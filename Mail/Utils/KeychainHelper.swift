@@ -36,7 +36,7 @@ public enum KeychainHelper {
 
     public static func storeToken(_ token: ApiToken) {
         var resultCode: OSStatus = noErr
-        let tokenData = try! JSONEncoder().encode(token)
+        let tokenData = try? JSONEncoder().encode(token)
 
         if let savedToken = getSavedToken(for: token.userId) {
             keychainQueue.sync {
