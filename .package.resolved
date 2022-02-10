@@ -1,0 +1,25 @@
+{
+  "object": {
+    "pins": [
+      {
+        "package": "Atlantis",
+        "repositoryURL": "https://github.com/ProxymanApp/atlantis",
+        "state": {
+          "branch": null,
+          "revision": "5e848072d45e3969bd1d69fab3b6c2151f826c41",
+          "version": "1.15.0"
+        }
+      },
+      {
+        "package": "InfomaniakLogin",
+        "repositoryURL": "https://github.com/Infomaniak/ios-login.git",
+        "state": {
+          "branch": null,
+          "revision": "9ac704e603cb9b11654f78e65ae2031dc584c341",
+          "version": "1.5.7"
+        }
+      }
+    ]
+  },
+  "version": 1
+}
