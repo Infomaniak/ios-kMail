@@ -22,6 +22,9 @@ let project = Project(name: "Mail",
 //                                     "mail/**/*.json",
 //                                     "mail/**/*.css"
                                  ],
+                                 scripts: [
+                                     .post(path: "scripts/lint.sh", name: "Swiftlint")
+                                 ],
                                  dependencies: [
                                      .package(product: "Atlantis"),
                                      .package(product: "InfomaniakLogin")
