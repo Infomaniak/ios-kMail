@@ -16,11 +16,10 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import XCTest
 @testable import Mail
+import XCTest
 
 class MailTests: XCTestCase {
-
     override func setUpWithError() throws {
         // Put setup code here. This method is called before the invocation of each test method in the class.
     }
@@ -43,5 +42,4 @@ class MailTests: XCTestCase {
             // Put the code you want to measure the time of here.
         }
     }
-
 }
