@@ -1,0 +1,22 @@
+name: CI workflow
+
+on:
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build:
+    name: Build and Test project
+    runs-on: self-hosted
+
+    steps:
+      - name: Cancel Previous Runs
+        uses: styfle/cancel-workflow-action@0.9.1
+        with:
+          access_token: ${{ github.token }}
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Build
+        run: .tuist-bin/tuist build --generate Mail
+      - name: Test
+        run: xcodebuild test -workspace Mail.xcworkspace -scheme Mail -destination "platform=iOS Simulator,name=iPhone 13" -only-testing:MailTests/MailTests
