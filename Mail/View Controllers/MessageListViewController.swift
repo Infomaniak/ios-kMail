@@ -29,7 +29,8 @@ class MessageListViewController: UIViewController {
     }
 
     static func instantiate() -> MessageListViewController {
-        return UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "MessageListViewController") as! MessageListViewController
+        return UIStoryboard(name: "Main", bundle: nil)
+            .instantiateViewController(withIdentifier: "MessageListViewController") as! MessageListViewController
     }
 }
 
