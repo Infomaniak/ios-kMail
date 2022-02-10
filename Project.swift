@@ -35,4 +35,5 @@ let project = Project(name: "Mail",
                                  dependencies: [
                                      .target(name: "Mail")
                                  ])
-                      ])
+                      ],
+                      fileHeaderTemplate: .file("file-header-template.txt"))
