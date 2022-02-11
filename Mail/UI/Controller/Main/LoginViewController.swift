@@ -19,7 +19,7 @@
 import InfomaniakLogin
 import UIKit
 
-class ViewController: UIViewController {
+class LoginViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
@@ -34,7 +34,7 @@ class ViewController: UIViewController {
     }
 }
 
-extension ViewController: InfomaniakLoginDelegate {
+extension LoginViewController: InfomaniakLoginDelegate {
     func didCompleteLoginWith(code: String, verifier: String) {
         InfomaniakLogin.getApiTokenUsing(code: code, codeVerifier: verifier) { token, _ in
             // Save the token
