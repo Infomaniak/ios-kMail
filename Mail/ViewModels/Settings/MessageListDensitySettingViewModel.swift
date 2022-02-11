@@ -19,6 +19,4 @@
 
 import UIKit
 
-class ExternalContentSettingViewController: UIViewController {
-    // SelectSettingFrament
-}
+class MessageListDensitySettingViewModel {}

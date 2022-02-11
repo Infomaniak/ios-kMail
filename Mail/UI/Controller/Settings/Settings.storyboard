@@ -36,7 +36,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="YZt-CG-igd" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="899" y="110"/>
+            <point key="canvasLocation" x="96" y="810"/>
         </scene>
         <!--Auto Replay Setting View Controller-->
         <scene sceneID="Ufl-VR-aHo">
@@ -51,7 +51,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="cnP-mb-66e" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1770" y="110"/>
+            <point key="canvasLocation" x="901" y="810"/>
         </scene>
         <!--Spam Setting View Controller-->
         <scene sceneID="Wk1-DB-Zke">
@@ -66,7 +66,22 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="gj9-ZS-U8X" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="2561" y="110"/>
+            <point key="canvasLocation" x="1699" y="810"/>
+        </scene>
+        <!--Select Setting View Controller-->
+        <scene sceneID="qxJ-GR-ISu">
+            <objects>
+                <viewController storyboardIdentifier="SelectSettingViewController" id="GXi-D7-tk5" customClass="SelectSettingViewController" customModule="Mail" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="iXi-6l-AWZ">
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <viewLayoutGuide key="safeArea" id="pIO-3e-JZK"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                    </view>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="Uix-be-oOj" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="2519" y="810"/>
         </scene>
     </scenes>
     <resources>

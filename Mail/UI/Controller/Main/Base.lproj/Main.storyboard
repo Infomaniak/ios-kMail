@@ -34,6 +34,21 @@
             </objects>
             <point key="canvasLocation" x="132" y="116"/>
         </scene>
+        <!--Switch User View Controller-->
+        <scene sceneID="Uwz-vQ-9nl">
+            <objects>
+                <viewController storyboardIdentifier="SwitchUserViewController" id="ztR-xr-lVd" customClass="SwitchUserViewController" customModule="Mail" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="IbK-EQ-Jnu">
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <viewLayoutGuide key="safeArea" id="8bH-zz-SP1"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                    </view>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="wfH-Ps-T4q" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1241" y="116"/>
+        </scene>
         <!--Message List View Controller-->
         <scene sceneID="Ue3-zq-BIi">
             <objects>
@@ -62,7 +77,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="XIj-LJ-QoO" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="959" y="116"/>
+            <point key="canvasLocation" x="1241" y="879"/>
         </scene>
         <!--Thread View Controller-->
         <scene sceneID="V3l-ae-LDl">
@@ -77,7 +92,52 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="2Ge-H2-zu7" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1730" y="116"/>
+            <point key="canvasLocation" x="2012" y="878"/>
+        </scene>
+        <!--New Message View Controller-->
+        <scene sceneID="lLT-io-9PR">
+            <objects>
+                <viewController storyboardIdentifier="NewMessageViewController" id="nVU-Ws-0JT" customClass="NewMessageViewController" customModule="Mail" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="m0j-jz-k1b">
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <viewLayoutGuide key="safeArea" id="3xm-Sw-uZk"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                    </view>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="3z1-FY-bW9" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="132" y="1632"/>
+        </scene>
+        <!--Menu Drawer View Controller-->
+        <scene sceneID="ZBh-vY-a0V">
+            <objects>
+                <viewController storyboardIdentifier="MenuDrawerViewController" id="EVw-Ko-6Ub" customClass="MenuDrawerViewController" customModule="Mail" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="tMD-XT-BdV">
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <viewLayoutGuide key="safeArea" id="xWL-Ee-w6q"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                    </view>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="Z1w-Lm-iNv" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="132" y="879"/>
+        </scene>
+        <!--Manage Mail Address View Controller-->
+        <scene sceneID="JqC-Qj-8DV">
+            <objects>
+                <viewController storyboardIdentifier="ManageMailAddressViewController" id="yqh-sA-usD" customClass="ManageMailAddressViewController" customModule="Mail" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="Nir-NZ-tJi">
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <viewLayoutGuide key="safeArea" id="bF2-c3-9QW"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                    </view>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="j8N-Id-iF6" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="2012" y="116"/>
         </scene>
     </scenes>
     <resources>

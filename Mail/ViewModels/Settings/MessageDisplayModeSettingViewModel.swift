@@ -19,6 +19,4 @@
 
 import UIKit
 
-class CancelDelaySettingViewController: UIViewController {
-    // SelectSettingFrament
-}
+class MessageDisplayModeSettingViewModel {}

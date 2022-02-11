@@ -19,6 +19,4 @@
 
 import UIKit
 
-class ThemeSettingViewController: UIViewController {
-    // SelectSettingFrament
-}
+class SignatureSettingViewModel {}
