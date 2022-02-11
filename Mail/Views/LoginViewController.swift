@@ -17,6 +17,7 @@
  */
 
 import InfomaniakLogin
+import MailCore
 import UIKit
 
 class LoginViewController: UIViewController {
