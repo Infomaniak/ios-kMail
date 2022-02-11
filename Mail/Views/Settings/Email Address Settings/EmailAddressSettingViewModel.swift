@@ -1,3 +1,4 @@
+//
 /*
  Infomaniak Mail - iOS App
  Copyright (C) 2022 Infomaniak Network SA
@@ -16,6 +17,6 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import UIKit
+import Foundation
 
-class AutoReplaySettingViewController: UIViewController {}
+class EmailAddressSettingViewModel {}
