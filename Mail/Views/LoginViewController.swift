@@ -36,10 +36,9 @@ extension LoginViewController: InfomaniakLoginDelegate {
         Task {
             do {
                 _ = try await AccountManager.instance.createAndSetCurrentAccount(code: code, codeVerifier: verifier)
-                let mailboxesVC = MessageListViewController.instantiate()
-                mailboxesVC.mailbox = AccountManager.instance.currentMailboxManager?.mailbox
-                mailboxesVC.modalPresentationStyle = .fullScreen
-                self.present(mailboxesVC, animated: true, completion: nil)
+				let splitVC = SplitViewController(style: .tripleColumn)
+                splitVC.modalPresentationStyle = .fullScreen
+                self.present(splitVC, animated: true, completion: nil)
             } catch {
                 if previousAccount != nil {
                     AccountManager.instance.switchAccount(newAccount: previousAccount!)

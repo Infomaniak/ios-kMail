@@ -18,4 +18,8 @@
 
 import UIKit
 
-class ThreadViewController: UIViewController {}
+class ThreadViewController: UIViewController {
+    override func viewDidLoad() {
+        super.viewDidLoad()
+    }
+}

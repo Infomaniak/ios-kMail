@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="19529" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="ew0-WY-pFy">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="19529" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="BYZ-38-t0r">
     <device id="retina6_1" orientation="portrait" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
@@ -9,65 +9,6 @@
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
-        <!--Thread View Controller-->
-        <scene sceneID="CWR-P1-Jcy">
-            <objects>
-                <viewController storyboardIdentifier="ThreadViewController" id="M5I-zI-0eO" customClass="ThreadViewController" customModule="Mail" customModuleProvider="target" sceneMemberID="viewController">
-                    <view key="view" contentMode="scaleToFill" id="04G-yO-DrI">
-                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
-                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <subviews>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="ThreadViewController" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="25H-VT-ZgW">
-                                <rect key="frame" x="124" y="437.5" width="166" height="21"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                <nil key="textColor"/>
-                                <nil key="highlightedColor"/>
-                            </label>
-                        </subviews>
-                        <viewLayoutGuide key="safeArea" id="Sw8-Hf-LZT"/>
-                        <color key="backgroundColor" systemColor="systemTealColor"/>
-                        <constraints>
-                            <constraint firstItem="25H-VT-ZgW" firstAttribute="centerY" secondItem="04G-yO-DrI" secondAttribute="centerY" id="8CS-6J-Dtr"/>
-                            <constraint firstItem="25H-VT-ZgW" firstAttribute="centerX" secondItem="04G-yO-DrI" secondAttribute="centerX" id="W5P-fd-g3a"/>
-                        </constraints>
-                    </view>
-                    <navigationItem key="navigationItem" id="KGb-s7-4ie"/>
-                </viewController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="29X-cc-33R" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="-119" y="410"/>
-        </scene>
-        <!--Navigation Controller-->
-        <scene sceneID="N7l-Oc-QSF">
-            <objects>
-                <navigationController id="PF6-iv-pkt" sceneMemberID="viewController">
-                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="GPt-MT-yPq">
-                        <rect key="frame" x="0.0" y="44" width="414" height="44"/>
-                        <autoresizingMask key="autoresizingMask"/>
-                    </navigationBar>
-                    <connections>
-                        <segue destination="SCD-k1-fXf" kind="relationship" relationship="rootViewController" id="Gx3-Zw-XOZ"/>
-                    </connections>
-                </navigationController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="VuY-O7-h2b" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="575" y="31"/>
-        </scene>
-        <!--Split View Controller-->
-        <scene sceneID="2pY-Az-FVf">
-            <objects>
-                <splitViewController allowDoubleColumnStyle="YES" preferredDisplayMode="twoBeside" behavior="tile" id="ew0-WY-pFy" sceneMemberID="viewController">
-                    <connections>
-                        <segue destination="EVw-Ko-6Ub" kind="relationship" relationship="masterViewController" id="yHs-lC-S3g"/>
-                        <segue destination="cV0-88-LdA" kind="relationship" relationship="detailViewController" id="VOw-M0-CcO"/>
-                        <segue destination="PF6-iv-pkt" kind="relationship" relationship="supplementaryViewController" id="xva-QY-pNt"/>
-                        <segue destination="PF6-iv-pkt" kind="relationship" relationship="compactViewController" id="eHF-dI-xsg"/>
-                    </connections>
-                </splitViewController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="g40-Q2-gAY" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="-994" y="-338"/>
-        </scene>
         <!--Login View Controller-->
         <scene sceneID="tne-QT-ifu">
             <objects>
@@ -99,7 +40,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-1894" y="-1294"/>
+            <point key="canvasLocation" x="-1436" y="-1294"/>
         </scene>
         <!--Switch User View Controller-->
         <scene sceneID="Uwz-vQ-9nl">
@@ -116,60 +57,6 @@
             </objects>
             <point key="canvasLocation" x="-670" y="-1294"/>
         </scene>
-        <!--Message List View Controller-->
-        <scene sceneID="Ue3-zq-BIi">
-            <objects>
-                <viewController storyboardIdentifier="MessageListViewController" id="SCD-k1-fXf" customClass="MessageListViewController" customModule="Mail" customModuleProvider="target" sceneMemberID="viewController">
-                    <view key="view" contentMode="scaleToFill" id="IyF-GM-9Lu">
-                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
-                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <subviews>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Logged in" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ojp-Il-0dn">
-                                <rect key="frame" x="169" y="437.5" width="76" height="21"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                <nil key="textColor"/>
-                                <nil key="highlightedColor"/>
-                            </label>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="7gl-f3-sxb">
-                                <rect key="frame" x="20" y="508.5" width="374" height="20.5"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                <nil key="textColor"/>
-                                <nil key="highlightedColor"/>
-                            </label>
-                        </subviews>
-                        <viewLayoutGuide key="safeArea" id="nkJ-BW-tKG"/>
-                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
-                        <constraints>
-                            <constraint firstItem="ojp-Il-0dn" firstAttribute="centerX" secondItem="IyF-GM-9Lu" secondAttribute="centerX" id="44U-tm-snj"/>
-                            <constraint firstItem="7gl-f3-sxb" firstAttribute="centerX" secondItem="IyF-GM-9Lu" secondAttribute="centerX" id="5fr-WQ-oVu"/>
-                            <constraint firstItem="7gl-f3-sxb" firstAttribute="top" secondItem="ojp-Il-0dn" secondAttribute="bottom" constant="50" id="6BB-I9-Qoi"/>
-                            <constraint firstItem="ojp-Il-0dn" firstAttribute="centerY" secondItem="IyF-GM-9Lu" secondAttribute="centerY" id="EPu-pe-PtQ"/>
-                            <constraint firstItem="7gl-f3-sxb" firstAttribute="leading" secondItem="nkJ-BW-tKG" secondAttribute="leading" constant="20" id="H5m-RQ-OSe"/>
-                            <constraint firstItem="nkJ-BW-tKG" firstAttribute="trailing" secondItem="7gl-f3-sxb" secondAttribute="trailing" constant="20" id="XGk-Xn-vbt"/>
-                        </constraints>
-                    </view>
-                    <connections>
-                        <outlet property="infoLabel" destination="7gl-f3-sxb" id="qxv-St-Tj5"/>
-                    </connections>
-                </viewController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="XIj-LJ-QoO" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="1241" y="879"/>
-        </scene>
-        <!--Thread View Controller-->
-        <scene sceneID="V3l-ae-LDl">
-            <objects>
-                <viewController storyboardIdentifier="ThreadViewController" id="Pwv-GR-8Mz" customClass="ThreadViewController" customModule="Mail" customModuleProvider="target" sceneMemberID="viewController">
-                    <view key="view" contentMode="scaleToFill" id="yCc-d3-yWx">
-                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
-                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <viewLayoutGuide key="safeArea" id="tvo-qP-xjr"/>
-                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
-                </viewController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="XIj-LJ-QoO" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="1346" y="31"/>
-        </scene>
         <!--New Message View Controller-->
         <scene sceneID="lLT-io-9PR">
             <objects>
@@ -183,34 +70,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="3z1-FY-bW9" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-1183" y="952"/>
-        </scene>
-        <!--Menu Drawer View Controller-->
-        <scene sceneID="ZBh-vY-a0V">
-            <objects>
-                <viewController storyboardIdentifier="MenuDrawerViewController" id="EVw-Ko-6Ub" customClass="MenuDrawerViewController" customModule="Mail" customModuleProvider="target" sceneMemberID="viewController">
-                    <view key="view" contentMode="scaleToFill" id="tMD-XT-BdV">
-                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
-                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <subviews>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Menu Drawer" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Aso-Lk-yf5">
-                                <rect key="frame" x="156" y="438" width="102" height="21"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                <nil key="textColor"/>
-                                <nil key="highlightedColor"/>
-                            </label>
-                        </subviews>
-                        <viewLayoutGuide key="safeArea" id="xWL-Ee-w6q"/>
-                        <color key="backgroundColor" systemColor="systemIndigoColor"/>
-                        <constraints>
-                            <constraint firstItem="Aso-Lk-yf5" firstAttribute="centerY" secondItem="tMD-XT-BdV" secondAttribute="centerY" id="PAp-f2-enK"/>
-                            <constraint firstItem="Aso-Lk-yf5" firstAttribute="centerX" secondItem="tMD-XT-BdV" secondAttribute="centerX" id="kRK-eH-coX"/>
-                        </constraints>
-                    </view>
-                </viewController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="Z1w-Lm-iNv" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="112" y="-642"/>
+            <point key="canvasLocation" x="-1436" y="-577"/>
         </scene>
         <!--Manage Mail Address View Controller-->
         <scene sceneID="JqC-Qj-8DV">
@@ -227,40 +87,10 @@
             </objects>
             <point key="canvasLocation" x="113" y="-1294"/>
         </scene>
-        <!--Navigation Controller-->
-        <scene sceneID="fro-9g-acM">
-            <objects>
-                <navigationController automaticallyAdjustsScrollViewInsets="NO" id="cV0-88-LdA" sceneMemberID="viewController">
-                    <toolbarItems/>
-                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="nNd-w8-VCf">
-                        <rect key="frame" x="0.0" y="44" width="414" height="44"/>
-                        <autoresizingMask key="autoresizingMask"/>
-                    </navigationBar>
-                    <nil name="viewControllers"/>
-                    <connections>
-                        <segue destination="M5I-zI-0eO" kind="relationship" relationship="rootViewController" id="AVe-TM-pWD"/>
-                    </connections>
-                </navigationController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="EYA-hf-oA9" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="-820" y="410"/>
-        </scene>
     </scenes>
-    <inferredMetricsTieBreakers>
-        <segue reference="xva-QY-pNt"/>
-    </inferredMetricsTieBreakers>
     <resources>
         <systemColor name="systemBackgroundColor">
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-        </systemColor>
-        <systemColor name="systemIndigoColor">
-            <color red="0.34509803921568627" green="0.33725490196078434" blue="0.83921568627450982" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-        </systemColor>
-        <systemColor name="systemPinkColor">
-            <color red="1" green="0.17647058823529413" blue="0.33333333333333331" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-        </systemColor>
-        <systemColor name="systemTealColor">
-            <color red="0.18823529411764706" green="0.69019607843137254" blue="0.7803921568627451" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
     </resources>
 </document>

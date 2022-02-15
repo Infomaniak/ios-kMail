@@ -28,9 +28,4 @@ class MessageListViewController: UIViewController {
         super.viewDidLoad()
         infoLabel.text = mailbox.email
     }
-
-    static func instantiate() -> MessageListViewController {
-        return UIStoryboard(name: "Main", bundle: nil)
-            .instantiateViewController(withIdentifier: "MessageListViewController") as! MessageListViewController
-    }
 }
