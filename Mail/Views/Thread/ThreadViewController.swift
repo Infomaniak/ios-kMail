@@ -18,8 +18,51 @@
 
 import UIKit
 
-class ThreadViewController: UIViewController {
+class ThreadViewController: UICollectionViewController {
+    var dataTest = ["Mail 1", "Mail 2", "Mail 3"]
+
+    // MARK: - Public methods
+
+    convenience init() {
+        self.init(collectionViewLayout: Self.createLayout())
+    }
+
     override func viewDidLoad() {
         super.viewDidLoad()
+        collectionView.register(UICollectionViewCell.self, forCellWithReuseIdentifier: "cell")
+    }
+
+    // MARK: - Private methods
+
+    private static func createLayout() -> UICollectionViewLayout {
+        return UICollectionViewCompositionalLayout { _, _ in
+            let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .estimated(53))
+            let item = NSCollectionLayoutItem(layoutSize: itemSize)
+            let group = NSCollectionLayoutGroup.vertical(layoutSize: itemSize, subitems: [item])
+            return NSCollectionLayoutSection(group: group)
+        }
     }
 }
+
+// MARK: - UICollectionViewDataSource
+
+extension ThreadViewController {
+    override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        return dataTest.count
+    }
+
+    override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "cell", for: indexPath)
+        let data = dataTest[indexPath.item]
+        let titleLabel = UILabel(frame: CGRect(x: 20, y: 0, width: cell.bounds.size.width - 40, height: 40))
+        titleLabel.textColor = UIColor.black
+        titleLabel.text = data
+        titleLabel.textAlignment = .left
+        cell.contentView.addSubview(titleLabel)
+        return cell
+    }
+}
+
+// MARK: - UICollectionViewDelegate
+
+extension ThreadViewController {}

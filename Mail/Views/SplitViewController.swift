@@ -39,6 +39,7 @@ class SplitViewController: UISplitViewController {
     private func setupSplitViews() {
         preferredSplitBehavior = .tile
         preferredDisplayMode = .twoBesideSecondary
+        showsSecondaryOnlyButton = true
 
         let menuDrawerViewController = MenuDrawerViewController()
         setViewController(menuDrawerViewController, for: .primary)
