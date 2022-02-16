@@ -65,4 +65,11 @@ extension MenuDrawerViewController {
 
 // MARK: - UICollectionViewDelegate
 
-extension MenuDrawerViewController {}
+extension MenuDrawerViewController {
+    override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        let selectedMailbox = dataTest[indexPath.item]
+        let messageLictVC = MessageListViewController()
+        messageLictVC.selectedMailbox = selectedMailbox
+        splitViewController?.setViewController(messageLictVC, for: .supplementary)
+      }
+}

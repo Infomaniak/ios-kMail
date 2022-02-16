@@ -20,6 +20,7 @@ import UIKit
 
 class ThreadViewController: UICollectionViewController {
     var dataTest = ["Mail 1", "Mail 2", "Mail 3"]
+    var selectedThread = ""
 
     // MARK: - Public methods
 
@@ -56,7 +57,7 @@ extension ThreadViewController {
         let data = dataTest[indexPath.item]
         let titleLabel = UILabel(frame: CGRect(x: 20, y: 0, width: cell.bounds.size.width - 40, height: 40))
         titleLabel.textColor = UIColor.black
-        titleLabel.text = data
+        titleLabel.text = selectedThread + " - " + data
         titleLabel.textAlignment = .left
         cell.contentView.addSubview(titleLabel)
         return cell

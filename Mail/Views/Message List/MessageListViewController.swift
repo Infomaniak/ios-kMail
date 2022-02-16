@@ -21,7 +21,7 @@ import UIKit
 
 class MessageListViewController: UICollectionViewController {
     var dataTest = ["Message 1", "Message 2", "Message 3"]
-    var mailboxSelected = ""
+    var selectedMailbox = ""
 
     // MARK: - Public methods
 
@@ -58,7 +58,7 @@ extension MessageListViewController {
         let data = dataTest[indexPath.item]
         let titleLabel = UILabel(frame: CGRect(x: 20, y: 0, width: cell.bounds.size.width - 40, height: 40))
         titleLabel.textColor = UIColor.black
-        titleLabel.text = mailboxSelected + " - " + data
+        titleLabel.text = selectedMailbox + " - " + data
         titleLabel.textAlignment = .left
         cell.contentView.addSubview(titleLabel)
         return cell
@@ -67,4 +67,11 @@ extension MessageListViewController {
 
 // MARK: - UICollectionViewDelegate
 
-extension MessageListViewController {}
+extension MessageListViewController {
+    override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        let selectedThread = dataTest[indexPath.item]
+        let threadVC = ThreadViewController()
+        threadVC.selectedThread = selectedThread
+        self.showDetailViewController(threadVC, sender: self)
+      }
+}
