@@ -71,7 +71,7 @@ extension MessageListViewController {
     override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         let selectedThread = dataTest[indexPath.item]
         let threadVC = ThreadViewController()
-        threadVC.selectedThread = selectedThread
+        threadVC.selectedThread = selectedMailbox + " - " + selectedThread
         self.showDetailViewController(threadVC, sender: self)
       }
 }
