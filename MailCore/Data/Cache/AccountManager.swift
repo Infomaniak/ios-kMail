@@ -206,7 +206,7 @@ public class AccountManager: RefreshTokenDelegate {
         let mailboxesResponse = try await mailApiFetcher.mailboxes()
         guard !mailboxesResponse.isEmpty else {
             removeAccount(toDeleteAccount: newAccount)
-            throw MailError.noMailbox
+            throw MailError.unknownError
         }
         MailboxInfosManager.instance.storeMailboxes(user: user, mailboxes: mailboxesResponse)
         let mainMailbox = mailboxesResponse.first!

@@ -20,90 +20,38 @@ import Foundation
 import InfomaniakCore
 import MailResources
 
-public struct MailError: Error, Equatable {
-    public enum MailErrorType: String, Codable {
-        case localError
-        case networkError
-        case serverError
-    }
+enum MailError: LocalizedError, CustomStringConvertible {
+    case apiError(ApiError)
+    case noToken
+    case resourceError
+    case unknownError
 
-    public let type: MailErrorType
-    public let code: String
-    public var localizedDescription: String
-
-    private init(type: MailErrorType, code: String, localizedString: String = "Generic error") {
-        self.type = type
-        self.code = code
-        localizedDescription = localizedString
-    }
-
-    public static let refreshToken = MailError(type: .serverError, code: "refreshToken")
-    public static let unknownToken = MailError(type: .localError, code: "unknownToken")
-    public static let localError = MailError(type: .localError, code: "localError")
-    public static let serverError = MailError(type: .serverError, code: "serverError")
-    public static let noMailbox = MailError(type: .serverError, code: "no_mailbox")
-
-    public static let unknownError = MailError(type: .localError, code: "unknownError")
-
-    private static let allErrors: [MailError] = []
-
-    private static let encoder = JSONEncoder()
-    private static let decoder = JSONDecoder()
-
-    public init(apiErrorCode: String) {
-        if let error = MailError.allErrors.first(where: { $0.type == .serverError && $0.code == apiErrorCode }) {
-            self = error
-        } else {
-            self = .serverError
+    var errorDescription: String? {
+        switch self {
+        case .apiError(let apiError):
+            if let code = ApiErrorCode(rawValue: apiError.code) {
+                return code.localizedDescription
+            }
+            return apiError.description
+        case .noToken:
+            return "No API token"
+        case .resourceError:
+            return "Resource error"
+        case .unknownError:
+            return "Unknown error"
         }
     }
 
-    public init(apiError: ApiError) {
-        if let error = MailError.allErrors.first(where: { $0.type == .serverError && $0.code == apiError.code }) {
-            self = error
-        } else {
-            self = .serverError
+    var description: String {
+        switch self {
+        case .apiError(let apiError):
+            return "MailError.apiError (\(apiError.code))"
+        case .noToken:
+            return "MailError.noToken"
+        case .resourceError:
+            return "MailError.resourceError"
+        case .unknownError:
+            return "MailError.unknownError"
         }
-    }
-
-    static func from(realmData: Data) -> MailError {
-        if let error = try? decoder.decode(MailError.self, from: realmData) {
-            return error
-        } else {
-            return .unknownError
-        }
-    }
-
-    public static func == (lhs: MailError, rhs: MailError) -> Bool {
-        return lhs.code == rhs.code
-    }
-}
-
-extension MailError: LocalizedError {
-    public var errorDescription: String? {
-        return localizedDescription
-    }
-}
-
-extension MailError: Codable {
-    public init(from decoder: Decoder) throws {
-        let values = try decoder.container(keyedBy: CodingKeys.self)
-        type = try values.decode(MailErrorType.self, forKey: .type)
-        code = try values.decode(String.self, forKey: .code)
-        localizedDescription = MailError.unknownError.localizedDescription
-        if let errorDescription = MailError.allErrors.first(where: { $0.type == type && $0.code == code })?.localizedDescription {
-            localizedDescription = errorDescription
-        }
-    }
-
-    public func encode(to encoder: Encoder) throws {
-        var container = encoder.container(keyedBy: CodingKeys.self)
-        try container.encode(type, forKey: .type)
-        try container.encode(code, forKey: .code)
-    }
-
-    enum CodingKeys: String, CodingKey {
-        case type
-        case code
     }
 }

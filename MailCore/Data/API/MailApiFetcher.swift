@@ -60,9 +60,9 @@ extension ApiFetcher {
         if let result = json.data {
             return (result, json.responseAt)
         } else if let apiError = json.error {
-            throw MailError(apiError: apiError)
+            throw MailError.apiError(apiError)
         } else {
-            throw MailError.serverError
+            throw MailError.unknownError
         }
     }
 }
@@ -90,7 +90,7 @@ class SyncedAuthenticator: OAuthAuthenticator {
     ) {
         AccountManager.instance.refreshTokenLockedQueue.async {
             if !KeychainHelper.isKeychainAccessible {
-                completion(.failure(MailError.refreshToken))
+                completion(.failure(MailError.noToken))
                 return
             }
 
@@ -117,7 +117,7 @@ class SyncedAuthenticator: OAuthAuthenticator {
 
                 if taskIdentifier == .invalid {
                     // We couldn't request additional time to refresh token maybe try later...
-                    completion(.failure(MailError.refreshToken))
+                    completion(.failure(MailError.noToken))
                     return
                 }
             }
