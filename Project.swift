@@ -75,8 +75,6 @@ let project = Project(name: "Mail",
                               infoPlist: .default,
                               resources: [
                                   "MailResources/**/*.xcassets"
-//                                  "MailResources/**/*.strings",
-//                                  "MailResources/**/*.stringsdict"
                               ]
                           ),
                           Target(
