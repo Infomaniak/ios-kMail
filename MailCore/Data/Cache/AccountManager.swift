@@ -204,13 +204,13 @@ public class AccountManager: RefreshTokenDelegate {
 
         // add get mailboxes
         let mailApiFetcher = MailApiFetcher(token: token, delegate: self)
-        let mailboxes = try await mailApiFetcher.mailboxes()
-        guard !mailboxes.isEmpty else {
+        let mailboxesResponse = try await mailApiFetcher.mailboxes()
+        guard !mailboxesResponse.isEmpty else {
             removeAccount(toDeleteAccount: newAccount)
             throw MailError.noMailbox
         }
-        MailboxInfosManager.instance.storeMailboxes(user: user, mailboxes: mailboxes)
-        let mainMailbox = mailboxes.first!
+        MailboxInfosManager.instance.storeMailboxes(user: user, mailboxes: mailboxesResponse)
+        let mainMailbox = mailboxesResponse.first!
         setCurrentMailboxForCurrentAccount(mailbox: mainMailbox)
         saveAccounts()
 

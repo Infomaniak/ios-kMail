@@ -70,7 +70,7 @@ public enum KeychainHelper {
             kSecAttrService as String: KeychainHelper.lockedKey,
             kSecValueData as String: KeychainHelper.lockedValue
         ]
-        let resultCode = SecItemAdd(queryAdd as CFDictionary, nil)
+        _ = SecItemAdd(queryAdd as CFDictionary, nil)
     }
 
     public static func deleteToken(for userId: Int) {
@@ -85,7 +85,6 @@ public enum KeychainHelper {
     }
 
     public static func storeToken(_ token: ApiToken) {
-        var resultCode: OSStatus = noErr
         let tokenData = try? JSONEncoder().encode(token)
 
         if let savedToken = getSavedToken(for: token.userId) {
@@ -100,7 +99,7 @@ public enum KeychainHelper {
                     let attributes: [String: Any] = [
                         kSecValueData as String: tokenData
                     ]
-                    resultCode = SecItemUpdate(queryUpdate as CFDictionary, attributes as CFDictionary)
+                    _ = SecItemUpdate(queryUpdate as CFDictionary, attributes as CFDictionary)
                 }
             }
         } else {
@@ -113,7 +112,7 @@ public enum KeychainHelper {
                     kSecAttrAccount as String: "\(token.userId)",
                     kSecValueData as String: tokenData
                 ]
-                resultCode = SecItemAdd(queryAdd as CFDictionary, nil)
+                _ = SecItemAdd(queryAdd as CFDictionary, nil)
             }
         }
     }
