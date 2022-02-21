@@ -26,24 +26,6 @@ public enum ApiResult: String, Codable {
 
 public class EmptyResponse: Codable {}
 
-public class CancelableResponse: Codable {
-    public let id: String
-    public let validUntil: Int
-    public var offline: Bool {
-        return id.isEmpty
-    }
-
-    init() {
-        id = ""
-        validUntil = 0
-    }
-
-    enum CodingKeys: String, CodingKey {
-        case id = "cancel_id"
-        case validUntil = "valid_until"
-    }
-}
-
 public class ApiResponse<ResponseContent: Decodable>: Decodable {
     public let result: ApiResult
     public let data: ResponseContent?
