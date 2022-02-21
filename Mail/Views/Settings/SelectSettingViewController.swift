@@ -18,8 +18,4 @@
 
 import UIKit
 
-class SelectSettingViewController: UIViewController {
-    override func viewDidLoad() {
-        super.viewDidLoad()
-    }
-}
+class SelectSettingViewController: UIViewController {}

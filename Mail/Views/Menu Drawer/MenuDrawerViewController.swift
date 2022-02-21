@@ -18,8 +18,4 @@
 
 import UIKit
 
-class MenuDrawerViewController: UIViewController {
-    override func viewDidLoad() {
-        super.viewDidLoad()
-    }
-}
+class MenuDrawerViewController: UIViewController {}

@@ -21,11 +21,6 @@ import MailCore
 import UIKit
 
 class LoginViewController: UIViewController {
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        // Do any additional setup after loading the view.
-    }
-
     @IBAction func loginButtonPressed(_ sender: UIButton) {
         InfomaniakLogin.initWith(
             clientId: "E90BC22D-67A8-452C-BE93-28DA33588CA4",

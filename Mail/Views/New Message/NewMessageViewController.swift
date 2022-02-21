@@ -18,8 +18,4 @@
 
 import UIKit
 
-class NewMessageViewController: UIViewController {
-    override func viewDidLoad() {
-        super.viewDidLoad()
-    }
-}
+class NewMessageViewController: UIViewController {}

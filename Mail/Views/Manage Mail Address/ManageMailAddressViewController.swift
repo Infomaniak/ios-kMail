@@ -18,8 +18,4 @@
 
 import UIKit
 
-class ManageMailAddressViewController: UIViewController {
-    override func viewDidLoad() {
-        super.viewDidLoad()
-    }
-}
+class ManageMailAddressViewController: UIViewController {}

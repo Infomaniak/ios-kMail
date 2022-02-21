@@ -18,8 +18,4 @@
 
 import UIKit
 
-class SwitchUserViewController: UIViewController {
-    override func viewDidLoad() {
-        super.viewDidLoad()
-    }
-}
+class SwitchUserViewController: UIViewController {}
