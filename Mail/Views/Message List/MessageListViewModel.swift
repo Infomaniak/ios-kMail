@@ -18,4 +18,4 @@
 
 import Foundation
 
-class MessageListViewModel {}
+@MainActor class MessageListViewModel {}

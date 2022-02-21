@@ -18,4 +18,4 @@
 
 import Foundation
 
-class ManageMailAddressViewModel {}
+@MainActor class ManageMailAddressViewModel {}

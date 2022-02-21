@@ -18,4 +18,4 @@
 
 import UIKit
 
-class SignatureSettingViewModel {}
+@MainActor class SignatureSettingViewModel {}

@@ -18,4 +18,4 @@
 
 import UIKit
 
-class MessageDisplayModeSettingViewModel {}
+@MainActor class MessageDisplayModeSettingViewModel {}

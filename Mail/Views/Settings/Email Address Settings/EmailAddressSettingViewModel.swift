@@ -18,4 +18,4 @@
 
 import Foundation
 
-class EmailAddressSettingViewModel {}
+@MainActor class EmailAddressSettingViewModel {}

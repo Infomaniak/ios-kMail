@@ -18,4 +18,4 @@
 
 import Foundation
 
-class SpamSettingViewModel {}
+@MainActor class SpamSettingViewModel {}

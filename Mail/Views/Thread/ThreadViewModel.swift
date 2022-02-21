@@ -18,4 +18,4 @@
 
 import Foundation
 
-class ThreadViewModel {}
+@MainActor class ThreadViewModel {}

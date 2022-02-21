@@ -18,4 +18,4 @@
 
 import Foundation
 
-class SettingsViewModel {}
+@MainActor class SettingsViewModel {}

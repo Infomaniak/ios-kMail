@@ -18,4 +18,4 @@
 
 import UIKit
 
-class MessageListDensitySettingViewModel {}
+@MainActor class MessageListDensitySettingViewModel {}

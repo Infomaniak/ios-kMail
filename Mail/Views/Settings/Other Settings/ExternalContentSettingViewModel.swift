@@ -18,4 +18,4 @@
 
 import UIKit
 
-class ExternalContentSettingViewModel {}
+@MainActor class ExternalContentSettingViewModel {}

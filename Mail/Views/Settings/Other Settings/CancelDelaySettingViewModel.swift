@@ -18,4 +18,4 @@
 
 import UIKit
 
-class CancelDelaySettingViewModel {}
+@MainActor class CancelDelaySettingViewModel {}

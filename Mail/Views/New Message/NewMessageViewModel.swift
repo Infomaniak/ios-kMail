@@ -18,4 +18,4 @@
 
 import Foundation
 
-class NewMessageViewModel {}
+@MainActor class NewMessageViewModel {}

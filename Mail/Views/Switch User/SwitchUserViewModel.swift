@@ -18,4 +18,4 @@
 
 import Foundation
 
-class SwitchUserViewModel {}
+@MainActor class SwitchUserViewModel {}

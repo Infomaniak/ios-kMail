@@ -18,4 +18,4 @@
 
 import UIKit
 
-class ThemeSettingViewModel {}
+@MainActor class ThemeSettingViewModel {}

@@ -18,4 +18,4 @@
 
 import Foundation
 
-class MenuDrawerViewModel {}
+@MainActor class MenuDrawerViewModel {}

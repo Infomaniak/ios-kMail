@@ -18,4 +18,4 @@
 
 import Foundation
 
-class AutoReplySettingViewModel {}
+@MainActor class AutoReplySettingViewModel {}
