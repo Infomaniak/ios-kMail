@@ -16,11 +16,17 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import MailCore
 import UIKit
 
 class MessageListViewController: UIViewController {
+    @IBOutlet weak var infoLabel: UILabel!
+
+    var mailbox: Mailbox!
+
     override func viewDidLoad() {
         super.viewDidLoad()
+        infoLabel.text = mailbox.email
     }
 
     static func instantiate() -> MessageListViewController {

@@ -20,8 +20,58 @@ import Foundation
 import InfomaniakLogin
 
 public enum KeychainHelper {
+    private static let accessGroup = AccountManager.accessGroup
     private static let tag = "ch.infomaniak.token".data(using: .utf8)!
     private static let keychainQueue = DispatchQueue(label: "com.infomaniak.mail.keychain")
+
+    private static let lockedKey = "isLockedKey"
+    private static let lockedValue = "locked".data(using: .utf8)!
+    private static var accessiblityValueWritten = false
+
+    static var isKeychainAccessible: Bool {
+        if !accessiblityValueWritten {
+            initKeychainAccessibility()
+        }
+
+        let query: [String: Any] = [
+            kSecClass as String: kSecClassGenericPassword,
+            kSecAttrService as String: KeychainHelper.lockedKey,
+            kSecAttrAccessGroup as String: accessGroup,
+            kSecReturnData as String: kCFBooleanTrue as Any,
+            kSecReturnAttributes as String: kCFBooleanTrue as Any,
+            kSecReturnRef as String: kCFBooleanTrue as Any,
+            kSecMatchLimit as String: kSecMatchLimitAll
+        ]
+
+        var result: AnyObject?
+
+        let resultCode = withUnsafeMutablePointer(to: &result) {
+            SecItemCopyMatching(query as CFDictionary, UnsafeMutablePointer($0))
+        }
+
+        if resultCode == noErr, let array = result as? [[String: Any]] {
+            for item in array {
+                if let value = item[kSecValueData as String] as? Data {
+                    return value == KeychainHelper.lockedValue
+                }
+            }
+            return false
+        } else {
+            return false
+        }
+    }
+
+    private static func initKeychainAccessibility() {
+        accessiblityValueWritten = true
+        let queryAdd: [String: Any] = [
+            kSecClass as String: kSecClassGenericPassword,
+            kSecAttrAccessGroup as String: accessGroup,
+            kSecAttrAccessible as String: kSecAttrAccessibleAfterFirstUnlock,
+            kSecAttrService as String: KeychainHelper.lockedKey,
+            kSecValueData as String: KeychainHelper.lockedValue
+        ]
+        let resultCode = SecItemAdd(queryAdd as CFDictionary, nil)
+    }
 
     public static func deleteToken(for userId: Int) {
         keychainQueue.sync {

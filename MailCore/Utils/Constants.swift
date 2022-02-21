@@ -1,3 +1,4 @@
+//
 /*
  Infomaniak Mail - iOS App
  Copyright (C) 2022 Infomaniak Network SA
@@ -17,21 +18,12 @@
  */
 
 import Foundation
-import InfomaniakLogin
+import MailResources
 
-open class Account: Codable {
-    public var token: ApiToken! {
-        didSet {
-            if let token = token {
-                userId = token.userId
-            }
-        }
-    }
-
-    public var userId: Int
-
-    public init(apiToken: ApiToken) {
-        self.token = apiToken
-        self.userId = apiToken.userId
-    }
+public enum Constants {
+    public static let isInExtension: Bool = {
+        let bundleUrl: URL = Bundle.main.bundleURL
+        let bundlePathExtension: String = bundleUrl.pathExtension
+        return bundlePathExtension == "appex"
+    }()
 }

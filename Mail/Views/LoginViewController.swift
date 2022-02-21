@@ -37,18 +37,18 @@ class LoginViewController: UIViewController {
 
 extension LoginViewController: InfomaniakLoginDelegate {
     func didCompleteLoginWith(code: String, verifier: String) {
-        InfomaniakLogin.getApiTokenUsing(code: code, codeVerifier: verifier) { token, _ in
-            // Save the token
-            guard let token = token else {
-                return
-            }
-
-            AccountManager.instance.createAndSetCurrentAccount(token: token)
-
-            DispatchQueue.main.async {
+        let previousAccount = AccountManager.instance.currentAccount
+        Task {
+            do {
+                _ = try await AccountManager.instance.createAndSetCurrentAccount(code: code, codeVerifier: verifier)
                 let mailboxesVC = MessageListViewController.instantiate()
+                mailboxesVC.mailbox = AccountManager.instance.currentMailboxManager?.mailbox
                 mailboxesVC.modalPresentationStyle = .fullScreen
                 self.present(mailboxesVC, animated: true, completion: nil)
+            } catch {
+                if previousAccount != nil {
+                    AccountManager.instance.switchAccount(newAccount: previousAccount!)
+                }
             }
         }
     }
