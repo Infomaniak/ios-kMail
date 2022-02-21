@@ -75,45 +75,6 @@ public class MailApiFetcher: ApiFetcher {
         ApiFetcher.decoder.keyDecodingStrategy = .convertFromSnakeCase
     }
 
-    // MARK: - Old request helpers
-
-    override public func handleResponse<Type>(response: DataResponse<Type, AFError>,
-                                              completion: @escaping (Type?, Error?) -> Void) {
-        super.handleResponse(response: response) { res, error in
-            if let error = error as? InfomaniakCore.ApiError {
-                completion(res, MailError(apiError: error))
-            } else {
-                completion(res, error)
-            }
-        }
-    }
-
-    @discardableResult
-    private func makeRequest<T: Decodable>(
-        _ convertible: URLConvertible,
-        method: HTTPMethod = .get,
-        parameters: Parameters? = nil,
-        encoding: ParameterEncoding = JSONEncoding.default,
-        headers: HTTPHeaders? = nil,
-        interceptor: RequestInterceptor? = nil,
-        requestModifier: Session.RequestModifier? = nil,
-        completion: @escaping (T?, Error?) -> Void
-    ) -> DataRequest {
-        return authenticatedSession.request(
-            convertible,
-            method: method,
-            parameters: parameters,
-            encoding: encoding,
-            headers: headers,
-            interceptor: interceptor,
-            requestModifier: requestModifier
-        )
-        .validate()
-        .responseDecodable(of: T.self, decoder: ApiFetcher.decoder) { response in
-            self.handleResponse(response: response, completion: completion)
-        }
-    }
-
     // MARK: - API methods
 
     public func mailboxes() async throws -> [Mailbox] {
