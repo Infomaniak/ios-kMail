@@ -43,11 +43,9 @@ class ThreadViewController: UICollectionViewController {
             return NSCollectionLayoutSection(group: group)
         }
     }
-}
 
-// MARK: - UICollectionViewDataSource
+    // MARK: - UICollectionViewDataSource
 
-extension ThreadViewController {
     override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return dataTest.count
     }
@@ -63,7 +61,3 @@ extension ThreadViewController {
         return cell
     }
 }
-
-// MARK: - UICollectionViewDelegate
-
-extension ThreadViewController {}

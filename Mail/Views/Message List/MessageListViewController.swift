@@ -44,11 +44,9 @@ class MessageListViewController: UICollectionViewController {
             return NSCollectionLayoutSection(group: group)
         }
     }
-}
 
-// MARK: - UICollectionViewDataSource
+    // MARK: - UICollectionViewDataSource
 
-extension MessageListViewController {
     override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return dataTest.count
     }
@@ -63,15 +61,13 @@ extension MessageListViewController {
         cell.contentView.addSubview(titleLabel)
         return cell
     }
-}
 
-// MARK: - UICollectionViewDelegate
+    // MARK: - UICollectionViewDelegate
 
-extension MessageListViewController {
     override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         let selectedThread = dataTest[indexPath.item]
         let threadVC = ThreadViewController()
         threadVC.selectedThread = selectedMailbox + " - " + selectedThread
-        self.showDetailViewController(threadVC, sender: self)
-      }
+        showDetailViewController(threadVC, sender: self)
+    }
 }

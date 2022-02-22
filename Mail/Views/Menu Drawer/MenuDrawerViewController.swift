@@ -42,11 +42,9 @@ class MenuDrawerViewController: UICollectionViewController {
             return NSCollectionLayoutSection(group: group)
         }
     }
-}
 
-// MARK: - UICollectionViewDataSource
+    // MARK: - UICollectionViewDataSource
 
-extension MenuDrawerViewController {
     override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return dataTest.count
     }
@@ -61,15 +59,13 @@ extension MenuDrawerViewController {
         cell.contentView.addSubview(titleLabel)
         return cell
     }
-}
 
-// MARK: - UICollectionViewDelegate
+    // MARK: - UICollectionViewDelegate
 
-extension MenuDrawerViewController {
     override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         let selectedMailbox = dataTest[indexPath.item]
         let messageLictVC = MessageListViewController()
         messageLictVC.selectedMailbox = selectedMailbox
         splitViewController?.setViewController(messageLictVC, for: .supplementary)
-      }
+    }
 }
