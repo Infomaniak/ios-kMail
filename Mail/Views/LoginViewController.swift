@@ -36,7 +36,7 @@ extension LoginViewController: InfomaniakLoginDelegate {
         Task {
             do {
                 _ = try await AccountManager.instance.createAndSetCurrentAccount(code: code, codeVerifier: verifier)
-				let splitVC = SplitViewController(style: .tripleColumn)
+                let splitVC = SplitViewController()
                 splitVC.modalPresentationStyle = .fullScreen
                 self.present(splitVC, animated: true, completion: nil)
             } catch {
