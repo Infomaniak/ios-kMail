@@ -24,7 +24,7 @@ class SplitViewController: UISplitViewController {
     convenience init() {
         self.init(style: .tripleColumn)
     }
-    
+
     override func viewDidLoad() {
         super.viewDidLoad()
 
