@@ -18,4 +18,27 @@
 
 import UIKit
 
-class MenuDrawerViewController: UIViewController {}
+class MenuDrawerViewController: MailCollectionViewController {
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        dataTest = ["Inbox", "Sent", "Trash"]
+    }
+
+    // MARK: - UICollectionViewDataSource
+
+    override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        let cell = super.collectionView(collectionView, cellForItemAt: indexPath)
+        let data = dataTest[indexPath.item]
+        titleLabel?.text = data
+        return cell
+    }
+
+    // MARK: - UICollectionViewDelegate
+
+    override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        let selectedMailbox = dataTest[indexPath.item]
+        let messageLictVC = MessageListViewController()
+        messageLictVC.selectedMailbox = selectedMailbox
+        splitViewController?.setViewController(messageLictVC, for: .supplementary)
+    }
+}

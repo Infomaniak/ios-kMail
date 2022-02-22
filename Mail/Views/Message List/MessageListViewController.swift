@@ -19,18 +19,29 @@
 import MailCore
 import UIKit
 
-class MessageListViewController: UIViewController {
-    @IBOutlet weak var infoLabel: UILabel!
-
-    var mailbox: Mailbox!
+class MessageListViewController: MailCollectionViewController {
+    var selectedMailbox = ""
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        infoLabel.text = mailbox.email
+        dataTest = ["Message 1", "Message 2", "Message 3"]
     }
 
-    static func instantiate() -> MessageListViewController {
-        return UIStoryboard(name: "Main", bundle: nil)
-            .instantiateViewController(withIdentifier: "MessageListViewController") as! MessageListViewController
+    // MARK: - UICollectionViewDataSource
+
+    override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        let cell = super.collectionView(collectionView, cellForItemAt: indexPath)
+        let data = dataTest[indexPath.item]
+        titleLabel?.text = selectedMailbox + " - " + data
+        return cell
+    }
+
+    // MARK: - UICollectionViewDelegate
+
+    override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        let selectedThread = dataTest[indexPath.item]
+        let threadVC = ThreadViewController()
+        threadVC.selectedThread = selectedMailbox + " - " + selectedThread
+        showDetailViewController(threadVC, sender: self)
     }
 }

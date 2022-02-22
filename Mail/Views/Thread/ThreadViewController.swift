@@ -18,4 +18,20 @@
 
 import UIKit
 
-class ThreadViewController: UIViewController {}
+class ThreadViewController: MailCollectionViewController {
+    var selectedThread = ""
+
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        dataTest = ["Mail 1", "Mail 2", "Mail 3"]
+    }
+
+    // MARK: - UICollectionViewDataSource
+
+    override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        let cell = super.collectionView(collectionView, cellForItemAt: indexPath)
+        let data = dataTest[indexPath.item]
+        titleLabel?.text = selectedThread + " - " + data
+        return cell
+    }
+}
