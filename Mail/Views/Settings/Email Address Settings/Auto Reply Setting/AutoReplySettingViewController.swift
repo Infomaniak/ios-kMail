@@ -16,16 +16,6 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import SwiftUI
+import UIKit
 
-struct MessageListView: View {
-    var body: some View {
-        Text("Hello, World!")
-    }
-}
-
-struct MessageListView_Previews: PreviewProvider {
-    static var previews: some View {
-        MessageListView()
-    }
-}
+class AutoReplySettingViewController: UIViewController {}

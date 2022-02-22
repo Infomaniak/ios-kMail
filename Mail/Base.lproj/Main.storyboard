@@ -2,23 +2,27 @@
 <document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="19529" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="BYZ-38-t0r">
     <device id="retina6_1" orientation="portrait" appearance="light"/>
     <dependencies>
+        <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="19519"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="System colors in document resources" minToolsVersion="11.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
-        <!--View Controller-->
+        <!--Login View Controller-->
         <scene sceneID="tne-QT-ifu">
             <objects>
-                <viewController id="BYZ-38-t0r" customClass="ViewController" customModule="Mail" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="BYZ-38-t0r" customClass="LoginViewController" customModule="Mail" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="8bC-Xf-vdC">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="e6K-wu-oYc">
-                                <rect key="frame" x="178" y="433" width="60" height="31"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="e6K-wu-oYc">
+                                <rect key="frame" x="167" y="427" width="80" height="42"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="80" id="A8Q-IO-MQR"/>
+                                    <constraint firstAttribute="height" constant="42" id="Mrd-gX-ZWm"/>
+                                </constraints>
                                 <state key="normal" title="Button"/>
                                 <buttonConfiguration key="configuration" style="filled" title="Login"/>
                                 <connections>
@@ -28,11 +32,30 @@
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                        <constraints>
+                            <constraint firstItem="e6K-wu-oYc" firstAttribute="centerY" secondItem="8bC-Xf-vdC" secondAttribute="centerY" id="3JK-SE-u2Y"/>
+                            <constraint firstItem="e6K-wu-oYc" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="5At-jO-owd"/>
+                        </constraints>
                     </view>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="132" y="116"/>
+        </scene>
+        <!--Switch User View Controller-->
+        <scene sceneID="Uwz-vQ-9nl">
+            <objects>
+                <viewController storyboardIdentifier="SwitchUserViewController" id="ztR-xr-lVd" customClass="SwitchUserViewController" customModule="Mail" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="IbK-EQ-Jnu">
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <viewLayoutGuide key="safeArea" id="8bH-zz-SP1"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                    </view>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="wfH-Ps-T4q" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1241" y="116"/>
         </scene>
         <!--Message List View Controller-->
         <scene sceneID="Ue3-zq-BIi">
@@ -42,27 +65,97 @@
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="-1" estimatedSectionHeaderHeight="-1" sectionFooterHeight="-1" estimatedSectionFooterHeight="-1" translatesAutoresizingMaskIntoConstraints="NO" id="UMr-9d-ViE">
-                                <rect key="frame" x="0.0" y="44" width="414" height="818"/>
-                                <color key="backgroundColor" systemColor="systemBackgroundColor"/>
-                            </tableView>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Logged in" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ojp-Il-0dn">
+                                <rect key="frame" x="169" y="437.5" width="76" height="21"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="7gl-f3-sxb">
+                                <rect key="frame" x="20" y="508.5" width="374" height="20.5"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="nkJ-BW-tKG"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <constraints>
-                            <constraint firstItem="UMr-9d-ViE" firstAttribute="leading" secondItem="nkJ-BW-tKG" secondAttribute="leading" id="CYe-Qp-qFn"/>
-                            <constraint firstItem="nkJ-BW-tKG" firstAttribute="trailing" secondItem="UMr-9d-ViE" secondAttribute="trailing" id="Oo8-VV-KzS"/>
-                            <constraint firstItem="nkJ-BW-tKG" firstAttribute="bottom" secondItem="UMr-9d-ViE" secondAttribute="bottom" id="XVh-Zd-9Qd"/>
-                            <constraint firstItem="UMr-9d-ViE" firstAttribute="top" secondItem="nkJ-BW-tKG" secondAttribute="top" id="nR3-zR-Hx7"/>
+                            <constraint firstItem="ojp-Il-0dn" firstAttribute="centerX" secondItem="IyF-GM-9Lu" secondAttribute="centerX" id="44U-tm-snj"/>
+                            <constraint firstItem="7gl-f3-sxb" firstAttribute="centerX" secondItem="IyF-GM-9Lu" secondAttribute="centerX" id="5fr-WQ-oVu"/>
+                            <constraint firstItem="7gl-f3-sxb" firstAttribute="top" secondItem="ojp-Il-0dn" secondAttribute="bottom" constant="50" id="6BB-I9-Qoi"/>
+                            <constraint firstItem="ojp-Il-0dn" firstAttribute="centerY" secondItem="IyF-GM-9Lu" secondAttribute="centerY" id="EPu-pe-PtQ"/>
+                            <constraint firstItem="7gl-f3-sxb" firstAttribute="leading" secondItem="nkJ-BW-tKG" secondAttribute="leading" constant="20" id="H5m-RQ-OSe"/>
+                            <constraint firstItem="nkJ-BW-tKG" firstAttribute="trailing" secondItem="7gl-f3-sxb" secondAttribute="trailing" constant="20" id="XGk-Xn-vbt"/>
                         </constraints>
                     </view>
                     <connections>
-                        <outlet property="tableView" destination="UMr-9d-ViE" id="w1n-su-1bZ"/>
+                        <outlet property="infoLabel" destination="7gl-f3-sxb" id="qxv-St-Tj5"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="XIj-LJ-QoO" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="959" y="116"/>
+            <point key="canvasLocation" x="1241" y="879"/>
+        </scene>
+        <!--Thread View Controller-->
+        <scene sceneID="V3l-ae-LDl">
+            <objects>
+                <viewController storyboardIdentifier="ThreadViewController" id="Pwv-GR-8Mz" customClass="ThreadViewController" customModule="Mail" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="yCc-d3-yWx">
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <viewLayoutGuide key="safeArea" id="tvo-qP-xjr"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                    </view>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="2Ge-H2-zu7" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="2012" y="878"/>
+        </scene>
+        <!--New Message View Controller-->
+        <scene sceneID="lLT-io-9PR">
+            <objects>
+                <viewController storyboardIdentifier="NewMessageViewController" id="nVU-Ws-0JT" customClass="NewMessageViewController" customModule="Mail" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="m0j-jz-k1b">
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <viewLayoutGuide key="safeArea" id="3xm-Sw-uZk"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                    </view>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="3z1-FY-bW9" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="132" y="1632"/>
+        </scene>
+        <!--Menu Drawer View Controller-->
+        <scene sceneID="ZBh-vY-a0V">
+            <objects>
+                <viewController storyboardIdentifier="MenuDrawerViewController" id="EVw-Ko-6Ub" customClass="MenuDrawerViewController" customModule="Mail" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="tMD-XT-BdV">
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <viewLayoutGuide key="safeArea" id="xWL-Ee-w6q"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                    </view>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="Z1w-Lm-iNv" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="132" y="879"/>
+        </scene>
+        <!--Manage Mail Address View Controller-->
+        <scene sceneID="JqC-Qj-8DV">
+            <objects>
+                <viewController storyboardIdentifier="ManageMailAddressViewController" id="yqh-sA-usD" customClass="ManageMailAddressViewController" customModule="Mail" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="Nir-NZ-tJi">
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <viewLayoutGuide key="safeArea" id="bF2-c3-9QW"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                    </view>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="j8N-Id-iF6" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="2012" y="116"/>
         </scene>
     </scenes>
     <resources>

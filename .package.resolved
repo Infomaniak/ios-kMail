@@ -2,6 +2,15 @@
   "object": {
     "pins": [
       {
+        "package": "Alamofire",
+        "repositoryURL": "https://github.com/Alamofire/Alamofire.git",
+        "state": {
+          "branch": null,
+          "revision": "f82c23a8a7ef8dc1a49a8bfc6a96883e79121864",
+          "version": "5.5.0"
+        }
+      },
+      {
         "package": "Atlantis",
         "repositoryURL": "https://github.com/ProxymanApp/atlantis",
         "state": {
@@ -11,12 +20,84 @@
         }
       },
       {
+        "package": "InfomaniakCore",
+        "repositoryURL": "https://github.com/Infomaniak/ios-core.git",
+        "state": {
+          "branch": null,
+          "revision": "62b482abddfc0eb6c1641cf5f181b25c3efbc7fa",
+          "version": "1.1.3"
+        }
+      },
+      {
         "package": "InfomaniakLogin",
         "repositoryURL": "https://github.com/Infomaniak/ios-login.git",
         "state": {
           "branch": null,
           "revision": "9ac704e603cb9b11654f78e65ae2031dc584c341",
           "version": "1.5.7"
+        }
+      },
+      {
+        "package": "Kingfisher",
+        "repositoryURL": "https://github.com/onevcat/Kingfisher",
+        "state": {
+          "branch": null,
+          "revision": "0c02c46cfdc0656ce74fd0963a75e5000a0b7f23",
+          "version": "7.1.2"
+        }
+      },
+      {
+        "package": "LocalizeKit",
+        "repositoryURL": "https://github.com/immortal79/LocalizeKit",
+        "state": {
+          "branch": null,
+          "revision": "1abb86ce614ae8d925bf82123c7360ab95827975",
+          "version": "1.0.1"
+        }
+      },
+      {
+        "package": "Realm",
+        "repositoryURL": "https://github.com/realm/realm-cocoa",
+        "state": {
+          "branch": null,
+          "revision": "9dff9f2862240d521ad6ad599541269177ddb993",
+          "version": "10.22.0"
+        }
+      },
+      {
+        "package": "RealmDatabase",
+        "repositoryURL": "https://github.com/realm/realm-core",
+        "state": {
+          "branch": null,
+          "revision": "6b81f1a7a2d421f9e0b9e7f04e76bcf736a54409",
+          "version": "11.9.0"
+        }
+      },
+      {
+        "package": "Sentry",
+        "repositoryURL": "https://github.com/getsentry/sentry-cocoa",
+        "state": {
+          "branch": null,
+          "revision": "967f04b3cd6989df3f9ced3060481a21646c146d",
+          "version": "7.9.0"
+        }
+      },
+      {
+        "package": "SnackBar",
+        "repositoryURL": "https://github.com/PhilippeWeidmann/SnackBar.swift",
+        "state": {
+          "branch": null,
+          "revision": "8d61e42b2e4a73ea04728c25b10150f6ecc995b6",
+          "version": "0.1.4"
+        }
+      },
+      {
+        "package": "SnapKit",
+        "repositoryURL": "https://github.com/SnapKit/SnapKit.git",
+        "state": {
+          "branch": null,
+          "revision": "d458564516e5676af9c70b4f4b2a9178294f1bc6",
+          "version": "5.0.1"
         }
       }
     ]

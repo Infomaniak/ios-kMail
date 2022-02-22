@@ -16,18 +16,17 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import Alamofire
 import Foundation
 
-extension UserDefaults {
-    static var shared: UserDefaults {
-        return UserDefaults(suiteName: "group.com.infomaniak.mail")!
-    }
-
-    private enum Keys: String {
-        case isUserLoggedIn
-    }
-
-    private func key(_ key: Keys) -> String {
-        return key.rawValue
+public extension JSONParameterEncoder {
+    static var convertToSnakeCase: JSONParameterEncoder {
+        let encoder = JSONEncoder()
+        encoder.keyEncodingStrategy = .convertToSnakeCase
+        encoder.dateEncodingStrategy = .custom { date, encoder in
+            var container = encoder.singleValueContainer()
+            try container.encode(Int(date.timeIntervalSince1970))
+        }
+        return JSONParameterEncoder(encoder: encoder)
     }
 }
