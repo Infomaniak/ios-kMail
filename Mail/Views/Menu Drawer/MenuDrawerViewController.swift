@@ -16,29 +16,45 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import MailCore
 import UIKit
 
 class MenuDrawerViewController: MailCollectionViewController {
+    private var viewModel = MenuDrawerViewModel()
+
     override func viewDidLoad() {
         super.viewDidLoad()
-        dataTest = ["Inbox", "Sent", "Trash"]
+        title = AccountManager.instance.currentMailboxManager?.mailbox.mailbox
+
+        getFolders()
+    }
+
+    func getFolders() {
+        Task {
+            await viewModel.fetchFolders()
+            collectionView.reloadData()
+        }
     }
 
     // MARK: - UICollectionViewDataSource
 
+    override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        return viewModel.folders.count
+    }
+
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = super.collectionView(collectionView, cellForItemAt: indexPath)
-        let data = dataTest[indexPath.item]
-        titleLabel?.text = data
+        let folder = viewModel.folders[indexPath.item]
+        titleLabel?.text = folder.localizedName
         return cell
     }
 
     // MARK: - UICollectionViewDelegate
 
     override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        let selectedMailbox = dataTest[indexPath.item]
+        let selectedFolder = viewModel.folders[indexPath.item].localizedName
         let messageLictVC = MessageListViewController()
-        messageLictVC.selectedMailbox = selectedMailbox
+        messageLictVC.selectedMailbox = selectedFolder
         splitViewController?.setViewController(messageLictVC, for: .supplementary)
     }
 }

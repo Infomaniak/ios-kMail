@@ -99,4 +99,8 @@ public extension Endpoint {
     static var mailbox: Endpoint {
         return Endpoint(path: "/api/mailbox", queryItems: nil)
     }
+
+    static func folders(uuid: String) -> Endpoint {
+        return Endpoint(path: "/api/mail/\(uuid)/folder", queryItems: nil)
+    }
 }

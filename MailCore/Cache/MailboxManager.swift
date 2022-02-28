@@ -48,4 +48,13 @@ public class MailboxManager {
         self.mailbox = mailbox
         self.apiFetcher = apiFetcher
     }
+
+    public func folders() async throws -> [Folder] {
+        do {
+            let folders = try await apiFetcher.folders(mailbox: mailbox)
+            return folders
+        } catch {
+            throw error
+        }
+    }
 }

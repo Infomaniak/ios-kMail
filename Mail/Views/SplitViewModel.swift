@@ -1,3 +1,4 @@
+//
 /*
  Infomaniak Mail - iOS App
  Copyright (C) 2022 Infomaniak Network SA
@@ -17,21 +18,3 @@
  */
 
 import Foundation
-import MailCore
-
-@MainActor class MenuDrawerViewModel {
-    var folders = [Folder]()
-    var mailboxManager: MailboxManager
-
-    init() {
-        mailboxManager = AccountManager.instance.currentMailboxManager!
-    }
-
-    func fetchFolders() async {
-        do {
-            folders = try await mailboxManager.folders().sorted()
-        } catch {
-            print("Error while getting folders: \(error.localizedDescription)")
-        }
-    }
-}

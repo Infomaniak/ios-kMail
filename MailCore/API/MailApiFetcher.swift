@@ -80,6 +80,10 @@ public class MailApiFetcher: ApiFetcher {
     public func mailboxes() async throws -> [Mailbox] {
         try await perform(request: authenticatedRequest(.mailbox)).data
     }
+
+    func folders(mailbox: Mailbox) async throws -> [Folder] {
+        try await perform(request: authenticatedRequest(.folders(uuid: mailbox.uuid))).data
+    }
 }
 
 class SyncedAuthenticator: OAuthAuthenticator {
