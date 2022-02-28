@@ -19,13 +19,6 @@
 import Foundation
 import InfomaniakCore
 
-public enum ApiResult: String, Codable {
-    case success
-    case error
-}
-
-public class EmptyResponse: Codable {}
-
 public class ApiResponse<ResponseContent: Decodable>: Decodable {
     public let result: ApiResult
     public let data: ResponseContent?

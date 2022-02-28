@@ -22,7 +22,7 @@ import InfomaniakLogin
 public enum KeychainHelper {
     private static let accessGroup = AccountManager.accessGroup
     private static let tag = "ch.infomaniak.token".data(using: .utf8)!
-    private static let keychainQueue = DispatchQueue(label: "com.infomaniak.mail.keychain")
+    private static let keychainQueue = DispatchQueue(label: "com.infomaniak.keychain")
 
     private static let lockedKey = "isLockedKey"
     private static let lockedValue = "locked".data(using: .utf8)!
