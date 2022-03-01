@@ -17,9 +17,10 @@
  */
 
 import Foundation
+import InfomaniakCore
 import RealmSwift
 
-public enum FolderRole: String, Codable {
+public enum FolderRole: String, Codable, PersistableEnum {
     case archive = "ARCHIVE"
     case draft = "DRAFT"
     case inbox = "INBOX"
@@ -66,17 +67,21 @@ public class Folder: Object, Codable, Comparable {
     @Persisted public var id: String
     @Persisted public var path: String
     @Persisted public var name: String
-    public var role: FolderRole?
+    @Persisted public var role: FolderRole?
     @Persisted public var unreadCount: Int?
     @Persisted public var totalCount: Int?
     @Persisted public var isFake: Bool
     @Persisted public var isCollapsed: Bool
     @Persisted public var isFavorite: Bool
     @Persisted public var separator: String
-    public var children: [Folder]
+    @Persisted public var children: List<Folder>
 
     public var listChildren: [Folder]? {
-        children.isEmpty ? nil : children
+        children.isEmpty ? nil : children.map { $0 }
+    }
+
+    override public class func primaryKey() -> String? {
+        return "id"
     }
 
     public var localizedName: String {
@@ -109,5 +114,19 @@ public class Folder: Object, Codable, Comparable {
             return false
         }
         return true
+    }
+
+    enum CodingKeys: String, CodingKey {
+        case id
+        case path
+        case name
+        case role
+        case unreadCount
+        case totalCount
+        case isFake
+        case isCollapsed
+        case isFavorite
+        case separator
+        case children
     }
 }
