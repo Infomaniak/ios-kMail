@@ -17,5 +17,33 @@
  */
 
 import Foundation
+import MailCore
 
-@MainActor class MessageListViewModel {}
+typealias Thread = MailCore.Thread
+
+@MainActor class MessageListViewModel {
+    var mailboxManager: MailboxManager
+    var folder: Folder?
+    var filter = Filter.all {
+        didSet {
+            Task {
+                await fetchThreads()
+            }
+        }
+    }
+    var threads = [Thread]()
+
+    init(mailboxManager: MailboxManager, folder: Folder?) {
+        self.mailboxManager = mailboxManager
+        self.folder = folder
+    }
+
+    func fetchThreads() async {
+        do {
+            guard let folder = folder else { return }
+            threads = try await mailboxManager.threads(folder: folder, filter: filter)
+        } catch {
+            print("Error while getting threads: \(error)")
+        }
+    }
+}

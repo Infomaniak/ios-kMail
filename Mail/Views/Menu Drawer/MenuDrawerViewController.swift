@@ -52,9 +52,8 @@ class MenuDrawerViewController: MailCollectionViewController {
     // MARK: - UICollectionViewDelegate
 
     override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        let selectedFolder = viewModel.folders[indexPath.item].localizedName
-        let messageLictVC = MessageListViewController()
-        messageLictVC.selectedMailbox = selectedFolder
+        let messageLictVC = MessageListViewController(mailboxManager: viewModel.mailboxManager)
+        messageLictVC.selectedFolder = viewModel.folders[indexPath.item]
         splitViewController?.setViewController(messageLictVC, for: .supplementary)
     }
 }
