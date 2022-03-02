@@ -56,9 +56,7 @@ class MessageListViewController: MailCollectionViewController {
     // MARK: - UICollectionViewDelegate
 
     override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        let selectedThread = viewModel.threads[indexPath.item]
-        let threadVC = ThreadViewController()
-//        threadVC.selectedThread = selectedFolder?.localizedName ?? "" + " - " + selectedThread.formattedSubject
+        let threadVC = ThreadViewController(thread: viewModel.threads[indexPath.item])
         showDetailViewController(threadVC, sender: self)
     }
 }

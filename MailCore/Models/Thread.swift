@@ -27,7 +27,7 @@ public struct Thread: Codable, Identifiable {
     public var messagesCount: Int
     public var uniqueMessagesCount: Int
     public var deletedMessagesCount: Int
-//    public var messages: [Message]
+    public var messages: [Message]
     public var unseenMessages: Int
 //    public var from: [Recipient]
 //    public var to: [Recipient]
