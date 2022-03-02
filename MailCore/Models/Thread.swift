@@ -34,7 +34,7 @@ public struct Thread: Codable, Identifiable {
 //    public var cc: [Recipient]
 //    public var bcc: [Recipient]
     public var subject: String?
-//    public var date: Date
+    public var date: Date
     public var hasAttachments: Bool
     public var hasStAttachments: Bool
     public var hasDrafts: Bool

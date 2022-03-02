@@ -34,7 +34,7 @@ public class Message: Codable, Identifiable, ObservableObject {
     public var msgId: String?
     public var subject: String?
 //    public var priority: MessagePriority
-//    public var date: Date
+    public var date: Date
     public var size: Int
 //    public var from: [Recipient]
 //    public var to: [Recipient]
