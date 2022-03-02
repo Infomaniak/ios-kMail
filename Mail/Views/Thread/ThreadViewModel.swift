@@ -19,7 +19,7 @@
 import Foundation
 
 @MainActor class ThreadViewModel {
-    var thread : Thread?
+    var thread: Thread?
 
     init(thread: Thread?) {
         self.thread = thread

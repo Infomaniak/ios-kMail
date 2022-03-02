@@ -31,6 +31,7 @@ typealias Thread = MailCore.Thread
             }
         }
     }
+
     var threads = [Thread]()
 
     init(mailboxManager: MailboxManager, folder: Folder?) {
