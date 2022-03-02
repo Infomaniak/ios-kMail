@@ -21,17 +21,15 @@ import UIKit
 
 class MessageListViewController: MailCollectionViewController {
     private var viewModel: MessageListViewModel
-    var selectedFolder: Folder?
 
-    init(mailboxManager: MailboxManager) {
-        viewModel = MessageListViewModel(mailboxManager: mailboxManager, folder: selectedFolder)
+    init(mailboxManager: MailboxManager, folder: Folder? = nil) {
+        viewModel = MessageListViewModel(mailboxManager: mailboxManager, folder: folder)
         super.init()
     }
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        viewModel.folder = selectedFolder
-        title = selectedFolder?.localizedName
+        title = viewModel.folder?.localizedName
         getThreads()
     }
 
@@ -58,9 +56,9 @@ class MessageListViewController: MailCollectionViewController {
     // MARK: - UICollectionViewDelegate
 
     override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        let selectedThread = dataTest[indexPath.item]
+        let selectedThread = viewModel.threads[indexPath.item]
         let threadVC = ThreadViewController()
-        threadVC.selectedThread = selectedFolder?.localizedName ?? "" + " - " + selectedThread
+//        threadVC.selectedThread = selectedFolder?.localizedName ?? "" + " - " + selectedThread.formattedSubject
         showDetailViewController(threadVC, sender: self)
     }
 }
