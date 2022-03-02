@@ -36,11 +36,11 @@ public class Message: Codable, Identifiable, ObservableObject {
 //    public var priority: MessagePriority
     public var date: Date
     public var size: Int
-//    public var from: [Recipient]
-//    public var to: [Recipient]
-//    public var cc: [Recipient]
-//    public var bcc: [Recipient]
-//    public var replyTo: [Recipient]
+    public var from: [Recipient]
+    public var to: [Recipient]
+    public var cc: [Recipient]
+    public var bcc: [Recipient]
+    public var replyTo: [Recipient]
 //    public var body: Body?
 //    public var dkimStatus: MessageDKIM
     public var attachmentsResource: String?
@@ -67,9 +67,9 @@ public class Message: Codable, Identifiable, ObservableObject {
         return subject ?? "(no subject)"
     }
 
-//    public var recipients: [Recipient] {
-//        return to + cc + bcc
-//    }
+    public var recipients: [Recipient] {
+        return to + cc + bcc
+    }
 }
 
 public struct BodyResult: Codable {

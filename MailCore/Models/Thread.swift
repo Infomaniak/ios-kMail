@@ -29,10 +29,10 @@ public struct Thread: Codable, Identifiable {
     public var deletedMessagesCount: Int
     public var messages: [Message]
     public var unseenMessages: Int
-//    public var from: [Recipient]
-//    public var to: [Recipient]
-//    public var cc: [Recipient]
-//    public var bcc: [Recipient]
+    public var from: [Recipient]
+    public var to: [Recipient]
+    public var cc: [Recipient]
+    public var bcc: [Recipient]
     public var subject: String?
     public var date: Date
     public var hasAttachments: Bool
