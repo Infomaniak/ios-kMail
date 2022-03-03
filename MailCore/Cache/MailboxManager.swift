@@ -50,19 +50,11 @@ public class MailboxManager {
     }
 
     public func folders() async throws -> [Folder] {
-        do {
-            return try await apiFetcher.folders(mailbox: mailbox)
-        } catch {
-            throw error
-        }
+        return try await apiFetcher.folders(mailbox: mailbox)
     }
 
     public func threads(folder: Folder, filter: Filter = .all) async throws -> [Thread] {
-        do {
-            let threadResult = try await apiFetcher.threads(mailbox: mailbox, folder: folder, filter: filter)
-            return threadResult.threads ?? []
-        } catch {
-            throw error
-        }
+        let threadResult = try await apiFetcher.threads(mailbox: mailbox, folder: folder, filter: filter)
+        return threadResult.threads ?? []
     }
 }
