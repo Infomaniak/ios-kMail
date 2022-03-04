@@ -18,4 +18,10 @@
 
 import Foundation
 
-@MainActor class ThreadViewModel {}
+@MainActor class ThreadViewModel {
+    var thread: Thread?
+
+    init(thread: Thread?) {
+        self.thread = thread
+    }
+}

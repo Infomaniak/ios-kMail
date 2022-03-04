@@ -73,12 +73,21 @@ public class MailApiFetcher: ApiFetcher {
     override public init() {
         super.init()
         ApiFetcher.decoder.keyDecodingStrategy = .convertFromSnakeCase
+        ApiFetcher.decoder.dateDecodingStrategy = .iso8601
     }
 
     // MARK: - API methods
 
     public func mailboxes() async throws -> [Mailbox] {
         try await perform(request: authenticatedRequest(.mailbox)).data
+    }
+
+    func folders(mailbox: Mailbox) async throws -> [Folder] {
+        try await perform(request: authenticatedRequest(.folders(uuid: mailbox.uuid))).data
+    }
+
+    func threads(mailbox: Mailbox, folder: Folder, filter: Filter = .all) async throws -> ThreadResult {
+        try await perform(request: authenticatedRequest(.threads(uuid: mailbox.uuid, folderId: folder.id, filter: filter == .all ? nil : filter.rawValue))).data
     }
 }
 

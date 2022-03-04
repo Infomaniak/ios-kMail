@@ -99,4 +99,16 @@ public extension Endpoint {
     static var mailbox: Endpoint {
         return Endpoint(path: "/api/mailbox", queryItems: nil)
     }
+
+    static func folders(uuid: String) -> Endpoint {
+        return Endpoint(path: "/api/mail/\(uuid)/folder", queryItems: nil)
+    }
+
+    static func threads(uuid: String, folderId: String, filter: String?) -> Endpoint {
+        return .folders(uuid: uuid).appending(path: "/\(folderId)/message", queryItems: [
+            URLQueryItem(name: "offset", value: "0"),
+            URLQueryItem(name: "thread", value: "on"),
+            URLQueryItem(name: "filters", value: filter)
+        ])
+    }
 }

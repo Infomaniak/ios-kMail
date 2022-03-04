@@ -17,21 +17,13 @@
  */
 
 import Foundation
-import MailCore
 
-@MainActor class MenuDrawerViewModel {
-    var folders = [Folder]()
-    var mailboxManager: MailboxManager
+public struct Recipient: Codable, Equatable {
+    public var email: String
+    public var name: String
 
-    init(mailboxManager: MailboxManager) {
-        self.mailboxManager = mailboxManager
-    }
-
-    func fetchFolders() async {
-        do {
-            folders = try await mailboxManager.folders().sorted()
-        } catch {
-            print("Error while getting folders: \(error.localizedDescription)")
-        }
+    public init(email: String, name: String) {
+        self.email = email
+        self.name = name
     }
 }

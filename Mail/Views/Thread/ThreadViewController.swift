@@ -16,22 +16,30 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import MailCore
 import UIKit
 
 class ThreadViewController: MailCollectionViewController {
-    var selectedThread = ""
+    private var viewModel: ThreadViewModel
+
+    init(thread: Thread? = nil) {
+        viewModel = ThreadViewModel(thread: thread)
+        super.init()
+    }
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        dataTest = ["Mail 1", "Mail 2", "Mail 3"]
     }
 
     // MARK: - UICollectionViewDataSource
 
+    override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        return viewModel.thread?.messages.count ?? 0
+    }
+
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = super.collectionView(collectionView, cellForItemAt: indexPath)
-        let data = dataTest[indexPath.item]
-        titleLabel?.text = selectedThread + " - " + data
+        titleLabel?.text = viewModel.thread?.messages[indexPath.item].subject
         return cell
     }
 }
