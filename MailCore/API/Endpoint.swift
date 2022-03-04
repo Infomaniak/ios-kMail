@@ -105,7 +105,7 @@ public extension Endpoint {
     }
 
     static func threads(uuid: String, folderId: String, filter: String?) -> Endpoint {
-        return Endpoint(path: "\(folders(uuid: uuid).path)/\(folderId)/message", queryItems: [
+        return .folders(uuid: uuid).appending(path: "/\(folderId)/message", queryItems: [
             URLQueryItem(name: "offset", value: "0"),
             URLQueryItem(name: "thread", value: "on"),
             URLQueryItem(name: "filters", value: filter)

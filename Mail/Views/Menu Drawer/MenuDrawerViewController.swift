@@ -20,11 +20,16 @@ import MailCore
 import UIKit
 
 class MenuDrawerViewController: MailCollectionViewController {
-    private var viewModel = MenuDrawerViewModel()
+    private var viewModel: MenuDrawerViewModel
+
+    init(mailboxManager: MailboxManager) {
+        viewModel = MenuDrawerViewModel(mailboxManager: mailboxManager)
+        super.init()
+    }
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        title = AccountManager.instance.currentMailboxManager?.mailbox.mailbox
+        title = viewModel.mailboxManager.mailbox.mailbox
 
         getFolders()
     }
@@ -52,8 +57,10 @@ class MenuDrawerViewController: MailCollectionViewController {
     // MARK: - UICollectionViewDelegate
 
     override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        let messageLictVC = MessageListViewController(mailboxManager: viewModel.mailboxManager, folder: viewModel.folders[indexPath.item]
+        let messageListVC = MessageListViewController(
+            mailboxManager: viewModel.mailboxManager,
+            folder: viewModel.folders[indexPath.item]
         )
-        splitViewController?.setViewController(messageLictVC, for: .supplementary)
+        splitViewController?.setViewController(messageListVC, for: .supplementary)
     }
 }

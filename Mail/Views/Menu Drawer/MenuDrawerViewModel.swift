@@ -23,8 +23,8 @@ import MailCore
     var folders = [Folder]()
     var mailboxManager: MailboxManager
 
-    init() {
-        mailboxManager = AccountManager.instance.currentMailboxManager!
+    init(mailboxManager: MailboxManager) {
+        self.mailboxManager = mailboxManager
     }
 
     func fetchFolders() async {

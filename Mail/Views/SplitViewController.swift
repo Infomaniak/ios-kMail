@@ -20,6 +20,8 @@ import MailCore
 import UIKit
 
 class SplitViewController: UISplitViewController {
+    var mailboxManager = AccountManager.instance.currentMailboxManager!
+
     // MARK: - Public methods
 
     convenience init() {
@@ -39,10 +41,10 @@ class SplitViewController: UISplitViewController {
         preferredDisplayMode = .twoBesideSecondary
         showsSecondaryOnlyButton = true
 
-        let menuDrawerViewController = MenuDrawerViewController()
+        let menuDrawerViewController = MenuDrawerViewController(mailboxManager: mailboxManager)
         setViewController(menuDrawerViewController, for: .primary)
 
-        let messageListViewController = MessageListViewController(mailboxManager: AccountManager.instance.currentMailboxManager!)
+        let messageListViewController = MessageListViewController(mailboxManager: mailboxManager)
         let pepNav = UINavigationController(rootViewController: messageListViewController)
         setViewController(pepNav, for: .supplementary)
         setViewController(pepNav, for: .compact)
