@@ -61,7 +61,6 @@ public class AccountManager: RefreshTokenDelegate {
     public var accounts = [Account]()
     public var tokens = [ApiToken]()
     public let refreshTokenLockedQueue = DispatchQueue(label: "com.infomaniak.mail.refreshtoken")
-    private let keychainQueue = DispatchQueue(label: "com.infomaniak.mail.keychain")
     public weak var delegate: AccountManagerDelegate?
     public var currentUserId: Int {
         didSet {

@@ -21,6 +21,7 @@ import Foundation
 import MailResources
 import UIKit
 import UserNotifications
+import InfomaniakCore
 
 public enum NotificationsHelper {
     public enum CategoryIdentifier {
