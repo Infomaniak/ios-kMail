@@ -31,13 +31,13 @@ struct MenuDrawerView: View {
     }
 
     var body: some View {
-        navigationTitle(viewModel.mailboxManager.mailbox.mailbox)
+        Text(viewModel.mailboxManager.mailbox.mailbox)
 
         List(viewModel.folders, children: \.listChildren) { folder in
             Button(folder.localizedName) {
                 updateSplitView(folder)
             }
-        }
+        }.listStyle(.plain)
         .onAppear {
             Task {
                 await viewModel.fetchFolders()
