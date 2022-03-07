@@ -17,21 +17,15 @@
  */
 
 import Foundation
-import MailCore
 
-@MainActor class MenuDrawerViewModel: ObservableObject {
-    @Published var folders = [Folder]()
-    var mailboxManager: MailboxManager
+public class ObservationToken {
+    private let cancellationClosure: () -> Void
 
-    init(mailboxManager: MailboxManager) {
-        self.mailboxManager = mailboxManager
+    public init(cancellationClosure: @escaping () -> Void) {
+        self.cancellationClosure = cancellationClosure
     }
 
-    func fetchFolders() async {
-        do {
-            folders = try await mailboxManager.folders().sorted()
-        } catch {
-            print("Error while getting folders: \(error.localizedDescription)")
-        }
+    public func cancel() {
+        cancellationClosure()
     }
 }

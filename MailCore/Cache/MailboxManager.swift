@@ -67,17 +67,28 @@ public class MailboxManager {
         }
     }
 
+    func getCachedFolders(freeze: Bool = true, using realm: Realm? = nil) -> [Folder]? {
+        let realm = realm ?? getRealm()
+        let folders = realm.objects(Folder.self)
+        return freeze ? folders.map { $0.freeze() } : folders.map { $0 }
+    }
+
     public func folders() async throws -> [Folder] {
-        // Get from API
-        let folders = try await apiFetcher.folders(mailbox: mailbox)
-        let realm = getRealm()
+        // Get from realm
+        if let cachedFolders = getCachedFolders(freeze: false), ReachabilityListener.instance.currentStatus == .offline {
+            return cachedFolders
+        } else {
+            // Get from API
+            let folders = try await apiFetcher.folders(mailbox: mailbox)
+            let realm = getRealm()
 
-        // Update folders in Realm
-        try? realm.safeWrite {
-            realm.add(folders, update: .modified)
+            // Update folders in Realm
+            try? realm.safeWrite {
+                realm.add(folders, update: .modified)
+            }
+
+            return folders.map { $0.freeze() }
         }
-
-        return folders.map { $0.freeze() }
     }
 
     public func threads(folder: Folder, filter: Filter = .all) async throws -> [Thread] {

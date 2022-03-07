@@ -17,50 +17,37 @@
  */
 
 import MailCore
+import SwiftUI
 import UIKit
 
-class MenuDrawerViewController: MailCollectionViewController {
+class MenuDrawerViewController: UIViewController {
     private var viewModel: MenuDrawerViewModel
 
     init(mailboxManager: MailboxManager) {
         viewModel = MenuDrawerViewModel(mailboxManager: mailboxManager)
-        super.init()
+        super.init(nibName: nil, bundle: nil)
+    }
+
+    @available(*, unavailable)
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
     }
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        title = viewModel.mailboxManager.mailbox.mailbox
 
-        getFolders()
-    }
-
-    func getFolders() {
-        Task {
-            await viewModel.fetchFolders()
-            collectionView.reloadData()
+        let menuDrawerView = MenuDrawerView(viewModel: viewModel) { folder in
+            let messageLictVC = MessageListViewController(mailboxManager: self.viewModel.mailboxManager, folder: folder)
+            self.splitViewController?.setViewController(messageLictVC, for: .supplementary)
         }
-    }
+        let hostingController = UIHostingController(rootView: menuDrawerView)
 
-    // MARK: - UICollectionViewDataSource
-
-    override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return viewModel.folders.count
-    }
-
-    override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = super.collectionView(collectionView, cellForItemAt: indexPath)
-        let folder = viewModel.folders[indexPath.item]
-        titleLabel?.text = folder.localizedName
-        return cell
-    }
-
-    // MARK: - UICollectionViewDelegate
-
-    override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        let messageListVC = MessageListViewController(
-            mailboxManager: viewModel.mailboxManager,
-            folder: viewModel.folders[indexPath.item]
-        )
-        splitViewController?.setViewController(messageListVC, for: .supplementary)
+        addChild(hostingController)
+        view.addSubview(hostingController.view)
+        hostingController.view.translatesAutoresizingMaskIntoConstraints = false
+        hostingController.view.topAnchor.constraint(equalTo: view.topAnchor).isActive = true
+        hostingController.view.bottomAnchor.constraint(equalTo: view.bottomAnchor).isActive = true
+        hostingController.view.leftAnchor.constraint(equalTo: view.leftAnchor).isActive = true
+        hostingController.view.rightAnchor.constraint(equalTo: view.rightAnchor).isActive = true
     }
 }

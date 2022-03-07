@@ -63,7 +63,7 @@ public enum FolderRole: String, Codable, PersistableEnum {
     }
 }
 
-public class Folder: Object, Codable, Comparable {
+public class Folder: Object, Codable, Comparable, Identifiable {
     @Persisted public var id: String
     @Persisted public var path: String
     @Persisted public var name: String
