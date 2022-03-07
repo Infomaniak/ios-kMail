@@ -80,9 +80,9 @@ public class MailboxManager {
         return folders.map { $0.freeze() }
     }
 
-	public func threads(folder: Folder, filter: Filter = .all) async throws -> [Thread] {
-            let threadResult = try await apiFetcher.threads(mailbox: mailbox, folder: folder, filter: filter)
-            return threadResult.threads ?? []
+    public func threads(folder: Folder, filter: Filter = .all) async throws -> [Thread] {
+        let threadResult = try await apiFetcher.threads(mailbox: mailbox, folder: folder, filter: filter)
+        return threadResult.threads ?? []
     }
 
     // MARK: - Utilities
