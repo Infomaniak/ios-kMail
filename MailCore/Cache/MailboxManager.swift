@@ -69,7 +69,9 @@ public class MailboxManager {
 
     func getCachedFolders(freeze: Bool = true, using realm: Realm? = nil) -> [Folder]? {
         let realm = realm ?? getRealm()
-        let folders = realm.objects(Folder.self)
+        let folders = realm.objects(Folder.self).filter {
+            $0.parent == nil
+        }
         return freeze ? folders.map { $0.freeze() } : folders.map { $0 }
     }
 

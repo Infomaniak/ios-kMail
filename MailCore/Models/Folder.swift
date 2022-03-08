@@ -64,7 +64,7 @@ public enum FolderRole: String, Codable, PersistableEnum {
 }
 
 public class Folder: Object, Codable, Comparable, Identifiable {
-    @Persisted public var id: String
+    @Persisted(primaryKey: true) public var _id: String
     @Persisted public var path: String
     @Persisted public var name: String
     @Persisted public var role: FolderRole?
@@ -75,13 +75,14 @@ public class Folder: Object, Codable, Comparable, Identifiable {
     @Persisted public var isFavorite: Bool
     @Persisted public var separator: String
     @Persisted public var children: List<Folder>
+    @Persisted(originProperty: "children") var parentLink: LinkingObjects<Folder>
 
     public var listChildren: [Folder]? {
         children.isEmpty ? nil : children.map { $0 }
     }
 
-    override public class func primaryKey() -> String? {
-        return "id"
+    public var parent: Folder? {
+        return parentLink.first
     }
 
     public var localizedName: String {
@@ -117,7 +118,7 @@ public class Folder: Object, Codable, Comparable, Identifiable {
     }
 
     enum CodingKeys: String, CodingKey {
-        case id
+        case _id = "id"
         case path
         case name
         case role

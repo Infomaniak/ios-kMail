@@ -87,7 +87,7 @@ public class MailApiFetcher: ApiFetcher {
     }
 
     func threads(mailbox: Mailbox, folder: Folder, filter: Filter = .all) async throws -> ThreadResult {
-        try await perform(request: authenticatedRequest(.threads(uuid: mailbox.uuid, folderId: folder.id, filter: filter == .all ? nil : filter.rawValue))).data
+        try await perform(request: authenticatedRequest(.threads(uuid: mailbox.uuid, folderId: folder._id, filter: filter == .all ? nil : filter.rawValue))).data
     }
 }
 
