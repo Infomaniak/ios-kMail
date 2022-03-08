@@ -72,7 +72,6 @@ public class MailApiFetcher: ApiFetcher {
 
     override public init() {
         super.init()
-        ApiFetcher.decoder.keyDecodingStrategy = .convertFromSnakeCase
         ApiFetcher.decoder.dateDecodingStrategy = .iso8601
     }
 

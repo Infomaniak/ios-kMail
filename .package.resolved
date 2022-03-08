@@ -23,9 +23,9 @@
         "package": "InfomaniakCore",
         "repositoryURL": "https://github.com/Infomaniak/ios-core.git",
         "state": {
-          "branch": null,
-          "revision": "7578cbcbdfdc21e64c1dd17d0a31868ed4dad1ef",
-          "version": "1.1.4"
+          "branch": "mail",
+          "revision": "3c3250c09420333a05293524b08204c79aae8348",
+          "version": null
         }
       },
       {
