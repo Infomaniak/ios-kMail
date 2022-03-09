@@ -69,8 +69,8 @@ public class MailboxManager {
 
     // MARK: - Folders
 
-    func getCachedFolders(freeze: Bool = true, using realm: Realm? = nil) -> [Folder]? {
-        let realm = realm ?? getRealm()
+    func getCachedFolders(freeze: Bool = true) -> [Folder]? {
+        let realm = getRealm()
         let folders = realm.objects(Folder.self).filter {
             $0.parent == nil
         }
@@ -97,7 +97,7 @@ public class MailboxManager {
 
     // MARK: - Thread
 
-    func getCachedThreads(freeze: Bool = true, using realm: Realm? = nil) -> [Thread]? {
+    func getCachedThreads(freeze: Bool = true) -> [Thread]? {
         let realm = getRealm()
         let threads = realm.objects(Thread.self)
         return freeze ? threads.map { $0.freeze() } : threads.map { $0 }

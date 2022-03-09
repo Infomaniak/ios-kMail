@@ -66,10 +66,6 @@ public class Message: Object, Codable, Identifiable {
     public var formattedSubject: String {
         return subject ?? "(no subject)"
     }
-
-//    public var recipients: [Recipient] {
-//        return to + cc + bcc
-//    }
 }
 
 public struct BodyResult: Codable {

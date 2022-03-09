@@ -1,4 +1,3 @@
-//
 /*
  Infomaniak Mail - iOS App
  Copyright (C) 2022 Infomaniak Network SA
@@ -38,16 +37,10 @@ struct MenuDrawerView: View {
                 updateSplitView(folder)
             }
         }.listStyle(.plain)
-        .onAppear {
-            Task {
-                await viewModel.fetchFolders()
+            .onAppear {
+                Task {
+                    await viewModel.fetchFolders()
+                }
             }
-        }
     }
 }
-
-// struct MenuDrawerView_Previews: PreviewProvider {
-//    static var previews: some View {
-//        MenuDrawerView()
-//    }
-// }

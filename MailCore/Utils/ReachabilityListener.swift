@@ -60,14 +60,13 @@ public class ReachabilityListener {
     }
 
     private func pathToStatus(_ path: NWPath) -> NetworkStatus {
-        switch path.status {
-        case .satisfied:
+        if path.status == .satisfied {
             if path.usesInterfaceType(.cellular) {
                 return .cellular
             } else {
                 return .wifi
             }
-        default:
+        } else {
             return .offline
         }
     }
