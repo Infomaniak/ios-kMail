@@ -17,12 +17,14 @@
  */
 
 import Foundation
+import RealmSwift
 
-public struct Recipient: Codable, Equatable {
-    public var email: String
-    public var name: String
+public class Recipient: Object, Codable {
+    @Persisted public var email: String
+    @Persisted public var name: String
 
-    public init(email: String, name: String) {
+    public convenience init(email: String, name: String) {
+        self.init()
         self.email = email
         self.name = name
     }

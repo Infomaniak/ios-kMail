@@ -17,31 +17,32 @@
  */
 
 import Foundation
+import RealmSwift
 
 public struct ThreadResult: Codable {
     let threads: [Thread]?
 }
 
-public struct Thread: Codable, Identifiable {
-    public var uid: String
-    public var messagesCount: Int
-    public var uniqueMessagesCount: Int
-    public var deletedMessagesCount: Int
-    public var messages: [Message]
-    public var unseenMessages: Int
-    public var from: [Recipient]
-    public var to: [Recipient]
-    public var cc: [Recipient]
-    public var bcc: [Recipient]
-    public var subject: String?
-    public var date: Date
-    public var hasAttachments: Bool
-    public var hasStAttachments: Bool
-    public var hasDrafts: Bool
-    public var flagged: Bool
-    public var answered: Bool
-    public var forwarded: Bool
-    public var size: Int
+public class Thread: Object, Codable, Identifiable {
+    @Persisted(primaryKey: true) public var uid: String
+    @Persisted public var messagesCount: Int
+    @Persisted public var uniqueMessagesCount: Int
+    @Persisted public var deletedMessagesCount: Int
+    @Persisted public var messages: List<Message>
+    @Persisted public var unseenMessages: Int
+    @Persisted public var from: List<Recipient>
+    @Persisted public var to: List<Recipient>
+    @Persisted public var cc: List<Recipient>
+    @Persisted public var bcc: List<Recipient>
+    @Persisted public var subject: String?
+    @Persisted public var date: Date
+    @Persisted public var hasAttachments: Bool
+    @Persisted public var hasStAttachments: Bool
+    @Persisted public var hasDrafts: Bool
+    @Persisted public var flagged: Bool
+    @Persisted public var answered: Bool
+    @Persisted public var forwarded: Bool
+    @Persisted public var size: Int
 
     public var id: String {
         return uid
@@ -72,5 +73,27 @@ public enum Filter: String, CaseIterable, Identifiable {
 
     public var id: String {
         return rawValue
+    }
+
+    enum CodingKeys: String, CodingKey {
+        case uid
+        case messagesCount
+        case uniqueMessagesCount
+        case deletedMessagesCount
+        case messages
+        case unseenMessages
+        case from
+        case to
+        case cc
+        case bcc
+        case subject
+        case date
+        case hasAttachments
+        case hasStAttachmen
+        case hasDrafts
+        case flagged
+        case answered
+        case forwarded
+        case size
     }
 }

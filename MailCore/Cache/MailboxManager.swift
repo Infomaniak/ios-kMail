@@ -54,7 +54,7 @@ public class MailboxManager {
         realmConfiguration = Realm.Configuration(
             fileURL: MailboxManager.constants.rootDocumentsURL.appendingPathComponent(realmName),
             schemaVersion: 1,
-            objectTypes: [Folder.self]
+            objectTypes: [Folder.self, Thread.self, Message.self, Recipient.self]
         )
     }
 
@@ -66,6 +66,8 @@ public class MailboxManager {
             fatalError()
         }
     }
+
+    // MARK: - Folders
 
     func getCachedFolders(freeze: Bool = true, using realm: Realm? = nil) -> [Folder]? {
         let realm = realm ?? getRealm()
@@ -93,9 +95,31 @@ public class MailboxManager {
         }
     }
 
+    // MARK: - Thread
+
+    func getCachedThreads(freeze: Bool = true, using realm: Realm? = nil) -> [Thread]? {
+        let realm = getRealm()
+        let threads = realm.objects(Thread.self)
+        return freeze ? threads.map { $0.freeze() } : threads.map { $0 }
+    }
+
     public func threads(folder: Folder, filter: Filter = .all) async throws -> [Thread] {
-        let threadResult = try await apiFetcher.threads(mailbox: mailbox, folder: folder, filter: filter)
-        return threadResult.threads ?? []
+        // Get from realm
+        if let cachedThreads = getCachedThreads(freeze: false), ReachabilityListener.instance.currentStatus == .offline {
+            return cachedThreads
+        } else {
+            // Get from API
+            let threadResult = try await apiFetcher.threads(mailbox: mailbox, folder: folder, filter: filter)
+
+            let realm = getRealm()
+
+            // Update folders in Realm
+            try? realm.safeWrite {
+                realm.add(threadResult.threads ?? [], update: .modified)
+            }
+
+            return threadResult.threads!.map { $0.freeze() }
+        }
     }
 
     // MARK: - Utilities
