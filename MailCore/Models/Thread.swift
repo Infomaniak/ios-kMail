@@ -74,26 +74,4 @@ public enum Filter: String, CaseIterable, Identifiable {
     public var id: String {
         return rawValue
     }
-
-    enum CodingKeys: String, CodingKey {
-        case uid
-        case messagesCount
-        case uniqueMessagesCount
-        case deletedMessagesCount
-        case messages
-        case unseenMessages
-        case from
-        case to
-        case cc
-        case bcc
-        case subject
-        case date
-        case hasAttachments
-        case hasStAttachmen
-        case hasDrafts
-        case flagged
-        case answered
-        case forwarded
-        case size
-    }
 }
