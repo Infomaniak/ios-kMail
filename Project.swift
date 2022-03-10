@@ -27,7 +27,8 @@ let project = Project(name: "Mail",
                           .package(url: "https://github.com/ProxymanApp/atlantis", .upToNextMajor(from: "1.3.0")),
                           .package(url: "https://github.com/Alamofire/Alamofire.git", .upToNextMajor(from: "5.2.2")),
                           .package(url: "https://github.com/CocoaLumberjack/CocoaLumberjack.git", .upToNextMajor(from: "3.7.0")),
-                          .package(url: "https://github.com/realm/realm-cocoa", .upToNextMajor(from: "10.0.0"))
+                          .package(url: "https://github.com/realm/realm-cocoa", .upToNextMajor(from: "10.0.0")),
+                          .package(url: "https://github.com/matomo-org/matomo-sdk-ios.git", .upToNextMajor(from: "7.5.1"))
                       ],
                       targets: [
                           Target(name: "Mail",
@@ -44,7 +45,8 @@ let project = Project(name: "Mail",
                                      .post(path: "scripts/lint.sh", name: "Swiftlint")
                                  ],
                                  dependencies: [
-                                     .target(name: "MailCore")
+                                     .target(name: "MailCore"),
+                                     .package(product: "MatomoTracker")
                                  ]),
                           Target(name: "MailTests",
                                  platform: .iOS,
