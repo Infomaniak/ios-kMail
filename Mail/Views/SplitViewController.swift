@@ -17,6 +17,7 @@
  */
 
 import MailCore
+import SwiftUI
 import UIKit
 
 class SplitViewController: UISplitViewController {
@@ -41,8 +42,12 @@ class SplitViewController: UISplitViewController {
         preferredDisplayMode = .twoBesideSecondary
         showsSecondaryOnlyButton = true
 
-        let menuDrawerViewController = MenuDrawerViewController(mailboxManager: mailboxManager)
-        setViewController(menuDrawerViewController, for: .primary)
+        let menuDrawerView = MenuDrawerView(
+            viewModel: MenuDrawerViewModel(mailboxManager: mailboxManager),
+            splitViewController: self
+        )
+        let menuDrawerHostingController = UIHostingController(rootView: menuDrawerView)
+        setViewController(menuDrawerHostingController, for: .primary)
 
         let messageListViewController = MessageListViewController(mailboxManager: mailboxManager)
         let pepNav = UINavigationController(rootViewController: messageListViewController)

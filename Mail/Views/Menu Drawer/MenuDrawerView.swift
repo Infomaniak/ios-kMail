@@ -22,11 +22,11 @@ import UIKit
 
 struct MenuDrawerView: View {
     @ObservedObject private var viewModel: MenuDrawerViewModel
-    var updateSplitView: (Folder) -> Void
+    private weak var splitViewController: UISplitViewController?
 
-    init(viewModel: MenuDrawerViewModel, splitViewUpdater: @escaping ((Folder) -> Void)) {
+    init(viewModel: MenuDrawerViewModel, splitViewController: UISplitViewController) {
         self.viewModel = viewModel
-        updateSplitView = splitViewUpdater
+        self.splitViewController = splitViewController
     }
 
     var body: some View {
@@ -34,7 +34,7 @@ struct MenuDrawerView: View {
 
         List(viewModel.folders, children: \.listChildren) { folder in
             Button(folder.localizedName) {
-                updateSplitView(folder)
+                updateSplitView(with: folder)
             }
         }.listStyle(.plain)
             .onAppear {
@@ -42,5 +42,10 @@ struct MenuDrawerView: View {
                     await viewModel.fetchFolders()
                 }
             }
+    }
+
+    private func updateSplitView(with folder: Folder) {
+        let messageListVC = MessageListViewController(mailboxManager: viewModel.mailboxManager, folder: folder)
+        splitViewController?.setViewController(messageListVC, for: .supplementary)
     }
 }
