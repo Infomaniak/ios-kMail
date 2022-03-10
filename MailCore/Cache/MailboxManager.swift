@@ -17,6 +17,7 @@
  */
 
 import Foundation
+import InfomaniakCore
 import RealmSwift
 
 public class MailboxManager {

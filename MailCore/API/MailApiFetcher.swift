@@ -113,7 +113,7 @@ class SyncedAuthenticator: OAuthAuthenticator {
             let group = DispatchGroup()
             group.enter()
             var taskIdentifier: UIBackgroundTaskIdentifier = .invalid
-            if !Constants.isInExtension {
+            if !Bundle.main.isExtension {
                 // It is absolutely necessary that the app stays awake while we refresh the token
                 taskIdentifier = UIApplication.shared.beginBackgroundTask(withName: "Refresh token") {
                     // If we didn't fetch the new token in the given time there is not much we can do apart from hoping that it wasn't revoked

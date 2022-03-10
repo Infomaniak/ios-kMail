@@ -2,15 +2,6 @@
   "object": {
     "pins": [
       {
-        "package": "Alamofire",
-        "repositoryURL": "https://github.com/Alamofire/Alamofire.git",
-        "state": {
-          "branch": null,
-          "revision": "f82c23a8a7ef8dc1a49a8bfc6a96883e79121864",
-          "version": "5.5.0"
-        }
-      },
-      {
         "package": "Atlantis",
         "repositoryURL": "https://github.com/ProxymanApp/atlantis",
         "state": {
@@ -24,7 +15,7 @@
         "repositoryURL": "https://github.com/Infomaniak/ios-core.git",
         "state": {
           "branch": "mail",
-          "revision": "3c3250c09420333a05293524b08204c79aae8348",
+          "revision": "b22e2bfbb11e3a85cbb81e8c4d2b058dd60e3845",
           "version": null
         }
       },
@@ -78,8 +69,8 @@
         "repositoryURL": "https://github.com/getsentry/sentry-cocoa",
         "state": {
           "branch": null,
-          "revision": "6e20ea06950ea871b70b6a82e8b42248ee2176e5",
-          "version": "7.10.0"
+          "revision": "32f29184d0d8ffd5a7299a37b90ab3cb343db1f3",
+          "version": "7.10.1"
         }
       },
       {
