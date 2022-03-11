@@ -2,15 +2,6 @@
   "object": {
     "pins": [
       {
-        "package": "Alamofire",
-        "repositoryURL": "https://github.com/Alamofire/Alamofire.git",
-        "state": {
-          "branch": null,
-          "revision": "f82c23a8a7ef8dc1a49a8bfc6a96883e79121864",
-          "version": "5.5.0"
-        }
-      },
-      {
         "package": "Atlantis",
         "repositoryURL": "https://github.com/ProxymanApp/atlantis",
         "state": {
@@ -23,9 +14,9 @@
         "package": "InfomaniakCore",
         "repositoryURL": "https://github.com/Infomaniak/ios-core.git",
         "state": {
-          "branch": null,
-          "revision": "7578cbcbdfdc21e64c1dd17d0a31868ed4dad1ef",
-          "version": "1.1.4"
+          "branch": "mail",
+          "revision": "b22e2bfbb11e3a85cbb81e8c4d2b058dd60e3845",
+          "version": null
         }
       },
       {
@@ -60,8 +51,8 @@
         "repositoryURL": "https://github.com/realm/realm-cocoa",
         "state": {
           "branch": null,
-          "revision": "9dff9f2862240d521ad6ad599541269177ddb993",
-          "version": "10.22.0"
+          "revision": "2380340c876da7a2d17b0b59e21e339120d09bb3",
+          "version": "10.24.0"
         }
       },
       {
@@ -69,8 +60,8 @@
         "repositoryURL": "https://github.com/realm/realm-core",
         "state": {
           "branch": null,
-          "revision": "6b81f1a7a2d421f9e0b9e7f04e76bcf736a54409",
-          "version": "11.9.0"
+          "revision": "e9eec444d13ebebc062202407e79b9833428a24e",
+          "version": "11.11.0"
         }
       },
       {
@@ -78,8 +69,8 @@
         "repositoryURL": "https://github.com/getsentry/sentry-cocoa",
         "state": {
           "branch": null,
-          "revision": "967f04b3cd6989df3f9ced3060481a21646c146d",
-          "version": "7.9.0"
+          "revision": "32f29184d0d8ffd5a7299a37b90ab3cb343db1f3",
+          "version": "7.10.1"
         }
       },
       {

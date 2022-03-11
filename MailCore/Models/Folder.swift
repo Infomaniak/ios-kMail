@@ -17,9 +17,10 @@
  */
 
 import Foundation
+import InfomaniakCore
 import RealmSwift
 
-public enum FolderRole: String, Codable {
+public enum FolderRole: String, Codable, PersistableEnum {
     case archive = "ARCHIVE"
     case draft = "DRAFT"
     case inbox = "INBOX"
@@ -62,21 +63,30 @@ public enum FolderRole: String, Codable {
     }
 }
 
-public class Folder: Object, Codable, Comparable {
-    @Persisted public var id: String
+public class Folder: Object, Codable, Comparable, Identifiable {
+    @Persisted(primaryKey: true) public var _id: String
     @Persisted public var path: String
     @Persisted public var name: String
-    public var role: FolderRole?
+    @Persisted public var role: FolderRole?
     @Persisted public var unreadCount: Int?
     @Persisted public var totalCount: Int?
     @Persisted public var isFake: Bool
     @Persisted public var isCollapsed: Bool
     @Persisted public var isFavorite: Bool
     @Persisted public var separator: String
-    public var children: [Folder]
+    @Persisted public var children: MutableSet<Folder>
+    @Persisted(originProperty: "children") var parentLink: LinkingObjects<Folder>
+
+    public var id: String {
+        return _id
+    }
 
     public var listChildren: [Folder]? {
-        children.isEmpty ? nil : children
+        children.isEmpty ? nil : children.map { $0 }
+    }
+
+    public var parent: Folder? {
+        return parentLink.first
     }
 
     public var localizedName: String {
@@ -109,5 +119,19 @@ public class Folder: Object, Codable, Comparable {
             return false
         }
         return true
+    }
+
+    enum CodingKeys: String, CodingKey {
+        case _id = "id"
+        case path
+        case name
+        case role
+        case unreadCount
+        case totalCount
+        case isFake
+        case isCollapsed
+        case isFavorite
+        case separator
+        case children
     }
 }

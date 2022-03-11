@@ -17,6 +17,8 @@
  */
 
 import Foundation
+import InfomaniakCore
+import RealmSwift
 
 public class MailboxManager {
     public class MailboxManagerConstants {
@@ -27,6 +29,7 @@ public class MailboxManager {
         init() {
             groupDirectoryURL = fileManager.containerURL(forSecurityApplicationGroupIdentifier: AccountManager.appGroup)!
             rootDocumentsURL = groupDirectoryURL.appendingPathComponent("mailboxes", isDirectory: true)
+            print(groupDirectoryURL)
             try? fileManager.setAttributes(
                 [FileAttributeKey.protectionKey: FileProtectionType.completeUntilFirstUserAuthentication],
                 ofItemAtPath: groupDirectoryURL.path
@@ -41,20 +44,94 @@ public class MailboxManager {
 
     public static let constants = MailboxManagerConstants()
 
+    public var realmConfiguration: Realm.Configuration
     public var mailbox: Mailbox
     public private(set) var apiFetcher: MailApiFetcher
 
     init(mailbox: Mailbox, apiFetcher: MailApiFetcher) {
         self.mailbox = mailbox
         self.apiFetcher = apiFetcher
+        let realmName = "\(mailbox.userId)-\(mailbox.mailboxId).realm"
+        realmConfiguration = Realm.Configuration(
+            fileURL: MailboxManager.constants.rootDocumentsURL.appendingPathComponent(realmName),
+            schemaVersion: 1,
+            objectTypes: [Folder.self, Thread.self, Message.self, Recipient.self]
+        )
+    }
+
+    public func getRealm() -> Realm {
+        do {
+            return try Realm(configuration: realmConfiguration)
+        } catch {
+            // Handle Error
+            fatalError()
+        }
+    }
+
+    // MARK: - Folders
+
+    func getCachedFolders(freeze: Bool = true, using realm: Realm? = nil) -> [Folder]? {
+        let realm = realm ?? getRealm()
+        let folders = realm.objects(Folder.self).filter {
+            $0.parent == nil
+        }
+        return freeze ? folders.map { $0.freeze() } : folders.map { $0 }
     }
 
     public func folders() async throws -> [Folder] {
-        return try await apiFetcher.folders(mailbox: mailbox)
+        // Get from realm
+        if let cachedFolders = getCachedFolders(freeze: false), ReachabilityListener.instance.currentStatus == .offline {
+            return cachedFolders
+        } else {
+            // Get from API
+            let folders = try await apiFetcher.folders(mailbox: mailbox)
+            let realm = getRealm()
+
+            // Update folders in Realm
+            try? realm.safeWrite {
+                realm.add(folders, update: .modified)
+            }
+
+            return folders.map { $0.freeze() }
+        }
+    }
+
+    // MARK: - Thread
+
+    func getCachedThreads(freeze: Bool = true, using realm: Realm? = nil) -> [Thread]? {
+        let realm = realm ?? getRealm()
+        let threads = realm.objects(Thread.self)
+        return freeze ? threads.map { $0.freeze() } : threads.map { $0 }
     }
 
     public func threads(folder: Folder, filter: Filter = .all) async throws -> [Thread] {
-        let threadResult = try await apiFetcher.threads(mailbox: mailbox, folder: folder, filter: filter)
-        return threadResult.threads ?? []
+        // Get from realm
+        if let cachedThreads = getCachedThreads(freeze: false), ReachabilityListener.instance.currentStatus == .offline {
+            return cachedThreads
+        } else {
+            // Get from API
+            let threadResult = try await apiFetcher.threads(mailbox: mailbox, folder: folder, filter: filter)
+
+            let realm = getRealm()
+
+            // Update folders in Realm
+            try? realm.safeWrite {
+                realm.add(threadResult.threads ?? [], update: .modified)
+            }
+
+            return threadResult.threads!.map { $0.freeze() }
+        }
+    }
+
+    // MARK: - Utilities
+}
+
+public extension Realm {
+    func safeWrite(_ block: () throws -> Void) throws {
+        if isInWriteTransaction {
+            try block()
+        } else {
+            try write(block)
+        }
     }
 }

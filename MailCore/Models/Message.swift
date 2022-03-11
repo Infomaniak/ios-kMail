@@ -17,6 +17,7 @@
  */
 
 import Foundation
+import RealmSwift
 
 public enum MessagePriority: String, Codable {
     case low, normal, high
@@ -28,46 +29,42 @@ public enum MessageDKIM: String, Codable {
     case notSigned = "not_signed"
 }
 
-public class Message: Codable, Identifiable, ObservableObject {
-    public var uid: String
-    public var msgId: String?
-    public var subject: String?
+public class Message: Object, Codable, Identifiable {
+    @Persisted public var uid: String
+    @Persisted public var msgId: String?
+    @Persisted public var subject: String?
 //    public var priority: MessagePriority
-    public var date: Date
-    public var size: Int
-    public var from: [Recipient]
-    public var to: [Recipient]
-    public var cc: [Recipient]
-    public var bcc: [Recipient]
-    public var replyTo: [Recipient]
+    @Persisted public var date: Date
+    @Persisted public var size: Int
+    @Persisted public var from: List<Recipient>
+    @Persisted public var to: List<Recipient>
+    @Persisted public var cc: List<Recipient>
+    @Persisted public var bcc: List<Recipient>
+    @Persisted public var replyTo: List<Recipient>
 //    public var body: Body?
 //    public var dkimStatus: MessageDKIM
-    public var attachmentsResource: String?
-    public var resource: String
-    public var downloadResource: String
-    public var draftResource: String?
-    public var stUuid: String?
+    @Persisted public var attachmentsResource: String?
+    @Persisted public var resource: String
+    @Persisted public var downloadResource: String
+    @Persisted public var draftResource: String?
+    @Persisted public var stUuid: String?
     // public var duplicates: []
-    public var folderId: String
-    public var folder: String
-    public var references: String?
-    public var answered: Bool
-    public var isDuplicate: Bool?
-    public var isDraft: Bool
-    public var hasAttachments: Bool
-    public var seen: Bool
-    public var scheduled: Bool
-    public var forwarded: Bool
-    public var flagged: Bool
-    public var safeDisplay: Bool?
-    public var hasUnsubscribeLink: Bool?
+    @Persisted public var folderId: String
+    @Persisted public var folder: String
+    @Persisted public var references: String?
+    @Persisted public var answered: Bool
+    @Persisted public var isDuplicate: Bool?
+    @Persisted public var isDraft: Bool
+    @Persisted public var hasAttachments: Bool
+    @Persisted public var seen: Bool
+    @Persisted public var scheduled: Bool
+    @Persisted public var forwarded: Bool
+    @Persisted public var flagged: Bool
+    @Persisted public var safeDisplay: Bool?
+    @Persisted public var hasUnsubscribeLink: Bool?
 
     public var formattedSubject: String {
         return subject ?? "(no subject)"
-    }
-
-    public var recipients: [Recipient] {
-        return to + cc + bcc
     }
 }
 

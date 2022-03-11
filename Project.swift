@@ -23,7 +23,7 @@ let deploymentTarget = DeploymentTarget.iOS(targetVersion: "14.0", devices: [.ip
 let project = Project(name: "Mail",
                       packages: [
                           .package(url: "https://github.com/Infomaniak/ios-login.git", .upToNextMajor(from: "1.4.0")),
-                          .package(url: "https://github.com/Infomaniak/ios-core.git", .upToNextMajor(from: "1.1.4")),
+                          .package(url: "https://github.com/Infomaniak/ios-core.git", .branch("mail")),
                           .package(url: "https://github.com/ProxymanApp/atlantis", .upToNextMajor(from: "1.3.0")),
                           .package(url: "https://github.com/Alamofire/Alamofire.git", .upToNextMajor(from: "5.2.2")),
                           .package(url: "https://github.com/realm/realm-cocoa", .upToNextMajor(from: "10.0.0"))

@@ -19,8 +19,8 @@
 import Foundation
 import MailCore
 
-@MainActor class MenuDrawerViewModel {
-    var folders = [Folder]()
+@MainActor class MenuDrawerViewModel: ObservableObject {
+    @Published var folders = [Folder]()
     var mailboxManager: MailboxManager
 
     init(mailboxManager: MailboxManager) {

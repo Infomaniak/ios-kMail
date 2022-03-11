@@ -72,7 +72,6 @@ public class MailApiFetcher: ApiFetcher {
 
     override public init() {
         super.init()
-        ApiFetcher.decoder.keyDecodingStrategy = .convertFromSnakeCase
         ApiFetcher.decoder.dateDecodingStrategy = .iso8601
     }
 
@@ -87,7 +86,7 @@ public class MailApiFetcher: ApiFetcher {
     }
 
     func threads(mailbox: Mailbox, folder: Folder, filter: Filter = .all) async throws -> ThreadResult {
-        try await perform(request: authenticatedRequest(.threads(uuid: mailbox.uuid, folderId: folder.id, filter: filter == .all ? nil : filter.rawValue))).data
+        try await perform(request: authenticatedRequest(.threads(uuid: mailbox.uuid, folderId: folder._id, filter: filter == .all ? nil : filter.rawValue))).data
     }
 }
 
@@ -114,7 +113,7 @@ class SyncedAuthenticator: OAuthAuthenticator {
             let group = DispatchGroup()
             group.enter()
             var taskIdentifier: UIBackgroundTaskIdentifier = .invalid
-            if !Constants.isInExtension {
+            if !Bundle.main.isExtension {
                 // It is absolutely necessary that the app stays awake while we refresh the token
                 taskIdentifier = UIApplication.shared.beginBackgroundTask(withName: "Refresh token") {
                     // If we didn't fetch the new token in the given time there is not much we can do apart from hoping that it wasn't revoked

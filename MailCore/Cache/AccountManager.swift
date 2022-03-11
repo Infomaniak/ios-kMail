@@ -79,7 +79,6 @@ public class AccountManager: RefreshTokenDelegate {
     }
 
     public var currentMailboxManager: MailboxManager? {
-        print(mailboxes)
         if let currentMailboxManager = getMailboxManager(for: currentMailboxId, userId: currentUserId) {
             return currentMailboxManager
         } else if let newCurrentMailbox = mailboxes.first {
