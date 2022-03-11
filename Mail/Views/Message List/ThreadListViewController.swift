@@ -33,6 +33,11 @@ class ThreadListViewController: MailCollectionViewController {
         getThreads()
     }
 
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        MatomoUtils.track(view: ["MessageList"])
+    }
+
     func getThreads() {
         Task {
             await viewModel.fetchThreads()
