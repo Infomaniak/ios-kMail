@@ -31,11 +31,3 @@ public struct URLConstants {
         return url
     }
 }
-
-public enum Constants {
-    public static let isInExtension: Bool = {
-        let bundleUrl: URL = Bundle.main.bundleURL
-        let bundlePathExtension: String = bundleUrl.pathExtension
-        return bundlePathExtension == "appex"
-    }()
-}
