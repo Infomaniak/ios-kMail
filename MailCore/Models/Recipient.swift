@@ -19,7 +19,7 @@
 import Foundation
 import RealmSwift
 
-public class Recipient: Object, Codable {
+public class Recipient: EmbeddedObject, Codable {
     @Persisted public var email: String
     @Persisted public var name: String
 
