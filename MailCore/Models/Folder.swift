@@ -74,8 +74,12 @@ public class Folder: Object, Codable, Comparable, Identifiable {
     @Persisted public var isCollapsed: Bool
     @Persisted public var isFavorite: Bool
     @Persisted public var separator: String
-    @Persisted public var children: List<Folder>
+    @Persisted public var children: MutableSet<Folder>
     @Persisted(originProperty: "children") var parentLink: LinkingObjects<Folder>
+
+    public var id: String {
+        return _id
+    }
 
     public var listChildren: [Folder]? {
         children.isEmpty ? nil : children.map { $0 }
