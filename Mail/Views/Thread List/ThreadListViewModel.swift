@@ -18,12 +18,13 @@
 
 import Foundation
 import MailCore
+import RealmSwift
 
 typealias Thread = MailCore.Thread
 
 @MainActor class ThreadListViewModel {
     var mailboxManager: MailboxManager
-    var folder: Folder?
+    var folder: Folder
     var filter = Filter.all {
         didSet {
             Task {
@@ -32,17 +33,39 @@ typealias Thread = MailCore.Thread
         }
     }
 
-    var threads = [Thread]()
+    var threads: AnyRealmCollection<Thread>
+    var observationThreadToken: NotificationToken?
 
-    init(mailboxManager: MailboxManager, folder: Folder?) {
+    typealias ListUpdatedCallback = ([Int], [Int], [Int], Bool) -> Void
+    var onListUpdated: ListUpdatedCallback?
+
+    init(mailboxManager: MailboxManager, folder: Folder) {
         self.mailboxManager = mailboxManager
         self.folder = folder
+        if let cachedFolder = mailboxManager.getRealm().object(ofType: Folder.self, forPrimaryKey: folder.id) {
+            threads = AnyRealmCollection(cachedFolder.threads)
+            observationThreadToken = threads.observe(on: .main) { [weak self] changes in
+                guard let self = self else { return }
+                switch changes {
+                case let .initial(results):
+                    self.threads = results
+                    self.onListUpdated?([], [], [], true)
+                case let .update(results, deletions, insertions, modifications):
+                    self.threads = results
+                    self.onListUpdated?(deletions, insertions, modifications, false)
+                case .error:
+                    break
+                }
+            }
+        } else {
+            threads = AnyRealmCollection(mailboxManager.getRealm().objects(Thread.self)
+                .filter(NSPredicate(format: "FALSEPREDICATE")))
+        }
     }
 
     func fetchThreads() async {
         do {
-            guard let folder = folder else { return }
-            threads = try await mailboxManager.threads(folder: folder, filter: filter)
+            try await mailboxManager.threads(folder: folder.freeze(), filter: filter)
         } catch {
             print("Error while getting threads: \(error)")
         }

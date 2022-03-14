@@ -118,11 +118,9 @@ public class MailboxManager {
         return freeze ? threads.map { $0.freeze() } : threads.map { $0 }
     }
 
-    public func threads(folder: Folder, filter: Filter = .all) async throws -> [Thread] {
+    public func threads(folder: Folder, filter: Filter = .all) async throws {
         // Get from realm
-        if let cachedThreads = getCachedThreads(freeze: false), ReachabilityListener.instance.currentStatus == .offline {
-            return cachedThreads
-        } else {
+        if ReachabilityListener.instance.currentStatus != .offline {
             // Get from API
             let threadResult = try await apiFetcher.threads(mailbox: mailbox, folder: folder, filter: filter)
 
@@ -131,9 +129,8 @@ public class MailboxManager {
             // Update folders in Realm
             try? realm.safeWrite {
                 realm.add(threadResult.threads ?? [], update: .modified)
+                realm.object(ofType: Folder.self, forPrimaryKey: folder.id)?.threads.insert(objectsIn: threadResult.threads ?? [])
             }
-
-            return threadResult.threads?.map { $0.freeze() } ?? []
         }
     }
 
@@ -149,3 +146,4 @@ public extension Realm {
         }
     }
 }
+

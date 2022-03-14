@@ -75,6 +75,7 @@ public class Folder: Object, Codable, Comparable, Identifiable {
     @Persisted public var isFavorite: Bool
     @Persisted public var separator: String
     @Persisted public var children: MutableSet<Folder>
+    @Persisted public var threads: MutableSet<Thread>
     @Persisted(originProperty: "children") var parentLink: LinkingObjects<Folder>
 
     public var id: String {
