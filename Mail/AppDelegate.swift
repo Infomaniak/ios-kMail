@@ -16,6 +16,7 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import CocoaLumberjackSwift
 import MailCore
 import Sentry
 import UIKit
@@ -27,6 +28,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         willFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil
     ) -> Bool {
         Logging.initLogging()
+        DDLogInfo("Application starting in foreground ? \(UIApplication.shared.applicationState != .background)")
+
         return true
     }
 

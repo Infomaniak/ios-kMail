@@ -16,6 +16,8 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import CocoaLumberjack
+import CocoaLumberjackSwift
 import Foundation
 import InfomaniakLogin
 import RealmSwift
@@ -23,7 +25,14 @@ import Sentry
 
 public enum Logging {
     public static func initLogging() {
+        initLogger()
         initSentry()
+    }
+
+    class LogFormatter: NSObject, DDLogFormatter {
+        func format(message logMessage: DDLogMessage) -> String? {
+            return "[Infomaniak] \(logMessage.message)"
+        }
     }
 
     public static func reportRealmOpeningError(_ error: Error, realmConfiguration: Realm.Configuration) -> Never {
@@ -35,9 +44,21 @@ public enum Logging {
         fatalError("Failed creating realm \(error.localizedDescription)")
     }
 
+    private static func initLogger() {
+        DDOSLogger.sharedInstance.logFormatter = LogFormatter()
+        DDLog.add(DDOSLogger.sharedInstance)
+        let logFileManager = DDLogFileManagerDefault(logsDirectory: MailboxManager.constants.cacheDirectoryURL
+            .appendingPathComponent("logs", isDirectory: true).path)
+        let fileLogger = DDFileLogger(logFileManager: logFileManager)
+        fileLogger.rollingFrequency = 60 * 60 * 24 // 24 hours
+        fileLogger.logFileManager.maximumNumberOfLogFiles = 7
+        DDLog.add(fileLogger)
+    }
+
     private static func initSentry() {
         SentrySDK.start { options in
             options.dsn = "https://a9e3e85be0c246fb9ab0e19be1785c89@sentry.infomaniak.com/42"
+            options.debug = true
         }
     }
 }

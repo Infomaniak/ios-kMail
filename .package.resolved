@@ -2,6 +2,15 @@
   "object": {
     "pins": [
       {
+        "package": "Alamofire",
+        "repositoryURL": "https://github.com/Alamofire/Alamofire.git",
+        "state": {
+          "branch": null,
+          "revision": "f82c23a8a7ef8dc1a49a8bfc6a96883e79121864",
+          "version": "5.5.0"
+        }
+      },
+      {
         "package": "Atlantis",
         "repositoryURL": "https://github.com/ProxymanApp/atlantis",
         "state": {
@@ -11,11 +20,20 @@
         }
       },
       {
+        "package": "CocoaLumberjack",
+        "repositoryURL": "https://github.com/CocoaLumberjack/CocoaLumberjack.git",
+        "state": {
+          "branch": null,
+          "revision": "80ada1f753b0d53d9b57c465936a7c4169375002",
+          "version": "3.7.4"
+        }
+      },
+      {
         "package": "InfomaniakCore",
         "repositoryURL": "https://github.com/Infomaniak/ios-core.git",
         "state": {
           "branch": "mail",
-          "revision": "39deff11cf2f2c06f104af33c4f7c88aafe0439b",
+          "revision": "9d7ce19d19d76ad19748d448313c04b03744e21a",
           "version": null
         }
       },
@@ -89,6 +107,15 @@
           "branch": null,
           "revision": "d458564516e5676af9c70b4f4b2a9178294f1bc6",
           "version": "5.0.1"
+        }
+      },
+      {
+        "package": "swift-log",
+        "repositoryURL": "https://github.com/apple/swift-log.git",
+        "state": {
+          "branch": null,
+          "revision": "5d66f7ba25daf4f94100e7022febf3c75e37a6c7",
+          "version": "1.4.2"
         }
       }
     ]

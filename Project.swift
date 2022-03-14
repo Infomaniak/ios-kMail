@@ -26,6 +26,7 @@ let project = Project(name: "Mail",
                           .package(url: "https://github.com/Infomaniak/ios-core.git", .branch("mail")),
                           .package(url: "https://github.com/ProxymanApp/atlantis", .upToNextMajor(from: "1.3.0")),
                           .package(url: "https://github.com/Alamofire/Alamofire.git", .upToNextMajor(from: "5.2.2")),
+                          .package(url: "https://github.com/CocoaLumberjack/CocoaLumberjack.git", .upToNextMajor(from: "3.7.0")),
                           .package(url: "https://github.com/realm/realm-cocoa", .upToNextMajor(from: "10.0.0"))
                       ],
                       targets: [
@@ -90,6 +91,7 @@ let project = Project(name: "Mail",
                                   .package(product: "Atlantis"),
                                   .package(product: "InfomaniakCore"),
                                   .package(product: "InfomaniakLogin"),
+                                  .package(product: "CocoaLumberjackSwift"),
                                   .package(product: "RealmSwift")
                               ]
                           )

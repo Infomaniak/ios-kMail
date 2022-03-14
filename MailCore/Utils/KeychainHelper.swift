@@ -16,6 +16,7 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import CocoaLumberjackSwift
 import Foundation
 import InfomaniakLogin
 import Sentry
@@ -58,6 +59,7 @@ public enum KeychainHelper {
             }
             return false
         } else {
+            DDLogInfo("[Keychain] Accessible error ? \(resultCode == noErr), \(resultCode)")
             return false
         }
     }
@@ -71,7 +73,10 @@ public enum KeychainHelper {
             kSecAttrService as String: KeychainHelper.lockedKey,
             kSecValueData as String: KeychainHelper.lockedValue
         ]
-        _ = SecItemAdd(queryAdd as CFDictionary, nil)
+        let resultCode = SecItemAdd(queryAdd as CFDictionary, nil)
+        DDLogInfo(
+            "[Keychain] Successfully init KeychainHelper ? \(resultCode == noErr || resultCode == errSecDuplicateItem), \(resultCode)"
+        )
     }
 
     public static func deleteToken(for userId: Int) {
@@ -81,7 +86,8 @@ public enum KeychainHelper {
                 kSecAttrService as String: tag,
                 kSecAttrAccount as String: "\(userId)"
             ]
-            _ = SecItemDelete(queryDelete as CFDictionary)
+            let resultCode = SecItemDelete(queryDelete as CFDictionary)
+            DDLogInfo("Successfully deleted token ? \(resultCode == noErr)")
         }
     }
 
@@ -103,6 +109,7 @@ public enum KeychainHelper {
                         kSecValueData as String: tokenData
                     ]
                     resultCode = SecItemUpdate(queryUpdate as CFDictionary, attributes as CFDictionary)
+                    DDLogInfo("Successfully updated token ? \(resultCode == noErr)")
                     SentrySDK.addBreadcrumb(crumb: token.generateBreadcrumb(level: .info, message: "Successfully updated token"))
                 }
             }
@@ -117,6 +124,7 @@ public enum KeychainHelper {
                     kSecValueData as String: tokenData
                 ]
                 resultCode = SecItemAdd(queryAdd as CFDictionary, nil)
+                DDLogInfo("Successfully saved token ? \(resultCode == noErr)")
                 SentrySDK.addBreadcrumb(crumb: token.generateBreadcrumb(level: .info, message: "Successfully saved token"))
             }
         }
@@ -173,6 +181,7 @@ public enum KeychainHelper {
             let resultCode = withUnsafeMutablePointer(to: &result) {
                 SecItemCopyMatching(query as CFDictionary, UnsafeMutablePointer($0))
             }
+            DDLogInfo("Successfully loaded tokens ? \(resultCode == noErr)")
 
             if resultCode == noErr {
                 let jsonDecoder = JSONDecoder()

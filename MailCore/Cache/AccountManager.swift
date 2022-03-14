@@ -16,6 +16,7 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import CocoaLumberjackSwift
 import Foundation
 import InfomaniakCore
 import InfomaniakLogin
@@ -234,7 +235,7 @@ public class AccountManager: RefreshTokenDelegate {
                 let savedAccounts = try decoder.decode([Account].self, from: data)
                 accounts = savedAccounts
             } catch {
-                // Handle error
+                DDLogError("Error loading accounts \(error)")
             }
         }
         return accounts
@@ -250,7 +251,7 @@ public class AccountManager: RefreshTokenDelegate {
                     try FileManager.default.createDirectory(atPath: groupDirectoryURL.path, withIntermediateDirectories: true)
                     try data.write(to: groupDirectoryURL.appendingPathComponent("accounts.json"))
                 } catch {
-                    // Handle error
+                    DDLogError("Error saving accounts \(error)")
                 }
             }
         }

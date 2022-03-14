@@ -41,7 +41,7 @@ public class MailboxInfosManager {
         do {
             return try Realm(configuration: realmConfiguration)
         } catch {
-            // Handle error
+            // We can't recover from this error but at least we report it correctly on Sentry
             Logging.reportRealmOpeningError(error, realmConfiguration: realmConfiguration)
         }
     }
