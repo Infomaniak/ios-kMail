@@ -19,6 +19,7 @@
 import Foundation
 import InfomaniakCore
 import RealmSwift
+import Sentry
 
 public class MailboxManager {
     public class MailboxManagerConstants {
@@ -63,8 +64,8 @@ public class MailboxManager {
         do {
             return try Realm(configuration: realmConfiguration)
         } catch {
-            // Handle Error
-            fatalError()
+            // We can't recover from this error but at least we report it correctly on Sentry
+            Logging.reportRealmOpeningError(error, realmConfiguration: realmConfiguration)
         }
     }
 

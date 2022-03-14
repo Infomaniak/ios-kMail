@@ -18,6 +18,7 @@
 
 import Foundation
 import InfomaniakLogin
+import Sentry
 
 public enum KeychainHelper {
     private static let accessGroup = AccountManager.accessGroup
@@ -85,6 +86,8 @@ public enum KeychainHelper {
     }
 
     public static func storeToken(_ token: ApiToken) {
+        var resultCode: OSStatus = noErr
+        // swiftlint:disable force_try
         let tokenData = try? JSONEncoder().encode(token)
 
         if let savedToken = getSavedToken(for: token.userId) {
@@ -99,7 +102,8 @@ public enum KeychainHelper {
                     let attributes: [String: Any] = [
                         kSecValueData as String: tokenData
                     ]
-                    _ = SecItemUpdate(queryUpdate as CFDictionary, attributes as CFDictionary)
+                    resultCode = SecItemUpdate(queryUpdate as CFDictionary, attributes as CFDictionary)
+                    SentrySDK.addBreadcrumb(crumb: token.generateBreadcrumb(level: .info, message: "Successfully updated token"))
                 }
             }
         } else {
@@ -112,8 +116,14 @@ public enum KeychainHelper {
                     kSecAttrAccount as String: "\(token.userId)",
                     kSecValueData as String: tokenData
                 ]
-                _ = SecItemAdd(queryAdd as CFDictionary, nil)
+                resultCode = SecItemAdd(queryAdd as CFDictionary, nil)
+                SentrySDK.addBreadcrumb(crumb: token.generateBreadcrumb(level: .info, message: "Successfully saved token"))
             }
+        }
+        if resultCode != noErr {
+            SentrySDK
+                .addBreadcrumb(crumb: token
+                    .generateBreadcrumb(level: .error, message: "Failed saving token", keychainError: resultCode))
         }
     }
 
@@ -174,7 +184,17 @@ public enum KeychainHelper {
                             }
                         }
                     }
+                    if let token = values.first {
+                        SentrySDK
+                            .addBreadcrumb(crumb: token.generateBreadcrumb(level: .info, message: "Successfully loaded token"))
+                    }
                 }
+            } else {
+                let crumb = Breadcrumb(level: .error, category: "Token")
+                crumb.type = "error"
+                crumb.message = "Failed loading tokens"
+                crumb.data = ["Keychain error code": resultCode]
+                SentrySDK.addBreadcrumb(crumb: crumb)
             }
         }
         return values
