@@ -119,7 +119,7 @@ public class MailboxManager {
                 realm.add(threadResult.threads ?? [], update: .modified)
             }
 
-            return threadResult.threads!.map { $0.freeze() }
+            return threadResult.threads?.map { $0.freeze() } ?? []
         }
     }
 
