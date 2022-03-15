@@ -59,7 +59,8 @@ class SplitViewController: UISplitViewController {
             setViewController(pepNav, for: .compact)
         }
 
-        let threadViewController = ThreadViewController()
-        setViewController(threadViewController, for: .secondary)
+        let threadView = ThreadView()
+        let threadHostingController = UIHostingController(rootView: threadView)
+        setViewController(threadHostingController, for: .secondary)
     }
 }
