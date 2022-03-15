@@ -98,7 +98,6 @@ public class AccountManager: RefreshTokenDelegate {
     private init() {
         currentMailboxId = UserDefaults.shared.currentMailboxId
         currentUserId = UserDefaults.shared.currentMailUserId
-        setSentryUserId(userId: currentUserId)
 
         forceReload()
     }
