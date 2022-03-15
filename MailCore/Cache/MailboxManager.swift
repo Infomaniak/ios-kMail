@@ -16,19 +16,23 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import CocoaLumberjackSwift
 import Foundation
 import InfomaniakCore
 import RealmSwift
+import Sentry
 
 public class MailboxManager {
     public class MailboxManagerConstants {
         private let fileManager = FileManager.default
         public let rootDocumentsURL: URL
         public let groupDirectoryURL: URL
+        public let cacheDirectoryURL: URL
 
         init() {
             groupDirectoryURL = fileManager.containerURL(forSecurityApplicationGroupIdentifier: AccountManager.appGroup)!
             rootDocumentsURL = groupDirectoryURL.appendingPathComponent("mailboxes", isDirectory: true)
+            cacheDirectoryURL = groupDirectoryURL.appendingPathComponent("Library/Caches", isDirectory: true)
             print(groupDirectoryURL)
             try? fileManager.setAttributes(
                 [FileAttributeKey.protectionKey: FileProtectionType.completeUntilFirstUserAuthentication],
@@ -39,6 +43,16 @@ public class MailboxManager {
                 withIntermediateDirectories: true,
                 attributes: nil
             )
+            try? FileManager.default.createDirectory(
+                atPath: cacheDirectoryURL.path,
+                withIntermediateDirectories: true,
+                attributes: nil
+            )
+
+            DDLogInfo(
+                "App working path is: \(fileManager.urls(for: .documentDirectory, in: .userDomainMask).first?.absoluteString ?? "")"
+            )
+            DDLogInfo("Group container path is: \(groupDirectoryURL.absoluteString)")
         }
     }
 
@@ -63,8 +77,8 @@ public class MailboxManager {
         do {
             return try Realm(configuration: realmConfiguration)
         } catch {
-            // Handle Error
-            fatalError()
+            // We can't recover from this error but at least we report it correctly on Sentry
+            Logging.reportRealmOpeningError(error, realmConfiguration: realmConfiguration)
         }
     }
 

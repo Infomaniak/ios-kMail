@@ -17,11 +17,12 @@
  */
 
 import Atlantis
+import CocoaLumberjackSwift
 import Foundation
+import InfomaniakCore
 import MailResources
 import UIKit
 import UserNotifications
-import InfomaniakCore
 
 public enum NotificationsHelper {
     public enum CategoryIdentifier {
@@ -41,7 +42,7 @@ public enum NotificationsHelper {
         do {
             try await UNUserNotificationCenter.current().requestAuthorization(options: options)
         } catch {
-            // Handle error
+            DDLogError("User has declined notifications")
         }
     }
 

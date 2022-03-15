@@ -16,9 +16,11 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import CocoaLumberjackSwift
 import Foundation
 import InfomaniakCore
 import InfomaniakLogin
+import Sentry
 
 public protocol AccountManagerDelegate: AnyObject {
     func currentAccountNeedsAuthentication()
@@ -65,6 +67,7 @@ public class AccountManager: RefreshTokenDelegate {
     public var currentUserId: Int {
         didSet {
             UserDefaults.shared.currentMailUserId = currentUserId
+            setSentryUserId(userId: currentUserId)
         }
     }
 
@@ -174,6 +177,12 @@ public class AccountManager: RefreshTokenDelegate {
     }
 
     public func didFailRefreshToken(_ token: ApiToken) {
+        SentrySDK.capture(message: "Failed refreshing token") { scope in
+            scope.setContext(
+                value: ["User id": token.userId, "Expiration date": token.expirationDate.timeIntervalSince1970],
+                key: "Token Infos"
+            )
+        }
         tokens.removeAll { $0.userId == token.userId }
         KeychainHelper.deleteToken(for: token.userId)
         if let account = account(for: token.userId) {
@@ -225,7 +234,7 @@ public class AccountManager: RefreshTokenDelegate {
                 let savedAccounts = try decoder.decode([Account].self, from: data)
                 accounts = savedAccounts
             } catch {
-                // Handle error
+                DDLogError("Error loading accounts \(error)")
             }
         }
         return accounts
@@ -241,7 +250,7 @@ public class AccountManager: RefreshTokenDelegate {
                     try FileManager.default.createDirectory(atPath: groupDirectoryURL.path, withIntermediateDirectories: true)
                     try data.write(to: groupDirectoryURL.appendingPathComponent("accounts.json"))
                 } catch {
-                    // Handle error
+                    DDLogError("Error saving accounts \(error)")
                 }
             }
         }
@@ -256,6 +265,15 @@ public class AccountManager: RefreshTokenDelegate {
     public func setCurrentAccount(account: Account) {
         currentAccount = account
         currentUserId = account.userId
+    }
+
+    private func setSentryUserId(userId: Int) {
+        guard userId != 0 else {
+            return
+        }
+        let user = Sentry.User(userId: "\(userId)")
+        user.ipAddress = "{{auto}}"
+        SentrySDK.setUser(user)
     }
 
     public func setCurrentMailboxForCurrentAccount(mailbox: Mailbox) {

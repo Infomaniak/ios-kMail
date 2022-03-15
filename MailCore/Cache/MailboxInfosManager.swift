@@ -20,6 +20,7 @@ import Foundation
 import InfomaniakCore
 import Realm
 import RealmSwift
+import Sentry
 
 public class MailboxInfosManager {
     public static let instance = MailboxInfosManager()
@@ -40,8 +41,8 @@ public class MailboxInfosManager {
         do {
             return try Realm(configuration: realmConfiguration)
         } catch {
-            // Handle error
-            fatalError("Failed creating realm \(error.localizedDescription)")
+            // We can't recover from this error but at least we report it correctly on Sentry
+            Logging.reportRealmOpeningError(error, realmConfiguration: realmConfiguration)
         }
     }
 

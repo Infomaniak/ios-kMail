@@ -20,6 +20,7 @@ import Alamofire
 import Foundation
 import InfomaniakCore
 import InfomaniakLogin
+import Sentry
 import UIKit
 
 extension ApiFetcher {
@@ -86,7 +87,9 @@ public class MailApiFetcher: ApiFetcher {
     }
 
     func threads(mailbox: Mailbox, folder: Folder, filter: Filter = .all) async throws -> ThreadResult {
-        try await perform(request: authenticatedRequest(.threads(uuid: mailbox.uuid, folderId: folder._id, filter: filter == .all ? nil : filter.rawValue))).data
+        try await perform(request: authenticatedRequest(.threads(uuid: mailbox.uuid, folderId: folder._id, filter: filter == .all
+                ? nil
+                : filter.rawValue))).data
     }
 }
 
@@ -97,7 +100,13 @@ class SyncedAuthenticator: OAuthAuthenticator {
         completion: @escaping (Result<OAuthAuthenticator.Credential, Error>) -> Void
     ) {
         AccountManager.instance.refreshTokenLockedQueue.async {
+            SentrySDK
+                .addBreadcrumb(crumb: (credential as ApiToken)
+                    .generateBreadcrumb(level: .info, message: "Refreshing token - Starting"))
             if !KeychainHelper.isKeychainAccessible {
+                SentrySDK
+                    .addBreadcrumb(crumb: (credential as ApiToken)
+                        .generateBreadcrumb(level: .error, message: "Refreshing token failed - Keychain unaccessible"))
                 completion(.failure(MailError.noToken))
                 return
             }
@@ -106,6 +115,10 @@ class SyncedAuthenticator: OAuthAuthenticator {
             AccountManager.instance.reloadTokensAndAccounts()
             if let token = AccountManager.instance.getTokenForUserId(credential.userId),
                token.expirationDate > credential.expirationDate {
+                SentrySDK
+                    .addBreadcrumb(crumb: token
+                        .generateBreadcrumb(level: .info, message: "Refreshing token - Success with local"))
+
                 completion(.success(token))
                 return
             }
@@ -116,6 +129,9 @@ class SyncedAuthenticator: OAuthAuthenticator {
             if !Bundle.main.isExtension {
                 // It is absolutely necessary that the app stays awake while we refresh the token
                 taskIdentifier = UIApplication.shared.beginBackgroundTask(withName: "Refresh token") {
+                    SentrySDK
+                        .addBreadcrumb(crumb: (credential as ApiToken)
+                            .generateBreadcrumb(level: .error, message: "Refreshing token failed - Background task expired"))
                     // If we didn't fetch the new token in the given time there is not much we can do apart from hoping that it wasn't revoked
                     if taskIdentifier != .invalid {
                         UIApplication.shared.endBackgroundTask(taskIdentifier)
@@ -132,16 +148,25 @@ class SyncedAuthenticator: OAuthAuthenticator {
             InfomaniakLogin.refreshToken(token: credential) { token, error in
                 // New token has been fetched correctly
                 if let token = token {
+                    SentrySDK
+                        .addBreadcrumb(crumb: token
+                            .generateBreadcrumb(level: .info, message: "Refreshing token - Success with remote"))
                     self.refreshTokenDelegate?.didUpdateToken(newToken: token, oldToken: credential)
                     completion(.success(token))
                 } else {
                     // Couldn't refresh the token, API says it's invalid
                     if let error = error as NSError?, error.domain == "invalid_grant" {
+                        SentrySDK
+                            .addBreadcrumb(crumb: (credential as ApiToken)
+                                .generateBreadcrumb(level: .error, message: "Refreshing token failed - Invalid grant"))
                         self.refreshTokenDelegate?.didFailRefreshToken(credential)
                         completion(.failure(error))
                     } else {
                         // Couldn't refresh the token, keep the old token and fetch it later. Maybe because of bad network ?
-
+                        SentrySDK
+                            .addBreadcrumb(crumb: (credential as ApiToken)
+                                .generateBreadcrumb(level: .error,
+                                                    message: "Refreshing token failed - Other \(error.debugDescription)"))
                         completion(.success(credential))
                     }
                 }
