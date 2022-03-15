@@ -51,6 +51,62 @@ public class Thread: Object, Codable, Identifiable {
     public var formattedSubject: String {
         return subject ?? "(no subject)"
     }
+
+    public convenience init(
+        uid: String,
+        messagesCount: Int,
+        uniqueMessagesCount: Int,
+        deletedMessagesCount: Int,
+        messages: [Message],
+        unseenMessages: Int,
+        from: [Recipient],
+        to: [Recipient],
+        cc: [Recipient],
+        bcc: [Recipient],
+        subject: String? = nil,
+        date: Date,
+        hasAttachments: Bool,
+        hasStAttachments: Bool,
+        hasDrafts: Bool,
+        flagged: Bool,
+        answered: Bool,
+        forwarded: Bool,
+        size: Int
+    ) {
+        self.init()
+
+        self.uid = uid
+        self.messagesCount = messagesCount
+        self.uniqueMessagesCount = uniqueMessagesCount
+        self.deletedMessagesCount = deletedMessagesCount
+
+        self.messages = List()
+        self.messages.append(objectsIn: messages)
+
+        self.unseenMessages = unseenMessages
+
+        self.from = List()
+        self.from.append(objectsIn: from)
+
+        self.to = List()
+        self.to.append(objectsIn: to)
+
+        self.cc = List()
+        self.cc.append(objectsIn: cc)
+
+        self.bcc = List()
+        self.bcc.append(objectsIn: bcc)
+
+        self.subject = subject
+        self.date = date
+        self.hasAttachments = hasAttachments
+        self.hasStAttachments = hasStAttachments
+        self.hasDrafts = hasDrafts
+        self.flagged = flagged
+        self.answered = answered
+        self.forwarded = forwarded
+        self.size = size
+    }
 }
 
 public enum Filter: String, CaseIterable, Identifiable {
