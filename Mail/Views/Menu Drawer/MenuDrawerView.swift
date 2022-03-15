@@ -45,7 +45,7 @@ struct MenuDrawerView: View {
     }
 
     private func updateSplitView(with folder: Folder) {
-        let messageListVC = MessageListViewController(mailboxManager: viewModel.mailboxManager, folder: folder)
+        let messageListVC = ThreadListViewController(mailboxManager: viewModel.mailboxManager, folder: folder)
         splitViewController?.setViewController(messageListVC, for: .supplementary)
     }
 }

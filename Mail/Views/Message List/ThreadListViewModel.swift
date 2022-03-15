@@ -21,7 +21,7 @@ import MailCore
 
 typealias Thread = MailCore.Thread
 
-@MainActor class MessageListViewModel {
+@MainActor class ThreadListViewModel {
     var mailboxManager: MailboxManager
     var folder: Folder?
     var filter = Filter.all {

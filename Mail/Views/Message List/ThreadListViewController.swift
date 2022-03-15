@@ -19,11 +19,11 @@
 import MailCore
 import UIKit
 
-class MessageListViewController: MailCollectionViewController {
-    private var viewModel: MessageListViewModel
+class ThreadListViewController: MailCollectionViewController {
+    private var viewModel: ThreadListViewModel
 
     init(mailboxManager: MailboxManager, folder: Folder? = nil) {
-        viewModel = MessageListViewModel(mailboxManager: mailboxManager, folder: folder)
+        viewModel = ThreadListViewModel(mailboxManager: mailboxManager, folder: folder)
         super.init()
     }
 

@@ -49,7 +49,7 @@ class SplitViewController: UISplitViewController {
         let menuDrawerHostingController = UIHostingController(rootView: menuDrawerView)
         setViewController(menuDrawerHostingController, for: .primary)
 
-        let messageListViewController = MessageListViewController(mailboxManager: mailboxManager)
+        let messageListViewController = ThreadListViewController(mailboxManager: mailboxManager)
         let pepNav = UINavigationController(rootViewController: messageListViewController)
         setViewController(pepNav, for: .supplementary)
         setViewController(pepNav, for: .compact)
