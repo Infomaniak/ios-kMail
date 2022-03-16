@@ -1,4 +1,3 @@
-//
 /*
  Infomaniak Mail - iOS App
  Copyright (C) 2022 Infomaniak Network SA
@@ -17,16 +16,31 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import MailCore
 import SwiftUI
 
 struct ThreadView: View {
+    @ObservedObject private var viewModel: ThreadViewModel
+
+    init(thread: Thread? = nil) {
+        viewModel = ThreadViewModel(thread: thread)
+    }
+
     var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+        ScrollView {
+            VStack {
+                if let messages = viewModel.thread?.messages {
+                    ForEach(messages) { message in
+                        MessageView(message: message)
+                    }
+                }
+            }
+        }
     }
 }
 
 struct ThreadView_Previews: PreviewProvider {
     static var previews: some View {
-        ThreadView()
+        ThreadView(thread: PreviewHelper.sampleThread)
     }
 }

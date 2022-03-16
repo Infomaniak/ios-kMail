@@ -19,10 +19,10 @@
 import Foundation
 import MailCore
 
-@MainActor class ThreadViewModel: ObservableObject {
-    @Published var thread: Thread?
+@MainActor class MessageViewModel: ObservableObject {
+    @Published var message: Message
 
-    init(thread: Thread?) {
-        self.thread = thread
+    init(message: Message) {
+        self.message = message
     }
 }

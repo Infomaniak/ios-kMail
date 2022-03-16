@@ -16,13 +16,25 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import Foundation
 import MailCore
+import SwiftUI
 
-@MainActor class ThreadViewModel: ObservableObject {
-    @Published var thread: Thread?
+struct MessageView: View {
+    @ObservedObject private var viewModel: MessageViewModel
 
-    init(thread: Thread?) {
-        self.thread = thread
+    init(message: Message) {
+        viewModel = MessageViewModel(message: message)
+    }
+
+    var body: some View {
+        VStack {
+            Text("Message view")
+        }
+    }
+}
+
+struct MessageView_Previews: PreviewProvider {
+    static var previews: some View {
+        MessageView(message: PreviewHelper.sampleMessage)
     }
 }
