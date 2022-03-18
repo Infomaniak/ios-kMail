@@ -33,7 +33,7 @@ struct MenuDrawerView: View {
     var body: some View {
         Text(viewModel.mailboxManager.mailbox.mailbox)
 
-        List(AnyRealmCollection(viewModel.folders), children: \.listChildren ) { folder in
+        List(AnyRealmCollection(viewModel.folders), children: \.listChildren) { folder in
             Button(folder.localizedName) {
                 updateSplitView(with: folder)
             }
