@@ -23,7 +23,7 @@ class ThreadListViewController: MailCollectionViewController {
     private var viewModel: ThreadListViewModel
 
     init(mailboxManager: MailboxManager, folder: Folder) {
-        viewModel = ThreadListViewController(mailboxManager: mailboxManager, folder: folder)
+        viewModel = ThreadListViewModel(mailboxManager: mailboxManager, folder: folder)
         super.init()
     }
 
