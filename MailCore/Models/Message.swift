@@ -29,7 +29,7 @@ public enum MessageDKIM: String, Codable, PersistableEnum {
     case notSigned = "not_signed"
 }
 
-public class Message: Object, Codable, Identifiable {
+public class Message: Object, Decodable, Identifiable {
     @Persisted(primaryKey: true) public var uid: String
     @Persisted public var msgId: String?
     @Persisted public var subject: String?
@@ -63,9 +63,95 @@ public class Message: Object, Codable, Identifiable {
     @Persisted public var flagged: Bool
     @Persisted public var safeDisplay: Bool?
     @Persisted public var hasUnsubscribeLink: Bool?
+    @Persisted(originProperty: "messages") var parentLink: LinkingObjects<Thread>
 
     public var formattedSubject: String {
         return subject ?? "(no subject)"
+    }
+
+    public var parent: Thread? {
+        return parentLink.first
+    }
+
+    private enum CodingKeys: String, CodingKey {
+        case uid
+        case msgId
+        case subject
+        case priority
+        case date
+        case size
+        case from
+        case to
+        case cc
+        case bcc
+        case replyTo
+        case body
+        case attachments
+        case dkimStatus
+        case attachmentsResource
+        case resource
+        case downloadResource
+        case draftResource
+        case stUuid
+        case folderId
+        case folder
+        case references
+        case answered
+        case isDuplicate
+        case isDraft
+        case hasAttachments
+        case seen
+        case scheduled
+        case forwarded
+        case flagged
+        case safeDisplay
+        case hasUnsubscribeLink
+    }
+
+    override init() {
+        super.init()
+    }
+
+    public required convenience init(from decoder: Decoder) throws {
+        self.init()
+
+        let values = try decoder.container(keyedBy: CodingKeys.self)
+        uid = try values.decode(String.self, forKey: .uid)
+        msgId = try values.decodeIfPresent(String.self, forKey: .msgId)
+        subject = try values.decodeIfPresent(String.self, forKey: .subject)
+        priority = try values.decode(MessagePriority.self, forKey: .priority)
+        date = try values.decode(Date.self, forKey: .date)
+        size = try values.decode(Int.self, forKey: .size)
+        from = try values.decode(List<Recipient>.self, forKey: .from)
+        to = try values.decode(List<Recipient>.self, forKey: .to)
+        cc = try values.decode(List<Recipient>.self, forKey: .cc)
+        bcc = try values.decode(List<Recipient>.self, forKey: .bcc)
+        replyTo = try values.decode(List<Recipient>.self, forKey: .replyTo)
+        body = try values.decodeIfPresent(Body.self, forKey: .body)
+        if let attachments = try? values.decode(List<Attachment>.self, forKey: .attachments) {
+            self.attachments = attachments
+        } else {
+            attachments = List()
+        }
+        dkimStatus = try values.decode(MessageDKIM.self, forKey: .dkimStatus)
+        attachmentsResource = try values.decodeIfPresent(String.self, forKey: .attachmentsResource)
+        resource = try values.decode(String.self, forKey: .resource)
+        downloadResource = try values.decode(String.self, forKey: .downloadResource)
+        draftResource = try values.decodeIfPresent(String.self, forKey: .draftResource)
+        stUuid = try values.decodeIfPresent(String.self, forKey: .stUuid)
+        folderId = try values.decode(String.self, forKey: .folderId)
+        folder = try values.decode(String.self, forKey: .folder)
+        references = try values.decodeIfPresent(String.self, forKey: .references)
+        answered = try values.decode(Bool.self, forKey: .answered)
+        isDuplicate = try values.decodeIfPresent(Bool.self, forKey: .isDuplicate)
+        isDraft = try values.decode(Bool.self, forKey: .isDraft)
+        hasAttachments = try values.decode(Bool.self, forKey: .hasAttachments)
+        seen = try values.decode(Bool.self, forKey: .seen)
+        scheduled = try values.decode(Bool.self, forKey: .scheduled)
+        forwarded = try values.decode(Bool.self, forKey: .forwarded)
+        flagged = try values.decode(Bool.self, forKey: .flagged)
+        safeDisplay = try values.decodeIfPresent(Bool.self, forKey: .safeDisplay)
+        hasUnsubscribeLink = try values.decodeIfPresent(Bool.self, forKey: .hasUnsubscribeLink)
     }
 
     public convenience init(
