@@ -17,6 +17,7 @@
  */
 
 import MailCore
+import RealmSwift
 import SwiftUI
 import UIKit
 
@@ -32,7 +33,7 @@ struct MenuDrawerView: View {
     var body: some View {
         Text(viewModel.mailboxManager.mailbox.mailbox)
 
-        List(viewModel.folders, children: \.listChildren) { folder in
+        List(AnyRealmCollection(viewModel.folders), children: \.listChildren ) { folder in
             Button(folder.localizedName) {
                 updateSplitView(with: folder)
             }

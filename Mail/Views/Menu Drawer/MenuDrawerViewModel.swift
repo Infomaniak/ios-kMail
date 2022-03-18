@@ -18,18 +18,20 @@
 
 import Foundation
 import MailCore
+import RealmSwift
 
 @MainActor class MenuDrawerViewModel: ObservableObject {
-    @Published var folders = [Folder]()
+    @ObservedResults(Folder.self) var folders
     var mailboxManager: MailboxManager
 
     init(mailboxManager: MailboxManager) {
         self.mailboxManager = mailboxManager
+        _folders = .init(Folder.self, configuration: mailboxManager.realmConfiguration)
     }
 
     func fetchFolders() async {
         do {
-            folders = try await mailboxManager.folders().sorted()
+            try await mailboxManager.folders()
         } catch {
             print("Error while getting folders: \(error.localizedDescription)")
         }

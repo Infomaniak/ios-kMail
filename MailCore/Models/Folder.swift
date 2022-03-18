@@ -82,8 +82,8 @@ public class Folder: Object, Codable, Comparable, Identifiable {
         return _id
     }
 
-    public var listChildren: [Folder]? {
-        children.isEmpty ? nil : children.map { $0 }
+    public var listChildren: AnyRealmCollection<Folder>? {
+        children.isEmpty ? nil : AnyRealmCollection(children)
     }
 
     public var parent: Folder? {
