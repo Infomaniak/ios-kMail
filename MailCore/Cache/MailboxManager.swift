@@ -86,16 +86,18 @@ public class MailboxManager {
 
     public func folders() async throws {
         // Get from realm
-        if ReachabilityListener.instance.currentStatus != .offline {
-            // Get from API
-            let folderResult = try await apiFetcher.folders(mailbox: mailbox)
+        guard ReachabilityListener.instance.currentStatus == .offline else {
+            return
+        }
+        
+        // Get from API
+        let folderResult = try await apiFetcher.folders(mailbox: mailbox)
 
-            let realm = getRealm()
+        let realm = getRealm()
 
-            // Update folders in Realm
-            try? realm.safeWrite {
-                realm.add(folderResult, update: .modified)
-            }
+        // Update folders in Realm
+        try? realm.safeWrite {
+            realm.add(folderResult, update: .modified)
         }
     }
 
@@ -103,17 +105,18 @@ public class MailboxManager {
 
     public func threads(folder: Folder, filter: Filter = .all) async throws {
         // Get from realm
-        if ReachabilityListener.instance.currentStatus != .offline {
-            // Get from API
-            let threadResult = try await apiFetcher.threads(mailbox: mailbox, folder: folder, filter: filter)
+        guard ReachabilityListener.instance.currentStatus != .offline else {
+            return
+        }
+        // Get from API
+        let threadResult = try await apiFetcher.threads(mailbox: mailbox, folder: folder, filter: filter)
 
-            let realm = getRealm()
+        let realm = getRealm()
 
-            // Update thread in Realm
-            try? realm.safeWrite {
-                realm.add(threadResult.threads ?? [], update: .modified)
-                realm.object(ofType: Folder.self, forPrimaryKey: folder.id)?.threads.insert(objectsIn: threadResult.threads ?? [])
-            }
+        // Update thread in Realm
+        try? realm.safeWrite {
+            realm.add(threadResult.threads ?? [], update: .modified)
+            realm.object(ofType: Folder.self, forPrimaryKey: folder.id)?.threads.insert(objectsIn: threadResult.threads ?? [])
         }
     }
 
