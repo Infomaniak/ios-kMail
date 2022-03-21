@@ -26,7 +26,7 @@ import RealmSwift
 
     init(mailboxManager: MailboxManager) {
         self.mailboxManager = mailboxManager
-        _folders = .init(Folder.self, configuration: mailboxManager.realmConfiguration)
+        _folders = .init(Folder.self, configuration: mailboxManager.realmConfiguration, filter: NSPredicate(format: "parentLink.@count == 0"))
     }
 
     func fetchFolders() async {
