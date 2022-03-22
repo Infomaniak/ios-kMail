@@ -41,6 +41,7 @@ struct MenuDrawerView: View {
                 Task {
                     await viewModel.fetchFolders()
                 }
+                MatomoUtils.track(view: ["MenuDrawer"])
             }
     }
 
