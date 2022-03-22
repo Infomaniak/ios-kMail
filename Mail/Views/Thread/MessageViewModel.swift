@@ -27,7 +27,6 @@ import SwiftUI
 
     init(mailboxManager: MailboxManager, message: Message) {
         self.mailboxManager = mailboxManager
-//        self.message = mailboxManager.getRealm().object(ofType: Message.self, forPrimaryKey: message.uid)!
 
         _message = .init(wrappedValue: mailboxManager.getRealm().object(ofType: Message.self, forPrimaryKey: message.uid)!)
 
