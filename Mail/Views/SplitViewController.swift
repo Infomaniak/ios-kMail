@@ -44,9 +44,10 @@ class SplitViewController: UISplitViewController {
         showsSecondaryOnlyButton = true
 
         let menuDrawerView = MenuDrawerView(
-            viewModel: MenuDrawerViewModel(mailboxManager: mailboxManager),
+            mailboxManager: mailboxManager,
             splitViewController: self
         )
+        .environment(\.realmConfiguration, mailboxManager.realmConfiguration)
         let menuDrawerHostingController = UIHostingController(rootView: menuDrawerView)
         setViewController(menuDrawerHostingController, for: .primary)
 

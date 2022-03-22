@@ -45,7 +45,7 @@ public enum FolderRole: String, Codable, PersistableEnum {
         }
     }
 
-    var order: Int {
+    public var order: Int {
         switch self {
         case .archive:
             return 6
@@ -76,7 +76,7 @@ public class Folder: Object, Codable, Comparable, Identifiable {
     @Persisted public var separator: String
     @Persisted public var children: MutableSet<Folder>
     @Persisted public var threads: MutableSet<Thread>
-    @Persisted(originProperty: "children") var parentLink: LinkingObjects<Folder>
+    @Persisted(originProperty: "children") public var parentLink: LinkingObjects<Folder>
 
     public var id: String {
         return _id

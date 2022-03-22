@@ -89,7 +89,6 @@ public class MailboxManager {
         guard ReachabilityListener.instance.currentStatus != .offline else {
             return
         }
-        
         // Get from API
         let folderResult = try await apiFetcher.folders(mailbox: mailbox)
 
