@@ -19,16 +19,16 @@
 import Foundation
 import RealmSwift
 
-public struct ThreadResult: Codable {
+public struct ThreadResult: Decodable {
     let threads: [Thread]?
 }
 
-public class Thread: Object, Codable, Identifiable {
+public class Thread: Object, Decodable, Identifiable {
     @Persisted(primaryKey: true) public var uid: String
     @Persisted public var messagesCount: Int
     @Persisted public var uniqueMessagesCount: Int
     @Persisted public var deletedMessagesCount: Int
-    @Persisted public var messages: List<Message>
+    @Persisted public var messages: MutableSet<Message>
     @Persisted public var unseenMessages: Int
     @Persisted public var from: List<Recipient>
     @Persisted public var to: List<Recipient>
@@ -80,8 +80,8 @@ public class Thread: Object, Codable, Identifiable {
         self.uniqueMessagesCount = uniqueMessagesCount
         self.deletedMessagesCount = deletedMessagesCount
 
-        self.messages = List()
-        self.messages.append(objectsIn: messages)
+        self.messages = MutableSet()
+        self.messages.insert(objectsIn: messages)
 
         self.unseenMessages = unseenMessages
 

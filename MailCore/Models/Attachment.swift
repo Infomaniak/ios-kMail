@@ -76,7 +76,7 @@ public class Attachment: /* Hashable, */ EmbeddedObject, Codable, Identifiable {
         resource = try values.decodeIfPresent(String.self, forKey: .resource)
         driveUrl = try values.decodeIfPresent(String.self, forKey: .driveUrl)
     }
-    
+
     override init() {
         super.init()
     }

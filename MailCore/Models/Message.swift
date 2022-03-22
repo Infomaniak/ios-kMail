@@ -65,6 +65,12 @@ public class Message: Object, Decodable, Identifiable {
     @Persisted public var hasUnsubscribeLink: Bool?
     @Persisted(originProperty: "messages") var parentLink: LinkingObjects<Thread>
 
+    @Persisted public var isComplete = false
+
+    public var shouldComplete: Bool {
+        return isDraft || !isComplete
+    }
+
     public var formattedSubject: String {
         return subject ?? "(no subject)"
     }
@@ -235,11 +241,13 @@ public class Message: Object, Decodable, Identifiable {
     }
 }
 
+// MARK: - Body
+
 public struct BodyResult: Codable {
     let body: Body
 }
 
-public class Body: EmbeddedObject, Codable {
+public class Body: EmbeddedObject, Codable/*, ObjectKeyIdentifiable */{
     @Persisted public var value: String
     @Persisted public var type: String
     @Persisted public var subBody: String?
