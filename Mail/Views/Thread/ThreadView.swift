@@ -22,8 +22,8 @@ import SwiftUI
 struct ThreadView: View {
     @ObservedObject private var viewModel: ThreadViewModel
 
-    init(thread: Thread? = nil) {
-        viewModel = ThreadViewModel(thread: thread)
+    init(mailboxManager: MailboxManager, thread: Thread? = nil) {
+        viewModel = ThreadViewModel(mailboxManager: mailboxManager, thread: thread)
     }
 
     var body: some View {
@@ -31,7 +31,7 @@ struct ThreadView: View {
             VStack {
                 if let messages = viewModel.thread?.messages {
                     ForEach(messages) { message in
-                        MessageView(message: message)
+                        MessageView(mailboxManager: viewModel.mailboxManager, message: message)
                     }
                 }
             }
@@ -41,6 +41,9 @@ struct ThreadView: View {
 
 struct ThreadView_Previews: PreviewProvider {
     static var previews: some View {
-        ThreadView(thread: PreviewHelper.sampleThread)
+        ThreadView(
+            mailboxManager: MailboxManager(mailbox: PreviewHelper.sampleMailbox, apiFetcher: MailApiFetcher()),
+            thread: PreviewHelper.sampleThread
+        )
     }
 }

@@ -72,7 +72,7 @@ class ThreadListViewController: MailCollectionViewController {
     // MARK: - UICollectionViewDelegate
 
     override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        let threadView = ThreadView()
+        let threadView = ThreadView(mailboxManager: viewModel.mailboxManager, thread: viewModel.threads[indexPath.item])
         let threadHostingController = UIHostingController(rootView: threadView)
         showDetailViewController(threadHostingController, sender: self)
     }
