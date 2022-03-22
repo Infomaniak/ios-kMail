@@ -17,8 +17,8 @@
  */
 
 import Foundation
-import MatomoTracker
 import MailCore
+import MatomoTracker
 
 class MatomoUtils {
     static let shared: MatomoTracker = {
