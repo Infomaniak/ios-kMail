@@ -18,23 +18,29 @@
 
 import MailCore
 import SwiftUI
+import RealmSwift
 
 struct MessageView: View {
     @ObservedObject private var viewModel: MessageViewModel
 
-    init(message: Message) {
-        viewModel = MessageViewModel(message: message)
+    init(mailboxManager: MailboxManager, message: Message) {
+        viewModel = MessageViewModel(mailboxManager: mailboxManager, message: message)
     }
 
     var body: some View {
         VStack {
+            Text(viewModel.message.subject ?? "No subject")
             Text("Message view")
+            Text(viewModel.message.body?.value ?? "No body")
         }
     }
 }
 
 struct MessageView_Previews: PreviewProvider {
     static var previews: some View {
-        MessageView(message: PreviewHelper.sampleMessage)
+        MessageView(
+            mailboxManager: MailboxManager(mailbox: PreviewHelper.sampleMailbox, apiFetcher: MailApiFetcher()),
+            message: PreviewHelper.sampleMessage
+        )
     }
 }
