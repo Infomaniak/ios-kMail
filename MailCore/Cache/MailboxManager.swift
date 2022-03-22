@@ -86,7 +86,7 @@ public class MailboxManager {
 
     public func folders() async throws {
         // Get from realm
-        guard ReachabilityListener.instance.currentStatus == .offline else {
+        guard ReachabilityListener.instance.currentStatus != .offline else {
             return
         }
         
