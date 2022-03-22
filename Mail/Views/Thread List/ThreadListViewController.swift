@@ -35,7 +35,7 @@ class ThreadListViewController: MailCollectionViewController {
 
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        MatomoUtils.track(view: ["MessageList"])
+        MatomoUtils.track(view: ["ThreadList"])
     }
 
     func getThreads() {
