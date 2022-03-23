@@ -21,12 +21,12 @@ import RealmSwift
 import SwiftUI
 
 struct ThreadView: View {
-    @ObservedObject private var viewModel: ThreadViewModel
     @ObservedRealmObject var thread: Thread
+    private var mailboxManager: MailboxManager
 
-    init(mailboxManager: MailboxManager, thread: Thread? = nil) {
-        viewModel = ThreadViewModel(mailboxManager: mailboxManager)
-        self.thread = thread!
+    init(mailboxManager: MailboxManager, thread: Thread) {
+        self.mailboxManager = mailboxManager
+        self.thread = thread
     }
 
     var body: some View {
@@ -34,7 +34,7 @@ struct ThreadView: View {
             VStack {
                 if let messages = thread.messages {
                     ForEach(messages) { message in
-                        MessageView(mailboxManager: viewModel.mailboxManager, message: message)
+                        MessageView(mailboxManager: mailboxManager, message: message)
                     }
                 }
             }

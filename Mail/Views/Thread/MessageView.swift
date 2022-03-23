@@ -21,11 +21,11 @@ import RealmSwift
 import SwiftUI
 
 struct MessageView: View {
-    @ObservedObject private var viewModel: MessageViewModel
     @ObservedRealmObject var message: Message
+    private var mailboxManager: MailboxManager
 
     init(mailboxManager: MailboxManager, message: Message) {
-        viewModel = MessageViewModel(mailboxManager: mailboxManager)
+        self.mailboxManager = mailboxManager
         self.message = message
     }
 
@@ -46,7 +46,7 @@ struct MessageView: View {
 
     private func fetchMessage() async {
         do {
-            try await viewModel.mailboxManager.message(message: message)
+            try await mailboxManager.message(message: message)
         } catch {
             print("Error while getting folders: \(error.localizedDescription)")
         }
