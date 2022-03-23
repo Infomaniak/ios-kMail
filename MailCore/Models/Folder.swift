@@ -45,7 +45,7 @@ public enum FolderRole: String, Codable, PersistableEnum {
         }
     }
 
-    var order: Int {
+    public var order: Int {
         switch self {
         case .archive:
             return 6
@@ -75,14 +75,15 @@ public class Folder: Object, Codable, Comparable, Identifiable {
     @Persisted public var isFavorite: Bool
     @Persisted public var separator: String
     @Persisted public var children: MutableSet<Folder>
-    @Persisted(originProperty: "children") var parentLink: LinkingObjects<Folder>
+    @Persisted public var threads: MutableSet<Thread>
+    @Persisted(originProperty: "children") public var parentLink: LinkingObjects<Folder>
 
     public var id: String {
         return _id
     }
 
-    public var listChildren: [Folder]? {
-        children.isEmpty ? nil : children.map { $0 }
+    public var listChildren: AnyRealmCollection<Folder>? {
+        children.isEmpty ? nil : AnyRealmCollection(children)
     }
 
     public var parent: Folder? {

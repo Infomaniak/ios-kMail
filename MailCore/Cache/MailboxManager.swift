@@ -84,56 +84,38 @@ public class MailboxManager {
 
     // MARK: - Folders
 
-    func getCachedFolders(freeze: Bool = true, using realm: Realm? = nil) -> [Folder]? {
-        let realm = realm ?? getRealm()
-        let folders = realm.objects(Folder.self).filter {
-            $0.parent == nil
-        }
-        return freeze ? folders.map { $0.freeze() } : folders.map { $0 }
-    }
-
-    public func folders() async throws -> [Folder] {
+    public func folders() async throws {
         // Get from realm
-        if let cachedFolders = getCachedFolders(freeze: false), ReachabilityListener.instance.currentStatus == .offline {
-            return cachedFolders
-        } else {
-            // Get from API
-            let folders = try await apiFetcher.folders(mailbox: mailbox)
-            let realm = getRealm()
+        guard ReachabilityListener.instance.currentStatus != .offline else {
+            return
+        }
+        // Get from API
+        let folderResult = try await apiFetcher.folders(mailbox: mailbox)
 
-            // Update folders in Realm
-            try? realm.safeWrite {
-                realm.add(folders, update: .modified)
-            }
+        let realm = getRealm()
 
-            return folders.map { $0.freeze() }
+        // Update folders in Realm
+        try? realm.safeWrite {
+            realm.add(folderResult, update: .modified)
         }
     }
 
     // MARK: - Thread
 
-    func getCachedThreads(freeze: Bool = true, using realm: Realm? = nil) -> [Thread]? {
-        let realm = realm ?? getRealm()
-        let threads = realm.objects(Thread.self)
-        return freeze ? threads.map { $0.freeze() } : threads.map { $0 }
-    }
-
-    public func threads(folder: Folder, filter: Filter = .all) async throws -> [Thread] {
+    public func threads(folder: Folder, filter: Filter = .all) async throws {
         // Get from realm
-        if let cachedThreads = getCachedThreads(freeze: false), ReachabilityListener.instance.currentStatus == .offline {
-            return cachedThreads
-        } else {
-            // Get from API
-            let threadResult = try await apiFetcher.threads(mailbox: mailbox, folder: folder, filter: filter)
+        guard ReachabilityListener.instance.currentStatus != .offline else {
+            return
+        }
+        // Get from API
+        let threadResult = try await apiFetcher.threads(mailbox: mailbox, folder: folder, filter: filter)
 
-            let realm = getRealm()
+        let realm = getRealm()
 
-            // Update folders in Realm
-            try? realm.safeWrite {
-                realm.add(threadResult.threads ?? [], update: .modified)
-            }
-
-            return threadResult.threads?.map { $0.freeze() } ?? []
+        // Update thread in Realm
+        try? realm.safeWrite {
+            realm.add(threadResult.threads ?? [], update: .modified)
+            realm.object(ofType: Folder.self, forPrimaryKey: folder.id)?.threads.insert(objectsIn: threadResult.threads ?? [])
         }
     }
 

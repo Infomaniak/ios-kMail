@@ -22,14 +22,24 @@ import UIKit
 class ThreadListViewController: MailCollectionViewController {
     private var viewModel: ThreadListViewModel
 
-    init(mailboxManager: MailboxManager, folder: Folder? = nil) {
+    init(mailboxManager: MailboxManager, folder: Folder) {
         viewModel = ThreadListViewModel(mailboxManager: mailboxManager, folder: folder)
         super.init()
     }
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        title = viewModel.folder?.localizedName
+        title = viewModel.folder.localizedName
+        viewModel.onListUpdated = { [self] deletions, insertions, modifications, reload in
+            guard !reload else {
+                collectionView.reloadData()
+                return
+            }
+
+            collectionView.deleteItems(at: deletions.map { IndexPath(item: $0, section: 0) })
+            collectionView.insertItems(at: insertions.map { IndexPath(item: $0, section: 0) })
+            collectionView.reloadItems(at: modifications.map { IndexPath(item: $0, section: 0) })
+        }
         getThreads()
     }
 

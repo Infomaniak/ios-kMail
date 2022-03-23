@@ -17,36 +17,50 @@
  */
 
 import MailCore
+import RealmSwift
 import SwiftUI
 import UIKit
 
 struct MenuDrawerView: View {
-    @ObservedObject private var viewModel: MenuDrawerViewModel
+    // swiftlint:disable empty_count
+    @ObservedResults(Folder.self, where: { $0.parentLink.count == 0 }) var folders
+    private var mailboxManager: MailboxManager
     private weak var splitViewController: UISplitViewController?
 
-    init(viewModel: MenuDrawerViewModel, splitViewController: UISplitViewController) {
-        self.viewModel = viewModel
+    init(mailboxManager: MailboxManager, splitViewController: UISplitViewController) {
+        self.mailboxManager = mailboxManager
+        // swiftlint:disable empty_count
+        _folders = .init(Folder.self, configuration: mailboxManager.realmConfiguration) { $0.parentLink.count == 0 }
         self.splitViewController = splitViewController
     }
 
     var body: some View {
-        Text(viewModel.mailboxManager.mailbox.mailbox)
+        Text(mailboxManager.mailbox.mailbox)
 
-        List(viewModel.folders, children: \.listChildren) { folder in
+        List(AnyRealmCollection(folders), children: \.listChildren) { folder in
             Button(folder.localizedName) {
                 updateSplitView(with: folder)
             }
-        }.listStyle(.plain)
-            .onAppear {
-                Task {
-                    await viewModel.fetchFolders()
-                }
+        }
+        .listStyle(.plain)
+        .onAppear {
+            Task {
+                await fetchFolders()
                 MatomoUtils.track(view: ["MenuDrawer"])
             }
+        }
     }
 
     private func updateSplitView(with folder: Folder) {
-        let messageListVC = ThreadListViewController(mailboxManager: viewModel.mailboxManager, folder: folder)
+        let messageListVC = ThreadListViewController(mailboxManager: mailboxManager, folder: folder)
         splitViewController?.setViewController(messageListVC, for: .supplementary)
+    }
+
+    private func fetchFolders() async {
+        do {
+            try await mailboxManager.folders()
+        } catch {
+            print("Error while getting folders: \(error.localizedDescription)")
+        }
     }
 }

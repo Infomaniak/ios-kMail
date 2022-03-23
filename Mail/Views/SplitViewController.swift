@@ -17,6 +17,7 @@
  */
 
 import MailCore
+import RealmSwift
 import SwiftUI
 import UIKit
 
@@ -43,16 +44,20 @@ class SplitViewController: UISplitViewController {
         showsSecondaryOnlyButton = true
 
         let menuDrawerView = MenuDrawerView(
-            viewModel: MenuDrawerViewModel(mailboxManager: mailboxManager),
+            mailboxManager: mailboxManager,
             splitViewController: self
         )
+        .environment(\.realmConfiguration, mailboxManager.realmConfiguration)
         let menuDrawerHostingController = UIHostingController(rootView: menuDrawerView)
         setViewController(menuDrawerHostingController, for: .primary)
 
-        let messageListViewController = ThreadListViewController(mailboxManager: mailboxManager)
-        let pepNav = UINavigationController(rootViewController: messageListViewController)
-        setViewController(pepNav, for: .supplementary)
-        setViewController(pepNav, for: .compact)
+        let inboxFolder = AnyRealmCollection(mailboxManager.getRealm().objects(Folder.self).filter("role = 'INBOX'"))
+        if let folder = inboxFolder.first {
+            let threadListViewController = ThreadListViewController(mailboxManager: mailboxManager, folder: folder)
+            let pepNav = UINavigationController(rootViewController: threadListViewController)
+            setViewController(pepNav, for: .supplementary)
+            setViewController(pepNav, for: .compact)
+        }
 
         let threadViewController = ThreadViewController()
         setViewController(threadViewController, for: .secondary)
