@@ -30,24 +30,6 @@ class MatomoUtils {
     // Enable or disable Matomo tracking
     static let isEnabled = true
 
-    enum Views: String {
-        case shareAndRights, save, search, uploadQueue, preview, menu, settings, store, security
-
-        var displayName: String {
-            return rawValue.capitalized
-        }
-    }
-
-    enum EventCategory: String {
-        case newElement, fileListFileAction, picturesFileAction, fileInfo, shareAndRights, colorFolder, categories, search,
-             fileList, comment, drive, account, settings, photoSync, home, displayList, inApp, trash,
-             dropbox, preview, mediaPlayer
-    }
-
-    enum UserAction: String {
-        case click, input
-    }
-
     static func connectUser() {
         guard isEnabled else { return }
         shared.userId = String(AccountManager.instance.currentUserId)
@@ -56,14 +38,5 @@ class MatomoUtils {
     static func track(view: [String]) {
         guard isEnabled else { return }
         shared.track(view: view)
-    }
-
-    static func track(eventWithCategory category: EventCategory, action: UserAction = .click, name: String, value: Float? = nil) {
-        guard isEnabled else { return }
-        shared.track(eventWithCategory: category.rawValue, action: action.rawValue, name: name, value: value)
-    }
-
-    static func track(eventWithCategory category: EventCategory, action: UserAction = .click, name: String, value: Bool) {
-        track(eventWithCategory: category, action: action, name: name, value: value ? 1.0 : 0.0)
     }
 }
