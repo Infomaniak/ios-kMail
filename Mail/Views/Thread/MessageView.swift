@@ -44,7 +44,7 @@ struct MessageView: View {
         }
     }
 
-    private func fetchMessage() async {
+    @MainActor private func fetchMessage() async {
         do {
             try await mailboxManager.message(message: message)
         } catch {
