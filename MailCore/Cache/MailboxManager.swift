@@ -146,4 +146,3 @@ public extension Realm {
         }
     }
 }
-
