@@ -32,10 +32,8 @@ struct ThreadView: View {
     var body: some View {
         ScrollView {
             VStack {
-                if let messages = thread.messages {
-                    ForEach(messages) { message in
-                        MessageView(mailboxManager: mailboxManager, message: message)
-                    }
+                ForEach(thread.messages) { message in
+                    MessageView(mailboxManager: mailboxManager, message: message)
                 }
             }
         }
