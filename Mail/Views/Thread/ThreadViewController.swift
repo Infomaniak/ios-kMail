@@ -27,8 +27,9 @@ class ThreadViewController: MailCollectionViewController {
         super.init()
     }
 
-    override func viewDidLoad() {
-        super.viewDidLoad()
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        MatomoUtils.track(view: ["Thread"])
     }
 
     // MARK: - UICollectionViewDataSource
