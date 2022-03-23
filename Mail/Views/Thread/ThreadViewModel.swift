@@ -21,10 +21,8 @@ import MailCore
 
 @MainActor class ThreadViewModel: ObservableObject {
     var mailboxManager: MailboxManager
-    @Published var thread: Thread?
 
-    init(mailboxManager: MailboxManager, thread: Thread?) {
+    init(mailboxManager: MailboxManager) {
         self.mailboxManager = mailboxManager
-        self.thread = thread
     }
 }

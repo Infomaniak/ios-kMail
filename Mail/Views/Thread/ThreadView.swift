@@ -17,19 +17,22 @@
  */
 
 import MailCore
+import RealmSwift
 import SwiftUI
 
 struct ThreadView: View {
     @ObservedObject private var viewModel: ThreadViewModel
+    @ObservedRealmObject var thread: Thread
 
     init(mailboxManager: MailboxManager, thread: Thread? = nil) {
-        viewModel = ThreadViewModel(mailboxManager: mailboxManager, thread: thread)
+        viewModel = ThreadViewModel(mailboxManager: mailboxManager)
+        self.thread = thread!
     }
 
     var body: some View {
         ScrollView {
             VStack {
-                if let messages = viewModel.thread?.messages {
+                if let messages = thread.messages {
                     ForEach(messages) { message in
                         MessageView(mailboxManager: viewModel.mailboxManager, message: message)
                     }

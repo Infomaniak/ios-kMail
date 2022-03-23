@@ -17,21 +17,38 @@
  */
 
 import MailCore
-import SwiftUI
 import RealmSwift
+import SwiftUI
 
 struct MessageView: View {
     @ObservedObject private var viewModel: MessageViewModel
+    @ObservedRealmObject var message: Message
 
     init(mailboxManager: MailboxManager, message: Message) {
-        viewModel = MessageViewModel(mailboxManager: mailboxManager, message: message)
+        viewModel = MessageViewModel(mailboxManager: mailboxManager)
+        self.message = message
     }
 
     var body: some View {
         VStack {
-            Text(viewModel.message.subject ?? "No subject")
+            Text(message.subject ?? "No subject")
             Text("Message view")
-            Text(viewModel.message.body?.value ?? "No body")
+            Text(message.body?.value ?? "No body")
+        }
+        .onAppear {
+            if self.message.shouldComplete {
+                Task {
+                    await fetchMessage()
+                }
+            }
+        }
+    }
+
+    private func fetchMessage() async {
+        do {
+            try await viewModel.mailboxManager.message(message: message)
+        } catch {
+            print("Error while getting folders: \(error.localizedDescription)")
         }
     }
 }

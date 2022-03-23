@@ -23,31 +23,8 @@ import SwiftUI
 
 @MainActor class MessageViewModel: ObservableObject {
     var mailboxManager: MailboxManager
-    @ObservedRealmObject var message: Message
 
-    init(mailboxManager: MailboxManager, message: Message) {
+    init(mailboxManager: MailboxManager) {
         self.mailboxManager = mailboxManager
-
-        _message = .init(wrappedValue: mailboxManager.getRealm().object(ofType: Message.self, forPrimaryKey: message.uid)!)
-
-//        if let cachedMessage = mailboxManager.getRealm().object(ofType: Message.self, forPrimaryKey: message.uid) {
-//            self.message = cachedMessage
-//            if cachedMessage.shouldComplete {
-        if self.message.shouldComplete {
-            Task {
-                print(self.message.body?.value)
-                await fetchMessage()
-                print(self.message.body?.value)
-            }
-        }
-//        }
-    }
-
-    func fetchMessage() async {
-        do {
-            try await mailboxManager.message(message: message)
-        } catch {
-            print("Error while getting folders: \(error.localizedDescription)")
-        }
     }
 }
