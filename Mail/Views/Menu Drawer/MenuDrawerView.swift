@@ -30,7 +30,7 @@ struct MenuDrawerView: View {
     init(mailboxManager: MailboxManager, splitViewController: UISplitViewController) {
         self.mailboxManager = mailboxManager
         // swiftlint:disable empty_count
-        _folders = .init(Folder.self, configuration: mailboxManager.realmConfiguration, where: { $0.parentLink.count == 0 })
+        _folders = .init(Folder.self, configuration: mailboxManager.realmConfiguration) { $0.parentLink.count == 0 }
         self.splitViewController = splitViewController
     }
 
