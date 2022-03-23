@@ -63,9 +63,11 @@ class ThreadListViewController: MailCollectionViewController {
     }
 
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = super.collectionView(collectionView, cellForItemAt: indexPath)
+        let cell = super.collectionView(collectionView, cellForItemAt: indexPath) as! UICollectionViewListCell
         let thread = viewModel.threads[indexPath.item]
-        titleLabel?.text = thread.formattedSubject
+        var content = cell.defaultContentConfiguration()
+        content.text = thread.formattedSubject
+        cell.contentConfiguration = content
         return cell
     }
 
