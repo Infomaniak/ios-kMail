@@ -59,8 +59,8 @@ class SplitViewController: UISplitViewController {
             setViewController(pepNav, for: .compact)
         }
 
-        let threadView = ThreadView(mailboxManager: mailboxManager)
-        let threadHostingController = UIHostingController(rootView: threadView)
+        let emptyThreadView = EmptyThreadView()
+        let threadHostingController = UIHostingController(rootView: emptyThreadView)
         setViewController(threadHostingController, for: .secondary)
     }
 }
