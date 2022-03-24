@@ -35,18 +35,39 @@ struct MenuDrawerView: View {
     }
 
     var body: some View {
-        Text(mailboxManager.mailbox.mailbox)
-
-        List(AnyRealmCollection(folders), children: \.listChildren) { folder in
-            Button(folder.localizedName) {
-                updateSplitView(with: folder)
+        VStack {
+            HStack {
+                Text("Infomaniak Mail")
+                Spacer()
+                Button {
+                    splitViewController?.setViewController(SettingsViewController(), for: .secondary)
+                } label: {
+                    Image(systemName: "gearshape")
+                }
             }
-        }
-        .listStyle(.plain)
-        .onAppear {
-            Task {
-                await fetchFolders()
-                MatomoUtils.track(view: ["MenuDrawer"])
+
+            Text(mailboxManager.mailbox.mailbox)
+
+            List(AnyRealmCollection(folders), children: \.listChildren) { folder in
+                Button {
+                    updateSplitView(with: folder)
+                } label: {
+                    HStack {
+                        Image(systemName: "tray")
+                        Text(folder.localizedName)
+                        Spacer()
+                        if let unreadCount = folder.unreadCount, unreadCount > 0 {
+                            Text(unreadCount < 100 ? "\(unreadCount)" : "99+")
+                        }
+                    }
+                }
+            }
+            .listStyle(.plain)
+            .onAppear {
+                Task {
+                    await fetchFolders()
+                    MatomoUtils.track(view: ["MenuDrawer"])
+                }
             }
         }
     }
