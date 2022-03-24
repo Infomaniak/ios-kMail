@@ -91,6 +91,13 @@ public class MailApiFetcher: ApiFetcher {
                 ? nil
                 : filter.rawValue))).data
     }
+
+    func message(mailbox: Mailbox, message: Message) async throws -> Message {
+        try await perform(request: authenticatedRequest(.resource(message.resource,
+                                                                  queryItems: [
+                                                                      URLQueryItem(name: "prefered_format", value: "html")
+                                                                  ]))).data
+    }
 }
 
 class SyncedAuthenticator: OAuthAuthenticator {

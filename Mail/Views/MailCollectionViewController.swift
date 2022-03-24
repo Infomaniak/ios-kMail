@@ -34,7 +34,7 @@ class MailCollectionViewController: UICollectionViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        collectionView.register(UICollectionViewCell.self, forCellWithReuseIdentifier: "cell")
+        collectionView.register(UICollectionViewListCell.self, forCellWithReuseIdentifier: "cell")
     }
 
     // MARK: - Private methods
@@ -51,12 +51,7 @@ class MailCollectionViewController: UICollectionViewController {
     // MARK: UICollectionViewDataSource
 
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "cell", for: indexPath)
-        titleLabel = UILabel(frame: CGRect(x: 20, y: 0, width: cell.bounds.size.width - 40, height: 40))
-        guard let titleLabel = titleLabel else { return cell }
-        titleLabel.textColor = UIColor.black
-        titleLabel.textAlignment = .left
-        cell.contentView.addSubview(titleLabel)
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "cell", for: indexPath) as! UICollectionViewListCell
         return cell
     }
 }

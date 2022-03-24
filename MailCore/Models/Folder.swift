@@ -135,4 +135,34 @@ public class Folder: Object, Codable, Comparable, Identifiable {
         case separator
         case children
     }
+
+    public convenience init(
+        id: String,
+        path: String,
+        name: String,
+        role: FolderRole? = nil,
+        unreadCount: Int? = nil,
+        totalCount: Int? = nil,
+        isFake: Bool,
+        isCollapsed: Bool,
+        isFavorite: Bool,
+        separator: String,
+        children: [Folder]
+    ) {
+        self.init()
+
+        _id = id
+        self.path = path
+        self.name = name
+        self.role = role
+        self.unreadCount = unreadCount
+        self.totalCount = totalCount
+        self.isFake = isFake
+        self.isCollapsed = isCollapsed
+        self.isFavorite = isFavorite
+        self.separator = separator
+
+        self.children = MutableSet()
+        self.children.insert(objectsIn: children)
+    }
 }

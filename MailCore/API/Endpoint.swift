@@ -92,6 +92,10 @@ public struct Endpoint {
 // MARK: - Endpoints
 
 public extension Endpoint {
+    static func resource(_ resource: String, queryItems: [URLQueryItem]? = nil) -> Endpoint {
+        return Endpoint(path: resource, queryItems: queryItems)
+    }
+
     private static var baseManager: Endpoint {
         return Endpoint(path: "/1/mail_hostings")
     }

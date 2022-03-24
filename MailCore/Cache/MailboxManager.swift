@@ -62,14 +62,14 @@ public class MailboxManager {
     public var mailbox: Mailbox
     public private(set) var apiFetcher: MailApiFetcher
 
-    init(mailbox: Mailbox, apiFetcher: MailApiFetcher) {
+    public init(mailbox: Mailbox, apiFetcher: MailApiFetcher) {
         self.mailbox = mailbox
         self.apiFetcher = apiFetcher
         let realmName = "\(mailbox.userId)-\(mailbox.mailboxId).realm"
         realmConfiguration = Realm.Configuration(
             fileURL: MailboxManager.constants.rootDocumentsURL.appendingPathComponent(realmName),
             schemaVersion: 1,
-            objectTypes: [Folder.self, Thread.self, Message.self, Recipient.self]
+            objectTypes: [Folder.self, Thread.self, Message.self, Body.self, Attachment.self, Recipient.self]
         )
     }
 
@@ -116,6 +116,21 @@ public class MailboxManager {
         try? realm.safeWrite {
             realm.add(threadResult.threads ?? [], update: .modified)
             realm.object(ofType: Folder.self, forPrimaryKey: folder.id)?.threads.insert(objectsIn: threadResult.threads ?? [])
+        }
+    }
+
+    // MARK: - Message
+
+    public func message(message: Message) async throws {
+        // Get from API
+        let completedMessage = try await apiFetcher.message(mailbox: mailbox, message: message)
+        completedMessage.isComplete = true
+
+        let realm = getRealm()
+
+        // Update message in Realm
+        try? realm.safeWrite {
+            realm.add(completedMessage, update: .modified)
         }
     }
 

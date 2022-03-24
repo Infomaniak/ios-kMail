@@ -43,7 +43,7 @@ typealias Thread = MailCore.Thread
         self.mailboxManager = mailboxManager
         self.folder = folder
         if let cachedFolder = mailboxManager.getRealm().object(ofType: Folder.self, forPrimaryKey: folder.id) {
-            threads = AnyRealmCollection(cachedFolder.threads)
+            threads = AnyRealmCollection(cachedFolder.threads.sorted(by: \.date, ascending: false))
             observationThreadToken = threads.observe(on: .main) { [weak self] changes in
                 guard let self = self else { return }
                 switch changes {

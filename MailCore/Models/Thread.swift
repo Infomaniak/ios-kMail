@@ -19,16 +19,16 @@
 import Foundation
 import RealmSwift
 
-public struct ThreadResult: Codable {
+public struct ThreadResult: Decodable {
     let threads: [Thread]?
 }
 
-public class Thread: Object, Codable, Identifiable {
+public class Thread: Object, Decodable, Identifiable {
     @Persisted(primaryKey: true) public var uid: String
     @Persisted public var messagesCount: Int
     @Persisted public var uniqueMessagesCount: Int
     @Persisted public var deletedMessagesCount: Int
-    @Persisted public var messages: List<Message>
+    @Persisted public var messages: MutableSet<Message>
     @Persisted public var unseenMessages: Int
     @Persisted public var from: List<Recipient>
     @Persisted public var to: List<Recipient>
@@ -50,6 +50,62 @@ public class Thread: Object, Codable, Identifiable {
 
     public var formattedSubject: String {
         return subject ?? "(no subject)"
+    }
+
+    public convenience init(
+        uid: String,
+        messagesCount: Int,
+        uniqueMessagesCount: Int,
+        deletedMessagesCount: Int,
+        messages: [Message],
+        unseenMessages: Int,
+        from: [Recipient],
+        to: [Recipient],
+        cc: [Recipient],
+        bcc: [Recipient],
+        subject: String? = nil,
+        date: Date,
+        hasAttachments: Bool,
+        hasStAttachments: Bool,
+        hasDrafts: Bool,
+        flagged: Bool,
+        answered: Bool,
+        forwarded: Bool,
+        size: Int
+    ) {
+        self.init()
+
+        self.uid = uid
+        self.messagesCount = messagesCount
+        self.uniqueMessagesCount = uniqueMessagesCount
+        self.deletedMessagesCount = deletedMessagesCount
+
+        self.messages = MutableSet()
+        self.messages.insert(objectsIn: messages)
+
+        self.unseenMessages = unseenMessages
+
+        self.from = List()
+        self.from.append(objectsIn: from)
+
+        self.to = List()
+        self.to.append(objectsIn: to)
+
+        self.cc = List()
+        self.cc.append(objectsIn: cc)
+
+        self.bcc = List()
+        self.bcc.append(objectsIn: bcc)
+
+        self.subject = subject
+        self.date = date
+        self.hasAttachments = hasAttachments
+        self.hasStAttachments = hasStAttachments
+        self.hasDrafts = hasDrafts
+        self.flagged = flagged
+        self.answered = answered
+        self.forwarded = forwarded
+        self.size = size
     }
 }
 

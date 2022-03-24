@@ -18,6 +18,7 @@
 
 import MailCore
 import UIKit
+import SwiftUI
 
 class ThreadListViewController: MailCollectionViewController {
     private var viewModel: ThreadListViewModel
@@ -62,16 +63,19 @@ class ThreadListViewController: MailCollectionViewController {
     }
 
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = super.collectionView(collectionView, cellForItemAt: indexPath)
+        let cell = super.collectionView(collectionView, cellForItemAt: indexPath) as! UICollectionViewListCell
         let thread = viewModel.threads[indexPath.item]
-        titleLabel?.text = thread.formattedSubject
+        var content = cell.defaultContentConfiguration()
+        content.text = thread.formattedSubject
+        cell.contentConfiguration = content
         return cell
     }
 
     // MARK: - UICollectionViewDelegate
 
     override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        let threadVC = ThreadViewController(thread: viewModel.threads[indexPath.item])
-        showDetailViewController(threadVC, sender: self)
+        let threadView = ThreadView(mailboxManager: viewModel.mailboxManager, thread: viewModel.threads[indexPath.item])
+        let threadHostingController = UIHostingController(rootView: threadView)
+        showDetailViewController(threadHostingController, sender: self)
     }
 }

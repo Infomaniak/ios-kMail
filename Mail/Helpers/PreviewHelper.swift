@@ -1,0 +1,121 @@
+/*
+ Infomaniak Mail - iOS App
+ Copyright (C) 2022 Infomaniak Network SA
+
+ This program is free software: you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation, either version 3 of the License, or
+ (at your option) any later version.
+
+ This program is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
+
+ You should have received a copy of the GNU General Public License
+ along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+import Foundation
+import InfomaniakLogin
+import MailCore
+import RealmSwift
+import SwiftUI
+
+struct PreviewHelper {
+    static let sampleMailbox = Mailbox(uuid: "",
+                                       email: "test@example.com",
+                                       emailIdn: "",
+                                       mailbox: "",
+                                       realMailbox: "",
+                                       linkId: 0,
+                                       mailboxId: 0,
+                                       hostingId: 0,
+                                       isPrimary: true,
+                                       passwordStatus: "",
+                                       isPasswordValid: true,
+                                       isValid: true,
+                                       isLocked: false,
+                                       hasSocialAndCommercialFiltering: false,
+                                       showConfigModal: false,
+                                       forceResetPassword: false,
+                                       mdaVersion: "",
+                                       isLimited: false,
+                                       isFree: false,
+                                       dailyLimit: 999)
+
+    static let sampleFolder = Folder(id: "",
+                                     path: "Folder",
+                                     name: "Folder",
+                                     isFake: false,
+                                     isCollapsed: false,
+                                     isFavorite: false,
+                                     separator: "",
+                                     children: [])
+
+    static let sampleThread = Thread(uid: "",
+                                     messagesCount: 2,
+                                     uniqueMessagesCount: 2,
+                                     deletedMessagesCount: 0,
+                                     messages: [sampleMessage],
+                                     unseenMessages: 1,
+                                     from: [sampleRecipient1],
+                                     to: [sampleRecipient2],
+                                     cc: [],
+                                     bcc: [],
+                                     subject: "Test thread",
+                                     date: Date(),
+                                     hasAttachments: true,
+                                     hasStAttachments: false,
+                                     hasDrafts: false,
+                                     flagged: true,
+                                     answered: true,
+                                     forwarded: true,
+                                     size: 0)
+
+    static let sampleMessage = Message(uid: "",
+                                       msgId: "",
+                                       subject: "Test message",
+                                       priority: .normal,
+                                       date: Date(),
+                                       size: 0,
+                                       from: [sampleRecipient1],
+                                       to: [sampleRecipient2],
+                                       cc: [],
+                                       bcc: [],
+                                       replyTo: [],
+                                       body: nil,
+                                       attachments: [],
+                                       dkimStatus: .notSigned,
+                                       resource: "",
+                                       downloadResource: "",
+                                       stUuid: nil,
+                                       folderId: "",
+                                       folder: "",
+                                       references: nil,
+                                       answered: false,
+                                       isDuplicate: false,
+                                       isDraft: false,
+                                       hasAttachments: false,
+                                       seen: false,
+                                       scheduled: false,
+                                       forwarded: false,
+                                       flagged: false,
+                                       safeDisplay: false,
+                                       hasUnsubscribeLink: true)
+
+    static let sampleRecipient1 = Recipient(email: "from@example.com", name: "John Doe")
+
+    static let sampleRecipient2 = Recipient(email: "to@example.com", name: "Alice Bobber")
+
+    static let sampleRecipient3 = Recipient(email: "test@example.com", name: "")
+
+    static let sampleAttachment = Attachment(
+        uuid: "",
+        partId: "",
+        mimeType: "unknown",
+        size: 0,
+        name: "Test attachment.bin",
+        disposition: .attachment
+    )
+}

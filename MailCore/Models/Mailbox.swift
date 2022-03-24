@@ -73,4 +73,50 @@ public class Mailbox: Object, Codable {
         case isFree
         case dailyLimit
     }
+
+    public convenience init(
+        uuid: String,
+        email: String,
+        emailIdn: String,
+        mailbox: String,
+        realMailbox: String,
+        linkId: Int,
+        mailboxId: Int,
+        hostingId: Int,
+        isPrimary: Bool,
+        passwordStatus: String,
+        isPasswordValid: Bool,
+        isValid: Bool,
+        isLocked: Bool,
+        hasSocialAndCommercialFiltering: Bool,
+        showConfigModal: Bool,
+        forceResetPassword: Bool,
+        mdaVersion: String,
+        isLimited: Bool,
+        isFree: Bool,
+        dailyLimit: Int
+    ) {
+        self.init()
+
+        self.uuid = uuid
+        self.email = email
+        self.emailIdn = emailIdn
+        self.mailbox = mailbox
+        self.realMailbox = realMailbox
+        self.linkId = linkId
+        self.mailboxId = mailboxId
+        self.hostingId = hostingId
+        self.isPrimary = isPrimary
+        self.passwordStatus = passwordStatus
+        self.isPasswordValid = isPasswordValid
+        self.isValid = isValid
+        self.isLocked = isLocked
+        self.hasSocialAndCommercialFiltering = hasSocialAndCommercialFiltering
+        self.showConfigModal = showConfigModal
+        self.forceResetPassword = forceResetPassword
+        self.mdaVersion = mdaVersion
+        self.isLimited = isLimited
+        self.isFree = isFree
+        self.dailyLimit = dailyLimit
+    }
 }

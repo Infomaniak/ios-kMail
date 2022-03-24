@@ -16,12 +16,16 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import Foundation
+import SwiftUI
 
-@MainActor class ThreadViewModel {
-    var thread: Thread?
+struct EmptyThreadView: View {
+    var body: some View {
+        Text("Aucun thread sélectionné")
+    }
+}
 
-    init(thread: Thread?) {
-        self.thread = thread
+struct EmptyThreadView_Previews: PreviewProvider {
+    static var previews: some View {
+        EmptyThreadView()
     }
 }
