@@ -16,6 +16,7 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import Atlantis
 import CocoaLumberjack
 import CocoaLumberjackSwift
 import Foundation
@@ -27,6 +28,7 @@ public enum Logging {
     public static func initLogging() {
         initLogger()
         initSentry()
+        initAtlantis()
     }
 
     class LogFormatter: NSObject, DDLogFormatter {
@@ -60,6 +62,10 @@ public enum Logging {
             options.dsn = "https://a9e3e85be0c246fb9ab0e19be1785c89@sentry.infomaniak.com/42"
             options.debug = true
         }
+    }
+
+    private static func initAtlantis() {
+        Atlantis.start()
     }
 }
 

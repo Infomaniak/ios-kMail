@@ -1,4 +1,3 @@
-//
 /*
  Infomaniak Mail - iOS App
  Copyright (C) 2022 Infomaniak Network SA
@@ -18,11 +17,6 @@
  */
 
 import Foundation
-
-open class ApiError: Codable, Error {
-    public var code: String
-    public var description: String
-}
 
 enum ApiErrorCode: String {
     // General

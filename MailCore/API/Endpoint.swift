@@ -17,67 +17,18 @@
  */
 
 import Foundation
+import InfomaniakCore
 
 // MARK: - Type definition
 
-enum ApiEnvironment {
-    case prod, preprod
-
-    public static let current = ApiEnvironment.prod
-
-    var host: String {
-        switch self {
-        case .prod:
-            return "infomaniak.com"
-        case .preprod:
-            return "preprod.dev.infomaniak.ch"
-        }
-    }
-
-    var apiHost: String {
-        return "api.\(host)"
-    }
-
+public extension ApiEnvironment {
     var mailHost: String {
         return "mail.\(host)"
     }
 }
 
-public struct Endpoint {
-    public static let itemsPerPage = 200
-
-    let path: String
-    let queryItems: [URLQueryItem]?
-    let apiEnvironment: ApiEnvironment
-    let host: String
-
-    public var url: URL {
-        var components = URLComponents()
-        components.scheme = "https"
-        components.host = host
-        components.path = path
-        components.queryItems = queryItems
-
-        guard let url = components.url else {
-            fatalError("Invalid endpoint URL: \(self)")
-        }
-        return url
-    }
-
-    init(path: String, queryItems: [URLQueryItem]? = nil, apiEnvironment: ApiEnvironment = .current, host: String? = nil) {
-        self.path = path
-        self.queryItems = queryItems
-        self.apiEnvironment = apiEnvironment
-        if let host = host {
-            self.host = host
-        } else {
-            self.host = apiEnvironment.mailHost
-        }
-    }
-
-    func appending(path: String, queryItems: [URLQueryItem]? = nil) -> Endpoint {
-        return Endpoint(path: self.path + path, queryItems: queryItems, apiEnvironment: apiEnvironment)
-    }
+public extension Endpoint {
+    static let itemsPerPage = 200
 
     func paginated(page: Int = 1) -> Endpoint {
         let paginationQueryItems = [
@@ -93,7 +44,7 @@ public struct Endpoint {
 
 public extension Endpoint {
     static func resource(_ resource: String, queryItems: [URLQueryItem]? = nil) -> Endpoint {
-        return Endpoint(path: resource, queryItems: queryItems)
+        return Endpoint(host: ApiEnvironment.current.mailHost, path: resource, queryItems: queryItems)
     }
 
     private static var baseManager: Endpoint {
@@ -101,11 +52,11 @@ public extension Endpoint {
     }
 
     static var mailbox: Endpoint {
-        return Endpoint(path: "/api/mailbox", queryItems: nil)
+        return Endpoint(host: ApiEnvironment.current.mailHost, path: "/api/mailbox", queryItems: nil)
     }
 
     static func folders(uuid: String) -> Endpoint {
-        return Endpoint(path: "/api/mail/\(uuid)/folder", queryItems: nil)
+        return Endpoint(host: ApiEnvironment.current.mailHost, path: "/api/mail/\(uuid)/folder", queryItems: nil)
     }
 
     static func threads(uuid: String, folderId: String, filter: String?) -> Endpoint {
