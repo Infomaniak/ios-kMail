@@ -28,44 +28,6 @@ extension ApiFetcher {
         self.init()
         setToken(token, authenticator: SyncedAuthenticator(refreshTokenDelegate: delegate))
     }
-
-    // MARK: - User methods
-
-    func userProfile() async throws -> UserProfile {
-        try await perform(request: authenticatedSession.request("\(apiURL)profile?with=avatar,phones,emails")).data
-    }
-
-    // MARK: - New request helpers
-
-    func authenticatedRequest(_ endpoint: Endpoint, method: HTTPMethod = .get, parameters: Parameters? = nil) -> DataRequest {
-        return authenticatedSession.request(endpoint.url, method: method, parameters: parameters, encoding: JSONEncoding.default)
-    }
-
-    func authenticatedRequest<Parameters: Encodable>(_ endpoint: Endpoint, method: HTTPMethod = .get,
-                                                     parameters: Parameters? = nil) -> DataRequest {
-        return authenticatedSession.request(
-            endpoint.url,
-            method: method,
-            parameters: parameters,
-            encoder: JSONParameterEncoder.convertToSnakeCase
-        )
-    }
-
-    func perform<T: Decodable>(request: DataRequest) async throws -> (data: T, responseAt: Int?) {
-        let response = await request.serializingDecodable(
-            ApiResponse<T>.self,
-            automaticallyCancelling: true,
-            decoder: ApiFetcher.decoder
-        ).response
-        let json = try response.result.get()
-        if let result = json.data {
-            return (result, json.responseAt)
-        } else if let apiError = json.error {
-            throw MailError.apiError(apiError)
-        } else {
-            throw MailError.unknownError
-        }
-    }
 }
 
 public class MailApiFetcher: ApiFetcher {
@@ -75,6 +37,16 @@ public class MailApiFetcher: ApiFetcher {
         super.init()
         ApiFetcher.decoder.dateDecodingStrategy = .iso8601
     }
+
+    override public func perform<T: Decodable>(request: DataRequest) async throws -> (data: T, responseAt: Int?) {
+         do {
+             return try await super.perform(request: request)
+         } catch let InfomaniakError.apiError(apiError) {
+             throw MailError.apiError(apiError)
+         } catch let InfomaniakError.serverError(statusCode: statusCode) {
+             throw MailError.serverError(statusCode: statusCode)
+         }
+     }
 
     // MARK: - API methods
 

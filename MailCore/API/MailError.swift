@@ -22,6 +22,7 @@ import MailResources
 
 enum MailError: LocalizedError, CustomStringConvertible {
     case apiError(ApiError)
+    case serverError(statusCode: Int)
     case noToken
     case resourceError
     case unknownError
@@ -39,6 +40,8 @@ enum MailError: LocalizedError, CustomStringConvertible {
             return "Resource error"
         case .unknownError:
             return "Unknown error"
+        case .serverError:
+            return "Server error"
         }
     }
 
@@ -52,6 +55,8 @@ enum MailError: LocalizedError, CustomStringConvertible {
             return "MailError.resourceError"
         case .unknownError:
             return "MailError.unknownError"
+        case .serverError(let statusCode):
+            return "MailError.serverError (\(statusCode))"
         }
     }
 }
