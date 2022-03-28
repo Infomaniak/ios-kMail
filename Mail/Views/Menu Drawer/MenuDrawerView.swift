@@ -22,6 +22,8 @@ import SwiftUI
 import UIKit
 
 struct MenuDrawerView: View {
+    @State private var showMailboxes = false
+
     // swiftlint:disable empty_count
     @ObservedResults(Folder.self, where: { $0.parentLink.count == 0 }) var folders
     private var mailboxManager: MailboxManager
@@ -45,8 +47,20 @@ struct MenuDrawerView: View {
                     Image(systemName: "gearshape")
                 }
             }
+            .padding()
 
-            Text(mailboxManager.mailbox.mailbox)
+            DisclosureGroup(mailboxManager.mailbox.email, isExpanded: $showMailboxes) {
+                ForEach(AccountManager.instance.mailboxes.filter { $0.mailboxId != mailboxManager.mailbox.mailboxId }, id: \.mailboxId) { mailbox in
+                    Button {
+                        print("Update account")
+                    } label: {
+                        Text(mailbox.email)
+                        Spacer()
+                        Text("2")
+                    }
+                }
+            }
+            .padding()
 
             List(AnyRealmCollection(folders), children: \.listChildren) { folder in
                 Button {
