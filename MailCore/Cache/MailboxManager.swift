@@ -91,13 +91,43 @@ public class MailboxManager {
         }
         // Get from API
         let folderResult = try await apiFetcher.folders(mailbox: mailbox)
+        let newFoldersId = foldersIds(from: folderResult)
 
         let realm = getRealm()
 
+        let cachedFolders = realm.objects(Folder.self)
+        let cachedFoldersId = Array(cachedFolders).map { $0.id }
+
         // Update folders in Realm
         try? realm.safeWrite {
+            // Remove old folders
+            for cachedFolderId in cachedFoldersId {
+                if !newFoldersId.contains(cachedFolderId),
+                   let folderToRemove = realm.object(ofType: Folder.self, forPrimaryKey: cachedFolderId) {
+                    // Remove orphan messages
+                    let messagesToRemove = realm.objects(Message.self)
+                        .filter("folderId == %@", folderToRemove.id) // Requête fausse
+                    realm.delete(messagesToRemove)
+                    let threadsToRemove = realm.objects(Thread.self).filter("messages.@count == 0")
+                    realm.delete(threadsToRemove)
+                    realm.delete(folderToRemove)
+                }
+            }
+
+            // Add new folders
             realm.add(folderResult, update: .modified)
         }
+    }
+
+    func foldersIds(from folders: [Folder], oldResult: [String] = []) -> [String] {
+        var result = oldResult
+        for folder in folders {
+            result.append(folder.id)
+            if !folder.children.isEmpty {
+                result.append(contentsOf: foldersIds(from: Array(folder.children)))
+            }
+        }
+        return result
     }
 
     // MARK: - Thread
