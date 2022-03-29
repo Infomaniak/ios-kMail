@@ -134,12 +134,6 @@ public class MailboxManager {
         }
     }
 
-    // MARK: - Quotas
-
-    public func quotas() async throws {
-        
-    }
-
     // MARK: - Utilities
 }
 

@@ -18,6 +18,7 @@
 
 import InfomaniakCore
 import MailCore
+import MailResources
 import RealmSwift
 import SwiftUI
 import UIKit
@@ -166,6 +167,7 @@ private struct MailboxQuotaView: View {
                     Text("Obtenir plus de stockage")
                         .bold()
                 }
+                .foregroundColor(Color(InfomaniakCoreAsset.infomaniakColor.color))
             }
 
             Spacer()
@@ -197,13 +199,13 @@ private struct QuotaCircularProgressViewStyle: ProgressViewStyle {
         ZStack {
             Circle()
                 .trim(from: 0, to: CGFloat(1 - (configuration.fractionCompleted ?? 0)))
-                .stroke(Color.blue, lineWidth: 2)
+                .stroke(Color(InfomaniakCoreAsset.infomaniakColor.color), lineWidth: 2)
                 .rotationEffect(.degrees(-90))
                 .frame(width: 40)
 
             Circle()
                 .trim(from: CGFloat(1 - (configuration.fractionCompleted ?? 0)), to: 1)
-                .stroke(Color.red, lineWidth: 2)
+                .stroke(Color(MailResourcesAsset.mailPink.color), lineWidth: 2)
                 .rotationEffect(.degrees(-90))
                 .frame(width: 40)
 
