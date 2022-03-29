@@ -16,6 +16,7 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import InfomaniakCore
 import MailCore
 import RealmSwift
 import SwiftUI
@@ -38,6 +39,44 @@ struct MenuDrawerView: View {
 
     var body: some View {
         VStack {
+            MenuHeaderView(splitViewController: splitViewController)
+
+            MailboxesManagementView(mailboxManager: mailboxManager)
+
+            List(AnyRealmCollection(folders), children: \.listChildren) { folder in
+                Button {
+                    updateSplitView(with: folder)
+                } label: {
+                    HStack {
+                        Image(systemName: "tray")
+                            .foregroundColor(Color(InfomaniakCoreAsset.infomaniakColor.color))
+                        Text(folder.localizedName)
+                        Spacer()
+                        if let unreadCount = folder.unreadCount, unreadCount > 0 {
+                            Text(unreadCount < 100 ? "\(unreadCount)" : "99+")
+                        }
+                    }
+                }
+            }
+            .listStyle(.plain)
+            .accentColor(Color(InfomaniakCoreAsset.infomaniakColor.color))
+            .onAppear {
+                Task {
+                    await fetchFolders()
+                    MatomoUtils.track(view: ["MenuDrawer"])
+                }
+            }
+
+            MailboxStatisticsView(mailboxManager: mailboxManager)
+        }
+    }
+
+    // MARK: - Subviews
+
+    private struct MenuHeaderView: View {
+        var splitViewController: UISplitViewController?
+
+        var body: some View {
             HStack {
                 Text("Infomaniak Mail")
                 Spacer()
@@ -48,43 +87,58 @@ struct MenuDrawerView: View {
                 }
             }
             .padding()
+        }
+    }
 
-            DisclosureGroup(mailboxManager.mailbox.email, isExpanded: $showMailboxes) {
-                ForEach(AccountManager.instance.mailboxes.filter { $0.mailboxId != mailboxManager.mailbox.mailboxId }, id: \.mailboxId) { mailbox in
-                    Button {
-                        print("Update account")
-                    } label: {
-                        Text(mailbox.email)
-                        Spacer()
-                        Text("2")
-                    }
-                }
-            }
-            .padding()
+    private struct MailboxesManagementView: View {
+        @State private var unfoldDetails = false
 
-            List(AnyRealmCollection(folders), children: \.listChildren) { folder in
-                Button {
-                    updateSplitView(with: folder)
-                } label: {
-                    HStack {
-                        Image(systemName: "tray")
-                        Text(folder.localizedName)
-                        Spacer()
-                        if let unreadCount = folder.unreadCount, unreadCount > 0 {
-                            Text(unreadCount < 100 ? "\(unreadCount)" : "99+")
+        var mailboxManager: MailboxManager
+
+        var body: some View {
+            DisclosureGroup(isExpanded: $unfoldDetails) {
+                VStack(alignment: .leading) {
+                    ForEach(AccountManager.instance.mailboxes.filter { $0.mailboxId != mailboxManager.mailbox.mailboxId }, id: \.mailboxId) { mailbox in
+                        Button {
+                            print("Update account")
+                        } label: {
+                            Text(mailbox.email)
+                            Spacer()
+                            Text("2")
                         }
                     }
+
+                    Divider()
+
+                    Button("Ajouter un compte") {}
+                    Button("Gérer mon compte") {}
                 }
+                .padding(.leading)
+            } label: {
+                Text(mailboxManager.mailbox.email)
+                    .bold()
+                    .lineLimit(1)
             }
-            .listStyle(.plain)
-            .onAppear {
-                Task {
-                    await fetchFolders()
-                    MatomoUtils.track(view: ["MenuDrawer"])
-                }
+            .accentColor(.primary)
+            .padding()
+        }
+    }
+
+    private struct MailboxStatisticsView: View {
+        var mailboxManager: MailboxManager
+        @State private var quotas: Quotas?
+
+        var body: some View {
+            VStack {
+
+            }
+            .task {
+                quotas = try await mailboxManager.apiFetcher.
             }
         }
     }
+
+    // MARK: - Private functions
 
     private func updateSplitView(with folder: Folder) {
         let messageListVC = ThreadListViewController(mailboxManager: mailboxManager, folder: folder)
@@ -98,4 +152,6 @@ struct MenuDrawerView: View {
             print("Error while getting folders: \(error.localizedDescription)")
         }
     }
+
+    // MARK: - Menu actions
 }
