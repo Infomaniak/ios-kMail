@@ -71,7 +71,7 @@ public class MailApiFetcher: ApiFetcher {
                                                                   ]))).data
     }
 
-    func quotas(mailbox: Mailbox) async throws -> Quotas {
+    public func quotas(mailbox: Mailbox) async throws -> Quotas {
         try await perform(request: authenticatedRequest(.quotas(mailbox: mailbox.mailbox, productId: mailbox.hostingId))).data
     }
 }

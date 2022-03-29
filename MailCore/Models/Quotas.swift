@@ -24,5 +24,5 @@ public class Quotas: Object, Codable {
     @Persisted public var size: Int
     @Persisted public var sizeCheckedAt: Int64
 
-    
+
 }

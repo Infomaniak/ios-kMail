@@ -31,3 +31,7 @@ public struct URLConstants {
         return url
     }
 }
+
+public enum Constants {
+    public static let sizeLimit = 20_000_000 // ko
+}

@@ -67,74 +67,7 @@ struct MenuDrawerView: View {
                 }
             }
 
-            MailboxStatisticsView(mailboxManager: mailboxManager)
-        }
-    }
-
-    // MARK: - Subviews
-
-    private struct MenuHeaderView: View {
-        var splitViewController: UISplitViewController?
-
-        var body: some View {
-            HStack {
-                Text("Infomaniak Mail")
-                Spacer()
-                Button {
-                    splitViewController?.setViewController(SettingsViewController(), for: .secondary)
-                } label: {
-                    Image(systemName: "gearshape")
-                }
-            }
-            .padding()
-        }
-    }
-
-    private struct MailboxesManagementView: View {
-        @State private var unfoldDetails = false
-
-        var mailboxManager: MailboxManager
-
-        var body: some View {
-            DisclosureGroup(isExpanded: $unfoldDetails) {
-                VStack(alignment: .leading) {
-                    ForEach(AccountManager.instance.mailboxes.filter { $0.mailboxId != mailboxManager.mailbox.mailboxId }, id: \.mailboxId) { mailbox in
-                        Button {
-                            print("Update account")
-                        } label: {
-                            Text(mailbox.email)
-                            Spacer()
-                            Text("2")
-                        }
-                    }
-
-                    Divider()
-
-                    Button("Ajouter un compte") {}
-                    Button("Gérer mon compte") {}
-                }
-                .padding(.leading)
-            } label: {
-                Text(mailboxManager.mailbox.email)
-                    .bold()
-                    .lineLimit(1)
-            }
-            .accentColor(.primary)
-            .padding()
-        }
-    }
-
-    private struct MailboxStatisticsView: View {
-        var mailboxManager: MailboxManager
-        @State private var quotas: Quotas?
-
-        var body: some View {
-            VStack {
-
-            }
-            .task {
-                quotas = try await mailboxManager.apiFetcher.
-            }
+            MailboxQuotaView(mailboxManager: mailboxManager)
         }
     }
 
@@ -154,4 +87,129 @@ struct MenuDrawerView: View {
     }
 
     // MARK: - Menu actions
+}
+
+private struct MenuHeaderView: View {
+    var splitViewController: UISplitViewController?
+
+    var body: some View {
+        HStack {
+            Text("Infomaniak Mail")
+            Spacer()
+            Button {
+                splitViewController?.setViewController(SettingsViewController(), for: .secondary)
+            } label: {
+                Image(systemName: "gearshape")
+            }
+        }
+        .padding()
+    }
+}
+
+private struct MailboxesManagementView: View {
+    @State private var unfoldDetails = false
+
+    var mailboxManager: MailboxManager
+
+    var body: some View {
+        DisclosureGroup(isExpanded: $unfoldDetails) {
+            VStack(alignment: .leading) {
+                ForEach(AccountManager.instance.mailboxes.filter { $0.mailboxId != mailboxManager.mailbox.mailboxId }, id: \.mailboxId) { mailbox in
+                    Button {
+                        print("Update account")
+                    } label: {
+                        Text(mailbox.email)
+                        Spacer()
+                        Text("2")
+                    }
+                }
+
+                Divider()
+
+                Button("Ajouter un compte") {}
+                Button("Gérer mon compte") {}
+            }
+            .padding(.leading)
+        } label: {
+            Text(mailboxManager.mailbox.email)
+                .bold()
+                .lineLimit(1)
+        }
+        .accentColor(.primary)
+        .padding()
+    }
+}
+
+private struct MailboxQuotaView: View {
+    var mailboxManager: MailboxManager
+    var formatter: ByteCountFormatter = {
+        let byteCountFormatter = ByteCountFormatter()
+        byteCountFormatter.countStyle = .file
+        byteCountFormatter.includesUnit = true
+        return byteCountFormatter
+    }()
+
+    @State private var quotas: Quotas?
+
+    var body: some View {
+        HStack {
+            ProgressView(value: computeQuotas())
+                .progressViewStyle(QuotaCircularProgressViewStyle())
+
+            VStack(alignment: .leading) {
+                Text(
+                    "\(formatter.string(from: .init(value: Double(quotas?.size ?? 0), unit: .kilobytes))) / \(formatter.string(from: .init(value: Double(Constants.sizeLimit), unit: .kilobytes))) utilisés"
+                )
+                Button {
+                    // TODO: Add action
+                } label: {
+                    Text("Obtenir plus de stockage")
+                        .bold()
+                }
+            }
+
+            Spacer()
+        }
+        .onChange(of: quotas, perform: { newValue in
+            print(Double(newValue?.size ?? 0) / Double(Constants.sizeLimit))
+            print(Double(newValue?.size ?? 0))
+            print(Constants.sizeLimit)
+        })
+        .onAppear {
+            Task {
+                do {
+                    quotas = try await mailboxManager.apiFetcher.quotas(mailbox: mailboxManager.mailbox)
+                } catch {
+                    print("Error while fetching quotas: \(error)")
+                }
+            }
+        }
+    }
+
+    private func computeQuotas() -> Double {
+        let value = Double(quotas?.size ?? 0) / Double(Constants.sizeLimit)
+        return value > 0.03 ? value : 0.03
+    }
+}
+
+private struct QuotaCircularProgressViewStyle: ProgressViewStyle {
+    func makeBody(configuration: Configuration) -> some View {
+        ZStack {
+            Circle()
+                .trim(from: 0, to: CGFloat(1 - (configuration.fractionCompleted ?? 0)))
+                .stroke(Color.blue, lineWidth: 2)
+                .rotationEffect(.degrees(-90))
+                .frame(width: 40)
+
+            Circle()
+                .trim(from: CGFloat(1 - (configuration.fractionCompleted ?? 0)), to: 1)
+                .stroke(Color.red, lineWidth: 2)
+                .rotationEffect(.degrees(-90))
+                .frame(width: 40)
+
+            Image(systemName: "tray")
+                .foregroundColor(.blue)
+        }
+        .frame(height: 40)
+    }
 }
