@@ -142,19 +142,18 @@ public class MailboxManager {
 
         let realm = getRealm()
 
+        guard let parentFolder = realm.object(ofType: Folder.self, forPrimaryKey: folder.id) else { return }
+        let fetchedThreads = MutableSet<Thread>()
+        fetchedThreads.insert(objectsIn: threadResult.threads ?? [])
         // Update thread in Realm
         try? realm.safeWrite {
-            if let parentFolder = realm.object(ofType: Folder.self, forPrimaryKey: folder.id) {
-                realm.delete(parentFolder.threads)
-            }
+            realm.add(fetchedThreads, update: .modified)
+            let toDeleteThreads = Set(parentFolder.threads).subtracting(Set(fetchedThreads))
+            let toDeleteMessages = Set(toDeleteThreads.flatMap(\.messages))
+            parentFolder.threads = fetchedThreads
 
-            realm.add(threadResult.threads ?? [], update: .modified)
-            realm.object(ofType: Folder.self, forPrimaryKey: folder.id)?.threads.insert(objectsIn: threadResult.threads ?? [])
-        }
-
-        try? realm.safeWrite {
-            let orphanMessages = realm.objects(Message.self).filter("parentLink.@count == 0")
-            realm.delete(orphanMessages)
+            realm.delete(toDeleteMessages)
+            realm.delete(toDeleteThreads)
         }
     }
 
