@@ -69,6 +69,7 @@ struct MenuDrawerView: View {
             }
 
             MailboxQuotaView(mailboxManager: mailboxManager)
+                .padding()
         }
     }
 
@@ -138,80 +139,5 @@ private struct MailboxesManagementView: View {
         }
         .accentColor(.primary)
         .padding()
-    }
-}
-
-private struct MailboxQuotaView: View {
-    var mailboxManager: MailboxManager
-    var formatter: ByteCountFormatter = {
-        let byteCountFormatter = ByteCountFormatter()
-        byteCountFormatter.countStyle = .file
-        byteCountFormatter.includesUnit = true
-        return byteCountFormatter
-    }()
-
-    @State private var quotas: Quotas?
-
-    var body: some View {
-        HStack {
-            ProgressView(value: computeQuotas())
-                .progressViewStyle(QuotaCircularProgressViewStyle())
-
-            VStack(alignment: .leading) {
-                Text(
-                    "\(formatter.string(from: .init(value: Double(quotas?.size ?? 0), unit: .kilobytes))) / \(formatter.string(from: .init(value: Double(Constants.sizeLimit), unit: .kilobytes))) utilisés"
-                )
-                Button {
-                    // TODO: Add action
-                } label: {
-                    Text("Obtenir plus de stockage")
-                        .bold()
-                }
-                .foregroundColor(Color(InfomaniakCoreAsset.infomaniakColor.color))
-            }
-
-            Spacer()
-        }
-        .onChange(of: quotas, perform: { newValue in
-            print(Double(newValue?.size ?? 0) / Double(Constants.sizeLimit))
-            print(Double(newValue?.size ?? 0))
-            print(Constants.sizeLimit)
-        })
-        .onAppear {
-            Task {
-                do {
-                    quotas = try await mailboxManager.apiFetcher.quotas(mailbox: mailboxManager.mailbox)
-                } catch {
-                    print("Error while fetching quotas: \(error)")
-                }
-            }
-        }
-    }
-
-    private func computeQuotas() -> Double {
-        let value = Double(quotas?.size ?? 0) / Double(Constants.sizeLimit)
-        return value > 0.03 ? value : 0.03
-    }
-}
-
-private struct QuotaCircularProgressViewStyle: ProgressViewStyle {
-    func makeBody(configuration: Configuration) -> some View {
-        ZStack {
-            Circle()
-                .trim(from: 0, to: CGFloat(1 - (configuration.fractionCompleted ?? 0)))
-                .stroke(Color(InfomaniakCoreAsset.infomaniakColor.color), lineWidth: 2)
-                .rotationEffect(.degrees(-90))
-                .frame(width: 40)
-
-            Circle()
-                .trim(from: CGFloat(1 - (configuration.fractionCompleted ?? 0)), to: 1)
-                .stroke(Color(MailResourcesAsset.mailPink.color), lineWidth: 2)
-                .rotationEffect(.degrees(-90))
-                .frame(width: 40)
-
-            Image(systemName: "tray")
-                .foregroundColor(.blue)
-        }
-        .frame(height: 40)
     }
 }
