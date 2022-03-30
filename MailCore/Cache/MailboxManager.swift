@@ -144,8 +144,17 @@ public class MailboxManager {
 
         // Update thread in Realm
         try? realm.safeWrite {
+            if let parentFolder = realm.object(ofType: Folder.self, forPrimaryKey: folder.id) {
+                realm.delete(parentFolder.threads)
+            }
+
             realm.add(threadResult.threads ?? [], update: .modified)
             realm.object(ofType: Folder.self, forPrimaryKey: folder.id)?.threads.insert(objectsIn: threadResult.threads ?? [])
+        }
+
+        try? realm.safeWrite {
+            let orphanMessages = realm.objects(Message.self).filter("parentLink.@count == 0")
+            realm.delete(orphanMessages)
         }
     }
 

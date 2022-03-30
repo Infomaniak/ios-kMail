@@ -51,7 +51,8 @@ class SplitViewController: UISplitViewController {
         let menuDrawerHostingController = UIHostingController(rootView: menuDrawerView)
         setViewController(menuDrawerHostingController, for: .primary)
 
-        let inboxFolder = AnyRealmCollection(mailboxManager.getRealm().objects(Folder.self).filter("role = 'INBOX'"))
+//        let inboxFolder = AnyRealmCollection(mailboxManager.getRealm().objects(Folder.self).filter("role = 'INBOX'"))
+        let inboxFolder = AnyRealmCollection(mailboxManager.getRealm().objects(Folder.self).filter("name = 'thread'"))
         if let folder = inboxFolder.first {
             let threadListViewController = ThreadListViewController(mailboxManager: mailboxManager, folder: folder)
             let pepNav = UINavigationController(rootViewController: threadListViewController)
