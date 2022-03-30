@@ -55,6 +55,7 @@ struct MenuDrawerView: View {
                         Spacer()
                         if let unreadCount = folder.unreadCount, unreadCount > 0 {
                             Text(unreadCount < 100 ? "\(unreadCount)" : "99+")
+                                .foregroundColor(Color(InfomaniakCoreAsset.infomaniakColor.color))
                         }
                     }
                 }
@@ -89,21 +90,4 @@ struct MenuDrawerView: View {
     }
 
     // MARK: - Menu actions
-}
-
-private struct MenuHeaderView: View {
-    var splitViewController: UISplitViewController?
-
-    var body: some View {
-        HStack {
-            Text("Infomaniak Mail")
-            Spacer()
-            Button {
-                splitViewController?.setViewController(SettingsViewController(), for: .secondary)
-            } label: {
-                Image(systemName: "gearshape")
-            }
-        }
-        .padding()
-    }
 }
