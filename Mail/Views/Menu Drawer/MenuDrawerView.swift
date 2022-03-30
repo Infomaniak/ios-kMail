@@ -42,7 +42,7 @@ struct MenuDrawerView: View {
         VStack {
             MenuHeaderView(splitViewController: splitViewController)
 
-            MailboxesManagementView(mailboxManager: mailboxManager)
+            MailboxesManagementView(mailbox: mailboxManager.mailbox)
 
             List(AnyRealmCollection(folders), children: \.listChildren) { folder in
                 Button {
@@ -104,40 +104,6 @@ private struct MenuHeaderView: View {
                 Image(systemName: "gearshape")
             }
         }
-        .padding()
-    }
-}
-
-private struct MailboxesManagementView: View {
-    @State private var unfoldDetails = false
-
-    var mailboxManager: MailboxManager
-
-    var body: some View {
-        DisclosureGroup(isExpanded: $unfoldDetails) {
-            VStack(alignment: .leading) {
-                ForEach(AccountManager.instance.mailboxes.filter { $0.mailboxId != mailboxManager.mailbox.mailboxId }, id: \.mailboxId) { mailbox in
-                    Button {
-                        print("Update account")
-                    } label: {
-                        Text(mailbox.email)
-                        Spacer()
-                        Text("2")
-                    }
-                }
-
-                Divider()
-
-                Button("Ajouter un compte") {}
-                Button("Gérer mon compte") {}
-            }
-            .padding(.leading)
-        } label: {
-            Text(mailboxManager.mailbox.email)
-                .bold()
-                .lineLimit(1)
-        }
-        .accentColor(.primary)
         .padding()
     }
 }
