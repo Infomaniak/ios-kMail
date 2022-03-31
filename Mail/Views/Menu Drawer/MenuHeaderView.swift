@@ -48,8 +48,9 @@ struct MenuHeaderView: View {
                     .frame(width: 26)
             }
         }
-        .padding()
-        .background(Color.white)
+        .padding([.leading, .trailing], MenuDrawerView.horizontalPadding)
+        .padding([.top, .bottom])
+        .background(Color.white) // Update with real background color
         .clipped()
         .shadow(color: .gray.opacity(0.2), radius: 3, x: 0, y: 4)
     }

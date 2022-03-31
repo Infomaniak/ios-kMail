@@ -25,8 +25,6 @@ struct MailboxesManagementView: View {
 
     var mailbox: Mailbox
 
-    let colors: [Color] = [.blue, .red, .yellow, .green]
-
     var body: some View {
         DisclosureGroup(isExpanded: $unfoldDetails) {
             VStack(alignment: .leading) {
@@ -52,11 +50,13 @@ struct MailboxesManagementView: View {
             .padding(.leading)
         } label: {
             Text(mailbox.email)
-                .bold()
+                .fontWeight(.semibold)
                 .lineLimit(1)
         }
         .accentColor(.primary)
-        .padding()
+        .padding([.leading, .trailing], MenuDrawerView.horizontalPadding)
+        .padding([.top], 20)
+        .padding([.bottom], 15)
     }
 }
 

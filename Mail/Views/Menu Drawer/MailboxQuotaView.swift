@@ -41,14 +41,15 @@ struct MailboxQuotaView: View {
             VStack(alignment: .leading) {
                 HStack {
                     Text("\(formatter.string(from: .init(value: Double(quotas?.size ?? 0), unit: .kilobytes))) / \(formatter.string(from: .init(value: Double(Constants.sizeLimit), unit: .kilobytes)))")
-                        .font(.system(size: 18))
+                        .font(.system(size: 19))
                     Text("utilisés")
                 }
+
                 Button {
                     print("Todo")
                 } label: {
                     Text("Obtenir plus de stockage")
-                        .bold()
+                        .fontWeight(.semibold)
                 }
                 .foregroundColor(Color(InfomaniakCoreAsset.infomaniakColor.color))
                 .font(.system(size: 15))
@@ -56,6 +57,8 @@ struct MailboxQuotaView: View {
 
             Spacer()
         }
+        .padding([.leading, .trailing], MenuDrawerView.horizontalPadding)
+        .padding([.top, .bottom])
         .onAppear {
             Task {
                 do {
@@ -84,7 +87,7 @@ private struct QuotaCircularProgressViewStyle: ProgressViewStyle {
 
             Circle()
                 .trim(from: CGFloat(1 - (configuration.fractionCompleted ?? 0)), to: 1)
-                .stroke(Color(MailResourcesAsset.mailPink.color), lineWidth: 2)
+                .stroke(Color(MailResourcesAsset.mailPinkColor.color), lineWidth: 2)
                 .rotationEffect(.degrees(-90))
                 .frame(width: 40)
 

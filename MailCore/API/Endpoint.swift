@@ -68,7 +68,7 @@ public extension Endpoint {
     }
 
     static func quotas(mailbox: String, productId: Int) -> Endpoint {
-        return Endpoint(path: "/api/mailbox/quotas", queryItems: [
+        return Endpoint(host: ApiEnvironment.current.mailHost, path: "/api/mailbox/quotas", queryItems: [
             URLQueryItem(name: "mailbox", value: mailbox),
             URLQueryItem(name: "product_id", value: "\(productId)")
         ])

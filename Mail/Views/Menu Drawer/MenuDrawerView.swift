@@ -31,6 +31,8 @@ struct MenuDrawerView: View {
     private var mailboxManager: MailboxManager
     private weak var splitViewController: UISplitViewController?
 
+    public static let horizontalPadding: CGFloat = 25
+
     init(mailboxManager: MailboxManager, splitViewController: UISplitViewController) {
         self.mailboxManager = mailboxManager
         // swiftlint:disable empty_count
@@ -70,7 +72,6 @@ struct MenuDrawerView: View {
             }
 
             MailboxQuotaView(mailboxManager: mailboxManager)
-                .padding()
         }
     }
 
