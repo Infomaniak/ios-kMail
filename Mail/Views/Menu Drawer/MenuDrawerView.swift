@@ -26,19 +26,10 @@ import UIKit
 struct MenuDrawerView: View {
     @State private var showMailboxes = false
 
-    // swiftlint:disable empty_count
-    @ObservedResults(Folder.self, where: { $0.parentLink.count == 0 }) var folders
-    private var mailboxManager: MailboxManager
-    private weak var splitViewController: UISplitViewController?
+    var mailboxManager: MailboxManager
+    weak var splitViewController: UISplitViewController?
 
     public static let horizontalPadding: CGFloat = 25
-
-    init(mailboxManager: MailboxManager, splitViewController: UISplitViewController) {
-        self.mailboxManager = mailboxManager
-        // swiftlint:disable empty_count
-        _folders = .init(Folder.self, configuration: mailboxManager.realmConfiguration) { $0.parentLink.count == 0 }
-        self.splitViewController = splitViewController
-    }
 
     var body: some View {
         VStack {
@@ -46,49 +37,11 @@ struct MenuDrawerView: View {
 
             MailboxesManagementView(mailbox: mailboxManager.mailbox)
 
-            List(AnyRealmCollection(folders), children: \.listChildren) { folder in
-                Button {
-                    updateSplitView(with: folder)
-                } label: {
-                    HStack {
-                        Image(systemName: "tray")
-                            .foregroundColor(Color(InfomaniakCoreAsset.infomaniakColor.color))
-                        Text(folder.localizedName)
-                        Spacer()
-                        if let unreadCount = folder.unreadCount, unreadCount > 0 {
-                            Text(unreadCount < 100 ? "\(unreadCount)" : "99+")
-                                .foregroundColor(Color(InfomaniakCoreAsset.infomaniakColor.color))
-                        }
-                    }
-                }
-            }
-            .listStyle(.plain)
-            .accentColor(Color(InfomaniakCoreAsset.infomaniakColor.color))
-            .onAppear {
-                Task {
-                    await fetchFolders()
-                    MatomoUtils.track(view: ["MenuDrawer"])
-                }
-            }
+            FoldersListView(mailboxManager: mailboxManager, splitViewController: splitViewController)
 
-            MailboxQuotaView(mailboxManager: mailboxManager)
+            if mailboxManager.mailbox.isLimited {
+                MailboxQuotaView(mailboxManager: mailboxManager)
+            }
         }
     }
-
-    // MARK: - Private functions
-
-    private func updateSplitView(with folder: Folder) {
-        let messageListVC = ThreadListViewController(mailboxManager: mailboxManager, folder: folder)
-        splitViewController?.setViewController(messageListVC, for: .supplementary)
-    }
-
-    private func fetchFolders() async {
-        do {
-            try await mailboxManager.folders()
-        } catch {
-            print("Error while getting folders: \(error.localizedDescription)")
-        }
-    }
-
-    // MARK: - Menu actions
 }

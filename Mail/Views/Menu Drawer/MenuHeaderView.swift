@@ -38,7 +38,9 @@ struct MenuHeaderView: View {
                     .font(.system(size: 22))
                     .bold()
             }
+
             Spacer()
+
             Button {
                 splitViewController?.setViewController(SettingsViewController(), for: .secondary)
             } label: {
@@ -50,7 +52,7 @@ struct MenuHeaderView: View {
         }
         .padding([.leading, .trailing], MenuDrawerView.horizontalPadding)
         .padding([.top, .bottom])
-        .background(Color.white) // Update with real background color
+        .background(Color(MailResourcesAsset.backgroundColor.color))
         .clipped()
         .shadow(color: .gray.opacity(0.2), radius: 3, x: 0, y: 4)
     }

@@ -17,6 +17,7 @@
  */
 
 import InfomaniakCore
+import MailResources
 import MailCore
 import SwiftUI
 
@@ -41,6 +42,7 @@ struct MailboxesManagementView: View {
                 }
 
                 Divider()
+                    .background(Color(MailResourcesAsset.separatorColor.color))
 
                 Button("Ajouter un compte") {}
                     .padding(.top, 5)

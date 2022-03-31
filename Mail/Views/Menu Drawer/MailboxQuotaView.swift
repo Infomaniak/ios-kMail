@@ -83,17 +83,19 @@ private struct QuotaCircularProgressViewStyle: ProgressViewStyle {
                 .trim(from: 0, to: CGFloat(1 - (configuration.fractionCompleted ?? 0)))
                 .stroke(Color(InfomaniakCoreAsset.infomaniakColor.color), lineWidth: 2)
                 .rotationEffect(.degrees(-90))
-                .frame(width: 40)
+                .frame(width: 42)
 
             Circle()
                 .trim(from: CGFloat(1 - (configuration.fractionCompleted ?? 0)), to: 1)
                 .stroke(Color(MailResourcesAsset.mailPinkColor.color), lineWidth: 2)
                 .rotationEffect(.degrees(-90))
-                .frame(width: 40)
+                .frame(width: 42)
 
-            Image(systemName: "tray")
-                .foregroundColor(.blue)
+            Image(uiImage: MailResourcesAsset.drawer.image)
+                .resizable()
+                .scaledToFit()
+                .frame(width: 18)
         }
-        .frame(height: 40)
+        .frame(height: 42)
     }
 }
