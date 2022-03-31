@@ -18,6 +18,7 @@
 
 import InfomaniakCore
 import MailCore
+import MailResources
 import RealmSwift
 import UIKit
 import SwiftUI
@@ -37,20 +38,7 @@ struct FoldersListView: View {
 
     var body: some View {
         List(AnyRealmCollection(folders), children: \.listChildren) { folder in
-            Button {
-                updateSplitView(with: folder)
-            } label: {
-                HStack {
-                    Image(systemName: "tray")
-                        .foregroundColor(Color(InfomaniakCoreAsset.infomaniakColor.color))
-                    Text(folder.localizedName)
-                    Spacer()
-                    if let unreadCount = folder.unreadCount, unreadCount > 0 {
-                        Text(unreadCount < 100 ? "\(unreadCount)" : "99+")
-                            .foregroundColor(Color(InfomaniakCoreAsset.infomaniakColor.color))
-                    }
-                }
-            }
+            FolderCellView(folder: folder, icon: MailResourcesAsset.drawer, action: updateSplitView)
         }
         .listStyle(.plain)
         .accentColor(Color(InfomaniakCoreAsset.infomaniakColor.color))
