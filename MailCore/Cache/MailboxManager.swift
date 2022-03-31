@@ -91,7 +91,7 @@ public class MailboxManager {
         }
         // Get from API
         let folderResult = try await apiFetcher.folders(mailbox: mailbox)
-        let newFolders = allFolders(from: folderResult)
+        let newFolders = getSubFolders(from: folderResult)
 
         let realm = getRealm()
 
@@ -137,12 +137,12 @@ public class MailboxManager {
         }
     }
 
-    func allFolders(from folders: [Folder], oldResult: [Folder] = []) -> [Folder] {
+    func getSubFolders(from folders: [Folder], oldResult: [Folder] = []) -> [Folder] {
         var result = oldResult
         for folder in folders {
             result.append(folder)
             if !folder.children.isEmpty {
-                result.append(contentsOf: allFolders(from: Array(folder.children)))
+                result.append(contentsOf: getSubFolders(from: Array(folder.children)))
             }
         }
         return result
@@ -234,4 +234,3 @@ public extension Realm {
         }
     }
 }
-
