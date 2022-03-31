@@ -23,6 +23,8 @@ import SwiftUI
 struct MessageView: View {
     @ObservedRealmObject var message: Message
     private var mailboxManager: MailboxManager
+    @State var model = WebViewModel()
+    @State private var webViewHeight: CGFloat = .zero
 
     init(mailboxManager: MailboxManager, message: Message) {
         self.mailboxManager = mailboxManager
@@ -33,7 +35,18 @@ struct MessageView: View {
         VStack {
             Text(message.subject ?? "No subject")
             Text("Message view")
-            Text(message.body?.value ?? "No body")
+            GeometryReader { proxy in
+                WebView(model: $model, dynamicHeight: $webViewHeight, proxy: proxy)
+                    .frame(height: webViewHeight)
+                    .background(Color.blue)
+            }
+            .frame(height: webViewHeight)
+            .onAppear {
+                model.loadHTMLString(value: message.body?.value)
+            }
+            .onChange(of: message.body) { _ in
+                model.loadHTMLString(value: message.body?.value)
+            }
         }
         .onAppear {
             if self.message.shouldComplete {
@@ -48,7 +61,7 @@ struct MessageView: View {
         do {
             try await mailboxManager.message(message: message)
         } catch {
-            print("Error while getting folders: \(error.localizedDescription)")
+            print("Error while getting messages: \(error.localizedDescription)")
         }
     }
 }
