@@ -124,17 +124,6 @@ public class MailboxManager {
         }
     }
 
-    func getSubFolders(from folders: [Folder], oldResult: [Folder] = []) -> [Folder] {
-        var result = oldResult
-        for folder in folders {
-            result.append(folder)
-            if !folder.children.isEmpty {
-                result.append(contentsOf: getSubFolders(from: Array(folder.children)))
-            }
-        }
-        return result
-    }
-
     // MARK: - Thread
 
     public func threads(folder: Folder, filter: Filter = .all) async throws {
@@ -154,7 +143,7 @@ public class MailboxManager {
 
         for thread in fetchedThreads {
             for message in thread.messages {
-                keepCacheAttributesForMessage(newMessage: message, keepProperties: .standard, using: realm)
+                keepCacheAttributes(for: message, keepProperties: .standard, using: realm)
             }
         }
 
@@ -196,19 +185,30 @@ public class MailboxManager {
         static let standard: MessagePropertiesOptions = [.fullyDownloaded, .body]
     }
 
-    private func keepCacheAttributesForMessage(
-        newMessage: Message,
+    private func keepCacheAttributes(
+        for message: Message,
         keepProperties: MessagePropertiesOptions,
         using realm: Realm? = nil
     ) {
         let realm = realm ?? getRealm()
-        guard let savedMessage = realm.object(ofType: Message.self, forPrimaryKey: newMessage.uid) else { return }
+        guard let savedMessage = realm.object(ofType: Message.self, forPrimaryKey: message.uid) else { return }
         if keepProperties.contains(.fullyDownloaded) {
-            newMessage.fullyDownloaded = savedMessage.fullyDownloaded
+            message.fullyDownloaded = savedMessage.fullyDownloaded
         }
         if keepProperties.contains(.body), let body = savedMessage.body {
-            newMessage.body = Body(value: body)
+            message.body = Body(value: body)
         }
+    }
+
+    func getSubFolders(from folders: [Folder], oldResult: [Folder] = []) -> [Folder] {
+        var result = oldResult
+        for folder in folders {
+            result.append(folder)
+            if !folder.children.isEmpty {
+                result.append(contentsOf: getSubFolders(from: Array(folder.children)))
+            }
+        }
+        return result
     }
 }
 
