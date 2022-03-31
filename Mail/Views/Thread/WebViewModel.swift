@@ -40,11 +40,11 @@ struct WebView: UIViewRepresentable {
         }
 
         func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
-            webView.evaluateJavaScript("document.documentElement.scrollHeight", completionHandler: { height, _ in
+            webView.evaluateJavaScript("document.documentElement.scrollHeight") { height, _ in
                 DispatchQueue.main.async {
                     self.parent.dynamicHeight = height as! CGFloat
                 }
-            })
+            }
         }
 
         func webView(
@@ -77,7 +77,9 @@ struct WebView: UIViewRepresentable {
         return webView
     }
 
-    func updateUIView(_ uiView: WKWebView, context: Context) {}
+    func updateUIView(_ uiView: WKWebView, context: Context) {
+        // needed for UIViewRepresentable
+    }
 }
 
 class WebViewModel: ObservableObject {
@@ -86,7 +88,7 @@ class WebViewModel: ObservableObject {
     let css: String? = try? String(contentsOfFile: Bundle.main.path(forResource: "editor", ofType: "css") ?? "", encoding: .utf8)
         .replacingOccurrences(of: "\n", with: "")
     var meta: String {
-        return "<meta name=viewport content=\"\(proxy?.size.width ?? 0), initial-scale=1\"><style type=\"text/css\">\(css)</style>"
+        return "<meta name=viewport content=\"\(proxy?.size.width ?? 0), initial-scale=1\"><style type=\"text/css\">\(css ?? "")</style>"
     }
 
     init() {
@@ -133,5 +135,7 @@ class URLSchemeHandler: NSObject, WKURLSchemeHandler {
         task.resume()
     }
 
-    func webView(_ webView: WKWebView, stop urlSchemeTask: WKURLSchemeTask) {}
+    func webView(_ webView: WKWebView, stop urlSchemeTask: WKURLSchemeTask) {
+        // needed for WKURLSchemeHandler
+    }
 }
