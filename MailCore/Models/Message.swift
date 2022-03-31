@@ -65,10 +65,10 @@ public class Message: Object, Decodable, Identifiable {
     @Persisted public var hasUnsubscribeLink: Bool?
     @Persisted(originProperty: "messages") var parentLink: LinkingObjects<Thread>
 
-    @Persisted public var isComplete = false
+    @Persisted public var fullyDownloaded = false
 
     public var shouldComplete: Bool {
-        return isDraft || !isComplete
+        return isDraft || !fullyDownloaded
     }
 
     public var formattedSubject: String {

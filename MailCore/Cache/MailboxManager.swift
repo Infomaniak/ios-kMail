@@ -143,8 +143,16 @@ public class MailboxManager {
         let realm = getRealm()
 
         guard let parentFolder = realm.object(ofType: Folder.self, forPrimaryKey: folder.id) else { return }
+
         let fetchedThreads = MutableSet<Thread>()
         fetchedThreads.insert(objectsIn: threadResult.threads ?? [])
+
+        for thread in fetchedThreads {
+            for message in thread.messages {
+                keepCacheAttributesForMessage(newMessage: message, keepProperties: .standard, using: realm)
+            }
+        }
+
         // Update thread in Realm
         try? realm.safeWrite {
             realm.add(fetchedThreads, update: .modified)
@@ -162,7 +170,7 @@ public class MailboxManager {
     public func message(message: Message) async throws {
         // Get from API
         let completedMessage = try await apiFetcher.message(mailbox: mailbox, message: message)
-        completedMessage.isComplete = true
+        completedMessage.fullyDownloaded = true
 
         let realm = getRealm()
 
@@ -173,6 +181,30 @@ public class MailboxManager {
     }
 
     // MARK: - Utilities
+
+    struct MessagePropertiesOptions: OptionSet {
+        let rawValue: Int
+
+        static let fullyDownloaded = MessagePropertiesOptions(rawValue: 1 << 0)
+        static let body = MessagePropertiesOptions(rawValue: 1 << 1)
+
+        static let standard: MessagePropertiesOptions = [.fullyDownloaded, .body]
+    }
+
+    private func keepCacheAttributesForMessage(
+        newMessage: Message,
+        keepProperties: MessagePropertiesOptions,
+        using realm: Realm? = nil
+    ) {
+        let realm = realm ?? getRealm()
+        guard let savedMessage = realm.object(ofType: Message.self, forPrimaryKey: newMessage.uid) else { return }
+        if keepProperties.contains(.fullyDownloaded) {
+            newMessage.fullyDownloaded = savedMessage.fullyDownloaded
+        }
+        if keepProperties.contains(.body), let body = savedMessage.body {
+            newMessage.body = Body(value: body)
+        }
+    }
 }
 
 public extension Realm {
