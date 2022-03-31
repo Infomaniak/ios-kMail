@@ -91,12 +91,36 @@ public class MailboxManager {
         }
         // Get from API
         let folderResult = try await apiFetcher.folders(mailbox: mailbox)
+        let newFolders = getSubFolders(from: folderResult)
 
         let realm = getRealm()
 
+        let cachedFolders = realm.objects(Folder.self)
+
         // Update folders in Realm
         try? realm.safeWrite {
+            // Remove old folders
             realm.add(folderResult, update: .modified)
+            let toDeleteFolders = Set(cachedFolders).subtracting(Set(newFolders))
+            var toDeleteThreads = [Thread]()
+
+            // Threads contains in folders to delete
+            let mayBeDeletedThreads = Set(toDeleteFolders.flatMap(\.threads))
+            // Delete messages in all threads from folders to delete
+            // If message.folderId is one of folders to delete Id
+            let toDeleteMessages = Set(mayBeDeletedThreads.flatMap(\.messages)
+                .filter { toDeleteFolders.map(\._id).contains($0.folderId) })
+
+            // Delete thread if all his messages are deleted
+            for thread in mayBeDeletedThreads {
+                if Set(thread.messages).isSubset(of: toDeleteMessages) {
+                    toDeleteThreads.append(thread)
+                }
+            }
+
+            realm.delete(toDeleteMessages)
+            realm.delete(toDeleteThreads)
+            realm.delete(toDeleteFolders)
         }
     }
 
@@ -112,10 +136,26 @@ public class MailboxManager {
 
         let realm = getRealm()
 
+        guard let parentFolder = realm.object(ofType: Folder.self, forPrimaryKey: folder.id) else { return }
+
+        let fetchedThreads = MutableSet<Thread>()
+        fetchedThreads.insert(objectsIn: threadResult.threads ?? [])
+
+        for thread in fetchedThreads {
+            for message in thread.messages {
+                keepCacheAttributes(for: message, keepProperties: .standard, using: realm)
+            }
+        }
+
         // Update thread in Realm
         try? realm.safeWrite {
-            realm.add(threadResult.threads ?? [], update: .modified)
-            realm.object(ofType: Folder.self, forPrimaryKey: folder.id)?.threads.insert(objectsIn: threadResult.threads ?? [])
+            realm.add(fetchedThreads, update: .modified)
+            let toDeleteThreads = Set(parentFolder.threads).subtracting(Set(fetchedThreads))
+            let toDeleteMessages = Set(toDeleteThreads.flatMap(\.messages))
+            parentFolder.threads = fetchedThreads
+
+            realm.delete(toDeleteMessages)
+            realm.delete(toDeleteThreads)
         }
     }
 
@@ -124,7 +164,7 @@ public class MailboxManager {
     public func message(message: Message) async throws {
         // Get from API
         let completedMessage = try await apiFetcher.message(mailbox: mailbox, message: message)
-        completedMessage.isComplete = true
+        completedMessage.fullyDownloaded = true
 
         let realm = getRealm()
 
@@ -135,6 +175,41 @@ public class MailboxManager {
     }
 
     // MARK: - Utilities
+
+    struct MessagePropertiesOptions: OptionSet {
+        let rawValue: Int
+
+        static let fullyDownloaded = MessagePropertiesOptions(rawValue: 1 << 0)
+        static let body = MessagePropertiesOptions(rawValue: 1 << 1)
+
+        static let standard: MessagePropertiesOptions = [.fullyDownloaded, .body]
+    }
+
+    private func keepCacheAttributes(
+        for message: Message,
+        keepProperties: MessagePropertiesOptions,
+        using realm: Realm? = nil
+    ) {
+        let realm = realm ?? getRealm()
+        guard let savedMessage = realm.object(ofType: Message.self, forPrimaryKey: message.uid) else { return }
+        if keepProperties.contains(.fullyDownloaded) {
+            message.fullyDownloaded = savedMessage.fullyDownloaded
+        }
+        if keepProperties.contains(.body), let body = savedMessage.body {
+            message.body = Body(value: body)
+        }
+    }
+
+    func getSubFolders(from folders: [Folder], oldResult: [Folder] = []) -> [Folder] {
+        var result = oldResult
+        for folder in folders {
+            result.append(folder)
+            if !folder.children.isEmpty {
+                result.append(contentsOf: getSubFolders(from: Array(folder.children)))
+            }
+        }
+        return result
+    }
 }
 
 public extension Realm {

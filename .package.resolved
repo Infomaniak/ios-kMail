@@ -1,131 +1,133 @@
 {
-  "pins" : [
-    {
-      "identity" : "alamofire",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/Alamofire/Alamofire.git",
-      "state" : {
-        "revision" : "f82c23a8a7ef8dc1a49a8bfc6a96883e79121864",
-        "version" : "5.5.0"
+  "object": {
+    "pins": [
+      {
+        "package": "Alamofire",
+        "repositoryURL": "https://github.com/Alamofire/Alamofire.git",
+        "state": {
+          "branch": null,
+          "revision": "f82c23a8a7ef8dc1a49a8bfc6a96883e79121864",
+          "version": "5.5.0"
+        }
+      },
+      {
+        "package": "Atlantis",
+        "repositoryURL": "https://github.com/ProxymanApp/atlantis",
+        "state": {
+          "branch": null,
+          "revision": "b60ef22babc5cc8997841b378bb2993229fac9eb",
+          "version": "1.16.0"
+        }
+      },
+      {
+        "package": "CocoaLumberjack",
+        "repositoryURL": "https://github.com/CocoaLumberjack/CocoaLumberjack.git",
+        "state": {
+          "branch": null,
+          "revision": "80ada1f753b0d53d9b57c465936a7c4169375002",
+          "version": "3.7.4"
+        }
+      },
+      {
+        "package": "InfomaniakCore",
+        "repositoryURL": "https://github.com/Infomaniak/ios-core.git",
+        "state": {
+          "branch": "mail",
+          "revision": "949b17c2a8c51d25dcb9a25e1a239f29a4d657d2",
+          "version": null
+        }
+      },
+      {
+        "package": "InfomaniakLogin",
+        "repositoryURL": "https://github.com/Infomaniak/ios-login.git",
+        "state": {
+          "branch": null,
+          "revision": "9ac704e603cb9b11654f78e65ae2031dc584c341",
+          "version": "1.5.7"
+        }
+      },
+      {
+        "package": "Kingfisher",
+        "repositoryURL": "https://github.com/onevcat/Kingfisher",
+        "state": {
+          "branch": null,
+          "revision": "32e4acdf6971f58f5ad552389cf2d7d016334eaf",
+          "version": "7.2.0"
+        }
+      },
+      {
+        "package": "LocalizeKit",
+        "repositoryURL": "https://github.com/immortal79/LocalizeKit",
+        "state": {
+          "branch": null,
+          "revision": "1abb86ce614ae8d925bf82123c7360ab95827975",
+          "version": "1.0.1"
+        }
+      },
+      {
+        "package": "MatomoTracker",
+        "repositoryURL": "https://github.com/matomo-org/matomo-sdk-ios.git",
+        "state": {
+          "branch": null,
+          "revision": "cea4a1cfcb05d49c5745801e05fff1cfed7a14e3",
+          "version": "7.5.1"
+        }
+      },
+      {
+        "package": "Realm",
+        "repositoryURL": "https://github.com/realm/realm-cocoa",
+        "state": {
+          "branch": null,
+          "revision": "f9400ca044844701ea32491a4c6c4b06d74ab24d",
+          "version": "10.25.0"
+        }
+      },
+      {
+        "package": "RealmDatabase",
+        "repositoryURL": "https://github.com/realm/realm-core",
+        "state": {
+          "branch": null,
+          "revision": "3c78cccdc0d9f967c5c15b7f3ea081814e2b3ef2",
+          "version": "11.13.0"
+        }
+      },
+      {
+        "package": "Sentry",
+        "repositoryURL": "https://github.com/getsentry/sentry-cocoa",
+        "state": {
+          "branch": null,
+          "revision": "0c9efc707a8a62b8b6a6fb03431cc74a9ea8cc51",
+          "version": "7.11.0"
+        }
+      },
+      {
+        "package": "SnackBar",
+        "repositoryURL": "https://github.com/PhilippeWeidmann/SnackBar.swift",
+        "state": {
+          "branch": null,
+          "revision": "8d61e42b2e4a73ea04728c25b10150f6ecc995b6",
+          "version": "0.1.4"
+        }
+      },
+      {
+        "package": "SnapKit",
+        "repositoryURL": "https://github.com/SnapKit/SnapKit.git",
+        "state": {
+          "branch": null,
+          "revision": "d458564516e5676af9c70b4f4b2a9178294f1bc6",
+          "version": "5.0.1"
+        }
+      },
+      {
+        "package": "swift-log",
+        "repositoryURL": "https://github.com/apple/swift-log.git",
+        "state": {
+          "branch": null,
+          "revision": "5d66f7ba25daf4f94100e7022febf3c75e37a6c7",
+          "version": "1.4.2"
+        }
       }
-    },
-    {
-      "identity" : "atlantis",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/ProxymanApp/atlantis",
-      "state" : {
-        "revision" : "b60ef22babc5cc8997841b378bb2993229fac9eb",
-        "version" : "1.16.0"
-      }
-    },
-    {
-      "identity" : "cocoalumberjack",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/CocoaLumberjack/CocoaLumberjack.git",
-      "state" : {
-        "revision" : "80ada1f753b0d53d9b57c465936a7c4169375002",
-        "version" : "3.7.4"
-      }
-    },
-    {
-      "identity" : "ios-core",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/Infomaniak/ios-core.git",
-      "state" : {
-        "branch" : "mail",
-        "revision" : "acb9e4132af3248d5465c9f21034094fb952a6f8"
-      }
-    },
-    {
-      "identity" : "ios-login",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/Infomaniak/ios-login.git",
-      "state" : {
-        "revision" : "9ac704e603cb9b11654f78e65ae2031dc584c341",
-        "version" : "1.5.7"
-      }
-    },
-    {
-      "identity" : "kingfisher",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/onevcat/Kingfisher",
-      "state" : {
-        "revision" : "32e4acdf6971f58f5ad552389cf2d7d016334eaf",
-        "version" : "7.2.0"
-      }
-    },
-    {
-      "identity" : "localizekit",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/immortal79/LocalizeKit",
-      "state" : {
-        "revision" : "1abb86ce614ae8d925bf82123c7360ab95827975",
-        "version" : "1.0.1"
-      }
-    },
-    {
-      "identity" : "matomo-sdk-ios",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/matomo-org/matomo-sdk-ios.git",
-      "state" : {
-        "revision" : "cea4a1cfcb05d49c5745801e05fff1cfed7a14e3",
-        "version" : "7.5.1"
-      }
-    },
-    {
-      "identity" : "realm-cocoa",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/realm/realm-cocoa",
-      "state" : {
-        "revision" : "628cf20632d65d3a3e90ae8aaf52bce596d7ad8f",
-        "version" : "10.24.2"
-      }
-    },
-    {
-      "identity" : "realm-core",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/realm/realm-core",
-      "state" : {
-        "revision" : "dcd3788f75bafb0cc397d145e1651aab3ad4bf0e",
-        "version" : "11.12.0"
-      }
-    },
-    {
-      "identity" : "sentry-cocoa",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/getsentry/sentry-cocoa",
-      "state" : {
-        "revision" : "0c9efc707a8a62b8b6a6fb03431cc74a9ea8cc51",
-        "version" : "7.11.0"
-      }
-    },
-    {
-      "identity" : "snackbar.swift",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/PhilippeWeidmann/SnackBar.swift",
-      "state" : {
-        "revision" : "8d61e42b2e4a73ea04728c25b10150f6ecc995b6",
-        "version" : "0.1.4"
-      }
-    },
-    {
-      "identity" : "snapkit",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/SnapKit/SnapKit.git",
-      "state" : {
-        "revision" : "d458564516e5676af9c70b4f4b2a9178294f1bc6",
-        "version" : "5.0.1"
-      }
-    },
-    {
-      "identity" : "swift-log",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/apple/swift-log.git",
-      "state" : {
-        "revision" : "5d66f7ba25daf4f94100e7022febf3c75e37a6c7",
-        "version" : "1.4.2"
-      }
-    }
-  ],
-  "version" : 2
+    ]
+  },
+  "version": 1
 }
