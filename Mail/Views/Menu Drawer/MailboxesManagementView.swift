@@ -30,24 +30,14 @@ struct MailboxesManagementView: View {
         DisclosureGroup(isExpanded: $unfoldDetails) {
             VStack(alignment: .leading) {
                 ForEach(AccountManager.instance.mailboxes.filter { $0.mailboxId != mailbox.mailboxId }, id: \.mailboxId) { mailbox in
-                    Button {
-                        print("Update account")
-                    } label: {
-                        Text(mailbox.email)
-                        Spacer()
-                        Text("2")
-                            .foregroundColor(Color(InfomaniakCoreAsset.infomaniakColor.color))
-                    }
-                    .padding([.top, .bottom], 3)
+                    MailboxesManagementButtonView(text: mailbox.email, detail: "2", handleAction: switchMailbox)
                 }
 
                 Divider()
                     .background(Color(MailResourcesAsset.separatorColor.color))
 
-                Button("Ajouter un compte") {}
-                    .padding(.top, 5)
-                Button("Gérer mon compte") {}
-                    .padding(.top, 5)
+                MailboxesManagementButtonView(text: "Ajouter un compte", handleAction: addNewAccount)
+                MailboxesManagementButtonView(text: "Gérer mon compte", handleAction: handleMyAccount)
             }
             .padding(.leading)
         } label: {
@@ -59,6 +49,20 @@ struct MailboxesManagementView: View {
         .padding([.leading, .trailing], MenuDrawerView.horizontalPadding)
         .padding([.top], 20)
         .padding([.bottom], 15)
+    }
+
+    // MARK: - Menu actions
+
+    private func switchMailbox() {
+        // todo later
+    }
+
+    private func addNewAccount() {
+        // todo later
+    }
+
+    private func handleMyAccount() {
+        // todo later
     }
 }
 
