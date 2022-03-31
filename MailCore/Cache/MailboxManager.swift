@@ -104,10 +104,14 @@ public class MailboxManager {
             let toDeleteFolders = Set(cachedFolders).subtracting(Set(newFolders))
             var toDeleteThreads = [Thread]()
 
+            // Threads contains in folders to delete
             let mayBeDeletedThreads = Set(toDeleteFolders.flatMap(\.threads))
+            // Delete messages in all threads from folders to delete
+            // If message.folderId is one of folders to delete Id
             let toDeleteMessages = Set(mayBeDeletedThreads.flatMap(\.messages)
-                .filter { toDeleteFolders.map(\._id).contains($0.folderId) == true })
+                .filter { toDeleteFolders.map(\._id).contains($0.folderId) })
 
+            // Delete thread if all his messages are deleted
             for thread in mayBeDeletedThreads {
                 if Set(thread.messages).isSubset(of: toDeleteMessages) {
                     toDeleteThreads.append(thread)
