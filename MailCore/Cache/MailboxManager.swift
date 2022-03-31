@@ -96,7 +96,6 @@ public class MailboxManager {
         let realm = getRealm()
 
         let cachedFolders = realm.objects(Folder.self)
-//        let cachedFoldersId = Array(cachedFolders).map { $0.id }
 
         // Update folders in Realm
         try? realm.safeWrite {
@@ -118,22 +117,6 @@ public class MailboxManager {
             realm.delete(toDeleteMessages)
             realm.delete(toDeleteThreads)
             realm.delete(toDeleteFolders)
-
-//            for cachedFolderId in cachedFoldersId {
-//                if !newFoldersId.contains(cachedFolderId),
-//                   let folderToRemove = realm.object(ofType: Folder.self, forPrimaryKey: cachedFolderId) {
-//                    // Remove orphan messages
-//                    let messagesToRemove = realm.objects(Message.self)
-//                        .filter("folderId == %@", folderToRemove.id)
-//                    realm.delete(messagesToRemove)
-//                    let threadsToRemove = realm.objects(Thread.self).filter("messages.@count == 0")
-//                    realm.delete(threadsToRemove)
-//                    realm.delete(folderToRemove)
-//                }
-//            }
-//
-//            // Add new folders
-//            realm.add(folderResult, update: .modified)
         }
     }
 
