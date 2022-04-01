@@ -17,6 +17,7 @@
  */
 
 import MailCore
+import MailResources
 import RealmSwift
 import SwiftUI
 import UIKit
@@ -49,6 +50,7 @@ class SplitViewController: UISplitViewController {
         )
         .environment(\.realmConfiguration, mailboxManager.realmConfiguration)
         let menuDrawerHostingController = UIHostingController(rootView: menuDrawerView)
+        menuDrawerHostingController.view.backgroundColor = MailResourcesAsset.backgroundColor.color
         setViewController(menuDrawerHostingController, for: .primary)
 
         let inboxFolder = AnyRealmCollection(mailboxManager.getRealm().objects(Folder.self).filter("role = 'INBOX'"))

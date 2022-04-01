@@ -16,30 +16,35 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import MailCore
-import RealmSwift
+import InfomaniakCore
 import SwiftUI
-import UIKit
 
-struct MenuDrawerView: View {
-    @State private var showMailboxes = false
+struct MailboxesManagementButtonView: View {
+    @State var text: String
+    @State var detail: String?
 
-    var mailboxManager: MailboxManager
-    weak var splitViewController: UISplitViewController?
-
-    public static let horizontalPadding: CGFloat = 25
+    var handleAction: () -> Void
 
     var body: some View {
-        VStack {
-            MenuHeaderView(splitViewController: splitViewController)
+        Button(action: handleAction) {
+            Text(text)
 
-            MailboxesManagementView(mailbox: mailboxManager.mailbox)
+            Spacer()
 
-            FoldersListView(mailboxManager: mailboxManager, splitViewController: splitViewController)
-
-            if mailboxManager.mailbox.isLimited {
-                MailboxQuotaView(mailboxManager: mailboxManager)
+            if let detail = detail {
+                Text(detail)
+                    .foregroundColor(Color(InfomaniakCoreAsset.infomaniakColor.color))
             }
         }
+        .padding([.top, .bottom], 5)
+    }
+}
+
+struct MailboxesManagementButtonView_Previews: PreviewProvider {
+    static var previews: some View {
+        MailboxesManagementButtonView(text: "Hello") {
+            print("Hello")
+        }
+        .previewLayout(.sizeThatFits)
     }
 }

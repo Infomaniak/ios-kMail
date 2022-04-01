@@ -70,6 +70,10 @@ public class MailApiFetcher: ApiFetcher {
                                                                       URLQueryItem(name: "prefered_format", value: "html")
                                                                   ]))).data
     }
+
+    public func quotas(mailbox: Mailbox) async throws -> Quotas {
+        try await perform(request: authenticatedRequest(.quotas(mailbox: mailbox.mailbox, productId: mailbox.hostingId))).data
+    }
 }
 
 class SyncedAuthenticator: OAuthAuthenticator {

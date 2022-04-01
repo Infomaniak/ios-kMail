@@ -17,21 +17,9 @@
  */
 
 import Foundation
-import MailResources
+import RealmSwift
 
-public struct URLConstants {
-    public static let matomo = URLConstants(urlString: "https://analytics.infomaniak.com/matomo.php")
-
-    private var urlString: String
-
-    public var url: URL {
-        guard let url = URL(string: urlString) else {
-            fatalError("Invalid URL")
-        }
-        return url
-    }
-}
-
-public enum Constants {
-    public static let sizeLimit = 20_000_000 // ko
+public class Quotas: Object, Codable {
+    @Persisted public var size: Int
+    @Persisted public var sizeCheckedAt: Int64
 }

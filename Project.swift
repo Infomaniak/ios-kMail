@@ -47,6 +47,7 @@ let project = Project(name: "Mail",
                                  ],
                                  dependencies: [
                                      .target(name: "MailCore"),
+                                     .target(name: "MailResources"),
                                      .package(product: "MatomoTracker"),
                                      .package(product: "Atlantis")
                                  ]),
