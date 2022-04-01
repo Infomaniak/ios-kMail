@@ -40,8 +40,8 @@ class SplitViewController: UISplitViewController {
     // MARK: - Private
 
     private func setupSplitViews() {
-        preferredSplitBehavior = .tile
-        preferredDisplayMode = .twoBesideSecondary
+        preferredSplitBehavior = .displace
+        preferredDisplayMode = .twoDisplaceSecondary
         showsSecondaryOnlyButton = true
 
         let menuDrawerView = MenuDrawerView(
@@ -56,9 +56,8 @@ class SplitViewController: UISplitViewController {
         let inboxFolder = AnyRealmCollection(mailboxManager.getRealm().objects(Folder.self).filter("role = 'INBOX'"))
         if let folder = inboxFolder.first {
             let threadListViewController = ThreadListViewController(mailboxManager: mailboxManager, folder: folder)
-            let pepNav = UINavigationController(rootViewController: threadListViewController)
-            setViewController(pepNav, for: .supplementary)
-            setViewController(pepNav, for: .compact)
+            setViewController(threadListViewController, for: .supplementary)
+            setViewController(threadListViewController, for: .compact)
         }
 
         let emptyThreadView = EmptyThreadView()
