@@ -17,7 +17,12 @@
  */
 
 enum Env_Sample {
+    // Set your token here
     static let token = "<token>"
 
+    // Set your user ID here
     static let userId = 01234
+
+    // Set the id of the test mailbox
+    static let mailboxId = 01234
 }
