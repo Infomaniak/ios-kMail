@@ -58,5 +58,25 @@ final class MailApiTests: XCTestCase {
 
     func testFolders() async throws {
         let mailboxes = try await setUpTest()
+        _ = try await currentApiFetcher.folders(mailbox: mailboxes[0])
+    }
+
+    func testThreads() async throws {
+        let mailboxes = try await setUpTest()
+        let folders = try await currentApiFetcher.folders(mailbox: mailboxes[0])
+        _ = try await currentApiFetcher.threads(mailbox: mailboxes[0], folder: folders[0])
+    }
+
+    func testMessage() async throws {
+        let mailboxes = try await setUpTest()
+        let folders = try await currentApiFetcher.folders(mailbox: mailboxes[0])
+        let threads = try await currentApiFetcher.threads(mailbox: mailboxes[0], folder: folders[0])
+        let threadWithMessages = threads.threads?.first { $0.messagesCount > 0 }
+        _ = try await currentApiFetcher.message(mailbox: mailboxes[0], message: threadWithMessages!.messages[0])
+    }
+
+    func testQuotas() async throws {
+        let mailboxes = try await setUpTest()
+        _ = try await currentApiFetcher.quotas(mailbox: mailboxes[0])
     }
 }
