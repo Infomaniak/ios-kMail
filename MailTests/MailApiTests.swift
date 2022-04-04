@@ -24,9 +24,13 @@ import XCTest
 @testable import MailCore
 
 class FakeTokenDelegate: RefreshTokenDelegate {
-    func didUpdateToken(newToken: ApiToken, oldToken: ApiToken) {}
+    func didUpdateToken(newToken: ApiToken, oldToken: ApiToken) {
+        // Nothing to do
+    }
 
-    func didFailRefreshToken(_ token: ApiToken) {}
+    func didFailRefreshToken(_ token: ApiToken) {
+        // Nothing to do
+    }
 }
 
 final class MailApiTests: XCTestCase {
@@ -40,8 +44,6 @@ final class MailApiTests: XCTestCase {
                              expirationDate: Date(timeIntervalSinceNow: TimeInterval(Int.max)))
         return MailApiFetcher(token: token, delegate: FakeTokenDelegate())
     }()
-
-    var mailboxes = [Mailbox]()
 
     // MARK: - Tests setup
 
