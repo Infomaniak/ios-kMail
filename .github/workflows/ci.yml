@@ -16,6 +16,12 @@ jobs:
           access_token: ${{ github.token }}
       - name: Checkout
         uses: actions/checkout@v2
+      - name: Create test env
+        env:
+          ENV_PATH: "MailTests/Env.swift"
+        run: |
+          touch $ENV_PATH
+          echo -e "enum Env {\n static let token = \"$TOKEN\"\n static let userId = $USERID\n static let mailboxId = $MAILBOXID\n}" > $ENV_PATH
       - name: Build
         run: .tuist-bin/tuist build --generate Mail
       - name: Test
