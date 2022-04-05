@@ -22,9 +22,11 @@ import RealmSwift
 
 public enum FolderRole: String, Codable, PersistableEnum {
     case archive = "ARCHIVE"
+    case commercial = "COMMERCIAL"
     case draft = "DRAFT"
     case inbox = "INBOX"
     case sent = "SENT"
+    case socialNetworks = "SOCIALNETWORKS"
     case spam = "SPAM"
     case trash = "TRASH"
 
@@ -32,12 +34,16 @@ public enum FolderRole: String, Codable, PersistableEnum {
         switch self {
         case .archive:
             return "Archives"
+        case .commercial:
+            return "Promotions"
         case .draft:
             return "Drafts"
         case .inbox:
             return "Inbox"
         case .sent:
             return "Sent"
+        case .socialNetworks:
+            return "Social Networks"
         case .spam:
             return "Spam"
         case .trash:
@@ -48,18 +54,21 @@ public enum FolderRole: String, Codable, PersistableEnum {
     public var order: Int {
         switch self {
         case .archive:
-            return 6
-        case .draft:
+            return 8
+        case .commercial:
             return 2
+        case .draft:
+            return 5
         case .inbox:
             return 1
         case .sent:
+            return 4
+        case .socialNetworks:
             return 3
         case .spam:
-            return 4
+            return 6
         case .trash:
-            return 5
-        }
+            return 7
     }
 }
 
