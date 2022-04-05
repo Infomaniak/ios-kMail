@@ -47,37 +47,35 @@ final class MailApiTests: XCTestCase {
 
     // MARK: - Tests setup
 
-    func setUpTest() async throws -> [Mailbox] {
-        return try await currentApiFetcher.mailboxes()
+    func setUpTest() async throws -> Mailbox {
+        let mailboxes = try await currentApiFetcher.mailboxes()
+        XCTAssertTrue(!mailboxes.isEmpty)
+        return mailboxes[0]
     }
 
     // MARK: - Tests methods
 
-    func testMailboxes() async throws {
-        let mailboxes = try await setUpTest()
-        XCTAssertTrue(!mailboxes.isEmpty)
-    }
-
     func testFolders() async throws {
-        let mailboxes = try await setUpTest()
-        _ = try await currentApiFetcher.folders(mailbox: mailboxes[0])
+        let mailbox = try await setUpTest()
+        _ = try await currentApiFetcher.folders(mailbox: mailbox)
     }
 
     func testThreads() async throws {
-        let mailboxes = try await setUpTest()
-        let folders = try await currentApiFetcher.folders(mailbox: mailboxes[0])
-        _ = try await currentApiFetcher.threads(mailbox: mailboxes[0], folder: folders[0])
+        let mailbox = try await setUpTest()
+        let folders = try await currentApiFetcher.folders(mailbox: mailbox)
+        _ = try await currentApiFetcher.threads(mailbox: mailbox, folder: folders[0])
     }
 
     func testMessage() async throws {
-        let mailboxes = try await setUpTest()
-        let folders = try await currentApiFetcher.folders(mailbox: mailboxes[0])
-        let threadResult = try await currentApiFetcher.threads(mailbox: mailboxes[0], folder: folders[0])
-        _ = try await currentApiFetcher.message(mailbox: mailboxes[0], message: threadResult.threads![0].messages[0])
+        let mailbox = try await setUpTest()
+        let folders = try await currentApiFetcher.folders(mailbox: mailbox)
+        let inbox = folders.first { $0.role == .inbox }!
+        let threadResult = try await currentApiFetcher.threads(mailbox: mailbox, folder: inbox)
+        _ = try await currentApiFetcher.message(mailbox: mailbox, message: threadResult.threads![0].messages[0])
     }
 
     func testQuotas() async throws {
-        let mailboxes = try await setUpTest()
-        _ = try await currentApiFetcher.quotas(mailbox: mailboxes[0])
+        let mailbox = try await setUpTest()
+        _ = try await currentApiFetcher.quotas(mailbox: mailbox)
     }
 }

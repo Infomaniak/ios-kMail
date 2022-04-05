@@ -19,10 +19,13 @@ jobs:
       - name: Create test env
         env:
           ENV_PATH: "MailTests/Env.swift"
+          ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
+          USER_ID: ${{ secrets.USER_ID }}
+          MAILBOX_ID: ${{ secrets.MAILBOX_ID }}
         run: |
           touch $ENV_PATH
-          echo -e "enum Env {\n static let token = \"$TOKEN\"\n static let userId = $USERID\n static let mailboxId = $MAILBOXID\n}" > $ENV_PATH
+          echo -e "enum Env {\n static let token = \"$ACCESS_TOKEN\"\n static let userId = $USER_ID\n static let mailboxId = $MAILBOX_ID\n}" > $ENV_PATH
       - name: Build
         run: .tuist-bin/tuist build --generate Mail
       - name: Test
-        run: xcodebuild test -workspace Mail.xcworkspace -scheme Mail -destination "platform=iOS Simulator,name=iPhone 13" -only-testing:MailTests/MailTests
+        run: xcodebuild test -workspace Mail.xcworkspace -scheme Mail -destination "platform=iOS Simulator,name=iPhone 13" -only-testing:MailTests/MailApiTests
