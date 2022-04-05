@@ -25,23 +25,33 @@ import SwiftUI
 
 struct FoldersListView: View {
     // swiftlint:disable empty_count
-    @ObservedResults(Folder.self, where: { $0.parentLink.count == 0 }) var folders
+    @ObservedResults(Folder.self, where: { $0.parentLink.count == 0 && $0.role == nil }) var folders
+
+    @State private var unfoldFolders = false
 
     var mailboxManager: MailboxManager
     weak var splitViewController: UISplitViewController?
 
     init(mailboxManager: MailboxManager, splitViewController: UISplitViewController?) {
         self.mailboxManager = mailboxManager
-        _folders = .init(Folder.self, configuration: mailboxManager.realmConfiguration) { $0.parentLink.count == 0 }
+        _folders = .init(Folder.self, configuration: mailboxManager.realmConfiguration) { $0.parentLink.count == 0 && $0.role == nil }
         self.splitViewController = splitViewController
     }
 
     var body: some View {
-        List(AnyRealmCollection(folders), children: \.listChildren) { folder in
-            FolderCellView(folder: folder, icon: MailResourcesAsset.drawer, action: updateSplitView)
+        DisclosureGroup(isExpanded: $unfoldFolders) {
+            ForEach(AnyRealmCollection(folders)) { folder in
+                FolderCellView(folder: folder, icon: MailResourcesAsset.drawer, action: updateSplitView)
+            }
+            .accentColor(Color(InfomaniakCoreAsset.infomaniakColor.color))
+        } label: {
+            Text("Dossiers")
+
+            Button(action: addNewFolder) {
+                Image(uiImage: MailResourcesAsset.addFolder.image)
+            }
         }
-        .listStyle(.plain)
-        .accentColor(Color(InfomaniakCoreAsset.infomaniakColor.color))
+        .padding([.leading, .trailing], MenuDrawerView.horizontalPadding)
         .onAppear {
             Task {
                 await fetchFolders()
@@ -63,5 +73,9 @@ struct FoldersListView: View {
     private func updateSplitView(with folder: Folder) {
         let messageListVC = ThreadListViewController(mailboxManager: mailboxManager, folder: folder)
         splitViewController?.setViewController(messageListVC, for: .supplementary)
+    }
+
+    private func addNewFolder() {
+        // add new folder
     }
 }

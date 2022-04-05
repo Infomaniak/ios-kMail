@@ -30,7 +30,7 @@ struct MenuDrawerView: View {
     public static let horizontalPadding: CGFloat = 25
 
     var body: some View {
-        VStack {
+        ScrollView {
             MenuHeaderView(splitViewController: splitViewController)
 
             MailboxesManagementView(mailbox: mailboxManager.mailbox)
@@ -41,5 +41,6 @@ struct MenuDrawerView: View {
                 MailboxQuotaView(mailboxManager: mailboxManager)
             }
         }
+        .listStyle(.plain)
     }
 }
