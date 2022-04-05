@@ -40,7 +40,6 @@ struct ThreadView: View {
         .onAppear {
             MatomoUtils.track(view: ["MessageView"])
         }
-        .navigationBarBackButtonHidden(true)
     }
 }
 

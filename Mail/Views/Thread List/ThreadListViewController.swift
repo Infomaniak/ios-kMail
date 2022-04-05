@@ -17,8 +17,8 @@
  */
 
 import MailCore
-import UIKit
 import SwiftUI
+import UIKit
 
 class ThreadListViewController: MailCollectionViewController {
     private var viewModel: ThreadListViewModel
@@ -30,7 +30,6 @@ class ThreadListViewController: MailCollectionViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        title = viewModel.folder.localizedName
         viewModel.onListUpdated = { [self] deletions, insertions, modifications, reload in
             guard !reload else {
                 collectionView.reloadData()
@@ -42,6 +41,11 @@ class ThreadListViewController: MailCollectionViewController {
             collectionView.reloadItems(at: modifications.map { IndexPath(item: $0, section: 0) })
         }
         getThreads()
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        parent?.navigationItem.title = viewModel.folder.localizedName
     }
 
     override func viewDidAppear(_ animated: Bool) {
@@ -76,6 +80,11 @@ class ThreadListViewController: MailCollectionViewController {
     override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         let threadView = ThreadView(mailboxManager: viewModel.mailboxManager, thread: viewModel.threads[indexPath.item])
         let threadHostingController = UIHostingController(rootView: threadView)
-        showDetailViewController(threadHostingController, sender: self)
+        if let splitVC = splitViewController, splitVC.isCollapsed {
+            navigationController?.pushViewController(threadHostingController, animated: true)
+        } else {
+            let nav = UINavigationController(rootViewController: threadHostingController)
+            showDetailViewController(nav, sender: self)
+        }
     }
 }

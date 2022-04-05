@@ -20,8 +20,8 @@ import InfomaniakCore
 import MailCore
 import MailResources
 import RealmSwift
-import UIKit
 import SwiftUI
+import UIKit
 
 struct FoldersListView: View {
     // swiftlint:disable empty_count
@@ -38,7 +38,12 @@ struct FoldersListView: View {
 
     var body: some View {
         List(AnyRealmCollection(folders), children: \.listChildren) { folder in
-            FolderCellView(folder: folder, icon: MailResourcesAsset.drawer, action: updateSplitView)
+            FolderCellView(
+                mailboxManager: mailboxManager,
+                folder: folder,
+                icon: MailResourcesAsset.drawer,
+                action: updateSplitView
+            )
         }
         .listStyle(.plain)
         .accentColor(Color(InfomaniakCoreAsset.infomaniakColor.color))
@@ -61,7 +66,11 @@ struct FoldersListView: View {
     }
 
     private func updateSplitView(with folder: Folder) {
-        let messageListVC = ThreadListViewController(mailboxManager: mailboxManager, folder: folder)
-        splitViewController?.setViewController(messageListVC, for: .supplementary)
+        if let splitVC = splitViewController, splitVC.isCollapsed {
+            
+        } else {
+            let threadListVC = ThreadListViewController(mailboxManager: mailboxManager, folder: folder)
+            splitViewController?.setViewController(threadListVC, for: .supplementary)
+        }
     }
 }

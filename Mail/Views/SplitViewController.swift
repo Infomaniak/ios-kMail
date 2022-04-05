@@ -56,12 +56,43 @@ class SplitViewController: UISplitViewController {
         let inboxFolder = AnyRealmCollection(mailboxManager.getRealm().objects(Folder.self).filter("role = 'INBOX'"))
         if let folder = inboxFolder.first {
             let threadListViewController = ThreadListViewController(mailboxManager: mailboxManager, folder: folder)
-            setViewController(threadListViewController, for: .supplementary)
-            setViewController(threadListViewController, for: .compact)
+            let threadListNav = UINavigationController(rootViewController: threadListViewController)
+            setViewController(threadListNav, for: .supplementary)
+            setViewController(threadListNav, for: .compact)
         }
 
         let emptyThreadView = EmptyThreadView()
         let threadHostingController = UIHostingController(rootView: emptyThreadView)
         setViewController(threadHostingController, for: .secondary)
     }
+}
+
+struct SplitView: View {
+    var mailboxManager = AccountManager.instance.currentMailboxManager!
+    var selectedFolder: Folder
+
+    init() {
+        selectedFolder = mailboxManager.getRealm().objects(Folder.self).filter("role = 'INBOX'").first!
+    }
+
+    var body: some View {
+        NavigationView {
+            MenuDrawerView(mailboxManager: mailboxManager)
+
+            ThreadList(mailboxManager: mailboxManager, folder: selectedFolder)
+
+            EmptyThreadView()
+        }
+    }
+}
+
+struct ThreadList: UIViewControllerRepresentable {
+    var mailboxManager: MailboxManager
+    var folder: Folder
+
+    func makeUIViewController(context: Context) -> ThreadListViewController {
+        return ThreadListViewController(mailboxManager: mailboxManager, folder: folder)
+    }
+
+    func updateUIViewController(_ uiViewController: ThreadListViewController, context: Context) {}
 }

@@ -22,15 +22,14 @@ import MailResources
 import SwiftUI
 
 struct FolderCellView: View {
+    var mailboxManager: MailboxManager
     @State var folder: Folder
 
     var icon: MailResourcesImages
     var action: (Folder) -> Void
 
     var body: some View {
-        Button {
-            action(folder)
-        } label: {
+        NavigationLink(destination: ThreadList(mailboxManager: mailboxManager, folder: folder)) {
             HStack {
                 Image(uiImage: icon.image)
                     .foregroundColor(Color(InfomaniakCoreAsset.infomaniakColor.color))
@@ -51,7 +50,7 @@ struct FolderCellView: View {
 
 struct FolderCellView_Previews: PreviewProvider {
     static var previews: some View {
-        FolderCellView(folder: PreviewHelper.sampleFolder, icon: MailResourcesAsset.drawer) { _ in
+        FolderCellView(mailboxManager: MailboxManager(mailbox: PreviewHelper.sampleMailbox, apiFetcher: MailApiFetcher()), folder: PreviewHelper.sampleFolder, icon: MailResourcesAsset.drawer) { _ in
             print("Hello")
         }
         .previewLayout(.sizeThatFits)
