@@ -16,6 +16,7 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import Introspect
 import MailCore
 import MailResources
 import RealmSwift
@@ -82,6 +83,10 @@ struct SplitView: View {
             ThreadList(mailboxManager: mailboxManager, folder: selectedFolder)
 
             EmptyThreadView()
+        }
+        .introspectNavigationController { navigationController in
+            guard let splitViewControler = navigationController.splitViewController else { return }
+            splitViewControler.preferredSplitBehavior = .displace
         }
     }
 }
