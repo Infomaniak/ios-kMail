@@ -69,6 +69,7 @@ public enum FolderRole: String, Codable, PersistableEnum {
             return 6
         case .trash:
             return 7
+        }
     }
 }
 
