@@ -28,16 +28,7 @@ struct MenuHeaderView: View {
             Image(uiImage: MailResourcesAsset.logoMail.image)
                 .resizable()
                 .scaledToFit()
-                .frame(width: 55)
-                .padding(.trailing, 5)
-
-            VStack(alignment: .leading) {
-                Text("Infomaniak")
-                    .font(.system(size: 14))
-                Text("Mail")
-                    .font(.system(size: 22))
-                    .bold()
-            }
+                .frame(height: 52)
 
             Spacer()
 

@@ -45,7 +45,7 @@ struct MailboxesManagementView: View {
                 .fontWeight(.semibold)
                 .lineLimit(1)
         }
-        .accentColor(.primary)
+        .accentColor(Color(MailResourcesAsset.primaryTextColor.color))
         .padding([.leading, .trailing], MenuDrawerView.horizontalPadding)
         .padding([.top], 20)
         .padding([.bottom], 15)

@@ -52,6 +52,7 @@ struct FoldersListView: View {
             }
         }
         .padding([.leading, .trailing], MenuDrawerView.horizontalPadding)
+        .accentColor(Color(MailResourcesAsset.primaryTextColor.color))
         .onAppear {
             Task {
                 await fetchFolders()
