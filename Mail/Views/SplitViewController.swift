@@ -71,6 +71,7 @@ class SplitViewController: UISplitViewController {
 struct SplitView: View {
     var mailboxManager = AccountManager.instance.currentMailboxManager!
     var selectedFolder: Folder
+    @State var navigationController: UINavigationController?
 
     init() {
         selectedFolder = mailboxManager.getRealm().objects(Folder.self).filter("role = 'INBOX'").first!
@@ -84,9 +85,23 @@ struct SplitView: View {
 
             EmptyThreadView()
         }
-        .introspectNavigationController { navigationController in
-            guard let splitViewControler = navigationController.splitViewController else { return }
-            splitViewControler.preferredSplitBehavior = .displace
+        .onRotate(perform: { orientation in
+            guard let splitViewControler = navigationController?.splitViewController else { return }
+            if orientation == .portrait || orientation == .portraitUpsideDown {
+                splitViewControler.preferredSplitBehavior = .overlay
+            } else if orientation == .landscapeLeft || orientation == .landscapeRight {
+                splitViewControler.preferredSplitBehavior = .displace
+            }
+        })
+        .introspectNavigationController { navController in
+            navigationController = navController
+            guard let splitViewControler = navController.splitViewController else { return }
+            if UIDevice.current.orientation.isLandscape {
+                splitViewControler.preferredSplitBehavior = .displace
+            } else if UIDevice.current.orientation.isLandscape {
+                splitViewControler.preferredSplitBehavior = .overlay
+            }
+            splitViewControler.preferredDisplayMode = .twoDisplaceSecondary
         }
     }
 }
@@ -100,4 +115,24 @@ struct ThreadList: UIViewControllerRepresentable {
     }
 
     func updateUIViewController(_ uiViewController: ThreadListViewController, context: Context) {}
+}
+
+
+struct DeviceRotationViewModifier: ViewModifier {
+    let action: (UIDeviceOrientation) -> Void
+
+    func body(content: Content) -> some View {
+        content
+            .onAppear()
+            .onReceive(NotificationCenter.default.publisher(for: UIDevice.orientationDidChangeNotification)) { _ in
+                action(UIDevice.current.orientation)
+            }
+    }
+}
+
+// A View wrapper to make the modifier easier to use
+extension View {
+    func onRotate(perform action: @escaping (UIDeviceOrientation) -> Void) -> some View {
+        self.modifier(DeviceRotationViewModifier(action: action))
+    }
 }
