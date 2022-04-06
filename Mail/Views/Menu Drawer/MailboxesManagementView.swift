@@ -39,6 +39,7 @@ struct MailboxesManagementView: View {
                 MailboxesManagementButtonView(text: "Gérer mon compte", handleAction: handleMyAccount)
             }
             .padding(.leading)
+            .padding(.top, 5)
         } label: {
             Text(mailbox.email)
                 .fontWeight(.semibold)

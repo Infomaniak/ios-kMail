@@ -52,7 +52,7 @@ struct FoldersListView: View {
                 }
                 .accentColor(Color(InfomaniakCoreAsset.infomaniakColor.color))
             }
-            .padding(.top, 6)
+            .padding(.top, 9)
         } label: {
             Text("Dossiers")
                 .padding(.trailing, 7)

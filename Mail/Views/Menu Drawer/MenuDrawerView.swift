@@ -17,6 +17,7 @@
  */
 
 import MailCore
+import MailResources
 import RealmSwift
 import SwiftUI
 import UIKit
@@ -29,11 +30,20 @@ struct MenuDrawerView: View {
 
     public static let horizontalPadding: CGFloat = 25
 
+    private let helpMenuItems = [
+        MenuItem(icon: MailResourcesAsset.alertCircle, label: "Feedbacks", action: sendFeedback),
+        MenuItem(icon: MailResourcesAsset.questionHelpCircle, label: "Aide", action: openHelp)
+    ]
+    private let actionsMenuItems = [
+        MenuItem(icon: MailResourcesAsset.drawerArrow, label: "Importer des mails", action: importMails),
+        MenuItem(icon: MailResourcesAsset.synchronizeArrow, label: "Restaurer des mails", action: restoreMails)
+    ]
+
     var body: some View {
         ScrollView {
             MenuHeaderView(splitViewController: splitViewController)
 
-            VStack {
+            VStack(alignment: .leading) {
                 MailboxesManagementView(mailbox: mailboxManager.mailbox)
 
                 MenuDrawerSeparatorView()
@@ -42,6 +52,12 @@ struct MenuDrawerView: View {
 
                 MenuDrawerSeparatorView()
 
+                ItemsListView(content: helpMenuItems)
+
+                MenuDrawerSeparatorView()
+
+                ItemsListView(title: "Actions avancées", content: actionsMenuItems)
+
                 if mailboxManager.mailbox.isLimited {
                     MailboxQuotaView(mailboxManager: mailboxManager)
                 }
@@ -49,5 +65,23 @@ struct MenuDrawerView: View {
             .padding([.leading, .trailing], Self.horizontalPadding)
         }
         .listStyle(.plain)
+    }
+
+    // MARK: - Menu actions
+
+    static func sendFeedback() {
+        // Send feedbacks
+    }
+
+    static func openHelp() {
+        // Open help
+    }
+
+    static func importMails() {
+        // Import Mails
+    }
+
+    static func restoreMails() {
+        // Restore Mails
     }
 }
