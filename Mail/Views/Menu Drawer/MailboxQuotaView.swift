@@ -57,7 +57,6 @@ struct MailboxQuotaView: View {
 
             Spacer()
         }
-        .padding([.leading, .trailing], MenuDrawerView.horizontalPadding)
         .padding([.top, .bottom])
         .onAppear {
             Task {

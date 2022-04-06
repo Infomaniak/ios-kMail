@@ -40,24 +40,29 @@ struct FoldersListView: View {
 
     var body: some View {
         DisclosureGroup(isExpanded: $unfoldFolders) {
-            ForEach(AnyRealmCollection(folders)) { folder in
+            ForEach(AnyRealmCollection(folders.sorted(by: [SortDescriptor(keyPath: \Folder.isFavorite, ascending: false)]))) { folder in
                 FolderCellView(folder: folder, icon: MailResourcesAsset.drawer, action: updateSplitView)
             }
             .accentColor(Color(InfomaniakCoreAsset.infomaniakColor.color))
         } label: {
             Text("Dossiers")
+                .padding(.trailing, 5)
 
             Button(action: addNewFolder) {
                 Image(uiImage: MailResourcesAsset.addFolder.image)
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 16)
             }
         }
-        .padding([.leading, .trailing], MenuDrawerView.horizontalPadding)
         .accentColor(Color(MailResourcesAsset.primaryTextColor.color))
+        .padding([.top, .bottom], 9)
         .onAppear {
             Task {
                 await fetchFolders()
                 MatomoUtils.track(view: ["MenuDrawer"])
             }
+            print(MailboxManager.constants.rootDocumentsURL)
         }
     }
 

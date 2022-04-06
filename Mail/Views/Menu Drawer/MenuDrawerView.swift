@@ -33,13 +33,20 @@ struct MenuDrawerView: View {
         ScrollView {
             MenuHeaderView(splitViewController: splitViewController)
 
-            MailboxesManagementView(mailbox: mailboxManager.mailbox)
+            VStack {
+                MailboxesManagementView(mailbox: mailboxManager.mailbox)
 
-            FoldersListView(mailboxManager: mailboxManager, splitViewController: splitViewController)
+                MenuDrawerSeparatorView()
 
-            if mailboxManager.mailbox.isLimited {
-                MailboxQuotaView(mailboxManager: mailboxManager)
+                FoldersListView(mailboxManager: mailboxManager, splitViewController: splitViewController)
+
+                MenuDrawerSeparatorView()
+
+                if mailboxManager.mailbox.isLimited {
+                    MailboxQuotaView(mailboxManager: mailboxManager)
+                }
             }
+            .padding([.leading, .trailing], Self.horizontalPadding)
         }
         .listStyle(.plain)
     }

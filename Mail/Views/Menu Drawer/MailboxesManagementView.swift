@@ -33,8 +33,7 @@ struct MailboxesManagementView: View {
                     MailboxesManagementButtonView(text: mailbox.email, detail: "2", handleAction: switchMailbox)
                 }
 
-                Divider()
-                    .background(Color(MailResourcesAsset.separatorColor.color))
+                MenuDrawerSeparatorView()
 
                 MailboxesManagementButtonView(text: "Ajouter un compte", handleAction: addNewAccount)
                 MailboxesManagementButtonView(text: "Gérer mon compte", handleAction: handleMyAccount)
@@ -46,7 +45,6 @@ struct MailboxesManagementView: View {
                 .lineLimit(1)
         }
         .accentColor(Color(MailResourcesAsset.primaryTextColor.color))
-        .padding([.leading, .trailing], MenuDrawerView.horizontalPadding)
         .padding([.top], 20)
         .padding([.bottom], 15)
     }
