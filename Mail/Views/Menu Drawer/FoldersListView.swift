@@ -32,6 +32,12 @@ struct FoldersListView: View {
     var mailboxManager: MailboxManager
     weak var splitViewController: UISplitViewController?
 
+    private let foldersSortDescriptors = [
+        SortDescriptor(keyPath: \Folder.isFavorite, ascending: false),
+        SortDescriptor(keyPath: \Folder.unreadCount, ascending: false),
+        SortDescriptor(keyPath: \Folder.name)
+    ]
+
     init(mailboxManager: MailboxManager, splitViewController: UISplitViewController?) {
         self.mailboxManager = mailboxManager
         _folders = .init(Folder.self, configuration: mailboxManager.realmConfiguration) { $0.parentLink.count == 0 && $0.role == nil }
@@ -40,13 +46,16 @@ struct FoldersListView: View {
 
     var body: some View {
         DisclosureGroup(isExpanded: $unfoldFolders) {
-            ForEach(AnyRealmCollection(folders.sorted(by: [SortDescriptor(keyPath: \Folder.isFavorite, ascending: false)]))) { folder in
-                FolderCellView(folder: folder, icon: MailResourcesAsset.drawer, action: updateSplitView)
+            VStack {
+                ForEach(AnyRealmCollection(folders.sorted(by: foldersSortDescriptors))) { folder in
+                    FolderCellView(folder: folder, icon: MailResourcesAsset.drawer, action: updateSplitView)
+                }
+                .accentColor(Color(InfomaniakCoreAsset.infomaniakColor.color))
             }
-            .accentColor(Color(InfomaniakCoreAsset.infomaniakColor.color))
+            .padding(.top, 6)
         } label: {
             Text("Dossiers")
-                .padding(.trailing, 5)
+                .padding(.trailing, 7)
 
             Button(action: addNewFolder) {
                 Image(uiImage: MailResourcesAsset.addFolder.image)

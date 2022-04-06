@@ -32,8 +32,9 @@ struct FolderCellView: View {
             action(folder)
         } label: {
             HStack {
-                Image(uiImage: icon.image)
+                Image(systemName: folder.isFavorite ? "folder.badge.plus" : "folder")
                     .foregroundColor(Color(InfomaniakCoreAsset.infomaniakColor.color))
+                    .padding(.trailing, 10)
 
                 Text(folder.localizedName)
                     .foregroundColor(Color(MailResourcesAsset.primaryTextColor.color))
@@ -45,6 +46,7 @@ struct FolderCellView: View {
                         .foregroundColor(Color(InfomaniakCoreAsset.infomaniakColor.color))
                 }
             }
+            .padding([.top, .bottom], 3)
         }
     }
 }
@@ -55,5 +57,6 @@ struct FolderCellView_Previews: PreviewProvider {
             print("Hello")
         }
         .previewLayout(.sizeThatFits)
+        .previewDevice(PreviewDevice(stringLiteral: "iPhone 11 Pro"))
     }
 }
