@@ -29,7 +29,7 @@ struct ItemCellView: View {
                     .resizable()
                     .scaledToFit()
                     .frame(height: 24)
-                    .padding(.trailing, 20)
+                    .padding(.trailing, 15)
 
                 Text(content.label)
                     .foregroundColor(Color(MailResourcesAsset.primaryTextColor.color))
