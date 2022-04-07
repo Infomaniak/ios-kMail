@@ -34,4 +34,28 @@ public struct URLConstants {
 
 public enum Constants {
     public static let sizeLimit = 20_000_000 // ko
+    
+    private static var dateFormatter = DateFormatter()
+    
+    public enum DateTimeStyle {
+        case date
+        case time
+        case datetime
+    }
+    
+    public static func formatDate(_ date: Date, style: DateTimeStyle = .datetime, relative: Bool = false) -> String {
+        switch style {
+        case .date:
+            dateFormatter.dateStyle = .medium
+            dateFormatter.timeStyle = .none
+        case .time:
+            dateFormatter.dateStyle = .none
+            dateFormatter.timeStyle = .short
+        case .datetime:
+            dateFormatter.dateStyle = .medium
+            dateFormatter.timeStyle = .short
+        }
+        dateFormatter.doesRelativeDateFormatting = relative
+        return dateFormatter.string(from: date)
+    }
 }

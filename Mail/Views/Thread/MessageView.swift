@@ -25,6 +25,7 @@ struct MessageView: View {
     private var mailboxManager: MailboxManager
     @State var model = WebViewModel()
     @State private var webViewHeight: CGFloat = .zero
+    @State var isHeaderReduced = true
 
     init(mailboxManager: MailboxManager, message: Message) {
         self.mailboxManager = mailboxManager
@@ -35,6 +36,7 @@ struct MessageView: View {
         VStack {
             Text(message.subject ?? "No subject")
             Text("Message view")
+            MessageHeaderView(message: message, isReduced: $isHeaderReduced)
             GeometryReader { proxy in
                 WebView(model: $model, dynamicHeight: $webViewHeight, proxy: proxy)
                     .frame(height: webViewHeight)
