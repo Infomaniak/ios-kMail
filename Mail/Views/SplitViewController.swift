@@ -53,11 +53,15 @@ struct SplitView: View {
         }
         .introspectNavigationController { navController in
             navigationController = navController
-            guard let splitViewControler = navController.splitViewController else { return }
-            if UIDevice.current.orientation.isLandscape {
+            guard let splitViewControler = navController.splitViewController,
+                  let interfaceOrientation = UIApplication.shared.windows.first(where: { $0.isKeyWindow })?.windowScene?
+                  .interfaceOrientation else { return }
+            if interfaceOrientation.isLandscape {
                 splitViewControler.preferredSplitBehavior = .displace
-            } else if UIDevice.current.orientation.isLandscape {
+            } else if interfaceOrientation.isPortrait {
                 splitViewControler.preferredSplitBehavior = .overlay
+            } else {
+                splitViewControler.preferredSplitBehavior = .automatic
             }
             splitViewControler.preferredDisplayMode = .twoDisplaceSecondary
         }
