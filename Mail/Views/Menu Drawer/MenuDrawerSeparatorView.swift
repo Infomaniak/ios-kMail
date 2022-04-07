@@ -21,17 +21,21 @@ import SwiftUI
 
 struct MenuDrawerSeparatorView: View {
     var withPadding = true
+    var fullWidth = false
 
     var body: some View {
         Divider()
             .background(Color(MailResourcesAsset.separatorColor.color))
             .padding(.top, withPadding ? 12 : 0)
             .padding(.bottom, withPadding ? 12: 0)
+            .padding(.trailing, fullWidth ? 0 : 30)
     }
 }
 
 struct MenuDrawerSeparatorView_Previews: PreviewProvider {
     static var previews: some View {
         MenuDrawerSeparatorView()
+            .previewLayout(.sizeThatFits)
+            .previewDevice("iPhone 13 Pro")
     }
 }

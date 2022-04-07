@@ -52,6 +52,10 @@ struct MenuDrawerView: View {
 
                 MenuDrawerSeparatorView()
 
+                RoleFoldersListView(mailboxManager: mailboxManager, selectedFolderId: $selectedFolderId)
+
+                MenuDrawerSeparatorView()
+
                 UserFoldersListView(mailboxManager: mailboxManager, splitViewController: splitViewController, selectedFolderId: $selectedFolderId)
 
                 MenuDrawerSeparatorView()

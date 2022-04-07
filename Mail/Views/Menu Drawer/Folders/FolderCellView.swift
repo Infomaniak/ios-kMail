@@ -38,7 +38,10 @@ struct FolderCellView: View {
             selectedFolderId = folder.id
         } label: {
             HStack {
-                Image(systemName: folder.isFavorite ? "folder.badge.plus" : "folder")
+                Image(uiImage: icon.image)
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 24, height: 24)
                     .foregroundColor(Color(InfomaniakCoreAsset.infomaniakColor.color))
                     .padding(.trailing, 10)
 

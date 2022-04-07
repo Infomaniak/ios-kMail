@@ -36,9 +36,9 @@ struct ItemsListView: View {
         VStack(alignment: .leading) {
             if let title = title {
                 Text(title)
-                    .font(.system(size: 15))
+                    .font(.system(size: 16))
                     .foregroundColor(Color(MailResourcesAsset.sectionHeaderTextColor.color))
-                    .padding(.bottom, 5)
+                    .padding(.bottom, 6)
             }
 
             ForEach(content) { item in

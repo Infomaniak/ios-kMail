@@ -16,16 +16,44 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import MailCore
+import MailResources
+import RealmSwift
 import SwiftUI
 
 struct RoleFoldersListView: View {
-    var body: some View {
-        Text("Hello, World!")
-    }
-}
+    // swiftlint:disable empty_count
+    @ObservedResults(Folder.self, where: { $0.parentLink.count == 0 && $0.role != nil }) var folders
 
-struct RoleFoldersListView_Previews: PreviewProvider {
-    static var previews: some View {
-        RoleFoldersListView()
+    @Binding var selectedFolderId: String?
+
+    private let items: [FolderRole: MailResourcesImages] = [
+        .inbox: MailResourcesAsset.drawer,
+        .commercial: MailResourcesAsset.commercial,
+        .socialNetworks: MailResourcesAsset.socialNetworks,
+        .sent: MailResourcesAsset.emailSent,
+        .draft: MailResourcesAsset.draft,
+        .spam: MailResourcesAsset.spam,
+        .trash: MailResourcesAsset.bin,
+        .archive: MailResourcesAsset.archive
+    ]
+
+    init(mailboxManager: MailboxManager, selectedFolderId: Binding<String?>) {
+        _folders = .init(Folder.self, configuration: mailboxManager.realmConfiguration) { $0.parentLink.count == 0 && $0.role != nil }
+        _selectedFolderId = selectedFolderId
+    }
+
+    var body: some View {
+        FolderCellView(folder: folders.first { $0.role == .inbox }!, selectedFolderId: $selectedFolderId, icon: items[.inbox]!, action: openFolder)
+
+        MenuDrawerSeparatorView()
+
+        ForEach(AnyRealmCollection(folders).filter { $0.role != .inbox }.sorted()) { folder in
+            FolderCellView(folder: folder, selectedFolderId: $selectedFolderId, icon: items[folder.role!]!, action: openFolder)
+        }
+    }
+
+    func openFolder(folder: Folder) {
+        // Remove function next
     }
 }
