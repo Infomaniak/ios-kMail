@@ -29,20 +29,18 @@ struct FolderCellView: View {
     var action: (Folder) -> Void
 
     var body: some View {
-        NavigationLink(destination: ThreadList(mailboxManager: mailboxManager, folder: folder)) {
-            HStack {
-                Image(uiImage: icon.image)
+        HStack {
+            Image(uiImage: icon.image)
+                .foregroundColor(Color(InfomaniakCoreAsset.infomaniakColor.color))
+
+            Text(folder.localizedName)
+                .foregroundColor(Color(MailResourcesAsset.primaryTextColor.color))
+
+            Spacer()
+
+            if let unreadCount = folder.unreadCount, unreadCount > 0 {
+                Text(unreadCount < 100 ? "\(unreadCount)" : "99+")
                     .foregroundColor(Color(InfomaniakCoreAsset.infomaniakColor.color))
-
-                Text(folder.localizedName)
-                    .foregroundColor(Color(MailResourcesAsset.primaryTextColor.color))
-
-                Spacer()
-
-                if let unreadCount = folder.unreadCount, unreadCount > 0 {
-                    Text(unreadCount < 100 ? "\(unreadCount)" : "99+")
-                        .foregroundColor(Color(InfomaniakCoreAsset.infomaniakColor.color))
-                }
             }
         }
     }
@@ -50,7 +48,11 @@ struct FolderCellView: View {
 
 struct FolderCellView_Previews: PreviewProvider {
     static var previews: some View {
-        FolderCellView(mailboxManager: MailboxManager(mailbox: PreviewHelper.sampleMailbox, apiFetcher: MailApiFetcher()), folder: PreviewHelper.sampleFolder, icon: MailResourcesAsset.drawer) { _ in
+        FolderCellView(
+            mailboxManager: MailboxManager(mailbox: PreviewHelper.sampleMailbox, apiFetcher: MailApiFetcher()),
+            folder: PreviewHelper.sampleFolder,
+            icon: MailResourcesAsset.drawer
+        ) { _ in
             print("Hello")
         }
         .previewLayout(.sizeThatFits)

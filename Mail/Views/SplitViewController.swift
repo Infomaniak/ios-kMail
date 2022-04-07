@@ -18,60 +18,14 @@
 
 import Introspect
 import MailCore
-import MailResources
 import RealmSwift
 import SwiftUI
-import UIKit
-
-class SplitViewController: UISplitViewController {
-    var mailboxManager = AccountManager.instance.currentMailboxManager!
-
-    // MARK: - Public methods
-
-    convenience init() {
-        self.init(style: .tripleColumn)
-    }
-
-    override func viewDidLoad() {
-        super.viewDidLoad()
-
-        setupSplitViews()
-    }
-
-    // MARK: - Private
-
-    private func setupSplitViews() {
-        preferredSplitBehavior = .displace
-        preferredDisplayMode = .twoDisplaceSecondary
-        showsSecondaryOnlyButton = true
-
-        let menuDrawerView = MenuDrawerView(
-            mailboxManager: mailboxManager,
-            splitViewController: self
-        )
-        .environment(\.realmConfiguration, mailboxManager.realmConfiguration)
-        let menuDrawerHostingController = UIHostingController(rootView: menuDrawerView)
-        menuDrawerHostingController.view.backgroundColor = MailResourcesAsset.backgroundColor.color
-        setViewController(menuDrawerHostingController, for: .primary)
-
-        let inboxFolder = AnyRealmCollection(mailboxManager.getRealm().objects(Folder.self).filter("role = 'INBOX'"))
-        if let folder = inboxFolder.first {
-            let threadListViewController = ThreadListViewController(mailboxManager: mailboxManager, folder: folder)
-            let threadListNav = UINavigationController(rootViewController: threadListViewController)
-            setViewController(threadListNav, for: .supplementary)
-            setViewController(threadListNav, for: .compact)
-        }
-
-        let emptyThreadView = EmptyThreadView()
-        let threadHostingController = UIHostingController(rootView: emptyThreadView)
-        setViewController(threadHostingController, for: .secondary)
-    }
-}
 
 struct SplitView: View {
     var mailboxManager = AccountManager.instance.currentMailboxManager!
     var selectedFolder: Folder
     @State var navigationController: UINavigationController?
+    @Environment(\.horizontalSizeClass) var sizeClass
 
     init() {
         selectedFolder = mailboxManager.getRealm().objects(Folder.self).filter("role = 'INBOX'").first!
@@ -79,20 +33,24 @@ struct SplitView: View {
 
     var body: some View {
         NavigationView {
-            MenuDrawerView(mailboxManager: mailboxManager)
+            if sizeClass == .compact {
+                ThreadList(mailboxManager: mailboxManager, folder: selectedFolder, isCompact: sizeClass == .compact)
+            } else {
+                MenuDrawerView(mailboxManager: mailboxManager, isCompact: sizeClass == .compact)
 
-            ThreadList(mailboxManager: mailboxManager, folder: selectedFolder)
+                ThreadList(mailboxManager: mailboxManager, folder: selectedFolder, isCompact: sizeClass == .compact)
 
-            EmptyThreadView()
+                EmptyThreadView()
+            }
         }
-        .onRotate(perform: { orientation in
+        .onRotate { orientation in
             guard let splitViewControler = navigationController?.splitViewController else { return }
             if orientation == .portrait || orientation == .portraitUpsideDown {
                 splitViewControler.preferredSplitBehavior = .overlay
             } else if orientation == .landscapeLeft || orientation == .landscapeRight {
                 splitViewControler.preferredSplitBehavior = .displace
             }
-        })
+        }
         .introspectNavigationController { navController in
             navigationController = navController
             guard let splitViewControler = navController.splitViewController else { return }
@@ -109,14 +67,14 @@ struct SplitView: View {
 struct ThreadList: UIViewControllerRepresentable {
     var mailboxManager: MailboxManager
     var folder: Folder
+    var isCompact: Bool
 
     func makeUIViewController(context: Context) -> ThreadListViewController {
-        return ThreadListViewController(mailboxManager: mailboxManager, folder: folder)
+        return ThreadListViewController(mailboxManager: mailboxManager, folder: folder, isCompact: isCompact)
     }
 
     func updateUIViewController(_ uiViewController: ThreadListViewController, context: Context) {}
 }
-
 
 struct DeviceRotationViewModifier: ViewModifier {
     let action: (UIDeviceOrientation) -> Void
@@ -133,6 +91,6 @@ struct DeviceRotationViewModifier: ViewModifier {
 // A View wrapper to make the modifier easier to use
 extension View {
     func onRotate(perform action: @escaping (UIDeviceOrientation) -> Void) -> some View {
-        self.modifier(DeviceRotationViewModifier(action: action))
+        modifier(DeviceRotationViewModifier(action: action))
     }
 }

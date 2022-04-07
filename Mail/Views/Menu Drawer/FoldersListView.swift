@@ -26,24 +26,51 @@ import UIKit
 struct FoldersListView: View {
     // swiftlint:disable empty_count
     @ObservedResults(Folder.self, where: { $0.parentLink.count == 0 }) var folders
+    @Environment(\.presentationMode) var presentationMode
 
     var mailboxManager: MailboxManager
     weak var splitViewController: UISplitViewController?
+    var isCompact: Bool
 
-    init(mailboxManager: MailboxManager, splitViewController: UISplitViewController?) {
+    var delegate: FolderListViewDelegate?
+
+    init(
+        mailboxManager: MailboxManager,
+        splitViewController: UISplitViewController?,
+        isCompact: Bool,
+        delegate: FolderListViewDelegate?
+    ) {
         self.mailboxManager = mailboxManager
         _folders = .init(Folder.self, configuration: mailboxManager.realmConfiguration) { $0.parentLink.count == 0 }
         self.splitViewController = splitViewController
+        self.isCompact = isCompact
+        self.delegate = delegate
     }
 
     var body: some View {
         List(AnyRealmCollection(folders), children: \.listChildren) { folder in
-            FolderCellView(
-                mailboxManager: mailboxManager,
-                folder: folder,
-                icon: MailResourcesAsset.drawer,
-                action: updateSplitView
-            )
+
+            if isCompact {
+                Button {
+                    updateSplitView(with: folder)
+                } label: {
+                    FolderCellView(
+                        mailboxManager: mailboxManager,
+                        folder: folder,
+                        icon: MailResourcesAsset.drawer,
+                        action: updateSplitView
+                    )
+                }
+            } else {
+                NavigationLink(destination: ThreadList(mailboxManager: mailboxManager, folder: folder, isCompact: isCompact)) {
+                    FolderCellView(
+                        mailboxManager: mailboxManager,
+                        folder: folder,
+                        icon: MailResourcesAsset.drawer,
+                        action: updateSplitView
+                    )
+                }
+            }
         }
         .listStyle(.plain)
         .accentColor(Color(InfomaniakCoreAsset.infomaniakColor.color))
@@ -66,11 +93,11 @@ struct FoldersListView: View {
     }
 
     private func updateSplitView(with folder: Folder) {
-        if let splitVC = splitViewController, splitVC.isCollapsed {
-            
-        } else {
-            let threadListVC = ThreadListViewController(mailboxManager: mailboxManager, folder: folder)
-            splitViewController?.setViewController(threadListVC, for: .supplementary)
-        }
+        delegate?.didSelectFolder(folder)
+        presentationMode.wrappedValue.dismiss()
     }
+}
+
+protocol FolderListViewDelegate: AnyObject {
+    func didSelectFolder(_ folder: Folder)
 }

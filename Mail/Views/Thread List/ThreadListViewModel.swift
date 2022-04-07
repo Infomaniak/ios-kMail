@@ -44,19 +44,7 @@ typealias Thread = MailCore.Thread
         self.folder = folder
         if let cachedFolder = mailboxManager.getRealm().object(ofType: Folder.self, forPrimaryKey: folder.id) {
             threads = AnyRealmCollection(cachedFolder.threads.sorted(by: \.date, ascending: false))
-            observationThreadToken = threads.observe(on: .main) { [weak self] changes in
-                guard let self = self else { return }
-                switch changes {
-                case let .initial(results):
-                    self.threads = results
-                    self.onListUpdated?([], [], [], true)
-                case let .update(results, deletions, insertions, modifications):
-                    self.threads = results
-                    self.onListUpdated?(deletions, insertions, modifications, false)
-                case .error:
-                    break
-                }
-            }
+            observeChanges()
         } else {
             threads = AnyRealmCollection(mailboxManager.getRealm().objects(Thread.self)
                 .filter(NSPredicate(format: "FALSEPREDICATE")))
@@ -68,6 +56,33 @@ typealias Thread = MailCore.Thread
             try await mailboxManager.threads(folder: folder.freeze(), filter: filter)
         } catch {
             print("Error while getting threads: \(error)")
+        }
+    }
+
+    func updateThreads(with folder: Folder) {
+        self.folder = folder
+        if let cachedFolder = mailboxManager.getRealm().object(ofType: Folder.self, forPrimaryKey: folder.id) {
+            threads = AnyRealmCollection(cachedFolder.threads.sorted(by: \.date, ascending: false))
+            observeChanges()
+        } else {
+            threads = AnyRealmCollection(mailboxManager.getRealm().objects(Thread.self)
+                .filter(NSPredicate(format: "FALSEPREDICATE")))
+        }
+    }
+
+    func observeChanges() {
+        observationThreadToken = threads.observe(on: .main) { [weak self] changes in
+            guard let self = self else { return }
+            switch changes {
+            case let .initial(results):
+                self.threads = results
+                self.onListUpdated?([], [], [], true)
+            case let .update(results, deletions, insertions, modifications):
+                self.threads = results
+                self.onListUpdated?(deletions, insertions, modifications, false)
+            case .error:
+                break
+            }
         }
     }
 }
