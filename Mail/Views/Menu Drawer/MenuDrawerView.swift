@@ -52,7 +52,7 @@ struct MenuDrawerView: View {
 
                 MenuDrawerSeparatorView()
 
-                FoldersListView(mailboxManager: mailboxManager, splitViewController: splitViewController, selectedFolderId: $selectedFolderId)
+                UserFoldersListView(mailboxManager: mailboxManager, splitViewController: splitViewController, selectedFolderId: $selectedFolderId)
 
                 MenuDrawerSeparatorView()
 
@@ -95,10 +95,10 @@ struct MenuDrawerView: View {
     }
 
     func importMails() {
-        // Import Mails
+        openURL(URLConstants.importMails.url)
     }
 
     func restoreMails() {
-        // Restore Mails
+        // Restore mails
     }
 }
