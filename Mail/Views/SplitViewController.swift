@@ -77,7 +77,9 @@ struct ThreadList: UIViewControllerRepresentable {
         return ThreadListViewController(mailboxManager: mailboxManager, folder: folder, isCompact: isCompact)
     }
 
-    func updateUIViewController(_ uiViewController: ThreadListViewController, context: Context) {}
+    func updateUIViewController(_ uiViewController: ThreadListViewController, context: Context) {
+        // Intentionally unimplemented...
+    }
 }
 
 struct DeviceRotationViewModifier: ViewModifier {
