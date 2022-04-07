@@ -20,9 +20,13 @@ import MailResources
 import SwiftUI
 
 struct MenuDrawerSeparatorView: View {
+    var withPadding = true
+
     var body: some View {
         Divider()
             .background(Color(MailResourcesAsset.separatorColor.color))
+            .padding(.top, withPadding ? 12 : 0)
+            .padding(.bottom, withPadding ? 12: 0)
     }
 }
 

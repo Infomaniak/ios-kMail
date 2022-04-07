@@ -23,13 +23,19 @@ import SwiftUI
 
 struct FolderCellView: View {
     @State var folder: Folder
+    @Binding var selectedFolderId: String?
 
     var icon: MailResourcesImages
     var action: (Folder) -> Void
 
+    var isSelected: Bool {
+        folder.id == selectedFolderId
+    }
+
     var body: some View {
         Button {
             action(folder)
+            selectedFolderId = folder.id
         } label: {
             HStack {
                 Image(systemName: folder.isFavorite ? "folder.badge.plus" : "folder")
@@ -37,13 +43,15 @@ struct FolderCellView: View {
                     .padding(.trailing, 10)
 
                 Text(folder.localizedName)
-                    .foregroundColor(Color(MailResourcesAsset.primaryTextColor.color))
+                    .foregroundColor(Color(isSelected ? InfomaniakCoreAsset.infomaniakColor.color : MailResourcesAsset.primaryTextColor.color))
+                    .fontWeight(isSelected ? .semibold : .regular)
 
                 Spacer()
 
                 if let unreadCount = folder.unreadCount, unreadCount > 0 {
                     Text(unreadCount < 100 ? "\(unreadCount)" : "99+")
                         .foregroundColor(Color(InfomaniakCoreAsset.infomaniakColor.color))
+                        .fontWeight(isSelected ? .semibold : .regular)
                 }
             }
             .padding([.top, .bottom], 3)
@@ -53,7 +61,7 @@ struct FolderCellView: View {
 
 struct FolderCellView_Previews: PreviewProvider {
     static var previews: some View {
-        FolderCellView(folder: PreviewHelper.sampleFolder, icon: MailResourcesAsset.drawer) { _ in
+        FolderCellView(folder: PreviewHelper.sampleFolder, selectedFolderId: .constant("hello"), icon: MailResourcesAsset.drawer) { _ in
             print("Hello")
         }
         .previewLayout(.sizeThatFits)

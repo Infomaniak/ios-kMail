@@ -29,6 +29,8 @@ struct FoldersListView: View {
 
     @State private var unfoldFolders = false
 
+    @Binding var selectedFolderId: String?
+
     var mailboxManager: MailboxManager
     weak var splitViewController: UISplitViewController?
 
@@ -38,17 +40,18 @@ struct FoldersListView: View {
         SortDescriptor(keyPath: \Folder.name)
     ]
 
-    init(mailboxManager: MailboxManager, splitViewController: UISplitViewController?) {
+    init(mailboxManager: MailboxManager, splitViewController: UISplitViewController?, selectedFolderId: Binding<String?>) {
         self.mailboxManager = mailboxManager
         _folders = .init(Folder.self, configuration: mailboxManager.realmConfiguration) { $0.parentLink.count == 0 && $0.role == nil }
         self.splitViewController = splitViewController
+        _selectedFolderId = selectedFolderId
     }
 
     var body: some View {
         DisclosureGroup(isExpanded: $unfoldFolders) {
             VStack {
                 ForEach(AnyRealmCollection(folders.sorted(by: foldersSortDescriptors))) { folder in
-                    FolderCellView(folder: folder, icon: MailResourcesAsset.drawer, action: updateSplitView)
+                    FolderCellView(folder: folder, selectedFolderId: $selectedFolderId, icon: MailResourcesAsset.drawer, action: updateSplitView)
                 }
                 .accentColor(Color(InfomaniakCoreAsset.infomaniakColor.color))
             }
@@ -65,7 +68,6 @@ struct FoldersListView: View {
             }
         }
         .accentColor(Color(MailResourcesAsset.primaryTextColor.color))
-        .padding([.top, .bottom], 9)
         .onAppear {
             Task {
                 await fetchFolders()

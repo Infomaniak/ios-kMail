@@ -24,6 +24,7 @@ import UIKit
 
 struct MenuDrawerView: View {
     @State private var showMailboxes = false
+    @State private var selectedFolderId: String?
 
     var mailboxManager: MailboxManager
     weak var splitViewController: UISplitViewController?
@@ -48,7 +49,7 @@ struct MenuDrawerView: View {
 
                 MenuDrawerSeparatorView()
 
-                FoldersListView(mailboxManager: mailboxManager, splitViewController: splitViewController)
+                FoldersListView(mailboxManager: mailboxManager, splitViewController: splitViewController, selectedFolderId: $selectedFolderId)
 
                 MenuDrawerSeparatorView()
 
