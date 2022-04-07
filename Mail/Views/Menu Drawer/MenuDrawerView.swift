@@ -23,22 +23,25 @@ import SwiftUI
 import UIKit
 
 struct MenuDrawerView: View {
+    public static let horizontalPadding: CGFloat = 25
+
+    @Environment(\.openURL) var openURL
+
     @State private var showMailboxes = false
     @State private var selectedFolderId: String?
 
     var mailboxManager: MailboxManager
     weak var splitViewController: UISplitViewController?
 
-    public static let horizontalPadding: CGFloat = 25
+    private var helpMenuItems = [MenuItem]()
+    private var actionsMenuItems = [MenuItem]()
 
-    private let helpMenuItems = [
-        MenuItem(icon: MailResourcesAsset.alertCircle, label: "Feedbacks", action: sendFeedback),
-        MenuItem(icon: MailResourcesAsset.questionHelpCircle, label: "Aide", action: openHelp)
-    ]
-    private let actionsMenuItems = [
-        MenuItem(icon: MailResourcesAsset.drawerArrow, label: "Importer des mails", action: importMails),
-        MenuItem(icon: MailResourcesAsset.synchronizeArrow, label: "Restaurer des mails", action: restoreMails)
-    ]
+    init(mailboxManager: MailboxManager, splitViewController: UISplitViewController?) {
+        self.mailboxManager = mailboxManager
+        self.splitViewController = splitViewController
+
+        getMenuItems()
+    }
 
     var body: some View {
         ScrollView {
@@ -68,21 +71,34 @@ struct MenuDrawerView: View {
         .listStyle(.plain)
     }
 
+    // MARK: - Private methods
+
+    private mutating func getMenuItems() {
+        helpMenuItems = [
+            MenuItem(icon: MailResourcesAsset.alertCircle, label: "Feedbacks", action: sendFeedback),
+            MenuItem(icon: MailResourcesAsset.questionHelpCircle, label: "Aide", action: openSupport)
+        ]
+        actionsMenuItems = [
+            MenuItem(icon: MailResourcesAsset.drawerArrow, label: "Importer des mails", action: importMails),
+            MenuItem(icon: MailResourcesAsset.synchronizeArrow, label: "Restaurer des mails", action: restoreMails)
+        ]
+    }
+
     // MARK: - Menu actions
 
-    static func sendFeedback() {
-        // Send feedbacks
+    func sendFeedback() {
+        openURL(URLConstants.feedback.url)
     }
 
-    static func openHelp() {
-        // Open help
+    func openSupport() {
+        openURL(URLConstants.support.url)
     }
 
-    static func importMails() {
+    func importMails() {
         // Import Mails
     }
 
-    static func restoreMails() {
+    func restoreMails() {
         // Restore Mails
     }
 }
