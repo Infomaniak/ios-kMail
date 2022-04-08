@@ -48,6 +48,7 @@ struct MessageView: View {
                 model.loadHTMLString(value: message.body?.value)
             }
         }
+        .padding(8)
         .onAppear {
             if self.message.shouldComplete {
                 Task {

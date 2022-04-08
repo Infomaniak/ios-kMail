@@ -17,6 +17,7 @@
  */
 
 import MailCore
+import MailResources
 import RealmSwift
 import SwiftUI
 
@@ -35,22 +36,26 @@ struct MessageHeaderView: View {
                         HStack(alignment: .firstTextBaseline) {
                             ForEach(message.from, id: \.email) { recipient in
                                 Text(recipient.title)
-                                    .font(.headline)
+                                    .font(.system(size: 16))
+                                    .fontWeight(.medium)
                             }
                             Text(Constants.formatDate(message.date))
-                                .font(.subheadline)
-                                .foregroundColor(.secondary)
+                                .font(.system(size: 13))
+                                .fontWeight(.regular)
+                                .foregroundColor(Color(MailResourcesAsset.secondaryTextColor.color))
+                            Spacer()
+                            Image(systemName: "chevron.down")
+                                .frame(width: 12)
                         }
-                        Text("To \(ListFormatter.localizedString(byJoining: message.recipients.map(\.title)))")
+                        Text(ListFormatter.localizedString(byJoining: message.recipients.map(\.title)))
                             .lineLimit(1)
-                            .font(.subheadline)
-                            .foregroundColor(.secondary)
+                            .font(.system(size: 14))
+                            .foregroundColor(Color(MailResourcesAsset.secondaryTextColor.color))
                     }
                 }
             }
         }
         .frame(maxWidth: .infinity, alignment: .leading)
-        .padding(8)
     }
 }
 

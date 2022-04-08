@@ -39,6 +39,7 @@ struct ThreadView: View {
                 }
             }
         }
+        .padding(8)
         .onAppear {
             MatomoUtils.track(view: ["MessageView"])
         }
