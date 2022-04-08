@@ -24,7 +24,7 @@ typealias Thread = MailCore.Thread
 
 @MainActor class ThreadListViewModel {
     var mailboxManager: MailboxManager
-    var folder: Folder
+    var folder: Folder?
     var filter = Filter.all {
         didSet {
             Task {
@@ -39,10 +39,11 @@ typealias Thread = MailCore.Thread
     typealias ListUpdatedCallback = ([Int], [Int], [Int], Bool) -> Void
     var onListUpdated: ListUpdatedCallback?
 
-    init(mailboxManager: MailboxManager, folder: Folder) {
+    init(mailboxManager: MailboxManager, folder: Folder?) {
         self.mailboxManager = mailboxManager
         self.folder = folder
-        if let cachedFolder = mailboxManager.getRealm().object(ofType: Folder.self, forPrimaryKey: folder.id) {
+
+        if let folder = folder, let cachedFolder = mailboxManager.getRealm().object(ofType: Folder.self, forPrimaryKey: folder.id) {
             threads = AnyRealmCollection(cachedFolder.threads.sorted(by: \.date, ascending: false))
             observeChanges()
         } else {
@@ -53,6 +54,9 @@ typealias Thread = MailCore.Thread
 
     func fetchThreads() async {
         do {
+            guard let folder = folder else {
+                return
+            }
             try await mailboxManager.threads(folder: folder.freeze(), filter: filter)
         } catch {
             print("Error while getting threads: \(error)")

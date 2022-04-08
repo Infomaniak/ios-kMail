@@ -23,12 +23,12 @@ import SwiftUI
 
 struct SplitView: View {
     var mailboxManager = AccountManager.instance.currentMailboxManager!
-    var selectedFolder: Folder
+    var selectedFolder: Folder?
     @State var navigationController: UINavigationController?
     @Environment(\.horizontalSizeClass) var sizeClass
 
     init() {
-        selectedFolder = mailboxManager.getRealm().objects(Folder.self).filter("role = 'INBOX'").first!
+        selectedFolder = mailboxManager.getRealm().objects(Folder.self).filter("role = 'INBOX'").first
     }
 
     var body: some View {

@@ -26,7 +26,7 @@ class ThreadListViewController: MailCollectionViewController, FolderListViewDele
 
     let isCompact: Bool
 
-    init(mailboxManager: MailboxManager, folder: Folder, isCompact: Bool) {
+    init(mailboxManager: MailboxManager, folder: Folder?, isCompact: Bool) {
         viewModel = ThreadListViewModel(mailboxManager: mailboxManager, folder: folder)
         self.isCompact = isCompact
         super.init()
@@ -58,7 +58,7 @@ class ThreadListViewController: MailCollectionViewController, FolderListViewDele
     }
 
     func updateView() {
-        parent?.navigationItem.title = viewModel.folder.localizedName
+        parent?.navigationItem.title = viewModel.folder?.localizedName
 
         viewModel.onListUpdated = { [self] deletions, insertions, modifications, reload in
             guard !reload else {

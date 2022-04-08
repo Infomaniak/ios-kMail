@@ -21,7 +21,7 @@ import MailCore
 
 struct ThreadList: UIViewControllerRepresentable {
     var mailboxManager: MailboxManager
-    var folder: Folder
+    var folder: Folder?
     var isCompact: Bool
 
     func makeUIViewController(context: Context) -> ThreadListViewController {
