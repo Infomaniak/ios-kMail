@@ -21,7 +21,10 @@ import MailCore
 import MailResources
 import RealmSwift
 import SwiftUI
-import UIKit
+
+protocol FolderListViewDelegate: AnyObject {
+    func didSelectFolder(_ folder: Folder)
+}
 
 struct FoldersListView: View {
     // swiftlint:disable empty_count
@@ -57,8 +60,7 @@ struct FoldersListView: View {
                     FolderCellView(
                         mailboxManager: mailboxManager,
                         folder: folder,
-                        icon: MailResourcesAsset.drawer,
-                        action: updateSplitView
+                        icon: MailResourcesAsset.drawer
                     )
                 }
             } else {
@@ -66,8 +68,7 @@ struct FoldersListView: View {
                     FolderCellView(
                         mailboxManager: mailboxManager,
                         folder: folder,
-                        icon: MailResourcesAsset.drawer,
-                        action: updateSplitView
+                        icon: MailResourcesAsset.drawer
                     )
                 }
             }
@@ -96,8 +97,4 @@ struct FoldersListView: View {
         delegate?.didSelectFolder(folder)
         presentationMode.wrappedValue.dismiss()
     }
-}
-
-protocol FolderListViewDelegate: AnyObject {
-    func didSelectFolder(_ folder: Folder)
 }

@@ -26,7 +26,6 @@ struct FolderCellView: View {
     @State var folder: Folder
 
     var icon: MailResourcesImages
-    var action: (Folder) -> Void
 
     var body: some View {
         HStack {
@@ -52,9 +51,7 @@ struct FolderCellView_Previews: PreviewProvider {
             mailboxManager: MailboxManager(mailbox: PreviewHelper.sampleMailbox, apiFetcher: MailApiFetcher()),
             folder: PreviewHelper.sampleFolder,
             icon: MailResourcesAsset.drawer
-        ) { _ in
-            print("Hello")
-        }
+        )
         .previewLayout(.sizeThatFits)
     }
 }
