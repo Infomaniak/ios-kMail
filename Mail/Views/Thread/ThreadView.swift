@@ -32,6 +32,8 @@ struct ThreadView: View {
     var body: some View {
         ScrollView {
             VStack {
+                Text(thread.subject ?? "")
+                    .font(.largeTitle)
                 ForEach(thread.messages) { message in
                     MessageView(mailboxManager: mailboxManager, message: message)
                 }

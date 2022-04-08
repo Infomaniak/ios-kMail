@@ -34,8 +34,6 @@ struct MessageView: View {
 
     var body: some View {
         VStack {
-            Text(message.subject ?? "No subject")
-            Text("Message view")
             MessageHeaderView(message: message, isReduced: $isHeaderReduced)
             GeometryReader { proxy in
                 WebView(model: $model, dynamicHeight: $webViewHeight, proxy: proxy)
