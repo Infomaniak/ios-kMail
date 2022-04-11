@@ -19,8 +19,10 @@
 import SwiftUI
 
 struct EmptyThreadView: View {
+    var text = "thread"
+    
     var body: some View {
-        Text("Aucun thread sélectionné")
+        Text("Aucun \(text) sélectionné")
     }
 }
 

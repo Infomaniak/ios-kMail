@@ -60,6 +60,8 @@ class ThreadListViewController: MailCollectionViewController, FolderListViewDele
     func updateView() {
         parent?.navigationItem.title = viewModel.folder?.localizedName
 
+        showEmptyView(viewModel.folder != nil)
+
         viewModel.onListUpdated = { [self] deletions, insertions, modifications, reload in
             guard !reload else {
                 collectionView.reloadData()
@@ -87,6 +89,11 @@ class ThreadListViewController: MailCollectionViewController, FolderListViewDele
         let menuDrawerHostingController = UIHostingController(rootView: menuDrawerView)
         menuDrawerHostingController.view.backgroundColor = MailResourcesAsset.backgroundColor.color
         present(menuDrawerHostingController, animated: true)
+    }
+
+    private func showEmptyView(_ isHidden: Bool) {
+        let emptyView = UIHostingController(rootView: EmptyThreadView(text: "dossier"))
+        collectionView.backgroundView = isHidden ? nil : emptyView.view
     }
 
     // MARK: - UICollectionViewDataSource
