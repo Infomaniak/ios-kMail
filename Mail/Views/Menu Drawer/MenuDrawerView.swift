@@ -27,6 +27,8 @@ struct MenuDrawerView: View {
 
     @Environment(\.openURL) var openURL
 
+    @StateObject var accountManager = AccountManager.instance
+
     @State private var showMailboxes = false
     @State private var selectedFolderId: String?
 
@@ -48,11 +50,11 @@ struct MenuDrawerView: View {
             MenuHeaderView(splitViewController: splitViewController)
 
             VStack(alignment: .leading) {
-                MailboxesManagementView(mailbox: mailboxManager.mailbox)
+                MailboxesManagementView()
 
                 MenuDrawerSeparatorView()
 
-                RoleFoldersListView(mailboxManager: mailboxManager, splitViewController: splitViewController, selectedFolderId: $selectedFolderId)
+                RoleFoldersListView(splitViewController: splitViewController, selectedFolderId: $selectedFolderId)
 
                 MenuDrawerSeparatorView()
 
@@ -73,6 +75,7 @@ struct MenuDrawerView: View {
             .padding([.leading, .trailing], Self.horizontalPadding)
         }
         .listStyle(.plain)
+        .environmentObject(accountManager)
     }
 
     // MARK: - Private methods

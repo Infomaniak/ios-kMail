@@ -22,15 +22,17 @@ import MailCore
 import SwiftUI
 
 struct MailboxesManagementView: View {
-    @State private var unfoldDetails = false
+    @EnvironmentObject var accountManager: AccountManager
 
-    var mailbox: Mailbox
+    @State private var unfoldDetails = false
 
     var body: some View {
         DisclosureGroup(isExpanded: $unfoldDetails) {
             VStack(alignment: .leading) {
-                ForEach(AccountManager.instance.mailboxes.filter { $0.mailboxId != mailbox.mailboxId }, id: \.mailboxId) { mailbox in
-                    MailboxesManagementButtonView(text: mailbox.email, detail: "2", handleAction: switchMailbox)
+                ForEach(accountManager.mailboxes.filter { $0.mailboxId != accountManager.currentMailboxManager?.mailbox.mailboxId }, id: \.mailboxId) { mailbox in
+                    MailboxesManagementButtonView(text: mailbox.email, detail: "2") {
+                        accountManager.setCurrentMailboxForCurrentAccount(mailbox: mailbox)
+                    }
                 }
 
                 MenuDrawerSeparatorView(withPadding: false, fullWidth: true)
@@ -41,7 +43,7 @@ struct MailboxesManagementView: View {
             .padding(.leading)
             .padding(.top, 5)
         } label: {
-            Text(mailbox.email)
+            Text(accountManager.currentMailboxManager?.mailbox.email ?? "")
                 .fontWeight(.semibold)
                 .lineLimit(1)
         }
@@ -66,7 +68,7 @@ struct MailboxesManagementView: View {
 
 struct MailboxesManagementView_Previews: PreviewProvider {
     static var previews: some View {
-        MailboxesManagementView(mailbox: PreviewHelper.sampleMailbox)
+        MailboxesManagementView()
             .previewLayout(.sizeThatFits)
     }
 }

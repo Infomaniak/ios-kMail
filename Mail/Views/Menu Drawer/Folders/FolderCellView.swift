@@ -22,11 +22,12 @@ import MailResources
 import SwiftUI
 
 struct FolderCellView: View {
+    @EnvironmentObject var accountManager: AccountManager
+
     @State var folder: Folder
     @Binding var selectedFolderId: String?
 
     var icon: MailResourcesImages
-    var mailboxManager: MailboxManager
     weak var splitViewController: UISplitViewController?
 
     var isSelected: Bool {
@@ -63,6 +64,7 @@ struct FolderCellView: View {
     }
 
     private func updateSplitView(with folder: Folder) {
+        guard let mailboxManager = accountManager.currentMailboxManager else { return }
         let messageListVC = ThreadListViewController(mailboxManager: mailboxManager, folder: folder)
         splitViewController?.setViewController(messageListVC, for: .supplementary)
     }
@@ -72,8 +74,7 @@ struct FolderCellView_Previews: PreviewProvider {
     static var previews: some View {
         FolderCellView(folder: PreviewHelper.sampleFolder,
                        selectedFolderId: .constant("hello"),
-                       icon: MailResourcesAsset.drawer,
-                       mailboxManager: MailboxManager(mailbox: PreviewHelper.sampleMailbox, apiFetcher: MailApiFetcher()))
+                       icon: MailResourcesAsset.drawer)
         .previewLayout(.sizeThatFits)
         .previewDevice(PreviewDevice(stringLiteral: "iPhone 11 Pro"))
     }

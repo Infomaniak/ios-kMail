@@ -27,11 +27,12 @@ struct UserFoldersListView: View {
     // swiftlint:disable empty_count
     @ObservedResults(Folder.self, where: { $0.parentLink.count == 0 && $0.role == nil }) var folders
 
+    @EnvironmentObject var accountManager: AccountManager
+
     @State private var unfoldFolders = false
 
     @Binding var selectedFolderId: String?
 
-    var mailboxManager: MailboxManager
     weak var splitViewController: UISplitViewController?
 
     private let foldersSortDescriptors = [
@@ -41,8 +42,7 @@ struct UserFoldersListView: View {
     ]
 
     init(mailboxManager: MailboxManager, splitViewController: UISplitViewController?, selectedFolderId: Binding<String?>) {
-        self.mailboxManager = mailboxManager
-        _folders = .init(Folder.self, configuration: mailboxManager.realmConfiguration) { $0.parentLink.count == 0 && $0.role == nil }
+        _folders = .init(Folder.self, configuration: AccountManager.instance.currentMailboxManager!.realmConfiguration) { $0.parentLink.count == 0 && $0.role == nil }
         self.splitViewController = splitViewController
         _selectedFolderId = selectedFolderId
     }
@@ -51,7 +51,7 @@ struct UserFoldersListView: View {
         DisclosureGroup(isExpanded: $unfoldFolders) {
             VStack {
                 ForEach(AnyRealmCollection(folders.sorted(by: foldersSortDescriptors))) { folder in
-                    FolderCellView(folder: folder, selectedFolderId: $selectedFolderId, icon: MailResourcesAsset.drawer, mailboxManager: mailboxManager, splitViewController: splitViewController)
+                    FolderCellView(folder: folder, selectedFolderId: $selectedFolderId, icon: MailResourcesAsset.drawer, splitViewController: splitViewController)
                 }
                 .accentColor(Color(InfomaniakCoreAsset.infomaniakColor.color))
             }
@@ -73,13 +73,18 @@ struct UserFoldersListView: View {
                 await fetchFolders()
                 MatomoUtils.track(view: ["MenuDrawer"])
             }
-            print(MailboxManager.constants.rootDocumentsURL)
+        }
+        .onChange(of: accountManager.currentMailboxId) { _ in
+            Task {
+                await fetchFolders()
+            }
         }
     }
 
     // MARK: - Private functions
 
     private func fetchFolders() async {
+        guard let mailboxManager = accountManager.currentMailboxManager else { return }
         do {
             try await mailboxManager.folders()
         } catch {
@@ -88,6 +93,7 @@ struct UserFoldersListView: View {
     }
 
     private func updateSplitView(with folder: Folder) {
+        guard let mailboxManager = accountManager.currentMailboxManager else { return }
         let messageListVC = ThreadListViewController(mailboxManager: mailboxManager, folder: folder)
         splitViewController?.setViewController(messageListVC, for: .supplementary)
     }

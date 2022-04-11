@@ -28,6 +28,7 @@ struct MailboxesManagementButtonView: View {
     var body: some View {
         Button(action: handleAction) {
             Text(text)
+                .lineLimit(1)
 
             Spacer()
 

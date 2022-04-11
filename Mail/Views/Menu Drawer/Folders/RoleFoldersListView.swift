@@ -25,9 +25,10 @@ struct RoleFoldersListView: View {
     // swiftlint:disable empty_count
     @ObservedResults(Folder.self, where: { $0.parentLink.count == 0 && $0.role != nil }) var folders
 
+    @EnvironmentObject var accountManager: AccountManager
+
     @Binding var selectedFolderId: String?
 
-    var mailboxManager: MailboxManager
     weak var splitViewController: UISplitViewController?
 
     private let items: [FolderRole: MailResourcesImages] = [
@@ -41,20 +42,21 @@ struct RoleFoldersListView: View {
         .archive: MailResourcesAsset.archive
     ]
 
-    init(mailboxManager: MailboxManager, splitViewController: UISplitViewController?, selectedFolderId: Binding<String?>) {
-        _folders = .init(Folder.self, configuration: mailboxManager.realmConfiguration) { $0.parentLink.count == 0 && $0.role != nil }
-        self.mailboxManager = mailboxManager
-        self.splitViewController = splitViewController
+    init(splitViewController: UISplitViewController?, selectedFolderId: Binding<String?>) {
+        _folders = .init(Folder.self, configuration: AccountManager.instance.currentMailboxManager!.realmConfiguration) { $0.parentLink.count == 0 && $0.role != nil }
         _selectedFolderId = selectedFolderId
+        self.splitViewController = splitViewController
     }
 
     var body: some View {
-        FolderCellView(folder: folders.first { $0.role == .inbox }!, selectedFolderId: $selectedFolderId, icon: items[.inbox]!, mailboxManager: mailboxManager, splitViewController: splitViewController)
+        return VStack {
+            //FolderCellView(folder: folders.first { $0.role == .inbox }!, selectedFolderId: $selectedFolderId, icon: items[.inbox]!, splitViewController: splitViewController)
 
-        MenuDrawerSeparatorView()
+            MenuDrawerSeparatorView()
 
-        ForEach(AnyRealmCollection(folders).filter { $0.role != .inbox }.sorted()) { folder in
-            FolderCellView(folder: folder, selectedFolderId: $selectedFolderId, icon: items[folder.role!]!, mailboxManager: mailboxManager, splitViewController: splitViewController)
+            ForEach(AnyRealmCollection(folders).filter { $0.role != .inbox }.sorted()) { folder in
+                FolderCellView(folder: folder, selectedFolderId: $selectedFolderId, icon: items[folder.role!]!, splitViewController: splitViewController)
+            }
         }
     }
 
