@@ -68,7 +68,7 @@ public class Message: Object, Decodable, Identifiable {
     @Persisted public var fullyDownloaded = false
 
     public var recipients: [Recipient] {
-        return Array(to) + Array(cc) + Array(bcc)
+        return Array(to) + Array(cc)
     }
 
     public var shouldComplete: Bool {
