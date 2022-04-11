@@ -28,10 +28,15 @@ struct FolderCellView: View {
     @Binding var selectedFolderId: String?
 
     var icon: MailResourcesImages
+    var withSmallIcon = false
     weak var splitViewController: UISplitViewController?
 
     var isSelected: Bool {
         folder.id == selectedFolderId
+    }
+
+    private var iconSize: CGFloat {
+        withSmallIcon ? 20 : 24
     }
 
     var body: some View {
@@ -43,7 +48,7 @@ struct FolderCellView: View {
                 Image(uiImage: icon.image)
                     .resizable()
                     .scaledToFit()
-                    .frame(width: 24, height: 24)
+                    .frame(width: iconSize, height: iconSize)
                     .foregroundColor(Color(InfomaniakCoreAsset.infomaniakColor.color))
                     .padding(.trailing, 10)
 
