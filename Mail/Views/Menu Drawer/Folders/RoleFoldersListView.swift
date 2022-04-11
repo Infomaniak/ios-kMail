@@ -50,7 +50,11 @@ struct RoleFoldersListView: View {
 
     var body: some View {
         return VStack {
-            FolderCellView(folder: folders.first { $0.role == .inbox }!, selectedFolderId: $selectedFolderId, icon: items[.inbox]!, splitViewController: splitViewController)
+            FolderCellView(folder: folders.first { $0.role == .inbox }!,
+                           selectedFolderId: $selectedFolderId,
+                           icon: items[.inbox]!,
+                           usePadding: false,
+                           splitViewController: splitViewController)
 
             MenuDrawerSeparatorView()
 

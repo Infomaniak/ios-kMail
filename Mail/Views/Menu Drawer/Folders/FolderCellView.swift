@@ -29,6 +29,7 @@ struct FolderCellView: View {
 
     var icon: MailResourcesImages
     var isUserFolder = false
+    var usePadding = true
     weak var splitViewController: UISplitViewController?
 
     var isSelected: Bool {
@@ -67,7 +68,7 @@ struct FolderCellView: View {
                         .fontWeight(isSelected ? .semibold : .regular)
                 }
             }
-            .padding([.top, .bottom], 3)
+            .padding([.top, .bottom], usePadding ? 4 : 0)
         }
     }
 

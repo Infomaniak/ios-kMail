@@ -48,7 +48,7 @@ struct UserFoldersListView: View {
     }
 
     var body: some View {
-        DisclosureGroup(isExpanded: $unfoldFolders) {
+        DisclosureGroup("Dossiers", isExpanded: $unfoldFolders) {
             VStack {
                 ForEach(AnyRealmCollection(folders.sorted(by: foldersSortDescriptors))) { folder in
                     FolderCellView(folder: folder,
@@ -60,16 +60,6 @@ struct UserFoldersListView: View {
                 .accentColor(Color(InfomaniakCoreAsset.infomaniakColor.color))
             }
             .padding(.top, 9)
-        } label: {
-            Text("Dossiers")
-                .padding(.trailing, 7)
-
-            Button(action: addNewFolder) {
-                Image(uiImage: MailResourcesAsset.addFolder.image)
-                    .resizable()
-                    .scaledToFit()
-                    .frame(width: 16)
-            }
         }
         .accentColor(Color(MailResourcesAsset.primaryTextColor.color))
         .onAppear {
@@ -94,15 +84,5 @@ struct UserFoldersListView: View {
         } catch {
             print("Error while getting folders: \(error.localizedDescription)")
         }
-    }
-
-    private func updateSplitView(with folder: Folder) {
-        guard let mailboxManager = accountManager.currentMailboxManager else { return }
-        let messageListVC = ThreadListViewController(mailboxManager: mailboxManager, folder: folder)
-        splitViewController?.setViewController(messageListVC, for: .supplementary)
-    }
-
-    private func addNewFolder() {
-        // add new folder
     }
 }
