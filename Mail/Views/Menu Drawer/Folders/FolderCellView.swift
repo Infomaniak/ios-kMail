@@ -26,7 +26,8 @@ struct FolderCellView: View {
     @Binding var selectedFolderId: String?
 
     var icon: MailResourcesImages
-    var action: (Folder) -> Void
+    var mailboxManager: MailboxManager
+    weak var splitViewController: UISplitViewController?
 
     var isSelected: Bool {
         folder.id == selectedFolderId
@@ -34,7 +35,7 @@ struct FolderCellView: View {
 
     var body: some View {
         Button {
-            action(folder)
+            updateSplitView(with: folder)
             selectedFolderId = folder.id
         } label: {
             HStack {
@@ -60,13 +61,19 @@ struct FolderCellView: View {
             .padding([.top, .bottom], 3)
         }
     }
+
+    private func updateSplitView(with folder: Folder) {
+        let messageListVC = ThreadListViewController(mailboxManager: mailboxManager, folder: folder)
+        splitViewController?.setViewController(messageListVC, for: .supplementary)
+    }
 }
 
 struct FolderCellView_Previews: PreviewProvider {
     static var previews: some View {
-        FolderCellView(folder: PreviewHelper.sampleFolder, selectedFolderId: .constant("hello"), icon: MailResourcesAsset.drawer) { _ in
-            print("Hello")
-        }
+        FolderCellView(folder: PreviewHelper.sampleFolder,
+                       selectedFolderId: .constant("hello"),
+                       icon: MailResourcesAsset.drawer,
+                       mailboxManager: MailboxManager(mailbox: PreviewHelper.sampleMailbox, apiFetcher: MailApiFetcher()))
         .previewLayout(.sizeThatFits)
         .previewDevice(PreviewDevice(stringLiteral: "iPhone 11 Pro"))
     }

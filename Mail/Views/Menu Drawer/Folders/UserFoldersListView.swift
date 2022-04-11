@@ -51,7 +51,7 @@ struct UserFoldersListView: View {
         DisclosureGroup(isExpanded: $unfoldFolders) {
             VStack {
                 ForEach(AnyRealmCollection(folders.sorted(by: foldersSortDescriptors))) { folder in
-                    FolderCellView(folder: folder, selectedFolderId: $selectedFolderId, icon: MailResourcesAsset.drawer, action: updateSplitView)
+                    FolderCellView(folder: folder, selectedFolderId: $selectedFolderId, icon: MailResourcesAsset.drawer, mailboxManager: mailboxManager, splitViewController: splitViewController)
                 }
                 .accentColor(Color(InfomaniakCoreAsset.infomaniakColor.color))
             }
