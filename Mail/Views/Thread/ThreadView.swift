@@ -34,8 +34,8 @@ struct ThreadView: View {
             VStack {
                 Text(thread.subject ?? "")
                     .font(.largeTitle)
-                ForEach(thread.messages) { message in
-                    MessageView(mailboxManager: mailboxManager, message: message)
+                ForEach(thread.messages.indices) { index in
+                    MessageView(mailboxManager: mailboxManager, message: thread.messages[index], isThreadHeader: index == 0)
                 }
             }
         }

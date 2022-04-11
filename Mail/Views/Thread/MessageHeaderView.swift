@@ -24,9 +24,10 @@ import SwiftUI
 struct MessageHeaderView: View {
     @StateRealmObject var message: Message
     @Binding var isReduced: Bool
+    @State var isThreadHeader: Bool
 
     var body: some View {
-        HStack(alignment: .top) {
+        HStack(alignment: isThreadHeader ? .top : .center) {
             if let recipient = message.from.first {
                 RecipientImage(recipient: recipient)
             }
@@ -44,44 +45,51 @@ struct MessageHeaderView: View {
                             .fontWeight(.regular)
                             .foregroundColor(Color(MailResourcesAsset.secondaryTextColor.color))
                         Spacer()
-                        Image(systemName: isReduced ? "chevron.down" : "chevron.up")
-                            .frame(width: 12)
-                            .onTapGesture {
-                                isReduced.toggle()
-                            }
+                        if isThreadHeader {
+                            Image(systemName: isReduced ? "chevron.down" : "chevron.up")
+                                .frame(width: 12)
+                                .onTapGesture {
+                                    isReduced.toggle()
+                                }
+                        } else {
+                            Image(systemName: "ellipsis")
+                                .frame(width: 12)
+                        }
                     }
 
-                    if isReduced {
-                        Text(ListFormatter.localizedString(byJoining: message.recipients.map(\.title)))
-                            .lineLimit(1)
-                            .font(.system(size: 14))
-                            .foregroundColor(Color(MailResourcesAsset.secondaryTextColor.color))
-                    } else {
-                        Text(message.from.first?.email ?? "")
-                            .foregroundColor(Color(MailResourcesAsset.primaryTextColor.color))
-                            .font(.system(size: 14))
-                            .fontWeight(.regular)
-
-                        VStack(alignment: .leading) {
-                            ForEach(Array(message.recipients.enumerated()), id: \.offset) { index, recipient in
-                                HStack(alignment: .firstTextBaseline, spacing: 2) {
-                                    if index == 0 {
-                                        Text("À:")
-                                    }
-                                    Text(recipient.name)
-                                        .foregroundColor(Color(MailResourcesAsset.primaryTextColor.color))
-                                    Text("(\(recipient.email))")
-                                        .font(.system(size: 13))
-                                    if index < message.recipients.count - 1 {
-                                        Text(",")
-                                    }
-                                    Spacer()
-                                }
-                                .foregroundColor(Color(MailResourcesAsset.secondaryTextColor.color))
+                    if isThreadHeader {
+                        if isReduced {
+                            Text(ListFormatter.localizedString(byJoining: message.recipients.map(\.title)))
+                                .lineLimit(1)
                                 .font(.system(size: 14))
+                                .foregroundColor(Color(MailResourcesAsset.secondaryTextColor.color))
+                        } else {
+                            Text(message.from.first?.email ?? "")
+                                .foregroundColor(Color(MailResourcesAsset.primaryTextColor.color))
+                                .font(.system(size: 14))
+                                .fontWeight(.regular)
+
+                            VStack(alignment: .leading) {
+                                ForEach(Array(message.recipients.enumerated()), id: \.offset) { index, recipient in
+                                    HStack(alignment: .firstTextBaseline, spacing: 2) {
+                                        if index == 0 {
+                                            Text("À:")
+                                        }
+                                        Text(recipient.name)
+                                            .foregroundColor(Color(MailResourcesAsset.primaryTextColor.color))
+                                        Text("(\(recipient.email))")
+                                            .font(.system(size: 13))
+                                        if index < message.recipients.count - 1 {
+                                            Text(",")
+                                        }
+                                        Spacer()
+                                    }
+                                    .foregroundColor(Color(MailResourcesAsset.secondaryTextColor.color))
+                                    .font(.system(size: 14))
+                                }
                             }
+                            .padding(.top, 6)
                         }
-                        .padding(.top, 6)
                     }
                 }
             }
@@ -93,8 +101,9 @@ struct MessageHeaderView: View {
 struct MessageHeaderView_Previews: PreviewProvider {
     static var previews: some View {
         Group {
-            MessageHeaderView(message: PreviewHelper.sampleMessage, isReduced: .constant(true))
-            MessageHeaderView(message: PreviewHelper.sampleMessage, isReduced: .constant(false))
+            MessageHeaderView(message: PreviewHelper.sampleMessage, isReduced: .constant(true), isThreadHeader: true)
+            MessageHeaderView(message: PreviewHelper.sampleMessage, isReduced: .constant(false), isThreadHeader: true)
+            MessageHeaderView(message: PreviewHelper.sampleMessage, isReduced: .constant(false), isThreadHeader: false)
         }
     }
 }

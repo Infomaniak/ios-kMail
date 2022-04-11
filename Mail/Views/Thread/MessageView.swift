@@ -26,15 +26,17 @@ struct MessageView: View {
     @State var model = WebViewModel()
     @State private var webViewHeight: CGFloat = .zero
     @State var isHeaderReduced = true
+    @State var isThreadHeader: Bool
 
-    init(mailboxManager: MailboxManager, message: Message) {
+    init(mailboxManager: MailboxManager, message: Message, isThreadHeader: Bool = false) {
         self.mailboxManager = mailboxManager
         self.message = message
+        self.isThreadHeader = isThreadHeader
     }
 
     var body: some View {
         VStack {
-            MessageHeaderView(message: message, isReduced: $isHeaderReduced)
+            MessageHeaderView(message: message, isReduced: $isHeaderReduced, isThreadHeader: isThreadHeader)
             GeometryReader { proxy in
                 WebView(model: $model, dynamicHeight: $webViewHeight, proxy: proxy)
                     .frame(height: webViewHeight)
