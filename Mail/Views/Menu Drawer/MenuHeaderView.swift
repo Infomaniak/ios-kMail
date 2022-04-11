@@ -25,7 +25,7 @@ struct MenuHeaderView: View {
 
     var body: some View {
         HStack {
-            Image(uiImage: MailResourcesAsset.logoMail.image)
+            Image("logo-mail")
                 .resizable()
                 .scaledToFit()
                 .frame(height: 52)

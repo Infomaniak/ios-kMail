@@ -53,10 +53,6 @@ struct MailboxesManagementView: View {
 
     // MARK: - Menu actions
 
-    private func switchMailbox() {
-        // todo later
-    }
-
     private func addNewAccount() {
         // todo later
     }

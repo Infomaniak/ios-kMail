@@ -28,7 +28,7 @@ struct FolderCellView: View {
     @Binding var selectedFolderId: String?
 
     var icon: MailResourcesImages
-    var withSmallIcon = false
+    var isUserFolder = false
     weak var splitViewController: UISplitViewController?
 
     var isSelected: Bool {
@@ -36,7 +36,10 @@ struct FolderCellView: View {
     }
 
     private var iconSize: CGFloat {
-        withSmallIcon ? 20 : 24
+        if isUserFolder {
+            return folder.isFavorite ? 22 : 19
+        }
+        return 24
     }
 
     var body: some View {

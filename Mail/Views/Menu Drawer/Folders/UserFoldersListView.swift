@@ -54,7 +54,7 @@ struct UserFoldersListView: View {
                     FolderCellView(folder: folder,
                                    selectedFolderId: $selectedFolderId,
                                    icon: folder.isFavorite ? MailResourcesAsset.folderStar : MailResourcesAsset.folder,
-                                   withSmallIcon: true,
+                                   isUserFolder: true,
                                    splitViewController: splitViewController)
                 }
                 .accentColor(Color(InfomaniakCoreAsset.infomaniakColor.color))
