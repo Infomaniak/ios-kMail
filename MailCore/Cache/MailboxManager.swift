@@ -210,6 +210,13 @@ public class MailboxManager {
         }
         return result
     }
+
+    public func getUnreadMessages() async throws -> Int {
+        let folders = try await apiFetcher.folders(mailbox: mailbox)
+        return folders.reduce(0) { partialResult, folder in
+            partialResult + (folder.unreadCount ?? 0)
+        }
+    }
 }
 
 public extension Realm {
