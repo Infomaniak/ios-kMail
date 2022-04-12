@@ -29,7 +29,9 @@ struct AttachmentsView: View {
                 Image(systemName: "paperclip")
                 Text("\(message.attachments.count) pièce jointe (3 MB)")
                 Text(String(message.attachments.first!.size))
-                Button("Tout télécharger") {}
+                Button("Tout télécharger") {
+                    // Will be done after complete attachment
+                }
             }
 
             ScrollView(.horizontal) {
