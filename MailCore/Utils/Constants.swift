@@ -58,4 +58,11 @@ public enum Constants {
         dateFormatter.doesRelativeDateFormatting = relative
         return dateFormatter.string(from: date)
     }
+    
+    public static func formatAttachmentSize(_ size: Int64, unit: Bool = true) -> String {
+        let byteCountFormatter = ByteCountFormatter()
+        byteCountFormatter.countStyle = .binary
+        byteCountFormatter.includesUnit = unit
+        return byteCountFormatter.string(fromByteCount: size)
+    }
 }

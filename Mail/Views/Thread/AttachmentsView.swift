@@ -17,22 +17,28 @@
  */
 
 import MailCore
-import simd
+import MailResources
 import SwiftUI
 
 struct AttachmentsView: View {
     var message: Message
 
     var body: some View {
-        VStack(alignment: .leading) {
+        VStack(alignment: .leading, spacing: 22) {
             HStack {
                 Image(systemName: "paperclip")
-                Text("\(message.attachments.count) pièce jointe (3 MB)")
-                Text(String(message.attachments.first!.size))
+                    .frame(width: 14)
+                    .foregroundColor(Color(MailResourcesAsset.secondaryTextColor.color))
+
+                Text("\(message.attachments.count) pièce jointe (\(message.getAttachmentsSize()))")
+                    .fontWeight(.regular)
+                    .foregroundColor(Color(MailResourcesAsset.secondaryTextColor.color))
+
                 Button("Tout télécharger") {
                     // Will be done after complete attachment
                 }
             }
+            .font(.system(size: 14))
 
             ScrollView(.horizontal) {
                 HStack {

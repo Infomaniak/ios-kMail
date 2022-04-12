@@ -35,8 +35,14 @@ struct MessageView: View {
     }
 
     var body: some View {
-        VStack {
+        VStack(spacing: 10) {
             MessageHeaderView(message: message, isReduced: $isHeaderReduced, isThreadHeader: isThreadHeader)
+            if isThreadHeader && !message.attachments.isEmpty {
+                AttachmentsView(message: message)
+                    .padding(.top, 16)
+                    .padding(.bottom, 10)
+            }
+
             GeometryReader { proxy in
                 WebView(model: $model, dynamicHeight: $webViewHeight, proxy: proxy)
                     .frame(height: webViewHeight)
