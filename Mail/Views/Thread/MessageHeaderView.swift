@@ -90,6 +90,9 @@ struct MessageHeaderView: View {
                             }
                             .padding(.top, 6)
                         }
+                        if !message.attachments.isEmpty {
+                            AttachmentsView(message: message)
+                        }
                     }
                 }
             }
