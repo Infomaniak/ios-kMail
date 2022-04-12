@@ -82,13 +82,10 @@ public class Message: Object, Decodable, Identifiable {
     public var parent: Thread? {
         return parentLink.first
     }
-    
-    public func getAttachmentsSize() -> String {
-        var value = 0
-        for attachment in attachments {
-            value += attachment.size
-        }
-        return Constants.formatAttachmentSize(Int64(value))
+
+    public var attachmentsSize: String {
+        let totalSize = attachments.reduce(0) { $0 + $1.size }
+        return Constants.formatAttachmentSize(Int64(totalSize))
     }
 
     private enum CodingKeys: String, CodingKey {
