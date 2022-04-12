@@ -30,6 +30,7 @@ struct RoleFoldersListView: View {
     @Binding var selectedFolderId: String?
 
     weak var splitViewController: UISplitViewController?
+    weak var delegate: FolderListViewDelegate?
 
     private let items: [FolderRole: MailResourcesImages] = [
         .inbox: MailResourcesAsset.drawer,
@@ -42,10 +43,10 @@ struct RoleFoldersListView: View {
         .archive: MailResourcesAsset.archive
     ]
 
-    init(splitViewController: UISplitViewController?, selectedFolderId: Binding<String?>) {
+    init(delegate: FolderListViewDelegate?, selectedFolderId: Binding<String?>) {
         _folders = .init(Folder.self, configuration: AccountManager.instance.currentMailboxManager!.realmConfiguration) { $0.parentLink.count == 0 && $0.role != nil }
         _selectedFolderId = selectedFolderId
-        self.splitViewController = splitViewController
+        self.delegate = delegate
     }
 
     var body: some View {
@@ -54,12 +55,12 @@ struct RoleFoldersListView: View {
                            selectedFolderId: $selectedFolderId,
                            icon: items[.inbox]!,
                            usePadding: false,
-                           splitViewController: splitViewController)
+                           delegate: delegate)
 
             MenuDrawerSeparatorView()
 
             ForEach(AnyRealmCollection(folders).filter { $0.role != .inbox }.sorted()) { folder in
-                FolderCellView(folder: folder, selectedFolderId: $selectedFolderId, icon: items[folder.role!]!, splitViewController: splitViewController)
+                FolderCellView(folder: folder, selectedFolderId: $selectedFolderId, icon: items[folder.role!]!, delegate: delegate)
             }
         }
     }

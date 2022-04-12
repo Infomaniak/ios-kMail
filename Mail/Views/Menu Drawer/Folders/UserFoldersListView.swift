@@ -33,7 +33,7 @@ struct UserFoldersListView: View {
 
     @Binding var selectedFolderId: String?
 
-    weak var splitViewController: UISplitViewController?
+    weak var delegate: FolderListViewDelegate?
 
     private let foldersSortDescriptors = [
         SortDescriptor(keyPath: \Folder.isFavorite, ascending: false),
@@ -41,9 +41,9 @@ struct UserFoldersListView: View {
         SortDescriptor(keyPath: \Folder.name)
     ]
 
-    init(mailboxManager: MailboxManager, splitViewController: UISplitViewController?, selectedFolderId: Binding<String?>) {
+    init(mailboxManager: MailboxManager, delegate: FolderListViewDelegate?, selectedFolderId: Binding<String?>) {
         _folders = .init(Folder.self, configuration: AccountManager.instance.currentMailboxManager!.realmConfiguration) { $0.parentLink.count == 0 && $0.role == nil }
-        self.splitViewController = splitViewController
+        self.delegate = delegate
         _selectedFolderId = selectedFolderId
     }
 
@@ -55,7 +55,7 @@ struct UserFoldersListView: View {
                                    selectedFolderId: $selectedFolderId,
                                    icon: folder.isFavorite ? MailResourcesAsset.folderStar : MailResourcesAsset.folder,
                                    isUserFolder: true,
-                                   splitViewController: splitViewController)
+                                   delegate: delegate)
                 }
                 .accentColor(Color(InfomaniakCoreAsset.infomaniakColor.color))
             }

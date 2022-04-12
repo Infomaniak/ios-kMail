@@ -40,11 +40,11 @@ struct MenuDrawerView: View {
     private var helpMenuItems = [MenuItem]()
     private var actionsMenuItems = [MenuItem]()
 
-	public static let horizontalPadding: CGFloat = 25
-
-    init(mailboxManager: MailboxManager, splitViewController: UISplitViewController?) {
+    init(mailboxManager: MailboxManager, splitViewController: UISplitViewController? = nil, isCompact: Bool, delegate: FolderListViewDelegate? = nil) {
         self.mailboxManager = mailboxManager
         self.splitViewController = splitViewController
+        self.isCompact = isCompact
+        self.delegate = delegate
 
         getMenuItems()
     }
@@ -58,11 +58,11 @@ struct MenuDrawerView: View {
 
                 MenuDrawerSeparatorView()
 
-                RoleFoldersListView(splitViewController: splitViewController, selectedFolderId: $selectedFolderId)
+                RoleFoldersListView(delegate: delegate, selectedFolderId: $selectedFolderId)
 
                 MenuDrawerSeparatorView()
 
-                UserFoldersListView(mailboxManager: mailboxManager, splitViewController: splitViewController, selectedFolderId: $selectedFolderId)
+                UserFoldersListView(mailboxManager: mailboxManager, delegate: delegate, selectedFolderId: $selectedFolderId)
 
                 MenuDrawerSeparatorView()
 

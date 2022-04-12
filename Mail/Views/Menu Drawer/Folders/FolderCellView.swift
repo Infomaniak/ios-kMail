@@ -21,7 +21,12 @@ import MailCore
 import MailResources
 import SwiftUI
 
+protocol FolderListViewDelegate: AnyObject {
+    func didSelectFolder(_ folder: Folder)
+}
+
 struct FolderCellView: View {
+    @Environment(\.presentationMode) var presentationMode
     @EnvironmentObject var accountManager: AccountManager
 
     @State var folder: Folder
@@ -30,7 +35,8 @@ struct FolderCellView: View {
     var icon: MailResourcesImages
     var isUserFolder = false
     var usePadding = true
-    weak var splitViewController: UISplitViewController?
+
+    weak var delegate: FolderListViewDelegate?
 
     var isSelected: Bool {
         folder.id == selectedFolderId
@@ -81,9 +87,8 @@ struct FolderCellView: View {
     }
 
     private func updateSplitView(with folder: Folder) {
-        guard let mailboxManager = accountManager.currentMailboxManager else { return }
-        let messageListVC = ThreadListViewController(mailboxManager: mailboxManager, folder: folder)
-        splitViewController?.setViewController(messageListVC, for: .supplementary)
+        delegate?.didSelectFolder(folder)
+        presentationMode.wrappedValue.dismiss()
     }
 
     private func selectDefaultFolder(currentFolder: Folder) {
