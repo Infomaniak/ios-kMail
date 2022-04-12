@@ -24,7 +24,7 @@ import SwiftUI
 struct SplitView: View {
     var mailboxManager = AccountManager.instance.currentMailboxManager!
     var selectedFolder: Folder?
-    @State var navigationController: UINavigationController?
+    @State var splitViewController: UISplitViewController?
     @Environment(\.horizontalSizeClass) var sizeClass
 
     init() {
@@ -43,29 +43,27 @@ struct SplitView: View {
                 EmptyThreadView()
             }
         }
-        .onRotate { _ in
-            guard let splitViewController = navigationController?.splitViewController,
-                  let interfaceOrientation = UIApplication.shared.windows.first(where: { $0.isKeyWindow })?.windowScene?
-                  .interfaceOrientation else { return }
-            setupBehaviour(orientation: interfaceOrientation, splitViewController: splitViewController)
+        .onRotate { orientation in
+            guard let interfaceOrientation = orientation else { return }
+            setupBehaviour(orientation: interfaceOrientation)
         }
         .introspectNavigationController { navController in
-            navigationController = navController
             guard let splitViewController = navController.splitViewController,
                   let interfaceOrientation = UIApplication.shared.windows.first(where: { $0.isKeyWindow })?.windowScene?
                   .interfaceOrientation else { return }
-            setupBehaviour(orientation: interfaceOrientation, splitViewController: splitViewController)
+            self.splitViewController = splitViewController
+            setupBehaviour(orientation: interfaceOrientation)
             splitViewController.preferredDisplayMode = .twoDisplaceSecondary
         }
     }
 
-    func setupBehaviour(orientation: UIInterfaceOrientation, splitViewController: UISplitViewController) {
+    func setupBehaviour(orientation: UIInterfaceOrientation) {
         if orientation.isLandscape {
-            splitViewController.preferredSplitBehavior = .displace
+            splitViewController?.preferredSplitBehavior = .displace
         } else if orientation.isPortrait {
-            splitViewController.preferredSplitBehavior = .overlay
+            splitViewController?.preferredSplitBehavior = .overlay
         } else {
-            splitViewController.preferredSplitBehavior = .automatic
+            splitViewController?.preferredSplitBehavior = .automatic
         }
     }
 }
