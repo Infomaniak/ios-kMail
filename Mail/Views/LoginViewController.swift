@@ -18,6 +18,7 @@
 
 import InfomaniakLogin
 import MailCore
+import SwiftUI
 import UIKit
 
 class LoginViewController: UIViewController {
@@ -37,7 +38,7 @@ extension LoginViewController: InfomaniakLoginDelegate {
             do {
                 _ = try await AccountManager.instance.createAndSetCurrentAccount(code: code, codeVerifier: verifier)
                 MatomoUtils.connectUser()
-                let splitVC = SplitViewController()
+                let splitVC = UIHostingController(rootView: SplitView())
                 self.view.window?.rootViewController = splitVC
                 self.view.window?.makeKeyAndVisible()
             } catch {

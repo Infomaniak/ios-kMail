@@ -26,6 +26,8 @@ struct MenuDrawerView: View {
 
     var mailboxManager: MailboxManager
     weak var splitViewController: UISplitViewController?
+    var isCompact: Bool
+    weak var delegate: FolderListViewDelegate?
 
     public static let horizontalPadding: CGFloat = 25
 
@@ -35,7 +37,12 @@ struct MenuDrawerView: View {
 
             MailboxesManagementView(mailbox: mailboxManager.mailbox)
 
-            FoldersListView(mailboxManager: mailboxManager, splitViewController: splitViewController)
+            FoldersListView(
+                mailboxManager: mailboxManager,
+                splitViewController: splitViewController,
+                isCompact: isCompact,
+                delegate: delegate
+            )
 
             if mailboxManager.mailbox.isLimited {
                 MailboxQuotaView(mailboxManager: mailboxManager)

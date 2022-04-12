@@ -17,20 +17,51 @@
  */
 
 import MailCore
-import UIKit
+import MailResources
 import SwiftUI
+import UIKit
 
-class ThreadListViewController: MailCollectionViewController {
+class ThreadListViewController: MailCollectionViewController, FolderListViewDelegate {
     private var viewModel: ThreadListViewModel
 
-    init(mailboxManager: MailboxManager, folder: Folder) {
+    let isCompact: Bool
+
+    init(mailboxManager: MailboxManager, folder: Folder?, isCompact: Bool) {
         viewModel = ThreadListViewModel(mailboxManager: mailboxManager, folder: folder)
+        self.isCompact = isCompact
         super.init()
     }
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        title = viewModel.folder.localizedName
+        getThreads()
+    }
+
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        if isCompact {
+            let menuButton = UIBarButtonItem(
+                image: UIImage(systemName: "line.3.horizontal"),
+                style: .plain,
+                target: self,
+                action: #selector(menuPressed)
+            )
+            parent?.navigationItem.leftBarButtonItem = menuButton
+        }
+
+        updateView()
+    }
+
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        MatomoUtils.track(view: ["ThreadList"])
+    }
+
+    func updateView() {
+        parent?.navigationItem.title = viewModel.folder?.localizedName
+
+        showEmptyView(viewModel.folder != nil)
+
         viewModel.onListUpdated = { [self] deletions, insertions, modifications, reload in
             guard !reload else {
                 collectionView.reloadData()
@@ -41,12 +72,6 @@ class ThreadListViewController: MailCollectionViewController {
             collectionView.insertItems(at: insertions.map { IndexPath(item: $0, section: 0) })
             collectionView.reloadItems(at: modifications.map { IndexPath(item: $0, section: 0) })
         }
-        getThreads()
-    }
-
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
-        MatomoUtils.track(view: ["ThreadList"])
     }
 
     func getThreads() {
@@ -54,6 +79,20 @@ class ThreadListViewController: MailCollectionViewController {
             await viewModel.fetchThreads()
             collectionView.reloadData()
         }
+    }
+
+    @objc func menuPressed() {
+        let menuDrawerView = MenuDrawerView(
+            mailboxManager: viewModel.mailboxManager, isCompact: isCompact, delegate: self
+        )
+        let menuDrawerHostingController = UIHostingController(rootView: menuDrawerView)
+        menuDrawerHostingController.view.backgroundColor = MailResourcesAsset.backgroundColor.color
+        present(menuDrawerHostingController, animated: true)
+    }
+
+    private func showEmptyView(_ isHidden: Bool) {
+        let emptyView = UIHostingController(rootView: EmptyThreadView(text: "dossier"))
+        collectionView.backgroundView = isHidden ? nil : emptyView.view
     }
 
     // MARK: - UICollectionViewDataSource
@@ -76,6 +115,20 @@ class ThreadListViewController: MailCollectionViewController {
     override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         let threadView = ThreadView(mailboxManager: viewModel.mailboxManager, thread: viewModel.threads[indexPath.item])
         let threadHostingController = UIHostingController(rootView: threadView)
-        showDetailViewController(threadHostingController, sender: self)
+        if let splitVC = splitViewController, splitVC.isCollapsed {
+            navigationController?.pushViewController(threadHostingController, animated: true)
+        } else {
+            let nav = UINavigationController(rootViewController: threadHostingController)
+            showDetailViewController(nav, sender: self)
+        }
+    }
+
+    // MARK: - FolderListViewDelegate
+
+    func didSelectFolder(_ folder: Folder) {
+        viewModel.updateThreads(with: folder)
+        collectionView.reloadData()
+        updateView()
+        getThreads()
     }
 }

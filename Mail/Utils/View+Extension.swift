@@ -18,16 +18,22 @@
 
 import SwiftUI
 
-struct EmptyThreadView: View {
-    var text = "thread"
+struct DeviceRotationViewModifier: ViewModifier {
+    let action: (UIInterfaceOrientation?) -> Void
 
-    var body: some View {
-        Text("Aucun \(text) sélectionné")
+    func body(content: Content) -> some View {
+        content
+            .onAppear()
+            .onReceive(NotificationCenter.default.publisher(for: UIDevice.orientationDidChangeNotification)) { _ in
+                action(UIApplication.shared.windows.first(where: { $0.isKeyWindow })?.windowScene?
+                    .interfaceOrientation)
+            }
     }
 }
 
-struct EmptyThreadView_Previews: PreviewProvider {
-    static var previews: some View {
-        EmptyThreadView()
+// A View wrapper to make the modifier easier to use
+extension View {
+    func onRotate(perform action: @escaping (UIInterfaceOrientation?) -> Void) -> some View {
+        modifier(DeviceRotationViewModifier(action: action))
     }
 }

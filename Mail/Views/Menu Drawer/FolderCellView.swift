@@ -25,25 +25,20 @@ struct FolderCellView: View {
     @State var folder: Folder
 
     var icon: MailResourcesImages
-    var action: (Folder) -> Void
 
     var body: some View {
-        Button {
-            action(folder)
-        } label: {
-            HStack {
-                Image(uiImage: icon.image)
+        HStack {
+            Image(uiImage: icon.image)
+                .foregroundColor(Color(InfomaniakCoreAsset.infomaniakColor.color))
+
+            Text(folder.localizedName)
+                .foregroundColor(Color(MailResourcesAsset.primaryTextColor.color))
+
+            Spacer()
+
+            if let unreadCount = folder.unreadCount, unreadCount > 0 {
+                Text(unreadCount < 100 ? "\(unreadCount)" : "99+")
                     .foregroundColor(Color(InfomaniakCoreAsset.infomaniakColor.color))
-
-                Text(folder.localizedName)
-                    .foregroundColor(Color(MailResourcesAsset.primaryTextColor.color))
-
-                Spacer()
-
-                if let unreadCount = folder.unreadCount, unreadCount > 0 {
-                    Text(unreadCount < 100 ? "\(unreadCount)" : "99+")
-                        .foregroundColor(Color(InfomaniakCoreAsset.infomaniakColor.color))
-                }
             }
         }
     }
@@ -51,9 +46,10 @@ struct FolderCellView: View {
 
 struct FolderCellView_Previews: PreviewProvider {
     static var previews: some View {
-        FolderCellView(folder: PreviewHelper.sampleFolder, icon: MailResourcesAsset.drawer) { _ in
-            print("Hello")
-        }
+        FolderCellView(
+            folder: PreviewHelper.sampleFolder,
+            icon: MailResourcesAsset.drawer
+        )
         .previewLayout(.sizeThatFits)
     }
 }
