@@ -123,7 +123,7 @@ class ThreadListViewController: MailCollectionViewController, FolderListViewDele
         }
     }
 
-    // MARK: - FolderLsitViewDelegate
+    // MARK: - FolderListViewDelegate
 
     func didSelectFolder(_ folder: Folder) {
         viewModel.updateThreads(with: folder)
