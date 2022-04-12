@@ -32,6 +32,9 @@ struct MenuDrawerView: View {
     @State var selectedFolderId: String?
     @State private var showMailboxes = false
 
+    @State private var inbox: Folder!
+    @State private var shouldNavigate = false
+
     var isCompact: Bool
     weak var delegate: FolderListViewDelegate?
 
@@ -74,6 +77,10 @@ struct MenuDrawerView: View {
                 }
             }
             .padding([.leading, .trailing], Self.horizontalPadding)
+
+            NavigationLink(destination: ThreadList(mailboxManager: accountManager.currentMailboxManager!, folder: inbox, isCompact: isCompact), isActive: $shouldNavigate) {
+                EmptyView()
+            }
         }
         .listStyle(.plain)
         .environmentObject(accountManager)
@@ -87,10 +94,13 @@ struct MenuDrawerView: View {
             Task {
                 await fetchFolders()
                 guard let mailboxManager = accountManager.currentMailboxManager else { return }
-                let inbox = mailboxManager.getRealm().objects(Folder.self).filter("role = 'INBOX'").first!
+                inbox = mailboxManager.getRealm().objects(Folder.self).filter("role = 'INBOX'").first!
                 delegate?.didSelectFolder(inbox, mailboxManager: mailboxManager)
 
                 selectedFolderId = inbox.id
+                if !isCompact {
+                    shouldNavigate = true
+                }
             }
         }
     }
