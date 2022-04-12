@@ -21,7 +21,7 @@ import SwiftUI
 
 struct MailboxesManagementButtonView: View {
     @State var text: String
-    @State var detail: String?
+    @State var detail: Int?
 
     var handleAction: () -> Void
 
@@ -32,8 +32,8 @@ struct MailboxesManagementButtonView: View {
 
             Spacer()
 
-            if let detail = detail {
-                Text(detail)
+            if let detail = detail, detail > 0 {
+                Text("\(detail)")
                     .foregroundColor(Color(InfomaniakCoreAsset.infomaniakColor.color))
             }
         }

@@ -24,14 +24,14 @@ import SwiftUI
 struct MailboxesManagementView: View {
     @EnvironmentObject var accountManager: AccountManager
 
-    @State private var mailboxes = [(mailbox: Mailbox, unreadCount: Int)]()
+    @State private var mailboxes = [(mailbox: Mailbox, unreadCount: Int?)]()
     @State private var unfoldDetails = false
 
     var body: some View {
         DisclosureGroup(isExpanded: $unfoldDetails) {
             VStack(alignment: .leading) {
                 ForEach(mailboxes, id: \.mailbox.mailboxId) { mailboxData in
-                    MailboxesManagementButtonView(text: mailboxData.mailbox.email, detail: "\(mailboxData.unreadCount)") {
+                    MailboxesManagementButtonView(text: mailboxData.mailbox.email, detail: mailboxData.unreadCount) {
                         accountManager.setCurrentMailboxForCurrentAccount(mailbox: mailboxData.mailbox)
                     }
                 }
@@ -59,12 +59,12 @@ struct MailboxesManagementView: View {
 
     // MARK: - Private functions
 
-    private func getMailboxesData() async -> [(mailbox: Mailbox, unreadCount: Int)] {
+    private func getMailboxesData() async -> [(mailbox: Mailbox, unreadCount: Int?)] {
         let mailboxes = accountManager.mailboxes.filter { $0.mailboxId != accountManager.currentMailboxId }
-        var mailboxesData = [(mailbox: Mailbox, unreadCount: Int)]()
+        var mailboxesData = [(mailbox: Mailbox, unreadCount: Int?)]()
         for mailbox in mailboxes {
             let unreadCount = try? await accountManager.getMailboxManager(for: mailbox)?.getUnreadMessages()
-            mailboxesData.append((mailbox, unreadCount ?? 0))
+            mailboxesData.append((mailbox, unreadCount))
         }
         return mailboxesData
     }
