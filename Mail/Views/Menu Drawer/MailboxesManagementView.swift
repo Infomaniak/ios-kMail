@@ -24,15 +24,15 @@ import SwiftUI
 struct MailboxesManagementView: View {
     @EnvironmentObject var accountManager: AccountManager
 
-    @State private var mailboxes = [(mailbox: Mailbox, unreadCount: Int?)]()
+    @State private var mailboxesUnreadCount = [Int: Int]()
     @State private var unfoldDetails = false
 
     var body: some View {
         DisclosureGroup(isExpanded: $unfoldDetails) {
             VStack(alignment: .leading) {
-                ForEach(mailboxes, id: \.mailbox.mailboxId) { mailboxData in
-                    MailboxesManagementButtonView(text: mailboxData.mailbox.email, detail: mailboxData.unreadCount) {
-                        accountManager.setCurrentMailboxForCurrentAccount(mailbox: mailboxData.mailbox)
+                ForEach(accountManager.mailboxes.filter { $0.mailboxId != accountManager.currentMailboxId }, id: \.mailboxId) { mailbox in
+                    MailboxesManagementButtonView(text: mailbox.email, detail: mailboxesUnreadCount[mailbox.mailboxId]) {
+                        accountManager.setCurrentMailboxForCurrentAccount(mailbox: mailbox)
                     }
                 }
 
@@ -52,19 +52,17 @@ struct MailboxesManagementView: View {
         .padding(.top, 20)
         .onAppear {
             Task {
-                mailboxes = await getMailboxesData()
+                mailboxesUnreadCount = await getMailboxesUnreadCount()
             }
         }
     }
 
     // MARK: - Private functions
 
-    private func getMailboxesData() async -> [(mailbox: Mailbox, unreadCount: Int?)] {
-        let mailboxes = accountManager.mailboxes.filter { $0.mailboxId != accountManager.currentMailboxId }
-        var mailboxesData = [(mailbox: Mailbox, unreadCount: Int?)]()
-        for mailbox in mailboxes {
-            let unreadCount = try? await accountManager.getMailboxManager(for: mailbox)?.getUnreadMessages()
-            mailboxesData.append((mailbox, unreadCount))
+    private func getMailboxesUnreadCount() async -> [Int: Int] {
+        var mailboxesData = [Int: Int]()
+        for mailbox in accountManager.mailboxes {
+            mailboxesData[mailbox.mailboxId] = try? await accountManager.getMailboxManager(for: mailbox)?.getUnreadMessages()
         }
         return mailboxesData
     }
