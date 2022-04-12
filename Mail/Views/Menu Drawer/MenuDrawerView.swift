@@ -27,7 +27,7 @@ struct MenuDrawerView: View {
     var mailboxManager: MailboxManager
     weak var splitViewController: UISplitViewController?
     var isCompact: Bool
-    var delegate: FolderListViewDelegate?
+    weak var delegate: FolderListViewDelegate?
 
     public static let horizontalPadding: CGFloat = 25
 

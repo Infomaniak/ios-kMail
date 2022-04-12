@@ -85,7 +85,6 @@ class ThreadListViewController: MailCollectionViewController, FolderListViewDele
         let menuDrawerView = MenuDrawerView(
             mailboxManager: viewModel.mailboxManager, isCompact: isCompact, delegate: self
         )
-        .environment(\.realmConfiguration, viewModel.mailboxManager.realmConfiguration)
         let menuDrawerHostingController = UIHostingController(rootView: menuDrawerView)
         menuDrawerHostingController.view.backgroundColor = MailResourcesAsset.backgroundColor.color
         present(menuDrawerHostingController, animated: true)

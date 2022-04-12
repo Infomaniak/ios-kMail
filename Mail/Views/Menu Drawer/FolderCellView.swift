@@ -22,7 +22,6 @@ import MailResources
 import SwiftUI
 
 struct FolderCellView: View {
-    var mailboxManager: MailboxManager
     @State var folder: Folder
 
     var icon: MailResourcesImages
@@ -48,7 +47,6 @@ struct FolderCellView: View {
 struct FolderCellView_Previews: PreviewProvider {
     static var previews: some View {
         FolderCellView(
-            mailboxManager: MailboxManager(mailbox: PreviewHelper.sampleMailbox, apiFetcher: MailApiFetcher()),
             folder: PreviewHelper.sampleFolder,
             icon: MailResourcesAsset.drawer
         )

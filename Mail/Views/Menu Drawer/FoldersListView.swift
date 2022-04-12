@@ -35,7 +35,7 @@ struct FoldersListView: View {
     weak var splitViewController: UISplitViewController?
     var isCompact: Bool
 
-    var delegate: FolderListViewDelegate?
+    weak var delegate: FolderListViewDelegate?
 
     init(
         mailboxManager: MailboxManager,
@@ -58,7 +58,6 @@ struct FoldersListView: View {
                     updateSplitView(with: folder)
                 } label: {
                     FolderCellView(
-                        mailboxManager: mailboxManager,
                         folder: folder,
                         icon: MailResourcesAsset.drawer
                     )
@@ -66,7 +65,6 @@ struct FoldersListView: View {
             } else {
                 NavigationLink(destination: ThreadList(mailboxManager: mailboxManager, folder: folder, isCompact: isCompact)) {
                     FolderCellView(
-                        mailboxManager: mailboxManager,
                         folder: folder,
                         icon: MailResourcesAsset.drawer
                     )

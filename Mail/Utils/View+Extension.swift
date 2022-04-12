@@ -19,20 +19,21 @@
 import SwiftUI
 
 struct DeviceRotationViewModifier: ViewModifier {
-    let action: (UIDeviceOrientation) -> Void
+    let action: (UIInterfaceOrientation?) -> Void
 
     func body(content: Content) -> some View {
         content
             .onAppear()
             .onReceive(NotificationCenter.default.publisher(for: UIDevice.orientationDidChangeNotification)) { _ in
-                action(UIDevice.current.orientation)
+                action(UIApplication.shared.windows.first(where: { $0.isKeyWindow })?.windowScene?
+                    .interfaceOrientation)
             }
     }
 }
 
 // A View wrapper to make the modifier easier to use
 extension View {
-    func onRotate(perform action: @escaping (UIDeviceOrientation) -> Void) -> some View {
+    func onRotate(perform action: @escaping (UIInterfaceOrientation?) -> Void) -> some View {
         modifier(DeviceRotationViewModifier(action: action))
     }
 }

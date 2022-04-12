@@ -18,8 +18,8 @@
 
 import InfomaniakLogin
 import MailCore
-import UIKit
 import SwiftUI
+import UIKit
 
 class LoginViewController: UIViewController {
     @IBAction func loginButtonPressed(_ sender: UIButton) {

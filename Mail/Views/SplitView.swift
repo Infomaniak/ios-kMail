@@ -43,27 +43,29 @@ struct SplitView: View {
                 EmptyThreadView()
             }
         }
-        .onRotate { orientation in
-            guard let splitViewControler = navigationController?.splitViewController else { return }
-            if orientation == .portrait || orientation == .portraitUpsideDown {
-                splitViewControler.preferredSplitBehavior = .overlay
-            } else if orientation == .landscapeLeft || orientation == .landscapeRight {
-                splitViewControler.preferredSplitBehavior = .displace
-            }
+        .onRotate { _ in
+            guard let splitViewController = navigationController?.splitViewController,
+                  let interfaceOrientation = UIApplication.shared.windows.first(where: { $0.isKeyWindow })?.windowScene?
+                  .interfaceOrientation else { return }
+            setupBehaviour(orientation: interfaceOrientation, splitViewController: splitViewController)
         }
         .introspectNavigationController { navController in
             navigationController = navController
-            guard let splitViewControler = navController.splitViewController,
+            guard let splitViewController = navController.splitViewController,
                   let interfaceOrientation = UIApplication.shared.windows.first(where: { $0.isKeyWindow })?.windowScene?
                   .interfaceOrientation else { return }
-            if interfaceOrientation.isLandscape {
-                splitViewControler.preferredSplitBehavior = .displace
-            } else if interfaceOrientation.isPortrait {
-                splitViewControler.preferredSplitBehavior = .overlay
-            } else {
-                splitViewControler.preferredSplitBehavior = .automatic
-            }
-            splitViewControler.preferredDisplayMode = .twoDisplaceSecondary
+            setupBehaviour(orientation: interfaceOrientation, splitViewController: splitViewController)
+            splitViewController.preferredDisplayMode = .twoDisplaceSecondary
+        }
+    }
+
+    func setupBehaviour(orientation: UIInterfaceOrientation, splitViewController: UISplitViewController) {
+        if orientation.isLandscape {
+            splitViewController.preferredSplitBehavior = .displace
+        } else if orientation.isPortrait {
+            splitViewController.preferredSplitBehavior = .overlay
+        } else {
+            splitViewController.preferredSplitBehavior = .automatic
         }
     }
 }
