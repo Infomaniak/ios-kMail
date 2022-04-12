@@ -62,27 +62,5 @@ struct UserFoldersListView: View {
             .padding(.top, 9)
         }
         .accentColor(Color(MailResourcesAsset.primaryTextColor.color))
-        .onAppear {
-            Task {
-                await fetchFolders()
-                MatomoUtils.track(view: ["MenuDrawer"])
-            }
-        }
-        .onChange(of: accountManager.currentMailboxId) { _ in
-            Task {
-                await fetchFolders()
-            }
-        }
-    }
-
-    // MARK: - Private functions
-
-    private func fetchFolders() async {
-        guard let mailboxManager = accountManager.currentMailboxManager else { return }
-        do {
-            try await mailboxManager.folders()
-        } catch {
-            print("Error while getting folders: \(error.localizedDescription)")
-        }
     }
 }

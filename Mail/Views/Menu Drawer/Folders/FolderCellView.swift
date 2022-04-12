@@ -70,12 +70,27 @@ struct FolderCellView: View {
             }
             .padding([.top, .bottom], usePadding ? 4 : 0)
         }
+        .onAppear {
+            if selectedFolderId == nil {
+                selectDefaultFolder(currentFolder: folder)
+            }
+        }
+        .onChange(of: accountManager.currentMailboxId) { _ in
+            selectDefaultFolder(currentFolder: folder)
+        }
     }
 
     private func updateSplitView(with folder: Folder) {
         guard let mailboxManager = accountManager.currentMailboxManager else { return }
         let messageListVC = ThreadListViewController(mailboxManager: mailboxManager, folder: folder)
         splitViewController?.setViewController(messageListVC, for: .supplementary)
+    }
+
+    private func selectDefaultFolder(currentFolder: Folder) {
+        if currentFolder.role == .inbox {
+            updateSplitView(with: folder)
+            selectedFolderId = folder.id
+        }
     }
 }
 

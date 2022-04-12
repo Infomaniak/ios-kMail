@@ -63,8 +63,4 @@ struct RoleFoldersListView: View {
             }
         }
     }
-
-    func openFolder(folder: Folder) {
-        // Remove function next
-    }
 }

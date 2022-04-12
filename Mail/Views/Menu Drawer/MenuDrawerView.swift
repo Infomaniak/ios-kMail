@@ -76,6 +76,17 @@ struct MenuDrawerView: View {
         }
         .listStyle(.plain)
         .environmentObject(accountManager)
+        .onAppear {
+            Task {
+                await fetchFolders()
+                MatomoUtils.track(view: ["MenuDrawer"])
+            }
+        }
+        .onChange(of: accountManager.currentMailboxId) { _ in
+            Task {
+                await fetchFolders()
+            }
+        }
     }
 
     // MARK: - Private methods
@@ -89,6 +100,15 @@ struct MenuDrawerView: View {
             MenuItem(icon: MailResourcesAsset.drawerArrow, label: "Importer des mails", action: importMails),
             MenuItem(icon: MailResourcesAsset.synchronizeArrow, label: "Restaurer des mails", action: restoreMails)
         ]
+    }
+
+    private func fetchFolders() async {
+        guard let mailboxManager = accountManager.currentMailboxManager else { return }
+        do {
+            try await mailboxManager.folders()
+        } catch {
+            print("Error while getting folders: \(error.localizedDescription)")
+        }
     }
 
     // MARK: - Menu actions
