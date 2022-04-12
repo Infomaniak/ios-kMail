@@ -86,14 +86,16 @@ struct FolderCellView: View {
         }
     }
 
-    private func updateSplitView(with folder: Folder) {
+    private func updateSplitView(with folder: Folder, dismiss: Bool = true) {
         delegate?.didSelectFolder(folder)
-        presentationMode.wrappedValue.dismiss()
+        if dismiss {
+            presentationMode.wrappedValue.dismiss()
+        }
     }
 
     private func selectDefaultFolder(currentFolder: Folder) {
         if currentFolder.role == .inbox {
-            updateSplitView(with: folder)
+            updateSplitView(with: folder, dismiss: false)
             selectedFolderId = folder.id
         }
     }

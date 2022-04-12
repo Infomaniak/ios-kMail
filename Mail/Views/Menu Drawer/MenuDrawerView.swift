@@ -32,17 +32,13 @@ struct MenuDrawerView: View {
     @State private var showMailboxes = false
     @State private var selectedFolderId: String?
 
-    var mailboxManager: MailboxManager
-    weak var splitViewController: UISplitViewController?
     var isCompact: Bool
     weak var delegate: FolderListViewDelegate?
 
     private var helpMenuItems = [MenuItem]()
     private var actionsMenuItems = [MenuItem]()
 
-    init(mailboxManager: MailboxManager, splitViewController: UISplitViewController? = nil, isCompact: Bool, delegate: FolderListViewDelegate? = nil) {
-        self.mailboxManager = mailboxManager
-        self.splitViewController = splitViewController
+    init(isCompact: Bool, delegate: FolderListViewDelegate? = nil) {
         self.isCompact = isCompact
         self.delegate = delegate
 
@@ -51,7 +47,7 @@ struct MenuDrawerView: View {
 
     var body: some View {
         ScrollView {
-            MenuHeaderView(splitViewController: splitViewController)
+            MenuHeaderView()
 
             VStack(alignment: .leading) {
                 MailboxesManagementView()
@@ -62,7 +58,7 @@ struct MenuDrawerView: View {
 
                 MenuDrawerSeparatorView()
 
-                UserFoldersListView(mailboxManager: mailboxManager, delegate: delegate, selectedFolderId: $selectedFolderId)
+                UserFoldersListView(delegate: delegate, selectedFolderId: $selectedFolderId)
 
                 MenuDrawerSeparatorView()
 
@@ -72,8 +68,8 @@ struct MenuDrawerView: View {
 
                 ItemsListView(title: "Actions avancées", content: actionsMenuItems)
 
-                if mailboxManager.mailbox.isLimited {
-                    MailboxQuotaView(mailboxManager: mailboxManager)
+                if accountManager.currentMailboxManager?.mailbox.isLimited == true {
+                    MailboxQuotaView()
                 }
             }
             .padding([.leading, .trailing], Self.horizontalPadding)

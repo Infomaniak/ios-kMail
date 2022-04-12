@@ -41,7 +41,7 @@ struct UserFoldersListView: View {
         SortDescriptor(keyPath: \Folder.name)
     ]
 
-    init(mailboxManager: MailboxManager, delegate: FolderListViewDelegate?, selectedFolderId: Binding<String?>) {
+    init(delegate: FolderListViewDelegate?, selectedFolderId: Binding<String?>) {
         _folders = .init(Folder.self, configuration: AccountManager.instance.currentMailboxManager!.realmConfiguration) { $0.parentLink.count == 0 && $0.role == nil }
         self.delegate = delegate
         _selectedFolderId = selectedFolderId

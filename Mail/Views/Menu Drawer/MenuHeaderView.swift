@@ -21,8 +21,6 @@ import SwiftUI
 import UIKit
 
 struct MenuHeaderView: View {
-    var splitViewController: UISplitViewController?
-
     var body: some View {
         HStack {
             Image(uiImage: MailResourcesAsset.logoMail.image)
@@ -33,7 +31,7 @@ struct MenuHeaderView: View {
             Spacer()
 
             Button {
-                splitViewController?.setViewController(SettingsViewController(), for: .secondary)
+                print("Hello")
             } label: {
                 Image(uiImage: MailResourcesAsset.gear.image)
                     .resizable()
@@ -51,6 +49,6 @@ struct MenuHeaderView: View {
 
 struct MenuHeaderView_Previews: PreviewProvider {
     static var previews: some View {
-        MenuHeaderView(splitViewController: UISplitViewController())
+        MenuHeaderView()
     }
 }
