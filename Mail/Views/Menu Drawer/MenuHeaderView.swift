@@ -25,8 +25,7 @@ struct MenuHeaderView: View {
 
     var body: some View {
         HStack {
-            // Call the image directly from assets to update it automatically when changing light / dark mode
-            Image("logo-mail")
+            Image(uiImage: MailResourcesAsset.logoMail.image)
                 .resizable()
                 .scaledToFit()
                 .frame(height: 52)
