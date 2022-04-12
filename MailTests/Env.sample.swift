@@ -16,18 +16,13 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import SwiftUI
+enum Env_Sample {
+    // Set your token here
+    static let token = "<token>"
 
-struct EmptyThreadView: View {
-    var text = "thread"
+    // Set your user ID here
+    static let userId = 01234
 
-    var body: some View {
-        Text("Aucun \(text) sélectionné")
-    }
-}
-
-struct EmptyThreadView_Previews: PreviewProvider {
-    static var previews: some View {
-        EmptyThreadView()
-    }
+    // Set the id of the test mailbox
+    static let mailboxId = 01234
 }

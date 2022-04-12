@@ -34,9 +34,13 @@ struct MenuDrawerView: View {
 
     var mailboxManager: MailboxManager
     weak var splitViewController: UISplitViewController?
+    var isCompact: Bool
+    weak var delegate: FolderListViewDelegate?
 
     private var helpMenuItems = [MenuItem]()
     private var actionsMenuItems = [MenuItem]()
+
+	public static let horizontalPadding: CGFloat = 25
 
     init(mailboxManager: MailboxManager, splitViewController: UISplitViewController?) {
         self.mailboxManager = mailboxManager

@@ -16,18 +16,19 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import MailCore
 import SwiftUI
 
-struct EmptyThreadView: View {
-    var text = "thread"
+struct ThreadList: UIViewControllerRepresentable {
+    var mailboxManager: MailboxManager
+    var folder: Folder?
+    var isCompact: Bool
 
-    var body: some View {
-        Text("Aucun \(text) sélectionné")
+    func makeUIViewController(context: Context) -> ThreadListViewController {
+        return ThreadListViewController(mailboxManager: mailboxManager, folder: folder, isCompact: isCompact)
     }
-}
 
-struct EmptyThreadView_Previews: PreviewProvider {
-    static var previews: some View {
-        EmptyThreadView()
+    func updateUIViewController(_ uiViewController: ThreadListViewController, context: Context) {
+        // Intentionally unimplemented...
     }
 }
