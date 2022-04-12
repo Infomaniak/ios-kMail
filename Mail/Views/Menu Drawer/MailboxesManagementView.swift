@@ -49,7 +49,7 @@ struct MailboxesManagementView: View {
                 .lineLimit(1)
         }
         .accentColor(Color(MailResourcesAsset.primaryTextColor.color))
-        .padding([.top], 20)
+        .padding(.top, 20)
         .onAppear {
             Task {
                 mailboxes = await getMailboxesData()

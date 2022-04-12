@@ -29,7 +29,8 @@ struct RoleFoldersListView: View {
 
     @Binding var selectedFolderId: String?
 
-    weak var splitViewController: UISplitViewController?
+    var isCompact: Bool
+
     weak var delegate: FolderListViewDelegate?
 
     private let items: [FolderRole: MailResourcesImages] = [
@@ -43,24 +44,29 @@ struct RoleFoldersListView: View {
         .archive: MailResourcesAsset.archive
     ]
 
-    init(delegate: FolderListViewDelegate?, selectedFolderId: Binding<String?>) {
+    init(selectedFolderId: Binding<String?>, isCompact: Bool, delegate: FolderListViewDelegate?) {
         _folders = .init(Folder.self, configuration: AccountManager.instance.currentMailboxManager!.realmConfiguration) { $0.parentLink.count == 0 && $0.role != nil }
         _selectedFolderId = selectedFolderId
+        self.isCompact = isCompact
         self.delegate = delegate
     }
 
     var body: some View {
-        return VStack {
-            FolderCellView(folder: folders.first { $0.role == .inbox }!,
-                           selectedFolderId: $selectedFolderId,
-                           icon: items[.inbox]!,
-                           usePadding: false,
-                           delegate: delegate)
+        VStack {
+            if let inbox = folders.first { $0.role == .inbox } {
+                FolderCellView(folder: inbox,
+                               selectedFolderId: $selectedFolderId,
+                               icon: items[.inbox]!,
+                               isCompact: isCompact,
+                               usePadding: false,
+                               delegate: delegate)
+                    .padding(.top, 3)
 
-            MenuDrawerSeparatorView()
+                MenuDrawerSeparatorView()
+            }
 
             ForEach(AnyRealmCollection(folders).filter { $0.role != .inbox }.sorted()) { folder in
-                FolderCellView(folder: folder, selectedFolderId: $selectedFolderId, icon: items[folder.role!]!, delegate: delegate)
+                FolderCellView(folder: folder, selectedFolderId: $selectedFolderId, icon: items[folder.role!]!, isCompact: isCompact, delegate: delegate)
             }
         }
     }

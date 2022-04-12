@@ -29,8 +29,8 @@ struct MenuDrawerView: View {
 
     @StateObject var accountManager = AccountManager.instance
 
+    @State var selectedFolderId: String?
     @State private var showMailboxes = false
-    @State private var selectedFolderId: String?
 
     var isCompact: Bool
     weak var delegate: FolderListViewDelegate?
@@ -38,9 +38,10 @@ struct MenuDrawerView: View {
     private var helpMenuItems = [MenuItem]()
     private var actionsMenuItems = [MenuItem]()
 
-    init(isCompact: Bool, delegate: FolderListViewDelegate? = nil) {
+    init(selectedFolderId: String?, isCompact: Bool, delegate: FolderListViewDelegate? = nil) {
         self.isCompact = isCompact
         self.delegate = delegate
+        _selectedFolderId = State(initialValue: selectedFolderId)
 
         getMenuItems()
     }
@@ -54,11 +55,11 @@ struct MenuDrawerView: View {
 
                 MenuDrawerSeparatorView()
 
-                RoleFoldersListView(delegate: delegate, selectedFolderId: $selectedFolderId)
+                RoleFoldersListView(selectedFolderId: $selectedFolderId, isCompact: isCompact, delegate: delegate)
 
                 MenuDrawerSeparatorView()
 
-                UserFoldersListView(delegate: delegate, selectedFolderId: $selectedFolderId)
+                UserFoldersListView(selectedFolderId: $selectedFolderId, isCompact: isCompact, delegate: delegate)
 
                 MenuDrawerSeparatorView()
 

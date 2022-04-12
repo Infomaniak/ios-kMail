@@ -40,7 +40,8 @@ struct MenuHeaderView: View {
             }
         }
         .padding([.leading, .trailing], MenuDrawerView.horizontalPadding)
-        .padding([.top, .bottom])
+        .padding(.top, 30)
+        .padding(.bottom)
         .background(Color(MailResourcesAsset.backgroundColor.color))
         .clipped()
         .shadow(color: Color(MailResourcesAsset.menuDrawerShadowColor.color), radius: 2, x: 0, y: 3)

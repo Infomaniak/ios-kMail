@@ -30,60 +30,34 @@ struct FolderCellView: View {
     @EnvironmentObject var accountManager: AccountManager
 
     @State var folder: Folder
+    @State private var shouldNavigate = false
+
     @Binding var selectedFolderId: String?
 
     var icon: MailResourcesImages
+    var isCompact: Bool
     var isUserFolder = false
     var usePadding = true
 
     weak var delegate: FolderListViewDelegate?
 
-    var isSelected: Bool {
-        folder.id == selectedFolderId
-    }
-
-    private var iconSize: CGFloat {
-        if isUserFolder {
-            return folder.isFavorite ? 22 : 19
-        }
-        return 24
-    }
-
     var body: some View {
-        Button {
-            updateSplitView(with: folder)
-            selectedFolderId = folder.id
-        } label: {
-            HStack {
-                Image(uiImage: icon.image)
-                    .resizable()
-                    .scaledToFit()
-                    .frame(width: iconSize, height: iconSize)
-                    .foregroundColor(Color(InfomaniakCoreAsset.infomaniakColor.color))
-                    .padding(.trailing, 10)
-
-                Text(folder.localizedName)
-                    .foregroundColor(Color(isSelected ? InfomaniakCoreAsset.infomaniakColor.color : MailResourcesAsset.primaryTextColor.color))
-                    .fontWeight(isSelected ? .semibold : .regular)
-
-                Spacer()
-
-                if let unreadCount = folder.unreadCount, unreadCount > 0 {
-                    Text(unreadCount < 100 ? "\(unreadCount)" : "99+")
-                        .foregroundColor(Color(InfomaniakCoreAsset.infomaniakColor.color))
-                        .fontWeight(isSelected ? .semibold : .regular)
+        VStack {
+            if !isCompact {
+                NavigationLink(destination: ThreadList(mailboxManager: accountManager.currentMailboxManager!, folder: folder, isCompact: isCompact), isActive: $shouldNavigate) {
+                    EmptyView()
                 }
             }
-            .padding([.top, .bottom], usePadding ? 4 : 0)
-        }
-        .onAppear {
-            if selectedFolderId == nil {
-                selectDefaultFolder(currentFolder: folder)
+
+            Button {
+                updateSplitView(with: folder)
+                selectedFolderId = folder.id
+                shouldNavigate = true
+            } label: {
+                CellContentView(selectedFolderId: $selectedFolderId, folder: $folder, icon: icon, isUserFolder: isUserFolder)
             }
         }
-        .onChange(of: accountManager.currentMailboxId) { _ in
-            selectDefaultFolder(currentFolder: folder)
-        }
+        .padding([.top, .bottom], usePadding ? 4 : 0)
     }
 
     private func updateSplitView(with folder: Folder, dismiss: Bool = true) {
@@ -92,11 +66,46 @@ struct FolderCellView: View {
             presentationMode.wrappedValue.dismiss()
         }
     }
+}
 
-    private func selectDefaultFolder(currentFolder: Folder) {
-        if currentFolder.role == .inbox {
-            updateSplitView(with: folder, dismiss: false)
-            selectedFolderId = folder.id
+private struct CellContentView: View {
+    @Binding var selectedFolderId: String?
+    @Binding var folder: Folder
+
+    var icon: MailResourcesImages
+    var isUserFolder: Bool
+
+    private var iconSize: CGFloat {
+        if isUserFolder {
+            return folder.isFavorite ? 22 : 19
+        }
+        return 24
+    }
+
+    private var isSelected: Bool {
+        folder.id == selectedFolderId
+    }
+
+    var body: some View {
+        HStack {
+            Image(uiImage: icon.image)
+                .resizable()
+                .scaledToFit()
+                .frame(width: iconSize, height: iconSize)
+                .foregroundColor(Color(InfomaniakCoreAsset.infomaniakColor.color))
+                .padding(.trailing, 10)
+
+            Text(folder.localizedName)
+                .foregroundColor(Color(isSelected ? InfomaniakCoreAsset.infomaniakColor.color : MailResourcesAsset.primaryTextColor.color))
+                .fontWeight(isSelected ? .semibold : .regular)
+
+            Spacer()
+
+            if let unreadCount = folder.unreadCount, unreadCount > 0 {
+                Text(unreadCount < 100 ? "\(unreadCount)" : "99+")
+                    .foregroundColor(Color(InfomaniakCoreAsset.infomaniakColor.color))
+                    .fontWeight(isSelected ? .semibold : .regular)
+            }
         }
     }
 }
@@ -104,8 +113,9 @@ struct FolderCellView: View {
 struct FolderCellView_Previews: PreviewProvider {
     static var previews: some View {
         FolderCellView(folder: PreviewHelper.sampleFolder,
-                       selectedFolderId: .constant("hello"),
-                       icon: MailResourcesAsset.drawer)
+                       selectedFolderId: .constant("blabla"),
+                       icon: MailResourcesAsset.drawer,
+                       isCompact: false)
         .previewLayout(.sizeThatFits)
         .previewDevice(PreviewDevice(stringLiteral: "iPhone 11 Pro"))
     }

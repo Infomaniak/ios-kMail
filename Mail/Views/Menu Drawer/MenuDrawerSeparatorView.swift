@@ -26,7 +26,7 @@ struct MenuDrawerSeparatorView: View {
     var body: some View {
         Divider()
             .background(Color(MailResourcesAsset.separatorColor.color))
-            .padding(.top, withPadding ? 12 : 0)
+            .padding(.top, withPadding ? 10 : 0)
             .padding(.bottom, withPadding ? 12: 0)
             .padding(.trailing, fullWidth ? 0 : 30)
     }

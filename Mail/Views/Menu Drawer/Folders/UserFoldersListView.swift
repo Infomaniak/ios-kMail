@@ -33,6 +33,8 @@ struct UserFoldersListView: View {
 
     @Binding var selectedFolderId: String?
 
+    var isCompact: Bool
+
     weak var delegate: FolderListViewDelegate?
 
     private let foldersSortDescriptors = [
@@ -41,10 +43,11 @@ struct UserFoldersListView: View {
         SortDescriptor(keyPath: \Folder.name)
     ]
 
-    init(delegate: FolderListViewDelegate?, selectedFolderId: Binding<String?>) {
+    init(selectedFolderId: Binding<String?>, isCompact: Bool, delegate: FolderListViewDelegate?) {
         _folders = .init(Folder.self, configuration: AccountManager.instance.currentMailboxManager!.realmConfiguration) { $0.parentLink.count == 0 && $0.role == nil }
-        self.delegate = delegate
         _selectedFolderId = selectedFolderId
+        self.isCompact = isCompact
+        self.delegate = delegate
     }
 
     var body: some View {
@@ -54,6 +57,7 @@ struct UserFoldersListView: View {
                     FolderCellView(folder: folder,
                                    selectedFolderId: $selectedFolderId,
                                    icon: folder.isFavorite ? MailResourcesAsset.folderStar : MailResourcesAsset.folder,
+                                   isCompact: isCompact,
                                    isUserFolder: true,
                                    delegate: delegate)
                 }
