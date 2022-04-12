@@ -86,6 +86,11 @@ struct MenuDrawerView: View {
         .onChange(of: accountManager.currentMailboxId) { _ in
             Task {
                 await fetchFolders()
+                guard let mailboxManager = accountManager.currentMailboxManager else { return }
+                let inbox = mailboxManager.getRealm().objects(Folder.self).filter("role = 'INBOX'").first!
+                delegate?.didSelectFolder(inbox, mailboxManager: mailboxManager)
+
+                selectedFolderId = inbox.id
             }
         }
     }

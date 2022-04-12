@@ -53,6 +53,10 @@ typealias Thread = MailCore.Thread
         }
     }
 
+    func updateMailboxManager(_ mailboxManager: MailboxManager) {
+        self.mailboxManager = mailboxManager
+    }
+
     func fetchThreads() async {
         do {
             guard let folder = folder else {
@@ -64,13 +68,16 @@ typealias Thread = MailCore.Thread
         }
     }
 
-    func updateThreads(with folder: Folder) {
+    func updateThreads(with folder: Folder, mailboxManager: MailboxManager? = nil) {
         self.folder = folder
-        if let cachedFolder = mailboxManager.getRealm().object(ofType: Folder.self, forPrimaryKey: folder.id) {
+        if let mailboxManager = mailboxManager {
+            self.mailboxManager = mailboxManager
+        }
+        if let cachedFolder = self.mailboxManager.getRealm().object(ofType: Folder.self, forPrimaryKey: folder.id) {
             threads = AnyRealmCollection(cachedFolder.threads.sorted(by: \.date, ascending: false))
             observeChanges()
         } else {
-            threads = AnyRealmCollection(mailboxManager.getRealm().objects(Thread.self)
+            threads = AnyRealmCollection(self.mailboxManager.getRealm().objects(Thread.self)
                 .filter(NSPredicate(format: "FALSEPREDICATE")))
         }
     }

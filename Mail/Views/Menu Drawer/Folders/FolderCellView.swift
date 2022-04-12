@@ -22,7 +22,7 @@ import MailResources
 import SwiftUI
 
 protocol FolderListViewDelegate: AnyObject {
-    func didSelectFolder(_ folder: Folder)
+    func didSelectFolder(_ folder: Folder, mailboxManager: MailboxManager?)
 }
 
 struct FolderCellView: View {
@@ -61,7 +61,7 @@ struct FolderCellView: View {
     }
 
     private func updateSplitView(with folder: Folder, dismiss: Bool = true) {
-        delegate?.didSelectFolder(folder)
+        delegate?.didSelectFolder(folder, mailboxManager: accountManager.currentMailboxManager)
         if dismiss {
             presentationMode.wrappedValue.dismiss()
         }

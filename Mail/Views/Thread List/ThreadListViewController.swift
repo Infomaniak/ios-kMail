@@ -123,8 +123,8 @@ class ThreadListViewController: MailCollectionViewController, FolderListViewDele
 
     // MARK: - FolderListViewDelegate
 
-    func didSelectFolder(_ folder: Folder) {
-        viewModel.updateThreads(with: folder)
+    func didSelectFolder(_ folder: Folder, mailboxManager: MailboxManager? = nil) {
+        viewModel.updateThreads(with: folder, mailboxManager: mailboxManager)
         collectionView.reloadData()
         updateView()
         getThreads()
