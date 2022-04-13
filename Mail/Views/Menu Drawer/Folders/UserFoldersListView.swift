@@ -25,7 +25,7 @@ import SwiftUI
 
 struct UserFoldersListView: View {
     // swiftlint:disable empty_count
-    @ObservedResults(Folder.self, where: { $0.parentLink.count == 0 && $0.role == nil }) var folders
+    @ObservedResults(Folder.self, where: { $0.parentLink.count == 0 }) var folders
 
     @EnvironmentObject var accountManager: AccountManager
 
@@ -43,8 +43,8 @@ struct UserFoldersListView: View {
         SortDescriptor(keyPath: \Folder.name)
     ]
 
-    init(selectedFolderId: Binding<String?>, isCompact: Bool, delegate: FolderListViewDelegate?) {
-        _folders = .init(Folder.self, configuration: AccountManager.instance.currentMailboxManager!.realmConfiguration) { $0.parentLink.count == 0 && $0.role == nil }
+    init(folders: ObservedResults<Folder>, selectedFolderId: Binding<String?>, isCompact: Bool, delegate: FolderListViewDelegate?) {
+        _folders = folders
         _selectedFolderId = selectedFolderId
         self.isCompact = isCompact
         self.delegate = delegate
@@ -53,7 +53,7 @@ struct UserFoldersListView: View {
     var body: some View {
         DisclosureGroup(MailResourcesStrings.buttonFolders, isExpanded: $unfoldFolders) {
             VStack {
-                ForEach(AnyRealmCollection(folders.sorted(by: foldersSortDescriptors))) { folder in
+                ForEach(AnyRealmCollection(folders.sorted(by: foldersSortDescriptors)).filter { $0.role == nil }) { folder in
                     FolderCell(folder: folder,
                                    selectedFolderId: $selectedFolderId,
                                    isCompact: isCompact,

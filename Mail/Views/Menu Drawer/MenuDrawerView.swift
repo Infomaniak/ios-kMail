@@ -27,6 +27,9 @@ struct MenuDrawerView: View {
 
     @Environment(\.openURL) var openURL
 
+    // swiftlint:disable empty_count
+    @ObservedResults(Folder.self, where: { $0.parentLink.count == 0 }) var folders
+
     @StateObject var accountManager = AccountManager.instance
 
     @State var selectedFolderId: String?
@@ -42,6 +45,7 @@ struct MenuDrawerView: View {
     private var actionsMenuItems = [MenuItem]()
 
     init(selectedFolderId: String?, isCompact: Bool, delegate: FolderListViewDelegate? = nil) {
+        _folders = .init(Folder.self, configuration: AccountManager.instance.currentMailboxManager!.realmConfiguration) { $0.parentLink.count == 0 }
         self.isCompact = isCompact
         self.delegate = delegate
         _selectedFolderId = State(initialValue: selectedFolderId)
@@ -58,11 +62,11 @@ struct MenuDrawerView: View {
 
                 MenuDrawerSeparatorView()
 
-                RoleFoldersListView(selectedFolderId: $selectedFolderId, isCompact: isCompact, delegate: delegate)
+                RoleFoldersListView(folders: $folders, selectedFolderId: $selectedFolderId, isCompact: isCompact, delegate: delegate)
 
                 MenuDrawerSeparatorView()
 
-                UserFoldersListView(selectedFolderId: $selectedFolderId, isCompact: isCompact, delegate: delegate)
+                UserFoldersListView(folders: $folders, selectedFolderId: $selectedFolderId, isCompact: isCompact, delegate: delegate)
 
                 MenuDrawerSeparatorView()
 

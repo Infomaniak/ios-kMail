@@ -23,7 +23,7 @@ import SwiftUI
 
 struct RoleFoldersListView: View {
     // swiftlint:disable empty_count
-    @ObservedResults(Folder.self, where: { $0.parentLink.count == 0 && $0.role != nil }) var folders
+    @ObservedResults(Folder.self, where: { $0.parentLink.count == 0 }) var folders
 
     @EnvironmentObject var accountManager: AccountManager
 
@@ -33,15 +33,15 @@ struct RoleFoldersListView: View {
 
     weak var delegate: FolderListViewDelegate?
 
-    init(selectedFolderId: Binding<String?>, isCompact: Bool, delegate: FolderListViewDelegate?) {
-        _folders = .init(Folder.self, configuration: AccountManager.instance.currentMailboxManager!.realmConfiguration) { $0.parentLink.count == 0 && $0.role != nil }
+    init(folders: ObservedResults<Folder>, selectedFolderId: Binding<String?>, isCompact: Bool, delegate: FolderListViewDelegate?) {
+        _folders = folders
         _selectedFolderId = selectedFolderId
         self.isCompact = isCompact
         self.delegate = delegate
     }
 
     var body: some View {
-        ForEach(AnyRealmCollection(folders).sorted()) { folder in
+        ForEach(AnyRealmCollection(folders).filter { $0.role != nil }.sorted()) { folder in
             FolderCell(folder: folder, selectedFolderId: $selectedFolderId, isCompact: isCompact, delegate: delegate)
                 .padding(.top, folder.role == .inbox ? 3 : Constants.menuDrawerFolderCellPadding)
                 .padding(.bottom, folder.role == .inbox ? 0 : Constants.menuDrawerFolderCellPadding)
