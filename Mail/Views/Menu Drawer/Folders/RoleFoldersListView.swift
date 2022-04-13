@@ -52,21 +52,13 @@ struct RoleFoldersListView: View {
     }
 
     var body: some View {
-        VStack {
-            if let inbox = folders.first { $0.role == .inbox } {
-                FolderCell(folder: inbox,
-                               selectedFolderId: $selectedFolderId,
-                               icon: items[.inbox]!,
-                               isCompact: isCompact,
-                               delegate: delegate)
-                    .padding(.top, 3)
+        ForEach(AnyRealmCollection(folders).sorted()) { folder in
+            FolderCell(folder: folder, selectedFolderId: $selectedFolderId, icon: items[folder.role!]!, isCompact: isCompact, delegate: delegate)
+                .padding(.top, folder.role == .inbox ? 3 : Constants.menuDrawerFolderCellPadding)
+                .padding(.bottom, folder.role == .inbox ? 0 : Constants.menuDrawerFolderCellPadding)
 
+            if folder.role == .inbox {
                 MenuDrawerSeparatorView()
-            }
-
-            ForEach(AnyRealmCollection(folders).filter { $0.role != .inbox }.sorted()) { folder in
-                FolderCell(folder: folder, selectedFolderId: $selectedFolderId, icon: items[folder.role!]!, isCompact: isCompact, delegate: delegate)
-                    .padding([.top, .bottom], Constants.menuDrawerFolderCellPadding)
             }
         }
     }
