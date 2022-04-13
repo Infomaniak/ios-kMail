@@ -26,6 +26,7 @@ enum MailError: LocalizedError, CustomStringConvertible {
     case noToken
     case resourceError
     case unknownError
+    
 
     var errorDescription: String? {
         switch self {
