@@ -53,10 +53,6 @@ typealias Thread = MailCore.Thread
         }
     }
 
-    func updateMailboxManager(_ mailboxManager: MailboxManager) {
-        self.mailboxManager = mailboxManager
-    }
-
     func fetchThreads() async {
         do {
             guard let folder = folder else {
