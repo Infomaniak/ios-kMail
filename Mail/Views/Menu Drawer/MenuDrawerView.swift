@@ -70,7 +70,7 @@ struct MenuDrawerView: View {
 
                 MenuDrawerSeparatorView()
 
-                ItemsListView(title: "Actions avancées", content: actionsMenuItems)
+                ItemsListView(title: MailResourcesStrings.menuDrawerAdvancedActions, content: actionsMenuItems)
 
                 if accountManager.currentMailboxManager?.mailbox.isLimited == true {
                     MailboxQuotaView()
@@ -109,12 +109,12 @@ struct MenuDrawerView: View {
 
     private mutating func getMenuItems() {
         helpMenuItems = [
-            MenuItem(icon: MailResourcesAsset.alertCircle, label: "Feedbacks", action: sendFeedback),
-            MenuItem(icon: MailResourcesAsset.questionHelpCircle, label: "Aide", action: openSupport)
+            MenuItem(icon: MailResourcesAsset.alertCircle, label: MailResourcesStrings.buttonFeedbacks, action: sendFeedback),
+            MenuItem(icon: MailResourcesAsset.questionHelpCircle, label: MailResourcesStrings.buttonHelp, action: openSupport)
         ]
         actionsMenuItems = [
-            MenuItem(icon: MailResourcesAsset.drawerArrow, label: "Importer des mails", action: importMails),
-            MenuItem(icon: MailResourcesAsset.synchronizeArrow, label: "Restaurer des mails", action: restoreMails)
+            MenuItem(icon: MailResourcesAsset.drawerArrow, label: MailResourcesStrings.buttonImportEmails, action: importMails),
+            MenuItem(icon: MailResourcesAsset.synchronizeArrow, label: MailResourcesStrings.buttonRestoreEmails, action: restoreMails)
         ]
     }
 

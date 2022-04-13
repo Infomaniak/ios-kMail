@@ -38,8 +38,8 @@ struct MailboxesManagementView: View {
 
                 MenuDrawerSeparatorView(withPadding: false, fullWidth: true)
 
-                MailboxesManagementButtonView(text: "Ajouter un compte", handleAction: addNewAccount)
-                MailboxesManagementButtonView(text: "Gérer mon compte", handleAction: handleMyAccount)
+                MailboxesManagementButtonView(text: MailResourcesStrings.buttonAddAccount, handleAction: addNewAccount)
+                MailboxesManagementButtonView(text: MailResourcesStrings.buttonManageAccount, handleAction: handleMyAccount)
             }
             .padding(.leading)
             .padding(.top, 5)

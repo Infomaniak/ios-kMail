@@ -51,7 +51,7 @@ struct UserFoldersListView: View {
     }
 
     var body: some View {
-        DisclosureGroup("Dossiers", isExpanded: $unfoldFolders) {
+        DisclosureGroup(MailResourcesStrings.buttonFolders, isExpanded: $unfoldFolders) {
             VStack {
                 ForEach(AnyRealmCollection(folders.sorted(by: foldersSortDescriptors))) { folder in
                     FolderCellView(folder: folder,

@@ -43,13 +43,11 @@ struct MailboxQuotaView: View {
                 HStack {
                     Text("\(formatter.string(from: .init(value: Double(quotas?.size ?? 0), unit: .kilobytes))) / \(formatter.string(from: .init(value: Double(Constants.sizeLimit), unit: .kilobytes)))")
                         .font(.system(size: 19))
-                    Text("utilisés")
+                    Text(MailResourcesStrings.menuDrawerUsed)
                 }
 
-                Button {
-                    print("Todo")
-                } label: {
-                    Text("Obtenir plus de stockage")
+                Button(action: openGetMoreStorage) {
+                    Text(MailResourcesStrings.buttonMoreStorage)
                         .fontWeight(.semibold)
                 }
                 .foregroundColor(Color(InfomaniakCoreAsset.infomaniakColor.color))
@@ -71,9 +69,16 @@ struct MailboxQuotaView: View {
         }
     }
 
+    // MARK: - Private functions
+
     private func computeProgression() -> Double {
+        let minimumValue = 0.03
         let value = Double(quotas?.size ?? 0) / Double(Constants.sizeLimit)
-        return value > 0.03 ? value : 0.03
+        return value > minimumValue ? value : minimumValue
+    }
+
+    private func openGetMoreStorage() {
+        print("to do")
     }
 }
 
