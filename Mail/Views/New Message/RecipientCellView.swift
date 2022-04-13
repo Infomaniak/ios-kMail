@@ -1,3 +1,4 @@
+//
 /*
  Infomaniak Mail - iOS App
  Copyright (C) 2022 Infomaniak Network SA
@@ -18,35 +19,29 @@
 
 import SwiftUI
 
-struct NewMessageView: View {
-    @Environment(\.presentationMode) var presentationMode
+struct RecipientCellView: View {
+    @State var from: String = ""
+
+    let text: String
 
     var body: some View {
-        NavigationView {
-            VStack {
-                RecipientCellView(text: "De :")
-                RecipientCellView(text: "À :")
-                RecipientCellView(text: "Objet :")
-                
-                Spacer()
+        VStack {
+            HStack {
+                Text(text)
+                TextField("", text: $from)
+                    .textContentType(.emailAddress)
+                    .keyboardType(.emailAddress)
+                    .autocapitalization(.none)
             }
-            .navigationBarTitleDisplayMode(.inline)
-            .navigationBarBackButtonHidden(true)
-            .navigationBarItems(leading:
-                Button(action: {
-                    self.presentationMode.wrappedValue.dismiss()
-                }) {
-                    HStack {
-                        Image(systemName: "multiply")
-                    }
-                })
+            Divider()
         }
-        .accentColor(.black)
+        .padding(.horizontal)
     }
 }
 
-struct NewMessageView_Previews: PreviewProvider {
+struct RecipientCellView_Previews: PreviewProvider {
     static var previews: some View {
-        NewMessageView()
+        RecipientCellView(text: "De : ")
+            .previewLayout(.sizeThatFits)
     }
 }
