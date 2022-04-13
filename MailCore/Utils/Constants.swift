@@ -40,4 +40,15 @@ public enum Constants {
     public static let sizeLimit = 20_000_000 // ko
 
     public static let menuDrawerFolderCellPadding: CGFloat = 4
+
+    static let byteCountFormatter: ByteCountFormatter = {
+        let byteCountFormatter = ByteCountFormatter()
+        byteCountFormatter.countStyle = .file
+        byteCountFormatter.includesUnit = true
+        return byteCountFormatter
+    }()
+
+    public static func formatQuota(_ size: Int) -> String {
+        return Self.byteCountFormatter.string(from: .init(value: Double(size), unit: .kilobytes))
+    }
 }

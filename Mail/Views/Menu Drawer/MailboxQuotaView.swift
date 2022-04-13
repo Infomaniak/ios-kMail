@@ -22,14 +22,14 @@ import MailResources
 import SwiftUI
 
 struct MailboxQuotaView: View {
-    @EnvironmentObject var accountManager: AccountManager
-
-    var formatter: ByteCountFormatter = {
+    static let formatter: ByteCountFormatter = {
         let byteCountFormatter = ByteCountFormatter()
         byteCountFormatter.countStyle = .file
         byteCountFormatter.includesUnit = true
         return byteCountFormatter
     }()
+
+    @EnvironmentObject var accountManager: AccountManager
 
     @State private var quotas: Quotas?
 
@@ -40,8 +40,8 @@ struct MailboxQuotaView: View {
                 .padding(.trailing, 7)
 
             VStack(alignment: .leading) {
-                HStack {
-                    Text("\(formatter.string(from: .init(value: Double(quotas?.size ?? 0), unit: .kilobytes))) / \(formatter.string(from: .init(value: Double(Constants.sizeLimit), unit: .kilobytes)))")
+                HStack(spacing: 4) {
+                    Text("\(Constants.formatQuota(quotas?.size ?? 0)) / \(Constants.formatQuota(Constants.sizeLimit))")
                         .font(.system(size: 19))
                     Text(MailResourcesStrings.menuDrawerUsed)
                 }
@@ -56,7 +56,8 @@ struct MailboxQuotaView: View {
 
             Spacer()
         }
-        .padding([.top, .bottom])
+        .padding(.top, 2)
+        .padding([.bottom])
         .onAppear {
             Task {
                 do {
@@ -101,6 +102,7 @@ private struct QuotaCircularProgressViewStyle: ProgressViewStyle {
                 .resizable()
                 .scaledToFit()
                 .frame(width: 18)
+                .foregroundColor(Color(InfomaniakCoreAsset.infomaniakColor.color))
         }
         .frame(height: 42)
     }

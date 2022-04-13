@@ -77,6 +77,7 @@ struct MenuDrawerView: View {
                 MenuDrawerItemsListView(title: MailResourcesStrings.menuDrawerAdvancedActions, content: actionsMenuItems)
 
                 if accountManager.currentMailboxManager?.mailbox.isLimited == true {
+                    MenuDrawerSeparatorView()
                     MailboxQuotaView()
                 }
             }
