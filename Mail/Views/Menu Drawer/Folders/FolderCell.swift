@@ -34,9 +34,7 @@ struct FolderCell: View {
 
     @Binding var selectedFolderId: String?
 
-    var icon: MailResourcesImages
     var isCompact: Bool
-    var isUserFolder = false
 
     weak var delegate: FolderListViewDelegate?
 
@@ -53,7 +51,7 @@ struct FolderCell: View {
                 selectedFolderId = folder.id
                 shouldNavigate = true
             } label: {
-                FolderCellContentView(selectedFolderId: $selectedFolderId, folder: $folder, icon: icon, isUserFolder: isUserFolder)
+                FolderCellContentView(selectedFolderId: $selectedFolderId, folder: $folder)
             }
         }
     }
@@ -68,11 +66,8 @@ private struct FolderCellContentView: View {
     @Binding var selectedFolderId: String?
     @Binding var folder: Folder
 
-    var icon: MailResourcesImages
-    var isUserFolder: Bool
-
     private var iconSize: CGFloat {
-        if isUserFolder {
+        if folder.role == nil {
             return folder.isFavorite ? 22 : 19
         }
         return 24
@@ -84,7 +79,7 @@ private struct FolderCellContentView: View {
 
     var body: some View {
         HStack {
-            Image(uiImage: icon.image)
+            folder.icon
                 .resizable()
                 .scaledToFit()
                 .frame(width: iconSize, height: iconSize)
@@ -110,7 +105,6 @@ struct FolderCellView_Previews: PreviewProvider {
     static var previews: some View {
         FolderCell(folder: PreviewHelper.sampleFolder,
                        selectedFolderId: .constant("blabla"),
-                       icon: MailResourcesAsset.drawer,
                        isCompact: false)
         .previewLayout(.sizeThatFits)
         .previewDevice(PreviewDevice(stringLiteral: "iPhone 11 Pro"))

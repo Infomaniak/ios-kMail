@@ -18,7 +18,9 @@
 
 import Foundation
 import InfomaniakCore
+import MailResources
 import RealmSwift
+import SwiftUI
 
 public enum FolderRole: String, Codable, PersistableEnum {
     case archive = "ARCHIVE"
@@ -71,6 +73,27 @@ public enum FolderRole: String, Codable, PersistableEnum {
             return 7
         }
     }
+
+    public var icon: MailResourcesImages {
+        switch self {
+        case .archive:
+            return MailResourcesAsset.archive
+        case .commercial:
+            return MailResourcesAsset.commercial
+        case .draft:
+            return MailResourcesAsset.draft
+        case .inbox:
+            return MailResourcesAsset.drawer
+        case .sent:
+            return MailResourcesAsset.emailSent
+        case .socialNetworks:
+            return MailResourcesAsset.socialNetworks
+        case .spam:
+            return MailResourcesAsset.spam
+        case .trash:
+            return MailResourcesAsset.bin
+        }
+    }
 }
 
 public class Folder: Object, Codable, Comparable, Identifiable {
@@ -102,6 +125,13 @@ public class Folder: Object, Codable, Comparable, Identifiable {
 
     public var localizedName: String {
         return role?.localizedName ?? name
+    }
+
+    public var icon: Image {
+        if let role = role {
+            return Image(uiImage: role.icon.image)
+        }
+        return Image(uiImage: isFavorite ? MailResourcesAsset.folderStar.image : MailResourcesAsset.folder.image)
     }
 
     public static func < (lhs: Folder, rhs: Folder) -> Bool {

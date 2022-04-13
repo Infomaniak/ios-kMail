@@ -33,17 +33,6 @@ struct RoleFoldersListView: View {
 
     weak var delegate: FolderListViewDelegate?
 
-    private let items: [FolderRole: MailResourcesImages] = [
-        .inbox: MailResourcesAsset.drawer,
-        .commercial: MailResourcesAsset.commercial,
-        .socialNetworks: MailResourcesAsset.socialNetworks,
-        .sent: MailResourcesAsset.emailSent,
-        .draft: MailResourcesAsset.draft,
-        .spam: MailResourcesAsset.spam,
-        .trash: MailResourcesAsset.bin,
-        .archive: MailResourcesAsset.archive
-    ]
-
     init(selectedFolderId: Binding<String?>, isCompact: Bool, delegate: FolderListViewDelegate?) {
         _folders = .init(Folder.self, configuration: AccountManager.instance.currentMailboxManager!.realmConfiguration) { $0.parentLink.count == 0 && $0.role != nil }
         _selectedFolderId = selectedFolderId
@@ -53,7 +42,7 @@ struct RoleFoldersListView: View {
 
     var body: some View {
         ForEach(AnyRealmCollection(folders).sorted()) { folder in
-            FolderCell(folder: folder, selectedFolderId: $selectedFolderId, icon: items[folder.role!]!, isCompact: isCompact, delegate: delegate)
+            FolderCell(folder: folder, selectedFolderId: $selectedFolderId, isCompact: isCompact, delegate: delegate)
                 .padding(.top, folder.role == .inbox ? 3 : Constants.menuDrawerFolderCellPadding)
                 .padding(.bottom, folder.role == .inbox ? 0 : Constants.menuDrawerFolderCellPadding)
 

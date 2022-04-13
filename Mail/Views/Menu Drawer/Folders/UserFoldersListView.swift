@@ -56,9 +56,7 @@ struct UserFoldersListView: View {
                 ForEach(AnyRealmCollection(folders.sorted(by: foldersSortDescriptors))) { folder in
                     FolderCell(folder: folder,
                                    selectedFolderId: $selectedFolderId,
-                                   icon: folder.isFavorite ? MailResourcesAsset.folderStar : MailResourcesAsset.folder,
                                    isCompact: isCompact,
-                                   isUserFolder: true,
                                    delegate: delegate)
                     .padding([.top, .bottom], Constants.menuDrawerFolderCellPadding)
                 }
