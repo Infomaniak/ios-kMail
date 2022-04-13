@@ -22,7 +22,7 @@ import MailCore
 import SwiftUI
 
 struct MailboxesManagementView: View {
-    @EnvironmentObject var accountManager: AccountManager
+    @EnvironmentObject var mailboxManager: MailboxManager
 
     @State private var mailboxesUnreadCount = [Int: Int]()
     @State private var unfoldDetails = false
@@ -30,9 +30,14 @@ struct MailboxesManagementView: View {
     var body: some View {
         DisclosureGroup(isExpanded: $unfoldDetails) {
             VStack(alignment: .leading) {
-                ForEach(accountManager.mailboxes.filter { $0.mailboxId != accountManager.currentMailboxId }, id: \.mailboxId) { mailbox in
+                ForEach(AccountManager.instance.mailboxes.filter { $0.mailboxId != mailboxManager.mailbox.mailboxId }, id: \.mailboxId) { mailbox in
                     MailboxesManagementButtonView(text: mailbox.email, detail: mailboxesUnreadCount[mailbox.mailboxId]) {
-                        accountManager.setCurrentMailboxForCurrentAccount(mailbox: mailbox)
+                        // TODO: Switch mailbox
+                    }
+                    .onAppear {
+                        Task {
+                            await fetchUnreadCountEmails(for: mailbox)
+                        }
                     }
                 }
 
@@ -44,27 +49,18 @@ struct MailboxesManagementView: View {
             .padding(.leading)
             .padding(.top, 5)
         } label: {
-            Text(accountManager.currentMailboxManager?.mailbox.email ?? "")
+            Text(mailboxManager.mailbox.email)
                 .fontWeight(.semibold)
                 .lineLimit(1)
         }
         .accentColor(Color(MailResourcesAsset.primaryTextColor.color))
         .padding(.top, 20)
-        .onAppear {
-            Task {
-                mailboxesUnreadCount = await getMailboxesUnreadCount()
-            }
-        }
     }
 
-    // MARK: - Private functions
+    // MARK: - Private function
 
-    private func getMailboxesUnreadCount() async -> [Int: Int] {
-        var mailboxesData = [Int: Int]()
-        for mailbox in accountManager.mailboxes {
-            mailboxesData[mailbox.mailboxId] = try? await accountManager.getMailboxManager(for: mailbox)?.getUnreadMessages()
-        }
-        return mailboxesData
+    private func fetchUnreadCountEmails(for mailbox: Mailbox) async {
+        mailboxesUnreadCount[mailbox.mailboxId] = try? await AccountManager.instance.getMailboxManager(for: mailbox)?.getUnreadMessages()
     }
 
     // MARK: - Menu actions

@@ -52,26 +52,26 @@ public extension InfomaniakLogin {
     }
 }
 
-public class AccountManager: RefreshTokenDelegate, ObservableObject {
+public class AccountManager: RefreshTokenDelegate {
     private static let appIdentifierPrefix = Bundle.main.infoDictionary!["AppIdentifierPrefix"] as! String
     private static let group = "com.infomaniak.mail"
     public static let appGroup = "group." + group
     public static let accessGroup: String = AccountManager.appIdentifierPrefix + AccountManager.group
     public static var instance = AccountManager()
     private let tag = "ch.infomaniak.token".data(using: .utf8)!
-    @Published public var currentAccount: Account!
-    @Published public var accounts = [Account]()
-    @Published public var tokens = [ApiToken]()
+    public var currentAccount: Account!
+    public var accounts = [Account]()
+    public var tokens = [ApiToken]()
     public let refreshTokenLockedQueue = DispatchQueue(label: "com.infomaniak.mail.refreshtoken")
     public weak var delegate: AccountManagerDelegate?
-    @Published public var currentUserId: Int {
+    public var currentUserId: Int {
         didSet {
             UserDefaults.shared.currentMailUserId = currentUserId
             setSentryUserId(userId: currentUserId)
         }
     }
 
-    @Published public var currentMailboxId: Int {
+    public var currentMailboxId: Int {
         didSet {
             UserDefaults.shared.currentMailboxId = currentMailboxId
         }

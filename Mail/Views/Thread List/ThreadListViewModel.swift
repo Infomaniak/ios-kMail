@@ -64,11 +64,8 @@ typealias Thread = MailCore.Thread
         }
     }
 
-    func updateThreads(with folder: Folder, mailboxManager: MailboxManager? = nil) {
+    func updateThreads(with folder: Folder) {
         self.folder = folder
-        if let mailboxManager = mailboxManager {
-            self.mailboxManager = mailboxManager
-        }
         if let cachedFolder = self.mailboxManager.getRealm().object(ofType: Folder.self, forPrimaryKey: folder.id) {
             threads = AnyRealmCollection(cachedFolder.threads.sorted(by: \.date, ascending: false))
             observeChanges()

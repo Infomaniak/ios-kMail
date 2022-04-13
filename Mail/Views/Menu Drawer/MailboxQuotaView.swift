@@ -29,7 +29,7 @@ struct MailboxQuotaView: View {
         return byteCountFormatter
     }()
 
-    @EnvironmentObject var accountManager: AccountManager
+    @EnvironmentObject var mailboxManager: MailboxManager
 
     @State private var quotas: Quotas?
 
@@ -61,7 +61,6 @@ struct MailboxQuotaView: View {
         .onAppear {
             Task {
                 do {
-                    guard let mailboxManager = accountManager.currentMailboxManager else { return }
                     quotas = try await mailboxManager.apiFetcher.quotas(mailbox: mailboxManager.mailbox)
                 } catch {
                     print("Error while fetching quotas: \(error)")

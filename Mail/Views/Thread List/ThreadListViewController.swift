@@ -82,7 +82,7 @@ class ThreadListViewController: MailCollectionViewController, FolderListViewDele
     }
 
     @objc func menuPressed() {
-        let menuDrawerView = MenuDrawerView(selectedFolderId: viewModel.folder?.id, isCompact: isCompact, delegate: self)
+        let menuDrawerView = MenuDrawerView(mailboxManager: viewModel.mailboxManager, selectedFolderId: viewModel.folder?.id, isCompact: isCompact, delegate: self)
         let menuDrawerHostingController = UIHostingController(rootView: menuDrawerView)
         menuDrawerHostingController.view.backgroundColor = MailResourcesAsset.backgroundColor.color
         present(menuDrawerHostingController, animated: true)
@@ -123,8 +123,8 @@ class ThreadListViewController: MailCollectionViewController, FolderListViewDele
 
     // MARK: - FolderListViewDelegate
 
-    func didSelectFolder(_ folder: Folder, mailboxManager: MailboxManager? = nil) {
-        viewModel.updateThreads(with: folder, mailboxManager: mailboxManager)
+    func didSelectFolder(_ folder: Folder) {
+        viewModel.updateThreads(with: folder)
         collectionView.reloadData()
         updateView()
         getThreads()

@@ -25,8 +25,6 @@ struct RoleFoldersListView: View {
     // swiftlint:disable empty_count
     @ObservedResults(Folder.self, where: { $0.parentLink.count == 0 }) var folders
 
-    @EnvironmentObject var accountManager: AccountManager
-
     @Binding var selectedFolderId: String?
 
     var isCompact: Bool

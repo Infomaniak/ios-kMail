@@ -22,7 +22,7 @@ import InfomaniakCore
 import RealmSwift
 import Sentry
 
-public class MailboxManager {
+public class MailboxManager: ObservableObject {
     public class MailboxManagerConstants {
         private let fileManager = FileManager.default
         public let rootDocumentsURL: URL

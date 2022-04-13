@@ -22,12 +22,12 @@ import MailResources
 import SwiftUI
 
 protocol FolderListViewDelegate: AnyObject {
-    func didSelectFolder(_ folder: Folder, mailboxManager: MailboxManager?)
+    func didSelectFolder(_ folder: Folder)
 }
 
 struct FolderCell: View {
     @Environment(\.presentationMode) var presentationMode
-    @EnvironmentObject var accountManager: AccountManager
+    @EnvironmentObject var mailboxManager: MailboxManager
 
     @State var folder: Folder
     @State private var shouldNavigate = false
@@ -41,7 +41,7 @@ struct FolderCell: View {
     var body: some View {
         VStack {
             if !isCompact {
-                NavigationLink(destination: ThreadList(mailboxManager: accountManager.currentMailboxManager!, folder: folder, isCompact: isCompact), isActive: $shouldNavigate) {
+                NavigationLink(destination: ThreadList(mailboxManager: mailboxManager, folder: folder, isCompact: isCompact), isActive: $shouldNavigate) {
                     EmptyView()
                 }
             }
@@ -57,7 +57,7 @@ struct FolderCell: View {
     }
 
     private func updateSplitView(with folder: Folder) {
-        delegate?.didSelectFolder(folder, mailboxManager: accountManager.currentMailboxManager)
+        delegate?.didSelectFolder(folder)
         presentationMode.wrappedValue.dismiss()
     }
 }

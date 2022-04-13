@@ -30,7 +30,7 @@ struct MenuDrawerView: View {
     // swiftlint:disable empty_count
     @ObservedResults(Folder.self, where: { $0.parentLink.count == 0 }) var folders
 
-    @StateObject var accountManager = AccountManager.instance
+    @StateObject var mailboxManager: MailboxManager
 
     @State var selectedFolderId: String?
     @State private var showMailboxes = false
@@ -44,8 +44,9 @@ struct MenuDrawerView: View {
     private var helpMenuItems = [MenuItem]()
     private var actionsMenuItems = [MenuItem]()
 
-    init(selectedFolderId: String?, isCompact: Bool, delegate: FolderListViewDelegate? = nil) {
+    init(mailboxManager: MailboxManager, selectedFolderId: String?, isCompact: Bool, delegate: FolderListViewDelegate? = nil) {
         _folders = .init(Folder.self, configuration: AccountManager.instance.currentMailboxManager!.realmConfiguration) { $0.parentLink.count == 0 }
+        _mailboxManager = StateObject(wrappedValue: mailboxManager)
         self.isCompact = isCompact
         self.delegate = delegate
         _selectedFolderId = State(initialValue: selectedFolderId)
@@ -76,36 +77,19 @@ struct MenuDrawerView: View {
 
                 MenuDrawerItemsListView(title: MailResourcesStrings.menuDrawerAdvancedActions, content: actionsMenuItems)
 
-                if accountManager.currentMailboxManager?.mailbox.isLimited == true {
+                if mailboxManager.mailbox.isLimited {
                     MenuDrawerSeparatorView()
                     MailboxQuotaView()
                 }
             }
             .padding([.leading, .trailing], Self.horizontalPadding)
-
-            NavigationLink(destination: ThreadList(mailboxManager: accountManager.currentMailboxManager!, folder: inbox, isCompact: isCompact), isActive: $shouldNavigate) {
-                EmptyView()
-            }
         }
         .listStyle(.plain)
-        .environmentObject(accountManager)
+        .environmentObject(mailboxManager)
         .onAppear {
             Task {
                 await fetchFolders()
                 MatomoUtils.track(view: ["MenuDrawer"])
-            }
-        }
-        .onChange(of: accountManager.currentMailboxId) { _ in
-            Task {
-                await fetchFolders()
-                guard let mailboxManager = accountManager.currentMailboxManager else { return }
-                inbox = mailboxManager.getRealm().objects(Folder.self).filter("role = 'INBOX'").first!
-                delegate?.didSelectFolder(inbox, mailboxManager: mailboxManager)
-
-                selectedFolderId = inbox.id
-                if !isCompact {
-                    shouldNavigate = true
-                }
             }
         }
     }
@@ -124,7 +108,6 @@ struct MenuDrawerView: View {
     }
 
     private func fetchFolders() async {
-        guard let mailboxManager = accountManager.currentMailboxManager else { return }
         do {
             try await mailboxManager.folders()
         } catch {
