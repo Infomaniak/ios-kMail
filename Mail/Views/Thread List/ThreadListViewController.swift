@@ -34,6 +34,7 @@ class ThreadListViewController: MailCollectionViewController, FolderListViewDele
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        addMessageButton()
         getThreads()
 
         collectionView.setCollectionViewLayout(Self.createLayout(), animated: true)
@@ -84,6 +85,24 @@ class ThreadListViewController: MailCollectionViewController, FolderListViewDele
         }
     }
 
+    private func addMessageButton() {
+        let button = UIButton()
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.setTitle("Nouveau Message", for: UIControl.State.normal)
+        button.setTitleColor(UIColor.white, for: UIControl.State.normal)
+        button.setImage(UIImage(systemName: "pencil"), for: .normal)
+        button.tintColor = UIColor.white
+        button.backgroundColor = MailResourcesAsset.mailPinkColor.color
+        button.cornerRadius = 27
+        button.semanticContentAttribute = .forceRightToLeft
+        button.addTarget(self, action: #selector(newMessageButtonPressed), for: .touchUpInside)
+        view.addSubview(button)
+        button.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -30).isActive = true
+        button.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -30).isActive = true
+        button.widthAnchor.constraint(equalToConstant: 204).isActive = true
+        button.heightAnchor.constraint(equalToConstant: 50).isActive = true
+    }
+
     @objc func getThreads() {
         Task {
             await viewModel.fetchThreads()
@@ -104,6 +123,11 @@ class ThreadListViewController: MailCollectionViewController, FolderListViewDele
     private func showEmptyView(_ isHidden: Bool) {
         let emptyView = UIHostingController(rootView: EmptyThreadView(text: "dossier"))
         collectionView.backgroundView = isHidden ? nil : emptyView.view
+    }
+
+    @objc func newMessageButtonPressed() {
+        let newMessageView = UIHostingController(rootView: NewMessageView())
+        present(newMessageView, animated: true)
     }
 
     private static func createLayout() -> UICollectionViewLayout {
