@@ -16,6 +16,7 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import InfomaniakCore
 import MailResources
 import SwiftUI
 
@@ -29,6 +30,7 @@ struct ItemCellView: View {
                     .resizable()
                     .scaledToFit()
                     .frame(height: 24)
+                    .foregroundColor(Color(InfomaniakCoreAsset.infomaniakColor.color))
                     .padding(.trailing, 15)
 
                 Text(content.label)
