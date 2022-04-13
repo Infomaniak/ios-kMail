@@ -66,11 +66,11 @@ struct MenuDrawerView: View {
 
                 MenuDrawerSeparatorView()
 
-                ItemsListView(content: helpMenuItems)
+                MenuDrawerItemsListView(content: helpMenuItems)
 
                 MenuDrawerSeparatorView()
 
-                ItemsListView(title: MailResourcesStrings.menuDrawerAdvancedActions, content: actionsMenuItems)
+                MenuDrawerItemsListView(title: MailResourcesStrings.menuDrawerAdvancedActions, content: actionsMenuItems)
 
                 if accountManager.currentMailboxManager?.mailbox.isLimited == true {
                     MailboxQuotaView()
@@ -142,6 +142,6 @@ struct MenuDrawerView: View {
     }
 
     func restoreMails() {
-        // Restore mails
+        // TODO: Display "Restore Mails" view
     }
 }

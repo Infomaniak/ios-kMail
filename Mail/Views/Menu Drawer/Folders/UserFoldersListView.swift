@@ -54,12 +54,13 @@ struct UserFoldersListView: View {
         DisclosureGroup(MailResourcesStrings.buttonFolders, isExpanded: $unfoldFolders) {
             VStack {
                 ForEach(AnyRealmCollection(folders.sorted(by: foldersSortDescriptors))) { folder in
-                    FolderCellView(folder: folder,
+                    FolderCell(folder: folder,
                                    selectedFolderId: $selectedFolderId,
                                    icon: folder.isFavorite ? MailResourcesAsset.folderStar : MailResourcesAsset.folder,
                                    isCompact: isCompact,
                                    isUserFolder: true,
                                    delegate: delegate)
+                    .padding([.top, .bottom], Constants.menuDrawerFolderCellPadding)
                 }
                 .accentColor(Color(InfomaniakCoreAsset.infomaniakColor.color))
             }

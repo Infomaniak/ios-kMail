@@ -25,7 +25,7 @@ protocol FolderListViewDelegate: AnyObject {
     func didSelectFolder(_ folder: Folder, mailboxManager: MailboxManager?)
 }
 
-struct FolderCellView: View {
+struct FolderCell: View {
     @Environment(\.presentationMode) var presentationMode
     @EnvironmentObject var accountManager: AccountManager
 
@@ -37,7 +37,6 @@ struct FolderCellView: View {
     var icon: MailResourcesImages
     var isCompact: Bool
     var isUserFolder = false
-    var usePadding = true
 
     weak var delegate: FolderListViewDelegate?
 
@@ -54,21 +53,18 @@ struct FolderCellView: View {
                 selectedFolderId = folder.id
                 shouldNavigate = true
             } label: {
-                CellContentView(selectedFolderId: $selectedFolderId, folder: $folder, icon: icon, isUserFolder: isUserFolder)
+                FolderCellContentView(selectedFolderId: $selectedFolderId, folder: $folder, icon: icon, isUserFolder: isUserFolder)
             }
         }
-        .padding([.top, .bottom], usePadding ? 4 : 0)
     }
 
-    private func updateSplitView(with folder: Folder, dismiss: Bool = true) {
+    private func updateSplitView(with folder: Folder) {
         delegate?.didSelectFolder(folder, mailboxManager: accountManager.currentMailboxManager)
-        if dismiss {
-            presentationMode.wrappedValue.dismiss()
-        }
+        presentationMode.wrappedValue.dismiss()
     }
 }
 
-private struct CellContentView: View {
+private struct FolderCellContentView: View {
     @Binding var selectedFolderId: String?
     @Binding var folder: Folder
 
@@ -112,7 +108,7 @@ private struct CellContentView: View {
 
 struct FolderCellView_Previews: PreviewProvider {
     static var previews: some View {
-        FolderCellView(folder: PreviewHelper.sampleFolder,
+        FolderCell(folder: PreviewHelper.sampleFolder,
                        selectedFolderId: .constant("blabla"),
                        icon: MailResourcesAsset.drawer,
                        isCompact: false)

@@ -33,7 +33,7 @@ struct MenuHeaderView: View {
             Spacer()
 
             Button {
-                print("Display settings")
+                // TODO: Display "Settings" view
             } label: {
                 Image(uiImage: MailResourcesAsset.gear.image)
                     .resizable()

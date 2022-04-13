@@ -28,7 +28,7 @@ struct MenuItem: Identifiable {
     var action: () -> Void
 }
 
-struct ItemsListView: View {
+struct MenuDrawerItemsListView: View {
     var title: String?
     var content: [MenuItem]
 
@@ -42,7 +42,7 @@ struct ItemsListView: View {
             }
 
             ForEach(content) { item in
-                ItemCellView(content: item)
+                MenuDrawerItemCell(content: item)
             }
         }
     }
@@ -50,7 +50,7 @@ struct ItemsListView: View {
 
 struct ItemsListView_Previews: PreviewProvider {
     static var previews: some View {
-        ItemsListView(title: "Actions avancées",
+        MenuDrawerItemsListView(title: "Actions avancées",
                       content: [
                         MenuItem(icon: MailResourcesAsset.drawerArrow, label: "Importer des mails") { print("Hello") },
                         MenuItem(icon: MailResourcesAsset.synchronizeArrow, label: "Restaurer des mails") { print("Hello") }

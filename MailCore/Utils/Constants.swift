@@ -18,6 +18,7 @@
 
 import Foundation
 import MailResources
+import SwiftUI
 
 public struct URLConstants {
     public static let feedback = URLConstants(urlString: "https://feedback.userreport.com/9f60b46d-7299-4887-b79d-c756cf474c4d#ideas/popular")
@@ -37,4 +38,6 @@ public struct URLConstants {
 
 public enum Constants {
     public static let sizeLimit = 20_000_000 // ko
+
+    public static let menuDrawerFolderCellPadding: CGFloat = 4
 }

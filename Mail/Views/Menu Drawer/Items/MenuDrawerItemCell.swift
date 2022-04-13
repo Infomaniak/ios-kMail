@@ -20,7 +20,7 @@ import InfomaniakCore
 import MailResources
 import SwiftUI
 
-struct ItemCellView: View {
+struct MenuDrawerItemCell: View {
     @State var content: MenuItem
 
     var body: some View {
@@ -42,7 +42,7 @@ struct ItemCellView: View {
 
 struct ItemCellView_Previews: PreviewProvider {
     static var previews: some View {
-        ItemCellView(content: MenuItem(icon: MailResourcesAsset.drawerArrow, label: "Importer des mails") { print("Hello") })
+        MenuDrawerItemCell(content: MenuItem(icon: MailResourcesAsset.drawerArrow, label: "Importer des mails") { print("Hello") })
             .previewLayout(.sizeThatFits)
             .previewDevice(PreviewDevice(stringLiteral: "iPhone 11 Pro"))
     }

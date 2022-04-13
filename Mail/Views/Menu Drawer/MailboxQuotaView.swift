@@ -78,7 +78,7 @@ struct MailboxQuotaView: View {
     }
 
     private func openGetMoreStorage() {
-        print("to do")
+        // TODO: Open "Get More Storage View"
     }
 }
 
