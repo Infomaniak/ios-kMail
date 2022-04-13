@@ -30,7 +30,8 @@ let project = Project(name: "Mail",
                           .package(url: "https://github.com/realm/realm-cocoa", .upToNextMajor(from: "10.0.0")),
                           .package(url: "https://github.com/matomo-org/matomo-sdk-ios.git", .upToNextMajor(from: "7.5.1")),
                           .package(url: "https://github.com/ProxymanApp/atlantis", .upToNextMajor(from: "1.16.0")),
-                          .package(url: "https://github.com/siteline/SwiftUI-Introspect.git", .upToNextMajor(from: "0.1.4"))
+                          .package(url: "https://github.com/siteline/SwiftUI-Introspect.git", .upToNextMajor(from: "0.1.4")),
+                          .package(url: "https://github.com/Ambrdctr/SQRichTextEditor", .branch("master"))
                       ],
                       targets: [
                           Target(name: "Mail",
@@ -52,7 +53,8 @@ let project = Project(name: "Mail",
                                      .target(name: "MailResources"),
                                      .package(product: "MatomoTracker"),
                                      .package(product: "Atlantis"),
-                                     .package(product: "Introspect")
+                                     .package(product: "Introspect"),
+                                     .package(product: "SQRichTextEditor")
                                  ]),
                           Target(name: "MailTests",
                                  platform: .iOS,
