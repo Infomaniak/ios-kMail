@@ -17,13 +17,25 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import UIKit
+import MailCore
 import SwiftUI
 
-class ThreadListCell: UICollectionViewCell {
-    var thread: Thread!
+struct ThreadListContentCell: View {
+    var thread: Thread
 
-    lazy var content: UIHostingController = {
-        return UIHostingController(rootView: ThreadListContentCell(thread: thread))
-    }()
+    var body: some View {
+        HStack {
+            Text(thread.formattedSubject)
+            Spacer()
+            Text(thread.formattedDate)
+        }
+    }
+}
+
+struct ThreadListCell_Previews: PreviewProvider {
+    static var previews: some View {
+        ThreadListContentCell(thread: PreviewHelper.sampleThread)
+            .previewLayout(.sizeThatFits)
+            .previewDevice("iPhone 13 Pro")
+    }
 }

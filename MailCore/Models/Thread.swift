@@ -52,6 +52,13 @@ public class Thread: Object, Decodable, Identifiable {
         return subject ?? "(no subject)"
     }
 
+    public var formattedDate: String {
+        if Calendar.current.isDateInToday(date) {
+            return Constants.formatDate(date, style: .time)
+        }
+        return Constants.formatDate(date, style: .date)
+    }
+
     public convenience init(
         uid: String,
         messagesCount: Int,
