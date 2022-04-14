@@ -39,16 +39,47 @@ public struct URLConstants {
 public enum Constants {
     public static let sizeLimit = 20_000_000 // ko
 
-    public static let menuDrawerFolderCellPadding: CGFloat = 4
+	public static let menuDrawerFolderCellPadding: CGFloat = 4
 
-    static let byteCountFormatter: ByteCountFormatter = {
+    private static var dateFormatter = DateFormatter()
+
+	static let byteCountFormatter: ByteCountFormatter = {
         let byteCountFormatter = ByteCountFormatter()
         byteCountFormatter.countStyle = .file
         byteCountFormatter.includesUnit = true
         return byteCountFormatter
     }()
 
-    public static func formatQuota(_ size: Int) -> String {
+    public enum DateTimeStyle {
+        case date
+        case time
+        case datetime
+    }
+
+    public static func formatDate(_ date: Date, style: DateTimeStyle = .datetime, relative: Bool = false) -> String {
+        switch style {
+        case .date:
+            dateFormatter.dateStyle = .medium
+            dateFormatter.timeStyle = .none
+        case .time:
+            dateFormatter.dateStyle = .none
+            dateFormatter.timeStyle = .short
+        case .datetime:
+            dateFormatter.dateStyle = .medium
+            dateFormatter.timeStyle = .short
+        }
+        dateFormatter.doesRelativeDateFormatting = relative
+        return dateFormatter.string(from: date)
+    }
+
+	public static func formatQuota(_ size: Int) -> String {
         return Self.byteCountFormatter.string(from: .init(value: Double(size), unit: .kilobytes))
+	}
+    
+    public static func formatAttachmentSize(_ size: Int64, unit: Bool = true) -> String {
+        let byteCountFormatter = ByteCountFormatter()
+        byteCountFormatter.countStyle = .binary
+        byteCountFormatter.includesUnit = unit
+        return byteCountFormatter.string(fromByteCount: size)
     }
 }

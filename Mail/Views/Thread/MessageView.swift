@@ -25,16 +25,24 @@ struct MessageView: View {
     private var mailboxManager: MailboxManager
     @State var model = WebViewModel()
     @State private var webViewHeight: CGFloat = .zero
+    @State var isHeaderReduced = true
+    @State var isThreadHeader: Bool
 
-    init(mailboxManager: MailboxManager, message: Message) {
+    init(mailboxManager: MailboxManager, message: Message, isThreadHeader: Bool = false) {
         self.mailboxManager = mailboxManager
         self.message = message
+        self.isThreadHeader = isThreadHeader
     }
 
     var body: some View {
-        VStack {
-            Text(message.subject ?? "No subject")
-            Text("Message view")
+        VStack(spacing: 10) {
+            MessageHeaderView(message: message, isReduced: $isHeaderReduced, isThreadHeader: isThreadHeader)
+            if isThreadHeader && !message.attachments.isEmpty {
+                AttachmentsView(message: message)
+                    .padding(.top, 16)
+                    .padding(.bottom, 10)
+            }
+
             GeometryReader { proxy in
                 WebView(model: $model, dynamicHeight: $webViewHeight, proxy: proxy)
                     .frame(height: webViewHeight)
@@ -48,6 +56,7 @@ struct MessageView: View {
                 model.loadHTMLString(value: message.body?.value)
             }
         }
+        .padding(8)
         .onAppear {
             if self.message.shouldComplete {
                 Task {

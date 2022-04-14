@@ -32,11 +32,14 @@ struct ThreadView: View {
     var body: some View {
         ScrollView {
             VStack {
-                ForEach(thread.messages) { message in
-                    MessageView(mailboxManager: mailboxManager, message: message)
+                Text(thread.subject ?? "")
+                    .font(.largeTitle)
+                ForEach(thread.messages.indices) { index in
+                    MessageView(mailboxManager: mailboxManager, message: thread.messages[index], isThreadHeader: index == 0)
                 }
             }
         }
+        .padding(8)
         .onAppear {
             MatomoUtils.track(view: ["MessageView"])
         }

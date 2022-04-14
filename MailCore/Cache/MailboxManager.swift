@@ -181,8 +181,9 @@ public class MailboxManager: ObservableObject {
 
         static let fullyDownloaded = MessagePropertiesOptions(rawValue: 1 << 0)
         static let body = MessagePropertiesOptions(rawValue: 1 << 1)
+        static let attachments = MessagePropertiesOptions(rawValue: 1 << 2)
 
-        static let standard: MessagePropertiesOptions = [.fullyDownloaded, .body]
+        static let standard: MessagePropertiesOptions = [.fullyDownloaded, .body, .attachments]
     }
 
     private func keepCacheAttributes(
@@ -197,6 +198,11 @@ public class MailboxManager: ObservableObject {
         }
         if keepProperties.contains(.body), let body = savedMessage.body {
             message.body = Body(value: body)
+        }
+        if keepProperties.contains(.attachments) {
+            for attachment in savedMessage.attachments {
+                message.attachments.append(Attachment(value: attachment.freeze()))
+            }
         }
     }
 

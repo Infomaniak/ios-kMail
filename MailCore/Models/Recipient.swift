@@ -28,4 +28,28 @@ public class Recipient: EmbeddedObject, Codable {
         self.email = email
         self.name = name
     }
+
+    // NEED TO CHANGE
+    var isCurrentUser: Bool {
+        return AccountManager.instance.currentAccount.user.email == email
+    }
+
+    // NEED TO CHANGE
+    public var title: String {
+        if isCurrentUser {
+            return "Me"
+        }
+        return name.isEmpty ? email : name
+    }
+
+    // NEED TO CHANGE
+    public var initials: String {
+        return (name)
+            .components(separatedBy: .whitespaces)
+            .compactMap(\.first)
+            .prefix(2)
+            .map { "\($0)" }
+            .joined()
+            .uppercased()
+    }
 }

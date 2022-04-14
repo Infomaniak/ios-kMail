@@ -67,6 +67,10 @@ public class Message: Object, Decodable, Identifiable {
 
     @Persisted public var fullyDownloaded = false
 
+    public var recipients: [Recipient] {
+        return Array(to) + Array(cc)
+    }
+
     public var shouldComplete: Bool {
         return isDraft || !fullyDownloaded
     }
@@ -77,6 +81,11 @@ public class Message: Object, Decodable, Identifiable {
 
     public var parent: Thread? {
         return parentLink.first
+    }
+
+    public var attachmentsSize: String {
+        let totalSize = attachments.reduce(0) { $0 + $1.size }
+        return Constants.formatAttachmentSize(Int64(totalSize))
     }
 
     private enum CodingKeys: String, CodingKey {
