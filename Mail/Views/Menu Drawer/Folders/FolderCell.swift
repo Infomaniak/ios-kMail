@@ -30,29 +30,30 @@ struct FolderCell: View {
     @EnvironmentObject var mailboxManager: MailboxManager
 
     @State var folder: Folder
-    @State private var shouldNavigate = false
 
     @Binding var selectedFolderId: String?
 
     var isCompact: Bool
-
     weak var delegate: FolderListViewDelegate?
 
     var body: some View {
-        VStack {
-            if !isCompact {
-                NavigationLink(destination: ThreadList(mailboxManager: mailboxManager, folder: folder, isCompact: isCompact), isActive: $shouldNavigate) {
-                    EmptyView()
-                }
-            }
-
+        if isCompact {
             Button {
                 updateSplitView(with: folder)
                 selectedFolderId = folder.id
-                shouldNavigate = true
             } label: {
                 FolderCellContentView(selectedFolderId: $selectedFolderId, folder: $folder)
             }
+        } else {
+            NavigationLink {
+                ThreadList(mailboxManager: mailboxManager, folder: folder, isCompact: isCompact)
+                    .onAppear {
+                        selectedFolderId = folder.id
+                    }
+            } label: {
+                FolderCellContentView(selectedFolderId: $selectedFolderId, folder: $folder)
+            }
+
         }
     }
 
