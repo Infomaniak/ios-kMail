@@ -76,56 +76,55 @@ class RichTextEditorModel: ObservableObject {
     }
 }
 
- class MailEditor: SQTextEditorView {
-     
-     private lazy var editorWebView: WKWebView = {
-         let config = WKWebViewConfiguration()
-         config.preferences = WKPreferences()
-         config.preferences.minimumFontSize = 10
-         config.preferences.javaScriptEnabled = true
-         config.preferences.javaScriptCanOpenWindowsAutomatically = false
-         config.processPool = WKProcessPool()
-         config.userContentController = WKUserContentController()
-         config.setURLSchemeHandler(URLSchemeHandler(), forURLScheme: URLSchemeHandler.scheme)
-         
-         JSMessageName.allCases.forEach {
-             config.userContentController.add(self, name: $0.rawValue)
-         }
-         
-         // inject css to html
-         if customCss == nil,
-            let cssURL = Bundle(for: SQTextEditorView.self).url(forResource: "editor", withExtension: "css"),
-            let css = try? String(contentsOf: cssURL, encoding: .utf8) {
-             customCss = css
-         }
-         
-         if let css = customCss {
-             let cssStyle = """
-                 javascript:(function() {
-                 var parent = document.getElementsByTagName('head').item(0);
-                 var style = document.createElement('style');
-                 style.type = 'text/css';
-                 style.innerHTML = window.atob('\(encodeStringTo64(fromString: css))');
-                 parent.appendChild(style)})()
-             """
-             let cssScript = WKUserScript(source: cssStyle, injectionTime: .atDocumentEnd, forMainFrameOnly: false)
-             config.userContentController.addUserScript(cssScript)
-         }
-         
-         let _webView = WKWebView(frame: .zero, configuration: config)
-         _webView.translatesAutoresizingMaskIntoConstraints = false
-         _webView.navigationDelegate = self
-         _webView.allowsLinkPreview = false
-         _webView.setKeyboardRequiresUserInteraction(false)
-         return _webView
-     }()
-     
-     override var webView: WKWebView {
-         get {
-             return editorWebView
-         }
-         set {
-             editorWebView = newValue
-         }
-     }
- }
+class MailEditor: SQTextEditorView {
+    private lazy var editorWebView: WKWebView = {
+        let config = WKWebViewConfiguration()
+        config.preferences = WKPreferences()
+        config.preferences.minimumFontSize = 10
+        config.preferences.javaScriptEnabled = true
+        config.preferences.javaScriptCanOpenWindowsAutomatically = false
+        config.processPool = WKProcessPool()
+        config.userContentController = WKUserContentController()
+        config.setURLSchemeHandler(URLSchemeHandler(), forURLScheme: URLSchemeHandler.scheme)
+
+        JSMessageName.allCases.forEach {
+            config.userContentController.add(self, name: $0.rawValue)
+        }
+
+        // inject css to html
+        if customCss == nil,
+           let cssURL = Bundle(for: SQTextEditorView.self).url(forResource: "editor", withExtension: "css"),
+           let css = try? String(contentsOf: cssURL, encoding: .utf8) {
+            customCss = css
+        }
+
+        if let css = customCss {
+            let cssStyle = """
+                javascript:(function() {
+                var parent = document.getElementsByTagName('head').item(0);
+                var style = document.createElement('style');
+                style.type = 'text/css';
+                style.innerHTML = window.atob('\(encodeStringTo64(fromString: css))');
+                parent.appendChild(style)})()
+            """
+            let cssScript = WKUserScript(source: cssStyle, injectionTime: .atDocumentEnd, forMainFrameOnly: false)
+            config.userContentController.addUserScript(cssScript)
+        }
+
+        let _webView = WKWebView(frame: .zero, configuration: config)
+        _webView.translatesAutoresizingMaskIntoConstraints = false
+        _webView.navigationDelegate = self
+        _webView.allowsLinkPreview = false
+        _webView.setKeyboardRequiresUserInteraction(false)
+        return _webView
+    }()
+
+    override var webView: WKWebView {
+        get {
+            return editorWebView
+        }
+        set {
+            editorWebView = newValue
+        }
+    }
+}
