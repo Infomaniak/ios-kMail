@@ -24,21 +24,13 @@ import SwiftUI
 struct MailboxesManagementView: View {
     @EnvironmentObject var mailboxManager: MailboxManager
 
-    @State private var mailboxesUnreadCount = [Int: Int]()
     @State private var unfoldDetails = false
 
     var body: some View {
         DisclosureGroup(isExpanded: $unfoldDetails) {
             VStack(alignment: .leading) {
                 ForEach(AccountManager.instance.mailboxes.filter { $0.mailboxId != mailboxManager.mailbox.mailboxId }, id: \.mailboxId) { mailbox in
-                    MailboxesManagementButtonView(text: mailbox.email, detail: mailboxesUnreadCount[mailbox.mailboxId]) {
-                        // TODO: Switch mailbox
-                    }
-                    .onAppear {
-                        Task {
-                            await fetchUnreadCountEmails(for: mailbox)
-                        }
-                    }
+                    MailboxCell(mailbox: mailbox)
                 }
 
                 MenuDrawerSeparatorView(withPadding: false, fullWidth: true)
@@ -57,20 +49,14 @@ struct MailboxesManagementView: View {
         .padding(.top, 20)
     }
 
-    // MARK: - Private function
-
-    private func fetchUnreadCountEmails(for mailbox: Mailbox) async {
-        mailboxesUnreadCount[mailbox.mailboxId] = try? await AccountManager.instance.getMailboxManager(for: mailbox)?.getUnreadMessages()
-    }
-
     // MARK: - Menu actions
 
     private func addNewAccount() {
-        // todo later
+        // TODO: Add new account
     }
 
     private func handleMyAccount() {
-        // todo later
+        // TODO: Handle my account
     }
 }
 

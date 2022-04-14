@@ -21,9 +21,15 @@ import SwiftUI
 
 struct MailboxesManagementButtonView: View {
     @State var text: String
-    @State var detail: Int?
+    @Binding var detail: Int?
 
     var handleAction: () -> Void
+
+    init(text: String, detail: Binding<Int?> = .constant(nil), handleAction: @escaping () -> Void) {
+        _text = State(initialValue: text)
+        _detail = detail
+        self.handleAction = handleAction
+    }
 
     var body: some View {
         Button(action: handleAction) {
