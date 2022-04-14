@@ -87,6 +87,10 @@ public class Draft: Object, Codable, Identifiable {
         case action
     }
 
+    override init() {
+        super.init()
+    }
+    
     public required convenience init(from decoder: Decoder) throws {
         self.init()
 
@@ -110,7 +114,7 @@ public class Draft: Object, Codable, Identifiable {
         attachments = try values.decode(List<Attachment>.self, forKey: .to)
     }
 
-    init(
+    public convenience init(
         uuid: String = "",
         identityId: String? = nil,
         inReplyToUid: String? = nil,
@@ -127,10 +131,10 @@ public class Draft: Object, Codable, Identifiable {
         ackRequest: Bool = false,
         priority: String? = nil,
         stUuid: String? = nil,
-        attachments: [Attachment]? = nil,
-        action: SaveDraftOption? = nil
+        attachments: [Attachment]? = nil
+//        action: SaveDraftOption? = nil
     ) {
-        super.init()
+        self.init()
 
         self.uuid = uuid
 //        var signatureId: String?

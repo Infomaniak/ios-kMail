@@ -19,9 +19,11 @@
 
 import SwiftUI
 import MailResources
+import MailCore
 
 struct RecipientCellView: View {
     @State var from: String = ""
+    @State var draft: Draft
 
     let text: String
 
@@ -29,7 +31,7 @@ struct RecipientCellView: View {
         VStack {
             HStack {
                 Text(text)
-                TextField("", text: $from)
+                TextField("", text: $draft.subjectValue)
                     .textContentType(.emailAddress)
                     .keyboardType(.emailAddress)
                     .autocapitalization(.none)
@@ -42,7 +44,7 @@ struct RecipientCellView: View {
 
 struct RecipientCellView_Previews: PreviewProvider {
     static var previews: some View {
-        RecipientCellView(text: "De : ")
+        RecipientCellView(draft: Draft(), text: "")
             .previewLayout(.sizeThatFits)
     }
 }

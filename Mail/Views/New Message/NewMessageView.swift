@@ -16,20 +16,30 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import MailCore
+import RealmSwift
 import SwiftUI
 
 struct NewMessageView: View {
+    private var mailboxManager: MailboxManager
+    @ObservedRealmObject var draft: Draft
+
     @State var editor = RichTextEditorModel()
     @State var draftBody = "Rédigez votre message"
 
     @Environment(\.presentationMode) var presentationMode
 
+    init(mailboxManager: MailboxManager, draft: Draft) {
+        self.mailboxManager = mailboxManager
+        self.draft = draft
+    }
+
     var body: some View {
         NavigationView {
             VStack {
-                RecipientCellView(text: "De :")
-                RecipientCellView(text: "À :")
-                RecipientCellView(text: "Objet :")
+                RecipientCellView(from: mailboxManager.mailbox.email, draft: draft, text: "De : ")
+                RecipientCellView(draft: draft, text: "À :")
+                RecipientCellView(draft: draft, text: "Objet :")
 
                 RichTextEditor(model: $editor, body: $draftBody)
             }
@@ -51,6 +61,9 @@ struct NewMessageView: View {
 
 struct NewMessageView_Previews: PreviewProvider {
     static var previews: some View {
-        NewMessageView()
+        NewMessageView(
+            mailboxManager: MailboxManager(mailbox: PreviewHelper.sampleMailbox, apiFetcher: MailApiFetcher()),
+            draft: Draft()
+        )
     }
 }
