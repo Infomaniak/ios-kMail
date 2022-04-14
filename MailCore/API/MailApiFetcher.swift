@@ -74,6 +74,17 @@ public class MailApiFetcher: ApiFetcher {
     public func quotas(mailbox: Mailbox) async throws -> Quotas {
         try await perform(request: authenticatedRequest(.quotas(mailbox: mailbox.mailbox, productId: mailbox.hostingId))).data
     }
+    
+    func draft(mailbox: Mailbox, draftUuid: String) async throws -> Draft {
+        try await perform(request: authenticatedRequest(.draft(uuid: mailbox.uuid, draftUuid: draftUuid))).data
+    }
+    
+    func draft(from message: Message) async throws -> Draft {
+        guard let resource = message.draftResource else {
+            throw MailError.resourceError
+        }
+        return try await perform(request: authenticatedRequest(.resource(resource))).data
+    }
 }
 
 class SyncedAuthenticator: OAuthAuthenticator {

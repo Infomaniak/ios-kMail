@@ -173,6 +173,20 @@ public class MailboxManager: ObservableObject {
             realm.add(completedMessage, update: .modified)
         }
     }
+    
+    // MARK: - Draft
+
+    public func draft(draftUuid: String) async throws {
+        // Get from API
+        let completedMessage = try await apiFetcher.draft(mailbox: mailbox, draftUuid:draftUuid)
+
+        let realm = getRealm()
+
+        // Update message in Realm
+        try? realm.safeWrite {
+            realm.add(completedMessage, update: .modified)
+        }
+    }
 
     // MARK: - Utilities
 

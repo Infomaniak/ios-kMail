@@ -73,4 +73,12 @@ public extension Endpoint {
             URLQueryItem(name: "product_id", value: "\(productId)")
         ])
     }
+    
+    static func draft(uuid: String) -> Endpoint {
+        return Endpoint(host: ApiEnvironment.current.mailHost, path: "/api/mail/\(uuid)/draft", queryItems: nil)
+    }
+    
+    static func draft(uuid: String, draftUuid: String) -> Endpoint {
+        return Endpoint(host: ApiEnvironment.current.mailHost, path: "\(draft(uuid: uuid).path)/\(draftUuid)", queryItems: nil)
+    }
 }
