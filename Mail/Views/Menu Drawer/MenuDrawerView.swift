@@ -81,6 +81,7 @@ struct MenuDrawerView: View {
             }
             .padding([.leading, .trailing], Self.horizontalPadding)
         }
+        .background(Color(MailResourcesAsset.backgroundColor.color))
         .environmentObject(mailboxManager)
         .task {
             await fetchFolders()
