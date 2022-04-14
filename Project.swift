@@ -43,6 +43,7 @@ let project = Project(name: "Mail",
                                  resources: [
                                      "Mail/**/*.storyboard"
                                  ],
+                                 entitlements: "MailResources/Mail.entitlements",
                                  scripts: [
                                      .post(path: "scripts/lint.sh", name: "Swiftlint")
                                  ],
