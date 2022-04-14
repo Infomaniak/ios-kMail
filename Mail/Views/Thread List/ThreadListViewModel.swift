@@ -66,11 +66,11 @@ typealias Thread = MailCore.Thread
 
     func updateThreads(with folder: Folder) {
         self.folder = folder
-        if let cachedFolder = self.mailboxManager.getRealm().object(ofType: Folder.self, forPrimaryKey: folder.id) {
+        if let cachedFolder = mailboxManager.getRealm().object(ofType: Folder.self, forPrimaryKey: folder.id) {
             threads = AnyRealmCollection(cachedFolder.threads.sorted(by: \.date, ascending: false))
             observeChanges()
         } else {
-            threads = AnyRealmCollection(self.mailboxManager.getRealm().objects(Thread.self)
+            threads = AnyRealmCollection(mailboxManager.getRealm().objects(Thread.self)
                 .filter(NSPredicate(format: "FALSEPREDICATE")))
         }
     }

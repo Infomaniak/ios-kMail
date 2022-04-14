@@ -21,8 +21,6 @@ import SwiftUI
 import UIKit
 
 struct MenuHeaderView: View {
-    @State private var shouldNavigate = false
-
     var body: some View {
         HStack {
             Image(uiImage: MailResourcesAsset.logoMail.image)

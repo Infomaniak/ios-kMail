@@ -22,13 +22,6 @@ import MailResources
 import SwiftUI
 
 struct MailboxQuotaView: View {
-    static let formatter: ByteCountFormatter = {
-        let byteCountFormatter = ByteCountFormatter()
-        byteCountFormatter.countStyle = .file
-        byteCountFormatter.includesUnit = true
-        return byteCountFormatter
-    }()
-
     @EnvironmentObject var mailboxManager: MailboxManager
 
     @State private var quotas: Quotas?
@@ -40,8 +33,8 @@ struct MailboxQuotaView: View {
                 .padding(.trailing, 7)
 
             VStack(alignment: .leading) {
-                HStack(spacing: 4) {
-                    HStack {
+                HStack(spacing: 5) {
+                    HStack(spacing: 4) {
                         Text(Int64((quotas?.size ?? 0) * 1000), format: Constants.byteCountFormatterStyle)
                         Text("/")
                         Text(Constants.sizeLimit, format: Constants.byteCountFormatterStyle)

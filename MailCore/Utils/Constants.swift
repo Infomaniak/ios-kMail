@@ -37,7 +37,7 @@ public struct URLConstants {
 }
 
 public enum Constants {
-    public static let sizeLimit: Int64 = 20_000_000_000 // Go
+    public static let sizeLimit: Int64 = 20_000_000_000 // 20 Go
 
 	public static let menuDrawerFolderCellPadding: CGFloat = 4
 
@@ -45,14 +45,7 @@ public enum Constants {
 
     private static var dateFormatter = DateFormatter()
 
-	static let byteCountFormatter: ByteCountFormatter = {
-        let byteCountFormatter = ByteCountFormatter()
-        byteCountFormatter.countStyle = .file
-        byteCountFormatter.includesUnit = true
-        return byteCountFormatter
-    }()
-
-    public enum DateTimeStyle {
+	public enum DateTimeStyle {
         case date
         case time
         case datetime
@@ -74,10 +67,6 @@ public enum Constants {
         return dateFormatter.string(from: date)
     }
 
-	public static func formatQuota(_ size: Int) -> String {
-        return Self.byteCountFormatter.string(from: .init(value: Double(size), unit: .kilobytes))
-	}
-    
     public static func formatAttachmentSize(_ size: Int64, unit: Bool = true) -> String {
         let byteCountFormatter = ByteCountFormatter()
         byteCountFormatter.countStyle = .binary

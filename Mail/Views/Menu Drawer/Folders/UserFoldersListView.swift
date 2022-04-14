@@ -32,7 +32,6 @@ struct UserFoldersListView: View {
     @Binding var selectedFolderId: String?
 
     var isCompact: Bool
-
     weak var delegate: FolderListViewDelegate?
 
     private let foldersSortDescriptors = [
@@ -40,13 +39,6 @@ struct UserFoldersListView: View {
         SortDescriptor(keyPath: \Folder.unreadCount, ascending: false),
         SortDescriptor(keyPath: \Folder.name)
     ]
-
-    init(folders: ObservedResults<Folder>, selectedFolderId: Binding<String?>, isCompact: Bool, delegate: FolderListViewDelegate?) {
-        _folders = folders
-        _selectedFolderId = selectedFolderId
-        self.isCompact = isCompact
-        self.delegate = delegate
-    }
 
     var body: some View {
         DisclosureGroup(MailResourcesStrings.buttonFolders, isExpanded: $unfoldFolders) {

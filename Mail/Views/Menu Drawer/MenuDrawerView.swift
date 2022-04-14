@@ -35,9 +35,6 @@ struct MenuDrawerView: View {
     @State var selectedFolderId: String?
     @State private var showMailboxes = false
 
-    @State private var inbox: Folder!
-    @State private var shouldNavigate = false
-
     var isCompact: Bool
     weak var delegate: FolderListViewDelegate?
 
@@ -84,13 +81,10 @@ struct MenuDrawerView: View {
             }
             .padding([.leading, .trailing], Self.horizontalPadding)
         }
-        .listStyle(.plain)
         .environmentObject(mailboxManager)
-        .onAppear {
-            Task {
-                await fetchFolders()
-                MatomoUtils.track(view: ["MenuDrawer"])
-            }
+        .task {
+            await fetchFolders()
+            MatomoUtils.track(view: ["MenuDrawer"])
         }
     }
 
@@ -111,7 +105,7 @@ struct MenuDrawerView: View {
         do {
             try await mailboxManager.folders()
         } catch {
-            print("Error while getting folders: \(error.localizedDescription)")
+            print("Error while fetching folders: \(error.localizedDescription)")
         }
     }
 
