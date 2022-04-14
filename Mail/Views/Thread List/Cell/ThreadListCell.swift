@@ -17,25 +17,29 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import MailCore
+import UIKit
 import SwiftUI
 
-struct ThreadListContentCell: View {
-    var thread: Thread
+class ThreadListCell: UICollectionViewCell {
+    static let identifier = "ThreadCell"
 
-    var body: some View {
-        HStack {
-            Text(thread.formattedSubject)
-            Spacer()
-            Text(thread.formattedDate)
-        }
+    var thread: Thread!
+
+    lazy var host: UIHostingController<ThreadListContentCell> = {
+        return UIHostingController(rootView: ThreadListContentCell(thread: thread))
+    }()
+
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        setupView()
     }
-}
 
-struct ThreadListCell_Previews: PreviewProvider {
-    static var previews: some View {
-        ThreadListContentCell(thread: PreviewHelper.sampleThread)
-            .previewLayout(.sizeThatFits)
-            .previewDevice("iPhone 13 Pro")
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+    private func setupView() {
+        host.view.translatesAutoresizingMaskIntoConstraints = false
+        contentView.addSubview(host.view)
     }
 }
