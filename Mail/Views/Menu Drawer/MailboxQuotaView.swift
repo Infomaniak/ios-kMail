@@ -41,8 +41,13 @@ struct MailboxQuotaView: View {
 
             VStack(alignment: .leading) {
                 HStack(spacing: 4) {
-                    Text("\(Constants.formatQuota(quotas?.size ?? 0)) / \(Constants.formatQuota(Constants.sizeLimit))")
-                        .font(.system(size: 19))
+                    HStack {
+                        Text(Int64((quotas?.size ?? 0) * 1000), format: Constants.byteCountFormatterStyle)
+                        Text("/")
+                        Text(Constants.sizeLimit, format: Constants.byteCountFormatterStyle)
+                    }
+                    .font(.system(size: 19))
+
                     Text(MailResourcesStrings.menuDrawerUsed)
                 }
 
@@ -58,13 +63,11 @@ struct MailboxQuotaView: View {
         }
         .padding(.top, 2)
         .padding([.bottom])
-        .onAppear {
-            Task {
-                do {
-                    quotas = try await mailboxManager.apiFetcher.quotas(mailbox: mailboxManager.mailbox)
-                } catch {
-                    print("Error while fetching quotas: \(error)")
-                }
+        .task {
+            do {
+                quotas = try await mailboxManager.apiFetcher.quotas(mailbox: mailboxManager.mailbox)
+            } catch {
+                print("Error while fetching quotas: \(error)")
             }
         }
     }

@@ -37,9 +37,11 @@ public struct URLConstants {
 }
 
 public enum Constants {
-    public static let sizeLimit = 20_000_000 // ko
+    public static let sizeLimit: Int64 = 20_000_000_000 // Go
 
 	public static let menuDrawerFolderCellPadding: CGFloat = 4
+
+    public static let byteCountFormatterStyle = ByteCountFormatStyle.byteCount(style: .file)
 
     private static var dateFormatter = DateFormatter()
 

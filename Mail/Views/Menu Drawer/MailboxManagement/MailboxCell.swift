@@ -27,10 +27,8 @@ struct MailboxCell: View {
         MailboxesManagementButtonView(text: mailbox.email, detail: $unreadCount) {
             // TODO: Switch mailbox
         }
-        .onAppear {
-            Task {
-                await fetchUnreadCountEmails()
-            }
+        .task {
+            await fetchUnreadCountEmails()
         }
     }
 
