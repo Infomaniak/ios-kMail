@@ -19,6 +19,9 @@
 import SwiftUI
 
 struct NewMessageView: View {
+    @State var editor = RichTextEditorModel()
+    @State var draftBody = "Rédigez votre message"
+
     @Environment(\.presentationMode) var presentationMode
 
     var body: some View {
@@ -27,9 +30,10 @@ struct NewMessageView: View {
                 RecipientCellView(text: "De :")
                 RecipientCellView(text: "À :")
                 RecipientCellView(text: "Objet :")
-                
-                Spacer()
+
+                RichTextEditor(model: $editor, body: $draftBody)
             }
+            .padding()
             .navigationBarTitleDisplayMode(.inline)
             .navigationBarBackButtonHidden(true)
             .navigationBarItems(leading:

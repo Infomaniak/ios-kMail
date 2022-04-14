@@ -18,6 +18,7 @@
  */
 
 import SwiftUI
+import MailResources
 
 struct RecipientCellView: View {
     @State var from: String = ""
@@ -34,8 +35,8 @@ struct RecipientCellView: View {
                     .autocapitalization(.none)
             }
             Divider()
+                .background(Color(MailResourcesAsset.separatorColor.color))
         }
-        .padding(.horizontal)
     }
 }
 
