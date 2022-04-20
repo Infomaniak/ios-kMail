@@ -18,15 +18,16 @@
 
 import MailCore
 import SwiftUI
+import RealmSwift
 
 struct AttachmentPreview: View {
     @Binding var isPresented: Bool
-    let attachment: Attachment
+    @ObservedRealmObject var attachment: Attachment
 
     var body: some View {
         ZStack {
             if let url = attachment.localUrl {
-                if FileManager.default.fileExists(atPath: attachment.localUrlPath!) {
+                if FileManager.default.fileExists(atPath: url.path) {
                     PreviewController(url: url)
                 }
             } else {
