@@ -38,7 +38,7 @@ struct AttachmentsView: View {
                     .foregroundColor(Color(MailResourcesAsset.secondaryTextColor.color))
 
                 Button("Tout télécharger") {
-                    // TODO : after complete attachment
+                    // TODO: after complete attachment
                 }
             }
             .font(.system(size: 14))
@@ -47,6 +47,14 @@ struct AttachmentsView: View {
                 HStack {
                     ForEach(message.attachments) { attachment in
                         AttachmentCell(attachment: attachment)
+                            .onTapGesture {
+                                sheet.state = .attachment(attachment)
+                                if attachment.localUrl == nil {
+                                    Task {
+                                        await mailboxManager.saveAttachmentLocally(message: message, attachment: attachment)
+                                    }
+                                }
+                            }
                     }
                 }
             }
@@ -56,6 +64,6 @@ struct AttachmentsView: View {
 
 struct AttachmentsView_Previews: PreviewProvider {
     static var previews: some View {
-        AttachmentsView(message: PreviewHelper.sampleMessage)
+        AttachmentsView(sheet: MessageSheet(), message: PreviewHelper.sampleMessage)
     }
 }

@@ -45,7 +45,7 @@ struct MessageView: View {
         VStack(spacing: 10) {
             MessageHeaderView(message: message, isReduced: $isHeaderReduced, isThreadHeader: isThreadHeader)
             if isThreadHeader && !message.attachments.isEmpty {
-                AttachmentsView(message: message)
+                AttachmentsView(sheet: sheet, message: message)
                     .padding(.top, 16)
                     .padding(.bottom, 10)
             }
@@ -71,6 +71,14 @@ struct MessageView: View {
                 }
             }
         }
+        .sheet(isPresented: $sheet.isShowing) {
+            switch sheet.state {
+            case let .attachment(attachment):
+                AttachmentPreview(isPresented: $sheet.isShowing, attachment: attachment)
+            case .none:
+                EmptyView()
+            }
+        }
     }
 
     @MainActor private func fetchMessage() async {
@@ -84,9 +92,6 @@ struct MessageView: View {
 
 struct MessageView_Previews: PreviewProvider {
     static var previews: some View {
-        MessageView(
-            mailboxManager: MailboxManager(mailbox: PreviewHelper.sampleMailbox, apiFetcher: MailApiFetcher()),
-            message: PreviewHelper.sampleMessage
-        )
+        MessageView(message: PreviewHelper.sampleMessage)
     }
 }
