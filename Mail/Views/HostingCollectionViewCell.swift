@@ -16,10 +16,19 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import MailResources
 import UIKit
 import SwiftUI
 
-class HostingCollectionViewCell<Content: View>: UICollectionViewCell {
+class CollectionCellViewModel: ObservableObject {
+    @Published var isSelected = false
+}
+
+protocol CollectionCell: View {
+    var viewModel: CollectionCellViewModel { get }
+}
+
+class HostingCollectionViewCell<Content: CollectionCell>: UICollectionViewCell {
     private weak var controller: UIHostingController<Content>?
 
     func host(_ view: Content, parent: UIViewController) {
@@ -43,5 +52,11 @@ class HostingCollectionViewCell<Content: View>: UICollectionViewCell {
             hostingController.didMove(toParent: parent)
             hostingController.view.layoutIfNeeded()
         }
+
+        let selectedView = UIView(frame: bounds)
+        selectedView.backgroundColor = MailResourcesAsset.backgroundHeaderColor.color
+        selectedBackgroundView = selectedView
+
+        focusEffect = .none
     }
 }

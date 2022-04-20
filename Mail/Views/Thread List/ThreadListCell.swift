@@ -20,7 +20,9 @@ import MailCore
 import MailResources
 import SwiftUI
 
-struct ThreadListCell: View {
+struct ThreadListCell: CollectionCell {
+    @ObservedObject var viewModel = CollectionCellViewModel()
+
     var thread: Thread
 
     var unread: Bool {
@@ -28,52 +30,55 @@ struct ThreadListCell: View {
     }
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 2) {
-            HStack {
-                Circle()
-                    .frame(width: 8, height: 8)
-                    .foregroundColor(Color(MailResourcesAsset.mailPinkColor.color))
+        HStack(alignment: .top, spacing: 10) {
+            Circle()
+                .frame(width: 8, height: 8)
+                .foregroundColor(Color(unread ?  MailResourcesAsset.mailPinkColor.color : .clear))
+                .padding(.top, 6)
 
-                Text(thread.from.first?.name ?? "")
-                    .font(.system(size: 18))
-                    .foregroundColor(Color(unread ? MailResourcesAsset.primaryTextColor.color : MailResourcesAsset.secondaryTextColor.color))
-                    .fontWeight(unread ? .semibold : .regular)
-
-                Spacer()
-
-                if thread.hasAttachments {
-                    Image(uiImage: MailResourcesAsset.attachment.image)
-                }
-                Text(thread.formattedDate)
-                    .foregroundColor(Color(unread ? MailResourcesAsset.primaryTextColor.color : MailResourcesAsset.secondaryTextColor.color))
-                    .fontWeight(unread ? .semibold : .regular)
-            }
-
-            HStack {
-                Circle()
-                    .frame(width: 8, height: 8)
-                    .foregroundColor(Color(MailResourcesAsset.backgroundColor.color))
-
-                VStack(alignment: .leading) {
-                    Text(thread.formattedSubject)
+            VStack(alignment: .leading, spacing: 2) {
+                HStack {
+                    Text(thread.from.first?.name ?? "")
+                        .font(.system(size: 18))
                         .foregroundColor(Color(unread ? MailResourcesAsset.primaryTextColor.color : MailResourcesAsset.secondaryTextColor.color))
                         .fontWeight(unread ? .semibold : .regular)
 
-                    Text(thread.messages.first?.body?.value ?? "")
-                        .foregroundColor(Color(MailResourcesAsset.secondaryTextColor.color))
-                        .lineLimit(1)
-                }
+                    Spacer()
 
-                Spacer()
-
-                if thread.flagged {
-                    Image(uiImage: MailResourcesAsset.starFilled.image)
-                } else {
-                    Image(uiImage: MailResourcesAsset.star.image)
+                    if thread.hasAttachments {
+                        Image(uiImage: MailResourcesAsset.attachment.image)
+                    }
+                    Text(thread.formattedDate)
                         .foregroundColor(Color(unread ? MailResourcesAsset.primaryTextColor.color : MailResourcesAsset.secondaryTextColor.color))
+                        .fontWeight(unread ? .semibold : .regular)
+                }
+                .padding(.bottom, 4)
+
+                HStack {
+                    VStack(alignment: .leading) {
+                        Text(thread.formattedSubject)
+                            .foregroundColor(Color(unread ? MailResourcesAsset.primaryTextColor.color : MailResourcesAsset.secondaryTextColor.color))
+                            .fontWeight(unread ? .semibold : .regular)
+                            .lineLimit(1)
+
+                        Text(thread.messages.first?.body?.value ?? "")
+                            .foregroundColor(Color(MailResourcesAsset.secondaryTextColor.color))
+                            .lineLimit(1)
+                    }
+
+                    Spacer()
+
+                    if thread.flagged {
+                        Image(uiImage: MailResourcesAsset.starFilled.image)
+                    } else {
+                        Image(uiImage: MailResourcesAsset.star.image)
+                            .foregroundColor(Color(unread ? MailResourcesAsset.primaryTextColor.color : MailResourcesAsset.secondaryTextColor.color))
+                    }
                 }
             }
         }
+        .padding([.leading, .trailing], 10)
+        .padding([.top, .bottom], 9)
     }
 }
 

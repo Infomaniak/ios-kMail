@@ -38,6 +38,7 @@ public enum Constants {
     private static var dateFormatter = DateFormatter()
 
     public enum DateTimeStyle {
+        case dateShort
         case date
         case time
         case datetime
@@ -45,6 +46,13 @@ public enum Constants {
 
     public static func formatDate(_ date: Date, style: DateTimeStyle = .datetime, relative: Bool = false) -> String {
         switch style {
+        case .dateShort:
+            let isThisYear = Calendar.current.component(.year, from: date) == Calendar.current.component(.year, from: Date())
+            if isThisYear {
+                dateFormatter.dateFormat = "d MMM"
+            } else {
+                dateFormatter.dateFormat = "d MMM yyyy"
+            }
         case .date:
             dateFormatter.dateStyle = .medium
             dateFormatter.timeStyle = .none
@@ -58,7 +66,7 @@ public enum Constants {
         dateFormatter.doesRelativeDateFormatting = relative
         return dateFormatter.string(from: date)
     }
-    
+
     public static func formatAttachmentSize(_ size: Int64, unit: Bool = true) -> String {
         let byteCountFormatter = ByteCountFormatter()
         byteCountFormatter.countStyle = .binary

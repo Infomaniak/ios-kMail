@@ -35,6 +35,7 @@ class ThreadListViewController: MailCollectionViewController, FolderListViewDele
     override func viewDidLoad() {
         super.viewDidLoad()
         getThreads()
+        collectionView.register(HostingCollectionViewCell<ThreadListCell>.self, forCellWithReuseIdentifier: "ThreadListCell")
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -54,7 +55,6 @@ class ThreadListViewController: MailCollectionViewController, FolderListViewDele
 
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        collectionView.register(HostingCollectionViewCell<ThreadListCell>.self, forCellWithReuseIdentifier: "ThreadListCell")
         MatomoUtils.track(view: ["ThreadList"])
     }
 
