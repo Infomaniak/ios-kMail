@@ -22,14 +22,13 @@ import SwiftUI
 
 struct NewMessageView: View {
     private var mailboxManager: MailboxManager
-    @ObservedRealmObject var draft: Draft
-
+    @State var draft = Draft()
     @State var editor = RichTextEditorModel()
     @State var draftBody = "Rédigez votre message"
 
     @Environment(\.presentationMode) var presentationMode
 
-    init(mailboxManager: MailboxManager, draft: Draft) {
+    init(mailboxManager: MailboxManager, draft: Draft = Draft()) {
         self.mailboxManager = mailboxManager
         self.draft = draft
     }
@@ -37,9 +36,9 @@ struct NewMessageView: View {
     var body: some View {
         NavigationView {
             VStack {
-                RecipientCellView(from: mailboxManager.mailbox.email, draft: draft, text: "De : ")
-                RecipientCellView(draft: draft, text: "À :")
-                RecipientCellView(draft: draft, text: "Objet :")
+                RecipientCellView(from: mailboxManager.mailbox.email, draft: draft, type: RecipientCellType.from)
+                RecipientCellView(draft: draft, type: RecipientCellType.to)
+                RecipientCellView(draft: draft, type: RecipientCellType.object)
 
                 RichTextEditor(model: $editor, body: $draftBody)
             }
@@ -53,9 +52,76 @@ struct NewMessageView: View {
                     HStack {
                         Image(systemName: "multiply")
                     }
+                },
+                trailing: HStack {
+                    Button {
+                        Task {
+                            await send()
+                            DispatchQueue.main.async {
+                                self.presentationMode.wrappedValue.dismiss()
+                            }
+                        }
+
+                    } label: {
+                        Text("Send")
+                            .fontWeight(.semibold)
+                    }
+                    Button {
+                        Task {
+                            await saveDraft()
+                            DispatchQueue.main.async {}
+                        }
+
+                    } label: {
+                        Text("Save")
+                            .fontWeight(.semibold)
+                    }
                 })
         }
         .accentColor(.black)
+    }
+
+    @MainActor private func send() async {
+        draft.action = .send
+
+        do {
+            try await mailboxManager.send(draft: draft)
+        } catch {
+            print("Error while sending email: \(error.localizedDescription)")
+        }
+    }
+
+    @MainActor private func saveDraft() async {
+        editor.richTextEditor.getHTML { [self] html in
+            Task {
+                self.draft.body = html!
+                self.draft.identityId = "869747"
+                self.draft.mimeType = "text/html"
+//                await removeAttachmentFromBody()
+
+                draft.action = .save
+
+                do {
+                    let saveResponse = try await mailboxManager.save(draft: draft)
+                    draft.uuid = saveResponse.uuid
+                    draft = try await getDraft()
+//                    await insertAttachmentInBody()
+                } catch {
+                    print("Error while saving draft: \(error.localizedDescription)")
+                }
+            }
+        }
+    }
+
+    @MainActor private func getDraft() async throws -> Draft {
+        let newDraft = try await mailboxManager.draft(draftUuid: draft.uuid)
+        DispatchQueue.main.async {
+            draft = newDraft
+//            if let signature = AccountManager.instance.signature {
+//                self.draft.identityId = "\(signature.defaultSignatureId)"
+//            }
+        }
+        return newDraft
     }
 }
 

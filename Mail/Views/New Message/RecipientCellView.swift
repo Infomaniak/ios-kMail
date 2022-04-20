@@ -17,24 +17,50 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import SwiftUI
-import MailResources
 import MailCore
+import MailResources
+import SwiftUI
+
+enum RecipientCellType {
+    case from, to, object
+
+    var title: String {
+        switch self {
+        case .from:
+            return "De :"
+        case .to:
+            return "À :"
+        case .object:
+            return "Objet :"
+        }
+    }
+}
 
 struct RecipientCellView: View {
     @State var from: String = ""
     @State var draft: Draft
 
-    let text: String
+    let type: RecipientCellType
 
     var body: some View {
         VStack {
             HStack {
-                Text(text)
-                TextField("", text: $draft.subjectValue)
-                    .textContentType(.emailAddress)
-                    .keyboardType(.emailAddress)
-                    .autocapitalization(.none)
+                Text(type.title)
+
+                switch type {
+                case .from:
+                    TextField("", text: $from)
+                        .textContentType(.emailAddress)
+                        .keyboardType(.emailAddress)
+                        .autocapitalization(.none)
+                case .to:
+                    TextField("", text: $draft.toValue)
+                        .textContentType(.emailAddress)
+                        .keyboardType(.emailAddress)
+                        .autocapitalization(.none)
+                case .object:
+                    TextField("", text: $draft.subjectValue)
+                }
             }
             Divider()
                 .background(Color(MailResourcesAsset.separatorColor.color))
@@ -44,7 +70,7 @@ struct RecipientCellView: View {
 
 struct RecipientCellView_Previews: PreviewProvider {
     static var previews: some View {
-        RecipientCellView(draft: Draft(), text: "")
+        RecipientCellView(draft: Draft(), type: RecipientCellType.from)
             .previewLayout(.sizeThatFits)
     }
 }

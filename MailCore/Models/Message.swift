@@ -30,7 +30,7 @@ public enum MessageDKIM: String, Codable, PersistableEnum {
 }
 
 public class Message: Object, Decodable, Identifiable {
-    @Persisted(primaryKey: true) public var uid: String
+    @Persisted(primaryKey: true) public var uid: String = ""
     @Persisted public var msgId: String?
     @Persisted public var subject: String?
     @Persisted public var priority: MessagePriority
@@ -127,9 +127,7 @@ public class Message: Object, Decodable, Identifiable {
         super.init()
     }
 
-    public required convenience init(from decoder: Decoder) throws {
-        self.init()
-
+    public required init(from decoder: Decoder) throws {
         let values = try decoder.container(keyedBy: CodingKeys.self)
         uid = try values.decode(String.self, forKey: .uid)
         msgId = try values.decodeIfPresent(String.self, forKey: .msgId)

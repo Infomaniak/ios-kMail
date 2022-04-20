@@ -126,7 +126,7 @@ class ThreadListViewController: MailCollectionViewController, FolderListViewDele
     }
 
     @objc func newMessageButtonPressed() {
-        let newMessageView = UIHostingController(rootView: NewMessageView(mailboxManager: viewModel.mailboxManager, draft: Draft()))
+        let newMessageView = UIHostingController(rootView: NewMessageView(mailboxManager: viewModel.mailboxManager))
         present(newMessageView, animated: true)
     }
 

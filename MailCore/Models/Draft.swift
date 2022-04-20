@@ -19,14 +19,19 @@
 import Foundation
 import RealmSwift
 
-public class DraftResponse: Object, Codable {
+public enum SaveDraftOption: String, Codable {
+    case save
+    case send
+}
+
+public struct DraftResponse: Codable {
     public var uuid: String
     public var attachments: [Attachment]
     public var uid: String
 }
 
 public class Draft: Object, Codable, Identifiable {
-    @Persisted(primaryKey: true) public var uuid: String
+    @Persisted(primaryKey: true) public var uuid: String = ""
     @Persisted public var identityId: String?
     @Persisted public var inReplyToUid: String?
     @Persisted public var forwardedUid: String?
@@ -43,18 +48,33 @@ public class Draft: Object, Codable, Identifiable {
     @Persisted public var priority: String?
     @Persisted public var stUuid: String?
     @Persisted public var attachments: List<Attachment>
-//    @Persisted var action: SaveDraftOption?
+    public var action: SaveDraftOption?
 
     public var toValue: String {
-        return recipientToValue(to)
+        get {
+            return recipientToValue(to)
+        }
+        set {
+            to = valueToRecipient(newValue)
+        }
     }
 
     public var ccValue: String {
-        return recipientToValue(cc)
+        get {
+            return recipientToValue(cc)
+        }
+        set {
+            cc = valueToRecipient(newValue)
+        }
     }
 
     public var bccValue: String {
-        return recipientToValue(bcc)
+        get {
+            return recipientToValue(bcc)
+        }
+        set {
+            bcc = valueToRecipient(newValue)
+        }
     }
 
     public var subjectValue: String {
@@ -87,13 +107,9 @@ public class Draft: Object, Codable, Identifiable {
         case action
     }
 
-    override init() {
-        super.init()
-    }
-    
-    public required convenience init(from decoder: Decoder) throws {
-        self.init()
+    override public init() {}
 
+    public required init(from decoder: Decoder) throws {
         let values = try decoder.container(keyedBy: CodingKeys.self)
         uuid = try values.decode(String.self, forKey: .uuid)
         identityId = try values.decodeIfPresent(String.self, forKey: .identityId)
@@ -114,7 +130,7 @@ public class Draft: Object, Codable, Identifiable {
         attachments = try values.decode(List<Attachment>.self, forKey: .to)
     }
 
-    public convenience init(
+    convenience init(
         uuid: String = "",
         identityId: String? = nil,
         inReplyToUid: String? = nil,
@@ -131,8 +147,8 @@ public class Draft: Object, Codable, Identifiable {
         ackRequest: Bool = false,
         priority: String? = nil,
         stUuid: String? = nil,
-        attachments: [Attachment]? = nil
-//        action: SaveDraftOption? = nil
+        attachments: [Attachment]? = nil,
+        action: SaveDraftOption? = nil
     ) {
         self.init()
 
@@ -141,7 +157,8 @@ public class Draft: Object, Codable, Identifiable {
 //        if let signature = AccountManager.instance.signature {
 //            signatureId = "\(signature.defaultSignatureId)"
 //        }
-        self.identityId = identityId // ?? signatureId
+        let signatureId = "869747"
+        self.identityId = identityId ?? signatureId
         self.inReplyToUid = inReplyToUid
         self.forwardedUid = forwardedUid
         self.references = references
@@ -168,7 +185,7 @@ public class Draft: Object, Codable, Identifiable {
         self.stUuid = stUuid
 
         if let attachments = attachments {
-            self.attachments.toRealmList()
+            self.attachments = attachments.toRealmList()
         }
 
         self.action = action
@@ -186,9 +203,21 @@ public class Draft: Object, Codable, Identifiable {
         try container.encode(mimeType, forKey: .mimeType)
         try container.encode(body, forKey: .body)
         try container.encode(quote, forKey: .quote)
-        try container.encode(to, forKey: .to)
-        try container.encode(cc, forKey: .cc)
-        try container.encode(bcc, forKey: .bcc)
+        if to.isEmpty {
+            try container.encodeNil(forKey: .to)
+        } else {
+            try container.encode(to, forKey: .to)
+        }
+        if cc.isEmpty {
+            try container.encodeNil(forKey: .cc)
+        } else {
+            try container.encode(cc, forKey: .cc)
+        }
+        if bcc.isEmpty {
+            try container.encodeNil(forKey: .bcc)
+        } else {
+            try container.encode(bcc, forKey: .bcc)
+        }
         try container.encode(subject, forKey: .subject)
         try container.encode(ackRequest, forKey: .ackRequest)
         try container.encode(priority, forKey: .priority)
@@ -197,7 +226,7 @@ public class Draft: Object, Codable, Identifiable {
             attachment.uuid
         }
 //        try container.encode(attachmentsArray, forKey: .attachments)
-//        try container.encode(action, forKey: .action)
+        try container.encode(action, forKey: .action)
     }
 
 //    class func replying(to message: Message, mode: ReplyMode) -> Draft {
@@ -223,9 +252,9 @@ public class Draft: Object, Codable, Identifiable {
 //                     attachments: mode == .forward ? message.attachments : nil)
 //    }
 
-    private func valueToRecipient(_ value: String) -> [Recipient]? {
-        guard !value.isEmpty else { return nil }
-        return value.components(separatedBy: ",").map { Recipient(email: $0, name: "") }
+    private func valueToRecipient(_ value: String) -> List<Recipient> {
+        guard !value.isEmpty else { return List<Recipient>() }
+        return value.components(separatedBy: ",").map { Recipient(email: $0, name: "") }.toRealmList()
     }
 
     private func recipientToValue(_ recipient: List<Recipient>?) -> String {

@@ -69,7 +69,7 @@ public class MailboxManager: ObservableObject {
         realmConfiguration = Realm.Configuration(
             fileURL: MailboxManager.constants.rootDocumentsURL.appendingPathComponent(realmName),
             schemaVersion: 1,
-            objectTypes: [Folder.self, Thread.self, Message.self, Body.self, Attachment.self, Recipient.self]
+            objectTypes: [Folder.self, Thread.self, Message.self, Body.self, Attachment.self, Recipient.self, Draft.self]
         )
     }
 
@@ -173,19 +173,30 @@ public class MailboxManager: ObservableObject {
             realm.add(completedMessage, update: .modified)
         }
     }
-    
+
     // MARK: - Draft
 
-    public func draft(draftUuid: String) async throws {
+    public func draft(draftUuid: String) async throws  -> Draft {
         // Get from API
-        let completedMessage = try await apiFetcher.draft(mailbox: mailbox, draftUuid:draftUuid)
+        let draft = try await apiFetcher.draft(mailbox: mailbox, draftUuid: draftUuid)
 
         let realm = getRealm()
 
         // Update message in Realm
         try? realm.safeWrite {
-            realm.add(completedMessage, update: .modified)
+            realm.add(draft, update: .modified)
         }
+        
+        return draft
+    }
+
+    public func send(draft: Draft) async throws {
+        _ = try await apiFetcher.send(mailbox: mailbox, draft: draft)
+    }
+
+    public func save(draft: Draft) async throws -> DraftResponse {
+        let saveResponse = try await apiFetcher.save(mailbox: mailbox, draft: draft)
+        return saveResponse
     }
 
     // MARK: - Utilities
