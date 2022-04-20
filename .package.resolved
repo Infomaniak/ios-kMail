@@ -3,10 +3,10 @@
     {
       "identity" : "alamofire",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/Alamofire/Alamofire.git",
+      "location" : "https://github.com/Alamofire/Alamofire",
       "state" : {
-        "revision" : "f82c23a8a7ef8dc1a49a8bfc6a96883e79121864",
-        "version" : "5.5.0"
+        "revision" : "354dda32d89fc8cd4f5c46487f64957d355f53d8",
+        "version" : "5.6.1"
       }
     },
     {
@@ -95,8 +95,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/getsentry/sentry-cocoa",
       "state" : {
-        "revision" : "c348f6e884873143282e7c6cd2c856fac971ea8c",
-        "version" : "7.12.0"
+        "revision" : "ccb6c292a202eb9366c87889509ef5a793d7137a",
+        "version" : "7.13.0"
       }
     },
     {
@@ -113,17 +113,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/SnapKit/SnapKit.git",
       "state" : {
-        "revision" : "d458564516e5676af9c70b4f4b2a9178294f1bc6",
-        "version" : "5.0.1"
-      }
-    },
-    {
-      "identity" : "sqrichtexteditor",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/Ambrdctr/SQRichTextEditor",
-      "state" : {
-        "branch" : "master",
-        "revision" : "739cf6a03daf78cd0bfd91449163f81a30b90b07"
+        "revision" : "f222cbdf325885926566172f6f5f06af95473158",
+        "version" : "5.6.0"
       }
     },
     {

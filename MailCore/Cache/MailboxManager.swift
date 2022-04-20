@@ -28,6 +28,8 @@ public class MailboxManager: ObservableObject {
         public let rootDocumentsURL: URL
         public let groupDirectoryURL: URL
         public let cacheDirectoryURL: URL
+        // TRY THIS
+//        public let temporaryDirectoryURL: URL
 
         init() {
             groupDirectoryURL = fileManager.containerURL(forSecurityApplicationGroupIdentifier: AccountManager.appGroup)!
@@ -205,6 +207,39 @@ public class MailboxManager: ObservableObject {
         }
     }
 
+    public func attachmentData(attachment: Attachment) async throws -> Attachment {
+        let data = try await apiFetcher.attachment(mailbox: mailbox, attachment: attachment)
+
+        if let liveAttachment = attachment.thaw() {
+            let realm = getRealm()
+            try? realm.safeWrite {
+                liveAttachment.data = data
+            }
+            return liveAttachment
+        } else {
+            return attachment
+        }
+    }
+
+    public func saveAttachmentLocally(message: Message, attachment: Attachment) async {
+        do {
+            let liveAttachment = try await attachmentData(attachment: attachment)
+            
+            let urlDescription = "\(message.uid)_\(attachment.partId)_\(attachment.name)"
+                .addingPercentEncoding(withAllowedCharacters: .urlPathAllowed)
+            let url = FileManager.default.temporaryDirectory.appendingPathComponent(urlDescription!)
+
+            let realm = getRealm()
+
+            if let data = liveAttachment.data {
+                try data.write(to: url)
+            }
+            try? realm.safeWrite {
+                liveAttachment.localUrlPath = url.path
+            }
+        } catch {
+            // Handle error
+        }
     // MARK: - Draft
 
     public func draft(draftUuid: String) async throws -> Draft {

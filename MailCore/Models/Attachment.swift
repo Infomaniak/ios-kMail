@@ -35,8 +35,14 @@ public class Attachment: /* Hashable, */ EmbeddedObject, Codable, Identifiable {
     @Persisted public var resource: String?
     @Persisted public var driveUrl: String?
     @Persisted public var data: Data? = nil
-    public var localUrl: URL? = nil
-    public var thumbnail: Image? = nil
+    @Persisted public var localUrlPath: String? = nil
+
+    public var localUrl: URL? {
+        guard let localUrlPath = localUrlPath else {
+            return nil
+        }
+        return URL(string: localUrlPath)
+    }
 
     public var uti: UTType? {
         UTType(mimeType: mimeType, conformingTo: .data)
