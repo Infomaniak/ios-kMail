@@ -150,19 +150,16 @@ public class Draft: Object, Codable, Identifiable {
         self.body = body
         self.quote = quote
 
-        self.to = List()
         if let to = to {
-            self.to.append(objectsIn: to)
+            self.to = to.toRealmList()
         }
 
-        self.cc = List()
         if let cc = cc {
-            self.to.append(objectsIn: cc)
+            self.cc = cc.toRealmList()
         }
 
-        self.bcc = List()
         if let bcc = bcc {
-            self.to.append(objectsIn: bcc)
+            self.bcc = bcc.toRealmList()
         }
 
         self.subject = subject
@@ -170,12 +167,11 @@ public class Draft: Object, Codable, Identifiable {
         self.priority = priority
         self.stUuid = stUuid
 
-        self.attachments = List()
         if let attachments = attachments {
-            self.attachments.append(objectsIn: attachments)
+            self.attachments.toRealmList()
         }
 
-//        self.action = action
+        self.action = action
     }
 
     public func encode(to encoder: Encoder) throws {

@@ -210,25 +210,19 @@ public class Message: Object, Decodable, Identifiable {
         self.date = date
         self.size = size
 
-        self.from = List()
-        self.from.append(objectsIn: from)
+        self.from = from.toRealmList()
 
-        self.to = List()
-        self.to.append(objectsIn: to)
+        self.to = to.toRealmList()
 
-        self.cc = List()
-        self.cc.append(objectsIn: cc)
+        self.cc = cc.toRealmList()
 
-        self.bcc = List()
-        self.bcc.append(objectsIn: bcc)
+        self.bcc = bcc.toRealmList()
 
-        self.replyTo = List()
-        self.replyTo.append(objectsIn: replyTo)
+        self.replyTo = replyTo.toRealmList()
 
         self.body = body
 
-        self.attachments = List()
-        self.attachments.append(objectsIn: attachments)
+        self.attachments = attachments.toRealmList()
 
         self.dkimStatus = dkimStatus
         self.resource = resource
