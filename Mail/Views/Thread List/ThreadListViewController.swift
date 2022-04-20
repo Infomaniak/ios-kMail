@@ -35,6 +35,8 @@ class ThreadListViewController: MailCollectionViewController, FolderListViewDele
     override func viewDidLoad() {
         super.viewDidLoad()
         getThreads()
+
+        collectionView.setCollectionViewLayout(Self.createLayout(), animated: true)
         collectionView.register(HostingCollectionViewCell<ThreadListCell>.self, forCellWithReuseIdentifier: "ThreadListCell")
     }
 
@@ -51,6 +53,10 @@ class ThreadListViewController: MailCollectionViewController, FolderListViewDele
         }
 
         updateView()
+
+        for indexPath in collectionView.indexPathsForSelectedItems ?? [] {
+            collectionView.deselectItem(at: indexPath, animated: true)
+        }
     }
 
     override func viewDidAppear(_ animated: Bool) {
@@ -94,6 +100,33 @@ class ThreadListViewController: MailCollectionViewController, FolderListViewDele
     private func showEmptyView(_ isHidden: Bool) {
         let emptyView = UIHostingController(rootView: EmptyThreadView(text: "dossier"))
         collectionView.backgroundView = isHidden ? nil : emptyView.view
+    }
+
+    private static func createLayout() -> UICollectionViewLayout {
+        var listConfiguration = UICollectionLayoutListConfiguration(appearance: .plain)
+        listConfiguration.showsSeparators = false
+
+        listConfiguration.leadingSwipeActionsConfigurationProvider = { _ in
+            let unreadAction = UIContextualAction(style: .normal, title: nil) { _, _, _ in }
+            unreadAction.backgroundColor = MailResourcesAsset.unreadActionColor.color
+            unreadAction.image = MailResourcesAsset.openLetter.image
+
+            return UISwipeActionsConfiguration(actions: [unreadAction])
+        }
+
+        listConfiguration.trailingSwipeActionsConfigurationProvider = { _ in
+            let menuAction = UIContextualAction(style: .normal, title: nil) { _, _, _ in }
+            menuAction.backgroundColor = MailResourcesAsset.menuActionColor.color
+            menuAction.image = MailResourcesAsset.threeDots.image
+
+            let deleteAction = UIContextualAction(style: .destructive, title: nil) { _, _, _ in }
+            deleteAction.backgroundColor = MailResourcesAsset.destructiveActionColor.color
+            deleteAction.image = MailResourcesAsset.bin.image
+
+            return UISwipeActionsConfiguration(actions: [deleteAction, menuAction])
+        }
+
+        return UICollectionViewCompositionalLayout.list(using: listConfiguration)
     }
 
     // MARK: - UICollectionViewDataSource
