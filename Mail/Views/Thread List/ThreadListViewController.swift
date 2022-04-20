@@ -54,7 +54,7 @@ class ThreadListViewController: MailCollectionViewController, FolderListViewDele
 
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        collectionView.register(ThreadListCell.self, forCellWithReuseIdentifier: ThreadListCell.identifier)
+        collectionView.register(HostingCollectionViewCell<ThreadListCell>.self, forCellWithReuseIdentifier: "ThreadListCell")
         MatomoUtils.track(view: ["ThreadList"])
     }
 
@@ -103,11 +103,9 @@ class ThreadListViewController: MailCollectionViewController, FolderListViewDele
     }
 
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = super.collectionView(collectionView, cellForItemAt: indexPath) as! UICollectionViewListCell
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "ThreadListCell", for: indexPath) as! HostingCollectionViewCell<ThreadListCell>
         let thread = viewModel.threads[indexPath.item]
-        var content = cell.defaultContentConfiguration()
-        content.text = thread.formattedSubject
-        cell.contentConfiguration = content
+        cell.host(ThreadListCell(thread: thread), parent: self)
         return cell
     }
 
