@@ -18,10 +18,13 @@
 
 import MailCore
 import MailResources
+import RealmSwift
 import SwiftUI
 
 struct AttachmentsView: View {
-    var message: Message
+    @ObservedObject var sheet: MessageSheet
+    @EnvironmentObject var mailboxManager: MailboxManager
+    @ObservedRealmObject var message: Message
 
     var body: some View {
         VStack(alignment: .leading, spacing: 22) {

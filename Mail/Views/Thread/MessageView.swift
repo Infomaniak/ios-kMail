@@ -20,16 +20,23 @@ import MailCore
 import RealmSwift
 import SwiftUI
 
+class MessageSheet: SheetState<MessageSheet.State> {
+    enum State: Equatable {
+        case attachment(Attachment)
+    }
+}
+
 struct MessageView: View {
     @ObservedRealmObject var message: Message
-    private var mailboxManager: MailboxManager
+    @EnvironmentObject var mailboxManager: MailboxManager
     @State var model = WebViewModel()
     @State private var webViewHeight: CGFloat = .zero
     @State var isHeaderReduced = true
     @State var isThreadHeader: Bool
 
-    init(mailboxManager: MailboxManager, message: Message, isThreadHeader: Bool = false) {
-        self.mailboxManager = mailboxManager
+    @ObservedObject private var sheet = MessageSheet()
+
+    init(message: Message, isThreadHeader: Bool = false) {
         self.message = message
         self.isThreadHeader = isThreadHeader
     }

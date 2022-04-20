@@ -35,7 +35,7 @@ struct ThreadView: View {
                 Text(thread.subject ?? "")
                     .font(.largeTitle)
                 ForEach(thread.messages.indices) { index in
-                    MessageView(mailboxManager: mailboxManager, message: thread.messages[index], isThreadHeader: index == 0)
+                    MessageView(message: thread.messages[index], isThreadHeader: index == 0)
                 }
             }
         }
@@ -43,6 +43,7 @@ struct ThreadView: View {
         .onAppear {
             MatomoUtils.track(view: ["MessageView"])
         }
+        .environmentObject(mailboxManager)
     }
 }
 
