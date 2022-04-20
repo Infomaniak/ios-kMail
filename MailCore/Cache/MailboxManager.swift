@@ -221,21 +221,11 @@ public class MailboxManager: ObservableObject {
         }
     }
 
-    public func saveAttachmentLocally(message: Message, attachment: Attachment) async {
+    public func saveAttachmentLocally(attachment: Attachment) async {
         do {
             let liveAttachment = try await attachmentData(attachment: attachment)
-            
-            let urlDescription = "\(message.uid)_\(attachment.partId)_\(attachment.name)"
-                .addingPercentEncoding(withAllowedCharacters: .urlPathAllowed)
-            let url = FileManager.default.temporaryDirectory.appendingPathComponent(urlDescription!)
-
-            let realm = getRealm()
-
-            if let data = liveAttachment.data {
+            if let data = liveAttachment.data, let url = liveAttachment.localUrl {
                 try data.write(to: url)
-            }
-            try? realm.safeWrite {
-                liveAttachment.localUrlPath = url.path
             }
         } catch {
             // Handle error

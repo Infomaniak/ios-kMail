@@ -35,13 +35,17 @@ public class Attachment: /* Hashable, */ EmbeddedObject, Codable, Identifiable {
     @Persisted public var resource: String?
     @Persisted public var driveUrl: String?
     @Persisted public var data: Data? = nil
-    @Persisted public var localUrlPath: String? = nil
+    @Persisted(originProperty: "attachments") var parentLink: LinkingObjects<Message>
+
+    public var parent: Message? {
+        return parentLink.first
+    }
 
     public var localUrl: URL? {
-        guard let localUrlPath = localUrlPath else {
-            return nil
-        }
-        return URL(string: localUrlPath)
+        guard let message = parent else { return nil }
+        let urlDescription = "\(message.uid)_\(partId)_\(name)"
+            .addingPercentEncoding(withAllowedCharacters: .urlPathAllowed)
+        return FileManager.default.temporaryDirectory.appendingPathComponent(urlDescription!)
     }
 
     public var uti: UTType? {

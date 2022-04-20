@@ -49,9 +49,9 @@ struct AttachmentsView: View {
                         AttachmentCell(attachment: attachment)
                             .onTapGesture {
                                 sheet.state = .attachment(attachment)
-                                if attachment.localUrl == nil {
+                                if !FileManager.default.fileExists(atPath: attachment.localUrl?.path ?? "") {
                                     Task {
-                                        await mailboxManager.saveAttachmentLocally(message: message, attachment: attachment)
+                                        await mailboxManager.saveAttachmentLocally(attachment: attachment)
                                     }
                                 }
                             }
