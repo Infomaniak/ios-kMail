@@ -20,15 +20,7 @@ import MailResources
 import UIKit
 import SwiftUI
 
-class CollectionCellViewModel: ObservableObject {
-    @Published var isSelected = false
-}
-
-protocol CollectionCell: View {
-    var viewModel: CollectionCellViewModel { get }
-}
-
-class HostingCollectionViewCell<Content: CollectionCell>: UICollectionViewCell {
+class HostingCollectionViewCell<Content: View>: UICollectionViewCell {
     private weak var controller: UIHostingController<Content>?
 
     func host(_ view: Content, parent: UIViewController) {

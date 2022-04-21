@@ -20,12 +20,13 @@ import MailCore
 import MailResources
 import SwiftUI
 
-struct ThreadListCell: CollectionCell {
-    @ObservedObject var viewModel = CollectionCellViewModel()
-
+struct ThreadListCell: View {
+    var mailboxManager: MailboxManager
     var thread: Thread
 
-    var unread: Bool {
+    @State private var mailContent = ""
+
+    private var unread: Bool {
         thread.unseenMessages > 0
     }
 
@@ -61,7 +62,7 @@ struct ThreadListCell: CollectionCell {
                             .fontWeight(unread ? .semibold : .regular)
                             .lineLimit(1)
 
-                        Text(thread.messages.first?.body?.value ?? "")
+                        Text(mailContent)
                             .foregroundColor(Color(MailResourcesAsset.secondaryTextColor.color))
                             .lineLimit(1)
                     }
@@ -79,12 +80,36 @@ struct ThreadListCell: CollectionCell {
         }
         .padding([.leading, .trailing], 10)
         .padding([.top, .bottom], 9)
+        .task {
+            await fetchMessage()
+            mailContent = await formatBody()
+        }
+    }
+
+    // MARK: - Private functions
+
+    @MainActor private func fetchMessage() async {
+        guard let message = thread.messages.first, message.body != nil else { return }
+        do {
+            try await mailboxManager.message(message: message)
+        } catch {
+            print("Error while fetching message: \(error.localizedDescription)")
+        }
+    }
+
+    private func formatBody() async -> String {
+        guard let body = thread.messages.first?.body else { return "(Message vide)" }
+
+        if let data = body.value.data(using: .utf8), let attributedString = try? NSAttributedString(data: data, options: [.documentType: NSAttributedString.DocumentType.html], documentAttributes: nil) {
+            return attributedString.string.replacingOccurrences(of: "\n", with: " ")
+        }
+        return body.value
     }
 }
 
 struct ThreadListCell_Previews: PreviewProvider {
     static var previews: some View {
-        ThreadListCell(thread: PreviewHelper.sampleThread)
+        ThreadListCell(mailboxManager: MailboxManager(mailbox: PreviewHelper.sampleMailbox, apiFetcher: MailApiFetcher()), thread: PreviewHelper.sampleThread)
             .previewLayout(.sizeThatFits)
             .previewDevice("iPhone 13 Pro")
     }

@@ -138,7 +138,7 @@ class ThreadListViewController: MailCollectionViewController, FolderListViewDele
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "ThreadListCell", for: indexPath) as! HostingCollectionViewCell<ThreadListCell>
         let thread = viewModel.threads[indexPath.item]
-        cell.host(ThreadListCell(thread: thread), parent: self)
+        cell.host(ThreadListCell(mailboxManager: viewModel.mailboxManager, thread: thread), parent: self)
         return cell
     }
 
