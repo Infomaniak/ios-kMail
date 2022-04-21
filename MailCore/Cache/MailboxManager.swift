@@ -217,11 +217,9 @@ public class MailboxManager: ObservableObject {
         return result
     }
 
-    public func getUnreadMessages() async throws -> Int {
-        let folders = try await apiFetcher.folders(mailbox: mailbox)
-        return folders.reduce(0) { partialResult, folder in
-            partialResult + (folder.unreadCount ?? 0)
-        }
+    public func hasUnreadMessages() -> Bool {
+        let realm = getRealm()
+        return realm.objects(Folder.self).contains { $0.unreadCount != nil && $0.unreadCount! > 0 }
     }
 }
 

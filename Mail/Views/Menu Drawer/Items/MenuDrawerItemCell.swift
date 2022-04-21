@@ -17,6 +17,7 @@
  */
 
 import InfomaniakCore
+import MailCore
 import MailResources
 import SwiftUI
 
@@ -34,7 +35,8 @@ struct MenuDrawerItemCell: View {
                     .padding(.trailing, 15)
 
                 Text(content.label)
-                    .foregroundColor(Color(MailResourcesAsset.primaryTextColor.color))
+                    .font(MailTextStyle.menuItem.font)
+                    .foregroundColor(MailTextStyle.menuItem.color)
             }
         }
     }

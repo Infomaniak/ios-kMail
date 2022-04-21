@@ -18,6 +18,7 @@
 
 import MailResources
 import SwiftUI
+import MailCore
 
 struct MenuItem: Identifiable {
     let id = UUID()
@@ -36,8 +37,8 @@ struct MenuDrawerItemsListView: View {
         VStack(alignment: .leading) {
             if let title = title {
                 Text(title)
-                    .font(.system(size: 16))
-                    .foregroundColor(Color(MailResourcesAsset.sectionHeaderTextColor.color))
+                    .font(MailTextStyle.menuTitle.font)
+                    .foregroundColor(MailTextStyle.menuTitle.color)
                     .padding(.bottom, 6)
             }
 

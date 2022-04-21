@@ -23,8 +23,6 @@ import SwiftUI
 import UIKit
 
 struct MenuDrawerView: View {
-    public static let horizontalPadding: CGFloat = 25
-
     @Environment(\.openURL) var openURL
 
     // swiftlint:disable empty_count
@@ -79,7 +77,7 @@ struct MenuDrawerView: View {
                     MailboxQuotaView()
                 }
             }
-            .padding([.leading, .trailing], Self.horizontalPadding)
+            .padding([.leading, .trailing], Constants.menuDrawerHorizontalPadding)
         }
         .background(Color(MailResourcesAsset.backgroundColor.color))
         .environmentObject(mailboxManager)

@@ -24,11 +24,9 @@ import UIKit
 import SwiftUI
 
 struct UserFoldersListView: View {
-    // swiftlint:disable empty_count
-    @ObservedResults(Folder.self, where: { $0.parentLink.count == 0 }) var folders
+    @ObservedResults(Folder.self) var folders
 
     @State private var unfoldFolders = false
-
     @Binding var selectedFolderId: String?
 
     var isCompact: Bool

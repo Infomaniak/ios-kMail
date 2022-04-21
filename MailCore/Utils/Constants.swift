@@ -40,12 +40,13 @@ public enum Constants {
     public static let sizeLimit: Int64 = 20_000_000_000 // 20 Go
 
 	public static let menuDrawerFolderCellPadding: CGFloat = 4
+    public static let menuDrawerHorizontalPadding: CGFloat = 25
 
     public static let byteCountFormatterStyle = ByteCountFormatStyle.byteCount(style: .file)
 
     private static var dateFormatter = DateFormatter()
 
-	public enum DateTimeStyle {
+    public enum DateTimeStyle {
         case date
         case time
         case datetime

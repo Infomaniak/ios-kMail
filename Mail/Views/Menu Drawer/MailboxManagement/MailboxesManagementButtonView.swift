@@ -16,32 +16,32 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import MailResources
 import InfomaniakCore
 import SwiftUI
 
 struct MailboxesManagementButtonView: View {
     @State var text: String
-    @Binding var detail: Int?
+    @Binding var showBadge: Bool
 
     var handleAction: () -> Void
 
-    init(text: String, detail: Binding<Int?> = .constant(nil), handleAction: @escaping () -> Void) {
+    init(text: String, showBadge: Binding<Bool> = .constant(false), handleAction: @escaping () -> Void) {
         _text = State(initialValue: text)
-        _detail = detail
+        _showBadge = showBadge
         self.handleAction = handleAction
     }
 
     var body: some View {
         Button(action: handleAction) {
+            if showBadge {
+                Circle()
+                    .frame(width: 8, height: 8)
+                    .foregroundColor(Color(MailResourcesAsset.mailPinkColor.color))
+            }
+
             Text(text)
                 .lineLimit(1)
-
-            Spacer()
-
-            if let detail = detail, detail > 0 {
-                Text("\(detail)")
-                    .foregroundColor(Color(InfomaniakCoreAsset.infomaniakColor.color))
-            }
         }
         .padding([.top, .bottom], 5)
     }

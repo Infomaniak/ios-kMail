@@ -128,10 +128,8 @@ public class Folder: Object, Codable, Comparable, Identifiable {
     }
 
     public var icon: Image {
-        if let role = role {
-            return Image(uiImage: role.icon.image)
-        }
-        return Image(uiImage: isFavorite ? MailResourcesAsset.folderStar.image : MailResourcesAsset.folder.image)
+        let asset = role?.icon ?? (isFavorite ? MailResourcesAsset.folderStar : MailResourcesAsset.folder)
+        return Image(uiImage: asset.image)
     }
 
     public static func < (lhs: Folder, rhs: Folder) -> Bool {

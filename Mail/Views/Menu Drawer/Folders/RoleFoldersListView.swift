@@ -22,8 +22,7 @@ import RealmSwift
 import SwiftUI
 
 struct RoleFoldersListView: View {
-    // swiftlint:disable empty_count
-    @ObservedResults(Folder.self, where: { $0.parentLink.count == 0 }) var folders
+    @ObservedResults(Folder.self) var folders
 
     @Binding var selectedFolderId: String?
 

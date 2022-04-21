@@ -78,6 +78,10 @@ private struct FolderCellContentView: View {
         folder.id == selectedFolderId
     }
 
+    private var textStyle: MailTextStyle {
+        isSelected ? .menuItemSelected : .menuItem
+    }
+
     var body: some View {
         HStack {
             folder.icon
@@ -88,15 +92,15 @@ private struct FolderCellContentView: View {
                 .padding(.trailing, 10)
 
             Text(folder.localizedName)
-                .foregroundColor(Color(isSelected ? InfomaniakCoreAsset.infomaniakColor.color : MailResourcesAsset.primaryTextColor.color))
-                .fontWeight(isSelected ? .semibold : .regular)
+                .font(textStyle.font)
+                .foregroundColor(textStyle.color)
 
             Spacer()
 
             if let unreadCount = folder.unreadCount, unreadCount > 0 {
                 Text(unreadCount < 100 ? "\(unreadCount)" : "99+")
-                    .foregroundColor(Color(InfomaniakCoreAsset.infomaniakColor.color))
-                    .fontWeight(isSelected ? .semibold : .regular)
+                    .font(textStyle.font)
+                    .foregroundColor(MailTextStyle.badge.color)
             }
         }
     }

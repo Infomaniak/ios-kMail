@@ -21,19 +21,20 @@ import SwiftUI
 
 struct MailboxCell: View {
     @State var mailbox: Mailbox
-    @State var unreadCount: Int?
+    @State var unreadMessages = false
 
     var body: some View {
-        MailboxesManagementButtonView(text: mailbox.email, detail: $unreadCount) {
+        MailboxesManagementButtonView(text: mailbox.email, showBadge: $unreadMessages) {
             // TODO: Switch mailbox
         }
-        .task {
-            await fetchUnreadCountEmails()
+        .onAppear {
+            hasUnreadMessages()
         }
     }
 
-    private func fetchUnreadCountEmails() async {
-        unreadCount = try? await AccountManager.instance.getMailboxManager(for: mailbox)?.getUnreadMessages()
+    private func hasUnreadMessages() {
+        guard let mailboxManager = AccountManager.instance.getMailboxManager(for: mailbox) else { return }
+        unreadMessages = mailboxManager.hasUnreadMessages()
     }
 }
 

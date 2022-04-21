@@ -19,6 +19,7 @@
 import MailResources
 import SwiftUI
 import UIKit
+import MailCore
 
 struct MenuHeaderView: View {
     var body: some View {
@@ -39,7 +40,7 @@ struct MenuHeaderView: View {
                     .frame(width: 26)
             }
         }
-        .padding([.leading, .trailing], MenuDrawerView.horizontalPadding)
+        .padding([.leading, .trailing], Constants.menuDrawerHorizontalPadding)
         .padding(.top, 30)
         .padding(.bottom)
         .background(Color(MailResourcesAsset.backgroundColor.color))

@@ -39,17 +39,17 @@ struct MailboxQuotaView: View {
                         Text("/")
                         Text(Constants.sizeLimit, format: Constants.byteCountFormatterStyle)
                     }
-                    .font(.system(size: 19))
+                    .font(MailTextStyle.highlighted.font)
+                    .foregroundColor(MailTextStyle.highlighted.color)
 
                     Text(MailResourcesStrings.menuDrawerUsed)
                 }
 
                 Button(action: openGetMoreStorage) {
                     Text(MailResourcesStrings.buttonMoreStorage)
-                        .fontWeight(.semibold)
                 }
-                .foregroundColor(Color(InfomaniakCoreAsset.infomaniakColor.color))
-                .font(.system(size: 15))
+                .foregroundColor(MailTextStyle.smallAction.color)
+                .font(MailTextStyle.smallAction.font)
             }
 
             Spacer()
