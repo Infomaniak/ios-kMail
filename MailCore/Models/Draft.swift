@@ -107,7 +107,11 @@ public class Draft: Object, Codable, Identifiable {
         case action
     }
 
-    override public init() {}
+    override public init() {
+        mimeType = "text/html"
+        let signatureId = "869747"
+        self.identityId = signatureId
+    }
 
     public required init(from decoder: Decoder) throws {
         let values = try decoder.container(keyedBy: CodingKeys.self)
@@ -157,8 +161,7 @@ public class Draft: Object, Codable, Identifiable {
 //        if let signature = AccountManager.instance.signature {
 //            signatureId = "\(signature.defaultSignatureId)"
 //        }
-        let signatureId = "869747"
-        self.identityId = identityId ?? signatureId
+//        self.identityId = identityId ?? signatureId
         self.inReplyToUid = inReplyToUid
         self.forwardedUid = forwardedUid
         self.references = references

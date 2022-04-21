@@ -95,8 +95,6 @@ struct NewMessageView: View {
         editor.richTextEditor.getHTML { [self] html in
             Task {
                 self.draft.body = html!
-                self.draft.identityId = "869747"
-                self.draft.mimeType = "text/html"
 //                await removeAttachmentFromBody()
 
                 draft.action = .save
