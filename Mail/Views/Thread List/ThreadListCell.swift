@@ -24,7 +24,7 @@ struct ThreadListCell: View {
     var mailboxManager: MailboxManager
     var thread: Thread
 
-    @State private var mailContent = ""
+    @State private var mailContent = "Chargement..."
 
     private var unread: Bool {
         thread.unseenMessages > 0
@@ -39,7 +39,7 @@ struct ThreadListCell: View {
 
             VStack(alignment: .leading, spacing: 2) {
                 HStack {
-                    Text(thread.from.first?.name ?? "")
+                    Text(thread.formattedFrom)
                         .font(.system(size: 18))
                         .foregroundColor(Color(unread ? MailResourcesAsset.primaryTextColor.color : MailResourcesAsset.secondaryTextColor.color))
                         .fontWeight(unread ? .semibold : .regular)
@@ -78,18 +78,19 @@ struct ThreadListCell: View {
                 }
             }
         }
-        .padding([.leading, .trailing], 10)
-        .padding([.top, .bottom], 9)
-        .task {
-            await fetchMessage()
-            mailContent = await formatBody()
-        }
+        .padding([.leading, .trailing], 12)
+        .padding([.top, .bottom], 14)
+        .onAppear(perform: {
+            Task {
+                mailContent = await formatBody(of: thread)
+            }
+        })
     }
 
     // MARK: - Private functions
 
-    @MainActor private func fetchMessage() async {
-        guard let message = thread.messages.first, message.body != nil else { return }
+    @MainActor private func fetchMessage(_ thread: Thread) async {
+        guard let message = thread.messages.last, !message.fullyDownloaded else { return }
         do {
             try await mailboxManager.message(message: message)
         } catch {
@@ -97,11 +98,14 @@ struct ThreadListCell: View {
         }
     }
 
-    private func formatBody() async -> String {
-        guard let body = thread.messages.first?.body else { return "(Message vide)" }
+    private func formatBody(of thread: Thread) async -> String {
+        await fetchMessage(thread)
+        guard let body = thread.messages.last?.body, !body.value.isEmpty else { return "(Message vide)" }
 
         if let data = body.value.data(using: .utf8), let attributedString = try? NSAttributedString(data: data, options: [.documentType: NSAttributedString.DocumentType.html], documentAttributes: nil) {
-            return attributedString.string.replacingOccurrences(of: "\n", with: " ")
+            return attributedString
+                .string
+                .replacingOccurrences(of: "\n", with: "")
         }
         return body.value
     }

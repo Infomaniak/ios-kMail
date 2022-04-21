@@ -48,8 +48,19 @@ public class Thread: Object, Decodable, Identifiable {
         return uid
     }
 
+    public var formattedFrom: String {
+        guard let from = from.last else { return "(unknow)" }
+        if from.name.isEmpty {
+            return from.email
+        }
+        return from.name
+    }
+
     public var formattedSubject: String {
-        return subject ?? "(no subject)"
+        guard let subject = subject, !subject.isEmpty else {
+            return "(no subject)"
+        }
+        return subject
     }
 
     public var formattedDate: String {

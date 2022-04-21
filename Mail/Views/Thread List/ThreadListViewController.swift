@@ -21,7 +21,7 @@ import MailResources
 import SwiftUI
 import UIKit
 
-class ThreadListViewController: MailCollectionViewController, FolderListViewDelegate {
+class ThreadListViewController: MailCollectionViewController, FolderListViewDelegate, UICollectionViewDelegateFlowLayout {
     private var viewModel: ThreadListViewModel
 
     let isCompact: Bool
