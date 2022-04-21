@@ -17,34 +17,47 @@
  */
 
 import MailCore
-import SwiftUI
+import MailResources
 import RealmSwift
+import SwiftUI
 
 struct AttachmentPreview: View {
     @Binding var isPresented: Bool
     @ObservedRealmObject var attachment: Attachment
 
     var body: some View {
-        ZStack {
-            if let url = attachment.localUrl {
-                if FileManager.default.fileExists(atPath: url.path) {
-                    PreviewController(url: url)
-                }
-            } else {
-                Spacer()
-                ProgressView()
-                Spacer()
-            }
+        ZStack(alignment: .topLeading) {
+            Color.black.ignoresSafeArea()
             VStack {
-                HStack {
-                    Button("Done") {
-                        isPresented = false
+                if let url = attachment.localUrl {
+                    if FileManager.default.fileExists(atPath: url.path) {
+                        PreviewController(url: url)
                     }
+                } else {
+                    Spacer()
+                    ProgressView()
                     Spacer()
                 }
-                Spacer()
                 AttachmentPreviewFooter(attachment: attachment)
+                    .background(
+                        RoundedRectangle(cornerRadius: 16)
+                            .foregroundColor(Color(MailResourcesAsset.backgroundColor.color))
+                            .edgesIgnoringSafeArea(.bottom)
+                    )
             }
+            Circle()
+                .foregroundColor(Color(MailResourcesAsset.backgroundColor.color).opacity(0.8))
+                .frame(width: 44, height: 44)
+                .padding(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0))
+                .overlay(
+                    Button {
+                        isPresented = false
+                    } label: {
+                        Image(systemName: "chevron.left")
+                            .frame(width: 16, height: 16)
+                    }
+                )
+                .padding(EdgeInsets(top: 16, leading: 16, bottom: 0, trailing: 16))
         }
     }
 }

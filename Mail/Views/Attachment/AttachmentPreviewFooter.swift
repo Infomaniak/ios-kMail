@@ -60,7 +60,6 @@ struct AttachmentPreviewFooter: View {
             }
             .padding(.top, 22)
         }
-        
         .background(Color(MailResourcesAsset.backgroundColor.color))
         .padding(32)
     }
