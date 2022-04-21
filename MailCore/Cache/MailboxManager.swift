@@ -69,7 +69,18 @@ public class MailboxManager: ObservableObject {
         realmConfiguration = Realm.Configuration(
             fileURL: MailboxManager.constants.rootDocumentsURL.appendingPathComponent(realmName),
             schemaVersion: 1,
-            objectTypes: [Folder.self, Thread.self, Message.self, Body.self, Attachment.self, Recipient.self, Draft.self]
+            objectTypes: [
+                Folder.self,
+                Thread.self,
+                Message.self,
+                Body.self,
+                Attachment.self,
+                Recipient.self,
+                Draft.self,
+                SignatureResponse.self,
+                Signature.self,
+                ValidEmail.self
+            ]
         )
     }
 
@@ -82,10 +93,29 @@ public class MailboxManager: ObservableObject {
         }
     }
 
+    // MARK: - Signatures
+
+    public func signatures() async throws {
+        // Get from API
+        let signaturesResult = try await apiFetcher.signatures(mailbox: mailbox)
+
+        let realm = getRealm()
+
+        // Update signatures in Realm
+        try? realm.safeWrite {
+            realm.add(signaturesResult, update: .modified)
+        }
+    }
+
+    public func getSignatureResponse(using realm: Realm? = nil) -> SignatureResponse? {
+        let realm = realm ?? getRealm()
+        return realm.object(ofType: SignatureResponse.self, forPrimaryKey: 1)
+    }
+
     // MARK: - Folders
 
     public func folders() async throws {
-        // Get from realm
+        // Get from Realm
         guard ReachabilityListener.instance.currentStatus != .offline else {
             return
         }
@@ -127,7 +157,7 @@ public class MailboxManager: ObservableObject {
     // MARK: - Thread
 
     public func threads(folder: Folder, filter: Filter = .all) async throws {
-        // Get from realm
+        // Get from Realm
         guard ReachabilityListener.instance.currentStatus != .offline else {
             return
         }
@@ -176,17 +206,22 @@ public class MailboxManager: ObservableObject {
 
     // MARK: - Draft
 
-    public func draft(draftUuid: String) async throws  -> Draft {
+    public func draft(draftUuid: String) async throws -> Draft {
+        // Get from realm
+//        guard ReachabilityListener.instance.currentStatus != .offline else {
+//            return
+//        }
+
         // Get from API
         let draft = try await apiFetcher.draft(mailbox: mailbox, draftUuid: draftUuid)
 
         let realm = getRealm()
 
-        // Update message in Realm
+        // Update draft in Realm
         try? realm.safeWrite {
             realm.add(draft, update: .modified)
         }
-        
+
         return draft
     }
 

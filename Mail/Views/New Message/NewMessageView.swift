@@ -22,15 +22,16 @@ import SwiftUI
 
 struct NewMessageView: View {
     private var mailboxManager: MailboxManager
-    @State var draft = Draft()
+    @State var draft: Draft
     @State var editor = RichTextEditorModel()
     @State var draftBody = "Rédigez votre message"
 
     @Environment(\.presentationMode) var presentationMode
 
-    init(mailboxManager: MailboxManager, draft: Draft = Draft()) {
+    init(mailboxManager: MailboxManager, draft: Draft? = nil) {
         self.mailboxManager = mailboxManager
-        self.draft = draft
+        guard let signatureResponse = mailboxManager.getSignatureResponse() else { fatalError() }
+        _draft = State(initialValue: draft ?? Draft(identityId: "\(signatureResponse.defaultSignatureId)"))
     }
 
     var body: some View {
@@ -102,24 +103,12 @@ struct NewMessageView: View {
                 do {
                     let saveResponse = try await mailboxManager.save(draft: draft)
                     draft.uuid = saveResponse.uuid
-                    draft = try await getDraft()
 //                    await insertAttachmentInBody()
                 } catch {
                     print("Error while saving draft: \(error.localizedDescription)")
                 }
             }
         }
-    }
-
-    @MainActor private func getDraft() async throws -> Draft {
-        let newDraft = try await mailboxManager.draft(draftUuid: draft.uuid)
-        DispatchQueue.main.async {
-            draft = newDraft
-//            if let signature = AccountManager.instance.signature {
-//                self.draft.identityId = "\(signature.defaultSignatureId)"
-//            }
-        }
-        return newDraft
     }
 }
 

@@ -54,6 +54,10 @@ public extension Endpoint {
     static var mailbox: Endpoint {
         return Endpoint(host: ApiEnvironment.current.mailHost, path: "/api/mailbox", queryItems: nil)
     }
+    
+    static func signatures(hostingId: Int, mailboxName: String) -> Endpoint {
+        return Endpoint(host: ApiEnvironment.current.mailHost, path: "/api/securedProxy/1/mail_hostings/\(hostingId)/mailboxes/\(mailboxName)/signatures", queryItems: nil)
+    }
 
     static func folders(uuid: String) -> Endpoint {
         return Endpoint(host: ApiEnvironment.current.mailHost, path: "/api/mail/\(uuid)/folder", queryItems: nil)

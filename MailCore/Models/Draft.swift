@@ -109,8 +109,6 @@ public class Draft: Object, Codable, Identifiable {
 
     override public init() {
         mimeType = "text/html"
-        let signatureId = "869747"
-        self.identityId = signatureId
     }
 
     public required init(from decoder: Decoder) throws {
@@ -134,7 +132,7 @@ public class Draft: Object, Codable, Identifiable {
         attachments = try values.decode(List<Attachment>.self, forKey: .to)
     }
 
-    convenience init(
+    public convenience init(
         uuid: String = "",
         identityId: String? = nil,
         inReplyToUid: String? = nil,
@@ -157,11 +155,7 @@ public class Draft: Object, Codable, Identifiable {
         self.init()
 
         self.uuid = uuid
-//        var signatureId: String?
-//        if let signature = AccountManager.instance.signature {
-//            signatureId = "\(signature.defaultSignatureId)"
-//        }
-//        self.identityId = identityId ?? signatureId
+        self.identityId = identityId
         self.inReplyToUid = inReplyToUid
         self.forwardedUid = forwardedUid
         self.references = references
