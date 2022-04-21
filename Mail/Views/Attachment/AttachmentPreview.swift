@@ -45,19 +45,19 @@ struct AttachmentPreview: View {
                             .edgesIgnoringSafeArea(.bottom)
                     )
             }
-            Circle()
-                .foregroundColor(Color(MailResourcesAsset.backgroundColor.color).opacity(0.8))
-                .frame(width: 44, height: 44)
-                .padding(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0))
-                .overlay(
-                    Button {
-                        isPresented = false
-                    } label: {
+            Button {
+                isPresented = false
+            } label: {
+                Circle()
+                    .foregroundColor(Color(MailResourcesAsset.backgroundColor.color).opacity(0.8))
+                    .frame(width: 44, height: 44)
+                    .padding(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0))
+                    .overlay(
                         Image(systemName: "chevron.left")
                             .frame(width: 16, height: 16)
-                    }
-                )
-                .padding(EdgeInsets(top: 16, leading: 16, bottom: 0, trailing: 16))
+                    )
+                    .padding(EdgeInsets(top: 16, leading: 16, bottom: 0, trailing: 16))
+            }
         }
     }
 }
