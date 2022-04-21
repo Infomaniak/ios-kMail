@@ -27,37 +27,42 @@ struct AttachmentPreview: View {
 
     var body: some View {
         ZStack(alignment: .topLeading) {
-            Color.black.ignoresSafeArea()
+            Color.black
             VStack {
+                Spacer()
                 if let url = attachment.localUrl {
                     if FileManager.default.fileExists(atPath: url.path) {
                         PreviewController(url: url)
+                            .aspectRatio(contentMode: .fit)
                     }
                 } else {
-                    Spacer()
                     ProgressView()
-                    Spacer()
                 }
-                AttachmentPreviewFooter(attachment: attachment)
-                    .background(
-                        RoundedRectangle(cornerRadius: 16)
-                            .foregroundColor(Color(MailResourcesAsset.backgroundColor.color))
-                            .edgesIgnoringSafeArea(.bottom)
-                    )
+                Spacer()
             }
+
             Button {
                 isPresented = false
             } label: {
                 Circle()
                     .foregroundColor(Color(MailResourcesAsset.backgroundColor.color).opacity(0.8))
                     .frame(width: 44, height: 44)
-                    .padding(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0))
                     .overlay(
                         Image(systemName: "chevron.left")
                             .frame(width: 16, height: 16)
                     )
                     .padding(EdgeInsets(top: 16, leading: 16, bottom: 0, trailing: 16))
             }
+
+            VStack {
+                Spacer()
+                AttachmentPreviewFooter(attachment: attachment)
+                    .background(
+                        RoundedRectangle(cornerRadius: 16)
+                            .frame(maxWidth: .infinity, maxHeight: .infinity)
+                            .foregroundColor(Color(MailResourcesAsset.backgroundColor.color))
+                    )
+            }.padding(.bottom, -10)
         }
     }
 }
