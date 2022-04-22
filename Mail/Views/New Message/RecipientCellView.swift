@@ -50,6 +50,8 @@ struct RecipientCellView: View {
         VStack {
             HStack {
                 Text(type.title)
+                    .font(MailTextStyle.secondary.font)
+                    .foregroundColor(MailTextStyle.secondary.color)
 
                 switch type {
                 case .from:
@@ -77,6 +79,8 @@ struct RecipientCellView: View {
                     TextField("", text: $draft.subjectValue)
                 }
             }
+            .font(MailTextStyle.body.font)
+            .foregroundColor(MailTextStyle.body.color)
             Divider()
                 .background(Color(MailResourcesAsset.separatorColor.color))
         }
