@@ -79,6 +79,7 @@ struct NewMessageView: View {
                     }
                 })
         }
+        .navigationViewStyle(.stack)
         .accentColor(.black)
     }
 
