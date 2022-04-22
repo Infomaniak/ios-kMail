@@ -25,6 +25,7 @@ struct NewMessageView: View {
     @State var draft: Draft
     @State var editor = RichTextEditorModel()
     @State var draftBody = "Rédigez votre message"
+    @State private var unfoldDetails = false
 
     @Environment(\.presentationMode) var presentationMode
 
@@ -38,7 +39,16 @@ struct NewMessageView: View {
         NavigationView {
             VStack {
                 RecipientCellView(from: mailboxManager.mailbox.email, draft: draft, type: RecipientCellType.from)
-                RecipientCellView(draft: draft, type: RecipientCellType.to)
+
+                DisclosureGroup(isExpanded: $unfoldDetails) {
+                    VStack {
+                        RecipientCellView(draft: draft, type: RecipientCellType.cc)
+                        RecipientCellView(draft: draft, type: RecipientCellType.bcc)
+                    }
+                    .padding(.top, 5)
+                } label: {
+                    RecipientCellView(draft: draft, type: RecipientCellType.to)
+                }
                 RecipientCellView(draft: draft, type: RecipientCellType.object)
 
                 RichTextEditor(model: $editor, body: $draftBody)

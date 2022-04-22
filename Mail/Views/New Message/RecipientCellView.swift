@@ -22,7 +22,7 @@ import MailResources
 import SwiftUI
 
 enum RecipientCellType {
-    case from, to, object
+    case from, to, cc, bcc, object
 
     var title: String {
         switch self {
@@ -30,6 +30,10 @@ enum RecipientCellType {
             return "De :"
         case .to:
             return "À :"
+        case .cc:
+            return "Cc :"
+        case .bcc:
+            return "Bcc :"
         case .object:
             return "Objet :"
         }
@@ -55,6 +59,17 @@ struct RecipientCellView: View {
                         .autocapitalization(.none)
                 case .to:
                     TextField("", text: $draft.toValue)
+                        .textContentType(.emailAddress)
+                        .keyboardType(.emailAddress)
+                        .autocapitalization(.none)
+                        .multilineTextAlignment(.leading)
+                case .cc:
+                    TextField("", text: $draft.ccValue)
+                        .textContentType(.emailAddress)
+                        .keyboardType(.emailAddress)
+                        .autocapitalization(.none)
+                case .bcc:
+                    TextField("", text: $draft.bccValue)
                         .textContentType(.emailAddress)
                         .keyboardType(.emailAddress)
                         .autocapitalization(.none)
