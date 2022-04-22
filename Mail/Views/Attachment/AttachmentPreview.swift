@@ -26,7 +26,7 @@ struct AttachmentPreview: View {
     @ObservedRealmObject var attachment: Attachment
 
     var body: some View {
-        ZStack(alignment: .topLeading) {
+        ZStack(alignment: .top) {
             Color.black
             VStack {
                 Spacer()
@@ -41,17 +41,20 @@ struct AttachmentPreview: View {
                 Spacer()
             }
 
-            Button {
-                isPresented = false
-            } label: {
-                Circle()
-                    .foregroundColor(Color(MailResourcesAsset.backgroundColor.color).opacity(0.8))
-                    .frame(width: 44, height: 44)
-                    .overlay(
-                        Image(systemName: "chevron.left")
-                            .frame(width: 16, height: 16)
-                    )
-                    .padding(EdgeInsets(top: 16, leading: 16, bottom: 0, trailing: 16))
+            HStack {
+                Button {
+                    isPresented = false
+                } label: {
+                    Circle()
+                        .foregroundColor(Color(MailResourcesAsset.backgroundColor.color).opacity(0.8))
+                        .frame(width: 44, height: 44)
+                        .overlay(
+                            Image(systemName: "chevron.left")
+                                .frame(width: 16, height: 16)
+                        )
+                        .padding(EdgeInsets(top: 16, leading: 16, bottom: 0, trailing: 16))
+                }
+                Spacer()
             }
 
             VStack {
