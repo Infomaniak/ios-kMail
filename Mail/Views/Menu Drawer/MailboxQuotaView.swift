@@ -22,13 +22,7 @@ import MailResources
 import SwiftUI
 
 struct MailboxQuotaView: View {
-    var mailboxManager: MailboxManager
-    var formatter: ByteCountFormatter = {
-        let byteCountFormatter = ByteCountFormatter()
-        byteCountFormatter.countStyle = .file
-        byteCountFormatter.includesUnit = true
-        return byteCountFormatter
-    }()
+    @EnvironmentObject var mailboxManager: MailboxManager
 
     @State private var quotas: Quotas?
 
@@ -39,40 +33,48 @@ struct MailboxQuotaView: View {
                 .padding(.trailing, 7)
 
             VStack(alignment: .leading) {
-                HStack {
-                    Text("\(formatter.string(from: .init(value: Double(quotas?.size ?? 0), unit: .kilobytes))) / \(formatter.string(from: .init(value: Double(Constants.sizeLimit), unit: .kilobytes)))")
-                        .font(.system(size: 19))
-                    Text("utilisés")
+                HStack(spacing: 5) {
+                    HStack(spacing: 4) {
+                        Text(Int64((quotas?.size ?? 0) * 1000), format: Constants.byteCountFormatterStyle)
+                        Text("/")
+                        Text(Constants.sizeLimit, format: Constants.byteCountFormatterStyle)
+                    }
+                    .font(MailTextStyle.highlighted.font)
+                    .foregroundColor(MailTextStyle.highlighted.color)
+
+                    Text(MailResourcesStrings.menuDrawerUsed)
                 }
 
-                Button {
-                    print("Todo")
-                } label: {
-                    Text("Obtenir plus de stockage")
-                        .fontWeight(.semibold)
+                Button(action: openGetMoreStorage) {
+                    Text(MailResourcesStrings.buttonMoreStorage)
                 }
-                .foregroundColor(Color(InfomaniakCoreAsset.infomaniakColor.color))
-                .font(.system(size: 15))
+                .foregroundColor(MailTextStyle.smallAction.color)
+                .font(MailTextStyle.smallAction.font)
             }
 
             Spacer()
         }
-        .padding([.leading, .trailing], MenuDrawerView.horizontalPadding)
-        .padding([.top, .bottom])
-        .onAppear {
-            Task {
-                do {
-                    quotas = try await mailboxManager.apiFetcher.quotas(mailbox: mailboxManager.mailbox)
-                } catch {
-                    print("Error while fetching quotas: \(error)")
-                }
+        .padding(.top, 2)
+        .padding([.bottom])
+        .task {
+            do {
+                quotas = try await mailboxManager.apiFetcher.quotas(mailbox: mailboxManager.mailbox)
+            } catch {
+                print("Error while fetching quotas: \(error)")
             }
         }
     }
 
+    // MARK: - Private functions
+
     private func computeProgression() -> Double {
+        let minimumValue = 0.03
         let value = Double(quotas?.size ?? 0) / Double(Constants.sizeLimit)
-        return value > 0.03 ? value : 0.03
+        return value > minimumValue ? value : minimumValue
+    }
+
+    private func openGetMoreStorage() {
+        // TODO: Open "Get More Storage View"
     }
 }
 
@@ -95,6 +97,7 @@ private struct QuotaCircularProgressViewStyle: ProgressViewStyle {
                 .resizable()
                 .scaledToFit()
                 .frame(width: 18)
+                .foregroundColor(Color(InfomaniakCoreAsset.infomaniakColor.color))
         }
         .frame(height: 42)
     }

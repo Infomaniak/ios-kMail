@@ -82,7 +82,8 @@ let project = Project(name: "Mail",
                               deploymentTarget: deploymentTarget,
                               infoPlist: .default,
                               resources: [
-                                  "MailResources/**/*.xcassets"
+                                  "MailResources/**/*.xcassets",
+                                  "MailResources/**/*.strings"
                               ]
                           ),
                           Target(

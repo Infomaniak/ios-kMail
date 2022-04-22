@@ -1,0 +1,39 @@
+/*
+ * Loco ios export: iOS Localizable.strings
+ * Project: kMail
+ * Release: Working copy
+ * Locale: es, Spanish
+ * Tagged: ios
+ * Exported by: Valentin Perignon
+ * Exported at: Wed, 13 Apr 2022 09:53:51 +0200
+ */
+
+/* loco:6256793050618f7416758a32 */
+"buttonAddAccount" = "Add an account";
+
+/* loco:62567ae448317f728353f752 */
+"buttonFeedbacks" = "Feedbacks";
+
+/* loco:62567a5b3e928d1b5930fc02 */
+"buttonFolders" = "Folders";
+
+/* loco:62567b2dadb07654e86a97e2 */
+"buttonHelp" = "Help";
+
+/* loco:62567b5b0774bb46043833b2 */
+"buttonImportEmails" = "Import emails";
+
+/* loco:6256795bbada8e54885d3243 */
+"buttonManageAccount" = "Manage my account";
+
+/* loco:62567be2708ef36f6e378df2 */
+"buttonMoreStorage" = "Get more storage";
+
+/* loco:62567b81c34ca7494235e273 */
+"buttonRestoreEmails" = "Restore emails";
+
+/* loco:62567b1163b65257647cd9a2 */
+"menuDrawerAdvancedActions" = "Advanced actions";
+
+/* loco:62567c24d2caf66fe31d1932 */
+"menuDrawerUsed" = "used";

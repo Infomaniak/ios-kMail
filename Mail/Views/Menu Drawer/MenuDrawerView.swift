@@ -17,36 +17,112 @@
  */
 
 import MailCore
+import MailResources
 import RealmSwift
 import SwiftUI
 import UIKit
 
 struct MenuDrawerView: View {
+    @Environment(\.openURL) var openURL
+
+    // swiftlint:disable empty_count
+    @ObservedResults(Folder.self, where: { $0.parentLink.count == 0 }) var folders
+
+    @StateObject var mailboxManager: MailboxManager
+
+    @State var selectedFolderId: String?
     @State private var showMailboxes = false
 
-    var mailboxManager: MailboxManager
-    weak var splitViewController: UISplitViewController?
     var isCompact: Bool
     weak var delegate: FolderListViewDelegate?
 
-    public static let horizontalPadding: CGFloat = 25
+    private var helpMenuItems = [MenuItem]()
+    private var actionsMenuItems = [MenuItem]()
+
+    init(mailboxManager: MailboxManager, selectedFolderId: String?, isCompact: Bool, delegate: FolderListViewDelegate? = nil) {
+        _folders = .init(Folder.self, configuration: AccountManager.instance.currentMailboxManager!.realmConfiguration) { $0.parentLink.count == 0 }
+        _mailboxManager = StateObject(wrappedValue: mailboxManager)
+        self.isCompact = isCompact
+        self.delegate = delegate
+        _selectedFolderId = State(initialValue: selectedFolderId)
+
+        getMenuItems()
+    }
 
     var body: some View {
-        VStack {
-            MenuHeaderView(splitViewController: splitViewController)
+        ScrollView {
+            MenuHeaderView()
 
-            MailboxesManagementView(mailbox: mailboxManager.mailbox)
+            VStack(alignment: .leading) {
+                MailboxesManagementView()
 
-            FoldersListView(
-                mailboxManager: mailboxManager,
-                splitViewController: splitViewController,
-                isCompact: isCompact,
-                delegate: delegate
-            )
+                MenuDrawerSeparatorView()
 
-            if mailboxManager.mailbox.isLimited {
-                MailboxQuotaView(mailboxManager: mailboxManager)
+                RoleFoldersListView(folders: $folders, selectedFolderId: $selectedFolderId, isCompact: isCompact, delegate: delegate)
+
+                MenuDrawerSeparatorView()
+
+                UserFoldersListView(folders: $folders, selectedFolderId: $selectedFolderId, isCompact: isCompact, delegate: delegate)
+
+                MenuDrawerSeparatorView()
+
+                MenuDrawerItemsListView(content: helpMenuItems)
+
+                MenuDrawerSeparatorView()
+
+                MenuDrawerItemsListView(title: MailResourcesStrings.menuDrawerAdvancedActions, content: actionsMenuItems)
+
+                if mailboxManager.mailbox.isLimited {
+                    MenuDrawerSeparatorView()
+                    MailboxQuotaView()
+                }
             }
+            .padding([.leading, .trailing], Constants.menuDrawerHorizontalPadding)
         }
+        .background(Color(MailResourcesAsset.backgroundColor.color))
+        .environmentObject(mailboxManager)
+        .task {
+            await fetchFolders()
+            MatomoUtils.track(view: ["MenuDrawer"])
+        }
+    }
+
+    // MARK: - Private methods
+
+    private mutating func getMenuItems() {
+        helpMenuItems = [
+            MenuItem(icon: MailResourcesAsset.alertCircle, label: MailResourcesStrings.buttonFeedbacks, action: sendFeedback),
+            MenuItem(icon: MailResourcesAsset.questionHelpCircle, label: MailResourcesStrings.buttonHelp, action: openSupport)
+        ]
+        actionsMenuItems = [
+            MenuItem(icon: MailResourcesAsset.drawerArrow, label: MailResourcesStrings.buttonImportEmails, action: importMails),
+            MenuItem(icon: MailResourcesAsset.synchronizeArrow, label: MailResourcesStrings.buttonRestoreEmails, action: restoreMails)
+        ]
+    }
+
+    private func fetchFolders() async {
+        do {
+            try await mailboxManager.folders()
+        } catch {
+            print("Error while fetching folders: \(error.localizedDescription)")
+        }
+    }
+
+    // MARK: - Menu actions
+
+    func sendFeedback() {
+        openURL(URLConstants.feedback.url)
+    }
+
+    func openSupport() {
+        openURL(URLConstants.support.url)
+    }
+
+    func importMails() {
+        openURL(URLConstants.importMails.url)
+    }
+
+    func restoreMails() {
+        // TODO: Display "Restore Mails" view
     }
 }

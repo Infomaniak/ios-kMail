@@ -18,9 +18,13 @@
 
 import Foundation
 import MailResources
+import SwiftUI
 
 public struct URLConstants {
+    public static let feedback = URLConstants(urlString: "https://feedback.userreport.com/9f60b46d-7299-4887-b79d-c756cf474c4d#ideas/popular")
+    public static let importMails = URLConstants(urlString: "https://import-email.infomaniak.com")
     public static let matomo = URLConstants(urlString: "https://analytics.infomaniak.com/matomo.php")
+    public static let support = URLConstants(urlString: "https://support.infomaniak.com")
 
     private var urlString: String
 
@@ -33,7 +37,12 @@ public struct URLConstants {
 }
 
 public enum Constants {
-    public static let sizeLimit = 20_000_000 // ko
+    public static let sizeLimit: Int64 = 20_000_000_000 // 20 Go
+
+	public static let menuDrawerFolderCellPadding: CGFloat = 4
+    public static let menuDrawerHorizontalPadding: CGFloat = 25
+
+    public static let byteCountFormatterStyle = ByteCountFormatStyle.byteCount(style: .file)
 
     private static var dateFormatter = DateFormatter()
 
@@ -58,7 +67,7 @@ public enum Constants {
         dateFormatter.doesRelativeDateFormatting = relative
         return dateFormatter.string(from: date)
     }
-    
+
     public static func formatAttachmentSize(_ size: Int64, unit: Bool = true) -> String {
         let byteCountFormatter = ByteCountFormatter()
         byteCountFormatter.countStyle = .binary

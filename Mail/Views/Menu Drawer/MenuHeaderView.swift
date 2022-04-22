@@ -19,30 +19,20 @@
 import MailResources
 import SwiftUI
 import UIKit
+import MailCore
 
 struct MenuHeaderView: View {
-    var splitViewController: UISplitViewController?
-
     var body: some View {
         HStack {
             Image(uiImage: MailResourcesAsset.logoMail.image)
                 .resizable()
                 .scaledToFit()
-                .frame(width: 55)
-                .padding(.trailing, 5)
-
-            VStack(alignment: .leading) {
-                Text("Infomaniak")
-                    .font(.system(size: 14))
-                Text("Mail")
-                    .font(.system(size: 22))
-                    .bold()
-            }
+                .frame(height: 52)
 
             Spacer()
 
             Button {
-                splitViewController?.setViewController(SettingsViewController(), for: .secondary)
+                // TODO: Display "Settings" view
             } label: {
                 Image(uiImage: MailResourcesAsset.gear.image)
                     .resizable()
@@ -50,8 +40,9 @@ struct MenuHeaderView: View {
                     .frame(width: 26)
             }
         }
-        .padding([.leading, .trailing], MenuDrawerView.horizontalPadding)
-        .padding([.top, .bottom])
+        .padding([.leading, .trailing], Constants.menuDrawerHorizontalPadding)
+        .padding(.top, 30)
+        .padding(.bottom)
         .background(Color(MailResourcesAsset.backgroundColor.color))
         .clipped()
         .shadow(color: Color(MailResourcesAsset.menuDrawerShadowColor.color), radius: 2, x: 0, y: 3)
@@ -60,6 +51,6 @@ struct MenuHeaderView: View {
 
 struct MenuHeaderView_Previews: PreviewProvider {
     static var previews: some View {
-        MenuHeaderView(splitViewController: UISplitViewController())
+        MenuHeaderView()
     }
 }

@@ -22,7 +22,7 @@ import InfomaniakCore
 import RealmSwift
 import Sentry
 
-public class MailboxManager {
+public class MailboxManager: ObservableObject {
     public class MailboxManagerConstants {
         private let fileManager = FileManager.default
         public let rootDocumentsURL: URL
@@ -215,6 +215,11 @@ public class MailboxManager {
             }
         }
         return result
+    }
+
+    public func hasUnreadMessages() -> Bool {
+        let realm = getRealm()
+        return realm.objects(Folder.self).contains { $0.unreadCount != nil && $0.unreadCount! > 0 }
     }
 }
 
