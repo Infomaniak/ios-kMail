@@ -28,13 +28,11 @@ struct AttachmentPreviewFooter: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 4) {
             Text(attachment.name)
-            HStack {
-                Text("75 Mo")
-                Text("•")
-                Text("Modifié le 27 Aout 2020 - 16:10")
-            }
-            .font(.system(size: 16, weight: .regular))
-            .foregroundColor(Color(MailResourcesAsset.secondaryTextColor.color))
+                .font(MailTextStyle.body.font)
+                .foregroundColor(MailTextStyle.body.color)
+            Text(Constants.formatAttachmentSize(Int64(attachment.size)))
+                .font(MailTextStyle.description.font)
+                .foregroundColor(MailTextStyle.description.color)
 
             HStack {
                 Button {
