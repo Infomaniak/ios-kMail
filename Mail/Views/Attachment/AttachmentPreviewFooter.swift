@@ -23,6 +23,7 @@ import SwiftUI
 
 struct AttachmentPreviewFooter: View {
     var attachment: Attachment
+    @State private var isSharePresented = false
 
     var body: some View {
         VStack(alignment: .leading, spacing: 4) {
@@ -37,7 +38,7 @@ struct AttachmentPreviewFooter: View {
 
             HStack {
                 Button {
-                    shareButton()
+                    isSharePresented = true
                 } label: {
                     HStack {
                         Image(systemName: "square.and.arrow.up")
@@ -62,9 +63,12 @@ struct AttachmentPreviewFooter: View {
         }
         .background(Color(MailResourcesAsset.backgroundColor.color))
         .padding(32)
+        .sheet(isPresented: $isSharePresented) {
+            if let itemUrl = attachment.localUrl {
+                ActivityViewController(activityItems: [itemUrl])
+            }
+        }
     }
-
-    private func shareButton() {}
 
     private func downloadAttachment() {}
 }
