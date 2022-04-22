@@ -36,6 +36,7 @@ struct ThreadView: View {
                     .font(.largeTitle)
                 ForEach(thread.messages.indices) { index in
                     MessageView(message: thread.messages[index], isThreadHeader: index == 0)
+                    MessageSeparatorView()
                 }
             }
         }
