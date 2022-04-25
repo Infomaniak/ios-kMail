@@ -33,7 +33,9 @@ struct PreviewController: UIViewControllerRepresentable {
         return Coordinator(parent: self)
     }
 
-    func updateUIViewController(_ uiViewController: QLPreviewController, context: Context) {}
+    func updateUIViewController(_ uiViewController: QLPreviewController, context: Context) {
+        //
+    }
 
     class Coordinator: QLPreviewControllerDataSource {
         let parent: PreviewController

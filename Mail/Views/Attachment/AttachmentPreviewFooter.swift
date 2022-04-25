@@ -68,7 +68,9 @@ struct AttachmentPreviewFooter: View {
         }
     }
 
-    private func downloadAttachment() {}
+    private func downloadAttachment() {
+        // TODO
+    }
 }
 
 struct AttachmentPreviewFooter_Previews: PreviewProvider {
