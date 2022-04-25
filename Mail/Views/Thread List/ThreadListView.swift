@@ -16,10 +16,13 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import SwiftUI
 import MailCore
+import MailResources
+import SwiftUI
 
 @MainActor struct ThreadListView: View {
+    @State private var presentMenuDrawer = false
+
     private var viewModel: ThreadListViewModel
 
     let isCompact: Bool
@@ -31,12 +34,32 @@ import MailCore
 
     var body: some View {
         List(viewModel.threads) { thread in
-            NavigationLink(destination: ThreadView(mailboxManager: viewModel.mailboxManager, thread: thread)) {
+            ZStack {
+                NavigationLink(destination: ThreadView(mailboxManager: viewModel.mailboxManager, thread: thread)) {
+                    EmptyView()
+                }
+                .opacity(0)
+
                 ThreadListCell(mailboxManager: viewModel.mailboxManager, thread: thread)
             }
             .listRowSeparator(.hidden)
         }
+        .listStyle(PlainListStyle())
         .navigationTitle(viewModel.folder?.localizedName ?? "")
+        .if(isCompact) { view in
+            view.toolbar {
+                ToolbarItem(placement: .navigationBarLeading) {
+                    Button {
+                        presentMenuDrawer.toggle()
+                    } label: {
+                        Image(uiImage: MailResourcesAsset.burger.image)
+                    }
+                }
+            }
+        }
+        .sheet(isPresented: $presentMenuDrawer, content: {
+            MenuDrawerView(mailboxManager: viewModel.mailboxManager, selectedFolderId: viewModel.folder?.id, isCompact: isCompact)
+        })
         .task {
             await viewModel.fetchThreads()
         }

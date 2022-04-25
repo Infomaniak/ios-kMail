@@ -27,19 +27,23 @@ struct SplitView: View {
     @State var splitViewController: UISplitViewController?
     @Environment(\.horizontalSizeClass) var sizeClass
 
+    var isCompact: Bool {
+        sizeClass == .compact
+    }
+
     init() {
         selectedFolder = mailboxManager.getRealm().objects(Folder.self).filter("role = 'INBOX'").first
     }
 
     var body: some View {
         NavigationView {
-            if sizeClass == .compact {
-                ThreadList(mailboxManager: mailboxManager, folder: selectedFolder, isCompact: sizeClass == .compact)
+            if isCompact {
+                ThreadListView(mailboxManager: mailboxManager, folder: selectedFolder, isCompact: isCompact)
             } else {
-                MenuDrawerView(mailboxManager: mailboxManager, selectedFolderId: selectedFolder?.id, isCompact: sizeClass == .compact)
+                MenuDrawerView(mailboxManager: mailboxManager, selectedFolderId: selectedFolder?.id, isCompact: isCompact)
                     .navigationBarHidden(true)
 
-                ThreadListView(mailboxManager: mailboxManager, folder: selectedFolder, isCompact: sizeClass == .compact)
+                ThreadListView(mailboxManager: mailboxManager, folder: selectedFolder, isCompact: isCompact)
 
                 EmptyThreadView()
             }

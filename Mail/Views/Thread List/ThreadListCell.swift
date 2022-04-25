@@ -24,8 +24,6 @@ struct ThreadListCell: View {
     var mailboxManager: MailboxManager
     var thread: Thread
 
-    @State private var mailContent = "Chargement..."
-
     private var unread: Bool {
         thread.unseenMessages > 0
     }
@@ -62,7 +60,8 @@ struct ThreadListCell: View {
                             .fontWeight(unread ? .semibold : .regular)
                             .lineLimit(1)
 
-                        Text(mailContent)
+                        // TODO: Julien Arnoux will modify the API to get a preview of the messages
+                        Text("Lorem Ipsum...")
                             .foregroundColor(Color(MailResourcesAsset.secondaryTextColor.color))
                             .lineLimit(1)
                     }
@@ -80,33 +79,6 @@ struct ThreadListCell: View {
         }
         .padding([.leading, .trailing], 12)
         .padding([.top, .bottom], 14)
-        .task {
-            mailContent = await formatBody(of: thread)
-        }
-    }
-
-    // MARK: - Private functions
-
-    @MainActor private func fetchMessage(_ thread: Thread) async {
-        guard let message = thread.messages.last, !message.fullyDownloaded else { return }
-        do {
-            try await mailboxManager.message(message: message)
-        } catch {
-            print("Error while fetching message: \(error.localizedDescription)")
-        }
-    }
-
-    private func formatBody(of thread: Thread) async -> String {
-        await fetchMessage(thread)
-        guard let body = thread.messages.last?.body, !body.value.isEmpty else { return "(Message vide)" }
-
-        if let data = body.value.data(using: .utf8), let attributedString = try? NSAttributedString(data: data, options: [.documentType: NSAttributedString.DocumentType.html], documentAttributes: nil) {
-            return attributedString
-                .string
-                .replacingOccurrences(of: "\n", with: " ")
-                .replacingOccurrences(of: "^[ ]+", with: "", options: .regularExpression)
-        }
-        return body.value
     }
 }
 
