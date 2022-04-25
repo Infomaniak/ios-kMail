@@ -89,9 +89,7 @@ class ThreadListViewController: MailCollectionViewController, FolderListViewDele
     }
 
     @objc func menuPressed() {
-        let menuDrawerView = MenuDrawerView(
-            mailboxManager: viewModel.mailboxManager, isCompact: isCompact, delegate: self
-        )
+        let menuDrawerView = MenuDrawerView(mailboxManager: viewModel.mailboxManager, selectedFolderId: viewModel.folder?.id, isCompact: isCompact, delegate: self)
         let menuDrawerHostingController = UIHostingController(rootView: menuDrawerView)
         menuDrawerHostingController.view.backgroundColor = MailResourcesAsset.backgroundColor.color
         present(menuDrawerHostingController, animated: true)

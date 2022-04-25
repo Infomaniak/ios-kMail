@@ -22,53 +22,47 @@ import MailCore
 import SwiftUI
 
 struct MailboxesManagementView: View {
-    @State private var unfoldDetails = false
+    @EnvironmentObject var mailboxManager: MailboxManager
 
-    var mailbox: Mailbox
+    @State private var unfoldDetails = false
 
     var body: some View {
         DisclosureGroup(isExpanded: $unfoldDetails) {
             VStack(alignment: .leading) {
-                ForEach(AccountManager.instance.mailboxes.filter { $0.mailboxId != mailbox.mailboxId }, id: \.mailboxId) { mailbox in
-                    MailboxesManagementButtonView(text: mailbox.email, detail: "2", handleAction: switchMailbox)
+                ForEach(AccountManager.instance.mailboxes.filter { $0.mailboxId != mailboxManager.mailbox.mailboxId }, id: \.mailboxId) { mailbox in
+                    MailboxCell(mailbox: mailbox)
                 }
 
-                Divider()
-                    .background(Color(MailResourcesAsset.separatorColor.color))
+                MenuDrawerSeparatorView(withPadding: false, fullWidth: true)
 
-                MailboxesManagementButtonView(text: "Ajouter un compte", handleAction: addNewAccount)
-                MailboxesManagementButtonView(text: "Gérer mon compte", handleAction: handleMyAccount)
+                MailboxesManagementButtonView(text: MailResourcesStrings.buttonAddAccount, handleAction: addNewAccount)
+                MailboxesManagementButtonView(text: MailResourcesStrings.buttonManageAccount, handleAction: handleMyAccount)
             }
             .padding(.leading)
+            .padding(.top, 5)
         } label: {
-            Text(mailbox.email)
+            Text(mailboxManager.mailbox.email)
                 .fontWeight(.semibold)
                 .lineLimit(1)
         }
-        .accentColor(.primary)
-        .padding([.leading, .trailing], MenuDrawerView.horizontalPadding)
-        .padding([.top], 20)
-        .padding([.bottom], 15)
+        .accentColor(Color(MailResourcesAsset.primaryTextColor.color))
+        .padding(.top, 20)
     }
 
     // MARK: - Menu actions
 
-    private func switchMailbox() {
-        // todo later
-    }
-
     private func addNewAccount() {
-        // todo later
+        // TODO: Add new account
     }
 
     private func handleMyAccount() {
-        // todo later
+        // TODO: Handle my account
     }
 }
 
 struct MailboxesManagementView_Previews: PreviewProvider {
     static var previews: some View {
-        MailboxesManagementView(mailbox: PreviewHelper.sampleMailbox)
+        MailboxesManagementView()
             .previewLayout(.sizeThatFits)
     }
 }
