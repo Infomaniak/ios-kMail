@@ -44,16 +44,6 @@ struct RichTextEditor: UIViewRepresentable {
                 }
             }
         }
-
-        func editorDidFocus(_ editor: SQTextEditorView) {}
-
-        func editorDidTapDoneButton(_ editor: SQTextEditorView) {}
-
-        func editor(_ editor: SQTextEditorView, contentHeightDidChange height: Int) {}
-
-        func editor(_ editor: SQTextEditorView, cursorPositionDidChange position: SQEditorCursorPosition) {}
-
-        func editor(_ editor: SQTextEditorView, selectedTextAttributeDidChange attribute: SQTextAttribute) {}
     }
 
     func makeCoordinator() -> Coordinator {
@@ -65,7 +55,9 @@ struct RichTextEditor: UIViewRepresentable {
         return richTextEditor
     }
 
-    func updateUIView(_ uiView: UIView, context: Context) {}
+    func updateUIView(_ uiView: UIView, context: Context) {
+        // Intentionally unimplemented...
+    }
 }
 
 class RichTextEditorModel: ObservableObject {

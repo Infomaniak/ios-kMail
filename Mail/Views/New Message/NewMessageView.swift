@@ -17,9 +17,9 @@
  */
 
 import MailCore
+import MailResources
 import RealmSwift
 import SwiftUI
-import MailResources
 
 struct NewMessageView: View {
     private var mailboxManager: MailboxManager
@@ -66,27 +66,19 @@ struct NewMessageView: View {
                     }
                 },
                 trailing: HStack {
-                    Button {
+                    Button("Send") {
                         Task {
                             await send()
                             DispatchQueue.main.async {
                                 self.presentationMode.wrappedValue.dismiss()
                             }
                         }
-
-                    } label: {
-                        Text("Send")
-                            .fontWeight(.semibold)
                     }
-                    Button {
+                    Button("Save") {
                         Task {
                             await saveDraft()
                             DispatchQueue.main.async {}
                         }
-
-                    } label: {
-                        Text("Save")
-                            .fontWeight(.semibold)
                     }
                 })
         }
@@ -108,14 +100,12 @@ struct NewMessageView: View {
         editor.richTextEditor.getHTML { [self] html in
             Task {
                 self.draft.body = html!
-//                await removeAttachmentFromBody()
 
                 draft.action = .save
 
                 do {
                     let saveResponse = try await mailboxManager.save(draft: draft)
                     draft.uuid = saveResponse.uuid
-//                    await insertAttachmentInBody()
                 } catch {
                     print("Error while saving draft: \(error.localizedDescription)")
                 }

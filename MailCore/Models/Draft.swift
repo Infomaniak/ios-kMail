@@ -219,35 +219,8 @@ public class Draft: Object, Codable, Identifiable {
         try container.encode(ackRequest, forKey: .ackRequest)
         try container.encode(priority, forKey: .priority)
         try container.encode(stUuid, forKey: .stUuid)
-        let attachmentsArray = attachments.map { attachment in
-            attachment.uuid
-        }
-//        try container.encode(attachmentsArray, forKey: .attachments)
         try container.encode(action, forKey: .action)
     }
-
-//    class func replying(to message: Message, mode: ReplyMode) -> Draft {
-//        let subject: String
-//        switch mode {
-//        case .reply, .replyAll:
-//            subject = "Re: \(message.formattedSubject)"
-//        case .forward:
-//            subject = "Fwd: \(message.formattedSubject)"
-//        }
-//        let header =
-//            "<div><br></div><div><br></div><div class=\"ik_mail_quote\" ><div>Le \(message.date), \(message.from.first?.name ?? "") &lt;\(message.from.first?.email ?? "")&gt; a écrit :<br></div><blockquote class=\"ws-ng-quote\" style=\"margin:0px 0px 0px 0.8ex;border-left-width:1px;border-left-style:solid;border-left-color:rgb(204,204,204);padding-left:1ex\">"
-//        let footer = "</blockquote></div>"
-//        return Draft(inReplyToUid: mode.isReply ? message.uid : nil,
-//                     forwardedUid: mode == .forward ? message.uid : nil,
-//                     inReplyTo: message.msgId,
-//                     body: "\(header)\(message.body?.value.replacingOccurrences(of: "'", with: "‘") ?? "")\(footer)",
-//                     quote: "\(header)\(message.body?.value.replacingOccurrences(of: "'", with: "‘") ?? "")\(footer)",
-//                     to: mode.isReply ? (message.replyTo.isEmpty ? message.from : message.replyTo) : nil,
-//                     cc: mode == .replyAll ? (message.to + message.cc) : nil,
-//                     bcc: mode == .replyAll ? message.bcc : nil,
-//                     subject: subject,
-//                     attachments: mode == .forward ? message.attachments : nil)
-//    }
 
     private func valueToRecipient(_ value: String) -> List<Recipient> {
         guard !value.isEmpty else { return List<Recipient>() }

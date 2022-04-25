@@ -207,11 +207,6 @@ public class MailboxManager: ObservableObject {
     // MARK: - Draft
 
     public func draft(draftUuid: String) async throws -> Draft {
-        // Get from realm
-//        guard ReachabilityListener.instance.currentStatus != .offline else {
-//            return
-//        }
-
         // Get from API
         let draft = try await apiFetcher.draft(mailbox: mailbox, draftUuid: draftUuid)
 
