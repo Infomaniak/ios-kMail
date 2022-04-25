@@ -46,7 +46,7 @@ struct FolderCell: View {
             }
         } else {
             NavigationLink {
-                ThreadList(mailboxManager: mailboxManager, folder: folder, isCompact: isCompact)
+                ThreadListView(mailboxManager: mailboxManager, folder: folder, isCompact: isCompact)
                     .onAppear {
                         selectedFolderId = folder.id
                     }
