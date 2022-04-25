@@ -1,4 +1,3 @@
-//
 /*
  Infomaniak Mail - iOS App
  Copyright (C) 2022 Infomaniak Network SA
@@ -27,15 +26,15 @@ enum RecipientCellType {
     var title: String {
         switch self {
         case .from:
-            return "De :"
+            return MailResourcesStrings.fromTitle
         case .to:
-            return "À :"
+            return MailResourcesStrings.toTitle
         case .cc:
-            return "Cc :"
+            return MailResourcesStrings.ccTitle
         case .bcc:
-            return "Bcc :"
+            return MailResourcesStrings.bccTitle
         case .object:
-            return "Objet :"
+            return MailResourcesStrings.objectTitle
         }
     }
 }

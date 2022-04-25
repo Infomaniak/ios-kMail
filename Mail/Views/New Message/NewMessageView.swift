@@ -19,12 +19,13 @@
 import MailCore
 import RealmSwift
 import SwiftUI
+import MailResources
 
 struct NewMessageView: View {
     private var mailboxManager: MailboxManager
     @State var draft: Draft
     @State var editor = RichTextEditorModel()
-    @State var draftBody = "Rédigez votre message"
+    @State var draftBody = MailResourcesStrings.newMessagePlaceholderTitle
     @State private var unfoldDetails = false
 
     @Environment(\.presentationMode) var presentationMode
