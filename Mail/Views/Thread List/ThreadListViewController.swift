@@ -21,7 +21,7 @@ import MailResources
 import SwiftUI
 import UIKit
 
-class ThreadListViewController: MailCollectionViewController, FolderListViewDelegate, UICollectionViewDelegateFlowLayout {
+class ThreadListViewController: MailCollectionViewController, FolderListViewDelegate {
     private var viewModel: ThreadListViewModel
 
     let isCompact: Bool
@@ -38,6 +38,9 @@ class ThreadListViewController: MailCollectionViewController, FolderListViewDele
 
         collectionView.setCollectionViewLayout(Self.createLayout(), animated: true)
         collectionView.register(HostingCollectionViewCell<ThreadListCell>.self, forCellWithReuseIdentifier: "ThreadListCell")
+
+        collectionView.refreshControl = UIRefreshControl()
+        collectionView.refreshControl?.addTarget(self, action: #selector(getThreads), for: .valueChanged)
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -81,10 +84,13 @@ class ThreadListViewController: MailCollectionViewController, FolderListViewDele
         }
     }
 
-    func getThreads() {
+    @objc func getThreads(fromRefreshControl: Bool = false) {
         Task {
             await viewModel.fetchThreads()
             collectionView.reloadData()
+            if collectionView.refreshControl?.isRefreshing == true {
+                collectionView.refreshControl?.endRefreshing()
+            }
         }
     }
 
@@ -105,8 +111,9 @@ class ThreadListViewController: MailCollectionViewController, FolderListViewDele
         listConfiguration.showsSeparators = false
 
         listConfiguration.leadingSwipeActionsConfigurationProvider = { _ in
-            let unreadAction = UIContextualAction(style: .normal, title: nil) { _, _, _ in
+            let unreadAction = UIContextualAction(style: .normal, title: nil) { _, _, completion in
                 // TODO: Mark the message as unread
+                completion(true)
             }
             unreadAction.backgroundColor = MailResourcesAsset.unreadActionColor.color
             unreadAction.image = MailResourcesAsset.openLetter.image
@@ -115,14 +122,16 @@ class ThreadListViewController: MailCollectionViewController, FolderListViewDele
         }
 
         listConfiguration.trailingSwipeActionsConfigurationProvider = { _ in
-            let menuAction = UIContextualAction(style: .normal, title: nil) { _, _, _ in
+            let menuAction = UIContextualAction(style: .normal, title: nil) { _, _, completion in
                 // TODO: Display bottom sheet
+                completion(true)
             }
             menuAction.backgroundColor = MailResourcesAsset.menuActionColor.color
             menuAction.image = MailResourcesAsset.threeDots.image
 
-            let deleteAction = UIContextualAction(style: .destructive, title: nil) { _, _, _ in
+            let deleteAction = UIContextualAction(style: .destructive, title: nil) { _, _, completion in
                 // TODO: Delete thread
+                completion(true)
             }
             deleteAction.backgroundColor = MailResourcesAsset.destructiveActionColor.color
             deleteAction.image = MailResourcesAsset.bin.image

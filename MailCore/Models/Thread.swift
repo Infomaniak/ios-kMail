@@ -67,7 +67,7 @@ public class Thread: Object, Decodable, Identifiable {
         if Calendar.current.isDateInToday(date) {
             return Constants.formatDate(date, style: .time)
         }
-        return Constants.formatDate(date, style: .dateShort)
+        return Constants.formatDate(date, style: .date, relative: true)
     }
 
     public convenience init(
