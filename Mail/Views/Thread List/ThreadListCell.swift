@@ -80,11 +80,9 @@ struct ThreadListCell: View {
         }
         .padding([.leading, .trailing], 12)
         .padding([.top, .bottom], 14)
-        .onAppear(perform: {
-            Task {
-                mailContent = await formatBody(of: thread)
-            }
-        })
+        .task {
+            mailContent = await formatBody(of: thread)
+        }
     }
 
     // MARK: - Private functions
@@ -105,7 +103,8 @@ struct ThreadListCell: View {
         if let data = body.value.data(using: .utf8), let attributedString = try? NSAttributedString(data: data, options: [.documentType: NSAttributedString.DocumentType.html], documentAttributes: nil) {
             return attributedString
                 .string
-                .replacingOccurrences(of: "\n", with: "")
+                .replacingOccurrences(of: "\n", with: " ")
+                .replacingOccurrences(of: "^[ ]+", with: "", options: .regularExpression)
         }
         return body.value
     }
