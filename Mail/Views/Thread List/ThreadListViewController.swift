@@ -105,7 +105,9 @@ class ThreadListViewController: MailCollectionViewController, FolderListViewDele
         listConfiguration.showsSeparators = false
 
         listConfiguration.leadingSwipeActionsConfigurationProvider = { _ in
-            let unreadAction = UIContextualAction(style: .normal, title: nil) { _, _, _ in }
+            let unreadAction = UIContextualAction(style: .normal, title: nil) { _, _, _ in
+                // TODO: Mark the message as unread
+            }
             unreadAction.backgroundColor = MailResourcesAsset.unreadActionColor.color
             unreadAction.image = MailResourcesAsset.openLetter.image
 
@@ -113,11 +115,15 @@ class ThreadListViewController: MailCollectionViewController, FolderListViewDele
         }
 
         listConfiguration.trailingSwipeActionsConfigurationProvider = { _ in
-            let menuAction = UIContextualAction(style: .normal, title: nil) { _, _, _ in }
+            let menuAction = UIContextualAction(style: .normal, title: nil) { _, _, _ in
+                // TODO: Display bottom sheet
+            }
             menuAction.backgroundColor = MailResourcesAsset.menuActionColor.color
             menuAction.image = MailResourcesAsset.threeDots.image
 
-            let deleteAction = UIContextualAction(style: .destructive, title: nil) { _, _, _ in }
+            let deleteAction = UIContextualAction(style: .destructive, title: nil) { _, _, _ in
+                // TODO: Delete thread
+            }
             deleteAction.backgroundColor = MailResourcesAsset.destructiveActionColor.color
             deleteAction.image = MailResourcesAsset.bin.image
 
