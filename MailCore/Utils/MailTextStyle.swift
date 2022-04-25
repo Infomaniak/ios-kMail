@@ -37,9 +37,21 @@ public struct MailTextStyle {
         self.init(font: font, color: Color(color.color))
     }
 
-    public static let body = MailTextStyle(
+    public static let header = MailTextStyle(
+        font: .system(size: 18, weight: .semibold),
+        color: MailResourcesAsset.primaryTextColor
+    )
+    public static let primary = MailTextStyle(
         font: .system(size: 16, weight: .regular),
         color: MailResourcesAsset.primaryTextColor
+    )
+    public static let primaryHighlighted = MailTextStyle(
+        font: .system(size: 16, weight: .semibold),
+        color: MailResourcesAsset.primaryTextColor
+    )
+    public static let secondary = MailTextStyle(
+        font: .system(size: 16, weight: .regular),
+        color: MailResourcesAsset.secondaryTextColor
     )
     public static let highlighted = MailTextStyle(
         font: .system(size: 19, weight: .regular),

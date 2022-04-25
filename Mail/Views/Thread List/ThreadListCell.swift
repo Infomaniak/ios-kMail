@@ -24,44 +24,50 @@ struct ThreadListCell: View {
     var mailboxManager: MailboxManager
     var thread: Thread
 
-    private var unread: Bool {
+    private var hasUnreadMessages: Bool {
         thread.unseenMessages > 0
+    }
+
+    private var textStyle: MailTextStyle {
+        hasUnreadMessages ? .primaryHighlighted : .secondary
     }
 
     var body: some View {
         HStack(alignment: .top, spacing: 10) {
             Circle()
-                .frame(width: 8, height: 8)
-                .foregroundColor(Color(unread ?  MailResourcesAsset.mailPinkColor.color : .clear))
+                .frame(width: Constants.unreadIconSize, height: Constants.unreadIconSize)
+                .foregroundColor(Color(hasUnreadMessages ?  MailResourcesAsset.mailPinkColor.color : .clear))
                 .padding(.top, 6)
 
             VStack(alignment: .leading, spacing: 2) {
                 HStack {
                     Text(thread.formattedFrom)
-                        .font(.system(size: 18))
-                        .foregroundColor(Color(unread ? MailResourcesAsset.primaryTextColor.color : MailResourcesAsset.secondaryTextColor.color))
-                        .fontWeight(unread ? .semibold : .regular)
+                        .foregroundColor(MailTextStyle.header.color)
+                        .font(MailTextStyle.header.font)
+                        .fontWeight(hasUnreadMessages ? .semibold : .regular)
 
                     Spacer()
 
                     if thread.hasAttachments {
                         Image(uiImage: MailResourcesAsset.attachment.image)
                     }
+
                     Text(thread.formattedDate)
-                        .foregroundColor(Color(unread ? MailResourcesAsset.primaryTextColor.color : MailResourcesAsset.secondaryTextColor.color))
-                        .fontWeight(unread ? .semibold : .regular)
+                        .foregroundColor(textStyle.color)
+                        .font(textStyle.font)
                 }
                 .padding(.bottom, 4)
 
                 HStack {
                     VStack(alignment: .leading) {
                         Text(thread.formattedSubject)
-                            .foregroundColor(Color(unread ? MailResourcesAsset.primaryTextColor.color : MailResourcesAsset.secondaryTextColor.color))
-                            .fontWeight(unread ? .semibold : .regular)
+                            .foregroundColor(textStyle.color)
+                            .font(textStyle.font)
                             .lineLimit(1)
 
+                        // TODO: Julien Arnoux will modify the API to get a preview of the messages
                         Text("Lorem Ipsum...")
-                            .foregroundColor(Color(MailResourcesAsset.secondaryTextColor.color))
+                            .foregroundColor(MailTextStyle.secondary.color)
                             .lineLimit(1)
                     }
 
@@ -71,7 +77,7 @@ struct ThreadListCell: View {
                         Image(uiImage: MailResourcesAsset.starFilled.image)
                     } else {
                         Image(uiImage: MailResourcesAsset.star.image)
-                            .foregroundColor(Color(unread ? MailResourcesAsset.primaryTextColor.color : MailResourcesAsset.secondaryTextColor.color))
+                            .foregroundColor(Color(hasUnreadMessages ? MailResourcesAsset.primaryTextColor.color : MailResourcesAsset.secondaryTextColor.color))
                     }
                 }
             }
