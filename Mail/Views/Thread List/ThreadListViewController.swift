@@ -84,7 +84,7 @@ class ThreadListViewController: MailCollectionViewController, FolderListViewDele
         }
     }
 
-    @objc func getThreads(fromRefreshControl: Bool = false) {
+    @objc func getThreads() {
         Task {
             await viewModel.fetchThreads()
             collectionView.reloadData()
@@ -113,7 +113,7 @@ class ThreadListViewController: MailCollectionViewController, FolderListViewDele
         listConfiguration.leadingSwipeActionsConfigurationProvider = { _ in
             let unreadAction = UIContextualAction(style: .normal, title: nil) { _, _, completion in
                 // TODO: Mark the message as unread
-                completion(true)
+                completion(false)
             }
             unreadAction.backgroundColor = MailResourcesAsset.unreadActionColor.color
             unreadAction.image = MailResourcesAsset.openLetter.image
@@ -124,14 +124,14 @@ class ThreadListViewController: MailCollectionViewController, FolderListViewDele
         listConfiguration.trailingSwipeActionsConfigurationProvider = { _ in
             let menuAction = UIContextualAction(style: .normal, title: nil) { _, _, completion in
                 // TODO: Display bottom sheet
-                completion(true)
+                completion(false)
             }
             menuAction.backgroundColor = MailResourcesAsset.menuActionColor.color
             menuAction.image = MailResourcesAsset.threeDots.image
 
             let deleteAction = UIContextualAction(style: .destructive, title: nil) { _, _, completion in
                 // TODO: Delete thread
-                completion(true)
+                completion(false)
             }
             deleteAction.backgroundColor = MailResourcesAsset.destructiveActionColor.color
             deleteAction.image = MailResourcesAsset.bin.image
