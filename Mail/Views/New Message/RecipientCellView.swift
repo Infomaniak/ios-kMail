@@ -42,6 +42,7 @@ enum RecipientCellType {
 struct RecipientCellView: View {
     @State var from: String = ""
     @State var draft: Draft
+    @Binding var showCcButton: Bool
 
     let type: RecipientCellType
 
@@ -59,11 +60,19 @@ struct RecipientCellView: View {
                         .keyboardType(.emailAddress)
                         .autocapitalization(.none)
                 case .to:
-                    TextField("", text: $draft.toValue)
-                        .textContentType(.emailAddress)
-                        .keyboardType(.emailAddress)
-                        .autocapitalization(.none)
-                        .multilineTextAlignment(.leading)
+                    HStack {
+                        TextField("", text: $draft.toValue)
+                            .textContentType(.emailAddress)
+                            .keyboardType(.emailAddress)
+                            .autocapitalization(.none)
+                            .multilineTextAlignment(.leading)
+                        Button(action: {
+                            showCcButton.toggle()
+                        }) {
+                            Image(systemName: showCcButton ? "chevron.up" : "chevron.down")
+                        }
+                    }
+
                 case .cc:
                     TextField("", text: $draft.ccValue)
                         .textContentType(.emailAddress)
@@ -88,7 +97,7 @@ struct RecipientCellView: View {
 
 struct RecipientCellView_Previews: PreviewProvider {
     static var previews: some View {
-        RecipientCellView(draft: Draft(), type: RecipientCellType.from)
+        RecipientCellView(draft: Draft(), showCcButton: .constant(false), type: RecipientCellType.from)
             .previewLayout(.sizeThatFits)
     }
 }

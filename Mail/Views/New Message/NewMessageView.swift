@@ -26,7 +26,7 @@ struct NewMessageView: View {
     @State var draft: Draft
     @State var editor = RichTextEditorModel()
     @State var draftBody = MailResourcesStrings.newMessagePlaceholderTitle
-    @State private var unfoldDetails = false
+    @State var showCc: Bool = false
 
     @Environment(\.presentationMode) var presentationMode
 
@@ -39,18 +39,16 @@ struct NewMessageView: View {
     var body: some View {
         NavigationView {
             VStack {
-                RecipientCellView(from: mailboxManager.mailbox.email, draft: draft, type: RecipientCellType.from)
+                RecipientCellView(from: mailboxManager.mailbox.email, draft: draft, showCcButton: $showCc, type: RecipientCellType.from)
 
-                DisclosureGroup(isExpanded: $unfoldDetails) {
-                    VStack {
-                        RecipientCellView(draft: draft, type: RecipientCellType.cc)
-                        RecipientCellView(draft: draft, type: RecipientCellType.bcc)
-                    }
-                    .padding(.top, 5)
-                } label: {
-                    RecipientCellView(draft: draft, type: RecipientCellType.to)
+                RecipientCellView(draft: draft, showCcButton: $showCc, type: RecipientCellType.to)
+
+                if showCc {
+                    RecipientCellView(draft: draft, showCcButton: $showCc, type: RecipientCellType.cc)
+                    RecipientCellView(draft: draft, showCcButton: $showCc, type: RecipientCellType.bcc)
                 }
-                RecipientCellView(draft: draft, type: RecipientCellType.object)
+
+                RecipientCellView(draft: draft, showCcButton: $showCc, type: RecipientCellType.object)
 
                 RichTextEditor(model: $editor, body: $draftBody)
             }
