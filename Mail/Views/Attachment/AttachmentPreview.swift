@@ -30,11 +30,10 @@ struct AttachmentPreview: View {
             Color.black
             VStack {
                 Spacer()
-                if let url = attachment.localUrl {
-                    if FileManager.default.fileExists(atPath: url.path) {
-                        PreviewController(url: url)
-                            .aspectRatio(contentMode: .fit)
-                    }
+                if attachment.saved, let url = attachment.localUrl, FileManager.default.fileExists(atPath: url.path) {
+                    PreviewController(url: url)
+                        .aspectRatio(contentMode: .fit)
+
                 } else {
                     ProgressView()
                 }

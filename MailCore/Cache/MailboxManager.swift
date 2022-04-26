@@ -28,8 +28,6 @@ public class MailboxManager: ObservableObject {
         public let rootDocumentsURL: URL
         public let groupDirectoryURL: URL
         public let cacheDirectoryURL: URL
-        // TRY THIS
-//        public let temporaryDirectoryURL: URL
 
         init() {
             groupDirectoryURL = fileManager.containerURL(forSecurityApplicationGroupIdentifier: AccountManager.appGroup)!
@@ -207,24 +205,22 @@ public class MailboxManager: ObservableObject {
         }
     }
 
-    public func attachmentData(attachment: Attachment) async throws -> Attachment {
+    public func attachmentData(attachment: Attachment) async throws -> Data {
         let data = try await apiFetcher.attachment(mailbox: mailbox, attachment: attachment)
 
         if let liveAttachment = attachment.thaw() {
             let realm = getRealm()
             try? realm.safeWrite {
-                liveAttachment.data = data
+                liveAttachment.saved = true
             }
-            return liveAttachment
-        } else {
-            return attachment
         }
+        return data
     }
 
     public func saveAttachmentLocally(attachment: Attachment) async {
         do {
-            let liveAttachment = try await attachmentData(attachment: attachment)
-            if let data = liveAttachment.data, let url = liveAttachment.localUrl {
+            let data = try await attachmentData(attachment: attachment)
+            if let url = attachment.localUrl {
                 try data.write(to: url)
             }
         } catch {

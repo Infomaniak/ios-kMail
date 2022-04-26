@@ -34,8 +34,8 @@ public class Attachment: /* Hashable, */ EmbeddedObject, Codable, Identifiable {
     @Persisted public var contentId: String?
     @Persisted public var resource: String?
     @Persisted public var driveUrl: String?
-    @Persisted public var data: Data? = nil
     @Persisted(originProperty: "attachments") var parentLink: LinkingObjects<Message>
+    @Persisted public var saved: Bool = false
 
     public var parent: Message? {
         return parentLink.first
@@ -101,8 +101,7 @@ public class Attachment: /* Hashable, */ EmbeddedObject, Codable, Identifiable {
         disposition: AttachmentDisposition,
         contentId: String? = nil,
         resource: String? = nil,
-        driveUrl: String? = nil,
-        data: Data? = nil
+        driveUrl: String? = nil
     ) {
         self.init()
 
@@ -116,7 +115,6 @@ public class Attachment: /* Hashable, */ EmbeddedObject, Codable, Identifiable {
         self.contentId = contentId
         self.resource = resource
         self.driveUrl = driveUrl
-        self.data = data
     }
 }
 
