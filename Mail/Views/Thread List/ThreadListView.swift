@@ -24,6 +24,7 @@ struct ThreadListView: View, FolderListViewDelegate {
     @ObservedObject var viewModel: ThreadListViewModel
 
     @State private var presentMenuDrawer = false
+    @State private var avatarImage = MailResourcesAsset.placeholderAvatar.image
 
     let isCompact: Bool
 
@@ -69,7 +70,21 @@ struct ThreadListView: View, FolderListViewDelegate {
         }
         .listStyle(PlainListStyle())
         .navigationTitle(viewModel.folder?.localizedName ?? "")
-        .if(isCompact) { view in
+        .toolbar {
+            ToolbarItem(placement: .navigationBarTrailing) {
+                Button {
+                    // TODO: Display accounts list
+                } label: {
+                    Image(uiImage: avatarImage)
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: 30, height: 30)
+                        .clipShape(Circle())
+                }
+
+            }
+        }
+        .modifyIf(isCompact) { view in
             view.toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
                     Button {
@@ -77,6 +92,7 @@ struct ThreadListView: View, FolderListViewDelegate {
                     } label: {
                         Image(uiImage: MailResourcesAsset.burger.image)
                     }
+                    .tint(Color(MailResourcesAsset.secondaryTextColor.color))
                 }
             }
         }
@@ -88,6 +104,9 @@ struct ThreadListView: View, FolderListViewDelegate {
         }
         .task {
             await viewModel.fetchThreads()
+            AccountManager.instance.currentAccount.user.getAvatar { image in
+                avatarImage = image
+            }
         }
     }
 
