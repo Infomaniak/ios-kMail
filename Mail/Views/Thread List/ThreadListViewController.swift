@@ -35,6 +35,12 @@ class ThreadListViewController: MailCollectionViewController, FolderListViewDele
     override func viewDidLoad() {
         super.viewDidLoad()
         getThreads()
+
+        collectionView.setCollectionViewLayout(Self.createLayout(), animated: true)
+        collectionView.register(HostingCollectionViewCell<ThreadListCell>.self, forCellWithReuseIdentifier: "ThreadListCell")
+
+        collectionView.refreshControl = UIRefreshControl()
+        collectionView.refreshControl?.addTarget(self, action: #selector(getThreads), for: .valueChanged)
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -50,6 +56,10 @@ class ThreadListViewController: MailCollectionViewController, FolderListViewDele
         }
 
         updateView()
+
+        for indexPath in collectionView.indexPathsForSelectedItems ?? [] {
+            collectionView.deselectItem(at: indexPath, animated: true)
+        }
     }
 
     override func viewDidAppear(_ animated: Bool) {
@@ -74,10 +84,13 @@ class ThreadListViewController: MailCollectionViewController, FolderListViewDele
         }
     }
 
-    func getThreads() {
+    @objc func getThreads() {
         Task {
             await viewModel.fetchThreads()
             collectionView.reloadData()
+            if collectionView.refreshControl?.isRefreshing == true {
+                collectionView.refreshControl?.endRefreshing()
+            }
         }
     }
 
@@ -93,6 +106,42 @@ class ThreadListViewController: MailCollectionViewController, FolderListViewDele
         collectionView.backgroundView = isHidden ? nil : emptyView.view
     }
 
+    private static func createLayout() -> UICollectionViewLayout {
+        var listConfiguration = UICollectionLayoutListConfiguration(appearance: .plain)
+        listConfiguration.showsSeparators = false
+
+        listConfiguration.leadingSwipeActionsConfigurationProvider = { _ in
+            let unreadAction = UIContextualAction(style: .normal, title: nil) { _, _, completion in
+                // TODO: Mark the message as unread
+                completion(false)
+            }
+            unreadAction.backgroundColor = MailResourcesAsset.unreadActionColor.color
+            unreadAction.image = MailResourcesAsset.openLetter.image
+
+            return UISwipeActionsConfiguration(actions: [unreadAction])
+        }
+
+        listConfiguration.trailingSwipeActionsConfigurationProvider = { _ in
+            let menuAction = UIContextualAction(style: .normal, title: nil) { _, _, completion in
+                // TODO: Display bottom sheet
+                completion(false)
+            }
+            menuAction.backgroundColor = MailResourcesAsset.menuActionColor.color
+            menuAction.image = MailResourcesAsset.threeDots.image
+
+            let deleteAction = UIContextualAction(style: .destructive, title: nil) { _, _, completion in
+                // TODO: Delete thread
+                completion(false)
+            }
+            deleteAction.backgroundColor = MailResourcesAsset.destructiveActionColor.color
+            deleteAction.image = MailResourcesAsset.bin.image
+
+            return UISwipeActionsConfiguration(actions: [deleteAction, menuAction])
+        }
+
+        return UICollectionViewCompositionalLayout.list(using: listConfiguration)
+    }
+
     // MARK: - UICollectionViewDataSource
 
     override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
@@ -100,11 +149,9 @@ class ThreadListViewController: MailCollectionViewController, FolderListViewDele
     }
 
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = super.collectionView(collectionView, cellForItemAt: indexPath) as! UICollectionViewListCell
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "ThreadListCell", for: indexPath) as! HostingCollectionViewCell<ThreadListCell>
         let thread = viewModel.threads[indexPath.item]
-        var content = cell.defaultContentConfiguration()
-        content.text = thread.formattedSubject
-        cell.contentConfiguration = content
+        cell.host(ThreadListCell(mailboxManager: viewModel.mailboxManager, thread: thread), parent: self)
         return cell
     }
 

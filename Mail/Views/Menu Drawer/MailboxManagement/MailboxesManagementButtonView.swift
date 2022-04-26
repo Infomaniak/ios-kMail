@@ -17,6 +17,7 @@
  */
 
 import MailResources
+import MailCore
 import InfomaniakCore
 import SwiftUI
 
@@ -36,7 +37,7 @@ struct MailboxesManagementButtonView: View {
         Button(action: handleAction) {
             if showBadge {
                 Circle()
-                    .frame(width: 8, height: 8)
+                    .frame(width: Constants.unreadIconSize, height: Constants.unreadIconSize)
                     .foregroundColor(Color(MailResourcesAsset.mailPinkColor.color))
             }
 
