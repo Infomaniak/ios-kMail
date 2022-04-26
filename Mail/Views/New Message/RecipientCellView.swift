@@ -69,16 +69,13 @@ struct RecipientCellView: View {
                         Button(action: {
                             showCcButton.toggle()
                         }) {
-//                            Image(systemName: showCcButton ? "chevron.up" : "chevron.down")
                             if showCcButton {
                                 Image(uiImage: MailResourcesAsset.chevronDown.image)
                             } else {
                                 Image(uiImage: MailResourcesAsset.chevronDown.image).rotationEffect(Angle(degrees: 180))
                             }
-                            
                         }
                     }
-
                 case .cc:
                     TextField("", text: $draft.ccValue)
                         .textContentType(.emailAddress)
