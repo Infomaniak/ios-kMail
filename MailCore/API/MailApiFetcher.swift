@@ -23,8 +23,8 @@ import InfomaniakLogin
 import Sentry
 import UIKit
 
-extension ApiFetcher {
-    public convenience init(token: ApiToken, delegate: RefreshTokenDelegate) {
+public extension ApiFetcher {
+    convenience init(token: ApiToken, delegate: RefreshTokenDelegate) {
         self.init()
         setToken(token, authenticator: SyncedAuthenticator(refreshTokenDelegate: delegate))
     }
@@ -39,19 +39,24 @@ public class MailApiFetcher: ApiFetcher {
     }
 
     override public func perform<T: Decodable>(request: DataRequest) async throws -> (data: T, responseAt: Int?) {
-         do {
-             return try await super.perform(request: request)
-         } catch let InfomaniakError.apiError(apiError) {
-             throw MailError.apiError(apiError)
-         } catch let InfomaniakError.serverError(statusCode: statusCode) {
-             throw MailError.serverError(statusCode: statusCode)
-         }
-     }
+        do {
+            return try await super.perform(request: request)
+        } catch let InfomaniakError.apiError(apiError) {
+            throw MailError.apiError(apiError)
+        } catch let InfomaniakError.serverError(statusCode: statusCode) {
+            throw MailError.serverError(statusCode: statusCode)
+        }
+    }
 
     // MARK: - API methods
 
     public func mailboxes() async throws -> [Mailbox] {
         try await perform(request: authenticatedRequest(.mailbox)).data
+    }
+
+    func signatures(mailbox: Mailbox) async throws -> SignatureResponse {
+        try await perform(request: authenticatedRequest(.signatures(hostingId: mailbox.hostingId, mailboxName: mailbox.mailbox)))
+            .data
     }
 
     func folders(mailbox: Mailbox) async throws -> [Folder] {
@@ -73,6 +78,33 @@ public class MailApiFetcher: ApiFetcher {
 
     public func quotas(mailbox: Mailbox) async throws -> Quotas {
         try await perform(request: authenticatedRequest(.quotas(mailbox: mailbox.mailbox, productId: mailbox.hostingId))).data
+    }
+
+    func draft(mailbox: Mailbox, draftUuid: String) async throws -> Draft {
+        try await perform(request: authenticatedRequest(.draft(uuid: mailbox.uuid, draftUuid: draftUuid))).data
+    }
+
+    func draft(from message: Message) async throws -> Draft {
+        guard let resource = message.draftResource else {
+            throw MailError.resourceError
+        }
+        return try await perform(request: authenticatedRequest(.resource(resource))).data
+    }
+
+    func send(mailbox: Mailbox, draft: Draft) async throws -> Bool {
+        try await perform(request: authenticatedRequest(
+            draft.uuid.isEmpty ? .draft(uuid: mailbox.uuid) : .draft(uuid: mailbox.uuid, draftUuid: draft.uuid),
+            method: draft.uuid.isEmpty ? .post : .put,
+            parameters: draft
+        )).data
+    }
+
+    func save(mailbox: Mailbox, draft: Draft) async throws -> DraftResponse {
+        try await perform(request: authenticatedRequest(
+            draft.uuid.isEmpty ? .draft(uuid: mailbox.uuid) : .draft(uuid: mailbox.uuid, draftUuid: draft.uuid),
+            method: draft.uuid.isEmpty ? .post : .put,
+            parameters: draft
+        )).data
     }
 }
 

@@ -42,12 +42,13 @@ public enum Constants {
 	public static let menuDrawerFolderCellPadding: CGFloat = 4
     public static let menuDrawerHorizontalPadding: CGFloat = 25
 
+    public static let unreadIconSize: CGFloat = 8
+
     public static let byteCountFormatterStyle = ByteCountFormatStyle.byteCount(style: .file)
 
     private static var dateFormatter = DateFormatter()
 
     public enum DateTimeStyle {
-        case dateShort
         case date
         case time
         case datetime
@@ -55,13 +56,6 @@ public enum Constants {
 
     public static func formatDate(_ date: Date, style: DateTimeStyle = .datetime, relative: Bool = false) -> String {
         switch style {
-        case .dateShort:
-            let isThisYear = Calendar.current.component(.year, from: date) == Calendar.current.component(.year, from: Date())
-            if isThisYear {
-                dateFormatter.dateFormat = "d MMM"
-            } else {
-                dateFormatter.dateFormat = "d MMM yyyy"
-            }
         case .date:
             dateFormatter.dateStyle = .medium
             dateFormatter.timeStyle = .none

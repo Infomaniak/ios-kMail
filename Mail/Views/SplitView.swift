@@ -48,6 +48,13 @@ struct SplitView: View {
                 EmptyThreadView()
             }
         }
+        .task {
+            do {
+                try await mailboxManager.signatures()
+            } catch {
+                print("Error while fetching signatures: \(error)")
+            }
+        }
         .onRotate { orientation in
             guard let interfaceOrientation = orientation else { return }
             setupBehaviour(orientation: interfaceOrientation)

@@ -21,7 +21,7 @@ import MailResources
 import SwiftUI
 import UIKit
 
-class ThreadListViewController: MailCollectionViewController, FolderListViewDelegate, UICollectionViewDelegateFlowLayout {
+class ThreadListViewController: MailCollectionViewController, FolderListViewDelegate {
     private var viewModel: ThreadListViewModel
 
     let isCompact: Bool
@@ -34,21 +34,26 @@ class ThreadListViewController: MailCollectionViewController, FolderListViewDele
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        addMessageButton()
         getThreads()
 
         collectionView.setCollectionViewLayout(Self.createLayout(), animated: true)
         collectionView.register(HostingCollectionViewCell<ThreadListCell>.self, forCellWithReuseIdentifier: "ThreadListCell")
+
+        collectionView.refreshControl = UIRefreshControl()
+        collectionView.refreshControl?.addTarget(self, action: #selector(getThreads), for: .valueChanged)
     }
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         if isCompact {
             let menuButton = UIBarButtonItem(
-                image: UIImage(systemName: "line.3.horizontal"),
+                image: MailResourcesAsset.burger.image,
                 style: .plain,
                 target: self,
                 action: #selector(menuPressed)
             )
+            menuButton.tintColor = MailResourcesAsset.secondaryTextColor.color
             parent?.navigationItem.leftBarButtonItem = menuButton
         }
 
@@ -81,10 +86,31 @@ class ThreadListViewController: MailCollectionViewController, FolderListViewDele
         }
     }
 
-    func getThreads() {
+    private func addMessageButton() {
+        let button = UIButton()
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.setTitle("Nouveau Message ", for: UIControl.State.normal)
+        button.setTitleColor(UIColor.white, for: UIControl.State.normal)
+        button.setImage (MailResourcesAsset.pencil.image, for: .normal)
+        button.tintColor = UIColor.white
+        button.backgroundColor = MailResourcesAsset.mailPinkColor.color
+        button.cornerRadius = 27
+        button.semanticContentAttribute = .forceRightToLeft
+        button.addTarget(self, action: #selector(newMessageButtonPressed), for: .touchUpInside)
+        view.addSubview(button)
+        button.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -30).isActive = true
+        button.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -30).isActive = true
+        button.widthAnchor.constraint(equalToConstant: 204).isActive = true
+        button.heightAnchor.constraint(equalToConstant: 49).isActive = true
+    }
+
+    @objc func getThreads() {
         Task {
             await viewModel.fetchThreads()
             collectionView.reloadData()
+            if collectionView.refreshControl?.isRefreshing == true {
+                collectionView.refreshControl?.endRefreshing()
+            }
         }
     }
 
@@ -100,12 +126,20 @@ class ThreadListViewController: MailCollectionViewController, FolderListViewDele
         collectionView.backgroundView = isHidden ? nil : emptyView.view
     }
 
+    @objc func newMessageButtonPressed() {
+        let newMessageView = UIHostingController(rootView: NewMessageView(mailboxManager: viewModel.mailboxManager))
+        present(newMessageView, animated: true)
+    }
+
     private static func createLayout() -> UICollectionViewLayout {
         var listConfiguration = UICollectionLayoutListConfiguration(appearance: .plain)
         listConfiguration.showsSeparators = false
 
         listConfiguration.leadingSwipeActionsConfigurationProvider = { _ in
-            let unreadAction = UIContextualAction(style: .normal, title: nil) { _, _, _ in }
+            let unreadAction = UIContextualAction(style: .normal, title: nil) { _, _, completion in
+                // TODO: Mark the message as unread
+                completion(false)
+            }
             unreadAction.backgroundColor = MailResourcesAsset.unreadActionColor.color
             unreadAction.image = MailResourcesAsset.openLetter.image
 
@@ -113,11 +147,17 @@ class ThreadListViewController: MailCollectionViewController, FolderListViewDele
         }
 
         listConfiguration.trailingSwipeActionsConfigurationProvider = { _ in
-            let menuAction = UIContextualAction(style: .normal, title: nil) { _, _, _ in }
+            let menuAction = UIContextualAction(style: .normal, title: nil) { _, _, completion in
+                // TODO: Display bottom sheet
+                completion(false)
+            }
             menuAction.backgroundColor = MailResourcesAsset.menuActionColor.color
             menuAction.image = MailResourcesAsset.threeDots.image
 
-            let deleteAction = UIContextualAction(style: .destructive, title: nil) { _, _, _ in }
+            let deleteAction = UIContextualAction(style: .destructive, title: nil) { _, _, completion in
+                // TODO: Delete thread
+                completion(false)
+            }
             deleteAction.backgroundColor = MailResourcesAsset.destructiveActionColor.color
             deleteAction.image = MailResourcesAsset.bin.image
 
