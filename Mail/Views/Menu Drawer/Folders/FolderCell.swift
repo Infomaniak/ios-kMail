@@ -21,7 +21,7 @@ import MailCore
 import MailResources
 import SwiftUI
 
-protocol FolderListViewDelegate: AnyObject {
+protocol FolderListViewDelegate {
     func didSelectFolder(_ folder: Folder)
 }
 
@@ -34,7 +34,7 @@ struct FolderCell: View {
     @Binding var selectedFolderId: String?
 
     var isCompact: Bool
-    weak var delegate: FolderListViewDelegate?
+    var delegate: FolderListViewDelegate?
 
     var body: some View {
         if isCompact {

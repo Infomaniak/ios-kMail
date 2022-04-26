@@ -30,7 +30,7 @@ struct UserFoldersListView: View {
     @Binding var selectedFolderId: String?
 
     var isCompact: Bool
-    weak var delegate: FolderListViewDelegate?
+    var delegate: FolderListViewDelegate?
 
     private let foldersSortDescriptors = [
         SortDescriptor(keyPath: \Folder.isFavorite, ascending: false),

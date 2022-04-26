@@ -34,7 +34,7 @@ struct MenuDrawerView: View {
     @State private var showMailboxes = false
 
     var isCompact: Bool
-    weak var delegate: FolderListViewDelegate?
+    var delegate: FolderListViewDelegate?
 
     private var helpMenuItems = [MenuItem]()
     private var actionsMenuItems = [MenuItem]()

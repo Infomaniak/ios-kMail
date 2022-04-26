@@ -27,7 +27,7 @@ struct RoleFoldersListView: View {
     @Binding var selectedFolderId: String?
 
     var isCompact: Bool
-    weak var delegate: FolderListViewDelegate?
+    var delegate: FolderListViewDelegate?
 
     var body: some View {
         ForEach(AnyRealmCollection(folders).filter { $0.role != nil }.sorted()) { folder in

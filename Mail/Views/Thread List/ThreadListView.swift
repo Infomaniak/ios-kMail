@@ -20,10 +20,10 @@ import MailCore
 import MailResources
 import SwiftUI
 
-@MainActor struct ThreadListView: View {
-    @State private var presentMenuDrawer = false
+struct ThreadListView: View, FolderListViewDelegate {
+    @ObservedObject var viewModel: ThreadListViewModel
 
-    private var viewModel: ThreadListViewModel
+    @State private var presentMenuDrawer = false
 
     let isCompact: Bool
 
@@ -81,7 +81,7 @@ import SwiftUI
             }
         }
         .sheet(isPresented: $presentMenuDrawer) {
-            MenuDrawerView(mailboxManager: viewModel.mailboxManager, selectedFolderId: viewModel.folder?.id, isCompact: isCompact)
+            MenuDrawerView(mailboxManager: viewModel.mailboxManager, selectedFolderId: viewModel.folder?.id, isCompact: isCompact, delegate: self)
         }
         .refreshable {
             await viewModel.fetchThreads()
@@ -89,6 +89,10 @@ import SwiftUI
         .task {
             await viewModel.fetchThreads()
         }
+    }
+
+    func didSelectFolder(_ folder: Folder) {
+        viewModel.updateThreads(with: folder)
     }
 }
 

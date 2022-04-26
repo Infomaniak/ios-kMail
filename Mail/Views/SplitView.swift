@@ -23,7 +23,7 @@ import SwiftUI
 
 struct SplitView: View {
     var mailboxManager = AccountManager.instance.currentMailboxManager!
-    var selectedFolder: Folder?
+    @State var selectedFolder: Folder?
     @State var splitViewController: UISplitViewController?
     @Environment(\.horizontalSizeClass) var sizeClass
 
