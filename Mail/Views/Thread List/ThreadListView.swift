@@ -43,6 +43,29 @@ import SwiftUI
                 ThreadListCell(mailboxManager: viewModel.mailboxManager, thread: thread)
             }
             .listRowSeparator(.hidden)
+            .swipeActions(edge: .leading, allowsFullSwipe: true) {
+                Button {
+                    // TODO: Mark the message as (un)read
+                } label: {
+                    Image(uiImage: MailResourcesAsset.openLetter.image)
+                }
+                .tint(Color(MailResourcesAsset.unreadActionColor.color))
+            }
+            .swipeActions(edge: .trailing, allowsFullSwipe: true) {
+                Button {
+                    // TODO: Delete thread
+                } label: {
+                    Image(uiImage: MailResourcesAsset.bin.image)
+                }
+                .tint(Color(MailResourcesAsset.destructiveActionColor.color))
+
+                Button {
+                    // TODO: Display menu
+                } label: {
+                    Image(uiImage: MailResourcesAsset.threeDots.image)
+                }
+                .tint(Color(MailResourcesAsset.menuActionColor.color))
+            }
         }
         .listStyle(PlainListStyle())
         .navigationTitle(viewModel.folder?.localizedName ?? "")
@@ -57,9 +80,12 @@ import SwiftUI
                 }
             }
         }
-        .sheet(isPresented: $presentMenuDrawer, content: {
+        .sheet(isPresented: $presentMenuDrawer) {
             MenuDrawerView(mailboxManager: viewModel.mailboxManager, selectedFolderId: viewModel.folder?.id, isCompact: isCompact)
-        })
+        }
+        .refreshable {
+            await viewModel.fetchThreads()
+        }
         .task {
             await viewModel.fetchThreads()
         }
