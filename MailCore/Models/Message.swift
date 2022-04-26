@@ -207,21 +207,13 @@ public class Message: Object, Decodable, Identifiable {
         self.priority = priority
         self.date = date
         self.size = size
-
         self.from = from.toRealmList()
-
         self.to = to.toRealmList()
-
         self.cc = cc.toRealmList()
-
         self.bcc = bcc.toRealmList()
-
         self.replyTo = replyTo.toRealmList()
-
         self.body = body
-
         self.attachments = attachments.toRealmList()
-
         self.dkimStatus = dkimStatus
         self.resource = resource
         self.downloadResource = downloadResource

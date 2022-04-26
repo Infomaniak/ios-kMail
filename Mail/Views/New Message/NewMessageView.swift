@@ -25,7 +25,7 @@ struct NewMessageView: View {
     private var mailboxManager: MailboxManager
     @State var draft: Draft
     @State var editor = RichTextEditorModel()
-    @State var draftBody = MailResourcesStrings.newMessagePlaceholderTitle
+    @State var draftBody = "<br><br>Envoyé avec Infomaniak Mail pour iOS" // MailResourcesStrings.newMessagePlaceholderTitle
     @State var showCc: Bool = false
 
     @Environment(\.presentationMode) var presentationMode
@@ -39,7 +39,12 @@ struct NewMessageView: View {
     var body: some View {
         NavigationView {
             VStack {
-                RecipientCellView(from: mailboxManager.mailbox.email, draft: draft, showCcButton: $showCc, type: RecipientCellType.from)
+                RecipientCellView(
+                    from: mailboxManager.mailbox.email,
+                    draft: draft,
+                    showCcButton: $showCc,
+                    type: RecipientCellType.from
+                )
 
                 RecipientCellView(draft: draft, showCcButton: $showCc, type: RecipientCellType.to)
 
@@ -59,32 +64,29 @@ struct NewMessageView: View {
                 Button(action: {
                     self.presentationMode.wrappedValue.dismiss()
                 }) {
-                    HStack {
-                        Image(systemName: "multiply")
-                    }
+                    Image(systemName: "multiply")
+                        .tint(Color(MailResourcesAsset.primaryTextColor.color))
                 },
-                trailing: HStack {
-                    Button("Send") {
-                        Task {
-                            await send()
-                            DispatchQueue.main.async {
-                                self.presentationMode.wrappedValue.dismiss()
-                            }
+                trailing:
+                Button(action: {
+                    Task {
+                        await send()
+                        DispatchQueue.main.async {
+                            self.presentationMode.wrappedValue.dismiss()
                         }
                     }
-                    Button("Save") {
-                        Task {
-                            await saveDraft()
-                            DispatchQueue.main.async {}
-                        }
-                    }
-                })
+                }) {
+                    Image(uiImage: MailResourcesAsset.send.image)
+                }
+                .tint(Color(MailResourcesAsset.mailPinkColor.color)))
         }
         .navigationViewStyle(.stack)
         .accentColor(.black)
     }
 
     @MainActor private func send() async {
+        await saveDraft()
+
         draft.action = .send
 
         do {

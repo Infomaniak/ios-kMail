@@ -48,11 +48,12 @@ class ThreadListViewController: MailCollectionViewController, FolderListViewDele
         super.viewWillAppear(animated)
         if isCompact {
             let menuButton = UIBarButtonItem(
-                image: UIImage(systemName: "line.3.horizontal"),
+                image: MailResourcesAsset.burger.image,
                 style: .plain,
                 target: self,
                 action: #selector(menuPressed)
             )
+            menuButton.tintColor = MailResourcesAsset.secondaryTextColor.color
             parent?.navigationItem.leftBarButtonItem = menuButton
         }
 
@@ -88,9 +89,9 @@ class ThreadListViewController: MailCollectionViewController, FolderListViewDele
     private func addMessageButton() {
         let button = UIButton()
         button.translatesAutoresizingMaskIntoConstraints = false
-        button.setTitle("Nouveau Message", for: UIControl.State.normal)
+        button.setTitle("Nouveau Message ", for: UIControl.State.normal)
         button.setTitleColor(UIColor.white, for: UIControl.State.normal)
-        button.setImage(UIImage(systemName: "pencil"), for: .normal)
+        button.setImage (MailResourcesAsset.pencil.image, for: .normal)
         button.tintColor = UIColor.white
         button.backgroundColor = MailResourcesAsset.mailPinkColor.color
         button.cornerRadius = 27
@@ -100,7 +101,7 @@ class ThreadListViewController: MailCollectionViewController, FolderListViewDele
         button.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -30).isActive = true
         button.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -30).isActive = true
         button.widthAnchor.constraint(equalToConstant: 204).isActive = true
-        button.heightAnchor.constraint(equalToConstant: 50).isActive = true
+        button.heightAnchor.constraint(equalToConstant: 49).isActive = true
     }
 
     @objc func getThreads() {

@@ -69,7 +69,13 @@ struct RecipientCellView: View {
                         Button(action: {
                             showCcButton.toggle()
                         }) {
-                            Image(systemName: showCcButton ? "chevron.up" : "chevron.down")
+//                            Image(systemName: showCcButton ? "chevron.up" : "chevron.down")
+                            if showCcButton {
+                                Image(uiImage: MailResourcesAsset.chevronDown.image)
+                            } else {
+                                Image(uiImage: MailResourcesAsset.chevronDown.image).rotationEffect(Angle(degrees: 180))
+                            }
+                            
                         }
                     }
 
@@ -87,10 +93,10 @@ struct RecipientCellView: View {
                     TextField("", text: $draft.subjectValue)
                 }
             }
-            .font(MailTextStyle.body.font)
-            .foregroundColor(MailTextStyle.body.color)
-            Divider()
-                .background(Color(MailResourcesAsset.separatorColor.color))
+            .font(MailTextStyle.primary.font)
+            .foregroundColor(MailTextStyle.primary.color)
+
+            MenuDrawerSeparatorView(withPadding: false, fullWidth: true)
         }
     }
 }

@@ -97,20 +97,13 @@ public class Thread: Object, Decodable, Identifiable {
         self.messagesCount = messagesCount
         self.uniqueMessagesCount = uniqueMessagesCount
         self.deletedMessagesCount = deletedMessagesCount
-
         self.messages = MutableSet()
         self.messages.insert(objectsIn: messages)
-
         self.unseenMessages = unseenMessages
-
         self.from = from.toRealmList()
-
         self.to = to.toRealmList()
-
         self.cc = cc.toRealmList()
-
         self.bcc = bcc.toRealmList()
-
         self.subject = subject
         self.date = date
         self.hasAttachments = hasAttachments
