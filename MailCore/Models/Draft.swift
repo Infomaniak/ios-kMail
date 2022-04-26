@@ -1,0 +1,233 @@
+/*
+ Infomaniak Mail - iOS App
+ Copyright (C) 2022 Infomaniak Network SA
+
+ This program is free software: you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation, either version 3 of the License, or
+ (at your option) any later version.
+
+ This program is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
+
+ You should have received a copy of the GNU General Public License
+ along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+import Foundation
+import RealmSwift
+
+public enum SaveDraftOption: String, Codable {
+    case save
+    case send
+}
+
+public struct DraftResponse: Codable {
+    public var uuid: String
+    public var attachments: [Attachment]
+    public var uid: String
+}
+
+public class Draft: Object, Codable, Identifiable {
+    @Persisted(primaryKey: true) public var uuid: String = ""
+    @Persisted public var identityId: String?
+    @Persisted public var inReplyToUid: String?
+    @Persisted public var forwardedUid: String?
+    @Persisted public var references: String?
+    @Persisted public var inReplyTo: String?
+    @Persisted public var mimeType: String
+    @Persisted public var body: String
+    @Persisted public var quote: String?
+    @Persisted public var to: List<Recipient>
+    @Persisted public var cc: List<Recipient>
+    @Persisted public var bcc: List<Recipient>
+    @Persisted public var subject: String?
+    @Persisted public var ackRequest = false
+    @Persisted public var priority: String?
+    @Persisted public var stUuid: String?
+    @Persisted public var attachments: List<Attachment>
+    public var action: SaveDraftOption?
+
+    public var toValue: String {
+        get {
+            return recipientToValue(to)
+        }
+        set {
+            to = valueToRecipient(newValue)
+        }
+    }
+
+    public var ccValue: String {
+        get {
+            return recipientToValue(cc)
+        }
+        set {
+            cc = valueToRecipient(newValue)
+        }
+    }
+
+    public var bccValue: String {
+        get {
+            return recipientToValue(bcc)
+        }
+        set {
+            bcc = valueToRecipient(newValue)
+        }
+    }
+
+    public var subjectValue: String {
+        get {
+            return subject ?? ""
+        }
+        set {
+            subject = newValue
+        }
+    }
+
+    private enum CodingKeys: String, CodingKey {
+        case uuid
+        case identityId
+        case inReplyToUid
+        case forwardedUid
+        case references
+        case inReplyTo
+        case mimeType
+        case body
+        case quote
+        case to
+        case cc
+        case bcc
+        case subject
+        case ackRequest
+        case priority
+        case stUuid
+        case attachments
+        case action
+    }
+
+    override public init() {
+        mimeType = "text/html"
+    }
+
+    public required init(from decoder: Decoder) throws {
+        let values = try decoder.container(keyedBy: CodingKeys.self)
+        uuid = try values.decode(String.self, forKey: .uuid)
+        identityId = try values.decodeIfPresent(String.self, forKey: .identityId)
+        inReplyToUid = try values.decodeIfPresent(String.self, forKey: .inReplyToUid)
+        forwardedUid = try values.decodeIfPresent(String.self, forKey: .forwardedUid)
+        references = try values.decodeIfPresent(String.self, forKey: .references)
+        inReplyTo = try values.decodeIfPresent(String.self, forKey: .inReplyTo)
+        mimeType = try values.decode(String.self, forKey: .mimeType)
+        body = try values.decode(String.self, forKey: .body)
+        quote = try values.decodeIfPresent(String.self, forKey: .quote)
+        to = try values.decode(List<Recipient>.self, forKey: .to)
+        cc = try values.decode(List<Recipient>.self, forKey: .cc)
+        bcc = try values.decode(List<Recipient>.self, forKey: .bcc)
+        subject = try values.decodeIfPresent(String.self, forKey: .inReplyTo)
+        ackRequest = try values.decode(Bool.self, forKey: .ackRequest)
+        priority = try values.decodeIfPresent(String.self, forKey: .priority)
+        stUuid = try values.decodeIfPresent(String.self, forKey: .stUuid)
+        attachments = try values.decode(List<Attachment>.self, forKey: .to)
+    }
+
+    public convenience init(
+        uuid: String = "",
+        identityId: String? = nil,
+        inReplyToUid: String? = nil,
+        forwardedUid: String? = nil,
+        references: String? = nil,
+        inReplyTo: String? = nil,
+        mimeType: String = "text/html",
+        body: String = "",
+        quote: String? = nil,
+        to: [Recipient]? = nil,
+        cc: [Recipient]? = nil,
+        bcc: [Recipient]? = nil,
+        subject: String = "",
+        ackRequest: Bool = false,
+        priority: String? = nil,
+        stUuid: String? = nil,
+        attachments: [Attachment]? = nil,
+        action: SaveDraftOption? = nil
+    ) {
+        self.init()
+
+        self.uuid = uuid
+        self.identityId = identityId
+        self.inReplyToUid = inReplyToUid
+        self.forwardedUid = forwardedUid
+        self.references = references
+        self.inReplyTo = inReplyTo
+        self.mimeType = mimeType
+        self.body = body
+        self.quote = quote
+
+        if let to = to {
+            self.to = to.toRealmList()
+        }
+
+        if let cc = cc {
+            self.cc = cc.toRealmList()
+        }
+
+        if let bcc = bcc {
+            self.bcc = bcc.toRealmList()
+        }
+
+        self.subject = subject
+        self.ackRequest = ackRequest
+        self.priority = priority
+        self.stUuid = stUuid
+
+        if let attachments = attachments {
+            self.attachments = attachments.toRealmList()
+        }
+
+        self.action = action
+    }
+
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+
+        try container.encode(uuid, forKey: .uuid)
+        try container.encode(identityId, forKey: .identityId)
+        try container.encode(inReplyToUid, forKey: .inReplyToUid)
+        try container.encode(forwardedUid, forKey: .forwardedUid)
+        try container.encode(references, forKey: .references)
+        try container.encode(inReplyTo, forKey: .inReplyTo)
+        try container.encode(mimeType, forKey: .mimeType)
+        try container.encode(body, forKey: .body)
+        try container.encode(quote, forKey: .quote)
+        if to.isEmpty {
+            try container.encodeNil(forKey: .to)
+        } else {
+            try container.encode(to, forKey: .to)
+        }
+        if cc.isEmpty {
+            try container.encodeNil(forKey: .cc)
+        } else {
+            try container.encode(cc, forKey: .cc)
+        }
+        if bcc.isEmpty {
+            try container.encodeNil(forKey: .bcc)
+        } else {
+            try container.encode(bcc, forKey: .bcc)
+        }
+        try container.encode(subject, forKey: .subject)
+        try container.encode(ackRequest, forKey: .ackRequest)
+        try container.encode(priority, forKey: .priority)
+        try container.encode(stUuid, forKey: .stUuid)
+        try container.encode(action, forKey: .action)
+    }
+
+    private func valueToRecipient(_ value: String) -> List<Recipient> {
+        guard !value.isEmpty else { return List<Recipient>() }
+        return value.components(separatedBy: ",").map { Recipient(email: $0, name: "") }.toRealmList()
+    }
+
+    private func recipientToValue(_ recipient: List<Recipient>?) -> String {
+        return recipient?.map(\.email).joined(separator: ",") ?? ""
+    }
+}

@@ -54,6 +54,10 @@ public extension Endpoint {
     static var mailbox: Endpoint {
         return Endpoint(host: ApiEnvironment.current.mailHost, path: "/api/mailbox", queryItems: nil)
     }
+    
+    static func signatures(hostingId: Int, mailboxName: String) -> Endpoint {
+        return Endpoint(host: ApiEnvironment.current.mailHost, path: "/api/securedProxy/1/mail_hostings/\(hostingId)/mailboxes/\(mailboxName)/signatures", queryItems: nil)
+    }
 
     static func folders(uuid: String) -> Endpoint {
         return Endpoint(host: ApiEnvironment.current.mailHost, path: "/api/mail/\(uuid)/folder", queryItems: nil)
@@ -72,5 +76,13 @@ public extension Endpoint {
             URLQueryItem(name: "mailbox", value: mailbox),
             URLQueryItem(name: "product_id", value: "\(productId)")
         ])
+    }
+
+    static func draft(uuid: String) -> Endpoint {
+        return Endpoint(host: ApiEnvironment.current.mailHost, path: "/api/mail/\(uuid)/draft", queryItems: nil)
+    }
+
+    static func draft(uuid: String, draftUuid: String) -> Endpoint {
+        return Endpoint(host: ApiEnvironment.current.mailHost, path: "\(draft(uuid: uuid).path)/\(draftUuid)", queryItems: nil)
     }
 }

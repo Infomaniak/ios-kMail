@@ -30,7 +30,7 @@ public enum MessageDKIM: String, Codable, PersistableEnum {
 }
 
 public class Message: Object, Decodable, Identifiable {
-    @Persisted(primaryKey: true) public var uid: String
+    @Persisted(primaryKey: true) public var uid: String = ""
     @Persisted public var msgId: String?
     @Persisted public var subject: String?
     @Persisted public var priority: MessagePriority
@@ -127,9 +127,7 @@ public class Message: Object, Decodable, Identifiable {
         super.init()
     }
 
-    public required convenience init(from decoder: Decoder) throws {
-        self.init()
-
+    public required init(from decoder: Decoder) throws {
         let values = try decoder.container(keyedBy: CodingKeys.self)
         uid = try values.decode(String.self, forKey: .uid)
         msgId = try values.decodeIfPresent(String.self, forKey: .msgId)
@@ -209,27 +207,13 @@ public class Message: Object, Decodable, Identifiable {
         self.priority = priority
         self.date = date
         self.size = size
-
-        self.from = List()
-        self.from.append(objectsIn: from)
-
-        self.to = List()
-        self.to.append(objectsIn: to)
-
-        self.cc = List()
-        self.cc.append(objectsIn: cc)
-
-        self.bcc = List()
-        self.bcc.append(objectsIn: bcc)
-
-        self.replyTo = List()
-        self.replyTo.append(objectsIn: replyTo)
-
+        self.from = from.toRealmList()
+        self.to = to.toRealmList()
+        self.cc = cc.toRealmList()
+        self.bcc = bcc.toRealmList()
+        self.replyTo = replyTo.toRealmList()
         self.body = body
-
-        self.attachments = List()
-        self.attachments.append(objectsIn: attachments)
-
+        self.attachments = attachments.toRealmList()
         self.dkimStatus = dkimStatus
         self.resource = resource
         self.downloadResource = downloadResource
