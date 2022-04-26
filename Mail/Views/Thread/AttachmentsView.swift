@@ -33,11 +33,11 @@ struct AttachmentsView: View {
                     .frame(width: 14)
                     .foregroundColor(Color(MailResourcesAsset.secondaryTextColor.color))
 
-                Text("\(message.attachments.count) pièce jointe (\(message.attachmentsSize))")
+                Text(MailResourcesStrings.attachmentQuantity(message.attachments.count, message.attachmentsSize))
                     .fontWeight(.regular)
                     .foregroundColor(Color(MailResourcesAsset.secondaryTextColor.color))
 
-                Button("Tout télécharger") {
+                Button(MailResourcesStrings.downloadAll) {
                     // TODO: after complete attachment
                 }
             }

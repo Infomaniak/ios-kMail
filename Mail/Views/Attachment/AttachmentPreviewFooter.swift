@@ -41,7 +41,7 @@ struct AttachmentPreviewFooter: View {
                     HStack {
                         Image(systemName: "square.and.arrow.up")
                             .frame(width: 24, height: 24)
-                        Text("Partager")
+                        Text(MailResourcesStrings.share)
                             .fontWeight(.semibold)
                     }
                 }
@@ -52,7 +52,7 @@ struct AttachmentPreviewFooter: View {
                     HStack {
                         Image(systemName: "square.and.arrow.down")
                             .frame(width: 24, height: 24)
-                        Text("Télécharger")
+                        Text(MailResourcesStrings.download)
                             .fontWeight(.semibold)
                     }
                 }
