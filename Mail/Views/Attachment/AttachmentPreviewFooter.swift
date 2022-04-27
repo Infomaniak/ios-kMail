@@ -1,4 +1,3 @@
-//
 /*
  Infomaniak Mail - iOS App
  Copyright (C) 2022 Infomaniak Network SA
@@ -27,6 +26,15 @@ struct AttachmentPreviewFooter: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 4) {
+            HStack {
+                Spacer()
+                Rectangle()
+                    .fill(Color(MailResourcesAsset.separatorColor.color))
+                    .cornerRadius(5)
+                    .frame(width: 44, height: 4)
+                Spacer()
+            }
+            .padding(.bottom, 11)
             Text(attachment.name)
                 .font(MailTextStyle.body.font)
                 .foregroundColor(MailTextStyle.body.color)
@@ -60,7 +68,7 @@ struct AttachmentPreviewFooter: View {
             .padding(.top, 22)
         }
         .background(Color(MailResourcesAsset.backgroundColor.color))
-        .padding(32)
+        .padding(EdgeInsets(top: 12, leading: 32, bottom: 32, trailing: 32))
         .sheet(isPresented: $isSharePresented) {
             if let itemUrl = attachment.localUrl {
                 ActivityViewController(activityItems: [itemUrl])
@@ -69,7 +77,7 @@ struct AttachmentPreviewFooter: View {
     }
 
     private func downloadAttachment() {
-        // TODO
+        // TODO:
     }
 }
 
