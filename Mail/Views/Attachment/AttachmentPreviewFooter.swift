@@ -78,7 +78,7 @@ struct AttachmentPreviewFooter: View {
     }
 
     private func downloadAttachment() {
-        // TODO:
+        // TODO: Download attachment
     }
 }
 
