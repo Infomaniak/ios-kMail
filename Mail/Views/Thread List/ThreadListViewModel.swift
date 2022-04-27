@@ -24,8 +24,11 @@ typealias Thread = MailCore.Thread
 
 @MainActor class ThreadListViewModel: ObservableObject {
     var mailboxManager: MailboxManager
+
     @Published var folder: Folder?
     @Published var threads: AnyRealmCollection<Thread>
+
+    var observationThreadToken: NotificationToken?
 
     var filter = Filter.all {
         didSet {
@@ -54,6 +57,7 @@ typealias Thread = MailCore.Thread
                 return
             }
             try await mailboxManager.threads(folder: folder.freeze(), filter: filter)
+            observeChanges()
         } catch {
             print("Error while getting threads: \(error)")
         }
@@ -63,9 +67,28 @@ typealias Thread = MailCore.Thread
         self.folder = folder
         if let cachedFolder = mailboxManager.getRealm().object(ofType: Folder.self, forPrimaryKey: folder.id) {
             threads = AnyRealmCollection(cachedFolder.threads.sorted(by: \.date, ascending: false))
+            observeChanges()
         } else {
             threads = AnyRealmCollection(mailboxManager.getRealm().objects(Thread.self)
                 .filter(NSPredicate(format: "FALSEPREDICATE")))
+        }
+    }
+
+    func observeChanges() {
+        observationThreadToken = threads.observe(on: .main) { [weak self] changes in
+            guard let self = self else { return }
+            switch changes {
+            case let .initial(results):
+                self.threads = results
+            case let .update(results, _, _, _):
+                self.threads = results
+            case .error:
+                break
+            }
+
+            Task {
+                await self.fetchThreads()
+            }
         }
     }
 }
