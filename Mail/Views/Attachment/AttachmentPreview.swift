@@ -43,7 +43,8 @@ struct AttachmentPreview: View {
                             .foregroundColor(Color(MailResourcesAsset.backgroundColor.color).opacity(0.8))
                             .frame(width: 44, height: 44)
                             .overlay(
-                                Image(systemName: "chevron.left")
+                                Image(uiImage: MailResourcesAsset.arrowLeft.image)
+                                    .foregroundColor(.black)
                                     .frame(width: 16, height: 16)
                             )
                             .padding(EdgeInsets(top: 16, leading: 16, bottom: 0, trailing: 16))

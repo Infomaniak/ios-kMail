@@ -47,7 +47,7 @@ struct AttachmentPreviewFooter: View {
                     isSharePresented = true
                 } label: {
                     HStack {
-                        Image(systemName: "square.and.arrow.up")
+                        Image(uiImage: MailResourcesAsset.share.image)
                             .frame(width: 24, height: 24)
                         Text(MailResourcesStrings.share)
                             .fontWeight(.semibold)
@@ -58,13 +58,14 @@ struct AttachmentPreviewFooter: View {
                     downloadAttachment()
                 } label: {
                     HStack {
-                        Image(systemName: "square.and.arrow.down")
+                        Image(uiImage: MailResourcesAsset.download.image)
                             .frame(width: 24, height: 24)
                         Text(MailResourcesStrings.download)
                             .fontWeight(.semibold)
                     }
                 }
             }
+            .foregroundColor(Color(MailResourcesAsset.infomaniakColor.color))
             .padding(.top, 22)
         }
         .background(Color(MailResourcesAsset.backgroundColor.color))

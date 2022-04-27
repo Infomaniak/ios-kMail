@@ -29,7 +29,7 @@ struct AttachmentsView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 22) {
             HStack {
-                Image(systemName: "paperclip")
+                Image(uiImage: MailResourcesAsset.paperclip.image)
                     .frame(width: 14)
                     .foregroundColor(Color(MailResourcesAsset.secondaryTextColor.color))
 
