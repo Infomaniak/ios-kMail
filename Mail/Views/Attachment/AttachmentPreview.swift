@@ -48,10 +48,13 @@ struct AttachmentPreview: View {
                             )
                             .padding(EdgeInsets(top: 16, leading: 16, bottom: 0, trailing: 16))
                     }
+                    .transition(.move(edge: .top))
                 }
                 Spacer()
                 Button {
-                    isFullScreen.toggle()
+                    withAnimation {
+                        isFullScreen.toggle()
+                    }
                 } label: {
                     Circle()
                         .foregroundColor(Color(MailResourcesAsset.backgroundColor.color).opacity(0.8))
@@ -75,6 +78,7 @@ struct AttachmentPreview: View {
                                 .foregroundColor(Color(MailResourcesAsset.backgroundColor.color))
                         )
                 }.padding(.bottom, -10)
+                    .transition(.move(edge: .bottom))
             }
         }
     }
