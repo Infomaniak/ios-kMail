@@ -51,18 +51,9 @@ struct ThreadListView: View, FolderListViewDelegate {
             }
             .listStyle(PlainListStyle())
 
-            Button {
-                presentNewMessageEditor.toggle()
-            } label: {
-                Text(MailResourcesStrings.newMessageButton)
-                Image(uiImage: MailResourcesAsset.pencil.image)
-            }
-            .tint(MailResourcesAsset.mailPinkColor)
-            .buttonStyle(.borderedProminent)
-            .buttonBorderShape(.roundedRectangle(radius: 50))
-            .controlSize(.large)
-            .padding(.trailing, 30)
-            .padding(.bottom, 25)
+            NewMessageButtonView(presentNewMessageEditor: $presentNewMessageEditor)
+                .padding(.trailing, 30)
+                .padding(.bottom, 25)
         }
         .modifier(ThreadListNavigationBar(isCompact: isCompact, title: viewModel.folder?.name, presentMenuDrawer: $presentMenuDrawer, avatarImage: $avatarImage))
         .sheet(isPresented: $presentMenuDrawer) {
