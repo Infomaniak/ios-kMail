@@ -28,8 +28,11 @@ struct AttachmentCell: View {
             RoundedRectangle(cornerRadius: 35, style: .continuous)
                 .fill(Color(MailResourcesAsset.backgroundHeaderColor.color))
             Text(attachment.name)
+                .truncationMode(.middle)
                 .padding(EdgeInsets(top: 8, leading: 12, bottom: 8, trailing: 12))
-        }.fixedSize()
+        }
+        .frame(maxWidth: 135)
+        .fixedSize()
     }
 }
 
