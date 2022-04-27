@@ -26,6 +26,7 @@ struct ThreadListView: View, FolderListViewDelegate {
 
     @State private var presentMenuDrawer = false
     @State private var avatarImage = MailResourcesAsset.placeholderAvatar.image
+    @State private var selectedThread: Thread?
 
     let isCompact: Bool
 
@@ -45,6 +46,72 @@ struct ThreadListView: View, FolderListViewDelegate {
                 ThreadListCell(mailboxManager: viewModel.mailboxManager, thread: thread)
             }
             .listRowSeparator(.hidden)
+            .modifier(ThreadListSwipeAction())
+        }
+        .listStyle(PlainListStyle())
+        .modifier(ThreadListNavigationBar(isCompact: isCompact, title: viewModel.folder?.name, presentMenuDrawer: $presentMenuDrawer, avatarImage: $avatarImage))
+        .sheet(isPresented: $presentMenuDrawer) {
+            MenuDrawerView(mailboxManager: viewModel.mailboxManager, selectedFolderId: viewModel.folder?.id, isCompact: isCompact, delegate: self)
+        }
+        .refreshable {
+            await viewModel.fetchThreads()
+        }
+        .task {
+            await viewModel.fetchThreads()
+            AccountManager.instance.currentAccount.user.getAvatar { image in
+                avatarImage = image
+            }
+        }
+    }
+
+    func didSelectFolder(_ folder: Folder) {
+        viewModel.updateThreads(with: folder)
+    }
+}
+
+private struct ThreadListNavigationBar: ViewModifier {
+    var isCompact: Bool
+
+    @State var title: String?
+
+    @Binding var presentMenuDrawer: Bool
+    @Binding var avatarImage: UIImage
+
+    func body(content: Content) -> some View {
+        content
+            .navigationTitle(title ?? "")
+            .toolbar {
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Button {
+                        // TODO: Display accounts list
+                    } label: {
+                        Image(uiImage: avatarImage)
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: 30, height: 30)
+                            .clipShape(Circle())
+                    }
+
+                }
+            }
+            .modifyIf(isCompact) { view in
+                view.toolbar {
+                    ToolbarItem(placement: .navigationBarLeading) {
+                        Button {
+                            presentMenuDrawer.toggle()
+                        } label: {
+                            Image(uiImage: MailResourcesAsset.burger.image)
+                        }
+                        .tint(Color(MailResourcesAsset.secondaryTextColor.color))
+                    }
+                }
+            }
+    }
+}
+
+private struct ThreadListSwipeAction: ViewModifier {
+    func body(content: Content) -> some View {
+        content
             .swipeActions(edge: .leading, allowsFullSwipe: true) {
                 Button {
                     // TODO: Mark the message as (un)read
@@ -68,51 +135,6 @@ struct ThreadListView: View, FolderListViewDelegate {
                 }
                 .tint(Color(MailResourcesAsset.menuActionColor.color))
             }
-        }
-        .listStyle(PlainListStyle())
-        .navigationTitle(viewModel.folder?.localizedName ?? "")
-        .toolbar {
-            ToolbarItem(placement: .navigationBarTrailing) {
-                Button {
-                    // TODO: Display accounts list
-                } label: {
-                    Image(uiImage: avatarImage)
-                        .resizable()
-                        .scaledToFit()
-                        .frame(width: 30, height: 30)
-                        .clipShape(Circle())
-                }
-
-            }
-        }
-        .modifyIf(isCompact) { view in
-            view.toolbar {
-                ToolbarItem(placement: .navigationBarLeading) {
-                    Button {
-                        presentMenuDrawer.toggle()
-                    } label: {
-                        Image(uiImage: MailResourcesAsset.burger.image)
-                    }
-                    .tint(Color(MailResourcesAsset.secondaryTextColor.color))
-                }
-            }
-        }
-        .sheet(isPresented: $presentMenuDrawer) {
-            MenuDrawerView(mailboxManager: viewModel.mailboxManager, selectedFolderId: viewModel.folder?.id, isCompact: isCompact, delegate: self)
-        }
-        .refreshable {
-            await viewModel.fetchThreads()
-        }
-        .task {
-            await viewModel.fetchThreads()
-            AccountManager.instance.currentAccount.user.getAvatar { image in
-                avatarImage = image
-            }
-        }
-    }
-
-    func didSelectFolder(_ folder: Folder) {
-        viewModel.updateThreads(with: folder)
     }
 }
 
