@@ -20,6 +20,7 @@ import MailCore
 import MailResources
 import SwiftUI
 
+
 struct ThreadListView: View, FolderListViewDelegate {
     @ObservedObject var viewModel: ThreadListViewModel
 
