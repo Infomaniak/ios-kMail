@@ -25,8 +25,9 @@ struct ThreadListView: View, FolderListViewDelegate {
     @ObservedObject var viewModel: ThreadListViewModel
 
     @State private var presentMenuDrawer = false
+    @State private var presentNewMessageEditor = false
+
     @State private var avatarImage = MailResourcesAsset.placeholderAvatar.image
-    @State private var selectedThread: Thread?
 
     let isCompact: Bool
 
@@ -36,22 +37,39 @@ struct ThreadListView: View, FolderListViewDelegate {
     }
 
     var body: some View {
-        List(viewModel.threads) { thread in
-            ZStack {
-                NavigationLink(destination: ThreadView(mailboxManager: viewModel.mailboxManager, thread: thread)) {
-                    EmptyView()
+        ZStack(alignment: .bottomTrailing) {
+            List(viewModel.threads) { thread in
+                ZStack {
+                    NavigationLink(destination: ThreadView(mailboxManager: viewModel.mailboxManager, thread: thread)) {
+                        EmptyView()
+                    }
+                    .opacity(0)
+                    ThreadListCell(mailboxManager: viewModel.mailboxManager, thread: thread)
                 }
-                .opacity(0)
-
-                ThreadListCell(mailboxManager: viewModel.mailboxManager, thread: thread)
+                .listRowSeparator(.hidden)
+                .modifier(ThreadListSwipeAction())
             }
-            .listRowSeparator(.hidden)
-            .modifier(ThreadListSwipeAction())
+            .listStyle(PlainListStyle())
+
+            Button {
+                presentNewMessageEditor.toggle()
+            } label: {
+                Text(MailResourcesStrings.newMessageButton)
+                Image(uiImage: MailResourcesAsset.pencil.image)
+            }
+            .tint(MailResourcesAsset.mailPinkColor)
+            .buttonStyle(.borderedProminent)
+            .buttonBorderShape(.roundedRectangle(radius: 50))
+            .controlSize(.large)
+            .padding(.trailing, 30)
+            .padding(.bottom, 25)
         }
-        .listStyle(PlainListStyle())
         .modifier(ThreadListNavigationBar(isCompact: isCompact, title: viewModel.folder?.name, presentMenuDrawer: $presentMenuDrawer, avatarImage: $avatarImage))
         .sheet(isPresented: $presentMenuDrawer) {
             MenuDrawerView(mailboxManager: viewModel.mailboxManager, selectedFolderId: viewModel.folder?.id, isCompact: isCompact, delegate: self)
+        }
+        .sheet(isPresented: $presentNewMessageEditor) {
+            NewMessageView(mailboxManager: viewModel.mailboxManager)
         }
         .refreshable {
             await viewModel.fetchThreads()
@@ -102,7 +120,7 @@ private struct ThreadListNavigationBar: ViewModifier {
                         } label: {
                             Image(uiImage: MailResourcesAsset.burger.image)
                         }
-                        .tint(Color(MailResourcesAsset.secondaryTextColor.color))
+                        .tint(MailResourcesAsset.secondaryTextColor)
                     }
                 }
             }
@@ -118,7 +136,7 @@ private struct ThreadListSwipeAction: ViewModifier {
                 } label: {
                     Image(uiImage: MailResourcesAsset.openLetter.image)
                 }
-                .tint(Color(MailResourcesAsset.unreadActionColor.color))
+                .tint(MailResourcesAsset.unreadActionColor)
             }
             .swipeActions(edge: .trailing, allowsFullSwipe: true) {
                 Button {
@@ -126,14 +144,14 @@ private struct ThreadListSwipeAction: ViewModifier {
                 } label: {
                     Image(uiImage: MailResourcesAsset.bin.image)
                 }
-                .tint(Color(MailResourcesAsset.destructiveActionColor.color))
+                .tint(MailResourcesAsset.destructiveActionColor)
 
                 Button {
                     // TODO: Display menu
                 } label: {
                     Image(uiImage: MailResourcesAsset.threeDots.image)
                 }
-                .tint(Color(MailResourcesAsset.menuActionColor.color))
+                .tint(MailResourcesAsset.menuActionColor)
             }
     }
 }

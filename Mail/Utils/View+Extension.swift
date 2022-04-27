@@ -16,6 +16,7 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import MailResources
 import SwiftUI
 
 struct DeviceRotationViewModifier: ViewModifier {
@@ -44,5 +45,13 @@ extension View {
         } else {
             self
         }
+    }
+
+    func foregroundColor(_ color: MailResourcesColors) -> some View {
+        return self.foregroundColor(Color(color.color))
+    }
+
+    func tint(_ tint: MailResourcesColors) -> some View {
+        return self.tint(Color(tint.color))
     }
 }
