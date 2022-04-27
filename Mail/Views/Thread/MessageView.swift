@@ -63,7 +63,7 @@ struct MessageView: View {
                 model.loadHTMLString(value: message.body?.value)
             }
         }
-        .padding(8)
+        .padding(16)
         .onAppear {
             if self.message.shouldComplete {
                 Task {

@@ -57,7 +57,11 @@ struct AttachmentsView: View {
                             }
                     }
                 }
+                .padding(.leading, 16)
+                .padding(.trailing, 16)
             }
+            .padding(.leading, -16)
+            .padding(.trailing, -16)
         }
     }
 }
