@@ -118,6 +118,15 @@
       }
     },
     {
+      "identity" : "sqrichtexteditor",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/Ambrdctr/SQRichTextEditor",
+      "state" : {
+        "branch" : "master",
+        "revision" : "739cf6a03daf78cd0bfd91449163f81a30b90b07"
+      }
+    },
+    {
       "identity" : "swift-log",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/apple/swift-log.git",

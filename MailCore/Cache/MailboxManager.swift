@@ -226,6 +226,8 @@ public class MailboxManager: ObservableObject {
         } catch {
             // Handle error
         }
+    }
+
     // MARK: - Draft
 
     public func draft(draftUuid: String) async throws -> Draft {

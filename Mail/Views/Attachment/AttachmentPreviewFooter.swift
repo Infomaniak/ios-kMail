@@ -36,8 +36,8 @@ struct AttachmentPreviewFooter: View {
             }
             .padding(.bottom, 11)
             Text(attachment.name)
-                .font(MailTextStyle.body.font)
-                .foregroundColor(MailTextStyle.body.color)
+                .font(MailTextStyle.primary.font)
+                .foregroundColor(MailTextStyle.primary.color)
             Text(Constants.formatAttachmentSize(Int64(attachment.size)))
                 .font(MailTextStyle.description.font)
                 .foregroundColor(MailTextStyle.description.color)
