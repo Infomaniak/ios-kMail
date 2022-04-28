@@ -20,7 +20,6 @@ import MailCore
 import MailResources
 import SwiftUI
 
-
 struct ThreadListView: View, FolderListViewDelegate {
     @ObservedObject var viewModel: ThreadListViewModel
 
@@ -28,25 +27,31 @@ struct ThreadListView: View, FolderListViewDelegate {
     @State private var presentNewMessageEditor = false
 
     @State private var avatarImage = MailResourcesAsset.placeholderAvatar.image
+    @State private var selectedThread: Thread?
 
     let isCompact: Bool
 
     init(mailboxManager: MailboxManager, folder: Folder?, isCompact: Bool) {
         viewModel = ThreadListViewModel(mailboxManager: mailboxManager, folder: folder)
         self.isCompact = isCompact
+
+        UITableViewCell.appearance().focusEffect = .none
     }
 
     var body: some View {
         ZStack(alignment: .bottomTrailing) {
             List(viewModel.threads) { thread in
                 ZStack {
-                    NavigationLink(destination: ThreadView(mailboxManager: viewModel.mailboxManager, thread: thread)) {
-                        EmptyView()
-                    }
+                    NavigationLink(destination: {
+                        ThreadView(mailboxManager: viewModel.mailboxManager, thread: thread)
+                            .onAppear { selectedThread = thread }
+                    }, label: { EmptyView() })
                     .opacity(0)
+
                     ThreadListCell(mailboxManager: viewModel.mailboxManager, thread: thread)
                 }
                 .listRowSeparator(.hidden)
+                .listRowBackground(Color(selectedThread == thread ? MailResourcesAsset.backgroundHeaderColor.color : MailResourcesAsset.backgroundColor.color))
                 .modifier(ThreadListSwipeAction())
             }
             .listStyle(PlainListStyle())
@@ -55,21 +60,22 @@ struct ThreadListView: View, FolderListViewDelegate {
                 .padding(.trailing, 30)
                 .padding(.bottom, 25)
         }
-        .modifier(ThreadListNavigationBar(isCompact: isCompact, title: viewModel.folder?.name, presentMenuDrawer: $presentMenuDrawer, avatarImage: $avatarImage))
+        .modifier(ThreadListNavigationBar(isCompact: isCompact, folder: $viewModel.folder, presentMenuDrawer: $presentMenuDrawer, avatarImage: $avatarImage))
         .sheet(isPresented: $presentMenuDrawer) {
             MenuDrawerView(mailboxManager: viewModel.mailboxManager, selectedFolderId: viewModel.folder?.id, isCompact: isCompact, delegate: self)
         }
         .sheet(isPresented: $presentNewMessageEditor) {
             NewMessageView(mailboxManager: viewModel.mailboxManager)
         }
-        .refreshable {
-            await viewModel.fetchThreads()
-        }
         .task {
             await viewModel.fetchThreads()
             AccountManager.instance.currentAccount.user.getAvatar { image in
                 avatarImage = image
             }
+            selectedThread = nil
+        }
+        .refreshable {
+            await viewModel.fetchThreads()
         }
     }
 
@@ -81,14 +87,14 @@ struct ThreadListView: View, FolderListViewDelegate {
 private struct ThreadListNavigationBar: ViewModifier {
     var isCompact: Bool
 
-    @State var title: String?
+    @Binding var folder: Folder?
 
     @Binding var presentMenuDrawer: Bool
     @Binding var avatarImage: UIImage
 
     func body(content: Content) -> some View {
         content
-            .navigationTitle(title ?? "")
+            .navigationTitle(folder?.localizedName ?? "")
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button {

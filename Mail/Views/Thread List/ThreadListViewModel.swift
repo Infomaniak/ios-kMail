@@ -72,6 +72,10 @@ typealias Thread = MailCore.Thread
             threads = AnyRealmCollection(mailboxManager.getRealm().objects(Thread.self)
                 .filter(NSPredicate(format: "FALSEPREDICATE")))
         }
+
+        Task {
+            await self.fetchThreads()
+        }
     }
 
     func observeChanges() {
@@ -84,10 +88,6 @@ typealias Thread = MailCore.Thread
                 self.threads = results
             case .error:
                 break
-            }
-
-            Task {
-                await self.fetchThreads()
             }
         }
     }
