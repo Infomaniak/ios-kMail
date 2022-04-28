@@ -106,36 +106,3 @@ class WebViewModel: ObservableObject {
         webView.loadHTMLString(meta + value, baseURL: nil)
     }
 }
-
-class URLSchemeHandler: NSObject, WKURLSchemeHandler {
-    static let scheme = "mail-infomaniak"
-    static let domain = "://mail.infomaniak.com"
-
-    func webView(_ webView: WKWebView, start urlSchemeTask: WKURLSchemeTask) {
-        let url = urlSchemeTask.request.url!
-        var components = URLComponents(url: url, resolvingAgainstBaseURL: true)
-        components?.scheme = "https"
-        var request = URLRequest(url: components!.url!)
-        request.addValue(
-            "Bearer \(AccountManager.instance.currentAccount.token.accessToken)",
-            forHTTPHeaderField: "Authorization"
-        )
-        let task = URLSession.shared.dataTask(with: request) { data, response, error in
-            if let response = response {
-                urlSchemeTask.didReceive(response)
-            }
-            if let data = data {
-                urlSchemeTask.didReceive(data)
-                urlSchemeTask.didFinish()
-            }
-            if let error = error {
-                urlSchemeTask.didFailWithError(error)
-            }
-        }
-        task.resume()
-    }
-
-    func webView(_ webView: WKWebView, stop urlSchemeTask: WKURLSchemeTask) {
-        // needed for WKURLSchemeHandler
-    }
-}

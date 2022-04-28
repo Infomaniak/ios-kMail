@@ -16,29 +16,23 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import MailCore
-import MailResources
+import Foundation
 import SwiftUI
 
-struct AttachmentCell: View {
-    var attachment: Attachment
+struct ActivityViewController: UIViewControllerRepresentable {
+    var activityItems: [Any]
+    var applicationActivities: [UIActivity]? = nil
 
-    var body: some View {
-        ZStack {
-            RoundedRectangle(cornerRadius: 35, style: .continuous)
-                .fill(Color(MailResourcesAsset.backgroundHeaderColor.color))
-            Text(attachment.name)
-                .truncationMode(.middle)
-                .padding([.top, .bottom], 8)
-                .padding([.leading, .trailing], 12)
-        }
-        .frame(maxWidth: 135)
-        .fixedSize()
+    func makeUIViewController(context: UIViewControllerRepresentableContext<ActivityViewController>)
+        -> UIActivityViewController {
+        let controller = UIActivityViewController(activityItems: activityItems, applicationActivities: applicationActivities)
+        return controller
     }
-}
 
-struct AttachmentCell_Previews: PreviewProvider {
-    static var previews: some View {
-        AttachmentCell(attachment: PreviewHelper.sampleAttachment)
+    func updateUIViewController(
+        _ uiViewController: UIActivityViewController,
+        context: UIViewControllerRepresentableContext<ActivityViewController>
+    ) {
+        // Intentionally unimplemented...
     }
 }

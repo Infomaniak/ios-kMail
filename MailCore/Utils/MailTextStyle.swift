@@ -77,4 +77,8 @@ public struct MailTextStyle {
         font: .system(size: 15, weight: .semibold),
         color: InfomaniakCoreAsset.infomaniakColor
     )
+    public static let description = MailTextStyle(
+        font: .system(size: 16, weight: .regular),
+        color: MailResourcesAsset.secondaryTextColor
+    )
 }

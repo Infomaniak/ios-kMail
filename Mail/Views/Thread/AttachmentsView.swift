@@ -18,24 +18,27 @@
 
 import MailCore
 import MailResources
+import RealmSwift
 import SwiftUI
 
 struct AttachmentsView: View {
-    var message: Message
+    @ObservedObject var sheet: MessageSheet
+    @EnvironmentObject var mailboxManager: MailboxManager
+    @ObservedRealmObject var message: Message
 
     var body: some View {
         VStack(alignment: .leading, spacing: 22) {
             HStack {
-                Image(systemName: "paperclip")
+                Image(uiImage: MailResourcesAsset.paperclip.image)
                     .frame(width: 14)
                     .foregroundColor(Color(MailResourcesAsset.secondaryTextColor.color))
 
-                Text("\(message.attachments.count) pièce jointe (\(message.attachmentsSize))")
+                Text(MailResourcesStrings.attachmentQuantity(message.attachments.count, message.attachmentsSize))
                     .fontWeight(.regular)
                     .foregroundColor(Color(MailResourcesAsset.secondaryTextColor.color))
 
-                Button("Tout télécharger") {
-                    // TODO : after complete attachment
+                Button(MailResourcesStrings.downloadAll) {
+                    // TODO: after complete attachment
                 }
             }
             .font(.system(size: 14))
@@ -44,15 +47,25 @@ struct AttachmentsView: View {
                 HStack {
                     ForEach(message.attachments) { attachment in
                         AttachmentCell(attachment: attachment)
+                            .onTapGesture {
+                                sheet.state = .attachment(attachment)
+                                if !FileManager.default.fileExists(atPath: attachment.localUrl?.path ?? "") {
+                                    Task {
+                                        await mailboxManager.saveAttachmentLocally(attachment: attachment)
+                                    }
+                                }
+                            }
                     }
                 }
+                .padding([.leading, .trailing], 16)
             }
+            .padding([.leading, .trailing], -16)
         }
     }
 }
 
 struct AttachmentsView_Previews: PreviewProvider {
     static var previews: some View {
-        AttachmentsView(message: PreviewHelper.sampleMessage)
+        AttachmentsView(sheet: MessageSheet(), message: PreviewHelper.sampleMessage)
     }
 }

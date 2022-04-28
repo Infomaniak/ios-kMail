@@ -194,6 +194,7 @@ public class MailboxManager: ObservableObject {
     public func message(message: Message) async throws {
         // Get from API
         let completedMessage = try await apiFetcher.message(mailbox: mailbox, message: message)
+        completedMessage.insertInlineAttachment()
         completedMessage.fullyDownloaded = true
 
         let realm = getRealm()
@@ -201,6 +202,29 @@ public class MailboxManager: ObservableObject {
         // Update message in Realm
         try? realm.safeWrite {
             realm.add(completedMessage, update: .modified)
+        }
+    }
+
+    public func attachmentData(attachment: Attachment) async throws -> Data {
+        let data = try await apiFetcher.attachment(mailbox: mailbox, attachment: attachment)
+
+        if let liveAttachment = attachment.thaw() {
+            let realm = getRealm()
+            try? realm.safeWrite {
+                liveAttachment.saved = true
+            }
+        }
+        return data
+    }
+
+    public func saveAttachmentLocally(attachment: Attachment) async {
+        do {
+            let data = try await attachmentData(attachment: attachment)
+            if let url = attachment.localUrl {
+                try data.write(to: url)
+            }
+        } catch {
+            // Handle error
         }
     }
 
