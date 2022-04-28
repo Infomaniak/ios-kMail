@@ -34,41 +34,8 @@ struct AttachmentPreview: View {
                 ProgressView()
             }
 
-            HStack {
-                if !isFullScreen {
-                    Button {
-                        isPresented = false
-                    } label: {
-                        Circle()
-                            .foregroundColor(Color(MailResourcesAsset.backgroundColor.color).opacity(0.8))
-                            .frame(width: 44, height: 44)
-                            .overlay(
-                                Image(uiImage: MailResourcesAsset.arrowLeft.image)
-                                    .foregroundColor(.black)
-                                    .frame(width: 16, height: 16)
-                            )
-                            .padding([.top, .leading, .trailing], 16)
-                    }
-                    .transition(.move(edge: .top))
-                }
-                Spacer()
-                Button {
-                    withAnimation {
-                        isFullScreen.toggle()
-                    }
-                } label: {
-                    Circle()
-                        .foregroundColor(Color(MailResourcesAsset.backgroundColor.color).opacity(0.8))
-                        .frame(width: 44, height: 44)
-                        .overlay(
-                            Image(systemName: isFullScreen
-                                ? "arrow.down.right.and.arrow.up.left"
-                                : "arrow.up.left.and.arrow.down.right")
-                                .frame(width: 16, height: 16)
-                        )
-                        .padding([.top, .leading, .trailing], 16)
-                }
-            }
+            AttachmentPreviewHeader(isPresented: $isPresented, isFullScreen: $isFullScreen)
+            
             if !isFullScreen {
                 VStack {
                     Spacer()
@@ -82,6 +49,7 @@ struct AttachmentPreview: View {
                     .transition(.move(edge: .bottom))
             }
         }
+        .ignoresSafeArea(.all, edges: .bottom)
     }
 }
 
