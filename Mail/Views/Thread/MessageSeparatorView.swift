@@ -23,10 +23,8 @@ struct MessageSeparatorView: View {
     var body: some View {
         Divider()
             .background(Color(MailResourcesAsset.separatorColor.color))
-            .padding(.top, 0)
-            .padding(.bottom, 0)
-            .padding(.trailing, 8)
-            .padding(.leading, 8)
+            .padding([.top, .bottom], 0)
+            .padding([.trailing, .leading], 8)
     }
 }
 

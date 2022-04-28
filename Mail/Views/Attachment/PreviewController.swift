@@ -34,7 +34,7 @@ struct PreviewController: UIViewControllerRepresentable {
     }
 
     func updateUIViewController(_ uiViewController: QLPreviewController, context: Context) {
-        //
+        // Intentionally unimplemented...
     }
 
     class Coordinator: QLPreviewControllerDataSource {

@@ -33,6 +33,6 @@ struct ActivityViewController: UIViewControllerRepresentable {
         _ uiViewController: UIActivityViewController,
         context: UIViewControllerRepresentableContext<ActivityViewController>
     ) {
-        //
+        // Intentionally unimplemented...
     }
 }
