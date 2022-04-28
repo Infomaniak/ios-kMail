@@ -76,6 +76,14 @@ public class MailApiFetcher: ApiFetcher {
                                                                   ]))).data
     }
 
+    func attachment(mailbox: Mailbox, attachment: Attachment) async throws -> Data {
+        guard let resource = attachment.resource else {
+            throw MailError.resourceError
+        }
+        let request = authenticatedRequest(.resource(resource))
+        return try await request.serializingData().value
+    }
+
     public func quotas(mailbox: Mailbox) async throws -> Quotas {
         try await perform(request: authenticatedRequest(.quotas(mailbox: mailbox.mailbox, productId: mailbox.hostingId))).data
     }

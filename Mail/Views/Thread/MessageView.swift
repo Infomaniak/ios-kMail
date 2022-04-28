@@ -20,16 +20,23 @@ import MailCore
 import RealmSwift
 import SwiftUI
 
+class MessageSheet: SheetState<MessageSheet.State> {
+    enum State: Equatable {
+        case attachment(Attachment)
+    }
+}
+
 struct MessageView: View {
     @ObservedRealmObject var message: Message
-    private var mailboxManager: MailboxManager
+    @EnvironmentObject var mailboxManager: MailboxManager
     @State var model = WebViewModel()
     @State private var webViewHeight: CGFloat = .zero
     @State var isHeaderReduced = true
     @State var isThreadHeader: Bool
 
-    init(mailboxManager: MailboxManager, message: Message, isThreadHeader: Bool = false) {
-        self.mailboxManager = mailboxManager
+    @ObservedObject private var sheet = MessageSheet()
+
+    init(message: Message, isThreadHeader: Bool = false) {
         self.message = message
         self.isThreadHeader = isThreadHeader
     }
@@ -38,7 +45,7 @@ struct MessageView: View {
         VStack(spacing: 10) {
             MessageHeaderView(message: message, isReduced: $isHeaderReduced, isThreadHeader: isThreadHeader)
             if isThreadHeader && !message.attachments.isEmpty {
-                AttachmentsView(message: message)
+                AttachmentsView(sheet: sheet, message: message)
                     .padding(.top, 16)
                     .padding(.bottom, 10)
             }
@@ -56,12 +63,20 @@ struct MessageView: View {
                 model.loadHTMLString(value: message.body?.value)
             }
         }
-        .padding(8)
+        .padding(16)
         .onAppear {
             if self.message.shouldComplete {
                 Task {
                     await fetchMessage()
                 }
+            }
+        }
+        .sheet(isPresented: $sheet.isShowing) {
+            switch sheet.state {
+            case let .attachment(attachment):
+                AttachmentPreview(isPresented: $sheet.isShowing, attachment: attachment)
+            case .none:
+                EmptyView()
             }
         }
     }
@@ -77,9 +92,6 @@ struct MessageView: View {
 
 struct MessageView_Previews: PreviewProvider {
     static var previews: some View {
-        MessageView(
-            mailboxManager: MailboxManager(mailbox: PreviewHelper.sampleMailbox, apiFetcher: MailApiFetcher()),
-            message: PreviewHelper.sampleMessage
-        )
+        MessageView(message: PreviewHelper.sampleMessage)
     }
 }

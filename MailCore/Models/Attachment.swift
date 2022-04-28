@@ -34,9 +34,19 @@ public class Attachment: /* Hashable, */ EmbeddedObject, Codable, Identifiable {
     @Persisted public var contentId: String?
     @Persisted public var resource: String?
     @Persisted public var driveUrl: String?
-    @Persisted public var data: Data? = nil
-    public var localUrl: URL? = nil
-    public var thumbnail: Image? = nil
+    @Persisted(originProperty: "attachments") var parentLink: LinkingObjects<Message>
+    @Persisted public var saved: Bool = false
+
+    public var parent: Message? {
+        return parentLink.first
+    }
+
+    public var localUrl: URL? {
+        guard let message = parent else { return nil }
+        let urlDescription = "\(message.uid)_\(partId)_\(name)"
+            .addingPercentEncoding(withAllowedCharacters: .urlPathAllowed)
+        return FileManager.default.temporaryDirectory.appendingPathComponent(urlDescription!)
+    }
 
     public var uti: UTType? {
         UTType(mimeType: mimeType, conformingTo: .data)
@@ -91,8 +101,7 @@ public class Attachment: /* Hashable, */ EmbeddedObject, Codable, Identifiable {
         disposition: AttachmentDisposition,
         contentId: String? = nil,
         resource: String? = nil,
-        driveUrl: String? = nil,
-        data: Data? = nil
+        driveUrl: String? = nil
     ) {
         self.init()
 
@@ -106,7 +115,6 @@ public class Attachment: /* Hashable, */ EmbeddedObject, Codable, Identifiable {
         self.contentId = contentId
         self.resource = resource
         self.driveUrl = driveUrl
-        self.data = data
     }
 }
 

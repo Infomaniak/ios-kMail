@@ -88,6 +88,17 @@ public class Message: Object, Decodable, Identifiable {
         return Constants.formatAttachmentSize(Int64(totalSize))
     }
 
+    public func insertInlineAttachment() {
+        for attachment in attachments {
+            if let contentId = attachment.contentId, let value = body?.value, let resource = attachment.resource {
+                body?.value = value.replacingOccurrences(
+                    of: "cid:\(contentId)",
+                    with: "\(URLSchemeHandler.scheme)\(URLSchemeHandler.domain)\(resource)"
+                )
+            }
+        }
+    }
+
     private enum CodingKeys: String, CodingKey {
         case uid
         case msgId

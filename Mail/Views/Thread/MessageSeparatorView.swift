@@ -16,29 +16,22 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import MailCore
 import MailResources
 import SwiftUI
 
-struct AttachmentCell: View {
-    var attachment: Attachment
-
+struct MessageSeparatorView: View {
     var body: some View {
-        ZStack {
-            RoundedRectangle(cornerRadius: 35, style: .continuous)
-                .fill(Color(MailResourcesAsset.backgroundHeaderColor.color))
-            Text(attachment.name)
-                .truncationMode(.middle)
-                .padding([.top, .bottom], 8)
-                .padding([.leading, .trailing], 12)
-        }
-        .frame(maxWidth: 135)
-        .fixedSize()
+        Divider()
+            .background(Color(MailResourcesAsset.separatorColor.color))
+            .padding([.top, .bottom], 0)
+            .padding([.trailing, .leading], 8)
     }
 }
 
-struct AttachmentCell_Previews: PreviewProvider {
+struct MessageSeparatorView_Previews: PreviewProvider {
     static var previews: some View {
-        AttachmentCell(attachment: PreviewHelper.sampleAttachment)
+        MessageSeparatorView()
+            .previewLayout(.sizeThatFits)
+            .previewDevice("iPhone 13 Pro")
     }
 }
