@@ -65,7 +65,7 @@ struct NewMessageView: View {
                     self.presentationMode.wrappedValue.dismiss()
                 }) {
                     Image(systemName: "multiply")
-                        .tint(Color(MailResourcesAsset.primaryTextColor.color))
+                        .tint(MailResourcesAsset.primaryTextColor)
                 },
                 trailing:
                 Button(action: {
@@ -78,7 +78,7 @@ struct NewMessageView: View {
                 }) {
                     Image(uiImage: MailResourcesAsset.send.image)
                 }
-                .tint(Color(MailResourcesAsset.mailPinkColor.color)))
+                .tint(MailResourcesAsset.mailPinkColor))
         }
         .navigationViewStyle(.stack)
         .accentColor(.black)

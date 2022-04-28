@@ -42,7 +42,7 @@ struct ThreadListCell: View {
         HStack(alignment: .top, spacing: 10) {
             Circle()
                 .frame(width: Constants.unreadIconSize, height: Constants.unreadIconSize)
-                .foregroundColor(Color(hasUnreadMessages ?  MailResourcesAsset.mailPinkColor.color : .clear))
+                .foregroundColor(hasUnreadMessages ? Color(MailResourcesAsset.mailPinkColor.color) : .clear)
                 .padding(.top, threadListAppearance == .large ? 10.5 : 6)
 
             if threadListAppearance == .large {
@@ -92,7 +92,7 @@ struct ThreadListCell: View {
                         Image(uiImage: MailResourcesAsset.starFilled.image)
                     } else {
                         Image(uiImage: MailResourcesAsset.star.image)
-                            .foregroundColor(Color(hasUnreadMessages ? MailResourcesAsset.primaryTextColor.color : MailResourcesAsset.secondaryTextColor.color))
+                            .foregroundColor(hasUnreadMessages ? MailResourcesAsset.primaryTextColor : MailResourcesAsset.secondaryTextColor)
                     }
                 }
             }

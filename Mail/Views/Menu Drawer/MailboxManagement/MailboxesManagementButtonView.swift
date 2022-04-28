@@ -38,7 +38,7 @@ struct MailboxesManagementButtonView: View {
             if showBadge {
                 Circle()
                     .frame(width: Constants.unreadIconSize, height: Constants.unreadIconSize)
-                    .foregroundColor(Color(MailResourcesAsset.mailPinkColor.color))
+                    .foregroundColor(MailResourcesAsset.mailPinkColor)
             }
 
             Text(text)

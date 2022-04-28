@@ -43,7 +43,7 @@ struct AttachmentPreview: View {
                         .background(
                             RoundedRectangle(cornerRadius: 16)
                                 .frame(maxWidth: .infinity, maxHeight: .infinity)
-                                .foregroundColor(Color(MailResourcesAsset.backgroundColor.color))
+                                .foregroundColor(MailResourcesAsset.backgroundColor)
                         )
                 }.padding(.bottom, -10)
                     .transition(.move(edge: .bottom))

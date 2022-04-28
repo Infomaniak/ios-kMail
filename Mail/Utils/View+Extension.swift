@@ -16,6 +16,7 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import InfomaniakCore
 import MailResources
 import SwiftUI
 
@@ -45,6 +46,10 @@ extension View {
         } else {
             self
         }
+    }
+
+    func foregroundColor(_ color: InfomaniakCoreColor) -> some View {
+        return self.foregroundColor(Color(color.color))
     }
 
     func foregroundColor(_ color: MailResourcesColors) -> some View {
