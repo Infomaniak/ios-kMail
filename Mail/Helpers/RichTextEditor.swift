@@ -61,9 +61,6 @@ class Coordinator: SQTextEditorDelegate {
 
     init(_ parent: RichTextEditor) {
         self.parent = parent // tell the coordinator what its parent is, so it can modify values there directly
-    }
-
-    func editorDidLoad(_ editor: SQTextEditorView) {
         parent.model.richTextEditor.insertHTML(parent.body) { error in
             if let error = error {
                 print("Failed to load editor: \(error)")
@@ -73,11 +70,9 @@ class Coordinator: SQTextEditorDelegate {
 
     func editor(_ editor: SQTextEditorView, cursorPositionDidChange position: SQEditorCursorPosition) {
         editor.getHTML { [self] html in
-            if let html = html {
-                if parent.body != html {
+            if let html = html, parent.body != html {
                     parent.body = html
                     parent.textChange()
-                }
             }
         }
     }

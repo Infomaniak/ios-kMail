@@ -230,4 +230,14 @@ public class Draft: Object, Codable, Identifiable {
     private func recipientToValue(_ recipient: List<Recipient>?) -> String {
         return recipient?.map(\.email).joined(separator: ",") ?? ""
     }
+
+    /// Creates a copy of this draft.
+    public func copy() -> Draft {
+        let copyDraft = Draft(value: self)
+        copyDraft.to = to.map { Recipient(value: $0) }.toRealmList()
+        copyDraft.cc = cc.map { Recipient(value: $0) }.toRealmList()
+        copyDraft.bcc = bcc.map { Recipient(value: $0) }.toRealmList()
+        copyDraft.attachments = attachments.map { Attachment(value: $0) }.toRealmList()
+        return copyDraft
+    }
 }

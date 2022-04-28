@@ -32,7 +32,7 @@ struct NewMessageView: View {
 
     var queue = DispatchQueue(label: "")
     @State var debouncedBufferWrite: DispatchWorkItem?
-    let saveExpiration = 1.0
+    let saveExpiration = 3.0
 
     init(mailboxManager: MailboxManager, draft: Draft? = nil) {
         self.mailboxManager = mailboxManager
@@ -74,9 +74,12 @@ struct NewMessageView: View {
                 trailing:
                 Button(action: {
                     Task {
-                        await send()
-                        DispatchQueue.main.async {
-                            self.presentationMode.wrappedValue.dismiss()
+                        if await send() {
+                            DispatchQueue.main.async {
+                                self.presentationMode.wrappedValue.dismiss()
+                            }
+                        } else {
+                            // Hanlde message not send - show alert
                         }
                     }
                 }) {
@@ -88,15 +91,12 @@ struct NewMessageView: View {
         .accentColor(.black)
     }
 
-    @MainActor private func send() async {
-        await saveDraft()
-
-        draft.action = .send
-
+    @MainActor private func send() async -> Bool {
         do {
-            try await mailboxManager.send(draft: draft)
+            return try await mailboxManager.send(draft: draft)
         } catch {
             print("Error while sending email: \(error.localizedDescription)")
+            return false
         }
     }
 
@@ -105,11 +105,9 @@ struct NewMessageView: View {
             Task {
                 self.draft.body = html!
 
-                draft.action = .save
-
                 do {
                     let saveResponse = try await mailboxManager.save(draft: draft)
-                    draft.uuid = saveResponse.uuid
+                    print("Draft saved!")
                 } catch {
                     print("Error while saving draft: \(error.localizedDescription)")
                 }

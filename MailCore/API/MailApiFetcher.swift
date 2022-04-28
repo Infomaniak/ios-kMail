@@ -100,7 +100,7 @@ public class MailApiFetcher: ApiFetcher {
     }
 
     func send(mailbox: Mailbox, draft: Draft) async throws -> Bool {
-        try await perform(request: authenticatedRequest(
+        return try await perform(request: authenticatedRequest(
             draft.uuid.isEmpty ? .draft(uuid: mailbox.uuid) : .draft(uuid: mailbox.uuid, draftUuid: draft.uuid),
             method: draft.uuid.isEmpty ? .post : .put,
             parameters: draft
