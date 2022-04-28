@@ -40,14 +40,16 @@ enum RecipientCellType {
 }
 
 struct RecipientCellView: View {
-    @State var from: String = ""
+    @State var text = ""
     @State var draft: Draft
     @Binding var showCcButton: Bool
 
     let type: RecipientCellType
 
+    var textChange: () -> Void
+
     var body: some View {
-        VStack {
+        VStack(alignment: .leading) {
             HStack {
                 Text(type.title)
                     .font(MailTextStyle.secondary.font)
@@ -55,17 +57,19 @@ struct RecipientCellView: View {
 
                 switch type {
                 case .from:
-                    TextField("", text: $from)
-                        .textContentType(.emailAddress)
-                        .keyboardType(.emailAddress)
-                        .autocapitalization(.none)
+                    Text(text)
                 case .to:
                     HStack {
-                        TextField("", text: $draft.toValue)
+                        TextField("", text: $text)
                             .textContentType(.emailAddress)
                             .keyboardType(.emailAddress)
                             .autocapitalization(.none)
                             .multilineTextAlignment(.leading)
+                            .onChange(of: text) { _ in
+                                draft.toValue = text
+                                textChange()
+                            }
+
                         Button(action: {
                             showCcButton.toggle()
                         }) {
@@ -77,17 +81,29 @@ struct RecipientCellView: View {
                         }
                     }
                 case .cc:
-                    TextField("", text: $draft.ccValue)
+                    TextField("", text: $text)
                         .textContentType(.emailAddress)
                         .keyboardType(.emailAddress)
                         .autocapitalization(.none)
+                        .onChange(of: text) { _ in
+                            draft.ccValue = text
+                            textChange()
+                        }
                 case .bcc:
-                    TextField("", text: $draft.bccValue)
+                    TextField("", text: $text)
                         .textContentType(.emailAddress)
                         .keyboardType(.emailAddress)
                         .autocapitalization(.none)
+                        .onChange(of: text) { _ in
+                            draft.bccValue = text
+                            textChange()
+                        }
                 case .object:
-                    TextField("", text: $draft.subjectValue)
+                    TextField("", text: $text)
+                        .onChange(of: text) { _ in
+                            draft.subjectValue = text
+                            textChange()
+                        }
                 }
             }
             .font(MailTextStyle.primary.font)
@@ -95,12 +111,13 @@ struct RecipientCellView: View {
 
             SeparatorView(withPadding: false, fullWidth: true)
         }
+
     }
 }
 
 struct RecipientCellView_Previews: PreviewProvider {
     static var previews: some View {
-        RecipientCellView(draft: Draft(), showCcButton: .constant(false), type: RecipientCellType.from)
+        RecipientCellView(draft: Draft(), showCcButton: .constant(false), type: RecipientCellType.from) { print("Test") }
             .previewLayout(.sizeThatFits)
     }
 }

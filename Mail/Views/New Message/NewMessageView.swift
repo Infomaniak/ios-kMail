@@ -30,6 +30,10 @@ struct NewMessageView: View {
 
     @Environment(\.presentationMode) var presentationMode
 
+    var queue = DispatchQueue(label: "")
+    @State var debouncedBufferWrite: DispatchWorkItem?
+    let saveExpiration = 1.0
+
     init(mailboxManager: MailboxManager, draft: Draft? = nil) {
         self.mailboxManager = mailboxManager
         guard let signatureResponse = mailboxManager.getSignatureResponse() else { fatalError() }
@@ -40,22 +44,22 @@ struct NewMessageView: View {
         NavigationView {
             VStack {
                 RecipientCellView(
-                    from: mailboxManager.mailbox.email,
+                    text: mailboxManager.mailbox.email,
                     draft: draft,
                     showCcButton: $showCc,
                     type: RecipientCellType.from
-                )
+                ) { textDidChange() }
 
-                RecipientCellView(draft: draft, showCcButton: $showCc, type: RecipientCellType.to)
+                RecipientCellView(draft: draft, showCcButton: $showCc, type: RecipientCellType.to) { textDidChange() }
 
                 if showCc {
-                    RecipientCellView(draft: draft, showCcButton: $showCc, type: RecipientCellType.cc)
-                    RecipientCellView(draft: draft, showCcButton: $showCc, type: RecipientCellType.bcc)
+                    RecipientCellView(draft: draft, showCcButton: $showCc, type: RecipientCellType.cc) { textDidChange() }
+                    RecipientCellView(draft: draft, showCcButton: $showCc, type: RecipientCellType.bcc) { textDidChange() }
                 }
 
-                RecipientCellView(draft: draft, showCcButton: $showCc, type: RecipientCellType.object)
+                RecipientCellView(draft: draft, showCcButton: $showCc, type: RecipientCellType.object) { textDidChange() }
 
-                RichTextEditor(model: $editor, body: $draftBody)
+                RichTextEditor(model: $editor, body: $draftBody) { textDidChange() }
             }
             .padding()
             .navigationBarTitleDisplayMode(.inline)
@@ -111,6 +115,17 @@ struct NewMessageView: View {
                 }
             }
         }
+    }
+
+    func textDidChange() {
+        debouncedBufferWrite?.cancel()
+        let debouncedWorkItem = DispatchWorkItem {
+            Task {
+                await saveDraft()
+            }
+        }
+        queue.asyncAfter(deadline: .now() + saveExpiration, execute: debouncedWorkItem)
+        debouncedBufferWrite = debouncedWorkItem
     }
 }
 
