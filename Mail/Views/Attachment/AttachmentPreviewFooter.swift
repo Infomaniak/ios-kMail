@@ -69,7 +69,8 @@ struct AttachmentPreviewFooter: View {
             .padding(.top, 22)
         }
         .background(Color(MailResourcesAsset.backgroundColor.color))
-        .padding(EdgeInsets(top: 12, leading: 32, bottom: 32, trailing: 32))
+        .padding(.top, 12)
+        .padding([.bottom, .leading, .trailing], 32)
         .sheet(isPresented: $isSharePresented) {
             if let itemUrl = attachment.localUrl {
                 ActivityViewController(activityItems: [itemUrl])

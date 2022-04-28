@@ -47,7 +47,7 @@ struct AttachmentPreview: View {
                                     .foregroundColor(.black)
                                     .frame(width: 16, height: 16)
                             )
-                            .padding(EdgeInsets(top: 16, leading: 16, bottom: 0, trailing: 16))
+                            .padding([.top, .leading, .trailing], 16)
                     }
                     .transition(.move(edge: .top))
                 }
@@ -66,7 +66,7 @@ struct AttachmentPreview: View {
                                 : "arrow.up.left.and.arrow.down.right")
                                 .frame(width: 16, height: 16)
                         )
-                        .padding(EdgeInsets(top: 16, leading: 16, bottom: 0, trailing: 16))
+                        .padding([.top, .leading, .trailing], 16)
                 }
             }
             if !isFullScreen {

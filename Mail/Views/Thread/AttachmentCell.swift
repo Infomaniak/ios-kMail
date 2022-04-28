@@ -29,7 +29,8 @@ struct AttachmentCell: View {
                 .fill(Color(MailResourcesAsset.backgroundHeaderColor.color))
             Text(attachment.name)
                 .truncationMode(.middle)
-                .padding(EdgeInsets(top: 8, leading: 12, bottom: 8, trailing: 12))
+                .padding([.top, .bottom], 8)
+                .padding([.leading, .trailing], 12)
         }
         .frame(maxWidth: 135)
         .fixedSize()
