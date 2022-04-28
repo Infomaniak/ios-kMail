@@ -51,7 +51,7 @@ struct ThreadListCell: View {
             }
 
             VStack(alignment: .leading, spacing: 2) {
-                HStack(spacing: 3) {
+                HStack(spacing: 15) {
                     Text(thread.formattedFrom)
                         .foregroundColor(MailTextStyle.header.color)
                         .font(MailTextStyle.header.font)
@@ -62,6 +62,7 @@ struct ThreadListCell: View {
 
                     if thread.hasAttachments {
                         Image(uiImage: MailResourcesAsset.attachment.image)
+                            .foregroundColor(textStyle.color)
                     }
 
                     Text(thread.formattedDate)

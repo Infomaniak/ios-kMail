@@ -26,7 +26,7 @@ struct ThreadListView: View, FolderListViewDelegate {
     @State private var presentMenuDrawer = false
     @State private var presentNewMessageEditor = false
 
-    @State private var avatarImage = MailResourcesAsset.placeholderAvatar.image
+    @State private var avatarImage = Image(uiImage: MailResourcesAsset.placeholderAvatar.image)
     @State private var selectedThread: Thread?
 
     let isCompact: Bool
@@ -41,6 +41,7 @@ struct ThreadListView: View, FolderListViewDelegate {
     var body: some View {
         ZStack(alignment: .bottomTrailing) {
             List(viewModel.threads) { thread in
+                // Useful to hide the NavigationLiok accessoryType
                 ZStack {
                     NavigationLink(destination: {
                         ThreadView(mailboxManager: viewModel.mailboxManager, thread: thread)
@@ -54,25 +55,25 @@ struct ThreadListView: View, FolderListViewDelegate {
                 .listRowBackground(Color(selectedThread == thread ? MailResourcesAsset.backgroundHeaderColor.color : MailResourcesAsset.backgroundColor.color))
                 .modifier(ThreadListSwipeAction())
             }
-            .listStyle(PlainListStyle())
+            .listStyle(.plain)
 
             NewMessageButtonView(presentNewMessageEditor: $presentNewMessageEditor)
                 .padding(.trailing, 30)
                 .padding(.bottom, 25)
         }
-        .modifier(ThreadListNavigationBar(isCompact: isCompact, folder: $viewModel.folder, presentMenuDrawer: $presentMenuDrawer, avatarImage: $avatarImage))
+        .modifier(ThreadListNavigationBar(isCompact: isCompact, folder: $viewModel.folder, avatarImage: $avatarImage, presentMenuDrawer: $presentMenuDrawer))
         .sheet(isPresented: $presentMenuDrawer) {
             MenuDrawerView(mailboxManager: viewModel.mailboxManager, selectedFolderId: viewModel.folder?.id, isCompact: isCompact, delegate: self)
         }
         .sheet(isPresented: $presentNewMessageEditor) {
             NewMessageView(mailboxManager: viewModel.mailboxManager)
         }
-        .task {
-            await viewModel.fetchThreads()
-            AccountManager.instance.currentAccount.user.getAvatar { image in
-                avatarImage = image
-            }
+        .onAppear {
             selectedThread = nil
+        }
+        .task {
+            avatarImage = await AccountManager.instance.currentAccount.user.getAvatar()
+            await viewModel.fetchThreads()
         }
         .refreshable {
             await viewModel.fetchThreads()
@@ -89,8 +90,8 @@ private struct ThreadListNavigationBar: ViewModifier {
 
     @Binding var folder: Folder?
 
+    @Binding var avatarImage: Image
     @Binding var presentMenuDrawer: Bool
-    @Binding var avatarImage: UIImage
 
     func body(content: Content) -> some View {
         content
@@ -100,7 +101,7 @@ private struct ThreadListNavigationBar: ViewModifier {
                     Button {
                         // TODO: Display accounts list
                     } label: {
-                        Image(uiImage: avatarImage)
+                        avatarImage
                             .resizable()
                             .scaledToFit()
                             .frame(width: 30, height: 30)
