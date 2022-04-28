@@ -206,7 +206,7 @@ public class MailboxManager: ObservableObject {
     }
 
     public func attachmentData(attachment: Attachment) async throws -> Data {
-        let data = try await apiFetcher.attachment(mailbox: mailbox, attachment: attachment)
+        let data = try await apiFetcher.attachment(attachment: attachment)
 
         if let liveAttachment = attachment.thaw() {
             let realm = getRealm()

@@ -76,7 +76,7 @@ public class MailApiFetcher: ApiFetcher {
                                                                   ]))).data
     }
 
-    func attachment(mailbox: Mailbox, attachment: Attachment) async throws -> Data {
+    func attachment(attachment: Attachment) async throws -> Data {
         guard let resource = attachment.resource else {
             throw MailError.resourceError
         }

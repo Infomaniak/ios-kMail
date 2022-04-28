@@ -25,7 +25,7 @@ import UniformTypeIdentifiers
 
 public class Attachment: /* Hashable, */ EmbeddedObject, Codable, Identifiable {
     @Persisted public var uuid: String?
-    @Persisted public var partId: String // PROLEM: Sometimes API return a String, sometimes an Int. Check with backend if we can have one type only? -- Asked to Julien A. on 08.09 - To follow up.
+    @Persisted public var partId: String // PROBLEM: Sometimes API return a String, sometimes an Int. Check with backend if we can have one type only? -- Asked to Julien A. on 08.09 - To follow up.
     @Persisted public var mimeType: String
     @Persisted public var encoding: String?
     @Persisted public var size: Int
