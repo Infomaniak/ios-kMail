@@ -20,11 +20,11 @@ import MailResources
 import SwiftUI
 
 struct NewMessageButtonView: View {
-    @Binding var presentNewMessageEditor: Bool
+    @ObservedObject var sheet: ThreadListSheet
 
     var body: some View {
         Button {
-            presentNewMessageEditor.toggle()
+            sheet.state = .newMessage
         } label: {
             Text(MailResourcesStrings.newMessageButton)
             Image(uiImage: MailResourcesAsset.pencil.image)
@@ -38,6 +38,6 @@ struct NewMessageButtonView: View {
 
 struct NewMessageButtonView_Previews: PreviewProvider {
     static var previews: some View {
-        NewMessageButtonView(presentNewMessageEditor: .constant(false))
+        NewMessageButtonView(sheet: ThreadListSheet())
     }
 }

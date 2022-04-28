@@ -20,8 +20,16 @@ import MailCore
 import MailResources
 import SwiftUI
 
+class ThreadListSheet: SheetState<ThreadListSheet.State> {
+    enum State: Equatable {
+        case menuDrawer
+        case newMessage
+    }
+}
+
 struct ThreadListView: View, FolderListViewDelegate {
     @ObservedObject var viewModel: ThreadListViewModel
+    @ObservedObject var sheet = ThreadListSheet()
 
     @State private var presentMenuDrawer = false
     @State private var presentNewMessageEditor = false
@@ -57,16 +65,20 @@ struct ThreadListView: View, FolderListViewDelegate {
             }
             .listStyle(.plain)
 
-            NewMessageButtonView(presentNewMessageEditor: $presentNewMessageEditor)
+            NewMessageButtonView(sheet: sheet)
                 .padding(.trailing, 30)
                 .padding(.bottom, 25)
         }
-        .modifier(ThreadListNavigationBar(isCompact: isCompact, folder: $viewModel.folder, avatarImage: $avatarImage, presentMenuDrawer: $presentMenuDrawer))
-        .sheet(isPresented: $presentMenuDrawer) {
-            MenuDrawerView(mailboxManager: viewModel.mailboxManager, selectedFolderId: viewModel.folder?.id, isCompact: isCompact, delegate: self)
-        }
-        .sheet(isPresented: $presentNewMessageEditor) {
-            NewMessageView(mailboxManager: viewModel.mailboxManager)
+        .modifier(ThreadListNavigationBar(isCompact: isCompact, sheet: sheet, folder: $viewModel.folder, avatarImage: $avatarImage))
+        .sheet(isPresented: $sheet.isShowing) {
+            switch sheet.state {
+            case .menuDrawer:
+                MenuDrawerView(mailboxManager: viewModel.mailboxManager, selectedFolderId: viewModel.folder?.id, isCompact: isCompact, delegate: self)
+            case .newMessage:
+                NewMessageView(mailboxManager: viewModel.mailboxManager)
+            case .none:
+                EmptyView()
+            }
         }
         .onAppear {
             selectedThread = nil
@@ -88,10 +100,10 @@ struct ThreadListView: View, FolderListViewDelegate {
 private struct ThreadListNavigationBar: ViewModifier {
     var isCompact: Bool
 
-    @Binding var folder: Folder?
+    @ObservedObject var sheet: ThreadListSheet
 
+    @Binding var folder: Folder?
     @Binding var avatarImage: Image
-    @Binding var presentMenuDrawer: Bool
 
     func body(content: Content) -> some View {
         content
@@ -114,7 +126,7 @@ private struct ThreadListNavigationBar: ViewModifier {
                 view.toolbar {
                     ToolbarItem(placement: .navigationBarLeading) {
                         Button {
-                            presentMenuDrawer.toggle()
+                            sheet.state = .menuDrawer
                         } label: {
                             Image(uiImage: MailResourcesAsset.burger.image)
                         }

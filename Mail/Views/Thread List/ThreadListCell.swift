@@ -22,6 +22,14 @@ import SwiftUI
 
 enum ThreadListAppearance: Int {
     case normal, compact, large
+
+    var cellVerticalPadding: CGFloat {
+        self == .compact ? 3 : 5
+    }
+
+    var unreadCircleTopPadding: CGFloat {
+        self == .large ? 10.5 : 6
+    }
 }
 
 struct ThreadListCell: View {
@@ -43,7 +51,7 @@ struct ThreadListCell: View {
             Circle()
                 .frame(width: Constants.unreadIconSize, height: Constants.unreadIconSize)
                 .foregroundColor(hasUnreadMessages ? Color(MailResourcesAsset.mailPinkColor.color) : .clear)
-                .padding(.top, threadListAppearance == .large ? 10.5 : 6)
+                .padding(.top, threadListAppearance.unreadCircleTopPadding)
 
             if threadListAppearance == .large {
                 RecipientImage(recipient: thread.from.last, size: 32)
@@ -97,7 +105,7 @@ struct ThreadListCell: View {
                 }
             }
         }
-        .padding([.top, .bottom], threadListAppearance == .compact ? 3 : 5)
+        .padding([.top, .bottom], threadListAppearance.cellVerticalPadding)
     }
 }
 
