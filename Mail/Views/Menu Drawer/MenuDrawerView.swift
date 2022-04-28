@@ -56,24 +56,24 @@ struct MenuDrawerView: View {
             VStack(alignment: .leading) {
                 MailboxesManagementView()
 
-                MenuDrawerSeparatorView()
+                SeparatorView()
 
                 RoleFoldersListView(folders: $folders, selectedFolderId: $selectedFolderId, isCompact: isCompact, delegate: delegate)
 
-                MenuDrawerSeparatorView()
+                SeparatorView()
 
                 UserFoldersListView(folders: $folders, selectedFolderId: $selectedFolderId, isCompact: isCompact, delegate: delegate)
 
-                MenuDrawerSeparatorView()
+                SeparatorView()
 
                 MenuDrawerItemsListView(content: helpMenuItems)
 
-                MenuDrawerSeparatorView()
+                SeparatorView()
 
                 MenuDrawerItemsListView(title: MailResourcesStrings.menuDrawerAdvancedActions, content: actionsMenuItems)
 
                 if mailboxManager.mailbox.isLimited {
-                    MenuDrawerSeparatorView()
+                    SeparatorView()
                     MailboxQuotaView()
                 }
             }

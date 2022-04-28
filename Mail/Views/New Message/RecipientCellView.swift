@@ -93,7 +93,7 @@ struct RecipientCellView: View {
             .font(MailTextStyle.primary.font)
             .foregroundColor(MailTextStyle.primary.color)
 
-            MenuDrawerSeparatorView(withPadding: false, fullWidth: true)
+            SeparatorView(withPadding: false, fullWidth: true)
         }
     }
 }
