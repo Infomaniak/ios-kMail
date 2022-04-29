@@ -54,6 +54,14 @@ public class MailApiFetcher: ApiFetcher {
         try await perform(request: authenticatedRequest(.mailboxes)).data
     }
 
+    func contacts() async throws -> [Contact] {
+        try await perform(request: authenticatedRequest(.contacts)).data
+    }
+
+    func addressBooks() async throws -> AddressBookResult {
+        try await perform(request: authenticatedRequest(.addressBooks)).data
+    }
+
     func signatures(mailbox: Mailbox) async throws -> SignatureResponse {
         try await perform(request: authenticatedRequest(.signatures(hostingId: mailbox.hostingId, mailboxName: mailbox.mailbox)))
             .data

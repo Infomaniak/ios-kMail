@@ -63,6 +63,17 @@ public extension Endpoint {
         return .base.appending(path: "/mail/\(uuid)")
     }
 
+    static var addressBooks: Endpoint {
+        return Endpoint(path: "/api/pim/addressbook", queryItems: nil)
+    }
+
+    static var contacts: Endpoint {
+        return Endpoint(
+            path: "/api/pim/contact/all",
+            queryItems: [URLQueryItem(name: "with", value: "emails,details,others,contacted_times")]
+        )
+    }
+
     static func signatures(hostingId: Int, mailboxName: String) -> Endpoint {
         return .baseManager.appending(path: "/\(hostingId)/mailboxes/\(mailboxName)/signatures")
     }
