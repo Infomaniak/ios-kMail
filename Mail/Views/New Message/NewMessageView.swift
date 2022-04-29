@@ -66,6 +66,10 @@ struct NewMessageView: View {
             .navigationBarBackButtonHidden(true)
             .navigationBarItems(leading:
                 Button(action: {
+                    debouncedBufferWrite?.cancel()
+                    Task {
+                        await saveDraft()
+                    }
                     self.presentationMode.wrappedValue.dismiss()
                 }) {
                     Image(systemName: "multiply")
