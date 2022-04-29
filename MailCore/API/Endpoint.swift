@@ -64,12 +64,12 @@ public extension Endpoint {
     }
 
     static var addressBooks: Endpoint {
-        return Endpoint(path: "/api/pim/addressbook", queryItems: nil)
+        return .base.appending(path: "/pim/addressbook")
     }
 
     static var contacts: Endpoint {
-        return Endpoint(
-            path: "/api/pim/contact/all",
+        return .base.appending(
+            path: "/pim/contact/all",
             queryItems: [URLQueryItem(name: "with", value: "emails,details,others,contacted_times")]
         )
     }
