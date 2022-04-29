@@ -20,7 +20,6 @@ import MailCore
 import SQRichTextEditor
 import SwiftUI
 import WebKit
-import MailCore
 
 struct RichTextEditor: UIViewRepresentable {
     typealias UIViewType = UIView
@@ -71,8 +70,8 @@ class Coordinator: SQTextEditorDelegate {
     func editor(_ editor: SQTextEditorView, cursorPositionDidChange position: SQEditorCursorPosition) {
         editor.getHTML { [self] html in
             if let html = html, parent.body != html {
-                    parent.body = html
-                    parent.textChange()
+                parent.body = html
+                parent.textChange()
             }
         }
     }

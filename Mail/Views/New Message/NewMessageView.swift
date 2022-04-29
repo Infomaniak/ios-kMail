@@ -47,17 +47,17 @@ struct NewMessageView: View {
                     text: mailboxManager.mailbox.email,
                     draft: draft,
                     showCcButton: $showCc,
-                    type: RecipientCellType.from
+                    type: .from
                 ) { textDidChange() }
 
-                RecipientCellView(draft: draft, showCcButton: $showCc, type: RecipientCellType.to) { textDidChange() }
+                RecipientCellView(draft: draft, showCcButton: $showCc, type: .to) { textDidChange() }
 
                 if showCc {
-                    RecipientCellView(draft: draft, showCcButton: $showCc, type: RecipientCellType.cc) { textDidChange() }
-                    RecipientCellView(draft: draft, showCcButton: $showCc, type: RecipientCellType.bcc) { textDidChange() }
+                    RecipientCellView(draft: draft, showCcButton: $showCc, type: .cc) { textDidChange() }
+                    RecipientCellView(draft: draft, showCcButton: $showCc, type: .bcc) { textDidChange() }
                 }
 
-                RecipientCellView(draft: draft, showCcButton: $showCc, type: RecipientCellType.object) { textDidChange() }
+                RecipientCellView(draft: draft, showCcButton: $showCc, type: .object) { textDidChange() }
 
                 RichTextEditor(model: $editor, body: $draftBody) { textDidChange() }
             }
@@ -75,11 +75,9 @@ struct NewMessageView: View {
                 Button(action: {
                     Task {
                         if await send() {
-                            DispatchQueue.main.async {
-                                self.presentationMode.wrappedValue.dismiss()
-                            }
+                            self.presentationMode.wrappedValue.dismiss()
                         } else {
-                            // Hanlde message not send - show alert
+                            // Handle message not sent - show alert
                         }
                     }
                 }) {

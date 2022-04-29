@@ -111,7 +111,6 @@ struct RecipientCellView: View {
 
             SeparatorView(withPadding: false, fullWidth: true)
         }
-
     }
 }
 
