@@ -30,7 +30,7 @@ struct NewMessageView: View {
 
     @Environment(\.presentationMode) var presentationMode
 
-    var queue = DispatchQueue(label: "")
+    static var queue = DispatchQueue(label: "com.infomaniak.mail.saveDraft")
     @State var debouncedBufferWrite: DispatchWorkItem?
     let saveExpiration = 3.0
 
@@ -121,7 +121,7 @@ struct NewMessageView: View {
                 await saveDraft()
             }
         }
-        queue.asyncAfter(deadline: .now() + saveExpiration, execute: debouncedWorkItem)
+        NewMessageView.queue.asyncAfter(deadline: .now() + saveExpiration, execute: debouncedWorkItem)
         debouncedBufferWrite = debouncedWorkItem
     }
 }
