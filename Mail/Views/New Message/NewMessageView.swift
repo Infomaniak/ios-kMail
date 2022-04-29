@@ -106,8 +106,7 @@ struct NewMessageView: View {
                 self.draft.body = html!
 
                 do {
-                    let saveResponse = try await mailboxManager.save(draft: draft)
-                    print("Draft saved!")
+                    _ = try await mailboxManager.save(draft: draft)
                 } catch {
                     print("Error while saving draft: \(error.localizedDescription)")
                 }

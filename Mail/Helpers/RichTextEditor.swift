@@ -35,7 +35,7 @@ struct RichTextEditor: UIViewRepresentable {
     }
 
     func makeCoordinator() -> Coordinator {
-        Coordinator(self)
+        return Coordinator(self)
     }
 
     func makeUIView(context: Context) -> UIView {
