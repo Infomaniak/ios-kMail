@@ -23,7 +23,7 @@ public class Contact: Object, Codable, Identifiable {
     @Persisted(primaryKey: true) public var id: String
     @Persisted public var color: String
 //    @Persisted public var contactedTimes: [String: Int]
-//    @Persisted public var emails: [String]
+    @Persisted public var emails: List<String>
     @Persisted public var firstname: String
     @Persisted public var lastname: String
     @Persisted public var name: String
@@ -46,7 +46,7 @@ public class Contact: Object, Codable, Identifiable {
         case id
         case color
 //        case contactedTimes
-//        case emails
+        case emails
         case firstname
         case lastname
         case name

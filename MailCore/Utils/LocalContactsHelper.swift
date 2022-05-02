@@ -33,6 +33,8 @@ class LocalContactsHelper {
             }
         }
     }
+    
+    static let shared = LocalContactsHelper()
 
     let store = CNContactStore()
     let keysToFetch = ([CNContactIdentifierKey, CNContactEmailAddressesKey, CNContactImageDataKey, CNContactNicknameKey, CNContactOrganizationNameKey] as [CNKeyDescriptor]) + [CNContactFormatter.descriptorForRequiredKeys(for: .fullName)]

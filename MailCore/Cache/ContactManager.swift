@@ -61,7 +61,8 @@ public class ContactManager: ObservableObject {
             deleteRealmIfMigrationNeeded: true,
             objectTypes: [
                 Contact.self,
-                AddressBook.self
+                AddressBook.self,
+                MergedContact.self
             ]
         )
     }
@@ -88,7 +89,37 @@ public class ContactManager: ObservableObject {
             realm.add(contacts, update: .modified)
         }
 
-//            mergeContacts()
+        mergeContacts()
+    }
+
+    public func mergeContacts() {
+        var mergeableContacts = [String: (local: CNContact?, remote: Contact?)]()
+
+        // Add local contacts
+        localContactsHelper.enumerateContacts { localContact, _ in
+            for email in localContact.emailAddresses {
+                let email = email.value as String
+                mergeableContacts[email] = (local: localContact, remote: mergeableContacts[email]?.remote)
+            }
+        }
+
+        // Add remote contacts
+        let realm = getRealm()
+        let contacts = realm.objects(Contact.self)
+        for remoteContact in contacts {
+            for email in remoteContact.emails {
+                mergeableContacts[email] = (local: mergeableContacts[email]?.local, remote: remoteContact)
+            }
+        }
+
+        // Merge
+        let mergedContacts = mergeableContacts.map { key, value in
+            MergedContact(email: key, localId: value.local?.identifier, remote: value.remote)
+        }
+
+        try? realm.safeWrite {
+            realm.add(mergedContacts, update: .modified)
+        }
     }
 
     public func getRemoteContact(with identifier: String) -> Contact? {
