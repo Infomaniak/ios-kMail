@@ -44,6 +44,9 @@ struct ThreadListView: View, FolderListViewDelegate {
         self.isCompact = isCompact
 
         UITableViewCell.appearance().focusEffect = .none
+
+        let navigationBarAppearance = UINavigationBar.appearance()
+        navigationBarAppearance.barTintColor = .red
     }
 
     var body: some View {
