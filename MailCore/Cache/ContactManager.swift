@@ -17,6 +17,7 @@
  */
 
 import CocoaLumberjackSwift
+import Contacts
 import Foundation
 import InfomaniakCore
 import RealmSwift
@@ -74,14 +75,12 @@ public class ContactManager: ObservableObject {
         }
     }
 
-//    public var contacts = [Contact]()
-//    public var addressBooks = [AddressBook]()
+    private let localContactsHelper = LocalContactsHelper()
 
     public func fetchContactsAndAddressBooks() async throws {
         let addressBooks = try await apiFetcher.addressBooks().addressbooks
         let contacts = try await apiFetcher.contacts()
 
-        // TODO: Add in realm ?
         let realm = getRealm()
 
         try? realm.safeWrite {
@@ -92,14 +91,22 @@ public class ContactManager: ObservableObject {
 //            mergeContacts()
     }
 
+    public func getRemoteContact(with identifier: String) -> Contact? {
+        let realm = getRealm()
+        return realm.object(ofType: Contact.self, forPrimaryKey: identifier)
+    }
+
+    public func getLocalContact(with identifier: String) async -> CNContact? {
+        return try? await localContactsHelper.getContact(with: identifier)
+    }
+
+    public func addressBook(with id: Int) -> AddressBook? {
+        let realm = getRealm()
+        return realm.object(ofType: AddressBook.self, forPrimaryKey: id)
+    }
+
 //    public func getRemoteContact(with identifier: String) -> Contact? {
 //        return contacts.first { $0.id == identifier }
 //    }
 //
-//    public func addressBook(with id: Int) -> AddressBook? {
-//        let realm = getRealm()
-//
-//        guard let addressBook = realm.object(ofType: AddressBook.self, forPrimaryKey: id) else { return }
-//        return addressBook
-//    }
 }
