@@ -19,6 +19,7 @@
 import ProjectDescription
 
 let deploymentTarget = DeploymentTarget.iOS(targetVersion: "15.0", devices: [.iphone, .ipad])
+let baseSettings = SettingsDictionary().automaticCodeSigning(devTeam: "864VDCS2QY")
 
 let project = Project(name: "Mail",
                       packages: [
@@ -55,7 +56,9 @@ let project = Project(name: "Mail",
                                      .package(product: "Atlantis"),
                                      .package(product: "Introspect"),
                                      .package(product: "SQRichTextEditor")
-                                 ]),
+                                 ],
+                                 settings: .settings(base: baseSettings)
+                          ),
                           Target(name: "MailTests",
                                  platform: .iOS,
                                  product: .unitTests,
@@ -64,7 +67,8 @@ let project = Project(name: "Mail",
                                  sources: "MailTests/**",
                                  dependencies: [
                                      .target(name: "Mail")
-                                 ]),
+                                 ]
+                          ),
                           Target(
                               name: "MailUITests",
                               platform: .iOS,
