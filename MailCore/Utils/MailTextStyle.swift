@@ -81,4 +81,8 @@ public struct MailTextStyle {
         font: .system(size: 16, weight: .regular),
         color: MailResourcesAsset.secondaryTextColor
     )
+    public static let hint = MailTextStyle(
+        font: .system(size: 14, weight: .regular),
+        color: MailResourcesAsset.hintTextColor
+    )
 }

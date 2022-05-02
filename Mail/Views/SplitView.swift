@@ -21,6 +21,8 @@ import MailCore
 import RealmSwift
 import SwiftUI
 
+import MailResources
+
 struct SplitView: View {
     var mailboxManager = AccountManager.instance.currentMailboxManager!
     var selectedFolder: Folder?
@@ -33,13 +35,13 @@ struct SplitView: View {
 
     init() {
         selectedFolder = mailboxManager.getRealm().objects(Folder.self).filter("role = 'INBOX'").first
+        updateNavigationBarAppearance()
     }
 
     var body: some View {
         NavigationView {
             if isCompact {
                 ThreadListView(mailboxManager: mailboxManager, folder: selectedFolder, isCompact: isCompact)
-                    .cornerRadius(30)
             } else {
                 MenuDrawerView(mailboxManager: mailboxManager, selectedFolderId: selectedFolder?.id, isCompact: isCompact)
                     .navigationBarHidden(true)
@@ -49,6 +51,7 @@ struct SplitView: View {
                 EmptyThreadView()
             }
         }
+        .accentColor(Color(MailResourcesAsset.primaryTextColor.color))
         .task {
             do {
                 try await mailboxManager.signatures()
@@ -78,5 +81,19 @@ struct SplitView: View {
         } else {
             splitViewController?.preferredSplitBehavior = .automatic
         }
+    }
+
+    func updateNavigationBarAppearance() {
+        let navigationBarAppearance = UINavigationBarAppearance()
+        navigationBarAppearance.configureWithTransparentBackground()
+        navigationBarAppearance.backgroundColor = MailResourcesAsset.backgroundHeaderColor.color
+        navigationBarAppearance.largeTitleTextAttributes = [
+            .foregroundColor: MailResourcesAsset.primaryTextColor.color,
+            .font: UIFont.systemFont(ofSize: 22, weight: .semibold)
+        ]
+
+        UINavigationBar.appearance().standardAppearance = navigationBarAppearance
+        UINavigationBar.appearance().compactAppearance = navigationBarAppearance
+        UINavigationBar.appearance().scrollEdgeAppearance = navigationBarAppearance
     }
 }
