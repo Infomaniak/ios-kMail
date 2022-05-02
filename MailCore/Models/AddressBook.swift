@@ -24,9 +24,10 @@ public struct AddressBookResult: Codable {
     var `default`: AddressBook?
 }
 
-public class AddressBook: Object, Codable {
-    @Persisted(primaryKey: true) public var id: Int
-    @Persisted public var uuid: String
+public class AddressBook: Object, Codable, Identifiable
+{
+    @Persisted public var id: Int
+    @Persisted(primaryKey: true) public var uuid: String
     // public var categories: [Category]
     @Persisted public var color: String
     @Persisted public var name: String
