@@ -244,13 +244,46 @@ public class MailboxManager: ObservableObject {
         return draft
     }
 
-    public func send(draft: Draft) async throws {
-        _ = try await apiFetcher.send(mailbox: mailbox, draft: draft)
+    public func send(draft: Draft) async throws -> Bool {
+        // If the draft has no UUID, we save it first
+        if draft.uuid.isEmpty {
+            _ = try await save(draft: draft)
+        }
+
+        draft.action = .send
+        let sendResponse = try await apiFetcher.send(mailbox: mailbox, draft: draft)
+        if sendResponse {
+            // Once the draft has been sent, we can delete it from Realm
+            delete(draft: draft)
+        }
+
+        return sendResponse
     }
 
     public func save(draft: Draft) async throws -> DraftResponse {
+        draft.action = .save
         let saveResponse = try await apiFetcher.save(mailbox: mailbox, draft: draft)
+
+        let realm = getRealm()
+        draft.uuid = saveResponse.uuid
+        let copyDraft: Draft = draft.copy()
+
+        // Update draft in Realm
+        try? realm.safeWrite {
+            realm.add(copyDraft, update: .modified)
+        }
         return saveResponse
+    }
+
+    public func delete(draft: Draft) {
+        let realm = getRealm()
+        if let draft = realm.object(ofType: Draft.self, forPrimaryKey: draft.uuid) {
+            try? realm.safeWrite {
+                realm.delete(draft)
+            }
+        } else {
+            print("No draft with uuid \(draft.uuid)")
+        }
     }
 
     // MARK: - Utilities

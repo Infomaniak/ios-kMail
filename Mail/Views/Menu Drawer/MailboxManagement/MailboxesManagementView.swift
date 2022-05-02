@@ -33,7 +33,7 @@ struct MailboxesManagementView: View {
                     MailboxCell(mailbox: mailbox)
                 }
 
-                MenuDrawerSeparatorView(withPadding: false, fullWidth: true)
+                SeparatorView(withPadding: false, fullWidth: true)
 
                 MailboxesManagementButtonView(text: MailResourcesStrings.buttonAddAccount, handleAction: addNewAccount)
                 MailboxesManagementButtonView(text: MailResourcesStrings.buttonManageAccount, handleAction: handleMyAccount)

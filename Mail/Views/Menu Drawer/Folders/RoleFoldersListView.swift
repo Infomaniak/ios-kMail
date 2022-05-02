@@ -36,7 +36,7 @@ struct RoleFoldersListView: View {
                 .padding(.bottom, folder.role == .inbox ? 0 : Constants.menuDrawerFolderCellPadding)
 
             if folder.role == .inbox {
-                MenuDrawerSeparatorView()
+                SeparatorView()
             }
         }
     }

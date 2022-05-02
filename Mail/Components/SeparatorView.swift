@@ -19,7 +19,7 @@
 import MailResources
 import SwiftUI
 
-struct MenuDrawerSeparatorView: View {
+struct SeparatorView: View {
     var withPadding = true
     var fullWidth = false
 
@@ -32,9 +32,9 @@ struct MenuDrawerSeparatorView: View {
     }
 }
 
-struct MenuDrawerSeparatorView_Previews: PreviewProvider {
+struct SeparatorView_Previews: PreviewProvider {
     static var previews: some View {
-        MenuDrawerSeparatorView()
+        SeparatorView()
             .previewLayout(.sizeThatFits)
             .previewDevice("iPhone 13 Pro")
     }

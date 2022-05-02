@@ -30,6 +30,10 @@ struct NewMessageView: View {
 
     @Environment(\.presentationMode) var presentationMode
 
+    static var queue = DispatchQueue(label: "com.infomaniak.mail.saveDraft")
+    @State var debouncedBufferWrite: DispatchWorkItem?
+    let saveExpiration = 3.0
+
     init(mailboxManager: MailboxManager, draft: Draft? = nil) {
         self.mailboxManager = mailboxManager
         guard let signatureResponse = mailboxManager.getSignatureResponse() else { fatalError() }
@@ -40,28 +44,32 @@ struct NewMessageView: View {
         NavigationView {
             VStack {
                 RecipientCellView(
-                    from: mailboxManager.mailbox.email,
+                    text: mailboxManager.mailbox.email,
                     draft: draft,
                     showCcButton: $showCc,
-                    type: RecipientCellType.from
-                )
+                    type: .from
+                ) { textDidChange() }
 
-                RecipientCellView(draft: draft, showCcButton: $showCc, type: RecipientCellType.to)
+                RecipientCellView(draft: draft, showCcButton: $showCc, type: .to) { textDidChange() }
 
                 if showCc {
-                    RecipientCellView(draft: draft, showCcButton: $showCc, type: RecipientCellType.cc)
-                    RecipientCellView(draft: draft, showCcButton: $showCc, type: RecipientCellType.bcc)
+                    RecipientCellView(draft: draft, showCcButton: $showCc, type: .cc) { textDidChange() }
+                    RecipientCellView(draft: draft, showCcButton: $showCc, type: .bcc) { textDidChange() }
                 }
 
-                RecipientCellView(draft: draft, showCcButton: $showCc, type: RecipientCellType.object)
+                RecipientCellView(draft: draft, showCcButton: $showCc, type: .object) { textDidChange() }
 
-                RichTextEditor(model: $editor, body: $draftBody)
+                RichTextEditor(model: $editor, body: $draftBody) { textDidChange() }
             }
             .padding()
             .navigationBarTitleDisplayMode(.inline)
             .navigationBarBackButtonHidden(true)
             .navigationBarItems(leading:
                 Button(action: {
+                    debouncedBufferWrite?.cancel()
+                    Task {
+                        await saveDraft()
+                    }
                     self.presentationMode.wrappedValue.dismiss()
                 }) {
                     Image(systemName: "multiply")
@@ -71,10 +79,9 @@ struct NewMessageView: View {
                 Button(action: {
                     Task {
                         await send()
-                        DispatchQueue.main.async {
-                            self.presentationMode.wrappedValue.dismiss()
-                        }
+                        // TODO: show confirmation snackbar or handle error
                     }
+                    self.presentationMode.wrappedValue.dismiss()
                 }) {
                     Image(uiImage: MailResourcesAsset.send.image)
                 }
@@ -84,15 +91,12 @@ struct NewMessageView: View {
         .accentColor(.black)
     }
 
-    @MainActor private func send() async {
-        await saveDraft()
-
-        draft.action = .send
-
+    @MainActor private func send() async -> Bool {
         do {
-            try await mailboxManager.send(draft: draft)
+            return try await mailboxManager.send(draft: draft)
         } catch {
             print("Error while sending email: \(error.localizedDescription)")
+            return false
         }
     }
 
@@ -101,16 +105,24 @@ struct NewMessageView: View {
             Task {
                 self.draft.body = html!
 
-                draft.action = .save
-
                 do {
-                    let saveResponse = try await mailboxManager.save(draft: draft)
-                    draft.uuid = saveResponse.uuid
+                    _ = try await mailboxManager.save(draft: draft)
                 } catch {
                     print("Error while saving draft: \(error.localizedDescription)")
                 }
             }
         }
+    }
+
+    func textDidChange() {
+        debouncedBufferWrite?.cancel()
+        let debouncedWorkItem = DispatchWorkItem {
+            Task {
+                await saveDraft()
+            }
+        }
+        NewMessageView.queue.asyncAfter(deadline: .now() + saveExpiration, execute: debouncedWorkItem)
+        debouncedBufferWrite = debouncedWorkItem
     }
 }
 

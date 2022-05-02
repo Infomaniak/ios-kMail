@@ -27,28 +27,14 @@ struct RichTextEditor: UIViewRepresentable {
     @Binding var model: RichTextEditorModel
     @Binding var body: String
 
+    var textChange: () -> Void
+
     var richTextEditor: SQTextEditorView {
         return model.richTextEditor
     }
 
-    class Coordinator: SQTextEditorDelegate {
-        var parent: RichTextEditor
-
-        init(_ parent: RichTextEditor) {
-            self.parent = parent // tell the coordinator what its parent is, so it can modify values there directly
-        }
-
-        func editorDidLoad(_ editor: SQTextEditorView) {
-            parent.model.richTextEditor.insertHTML(parent.body) { error in
-                if let error = error {
-                    print("Failed to load editor: \(error)")
-                }
-            }
-        }
-    }
-
     func makeCoordinator() -> Coordinator {
-        Coordinator(self)
+        return Coordinator(self)
     }
 
     func makeUIView(context: Context) -> UIView {
@@ -66,6 +52,28 @@ class RichTextEditorModel: ObservableObject {
 
     init() {
         richTextEditor = MailEditor()
+    }
+}
+
+class Coordinator: SQTextEditorDelegate {
+    var parent: RichTextEditor
+
+    init(_ parent: RichTextEditor) {
+        self.parent = parent // tell the coordinator what its parent is, so it can modify values there directly
+        parent.model.richTextEditor.insertHTML(parent.body) { error in
+            if let error = error {
+                print("Failed to load editor: \(error)")
+            }
+        }
+    }
+
+    func editor(_ editor: SQTextEditorView, cursorPositionDidChange position: SQEditorCursorPosition) {
+        editor.getHTML { [self] html in
+            if let html = html, parent.body != html {
+                parent.body = html
+                parent.textChange()
+            }
+        }
     }
 }
 
