@@ -18,6 +18,7 @@
 
 import MailCore
 import MailResources
+import RealmSwift
 import SwiftUI
 
 class ThreadListSheet: SheetState<ThreadListSheet.State> {
@@ -27,20 +28,20 @@ class ThreadListSheet: SheetState<ThreadListSheet.State> {
     }
 }
 
-struct ThreadListView: View, FolderListViewDelegate {
-    @ObservedObject var viewModel: ThreadListViewModel
+struct ThreadListView: View {
+    @StateObject var viewModel: ThreadListViewModel
     @ObservedObject var sheet = ThreadListSheet()
 
-    @State private var presentMenuDrawer = false
-    @State private var presentNewMessageEditor = false
+    @Binding var currentFolder: Folder?
 
     @State private var avatarImage = Image(uiImage: MailResourcesAsset.placeholderAvatar.image)
     @State private var selectedThread: Thread?
 
     let isCompact: Bool
 
-    init(mailboxManager: MailboxManager, folder: Folder?, isCompact: Bool) {
-        viewModel = ThreadListViewModel(mailboxManager: mailboxManager, folder: folder)
+    init(mailboxManager: MailboxManager, folder: Binding<Folder?>, isCompact: Bool) {
+        _viewModel = StateObject(wrappedValue: ThreadListViewModel(mailboxManager: mailboxManager, folder: folder.wrappedValue))
+        _currentFolder = folder
         self.isCompact = isCompact
 
         UITableViewCell.appearance().focusEffect = .none
@@ -51,7 +52,7 @@ struct ThreadListView: View, FolderListViewDelegate {
             Color(MailResourcesAsset.backgroundColor.color)
 
             List(viewModel.threads) { thread in
-                // Useful to hide the NavigationLiok accessoryType
+                // Useful to hide the NavigationLink accessoryType
                 ZStack {
                     NavigationLink(destination: {
                         ThreadView(mailboxManager: viewModel.mailboxManager, thread: thread)
@@ -75,7 +76,7 @@ struct ThreadListView: View, FolderListViewDelegate {
         .sheet(isPresented: $sheet.isShowing) {
             switch sheet.state {
             case .menuDrawer:
-                MenuDrawerView(mailboxManager: viewModel.mailboxManager, selectedFolderId: viewModel.folder?.id, isCompact: isCompact, delegate: self)
+                MenuDrawerView(mailboxManager: viewModel.mailboxManager, selectedFolder: $currentFolder, isCompact: isCompact)
             case .newMessage:
                 NewMessageView(mailboxManager: viewModel.mailboxManager)
             case .none:
@@ -85,17 +86,16 @@ struct ThreadListView: View, FolderListViewDelegate {
         .onAppear {
             selectedThread = nil
         }
+        .onChange(of: currentFolder) { newFolder in
+            guard let folder = newFolder else { return }
+            viewModel.updateThreads(with: folder)
+        }
         .task {
             avatarImage = await AccountManager.instance.currentAccount.user.getAvatar()
-            await viewModel.fetchThreads()
         }
         .refreshable {
             await viewModel.fetchThreads()
         }
-    }
-
-    func didSelectFolder(_ folder: Folder) {
-        viewModel.updateThreads(with: folder)
     }
 }
 
@@ -175,7 +175,7 @@ private struct ThreadListSwipeAction: ViewModifier {
 struct ThreadListView_Previews: PreviewProvider {
     static var previews: some View {
         ThreadListView(mailboxManager: MailboxManager(mailbox: PreviewHelper.sampleMailbox, apiFetcher: MailApiFetcher()),
-                       folder: PreviewHelper.sampleFolder,
+                       folder: .constant(PreviewHelper.sampleFolder),
                        isCompact: false)
     }
 }

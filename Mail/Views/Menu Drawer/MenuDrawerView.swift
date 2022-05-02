@@ -29,22 +29,20 @@ struct MenuDrawerView: View {
     @ObservedResults(Folder.self, where: { $0.parentLink.count == 0 }) var folders
 
     @StateObject var mailboxManager: MailboxManager
-
-    @State var selectedFolderId: String?
     @State private var showMailboxes = false
 
+    @Binding var selectedFolder: Folder?
+
     var isCompact: Bool
-    var delegate: FolderListViewDelegate?
 
     private var helpMenuItems = [MenuItem]()
     private var actionsMenuItems = [MenuItem]()
 
-    init(mailboxManager: MailboxManager, selectedFolderId: String?, isCompact: Bool, delegate: FolderListViewDelegate? = nil) {
+    init(mailboxManager: MailboxManager, selectedFolder: Binding<Folder?>, isCompact: Bool) {
         _folders = .init(Folder.self, configuration: AccountManager.instance.currentMailboxManager!.realmConfiguration) { $0.parentLink.count == 0 }
         _mailboxManager = StateObject(wrappedValue: mailboxManager)
         self.isCompact = isCompact
-        self.delegate = delegate
-        _selectedFolderId = State(initialValue: selectedFolderId)
+        _selectedFolder = selectedFolder
 
         getMenuItems()
     }
@@ -58,11 +56,11 @@ struct MenuDrawerView: View {
 
                 MenuDrawerSeparatorView()
 
-                RoleFoldersListView(folders: $folders, selectedFolderId: $selectedFolderId, isCompact: isCompact, delegate: delegate)
+                RoleFoldersListView(folders: $folders, selectedFolder: $selectedFolder, isCompact: isCompact)
 
                 MenuDrawerSeparatorView()
 
-                UserFoldersListView(folders: $folders, selectedFolderId: $selectedFolderId, isCompact: isCompact, delegate: delegate)
+                UserFoldersListView(folders: $folders, selectedFolder: $selectedFolder, isCompact: isCompact)
 
                 MenuDrawerSeparatorView()
 

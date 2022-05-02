@@ -53,9 +53,7 @@ typealias Thread = MailCore.Thread
 
     func fetchThreads() async {
         do {
-            guard let folder = folder else {
-                return
-            }
+            guard let folder = folder else { return }
             try await mailboxManager.threads(folder: folder.freeze(), filter: filter)
             observeChanges()
         } catch {

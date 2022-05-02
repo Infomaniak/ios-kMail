@@ -21,61 +21,24 @@ import MailCore
 import MailResources
 import SwiftUI
 
-protocol FolderListViewDelegate {
-    func didSelectFolder(_ folder: Folder)
-}
-
 struct FolderCell: View {
     @Environment(\.presentationMode) var presentationMode
     @EnvironmentObject var mailboxManager: MailboxManager
 
-    @State var folder: Folder
-
-    @Binding var selectedFolderId: String?
+    @State var currentFolder: Folder
+    @Binding var selectedFolder: Folder?
 
     var isCompact: Bool
-    var delegate: FolderListViewDelegate?
-
-    var body: some View {
-        if isCompact {
-            Button {
-                updateSplitView(with: folder)
-                selectedFolderId = folder.id
-            } label: {
-                FolderCellContentView(selectedFolderId: $selectedFolderId, folder: $folder)
-            }
-        } else {
-            NavigationLink {
-                ThreadListView(mailboxManager: mailboxManager, folder: folder, isCompact: isCompact)
-                    .onAppear {
-                        selectedFolderId = folder.id
-                    }
-            } label: {
-                FolderCellContentView(selectedFolderId: $selectedFolderId, folder: $folder)
-            }
-
-        }
-    }
-
-    private func updateSplitView(with folder: Folder) {
-        delegate?.didSelectFolder(folder)
-        presentationMode.wrappedValue.dismiss()
-    }
-}
-
-private struct FolderCellContentView: View {
-    @Binding var selectedFolderId: String?
-    @Binding var folder: Folder
 
     private var iconSize: CGFloat {
-        if folder.role == nil {
-            return folder.isFavorite ? 22 : 19
+        if currentFolder.role == nil {
+            return currentFolder.isFavorite ? 22 : 19
         }
         return 24
     }
 
     private var isSelected: Bool {
-        folder.id == selectedFolderId
+        currentFolder.id == selectedFolder?.id
     }
 
     private var textStyle: MailTextStyle {
@@ -83,34 +46,43 @@ private struct FolderCellContentView: View {
     }
 
     var body: some View {
-        HStack {
-            folder.icon
-                .resizable()
-                .scaledToFit()
-                .frame(width: iconSize, height: iconSize)
-                .foregroundColor(InfomaniakCoreAsset.infomaniakColor)
-                .padding(.trailing, 10)
+        Button(action: updateFolder) {
+            HStack {
+                currentFolder.icon
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: iconSize, height: iconSize)
+                    .foregroundColor(InfomaniakCoreAsset.infomaniakColor)
+                    .padding(.trailing, 10)
 
-            Text(folder.localizedName)
-                .font(textStyle.font)
-                .foregroundColor(textStyle.color)
-
-            Spacer()
-
-            if let unreadCount = folder.unreadCount, unreadCount > 0 {
-                Text(unreadCount < 100 ? "\(unreadCount)" : "99+")
+                Text(currentFolder.localizedName)
                     .font(textStyle.font)
-                    .foregroundColor(MailTextStyle.badge.color)
+                    .foregroundColor(textStyle.color)
+
+                Spacer()
+
+                if currentFolder.unreadCount != nil {
+                    Text(currentFolder.formattedUnreadCount)
+                        .font(textStyle.font)
+                        .foregroundColor(MailTextStyle.badge.color)
+                }
             }
         }
+    }
+
+    private func updateFolder() {
+        selectedFolder = currentFolder
+        presentationMode.wrappedValue.dismiss()
     }
 }
 
 struct FolderCellView_Previews: PreviewProvider {
     static var previews: some View {
-        FolderCell(folder: PreviewHelper.sampleFolder,
-                       selectedFolderId: .constant("blabla"),
-                       isCompact: false)
+        FolderCell(
+            currentFolder: PreviewHelper.sampleFolder,
+            selectedFolder: .constant(PreviewHelper.sampleFolder),
+            isCompact: false
+        )
         .previewLayout(.sizeThatFits)
         .previewDevice(PreviewDevice(stringLiteral: "iPhone 11 Pro"))
     }

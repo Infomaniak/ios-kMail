@@ -25,7 +25,7 @@ import MailResources
 
 struct SplitView: View {
     var mailboxManager = AccountManager.instance.currentMailboxManager!
-    var selectedFolder: Folder?
+    @State var selectedFolder: Folder?
     @State var splitViewController: UISplitViewController?
     @Environment(\.horizontalSizeClass) var sizeClass
 
@@ -34,19 +34,20 @@ struct SplitView: View {
     }
 
     init() {
-        selectedFolder = mailboxManager.getRealm().objects(Folder.self).filter("role = 'INBOX'").first
+        let inbox = mailboxManager.getRealm().objects(Folder.self).filter("role = 'INBOX'").first
+        _selectedFolder = State(wrappedValue: inbox)
         updateNavigationBarAppearance()
     }
 
     var body: some View {
         NavigationView {
             if isCompact {
-                ThreadListView(mailboxManager: mailboxManager, folder: selectedFolder, isCompact: isCompact)
+                ThreadListView(mailboxManager: mailboxManager, folder: $selectedFolder, isCompact: isCompact)
             } else {
-                MenuDrawerView(mailboxManager: mailboxManager, selectedFolderId: selectedFolder?.id, isCompact: isCompact)
+                MenuDrawerView(mailboxManager: mailboxManager, selectedFolder: $selectedFolder, isCompact: isCompact)
                     .navigationBarHidden(true)
 
-                ThreadListView(mailboxManager: mailboxManager, folder: selectedFolder, isCompact: isCompact)
+                ThreadListView(mailboxManager: mailboxManager, folder: $selectedFolder, isCompact: isCompact)
 
                 EmptyThreadView()
             }
