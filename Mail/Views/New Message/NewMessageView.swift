@@ -78,11 +78,8 @@ struct NewMessageView: View {
                 trailing:
                 Button(action: {
                     Task {
-                        if await send() {
-                            // TODO: show confirmation snackbar
-                        } else {
-                            // TODO: Handle message not sent - show alert
-                        }
+                        await send()
+                        // TODO: show confirmation snackbar or handle error
                     }
                     self.presentationMode.wrappedValue.dismiss()
                 }) {
