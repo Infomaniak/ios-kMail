@@ -79,11 +79,12 @@ struct NewMessageView: View {
                 Button(action: {
                     Task {
                         if await send() {
-                            self.presentationMode.wrappedValue.dismiss()
+                            // TODO: show confirmation snackbar
                         } else {
-                            // Handle message not sent - show alert
+                            // TODO: Handle message not sent - show alert
                         }
                     }
+                    self.presentationMode.wrappedValue.dismiss()
                 }) {
                     Image(uiImage: MailResourcesAsset.send.image)
                 }
