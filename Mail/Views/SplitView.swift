@@ -39,6 +39,7 @@ struct SplitView: View {
         NavigationView {
             if isCompact {
                 ThreadListView(mailboxManager: mailboxManager, folder: selectedFolder, isCompact: isCompact)
+                    .cornerRadius(30)
             } else {
                 MenuDrawerView(mailboxManager: mailboxManager, selectedFolderId: selectedFolder?.id, isCompact: isCompact)
                     .navigationBarHidden(true)

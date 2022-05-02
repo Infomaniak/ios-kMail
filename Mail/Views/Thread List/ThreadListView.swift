@@ -45,8 +45,17 @@ struct ThreadListView: View, FolderListViewDelegate {
 
         UITableViewCell.appearance().focusEffect = .none
 
-        let navigationBarAppearance = UINavigationBar.appearance()
-        navigationBarAppearance.barTintColor = .red
+        let navigationBarAppearance = UINavigationBarAppearance()
+        navigationBarAppearance.configureWithTransparentBackground()
+        navigationBarAppearance.backgroundColor = MailResourcesAsset.backgroundHeaderColor.color
+        navigationBarAppearance.largeTitleTextAttributes = [
+            .foregroundColor: MailResourcesAsset.primaryTextColor.color,
+            .font: UIFont.systemFont(ofSize: 22, weight: .semibold)
+        ]
+
+        UINavigationBar.appearance().standardAppearance = navigationBarAppearance
+        UINavigationBar.appearance().compactAppearance = navigationBarAppearance
+        UINavigationBar.appearance().scrollEdgeAppearance = navigationBarAppearance
     }
 
     var body: some View {
@@ -112,6 +121,18 @@ private struct ThreadListNavigationBar: ViewModifier {
         content
             .navigationTitle(folder?.localizedName ?? "")
             .toolbar {
+                ToolbarItem(placement: .principal) {
+                    HStack {
+                        Image(uiImage: MailResourcesAsset.search.image)
+
+                        Text("Rechercher un message")
+                        Spacer()
+
+                        Image(uiImage: MailResourcesAsset.filter.image)
+                    }
+                    .padding([.leading, .trailing], 20)
+                }
+
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button {
                         // TODO: Display accounts list
