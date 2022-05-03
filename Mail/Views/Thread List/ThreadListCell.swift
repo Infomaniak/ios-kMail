@@ -98,9 +98,6 @@ struct ThreadListCell: View {
 
                     if thread.flagged {
                         Image(uiImage: MailResourcesAsset.starFilled.image)
-                    } else {
-                        Image(uiImage: MailResourcesAsset.star.image)
-                            .foregroundColor(hasUnreadMessages ? MailResourcesAsset.primaryTextColor : MailResourcesAsset.secondaryTextColor)
                     }
                 }
             }

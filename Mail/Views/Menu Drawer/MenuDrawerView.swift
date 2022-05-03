@@ -81,6 +81,9 @@ struct MenuDrawerView: View {
         .environmentObject(mailboxManager)
         .task {
             await fetchFolders()
+            if selectedFolder == nil {
+                selectedFolder = folders.first { $0.role == .inbox }
+            }
             MatomoUtils.track(view: ["MenuDrawer"])
         }
     }

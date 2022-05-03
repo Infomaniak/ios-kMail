@@ -36,20 +36,21 @@ struct SplitView: View {
     init() {
         let inbox = mailboxManager.getRealm().objects(Folder.self).filter("role = 'INBOX'").first
         _selectedFolder = State(wrappedValue: inbox)
-        updateNavigationBarAppearance()
     }
 
     var body: some View {
-        NavigationView {
-            if isCompact {
-                ThreadListView(mailboxManager: mailboxManager, folder: $selectedFolder, isCompact: isCompact)
-            } else {
-                MenuDrawerView(mailboxManager: mailboxManager, selectedFolder: $selectedFolder, isCompact: isCompact)
-                    .navigationBarHidden(true)
+        GeometryReader { geometry in
+            NavigationView {
+                if isCompact {
+                    ThreadListView(mailboxManager: mailboxManager, folder: $selectedFolder, isCompact: isCompact, geometryProxy: geometry)
+                } else {
+                    MenuDrawerView(mailboxManager: mailboxManager, selectedFolder: $selectedFolder, isCompact: isCompact)
+                        .navigationBarHidden(true)
 
-                ThreadListView(mailboxManager: mailboxManager, folder: $selectedFolder, isCompact: isCompact)
+                    ThreadListView(mailboxManager: mailboxManager, folder: $selectedFolder, isCompact: isCompact, geometryProxy: geometry)
 
-                EmptyThreadView()
+                    EmptyThreadView()
+                }
             }
         }
         .accentColor(Color(MailResourcesAsset.primaryTextColor.color))
@@ -82,19 +83,5 @@ struct SplitView: View {
         } else {
             splitViewController?.preferredSplitBehavior = .automatic
         }
-    }
-
-    func updateNavigationBarAppearance() {
-        let navigationBarAppearance = UINavigationBarAppearance()
-        navigationBarAppearance.configureWithTransparentBackground()
-        navigationBarAppearance.backgroundColor = MailResourcesAsset.backgroundHeaderColor.color
-        navigationBarAppearance.largeTitleTextAttributes = [
-            .foregroundColor: MailResourcesAsset.primaryTextColor.color,
-            .font: UIFont.systemFont(ofSize: 22, weight: .semibold)
-        ]
-
-        UINavigationBar.appearance().standardAppearance = navigationBarAppearance
-        UINavigationBar.appearance().compactAppearance = navigationBarAppearance
-        UINavigationBar.appearance().scrollEdgeAppearance = navigationBarAppearance
     }
 }

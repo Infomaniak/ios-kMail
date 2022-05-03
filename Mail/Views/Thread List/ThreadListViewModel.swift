@@ -81,9 +81,9 @@ typealias Thread = MailCore.Thread
             guard let self = self else { return }
             switch changes {
             case let .initial(results):
-                self.threads = results
+                self.threads = results.freeze()
             case let .update(results, _, _, _):
-                self.threads = results
+                self.threads = results.freeze()
             case .error:
                 break
             }
