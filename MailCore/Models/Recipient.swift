@@ -30,7 +30,7 @@ public class Recipient: EmbeddedObject, Codable {
         self.name = name
     }
 
-    var isCurrentUser: Bool {
+    public var isCurrentUser: Bool {
         return AccountManager.instance.currentAccount.user.email == email
     }
 
@@ -41,7 +41,7 @@ public class Recipient: EmbeddedObject, Codable {
         return contact?.name ?? (name.isEmpty ? email : name)
     }
     
-    var color: Color {
+    public var color: Color {
         if let contact = contact {
             return Color(hex: contact.color)
         }
@@ -58,7 +58,7 @@ public class Recipient: EmbeddedObject, Codable {
             .uppercased()
     }
     
-    var contact: MergedContact? {
+    public var contact: MergedContact? {
         AccountManager.instance.currentContactManager?.getContact(for: email)
     }
 }
