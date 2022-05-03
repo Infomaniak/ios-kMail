@@ -118,4 +118,6 @@ struct PreviewHelper {
         name: "Test attachment.bin",
         disposition: .attachment
     )
+    
+    static let sampleMergedContact = MergedContact(email: "contact@example.com", localId: "", remote: nil)
 }

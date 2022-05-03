@@ -54,9 +54,6 @@ public class MergedContact: Object, Identifiable {
     public lazy var nickname: String? = merge(local?.nickname, remote?.nickname)
     public lazy var organization: String? = merge(local?.organizationName, remote?.organization)
 
-    public lazy var avatarData: Data? = local?.imageData
-    public lazy var avatarPath: String? = remote?.avatar
-
     public var isLocal: Bool {
         return localId != nil
     }
@@ -66,13 +63,13 @@ public class MergedContact: Object, Identifiable {
     }
 
     public var hasAvatar: Bool {
-        return avatarData != nil || remote?.avatar != nil
+        return local?.imageData != nil || remote?.avatar != nil
     }
 
-    func getAvatar(size: CGSize = CGSize(width: 40, height: 40), completion: @escaping (UIImage) -> Void) {
-        if let data = avatarData, let image = UIImage(data: data) {
+    public func getAvatar(size: CGSize = CGSize(width: 40, height: 40), completion: @escaping (UIImage) -> Void) {
+        if let data = local?.imageData, let image = UIImage(data: data) {
             completion(image)
-        } else if let avatarPath = avatarPath, let avatarUrl = URL(string: avatarPath) {
+        } else if let avatarPath = remote?.avatar, let avatarUrl = URL(string: avatarPath) {
             KingfisherManager.shared.retrieveImage(with: avatarUrl) { result in
                 if let avatarImage = try? result.get().image {
                     completion(avatarImage)
@@ -89,8 +86,12 @@ public class MergedContact: Object, Identifiable {
     private func merge<T>(_ element1: T?, _ element2: T?) -> T? {
         return element1 ?? element2
     }
+    
+    override init() {
+        super.init()
+    }
 
-    convenience init(email: String, localId: String?, remote: Contact?) {
+    public convenience init(email: String, localId: String?, remote: Contact?) {
         self.init()
         self.email = email
         self.localId = localId
