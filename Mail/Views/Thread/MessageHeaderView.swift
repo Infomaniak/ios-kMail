@@ -73,7 +73,7 @@ struct MessageHeaderView: View {
                                 ForEach(Array(message.recipients.enumerated()), id: \.offset) { index, recipient in
                                     HStack(alignment: .firstTextBaseline, spacing: 2) {
                                         if index == 0 {
-                                            Text("À:")
+                                            Text(MailResourcesStrings.toTitle)
                                         }
                                         Text(recipient.name)
                                             .foregroundColor(MailResourcesAsset.primaryTextColor)
