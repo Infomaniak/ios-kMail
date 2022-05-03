@@ -35,12 +35,6 @@ public class Contact: Object, Codable, Identifiable {
     @Persisted public var favorite: Bool?
     @Persisted public var nickname: String?
     @Persisted public var organization: String?
-
-//    var addressBook: AddressBook? {
-//        guard let addressbookId = addressbookId else { return nil }
-//        return AccountManager.instance.currentContactManager
-//        return AccountManager.instance.contactStore.getAddressBook(with: addressbookId)
-//    }
     
     enum CodingKeys: String, CodingKey {
         case id
@@ -59,29 +53,4 @@ public class Contact: Object, Codable, Identifiable {
         case nickname
         case organization
     }
-
-//    public init(from decoder: Decoder) throws {
-//        // Custom decoder because of `id` type inconsistency (#I8)
-//        let values = try decoder.container(keyedBy: CodingKeys.self)
-//        if let id = try? values.decode(Int.self, forKey: .id) {
-//            self.id = "\(id)"
-//        } else {
-//            id = try values.decode(String.self, forKey: .id)
-//        }
-//        color = try values.decode(String.self, forKey: .color)
-//        // Will need to investigate this later
-//        contactedTimes = (try? values.decode([String: Int].self, forKey: .contactedTimes)) ?? [:]
-//        emails = try values.decode([String].self, forKey: .emails)
-//        firstname = try values.decode(String.self, forKey: .firstname)
-//        lastname = try values.decode(String.self, forKey: .lastname)
-//        name = try values.decode(String.self, forKey: .name)
-//        other = try values.decode(Bool.self, forKey: .other)
-//        uuid = try values.decodeIfPresent(String.self, forKey: .uuid)
-//        addressbookId = try values.decodeIfPresent(Int.self, forKey: .addressbookId)
-//        avatar = try values.decodeIfPresent(String.self, forKey: .avatar)
-//        categories = try values.decodeIfPresent([Int].self, forKey: .categories)
-//        favorite = try values.decodeIfPresent(Bool.self, forKey: .favorite)
-//        nickname = try values.decodeIfPresent(String.self, forKey: .nickname)
-//        organization = try values.decodeIfPresent(String.self, forKey: .organization)
-//    }
 }
