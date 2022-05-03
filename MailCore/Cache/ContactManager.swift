@@ -130,6 +130,11 @@ public class ContactManager: ObservableObject {
     public func getLocalContact(with identifier: String) async -> CNContact? {
         return try? await localContactsHelper.getContact(with: identifier)
     }
+    
+    public func getContact(for email: String) -> MergedContact? {
+        let realm = getRealm()
+        return realm.object(ofType: MergedContact.self, forPrimaryKey: email)
+    }
 
     public func addressBook(with id: Int) -> AddressBook? {
         let realm = getRealm()
