@@ -31,8 +31,11 @@ public struct DraftResponse: Codable {
 }
 
 public class Draft: Object, Codable, Identifiable {
+    static let uuidLocalPrefix = "Local-"
+
     @Persisted(primaryKey: true) public var uuid: String = ""
     @Persisted public var identityId: String?
+    @Persisted public var messageUid: String?
     @Persisted public var inReplyToUid: String?
     @Persisted public var forwardedUid: String?
     @Persisted public var references: String?
@@ -48,6 +51,7 @@ public class Draft: Object, Codable, Identifiable {
     @Persisted public var priority: String?
     @Persisted public var stUuid: String?
     @Persisted public var attachments: List<Attachment>
+    @Persisted public var isOffline = true
     public var action: SaveDraftOption?
 
     public var toValue: String {
@@ -86,6 +90,10 @@ public class Draft: Object, Codable, Identifiable {
         }
     }
 
+    public var hasLocalUuid: Bool {
+        return uuid.isEmpty || uuid.starts(with: Draft.uuidLocalPrefix)
+    }
+
     private enum CodingKeys: String, CodingKey {
         case uuid
         case identityId
@@ -104,6 +112,7 @@ public class Draft: Object, Codable, Identifiable {
         case priority
         case stUuid
         case attachments
+        case isOffline
         case action
     }
 
@@ -135,6 +144,7 @@ public class Draft: Object, Codable, Identifiable {
     public convenience init(
         uuid: String = "",
         identityId: String? = nil,
+        messageUid: String? = nil,
         inReplyToUid: String? = nil,
         forwardedUid: String? = nil,
         references: String? = nil,
@@ -150,12 +160,14 @@ public class Draft: Object, Codable, Identifiable {
         priority: String? = nil,
         stUuid: String? = nil,
         attachments: [Attachment]? = nil,
+        isOffline: Bool = true,
         action: SaveDraftOption? = nil
     ) {
         self.init()
 
         self.uuid = uuid
         self.identityId = identityId
+        self.messageUid = messageUid
         self.inReplyToUid = inReplyToUid
         self.forwardedUid = forwardedUid
         self.references = references
@@ -163,28 +175,15 @@ public class Draft: Object, Codable, Identifiable {
         self.mimeType = mimeType
         self.body = body
         self.quote = quote
-
-        if let to = to {
-            self.to = to.toRealmList()
-        }
-
-        if let cc = cc {
-            self.cc = cc.toRealmList()
-        }
-
-        if let bcc = bcc {
-            self.bcc = bcc.toRealmList()
-        }
-
+        self.to = to?.toRealmList() ?? List()
+        self.cc = cc?.toRealmList() ?? List()
+        self.bcc = bcc?.toRealmList() ?? List()
         self.subject = subject
         self.ackRequest = ackRequest
         self.priority = priority
         self.stUuid = stUuid
-
-        if let attachments = attachments {
-            self.attachments = attachments.toRealmList()
-        }
-
+        self.attachments = attachments?.toRealmList() ?? List()
+        self.isOffline = isOffline
         self.action = action
     }
 
@@ -219,6 +218,7 @@ public class Draft: Object, Codable, Identifiable {
         try container.encode(ackRequest, forKey: .ackRequest)
         try container.encode(priority, forKey: .priority)
         try container.encode(stUuid, forKey: .stUuid)
+        try container.encode(isOffline, forKey: .isOffline)
         try container.encode(action, forKey: .action)
     }
 

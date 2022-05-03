@@ -26,7 +26,7 @@ struct NewMessageView: View {
     @State var draft: Draft
     @State var editor = RichTextEditorModel()
     @State var draftBody = "<br><br>Envoyé avec Infomaniak Mail pour iOS" // MailResourcesStrings.newMessagePlaceholderTitle
-    @State var showCc: Bool = false
+    @State var showCc = false
 
     @Environment(\.presentationMode) var presentationMode
 
@@ -37,7 +37,9 @@ struct NewMessageView: View {
     init(mailboxManager: MailboxManager, draft: Draft? = nil) {
         self.mailboxManager = mailboxManager
         guard let signatureResponse = mailboxManager.getSignatureResponse() else { fatalError() }
-        _draft = State(initialValue: draft ?? Draft(identityId: "\(signatureResponse.defaultSignatureId)"))
+        _draft =
+            State(initialValue: draft ??
+                Draft(identityId: "\(signatureResponse.defaultSignatureId)", messageUid: UUID().uuidString))
     }
 
     var body: some View {
@@ -115,6 +117,7 @@ struct NewMessageView: View {
     }
 
     func textDidChange() {
+        draft.isOffline = true
         debouncedBufferWrite?.cancel()
         let debouncedWorkItem = DispatchWorkItem {
             Task {

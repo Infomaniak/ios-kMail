@@ -129,8 +129,8 @@ public class MailApiFetcher: ApiFetcher {
 
     func save(mailbox: Mailbox, draft: Draft) async throws -> DraftResponse {
         try await perform(request: authenticatedRequest(
-            draft.uuid.isEmpty ? .draft(uuid: mailbox.uuid) : .draft(uuid: mailbox.uuid, draftUuid: draft.uuid),
-            method: draft.uuid.isEmpty ? .post : .put,
+            draft.hasLocalUuid ? .draft(uuid: mailbox.uuid) : .draft(uuid: mailbox.uuid, draftUuid: draft.uuid),
+            method: draft.hasLocalUuid ? .post : .put,
             parameters: draft
         )).data
     }

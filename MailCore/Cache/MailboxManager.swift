@@ -266,7 +266,6 @@ public class MailboxManager: ObservableObject {
         if draft.uuid.isEmpty {
             _ = try await save(draft: draft)
         }
-
         draft.action = .send
         let sendResponse = try await apiFetcher.send(mailbox: mailbox, draft: draft)
         if sendResponse {
@@ -279,17 +278,41 @@ public class MailboxManager: ObservableObject {
 
     public func save(draft: Draft) async throws -> DraftResponse {
         draft.action = .save
-        let saveResponse = try await apiFetcher.save(mailbox: mailbox, draft: draft)
+        do {
+            let saveResponse = try await apiFetcher.save(mailbox: mailbox, draft: draft)
 
-        let realm = getRealm()
-        draft.uuid = saveResponse.uuid
-        let copyDraft: Draft = draft.copy()
+            let realm = getRealm()
+            let oldUuid = draft.uuid
+            draft.uuid = saveResponse.uuid
+            draft.messageUid = saveResponse.uid
+            draft.isOffline = false
 
-        // Update draft in Realm
-        try? realm.safeWrite {
-            realm.add(copyDraft, update: .modified)
+            let copyDraft: Draft = draft.copy()
+
+            // Update draft in Realm
+            try? realm.safeWrite {
+                realm.add(copyDraft, update: .modified)
+            }
+            if let draft = realm.object(ofType: Draft.self, forPrimaryKey: oldUuid), oldUuid.starts(with: Draft.uuidLocalPrefix) {
+                // Delete local draft in Realm
+                try? realm.safeWrite {
+                    realm.delete(draft)
+                }
+            }
+            return saveResponse
+        } catch {
+            let realm = getRealm()
+            if draft.uuid.isEmpty {
+                draft.uuid = Draft.uuidLocalPrefix + UUID().uuidString
+            }
+            let copyDraft: Draft = draft.copy()
+
+            // Update draft in Realm
+            try? realm.safeWrite {
+                realm.add(copyDraft, update: .modified)
+            }
+            throw error
         }
-        return saveResponse
     }
 
     public func delete(draft: Draft) {
