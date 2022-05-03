@@ -135,9 +135,4 @@ public class ContactManager: ObservableObject {
         let realm = getRealm()
         return realm.object(ofType: AddressBook.self, forPrimaryKey: id)
     }
-
-//    public func getRemoteContact(with identifier: String) -> Contact? {
-//        return contacts.first { $0.id == identifier }
-//    }
-//
 }

@@ -18,9 +18,10 @@
 
 import Contacts
 import Foundation
+import Kingfisher
 import RealmSwift
-
-// TODO: Avatar data
+import SwiftUI
+import UIKit
 
 public class MergedContact: Object, Identifiable {
     @Persisted(primaryKey: true) public var email: String = UUID().uuidString
@@ -68,13 +69,19 @@ public class MergedContact: Object, Identifiable {
         return avatarData != nil || remote?.avatar != nil
     }
 
-    func getAvatarData() async throws -> Data? {
-        if let data = avatarData {
-            return data
-        } else if let path = remote?.avatar {
-            return try await MailApiFetcher().contactImage(at: path)
+    func getAvatar(size: CGSize = CGSize(width: 40, height: 40), completion: @escaping (UIImage) -> Void) {
+        if let data = avatarData, let image = UIImage(data: data) {
+            completion(image)
+        } else if let avatarPath = avatarPath, let avatarUrl = URL(string: avatarPath) {
+            KingfisherManager.shared.retrieveImage(with: avatarUrl) { result in
+                if let avatarImage = try? result.get().image {
+                    completion(avatarImage)
+                }
+            }
+        } else {
+            let backgroundColor = UIColor(hex: color)!
+            completion(UIImage.getInitialsPlaceholder(with: name, size: size, backgroundColor: backgroundColor))
         }
-        return nil
     }
 
     private static let contactFormatter = CNContactFormatter()
