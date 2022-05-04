@@ -30,6 +30,32 @@ struct FolderCell: View {
 
     var isCompact: Bool
 
+    var body: some View {
+        if isCompact {
+            Button(action: updateFolder) {
+                FolderCellContent(currentFolder: $currentFolder, selectedFolder: $selectedFolder)
+            }
+        } else {
+            NavigationLink {
+                ThreadListView(mailboxManager: mailboxManager, folder: .constant(currentFolder), isCompact: isCompact)
+                    .onAppear { selectedFolder = currentFolder }
+            } label: {
+                FolderCellContent(currentFolder: $currentFolder, selectedFolder: $selectedFolder)
+            }
+
+        }
+    }
+
+    private func updateFolder() {
+        selectedFolder = currentFolder
+        presentationMode.wrappedValue.dismiss()
+    }
+}
+
+struct FolderCellContent: View {
+    @Binding var currentFolder: Folder
+    @Binding var selectedFolder: Folder?
+
     private var iconSize: CGFloat {
         if currentFolder.role == nil {
             return currentFolder.isFavorite ? 22 : 19
@@ -46,33 +72,26 @@ struct FolderCell: View {
     }
 
     var body: some View {
-        Button(action: updateFolder) {
-            HStack {
-                currentFolder.icon
-                    .resizable()
-                    .scaledToFit()
-                    .frame(width: iconSize, height: iconSize)
-                    .foregroundColor(InfomaniakCoreAsset.infomaniakColor)
-                    .padding(.trailing, 10)
+        HStack {
+            currentFolder.icon
+                .resizable()
+                .scaledToFit()
+                .frame(width: iconSize, height: iconSize)
+                .foregroundColor(InfomaniakCoreAsset.infomaniakColor)
+                .padding(.trailing, 10)
 
-                Text(currentFolder.localizedName)
+            Text(currentFolder.localizedName)
+                .font(textStyle.font)
+                .foregroundColor(textStyle.color)
+
+            Spacer()
+
+            if currentFolder.unreadCount != nil {
+                Text(currentFolder.formattedUnreadCount)
                     .font(textStyle.font)
-                    .foregroundColor(textStyle.color)
-
-                Spacer()
-
-                if currentFolder.unreadCount != nil {
-                    Text(currentFolder.formattedUnreadCount)
-                        .font(textStyle.font)
-                        .foregroundColor(MailTextStyle.badge.color)
-                }
+                    .foregroundColor(MailTextStyle.badge.color)
             }
         }
-    }
-
-    private func updateFolder() {
-        selectedFolder = currentFolder
-        presentationMode.wrappedValue.dismiss()
     }
 }
 

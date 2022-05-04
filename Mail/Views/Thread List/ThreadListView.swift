@@ -39,9 +39,9 @@ struct ThreadListView: View {
     @State private var selectedThread: Thread?
 
     let isCompact: Bool
-    let geometryProxy: GeometryProxy
+    let geometryProxy: GeometryProxy?
 
-    init(mailboxManager: MailboxManager, folder: Binding<Folder?>, isCompact: Bool, geometryProxy: GeometryProxy) {
+    init(mailboxManager: MailboxManager, folder: Binding<Folder?>, isCompact: Bool, geometryProxy: GeometryProxy? = nil) {
         _viewModel = StateObject(wrappedValue: ThreadListViewModel(mailboxManager: mailboxManager, folder: folder.wrappedValue))
         _currentFolder = folder
         self.isCompact = isCompact
@@ -60,7 +60,7 @@ struct ThreadListView: View {
                 ZStack {
                     NavigationLink(destination: {
                         ThreadView(mailboxManager: viewModel.mailboxManager, thread: thread)
-                            //.onAppear { selectedThread = thread }
+                            .onAppear { selectedThread = thread }
                     }, label: { EmptyView() })
                     .opacity(0)
 
@@ -74,7 +74,7 @@ struct ThreadListView: View {
 
             NewMessageButtonView(sheet: sheet)
                 .padding(.trailing, 30)
-                .padding(.bottom, max(8, 30 - geometryProxy.safeAreaInsets.bottom))
+                .padding(.bottom, max(8, 30 - (geometryProxy?.safeAreaInsets.bottom ?? 0)))
         }
         .introspectNavigationController { navigationController in
             let navigationBarAppearance = UINavigationBarAppearance()
