@@ -44,7 +44,7 @@ struct SplitView: View {
                 if isCompact {
                     ThreadListView(mailboxManager: mailboxManager, folder: $selectedFolder, isCompact: isCompact, geometryProxy: geometry)
                 } else {
-                    MenuDrawerView(mailboxManager: mailboxManager, selectedFolder: $selectedFolder, isCompact: isCompact)
+                    MenuDrawerView(mailboxManager: mailboxManager, selectedFolder: $selectedFolder, isCompact: isCompact, geometryProxy: geometry)
                         .navigationBarHidden(true)
 
                     ThreadListView(mailboxManager: mailboxManager, folder: $selectedFolder, isCompact: isCompact, geometryProxy: geometry)

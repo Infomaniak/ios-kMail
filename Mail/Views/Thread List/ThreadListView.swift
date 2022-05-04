@@ -39,9 +39,9 @@ struct ThreadListView: View {
     @State private var selectedThread: Thread?
 
     let isCompact: Bool
-    let geometryProxy: GeometryProxy?
+    let geometryProxy: GeometryProxy
 
-    init(mailboxManager: MailboxManager, folder: Binding<Folder?>, isCompact: Bool, geometryProxy: GeometryProxy? = nil) {
+    init(mailboxManager: MailboxManager, folder: Binding<Folder?>, isCompact: Bool, geometryProxy: GeometryProxy) {
         _viewModel = StateObject(wrappedValue: ThreadListViewModel(mailboxManager: mailboxManager, folder: folder.wrappedValue))
         _currentFolder = folder
         self.isCompact = isCompact
@@ -67,14 +67,14 @@ struct ThreadListView: View {
                     ThreadListCell(mailboxManager: viewModel.mailboxManager, thread: thread)
                 }
                 .listRowSeparator(.hidden)
-                .listRowBackground(Color(selectedThread == thread ? MailResourcesAsset.backgroundHeaderColor.color : MailResourcesAsset.backgroundColor.color))
+                .listRowBackground(Color(selectedThread == thread ? MailResourcesAsset.backgroundCardSelectedColor.color : MailResourcesAsset.backgroundColor.color))
                 .modifier(ThreadListSwipeAction())
             }
             .listStyle(.plain)
 
             NewMessageButtonView(sheet: sheet)
                 .padding(.trailing, 30)
-                .padding(.bottom, max(8, 30 - (geometryProxy?.safeAreaInsets.bottom ?? 0)))
+                .padding(.bottom, max(8, 30 - geometryProxy.safeAreaInsets.bottom))
         }
         .introspectNavigationController { navigationController in
             let navigationBarAppearance = UINavigationBarAppearance()
@@ -93,7 +93,7 @@ struct ThreadListView: View {
         .sheet(isPresented: $sheet.isShowing) {
             switch sheet.state {
             case .menuDrawer:
-                MenuDrawerView(mailboxManager: viewModel.mailboxManager, selectedFolder: $currentFolder, isCompact: isCompact)
+                MenuDrawerView(mailboxManager: viewModel.mailboxManager, selectedFolder: $currentFolder, isCompact: isCompact, geometryProxy: geometryProxy)
             case .newMessage:
                 NewMessageView(mailboxManager: viewModel.mailboxManager)
             case .none:

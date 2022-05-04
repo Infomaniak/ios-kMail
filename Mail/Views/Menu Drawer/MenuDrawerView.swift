@@ -20,7 +20,6 @@ import MailCore
 import MailResources
 import RealmSwift
 import SwiftUI
-import UIKit
 
 struct MenuDrawerView: View {
     @Environment(\.openURL) var openURL
@@ -34,15 +33,17 @@ struct MenuDrawerView: View {
     @Binding var selectedFolder: Folder?
 
     var isCompact: Bool
+    let geometryProxy: GeometryProxy
 
     private var helpMenuItems = [MenuItem]()
     private var actionsMenuItems = [MenuItem]()
 
-    init(mailboxManager: MailboxManager, selectedFolder: Binding<Folder?>, isCompact: Bool) {
+    init(mailboxManager: MailboxManager, selectedFolder: Binding<Folder?>, isCompact: Bool, geometryProxy: GeometryProxy) {
         _folders = .init(Folder.self, configuration: AccountManager.instance.currentMailboxManager!.realmConfiguration) { $0.parentLink.count == 0 }
         _mailboxManager = StateObject(wrappedValue: mailboxManager)
-        self.isCompact = isCompact
         _selectedFolder = selectedFolder
+        self.isCompact = isCompact
+        self.geometryProxy = geometryProxy
 
         getMenuItems()
     }
@@ -56,11 +57,11 @@ struct MenuDrawerView: View {
 
                 MenuDrawerSeparatorView()
 
-                RoleFoldersListView(folders: $folders, selectedFolder: $selectedFolder, isCompact: isCompact)
+                RoleFoldersListView(folders: $folders, selectedFolder: $selectedFolder, isCompact: isCompact, geometryProxy: geometryProxy)
 
                 MenuDrawerSeparatorView()
 
-                UserFoldersListView(folders: $folders, selectedFolder: $selectedFolder, isCompact: isCompact)
+                UserFoldersListView(folders: $folders, selectedFolder: $selectedFolder, isCompact: isCompact, geometryProxy: geometryProxy)
 
                 MenuDrawerSeparatorView()
 

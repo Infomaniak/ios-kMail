@@ -27,10 +27,11 @@ struct RoleFoldersListView: View {
     @Binding var selectedFolder: Folder?
 
     var isCompact: Bool
+    let geometryProxy: GeometryProxy
 
     var body: some View {
         ForEach(AnyRealmCollection(folders).filter { $0.role != nil }.sorted()) { folder in
-            FolderCell(currentFolder: folder, selectedFolder: $selectedFolder, isCompact: isCompact)
+            FolderCell(currentFolder: folder, selectedFolder: $selectedFolder, isCompact: isCompact, geometryProxy: geometryProxy)
                 .padding(.top, folder.role == .inbox ? 3 : Constants.menuDrawerFolderCellPadding)
                 .padding(.bottom, folder.role == .inbox ? 0 : Constants.menuDrawerFolderCellPadding)
 
