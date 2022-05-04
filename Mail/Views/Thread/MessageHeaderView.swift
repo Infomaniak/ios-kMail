@@ -44,13 +44,18 @@ struct MessageHeaderView: View {
                             .font(.system(size: 13))
                             .fontWeight(.regular)
                             .foregroundColor(MailResourcesAsset.secondaryTextColor)
+							.transition(.opacity)
                         Spacer()
                         if isThreadHeader {
-                            Image(systemName: isReduced ? "chevron.down" : "chevron.up")
-                                .frame(width: 12)
-                                .onTapGesture {
+                            Button {
+                                withAnimation {
                                     isReduced.toggle()
                                 }
+                            } label: {
+                                Image(systemName: "chevron.down")
+                                    .frame(width: 12)
+                                    .rotationEffect(.degrees(isReduced ? 0 : 180))
+                            }
                         } else {
                             Image(systemName: "ellipsis")
                                 .frame(width: 12)
@@ -64,36 +69,39 @@ struct MessageHeaderView: View {
                                 .font(.system(size: 14))
                                 .foregroundColor(MailResourcesAsset.secondaryTextColor)
                         } else {
-                            Text(message.from.first?.email ?? "")
-                                .foregroundColor(Color(MailResourcesAsset.primaryTextColor.color))
-                                .font(.system(size: 14))
-                                .fontWeight(.regular)
+                            Group {
+                                Text(message.from.first?.email ?? "")
+                                    .foregroundColor(Color(MailResourcesAsset.primaryTextColor.color))
+                                    .font(.system(size: 14))
+                                    .fontWeight(.regular)
 
-                            VStack(alignment: .leading) {
-                                ForEach(Array(message.recipients.enumerated()), id: \.offset) { index, recipient in
-                                    GeometryReader { geometry in
-                                        HStack(alignment: .firstTextBaseline, spacing: 2) {
-                                            if index == 0 {
-                                                Text(MailResourcesStrings.toTitle)
+                                VStack(alignment: .leading) {
+                                    ForEach(Array(message.recipients.enumerated()), id: \.offset) { index, recipient in
+                                        GeometryReader { geometry in
+                                            HStack(alignment: .firstTextBaseline, spacing: 2) {
+                                                if index == 0 {
+                                                    Text(MailResourcesStrings.toTitle)
+                                                }
+                                                Text(recipient.name)
+                                                    .foregroundColor(Color(MailResourcesAsset.primaryTextColor.color))
+                                                    .fixedSize()
+                                                Text("(\(recipient.email))")
+                                                    .font(.system(size: 13))
+                                                    .truncationMode(.tail)
+                                                if index < message.recipients.count - 1 {
+                                                    Text(",")
+                                                }
+                                                Spacer()
                                             }
-                                            Text(recipient.name)
-                                                .foregroundColor(Color(MailResourcesAsset.primaryTextColor.color))
-                                                .fixedSize()
-                                            Text("(\(recipient.email))")
-                                                .font(.system(size: 13))
-                                                .truncationMode(.tail)
-                                            if index < message.recipients.count - 1 {
-                                                Text(",")
-                                            }
-                                            Spacer()
+                                            .foregroundColor(MailResourcesAsset.secondaryTextColor)
+                                            .font(.system(size: 14))
+                                            .frame(width: geometry.size.width)
                                         }
-                                        .foregroundColor(MailResourcesAsset.secondaryTextColor)
-                                        .font(.system(size: 14))
-                                        .frame(width: geometry.size.width)
                                     }
                                 }
+                                .padding(.top, 6)
                             }
-                            .padding(.top, 6)
+                            .transition(.opacity)
                         }
                     }
                 }
