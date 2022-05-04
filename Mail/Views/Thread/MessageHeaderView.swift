@@ -71,21 +71,26 @@ struct MessageHeaderView: View {
 
                             VStack(alignment: .leading) {
                                 ForEach(Array(message.recipients.enumerated()), id: \.offset) { index, recipient in
-                                    HStack(alignment: .firstTextBaseline, spacing: 2) {
-                                        if index == 0 {
-                                            Text(MailResourcesStrings.toTitle)
+                                    GeometryReader { geometry in
+                                        HStack(alignment: .firstTextBaseline, spacing: 2) {
+                                            if index == 0 {
+                                                Text(MailResourcesStrings.toTitle)
+                                            }
+                                            Text(recipient.name)
+                                                .foregroundColor(Color(MailResourcesAsset.primaryTextColor.color))
+                                                .fixedSize()
+                                            Text("(\(recipient.email))")
+                                                .font(.system(size: 13))
+                                                .truncationMode(.tail)
+                                            if index < message.recipients.count - 1 {
+                                                Text(",")
+                                            }
+                                            Spacer()
                                         }
-                                        Text(recipient.name)
-                                            .foregroundColor(MailResourcesAsset.primaryTextColor)
-                                        Text("(\(recipient.email))")
-                                            .font(.system(size: 13))
-                                        if index < message.recipients.count - 1 {
-                                            Text(",")
-                                        }
-                                        Spacer()
+                                        .foregroundColor(MailResourcesAsset.secondaryTextColor)
+                                        .font(.system(size: 14))
+                                        .frame(width: geometry.size.width)
                                     }
-                                    .foregroundColor(MailResourcesAsset.secondaryTextColor)
-                                    .font(.system(size: 14))
                                 }
                             }
                             .padding(.top, 6)
