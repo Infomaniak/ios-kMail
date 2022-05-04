@@ -37,7 +37,7 @@ struct SearchBarButtonView: View {
                 .scaledToFit()
                 .frame(width: Constants.searchBarIconSize, height: Constants.searchBarIconSize)
         }
-        .padding([.top, .bottom], 8)
+        .padding([.top, .bottom], 10)
         .padding([.leading, .trailing], 12)
         .background(Color(MailResourcesAsset.backgroundSearchBar.color))
         .foregroundColor(MailTextStyle.hint.color)
