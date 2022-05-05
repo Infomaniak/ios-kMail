@@ -88,6 +88,7 @@ struct ThreadListView: View {
             navigationController.navigationBar.standardAppearance = navigationBarAppearance
             navigationController.navigationBar.compactAppearance = navigationBarAppearance
             navigationController.navigationBar.scrollEdgeAppearance = navigationBarAppearance
+            navigationController.hidesBarsOnSwipe = true
         }
         .modifier(ThreadListNavigationBar(isCompact: isCompact, sheet: sheet, folder: $viewModel.folder, avatarImage: $avatarImage))
         .sheet(isPresented: $sheet.isShowing) {
