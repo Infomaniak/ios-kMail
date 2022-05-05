@@ -25,11 +25,16 @@ struct MessageHeaderView: View {
     @StateRealmObject var message: Message
     @Binding var isReduced: Bool
     @State var isThreadHeader: Bool
+    
+    @EnvironmentObject var card: MessageCard
 
     var body: some View {
         HStack(alignment: isThreadHeader ? .top : .center) {
             if let recipient = message.from.first {
                 RecipientImage(recipient: recipient)
+                    .onTapGesture {
+                        card.state = .contact(recipient)
+                    }
             }
 
             HStack(alignment: .top) {

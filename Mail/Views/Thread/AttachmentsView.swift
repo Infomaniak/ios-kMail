@@ -22,7 +22,7 @@ import RealmSwift
 import SwiftUI
 
 struct AttachmentsView: View {
-    @ObservedObject var sheet: MessageSheet
+    @EnvironmentObject var sheet: MessageSheet
     @EnvironmentObject var mailboxManager: MailboxManager
     @ObservedRealmObject var message: Message
 
@@ -66,6 +66,6 @@ struct AttachmentsView: View {
 
 struct AttachmentsView_Previews: PreviewProvider {
     static var previews: some View {
-        AttachmentsView(sheet: MessageSheet(), message: PreviewHelper.sampleMessage)
+        AttachmentsView(message: PreviewHelper.sampleMessage)
     }
 }

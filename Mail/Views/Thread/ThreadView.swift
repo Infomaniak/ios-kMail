@@ -20,9 +20,24 @@ import MailCore
 import RealmSwift
 import SwiftUI
 
+class MessageSheet: SheetState<MessageSheet.State> {
+    enum State: Equatable {
+        case attachment(Attachment)
+    }
+}
+
+class MessageCard: CardState<MessageCard.State> {
+    enum State: Equatable {
+        case contact(Recipient)
+    }
+}
+
 struct ThreadView: View {
     @ObservedRealmObject var thread: Thread
     private var mailboxManager: MailboxManager
+
+    @ObservedObject private var sheet = MessageSheet()
+    @ObservedObject private var card = MessageCard()
 
     init(mailboxManager: MailboxManager, thread: Thread) {
         self.mailboxManager = mailboxManager
@@ -30,20 +45,43 @@ struct ThreadView: View {
     }
 
     var body: some View {
-        ScrollView {
-            VStack {
-                Text(thread.subject ?? "")
-                    .font(.largeTitle)
-                ForEach(thread.messages.indices) { index in
-                    MessageView(message: thread.messages[index], isThreadHeader: index == 0)
-                    MessageSeparatorView()
+        ZStack {
+            ScrollView {
+                VStack {
+                    Text(thread.subject ?? "")
+                        .font(.largeTitle)
+                    ForEach(thread.messages.indices) { index in
+                        MessageView(message: thread.messages[index], isThreadHeader: index == 0)
+                        MessageSeparatorView()
+                    }
+                }
+            }
+            .onAppear {
+                MatomoUtils.track(view: ["MessageView"])
+            }
+
+            if card.cardShown {
+                switch card.state {
+                case let .contact(contact):
+                    BottomCard(cardShown: $card.cardShown, cardDismissal: $card.cardDismissal, height: 285) {
+                        ContactView(contact: contact)
+                    }
+                case .none:
+                    EmptyView()
                 }
             }
         }
-        .onAppear {
-            MatomoUtils.track(view: ["MessageView"])
-        }
         .environmentObject(mailboxManager)
+        .environmentObject(card)
+        .environmentObject(sheet)
+        .sheet(isPresented: $sheet.isShowing) {
+            switch sheet.state {
+            case let .attachment(attachment):
+                AttachmentPreview(isPresented: $sheet.isShowing, attachment: attachment)
+            case .none:
+                EmptyView()
+            }
+        }
     }
 }
 
