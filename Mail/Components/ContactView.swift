@@ -92,13 +92,13 @@ struct ContactView: View {
     private func handleAction(_ action: ContactAction) {
         switch action {
         case .writeEmailAction:
-            // TODO: handle action
+            // TODO: handle writeEmail action
             return
         case .addContactsAction:
-            // TODO: handle action
+            // TODO: handle addContacts action
             return
         case .copyEmailAction:
-            // TODO: handle action
+            // TODO: handle copyEmail action
             return
         default:
             return
