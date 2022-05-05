@@ -62,9 +62,9 @@ struct ThreadView: View {
 
             if card.cardShown {
                 switch card.state {
-                case let .contact(contact):
+                case let .contact(recipient):
                     BottomCard(cardShown: $card.cardShown, cardDismissal: $card.cardDismissal, height: 285) {
-                        ContactView(contact: contact)
+                        ContactView(recipient: recipient)
                     }
                 case .none:
                     EmptyView()

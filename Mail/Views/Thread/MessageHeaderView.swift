@@ -33,7 +33,7 @@ struct MessageHeaderView: View {
             if let recipient = message.from.first {
                 RecipientImage(recipient: recipient)
                     .onTapGesture {
-                        card.state = .contact(recipient)
+                        openContact(recipient: recipient)
                     }
             }
 
@@ -113,6 +113,10 @@ struct MessageHeaderView: View {
             }
         }
         .frame(maxWidth: .infinity, alignment: .leading)
+    }
+    
+    private func openContact(recipient: Recipient) {
+        card.state = .contact(recipient)
     }
 }
 
