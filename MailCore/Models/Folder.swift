@@ -132,6 +132,14 @@ public class Folder: Object, Codable, Comparable, Identifiable {
         return Image(uiImage: asset.image)
     }
 
+    public var formattedUnreadCount: String {
+        guard let unreadCount = unreadCount else { return "" }
+        if unreadCount >= 100 {
+            return "99+"
+        }
+        return unreadCount > 0 ? "\(unreadCount)" : ""
+    }
+
     public static func < (lhs: Folder, rhs: Folder) -> Bool {
         if let lhsRole = lhs.role, let rhsRole = rhs.role {
             return lhsRole.order < rhsRole.order

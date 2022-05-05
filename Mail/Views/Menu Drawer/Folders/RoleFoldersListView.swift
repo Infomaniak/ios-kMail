@@ -24,14 +24,14 @@ import SwiftUI
 struct RoleFoldersListView: View {
     @ObservedResults(Folder.self) var folders
 
-    @Binding var selectedFolderId: String?
+    @Binding var selectedFolder: Folder?
 
     var isCompact: Bool
-    weak var delegate: FolderListViewDelegate?
+    let geometryProxy: GeometryProxy
 
     var body: some View {
         ForEach(AnyRealmCollection(folders).filter { $0.role != nil }.sorted()) { folder in
-            FolderCell(folder: folder, selectedFolderId: $selectedFolderId, isCompact: isCompact, delegate: delegate)
+            FolderCell(currentFolder: folder, selectedFolder: $selectedFolder, isCompact: isCompact, geometryProxy: geometryProxy)
                 .padding(.top, folder.role == .inbox ? 3 : Constants.menuDrawerFolderCellPadding)
                 .padding(.bottom, folder.role == .inbox ? 0 : Constants.menuDrawerFolderCellPadding)
 

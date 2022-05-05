@@ -16,19 +16,29 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import MailCore
+import MailResources
 import SwiftUI
 
-struct ThreadList: UIViewControllerRepresentable {
-    var mailboxManager: MailboxManager
-    var folder: Folder?
-    var isCompact: Bool
+struct NewMessageButtonView: View {
+    @ObservedObject var sheet: ThreadListSheet
 
-    func makeUIViewController(context: Context) -> ThreadListViewController {
-        return ThreadListViewController(mailboxManager: mailboxManager, folder: folder, isCompact: isCompact)
+    var body: some View {
+        Button {
+            sheet.state = .newMessage
+        } label: {
+            Text(MailResourcesStrings.newMessageButton)
+                .fontWeight(.medium)
+            Image(uiImage: MailResourcesAsset.pencil.image)
+        }
+        .tint(MailResourcesAsset.mailPinkColor)
+        .buttonStyle(.borderedProminent)
+        .buttonBorderShape(.roundedRectangle(radius: 50))
+        .controlSize(.large)
     }
+}
 
-    func updateUIViewController(_ uiViewController: ThreadListViewController, context: Context) {
-        // Intentionally unimplemented...
+struct NewMessageButtonView_Previews: PreviewProvider {
+    static var previews: some View {
+        NewMessageButtonView(sheet: ThreadListSheet())
     }
 }

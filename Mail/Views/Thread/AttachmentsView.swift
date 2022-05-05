@@ -31,11 +31,11 @@ struct AttachmentsView: View {
             HStack {
                 Image(uiImage: MailResourcesAsset.paperclip.image)
                     .frame(width: 14)
-                    .foregroundColor(Color(MailResourcesAsset.secondaryTextColor.color))
+                    .foregroundColor(MailResourcesAsset.secondaryTextColor)
 
                 Text(MailResourcesStrings.attachmentQuantity(message.attachments.count, message.attachmentsSize))
                     .fontWeight(.regular)
-                    .foregroundColor(Color(MailResourcesAsset.secondaryTextColor.color))
+                    .foregroundColor(MailResourcesAsset.secondaryTextColor)
 
                 Button(MailResourcesStrings.downloadAll) {
                     // TODO: after complete attachment

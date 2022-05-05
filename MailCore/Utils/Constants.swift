@@ -42,6 +42,8 @@ public enum Constants {
 	public static let menuDrawerFolderCellPadding: CGFloat = 4
     public static let menuDrawerHorizontalPadding: CGFloat = 25
 
+    public static let searchBarIconSize: CGFloat = 16
+
     public static let unreadIconSize: CGFloat = 8
 
     public static let byteCountFormatterStyle = ByteCountFormatStyle.byteCount(style: .file)

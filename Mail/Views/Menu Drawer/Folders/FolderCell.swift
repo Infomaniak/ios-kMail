@@ -21,61 +21,51 @@ import MailCore
 import MailResources
 import SwiftUI
 
-protocol FolderListViewDelegate: AnyObject {
-    func didSelectFolder(_ folder: Folder)
-}
-
 struct FolderCell: View {
     @Environment(\.presentationMode) var presentationMode
     @EnvironmentObject var mailboxManager: MailboxManager
 
-    @State var folder: Folder
-
-    @Binding var selectedFolderId: String?
+    @State var currentFolder: Folder!
+    @Binding var selectedFolder: Folder?
 
     var isCompact: Bool
-    weak var delegate: FolderListViewDelegate?
+    let geometryProxy: GeometryProxy
 
     var body: some View {
         if isCompact {
-            Button {
-                updateSplitView(with: folder)
-                selectedFolderId = folder.id
-            } label: {
-                FolderCellContentView(selectedFolderId: $selectedFolderId, folder: $folder)
+            Button(action: updateFolder) {
+                FolderCellContent(currentFolder: $currentFolder, selectedFolder: $selectedFolder)
             }
         } else {
             NavigationLink {
-                ThreadList(mailboxManager: mailboxManager, folder: folder, isCompact: isCompact)
-                    .onAppear {
-                        selectedFolderId = folder.id
-                    }
+                ThreadListView(mailboxManager: mailboxManager, folder: $currentFolder, isCompact: isCompact, geometryProxy: geometryProxy)
+                    .onAppear { selectedFolder = currentFolder }
             } label: {
-                FolderCellContentView(selectedFolderId: $selectedFolderId, folder: $folder)
+                FolderCellContent(currentFolder: $currentFolder, selectedFolder: $selectedFolder)
             }
 
         }
     }
 
-    private func updateSplitView(with folder: Folder) {
-        delegate?.didSelectFolder(folder)
+    private func updateFolder() {
+        selectedFolder = currentFolder
         presentationMode.wrappedValue.dismiss()
     }
 }
 
-private struct FolderCellContentView: View {
-    @Binding var selectedFolderId: String?
-    @Binding var folder: Folder
+struct FolderCellContent: View {
+    @Binding var currentFolder: Folder!
+    @Binding var selectedFolder: Folder?
 
     private var iconSize: CGFloat {
-        if folder.role == nil {
-            return folder.isFavorite ? 22 : 19
+        if currentFolder.role == nil {
+            return currentFolder.isFavorite ? 22 : 19
         }
         return 24
     }
 
     private var isSelected: Bool {
-        folder.id == selectedFolderId
+        currentFolder.id == selectedFolder?.id
     }
 
     private var textStyle: MailTextStyle {
@@ -84,21 +74,21 @@ private struct FolderCellContentView: View {
 
     var body: some View {
         HStack {
-            folder.icon
+            currentFolder.icon
                 .resizable()
                 .scaledToFit()
                 .frame(width: iconSize, height: iconSize)
-                .foregroundColor(Color(InfomaniakCoreAsset.infomaniakColor.color))
+                .foregroundColor(InfomaniakCoreAsset.infomaniakColor)
                 .padding(.trailing, 10)
 
-            Text(folder.localizedName)
+            Text(currentFolder.localizedName)
                 .font(textStyle.font)
                 .foregroundColor(textStyle.color)
 
             Spacer()
 
-            if let unreadCount = folder.unreadCount, unreadCount > 0 {
-                Text(unreadCount < 100 ? "\(unreadCount)" : "99+")
+            if currentFolder.unreadCount != nil {
+                Text(currentFolder.formattedUnreadCount)
                     .font(textStyle.font)
                     .foregroundColor(MailTextStyle.badge.color)
             }
@@ -108,9 +98,14 @@ private struct FolderCellContentView: View {
 
 struct FolderCellView_Previews: PreviewProvider {
     static var previews: some View {
-        FolderCell(folder: PreviewHelper.sampleFolder,
-                       selectedFolderId: .constant("blabla"),
-                       isCompact: false)
+        GeometryReader { geometry in
+            FolderCell(
+                currentFolder: PreviewHelper.sampleFolder,
+                selectedFolder: .constant(PreviewHelper.sampleFolder),
+                isCompact: false,
+                geometryProxy: geometry
+            )
+        }
         .previewLayout(.sizeThatFits)
         .previewDevice(PreviewDevice(stringLiteral: "iPhone 11 Pro"))
     }

@@ -43,7 +43,7 @@ struct MessageHeaderView: View {
                         Text(Constants.formatDate(message.date))
                             .font(.system(size: 13))
                             .fontWeight(.regular)
-                            .foregroundColor(Color(MailResourcesAsset.secondaryTextColor.color))
+                            .foregroundColor(MailResourcesAsset.secondaryTextColor)
                         Spacer()
                         if isThreadHeader {
                             Image(systemName: isReduced ? "chevron.down" : "chevron.up")
@@ -62,7 +62,7 @@ struct MessageHeaderView: View {
                             Text(ListFormatter.localizedString(byJoining: message.recipients.map(\.title)))
                                 .lineLimit(1)
                                 .font(.system(size: 14))
-                                .foregroundColor(Color(MailResourcesAsset.secondaryTextColor.color))
+                                .foregroundColor(MailResourcesAsset.secondaryTextColor)
                         } else {
                             Text(message.from.first?.email ?? "")
                                 .foregroundColor(Color(MailResourcesAsset.primaryTextColor.color))
@@ -76,7 +76,7 @@ struct MessageHeaderView: View {
                                             Text("À:")
                                         }
                                         Text(recipient.name)
-                                            .foregroundColor(Color(MailResourcesAsset.primaryTextColor.color))
+                                            .foregroundColor(MailResourcesAsset.primaryTextColor)
                                         Text("(\(recipient.email))")
                                             .font(.system(size: 13))
                                         if index < message.recipients.count - 1 {
@@ -84,7 +84,7 @@ struct MessageHeaderView: View {
                                         }
                                         Spacer()
                                     }
-                                    .foregroundColor(Color(MailResourcesAsset.secondaryTextColor.color))
+                                    .foregroundColor(MailResourcesAsset.secondaryTextColor)
                                     .font(.system(size: 14))
                                 }
                             }

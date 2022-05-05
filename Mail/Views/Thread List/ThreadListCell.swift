@@ -20,7 +20,21 @@ import MailCore
 import MailResources
 import SwiftUI
 
+enum ThreadListAppearance: Int {
+    case normal, compact, large
+
+    var cellVerticalPadding: CGFloat {
+        self == .compact ? 3 : 5
+    }
+
+    var unreadCircleTopPadding: CGFloat {
+        self == .large ? 10.5 : 6
+    }
+}
+
 struct ThreadListCell: View {
+    @AppStorage("threadListAppearance") var threadListAppearance: ThreadListAppearance = .normal
+
     var mailboxManager: MailboxManager
     var thread: Thread
 
@@ -36,20 +50,27 @@ struct ThreadListCell: View {
         HStack(alignment: .top, spacing: 10) {
             Circle()
                 .frame(width: Constants.unreadIconSize, height: Constants.unreadIconSize)
-                .foregroundColor(Color(hasUnreadMessages ?  MailResourcesAsset.mailPinkColor.color : .clear))
-                .padding(.top, 6)
+                .foregroundColor(hasUnreadMessages ? Color(MailResourcesAsset.mailPinkColor.color) : .clear)
+                .padding(.top, threadListAppearance.unreadCircleTopPadding)
+
+            if threadListAppearance == .large {
+                RecipientImage(recipient: thread.from.last, size: 32)
+                    .padding(.trailing, 3)
+            }
 
             VStack(alignment: .leading, spacing: 2) {
-                HStack {
+                HStack(spacing: 15) {
                     Text(thread.formattedFrom)
                         .foregroundColor(MailTextStyle.header.color)
                         .font(MailTextStyle.header.font)
                         .fontWeight(hasUnreadMessages ? .semibold : .regular)
+                        .lineLimit(1)
 
                     Spacer()
 
                     if thread.hasAttachments {
                         Image(uiImage: MailResourcesAsset.attachment.image)
+                            .foregroundColor(textStyle.color)
                     }
 
                     Text(thread.formattedDate)
@@ -58,32 +79,30 @@ struct ThreadListCell: View {
                 }
                 .padding(.bottom, 4)
 
-                HStack {
+                HStack(spacing: 3) {
                     VStack(alignment: .leading) {
                         Text(thread.formattedSubject)
                             .foregroundColor(textStyle.color)
                             .font(textStyle.font)
                             .lineLimit(1)
 
-                        // TODO: Julien Arnoux will modify the API to get a preview of the messages
-                        Text("Lorem Ipsum...")
-                            .foregroundColor(MailTextStyle.secondary.color)
-                            .lineLimit(1)
+                        if threadListAppearance != .compact {
+                            // TODO: Julien Arnoux will modify the API to get a preview of the messages
+                            Text("Lorem Ipsum...")
+                                .foregroundColor(MailTextStyle.secondary.color)
+                                .lineLimit(1)
+                        }
                     }
 
                     Spacer()
 
                     if thread.flagged {
                         Image(uiImage: MailResourcesAsset.starFilled.image)
-                    } else {
-                        Image(uiImage: MailResourcesAsset.star.image)
-                            .foregroundColor(Color(hasUnreadMessages ? MailResourcesAsset.primaryTextColor.color : MailResourcesAsset.secondaryTextColor.color))
                     }
                 }
             }
         }
-        .padding([.leading, .trailing], 12)
-        .padding([.top, .bottom], 14)
+        .padding([.top, .bottom], threadListAppearance.cellVerticalPadding)
     }
 }
 

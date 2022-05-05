@@ -27,10 +27,10 @@ struct UserFoldersListView: View {
     @ObservedResults(Folder.self) var folders
 
     @State private var unfoldFolders = false
-    @Binding var selectedFolderId: String?
+    @Binding var selectedFolder: Folder?
 
     var isCompact: Bool
-    weak var delegate: FolderListViewDelegate?
+    let geometryProxy: GeometryProxy
 
     private let foldersSortDescriptors = [
         SortDescriptor(keyPath: \Folder.isFavorite, ascending: false),
@@ -42,10 +42,7 @@ struct UserFoldersListView: View {
         DisclosureGroup(MailResourcesStrings.buttonFolders, isExpanded: $unfoldFolders) {
             VStack {
                 ForEach(AnyRealmCollection(folders.sorted(by: foldersSortDescriptors)).filter { $0.role == nil }) { folder in
-                    FolderCell(folder: folder,
-                                   selectedFolderId: $selectedFolderId,
-                                   isCompact: isCompact,
-                                   delegate: delegate)
+                    FolderCell(currentFolder: folder, selectedFolder: $selectedFolder, isCompact: isCompact, geometryProxy: geometryProxy)
                     .padding([.top, .bottom], Constants.menuDrawerFolderCellPadding)
                 }
                 .accentColor(Color(InfomaniakCoreAsset.infomaniakColor.color))

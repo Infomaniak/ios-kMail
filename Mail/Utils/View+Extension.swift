@@ -16,6 +16,8 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import InfomaniakCore
+import MailResources
 import SwiftUI
 
 struct DeviceRotationViewModifier: ViewModifier {
@@ -35,5 +37,26 @@ struct DeviceRotationViewModifier: ViewModifier {
 extension View {
     func onRotate(perform action: @escaping (UIInterfaceOrientation?) -> Void) -> some View {
         modifier(DeviceRotationViewModifier(action: action))
+    }
+
+    @ViewBuilder
+    func modifyIf<Content: View>(_ condition: Bool, transform: (Self) -> Content) -> some View {
+        if condition {
+            transform(self)
+        } else {
+            self
+        }
+    }
+
+    func foregroundColor(_ color: InfomaniakCoreColor) -> some View {
+        return self.foregroundColor(Color(color.color))
+    }
+
+    func foregroundColor(_ color: MailResourcesColors) -> some View {
+        return self.foregroundColor(Color(color.color))
+    }
+
+    func tint(_ tint: MailResourcesColors) -> some View {
+        return self.tint(Color(tint.color))
     }
 }

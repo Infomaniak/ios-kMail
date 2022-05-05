@@ -22,9 +22,14 @@ import RealmSwift
 
 typealias Thread = MailCore.Thread
 
-@MainActor class ThreadListViewModel {
+@MainActor class ThreadListViewModel: ObservableObject {
     var mailboxManager: MailboxManager
-    var folder: Folder?
+
+    @Published var folder: Folder?
+    @Published var threads: AnyRealmCollection<Thread>
+
+    var observationThreadToken: NotificationToken?
+
     var filter = Filter.all {
         didSet {
             Task {
@@ -33,12 +38,6 @@ typealias Thread = MailCore.Thread
         }
     }
 
-    var threads: AnyRealmCollection<Thread>
-    var observationThreadToken: NotificationToken?
-
-    typealias ListUpdatedCallback = ([Int], [Int], [Int], Bool) -> Void
-    var onListUpdated: ListUpdatedCallback?
-
     init(mailboxManager: MailboxManager, folder: Folder?) {
         self.mailboxManager = mailboxManager
         self.folder = folder
@@ -46,7 +45,6 @@ typealias Thread = MailCore.Thread
         if let folder = folder,
            let cachedFolder = mailboxManager.getRealm().object(ofType: Folder.self, forPrimaryKey: folder.id) {
             threads = AnyRealmCollection(cachedFolder.threads.sorted(by: \.date, ascending: false))
-            observeChanges()
         } else {
             threads = AnyRealmCollection(mailboxManager.getRealm().objects(Thread.self)
                 .filter(NSPredicate(format: "FALSEPREDICATE")))
@@ -55,10 +53,9 @@ typealias Thread = MailCore.Thread
 
     func fetchThreads() async {
         do {
-            guard let folder = folder else {
-                return
-            }
+            guard let folder = folder else { return }
             try await mailboxManager.threads(folder: folder.freeze(), filter: filter)
+            observeChanges()
         } catch {
             print("Error while getting threads: \(error)")
         }
@@ -73,6 +70,10 @@ typealias Thread = MailCore.Thread
             threads = AnyRealmCollection(mailboxManager.getRealm().objects(Thread.self)
                 .filter(NSPredicate(format: "FALSEPREDICATE")))
         }
+
+        Task {
+            await self.fetchThreads()
+        }
     }
 
     func observeChanges() {
@@ -80,11 +81,9 @@ typealias Thread = MailCore.Thread
             guard let self = self else { return }
             switch changes {
             case let .initial(results):
-                self.threads = results
-                self.onListUpdated?([], [], [], true)
-            case let .update(results, deletions, insertions, modifications):
-                self.threads = results
-                self.onListUpdated?(deletions, insertions, modifications, false)
+                self.threads = results.freeze()
+            case let .update(results, _, _, _):
+                self.threads = results.freeze()
             case .error:
                 break
             }

@@ -20,7 +20,6 @@ import MailCore
 import MailResources
 import RealmSwift
 import SwiftUI
-import UIKit
 
 struct MenuDrawerView: View {
     @Environment(\.openURL) var openURL
@@ -29,22 +28,22 @@ struct MenuDrawerView: View {
     @ObservedResults(Folder.self, where: { $0.parentLink.count == 0 }) var folders
 
     @StateObject var mailboxManager: MailboxManager
-
-    @State var selectedFolderId: String?
     @State private var showMailboxes = false
 
+    @Binding var selectedFolder: Folder?
+
     var isCompact: Bool
-    weak var delegate: FolderListViewDelegate?
+    let geometryProxy: GeometryProxy
 
     private var helpMenuItems = [MenuItem]()
     private var actionsMenuItems = [MenuItem]()
 
-    init(mailboxManager: MailboxManager, selectedFolderId: String?, isCompact: Bool, delegate: FolderListViewDelegate? = nil) {
+    init(mailboxManager: MailboxManager, selectedFolder: Binding<Folder?>, isCompact: Bool, geometryProxy: GeometryProxy) {
         _folders = .init(Folder.self, configuration: AccountManager.instance.currentMailboxManager!.realmConfiguration) { $0.parentLink.count == 0 }
         _mailboxManager = StateObject(wrappedValue: mailboxManager)
+        _selectedFolder = selectedFolder
         self.isCompact = isCompact
-        self.delegate = delegate
-        _selectedFolderId = State(initialValue: selectedFolderId)
+        self.geometryProxy = geometryProxy
 
         getMenuItems()
     }
@@ -58,11 +57,11 @@ struct MenuDrawerView: View {
 
                 SeparatorView()
 
-                RoleFoldersListView(folders: $folders, selectedFolderId: $selectedFolderId, isCompact: isCompact, delegate: delegate)
+                RoleFoldersListView(folders: $folders, selectedFolder: $selectedFolder, isCompact: isCompact, geometryProxy: geometryProxy)
 
                 SeparatorView()
 
-                UserFoldersListView(folders: $folders, selectedFolderId: $selectedFolderId, isCompact: isCompact, delegate: delegate)
+                UserFoldersListView(folders: $folders, selectedFolder: $selectedFolder, isCompact: isCompact, geometryProxy: geometryProxy)
 
                 SeparatorView()
 
@@ -83,6 +82,9 @@ struct MenuDrawerView: View {
         .environmentObject(mailboxManager)
         .task {
             await fetchFolders()
+            if selectedFolder == nil {
+                selectedFolder = folders.first { $0.role == .inbox }
+            }
             MatomoUtils.track(view: ["MenuDrawer"])
         }
     }

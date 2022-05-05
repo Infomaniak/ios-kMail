@@ -21,29 +21,39 @@ import MailCore
 import RealmSwift
 import SwiftUI
 
+import MailResources
+
 struct SplitView: View {
     var mailboxManager = AccountManager.instance.currentMailboxManager!
-    var selectedFolder: Folder?
+    @State var selectedFolder: Folder?
     @State var splitViewController: UISplitViewController?
     @Environment(\.horizontalSizeClass) var sizeClass
 
+    var isCompact: Bool {
+        sizeClass == .compact
+    }
+
     init() {
-        selectedFolder = mailboxManager.getRealm().objects(Folder.self).filter("role = 'INBOX'").first
+        let inbox = mailboxManager.getRealm().objects(Folder.self).filter("role = 'INBOX'").first
+        _selectedFolder = State(wrappedValue: inbox)
     }
 
     var body: some View {
-        NavigationView {
-            if sizeClass == .compact {
-                ThreadList(mailboxManager: mailboxManager, folder: selectedFolder, isCompact: sizeClass == .compact)
-            } else {
-                MenuDrawerView(mailboxManager: mailboxManager, selectedFolderId: selectedFolder?.id, isCompact: sizeClass == .compact)
-                    .navigationBarHidden(true)
+        GeometryReader { geometry in
+            NavigationView {
+                if isCompact {
+                    ThreadListView(mailboxManager: mailboxManager, folder: $selectedFolder, isCompact: isCompact, geometryProxy: geometry)
+                } else {
+                    MenuDrawerView(mailboxManager: mailboxManager, selectedFolder: $selectedFolder, isCompact: isCompact, geometryProxy: geometry)
+                        .navigationBarHidden(true)
 
-                ThreadList(mailboxManager: mailboxManager, folder: selectedFolder, isCompact: sizeClass == .compact)
+                    ThreadListView(mailboxManager: mailboxManager, folder: $selectedFolder, isCompact: isCompact, geometryProxy: geometry)
 
-                EmptyThreadView()
+                    EmptyThreadView()
+                }
             }
         }
+        .accentColor(Color(MailResourcesAsset.primaryTextColor.color))
         .task {
             do {
                 try await mailboxManager.signatures()

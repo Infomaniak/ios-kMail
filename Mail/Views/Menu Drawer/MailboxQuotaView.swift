@@ -97,7 +97,7 @@ private struct QuotaCircularProgressViewStyle: ProgressViewStyle {
                 .resizable()
                 .scaledToFit()
                 .frame(width: 18)
-                .foregroundColor(Color(InfomaniakCoreAsset.infomaniakColor.color))
+                .foregroundColor(InfomaniakCoreAsset.infomaniakColor)
         }
         .frame(height: 42)
     }

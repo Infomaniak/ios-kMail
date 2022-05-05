@@ -20,14 +20,14 @@ import MailCore
 import SwiftUI
 
 struct RecipientImage: View {
-    var recipient: Recipient
+    var recipient: Recipient?
     var size: CGFloat = 40
 
     var body: some View {
         ZStack {
             Circle()
                 .fill(Color.gray)
-            Text(recipient.initials)
+            Text(recipient?.initials ?? "?")
                 .font(.system(size: size * 0.5, weight: .semibold))
                 .foregroundColor(.white)
         }

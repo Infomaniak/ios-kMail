@@ -21,6 +21,7 @@ import Foundation
 import InfomaniakCore
 import InfomaniakLogin
 import Sentry
+import SwiftUI
 
 public protocol AccountManagerDelegate: AnyObject {
     func currentAccountNeedsAuthentication()
@@ -47,6 +48,16 @@ public extension InfomaniakLogin {
                 } else {
                     continuation.resume(throwing: error ?? MailError.unknownError)
                 }
+            }
+        }
+    }
+}
+
+public extension InfomaniakUser {
+    func getAvatar(size: CGSize = CGSize(width: 40, height: 40)) async -> Image {
+        return await withCheckedContinuation { continuation in
+            self.getAvatar(size: size) { image in
+                continuation.resume(returning: Image(uiImage: image))
             }
         }
     }
