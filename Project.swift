@@ -43,7 +43,9 @@ let project = Project(name: "Mail",
                                  infoPlist: "Mail/Info.plist",
                                  sources: "Mail/**",
                                  resources: [
-                                     "Mail/**/*.storyboard"
+                                     "Mail/**/*.storyboard",
+                                     "MailResources/**/*.strings",
+                                     "MailResources/**/*.stringsdict"
                                  ],
                                  entitlements: "MailResources/Mail.entitlements",
                                  scripts: [
