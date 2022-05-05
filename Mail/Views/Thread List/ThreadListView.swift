@@ -56,21 +56,21 @@ struct ThreadListView: View {
                 .ignoresSafeArea()
 
             List(viewModel.threads) { thread in
-                // Useful to hide the NavigationLink accessoryType
-                ZStack {
-                    NavigationLink(destination: {
-                        ThreadView(mailboxManager: viewModel.mailboxManager, thread: thread)
-                            .onAppear { selectedThread = thread }
-                    }, label: { EmptyView() })
-                    .opacity(0)
-
+                NavigationLink(destination: {
+                    ThreadView(mailboxManager: viewModel.mailboxManager, thread: thread)
+                        .onAppear { selectedThread = thread }
+                }, label: {
                     ThreadListCell(mailboxManager: viewModel.mailboxManager, thread: thread)
-                }
+                })
                 .listRowSeparator(.hidden)
                 .listRowBackground(Color(selectedThread == thread ? MailResourcesAsset.backgroundCardSelectedColor.color : MailResourcesAsset.backgroundColor.color))
                 .modifier(ThreadListSwipeAction())
+
             }
             .listStyle(.plain)
+            .introspectTableView { tableView in
+                tableView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: 60, right: 0)
+            }
 
             NewMessageButtonView(sheet: sheet)
                 .padding(.trailing, 30)
