@@ -66,6 +66,7 @@ public class Message: Object, Decodable, Identifiable {
     @Persisted(originProperty: "messages") var parentLink: LinkingObjects<Thread>
 
     @Persisted public var fullyDownloaded = false
+    @Persisted public var isDraftOffline = false
 
     public var recipients: [Recipient] {
         return Array(to) + Array(cc)
@@ -242,6 +243,28 @@ public class Message: Object, Decodable, Identifiable {
         self.flagged = flagged
         self.safeDisplay = safeDisplay
         self.hasUnsubscribeLink = hasUnsubscribeLink
+    }
+
+    convenience init(draft: Draft) {
+        self.init()
+
+        if let messageUid = draft.messageUid {
+            uid = messageUid
+        }
+        subject = draft.subject
+        priority = draft.priority
+        date = Date()
+        size = 0
+        to = draft.to
+        cc = draft.cc
+        bcc = draft.bcc
+        let body = Body()
+        body.value = draft.body
+        body.type = draft.mimeType
+        self.body = body
+        attachments = draft.attachments
+        references = draft.references
+        isDraft = true
     }
 }
 

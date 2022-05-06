@@ -48,7 +48,7 @@ public class Draft: Object, Codable, Identifiable {
     @Persisted public var bcc: List<Recipient>
     @Persisted public var subject: String?
     @Persisted public var ackRequest = false
-    @Persisted public var priority: String?
+    @Persisted public var priority: MessagePriority
     @Persisted public var stUuid: String?
     @Persisted public var attachments: List<Attachment>
     @Persisted public var isOffline = true
@@ -136,7 +136,7 @@ public class Draft: Object, Codable, Identifiable {
         bcc = try values.decode(List<Recipient>.self, forKey: .bcc)
         subject = try values.decodeIfPresent(String.self, forKey: .inReplyTo)
         ackRequest = try values.decode(Bool.self, forKey: .ackRequest)
-        priority = try values.decodeIfPresent(String.self, forKey: .priority)
+        priority = try values.decode(MessagePriority.self, forKey: .priority)
         stUuid = try values.decodeIfPresent(String.self, forKey: .stUuid)
         attachments = try values.decode(List<Attachment>.self, forKey: .to)
     }
@@ -157,7 +157,7 @@ public class Draft: Object, Codable, Identifiable {
         bcc: [Recipient]? = nil,
         subject: String = "",
         ackRequest: Bool = false,
-        priority: String? = nil,
+        priority: MessagePriority = .normal,
         stUuid: String? = nil,
         attachments: [Attachment]? = nil,
         isOffline: Bool = true,
