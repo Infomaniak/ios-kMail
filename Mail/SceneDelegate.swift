@@ -30,7 +30,6 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, AccountManagerDelegate 
         // If using a storyboard, the `window` property will automatically be initialized and attached to the scene.
         // This delegate does not imply the connecting scene or session are new (see `application:configurationForConnectingSceneSession` instead).
         guard let _ = (scene as? UIWindowScene) else { return }
-
         accountManager = AccountManager.instance
         setupLaunch()
     }
@@ -64,30 +63,25 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, AccountManagerDelegate 
     }
 
     func setRootViewController(_ viewController: UIViewController, animated: Bool = true) {
-        guard let window = window, animated else {
-            self.window?.rootViewController = viewController
-            self.window?.makeKeyAndVisible()
-            return
-        }
-
+        guard let window = window else { return }
         window.rootViewController = viewController
         window.makeKeyAndVisible()
-        UIView.transition(with: window, duration: 0.3, options: .transitionCrossDissolve, animations: nil, completion: nil)
+        if animated {
+            UIView.transition(with: window, duration: 0.3, options: .transitionCrossDissolve, animations: nil, completion: nil)
+        }
     }
 
     func currentAccountNeedsAuthentication() {
         setRootViewController(LoginViewController())
     }
 
-    // MARK: - Private functions
-
     private func setupLaunch() {
+        let viewController: UIViewController
         if accountManager.accounts.isEmpty {
-            window?.rootViewController = LoginViewController.instantiate()
-            window?.makeKeyAndVisible()
+            viewController = LoginViewController.instantiate()
         } else {
-            window?.rootViewController = UIHostingController(rootView: SplitView())
-            window?.makeKeyAndVisible()
+            viewController = UIHostingController(rootView: SplitView())
         }
+        setRootViewController(viewController, animated: false)
     }
 }
