@@ -56,15 +56,30 @@ struct ThreadListView: View {
                 .ignoresSafeArea()
 
             List(viewModel.threads) { thread in
-                NavigationLink(destination: {
-                    ThreadView(mailboxManager: viewModel.mailboxManager, thread: thread)
-                        .onAppear { selectedThread = thread }
-                }, label: {
-                    ThreadListCell(mailboxManager: viewModel.mailboxManager, thread: thread)
-                })
-                .listRowSeparator(.hidden)
-                .listRowBackground(Color(selectedThread == thread ? MailResourcesAsset.backgroundCardSelectedColor.color : MailResourcesAsset.backgroundColor.color))
-                .modifier(ThreadListSwipeAction())
+                if currentFolder?.role == .draft {
+                    Button(action: {
+                        sheet.state = .newMessage
+                    }, label: {
+                        ThreadListCell(mailboxManager: viewModel.mailboxManager, thread: thread)
+                    })
+                    .listRowSeparator(.hidden)
+                    .listRowBackground(Color(selectedThread == thread
+                            ? MailResourcesAsset.backgroundCardSelectedColor.color
+                            : MailResourcesAsset.backgroundColor.color))
+                        .modifier(ThreadListSwipeAction())
+                } else {
+                    NavigationLink(destination: {
+                        ThreadView(mailboxManager: viewModel.mailboxManager, thread: thread)
+                            .onAppear { selectedThread = thread }
+                    }, label: {
+                        ThreadListCell(mailboxManager: viewModel.mailboxManager, thread: thread)
+                    })
+                    .listRowSeparator(.hidden)
+                    .listRowBackground(Color(selectedThread == thread
+                            ? MailResourcesAsset.backgroundCardSelectedColor.color
+                            : MailResourcesAsset.backgroundColor.color))
+                        .modifier(ThreadListSwipeAction())
+                }
             }
             .listStyle(.plain)
             .introspectTableView { tableView in
@@ -89,11 +104,17 @@ struct ThreadListView: View {
             navigationController.navigationBar.scrollEdgeAppearance = navigationBarAppearance
             navigationController.hidesBarsOnSwipe = true
         }
-        .modifier(ThreadListNavigationBar(isCompact: isCompact, sheet: sheet, folder: $viewModel.folder, avatarImage: $avatarImage))
+        .modifier(ThreadListNavigationBar(isCompact: isCompact, sheet: sheet, folder: $viewModel.folder,
+                                          avatarImage: $avatarImage))
         .sheet(isPresented: $sheet.isShowing) {
             switch sheet.state {
             case .menuDrawer:
-                MenuDrawerView(mailboxManager: viewModel.mailboxManager, selectedFolder: $currentFolder, isCompact: isCompact, geometryProxy: geometryProxy)
+                MenuDrawerView(
+                    mailboxManager: viewModel.mailboxManager,
+                    selectedFolder: $currentFolder,
+                    isCompact: isCompact,
+                    geometryProxy: geometryProxy
+                )
             case .newMessage:
                 NewMessageView(mailboxManager: viewModel.mailboxManager)
             case .none:
