@@ -17,18 +17,27 @@
  */
 
 import CocoaLumberjackSwift
+import InfomaniakLogin
 import MailCore
 import Sentry
 import UIKit
+import SwiftUI
 
 @main
-class AppDelegate: UIResponder, UIApplicationDelegate {
+class AppDelegate: UIResponder, UIApplicationDelegate, AccountManagerDelegate {
+    var window: UIWindow?
+
+    private var accountManager: AccountManager!
+
     func application(
         _ application: UIApplication,
         willFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil
     ) -> Bool {
         Logging.initLogging()
         DDLogInfo("Application starting in foreground ? \(UIApplication.shared.applicationState != .background)")
+        InfomaniakLogin.initWith(clientId: MailApiFetcher.clientId)
+        accountManager = AccountManager.instance
+        launchSetup()
 
         return true
     }
@@ -57,5 +66,37 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // Called when the user discards a scene session.
         // If any sessions were discarded while the application was not running, this will be called shortly after application:didFinishLaunchingWithOptions.
         // Use this method to release any resources that were specific to the discarded scenes, as they will not return.
+    }
+
+    func setRootViewController(_ viewController: UIViewController, animated: Bool = true) {
+        guard animated, let window = window else {
+            self.window?.rootViewController = viewController
+            self.window?.makeKeyAndVisible()
+            return
+        }
+
+        window.rootViewController = viewController
+        window.makeKeyAndVisible()
+        UIView.transition(with: window, duration: 0.3, options: .transitionCrossDissolve, animations: nil, completion: nil)
+    }
+
+    // MARK: - Account Manager Delegate
+
+    func currentAccountNeedsAuthentication() {
+        setRootViewController(LoginViewController())
+    }
+
+
+    // MARK: - Private functions
+
+    private func launchSetup() {
+        if accountManager.accounts.isEmpty {
+            window?.rootViewController = LoginViewController()
+            window?.makeKeyAndVisible()
+        } else {
+            let spliViewController = UIHostingController(rootView: SplitView())
+            window?.rootViewController = spliViewController
+            window?.makeKeyAndVisible()
+        }
     }
 }
