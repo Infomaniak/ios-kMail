@@ -61,8 +61,7 @@ public class ContactManager: ObservableObject {
             deleteRealmIfMigrationNeeded: true,
             objectTypes: [
                 Contact.self,
-                AddressBook.self,
-                MergedContact.self
+                AddressBook.self
             ]
         )
     }
@@ -77,6 +76,8 @@ public class ContactManager: ObservableObject {
     }
 
     private let localContactsHelper = LocalContactsHelper()
+
+    public var mergedContacts = [String: MergedContact]()
 
     public func fetchContactsAndAddressBooks() async throws {
         let addressBooks = try await apiFetcher.addressBooks().addressbooks
@@ -113,12 +114,8 @@ public class ContactManager: ObservableObject {
         }
 
         // Merge
-        let mergedContacts = mergeableContacts.map { key, value in
-            MergedContact(email: key, localId: value.local?.identifier, remote: value.remote)
-        }
-
-        try? realm.safeWrite {
-            realm.add(mergedContacts, update: .modified)
+        _ = mergeableContacts.map { key, value in
+            mergedContacts[key] = MergedContact(email: key, remote: value.remote?.freeze(), local: value.local)
         }
     }
 
@@ -132,8 +129,7 @@ public class ContactManager: ObservableObject {
     }
 
     public func getContact(for email: String) -> MergedContact? {
-        let realm = getRealm()
-        return realm.object(ofType: MergedContact.self, forPrimaryKey: email)
+        return mergedContacts[email]
     }
 
     public func addressBook(with id: Int) -> AddressBook? {

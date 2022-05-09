@@ -119,5 +119,5 @@ struct PreviewHelper {
         disposition: .attachment
     )
     
-    static let sampleMergedContact = MergedContact(email: "contact@example.com", localId: "", remote: nil)
+    static let sampleMergedContact = MergedContact(email: "mergedContact@example.com", remote: nil, local: nil)
 }

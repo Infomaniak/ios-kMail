@@ -23,21 +23,12 @@ import RealmSwift
 import SwiftUI
 import UIKit
 
-public class MergedContact: Object, Identifiable {
-    @Persisted(primaryKey: true) public var email: String = UUID().uuidString
-    @Persisted public var remote: Contact?
-    @Persisted public var localId: String?
+public class MergedContact {
+    public var email: String
+    public var remote: Contact?
+    public var local: CNContact?
 
     private let contactFormatter = CNContactFormatter()
-
-    private lazy var local: CNContact? = {
-        if let localId = localId {
-            Task {
-                try await LocalContactsHelper.shared.getContact(with: localId)
-            }
-        }
-        return nil
-    }()
 
     public lazy var color: String = remote?.color ?? "#00bcd4"
     public lazy var firstname: String = merge(local?.givenName, remote?.firstname) ?? ""
@@ -55,7 +46,7 @@ public class MergedContact: Object, Identifiable {
     public lazy var organization: String? = merge(local?.organizationName, remote?.organization)
 
     public var isLocal: Bool {
-        return localId != nil
+        return local != nil
     }
 
     public var isInfomaniak: Bool {
@@ -81,20 +72,13 @@ public class MergedContact: Object, Identifiable {
         }
     }
 
-    private static let contactFormatter = CNContactFormatter()
-
     private func merge<T>(_ element1: T?, _ element2: T?) -> T? {
         return element1 ?? element2
     }
-    
-    override init() {
-        super.init()
-    }
 
-    public convenience init(email: String, localId: String?, remote: Contact?) {
-        self.init()
+    public init(email: String, remote: Contact?, local: CNContact?) {
         self.email = email
-        self.localId = localId
         self.remote = remote
+        self.local = local
     }
 }
