@@ -25,6 +25,10 @@ class LoginViewController: UIViewController {
     @IBAction func loginButtonPressed(_ sender: UIButton) {
         InfomaniakLogin.webviewLoginFrom(viewController: self, delegate: self)
     }
+
+    static func instantiate() -> LoginViewController {
+        return UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "LoginViewController") as! LoginViewController
+    }
 }
 
 extension LoginViewController: InfomaniakLoginDelegate {

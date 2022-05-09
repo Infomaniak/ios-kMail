@@ -83,7 +83,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, AccountManagerDelegate 
 
     private func setupLaunch() {
         if accountManager.accounts.isEmpty {
-            window?.rootViewController = LoginViewController()
+            window?.rootViewController = LoginViewController.instantiate()
             window?.makeKeyAndVisible()
         } else {
             window?.rootViewController = UIHostingController(rootView: SplitView())

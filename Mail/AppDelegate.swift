@@ -21,7 +21,6 @@ import InfomaniakLogin
 import MailCore
 import Sentry
 import UIKit
-import SwiftUI
 
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
