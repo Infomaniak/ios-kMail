@@ -17,15 +17,22 @@
  */
 
 import UIKit
+import MailCore
+import SwiftUI
 
-class SceneDelegate: UIResponder, UIWindowSceneDelegate {
+class SceneDelegate: UIResponder, UIWindowSceneDelegate, AccountManagerDelegate {
     var window: UIWindow?
+
+    private var accountManager: AccountManager!
 
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
         // Use this method to optionally configure and attach the UIWindow `window` to the provided UIWindowScene `scene`.
         // If using a storyboard, the `window` property will automatically be initialized and attached to the scene.
         // This delegate does not imply the connecting scene or session are new (see `application:configurationForConnectingSceneSession` instead).
         guard let _ = (scene as? UIWindowScene) else { return }
+
+        accountManager = AccountManager.instance
+        setupLaunch()
     }
 
     func sceneDidDisconnect(_ scene: UIScene) {
@@ -54,5 +61,33 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         // Called as the scene transitions from the foreground to the background.
         // Use this method to save data, release shared resources, and store enough scene-specific state information
         // to restore the scene back to its current state.
+    }
+
+    func setRootViewController(_ viewController: UIViewController, animated: Bool = true) {
+        guard let window = window, animated else {
+            self.window?.rootViewController = viewController
+            self.window?.makeKeyAndVisible()
+            return
+        }
+
+        window.rootViewController = viewController
+        window.makeKeyAndVisible()
+        UIView.transition(with: window, duration: 0.3, options: .transitionCrossDissolve, animations: nil, completion: nil)
+    }
+
+    func currentAccountNeedsAuthentication() {
+        setRootViewController(LoginViewController())
+    }
+
+    // MARK: - Private functions
+
+    private func setupLaunch() {
+        if accountManager.accounts.isEmpty {
+            window?.rootViewController = LoginViewController()
+            window?.makeKeyAndVisible()
+        } else {
+            window?.rootViewController = UIHostingController(rootView: SplitView())
+            window?.makeKeyAndVisible()
+        }
     }
 }
