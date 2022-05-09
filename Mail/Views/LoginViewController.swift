@@ -33,6 +33,7 @@ class LoginViewController: UIViewController {
 
 extension LoginViewController: InfomaniakLoginDelegate {
     func didCompleteLoginWith(code: String, verifier: String) {
+        MatomoUtils.track(eventWithCategory: .account, name: "loggedIn")
         let previousAccount = AccountManager.instance.currentAccount
         Task {
             do {
