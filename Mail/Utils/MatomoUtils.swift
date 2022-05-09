@@ -23,20 +23,18 @@ import MatomoTracker
 class MatomoUtils {
     static let shared: MatomoTracker = {
         let tracker = MatomoTracker(siteId: "9", baseURL: URLConstants.matomo.url)
+        #if DEBUG
+        tracker.isOptedOut = true
+        #endif
         tracker.userId = String(AccountManager.instance.currentUserId)
         return tracker
     }()
 
-    // Enable or disable Matomo tracking
-    static let isEnabled = true
-
     static func connectUser() {
-        guard isEnabled else { return }
         shared.userId = String(AccountManager.instance.currentUserId)
     }
 
     static func track(view: [String]) {
-        guard isEnabled else { return }
         shared.track(view: view)
     }
 }
