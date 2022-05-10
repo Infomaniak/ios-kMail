@@ -88,7 +88,7 @@ struct MessageHeaderView: View {
                                                     Text(MailResourcesStrings.toTitle)
                                                 }
                                                 Text(recipient.name)
-                                                    .foregroundColor(Color(MailResourcesAsset.primaryTextColor.color))
+                                                    .foregroundColor(MailResourcesAsset.primaryTextColor)
                                                     .fixedSize()
                                                 Text("(\(recipient.email))")
                                                     .font(.system(size: 13))

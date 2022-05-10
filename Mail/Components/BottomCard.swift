@@ -57,11 +57,11 @@ struct BottomCard<Content: View>: View {
                 ZStack(alignment: .topLeading) {
                     RoundedRectangle(cornerRadius: 15)
                         .frame(width: UIScreen.main.bounds.width, height: height)
-                        .foregroundColor(Color(MailResourcesAsset.backgroundColor.color))
+                        .foregroundColor(MailResourcesAsset.backgroundColor)
                     HStack {
                         Spacer()
                         RoundedRectangle(cornerRadius: 5)
-                            .foregroundColor(Color(MailResourcesAsset.separatorColor.color))
+                            .foregroundColor(MailResourcesAsset.separatorColor)
                             .frame(width: 44, height: 4)
                         Spacer()
                     }

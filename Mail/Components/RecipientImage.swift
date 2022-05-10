@@ -20,7 +20,7 @@ import MailCore
 import SwiftUI
 
 struct RecipientImage: View {
-    var recipient: Recipient?
+    var recipient: Recipient
     var size: CGFloat = 40
 
     var body: some View {

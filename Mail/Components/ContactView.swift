@@ -55,20 +55,20 @@ struct ContactView: View {
                     VStack(alignment: .leading) {
                         Text(contact.name)
                             .font(.system(size: 16, weight: .medium))
-                            .foregroundColor(Color(MailResourcesAsset.primaryTextColor.color))
+                            .foregroundColor(MailResourcesAsset.primaryTextColor)
                         Text(contact.email)
                             .font(.system(size: 16, weight: .regular))
-                            .foregroundColor(Color(MailResourcesAsset.secondaryTextColor.color))
+                            .foregroundColor(MailResourcesAsset.secondaryTextColor)
                     }
                 } else {
                     RecipientImage(recipient: recipient, size: 32)
                     VStack(alignment: .leading) {
                         Text(recipient.name)
                             .font(.system(size: 16, weight: .medium))
-                            .foregroundColor(Color(MailResourcesAsset.primaryTextColor.color))
+                            .foregroundColor(MailResourcesAsset.primaryTextColor)
                         Text(recipient.email)
                             .font(.system(size: 16, weight: .regular))
-                            .foregroundColor(Color(MailResourcesAsset.secondaryTextColor.color))
+                            .foregroundColor(MailResourcesAsset.secondaryTextColor)
                     }
                 }
             }
@@ -77,7 +77,7 @@ struct ContactView: View {
             ForEach(actions, id: \.self) { action in
                 HStack {
                     Image(uiImage: action.image)
-                        .foregroundColor(Color(MailResourcesAsset.infomaniakColor.color))
+                        .foregroundColor(MailResourcesAsset.infomaniakColor)
                     Text(action.name)
                 }
                 .frame(height: 40)

@@ -54,7 +54,7 @@ struct ThreadListCell: View {
                 .padding(.top, threadListAppearance.unreadCircleTopPadding)
 
             if threadListAppearance == .large {
-                RecipientImage(recipient: thread.from.last, size: 32)
+                RecipientImage(recipient: thread.from.last!, size: 32)
                     .padding(.trailing, 3)
             }
 
