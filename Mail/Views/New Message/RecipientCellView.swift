@@ -52,8 +52,7 @@ struct RecipientCellView: View {
         VStack(alignment: .leading) {
             HStack {
                 Text(type.title)
-                    .font(MailTextStyle.secondary.font)
-                    .foregroundColor(MailTextStyle.secondary.color)
+                    .textStyle(.bodySecondary)
 
                 switch type {
                 case .from:
@@ -106,8 +105,7 @@ struct RecipientCellView: View {
                         }
                 }
             }
-            .font(MailTextStyle.primary.font)
-            .foregroundColor(MailTextStyle.primary.color)
+            .textStyle(.body)
 
             SeparatorView(withPadding: false, fullWidth: true)
         }

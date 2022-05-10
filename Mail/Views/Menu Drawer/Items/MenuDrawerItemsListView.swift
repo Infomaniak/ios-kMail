@@ -37,8 +37,7 @@ struct MenuDrawerItemsListView: View {
         VStack(alignment: .leading) {
             if let title = title {
                 Text(title)
-                    .font(MailTextStyle.menuTitle.font)
-                    .foregroundColor(MailTextStyle.menuTitle.color)
+                    .textStyle(.calloutSecondary)
                     .padding(.bottom, 6)
             }
 

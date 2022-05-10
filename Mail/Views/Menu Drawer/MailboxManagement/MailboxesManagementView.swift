@@ -42,7 +42,7 @@ struct MailboxesManagementView: View {
             .padding(.top, 5)
         } label: {
             Text(mailboxManager.mailbox.email)
-                .fontWeight(.semibold)
+                .textStyle(.header3)
                 .lineLimit(1)
         }
         .accentColor(Color(MailResourcesAsset.primaryTextColor.color))
@@ -63,6 +63,7 @@ struct MailboxesManagementView: View {
 struct MailboxesManagementView_Previews: PreviewProvider {
     static var previews: some View {
         MailboxesManagementView()
+            .environmentObject(MailboxManager(mailbox: PreviewHelper.sampleMailbox, apiFetcher: MailApiFetcher()))
             .previewLayout(.sizeThatFits)
     }
 }

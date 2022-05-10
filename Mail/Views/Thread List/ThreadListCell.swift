@@ -43,7 +43,7 @@ struct ThreadListCell: View {
     }
 
     private var textStyle: MailTextStyle {
-        hasUnreadMessages ? .primaryHighlighted : .secondary
+        hasUnreadMessages ? .header3 : .bodySecondary
     }
 
     var body: some View {
@@ -59,11 +59,10 @@ struct ThreadListCell: View {
             }
 
             VStack(alignment: .leading, spacing: 2) {
-                HStack(spacing: 15) {
+                HStack(spacing: 8) {
                     Text(thread.formattedFrom)
-                        .foregroundColor(MailTextStyle.header.color)
-                        .font(MailTextStyle.header.font)
-                        .fontWeight(hasUnreadMessages ? .semibold : .regular)
+                        .textStyle(hasUnreadMessages ? .header2 : .header2Secondary)
+                        // .fontWeight(hasUnreadMessages ? .semibold : .regular)
                         .lineLimit(1)
 
                     Spacer()
@@ -71,25 +70,24 @@ struct ThreadListCell: View {
                     if thread.hasAttachments {
                         Image(uiImage: MailResourcesAsset.attachment.image)
                             .foregroundColor(textStyle.color)
+                            .frame(height: 10)
                     }
 
                     Text(thread.formattedDate)
-                        .foregroundColor(textStyle.color)
-                        .font(textStyle.font)
+                        .textStyle(hasUnreadMessages ? .calloutStrong : .calloutSecondary)
                 }
                 .padding(.bottom, 4)
 
                 HStack(spacing: 3) {
                     VStack(alignment: .leading) {
                         Text(thread.formattedSubject)
-                            .foregroundColor(textStyle.color)
-                            .font(textStyle.font)
+                            .textStyle(textStyle)
                             .lineLimit(1)
 
                         if threadListAppearance != .compact {
                             // TODO: Julien Arnoux will modify the API to get a preview of the messages
                             Text("Lorem Ipsum...")
-                                .foregroundColor(MailTextStyle.secondary.color)
+                                .textStyle(.bodySecondary)
                                 .lineLimit(1)
                         }
                     }
