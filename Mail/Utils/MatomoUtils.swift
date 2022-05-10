@@ -30,11 +30,23 @@ class MatomoUtils {
         return tracker
     }()
 
+    enum EventCategory: String {
+        case account
+    }
+
+    enum UserAction: String {
+        case click
+    }
+
     static func connectUser() {
         shared.userId = String(AccountManager.instance.currentUserId)
     }
 
     static func track(view: [String]) {
         shared.track(view: view)
+    }
+
+    static func track(eventWithCategory category: EventCategory, action: UserAction = .click, name: String, value: Float? = nil) {
+        shared.track(eventWithCategory: category.rawValue, action: action.rawValue, name: name, value: value)
     }
 }

@@ -17,6 +17,7 @@
  */
 
 import CocoaLumberjackSwift
+import InfomaniakLogin
 import MailCore
 import Sentry
 import UIKit
@@ -29,6 +30,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     ) -> Bool {
         Logging.initLogging()
         DDLogInfo("Application starting in foreground ? \(UIApplication.shared.applicationState != .background)")
+        InfomaniakLogin.initWith(clientId: MailApiFetcher.clientId)
 
         return true
     }

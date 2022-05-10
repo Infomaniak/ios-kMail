@@ -23,16 +23,17 @@ import UIKit
 
 class LoginViewController: UIViewController {
     @IBAction func loginButtonPressed(_ sender: UIButton) {
-        InfomaniakLogin.initWith(
-            clientId: "E90BC22D-67A8-452C-BE93-28DA33588CA4",
-            redirectUri: "com.infomaniak.mail://oauth2redirect"
-        )
         InfomaniakLogin.webviewLoginFrom(viewController: self, delegate: self)
+    }
+
+    static func instantiate() -> LoginViewController {
+        return UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "LoginViewController") as! LoginViewController
     }
 }
 
 extension LoginViewController: InfomaniakLoginDelegate {
     func didCompleteLoginWith(code: String, verifier: String) {
+        MatomoUtils.track(eventWithCategory: .account, name: "loggedIn")
         let previousAccount = AccountManager.instance.currentAccount
         Task {
             do {
