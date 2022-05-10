@@ -87,7 +87,7 @@ struct BottomCard<Content: View>: View {
             }
         }
         .onChange(of: cardDismissal) { newValue in
-            if newValue == false {
+            if !newValue {
                 dismiss()
             }
         }
