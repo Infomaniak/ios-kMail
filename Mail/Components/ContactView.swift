@@ -22,6 +22,7 @@ import SwiftUI
 
 struct ContactView: View {
     var recipient: Recipient
+    @EnvironmentObject var card: MessageCard
 
     private struct ContactAction: Hashable {
         let name: String
@@ -89,17 +90,27 @@ struct ContactView: View {
         .padding(.top, 31)
     }
 
+    private func writeEmail() {
+        // TODO: handle writeEmail action
+    }
+
+    private func addToContacts() {
+        // TODO: handle addContacts action
+    }
+
+    private func copyEmail() {
+        UIPasteboard.general.string = recipient.email
+        card.cardDismissal = false
+    }
+
     private func handleAction(_ action: ContactAction) {
         switch action {
         case .writeEmailAction:
-            // TODO: handle writeEmail action
-            return
+            writeEmail()
         case .addContactsAction:
-            // TODO: handle addContacts action
-            return
+            addToContacts()
         case .copyEmailAction:
-            // TODO: handle copyEmail action
-            return
+            copyEmail()
         default:
             return
         }

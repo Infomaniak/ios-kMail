@@ -86,22 +86,27 @@ struct BottomCard<Content: View>: View {
                     })
             }
         }
+        .onChange(of: cardDismissal) { newValue in
+            if newValue == false {
+                dismiss()
+            }
+        }
         .onAppear {
             present()
         }
         .edgesIgnoringSafeArea(.all)
     }
-    
+
     private func present() {
-        self.offset.height = height
+        offset.height = height
         withAnimation {
             self.offset.height = 0
             self.opacity = 1
         }
     }
 
-    private func dismiss() {
-        cardDismissal.toggle()
+    public func dismiss() {
+        cardDismissal = false
         withAnimation {
             self.offset.height = height
             self.opacity = 0
