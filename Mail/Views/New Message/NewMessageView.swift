@@ -25,8 +25,15 @@ struct NewMessageView: View {
     private var mailboxManager: MailboxManager
     @State var draft: Draft
     @State var editor = RichTextEditorModel()
-    @State var draftBody = "<br><br>Envoyé avec Infomaniak Mail pour iOS" // MailResourcesStrings.newMessagePlaceholderTitle
     @State var showCc = false
+
+    let defaultBody = "<div><br></div><div><br></div><div>Envoyé avec Infomaniak Mail pour iOS<br></div>"
+
+    @State private var selectedMailboxItem: Int = 0 {
+        didSet {
+            // guard let mailboxManager = AccountManager.instance.getMailboxManager(for: AccountManager.instance.mailboxes[selectedMailboxItem]) else { return }
+        }
+    }
 
     @Environment(\.presentationMode) var presentationMode
 
@@ -39,55 +46,65 @@ struct NewMessageView: View {
         guard let signatureResponse = mailboxManager.getSignatureResponse() else { fatalError() }
         _draft =
             State(initialValue: draft ??
-                Draft(identityId: "\(signatureResponse.defaultSignatureId)", messageUid: UUID().uuidString))
+                Draft(identityId: "\(signatureResponse.defaultSignatureId)", messageUid: UUID().uuidString, body: defaultBody))
     }
 
     var body: some View {
         NavigationView {
             VStack {
-                RecipientCellView(
-                    text: mailboxManager.mailbox.email,
-                    draft: draft,
-                    showCcButton: $showCc,
-                    type: .from
-                ) { textDidChange() }
+                HStack(alignment: .firstTextBaseline) {
+                    Text(MailResourcesStrings.fromTitle)
+                    Picker("Mailbox", selection: $selectedMailboxItem) {
+                        ForEach(AccountManager.instance.mailboxes.indices, id: \.self) { i in
+                            Text(AccountManager.instance.mailboxes[i].email).tag(i)
+                        }
+                    }
+                    Spacer()
+                }
+                SeparatorView(withPadding: false, fullWidth: true)
 
-                RecipientCellView(draft: draft, showCcButton: $showCc, type: .to) { textDidChange() }
+                RecipientCellView(draft: $draft, showCcButton: $showCc, type: .to)
 
                 if showCc {
-                    RecipientCellView(draft: draft, showCcButton: $showCc, type: .cc) { textDidChange() }
-                    RecipientCellView(draft: draft, showCcButton: $showCc, type: .bcc) { textDidChange() }
+                    RecipientCellView(draft: $draft, showCcButton: $showCc, type: .cc)
+                    RecipientCellView(draft: $draft, showCcButton: $showCc, type: .bcc)
                 }
 
-                RecipientCellView(draft: draft, showCcButton: $showCc, type: .object) { textDidChange() }
+                RecipientCellView(draft: $draft, showCcButton: $showCc, type: .object)
 
-                RichTextEditor(model: $editor, body: $draftBody) { textDidChange() }
+                RichTextEditor(model: $editor, body: draft.body) { body in
+                    draft.body = body
+                    textDidChange()
+                }
             }
             .padding()
             .navigationBarTitleDisplayMode(.inline)
             .navigationBarBackButtonHidden(true)
             .navigationBarItems(leading:
-                Button(action: {
+                Button {
                     debouncedBufferWrite?.cancel()
                     Task {
                         await saveDraft()
                     }
                     self.presentationMode.wrappedValue.dismiss()
-                }) {
+                } label: {
                     Image(systemName: "multiply")
                         .tint(MailResourcesAsset.primaryTextColor)
                 },
                 trailing:
-                Button(action: {
+                Button {
                     Task {
                         await send()
                         // TODO: show confirmation snackbar or handle error
                     }
                     self.presentationMode.wrappedValue.dismiss()
-                }) {
+                } label: {
                     Image(uiImage: MailResourcesAsset.send.image)
                 }
                 .tint(MailResourcesAsset.mailPinkColor))
+        }
+        .onChange(of: draft) { _ in
+            textDidChange()
         }
         .navigationViewStyle(.stack)
         .accentColor(.black)

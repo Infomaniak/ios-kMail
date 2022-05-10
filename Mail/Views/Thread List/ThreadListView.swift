@@ -26,6 +26,7 @@ class ThreadListSheet: SheetState<ThreadListSheet.State> {
     enum State: Equatable {
         case menuDrawer
         case newMessage
+        case editMessage(draft: Draft)
     }
 }
 
@@ -58,7 +59,7 @@ struct ThreadListView: View {
             List(viewModel.threads) { thread in
                 if currentFolder?.role == .draft {
                     Button(action: {
-                        sheet.state = .newMessage
+                        editDraft(from: thread)
                     }, label: {
                         ThreadListCell(mailboxManager: viewModel.mailboxManager, thread: thread)
                     })
@@ -117,6 +118,8 @@ struct ThreadListView: View {
                 )
             case .newMessage:
                 NewMessageView(mailboxManager: viewModel.mailboxManager)
+            case let .editMessage(draft):
+                NewMessageView(mailboxManager: viewModel.mailboxManager, draft: draft)
             case .none:
                 EmptyView()
             }
@@ -141,6 +144,25 @@ struct ThreadListView: View {
         }
         .refreshable {
             await viewModel.fetchThreads()
+        }
+    }
+
+    private func editDraft(from thread: Thread) {
+        guard let message = thread.messages.first else { return }
+        var sheetPresented = false
+
+        // If we already have the draft locally, present it directly
+        if let draft: Draft = viewModel.mailboxManager.getRealm().objects(Draft.self).where({ $0.messageUid == message.uid }).first?.copy() {
+            sheet.state = .editMessage(draft: draft)
+            sheetPresented = true
+        }
+
+        // Update the draft
+        Task { [sheetPresented] in
+            let draft = try await viewModel.mailboxManager.draft(from: message)
+            if !sheetPresented {
+                sheet.state = .editMessage(draft: draft)
+            }
         }
     }
 }

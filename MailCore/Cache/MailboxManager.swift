@@ -261,6 +261,20 @@ public class MailboxManager: ObservableObject {
         return draft
     }
 
+    public func draft(from message: Message) async throws -> Draft {
+        // Get from API
+        let draft = try await apiFetcher.draft(from: message)
+
+        let realm = getRealm()
+
+        // Update draft in Realm
+        try? realm.safeWrite {
+            realm.add(draft.copy(), update: .modified)
+        }
+
+        return draft
+    }
+
     public func send(draft: Draft) async throws -> Bool {
         // If the draft has no UUID, we save it first
         if draft.uuid.isEmpty {
@@ -325,7 +339,7 @@ public class MailboxManager: ObservableObject {
             print("No draft with uuid \(draft.uuid)")
         }
     }
-    
+
     public func draftOffline() {
         let realm = getRealm()
         let draftOffline = AnyRealmCollection(realm
