@@ -62,7 +62,6 @@ struct ThreadListCell: View {
                 HStack(spacing: 8) {
                     Text(thread.formattedFrom)
                         .textStyle(hasUnreadMessages ? .header2 : .header2Secondary)
-                        // .fontWeight(hasUnreadMessages ? .semibold : .regular)
                         .lineLimit(1)
 
                     Spacer()
