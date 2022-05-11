@@ -80,16 +80,20 @@ public class ContactManager: ObservableObject {
     public var mergedContacts = [String: MergedContact]()
 
     public func fetchContactsAndAddressBooks() async throws {
-        let addressBooks = try await apiFetcher.addressBooks().addressbooks
-        let contacts = try await apiFetcher.contacts()
+        do {
+            let addressBooks = try await apiFetcher.addressBooks().addressbooks
+            let contacts = try await apiFetcher.contacts()
 
-        let realm = getRealm()
+            let realm = getRealm()
 
-        try? realm.safeWrite {
-            realm.add(addressBooks, update: .modified)
-            realm.add(contacts, update: .modified)
+            try? realm.safeWrite {
+                realm.add(addressBooks, update: .modified)
+                realm.add(contacts, update: .modified)
+            }
+        } catch {
+            mergeContacts()
+            throw error
         }
-
         mergeContacts()
     }
 
