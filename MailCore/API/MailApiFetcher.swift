@@ -51,7 +51,7 @@ public class MailApiFetcher: ApiFetcher {
     // MARK: - API methods
 
     public func mailboxes() async throws -> [Mailbox] {
-        try await perform(request: authenticatedRequest(.mailbox)).data
+        try await perform(request: authenticatedRequest(.mailboxes)).data
     }
 
     func signatures(mailbox: Mailbox) async throws -> SignatureResponse {
