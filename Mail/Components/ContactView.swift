@@ -49,27 +49,14 @@ struct ContactView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
             HStack {
-                if let contact = recipient.contact {
-                    ContactImage(contact: contact)
-                        .frame(width: 32, height: 32)
-                    VStack(alignment: .leading) {
-                        Text(contact.name)
-                            .font(.system(size: 16, weight: .medium))
-                            .foregroundColor(MailResourcesAsset.primaryTextColor)
-                        Text(contact.email)
-                            .font(.system(size: 16, weight: .regular))
-                            .foregroundColor(MailResourcesAsset.secondaryTextColor)
-                    }
-                } else {
-                    RecipientImage(recipient: recipient, size: 32)
-                    VStack(alignment: .leading) {
-                        Text(recipient.name)
-                            .font(.system(size: 16, weight: .medium))
-                            .foregroundColor(MailResourcesAsset.primaryTextColor)
-                        Text(recipient.email)
-                            .font(.system(size: 16, weight: .regular))
-                            .foregroundColor(MailResourcesAsset.secondaryTextColor)
-                    }
+                RecipientImage(recipient: recipient, size: 32)
+                VStack(alignment: .leading) {
+                    Text(recipient.contact?.name ?? recipient.name)
+                        .font(.system(size: 16, weight: .medium))
+                        .foregroundColor(MailResourcesAsset.primaryTextColor)
+                    Text(recipient.contact?.email ?? recipient.email)
+                        .font(.system(size: 16, weight: .regular))
+                        .foregroundColor(MailResourcesAsset.secondaryTextColor)
                 }
             }
             .frame(height: 40)
