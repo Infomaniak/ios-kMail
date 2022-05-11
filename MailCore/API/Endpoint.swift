@@ -44,23 +44,31 @@ public extension Endpoint {
 
 public extension Endpoint {
     static func resource(_ resource: String, queryItems: [URLQueryItem]? = nil) -> Endpoint {
-        return Endpoint(host: ApiEnvironment.current.mailHost, path: resource, queryItems: queryItems)
+        return Endpoint(hostKeypath: \.mailHost, path: resource, queryItems: queryItems)
     }
 
     private static var baseManager: Endpoint {
         return Endpoint(path: "/1/mail_hostings")
     }
 
-    static var mailbox: Endpoint {
-        return Endpoint(host: ApiEnvironment.current.mailHost, path: "/api/mailbox", queryItems: nil)
+    private static var base: Endpoint {
+        return Endpoint(hostKeypath: \.mailHost, path: "/api")
     }
-    
+
+    static var mailboxes: Endpoint {
+        return .base.appending(path: "/mailbox")
+    }
+
+    private static func mailbox(uuid: String) -> Endpoint {
+        return .base.appending(path: "/mail/\(uuid)")
+    }
+
     static func signatures(hostingId: Int, mailboxName: String) -> Endpoint {
-        return Endpoint(host: ApiEnvironment.current.mailHost, path: "/api/securedProxy/1/mail_hostings/\(hostingId)/mailboxes/\(mailboxName)/signatures", queryItems: nil)
+        return .baseManager.appending(path: "/\(hostingId)/mailboxes/\(mailboxName)/signatures")
     }
 
     static func folders(uuid: String) -> Endpoint {
-        return Endpoint(host: ApiEnvironment.current.mailHost, path: "/api/mail/\(uuid)/folder", queryItems: nil)
+        return .mailbox(uuid: uuid).appending(path: "/folder")
     }
 
     static func threads(uuid: String, folderId: String, filter: String?) -> Endpoint {
@@ -72,17 +80,17 @@ public extension Endpoint {
     }
 
     static func quotas(mailbox: String, productId: Int) -> Endpoint {
-        return Endpoint(host: ApiEnvironment.current.mailHost, path: "/api/mailbox/quotas", queryItems: [
+        return .mailboxes.appending(path: "/quotas", queryItems: [
             URLQueryItem(name: "mailbox", value: mailbox),
             URLQueryItem(name: "product_id", value: "\(productId)")
         ])
     }
 
     static func draft(uuid: String) -> Endpoint {
-        return Endpoint(host: ApiEnvironment.current.mailHost, path: "/api/mail/\(uuid)/draft", queryItems: nil)
+        return .mailbox(uuid: uuid).appending(path: "/draft")
     }
 
     static func draft(uuid: String, draftUuid: String) -> Endpoint {
-        return Endpoint(host: ApiEnvironment.current.mailHost, path: "\(draft(uuid: uuid).path)/\(draftUuid)", queryItems: nil)
+        return .draft(uuid: uuid).appending(path: "/\(draftUuid)")
     }
 }
