@@ -18,6 +18,7 @@
 
 import Contacts
 import Foundation
+import InfomaniakCore
 import Kingfisher
 import RealmSwift
 import SwiftUI
@@ -60,8 +61,8 @@ public class MergedContact {
     public func getAvatar(size: CGSize = CGSize(width: 40, height: 40), completion: @escaping (UIImage) -> Void) {
         if let data = local?.imageData, let image = UIImage(data: data) {
             completion(image)
-        } else if let avatarPath = remote?.avatar, let avatarUrl = URL(string: avatarPath) {
-            KingfisherManager.shared.retrieveImage(with: avatarUrl) { result in
+        } else if let avatarPath = remote?.avatar {
+            KingfisherManager.shared.retrieveImage(with: Endpoint.resource(avatarPath).url) { result in
                 if let avatarImage = try? result.get().image {
                     completion(avatarImage)
                 }
