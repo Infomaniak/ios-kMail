@@ -152,7 +152,7 @@ struct ThreadListView: View {
         var sheetPresented = false
 
         // If we already have the draft locally, present it directly
-        if let draft: Draft = viewModel.mailboxManager.getRealm().objects(Draft.self).where({ $0.messageUid == message.uid }).first?.copy() {
+        if let draft: Draft = viewModel.mailboxManager.draft(messageUid: message.uid)?.copy() {
             sheet.state = .editMessage(draft: draft)
             sheetPresented = true
         }

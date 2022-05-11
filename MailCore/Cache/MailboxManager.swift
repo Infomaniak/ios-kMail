@@ -275,6 +275,10 @@ public class MailboxManager: ObservableObject {
         return draft
     }
 
+    public func draft(messageUid: String) -> Draft? {
+        return getRealm().objects(Draft.self).where { $0.messageUid == messageUid }.first
+    }
+
     public func send(draft: Draft) async throws -> Bool {
         // If the draft has no UUID, we save it first
         if draft.uuid.isEmpty {
