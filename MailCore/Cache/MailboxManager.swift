@@ -229,6 +229,22 @@ public class MailboxManager: ObservableObject {
         }
     }
 
+    public func markAsSeen(message: Message, seen: Bool = true) async throws {
+        if seen {
+            let _ = try await apiFetcher.markAsSeen(mailbox: mailbox, messages: [message])
+        } else {
+            let _ = try await apiFetcher.markAsUnseen(mailbox: mailbox, messages: [message])
+        }
+
+        if let liveMessage = message.thaw() {
+            let realm = getRealm()
+            try? realm.safeWrite {
+                liveMessage.seen = seen
+                liveMessage.parent?.updateUnseenMessages()
+            }
+        }
+    }
+
     // MARK: - Draft
 
     public func draft(draftUuid: String) async throws -> Draft {

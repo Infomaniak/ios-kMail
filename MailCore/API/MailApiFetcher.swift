@@ -84,6 +84,18 @@ public class MailApiFetcher: ApiFetcher {
                                                                   ]))).data
     }
 
+    func markAsSeen(mailbox: Mailbox, messages: [Message]) async throws -> SeenResult {
+        try await perform(request: authenticatedRequest(.messageSeen(uuid: mailbox.uuid),
+                                                        method: .post,
+                                                        parameters: ["uids": messages.map(\.uid)])).data
+    }
+
+    func markAsUnseen(mailbox: Mailbox, messages: [Message]) async throws -> SeenResult {
+        try await perform(request: authenticatedRequest(.messageUnseen(uuid: mailbox.uuid),
+                                                        method: .post,
+                                                        parameters: ["uids": messages.map(\.uid)])).data
+    }
+
     func attachment(attachment: Attachment) async throws -> Data {
         guard let resource = attachment.resource else {
             throw MailError.resourceError

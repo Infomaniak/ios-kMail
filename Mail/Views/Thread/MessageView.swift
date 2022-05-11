@@ -57,6 +57,11 @@ struct MessageView: View {
         }
         .padding(16)
         .onAppear {
+            if !message.seen {
+                Task {
+                    try await mailboxManager.markAsSeen(message: message, seen: true)
+                }
+            }
             if self.message.shouldComplete {
                 Task {
                     await fetchMessage()
