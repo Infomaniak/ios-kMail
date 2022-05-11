@@ -80,11 +80,7 @@ struct MenuDrawerView: View {
         }
         .background(Color(MailResourcesAsset.backgroundColor.color))
         .environmentObject(mailboxManager)
-        .task {
-            await fetchFolders()
-            if selectedFolder == nil {
-                selectedFolder = folders.first { $0.role == .inbox }
-            }
+        .onAppear {
             MatomoUtils.track(view: ["MenuDrawer"])
         }
     }
@@ -100,14 +96,6 @@ struct MenuDrawerView: View {
             MenuItem(icon: MailResourcesAsset.drawerArrow, label: MailResourcesStrings.buttonImportEmails, action: importMails),
             MenuItem(icon: MailResourcesAsset.synchronizeArrow, label: MailResourcesStrings.buttonRestoreEmails, action: restoreMails)
         ]
-    }
-
-    private func fetchFolders() async {
-        do {
-            try await mailboxManager.folders()
-        } catch {
-            print("Error while fetching folders: \(error.localizedDescription)")
-        }
     }
 
     // MARK: - Menu actions

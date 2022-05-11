@@ -73,15 +73,30 @@ struct SplitView: View {
             setupBehaviour(orientation: interfaceOrientation)
             splitViewController.preferredDisplayMode = .twoDisplaceSecondary
         }
+        .task {
+            await fetchFolders()
+            // On first launch, select inbox
+            if selectedFolder == nil {
+                selectedFolder = mailboxManager.getRealm().objects(Folder.self).first { $0.role == .inbox }?.freeze()
+            }
+        }
     }
 
-    func setupBehaviour(orientation: UIInterfaceOrientation) {
+    private func setupBehaviour(orientation: UIInterfaceOrientation) {
         if orientation.isLandscape {
             splitViewController?.preferredSplitBehavior = .displace
         } else if orientation.isPortrait {
             splitViewController?.preferredSplitBehavior = .overlay
         } else {
             splitViewController?.preferredSplitBehavior = .automatic
+        }
+    }
+
+    private func fetchFolders() async {
+        do {
+            try await mailboxManager.folders()
+        } catch {
+            print("Error while fetching folders: \(error.localizedDescription)")
         }
     }
 }
