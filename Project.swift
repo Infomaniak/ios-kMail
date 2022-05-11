@@ -17,6 +17,7 @@
  */
 
 import ProjectDescription
+import Foundation
 
 let deploymentTarget = DeploymentTarget.iOS(targetVersion: "15.0", devices: [.iphone, .ipad])
 let baseSettings = SettingsDictionary().automaticCodeSigning(devTeam: "864VDCS2QY")
@@ -59,7 +60,8 @@ let project = Project(name: "Mail",
                                      .package(product: "Introspect"),
                                      .package(product: "SQRichTextEditor")
                                  ],
-                                 settings: .settings(base: baseSettings)
+                                 settings: .settings(base: baseSettings),
+                                 environment: ["hostname": "\(ProcessInfo.processInfo.hostName)."]
                           ),
                           Target(name: "MailTests",
                                  platform: .iOS,
