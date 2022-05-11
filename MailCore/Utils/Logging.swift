@@ -72,7 +72,7 @@ public enum Logging {
 
     private static func initAtlantis() {
         #if DEBUG
-            Atlantis.start(hostName: ProcessInfo.processInfo.hostName)
+            Atlantis.start(hostName: ProcessInfo.processInfo.environment["hostname"])
         #endif
     }
 }
