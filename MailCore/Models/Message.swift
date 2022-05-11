@@ -258,10 +258,10 @@ public class Message: Object, Decodable, Identifiable {
         to = draft.to
         cc = draft.cc
         bcc = draft.bcc
-        let body = Body()
-        body.value = draft.body
-        body.type = draft.mimeType
-        self.body = body
+        let messageBody = Body()
+        messageBody.value = draft.body
+        messageBody.type = draft.mimeType
+        self.body = messageBody
         attachments = draft.attachments
         references = draft.references
         isDraft = true

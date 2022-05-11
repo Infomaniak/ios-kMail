@@ -31,6 +31,7 @@ struct NewMessageView: View {
 
     @State private var selectedMailboxItem: Int = 0 {
         didSet {
+            // TODO: get Mailbox
             // guard let mailboxManager = AccountManager.instance.getMailboxManager(for: AccountManager.instance.mailboxes[selectedMailboxItem]) else { return }
         }
     }
