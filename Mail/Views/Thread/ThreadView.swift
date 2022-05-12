@@ -17,6 +17,7 @@
  */
 
 import MailCore
+import MailResources
 import RealmSwift
 import SwiftUI
 
@@ -39,6 +40,10 @@ struct ThreadView: View {
     @ObservedObject private var sheet = MessageSheet()
     @ObservedObject private var card = MessageCard()
 
+    private var messages: [Message] {
+        return Array(thread.messages.sorted(by: \.date, ascending: true))
+    }
+
     init(mailboxManager: MailboxManager, thread: Thread) {
         self.mailboxManager = mailboxManager
         self.thread = thread
@@ -48,14 +53,15 @@ struct ThreadView: View {
         ZStack {
             ScrollView {
                 VStack {
-                    Text(thread.subject ?? "")
-                        .font(.largeTitle)
-                    ForEach(thread.messages.indices) { index in
-                        MessageView(message: thread.messages[index], isThreadHeader: index == 0)
-                        MessageSeparatorView()
+                    ForEach(messages.indices, id: \.self) { index in
+                        MessageView(message: messages[index])
+                        if index < messages.count - 1 {
+                            MessageSeparatorView()
+                        }
                     }
                 }
             }
+            .navigationTitle(thread.formattedSubject)
             .onAppear {
                 MatomoUtils.track(view: ["MessageView"])
             }

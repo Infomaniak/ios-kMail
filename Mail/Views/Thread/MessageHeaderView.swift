@@ -23,13 +23,11 @@ import SwiftUI
 
 struct MessageHeaderView: View {
     @StateRealmObject var message: Message
-    @Binding var isReduced: Bool
-    @State var isThreadHeader: Bool
-    
+    @Binding var isExpanded: Bool
     @EnvironmentObject var card: MessageCard
 
     var body: some View {
-        HStack(alignment: isThreadHeader ? .top : .center) {
+        HStack(alignment: .top) {
             if let recipient = message.from.first {
                 RecipientImage(recipient: recipient)
                     .onTapGesture {
@@ -37,84 +35,46 @@ struct MessageHeaderView: View {
                     }
             }
 
-            HStack(alignment: .top) {
-                VStack(alignment: .leading, spacing: 0) {
-                    HStack(alignment: .firstTextBaseline) {
-                        ForEach(message.from, id: \.email) { recipient in
-                            Text(recipient.title)
-                                .font(.system(size: 16))
-                                .fontWeight(.medium)
-                        }
-                        Text(Constants.formatDate(message.date))
-                            .font(.system(size: 13))
-                            .fontWeight(.regular)
-                            .foregroundColor(MailResourcesAsset.secondaryTextColor)
-							.transition(.opacity)
-                        Spacer()
-                        if isThreadHeader {
-                            Button {
-                                withAnimation {
-                                    isReduced.toggle()
-                                }
-                            } label: {
-                                Image(systemName: "chevron.down")
-                                    .frame(width: 12)
-                                    .rotationEffect(.degrees(isReduced ? 0 : 180))
-                            }
-                        } else {
-                            Image(systemName: "ellipsis")
-                                .frame(width: 12)
-                        }
+            VStack(alignment: .leading, spacing: 0) {
+                HStack(alignment: .firstTextBaseline, spacing: 16) {
+                    ForEach(message.from, id: \.self) { recipient in
+                        Text(recipient.title)
+                            .textStyle(.header3)
+                    }
+                    Text(message.date, format: .dateTime)
+                        .textStyle(.calloutSecondary)
+                    Spacer()
+                    ChevronButton(isExpanded: $isExpanded)
+                }
+
+                if isExpanded {
+                    if let email = message.from.first?.email {
+                        Text(email)
+                            .textStyle(.callout)
                     }
 
-                    if isThreadHeader {
-                        if isReduced {
-                            Text(ListFormatter.localizedString(byJoining: message.recipients.map(\.title)))
-                                .lineLimit(1)
-                                .font(.system(size: 14))
-                                .foregroundColor(MailResourcesAsset.secondaryTextColor)
-                        } else {
-                            Group {
-                                Text(message.from.first?.email ?? "")
-                                    .foregroundColor(Color(MailResourcesAsset.primaryTextColor.color))
-                                    .font(.system(size: 14))
-                                    .fontWeight(.regular)
-
-                                VStack(alignment: .leading) {
-                                    ForEach(Array(message.recipients.enumerated()), id: \.offset) { index, recipient in
-                                        GeometryReader { geometry in
-                                            HStack(alignment: .firstTextBaseline, spacing: 2) {
-                                                if index == 0 {
-                                                    Text(MailResourcesStrings.toTitle)
-                                                }
-                                                Text(recipient.name)
-                                                    .foregroundColor(MailResourcesAsset.primaryTextColor)
-                                                    .fixedSize()
-                                                Text("(\(recipient.email))")
-                                                    .font(.system(size: 13))
-                                                    .truncationMode(.tail)
-                                                if index < message.recipients.count - 1 {
-                                                    Text(",")
-                                                }
-                                                Spacer()
-                                            }
-                                            .foregroundColor(MailResourcesAsset.secondaryTextColor)
-                                            .font(.system(size: 14))
-                                            .frame(width: geometry.size.width)
-                                        }
-                                    }
-                                }
-                                .padding(.top, 6)
-                            }
-                            .transition(.opacity)
+                    VStack(alignment: .leading) {
+                        RecipientLabel(title: MailResourcesStrings.toTitle, recipients: message.to)
+                        if !message.cc.isEmpty {
+                            RecipientLabel(title: MailResourcesStrings.ccTitle, recipients: message.cc)
+                        }
+                        if !message.bcc.isEmpty {
+                            RecipientLabel(title: MailResourcesStrings.bccTitle, recipients: message.bcc)
                         }
                     }
+                    .textStyle(.calloutSecondary)
+                    .padding(.top, 6)
+                } else {
+                    Text(message.recipients.map(\.title), format: .list(type: .and))
+                        .lineLimit(1)
+                        .textStyle(.calloutSecondary)
                 }
             }
+            .padding(.top, 2)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
     }
-    
+
     private func openContact(recipient: Recipient) {
         card.state = .contact(recipient)
     }
@@ -123,9 +83,34 @@ struct MessageHeaderView: View {
 struct MessageHeaderView_Previews: PreviewProvider {
     static var previews: some View {
         Group {
-            MessageHeaderView(message: PreviewHelper.sampleMessage, isReduced: .constant(true), isThreadHeader: true)
-            MessageHeaderView(message: PreviewHelper.sampleMessage, isReduced: .constant(false), isThreadHeader: true)
-            MessageHeaderView(message: PreviewHelper.sampleMessage, isReduced: .constant(false), isThreadHeader: false)
+            MessageHeaderView(message: PreviewHelper.sampleMessage, isExpanded: .constant(false))
+            MessageHeaderView(message: PreviewHelper.sampleMessage, isExpanded: .constant(true))
+        }
+    }
+}
+
+struct RecipientLabel: View {
+    let title: String
+    let recipients: RealmSwift.List<Recipient>
+
+    var body: some View {
+        HStack(spacing: 4) {
+            Text(title)
+            VStack(alignment: .leading) {
+                ForEach(recipients, id: \.self) { recipient in
+                    Text(text(for: recipient))
+                        .lineLimit(1)
+                        .truncationMode(.tail)
+                }
+            }
+        }
+    }
+
+    private func text(for recipient: Recipient) -> String {
+        if recipient.name.isEmpty {
+            return recipient.email
+        } else {
+            return "\(recipient.name) (\(recipient.email))"
         }
     }
 }

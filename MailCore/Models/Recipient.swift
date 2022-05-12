@@ -31,7 +31,7 @@ public class Recipient: EmbeddedObject, Codable {
     }
 
     public var isCurrentUser: Bool {
-        return AccountManager.instance.currentAccount.user.email == email
+        return AccountManager.instance.currentAccount?.user.email == email
     }
 
     public var title: String {

@@ -25,18 +25,15 @@ struct MessageView: View {
     @EnvironmentObject var mailboxManager: MailboxManager
     @State var model = WebViewModel()
     @State private var webViewHeight: CGFloat = .zero
-    @State var isHeaderReduced = true
-    @State var isThreadHeader: Bool
-
-    init(message: Message, isThreadHeader: Bool = false) {
+    @State var isHeaderExpanded = false
+    init(message: Message) {
         self.message = message
-        self.isThreadHeader = isThreadHeader
     }
 
     var body: some View {
         VStack(spacing: 10) {
-            MessageHeaderView(message: message, isReduced: $isHeaderReduced, isThreadHeader: isThreadHeader)
-            if isThreadHeader && !message.attachments.isEmpty {
+            MessageHeaderView(message: message, isExpanded: $isHeaderExpanded)
+            if !message.attachments.isEmpty {
                 AttachmentsView(message: message)
                     .padding(.top, 16)
                     .padding(.bottom, 10)
