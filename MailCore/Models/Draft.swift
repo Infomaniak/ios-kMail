@@ -34,6 +34,7 @@ public class Draft: Object, Codable, Identifiable {
     static let uuidLocalPrefix = "Local-"
 
     @Persisted(primaryKey: true) public var uuid: String = ""
+    @Persisted public var date: Date
     @Persisted public var identityId: String?
     @Persisted public var messageUid: String?
     @Persisted public var inReplyToUid: String?
@@ -96,6 +97,7 @@ public class Draft: Object, Codable, Identifiable {
 
     private enum CodingKeys: String, CodingKey {
         case uuid
+        case date
         case identityId
         case inReplyToUid
         case forwardedUid
@@ -123,6 +125,7 @@ public class Draft: Object, Codable, Identifiable {
     public required init(from decoder: Decoder) throws {
         let values = try decoder.container(keyedBy: CodingKeys.self)
         uuid = try values.decode(String.self, forKey: .uuid)
+        date = try values.decode(Date.self, forKey: .date)
         identityId = try values.decodeIfPresent(String.self, forKey: .identityId)
         inReplyToUid = try values.decodeIfPresent(String.self, forKey: .inReplyToUid)
         forwardedUid = try values.decodeIfPresent(String.self, forKey: .forwardedUid)
@@ -143,6 +146,7 @@ public class Draft: Object, Codable, Identifiable {
 
     public convenience init(
         uuid: String = "",
+        date: Date = Date(),
         identityId: String? = nil,
         messageUid: String? = nil,
         inReplyToUid: String? = nil,
@@ -166,6 +170,7 @@ public class Draft: Object, Codable, Identifiable {
         self.init()
 
         self.uuid = uuid
+        self.date = date
         self.identityId = identityId
         self.messageUid = messageUid
         self.inReplyToUid = inReplyToUid
@@ -191,6 +196,7 @@ public class Draft: Object, Codable, Identifiable {
         var container = encoder.container(keyedBy: CodingKeys.self)
 
         try container.encode(uuid, forKey: .uuid)
+        try container.encode(date, forKey: .date)
         try container.encode(identityId, forKey: .identityId)
         try container.encode(inReplyToUid, forKey: .inReplyToUid)
         try container.encode(forwardedUid, forKey: .forwardedUid)
