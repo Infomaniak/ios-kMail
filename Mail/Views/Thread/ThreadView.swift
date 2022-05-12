@@ -52,7 +52,7 @@ struct ThreadView: View {
     var body: some View {
         ZStack {
             ScrollView {
-                VStack {
+                VStack(spacing: 0) {
                     ForEach(messages.indices, id: \.self) { index in
                         MessageView(message: messages[index])
                         if index < messages.count - 1 {

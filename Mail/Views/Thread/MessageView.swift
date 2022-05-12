@@ -31,13 +31,15 @@ struct MessageView: View {
     }
 
     var body: some View {
-        VStack(spacing: 10) {
-            MessageHeaderView(message: message, isExpanded: $isHeaderExpanded)
-            if !message.attachments.isEmpty {
-                AttachmentsView(message: message)
-                    .padding(.top, 16)
-                    .padding(.bottom, 10)
+        VStack(spacing: 16) {
+            Group {
+                MessageHeaderView(message: message, isExpanded: $isHeaderExpanded)
+
+                if !message.attachments.isEmpty {
+                    AttachmentsView(message: message)
+                }
             }
+            .padding([.leading, .trailing], 16)
 
             GeometryReader { proxy in
                 WebView(model: $model, dynamicHeight: $webViewHeight, proxy: proxy)
@@ -52,7 +54,7 @@ struct MessageView: View {
                 model.loadHTMLString(value: message.body?.value)
             }
         }
-        .padding(16)
+        .padding([.top], 16)
         .onAppear {
             if !message.seen {
                 Task {
