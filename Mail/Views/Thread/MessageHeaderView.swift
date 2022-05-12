@@ -36,12 +36,15 @@ struct MessageHeaderView: View {
             }
 
             VStack(alignment: .leading, spacing: 0) {
-                HStack(alignment: .firstTextBaseline, spacing: 16) {
+                HStack(alignment: .firstTextBaseline, spacing: 8) {
                     ForEach(message.from, id: \.self) { recipient in
                         Text(recipient.title)
+                            .lineLimit(1)
                             .textStyle(.header3)
                     }
                     Text(message.date, format: .dateTime)
+                        .lineLimit(1)
+                        .truncationMode(.middle)
                         .textStyle(.calloutSecondary)
                     Spacer()
                     ChevronButton(isExpanded: $isExpanded)
