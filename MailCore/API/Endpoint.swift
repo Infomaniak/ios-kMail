@@ -104,4 +104,12 @@ public extension Endpoint {
     static func draft(uuid: String, draftUuid: String) -> Endpoint {
         return .draft(uuid: uuid).appending(path: "/\(draftUuid)")
     }
+
+    static func messageSeen(uuid: String) -> Endpoint {
+        return .mailbox(uuid: uuid).appending(path: "/message/seen")
+    }
+
+    static func messageUnseen(uuid: String) -> Endpoint {
+        return .mailbox(uuid: uuid).appending(path: "/message/unseen")
+    }
 }

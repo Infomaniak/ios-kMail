@@ -67,6 +67,12 @@ public class Thread: Object, Decodable, Identifiable {
         return Constants.formatDate(date, style: .date, relative: true)
     }
 
+    public func updateUnseenMessages() {
+        unseenMessages = messages.filter {
+            !$0.seen
+        }.count
+    }
+
     public convenience init(
         uid: String,
         messagesCount: Int,
