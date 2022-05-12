@@ -44,6 +44,7 @@ let project = Project(name: "Mail",
                                  infoPlist: "Mail/Info.plist",
                                  sources: "Mail/**",
                                  resources: [
+                                     "MailResources/**/*.xcassets",
                                      "Mail/**/*.storyboard",
                                      "MailResources/**/*.strings",
                                      "MailResources/**/*.stringsdict"
@@ -71,8 +72,7 @@ let project = Project(name: "Mail",
                                  sources: "MailTests/**",
                                  dependencies: [
                                      .target(name: "Mail")
-                                 ]
-                          ),
+                                 ]),
                           Target(
                               name: "MailUITests",
                               platform: .iOS,
@@ -95,7 +95,8 @@ let project = Project(name: "Mail",
                                   "MailResources/**/*.xcassets",
                                   "MailResources/**/*.strings",
                                   "MailResources/**/*.stringsdict"
-                              ]
+                              ],
+                              settings: .settings(base: baseSettings)
                           ),
                           Target(
                               name: "MailCore",
@@ -113,7 +114,8 @@ let project = Project(name: "Mail",
                                   .package(product: "InfomaniakLogin"),
                                   .package(product: "CocoaLumberjackSwift"),
                                   .package(product: "RealmSwift")
-                              ]
+                              ],
+                              settings: .settings(base: baseSettings)
                           )
                       ],
                       fileHeaderTemplate: .file("file-header-template.txt"))
