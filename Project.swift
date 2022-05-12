@@ -33,7 +33,8 @@ let project = Project(name: "Mail",
                           .package(url: "https://github.com/matomo-org/matomo-sdk-ios.git", .upToNextMajor(from: "7.5.1")),
                           .package(url: "https://github.com/ProxymanApp/atlantis", .upToNextMajor(from: "1.16.0")),
                           .package(url: "https://github.com/siteline/SwiftUI-Introspect.git", .upToNextMajor(from: "0.1.4")),
-                          .package(url: "https://github.com/Ambrdctr/SQRichTextEditor", .branch("master"))
+                          .package(url: "https://github.com/Ambrdctr/SQRichTextEditor", .branch("master")),
+                          .package(url: "https://github.com/markiv/SwiftUI-Shimmer", .upToNextMajor(from: "1.0.1"))
                       ],
                       targets: [
                           Target(name: "Mail",
@@ -60,7 +61,8 @@ let project = Project(name: "Mail",
                                      .package(product: "MatomoTracker"),
                                      .package(product: "Atlantis"),
                                      .package(product: "Introspect"),
-                                     .package(product: "SQRichTextEditor")
+                                     .package(product: "SQRichTextEditor"),
+                                     .package(product: "Shimmer")
                                  ],
                                  settings: .settings(base: baseSettings),
                                  environment: ["hostname": "\(ProcessInfo.processInfo.hostName)."]

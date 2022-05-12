@@ -19,6 +19,7 @@
 import MailCore
 import RealmSwift
 import SwiftUI
+import Shimmer
 
 struct MessageView: View {
     @ObservedRealmObject var message: Message
@@ -26,6 +27,7 @@ struct MessageView: View {
     @State var model = WebViewModel()
     @State private var webViewHeight: CGFloat = .zero
     @State var isHeaderExpanded = false
+
     init(message: Message) {
         self.message = message
     }
@@ -37,6 +39,13 @@ struct MessageView: View {
 
                 if !message.attachments.isEmpty {
                     AttachmentsView(message: message)
+                }
+
+                // Display a shimmer while the body is loading
+                if message.body == nil {
+                    Text("Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras elementum justo quis neque iaculis, eget vehicula metus vulputate. Duis sit amet tempor nisl. Nulla ac semper risus, nec rutrum elit. Maecenas sed volutpat urna. Vestibulum varius ac orci eu eleifend. Sed at ullamcorper odio. Donec sodales, nisl vel pellentesque scelerisque, ligula justo efficitur ex, non vestibulum nisi purus sit amet dui. Praesent ultricies orci et enim hendrerit posuere eget quis leo. Mauris sit amet sollicitudin mi. Suspendisse volutpat odio ante, quis elementum massa congue sed. Sed varius varius tempus.")
+                        .redacted(reason: .placeholder)
+                        .shimmering()
                 }
             }
             .padding([.leading, .trailing], 16)
