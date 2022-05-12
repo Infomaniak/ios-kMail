@@ -126,13 +126,13 @@ public class Thread: Object, Decodable, Identifiable {
         uniqueMessagesCount = 1
         deletedMessagesCount = 0
         messages = MutableSet()
-        messages.insert(objectsIn: messages)
+        messages.insert(Message(draft: draft))
         unseenMessages = 0
         to = draft.to
         cc = draft.cc
         bcc = draft.bcc
         subject = draft.subject
-        date = Date()
+        date = draft.date
         hasAttachments = false
         hasStAttachments = false
         hasDrafts = true

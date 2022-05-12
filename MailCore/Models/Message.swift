@@ -253,7 +253,7 @@ public class Message: Object, Decodable, Identifiable {
         }
         subject = draft.subject
         priority = draft.priority
-        date = Date()
+        date = draft.date
         size = 0
         to = draft.to
         cc = draft.cc

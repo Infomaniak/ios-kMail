@@ -356,7 +356,6 @@ public class MailboxManager: ObservableObject {
 
         for draft in draftOffline {
             let thread = Thread(draft: draft)
-            thread.messages.insert(Message(draft: draft))
             offlineDraftThread.append(thread)
         }
 
