@@ -5,7 +5,7 @@
 	<key>attachmentQuantity</key>
 	<dict>
 		<key>NSStringLocalizedFormatKey</key>
-		<string>%#@items@ (%s)</string>
+		<string>%#@items@</string>
 		<key>items</key>
 		<dict>
 			<key>NSStringFormatSpecTypeKey</key>

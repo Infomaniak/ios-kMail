@@ -33,7 +33,7 @@ struct AttachmentsView: View {
                     .frame(width: 14)
                     .foregroundColor(MailResourcesAsset.secondaryTextColor)
 
-                Text("\(MailResourcesStrings.attachmentQuantity(message.attachments.count, "0")) (\(message.attachmentsSize, format: .defaultByteCount))")
+                Text("\(MailResourcesStrings.attachmentQuantity(message.attachments.count)) (\(message.attachmentsSize, format: .defaultByteCount))")
                     .fontWeight(.regular)
                     .foregroundColor(MailResourcesAsset.secondaryTextColor)
 
