@@ -69,6 +69,7 @@ public class MailboxManager: ObservableObject {
         realmConfiguration = Realm.Configuration(
             fileURL: MailboxManager.constants.rootDocumentsURL.appendingPathComponent(realmName),
             schemaVersion: 1,
+            deleteRealmIfMigrationNeeded: true,
             objectTypes: [
                 Folder.self,
                 Thread.self,
@@ -206,7 +207,7 @@ public class MailboxManager: ObservableObject {
     }
 
     public func attachmentData(attachment: Attachment) async throws -> Data {
-        let data = try await apiFetcher.attachment(mailbox: mailbox, attachment: attachment)
+        let data = try await apiFetcher.attachment(attachment: attachment)
 
         if let liveAttachment = attachment.thaw() {
             let realm = getRealm()

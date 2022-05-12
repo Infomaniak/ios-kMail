@@ -18,6 +18,7 @@
 
 import Foundation
 import RealmSwift
+import SwiftUI
 
 public class Recipient: EmbeddedObject, Codable {
     @Persisted public var email: String
@@ -29,27 +30,35 @@ public class Recipient: EmbeddedObject, Codable {
         self.name = name
     }
 
-    // NEED TO CHANGE
-    var isCurrentUser: Bool {
+    public var isCurrentUser: Bool {
         return AccountManager.instance.currentAccount.user.email == email
     }
 
-    // NEED TO CHANGE
     public var title: String {
         if isCurrentUser {
             return "Me"
         }
-        return name.isEmpty ? email : name
+        return contact?.name ?? (name.isEmpty ? email : name)
+    }
+    
+    public var color: Color {
+        if let contact = contact {
+            return Color(hex: contact.color)
+        }
+        return .gray
     }
 
-    // NEED TO CHANGE
     public var initials: String {
-        return (name)
+        return (contact?.name ?? name)
             .components(separatedBy: .whitespaces)
             .compactMap(\.first)
             .prefix(2)
             .map { "\($0)" }
             .joined()
             .uppercased()
+    }
+    
+    public var contact: MergedContact? {
+        AccountManager.instance.currentContactManager?.getContact(for: email)
     }
 }

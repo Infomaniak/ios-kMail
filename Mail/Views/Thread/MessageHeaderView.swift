@@ -25,11 +25,16 @@ struct MessageHeaderView: View {
     @StateRealmObject var message: Message
     @Binding var isReduced: Bool
     @State var isThreadHeader: Bool
+    
+    @EnvironmentObject var card: MessageCard
 
     var body: some View {
         HStack(alignment: isThreadHeader ? .top : .center) {
             if let recipient = message.from.first {
                 RecipientImage(recipient: recipient)
+                    .onTapGesture {
+                        openContact(recipient: recipient)
+                    }
             }
 
             HStack(alignment: .top) {
@@ -44,13 +49,18 @@ struct MessageHeaderView: View {
                             .font(.system(size: 13))
                             .fontWeight(.regular)
                             .foregroundColor(MailResourcesAsset.secondaryTextColor)
+							.transition(.opacity)
                         Spacer()
                         if isThreadHeader {
-                            Image(systemName: isReduced ? "chevron.down" : "chevron.up")
-                                .frame(width: 12)
-                                .onTapGesture {
+                            Button {
+                                withAnimation {
                                     isReduced.toggle()
                                 }
+                            } label: {
+                                Image(systemName: "chevron.down")
+                                    .frame(width: 12)
+                                    .rotationEffect(.degrees(isReduced ? 0 : 180))
+                            }
                         } else {
                             Image(systemName: "ellipsis")
                                 .frame(width: 12)
@@ -64,37 +74,49 @@ struct MessageHeaderView: View {
                                 .font(.system(size: 14))
                                 .foregroundColor(MailResourcesAsset.secondaryTextColor)
                         } else {
-                            Text(message.from.first?.email ?? "")
-                                .foregroundColor(Color(MailResourcesAsset.primaryTextColor.color))
-                                .font(.system(size: 14))
-                                .fontWeight(.regular)
-
-                            VStack(alignment: .leading) {
-                                ForEach(Array(message.recipients.enumerated()), id: \.offset) { index, recipient in
-                                    HStack(alignment: .firstTextBaseline, spacing: 2) {
-                                        if index == 0 {
-                                            Text("À:")
-                                        }
-                                        Text(recipient.name)
-                                            .foregroundColor(MailResourcesAsset.primaryTextColor)
-                                        Text("(\(recipient.email))")
-                                            .font(.system(size: 13))
-                                        if index < message.recipients.count - 1 {
-                                            Text(",")
-                                        }
-                                        Spacer()
-                                    }
-                                    .foregroundColor(MailResourcesAsset.secondaryTextColor)
+                            Group {
+                                Text(message.from.first?.email ?? "")
+                                    .foregroundColor(Color(MailResourcesAsset.primaryTextColor.color))
                                     .font(.system(size: 14))
+                                    .fontWeight(.regular)
+
+                                VStack(alignment: .leading) {
+                                    ForEach(Array(message.recipients.enumerated()), id: \.offset) { index, recipient in
+                                        GeometryReader { geometry in
+                                            HStack(alignment: .firstTextBaseline, spacing: 2) {
+                                                if index == 0 {
+                                                    Text(MailResourcesStrings.toTitle)
+                                                }
+                                                Text(recipient.name)
+                                                    .foregroundColor(MailResourcesAsset.primaryTextColor)
+                                                    .fixedSize()
+                                                Text("(\(recipient.email))")
+                                                    .font(.system(size: 13))
+                                                    .truncationMode(.tail)
+                                                if index < message.recipients.count - 1 {
+                                                    Text(",")
+                                                }
+                                                Spacer()
+                                            }
+                                            .foregroundColor(MailResourcesAsset.secondaryTextColor)
+                                            .font(.system(size: 14))
+                                            .frame(width: geometry.size.width)
+                                        }
+                                    }
                                 }
+                                .padding(.top, 6)
                             }
-                            .padding(.top, 6)
+                            .transition(.opacity)
                         }
                     }
                 }
             }
         }
         .frame(maxWidth: .infinity, alignment: .leading)
+    }
+    
+    private func openContact(recipient: Recipient) {
+        card.state = .contact(recipient)
     }
 }
 

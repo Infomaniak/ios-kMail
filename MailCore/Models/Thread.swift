@@ -50,10 +50,7 @@ public class Thread: Object, Decodable, Identifiable {
 
     public var formattedFrom: String {
         guard let from = from.last else { return "(unknow)" }
-        if from.name.isEmpty {
-            return from.email
-        }
-        return from.name
+        return from.title
     }
 
     public var formattedSubject: String {

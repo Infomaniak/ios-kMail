@@ -103,7 +103,19 @@ public class AccountManager: RefreshTokenDelegate {
         }
     }
 
+    public var currentContactManager: ContactManager? {
+        if let currentContactManager = getContactManager(for: currentUserId) {
+            return currentContactManager
+        } else if let newCurrentAccount = accounts.first {
+            setCurrentAccount(account: newCurrentAccount)
+            return getContactManager(for: currentUserId)
+        } else {
+            return nil
+        }
+    }
+
     private var mailboxManagers = [String: MailboxManager]()
+    private var contactManagers = [String: ContactManager]()
     private var apiFetchers = [Int: MailApiFetcher]()
 
     private init() {
@@ -169,6 +181,18 @@ public class AccountManager: RefreshTokenDelegate {
         }
     }
 
+    public func getContactManager(for userId: Int) -> ContactManager? {
+        if let contactManager = contactManagers[String(userId)] {
+            return contactManager
+        } else if let token = getTokenForUserId(userId) {
+            let apiFetcher = getApiFetcher(for: userId, token: token)
+            contactManagers[String(userId)] = ContactManager(user: currentAccount.user, apiFetcher: apiFetcher)
+            return contactManagers[String(userId)]
+        } else {
+            return nil
+        }
+    }
+
     public func getApiFetcher(for userId: Int, token: ApiToken) -> MailApiFetcher {
         if let apiFetcher = apiFetchers[userId] {
             return apiFetcher
@@ -211,13 +235,13 @@ public class AccountManager: RefreshTokenDelegate {
     }
 
     public func createAndSetCurrentAccount(token: ApiToken) async throws -> Account {
-        let newAccount = Account(apiToken: token)
-        addAccount(account: newAccount)
-        setCurrentAccount(account: newAccount)
-
         let apiFetcher = ApiFetcher(token: token, delegate: self)
         let user = try await apiFetcher.userProfile()
+
+        let newAccount = Account(apiToken: token)
         newAccount.user = user
+        addAccount(account: newAccount)
+        setCurrentAccount(account: newAccount)
 
         // add get mailboxes
         let mailApiFetcher = MailApiFetcher(token: token, delegate: self)
@@ -276,6 +300,9 @@ public class AccountManager: RefreshTokenDelegate {
     public func setCurrentAccount(account: Account) {
         currentAccount = account
         currentUserId = account.userId
+        Task {
+            try await currentContactManager?.fetchContactsAndAddressBooks()
+        }
     }
 
     private func setSentryUserId(userId: Int) {
@@ -340,6 +367,12 @@ public class AccountManager: RefreshTokenDelegate {
             where mailboxManager.mailbox != currentMailboxManager?.mailbox && mailboxManager.apiFetcher.currentToken?
             .userId == newToken.userId {
             mailboxManager.apiFetcher.currentToken = newToken
+        }
+
+        // Update token for the other contact manager
+        for contactManager in contactManagers.values
+            where contactManager.user.id != currentUserId && contactManager.apiFetcher.currentToken?.userId == newToken.userId {
+            contactManager.apiFetcher.currentToken = newToken
         }
     }
 }

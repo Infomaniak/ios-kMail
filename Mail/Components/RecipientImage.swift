@@ -20,18 +20,40 @@ import MailCore
 import SwiftUI
 
 struct RecipientImage: View {
-    var recipient: Recipient?
+    var recipient: Recipient
     var size: CGFloat = 40
 
     var body: some View {
-        ZStack {
-            Circle()
-                .fill(Color.gray)
-            Text(recipient?.initials ?? "?")
-                .font(.system(size: size * 0.5, weight: .semibold))
-                .foregroundColor(.white)
+        if recipient.isCurrentUser,
+           let url = URL(string: AccountManager.instance.currentAccount.user.avatar) {
+            AsyncImage(url: url) { image in
+                image.resizable()
+            } placeholder: {
+                Color.gray
+            }
+            .frame(width: size, height: size)
+            .clipShape(Circle())
+        } else if let contact = recipient.contact, contact.hasAvatar {
+            ContactImage(contact: contact)
+                .frame(width: size, height: size)
+                .clipShape(Circle())
+        } else if recipient.initials.isEmpty {
+            Image(systemName: "person.crop.circle.fill")
+                .resizable()
+                .frame(width: size, height: size)
+                .foregroundColor(recipient.color)
+                .background(Color.white)
+                .clipShape(Circle())
+        } else {
+            ZStack {
+                Circle()
+                    .fill(recipient.color)
+                Text(recipient.initials)
+                    .font(.system(size: size * 0.5, weight: .semibold))
+                    .foregroundColor(.white)
+            }
+            .frame(width: size, height: size)
         }
-        .frame(width: size, height: size)
     }
 }
 
