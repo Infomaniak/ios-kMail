@@ -57,30 +57,27 @@ struct ThreadListView: View {
                 .ignoresSafeArea()
 
             List(viewModel.threads) { thread in
-                if currentFolder?.role == .draft {
-                    Button(action: {
-                        editDraft(from: thread)
-                    }, label: {
-                        ThreadListCell(mailboxManager: viewModel.mailboxManager, thread: thread)
-                    })
-                    .listRowSeparator(.hidden)
-                    .listRowBackground(Color(selectedThread == thread
-                            ? MailResourcesAsset.backgroundCardSelectedColor.color
-                            : MailResourcesAsset.backgroundColor.color))
-                        .modifier(ThreadListSwipeAction())
-                } else {
-                    NavigationLink(destination: {
-                        ThreadView(mailboxManager: viewModel.mailboxManager, thread: thread)
-                            .onAppear { selectedThread = thread }
-                    }, label: {
-                        ThreadListCell(mailboxManager: viewModel.mailboxManager, thread: thread)
-                    })
-                    .listRowSeparator(.hidden)
-                    .listRowBackground(Color(selectedThread == thread
-                            ? MailResourcesAsset.backgroundCardSelectedColor.color
-                            : MailResourcesAsset.backgroundColor.color))
-                        .modifier(ThreadListSwipeAction())
+                Group {
+                    if currentFolder?.role == .draft {
+                        Button(action: {
+                            editDraft(from: thread)
+                        }, label: {
+                            ThreadListCell(mailboxManager: viewModel.mailboxManager, thread: thread)
+                        })
+                    } else {
+                        NavigationLink(destination: {
+                            ThreadView(mailboxManager: viewModel.mailboxManager, thread: thread)
+                                .onAppear { selectedThread = thread }
+                        }, label: {
+                            ThreadListCell(mailboxManager: viewModel.mailboxManager, thread: thread)
+                        })
+                    }
                 }
+                .listRowSeparator(.hidden)
+                .listRowBackground(Color(selectedThread == thread
+                                         ? MailResourcesAsset.backgroundCardSelectedColor.color
+                                         : MailResourcesAsset.backgroundColor.color))
+                .modifier(ThreadListSwipeAction())
             }
             .listStyle(.plain)
             .introspectTableView { tableView in
