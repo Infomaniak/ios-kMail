@@ -346,13 +346,11 @@ public class MailboxManager: ObservableObject {
 
     public func draftOffline() {
         let realm = getRealm()
-        let draftOffline = AnyRealmCollection(realm
-            .objects(Draft.self)
-            .filter(NSPredicate(format: "isOffline == true")))
+        let draftOffline = AnyRealmCollection(realm.objects(Draft.self).where { $0.isOffline == true })
 
         let offlineDraftThread = List<Thread>()
 
-        let folder = realm.objects(Folder.self).where { $0.role == .draft }.first!
+        guard let folder = realm.objects(Folder.self).where({ $0.role == .draft }).first else { return }
 
         for draft in draftOffline {
             let thread = Thread(draft: draft)
