@@ -34,10 +34,10 @@ struct NewMessageView: View {
     @State var debouncedBufferWrite: DispatchWorkItem?
     let saveExpiration = 3.0
 
-    init(mailboxManager: MailboxManager, draft: Draft? = nil) {
+    init(mailboxManager: MailboxManager, draft: Draft? = nil, to: [Recipient]? = nil) {
         self.mailboxManager = mailboxManager
         guard let signatureResponse = mailboxManager.getSignatureResponse() else { fatalError() }
-        _draft = State(initialValue: draft ?? Draft(identityId: "\(signatureResponse.defaultSignatureId)"))
+        _draft = State(initialValue: draft ?? Draft(identityId: "\(signatureResponse.defaultSignatureId)", to: to))
     }
 
     var body: some View {

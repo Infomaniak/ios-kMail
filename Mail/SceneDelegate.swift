@@ -16,9 +16,9 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import UIKit
 import MailCore
 import SwiftUI
+import UIKit
 
 class SceneDelegate: UIResponder, UIWindowSceneDelegate, AccountManagerDelegate {
     var window: UIWindow?
@@ -83,5 +83,26 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, AccountManagerDelegate 
             viewController = UIHostingController(rootView: SplitView())
         }
         setRootViewController(viewController, animated: false)
+    }
+
+    // MARK: - Open URLs
+
+    func scene(_ scene: UIScene, openURLContexts URLContexts: Set<UIOpenURLContext>) {
+        _ = URLContexts.first { handleUrlOpen($0.url) }
+    }
+
+    private func handleUrlOpen(_ url: URL) -> Bool {
+        guard let urlComponents = URLComponents(url: url, resolvingAgainstBaseURL: true),
+              let mailboxManager = accountManager.currentMailboxManager else {
+            return false
+        }
+
+        if urlComponents.scheme?.caseInsensitiveCompare("mailto") == .orderedSame {
+            let newMessageView = NewMessageView(mailboxManager: mailboxManager, to: [Recipient(email: urlComponents.path, name: "")])
+            let viewController = UIHostingController(rootView: newMessageView)
+            window?.rootViewController?.present(viewController, animated: true)
+        }
+
+        return true
     }
 }
