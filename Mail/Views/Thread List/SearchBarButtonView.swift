@@ -29,7 +29,7 @@ struct SearchBarButtonView: View {
                 .frame(width: Constants.searchBarIconSize, height: Constants.searchBarIconSize)
 
             Text(MailResourcesStrings.searchViewHint)
-                .font(MailTextStyle.hint.font)
+                .textStyle(.calloutHint)
             Spacer()
 
             Image(uiImage: MailResourcesAsset.filter.image)
@@ -40,7 +40,7 @@ struct SearchBarButtonView: View {
         .padding([.top, .bottom], 10)
         .padding([.leading, .trailing], 12)
         .background(Color(MailResourcesAsset.backgroundSearchBar.color))
-        .foregroundColor(MailTextStyle.hint.color)
+        .foregroundColor(MailResourcesAsset.hintTextColor)
         .cornerRadius(40)
         .padding([.leading, .trailing], 15)
         .shadow(color: .black.opacity(0.05), radius: 4, x: 0, y: 0)

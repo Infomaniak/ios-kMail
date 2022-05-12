@@ -37,52 +37,78 @@ public struct MailTextStyle {
         self.init(font: font, color: Color(color.color))
     }
 
-    public static let header = MailTextStyle(
+    public static let header1 = MailTextStyle(
+        font: .system(size: 22, weight: .semibold),
+        color: MailResourcesAsset.primaryTextColor
+    )
+
+    public static let header2 = MailTextStyle(
         font: .system(size: 18, weight: .semibold),
         color: MailResourcesAsset.primaryTextColor
     )
-    public static let primary = MailTextStyle(
-        font: .system(size: 16, weight: .regular),
-        color: MailResourcesAsset.primaryTextColor
+
+    public static let header2Secondary = MailTextStyle(
+        font: .system(size: 18),
+        color: MailResourcesAsset.secondaryTextColor
     )
-    public static let primaryHighlighted = MailTextStyle(
+
+    public static let header3 = MailTextStyle(
         font: .system(size: 16, weight: .semibold),
         color: MailResourcesAsset.primaryTextColor
     )
-    public static let secondary = MailTextStyle(
-        font: .system(size: 16, weight: .regular),
+
+    public static let body = MailTextStyle(
+        font: .system(size: 16),
+        color: MailResourcesAsset.primaryTextColor
+    )
+
+    public static let bodySecondary = MailTextStyle(
+        font: .system(size: 16),
         color: MailResourcesAsset.secondaryTextColor
     )
-    public static let highlighted = MailTextStyle(
-        font: .system(size: 19, weight: .regular),
-        color: MailResourcesAsset.primaryTextColor
-    )
-    public static let menuItem = MailTextStyle(
-        font: .system(size: 16, weight: .regular),
-        color: MailResourcesAsset.primaryTextColor
-    )
-    public static let menuItemSelected = MailTextStyle(
+
+    public static let button = MailTextStyle(
         font: .system(size: 16, weight: .semibold),
-        color: InfomaniakCoreAsset.infomaniakColor
+        color: MailResourcesAsset.infomaniakColor
     )
-    public static let menuTitle = MailTextStyle(
-        font: .system(size: 15, weight: .regular),
-        color: MailResourcesAsset.sectionHeaderTextColor
+
+    public static let buttonPill = MailTextStyle(
+        font: .system(size: 16, weight: .semibold),
+        color: .white
     )
-    public static let badge = MailTextStyle(
-        font: .system(size: 16, weight: .regular),
-        color: InfomaniakCoreAsset.infomaniakColor
+
+    public static let calloutStrong = MailTextStyle(
+        font: .system(size: 14, weight: .semibold),
+        color: MailResourcesAsset.primaryTextColor
     )
-    public static let smallAction = MailTextStyle(
-        font: .system(size: 15, weight: .semibold),
-        color: InfomaniakCoreAsset.infomaniakColor
+
+    public static let callout = MailTextStyle(
+        font: .system(size: 14),
+        color: MailResourcesAsset.primaryTextColor
     )
-    public static let description = MailTextStyle(
-        font: .system(size: 16, weight: .regular),
+
+    public static let calloutSecondary = MailTextStyle(
+        font: .system(size: 14),
         color: MailResourcesAsset.secondaryTextColor
     )
-    public static let hint = MailTextStyle(
-        font: .system(size: 14, weight: .regular),
+
+    public static let calloutHint = MailTextStyle(
+        font: .system(size: 14),
         color: MailResourcesAsset.hintTextColor
+    )
+
+    public static let calloutHighlighted = MailTextStyle(
+        font: .system(size: 14),
+        color: MailResourcesAsset.infomaniakColor
+    )
+
+    public static let snackbarBody = MailTextStyle(
+        font: .system(size: 14),
+        color: Color(uiColor: UIColor(hex: "#F5F5F5")!) // FIXME: Add to colors
+    )
+
+    public static let snackbarButton = MailTextStyle(
+        font: .system(size: 14),
+        color: Color(uiColor: UIColor(hex: "#4CB7FF")!) // FIXME: Add to colors
     )
 }

@@ -16,29 +16,21 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import MailResources
+import MailCore
 import SwiftUI
 
-struct NewMessageButtonView: View {
-    @ObservedObject var sheet: ThreadListSheet
+struct TextStyleModifier: ViewModifier {
+    let style: MailTextStyle
 
-    var body: some View {
-        Button {
-            sheet.state = .newMessage
-        } label: {
-            Text(MailResourcesStrings.newMessageButton)
-                .textStyle(.buttonPill)
-            Image(uiImage: MailResourcesAsset.pencil.image)
-        }
-        .tint(MailResourcesAsset.mailPinkColor)
-        .buttonStyle(.borderedProminent)
-        .buttonBorderShape(.roundedRectangle(radius: 50))
-        .controlSize(.large)
+    func body(content: Content) -> some View {
+        content
+            .font(style.font)
+            .foregroundColor(style.color)
     }
 }
 
-struct NewMessageButtonView_Previews: PreviewProvider {
-    static var previews: some View {
-        NewMessageButtonView(sheet: ThreadListSheet())
+extension View {
+    func textStyle(_ style: MailTextStyle) -> some View {
+        modifier(TextStyleModifier(style: style))
     }
 }

@@ -65,7 +65,6 @@ struct ThreadListView: View {
                 .listRowSeparator(.hidden)
                 .listRowBackground(Color(selectedThread == thread ? MailResourcesAsset.backgroundCardSelectedColor.color : MailResourcesAsset.backgroundColor.color))
                 .modifier(ThreadListSwipeAction())
-
             }
             .listStyle(.plain)
             .introspectTableView { tableView in
@@ -112,7 +111,9 @@ struct ThreadListView: View {
             viewModel.updateThreads(with: folder)
         }
         .task {
-            avatarImage = await AccountManager.instance.currentAccount.user.getAvatar()
+            if let account = AccountManager.instance.currentAccount {
+                avatarImage = await account.user.getAvatar()
+            }
         }
         .refreshable {
             await viewModel.fetchThreads()
@@ -146,7 +147,6 @@ private struct ThreadListNavigationBar: ViewModifier {
                             .frame(width: 30, height: 30)
                             .clipShape(Circle())
                     }
-
                 }
             }
             .modifyIf(isCompact) { view in

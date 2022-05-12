@@ -39,8 +39,7 @@ struct MailboxQuotaView: View {
                         Text("/")
                         Text(Constants.sizeLimit, format: Constants.byteCountFormatterStyle)
                     }
-                    .font(MailTextStyle.highlighted.font)
-                    .foregroundColor(MailTextStyle.highlighted.color)
+                    .textStyle(.header3)
 
                     Text(MailResourcesStrings.menuDrawerUsed)
                 }
@@ -48,8 +47,7 @@ struct MailboxQuotaView: View {
                 Button(action: openGetMoreStorage) {
                     Text(MailResourcesStrings.buttonMoreStorage)
                 }
-                .foregroundColor(MailTextStyle.smallAction.color)
-                .font(MailTextStyle.smallAction.font)
+                .textStyle(.button)
             }
 
             Spacer()

@@ -69,7 +69,7 @@ struct FolderCellContent: View {
     }
 
     private var textStyle: MailTextStyle {
-        isSelected ? .menuItemSelected : .menuItem
+        isSelected ? .button : .body
     }
 
     var body: some View {
@@ -82,15 +82,13 @@ struct FolderCellContent: View {
                 .padding(.trailing, 10)
 
             Text(currentFolder.localizedName)
-                .font(textStyle.font)
-                .foregroundColor(textStyle.color)
+                .textStyle(textStyle)
 
             Spacer()
 
             if currentFolder.unreadCount != nil {
                 Text(currentFolder.formattedUnreadCount)
-                    .font(textStyle.font)
-                    .foregroundColor(MailTextStyle.badge.color)
+                    .textStyle(.calloutHighlighted)
             }
         }
     }

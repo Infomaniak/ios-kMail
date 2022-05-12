@@ -35,8 +35,7 @@ struct MenuDrawerItemCell: View {
                     .padding(.trailing, 15)
 
                 Text(content.label)
-                    .font(MailTextStyle.menuItem.font)
-                    .foregroundColor(MailTextStyle.menuItem.color)
+                    .textStyle(.body)
             }
         }
     }
