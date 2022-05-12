@@ -66,7 +66,6 @@ public class Message: Object, Decodable, Identifiable {
     @Persisted(originProperty: "messages") var parentLink: LinkingObjects<Thread>
 
     @Persisted public var fullyDownloaded = false
-    @Persisted public var isDraftOffline = false
 
     public var recipients: [Recipient] {
         return Array(to) + Array(cc)
