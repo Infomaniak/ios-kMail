@@ -34,8 +34,7 @@ struct SplitView: View {
     }
 
     init() {
-        let inbox = mailboxManager.getRealm().objects(Folder.self).filter("role = 'INBOX'").first
-        _selectedFolder = State(wrappedValue: inbox)
+        _selectedFolder = State(wrappedValue: getInbox())
     }
 
     var body: some View {
@@ -77,7 +76,7 @@ struct SplitView: View {
             await fetchFolders()
             // On first launch, select inbox
             if selectedFolder == nil {
-                selectedFolder = mailboxManager.getRealm().objects(Folder.self).first { $0.role == .inbox }?.freeze()
+                selectedFolder = getInbox()
             }
         }
     }
@@ -98,5 +97,11 @@ struct SplitView: View {
         } catch {
             print("Error while fetching folders: \(error.localizedDescription)")
         }
+    }
+
+    private func getInbox() -> Folder? {
+        let realm = mailboxManager.getRealm()
+        realm.refresh()
+        return realm.objects(Folder.self).first { $0.role == .inbox }
     }
 }

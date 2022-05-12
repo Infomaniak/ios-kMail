@@ -114,6 +114,9 @@ struct ThreadListView: View {
             if let account = AccountManager.instance.currentAccount {
                 avatarImage = await account.user.getAvatar()
             }
+            if let folder = currentFolder {
+                viewModel.updateThreads(with: folder)
+            }
         }
         .refreshable {
             await viewModel.fetchThreads()
