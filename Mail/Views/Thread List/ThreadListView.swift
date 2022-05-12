@@ -149,7 +149,7 @@ struct ThreadListView: View {
         var sheetPresented = false
 
         // If we already have the draft locally, present it directly
-        if let draft: Draft = viewModel.mailboxManager.draft(messageUid: message.uid)?.copy() {
+        if let draft = viewModel.mailboxManager.draft(messageUid: message.uid)?.detached() {
             sheet.state = .editMessage(draft: draft)
             sheetPresented = true
         }

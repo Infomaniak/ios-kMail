@@ -269,7 +269,7 @@ public class MailboxManager: ObservableObject {
 
         // Update draft in Realm
         try? realm.safeWrite {
-            realm.add(draft.copy(), update: .modified)
+            realm.add(draft.detached(), update: .modified)
         }
 
         return draft
@@ -305,7 +305,7 @@ public class MailboxManager: ObservableObject {
             draft.messageUid = saveResponse.uid
             draft.isOffline = false
 
-            let copyDraft: Draft = draft.copy()
+            let copyDraft = draft.detached()
 
             // Update draft in Realm
             try? realm.safeWrite {
@@ -323,7 +323,7 @@ public class MailboxManager: ObservableObject {
             if draft.uuid.isEmpty {
                 draft.uuid = Draft.uuidLocalPrefix + UUID().uuidString
             }
-            let copyDraft: Draft = draft.copy()
+            let copyDraft = draft.detached()
 
             // Update draft in Realm
             try? realm.safeWrite {

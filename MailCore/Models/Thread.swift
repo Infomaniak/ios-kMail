@@ -128,9 +128,9 @@ public class Thread: Object, Decodable, Identifiable {
         messages = MutableSet()
         messages.insert(Message(draft: draft))
         unseenMessages = 0
-        to = draft.to
-        cc = draft.cc
-        bcc = draft.bcc
+        to = draft.to.detached()
+        cc = draft.cc.detached()
+        bcc = draft.bcc.detached()
         subject = draft.subject
         date = draft.date
         hasAttachments = false

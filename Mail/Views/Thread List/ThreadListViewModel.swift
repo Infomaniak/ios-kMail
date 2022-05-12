@@ -55,13 +55,22 @@ typealias Thread = MailCore.Thread
         do {
             guard let folder = folder else { return }
             try await mailboxManager.threads(folder: folder.freeze(), filter: filter)
-            if let cachedFolder = mailboxManager.getRealm().object(ofType: Folder.self, forPrimaryKey: folder.id) {
-                threads = AnyRealmCollection(cachedFolder.threads.sorted(by: \.date, ascending: false))
-                observeChanges()
+
+            if folder.role == .draft {
+                if let cachedFolder = mailboxManager.getRealm().object(ofType: Folder.self, forPrimaryKey: folder.id) {
+                    threads = AnyRealmCollection(cachedFolder.threads.sorted(by: \.date, ascending: false))
+                    observeChanges()
+                }
+            } else {
+                if let cachedFolder = mailboxManager.getRealm().object(ofType: Folder.self, forPrimaryKey: folder.id) {
+                    threads = AnyRealmCollection(cachedFolder.threads.sorted(by: \.date, ascending: false))
+                    observeChanges()
+                }
             }
         } catch {
             print("Error while getting threads: \(error)")
         }
+        mailboxManager.draftOffline()
     }
 
     func updateThreads(with folder: Folder) {
