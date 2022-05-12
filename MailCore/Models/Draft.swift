@@ -137,11 +137,11 @@ public class Draft: Object, Codable, Identifiable {
         to = try values.decode(List<Recipient>.self, forKey: .to)
         cc = try values.decode(List<Recipient>.self, forKey: .cc)
         bcc = try values.decode(List<Recipient>.self, forKey: .bcc)
-        subject = try values.decodeIfPresent(String.self, forKey: .inReplyTo)
+        subject = try values.decodeIfPresent(String.self, forKey: .subject)
         ackRequest = try values.decode(Bool.self, forKey: .ackRequest)
         priority = try values.decode(MessagePriority.self, forKey: .priority)
         stUuid = try values.decodeIfPresent(String.self, forKey: .stUuid)
-        attachments = try values.decode(List<Attachment>.self, forKey: .to)
+        attachments = try values.decode(List<Attachment>.self, forKey: .attachments)
     }
 
     public convenience init(
