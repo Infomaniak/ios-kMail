@@ -17,8 +17,8 @@
  */
 
 import InfomaniakCore
-import MailResources
 import MailCore
+import MailResources
 import SwiftUI
 
 struct MailboxesManagementView: View {
@@ -31,7 +31,10 @@ struct MailboxesManagementView: View {
     var body: some View {
         DisclosureGroup(isExpanded: $unfoldDetails) {
             VStack(alignment: .leading) {
-                ForEach(AccountManager.instance.mailboxes.filter { $0.mailboxId != mailboxManager.mailbox.mailboxId }, id: \.mailboxId) { mailbox in
+                ForEach(
+                    AccountManager.instance.mailboxes.filter { $0.mailboxId != mailboxManager.mailbox.mailboxId },
+                    id: \.mailboxId
+                ) { mailbox in
                     MailboxCell(mailbox: mailbox)
                 }
 
