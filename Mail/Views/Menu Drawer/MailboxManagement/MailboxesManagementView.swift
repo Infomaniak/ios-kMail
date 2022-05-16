@@ -22,7 +22,9 @@ import MailCore
 import SwiftUI
 
 struct MailboxesManagementView: View {
+    @Environment(\.presentationMode) var presentationMode
     @EnvironmentObject var mailboxManager: MailboxManager
+    @EnvironmentObject var sheet: SettingsSheet
 
     @State private var unfoldDetails = false
 
@@ -56,7 +58,8 @@ struct MailboxesManagementView: View {
     }
 
     private func handleMyAccount() {
-        // TODO: Handle my account
+        sheet.state = .manageAccount
+        presentationMode.wrappedValue.dismiss()
     }
 }
 

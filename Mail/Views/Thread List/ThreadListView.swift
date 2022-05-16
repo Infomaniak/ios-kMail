@@ -34,6 +34,7 @@ struct ThreadListView: View {
     @StateObject var viewModel: ThreadListViewModel
 
     @EnvironmentObject var menuSheet: MenuSheet
+    @EnvironmentObject var settingsSheet: SettingsSheet
 
     @Binding var currentFolder: Folder?
 
@@ -88,6 +89,19 @@ struct ThreadListView: View {
             NewMessageButtonView(sheet: menuSheet)
                 .padding(.trailing, 30)
                 .padding(.bottom, max(8, 30 - geometryProxy.safeAreaInsets.bottom))
+
+            NavigationLink(isActive: $settingsSheet.isShowing) {
+                switch settingsSheet.state {
+                case .settings:
+                    SettingsView(isCompact: isCompact)
+                case .manageAccount:
+                    AccountView()
+                case .none:
+                    EmptyView()
+                }
+            } label: {
+                EmptyView()
+            }
         }
         .introspectNavigationController { navigationController in
             let navigationBarAppearance = UINavigationBarAppearance()

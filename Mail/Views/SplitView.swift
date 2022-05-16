@@ -23,11 +23,21 @@ import SwiftUI
 
 import MailResources
 
+class SettingsSheet: SheetState<SettingsSheet.State> {
+    enum State: Equatable {
+        case manageAccount
+        case settings
+    }
+}
+
 struct SplitView: View {
-    var mailboxManager = AccountManager.instance.currentMailboxManager!
+    @ObservedObject var mailboxManager = AccountManager.instance.currentMailboxManager!
     @State var selectedFolder: Folder?
     @State var splitViewController: UISplitViewController?
     @Environment(\.horizontalSizeClass) var sizeClass
+
+    @ObservedObject var settingsSheet = SettingsSheet()
+    @ObservedObject var menuSheet = MenuSheet()
 
     var isCompact: Bool {
         sizeClass == .compact
@@ -54,6 +64,7 @@ struct SplitView: View {
         }
         .environmentObject(mailboxManager)
         .environmentObject(menuSheet)
+        .environmentObject(settingsSheet)
         .accentColor(Color(MailResourcesAsset.primaryTextColor.color))
         .task {
             do {
