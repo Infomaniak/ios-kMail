@@ -22,6 +22,9 @@ import UIKit
 import MailCore
 
 struct MenuHeaderView: View {
+    @Environment(\.presentationMode) var presentationMode
+    @EnvironmentObject var sheet: SettingsSheet
+    
     var body: some View {
         HStack {
             Image(uiImage: MailResourcesAsset.logoMail.image)
@@ -32,7 +35,8 @@ struct MenuHeaderView: View {
             Spacer()
 
             Button {
-                // TODO: Display "Settings" view
+                sheet.state = .settings
+                presentationMode.wrappedValue.dismiss()
             } label: {
                 Image(uiImage: MailResourcesAsset.gear.image)
                     .resizable()
