@@ -93,7 +93,7 @@ struct ThreadListView: View {
             NavigationLink(isActive: $settingsSheet.isShowing) {
                 switch settingsSheet.state {
                 case .settings:
-                    SettingsView(isCompact: isCompact)
+                    SettingsView()
                 case .manageAccount:
                     AccountView()
                 case .none:
