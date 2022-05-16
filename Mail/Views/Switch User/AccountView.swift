@@ -26,57 +26,55 @@ struct AccountView: View {
     @State private var user: UserProfile! = AccountManager.instance.currentAccount.user
 
     var body: some View {
-        VStack {
-            // Image
+        VStack(spacing: 25) {
             Image(uiImage: avatarImage)
                 .resizable()
                 .frame(width: 110, height: 110)
                 .clipShape(Circle())
 
-            // Email
-            Text(user.email)
-                .textStyle(.header2Normal)
+            VStack(spacing: 8) {
+                Text(user.email)
+                    .textStyle(.header2Normal)
 
-            // BUtton changer de compte
-            Button {
-                // TODO: - Change account action
-            } label: {
-                // TODO: - Traduction
-                Text("Changer de compte")
-                    .textStyle(.button)
+                Button {
+                    // TODO: - Change account action
+                } label: {
+                    Text(MailResourcesStrings.changeAccount)
+                        .textStyle(.button)
+                }
             }
 
-            // Button email associé au compte
+            // TODO: - Show email list
             SeparatorView(withPadding: false, fullWidth: true)
             HStack {
-                // TODO: - Traduction
-                Text("Adresses e-mail associées au compte")
+                Text(MailResourcesStrings.emailAddressesAssociatedWithThisAccount)
                 Spacer()
                 Image(systemName: "chevron.right")
                     .frame(width: 12, height: 12)
             }
+            .padding([.leading, .trailing], 14)
             SeparatorView(withPadding: false, fullWidth: true)
 
-            // Appareils liste
             // TODO: - Appareil list
 
-            // Button supprimer compte
             Button {
                 // TODO: - Delete account
             } label: {
-                Text("Supprimer mon compte")
+                Text(MailResourcesStrings.deleteAccount)
                     .textStyle(.button)
             }
 
-            // Button me déconnecter de ce compte
             Button {
                 // TODO: - Disconnect account
             } label: {
-                // TODO: - Traduction
-                Text("Me déconnecter de ce compte")
+                Text(MailResourcesStrings.disconnectAccount)
                     .textStyle(.button)
             }
+
+            Spacer()
         }
+        .padding([.top, .bottom], 30)
+        .padding([.leading, .trailing], 18)
         .onAppear {
             user.getAvatar(size: CGSize(width: 110, height: 110)) { image in
                 self.avatarImage = image
