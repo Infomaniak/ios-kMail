@@ -51,12 +51,27 @@ struct SplitView: View {
         GeometryReader { geometry in
             NavigationView {
                 if isCompact {
-                    ThreadListView(mailboxManager: mailboxManager, folder: $selectedFolder, isCompact: isCompact, geometryProxy: geometry)
+                    ThreadListView(
+                        mailboxManager: mailboxManager,
+                        folder: $selectedFolder,
+                        isCompact: isCompact,
+                        geometryProxy: geometry
+                    )
                 } else {
-                    MenuDrawerView(mailboxManager: mailboxManager, selectedFolder: $selectedFolder, isCompact: isCompact, geometryProxy: geometry)
-                        .navigationBarHidden(true)
+                    MenuDrawerView(
+                        mailboxManager: mailboxManager,
+                        selectedFolder: $selectedFolder,
+                        isCompact: isCompact,
+                        geometryProxy: geometry
+                    )
+                    .navigationBarHidden(true)
 
-                    ThreadListView(mailboxManager: mailboxManager, folder: $selectedFolder, isCompact: isCompact, geometryProxy: geometry)
+                    ThreadListView(
+                        mailboxManager: mailboxManager,
+                        folder: $selectedFolder,
+                        isCompact: isCompact,
+                        geometryProxy: geometry
+                    )
 
                     EmptyThreadView()
                 }
