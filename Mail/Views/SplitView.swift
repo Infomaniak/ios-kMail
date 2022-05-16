@@ -77,7 +77,6 @@ struct SplitView: View {
                 }
             }
         }
-        .environmentObject(mailboxManager)
         .environmentObject(menuSheet)
         .environmentObject(settingsSheet)
         .accentColor(Color(MailResourcesAsset.primaryTextColor.color))
