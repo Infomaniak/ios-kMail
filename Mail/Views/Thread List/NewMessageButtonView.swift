@@ -20,7 +20,7 @@ import MailResources
 import SwiftUI
 
 struct NewMessageButtonView: View {
-    @ObservedObject var sheet: ThreadListSheet
+    @ObservedObject var sheet: MenuSheet
 
     var body: some View {
         Button {
@@ -39,6 +39,6 @@ struct NewMessageButtonView: View {
 
 struct NewMessageButtonView_Previews: PreviewProvider {
     static var previews: some View {
-        NewMessageButtonView(sheet: ThreadListSheet())
+        NewMessageButtonView(sheet: MenuSheet())
     }
 }

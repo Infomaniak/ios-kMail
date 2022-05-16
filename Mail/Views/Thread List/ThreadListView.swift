@@ -22,7 +22,7 @@ import MailResources
 import RealmSwift
 import SwiftUI
 
-class ThreadListSheet: SheetState<ThreadListSheet.State> {
+class MenuSheet: SheetState<MenuSheet.State> {
     enum State: Equatable {
         case menuDrawer
         case newMessage
@@ -32,7 +32,8 @@ class ThreadListSheet: SheetState<ThreadListSheet.State> {
 
 struct ThreadListView: View {
     @StateObject var viewModel: ThreadListViewModel
-    @StateObject var sheet = ThreadListSheet()
+
+    @EnvironmentObject var menuSheet: MenuSheet
 
     @Binding var currentFolder: Folder?
 
@@ -84,7 +85,7 @@ struct ThreadListView: View {
                 tableView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: 60, right: 0)
             }
 
-            NewMessageButtonView(sheet: sheet)
+            NewMessageButtonView(sheet: menuSheet)
                 .padding(.trailing, 30)
                 .padding(.bottom, max(8, 30 - geometryProxy.safeAreaInsets.bottom))
         }
@@ -102,10 +103,10 @@ struct ThreadListView: View {
             navigationController.navigationBar.scrollEdgeAppearance = navigationBarAppearance
             navigationController.hidesBarsOnSwipe = true
         }
-        .modifier(ThreadListNavigationBar(isCompact: isCompact, sheet: sheet, folder: $viewModel.folder,
+        .modifier(ThreadListNavigationBar(isCompact: isCompact, sheet: menuSheet, folder: $viewModel.folder,
                                           avatarImage: $avatarImage))
-        .sheet(isPresented: $sheet.isShowing) {
-            switch sheet.state {
+        .sheet(isPresented: $menuSheet.isShowing) {
+            switch menuSheet.state {
             case .menuDrawer:
                 MenuDrawerView(
                     mailboxManager: viewModel.mailboxManager,
@@ -167,7 +168,7 @@ struct ThreadListView: View {
 private struct ThreadListNavigationBar: ViewModifier {
     var isCompact: Bool
 
-    @ObservedObject var sheet: ThreadListSheet
+    @ObservedObject var sheet: MenuSheet
 
     @Binding var folder: Folder?
     @Binding var avatarImage: Image
