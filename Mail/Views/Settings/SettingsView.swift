@@ -24,12 +24,6 @@ import SwiftUI
 struct SettingsView: View {
     @EnvironmentObject var menuSheet: MenuSheet
 
-    let isCompact: Bool
-
-    init(isCompact: Bool) {
-        self.isCompact = isCompact
-    }
-
     var body: some View {
         ZStack {
             Text("Settings View")
@@ -42,50 +36,11 @@ struct SettingsView: View {
                 }
             }
         }
-
-        .introspectNavigationController { navigationController in
-            let navigationBarAppearance = UINavigationBarAppearance()
-            navigationBarAppearance.configureWithTransparentBackground()
-            navigationBarAppearance.backgroundColor = MailResourcesAsset.backgroundHeaderColor.color
-            navigationBarAppearance.largeTitleTextAttributes = [
-                .foregroundColor: MailResourcesAsset.primaryTextColor.color,
-                .font: UIFont.systemFont(ofSize: 22, weight: .semibold)
-            ]
-
-            navigationController.navigationBar.standardAppearance = navigationBarAppearance
-            navigationController.navigationBar.compactAppearance = navigationBarAppearance
-            navigationController.navigationBar.scrollEdgeAppearance = navigationBarAppearance
-            navigationController.hidesBarsOnSwipe = true
-        }
-        .modifier(SettingsNavigationBar(isCompact: isCompact, sheet: menuSheet))
-    }
-}
-
-private struct SettingsNavigationBar: ViewModifier {
-    var isCompact: Bool
-
-    @ObservedObject var sheet: MenuSheet
-
-    func body(content: Content) -> some View {
-        content
-            .navigationTitle(MailResourcesStrings.settings)
-            .modifyIf(isCompact) { view in
-                view.toolbar {
-                    ToolbarItem(placement: .navigationBarLeading) {
-                        Button {
-                            sheet.state = .menuDrawer
-                        } label: {
-                            Image(uiImage: MailResourcesAsset.burger.image)
-                        }
-                        .tint(MailResourcesAsset.secondaryTextColor)
-                    }
-                }
-            }
     }
 }
 
 struct SettingsView_Previews: PreviewProvider {
     static var previews: some View {
-        SettingsView(isCompact: false)
+        SettingsView()
     }
 }
