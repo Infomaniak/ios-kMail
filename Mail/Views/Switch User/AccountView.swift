@@ -36,8 +36,8 @@ struct AccountView: View {
                 Text(user.email)
                     .textStyle(.header2Normal)
 
-                Button {
-                    // TODO: - Change account action
+                NavigationLink {
+                    AccountListView()
                 } label: {
                     Text(MailResourcesStrings.changeAccount)
                         .textStyle(.button)

@@ -57,7 +57,8 @@ struct MailboxesManagementView: View {
     // MARK: - Menu actions
 
     private func addNewAccount() {
-        // TODO: Add new account
+        sheet.state = .addAccount
+        presentationMode.wrappedValue.dismiss()
     }
 
     private func handleMyAccount() {
