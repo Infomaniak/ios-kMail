@@ -96,6 +96,8 @@ struct ThreadListView: View {
                     SettingsView()
                 case .manageAccount:
                     AccountView()
+                case .addAccount:
+                    LoginView()
                 case .none:
                     EmptyView()
                 }
