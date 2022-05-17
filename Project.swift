@@ -29,7 +29,6 @@ let project = Project(name: "Mail",
                           .package(url: "https://github.com/ProxymanApp/atlantis", .upToNextMajor(from: "1.3.0")),
                           .package(url: "https://github.com/Alamofire/Alamofire.git", .upToNextMajor(from: "5.2.2")),
                           .package(url: "https://github.com/CocoaLumberjack/CocoaLumberjack.git", .upToNextMajor(from: "3.7.0")),
-                          .package(url: "https://github.com/realm/realm-swift", .upToNextMajor(from: "10.0.0")),
                           .package(url: "https://github.com/matomo-org/matomo-sdk-ios.git", .upToNextMajor(from: "7.5.1")),
                           .package(url: "https://github.com/ProxymanApp/atlantis", .upToNextMajor(from: "1.16.0")),
                           .package(url: "https://github.com/siteline/SwiftUI-Introspect.git", .upToNextMajor(from: "0.1.4")),
@@ -115,8 +114,7 @@ let project = Project(name: "Mail",
                                   .package(product: "Atlantis"),
                                   .package(product: "InfomaniakCore"),
                                   .package(product: "InfomaniakLogin"),
-                                  .package(product: "CocoaLumberjackSwift"),
-                                  .package(product: "RealmSwift")
+                                  .package(product: "CocoaLumberjackSwift")
                               ],
                               settings: .settings(base: baseSettings)
                           )
