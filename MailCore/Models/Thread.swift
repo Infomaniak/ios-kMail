@@ -117,6 +117,30 @@ public class Thread: Object, Decodable, Identifiable {
         self.forwarded = forwarded
         self.size = size
     }
+
+    convenience init(draft: Draft) {
+        self.init()
+
+        uid = draft.uuid
+        messagesCount = 1
+        uniqueMessagesCount = 1
+        deletedMessagesCount = 0
+        messages = MutableSet()
+        messages.insert(Message(draft: draft))
+        unseenMessages = 0
+        to = draft.to.detached()
+        cc = draft.cc.detached()
+        bcc = draft.bcc.detached()
+        subject = draft.subject
+        date = draft.date
+        hasAttachments = false
+        hasStAttachments = false
+        hasDrafts = true
+        flagged = false
+        answered = false
+        forwarded = false
+        size = 0
+    }
 }
 
 public enum Filter: String, CaseIterable, Identifiable {

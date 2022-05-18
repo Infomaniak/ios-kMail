@@ -31,8 +31,12 @@ public struct DraftResponse: Codable {
 }
 
 public class Draft: Object, Codable, Identifiable {
+    static let uuidLocalPrefix = "Local-"
+
     @Persisted(primaryKey: true) public var uuid: String = ""
+    @Persisted public var date: Date
     @Persisted public var identityId: String?
+    @Persisted public var messageUid: String?
     @Persisted public var inReplyToUid: String?
     @Persisted public var forwardedUid: String?
     @Persisted public var references: String?
@@ -45,9 +49,10 @@ public class Draft: Object, Codable, Identifiable {
     @Persisted public var bcc: List<Recipient>
     @Persisted public var subject: String?
     @Persisted public var ackRequest = false
-    @Persisted public var priority: String?
+    @Persisted public var priority: MessagePriority
     @Persisted public var stUuid: String?
     @Persisted public var attachments: List<Attachment>
+    @Persisted public var isOffline = true
     public var action: SaveDraftOption?
 
     public var toValue: String {
@@ -86,8 +91,13 @@ public class Draft: Object, Codable, Identifiable {
         }
     }
 
+    public var hasLocalUuid: Bool {
+        return uuid.isEmpty || uuid.starts(with: Draft.uuidLocalPrefix)
+    }
+
     private enum CodingKeys: String, CodingKey {
         case uuid
+        case date
         case identityId
         case inReplyToUid
         case forwardedUid
@@ -104,6 +114,7 @@ public class Draft: Object, Codable, Identifiable {
         case priority
         case stUuid
         case attachments
+        case isOffline
         case action
     }
 
@@ -114,6 +125,7 @@ public class Draft: Object, Codable, Identifiable {
     public required init(from decoder: Decoder) throws {
         let values = try decoder.container(keyedBy: CodingKeys.self)
         uuid = try values.decode(String.self, forKey: .uuid)
+        date = try values.decode(Date.self, forKey: .date)
         identityId = try values.decodeIfPresent(String.self, forKey: .identityId)
         inReplyToUid = try values.decodeIfPresent(String.self, forKey: .inReplyToUid)
         forwardedUid = try values.decodeIfPresent(String.self, forKey: .forwardedUid)
@@ -125,16 +137,18 @@ public class Draft: Object, Codable, Identifiable {
         to = try values.decode(List<Recipient>.self, forKey: .to)
         cc = try values.decode(List<Recipient>.self, forKey: .cc)
         bcc = try values.decode(List<Recipient>.self, forKey: .bcc)
-        subject = try values.decodeIfPresent(String.self, forKey: .inReplyTo)
+        subject = try values.decodeIfPresent(String.self, forKey: .subject)
         ackRequest = try values.decode(Bool.self, forKey: .ackRequest)
-        priority = try values.decodeIfPresent(String.self, forKey: .priority)
+        priority = try values.decode(MessagePriority.self, forKey: .priority)
         stUuid = try values.decodeIfPresent(String.self, forKey: .stUuid)
-        attachments = try values.decode(List<Attachment>.self, forKey: .to)
+        attachments = try values.decode(List<Attachment>.self, forKey: .attachments)
     }
 
     public convenience init(
         uuid: String = "",
+        date: Date = Date(),
         identityId: String? = nil,
+        messageUid: String? = nil,
         inReplyToUid: String? = nil,
         forwardedUid: String? = nil,
         references: String? = nil,
@@ -147,15 +161,18 @@ public class Draft: Object, Codable, Identifiable {
         bcc: [Recipient]? = nil,
         subject: String = "",
         ackRequest: Bool = false,
-        priority: String? = nil,
+        priority: MessagePriority = .normal,
         stUuid: String? = nil,
         attachments: [Attachment]? = nil,
+        isOffline: Bool = true,
         action: SaveDraftOption? = nil
     ) {
         self.init()
 
         self.uuid = uuid
+        self.date = date
         self.identityId = identityId
+        self.messageUid = messageUid
         self.inReplyToUid = inReplyToUid
         self.forwardedUid = forwardedUid
         self.references = references
@@ -163,28 +180,15 @@ public class Draft: Object, Codable, Identifiable {
         self.mimeType = mimeType
         self.body = body
         self.quote = quote
-
-        if let to = to {
-            self.to = to.toRealmList()
-        }
-
-        if let cc = cc {
-            self.cc = cc.toRealmList()
-        }
-
-        if let bcc = bcc {
-            self.bcc = bcc.toRealmList()
-        }
-
+        self.to = to?.toRealmList() ?? List()
+        self.cc = cc?.toRealmList() ?? List()
+        self.bcc = bcc?.toRealmList() ?? List()
         self.subject = subject
         self.ackRequest = ackRequest
         self.priority = priority
         self.stUuid = stUuid
-
-        if let attachments = attachments {
-            self.attachments = attachments.toRealmList()
-        }
-
+        self.attachments = attachments?.toRealmList() ?? List()
+        self.isOffline = isOffline
         self.action = action
     }
 
@@ -192,6 +196,7 @@ public class Draft: Object, Codable, Identifiable {
         var container = encoder.container(keyedBy: CodingKeys.self)
 
         try container.encode(uuid, forKey: .uuid)
+        try container.encode(date, forKey: .date)
         try container.encode(identityId, forKey: .identityId)
         try container.encode(inReplyToUid, forKey: .inReplyToUid)
         try container.encode(forwardedUid, forKey: .forwardedUid)
@@ -219,6 +224,7 @@ public class Draft: Object, Codable, Identifiable {
         try container.encode(ackRequest, forKey: .ackRequest)
         try container.encode(priority, forKey: .priority)
         try container.encode(stUuid, forKey: .stUuid)
+        try container.encode(isOffline, forKey: .isOffline)
         try container.encode(action, forKey: .action)
     }
 
@@ -229,15 +235,5 @@ public class Draft: Object, Codable, Identifiable {
 
     private func recipientToValue(_ recipient: List<Recipient>?) -> String {
         return recipient?.map(\.email).joined(separator: ",") ?? ""
-    }
-
-    /// Creates a copy of this draft.
-    public func copy() -> Draft {
-        let copyDraft = Draft(value: self)
-        copyDraft.to = to.map { Recipient(value: $0) }.toRealmList()
-        copyDraft.cc = cc.map { Recipient(value: $0) }.toRealmList()
-        copyDraft.bcc = bcc.map { Recipient(value: $0) }.toRealmList()
-        copyDraft.attachments = attachments.map { Attachment(value: $0) }.toRealmList()
-        return copyDraft
     }
 }

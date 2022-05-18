@@ -40,7 +40,7 @@ public class Recipient: EmbeddedObject, Codable {
         }
         return contact?.name ?? (name.isEmpty ? email : name)
     }
-    
+
     public var color: Color {
         if let contact = contact {
             return Color(hex: contact.color)
@@ -57,7 +57,7 @@ public class Recipient: EmbeddedObject, Codable {
             .joined()
             .uppercased()
     }
-    
+
     public var contact: MergedContact? {
         AccountManager.instance.currentContactManager?.getContact(for: email)
     }

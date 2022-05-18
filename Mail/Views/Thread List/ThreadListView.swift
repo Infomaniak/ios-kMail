@@ -26,6 +26,7 @@ class ThreadListSheet: SheetState<ThreadListSheet.State> {
     enum State: Equatable {
         case menuDrawer
         case newMessage
+        case editMessage(draft: Draft)
     }
 }
 
@@ -56,14 +57,26 @@ struct ThreadListView: View {
                 .ignoresSafeArea()
 
             List(viewModel.threads) { thread in
-                NavigationLink(destination: {
-                    ThreadView(mailboxManager: viewModel.mailboxManager, thread: thread)
-                        .onAppear { selectedThread = thread }
-                }, label: {
-                    ThreadListCell(mailboxManager: viewModel.mailboxManager, thread: thread)
-                })
+                Group {
+                    if currentFolder?.role == .draft {
+                        Button(action: {
+                            editDraft(from: thread)
+                        }, label: {
+                            ThreadListCell(mailboxManager: viewModel.mailboxManager, thread: thread)
+                        })
+                    } else {
+                        NavigationLink(destination: {
+                            ThreadView(mailboxManager: viewModel.mailboxManager, thread: thread)
+                                .onAppear { selectedThread = thread }
+                        }, label: {
+                            ThreadListCell(mailboxManager: viewModel.mailboxManager, thread: thread)
+                        })
+                    }
+                }
                 .listRowSeparator(.hidden)
-                .listRowBackground(Color(selectedThread == thread ? MailResourcesAsset.backgroundCardSelectedColor.color : MailResourcesAsset.backgroundColor.color))
+                .listRowBackground(Color(selectedThread == thread
+                                         ? MailResourcesAsset.backgroundCardSelectedColor.color
+                                         : MailResourcesAsset.backgroundColor.color))
                 .modifier(ThreadListSwipeAction())
             }
             .listStyle(.plain)
@@ -89,13 +102,21 @@ struct ThreadListView: View {
             navigationController.navigationBar.scrollEdgeAppearance = navigationBarAppearance
             navigationController.hidesBarsOnSwipe = true
         }
-        .modifier(ThreadListNavigationBar(isCompact: isCompact, sheet: sheet, folder: $viewModel.folder, avatarImage: $avatarImage))
+        .modifier(ThreadListNavigationBar(isCompact: isCompact, sheet: sheet, folder: $viewModel.folder,
+                                          avatarImage: $avatarImage))
         .sheet(isPresented: $sheet.isShowing) {
             switch sheet.state {
             case .menuDrawer:
-                MenuDrawerView(mailboxManager: viewModel.mailboxManager, selectedFolder: $currentFolder, isCompact: isCompact, geometryProxy: geometryProxy)
+                MenuDrawerView(
+                    mailboxManager: viewModel.mailboxManager,
+                    selectedFolder: $currentFolder,
+                    isCompact: isCompact,
+                    geometryProxy: geometryProxy
+                )
             case .newMessage:
                 NewMessageView(mailboxManager: viewModel.mailboxManager)
+            case let .editMessage(draft):
+                NewMessageView(mailboxManager: viewModel.mailboxManager, draft: draft)
             case .none:
                 EmptyView()
             }
@@ -120,6 +141,25 @@ struct ThreadListView: View {
         }
         .refreshable {
             await viewModel.fetchThreads()
+        }
+    }
+
+    private func editDraft(from thread: Thread) {
+        guard let message = thread.messages.first else { return }
+        var sheetPresented = false
+
+        // If we already have the draft locally, present it directly
+        if let draft = viewModel.mailboxManager.draft(messageUid: message.uid)?.detached() {
+            sheet.state = .editMessage(draft: draft)
+            sheetPresented = true
+        }
+
+        // Update the draft
+        Task { [sheetPresented] in
+            let draft = try await viewModel.mailboxManager.draft(from: message)
+            if !sheetPresented {
+                sheet.state = .editMessage(draft: draft)
+            }
         }
     }
 }

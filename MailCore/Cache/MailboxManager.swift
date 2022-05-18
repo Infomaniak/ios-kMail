@@ -261,12 +261,29 @@ public class MailboxManager: ObservableObject {
         return draft
     }
 
+    public func draft(from message: Message) async throws -> Draft {
+        // Get from API
+        let draft = try await apiFetcher.draft(from: message)
+
+        let realm = getRealm()
+
+        // Update draft in Realm
+        try? realm.safeWrite {
+            realm.add(draft.detached(), update: .modified)
+        }
+
+        return draft
+    }
+
+    public func draft(messageUid: String) -> Draft? {
+        return getRealm().objects(Draft.self).where { $0.messageUid == messageUid }.first
+    }
+
     public func send(draft: Draft) async throws -> Bool {
         // If the draft has no UUID, we save it first
         if draft.uuid.isEmpty {
             _ = try await save(draft: draft)
         }
-
         draft.action = .send
         let sendResponse = try await apiFetcher.send(mailbox: mailbox, draft: draft)
         if sendResponse {
@@ -279,17 +296,41 @@ public class MailboxManager: ObservableObject {
 
     public func save(draft: Draft) async throws -> DraftResponse {
         draft.action = .save
-        let saveResponse = try await apiFetcher.save(mailbox: mailbox, draft: draft)
+        do {
+            let saveResponse = try await apiFetcher.save(mailbox: mailbox, draft: draft)
 
-        let realm = getRealm()
-        draft.uuid = saveResponse.uuid
-        let copyDraft: Draft = draft.copy()
+            let realm = getRealm()
+            let oldUuid = draft.uuid
+            draft.uuid = saveResponse.uuid
+            draft.messageUid = saveResponse.uid
+            draft.isOffline = false
 
-        // Update draft in Realm
-        try? realm.safeWrite {
-            realm.add(copyDraft, update: .modified)
+            let copyDraft = draft.detached()
+
+            // Update draft in Realm
+            try? realm.safeWrite {
+                realm.add(copyDraft, update: .modified)
+            }
+            if let draft = realm.object(ofType: Draft.self, forPrimaryKey: oldUuid), oldUuid.starts(with: Draft.uuidLocalPrefix) {
+                // Delete local draft in Realm
+                try? realm.safeWrite {
+                    realm.delete(draft)
+                }
+            }
+            return saveResponse
+        } catch {
+            let realm = getRealm()
+            if draft.uuid.isEmpty {
+                draft.uuid = Draft.uuidLocalPrefix + UUID().uuidString
+            }
+            let copyDraft = draft.detached()
+
+            // Update draft in Realm
+            try? realm.safeWrite {
+                realm.add(copyDraft, update: .modified)
+            }
+            throw error
         }
-        return saveResponse
     }
 
     public func delete(draft: Draft) {
@@ -300,6 +341,26 @@ public class MailboxManager: ObservableObject {
             }
         } else {
             print("No draft with uuid \(draft.uuid)")
+        }
+    }
+
+    public func draftOffline() {
+        let realm = getRealm()
+        let draftOffline = AnyRealmCollection(realm.objects(Draft.self).where { $0.isOffline == true })
+
+        let offlineDraftThread = List<Thread>()
+
+        guard let folder = realm.objects(Folder.self).where({ $0.role == .draft }).first else { return }
+
+        for draft in draftOffline {
+            let thread = Thread(draft: draft)
+            offlineDraftThread.append(thread)
+        }
+
+        // Update message in Realm
+        try? realm.safeWrite {
+            realm.add(offlineDraftThread, update: .modified)
+            folder.threads.insert(objectsIn: offlineDraftThread)
         }
     }
 

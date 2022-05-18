@@ -243,6 +243,28 @@ public class Message: Object, Decodable, Identifiable {
         self.safeDisplay = safeDisplay
         self.hasUnsubscribeLink = hasUnsubscribeLink
     }
+
+    convenience init(draft: Draft) {
+        self.init()
+
+        if let messageUid = draft.messageUid {
+            uid = messageUid
+        }
+        subject = draft.subject
+        priority = draft.priority
+        date = draft.date
+        size = 0
+        to = draft.to.detached()
+        cc = draft.cc.detached()
+        bcc = draft.bcc.detached()
+        let messageBody = Body()
+        messageBody.value = draft.body
+        messageBody.type = draft.mimeType
+        self.body = messageBody
+        attachments = draft.attachments.detached()
+        references = draft.references
+        isDraft = true
+    }
 }
 
 // MARK: - Body
