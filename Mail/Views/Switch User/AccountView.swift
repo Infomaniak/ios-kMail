@@ -65,7 +65,15 @@ struct AccountView: View {
             }
 
             Button {
-                // TODO: - Disconnect account
+                AccountManager.instance.removeTokenAndAccount(token: AccountManager.instance.currentAccount.token)
+                if let nextAccount = AccountManager.instance.accounts.first {
+                    AccountManager.instance.switchAccount(newAccount: nextAccount)
+                    (UIApplication.shared.delegate as? AppDelegate)?.refreshCacheData()
+                    (UIApplication.shared.connectedScenes.first?.delegate as? SceneDelegate)?.setRootViewController(UIHostingController(rootView: SplitView()))
+                } else {
+                    (UIApplication.shared.connectedScenes.first?.delegate as? SceneDelegate)?.setRootViewController(LoginViewController.instantiate())
+                }
+                AccountManager.instance.saveAccounts()
             } label: {
                 Text(MailResourcesStrings.disconnectAccount)
                     .textStyle(.button)
