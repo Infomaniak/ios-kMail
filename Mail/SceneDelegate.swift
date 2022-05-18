@@ -83,7 +83,6 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, AccountManagerDelegate 
             viewController = UIHostingController(rootView: SplitView())
         }
         setRootViewController(viewController, animated: false)
-        (UIApplication.shared.delegate as? AppDelegate)?.refreshCacheData()
     }
 
     // MARK: - Open URLs
