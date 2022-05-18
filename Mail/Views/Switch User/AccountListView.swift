@@ -25,13 +25,7 @@ struct AccountListView: View {
         ScrollView {
             VStack {
                 ForEach(AccountManager.instance.accounts) { account in
-                    AccountCellView(user: account.user)
-                        .onTapGesture {
-                            AccountManager.instance.switchAccount(newAccount: account)
-                            (UIApplication.shared.delegate as? AppDelegate)?.refreshCacheData()
-                            (UIApplication.shared.connectedScenes.first?.delegate as? SceneDelegate)?
-                                .setRootViewController(UIHostingController(rootView: SplitView()))
-                        }
+                    AccountCellView(account: account)
                 }
             }
         }
