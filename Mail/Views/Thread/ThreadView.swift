@@ -80,6 +80,40 @@ struct ThreadView: View {
         .environmentObject(mailboxManager)
         .environmentObject(card)
         .environmentObject(sheet)
+        .toolbar {
+            ToolbarItemGroup(placement: .bottomBar) {
+                Group {
+                    Button {
+                        // TODO: Reply
+                    } label: {
+                        VStack(spacing: 0) {
+                            Image(resource: MailResourcesAsset.reply)
+                            Text(MailResourcesStrings.buttonReply)
+                        }
+                    }
+                    Spacer()
+                    Button {
+                        // TODO: Forward
+                    } label: {
+                        VStack(spacing: 0) {
+                            Image(resource: MailResourcesAsset.forward)
+                            Text(MailResourcesStrings.buttonForward)
+                        }
+                    }
+                    Spacer()
+                    Button {
+                        // TODO: Show menu
+                    } label: {
+                        VStack(spacing: 0) {
+                            Image(systemName: "ellipsis")
+                                .frame(width: 24, height: 24)
+                            Text(MailResourcesStrings.buttonMore)
+                        }
+                    }
+                }
+                .textStyle(.calloutHighlighted)
+            }
+        }
         .sheet(isPresented: $sheet.isShowing) {
             switch sheet.state {
             case let .attachment(attachment):
