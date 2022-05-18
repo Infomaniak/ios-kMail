@@ -17,8 +17,8 @@
  */
 
 import MailCore
-import SwiftUI
 import MailResources
+import SwiftUI
 
 struct AccountListView: View {
     var body: some View {
@@ -26,6 +26,12 @@ struct AccountListView: View {
             VStack {
                 ForEach(AccountManager.instance.accounts) { account in
                     AccountCellView(user: account.user)
+                        .onTapGesture {
+                            AccountManager.instance.switchAccount(newAccount: account)
+
+                            (UIApplication.shared.connectedScenes.first?.delegate as? SceneDelegate)?
+                                .setRootViewController(UIHostingController(rootView: SplitView()))
+                        }
                 }
             }
         }
