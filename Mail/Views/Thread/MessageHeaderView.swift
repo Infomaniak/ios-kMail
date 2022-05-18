@@ -40,6 +40,7 @@ struct MessageHeaderView: View {
                     ForEach(message.from, id: \.self) { recipient in
                         Text(recipient.title)
                             .lineLimit(1)
+                            .layoutPriority(1)
                             .textStyle(.header3)
                     }
                     Text(message.date, format: .dateTime)
@@ -97,13 +98,11 @@ struct RecipientLabel: View {
     let recipients: RealmSwift.List<Recipient>
 
     var body: some View {
-        HStack(spacing: 4) {
+        HStack(alignment: .top, spacing: 4) {
             Text(title)
             VStack(alignment: .leading) {
                 ForEach(recipients, id: \.self) { recipient in
                     Text(text(for: recipient))
-                        .lineLimit(1)
-                        .truncationMode(.tail)
                 }
             }
         }
