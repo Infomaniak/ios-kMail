@@ -48,12 +48,8 @@ struct AccountCellView: View {
                 }
 
                 Spacer()
-
-                Button {
-                    showEmailList.toggle()
-                } label: {
-                    Image(systemName: "chevron.down")
-                }
+                
+                ChevronButton(isExpanded: $showEmailList)
             }
             .onTapGesture {
                 AccountManager.instance.switchAccount(newAccount: account)
