@@ -167,7 +167,7 @@ struct ThreadListView: View {
 
         // If we already have the draft locally, present it directly
         if let draft = viewModel.mailboxManager.draft(messageUid: message.uid)?.detached() {
-            sheet.state = .editMessage(draft: draft)
+            menuSheet.state = .editMessage(draft: draft)
             sheetPresented = true
         }
 
@@ -175,7 +175,7 @@ struct ThreadListView: View {
         Task { [sheetPresented] in
             let draft = try await viewModel.mailboxManager.draft(from: message)
             if !sheetPresented {
-                sheet.state = .editMessage(draft: draft)
+                menuSheet.state = .editMessage(draft: draft)
             }
         }
     }
