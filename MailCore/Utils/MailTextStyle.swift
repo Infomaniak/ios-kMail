@@ -47,11 +47,6 @@ public struct MailTextStyle {
         color: MailResourcesAsset.primaryTextColor
     )
 
-    public static let header2Normal = MailTextStyle(
-        font: .system(size: 18),
-        color: MailResourcesAsset.primaryTextColor
-    )
-
     public static let header2Secondary = MailTextStyle(
         font: .system(size: 18),
         color: MailResourcesAsset.secondaryTextColor

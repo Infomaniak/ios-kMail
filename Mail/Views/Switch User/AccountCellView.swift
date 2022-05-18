@@ -23,9 +23,14 @@ import SwiftUI
 
 struct AccountCellView: View {
     @State private var avatarImage = MailResourcesAsset.placeholderAvatar.image
-    @State var account: Account!
+    @State var account: Account
 
-    @State private var showEmailList = false
+    @State private var showEmailList: Bool
+    
+    init(account: Account) {
+        self.account = account
+        self.showEmailList = AccountManager.instance.currentAccount == account
+    }
 
     var body: some View {
         VStack {
@@ -84,8 +89,8 @@ struct AccountCellView: View {
     }
 }
 
-struct AccountCellView_Previews: PreviewProvider {
-    static var previews: some View {
-        AccountCellView()
-    }
-}
+//struct AccountCellView_Previews: PreviewProvider {
+//    static var previews: some View {
+//        AccountCellView()
+//    }
+//}

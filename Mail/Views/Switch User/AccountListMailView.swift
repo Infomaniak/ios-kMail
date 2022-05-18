@@ -27,8 +27,8 @@ struct AccountListMailView: View {
     var body: some View {
         HStack(spacing: 16) {
             Image(uiImage: MailResourcesAsset.envelope.image)
-                .frame(width: 20, height: 20)
-
+                .frame(width: 16, height: 16)
+                
             Text(mailbox.email)
                 .truncationMode(.tail)
                 .lineLimit(1)
@@ -40,6 +40,7 @@ struct AccountListMailView: View {
                 .foregroundColor(MailResourcesAsset.infomaniakColor)
         }
         .foregroundColor(isSelected ? MailResourcesAsset.infomaniakColor : MailResourcesAsset.primaryTextColor)
+        .textStyle(isSelected ? .calloutStrong : .callout)
     }
 }
 
