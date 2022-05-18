@@ -28,8 +28,6 @@ struct TextStylePreview: View {
                         .textStyle(.header1)
                     Text("Header 2")
                         .textStyle(.header2)
-                    Text("Header 2 normal")
-                        .textStyle(.header2Normal)
                     Text("Header 2 secondary")
                         .textStyle(.header2Secondary)
                     Text("Header 3")
@@ -44,10 +42,10 @@ struct TextStylePreview: View {
                         .textStyle(.callout)
                     Text("Callout highlighted")
                         .textStyle(.calloutHighlighted)
-                }
-                Group {
                     Text("Callout secondary")
                         .textStyle(.calloutSecondary)
+                }
+                Group {
                     Text("Callout hint")
                         .textStyle(.calloutHint)
                     Text("Button")
