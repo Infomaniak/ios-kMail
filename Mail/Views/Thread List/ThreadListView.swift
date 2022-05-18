@@ -198,8 +198,9 @@ private struct ThreadListNavigationBar: ViewModifier {
                 }
 
                 ToolbarItem(placement: .navigationBarTrailing) {
-                    Button {
-                        // TODO: Display accounts list
+                    // TODO: - Add floatingPanel
+                    NavigationLink {
+                        AccountListView()
                     } label: {
                         avatarImage
                             .resizable()
