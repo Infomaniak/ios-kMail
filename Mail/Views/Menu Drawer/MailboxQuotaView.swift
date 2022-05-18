@@ -35,9 +35,9 @@ struct MailboxQuotaView: View {
             VStack(alignment: .leading) {
                 HStack(spacing: 5) {
                     HStack(spacing: 4) {
-                        Text(Int64((quotas?.size ?? 0) * 1000), format: Constants.byteCountFormatterStyle)
+                        Text(Int64((quotas?.size ?? 0) * 1000), format: .defaultByteCount)
                         Text("/")
-                        Text(Constants.sizeLimit, format: Constants.byteCountFormatterStyle)
+                        Text(Constants.sizeLimit, format: .defaultByteCount)
                     }
                     .textStyle(.header3)
 

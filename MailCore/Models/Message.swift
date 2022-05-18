@@ -83,9 +83,8 @@ public class Message: Object, Decodable, Identifiable {
         return parentLink.first
     }
 
-    public var attachmentsSize: String {
-        let totalSize = attachments.reduce(0) { $0 + $1.size }
-        return Constants.formatAttachmentSize(Int64(totalSize))
+    public var attachmentsSize: Int64 {
+        return attachments.reduce(0) { $0 + Int64($1.size) }
     }
 
     public func insertInlineAttachment() {
@@ -242,6 +241,7 @@ public class Message: Object, Decodable, Identifiable {
         self.flagged = flagged
         self.safeDisplay = safeDisplay
         self.hasUnsubscribeLink = hasUnsubscribeLink
+        self.fullyDownloaded = true
     }
 
     convenience init(draft: Draft) {

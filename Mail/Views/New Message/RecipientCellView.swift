@@ -58,15 +58,7 @@ struct RecipientCellView: View {
                             .autocapitalization(.none)
                             .multilineTextAlignment(.leading)
 
-                        Button {
-                            showCcButton.toggle()
-                        } label: {
-                            if showCcButton {
-                                Image(uiImage: MailResourcesAsset.chevronDown.image)
-                            } else {
-                                Image(uiImage: MailResourcesAsset.chevronDown.image).rotationEffect(Angle(degrees: 180))
-                            }
-                        }
+                        ChevronButton(isExpanded: $showCcButton)
                     }
                 case .cc:
                     TextField("", text: $draft.ccValue)

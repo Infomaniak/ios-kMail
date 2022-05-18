@@ -37,7 +37,7 @@ struct AttachmentPreviewFooter: View {
             .padding(.bottom, 11)
             Text(attachment.name)
                 .textStyle(.body)
-            Text(Constants.formatAttachmentSize(Int64(attachment.size)))
+            Text(Int64(attachment.size), format: .defaultByteCount)
                 .textStyle(.calloutSecondary)
 
             HStack {

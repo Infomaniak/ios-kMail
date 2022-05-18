@@ -33,13 +33,14 @@ struct AttachmentsView: View {
                     .frame(width: 14)
                     .foregroundColor(MailResourcesAsset.secondaryTextColor)
 
-                Text(MailResourcesStrings.attachmentQuantity(message.attachments.count, message.attachmentsSize))
+                Text("\(MailResourcesStrings.attachmentQuantity(message.attachments.count)) (\(message.attachmentsSize, format: .defaultByteCount))")
                     .fontWeight(.regular)
                     .foregroundColor(MailResourcesAsset.secondaryTextColor)
 
                 Button(MailResourcesStrings.downloadAll) {
                     // TODO: after complete attachment
                 }
+                .tint(MailResourcesAsset.infomaniakColor)
             }
             .font(.system(size: 14))
 

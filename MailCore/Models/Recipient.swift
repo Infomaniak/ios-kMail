@@ -17,6 +17,7 @@
  */
 
 import Foundation
+import MailResources
 import RealmSwift
 import SwiftUI
 
@@ -31,12 +32,12 @@ public class Recipient: EmbeddedObject, Codable {
     }
 
     public var isCurrentUser: Bool {
-        return AccountManager.instance.currentAccount.user.email == email
+        return AccountManager.instance.currentAccount?.user.email == email
     }
 
     public var title: String {
         if isCurrentUser {
-            return "Me"
+            return MailResourcesStrings.contactMe
         }
         return contact?.name ?? (name.isEmpty ? email : name)
     }
