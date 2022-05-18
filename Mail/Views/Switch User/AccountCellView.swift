@@ -16,17 +16,17 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import SwiftUI
-import MailResources
 import InfomaniakCore
 import MailCore
+import MailResources
+import SwiftUI
 
 struct AccountCellView: View {
     @State private var avatarImage = MailResourcesAsset.placeholderAvatar.image
-    @State var user: UserProfile!
-    
+    @State var account: Account!
+
     @State private var showEmailList = false
-    
+
     var body: some View {
         VStack {
             HStack(spacing: 15) {
@@ -34,26 +34,42 @@ struct AccountCellView: View {
                     .resizable()
                     .frame(width: 40, height: 40)
                     .clipShape(Circle())
-                
+
                 VStack(alignment: .leading, spacing: 4) {
-                    Text(user.displayName)
+                    Text(account.user.displayName)
                         .textStyle(.body)
-                    Text(user.email)
+                    Text(account.user.email)
                         .textStyle(.calloutSecondary)
                 }
-                
+
                 Spacer()
-                
+
                 Button {
                     showEmailList.toggle()
                 } label: {
                     Image(systemName: "chevron.down")
                 }
             }
+            .onTapGesture {
+                AccountManager.instance.switchAccount(newAccount: account)
+                (UIApplication.shared.delegate as? AppDelegate)?.refreshCacheData()
+                (UIApplication.shared.connectedScenes.first?.delegate as? SceneDelegate)?
+                    .setRootViewController(UIHostingController(rootView: SplitView()))
+            }
             if showEmailList {
-                ForEach(MailboxInfosManager.instance.getMailboxes(for: user.id), id: \.mailboxId) { mailbox in
-                    AccountListMailView(mailbox: mailbox, isSelected: AccountManager.instance.currentMailboxId == mailbox.mailboxId)
-                        .padding()
+                ForEach(MailboxInfosManager.instance.getMailboxes(for: account.user.id), id: \.mailboxId) { mailbox in
+                    AccountListMailView(
+                        mailbox: mailbox,
+                        isSelected: AccountManager.instance.currentMailboxId == mailbox.mailboxId
+                    )
+                    .padding()
+                    .onTapGesture {
+                        AccountManager.instance.switchAccount(newAccount: account)
+                        AccountManager.instance.setCurrentMailboxForCurrentAccount(mailbox: mailbox)
+                        (UIApplication.shared.delegate as? AppDelegate)?.refreshCacheData()
+                        (UIApplication.shared.connectedScenes.first?.delegate as? SceneDelegate)?
+                            .setRootViewController(UIHostingController(rootView: SplitView()))
+                    }
                 }
                 .padding(.leading, 18)
             }
@@ -61,7 +77,7 @@ struct AccountCellView: View {
         .padding(.top, 14)
         .padding(.bottom, 11)
         .onAppear {
-            user.getAvatar { image in
+            account.user.getAvatar { image in
                 self.avatarImage = image
             }
         }
