@@ -26,6 +26,9 @@ struct MailboxCell: View {
     var body: some View {
         MailboxesManagementButtonView(text: mailbox.email, showBadge: $unreadMessages) {
             // TODO: Switch mailbox
+            AccountManager.instance.setCurrentMailboxForCurrentAccount(mailbox: mailbox)
+            AccountManager.instance.saveAccounts()
+            (UIApplication.shared.connectedScenes.first?.delegate as? SceneDelegate)?.setRootViewController(UIHostingController(rootView: SplitView()))
         }
         .onAppear {
             hasUnreadMessages()
