@@ -26,6 +26,8 @@ enum MailError: LocalizedError, CustomStringConvertible {
     case noToken
     case resourceError
     case unknownError
+    case unknownToken
+    case noMailbox
 
     var errorDescription: String? {
         switch self {
@@ -42,6 +44,10 @@ enum MailError: LocalizedError, CustomStringConvertible {
             return "Unknown error"
         case .serverError:
             return "Server error"
+        case .unknownToken:
+            return "Unknown token"
+        case .noMailbox:
+            return "No Mailbox"
         }
     }
 
@@ -57,6 +63,10 @@ enum MailError: LocalizedError, CustomStringConvertible {
             return "MailError.unknownError"
         case .serverError(let statusCode):
             return "MailError.serverError (\(statusCode))"
+        case .unknownToken:
+            return "MailError.unknownToken"
+        case .noMailbox:
+            return "MailError.noMailbox"
         }
     }
 }

@@ -17,13 +17,17 @@
  */
 
 import CocoaLumberjackSwift
+import InfomaniakCore
 import InfomaniakLogin
 import MailCore
 import Sentry
+import SwiftUI
 import UIKit
 
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
+    private var accountManager: AccountManager!
+
     func application(
         _ application: UIApplication,
         willFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil
@@ -31,6 +35,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         Logging.initLogging()
         DDLogInfo("Application starting in foreground ? \(UIApplication.shared.applicationState != .background)")
         InfomaniakLogin.initWith(clientId: MailApiFetcher.clientId)
+        accountManager = AccountManager.instance
 
         return true
     }
@@ -59,5 +64,17 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // Called when the user discards a scene session.
         // If any sessions were discarded while the application was not running, this will be called shortly after application:didFinishLaunchingWithOptions.
         // Use this method to release any resources that were specific to the discarded scenes, as they will not return.
+    }
+
+    func refreshCacheData() {
+        let currentAccount = AccountManager.instance.currentAccount!
+
+        Task {
+            do {
+                let _ = try await accountManager.updateUser(for: currentAccount, registerToken: true)
+            } catch {
+                DDLogError("Error while updating user account: \(error)")
+            }
+        }
     }
 }

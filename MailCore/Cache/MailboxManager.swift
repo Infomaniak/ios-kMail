@@ -21,6 +21,7 @@ import Foundation
 import InfomaniakCore
 import RealmSwift
 import Sentry
+import SwiftRegex
 
 public class MailboxManager: ObservableObject {
     public class MailboxManagerConstants {
@@ -91,6 +92,25 @@ public class MailboxManager: ObservableObject {
         } catch {
             // We can't recover from this error but at least we report it correctly on Sentry
             Logging.reportRealmOpeningError(error, realmConfiguration: realmConfiguration)
+        }
+    }
+
+    /// Delete all mailbox data cache for user
+    /// - Parameters:
+    ///   - userId: User ID
+    ///   - mailboxId: Mailbox ID (`nil` if all user mailboxes)
+    public static func deleteUserMailbox(userId: Int, mailboxId: Int? = nil) {
+        let files = (try? FileManager.default
+            .contentsOfDirectory(at: MailboxManager.constants.rootDocumentsURL, includingPropertiesForKeys: nil))
+        files?.forEach { file in
+            if let matches = Regex(pattern: "(\\d+)-(\\d+).realm.*")?.firstMatch(in: file.lastPathComponent), matches.count > 2 {
+                let fileUserId = matches[1]
+                let fileMailboxId = matches[2]
+                if Int(fileUserId) == userId && (mailboxId == nil || Int(fileMailboxId) == mailboxId) {
+                    DDLogInfo("Deleting file: \(file.lastPathComponent)")
+                    try? FileManager.default.removeItem(at: file)
+                }
+            }
         }
     }
 

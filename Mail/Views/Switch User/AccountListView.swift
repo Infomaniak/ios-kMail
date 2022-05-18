@@ -28,7 +28,7 @@ struct AccountListView: View {
                     AccountCellView(user: account.user)
                         .onTapGesture {
                             AccountManager.instance.switchAccount(newAccount: account)
-
+                            (UIApplication.shared.delegate as? AppDelegate)?.refreshCacheData()
                             (UIApplication.shared.connectedScenes.first?.delegate as? SceneDelegate)?
                                 .setRootViewController(UIHostingController(rootView: SplitView()))
                         }
@@ -36,6 +36,18 @@ struct AccountListView: View {
             }
         }
         .padding(16)
+        .onAppear {
+            Task {
+                try await withThrowingTaskGroup(of: Void.self) { group in
+                    for account in AccountManager.instance.accounts where account != AccountManager.instance.currentAccount {
+                        group.addTask {
+                            _ = try await AccountManager.instance.updateUser(for: account, registerToken: false)
+                        }
+                    }
+                    try await group.waitForAll()
+                }
+            }
+        }
     }
 }
 
