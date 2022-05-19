@@ -38,7 +38,7 @@ struct ThreadListView: View {
 
     @Binding var currentFolder: Folder?
 
-    @State private var avatarImage = Image(uiImage: MailResourcesAsset.placeholderAvatar.image)
+    @State private var avatarImage = Image(resource: MailResourcesAsset.placeholderAvatar)
     @State private var selectedThread: Thread?
 
     let isCompact: Bool
@@ -216,7 +216,7 @@ private struct ThreadListNavigationBar: ViewModifier {
                         Button {
                             sheet.state = .menuDrawer
                         } label: {
-                            Image(uiImage: MailResourcesAsset.burger.image)
+                            Image(resource: MailResourcesAsset.burger)
                         }
                         .tint(MailResourcesAsset.secondaryTextColor)
                     }
@@ -232,7 +232,7 @@ private struct ThreadListSwipeAction: ViewModifier {
                 Button {
                     // TODO: Mark the message as (un)read
                 } label: {
-                    Image(uiImage: MailResourcesAsset.openLetter.image)
+                    Image(resource: MailResourcesAsset.openLetter)
                 }
                 .tint(MailResourcesAsset.unreadActionColor)
             }
@@ -240,14 +240,14 @@ private struct ThreadListSwipeAction: ViewModifier {
                 Button {
                     // TODO: Delete thread
                 } label: {
-                    Image(uiImage: MailResourcesAsset.bin.image)
+                    Image(resource: MailResourcesAsset.bin)
                 }
                 .tint(MailResourcesAsset.destructiveActionColor)
 
                 Button {
                     // TODO: Display menu
                 } label: {
-                    Image(uiImage: MailResourcesAsset.threeDots.image)
+                    Image(resource: MailResourcesAsset.threeDots)
                 }
                 .tint(MailResourcesAsset.menuActionColor)
             }

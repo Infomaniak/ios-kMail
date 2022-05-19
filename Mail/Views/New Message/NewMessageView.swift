@@ -100,7 +100,7 @@ struct NewMessageView: View {
                     }
                     self.presentationMode.wrappedValue.dismiss()
                 } label: {
-                    Image(uiImage: MailResourcesAsset.send.image)
+                    Image(resource: MailResourcesAsset.send)
                 }
                 .tint(MailResourcesAsset.mailPinkColor))
         }
