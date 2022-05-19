@@ -22,6 +22,8 @@ import MailResources
 import SwiftUI
 
 struct AccountView: View {
+    @Environment(\.window) private var window
+    
     @State private var avatarImage = MailResourcesAsset.placeholderAvatar.image
     @State private var user: UserProfile! = AccountManager.instance.currentAccount.user
 
@@ -67,11 +69,9 @@ struct AccountView: View {
             Button {
                 AccountManager.instance.removeTokenAndAccount(token: AccountManager.instance.currentAccount.token)
                 if let nextAccount = AccountManager.instance.accounts.first {
-                    AccountManager.instance.switchAccount(newAccount: nextAccount)
-                    (UIApplication.shared.delegate as? AppDelegate)?.refreshCacheData()
-                    (UIApplication.shared.connectedScenes.first?.delegate as? SceneDelegate)?.setRootViewController(UIHostingController(rootView: SplitView()))
+                    (window?.windowScene?.delegate as? SceneDelegate)?.switchAccount(nextAccount)
                 } else {
-                    (UIApplication.shared.connectedScenes.first?.delegate as? SceneDelegate)?.setRootViewController(LoginViewController.instantiate())
+                    (window?.windowScene?.delegate as? SceneDelegate)?.setRootViewController(LoginViewController.instantiate())
                 }
                 AccountManager.instance.saveAccounts()
             } label: {

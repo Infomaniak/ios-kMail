@@ -24,7 +24,8 @@ import SwiftUI
 struct MailboxesManagementView: View {
     @Environment(\.presentationMode) var presentationMode
     @EnvironmentObject var mailboxManager: MailboxManager
-    @EnvironmentObject var sheet: SettingsSheet
+    @EnvironmentObject var settingsSheet: SettingsSheet
+    @EnvironmentObject var menuSheet: MenuSheet
 
     @State private var unfoldDetails = false
 
@@ -57,12 +58,11 @@ struct MailboxesManagementView: View {
     // MARK: - Menu actions
 
     private func addNewAccount() {
-        sheet.state = .addAccount
-        presentationMode.wrappedValue.dismiss()
+        menuSheet.state = .addAccount
     }
 
     private func handleMyAccount() {
-        sheet.state = .manageAccount
+        settingsSheet.state = .manageAccount
         presentationMode.wrappedValue.dismiss()
     }
 }
