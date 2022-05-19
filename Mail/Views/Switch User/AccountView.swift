@@ -81,6 +81,7 @@ struct AccountView: View {
 
             Spacer()
         }
+        .navigationTitle(MailResourcesStrings.titleMyAccount)
         .padding([.top, .bottom], 30)
         .padding([.leading, .trailing], 18)
         .onAppear {

@@ -29,6 +29,7 @@ struct AccountListView: View {
                 }
             }
         }
+        .navigationTitle(MailResourcesStrings.titleMyAccounts)
         .padding(16)
         .onAppear {
             Task {
