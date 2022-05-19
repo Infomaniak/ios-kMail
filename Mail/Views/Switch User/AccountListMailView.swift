@@ -28,7 +28,7 @@ struct AccountListMailView: View {
         HStack(spacing: 16) {
             Image(resource: MailResourcesAsset.envelope)
                 .frame(width: 16, height: 16)
-                
+
             Text(mailbox.email)
                 .truncationMode(.tail)
                 .lineLimit(1)
@@ -36,8 +36,8 @@ struct AccountListMailView: View {
             Spacer()
 
             // TODO: - Replace false number
-            Text("7")
-                .foregroundColor(MailResourcesAsset.infomaniakColor)
+//            Text("7")
+//                .foregroundColor(MailResourcesAsset.infomaniakColor)
         }
         .foregroundColor(isSelected ? MailResourcesAsset.infomaniakColor : MailResourcesAsset.primaryTextColor)
         .textStyle(isSelected ? .calloutStrong : .callout)
