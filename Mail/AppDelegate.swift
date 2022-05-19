@@ -67,7 +67,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
 
     func refreshCacheData() {
-        let currentAccount = AccountManager.instance.currentAccount!
+        guard let currentAccount = AccountManager.instance.currentAccount else {
+            return
+        }
 
         Task {
             do {
