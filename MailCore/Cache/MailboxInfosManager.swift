@@ -70,8 +70,8 @@ public class MailboxInfosManager {
         return mailboxRemoved
     }
 
-    public static func getObjectId(mailboxId: Int, userId: Int) -> String {
-        return "\(mailboxId)_\(userId)"
+    public static func getObjectId(mailboxId: Int) -> String {
+        return "\(mailboxId)"
     }
 
     public func getMailboxes(for userId: Int? = nil, using realm: Realm? = nil) -> [Mailbox] {
