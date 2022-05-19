@@ -16,6 +16,7 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import InfomaniakCore
 import MailCore
 import SwiftUI
 import UIKit
@@ -71,19 +72,42 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, AccountManagerDelegate 
         }
     }
 
+    func setRootView<Content>(_ view: Content, animated: Bool = true) where Content: View {
+        // Inject window in view as environment variable
+        let view = view.environment(\.window, window)
+        // Set root view controller
+        let hostingController = UIHostingController(rootView: view)
+        setRootViewController(hostingController)
+    }
+
     func currentAccountNeedsAuthentication() {
         setRootViewController(LoginViewController())
     }
 
     private func setupLaunch() {
-        let viewController: UIViewController
         if accountManager.accounts.isEmpty {
-            viewController = LoginViewController.instantiate()
+            setRootViewController(LoginViewController.instantiate(), animated: false)
         } else {
-            viewController = UIHostingController(rootView: SplitView())
+            setRootView(SplitView())
         }
-        setRootViewController(viewController, animated: false)
         (UIApplication.shared.delegate as? AppDelegate)?.refreshCacheData()
+    }
+
+    func switchMailbox(_ mailbox: Mailbox) {
+        AccountManager.instance.setCurrentMailboxForCurrentAccount(mailbox: mailbox)
+        AccountManager.instance.saveAccounts()
+        setRootView(SplitView())
+    }
+
+    func switchAccount(_ account: Account, mailbox: Mailbox? = nil) {
+        AccountManager.instance.switchAccount(newAccount: account)
+        (UIApplication.shared.delegate as? AppDelegate)?.refreshCacheData()
+
+        if let mailbox = mailbox {
+            switchMailbox(mailbox)
+        } else {
+            setRootView(SplitView())
+        }
     }
 
     // MARK: - Open URLs
