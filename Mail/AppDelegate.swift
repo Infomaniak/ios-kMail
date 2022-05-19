@@ -73,7 +73,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
         Task {
             do {
-                let _ = try await accountManager.updateUser(for: currentAccount, registerToken: true)
+                try await accountManager.updateUser(for: currentAccount, registerToken: true)
             } catch {
                 DDLogError("Error while updating user account: \(error)")
             }
