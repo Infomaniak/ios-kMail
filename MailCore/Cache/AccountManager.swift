@@ -271,7 +271,7 @@ public class AccountManager: RefreshTokenDelegate {
         return newAccount
     }
 
-    public func updateUser(for account: Account, registerToken: Bool) async throws -> (Account, Mailbox?) {
+    public func updateUser(for account: Account, registerToken: Bool) async throws {
         guard account.isConnected else {
             throw MailError.unknownError
         }
@@ -300,8 +300,6 @@ public class AccountManager: RefreshTokenDelegate {
         }
 
         saveAccounts()
-
-        return (account, switchedMailbox)
     }
 
     public func loadAccounts() -> [Account] {

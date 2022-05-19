@@ -49,11 +49,11 @@ extension View {
     }
 
     func foregroundColor(_ color: InfomaniakCoreColor) -> some View {
-        return self.foregroundColor(Color(color.color))
+        return foregroundColor(Color(color.color))
     }
 
     func foregroundColor(_ color: MailResourcesColors) -> some View {
-        return self.foregroundColor(Color(color.color))
+        return foregroundColor(Color(color.color))
     }
 
     func tint(_ tint: MailResourcesColors) -> some View {
