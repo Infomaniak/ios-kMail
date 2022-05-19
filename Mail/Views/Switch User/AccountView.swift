@@ -81,7 +81,7 @@ struct AccountView: View {
 
             Spacer()
         }
-        .navigationTitle(MailResourcesStrings.titleMyAccount)
+        .navigationBarTitle(MailResourcesStrings.titleMyAccount, displayMode: .inline)
         .padding([.top, .bottom], 30)
         .padding([.leading, .trailing], 18)
         .onAppear {
