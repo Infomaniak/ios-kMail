@@ -51,6 +51,8 @@ struct AccountCellView: View {
 
                 ChevronButton(isExpanded: $showEmailList)
             }
+            .padding(.top, 6)
+            .padding(.bottom, 19)
             .onTapGesture {
                 AccountManager.instance.switchAccount(newAccount: account)
                 (UIApplication.shared.delegate as? AppDelegate)?.refreshCacheData()
@@ -58,25 +60,25 @@ struct AccountCellView: View {
                     .setRootViewController(UIHostingController(rootView: SplitView()))
             }
             if showEmailList {
-                ForEach(MailboxInfosManager.instance.getMailboxes(for: account.user.id), id: \.mailboxId) { mailbox in
-                    AccountListMailView(
-                        mailbox: mailbox,
-                        isSelected: AccountManager.instance.currentMailboxId == mailbox.mailboxId
-                    )
-                    .padding()
-                    .onTapGesture {
-                        AccountManager.instance.switchAccount(newAccount: account)
-                        AccountManager.instance.setCurrentMailboxForCurrentAccount(mailbox: mailbox)
-                        (UIApplication.shared.delegate as? AppDelegate)?.refreshCacheData()
-                        (UIApplication.shared.connectedScenes.first?.delegate as? SceneDelegate)?
-                            .setRootViewController(UIHostingController(rootView: SplitView()))
+                VStack(spacing: 26) {
+                    ForEach(MailboxInfosManager.instance.getMailboxes(for: account.user.id), id: \.mailboxId) { mailbox in
+                        AccountListMailView(
+                            mailbox: mailbox,
+                            isSelected: AccountManager.instance.currentMailboxId == mailbox.mailboxId
+                        )
+                        .onTapGesture {
+                            AccountManager.instance.switchAccount(newAccount: account)
+                            AccountManager.instance.setCurrentMailboxForCurrentAccount(mailbox: mailbox)
+                            (UIApplication.shared.delegate as? AppDelegate)?.refreshCacheData()
+                            (UIApplication.shared.connectedScenes.first?.delegate as? SceneDelegate)?
+                                .setRootViewController(UIHostingController(rootView: SplitView()))
+                        }
                     }
                 }
+                .padding(.bottom, 28)
                 .padding(.leading, 18)
             }
         }
-        .padding(.top, 14)
-        .padding(.bottom, 11)
         .onAppear {
             account.user.getAvatar { image in
                 self.avatarImage = image
