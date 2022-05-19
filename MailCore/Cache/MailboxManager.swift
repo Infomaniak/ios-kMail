@@ -177,6 +177,7 @@ public class MailboxManager: ObservableObject {
 
     public func getFolder(with role: FolderRole, using realm: Realm? = nil) -> Folder? {
         let realm = realm ?? getRealm()
+        realm.refresh()
         return realm.objects(Folder.self).where { $0.role == role }.first
     }
 
@@ -415,7 +416,7 @@ public class MailboxManager: ObservableObject {
 
         let offlineDraftThread = List<Thread>()
 
-        guard let folder = realm.objects(Folder.self).where({ $0.role == .draft }).first else { return }
+        guard let folder = getFolder(with: .draft, using: realm) else { return }
 
         for draft in draftOffline {
             let thread = Thread(draft: draft)
