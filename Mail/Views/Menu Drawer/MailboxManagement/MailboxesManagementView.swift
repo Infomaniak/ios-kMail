@@ -17,19 +17,25 @@
  */
 
 import InfomaniakCore
-import MailResources
 import MailCore
+import MailResources
 import SwiftUI
 
 struct MailboxesManagementView: View {
+    @Environment(\.presentationMode) var presentationMode
     @EnvironmentObject var mailboxManager: MailboxManager
+    @EnvironmentObject var settingsSheet: SettingsSheet
+    @EnvironmentObject var menuSheet: MenuSheet
 
     @State private var unfoldDetails = false
 
     var body: some View {
         DisclosureGroup(isExpanded: $unfoldDetails) {
             VStack(alignment: .leading) {
-                ForEach(AccountManager.instance.mailboxes.filter { $0.mailboxId != mailboxManager.mailbox.mailboxId }, id: \.mailboxId) { mailbox in
+                ForEach(
+                    AccountManager.instance.mailboxes.filter { $0.mailboxId != mailboxManager.mailbox.mailboxId },
+                    id: \.mailboxId
+                ) { mailbox in
                     MailboxCell(mailbox: mailbox)
                 }
 
@@ -52,11 +58,12 @@ struct MailboxesManagementView: View {
     // MARK: - Menu actions
 
     private func addNewAccount() {
-        // TODO: Add new account
+        menuSheet.state = .addAccount
     }
 
     private func handleMyAccount() {
-        // TODO: Handle my account
+        settingsSheet.state = .manageAccount
+        presentationMode.wrappedValue.dismiss()
     }
 }
 

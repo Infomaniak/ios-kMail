@@ -33,7 +33,7 @@ struct AttachmentPreviewHeader: View {
                         .foregroundColor(Color(MailResourcesAsset.backgroundColor.color).opacity(0.8))
                         .frame(width: 44, height: 44)
                         .overlay(
-                            Image(uiImage: MailResourcesAsset.arrowLeft.image)
+                            Image(resource: MailResourcesAsset.arrowLeft)
                                 .foregroundColor(.black)
                                 .frame(width: 16, height: 16)
                         )

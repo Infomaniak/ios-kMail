@@ -20,6 +20,7 @@ import CocoaLumberjackSwift
 import Foundation
 import InfomaniakCore
 import InfomaniakLogin
+import RealmSwift
 import Sentry
 import SwiftUI
 
@@ -60,6 +61,14 @@ public extension InfomaniakUser {
                 continuation.resume(returning: Image(uiImage: image))
             }
         }
+    }
+}
+
+@globalActor actor AccountActor: GlobalActor {
+    static let shared = AccountActor()
+
+    public static func run<T>(resultType: T.Type = T.self, body: @AccountActor @Sendable () throws -> T) async rethrows -> T {
+        try await body()
     }
 }
 
@@ -193,6 +202,10 @@ public class AccountManager: RefreshTokenDelegate {
         }
     }
 
+    private func clearMailboxManagers() {
+        mailboxManagers.removeAll()
+    }
+
     public func getApiFetcher(for userId: Int, token: ApiToken) -> MailApiFetcher {
         if let apiFetcher = apiFetchers[userId] {
             return apiFetcher
@@ -256,6 +269,37 @@ public class AccountManager: RefreshTokenDelegate {
         saveAccounts()
 
         return newAccount
+    }
+
+    public func updateUser(for account: Account, registerToken: Bool) async throws {
+        guard account.isConnected else {
+            throw MailError.unknownError
+        }
+
+        let apiFetcher = await AccountActor.run {
+            getApiFetcher(for: account.userId, token: account.token)
+        }
+        let user = try await apiFetcher.userProfile()
+        account.user = user
+
+        let mailboxes = try await apiFetcher.mailboxes()
+        guard !mailboxes.isEmpty else {
+            removeAccount(toDeleteAccount: account)
+            throw MailError.noMailbox
+        }
+
+        let mailboxRemovedList = MailboxInfosManager.instance.storeMailboxes(user: user, mailboxes: mailboxes)
+        clearMailboxManagers()
+        var switchedMailbox: Mailbox?
+        for mailboxRemoved in mailboxRemovedList {
+            if currentMailboxManager?.mailbox.mailboxId == mailboxRemoved.mailboxId {
+                switchedMailbox = mailboxes.first
+                setCurrentMailboxForCurrentAccount(mailbox: switchedMailbox!)
+            }
+            MailboxManager.deleteUserMailbox(userId: user.id, mailboxId: mailboxRemoved.mailboxId)
+        }
+
+        saveAccounts()
     }
 
     public func loadAccounts() -> [Account] {
@@ -333,6 +377,7 @@ public class AccountManager: RefreshTokenDelegate {
             currentAccount = nil
             currentMailboxId = 0
         }
+        MailboxManager.deleteUserMailbox(userId: toDeleteAccount.userId)
         accounts.removeAll { account -> Bool in
             account == toDeleteAccount
         }

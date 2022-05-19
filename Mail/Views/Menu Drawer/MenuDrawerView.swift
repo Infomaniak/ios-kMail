@@ -39,7 +39,9 @@ struct MenuDrawerView: View {
     private var actionsMenuItems = [MenuItem]()
 
     init(mailboxManager: MailboxManager, selectedFolder: Binding<Folder?>, isCompact: Bool, geometryProxy: GeometryProxy) {
-        _folders = .init(Folder.self, configuration: AccountManager.instance.currentMailboxManager!.realmConfiguration) { $0.parentLink.count == 0 }
+        _folders = .init(Folder.self, configuration: AccountManager.instance.currentMailboxManager!.realmConfiguration) {
+            $0.parentLink.count == 0
+        }
         _mailboxManager = StateObject(wrappedValue: mailboxManager)
         _selectedFolder = selectedFolder
         self.isCompact = isCompact
@@ -57,11 +59,21 @@ struct MenuDrawerView: View {
 
                 SeparatorView()
 
-                RoleFoldersListView(folders: $folders, selectedFolder: $selectedFolder, isCompact: isCompact, geometryProxy: geometryProxy)
+                RoleFoldersListView(
+                    folders: $folders,
+                    selectedFolder: $selectedFolder,
+                    isCompact: isCompact,
+                    geometryProxy: geometryProxy
+                )
 
                 SeparatorView()
 
-                UserFoldersListView(folders: $folders, selectedFolder: $selectedFolder, isCompact: isCompact, geometryProxy: geometryProxy)
+                UserFoldersListView(
+                    folders: $folders,
+                    selectedFolder: $selectedFolder,
+                    isCompact: isCompact,
+                    geometryProxy: geometryProxy
+                )
 
                 SeparatorView()
 
@@ -94,7 +106,11 @@ struct MenuDrawerView: View {
         ]
         actionsMenuItems = [
             MenuItem(icon: MailResourcesAsset.drawerArrow, label: MailResourcesStrings.buttonImportEmails, action: importMails),
-            MenuItem(icon: MailResourcesAsset.synchronizeArrow, label: MailResourcesStrings.buttonRestoreEmails, action: restoreMails)
+            MenuItem(
+                icon: MailResourcesAsset.synchronizeArrow,
+                label: MailResourcesStrings.buttonRestoreEmails,
+                action: restoreMails
+            )
         ]
     }
 

@@ -16,29 +16,16 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import MailResources
+import Foundation
 import SwiftUI
 
-struct NewMessageButtonView: View {
-    @ObservedObject var sheet: MenuSheet
-
-    var body: some View {
-        Button {
-            sheet.state = .newMessage
-        } label: {
-            Text(MailResourcesStrings.newMessageButton)
-                .textStyle(.buttonPill)
-            Image(resource: MailResourcesAsset.pencil)
-        }
-        .tint(MailResourcesAsset.mailPinkColor)
-        .buttonStyle(.borderedProminent)
-        .buttonBorderShape(.roundedRectangle(radius: 50))
-        .controlSize(.large)
-    }
+public struct WindowKey: EnvironmentKey {
+    public static let defaultValue: UIWindow? = nil
 }
 
-struct NewMessageButtonView_Previews: PreviewProvider {
-    static var previews: some View {
-        NewMessageButtonView(sheet: MenuSheet())
+public extension EnvironmentValues {
+    var window: WindowKey.Value {
+        get { return self[WindowKey.self] }
+        set { self[WindowKey.self] = newValue }
     }
 }

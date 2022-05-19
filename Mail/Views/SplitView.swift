@@ -23,11 +23,21 @@ import SwiftUI
 
 import MailResources
 
+class SettingsSheet: SheetState<SettingsSheet.State> {
+    enum State: Equatable {
+        case manageAccount
+        case settings
+    }
+}
+
 struct SplitView: View {
-    var mailboxManager = AccountManager.instance.currentMailboxManager!
+    @ObservedObject var mailboxManager = AccountManager.instance.currentMailboxManager!
     @State var selectedFolder: Folder?
     @State var splitViewController: UISplitViewController?
     @Environment(\.horizontalSizeClass) var sizeClass
+
+    @ObservedObject var settingsSheet = SettingsSheet()
+    @ObservedObject var menuSheet = MenuSheet()
 
     var isCompact: Bool {
         sizeClass == .compact
@@ -41,17 +51,34 @@ struct SplitView: View {
         GeometryReader { geometry in
             NavigationView {
                 if isCompact {
-                    ThreadListView(mailboxManager: mailboxManager, folder: $selectedFolder, isCompact: isCompact, geometryProxy: geometry)
+                    ThreadListView(
+                        mailboxManager: mailboxManager,
+                        folder: $selectedFolder,
+                        isCompact: isCompact,
+                        geometryProxy: geometry
+                    )
                 } else {
-                    MenuDrawerView(mailboxManager: mailboxManager, selectedFolder: $selectedFolder, isCompact: isCompact, geometryProxy: geometry)
-                        .navigationBarHidden(true)
+                    MenuDrawerView(
+                        mailboxManager: mailboxManager,
+                        selectedFolder: $selectedFolder,
+                        isCompact: isCompact,
+                        geometryProxy: geometry
+                    )
+                    .navigationBarHidden(true)
 
-                    ThreadListView(mailboxManager: mailboxManager, folder: $selectedFolder, isCompact: isCompact, geometryProxy: geometry)
+                    ThreadListView(
+                        mailboxManager: mailboxManager,
+                        folder: $selectedFolder,
+                        isCompact: isCompact,
+                        geometryProxy: geometry
+                    )
 
                     EmptyThreadView()
                 }
             }
         }
+        .environmentObject(menuSheet)
+        .environmentObject(settingsSheet)
         .accentColor(Color(MailResourcesAsset.primaryTextColor.color))
         .task {
             do {

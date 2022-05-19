@@ -16,32 +16,31 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import Introspect
 import MailCore
+import MailResources
 import SwiftUI
 
-struct MailboxCell: View {
-    @Environment(\.window) private var window
-
-    @State var mailbox: Mailbox
-    @State var unreadMessages = false
+struct SettingsView: View {
+    @EnvironmentObject var menuSheet: MenuSheet
 
     var body: some View {
-        MailboxesManagementButtonView(text: mailbox.email, showBadge: $unreadMessages) {
-            (window?.windowScene?.delegate as? SceneDelegate)?.switchMailbox(mailbox)
+        ZStack {
+            Text("Settings View")
+                .font(.system(size: 50))
+            List {
+                NavigationLink {
+                    AccountView()
+                } label: {
+                    Text("Account")
+                }
+            }
         }
-        .onAppear {
-            hasUnreadMessages()
-        }
-    }
-
-    private func hasUnreadMessages() {
-        guard let mailboxManager = AccountManager.instance.getMailboxManager(for: mailbox) else { return }
-        unreadMessages = mailboxManager.hasUnreadMessages()
     }
 }
 
-struct MailboxCell_Previews: PreviewProvider {
+struct SettingsView_Previews: PreviewProvider {
     static var previews: some View {
-        MailboxCell(mailbox: PreviewHelper.sampleMailbox)
+        SettingsView()
     }
 }

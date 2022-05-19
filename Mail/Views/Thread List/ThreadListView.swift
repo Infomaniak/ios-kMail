@@ -22,21 +22,24 @@ import MailResources
 import RealmSwift
 import SwiftUI
 
-class ThreadListSheet: SheetState<ThreadListSheet.State> {
+class MenuSheet: SheetState<MenuSheet.State> {
     enum State: Equatable {
         case menuDrawer
         case newMessage
         case editMessage(draft: Draft)
+        case addAccount
     }
 }
 
 struct ThreadListView: View {
     @StateObject var viewModel: ThreadListViewModel
-    @StateObject var sheet = ThreadListSheet()
+
+    @EnvironmentObject var menuSheet: MenuSheet
+    @EnvironmentObject var settingsSheet: SettingsSheet
 
     @Binding var currentFolder: Folder?
 
-    @State private var avatarImage = Image(uiImage: MailResourcesAsset.placeholderAvatar.image)
+    @State private var avatarImage = Image(resource: MailResourcesAsset.placeholderAvatar)
     @State private var selectedThread: Thread?
 
     let isCompact: Bool
@@ -75,18 +78,31 @@ struct ThreadListView: View {
                 }
                 .listRowSeparator(.hidden)
                 .listRowBackground(Color(selectedThread == thread
-                                         ? MailResourcesAsset.backgroundCardSelectedColor.color
-                                         : MailResourcesAsset.backgroundColor.color))
-                .modifier(ThreadListSwipeAction())
+                        ? MailResourcesAsset.backgroundCardSelectedColor.color
+                        : MailResourcesAsset.backgroundColor.color))
+                    .modifier(ThreadListSwipeAction())
             }
             .listStyle(.plain)
             .introspectTableView { tableView in
                 tableView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: 60, right: 0)
             }
 
-            NewMessageButtonView(sheet: sheet)
+            NewMessageButtonView(sheet: menuSheet)
                 .padding(.trailing, 30)
                 .padding(.bottom, max(8, 30 - geometryProxy.safeAreaInsets.bottom))
+
+            NavigationLink(isActive: $settingsSheet.isShowing) {
+                switch settingsSheet.state {
+                case .settings:
+                    SettingsView()
+                case .manageAccount:
+                    AccountView()
+                case .none:
+                    EmptyView()
+                }
+            } label: {
+                EmptyView()
+            }
         }
         .introspectNavigationController { navigationController in
             let navigationBarAppearance = UINavigationBarAppearance()
@@ -102,10 +118,10 @@ struct ThreadListView: View {
             navigationController.navigationBar.scrollEdgeAppearance = navigationBarAppearance
             navigationController.hidesBarsOnSwipe = true
         }
-        .modifier(ThreadListNavigationBar(isCompact: isCompact, sheet: sheet, folder: $viewModel.folder,
+        .modifier(ThreadListNavigationBar(isCompact: isCompact, sheet: menuSheet, folder: $viewModel.folder,
                                           avatarImage: $avatarImage))
-        .sheet(isPresented: $sheet.isShowing) {
-            switch sheet.state {
+        .sheet(isPresented: $menuSheet.isShowing) {
+            switch menuSheet.state {
             case .menuDrawer:
                 MenuDrawerView(
                     mailboxManager: viewModel.mailboxManager,
@@ -117,6 +133,8 @@ struct ThreadListView: View {
                 NewMessageView(mailboxManager: viewModel.mailboxManager)
             case let .editMessage(draft):
                 NewMessageView(mailboxManager: viewModel.mailboxManager, draft: draft)
+            case .addAccount:
+                LoginView()
             case .none:
                 EmptyView()
             }
@@ -150,7 +168,7 @@ struct ThreadListView: View {
 
         // If we already have the draft locally, present it directly
         if let draft = viewModel.mailboxManager.draft(messageUid: message.uid)?.detached() {
-            sheet.state = .editMessage(draft: draft)
+            menuSheet.state = .editMessage(draft: draft)
             sheetPresented = true
         }
 
@@ -158,7 +176,7 @@ struct ThreadListView: View {
         Task { [sheetPresented] in
             let draft = try await viewModel.mailboxManager.draft(from: message)
             if !sheetPresented {
-                sheet.state = .editMessage(draft: draft)
+                menuSheet.state = .editMessage(draft: draft)
             }
         }
     }
@@ -167,7 +185,7 @@ struct ThreadListView: View {
 private struct ThreadListNavigationBar: ViewModifier {
     var isCompact: Bool
 
-    @ObservedObject var sheet: ThreadListSheet
+    @ObservedObject var sheet: MenuSheet
 
     @Binding var folder: Folder?
     @Binding var avatarImage: Image
@@ -181,8 +199,9 @@ private struct ThreadListNavigationBar: ViewModifier {
                 }
 
                 ToolbarItem(placement: .navigationBarTrailing) {
-                    Button {
-                        // TODO: Display accounts list
+                    // TODO: - Add floatingPanel
+                    NavigationLink {
+                        AccountListView()
                     } label: {
                         avatarImage
                             .resizable()
@@ -198,7 +217,7 @@ private struct ThreadListNavigationBar: ViewModifier {
                         Button {
                             sheet.state = .menuDrawer
                         } label: {
-                            Image(uiImage: MailResourcesAsset.burger.image)
+                            Image(resource: MailResourcesAsset.burger)
                         }
                         .tint(MailResourcesAsset.secondaryTextColor)
                     }
@@ -214,7 +233,7 @@ private struct ThreadListSwipeAction: ViewModifier {
                 Button {
                     // TODO: Mark the message as (un)read
                 } label: {
-                    Image(uiImage: MailResourcesAsset.openLetter.image)
+                    Image(resource: MailResourcesAsset.openLetter)
                 }
                 .tint(MailResourcesAsset.unreadActionColor)
             }
@@ -222,14 +241,14 @@ private struct ThreadListSwipeAction: ViewModifier {
                 Button {
                     // TODO: Delete thread
                 } label: {
-                    Image(uiImage: MailResourcesAsset.bin.image)
+                    Image(resource: MailResourcesAsset.bin)
                 }
                 .tint(MailResourcesAsset.destructiveActionColor)
 
                 Button {
                     // TODO: Display menu
                 } label: {
-                    Image(uiImage: MailResourcesAsset.threeDots.image)
+                    Image(resource: MailResourcesAsset.threeDots)
                 }
                 .tint(MailResourcesAsset.menuActionColor)
             }

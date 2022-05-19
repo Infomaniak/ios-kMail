@@ -16,8 +16,8 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import ProjectDescription
 import Foundation
+import ProjectDescription
 
 let deploymentTarget = DeploymentTarget.iOS(targetVersion: "15.0", devices: [.iphone, .ipad])
 let baseSettings = SettingsDictionary().automaticCodeSigning(devTeam: "864VDCS2QY")
@@ -30,6 +30,7 @@ let project = Project(name: "Mail",
                           .package(url: "https://github.com/Alamofire/Alamofire.git", .upToNextMajor(from: "5.2.2")),
                           .package(url: "https://github.com/CocoaLumberjack/CocoaLumberjack.git", .upToNextMajor(from: "3.7.0")),
                           .package(url: "https://github.com/realm/realm-swift", .upToNextMajor(from: "10.0.0")),
+                          .package(url: "https://github.com/flowbe/SwiftRegex.git", .upToNextMajor(from: "1.0.0")),
                           .package(url: "https://github.com/matomo-org/matomo-sdk-ios.git", .upToNextMajor(from: "7.5.1")),
                           .package(url: "https://github.com/ProxymanApp/atlantis", .upToNextMajor(from: "1.16.0")),
                           .package(url: "https://github.com/siteline/SwiftUI-Introspect.git", .upToNextMajor(from: "0.1.4")),
@@ -65,8 +66,7 @@ let project = Project(name: "Mail",
                                      .package(product: "Shimmer")
                                  ],
                                  settings: .settings(base: baseSettings),
-                                 environment: ["hostname": "\(ProcessInfo.processInfo.hostName)."]
-                          ),
+                                 environment: ["hostname": "\(ProcessInfo.processInfo.hostName)."]),
                           Target(name: "MailTests",
                                  platform: .iOS,
                                  product: .unitTests,
@@ -116,7 +116,8 @@ let project = Project(name: "Mail",
                                   .package(product: "InfomaniakCore"),
                                   .package(product: "InfomaniakLogin"),
                                   .package(product: "CocoaLumberjackSwift"),
-                                  .package(product: "RealmSwift")
+                                  .package(product: "RealmSwift"),
+                                  .package(product: "SwiftRegex")
                               ],
                               settings: .settings(base: baseSettings)
                           )

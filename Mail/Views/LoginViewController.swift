@@ -21,13 +21,36 @@ import MailCore
 import SwiftUI
 import UIKit
 
+struct LoginView: UIViewControllerRepresentable {
+    func makeUIViewController(context: Context) -> LoginViewController {
+        let login = LoginViewController.instantiate()
+        return login
+    }
+
+    func updateUIViewController(_ uiViewController: LoginViewController, context: Context) {
+        // Intentionally unimplemented...
+    }
+}
+
 class LoginViewController: UIViewController {
+    override func viewDidLoad() {
+        InfomaniakLogin.setupWebviewNavbar(
+            title: "",
+            titleColor: nil,
+            color: nil,
+            buttonColor: nil,
+            clearCookie: true,
+            timeOutMessage: "Timeout"
+        )
+    }
+
     @IBAction func loginButtonPressed(_ sender: UIButton) {
         InfomaniakLogin.webviewLoginFrom(viewController: self, delegate: self)
     }
 
     static func instantiate() -> LoginViewController {
-        return UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "LoginViewController") as! LoginViewController
+        return UIStoryboard(name: "Main", bundle: nil)
+            .instantiateViewController(withIdentifier: "LoginViewController") as! LoginViewController
     }
 }
 
@@ -39,7 +62,8 @@ extension LoginViewController: InfomaniakLoginDelegate {
             do {
                 _ = try await AccountManager.instance.createAndSetCurrentAccount(code: code, codeVerifier: verifier)
                 MatomoUtils.connectUser()
-                let splitVC = UIHostingController(rootView: SplitView())
+                let splitView = SplitView().environment(\.window, self.view.window)
+                let splitVC = UIHostingController(rootView: splitView)
                 self.view.window?.rootViewController = splitVC
                 self.view.window?.makeKeyAndVisible()
             } catch {
