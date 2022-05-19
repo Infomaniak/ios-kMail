@@ -26,10 +26,10 @@ struct AccountCellView: View {
     @State var account: Account
 
     @State private var showEmailList: Bool
-    
+
     init(account: Account) {
         self.account = account
-        self.showEmailList = AccountManager.instance.currentAccount == account
+        showEmailList = AccountManager.instance.currentAccount == account
     }
 
     var body: some View {
@@ -42,13 +42,13 @@ struct AccountCellView: View {
 
                 VStack(alignment: .leading, spacing: 4) {
                     Text(account.user.displayName)
-                        .textStyle(.body)
+                        .textStyle(.header3)
                     Text(account.user.email)
-                        .textStyle(.calloutSecondary)
+                        .textStyle(.callout)
                 }
 
                 Spacer()
-                
+
                 ChevronButton(isExpanded: $showEmailList)
             }
             .onTapGesture {
@@ -85,8 +85,8 @@ struct AccountCellView: View {
     }
 }
 
-//struct AccountCellView_Previews: PreviewProvider {
+// struct AccountCellView_Previews: PreviewProvider {
 //    static var previews: some View {
 //        AccountCellView()
 //    }
-//}
+// }
