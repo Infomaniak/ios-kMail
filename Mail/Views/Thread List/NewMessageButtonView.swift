@@ -28,7 +28,7 @@ struct NewMessageButtonView: View {
         } label: {
             Text(MailResourcesStrings.newMessageButton)
                 .textStyle(.buttonPill)
-            Image(uiImage: MailResourcesAsset.pencil.image)
+            Image(resource: MailResourcesAsset.pencil)
         }
         .tint(MailResourcesAsset.mailPinkColor)
         .buttonStyle(.borderedProminent)

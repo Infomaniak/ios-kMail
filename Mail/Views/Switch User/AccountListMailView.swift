@@ -26,7 +26,7 @@ struct AccountListMailView: View {
 
     var body: some View {
         HStack(spacing: 16) {
-            Image(uiImage: MailResourcesAsset.envelope.image)
+            Image(resource: MailResourcesAsset.envelope)
                 .frame(width: 16, height: 16)
                 
             Text(mailbox.email)

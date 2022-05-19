@@ -91,7 +91,7 @@ private struct QuotaCircularProgressViewStyle: ProgressViewStyle {
                 .rotationEffect(.degrees(-90))
                 .frame(width: 42)
 
-            Image(uiImage: MailResourcesAsset.drawer.image)
+            Image(resource: MailResourcesAsset.drawer)
                 .resizable()
                 .scaledToFit()
                 .frame(width: 18)

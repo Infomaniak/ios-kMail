@@ -23,7 +23,7 @@ import SwiftUI
 struct SearchBarButtonView: View {
     var body: some View {
         HStack {
-            Image(uiImage: MailResourcesAsset.search.image)
+            Image(resource: MailResourcesAsset.search)
                 .resizable()
                 .scaledToFit()
                 .frame(width: Constants.searchBarIconSize, height: Constants.searchBarIconSize)
@@ -32,7 +32,7 @@ struct SearchBarButtonView: View {
                 .textStyle(.calloutHint)
             Spacer()
 
-            Image(uiImage: MailResourcesAsset.filter.image)
+            Image(resource: MailResourcesAsset.filter)
                 .resizable()
                 .scaledToFit()
                 .frame(width: Constants.searchBarIconSize, height: Constants.searchBarIconSize)

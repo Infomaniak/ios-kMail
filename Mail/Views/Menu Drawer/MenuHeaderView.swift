@@ -27,7 +27,7 @@ struct MenuHeaderView: View {
 
     var body: some View {
         HStack {
-            Image(uiImage: MailResourcesAsset.logoMail.image)
+            Image(resource: MailResourcesAsset.logoMail)
                 .resizable()
                 .scaledToFit()
                 .frame(height: 52)
@@ -38,7 +38,7 @@ struct MenuHeaderView: View {
                 sheet.state = .settings
                 presentationMode.wrappedValue.dismiss()
             } label: {
-                Image(uiImage: MailResourcesAsset.gear.image)
+                Image(resource: MailResourcesAsset.gear)
                     .resizable()
                     .scaledToFit()
                     .frame(width: 26)
