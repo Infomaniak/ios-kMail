@@ -25,9 +25,10 @@ struct AccountListMailView: View {
     @State var isSelected = false
 
     var body: some View {
-        HStack(spacing: 16) {
+        HStack(alignment: .center, spacing: 16) {
             Image(resource: MailResourcesAsset.envelope)
-                .frame(width: 16, height: 16)
+                .resizable()
+                .frame(width: 20, height: 20)
 
             Text(mailbox.email)
                 .truncationMode(.tail)
