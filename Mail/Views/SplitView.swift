@@ -27,7 +27,6 @@ class SettingsSheet: SheetState<SettingsSheet.State> {
     enum State: Equatable {
         case manageAccount
         case settings
-        case addAccount
     }
 }
 

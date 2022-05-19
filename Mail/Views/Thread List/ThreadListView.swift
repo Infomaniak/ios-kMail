@@ -27,6 +27,7 @@ class MenuSheet: SheetState<MenuSheet.State> {
         case menuDrawer
         case newMessage
         case editMessage(draft: Draft)
+        case addAccount
     }
 }
 
@@ -77,9 +78,9 @@ struct ThreadListView: View {
                 }
                 .listRowSeparator(.hidden)
                 .listRowBackground(Color(selectedThread == thread
-                                         ? MailResourcesAsset.backgroundCardSelectedColor.color
-                                         : MailResourcesAsset.backgroundColor.color))
-                .modifier(ThreadListSwipeAction())
+                        ? MailResourcesAsset.backgroundCardSelectedColor.color
+                        : MailResourcesAsset.backgroundColor.color))
+                    .modifier(ThreadListSwipeAction())
             }
             .listStyle(.plain)
             .introspectTableView { tableView in
@@ -96,8 +97,6 @@ struct ThreadListView: View {
                     SettingsView()
                 case .manageAccount:
                     AccountView()
-                case .addAccount:
-                    LoginView()
                 case .none:
                     EmptyView()
                 }
@@ -134,6 +133,8 @@ struct ThreadListView: View {
                 NewMessageView(mailboxManager: viewModel.mailboxManager)
             case let .editMessage(draft):
                 NewMessageView(mailboxManager: viewModel.mailboxManager, draft: draft)
+            case .addAccount:
+                LoginView()
             case .none:
                 EmptyView()
             }

@@ -31,16 +31,14 @@ struct AccountListView: View {
         }
         .navigationBarTitle(MailResourcesStrings.titleMyAccounts, displayMode: .inline)
         .padding(16)
-        .onAppear {
-            Task {
-                try await withThrowingTaskGroup(of: Void.self) { group in
-                    for account in AccountManager.instance.accounts where account != AccountManager.instance.currentAccount {
-                        group.addTask {
-                            _ = try await AccountManager.instance.updateUser(for: account, registerToken: false)
-                        }
+        .task {
+            try? await withThrowingTaskGroup(of: Void.self) { group in
+                for account in AccountManager.instance.accounts where account != AccountManager.instance.currentAccount {
+                    group.addTask {
+                        _ = try await AccountManager.instance.updateUser(for: account, registerToken: false)
                     }
-                    try await group.waitForAll()
                 }
+                try await group.waitForAll()
             }
         }
     }
