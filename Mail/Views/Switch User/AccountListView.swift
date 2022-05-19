@@ -29,7 +29,7 @@ struct AccountListView: View {
                 }
             }
         }
-        .navigationTitle(MailResourcesStrings.titleMyAccounts)
+        .navigationBarTitle(MailResourcesStrings.titleMyAccounts, displayMode: .inline)
         .padding(16)
         .onAppear {
             Task {
