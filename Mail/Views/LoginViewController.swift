@@ -62,7 +62,8 @@ extension LoginViewController: InfomaniakLoginDelegate {
             do {
                 _ = try await AccountManager.instance.createAndSetCurrentAccount(code: code, codeVerifier: verifier)
                 MatomoUtils.connectUser()
-                let splitVC = UIHostingController(rootView: SplitView())
+                let splitView = SplitView().environment(\.window, self.view.window)
+                let splitVC = UIHostingController(rootView: splitView)
                 self.view.window?.rootViewController = splitVC
                 self.view.window?.makeKeyAndVisible()
             } catch {

@@ -22,6 +22,8 @@ import MailResources
 import SwiftUI
 
 struct AccountCellView: View {
+    @Environment(\.window) private var window
+
     @State private var avatarImage = MailResourcesAsset.placeholderAvatar.image
     @State var account: Account
 
@@ -54,10 +56,7 @@ struct AccountCellView: View {
             .padding(.top, 6)
             .padding(.bottom, 19)
             .onTapGesture {
-                AccountManager.instance.switchAccount(newAccount: account)
-                (UIApplication.shared.delegate as? AppDelegate)?.refreshCacheData()
-                (UIApplication.shared.connectedScenes.first?.delegate as? SceneDelegate)?
-                    .setRootViewController(UIHostingController(rootView: SplitView()))
+                (window?.windowScene?.delegate as? SceneDelegate)?.switchAccount(account)
             }
             if showEmailList {
                 VStack(spacing: 26) {
@@ -67,11 +66,7 @@ struct AccountCellView: View {
                             isSelected: AccountManager.instance.currentMailboxId == mailbox.mailboxId
                         )
                         .onTapGesture {
-                            AccountManager.instance.switchAccount(newAccount: account)
-                            AccountManager.instance.setCurrentMailboxForCurrentAccount(mailbox: mailbox)
-                            (UIApplication.shared.delegate as? AppDelegate)?.refreshCacheData()
-                            (UIApplication.shared.connectedScenes.first?.delegate as? SceneDelegate)?
-                                .setRootViewController(UIHostingController(rootView: SplitView()))
+                            (window?.windowScene?.delegate as? SceneDelegate)?.switchAccount(account, mailbox: mailbox)
                         }
                     }
                 }

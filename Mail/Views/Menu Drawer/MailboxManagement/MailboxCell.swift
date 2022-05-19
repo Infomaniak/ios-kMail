@@ -20,15 +20,14 @@ import MailCore
 import SwiftUI
 
 struct MailboxCell: View {
+    @Environment(\.window) private var window
+
     @State var mailbox: Mailbox
     @State var unreadMessages = false
 
     var body: some View {
         MailboxesManagementButtonView(text: mailbox.email, showBadge: $unreadMessages) {
-            // TODO: Switch mailbox
-            AccountManager.instance.setCurrentMailboxForCurrentAccount(mailbox: mailbox)
-            AccountManager.instance.saveAccounts()
-            (UIApplication.shared.connectedScenes.first?.delegate as? SceneDelegate)?.setRootViewController(UIHostingController(rootView: SplitView()))
+            (window?.windowScene?.delegate as? SceneDelegate)?.switchMailbox(mailbox)
         }
         .onAppear {
             hasUnreadMessages()
