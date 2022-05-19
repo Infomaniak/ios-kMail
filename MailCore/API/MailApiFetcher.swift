@@ -96,6 +96,12 @@ public class MailApiFetcher: ApiFetcher {
                                                         parameters: ["uids": messages.map(\.uid)])).data
     }
 
+    func move(mailbox: Mailbox, messages: [Message], destinationId: String) async throws -> Empty {
+        try await perform(request: authenticatedRequest(.moveMessages(uuid: mailbox.uuid),
+                                                        method: .post,
+                                                        parameters: ["uids": messages.map(\.uid), "to": destinationId])).data
+    }
+
     func attachment(attachment: Attachment) async throws -> Data {
         guard let resource = attachment.resource else {
             throw MailError.resourceError

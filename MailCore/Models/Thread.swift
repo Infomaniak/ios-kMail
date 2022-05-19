@@ -43,6 +43,7 @@ public class Thread: Object, Decodable, Identifiable {
     @Persisted public var answered: Bool
     @Persisted public var forwarded: Bool
     @Persisted public var size: Int
+    @Persisted(originProperty: "threads") public var parentLink: LinkingObjects<Folder>
 
     public var id: String {
         return uid
@@ -67,10 +68,34 @@ public class Thread: Object, Decodable, Identifiable {
         return Constants.formatDate(date, style: .date, relative: true)
     }
 
+    public var parent: Folder? {
+        return parentLink.first
+    }
+
     public func updateUnseenMessages() {
-        unseenMessages = messages.filter {
-            !$0.seen
-        }.count
+        unseenMessages = messages.filter { !$0.seen }.count
+    }
+
+    private enum CodingKeys: String, CodingKey {
+        case uid
+        case messagesCount
+        case uniqueMessagesCount
+        case deletedMessagesCount
+        case messages
+        case unseenMessages
+        case from
+        case to
+        case cc
+        case bcc
+        case subject
+        case date
+        case hasAttachments
+        case hasStAttachments
+        case hasDrafts
+        case flagged
+        case answered
+        case forwarded
+        case size
     }
 
     public convenience init(

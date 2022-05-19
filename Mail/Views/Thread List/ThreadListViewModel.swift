@@ -94,4 +94,13 @@ typealias Thread = MailCore.Thread
             }
         }
     }
+
+    func delete(thread: Thread) async {
+        guard let trashFolder = mailboxManager.getFolder(with: .trash)?.freeze() else { return }
+        do {
+            try await mailboxManager.move(thread: thread, to: trashFolder)
+        } catch {
+            print("Error while moving thread to trash: \(error.localizedDescription)")
+        }
+    }
 }

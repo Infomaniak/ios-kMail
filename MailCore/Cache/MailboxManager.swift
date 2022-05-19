@@ -175,6 +175,11 @@ public class MailboxManager: ObservableObject {
         }
     }
 
+    public func getFolder(with role: FolderRole, using realm: Realm? = nil) -> Folder? {
+        let realm = realm ?? getRealm()
+        return realm.objects(Folder.self).where { $0.role == role }.first
+    }
+
     // MARK: - Thread
 
     public func threads(folder: Folder, filter: Filter = .all) async throws {
@@ -251,9 +256,9 @@ public class MailboxManager: ObservableObject {
 
     public func markAsSeen(message: Message, seen: Bool = true) async throws {
         if seen {
-            let _ = try await apiFetcher.markAsSeen(mailbox: mailbox, messages: [message])
+            _ = try await apiFetcher.markAsSeen(mailbox: mailbox, messages: [message])
         } else {
-            let _ = try await apiFetcher.markAsUnseen(mailbox: mailbox, messages: [message])
+            _ = try await apiFetcher.markAsUnseen(mailbox: mailbox, messages: [message])
         }
 
         if let liveMessage = message.thaw() {
@@ -261,6 +266,18 @@ public class MailboxManager: ObservableObject {
             try? realm.safeWrite {
                 liveMessage.seen = seen
                 liveMessage.parent?.updateUnseenMessages()
+            }
+        }
+    }
+
+    public func move(thread: Thread, to folder: Folder) async throws {
+        _ = try await apiFetcher.move(mailbox: mailbox, messages: Array(thread.messages), destinationId: folder._id)
+
+        let realm = getRealm()
+        if let liveFolder = folder.thaw(), let liveThread = thread.thaw() {
+            try? realm.safeWrite {
+                liveThread.parent?.threads.remove(liveThread)
+                liveFolder.threads.insert(liveThread)
             }
         }
     }
