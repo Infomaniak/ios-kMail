@@ -234,7 +234,9 @@ private struct ThreadListSwipeAction: ViewModifier {
         content
             .swipeActions(edge: .leading) {
                 Button {
-                    // TODO: Mark the message as (un)read
+                    Task {
+                        await viewModel.toggleRead(thread: thread)
+                    }
                 } label: {
                     Image(resource: MailResourcesAsset.openLetter)
                 }

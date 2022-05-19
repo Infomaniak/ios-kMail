@@ -103,4 +103,12 @@ typealias Thread = MailCore.Thread
             print("Error while moving thread to trash: \(error.localizedDescription)")
         }
     }
+
+    func toggleRead(thread: Thread) async {
+        do {
+            _ = try await mailboxManager.toggleRead(thread: thread)
+        } catch {
+            print("Error while marking thread as seen: \(error.localizedDescription)")
+        }
+    }
 }

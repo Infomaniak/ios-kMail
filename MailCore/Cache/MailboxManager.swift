@@ -270,6 +270,34 @@ public class MailboxManager: ObservableObject {
         }
     }
 
+    public func toggleRead(thread: Thread) async throws {
+        // Mark as seen
+        if thread.unseenMessages > 0 {
+            _ = try await apiFetcher.markAsSeen(mailbox: mailbox, messages: Array(thread.messages))
+            if let liveThread = thread.thaw() {
+                let realm = getRealm()
+                try? realm.safeWrite {
+                    liveThread.unseenMessages = 0
+                    for message in thread.messages {
+                        message.thaw()?.seen = true
+                    }
+                }
+            }
+        } else {
+            // Mark as unseen
+            _ = try await apiFetcher.markAsUnseen(mailbox: mailbox, messages: Array(thread.messages))
+            if let liveThread = thread.thaw() {
+                let realm = getRealm()
+                try? realm.safeWrite {
+                    liveThread.unseenMessages = liveThread.messagesCount
+                    for message in thread.messages {
+                        message.thaw()?.seen = false
+                    }
+                }
+            }
+        }
+    }
+
     public func move(thread: Thread, to folder: Folder) async throws {
         _ = try await apiFetcher.move(mailbox: mailbox, messages: Array(thread.messages), destinationId: folder._id)
 
