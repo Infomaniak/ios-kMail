@@ -85,7 +85,6 @@ class MailEditor: SQTextEditorView {
         let config = WKWebViewConfiguration()
         config.preferences = WKPreferences()
         config.preferences.minimumFontSize = 10
-        config.preferences.javaScriptEnabled = true
         config.preferences.javaScriptCanOpenWindowsAutomatically = false
         config.processPool = WKProcessPool()
         config.userContentController = WKUserContentController()

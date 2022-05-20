@@ -34,6 +34,7 @@ struct LoginView: UIViewControllerRepresentable {
 
 class LoginViewController: UIViewController {
     override func viewDidLoad() {
+        super.viewDidLoad()
         InfomaniakLogin.setupWebviewNavbar(
             title: "",
             titleColor: nil,

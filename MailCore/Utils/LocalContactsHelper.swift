@@ -33,7 +33,7 @@ class LocalContactsHelper {
             }
         }
     }
-    
+
     static let shared = LocalContactsHelper()
 
     let store = CNContactStore()
@@ -94,4 +94,3 @@ class LocalContactsHelper {
         }
     }
 }
-

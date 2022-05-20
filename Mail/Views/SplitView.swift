@@ -35,6 +35,7 @@ struct SplitView: View {
     @State var selectedFolder: Folder?
     @State var splitViewController: UISplitViewController?
     @Environment(\.horizontalSizeClass) var sizeClass
+    @Environment(\.window) var window
 
     @ObservedObject var settingsSheet = SettingsSheet()
     @ObservedObject var menuSheet = MenuSheet()
@@ -93,8 +94,7 @@ struct SplitView: View {
         }
         .introspectNavigationController { navController in
             guard let splitViewController = navController.splitViewController,
-                  let interfaceOrientation = UIApplication.shared.windows.first(where: { $0.isKeyWindow })?.windowScene?
-                  .interfaceOrientation else { return }
+                  let interfaceOrientation = window?.windowScene?.interfaceOrientation else { return }
             self.splitViewController = splitViewController
             setupBehaviour(orientation: interfaceOrientation)
             splitViewController.preferredDisplayMode = .twoDisplaceSecondary

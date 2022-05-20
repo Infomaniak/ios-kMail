@@ -35,7 +35,7 @@ struct AttachmentPreview: View {
             }
 
             AttachmentPreviewHeader(isPresented: $isPresented, isFullScreen: $isFullScreen)
-            
+
             if !isFullScreen {
                 VStack {
                     Spacer()

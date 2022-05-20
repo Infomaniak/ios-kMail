@@ -3,7 +3,7 @@
     {
       "identity" : "alamofire",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/Alamofire/Alamofire",
+      "location" : "https://github.com/Alamofire/Alamofire.git",
       "state" : {
         "revision" : "354dda32d89fc8cd4f5c46487f64957d355f53d8",
         "version" : "5.6.1"
@@ -33,7 +33,7 @@
       "location" : "https://github.com/Infomaniak/ios-core.git",
       "state" : {
         "branch" : "mail",
-        "revision" : "282c1453a6678a7d71e3348cf608c31c2a84b3e7"
+        "revision" : "7a0b5935444f240b25c2b897444111b00fe743a0"
       }
     },
     {
@@ -77,8 +77,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/realm/realm-core",
       "state" : {
-        "revision" : "472d325a2e844fcb48c400db74e6b9646f92ca93",
-        "version" : "11.15.0"
+        "revision" : "d97eed3ae7dff2f2e2ffbda83fa8f3b8c445c6ba",
+        "version" : "11.17.0"
       }
     },
     {
@@ -86,8 +86,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/realm/realm-swift",
       "state" : {
-        "revision" : "41fe221e2209ad31bee35593513d957dc3e6e458",
-        "version" : "10.25.2"
+        "revision" : "7f123e48ec12926bb5080e449df360127ee0352d",
+        "version" : "10.26.0"
       }
     },
     {
