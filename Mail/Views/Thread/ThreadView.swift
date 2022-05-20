@@ -64,6 +64,11 @@ struct ThreadView: View {
             .navigationTitle(thread.formattedSubject)
             .onAppear {
                 MatomoUtils.track(view: ["MessageView"])
+                // Style toolbar
+                let appereance = UIToolbarAppearance()
+                appereance.configureWithOpaqueBackground()
+                appereance.backgroundColor = MailResourcesAsset.backgroundSearchBar.color
+                UIToolbar.appearance().standardAppearance = appereance
             }
 
             if card.cardShown {
