@@ -311,6 +311,18 @@ public class MailboxManager: ObservableObject {
         }
     }
 
+    public func delete(thread: Thread) async throws {
+        _ = try await apiFetcher.delete(mailbox: mailbox, messages: Array(thread.messages))
+
+        let realm = getRealm()
+        if let liveThread = thread.thaw() {
+            try? realm.safeWrite {
+                realm.delete(liveThread.messages)
+                realm.delete(liveThread)
+            }
+        }
+    }
+
     // MARK: - Draft
 
     public func draft(draftUuid: String) async throws -> Draft {

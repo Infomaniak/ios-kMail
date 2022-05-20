@@ -96,11 +96,21 @@ typealias Thread = MailCore.Thread
     }
 
     func delete(thread: Thread) async {
-        guard let trashFolder = mailboxManager.getFolder(with: .trash)?.freeze() else { return }
-        do {
-            try await mailboxManager.move(thread: thread, to: trashFolder)
-        } catch {
-            print("Error while moving thread to trash: \(error.localizedDescription)")
+        if folder?.role == .trash {
+            // Delete definitely
+            do {
+                try await mailboxManager.delete(thread: thread)
+            } catch {
+                print("Error while deleting thread: \(error.localizedDescription)")
+            }
+        } else {
+            // Move to trash
+            guard let trashFolder = mailboxManager.getFolder(with: .trash)?.freeze() else { return }
+            do {
+                try await mailboxManager.move(thread: thread, to: trashFolder)
+            } catch {
+                print("Error while moving thread to trash: \(error.localizedDescription)")
+            }
         }
     }
 
