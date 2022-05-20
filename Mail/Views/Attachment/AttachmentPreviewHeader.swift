@@ -16,13 +16,13 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import SwiftUI
 import MailResources
+import SwiftUI
 
 struct AttachmentPreviewHeader: View {
     @Binding var isPresented: Bool
     @Binding var isFullScreen: Bool
-    
+
     var body: some View {
         HStack {
             if !isFullScreen {

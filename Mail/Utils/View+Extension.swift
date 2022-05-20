@@ -27,8 +27,7 @@ struct DeviceRotationViewModifier: ViewModifier {
         content
             .onAppear()
             .onReceive(NotificationCenter.default.publisher(for: UIDevice.orientationDidChangeNotification)) { _ in
-                action(UIApplication.shared.windows.first(where: { $0.isKeyWindow })?.windowScene?
-                    .interfaceOrientation)
+                action(UIApplication.shared.mainSceneKeyWindow?.windowScene?.interfaceOrientation)
             }
     }
 }

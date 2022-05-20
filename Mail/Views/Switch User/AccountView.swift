@@ -23,7 +23,7 @@ import SwiftUI
 
 struct AccountView: View {
     @Environment(\.window) private var window
-    
+
     @State private var avatarImage = MailResourcesAsset.placeholderAvatar.image
     @State private var user: UserProfile! = AccountManager.instance.currentAccount.user
 

@@ -25,7 +25,7 @@ struct BottomCard<Content: View>: View {
     @Binding var cardDismissal: Bool
     let height: CGFloat
 
-    @State private var offset = CGSize(width: 0, height: 0)
+    @State private var offset = CGSize.zero
     @State private var opacity: Double = 0
 
     init(cardShown: Binding<Bool>,

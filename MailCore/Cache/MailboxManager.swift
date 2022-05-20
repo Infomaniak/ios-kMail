@@ -251,9 +251,9 @@ public class MailboxManager: ObservableObject {
 
     public func markAsSeen(message: Message, seen: Bool = true) async throws {
         if seen {
-            let _ = try await apiFetcher.markAsSeen(mailbox: mailbox, messages: [message])
+            _ = try await apiFetcher.markAsSeen(mailbox: mailbox, messages: [message])
         } else {
-            let _ = try await apiFetcher.markAsUnseen(mailbox: mailbox, messages: [message])
+            _ = try await apiFetcher.markAsUnseen(mailbox: mailbox, messages: [message])
         }
 
         if let liveMessage = message.thaw() {
