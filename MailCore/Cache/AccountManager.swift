@@ -123,7 +123,7 @@ public class AccountManager: RefreshTokenDelegate {
         }
     }
 
-    private var mailboxManagers = [String: MailboxManager]()
+    private var mailboxManagers = [Int: MailboxManager]()
     private var contactManagers = [String: ContactManager]()
     private var apiFetchers = [Int: MailApiFetcher]()
 
@@ -144,7 +144,7 @@ public class AccountManager: RefreshTokenDelegate {
             setCurrentAccount(account: account)
 
             if let currentMailbox = MailboxInfosManager.instance
-                .getMailbox(id: currentMailboxId, userId: currentUserId) ?? mailboxes.first {
+                .getMailbox(mailboxId: currentMailboxId) ?? mailboxes.first {
                 setCurrentMailboxForCurrentAccount(mailbox: currentMailbox)
             }
         }
@@ -176,15 +176,13 @@ public class AccountManager: RefreshTokenDelegate {
     }
 
     public func getMailboxManager(for mailboxId: Int, userId: Int) -> MailboxManager? {
-        let objectId = MailboxInfosManager.getObjectId(mailboxId: mailboxId, userId: userId)
-
-        if let mailboxManager = mailboxManagers[objectId] {
+        if let mailboxManager = mailboxManagers[mailboxId] {
             return mailboxManager
         } else if let token = getTokenForUserId(userId),
-                  let mailbox = MailboxInfosManager.instance.getMailbox(id: mailboxId, userId: userId) {
+                  let mailbox = MailboxInfosManager.instance.getMailbox(mailboxId: mailboxId) {
             let apiFetcher = getApiFetcher(for: userId, token: token)
-            mailboxManagers[objectId] = MailboxManager(mailbox: mailbox, apiFetcher: apiFetcher)
-            return mailboxManagers[objectId]
+            mailboxManagers[mailboxId] = MailboxManager(mailbox: mailbox, apiFetcher: apiFetcher)
+            return mailboxManagers[mailboxId]
         } else {
             return nil
         }

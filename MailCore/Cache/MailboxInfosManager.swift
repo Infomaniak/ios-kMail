@@ -59,19 +59,15 @@ public class MailboxInfosManager {
         let realm = getRealm()
         let mailboxRemoved = getMailboxes(for: user.id, using: realm).filter { currentMailbox in
             !mailboxes.contains { newMailbox in
-                newMailbox.objectId == currentMailbox.objectId
+                newMailbox.mailboxId == currentMailbox.mailboxId
             }
         }
-        let mailboxRemovedIds = mailboxRemoved.map(\.objectId)
+        let mailboxRemovedIds = mailboxRemoved.map(\.mailboxId)
         try? realm.write {
-            realm.delete(realm.objects(Mailbox.self).filter("objectId IN %@", mailboxRemovedIds))
+            realm.delete(realm.objects(Mailbox.self).filter("mailboxId IN %@", mailboxRemovedIds))
             realm.add(mailboxes, update: .modified)
         }
         return mailboxRemoved
-    }
-
-    public static func getObjectId(mailboxId: Int, userId: Int) -> String {
-        return "\(mailboxId)_\(userId)"
     }
 
     public func getMailboxes(for userId: Int? = nil, using realm: Realm? = nil) -> [Mailbox] {
@@ -86,13 +82,9 @@ public class MailboxInfosManager {
         return Array(realmMailboxList.map { $0.freeze() })
     }
 
-    public func getMailbox(id: Int, userId: Int, using realm: Realm? = nil) -> Mailbox? {
-        return getMailbox(objectId: MailboxInfosManager.getObjectId(mailboxId: id, userId: userId), using: realm)
-    }
-
-    public func getMailbox(objectId: String, freeze: Bool = true, using realm: Realm? = nil) -> Mailbox? {
+    public func getMailbox(mailboxId: Int, freeze: Bool = true, using realm: Realm? = nil) -> Mailbox? {
         let realm = realm ?? getRealm()
-        let mailbox = realm.object(ofType: Mailbox.self, forPrimaryKey: objectId)
+        let mailbox = realm.object(ofType: Mailbox.self, forPrimaryKey: mailboxId)
         return freeze ? mailbox?.freeze() : mailbox
     }
 }
