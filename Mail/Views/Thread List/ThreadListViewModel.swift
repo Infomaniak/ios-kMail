@@ -103,6 +103,9 @@ typealias Thread = MailCore.Thread
             } catch {
                 print("Error while deleting thread: \(error.localizedDescription)")
             }
+        } else if folder?.role == .draft && thread.uid.starts(with: Draft.uuidLocalPrefix) {
+            // Delete local draft from Realm
+            mailboxManager.deleteLocalDraft(thread: thread)
         } else {
             // Move to trash
             guard let trashFolder = mailboxManager.getFolder(with: .trash)?.freeze() else { return }

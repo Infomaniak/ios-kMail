@@ -442,6 +442,24 @@ public class MailboxManager: ObservableObject {
         }
     }
 
+    /// Delete local draft from its associated thread
+    /// - Parameter thread: Thread associated to local draft
+    public func deleteLocalDraft(thread: Thread) {
+        let realm = getRealm()
+        if let message = thread.messages.first, let draft = draft(messageUid: message.uid) {
+            try? realm.safeWrite {
+                realm.delete(draft)
+            }
+        }
+        // Delete thread
+        if let liveThread = thread.thaw() {
+            try? realm.safeWrite {
+                realm.delete(liveThread.messages)
+                realm.delete(liveThread)
+            }
+        }
+    }
+
     // MARK: - Utilities
 
     struct MessagePropertiesOptions: OptionSet {

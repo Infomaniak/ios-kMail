@@ -31,7 +31,7 @@ public struct DraftResponse: Codable {
 }
 
 public class Draft: Object, Codable, Identifiable {
-    static let uuidLocalPrefix = "Local-"
+    public static let uuidLocalPrefix = "Local-"
 
     @Persisted(primaryKey: true) public var uuid: String = ""
     @Persisted public var date: Date
