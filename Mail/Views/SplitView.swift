@@ -127,8 +127,6 @@ struct SplitView: View {
     }
 
     private func getInbox() -> Folder? {
-        let realm = mailboxManager.getRealm()
-        realm.refresh()
-        return realm.objects(Folder.self).first { $0.role == .inbox }
+        return mailboxManager.getFolder(with: .inbox)
     }
 }

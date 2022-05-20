@@ -80,7 +80,7 @@ struct ThreadListView: View {
                 .listRowBackground(Color(selectedThread == thread
                         ? MailResourcesAsset.backgroundCardSelectedColor.color
                         : MailResourcesAsset.backgroundColor.color))
-                    .modifier(ThreadListSwipeAction())
+                .modifier(ThreadListSwipeAction(thread: thread, viewModel: viewModel))
             }
             .listStyle(.plain)
             .introspectTableView { tableView in
@@ -227,19 +227,26 @@ private struct ThreadListNavigationBar: ViewModifier {
 }
 
 private struct ThreadListSwipeAction: ViewModifier {
+    let thread: Thread
+    let viewModel: ThreadListViewModel
+
     func body(content: Content) -> some View {
         content
-            .swipeActions(edge: .leading, allowsFullSwipe: true) {
+            .swipeActions(edge: .leading) {
                 Button {
-                    // TODO: Mark the message as (un)read
+                    Task {
+                        await viewModel.toggleRead(thread: thread)
+                    }
                 } label: {
                     Image(resource: MailResourcesAsset.openLetter)
                 }
                 .tint(MailResourcesAsset.unreadActionColor)
             }
-            .swipeActions(edge: .trailing, allowsFullSwipe: true) {
-                Button {
-                    // TODO: Delete thread
+            .swipeActions(edge: .trailing) {
+                Button(role: .destructive) {
+                    Task {
+                        await viewModel.delete(thread: thread)
+                    }
                 } label: {
                     Image(resource: MailResourcesAsset.bin)
                 }

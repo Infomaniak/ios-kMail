@@ -260,7 +260,7 @@ public class Message: Object, Decodable, Identifiable {
         let messageBody = Body()
         messageBody.value = draft.body
         messageBody.type = draft.mimeType
-        self.body = messageBody
+        body = messageBody
         attachments = draft.attachments.detached()
         references = draft.references
         isDraft = true

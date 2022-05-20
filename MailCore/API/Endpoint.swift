@@ -112,4 +112,12 @@ public extension Endpoint {
     static func messageUnseen(uuid: String) -> Endpoint {
         return .mailbox(uuid: uuid).appending(path: "/message/unseen")
     }
+
+    static func moveMessages(uuid: String) -> Endpoint {
+        return .mailbox(uuid: uuid).appending(path: "/message/move")
+    }
+
+    static func deleteMessages(uuid: String) -> Endpoint {
+        return .mailbox(uuid: uuid).appending(path: "/message/delete")
+    }
 }
