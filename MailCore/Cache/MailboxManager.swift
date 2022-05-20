@@ -66,7 +66,7 @@ public class MailboxManager: ObservableObject {
     public init(mailbox: Mailbox, apiFetcher: MailApiFetcher) {
         self.mailbox = mailbox
         self.apiFetcher = apiFetcher
-        let realmName = "\(mailbox.userId)-\(mailbox.mailboxId).realm"
+        let realmName = "\(mailbox.mailboxId).realm"
         realmConfiguration = Realm.Configuration(
             fileURL: MailboxManager.constants.rootDocumentsURL.appendingPathComponent(realmName),
             schemaVersion: 1,
