@@ -22,19 +22,13 @@ import RealmSwift
 import SwiftUI
 
 struct NewMessageView: View {
-    private var mailboxManager: MailboxManager
+    @State private var mailboxManager: MailboxManager
+    @State private var selectedMailboxItem: Int = 0
     @State var draft: Draft
     @State var editor = RichTextEditorModel()
     @State var showCc = false
 
     let defaultBody = "<div><br></div><div><br></div><div>Envoyé avec Infomaniak Mail pour iOS<br></div>"
-
-    @State private var selectedMailboxItem: Int = 0 {
-        didSet {
-            // TODO: get Mailbox
-            // guard let mailboxManager = AccountManager.instance.getMailboxManager(for: AccountManager.instance.mailboxes[selectedMailboxItem]) else { return }
-        }
-    }
 
     @Environment(\.presentationMode) var presentationMode
 
@@ -43,7 +37,7 @@ struct NewMessageView: View {
     let saveExpiration = 3.0
 
     init(mailboxManager: MailboxManager, draft: Draft? = nil) {
-        self.mailboxManager = mailboxManager
+        _mailboxManager = State(initialValue: mailboxManager)
         guard let signatureResponse = mailboxManager.getSignatureResponse() else { fatalError() }
         _draft =
             State(initialValue: draft ??
@@ -55,13 +49,16 @@ struct NewMessageView: View {
             VStack {
                 HStack(alignment: .firstTextBaseline) {
                     Text(MailResourcesStrings.fromTitle)
+                        .textStyle(.bodySecondary)
                     Picker("Mailbox", selection: $selectedMailboxItem) {
                         ForEach(AccountManager.instance.mailboxes.indices, id: \.self) { i in
                             Text(AccountManager.instance.mailboxes[i].email).tag(i)
                         }
                     }
+                    .textStyle(.body)
                     Spacer()
                 }
+
                 SeparatorView(withPadding: false, fullWidth: true)
 
                 RecipientCellView(draft: $draft, showCcButton: $showCc, type: .to)
@@ -106,6 +103,13 @@ struct NewMessageView: View {
         }
         .onChange(of: draft) { _ in
             textDidChange()
+        }
+        .onChange(of: selectedMailboxItem) { _ in
+            let mailbox = AccountManager.instance.mailboxes[selectedMailboxItem]
+            guard let mailboxManager = AccountManager.instance.getMailboxManager(for: mailbox),
+                  let signatureResponse = mailboxManager.getSignatureResponse() else { return }
+            self.mailboxManager = mailboxManager
+            draft.identityId = "\(signatureResponse.defaultSignatureId)"
         }
         .navigationViewStyle(.stack)
         .accentColor(.black)
