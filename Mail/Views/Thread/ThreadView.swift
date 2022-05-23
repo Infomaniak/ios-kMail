@@ -24,6 +24,7 @@ import SwiftUI
 class MessageSheet: SheetState<MessageSheet.State> {
     enum State: Equatable {
         case attachment(Attachment)
+        case reply(Message, ReplyMode)
     }
 }
 
@@ -89,7 +90,8 @@ struct ThreadView: View {
             ToolbarItemGroup(placement: .bottomBar) {
                 Group {
                     Button {
-                        // TODO: Reply
+                        guard let message = thread.messages.last else { return }
+                        sheet.state = .reply(message, .reply)
                     } label: {
                         VStack(spacing: 0) {
                             Image(resource: MailResourcesAsset.reply)
@@ -98,7 +100,8 @@ struct ThreadView: View {
                     }
                     Spacer()
                     Button {
-                        // TODO: Forward
+                        guard let message = thread.messages.last else { return }
+                        sheet.state = .reply(message, .forward)
                     } label: {
                         VStack(spacing: 0) {
                             Image(resource: MailResourcesAsset.forward)
@@ -123,6 +126,8 @@ struct ThreadView: View {
             switch sheet.state {
             case let .attachment(attachment):
                 AttachmentPreview(isPresented: $sheet.isShowing, attachment: attachment)
+            case let .reply(message, replyMode):
+                NewMessageView(isPresented: $sheet.isShowing, mailboxManager: mailboxManager, draft: Draft.replying(to: message, mode: replyMode))
             case .none:
                 EmptyView()
             }

@@ -127,9 +127,9 @@ struct ThreadListView: View {
                     isCompact: isCompact
                 )
             case .newMessage:
-                NewMessageView(mailboxManager: viewModel.mailboxManager)
+                NewMessageView(isPresented: $menuSheet.isShowing, mailboxManager: viewModel.mailboxManager)
             case let .editMessage(draft):
-                NewMessageView(mailboxManager: viewModel.mailboxManager, draft: draft)
+                NewMessageView(isPresented: $menuSheet.isShowing, mailboxManager: viewModel.mailboxManager, draft: draft)
             case .addAccount:
                 LoginView()
             case .none:
