@@ -41,7 +41,7 @@ struct AccountView: View {
                 NavigationLink {
                     AccountListView()
                 } label: {
-                    Text(MailResourcesStrings.changeAccount)
+                    Text(MailResourcesStrings.buttonAccountSwitch)
                         .textStyle(.button)
                 }
             }
@@ -49,7 +49,7 @@ struct AccountView: View {
             // TODO: - Show email list
             SeparatorView(withPadding: false, fullWidth: true)
             HStack {
-                Text(MailResourcesStrings.emailAddressesAssociatedWithThisAccount)
+                Text(MailResourcesStrings.buttonAccountAssociatedEmailAddresses)
                 Spacer()
                 Image(systemName: "chevron.right")
                     .frame(width: 12, height: 12)
@@ -62,7 +62,7 @@ struct AccountView: View {
             Button {
                 // TODO: - Delete account
             } label: {
-                Text(MailResourcesStrings.deleteAccount)
+                Text(MailResourcesStrings.buttonAccountDelete)
                     .textStyle(.button)
             }
 
@@ -75,7 +75,7 @@ struct AccountView: View {
                 }
                 AccountManager.instance.saveAccounts()
             } label: {
-                Text(MailResourcesStrings.disconnectAccount)
+                Text(MailResourcesStrings.buttonAccountDisconnect)
                     .textStyle(.button)
             }
 

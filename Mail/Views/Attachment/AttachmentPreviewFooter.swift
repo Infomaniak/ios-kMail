@@ -47,7 +47,7 @@ struct AttachmentPreviewFooter: View {
                     HStack {
                         Image(resource: MailResourcesAsset.share)
                             .frame(width: 24, height: 24)
-                        Text(MailResourcesStrings.share)
+                        Text(MailResourcesStrings.buttonShare)
                             .fontWeight(.semibold)
                     }
                 }
@@ -58,7 +58,7 @@ struct AttachmentPreviewFooter: View {
                     HStack {
                         Image(resource: MailResourcesAsset.download)
                             .frame(width: 24, height: 24)
-                        Text(MailResourcesStrings.download)
+                        Text(MailResourcesStrings.buttonDownload)
                             .fontWeight(.semibold)
                     }
                 }
