@@ -66,7 +66,6 @@ public enum Logging {
     private static func initSentry() {
         SentrySDK.start { options in
             options.dsn = "https://a9e3e85be0c246fb9ab0e19be1785c89@sentry.infomaniak.com/42"
-            options.debug = true
         }
     }
 
