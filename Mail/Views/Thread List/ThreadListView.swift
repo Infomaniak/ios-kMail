@@ -43,13 +43,11 @@ struct ThreadListView: View {
     @State private var selectedThread: Thread?
 
     let isCompact: Bool
-    let geometryProxy: GeometryProxy
 
-    init(mailboxManager: MailboxManager, folder: Binding<Folder?>, isCompact: Bool, geometryProxy: GeometryProxy) {
+    init(mailboxManager: MailboxManager, folder: Binding<Folder?>, isCompact: Bool) {
         _viewModel = StateObject(wrappedValue: ThreadListViewModel(mailboxManager: mailboxManager, folder: folder.wrappedValue))
         _currentFolder = folder
         self.isCompact = isCompact
-        self.geometryProxy = geometryProxy
 
         UITableViewCell.appearance().focusEffect = .none
     }
@@ -89,7 +87,7 @@ struct ThreadListView: View {
 
             NewMessageButtonView(sheet: menuSheet)
                 .padding(.trailing, 30)
-                .padding(.bottom, max(8, 30 - geometryProxy.safeAreaInsets.bottom))
+                .padding(.bottom, 8)
 
             NavigationLink(isActive: $settingsSheet.isShowing) {
                 switch settingsSheet.state {
@@ -126,8 +124,7 @@ struct ThreadListView: View {
                 MenuDrawerView(
                     mailboxManager: viewModel.mailboxManager,
                     selectedFolder: $currentFolder,
-                    isCompact: isCompact,
-                    geometryProxy: geometryProxy
+                    isCompact: isCompact
                 )
             case .newMessage:
                 NewMessageView(mailboxManager: viewModel.mailboxManager)
@@ -264,13 +261,10 @@ private struct ThreadListSwipeAction: ViewModifier {
 
 struct ThreadListView_Previews: PreviewProvider {
     static var previews: some View {
-        GeometryReader { geometry in
-            ThreadListView(
-                mailboxManager: MailboxManager(mailbox: PreviewHelper.sampleMailbox, apiFetcher: MailApiFetcher()),
-                folder: .constant(PreviewHelper.sampleFolder),
-                isCompact: false,
-                geometryProxy: geometry
-            )
-        }
+        ThreadListView(
+            mailboxManager: MailboxManager(mailbox: PreviewHelper.sampleMailbox, apiFetcher: MailApiFetcher()),
+            folder: .constant(PreviewHelper.sampleFolder),
+            isCompact: false
+        )
     }
 }

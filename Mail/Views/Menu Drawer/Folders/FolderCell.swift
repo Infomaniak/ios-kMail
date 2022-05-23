@@ -29,7 +29,6 @@ struct FolderCell: View {
     @Binding var selectedFolder: Folder?
 
     var isCompact: Bool
-    let geometryProxy: GeometryProxy
 
     var body: some View {
         if isCompact {
@@ -38,12 +37,11 @@ struct FolderCell: View {
             }
         } else {
             NavigationLink {
-                ThreadListView(mailboxManager: mailboxManager, folder: $currentFolder, isCompact: isCompact, geometryProxy: geometryProxy)
+                ThreadListView(mailboxManager: mailboxManager, folder: $currentFolder, isCompact: isCompact)
                     .onAppear { selectedFolder = currentFolder }
             } label: {
                 FolderCellContent(currentFolder: $currentFolder, selectedFolder: $selectedFolder)
             }
-
         }
     }
 
@@ -96,14 +94,11 @@ struct FolderCellContent: View {
 
 struct FolderCellView_Previews: PreviewProvider {
     static var previews: some View {
-        GeometryReader { geometry in
-            FolderCell(
-                currentFolder: PreviewHelper.sampleFolder,
-                selectedFolder: .constant(PreviewHelper.sampleFolder),
-                isCompact: false,
-                geometryProxy: geometry
-            )
-        }
+        FolderCell(
+            currentFolder: PreviewHelper.sampleFolder,
+            selectedFolder: .constant(PreviewHelper.sampleFolder),
+            isCompact: false
+        )
         .previewLayout(.sizeThatFits)
         .previewDevice(PreviewDevice(stringLiteral: "iPhone 11 Pro"))
     }
