@@ -27,15 +27,17 @@ struct MessageView: View {
     @State var model = WebViewModel()
     @State private var webViewHeight: CGFloat = .zero
     @State var isHeaderExpanded = false
+    let showActionButtons: Bool
 
-    init(message: Message) {
+    init(message: Message, showActionButtons: Bool = true) {
         self.message = message
+        self.showActionButtons = showActionButtons
     }
 
     var body: some View {
         VStack(spacing: 16) {
             Group {
-                MessageHeaderView(message: message, isExpanded: $isHeaderExpanded)
+                MessageHeaderView(message: message, isExpanded: $isHeaderExpanded, showActionButtons: showActionButtons)
 
                 if !message.attachments.isEmpty {
                     AttachmentsView(message: message)
