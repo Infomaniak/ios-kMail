@@ -51,7 +51,7 @@ struct RichTextEditor: UIViewRepresentable {
 
         func editor(_ editor: SQTextEditorView, cursorPositionDidChange position: SQEditorCursorPosition) {
             editor.getHTML { [self] html in
-                if let html = html, parent.body != html {
+                if let html = html, parent.body.trimmingCharacters(in: .whitespacesAndNewlines) != html {
                     parent.body = html
                     parent.textChange(html)
                 }
