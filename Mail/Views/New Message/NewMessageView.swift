@@ -29,6 +29,8 @@ struct NewMessageView: View {
     @State var editor = RichTextEditorModel()
     @State var showCc = false
 
+    @State private var draftHasChanged = false
+
     let defaultBody = "<div><br></div><div><br></div><div>Envoyé avec Infomaniak Mail pour iOS<br></div>"
 
     static var queue = DispatchQueue(label: "com.infomaniak.mail.saveDraft")
@@ -81,9 +83,11 @@ struct NewMessageView: View {
             .navigationBarBackButtonHidden(true)
             .navigationBarItems(leading:
                 Button {
-                    debouncedBufferWrite?.cancel()
-                    Task {
-                        await saveDraft()
+                    if draftHasChanged {
+                        debouncedBufferWrite?.cancel()
+                        Task {
+                            await saveDraft()
+                        }
                     }
                     self.dismiss()
                 } label: {
@@ -139,7 +143,10 @@ struct NewMessageView: View {
         }
     }
 
+    func textDidChange() {
+        draftHasChanged = true
     private func textDidChange() {
+        draftHasChanged = true
         draft.isOffline = true
         debouncedBufferWrite?.cancel()
         let debouncedWorkItem = DispatchWorkItem {
