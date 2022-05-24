@@ -17,6 +17,7 @@
  */
 
 import Foundation
+import MailResources
 import RealmSwift
 
 public enum SaveDraftOption: String, Codable {
@@ -208,7 +209,8 @@ public class Draft: Object, Codable, Identifiable {
         case .forward:
             subject = "Fwd: \(message.formattedSubject)"
         }
-        let quote = "<div id=\"answerContentMessage\" class=\"ik_mail_quote\" ><div>Le \(message.date.ISO8601Format()), \(message.from.first?.name ?? "") &lt;\(message.from.first?.email ?? "")&gt; a écrit :</div><blockquote class=\"ws-ng-quote\"><div class=\"ik_mail_quote-6057eJzz9HPyjwAABGYBgQ\">\(message.body?.value.replacingOccurrences(of: "'", with: "’") ?? "")</div></blockquote></div>"
+        let headerText = MailResourcesStrings.messageReplyHeader(message.date.ISO8601Format(), message.from.first?.htmlDescription ?? "")
+        let quote = "<div id=\"answerContentMessage\" class=\"ik_mail_quote\" ><div>\(headerText)</div><blockquote class=\"ws-ng-quote\"><div class=\"ik_mail_quote-6057eJzz9HPyjwAABGYBgQ\">\(message.body?.value.replacingOccurrences(of: "'", with: "’") ?? "")</div></blockquote></div>"
         return Draft(inReplyToUid: mode.isReply ? message.uid : nil,
                      forwardedUid: mode == .forward ? message.uid : nil,
                      inReplyTo: message.msgId,
