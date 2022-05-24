@@ -60,6 +60,11 @@ struct ThreadListCell: View {
 
             VStack(alignment: .leading, spacing: 2) {
                 HStack(spacing: 8) {
+                    if thread.hasDrafts {
+                        Text("(\(MailResourcesStrings.messageIsDraftOption))")
+                            .foregroundColor(MailResourcesAsset.destructiveActionColor)
+                            .textStyle(hasUnreadMessages ? .header2 : .header2Secondary)
+                    }
                     Text(thread.formattedFrom)
                         .textStyle(hasUnreadMessages ? .header2 : .header2Secondary)
                         .lineLimit(1)
@@ -105,8 +110,11 @@ struct ThreadListCell: View {
 
 struct ThreadListCell_Previews: PreviewProvider {
     static var previews: some View {
-        ThreadListCell(mailboxManager: MailboxManager(mailbox: PreviewHelper.sampleMailbox, apiFetcher: MailApiFetcher()), thread: PreviewHelper.sampleThread)
-            .previewLayout(.sizeThatFits)
-            .previewDevice("iPhone 13 Pro")
+        ThreadListCell(
+            mailboxManager: MailboxManager(mailbox: PreviewHelper.sampleMailbox, apiFetcher: MailApiFetcher()),
+            thread: PreviewHelper.sampleThread
+        )
+        .previewLayout(.sizeThatFits)
+        .previewDevice("iPhone 13 Pro")
     }
 }
