@@ -67,7 +67,7 @@ struct ThreadListCell: View {
                     Spacer()
 
                     if thread.hasAttachments {
-                        Image(resource: MailResourcesAsset.attachment)
+                        Image(resource: MailResourcesAsset.attachmentMail1)
                             .foregroundColor(textStyle.color)
                             .frame(height: 10)
                     }
@@ -94,7 +94,7 @@ struct ThreadListCell: View {
                     Spacer()
 
                     if thread.flagged {
-                        Image(resource: MailResourcesAsset.starFilled)
+                        Image(resource: MailResourcesAsset.starFull)
                     }
                 }
             }

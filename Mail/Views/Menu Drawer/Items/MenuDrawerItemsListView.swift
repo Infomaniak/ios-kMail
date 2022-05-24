@@ -52,8 +52,8 @@ struct ItemsListView_Previews: PreviewProvider {
     static var previews: some View {
         MenuDrawerItemsListView(title: "Actions avancées",
                       content: [
-                        MenuItem(icon: MailResourcesAsset.drawerArrow, label: "Importer des mails") { print("Hello") },
-                        MenuItem(icon: MailResourcesAsset.synchronizeArrow, label: "Restaurer des mails") { print("Hello") }
+                        MenuItem(icon: MailResourcesAsset.drawerDownload, label: "Importer des mails") { print("Hello") },
+                        MenuItem(icon: MailResourcesAsset.restoreArrow, label: "Restaurer des mails") { print("Hello") }
                       ])
         .previewLayout(.sizeThatFits)
         .previewDevice(PreviewDevice(stringLiteral: "iPhone 11 Pro"))

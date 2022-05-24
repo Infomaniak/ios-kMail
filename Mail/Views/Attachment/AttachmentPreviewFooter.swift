@@ -56,7 +56,7 @@ struct AttachmentPreviewFooter: View {
                     downloadAttachment()
                 } label: {
                     HStack {
-                        Image(resource: MailResourcesAsset.download)
+                        Image(resource: MailResourcesAsset.downloadWith)
                             .frame(width: 24, height: 24)
                         Text(MailResourcesStrings.buttonDownload)
                             .fontWeight(.semibold)

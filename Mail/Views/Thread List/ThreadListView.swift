@@ -238,7 +238,7 @@ private struct ThreadListSwipeAction: ViewModifier {
                         await viewModel.toggleRead(thread: thread)
                     }
                 } label: {
-                    Image(resource: MailResourcesAsset.openLetter)
+                    Image(resource: MailResourcesAsset.envelopeOpen)
                 }
                 .tint(MailResourcesAsset.unreadActionColor)
             }
@@ -255,7 +255,7 @@ private struct ThreadListSwipeAction: ViewModifier {
                 Button {
                     // TODO: Display menu
                 } label: {
-                    Image(resource: MailResourcesAsset.threeDots)
+                    Image(resource: MailResourcesAsset.navigationMenu)
                 }
                 .tint(MailResourcesAsset.menuActionColor)
             }

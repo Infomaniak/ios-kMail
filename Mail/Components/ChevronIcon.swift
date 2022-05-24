@@ -31,8 +31,9 @@ struct ChevronIcon: View {
     let style: Style
 
     var body: some View {
-        Image(resource: MailResourcesAsset.chevronUp)
-            .frame(width: 12)
+        Image(resource: MailResourcesAsset.arrowUp)
+            .resizable()
+            .frame(width: 12, height: 12)
             .foregroundColor(MailResourcesAsset.secondaryTextColor)
             .padding([.top, .bottom], 2)
             .padding([.leading, .trailing], 1.5)

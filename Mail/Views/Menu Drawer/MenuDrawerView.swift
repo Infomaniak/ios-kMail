@@ -101,13 +101,13 @@ struct MenuDrawerView: View {
 
     private mutating func getMenuItems() {
         helpMenuItems = [
-            MenuItem(icon: MailResourcesAsset.alertCircle, label: MailResourcesStrings.buttonFeedbacks, action: sendFeedback),
-            MenuItem(icon: MailResourcesAsset.questionHelpCircle, label: MailResourcesStrings.buttonHelp, action: openSupport)
+            MenuItem(icon: MailResourcesAsset.feedbacks, label: MailResourcesStrings.buttonFeedbacks, action: sendFeedback),
+            MenuItem(icon: MailResourcesAsset.help, label: MailResourcesStrings.buttonHelp, action: openSupport)
         ]
         actionsMenuItems = [
-            MenuItem(icon: MailResourcesAsset.drawerArrow, label: MailResourcesStrings.buttonImportEmails, action: importMails),
+            MenuItem(icon: MailResourcesAsset.drawerDownload, label: MailResourcesStrings.buttonImportEmails, action: importMails),
             MenuItem(
-                icon: MailResourcesAsset.synchronizeArrow,
+                icon: MailResourcesAsset.restoreArrow,
                 label: MailResourcesStrings.buttonRestoreEmails,
                 action: restoreMails
             )

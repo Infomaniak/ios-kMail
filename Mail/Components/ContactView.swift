@@ -30,15 +30,15 @@ struct ContactView: View {
 
         static let writeEmailAction = ContactAction(
             name: MailResourcesStrings.contactActionWriteEmail,
-            image: MailResourcesAsset.ecrire.image
+            image: MailResourcesAsset.pencil.image
         )
         static let addContactsAction = ContactAction(
             name: MailResourcesStrings.contactActionAddToContacts,
-            image: MailResourcesAsset.singleNeutralActionsAdd.image
+            image: MailResourcesAsset.addUser.image
         )
         static let copyEmailAction = ContactAction(
             name: MailResourcesStrings.contactActionCopyEmailAddress,
-            image: MailResourcesAsset.commonFileDouble.image
+            image: MailResourcesAsset.duplicate.image
         )
     }
 
