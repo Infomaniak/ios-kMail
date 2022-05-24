@@ -86,7 +86,7 @@ struct NewMessageView: View {
                     }
                     self.presentationMode.wrappedValue.dismiss()
                 } label: {
-                    Image(systemName: "multiply")
+                    Image(systemName: "xmark")
                         .tint(MailResourcesAsset.primaryTextColor)
                 },
                 trailing:

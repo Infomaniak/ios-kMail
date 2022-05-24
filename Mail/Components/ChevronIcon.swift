@@ -21,10 +21,19 @@ import SwiftUI
 
 struct ChevronIcon: View {
     enum Style {
-        case up, down
+        case up, right, left, down
 
-        var isDown: Bool {
-            return self == .down
+        var rotationAngle: Angle {
+            switch self {
+            case .up:
+                return .zero
+            case .right:
+                return .radians(.pi / 2)
+            case .down:
+                return .radians(.pi)
+            case .left:
+                return .radians(3 * .pi / 2)
+            }
         }
     }
 
@@ -37,7 +46,7 @@ struct ChevronIcon: View {
             .foregroundColor(MailResourcesAsset.secondaryTextColor)
             .padding([.top, .bottom], 2)
             .padding([.leading, .trailing], 1.5)
-            .rotationEffect(.degrees(style.isDown ? 180 : 0))
+            .rotationEffect(style.rotationAngle)
     }
 }
 
