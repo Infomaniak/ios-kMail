@@ -37,7 +37,7 @@ struct AttachmentsView: View {
                     .fontWeight(.regular)
                     .foregroundColor(MailResourcesAsset.secondaryTextColor)
 
-                Button(MailResourcesStrings.downloadAll) {
+                Button(MailResourcesStrings.buttonDownloadAll) {
                     // TODO: after complete attachment
                 }
                 .tint(MailResourcesAsset.infomaniakColor)

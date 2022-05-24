@@ -26,7 +26,7 @@ struct NewMessageButtonView: View {
         Button {
             sheet.state = .newMessage
         } label: {
-            Text(MailResourcesStrings.newMessageButton)
+            Text(MailResourcesStrings.buttonNewMessage)
                 .textStyle(.buttonPill)
             Image(resource: MailResourcesAsset.pencil)
         }
