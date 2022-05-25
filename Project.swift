@@ -24,7 +24,7 @@ let baseSettings = SettingsDictionary().automaticCodeSigning(devTeam: "864VDCS2Q
 
 let project = Project(name: "Mail",
                       packages: [
-                          .package(url: "https://github.com/Infomaniak/ios-login.git", .upToNextMajor(from: "1.4.0")),
+                          .package(url: "https://github.com/Infomaniak/ios-login.git", .upToNextMajor(from: "2.0.0")),
                           .package(url: "https://github.com/Infomaniak/ios-core.git", .branch("mail")),
                           .package(url: "https://github.com/ProxymanApp/atlantis", .upToNextMajor(from: "1.3.0")),
                           .package(url: "https://github.com/Alamofire/Alamofire.git", .upToNextMajor(from: "5.2.2")),

@@ -33,7 +33,7 @@
       "location" : "https://github.com/Infomaniak/ios-core.git",
       "state" : {
         "branch" : "mail",
-        "revision" : "7a0b5935444f240b25c2b897444111b00fe743a0"
+        "revision" : "8885c6471f873d4a5f4e53682a06677e10d2fa5b"
       }
     },
     {
@@ -41,8 +41,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Infomaniak/ios-login.git",
       "state" : {
-        "branch" : "ASWebAuthentication",
-        "revision" : "e7bd757e47550d931b82f04f37366e93a5a6dba0"
+        "revision" : "65776b8c2b22dbdea53474794431d09fbc842ae5",
+        "version" : "2.0.0"
       }
     },
     {
