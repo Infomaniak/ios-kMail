@@ -8,68 +8,20 @@
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
-        <!--Login View Controller-->
+        <!--View Controller-->
         <scene sceneID="tne-QT-ifu">
             <objects>
-                <viewController storyboardIdentifier="LoginViewController" id="BYZ-38-t0r" customClass="LoginViewController" customModule="Mail" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="BYZ-38-t0r" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="8bC-Xf-vdC">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <subviews>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="e6K-wu-oYc">
-                                <rect key="frame" x="167" y="427" width="80" height="42"/>
-                                <constraints>
-                                    <constraint firstAttribute="width" constant="80" id="A8Q-IO-MQR"/>
-                                    <constraint firstAttribute="height" constant="42" id="Mrd-gX-ZWm"/>
-                                </constraints>
-                                <state key="normal" title="Button"/>
-                                <buttonConfiguration key="configuration" style="filled" title="Login"/>
-                                <connections>
-                                    <action selector="loginButtonPressed:" destination="BYZ-38-t0r" eventType="touchUpInside" id="AWN-M5-MuT"/>
-                                </connections>
-                            </button>
-                        </subviews>
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
-                        <constraints>
-                            <constraint firstItem="e6K-wu-oYc" firstAttribute="centerY" secondItem="8bC-Xf-vdC" secondAttribute="centerY" id="3JK-SE-u2Y"/>
-                            <constraint firstItem="e6K-wu-oYc" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="5At-jO-owd"/>
-                        </constraints>
                     </view>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="-1436" y="-1294"/>
-        </scene>
-        <!--Switch User View Controller-->
-        <scene sceneID="Uwz-vQ-9nl">
-            <objects>
-                <viewController storyboardIdentifier="SwitchUserViewController" id="ztR-xr-lVd" customClass="SwitchUserViewController" customModule="Mail" customModuleProvider="target" sceneMemberID="viewController">
-                    <view key="view" contentMode="scaleToFill" id="IbK-EQ-Jnu">
-                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
-                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <viewLayoutGuide key="safeArea" id="8bH-zz-SP1"/>
-                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
-                    </view>
-                </viewController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="wfH-Ps-T4q" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="-670" y="-1294"/>
-        </scene>
-        <!--Manage Mail Address View Controller-->
-        <scene sceneID="JqC-Qj-8DV">
-            <objects>
-                <viewController storyboardIdentifier="ManageMailAddressViewController" id="yqh-sA-usD" customClass="ManageMailAddressViewController" customModule="Mail" customModuleProvider="target" sceneMemberID="viewController">
-                    <view key="view" contentMode="scaleToFill" id="Nir-NZ-tJi">
-                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
-                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <viewLayoutGuide key="safeArea" id="bF2-c3-9QW"/>
-                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
-                    </view>
-                </viewController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="j8N-Id-iF6" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="113" y="-1294"/>
         </scene>
     </scenes>
     <resources>

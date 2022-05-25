@@ -131,7 +131,7 @@ struct ThreadListView: View {
             case let .editMessage(draft):
                 NewMessageView(isPresented: $menuSheet.isShowing, mailboxManager: viewModel.mailboxManager, draft: draft)
             case .addAccount:
-                LoginView()
+                LoginView(isPresented: $menuSheet.isShowing)
             case .none:
                 EmptyView()
             }

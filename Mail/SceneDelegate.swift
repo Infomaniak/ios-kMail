@@ -81,14 +81,14 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, AccountManagerDelegate 
     }
 
     func currentAccountNeedsAuthentication() {
-        setRootViewController(LoginViewController())
+        showLoginView()
     }
 
     private func setupLaunch() {
         if accountManager.accounts.isEmpty {
-            setRootViewController(LoginViewController.instantiate(), animated: false)
+            showLoginView(animated: false)
         } else {
-            setRootView(SplitView())
+            showMainView(animated: false)
         }
         (UIApplication.shared.delegate as? AppDelegate)?.refreshCacheData()
     }
@@ -96,7 +96,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, AccountManagerDelegate 
     func switchMailbox(_ mailbox: Mailbox) {
         AccountManager.instance.setCurrentMailboxForCurrentAccount(mailbox: mailbox)
         AccountManager.instance.saveAccounts()
-        setRootView(SplitView())
+        showMainView()
     }
 
     func switchAccount(_ account: Account, mailbox: Mailbox? = nil) {
@@ -106,8 +106,18 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, AccountManagerDelegate 
         if let mailbox = mailbox {
             switchMailbox(mailbox)
         } else {
-            setRootView(SplitView())
+            showMainView()
         }
+    }
+
+    // MARK: - Show views
+
+    func showLoginView(animated: Bool = true) {
+        setRootView(LoginView(), animated: animated)
+    }
+
+    func showMainView(animated: Bool = true) {
+        setRootView(SplitView(), animated: animated)
     }
 
     // MARK: - Open URLs

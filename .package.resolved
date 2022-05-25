@@ -41,8 +41,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Infomaniak/ios-login.git",
       "state" : {
-        "revision" : "9ac704e603cb9b11654f78e65ae2031dc584c341",
-        "version" : "1.5.7"
+        "branch" : "ASWebAuthentication",
+        "revision" : "e7bd757e47550d931b82f04f37366e93a5a6dba0"
       }
     },
     {
@@ -95,8 +95,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/getsentry/sentry-cocoa",
       "state" : {
-        "revision" : "afa4cd596e5cf97a797fb9b5c3afeea4add2c7a3",
-        "version" : "7.15.0"
+        "revision" : "b34ce9048e6b8b082ea6b15e6b50583d46c936ea",
+        "version" : "7.16.0"
       }
     },
     {
