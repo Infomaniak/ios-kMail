@@ -38,14 +38,14 @@ struct LoginView: View {
                         .resizable()
                         .scaledToFit()
                         .frame(width: 185)
-                    Text("Bienvenue sur l’App Mail Infomaniak")
+                    Text(MailResourcesStrings.loginViewTitle)
                         .textStyle(.header3)
                         .padding(.top, 48)
-                    Text("Connectez-vous à votre compte et gérez tous vos emails Infomaniak depuis l’app.")
+                    Text(MailResourcesStrings.loginViewDescription)
                         .textStyle(.callout)
                 }
                 Spacer()
-                Button("Connexion") {
+                Button(MailResourcesStrings.buttonLogin) {
                     InfomaniakLogin.asWebAuthenticationLoginFrom(useEphemeralSession: true) { result in
                         switch result {
                         case .success(let result):
@@ -72,9 +72,10 @@ struct LoginView: View {
                     EmptyView()
                 }
             })
-            .alert("Erreur", isPresented: $presentAlert) {} message: {
-                Text("La connexion a échoué.")
+            .alert(MailResourcesStrings.errorLoginTitle, isPresented: $presentAlert) {} message: {
+                Text(MailResourcesStrings.errorLoginDescription)
             }
+
         }
     }
 
