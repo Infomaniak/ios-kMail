@@ -59,7 +59,7 @@ struct LoginView: View {
                 .textStyle(.button)
                 Spacer()
             }
-            .padding(48)
+            .padding(window?.windowScene?.interfaceOrientation.isPortrait == true ? 48 : 0)
             .navigationBarTitleDisplayMode(.inline)
             .navigationBarItems(leading: Group {
                 if let isPresented = isPresented {
@@ -109,6 +109,9 @@ struct LoginView: View {
 struct LoginView_Previews: PreviewProvider {
     static var previews: some View {
         LoginView()
+            .previewInterfaceOrientation(.portrait)
+        LoginView()
+            .previewInterfaceOrientation(.landscapeLeft)
         LoginView(isPresented: .constant(true))
     }
 }
