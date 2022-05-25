@@ -38,10 +38,11 @@ struct NewMessageView: View {
     init(isPresented: Binding<Bool>, mailboxManager: MailboxManager, draft: Draft? = nil) {
         _isPresented = isPresented
         self.mailboxManager = mailboxManager
+        self.selectedMailboxItem = AccountManager.instance.mailboxes.firstIndex { $0.mailboxId == mailboxManager.mailbox.mailboxId } ?? 0
         guard let signatureResponse = mailboxManager.getSignatureResponse() else { fatalError() }
-        self.draft = draft ?? Draft(identityId: "\(signatureResponse.defaultSignatureId)",
-                                    messageUid: UUID().uuidString,
+        self.draft = draft ?? Draft(messageUid: UUID().uuidString,
                                     body: defaultBody)
+        self.draft.identityId = "\(signatureResponse.defaultSignatureId)"
     }
 
     var body: some View {
