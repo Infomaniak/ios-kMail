@@ -17,6 +17,7 @@
  */
 
 import MailCore
+import MailResources
 import SwiftUI
 
 struct RecipientImage: View {
@@ -38,7 +39,7 @@ struct RecipientImage: View {
                 .frame(width: size, height: size)
                 .clipShape(Circle())
         } else if recipient.initials.isEmpty {
-            Image(systemName: "person.crop.circle.fill")
+            Image(resource: MailResourcesAsset.placeholderAvatar)
                 .resizable()
                 .frame(width: size, height: size)
                 .foregroundColor(recipient.color)

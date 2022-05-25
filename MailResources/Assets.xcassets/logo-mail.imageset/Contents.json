@@ -3,16 +3,6 @@
     {
       "filename" : "logo-mail.svg",
       "idiom" : "universal"
-    },
-    {
-      "appearances" : [
-        {
-          "appearance" : "luminosity",
-          "value" : "dark"
-        }
-      ],
-      "filename" : "Mail+name.svg",
-      "idiom" : "universal"
     }
   ],
   "info" : {

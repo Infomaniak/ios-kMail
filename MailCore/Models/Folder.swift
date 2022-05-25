@@ -77,17 +77,17 @@ public enum FolderRole: String, Codable, PersistableEnum {
     public var icon: MailResourcesImages {
         switch self {
         case .archive:
-            return MailResourcesAsset.archive
+            return MailResourcesAsset.archives
         case .commercial:
-            return MailResourcesAsset.commercial
+            return MailResourcesAsset.promotions
         case .draft:
             return MailResourcesAsset.draft
         case .inbox:
             return MailResourcesAsset.drawer
         case .sent:
-            return MailResourcesAsset.emailSent
+            return MailResourcesAsset.send
         case .socialNetworks:
-            return MailResourcesAsset.socialNetworks
+            return MailResourcesAsset.socialMedia
         case .spam:
             return MailResourcesAsset.spam
         case .trash:

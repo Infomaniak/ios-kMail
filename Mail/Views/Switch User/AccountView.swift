@@ -51,8 +51,7 @@ struct AccountView: View {
             HStack {
                 Text(MailResourcesStrings.buttonAccountAssociatedEmailAddresses)
                 Spacer()
-                Image(systemName: "chevron.right")
-                    .frame(width: 12, height: 12)
+                ChevronIcon(style: .right)
             }
             .padding([.leading, .trailing], 14)
             SeparatorView(withPadding: false, fullWidth: true)
