@@ -73,7 +73,9 @@ struct LoginView: View {
                     EmptyView()
                 }
             })
-            .alert(MailResourcesStrings.errorLoginTitle, isPresented: $presentAlert) {} message: {
+            .alert(MailResourcesStrings.errorLoginTitle, isPresented: $presentAlert) {
+                // Use default button
+            } message: {
                 Text(MailResourcesStrings.errorLoginDescription)
             }
         }
