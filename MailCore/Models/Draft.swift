@@ -203,14 +203,15 @@ public class Draft: Object, Codable, Identifiable {
 
     public class func replying(to message: Message, mode: ReplyMode) -> Draft {
         let subject: String
+        let quote: String
         switch mode {
         case .reply, .replyAll:
             subject = "Re: \(message.formattedSubject)"
+            quote = Constants.replyQuote(message: message)
         case .forward:
             subject = "Fwd: \(message.formattedSubject)"
+            quote = Constants.forwardQuote(message: message)
         }
-        let headerText = MailResourcesStrings.messageReplyHeader(message.date.ISO8601Format(), message.from.first?.htmlDescription ?? "")
-        let quote = "<div id=\"answerContentMessage\" class=\"ik_mail_quote\" ><div>\(headerText)</div><blockquote class=\"ws-ng-quote\"><div class=\"ik_mail_quote-6057eJzz9HPyjwAABGYBgQ\">\(message.body?.value.replacingOccurrences(of: "'", with: "’") ?? "")</div></blockquote></div>"
         return Draft(inReplyToUid: mode.isReply ? message.uid : nil,
                      forwardedUid: mode == .forward ? message.uid : nil,
                      inReplyTo: message.msgId,
