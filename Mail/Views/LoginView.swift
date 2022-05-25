@@ -44,6 +44,7 @@ struct LoginView: View {
                     Text(MailResourcesStrings.loginViewDescription)
                         .textStyle(.callout)
                 }
+                .multilineTextAlignment(.center)
                 Spacer()
                 Button(MailResourcesStrings.buttonLogin) {
                     InfomaniakLogin.asWebAuthenticationLoginFrom(useEphemeralSession: true) { result in
@@ -75,7 +76,6 @@ struct LoginView: View {
             .alert(MailResourcesStrings.errorLoginTitle, isPresented: $presentAlert) {} message: {
                 Text(MailResourcesStrings.errorLoginDescription)
             }
-
         }
     }
 
