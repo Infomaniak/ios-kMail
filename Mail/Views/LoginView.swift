@@ -16,6 +16,7 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import AuthenticationServices
 import InfomaniakLogin
 import MailCore
 import MailResources
@@ -23,6 +24,8 @@ import SwiftUI
 
 struct LoginView: View {
     var isPresented: Binding<Bool>?
+
+    @State private var presentAlert = false
 
     @Environment(\.window) var window
 
@@ -69,6 +72,9 @@ struct LoginView: View {
                     EmptyView()
                 }
             })
+            .alert("Erreur", isPresented: $presentAlert) {} message: {
+                Text("La connexion a échoué.")
+            }
         }
     }
 
@@ -91,8 +97,9 @@ struct LoginView: View {
     }
 
     private func loginFailed(error: Error) {
-        // TODO: Handle error
-        print("Login error: \(error.localizedDescription)")
+        print("Login error: \(error)")
+        guard (error as? ASWebAuthenticationSessionError)?.code != .canceledLogin else { return }
+        presentAlert = true
     }
 }
 
