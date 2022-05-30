@@ -46,6 +46,7 @@ struct RichTextEditor: UIViewRepresentable {
                     print("Failed to load editor: \(error)")
                 }
             }
+            parent.model.richTextEditor.moveCursorToStart()
         }
 
         func editor(_ editor: SQTextEditorView, cursorPositionDidChange position: SQEditorCursorPosition) {
@@ -129,5 +130,23 @@ class MailEditor: SQTextEditorView {
         set {
             editorWebView = newValue
         }
+    }
+
+    private func callEditorMethod(name: String, completion: ((_ error: Error?) -> Void)?) {
+        webView.evaluateJavaScript("editor.\(name)()") { _, error in
+            completion?(error)
+        }
+    }
+
+    // MARK: - Editor methods
+
+    /// Removes any current selection and moves the cursor to the very beginning of the document.
+    func moveCursorToStart(completion: ((_ error: Error?) -> Void)? = nil) {
+        callEditorMethod(name: "moveCursorToStart", completion: completion)
+    }
+
+    /// Removes any current selection and moves the cursor to the very end of the document.
+    func moveCursorToEnd(completion: ((_ error: Error?) -> Void)? = nil) {
+        callEditorMethod(name: "moveCursorToEnd", completion: completion)
     }
 }
