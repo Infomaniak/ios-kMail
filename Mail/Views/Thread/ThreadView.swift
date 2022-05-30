@@ -40,13 +40,23 @@ struct ThreadView: View {
     @ObservedObject private var sheet = MessageSheet()
     @ObservedObject private var card = MessageCard()
 
+    private let trashId: String
+
+    private var isTrashFolder: Bool {
+        return thread.parent?._id == trashId
+    }
+
     private var messages: [Message] {
-        return Array(thread.messages.sorted(by: \.date, ascending: true))
+        return Array(thread.messages
+            .where { $0.isDuplicate != true }
+            .sorted(by: \.date, ascending: true))
+            .filter { isTrashFolder || $0.folderId != trashId }
     }
 
     init(mailboxManager: MailboxManager, thread: Thread) {
         self.mailboxManager = mailboxManager
         self.thread = thread
+        trashId = mailboxManager.getFolder(with: .trash)?._id ?? ""
     }
 
     var body: some View {

@@ -222,6 +222,7 @@ public class MailboxManager: ObservableObject {
         // Get from API
         let completedMessage = try await apiFetcher.message(mailbox: mailbox, message: message)
         completedMessage.insertInlineAttachment()
+        keepCacheAttributes(for: completedMessage, keepProperties: .isDuplicate)
         completedMessage.fullyDownloaded = true
 
         let realm = getRealm()
@@ -307,6 +308,10 @@ public class MailboxManager: ObservableObject {
             try? realm.safeWrite {
                 liveThread.parent?.threads.remove(liveThread)
                 liveFolder.threads.insert(liveThread)
+                for message in liveThread.messages {
+                    message.folder = folder.name
+                    message.folderId = folder._id
+                }
             }
         }
     }
@@ -468,6 +473,7 @@ public class MailboxManager: ObservableObject {
         static let fullyDownloaded = MessagePropertiesOptions(rawValue: 1 << 0)
         static let body = MessagePropertiesOptions(rawValue: 1 << 1)
         static let attachments = MessagePropertiesOptions(rawValue: 1 << 2)
+        static let isDuplicate = MessagePropertiesOptions(rawValue: 1 << 3)
 
         static let standard: MessagePropertiesOptions = [.fullyDownloaded, .body, .attachments]
     }
@@ -489,6 +495,9 @@ public class MailboxManager: ObservableObject {
             for attachment in savedMessage.attachments {
                 message.attachments.append(Attachment(value: attachment.freeze()))
             }
+        }
+        if keepProperties.contains(.isDuplicate) {
+            message.isDuplicate = savedMessage.isDuplicate
         }
     }
 
