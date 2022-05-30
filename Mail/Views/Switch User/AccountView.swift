@@ -70,7 +70,7 @@ struct AccountView: View {
                 if let nextAccount = AccountManager.instance.accounts.first {
                     (window?.windowScene?.delegate as? SceneDelegate)?.switchAccount(nextAccount)
                 } else {
-                    (window?.windowScene?.delegate as? SceneDelegate)?.setRootViewController(LoginViewController.instantiate())
+                    (window?.windowScene?.delegate as? SceneDelegate)?.showLoginView()
                 }
                 AccountManager.instance.saveAccounts()
             } label: {

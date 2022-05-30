@@ -33,7 +33,7 @@
       "location" : "https://github.com/Infomaniak/ios-core.git",
       "state" : {
         "branch" : "mail",
-        "revision" : "7a0b5935444f240b25c2b897444111b00fe743a0"
+        "revision" : "8885c6471f873d4a5f4e53682a06677e10d2fa5b"
       }
     },
     {
@@ -41,8 +41,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Infomaniak/ios-login.git",
       "state" : {
-        "revision" : "9ac704e603cb9b11654f78e65ae2031dc584c341",
-        "version" : "1.5.7"
+        "revision" : "73a0c2586dae7c97ee2888e5a2ca9fee267fb53c",
+        "version" : "2.0.0"
       }
     },
     {
@@ -95,8 +95,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/getsentry/sentry-cocoa",
       "state" : {
-        "revision" : "afa4cd596e5cf97a797fb9b5c3afeea4add2c7a3",
-        "version" : "7.15.0"
+        "revision" : "b34ce9048e6b8b082ea6b15e6b50583d46c936ea",
+        "version" : "7.16.0"
       }
     },
     {
