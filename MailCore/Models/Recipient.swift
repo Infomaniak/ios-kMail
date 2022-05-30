@@ -62,4 +62,13 @@ public class Recipient: EmbeddedObject, Codable {
     public var contact: MergedContact? {
         AccountManager.instance.currentContactManager?.getContact(for: email)
     }
+
+    public var htmlDescription: String {
+        let emailString = "&lt;\(email)&gt;"
+        if name.isEmpty {
+            return emailString
+        } else {
+            return "\(name) \(emailString)"
+        }
+    }
 }

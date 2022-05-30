@@ -49,33 +49,28 @@ struct SplitView: View {
     }
 
     var body: some View {
-        GeometryReader { geometry in
-            NavigationView {
-                if isCompact {
-                    ThreadListView(
-                        mailboxManager: mailboxManager,
-                        folder: $selectedFolder,
-                        isCompact: isCompact,
-                        geometryProxy: geometry
-                    )
-                } else {
-                    MenuDrawerView(
-                        mailboxManager: mailboxManager,
-                        selectedFolder: $selectedFolder,
-                        isCompact: isCompact,
-                        geometryProxy: geometry
-                    )
-                    .navigationBarHidden(true)
+        NavigationView {
+            if isCompact {
+                ThreadListView(
+                    mailboxManager: mailboxManager,
+                    folder: $selectedFolder,
+                    isCompact: isCompact
+                )
+            } else {
+                MenuDrawerView(
+                    mailboxManager: mailboxManager,
+                    selectedFolder: $selectedFolder,
+                    isCompact: isCompact
+                )
+                .navigationBarHidden(true)
 
-                    ThreadListView(
-                        mailboxManager: mailboxManager,
-                        folder: $selectedFolder,
-                        isCompact: isCompact,
-                        geometryProxy: geometry
-                    )
+                ThreadListView(
+                    mailboxManager: mailboxManager,
+                    folder: $selectedFolder,
+                    isCompact: isCompact
+                )
 
-                    EmptyThreadView()
-                }
+                EmptyThreadView()
             }
         }
         .environmentObject(menuSheet)

@@ -22,6 +22,7 @@ import RealmSwift
 import SwiftUI
 
 struct NewMessageView: View {
+    @Binding var isPresented: Bool
     @State private var mailboxManager: MailboxManager
     @State private var selectedMailboxItem: Int = 0
     @State var draft: Draft
@@ -30,18 +31,18 @@ struct NewMessageView: View {
 
     let defaultBody = "<div><br></div><div><br></div><div>Envoyé avec Infomaniak Mail pour iOS<br></div>"
 
-    @Environment(\.presentationMode) var presentationMode
-
     static var queue = DispatchQueue(label: "com.infomaniak.mail.saveDraft")
     @State var debouncedBufferWrite: DispatchWorkItem?
     let saveExpiration = 3.0
 
-    init(mailboxManager: MailboxManager, draft: Draft? = nil) {
-        _mailboxManager = State(initialValue: mailboxManager)
+    init(isPresented: Binding<Bool>, mailboxManager: MailboxManager, draft: Draft? = nil) {
+        _isPresented = isPresented
+        self.mailboxManager = mailboxManager
+        self.selectedMailboxItem = AccountManager.instance.mailboxes.firstIndex { $0.mailboxId == mailboxManager.mailbox.mailboxId } ?? 0
         guard let signatureResponse = mailboxManager.getSignatureResponse() else { fatalError() }
-        _draft =
-            State(initialValue: draft ??
-                Draft(identityId: "\(signatureResponse.defaultSignatureId)", messageUid: UUID().uuidString, body: defaultBody))
+        self.draft = draft ?? Draft(messageUid: UUID().uuidString,
+                                    body: defaultBody)
+        self.draft.identityId = "\(signatureResponse.defaultSignatureId)"
     }
 
     var body: some View {
@@ -84,7 +85,7 @@ struct NewMessageView: View {
                     Task {
                         await saveDraft()
                     }
-                    self.presentationMode.wrappedValue.dismiss()
+                    self.dismiss()
                 } label: {
                     Image(systemName: "xmark")
                         .tint(MailResourcesAsset.primaryTextColor)
@@ -95,7 +96,7 @@ struct NewMessageView: View {
                         await send()
                         // TODO: show confirmation snackbar or handle error
                     }
-                    self.presentationMode.wrappedValue.dismiss()
+                    self.dismiss()
                 } label: {
                     Image(resource: MailResourcesAsset.send)
                 }
@@ -138,7 +139,7 @@ struct NewMessageView: View {
         }
     }
 
-    func textDidChange() {
+    private func textDidChange() {
         draft.isOffline = true
         debouncedBufferWrite?.cancel()
         let debouncedWorkItem = DispatchWorkItem {
@@ -149,11 +150,16 @@ struct NewMessageView: View {
         NewMessageView.queue.asyncAfter(deadline: .now() + saveExpiration, execute: debouncedWorkItem)
         debouncedBufferWrite = debouncedWorkItem
     }
+
+    private func dismiss() {
+        isPresented = false
+    }
 }
 
 struct NewMessageView_Previews: PreviewProvider {
     static var previews: some View {
         NewMessageView(
+            isPresented: .constant(true),
             mailboxManager: MailboxManager(mailbox: PreviewHelper.sampleMailbox, apiFetcher: MailApiFetcher()),
             draft: Draft()
         )

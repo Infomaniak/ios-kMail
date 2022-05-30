@@ -24,6 +24,7 @@ import SwiftUI
 class MessageSheet: SheetState<MessageSheet.State> {
     enum State: Equatable {
         case attachment(Attachment)
+        case reply(Message, ReplyMode)
     }
 }
 
@@ -64,7 +65,7 @@ struct ThreadView: View {
             ScrollView {
                 VStack(spacing: 0) {
                     ForEach(messages.indices, id: \.self) { index in
-                        MessageView(message: messages[index])
+                        MessageView(message: messages[index], showActionButtons: messages.count > 1)
                         if index < messages.count - 1 {
                             MessageSeparatorView()
                         }
@@ -74,6 +75,11 @@ struct ThreadView: View {
             .navigationTitle(thread.formattedSubject)
             .onAppear {
                 MatomoUtils.track(view: ["MessageView"])
+                // Style toolbar
+                let appereance = UIToolbarAppearance()
+                appereance.configureWithOpaqueBackground()
+                appereance.backgroundColor = MailResourcesAsset.backgroundSearchBar.color
+                UIToolbar.appearance().standardAppearance = appereance
             }
 
             if card.cardShown {
@@ -90,10 +96,48 @@ struct ThreadView: View {
         .environmentObject(mailboxManager)
         .environmentObject(card)
         .environmentObject(sheet)
+        .toolbar {
+            ToolbarItemGroup(placement: .bottomBar) {
+                Group {
+                    Button {
+                        guard let message = thread.messages.last else { return }
+                        sheet.state = .reply(message, .reply)
+                    } label: {
+                        VStack(spacing: 0) {
+                            Image(resource: MailResourcesAsset.reply)
+                            Text(MailResourcesStrings.buttonReply)
+                        }
+                    }
+                    Spacer()
+                    Button {
+                        guard let message = thread.messages.last else { return }
+                        sheet.state = .reply(message, .forward)
+                    } label: {
+                        VStack(spacing: 0) {
+                            Image(resource: MailResourcesAsset.forward)
+                            Text(MailResourcesStrings.buttonForward)
+                        }
+                    }
+                    Spacer()
+                    Button {
+                        // TODO: Show menu
+                    } label: {
+                        VStack(spacing: 0) {
+                            Image(systemName: "ellipsis")
+                                .frame(width: 24, height: 24)
+                            Text(MailResourcesStrings.buttonMore)
+                        }
+                    }
+                }
+                .textStyle(.calloutHighlighted)
+            }
+        }
         .sheet(isPresented: $sheet.isShowing) {
             switch sheet.state {
             case let .attachment(attachment):
                 AttachmentPreview(isPresented: $sheet.isShowing, attachment: attachment)
+            case let .reply(message, replyMode):
+                NewMessageView(isPresented: $sheet.isShowing, mailboxManager: mailboxManager, draft: Draft.replying(to: message, mode: replyMode))
             case .none:
                 EmptyView()
             }

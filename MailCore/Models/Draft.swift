@@ -17,11 +17,20 @@
  */
 
 import Foundation
+import MailResources
 import RealmSwift
 
 public enum SaveDraftOption: String, Codable {
     case save
     case send
+}
+
+public enum ReplyMode {
+    case reply, replyAll, forward
+
+    var isReply: Bool {
+        return self == .reply || self == .replyAll
+    }
 }
 
 public struct DraftResponse: Codable {
@@ -190,6 +199,28 @@ public class Draft: Object, Codable, Identifiable {
         self.attachments = attachments?.toRealmList() ?? List()
         self.isOffline = isOffline
         self.action = action
+    }
+
+    public class func replying(to message: Message, mode: ReplyMode) -> Draft {
+        let subject: String
+        let quote: String
+        switch mode {
+        case .reply, .replyAll:
+            subject = "Re: \(message.formattedSubject)"
+            quote = Constants.replyQuote(message: message)
+        case .forward:
+            subject = "Fwd: \(message.formattedSubject)"
+            quote = Constants.forwardQuote(message: message)
+        }
+        return Draft(inReplyToUid: mode.isReply ? message.uid : nil,
+                     forwardedUid: mode == .forward ? message.uid : nil,
+                     inReplyTo: message.msgId,
+                     body: "<div><br></div><div><br></div>\(quote)",
+                     quote: quote,
+                     to: mode.isReply ? Array(message.replyTo.isEmpty ? message.from.detached() : message.replyTo.detached()) : nil,
+                     cc: mode == .replyAll ? Array(message.to.detached()) + Array(message.cc.detached()) : nil,
+                     subject: subject,
+                     attachments: mode == .forward ? Array(message.attachments) : nil)
     }
 
     public func encode(to encoder: Encoder) throws {

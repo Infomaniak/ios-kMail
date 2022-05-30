@@ -39,7 +39,7 @@ public struct URLConstants {
 public enum Constants {
     public static let sizeLimit: Int64 = 20_000_000_000 // 20 Go
 
-	public static let menuDrawerFolderCellPadding: CGFloat = 4
+    public static let menuDrawerFolderCellPadding: CGFloat = 4
     public static let menuDrawerHorizontalPadding: CGFloat = 25
 
     public static let searchBarIconSize: CGFloat = 16
@@ -68,5 +68,41 @@ public enum Constants {
         }
         dateFormatter.doesRelativeDateFormatting = relative
         return dateFormatter.string(from: date)
+    }
+
+    public static func forwardQuote(message: Message) -> String {
+        let date = DateFormatter.localizedString(from: message.date, dateStyle: .medium, timeStyle: .short)
+        let to = ListFormatter.localizedString(byJoining: message.to.map(\.htmlDescription))
+        return """
+        <div class=\"forwardContentMessage\">
+        <div>---------- \(MailResourcesStrings.messageForwardHeader) ---------<br></div>
+        <div>\(MailResourcesStrings.fromTitle) \(message.from.first?.htmlDescription ?? "")<br></div>
+        <div>\(MailResourcesStrings.dateTitle) \(date)<br></div>
+        <div>\(MailResourcesStrings.objectTitle) \(message.formattedSubject)<br></div>
+        <div>\(MailResourcesStrings.toTitle) \(to)<br></div>
+        <div><br></div>
+        <div><br></div>
+        <div class=\"ws-ng-mail-style--6094eJzz9HPyjwAABGYBgQ\">
+        \(message.body?.value.replacingOccurrences(of: "'", with: "’") ?? "")
+        </div>
+        </div>
+        """
+    }
+
+    public static func replyQuote(message: Message) -> String {
+        let headerText = MailResourcesStrings.messageReplyHeader(
+            DateFormatter.localizedString(from: message.date, dateStyle: .medium, timeStyle: .short),
+            message.from.first?.htmlDescription ?? ""
+        )
+        return """
+        <div id=\"answerContentMessage\" class=\"ik_mail_quote\" >
+        <div>\(headerText)</div>
+        <blockquote class=\"ws-ng-quote\">
+        <div class=\"ik_mail_quote-6057eJzz9HPyjwAABGYBgQ\">
+        \(message.body?.value.replacingOccurrences(of: "'", with: "’") ?? "")
+        </div>
+        </blockquote>
+        </div>
+        """
     }
 }

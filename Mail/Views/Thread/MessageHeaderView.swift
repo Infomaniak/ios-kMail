@@ -22,8 +22,11 @@ import RealmSwift
 import SwiftUI
 
 struct MessageHeaderView: View {
-    @StateRealmObject var message: Message
+    @ObservedRealmObject var message: Message
     @Binding var isExpanded: Bool
+    let showActionButtons: Bool
+
+    @EnvironmentObject var sheet: MessageSheet
     @EnvironmentObject var card: MessageCard
 
     var body: some View {
@@ -75,6 +78,26 @@ struct MessageHeaderView: View {
                 }
             }
             .padding(.top, 2)
+
+            if showActionButtons {
+                HStack(spacing: 24) {
+                    Button {
+                        sheet.state = .reply(message, .reply)
+                    } label: {
+                        Image(resource: MailResourcesAsset.reply)
+                            .frame(width: 20, height: 20)
+                    }
+                    Button {
+                        // TODO: Show menu
+                    } label: {
+                        Image(resource: MailResourcesAsset.plusActions)
+                            .frame(width: 20, height: 20)
+                    }
+                }
+                .tint(MailResourcesAsset.infomaniakColor)
+                .padding(.top, 2)
+                .padding(.leading, 16)
+            }
         }
         .frame(maxWidth: .infinity, alignment: .leading)
     }
@@ -87,8 +110,8 @@ struct MessageHeaderView: View {
 struct MessageHeaderView_Previews: PreviewProvider {
     static var previews: some View {
         Group {
-            MessageHeaderView(message: PreviewHelper.sampleMessage, isExpanded: .constant(false))
-            MessageHeaderView(message: PreviewHelper.sampleMessage, isExpanded: .constant(true))
+            MessageHeaderView(message: PreviewHelper.sampleMessage, isExpanded: .constant(false), showActionButtons: true)
+            MessageHeaderView(message: PreviewHelper.sampleMessage, isExpanded: .constant(true), showActionButtons: true)
         }
     }
 }

@@ -33,19 +33,17 @@ struct MenuDrawerView: View {
     @Binding var selectedFolder: Folder?
 
     var isCompact: Bool
-    let geometryProxy: GeometryProxy
 
     private var helpMenuItems = [MenuItem]()
     private var actionsMenuItems = [MenuItem]()
 
-    init(mailboxManager: MailboxManager, selectedFolder: Binding<Folder?>, isCompact: Bool, geometryProxy: GeometryProxy) {
+    init(mailboxManager: MailboxManager, selectedFolder: Binding<Folder?>, isCompact: Bool) {
         _folders = .init(Folder.self, configuration: AccountManager.instance.currentMailboxManager!.realmConfiguration) {
             $0.parentLink.count == 0
         }
         _mailboxManager = StateObject(wrappedValue: mailboxManager)
         _selectedFolder = selectedFolder
         self.isCompact = isCompact
-        self.geometryProxy = geometryProxy
 
         getMenuItems()
     }
@@ -62,8 +60,7 @@ struct MenuDrawerView: View {
                 RoleFoldersListView(
                     folders: $folders,
                     selectedFolder: $selectedFolder,
-                    isCompact: isCompact,
-                    geometryProxy: geometryProxy
+                    isCompact: isCompact
                 )
 
                 SeparatorView()
@@ -71,8 +68,7 @@ struct MenuDrawerView: View {
                 UserFoldersListView(
                     folders: $folders,
                     selectedFolder: $selectedFolder,
-                    isCompact: isCompact,
-                    geometryProxy: geometryProxy
+                    isCompact: isCompact
                 )
 
                 SeparatorView()
