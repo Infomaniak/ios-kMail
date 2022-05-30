@@ -73,9 +73,9 @@ public enum Constants {
     public static func forwardQuote(message: Message) -> String {
         return """
         <div class=\"forwardContentMessage\">
-        <div>---------- Message transféré ---------<br></div>
+        <div>---------- \(MailResourcesStrings.messageForwardHeader) ---------<br></div>
         <div>\(MailResourcesStrings.fromTitle) \(message.from.first?.htmlDescription ?? "")<br></div>
-        <div>Date : \(message.date)<br></div>
+        <div>\(MailResourcesStrings.dateTitle) \(message.date)<br></div>
         <div>\(MailResourcesStrings.objectTitle) \(message.formattedSubject)<br></div>
         <div>\(MailResourcesStrings.toTitle) \(ListFormatter.localizedString(byJoining: message.to.map(\.htmlDescription)))<br></div>
         <div><br></div>
