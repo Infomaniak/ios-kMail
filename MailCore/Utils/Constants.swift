@@ -71,13 +71,15 @@ public enum Constants {
     }
 
     public static func forwardQuote(message: Message) -> String {
+        let date = DateFormatter.localizedString(from: message.date, dateStyle: .medium, timeStyle: .short)
+        let to = ListFormatter.localizedString(byJoining: message.to.map(\.htmlDescription))
         return """
         <div class=\"forwardContentMessage\">
         <div>---------- \(MailResourcesStrings.messageForwardHeader) ---------<br></div>
         <div>\(MailResourcesStrings.fromTitle) \(message.from.first?.htmlDescription ?? "")<br></div>
-        <div>\(MailResourcesStrings.dateTitle) \(message.date)<br></div>
+        <div>\(MailResourcesStrings.dateTitle) \(date)<br></div>
         <div>\(MailResourcesStrings.objectTitle) \(message.formattedSubject)<br></div>
-        <div>\(MailResourcesStrings.toTitle) \(ListFormatter.localizedString(byJoining: message.to.map(\.htmlDescription)))<br></div>
+        <div>\(MailResourcesStrings.toTitle) \(to)<br></div>
         <div><br></div>
         <div><br></div>
         <div class=\"ws-ng-mail-style--6094eJzz9HPyjwAABGYBgQ\">
