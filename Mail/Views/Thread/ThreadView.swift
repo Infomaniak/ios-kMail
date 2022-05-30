@@ -100,7 +100,7 @@ struct ThreadView: View {
             ToolbarItemGroup(placement: .bottomBar) {
                 Group {
                     Button {
-                        guard let message = thread.messages.last else { return }
+                        guard let message = messages.last else { return }
                         sheet.state = .reply(message, .reply)
                     } label: {
                         VStack(spacing: 0) {
@@ -110,7 +110,7 @@ struct ThreadView: View {
                     }
                     Spacer()
                     Button {
-                        guard let message = thread.messages.last else { return }
+                        guard let message = messages.last else { return }
                         sheet.state = .reply(message, .forward)
                     } label: {
                         VStack(spacing: 0) {
