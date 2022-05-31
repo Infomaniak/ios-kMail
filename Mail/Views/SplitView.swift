@@ -76,6 +76,7 @@ struct SplitView: View {
                             isCompact: isCompact
                         )
                     }
+                    .gesture(navigationDrawerController.dragGesture)
                 }
             } else {
                 NavigationView {
@@ -100,11 +101,17 @@ struct SplitView: View {
         .environmentObject(settingsSheet)
         .environmentObject(navigationDrawerController)
         .accentColor(Color(MailResourcesAsset.primaryTextColor.color))
+        .onAppear {
+            navigationDrawerController.window = window
+        }
         .task {
-            do {
-                try await mailboxManager.signatures()
-            } catch {
-                print("Error while fetching signatures: \(error)")
+            await fetchSignatures()
+        }
+        .task {
+            await fetchFolders()
+            // On first launch, select inbox
+            if selectedFolder == nil {
+                selectedFolder = getInbox()
             }
         }
         .onRotate { orientation in
@@ -118,13 +125,6 @@ struct SplitView: View {
             setupBehaviour(orientation: interfaceOrientation)
             splitViewController.preferredDisplayMode = .twoDisplaceSecondary
         }
-        .task {
-            await fetchFolders()
-            // On first launch, select inbox
-            if selectedFolder == nil {
-                selectedFolder = getInbox()
-            }
-        }
     }
 
     private func setupBehaviour(orientation: UIInterfaceOrientation) {
@@ -134,6 +134,14 @@ struct SplitView: View {
             splitViewController?.preferredSplitBehavior = .overlay
         } else {
             splitViewController?.preferredSplitBehavior = .automatic
+        }
+    }
+
+    private func fetchSignatures() async {
+        do {
+            try await mailboxManager.signatures()
+        } catch {
+            print("Error while fetching signatures: \(error)")
         }
     }
 

@@ -37,7 +37,7 @@ struct NavigationDrawer: View {
                 MenuDrawerView(mailboxManager: mailboxManager, selectedFolder: $folder, isCompact: isCompact)
                     .frame(maxWidth: maxWidth)
                     .padding(.trailing, spacing)
-                    .offset(x: navigationDrawerController.isOpen ? 0 : -geometryProxy.size.width)
+                    .offset(x: navigationDrawerController.getOffset(size: geometryProxy.size).width)
                 Spacer()
             }
         }
@@ -45,10 +45,41 @@ struct NavigationDrawer: View {
 }
 
 class NavigationDrawerController: ObservableObject {
-    @Published private(set) var isOpen: Bool
+    @Published private(set) var isOpen = false
+    @Published private(set) var isDragging = false
+    @Published private(set) var dragOffset = CGSize.zero
 
-    init() {
-        isOpen = false
+    weak var window: UIWindow?
+
+    lazy var dragGesture = DragGesture()
+        .onChanged { [weak self] value in
+            guard let self = self else { return }
+            if (self.isOpen && value.translation.width < 0) || !self.isOpen {
+                self.isDragging = true
+                self.dragOffset = value.translation
+            }
+        }
+        .onEnded { [weak self] value in
+            guard let self = self else { return }
+            let windowSize = self.window?.frame.size ?? .zero
+            if self.isOpen && value.translation.width < -(windowSize.width / 2) {
+                // Closing drawer
+                withAnimation {
+                    self.dragOffset = CGSize(width: -windowSize.width, height: -windowSize.height)
+                }
+                self.close()
+            }
+            self.isDragging = false
+        }
+
+    func getOffset(size: CGSize) -> CGSize {
+        if isDragging {
+            return dragOffset
+        } else if isOpen {
+            return .zero
+        } else {
+            return CGSize(width: -size.width, height: -size.height)
+        }
     }
 
     func close() {
