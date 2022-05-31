@@ -76,7 +76,6 @@ struct SplitView: View {
                             isCompact: isCompact
                         )
                     }
-                    .animation(.default)
                 }
             } else {
                 NavigationView {

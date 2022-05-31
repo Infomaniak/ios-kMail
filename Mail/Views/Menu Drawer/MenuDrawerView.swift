@@ -22,21 +22,24 @@ import RealmSwift
 import SwiftUI
 
 struct NavigationDrawer: View {
-    private let width = UIScreen.main.bounds.width - 60
+    private let maxWidth = 350.0
+    private let spacing = 60.0
 
     let mailboxManager: MailboxManager
     @Binding var folder: Folder?
     let isCompact: Bool
 
-    @Environment(\.window) var window
     @EnvironmentObject var navigationDrawerController: NavigationDrawerController
 
     var body: some View {
-        HStack {
-            MenuDrawerView(mailboxManager: mailboxManager, selectedFolder: $folder, isCompact: isCompact)
-                .frame(width: self.width)
-                .offset(x: navigationDrawerController.isOpen ? 0 : -self.width)
-            Spacer()
+        GeometryReader { geometryProxy in
+            HStack {
+                MenuDrawerView(mailboxManager: mailboxManager, selectedFolder: $folder, isCompact: isCompact)
+                    .frame(maxWidth: maxWidth)
+                    .padding(.trailing, spacing)
+                    .offset(x: navigationDrawerController.isOpen ? 0 : -geometryProxy.size.width)
+                Spacer()
+            }
         }
     }
 }
@@ -49,11 +52,15 @@ class NavigationDrawerController: ObservableObject {
     }
 
     func close() {
-        isOpen = false
+        withAnimation {
+            isOpen = false
+        }
     }
 
     func open() {
-        isOpen = true
+        withAnimation {
+            isOpen = true
+        }
     }
 }
 
