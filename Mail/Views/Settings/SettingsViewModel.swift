@@ -143,7 +143,7 @@ public enum ParameterSection: CaseIterable, Identifiable {
 
 public enum ParameterRow: CaseIterable, Identifiable {
     public var id: Self { self }
-    
+
     // Principal
     case send
     case codeLock
@@ -231,17 +231,13 @@ public enum ParameterRow: CaseIterable, Identifiable {
         case .acknowledgement:
             return MailResourcesStrings.settingsSendAcknowledgement
         case .shortRight:
-            // TODO: - add trad
-            return ""
+            return MailResourcesStrings.settingsSwipeShortRight
         case .longRight:
-            // TODO: - add trad
-            return ""
+            return MailResourcesStrings.settingsSwipeLongRight
         case .shortLeft:
-            // TODO: - add trad
-            return ""
+            return MailResourcesStrings.settingsSwipeShortLeft
         case .longLeft:
-            // TODO: - add trad
-            return ""
+            return MailResourcesStrings.settingsSwipeLongLeft
         }
     }
 

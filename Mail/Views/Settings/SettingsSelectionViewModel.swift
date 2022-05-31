@@ -91,7 +91,7 @@ class SettingsSelectionViewModel: ObservableObject {
                 .swipeReport,
                 .swipeSpam,
                 .swipeReadAndArchive,
-                .swipeFastAction,
+                .swipeQuickAction,
                 .swipeNone
             ]
         }
@@ -132,7 +132,7 @@ public enum ParameterSelectionRow: CaseIterable, Identifiable {
     case swipeReport
     case swipeSpam
     case swipeReadAndArchive
-    case swipeFastAction
+    case swipeQuickAction
     case swipeNone
 
     // TODO: - fix this
@@ -153,7 +153,6 @@ public enum ParameterSelectionRow: CaseIterable, Identifiable {
         }
     }
 
-    // TODO: - Finish this
     public var title: String {
         switch self {
         case .messageDisplaySimple:
@@ -171,35 +170,36 @@ public enum ParameterSelectionRow: CaseIterable, Identifiable {
         case .externalContentAskMe:
             return MailResourcesStrings.settingsOptionAskMe
         case .cancelDelayDisabled:
-            return ""
+            return MailResourcesStrings.settingsDisabled
         case .cancelDelay10:
-            return ""
+            return MailResourcesStrings.settingsDelaySeconds(10)
         case .cancelDelay20:
-            return ""
+            return MailResourcesStrings.settingsDelaySeconds(20)
         case .cancelDelay30:
-            return ""
+            return MailResourcesStrings.settingsDelaySeconds(30)
         case .mailTransferInBody:
             return MailResourcesStrings.settingsTransferInBody
         case .mailTransferAsAttachment:
             return MailResourcesStrings.settingsTransferAsAttachment
         case .swipeDelete:
-            return ""
+            return MailResourcesStrings.settingsSwipeActionDelete
         case .swipeArchive:
-            return ""
+            return MailResourcesStrings.settingsSwipeActionArchive
         case .swipeRead:
-            return ""
+            return MailResourcesStrings.settingsSwipeActionReadUnread
         case .swipeMove:
-            return ""
+            return MailResourcesStrings.settingsSwipeActionMove
         case .swipeReport:
+            // TODO: - Add trad
             return ""
         case .swipeSpam:
-            return ""
+            return MailResourcesStrings.settingsSwipeActionSpam
         case .swipeReadAndArchive:
-            return ""
-        case .swipeFastAction:
-            return ""
+            return MailResourcesStrings.settingsSwipeActionReadAndArchive
+        case .swipeQuickAction:
+            return MailResourcesStrings.settingsSwipeActionQuickActionsMenu
         case .swipeNone:
-            return ""
+            return MailResourcesStrings.settingsSwipeActionNone
         }
     }
 
