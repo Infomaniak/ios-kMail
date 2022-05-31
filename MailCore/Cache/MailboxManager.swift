@@ -437,6 +437,8 @@ public class MailboxManager: ObservableObject {
 
         for draft in draftOffline {
             let thread = Thread(draft: draft)
+            let from = Recipient(email: mailbox.email, name: mailbox.emailIdn)
+            thread.from.append(from)
             offlineDraftThread.append(thread)
         }
 
