@@ -31,25 +31,21 @@ struct SettingsView: View {
 
     var body: some View {
         ScrollView {
-            VStack {
+            VStack(alignment: .leading, spacing: 30) {
                 ForEach(viewModel.tableContent) { section in
-                    Section {
-                        VStack(spacing: 25) {
-                            ForEach(section.content) { row in
-                                SettingsRowView(row: row)
-                            }
+                    SettingsSectionHeaderView(title: section.title, separator: !(section == viewModel.tableContent.first))
+
+                    VStack(spacing: 25) {
+                        ForEach(section.content) { row in
+                            SettingsRowView(row: row)
                         }
-                        .padding([.leading, .trailing], 16)
-                        .listRowSeparator(.hidden)
-                    } header: {
-                        SettingsSectionHeaderView(title: section.title, separator: !(section == viewModel.tableContent.first))
                     }
+                    .padding([.leading, .trailing], 16)
                 }
             }
             .environmentObject(viewModel)
         }
-        .navigationBarTitle("Settings")
-        .backButtonDisplayMode(.minimal)
+        .padding(16)
     }
 }
 

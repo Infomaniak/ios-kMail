@@ -24,7 +24,9 @@ struct SettingsSectionHeaderView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 15) {
-            SeparatorView(withPadding: false, fullWidth: true)
+            if separator {
+                SeparatorView(withPadding: false, fullWidth: true)
+            }
             Text(title)
                 .textStyle(.calloutSecondary)
         }
