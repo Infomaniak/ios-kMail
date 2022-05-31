@@ -22,8 +22,8 @@ import SwiftUI
 import UIKit
 
 struct MenuHeaderView: View {
-    @Environment(\.presentationMode) var presentationMode
     @EnvironmentObject var sheet: SettingsSheet
+    @EnvironmentObject var navigationDrawerController: NavigationDrawerController
 
     var body: some View {
         HStack {
@@ -36,7 +36,7 @@ struct MenuHeaderView: View {
 
             Button {
                 sheet.state = .settings
-                presentationMode.wrappedValue.dismiss()
+                navigationDrawerController.close()
             } label: {
                 Image(resource: MailResourcesAsset.cog)
                     .resizable()

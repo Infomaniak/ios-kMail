@@ -22,10 +22,10 @@ import MailResources
 import SwiftUI
 
 struct MailboxesManagementView: View {
-    @Environment(\.presentationMode) var presentationMode
     @EnvironmentObject var mailboxManager: MailboxManager
     @EnvironmentObject var settingsSheet: SettingsSheet
     @EnvironmentObject var menuSheet: MenuSheet
+    @EnvironmentObject var navigationDrawerController: NavigationDrawerController
 
     @State private var unfoldDetails = false
 
@@ -63,7 +63,7 @@ struct MailboxesManagementView: View {
 
     private func handleMyAccount() {
         settingsSheet.state = .manageAccount
-        presentationMode.wrappedValue.dismiss()
+        navigationDrawerController.close()
     }
 }
 
