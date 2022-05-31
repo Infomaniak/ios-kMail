@@ -22,6 +22,10 @@ extension UserDefaults.Keys {
     static let currentMailboxId = UserDefaults.Keys(rawValue: "currentMailboxId")
     static let currentMailUserId = UserDefaults.Keys(rawValue: "currentMailUserId")
     static let notificationsEnabled = UserDefaults.Keys(rawValue: "notificationsEnabled")
+    static let appLock = UserDefaults.Keys(rawValue: "appLock")
+    static let threadDensity = UserDefaults.Keys(rawValue: "threadDensity")
+    static let externalContent = UserDefaults.Keys(rawValue: "externalContent")
+    static let theme = UserDefaults.Keys(rawValue: "theme")
 }
 
 public extension UserDefaults {
@@ -54,6 +58,46 @@ public extension UserDefaults {
         }
         set {
             set(newValue, forKey: key(.notificationsEnabled))
+        }
+    }
+
+    var isAppLockEnabled: Bool {
+        get {
+            return bool(forKey: key(.appLock))
+        }
+        set {
+            set(newValue, forKey: key(.appLock))
+        }
+    }
+
+    var threadDensity: ThreadDensity {
+        get {
+            return ThreadDensity(rawValue: string(forKey: key(.threadDensity)) ?? "") ?? .defaultDensity
+        }
+        set {
+            set(newValue.rawValue, forKey: key(.threadDensity))
+        }
+    }
+
+    var displayExternalContent: Bool {
+        get {
+            return bool(forKey: key(.externalContent))
+        }
+        set {
+            set(newValue, forKey: key(.externalContent))
+        }
+    }
+
+    var theme: Theme {
+        get {
+            guard let theme = object(forKey: key(.theme)) as? String else {
+                setValue(Theme.system.rawValue, forKey: key(.theme))
+                return Theme.system
+            }
+            return Theme(rawValue: theme)!
+        }
+        set {
+            setValue(newValue.rawValue, forKey: key(.theme))
         }
     }
 }

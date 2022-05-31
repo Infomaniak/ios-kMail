@@ -22,13 +22,31 @@ import MailResources
 import SwiftUI
 
 struct SettingsView: View {
+    @EnvironmentObject var menuSheet: MenuSheet
+    @State var viewModel: SettingsViewModel
+
+    init(viewModel: SettingsViewModel = SettingsViewModel()) {
+        self.viewModel = viewModel
+    }
+
     var body: some View {
-        List {
-            NavigationLink {
-                AccountView()
-            } label: {
-                Text("Account")
+        ScrollView {
+            VStack {
+                ForEach(viewModel.tableContent) { section in
+                    Section {
+                        VStack(spacing: 25) {
+                            ForEach(section.content) { row in
+                                SettingsRowView(row: row)
+                            }
+                        }
+                        .padding([.leading, .trailing], 16)
+                        .listRowSeparator(.hidden)
+                    } header: {
+                        SettingsSectionHeaderView(title: section.title, separator: !(section == viewModel.tableContent.first))
+                    }
+                }
             }
+            .environmentObject(viewModel)
         }
         .navigationBarTitle("Settings")
         .backButtonDisplayMode(.minimal)
