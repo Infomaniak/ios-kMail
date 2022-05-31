@@ -282,13 +282,13 @@ public class AccountManager: RefreshTokenDelegate {
         let user = try await apiFetcher.userProfile()
         account.user = user
 
-        let mailboxes = try await apiFetcher.mailboxes()
-        guard !mailboxes.isEmpty else {
+        let fetchedMailboxes = try await apiFetcher.mailboxes()
+        guard !fetchedMailboxes.isEmpty else {
             removeAccount(toDeleteAccount: account)
             throw MailError.noMailbox
         }
 
-        let mailboxRemovedList = MailboxInfosManager.instance.storeMailboxes(user: user, mailboxes: mailboxes)
+        let mailboxRemovedList = MailboxInfosManager.instance.storeMailboxes(user: user, mailboxes: fetchedMailboxes)
         clearMailboxManagers()
         var switchedMailbox: Mailbox?
         for mailboxRemoved in mailboxRemovedList {
@@ -303,7 +303,7 @@ public class AccountManager: RefreshTokenDelegate {
     }
 
     public func loadAccounts() -> [Account] {
-        var accounts = [Account]()
+        var loadedAccounts = [Account]()
         if let groupDirectoryURL = FileManager.default
             .containerURL(forSecurityApplicationGroupIdentifier: AccountManager.appGroup)?
             .appendingPathComponent("preferences", isDirectory: true) {
@@ -311,12 +311,12 @@ public class AccountManager: RefreshTokenDelegate {
             do {
                 let data = try Data(contentsOf: groupDirectoryURL.appendingPathComponent("accounts.json"))
                 let savedAccounts = try decoder.decode([Account].self, from: data)
-                accounts = savedAccounts
+                loadedAccounts = savedAccounts
             } catch {
                 DDLogError("Error loading accounts \(error)")
             }
         }
-        return accounts
+        return loadedAccounts
     }
 
     public func saveAccounts() {
