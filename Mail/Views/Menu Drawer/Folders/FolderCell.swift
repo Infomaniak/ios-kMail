@@ -22,8 +22,8 @@ import MailResources
 import SwiftUI
 
 struct FolderCell: View {
-    @Environment(\.presentationMode) var presentationMode
     @EnvironmentObject var mailboxManager: MailboxManager
+    @EnvironmentObject var navigationDrawerController: NavigationDrawerController
 
     @State var currentFolder: Folder!
     @Binding var selectedFolder: Folder?
@@ -47,7 +47,7 @@ struct FolderCell: View {
 
     private func updateFolder() {
         selectedFolder = currentFolder
-        presentationMode.wrappedValue.dismiss()
+        navigationDrawerController.close()
     }
 }
 

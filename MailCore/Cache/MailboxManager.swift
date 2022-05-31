@@ -177,7 +177,7 @@ public class MailboxManager: ObservableObject {
 
     public func getFolder(with role: FolderRole, using realm: Realm? = nil) -> Folder? {
         let realm = realm ?? getRealm()
-        realm.refresh()
+        realm.autorefresh = true
         return realm.objects(Folder.self).where { $0.role == role }.first
     }
 

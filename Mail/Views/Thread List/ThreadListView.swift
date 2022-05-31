@@ -24,7 +24,6 @@ import SwiftUI
 
 class MenuSheet: SheetState<MenuSheet.State> {
     enum State: Equatable {
-        case menuDrawer
         case newMessage
         case editMessage(draft: Draft)
         case addAccount
@@ -116,16 +115,9 @@ struct ThreadListView: View {
             navigationController.navigationBar.scrollEdgeAppearance = navigationBarAppearance
             navigationController.hidesBarsOnSwipe = true
         }
-        .modifier(ThreadListNavigationBar(isCompact: isCompact, sheet: menuSheet, folder: $viewModel.folder,
-                                          avatarImage: $avatarImage))
+        .modifier(ThreadListNavigationBar(isCompact: isCompact, folder: $viewModel.folder, avatarImage: $avatarImage))
         .sheet(isPresented: $menuSheet.isShowing) {
             switch menuSheet.state {
-            case .menuDrawer:
-                MenuDrawerView(
-                    mailboxManager: viewModel.mailboxManager,
-                    selectedFolder: $currentFolder,
-                    isCompact: isCompact
-                )
             case .newMessage:
                 NewMessageView(isPresented: $menuSheet.isShowing, mailboxManager: viewModel.mailboxManager)
             case let .editMessage(draft):
@@ -182,10 +174,10 @@ struct ThreadListView: View {
 private struct ThreadListNavigationBar: ViewModifier {
     var isCompact: Bool
 
-    @ObservedObject var sheet: MenuSheet
-
     @Binding var folder: Folder?
     @Binding var avatarImage: Image
+
+    @EnvironmentObject var navigationDrawerController: NavigationDrawerController
 
     func body(content: Content) -> some View {
         content
@@ -196,7 +188,6 @@ private struct ThreadListNavigationBar: ViewModifier {
                 }
 
                 ToolbarItem(placement: .navigationBarTrailing) {
-                    // TODO: - Add floatingPanel
                     NavigationLink {
                         AccountListView()
                     } label: {
@@ -212,7 +203,7 @@ private struct ThreadListNavigationBar: ViewModifier {
                 view.toolbar {
                     ToolbarItem(placement: .navigationBarLeading) {
                         Button {
-                            sheet.state = .menuDrawer
+                            navigationDrawerController.open()
                         } label: {
                             Image(resource: MailResourcesAsset.burger)
                         }

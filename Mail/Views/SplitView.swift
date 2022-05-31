@@ -34,11 +34,13 @@ struct SplitView: View {
     @ObservedObject var mailboxManager = AccountManager.instance.currentMailboxManager!
     @State var selectedFolder: Folder?
     @State var splitViewController: UISplitViewController?
+    @StateObject private var navigationDrawerController = NavigationDrawerController()
+
     @Environment(\.horizontalSizeClass) var sizeClass
     @Environment(\.window) var window
 
-    @ObservedObject var settingsSheet = SettingsSheet()
-    @ObservedObject var menuSheet = MenuSheet()
+    @ObservedObject private var settingsSheet = SettingsSheet()
+    @ObservedObject private var menuSheet = MenuSheet()
 
     var isCompact: Bool {
         sizeClass == .compact
@@ -49,32 +51,55 @@ struct SplitView: View {
     }
 
     var body: some View {
-        NavigationView {
+        Group {
             if isCompact {
-                ThreadListView(
-                    mailboxManager: mailboxManager,
-                    folder: $selectedFolder,
-                    isCompact: isCompact
-                )
+                ZStack {
+                    NavigationView {
+                        ThreadListView(
+                            mailboxManager: mailboxManager,
+                            folder: $selectedFolder,
+                            isCompact: isCompact
+                        )
+                    }
+
+                    Group {
+                        Color.black
+                            .opacity(navigationDrawerController.isOpen ? 0.5 : 0)
+                            .ignoresSafeArea()
+                            .onTapGesture {
+                                navigationDrawerController.close()
+                            }
+
+                        NavigationDrawer(
+                            mailboxManager: mailboxManager,
+                            folder: $selectedFolder,
+                            isCompact: isCompact
+                        )
+                    }
+                    .animation(.default)
+                }
             } else {
-                MenuDrawerView(
-                    mailboxManager: mailboxManager,
-                    selectedFolder: $selectedFolder,
-                    isCompact: isCompact
-                )
-                .navigationBarHidden(true)
+                NavigationView {
+                    MenuDrawerView(
+                        mailboxManager: mailboxManager,
+                        selectedFolder: $selectedFolder,
+                        isCompact: isCompact
+                    )
+                    .navigationBarHidden(true)
 
-                ThreadListView(
-                    mailboxManager: mailboxManager,
-                    folder: $selectedFolder,
-                    isCompact: isCompact
-                )
+                    ThreadListView(
+                        mailboxManager: mailboxManager,
+                        folder: $selectedFolder,
+                        isCompact: isCompact
+                    )
 
-                EmptyThreadView()
+                    EmptyThreadView()
+                }
             }
         }
         .environmentObject(menuSheet)
         .environmentObject(settingsSheet)
+        .environmentObject(navigationDrawerController)
         .accentColor(Color(MailResourcesAsset.primaryTextColor.color))
         .task {
             do {

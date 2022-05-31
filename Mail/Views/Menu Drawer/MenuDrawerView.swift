@@ -21,6 +21,42 @@ import MailResources
 import RealmSwift
 import SwiftUI
 
+struct NavigationDrawer: View {
+    private let width = UIScreen.main.bounds.width - 60
+
+    let mailboxManager: MailboxManager
+    @Binding var folder: Folder?
+    let isCompact: Bool
+
+    @Environment(\.window) var window
+    @EnvironmentObject var navigationDrawerController: NavigationDrawerController
+
+    var body: some View {
+        HStack {
+            MenuDrawerView(mailboxManager: mailboxManager, selectedFolder: $folder, isCompact: isCompact)
+                .frame(width: self.width)
+                .offset(x: navigationDrawerController.isOpen ? 0 : -self.width)
+            Spacer()
+        }
+    }
+}
+
+class NavigationDrawerController: ObservableObject {
+    @Published private(set) var isOpen: Bool
+
+    init() {
+        isOpen = false
+    }
+
+    func close() {
+        isOpen = false
+    }
+
+    func open() {
+        isOpen = true
+    }
+}
+
 struct MenuDrawerView: View {
     @Environment(\.openURL) var openURL
 
