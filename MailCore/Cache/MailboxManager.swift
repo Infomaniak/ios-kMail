@@ -406,6 +406,7 @@ public class MailboxManager: ObservableObject {
             if draft.uuid.isEmpty {
                 draft.uuid = Draft.uuidLocalPrefix + UUID().uuidString
             }
+            draft.date = Date()
             let copyDraft = draft.detached()
 
             // Update draft in Realm
