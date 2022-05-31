@@ -18,7 +18,7 @@
 
 import XCTest
 
-class mailUITestsLaunchTests: XCTestCase {
+class MailUITestsLaunchTests: XCTestCase {
     override class var runsForEachTargetApplicationUIConfiguration: Bool {
         true
     }
