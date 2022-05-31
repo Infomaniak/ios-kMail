@@ -79,6 +79,7 @@ struct LoginView: View {
                 Text(MailResourcesStrings.errorLoginDescription)
             }
         }
+        .navigationViewStyle(.stack)
     }
 
     // MARK: - Private methods
