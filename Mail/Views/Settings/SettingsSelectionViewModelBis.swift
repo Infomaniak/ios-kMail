@@ -21,17 +21,17 @@ import MailResources
 import SwiftUI
 
 public enum SettingsSelectionPage: CaseIterable {
-    case theme
+//    case theme
     case messageDisplay
     case externalContent
     case cancelDelay
     case mailTransfer
-    case swipe
+//    case swipe
 
     public var title: String {
         switch self {
-        case .theme:
-            return MailResourcesStrings.settingsThemeChoiceTitle
+//        case .theme:
+//            return MailResourcesStrings.settingsThemeChoiceTitle
         case .messageDisplay:
             return MailResourcesStrings.settingsMessageDisplayTitle
         case .externalContent:
@@ -40,15 +40,15 @@ public enum SettingsSelectionPage: CaseIterable {
             return MailResourcesStrings.settingsCancellationPeriodTitle
         case .mailTransfer:
             return MailResourcesStrings.settingsTransferEmailsTitle
-        case .swipe:
-            return MailResourcesStrings.settingsSwipeActionsTitle
+//        case .swipe:
+//            return MailResourcesStrings.settingsSwipeActionsTitle
         }
     }
 
     public var description: String {
         switch self {
-        case .theme:
-            return MailResourcesStrings.settingsTheme
+//        case .theme:
+//            return MailResourcesStrings.settingsTheme
         case .messageDisplay:
             return MailResourcesStrings.settingsSelectDisplayModeDescription
         case .externalContent:
@@ -57,8 +57,8 @@ public enum SettingsSelectionPage: CaseIterable {
             return ""
         case .mailTransfer:
             return ""
-        case .swipe:
-            return ""
+//        case .swipe:
+//            return ""
         }
     }
 }
@@ -72,8 +72,8 @@ class SettingsSelectionViewModelBis: ObservableObject {
 
     public var tableContent: [ParameterSelectionRow] {
         switch page {
-        case .theme:
-            return [.themeDark, .themeLight, .themeDefault]
+//        case .theme:
+//            return [.themeDark, .themeLight, .themeDefault]
         case .messageDisplay:
             return [.messageDisplaySimple, .messageDisplayThread]
         case .externalContent:
@@ -82,18 +82,18 @@ class SettingsSelectionViewModelBis: ObservableObject {
             return [.cancelDelayDisabled, .cancelDelay10, .cancelDelay20, .cancelDelay30]
         case .mailTransfer:
             return [.mailTransferInBody, .mailTransferAsAttachment]
-        case .swipe:
-            return [
-                .swipeDelete,
-                .swipeArchive,
-                .swipeRead,
-                .swipeMove,
-                .swipeReport,
-                .swipeSpam,
-                .swipeReadAndArchive,
-                .swipeQuickAction,
-                .swipeNone
-            ]
+//        case .swipe:
+//            return [
+//                .swipeDelete,
+//                .swipeArchive,
+//                .swipeRead,
+//                .swipeMove,
+//                .swipeReport,
+//                .swipeSpam,
+//                .swipeReadAndArchive,
+//                .swipeQuickAction,
+//                .swipeNone
+//            ]
         }
     }
 }
@@ -102,9 +102,9 @@ public enum ParameterSelectionRow: CaseIterable, Identifiable {
     public var id: Self { self }
 
     // theme
-    case themeLight
-    case themeDark
-    case themeDefault
+//    case themeLight
+//    case themeDark
+//    case themeDefault
 
     // messageDisplay
     case messageDisplayThread
@@ -125,15 +125,15 @@ public enum ParameterSelectionRow: CaseIterable, Identifiable {
     case mailTransferAsAttachment
 
     // swipe
-    case swipeDelete
-    case swipeArchive
-    case swipeRead
-    case swipeMove
-    case swipeReport
-    case swipeSpam
-    case swipeReadAndArchive
-    case swipeQuickAction
-    case swipeNone
+//    case swipeDelete
+//    case swipeArchive
+//    case swipeRead
+//    case swipeMove
+//    case swipeReport
+//    case swipeSpam
+//    case swipeReadAndArchive
+//    case swipeQuickAction
+//    case swipeNone
 
     // TODO: - fix this
     public var image: Image? {
@@ -142,12 +142,12 @@ public enum ParameterSelectionRow: CaseIterable, Identifiable {
             return Image(uiImage: MailResourcesAsset.conversationEmail.image)
         case .messageDisplaySimple:
             return Image(uiImage: MailResourcesAsset.singleEmail.image)
-        case .themeDark:
-            return nil
-        case .themeLight:
-            return nil
-        case .themeDefault:
-            return nil
+//        case .themeDark:
+//            return nil
+//        case .themeLight:
+//            return nil
+//        case .themeDefault:
+//            return nil
         default:
             return nil
         }
@@ -159,12 +159,12 @@ public enum ParameterSelectionRow: CaseIterable, Identifiable {
             return MailResourcesStrings.settingsOptionMessages
         case .messageDisplayThread:
             return MailResourcesStrings.settingsOptionDiscussions
-        case .themeLight:
-            return MailResourcesStrings.settingsOptionLightTheme
-        case .themeDark:
-            return MailResourcesStrings.settingsOptionDarkTheme
-        case .themeDefault:
-            return MailResourcesStrings.settingsDefault
+//        case .themeLight:
+//            return MailResourcesStrings.settingsOptionLightTheme
+//        case .themeDark:
+//            return MailResourcesStrings.settingsOptionDarkTheme
+//        case .themeDefault:
+//            return MailResourcesStrings.settingsDefault
         case .externalContentAlways:
             return MailResourcesStrings.settingsOptionAlways
         case .externalContentAskMe:
@@ -181,38 +181,40 @@ public enum ParameterSelectionRow: CaseIterable, Identifiable {
             return MailResourcesStrings.settingsTransferInBody
         case .mailTransferAsAttachment:
             return MailResourcesStrings.settingsTransferAsAttachment
-        case .swipeDelete:
-            return MailResourcesStrings.settingsSwipeActionDelete
-        case .swipeArchive:
-            return MailResourcesStrings.settingsSwipeActionArchive
-        case .swipeRead:
-            return MailResourcesStrings.settingsSwipeActionReadUnread
-        case .swipeMove:
-            return MailResourcesStrings.settingsSwipeActionMove
-        case .swipeReport:
-            // TODO: - Add trad
+//        case .swipeDelete:
+//            return MailResourcesStrings.settingsSwipeActionDelete
+//        case .swipeArchive:
+//            return MailResourcesStrings.settingsSwipeActionArchive
+//        case .swipeRead:
+//            return MailResourcesStrings.settingsSwipeActionReadUnread
+//        case .swipeMove:
+//            return MailResourcesStrings.settingsSwipeActionMove
+//        case .swipeReport:
+//            // TODO: - Add trad
+//            return ""
+//        case .swipeSpam:
+//            return MailResourcesStrings.settingsSwipeActionSpam
+//        case .swipeReadAndArchive:
+//            return MailResourcesStrings.settingsSwipeActionReadAndArchive
+//        case .swipeQuickAction:
+//            return MailResourcesStrings.settingsSwipeActionQuickActionsMenu
+//        case .swipeNone:
+//            return MailResourcesStrings.settingsSwipeActionNone
+        default:
             return ""
-        case .swipeSpam:
-            return MailResourcesStrings.settingsSwipeActionSpam
-        case .swipeReadAndArchive:
-            return MailResourcesStrings.settingsSwipeActionReadAndArchive
-        case .swipeQuickAction:
-            return MailResourcesStrings.settingsSwipeActionQuickActionsMenu
-        case .swipeNone:
-            return MailResourcesStrings.settingsSwipeActionNone
         }
     }
 
     // TODO: - fix that
     public var isSelected: Bool {
         switch self {
-        case .themeLight:
-            UserDefaults.shared.theme
-            return true
-        case .themeDark:
-            return true
-        case .themeDefault:
-            return true
+//        case .themeLight:
+//            UserDefaults.shared.theme
+//            return true
+//        case .themeDark:
+//            return true
+//        case .themeDefault:
+//            return true
         case .messageDisplayThread:
             return true
         case .messageDisplaySimple:
@@ -233,24 +235,24 @@ public enum ParameterSelectionRow: CaseIterable, Identifiable {
             return true
         case .mailTransferAsAttachment:
             return true
-        case .swipeDelete:
-            return true
-        case .swipeArchive:
-            return true
-        case .swipeRead:
-            return true
-        case .swipeMove:
-            return true
-        case .swipeReport:
-            return true
-        case .swipeSpam:
-            return true
-        case .swipeReadAndArchive:
-            return true
-        case .swipeQuickAction:
-            return true
-        case .swipeNone:
-            return true
+//        case .swipeDelete:
+//            return true
+//        case .swipeArchive:
+//            return true
+//        case .swipeRead:
+//            return true
+//        case .swipeMove:
+//            return true
+//        case .swipeReport:
+//            return true
+//        case .swipeSpam:
+//            return true
+//        case .swipeReadAndArchive:
+//            return true
+//        case .swipeQuickAction:
+//            return true
+//        case .swipeNone:
+//            return true
         }
     }
 }

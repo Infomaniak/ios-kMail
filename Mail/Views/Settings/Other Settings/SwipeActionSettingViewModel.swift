@@ -16,23 +16,26 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import Foundation
 import MailCore
 import MailResources
 import SwiftUI
-import UIKit
 
-class ThemeSettingViewModel: SettingsSelectionViewModel {
-    private var content: [Theme] = [.system, .light, .dark]
+class SwipeActionSettingViewModel: SettingsSelectionViewModel {
+    public var swipeType: SwipeType
 
-    init() {
-        super.init(title: MailResourcesStrings.settingsTheme)
+    private var content: [SwipeAction] = SwipeAction.allCases
 
-        for (indice, theme) in content.enumerated() {
+    init(swipe: SwipeType) {
+        swipeType = swipe
+        super.init(title: swipe.title)
+
+        for (indice, action) in content.enumerated() {
             tableContent.append(
                 SettingsSelectionContent(
                     id: indice,
-                    view: AnyView(SettingsSelectionCellView(title: theme.title, image: theme.icon)),
-                    isSelected: theme == UserDefaults.shared.theme
+                    view: AnyView(SettingsSelectionCellView(title: action.title)),
+                    isSelected: action == swipeType.setting
                 )
             )
         }
@@ -40,10 +43,6 @@ class ThemeSettingViewModel: SettingsSelectionViewModel {
 
     override func updateSelection(newValue: Int) {
         super.updateSelection(newValue: newValue)
-        UserDefaults.shared.theme = content[newValue]
-
-        // TODO: - clean this
-        (UIApplication.shared.connectedScenes.first?.delegate as? SceneDelegate)?.window?
-            .overrideUserInterfaceStyle = content[newValue].interfaceStyle
+        swipeType.setting = content[newValue]
     }
 }

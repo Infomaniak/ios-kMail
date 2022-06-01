@@ -26,6 +26,10 @@ extension UserDefaults.Keys {
     static let threadDensity = UserDefaults.Keys(rawValue: "threadDensity")
     static let externalContent = UserDefaults.Keys(rawValue: "externalContent")
     static let theme = UserDefaults.Keys(rawValue: "theme")
+    static let swipeShortRight = UserDefaults.Keys(rawValue: "swipeShortRight")
+    static let swipeLongRight = UserDefaults.Keys(rawValue: "swipeLongRight")
+    static let swipeShortLeft = UserDefaults.Keys(rawValue: "swipeShortLeft")
+    static let swipeLongLeft = UserDefaults.Keys(rawValue: "swipeLongLeft")
 }
 
 public extension UserDefaults {
@@ -98,6 +102,42 @@ public extension UserDefaults {
         }
         set {
             setValue(newValue.rawValue, forKey: key(.theme))
+        }
+    }
+
+    var swipeShortRight: SwipeAction {
+        get {
+            return SwipeAction(rawValue: string(forKey: key(.swipeShortRight)) ?? "") ?? .none
+        }
+        set {
+            set(newValue.rawValue, forKey: key(.swipeShortRight))
+        }
+    }
+
+    var swipeLongRight: SwipeAction {
+        get {
+            return SwipeAction(rawValue: string(forKey: key(.swipeLongRight)) ?? "") ?? .none
+        }
+        set {
+            set(newValue.rawValue, forKey: key(.swipeLongRight))
+        }
+    }
+
+    var swipeShortLeft: SwipeAction {
+        get {
+            return SwipeAction(rawValue: string(forKey: key(.swipeShortLeft)) ?? "") ?? .none
+        }
+        set {
+            set(newValue.rawValue, forKey: key(.swipeShortLeft))
+        }
+    }
+
+    var swipeLongLeft: SwipeAction {
+        get {
+            return SwipeAction(rawValue: string(forKey: key(.swipeLongLeft)) ?? "") ?? .none
+        }
+        set {
+            set(newValue.rawValue, forKey: key(.swipeLongLeft))
         }
     }
 }

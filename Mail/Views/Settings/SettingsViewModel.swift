@@ -343,8 +343,14 @@ public enum ParameterRow: CaseIterable, Identifiable {
 //            return AnyView(SettingsSelectionView(viewModel: SettingsSelectionViewModel(page: .cancelDelay)))
 //        case .emailTransfer:
 //            return AnyView(SettingsSelectionView(viewModel: SettingsSelectionViewModel(page: .mailTransfer)))
-//        case .shortRight, .longRight, .shortLeft, .longLeft:
-//            return AnyView(SettingsSelectionView(viewModel: SettingsSelectionViewModel(page: .swipe)))
+        case .shortRight:
+            return AnyView(SettingsSelectionView(viewModel: SwipeActionSettingViewModel(swipe: .shortRight)))
+        case .longRight:
+            return AnyView(SettingsSelectionView(viewModel: SwipeActionSettingViewModel(swipe: .longRight)))
+        case .shortLeft:
+            return AnyView(SettingsSelectionView(viewModel: SwipeActionSettingViewModel(swipe: .shortLeft)))
+        case .longLeft:
+            return AnyView(SettingsSelectionView(viewModel: SwipeActionSettingViewModel(swipe: .longLeft)))
         default:
             return nil
         }
