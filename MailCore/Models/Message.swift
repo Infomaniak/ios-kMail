@@ -53,6 +53,7 @@ public class Message: Object, Decodable, Identifiable {
     @Persisted public var folderId: String
     @Persisted public var folder: String
     @Persisted public var references: String?
+    @Persisted public var preview: String
     @Persisted public var answered: Bool
     @Persisted public var isDuplicate: Bool?
     @Persisted public var isDraft: Bool
@@ -121,6 +122,7 @@ public class Message: Object, Decodable, Identifiable {
         case folderId
         case folder
         case references
+        case preview
         case answered
         case isDuplicate
         case isDraft
@@ -165,6 +167,7 @@ public class Message: Object, Decodable, Identifiable {
         folderId = try values.decode(String.self, forKey: .folderId)
         folder = try values.decode(String.self, forKey: .folder)
         references = try values.decodeIfPresent(String.self, forKey: .references)
+        preview = try values.decode(String.self, forKey: .preview)
         answered = try values.decode(Bool.self, forKey: .answered)
         isDuplicate = try values.decodeIfPresent(Bool.self, forKey: .isDuplicate)
         isDraft = try values.decode(Bool.self, forKey: .isDraft)
@@ -198,6 +201,7 @@ public class Message: Object, Decodable, Identifiable {
         folderId: String,
         folder: String,
         references: String? = nil,
+        preview: String,
         answered: Bool,
         isDuplicate: Bool? = nil,
         isDraft: Bool,
@@ -231,6 +235,7 @@ public class Message: Object, Decodable, Identifiable {
         self.folderId = folderId
         self.folder = folder
         self.references = references
+        self.preview = preview
         self.answered = answered
         self.isDuplicate = isDuplicate
         self.isDraft = isDraft
