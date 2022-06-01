@@ -406,6 +406,7 @@ public class MailboxManager: ObservableObject {
             if draft.uuid.isEmpty {
                 draft.uuid = Draft.uuidLocalPrefix + UUID().uuidString
             }
+            draft.date = Date()
             let copyDraft = draft.detached()
 
             // Update draft in Realm
@@ -437,6 +438,8 @@ public class MailboxManager: ObservableObject {
 
         for draft in draftOffline {
             let thread = Thread(draft: draft)
+            let from = Recipient(email: mailbox.email, name: mailbox.emailIdn)
+            thread.from.append(from)
             offlineDraftThread.append(thread)
         }
 

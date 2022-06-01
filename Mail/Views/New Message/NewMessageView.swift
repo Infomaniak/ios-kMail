@@ -29,6 +29,8 @@ struct NewMessageView: View {
     @State var editor = RichTextEditorModel()
     @State var showCc = false
 
+    @State private var draftHasChanged = false
+
     let defaultBody = "<div><br></div><div><br></div><div>Envoyé avec Infomaniak Mail pour iOS<br></div>"
 
     static var queue = DispatchQueue(label: "com.infomaniak.mail.saveDraft")
@@ -38,7 +40,8 @@ struct NewMessageView: View {
     init(isPresented: Binding<Bool>, mailboxManager: MailboxManager, draft: Draft? = nil) {
         _isPresented = isPresented
         self.mailboxManager = mailboxManager
-        self.selectedMailboxItem = AccountManager.instance.mailboxes.firstIndex { $0.mailboxId == mailboxManager.mailbox.mailboxId } ?? 0
+        selectedMailboxItem = AccountManager.instance.mailboxes
+            .firstIndex { $0.mailboxId == mailboxManager.mailbox.mailboxId } ?? 0
         guard let signatureResponse = mailboxManager.getSignatureResponse() else { fatalError() }
         self.draft = draft ?? Draft(messageUid: UUID().uuidString,
                                     body: defaultBody)
@@ -81,10 +84,6 @@ struct NewMessageView: View {
             .navigationBarBackButtonHidden(true)
             .navigationBarItems(leading:
                 Button {
-                    debouncedBufferWrite?.cancel()
-                    Task {
-                        await saveDraft()
-                    }
                     self.dismiss()
                 } label: {
                     Image(systemName: "xmark")
@@ -112,12 +111,21 @@ struct NewMessageView: View {
             self.mailboxManager = mailboxManager
             draft.identityId = "\(signatureResponse.defaultSignatureId)"
         }
+        .onDisappear {
+            if draftHasChanged {
+                debouncedBufferWrite?.cancel()
+                Task {
+                    await saveDraft()
+                }
+            }
+        }
         .navigationViewStyle(.stack)
         .accentColor(.black)
     }
 
     @MainActor private func send() async -> Bool {
         do {
+            draftHasChanged = false
             return try await mailboxManager.send(draft: draft)
         } catch {
             print("Error while sending email: \(error.localizedDescription)")
@@ -132,6 +140,7 @@ struct NewMessageView: View {
 
                 do {
                     _ = try await mailboxManager.save(draft: draft)
+                    draftHasChanged = false
                 } catch {
                     print("Error while saving draft: \(error.localizedDescription)")
                 }
@@ -140,6 +149,7 @@ struct NewMessageView: View {
     }
 
     private func textDidChange() {
+        draftHasChanged = true
         draft.isOffline = true
         debouncedBufferWrite?.cancel()
         let debouncedWorkItem = DispatchWorkItem {
