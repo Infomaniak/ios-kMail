@@ -33,7 +33,7 @@
       "location" : "https://github.com/Infomaniak/ios-core.git",
       "state" : {
         "branch" : "mail",
-        "revision" : "8885c6471f873d4a5f4e53682a06677e10d2fa5b"
+        "revision" : "b3fde539a8b93b29435a7716d8e10ed54d0e6b15"
       }
     },
     {
@@ -77,8 +77,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/realm/realm-core",
       "state" : {
-        "revision" : "d97eed3ae7dff2f2e2ffbda83fa8f3b8c445c6ba",
-        "version" : "11.17.0"
+        "revision" : "9e2f3cb730a546ff33e95c563a85e3cf61f17d17",
+        "version" : "12.0.0"
       }
     },
     {
@@ -86,8 +86,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/realm/realm-swift",
       "state" : {
-        "revision" : "7f123e48ec12926bb5080e449df360127ee0352d",
-        "version" : "10.26.0"
+        "revision" : "0762a9eb77929fdfbefa476ae62afed2b3e41bae",
+        "version" : "10.27.0"
       }
     },
     {
