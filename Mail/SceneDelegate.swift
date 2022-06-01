@@ -35,6 +35,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, AccountManagerDelegate 
         accountManager = AccountManager.instance
         window?.tintColor = MailResourcesAsset.infomaniakColor.color
         setupLaunch()
+        window?.overrideUserInterfaceStyle = UserDefaults.shared.theme.interfaceStyle
     }
 
     func sceneDidDisconnect(_ scene: UIScene) {

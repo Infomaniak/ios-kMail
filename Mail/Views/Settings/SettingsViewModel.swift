@@ -242,7 +242,7 @@ public enum ParameterRow: CaseIterable, Identifiable {
     }
 
     // TODO: - Fix description value
-    var description: String? {
+     var description: String? {
         switch self {
         case .threadDensity:
             return UserDefaults.shared.threadDensity.title
@@ -307,20 +307,20 @@ public enum ParameterRow: CaseIterable, Identifiable {
         }
     }
 
-    var destination: AnyView? {
+    @MainActor var destination: AnyView? {
         switch self {
         case .send:
             return AnyView(SettingsView(viewModel: SettingsViewModel(page: .sendPage)))
         case .threadDensity:
             return nil
         case .theme:
-            return AnyView(SettingsSelectionView(viewModel: SettingsSelectionViewModel(page: .theme)))
+            return AnyView(SettingsSelectionView(viewModel: ThemeSettingViewModel()))
         case .swipeActions:
             return AnyView(SettingsView(viewModel: SettingsViewModel(page: .swipeActions)))
-        case .messageDisplay:
-            return AnyView(SettingsSelectionView(viewModel: SettingsSelectionViewModel(page: .messageDisplay)))
-        case .externalContent:
-            return AnyView(SettingsSelectionView(viewModel: SettingsSelectionViewModel(page: .externalContent)))
+//        case .messageDisplay:
+//            return AnyView(SettingsSelectionView(viewModel: SettingsSelectionViewModel(page: .messageDisplay)))
+//        case .externalContent:
+//            return AnyView(SettingsSelectionView(viewModel: SettingsSelectionViewModel(page: .externalContent)))
         case .signature:
             return nil
         case .autoReply:
@@ -339,12 +339,12 @@ public enum ParameterRow: CaseIterable, Identifiable {
             return nil
         case .logs:
             return nil
-        case .cancelPeriod:
-            return AnyView(SettingsSelectionView(viewModel: SettingsSelectionViewModel(page: .cancelDelay)))
-        case .emailTransfer:
-            return AnyView(SettingsSelectionView(viewModel: SettingsSelectionViewModel(page: .mailTransfer)))
-        case .shortRight, .longRight, .shortLeft, .longLeft:
-            return AnyView(SettingsSelectionView(viewModel: SettingsSelectionViewModel(page: .swipe)))
+//        case .cancelPeriod:
+//            return AnyView(SettingsSelectionView(viewModel: SettingsSelectionViewModel(page: .cancelDelay)))
+//        case .emailTransfer:
+//            return AnyView(SettingsSelectionView(viewModel: SettingsSelectionViewModel(page: .mailTransfer)))
+//        case .shortRight, .longRight, .shortLeft, .longLeft:
+//            return AnyView(SettingsSelectionView(viewModel: SettingsSelectionViewModel(page: .swipe)))
         default:
             return nil
         }

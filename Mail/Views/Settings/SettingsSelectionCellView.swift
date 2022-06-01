@@ -19,28 +19,24 @@
 import SwiftUI
 
 struct SettingsSelectionCellView: View {
-    var row: ParameterSelectionRow
+    public var image: Image?
+    public var title: String
 
-    @State private var isSelected: Bool
-
-    init(row: ParameterSelectionRow) {
-        self.row = row
-        _isSelected = State(initialValue: row.isSelected)
+    public init(title: String, image: Image? = nil) {
+        self.title = title
+        self.image = image
     }
 
     var body: some View {
         HStack {
-            row.image
-            Text(row.title)
-            if isSelected {
-                Image(systemName: "checkmark")
-            }
+            image
+            Text(title)
         }
     }
 }
 
 struct SettingsSelectionCellView_Previews: PreviewProvider {
     static var previews: some View {
-        SettingsSelectionCellView(row: .messageDisplayThread)
+        SettingsSelectionCellView(title: "")
     }
 }

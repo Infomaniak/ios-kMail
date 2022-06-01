@@ -16,6 +16,35 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import MailCore
+import MailResources
+import SwiftUI
 import UIKit
 
-@MainActor class ThemeSettingViewModel {}
+class ThemeSettingViewModel: SettingsSelectionViewModel {
+    @Environment(\.window) private var window
+    private var content: [Theme] = [.system, .light, .dark]
+
+    init() {
+        super.init(title: MailResourcesStrings.settingsTheme)
+
+        for (indice, theme) in content.enumerated() {
+            tableContent.append(
+                SettingsSelectionContent(
+                    id: indice,
+                    view: AnyView(SettingsSelectionCellView(title: theme.title, image: theme.icon)),
+                    isSelected: theme == UserDefaults.shared.theme
+                )
+            )
+        }
+    }
+
+    override func updateSelection(newValue: Int) {
+        super.updateSelection(newValue: newValue)
+        UserDefaults.shared.theme = content[newValue]
+
+        // TODO: - clean this
+        (UIApplication.shared.connectedScenes.first?.delegate as? SceneDelegate)?.window?
+            .overrideUserInterfaceStyle = content[newValue].interfaceStyle
+    }
+}

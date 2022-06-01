@@ -18,6 +18,7 @@
 
 import Foundation
 import MailResources
+import SwiftUI
 import UIKit
 
 public enum Theme: String, CaseIterable {
@@ -42,6 +43,17 @@ public enum Theme: String, CaseIterable {
             return MailResourcesStrings.settingsOptionDarkTheme
         case .system:
             return MailResourcesStrings.settingsDefault
+        }
+    }
+
+    public var icon: Image {
+        switch self {
+        case .light:
+            return Image(uiImage: MailResourcesAsset.themeLight.image)
+        case .dark:
+            return Image(uiImage: MailResourcesAsset.themeDark.image)
+        case .system:
+            return Image(uiImage: MailResourcesAsset.themeTel.image)
         }
     }
 }

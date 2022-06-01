@@ -17,28 +17,47 @@
  */
 
 import SwiftUI
+import MailResources
 
 struct SettingsSelectionView: View {
-    @State var viewModel: SettingsSelectionViewModel
+    @StateObject var viewModel: SettingsSelectionViewModel
 
     init(viewModel: SettingsSelectionViewModel) {
-        self.viewModel = viewModel
+        _viewModel = StateObject(wrappedValue: viewModel)
     }
 
     var body: some View {
-        VStack {
-            Text(viewModel.page.description)
-            List {
-                ForEach(viewModel.tableContent) { row in
-                    SettingsSelectionCellView(row: row)
+        VStack(alignment: .leading, spacing: 15) {
+            if let title = viewModel.title {
+                SettingsSectionHeaderView(title: title, separator: false)
+            }
+
+            ScrollView {
+                VStack(alignment: .leading, spacing: 22) {
+                    ForEach(viewModel.tableContent) { element in
+                        HStack {
+                            element.view
+                                .textStyle(element.isSelected ? .button : .body)
+                            Spacer()
+                            if element.isSelected {
+                                Image(systemName: "checkmark")
+                                    .foregroundColor(MailResourcesAsset.infomaniakColor)
+                            }
+                        }
+                        .onTapGesture {
+                            viewModel.updateSelection(newValue: element.id)
+                        }
+                    }
                 }
             }
+            .padding([.leading, .trailing], 16)
         }
+        .padding(16)
     }
 }
 
 struct SettingsSelectionView_Previews: PreviewProvider {
     static var previews: some View {
-        SettingsSelectionView(viewModel: SettingsSelectionViewModel(page: .messageDisplay))
+        SettingsSelectionView(viewModel: ThemeSettingViewModel())
     }
 }
