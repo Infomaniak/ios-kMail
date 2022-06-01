@@ -31,34 +31,30 @@ struct MessageHeaderView: View {
     @EnvironmentObject var card: MessageCard
 
     var body: some View {
-        HStack(alignment: .top) {
-            if let recipient = message.from.first {
-                RecipientImage(recipient: recipient)
-                    .onTapGesture {
-                        openContact(recipient: recipient)
-                    }
-            }
-
-            VStack(alignment: .leading, spacing: 0) {
-                HStack(alignment: .firstTextBaseline, spacing: 8) {
-                    ForEach(message.from, id: \.self) { recipient in
-                        Text(recipient.title)
-                            .lineLimit(1)
-                            .layoutPriority(1)
-                            .textStyle(.header3)
-                    }
-                    Text(message.date, format: .dateTime)
-                        .lineLimit(1)
-                        .truncationMode(.middle)
-                        .textStyle(.calloutSecondary)
-                    Spacer()
-                    ChevronButton(isExpanded: $isExpanded)
+        if message.isDraft {
+            HStack(alignment: .top) {
+                if let recipient = message.from.first {
+                    RecipientImage(recipient: recipient)
+                        .onTapGesture {
+                            openContact(recipient: recipient)
+                        }
                 }
-
-                if isExpanded {
-                    if let email = message.from.first?.email {
-                        Text(email)
-                            .textStyle(.callout)
+                Button {
+                    // TODO: open edit Draft view
+                } label: {
+                    VStack(alignment: .leading, spacing: 0) {
+                        Text(MailResourcesStrings.messageIsDraftOption)
+                            .foregroundColor(MailResourcesAsset.destructiveActionColor)
+                            .textStyle(.header3)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                        Text("Lorem ipsum dolor sit amet, consectetur adipiscing elit." /* message.preview */ )
+                            .textStyle(.bodySecondary)
+                            .lineLimit(1)
+                    }
+                }
+            }
+            Spacer()
+        } else {
             if isCollapsed {
                 HStack(alignment: .top) {
                     if let recipient = message.from.first {
@@ -167,7 +163,6 @@ struct MessageHeaderView: View {
                 .frame(maxWidth: .infinity, alignment: .leading)
             }
         }
-        .frame(maxWidth: .infinity, alignment: .leading)
     }
 
     private func openContact(recipient: Recipient) {
