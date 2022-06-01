@@ -17,26 +17,21 @@
  */
 
 import Introspect
-import MailCore
-import MailResources
 import SwiftUI
 
-struct SettingsView: View {
-    var body: some View {
-        List {
-            NavigationLink {
-                AccountView()
-            } label: {
-                Text("Account")
+struct BackButtonDisplayModeModifier: ViewModifier {
+    let displayMode: UINavigationItem.BackButtonDisplayMode
+
+    func body(content: Content) -> some View {
+        content
+            .introspectViewController { viewController in
+                viewController.navigationItem.backButtonDisplayMode = displayMode
             }
-        }
-        .navigationBarTitle("Settings")
-        .backButtonDisplayMode(.minimal)
     }
 }
 
-struct SettingsView_Previews: PreviewProvider {
-    static var previews: some View {
-        SettingsView()
+extension View {
+    func backButtonDisplayMode(_ displayMode: UINavigationItem.BackButtonDisplayMode) -> some View {
+        modifier(BackButtonDisplayModeModifier(displayMode: displayMode))
     }
 }

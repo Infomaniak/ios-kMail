@@ -81,6 +81,7 @@ struct AccountView: View {
             Spacer()
         }
         .navigationBarTitle(MailResourcesStrings.titleMyAccount, displayMode: .inline)
+        .backButtonDisplayMode(.minimal)
         .padding([.top, .bottom], 30)
         .padding([.leading, .trailing], 18)
         .onAppear {
