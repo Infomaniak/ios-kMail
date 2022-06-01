@@ -30,7 +30,7 @@ struct MailboxesManagementView: View {
     @State private var unfoldDetails = false
 
     var body: some View {
-        DisclosureGroup(isExpanded: $unfoldDetails) {
+        DisclosureGroup(mailboxManager.mailbox.email, isExpanded: $unfoldDetails) {
             VStack(alignment: .leading) {
                 ForEach(
                     AccountManager.instance.mailboxes.filter { $0.mailboxId != mailboxManager.mailbox.mailboxId },
@@ -46,11 +46,8 @@ struct MailboxesManagementView: View {
             }
             .padding(.leading)
             .padding(.top, 5)
-        } label: {
-            Text(mailboxManager.mailbox.email)
-                .textStyle(.header3)
-                .lineLimit(1)
         }
+        .textStyle(.header3)
         .accentColor(Color(MailResourcesAsset.primaryTextColor.color))
         .padding(.top, 20)
     }

@@ -30,6 +30,8 @@ struct AttachmentsView: View {
         VStack(alignment: .leading, spacing: 22) {
             HStack {
                 Image(resource: MailResourcesAsset.attachmentMail2)
+                    .resizable()
+                    .scaledToFit()
                     .frame(width: 14)
                     .foregroundColor(MailResourcesAsset.secondaryTextColor)
 
@@ -40,7 +42,6 @@ struct AttachmentsView: View {
                 Button(MailResourcesStrings.buttonDownloadAll) {
                     // TODO: after complete attachment
                 }
-                .tint(MailResourcesAsset.infomaniakColor)
             }
             .font(.system(size: 14))
 

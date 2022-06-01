@@ -94,7 +94,6 @@ struct MessageHeaderView: View {
                             .frame(width: 20, height: 20)
                     }
                 }
-                .tint(MailResourcesAsset.infomaniakColor)
                 .padding(.top, 2)
                 .padding(.leading, 16)
             }

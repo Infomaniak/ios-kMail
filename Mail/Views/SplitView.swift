@@ -100,7 +100,6 @@ struct SplitView: View {
         .environmentObject(menuSheet)
         .environmentObject(settingsSheet)
         .environmentObject(navigationDrawerController)
-        .accentColor(Color(MailResourcesAsset.primaryTextColor.color))
         .onAppear {
             navigationDrawerController.window = window
         }

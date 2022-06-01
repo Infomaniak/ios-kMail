@@ -87,8 +87,8 @@ struct NewMessageView: View {
                     self.dismiss()
                 } label: {
                     Image(systemName: "xmark")
-                        .tint(MailResourcesAsset.primaryTextColor)
-                },
+                }
+                .tint(MailResourcesAsset.secondaryTextColor),
                 trailing:
                 Button {
                     Task {
@@ -120,7 +120,6 @@ struct NewMessageView: View {
             }
         }
         .navigationViewStyle(.stack)
-        .accentColor(.black)
     }
 
     @MainActor private func send() async -> Bool {
