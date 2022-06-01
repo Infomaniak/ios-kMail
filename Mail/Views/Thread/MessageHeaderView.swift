@@ -24,6 +24,7 @@ import SwiftUI
 struct MessageHeaderView: View {
     @ObservedRealmObject var message: Message
     @Binding var isExpanded: Bool
+    @Binding var isCollapsed: Bool
     let showActionButtons: Bool
 
     @EnvironmentObject var sheet: MessageSheet
@@ -58,44 +59,112 @@ struct MessageHeaderView: View {
                     if let email = message.from.first?.email {
                         Text(email)
                             .textStyle(.callout)
-                    }
-
-                    VStack(alignment: .leading) {
-                        RecipientLabel(title: MailResourcesStrings.toTitle, recipients: message.to)
-                        if !message.cc.isEmpty {
-                            RecipientLabel(title: MailResourcesStrings.ccTitle, recipients: message.cc)
-                        }
-                        if !message.bcc.isEmpty {
-                            RecipientLabel(title: MailResourcesStrings.bccTitle, recipients: message.bcc)
-                        }
-                    }
-                    .textStyle(.calloutSecondary)
-                    .padding(.top, 6)
-                } else {
-                    Text(message.recipients.map(\.title), format: .list(type: .and))
-                        .lineLimit(1)
-                        .textStyle(.calloutSecondary)
-                }
-            }
-            .padding(.top, 2)
-
-            if showActionButtons {
-                HStack(spacing: 24) {
-                    Button {
-                        sheet.state = .reply(message, .reply)
-                    } label: {
-                        Image(resource: MailResourcesAsset.reply)
-                            .frame(width: 20, height: 20)
+            if isCollapsed {
+                HStack(alignment: .top) {
+                    if let recipient = message.from.first {
+                        RecipientImage(recipient: recipient)
+                            .onTapGesture {
+                                openContact(recipient: recipient)
+                            }
                     }
                     Button {
-                        // TODO: Show menu
+                        isCollapsed.toggle()
                     } label: {
-                        Image(resource: MailResourcesAsset.plusActions)
-                            .frame(width: 20, height: 20)
+                        VStack(alignment: .leading, spacing: 0) {
+                            HStack(alignment: .firstTextBaseline, spacing: 8) {
+                                ForEach(message.from, id: \.self) { recipient in
+                                    Text(recipient.title)
+                                        .lineLimit(1)
+                                        .layoutPriority(1)
+                                        .textStyle(.header3)
+                                }
+                                Text(message.date, format: .dateTime)
+                                    .lineLimit(1)
+                                    .truncationMode(.middle)
+                                    .textStyle(.calloutSecondary)
+                                Spacer()
+                            }
+                            Text("Lorem ipsum dolor sit amet, consectetur adipiscing elit." /* message.preview */ )
+                                .textStyle(.bodySecondary)
+                                .lineLimit(1)
+                        }
                     }
                 }
-                .padding(.top, 2)
-                .padding(.leading, 16)
+                Spacer()
+            } else {
+                HStack(alignment: .top) {
+                    if let recipient = message.from.first {
+                        RecipientImage(recipient: recipient)
+                            .onTapGesture {
+                                openContact(recipient: recipient)
+                            }
+                    }
+                    Button {
+                        isCollapsed.toggle()
+                    } label: {
+                        VStack(alignment: .leading, spacing: 0) {
+                            HStack(alignment: .firstTextBaseline, spacing: 8) {
+                                ForEach(message.from, id: \.self) { recipient in
+                                    Text(recipient.title)
+                                        .lineLimit(1)
+                                        .layoutPriority(1)
+                                        .textStyle(.header3)
+                                }
+                                Text(message.date, format: .dateTime)
+                                    .lineLimit(1)
+                                    .truncationMode(.middle)
+                                    .textStyle(.calloutSecondary)
+                                Spacer()
+                                ChevronButton(isExpanded: $isExpanded)
+                            }
+
+                            if isExpanded {
+                                if let email = message.from.first?.email {
+                                    Text(email)
+                                        .textStyle(.callout)
+                                }
+
+                                VStack(alignment: .leading) {
+                                    RecipientLabel(title: MailResourcesStrings.toTitle, recipients: message.to)
+                                    if !message.cc.isEmpty {
+                                        RecipientLabel(title: MailResourcesStrings.ccTitle, recipients: message.cc)
+                                    }
+                                    if !message.bcc.isEmpty {
+                                        RecipientLabel(title: MailResourcesStrings.bccTitle, recipients: message.bcc)
+                                    }
+                                }
+                                .textStyle(.calloutSecondary)
+                                .padding(.top, 6)
+                            } else {
+                                Text(message.recipients.map(\.title), format: .list(type: .and))
+                                    .lineLimit(1)
+                                    .textStyle(.calloutSecondary)
+                            }
+                        }
+                    }
+                    .padding(.top, 2)
+
+                    if showActionButtons {
+                        HStack(spacing: 24) {
+                            Button {
+                                sheet.state = .reply(message, .reply)
+                            } label: {
+                                Image(resource: MailResourcesAsset.reply)
+                                    .frame(width: 20, height: 20)
+                            }
+                            Button {
+                                // TODO: Show menu
+                            } label: {
+                                Image(resource: MailResourcesAsset.plusActions)
+                                    .frame(width: 20, height: 20)
+                            }
+                        }
+                        .tint(MailResourcesAsset.infomaniakColor)
+                        .padding(.top, 2)
+                        .padding(.leading, 16)
+                    }
+                }
+                .frame(maxWidth: .infinity, alignment: .leading)
             }
         }
         .frame(maxWidth: .infinity, alignment: .leading)
@@ -109,8 +178,18 @@ struct MessageHeaderView: View {
 struct MessageHeaderView_Previews: PreviewProvider {
     static var previews: some View {
         Group {
-            MessageHeaderView(message: PreviewHelper.sampleMessage, isExpanded: .constant(false), showActionButtons: true)
-            MessageHeaderView(message: PreviewHelper.sampleMessage, isExpanded: .constant(true), showActionButtons: true)
+            MessageHeaderView(
+                message: PreviewHelper.sampleMessage,
+                isExpanded: .constant(false),
+                isCollapsed: .constant(false),
+                showActionButtons: true
+            )
+            MessageHeaderView(
+                message: PreviewHelper.sampleMessage,
+                isExpanded: .constant(true),
+                isCollapsed: .constant(true),
+                showActionButtons: true
+            )
         }
     }
 }
