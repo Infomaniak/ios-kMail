@@ -16,6 +16,32 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import MailResources
+import SwiftUI
 import UIKit
 
-@MainActor class MessageDisplayModeSettingViewModel {}
+class MessageDisplayModeSettingViewModel: SettingsSelectionViewModel {
+    private var content: [(title: String, image: UIImage, value: Bool)] = [
+        (title: MailResourcesStrings.settingsOptionDiscussions, image: MailResourcesAsset.conversationEmail.image, value: true),
+        (title: MailResourcesStrings.settingsOptionMessages, image: MailResourcesAsset.singleEmail.image, value: false)
+    ]
+
+    init() {
+        super.init(title: MailResourcesStrings.settingsMessageDisplayTitle)
+
+        for (indice, display) in content.enumerated() {
+            tableContent.append(
+                SettingsSelectionContent(
+                    id: indice,
+                    view: AnyView(SettingsSelectionCellView(title: display.title, image: Image(uiImage: display.image))),
+                    isSelected: display.value == UserDefaults.shared.threadMode
+                )
+            )
+        }
+    }
+
+    override func updateSelection(newValue: Int) {
+        super.updateSelection(newValue: newValue)
+        UserDefaults.shared.threadMode = content[newValue].value
+    }
+}

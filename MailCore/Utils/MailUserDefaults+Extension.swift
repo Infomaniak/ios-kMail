@@ -30,6 +30,7 @@ extension UserDefaults.Keys {
     static let swipeLongRight = UserDefaults.Keys(rawValue: "swipeLongRight")
     static let swipeShortLeft = UserDefaults.Keys(rawValue: "swipeShortLeft")
     static let swipeLongLeft = UserDefaults.Keys(rawValue: "swipeLongLeft")
+    static let threadMode = UserDefaults.Keys(rawValue: "threadMode")
 }
 
 public extension UserDefaults {
@@ -138,6 +139,15 @@ public extension UserDefaults {
         }
         set {
             set(newValue.rawValue, forKey: key(.swipeLongLeft))
+        }
+    }
+
+    var threadMode: Bool {
+        get {
+            return bool(forKey: key(.threadMode))
+        }
+        set {
+            set(newValue, forKey: key(.threadMode))
         }
     }
 }

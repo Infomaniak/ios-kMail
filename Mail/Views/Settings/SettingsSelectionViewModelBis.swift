@@ -22,7 +22,7 @@ import SwiftUI
 
 public enum SettingsSelectionPage: CaseIterable {
 //    case theme
-    case messageDisplay
+//    case messageDisplay
     case externalContent
     case cancelDelay
     case mailTransfer
@@ -32,8 +32,8 @@ public enum SettingsSelectionPage: CaseIterable {
         switch self {
 //        case .theme:
 //            return MailResourcesStrings.settingsThemeChoiceTitle
-        case .messageDisplay:
-            return MailResourcesStrings.settingsMessageDisplayTitle
+//        case .messageDisplay:
+//            return MailResourcesStrings.settingsMessageDisplayTitle
         case .externalContent:
             return MailResourcesStrings.settingsExternalContentTitle
         case .cancelDelay:
@@ -49,8 +49,8 @@ public enum SettingsSelectionPage: CaseIterable {
         switch self {
 //        case .theme:
 //            return MailResourcesStrings.settingsTheme
-        case .messageDisplay:
-            return MailResourcesStrings.settingsSelectDisplayModeDescription
+//        case .messageDisplay:
+//            return MailResourcesStrings.settingsSelectDisplayModeDescription
         case .externalContent:
             return MailResourcesStrings.settingsSelectDisplayModeDescription
         case .cancelDelay:
@@ -74,8 +74,8 @@ class SettingsSelectionViewModelBis: ObservableObject {
         switch page {
 //        case .theme:
 //            return [.themeDark, .themeLight, .themeDefault]
-        case .messageDisplay:
-            return [.messageDisplaySimple, .messageDisplayThread]
+//        case .messageDisplay:
+//            return [.messageDisplaySimple, .messageDisplayThread]
         case .externalContent:
             return [.externalContentAlways, .externalContentAskMe]
         case .cancelDelay:
@@ -107,8 +107,8 @@ public enum ParameterSelectionRow: CaseIterable, Identifiable {
 //    case themeDefault
 
     // messageDisplay
-    case messageDisplayThread
-    case messageDisplaySimple
+//    case messageDisplayThread
+//    case messageDisplaySimple
 
     // externalContent
     case externalContentAlways
@@ -138,10 +138,10 @@ public enum ParameterSelectionRow: CaseIterable, Identifiable {
     // TODO: - fix this
     public var image: Image? {
         switch self {
-        case .messageDisplayThread:
-            return Image(uiImage: MailResourcesAsset.conversationEmail.image)
-        case .messageDisplaySimple:
-            return Image(uiImage: MailResourcesAsset.singleEmail.image)
+//        case .messageDisplayThread:
+//            return Image(uiImage: MailResourcesAsset.conversationEmail.image)
+//        case .messageDisplaySimple:
+//            return Image(uiImage: MailResourcesAsset.singleEmail.image)
 //        case .themeDark:
 //            return nil
 //        case .themeLight:
@@ -155,10 +155,10 @@ public enum ParameterSelectionRow: CaseIterable, Identifiable {
 
     public var title: String {
         switch self {
-        case .messageDisplaySimple:
-            return MailResourcesStrings.settingsOptionMessages
-        case .messageDisplayThread:
-            return MailResourcesStrings.settingsOptionDiscussions
+//        case .messageDisplaySimple:
+//            return MailResourcesStrings.settingsOptionMessages
+//        case .messageDisplayThread:
+//            return MailResourcesStrings.settingsOptionDiscussions
 //        case .themeLight:
 //            return MailResourcesStrings.settingsOptionLightTheme
 //        case .themeDark:
@@ -215,10 +215,10 @@ public enum ParameterSelectionRow: CaseIterable, Identifiable {
 //            return true
 //        case .themeDefault:
 //            return true
-        case .messageDisplayThread:
-            return true
-        case .messageDisplaySimple:
-            return true
+//        case .messageDisplayThread:
+//            return true
+//        case .messageDisplaySimple:
+//            return true
         case .externalContentAlways:
             return true
         case .externalContentAskMe:
