@@ -341,8 +341,8 @@ public enum ParameterRow: CaseIterable, Identifiable {
             return nil
         case .cancelPeriod:
             return AnyView(SettingsSelectionView(viewModel: CancelDelaySettingViewModel()))
-//        case .emailTransfer:
-//            return AnyView(SettingsSelectionView(viewModel: SettingsSelectionViewModel(page: .mailTransfer)))
+        case .emailTransfer:
+            return AnyView(SettingsSelectionView(viewModel: ForwardModeSettingViewModel()))
         case .shortRight:
             return AnyView(SettingsSelectionView(viewModel: SwipeActionSettingViewModel(swipe: .shortRight)))
         case .longRight:

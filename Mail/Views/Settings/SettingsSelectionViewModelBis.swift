@@ -25,7 +25,7 @@ public enum SettingsSelectionPage: CaseIterable {
 //    case messageDisplay
     case externalContent
 //    case cancelDelay
-    case mailTransfer
+//    case mailTransfer
 //    case swipe
 
     public var title: String {
@@ -38,8 +38,8 @@ public enum SettingsSelectionPage: CaseIterable {
             return MailResourcesStrings.settingsExternalContentTitle
 //        case .cancelDelay:
 //            return MailResourcesStrings.settingsCancellationPeriodTitle
-        case .mailTransfer:
-            return MailResourcesStrings.settingsTransferEmailsTitle
+//        case .mailTransfer:
+//            return MailResourcesStrings.settingsTransferEmailsTitle
 //        case .swipe:
 //            return MailResourcesStrings.settingsSwipeActionsTitle
         }
@@ -55,8 +55,8 @@ public enum SettingsSelectionPage: CaseIterable {
             return MailResourcesStrings.settingsSelectDisplayModeDescription
 //        case .cancelDelay:
 //            return ""
-        case .mailTransfer:
-            return ""
+//        case .mailTransfer:
+//            return ""
 //        case .swipe:
 //            return ""
         }
@@ -80,8 +80,8 @@ class SettingsSelectionViewModelBis: ObservableObject {
             return [.externalContentAlways, .externalContentAskMe]
 //        case .cancelDelay:
 //            return [.cancelDelayDisabled, .cancelDelay10, .cancelDelay20, .cancelDelay30]
-        case .mailTransfer:
-            return [.mailTransferInBody, .mailTransferAsAttachment]
+//        case .mailTransfer:
+//            return [.mailTransferInBody, .mailTransferAsAttachment]
 //        case .swipe:
 //            return [
 //                .swipeDelete,
@@ -121,8 +121,8 @@ public enum ParameterSelectionRow: CaseIterable, Identifiable {
 //    case cancelDelay30
 
     // mailTransfer
-    case mailTransferInBody
-    case mailTransferAsAttachment
+//    case mailTransferInBody
+//    case mailTransferAsAttachment
 
     // swipe
 //    case swipeDelete
@@ -177,10 +177,10 @@ public enum ParameterSelectionRow: CaseIterable, Identifiable {
 //            return MailResourcesStrings.settingsDelaySeconds(20)
 //        case .cancelDelay30:
 //            return MailResourcesStrings.settingsDelaySeconds(30)
-        case .mailTransferInBody:
-            return MailResourcesStrings.settingsTransferInBody
-        case .mailTransferAsAttachment:
-            return MailResourcesStrings.settingsTransferAsAttachment
+//        case .mailTransferInBody:
+//            return MailResourcesStrings.settingsTransferInBody
+//        case .mailTransferAsAttachment:
+//            return MailResourcesStrings.settingsTransferAsAttachment
 //        case .swipeDelete:
 //            return MailResourcesStrings.settingsSwipeActionDelete
 //        case .swipeArchive:
@@ -231,10 +231,10 @@ public enum ParameterSelectionRow: CaseIterable, Identifiable {
 //            return true
 //        case .cancelDelay30:
 //            return true
-        case .mailTransferInBody:
-            return true
-        case .mailTransferAsAttachment:
-            return true
+//        case .mailTransferInBody:
+//            return true
+//        case .mailTransferAsAttachment:
+//            return true
 //        case .swipeDelete:
 //            return true
 //        case .swipeArchive:
