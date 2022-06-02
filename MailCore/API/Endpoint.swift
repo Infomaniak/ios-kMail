@@ -27,19 +27,6 @@ public extension ApiEnvironment {
     }
 }
 
-public extension Endpoint {
-    static let itemsPerPage = 200
-
-    func paginated(page: Int = 1) -> Endpoint {
-        let paginationQueryItems = [
-            URLQueryItem(name: "page", value: "\(page)"),
-            URLQueryItem(name: "per_page", value: "\(Endpoint.itemsPerPage)")
-        ]
-
-        return Endpoint(path: path, queryItems: (queryItems ?? []) + paginationQueryItems, apiEnvironment: apiEnvironment)
-    }
-}
-
 // MARK: - Endpoints
 
 public extension Endpoint {
@@ -82,9 +69,9 @@ public extension Endpoint {
         return .mailbox(uuid: uuid).appending(path: "/folder")
     }
 
-    static func threads(uuid: String, folderId: String, filter: String?) -> Endpoint {
+    static func threads(uuid: String, folderId: String, offset: Int = 0, filter: String?) -> Endpoint {
         return .folders(uuid: uuid).appending(path: "/\(folderId)/message", queryItems: [
-            URLQueryItem(name: "offset", value: "0"),
+            URLQueryItem(name: "offset", value: "\(offset)"),
             URLQueryItem(name: "thread", value: "on"),
             URLQueryItem(name: "filters", value: filter)
         ])

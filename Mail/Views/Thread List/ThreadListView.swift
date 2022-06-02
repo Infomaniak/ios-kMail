@@ -81,6 +81,9 @@ struct ThreadListView: View {
                             ? MailResourcesAsset.backgroundCardSelectedColor.color
                             : MailResourcesAsset.backgroundColor.color))
                     .modifier(ThreadListSwipeAction(thread: thread, viewModel: viewModel))
+                    .onAppear {
+                        viewModel.loadNextPageIfNeeded(currentItem: thread)
+                    }
                 }
                 .listStyle(.plain)
                 .introspectTableView { tableView in

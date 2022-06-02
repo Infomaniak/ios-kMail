@@ -28,7 +28,8 @@ typealias Thread = MailCore.Thread
     @Published var folder: Folder?
     @Published var threads: AnyRealmCollection<Thread>
 
-    var observationThreadToken: NotificationToken?
+    private var page = 1
+    private var observationThreadToken: NotificationToken?
 
     var filter = Filter.all {
         didSet {
@@ -42,24 +43,21 @@ typealias Thread = MailCore.Thread
         self.mailboxManager = mailboxManager
         self.folder = folder
 
+        let realm = mailboxManager.getRealm()
         if let folder = folder,
-           let cachedFolder = mailboxManager.getRealm().object(ofType: Folder.self, forPrimaryKey: folder.id) {
+           let cachedFolder = realm.object(ofType: Folder.self, forPrimaryKey: folder.id) {
             threads = AnyRealmCollection(cachedFolder.threads.sorted(by: \.date, ascending: false))
+            observeChanges()
         } else {
-            threads = AnyRealmCollection(mailboxManager.getRealm().objects(Thread.self)
-                .filter(NSPredicate(format: "FALSEPREDICATE")))
+            threads = AnyRealmCollection(realm.objects(Thread.self).filter(NSPredicate(format: "FALSEPREDICATE")))
         }
     }
 
-    func fetchThreads() async {
+    func fetchThreads(page: Int = 1) async {
         do {
             guard let folder = folder else { return }
-            try await mailboxManager.threads(folder: folder.freeze(), filter: filter)
-
-            if let cachedFolder = mailboxManager.getRealm().object(ofType: Folder.self, forPrimaryKey: folder.id) {
-                threads = AnyRealmCollection(cachedFolder.threads.sorted(by: \.date, ascending: false))
-                observeChanges()
-            }
+            try await mailboxManager.threads(folder: folder.freeze(), page: page, filter: filter)
+            self.page = page
         } catch {
             print("Error while getting threads: \(error)")
         }
@@ -68,12 +66,12 @@ typealias Thread = MailCore.Thread
 
     func updateThreads(with folder: Folder) {
         self.folder = folder
-        if let cachedFolder = mailboxManager.getRealm().object(ofType: Folder.self, forPrimaryKey: folder.id) {
+        let realm = mailboxManager.getRealm()
+        if let cachedFolder = realm.object(ofType: Folder.self, forPrimaryKey: folder.id) {
             threads = AnyRealmCollection(cachedFolder.threads.sorted(by: \.date, ascending: false))
             observeChanges()
         } else {
-            threads = AnyRealmCollection(mailboxManager.getRealm().objects(Thread.self)
-                .filter(NSPredicate(format: "FALSEPREDICATE")))
+            threads = AnyRealmCollection(realm.objects(Thread.self).filter(NSPredicate(format: "FALSEPREDICATE")))
         }
 
         Task {
@@ -82,6 +80,7 @@ typealias Thread = MailCore.Thread
     }
 
     func observeChanges() {
+        observationThreadToken?.invalidate()
         observationThreadToken = threads.observe(on: .main) { [weak self] changes in
             guard let self = self else { return }
             switch changes {
@@ -122,6 +121,16 @@ typealias Thread = MailCore.Thread
             _ = try await mailboxManager.toggleRead(thread: thread)
         } catch {
             print("Error while marking thread as seen: \(error.localizedDescription)")
+        }
+    }
+
+    func loadNextPageIfNeeded(currentItem: Thread) {
+        // Start loading next page when we reach the second-to-last item
+        let thresholdIndex = threads.index(threads.endIndex, offsetBy: -1)
+        if threads.firstIndex(where: { $0.uid == currentItem.uid }) == thresholdIndex {
+            Task {
+                await fetchThreads(page: page + 1)
+            }
         }
     }
 }

@@ -33,6 +33,8 @@ public extension ApiFetcher {
 public class MailApiFetcher: ApiFetcher {
     public static let clientId = "E90BC22D-67A8-452C-BE93-28DA33588CA4"
 
+    private let itemsPerPage = 50
+
     override public init() {
         super.init()
         ApiFetcher.decoder.dateDecodingStrategy = .iso8601
@@ -71,10 +73,13 @@ public class MailApiFetcher: ApiFetcher {
         try await perform(request: authenticatedRequest(.folders(uuid: mailbox.uuid))).data
     }
 
-    func threads(mailbox: Mailbox, folder: Folder, filter: Filter = .all) async throws -> ThreadResult {
-        try await perform(request: authenticatedRequest(.threads(uuid: mailbox.uuid, folderId: folder._id, filter: filter == .all
-                ? nil
-                : filter.rawValue))).data
+    func threads(mailbox: Mailbox, folder: Folder, page: Int, filter: Filter = .all) async throws -> ThreadResult {
+        try await perform(request: authenticatedRequest(.threads(
+            uuid: mailbox.uuid,
+            folderId: folder._id,
+            offset: (page - 1) * itemsPerPage,
+            filter: filter == .all ? nil : filter.rawValue
+        ))).data
     }
 
     func message(mailbox: Mailbox, message: Message) async throws -> Message {
