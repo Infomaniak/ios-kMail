@@ -27,7 +27,10 @@ class MessageDisplayModeSettingViewModel: SettingsSelectionViewModel {
     ]
 
     init() {
-        super.init(title: MailResourcesStrings.settingsMessageDisplayTitle)
+        super.init(
+            title: MailResourcesStrings.settingsMessageDisplayTitle,
+            header: MailResourcesStrings.settingsSelectDisplayModeDescription
+        )
 
         for (indice, display) in content.enumerated() {
             tableContent.append(

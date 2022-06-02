@@ -28,10 +28,12 @@ struct SettingsSelectionContent: Identifiable {
 @MainActor class SettingsSelectionViewModel: ObservableObject {
     @Published public var tableContent: [SettingsSelectionContent] = []
 
-    public var title: String?
+    public var title: String
+    public var header: String?
 
-    init(title: String? = nil) {
+    init(title: String, header: String? = nil) {
         self.title = title
+        self.header = header
     }
 
     public func updateSelection(newValue: Int) {

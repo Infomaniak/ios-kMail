@@ -28,8 +28,8 @@ struct SettingsSelectionView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 15) {
-            if let title = viewModel.title {
-                SettingsSectionHeaderView(title: title, separator: false)
+            if let header = viewModel.header {
+                SettingsSectionHeaderView(title: header, separator: false)
             }
 
             ScrollView {
@@ -52,6 +52,7 @@ struct SettingsSelectionView: View {
             }
             .padding([.leading, .trailing], 16)
         }
+        .navigationTitle(viewModel.title)
         .padding(16)
     }
 }

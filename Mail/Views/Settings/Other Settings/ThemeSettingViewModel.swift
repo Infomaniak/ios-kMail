@@ -25,7 +25,10 @@ class ThemeSettingViewModel: SettingsSelectionViewModel {
     private var content: [Theme] = [.system, .light, .dark]
 
     init() {
-        super.init(title: MailResourcesStrings.settingsTheme)
+        super.init(
+            title: MailResourcesStrings.settingsThemeChoiceTitle,
+            header: MailResourcesStrings.settingsTheme
+        )
 
         for (indice, theme) in content.enumerated() {
             tableContent.append(
