@@ -30,9 +30,9 @@ struct MessageView: View {
     @State var isCollapsed: Bool
     let showActionButtons: Bool
 
-    init(message: Message, isCollapse: Bool = true, showActionButtons: Bool = true) {
+    init(message: Message, isCollapsed: Bool = true, showActionButtons: Bool = true) {
         self.message = message
-        self.isCollapsed = isCollapse
+        self.isCollapsed = isCollapsed
         self.showActionButtons = showActionButtons
     }
 
