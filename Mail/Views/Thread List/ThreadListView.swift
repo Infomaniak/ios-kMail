@@ -59,30 +59,40 @@ struct ThreadListView: View {
             if viewModel.threads.isEmpty {
                 EmptyListView()
             } else {
-                List(viewModel.threads) { thread in
-                    Group {
-                        if currentFolder?.role == .draft {
-                            Button(action: {
-                                editDraft(from: thread)
-                            }, label: {
-                                ThreadListCell(mailboxManager: viewModel.mailboxManager, thread: thread)
-                            })
-                        } else {
-                            NavigationLink(destination: {
-                                ThreadView(mailboxManager: viewModel.mailboxManager, thread: thread)
-                                    .onAppear { selectedThread = thread }
-                            }, label: {
-                                ThreadListCell(mailboxManager: viewModel.mailboxManager, thread: thread)
-                            })
+                List {
+                    ForEach(viewModel.threads) { thread in
+                        Group {
+                            if currentFolder?.role == .draft {
+                                Button(action: {
+                                    editDraft(from: thread)
+                                }, label: {
+                                    ThreadListCell(mailboxManager: viewModel.mailboxManager, thread: thread)
+                                })
+                            } else {
+                                NavigationLink(destination: {
+                                    ThreadView(mailboxManager: viewModel.mailboxManager, thread: thread)
+                                        .onAppear { selectedThread = thread }
+                                }, label: {
+                                    ThreadListCell(mailboxManager: viewModel.mailboxManager, thread: thread)
+                                })
+                            }
+                        }
+                        .listRowSeparator(.hidden)
+                        .listRowBackground(Color(selectedThread == thread
+                                ? MailResourcesAsset.backgroundCardSelectedColor.color
+                                : MailResourcesAsset.backgroundColor.color))
+                        .modifier(ThreadListSwipeAction(thread: thread, viewModel: viewModel))
+                        .onAppear {
+                            viewModel.loadNextPageIfNeeded(currentItem: thread)
                         }
                     }
-                    .listRowSeparator(.hidden)
-                    .listRowBackground(Color(selectedThread == thread
-                            ? MailResourcesAsset.backgroundCardSelectedColor.color
-                            : MailResourcesAsset.backgroundColor.color))
-                    .modifier(ThreadListSwipeAction(thread: thread, viewModel: viewModel))
-                    .onAppear {
-                        viewModel.loadNextPageIfNeeded(currentItem: thread)
+
+                    if viewModel.isLoadingPage {
+                        HStack {
+                            Spacer()
+                            ProgressView()
+                            Spacer()
+                        }
                     }
                 }
                 .listStyle(.plain)
