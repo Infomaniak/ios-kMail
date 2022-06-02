@@ -355,20 +355,6 @@ public class MailboxManager: ObservableObject {
 
     // MARK: - Draft
 
-    public func draft(draftUuid: String) async throws -> Draft {
-        // Get from API
-        let draft = try await apiFetcher.draft(mailbox: mailbox, draftUuid: draftUuid)
-
-        let realm = getRealm()
-
-        // Update draft in Realm
-        try? realm.safeWrite {
-            realm.add(draft, update: .modified)
-        }
-
-        return draft
-    }
-
     public func draft(from message: Message) async throws -> Draft {
         // Get from API
         let draft = try await apiFetcher.draft(from: message)
