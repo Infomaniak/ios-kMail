@@ -31,7 +31,14 @@ public extension ApiEnvironment {
 
 public extension Endpoint {
     static func resource(_ resource: String, queryItems: [URLQueryItem]? = nil) -> Endpoint {
-        return Endpoint(hostKeypath: \.mailHost, path: resource, queryItems: queryItems)
+        let components = URLComponents(string: resource)
+        var mergedQueryItems = components?.queryItems
+        if mergedQueryItems == nil {
+            mergedQueryItems = queryItems
+        } else if let queryItems = queryItems {
+            mergedQueryItems?.append(contentsOf: queryItems)
+        }
+        return Endpoint(hostKeypath: \.mailHost, path: components?.path ?? resource, queryItems: mergedQueryItems)
     }
 
     private static var baseManager: Endpoint {

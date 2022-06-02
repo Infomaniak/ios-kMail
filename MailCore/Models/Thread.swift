@@ -20,7 +20,14 @@ import Foundation
 import RealmSwift
 
 public struct ThreadResult: Decodable {
-    let threads: [Thread]?
+    public let threads: [Thread]?
+    public let totalMessagesCount: Int
+    public let messagesCount: Int
+    public let currentOffset: Int
+    public let threadMode: String
+    public let folderUnseenMessages: Int
+    public let resourcePrevious: String?
+    public let resourceNext: String?
 }
 
 public class Thread: Object, Decodable, Identifiable {

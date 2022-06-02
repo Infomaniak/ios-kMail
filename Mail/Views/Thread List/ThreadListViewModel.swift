@@ -29,8 +29,7 @@ typealias Thread = MailCore.Thread
     @Published var threads: AnyRealmCollection<Thread>
     @Published var isLoadingPage = false
 
-    private var currentPage = 1
-    private var canLoadMorePages = true
+    private var resourceNext: String?
     private var observationThreadToken: NotificationToken?
 
     var filter = Filter.all {
@@ -55,8 +54,8 @@ typealias Thread = MailCore.Thread
         }
     }
 
-    func fetchThreads(page: Int = 1) async {
-        guard !isLoadingPage && canLoadMorePages else {
+    func fetchThreads() async {
+        guard !isLoadingPage else {
             return
         }
 
@@ -64,8 +63,26 @@ typealias Thread = MailCore.Thread
 
         do {
             guard let folder = folder else { return }
-            try await mailboxManager.threads(folder: folder.freeze(), page: page, filter: filter)
-            currentPage = page
+            let result = try await mailboxManager.threads(folder: folder.freeze(), filter: filter)
+            resourceNext = result.resourceNext
+        } catch {
+            print("Error while getting threads: \(error)")
+        }
+        isLoadingPage = false
+        mailboxManager.draftOffline()
+    }
+
+    func fetchNextPage() async {
+        guard !isLoadingPage, let resource = resourceNext else {
+            return
+        }
+
+        isLoadingPage = true
+
+        do {
+            guard let folder = folder else { return }
+            let result = try await mailboxManager.threads(folder: folder.freeze(), resource: resource)
+            resourceNext = result.resourceNext
         } catch {
             print("Error while getting threads: \(error)")
         }
@@ -138,7 +155,7 @@ typealias Thread = MailCore.Thread
         let thresholdIndex = threads.index(threads.endIndex, offsetBy: -1)
         if threads.firstIndex(where: { $0.uid == currentItem.uid }) == thresholdIndex {
             Task {
-                await fetchThreads(page: currentPage + 1)
+                await fetchNextPage()
             }
         }
     }

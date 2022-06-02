@@ -183,20 +183,32 @@ public class MailboxManager: ObservableObject {
 
     // MARK: - Thread
 
-    public func threads(folder: Folder, page: Int = 1, filter: Filter = .all) async throws {
-        // Get from Realm
-        guard ReachabilityListener.instance.currentStatus != .offline else {
-            return
-        }
+    public func threads(folder: Folder, filter: Filter = .all) async throws -> ThreadResult {
         // Get from API
-        let threadResult = try await apiFetcher.threads(mailbox: mailbox, folder: folder, page: page, filter: filter)
+        let threadResult = try await apiFetcher.threads(mailbox: mailbox, folder: folder, filter: filter)
 
+        // Save result
+        saveThreads(result: threadResult, parent: folder)
+
+        return threadResult
+    }
+
+    public func threads(folder: Folder, resource: String) async throws -> ThreadResult {
+        // Get from API
+        let threadResult = try await apiFetcher.threads(from: resource)
+
+        // Save result
+        saveThreads(result: threadResult, parent: folder)
+
+        return threadResult
+    }
+
+    private func saveThreads(result: ThreadResult, parent: Folder) {
+        guard let parentFolder = parent.thaw() else { return }
         let realm = getRealm()
 
-        guard let parentFolder = realm.object(ofType: Folder.self, forPrimaryKey: folder.id) else { return }
-
         let fetchedThreads = MutableSet<Thread>()
-        fetchedThreads.insert(objectsIn: threadResult.threads ?? [])
+        fetchedThreads.insert(objectsIn: result.threads ?? [])
 
         for thread in fetchedThreads {
             for message in thread.messages {
@@ -208,7 +220,7 @@ public class MailboxManager: ObservableObject {
         try? realm.safeWrite {
             realm.add(fetchedThreads, update: .modified)
             // Clean old threads after fetching first page
-            if page == 1 {
+            if result.currentOffset == 0 {
                 let toDeleteThreads = Set(parentFolder.threads).subtracting(Set(fetchedThreads))
                 let toDeleteMessages = Set(toDeleteThreads.flatMap(\.messages))
                 parentFolder.threads = fetchedThreads
