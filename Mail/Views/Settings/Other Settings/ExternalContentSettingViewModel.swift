@@ -16,6 +16,35 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import MailResources
+import SwiftUI
 import UIKit
 
-@MainActor class ExternalContentSettingViewModel {}
+class ExternalContentSettingViewModel: SettingsSelectionViewModel {
+    private var content: [(value: Bool, title: String)] = [
+        (value: true, title: MailResourcesStrings.settingsOptionAlways),
+        (value: false, title: MailResourcesStrings.settingsOptionAskMe)
+    ]
+
+    init() {
+        super.init(
+            title: MailResourcesStrings.settingsExternalContentTitle,
+            header: MailResourcesStrings.settingsSelectDisplayModeDescription
+        )
+
+        for (indice, mode) in content.enumerated() {
+            tableContent.append(
+                SettingsSelectionContent(
+                    id: indice,
+                    view: AnyView(SettingsSelectionCellView(title: mode.title)),
+                    isSelected: mode.value == UserDefaults.shared.displayExternalContent
+                )
+            )
+        }
+    }
+
+    override func updateSelection(newValue: Int) {
+        super.updateSelection(newValue: newValue)
+        UserDefaults.shared.displayExternalContent = content[newValue].value
+    }
+}

@@ -319,8 +319,8 @@ public enum ParameterRow: CaseIterable, Identifiable {
             return AnyView(SettingsView(viewModel: SettingsViewModel(page: .swipeActions)))
         case .messageDisplay:
             return AnyView(SettingsSelectionView(viewModel: MessageDisplayModeSettingViewModel()))
-//        case .externalContent:
-//            return AnyView(SettingsSelectionView(viewModel: SettingsSelectionViewModel(page: .externalContent)))
+        case .externalContent:
+            return AnyView(SettingsSelectionView(viewModel: ExternalContentSettingViewModel()))
         case .signature:
             return nil
         case .autoReply:
