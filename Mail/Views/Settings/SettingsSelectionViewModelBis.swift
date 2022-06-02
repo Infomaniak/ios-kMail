@@ -24,7 +24,7 @@ public enum SettingsSelectionPage: CaseIterable {
 //    case theme
 //    case messageDisplay
     case externalContent
-    case cancelDelay
+//    case cancelDelay
     case mailTransfer
 //    case swipe
 
@@ -36,8 +36,8 @@ public enum SettingsSelectionPage: CaseIterable {
 //            return MailResourcesStrings.settingsMessageDisplayTitle
         case .externalContent:
             return MailResourcesStrings.settingsExternalContentTitle
-        case .cancelDelay:
-            return MailResourcesStrings.settingsCancellationPeriodTitle
+//        case .cancelDelay:
+//            return MailResourcesStrings.settingsCancellationPeriodTitle
         case .mailTransfer:
             return MailResourcesStrings.settingsTransferEmailsTitle
 //        case .swipe:
@@ -53,8 +53,8 @@ public enum SettingsSelectionPage: CaseIterable {
 //            return MailResourcesStrings.settingsSelectDisplayModeDescription
         case .externalContent:
             return MailResourcesStrings.settingsSelectDisplayModeDescription
-        case .cancelDelay:
-            return ""
+//        case .cancelDelay:
+//            return ""
         case .mailTransfer:
             return ""
 //        case .swipe:
@@ -78,8 +78,8 @@ class SettingsSelectionViewModelBis: ObservableObject {
 //            return [.messageDisplaySimple, .messageDisplayThread]
         case .externalContent:
             return [.externalContentAlways, .externalContentAskMe]
-        case .cancelDelay:
-            return [.cancelDelayDisabled, .cancelDelay10, .cancelDelay20, .cancelDelay30]
+//        case .cancelDelay:
+//            return [.cancelDelayDisabled, .cancelDelay10, .cancelDelay20, .cancelDelay30]
         case .mailTransfer:
             return [.mailTransferInBody, .mailTransferAsAttachment]
 //        case .swipe:
@@ -115,10 +115,10 @@ public enum ParameterSelectionRow: CaseIterable, Identifiable {
     case externalContentAskMe
 
     // cancelDelay
-    case cancelDelayDisabled
-    case cancelDelay10
-    case cancelDelay20
-    case cancelDelay30
+//    case cancelDelayDisabled
+//    case cancelDelay10
+//    case cancelDelay20
+//    case cancelDelay30
 
     // mailTransfer
     case mailTransferInBody
@@ -169,14 +169,14 @@ public enum ParameterSelectionRow: CaseIterable, Identifiable {
             return MailResourcesStrings.settingsOptionAlways
         case .externalContentAskMe:
             return MailResourcesStrings.settingsOptionAskMe
-        case .cancelDelayDisabled:
-            return MailResourcesStrings.settingsDisabled
-        case .cancelDelay10:
-            return MailResourcesStrings.settingsDelaySeconds(10)
-        case .cancelDelay20:
-            return MailResourcesStrings.settingsDelaySeconds(20)
-        case .cancelDelay30:
-            return MailResourcesStrings.settingsDelaySeconds(30)
+//        case .cancelDelayDisabled:
+//            return MailResourcesStrings.settingsDisabled
+//        case .cancelDelay10:
+//            return MailResourcesStrings.settingsDelaySeconds(10)
+//        case .cancelDelay20:
+//            return MailResourcesStrings.settingsDelaySeconds(20)
+//        case .cancelDelay30:
+//            return MailResourcesStrings.settingsDelaySeconds(30)
         case .mailTransferInBody:
             return MailResourcesStrings.settingsTransferInBody
         case .mailTransferAsAttachment:
@@ -223,14 +223,14 @@ public enum ParameterSelectionRow: CaseIterable, Identifiable {
             return true
         case .externalContentAskMe:
             return true
-        case .cancelDelayDisabled:
-            return true
-        case .cancelDelay10:
-            return true
-        case .cancelDelay20:
-            return true
-        case .cancelDelay30:
-            return true
+//        case .cancelDelayDisabled:
+//            return true
+//        case .cancelDelay10:
+//            return true
+//        case .cancelDelay20:
+//            return true
+//        case .cancelDelay30:
+//            return true
         case .mailTransferInBody:
             return true
         case .mailTransferAsAttachment:

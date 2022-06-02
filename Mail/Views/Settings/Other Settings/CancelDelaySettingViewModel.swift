@@ -16,6 +16,31 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import MailResources
+import SwiftUI
 import UIKit
 
-@MainActor class CancelDelaySettingViewModel {}
+class CancelDelaySettingViewModel: SettingsSelectionViewModel {
+    private var content: [Int] = [0, 10, 15, 20, 25, 30]
+
+    init() {
+        super.init(title: MailResourcesStrings.settingsCancellationPeriodTitle)
+
+        for (indice, value) in content.enumerated() {
+            tableContent.append(
+                SettingsSelectionContent(
+                    id: indice,
+                    view: AnyView(SettingsSelectionCellView(title: indice == 0
+                            ? MailResourcesStrings.settingsDisabled
+                            : MailResourcesStrings.settingsDelaySeconds(value))),
+                    isSelected: value == UserDefaults.shared.cancelSendDelay
+                )
+            )
+        }
+    }
+
+    override func updateSelection(newValue: Int) {
+        super.updateSelection(newValue: newValue)
+        UserDefaults.shared.cancelSendDelay = content[newValue]
+    }
+}

@@ -31,6 +31,7 @@ extension UserDefaults.Keys {
     static let swipeShortLeft = UserDefaults.Keys(rawValue: "swipeShortLeft")
     static let swipeLongLeft = UserDefaults.Keys(rawValue: "swipeLongLeft")
     static let threadMode = UserDefaults.Keys(rawValue: "threadMode")
+    static let cancelDelay = UserDefaults.Keys(rawValue: "cancelDelay")
 }
 
 public extension UserDefaults {
@@ -148,6 +149,15 @@ public extension UserDefaults {
         }
         set {
             set(newValue, forKey: key(.threadMode))
+        }
+    }
+
+    var cancelSendDelay: Int {
+        get {
+            return integer(forKey: key(.cancelDelay))
+        }
+        set {
+            set(newValue, forKey: key(.cancelDelay))
         }
     }
 }
