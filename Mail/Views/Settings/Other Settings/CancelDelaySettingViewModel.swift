@@ -20,7 +20,7 @@ import MailResources
 import SwiftUI
 import UIKit
 
-class CancelDelaySettingViewModel: SettingsSelectionViewModel {
+@MainActor class CancelDelaySettingViewModel: SettingsSelectionViewModel {
     private var content: [Int] = [0, 10, 15, 20, 25, 30]
 
     init() {

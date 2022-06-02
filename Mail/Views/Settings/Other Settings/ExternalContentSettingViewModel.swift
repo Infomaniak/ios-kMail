@@ -20,7 +20,7 @@ import MailResources
 import SwiftUI
 import UIKit
 
-class ExternalContentSettingViewModel: SettingsSelectionViewModel {
+@MainActor class ExternalContentSettingViewModel: SettingsSelectionViewModel {
     private var content: [(value: Bool, title: String)] = [
         (value: true, title: MailResourcesStrings.settingsOptionAlways),
         (value: false, title: MailResourcesStrings.settingsOptionAskMe)

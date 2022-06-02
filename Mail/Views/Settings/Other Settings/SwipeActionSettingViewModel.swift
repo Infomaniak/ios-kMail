@@ -21,7 +21,7 @@ import MailCore
 import MailResources
 import SwiftUI
 
-class SwipeActionSettingViewModel: SettingsSelectionViewModel {
+@MainActor class SwipeActionSettingViewModel: SettingsSelectionViewModel {
     public var swipeType: SwipeType
 
     private var content: [SwipeAction] = SwipeAction.allCases

@@ -20,7 +20,7 @@ import MailResources
 import SwiftUI
 import UIKit
 
-class MessageDisplayModeSettingViewModel: SettingsSelectionViewModel {
+@MainActor class MessageDisplayModeSettingViewModel: SettingsSelectionViewModel {
     private var content: [(title: String, image: UIImage, value: Bool)] = [
         (title: MailResourcesStrings.settingsOptionDiscussions, image: MailResourcesAsset.conversationEmail.image, value: true),
         (title: MailResourcesStrings.settingsOptionMessages, image: MailResourcesAsset.singleEmail.image, value: false)

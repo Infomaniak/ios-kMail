@@ -21,7 +21,7 @@ import MailCore
 import MailResources
 import SwiftUI
 
-class ForwardModeSettingViewModel: SettingsSelectionViewModel {
+@MainActor class ForwardModeSettingViewModel: SettingsSelectionViewModel {
     private var content = ForwardMode.allCases
 
     init() {

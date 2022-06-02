@@ -21,7 +21,7 @@ import MailResources
 import SwiftUI
 import UIKit
 
-class ThemeSettingViewModel: SettingsSelectionViewModel {
+@MainActor class ThemeSettingViewModel: SettingsSelectionViewModel {
     private var content: [Theme] = [.system, .light, .dark]
 
     init() {
