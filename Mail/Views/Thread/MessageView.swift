@@ -61,7 +61,7 @@ struct MessageView: View {
             }
             .padding([.leading, .trailing], 16)
 
-            if !isCollapse {
+            if !isCollapsed {
                 GeometryReader { proxy in
                     WebView(model: $model, dynamicHeight: $webViewHeight, proxy: proxy)
                         .frame(height: webViewHeight)

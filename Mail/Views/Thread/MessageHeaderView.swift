@@ -43,11 +43,20 @@ struct MessageHeaderView: View {
                     // TODO: open edit Draft view
                 } label: {
                     VStack(alignment: .leading, spacing: 0) {
-                        Text(MailResourcesStrings.messageIsDraftOption)
-                            .foregroundColor(MailResourcesAsset.destructiveActionColor)
-                            .textStyle(.header3)
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                        Text("Lorem ipsum dolor sit amet, consectetur adipiscing elit." /* message.preview */ )
+                        HStack {
+                            Text(MailResourcesStrings.messageIsDraftOption)
+                                .foregroundColor(MailResourcesAsset.destructiveActionColor)
+                                .textStyle(.header3)
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                            Button {
+                                // TODO: Delete Draft
+                            } label: {
+                                Image(resource: MailResourcesAsset.bin)
+                            }
+                        }
+                        .tint(MailResourcesAsset.destructiveActionColor)
+
+                        Text("Lorem ipsum dolor sit amet" /* message.preview */ )
                             .textStyle(.bodySecondary)
                             .lineLimit(1)
                     }
