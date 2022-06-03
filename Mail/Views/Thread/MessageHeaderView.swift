@@ -27,6 +27,7 @@ struct MessageHeaderView: View {
     @Binding var isCollapsed: Bool
     let showActionButtons: Bool
 
+    @EnvironmentObject var mailboxManager: MailboxManager
     @EnvironmentObject var sheet: MessageSheet
     @EnvironmentObject var card: MessageCard
 
@@ -40,7 +41,7 @@ struct MessageHeaderView: View {
                         }
                 }
                 Button {
-                    // TODO: open edit Draft view
+                    editDraft(from: message)
                 } label: {
                     VStack(alignment: .leading, spacing: 0) {
                         HStack {
@@ -176,6 +177,24 @@ struct MessageHeaderView: View {
 
     private func openContact(recipient: Recipient) {
         card.state = .contact(recipient)
+    }
+
+    private func editDraft(from message: Message) {
+        var sheetPresented = false
+
+        // If we already have the draft locally, present it directly
+        if let draft = mailboxManager.draft(messageUid: message.uid)?.detached() {
+            sheet.state = .edit(draft)
+            sheetPresented = true
+        }
+
+        // Update the draft
+        Task { [sheetPresented] in
+            let draft = try await mailboxManager.draft(from: message)
+            if !sheetPresented {
+                sheet.state = .edit(draft)
+            }
+        }
     }
 }
 

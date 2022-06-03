@@ -25,6 +25,7 @@ class MessageSheet: SheetState<MessageSheet.State> {
     enum State: Equatable {
         case attachment(Attachment)
         case reply(Message, ReplyMode)
+        case edit(Draft)
     }
 }
 
@@ -140,6 +141,8 @@ struct ThreadView: View {
                 AttachmentPreview(isPresented: $sheet.isShowing, attachment: attachment)
             case let .reply(message, replyMode):
                 NewMessageView(isPresented: $sheet.isShowing, mailboxManager: mailboxManager, draft: Draft.replying(to: message, mode: replyMode))
+            case let .edit(draft):
+                NewMessageView(isPresented: $sheet.isShowing, mailboxManager: mailboxManager, draft: draft)
             case .none:
                 EmptyView()
             }
