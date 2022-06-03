@@ -68,8 +68,13 @@ class NavigationDrawerController: ObservableObject {
                     self.dragOffset = CGSize(width: -windowSize.width, height: -windowSize.height)
                 }
                 self.close()
+                self.isDragging = false
+            } else {
+                withAnimation {
+                    self.dragOffset = .zero
+                }
+                self.isDragging = false
             }
-            self.isDragging = false
         }
 
     func getOffset(size: CGSize) -> CGSize {
