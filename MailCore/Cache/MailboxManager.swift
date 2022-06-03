@@ -175,9 +175,17 @@ public class MailboxManager: ObservableObject {
         }
     }
 
-    public func getFolder(with role: FolderRole, using realm: Realm? = nil) -> Folder? {
+    /// Get the folder with the corresponding role in Realm.
+    /// - Parameters:
+    ///   - role: Role of the folder.
+    ///   - realm: The Realm instance to use. If this parameter is `nil`, a new one will be created.
+    ///   - shouldRefresh: If `true`, the Realm instance will be refreshed before trying to get the folder.
+    /// - Returns: The folder with the corresponding role, or `nil` if no such folder has been found.
+    public func getFolder(with role: FolderRole, using realm: Realm? = nil, shouldRefresh: Bool = false) -> Folder? {
         let realm = realm ?? getRealm()
-        realm.autorefresh = true
+        if shouldRefresh {
+            realm.refresh()
+        }
         return realm.objects(Folder.self).where { $0.role == role }.first
     }
 

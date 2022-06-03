@@ -154,6 +154,6 @@ struct SplitView: View {
     }
 
     private func getInbox() -> Folder? {
-        return mailboxManager.getFolder(with: .inbox)
+        return mailboxManager.getFolder(with: .inbox, shouldRefresh: true)
     }
 }
