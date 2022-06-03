@@ -44,10 +44,10 @@ struct UserFoldersListView: View {
                     FolderCell(currentFolder: folder, selectedFolder: $selectedFolder, isCompact: isCompact)
                     .padding([.top, .bottom], Constants.menuDrawerFolderCellPadding)
                 }
-                .accentColor(Color(InfomaniakCoreAsset.infomaniakColor.color))
             }
             .padding(.top, 9)
         }
+        .textStyle(.body)
         .accentColor(Color(MailResourcesAsset.primaryTextColor.color))
     }
 }

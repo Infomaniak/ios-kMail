@@ -20,6 +20,7 @@ import InfomaniakCore
 import MailCore
 import SwiftUI
 import UIKit
+import MailResources
 
 class SceneDelegate: UIResponder, UIWindowSceneDelegate, AccountManagerDelegate {
     var window: UIWindow?
@@ -32,6 +33,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, AccountManagerDelegate 
         // This delegate does not imply the connecting scene or session are new (see `application:configurationForConnectingSceneSession` instead).
         guard let _ = (scene as? UIWindowScene) else { return }
         accountManager = AccountManager.instance
+        window?.tintColor = MailResourcesAsset.infomaniakColor.color
         setupLaunch()
     }
 

@@ -67,8 +67,8 @@ struct LoginView: View {
                         isPresented.wrappedValue = false
                     } label: {
                         Image(systemName: "xmark")
-                            .tint(MailResourcesAsset.primaryTextColor)
                     }
+                    .tint(MailResourcesAsset.secondaryTextColor)
                 } else {
                     EmptyView()
                 }

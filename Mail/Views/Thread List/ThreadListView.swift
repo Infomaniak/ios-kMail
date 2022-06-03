@@ -115,6 +115,7 @@ struct ThreadListView: View {
                 .font: UIFont.systemFont(ofSize: 22, weight: .semibold)
             ]
 
+            navigationController.navigationBar.tintColor = MailResourcesAsset.secondaryTextColor.color
             navigationController.navigationBar.standardAppearance = navigationBarAppearance
             navigationController.navigationBar.compactAppearance = navigationBarAppearance
             navigationController.navigationBar.scrollEdgeAppearance = navigationBarAppearance
@@ -212,7 +213,6 @@ private struct ThreadListNavigationBar: ViewModifier {
                         } label: {
                             Image(resource: MailResourcesAsset.burger)
                         }
-                        .tint(MailResourcesAsset.secondaryTextColor)
                     }
                 }
             }

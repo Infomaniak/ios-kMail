@@ -42,6 +42,7 @@ struct MailboxesManagementButtonView: View {
             }
 
             Text(text)
+                .textStyle(.body)
                 .lineLimit(1)
         }
         .padding([.top, .bottom], 5)
