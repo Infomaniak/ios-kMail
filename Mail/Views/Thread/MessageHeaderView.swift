@@ -84,7 +84,7 @@ struct MessageHeaderView: View {
                     Button {
                         sheet.state = .reply(message, .reply)
                     } label: {
-                        Image(resource: MailResourcesAsset.reply)
+                        Image(resource: MailResourcesAsset.emailActionReply)
                             .frame(width: 20, height: 20)
                     }
                     Button {

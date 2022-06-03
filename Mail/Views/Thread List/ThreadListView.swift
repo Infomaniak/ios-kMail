@@ -30,6 +30,12 @@ class MenuSheet: SheetState<MenuSheet.State> {
     }
 }
 
+class ThreadCard: CardState<ThreadCard.State> {
+    enum State: Equatable {
+        case actions(Thread)
+    }
+}
+
 struct ThreadListView: View {
     @StateObject var viewModel: ThreadListViewModel
 
@@ -40,6 +46,7 @@ struct ThreadListView: View {
 
     @State private var avatarImage = Image(resource: MailResourcesAsset.placeholderAvatar)
     @State private var selectedThread: Thread?
+    @StateObject private var card = ThreadCard()
 
     let isCompact: Bool
 
@@ -81,7 +88,7 @@ struct ThreadListView: View {
                         .listRowBackground(Color(selectedThread == thread
                                 ? MailResourcesAsset.backgroundCardSelectedColor.color
                                 : MailResourcesAsset.backgroundColor.color))
-                        .modifier(ThreadListSwipeAction(thread: thread, viewModel: viewModel))
+                        .modifier(ThreadListSwipeAction(thread: thread, viewModel: viewModel, card: card))
                         .onAppear {
                             viewModel.loadNextPageIfNeeded(currentItem: thread)
                         }
@@ -116,6 +123,17 @@ struct ThreadListView: View {
                 }
             } label: {
                 EmptyView()
+            }
+
+            if card.cardShown {
+                switch card.state {
+                case .actions(_):
+                    BottomCard(cardShown: $card.cardShown, cardDismissal: $card.cardDismissal, height: 500) {
+                        ActionsView()
+                    }
+                case .none:
+                    EmptyView()
+                }
             }
         }
         .backButtonDisplayMode(.minimal)
@@ -235,6 +253,7 @@ private struct ThreadListNavigationBar: ViewModifier {
 private struct ThreadListSwipeAction: ViewModifier {
     let thread: Thread
     let viewModel: ThreadListViewModel
+    @ObservedObject var card: ThreadCard
 
     func body(content: Content) -> some View {
         content
@@ -259,7 +278,7 @@ private struct ThreadListSwipeAction: ViewModifier {
                 .tint(MailResourcesAsset.destructiveActionColor)
 
                 Button {
-                    // TODO: Display menu
+                    card.state = .actions(thread)
                 } label: {
                     Image(resource: MailResourcesAsset.navigationMenu)
                 }

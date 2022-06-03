@@ -105,7 +105,7 @@ struct ThreadView: View {
                         sheet.state = .reply(message, .reply)
                     } label: {
                         VStack(spacing: 0) {
-                            Image(resource: MailResourcesAsset.reply)
+                            Image(resource: MailResourcesAsset.emailActionReply)
                             Text(MailResourcesStrings.buttonReply)
                         }
                     }
@@ -115,7 +115,7 @@ struct ThreadView: View {
                         sheet.state = .reply(message, .forward)
                     } label: {
                         VStack(spacing: 0) {
-                            Image(resource: MailResourcesAsset.forward)
+                            Image(resource: MailResourcesAsset.emailActionTransfer)
                             Text(MailResourcesStrings.buttonForward)
                         }
                     }
