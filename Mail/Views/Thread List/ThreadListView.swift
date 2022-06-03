@@ -105,6 +105,7 @@ struct ThreadListView: View {
                 EmptyView()
             }
         }
+        .backButtonDisplayMode(.minimal)
         .introspectNavigationController { navigationController in
             let navigationBarAppearance = UINavigationBarAppearance()
             navigationBarAppearance.configureWithTransparentBackground()

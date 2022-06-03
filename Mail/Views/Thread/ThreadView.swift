@@ -73,6 +73,7 @@ struct ThreadView: View {
                 }
             }
             .navigationTitle(thread.formattedSubject)
+            .backButtonDisplayMode(.minimal)
             .onAppear {
                 MatomoUtils.track(view: ["MessageView"])
                 // Style toolbar
