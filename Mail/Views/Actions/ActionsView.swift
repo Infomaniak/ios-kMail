@@ -37,13 +37,13 @@ struct ActionsView: View {
             // Quick actions
             HStack(spacing: 28) {
                 ForEach(viewModel.quickActions) { action in
-                    QuickActionView(action: action)
+                    QuickActionView(viewModel: viewModel, action: action)
                 }
             }
             SeparatorView(withPadding: false, fullWidth: true)
             // Actions
             ForEach(viewModel.listActions) { action in
-                ActionView(action: action)
+                ActionView(viewModel: viewModel, action: action)
             }
         }
         .padding([.leading, .trailing], 32)
@@ -59,11 +59,12 @@ struct ActionsView_Previews: PreviewProvider {
 }
 
 struct QuickActionView: View {
+    @ObservedObject var viewModel: ActionsViewModel
     let action: Action
 
     var body: some View {
         Button {
-            // TODO: Action
+            viewModel.didTap(action: action)
         } label: {
             VStack(spacing: 8) {
                 ZStack {
@@ -87,11 +88,12 @@ struct QuickActionView: View {
 }
 
 struct ActionView: View {
+    @ObservedObject var viewModel: ActionsViewModel
     let action: Action
 
     var body: some View {
         Button {
-            // TODO: Action
+            viewModel.didTap(action: action)
         } label: {
             HStack {
                 Image(resource: action.icon)

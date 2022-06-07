@@ -77,4 +77,9 @@ enum ActionsTarget {
             .editMenu
         ]
     }
+
+    func didTap(action: Action) {
+        // TODO: Handle action
+        print("Did tap on action: \"\(action.title)\"")
+    }
 }
