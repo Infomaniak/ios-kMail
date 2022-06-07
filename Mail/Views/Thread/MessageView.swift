@@ -41,8 +41,8 @@ struct MessageView: View {
             Group {
                 MessageHeaderView(
                     message: message,
-                    isExpanded: $isHeaderExpanded,
-                    isCollapsed: $isCollapsed,
+                    isHeaderExpanded: $isHeaderExpanded,
+                    isMessageExpanded: $isCollapsed,
                     showActionButtons: showActionButtons
                 )
 

@@ -23,8 +23,8 @@ import SwiftUI
 
 struct MessageHeaderView: View {
     @ObservedRealmObject var message: Message
-    @Binding var isExpanded: Bool
-    @Binding var isCollapsed: Bool
+    @Binding var isHeaderExpanded: Bool
+    @Binding var isMessageExpanded: Bool
     let showActionButtons: Bool
 
     @EnvironmentObject var mailboxManager: MailboxManager
@@ -65,7 +65,7 @@ struct MessageHeaderView: View {
             }
             Spacer()
         } else {
-            if isCollapsed {
+            if isMessageExpanded {
                 HStack(alignment: .top) {
                     if let recipient = message.from.first {
                         RecipientImage(recipient: recipient)
@@ -74,10 +74,10 @@ struct MessageHeaderView: View {
                             }
                     }
                     Button {
-                        isCollapsed.toggle()
+                        isMessageExpanded.toggle()
                     } label: {
                         VStack(alignment: .leading, spacing: 0) {
-                            MessageHeaderTitleView(message: message, isCollapsed: isCollapsed, isExpanded: $isExpanded)
+                            MessageHeaderTitleView(message: message, isMessageExpanded: isMessageExpanded, isHeaderExpanded: $isHeaderExpanded)
                             Text("Lorem ipsum dolor sit amet, consectetur adipiscing elit." /* message.preview */ )
                                 .textStyle(.bodySecondary)
                                 .lineLimit(1)
@@ -94,12 +94,12 @@ struct MessageHeaderView: View {
                             }
                     }
                     Button {
-                        isCollapsed.toggle()
+                        isMessageExpanded.toggle()
                     } label: {
                         VStack(alignment: .leading, spacing: 0) {
-                            MessageHeaderTitleView(message: message, isCollapsed: isCollapsed, isExpanded: $isExpanded)
+                            MessageHeaderTitleView(message: message, isMessageExpanded: isMessageExpanded, isHeaderExpanded: $isHeaderExpanded)
 
-                            if isExpanded {
+                            if isHeaderExpanded {
                                 if let email = message.from.first?.email {
                                     Text(email)
                                         .textStyle(.callout)
@@ -184,14 +184,14 @@ struct MessageHeaderView_Previews: PreviewProvider {
         Group {
             MessageHeaderView(
                 message: PreviewHelper.sampleMessage,
-                isExpanded: .constant(false),
-                isCollapsed: .constant(false),
+                isHeaderExpanded: .constant(false),
+                isMessageExpanded: .constant(false),
                 showActionButtons: true
             )
             MessageHeaderView(
                 message: PreviewHelper.sampleMessage,
-                isExpanded: .constant(true),
-                isCollapsed: .constant(true),
+                isHeaderExpanded: .constant(true),
+                isMessageExpanded: .constant(true),
                 showActionButtons: true
             )
         }
@@ -224,8 +224,8 @@ struct RecipientLabel: View {
 
 struct MessageHeaderTitleView: View {
     let message: Message
-    let isCollapsed: Bool
-    @Binding var isExpanded: Bool
+    let isMessageExpanded: Bool
+    @Binding var isHeaderExpanded: Bool
 
     var body: some View {
         HStack(alignment: .firstTextBaseline, spacing: 8) {
@@ -240,8 +240,8 @@ struct MessageHeaderTitleView: View {
                 .truncationMode(.middle)
                 .textStyle(.calloutSecondary)
             Spacer()
-            if !isCollapsed {
-                ChevronButton(isExpanded: $isExpanded)
+            if !isMessageExpanded {
+                ChevronButton(isExpanded: $isHeaderExpanded)
             }
         }
     }
