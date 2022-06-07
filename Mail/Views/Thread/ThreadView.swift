@@ -16,6 +16,7 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import BottomSheet
 import MailCore
 import MailResources
 import RealmSwift
@@ -28,9 +29,13 @@ class MessageSheet: SheetState<MessageSheet.State> {
     }
 }
 
-class MessageCard: CardState<MessageCard.State> {
+class MessageBottomSheet: BottomSheetState<MessageBottomSheet.State, MessageBottomSheet.Position> {
     enum State: Equatable {
         case contact(Recipient)
+    }
+
+    enum Position: CGFloat, CaseIterable {
+        case top = 285, hidden = 0
     }
 }
 
@@ -38,10 +43,11 @@ struct ThreadView: View {
     @ObservedRealmObject var thread: Thread
     private var mailboxManager: MailboxManager
 
-    @ObservedObject private var sheet = MessageSheet()
-    @ObservedObject private var card = MessageCard()
+    @StateObject private var sheet = MessageSheet()
+    @StateObject private var bottomSheet = MessageBottomSheet()
 
     private let trashId: String
+    private let bottomSheetOptions = Constants.bottomSheetOptions + [.absolutePositionValue]
 
     private var isTrashFolder: Bool {
         return thread.parent?._id == trashId
@@ -82,21 +88,10 @@ struct ThreadView: View {
                 appereance.backgroundColor = MailResourcesAsset.backgroundSearchBar.color
                 UIToolbar.appearance().standardAppearance = appereance
             }
-
-            if card.cardShown {
-                switch card.state {
-                case let .contact(recipient):
-                    BottomCard(cardShown: $card.cardShown, cardDismissal: $card.cardDismissal, height: 285) {
-                        ContactView(recipient: recipient)
-                    }
-                case .none:
-                    EmptyView()
-                }
-            }
         }
         .environmentObject(mailboxManager)
-        .environmentObject(card)
         .environmentObject(sheet)
+        .environmentObject(bottomSheet)
         .toolbar {
             ToolbarItemGroup(placement: .bottomBar) {
                 Group {
@@ -139,6 +134,14 @@ struct ThreadView: View {
                 AttachmentPreview(isPresented: $sheet.isShowing, attachment: attachment)
             case let .reply(message, replyMode):
                 NewMessageView(isPresented: $sheet.isShowing, mailboxManager: mailboxManager, draft: Draft.replying(to: message, mode: replyMode))
+            case .none:
+                EmptyView()
+            }
+        }
+        .bottomSheet(bottomSheetPosition: $bottomSheet.position, options: bottomSheetOptions) {
+            switch bottomSheet.state {
+            case let .contact(recipient):
+                ContactView(recipient: recipient, bottomSheet: bottomSheet)
             case .none:
                 EmptyView()
             }

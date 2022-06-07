@@ -16,6 +16,7 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import BottomSheet
 import Introspect
 import MailCore
 import MailResources
@@ -30,9 +31,13 @@ class MenuSheet: SheetState<MenuSheet.State> {
     }
 }
 
-class ThreadCard: CardState<ThreadCard.State> {
+class ThreadBottomSheet: BottomSheetState<ThreadBottomSheet.State, ThreadBottomSheet.Position> {
     enum State: Equatable {
         case actions(Thread)
+    }
+
+    public enum Position: CGFloat, CaseIterable {
+        case top = 0.975, middle = 0.4, hidden = 0
     }
 }
 
@@ -46,9 +51,11 @@ struct ThreadListView: View {
 
     @State private var avatarImage = Image(resource: MailResourcesAsset.placeholderAvatar)
     @State private var selectedThread: Thread?
-    @StateObject private var card = ThreadCard()
+    @StateObject private var bottomSheet = ThreadBottomSheet()
 
     let isCompact: Bool
+
+    private let bottomSheetOptions = Constants.bottomSheetOptions + [.appleScrollBehavior]
 
     init(mailboxManager: MailboxManager, folder: Binding<Folder?>, isCompact: Bool) {
         _viewModel = StateObject(wrappedValue: ThreadListViewModel(mailboxManager: mailboxManager, folder: folder.wrappedValue))
@@ -88,7 +95,7 @@ struct ThreadListView: View {
                         .listRowBackground(Color(selectedThread == thread
                                 ? MailResourcesAsset.backgroundCardSelectedColor.color
                                 : MailResourcesAsset.backgroundColor.color))
-                        .modifier(ThreadListSwipeAction(thread: thread, viewModel: viewModel, card: card))
+                        .modifier(ThreadListSwipeAction(thread: thread, viewModel: viewModel, bottomSheet: bottomSheet))
                         .onAppear {
                             viewModel.loadNextPageIfNeeded(currentItem: thread)
                         }
@@ -124,17 +131,6 @@ struct ThreadListView: View {
             } label: {
                 EmptyView()
             }
-
-            if card.cardShown {
-                switch card.state {
-                case let .actions(thread):
-                    BottomCard(cardShown: $card.cardShown, cardDismissal: $card.cardDismissal, height: 500) {
-                        ActionsView(target: .thread(thread))
-                    }
-                case .none:
-                    EmptyView()
-                }
-            }
         }
         .backButtonDisplayMode(.minimal)
         .introspectNavigationController { navigationController in
@@ -162,6 +158,14 @@ struct ThreadListView: View {
             case .addAccount:
                 LoginView(isPresented: $menuSheet.isShowing)
             case .none:
+                EmptyView()
+            }
+        }
+        .bottomSheet(bottomSheetPosition: $bottomSheet.position, options: bottomSheetOptions) {
+            switch bottomSheet.state {
+            case let .actions(thread):
+                ActionsView(target: .thread(thread))
+            default:
                 EmptyView()
             }
         }
@@ -253,7 +257,7 @@ private struct ThreadListNavigationBar: ViewModifier {
 private struct ThreadListSwipeAction: ViewModifier {
     let thread: Thread
     let viewModel: ThreadListViewModel
-    @ObservedObject var card: ThreadCard
+    @ObservedObject var bottomSheet: ThreadBottomSheet
 
     func body(content: Content) -> some View {
         content
@@ -278,7 +282,7 @@ private struct ThreadListSwipeAction: ViewModifier {
                 .tint(MailResourcesAsset.destructiveActionColor)
 
                 Button {
-                    card.state = .actions(thread)
+                    bottomSheet.open(state: .actions(thread), position: .middle)
                 } label: {
                     Image(resource: MailResourcesAsset.navigationMenu)
                 }

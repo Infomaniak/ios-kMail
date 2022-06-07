@@ -29,26 +29,25 @@ struct ActionsView: View {
     }
 
     var body: some View {
-        ScrollView {
-            VStack(alignment: .leading, spacing: 24) {
-                // Header
-                Text("Que souhaitez-vous faire ?")
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .textStyle(.bodySecondary)
-                // Quick actions
-                HStack(spacing: 28) {
-                    ForEach(viewModel.quickActions) { action in
-                        QuickActionView(action: action)
-                    }
-                }
-                SeparatorView(withPadding: false, fullWidth: true)
-                // Actions
-                ForEach(viewModel.listActions) { action in
-                    ActionView(action: action)
+        VStack(alignment: .leading, spacing: 24) {
+            // Header
+            Text("Que souhaitez-vous faire ?")
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .textStyle(.bodySecondary)
+            // Quick actions
+            HStack(spacing: 28) {
+                ForEach(viewModel.quickActions) { action in
+                    QuickActionView(action: action)
                 }
             }
-            .padding(32)
+            SeparatorView(withPadding: false, fullWidth: true)
+            // Actions
+            ForEach(viewModel.listActions) { action in
+                ActionView(action: action)
+            }
         }
+        .padding([.leading, .trailing], 32)
+        .padding(.top, 16)
     }
 }
 

@@ -27,7 +27,7 @@ struct MessageHeaderView: View {
     let showActionButtons: Bool
 
     @EnvironmentObject var sheet: MessageSheet
-    @EnvironmentObject var card: MessageCard
+    @EnvironmentObject var bottomSheet: MessageBottomSheet
 
     var body: some View {
         HStack(alignment: .top) {
@@ -102,7 +102,7 @@ struct MessageHeaderView: View {
     }
 
     private func openContact(recipient: Recipient) {
-        card.state = .contact(recipient)
+        bottomSheet.open(state: .contact(recipient), position: .top)
     }
 }
 
