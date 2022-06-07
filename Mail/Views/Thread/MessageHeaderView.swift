@@ -50,7 +50,7 @@ struct MessageHeaderView: View {
                                 .textStyle(.header3)
                                 .frame(maxWidth: .infinity, alignment: .leading)
                             Button {
-                                // TODO: Delete Draft
+                                deleteDraft(from: message)
                             } label: {
                                 Image(resource: MailResourcesAsset.bin)
                             }
@@ -194,6 +194,12 @@ struct MessageHeaderView: View {
             if !sheetPresented {
                 sheet.state = .edit(draft)
             }
+        }
+    }
+
+    private func deleteDraft(from: Message) {
+        Task {
+            try await mailboxManager.deleteDraft(from: message)
         }
     }
 }
