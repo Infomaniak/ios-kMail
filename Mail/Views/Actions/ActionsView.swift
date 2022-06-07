@@ -66,14 +66,14 @@ struct QuickActionView: View {
         Button {
             // TODO: Action
         } label: {
-            VStack {
+            VStack(spacing: 8) {
                 Image(resource: action.icon)
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
                     .aspectRatio(1, contentMode: .fit)
                     .background(Color(MailResourcesAsset.backgroundHeaderColor.color))
                     .clipShape(RoundedRectangle(cornerRadius: 8))
                 Text(action.title)
-                    .font(MailTextStyle.callout.font)
+                    .font(.system(size: 12))
                     .lineLimit(1)
             }
         }
