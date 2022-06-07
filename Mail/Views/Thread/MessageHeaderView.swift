@@ -77,19 +77,7 @@ struct MessageHeaderView: View {
                         isCollapsed.toggle()
                     } label: {
                         VStack(alignment: .leading, spacing: 0) {
-                            HStack(alignment: .firstTextBaseline, spacing: 8) {
-                                ForEach(message.from, id: \.self) { recipient in
-                                    Text(recipient.title)
-                                        .lineLimit(1)
-                                        .layoutPriority(1)
-                                        .textStyle(.header3)
-                                }
-                                Text(message.date, format: .dateTime)
-                                    .lineLimit(1)
-                                    .truncationMode(.middle)
-                                    .textStyle(.calloutSecondary)
-                                Spacer()
-                            }
+                            MessageHeaderTitleView(message: message, isCollapsed: isCollapsed, isExpanded: $isExpanded)
                             Text("Lorem ipsum dolor sit amet, consectetur adipiscing elit." /* message.preview */ )
                                 .textStyle(.bodySecondary)
                                 .lineLimit(1)
@@ -109,20 +97,7 @@ struct MessageHeaderView: View {
                         isCollapsed.toggle()
                     } label: {
                         VStack(alignment: .leading, spacing: 0) {
-                            HStack(alignment: .firstTextBaseline, spacing: 8) {
-                                ForEach(message.from, id: \.self) { recipient in
-                                    Text(recipient.title)
-                                        .lineLimit(1)
-                                        .layoutPriority(1)
-                                        .textStyle(.header3)
-                                }
-                                Text(message.date, format: .dateTime)
-                                    .lineLimit(1)
-                                    .truncationMode(.middle)
-                                    .textStyle(.calloutSecondary)
-                                Spacer()
-                                ChevronButton(isExpanded: $isExpanded)
-                            }
+                            MessageHeaderTitleView(message: message, isCollapsed: isCollapsed, isExpanded: $isExpanded)
 
                             if isExpanded {
                                 if let email = message.from.first?.email {
@@ -243,6 +218,31 @@ struct RecipientLabel: View {
             return recipient.email
         } else {
             return "\(recipient.name) (\(recipient.email))"
+        }
+    }
+}
+
+struct MessageHeaderTitleView: View {
+    let message: Message
+    let isCollapsed: Bool
+    @Binding var isExpanded: Bool
+
+    var body: some View {
+        HStack(alignment: .firstTextBaseline, spacing: 8) {
+            ForEach(message.from, id: \.self) { recipient in
+                Text(recipient.title)
+                    .lineLimit(1)
+                    .layoutPriority(1)
+                    .textStyle(.header3)
+            }
+            Text(message.date, format: .dateTime)
+                .lineLimit(1)
+                .truncationMode(.middle)
+                .textStyle(.calloutSecondary)
+            Spacer()
+            if !isCollapsed {
+                ChevronButton(isExpanded: $isExpanded)
+            }
         }
     }
 }
