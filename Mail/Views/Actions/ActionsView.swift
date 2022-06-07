@@ -21,7 +21,12 @@ import MailResources
 import SwiftUI
 
 struct ActionsView: View {
-    @StateObject var viewModel = ActionsViewModel()
+    @StateObject var viewModel: ActionsViewModel
+
+    init(target: ActionsTarget) {
+        let viewModel = ActionsViewModel(target: target)
+        _viewModel = StateObject(wrappedValue: viewModel)
+    }
 
     var body: some View {
         ScrollView {
@@ -38,7 +43,7 @@ struct ActionsView: View {
                 }
                 SeparatorView(withPadding: false, fullWidth: true)
                 // Actions
-                ForEach(viewModel.actions) { action in
+                ForEach(viewModel.listActions) { action in
                     ActionView(action: action)
                 }
             }
@@ -49,7 +54,7 @@ struct ActionsView: View {
 
 struct ActionsView_Previews: PreviewProvider {
     static var previews: some View {
-        ActionsView()
+        ActionsView(target: .thread(PreviewHelper.sampleThread))
             .accentColor(Color(MailResourcesAsset.infomaniakColor.color))
     }
 }

@@ -127,9 +127,9 @@ struct ThreadListView: View {
 
             if card.cardShown {
                 switch card.state {
-                case .actions(_):
+                case let .actions(thread):
                     BottomCard(cardShown: $card.cardShown, cardDismissal: $card.cardDismissal, height: 500) {
-                        ActionsView()
+                        ActionsView(target: .thread(thread))
                     }
                 case .none:
                     EmptyView()

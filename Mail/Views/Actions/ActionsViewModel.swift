@@ -17,40 +17,64 @@
  */
 
 import Foundation
+import MailCore
 import MailResources
 
 struct Action: Identifiable {
     let id: Int
     let title: String
     let icon: MailResourcesImages
-    let quickAction: Bool
+
+    static let delete = Action(id: 1, title: "Supprimer", icon: MailResourcesAsset.bin)
+    static let reply = Action(id: 2, title: "Répondre", icon: MailResourcesAsset.emailActionReply)
+    static let archive = Action(id: 3, title: "Archiver", icon: MailResourcesAsset.archives)
+    static let forward = Action(id: 4, title: "Transférer", icon: MailResourcesAsset.emailActionTransfer)
+    static let markAsRead = Action(id: 5, title: "Marquer comme lu", icon: MailResourcesAsset.envelope)
+    static let move = Action(id: 6, title: "Déplacer", icon: MailResourcesAsset.emailActionSend21)
+    static let postpone = Action(id: 7, title: "Reporter", icon: MailResourcesAsset.waitingMessage)
+    static let spam = Action(id: 8, title: "Spam", icon: MailResourcesAsset.spam)
+    static let block = Action(id: 9, title: "Bloquer l’expéditeur", icon: MailResourcesAsset.blockUser)
+    static let phishing = Action(id: 10, title: "Hammeçonnage", icon: MailResourcesAsset.fishing)
+    static let print = Action(id: 11, title: "Imprimer", icon: MailResourcesAsset.printText)
+    static let saveAsPDF = Action(id: 12, title: "Enregistrer en PDF", icon: MailResourcesAsset.fileDownload)
+    static let openIn = Action(id: 13, title: "Ouvrir dans", icon: MailResourcesAsset.sendTo)
+    static let createRule = Action(id: 14, title: "Créer une règle", icon: MailResourcesAsset.ruleRegle)
+    static let report = Action(id: 15, title: "Signaler un problème d’affichage", icon: MailResourcesAsset.feedbacks)
+    static let editMenu = Action(id: 16, title: "Modifier le menu", icon: MailResourcesAsset.editTools)
+}
+
+enum ActionsTarget {
+    case threads([Thread])
+    case thread(Thread)
+    case message(Message)
 }
 
 @MainActor class ActionsViewModel: ObservableObject {
-    let allActions = [
-        Action(id: 1, title: "Supprimer", icon: MailResourcesAsset.bin, quickAction: true),
-        Action(id: 2, title: "Répondre", icon: MailResourcesAsset.emailActionReply, quickAction: true),
-        Action(id: 3, title: "Archiver", icon: MailResourcesAsset.archives, quickAction: true),
-        Action(id: 4, title: "Transférer", icon: MailResourcesAsset.emailActionTransfer, quickAction: true),
-        Action(id: 5, title: "Marquer comme lu", icon: MailResourcesAsset.envelope, quickAction: false),
-        Action(id: 6, title: "Déplacer", icon: MailResourcesAsset.emailActionSend21, quickAction: false),
-        Action(id: 7, title: "Reporter", icon: MailResourcesAsset.waitingMessage, quickAction: false),
-        Action(id: 8, title: "Spam", icon: MailResourcesAsset.spam, quickAction: false),
-        Action(id: 9, title: "Bloquer l’expéditeur", icon: MailResourcesAsset.blockUser, quickAction: false),
-        Action(id: 10, title: "Hammeçonnage", icon: MailResourcesAsset.fishing, quickAction: false),
-        Action(id: 11, title: "Imprimer", icon: MailResourcesAsset.printText, quickAction: false),
-        Action(id: 12, title: "Enregistrer en PDF", icon: MailResourcesAsset.fileDownload, quickAction: false),
-        Action(id: 13, title: "Ouvrir dans", icon: MailResourcesAsset.sendTo, quickAction: false),
-        Action(id: 14, title: "Créer une règle", icon: MailResourcesAsset.ruleRegle, quickAction: false),
-        Action(id: 15, title: "Signaler un problème d’affichage", icon: MailResourcesAsset.feedbacks, quickAction: false),
-        Action(id: 16, title: "Modifier le menu", icon: MailResourcesAsset.editTools, quickAction: false)
-    ]
+    let target: ActionsTarget
+    @Published var quickActions: [Action] = []
+    @Published var listActions: [Action] = []
 
-    var quickActions: [Action] {
-        allActions.filter(\.quickAction)
+    init(target: ActionsTarget) {
+        self.target = target
+        setActions()
     }
 
-    var actions: [Action] {
-        Array(allActions.drop(while: \.quickAction))
+    private func setActions() {
+        // In the future, we might want to adjust the actions based on the target
+        quickActions = [.delete, .reply, .archive, .forward]
+        listActions = [
+            .markAsRead,
+            .move,
+            .postpone,
+            .spam,
+            .block,
+            .phishing,
+            .print,
+            .saveAsPDF,
+            .openIn,
+            .createRule,
+            .report,
+            .editMenu
+        ]
     }
 }
