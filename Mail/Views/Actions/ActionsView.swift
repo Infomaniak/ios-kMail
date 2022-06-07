@@ -66,11 +66,18 @@ struct QuickActionView: View {
             // TODO: Action
         } label: {
             VStack(spacing: 8) {
-                Image(resource: action.icon)
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
-                    .aspectRatio(1, contentMode: .fit)
-                    .background(Color(MailResourcesAsset.backgroundHeaderColor.color))
-                    .clipShape(RoundedRectangle(cornerRadius: 8))
+                ZStack {
+                    RoundedRectangle(cornerRadius: 8)
+                        .fill(Color(MailResourcesAsset.backgroundHeaderColor.color))
+
+                    Image(resource: action.icon)
+                        .resizable()
+                        .scaledToFit()
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                        .padding(19)
+                }
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                .aspectRatio(1, contentMode: .fit)
                 Text(action.title)
                     .font(.system(size: 12))
                     .lineLimit(1)
