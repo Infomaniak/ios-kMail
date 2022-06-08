@@ -76,7 +76,8 @@ struct MessageView: View {
                 }
             }
         }
-        .padding([.top], 16)
+        .padding(.top, 16)
+        .padding(.bottom, isMessageExpanded ? 0 : 16)
         .onAppear {
             if !message.seen {
                 Task {

@@ -32,7 +32,7 @@ struct MessageHeaderView: View {
     @EnvironmentObject var card: MessageCard
 
     var body: some View {
-        HStack(alignment: .top) {
+        HStack(alignment: message.isDraft ? .center : .top) {
             if let recipient = message.from.first {
                 RecipientImage(recipient: recipient)
                     .onTapGesture {
@@ -42,71 +42,66 @@ struct MessageHeaderView: View {
 
             VStack(alignment: .leading, spacing: 0) {
                 if message.isDraft {
-                    Button {
-                        editDraft(from: message)
-                    } label: {
-                        VStack(alignment: .leading, spacing: 0) {
-                            HStack {
-                                Text(MailResourcesStrings.messageIsDraftOption)
-                                    .foregroundColor(MailResourcesAsset.destructiveActionColor)
-                                    .textStyle(.header3)
-                                    .frame(maxWidth: .infinity, alignment: .leading)
-                                Button {
-                                    deleteDraft(from: message)
-                                } label: {
-                                    Image(resource: MailResourcesAsset.bin)
-                                }
-                            }
-                            .tint(MailResourcesAsset.destructiveActionColor)
-
-                            Text("Lorem ipsum dolor sit amet" /* message.preview */ )
-                                .textStyle(.bodySecondary)
-                                .lineLimit(1)
+                    HStack {
+                        Text(MailResourcesStrings.messageIsDraftOption)
+                            .foregroundColor(MailResourcesAsset.destructiveActionColor)
+                            .textStyle(.header3)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                        Button {
+                            deleteDraft(from: message)
+                        } label: {
+                            Image(resource: MailResourcesAsset.bin)
+                                .resizable()
+                                .scaledToFit()
+                                .frame(width: 22, height: 22)
                         }
                     }
+                    .tint(MailResourcesAsset.destructiveActionColor)
                 } else {
-                    Button {
-                        isMessageExpanded.toggle()
-                    } label: {
-                        VStack(alignment: .leading, spacing: 0) {
-                            MessageHeaderTitleView(
-                                message: message,
-                                isMessageExpanded: isMessageExpanded,
-                                isHeaderExpanded: $isHeaderExpanded
-                            )
-
-                            if isMessageExpanded {
-                                if isHeaderExpanded {
-                                    if let email = message.from.first?.email {
-                                        Text(email)
-                                            .textStyle(.callout)
-                                    }
-
-                                    VStack(alignment: .leading) {
-                                        RecipientLabel(title: MailResourcesStrings.toTitle, recipients: message.to)
-                                        if !message.cc.isEmpty {
-                                            RecipientLabel(title: MailResourcesStrings.ccTitle, recipients: message.cc)
-                                        }
-                                        if !message.bcc.isEmpty {
-                                            RecipientLabel(title: MailResourcesStrings.bccTitle, recipients: message.bcc)
-                                        }
-                                    }
-                                    .textStyle(.calloutSecondary)
-                                    .padding(.top, 6)
-                                } else {
-                                    Text(message.recipients.map(\.title), format: .list(type: .and))
-                                        .lineLimit(1)
-                                        .textStyle(.calloutSecondary)
-                                }
-                            } else {
-                                Text("Lorem ipsum dolor sit amet, consectetur adipiscing elit." /* message.preview */ )
-                                    .textStyle(.bodySecondary)
-                                    .lineLimit(1)
-                            }
+                    HStack(alignment: .firstTextBaseline, spacing: 8) {
+                        ForEach(message.from, id: \.self) { recipient in
+                            Text(recipient.title)
+                                .lineLimit(1)
+                                .layoutPriority(1)
+                                .textStyle(.header3)
+                        }
+                        Text(message.date, format: .dateTime)
+                            .lineLimit(1)
+                            .truncationMode(.middle)
+                            .textStyle(.calloutSecondary)
+                        Spacer()
+                        if isMessageExpanded {
+                            ChevronButton(isExpanded: $isHeaderExpanded)
                         }
                     }
                 }
-                Spacer()
+
+                if isHeaderExpanded {
+                    if let email = message.from.first?.email {
+                        Text(email)
+                            .textStyle(.callout)
+                    }
+
+                    VStack(alignment: .leading) {
+                        RecipientLabel(title: MailResourcesStrings.toTitle, recipients: message.to)
+                        if !message.cc.isEmpty {
+                            RecipientLabel(title: MailResourcesStrings.ccTitle, recipients: message.cc)
+                        }
+                        if !message.bcc.isEmpty {
+                            RecipientLabel(title: MailResourcesStrings.bccTitle, recipients: message.bcc)
+                        }
+                    }
+                    .textStyle(.calloutSecondary)
+                    .padding(.top, 6)
+                } else if isMessageExpanded {
+                    Text(message.recipients.map(\.title), format: .list(type: .and))
+                        .lineLimit(1)
+                        .textStyle(.calloutSecondary)
+                } else {
+                    Text(message.preview)
+                        .textStyle(.bodySecondary)
+                        .lineLimit(1)
+                }
             }
             .padding(.top, 2)
 
@@ -130,6 +125,15 @@ struct MessageHeaderView: View {
             }
         }
         .frame(maxWidth: .infinity, alignment: .leading)
+        .onTapGesture {
+            if message.isDraft {
+                editDraft(from: message)
+            } else if !isMessageExpanded {
+                withAnimation {
+                    isMessageExpanded = true
+                }
+            }
+        }
     }
 
     private func openContact(recipient: Recipient) {
@@ -163,20 +167,30 @@ struct MessageHeaderView: View {
 
 struct MessageHeaderView_Previews: PreviewProvider {
     static var previews: some View {
-        Group {
-            MessageHeaderView(
-                message: PreviewHelper.sampleMessage,
-                isHeaderExpanded: .constant(false),
-                isMessageExpanded: .constant(false),
-                showActionButtons: true
-            )
-            MessageHeaderView(
-                message: PreviewHelper.sampleMessage,
-                isHeaderExpanded: .constant(true),
-                isMessageExpanded: .constant(true),
-                showActionButtons: true
-            )
-        }
+        MessageHeaderView(
+            message: PreviewHelper.sampleMessageDraft,
+            isHeaderExpanded: .constant(false),
+            isMessageExpanded: .constant(false),
+            showActionButtons: true
+        )
+        MessageHeaderView(
+            message: PreviewHelper.sampleMessage,
+            isHeaderExpanded: .constant(false),
+            isMessageExpanded: .constant(false),
+            showActionButtons: true
+        )
+        MessageHeaderView(
+            message: PreviewHelper.sampleMessage,
+            isHeaderExpanded: .constant(false),
+            isMessageExpanded: .constant(true),
+            showActionButtons: true
+        )
+        MessageHeaderView(
+            message: PreviewHelper.sampleMessage,
+            isHeaderExpanded: .constant(true),
+            isMessageExpanded: .constant(true),
+            showActionButtons: true
+        )
     }
 }
 
@@ -200,31 +214,6 @@ struct RecipientLabel: View {
             return recipient.email
         } else {
             return "\(recipient.name) (\(recipient.email))"
-        }
-    }
-}
-
-struct MessageHeaderTitleView: View {
-    let message: Message
-    let isMessageExpanded: Bool
-    @Binding var isHeaderExpanded: Bool
-
-    var body: some View {
-        HStack(alignment: .firstTextBaseline, spacing: 8) {
-            ForEach(message.from, id: \.self) { recipient in
-                Text(recipient.title)
-                    .lineLimit(1)
-                    .layoutPriority(1)
-                    .textStyle(.header3)
-            }
-            Text(message.date, format: .dateTime)
-                .lineLimit(1)
-                .truncationMode(.middle)
-                .textStyle(.calloutSecondary)
-            Spacer()
-            if isMessageExpanded {
-                ChevronButton(isExpanded: $isHeaderExpanded)
-            }
         }
     }
 }
