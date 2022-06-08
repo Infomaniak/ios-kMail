@@ -189,7 +189,7 @@ struct RecipientLabel: View {
             Text(title)
             VStack(alignment: .leading) {
                 ForEach(recipients, id: \.self) { recipient in
-                    Text(text(for: recipient))
+                    Text(text(for: recipient)).multilineTextAlignment(.leading)
                 }
             }
         }
