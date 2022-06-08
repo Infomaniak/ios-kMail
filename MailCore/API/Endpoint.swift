@@ -27,24 +27,18 @@ public extension ApiEnvironment {
     }
 }
 
-public extension Endpoint {
-    static let itemsPerPage = 200
-
-    func paginated(page: Int = 1) -> Endpoint {
-        let paginationQueryItems = [
-            URLQueryItem(name: "page", value: "\(page)"),
-            URLQueryItem(name: "per_page", value: "\(Endpoint.itemsPerPage)")
-        ]
-
-        return Endpoint(path: path, queryItems: (queryItems ?? []) + paginationQueryItems, apiEnvironment: apiEnvironment)
-    }
-}
-
 // MARK: - Endpoints
 
 public extension Endpoint {
     static func resource(_ resource: String, queryItems: [URLQueryItem]? = nil) -> Endpoint {
-        return Endpoint(hostKeypath: \.mailHost, path: resource, queryItems: queryItems)
+        let components = URLComponents(string: resource)
+        var mergedQueryItems = components?.queryItems
+        if mergedQueryItems == nil {
+            mergedQueryItems = queryItems
+        } else if let queryItems = queryItems {
+            mergedQueryItems?.append(contentsOf: queryItems)
+        }
+        return Endpoint(hostKeypath: \.mailHost, path: components?.path ?? resource, queryItems: mergedQueryItems)
     }
 
     private static var baseManager: Endpoint {
@@ -82,9 +76,9 @@ public extension Endpoint {
         return .mailbox(uuid: uuid).appending(path: "/folder")
     }
 
-    static func threads(uuid: String, folderId: String, filter: String?) -> Endpoint {
+    static func threads(uuid: String, folderId: String, offset: Int = 0, filter: String?) -> Endpoint {
         return .folders(uuid: uuid).appending(path: "/\(folderId)/message", queryItems: [
-            URLQueryItem(name: "offset", value: "0"),
+            URLQueryItem(name: "offset", value: "\(offset)"),
             URLQueryItem(name: "thread", value: "on"),
             URLQueryItem(name: "filters", value: filter)
         ])
