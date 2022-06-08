@@ -116,8 +116,7 @@ struct ThreadListView: View {
             }
 
             NewMessageButtonView(sheet: menuSheet)
-                .padding(.trailing, 30)
-                .padding(.bottom, 8)
+                .padding([.trailing, .bottom], 30)
 
             NavigationLink(isActive: $settingsSheet.isShowing) {
                 switch settingsSheet.state {
@@ -169,6 +168,7 @@ struct ThreadListView: View {
                 EmptyView()
             }
         }
+        .edgesIgnoringSafeArea(.bottom)
         .onAppear {
             if isCompact {
                 selectedThread = nil
