@@ -32,122 +32,104 @@ struct MessageHeaderView: View {
     @EnvironmentObject var card: MessageCard
 
     var body: some View {
-        if message.isDraft {
-            HStack(alignment: .top) {
-                if let recipient = message.from.first {
-                    RecipientImage(recipient: recipient)
-                        .onTapGesture {
-                            openContact(recipient: recipient)
-                        }
-                }
-                Button {
-                    editDraft(from: message)
-                } label: {
-                    VStack(alignment: .leading, spacing: 0) {
-                        HStack {
-                            Text(MailResourcesStrings.messageIsDraftOption)
-                                .foregroundColor(MailResourcesAsset.destructiveActionColor)
-                                .textStyle(.header3)
-                                .frame(maxWidth: .infinity, alignment: .leading)
-                            Button {
-                                deleteDraft(from: message)
-                            } label: {
-                                Image(resource: MailResourcesAsset.bin)
-                            }
-                        }
-                        .tint(MailResourcesAsset.destructiveActionColor)
-
-                        Text("Lorem ipsum dolor sit amet" /* message.preview */ )
-                            .textStyle(.bodySecondary)
-                            .lineLimit(1)
+        HStack(alignment: .top) {
+            if let recipient = message.from.first {
+                RecipientImage(recipient: recipient)
+                    .onTapGesture {
+                        openContact(recipient: recipient)
                     }
-                }
             }
-            Spacer()
-        } else {
-            if isMessageExpanded {
-                HStack(alignment: .top) {
-                    if let recipient = message.from.first {
-                        RecipientImage(recipient: recipient)
-                            .onTapGesture {
-                                openContact(recipient: recipient)
-                            }
-                    }
+
+            VStack(alignment: .leading, spacing: 0) {
+                if message.isDraft {
                     Button {
-                        isMessageExpanded.toggle()
+                        editDraft(from: message)
                     } label: {
                         VStack(alignment: .leading, spacing: 0) {
-                            MessageHeaderTitleView(message: message, isMessageExpanded: isMessageExpanded, isHeaderExpanded: $isHeaderExpanded)
-                            Text("Lorem ipsum dolor sit amet, consectetur adipiscing elit." /* message.preview */ )
+                            HStack {
+                                Text(MailResourcesStrings.messageIsDraftOption)
+                                    .foregroundColor(MailResourcesAsset.destructiveActionColor)
+                                    .textStyle(.header3)
+                                    .frame(maxWidth: .infinity, alignment: .leading)
+                                Button {
+                                    deleteDraft(from: message)
+                                } label: {
+                                    Image(resource: MailResourcesAsset.bin)
+                                }
+                            }
+                            .tint(MailResourcesAsset.destructiveActionColor)
+
+                            Text("Lorem ipsum dolor sit amet" /* message.preview */ )
                                 .textStyle(.bodySecondary)
                                 .lineLimit(1)
                         }
                     }
-                }
-                Spacer()
-            } else {
-                HStack(alignment: .top) {
-                    if let recipient = message.from.first {
-                        RecipientImage(recipient: recipient)
-                            .onTapGesture {
-                                openContact(recipient: recipient)
-                            }
-                    }
+                } else {
                     Button {
                         isMessageExpanded.toggle()
                     } label: {
                         VStack(alignment: .leading, spacing: 0) {
-                            MessageHeaderTitleView(message: message, isMessageExpanded: isMessageExpanded, isHeaderExpanded: $isHeaderExpanded)
+                            MessageHeaderTitleView(
+                                message: message,
+                                isMessageExpanded: isMessageExpanded,
+                                isHeaderExpanded: $isHeaderExpanded
+                            )
 
-                            if isHeaderExpanded {
-                                if let email = message.from.first?.email {
-                                    Text(email)
-                                        .textStyle(.callout)
-                                }
+                            if isMessageExpanded {
+                                if isHeaderExpanded {
+                                    if let email = message.from.first?.email {
+                                        Text(email)
+                                            .textStyle(.callout)
+                                    }
 
-                                VStack(alignment: .leading) {
-                                    RecipientLabel(title: MailResourcesStrings.toTitle, recipients: message.to)
-                                    if !message.cc.isEmpty {
-                                        RecipientLabel(title: MailResourcesStrings.ccTitle, recipients: message.cc)
+                                    VStack(alignment: .leading) {
+                                        RecipientLabel(title: MailResourcesStrings.toTitle, recipients: message.to)
+                                        if !message.cc.isEmpty {
+                                            RecipientLabel(title: MailResourcesStrings.ccTitle, recipients: message.cc)
+                                        }
+                                        if !message.bcc.isEmpty {
+                                            RecipientLabel(title: MailResourcesStrings.bccTitle, recipients: message.bcc)
+                                        }
                                     }
-                                    if !message.bcc.isEmpty {
-                                        RecipientLabel(title: MailResourcesStrings.bccTitle, recipients: message.bcc)
-                                    }
-                                }
-                                .textStyle(.calloutSecondary)
-                                .padding(.top, 6)
-                            } else {
-                                Text(message.recipients.map(\.title), format: .list(type: .and))
-                                    .lineLimit(1)
                                     .textStyle(.calloutSecondary)
+                                    .padding(.top, 6)
+                                } else {
+                                    Text(message.recipients.map(\.title), format: .list(type: .and))
+                                        .lineLimit(1)
+                                        .textStyle(.calloutSecondary)
+                                }
+                            } else {
+                                Text("Lorem ipsum dolor sit amet, consectetur adipiscing elit." /* message.preview */ )
+                                    .textStyle(.bodySecondary)
+                                    .lineLimit(1)
                             }
                         }
-                    }
-                    .padding(.top, 2)
-
-                    if showActionButtons {
-                        HStack(spacing: 24) {
-                            Button {
-                                sheet.state = .reply(message, .reply)
-                            } label: {
-                                Image(resource: MailResourcesAsset.reply)
-                                    .frame(width: 20, height: 20)
-                            }
-                            Button {
-                                // TODO: Show menu
-                            } label: {
-                                Image(resource: MailResourcesAsset.plusActions)
-                                    .frame(width: 20, height: 20)
-                            }
-                        }
-                        .tint(MailResourcesAsset.infomaniakColor)
-                        .padding(.top, 2)
-                        .padding(.leading, 16)
                     }
                 }
-                .frame(maxWidth: .infinity, alignment: .leading)
+                Spacer()
+            }
+            .padding(.top, 2)
+
+            if showActionButtons && isMessageExpanded {
+                HStack(spacing: 24) {
+                    Button {
+                        sheet.state = .reply(message, .reply)
+                    } label: {
+                        Image(resource: MailResourcesAsset.reply)
+                            .frame(width: 20, height: 20)
+                    }
+                    Button {
+                        // TODO: Show menu
+                    } label: {
+                        Image(resource: MailResourcesAsset.plusActions)
+                            .frame(width: 20, height: 20)
+                    }
+                }
+                .padding(.top, 2)
+                .padding(.leading, 16)
             }
         }
+        .frame(maxWidth: .infinity, alignment: .leading)
     }
 
     private func openContact(recipient: Recipient) {
@@ -240,7 +222,7 @@ struct MessageHeaderTitleView: View {
                 .truncationMode(.middle)
                 .textStyle(.calloutSecondary)
             Spacer()
-            if !isMessageExpanded {
+            if isMessageExpanded {
                 ChevronButton(isExpanded: $isHeaderExpanded)
             }
         }

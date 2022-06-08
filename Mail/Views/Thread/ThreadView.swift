@@ -66,8 +66,8 @@ struct ThreadView: View {
             ScrollView {
                 VStack(spacing: 0) {
                     ForEach(messages.indices, id: \.self) { index in
-                        let isCollapsed = ((index != messages.count - 1) && messages[index].seen || messages[index].isDraft)
-                        MessageView(message: messages[index], isCollapsed: isCollapsed, showActionButtons: messages.count > 1)
+                        let isMessageExpanded = ((index == messages.count - 1) && !messages[index].isDraft) || !messages[index].seen
+                        MessageView(message: messages[index], isMessageExpanded: isMessageExpanded, showActionButtons: messages.count > 1)
                         if index < messages.count - 1 {
                             MessageSeparatorView()
                         }

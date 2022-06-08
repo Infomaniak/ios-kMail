@@ -27,12 +27,12 @@ struct MessageView: View {
     @State var model = WebViewModel()
     @State private var webViewHeight: CGFloat = .zero
     @State var isHeaderExpanded = false
-    @State var isCollapsed: Bool
+    @State var isMessageExpanded: Bool
     let showActionButtons: Bool
 
-    init(message: Message, isCollapsed: Bool = true, showActionButtons: Bool = true) {
+    init(message: Message, isMessageExpanded: Bool = false, showActionButtons: Bool = true) {
         self.message = message
-        self.isCollapsed = isCollapsed
+        self.isMessageExpanded = isMessageExpanded
         self.showActionButtons = showActionButtons
     }
 
@@ -42,7 +42,7 @@ struct MessageView: View {
                 MessageHeaderView(
                     message: message,
                     isHeaderExpanded: $isHeaderExpanded,
-                    isMessageExpanded: $isCollapsed,
+                    isMessageExpanded: $isMessageExpanded,
                     showActionButtons: showActionButtons
                 )
 
@@ -61,7 +61,7 @@ struct MessageView: View {
             }
             .padding([.leading, .trailing], 16)
 
-            if !isCollapsed {
+            if isMessageExpanded {
                 GeometryReader { proxy in
                     WebView(model: $model, dynamicHeight: $webViewHeight, proxy: proxy)
                         .frame(height: webViewHeight)
