@@ -33,7 +33,7 @@ class MenuSheet: SheetState<MenuSheet.State> {
 
 class ThreadBottomSheet: BottomSheetState<ThreadBottomSheet.State, ThreadBottomSheet.Position> {
     enum State: Equatable {
-        case actions(Thread)
+        case actions(ActionsTarget)
     }
 
     public enum Position: CGFloat, CaseIterable {
@@ -162,8 +162,8 @@ struct ThreadListView: View {
         }
         .bottomSheet(bottomSheetPosition: $bottomSheet.position, options: bottomSheetOptions) {
             switch bottomSheet.state {
-            case let .actions(thread):
-                ActionsView(target: .thread(thread))
+            case let .actions(target):
+                ActionsView(target: target)
             default:
                 EmptyView()
             }
@@ -282,7 +282,7 @@ private struct ThreadListSwipeAction: ViewModifier {
                 .tint(MailResourcesAsset.destructiveActionColor)
 
                 Button {
-                    bottomSheet.open(state: .actions(thread), position: .middle)
+                    bottomSheet.open(state: .actions(.thread(thread)), position: .middle)
                 } label: {
                     Image(resource: MailResourcesAsset.navigationMenu)
                 }

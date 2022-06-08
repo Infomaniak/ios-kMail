@@ -43,7 +43,7 @@ struct Action: Identifiable {
     static let editMenu = Action(id: 16, title: MailResourcesStrings.buttonEditMenu, icon: MailResourcesAsset.editTools)
 }
 
-enum ActionsTarget {
+enum ActionsTarget: Equatable {
     case threads([Thread])
     case thread(Thread)
     case message(Message)

@@ -28,6 +28,7 @@ struct MessageHeaderView: View {
 
     @EnvironmentObject var sheet: MessageSheet
     @EnvironmentObject var bottomSheet: MessageBottomSheet
+    @EnvironmentObject var threadBottomSheet: ThreadBottomSheet
 
     var body: some View {
         HStack(alignment: .top) {
@@ -88,7 +89,7 @@ struct MessageHeaderView: View {
                             .frame(width: 20, height: 20)
                     }
                     Button {
-                        // TODO: Show menu
+                        threadBottomSheet.open(state: .actions(.message(message)), position: .middle)
                     } label: {
                         Image(resource: MailResourcesAsset.plusActions)
                             .frame(width: 20, height: 20)

@@ -45,9 +45,11 @@ struct ThreadView: View {
 
     @StateObject private var sheet = MessageSheet()
     @StateObject private var bottomSheet = MessageBottomSheet()
+    @StateObject private var threadBottomSheet = ThreadBottomSheet()
 
     private let trashId: String
     private let bottomSheetOptions = Constants.bottomSheetOptions + [.absolutePositionValue]
+    private let threadBottomSheetOptions = Constants.bottomSheetOptions + [.appleScrollBehavior]
 
     private var isTrashFolder: Bool {
         return thread.parent?._id == trashId
@@ -92,6 +94,7 @@ struct ThreadView: View {
         .environmentObject(mailboxManager)
         .environmentObject(sheet)
         .environmentObject(bottomSheet)
+        .environmentObject(threadBottomSheet)
         .toolbar {
             ToolbarItemGroup(placement: .bottomBar) {
                 Group {
@@ -116,7 +119,7 @@ struct ThreadView: View {
                     }
                     Spacer()
                     Button {
-                        // TODO: Show menu
+                        threadBottomSheet.open(state: .actions(.thread(thread)), position: .middle)
                     } label: {
                         VStack(spacing: 0) {
                             Image(systemName: "ellipsis")
@@ -142,6 +145,14 @@ struct ThreadView: View {
             switch bottomSheet.state {
             case let .contact(recipient):
                 ContactView(recipient: recipient, bottomSheet: bottomSheet)
+            case .none:
+                EmptyView()
+            }
+        }
+        .bottomSheet(bottomSheetPosition: $threadBottomSheet.position, options: threadBottomSheetOptions) {
+            switch threadBottomSheet.state {
+            case let .actions(target):
+                ActionsView(target: target)
             case .none:
                 EmptyView()
             }
