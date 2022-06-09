@@ -29,7 +29,8 @@ struct MessageHeaderView: View {
 
     @EnvironmentObject var mailboxManager: MailboxManager
     @EnvironmentObject var sheet: MessageSheet
-    @EnvironmentObject var card: MessageCard
+    @EnvironmentObject var bottomSheet: MessageBottomSheet
+    @EnvironmentObject var threadBottomSheet: ThreadBottomSheet
 
     var body: some View {
         HStack(alignment: message.isDraft ? .center : .top) {
@@ -110,11 +111,11 @@ struct MessageHeaderView: View {
                     Button {
                         sheet.state = .reply(message, .reply)
                     } label: {
-                        Image(resource: MailResourcesAsset.reply)
+                        Image(resource: MailResourcesAsset.emailActionReply)
                             .frame(width: 20, height: 20)
                     }
                     Button {
-                        // TODO: Show menu
+                        threadBottomSheet.open(state: .actions(.message(message)), position: .middle)
                     } label: {
                         Image(resource: MailResourcesAsset.plusActions)
                             .frame(width: 20, height: 20)
@@ -137,7 +138,7 @@ struct MessageHeaderView: View {
     }
 
     private func openContact(recipient: Recipient) {
-        card.state = .contact(recipient)
+        bottomSheet.open(state: .contact(recipient), position: .top)
     }
 
     private func editDraft(from message: Message) {

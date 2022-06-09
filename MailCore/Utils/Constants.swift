@@ -16,6 +16,7 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import BottomSheet
 import Foundation
 import MailResources
 import SwiftUI
@@ -45,6 +46,17 @@ public enum Constants {
     public static let searchBarIconSize: CGFloat = 16
 
     public static let unreadIconSize: CGFloat = 8
+
+    public static let bottomSheetOptions: [BottomSheet.Options] = [
+        .background { AnyView(Color(MailResourcesAsset.backgroundColor.color)) },
+        .backgroundBlur(effect: .dark),
+        .cornerRadius(20),
+        .dragIndicatorColor(Color(MailResourcesAsset.menuActionColor.color)),
+        .noBottomPosition,
+        .shadow(color: Color(.sRGBLinear, white: 0, opacity: 0.1), radius: 30, x: 0, y: -10),
+        .swipeToDismiss,
+        .tapToDismiss
+    ]
 
     private static var dateFormatter = DateFormatter()
 

@@ -16,15 +16,20 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import Foundation
+import BottomSheet
+import SwiftUI
 
-class CardState<State>: ObservableObject {
-    @Published var cardShown = false
-    @Published var cardDismissal = false
-    @Published var state: State? {
-        didSet {
-            cardShown = state != nil
-            cardDismissal = state != nil
-        }
+class BottomSheetState<State, PositionEnum>: ObservableObject where PositionEnum: CaseIterable, PositionEnum: Equatable, PositionEnum: RawRepresentable, PositionEnum.RawValue == CGFloat {
+    @Published var position: PositionEnum = .init(rawValue: 0)!
+    @Published private(set) var state: State?
+
+    func open(state: State, position: PositionEnum) {
+        self.state = state
+        self.position = position
+    }
+
+    func close() {
+        state = nil
+        position = .init(rawValue: 0)!
     }
 }

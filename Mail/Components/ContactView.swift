@@ -22,7 +22,7 @@ import SwiftUI
 
 struct ContactView: View {
     var recipient: Recipient
-    @EnvironmentObject var card: MessageCard
+    @ObservedObject var bottomSheet: MessageBottomSheet
 
     private struct ContactAction: Hashable {
         let name: String
@@ -52,29 +52,29 @@ struct ContactView: View {
                 RecipientImage(recipient: recipient, size: 32)
                 VStack(alignment: .leading) {
                     Text(recipient.contact?.name ?? recipient.name)
-                        .font(.system(size: 16, weight: .medium))
-                        .foregroundColor(MailResourcesAsset.primaryTextColor)
+                        .textStyle(.header3)
                     Text(recipient.contact?.email ?? recipient.email)
-                        .font(.system(size: 16, weight: .regular))
-                        .foregroundColor(MailResourcesAsset.secondaryTextColor)
+                        .textStyle(.bodySecondary)
                 }
             }
             .frame(height: 40)
 
             ForEach(actions, id: \.self) { action in
-                HStack {
-                    Image(uiImage: action.image)
-                        .foregroundColor(MailResourcesAsset.infomaniakColor)
-                    Text(action.name)
+                Button {
+                    handleAction(action)
+                } label: {
+                    HStack {
+                        Image(uiImage: action.image)
+                        Text(action.name)
+                            .textStyle(.body)
+                    }
                 }
                 .frame(height: 40)
-                .onTapGesture {
-                    handleAction(action)
-                }
             }
         }
-        .padding([.leading, .trailing, .bottom], 24)
-        .padding(.top, 31)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding([.leading, .trailing], 24)
+        .padding(.top, 16)
     }
 
     private func writeEmail() {
@@ -87,7 +87,7 @@ struct ContactView: View {
 
     private func copyEmail() {
         UIPasteboard.general.string = recipient.email
-        card.cardDismissal = false
+        bottomSheet.close()
     }
 
     private func handleAction(_ action: ContactAction) {
@@ -106,6 +106,6 @@ struct ContactView: View {
 
 struct ContactView_Previews: PreviewProvider {
     static var previews: some View {
-        ContactView(recipient: PreviewHelper.sampleRecipient1)
+        ContactView(recipient: PreviewHelper.sampleRecipient1, bottomSheet: MessageBottomSheet())
     }
 }

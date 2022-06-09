@@ -35,7 +35,8 @@ let project = Project(name: "Mail",
                           .package(url: "https://github.com/ProxymanApp/atlantis", .upToNextMajor(from: "1.16.0")),
                           .package(url: "https://github.com/siteline/SwiftUI-Introspect.git", .upToNextMajor(from: "0.1.4")),
                           .package(url: "https://github.com/Ambrdctr/SQRichTextEditor", .branch("master")),
-                          .package(url: "https://github.com/markiv/SwiftUI-Shimmer", .upToNextMajor(from: "1.0.1"))
+                          .package(url: "https://github.com/markiv/SwiftUI-Shimmer", .upToNextMajor(from: "1.0.1")),
+                          .package(url: "https://github.com/lucaszischka/BottomSheet", .upToNextMajor(from: "2.7.0"))
                       ],
                       targets: [
                           Target(name: "Mail",
@@ -60,7 +61,6 @@ let project = Project(name: "Mail",
                                      .target(name: "MailCore"),
                                      .target(name: "MailResources"),
                                      .package(product: "MatomoTracker"),
-                                     .package(product: "Atlantis"),
                                      .package(product: "Introspect"),
                                      .package(product: "SQRichTextEditor"),
                                      .package(product: "Shimmer")
@@ -117,7 +117,8 @@ let project = Project(name: "Mail",
                                   .package(product: "InfomaniakLogin"),
                                   .package(product: "CocoaLumberjackSwift"),
                                   .package(product: "RealmSwift"),
-                                  .package(product: "SwiftRegex")
+                                  .package(product: "SwiftRegex"),
+                                  .package(product: "BottomSheet")
                               ],
                               settings: .settings(base: baseSettings)
                           )
