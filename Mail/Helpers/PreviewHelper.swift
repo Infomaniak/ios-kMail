@@ -105,38 +105,6 @@ struct PreviewHelper {
                                        safeDisplay: false,
                                        hasUnsubscribeLink: true)
 
-    static let sampleMessageDraft = Message(uid: "",
-                                            msgId: "",
-                                            subject: "Test message",
-                                            priority: .normal,
-                                            date: Date(),
-                                            size: 0,
-                                            from: [sampleRecipient1],
-                                            to: [sampleRecipient2],
-                                            cc: [],
-                                            bcc: [],
-                                            replyTo: [],
-                                            body: nil,
-                                            attachments: [],
-                                            dkimStatus: .notSigned,
-                                            resource: "",
-                                            downloadResource: "",
-                                            stUuid: nil,
-                                            folderId: "",
-                                            folder: "",
-                                            references: nil,
-                                            preview: "Lorem ipsum dolor sit amen",
-                                            answered: false,
-                                            isDuplicate: false,
-                                            isDraft: true,
-                                            hasAttachments: false,
-                                            seen: false,
-                                            scheduled: false,
-                                            forwarded: false,
-                                            flagged: false,
-                                            safeDisplay: false,
-                                            hasUnsubscribeLink: true)
-
     static let sampleRecipient1 = Recipient(email: "from@example.com", name: "John Doe")
 
     static let sampleRecipient2 = Recipient(email: "to@example.com", name: "Alice Bobber")

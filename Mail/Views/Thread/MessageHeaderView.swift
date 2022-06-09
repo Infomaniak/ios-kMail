@@ -168,12 +168,6 @@ struct MessageHeaderView: View {
 struct MessageHeaderView_Previews: PreviewProvider {
     static var previews: some View {
         MessageHeaderView(
-            message: PreviewHelper.sampleMessageDraft,
-            isHeaderExpanded: .constant(false),
-            isMessageExpanded: .constant(false),
-            showActionButtons: true
-        )
-        MessageHeaderView(
             message: PreviewHelper.sampleMessage,
             isHeaderExpanded: .constant(false),
             isMessageExpanded: .constant(false),
