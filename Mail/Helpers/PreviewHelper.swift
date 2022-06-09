@@ -93,6 +93,7 @@ struct PreviewHelper {
                                        folderId: "",
                                        folder: "",
                                        references: nil,
+                                       preview: "Lorem ipsum dolor sit amen",
                                        answered: false,
                                        isDuplicate: false,
                                        isDraft: false,

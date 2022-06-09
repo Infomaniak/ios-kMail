@@ -23,14 +23,16 @@ import SwiftUI
 
 struct MessageHeaderView: View {
     @ObservedRealmObject var message: Message
-    @Binding var isExpanded: Bool
+    @Binding var isHeaderExpanded: Bool
+    @Binding var isMessageExpanded: Bool
     let showActionButtons: Bool
 
+    @EnvironmentObject var mailboxManager: MailboxManager
     @EnvironmentObject var sheet: MessageSheet
     @EnvironmentObject var card: MessageCard
 
     var body: some View {
-        HStack(alignment: .top) {
+        HStack(alignment: message.isDraft ? .center : .top) {
             if let recipient = message.from.first {
                 RecipientImage(recipient: recipient)
                     .onTapGesture {
@@ -39,22 +41,42 @@ struct MessageHeaderView: View {
             }
 
             VStack(alignment: .leading, spacing: 0) {
-                HStack(alignment: .firstTextBaseline, spacing: 8) {
-                    ForEach(message.from, id: \.self) { recipient in
-                        Text(recipient.title)
-                            .lineLimit(1)
-                            .layoutPriority(1)
+                if message.isDraft {
+                    HStack {
+                        Text(MailResourcesStrings.messageIsDraftOption)
+                            .foregroundColor(MailResourcesAsset.destructiveActionColor)
                             .textStyle(.header3)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                        Button {
+                            deleteDraft(from: message)
+                        } label: {
+                            Image(resource: MailResourcesAsset.bin)
+                                .resizable()
+                                .scaledToFit()
+                                .frame(width: 22, height: 22)
+                        }
                     }
-                    Text(message.date, format: .dateTime)
-                        .lineLimit(1)
-                        .truncationMode(.middle)
-                        .textStyle(.calloutSecondary)
-                    Spacer()
-                    ChevronButton(isExpanded: $isExpanded)
+                    .tint(MailResourcesAsset.destructiveActionColor)
+                } else {
+                    HStack(alignment: .firstTextBaseline, spacing: 8) {
+                        ForEach(message.from, id: \.self) { recipient in
+                            Text(recipient.title)
+                                .lineLimit(1)
+                                .layoutPriority(1)
+                                .textStyle(.header3)
+                        }
+                        Text(message.date, format: .dateTime)
+                            .lineLimit(1)
+                            .truncationMode(.middle)
+                            .textStyle(.calloutSecondary)
+                        Spacer()
+                        if isMessageExpanded {
+                            ChevronButton(isExpanded: $isHeaderExpanded)
+                        }
+                    }
                 }
 
-                if isExpanded {
+                if isHeaderExpanded {
                     if let email = message.from.first?.email {
                         Text(email)
                             .textStyle(.callout)
@@ -71,15 +93,19 @@ struct MessageHeaderView: View {
                     }
                     .textStyle(.calloutSecondary)
                     .padding(.top, 6)
-                } else {
+                } else if isMessageExpanded {
                     Text(message.recipients.map(\.title), format: .list(type: .and))
                         .lineLimit(1)
                         .textStyle(.calloutSecondary)
+                } else {
+                    Text(message.preview)
+                        .textStyle(.bodySecondary)
+                        .lineLimit(1)
                 }
             }
             .padding(.top, 2)
 
-            if showActionButtons {
+            if showActionButtons && isMessageExpanded {
                 HStack(spacing: 24) {
                     Button {
                         sheet.state = .reply(message, .reply)
@@ -99,19 +125,66 @@ struct MessageHeaderView: View {
             }
         }
         .frame(maxWidth: .infinity, alignment: .leading)
+        .onTapGesture {
+            if message.isDraft {
+                editDraft(from: message)
+            } else if !isMessageExpanded {
+                withAnimation {
+                    isMessageExpanded = true
+                }
+            }
+        }
     }
 
     private func openContact(recipient: Recipient) {
         card.state = .contact(recipient)
     }
+
+    private func editDraft(from message: Message) {
+        var sheetPresented = false
+
+        // If we already have the draft locally, present it directly
+        if let draft = mailboxManager.draft(messageUid: message.uid)?.detached() {
+            sheet.state = .edit(draft)
+            sheetPresented = true
+        }
+
+        // Update the draft
+        Task { [sheetPresented] in
+            let draft = try await mailboxManager.draft(from: message)
+            if !sheetPresented {
+                sheet.state = .edit(draft)
+            }
+        }
+    }
+
+    private func deleteDraft(from: Message) {
+        Task {
+            try await mailboxManager.deleteDraft(from: message)
+        }
+    }
 }
 
 struct MessageHeaderView_Previews: PreviewProvider {
     static var previews: some View {
-        Group {
-            MessageHeaderView(message: PreviewHelper.sampleMessage, isExpanded: .constant(false), showActionButtons: true)
-            MessageHeaderView(message: PreviewHelper.sampleMessage, isExpanded: .constant(true), showActionButtons: true)
-        }
+        MessageHeaderView(
+            message: PreviewHelper.sampleMessage,
+            isHeaderExpanded: .constant(false),
+            isMessageExpanded: .constant(false),
+            showActionButtons: true
+        )
+        MessageHeaderView(
+            message: PreviewHelper.sampleMessage,
+            isHeaderExpanded: .constant(false),
+            isMessageExpanded: .constant(true),
+            showActionButtons: true
+        )
+        MessageHeaderView(
+            message: PreviewHelper.sampleMessage,
+            isHeaderExpanded: .constant(true),
+            isMessageExpanded: .constant(true),
+            showActionButtons: true
+        )
     }
 }
 
@@ -124,7 +197,7 @@ struct RecipientLabel: View {
             Text(title)
             VStack(alignment: .leading) {
                 ForEach(recipients, id: \.self) { recipient in
-                    Text(text(for: recipient))
+                    Text(text(for: recipient)).multilineTextAlignment(.leading)
                 }
             }
         }

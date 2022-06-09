@@ -25,6 +25,7 @@ class MessageSheet: SheetState<MessageSheet.State> {
     enum State: Equatable {
         case attachment(Attachment)
         case reply(Message, ReplyMode)
+        case edit(Draft)
     }
 }
 
@@ -65,7 +66,8 @@ struct ThreadView: View {
             ScrollView {
                 VStack(spacing: 0) {
                     ForEach(messages.indices, id: \.self) { index in
-                        MessageView(message: messages[index], showActionButtons: messages.count > 1)
+                        let isMessageExpanded = ((index == messages.count - 1) && !messages[index].isDraft) || !messages[index].seen
+                        MessageView(message: messages[index], isMessageExpanded: isMessageExpanded, showActionButtons: messages.count > 1)
                         if index < messages.count - 1 {
                             MessageSeparatorView()
                         }
@@ -139,6 +141,8 @@ struct ThreadView: View {
                 AttachmentPreview(isPresented: $sheet.isShowing, attachment: attachment)
             case let .reply(message, replyMode):
                 NewMessageView(isPresented: $sheet.isShowing, mailboxManager: mailboxManager, draft: Draft.replying(to: message, mode: replyMode))
+            case let .edit(draft):
+                NewMessageView(isPresented: $sheet.isShowing, mailboxManager: mailboxManager, draft: draft)
             case .none:
                 EmptyView()
             }

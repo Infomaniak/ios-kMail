@@ -355,20 +355,6 @@ public class MailboxManager: ObservableObject {
 
     // MARK: - Draft
 
-    public func draft(draftUuid: String) async throws -> Draft {
-        // Get from API
-        let draft = try await apiFetcher.draft(mailbox: mailbox, draftUuid: draftUuid)
-
-        let realm = getRealm()
-
-        // Update draft in Realm
-        try? realm.safeWrite {
-            realm.add(draft, update: .modified)
-        }
-
-        return draft
-    }
-
     public func draft(from message: Message) async throws -> Draft {
         // Get from API
         let draft = try await apiFetcher.draft(from: message)
@@ -451,6 +437,21 @@ public class MailboxManager: ObservableObject {
         } else {
             print("No draft with uuid \(draft.uuid)")
         }
+    }
+
+    public func deleteDraft(from message: Message) async throws -> Bool {
+        // Delete from API
+        let deleteResponse = try await apiFetcher.deleteDraft(from: message)
+        // TODO: check if deletion was successful - if yes delete draft in realm if no display message
+        if let draft = draft(messageUid: message.uid) {
+            let realm = getRealm()
+
+            // Delete draft in Realm
+            try? realm.safeWrite {
+                realm.delete(draft)
+            }
+        }
+        return (deleteResponse != nil)
     }
 
     public func draftOffline() {
