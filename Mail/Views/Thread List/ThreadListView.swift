@@ -244,7 +244,7 @@ private struct ThreadListSwipeAction: ViewModifier {
                         await viewModel.toggleRead(thread: thread)
                     }
                 } label: {
-                    Image(resource: MailResourcesAsset.envelopeOpen)
+                    Image(resource: thread.unseenMessages > 0 ? MailResourcesAsset.envelopeOpen : MailResourcesAsset.envelope)
                 }
                 .tint(MailResourcesAsset.unreadActionColor)
             }
