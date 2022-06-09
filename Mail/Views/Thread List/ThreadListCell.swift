@@ -88,9 +88,10 @@ struct ThreadListCell: View {
                             .textStyle(textStyle)
                             .lineLimit(1)
 
-                        if threadListAppearance != .compact {
-                            // TODO: Julien Arnoux will modify the API to get a preview of the messages
-                            Text("Lorem Ipsum...")
+                        if threadListAppearance != .compact,
+                           let preview = thread.messages.last?.preview,
+                           !preview.isEmpty {
+                            Text(preview)
                                 .textStyle(.bodySecondary)
                                 .lineLimit(1)
                         }
