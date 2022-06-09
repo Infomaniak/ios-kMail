@@ -163,7 +163,7 @@ struct ThreadListView: View {
         .bottomSheet(bottomSheetPosition: $bottomSheet.position, options: bottomSheetOptions) {
             switch bottomSheet.state {
             case let .actions(target):
-                ActionsView(target: target)
+                ActionsView(mailboxManager: viewModel.mailboxManager, target: target)
             default:
                 EmptyView()
             }

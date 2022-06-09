@@ -21,19 +21,18 @@ import MailResources
 import SwiftUI
 
 struct ActionsView: View {
-    @StateObject var viewModel: ActionsViewModel
+    @ObservedObject var viewModel: ActionsViewModel
 
-    init(target: ActionsTarget) {
-        let viewModel = ActionsViewModel(target: target)
-        _viewModel = StateObject(wrappedValue: viewModel)
+    init(mailboxManager: MailboxManager, target: ActionsTarget) {
+        viewModel = ActionsViewModel(mailboxManager: mailboxManager, target: target)
     }
 
     var body: some View {
         VStack(alignment: .leading, spacing: 24) {
             // Header
-            Text("Que souhaitez-vous faire ?")
+            Text(MailResourcesStrings.actionsMenuTitle)
                 .frame(maxWidth: .infinity, alignment: .leading)
-                .textStyle(.bodySecondary)
+                .textStyle(.header3)
             // Quick actions
             HStack(spacing: 28) {
                 ForEach(viewModel.quickActions) { action in
@@ -53,7 +52,7 @@ struct ActionsView: View {
 
 struct ActionsView_Previews: PreviewProvider {
     static var previews: some View {
-        ActionsView(target: .thread(PreviewHelper.sampleThread))
+        ActionsView(mailboxManager: MailboxManager(mailbox: PreviewHelper.sampleMailbox, apiFetcher: MailApiFetcher()), target: .thread(PreviewHelper.sampleThread))
             .accentColor(Color(MailResourcesAsset.infomaniakColor.color))
     }
 }
