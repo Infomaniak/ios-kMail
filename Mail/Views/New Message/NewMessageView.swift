@@ -16,11 +16,11 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import InfomaniakCore
 import MailCore
 import MailResources
 import RealmSwift
 import SwiftUI
-import InfomaniakCore
 
 struct NewMessageView: View {
     @Binding var isPresented: Bool
@@ -99,7 +99,13 @@ struct NewMessageView: View {
                 Button {
                     Task {
                         if let cancelableResponse = await send() {
-                            IKSnackBar.showCancelableSnackBar(message: MailResourcesStrings.emailSentSnackbar, cancelSuccessMessage: MailResourcesStrings.canceledEmailSendingConfirmationSnackbar, duration: .custom(CGFloat(draft.delay)), cancelableResponse: cancelableResponse, mailboxManager: mailboxManager)
+                            IKSnackBar.showCancelableSnackBar(
+                                message: MailResourcesStrings.emailSentSnackbar,
+                                cancelSuccessMessage: MailResourcesStrings.canceledEmailSendingConfirmationSnackbar,
+                                duration: .custom(CGFloat(draft.delay)),
+                                cancelableResponse: cancelableResponse,
+                                mailboxManager: mailboxManager
+                            )
                         }
                     }
                     self.dismiss()

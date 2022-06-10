@@ -379,10 +379,10 @@ public class MailboxManager: ObservableObject {
             _ = try await save(draft: draft)
         }
         draft.action = .send
-             let cancelableResponse = try await apiFetcher.send(mailbox: mailbox, draft: draft)
-            // Once the draft has been sent, we can delete it from Realm
-            delete(draft: draft)
-            return cancelableResponse
+        let cancelableResponse = try await apiFetcher.send(mailbox: mailbox, draft: draft)
+        // Once the draft has been sent, we can delete it from Realm
+        delete(draft: draft)
+        return cancelableResponse
     }
 
     public func save(draft: Draft) async throws -> DraftResponse {
