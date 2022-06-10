@@ -152,6 +152,7 @@ typealias Thread = MailCore.Thread
 
     func loadNextPageIfNeeded(currentItem: Thread) {
         // Start loading next page when we reach the second-to-last item
+        guard !threads.isEmpty else { return }
         let thresholdIndex = threads.index(threads.endIndex, offsetBy: -1)
         if threads.firstIndex(where: { $0.uid == currentItem.uid }) == thresholdIndex {
             Task {
