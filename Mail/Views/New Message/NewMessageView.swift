@@ -99,8 +99,7 @@ struct NewMessageView: View {
                 Button {
                     Task {
                         if let cancelableResponse = await send() {
-                            // TODO: Change duration following user preferences
-                            IKSnackBar.showCancelableSnackBar(message: MailResourcesStrings.emailSentSnackbar, cancelSuccessMessage: MailResourcesStrings.canceledEmailSendingConfirmationSnackbar, duration: .custom(30), cancelableResponse: cancelableResponse, mailboxManager: mailboxManager)
+                            IKSnackBar.showCancelableSnackBar(message: MailResourcesStrings.emailSentSnackbar, cancelSuccessMessage: MailResourcesStrings.canceledEmailSendingConfirmationSnackbar, duration: .custom(CGFloat(draft.delay)), cancelableResponse: cancelableResponse, mailboxManager: mailboxManager)
                         }
                     }
                     self.dismiss()
