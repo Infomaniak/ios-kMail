@@ -29,6 +29,7 @@ struct NewMessageView: View {
     @State var editor = RichTextEditorModel()
     @State var showCc = false
 
+    @State private var sendDisabled = false
     @State private var draftHasChanged = false
 
     let defaultBody = "<div><br></div><div><br></div><div>Envoyé avec Infomaniak Mail pour iOS<br></div>"
@@ -42,10 +43,14 @@ struct NewMessageView: View {
         self.mailboxManager = mailboxManager
         selectedMailboxItem = AccountManager.instance.mailboxes
             .firstIndex { $0.mailboxId == mailboxManager.mailbox.mailboxId } ?? 0
-        guard let signatureResponse = mailboxManager.getSignatureResponse() else { fatalError() }
         self.draft = draft ?? Draft(messageUid: UUID().uuidString,
                                     body: defaultBody)
-        self.draft.identityId = "\(signatureResponse.defaultSignatureId)"
+        if let signatureResponse = mailboxManager.getSignatureResponse() {
+            self.draft.identityId = "\(signatureResponse.defaultSignatureId)"
+            sendDisabled = false
+        } else {
+            sendDisabled = true
+        }
     }
 
     var body: some View {
@@ -99,7 +104,8 @@ struct NewMessageView: View {
                 } label: {
                     Image(resource: MailResourcesAsset.send)
                 }
-                .tint(MailResourcesAsset.mailPinkColor))
+                .tint(MailResourcesAsset.mailPinkColor)
+                .disabled(sendDisabled))
         }
         .onChange(of: draft) { _ in
             textDidChange()
