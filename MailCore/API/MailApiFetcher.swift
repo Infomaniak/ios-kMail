@@ -137,7 +137,7 @@ public class MailApiFetcher: ApiFetcher {
         return try await perform(request: authenticatedRequest(.resource(resource))).data
     }
 
-    func send(mailbox: Mailbox, draft: Draft) async throws -> Bool {
+    func send(mailbox: Mailbox, draft: Draft) async throws -> CancelableResponse {
         try await perform(request: authenticatedRequest(
             draft.uuid.isEmpty ? .draft(uuid: mailbox.uuid) : .draft(uuid: mailbox.uuid, draftUuid: draft.uuid),
             method: draft.uuid.isEmpty ? .post : .put,
@@ -165,6 +165,11 @@ public class MailApiFetcher: ApiFetcher {
         } catch {
             return nil
         }
+    }
+
+    @discardableResult
+    public func undoAction(resource: String) async throws -> Empty? { // TODO: change return type when bug will be fixed from API
+        try await perform(request: authenticatedRequest(.resource(resource), method: .put)).data
     }
 }
 

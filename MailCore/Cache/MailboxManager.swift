@@ -373,19 +373,16 @@ public class MailboxManager: ObservableObject {
         return getRealm().objects(Draft.self).where { $0.messageUid == messageUid }.first
     }
 
-    public func send(draft: Draft) async throws -> Bool {
+    public func send(draft: Draft) async throws -> CancelableResponse {
         // If the draft has no UUID, we save it first
         if draft.uuid.isEmpty {
             _ = try await save(draft: draft)
         }
         draft.action = .send
-        let sendResponse = try await apiFetcher.send(mailbox: mailbox, draft: draft)
-        if sendResponse {
-            // Once the draft has been sent, we can delete it from Realm
-            delete(draft: draft)
-        }
-
-        return sendResponse
+        let cancelableResponse = try await apiFetcher.send(mailbox: mailbox, draft: draft)
+        // Once the draft has been sent, we can delete it from Realm
+        delete(draft: draft)
+        return cancelableResponse
     }
 
     public func save(draft: Draft) async throws -> DraftResponse {

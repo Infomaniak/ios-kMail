@@ -16,6 +16,7 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import InfomaniakCore
 import MailCore
 import MailResources
 import RealmSwift
@@ -97,8 +98,15 @@ struct NewMessageView: View {
                 trailing:
                 Button {
                     Task {
-                        await send()
-                        // TODO: show confirmation snackbar or handle error
+                        if let cancelableResponse = await send() {
+                            IKSnackBar.showCancelableSnackBar(
+                                message: MailResourcesStrings.emailSentSnackbar,
+                                cancelSuccessMessage: MailResourcesStrings.canceledEmailSendingConfirmationSnackbar,
+                                duration: .custom(CGFloat(draft.delay)),
+                                cancelableResponse: cancelableResponse,
+                                mailboxManager: mailboxManager
+                            )
+                        }
                     }
                     self.dismiss()
                 } label: {
@@ -128,13 +136,13 @@ struct NewMessageView: View {
         .navigationViewStyle(.stack)
     }
 
-    @MainActor private func send() async -> Bool {
+    @MainActor private func send() async -> CancelableResponse? {
         do {
             draftHasChanged = false
             return try await mailboxManager.send(draft: draft)
         } catch {
             print("Error while sending email: \(error.localizedDescription)")
-            return false
+            return nil
         }
     }
 

@@ -63,6 +63,7 @@ public class Draft: Object, Codable, Identifiable {
     @Persisted public var attachments: List<Attachment>
     @Persisted public var isOffline = true
     public var action: SaveDraftOption?
+    public var delay: Int = 30 // TODO: Change delay following user preferences
 
     public var toValue: String {
         get {
@@ -125,6 +126,7 @@ public class Draft: Object, Codable, Identifiable {
         case attachments
         case isOffline
         case action
+        case delay
     }
 
     override public init() {
@@ -257,6 +259,7 @@ public class Draft: Object, Codable, Identifiable {
         try container.encode(stUuid, forKey: .stUuid)
         try container.encode(isOffline, forKey: .isOffline)
         try container.encode(action, forKey: .action)
+        try container.encode(delay, forKey: .delay)
     }
 
     private func valueToRecipient(_ value: String) -> List<Recipient> {
