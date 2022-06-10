@@ -20,6 +20,7 @@ import MailCore
 import MailResources
 import RealmSwift
 import SwiftUI
+import InfomaniakCore
 
 struct NewMessageView: View {
     @Binding var isPresented: Bool
@@ -97,8 +98,10 @@ struct NewMessageView: View {
                 trailing:
                 Button {
                     Task {
-                        await send()
-                        // TODO: show confirmation snackbar or handle error
+                        if let cancelableResponse = await send() {
+                            // TODO: Change duration following user preferences
+                            IKSnackBar.showCancelableSnackBar(message: "Email Envoyé", cancelSuccessMessage: "Envoi Annulé", duration: .custom(30), cancelableResponse: cancelableResponse, mailboxManager: mailboxManager)
+                        }
                     }
                     self.dismiss()
                 } label: {
@@ -128,13 +131,13 @@ struct NewMessageView: View {
         .navigationViewStyle(.stack)
     }
 
-    @MainActor private func send() async -> Bool {
+    @MainActor private func send() async -> CancelableResponse? {
         do {
             draftHasChanged = false
             return try await mailboxManager.send(draft: draft)
         } catch {
             print("Error while sending email: \(error.localizedDescription)")
-            return false
+            return nil
         }
     }
 

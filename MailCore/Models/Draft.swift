@@ -63,7 +63,7 @@ public class Draft: Object, Codable, Identifiable {
     @Persisted public var attachments: List<Attachment>
     @Persisted public var isOffline = true
     public var action: SaveDraftOption?
-    public var delay: Int = 30
+    public var delay: Int = 30 // TODO: Change delay following user preferences
 
     public var toValue: String {
         get {
