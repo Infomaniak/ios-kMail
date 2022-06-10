@@ -115,7 +115,7 @@ struct MessageHeaderView: View {
                             .frame(width: 20, height: 20)
                     }
                     Button {
-                        threadBottomSheet.open(state: .actions(.message(message)), position: .middle)
+                        threadBottomSheet.open(state: .actions(.message(message.thaw() ?? message)), position: .middle)
                     } label: {
                         Image(resource: MailResourcesAsset.plusActions)
                             .frame(width: 20, height: 20)

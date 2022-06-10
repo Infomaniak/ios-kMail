@@ -163,7 +163,11 @@ struct ThreadListView: View {
         .bottomSheet(bottomSheetPosition: $bottomSheet.position, options: bottomSheetOptions) {
             switch bottomSheet.state {
             case let .actions(target):
-                ActionsView(mailboxManager: viewModel.mailboxManager, target: target)
+                if target.isInvalidated {
+                    EmptyView()
+                } else {
+                    ActionsView(mailboxManager: viewModel.mailboxManager, target: target)
+                }
             default:
                 EmptyView()
             }
@@ -282,7 +286,7 @@ private struct ThreadListSwipeAction: ViewModifier {
                 .tint(MailResourcesAsset.destructiveActionColor)
 
                 Button {
-                    bottomSheet.open(state: .actions(.thread(thread)), position: .middle)
+                    bottomSheet.open(state: .actions(.thread(thread.thaw() ?? thread)), position: .middle)
                 } label: {
                     Image(resource: MailResourcesAsset.navigationMenu)
                 }

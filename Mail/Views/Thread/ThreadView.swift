@@ -121,7 +121,7 @@ struct ThreadView: View {
                     }
                     Spacer()
                     Button {
-                        threadBottomSheet.open(state: .actions(.thread(thread)), position: .middle)
+                        threadBottomSheet.open(state: .actions(.thread(thread.thaw() ?? thread)), position: .middle)
                     } label: {
                         VStack(spacing: 0) {
                             Image(systemName: "ellipsis")

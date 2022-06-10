@@ -53,6 +53,17 @@ enum ActionsTarget: Equatable {
     case threads([Thread])
     case thread(Thread)
     case message(Message)
+
+    var isInvalidated: Bool {
+        switch self {
+        case .threads(let threads):
+            return threads.contains(where: \.isInvalidated)
+        case .thread(let thread):
+            return thread.isInvalidated
+        case .message(let message):
+            return message.isInvalidated
+        }
+    }
 }
 
 @MainActor class ActionsViewModel: ObservableObject {
@@ -166,9 +177,9 @@ enum ActionsTarget: Equatable {
                     try await group.waitForAll()
                 }
             case .thread(let thread):
-                try await mailboxManager.toggleRead(thread: thread)
+                try await mailboxManager.toggleRead(thread: thread.freezeIfNeeded())
             case .message(let message):
-                try await mailboxManager.markAsSeen(message: message, seen: !message.seen)
+                try await mailboxManager.markAsSeen(message: message.freezeIfNeeded(), seen: !message.seen)
             }
         }
     }
