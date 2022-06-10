@@ -19,6 +19,7 @@
 import Foundation
 import InfomaniakCore
 import SnackBar
+import MailResources
 
 public extension IKSnackBar {
     @discardableResult
@@ -32,5 +33,31 @@ public extension IKSnackBar {
             snackbar?.show()
         }
         return snackbar
+    }
+
+    @discardableResult
+    @MainActor
+    static func showCancelableSnackBar(
+        message: String,
+        cancelSuccessMessage: String,
+        duration: SnackBar.Duration = .lengthLong,
+        cancelableResponse: CancelableResponse,
+        mailboxManager: MailboxManager
+    ) -> IKSnackBar? {
+        return IKSnackBar.showSnackBar(
+            message: message,
+            duration: duration,
+            action: .init(title: MailResourcesStrings.settingsCancellationPeriodTitle) { // TODO: change string
+                Task {
+                    do {
+                        try await mailboxManager.undoAction(resource: cancelableResponse.cancelResource)
+
+                        IKSnackBar.showSnackBar(message: cancelSuccessMessage)
+                    } catch {
+                        IKSnackBar.showSnackBar(message: error.localizedDescription)
+                    }
+                }
+            }
+        )
     }
 }

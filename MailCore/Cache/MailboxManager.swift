@@ -545,6 +545,10 @@ public class MailboxManager: ObservableObject {
         let realm = getRealm()
         return realm.objects(Folder.self).contains { $0.unreadCount != nil && $0.unreadCount! > 0 }
     }
+    
+    public func undoAction(resource: String) async throws {
+        try await apiFetcher.undoAction(resource: resource)
+    }
 }
 
 public extension Realm {

@@ -166,6 +166,11 @@ public class MailApiFetcher: ApiFetcher {
             return nil
         }
     }
+    
+    @discardableResult
+    public func undoAction(resource: String) async throws -> Empty? {     // TODO: change return type when bug will be fixed from API
+        try await perform(request: authenticatedRequest(.resource(resource), method: .put)).data
+    }
 }
 
 class SyncedAuthenticator: OAuthAuthenticator {
