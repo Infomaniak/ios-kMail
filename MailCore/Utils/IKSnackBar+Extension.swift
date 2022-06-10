@@ -18,8 +18,8 @@
 
 import Foundation
 import InfomaniakCore
-import SnackBar
 import MailResources
+import SnackBar
 
 public extension IKSnackBar {
     @discardableResult
@@ -47,7 +47,7 @@ public extension IKSnackBar {
         return IKSnackBar.showSnackBar(
             message: message,
             duration: duration,
-            action: .init(title: MailResourcesStrings.settingsCancellationPeriodTitle) { // TODO: change string
+            action: .init(title: MailResourcesStrings.buttonCancel) {
                 Task {
                     do {
                         try await mailboxManager.undoAction(resource: cancelableResponse.cancelResource)
