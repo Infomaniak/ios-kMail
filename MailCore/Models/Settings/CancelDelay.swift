@@ -16,20 +16,20 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import CoreMedia
 import Foundation
 import MailResources
 
-public enum ForwardMode: String, CaseIterable {
-    case inline
-    case attachment
+public enum CancelDelay: Int, CaseIterable, SettingsOptionEnum {
+    case delay0 = 0
+    case delay10 = 10
+    case delay15 = 15
+    case delay20 = 20
+    case delay25 = 25
+    case delay30 = 30
 
     public var title: String {
-        switch self {
-        case .inline:
-            return MailResourcesStrings.settingsTransferInBody
-        case .attachment:
-            return MailResourcesStrings.settingsTransferAsAttachment
-        }
+        return self == .delay0
+            ? MailResourcesStrings.settingsDisabled
+            : MailResourcesStrings.settingsDelaySeconds(rawValue)
     }
 }

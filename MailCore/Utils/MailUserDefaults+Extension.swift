@@ -18,6 +18,10 @@
 
 import Foundation
 
+public protocol SettingsOptionEnum {
+    var title: String { get }
+}
+
 extension UserDefaults.Keys {
     static let currentMailboxId = UserDefaults.Keys(rawValue: "currentMailboxId")
     static let currentMailUserId = UserDefaults.Keys(rawValue: "currentMailUserId")
@@ -153,12 +157,12 @@ public extension UserDefaults {
         }
     }
 
-    var cancelSendDelay: Int {
+    var cancelSendDelay: CancelDelay {
         get {
-            return integer(forKey: key(.cancelDelay))
+            return CancelDelay(rawValue: integer(forKey: key(.cancelDelay))) ?? .delay0
         }
         set {
-            set(newValue, forKey: key(.cancelDelay))
+            set(newValue.rawValue, forKey: key(.cancelDelay))
         }
     }
 

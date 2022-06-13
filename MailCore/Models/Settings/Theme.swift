@@ -21,7 +21,7 @@ import MailResources
 import SwiftUI
 import UIKit
 
-public enum Theme: String, CaseIterable {
+public enum Theme: String, CaseIterable, SettingsOptionEnum {
     case light
     case dark
     case system

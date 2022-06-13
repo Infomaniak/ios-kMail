@@ -16,22 +16,20 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import CoreMedia
 import Foundation
 import MailResources
 
-public enum ThreadDensity: String, SettingsOptionEnum {
-    case defaultDensity
-    case largeDensity
-    case compactDensity
+public enum ForwardMode: String, CaseIterable, SettingsOptionEnum {
+    case inline
+    case attachment
 
     public var title: String {
         switch self {
-        case .defaultDensity:
-            return MailResourcesStrings.settingsDefault
-        case .largeDensity:
-            return MailResourcesStrings.settingsDensityOptionLarge
-        case .compactDensity:
-            return MailResourcesStrings.settingsDensityOptionCompact
+        case .inline:
+            return MailResourcesStrings.settingsTransferInBody
+        case .attachment:
+            return MailResourcesStrings.settingsTransferAsAttachment
         }
     }
 }
