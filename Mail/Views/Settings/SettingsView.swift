@@ -16,41 +16,51 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import Introspect
 import MailCore
-import MailResources
 import SwiftUI
 
 struct SettingsView: View {
-    @EnvironmentObject var menuSheet: MenuSheet
-    @State var viewModel: SettingsViewModel
+    @ObservedObject var viewModel: SettingsViewModel
 
-    init(viewModel: SettingsViewModel = SettingsViewModel()) {
+//    let sections: [SettingsSection] = [.emailAddresses, .general, .appearance]
+    @State var selectedValues: [SettingsOption: SettingsOptionEnum] = [:]
+
+    init(viewModel: SettingsViewModel) {
         self.viewModel = viewModel
     }
 
     var body: some View {
-        ScrollView {
-            VStack(alignment: .leading, spacing: 30) {
-                ForEach(viewModel.tableContent) { section in
-                    SettingsSectionHeaderView(title: section.title, separator: !(section == viewModel.tableContent.first))
-
-                    VStack(spacing: 25) {
-                        ForEach(section.content) { row in
-                            SettingsRowView(row: row)
+        List {
+            ForEach(viewModel.sections) { section in
+                Section(header: Text(section.name)) {
+                    ForEach(section.items) { item in
+                        switch item.type {
+                        case let .subMenu(destination: destination):
+                            SettingsSubMenuCell(title: item.title, destination: destination)
+                        case let .toggle(userDefaults: userDefaults):
+                            SettingsToggleCell(title: item.title, userDefaults: userDefaults)
+                        case let .option(option):
+                            SettingsOptionCell(title: item.title, subtitle: selectedValues[option]?.title ?? "", option: option)
                         }
                     }
-                    .padding([.leading, .trailing], 16)
                 }
             }
-            .environmentObject(viewModel)
         }
-        .padding(16)
+        .navigationBarTitle("Settings")
+        .onAppear {
+            updateSelectedValues()
+        }
+    }
+
+    private func updateSelectedValues() {
+        selectedValues = [
+            .theme: UserDefaults.shared.theme
+        ]
     }
 }
 
 struct SettingsView_Previews: PreviewProvider {
     static var previews: some View {
-        SettingsView()
+        SettingsView(viewModel: GeneralSettingsViewModel())
     }
 }

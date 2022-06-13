@@ -17,342 +17,120 @@
  */
 
 import Foundation
-import MailResources
+import MailCore
 import SwiftUI
 
-public enum SettingsPage: CaseIterable {
-    case principal
-    case sendPage
-    case mailAddress
-    case swipeActions
+// MARK: - SettingsSection
 
-    public var title: String {
-        switch self {
-        case .principal:
-            return MailResourcesStrings.settingsTitle
-        case .sendPage:
-            return MailResourcesStrings.settingsSendTitle
-        case .mailAddress:
-            return ""
-        case .swipeActions:
-            return MailResourcesStrings.settingsSwipeActionsTitle
-        }
-    }
+struct SettingsSection: Identifiable {
+    var id: Int
+    var name: String
+    var items: [SettingsItem]
 }
 
-class SettingsViewModel: ObservableObject {
-    public var page: SettingsPage
+// MARK: - SettingsItem
 
-    init(page: SettingsPage = .principal) {
-        self.page = page
-    }
-
-    public var tableContent: [ParameterSection] {
-        switch page {
-        case .principal:
-            return [.mailAddresses, .general, .appearance]
-        case .sendPage:
-            return [.send]
-        case .mailAddress:
-            return [.mailAddressGeneral, .mailAddressInbox, .mailAddressSecurity, .mailAddressPrivacy]
-        case .swipeActions:
-            return [.swipeActions]
-        }
-    }
-
-    public func updateToggleSettings(for row: ParameterRow, with value: Bool) {
-        switch row {
-        case .codeLock:
-            UserDefaults.shared.isAppLockEnabled = value
-        default:
-            return
-        }
-    }
+struct SettingsItem: Identifiable, Equatable {
+    var id: Int
+    var title: String
+    var type: SettingsType
 }
 
-// MARK: - ParameterSection
+// MARK: - SettingsType
 
-public enum ParameterSection: CaseIterable, Identifiable {
-    public var id: Self { self }
+enum SettingsType: Equatable {
+    case subMenu(destination: SettingsDestination)
+    case toggle(userDefaults: ReferenceWritableKeyPath<UserDefaults, Bool>)
+    case option(SettingsOption)
+}
 
-    // Principal
-    case mailAddresses
-    case general
-    case appearance
+// MARK: - SettingsDestination
 
-    // MailAddresses
-    case mailAddressGeneral
-    case mailAddressInbox
-    case mailAddressSecurity
-    case mailAddressPrivacy
-
-    // Send
+enum SettingsDestination: String, Equatable {
+    case emailSettings
     case send
+    case swipe
 
-    // SwipeActions
-    case swipeActions
-
-    var title: String {
+    @MainActor @ViewBuilder
+    func getDestination() -> some View {
         switch self {
-        case .mailAddresses:
-            return MailResourcesStrings.settingsSectionEmailAddresses
-        case .general:
-            return MailResourcesStrings.settingsSectionGeneral
-        case .appearance:
-            return MailResourcesStrings.settingsSectionAppearance
-        case .mailAddressGeneral:
-            return MailResourcesStrings.settingsSectionGeneral
-        case .mailAddressInbox:
-            return MailResourcesStrings.inboxFolder
-        case .mailAddressSecurity:
-            return MailResourcesStrings.settingsSectionSecurity
-        case .mailAddressPrivacy:
-            return MailResourcesStrings.settingsSectionPrivacy
+        case .emailSettings:
+            AccountView()
         case .send:
-            return ""
-        case .swipeActions:
-            return ""
-        }
-    }
-
-    var content: [ParameterRow] {
-        switch self {
-        case .mailAddresses:
-            return []
-        case .general:
-            return [.send, .codeLock]
-        case .appearance:
-            return [.threadDensity, .theme, .swipeActions, .messageDisplay, .externalContent]
-        case .mailAddressGeneral:
-            return [.signature, .autoReply, .folderSettings, .notifications]
-        case .mailAddressInbox:
-            return [.inboxType, .rules, .redirect, .alias]
-        case .mailAddressSecurity:
-            return [.adsFilter, .spamFilter, .blockedRecipient]
-        case .mailAddressPrivacy:
-            return [.deleteHistory, .logs]
-        case .send:
-            return [.cancelPeriod, .emailTransfer, .includeOriginal, .acknowledgement]
-        case .swipeActions:
-            return [.shortRight, .longRight, .shortLeft, .longLeft]
+            SettingsView(viewModel: SendSettingsViewModel())
+        case .swipe:
+            EmptyView()
+//            SettingsView(viewModel: )
         }
     }
 }
 
-// MARK: - ParameterRow
+// MARK: - SettingsOption
 
-public enum ParameterRow: CaseIterable, Identifiable {
-    public var id: Self { self }
+//struct SettingsOption: Equatable {
+//    let id: Int
+//    let destination: AnyView
+//
+//    init(id: Int, destination: AnyView) {
+//        self.id = id
+//        self.destination = destination
+//    }
+//
+//
+//    static func == (lhs: SettingsOption, rhs: SettingsOption) -> Bool {
+//        return lhs.id == rhs.id
+//    }
+//}
 
-    // Principal
-    case send
-    case codeLock
-    case threadDensity
-    case theme
-    case swipeActions
-    case messageDisplay
-    case externalContent
+enum SettingsOption: Equatable {
+    // General settings
+    case threadDensityOption
+    case themeOption
+    case displayModeOption
+    case externalContentOption
 
-    // MailAddresses
-    case signature
-    case autoReply
-    case folderSettings
-    case notifications
-    case inboxType
-    case rules
-    case redirect
-    case alias
-    case adsFilter
-    case spamFilter
-    case blockedRecipient
-    case deleteHistory
-    case logs
+    // Send settings
+    case cancelDelayOption
+    case forwardMessageOption
+    
+    // Swipe
+    case swipeShortRightOption
+    case swipeLongRightOption
+    case swipeShortLeftOption
+    case swipeLongLeftOption
 
-    // Send
-    case cancelPeriod
-    case emailTransfer
-    case includeOriginal
-    case acknowledgement
-
-    // SwipeActions
-    case shortRight
-    case longRight
-    case shortLeft
-    case longLeft
-
-    var title: String {
+    @ViewBuilder
+    func getDestination() -> some View {
         switch self {
-        case .send:
-            return MailResourcesStrings.settingsSendTitle
-        case .codeLock:
-            return MailResourcesStrings.settingsCodeLock
-        case .threadDensity:
-            return MailResourcesStrings.settingsThreadListDensityTitle
-        case .theme:
-            return MailResourcesStrings.settingsTheme
-        case .swipeActions:
-            return MailResourcesStrings.settingsSwipeActionsTitle
-        case .messageDisplay:
-            return MailResourcesStrings.settingsMessageDisplayTitle
-        case .externalContent:
-            return MailResourcesStrings.settingsExternalContentTitle
-        case .signature:
-            return MailResourcesStrings.settingsMailboxGeneralSignature
-        case .autoReply:
-            return MailResourcesStrings.settingsMailboxGeneralAutoreply
-        case .folderSettings:
-            return MailResourcesStrings.settingsMailboxGeneralFolders
-        case .notifications:
-            return MailResourcesStrings.settingsMailboxGeneralNotifications
-        case .inboxType:
-            return MailResourcesStrings.settingsInboxType
-        case .rules:
-            return MailResourcesStrings.settingsInboxRules
-        case .redirect:
-            return MailResourcesStrings.settingsInboxRedirect
-        case .alias:
-            return MailResourcesStrings.settingsInboxAlias
-        case .adsFilter:
-            return MailResourcesStrings.settingsSecurityAdsFilter
-        case .spamFilter:
-            return MailResourcesStrings.settingsSecuritySpamFilter
-        case .blockedRecipient:
-            return MailResourcesStrings.settingsSecurityBlockedRecipients
-        case .deleteHistory:
-            return MailResourcesStrings.settingsPrivacyDeleteSearchHistory
-        case .logs:
-            return MailResourcesStrings.settingsPrivacyViewLogs
-        case .cancelPeriod:
-            return MailResourcesStrings.settingsCancellationPeriodTitle
-        case .emailTransfer:
-            return MailResourcesStrings.settingsTransferEmailsTitle
-        case .includeOriginal:
-            return MailResourcesStrings.settingsSendIncludeOriginalMessage
-        case .acknowledgement:
-            return MailResourcesStrings.settingsSendAcknowledgement
-        case .shortRight:
-            return MailResourcesStrings.settingsSwipeShortRight
-        case .longRight:
-            return MailResourcesStrings.settingsSwipeLongRight
-        case .shortLeft:
-            return MailResourcesStrings.settingsSwipeShortLeft
-        case .longLeft:
-            return MailResourcesStrings.settingsSwipeLongLeft
+        case .threadDensityOption:
+            EmptyView()
+        case .themeOption:
+            SettingsOptionView<Theme>(title: "Thème", keyPath: \.theme)
+        case .displayModeOption:
+            EmptyView()
+        case .externalContentOption:
+            EmptyView()
+        case .cancelDelayOption:
+            SettingsOptionView<CancelDelay>(title: "Delay", keyPath: \.cancelSendDelay)
+        case .forwardMessageOption:
+            SettingsOptionView<ForwardMode>(title: "Forward", keyPath: \.forwardMode)
+        case .swipeShortRightOption:
+            EmptyView()
+        case .swipeLongRightOption:
+            EmptyView()
+        case .swipeShortLeftOption:
+            EmptyView()
+        case .swipeLongLeftOption:
+            EmptyView()
         }
     }
+}
 
-    // TODO: - Fix description value
-     var description: String? {
-        switch self {
-        case .threadDensity:
-            return UserDefaults.shared.threadDensity.title
-        case .theme:
-            return UserDefaults.shared.theme.title
-        case .swipeActions:
-            return "swipeActions"
-        case .messageDisplay:
-            return "messageDisplay"
-        case .externalContent:
-            return UserDefaults.shared.displayExternalContent
-                ? MailResourcesStrings.settingsOptionAlways
-                : MailResourcesStrings.settingsOptionAskMe
-        case .autoReply:
-            return "autoreply"
-        case .inboxType:
-            return "inboxType"
-        case .adsFilter:
-            return "adsFilter"
-        case .spamFilter:
-            return "spamFilter"
-        case .blockedRecipient:
-            return "blockedRecipient"
-        case .cancelPeriod:
-            return "cancelPeriod"
-        case .emailTransfer:
-            return "emailTransfer"
-        case .shortRight:
-            return "shortRight"
-        case .longRight:
-            return "longRight"
-        case .shortLeft:
-            return "shortLeft"
-        case .longLeft:
-            return "longLeft"
-        default:
-            return nil
-        }
-    }
+@MainActor class SettingsViewModel: ObservableObject {
+    public var title: String
+    public var sections: [SettingsSection] = []
 
-    var hasToggle: Bool {
-        switch self {
-        case .codeLock, .notifications, .adsFilter, .spamFilter, .includeOriginal, .acknowledgement:
-            return true
-        default:
-            return false
-        }
-    }
-
-    var isOn: Bool {
-        switch self {
-        case .codeLock:
-            return UserDefaults.shared.isAppLockEnabled
-        case .notifications:
-            return UserDefaults.shared.isNotificationEnabled
-//        case .adsFilter:
-//        case .spamFilter:
-//        case .includeOriginal:
-//        case .acknowledgement:
-        default:
-            return false
-        }
-    }
-
-    @MainActor var destination: AnyView? {
-        switch self {
-        case .send:
-            return AnyView(SettingsView(viewModel: SettingsViewModel(page: .sendPage)))
-        case .threadDensity:
-            return nil
-        case .theme:
-            return AnyView(SettingsSelectionView(viewModel: ThemeSettingViewModel()))
-        case .swipeActions:
-            return AnyView(SettingsView(viewModel: SettingsViewModel(page: .swipeActions)))
-        case .messageDisplay:
-            return AnyView(SettingsSelectionView(viewModel: MessageDisplayModeSettingViewModel()))
-        case .externalContent:
-            return AnyView(SettingsSelectionView(viewModel: ExternalContentSettingViewModel()))
-        case .signature:
-            return nil
-        case .autoReply:
-            return nil
-        case .folderSettings:
-            return nil
-        case .inboxType:
-            return nil
-        case .rules:
-            return nil
-        case .redirect:
-            return nil
-        case .alias:
-            return nil
-        case .blockedRecipient:
-            return nil
-        case .logs:
-            return nil
-        case .cancelPeriod:
-            return AnyView(SettingsSelectionView(viewModel: CancelDelaySettingViewModel()))
-        case .emailTransfer:
-            return AnyView(SettingsSelectionView(viewModel: ForwardModeSettingViewModel()))
-        case .shortRight:
-            return AnyView(SettingsSelectionView(viewModel: SwipeActionSettingViewModel(swipe: .shortRight)))
-        case .longRight:
-            return AnyView(SettingsSelectionView(viewModel: SwipeActionSettingViewModel(swipe: .longRight)))
-        case .shortLeft:
-            return AnyView(SettingsSelectionView(viewModel: SwipeActionSettingViewModel(swipe: .shortLeft)))
-        case .longLeft:
-            return AnyView(SettingsSelectionView(viewModel: SwipeActionSettingViewModel(swipe: .longLeft)))
-        default:
-            return nil
-        }
+    init(title: String) {
+        self.title = title
     }
 }
