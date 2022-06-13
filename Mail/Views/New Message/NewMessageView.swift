@@ -44,14 +44,14 @@ struct NewMessageView: View {
         self.mailboxManager = mailboxManager
         selectedMailboxItem = AccountManager.instance.mailboxes
             .firstIndex { $0.mailboxId == mailboxManager.mailbox.mailboxId } ?? 0
-        var draft = draft ?? UnmanagedDraft(body: defaultBody)
+        var initialDraft = draft ?? UnmanagedDraft(body: defaultBody)
         if let signatureResponse = mailboxManager.getSignatureResponse() {
-            draft.setSender(signatureResponse: signatureResponse)
+            initialDraft.setSender(signatureResponse: signatureResponse)
             sendDisabled = false
         } else {
             sendDisabled = true
         }
-        self.draft = draft
+        self.draft = initialDraft
     }
 
     var body: some View {

@@ -60,12 +60,7 @@ struct RecipientCellView: View {
 
                         ChevronButton(isExpanded: $showCcButton)
                     }
-                case .cc:
-                    TextField("", text: $text)
-                        .textContentType(.emailAddress)
-                        .keyboardType(.emailAddress)
-                        .autocapitalization(.none)
-                case .bcc:
+                case .cc, .bcc:
                     TextField("", text: $text)
                         .textContentType(.emailAddress)
                         .keyboardType(.emailAddress)

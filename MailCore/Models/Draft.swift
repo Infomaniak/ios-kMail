@@ -19,6 +19,7 @@
 import Foundation
 import MailResources
 import RealmSwift
+import UniformTypeIdentifiers
 
 public enum SaveDraftOption: String, Codable {
     case save
@@ -99,7 +100,7 @@ public struct UnmanagedDraft: Equatable, Encodable, AbstractDraft {
                 subject: String = "",
                 body: String = "",
                 quote: String = "",
-                mimeType: String = "text/html",
+                mimeType: String = UTType.html.preferredMIMEType!,
                 from: [Recipient]? = nil,
                 replyTo: [Recipient]? = nil,
                 to: [Recipient]? = nil,
@@ -245,7 +246,7 @@ public class Draft: Object, Decodable, Identifiable, AbstractDraft {
     }
 
     override public init() {
-        mimeType = "text/html"
+        mimeType = UTType.html.preferredMIMEType!
     }
 
     public required init(from decoder: Decoder) throws {
@@ -278,7 +279,7 @@ public class Draft: Object, Decodable, Identifiable, AbstractDraft {
                             forwardedUid: String? = nil,
                             references: String? = nil,
                             inReplyTo: String? = nil,
-                            mimeType: String = "text/html",
+                            mimeType: String = UTType.html.preferredMIMEType!,
                             body: String = "",
                             quote: String? = nil,
                             to: [Recipient]? = nil,
