@@ -24,7 +24,7 @@ struct SettingsOptionCell: View {
     let option: SettingsOption
 
     var body: some View {
-        NavigationLink(destination: option.destination) {
+        NavigationLink(destination: option.getDestination()) {
             VStack {
                 Text(title)
                 Text(subtitle)
@@ -36,6 +36,6 @@ struct SettingsOptionCell: View {
 
 struct SettingsOptionCell_Previews: PreviewProvider {
     static var previews: some View {
-        SettingsOptionCell(title: "Theme", subtitle: "Theme", option: .theme)
+        SettingsOptionCell(title: "Theme", subtitle: "Theme", option: .themeOption)
     }
 }

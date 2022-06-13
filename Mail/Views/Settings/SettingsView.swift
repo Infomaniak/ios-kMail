@@ -54,7 +54,7 @@ struct SettingsView: View {
 
     private func updateSelectedValues() {
         selectedValues = [
-            .theme: UserDefaults.shared.theme
+            .themeOption: UserDefaults.shared.theme
         ]
     }
 }

@@ -67,7 +67,7 @@ enum SettingsDestination: String, Equatable {
 
 // MARK: - SettingsOption
 
-//struct SettingsOption: Equatable {
+// struct SettingsOption: Equatable {
 //    let id: Int
 //    let destination: AnyView
 //
@@ -80,7 +80,7 @@ enum SettingsDestination: String, Equatable {
 //    static func == (lhs: SettingsOption, rhs: SettingsOption) -> Bool {
 //        return lhs.id == rhs.id
 //    }
-//}
+// }
 
 enum SettingsOption: Equatable {
     // General settings
@@ -92,7 +92,7 @@ enum SettingsOption: Equatable {
     // Send settings
     case cancelDelayOption
     case forwardMessageOption
-    
+
     // Swipe
     case swipeShortRightOption
     case swipeLongRightOption
@@ -132,5 +132,9 @@ enum SettingsOption: Equatable {
 
     init(title: String) {
         self.title = title
+    }
+
+    func selectedValuesUpdated(selectedValues: [SettingsOption: SettingsOptionEnum]) {
+        // Empty on purpose
     }
 }
