@@ -373,11 +373,12 @@ public class MailboxManager: ObservableObject {
         return getRealm().objects(Draft.self).where { $0.messageUid == messageUid }.first
     }
 
-    public func send(draft: Draft) async throws -> CancelableResponse {
+    public func send(draft: UnmanagedDraft) async throws -> CancelableResponse {
         // If the draft has no UUID, we save it first
         if draft.uuid.isEmpty {
             _ = try await save(draft: draft)
         }
+        var draft = draft
         draft.action = .send
         let cancelableResponse = try await apiFetcher.send(mailbox: mailbox, draft: draft)
         // Once the draft has been sent, we can delete it from Realm
@@ -385,12 +386,14 @@ public class MailboxManager: ObservableObject {
         return cancelableResponse
     }
 
-    public func save(draft: Draft) async throws -> DraftResponse {
+    public func save(draft: UnmanagedDraft) async throws -> DraftResponse {
+        var draft = draft
         draft.action = .save
         do {
             let saveResponse = try await apiFetcher.save(mailbox: mailbox, draft: draft)
 
             let realm = getRealm()
+            let draft = draft.asManaged()
             let oldUuid = draft.uuid
             draft.uuid = saveResponse.uuid
             draft.messageUid = saveResponse.uid
@@ -411,9 +414,11 @@ public class MailboxManager: ObservableObject {
             return saveResponse
         } catch {
             let realm = getRealm()
+            let draft = draft.asManaged()
             if draft.uuid.isEmpty {
                 draft.uuid = Draft.uuidLocalPrefix + UUID().uuidString
             }
+            draft.isOffline = true
             draft.date = Date()
             let copyDraft = draft.detached()
 
@@ -425,7 +430,7 @@ public class MailboxManager: ObservableObject {
         }
     }
 
-    public func delete(draft: Draft) {
+    public func delete(draft: AbstractDraft) {
         let realm = getRealm()
         if let draft = realm.object(ofType: Draft.self, forPrimaryKey: draft.uuid) {
             try? realm.safeWrite {

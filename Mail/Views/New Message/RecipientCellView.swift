@@ -38,7 +38,7 @@ enum RecipientCellType {
 }
 
 struct RecipientCellView: View {
-    @Binding var draft: Draft
+    @Binding var text: String
     @Binding var showCcButton: Bool
 
     let type: RecipientCellType
@@ -52,7 +52,7 @@ struct RecipientCellView: View {
                 switch type {
                 case .to:
                     HStack {
-                        TextField("", text: $draft.toValue)
+                        TextField("", text: $text)
                             .textContentType(.emailAddress)
                             .keyboardType(.emailAddress)
                             .autocapitalization(.none)
@@ -61,17 +61,17 @@ struct RecipientCellView: View {
                         ChevronButton(isExpanded: $showCcButton)
                     }
                 case .cc:
-                    TextField("", text: $draft.ccValue)
+                    TextField("", text: $text)
                         .textContentType(.emailAddress)
                         .keyboardType(.emailAddress)
                         .autocapitalization(.none)
                 case .bcc:
-                    TextField("", text: $draft.bccValue)
+                    TextField("", text: $text)
                         .textContentType(.emailAddress)
                         .keyboardType(.emailAddress)
                         .autocapitalization(.none)
                 case .object:
-                    TextField("", text: $draft.subjectValue)
+                    TextField("", text: $text)
                 }
             }
             .textStyle(.body)
@@ -83,7 +83,7 @@ struct RecipientCellView: View {
 
 struct RecipientCellView_Previews: PreviewProvider {
     static var previews: some View {
-        RecipientCellView(draft: .constant(Draft()), showCcButton: .constant(false), type: .to)
+        RecipientCellView(text: .constant(""), showCcButton: .constant(false), type: .to)
             .previewLayout(.sizeThatFits)
     }
 }

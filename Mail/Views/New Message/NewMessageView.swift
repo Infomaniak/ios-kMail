@@ -26,7 +26,7 @@ struct NewMessageView: View {
     @Binding var isPresented: Bool
     @State private var mailboxManager: MailboxManager
     @State private var selectedMailboxItem: Int = 0
-    @State var draft: Draft
+    @State var draft: UnmanagedDraft
     @State var editor = RichTextEditorModel()
     @State var showCc = false
 
@@ -39,19 +39,19 @@ struct NewMessageView: View {
     @State var debouncedBufferWrite: DispatchWorkItem?
     let saveExpiration = 3.0
 
-    init(isPresented: Binding<Bool>, mailboxManager: MailboxManager, draft: Draft? = nil) {
+    init(isPresented: Binding<Bool>, mailboxManager: MailboxManager, draft: UnmanagedDraft? = nil) {
         _isPresented = isPresented
         self.mailboxManager = mailboxManager
         selectedMailboxItem = AccountManager.instance.mailboxes
             .firstIndex { $0.mailboxId == mailboxManager.mailbox.mailboxId } ?? 0
-        self.draft = draft ?? Draft(messageUid: UUID().uuidString,
-                                    body: defaultBody)
+        var draft = draft ?? UnmanagedDraft(body: defaultBody)
         if let signatureResponse = mailboxManager.getSignatureResponse() {
-            self.draft.identityId = "\(signatureResponse.defaultSignatureId)"
+            draft.identityId = "\(signatureResponse.defaultSignatureId)"
             sendDisabled = false
         } else {
             sendDisabled = true
         }
+        self.draft = draft
     }
 
     var body: some View {
@@ -71,19 +71,16 @@ struct NewMessageView: View {
 
                 SeparatorView(withPadding: false, fullWidth: true)
 
-                RecipientCellView(draft: $draft, showCcButton: $showCc, type: .to)
+                RecipientCellView(text: $draft.toValue, showCcButton: $showCc, type: .to)
 
                 if showCc {
-                    RecipientCellView(draft: $draft, showCcButton: $showCc, type: .cc)
-                    RecipientCellView(draft: $draft, showCcButton: $showCc, type: .bcc)
+                    RecipientCellView(text: $draft.ccValue, showCcButton: $showCc, type: .cc)
+                    RecipientCellView(text: $draft.bccValue, showCcButton: $showCc, type: .bcc)
                 }
 
-                RecipientCellView(draft: $draft, showCcButton: $showCc, type: .object)
+                RecipientCellView(text: $draft.subject, showCcButton: $showCc, type: .object)
 
-                RichTextEditor(model: $editor, body: draft.body) { body in
-                    draft.body = body
-                    textDidChange()
-                }
+                RichTextEditor(model: $editor, body: $draft.body)
             }
             .padding()
             .navigationBarTitleDisplayMode(.inline)
@@ -102,7 +99,7 @@ struct NewMessageView: View {
                             IKSnackBar.showCancelableSnackBar(
                                 message: MailResourcesStrings.emailSentSnackbar,
                                 cancelSuccessMessage: MailResourcesStrings.canceledEmailSendingConfirmationSnackbar,
-                                duration: .custom(CGFloat(draft.delay)),
+                                duration: .custom(CGFloat(draft.delay ?? 3)),
                                 cancelableResponse: cancelableResponse,
                                 mailboxManager: mailboxManager
                             )
@@ -163,7 +160,6 @@ struct NewMessageView: View {
 
     private func textDidChange() {
         draftHasChanged = true
-        draft.isOffline = true
         debouncedBufferWrite?.cancel()
         let debouncedWorkItem = DispatchWorkItem {
             Task {
@@ -183,8 +179,7 @@ struct NewMessageView_Previews: PreviewProvider {
     static var previews: some View {
         NewMessageView(
             isPresented: .constant(true),
-            mailboxManager: MailboxManager(mailbox: PreviewHelper.sampleMailbox, apiFetcher: MailApiFetcher()),
-            draft: Draft()
+            mailboxManager: MailboxManager(mailbox: PreviewHelper.sampleMailbox, apiFetcher: MailApiFetcher())
         )
     }
 }
