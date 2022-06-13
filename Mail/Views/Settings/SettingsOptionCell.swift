@@ -18,36 +18,24 @@
 
 import SwiftUI
 
-struct SettingsToggleCellView: View {
-    @EnvironmentObject var viewModel: SettingsViewModel
-
-    var row: ParameterRow
-    @State private var isOn: Bool
-
-    init(row: ParameterRow) {
-        self.row = row
-        _isOn = State(initialValue: row.isOn)
-    }
+struct SettingsOptionCell: View {
+    let title: String
+    let subtitle: String
+    let option: SettingsOption
 
     var body: some View {
-        Toggle(isOn: $isOn) {
-            VStack(alignment: .leading, spacing: 0) {
-                Text(row.title)
-                    .textStyle(.body)
-                if let description = row.description {
-                    Text(description)
-                        .textStyle(.calloutHint)
-                }
+        NavigationLink(destination: option.destination) {
+            VStack {
+                Text(title)
+                Text(subtitle)
+                    .font(.callout)
             }
-        }
-        .onChange(of: isOn) { newValue in
-            viewModel.updateToggleSettings(for: row, with: newValue)
         }
     }
 }
 
-struct SettingsToggleCellView_Previews: PreviewProvider {
+struct SettingsOptionCell_Previews: PreviewProvider {
     static var previews: some View {
-        SettingsToggleCellView(row: .codeLock)
+        SettingsOptionCell(title: "Theme", subtitle: "Theme", option: .theme)
     }
 }

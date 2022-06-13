@@ -18,25 +18,23 @@
 
 import SwiftUI
 
-struct SettingsSelectionCellView: View {
-    public var image: Image?
-    public var title: String
-
-    public init(title: String, image: Image? = nil) {
-        self.title = title
-        self.image = image
-    }
-
+struct SettingsToggleCell: View {
+    let title: String
+    let userDefaults: ReferenceWritableKeyPath<UserDefaults, Bool>
+    
     var body: some View {
-        HStack {
-            image
+        Toggle(isOn: Binding(get: {
+            UserDefaults.shared[keyPath: userDefaults]
+        }, set: { value in
+            UserDefaults.shared[keyPath: userDefaults] = value
+        })) {
             Text(title)
         }
     }
 }
 
-struct SettingsSelectionCellView_Previews: PreviewProvider {
-    static var previews: some View {
-        SettingsSelectionCellView(title: "")
-    }
-}
+//struct SettingsToggleCell_Previews: PreviewProvider {
+//    static var previews: some View {
+//        SettingsToggleCell(title: "Code lock", userDefaults: <#ReferenceWritableKeyPath<UserDefaults, Bool>#>)
+//    }
+//}

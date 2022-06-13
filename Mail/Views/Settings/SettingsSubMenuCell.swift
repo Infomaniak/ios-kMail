@@ -18,27 +18,19 @@
 
 import SwiftUI
 
-struct SettingsNavigateCellView: View {
-    var row: ParameterRow
-
+struct SettingsSubMenuCell: View {
+    let title: String
+    let destination: SettingsDestination
+    
     var body: some View {
-        VStack(alignment: .leading, spacing: 0) {
-            HStack {
-                Text(row.title)
-                    .textStyle(.body)
-                Spacer()
-                ChevronIcon(style: .right)
-            }
-            if let description = row.description {
-                Text(description)
-                    .textStyle(.calloutHint)
-            }
+        NavigationLink(destination: destination.getDestination()) {
+            Text(title)
         }
     }
 }
 
-struct SettingsNavigateCellView_Previews: PreviewProvider {
-    static var previews: some View {
-        SettingsNavigateCellView(row: .messageDisplay)
-    }
-}
+//struct SettingsSubMenuCell_Previews: PreviewProvider {
+//    static var previews: some View {
+//        SettingsSubMenuCell(title: <#String#>, destination: <#SettingsDestination#>)
+//    }
+//}
