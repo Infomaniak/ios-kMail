@@ -69,6 +69,10 @@ public struct UnmanagedDraft: Equatable, Encodable, AbstractDraft {
     public var action: SaveDraftOption?
     public var delay: Int?
 
+    public var hasLocalUuid: Bool {
+        return uuid.isEmpty || uuid.starts(with: Draft.uuidLocalPrefix)
+    }
+
     public var toValue: String {
         get {
             return recipientToValue(to)
