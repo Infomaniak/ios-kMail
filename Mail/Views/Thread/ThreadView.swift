@@ -57,10 +57,9 @@ struct ThreadView: View {
     }
 
     private var messages: [Message] {
-        return Array(thread.messages
-            .where { $0.isDuplicate != true }
-            .sorted(by: \.date, ascending: true))
-            .filter { isTrashFolder || $0.folderId != trashId }
+        return Array(thread.messages)
+        .filter { $0.isDuplicate != true && (isTrashFolder || $0.folderId != trashId) }
+        .sorted { $0.date.compare($1.date) == .orderedAscending }
     }
 
     init(mailboxManager: MailboxManager, thread: Thread) {
