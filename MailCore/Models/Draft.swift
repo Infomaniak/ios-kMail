@@ -183,6 +183,15 @@ public struct UnmanagedDraft: Equatable, Encodable, AbstractDraft {
                      priority: priority,
                      stUuid: stUuid)
     }
+
+    public mutating func setSender(signatureResponse: SignatureResponse) {
+        identityId = "\(signatureResponse.defaultSignatureId)"
+        guard let signature = signatureResponse.signatures.first(where: { $0.id == signatureResponse.defaultSignatureId }) else {
+            return
+        }
+        from = [Recipient(email: signature.sender, name: signature.fullName)]
+        replyTo = [Recipient(email: signature.replyTo, name: "")]
+    }
 }
 
 public class Draft: Object, Decodable, Identifiable, AbstractDraft {

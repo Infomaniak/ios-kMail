@@ -46,7 +46,7 @@ struct NewMessageView: View {
             .firstIndex { $0.mailboxId == mailboxManager.mailbox.mailboxId } ?? 0
         var draft = draft ?? UnmanagedDraft(body: defaultBody)
         if let signatureResponse = mailboxManager.getSignatureResponse() {
-            draft.identityId = "\(signatureResponse.defaultSignatureId)"
+            draft.setSender(signatureResponse: signatureResponse)
             sendDisabled = false
         } else {
             sendDisabled = true
@@ -120,7 +120,7 @@ struct NewMessageView: View {
             guard let mailboxManager = AccountManager.instance.getMailboxManager(for: mailbox),
                   let signatureResponse = mailboxManager.getSignatureResponse() else { return }
             self.mailboxManager = mailboxManager
-            draft.identityId = "\(signatureResponse.defaultSignatureId)"
+            draft.setSender(signatureResponse: signatureResponse)
         }
         .onDisappear {
             if draftHasChanged {
