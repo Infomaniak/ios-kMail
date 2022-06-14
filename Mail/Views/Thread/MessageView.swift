@@ -94,10 +94,8 @@ struct MessageView: View {
     }
 
     @MainActor private func fetchMessage() async {
-        do {
+        await tryOrDisplayError {
             try await mailboxManager.message(message: message)
-        } catch {
-            IKSnackBar.showSnackBar(message: error.localizedDescription)
         }
     }
 }

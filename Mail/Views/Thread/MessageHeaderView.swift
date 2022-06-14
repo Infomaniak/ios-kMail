@@ -162,10 +162,8 @@ struct MessageHeaderView: View {
 
     private func deleteDraft(from: Message) {
         Task {
-            do {
+            await tryOrDisplayError {
                 try await mailboxManager.deleteDraft(from: message)
-            } catch {
-                IKSnackBar.showSnackBar(message: error.localizedDescription)
             }
         }
     }

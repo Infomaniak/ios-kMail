@@ -16,11 +16,11 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import InfomaniakCore
 import Introspect
 import MailCore
 import RealmSwift
 import SwiftUI
-import InfomaniakCore
 
 import MailResources
 
@@ -138,18 +138,14 @@ struct SplitView: View {
     }
 
     private func fetchSignatures() async {
-        do {
+        await tryOrDisplayError {
             try await mailboxManager.signatures()
-        } catch {
-            IKSnackBar.showSnackBar(message: error.localizedDescription)
         }
     }
 
     private func fetchFolders() async {
-        do {
+        await tryOrDisplayError {
             try await mailboxManager.folders()
-        } catch {
-            IKSnackBar.showSnackBar(message: error.localizedDescription)
         }
     }
 

@@ -17,9 +17,9 @@
  */
 
 import Foundation
+import InfomaniakCore
 import MailCore
 import RealmSwift
-import InfomaniakCore
 
 typealias Thread = MailCore.Thread
 
@@ -62,12 +62,10 @@ typealias Thread = MailCore.Thread
 
         isLoadingPage = true
 
-        do {
+        await tryOrDisplayError {
             guard let folder = folder else { return }
             let result = try await mailboxManager.threads(folder: folder.freeze(), filter: filter)
             resourceNext = result.resourceNext
-        } catch {
-            IKSnackBar.showSnackBar(message: error.localizedDescription)
         }
         isLoadingPage = false
         mailboxManager.draftOffline()
@@ -80,12 +78,10 @@ typealias Thread = MailCore.Thread
 
         isLoadingPage = true
 
-        do {
+        await tryOrDisplayError {
             guard let folder = folder else { return }
             let result = try await mailboxManager.threads(folder: folder.freeze(), resource: resource)
             resourceNext = result.resourceNext
-        } catch {
-            print("Error while getting threads: \(error)")
         }
         isLoadingPage = false
         mailboxManager.draftOffline()
@@ -124,30 +120,26 @@ typealias Thread = MailCore.Thread
     func delete(thread: Thread) async {
         if folder?.role == .trash {
             // Delete definitely
-            do {
+            await tryOrDisplayError {
                 try await mailboxManager.delete(thread: thread)
-            } catch {
-                IKSnackBar.showSnackBar(message: error.localizedDescription)
             }
         } else if folder?.role == .draft && thread.uid.starts(with: Draft.uuidLocalPrefix) {
             // Delete local draft from Realm
-            mailboxManager.deleteLocalDraft(thread: thread)
+            tryOrDisplayError {
+                mailboxManager.deleteLocalDraft(thread: thread)
+            }
         } else {
             // Move to trash
             guard let trashFolder = mailboxManager.getFolder(with: .trash)?.freeze() else { return }
-            do {
+            await tryOrDisplayError {
                 try await mailboxManager.move(thread: thread, to: trashFolder)
-            } catch {
-                IKSnackBar.showSnackBar(message: error.localizedDescription)
             }
         }
     }
 
     func toggleRead(thread: Thread) async {
-        do {
+        await tryOrDisplayError {
             _ = try await mailboxManager.toggleRead(thread: thread)
-        } catch {
-            IKSnackBar.showSnackBar(message: error.localizedDescription)
         }
     }
 
