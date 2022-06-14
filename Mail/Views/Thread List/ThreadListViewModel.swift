@@ -121,24 +121,10 @@ typealias Thread = MailCore.Thread
     }
 
     func delete(thread: Thread) async {
-        if folder?.role == .trash {
-            // Delete definitely
-            do {
-                try await mailboxManager.delete(thread: thread)
-            } catch {
-                print("Error while deleting thread: \(error.localizedDescription)")
-            }
-        } else if folder?.role == .draft && thread.uid.starts(with: Draft.uuidLocalPrefix) {
-            // Delete local draft from Realm
-            mailboxManager.deleteLocalDraft(thread: thread)
-        } else {
-            // Move to trash
-            guard let trashFolder = mailboxManager.getFolder(with: .trash)?.freeze() else { return }
-            do {
-                try await mailboxManager.move(thread: thread, to: trashFolder)
-            } catch {
-                print("Error while moving thread to trash: \(error.localizedDescription)")
-            }
+        do {
+            try await mailboxManager.moveOrDelete(thread: thread)
+        } catch {
+            print("Error while deleting thread: \(error.localizedDescription)")
         }
     }
 

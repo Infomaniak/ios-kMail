@@ -68,14 +68,16 @@ enum ActionsTarget: Equatable {
 
 @MainActor class ActionsViewModel: ObservableObject {
     private let mailboxManager: MailboxManager
-    private var target: ActionsTarget
+    private let target: ActionsTarget
+    private let state: ThreadBottomSheet
 
     @Published var quickActions: [Action] = []
     @Published var listActions: [Action] = []
 
-    init(mailboxManager: MailboxManager, target: ActionsTarget) {
+    init(mailboxManager: MailboxManager, target: ActionsTarget, state: ThreadBottomSheet) {
         self.mailboxManager = mailboxManager
         self.target = target
+        self.state = state
         setActions()
     }
 
@@ -110,7 +112,9 @@ enum ActionsTarget: Equatable {
     func didTap(action: Action) {
         switch action {
         case .delete:
-            delete()
+            Task {
+                try await delete()
+            }
         case .reply:
             reply()
         case .archive:
@@ -118,7 +122,9 @@ enum ActionsTarget: Equatable {
         case .forward:
             forward()
         case .markAsRead, .markAsUnread:
-            toggleRead()
+            Task {
+                try await toggleRead()
+            }
         case .move:
             move()
         case .postpone:
@@ -146,10 +152,40 @@ enum ActionsTarget: Equatable {
         }
     }
 
+    private func taskGroup(on threads: [Thread], method: @escaping (Thread) async throws -> Void) async throws {
+        try await withThrowingTaskGroup(of: Void.self) { group in
+            for thread in threads {
+                group.addTask {
+                    try await method(thread)
+                }
+            }
+            try await group.waitForAll()
+        }
+    }
+
     // MARK: - Actions methods
 
-    private func delete() {
-        print("DELETE ACTION")
+    private func delete() async throws {
+        switch target {
+        case .threads(let threads):
+            try await taskGroup(on: threads, method: mailboxManager.moveOrDelete)
+        case .thread(let thread):
+            try await mailboxManager.moveOrDelete(thread: thread.freezeIfNeeded())
+        case .message(let message):
+            if message.folderId == mailboxManager.getFolder(with: .trash)?._id {
+                // Delete definitely
+                try await mailboxManager.delete(messages: [message.freezeIfNeeded()])
+            } else if message.isDraft && message.uid.starts(with: Draft.uuidLocalPrefix) {
+                // Delete local draft from Realm
+                if let thread = message.parent {
+                    mailboxManager.deleteLocalDraft(thread: thread)
+                }
+            } else {
+                // Move to trash
+                try await mailboxManager.moveToTrash(messages: [message.freezeIfNeeded()])
+            }
+        }
+        state.close()
     }
 
     private func reply() {
@@ -164,23 +200,14 @@ enum ActionsTarget: Equatable {
         print("FORWARD ACTION")
     }
 
-    private func toggleRead() {
-        Task {
-            switch target {
-            case .threads(let threads):
-                try await withThrowingTaskGroup(of: Void.self) { group in
-                    for thread in threads {
-                        group.addTask {
-                            try await self.mailboxManager.toggleRead(thread: thread)
-                        }
-                    }
-                    try await group.waitForAll()
-                }
-            case .thread(let thread):
-                try await mailboxManager.toggleRead(thread: thread.freezeIfNeeded())
-            case .message(let message):
-                try await mailboxManager.markAsSeen(message: message.freezeIfNeeded(), seen: !message.seen)
-            }
+    private func toggleRead() async throws {
+        switch target {
+        case .threads(let threads):
+            try await taskGroup(on: threads, method: mailboxManager.toggleRead)
+        case .thread(let thread):
+            try await mailboxManager.toggleRead(thread: thread.freezeIfNeeded())
+        case .message(let message):
+            try await mailboxManager.markAsSeen(messages: [message.freezeIfNeeded()], seen: !message.seen)
         }
     }
 

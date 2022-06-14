@@ -166,7 +166,7 @@ struct ThreadListView: View {
                 if target.isInvalidated {
                     EmptyView()
                 } else {
-                    ActionsView(mailboxManager: viewModel.mailboxManager, target: target)
+                    ActionsView(mailboxManager: viewModel.mailboxManager, target: target, state: bottomSheet)
                 }
             default:
                 EmptyView()
