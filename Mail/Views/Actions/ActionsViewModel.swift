@@ -70,14 +70,19 @@ enum ActionsTarget: Equatable {
     private let mailboxManager: MailboxManager
     private let target: ActionsTarget
     private let state: ThreadBottomSheet
+    private let replyHandler: (Message, ReplyMode) -> Void
 
     @Published var quickActions: [Action] = []
     @Published var listActions: [Action] = []
 
-    init(mailboxManager: MailboxManager, target: ActionsTarget, state: ThreadBottomSheet) {
+    init(mailboxManager: MailboxManager,
+         target: ActionsTarget,
+         state: ThreadBottomSheet,
+         replyHandler: @escaping (Message, ReplyMode) -> Void) {
         self.mailboxManager = mailboxManager
         self.target = target
         self.state = state
+        self.replyHandler = replyHandler
         setActions()
     }
 
@@ -189,7 +194,16 @@ enum ActionsTarget: Equatable {
     }
 
     private func reply() {
-        print("REPLY ACTION")
+        switch target {
+        case .threads:
+            // We don't handle this action in multiple selection
+            break
+        case .thread(let thread):
+            guard let message = thread.messages.last(where: { !$0.isDraft }) else { return }
+            replyHandler(message, .reply)
+        case .message(let message):
+            replyHandler(message, .reply)
+        }
     }
 
     private func archive() {
@@ -197,7 +211,16 @@ enum ActionsTarget: Equatable {
     }
 
     private func forward() {
-        print("FORWARD ACTION")
+        switch target {
+        case .threads:
+            // We don't handle this action in multiple selection
+            break
+        case .thread(let thread):
+            guard let message = thread.messages.last(where: { !$0.isDraft }) else { return }
+            replyHandler(message, .forward)
+        case .message(let message):
+            replyHandler(message, .forward)
+        }
     }
 
     private func toggleRead() async throws {

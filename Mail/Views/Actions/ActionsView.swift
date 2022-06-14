@@ -23,8 +23,11 @@ import SwiftUI
 struct ActionsView: View {
     @ObservedObject var viewModel: ActionsViewModel
 
-    init(mailboxManager: MailboxManager, target: ActionsTarget, state: ThreadBottomSheet) {
-        viewModel = ActionsViewModel(mailboxManager: mailboxManager, target: target, state: state)
+    init(mailboxManager: MailboxManager,
+         target: ActionsTarget,
+         state: ThreadBottomSheet,
+         replyHandler: @escaping (Message, ReplyMode) -> Void) {
+        viewModel = ActionsViewModel(mailboxManager: mailboxManager, target: target, state: state, replyHandler: replyHandler)
     }
 
     var body: some View {
@@ -54,7 +57,8 @@ struct ActionsView_Previews: PreviewProvider {
     static var previews: some View {
         ActionsView(mailboxManager: MailboxManager(mailbox: PreviewHelper.sampleMailbox, apiFetcher: MailApiFetcher()),
                     target: .thread(PreviewHelper.sampleThread),
-                    state: ThreadBottomSheet())
+                    state: ThreadBottomSheet(),
+                    replyHandler: { _, _ in })
             .accentColor(Color(MailResourcesAsset.infomaniakColor.color))
     }
 }

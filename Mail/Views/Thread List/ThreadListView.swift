@@ -26,6 +26,7 @@ import SwiftUI
 class MenuSheet: SheetState<MenuSheet.State> {
     enum State: Equatable {
         case newMessage
+        case reply(Message, ReplyMode)
         case editMessage(draft: Draft)
         case addAccount
     }
@@ -159,6 +160,8 @@ struct ThreadListView: View {
             switch menuSheet.state {
             case .newMessage:
                 NewMessageView(isPresented: $menuSheet.isShowing, mailboxManager: viewModel.mailboxManager)
+            case let .reply(message, replyMode):
+                NewMessageView(isPresented: $menuSheet.isShowing, mailboxManager: viewModel.mailboxManager, draft: .replying(to: message, mode: replyMode))
             case let .editMessage(draft):
                 NewMessageView(isPresented: $menuSheet.isShowing, mailboxManager: viewModel.mailboxManager, draft: draft.asUnmanaged())
             case .addAccount:
@@ -173,7 +176,9 @@ struct ThreadListView: View {
                 if target.isInvalidated {
                     EmptyView()
                 } else {
-                    ActionsView(mailboxManager: viewModel.mailboxManager, target: target, state: bottomSheet)
+                    ActionsView(mailboxManager: viewModel.mailboxManager, target: target, state: bottomSheet) { message, replyMode in
+                        menuSheet.state = .reply(message, replyMode)
+                    }
                 }
             default:
                 EmptyView()
