@@ -37,10 +37,11 @@ struct ActionsView: View {
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .textStyle(.header3)
             // Quick actions
-            HStack(spacing: 28) {
+            HStack(alignment: .top, spacing: 28) {
                 ForEach(viewModel.quickActions) { action in
                     QuickActionView(viewModel: viewModel, action: action)
                 }
+                .fixedSize(horizontal: false, vertical: true)
             }
             SeparatorView(withPadding: false, fullWidth: true)
             // Actions
@@ -57,8 +58,7 @@ struct ActionsView_Previews: PreviewProvider {
     static var previews: some View {
         ActionsView(mailboxManager: MailboxManager(mailbox: PreviewHelper.sampleMailbox, apiFetcher: MailApiFetcher()),
                     target: .thread(PreviewHelper.sampleThread),
-                    state: ThreadBottomSheet(),
-                    replyHandler: { _, _ in })
+                    state: ThreadBottomSheet()) { _, _ in }
             .accentColor(Color(MailResourcesAsset.infomaniakColor.color))
     }
 }
@@ -84,9 +84,9 @@ struct QuickActionView: View {
                 }
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
                 .aspectRatio(1, contentMode: .fit)
+
                 Text(action.title)
                     .font(.system(size: 12))
-                    .lineLimit(1)
             }
         }
     }

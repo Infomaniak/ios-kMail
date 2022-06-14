@@ -28,21 +28,22 @@ struct Action: Identifiable, Equatable {
 
     static let delete = Action(id: 1, title: MailResourcesStrings.buttonDelete, icon: MailResourcesAsset.bin)
     static let reply = Action(id: 2, title: MailResourcesStrings.buttonReply, icon: MailResourcesAsset.emailActionReply)
-    static let archive = Action(id: 3, title: MailResourcesStrings.buttonArchive, icon: MailResourcesAsset.archives)
-    static let forward = Action(id: 4, title: MailResourcesStrings.buttonForward, icon: MailResourcesAsset.emailActionTransfer)
-    static let markAsRead = Action(id: 5, title: MailResourcesStrings.buttonMarkAsRead, icon: MailResourcesAsset.envelope)
-    static let markAsUnread = Action(id: 17, title: MailResourcesStrings.buttonMarkAsUnread, icon: MailResourcesAsset.envelopeOpen)
-    static let move = Action(id: 6, title: MailResourcesStrings.buttonMove, icon: MailResourcesAsset.emailActionSend21)
-    static let postpone = Action(id: 7, title: MailResourcesStrings.buttonPostpone, icon: MailResourcesAsset.waitingMessage)
-    static let spam = Action(id: 8, title: MailResourcesStrings.buttonSpam, icon: MailResourcesAsset.spam)
-    static let block = Action(id: 9, title: MailResourcesStrings.buttonBlockSender, icon: MailResourcesAsset.blockUser)
-    static let phishing = Action(id: 10, title: MailResourcesStrings.buttonPhishing, icon: MailResourcesAsset.fishing)
-    static let print = Action(id: 11, title: MailResourcesStrings.buttonPrint, icon: MailResourcesAsset.printText)
-    static let saveAsPDF = Action(id: 12, title: MailResourcesStrings.buttonSavePDF, icon: MailResourcesAsset.fileDownload)
-    static let openIn = Action(id: 13, title: MailResourcesStrings.buttonOpenIn, icon: MailResourcesAsset.sendTo)
-    static let createRule = Action(id: 14, title: MailResourcesStrings.buttonCreateRule, icon: MailResourcesAsset.ruleRegle)
-    static let report = Action(id: 15, title: MailResourcesStrings.buttonReportDisplayProblem, icon: MailResourcesAsset.feedbacks)
-    static let editMenu = Action(id: 16, title: MailResourcesStrings.buttonEditMenu, icon: MailResourcesAsset.editTools)
+    static let replyAll = Action(id: 3, title: MailResourcesStrings.buttonReplyAll, icon: MailResourcesAsset.emailActionReplyToAll)
+    static let archive = Action(id: 4, title: MailResourcesStrings.buttonArchive, icon: MailResourcesAsset.archives)
+    static let forward = Action(id: 5, title: MailResourcesStrings.buttonForward, icon: MailResourcesAsset.emailActionTransfer)
+    static let markAsRead = Action(id: 6, title: MailResourcesStrings.buttonMarkAsRead, icon: MailResourcesAsset.envelope)
+    static let markAsUnread = Action(id: 7, title: MailResourcesStrings.buttonMarkAsUnread, icon: MailResourcesAsset.envelopeOpen)
+    static let move = Action(id: 8, title: MailResourcesStrings.buttonMove, icon: MailResourcesAsset.emailActionSend21)
+    static let postpone = Action(id: 9, title: MailResourcesStrings.buttonPostpone, icon: MailResourcesAsset.waitingMessage)
+    static let spam = Action(id: 10, title: MailResourcesStrings.buttonSpam, icon: MailResourcesAsset.spam)
+    static let block = Action(id: 11, title: MailResourcesStrings.buttonBlockSender, icon: MailResourcesAsset.blockUser)
+    static let phishing = Action(id: 12, title: MailResourcesStrings.buttonPhishing, icon: MailResourcesAsset.fishing)
+    static let print = Action(id: 13, title: MailResourcesStrings.buttonPrint, icon: MailResourcesAsset.printText)
+    static let saveAsPDF = Action(id: 14, title: MailResourcesStrings.buttonSavePDF, icon: MailResourcesAsset.fileDownload)
+    static let openIn = Action(id: 15, title: MailResourcesStrings.buttonOpenIn, icon: MailResourcesAsset.sendTo)
+    static let createRule = Action(id: 16, title: MailResourcesStrings.buttonCreateRule, icon: MailResourcesAsset.ruleRegle)
+    static let report = Action(id: 17, title: MailResourcesStrings.buttonReportDisplayProblem, icon: MailResourcesAsset.feedbacks)
+    static let editMenu = Action(id: 18, title: MailResourcesStrings.buttonEditMenu, icon: MailResourcesAsset.editTools)
 
     static func == (lhs: Action, rhs: Action) -> Bool {
         lhs.id == rhs.id
@@ -88,7 +89,7 @@ enum ActionsTarget: Equatable {
 
     private func setActions() {
         // In the future, we might want to adjust the actions based on the target
-        quickActions = [.delete, .reply, .archive, .forward]
+        quickActions = [.reply, .replyAll, .forward, .delete]
         let unread: Bool
         switch target {
         case .threads(let threads):
@@ -99,6 +100,7 @@ enum ActionsTarget: Equatable {
             unread = !message.seen
         }
         listActions = [
+            .archive,
             unread ? .markAsRead : .markAsUnread,
             .move,
             .postpone,
@@ -121,11 +123,21 @@ enum ActionsTarget: Equatable {
                 try await delete()
             }
         case .reply:
-            reply()
+            Task {
+                try await reply(mode: .reply)
+            }
+        case .replyAll:
+            Task {
+                try await reply(mode: .replyAll)
+            }
         case .archive:
-            archive()
+            Task {
+                try await archive()
+            }
         case .forward:
-            forward()
+            Task {
+                try await reply(mode: .forward)
+            }
         case .markAsRead, .markAsUnread:
             Task {
                 try await toggleRead()
@@ -187,39 +199,40 @@ enum ActionsTarget: Equatable {
                 }
             } else {
                 // Move to trash
-                try await mailboxManager.moveToTrash(messages: [message.freezeIfNeeded()])
+                try await mailboxManager.move(messages: [message.freezeIfNeeded()], to: .trash)
             }
         }
         state.close()
     }
 
-    private func reply() {
+    private func reply(mode: ReplyMode) async throws {
         switch target {
         case .threads:
             // We don't handle this action in multiple selection
             break
         case .thread(let thread):
             guard let message = thread.messages.last(where: { !$0.isDraft }) else { return }
-            replyHandler(message, .reply)
+            // Download message if needed to get body
+            if !message.fullyDownloaded {
+                try await mailboxManager.message(message: message)
+            }
+            message.realm?.refresh()
+            replyHandler(message, mode)
         case .message(let message):
-            replyHandler(message, .reply)
+            replyHandler(message, mode)
         }
     }
 
-    private func archive() {
-        print("ARCHIVE")
-    }
-
-    private func forward() {
+    private func archive() async throws {
         switch target {
-        case .threads:
-            // We don't handle this action in multiple selection
-            break
+        case .threads(let threads):
+            try await taskGroup(on: threads) { [mailboxManager] thread in
+                try await mailboxManager.move(thread: thread, to: .archive)
+            }
         case .thread(let thread):
-            guard let message = thread.messages.last(where: { !$0.isDraft }) else { return }
-            replyHandler(message, .forward)
+            try await mailboxManager.move(thread: thread.freezeIfNeeded(), to: .archive)
         case .message(let message):
-            replyHandler(message, .forward)
+            try await mailboxManager.move(messages: [message.freezeIfNeeded()], to: .archive)
         }
     }
 
