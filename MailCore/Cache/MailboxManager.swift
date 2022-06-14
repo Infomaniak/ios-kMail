@@ -302,7 +302,15 @@ public class MailboxManager: ObservableObject {
     public func move(messages: [Message], to folder: Folder) async throws {
         _ = try await apiFetcher.move(mailbox: mailbox, messages: messages, destinationId: folder._id)
 
-        // TODO: Update Realm
+        let realm = getRealm()
+        try? realm.safeWrite {
+            for message in messages {
+                if let liveMessage = message.thaw() {
+                    liveMessage.folder = folder.name
+                    liveMessage.folderId = folder._id
+                }
+            }
+        }
     }
 
     public func moveToTrash(messages: [Message]) async throws {
