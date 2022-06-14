@@ -18,6 +18,7 @@
 
 import Foundation
 import MailCore
+import MailResources
 import SwiftUI
 
 // MARK: - SettingsSection
@@ -105,15 +106,30 @@ enum SettingsOption: Equatable {
         case .threadDensityOption:
             EmptyView()
         case .themeOption:
-            SettingsOptionView<Theme>(title: "Thème", keyPath: \.theme)
+            SettingsOptionView<Theme>(
+                title: MailResourcesStrings.settingsThemeChoiceTitle,
+                keyPath: \.theme
+            )
         case .displayModeOption:
-            EmptyView()
+            SettingsOptionView<ThreadMode>(
+                title: MailResourcesStrings.settingsMessageDisplayTitle,
+                keyPath: \.threadMode
+            )
         case .externalContentOption:
-            EmptyView()
+            SettingsOptionView<ExternalContent>(
+                title: MailResourcesStrings.settingsExternalContentTitle,
+                keyPath: \.displayExternalContent
+            )
         case .cancelDelayOption:
-            SettingsOptionView<CancelDelay>(title: "Delay", keyPath: \.cancelSendDelay)
+            SettingsOptionView<CancelDelay>(
+                title: MailResourcesStrings.settingsCancellationPeriodTitle,
+                keyPath: \.cancelSendDelay
+            )
         case .forwardMessageOption:
-            SettingsOptionView<ForwardMode>(title: "Forward", keyPath: \.forwardMode)
+            SettingsOptionView<ForwardMode>(
+                title: MailResourcesStrings.settingsTransferEmailsTitle,
+                keyPath: \.forwardMode
+            )
         case .swipeShortRightOption:
             EmptyView()
         case .swipeLongRightOption:

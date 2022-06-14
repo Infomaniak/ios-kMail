@@ -92,12 +92,12 @@ public extension UserDefaults {
         }
     }
 
-    var displayExternalContent: Bool {
+    var displayExternalContent: ExternalContent {
         get {
-            return bool(forKey: key(.externalContent))
+            return ExternalContent(rawValue: string(forKey: key(.externalContent)) ?? "") ?? .always
         }
         set {
-            set(newValue, forKey: key(.externalContent))
+            set(newValue.rawValue, forKey: key(.externalContent))
         }
     }
 
@@ -150,12 +150,12 @@ public extension UserDefaults {
         }
     }
 
-    var threadMode: Bool {
+    var threadMode: ThreadMode {
         get {
-            return bool(forKey: key(.threadMode))
+            return ThreadMode(rawValue: string(forKey: key(.threadMode)) ?? "") ?? .discussion
         }
         set {
-            set(newValue, forKey: key(.threadMode))
+            set(newValue.rawValue, forKey: key(.threadMode))
         }
     }
 
@@ -185,7 +185,7 @@ public extension UserDefaults {
             set(newValue, forKey: key(.includeOriginalInReply))
         }
     }
-    
+
     var acknowledgement: Bool {
         get {
             return bool(forKey: key(.acknowledgement))

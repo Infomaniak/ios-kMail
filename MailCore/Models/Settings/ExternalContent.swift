@@ -17,29 +17,18 @@
  */
 
 import Foundation
-import MailCore
 import MailResources
-import SwiftUI
 
-@MainActor class ForwardModeSettingViewModel: SettingsSelectionViewModel {
-    private var content = ForwardMode.allCases
+public enum ExternalContent: String, CaseIterable, SettingsOptionEnum {
+    case always
+    case askMe
 
-    init() {
-        super.init(title: MailResourcesStrings.settingsTransferEmailsTitle)
-
-        for (indice, mode) in content.enumerated() {
-            tableContent.append(
-                SettingsSelectionContent(
-                    id: indice,
-                    view: AnyView(SettingsSelectionCellView(title: mode.title)),
-                    isSelected: mode == UserDefaults.shared.forwardMode
-                )
-            )
+    public var title: String {
+        switch self {
+        case .always:
+            return MailResourcesStrings.settingsOptionAlways
+        case .askMe:
+            return MailResourcesStrings.settingsOptionAskMe
         }
-    }
-
-    override func updateSelection(newValue: Int) {
-        super.updateSelection(newValue: newValue)
-        UserDefaults.shared.forwardMode = content[newValue]
     }
 }
