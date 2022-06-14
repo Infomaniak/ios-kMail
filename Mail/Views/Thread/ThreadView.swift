@@ -120,7 +120,7 @@ struct ThreadView: View {
                     }
                     Spacer()
                     Button {
-                        threadBottomSheet.open(state: .actions(.thread(thread)), position: .middle)
+                        threadBottomSheet.open(state: .actions(.thread(thread.thaw() ?? thread)), position: .middle)
                     } label: {
                         VStack(spacing: 0) {
                             Image(systemName: "ellipsis")
@@ -155,7 +155,7 @@ struct ThreadView: View {
         .bottomSheet(bottomSheetPosition: $threadBottomSheet.position, options: threadBottomSheetOptions) {
             switch threadBottomSheet.state {
             case let .actions(target):
-                ActionsView(target: target)
+                ActionsView(mailboxManager: mailboxManager, target: target, state: threadBottomSheet)
             case .none:
                 EmptyView()
             }
