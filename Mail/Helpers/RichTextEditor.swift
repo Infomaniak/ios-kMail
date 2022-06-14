@@ -25,9 +25,7 @@ struct RichTextEditor: UIViewRepresentable {
     typealias UIViewType = UIView
 
     @Binding var model: RichTextEditorModel
-    var body: String
-
-    var textChange: (String) -> Void
+    @Binding var body: String
 
     var richTextEditor: SQTextEditorView {
         return model.richTextEditor
@@ -50,10 +48,9 @@ struct RichTextEditor: UIViewRepresentable {
         }
 
         func editor(_ editor: SQTextEditorView, cursorPositionDidChange position: SQEditorCursorPosition) {
-            editor.getHTML { [self] html in
-                if let html = html, parent.body.trimmingCharacters(in: .whitespacesAndNewlines) != html {
-                    parent.body = html
-                    parent.textChange(html)
+            editor.getHTML { html in
+                if let html = html, self.parent.body.trimmingCharacters(in: .whitespacesAndNewlines) != html {
+                    self.parent.body = html
                 }
             }
         }

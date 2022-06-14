@@ -46,7 +46,7 @@ public class Signature: Object, Decodable {
     @Persisted public var isDefault: Bool
 
     private enum CodingKeys: String, CodingKey {
-        case name, content, replyTo, replyToIdn, replyToId, fullName, sender, senderIdn, senderId, isDefault
+        case id, name, content, replyTo, replyToIdn, replyToId, fullName, sender, senderIdn, senderId, isDefault
         // Property 'hash' already exists
         case hashString = "hash"
     }

@@ -19,6 +19,7 @@
 import Foundation
 import MailResources
 import RealmSwift
+import UniformTypeIdentifiers
 
 public enum SaveDraftOption: String, Codable {
     case save
@@ -39,31 +40,38 @@ public struct DraftResponse: Codable {
     public var uid: String
 }
 
-public class Draft: Object, Codable, Identifiable {
-    public static let uuidLocalPrefix = "Local-"
+public protocol AbstractDraft {
+    var uuid: String { get }
+}
 
-    @Persisted(primaryKey: true) public var uuid: String = ""
-    @Persisted public var date: Date
-    @Persisted public var identityId: String?
-    @Persisted public var messageUid: String?
-    @Persisted public var inReplyToUid: String?
-    @Persisted public var forwardedUid: String?
-    @Persisted public var references: String?
-    @Persisted public var inReplyTo: String?
-    @Persisted public var mimeType: String
-    @Persisted public var body: String
-    @Persisted public var quote: String?
-    @Persisted public var to: List<Recipient>
-    @Persisted public var cc: List<Recipient>
-    @Persisted public var bcc: List<Recipient>
-    @Persisted public var subject: String?
-    @Persisted public var ackRequest = false
-    @Persisted public var priority: MessagePriority
-    @Persisted public var stUuid: String?
-    @Persisted public var attachments: List<Attachment>
-    @Persisted public var isOffline = true
+// We need two draft models because of a bug in Realm…
+// https://github.com/realm/realm-swift/issues/7810
+public struct UnmanagedDraft: Equatable, Encodable, AbstractDraft {
+    public var uuid: String
+    public var subject: String
+    public var body: String
+    public var quote: String
+    public var mimeType: String
+    public var from: [Recipient]?
+    public var replyTo: [Recipient]?
+    public var to: [Recipient]?
+    public var cc: [Recipient]?
+    public var bcc: [Recipient]?
+    public var inReplyTo: String?
+    public var inReplyToUid: String?
+    public var forwardedUid: String?
+    // attachments
+    public var identityId: String
+    public var ackRequest = false
+    public var stUuid: String?
+    // uid?
+    public var priority: MessagePriority
     public var action: SaveDraftOption?
-    public var delay: Int = 30 // TODO: Change delay following user preferences
+    public var delay: Int?
+
+    public var hasLocalUuid: Bool {
+        return uuid.isEmpty || uuid.starts(with: Draft.uuidLocalPrefix)
+    }
 
     public var toValue: String {
         get {
@@ -92,14 +100,128 @@ public class Draft: Object, Codable, Identifiable {
         }
     }
 
-    public var subjectValue: String {
-        get {
-            return subject ?? ""
-        }
-        set {
-            subject = newValue
-        }
+    public init(uuid: String = "",
+                subject: String = "",
+                body: String = "",
+                quote: String = "",
+                mimeType: String = UTType.html.preferredMIMEType!,
+                from: [Recipient]? = nil,
+                replyTo: [Recipient]? = nil,
+                to: [Recipient]? = nil,
+                cc: [Recipient]? = nil,
+                bcc: [Recipient]? = nil,
+                inReplyTo: String? = nil,
+                inReplyToUid: String? = nil,
+                forwardedUid: String? = nil,
+                identityId: String = "",
+                ackRequest: Bool = false,
+                stUuid: String? = nil,
+                priority: MessagePriority = .normal,
+                action: SaveDraftOption? = nil,
+                delay: Int? = 30) {
+        self.uuid = uuid
+        self.subject = subject
+        self.body = body
+        self.quote = quote
+        self.mimeType = mimeType
+        self.from = from
+        self.replyTo = replyTo
+        self.to = to
+        self.cc = cc
+        self.bcc = bcc
+        self.inReplyTo = inReplyTo
+        self.inReplyToUid = inReplyToUid
+        self.forwardedUid = forwardedUid
+        self.identityId = identityId
+        self.ackRequest = ackRequest
+        self.stUuid = stUuid
+        self.priority = priority
+        self.action = action
+        self.delay = delay
     }
+
+    private func valueToRecipient(_ value: String) -> [Recipient]? {
+        guard !value.isEmpty else { return nil }
+        return value.components(separatedBy: ",").map { Recipient(email: $0, name: "") }
+    }
+
+    private func recipientToValue(_ recipient: [Recipient]?) -> String {
+        return recipient?.map(\.email).joined(separator: ",") ?? ""
+    }
+
+    public static func replying(to message: Message, mode: ReplyMode) -> UnmanagedDraft {
+        let subject: String
+        let quote: String
+        switch mode {
+        case .reply, .replyAll:
+            subject = "Re: \(message.formattedSubject)"
+            quote = Constants.replyQuote(message: message)
+        case .forward:
+            subject = "Fwd: \(message.formattedSubject)"
+            quote = Constants.forwardQuote(message: message)
+        }
+        return UnmanagedDraft(subject: subject,
+                              body: "<div><br></div><div><br></div>\(quote)",
+                              quote: quote,
+                              to: mode.isReply ? Array(message.replyTo.isEmpty ? message.from.detached() : message.replyTo.detached()) : nil,
+                              cc: mode == .replyAll ? Array(message.to.detached()) + Array(message.cc.detached()) : nil,
+                              inReplyTo: message.msgId,
+                              inReplyToUid: mode.isReply ? message.uid : nil,
+                              forwardedUid: mode == .forward ? message.uid : nil /* ,
+                               attachments: mode == .forward ? Array(message.attachments) : nil */ )
+    }
+
+    public func asManaged() -> Draft {
+        return Draft(uuid: uuid,
+                     identityId: identityId,
+                     inReplyToUid: inReplyToUid,
+                     forwardedUid: forwardedUid,
+                     inReplyTo: inReplyTo,
+                     mimeType: mimeType,
+                     body: body,
+                     quote: quote,
+                     to: to,
+                     cc: cc,
+                     bcc: bcc,
+                     subject: subject,
+                     ackRequest: ackRequest,
+                     priority: priority,
+                     stUuid: stUuid)
+    }
+
+    public mutating func setSender(signatureResponse: SignatureResponse) {
+        identityId = "\(signatureResponse.defaultSignatureId)"
+        guard let signature = signatureResponse.signatures.first(where: { $0.id == signatureResponse.defaultSignatureId }) else {
+            return
+        }
+        from = [Recipient(email: signature.sender, name: signature.fullName)]
+        replyTo = [Recipient(email: signature.replyTo, name: "")]
+    }
+}
+
+public class Draft: Object, Decodable, Identifiable, AbstractDraft {
+    public static let uuidLocalPrefix = "Local-"
+
+    @Persisted(primaryKey: true) public var uuid: String = ""
+    @Persisted public var date: Date
+    @Persisted public var identityId: String?
+    @Persisted public var messageUid: String?
+    @Persisted public var inReplyToUid: String?
+    @Persisted public var forwardedUid: String?
+    @Persisted public var references: String?
+    @Persisted public var inReplyTo: String?
+    @Persisted public var mimeType: String
+    @Persisted public var body: String
+    @Persisted public var quote: String?
+    @Persisted public var to: List<Recipient>
+    @Persisted public var cc: List<Recipient>
+    @Persisted public var bcc: List<Recipient>
+    @Persisted public var subject: String?
+    @Persisted public var ackRequest = false
+    @Persisted public var priority: MessagePriority
+    @Persisted public var stUuid: String?
+    @Persisted public var attachments: List<Attachment>
+    @Persisted public var isOffline = true
 
     public var hasLocalUuid: Bool {
         return uuid.isEmpty || uuid.starts(with: Draft.uuidLocalPrefix)
@@ -125,12 +247,10 @@ public class Draft: Object, Codable, Identifiable {
         case stUuid
         case attachments
         case isOffline
-        case action
-        case delay
     }
 
     override public init() {
-        mimeType = "text/html"
+        mimeType = UTType.html.preferredMIMEType!
     }
 
     public required init(from decoder: Decoder) throws {
@@ -155,29 +275,26 @@ public class Draft: Object, Codable, Identifiable {
         attachments = try values.decode(List<Attachment>.self, forKey: .attachments)
     }
 
-    public convenience init(
-        uuid: String = "",
-        date: Date = Date(),
-        identityId: String? = nil,
-        messageUid: String? = nil,
-        inReplyToUid: String? = nil,
-        forwardedUid: String? = nil,
-        references: String? = nil,
-        inReplyTo: String? = nil,
-        mimeType: String = "text/html",
-        body: String = "",
-        quote: String? = nil,
-        to: [Recipient]? = nil,
-        cc: [Recipient]? = nil,
-        bcc: [Recipient]? = nil,
-        subject: String = "",
-        ackRequest: Bool = false,
-        priority: MessagePriority = .normal,
-        stUuid: String? = nil,
-        attachments: [Attachment]? = nil,
-        isOffline: Bool = true,
-        action: SaveDraftOption? = nil
-    ) {
+    public convenience init(uuid: String = "",
+                            date: Date = Date(),
+                            identityId: String? = nil,
+                            messageUid: String? = nil,
+                            inReplyToUid: String? = nil,
+                            forwardedUid: String? = nil,
+                            references: String? = nil,
+                            inReplyTo: String? = nil,
+                            mimeType: String = UTType.html.preferredMIMEType!,
+                            body: String = "",
+                            quote: String? = nil,
+                            to: [Recipient]? = nil,
+                            cc: [Recipient]? = nil,
+                            bcc: [Recipient]? = nil,
+                            subject: String = "",
+                            ackRequest: Bool = false,
+                            priority: MessagePriority = .normal,
+                            stUuid: String? = nil,
+                            attachments: [Attachment]? = nil,
+                            isOffline: Bool = true) {
         self.init()
 
         self.uuid = uuid
@@ -200,74 +317,23 @@ public class Draft: Object, Codable, Identifiable {
         self.stUuid = stUuid
         self.attachments = attachments?.toRealmList() ?? List()
         self.isOffline = isOffline
-        self.action = action
     }
 
-    public class func replying(to message: Message, mode: ReplyMode) -> Draft {
-        let subject: String
-        let quote: String
-        switch mode {
-        case .reply, .replyAll:
-            subject = "Re: \(message.formattedSubject)"
-            quote = Constants.replyQuote(message: message)
-        case .forward:
-            subject = "Fwd: \(message.formattedSubject)"
-            quote = Constants.forwardQuote(message: message)
-        }
-        return Draft(inReplyToUid: mode.isReply ? message.uid : nil,
-                     forwardedUid: mode == .forward ? message.uid : nil,
-                     inReplyTo: message.msgId,
-                     body: "<div><br></div><div><br></div>\(quote)",
-                     quote: quote,
-                     to: mode.isReply ? Array(message.replyTo.isEmpty ? message.from.detached() : message.replyTo.detached()) : nil,
-                     cc: mode == .replyAll ? Array(message.to.detached()) + Array(message.cc.detached()) : nil,
-                     subject: subject,
-                     attachments: mode == .forward ? Array(message.attachments) : nil)
-    }
-
-    public func encode(to encoder: Encoder) throws {
-        var container = encoder.container(keyedBy: CodingKeys.self)
-
-        try container.encode(uuid, forKey: .uuid)
-        try container.encode(date, forKey: .date)
-        try container.encode(identityId, forKey: .identityId)
-        try container.encode(inReplyToUid, forKey: .inReplyToUid)
-        try container.encode(forwardedUid, forKey: .forwardedUid)
-        try container.encode(references, forKey: .references)
-        try container.encode(inReplyTo, forKey: .inReplyTo)
-        try container.encode(mimeType, forKey: .mimeType)
-        try container.encode(body, forKey: .body)
-        try container.encode(quote, forKey: .quote)
-        if to.isEmpty {
-            try container.encodeNil(forKey: .to)
-        } else {
-            try container.encode(to, forKey: .to)
-        }
-        if cc.isEmpty {
-            try container.encodeNil(forKey: .cc)
-        } else {
-            try container.encode(cc, forKey: .cc)
-        }
-        if bcc.isEmpty {
-            try container.encodeNil(forKey: .bcc)
-        } else {
-            try container.encode(bcc, forKey: .bcc)
-        }
-        try container.encode(subject, forKey: .subject)
-        try container.encode(ackRequest, forKey: .ackRequest)
-        try container.encode(priority, forKey: .priority)
-        try container.encode(stUuid, forKey: .stUuid)
-        try container.encode(isOffline, forKey: .isOffline)
-        try container.encode(action, forKey: .action)
-        try container.encode(delay, forKey: .delay)
-    }
-
-    private func valueToRecipient(_ value: String) -> List<Recipient> {
-        guard !value.isEmpty else { return List<Recipient>() }
-        return value.components(separatedBy: ",").map { Recipient(email: $0, name: "") }.toRealmList()
-    }
-
-    private func recipientToValue(_ recipient: List<Recipient>?) -> String {
-        return recipient?.map(\.email).joined(separator: ",") ?? ""
+    public func asUnmanaged() -> UnmanagedDraft {
+        return UnmanagedDraft(uuid: uuid,
+                              subject: subject ?? "",
+                              body: body,
+                              quote: quote ?? "",
+                              mimeType: mimeType,
+                              to: to.isEmpty ? nil : Array(to),
+                              cc: cc.isEmpty ? nil : Array(cc),
+                              bcc: bcc.isEmpty ? nil : Array(bcc),
+                              inReplyTo: inReplyTo,
+                              inReplyToUid: inReplyToUid,
+                              forwardedUid: forwardedUid,
+                              identityId: identityId ?? "",
+                              ackRequest: ackRequest,
+                              stUuid: stUuid,
+                              priority: priority)
     }
 }

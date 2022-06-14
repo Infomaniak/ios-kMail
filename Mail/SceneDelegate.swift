@@ -18,9 +18,9 @@
 
 import InfomaniakCore
 import MailCore
+import MailResources
 import SwiftUI
 import UIKit
-import MailResources
 
 class SceneDelegate: UIResponder, UIWindowSceneDelegate, AccountManagerDelegate {
     var window: UIWindow?
@@ -136,12 +136,12 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, AccountManagerDelegate 
         }
 
         if urlComponents.scheme?.caseInsensitiveCompare("mailto") == .orderedSame {
-            let draft = Draft(identityId: "\(signatureResponse.defaultSignatureId)",
-                              body: urlComponents.getQueryItem(named: "body") ?? "",
-                              to: [Recipient(email: urlComponents.path, name: "")],
-                              cc: getRecipients(from: urlComponents, name: "cc"),
-                              bcc: getRecipients(from: urlComponents, name: "bcc"),
-                              subject: urlComponents.getQueryItem(named: "subject") ?? "")
+            let draft = UnmanagedDraft(subject: urlComponents.getQueryItem(named: "subject") ?? "",
+                                       body: urlComponents.getQueryItem(named: "body") ?? "",
+                                       to: [Recipient(email: urlComponents.path, name: "")],
+                                       cc: getRecipients(from: urlComponents, name: "cc"),
+                                       bcc: getRecipients(from: urlComponents, name: "bcc"),
+                                       identityId: "\(signatureResponse.defaultSignatureId)")
 
             let newMessageView = NewMessageView(isPresented: .constant(true), mailboxManager: mailboxManager, draft: draft)
             let viewController = UIHostingController(rootView: newMessageView)
