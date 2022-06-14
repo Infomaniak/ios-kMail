@@ -20,7 +20,7 @@ import Foundation
 import MailResources
 import SwiftUI
 
-public enum ThreadDensity: String, SettingsOptionEnum {
+public enum ThreadDensity: String, CaseIterable, SettingsOptionEnum {
     case defaultDensity
     case largeDensity
     case compactDensity
@@ -35,8 +35,15 @@ public enum ThreadDensity: String, SettingsOptionEnum {
             return MailResourcesStrings.settingsDensityOptionCompact
         }
     }
-    
+
     public var image: Image? {
-        return nil
+        switch self {
+        case .defaultDensity:
+            return Image(uiImage: MailResourcesAsset.defaultList.image)
+        case .largeDensity:
+            return Image(uiImage: MailResourcesAsset.normalList.image)
+        case .compactDensity:
+            return Image(uiImage: MailResourcesAsset.compactList.image)
+        }
     }
 }

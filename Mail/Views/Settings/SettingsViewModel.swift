@@ -104,7 +104,7 @@ enum SettingsOption: Equatable {
     func getDestination() -> some View {
         switch self {
         case .threadDensityOption:
-            EmptyView()
+            SettingsThreadDensityOptionView()
         case .themeOption:
             SettingsOptionView<Theme>(
                 title: MailResourcesStrings.settingsThemeChoiceTitle,
