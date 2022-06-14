@@ -108,16 +108,19 @@ enum SettingsOption: Equatable {
         case .themeOption:
             SettingsOptionView<Theme>(
                 title: MailResourcesStrings.settingsThemeChoiceTitle,
+                subtitle: MailResourcesStrings.settingsTheme,
                 keyPath: \.theme
             )
         case .displayModeOption:
             SettingsOptionView<ThreadMode>(
                 title: MailResourcesStrings.settingsMessageDisplayTitle,
+                subtitle: MailResourcesStrings.settingsSelectDisplayModeDescription,
                 keyPath: \.threadMode
             )
         case .externalContentOption:
             SettingsOptionView<ExternalContent>(
                 title: MailResourcesStrings.settingsExternalContentTitle,
+                subtitle: MailResourcesStrings.settingsSelectDisplayModeDescription,
                 keyPath: \.displayExternalContent
             )
         case .cancelDelayOption:

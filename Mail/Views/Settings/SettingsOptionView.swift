@@ -23,6 +23,7 @@ import SwiftUI
 struct SettingsOptionView<OptionEnum>: View where OptionEnum: CaseIterable, OptionEnum: Equatable, OptionEnum: RawRepresentable,
     OptionEnum: SettingsOptionEnum, OptionEnum.AllCases: RandomAccessCollection, OptionEnum.RawValue: Hashable {
     let title: String
+    let subtitle: String?
     let keyPath: ReferenceWritableKeyPath<UserDefaults, OptionEnum>
 
     private let values = OptionEnum.allCases
@@ -33,25 +34,30 @@ struct SettingsOptionView<OptionEnum>: View where OptionEnum: CaseIterable, Opti
         }
     }
 
-    init(title: String, keyPath: ReferenceWritableKeyPath<UserDefaults, OptionEnum>) {
+    init(title: String, subtitle: String? = nil, keyPath: ReferenceWritableKeyPath<UserDefaults, OptionEnum>) {
         self.title = title
+        self.subtitle = subtitle
         self.keyPath = keyPath
         _selectedValue = State(wrappedValue: UserDefaults.shared[keyPath: keyPath])
     }
 
     var body: some View {
-        List(values, id: \.rawValue) { value in
-            Button {
-                selectedValue = value
-            } label: {
-                HStack(spacing: 21) {
-                    value.image
-                    Text(value.title)
-                        .textStyle(value == selectedValue ? .button : .body)
-                    Spacer()
-                    if value == selectedValue {
-                        Image(systemName: "checkmark")
-                            .foregroundColor(MailResourcesAsset.infomaniakColor)
+        List {
+            Section(header: Text(subtitle ?? "")) {
+                ForEach(values, id: \.rawValue) { value in
+                    Button {
+                        selectedValue = value
+                    } label: {
+                        HStack(spacing: 21) {
+                            value.image
+                            Text(value.title)
+                                .textStyle(value == selectedValue ? .button : .body)
+                            Spacer()
+                            if value == selectedValue {
+                                Image(systemName: "checkmark")
+                                    .foregroundColor(MailResourcesAsset.infomaniakColor)
+                            }
+                        }
                     }
                 }
             }
