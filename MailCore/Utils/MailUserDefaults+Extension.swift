@@ -37,6 +37,8 @@ extension UserDefaults.Keys {
     static let threadMode = UserDefaults.Keys(rawValue: "threadMode")
     static let cancelDelay = UserDefaults.Keys(rawValue: "cancelDelay")
     static let forwardMode = UserDefaults.Keys(rawValue: "forwardMode")
+    static let acknowledgement = UserDefaults.Keys(rawValue: "acknowledgement")
+    static let includeOriginalInReply = UserDefaults.Keys(rawValue: "includeOriginalInReply")
 }
 
 public extension UserDefaults {
@@ -172,6 +174,24 @@ public extension UserDefaults {
         }
         set {
             set(newValue.rawValue, forKey: key(.forwardMode))
+        }
+    }
+
+    var includeOriginalInReply: Bool {
+        get {
+            return bool(forKey: key(.includeOriginalInReply))
+        }
+        set {
+            set(newValue, forKey: key(.includeOriginalInReply))
+        }
+    }
+    
+    var acknowledgement: Bool {
+        get {
+            return bool(forKey: key(.acknowledgement))
+        }
+        set {
+            set(newValue, forKey: key(.acknowledgement))
         }
     }
 }
