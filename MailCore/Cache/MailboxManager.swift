@@ -506,19 +506,21 @@ public class MailboxManager: ObservableObject {
         }
     }
 
-    public func deleteDraft(from message: Message) async throws -> Bool {
+    public func deleteDraft(from message: Message) async throws {
         // Delete from API
-        let deleteResponse = try await apiFetcher.deleteDraft(from: message)
-        // TODO: check if deletion was successful - if yes delete draft in realm if no display message
-        if let draft = draft(messageUid: message.uid) {
-            let realm = getRealm()
+        do {
+            try await apiFetcher.deleteDraft(from: message)
+            if let draft = draft(messageUid: message.uid) {
+                let realm = getRealm()
 
-            // Delete draft in Realm
-            try? realm.safeWrite {
-                realm.delete(draft)
+                // Delete draft in Realm
+                try? realm.safeWrite {
+                    realm.delete(draft)
+                }
             }
+        } catch {
+            throw error
         }
-        return (deleteResponse != nil)
     }
 
     public func draftOffline() {

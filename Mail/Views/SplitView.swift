@@ -20,6 +20,7 @@ import Introspect
 import MailCore
 import RealmSwift
 import SwiftUI
+import InfomaniakCore
 
 import MailResources
 
@@ -140,7 +141,7 @@ struct SplitView: View {
         do {
             try await mailboxManager.signatures()
         } catch {
-            print("Error while fetching signatures: \(error)")
+            IKSnackBar.showSnackBar(message: error.localizedDescription)
         }
     }
 
@@ -148,7 +149,7 @@ struct SplitView: View {
         do {
             try await mailboxManager.folders()
         } catch {
-            print("Error while fetching folders: \(error.localizedDescription)")
+            IKSnackBar.showSnackBar(message: error.localizedDescription)
         }
     }
 

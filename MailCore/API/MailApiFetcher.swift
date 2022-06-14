@@ -163,7 +163,7 @@ public class MailApiFetcher: ApiFetcher {
         do {
             return try await perform(request: authenticatedRequest(.resource(resource), method: .delete)).data
         } catch {
-            return nil
+            throw error
         }
     }
 

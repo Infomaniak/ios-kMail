@@ -19,6 +19,7 @@
 import Foundation
 import MailCore
 import RealmSwift
+import InfomaniakCore
 
 typealias Thread = MailCore.Thread
 
@@ -66,7 +67,7 @@ typealias Thread = MailCore.Thread
             let result = try await mailboxManager.threads(folder: folder.freeze(), filter: filter)
             resourceNext = result.resourceNext
         } catch {
-            print("Error while getting threads: \(error)")
+            IKSnackBar.showSnackBar(message: error.localizedDescription)
         }
         isLoadingPage = false
         mailboxManager.draftOffline()
@@ -121,10 +122,24 @@ typealias Thread = MailCore.Thread
     }
 
     func delete(thread: Thread) async {
-        do {
-            try await mailboxManager.moveOrDelete(thread: thread)
-        } catch {
-            print("Error while deleting thread: \(error.localizedDescription)")
+        if folder?.role == .trash {
+            // Delete definitely
+            do {
+                try await mailboxManager.delete(thread: thread)
+            } catch {
+                IKSnackBar.showSnackBar(message: error.localizedDescription)
+            }
+        } else if folder?.role == .draft && thread.uid.starts(with: Draft.uuidLocalPrefix) {
+            // Delete local draft from Realm
+            mailboxManager.deleteLocalDraft(thread: thread)
+        } else {
+            // Move to trash
+            guard let trashFolder = mailboxManager.getFolder(with: .trash)?.freeze() else { return }
+            do {
+                try await mailboxManager.move(thread: thread, to: trashFolder)
+            } catch {
+                IKSnackBar.showSnackBar(message: error.localizedDescription)
+            }
         }
     }
 
@@ -132,7 +147,7 @@ typealias Thread = MailCore.Thread
         do {
             _ = try await mailboxManager.toggleRead(thread: thread)
         } catch {
-            print("Error while marking thread as seen: \(error.localizedDescription)")
+            IKSnackBar.showSnackBar(message: error.localizedDescription)
         }
     }
 
