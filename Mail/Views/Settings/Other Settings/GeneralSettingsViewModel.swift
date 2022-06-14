@@ -27,6 +27,15 @@ import SwiftUI
         super.init(title: MailResourcesStrings.settingsTitle)
         sections = [.emailAddresses, .general, .appearance]
     }
+
+    override func updateSelectedValue() {
+        selectedValues = [
+            .threadDensityOption: UserDefaults.shared.threadDensity,
+            .themeOption: UserDefaults.shared.theme,
+            .displayModeOption: UserDefaults.shared.threadMode,
+            .externalContentOption: UserDefaults.shared.displayExternalContent
+        ]
+    }
 }
 
 private extension SettingsSection {

@@ -27,6 +27,13 @@ import SwiftUI
         super.init(title: MailResourcesStrings.settingsSendTitle)
         sections = [.sendPage]
     }
+
+    override func updateSelectedValue() {
+        selectedValues = [
+            .cancelDelayOption: UserDefaults.shared.cancelSendDelay,
+            .forwardMessageOption: UserDefaults.shared.forwardMode
+        ]
+    }
 }
 
 private extension SettingsSection {

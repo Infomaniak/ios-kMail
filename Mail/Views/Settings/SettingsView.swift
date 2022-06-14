@@ -22,9 +22,6 @@ import SwiftUI
 struct SettingsView: View {
     @ObservedObject var viewModel: SettingsViewModel
 
-//    let sections: [SettingsSection] = [.emailAddresses, .general, .appearance]
-    @State var selectedValues: [SettingsOption: SettingsOptionEnum] = [:]
-
     init(viewModel: SettingsViewModel) {
         self.viewModel = viewModel
     }
@@ -40,22 +37,23 @@ struct SettingsView: View {
                         case let .toggle(userDefaults: userDefaults):
                             SettingsToggleCell(title: item.title, userDefaults: userDefaults)
                         case let .option(option):
-                            SettingsOptionCell(title: item.title, subtitle: selectedValues[option]?.title ?? "", option: option)
+                            SettingsOptionCell(
+                                title: item.title,
+                                subtitle: viewModel.selectedValues[option]?.title ?? "",
+                                option: option
+                            )
                         }
                     }
+                    .listRowSeparator(.hidden)
                 }
+                .listSectionSeparator(viewModel.sections.last == section ? .hidden : .visible, edges: .bottom)
             }
         }
-        .navigationBarTitle("Settings")
+        .listStyle(.plain)
+        .navigationBarTitle(viewModel.title)
         .onAppear {
-            updateSelectedValues()
+            viewModel.updateSelectedValue()
         }
-    }
-
-    private func updateSelectedValues() {
-        selectedValues = [
-            .themeOption: UserDefaults.shared.theme
-        ]
     }
 }
 

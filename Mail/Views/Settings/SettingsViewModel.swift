@@ -23,7 +23,7 @@ import SwiftUI
 
 // MARK: - SettingsSection
 
-struct SettingsSection: Identifiable {
+struct SettingsSection: Identifiable, Equatable {
     var id: Int
     var name: String
     var items: [SettingsItem]
@@ -147,13 +147,15 @@ enum SettingsOption: Equatable {
 
 @MainActor class SettingsViewModel: ObservableObject {
     public var title: String
+    @Published public var selectedValues: [SettingsOption: SettingsOptionEnum] = [:]
     public var sections: [SettingsSection] = []
 
     init(title: String) {
         self.title = title
+        updateSelectedValue()
     }
 
-    func selectedValuesUpdated(selectedValues: [SettingsOption: SettingsOptionEnum]) {
+    func updateSelectedValue() {
         // Empty on purpose
     }
 }

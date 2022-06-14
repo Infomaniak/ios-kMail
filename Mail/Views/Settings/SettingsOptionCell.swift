@@ -25,10 +25,10 @@ struct SettingsOptionCell: View {
 
     var body: some View {
         NavigationLink(destination: option.getDestination()) {
-            VStack {
+            VStack(alignment: .leading) {
                 Text(title)
                 Text(subtitle)
-                    .font(.callout)
+                    .textStyle(.calloutSecondary)
             }
         }
     }
