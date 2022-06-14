@@ -18,6 +18,7 @@
 
 import Foundation
 import MailResources
+import SwiftUI
 
 public enum ThreadMode: String, CaseIterable, SettingsOptionEnum {
     case discussion
@@ -34,5 +35,14 @@ public enum ThreadMode: String, CaseIterable, SettingsOptionEnum {
 
     public var value: Bool {
         return self == .discussion ? true : false
+    }
+
+    public var image: Image? {
+        switch self {
+        case .discussion:
+            return Image(uiImage: MailResourcesAsset.conversationEmail.image)
+        case .message:
+            return Image(uiImage: MailResourcesAsset.singleEmail.image)
+        }
     }
 }

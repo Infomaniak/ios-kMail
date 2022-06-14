@@ -18,6 +18,7 @@
 
 import Foundation
 import MailResources
+import SwiftUI
 
 public enum ExternalContent: String, CaseIterable, SettingsOptionEnum {
     case always
@@ -30,5 +31,9 @@ public enum ExternalContent: String, CaseIterable, SettingsOptionEnum {
         case .askMe:
             return MailResourcesStrings.settingsOptionAskMe
         }
+    }
+
+    public var image: Image? {
+        return nil
     }
 }

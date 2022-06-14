@@ -19,6 +19,7 @@
 import CoreMedia
 import Foundation
 import MailResources
+import SwiftUI
 
 public enum ForwardMode: String, CaseIterable, SettingsOptionEnum {
     case inline
@@ -31,5 +32,9 @@ public enum ForwardMode: String, CaseIterable, SettingsOptionEnum {
         case .attachment:
             return MailResourcesStrings.settingsTransferAsAttachment
         }
+    }
+
+    public var image: Image? {
+        return nil
     }
 }

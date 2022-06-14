@@ -18,6 +18,7 @@
 
 import Foundation
 import MailResources
+import SwiftUI
 
 public enum CancelDelay: Int, CaseIterable, SettingsOptionEnum {
     case delay0 = 0
@@ -31,5 +32,9 @@ public enum CancelDelay: Int, CaseIterable, SettingsOptionEnum {
         return self == .delay0
             ? MailResourcesStrings.settingsDisabled
             : MailResourcesStrings.settingsDelaySeconds(rawValue)
+    }
+
+    public var image: Image? {
+        return nil
     }
 }

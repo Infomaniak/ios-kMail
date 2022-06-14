@@ -17,6 +17,7 @@
  */
 
 import MailCore
+import MailResources
 import SwiftUI
 
 struct SettingsOptionView<OptionEnum>: View where OptionEnum: CaseIterable, OptionEnum: Equatable, OptionEnum: RawRepresentable,
@@ -43,11 +44,14 @@ struct SettingsOptionView<OptionEnum>: View where OptionEnum: CaseIterable, Opti
             Button {
                 selectedValue = value
             } label: {
-                HStack {
+                HStack(spacing: 21) {
+                    value.image
                     Text(value.title)
+                        .textStyle(value == selectedValue ? .button : .body)
                     Spacer()
                     if value == selectedValue {
                         Image(systemName: "checkmark")
+                            .foregroundColor(MailResourcesAsset.infomaniakColor)
                     }
                 }
             }

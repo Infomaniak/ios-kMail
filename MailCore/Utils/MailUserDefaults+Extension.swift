@@ -17,9 +17,11 @@
  */
 
 import Foundation
+import SwiftUI
 
 public protocol SettingsOptionEnum {
     var title: String { get }
+    var image: Image? { get }
 }
 
 extension UserDefaults.Keys {

@@ -19,7 +19,6 @@
 import Foundation
 import MailResources
 import SwiftUI
-import UIKit
 
 public enum Theme: String, CaseIterable, SettingsOptionEnum {
     case light
@@ -46,7 +45,7 @@ public enum Theme: String, CaseIterable, SettingsOptionEnum {
         }
     }
 
-    public var icon: Image {
+    public var image: Image? {
         switch self {
         case .light:
             return Image(uiImage: MailResourcesAsset.themeLight.image)
