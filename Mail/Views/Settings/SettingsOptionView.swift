@@ -31,6 +31,10 @@ struct SettingsOptionView<OptionEnum>: View where OptionEnum: CaseIterable, Opti
     @State private var selectedValue: OptionEnum {
         didSet {
             UserDefaults.shared[keyPath: keyPath] = selectedValue
+            if keyPath == \.theme {
+                (UIApplication.shared.connectedScenes.first?.delegate as? SceneDelegate)?.window?
+                    .overrideUserInterfaceStyle = UserDefaults.shared.theme.interfaceStyle
+            }
         }
     }
 
@@ -60,8 +64,10 @@ struct SettingsOptionView<OptionEnum>: View where OptionEnum: CaseIterable, Opti
                         }
                     }
                 }
+                .listRowSeparator(.hidden)
             }
         }
+        .listStyle(.plain)
         .navigationBarTitle(title)
     }
 }
