@@ -22,7 +22,6 @@ import SwiftUI
 struct EmptyListView: View {
     var body: some View {
         VStack {
-            Spacer()
             Image(resource: MailResourcesAsset.zeroMail)
                 .padding(24)
             Text(MailResourcesStrings.noEmailTitle)
@@ -31,8 +30,8 @@ struct EmptyListView: View {
             Text(MailResourcesStrings.noEmailDescription)
                 .textStyle(.bodySecondary)
                 .multilineTextAlignment(.center)
-            Spacer()
         }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
         .padding(48)
     }
 }
