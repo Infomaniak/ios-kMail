@@ -302,5 +302,7 @@ struct ThreadListView_Previews: PreviewProvider {
             folder: .constant(PreviewHelper.sampleFolder),
             isCompact: false
         )
+        .environmentObject(MenuSheet())
+        .environmentObject(SettingsSheet())
     }
 }
