@@ -68,21 +68,6 @@ enum SettingsDestination: String, Equatable {
 
 // MARK: - SettingsOption
 
-// struct SettingsOption: Equatable {
-//    let id: Int
-//    let destination: AnyView
-//
-//    init(id: Int, destination: AnyView) {
-//        self.id = id
-//        self.destination = destination
-//    }
-//
-//
-//    static func == (lhs: SettingsOption, rhs: SettingsOption) -> Bool {
-//        return lhs.id == rhs.id
-//    }
-// }
-
 enum SettingsOption: Equatable {
     // General settings
     case threadDensityOption

@@ -16,6 +16,6 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import UIKit
+import Foundation
 
-class AutoReplySettingViewController: UIViewController {}
+@MainActor class EmailAddressSettingsViewModel {}
