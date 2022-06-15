@@ -36,6 +36,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         DDLogInfo("Application starting in foreground ? \(UIApplication.shared.applicationState != .background)")
         InfomaniakLogin.initWith(clientId: MailApiFetcher.clientId)
         accountManager = AccountManager.instance
+        ApiFetcher.decoder.dateDecodingStrategy = .iso8601
 
         return true
     }
