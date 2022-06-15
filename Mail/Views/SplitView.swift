@@ -16,6 +16,7 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import BottomSheet
 import InfomaniakCore
 import Introspect
 import MailCore
@@ -23,6 +24,15 @@ import RealmSwift
 import SwiftUI
 
 import MailResources
+class GlobalBottomSheet: BottomSheetState<GlobalBottomSheet.State, GlobalBottomSheet.Position> {
+    enum State {
+        case move(moveHandler: (Folder) -> Void)
+    }
+
+    enum Position: CGFloat, CaseIterable {
+        case middle = 272, hidden = 0
+    }
+}
 
 struct SplitView: View {
     @ObservedObject var mailboxManager = AccountManager.instance.currentMailboxManager!
@@ -33,7 +43,8 @@ struct SplitView: View {
     @Environment(\.horizontalSizeClass) var sizeClass
     @Environment(\.window) var window
 
-    @ObservedObject private var menuSheet = MenuSheet()
+    @StateObject private var menuSheet = MenuSheet()
+    @StateObject private var bottomSheet = GlobalBottomSheet()
 
     var isCompact: Bool {
         sizeClass == .compact
@@ -136,6 +147,15 @@ struct SplitView: View {
                 SheetView(isPresented: $menuSheet.isShowing) {
                     SettingsView(viewModel: GeneralSettingsViewModel())
                 }
+            case .none:
+                EmptyView()
+            }
+        }
+        .environmentObject(bottomSheet)
+        .bottomSheet(bottomSheetPosition: $bottomSheet.position, options: Constants.bottomSheetOptions + [.absolutePositionValue]) {
+            switch bottomSheet.state {
+            case .move(let moveHandler):
+                MoveEmailView(mailboxManager: mailboxManager, state: bottomSheet, moveHandler: moveHandler)
             case .none:
                 EmptyView()
             }

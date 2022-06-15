@@ -73,6 +73,7 @@ enum ActionsTarget: Equatable {
     private let mailboxManager: MailboxManager
     private let target: ActionsTarget
     private let state: ThreadBottomSheet
+    private let globalSheet: GlobalBottomSheet
     private let replyHandler: (Message, ReplyMode) -> Void
 
     @Published var quickActions: [Action] = []
@@ -81,10 +82,12 @@ enum ActionsTarget: Equatable {
     init(mailboxManager: MailboxManager,
          target: ActionsTarget,
          state: ThreadBottomSheet,
+         globalSheet: GlobalBottomSheet,
          replyHandler: @escaping (Message, ReplyMode) -> Void) {
         self.mailboxManager = mailboxManager
         self.target = target
         self.state = state
+        self.globalSheet = globalSheet
         self.replyHandler = replyHandler
         setActions()
     }
@@ -194,20 +197,20 @@ enum ActionsTarget: Equatable {
         }
     }
 
-    private func move(to folderRole: FolderRole) async throws {
+    private func move(to folder: Folder) async throws {
         let response: UndoResponse
         let snackBarMessage: String
         switch target {
         case .threads(let threads):
             let messages = threads.flatMap(\.messages).map { $0.freezeIfNeeded() }
-            response = try await mailboxManager.move(messages: messages, to: folderRole)
-            snackBarMessage = MailResourcesStrings.snackbarThreadMovedPlural(folderRole.localizedName)
+            response = try await mailboxManager.move(messages: messages, to: folder)
+            snackBarMessage = MailResourcesStrings.snackbarThreadMovedPlural(folder.localizedName)
         case .thread(let thread):
-            response = try await mailboxManager.move(thread: thread.freezeIfNeeded(), to: folderRole)
-            snackBarMessage = MailResourcesStrings.snackbarThreadMoved(folderRole.localizedName)
+            response = try await mailboxManager.move(thread: thread.freezeIfNeeded(), to: folder)
+            snackBarMessage = MailResourcesStrings.snackbarThreadMoved(folder.localizedName)
         case .message(let message):
-            response = try await mailboxManager.move(messages: [message.freezeIfNeeded()], to: folderRole)
-            snackBarMessage = MailResourcesStrings.snackbarMessageMoved(folderRole.localizedName)
+            response = try await mailboxManager.move(messages: [message.freezeIfNeeded()], to: folder)
+            snackBarMessage = MailResourcesStrings.snackbarMessageMoved(folder.localizedName)
         }
 
         IKSnackBar.showCancelableSnackBar(message: snackBarMessage,
@@ -264,7 +267,8 @@ enum ActionsTarget: Equatable {
     }
 
     private func archive() async throws {
-        try await move(to: .archive)
+        guard let archiveFolder = mailboxManager.getFolder(with: .archive)?.freeze() else { return }
+        try await move(to: archiveFolder)
     }
 
     private func toggleRead() async throws {
@@ -279,7 +283,12 @@ enum ActionsTarget: Equatable {
     }
 
     private func move() {
-        // TODO: MOVE ACTION
+        state.close()
+        globalSheet.open(state: .move { folder in
+            Task {
+                try await self.move(to: folder)
+            }
+        }, position: .middle)
     }
 
     private func postpone() {

@@ -140,6 +140,16 @@ public class Folder: Object, Codable, Comparable, Identifiable {
         return unreadCount > 0 ? "\(unreadCount)" : ""
     }
 
+    public var formattedPath: String {
+        var names = [String]()
+        var maybeFolder: Folder? = self
+        while let folder = maybeFolder {
+            names.append(folder.localizedName)
+            maybeFolder = folder.parent
+        }
+        return names.reversed().joined(separator: " > ")
+    }
+
     public static func < (lhs: Folder, rhs: Folder) -> Bool {
         if let lhsRole = lhs.role, let rhsRole = rhs.role {
             return lhsRole.order < rhsRole.order
@@ -148,7 +158,7 @@ public class Folder: Object, Codable, Comparable, Identifiable {
         } else if rhs.role != nil {
             return false
         } else if lhs.isFavorite == rhs.isFavorite {
-            return lhs.name < rhs.name
+            return lhs.path < rhs.path
         } else {
             return lhs.isFavorite
         }

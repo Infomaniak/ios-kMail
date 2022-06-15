@@ -49,6 +49,7 @@ struct ThreadListView: View {
     @StateObject var viewModel: ThreadListViewModel
 
     @EnvironmentObject var menuSheet: MenuSheet
+    @EnvironmentObject var globalBottomSheet: GlobalBottomSheet
 
     @Binding var currentFolder: Folder?
 
@@ -137,7 +138,10 @@ struct ThreadListView: View {
                 if target.isInvalidated {
                     EmptyView()
                 } else {
-                    ActionsView(mailboxManager: viewModel.mailboxManager, target: target, state: bottomSheet) { message, replyMode in
+                    ActionsView(mailboxManager: viewModel.mailboxManager,
+                                target: target,
+                                state: bottomSheet,
+                                globalSheet: globalBottomSheet) { message, replyMode in
                         menuSheet.state = .reply(message, replyMode)
                     }
                 }

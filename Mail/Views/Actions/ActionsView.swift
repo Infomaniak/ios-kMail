@@ -26,8 +26,13 @@ struct ActionsView: View {
     init(mailboxManager: MailboxManager,
          target: ActionsTarget,
          state: ThreadBottomSheet,
+         globalSheet: GlobalBottomSheet,
          replyHandler: @escaping (Message, ReplyMode) -> Void) {
-        viewModel = ActionsViewModel(mailboxManager: mailboxManager, target: target, state: state, replyHandler: replyHandler)
+        viewModel = ActionsViewModel(mailboxManager: mailboxManager,
+                                     target: target,
+                                     state: state,
+                                     globalSheet: globalSheet,
+                                     replyHandler: replyHandler)
     }
 
     var body: some View {
@@ -58,7 +63,8 @@ struct ActionsView_Previews: PreviewProvider {
     static var previews: some View {
         ActionsView(mailboxManager: MailboxManager(mailbox: PreviewHelper.sampleMailbox, apiFetcher: MailApiFetcher()),
                     target: .thread(PreviewHelper.sampleThread),
-                    state: ThreadBottomSheet()) { _, _ in }
+                    state: ThreadBottomSheet(),
+                    globalSheet: GlobalBottomSheet()) { _, _ in }
             .accentColor(Color(MailResourcesAsset.infomaniakColor.color))
     }
 }
