@@ -64,7 +64,7 @@ typealias Thread = MailCore.Thread
 
         await tryOrDisplayError {
             guard let folder = folder else { return }
-            let result = try await mailboxManager.threads(folder: folder.freeze(), filter: filter)
+            let result = try await mailboxManager.threads(folder: folder.freezeIfNeeded(), filter: filter)
             resourceNext = result.resourceNext
         }
         isLoadingPage = false
@@ -80,7 +80,7 @@ typealias Thread = MailCore.Thread
 
         await tryOrDisplayError {
             guard let folder = folder else { return }
-            let result = try await mailboxManager.threads(folder: folder.freeze(), resource: resource)
+            let result = try await mailboxManager.threads(folder: folder.freezeIfNeeded(), resource: resource)
             resourceNext = result.resourceNext
         }
         isLoadingPage = false
@@ -108,9 +108,9 @@ typealias Thread = MailCore.Thread
             guard let self = self else { return }
             switch changes {
             case let .initial(results):
-                self.threads = results.freeze()
+                self.threads = results.freezeIfNeeded()
             case let .update(results, _, _, _):
-                self.threads = results.freeze()
+                self.threads = results.freezeIfNeeded()
             case .error:
                 break
             }
