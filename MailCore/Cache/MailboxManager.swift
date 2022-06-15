@@ -313,9 +313,9 @@ public class MailboxManager: ObservableObject {
         }
     }
 
-    public func moveToTrash(messages: [Message]) async throws {
-        guard let trashFolder = getFolder(with: .trash)?.freeze() else { return }
-        try await move(messages: messages, to: trashFolder)
+    public func move(messages: [Message], to folderRole: FolderRole) async throws {
+        guard let folder = getFolder(with: folderRole)?.freeze() else { return }
+        try await move(messages: messages, to: folder)
     }
 
     public func delete(messages: [Message]) async throws {
@@ -385,9 +385,9 @@ public class MailboxManager: ObservableObject {
         }
     }
 
-    public func moveToTrash(thread: Thread) async throws {
-        guard let trashFolder = getFolder(with: .trash)?.freeze() else { return }
-        try await move(thread: thread, to: trashFolder)
+    public func move(thread: Thread, to folderRole: FolderRole) async throws {
+        guard let folder = getFolder(with: folderRole)?.freeze() else { return }
+        try await move(thread: thread, to: folder)
     }
 
     public func delete(thread: Thread) async throws {
@@ -414,7 +414,7 @@ public class MailboxManager: ObservableObject {
             deleteLocalDraft(thread: thread)
         } else {
             // Move to trash
-            try await moveToTrash(thread: thread)
+            try await move(thread: thread, to: .trash)
         }
     }
 

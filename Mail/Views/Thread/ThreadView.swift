@@ -155,7 +155,9 @@ struct ThreadView: View {
         .bottomSheet(bottomSheetPosition: $threadBottomSheet.position, options: threadBottomSheetOptions) {
             switch threadBottomSheet.state {
             case let .actions(target):
-                ActionsView(mailboxManager: mailboxManager, target: target, state: threadBottomSheet)
+                ActionsView(mailboxManager: mailboxManager, target: target, state: threadBottomSheet) { message, replyMode in
+                    sheet.state = .reply(message, replyMode)
+                }
             case .none:
                 EmptyView()
             }
