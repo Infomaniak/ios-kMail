@@ -19,13 +19,14 @@
 import Foundation
 import InfomaniakCore
 
-@MainActor
 public func tryOrDisplayError(_ body: () throws -> Void) {
     do {
         try body()
     } catch {
         if error.shouldDisplay {
-            IKSnackBar.showSnackBar(message: error.localizedDescription)
+            Task.detached {
+                await IKSnackBar.showSnackBar(message: error.localizedDescription)
+            }
         }
         print("Error: \(error)")
     }
@@ -36,14 +37,16 @@ public func tryOrDisplayError(_ body: () async throws -> Void) async {
         try await body()
     } catch {
         if error.shouldDisplay {
-            await IKSnackBar.showSnackBar(message: error.localizedDescription)
+            Task.detached {
+                await IKSnackBar.showSnackBar(message: error.localizedDescription)
+            }
         }
         print("Error: \(error)")
     }
 }
 
-extension Error {
-    public var shouldDisplay: Bool {
+public extension Error {
+    var shouldDisplay: Bool {
         switch asAFError {
         case .explicitlyCancelled:
             return false
