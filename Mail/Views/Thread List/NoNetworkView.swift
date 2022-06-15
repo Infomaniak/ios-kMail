@@ -29,11 +29,11 @@ struct NoNetworkView: View {
                         .resizable()
                         .scaledToFit()
                         .frame(width: 18, height: 18)
-                    Text("Pas de signal")
+                    Text(MailResourcesStrings.noNetworkTitle)
                         .font(MailTextStyle.calloutStrong.font)
                 }
                 .foregroundColor(MailResourcesAsset.warningColor)
-                Text("Vos mails pourraient ne pas être à jour")
+                Text(MailResourcesStrings.noNetworkDescription)
                     .textStyle(.calloutSecondary)
             }
             .frame(maxWidth: .infinity, alignment: .leading)
