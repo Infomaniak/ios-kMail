@@ -160,11 +160,7 @@ public class MailApiFetcher: ApiFetcher {
             throw MailError.resourceError
         }
 
-        do {
-            return try await perform(request: authenticatedRequest(.resource(resource), method: .delete)).data
-        } catch {
-            return nil
-        }
+        return try await perform(request: authenticatedRequest(.resource(resource), method: .delete)).data
     }
 
     @discardableResult

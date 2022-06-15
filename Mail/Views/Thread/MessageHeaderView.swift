@@ -20,6 +20,7 @@ import MailCore
 import MailResources
 import RealmSwift
 import SwiftUI
+import InfomaniakCore
 
 struct MessageHeaderView: View {
     @ObservedRealmObject var message: Message
@@ -161,7 +162,9 @@ struct MessageHeaderView: View {
 
     private func deleteDraft(from: Message) {
         Task {
-            try await mailboxManager.deleteDraft(from: message)
+            await tryOrDisplayError {
+                try await mailboxManager.deleteDraft(from: message)
+            }
         }
     }
 }

@@ -103,9 +103,9 @@ struct NewMessageView: View {
                                 cancelableResponse: cancelableResponse,
                                 mailboxManager: mailboxManager
                             )
+                            self.dismiss()
                         }
                     }
-                    self.dismiss()
                 } label: {
                     Image(resource: MailResourcesAsset.send)
                 }
@@ -138,7 +138,7 @@ struct NewMessageView: View {
             draftHasChanged = false
             return try await mailboxManager.send(draft: draft)
         } catch {
-            print("Error while sending email: \(error.localizedDescription)")
+            IKSnackBar.showSnackBar(message: error.localizedDescription)
             return nil
         }
     }
@@ -152,7 +152,7 @@ struct NewMessageView: View {
                     _ = try await mailboxManager.save(draft: draft)
                     draftHasChanged = false
                 } catch {
-                    print("Error while saving draft: \(error.localizedDescription)")
+                    IKSnackBar.showSnackBar(message: error.localizedDescription)
                 }
             }
         }

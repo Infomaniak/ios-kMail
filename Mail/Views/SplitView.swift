@@ -16,6 +16,7 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import InfomaniakCore
 import Introspect
 import MailCore
 import RealmSwift
@@ -137,18 +138,14 @@ struct SplitView: View {
     }
 
     private func fetchSignatures() async {
-        do {
+        await tryOrDisplayError {
             try await mailboxManager.signatures()
-        } catch {
-            print("Error while fetching signatures: \(error)")
         }
     }
 
     private func fetchFolders() async {
-        do {
+        await tryOrDisplayError {
             try await mailboxManager.folders()
-        } catch {
-            print("Error while fetching folders: \(error.localizedDescription)")
         }
     }
 

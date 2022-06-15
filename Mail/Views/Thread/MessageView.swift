@@ -16,6 +16,7 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import InfomaniakCore
 import MailCore
 import RealmSwift
 import Shimmer
@@ -93,10 +94,8 @@ struct MessageView: View {
     }
 
     @MainActor private func fetchMessage() async {
-        do {
+        await tryOrDisplayError {
             try await mailboxManager.message(message: message)
-        } catch {
-            print("Error while getting messages: \(error.localizedDescription)")
         }
     }
 }
