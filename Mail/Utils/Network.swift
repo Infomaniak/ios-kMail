@@ -16,27 +16,27 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import MailResources
-import SwiftUI
+import Foundation
+import Network
 
-struct SeparatorView: View {
-    var withPadding = true
-    var fullWidth = false
+class NetworkMonitor: ObservableObject {
+    @Published private(set) var isConnected = false
+    @Published private(set) var isCellular = false
 
-    var body: some View {
-        Divider()
-            .frame(height: 1)
-            .overlay(Color(MailResourcesAsset.separatorColor.color))
-            .padding(.top, withPadding ? 10 : 0)
-            .padding(.bottom, withPadding ? 12: 0)
-            .padding(.trailing, fullWidth ? 0 : 30)
+    private let monitor = NWPathMonitor()
+    private let queue = DispatchQueue.global()
+
+    public func start() {
+        monitor.start(queue: queue)
+        monitor.pathUpdateHandler = { [weak self] path in
+            DispatchQueue.main.async {
+                self?.isConnected = path.status == .satisfied
+                self?.isCellular = path.usesInterfaceType(.cellular)
+            }
+        }
     }
-}
 
-struct SeparatorView_Previews: PreviewProvider {
-    static var previews: some View {
-        SeparatorView()
-            .previewLayout(.sizeThatFits)
-            .previewDevice("iPhone 13 Pro")
+    public func stop() {
+        monitor.cancel()
     }
 }

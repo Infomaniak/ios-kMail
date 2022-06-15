@@ -52,6 +52,7 @@ struct ThreadListView: View {
     @State private var avatarImage = Image(resource: MailResourcesAsset.placeholderAvatar)
     @State private var selectedThread: Thread?
     @StateObject private var bottomSheet = ThreadBottomSheet()
+    @StateObject private var networkMonitor = NetworkMonitor()
 
     let isCompact: Bool
 
@@ -75,6 +76,12 @@ struct ThreadListView: View {
             }
 
             List {
+                if !networkMonitor.isConnected {
+                    NoNetworkView()
+                        .listRowSeparator(.hidden)
+                        .listRowInsets(.init(top: 0, leading: 8, bottom: 0, trailing: 8))
+                }
+
                 ForEach(viewModel.threads) { thread in
                     Group {
                         if currentFolder?.role == .draft {
@@ -177,6 +184,10 @@ struct ThreadListView: View {
             if isCompact {
                 selectedThread = nil
             }
+            networkMonitor.start()
+        }
+        .onDisappear {
+            networkMonitor.stop()
         }
         .onChange(of: currentFolder) { newFolder in
             guard let folder = newFolder else { return }
