@@ -72,47 +72,47 @@ struct ThreadListView: View {
 
             if viewModel.threads.isEmpty {
                 EmptyListView()
-            } else {
-                List {
-                    ForEach(viewModel.threads) { thread in
-                        Group {
-                            if currentFolder?.role == .draft {
-                                Button(action: {
-                                    editDraft(from: thread)
-                                }, label: {
-                                    ThreadListCell(mailboxManager: viewModel.mailboxManager, thread: thread)
-                                })
-                            } else {
-                                NavigationLink(destination: {
-                                    ThreadView(mailboxManager: viewModel.mailboxManager, thread: thread)
-                                        .onAppear { selectedThread = thread }
-                                }, label: {
-                                    ThreadListCell(mailboxManager: viewModel.mailboxManager, thread: thread)
-                                })
-                            }
-                        }
-                        .listRowSeparator(.hidden)
-                        .listRowBackground(Color(selectedThread == thread
-                                ? MailResourcesAsset.backgroundCardSelectedColor.color
-                                : MailResourcesAsset.backgroundColor.color))
-                        .modifier(ThreadListSwipeAction(thread: thread, viewModel: viewModel, bottomSheet: bottomSheet))
-                        .onAppear {
-                            viewModel.loadNextPageIfNeeded(currentItem: thread)
-                        }
-                    }
+            }
 
-                    if viewModel.isLoadingPage {
-                        HStack {
-                            Spacer()
-                            ProgressView()
-                            Spacer()
+            List {
+                ForEach(viewModel.threads) { thread in
+                    Group {
+                        if currentFolder?.role == .draft {
+                            Button(action: {
+                                editDraft(from: thread)
+                            }, label: {
+                                ThreadListCell(mailboxManager: viewModel.mailboxManager, thread: thread)
+                            })
+                        } else {
+                            NavigationLink(destination: {
+                                ThreadView(mailboxManager: viewModel.mailboxManager, thread: thread)
+                                    .onAppear { selectedThread = thread }
+                            }, label: {
+                                ThreadListCell(mailboxManager: viewModel.mailboxManager, thread: thread)
+                            })
                         }
                     }
+                    .listRowSeparator(.hidden)
+                    .listRowBackground(Color(selectedThread == thread
+                            ? MailResourcesAsset.backgroundCardSelectedColor.color
+                            : MailResourcesAsset.backgroundColor.color))
+                    .modifier(ThreadListSwipeAction(thread: thread, viewModel: viewModel, bottomSheet: bottomSheet))
+                    .onAppear {
+                        viewModel.loadNextPageIfNeeded(currentItem: thread)
+                    }
                 }
-                .listStyle(.plain)
-                .introspectTableView { tableView in
-                    tableView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: 60, right: 0)
+
+                if viewModel.isLoadingPage {
+                    HStack {
+                        Spacer()
+                        ProgressView()
+                        Spacer()
+                    }
                 }
+            }
+            .listStyle(.plain)
+            .introspectTableView { tableView in
+                tableView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: 60, right: 0)
             }
 
             NewMessageButtonView(sheet: menuSheet)
