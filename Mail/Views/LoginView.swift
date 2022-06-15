@@ -17,6 +17,7 @@
  */
 
 import AuthenticationServices
+import InfomaniakCore
 import InfomaniakLogin
 import MailCore
 import MailResources
@@ -96,6 +97,7 @@ struct LoginView: View {
                 if let previousAccount = previousAccount {
                     AccountManager.instance.switchAccount(newAccount: previousAccount)
                 }
+                await IKSnackBar.showSnackBar(message: error.localizedDescription)
             }
         }
     }

@@ -249,7 +249,7 @@ public class AccountManager: RefreshTokenDelegate {
 
     public func createAndSetCurrentAccount(token: ApiToken) async throws -> Account {
         let apiFetcher = ApiFetcher(token: token, delegate: self)
-        let user = try await apiFetcher.userProfile()
+        let user = try await apiFetcher.userProfile(dateFormat: .iso8601)
 
         let newAccount = Account(apiToken: token)
         newAccount.user = user
@@ -279,7 +279,7 @@ public class AccountManager: RefreshTokenDelegate {
         let apiFetcher = await AccountActor.run {
             getApiFetcher(for: account.userId, token: account.token)
         }
-        let user = try await apiFetcher.userProfile()
+        let user = try await apiFetcher.userProfile(dateFormat: .iso8601)
         account.user = user
 
         let fetchedMailboxes = try await apiFetcher.mailboxes()
