@@ -17,6 +17,7 @@
  */
 
 import Foundation
+import InfomaniakCore
 import MailCore
 import MailResources
 import RealmSwift
@@ -147,7 +148,9 @@ enum ActionsTarget: Equatable {
         case .postpone:
             postpone()
         case .spam:
-            spam()
+            Task {
+                try await spam()
+            }
         case .block:
             block()
         case .phishing:
@@ -255,8 +258,21 @@ enum ActionsTarget: Equatable {
         print("POSTPONE ACTION")
     }
 
-    private func spam() {
-        print("SPAM ACTION")
+    private func spam() async throws {
+        let response: UndoResponse
+        switch target {
+        case .threads(let threads):
+            response = try await mailboxManager.reportSpam(messages: threads.flatMap(\.messages).map { $0.freezeIfNeeded() })
+        case .thread(let thread):
+            response = try await mailboxManager.reportSpam(thread: thread.freezeIfNeeded())
+        case .message(let message):
+            response = try await mailboxManager.reportSpam(messages: [message.freezeIfNeeded()])
+        }
+
+        IKSnackBar.showCancelableSnackBar(message: "Conversation déplacée vers Spam",
+                                          cancelSuccessMessage: "Déplacement annulé",
+                                          cancelableResponse: response,
+                                          mailboxManager: mailboxManager)
     }
 
     private func block() {

@@ -241,6 +241,101 @@ public class MailboxManager: ObservableObject {
         }
     }
 
+    public func toggleRead(thread: Thread) async throws {
+        if thread.unseenMessages > 0 {
+            // Mark as seen
+            _ = try await apiFetcher.markAsSeen(mailbox: mailbox, messages: Array(thread.messages))
+            if let liveThread = thread.thaw() {
+                let realm = getRealm()
+                try? realm.safeWrite {
+                    liveThread.unseenMessages = 0
+                    for message in thread.messages {
+                        message.thaw()?.seen = true
+                    }
+                }
+            }
+        } else {
+            // Mark as unseen
+            _ = try await apiFetcher.markAsUnseen(mailbox: mailbox, messages: Array(thread.messages))
+            if let liveThread = thread.thaw() {
+                let realm = getRealm()
+                try? realm.safeWrite {
+                    liveThread.unseenMessages = liveThread.messagesCount
+                    for message in thread.messages {
+                        message.thaw()?.seen = false
+                    }
+                }
+            }
+        }
+    }
+
+    public func move(thread: Thread, to folder: Folder) async throws {
+        _ = try await apiFetcher.move(mailbox: mailbox, messages: Array(thread.messages), destinationId: folder._id)
+
+        let realm = getRealm()
+        if let liveFolder = folder.thaw(), let liveThread = thread.thaw() {
+            try? realm.safeWrite {
+                liveThread.parent?.threads.remove(liveThread)
+                liveFolder.threads.insert(liveThread)
+                for message in liveThread.messages {
+                    message.folder = folder.name
+                    message.folderId = folder._id
+                }
+            }
+        }
+    }
+
+    public func move(thread: Thread, to folderRole: FolderRole) async throws {
+        guard let folder = getFolder(with: folderRole)?.freeze() else { return }
+        try await move(thread: thread, to: folder)
+    }
+
+    public func delete(thread: Thread) async throws {
+        _ = try await apiFetcher.delete(mailbox: mailbox, messages: Array(thread.messages))
+
+        let realm = getRealm()
+        if let liveThread = thread.thaw() {
+            try? realm.safeWrite {
+                realm.delete(liveThread.messages)
+                realm.delete(liveThread)
+            }
+        }
+    }
+
+    /// Move to trash or delete thread, depending on its current state
+    /// - Parameter thread: Thread to remove
+    public func moveOrDelete(thread: Thread) async throws {
+        let parentFolder = thread.parent
+        if parentFolder?.role == .trash {
+            // Delete definitely
+            try await delete(thread: thread)
+        } else if parentFolder?.role == .draft && thread.uid.starts(with: Draft.uuidLocalPrefix) {
+            // Delete local draft from Realm
+            deleteLocalDraft(thread: thread)
+        } else {
+            // Move to trash
+            try await move(thread: thread, to: .trash)
+        }
+    }
+
+    public func reportSpam(thread: Thread) async throws -> UndoResponse {
+        let response = try await apiFetcher.reportSpam(mailbox: mailbox, messages: Array(thread.messages))
+
+        let realm = getRealm()
+        if let spamFolder = getFolder(with: .spam, using: realm), let liveThread = thread.thaw() {
+            try? realm.safeWrite {
+                liveThread.parent?.threads.remove(liveThread)
+                spamFolder.threads.insert(liveThread)
+                for message in liveThread.messages {
+                    message.folder = spamFolder.name
+                    message.folderId = spamFolder._id
+                }
+            }
+        }
+
+        return response
+    }
+
     // MARK: - Message
 
     public func message(message: Message) async throws {
@@ -339,83 +434,21 @@ public class MailboxManager: ObservableObject {
         }
     }
 
-    // MARK: - Thread
-
-    public func toggleRead(thread: Thread) async throws {
-        if thread.unseenMessages > 0 {
-            // Mark as seen
-            _ = try await apiFetcher.markAsSeen(mailbox: mailbox, messages: Array(thread.messages))
-            if let liveThread = thread.thaw() {
-                let realm = getRealm()
-                try? realm.safeWrite {
-                    liveThread.unseenMessages = 0
-                    for message in thread.messages {
-                        message.thaw()?.seen = true
-                    }
-                }
-            }
-        } else {
-            // Mark as unseen
-            _ = try await apiFetcher.markAsUnseen(mailbox: mailbox, messages: Array(thread.messages))
-            if let liveThread = thread.thaw() {
-                let realm = getRealm()
-                try? realm.safeWrite {
-                    liveThread.unseenMessages = liveThread.messagesCount
-                    for message in thread.messages {
-                        message.thaw()?.seen = false
-                    }
-                }
-            }
-        }
-    }
-
-    public func move(thread: Thread, to folder: Folder) async throws {
-        _ = try await apiFetcher.move(mailbox: mailbox, messages: Array(thread.messages), destinationId: folder._id)
+    public func reportSpam(messages: [Message]) async throws -> UndoResponse {
+        let response = try await apiFetcher.reportSpam(mailbox: mailbox, messages: messages)
 
         let realm = getRealm()
-        if let liveFolder = folder.thaw(), let liveThread = thread.thaw() {
-            try? realm.safeWrite {
-                liveThread.parent?.threads.remove(liveThread)
-                liveFolder.threads.insert(liveThread)
-                for message in liveThread.messages {
-                    message.folder = folder.name
-                    message.folderId = folder._id
+        guard let spamFolder = getFolder(with: .spam, using: realm)?.freeze() else { return response }
+        try? realm.safeWrite {
+            for message in messages {
+                if let liveMessage = message.thaw() {
+                    liveMessage.folder = spamFolder.name
+                    liveMessage.folderId = spamFolder._id
                 }
             }
         }
-    }
 
-    public func move(thread: Thread, to folderRole: FolderRole) async throws {
-        guard let folder = getFolder(with: folderRole)?.freeze() else { return }
-        try await move(thread: thread, to: folder)
-    }
-
-    public func delete(thread: Thread) async throws {
-        _ = try await apiFetcher.delete(mailbox: mailbox, messages: Array(thread.messages))
-
-        let realm = getRealm()
-        if let liveThread = thread.thaw() {
-            try? realm.safeWrite {
-                realm.delete(liveThread.messages)
-                realm.delete(liveThread)
-            }
-        }
-    }
-
-    /// Move to trash or delete thread, depending on its current state
-    /// - Parameter thread: Thread to remove
-    public func moveOrDelete(thread: Thread) async throws {
-        let parentFolder = thread.parent
-        if parentFolder?.role == .trash {
-            // Delete definitely
-            try await delete(thread: thread)
-        } else if parentFolder?.role == .draft && thread.uid.starts(with: Draft.uuidLocalPrefix) {
-            // Delete local draft from Realm
-            deleteLocalDraft(thread: thread)
-        } else {
-            // Move to trash
-            try await move(thread: thread, to: .trash)
-        }
+        return response
     }
 
     // MARK: - Draft
@@ -438,7 +471,7 @@ public class MailboxManager: ObservableObject {
         return getRealm().objects(Draft.self).where { $0.messageUid == messageUid }.first
     }
 
-    public func send(draft: UnmanagedDraft) async throws -> CancelableResponse {
+    public func send(draft: UnmanagedDraft) async throws -> CancelResponse {
         // If the draft has no UUID, we save it first
         if draft.uuid.isEmpty {
             _ = try await save(draft: draft)

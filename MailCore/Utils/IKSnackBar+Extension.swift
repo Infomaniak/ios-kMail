@@ -50,7 +50,7 @@ public extension IKSnackBar {
             action: .init(title: MailResourcesStrings.buttonCancel) {
                 Task {
                     do {
-                        try await mailboxManager.apiFetcher.undoAction(resource: cancelableResponse.cancelResource)
+                        try await mailboxManager.apiFetcher.undoAction(resource: cancelableResponse.resource)
 
                         IKSnackBar.showSnackBar(message: cancelSuccessMessage)
                     } catch {
