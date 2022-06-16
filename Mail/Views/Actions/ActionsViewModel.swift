@@ -27,25 +27,25 @@ struct Action: Identifiable, Equatable {
     let title: String
     let icon: MailResourcesImages
 
-    static let delete = Action(id: 1, title: MailResourcesStrings.buttonDelete, icon: MailResourcesAsset.bin)
-    static let reply = Action(id: 2, title: MailResourcesStrings.buttonReply, icon: MailResourcesAsset.emailActionReply)
-    static let replyAll = Action(id: 3, title: MailResourcesStrings.buttonReplyAll, icon: MailResourcesAsset.emailActionReplyToAll)
-    static let archive = Action(id: 4, title: MailResourcesStrings.buttonArchive, icon: MailResourcesAsset.archives)
-    static let forward = Action(id: 5, title: MailResourcesStrings.buttonForward, icon: MailResourcesAsset.emailActionTransfer)
-    static let markAsRead = Action(id: 6, title: MailResourcesStrings.buttonMarkAsRead, icon: MailResourcesAsset.envelope)
-    static let markAsUnread = Action(id: 7, title: MailResourcesStrings.buttonMarkAsUnread, icon: MailResourcesAsset.envelopeOpen)
-    static let move = Action(id: 8, title: MailResourcesStrings.buttonMove, icon: MailResourcesAsset.emailActionSend21)
-    static let postpone = Action(id: 9, title: MailResourcesStrings.buttonPostpone, icon: MailResourcesAsset.waitingMessage)
-    static let spam = Action(id: 10, title: MailResourcesStrings.buttonSpam, icon: MailResourcesAsset.spam)
-    static let nonSpam = Action(id: 19, title: "Non spam", icon: MailResourcesAsset.spam)
-    static let block = Action(id: 11, title: MailResourcesStrings.buttonBlockSender, icon: MailResourcesAsset.blockUser)
-    static let phishing = Action(id: 12, title: MailResourcesStrings.buttonPhishing, icon: MailResourcesAsset.fishing)
-    static let print = Action(id: 13, title: MailResourcesStrings.buttonPrint, icon: MailResourcesAsset.printText)
-    static let saveAsPDF = Action(id: 14, title: MailResourcesStrings.buttonSavePDF, icon: MailResourcesAsset.fileDownload)
-    static let openIn = Action(id: 15, title: MailResourcesStrings.buttonOpenIn, icon: MailResourcesAsset.sendTo)
-    static let createRule = Action(id: 16, title: MailResourcesStrings.buttonCreateRule, icon: MailResourcesAsset.ruleRegle)
-    static let report = Action(id: 17, title: MailResourcesStrings.buttonReportDisplayProblem, icon: MailResourcesAsset.feedbacks)
-    static let editMenu = Action(id: 18, title: MailResourcesStrings.buttonEditMenu, icon: MailResourcesAsset.editTools)
+    static let delete = Action(id: 1, title: MailResourcesStrings.actionDelete, icon: MailResourcesAsset.bin)
+    static let reply = Action(id: 2, title: MailResourcesStrings.actionReply, icon: MailResourcesAsset.emailActionReply)
+    static let replyAll = Action(id: 3, title: MailResourcesStrings.actionReplyAll, icon: MailResourcesAsset.emailActionReplyToAll)
+    static let archive = Action(id: 4, title: MailResourcesStrings.actionArchive, icon: MailResourcesAsset.archives)
+    static let forward = Action(id: 5, title: MailResourcesStrings.actionForward, icon: MailResourcesAsset.emailActionTransfer)
+    static let markAsRead = Action(id: 6, title: MailResourcesStrings.actionMarkAsRead, icon: MailResourcesAsset.envelope)
+    static let markAsUnread = Action(id: 7, title: MailResourcesStrings.actionMarkAsUnread, icon: MailResourcesAsset.envelopeOpen)
+    static let move = Action(id: 8, title: MailResourcesStrings.actionMove, icon: MailResourcesAsset.emailActionSend21)
+    static let postpone = Action(id: 9, title: MailResourcesStrings.actionPostpone, icon: MailResourcesAsset.waitingMessage)
+    static let spam = Action(id: 10, title: MailResourcesStrings.actionSpam, icon: MailResourcesAsset.spam)
+    static let nonSpam = Action(id: 19, title: MailResourcesStrings.actionNonSpam, icon: MailResourcesAsset.spam)
+    static let block = Action(id: 11, title: MailResourcesStrings.actionBlockSender, icon: MailResourcesAsset.blockUser)
+    static let phishing = Action(id: 12, title: MailResourcesStrings.actionPhishing, icon: MailResourcesAsset.fishing)
+    static let print = Action(id: 13, title: MailResourcesStrings.actionPrint, icon: MailResourcesAsset.printText)
+    static let saveAsPDF = Action(id: 14, title: MailResourcesStrings.actionSavePDF, icon: MailResourcesAsset.fileDownload)
+    static let openIn = Action(id: 15, title: MailResourcesStrings.actionOpenIn, icon: MailResourcesAsset.sendTo)
+    static let createRule = Action(id: 16, title: MailResourcesStrings.actionCreateRule, icon: MailResourcesAsset.ruleRegle)
+    static let report = Action(id: 17, title: MailResourcesStrings.actionReportDisplayProblem, icon: MailResourcesAsset.feedbacks)
+    static let editMenu = Action(id: 18, title: MailResourcesStrings.actionEditMenu, icon: MailResourcesAsset.editTools)
 
     static func == (lhs: Action, rhs: Action) -> Bool {
         lhs.id == rhs.id
@@ -269,34 +269,42 @@ enum ActionsTarget: Equatable {
 
     private func spam() async throws {
         let response: UndoResponse
+        let snackBarMessage: String
         switch target {
         case .threads(let threads):
             response = try await mailboxManager.reportSpam(messages: threads.flatMap(\.messages).map { $0.freezeIfNeeded() })
+            snackBarMessage = MailResourcesStrings.snackbarThreadMovedPlural(FolderRole.spam.localizedName)
         case .thread(let thread):
             response = try await mailboxManager.reportSpam(thread: thread.freezeIfNeeded())
+            snackBarMessage = MailResourcesStrings.snackbarThreadMoved(FolderRole.spam.localizedName)
         case .message(let message):
             response = try await mailboxManager.reportSpam(messages: [message.freezeIfNeeded()])
+            snackBarMessage = MailResourcesStrings.snackbarMessageMoved(FolderRole.spam.localizedName)
         }
 
-        IKSnackBar.showCancelableSnackBar(message: "Conversation déplacée vers Spam",
-                                          cancelSuccessMessage: "Déplacement annulé",
+        IKSnackBar.showCancelableSnackBar(message: snackBarMessage,
+                                          cancelSuccessMessage: MailResourcesStrings.snackbarMoveCancelled,
                                           cancelableResponse: response,
                                           mailboxManager: mailboxManager)
     }
 
     private func nonSpam() async throws {
         let response: UndoResponse
+        let snackBarMessage: String
         switch target {
         case .threads(let threads):
             response = try await mailboxManager.nonSpam(messages: threads.flatMap(\.messages).map { $0.freezeIfNeeded() })
+            snackBarMessage = MailResourcesStrings.snackbarThreadMovedPlural(FolderRole.inbox.localizedName)
         case .thread(let thread):
             response = try await mailboxManager.nonSpam(thread: thread.freezeIfNeeded())
+            snackBarMessage = MailResourcesStrings.snackbarThreadMoved(FolderRole.inbox.localizedName)
         case .message(let message):
             response = try await mailboxManager.nonSpam(messages: [message.freezeIfNeeded()])
+            snackBarMessage = MailResourcesStrings.snackbarMessageMoved(FolderRole.inbox.localizedName)
         }
 
-        IKSnackBar.showCancelableSnackBar(message: "Conversation déplacée vers Boîte de réception",
-                                          cancelSuccessMessage: "Déplacement annulé",
+        IKSnackBar.showCancelableSnackBar(message: snackBarMessage,
+                                          cancelSuccessMessage: MailResourcesStrings.snackbarMoveCancelled,
                                           cancelableResponse: response,
                                           mailboxManager: mailboxManager)
     }
