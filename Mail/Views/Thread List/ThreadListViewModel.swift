@@ -20,6 +20,7 @@ import Foundation
 import InfomaniakCore
 import MailCore
 import RealmSwift
+import SwiftUI
 
 typealias Thread = MailCore.Thread
 
@@ -27,7 +28,7 @@ typealias Thread = MailCore.Thread
     var mailboxManager: MailboxManager
 
     @Published var folder: Folder?
-    @Published var threads: AnyRealmCollection<Thread>
+    @Published var threads: [Thread] = []
     @Published var isLoadingPage = false
 
     private var resourceNext: String?
@@ -44,15 +45,7 @@ typealias Thread = MailCore.Thread
     init(mailboxManager: MailboxManager, folder: Folder?) {
         self.mailboxManager = mailboxManager
         self.folder = folder
-
-        let realm = mailboxManager.getRealm()
-        if let folder = folder,
-           let cachedFolder = realm.object(ofType: Folder.self, forPrimaryKey: folder.id) {
-            threads = AnyRealmCollection(cachedFolder.threads.sorted(by: \.date, ascending: false))
-            observeChanges()
-        } else {
-            threads = AnyRealmCollection(realm.objects(Thread.self).filter(NSPredicate(format: "FALSEPREDICATE")))
-        }
+        observeChanges()
     }
 
     func fetchThreads() async {
@@ -89,13 +82,7 @@ typealias Thread = MailCore.Thread
 
     func updateThreads(with folder: Folder) {
         self.folder = folder
-        let realm = mailboxManager.getRealm()
-        if let cachedFolder = realm.object(ofType: Folder.self, forPrimaryKey: folder.id) {
-            threads = AnyRealmCollection(cachedFolder.threads.sorted(by: \.date, ascending: false))
-            observeChanges()
-        } else {
-            threads = AnyRealmCollection(realm.objects(Thread.self).filter(NSPredicate(format: "FALSEPREDICATE")))
-        }
+        observeChanges()
 
         Task {
             await self.fetchThreads()
@@ -104,16 +91,22 @@ typealias Thread = MailCore.Thread
 
     func observeChanges() {
         observationThreadToken?.invalidate()
-        observationThreadToken = threads.observe(on: .main) { [weak self] changes in
-            guard let self = self else { return }
-            switch changes {
-            case let .initial(results):
-                self.threads = results.freezeIfNeeded()
-            case let .update(results, _, _, _):
-                self.threads = results.freezeIfNeeded()
-            case .error:
-                break
+        if let folder = folder?.thaw() {
+            let threadResults = folder.threads.sorted(by: \.date, ascending: false)
+            observationThreadToken = threadResults.observe(on: .main) { [weak self] changes in
+                switch changes {
+                case let .initial(results):
+                    self?.threads = Array(results.freezeIfNeeded())
+                case let .update(results, _, _, _):
+                    withAnimation {
+                        self?.threads = Array(results.freezeIfNeeded())
+                    }
+                case .error:
+                    break
+                }
             }
+        } else {
+            threads = []
         }
     }
 
