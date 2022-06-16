@@ -32,8 +32,8 @@ struct Action: Identifiable, Equatable {
     static let replyAll = Action(id: 3, title: MailResourcesStrings.actionReplyAll, icon: MailResourcesAsset.emailActionReplyToAll)
     static let archive = Action(id: 4, title: MailResourcesStrings.actionArchive, icon: MailResourcesAsset.archives)
     static let forward = Action(id: 5, title: MailResourcesStrings.actionForward, icon: MailResourcesAsset.emailActionTransfer)
-    static let markAsRead = Action(id: 6, title: MailResourcesStrings.actionMarkAsRead, icon: MailResourcesAsset.envelope)
-    static let markAsUnread = Action(id: 7, title: MailResourcesStrings.actionMarkAsUnread, icon: MailResourcesAsset.envelopeOpen)
+    static let markAsRead = Action(id: 6, title: MailResourcesStrings.actionMarkAsRead, icon: MailResourcesAsset.envelopeOpen)
+    static let markAsUnread = Action(id: 7, title: MailResourcesStrings.actionMarkAsUnread, icon: MailResourcesAsset.envelope)
     static let move = Action(id: 8, title: MailResourcesStrings.actionMove, icon: MailResourcesAsset.emailActionSend21)
     static let postpone = Action(id: 9, title: MailResourcesStrings.actionPostpone, icon: MailResourcesAsset.waitingMessage)
     static let spam = Action(id: 10, title: MailResourcesStrings.actionSpam, icon: MailResourcesAsset.spam)
@@ -90,36 +90,54 @@ enum ActionsTarget: Equatable {
     }
 
     private func setActions() {
-        // In the future, we might want to adjust the actions based on the target
-        quickActions = [.reply, .replyAll, .forward, .delete]
-        let unread: Bool
-        let spam: Bool
         switch target {
         case .threads(let threads):
-            unread = threads.allSatisfy { $0.unseenMessages > 0 }
-            spam = threads.allSatisfy { $0.parent?.role == .spam }
+            let spam = threads.allSatisfy { $0.parent?.role == .spam }
+            quickActions = [.move, .postpone, spam ? .nonSpam : .spam, .delete]
+
+            let unread = threads.allSatisfy { $0.unseenMessages > 0 }
+            listActions = [
+                .archive,
+                unread ? .markAsRead : .markAsUnread,
+                .print,
+                .openIn
+            ]
         case .thread(let thread):
-            unread = thread.unseenMessages > 0
-            spam = thread.parent?.role == .spam
+            quickActions = [.reply, .replyAll, .forward, .delete]
+
+            let unread = thread.unseenMessages > 0
+            let spam = thread.parent?.role == .spam
+            listActions = [
+                .archive,
+                unread ? .markAsRead : .markAsUnread,
+                .move,
+                .postpone,
+                spam ? .nonSpam : .spam,
+                .print,
+                .saveAsPDF,
+                .openIn
+            ]
         case .message(let message):
-            unread = !message.seen
-            spam = message.folderId == mailboxManager.getFolder(with: .spam)?._id
+            quickActions = [.reply, .replyAll, .forward, .delete]
+
+            let unread = !message.seen
+            let spam = message.folderId == mailboxManager.getFolder(with: .spam)?._id
+            listActions = [
+                .archive,
+                unread ? .markAsRead : .markAsUnread,
+                .move,
+                .postpone,
+                spam ? .nonSpam : .spam,
+                .block,
+                .phishing,
+                .print,
+                .saveAsPDF,
+                .openIn,
+                .createRule,
+                .report,
+                .editMenu
+            ]
         }
-        listActions = [
-            .archive,
-            unread ? .markAsRead : .markAsUnread,
-            .move,
-            .postpone,
-            spam ? .nonSpam : .spam,
-            .block,
-            .phishing,
-            .print,
-            .saveAsPDF,
-            .openIn,
-            .createRule,
-            .report,
-            .editMenu
-        ]
     }
 
     func didTap(action: Action) {
@@ -161,7 +179,9 @@ enum ActionsTarget: Equatable {
                 try await nonSpam()
             }
         case .block:
-            block()
+            Task {
+                try await block()
+            }
         case .phishing:
             phishing()
         case .print:
@@ -309,8 +329,18 @@ enum ActionsTarget: Equatable {
                                           mailboxManager: mailboxManager)
     }
 
-    private func block() {
-        print("BLOCK ACTION")
+    private func block() async throws {
+        switch target {
+        case .threads:
+            // This action is only available on a single message
+            break
+        case .thread:
+            // This action is only available on a single message
+            break
+        case .message(let message):
+            _ = try await mailboxManager.apiFetcher.blockSender(message: message.freezeIfNeeded())
+        }
+        IKSnackBar.showSnackBar(message: "Expéditeur(s) blacklisté(s) avec succès")
     }
 
     private func phishing() {

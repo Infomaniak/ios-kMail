@@ -174,6 +174,10 @@ public class MailApiFetcher: ApiFetcher {
                                                         method: .post,
                                                         parameters: ["uids": messages.map(\.uid)])).data
     }
+
+    public func blockSender(message: Message) async throws -> Bool {
+        try await perform(request: authenticatedRequest(.blockSender(messageResource: message.resource), method: .post)).data
+    }
 }
 
 class SyncedAuthenticator: OAuthAuthenticator {

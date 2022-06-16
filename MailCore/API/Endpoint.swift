@@ -122,4 +122,8 @@ public extension Endpoint {
     static func nonSpam(uuid: String) -> Endpoint {
         return .mailbox(uuid: uuid).appending(path: "/message/ham")
     }
+
+    static func blockSender(messageResource: String) -> Endpoint {
+        return .resource(messageResource).appending(path: "/blacklist")
+    }
 }
