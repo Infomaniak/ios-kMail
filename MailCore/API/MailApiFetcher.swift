@@ -168,6 +168,12 @@ public class MailApiFetcher: ApiFetcher {
                                                         method: .post,
                                                         parameters: ["uids": messages.map(\.uid)])).data
     }
+
+    public func nonSpam(mailbox: Mailbox, messages: [Message]) async throws -> UndoResponse {
+        try await perform(request: authenticatedRequest(.nonSpam(uuid: mailbox.uuid),
+                                                        method: .post,
+                                                        parameters: ["uids": messages.map(\.uid)])).data
+    }
 }
 
 class SyncedAuthenticator: OAuthAuthenticator {

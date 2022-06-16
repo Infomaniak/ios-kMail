@@ -118,4 +118,8 @@ public extension Endpoint {
     static func reportSpam(uuid: String) -> Endpoint {
         return .mailbox(uuid: uuid).appending(path: "/message/spam")
     }
+
+    static func nonSpam(uuid: String) -> Endpoint {
+        return .mailbox(uuid: uuid).appending(path: "/message/ham")
+    }
 }

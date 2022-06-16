@@ -37,6 +37,7 @@ struct Action: Identifiable, Equatable {
     static let move = Action(id: 8, title: MailResourcesStrings.buttonMove, icon: MailResourcesAsset.emailActionSend21)
     static let postpone = Action(id: 9, title: MailResourcesStrings.buttonPostpone, icon: MailResourcesAsset.waitingMessage)
     static let spam = Action(id: 10, title: MailResourcesStrings.buttonSpam, icon: MailResourcesAsset.spam)
+    static let nonSpam = Action(id: 19, title: "Non spam", icon: MailResourcesAsset.spam)
     static let block = Action(id: 11, title: MailResourcesStrings.buttonBlockSender, icon: MailResourcesAsset.blockUser)
     static let phishing = Action(id: 12, title: MailResourcesStrings.buttonPhishing, icon: MailResourcesAsset.fishing)
     static let print = Action(id: 13, title: MailResourcesStrings.buttonPrint, icon: MailResourcesAsset.printText)
@@ -92,20 +93,24 @@ enum ActionsTarget: Equatable {
         // In the future, we might want to adjust the actions based on the target
         quickActions = [.reply, .replyAll, .forward, .delete]
         let unread: Bool
+        let spam: Bool
         switch target {
         case .threads(let threads):
             unread = threads.allSatisfy { $0.unseenMessages > 0 }
+            spam = threads.allSatisfy { $0.parent?.role == .spam }
         case .thread(let thread):
             unread = thread.unseenMessages > 0
+            spam = thread.parent?.role == .spam
         case .message(let message):
             unread = !message.seen
+            spam = message.folderId == mailboxManager.getFolder(with: .spam)?._id
         }
         listActions = [
             .archive,
             unread ? .markAsRead : .markAsUnread,
             .move,
             .postpone,
-            .spam,
+            spam ? .nonSpam : .spam,
             .block,
             .phishing,
             .print,
@@ -150,6 +155,10 @@ enum ActionsTarget: Equatable {
         case .spam:
             Task {
                 try await spam()
+            }
+        case .nonSpam:
+            Task {
+                try await nonSpam()
             }
         case .block:
             block()
@@ -270,6 +279,23 @@ enum ActionsTarget: Equatable {
         }
 
         IKSnackBar.showCancelableSnackBar(message: "Conversation déplacée vers Spam",
+                                          cancelSuccessMessage: "Déplacement annulé",
+                                          cancelableResponse: response,
+                                          mailboxManager: mailboxManager)
+    }
+
+    private func nonSpam() async throws {
+        let response: UndoResponse
+        switch target {
+        case .threads(let threads):
+            response = try await mailboxManager.nonSpam(messages: threads.flatMap(\.messages).map { $0.freezeIfNeeded() })
+        case .thread(let thread):
+            response = try await mailboxManager.nonSpam(thread: thread.freezeIfNeeded())
+        case .message(let message):
+            response = try await mailboxManager.nonSpam(messages: [message.freezeIfNeeded()])
+        }
+
+        IKSnackBar.showCancelableSnackBar(message: "Conversation déplacée vers Boîte de réception",
                                           cancelSuccessMessage: "Déplacement annulé",
                                           cancelableResponse: response,
                                           mailboxManager: mailboxManager)

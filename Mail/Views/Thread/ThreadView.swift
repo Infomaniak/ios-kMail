@@ -58,8 +58,8 @@ struct ThreadView: View {
 
     private var messages: [Message] {
         return Array(thread.messages)
-        .filter { $0.isDuplicate != true && (isTrashFolder || $0.folderId != trashId) }
-        .sorted { $0.date.compare($1.date) == .orderedAscending }
+            .filter { $0.isDuplicate != true && (isTrashFolder || $0.folderId != trashId) }
+            .sorted { $0.date.compare($1.date) == .orderedAscending }
     }
 
     init(mailboxManager: MailboxManager, thread: Thread) {
@@ -155,8 +155,12 @@ struct ThreadView: View {
         .bottomSheet(bottomSheetPosition: $threadBottomSheet.position, options: threadBottomSheetOptions) {
             switch threadBottomSheet.state {
             case let .actions(target):
-                ActionsView(mailboxManager: mailboxManager, target: target, state: threadBottomSheet) { message, replyMode in
-                    sheet.state = .reply(message, replyMode)
+                if target.isInvalidated {
+                    EmptyView()
+                } else {
+                    ActionsView(mailboxManager: mailboxManager, target: target, state: threadBottomSheet) { message, replyMode in
+                        sheet.state = .reply(message, replyMode)
+                    }
                 }
             case .none:
                 EmptyView()

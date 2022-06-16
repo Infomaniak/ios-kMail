@@ -272,16 +272,8 @@ public class MailboxManager: ObservableObject {
     public func move(thread: Thread, to folder: Folder) async throws {
         _ = try await apiFetcher.move(mailbox: mailbox, messages: Array(thread.messages), destinationId: folder._id)
 
-        let realm = getRealm()
         if let liveFolder = folder.thaw(), let liveThread = thread.thaw() {
-            try? realm.safeWrite {
-                liveThread.parent?.threads.remove(liveThread)
-                liveFolder.threads.insert(liveThread)
-                for message in liveThread.messages {
-                    message.folder = folder.name
-                    message.folderId = folder._id
-                }
-            }
+            try? moveLocally(thread: liveThread, to: liveFolder)
         }
     }
 
@@ -323,17 +315,33 @@ public class MailboxManager: ObservableObject {
 
         let realm = getRealm()
         if let spamFolder = getFolder(with: .spam, using: realm), let liveThread = thread.thaw() {
-            try? realm.safeWrite {
-                liveThread.parent?.threads.remove(liveThread)
-                spamFolder.threads.insert(liveThread)
-                for message in liveThread.messages {
-                    message.folder = spamFolder.name
-                    message.folderId = spamFolder._id
-                }
-            }
+            try? moveLocally(thread: liveThread, to: spamFolder)
         }
 
         return response
+    }
+
+    public func nonSpam(thread: Thread) async throws -> UndoResponse {
+        let response = try await apiFetcher.nonSpam(mailbox: mailbox, messages: Array(thread.messages))
+
+        let realm = getRealm()
+        if let inboxFolder = getFolder(with: .inbox, using: realm), let liveThread = thread.thaw() {
+            try? moveLocally(thread: liveThread, to: inboxFolder)
+        }
+
+        return response
+    }
+
+    private func moveLocally(thread: Thread, to folder: Folder, using realm: Realm? = nil) throws {
+        let realm = realm ?? getRealm()
+        try realm.safeWrite {
+            thread.parent?.threads.remove(thread)
+            folder.threads.insert(thread)
+            for message in thread.messages {
+                message.folder = folder.name
+                message.folderId = folder._id
+            }
+        }
     }
 
     // MARK: - Message
@@ -397,15 +405,7 @@ public class MailboxManager: ObservableObject {
     public func move(messages: [Message], to folder: Folder) async throws {
         _ = try await apiFetcher.move(mailbox: mailbox, messages: messages, destinationId: folder._id)
 
-        let realm = getRealm()
-        try? realm.safeWrite {
-            for message in messages {
-                if let liveMessage = message.thaw() {
-                    liveMessage.folder = folder.name
-                    liveMessage.folderId = folder._id
-                }
-            }
-        }
+        try? moveLocally(messages: messages, to: folder)
     }
 
     public func move(messages: [Message], to folderRole: FolderRole) async throws {
@@ -439,16 +439,31 @@ public class MailboxManager: ObservableObject {
 
         let realm = getRealm()
         guard let spamFolder = getFolder(with: .spam, using: realm)?.freeze() else { return response }
-        try? realm.safeWrite {
+        try? moveLocally(messages: messages, to: spamFolder, using: realm)
+
+        return response
+    }
+
+    public func nonSpam(messages: [Message]) async throws -> UndoResponse {
+        let response = try await apiFetcher.nonSpam(mailbox: mailbox, messages: messages)
+
+        let realm = getRealm()
+        guard let inboxFolder = getFolder(with: .inbox, using: realm)?.freeze() else { return response }
+        try? moveLocally(messages: messages, to: inboxFolder, using: realm)
+
+        return response
+    }
+
+    private func moveLocally(messages: [Message], to folder: Folder, using realm: Realm? = nil) throws {
+        let realm = realm ?? getRealm()
+        try realm.safeWrite {
             for message in messages {
                 if let liveMessage = message.thaw() {
-                    liveMessage.folder = spamFolder.name
-                    liveMessage.folderId = spamFolder._id
+                    liveMessage.folder = folder.name
+                    liveMessage.folderId = folder._id
                 }
             }
         }
-
-        return response
     }
 
     // MARK: - Draft
