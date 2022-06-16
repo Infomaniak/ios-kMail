@@ -80,6 +80,8 @@ class RichTextEditorModel: ObservableObject {
 }
 
 class MailEditor: SQTextEditorView {
+    var toolbar = UIToolbar()
+
     private lazy var editorWebView: WKWebView = {
         let config = WKWebViewConfiguration()
         config.preferences = WKPreferences()
@@ -118,7 +120,7 @@ class MailEditor: SQTextEditorView {
         _webView.navigationDelegate = self
         _webView.allowsLinkPreview = false
         _webView.setKeyboardRequiresUserInteraction(false)
-        _webView.addInputAccessoryView(toolbar: self.getToolbar(height: 44))
+        _webView.addInputAccessoryView(toolbar: self.getToolbar(height: 44, style: .main))
         return _webView
     }()
 
@@ -151,18 +153,20 @@ class MailEditor: SQTextEditorView {
 
     // MARK: - Custom Toolbar
 
-    func getToolbar(height: Int) -> UIToolbar? {
-        let toolBar = UIToolbar()
-        toolBar.frame = CGRect(x: 0, y: 50, width: 320, height: height)
-        toolBar.tintColor = MailResourcesAsset.secondaryTextColor.color
-        toolBar.barTintColor = .white
+    func getToolbar(height: Int, style: ToolbarStyle) -> UIToolbar? {
+        toolbar.frame = CGRect(x: 0, y: 50, width: 320, height: height)
+        toolbar.tintColor = MailResourcesAsset.secondaryTextColor.color
+        toolbar.barTintColor = .white
 
         let editTextButton = UIBarButtonItem(
             image: MailResourcesAsset.textModes.image,
             style: .plain,
             target: self,
-            action: #selector(onToolbarDoneClick(sender:))
+            action: style == .textEdition
+                ? #selector(onToolbarbackClick(sender:))
+                : #selector(onToolbarTextEditionClick(sender:))
         )
+        editTextButton.tintColor = style == .textEdition ? MailResourcesAsset.infomaniakColor.color : MailResourcesAsset.secondaryTextColor.color
         let attachmentButton = UIBarButtonItem(
             image: MailResourcesAsset.attachmentMail2.image,
             style: .plain,
@@ -187,16 +191,86 @@ class MailEditor: SQTextEditorView {
             target: self,
             action: #selector(onToolbarDoneClick(sender:))
         )
+        let normalTextButton = UIBarButtonItem(
+            title: "Normal",
+            style: .plain,
+            target: self,
+            action: #selector(onToolbarDoneClick(sender:))
+        )
+        let boldTextButton = UIBarButtonItem(
+            title: "Bold",
+            style: .plain,
+            target: self,
+            action: #selector(onToolbarDoneClick(sender:))
+        )
+        let titleTextButton = UIBarButtonItem(
+            title: "Title",
+            style: .plain,
+            target: self,
+            action: #selector(onToolbarDoneClick(sender:))
+        )
+        let italicTextButton = UIBarButtonItem(
+            image: MailResourcesAsset.italic.image,
+            style: .plain,
+            target: self,
+            action: #selector(onToolbarDoneClick(sender:))
+        )
+        let underlineTextButton = UIBarButtonItem(
+            image: MailResourcesAsset.underline.image,
+            style: .plain,
+            target: self,
+            action: #selector(onToolbarDoneClick(sender:))
+        )
+        let strikeThroughTextButton = UIBarButtonItem(
+            image: MailResourcesAsset.strikeThrough.image,
+            style: .plain,
+            target: self,
+            action: #selector(onToolbarDoneClick(sender:))
+        )
+        let unorderedListTextButton = UIBarButtonItem(
+            image: MailResourcesAsset.unorderedList.image,
+            style: .plain,
+            target: self,
+            action: #selector(onToolbarDoneClick(sender:))
+        )
         let flexibleSpaceItem = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: self, action: nil)
 
-        toolBar.setItems([editTextButton, flexibleSpaceItem, attachmentButton, flexibleSpaceItem, photoButton, flexibleSpaceItem, linkButton, flexibleSpaceItem, programMessageButton], animated: false)
-        toolBar.isUserInteractionEnabled = true
+        switch style {
+        case .main:
+            toolbar.setItems(
+                [editTextButton, flexibleSpaceItem, attachmentButton, flexibleSpaceItem, photoButton, flexibleSpaceItem,
+                 linkButton, flexibleSpaceItem, programMessageButton],
+                animated: false
+            )
+        case .textEdition:
+            toolbar.setItems(
+                [editTextButton, flexibleSpaceItem, normalTextButton, flexibleSpaceItem, boldTextButton, flexibleSpaceItem,
+                 titleTextButton, flexibleSpaceItem, italicTextButton, flexibleSpaceItem, underlineTextButton,
+                 flexibleSpaceItem, strikeThroughTextButton, unorderedListTextButton],
+                animated: false
+            )
+        }
+        toolbar.isUserInteractionEnabled = true
 
-        toolBar.sizeToFit()
-        return toolBar
+        toolbar.sizeToFit()
+        return toolbar
     }
 
     @objc func onToolbarDoneClick(sender: UIBarButtonItem) {
-        webView.resignFirstResponder()
     }
+
+    @objc func onToolbarTextEditionClick(sender: UIBarButtonItem) {
+        webView.addInputAccessoryView(toolbar: getToolbar(height: 44, style: .textEdition))
+        toolbar.setNeedsLayout()
+    }
+
+    @objc func onToolbarbackClick(sender: UIBarButtonItem) {
+        webView.addInputAccessoryView(toolbar: getToolbar(height: 44, style: .main))
+        toolbar.setNeedsLayout()
+    }
+}
+
+enum ToolbarStyle {
+    case main
+    case textEdition
 }
