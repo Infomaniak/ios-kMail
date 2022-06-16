@@ -17,6 +17,7 @@
  */
 
 import MailCore
+import MailResources
 import SQRichTextEditor
 import SwiftUI
 import WebKit
@@ -117,6 +118,7 @@ class MailEditor: SQTextEditorView {
         _webView.navigationDelegate = self
         _webView.allowsLinkPreview = false
         _webView.setKeyboardRequiresUserInteraction(false)
+        _webView.addInputAccessoryView(toolbar: self.getToolbar(height: 44))
         return _webView
     }()
 
@@ -145,5 +147,56 @@ class MailEditor: SQTextEditorView {
     /// Removes any current selection and moves the cursor to the very end of the document.
     func moveCursorToEnd(completion: ((_ error: Error?) -> Void)? = nil) {
         callEditorMethod(name: "moveCursorToEnd", completion: completion)
+    }
+
+    // MARK: - Custom Toolbar
+
+    func getToolbar(height: Int) -> UIToolbar? {
+        let toolBar = UIToolbar()
+        toolBar.frame = CGRect(x: 0, y: 50, width: 320, height: height)
+        toolBar.tintColor = MailResourcesAsset.secondaryTextColor.color
+        toolBar.barTintColor = .white
+
+        let editTextButton = UIBarButtonItem(
+            image: MailResourcesAsset.textModes.image,
+            style: .plain,
+            target: self,
+            action: #selector(onToolbarDoneClick(sender:))
+        )
+        let attachmentButton = UIBarButtonItem(
+            image: MailResourcesAsset.attachmentMail2.image,
+            style: .plain,
+            target: self,
+            action: #selector(onToolbarDoneClick(sender:))
+        )
+        let photoButton = UIBarButtonItem(
+            image: MailResourcesAsset.photo.image,
+            style: .plain,
+            target: self,
+            action: #selector(onToolbarDoneClick(sender:))
+        )
+        let linkButton = UIBarButtonItem(
+            image: MailResourcesAsset.hyperlink.image,
+            style: .plain,
+            target: self,
+            action: #selector(onToolbarDoneClick(sender:))
+        )
+        let programMessageButton = UIBarButtonItem(
+            image: MailResourcesAsset.programMessage.image,
+            style: .plain,
+            target: self,
+            action: #selector(onToolbarDoneClick(sender:))
+        )
+        let flexibleSpaceItem = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: self, action: nil)
+
+        toolBar.setItems([editTextButton, flexibleSpaceItem, attachmentButton, flexibleSpaceItem, photoButton, flexibleSpaceItem, linkButton, flexibleSpaceItem, programMessageButton], animated: false)
+        toolBar.isUserInteractionEnabled = true
+
+        toolBar.sizeToFit()
+        return toolBar
+    }
+
+    @objc func onToolbarDoneClick(sender: UIBarButtonItem) {
+        webView.resignFirstResponder()
     }
 }
