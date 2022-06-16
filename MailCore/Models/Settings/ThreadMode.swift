@@ -34,7 +34,7 @@ public enum ThreadMode: String, CaseIterable, SettingsOptionEnum {
     }
 
     public var value: Bool {
-        return self == .discussion ? true : false
+        return self == .discussion
     }
 
     public var image: Image? {
