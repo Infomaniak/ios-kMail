@@ -21,28 +21,55 @@ import MailCore
 import MailResources
 import SwiftUI
 
-//@MainActor class SwipeActionSettingViewModel: SettingsSelectionViewModel {
-//    public var swipeType: SwipeType
-//
-//    private var content: [SwipeAction] = SwipeAction.allCases
-//
-//    init(swipe: SwipeType) {
-//        swipeType = swipe
-//        super.init(title: swipe.title)
-//
-//        for (indice, action) in content.enumerated() {
-//            tableContent.append(
-//                SettingsSelectionContent(
-//                    id: indice,
-//                    view: AnyView(SettingsSelectionCellView(title: action.title)),
-//                    isSelected: action == swipeType.setting
-//                )
-//            )
-//        }
-//    }
-//
-//    override func updateSelection(newValue: Int) {
-//        super.updateSelection(newValue: newValue)
-//        swipeType.setting = content[newValue]
-//    }
-//}
+@MainActor class SwipeActionSettingsViewModel: SettingsViewModel {
+    init() {
+        super.init(title: MailResourcesStrings.settingsSwipeActionsTitle)
+        sections = [.rightSwipe, .leftSwipe]
+    }
+
+    override func updateSelectedValue() {
+        selectedValues = [
+            .swipeShortRightOption: UserDefaults.shared.swipeShortRight,
+            .swipeLongRightOption: UserDefaults.shared.swipeLongRight,
+            .swipeShortLeftOption: UserDefaults.shared.swipeShortLeft,
+            .swipeLongLeftOption: UserDefaults.shared.swipeLongLeft
+        ]
+    }
+}
+
+extension SettingsSection {
+    static let rightSwipe = SettingsSection(
+        id: 1,
+        name: "",
+        items: [.shortRight, .longRight]
+    )
+    static let leftSwipe = SettingsSection(
+        id: 2,
+        name: "",
+        items: [.shortLeft, .longLeft]
+    )
+}
+
+private extension SettingsItem {
+    static let shortRight = SettingsItem(
+        id: 1,
+        title: MailResourcesStrings.settingsSwipeShortRight,
+        type: .option(.swipeShortRightOption)
+    )
+    static let longRight = SettingsItem(
+        id: 2,
+        title: MailResourcesStrings.settingsSwipeLongRight,
+        type: .option(.swipeLongRightOption)
+    )
+
+    static let shortLeft = SettingsItem(
+        id: 3,
+        title: MailResourcesStrings.settingsSwipeShortLeft,
+        type: .option(.swipeShortLeftOption)
+    )
+    static let longLeft = SettingsItem(
+        id: 4,
+        title: MailResourcesStrings.settingsSwipeLongLeft,
+        type: .option(.swipeLongLeftOption)
+    )
+}

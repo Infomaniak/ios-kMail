@@ -18,6 +18,7 @@
 
 import Foundation
 import MailResources
+import SwiftUI
 
 public enum SwipeType: String, CaseIterable {
     case shortRight
@@ -66,7 +67,7 @@ public enum SwipeType: String, CaseIterable {
     }
 }
 
-public enum SwipeAction: String, CaseIterable {
+public enum SwipeAction: String, CaseIterable, SettingsOptionEnum {
     case delete
     case archive
     case readUnread
@@ -97,6 +98,58 @@ public enum SwipeAction: String, CaseIterable {
             return MailResourcesStrings.settingsSwipeActionQuickActionsMenu
         case .none:
             return MailResourcesStrings.settingsSwipeActionNone
+        }
+    }
+
+    public var image: Image? {
+        return nil
+    }
+
+    public var swipeIcon: Image? {
+        switch self {
+        case .delete:
+            return Image(uiImage: MailResourcesAsset.bin.image)
+        case .archive:
+            return Image(uiImage: MailResourcesAsset.archives.image)
+        case .readUnread:
+            return Image(uiImage: MailResourcesAsset.envelopeOpen.image)
+        case .move:
+            return Image(uiImage: MailResourcesAsset.move.image)
+        case .report:
+//            return Image(uiImage: MailResourcesAsset.)
+            return nil
+        case .spam:
+            return Image(uiImage: MailResourcesAsset.spam.image)
+        case .readAndAchive:
+//            return Image(uiImage: MailResourcesAsset.)
+            return nil
+        case .quickAction:
+            return Image(uiImage: MailResourcesAsset.plusActions.image)
+        case .none:
+            return nil
+        }
+    }
+
+    public var swipeTint: UIColor? {
+        switch self {
+        case .delete:
+            return MailResourcesAsset.destructiveActionColor.color
+        case .archive:
+            return .blue
+        case .readUnread:
+            return MailResourcesAsset.unreadActionColor.color
+        case .move:
+            return .blue
+        case .report:
+            return .blue
+        case .spam:
+            return .blue
+        case .readAndAchive:
+            return .blue
+        case .quickAction:
+            return MailResourcesAsset.menuActionColor.color
+        case .none:
+            return nil
         }
     }
 }

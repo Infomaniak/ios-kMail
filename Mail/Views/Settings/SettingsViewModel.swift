@@ -60,8 +60,7 @@ enum SettingsDestination: String, Equatable {
         case .send:
             SettingsView(viewModel: SendSettingsViewModel())
         case .swipe:
-            EmptyView()
-//            SettingsView(viewModel: )
+            SettingsSwipeActionsView(viewModel: SwipeActionSettingsViewModel())
         }
     }
 }
@@ -119,13 +118,25 @@ enum SettingsOption: Equatable {
                 keyPath: \.forwardMode
             )
         case .swipeShortRightOption:
-            EmptyView()
+            SettingsOptionView<SwipeAction>(
+                title: MailResourcesStrings.settingsSwipeShortRight,
+                keyPath: \.swipeShortRight
+            )
         case .swipeLongRightOption:
-            EmptyView()
+            SettingsOptionView<SwipeAction>(
+                title: MailResourcesStrings.settingsSwipeLongRight,
+                keyPath: \.swipeLongRight
+            )
         case .swipeShortLeftOption:
-            EmptyView()
+            SettingsOptionView<SwipeAction>(
+                title: MailResourcesStrings.settingsSwipeShortLeft,
+                keyPath: \.swipeShortLeft
+            )
         case .swipeLongLeftOption:
-            EmptyView()
+            SettingsOptionView<SwipeAction>(
+                title: MailResourcesStrings.settingsSwipeLongLeft,
+                keyPath: \.swipeLongLeft
+            )
         }
     }
 }
