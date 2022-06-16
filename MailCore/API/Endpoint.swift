@@ -126,4 +126,8 @@ public extension Endpoint {
     static func blockSender(messageResource: String) -> Endpoint {
         return .resource(messageResource).appending(path: "/blacklist")
     }
+
+    static func report(messageResource: String) -> Endpoint {
+        return .resource(messageResource).appending(path: "/report")
+    }
 }

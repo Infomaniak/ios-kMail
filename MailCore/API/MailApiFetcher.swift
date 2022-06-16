@@ -178,6 +178,12 @@ public class MailApiFetcher: ApiFetcher {
     public func blockSender(message: Message) async throws -> Bool {
         try await perform(request: authenticatedRequest(.blockSender(messageResource: message.resource), method: .post)).data
     }
+
+    public func reportPhishing(message: Message) async throws -> Bool {
+        try await perform(request: authenticatedRequest(.report(messageResource: message.resource),
+                                                        method: .post,
+                                                        parameters: ["type": "phishing"])).data
+    }
 }
 
 class SyncedAuthenticator: OAuthAuthenticator {

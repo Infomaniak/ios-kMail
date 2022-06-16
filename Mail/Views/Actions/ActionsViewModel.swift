@@ -183,7 +183,9 @@ enum ActionsTarget: Equatable {
                 try await block()
             }
         case .phishing:
-            phishing()
+            Task {
+                try await phishing()
+            }
         case .print:
             printAction()
         case .saveAsPDF:
@@ -330,21 +332,22 @@ enum ActionsTarget: Equatable {
     }
 
     private func block() async throws {
-        switch target {
-        case .threads:
-            // This action is only available on a single message
-            break
-        case .thread:
-            // This action is only available on a single message
-            break
-        case .message(let message):
-            _ = try await mailboxManager.apiFetcher.blockSender(message: message.freezeIfNeeded())
+        // This action is only available on a single message
+        guard case .message(let message) = target else { return }
+        let response = try await mailboxManager.apiFetcher.blockSender(message: message.freezeIfNeeded())
+        if response {
+            IKSnackBar.showSnackBar(message: "Expéditeur(s) blacklisté(s) avec succès")
         }
-        IKSnackBar.showSnackBar(message: "Expéditeur(s) blacklisté(s) avec succès")
     }
 
-    private func phishing() {
-        print("PHISHING ACTION")
+    private func phishing() async throws {
+        // This action is only available on a single message
+        guard case .message(let message) = target else { return }
+        let response = try await mailboxManager.apiFetcher.reportPhishing(message: message)
+        if response {
+            _ = try await mailboxManager.reportSpam(messages: [message.freezeIfNeeded()])
+            IKSnackBar.showSnackBar(message: "Signalement effectué avec succès")
+        }
     }
 
     private func printAction() {
