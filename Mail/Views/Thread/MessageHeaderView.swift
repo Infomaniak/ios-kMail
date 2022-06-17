@@ -26,7 +26,6 @@ struct MessageHeaderView: View {
     @ObservedRealmObject var message: Message
     @Binding var isHeaderExpanded: Bool
     @Binding var isMessageExpanded: Bool
-    let showActionButtons: Bool
 
     @EnvironmentObject var mailboxManager: MailboxManager
     @EnvironmentObject var sheet: MessageSheet
@@ -107,7 +106,7 @@ struct MessageHeaderView: View {
             }
             .padding(.top, 2)
 
-            if showActionButtons && isMessageExpanded {
+            if isMessageExpanded {
                 HStack(spacing: 24) {
                     Button {
                         sheet.state = .reply(message, .reply)
@@ -174,20 +173,17 @@ struct MessageHeaderView_Previews: PreviewProvider {
         MessageHeaderView(
             message: PreviewHelper.sampleMessage,
             isHeaderExpanded: .constant(false),
-            isMessageExpanded: .constant(false),
-            showActionButtons: true
+            isMessageExpanded: .constant(false)
         )
         MessageHeaderView(
             message: PreviewHelper.sampleMessage,
             isHeaderExpanded: .constant(false),
-            isMessageExpanded: .constant(true),
-            showActionButtons: true
+            isMessageExpanded: .constant(true)
         )
         MessageHeaderView(
             message: PreviewHelper.sampleMessage,
             isHeaderExpanded: .constant(true),
-            isMessageExpanded: .constant(true),
-            showActionButtons: true
+            isMessageExpanded: .constant(true)
         )
     }
 }

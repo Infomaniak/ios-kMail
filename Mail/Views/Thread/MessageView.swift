@@ -29,12 +29,10 @@ struct MessageView: View {
     @State private var webViewHeight: CGFloat = .zero
     @State var isHeaderExpanded = false
     @State var isMessageExpanded: Bool
-    let showActionButtons: Bool
 
-    init(message: Message, isMessageExpanded: Bool = false, showActionButtons: Bool = true) {
+    init(message: Message, isMessageExpanded: Bool = false) {
         self.message = message
         self.isMessageExpanded = isMessageExpanded
-        self.showActionButtons = showActionButtons
     }
 
     var body: some View {
@@ -43,8 +41,7 @@ struct MessageView: View {
                 MessageHeaderView(
                     message: message,
                     isHeaderExpanded: $isHeaderExpanded,
-                    isMessageExpanded: $isMessageExpanded,
-                    showActionButtons: showActionButtons
+                    isMessageExpanded: $isMessageExpanded
                 )
 
                 if !message.attachments.isEmpty {
