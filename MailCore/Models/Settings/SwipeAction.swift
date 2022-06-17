@@ -114,7 +114,7 @@ public enum SwipeAction: String, CaseIterable, SettingsOptionEnum {
         case .readUnread:
             return Image(uiImage: MailResourcesAsset.envelopeOpen.image)
         case .move:
-            return Image(uiImage: MailResourcesAsset.move.image)
+            return Image(uiImage: MailResourcesAsset.emailActionSend21.image)
         case .report:
 //            return Image(uiImage: MailResourcesAsset.)
             return nil
