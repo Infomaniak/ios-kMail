@@ -140,52 +140,32 @@ enum ActionsTarget: Equatable {
         }
     }
 
-    func didTap(action: Action) {
+    func didTap(action: Action) async throws {
         switch action {
         case .delete:
-            Task {
-                try await delete()
-            }
+            try await delete()
         case .reply:
-            Task {
-                try await reply(mode: .reply)
-            }
+            try await reply(mode: .reply)
         case .replyAll:
-            Task {
-                try await reply(mode: .replyAll)
-            }
+            try await reply(mode: .replyAll)
         case .archive:
-            Task {
-                try await archive()
-            }
+            try await archive()
         case .forward:
-            Task {
-                try await reply(mode: .forward)
-            }
+            try await reply(mode: .forward)
         case .markAsRead, .markAsUnread:
-            Task {
-                try await toggleRead()
-            }
+            try await toggleRead()
         case .move:
             move()
         case .postpone:
             postpone()
         case .spam:
-            Task {
-                try await spam()
-            }
+            try await spam()
         case .nonSpam:
-            Task {
-                try await nonSpam()
-            }
+            try await nonSpam()
         case .block:
-            Task {
-                try await block()
-            }
+            try await block()
         case .phishing:
-            Task {
-                try await phishing()
-            }
+            try await phishing()
         case .print:
             printAction()
         case .saveAsPDF:

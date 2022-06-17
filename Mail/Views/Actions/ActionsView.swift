@@ -69,7 +69,11 @@ struct QuickActionView: View {
 
     var body: some View {
         Button {
-            viewModel.didTap(action: action)
+            Task {
+                await tryOrDisplayError {
+                    try await viewModel.didTap(action: action)
+                }
+            }
         } label: {
             VStack(spacing: 8) {
                 ZStack {
@@ -98,7 +102,11 @@ struct ActionView: View {
 
     var body: some View {
         Button {
-            viewModel.didTap(action: action)
+            Task {
+                await tryOrDisplayError {
+                    try await viewModel.didTap(action: action)
+                }
+            }
         } label: {
             HStack {
                 Image(resource: action.icon)
