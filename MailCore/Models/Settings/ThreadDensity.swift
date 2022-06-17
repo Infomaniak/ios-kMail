@@ -21,29 +21,31 @@ import MailResources
 import SwiftUI
 
 public enum ThreadDensity: String, CaseIterable, SettingsOptionEnum {
-    case defaultDensity
-    case largeDensity
-    case compactDensity
+    case normal
+    case large
+    case compact
 
     public var title: String {
         switch self {
-        case .defaultDensity:
+        case .normal:
             return MailResourcesStrings.settingsDefault
-        case .largeDensity:
+        case .large:
             return MailResourcesStrings.settingsDensityOptionLarge
-        case .compactDensity:
+        case .compact:
             return MailResourcesStrings.settingsDensityOptionCompact
         }
     }
 
     public var image: Image? {
+        let resource: MailResourcesImages
         switch self {
-        case .defaultDensity:
-            return Image(uiImage: MailResourcesAsset.defaultList.image)
-        case .largeDensity:
-            return Image(uiImage: MailResourcesAsset.normalList.image)
-        case .compactDensity:
-            return Image(uiImage: MailResourcesAsset.compactList.image)
+        case .normal:
+            resource = MailResourcesAsset.defaultList
+        case .large:
+            resource = MailResourcesAsset.normalList
+        case .compact:
+            resource = MailResourcesAsset.compactList
         }
+        return Image(uiImage: resource.image)
     }
 }

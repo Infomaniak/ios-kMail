@@ -39,7 +39,7 @@ import SwiftUI
 private extension SettingsSection {
     static let sendPage = SettingsSection(
         id: 1,
-        name: "",
+        name: nil,
         items: [.cancelDelay, .forwardMessage, .includeOriginalInReply, .acknowledgement]
     )
 }

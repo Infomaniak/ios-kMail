@@ -22,11 +22,7 @@ import SwiftUI
 import UIKit
 
 struct SettingsThreadDensityOptionView: View {
-    @State private var selectedValue: ThreadDensity {
-        didSet {
-            UserDefaults.shared.threadDensity = selectedValue
-        }
-    }
+    @State private var selectedValue: ThreadDensity
 
     init() {
         _selectedValue = State(wrappedValue: UserDefaults.shared.threadDensity)
@@ -34,34 +30,36 @@ struct SettingsThreadDensityOptionView: View {
 
     var body: some View {
         VStack(spacing: 30) {
-            HStack {
-                Text(MailResourcesStrings.settingsSelectDisplayModeDescription)
-                    .textStyle(.callout)
-                Spacer()
-            }
+            Text(MailResourcesStrings.settingsSelectDisplayModeDescription)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .textStyle(.header3)
             HStack(spacing: 31) {
-                ForEach(ThreadDensity.allCases, id: \.rawValue) { value in
-                    Button {
-                        selectedValue = value
-                    } label: {
+                Picker("Display mode", selection: $selectedValue) {
+                    ForEach(ThreadDensity.allCases, id: \.rawValue) { value in
                         Text(value.title)
-                            .foregroundColor(selectedValue == value ? MailTextStyle.button.color : MailTextStyle.body.color)
+                            .tag(value)
                     }
                 }
+                .pickerStyle(.segmented)
             }
-            selectedValue.image
+            selectedValue.image!
+                .resizable()
+                .scaledToFit()
                 .shadow(color: Color(red: 0, green: 0, blue: 0, opacity: 0.15), radius: 3, x: 0, y: 0)
 
             Spacer()
         }
-        .navigationBarTitle(MailResourcesStrings.settingsThreadListDensityTitle)
-        .padding([.leading, .trailing], 17)
+        .onChange(of: selectedValue) { _ in
+            UserDefaults.shared.threadDensity = selectedValue
+        }
+        .navigationBarTitle(MailResourcesStrings.settingsThreadListDensityTitle, displayMode: .inline)
+        .padding([.leading, .trailing], 16)
         .padding(.top, 30)
     }
 }
 
-// struct SettingsThreadDensityOptionView_Previews: PreviewProvider {
-//    static var previews: some View {
-//        SettingsThreadDensityOptionView()
-//    }
-// }
+struct SettingsThreadDensityOptionView_Previews: PreviewProvider {
+    static var previews: some View {
+        SettingsThreadDensityOptionView()
+    }
+}

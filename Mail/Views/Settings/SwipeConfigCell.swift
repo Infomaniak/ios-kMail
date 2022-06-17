@@ -21,54 +21,58 @@ import MailResources
 import SwiftUI
 
 struct SwipeConfigCell: View {
-    @State var selectedValues: [SettingsOption: SettingsOptionEnum]
+    @Binding var selectedValues: [SettingsOption: SettingsOptionEnum]
     var section: SettingsSection
 
-    private var offsetCount = 0
-
-    init(selectedValues: [SettingsOption: SettingsOptionEnum], section: SettingsSection) {
-        self.selectedValues = selectedValues
-        self.section = section
-
-        if section == .leftSwipe {
-            if SwipeType.shortLeft.setting.swipeIcon != nil {
-                offsetCount += 1
+    var actions: [SwipeAction] {
+        var actions = [SwipeAction]()
+        if section == .rightSwipe {
+            if let action = selectedValues[.swipeShortRightOption] as? SwipeAction, action != .none {
+                actions.append(action)
             }
-            if SwipeType.longLeft.setting.swipeIcon != nil {
-                offsetCount += 1
+            if let action = selectedValues[.swipeLongRightOption] as? SwipeAction, action != .none {
+                actions.append(action)
+            }
+        } else if section == .leftSwipe {
+            if let action = selectedValues[.swipeShortLeftOption] as? SwipeAction, action != .none {
+                actions.append(action)
+            }
+            if let action = selectedValues[.swipeLongLeftOption] as? SwipeAction, action != .none {
+                actions.append(action)
             }
         }
+        return actions
     }
 
     var body: some View {
         HStack(spacing: 0) {
-            if section == .rightSwipe {
-                SwipeType.longRight.setting.swipeIcon
-                    .frame(width: 80, height: 80)
-                    .background(Color(uiColor: SwipeType.longRight.setting.swipeTint ?? .clear))
-                SwipeType.shortRight.setting.swipeIcon
-                    .frame(width: 80, height: 80)
-                    .background(Color(uiColor: SwipeType.shortRight.setting.swipeTint ?? .clear))
+            ForEach(actions, id: \.rawValue) { action in
+                ZStack {
+                    Color(uiColor: action.swipeTint ?? .clear)
+
+                    action.swipeIcon!
+                        .resizable()
+                        .frame(width: 24, height: 24)
+                        .foregroundColor(.white)
+                }
+                .frame(width: 74)
             }
 
-            Image(uiImage: MailResourcesAsset.configSwipe.image)
-
-            if section == .leftSwipe {
-                SwipeType.shortLeft.setting.swipeIcon
-                    .frame(width: 80, height: 80)
-                    .background(Color(uiColor: SwipeType.shortLeft.setting.swipeTint ?? .clear))
-
-                SwipeType.longLeft.setting.swipeIcon
-                    .frame(width: 80, height: 80)
-                    .background(Color(uiColor: SwipeType.longLeft.setting.swipeTint ?? .clear))
-            }
+            Image(resource: MailResourcesAsset.configSwipe)
+                .resizable()
+                .aspectRatio(contentMode: .fill)
         }
-        .offset(x: CGFloat(-80 * offsetCount), y: 0)
+        .frame(height: 80)
+        .environment(\.layoutDirection, section == .rightSwipe ? .leftToRight : .rightToLeft)
+        .offset(x: section == .rightSwipe ? 0 : CGFloat(-80 * actions.count), y: 0)
     }
 }
 
 struct SwipeConfigCell_Previews: PreviewProvider {
     static var previews: some View {
-        SwipeConfigCell(selectedValues: [:], section: .rightSwipe)
+        SwipeConfigCell(selectedValues: .constant([.swipeLongRightOption: SwipeAction.readUnread]), section: .rightSwipe)
+        SwipeConfigCell(selectedValues: .constant([.swipeLongRightOption: SwipeAction.readUnread, .swipeShortRightOption: SwipeAction.archive]), section: .rightSwipe)
+        SwipeConfigCell(selectedValues: .constant([.swipeLongLeftOption: SwipeAction.delete]), section: .leftSwipe)
+        SwipeConfigCell(selectedValues: .constant([.swipeLongLeftOption: SwipeAction.delete, .swipeShortLeftOption: SwipeAction.quickAction]), section: .leftSwipe)
     }
 }

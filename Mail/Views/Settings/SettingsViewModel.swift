@@ -25,7 +25,7 @@ import SwiftUI
 
 struct SettingsSection: Identifiable, Equatable {
     var id: Int
-    var name: String
+    var name: String?
     var items: [SettingsItem]
 }
 
@@ -56,7 +56,7 @@ enum SettingsDestination: String, Equatable {
     func getDestination() -> some View {
         switch self {
         case .emailSettings:
-            AccountView()
+            EmptyView()
         case .send:
             SettingsView(viewModel: SendSettingsViewModel())
         case .swipe:

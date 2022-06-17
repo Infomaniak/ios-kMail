@@ -40,12 +40,12 @@ import SwiftUI
 extension SettingsSection {
     static let rightSwipe = SettingsSection(
         id: 1,
-        name: "",
+        name: nil,
         items: [.shortRight, .longRight]
     )
     static let leftSwipe = SettingsSection(
         id: 2,
-        name: "",
+        name: nil,
         items: [.shortLeft, .longLeft]
     )
 }

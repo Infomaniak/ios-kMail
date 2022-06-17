@@ -47,7 +47,7 @@ struct SettingsOptionView<OptionEnum>: View where OptionEnum: CaseIterable, Opti
 
     var body: some View {
         List {
-            Section(header: Text(subtitle ?? "")) {
+            Section {
                 ForEach(values, id: \.rawValue) { value in
                     Button {
                         selectedValue = value
@@ -65,15 +65,22 @@ struct SettingsOptionView<OptionEnum>: View where OptionEnum: CaseIterable, Opti
                     }
                 }
                 .listRowSeparator(.hidden)
+            } header: {
+                if let subtitle = subtitle {
+                    Text(subtitle)
+                        .textStyle(.header3)
+                } else {
+                    EmptyView()
+                }
             }
         }
         .listStyle(.plain)
-        .navigationBarTitle(title)
+        .navigationBarTitle(title, displayMode: .inline)
     }
 }
 
-// struct SettingsOptionView_Previews: PreviewProvider {
-//    static var previews: some View {
-//        SettingsOptionView<<#OptionEnum: SettingsOptionEnum & CaseIterable & Equatable & RawRepresentable#>>()
-//    }
-// }
+struct SettingsOptionView_Previews: PreviewProvider {
+    static var previews: some View {
+        SettingsOptionView<Theme>(title: "Theme", subtitle: "Theme", keyPath: \.theme)
+    }
+}

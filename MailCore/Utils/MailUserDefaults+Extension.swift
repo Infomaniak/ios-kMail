@@ -87,7 +87,7 @@ public extension UserDefaults {
 
     var threadDensity: ThreadDensity {
         get {
-            return ThreadDensity(rawValue: string(forKey: key(.threadDensity)) ?? "") ?? .defaultDensity
+            return ThreadDensity(rawValue: string(forKey: key(.threadDensity)) ?? "") ?? .normal
         }
         set {
             set(newValue.rawValue, forKey: key(.threadDensity))
@@ -105,7 +105,7 @@ public extension UserDefaults {
 
     var theme: Theme {
         get {
-            guard let theme = object(forKey: key(.theme)) as? String else {
+            guard let theme = string(forKey: key(.theme)) else {
                 setValue(Theme.system.rawValue, forKey: key(.theme))
                 return Theme.system
             }

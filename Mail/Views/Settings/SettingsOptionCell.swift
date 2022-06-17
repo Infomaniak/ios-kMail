@@ -27,6 +27,7 @@ struct SettingsOptionCell: View {
         NavigationLink(destination: option.getDestination()) {
             VStack(alignment: .leading) {
                 Text(title)
+                    .textStyle(.body)
                 Text(subtitle)
                     .textStyle(.calloutSecondary)
             }

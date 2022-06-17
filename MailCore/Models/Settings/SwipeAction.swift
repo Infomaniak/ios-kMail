@@ -116,13 +116,11 @@ public enum SwipeAction: String, CaseIterable, SettingsOptionEnum {
         case .move:
             return Image(uiImage: MailResourcesAsset.emailActionSend21.image)
         case .report:
-//            return Image(uiImage: MailResourcesAsset.)
-            return nil
+            return Image(uiImage: MailResourcesAsset.waitingMessage.image)
         case .spam:
             return Image(uiImage: MailResourcesAsset.spam.image)
         case .readAndAchive:
-//            return Image(uiImage: MailResourcesAsset.)
-            return nil
+            return Image(uiImage: MailResourcesAsset.archives.image)
         case .quickAction:
             return Image(uiImage: MailResourcesAsset.plusActions.image)
         case .none:

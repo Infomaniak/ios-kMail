@@ -29,7 +29,7 @@ struct SettingsView: View {
     var body: some View {
         List {
             ForEach(viewModel.sections) { section in
-                Section(header: Text(section.name)) {
+                Section {
                     ForEach(section.items) { item in
                         switch item.type {
                         case let .subMenu(destination: destination):
@@ -45,12 +45,25 @@ struct SettingsView: View {
                         }
                     }
                     .listRowSeparator(.hidden)
+                } header: {
+                    if let title = section.name {
+                        VStack(alignment: .leading, spacing: 16) {
+                            if viewModel.sections.first != section {
+                                SeparatorView(withPadding: false, fullWidth: true)
+                            }
+                            Text(title)
+                                .textStyle(.header3)
+                        }
+                    } else {
+                        EmptyView()
+                    }
                 }
-                .listSectionSeparator(viewModel.sections.last == section ? .hidden : .visible, edges: .bottom)
+                .listSectionSeparator(.hidden)
             }
         }
         .listStyle(.plain)
-        .navigationBarTitle(viewModel.title)
+        .navigationBarTitle(viewModel.title, displayMode: .inline)
+        .backButtonDisplayMode(.minimal)
         .onAppear {
             viewModel.updateSelectedValue()
         }

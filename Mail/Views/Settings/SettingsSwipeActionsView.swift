@@ -16,6 +16,7 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import MailCore
 import SwiftUI
 
 struct SettingsSwipeActionsView: View {
@@ -27,29 +28,34 @@ struct SettingsSwipeActionsView: View {
 
     var body: some View {
         List {
+            Section {
+                Text("Balayez des éléments dans votre boîte de réception et accedez rapidement à vos actions les plus fréquentes")
+                    .textStyle(.header3)
+                    .listRowSeparator(.hidden)
+            }
+
             ForEach(viewModel.sections) { section in
                 Section {
                     ForEach(section.items) { item in
-                        switch item.type {
-                        case let .option(option):
+                        if case let .option(option) = item.type {
                             SettingsOptionCell(
                                 title: item.title,
                                 subtitle: viewModel.selectedValues[option]?.title ?? "",
                                 option: option
                             )
-                        default:
+                        } else {
                             EmptyView()
                         }
                     }
                     .listRowSeparator(.hidden)
                 } footer: {
-                    SwipeConfigCell(selectedValues: viewModel.selectedValues, section: section)
+                    SwipeConfigCell(selectedValues: $viewModel.selectedValues, section: section)
                 }
-                .listSectionSeparator(viewModel.sections.last == section ? .hidden : .visible, edges: .bottom)
+                .listSectionSeparator(.hidden)
             }
         }
         .listStyle(.plain)
-        .navigationBarTitle(viewModel.title)
+        .navigationBarTitle(viewModel.title, displayMode: .inline)
         .onAppear {
             viewModel.updateSelectedValue()
         }
