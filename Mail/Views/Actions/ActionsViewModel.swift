@@ -336,7 +336,7 @@ enum ActionsTarget: Equatable {
         guard case .message(let message) = target else { return }
         let response = try await mailboxManager.apiFetcher.blockSender(message: message.freezeIfNeeded())
         if response {
-            IKSnackBar.showSnackBar(message: "Expéditeur(s) blacklisté(s) avec succès")
+            IKSnackBar.showSnackBar(message: MailResourcesStrings.snackbarSenderBlacklisted)
         }
     }
 
@@ -346,7 +346,7 @@ enum ActionsTarget: Equatable {
         let response = try await mailboxManager.apiFetcher.reportPhishing(message: message)
         if response {
             _ = try await mailboxManager.reportSpam(messages: [message.freezeIfNeeded()])
-            IKSnackBar.showSnackBar(message: "Signalement effectué avec succès")
+            IKSnackBar.showSnackBar(message: MailResourcesStrings.snackbarReportPhishingConfirmation)
         }
     }
 
