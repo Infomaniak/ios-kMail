@@ -262,11 +262,11 @@ enum ActionsTarget: Equatable {
     }
 
     private func move() {
-        print("MOVE ACTION")
+        // TODO: MOVE ACTION
     }
 
     private func postpone() {
-        print("POSTPONE ACTION")
+        // TODO: POSTPONE ACTION
     }
 
     private func spam() async throws {
@@ -331,26 +331,26 @@ enum ActionsTarget: Equatable {
     }
 
     private func printAction() {
-        print("PRINT ACTION")
+        // TODO: PRINT ACTION
     }
 
     private func saveAsPDF() {
-        print("SAVE AS PDF ACTION")
+        // TODO: SAVE AS PDF ACTION
     }
 
     private func openIn() {
-        print("OPEN IN ACTION")
+        // TODO: OPEN IN ACTION
     }
 
     private func createRule() {
-        print("CREATE RULE ACTION")
+        // TODO: CREATE RULE ACTION
     }
 
     private func report() {
-        print("REPORT ACTION")
+        // TODO: REPORT ACTION
     }
 
     private func editMenu() {
-        print("EDIT MENU ACTION")
+        // TODO: EDIT MENU ACTION
     }
 }
