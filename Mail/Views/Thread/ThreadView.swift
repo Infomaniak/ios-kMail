@@ -74,7 +74,7 @@ struct ThreadView: View {
                 VStack(spacing: 0) {
                     ForEach(messages.indices, id: \.self) { index in
                         let isMessageExpanded = ((index == messages.count - 1) && !messages[index].isDraft) || !messages[index].seen
-                        MessageView(message: messages[index], isMessageExpanded: isMessageExpanded, showActionButtons: messages.count > 1)
+                        MessageView(message: messages[index], isMessageExpanded: isMessageExpanded)
                         if index < messages.count - 1 {
                             MessageSeparatorView()
                         }
