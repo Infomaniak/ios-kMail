@@ -281,7 +281,7 @@ public class MailboxManager: ObservableObject {
     }
 
     public func move(thread: Thread, to folderRole: FolderRole) async throws -> UndoResponse {
-        guard let folder = getFolder(with: folderRole)?.freeze() else { return UndoResponse(undoResource: "") }
+        guard let folder = getFolder(with: folderRole)?.freeze() else { throw MailError.folderNotFound }
         return try await move(thread: thread, to: folder)
     }
 
@@ -421,7 +421,7 @@ public class MailboxManager: ObservableObject {
     }
 
     public func move(messages: [Message], to folderRole: FolderRole) async throws -> UndoResponse {
-        guard let folder = getFolder(with: folderRole)?.freeze() else { return UndoResponse(undoResource: "") }
+        guard let folder = getFolder(with: folderRole)?.freeze() else { throw MailError.folderNotFound }
         return try await move(messages: messages, to: folder)
     }
 
