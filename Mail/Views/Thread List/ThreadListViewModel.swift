@@ -111,28 +111,14 @@ typealias Thread = MailCore.Thread
     }
 
     func delete(thread: Thread) async {
-        if folder?.role == .trash {
-            // Delete definitely
-            await tryOrDisplayError {
-                try await mailboxManager.delete(thread: thread)
-            }
-        } else if folder?.role == .draft && thread.uid.starts(with: Draft.uuidLocalPrefix) {
-            // Delete local draft from Realm
-            tryOrDisplayError {
-                mailboxManager.deleteLocalDraft(thread: thread)
-            }
-        } else {
-            // Move to trash
-            guard let trashFolder = mailboxManager.getFolder(with: .trash)?.freeze() else { return }
-            await tryOrDisplayError {
-                try await mailboxManager.move(thread: thread, to: trashFolder)
-            }
+        await tryOrDisplayError {
+            try await mailboxManager.moveOrDelete(thread: thread)
         }
     }
 
     func toggleRead(thread: Thread) async {
         await tryOrDisplayError {
-            _ = try await mailboxManager.toggleRead(thread: thread)
+            try await mailboxManager.toggleRead(thread: thread)
         }
     }
 
