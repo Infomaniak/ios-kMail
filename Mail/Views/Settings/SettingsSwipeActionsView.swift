@@ -17,6 +17,7 @@
  */
 
 import MailCore
+import MailResources
 import SwiftUI
 
 struct SettingsSwipeActionsView: View {
@@ -29,7 +30,7 @@ struct SettingsSwipeActionsView: View {
     var body: some View {
         List {
             Section {
-                Text("Balayez des éléments dans votre boîte de réception et accedez rapidement à vos actions les plus fréquentes")
+                Text(MailResourcesStrings.settingsSwipeDescription)
                     .textStyle(.header3)
                     .listRowSeparator(.hidden)
             }
