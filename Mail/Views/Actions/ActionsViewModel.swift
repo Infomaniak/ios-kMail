@@ -194,6 +194,28 @@ enum ActionsTarget: Equatable {
         }
     }
 
+    private func move(to folderRole: FolderRole) async throws {
+        let response: UndoResponse
+        let snackBarMessage: String
+        switch target {
+        case .threads(let threads):
+            let messages = threads.flatMap(\.messages).map { $0.freezeIfNeeded() }
+            response = try await mailboxManager.move(messages: messages, to: folderRole)
+            snackBarMessage = MailResourcesStrings.snackbarThreadMovedPlural(folderRole.localizedName)
+        case .thread(let thread):
+            response = try await mailboxManager.move(thread: thread.freezeIfNeeded(), to: folderRole)
+            snackBarMessage = MailResourcesStrings.snackbarThreadMoved(folderRole.localizedName)
+        case .message(let message):
+            response = try await mailboxManager.move(messages: [message.freezeIfNeeded()], to: folderRole)
+            snackBarMessage = MailResourcesStrings.snackbarMessageMoved(folderRole.localizedName)
+        }
+
+        IKSnackBar.showCancelableSnackBar(message: snackBarMessage,
+                                          cancelSuccessMessage: MailResourcesStrings.snackbarMoveCancelled,
+                                          cancelableResponse: response,
+                                          mailboxManager: mailboxManager)
+    }
+
     // MARK: - Actions methods
 
     private func delete() async throws {
@@ -213,7 +235,11 @@ enum ActionsTarget: Equatable {
                 }
             } else {
                 // Move to trash
-                try await mailboxManager.move(messages: [message.freezeIfNeeded()], to: .trash)
+                let response = try await mailboxManager.move(messages: [message.freezeIfNeeded()], to: .trash)
+                IKSnackBar.showCancelableSnackBar(message: MailResourcesStrings.snackbarMessageMoved(FolderRole.trash.localizedName),
+                                                  cancelSuccessMessage: MailResourcesStrings.snackbarMoveCancelled,
+                                                  cancelableResponse: response,
+                                                  mailboxManager: mailboxManager)
             }
         }
         state.close()
@@ -238,16 +264,7 @@ enum ActionsTarget: Equatable {
     }
 
     private func archive() async throws {
-        switch target {
-        case .threads(let threads):
-            try await taskGroup(on: threads) { [mailboxManager] thread in
-                try await mailboxManager.move(thread: thread, to: .archive)
-            }
-        case .thread(let thread):
-            try await mailboxManager.move(thread: thread.freezeIfNeeded(), to: .archive)
-        case .message(let message):
-            try await mailboxManager.move(messages: [message.freezeIfNeeded()], to: .archive)
-        }
+        try await move(to: .archive)
     }
 
     private func toggleRead() async throws {

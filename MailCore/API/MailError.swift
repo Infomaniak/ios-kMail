@@ -20,7 +20,9 @@ import Foundation
 import InfomaniakCore
 import MailResources
 
-enum MailError: LocalizedError, CustomStringConvertible {
+extension ApiError: CustomStringConvertible {}
+
+public enum MailError: LocalizedError {
     case apiError(ApiError)
     case serverError(statusCode: Int)
     case noToken
@@ -28,8 +30,9 @@ enum MailError: LocalizedError, CustomStringConvertible {
     case unknownError
     case unknownToken
     case noMailbox
+    case folderNotFound
 
-    var errorDescription: String? {
+    public var errorDescription: String? {
         switch self {
         case .apiError(let apiError):
             if let code = ApiErrorCode(rawValue: apiError.code) {
@@ -48,25 +51,8 @@ enum MailError: LocalizedError, CustomStringConvertible {
             return "Unknown token"
         case .noMailbox:
             return "No Mailbox"
-        }
-    }
-
-    var description: String {
-        switch self {
-        case .apiError(let apiError):
-            return "MailError.apiError (\(apiError.code))"
-        case .noToken:
-            return "MailError.noToken"
-        case .resourceError:
-            return "MailError.resourceError"
-        case .unknownError:
-            return "MailError.unknownError"
-        case .serverError(let statusCode):
-            return "MailError.serverError (\(statusCode))"
-        case .unknownToken:
-            return "MailError.unknownToken"
-        case .noMailbox:
-            return "MailError.noMailbox"
+        case .folderNotFound:
+            return "Folder not found"
         }
     }
 }

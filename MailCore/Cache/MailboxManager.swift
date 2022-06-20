@@ -19,6 +19,7 @@
 import CocoaLumberjackSwift
 import Foundation
 import InfomaniakCore
+import MailResources
 import RealmSwift
 import Sentry
 import SwiftRegex
@@ -269,17 +270,19 @@ public class MailboxManager: ObservableObject {
         }
     }
 
-    public func move(thread: Thread, to folder: Folder) async throws {
-        _ = try await apiFetcher.move(mailbox: mailbox, messages: Array(thread.messages), destinationId: folder._id)
+    public func move(thread: Thread, to folder: Folder) async throws -> UndoResponse {
+        let response = try await apiFetcher.move(mailbox: mailbox, messages: Array(thread.messages), destinationId: folder._id)
 
         if let liveFolder = folder.thaw(), let liveThread = thread.thaw() {
             try? moveLocally(thread: liveThread, to: liveFolder)
         }
+
+        return response
     }
 
-    public func move(thread: Thread, to folderRole: FolderRole) async throws {
-        guard let folder = getFolder(with: folderRole)?.freeze() else { return }
-        try await move(thread: thread, to: folder)
+    public func move(thread: Thread, to folderRole: FolderRole) async throws -> UndoResponse {
+        guard let folder = getFolder(with: folderRole)?.freeze() else { throw MailError.folderNotFound }
+        return try await move(thread: thread, to: folder)
     }
 
     public func delete(thread: Thread) async throws {
@@ -306,7 +309,14 @@ public class MailboxManager: ObservableObject {
             deleteLocalDraft(thread: thread)
         } else {
             // Move to trash
-            try await move(thread: thread, to: .trash)
+            let response = try await move(thread: thread, to: .trash)
+            let folderName = FolderRole.trash.localizedName
+            Task.detached {
+                await IKSnackBar.showCancelableSnackBar(message: MailResourcesStrings.snackbarThreadMoved(folderName),
+                                                        cancelSuccessMessage: MailResourcesStrings.snackbarMoveCancelled,
+                                                        cancelableResponse: response,
+                                                        mailboxManager: self)
+            }
         }
     }
 
@@ -402,15 +412,17 @@ public class MailboxManager: ObservableObject {
         }
     }
 
-    public func move(messages: [Message], to folder: Folder) async throws {
-        _ = try await apiFetcher.move(mailbox: mailbox, messages: messages, destinationId: folder._id)
+    public func move(messages: [Message], to folder: Folder) async throws -> UndoResponse {
+        let response = try await apiFetcher.move(mailbox: mailbox, messages: messages, destinationId: folder._id)
 
         try? moveLocally(messages: messages, to: folder)
+
+        return response
     }
 
-    public func move(messages: [Message], to folderRole: FolderRole) async throws {
-        guard let folder = getFolder(with: folderRole)?.freeze() else { return }
-        try await move(messages: messages, to: folder)
+    public func move(messages: [Message], to folderRole: FolderRole) async throws -> UndoResponse {
+        guard let folder = getFolder(with: folderRole)?.freeze() else { throw MailError.folderNotFound }
+        return try await move(messages: messages, to: folder)
     }
 
     public func delete(messages: [Message]) async throws {
