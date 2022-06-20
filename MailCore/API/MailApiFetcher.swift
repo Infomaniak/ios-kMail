@@ -132,7 +132,7 @@ public class MailApiFetcher: ApiFetcher {
         return try await perform(request: authenticatedRequest(.resource(resource))).data
     }
 
-    func send(mailbox: Mailbox, draft: UnmanagedDraft) async throws -> CancelableResponse {
+    func send(mailbox: Mailbox, draft: UnmanagedDraft) async throws -> CancelResponse {
         try await perform(request: authenticatedRequest(
             draft.uuid.isEmpty ? .draft(uuid: mailbox.uuid) : .draft(uuid: mailbox.uuid, draftUuid: draft.uuid),
             method: draft.uuid.isEmpty ? .post : .put,
@@ -161,6 +161,28 @@ public class MailApiFetcher: ApiFetcher {
     @discardableResult
     public func undoAction(resource: String) async throws -> Empty? { // TODO: change return type when bug will be fixed from API
         try await perform(request: authenticatedRequest(.resource(resource), method: .put)).data
+    }
+
+    public func reportSpam(mailbox: Mailbox, messages: [Message]) async throws -> UndoResponse {
+        try await perform(request: authenticatedRequest(.reportSpam(uuid: mailbox.uuid),
+                                                        method: .post,
+                                                        parameters: ["uids": messages.map(\.uid)])).data
+    }
+
+    public func nonSpam(mailbox: Mailbox, messages: [Message]) async throws -> UndoResponse {
+        try await perform(request: authenticatedRequest(.nonSpam(uuid: mailbox.uuid),
+                                                        method: .post,
+                                                        parameters: ["uids": messages.map(\.uid)])).data
+    }
+
+    public func blockSender(message: Message) async throws -> Bool {
+        try await perform(request: authenticatedRequest(.blockSender(messageResource: message.resource), method: .post)).data
+    }
+
+    public func reportPhishing(message: Message) async throws -> Bool {
+        try await perform(request: authenticatedRequest(.report(messageResource: message.resource),
+                                                        method: .post,
+                                                        parameters: ["type": "phishing"])).data
     }
 }
 

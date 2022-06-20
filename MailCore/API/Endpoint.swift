@@ -114,4 +114,20 @@ public extension Endpoint {
     static func deleteMessages(uuid: String) -> Endpoint {
         return .mailbox(uuid: uuid).appending(path: "/message/delete")
     }
+
+    static func reportSpam(uuid: String) -> Endpoint {
+        return .mailbox(uuid: uuid).appending(path: "/message/spam")
+    }
+
+    static func nonSpam(uuid: String) -> Endpoint {
+        return .mailbox(uuid: uuid).appending(path: "/message/ham")
+    }
+
+    static func blockSender(messageResource: String) -> Endpoint {
+        return .resource(messageResource).appending(path: "/blacklist")
+    }
+
+    static func report(messageResource: String) -> Endpoint {
+        return .resource(messageResource).appending(path: "/report")
+    }
 }

@@ -32,7 +32,7 @@ public enum FolderRole: String, Codable, PersistableEnum {
     case spam = "SPAM"
     case trash = "TRASH"
 
-    var localizedName: String {
+    public var localizedName: String {
         switch self {
         case .archive:
             return MailResourcesStrings.archiveFolder

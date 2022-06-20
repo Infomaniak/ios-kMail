@@ -18,6 +18,22 @@
 
 import Foundation
 
-public class CancelableResponse: Codable {
+public protocol CancelableResponse {
+    var resource: String { get }
+}
+
+public struct CancelResponse: Decodable, CancelableResponse {
     public let cancelResource: String
+
+    public var resource: String {
+        return cancelResource
+    }
+}
+
+public struct UndoResponse: Decodable, CancelableResponse {
+    public let undoResource: String
+
+    public var resource: String {
+        return undoResource
+    }
 }
