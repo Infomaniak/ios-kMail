@@ -43,7 +43,7 @@ struct MoveEmailView: View {
 
     var body: some View {
         VStack(alignment: .trailing, spacing: 16) {
-            Text("Dans quel dossier souhaitez-vous déplacer votre email ?")
+            Text(MailResourcesStrings.moveTitle)
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .textStyle(.header3)
             Picker("Dossier", selection: $selectedFolderItem) {
@@ -60,12 +60,12 @@ struct MoveEmailView: View {
             )
             .textStyle(.body)
             .accentColor(MailTextStyle.body.color)
-            Button("Enregistrer") {
+            Button(MailResourcesStrings.actionMove) {
                 moveHandler(sortedFolders[selectedFolderItem])
                 state.close()
             }
             .textStyle(.button)
-            Button("Créer un nouveau dossier") {
+            Button(MailResourcesStrings.buttonCreateFolder) {
                 state.open(state: .createNewFolder(mode: .move(moveHandler: moveHandler)), position: .newFolderHeight)
             }
             .textStyle(.button)

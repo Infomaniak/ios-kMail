@@ -17,6 +17,7 @@
  */
 
 import MailCore
+import MailResources
 import RealmSwift
 import SwiftUI
 
@@ -41,9 +42,9 @@ struct CreateFolderView: View {
         var buttonTitle: String {
             switch self {
             case .create:
-                return "Créer"
+                return MailResourcesStrings.buttonCreate
             case .move:
-                return "Déplacer"
+                return MailResourcesStrings.actionMove
             }
         }
     }
@@ -66,11 +67,11 @@ struct CreateFolderView: View {
                             .padding(4)
                     }
                 }
-                Text("Quel sera le nom de ce dossier ?")
+                Text(MailResourcesStrings.createFolderTitle)
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .textStyle(.header3)
             }
-            TextField("Nom du dossier", text: $folderName)
+            TextField(MailResourcesStrings.createFolderName, text: $folderName)
                 .padding(12)
                 .overlay(
                     RoundedRectangle(cornerRadius: 4)
@@ -78,10 +79,10 @@ struct CreateFolderView: View {
                 )
                 .textStyle(.body)
             VStack(alignment: .leading, spacing: 4) {
-                Text("Dossier parent (optionnel)")
+                Text(MailResourcesStrings.createFolderParent)
                     .textStyle(.callout)
                 Picker("Dossier", selection: $selectedFolderItem) {
-                    Text("Aucun").tag(0)
+                    Text(MailResourcesStrings.createFolderNoParent).tag(0)
                     ForEach(sortedFolders.indices, id: \.self) { i in
                         Text(sortedFolders[i].formattedPath).tag(i + 1)
                     }
