@@ -26,7 +26,7 @@ struct CreateFolderView: View {
     @ObservedResults(Folder.self) var folders
 
     @State private var folderName: String = ""
-    @State private var selectedFolderItem: Int = 0
+    @State private var selectedFolderID: String = ""
 
     private var mode: Mode
     private var state: GlobalBottomSheet
@@ -58,6 +58,7 @@ struct CreateFolderView: View {
 
     var body: some View {
         VStack(alignment: .trailing, spacing: 16) {
+            // Header
             HStack(spacing: 12) {
                 if case let .move(moveHandler) = mode {
                     Button {
@@ -71,6 +72,7 @@ struct CreateFolderView: View {
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .textStyle(.header3)
             }
+            // Text field
             TextField(MailResourcesStrings.createFolderName, text: $folderName)
                 .padding(12)
                 .overlay(
@@ -78,32 +80,16 @@ struct CreateFolderView: View {
                         .stroke(Color(hex: "#E0E0E0"))
                 )
                 .textStyle(.body)
-            VStack(alignment: .leading, spacing: 4) {
-                Text(MailResourcesStrings.createFolderParent)
-                    .textStyle(.callout)
-                Picker("Dossier", selection: $selectedFolderItem) {
-                    Text(MailResourcesStrings.createFolderNoParent).tag(0)
-                    ForEach(sortedFolders.indices, id: \.self) { i in
-                        Text(sortedFolders[i].formattedPath).tag(i + 1)
-                    }
-                }
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .padding([.top, .bottom], 10)
-                .padding([.leading, .trailing], 12)
-                .overlay(
-                    RoundedRectangle(cornerRadius: 4)
-                        .stroke(Color(hex: "#E0E0E0"))
-                )
-                .textStyle(.body)
-                .accentColor(MailTextStyle.body.color)
-            }
+            // Picker
+            LargePicker(title: MailResourcesStrings.createFolderParent,
+                        noSelectionText: MailResourcesStrings.createFolderNoParent,
+                        selection: $selectedFolderID,
+                        items: sortedFolders.map { .init(id: $0.id, name: $0.formattedPath) })
+            // Button
             Button(mode.buttonTitle) {
                 state.close()
                 Task {
-                    var parent: Folder?
-                    if selectedFolderItem > 0 {
-                        parent = sortedFolders[selectedFolderItem - 1]
-                    }
+                    let parent = sortedFolders.first { $0.id == selectedFolderID }
                     await tryOrDisplayError {
                         let folder = try await mailboxManager.createFolder(name: folderName, parent: parent)
                         if case let .move(moveHandler) = mode {

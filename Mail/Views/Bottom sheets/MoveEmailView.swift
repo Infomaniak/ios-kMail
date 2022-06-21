@@ -25,7 +25,7 @@ struct MoveEmailView: View {
     @StateObject var mailboxManager: MailboxManager
     @ObservedResults(Folder.self) var folders
 
-    @State private var selectedFolderItem: Int = 0
+    @State private var selectedFolderID: String = ""
 
     private let state: GlobalBottomSheet
     private let moveHandler: (Folder) -> Void
@@ -46,22 +46,9 @@ struct MoveEmailView: View {
             Text(MailResourcesStrings.moveTitle)
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .textStyle(.header3)
-            Picker("Dossier", selection: $selectedFolderItem) {
-                ForEach(sortedFolders.indices, id: \.self) { i in
-                    Text(sortedFolders[i].formattedPath).tag(i)
-                }
-            }
-            .frame(maxWidth: .infinity, alignment: .leading)
-            .padding([.top, .bottom], 10)
-            .padding([.leading, .trailing], 12)
-            .overlay(
-                RoundedRectangle(cornerRadius: 4)
-                    .stroke(Color(hex: "#E0E0E0"))
-            )
-            .textStyle(.body)
-            .accentColor(MailTextStyle.body.color)
+            LargePicker(selection: $selectedFolderID, items: sortedFolders.map { .init(id: $0.id, name: $0.formattedPath) })
             Button(MailResourcesStrings.actionMove) {
-                moveHandler(sortedFolders[selectedFolderItem])
+                moveHandler(sortedFolders.first { $0.id == selectedFolderID }!)
                 state.close()
             }
             .textStyle(.button)
@@ -71,6 +58,9 @@ struct MoveEmailView: View {
             .textStyle(.button)
         }
         .padding([.leading, .trailing], 24)
+        .onAppear {
+            selectedFolderID = sortedFolders.first?.id ?? ""
+        }
     }
 }
 
