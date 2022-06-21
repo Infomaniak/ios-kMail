@@ -48,9 +48,9 @@ struct SwipeConfigCell: View {
         HStack(spacing: 0) {
             ForEach(actions, id: \.rawValue) { action in
                 ZStack {
-                    Color(uiColor: action.swipeTint ?? .clear)
+                    action.swipeTint
 
-                    action.swipeIcon!
+                    action.swipeIcon?
                         .resizable()
                         .frame(width: 24, height: 24)
                         .foregroundColor(.white)

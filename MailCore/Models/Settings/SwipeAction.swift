@@ -72,6 +72,7 @@ public enum SwipeAction: String, CaseIterable, SettingsOptionEnum {
     case archive
     case readUnread
     case move
+    case favorite
     case report
     case spam
     case readAndAchive
@@ -88,6 +89,8 @@ public enum SwipeAction: String, CaseIterable, SettingsOptionEnum {
             return MailResourcesStrings.settingsSwipeActionReadUnread
         case .move:
             return MailResourcesStrings.actionMove
+        case .favorite:
+            return MailResourcesStrings.favoritesFolder
         case .report:
             return MailResourcesStrings.actionPostpone
         case .spam:
@@ -106,47 +109,65 @@ public enum SwipeAction: String, CaseIterable, SettingsOptionEnum {
     }
 
     public var swipeIcon: Image? {
+        let resource: MailResourcesImages?
         switch self {
         case .delete:
-            return Image(uiImage: MailResourcesAsset.bin.image)
+            resource = MailResourcesAsset.bin
         case .archive:
-            return Image(uiImage: MailResourcesAsset.archives.image)
+            resource = MailResourcesAsset.archives
         case .readUnread:
-            return Image(uiImage: MailResourcesAsset.envelopeOpen.image)
+            resource = MailResourcesAsset.envelopeOpen
         case .move:
-            return Image(uiImage: MailResourcesAsset.emailActionSend21.image)
+            resource = MailResourcesAsset.emailActionSend21
+        case .favorite:
+            resource = MailResourcesAsset.star
         case .report:
-            return Image(uiImage: MailResourcesAsset.waitingMessage.image)
+            resource = MailResourcesAsset.waitingMessage
         case .spam:
-            return Image(uiImage: MailResourcesAsset.spam.image)
+            resource = MailResourcesAsset.spam
         case .readAndAchive:
-            return Image(uiImage: MailResourcesAsset.archives.image)
+            resource = MailResourcesAsset.archives
         case .quickAction:
-            return Image(uiImage: MailResourcesAsset.plusActions.image)
+            resource = MailResourcesAsset.navigationMenu
         case .none:
+            resource = nil
+        }
+
+        if let resource = resource {
+            return Image(uiImage: resource.image)
+        } else {
             return nil
         }
     }
 
-    public var swipeTint: UIColor? {
+    public var swipeTint: Color? {
+        let resource: MailResourcesColors?
         switch self {
         case .delete:
-            return MailResourcesAsset.destructiveActionColor.color
+            resource = MailResourcesAsset.redActionColor
         case .archive:
-            return .blue
+            resource = MailResourcesAsset.greenActionColor
         case .readUnread:
-            return MailResourcesAsset.unreadActionColor.color
+            resource = MailResourcesAsset.darkBlueActionColor
         case .move:
-            return .blue
+            resource = MailResourcesAsset.turquoiseActionColor
+        case .favorite:
+            resource = MailResourcesAsset.yellowActionColor
         case .report:
-            return .blue
+            resource = MailResourcesAsset.lightBlueActionColor
         case .spam:
-            return .blue
+            resource = MailResourcesAsset.warningColor
         case .readAndAchive:
-            return .blue
+            resource = MailResourcesAsset.purpleActionColor
         case .quickAction:
-            return MailResourcesAsset.menuActionColor.color
+            resource = MailResourcesAsset.menuActionColor
         case .none:
+            resource = nil
+        }
+
+        if let resource = resource {
+            return Color(resource.color)
+        } else {
             return nil
         }
     }

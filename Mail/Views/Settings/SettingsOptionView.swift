@@ -54,6 +54,7 @@ struct SettingsOptionView<OptionEnum>: View where OptionEnum: CaseIterable, Opti
                     } label: {
                         HStack(spacing: 21) {
                             value.image
+                                .foregroundColor(MailResourcesAsset.hintTextColor)
                             Text(value.title)
                                 .textStyle(value == selectedValue ? .button : .body)
                             Spacer()

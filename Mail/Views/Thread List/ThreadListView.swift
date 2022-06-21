@@ -282,6 +282,7 @@ private struct ThreadListSwipeAction: ViewModifier {
     func body(content: Content) -> some View {
         content
             .swipeActions(edge: .leading) {
+                let action = SwipeAction.readUnread
                 Button {
                     Task {
                         await viewModel.toggleRead(thread: thread)
@@ -289,24 +290,26 @@ private struct ThreadListSwipeAction: ViewModifier {
                 } label: {
                     Image(resource: thread.unseenMessages > 0 ? MailResourcesAsset.envelopeOpen : MailResourcesAsset.envelope)
                 }
-                .tint(MailResourcesAsset.unreadActionColor)
+                .tint(action.swipeTint)
             }
             .swipeActions(edge: .trailing) {
+                let deleteAction = SwipeAction.delete
                 Button(role: .destructive) {
                     Task {
                         await viewModel.delete(thread: thread)
                     }
                 } label: {
-                    Image(resource: MailResourcesAsset.bin)
+                    deleteAction.swipeIcon
                 }
-                .tint(MailResourcesAsset.destructiveActionColor)
+                .tint(deleteAction.swipeTint)
 
+                let menuAction = SwipeAction.quickAction
                 Button {
                     bottomSheet.open(state: .actions(.thread(thread.thaw() ?? thread)), position: .middle)
                 } label: {
-                    Image(resource: MailResourcesAsset.navigationMenu)
+                    menuAction.swipeIcon
                 }
-                .tint(MailResourcesAsset.menuActionColor)
+                .tint(menuAction.swipeTint)
             }
     }
 }

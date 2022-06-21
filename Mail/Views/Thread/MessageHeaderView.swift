@@ -45,7 +45,7 @@ struct MessageHeaderView: View {
                 if message.isDraft {
                     HStack {
                         Text(MailResourcesStrings.messageIsDraftOption)
-                            .foregroundColor(MailResourcesAsset.destructiveActionColor)
+                            .foregroundColor(MailResourcesAsset.redActionColor)
                             .textStyle(.header3)
                             .frame(maxWidth: .infinity, alignment: .leading)
                         Button {
@@ -57,7 +57,7 @@ struct MessageHeaderView: View {
                                 .frame(width: 22, height: 22)
                         }
                     }
-                    .tint(MailResourcesAsset.destructiveActionColor)
+                    .tint(MailResourcesAsset.redActionColor)
                 } else {
                     HStack(alignment: .firstTextBaseline, spacing: 8) {
                         ForEach(message.from, id: \.self) { recipient in
