@@ -81,6 +81,7 @@ class RichTextEditorModel: ObservableObject {
 
 class MailEditor: SQTextEditorView {
     var toolbar = UIToolbar()
+    var bottomSheet: NewMessageBottomSheet?
 
     private lazy var editorWebView: WKWebView = {
         let config = WKWebViewConfiguration()
@@ -206,7 +207,7 @@ class MailEditor: SQTextEditorView {
             image: MailResourcesAsset.hyperlink.image,
             style: .plain,
             target: self,
-            action: #selector(onToolbarBackClick(sender:))
+            action: #selector(onToolbarLinkClick(sender:))
         )
         let programMessageButton = UIBarButtonItem(
             image: MailResourcesAsset.programMessage.image,
@@ -316,6 +317,11 @@ class MailEditor: SQTextEditorView {
             webView.addInputAccessoryView(toolbar: getToolbar(height: 44, style: .textEdition))
             toolbar.setNeedsLayout()
         }
+    }
+
+    @objc func onToolbarLinkClick(sender: UIBarButtonItem) {
+        webView.resignFirstResponder()
+        bottomSheet?.open(state: .link, position: .top)
     }
 
     @objc func onToolbarBackClick(sender: UIBarButtonItem) {
