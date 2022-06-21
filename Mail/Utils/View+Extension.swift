@@ -58,4 +58,10 @@ extension View {
     func tint(_ tint: MailResourcesColors) -> some View {
         return self.tint(Color(tint.color))
     }
+
+    func navigationBarAppStyle() -> some View {
+        return introspectNavigationController { navigationController in
+            navigationController.navigationBar.setAppStyle()
+        }
+    }
 }

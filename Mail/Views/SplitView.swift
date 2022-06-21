@@ -24,13 +24,6 @@ import SwiftUI
 
 import MailResources
 
-class SettingsSheet: SheetState<SettingsSheet.State> {
-    enum State: Equatable {
-        case manageAccount
-        case settings
-    }
-}
-
 struct SplitView: View {
     @ObservedObject var mailboxManager = AccountManager.instance.currentMailboxManager!
     @State var selectedFolder: Folder?
@@ -40,7 +33,6 @@ struct SplitView: View {
     @Environment(\.horizontalSizeClass) var sizeClass
     @Environment(\.window) var window
 
-    @ObservedObject private var settingsSheet = SettingsSheet()
     @ObservedObject private var menuSheet = MenuSheet()
 
     var isCompact: Bool {
@@ -99,7 +91,6 @@ struct SplitView: View {
             }
         }
         .environmentObject(menuSheet)
-        .environmentObject(settingsSheet)
         .environmentObject(navigationDrawerController)
         .onAppear {
             navigationDrawerController.window = window
@@ -124,6 +115,30 @@ struct SplitView: View {
             self.splitViewController = splitViewController
             setupBehaviour(orientation: interfaceOrientation)
             splitViewController.preferredDisplayMode = .twoDisplaceSecondary
+        }
+        .sheet(isPresented: $menuSheet.isShowing) {
+            switch menuSheet.state {
+            case .newMessage:
+                NewMessageView(isPresented: $menuSheet.isShowing, mailboxManager: mailboxManager)
+            case let .reply(message, replyMode):
+                NewMessageView(isPresented: $menuSheet.isShowing, mailboxManager: mailboxManager, draft: .replying(to: message, mode: replyMode))
+            case let .editMessage(draft):
+                NewMessageView(isPresented: $menuSheet.isShowing, mailboxManager: mailboxManager, draft: draft.asUnmanaged())
+            case .addAccount:
+                LoginView(isPresented: $menuSheet.isShowing)
+            case .manageAccount:
+                AccountView(isPresented: $menuSheet.isShowing)
+            case .switchAccount:
+                SheetView(isPresented: $menuSheet.isShowing) {
+                    AccountListView()
+                }
+            case .settings:
+                SheetView(isPresented: $menuSheet.isShowing) {
+                    SettingsView(viewModel: GeneralSettingsViewModel())
+                }
+            case .none:
+                EmptyView()
+            }
         }
     }
 

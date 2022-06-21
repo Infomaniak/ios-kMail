@@ -23,9 +23,7 @@ import SwiftUI
 
 struct MailboxesManagementView: View {
     @EnvironmentObject var mailboxManager: MailboxManager
-    @EnvironmentObject var settingsSheet: SettingsSheet
     @EnvironmentObject var menuSheet: MenuSheet
-    @EnvironmentObject var navigationDrawerController: NavigationDrawerController
 
     @State private var unfoldDetails = false
 
@@ -59,8 +57,7 @@ struct MailboxesManagementView: View {
     }
 
     private func handleMyAccount() {
-        settingsSheet.state = .manageAccount
-        navigationDrawerController.close()
+        menuSheet.state = .manageAccount
     }
 }
 

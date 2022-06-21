@@ -29,6 +29,9 @@ class MenuSheet: SheetState<MenuSheet.State> {
         case reply(Message, ReplyMode)
         case editMessage(draft: Draft)
         case addAccount
+        case manageAccount
+        case switchAccount
+        case settings
     }
 }
 
@@ -46,7 +49,6 @@ struct ThreadListView: View {
     @StateObject var viewModel: ThreadListViewModel
 
     @EnvironmentObject var menuSheet: MenuSheet
-    @EnvironmentObject var settingsSheet: SettingsSheet
 
     @Binding var currentFolder: Folder?
 
@@ -125,51 +127,10 @@ struct ThreadListView: View {
 
             NewMessageButtonView(sheet: menuSheet)
                 .padding([.trailing, .bottom], 30)
-
-            NavigationLink(isActive: $settingsSheet.isShowing) {
-                switch settingsSheet.state {
-                case .settings:
-                    SettingsView(viewModel: GeneralSettingsViewModel())
-                case .manageAccount:
-                    AccountView()
-                case .none:
-                    EmptyView()
-                }
-            } label: {
-                EmptyView()
-            }
         }
         .backButtonDisplayMode(.minimal)
-        .introspectNavigationController { navigationController in
-            let navigationBarAppearance = UINavigationBarAppearance()
-            navigationBarAppearance.configureWithTransparentBackground()
-            navigationBarAppearance.backgroundColor = MailResourcesAsset.backgroundHeaderColor.color
-            navigationBarAppearance.largeTitleTextAttributes = [
-                .foregroundColor: MailResourcesAsset.primaryTextColor.color,
-                .font: UIFont.systemFont(ofSize: 22, weight: .semibold)
-            ]
-
-            navigationController.navigationBar.tintColor = MailResourcesAsset.secondaryTextColor.color
-            navigationController.navigationBar.standardAppearance = navigationBarAppearance
-            navigationController.navigationBar.compactAppearance = navigationBarAppearance
-            navigationController.navigationBar.scrollEdgeAppearance = navigationBarAppearance
-            // navigationController.hidesBarsOnSwipe = true
-        }
+        .navigationBarAppStyle()
         .modifier(ThreadListNavigationBar(isCompact: isCompact, folder: $viewModel.folder, avatarImage: $avatarImage))
-        .sheet(isPresented: $menuSheet.isShowing) {
-            switch menuSheet.state {
-            case .newMessage:
-                NewMessageView(isPresented: $menuSheet.isShowing, mailboxManager: viewModel.mailboxManager)
-            case let .reply(message, replyMode):
-                NewMessageView(isPresented: $menuSheet.isShowing, mailboxManager: viewModel.mailboxManager, draft: .replying(to: message, mode: replyMode))
-            case let .editMessage(draft):
-                NewMessageView(isPresented: $menuSheet.isShowing, mailboxManager: viewModel.mailboxManager, draft: draft.asUnmanaged())
-            case .addAccount:
-                LoginView(isPresented: $menuSheet.isShowing)
-            case .none:
-                EmptyView()
-            }
-        }
         .bottomSheet(bottomSheetPosition: $bottomSheet.position, options: bottomSheetOptions) {
             switch bottomSheet.state {
             case let .actions(target):
@@ -238,6 +199,7 @@ private struct ThreadListNavigationBar: ViewModifier {
     @Binding var folder: Folder?
     @Binding var avatarImage: Image
 
+    @EnvironmentObject var menuSheet: MenuSheet
     @EnvironmentObject var navigationDrawerController: NavigationDrawerController
 
     func body(content: Content) -> some View {
@@ -249,8 +211,8 @@ private struct ThreadListNavigationBar: ViewModifier {
                 }
 
                 ToolbarItem(placement: .navigationBarTrailing) {
-                    NavigationLink {
-                        AccountListView()
+                    Button {
+                        menuSheet.state = .switchAccount
                     } label: {
                         avatarImage
                             .resizable()
@@ -322,6 +284,5 @@ struct ThreadListView_Previews: PreviewProvider {
             isCompact: false
         )
         .environmentObject(MenuSheet())
-        .environmentObject(SettingsSheet())
     }
 }
