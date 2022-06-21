@@ -18,4 +18,4 @@
 
 import Foundation
 
-@MainActor class AutoReplySettingViewModel {}
+@MainActor class EmailAddressSettingsViewModel {}

@@ -16,6 +16,25 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import UIKit
+import Foundation
+import MailResources
+import SwiftUI
 
-@MainActor class ThemeSettingViewModel {}
+public enum CancelDelay: Int, CaseIterable, SettingsOptionEnum {
+    case disabled = 0
+    case seconds10 = 10
+    case seconds15 = 15
+    case seconds20 = 20
+    case seconds25 = 25
+    case seconds30 = 30
+
+    public var title: String {
+        return self == .disabled
+            ? MailResourcesStrings.settingsDisabled
+            : MailResourcesStrings.settingsDelaySeconds(rawValue)
+    }
+
+    public var image: Image? {
+        return nil
+    }
+}

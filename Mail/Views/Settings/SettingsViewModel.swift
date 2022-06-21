@@ -17,5 +17,141 @@
  */
 
 import Foundation
+import MailCore
+import MailResources
+import SwiftUI
 
-@MainActor class SettingsViewModel {}
+// MARK: - SettingsSection
+
+struct SettingsSection: Identifiable, Equatable {
+    var id: Int
+    var name: String?
+    var items: [SettingsItem]
+}
+
+// MARK: - SettingsItem
+
+struct SettingsItem: Identifiable, Equatable {
+    var id: Int
+    var title: String
+    var type: SettingsType
+}
+
+// MARK: - SettingsType
+
+enum SettingsType: Equatable {
+    case subMenu(destination: SettingsDestination)
+    case toggle(userDefaults: ReferenceWritableKeyPath<UserDefaults, Bool>)
+    case option(SettingsOption)
+}
+
+// MARK: - SettingsDestination
+
+enum SettingsDestination: String, Equatable {
+    case emailSettings
+    case send
+    case swipe
+
+    @MainActor @ViewBuilder
+    func getDestination() -> some View {
+        switch self {
+        case .emailSettings:
+            EmptyView()
+        case .send:
+            SettingsView(viewModel: SendSettingsViewModel())
+        case .swipe:
+            SettingsSwipeActionsView(viewModel: SwipeActionSettingsViewModel())
+        }
+    }
+}
+
+// MARK: - SettingsOption
+
+enum SettingsOption: Equatable {
+    // General settings
+    case threadDensityOption
+    case themeOption
+    case displayModeOption
+    case externalContentOption
+
+    // Send settings
+    case cancelDelayOption
+    case forwardMessageOption
+
+    // Swipe
+    case swipeShortRightOption
+    case swipeLongRightOption
+    case swipeShortLeftOption
+    case swipeLongLeftOption
+
+    @ViewBuilder
+    func getDestination() -> some View {
+        switch self {
+        case .threadDensityOption:
+            SettingsThreadDensityOptionView()
+        case .themeOption:
+            SettingsOptionView<Theme>(
+                title: MailResourcesStrings.settingsThemeChoiceTitle,
+                subtitle: MailResourcesStrings.settingsTheme,
+                keyPath: \.theme
+            )
+        case .displayModeOption:
+            SettingsOptionView<ThreadMode>(
+                title: MailResourcesStrings.settingsMessageDisplayTitle,
+                subtitle: MailResourcesStrings.settingsSelectDisplayModeDescription,
+                keyPath: \.threadMode
+            )
+        case .externalContentOption:
+            SettingsOptionView<ExternalContent>(
+                title: MailResourcesStrings.settingsExternalContentTitle,
+                subtitle: MailResourcesStrings.settingsSelectDisplayModeDescription,
+                keyPath: \.displayExternalContent
+            )
+        case .cancelDelayOption:
+            SettingsOptionView<CancelDelay>(
+                title: MailResourcesStrings.settingsCancellationPeriodTitle,
+                keyPath: \.cancelSendDelay
+            )
+        case .forwardMessageOption:
+            SettingsOptionView<ForwardMode>(
+                title: MailResourcesStrings.settingsTransferEmailsTitle,
+                keyPath: \.forwardMode
+            )
+        case .swipeShortRightOption:
+            SettingsOptionView<SwipeAction>(
+                title: MailResourcesStrings.settingsSwipeShortRight,
+                keyPath: \.swipeShortRight
+            )
+        case .swipeLongRightOption:
+            SettingsOptionView<SwipeAction>(
+                title: MailResourcesStrings.settingsSwipeLongRight,
+                keyPath: \.swipeLongRight
+            )
+        case .swipeShortLeftOption:
+            SettingsOptionView<SwipeAction>(
+                title: MailResourcesStrings.settingsSwipeShortLeft,
+                keyPath: \.swipeShortLeft
+            )
+        case .swipeLongLeftOption:
+            SettingsOptionView<SwipeAction>(
+                title: MailResourcesStrings.settingsSwipeLongLeft,
+                keyPath: \.swipeLongLeft
+            )
+        }
+    }
+}
+
+@MainActor class SettingsViewModel: ObservableObject {
+    public var title: String
+    @Published public var selectedValues: [SettingsOption: SettingsOptionEnum] = [:]
+    public var sections: [SettingsSection] = []
+
+    init(title: String) {
+        self.title = title
+        updateSelectedValue()
+    }
+
+    func updateSelectedValue() {
+        // Empty on purpose
+    }
+}

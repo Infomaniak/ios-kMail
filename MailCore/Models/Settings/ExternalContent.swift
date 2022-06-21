@@ -16,6 +16,24 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import UIKit
+import Foundation
+import MailResources
+import SwiftUI
 
-class SpamSettingViewController: UIViewController {}
+public enum ExternalContent: String, CaseIterable, SettingsOptionEnum {
+    case always
+    case askMe
+
+    public var title: String {
+        switch self {
+        case .always:
+            return MailResourcesStrings.settingsOptionAlways
+        case .askMe:
+            return MailResourcesStrings.settingsOptionAskMe
+        }
+    }
+
+    public var image: Image? {
+        return nil
+    }
+}

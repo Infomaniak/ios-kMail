@@ -16,6 +16,25 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import UIKit
+import CoreMedia
+import Foundation
+import MailResources
+import SwiftUI
 
-class AutoReplySettingViewController: UIViewController {}
+public enum ForwardMode: String, CaseIterable, SettingsOptionEnum {
+    case inline
+    case attachment
+
+    public var title: String {
+        switch self {
+        case .inline:
+            return MailResourcesStrings.settingsTransferInBody
+        case .attachment:
+            return MailResourcesStrings.settingsTransferAsAttachment
+        }
+    }
+
+    public var image: Image? {
+        return nil
+    }
+}

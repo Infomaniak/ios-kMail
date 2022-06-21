@@ -51,6 +51,7 @@ struct NewMessageView: View {
         } else {
             sendDisabled = true
         }
+        initialDraft.delay = UserDefaults.shared.cancelSendDelay.rawValue
         self.draft = initialDraft
     }
 

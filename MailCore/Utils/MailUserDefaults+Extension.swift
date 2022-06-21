@@ -17,11 +17,30 @@
  */
 
 import Foundation
+import SwiftUI
+
+public protocol SettingsOptionEnum {
+    var title: String { get }
+    var image: Image? { get }
+}
 
 extension UserDefaults.Keys {
     static let currentMailboxId = UserDefaults.Keys(rawValue: "currentMailboxId")
     static let currentMailUserId = UserDefaults.Keys(rawValue: "currentMailUserId")
     static let notificationsEnabled = UserDefaults.Keys(rawValue: "notificationsEnabled")
+    static let appLock = UserDefaults.Keys(rawValue: "appLock")
+    static let threadDensity = UserDefaults.Keys(rawValue: "threadDensity")
+    static let externalContent = UserDefaults.Keys(rawValue: "externalContent")
+    static let theme = UserDefaults.Keys(rawValue: "theme")
+    static let swipeShortRight = UserDefaults.Keys(rawValue: "swipeShortRight")
+    static let swipeLongRight = UserDefaults.Keys(rawValue: "swipeLongRight")
+    static let swipeShortLeft = UserDefaults.Keys(rawValue: "swipeShortLeft")
+    static let swipeLongLeft = UserDefaults.Keys(rawValue: "swipeLongLeft")
+    static let threadMode = UserDefaults.Keys(rawValue: "threadMode")
+    static let cancelDelay = UserDefaults.Keys(rawValue: "cancelDelay")
+    static let forwardMode = UserDefaults.Keys(rawValue: "forwardMode")
+    static let acknowledgement = UserDefaults.Keys(rawValue: "acknowledgement")
+    static let includeOriginalInReply = UserDefaults.Keys(rawValue: "includeOriginalInReply")
 }
 
 public extension UserDefaults {
@@ -54,6 +73,128 @@ public extension UserDefaults {
         }
         set {
             set(newValue, forKey: key(.notificationsEnabled))
+        }
+    }
+
+    var isAppLockEnabled: Bool {
+        get {
+            return bool(forKey: key(.appLock))
+        }
+        set {
+            set(newValue, forKey: key(.appLock))
+        }
+    }
+
+    var threadDensity: ThreadDensity {
+        get {
+            return ThreadDensity(rawValue: string(forKey: key(.threadDensity)) ?? "") ?? .normal
+        }
+        set {
+            set(newValue.rawValue, forKey: key(.threadDensity))
+        }
+    }
+
+    var displayExternalContent: ExternalContent {
+        get {
+            return ExternalContent(rawValue: string(forKey: key(.externalContent)) ?? "") ?? .always
+        }
+        set {
+            set(newValue.rawValue, forKey: key(.externalContent))
+        }
+    }
+
+    var theme: Theme {
+        get {
+            let defaultTheme = Theme.system
+            guard let theme = string(forKey: key(.theme)) else {
+                setValue(defaultTheme.rawValue, forKey: key(.theme))
+                return defaultTheme
+            }
+            return Theme(rawValue: theme) ?? defaultTheme
+        }
+        set {
+            setValue(newValue.rawValue, forKey: key(.theme))
+        }
+    }
+
+    var swipeShortRight: SwipeAction {
+        get {
+            return SwipeAction(rawValue: string(forKey: key(.swipeShortRight)) ?? "") ?? .quickAction
+        }
+        set {
+            set(newValue.rawValue, forKey: key(.swipeShortRight))
+        }
+    }
+
+    var swipeLongRight: SwipeAction {
+        get {
+            return SwipeAction(rawValue: string(forKey: key(.swipeLongRight)) ?? "") ?? .delete
+        }
+        set {
+            set(newValue.rawValue, forKey: key(.swipeLongRight))
+        }
+    }
+
+    var swipeShortLeft: SwipeAction {
+        get {
+            return SwipeAction(rawValue: string(forKey: key(.swipeShortLeft)) ?? "") ?? .none
+        }
+        set {
+            set(newValue.rawValue, forKey: key(.swipeShortLeft))
+        }
+    }
+
+    var swipeLongLeft: SwipeAction {
+        get {
+            return SwipeAction(rawValue: string(forKey: key(.swipeLongLeft)) ?? "") ?? .readUnread
+        }
+        set {
+            set(newValue.rawValue, forKey: key(.swipeLongLeft))
+        }
+    }
+
+    var threadMode: ThreadMode {
+        get {
+            return ThreadMode(rawValue: string(forKey: key(.threadMode)) ?? "") ?? .discussion
+        }
+        set {
+            set(newValue.rawValue, forKey: key(.threadMode))
+        }
+    }
+
+    var cancelSendDelay: CancelDelay {
+        get {
+            return CancelDelay(rawValue: integer(forKey: key(.cancelDelay))) ?? .seconds10
+        }
+        set {
+            set(newValue.rawValue, forKey: key(.cancelDelay))
+        }
+    }
+
+    var forwardMode: ForwardMode {
+        get {
+            ForwardMode(rawValue: string(forKey: key(.forwardMode)) ?? "") ?? .inline
+        }
+        set {
+            set(newValue.rawValue, forKey: key(.forwardMode))
+        }
+    }
+
+    var includeOriginalInReply: Bool {
+        get {
+            return bool(forKey: key(.includeOriginalInReply))
+        }
+        set {
+            set(newValue, forKey: key(.includeOriginalInReply))
+        }
+    }
+
+    var acknowledgement: Bool {
+        get {
+            return bool(forKey: key(.acknowledgement))
+        }
+        set {
+            set(newValue, forKey: key(.acknowledgement))
         }
     }
 }

@@ -20,9 +20,7 @@ import MailCore
 import MailResources
 import SwiftUI
 
-enum ThreadListAppearance: Int {
-    case normal, compact, large
-
+extension ThreadDensity {
     var cellVerticalPadding: CGFloat {
         self == .compact ? 3 : 5
     }
@@ -33,7 +31,7 @@ enum ThreadListAppearance: Int {
 }
 
 struct ThreadListCell: View {
-    @AppStorage("threadListAppearance") var threadListAppearance: ThreadListAppearance = .normal
+    @AppStorage("threadDensity", store: .shared) var density: ThreadDensity = .normal
 
     var mailboxManager: MailboxManager
     var thread: Thread
@@ -51,9 +49,9 @@ struct ThreadListCell: View {
             Circle()
                 .frame(width: Constants.unreadIconSize, height: Constants.unreadIconSize)
                 .foregroundColor(hasUnreadMessages ? Color(MailResourcesAsset.mailPinkColor.color) : .clear)
-                .padding(.top, threadListAppearance.unreadCircleTopPadding)
+                .padding(.top, density.unreadCircleTopPadding)
 
-            if threadListAppearance == .large {
+            if density == .large {
                 RecipientImage(recipient: thread.from.last!, size: 32)
                     .padding(.trailing, 3)
             }
@@ -62,7 +60,7 @@ struct ThreadListCell: View {
                 HStack(spacing: 8) {
                     if thread.hasDrafts {
                         Text("(\(MailResourcesStrings.messageIsDraftOption))")
-                            .foregroundColor(MailResourcesAsset.destructiveActionColor)
+                            .foregroundColor(MailResourcesAsset.redActionColor)
                             .textStyle(hasUnreadMessages ? .header2 : .header2Secondary)
                     }
                     Text(thread.formattedFrom)
@@ -88,7 +86,7 @@ struct ThreadListCell: View {
                             .textStyle(textStyle)
                             .lineLimit(1)
 
-                        if threadListAppearance != .compact,
+                        if density != .compact,
                            let preview = thread.messages.last?.preview,
                            !preview.isEmpty {
                             Text(preview)
@@ -105,7 +103,7 @@ struct ThreadListCell: View {
                 }
             }
         }
-        .padding([.top, .bottom], threadListAppearance.cellVerticalPadding)
+        .padding([.top, .bottom], density.cellVerticalPadding)
     }
 }
 

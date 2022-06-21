@@ -32,7 +32,7 @@ enum RecipientCellType {
         case .bcc:
             return MailResourcesStrings.bccTitle
         case .object:
-            return MailResourcesStrings.objectTitle
+            return MailResourcesStrings.subjectTitle
         }
     }
 }

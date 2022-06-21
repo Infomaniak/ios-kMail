@@ -16,6 +16,27 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import UIKit
+import SwiftUI
 
-@MainActor class SignatureSettingViewModel {}
+struct SettingsOptionCell: View {
+    let title: String
+    let subtitle: String
+    let option: SettingsOption
+
+    var body: some View {
+        NavigationLink(destination: option.getDestination()) {
+            VStack(alignment: .leading) {
+                Text(title)
+                    .textStyle(.body)
+                Text(subtitle)
+                    .textStyle(.calloutSecondary)
+            }
+        }
+    }
+}
+
+struct SettingsOptionCell_Previews: PreviewProvider {
+    static var previews: some View {
+        SettingsOptionCell(title: "Theme", subtitle: "Theme", option: .themeOption)
+    }
+}

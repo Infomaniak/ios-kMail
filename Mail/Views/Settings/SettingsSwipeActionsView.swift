@@ -17,61 +17,54 @@
  */
 
 import MailCore
+import MailResources
 import SwiftUI
 
-struct SettingsView: View {
-    @ObservedObject var viewModel: SettingsViewModel
+struct SettingsSwipeActionsView: View {
+    @ObservedObject var viewModel: SwipeActionSettingsViewModel
 
-    init(viewModel: SettingsViewModel) {
+    init(viewModel: SwipeActionSettingsViewModel) {
         self.viewModel = viewModel
     }
 
     var body: some View {
         List {
+            Section {
+                Text(MailResourcesStrings.settingsSwipeDescription)
+                    .textStyle(.header3)
+                    .listRowSeparator(.hidden)
+            }
+
             ForEach(viewModel.sections) { section in
                 Section {
                     ForEach(section.items) { item in
-                        switch item.type {
-                        case let .subMenu(destination: destination):
-                            SettingsSubMenuCell(title: item.title, destination: destination)
-                        case let .toggle(userDefaults: userDefaults):
-                            SettingsToggleCell(title: item.title, userDefaults: userDefaults)
-                        case let .option(option):
+                        if case let .option(option) = item.type {
                             SettingsOptionCell(
                                 title: item.title,
                                 subtitle: viewModel.selectedValues[option]?.title ?? "",
                                 option: option
                             )
+                        } else {
+                            EmptyView()
                         }
                     }
                     .listRowSeparator(.hidden)
-                } header: {
-                    if let title = section.name {
-                        VStack(alignment: .leading, spacing: 16) {
-                            if viewModel.sections.first != section {
-                                SeparatorView(withPadding: false, fullWidth: true)
-                            }
-                            Text(title)
-                                .textStyle(.header3)
-                        }
-                    } else {
-                        EmptyView()
-                    }
+                } footer: {
+                    SwipeConfigCell(selectedValues: $viewModel.selectedValues, section: section)
                 }
                 .listSectionSeparator(.hidden)
             }
         }
         .listStyle(.plain)
         .navigationBarTitle(viewModel.title, displayMode: .inline)
-        .backButtonDisplayMode(.minimal)
         .onAppear {
             viewModel.updateSelectedValue()
         }
     }
 }
 
-struct SettingsView_Previews: PreviewProvider {
+struct SettingsSwipeActionsView_Previews: PreviewProvider {
     static var previews: some View {
-        SettingsView(viewModel: GeneralSettingsViewModel())
+        SettingsSwipeActionsView(viewModel: SwipeActionSettingsViewModel())
     }
 }

@@ -34,6 +34,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, AccountManagerDelegate 
         guard let _ = (scene as? UIWindowScene) else { return }
         accountManager = AccountManager.instance
         window?.tintColor = MailResourcesAsset.infomaniakColor.color
+        window?.overrideUserInterfaceStyle = UserDefaults.shared.theme.interfaceStyle
         setupLaunch()
     }
 

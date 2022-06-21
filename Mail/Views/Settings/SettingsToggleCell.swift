@@ -16,6 +16,26 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import UIKit
+import SwiftUI
 
-@MainActor class MessageDisplayModeSettingViewModel {}
+struct SettingsToggleCell: View {
+    let title: String
+    let userDefaults: ReferenceWritableKeyPath<UserDefaults, Bool>
+
+    var body: some View {
+        Toggle(isOn: Binding(get: {
+            UserDefaults.shared[keyPath: userDefaults]
+        }, set: { value in
+            UserDefaults.shared[keyPath: userDefaults] = value
+        })) {
+            Text(title)
+                .textStyle(.body)
+        }
+    }
+}
+
+struct SettingsToggleCell_Previews: PreviewProvider {
+   static var previews: some View {
+       SettingsToggleCell(title: "Code lock", userDefaults: \.isAppLockEnabled)
+   }
+}

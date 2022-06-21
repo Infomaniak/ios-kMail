@@ -16,6 +16,22 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import UIKit
+import SwiftUI
 
-@MainActor class CancelDelaySettingViewModel {}
+struct SettingsSubMenuCell: View {
+    let title: String
+    let destination: SettingsDestination
+
+    var body: some View {
+        NavigationLink(destination: destination.getDestination()) {
+            Text(title)
+                .textStyle(.body)
+        }
+    }
+}
+
+struct SettingsSubMenuCell_Previews: PreviewProvider {
+    static var previews: some View {
+        SettingsSubMenuCell(title: "Settings sub-menu", destination: .emailSettings)
+    }
+}
