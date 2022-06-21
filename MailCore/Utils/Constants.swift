@@ -90,7 +90,7 @@ public enum Constants {
         <div>---------- \(MailResourcesStrings.messageForwardHeader) ---------<br></div>
         <div>\(MailResourcesStrings.fromTitle) \(message.from.first?.htmlDescription ?? "")<br></div>
         <div>\(MailResourcesStrings.dateTitle) \(date)<br></div>
-        <div>\(MailResourcesStrings.objectTitle) \(message.formattedSubject)<br></div>
+        <div>\(MailResourcesStrings.subjectTitle) \(message.formattedSubject)<br></div>
         <div>\(MailResourcesStrings.toTitle) \(to)<br></div>
         <div><br></div>
         <div><br></div>

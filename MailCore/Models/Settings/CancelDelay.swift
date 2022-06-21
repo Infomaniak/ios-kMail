@@ -21,15 +21,15 @@ import MailResources
 import SwiftUI
 
 public enum CancelDelay: Int, CaseIterable, SettingsOptionEnum {
-    case delay0 = 0
-    case delay10 = 10
-    case delay15 = 15
-    case delay20 = 20
-    case delay25 = 25
-    case delay30 = 30
+    case disabled = 0
+    case seconds10 = 10
+    case seconds15 = 15
+    case seconds20 = 20
+    case seconds25 = 25
+    case seconds30 = 30
 
     public var title: String {
-        return self == .delay0
+        return self == .disabled
             ? MailResourcesStrings.settingsDisabled
             : MailResourcesStrings.settingsDelaySeconds(rawValue)
     }

@@ -118,7 +118,7 @@ public struct UnmanagedDraft: Equatable, Encodable, AbstractDraft {
                 stUuid: String? = nil,
                 priority: MessagePriority = .normal,
                 action: SaveDraftOption? = nil,
-                delay: Int? = 30) {
+                delay: Int? = UserDefaults.shared.cancelSendDelay.rawValue) {
         self.uuid = uuid
         self.subject = subject
         self.body = body

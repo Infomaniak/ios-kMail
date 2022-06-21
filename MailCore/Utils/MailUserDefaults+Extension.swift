@@ -105,11 +105,12 @@ public extension UserDefaults {
 
     var theme: Theme {
         get {
+            let defaultTheme = Theme.system
             guard let theme = string(forKey: key(.theme)) else {
-                setValue(Theme.system.rawValue, forKey: key(.theme))
-                return Theme.system
+                setValue(defaultTheme.rawValue, forKey: key(.theme))
+                return defaultTheme
             }
-            return Theme(rawValue: theme)!
+            return Theme(rawValue: theme) ?? defaultTheme
         }
         set {
             setValue(newValue.rawValue, forKey: key(.theme))
@@ -118,7 +119,7 @@ public extension UserDefaults {
 
     var swipeShortRight: SwipeAction {
         get {
-            return SwipeAction(rawValue: string(forKey: key(.swipeShortRight)) ?? "") ?? .none
+            return SwipeAction(rawValue: string(forKey: key(.swipeShortRight)) ?? "") ?? .quickAction
         }
         set {
             set(newValue.rawValue, forKey: key(.swipeShortRight))
@@ -127,7 +128,7 @@ public extension UserDefaults {
 
     var swipeLongRight: SwipeAction {
         get {
-            return SwipeAction(rawValue: string(forKey: key(.swipeLongRight)) ?? "") ?? .none
+            return SwipeAction(rawValue: string(forKey: key(.swipeLongRight)) ?? "") ?? .delete
         }
         set {
             set(newValue.rawValue, forKey: key(.swipeLongRight))
@@ -145,7 +146,7 @@ public extension UserDefaults {
 
     var swipeLongLeft: SwipeAction {
         get {
-            return SwipeAction(rawValue: string(forKey: key(.swipeLongLeft)) ?? "") ?? .none
+            return SwipeAction(rawValue: string(forKey: key(.swipeLongLeft)) ?? "") ?? .readUnread
         }
         set {
             set(newValue.rawValue, forKey: key(.swipeLongLeft))
@@ -163,7 +164,7 @@ public extension UserDefaults {
 
     var cancelSendDelay: CancelDelay {
         get {
-            return CancelDelay(rawValue: integer(forKey: key(.cancelDelay))) ?? .delay0
+            return CancelDelay(rawValue: integer(forKey: key(.cancelDelay))) ?? .seconds10
         }
         set {
             set(newValue.rawValue, forKey: key(.cancelDelay))
