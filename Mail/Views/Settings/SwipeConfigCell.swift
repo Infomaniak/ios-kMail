@@ -27,17 +27,17 @@ struct SwipeConfigCell: View {
     var actions: [SwipeAction] {
         var actions = [SwipeAction]()
         if section == .rightSwipe {
-            if let action = selectedValues[.swipeShortRightOption] as? SwipeAction, action != .none {
-                actions.append(action)
-            }
             if let action = selectedValues[.swipeLongRightOption] as? SwipeAction, action != .none {
                 actions.append(action)
             }
-        } else if section == .leftSwipe {
-            if let action = selectedValues[.swipeShortLeftOption] as? SwipeAction, action != .none {
+            if let action = selectedValues[.swipeShortRightOption] as? SwipeAction, action != .none {
                 actions.append(action)
             }
+        } else if section == .leftSwipe {
             if let action = selectedValues[.swipeLongLeftOption] as? SwipeAction, action != .none {
+                actions.append(action)
+            }
+            if let action = selectedValues[.swipeShortLeftOption] as? SwipeAction, action != .none {
                 actions.append(action)
             }
         }
