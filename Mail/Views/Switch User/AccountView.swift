@@ -22,68 +22,78 @@ import MailResources
 import SwiftUI
 
 struct AccountView: View {
+    @Binding var isPresented: Bool
+
     @Environment(\.window) private var window
 
     @State private var avatarImage = MailResourcesAsset.placeholderAvatar.image
     @State private var user: UserProfile! = AccountManager.instance.currentAccount.user
 
     var body: some View {
-        VStack(spacing: 25) {
-            Image(uiImage: avatarImage)
-                .resizable()
-                .frame(width: 110, height: 110)
-                .clipShape(Circle())
+        NavigationView {
+            VStack(spacing: 25) {
+                Image(uiImage: avatarImage)
+                    .resizable()
+                    .frame(width: 110, height: 110)
+                    .clipShape(Circle())
 
-            VStack(spacing: 8) {
-                Text(user.email)
-                    .textStyle(.header2)
+                VStack(spacing: 8) {
+                    Text(user.email)
+                        .textStyle(.header2)
 
-                NavigationLink {
-                    AccountListView()
+                    NavigationLink {
+                        AccountListView()
+                    } label: {
+                        Text(MailResourcesStrings.buttonAccountSwitch)
+                            .textStyle(.button)
+                    }
+                }
+
+                // TODO: - Show email list
+                SeparatorView(withPadding: false, fullWidth: true)
+                HStack {
+                    Text(MailResourcesStrings.buttonAccountAssociatedEmailAddresses)
+                    Spacer()
+                    ChevronIcon(style: .right)
+                }
+                .padding([.leading, .trailing], 14)
+                SeparatorView(withPadding: false, fullWidth: true)
+
+                // TODO: - Appareil list
+
+                Button {
+                    // TODO: - Delete account
                 } label: {
-                    Text(MailResourcesStrings.buttonAccountSwitch)
+                    Text(MailResourcesStrings.buttonAccountDelete)
                         .textStyle(.button)
                 }
-            }
 
-            // TODO: - Show email list
-            SeparatorView(withPadding: false, fullWidth: true)
-            HStack {
-                Text(MailResourcesStrings.buttonAccountAssociatedEmailAddresses)
-                Spacer()
-                ChevronIcon(style: .right)
-            }
-            .padding([.leading, .trailing], 14)
-            SeparatorView(withPadding: false, fullWidth: true)
-
-            // TODO: - Appareil list
-
-            Button {
-                // TODO: - Delete account
-            } label: {
-                Text(MailResourcesStrings.buttonAccountDelete)
-                    .textStyle(.button)
-            }
-
-            Button {
-                AccountManager.instance.removeTokenAndAccount(token: AccountManager.instance.currentAccount.token)
-                if let nextAccount = AccountManager.instance.accounts.first {
-                    (window?.windowScene?.delegate as? SceneDelegate)?.switchAccount(nextAccount)
-                } else {
-                    (window?.windowScene?.delegate as? SceneDelegate)?.showLoginView()
+                Button {
+                    AccountManager.instance.removeTokenAndAccount(token: AccountManager.instance.currentAccount.token)
+                    if let nextAccount = AccountManager.instance.accounts.first {
+                        (window?.windowScene?.delegate as? SceneDelegate)?.switchAccount(nextAccount)
+                    } else {
+                        (window?.windowScene?.delegate as? SceneDelegate)?.showLoginView()
+                    }
+                    AccountManager.instance.saveAccounts()
+                } label: {
+                    Text(MailResourcesStrings.buttonAccountDisconnect)
+                        .textStyle(.button)
                 }
-                AccountManager.instance.saveAccounts()
-            } label: {
-                Text(MailResourcesStrings.buttonAccountDisconnect)
-                    .textStyle(.button)
-            }
 
-            Spacer()
+                Spacer()
+            }
+            .navigationBarTitle(MailResourcesStrings.titleMyAccount, displayMode: .inline)
+            .backButtonDisplayMode(.minimal)
+            .navigationBarItems(leading: Button {
+                isPresented = false
+            } label: {
+                Image(systemName: "xmark")
+            })
+            .padding([.top, .bottom], 30)
+            .padding([.leading, .trailing], 18)
         }
-        .navigationBarTitle(MailResourcesStrings.titleMyAccount, displayMode: .inline)
-        .backButtonDisplayMode(.minimal)
-        .padding([.top, .bottom], 30)
-        .padding([.leading, .trailing], 18)
+        .navigationBarAppStyle()
         .onAppear {
             user.getAvatar(size: CGSize(width: 110, height: 110)) { image in
                 self.avatarImage = image
@@ -94,6 +104,6 @@ struct AccountView: View {
 
 struct AccountView_Previews: PreviewProvider {
     static var previews: some View {
-        AccountView()
+        AccountView(isPresented: .constant(true))
     }
 }
