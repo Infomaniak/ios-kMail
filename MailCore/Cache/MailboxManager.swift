@@ -190,6 +190,16 @@ public class MailboxManager: ObservableObject {
         return realm.objects(Folder.self).where { $0.role == role }.first
     }
 
+    public func createFolder(name: String, parent: Folder? = nil) async throws -> Folder {
+        let folder = try await apiFetcher.create(mailbox: mailbox, folder: NewFolder(name: name, path: parent?.path))
+        let realm = getRealm()
+        try? realm.write {
+            realm.add(folder)
+            parent?.thaw()?.children.insert(folder)
+        }
+        return folder.freeze()
+    }
+
     // MARK: - Thread
 
     public func threads(folder: Folder, filter: Filter = .all) async throws -> ThreadResult {

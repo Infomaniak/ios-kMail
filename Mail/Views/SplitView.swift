@@ -27,10 +27,11 @@ import MailResources
 class GlobalBottomSheet: BottomSheetState<GlobalBottomSheet.State, GlobalBottomSheet.Position> {
     enum State {
         case move(moveHandler: (Folder) -> Void)
+        case createNewFolder(mode: CreateFolderView.Mode)
     }
 
     enum Position: CGFloat, CaseIterable {
-        case middle = 272, hidden = 0
+        case moveHeight = 272, newFolderHeight = 300, hidden = 0
     }
 }
 
@@ -45,6 +46,8 @@ struct SplitView: View {
 
     @StateObject private var menuSheet = MenuSheet()
     @StateObject private var bottomSheet = GlobalBottomSheet()
+
+    private let bottomSheetOptions = Constants.bottomSheetOptions + [.absolutePositionValue, .notResizeable]
 
     var isCompact: Bool {
         sizeClass == .compact
@@ -152,10 +155,12 @@ struct SplitView: View {
             }
         }
         .environmentObject(bottomSheet)
-        .bottomSheet(bottomSheetPosition: $bottomSheet.position, options: Constants.bottomSheetOptions + [.absolutePositionValue]) {
+        .bottomSheet(bottomSheetPosition: $bottomSheet.position, options: bottomSheetOptions) {
             switch bottomSheet.state {
             case .move(let moveHandler):
                 MoveEmailView(mailboxManager: mailboxManager, state: bottomSheet, moveHandler: moveHandler)
+            case .createNewFolder(let mode):
+                CreateFolderView(mailboxManager: mailboxManager, state: bottomSheet, mode: mode)
             case .none:
                 EmptyView()
             }

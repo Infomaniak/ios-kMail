@@ -288,7 +288,7 @@ enum ActionsTarget: Equatable {
             Task {
                 try await self.move(to: folder)
             }
-        }, position: .middle)
+        }, position: .moveHeight)
     }
 
     private func postpone() {

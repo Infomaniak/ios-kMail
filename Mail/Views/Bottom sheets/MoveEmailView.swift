@@ -23,8 +23,7 @@ import SwiftUI
 
 struct MoveEmailView: View {
     @StateObject var mailboxManager: MailboxManager
-    // swiftlint:disable empty_count
-    @ObservedResults(Folder.self, where: { $0.parentLink.count == 0 }) var folders
+    @ObservedResults(Folder.self) var folders
 
     @State private var selectedFolderItem: Int = 0
 
@@ -67,7 +66,7 @@ struct MoveEmailView: View {
             }
             .textStyle(.button)
             Button("Créer un nouveau dossier") {
-                // TODO: Create new folder
+                state.open(state: .createNewFolder(mode: .move(moveHandler: moveHandler)), position: .newFolderHeight)
             }
             .textStyle(.button)
         }
