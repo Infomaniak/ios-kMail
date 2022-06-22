@@ -49,6 +49,9 @@ struct RichTextEditor: UIViewRepresentable {
         }
 
         func editor(_ editor: SQTextEditorView, cursorPositionDidChange position: SQEditorCursorPosition) {
+            if let mailEditor = editor as? MailEditor {
+                mailEditor.getToolbar(height: 44, style: mailEditor.toolbarStyle)
+            }
             editor.getHTML { html in
                 if let html = html, self.parent.body.trimmingCharacters(in: .whitespacesAndNewlines) != html {
                     self.parent.body = html
@@ -82,6 +85,7 @@ class RichTextEditorModel: ObservableObject {
 class MailEditor: SQTextEditorView {
     var toolbar = UIToolbar()
     var bottomSheet: NewMessageBottomSheet?
+    var toolbarStyle = ToolbarStyle.main
 
     private lazy var editorWebView: WKWebView = {
         let config = WKWebViewConfiguration()
@@ -156,10 +160,6 @@ class MailEditor: SQTextEditorView {
         callEditorMethod(name: "bold", completion: completion)
     }
 
-    func removeBold(completion: ((_ error: Error?) -> Void)? = nil) {
-        callEditorMethod(name: "removeBold", completion: completion)
-    }
-
     func makeUnorderedList(completion: ((_ error: Error?) -> Void)? = nil) {
         callEditorMethod(name: "makeUnorderedList", completion: completion)
     }
@@ -168,13 +168,9 @@ class MailEditor: SQTextEditorView {
         callEditorMethod(name: "removeList", completion: completion)
     }
 
-    func removeAllFormatting(completion: ((_ error: Error?) -> Void)? = nil) {
-        callEditorMethod(name: "removeAllFormatting", completion: completion)
-    }
-
     // MARK: - Custom Toolbar
 
-    func getToolbar(height: Int, style: ToolbarStyle) -> UIToolbar? {
+    public func getToolbar(height: Int, style: ToolbarStyle) -> UIToolbar? {
         toolbar.frame = CGRect(x: 0, y: 50, width: 320, height: height)
         toolbar.tintColor = MailResourcesAsset.secondaryTextColor.color
         toolbar.barTintColor = .white
@@ -215,13 +211,6 @@ class MailEditor: SQTextEditorView {
             target: self,
             action: #selector(onToolbarBackClick(sender:))
         )
-        let normalTextButton = UIBarButtonItem(
-            title: "Normal",
-            style: .plain,
-            target: self,
-            action: #selector(onToolbarTextEditionClick(sender:))
-        )
-        normalTextButton.tag = TextEditionAction.normal.rawValue
 
         let boldTextButton = UIBarButtonItem(
             title: "Bold",
@@ -230,14 +219,7 @@ class MailEditor: SQTextEditorView {
             action: #selector(onToolbarTextEditionClick(sender:))
         )
         boldTextButton.tag = TextEditionAction.bold.rawValue
-
-        let titleTextButton = UIBarButtonItem(
-            title: "Title",
-            style: .done,
-            target: self,
-            action: #selector(onToolbarTextEditionClick(sender:))
-        )
-        titleTextButton.tag = TextEditionAction.title.rawValue
+        boldTextButton.isSelected = selectedTextAttribute.format.hasBold
 
         let italicTextButton = UIBarButtonItem(
             image: MailResourcesAsset.italic.image,
@@ -246,6 +228,7 @@ class MailEditor: SQTextEditorView {
             action: #selector(onToolbarTextEditionClick(sender:))
         )
         italicTextButton.tag = TextEditionAction.italic.rawValue
+        italicTextButton.isSelected = selectedTextAttribute.format.hasItalic
 
         let underlineTextButton = UIBarButtonItem(
             image: MailResourcesAsset.underline.image,
@@ -254,6 +237,7 @@ class MailEditor: SQTextEditorView {
             action: #selector(onToolbarTextEditionClick(sender:))
         )
         underlineTextButton.tag = TextEditionAction.underline.rawValue
+        underlineTextButton.isSelected = selectedTextAttribute.format.hasUnderline
 
         let strikeThroughTextButton = UIBarButtonItem(
             image: MailResourcesAsset.strikeThrough.image,
@@ -262,6 +246,7 @@ class MailEditor: SQTextEditorView {
             action: #selector(onToolbarTextEditionClick(sender:))
         )
         strikeThroughTextButton.tag = TextEditionAction.strikeThrough.rawValue
+        strikeThroughTextButton.isSelected = selectedTextAttribute.format.hasStrikethrough
 
         let unorderedListTextButton = UIBarButtonItem(
             image: MailResourcesAsset.unorderedList.image,
@@ -276,15 +261,34 @@ class MailEditor: SQTextEditorView {
         switch style {
         case .main:
             toolbar.setItems(
-                [editTextButton, flexibleSpaceItem, attachmentButton, flexibleSpaceItem, photoButton, flexibleSpaceItem,
-                 linkButton, flexibleSpaceItem, programMessageButton],
+                [
+                    editTextButton,
+                    flexibleSpaceItem,
+                    attachmentButton,
+                    flexibleSpaceItem,
+                    photoButton,
+                    flexibleSpaceItem,
+                    linkButton,
+                    flexibleSpaceItem,
+                    programMessageButton
+                ],
                 animated: false
             )
         case .textEdition:
             toolbar.setItems(
-                [editTextButton, flexibleSpaceItem, normalTextButton, flexibleSpaceItem, boldTextButton, flexibleSpaceItem,
-                 titleTextButton, flexibleSpaceItem, italicTextButton, flexibleSpaceItem, underlineTextButton,
-                 flexibleSpaceItem, strikeThroughTextButton, unorderedListTextButton],
+                [
+                    editTextButton,
+                    flexibleSpaceItem,
+                    boldTextButton,
+                    flexibleSpaceItem,
+                    italicTextButton,
+                    flexibleSpaceItem,
+                    underlineTextButton,
+                    flexibleSpaceItem,
+                    strikeThroughTextButton,
+                    flexibleSpaceItem,
+                    unorderedListTextButton
+                ],
                 animated: false
             )
         }
@@ -296,25 +300,23 @@ class MailEditor: SQTextEditorView {
 
     @objc func onToolbarTextEditionClick(sender: UIBarButtonItem) {
         switch sender.tag {
-        case TextEditionAction.normal.rawValue:
-            removeAllFormatting()
         case TextEditionAction.bold.rawValue:
+            sender.isSelected.toggle()
             bold()
-        case TextEditionAction.underline.rawValue:
-            underline()
-        case TextEditionAction.title.rawValue:
-            setText(size: 20)
-            addBold()
         case TextEditionAction.italic.rawValue:
+            sender.isSelected.toggle()
             italic()
         case TextEditionAction.underline.rawValue:
+            sender.isSelected.toggle()
             underline()
         case TextEditionAction.strikeThrough.rawValue:
+            sender.isSelected.toggle()
             strikethrough()
         case TextEditionAction.unorderedList.rawValue:
             makeUnorderedList()
         default:
-            webView.addInputAccessoryView(toolbar: getToolbar(height: 44, style: .textEdition))
+            toolbarStyle = .textEdition
+            webView.addInputAccessoryView(toolbar: getToolbar(height: 44, style: toolbarStyle))
             toolbar.setNeedsLayout()
         }
     }
@@ -325,7 +327,8 @@ class MailEditor: SQTextEditorView {
     }
 
     @objc func onToolbarBackClick(sender: UIBarButtonItem) {
-        webView.addInputAccessoryView(toolbar: getToolbar(height: 44, style: .main))
+        toolbarStyle = .main
+        webView.addInputAccessoryView(toolbar: getToolbar(height: 44, style: toolbarStyle))
         toolbar.setNeedsLayout()
     }
 }
@@ -336,9 +339,7 @@ enum ToolbarStyle {
 }
 
 enum TextEditionAction: Int {
-    case normal = 1
-    case bold = 2
-    case title
+    case bold = 1
     case italic
     case underline
     case strikeThrough
