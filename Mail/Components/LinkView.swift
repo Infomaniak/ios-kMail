@@ -17,6 +17,7 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import InfomaniakCore
 import MailResources
 import SwiftUI
 
@@ -24,6 +25,7 @@ struct LinkView: View {
     @State var url: String = ""
 
     @ObservedObject var bottomSheet: NewMessageBottomSheet
+    @FocusState private var isFocused: Bool
 
     var body: some View {
         VStack(alignment: .leading, spacing: 24) {
@@ -31,10 +33,26 @@ struct LinkView: View {
                 .textStyle(.header3)
             TextField("url", text: $url)
                 .textFieldStyle(.roundedBorder)
+                .focused($isFocused)
+                .keyboardType(.URL)
+                .onAppear {
+                    isFocused = true
+                }
             HStack {
                 Spacer()
                 Button {
-                    
+                    guard var urlComponents = URLComponents(string: url) else {
+                        IKSnackBar.showSnackBar(message: "Invalid URL")
+                        return
+                    }
+                    if urlComponents.scheme == nil {
+                        urlComponents.scheme = "http"
+                    }
+                    guard let url = urlComponents.url?.absoluteString else {
+                        IKSnackBar.showSnackBar(message: "Invalid URL")
+                        return
+                    }
+                    bottomSheet.actionHandler?(url)
                 } label: {
                     Text("Valider")
                         .textStyle(.buttonPill)
@@ -43,6 +61,7 @@ struct LinkView: View {
                 .buttonStyle(.borderedProminent)
                 .buttonBorderShape(.roundedRectangle(radius: 50))
                 .controlSize(.large)
+                .disabled(url.isEmpty)
             }
         }
         .padding()

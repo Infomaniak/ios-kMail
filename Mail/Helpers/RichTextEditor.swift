@@ -324,6 +324,10 @@ class MailEditor: SQTextEditorView {
     @objc func onToolbarLinkClick(sender: UIBarButtonItem) {
         webView.resignFirstResponder()
         bottomSheet?.open(state: .link, position: .top)
+        bottomSheet?.actionHandler = { url in
+            self.makeLink(url: url)
+            self.bottomSheet?.close()
+        }
     }
 
     @objc func onToolbarBackClick(sender: UIBarButtonItem) {

@@ -30,6 +30,8 @@ class NewMessageBottomSheet: BottomSheetState<NewMessageBottomSheet.State, NewMe
     enum Position: CGFloat, CaseIterable {
         case top = 200, hidden = 0
     }
+
+    var actionHandler: ((String) -> Void)?
 }
 
 struct NewMessageView: View {
