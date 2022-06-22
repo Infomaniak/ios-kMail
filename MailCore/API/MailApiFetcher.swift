@@ -184,6 +184,10 @@ public class MailApiFetcher: ApiFetcher {
                                                         method: .post,
                                                         parameters: ["type": "phishing"])).data
     }
+
+    public func create(mailbox: Mailbox, folder: NewFolder) async throws -> Folder {
+        try await perform(request: authenticatedRequest(.folders(uuid: mailbox.uuid), method: .post, parameters: folder)).data
+    }
 }
 
 class SyncedAuthenticator: OAuthAuthenticator {

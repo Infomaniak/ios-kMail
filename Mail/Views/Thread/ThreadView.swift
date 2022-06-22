@@ -48,6 +48,8 @@ struct ThreadView: View {
     @StateObject private var bottomSheet = MessageBottomSheet()
     @StateObject private var threadBottomSheet = ThreadBottomSheet()
 
+    @EnvironmentObject var globalBottomSheet: GlobalBottomSheet
+
     private let trashId: String
     private let bottomSheetOptions = Constants.bottomSheetOptions + [.absolutePositionValue]
     private let threadBottomSheetOptions = Constants.bottomSheetOptions + [.appleScrollBehavior]
@@ -158,7 +160,10 @@ struct ThreadView: View {
                 if target.isInvalidated {
                     EmptyView()
                 } else {
-                    ActionsView(mailboxManager: mailboxManager, target: target, state: threadBottomSheet) { message, replyMode in
+                    ActionsView(mailboxManager: mailboxManager,
+                                target: target,
+                                state: threadBottomSheet,
+                                globalSheet: globalBottomSheet) { message, replyMode in
                         sheet.state = .reply(message, replyMode)
                     }
                 }
