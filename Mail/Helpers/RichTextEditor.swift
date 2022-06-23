@@ -173,12 +173,9 @@ class MailEditor: SQTextEditorView {
 
     // MARK: - Custom Toolbar
 
-    @discardableResult
-    public func setToolbar(style: ToolbarStyle) -> UIToolbar? {
+    public func setToolbar(style: ToolbarStyle) {
         toolbarStyle = style
-        let toolbar = getToolbar(height: 44, style: toolbarStyle)
-        webView.addInputAccessoryView(toolbar: toolbar)
-        return toolbar
+        webView.addInputAccessoryView(toolbar: getToolbar(height: 44, style: toolbarStyle))
     }
 
     public func getToolbar(height: Int, style: ToolbarStyle) -> UIToolbar? {
