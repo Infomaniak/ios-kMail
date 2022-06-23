@@ -36,6 +36,9 @@ struct LinkView: View {
                 .textFieldStyle(.roundedBorder)
                 .focused($isFocused)
                 .keyboardType(.URL)
+                .disableAutocorrection(true)
+                .autocapitalization(.none)
+                .textContentType(.URL)
                 .onAppear {
                     isFocused = true
                 }
