@@ -39,11 +39,12 @@ enum RecipientFieldType: Hashable {
 
 class NewMessageBottomSheet: BottomSheetState<NewMessageBottomSheet.State, NewMessageBottomSheet.Position> {
     enum State {
+        case attachment
         case link(handler: (String) -> Void)
     }
 
     enum Position: CGFloat, CaseIterable {
-        case top = 200, hidden = 0
+        case link = 200, attachment = 250, hidden = 0
     }
 }
 
@@ -176,6 +177,8 @@ struct NewMessageView: View {
         }
         .bottomSheet(bottomSheetPosition: $bottomSheet.position, options: bottomSheetOptions) {
             switch bottomSheet.state {
+            case .attachment:
+                AttachmentView(bottomSheet: bottomSheet)
             case .link(let handler):
                 LinkView(actionHandler: handler)
             case .none:

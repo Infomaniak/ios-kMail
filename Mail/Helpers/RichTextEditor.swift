@@ -238,7 +238,7 @@ class MailEditor: SQTextEditorView {
             updateToolbarItems(style: toolbarStyle == .main ? .textEdition : .main)
         case .attachment:
             // TODO: Handle Attachment
-            break
+            bottomSheet?.open(state: .attachment, position: .attachment)
         case .photo:
             // TODO: Handle photo
             break
@@ -250,7 +250,7 @@ class MailEditor: SQTextEditorView {
                 bottomSheet?.open(state: .link { url in
                     self.makeLink(url: url)
                     self.bottomSheet?.close()
-                }, position: .top)
+                }, position: .link)
             }
         case .programMessage:
             // TODO: Handle programmed message
