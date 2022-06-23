@@ -50,12 +50,18 @@ struct RichTextEditor: UIViewRepresentable {
 
         func editor(_ editor: SQTextEditorView, cursorPositionDidChange position: SQEditorCursorPosition) {
             if let mailEditor = editor as? MailEditor {
-                mailEditor.getToolbar(height: 44, style: mailEditor.toolbarStyle)
+                _ = mailEditor.getToolbar(height: 44, style: mailEditor.toolbarStyle)
             }
             editor.getHTML { html in
                 if let html = html, self.parent.body.trimmingCharacters(in: .whitespacesAndNewlines) != html {
                     self.parent.body = html
                 }
+            }
+        }
+
+        func editor(_ editor: SQTextEditorView, selectedTextAttributeDidChange attribute: SQTextAttribute) {
+            if let mailEditor = editor as? MailEditor {
+                _ = mailEditor.getToolbar(height: 44, style: mailEditor.toolbarStyle)
             }
         }
     }
@@ -213,7 +219,7 @@ class MailEditor: SQTextEditorView {
         )
 
         let boldTextButton = UIBarButtonItem(
-            title: "Bold",
+            image: MailResourcesAsset.bold.image,
             style: .plain,
             target: self,
             action: #selector(onToolbarTextEditionClick(sender:))
@@ -301,16 +307,12 @@ class MailEditor: SQTextEditorView {
     @objc func onToolbarTextEditionClick(sender: UIBarButtonItem) {
         switch sender.tag {
         case TextEditionAction.bold.rawValue:
-            sender.isSelected.toggle()
             bold()
         case TextEditionAction.italic.rawValue:
-            sender.isSelected.toggle()
             italic()
         case TextEditionAction.underline.rawValue:
-            sender.isSelected.toggle()
             underline()
         case TextEditionAction.strikeThrough.rawValue:
-            sender.isSelected.toggle()
             strikethrough()
         case TextEditionAction.unorderedList.rawValue:
             makeUnorderedList()
