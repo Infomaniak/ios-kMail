@@ -40,6 +40,7 @@ struct NewMessageView: View {
     @State var editor = RichTextEditorModel()
     @State var showCc = false
 
+    @State private var autocompletion: [Recipient] = []
     @State private var sendDisabled = false
     @State private var draftHasChanged = false
 
@@ -87,15 +88,15 @@ struct NewMessageView: View {
                 SeparatorView(withPadding: false, fullWidth: true)
 
                 NewMessageCell(title: MailResourcesStrings.toTitle, showCc: $showCc) {
-                    RecipientField(recipients: $draft.to)
+                    RecipientField(recipients: $draft.to, autocompletion: $autocompletion)
                 }
 
                 if showCc {
                     NewMessageCell(title: MailResourcesStrings.ccTitle) {
-                        RecipientField(recipients: $draft.cc)
+                        RecipientField(recipients: $draft.cc, autocompletion: $autocompletion)
                     }
                     NewMessageCell(title: MailResourcesStrings.bccTitle) {
-                        RecipientField(recipients: $draft.bcc)
+                        RecipientField(recipients: $draft.bcc, autocompletion: $autocompletion)
                     }
                 }
 
@@ -108,15 +109,14 @@ struct NewMessageView: View {
             .padding()
             .navigationBarTitleDisplayMode(.inline)
             .navigationBarBackButtonHidden(true)
-            .navigationBarItems(leading:
-                Button {
+            .navigationBarItems(
+                leading: Button {
                     self.dismiss()
                 } label: {
                     Image(systemName: "xmark")
                 }
                 .tint(MailResourcesAsset.secondaryTextColor),
-                trailing:
-                Button {
+                trailing: Button {
                     Task {
                         if let cancelableResponse = await send() {
                             IKSnackBar.showCancelableSnackBar(
@@ -133,7 +133,11 @@ struct NewMessageView: View {
                     Image(resource: MailResourcesAsset.send)
                 }
                 .tint(MailResourcesAsset.mailPinkColor)
-                .disabled(sendDisabled))
+                .disabled(sendDisabled)
+            )
+            .overlay {
+                AutocompletionView(autocompletion: $autocompletion)
+            }
         }
         .onChange(of: draft) { _ in
             textDidChange()

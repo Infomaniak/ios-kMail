@@ -49,8 +49,8 @@ struct RecipientChip: View {
 
 struct RecipientField: View {
     @Binding var recipients: [Recipient]
+    @Binding var autocompletion: [Recipient]
     @State private var currentText = ""
-    @State private var autocompletion: [MergedContact] = []
     @FocusState private var fieldIsFocused: Bool
 
     var body: some View {
@@ -69,8 +69,8 @@ struct RecipientField: View {
                     .multilineTextAlignment(.leading)
                     .focused($fieldIsFocused)
                     .onSubmit {
-                        guard let contact = autocompletion.first else { return }
-                        recipients.append(Recipient(email: contact.email, name: contact.name))
+                        guard let recipient = autocompletion.first else { return }
+                        recipients.append(recipient)
                         currentText = ""
                         fieldIsFocused = true
                     }
@@ -83,13 +83,18 @@ struct RecipientField: View {
 
     private func updateAutocompletion() {
         let contactManager = AccountManager.instance.currentContactManager
-        autocompletion = contactManager?.contacts(matching: currentText) ?? []
-        debugPrint("Autocompletion results: \(autocompletion.map { "\($0.name) - \($0.email)" })")
+        let contacts = contactManager?.contacts(matching: currentText) ?? []
+        autocompletion = contacts.map { Recipient(email: $0.email, name: $0.name) }
+        // Append typed email
+        let emailPredicate = NSPredicate(format: "SELF MATCHES %@", Constants.mailRegex)
+        if emailPredicate.evaluate(with: currentText) && !autocompletion.contains(where: { $0.email.caseInsensitiveCompare(currentText) == .orderedSame }) {
+            autocompletion.append(Recipient(email: currentText, name: ""))
+        }
     }
 }
 
 struct RecipientField_Previews: PreviewProvider {
     static var previews: some View {
-        RecipientField(recipients: .constant([PreviewHelper.sampleRecipient1, PreviewHelper.sampleRecipient2, PreviewHelper.sampleRecipient3]))
+        RecipientField(recipients: .constant([PreviewHelper.sampleRecipient1, PreviewHelper.sampleRecipient2, PreviewHelper.sampleRecipient3]), autocompletion: .constant([]))
     }
 }

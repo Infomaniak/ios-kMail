@@ -53,7 +53,7 @@ struct NewMessageCell<Content>: View where Content: View {
 struct RecipientCellView_Previews: PreviewProvider {
     static var previews: some View {
         NewMessageCell(title: "To:", showCc: .constant(false)) {
-            RecipientField(recipients: .constant([PreviewHelper.sampleRecipient1]))
+            RecipientField(recipients: .constant([PreviewHelper.sampleRecipient1]), autocompletion: .constant([]))
         }
         NewMessageCell(title: "Subject:") {
             TextField("", text: .constant(""))
