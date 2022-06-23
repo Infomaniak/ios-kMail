@@ -18,6 +18,7 @@
  */
 
 import InfomaniakCore
+import MailCore
 import MailResources
 import SwiftUI
 
@@ -29,9 +30,9 @@ struct LinkView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 24) {
-            Text("Rentrez l'url")
+            Text(MailResourcesStrings.urlEntryTitle)
                 .textStyle(.header3)
-            TextField("url", text: $url)
+            TextField(MailResourcesStrings.urlPlaceholder, text: $url)
                 .textFieldStyle(.roundedBorder)
                 .focused($isFocused)
                 .keyboardType(.URL)
@@ -42,19 +43,19 @@ struct LinkView: View {
                 Spacer()
                 Button {
                     guard var urlComponents = URLComponents(string: url) else {
-                        IKSnackBar.showSnackBar(message: "Invalid URL")
+                        IKSnackBar.showSnackBar(message: MailResourcesStrings.snackbarInvalidUrl)
                         return
                     }
                     if urlComponents.scheme == nil {
-                        urlComponents.scheme = "http"
+                        urlComponents.scheme = URLConstants.schemeUrl
                     }
                     guard let url = urlComponents.url?.absoluteString else {
-                        IKSnackBar.showSnackBar(message: "Invalid URL")
+                        IKSnackBar.showSnackBar(message: MailResourcesStrings.snackbarInvalidUrl)
                         return
                     }
                     bottomSheet.actionHandler?(url)
                 } label: {
-                    Text("Valider")
+                    Text(MailResourcesStrings.buttonValid)
                         .textStyle(.buttonPill)
                 }
                 .tint(MailResourcesAsset.mailPinkColor)
