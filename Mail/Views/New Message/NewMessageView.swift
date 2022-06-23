@@ -34,12 +34,13 @@ class NewMessageBottomSheet: BottomSheetState<NewMessageBottomSheet.State, NewMe
 
 struct NewMessageView: View {
     @Binding var isPresented: Bool
+
     @State private var mailboxManager: MailboxManager
     @State private var selectedMailboxItem: Int = 0
-    @State var draft: UnmanagedDraft
-    @State var editor = RichTextEditorModel()
-    @State var showCc = false
-
+    @State private var draft: UnmanagedDraft
+    @State private var editor = RichTextEditorModel()
+    @State private var showCc = false
+    @State private var addRecipientHandler: ((Recipient) -> Void)?
     @State private var autocompletion: [Recipient] = []
     @State private var sendDisabled = false
     @State private var draftHasChanged = false
@@ -88,15 +89,15 @@ struct NewMessageView: View {
                 SeparatorView(withPadding: false, fullWidth: true)
 
                 NewMessageCell(title: MailResourcesStrings.toTitle, showCc: $showCc) {
-                    RecipientField(recipients: $draft.to, autocompletion: $autocompletion)
+                    RecipientField(recipients: $draft.to, autocompletion: $autocompletion, addRecipientHandler: $addRecipientHandler)
                 }
 
                 if showCc {
                     NewMessageCell(title: MailResourcesStrings.ccTitle) {
-                        RecipientField(recipients: $draft.cc, autocompletion: $autocompletion)
+                        RecipientField(recipients: $draft.cc, autocompletion: $autocompletion, addRecipientHandler: $addRecipientHandler)
                     }
                     NewMessageCell(title: MailResourcesStrings.bccTitle) {
-                        RecipientField(recipients: $draft.bcc, autocompletion: $autocompletion)
+                        RecipientField(recipients: $draft.bcc, autocompletion: $autocompletion, addRecipientHandler: $addRecipientHandler)
                     }
                 }
 
@@ -136,7 +137,9 @@ struct NewMessageView: View {
                 .disabled(sendDisabled)
             )
             .overlay {
-                AutocompletionView(autocompletion: $autocompletion)
+                AutocompletionView(autocompletion: $autocompletion) { recipient in
+                    addRecipientHandler?(recipient)
+                }
             }
         }
         .onChange(of: draft) { _ in

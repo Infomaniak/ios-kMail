@@ -21,6 +21,7 @@ import SwiftUI
 
 struct AutocompletionView: View {
     @Binding var autocompletion: [Recipient]
+    let onSelect: (Recipient) -> Void
 
     var body: some View {
         VStack {
@@ -28,8 +29,7 @@ struct AutocompletionView: View {
                 Spacer(minLength: 200)
                 List(autocompletion, id: \.email) { recipient in
                     Button {
-                        // TODO: Add to autocompletion
-                        print("Selected: \(recipient)")
+                        onSelect(recipient)
                     } label: {
                         RecipientAutocompletionCell(recipient: recipient)
                     }
@@ -45,6 +45,6 @@ struct AutocompletionView_Previews: PreviewProvider {
     static var previews: some View {
         AutocompletionView(autocompletion: .constant([
             PreviewHelper.sampleRecipient1, PreviewHelper.sampleRecipient2, PreviewHelper.sampleRecipient3
-        ]))
+        ])) { _ in }
     }
 }

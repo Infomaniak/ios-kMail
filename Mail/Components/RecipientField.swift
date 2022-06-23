@@ -50,6 +50,8 @@ struct RecipientChip: View {
 struct RecipientField: View {
     @Binding var recipients: [Recipient]
     @Binding var autocompletion: [Recipient]
+    @Binding var addRecipientHandler: ((Recipient) -> Void)?
+
     @State private var currentText = ""
     @FocusState private var fieldIsFocused: Bool
 
@@ -70,14 +72,13 @@ struct RecipientField: View {
                     .focused($fieldIsFocused)
                     .onSubmit {
                         guard let recipient = autocompletion.first else { return }
-                        recipients.append(recipient)
-                        currentText = ""
-                        fieldIsFocused = true
+                        add(recipient: recipient)
                     }
             }
         }
         .onChange(of: currentText) { _ in
             updateAutocompletion()
+            addRecipientHandler = add(recipient:)
         }
     }
 
@@ -91,10 +92,20 @@ struct RecipientField: View {
             autocompletion.append(Recipient(email: currentText, name: ""))
         }
     }
+
+    private func add(recipient: Recipient) {
+        recipients.append(recipient)
+        currentText = ""
+        fieldIsFocused = true
+    }
 }
 
 struct RecipientField_Previews: PreviewProvider {
     static var previews: some View {
-        RecipientField(recipients: .constant([PreviewHelper.sampleRecipient1, PreviewHelper.sampleRecipient2, PreviewHelper.sampleRecipient3]), autocompletion: .constant([]))
+        RecipientField(recipients: .constant([
+            PreviewHelper.sampleRecipient1, PreviewHelper.sampleRecipient2, PreviewHelper.sampleRecipient3
+        ]),
+        autocompletion: .constant([]),
+        addRecipientHandler: .constant { _ in })
     }
 }
