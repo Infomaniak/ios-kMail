@@ -175,6 +175,7 @@ struct ThreadListView: View {
         .refreshable {
             await viewModel.fetchThreads()
         }
+        .defaultAppStorage(.shared)
     }
 
     private func editDraft(from thread: Thread) {
@@ -264,7 +265,14 @@ private struct SwipeActionView: View {
 private struct ThreadListSwipeAction: ViewModifier {
     let thread: Thread
     let viewModel: ThreadListViewModel
+
     @ObservedObject var bottomSheet: ThreadBottomSheet
+
+    @AppStorage(UserDefaults.shared.key(.swipeLongRight)) private var swipeLongRight = SwipeAction.none
+    @AppStorage(UserDefaults.shared.key(.swipeShortRight)) private var swipeShortRight = SwipeAction.none
+
+    @AppStorage(UserDefaults.shared.key(.swipeLongLeft)) private var swipeLongLeft = SwipeAction.none
+    @AppStorage(UserDefaults.shared.key(.swipeShortLeft)) private var swipeShortLeft = SwipeAction.none
 
     func edgeActions(_ actions: [SwipeAction]) -> some View {
         ForEach(actions.filter({ $0 != .none }), id: \.rawValue) { action in
@@ -275,10 +283,10 @@ private struct ThreadListSwipeAction: ViewModifier {
     func body(content: Content) -> some View {
         content
             .swipeActions(edge: .leading) {
-                edgeActions([UserDefaults.shared.swipeLongRight, UserDefaults.shared.swipeShortRight])
+                edgeActions([swipeLongRight, swipeShortRight])
             }
             .swipeActions(edge: .trailing) {
-                edgeActions([UserDefaults.shared.swipeLongLeft, UserDefaults.shared.swipeShortLeft])
+                edgeActions([swipeLongLeft, swipeShortLeft])
             }
     }
 }
