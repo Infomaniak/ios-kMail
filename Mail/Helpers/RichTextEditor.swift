@@ -230,11 +230,15 @@ class MailEditor: SQTextEditorView {
             // TODO: Handle photo
             break
         case .link:
-            webView.resignFirstResponder()
-            bottomSheet?.open(state: .link { url in
-                self.makeLink(url: url)
-                self.bottomSheet?.close()
-            }, position: .top)
+            if selectedTextAttribute.format.hasLink {
+                removeLink()
+            } else {
+                webView.resignFirstResponder()
+                bottomSheet?.open(state: .link { url in
+                    self.makeLink(url: url)
+                    self.bottomSheet?.close()
+                }, position: .top)
+            }
         case .programMessage:
             // TODO: Handle programmed message
             break
@@ -305,7 +309,9 @@ enum ToolbarAction: Int {
             return textAttribute.format.hasUnderline
         case .strikeThrough:
             return textAttribute.format.hasStrikethrough
-        case .unorderedList, .editText, .attachment, .photo, .link, .programMessage:
+        case .link:
+            return textAttribute.format.hasLink
+        case .unorderedList, .editText, .attachment, .photo, .programMessage:
             return false
         }
     }
