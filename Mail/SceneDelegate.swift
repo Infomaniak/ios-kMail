@@ -152,8 +152,8 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, AccountManagerDelegate 
         return true
     }
 
-    private func getRecipients(from urlComponents: URLComponents, name: String) -> [Recipient]? {
-        return urlComponents.getQueryItem(named: name)?.split(separator: ",").map { Recipient(email: "\($0)", name: "") }
+    private func getRecipients(from urlComponents: URLComponents, name: String) -> [Recipient] {
+        return urlComponents.getQueryItem(named: name)?.split(separator: ",").map { Recipient(email: "\($0)", name: "") } ?? []
     }
 }
 

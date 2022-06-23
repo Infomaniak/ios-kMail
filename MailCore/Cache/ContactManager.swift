@@ -140,4 +140,8 @@ public class ContactManager: ObservableObject {
         let realm = getRealm()
         return realm.object(ofType: AddressBook.self, forPrimaryKey: id)
     }
+
+    public func contacts(matching string: String) -> [MergedContact] {
+        return mergedContacts.values.filter { $0.name.localizedCaseInsensitiveContains(string) || $0.email.localizedCaseInsensitiveContains(string) }
+    }
 }

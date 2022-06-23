@@ -86,14 +86,22 @@ struct NewMessageView: View {
 
                 SeparatorView(withPadding: false, fullWidth: true)
 
-                RecipientCellView(text: $draft.toValue, showCcButton: $showCc, type: .to)
-
-                if showCc {
-                    RecipientCellView(text: $draft.ccValue, showCcButton: $showCc, type: .cc)
-                    RecipientCellView(text: $draft.bccValue, showCcButton: $showCc, type: .bcc)
+                NewMessageCell(title: MailResourcesStrings.toTitle, showCc: $showCc) {
+                    RecipientField(recipients: $draft.to)
                 }
 
-                RecipientCellView(text: $draft.subject, showCcButton: $showCc, type: .object)
+                if showCc {
+                    NewMessageCell(title: MailResourcesStrings.ccTitle) {
+                        RecipientField(recipients: $draft.cc)
+                    }
+                    NewMessageCell(title: MailResourcesStrings.bccTitle) {
+                        RecipientField(recipients: $draft.bcc)
+                    }
+                }
+
+                NewMessageCell(title: MailResourcesStrings.subjectTitle) {
+                    TextField("", text: $draft.subject)
+                }
 
                 RichTextEditor(model: $editor, body: $draft.body)
             }
