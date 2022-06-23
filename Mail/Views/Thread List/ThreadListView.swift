@@ -55,7 +55,6 @@ struct ThreadListView: View {
 
     @State private var avatarImage = Image(resource: MailResourcesAsset.placeholderAvatar)
     @State private var selectedThread: Thread?
-    @StateObject private var bottomSheet = ThreadBottomSheet()
     @StateObject private var networkMonitor = NetworkMonitor()
 
     let isCompact: Bool
@@ -107,7 +106,7 @@ struct ThreadListView: View {
                     .listRowBackground(Color(selectedThread == thread
                             ? MailResourcesAsset.backgroundCardSelectedColor.color
                             : MailResourcesAsset.backgroundColor.color))
-                    .modifier(ThreadListSwipeAction(thread: thread, viewModel: viewModel, bottomSheet: bottomSheet))
+                    .modifier(ThreadListSwipeAction(thread: thread, viewModel: viewModel))
                     .onAppear {
                         viewModel.loadNextPageIfNeeded(currentItem: thread)
                     }
@@ -132,15 +131,15 @@ struct ThreadListView: View {
         .backButtonDisplayMode(.minimal)
         .navigationBarAppStyle()
         .modifier(ThreadListNavigationBar(isCompact: isCompact, folder: $viewModel.folder, avatarImage: $avatarImage))
-        .bottomSheet(bottomSheetPosition: $bottomSheet.position, options: bottomSheetOptions) {
-            switch bottomSheet.state {
+        .bottomSheet(bottomSheetPosition: $viewModel.bottomSheet.position, options: bottomSheetOptions) {
+            switch viewModel.bottomSheet.state {
             case let .actions(target):
                 if target.isInvalidated {
                     EmptyView()
                 } else {
                     ActionsView(mailboxManager: viewModel.mailboxManager,
                                 target: target,
-                                state: bottomSheet,
+                                state: viewModel.bottomSheet,
                                 globalSheet: globalBottomSheet) { message, replyMode in
                         menuSheet.state = .reply(message, replyMode)
                     }
@@ -266,8 +265,6 @@ private struct ThreadListSwipeAction: ViewModifier {
     let thread: Thread
     let viewModel: ThreadListViewModel
 
-    @ObservedObject var bottomSheet: ThreadBottomSheet
-
     @AppStorage(UserDefaults.shared.key(.swipeLongRight)) private var swipeLongRight = SwipeAction.none
     @AppStorage(UserDefaults.shared.key(.swipeShortRight)) private var swipeShortRight = SwipeAction.none
 
@@ -275,7 +272,7 @@ private struct ThreadListSwipeAction: ViewModifier {
     @AppStorage(UserDefaults.shared.key(.swipeShortLeft)) private var swipeShortLeft = SwipeAction.none
 
     func edgeActions(_ actions: [SwipeAction]) -> some View {
-        ForEach(actions.filter({ $0 != .none }), id: \.rawValue) { action in
+        ForEach(actions.filter { $0 != .none }, id: \.rawValue) { action in
             SwipeActionView(thread: thread, viewModel: viewModel, action: action)
         }
     }
