@@ -49,9 +49,6 @@ struct RichTextEditor: UIViewRepresentable {
         }
 
         func editor(_ editor: SQTextEditorView, cursorPositionDidChange position: SQEditorCursorPosition) {
-            if let mailEditor = editor as? MailEditor {
-                _ = mailEditor.getToolbar(height: 44, style: mailEditor.toolbarStyle)
-            }
             editor.getHTML { html in
                 if let html = html, self.parent.body.trimmingCharacters(in: .whitespacesAndNewlines) != html {
                     self.parent.body = html
@@ -61,7 +58,7 @@ struct RichTextEditor: UIViewRepresentable {
 
         func editor(_ editor: SQTextEditorView, selectedTextAttributeDidChange attribute: SQTextAttribute) {
             if let mailEditor = editor as? MailEditor {
-                _ = mailEditor.getToolbar(height: 44, style: mailEditor.toolbarStyle)
+                mailEditor.setToolbar(style: mailEditor.toolbarStyle)
             }
         }
     }
@@ -176,178 +173,143 @@ class MailEditor: SQTextEditorView {
 
     // MARK: - Custom Toolbar
 
+    @discardableResult
+    public func setToolbar(style: ToolbarStyle) -> UIToolbar? {
+        toolbarStyle = style
+        let toolbar = getToolbar(height: 44, style: toolbarStyle)
+        webView.addInputAccessoryView(toolbar: toolbar)
+        return toolbar
+    }
+
     public func getToolbar(height: Int, style: ToolbarStyle) -> UIToolbar? {
         toolbar.frame = CGRect(x: 0, y: 50, width: 320, height: height)
         toolbar.tintColor = MailResourcesAsset.secondaryTextColor.color
         toolbar.barTintColor = .white
 
-        let editTextButton = UIBarButtonItem(
-            image: MailResourcesAsset.textModes.image,
-            style: .plain,
-            target: self,
-            action: style == .textEdition
-                ? #selector(onToolbarBackClick(sender:))
-                : #selector(onToolbarTextEditionClick(sender:))
-        )
-        editTextButton.tintColor = style == .textEdition
-            ? MailResourcesAsset.infomaniakColor.color
-            : MailResourcesAsset.secondaryTextColor.color
-
-        let attachmentButton = UIBarButtonItem(
-            image: MailResourcesAsset.attachmentMail2.image,
-            style: .plain,
-            target: self,
-            action: #selector(onToolbarBackClick(sender:))
-        )
-        let photoButton = UIBarButtonItem(
-            image: MailResourcesAsset.photo.image,
-            style: .plain,
-            target: self,
-            action: #selector(onToolbarBackClick(sender:))
-        )
-        let linkButton = UIBarButtonItem(
-            image: MailResourcesAsset.hyperlink.image,
-            style: .plain,
-            target: self,
-            action: #selector(onToolbarLinkClick(sender:))
-        )
-        let programMessageButton = UIBarButtonItem(
-            image: MailResourcesAsset.programMessage.image,
-            style: .plain,
-            target: self,
-            action: #selector(onToolbarBackClick(sender:))
-        )
-
-        let boldTextButton = UIBarButtonItem(
-            image: MailResourcesAsset.bold.image,
-            style: .plain,
-            target: self,
-            action: #selector(onToolbarTextEditionClick(sender:))
-        )
-        boldTextButton.tag = TextEditionAction.bold.rawValue
-        boldTextButton.isSelected = selectedTextAttribute.format.hasBold
-
-        let italicTextButton = UIBarButtonItem(
-            image: MailResourcesAsset.italic.image,
-            style: .plain,
-            target: self,
-            action: #selector(onToolbarTextEditionClick(sender:))
-        )
-        italicTextButton.tag = TextEditionAction.italic.rawValue
-        italicTextButton.isSelected = selectedTextAttribute.format.hasItalic
-
-        let underlineTextButton = UIBarButtonItem(
-            image: MailResourcesAsset.underline.image,
-            style: .plain,
-            target: self,
-            action: #selector(onToolbarTextEditionClick(sender:))
-        )
-        underlineTextButton.tag = TextEditionAction.underline.rawValue
-        underlineTextButton.isSelected = selectedTextAttribute.format.hasUnderline
-
-        let strikeThroughTextButton = UIBarButtonItem(
-            image: MailResourcesAsset.strikeThrough.image,
-            style: .plain,
-            target: self,
-            action: #selector(onToolbarTextEditionClick(sender:))
-        )
-        strikeThroughTextButton.tag = TextEditionAction.strikeThrough.rawValue
-        strikeThroughTextButton.isSelected = selectedTextAttribute.format.hasStrikethrough
-
-        let unorderedListTextButton = UIBarButtonItem(
-            image: MailResourcesAsset.unorderedList.image,
-            style: .plain,
-            target: self,
-            action: #selector(onToolbarTextEditionClick(sender:))
-        )
-        unorderedListTextButton.tag = TextEditionAction.unorderedList.rawValue
-
         let flexibleSpaceItem = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: self, action: nil)
 
-        switch style {
-        case .main:
-            toolbar.setItems(
-                [
-                    editTextButton,
-                    flexibleSpaceItem,
-                    attachmentButton,
-                    flexibleSpaceItem,
-                    photoButton,
-                    flexibleSpaceItem,
-                    linkButton,
-                    flexibleSpaceItem,
-                    programMessageButton
-                ],
-                animated: false
+        let actionItems = style.actions.map { action -> UIBarButtonItem in
+            let item = UIBarButtonItem(
+                image: action.icon,
+                style: .plain,
+                target: self,
+                action: #selector(onToolbarClick(sender:))
             )
-        case .textEdition:
-            toolbar.setItems(
-                [
-                    editTextButton,
-                    flexibleSpaceItem,
-                    boldTextButton,
-                    flexibleSpaceItem,
-                    italicTextButton,
-                    flexibleSpaceItem,
-                    underlineTextButton,
-                    flexibleSpaceItem,
-                    strikeThroughTextButton,
-                    flexibleSpaceItem,
-                    unorderedListTextButton
-                ],
-                animated: false
-            )
+            item.tag = action.rawValue
+            item.isSelected = action.isSelected(textAttribute: selectedTextAttribute)
+            if action == .editText && style == .textEdition {
+                item.tintColor = MailResourcesAsset.infomaniakColor.color
+            }
+            return item
         }
-        toolbar.isUserInteractionEnabled = true
+        let barButtonItems = Array(actionItems.map { [$0] }.joined(separator: [flexibleSpaceItem]))
 
+        toolbar.setItems(barButtonItems, animated: false)
+        toolbar.isUserInteractionEnabled = true
         toolbar.sizeToFit()
+
         return toolbar
     }
 
-    @objc func onToolbarTextEditionClick(sender: UIBarButtonItem) {
-        switch sender.tag {
-        case TextEditionAction.bold.rawValue:
+    @objc func onToolbarClick(sender: UIBarButtonItem) {
+        switch ToolbarAction(rawValue: sender.tag) {
+        case .bold:
             bold()
-        case TextEditionAction.italic.rawValue:
+        case .italic:
             italic()
-        case TextEditionAction.underline.rawValue:
+        case .underline:
             underline()
-        case TextEditionAction.strikeThrough.rawValue:
+        case .strikeThrough:
             strikethrough()
-        case TextEditionAction.unorderedList.rawValue:
+        case .unorderedList:
             makeUnorderedList()
-        default:
-            toolbarStyle = .textEdition
-            webView.addInputAccessoryView(toolbar: getToolbar(height: 44, style: toolbarStyle))
+        case .editText:
+            setToolbar(style: toolbarStyle == .main ? .textEdition : .main)
             toolbar.setNeedsLayout()
+        case .attachment:
+            // TODO: Handle Attachment
+            break
+        case .photo:
+            // TODO: Handle photo
+            break
+        case .link:
+            webView.resignFirstResponder()
+            bottomSheet?.open(state: .link { url in
+                self.makeLink(url: url)
+                self.bottomSheet?.close()
+            }, position: .top)
+        case .programMessage:
+            // TODO: Handle programmed message
+            break
+        case .none:
+            return
         }
-    }
-
-    @objc func onToolbarLinkClick(sender: UIBarButtonItem) {
-        webView.resignFirstResponder()
-        bottomSheet?.open(state: .link, position: .top)
-        bottomSheet?.actionHandler = { url in
-            self.makeLink(url: url)
-            self.bottomSheet?.close()
-        }
-    }
-
-    @objc func onToolbarBackClick(sender: UIBarButtonItem) {
-        toolbarStyle = .main
-        webView.addInputAccessoryView(toolbar: getToolbar(height: 44, style: toolbarStyle))
-        toolbar.setNeedsLayout()
     }
 }
 
 enum ToolbarStyle {
     case main
     case textEdition
+
+    var actions: [ToolbarAction] {
+        switch self {
+        case .main:
+            return [.editText, .attachment, .photo, .link, .programMessage]
+        case .textEdition:
+            return [.editText, .bold, .italic, .underline, .strikeThrough, .unorderedList]
+        }
+    }
 }
 
-enum TextEditionAction: Int {
+enum ToolbarAction: Int {
     case bold = 1
     case italic
     case underline
     case strikeThrough
     case unorderedList
+    case editText
+    case attachment
+    case photo
+    case link
+    case programMessage
+
+    var icon: UIImage {
+        switch self {
+        case .bold:
+            return MailResourcesAsset.bold.image
+        case .italic:
+            return MailResourcesAsset.italic.image
+        case .underline:
+            return MailResourcesAsset.underline.image
+        case .strikeThrough:
+            return MailResourcesAsset.strikeThrough.image
+        case .unorderedList:
+            return MailResourcesAsset.unorderedList.image
+        case .editText:
+            return MailResourcesAsset.textModes.image
+        case .attachment:
+            return MailResourcesAsset.attachmentMail2.image
+        case .photo:
+            return MailResourcesAsset.photo.image
+        case .link:
+            return MailResourcesAsset.hyperlink.image
+        case .programMessage:
+            return MailResourcesAsset.programMessage.image
+        }
+    }
+
+    func isSelected(textAttribute: SQTextAttribute) -> Bool {
+        switch self {
+        case .bold:
+            return textAttribute.format.hasBold
+        case .italic:
+            return textAttribute.format.hasItalic
+        case .underline:
+            return textAttribute.format.hasUnderline
+        case .strikeThrough:
+            return textAttribute.format.hasStrikethrough
+        case .unorderedList, .editText, .attachment, .photo, .link, .programMessage:
+            return false
+        }
+    }
 }

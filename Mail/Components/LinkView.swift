@@ -24,8 +24,9 @@ import SwiftUI
 struct LinkView: View {
     @State var url: String = ""
 
-    @ObservedObject var bottomSheet: NewMessageBottomSheet
     @FocusState private var isFocused: Bool
+
+    var actionHandler: ((String) -> Void)?
 
     var body: some View {
         VStack(alignment: .leading, spacing: 24) {
@@ -52,7 +53,7 @@ struct LinkView: View {
                         IKSnackBar.showSnackBar(message: MailResourcesStrings.snackbarInvalidUrl)
                         return
                     }
-                    bottomSheet.actionHandler?(url)
+                    actionHandler?(url)
                 } label: {
                     Text(MailResourcesStrings.buttonValid)
                         .textStyle(.buttonPill)
@@ -70,6 +71,6 @@ struct LinkView: View {
 
 struct LinkView_Previews: PreviewProvider {
     static var previews: some View {
-        LinkView(url: "url", bottomSheet: NewMessageBottomSheet())
+        LinkView(url: "url")
     }
 }

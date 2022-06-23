@@ -23,15 +23,13 @@ import RealmSwift
 import SwiftUI
 
 class NewMessageBottomSheet: BottomSheetState<NewMessageBottomSheet.State, NewMessageBottomSheet.Position> {
-    enum State: Equatable {
-        case link
+    enum State {
+        case link(handler: (String) -> Void)
     }
 
     enum Position: CGFloat, CaseIterable {
         case top = 200, hidden = 0
     }
-
-    var actionHandler: ((String) -> Void)?
 }
 
 struct NewMessageView: View {
@@ -152,8 +150,8 @@ struct NewMessageView: View {
         }
         .bottomSheet(bottomSheetPosition: $bottomSheet.position, options: bottomSheetOptions) {
             switch bottomSheet.state {
-            case .link:
-                LinkView(bottomSheet: bottomSheet)
+            case .link(let handler):
+                LinkView(actionHandler: handler)
             case .none:
                 EmptyView()
             }
