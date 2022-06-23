@@ -240,42 +240,45 @@ private struct ThreadListNavigationBar: ViewModifier {
     }
 }
 
+private struct SwipeActionView: View {
+    let thread: Thread
+    let viewModel: ThreadListViewModel
+    let action: SwipeAction
+
+    var body: some View {
+        Button {
+            Task {
+                await viewModel.hanldeSwipeAction(action, thread: thread)
+            }
+        } label: {
+            if action == .readUnread {
+                Image(uiImage: (thread.unseenMessages == 0 ? MailResourcesAsset.envelopeOpen : MailResourcesAsset.envelope).image)
+            } else {
+                action.swipeIcon
+            }
+        }
+        .tint(action.swipeTint)
+    }
+}
+
 private struct ThreadListSwipeAction: ViewModifier {
     let thread: Thread
     let viewModel: ThreadListViewModel
     @ObservedObject var bottomSheet: ThreadBottomSheet
 
+    func edgeActions(_ actions: [SwipeAction]) -> some View {
+        ForEach(actions.filter({ $0 != .none }), id: \.rawValue) { action in
+            SwipeActionView(thread: thread, viewModel: viewModel, action: action)
+        }
+    }
+
     func body(content: Content) -> some View {
         content
             .swipeActions(edge: .leading) {
-                let action = SwipeAction.readUnread
-                Button {
-                    Task {
-                        await viewModel.toggleRead(thread: thread)
-                    }
-                } label: {
-                    Image(resource: thread.unseenMessages > 0 ? MailResourcesAsset.envelopeOpen : MailResourcesAsset.envelope)
-                }
-                .tint(action.swipeTint)
+                edgeActions([UserDefaults.shared.swipeLongRight, UserDefaults.shared.swipeShortRight])
             }
             .swipeActions(edge: .trailing) {
-                let deleteAction = SwipeAction.delete
-                Button(role: .destructive) {
-                    Task {
-                        await viewModel.delete(thread: thread)
-                    }
-                } label: {
-                    deleteAction.swipeIcon
-                }
-                .tint(deleteAction.swipeTint)
-
-                let menuAction = SwipeAction.quickAction
-                Button {
-                    bottomSheet.open(state: .actions(.thread(thread.thaw() ?? thread)), position: .middle)
-                } label: {
-                    menuAction.swipeIcon
-                }
-                .tint(menuAction.swipeTint)
+                edgeActions([UserDefaults.shared.swipeLongLeft, UserDefaults.shared.swipeShortLeft])
             }
     }
 }

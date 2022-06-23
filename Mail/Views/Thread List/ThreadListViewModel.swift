@@ -110,6 +110,19 @@ typealias Thread = MailCore.Thread
         }
     }
 
+    func hanldeSwipeAction(_ action: SwipeAction, thread: Thread) async {
+        await tryOrDisplayError {
+            switch action {
+            case .delete:
+                try await mailboxManager.moveOrDelete(thread: thread)
+            case .readUnread:
+                try await mailboxManager.toggleRead(thread: thread)
+            default:
+                break
+            }
+        }
+    }
+
     func delete(thread: Thread) async {
         await tryOrDisplayError {
             try await mailboxManager.moveOrDelete(thread: thread)
