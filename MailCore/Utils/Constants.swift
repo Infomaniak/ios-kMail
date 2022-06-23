@@ -38,7 +38,7 @@ public struct URLConstants {
 }
 
 public enum Constants {
-    public static let sizeLimit: Int64 = 20_000_000_000 // 20 Go
+    public static let sizeLimit = Int64(20 * pow(1024.0, 3.0)) // 20 Go
 
     public static let menuDrawerFolderCellPadding: CGFloat = 4
     public static let menuDrawerHorizontalPadding: CGFloat = 25
