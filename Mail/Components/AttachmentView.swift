@@ -19,8 +19,16 @@
 import MailResources
 import SwiftUI
 
+class NewMessageAttachmentSheet: SheetState<NewMessageAttachmentSheet.State> {
+    enum State {
+        case photoLibrary, fileSelection, inlinePhotoLibrary
+    }
+}
+
 struct AttachmentView: View {
     @ObservedObject var bottomSheet: NewMessageBottomSheet
+
+    @StateObject private var attachmentSheet = NewMessageAttachmentSheet()
 
     private struct AttachmentAction: Hashable {
         let name: String
@@ -51,7 +59,10 @@ struct AttachmentView: View {
 
             ForEach(actions, id: \.self) { action in
                 Button {
-                    handleAction(action)
+                    if action == .addFile {
+                        attachmentSheet.state = .fileSelection
+                    }
+                    if action == .openCamera {}
                 } label: {
                     HStack {
                         Image(uiImage: action.image)
@@ -65,21 +76,14 @@ struct AttachmentView: View {
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding([.leading, .trailing], 24)
         .padding(.top, 16)
-    }
-
-    private func handleAction(_ action: AttachmentAction) {
-        switch action {
-        case .addFile:
-            // TODO: handle action
-            break
-        case .addPhotoFromLibrary:
-            // TODO: handle action
-            break
-        case .openCamera:
-            // TODO: handle action
-            break
-        default:
-            return
+        .sheet(isPresented: $attachmentSheet.isShowing) {
+            switch attachmentSheet.state {
+            case .fileSelection:
+                DocumentPicker { _ in
+                }
+            default:
+                EmptyView()
+            }
         }
     }
 }
