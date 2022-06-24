@@ -61,7 +61,9 @@ struct RecipientField: View {
             if !recipients.isEmpty {
                 WrappingHStack(recipients.indices, spacing: .constant(8), lineSpacing: 8) { i in
                     RecipientChip(recipient: recipients[i]) {
-                        recipients.remove(at: i)
+                        withAnimation {
+                            _ = recipients.remove(at: i)
+                        }
                     }
                 }
             }
@@ -87,7 +89,9 @@ struct RecipientField: View {
     private func updateAutocompletion() {
         let contactManager = AccountManager.instance.currentContactManager
         let contacts = contactManager?.contacts(matching: currentText) ?? []
-        autocompletion = contacts.map { Recipient(email: $0.email, name: $0.name) }
+        withAnimation {
+            autocompletion = contacts.map { Recipient(email: $0.email, name: $0.name) }
+        }
         // Append typed email
         let emailPredicate = NSPredicate(format: "SELF MATCHES %@", Constants.mailRegex)
         if emailPredicate.evaluate(with: currentText) && !autocompletion.contains(where: { $0.email.caseInsensitiveCompare(currentText) == .orderedSame }) {
@@ -96,7 +100,9 @@ struct RecipientField: View {
     }
 
     private func add(recipient: Recipient) {
-        recipients.append(recipient)
+        withAnimation {
+            recipients.append(recipient)
+        }
         currentText = ""
     }
 }

@@ -24,13 +24,17 @@ struct AutocompletionView: View {
     let onSelect: (Recipient) -> Void
 
     var body: some View {
-        List(autocompletion, id: \.email) { recipient in
-            Button {
-                onSelect(recipient)
-            } label: {
-                RecipientAutocompletionCell(recipient: recipient)
+        List {
+            Section {
+                ForEach(autocompletion, id: \.email) { recipient in
+                    Button {
+                        onSelect(recipient)
+                    } label: {
+                        RecipientAutocompletionCell(recipient: recipient)
+                    }
+                    .listRowSeparator(.hidden)
+                }
             }
-            .listRowSeparator(.hidden)
         }
         .listStyle(.plain)
     }
