@@ -68,13 +68,6 @@ public class Thread: Object, Decodable, Identifiable {
         return subject
     }
 
-    public var formattedDate: String {
-        if Calendar.current.isDateInToday(date) {
-            return Constants.formatDate(date, style: .time)
-        }
-        return Constants.formatDate(date, style: .date, relative: true)
-    }
-
     public var parent: Folder? {
         return parentLink.first
     }

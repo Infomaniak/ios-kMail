@@ -16,11 +16,11 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import InfomaniakCore
 import MailCore
 import MailResources
 import RealmSwift
 import SwiftUI
-import InfomaniakCore
 
 struct MessageHeaderView: View {
     @ObservedRealmObject var message: Message
@@ -63,12 +63,11 @@ struct MessageHeaderView: View {
                         ForEach(message.from, id: \.self) { recipient in
                             Text(recipient.title)
                                 .lineLimit(1)
-                                .layoutPriority(1)
                                 .textStyle(.header3)
                         }
-                        Text(message.date, format: .dateTime)
+                        Text(message.date.customRelativeFormatted)
                             .lineLimit(1)
-                            .truncationMode(.middle)
+                            .layoutPriority(1)
                             .textStyle(.calloutSecondary)
                         Spacer()
                         if isMessageExpanded {

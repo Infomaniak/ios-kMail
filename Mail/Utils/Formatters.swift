@@ -18,9 +18,18 @@
 
 import Foundation
 
-public extension FormatStyle where Self == Date.FormatStyle {
-    static var dateTime: Date.FormatStyle {
-        return .init(date: .abbreviated, time: .shortened)
+public extension Date {
+    var customRelativeFormatted: String {
+        if Calendar.current.isDateInToday(self) {
+            return self.formatted(date: .omitted, time: .shortened)
+        } else if Calendar.current.isDateInYesterday(self) {
+            let dateMidnight = Calendar.current.date(bySettingHour: 0, minute: 0, second: 0, of: self)!
+            return dateMidnight.formatted(.relative(presentation: .named))
+        } else if Calendar.current.isDate(self, equalTo: Date(), toGranularity: .weekOfYear) {
+            return self.formatted(.dateTime.weekday(.wide))
+        } else {
+            return self.formatted(date: .numeric, time: .omitted)
+        }
     }
 }
 

@@ -62,30 +62,6 @@ public enum Constants {
 
     public static let mailRegex = "(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|\"(?:[\\x01-\\x08\\x0b\\x0c\\x0e-\\x1f\\x21\\x23-\\x5b\\x5d-\\x7f]|\\\\[\\x01-\\x09\\x0b\\x0c\\x0e-\\x7f])*\")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\\[(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?|[a-z0-9-]*[a-z0-9]:(?:[\\x01-\\x08\\x0b\\x0c\\x0e-\\x1f\\x21-\\x5a\\x53-\\x7f]|\\\\[\\x01-\\x09\\x0b\\x0c\\x0e-\\x7f])+)\\])"
 
-    private static var dateFormatter = DateFormatter()
-
-    public enum DateTimeStyle {
-        case date
-        case time
-        case datetime
-    }
-
-    public static func formatDate(_ date: Date, style: DateTimeStyle = .datetime, relative: Bool = false) -> String {
-        switch style {
-        case .date:
-            dateFormatter.dateStyle = .medium
-            dateFormatter.timeStyle = .none
-        case .time:
-            dateFormatter.dateStyle = .none
-            dateFormatter.timeStyle = .short
-        case .datetime:
-            dateFormatter.dateStyle = .medium
-            dateFormatter.timeStyle = .short
-        }
-        dateFormatter.doesRelativeDateFormatting = relative
-        return dateFormatter.string(from: date)
-    }
-
     public static func forwardQuote(message: Message) -> String {
         let date = DateFormatter.localizedString(from: message.date, dateStyle: .medium, timeStyle: .short)
         let to = ListFormatter.localizedString(byJoining: message.to.map(\.htmlDescription))
