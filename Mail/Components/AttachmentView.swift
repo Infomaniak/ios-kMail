@@ -21,7 +21,7 @@ import SwiftUI
 
 class NewMessageAttachmentSheet: SheetState<NewMessageAttachmentSheet.State> {
     enum State {
-        case photoLibrary, fileSelection, inlinePhotoLibrary
+        case fileSelection, photoLibrary, camera
     }
 }
 
@@ -62,7 +62,9 @@ struct AttachmentView: View {
                     if action == .addFile {
                         attachmentSheet.state = .fileSelection
                     }
-                    if action == .openCamera {}
+                    if action == .addPhotoFromLibrary {
+                        attachmentSheet.state = .photoLibrary
+                    }
                 } label: {
                     HStack {
                         Image(uiImage: action.image)
@@ -80,6 +82,9 @@ struct AttachmentView: View {
             switch attachmentSheet.state {
             case .fileSelection:
                 DocumentPicker { _ in
+                }
+            case .photoLibrary:
+                ImagePicker { _ in
                 }
             default:
                 EmptyView()
