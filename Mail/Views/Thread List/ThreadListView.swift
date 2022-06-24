@@ -51,6 +51,8 @@ struct ThreadListView: View {
     @EnvironmentObject var menuSheet: MenuSheet
     @EnvironmentObject var globalBottomSheet: GlobalBottomSheet
 
+    @ObservedObject var bottomSheet: ThreadBottomSheet
+
     @Binding var currentFolder: Folder?
 
     @State private var avatarImage = Image(resource: MailResourcesAsset.placeholderAvatar)
@@ -62,7 +64,11 @@ struct ThreadListView: View {
     private let bottomSheetOptions = Constants.bottomSheetOptions + [.appleScrollBehavior]
 
     init(mailboxManager: MailboxManager, folder: Binding<Folder?>, isCompact: Bool) {
-        _viewModel = StateObject(wrappedValue: ThreadListViewModel(mailboxManager: mailboxManager, folder: folder.wrappedValue))
+        let bottomSheet = ThreadBottomSheet()
+        _bottomSheet = ObservedObject(wrappedValue: bottomSheet)
+        _viewModel = StateObject(wrappedValue: ThreadListViewModel(mailboxManager: mailboxManager,
+                                                                   folder: folder.wrappedValue,
+                                                                   bottomSheet: bottomSheet))
         _currentFolder = folder
         self.isCompact = isCompact
 
@@ -131,15 +137,15 @@ struct ThreadListView: View {
         .backButtonDisplayMode(.minimal)
         .navigationBarAppStyle()
         .modifier(ThreadListNavigationBar(isCompact: isCompact, folder: $viewModel.folder, avatarImage: $avatarImage))
-        .bottomSheet(bottomSheetPosition: $viewModel.bottomSheet.position, options: bottomSheetOptions) {
-            switch viewModel.bottomSheet.state {
+        .bottomSheet(bottomSheetPosition: $bottomSheet.position, options: bottomSheetOptions) {
+            switch bottomSheet.state {
             case let .actions(target):
                 if target.isInvalidated {
                     EmptyView()
                 } else {
                     ActionsView(mailboxManager: viewModel.mailboxManager,
                                 target: target,
-                                state: viewModel.bottomSheet,
+                                state: bottomSheet,
                                 globalSheet: globalBottomSheet) { message, replyMode in
                         menuSheet.state = .reply(message, replyMode)
                     }
@@ -154,6 +160,7 @@ struct ThreadListView: View {
                 selectedThread = nil
             }
             networkMonitor.start()
+            viewModel.globalBottomSheet = globalBottomSheet
         }
         .onDisappear {
             networkMonitor.stop()

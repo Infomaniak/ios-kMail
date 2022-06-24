@@ -32,7 +32,8 @@ typealias Thread = MailCore.Thread
     @Published var threads: [Thread] = []
     @Published var isLoadingPage = false
 
-    @Published var bottomSheet = ThreadBottomSheet()
+    var bottomSheet: ThreadBottomSheet
+    var globalBottomSheet: GlobalBottomSheet?
 
     private var resourceNext: String?
     private var observationThreadToken: NotificationToken?
@@ -45,9 +46,10 @@ typealias Thread = MailCore.Thread
         }
     }
 
-    init(mailboxManager: MailboxManager, folder: Folder?) {
+    init(mailboxManager: MailboxManager, folder: Folder?, bottomSheet: ThreadBottomSheet) {
         self.mailboxManager = mailboxManager
         self.folder = folder
+        self.bottomSheet = bottomSheet
         observeChanges()
     }
 
@@ -136,8 +138,9 @@ typealias Thread = MailCore.Thread
             case .readUnread:
                 try await mailboxManager.toggleRead(thread: thread)
             case .move:
-                // TODO: Move
-                break
+                globalBottomSheet?.open(state: .move(moveHandler: { folder in
+                    print("FOLDER \(folder.name)")
+                }), position: .moveHeight)
             case .favorite:
                 try await mailboxManager.toggleStar(thread: thread)
             case .report:
@@ -152,7 +155,6 @@ typealias Thread = MailCore.Thread
                 try await move(thread: thread, to: .archive)
             case .quickAction:
                 bottomSheet.open(state: .actions(.thread(thread.thaw() ?? thread)), position: .middle)
-                objectWillChange.send()
             case .none:
                 break
             }
