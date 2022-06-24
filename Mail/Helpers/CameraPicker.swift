@@ -21,7 +21,7 @@ import SwiftUI
 import UIKit
 
 struct CameraPicker: UIViewControllerRepresentable {
-    var sourceType: UIImagePickerController.SourceType = .photoLibrary
+    var sourceType: UIImagePickerController.SourceType = .camera
 
     @Binding var selectedImage: UIImage
     @Environment(\.presentationMode) private var presentationMode

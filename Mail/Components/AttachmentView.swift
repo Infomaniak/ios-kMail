@@ -29,11 +29,10 @@ struct AttachmentView: View {
     @ObservedObject var bottomSheet: NewMessageBottomSheet
 
     @StateObject private var attachmentSheet = NewMessageAttachmentSheet()
-    
-    @State private var image = UIImage()
-    
-    @State private var isPresenting = false
 
+    @State private var image = UIImage()
+
+    @State private var isPresenting = false
 
     private struct AttachmentAction: Hashable {
         let name: String
@@ -95,7 +94,7 @@ struct AttachmentView: View {
                 ImagePicker { _ in
                 }
             case .camera:
-                CameraPicker(sourceType: .camera, selectedImage: self.$image)
+                CameraPicker(selectedImage: self.$image)
             case .none:
                 EmptyView()
             }

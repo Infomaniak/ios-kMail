@@ -63,6 +63,9 @@ struct NewMessageView: View {
     @State private var draftHasChanged = false
 
     @StateObject private var bottomSheet = NewMessageBottomSheet()
+    @StateObject private var attachmentSheet = NewMessageAttachmentSheet()
+
+    @State private var image = UIImage()
 
     static var queue = DispatchQueue(label: "com.infomaniak.mail.saveDraft")
     @State var debouncedBufferWrite: DispatchWorkItem?
@@ -166,6 +169,7 @@ struct NewMessageView: View {
         }
         .onAppear {
             editor.richTextEditor.bottomSheet = bottomSheet
+            editor.richTextEditor.attachmentSheet = attachmentSheet
         }
         .onDisappear {
             if draftHasChanged {
@@ -175,11 +179,14 @@ struct NewMessageView: View {
                 }
             }
         }
+        .sheet(isPresented: $attachmentSheet.isShowing) {
+            CameraPicker(selectedImage: self.$image)
+        }
         .bottomSheet(bottomSheetPosition: $bottomSheet.position, options: bottomSheetOptions) {
             switch bottomSheet.state {
             case .attachment:
                 AttachmentView(bottomSheet: bottomSheet)
-            case .link(let handler):
+            case let .link(handler):
                 LinkView(actionHandler: handler)
             case .none:
                 EmptyView()
