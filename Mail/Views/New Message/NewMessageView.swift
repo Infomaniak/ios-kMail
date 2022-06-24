@@ -204,7 +204,8 @@ struct NewMessageView: View {
                 self.draft.body = html!
 
                 do {
-                    _ = try await mailboxManager.save(draft: draft)
+                    let response = try await mailboxManager.save(draft: draft)
+                    self.draft.uuid = response.uuid
                     draftHasChanged = false
                 } catch {
                     IKSnackBar.showSnackBar(message: error.localizedDescription)
