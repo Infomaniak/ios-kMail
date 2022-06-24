@@ -88,14 +88,15 @@ struct RecipientField: View {
 
     private func updateAutocompletion() {
         let contactManager = AccountManager.instance.currentContactManager
-        let contacts = contactManager?.contacts(matching: currentText) ?? []
-        withAnimation {
-            autocompletion = contacts.map { Recipient(email: $0.email, name: $0.name) }
-        }
+        let autocompleteContacts = contactManager?.contacts(matching: currentText) ?? []
+        var autocompleteRecipients = autocompleteContacts.map { Recipient(email: $0.email, name: $0.name) }
         // Append typed email
         let emailPredicate = NSPredicate(format: "SELF MATCHES %@", Constants.mailRegex)
         if emailPredicate.evaluate(with: currentText) && !autocompletion.contains(where: { $0.email.caseInsensitiveCompare(currentText) == .orderedSame }) {
-            autocompletion.append(Recipient(email: currentText, name: ""))
+            autocompleteRecipients.append(Recipient(email: currentText, name: ""))
+        }
+        withAnimation {
+            autocompletion = autocompleteRecipients.filter { !recipients.map(\.email).contains($0.email) }
         }
     }
 
