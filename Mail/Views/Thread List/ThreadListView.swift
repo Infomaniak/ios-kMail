@@ -75,7 +75,7 @@ struct ThreadListView: View {
             Color(MailResourcesAsset.backgroundColor.color)
                 .ignoresSafeArea()
 
-            if viewModel.threads.isEmpty {
+            if viewModel.threads.isEmpty && !viewModel.isLoadingPage {
                 EmptyListView()
             }
 
@@ -155,9 +155,6 @@ struct ThreadListView: View {
                 selectedThread = nil
             }
             networkMonitor.start()
-        }
-        .onDisappear {
-            networkMonitor.stop()
         }
         .onChange(of: currentFolder) { newFolder in
             guard let folder = newFolder else { return }
