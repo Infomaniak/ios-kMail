@@ -29,6 +29,11 @@ struct AttachmentView: View {
     @ObservedObject var bottomSheet: NewMessageBottomSheet
 
     @StateObject private var attachmentSheet = NewMessageAttachmentSheet()
+    
+    @State private var image = UIImage()
+    
+    @State private var isPresenting = false
+
 
     private struct AttachmentAction: Hashable {
         let name: String
@@ -65,6 +70,9 @@ struct AttachmentView: View {
                     if action == .addPhotoFromLibrary {
                         attachmentSheet.state = .photoLibrary
                     }
+                    if action == .openCamera {
+                        attachmentSheet.state = .camera
+                    }
                 } label: {
                     HStack {
                         Image(uiImage: action.image)
@@ -86,7 +94,9 @@ struct AttachmentView: View {
             case .photoLibrary:
                 ImagePicker { _ in
                 }
-            default:
+            case .camera:
+                CameraPicker(sourceType: .camera, selectedImage: self.$image)
+            case .none:
                 EmptyView()
             }
         }
