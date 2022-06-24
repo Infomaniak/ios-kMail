@@ -50,8 +50,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Infomaniak/ios-login.git",
       "state" : {
-        "revision" : "73a0c2586dae7c97ee2888e5a2ca9fee267fb53c",
-        "version" : "2.0.0"
+        "revision" : "b1336feaf2f71924d559364c074b7130cf357882",
+        "version" : "2.1.0"
       }
     },
     {
@@ -59,8 +59,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/onevcat/Kingfisher",
       "state" : {
-        "revision" : "59eb199fdb8dd47733624e8b0277822d0232579e",
-        "version" : "7.2.2"
+        "revision" : "022e4eeb79f817748544b318b991d9a70036bbf8",
+        "version" : "7.2.4"
       }
     },
     {
@@ -95,8 +95,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/realm/realm-swift",
       "state" : {
-        "revision" : "c54cc0bda9fb1aa94667022a46c3d079121476fc",
-        "version" : "10.28.0"
+        "revision" : "d3aaab84885e0de9a7a49955874cee160adee164",
+        "version" : "10.28.1"
       }
     },
     {
@@ -104,8 +104,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/getsentry/sentry-cocoa",
       "state" : {
-        "revision" : "b34ce9048e6b8b082ea6b15e6b50583d46c936ea",
-        "version" : "7.16.0"
+        "revision" : "3c40cf37f386e169ce2fa34a1614dff0723f9755",
+        "version" : "7.16.1"
       }
     },
     {

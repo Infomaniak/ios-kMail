@@ -27,6 +27,8 @@ public struct URLConstants {
     public static let matomo = URLConstants(urlString: "https://analytics.infomaniak.com/matomo.php")
     public static let support = URLConstants(urlString: "https://support.infomaniak.com")
 
+    public static let schemeUrl = "http"
+
     private var urlString: String
 
     public var url: URL {

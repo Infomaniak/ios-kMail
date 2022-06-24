@@ -22,6 +22,16 @@ import MailResources
 import RealmSwift
 import SwiftUI
 
+class NewMessageBottomSheet: BottomSheetState<NewMessageBottomSheet.State, NewMessageBottomSheet.Position> {
+    enum State {
+        case link(handler: (String) -> Void)
+    }
+
+    enum Position: CGFloat, CaseIterable {
+        case top = 200, hidden = 0
+    }
+}
+
 struct NewMessageView: View {
     @Binding var isPresented: Bool
     @State private var mailboxManager: MailboxManager
@@ -33,11 +43,15 @@ struct NewMessageView: View {
     @State private var sendDisabled = false
     @State private var draftHasChanged = false
 
+    @StateObject private var bottomSheet = NewMessageBottomSheet()
+
     let defaultBody = "<div><br></div><div><br></div><div>Envoyé avec Infomaniak Mail pour iOS<br></div>"
 
     static var queue = DispatchQueue(label: "com.infomaniak.mail.saveDraft")
     @State var debouncedBufferWrite: DispatchWorkItem?
     let saveExpiration = 3.0
+
+    private let bottomSheetOptions = Constants.bottomSheetOptions + [.absolutePositionValue]
 
     init(isPresented: Binding<Bool>, mailboxManager: MailboxManager, draft: UnmanagedDraft? = nil) {
         _isPresented = isPresented
@@ -123,12 +137,23 @@ struct NewMessageView: View {
             self.mailboxManager = mailboxManager
             draft.setSender(signatureResponse: signatureResponse)
         }
+        .onAppear {
+            editor.richTextEditor.bottomSheet = bottomSheet
+        }
         .onDisappear {
             if draftHasChanged {
                 debouncedBufferWrite?.cancel()
                 Task {
                     await saveDraft()
                 }
+            }
+        }
+        .bottomSheet(bottomSheetPosition: $bottomSheet.position, options: bottomSheetOptions) {
+            switch bottomSheet.state {
+            case .link(let handler):
+                LinkView(actionHandler: handler)
+            case .none:
+                EmptyView()
             }
         }
         .navigationViewStyle(.stack)
