@@ -57,8 +57,13 @@ public class Thread: Object, Decodable, Identifiable {
     }
 
     public var formattedFrom: String {
-        guard let from = from.last else { return "(unknow)" }
+        guard let from = from.last else { return "(unknown)" }
         return from.title
+    }
+
+    public var formattedTo: String {
+        guard let to = to.last else { return "(unknown)" }
+        return to.title
     }
 
     public var formattedSubject: String {

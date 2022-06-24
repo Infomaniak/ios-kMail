@@ -63,7 +63,7 @@ struct ThreadListCell: View {
                             .foregroundColor(MailResourcesAsset.redActionColor)
                             .textStyle(hasUnreadMessages ? .header2 : .header2Secondary)
                     }
-                    Text(thread.formattedFrom)
+                    Text(thread.messages.allSatisfy(\.isDraft) ? thread.formattedTo : thread.formattedFrom)
                         .textStyle(hasUnreadMessages ? .header2 : .header2Secondary)
                         .lineLimit(1)
 
