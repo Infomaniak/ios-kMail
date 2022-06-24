@@ -152,4 +152,8 @@ public extension Endpoint {
     static func report(messageResource: String) -> Endpoint {
         return .resource(messageResource).appending(path: "/report")
     }
+
+    static func createAttachment(uuid: String) -> Endpoint {
+        return .draft(uuid: uuid).appending(path: "/attachment")
+    }
 }

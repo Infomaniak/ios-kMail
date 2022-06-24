@@ -77,7 +77,7 @@ public struct UnmanagedDraft: Equatable, Encodable, AbstractDraft {
     public var inReplyTo: String?
     public var inReplyToUid: String?
     public var forwardedUid: String?
-    // attachments
+    public var attachments: [Attachment]?
     public var identityId: String
     public var ackRequest = false
     public var stUuid: String?
@@ -130,6 +130,7 @@ public struct UnmanagedDraft: Equatable, Encodable, AbstractDraft {
                 inReplyTo: String? = nil,
                 inReplyToUid: String? = nil,
                 forwardedUid: String? = nil,
+                attachements: [Attachment]? = nil,
                 identityId: String = "",
                 ackRequest: Bool = false,
                 stUuid: String? = nil,
@@ -149,6 +150,7 @@ public struct UnmanagedDraft: Equatable, Encodable, AbstractDraft {
         self.inReplyTo = inReplyTo
         self.inReplyToUid = inReplyToUid
         self.forwardedUid = forwardedUid
+        attachments = attachements
         self.identityId = identityId
         self.ackRequest = ackRequest
         self.stUuid = stUuid

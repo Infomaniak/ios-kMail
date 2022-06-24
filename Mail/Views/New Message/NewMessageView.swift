@@ -19,6 +19,7 @@
 import InfomaniakCore
 import MailCore
 import MailResources
+import PhotosUI
 import RealmSwift
 import SwiftUI
 
@@ -292,6 +293,86 @@ struct NewMessageView: View {
                 _ = try await mailboxManager.move(thread: frozenThread, to: .trash)
                 IKSnackBar.showSnackBar(message: MailResourcesStrings.Localizable.snackBarDraftDeleted)
             }
+        }
+    }
+
+    // MARK: Attachments
+
+    func addImageAttachment(
+        results: [PHPickerResult],
+        disposition: AttachmentDisposition = .attachment,
+        completion: @escaping (String) -> Void = { _ in }
+    ) async {
+        let itemProviders = results.map(\.itemProvider)
+        await withTaskGroup(of: Void.self) { group in
+            for itemProvider in itemProviders {
+                group.addTask {
+                    do {
+                        let typeIdentifier = itemProvider.registeredTypeIdentifiers.first ?? ""
+                        let url = try await self.loadFileRepresentation(itemProvider, typeIdentifier: typeIdentifier)
+                        let name = itemProvider.suggestedName ?? self.getDefaultFileName()
+
+                        let attachment = try await self.sendAttachment(
+                            typeIdentifier: typeIdentifier,
+                            url: url,
+                            name: name,
+                            disposition: disposition
+                        )
+                        if disposition == .inline, let cid = attachment?.contentId {
+                            completion(cid)
+                        }
+                    } catch {
+                        print("Error while creating attachment: \(error.localizedDescription)")
+                    }
+                }
+            }
+        }
+    }
+
+    func loadFileRepresentation(_ itemProvider: NSItemProvider, typeIdentifier: String) async throws -> URL {
+        try await withCheckedThrowingContinuation { continuation in
+            itemProvider.loadFileRepresentation(forTypeIdentifier: typeIdentifier) { url, error in
+                if let url = url {
+                    continuation.resume(returning: url)
+                } else {
+                    continuation.resume(throwing: error!)
+                }
+            }
+        }
+    }
+
+    public nonisolated func getDefaultFileName() -> String {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyyMMdd_HHmmssSS"
+        return formatter.string(from: Date())
+    }
+
+    func sendAttachment(typeIdentifier: String, url: URL, name: String,
+                        disposition: AttachmentDisposition) async throws -> Attachment? {
+        let data = try Data(contentsOf: url)
+
+        let uti = UTType(typeIdentifier)
+        var name = name
+        if let nameExtension = uti?.preferredFilenameExtension {
+            name.append(".\(nameExtension)")
+        }
+
+        let attachment = try await mailboxManager.apiFetcher.createAttachment(
+            mailbox: mailboxManager.mailbox,
+            attachmentData: data,
+            disposition: disposition,
+            attachmentName: name,
+            mimeType: uti?.preferredMIMEType ?? "application/octet-stream"
+        )
+        addAttachment(attachment)
+        return attachment
+    }
+
+    func addAttachment(_ attachment: Attachment) {
+        if draft.attachments == nil {
+            draft.attachments = [attachment]
+        } else {
+            draft.attachments?.append(attachment)
         }
     }
 }
