@@ -139,9 +139,7 @@ typealias Thread = MailCore.Thread
                 // TODO: Move
                 break
             case .favorite:
-                let lastMessage = thread.messages.last
-                // TODO: Favorite
-                break
+                try await mailboxManager.toggleStar(thread: thread)
             case .report:
                 // TODO: Report action
                 break

@@ -352,6 +352,31 @@ public class MailboxManager: ObservableObject {
         return response
     }
 
+    public func toggleStar(thread: Thread) async throws {
+        if thread.flagged {
+            _ = try await apiFetcher.unstar(mailbox: mailbox, messages: Array(thread.messages))
+            if let liveThread = thread.thaw() {
+                let realm = getRealm()
+                try? realm.safeWrite {
+                    liveThread.flagged = false
+                    for message in thread.messages {
+                        message.thaw()?.flagged = false
+                    }
+                }
+            }
+        } else {
+            guard let lastMessage = thread.messages.last else { return }
+            _ = try await apiFetcher.star(mailbox: mailbox, messages: [lastMessage])
+            if let liveThread = thread.thaw() {
+                let ream = getRealm()
+                try? ream.safeWrite {
+                    liveThread.flagged = true
+                    lastMessage.thaw()?.flagged = true
+                }
+            }
+        }
+    }
+
     private func moveLocally(thread: Thread, to folder: Folder, using realm: Realm? = nil) throws {
         let realm = realm ?? getRealm()
         try realm.safeWrite {
@@ -472,6 +497,38 @@ public class MailboxManager: ObservableObject {
         let realm = getRealm()
         guard let inboxFolder = getFolder(with: .inbox, using: realm)?.freeze() else { return response }
         try? moveLocally(messages: messages, to: inboxFolder, using: realm)
+
+        return response
+    }
+
+    public func star(messages: [Message]) async throws -> MessageActionResult {
+        let response = try await apiFetcher.star(mailbox: mailbox, messages: messages)
+
+        let realm = getRealm()
+        for message in messages {
+            if let liveMessage = message.thaw() {
+                try? realm.safeWrite {
+                    liveMessage.flagged = true
+                    liveMessage.parent?.updateFlagged()
+                }
+            }
+        }
+
+        return response
+    }
+
+    public func unstar(messages: [Message]) async throws -> MessageActionResult {
+        let response = try await apiFetcher.unstar(mailbox: mailbox, messages: messages)
+
+        let realm = getRealm()
+        for message in messages {
+            if let liveMessage = message.thaw() {
+                try realm.safeWrite {
+                    liveMessage.flagged = false
+                    liveMessage.parent?.updateFlagged()
+                }
+            }
+        }
 
         return response
     }
