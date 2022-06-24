@@ -39,15 +39,15 @@ struct AttachmentView: View {
         let image: UIImage
 
         static let addFile = AttachmentAction(
-            name: "Joindre un fichier",
+            name: MailResourcesStrings.attachmentActionFile,
             image: MailResourcesAsset.folder.image
         )
         static let addPhotoFromLibrary = AttachmentAction(
-            name: "Envoyer une photo depuis la phototèque",
+            name: MailResourcesStrings.attachmentActionPhotoLibrary,
             image: MailResourcesAsset.photo.image
         )
         static let openCamera = AttachmentAction(
-            name: "Appareil Photo",
+            name: MailResourcesStrings.attachmentActionCamera,
             image: MailResourcesAsset.photo.image
         )
     }
@@ -58,7 +58,7 @@ struct AttachmentView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
-            Text("Ajouter une pièce jointe")
+            Text(MailResourcesStrings.attachmentActionTitle)
                 .textStyle(.header3)
 
             ForEach(actions, id: \.self) { action in
