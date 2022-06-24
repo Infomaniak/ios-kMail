@@ -55,7 +55,9 @@ struct RecipientCellView_Previews: PreviewProvider {
         NewMessageCell(title: "To:", showCc: .constant(false)) {
             RecipientField(recipients: .constant([PreviewHelper.sampleRecipient1]),
                            autocompletion: .constant([]),
-                           addRecipientHandler: .constant { _ in })
+                           addRecipientHandler: .constant { _ in },
+                           focusedField: .init(),
+                           type: .to)
         }
         NewMessageCell(title: "Subject:") {
             TextField("", text: .constant(""))

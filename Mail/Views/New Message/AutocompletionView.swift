@@ -24,20 +24,15 @@ struct AutocompletionView: View {
     let onSelect: (Recipient) -> Void
 
     var body: some View {
-        VStack {
-            if !autocompletion.isEmpty {
-                Spacer(minLength: 200)
-                List(autocompletion, id: \.email) { recipient in
-                    Button {
-                        onSelect(recipient)
-                    } label: {
-                        RecipientAutocompletionCell(recipient: recipient)
-                    }
-                    .listRowSeparator(.hidden)
-                }
-                .listStyle(.plain)
+        List(autocompletion, id: \.email) { recipient in
+            Button {
+                onSelect(recipient)
+            } label: {
+                RecipientAutocompletionCell(recipient: recipient)
             }
+            .listRowSeparator(.hidden)
         }
+        .listStyle(.plain)
     }
 }
 

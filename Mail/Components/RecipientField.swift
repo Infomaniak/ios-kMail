@@ -51,30 +51,32 @@ struct RecipientField: View {
     @Binding var recipients: [Recipient]
     @Binding var autocompletion: [Recipient]
     @Binding var addRecipientHandler: ((Recipient) -> Void)?
+    @FocusState var focusedField: RecipientFieldType?
+    let type: RecipientFieldType
 
     @State private var currentText = ""
-    @FocusState private var fieldIsFocused: Bool
 
     var body: some View {
-        WrappingHStack(0 ... recipients.count, spacing: .constant(8), lineSpacing: 8) { i in
-            if i < recipients.count {
-                RecipientChip(recipient: recipients[i]) {
-                    recipients.remove(at: i)
-                }
-                .layoutPriority(1)
-            } else {
-                TextField("", text: $currentText)
-                    .textContentType(.emailAddress)
-                    .keyboardType(.emailAddress)
-                    .autocapitalization(.none)
-                    .disableAutocorrection(true)
-                    .multilineTextAlignment(.leading)
-                    .focused($fieldIsFocused)
-                    .onSubmit {
-                        guard let recipient = autocompletion.first else { return }
-                        add(recipient: recipient)
+        VStack {
+            if !recipients.isEmpty {
+                WrappingHStack(recipients.indices, spacing: .constant(8), lineSpacing: 8) { i in
+                    RecipientChip(recipient: recipients[i]) {
+                        recipients.remove(at: i)
                     }
+                }
             }
+            TextField("", text: $currentText)
+                .textContentType(.emailAddress)
+                .keyboardType(.emailAddress)
+                .autocapitalization(.none)
+                .disableAutocorrection(true)
+                .multilineTextAlignment(.leading)
+                .focused($focusedField, equals: type)
+                .onSubmit {
+                    guard let recipient = autocompletion.first else { return }
+                    add(recipient: recipient)
+                    focusedField = type
+                }
         }
         .onChange(of: currentText) { _ in
             updateAutocompletion()
@@ -96,7 +98,6 @@ struct RecipientField: View {
     private func add(recipient: Recipient) {
         recipients.append(recipient)
         currentText = ""
-        fieldIsFocused = true
     }
 }
 
@@ -106,6 +107,8 @@ struct RecipientField_Previews: PreviewProvider {
             PreviewHelper.sampleRecipient1, PreviewHelper.sampleRecipient2, PreviewHelper.sampleRecipient3
         ]),
         autocompletion: .constant([]),
-        addRecipientHandler: .constant { _ in })
+        addRecipientHandler: .constant { _ in },
+        focusedField: .init(),
+        type: .to)
     }
 }
