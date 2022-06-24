@@ -85,13 +85,13 @@ public class MailApiFetcher: ApiFetcher {
                                                                   ]))).data
     }
 
-    func markAsSeen(mailbox: Mailbox, messages: [Message]) async throws -> SeenResult {
+    func markAsSeen(mailbox: Mailbox, messages: [Message]) async throws -> MessageActionResult {
         try await perform(request: authenticatedRequest(.messageSeen(uuid: mailbox.uuid),
                                                         method: .post,
                                                         parameters: ["uids": messages.map(\.uid)])).data
     }
 
-    func markAsUnseen(mailbox: Mailbox, messages: [Message]) async throws -> SeenResult {
+    func markAsUnseen(mailbox: Mailbox, messages: [Message]) async throws -> MessageActionResult {
         try await perform(request: authenticatedRequest(.messageUnseen(uuid: mailbox.uuid),
                                                         method: .post,
                                                         parameters: ["uids": messages.map(\.uid)])).data
@@ -171,6 +171,18 @@ public class MailApiFetcher: ApiFetcher {
 
     public func nonSpam(mailbox: Mailbox, messages: [Message]) async throws -> UndoResponse {
         try await perform(request: authenticatedRequest(.nonSpam(uuid: mailbox.uuid),
+                                                        method: .post,
+                                                        parameters: ["uids": messages.map(\.uid)])).data
+    }
+
+    public func star(mailbox: Mailbox, messages: [Message]) async throws -> MessageActionResult {
+        try await perform(request: authenticatedRequest(.star(uuid: mailbox.uuid),
+                                                        method: .post,
+                                                        parameters: ["uids": messages.map(\.uid)])).data
+    }
+
+    public func unstar(mailbox: Mailbox, messages: [Message]) async throws -> MessageActionResult {
+        try await perform(request: authenticatedRequest(.unstar(uuid: mailbox.uuid),
                                                         method: .post,
                                                         parameters: ["uids": messages.map(\.uid)])).data
     }

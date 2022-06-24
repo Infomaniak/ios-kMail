@@ -139,7 +139,8 @@ typealias Thread = MailCore.Thread
                 // TODO: Move
                 break
             case .favorite:
-                // TODO: Favorite action
+                let lastMessage = thread.messages.last
+                // TODO: Favorite
                 break
             case .report:
                 // TODO: Report action

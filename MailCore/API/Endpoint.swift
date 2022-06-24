@@ -123,6 +123,14 @@ public extension Endpoint {
         return .mailbox(uuid: uuid).appending(path: "/message/ham")
     }
 
+    static func star(uuid: String) -> Endpoint {
+        return .mailbox(uuid: uuid).appending(path: "/message/star")
+    }
+
+    static func unstar(uuid: String) -> Endpoint {
+        return .mailbox(uuid: uuid).appending(path: "/message/unstar")
+    }
+
     static func blockSender(messageResource: String) -> Endpoint {
         return .resource(messageResource).appending(path: "/blacklist")
     }

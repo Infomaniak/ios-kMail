@@ -284,6 +284,6 @@ public class Body: EmbeddedObject, Codable {
     @Persisted public var subBody: String?
 }
 
-public struct SeenResult: Codable {
+public struct MessageActionResult: Codable {
     public var flagged: Int
 }
