@@ -89,6 +89,8 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, AccountManagerDelegate 
     private func setupLaunch() {
         if accountManager.accounts.isEmpty {
             showLoginView(animated: false)
+        } else if UserDefaults.shared.isAppLockEnabled && AppLockHelper.shared.isAppLocked {
+            setRootView(LockedAppView())
         } else {
             showMainView(animated: false)
         }
