@@ -49,6 +49,8 @@ struct RichTextEditor: UIViewRepresentable {
         }
 
         func editor(_ editor: SQTextEditorView, cursorPositionDidChange position: SQEditorCursorPosition) {
+            parent.model.delegateCount += 1
+            guard parent.model.isInitialized else { return }
             editor.getHTML { html in
                 if let html = html, self.parent.body.trimmingCharacters(in: .whitespacesAndNewlines) != html {
                     self.parent.body = html
@@ -79,6 +81,10 @@ struct RichTextEditor: UIViewRepresentable {
 
 class RichTextEditorModel: ObservableObject {
     let richTextEditor: MailEditor
+    @Published var delegateCount = 0
+    var isInitialized: Bool {
+        delegateCount > 2
+    }
 
     init() {
         richTextEditor = MailEditor()

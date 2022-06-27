@@ -17,6 +17,7 @@
  */
 
 import Foundation
+import MailResources
 import RealmSwift
 
 public struct ThreadResult: Decodable {
@@ -57,13 +58,18 @@ public class Thread: Object, Decodable, Identifiable {
     }
 
     public var formattedFrom: String {
-        guard let from = from.last else { return "(unknow)" }
+        guard let from = from.last else { return MailResourcesStrings.unknownRecipientTitle }
         return from.title
+    }
+
+    public var formattedTo: String {
+        guard let to = to.last else { return MailResourcesStrings.unknownRecipientTitle }
+        return to.title
     }
 
     public var formattedSubject: String {
         guard let subject = subject, !subject.isEmpty else {
-            return "(no subject)"
+            return MailResourcesStrings.noSubjectTitle
         }
         return subject
     }
@@ -154,7 +160,7 @@ public class Thread: Object, Decodable, Identifiable {
         self.size = size
     }
 
-    convenience init(draft: Draft) {
+    public convenience init(draft: Draft) {
         self.init()
 
         uid = draft.uuid

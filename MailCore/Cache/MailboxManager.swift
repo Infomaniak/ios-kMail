@@ -561,8 +561,9 @@ public class MailboxManager: ObservableObject {
         return draft
     }
 
-    public func draft(messageUid: String) -> Draft? {
-        return getRealm().objects(Draft.self).where { $0.messageUid == messageUid }.first
+    public func draft(messageUid: String, using realm: Realm? = nil) -> Draft? {
+        let realm = realm ?? getRealm()
+        return realm.objects(Draft.self).where { $0.messageUid == messageUid }.first
     }
 
     public func send(draft: UnmanagedDraft) async throws -> CancelResponse {

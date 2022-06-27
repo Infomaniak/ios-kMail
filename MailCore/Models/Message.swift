@@ -17,6 +17,7 @@
  */
 
 import Foundation
+import MailResources
 import RealmSwift
 
 public enum MessagePriority: String, Codable, PersistableEnum {
@@ -77,7 +78,7 @@ public class Message: Object, Decodable, Identifiable {
     }
 
     public var formattedSubject: String {
-        return subject ?? "(no subject)"
+        return subject ?? MailResourcesStrings.noSubjectTitle
     }
 
     public var parent: Thread? {
