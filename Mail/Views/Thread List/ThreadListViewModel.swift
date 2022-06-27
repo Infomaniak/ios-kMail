@@ -19,6 +19,7 @@
 import Foundation
 import InfomaniakCore
 import MailCore
+import MailResources
 import RealmSwift
 import SwiftUI
 
@@ -31,6 +32,9 @@ typealias Thread = MailCore.Thread
     @Published var threads: [Thread] = []
     @Published var isLoadingPage = false
 
+    var bottomSheet: ThreadBottomSheet
+    var globalBottomSheet: GlobalBottomSheet?
+
     private var resourceNext: String?
     private var observationThreadToken: NotificationToken?
 
@@ -42,9 +46,10 @@ typealias Thread = MailCore.Thread
         }
     }
 
-    init(mailboxManager: MailboxManager, folder: Folder?) {
+    init(mailboxManager: MailboxManager, folder: Folder?, bottomSheet: ThreadBottomSheet) {
         self.mailboxManager = mailboxManager
         self.folder = folder
+        self.bottomSheet = bottomSheet
         observeChanges()
     }
 
@@ -110,18 +115,6 @@ typealias Thread = MailCore.Thread
         }
     }
 
-    func delete(thread: Thread) async {
-        await tryOrDisplayError {
-            try await mailboxManager.moveOrDelete(thread: thread)
-        }
-    }
-
-    func toggleRead(thread: Thread) async {
-        await tryOrDisplayError {
-            try await mailboxManager.toggleRead(thread: thread)
-        }
-    }
-
     func loadNextPageIfNeeded(currentItem: Thread) {
         // Start loading next page when we reach the second-to-last item
         guard !threads.isEmpty else { return }
@@ -131,5 +124,69 @@ typealias Thread = MailCore.Thread
                 await fetchNextPage()
             }
         }
+    }
+
+    // MARK: - Swipe actions
+
+    func hanldeSwipeAction(_ action: SwipeAction, thread: Thread) async throws {
+        switch action {
+        case .delete:
+            try await mailboxManager.moveOrDelete(thread: thread)
+        case .archive:
+            try await move(thread: thread, to: .archive)
+        case .readUnread:
+            try await mailboxManager.toggleRead(thread: thread)
+        case .move:
+            globalBottomSheet?.open(state: .move(moveHandler: { folder in
+                Task {
+                    try await self.move(thread: thread, to: folder)
+                }
+            }), position: .moveHeight)
+        case .favorite:
+            try await mailboxManager.toggleStar(thread: thread)
+        case .report:
+            // TODO: Report action
+            break
+        case .spam:
+            try await toggleSpam(thread: thread)
+        case .readAndAchive:
+            if thread.unseenMessages > 0 {
+                try await mailboxManager.toggleRead(thread: thread)
+            }
+            try await move(thread: thread, to: .archive)
+        case .quickAction:
+            bottomSheet.open(state: .actions(.thread(thread.thaw() ?? thread)), position: .middle)
+        case .none:
+            break
+        }
+    }
+
+    private func toggleSpam(thread: Thread) async throws {
+        let folderRole: FolderRole
+        let response: UndoResponse
+        if folder?.role == .spam {
+            response = try await mailboxManager.nonSpam(thread: thread)
+            folderRole = .inbox
+        } else {
+            response = try await mailboxManager.reportSpam(thread: thread)
+            folderRole = .spam
+        }
+        IKSnackBar.showCancelableSnackBar(message: MailResourcesStrings.snackbarThreadMoved(folderRole.localizedName),
+                                          cancelSuccessMessage: MailResourcesStrings.snackbarMoveCancelled,
+                                          cancelableResponse: response,
+                                          mailboxManager: mailboxManager)
+    }
+
+    private func move(thread: Thread, to folderRole: FolderRole) async throws {
+        guard let folder = mailboxManager.getFolder(with: folderRole) else { return }
+        try await move(thread: thread, to: folder)
+    }
+
+    private func move(thread: Thread, to folder: Folder) async throws {
+        let response = try await mailboxManager.move(thread: thread, to: folder)
+        IKSnackBar.showCancelableSnackBar(message: MailResourcesStrings.snackbarThreadMoved(folder.localizedName),
+                                          cancelSuccessMessage: MailResourcesStrings.snackbarMoveCancelled,
+                                          cancelableResponse: response,
+                                          mailboxManager: mailboxManager)
     }
 }

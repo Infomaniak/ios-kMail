@@ -120,22 +120,26 @@ enum SettingsOption: Equatable {
         case .swipeShortRightOption:
             SettingsOptionView<SwipeAction>(
                 title: MailResourcesStrings.settingsSwipeShortRight,
-                keyPath: \.swipeShortRight
+                keyPath: \.swipeShortRight,
+                excludedKeyPath: [\.swipeLongRight, \.swipeShortLeft, \.swipeLongLeft]
             )
         case .swipeLongRightOption:
             SettingsOptionView<SwipeAction>(
                 title: MailResourcesStrings.settingsSwipeLongRight,
-                keyPath: \.swipeLongRight
+                keyPath: \.swipeLongRight,
+                excludedKeyPath: [\.swipeShortRight, \.swipeShortLeft, \.swipeLongLeft]
             )
         case .swipeShortLeftOption:
             SettingsOptionView<SwipeAction>(
                 title: MailResourcesStrings.settingsSwipeShortLeft,
-                keyPath: \.swipeShortLeft
+                keyPath: \.swipeShortLeft,
+                excludedKeyPath: [\.swipeShortRight, \.swipeLongRight, \.swipeLongLeft]
             )
         case .swipeLongLeftOption:
             SettingsOptionView<SwipeAction>(
                 title: MailResourcesStrings.settingsSwipeLongLeft,
-                keyPath: \.swipeLongLeft
+                keyPath: \.swipeLongLeft,
+                excludedKeyPath: [\.swipeShortRight, \.swipeLongRight, \.swipeShortLeft]
             )
         }
     }

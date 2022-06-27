@@ -55,7 +55,7 @@ struct ThreadListView: View {
 
     @State private var avatarImage = Image(resource: MailResourcesAsset.placeholderAvatar)
     @State private var selectedThread: Thread?
-    @StateObject private var bottomSheet = ThreadBottomSheet()
+    @StateObject var bottomSheet: ThreadBottomSheet
     @StateObject private var networkMonitor = NetworkMonitor()
 
     let isCompact: Bool
@@ -63,7 +63,11 @@ struct ThreadListView: View {
     private let bottomSheetOptions = Constants.bottomSheetOptions + [.appleScrollBehavior]
 
     init(mailboxManager: MailboxManager, folder: Binding<Folder?>, isCompact: Bool) {
-        _viewModel = StateObject(wrappedValue: ThreadListViewModel(mailboxManager: mailboxManager, folder: folder.wrappedValue))
+        let threadBottomSheet = ThreadBottomSheet()
+        _bottomSheet = StateObject(wrappedValue: threadBottomSheet)
+        _viewModel = StateObject(wrappedValue: ThreadListViewModel(mailboxManager: mailboxManager,
+                                                                   folder: folder.wrappedValue,
+                                                                   bottomSheet: threadBottomSheet))
         _currentFolder = folder
         self.isCompact = isCompact
 
@@ -107,7 +111,7 @@ struct ThreadListView: View {
                     .listRowBackground(Color(selectedThread == thread
                             ? MailResourcesAsset.backgroundCardSelectedColor.color
                             : MailResourcesAsset.backgroundColor.color))
-                    .modifier(ThreadListSwipeAction(thread: thread, viewModel: viewModel, bottomSheet: bottomSheet))
+                    .modifier(ThreadListSwipeAction(thread: thread, viewModel: viewModel))
                     .onAppear {
                         viewModel.loadNextPageIfNeeded(currentItem: thread)
                     }
@@ -155,6 +159,7 @@ struct ThreadListView: View {
                 selectedThread = nil
             }
             networkMonitor.start()
+            viewModel.globalBottomSheet = globalBottomSheet
         }
         .onChange(of: currentFolder) { newFolder in
             guard let folder = newFolder else { return }
@@ -237,43 +242,56 @@ private struct ThreadListNavigationBar: ViewModifier {
     }
 }
 
+private struct SwipeActionView: View {
+    let thread: Thread
+    let viewModel: ThreadListViewModel
+    let action: SwipeAction
+
+    var icon: Image? {
+        if action == .readUnread {
+            Image(resource: thread.unseenMessages == 0 ? MailResourcesAsset.envelopeOpen : MailResourcesAsset.envelope)
+        }
+        return action.swipeIcon
+    }
+
+    var body: some View {
+        Button {
+            Task {
+                await tryOrDisplayError {
+                    try await viewModel.hanldeSwipeAction(action, thread: thread)
+                }
+            }
+        } label: {
+            Label { Text(action.title) } icon: { icon }
+        }
+        .tint(action.swipeTint)
+    }
+}
+
 private struct ThreadListSwipeAction: ViewModifier {
     let thread: Thread
     let viewModel: ThreadListViewModel
-    @ObservedObject var bottomSheet: ThreadBottomSheet
+
+    @AppStorage(UserDefaults.shared.key(.swipeLongRight)) private var swipeLongRight = SwipeAction.none
+    @AppStorage(UserDefaults.shared.key(.swipeShortRight)) private var swipeShortRight = SwipeAction.none
+
+    @AppStorage(UserDefaults.shared.key(.swipeLongLeft)) private var swipeLongLeft = SwipeAction.none
+    @AppStorage(UserDefaults.shared.key(.swipeShortLeft)) private var swipeShortLeft = SwipeAction.none
 
     func body(content: Content) -> some View {
         content
             .swipeActions(edge: .leading) {
-                let action = SwipeAction.readUnread
-                Button {
-                    Task {
-                        await viewModel.toggleRead(thread: thread)
-                    }
-                } label: {
-                    Image(resource: thread.unseenMessages > 0 ? MailResourcesAsset.envelopeOpen : MailResourcesAsset.envelope)
-                }
-                .tint(action.swipeTint)
+                edgeActions([swipeLongRight, swipeShortRight])
             }
             .swipeActions(edge: .trailing) {
-                let deleteAction = SwipeAction.delete
-                Button(role: .destructive) {
-                    Task {
-                        await viewModel.delete(thread: thread)
-                    }
-                } label: {
-                    deleteAction.swipeIcon
-                }
-                .tint(deleteAction.swipeTint)
-
-                let menuAction = SwipeAction.quickAction
-                Button {
-                    bottomSheet.open(state: .actions(.thread(thread.thaw() ?? thread)), position: .middle)
-                } label: {
-                    menuAction.swipeIcon
-                }
-                .tint(menuAction.swipeTint)
+                edgeActions([swipeLongLeft, swipeShortLeft])
             }
+    }
+
+    func edgeActions(_ actions: [SwipeAction]) -> some View {
+        ForEach(actions.filter { $0 != .none }, id: \.rawValue) { action in
+            SwipeActionView(thread: thread, viewModel: viewModel, action: action)
+        }
     }
 }
 

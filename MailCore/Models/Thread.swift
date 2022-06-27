@@ -83,6 +83,10 @@ public class Thread: Object, Decodable, Identifiable {
         unseenMessages = messages.filter { !$0.seen }.count
     }
 
+    public func updateFlagged() {
+        flagged = messages.contains { $0.flagged }
+    }
+
     private enum CodingKeys: String, CodingKey {
         case uid
         case messagesCount

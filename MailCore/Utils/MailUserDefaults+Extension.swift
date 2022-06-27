@@ -25,22 +25,22 @@ public protocol SettingsOptionEnum {
 }
 
 extension UserDefaults.Keys {
-    static let currentMailboxId = UserDefaults.Keys(rawValue: "currentMailboxId")
-    static let currentMailUserId = UserDefaults.Keys(rawValue: "currentMailUserId")
-    static let notificationsEnabled = UserDefaults.Keys(rawValue: "notificationsEnabled")
-    static let appLock = UserDefaults.Keys(rawValue: "appLock")
-    static let threadDensity = UserDefaults.Keys(rawValue: "threadDensity")
-    static let externalContent = UserDefaults.Keys(rawValue: "externalContent")
-    static let theme = UserDefaults.Keys(rawValue: "theme")
-    static let swipeShortRight = UserDefaults.Keys(rawValue: "swipeShortRight")
-    static let swipeLongRight = UserDefaults.Keys(rawValue: "swipeLongRight")
-    static let swipeShortLeft = UserDefaults.Keys(rawValue: "swipeShortLeft")
-    static let swipeLongLeft = UserDefaults.Keys(rawValue: "swipeLongLeft")
-    static let threadMode = UserDefaults.Keys(rawValue: "threadMode")
-    static let cancelDelay = UserDefaults.Keys(rawValue: "cancelDelay")
-    static let forwardMode = UserDefaults.Keys(rawValue: "forwardMode")
-    static let acknowledgement = UserDefaults.Keys(rawValue: "acknowledgement")
-    static let includeOriginalInReply = UserDefaults.Keys(rawValue: "includeOriginalInReply")
+    public static let currentMailboxId = UserDefaults.Keys(rawValue: "currentMailboxId")
+    public static let currentMailUserId = UserDefaults.Keys(rawValue: "currentMailUserId")
+    public static let notificationsEnabled = UserDefaults.Keys(rawValue: "notificationsEnabled")
+    public static let appLock = UserDefaults.Keys(rawValue: "appLock")
+    public static let threadDensity = UserDefaults.Keys(rawValue: "threadDensity")
+    public static let externalContent = UserDefaults.Keys(rawValue: "externalContent")
+    public static let theme = UserDefaults.Keys(rawValue: "theme")
+    public static let swipeShortRight = UserDefaults.Keys(rawValue: "swipeShortRight")
+    public static let swipeLongRight = UserDefaults.Keys(rawValue: "swipeLongRight")
+    public static let swipeShortLeft = UserDefaults.Keys(rawValue: "swipeShortLeft")
+    public static let swipeLongLeft = UserDefaults.Keys(rawValue: "swipeLongLeft")
+    public static let threadMode = UserDefaults.Keys(rawValue: "threadMode")
+    public static let cancelDelay = UserDefaults.Keys(rawValue: "cancelDelay")
+    public static let forwardMode = UserDefaults.Keys(rawValue: "forwardMode")
+    public static let acknowledgement = UserDefaults.Keys(rawValue: "acknowledgement")
+    public static let includeOriginalInReply = UserDefaults.Keys(rawValue: "includeOriginalInReply")
 }
 
 public extension UserDefaults {
