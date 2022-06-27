@@ -21,27 +21,33 @@ import SwiftUI
 
 struct SettingsToggleCell: View {
     let title: String
-    let userDefaults: ReferenceWritableKeyPath<UserDefaults, Bool>
+    let userDefaults: UserDefaults.Keys
+
+    @AppStorage private var value: Bool
+
+    init(title: String, userDefaults: UserDefaults.Keys) {
+        self.title = title
+        self.userDefaults = userDefaults
+        _value = AppStorage(wrappedValue: false, userDefaults.rawValue, store: .shared)
+    }
 
     var body: some View {
-        Toggle(isOn: Binding(get: {
-            UserDefaults.shared[keyPath: userDefaults]
-        }, set: { value in
-            UserDefaults.shared[keyPath: userDefaults] = value
-            if userDefaults == \.isAppLockEnabled {
+        Toggle(isOn: $value) {
+            Text(title)
+                .textStyle(.body)
+        }
+        .onChange(of: value) { _ in
+            if userDefaults == .appLock {
                 Task {
                     do {
                         if try await !AppLockHelper.shared.evaluatePolicy(reason: "Coucou") {
-                            UserDefaults.shared[keyPath: userDefaults].toggle()
+                            value.toggle()
                         }
                     } catch {
-                        UserDefaults.shared[keyPath: userDefaults].toggle()
+                        value.toggle()
                     }
                 }
             }
-        })) {
-            Text(title)
-                .textStyle(.body)
         }
         .tint(.accentColor)
     }
@@ -49,6 +55,6 @@ struct SettingsToggleCell: View {
 
 struct SettingsToggleCell_Previews: PreviewProvider {
    static var previews: some View {
-       SettingsToggleCell(title: "Code lock", userDefaults: \.isAppLockEnabled)
+       SettingsToggleCell(title: "Code lock", userDefaults: .appLock)
    }
 }

@@ -66,7 +66,7 @@ private extension SettingsItem {
     static let lock = SettingsItem(
         id: 2,
         title: MailResourcesStrings.settingsCodeLock,
-        type: .toggle(userDefaults: \.isAppLockEnabled)
+        type: .toggle(userDefaults: .appLock)
     )
     static let threadDensity = SettingsItem(
         id: 3,
