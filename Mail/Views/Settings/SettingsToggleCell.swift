@@ -16,6 +16,7 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import InfomaniakCore
 import SwiftUI
 
 struct SettingsToggleCell: View {
@@ -27,6 +28,17 @@ struct SettingsToggleCell: View {
             UserDefaults.shared[keyPath: userDefaults]
         }, set: { value in
             UserDefaults.shared[keyPath: userDefaults] = value
+            if userDefaults == \.isAppLockEnabled {
+                Task {
+                    do {
+                        if try await !AppLockHelper.shared.evaluatePolicy(reason: "Coucou") {
+                            UserDefaults.shared[keyPath: userDefaults].toggle()
+                        }
+                    } catch {
+                        UserDefaults.shared[keyPath: userDefaults].toggle()
+                    }
+                }
+            }
         })) {
             Text(title)
                 .textStyle(.body)
