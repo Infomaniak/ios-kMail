@@ -51,12 +51,11 @@ struct ThreadListView: View {
     @EnvironmentObject var menuSheet: MenuSheet
     @EnvironmentObject var globalBottomSheet: GlobalBottomSheet
 
-    @ObservedObject var bottomSheet: ThreadBottomSheet
-
     @Binding var currentFolder: Folder?
 
     @State private var avatarImage = Image(resource: MailResourcesAsset.placeholderAvatar)
     @State private var selectedThread: Thread?
+    @StateObject var bottomSheet: ThreadBottomSheet
     @StateObject private var networkMonitor = NetworkMonitor()
 
     let isCompact: Bool
@@ -64,11 +63,11 @@ struct ThreadListView: View {
     private let bottomSheetOptions = Constants.bottomSheetOptions + [.appleScrollBehavior]
 
     init(mailboxManager: MailboxManager, folder: Binding<Folder?>, isCompact: Bool) {
-        let bottomSheet = ThreadBottomSheet()
-        _bottomSheet = ObservedObject(wrappedValue: bottomSheet)
+        let threadBottomSheet = ThreadBottomSheet()
+        _bottomSheet = StateObject(wrappedValue: threadBottomSheet)
         _viewModel = StateObject(wrappedValue: ThreadListViewModel(mailboxManager: mailboxManager,
                                                                    folder: folder.wrappedValue,
-                                                                   bottomSheet: bottomSheet))
+                                                                   bottomSheet: threadBottomSheet))
         _currentFolder = folder
         self.isCompact = isCompact
 
@@ -181,7 +180,6 @@ struct ThreadListView: View {
         .refreshable {
             await viewModel.fetchThreads()
         }
-        .defaultAppStorage(.shared)
     }
 
     private func editDraft(from thread: Thread) {
@@ -252,17 +250,20 @@ private struct SwipeActionView: View {
     let viewModel: ThreadListViewModel
     let action: SwipeAction
 
+    var icon: Image? {
+        if action == .readUnread {
+            return Image(uiImage: (thread.unseenMessages == 0 ? MailResourcesAsset.envelopeOpen : MailResourcesAsset.envelope).image)
+        }
+        return action.swipeIcon
+    }
+
     var body: some View {
         Button {
             Task {
                 await viewModel.hanldeSwipeAction(action, thread: thread)
             }
         } label: {
-            if action == .readUnread {
-                Image(uiImage: (thread.unseenMessages == 0 ? MailResourcesAsset.envelopeOpen : MailResourcesAsset.envelope).image)
-            } else {
-                action.swipeIcon
-            }
+            Label { Text(action.title) } icon: { icon }
         }
         .tint(action.swipeTint)
     }
@@ -278,12 +279,6 @@ private struct ThreadListSwipeAction: ViewModifier {
     @AppStorage(UserDefaults.shared.key(.swipeLongLeft)) private var swipeLongLeft = SwipeAction.none
     @AppStorage(UserDefaults.shared.key(.swipeShortLeft)) private var swipeShortLeft = SwipeAction.none
 
-    func edgeActions(_ actions: [SwipeAction]) -> some View {
-        ForEach(actions.filter { $0 != .none }, id: \.rawValue) { action in
-            SwipeActionView(thread: thread, viewModel: viewModel, action: action)
-        }
-    }
-
     func body(content: Content) -> some View {
         content
             .swipeActions(edge: .leading) {
@@ -292,6 +287,12 @@ private struct ThreadListSwipeAction: ViewModifier {
             .swipeActions(edge: .trailing) {
                 edgeActions([swipeLongLeft, swipeShortLeft])
             }
+    }
+
+    func edgeActions(_ actions: [SwipeAction]) -> some View {
+        ForEach(actions.filter { $0 != .none }, id: \.rawValue) { action in
+            SwipeActionView(thread: thread, viewModel: viewModel, action: action)
+        }
     }
 }
 

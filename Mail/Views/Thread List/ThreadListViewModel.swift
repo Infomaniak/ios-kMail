@@ -139,7 +139,9 @@ typealias Thread = MailCore.Thread
                 try await mailboxManager.toggleRead(thread: thread)
             case .move:
                 globalBottomSheet?.open(state: .move(moveHandler: { folder in
-                    print("FOLDER \(folder.name)")
+                    Task {
+                        try await self.move(thread: thread, to: folder)
+                    }
                 }), position: .moveHeight)
             case .favorite:
                 try await mailboxManager.toggleStar(thread: thread)
@@ -178,8 +180,13 @@ typealias Thread = MailCore.Thread
     }
 
     private func move(thread: Thread, to folderRole: FolderRole) async throws {
-        let response = try await mailboxManager.move(thread: thread, to: folderRole)
-        IKSnackBar.showCancelableSnackBar(message: MailResourcesStrings.snackbarThreadMoved(folderRole.localizedName),
+        guard let folder = mailboxManager.getFolder(with: folderRole) else { return }
+        try await move(thread: thread, to: folder)
+    }
+
+    private func move(thread: Thread, to folder: Folder) async throws {
+        let response = try await mailboxManager.move(thread: thread, to: folder)
+        IKSnackBar.showCancelableSnackBar(message: MailResourcesStrings.snackbarThreadMoved(folder.localizedName),
                                           cancelSuccessMessage: MailResourcesStrings.snackbarMoveCancelled,
                                           cancelableResponse: response,
                                           mailboxManager: mailboxManager)

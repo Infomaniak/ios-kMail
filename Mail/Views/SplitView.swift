@@ -106,6 +106,7 @@ struct SplitView: View {
         }
         .environmentObject(menuSheet)
         .environmentObject(navigationDrawerController)
+        .defaultAppStorage(.shared)
         .onAppear {
             navigationDrawerController.window = window
         }
