@@ -69,7 +69,7 @@ public struct MailTextStyle {
 
     public static let button = MailTextStyle(
         font: .system(size: 16, weight: .semibold),
-        color: MailResourcesAsset.infomaniakColor
+        color: UserDefaults.shared.accentColor.primary
     )
 
     public static let buttonPill = MailTextStyle(
@@ -99,7 +99,7 @@ public struct MailTextStyle {
 
     public static let calloutHighlighted = MailTextStyle(
         font: .system(size: 14),
-        color: MailResourcesAsset.infomaniakColor
+        color: UserDefaults.shared.accentColor.primary
     )
 
     public static let snackbarBody = MailTextStyle(

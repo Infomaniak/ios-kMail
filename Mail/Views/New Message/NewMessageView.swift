@@ -152,7 +152,6 @@ struct NewMessageView: View {
                 } label: {
                     Image(resource: MailResourcesAsset.send)
                 }
-                .tint(MailResourcesAsset.mailPinkColor)
                 .disabled(sendDisabled)
             )
         }

@@ -31,7 +31,7 @@ struct MenuDrawerItemCell: View {
                     .resizable()
                     .scaledToFit()
                     .frame(height: 24)
-                    .foregroundColor(InfomaniakCoreAsset.infomaniakColor)
+                    .foregroundColor(.accentColor)
                     .padding(.trailing, 15)
 
                 Text(content.label)

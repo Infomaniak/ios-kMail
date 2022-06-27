@@ -201,7 +201,7 @@ class MailEditor: SQTextEditorView {
             item.tag = action.rawValue
             item.isSelected = action.isSelected(textAttribute: selectedTextAttribute)
             if action == .editText && style == .textEdition {
-                item.tintColor = MailResourcesAsset.infomaniakColor.color
+                item.tintColor = UserDefaults.shared.accentColor.primary.color
             }
             return item
         }

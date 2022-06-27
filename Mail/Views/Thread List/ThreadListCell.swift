@@ -48,7 +48,7 @@ struct ThreadListCell: View {
         HStack(alignment: .top, spacing: 10) {
             Circle()
                 .frame(width: Constants.unreadIconSize, height: Constants.unreadIconSize)
-                .foregroundColor(hasUnreadMessages ? Color(MailResourcesAsset.mailPinkColor.color) : .clear)
+                .foregroundColor(hasUnreadMessages ? Color.accentColor : .clear)
                 .padding(.top, density.unreadCircleTopPadding)
 
             if density == .large {

@@ -76,7 +76,7 @@ struct FolderCellContent: View {
                 .resizable()
                 .scaledToFit()
                 .frame(width: iconSize, height: iconSize)
-                .foregroundColor(InfomaniakCoreAsset.infomaniakColor)
+                .foregroundColor(.accentColor)
                 .padding(.trailing, 10)
 
             Text(currentFolder.localizedName)

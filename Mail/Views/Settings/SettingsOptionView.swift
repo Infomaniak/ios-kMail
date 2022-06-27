@@ -64,7 +64,7 @@ struct SettingsOptionView<OptionEnum>: View where OptionEnum: CaseIterable, Opti
                             Spacer()
                             if value == selectedValue {
                                 Image(systemName: "checkmark")
-                                    .foregroundColor(MailResourcesAsset.infomaniakColor)
+                                    .foregroundColor(.accentColor)
                             }
                         }
                     }

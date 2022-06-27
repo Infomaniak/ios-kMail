@@ -61,7 +61,6 @@ struct LinkView: View {
                     Text(MailResourcesStrings.buttonValid)
                         .textStyle(.buttonPill)
                 }
-                .tint(MailResourcesAsset.mailPinkColor)
                 .buttonStyle(.borderedProminent)
                 .buttonBorderShape(.roundedRectangle(radius: 50))
                 .controlSize(.large)

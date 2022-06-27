@@ -65,7 +65,7 @@ struct ActionsView_Previews: PreviewProvider {
                     target: .thread(PreviewHelper.sampleThread),
                     state: ThreadBottomSheet(),
                     globalSheet: GlobalBottomSheet()) { _, _ in }
-            .accentColor(Color(MailResourcesAsset.infomaniakColor.color))
+            .accentColor(Color(AccentColor.pink.primary.color))
     }
 }
 

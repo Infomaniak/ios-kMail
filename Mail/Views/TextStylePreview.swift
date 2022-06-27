@@ -52,7 +52,7 @@ struct TextStylePreview: View {
                         .textStyle(.button)
                     Text("Button pill")
                         .padding()
-                        .background(Color(uiColor: MailResourcesAsset.mailPinkColor.color))
+                        .background(Color.accentColor)
                         .cornerRadius(50)
                         .textStyle(.buttonPill)
                 }
