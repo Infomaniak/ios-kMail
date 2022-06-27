@@ -128,38 +128,36 @@ typealias Thread = MailCore.Thread
 
     // MARK: - Swipe actions
 
-    func hanldeSwipeAction(_ action: SwipeAction, thread: Thread) async {
-        await tryOrDisplayError {
-            switch action {
-            case .delete:
-                try await mailboxManager.moveOrDelete(thread: thread)
-            case .archive:
-                try await move(thread: thread, to: .archive)
-            case .readUnread:
-                try await mailboxManager.toggleRead(thread: thread)
-            case .move:
-                globalBottomSheet?.open(state: .move(moveHandler: { folder in
-                    Task {
-                        try await self.move(thread: thread, to: folder)
-                    }
-                }), position: .moveHeight)
-            case .favorite:
-                try await mailboxManager.toggleStar(thread: thread)
-            case .report:
-                // TODO: Report action
-                break
-            case .spam:
-                try await toggleSpam(thread: thread)
-            case .readAndAchive:
-                if thread.unseenMessages > 0 {
-                    try await mailboxManager.toggleRead(thread: thread)
+    func hanldeSwipeAction(_ action: SwipeAction, thread: Thread) async throws {
+        switch action {
+        case .delete:
+            try await mailboxManager.moveOrDelete(thread: thread)
+        case .archive:
+            try await move(thread: thread, to: .archive)
+        case .readUnread:
+            try await mailboxManager.toggleRead(thread: thread)
+        case .move:
+            globalBottomSheet?.open(state: .move(moveHandler: { folder in
+                Task {
+                    try await self.move(thread: thread, to: folder)
                 }
-                try await move(thread: thread, to: .archive)
-            case .quickAction:
-                bottomSheet.open(state: .actions(.thread(thread.thaw() ?? thread)), position: .middle)
-            case .none:
-                break
+            }), position: .moveHeight)
+        case .favorite:
+            try await mailboxManager.toggleStar(thread: thread)
+        case .report:
+            // TODO: Report action
+            break
+        case .spam:
+            try await toggleSpam(thread: thread)
+        case .readAndAchive:
+            if thread.unseenMessages > 0 {
+                try await mailboxManager.toggleRead(thread: thread)
             }
+            try await move(thread: thread, to: .archive)
+        case .quickAction:
+            bottomSheet.open(state: .actions(.thread(thread.thaw() ?? thread)), position: .middle)
+        case .none:
+            break
         }
     }
 

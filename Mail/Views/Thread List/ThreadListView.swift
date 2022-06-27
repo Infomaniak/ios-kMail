@@ -252,7 +252,7 @@ private struct SwipeActionView: View {
 
     var icon: Image? {
         if action == .readUnread {
-            return Image(uiImage: (thread.unseenMessages == 0 ? MailResourcesAsset.envelopeOpen : MailResourcesAsset.envelope).image)
+            Image(resource: thread.unseenMessages == 0 ? MailResourcesAsset.envelopeOpen : MailResourcesAsset.envelope)
         }
         return action.swipeIcon
     }
@@ -260,7 +260,9 @@ private struct SwipeActionView: View {
     var body: some View {
         Button {
             Task {
-                await viewModel.hanldeSwipeAction(action, thread: thread)
+                await tryOrDisplayError {
+                    try await viewModel.hanldeSwipeAction(action, thread: thread)
+                }
             }
         } label: {
             Label { Text(action.title) } icon: { icon }
