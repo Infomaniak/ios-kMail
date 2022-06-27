@@ -17,8 +17,8 @@
  */
 
 import Foundation
-import RealmSwift
 import MailResources
+import RealmSwift
 
 public struct ThreadResult: Decodable {
     public let threads: [Thread]?
@@ -156,7 +156,7 @@ public class Thread: Object, Decodable, Identifiable {
         self.size = size
     }
 
-    convenience init(draft: Draft) {
+    public convenience init(draft: Draft) {
         self.init()
 
         uid = draft.uuid

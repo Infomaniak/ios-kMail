@@ -173,7 +173,7 @@ struct NewMessageView: View {
             if draftHasChanged {
                 debouncedBufferWrite?.cancel()
                 Task {
-                    await saveDraft()
+                    await saveDraft(showSnackBar: true)
                 }
             }
         }
@@ -198,7 +198,7 @@ struct NewMessageView: View {
         }
     }
 
-    @MainActor private func saveDraft() async {
+    @MainActor private func saveDraft(showSnackBar: Bool = false) async {
         editor.richTextEditor.getHTML { [self] html in
             Task {
                 self.draft.body = html!
@@ -207,6 +207,12 @@ struct NewMessageView: View {
                     let response = try await mailboxManager.save(draft: draft)
                     self.draft.uuid = response.uuid
                     draftHasChanged = false
+                    if showSnackBar {
+                        IKSnackBar.showSnackBar(message: MailResourcesStrings.snackBarDraftSaved,
+                                                action: .init(title: MailResourcesStrings.actionDelete) {
+                                                    deleteDraft(messageUid: response.uid)
+                                                })
+                    }
                 } catch {
                     IKSnackBar.showSnackBar(message: error.localizedDescription)
                 }
@@ -256,6 +262,26 @@ struct NewMessageView: View {
                                addRecipientHandler: $addRecipientHandler,
                                focusedField: _focusedRecipientField,
                                type: type)
+            }
+        }
+    }
+
+    private func deleteDraft(messageUid: String) {
+        // Convert draft to thread
+        let realm = mailboxManager.getRealm()
+        guard let draft = mailboxManager.draft(messageUid: messageUid, using: realm)?.freeze(),
+              let draftFolder = mailboxManager.getFolder(with: .draft, using: realm) else { return }
+        let thread = Thread(draft: draft)
+        try? realm.safeWrite {
+            realm.add(thread, update: .modified)
+            draftFolder.threads.insert(thread)
+        }
+        let frozenThread = thread.freeze()
+        // Delete
+        Task {
+            await tryOrDisplayError {
+                _ = try await mailboxManager.move(thread: frozenThread, to: .trash)
+                IKSnackBar.showSnackBar(message: MailResourcesStrings.snackBarDraftDeleted)
             }
         }
     }
