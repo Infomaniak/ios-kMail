@@ -249,7 +249,7 @@ private struct SwipeActionView: View {
 
     var icon: Image? {
         if action == .readUnread {
-            Image(resource: thread.unseenMessages == 0 ? MailResourcesAsset.envelopeOpen : MailResourcesAsset.envelope)
+            return Image(resource: thread.unseenMessages == 0 ? MailResourcesAsset.envelope : MailResourcesAsset.envelopeOpen)
         }
         return action.swipeIcon
     }
