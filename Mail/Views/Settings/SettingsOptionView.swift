@@ -25,8 +25,9 @@ struct SettingsOptionView<OptionEnum>: View where OptionEnum: CaseIterable, Opti
     let title: String
     let subtitle: String?
     let keyPath: ReferenceWritableKeyPath<UserDefaults, OptionEnum>
+    let excludedKeyPath: [ReferenceWritableKeyPath<UserDefaults, OptionEnum>]?
 
-    private let values = OptionEnum.allCases
+    @State private var values = Array(OptionEnum.allCases)
 
     @State private var selectedValue: OptionEnum {
         didSet {
@@ -38,12 +39,15 @@ struct SettingsOptionView<OptionEnum>: View where OptionEnum: CaseIterable, Opti
         }
     }
 
-    init(title: String, subtitle: String? = nil, keyPath: ReferenceWritableKeyPath<UserDefaults, OptionEnum>) {
+    init(title: String,
+         subtitle: String? = nil,
+         keyPath: ReferenceWritableKeyPath<UserDefaults, OptionEnum>,
+         excludedKeyPath: [ReferenceWritableKeyPath<UserDefaults, OptionEnum>]? = nil) {
         self.title = title
         self.subtitle = subtitle
         self.keyPath = keyPath
-        _selectedValue = State(wrappedValue: UserDefaults.shared[keyPath: keyPath])
-    }
+        self.excludedKeyPath = excludedKeyPath
+        _selectedValue = State(wrappedValue: UserDefaults.shared[keyPath: keyPath])    }
 
     var body: some View {
         List {
@@ -77,6 +81,18 @@ struct SettingsOptionView<OptionEnum>: View where OptionEnum: CaseIterable, Opti
         }
         .listStyle(.plain)
         .navigationBarTitle(title, displayMode: .inline)
+        .onAppear {
+            updateOptions()
+        }
+    }
+
+    private func updateOptions() {
+        if let excludedKeyPath = excludedKeyPath {
+            let excludedValues = excludedKeyPath.map { UserDefaults.shared[keyPath: $0] }
+            values = values.filter { value in
+                return !excludedValues.contains(value) || (value.rawValue as? String) == "none"
+            }
+        }
     }
 }
 
