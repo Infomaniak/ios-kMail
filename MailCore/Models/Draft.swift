@@ -44,6 +44,23 @@ public protocol AbstractDraft {
     var uuid: String { get }
 }
 
+@propertyWrapper public struct EmptyNilEncoded<Content>: Encodable, Equatable where Content: Encodable & Equatable {
+    public var wrappedValue: [Content]
+
+    public init(wrappedValue: [Content]) {
+        self.wrappedValue = wrappedValue
+    }
+
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.singleValueContainer()
+        if wrappedValue.isEmpty {
+            try container.encodeNil()
+        } else {
+            try container.encode(wrappedValue)
+        }
+    }
+}
+
 // We need two draft models because of a bug in Realm…
 // https://github.com/realm/realm-swift/issues/7810
 public struct UnmanagedDraft: Equatable, Encodable, AbstractDraft {
@@ -52,11 +69,11 @@ public struct UnmanagedDraft: Equatable, Encodable, AbstractDraft {
     public var body: String
     public var quote: String
     public var mimeType: String
-    public var from: [Recipient]?
-    public var replyTo: [Recipient]?
-    public var to: [Recipient]?
-    public var cc: [Recipient]?
-    public var bcc: [Recipient]?
+    @EmptyNilEncoded public var from: [Recipient]
+    @EmptyNilEncoded public var replyTo: [Recipient]
+    @EmptyNilEncoded public var to: [Recipient]
+    @EmptyNilEncoded public var cc: [Recipient]
+    @EmptyNilEncoded public var bcc: [Recipient]
     public var inReplyTo: String?
     public var inReplyToUid: String?
     public var forwardedUid: String?
@@ -105,11 +122,11 @@ public struct UnmanagedDraft: Equatable, Encodable, AbstractDraft {
                 body: String = "",
                 quote: String = "",
                 mimeType: String = UTType.html.preferredMIMEType!,
-                from: [Recipient]? = nil,
-                replyTo: [Recipient]? = nil,
-                to: [Recipient]? = nil,
-                cc: [Recipient]? = nil,
-                bcc: [Recipient]? = nil,
+                from: [Recipient] = [],
+                replyTo: [Recipient] = [],
+                to: [Recipient] = [],
+                cc: [Recipient] = [],
+                bcc: [Recipient] = [],
                 inReplyTo: String? = nil,
                 inReplyToUid: String? = nil,
                 forwardedUid: String? = nil,
@@ -140,13 +157,13 @@ public struct UnmanagedDraft: Equatable, Encodable, AbstractDraft {
         self.delay = delay
     }
 
-    private func valueToRecipient(_ value: String) -> [Recipient]? {
-        guard !value.isEmpty else { return nil }
+    private func valueToRecipient(_ value: String) -> [Recipient] {
+        guard !value.isEmpty else { return [] }
         return value.components(separatedBy: ",").map { Recipient(email: $0, name: "") }
     }
 
-    private func recipientToValue(_ recipient: [Recipient]?) -> String {
-        return recipient?.map(\.email).joined(separator: ",") ?? ""
+    private func recipientToValue(_ recipient: [Recipient]) -> String {
+        return recipient.map(\.email).joined(separator: ",")
     }
 
     public static func replying(to message: Message, mode: ReplyMode) -> UnmanagedDraft {
@@ -163,8 +180,8 @@ public struct UnmanagedDraft: Equatable, Encodable, AbstractDraft {
         return UnmanagedDraft(subject: subject,
                               body: "<div><br></div><div><br></div>\(quote)",
                               quote: quote,
-                              to: mode.isReply ? Array(message.replyTo.isEmpty ? message.from.detached() : message.replyTo.detached()) : nil,
-                              cc: mode == .replyAll ? Array(message.to.detached()) + Array(message.cc.detached()) : nil,
+                              to: mode.isReply ? Array(message.replyTo.isEmpty ? message.from.detached() : message.replyTo.detached()) : [],
+                              cc: mode == .replyAll ? Array(message.to.detached()) + Array(message.cc.detached()) : [],
                               inReplyTo: message.msgId,
                               inReplyToUid: mode.isReply ? message.uid : nil,
                               forwardedUid: mode == .forward ? message.uid : nil /* ,
@@ -325,9 +342,9 @@ public class Draft: Object, Decodable, Identifiable, AbstractDraft {
                               body: body,
                               quote: quote ?? "",
                               mimeType: mimeType,
-                              to: to.isEmpty ? nil : Array(to),
-                              cc: cc.isEmpty ? nil : Array(cc),
-                              bcc: bcc.isEmpty ? nil : Array(bcc),
+                              to: Array(to),
+                              cc: Array(cc),
+                              bcc: Array(bcc),
                               inReplyTo: inReplyTo,
                               inReplyToUid: inReplyToUid,
                               forwardedUid: forwardedUid,

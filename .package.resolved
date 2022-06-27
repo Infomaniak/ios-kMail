@@ -3,7 +3,7 @@
     {
       "identity" : "alamofire",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/Alamofire/Alamofire",
+      "location" : "https://github.com/Alamofire/Alamofire.git",
       "state" : {
         "revision" : "354dda32d89fc8cd4f5c46487f64957d355f53d8",
         "version" : "5.6.1"
@@ -169,6 +169,15 @@
       "state" : {
         "revision" : "61411771350a5a4e96666a8a202ae4b2be327a2b",
         "version" : "1.0.1"
+      }
+    },
+    {
+      "identity" : "wrappinghstack",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/dkk/WrappingHStack",
+      "state" : {
+        "revision" : "f568b78357a26f740998306f156d1ef97b6b9680",
+        "version" : "2.2.1"
       }
     }
   ],

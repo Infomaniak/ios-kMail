@@ -22,6 +22,21 @@ import MailResources
 import RealmSwift
 import SwiftUI
 
+enum RecipientFieldType: Hashable {
+    case to, cc, bcc
+
+    var title: String {
+        switch self {
+        case .to:
+            return MailResourcesStrings.toTitle
+        case .cc:
+            return MailResourcesStrings.ccTitle
+        case .bcc:
+            return MailResourcesStrings.bccTitle
+        }
+    }
+}
+
 class NewMessageBottomSheet: BottomSheetState<NewMessageBottomSheet.State, NewMessageBottomSheet.Position> {
     enum State {
         case link(handler: (String) -> Void)
@@ -34,12 +49,15 @@ class NewMessageBottomSheet: BottomSheetState<NewMessageBottomSheet.State, NewMe
 
 struct NewMessageView: View {
     @Binding var isPresented: Bool
+
     @State private var mailboxManager: MailboxManager
     @State private var selectedMailboxItem: Int = 0
-    @State var draft: UnmanagedDraft
-    @State var editor = RichTextEditorModel()
-    @State var showCc = false
-
+    @State private var draft: UnmanagedDraft
+    @State private var editor = RichTextEditorModel()
+    @State private var showCc = false
+    @FocusState private var focusedRecipientField: RecipientFieldType?
+    @State private var addRecipientHandler: ((Recipient) -> Void)?
+    @State private var autocompletion: [Recipient] = []
     @State private var sendDisabled = false
     @State private var draftHasChanged = false
 
@@ -72,43 +90,53 @@ struct NewMessageView: View {
     var body: some View {
         NavigationView {
             VStack {
-                HStack(alignment: .firstTextBaseline) {
-                    Text(MailResourcesStrings.fromTitle)
-                        .textStyle(.bodySecondary)
-                    Picker("Mailbox", selection: $selectedMailboxItem) {
-                        ForEach(AccountManager.instance.mailboxes.indices, id: \.self) { i in
-                            Text(AccountManager.instance.mailboxes[i].email).tag(i)
+                if autocompletion.isEmpty {
+                    HStack {
+                        Text(MailResourcesStrings.fromTitle)
+                            .textStyle(.bodySecondary)
+                        Picker("Mailbox", selection: $selectedMailboxItem) {
+                            ForEach(AccountManager.instance.mailboxes.indices, id: \.self) { i in
+                                Text(AccountManager.instance.mailboxes[i].email).tag(i)
+                            }
                         }
+                        .textStyle(.body)
+                        Spacer()
                     }
-                    .textStyle(.body)
-                    Spacer()
+
+                    SeparatorView(withPadding: false, fullWidth: true)
                 }
 
-                SeparatorView(withPadding: false, fullWidth: true)
-
-                RecipientCellView(text: $draft.toValue, showCcButton: $showCc, type: .to)
+                recipientCell(type: .to)
 
                 if showCc {
-                    RecipientCellView(text: $draft.ccValue, showCcButton: $showCc, type: .cc)
-                    RecipientCellView(text: $draft.bccValue, showCcButton: $showCc, type: .bcc)
+                    recipientCell(type: .cc)
+                    recipientCell(type: .bcc)
                 }
 
-                RecipientCellView(text: $draft.subject, showCcButton: $showCc, type: .object)
+                // Show the rest of the view, or the autocompletion list
+                if autocompletion.isEmpty {
+                    NewMessageCell(title: MailResourcesStrings.subjectTitle) {
+                        TextField("", text: $draft.subject)
+                    }
 
-                RichTextEditor(model: $editor, body: $draft.body)
+                    RichTextEditor(model: $editor, body: $draft.body)
+                } else {
+                    AutocompletionView(autocompletion: $autocompletion) { recipient in
+                        addRecipientHandler?(recipient)
+                    }
+                }
             }
             .padding()
             .navigationBarTitleDisplayMode(.inline)
             .navigationBarBackButtonHidden(true)
-            .navigationBarItems(leading:
-                Button {
+            .navigationBarItems(
+                leading: Button {
                     self.dismiss()
                 } label: {
                     Image(systemName: "xmark")
                 }
                 .tint(MailResourcesAsset.secondaryTextColor),
-                trailing:
-                Button {
+                trailing: Button {
                     Task {
                         if let cancelableResponse = await send() {
                             IKSnackBar.showCancelableSnackBar(
@@ -125,7 +153,8 @@ struct NewMessageView: View {
                     Image(resource: MailResourcesAsset.send)
                 }
                 .tint(MailResourcesAsset.mailPinkColor)
-                .disabled(sendDisabled))
+                .disabled(sendDisabled)
+            )
         }
         .onChange(of: draft) { _ in
             textDidChange()
@@ -198,6 +227,36 @@ struct NewMessageView: View {
 
     private func dismiss() {
         isPresented = false
+    }
+
+    private func shouldDisplay(field: RecipientFieldType) -> Bool {
+        return autocompletion.isEmpty || focusedRecipientField == field
+    }
+
+    private func binding(for type: RecipientFieldType) -> Binding<[Recipient]> {
+        let binding: Binding<[Recipient]>
+        switch type {
+        case .to:
+            binding = $draft.to
+        case .cc:
+            binding = $draft.cc
+        case .bcc:
+            binding = $draft.bcc
+        }
+        return binding
+    }
+
+    @ViewBuilder
+    private func recipientCell(type: RecipientFieldType) -> some View {
+        if shouldDisplay(field: type) {
+            NewMessageCell(title: type.title, showCc: type == .to ? $showCc : nil) {
+                RecipientField(recipients: binding(for: type),
+                               autocompletion: $autocompletion,
+                               addRecipientHandler: $addRecipientHandler,
+                               focusedField: _focusedRecipientField,
+                               type: type)
+            }
+        }
     }
 }
 
