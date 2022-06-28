@@ -32,9 +32,11 @@ struct SettingsOptionView<OptionEnum>: View where OptionEnum: CaseIterable, Opti
     @State private var selectedValue: OptionEnum {
         didSet {
             UserDefaults.shared[keyPath: keyPath] = selectedValue
-            if keyPath == \.theme {
-                (UIApplication.shared.connectedScenes.first?.delegate as? SceneDelegate)?.window?
-                    .overrideUserInterfaceStyle = UserDefaults.shared.theme.interfaceStyle
+            switch keyPath {
+            case \.theme, \.accentColor:
+                UIApplication.shared.connectedScenes.forEach { ($0.delegate as? SceneDelegate)?.updateWindowUI() }
+            default:
+                break
             }
         }
     }
@@ -47,7 +49,8 @@ struct SettingsOptionView<OptionEnum>: View where OptionEnum: CaseIterable, Opti
         self.subtitle = subtitle
         self.keyPath = keyPath
         self.excludedKeyPath = excludedKeyPath
-        _selectedValue = State(wrappedValue: UserDefaults.shared[keyPath: keyPath])    }
+        _selectedValue = State(wrappedValue: UserDefaults.shared[keyPath: keyPath])
+    }
 
     var body: some View {
         List {

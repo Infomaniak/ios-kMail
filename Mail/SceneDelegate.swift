@@ -33,9 +33,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, AccountManagerDelegate 
         // This delegate does not imply the connecting scene or session are new (see `application:configurationForConnectingSceneSession` instead).
         guard let _ = (scene as? UIWindowScene) else { return }
         accountManager = AccountManager.instance
-        UserDefaults.shared.accentColor = .pink
-        window?.tintColor = UserDefaults.shared.accentColor.primary.color
-        window?.overrideUserInterfaceStyle = UserDefaults.shared.theme.interfaceStyle
+        updateWindowUI()
         setupLaunch()
     }
 
@@ -112,6 +110,11 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, AccountManagerDelegate 
         } else {
             showMainView()
         }
+    }
+
+    func updateWindowUI() {
+        window?.tintColor = UserDefaults.shared.accentColor.primary.color
+        window?.overrideUserInterfaceStyle = UserDefaults.shared.theme.interfaceStyle
     }
 
     // MARK: - Show views
