@@ -45,18 +45,18 @@ public enum AccentColor: String, CaseIterable, SettingsOptionEnum {
     public var primary: MailResourcesColors {
         switch self {
         case .pink:
-            return MailResourcesAsset.mailPinkColor
+            return MailResourcesAsset.primaryPinkColor
         case .blue:
-            return MailResourcesAsset.infomaniakColor
+            return MailResourcesAsset.primaryBlueColor
         }
     }
 
     public var secondary: MailResourcesColors {
         switch self {
         case .pink:
-            return MailResourcesAsset.mailPinkColor
+            return MailResourcesAsset.secondaryPinkColor
         case .blue:
-            return MailResourcesAsset.infomaniakColor
+            return MailResourcesAsset.secondaryBlueColor
         }
     }
 }
