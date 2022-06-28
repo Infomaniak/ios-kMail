@@ -98,8 +98,8 @@ enum SettingsOption: Equatable {
             )
         case .accentColor:
             SettingsOptionView<AccentColor>(
-                title: "Couleur d’accentuation",
-                subtitle: "Choisissez la couleur d’accentuation de l’application",
+                title: MailResourcesStrings.settingsAccentColor,
+                subtitle: MailResourcesStrings.settingsAccentColorDescription,
                 keyPath: \.accentColor
             )
         case .displayModeOption:

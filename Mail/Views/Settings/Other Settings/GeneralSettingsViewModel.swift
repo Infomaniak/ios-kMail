@@ -80,7 +80,7 @@ private extension SettingsItem {
     )
     static let accentColor = SettingsItem(
         id: 8,
-        title: "Couleur d’accentuation",
+        title: MailResourcesStrings.settingsAccentColor,
         type: .option(.accentColor)
     )
     static let swipeActions = SettingsItem(

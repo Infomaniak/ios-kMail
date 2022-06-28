@@ -61,8 +61,8 @@ struct UserFoldersListView: View {
                     FolderCell(folder: folder, selectedFolder: $selectedFolder, isCompact: isCompact)
                 }
 
-                MenuDrawerItemCell(content: .init(icon: MailResourcesAsset.add, label: "Ajouter un dossier") {
-                    // TODO: Add folder
+                MenuDrawerItemCell(content: .init(icon: MailResourcesAsset.add, label: MailResourcesStrings.buttonCreateFolder) {
+                    // TODO: Create folder
                 })
                 .padding(.top, Constants.menuDrawerVerticalPadding)
                 .padding([.leading, .trailing], Constants.menuDrawerHorizontalPadding)
