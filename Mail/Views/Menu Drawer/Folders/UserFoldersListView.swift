@@ -29,6 +29,8 @@ struct UserFoldersListView: View {
     @State private var isExpanded = false
     @Binding var selectedFolder: Folder?
 
+    @EnvironmentObject var globalSheet: GlobalBottomSheet
+
     var isCompact: Bool
 
     private let foldersSortDescriptors = [
@@ -62,7 +64,7 @@ struct UserFoldersListView: View {
                 }
 
                 MenuDrawerItemCell(content: .init(icon: MailResourcesAsset.add, label: MailResourcesStrings.Localizable.buttonCreateFolder) {
-                    // TODO: Create folder
+                    globalSheet.open(state: .createNewFolder(mode: .create), position: .newFolderHeight)
                 })
                 .padding(.top, Constants.menuDrawerVerticalPadding)
                 .padding([.leading, .trailing], Constants.menuDrawerHorizontalPadding)
