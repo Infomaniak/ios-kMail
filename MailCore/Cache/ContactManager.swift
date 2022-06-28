@@ -144,4 +144,9 @@ public class ContactManager: ObservableObject {
     public func contacts(matching string: String) -> [MergedContact] {
         return mergedContacts.values.filter { $0.name.localizedCaseInsensitiveContains(string) || $0.email.localizedCaseInsensitiveContains(string) }
     }
+
+    public func getMainAddressBook() -> AddressBook? {
+        let realm = getRealm()
+        return realm.objects(AddressBook.self).filter { $0.principalUri.starts(with: "principals") }.first
+    }
 }

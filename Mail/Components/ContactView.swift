@@ -82,7 +82,11 @@ struct ContactView: View {
     }
 
     private func addToContacts() {
-        // TODO: handle addContacts action
+        let contactManager = AccountManager.instance.currentContactManager
+        guard let addressBook = contactManager?.getMainAddressBook() else { return }
+        Task {
+            try? await AccountManager.instance.currentContactManager?.apiFetcher.addContact(recipient, to: addressBook)
+        }
     }
 
     private func copyEmail() {
