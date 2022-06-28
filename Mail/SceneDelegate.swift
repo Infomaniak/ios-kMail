@@ -63,15 +63,13 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, AccountManagerDelegate 
         // Called as the scene transitions from the foreground to the background.
         // Use this method to save data, release shared resources, and store enough scene-specific state information
         // to restore the scene back to its current state.
-        if UserDefaults.shared.isAppLockEnabled {
-            // Cast rootViewController in a UIHostingViewController class containing a LockedAppView and
-            // a UIWindow? environment variable
-            if window?.rootViewController?.isKind(of: UIHostingController<ModifiedContent<
-                LockedAppView,
-                _EnvironmentKeyWritingModifier<UIWindow?>
-            >>.self) == true {
-                AppLockHelper.shared.setTime()
-            }
+
+        // Cast rootViewController in a UIHostingViewController containing a LockedAppView and a UIWindow? environment variable
+        if UserDefaults.shared.isAppLockEnabled && window?.rootViewController?.isKind(of: UIHostingController<ModifiedContent<
+            LockedAppView,
+            _EnvironmentKeyWritingModifier<UIWindow?>
+        >>.self) == true {
+            AppLockHelper.shared.setTime()
         }
     }
 
