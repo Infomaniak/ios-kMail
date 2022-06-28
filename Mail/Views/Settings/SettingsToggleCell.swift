@@ -36,7 +36,7 @@ struct SettingsToggleCell: View {
             Text(title)
                 .textStyle(.body)
         }
-        .onChange(of: value) { _ in
+        .onTapGesture {
             if userDefaults == .appLock {
                 Task {
                     do {
