@@ -17,6 +17,7 @@
  */
 
 import InfomaniakCore
+import MailResources
 import SwiftUI
 
 struct SettingsToggleCell: View {
@@ -32,20 +33,30 @@ struct SettingsToggleCell: View {
     }
 
     var body: some View {
-        Toggle(isOn: $value) {
+        Toggle(isOn: Binding {
+            value
+        } set: { newValue in
+            value = newValue
+            if userDefaults == .appLock {
+                enableAppLock()
+            }
+        }) {
             Text(title)
                 .textStyle(.body)
         }
-        .onTapGesture {
-            if userDefaults == .appLock {
-                Task {
-                    do {
-                        if try await !AppLockHelper.shared.evaluatePolicy(reason: "Coucou") {
-                            value.toggle()
-                        }
-                    } catch {
+    }
+
+    private func enableAppLock() {
+        Task {
+            do {
+                if try await !AppLockHelper.shared.evaluatePolicy(reason: MailResourcesStrings.appSecurityDescription) {
+                    withAnimation {
                         value.toggle()
                     }
+                }
+            } catch {
+                withAnimation {
+                    value.toggle()
                 }
             }
         }

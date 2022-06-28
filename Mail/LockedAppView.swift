@@ -17,6 +17,7 @@
  */
 
 import InfomaniakCore
+import MailResources
 import SwiftUI
 
 struct LockedAppView: View {
@@ -31,7 +32,7 @@ struct LockedAppView: View {
 
     private func unlockApp() {
         Task {
-            if (try? await AppLockHelper.shared.evaluatePolicy(reason: "Hey")) == true {
+            if (try? await AppLockHelper.shared.evaluatePolicy(reason: MailResourcesStrings.lockAppTitle)) == true {
                 await (window?.windowScene?.delegate as? SceneDelegate)?.showMainView()
             }
         }
