@@ -20,14 +20,46 @@ import InfomaniakCore
 import MailResources
 import SwiftUI
 
+// TODO: Update the view when the mock-up is ready (current view based on kDrive)
+
 struct LockedAppView: View {
     @Environment(\.window) var window
 
     var body: some View {
         VStack {
-            Text("Unlock App")
-            Button("Unlock App", action: unlockApp)
+            Image(resource: MailResourcesAsset.logoText)
+                .resizable()
+                .scaledToFit()
+                .frame(width: 200)
+
+            Spacer()
+
+            Circle()
+                .frame(width: 175, height: 175)
+                .foregroundColor(MailResourcesAsset.backgroundHeaderColor)
+                .overlay {
+                    Image(systemName: "lock.fill")
+                        .font(.system(size: 60))
+                        .foregroundColor(MailResourcesAsset.mailPinkColor)
+                }
+                .padding(.bottom, 5)
+            Text(MailResourcesStrings.lockAppTitle)
+                .font(.body)
+
+            Spacer()
+
+            Button(action: unlockApp) {
+                Text(MailResourcesStrings.buttonUnlock)
+                    .frame(maxWidth: .infinity)
+                    .padding([.top, .bottom])
+                    .background(Color(uiColor: MailResourcesAsset.mailPinkColor.color))
+                    .foregroundColor(.white)
+                    .clipShape(RoundedRectangle(cornerRadius: 5))
+            }
+            .padding([.leading, .trailing], 40)
         }
+        .padding(.top, 20)
+        .padding(.bottom, 75)
     }
 
     private func unlockApp() {
