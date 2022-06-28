@@ -69,7 +69,6 @@ struct LoginView: View {
                     } label: {
                         Image(systemName: "xmark")
                     }
-                    .tint(MailResourcesAsset.secondaryTextColor)
                 } else {
                     EmptyView()
                 }

@@ -31,6 +31,7 @@ struct SettingsToggleCell: View {
             Text(title)
                 .textStyle(.body)
         }
+        .tint(.accentColor)
     }
 }
 

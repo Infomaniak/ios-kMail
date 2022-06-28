@@ -134,8 +134,7 @@ struct NewMessageView: View {
                     self.dismiss()
                 } label: {
                     Image(systemName: "xmark")
-                }
-                .tint(MailResourcesAsset.secondaryTextColor),
+                },
                 trailing: Button {
                     Task {
                         if let cancelableResponse = await send() {
