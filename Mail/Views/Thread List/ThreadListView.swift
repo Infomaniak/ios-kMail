@@ -298,7 +298,7 @@ private struct ThreadListSwipeAction: ViewModifier {
 struct ThreadListView_Previews: PreviewProvider {
     static var previews: some View {
         ThreadListView(
-            mailboxManager: MailboxManager(mailbox: PreviewHelper.sampleMailbox, apiFetcher: MailApiFetcher()),
+            mailboxManager: PreviewHelper.sampleMailboxManager,
             folder: .constant(PreviewHelper.sampleFolder),
             isCompact: false
         )

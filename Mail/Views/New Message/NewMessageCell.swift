@@ -45,7 +45,7 @@ struct NewMessageCell<Content>: View where Content: View {
             }
             .textStyle(.body)
 
-            SeparatorView(withPadding: false, fullWidth: true)
+            IKDivider()
         }
     }
 }

@@ -106,7 +106,7 @@ struct CreateFolderView: View {
 
 struct CreateFolderView_Previews: PreviewProvider {
     static var previews: some View {
-        CreateFolderView(mailboxManager: MailboxManager(mailbox: PreviewHelper.sampleMailbox, apiFetcher: MailApiFetcher()), state: GlobalBottomSheet(), mode: .create)
-        CreateFolderView(mailboxManager: MailboxManager(mailbox: PreviewHelper.sampleMailbox, apiFetcher: MailApiFetcher()), state: GlobalBottomSheet(), mode: .move { _ in })
+        CreateFolderView(mailboxManager: PreviewHelper.sampleMailboxManager, state: GlobalBottomSheet(), mode: .create)
+        CreateFolderView(mailboxManager: PreviewHelper.sampleMailboxManager, state: GlobalBottomSheet(), mode: .move { _ in })
     }
 }

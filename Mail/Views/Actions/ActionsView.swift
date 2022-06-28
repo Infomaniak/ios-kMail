@@ -48,7 +48,7 @@ struct ActionsView: View {
                 }
                 .fixedSize(horizontal: false, vertical: true)
             }
-            SeparatorView(withPadding: false, fullWidth: true)
+            IKDivider()
             // Actions
             ForEach(viewModel.listActions) { action in
                 ActionView(viewModel: viewModel, action: action)
@@ -61,7 +61,7 @@ struct ActionsView: View {
 
 struct ActionsView_Previews: PreviewProvider {
     static var previews: some View {
-        ActionsView(mailboxManager: MailboxManager(mailbox: PreviewHelper.sampleMailbox, apiFetcher: MailApiFetcher()),
+        ActionsView(mailboxManager: PreviewHelper.sampleMailboxManager,
                     target: .thread(PreviewHelper.sampleThread),
                     state: ThreadBottomSheet(),
                     globalSheet: GlobalBottomSheet()) { _, _ in }

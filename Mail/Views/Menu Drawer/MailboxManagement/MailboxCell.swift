@@ -23,20 +23,15 @@ struct MailboxCell: View {
     @Environment(\.window) private var window
 
     @State var mailbox: Mailbox
-    @State var unreadMessages = false
+    @State var unreadCount = 0
 
     var body: some View {
-        MailboxesManagementButtonView(text: mailbox.email, showBadge: $unreadMessages) {
+        MailboxesManagementButtonView(text: mailbox.email, detailNumber: unreadCount > 0 ? unreadCount : nil) {
             (window?.windowScene?.delegate as? SceneDelegate)?.switchMailbox(mailbox)
         }
         .onAppear {
-            hasUnreadMessages()
+            // TODO: Get unread count
         }
-    }
-
-    private func hasUnreadMessages() {
-        guard let mailboxManager = AccountManager.instance.getMailboxManager(for: mailbox) else { return }
-        unreadMessages = mailboxManager.hasUnreadMessages()
     }
 }
 

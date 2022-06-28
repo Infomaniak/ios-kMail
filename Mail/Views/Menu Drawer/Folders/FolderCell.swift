@@ -25,7 +25,7 @@ struct FolderCell: View {
     @EnvironmentObject var mailboxManager: MailboxManager
     @EnvironmentObject var navigationDrawerController: NavigationDrawerController
 
-    @State var currentFolder: Folder!
+    let folder: Folder
     @Binding var selectedFolder: Folder?
 
     var isCompact: Bool
@@ -33,37 +33,30 @@ struct FolderCell: View {
     var body: some View {
         if isCompact {
             Button(action: updateFolder) {
-                FolderCellContent(currentFolder: $currentFolder, selectedFolder: $selectedFolder)
+                FolderCellContent(folder: folder, selectedFolder: $selectedFolder)
             }
         } else {
             NavigationLink {
-                ThreadListView(mailboxManager: mailboxManager, folder: $currentFolder, isCompact: isCompact)
-                    .onAppear { selectedFolder = currentFolder }
+                ThreadListView(mailboxManager: mailboxManager, folder: .constant(folder), isCompact: isCompact)
+                    .onAppear { selectedFolder = folder }
             } label: {
-                FolderCellContent(currentFolder: $currentFolder, selectedFolder: $selectedFolder)
+                FolderCellContent(folder: folder, selectedFolder: $selectedFolder)
             }
         }
     }
 
     private func updateFolder() {
-        selectedFolder = currentFolder
+        selectedFolder = folder
         navigationDrawerController.close()
     }
 }
 
 struct FolderCellContent: View {
-    @Binding var currentFolder: Folder!
+    let folder: Folder
     @Binding var selectedFolder: Folder?
 
-    private var iconSize: CGFloat {
-        if currentFolder.role == nil {
-            return currentFolder.isFavorite ? 22 : 19
-        }
-        return 24
-    }
-
     private var isSelected: Bool {
-        currentFolder.id == selectedFolder?.id
+        folder.id == selectedFolder?.id
     }
 
     private var textStyle: MailTextStyle {
@@ -71,23 +64,30 @@ struct FolderCellContent: View {
     }
 
     var body: some View {
-        HStack {
-            currentFolder.icon
+        HStack(spacing: 0) {
+            folder.icon
                 .resizable()
                 .scaledToFit()
-                .frame(width: iconSize, height: iconSize)
+                .frame(width: 24, height: 24)
                 .foregroundColor(.accentColor)
-                .padding(.trailing, 10)
+                .padding(.trailing, 24)
 
-            Text(currentFolder.localizedName)
+            Text(folder.localizedName)
                 .textStyle(textStyle)
 
             Spacer()
 
-            if currentFolder.unreadCount != nil {
-                Text(currentFolder.formattedUnreadCount)
+            if folder.unreadCount != nil {
+                Text(folder.formattedUnreadCount)
                     .textStyle(.calloutHighlighted)
             }
+        }
+        .padding([.top, .bottom], Constants.menuDrawerVerticalPadding)
+        .padding(.leading, Constants.menuDrawerHorizontalPadding)
+        .padding(.trailing, 18)
+        .modifyIf(isSelected) { view in
+            view
+                .background(SelectionBackground())
         }
     }
 }
@@ -95,11 +95,11 @@ struct FolderCellContent: View {
 struct FolderCellView_Previews: PreviewProvider {
     static var previews: some View {
         FolderCell(
-            currentFolder: PreviewHelper.sampleFolder,
+            folder: PreviewHelper.sampleFolder,
             selectedFolder: .constant(PreviewHelper.sampleFolder),
             isCompact: false
         )
-        .previewLayout(.sizeThatFits)
-        .previewDevice(PreviewDevice(stringLiteral: "iPhone 11 Pro"))
+        .environmentObject(PreviewHelper.sampleMailboxManager)
+        .environmentObject(NavigationDrawerController())
     }
 }

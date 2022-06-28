@@ -110,7 +110,7 @@ struct ThreadListCell: View {
 struct ThreadListCell_Previews: PreviewProvider {
     static var previews: some View {
         ThreadListCell(
-            mailboxManager: MailboxManager(mailbox: PreviewHelper.sampleMailbox, apiFetcher: MailApiFetcher()),
+            mailboxManager: PreviewHelper.sampleMailboxManager,
             thread: PreviewHelper.sampleThread
         )
         .previewLayout(.sizeThatFits)

@@ -117,7 +117,7 @@ struct MenuDrawerView: View {
     private var actionsMenuItems = [MenuItem]()
 
     init(mailboxManager: MailboxManager, selectedFolder: Binding<Folder?>, isCompact: Bool) {
-        _folders = .init(Folder.self, configuration: AccountManager.instance.currentMailboxManager!.realmConfiguration) {
+        _folders = .init(Folder.self, configuration: AccountManager.instance.currentMailboxManager?.realmConfiguration) {
             $0.parentLink.count == 0
         }
         _mailboxManager = StateObject(wrappedValue: mailboxManager)
@@ -128,13 +128,12 @@ struct MenuDrawerView: View {
     }
 
     var body: some View {
-        ScrollView {
+        VStack(spacing: 0) {
             MenuHeaderView()
+                .zIndex(1)
 
-            VStack(alignment: .leading) {
+            ScrollView {
                 MailboxesManagementView()
-
-                SeparatorView()
 
                 RoleFoldersListView(
                     folders: $folders,
@@ -142,7 +141,7 @@ struct MenuDrawerView: View {
                     isCompact: isCompact
                 )
 
-                SeparatorView()
+                IKDivider(withPadding: true)
 
                 UserFoldersListView(
                     folders: $folders,
@@ -150,20 +149,20 @@ struct MenuDrawerView: View {
                     isCompact: isCompact
                 )
 
-                SeparatorView()
+                IKDivider(withPadding: true)
 
                 MenuDrawerItemsListView(content: helpMenuItems)
 
-                SeparatorView()
+                IKDivider(withPadding: true)
 
                 MenuDrawerItemsListView(title: MailResourcesStrings.menuDrawerAdvancedActions, content: actionsMenuItems)
 
                 if mailboxManager.mailbox.isLimited {
-                    SeparatorView()
+                    IKDivider(withPadding: true)
+
                     MailboxQuotaView()
                 }
             }
-            .padding([.leading, .trailing], Constants.menuDrawerHorizontalPadding)
         }
         .background(Color(MailResourcesAsset.backgroundColor.color))
         .environmentObject(mailboxManager)
@@ -205,5 +204,13 @@ struct MenuDrawerView: View {
 
     func restoreMails() {
         // TODO: Display "Restore Mails" view
+    }
+}
+
+struct MenuDrawerView_Previews: PreviewProvider {
+    static var previews: some View {
+        MenuDrawerView(mailboxManager: PreviewHelper.sampleMailboxManager,
+                       selectedFolder: .constant(nil),
+                       isCompact: false)
     }
 }

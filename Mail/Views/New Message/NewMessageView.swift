@@ -103,7 +103,7 @@ struct NewMessageView: View {
                         Spacer()
                     }
 
-                    SeparatorView(withPadding: false, fullWidth: true)
+                    IKDivider()
                 }
 
                 recipientCell(type: .to)
@@ -289,7 +289,7 @@ struct NewMessageView_Previews: PreviewProvider {
     static var previews: some View {
         NewMessageView(
             isPresented: .constant(true),
-            mailboxManager: MailboxManager(mailbox: PreviewHelper.sampleMailbox, apiFetcher: MailApiFetcher())
+            mailboxManager: PreviewHelper.sampleMailboxManager
         )
     }
 }

@@ -50,14 +50,14 @@ struct AccountView: View {
                 }
 
                 // TODO: - Show email list
-                SeparatorView(withPadding: false, fullWidth: true)
+                IKDivider()
                 HStack {
                     Text(MailResourcesStrings.buttonAccountAssociatedEmailAddresses)
                     Spacer()
                     ChevronIcon(style: .right)
                 }
                 .padding([.leading, .trailing], 14)
-                SeparatorView(withPadding: false, fullWidth: true)
+                IKDivider()
 
                 // TODO: - Appareil list
 

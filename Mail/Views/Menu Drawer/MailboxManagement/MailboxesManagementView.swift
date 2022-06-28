@@ -25,29 +25,62 @@ struct MailboxesManagementView: View {
     @EnvironmentObject var mailboxManager: MailboxManager
     @EnvironmentObject var menuSheet: MenuSheet
 
-    @State private var unfoldDetails = false
+    @State private var isExpanded = false
+    @State private var avatarImage = Image(resource: MailResourcesAsset.placeholderAvatar)
+
+    private var otherMailboxes: [Mailbox] {
+        return AccountManager.instance.mailboxes.filter { $0.mailboxId != mailboxManager.mailbox.mailboxId }
+    }
 
     var body: some View {
-        DisclosureGroup(mailboxManager.mailbox.email, isExpanded: $unfoldDetails) {
-            VStack(alignment: .leading) {
-                ForEach(
-                    AccountManager.instance.mailboxes.filter { $0.mailboxId != mailboxManager.mailbox.mailboxId },
-                    id: \.mailboxId
-                ) { mailbox in
-                    MailboxCell(mailbox: mailbox)
+        VStack(alignment: .leading) {
+            Button {
+                withAnimation {
+                    isExpanded.toggle()
                 }
-
-                SeparatorView(withPadding: false, fullWidth: true)
-
-                MailboxesManagementButtonView(text: MailResourcesStrings.buttonAddAccount, handleAction: addNewAccount)
-                MailboxesManagementButtonView(text: MailResourcesStrings.buttonManageAccount, handleAction: handleMyAccount)
+            } label: {
+                HStack(spacing: 0) {
+                    avatarImage
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: 32, height: 32)
+                        .clipShape(Circle())
+                        .padding(.trailing, 16)
+                    Text(mailboxManager.mailbox.email)
+                        .foregroundColor(.accentColor)
+                        .textStyle(.header3)
+                        .lineLimit(1)
+                    Spacer()
+                    ChevronIcon(style: isExpanded ? .up : .down)
+                }
+                .padding([.top, .bottom], 8)
+                .padding([.leading, .trailing], 20)
+                .background(SelectionBackground())
             }
-            .padding(.leading)
-            .padding(.top, 5)
+
+            if isExpanded {
+                VStack(alignment: .leading) {
+                    ForEach(otherMailboxes, id: \.mailboxId) { mailbox in
+                        MailboxCell(mailbox: mailbox)
+                    }
+
+                    if !otherMailboxes.isEmpty {
+                        IKDivider(withPadding: true)
+                    }
+
+                    MailboxesManagementButtonView(text: MailResourcesStrings.buttonAddAccount, handleAction: addNewAccount)
+                    MailboxesManagementButtonView(text: MailResourcesStrings.buttonManageAccount, handleAction: handleMyAccount)
+
+                    IKDivider(withPadding: true)
+                }
+            }
         }
-        .textStyle(.header3)
-        .accentColor(Color(MailResourcesAsset.primaryTextColor.color))
-        .padding(.top, 20)
+        .padding(.top, 16)
+        .task {
+            if let user = AccountManager.instance.account(for: mailboxManager.mailbox.userId)?.user {
+                avatarImage = await user.getAvatar()
+            }
+        }
     }
 
     // MARK: - Menu actions
@@ -64,7 +97,8 @@ struct MailboxesManagementView: View {
 struct MailboxesManagementView_Previews: PreviewProvider {
     static var previews: some View {
         MailboxesManagementView()
-            .environmentObject(MailboxManager(mailbox: PreviewHelper.sampleMailbox, apiFetcher: MailApiFetcher()))
+            .environmentObject(PreviewHelper.sampleMailboxManager)
             .previewLayout(.sizeThatFits)
+            .accentColor(UserDefaults.shared.accentColor.primary.swiftUiColor)
     }
 }

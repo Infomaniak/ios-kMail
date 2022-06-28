@@ -16,27 +16,19 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import MailResources
 import SwiftUI
 
-struct SeparatorView: View {
-    var withPadding = true
-    var fullWidth = false
-
+struct SelectionBackground: View {
     var body: some View {
-        Divider()
-            .frame(height: 1)
-            .overlay(Color(MailResourcesAsset.separatorColor.color))
-            .padding(.top, withPadding ? 10 : 0)
-            .padding(.bottom, withPadding ? 12: 0)
-            .padding(.trailing, fullWidth ? 0 : 30)
+        RoundedRectangle(cornerRadius: 10)
+            .fill(UserDefaults.shared.accentColor.secondary.swiftUiColor)
+            .offset(x: 10, y: 0)
+            .padding(.leading, -2)
     }
 }
 
-struct SeparatorView_Previews: PreviewProvider {
+struct SelectionBackground_Previews: PreviewProvider {
     static var previews: some View {
-        SeparatorView()
-            .previewLayout(.sizeThatFits)
-            .previewDevice("iPhone 13 Pro")
+        SelectionBackground()
     }
 }

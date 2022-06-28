@@ -22,21 +22,21 @@ import MailResources
 import SwiftUI
 
 struct MenuDrawerItemCell: View {
-    @State var content: MenuItem
+    let content: MenuItem
 
     var body: some View {
         Button(action: content.action) {
-            HStack {
-                Image(uiImage: content.icon.image)
+            HStack(spacing: 24) {
+                Image(resource: content.icon)
                     .resizable()
                     .scaledToFit()
-                    .frame(height: 24)
+                    .frame(width: 24, height: 24)
                     .foregroundColor(.accentColor)
-                    .padding(.trailing, 15)
 
                 Text(content.label)
                     .textStyle(.body)
             }
+            .frame(maxWidth: .infinity, alignment: .leading)
         }
     }
 }
