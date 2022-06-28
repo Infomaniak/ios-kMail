@@ -98,6 +98,11 @@ struct ThreadView: View {
         .environmentObject(sheet)
         .environmentObject(bottomSheet)
         .environmentObject(threadBottomSheet)
+        .task {
+            if thread.unseenMessages > 0 {
+                try? await mailboxManager.toggleRead(thread: thread)
+            }
+        }
         .toolbar {
             ToolbarItemGroup(placement: .bottomBar) {
                 Group {
