@@ -20,13 +20,13 @@ import InfomaniakCore
 import MailCore
 import MailResources
 import RealmSwift
-import UIKit
 import SwiftUI
+import UIKit
 
 struct UserFoldersListView: View {
     @ObservedResults(Folder.self) var folders
 
-    @State private var unfoldFolders = false
+    @State private var isExpanded = false
     @Binding var selectedFolder: Folder?
 
     var isCompact: Bool
@@ -38,16 +38,36 @@ struct UserFoldersListView: View {
     ]
 
     var body: some View {
-        DisclosureGroup(MailResourcesStrings.buttonFolders, isExpanded: $unfoldFolders) {
-            VStack {
-                ForEach(AnyRealmCollection(folders.sorted(by: foldersSortDescriptors)).filter { $0.role == nil }) { folder in
-                    FolderCell(currentFolder: folder, selectedFolder: $selectedFolder, isCompact: isCompact)
-                    .padding([.top, .bottom], Constants.menuDrawerFolderCellPadding)
+        VStack(spacing: 0) {
+            Button {
+                withAnimation {
+                    isExpanded.toggle()
+                }
+            } label: {
+                HStack {
+                    Text(MailResourcesStrings.buttonFolders)
+                        .textStyle(.body)
+                    Spacer()
+                    ChevronIcon(style: isExpanded ? .up : .down)
                 }
             }
-            .padding(.top, 9)
+            .padding(.leading, Constants.menuDrawerHorizontalPadding)
+            .padding(.trailing, 18)
+
+            if isExpanded {
+                Spacer(minLength: Constants.menuDrawerVerticalPadding)
+
+                ForEach(folders.sorted(by: foldersSortDescriptors).filter { $0.role == nil }) { folder in
+                    FolderCell(folder: folder, selectedFolder: $selectedFolder, isCompact: isCompact)
+                }
+
+                MenuDrawerItemCell(content: .init(icon: MailResourcesAsset.add, label: MailResourcesStrings.buttonCreateFolder) {
+                    // TODO: Create folder
+                })
+                .padding(.top, Constants.menuDrawerVerticalPadding)
+                .padding([.leading, .trailing], Constants.menuDrawerHorizontalPadding)
+            }
         }
-        .textStyle(.body)
-        .accentColor(Color(MailResourcesAsset.primaryTextColor.color))
+        .padding([.top, .bottom], 19)
     }
 }

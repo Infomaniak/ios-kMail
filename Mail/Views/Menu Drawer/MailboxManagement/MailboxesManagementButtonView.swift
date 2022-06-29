@@ -16,44 +16,43 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import MailResources
-import MailCore
 import InfomaniakCore
+import MailCore
+import MailResources
 import SwiftUI
 
 struct MailboxesManagementButtonView: View {
-    @State var text: String
-    @Binding var showBadge: Bool
+    let text: String
+    let detailNumber: Int?
+    let handleAction: () -> Void
 
-    var handleAction: () -> Void
-
-    init(text: String, showBadge: Binding<Bool> = .constant(false), handleAction: @escaping () -> Void) {
-        _text = State(initialValue: text)
-        _showBadge = showBadge
+    init(text: String, detailNumber: Int? = nil, handleAction: @escaping () -> Void) {
+        self.text = text
+        self.detailNumber = detailNumber
         self.handleAction = handleAction
     }
 
     var body: some View {
         Button(action: handleAction) {
-            if showBadge {
-                Circle()
-                    .frame(width: Constants.unreadIconSize, height: Constants.unreadIconSize)
-                    .foregroundColor(MailResourcesAsset.mailPinkColor)
+            HStack {
+                Text(text)
+                    .textStyle(.body)
+                    .lineLimit(1)
+                Spacer()
+                if let detailNumber = detailNumber {
+                    Text("\(detailNumber)")
+                        .textStyle(.calloutHighlighted)
+                }
             }
-
-            Text(text)
-                .textStyle(.body)
-                .lineLimit(1)
         }
-        .padding([.top, .bottom], 5)
+        .padding([.top, .bottom], 8)
+        .padding(.leading, 66)
     }
 }
 
 struct MailboxesManagementButtonView_Previews: PreviewProvider {
     static var previews: some View {
-        MailboxesManagementButtonView(text: "Hello") {
-            print("Hello")
-        }
-        .previewLayout(.sizeThatFits)
+        MailboxesManagementButtonView(text: "Hello") { /* Empty for test */ }
+        MailboxesManagementButtonView(text: "Hello", detailNumber: 10) { /* Empty for test */ }
     }
 }

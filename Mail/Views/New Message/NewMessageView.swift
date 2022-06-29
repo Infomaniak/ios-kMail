@@ -103,7 +103,7 @@ struct NewMessageView: View {
                         Spacer()
                     }
 
-                    SeparatorView(withPadding: false, fullWidth: true)
+                    IKDivider()
                 }
 
                 recipientCell(type: .to)
@@ -134,8 +134,7 @@ struct NewMessageView: View {
                     self.dismiss()
                 } label: {
                     Image(systemName: "xmark")
-                }
-                .tint(MailResourcesAsset.secondaryTextColor),
+                },
                 trailing: Button {
                     Task {
                         if let cancelableResponse = await send() {
@@ -152,7 +151,6 @@ struct NewMessageView: View {
                 } label: {
                     Image(resource: MailResourcesAsset.send)
                 }
-                .tint(MailResourcesAsset.mailPinkColor)
                 .disabled(sendDisabled)
             )
         }
@@ -291,7 +289,7 @@ struct NewMessageView_Previews: PreviewProvider {
     static var previews: some View {
         NewMessageView(
             isPresented: .constant(true),
-            mailboxManager: MailboxManager(mailbox: PreviewHelper.sampleMailbox, apiFetcher: MailApiFetcher())
+            mailboxManager: PreviewHelper.sampleMailboxManager
         )
     }
 }

@@ -63,7 +63,7 @@ struct AttachmentPreviewFooter: View {
                     }
                 }
             }
-            .foregroundColor(MailResourcesAsset.infomaniakColor)
+            .foregroundColor(.accentColor)
             .padding(.top, 22)
         }
         .background(Color(MailResourcesAsset.backgroundColor.color))

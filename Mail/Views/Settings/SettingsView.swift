@@ -49,7 +49,7 @@ struct SettingsView: View {
                     if let title = section.name {
                         VStack(alignment: .leading, spacing: 16) {
                             if viewModel.sections.first != section {
-                                SeparatorView(withPadding: false, fullWidth: true)
+                                IKDivider()
                             }
                             Text(title)
                                 .textStyle(.header3)

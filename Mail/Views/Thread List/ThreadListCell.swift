@@ -31,7 +31,7 @@ extension ThreadDensity {
 }
 
 struct ThreadListCell: View {
-    @AppStorage("threadDensity", store: .shared) var density: ThreadDensity = .normal
+    @AppStorage(UserDefaults.shared.key(.threadDensity)) var density: ThreadDensity = .normal
 
     var mailboxManager: MailboxManager
     var thread: Thread
@@ -48,7 +48,7 @@ struct ThreadListCell: View {
         HStack(alignment: .top, spacing: 10) {
             Circle()
                 .frame(width: Constants.unreadIconSize, height: Constants.unreadIconSize)
-                .foregroundColor(hasUnreadMessages ? Color(MailResourcesAsset.mailPinkColor.color) : .clear)
+                .foregroundColor(hasUnreadMessages ? Color.accentColor : .clear)
                 .padding(.top, density.unreadCircleTopPadding)
 
             if density == .large {
@@ -110,7 +110,7 @@ struct ThreadListCell: View {
 struct ThreadListCell_Previews: PreviewProvider {
     static var previews: some View {
         ThreadListCell(
-            mailboxManager: MailboxManager(mailbox: PreviewHelper.sampleMailbox, apiFetcher: MailApiFetcher()),
+            mailboxManager: PreviewHelper.sampleMailboxManager,
             thread: PreviewHelper.sampleThread
         )
         .previewLayout(.sizeThatFits)

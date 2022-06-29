@@ -22,19 +22,37 @@ import SwiftUI
 
 public struct MailTextStyle {
     public var font: Font
-    public var color: Color
+    private var colorType: Color
 
-    public init(font: Font, color: Color) {
+    public var color: SwiftUI.Color {
+        switch colorType {
+        case .staticColor(let color):
+            return color
+        case .accentColor(let colorKeyPath):
+            return UserDefaults.shared.accentColor[keyPath: colorKeyPath].swiftUiColor
+        }
+    }
+
+    private enum Color {
+        case staticColor(SwiftUI.Color)
+        case accentColor(KeyPath<AccentColor, MailResourcesColors>)
+    }
+
+    private init(font: Font, colorType: Color) {
         self.font = font
-        self.color = color
+        self.colorType = colorType
+    }
+
+    public init(font: Font, color: SwiftUI.Color) {
+        self.init(font: font, colorType: .staticColor(color))
     }
 
     public init(font: Font, color: MailResourcesColors) {
-        self.init(font: font, color: Color(color.color))
+        self.init(font: font, color: .init(color.color))
     }
 
-    public init(font: Font, color: InfomaniakCoreColor) {
-        self.init(font: font, color: Color(color.color))
+    public init(font: Font, color: KeyPath<AccentColor, MailResourcesColors>) {
+        self.init(font: font, colorType: .accentColor(color))
     }
 
     public static let header1 = MailTextStyle(
@@ -69,7 +87,7 @@ public struct MailTextStyle {
 
     public static let button = MailTextStyle(
         font: .system(size: 16, weight: .semibold),
-        color: MailResourcesAsset.infomaniakColor
+        color: \.primary
     )
 
     public static let buttonPill = MailTextStyle(
@@ -99,16 +117,16 @@ public struct MailTextStyle {
 
     public static let calloutHighlighted = MailTextStyle(
         font: .system(size: 14),
-        color: MailResourcesAsset.infomaniakColor
+        color: \.primary
     )
 
     public static let snackbarBody = MailTextStyle(
         font: .system(size: 14),
-        color: Color(uiColor: UIColor(hex: "#F5F5F5")!) // FIXME: Add to colors
+        color: SwiftUI.Color(hex: "#F5F5F5") // FIXME: Add to colors
     )
 
     public static let snackbarButton = MailTextStyle(
         font: .system(size: 14),
-        color: Color(uiColor: UIColor(hex: "#4CB7FF")!) // FIXME: Add to colors
+        color: SwiftUI.Color(hex: "#4CB7FF") // FIXME: Add to colors
     )
 }

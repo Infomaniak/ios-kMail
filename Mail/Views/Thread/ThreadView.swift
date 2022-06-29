@@ -182,7 +182,7 @@ struct ThreadView: View {
 struct ThreadView_Previews: PreviewProvider {
     static var previews: some View {
         ThreadView(
-            mailboxManager: MailboxManager(mailbox: PreviewHelper.sampleMailbox, apiFetcher: MailApiFetcher()),
+            mailboxManager: PreviewHelper.sampleMailboxManager,
             thread: PreviewHelper.sampleThread
         )
     }

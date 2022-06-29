@@ -32,7 +32,6 @@ struct NewMessageButtonView: View {
                 .resizable()
                 .frame(width: 16, height: 16)
         }
-        .tint(MailResourcesAsset.mailPinkColor)
         .buttonStyle(.borderedProminent)
         .buttonBorderShape(.roundedRectangle(radius: 50))
         .controlSize(.large)

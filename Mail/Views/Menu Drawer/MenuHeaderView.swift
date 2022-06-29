@@ -39,12 +39,13 @@ struct MenuHeaderView: View {
                 Image(resource: MailResourcesAsset.cog)
                     .resizable()
                     .scaledToFit()
-                    .frame(width: 26)
+                    .frame(width: 24)
             }
+            .buttonStyle(.borderless)
         }
-        .padding([.leading, .trailing], Constants.menuDrawerHorizontalPadding)
-        .padding(.top, 30)
-        .padding(.bottom)
+        .padding([.top, .bottom], 16)
+        .padding(.leading, 18)
+        .padding(.trailing, 14)
         .background(Color(MailResourcesAsset.backgroundColor.color))
         .clipped()
         .shadow(color: Color(MailResourcesAsset.menuDrawerShadowColor.color), radius: 2, x: 0, y: 3)

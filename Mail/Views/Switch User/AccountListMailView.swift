@@ -38,9 +38,9 @@ struct AccountListMailView: View {
 
             // TODO: - Replace false number
 //            Text("7")
-//                .foregroundColor(MailResourcesAsset.infomaniakColor)
+//                .foregroundColor(.accentColor)
         }
-        .foregroundColor(isSelected ? MailResourcesAsset.infomaniakColor : MailResourcesAsset.primaryTextColor)
+        .foregroundColor(isSelected ? Color.accentColor : MailResourcesAsset.primaryTextColor.swiftUiColor)
         .textStyle(isSelected ? .calloutStrong : .callout)
     }
 }

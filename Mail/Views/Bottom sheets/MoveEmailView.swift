@@ -66,7 +66,7 @@ struct MoveEmailView: View {
 
 struct MoveEmailView_Previews: PreviewProvider {
     static var previews: some View {
-        MoveEmailView(mailboxManager: MailboxManager(mailbox: PreviewHelper.sampleMailbox, apiFetcher: MailApiFetcher()),
+        MoveEmailView(mailboxManager: PreviewHelper.sampleMailboxManager,
                       state: GlobalBottomSheet()) { _ in }
     }
 }

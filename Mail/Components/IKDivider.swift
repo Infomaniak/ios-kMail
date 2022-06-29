@@ -18,27 +18,23 @@
 
 import MailCore
 import MailResources
-import RealmSwift
 import SwiftUI
 
-struct RoleFoldersListView: View {
-    @ObservedResults(Folder.self) var folders
-
-    @Binding var selectedFolder: Folder?
-
-    var isCompact: Bool
+struct IKDivider: View {
+    var withPadding = false
 
     var body: some View {
-        VStack(spacing: 0) {
-            ForEach(Array(folders.filter { $0.role != nil }).sorted()) { folder in
-                FolderCell(folder: folder, selectedFolder: $selectedFolder, isCompact: isCompact)
+        Divider()
+            .frame(height: 1)
+            .overlay(Color(MailResourcesAsset.separatorColor.color))
+            .padding([.leading, .trailing], withPadding ? Constants.menuDrawerHorizontalPadding : 0)
+    }
+}
 
-                if folder.role == .inbox {
-                    IKDivider(withPadding: true)
-                        .padding([.top, .bottom], Constants.menuDrawerVerticalPadding)
-                }
-            }
-        }
-        .padding([.top, .bottom], Constants.menuDrawerVerticalPadding)
+struct SeparatorView_Previews: PreviewProvider {
+    static var previews: some View {
+        IKDivider()
+            .previewLayout(.sizeThatFits)
+            .previewDevice("iPhone 13 Pro")
     }
 }

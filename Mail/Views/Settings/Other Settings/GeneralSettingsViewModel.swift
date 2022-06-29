@@ -32,6 +32,7 @@ import SwiftUI
         selectedValues = [
             .threadDensityOption: UserDefaults.shared.threadDensity,
             .themeOption: UserDefaults.shared.theme,
+            .accentColor: UserDefaults.shared.accentColor,
             .displayModeOption: UserDefaults.shared.threadMode,
             .externalContentOption: UserDefaults.shared.displayExternalContent
         ]
@@ -52,7 +53,7 @@ private extension SettingsSection {
     static let appearance = SettingsSection(
         id: 3,
         name: MailResourcesStrings.settingsSectionAppearance,
-        items: [.threadDensity, .theme, .swipeActions, .displayMode, .externalContent]
+        items: [.threadDensity, .theme, .accentColor, .swipeActions, .displayMode, .externalContent]
     )
 }
 
@@ -76,6 +77,11 @@ private extension SettingsItem {
         id: 4,
         title: MailResourcesStrings.settingsTheme,
         type: .option(.themeOption)
+    )
+    static let accentColor = SettingsItem(
+        id: 8,
+        title: MailResourcesStrings.settingsAccentColor,
+        type: .option(.accentColor)
     )
     static let swipeActions = SettingsItem(
         id: 5,

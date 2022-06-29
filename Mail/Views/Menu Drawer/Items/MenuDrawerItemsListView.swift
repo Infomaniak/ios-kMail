@@ -16,9 +16,9 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import MailCore
 import MailResources
 import SwiftUI
-import MailCore
 
 struct MenuItem: Identifiable {
     let id = UUID()
@@ -34,28 +34,29 @@ struct MenuDrawerItemsListView: View {
     var content: [MenuItem]
 
     var body: some View {
-        VStack(alignment: .leading) {
+        VStack(alignment: .leading, spacing: 16) {
             if let title = title {
                 Text(title)
                     .textStyle(.calloutSecondary)
-                    .padding(.bottom, 6)
             }
 
             ForEach(content) { item in
                 MenuDrawerItemCell(content: item)
             }
         }
+        .padding([.top, .bottom], 19)
+        .padding([.leading, .trailing], Constants.menuDrawerHorizontalPadding)
     }
 }
 
 struct ItemsListView_Previews: PreviewProvider {
     static var previews: some View {
         MenuDrawerItemsListView(title: "Actions avancées",
-                      content: [
-                        MenuItem(icon: MailResourcesAsset.drawerDownload, label: "Importer des mails") { print("Hello") },
-                        MenuItem(icon: MailResourcesAsset.restoreArrow, label: "Restaurer des mails") { print("Hello") }
-                      ])
-        .previewLayout(.sizeThatFits)
-        .previewDevice(PreviewDevice(stringLiteral: "iPhone 11 Pro"))
+                                content: [
+                                    MenuItem(icon: MailResourcesAsset.drawerDownload, label: "Importer des mails") { print("Hello") },
+                                    MenuItem(icon: MailResourcesAsset.restoreArrow, label: "Restaurer des mails") { print("Hello") }
+                                ])
+                                .previewLayout(.sizeThatFits)
+                                .previewDevice(PreviewDevice(stringLiteral: "iPhone 11 Pro"))
     }
 }

@@ -71,6 +71,7 @@ enum SettingsOption: Equatable {
     // General settings
     case threadDensityOption
     case themeOption
+    case accentColor
     case displayModeOption
     case externalContentOption
 
@@ -94,6 +95,12 @@ enum SettingsOption: Equatable {
                 title: MailResourcesStrings.settingsThemeChoiceTitle,
                 subtitle: MailResourcesStrings.settingsTheme,
                 keyPath: \.theme
+            )
+        case .accentColor:
+            SettingsOptionView<AccentColor>(
+                title: MailResourcesStrings.settingsAccentColor,
+                subtitle: MailResourcesStrings.settingsAccentColorDescription,
+                keyPath: \.accentColor
             )
         case .displayModeOption:
             SettingsOptionView<ThreadMode>(

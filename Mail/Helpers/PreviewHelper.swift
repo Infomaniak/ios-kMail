@@ -23,6 +23,8 @@ import RealmSwift
 import SwiftUI
 
 struct PreviewHelper {
+    static let sampleMailboxManager = MailboxManager(mailbox: sampleMailbox, apiFetcher: MailApiFetcher())
+
     static let sampleMailbox = Mailbox(uuid: "",
                                        email: "test@example.com",
                                        emailIdn: "",

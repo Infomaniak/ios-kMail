@@ -38,7 +38,7 @@ struct NoNetworkView: View {
             }
             .frame(maxWidth: .infinity, alignment: .leading)
             .padding(16)
-            SeparatorView(withPadding: false, fullWidth: true)
+            IKDivider()
         }
     }
 }

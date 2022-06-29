@@ -47,8 +47,8 @@ struct MailboxQuotaView: View {
 
             Spacer()
         }
-        .padding(.top, 2)
-        .padding([.bottom])
+        .padding([.leading, .trailing], Constants.menuDrawerHorizontalPadding)
+        .padding([.top, .bottom], 19)
         .task {
             do {
                 quotas = try await mailboxManager.apiFetcher.quotas(mailbox: mailboxManager.mailbox)
@@ -72,25 +72,27 @@ struct MailboxQuotaView: View {
 }
 
 private struct QuotaCircularProgressViewStyle: ProgressViewStyle {
+    @AppStorage(UserDefaults.shared.key(.accentColor)) private var accentColor = AccentColor.pink
+
     func makeBody(configuration: Configuration) -> some View {
         ZStack {
             Circle()
                 .trim(from: 0, to: CGFloat(1 - (configuration.fractionCompleted ?? 0)))
-                .stroke(Color(InfomaniakCoreAsset.infomaniakColor.color), lineWidth: 2)
+                .stroke(accentColor.secondary.swiftUiColor, lineWidth: 2)
                 .rotationEffect(.degrees(-90))
-                .frame(width: 42)
+                .frame(width: 46)
 
             Circle()
                 .trim(from: CGFloat(1 - (configuration.fractionCompleted ?? 0)), to: 1)
-                .stroke(Color(MailResourcesAsset.mailPinkColor.color), lineWidth: 2)
+                .stroke(Color.accentColor, lineWidth: 2)
                 .rotationEffect(.degrees(-90))
-                .frame(width: 42)
+                .frame(width: 46)
 
             Image(resource: MailResourcesAsset.drawer)
                 .resizable()
                 .scaledToFit()
                 .frame(width: 18)
-                .foregroundColor(InfomaniakCoreAsset.infomaniakColor)
+                .foregroundColor(.accentColor)
         }
         .frame(height: 42)
     }

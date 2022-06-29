@@ -43,7 +43,7 @@ struct ChevronIcon: View {
         Image(resource: MailResourcesAsset.arrowUp)
             .resizable()
             .frame(width: 12, height: 12)
-            .foregroundColor(MailResourcesAsset.secondaryTextColor)
+            .foregroundColor(.primary)
             .padding([.top, .bottom], 2)
             .padding([.leading, .trailing], 1.5)
             .rotationEffect(style.rotationAngle)

@@ -29,7 +29,6 @@ extension UINavigationBar {
             .font: UIFont.systemFont(ofSize: 22, weight: .semibold)
         ]
 
-        tintColor = MailResourcesAsset.secondaryTextColor.color
         standardAppearance = navigationBarAppearance
         compactAppearance = navigationBarAppearance
         scrollEdgeAppearance = navigationBarAppearance
