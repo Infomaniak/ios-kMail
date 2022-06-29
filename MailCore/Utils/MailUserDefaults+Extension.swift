@@ -44,12 +44,6 @@ public extension UserDefaults.Keys {
     static let includeOriginalInReply = UserDefaults.Keys(rawValue: "includeOriginalInReply")
 }
 
-extension UserDefaults.Keys: Equatable {
-    public static func == (lhs: UserDefaults.Keys, rhs: UserDefaults.Keys) -> Bool {
-        return lhs.rawValue == rhs.rawValue
-    }
-}
-
 public extension UserDefaults {
     static let shared = UserDefaults(suiteName: AccountManager.appGroup)!
 

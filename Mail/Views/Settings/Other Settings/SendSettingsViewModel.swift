@@ -58,11 +58,11 @@ private extension SettingsItem {
     static let includeOriginalInReply = SettingsItem(
         id: 3,
         title: MailResourcesStrings.settingsSendIncludeOriginalMessage,
-        type: .toggle(userDefaults: .includeOriginalInReply)
+        type: .toggle(userDefaults: \.includeOriginalInReply)
     )
     static let acknowledgement = SettingsItem(
         id: 4,
         title: MailResourcesStrings.settingsSendAcknowledgement,
-        type: .toggle(userDefaults: .acknowledgement)
+        type: .toggle(userDefaults: \.acknowledgement)
     )
 }

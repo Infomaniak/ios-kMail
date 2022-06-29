@@ -41,7 +41,7 @@ struct SettingsItem: Identifiable, Equatable {
 
 enum SettingsType: Equatable {
     case subMenu(destination: SettingsDestination)
-    case toggle(userDefaults: UserDefaults.Keys)
+    case toggle(userDefaults: ReferenceWritableKeyPath<UserDefaults, Bool>)
     case option(SettingsOption)
 }
 

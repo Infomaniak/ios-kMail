@@ -22,50 +22,57 @@ import SwiftUI
 
 struct SettingsToggleCell: View {
     let title: String
-    let userDefaults: UserDefaults.Keys
+    let userDefaults: ReferenceWritableKeyPath<UserDefaults, Bool>
 
-    @AppStorage private var value: Bool
+    @State private var toggleIsOn: Bool
+    @State private var lastValue: Bool
 
-    init(title: String, userDefaults: UserDefaults.Keys) {
+    init(title: String, userDefaults: ReferenceWritableKeyPath<UserDefaults, Bool>) {
         self.title = title
         self.userDefaults = userDefaults
-        _value = AppStorage(wrappedValue: false, userDefaults.rawValue, store: .shared)
+        _toggleIsOn = State(wrappedValue: UserDefaults.shared[keyPath: userDefaults])
+        _lastValue = _toggleIsOn
     }
 
     var body: some View {
-        Toggle(isOn: Binding {
-            value
-        } set: { newValue in
-            value = newValue
-            if userDefaults == .appLock {
-                enableAppLock()
-            }
-        }) {
+        Toggle(isOn: Binding(get: {
+            toggleIsOn
+        }, set: { value in
+            lastValue = toggleIsOn
+            toggleIsOn = value
+            UserDefaults.shared[keyPath: userDefaults] = value
+        })) {
             Text(title)
                 .textStyle(.body)
+        }
+        .tint(.accentColor)
+        .onChange(of: toggleIsOn) { newValue in
+            guard newValue != lastValue else { return }
+            if userDefaults == \.isAppLockEnabled {
+                enableAppLock()
+            }
         }
     }
 
     private func enableAppLock() {
-        Task {
-            do {
-                if try await !AppLockHelper.shared.evaluatePolicy(reason: MailResourcesStrings.appSecurityDescription) {
-                    withAnimation {
-                        value.toggle()
-                    }
-                }
-            } catch {
-                withAnimation {
-                    value.toggle()
-                }
-            }
-        }
-        .tint(.accentColor)
-    }
+             Task {
+                 do {
+                     if try await !AppLockHelper.shared.evaluatePolicy(reason: MailResourcesStrings.appSecurityDescription) {
+                         withAnimation {
+                             toggleIsOn.toggle()
+                         }
+                     }
+                 } catch {
+                     withAnimation {
+                         toggleIsOn.toggle()
+                     }
+                 }
+             }
+         }
 }
 
 struct SettingsToggleCell_Previews: PreviewProvider {
    static var previews: some View {
-       SettingsToggleCell(title: "Code lock", userDefaults: .appLock)
+       SettingsToggleCell(title: "Code lock", userDefaults: \.isAppLockEnabled)
    }
 }
