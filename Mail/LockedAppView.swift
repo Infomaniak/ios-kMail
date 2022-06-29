@@ -40,7 +40,7 @@ struct LockedAppView: View {
                 .overlay {
                     Image(systemName: "lock.fill")
                         .font(.system(size: 60))
-                        .foregroundColor(MailResourcesAsset.mailPinkColor)
+                        .foregroundColor(.accentColor)
                 }
                 .padding(.bottom, 5)
             Text(MailResourcesStrings.lockAppTitle)
@@ -52,7 +52,7 @@ struct LockedAppView: View {
                 Text(MailResourcesStrings.buttonUnlock)
                     .frame(maxWidth: .infinity)
                     .padding([.top, .bottom])
-                    .background(Color(uiColor: MailResourcesAsset.mailPinkColor.color))
+                    .background(Color.accentColor)
                     .foregroundColor(.white)
                     .clipShape(RoundedRectangle(cornerRadius: 5))
             }
