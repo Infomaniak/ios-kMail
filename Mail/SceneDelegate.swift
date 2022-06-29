@@ -71,7 +71,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, AccountManagerDelegate 
         if UserDefaults.shared.isAppLockEnabled && window?.rootViewController?.isKind(of: UIHostingController<ModifiedContent<
             LockedAppView,
             _EnvironmentKeyWritingModifier<UIWindow?>
-        >>.self) == true {
+        >>.self) != true {
             AppLockHelper.shared.setTime()
         }
     }
