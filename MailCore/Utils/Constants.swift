@@ -45,8 +45,6 @@ public enum Constants {
     public static let menuDrawerHorizontalPadding: CGFloat = 24
     public static let menuDrawerVerticalPadding: CGFloat = 12
 
-    public static let searchBarIconSize: CGFloat = 16
-
     public static let unreadIconSize: CGFloat = 8
 
     public static let bottomSheetOptions: [BottomSheet.Options] = [

@@ -210,13 +210,22 @@ private struct ThreadListNavigationBar: ViewModifier {
 
     func body(content: Content) -> some View {
         content
-            .navigationTitle(folder?.localizedName ?? "")
+            .navigationBarTitle(folder?.localizedName ?? "", displayMode: .inline)
             .toolbar {
                 ToolbarItem(placement: .principal) {
-                    SearchBarButtonView()
+                    Text(folder?.localizedName ?? "")
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .textStyle(.header1)
+                        .padding(.leading, 8)
                 }
 
-                ToolbarItem(placement: .navigationBarTrailing) {
+                ToolbarItemGroup(placement: .navigationBarTrailing) {
+                    Button {
+                        // TODO: Search
+                    } label: {
+                        Image(resource: MailResourcesAsset.search)
+                    }
+
                     Button {
                         menuSheet.state = .switchAccount
                     } label: {
