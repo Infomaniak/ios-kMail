@@ -75,7 +75,7 @@ struct ThreadListCell: View {
                             .frame(height: 10)
                     }
 
-                    Text(thread.formattedDate)
+                    Text(thread.date.customRelativeFormatted)
                         .textStyle(hasUnreadMessages ? .calloutStrong : .calloutSecondary)
                 }
                 .padding(.bottom, 4)
