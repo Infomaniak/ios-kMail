@@ -237,18 +237,13 @@ public class MailboxManager: ObservableObject {
 
         // Update thread in Realm
         try? realm.safeWrite {
-            realm.add(fetchedThreads, update: .modified)
             // Clean old threads after fetching first page
             if result.currentOffset == 0 {
-                let toDeleteThreads = Set(parentFolder.threads).subtracting(Set(fetchedThreads))
-                let toDeleteMessages = Set(toDeleteThreads.flatMap(\.messages))
-                parentFolder.threads = fetchedThreads
-
-                realm.delete(toDeleteMessages)
-                realm.delete(toDeleteThreads)
-            } else {
-                parentFolder.threads.insert(objectsIn: fetchedThreads)
+                realm.delete(parentFolder.threads.flatMap(\.messages))
+                realm.delete(parentFolder.threads)
             }
+            realm.add(fetchedThreads, update: .modified)
+            parentFolder.threads.insert(objectsIn: fetchedThreads)
         }
     }
 
