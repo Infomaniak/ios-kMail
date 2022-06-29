@@ -31,7 +31,7 @@ extension ThreadDensity {
 }
 
 struct ThreadListCell: View {
-    @AppStorage("threadDensity", store: .shared) var density: ThreadDensity = .normal
+    @AppStorage(UserDefaults.shared.key(.threadDensity)) var density: ThreadDensity = .normal
 
     var mailboxManager: MailboxManager
     var thread: Thread

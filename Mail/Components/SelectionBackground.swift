@@ -16,12 +16,15 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import MailCore
 import SwiftUI
 
 struct SelectionBackground: View {
+    @AppStorage(UserDefaults.shared.key(.accentColor)) private var accentColor = AccentColor.pink
+
     var body: some View {
         RoundedRectangle(cornerRadius: 10)
-            .fill(UserDefaults.shared.accentColor.secondary.swiftUiColor)
+            .fill(accentColor.secondary.swiftUiColor)
             .offset(x: 10, y: 0)
             .padding(.leading, -2)
     }

@@ -72,11 +72,13 @@ struct MailboxQuotaView: View {
 }
 
 private struct QuotaCircularProgressViewStyle: ProgressViewStyle {
+    @AppStorage(UserDefaults.shared.key(.accentColor)) private var accentColor = AccentColor.pink
+
     func makeBody(configuration: Configuration) -> some View {
         ZStack {
             Circle()
                 .trim(from: 0, to: CGFloat(1 - (configuration.fractionCompleted ?? 0)))
-                .stroke(UserDefaults.shared.accentColor.secondary.swiftUiColor, lineWidth: 2)
+                .stroke(accentColor.secondary.swiftUiColor, lineWidth: 2)
                 .rotationEffect(.degrees(-90))
                 .frame(width: 46)
 
