@@ -86,9 +86,6 @@ struct ThreadListView: View {
                              unreadFilterOn: $viewModel.filterUnreadOn)
 
             ZStack(alignment: .bottomTrailing) {
-                Color(MailResourcesAsset.backgroundColor.color)
-                    .ignoresSafeArea()
-
                 if viewModel.threads.isEmpty && !viewModel.isLoadingPage {
                     EmptyListView()
                 }
@@ -112,9 +109,9 @@ struct ThreadListView: View {
                             }
                         }
                         .listRowSeparator(.hidden)
-                        .listRowBackground(Color(selectedThread == thread
-                                ? MailResourcesAsset.backgroundCardSelectedColor.color
-                                : MailResourcesAsset.backgroundColor.color))
+                        .listRowBackground(selectedThread == thread
+                                ? MailResourcesAsset.backgroundCardSelectedColor.swiftUiColor
+                                : MailResourcesAsset.backgroundColor.swiftUiColor)
                         .modifier(ThreadListSwipeAction(thread: thread, viewModel: viewModel))
                         .onAppear {
                             viewModel.loadNextPageIfNeeded(currentItem: thread)
@@ -138,6 +135,7 @@ struct ThreadListView: View {
                 NewMessageButtonView(sheet: menuSheet)
                     .padding([.trailing, .bottom], 30)
             }
+            .appShadow()
         }
         .backButtonDisplayMode(.minimal)
         .navigationBarAppStyle()

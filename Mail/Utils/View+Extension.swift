@@ -52,11 +52,11 @@ extension View {
     }
 
     func foregroundColor(_ color: MailResourcesColors) -> some View {
-        return foregroundColor(Color(color.color))
+        return foregroundColor(color.swiftUiColor)
     }
 
     func tint(_ tint: MailResourcesColors) -> some View {
-        return self.tint(Color(tint.color))
+        return self.tint(tint.swiftUiColor)
     }
 
     func navigationBarAppStyle() -> some View {

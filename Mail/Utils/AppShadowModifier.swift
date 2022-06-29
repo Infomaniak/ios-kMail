@@ -16,25 +16,28 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import MailCore
 import MailResources
 import SwiftUI
 
-struct IKDivider: View {
-    var withPadding = false
+struct AppShadowModifier: ViewModifier {
+    func body(content: Content) -> some View {
+        ZStack {
+            MailResourcesAsset.backgroundColor.swiftUiColor
+                .ignoresSafeArea()
+                .shadow(color: .primary.opacity(0.08), radius: 7, x: 0, y: -1)
 
-    var body: some View {
-        Divider()
-            .frame(height: 1)
-            .overlay(MailResourcesAsset.separatorColor.swiftUiColor)
-            .padding([.leading, .trailing], withPadding ? Constants.menuDrawerHorizontalPadding : 0)
+            content
+        }
     }
 }
 
-struct SeparatorView_Previews: PreviewProvider {
-    static var previews: some View {
-        IKDivider()
-            .previewLayout(.sizeThatFits)
-            .previewDevice("iPhone 13 Pro")
+extension View {
+    func appShadow(withPadding: Bool = false) -> some View {
+        modifier(AppShadowModifier())
+            .modifyIf(withPadding) { content in
+                content
+                    .padding(.top, 10)
+                    .background(MailResourcesAsset.backgroundHeaderColor.swiftUiColor)
+            }
     }
 }

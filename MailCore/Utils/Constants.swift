@@ -48,10 +48,10 @@ public enum Constants {
     public static let unreadIconSize: CGFloat = 8
 
     public static let bottomSheetOptions: [BottomSheet.Options] = [
-        .background { AnyView(Color(MailResourcesAsset.backgroundColor.color)) },
+        .background { AnyView(MailResourcesAsset.backgroundColor.swiftUiColor) },
         .backgroundBlur(effect: .dark),
         .cornerRadius(20),
-        .dragIndicatorColor(Color(MailResourcesAsset.menuActionColor.color)),
+        .dragIndicatorColor(MailResourcesAsset.menuActionColor.swiftUiColor),
         .noBottomPosition,
         .shadow(color: Color(.sRGBLinear, white: 0, opacity: 0.1), radius: 30, x: 0, y: -10),
         .swipeToDismiss,

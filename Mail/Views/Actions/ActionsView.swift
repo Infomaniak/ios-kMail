@@ -65,7 +65,7 @@ struct ActionsView_Previews: PreviewProvider {
                     target: .thread(PreviewHelper.sampleThread),
                     state: ThreadBottomSheet(),
                     globalSheet: GlobalBottomSheet()) { _, _ in }
-            .accentColor(Color(AccentColor.pink.primary.color))
+            .accentColor(AccentColor.pink.primary.swiftUiColor)
     }
 }
 
@@ -84,7 +84,7 @@ struct QuickActionView: View {
             VStack(spacing: 8) {
                 ZStack {
                     RoundedRectangle(cornerRadius: 8)
-                        .fill(Color(MailResourcesAsset.backgroundHeaderColor.color))
+                        .fill(MailResourcesAsset.backgroundHeaderColor.swiftUiColor)
 
                     Image(resource: action.icon)
                         .resizable()
