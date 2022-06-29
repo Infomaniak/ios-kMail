@@ -57,6 +57,9 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, AccountManagerDelegate 
     func sceneWillEnterForeground(_ scene: UIScene) {
         // Called as the scene transitions from the background to the foreground.
         // Use this method to undo the changes made on entering the background.
+        if UserDefaults.shared.isAppLockEnabled && AppLockHelper.shared.isAppLocked {
+            showLockView()
+        }
     }
 
     func sceneDidEnterBackground(_ scene: UIScene) {
@@ -97,8 +100,6 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, AccountManagerDelegate 
     private func setupLaunch() {
         if accountManager.accounts.isEmpty {
             showLoginView(animated: false)
-        } else if UserDefaults.shared.isAppLockEnabled && AppLockHelper.shared.isAppLocked {
-            setRootView(LockedAppView())
         } else {
             showMainView(animated: false)
         }
@@ -135,6 +136,10 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, AccountManagerDelegate 
 
     func showMainView(animated: Bool = true) {
         setRootView(SplitView(), animated: animated)
+    }
+
+    func showLockView() {
+        setRootView(LockedAppView(), animated: false)
     }
 
     // MARK: - Open URLs
