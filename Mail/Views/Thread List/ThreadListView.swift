@@ -108,6 +108,7 @@ struct ThreadListView: View {
                                 })
                             }
                         }
+                        .listRowInsets(.init(top: 0, leading: 12, bottom: 0, trailing: 12))
                         .listRowSeparator(.hidden)
                         .listRowBackground(selectedThread == thread
                                 ? MailResourcesAsset.backgroundCardSelectedColor.swiftUiColor

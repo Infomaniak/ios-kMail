@@ -22,11 +22,11 @@ import SwiftUI
 
 extension ThreadDensity {
     var cellVerticalPadding: CGFloat {
-        self == .compact ? 3 : 5
+        self == .compact ? 8 : 16
     }
 
     var unreadCircleTopPadding: CGFloat {
-        self == .large ? 10.5 : 6
+        self == .large ? 12 : 6
     }
 }
 
@@ -53,7 +53,7 @@ struct ThreadListCell: View {
 
             if density == .large {
                 RecipientImage(recipient: thread.from.last!, size: 32)
-                    .padding(.trailing, 3)
+                    .padding(.trailing, 2)
             }
 
             VStack(alignment: .leading, spacing: 2) {
@@ -99,6 +99,9 @@ struct ThreadListCell: View {
 
                     if thread.flagged {
                         Image(resource: MailResourcesAsset.starFull)
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: 20, height: 20)
                     }
                 }
             }
