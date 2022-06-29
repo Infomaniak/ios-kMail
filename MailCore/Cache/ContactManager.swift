@@ -155,7 +155,7 @@ public class ContactManager: ObservableObject {
         newContact.emails.append(recipient.email)
 
         let contactId = try await apiFetcher.addContact(recipient, to: addressBook)
-        newContact.id = contactId
+        newContact.id = String(contactId)
 
         let realm = getRealm()
         try? realm.safeWrite {

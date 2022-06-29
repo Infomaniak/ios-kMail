@@ -204,7 +204,7 @@ enum ActionsTarget: Equatable {
         case .threads(let threads):
             let messages = threads.flatMap(\.messages).map { $0.freezeIfNeeded() }
             response = try await mailboxManager.move(messages: messages, to: folder)
-            snackBarMessage = MailResourcesStrings.Localizable.snackbarThreadMovedPlural(folder.localizedName)
+            snackBarMessage = MailResourcesStrings.Localizable.snackbarThreadsMoved(folder.localizedName)
         case .thread(let thread):
             response = try await mailboxManager.move(thread: thread.freezeIfNeeded(), to: folder)
             snackBarMessage = MailResourcesStrings.Localizable.snackbarThreadMoved(folder.localizedName)
@@ -301,7 +301,7 @@ enum ActionsTarget: Equatable {
         switch target {
         case .threads(let threads):
             response = try await mailboxManager.reportSpam(messages: threads.flatMap(\.messages).map { $0.freezeIfNeeded() })
-            snackBarMessage = MailResourcesStrings.Localizable.snackbarThreadMovedPlural(FolderRole.spam.localizedName)
+            snackBarMessage = MailResourcesStrings.Localizable.snackbarThreadsMoved(FolderRole.spam.localizedName)
         case .thread(let thread):
             response = try await mailboxManager.reportSpam(thread: thread.freezeIfNeeded())
             snackBarMessage = MailResourcesStrings.Localizable.snackbarThreadMoved(FolderRole.spam.localizedName)
@@ -322,7 +322,7 @@ enum ActionsTarget: Equatable {
         switch target {
         case .threads(let threads):
             response = try await mailboxManager.nonSpam(messages: threads.flatMap(\.messages).map { $0.freezeIfNeeded() })
-            snackBarMessage = MailResourcesStrings.Localizable.snackbarThreadMovedPlural(FolderRole.inbox.localizedName)
+            snackBarMessage = MailResourcesStrings.Localizable.snackbarThreadsMoved(FolderRole.inbox.localizedName)
         case .thread(let thread):
             response = try await mailboxManager.nonSpam(thread: thread.freezeIfNeeded())
             snackBarMessage = MailResourcesStrings.Localizable.snackbarThreadMoved(FolderRole.inbox.localizedName)
