@@ -75,63 +75,69 @@ struct ThreadListView: View {
     }
 
     var body: some View {
-        ZStack(alignment: .bottomTrailing) {
-            Color(MailResourcesAsset.backgroundColor.color)
-                .ignoresSafeArea()
+        VStack(spacing: 0) {
+            ThreadListHeader(isConnected: $networkMonitor.isConnected,
+                             lastUpdate: $viewModel.lastUpdate,
+                             unreadCount: Binding(get: {
+                                 currentFolder?.unreadCount
+                             }, set: { value in
+                                 currentFolder?.unreadCount = value
+                             }),
+                             unreadFilterOn: $viewModel.filterUnreadOn)
 
-            if viewModel.threads.isEmpty && !viewModel.isLoadingPage {
-                EmptyListView()
-            }
+            ZStack(alignment: .bottomTrailing) {
+                Color(MailResourcesAsset.backgroundColor.color)
+                    .ignoresSafeArea()
 
-            List {
-                if !networkMonitor.isConnected {
-                    NoNetworkView()
-                        .listRowSeparator(.hidden)
-                        .listRowInsets(.init(top: 0, leading: 8, bottom: 0, trailing: 8))
+                if viewModel.threads.isEmpty && !viewModel.isLoadingPage {
+                    EmptyListView()
                 }
 
-                ForEach(viewModel.threads) { thread in
-                    Group {
-                        if currentFolder?.role == .draft {
-                            Button(action: {
-                                editDraft(from: thread)
-                            }, label: {
-                                ThreadListCell(mailboxManager: viewModel.mailboxManager, thread: thread)
-                            })
-                        } else {
-                            NavigationLink(destination: {
-                                ThreadView(mailboxManager: viewModel.mailboxManager, thread: thread)
-                                    .onAppear { selectedThread = thread }
-                            }, label: {
-                                ThreadListCell(mailboxManager: viewModel.mailboxManager, thread: thread)
-                            })
+                List {
+                    ForEach(viewModel.threads) { thread in
+                        Group {
+                            if currentFolder?.role == .draft {
+                                Button(action: {
+                                    editDraft(from: thread)
+                                }, label: {
+                                    ThreadListCell(mailboxManager: viewModel.mailboxManager, thread: thread)
+                                })
+                            } else {
+                                NavigationLink(destination: {
+                                    ThreadView(mailboxManager: viewModel.mailboxManager, thread: thread)
+                                        .onAppear { selectedThread = thread }
+                                }, label: {
+                                    ThreadListCell(mailboxManager: viewModel.mailboxManager, thread: thread)
+                                })
+                            }
+                        }
+                        .listRowSeparator(.hidden)
+                        .listRowBackground(Color(selectedThread == thread
+                                ? MailResourcesAsset.backgroundCardSelectedColor.color
+                                : MailResourcesAsset.backgroundColor.color))
+                        .modifier(ThreadListSwipeAction(thread: thread, viewModel: viewModel))
+                        .onAppear {
+                            viewModel.loadNextPageIfNeeded(currentItem: thread)
                         }
                     }
-                    .listRowSeparator(.hidden)
-                    .listRowBackground(Color(selectedThread == thread
-                            ? MailResourcesAsset.backgroundCardSelectedColor.color
-                            : MailResourcesAsset.backgroundColor.color))
-                    .modifier(ThreadListSwipeAction(thread: thread, viewModel: viewModel))
-                    .onAppear {
-                        viewModel.loadNextPageIfNeeded(currentItem: thread)
+
+                    if viewModel.isLoadingPage {
+                        HStack {
+                            Spacer()
+                            ProgressView()
+                            Spacer()
+                        }
+                        .listRowSeparator(.hidden)
                     }
                 }
-
-                if viewModel.isLoadingPage {
-                    HStack {
-                        Spacer()
-                        ProgressView()
-                        Spacer()
-                    }
+                .listStyle(.plain)
+                .introspectTableView { tableView in
+                    tableView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: 60, right: 0)
                 }
-            }
-            .listStyle(.plain)
-            .introspectTableView { tableView in
-                tableView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: 60, right: 0)
-            }
 
-            NewMessageButtonView(sheet: menuSheet)
-                .padding([.trailing, .bottom], 30)
+                NewMessageButtonView(sheet: menuSheet)
+                    .padding([.trailing, .bottom], 30)
+            }
         }
         .backButtonDisplayMode(.minimal)
         .navigationBarAppStyle()

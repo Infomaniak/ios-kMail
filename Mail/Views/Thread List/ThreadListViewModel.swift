@@ -31,6 +31,7 @@ typealias Thread = MailCore.Thread
     @Published var folder: Folder?
     @Published var threads: [Thread] = []
     @Published var isLoadingPage = false
+    @Published var lastUpdate: Date?
 
     var bottomSheet: ThreadBottomSheet
     var globalBottomSheet: GlobalBottomSheet?
@@ -38,11 +39,20 @@ typealias Thread = MailCore.Thread
     private var resourceNext: String?
     private var observationThreadToken: NotificationToken?
 
-    var filter = Filter.all {
+    @Published var filter = Filter.all {
         didSet {
             Task {
                 await fetchThreads()
             }
+        }
+    }
+
+    var filterUnreadOn: Bool {
+        get {
+            return filter == .unseen
+        }
+        set {
+            filter = newValue ? .unseen : .all
         }
     }
 
@@ -66,6 +76,7 @@ typealias Thread = MailCore.Thread
             resourceNext = result.resourceNext
         }
         isLoadingPage = false
+        lastUpdate = Date()
         mailboxManager.draftOffline()
     }
 

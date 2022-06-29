@@ -20,8 +20,8 @@ import Foundation
 import Network
 
 class NetworkMonitor: ObservableObject {
-    @Published private(set) var isConnected = false
-    @Published private(set) var isCellular = false
+    @Published var isConnected = false
+    @Published var isCellular = false
 
     private let monitor = NWPathMonitor()
     private let queue = DispatchQueue.global()

@@ -22,24 +22,20 @@ import SwiftUI
 
 struct NoNetworkView: View {
     var body: some View {
-        VStack(spacing: 0) {
-            VStack(alignment: .leading, spacing: 4) {
-                HStack {
-                    Image(resource: MailResourcesAsset.noSignal)
-                        .resizable()
-                        .scaledToFit()
-                        .frame(width: 18, height: 18)
-                    Text(MailResourcesStrings.Localizable.noNetworkTitle)
-                        .font(MailTextStyle.calloutStrong.font)
-                }
-                .foregroundColor(MailResourcesAsset.warningColor)
-                Text(MailResourcesStrings.Localizable.noNetworkDescription)
-                    .textStyle(.calloutSecondary)
+        VStack(alignment: .leading, spacing: 4) {
+            HStack {
+                Image(resource: MailResourcesAsset.noSignal)
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 18, height: 18)
+                Text(MailResourcesStrings.Localizable.noNetworkTitle)
+                    .font(MailTextStyle.calloutStrong.font)
             }
-            .frame(maxWidth: .infinity, alignment: .leading)
-            .padding(16)
-            IKDivider()
+            .foregroundColor(MailResourcesAsset.warningColor)
+            Text(MailResourcesStrings.Localizable.noNetworkDescription)
+                .textStyle(.calloutSecondary)
         }
+        .frame(maxWidth: .infinity, alignment: .leading)
     }
 }
 
