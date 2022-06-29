@@ -32,11 +32,11 @@ class MessageSheet: SheetState<MessageSheet.State> {
 
 class MessageBottomSheet: BottomSheetState<MessageBottomSheet.State, MessageBottomSheet.Position> {
     enum State: Equatable {
-        case contact(Recipient)
+        case contact(Recipient, Bool)
     }
 
     enum Position: CGFloat, CaseIterable {
-        case top = 285, hidden = 0
+        case top = 285, middle = 230, hidden = 0
     }
 }
 
@@ -153,8 +153,8 @@ struct ThreadView: View {
         }
         .bottomSheet(bottomSheetPosition: $bottomSheet.position, options: bottomSheetOptions) {
             switch bottomSheet.state {
-            case let .contact(recipient):
-                ContactView(recipient: recipient, bottomSheet: bottomSheet)
+            case let .contact(recipient, isRemoteContact):
+                ContactView(recipient: recipient, isRemoteContact: isRemoteContact, bottomSheet: bottomSheet)
             case .none:
                 EmptyView()
             }

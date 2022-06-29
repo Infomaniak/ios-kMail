@@ -22,6 +22,7 @@ import SwiftUI
 
 struct ContactView: View {
     var recipient: Recipient
+    var isRemoteContact: Bool
     @ObservedObject var bottomSheet: MessageBottomSheet
 
     private struct ContactAction: Hashable {
@@ -42,9 +43,12 @@ struct ContactView: View {
         )
     }
 
-    private let actions: [ContactAction] = [
-        .writeEmailAction, .addContactsAction, .copyEmailAction
-    ]
+    private var actions: [ContactAction] {
+        if isRemoteContact {
+            return [.writeEmailAction, .copyEmailAction]
+        }
+        return [.writeEmailAction, .addContactsAction, .copyEmailAction]
+    }
 
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
@@ -110,6 +114,6 @@ struct ContactView: View {
 
 struct ContactView_Previews: PreviewProvider {
     static var previews: some View {
-        ContactView(recipient: PreviewHelper.sampleRecipient1, bottomSheet: MessageBottomSheet())
+        ContactView(recipient: PreviewHelper.sampleRecipient1, isRemoteContact: false, bottomSheet: MessageBottomSheet())
     }
 }
