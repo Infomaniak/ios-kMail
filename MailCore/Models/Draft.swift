@@ -166,8 +166,8 @@ public struct UnmanagedDraft: Equatable, Encodable, AbstractDraft {
         return recipient.map(\.email).joined(separator: ",")
     }
 
-    public static func writingTo(_ recipient: Recipient) -> UnmanagedDraft {
-        return UnmanagedDraft(to: [recipient])
+    public static func writing(to recipient: Recipient) -> UnmanagedDraft {
+        return UnmanagedDraft(to: [recipient.detached()])
     }
 
     public static func replying(to message: Message, mode: ReplyMode) -> UnmanagedDraft {

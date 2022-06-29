@@ -149,7 +149,7 @@ struct ThreadView: View {
             case let .edit(draft):
                 NewMessageView(isPresented: $sheet.isShowing, mailboxManager: mailboxManager, draft: draft.asUnmanaged())
             case let .writeTo(recipient):
-                NewMessageView(isPresented: $sheet.isShowing, mailboxManager: mailboxManager, draft: .writingTo(recipient))
+                NewMessageView(isPresented: $sheet.isShowing, mailboxManager: mailboxManager, draft: .writing(to: recipient))
             case .none:
                 EmptyView()
             }

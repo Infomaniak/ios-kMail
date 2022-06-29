@@ -145,6 +145,30 @@ public class ContactManager: ObservableObject {
         return mergedContacts.values.filter { $0.name.localizedCaseInsensitiveContains(string) || $0.email.localizedCaseInsensitiveContains(string) }
     }
 
+    public func addContact(recipient: Recipient) async throws {
+        guard let addressBook = getMainAddressBook() else { return }
+
+        let newContact = Contact()
+        let name = recipient.name.split(separator: " ", maxSplits: 1)
+        newContact.firstname = String(name.first ?? "")
+        newContact.lastname = String((name.count == 2 ? name.last : nil) ?? "")
+        newContact.emails.append(recipient.email)
+
+        let contactId = try await apiFetcher.addContact(recipient, to: addressBook)
+        newContact.id = contactId
+
+        let realm = getRealm()
+        try? realm.safeWrite {
+            realm.add(newContact)
+        }
+
+        if let mergedContact = getContact(for: recipient.email) {
+            mergedContact.remote = newContact.freeze()
+        } else {
+            mergedContacts[recipient.email] = MergedContact(email: recipient.email, remote: newContact, local: nil)
+        }
+    }
+
     public func getMainAddressBook() -> AddressBook? {
         let realm = getRealm()
         return realm.objects(AddressBook.self).filter { $0.principalUri.starts(with: "principals") }.first

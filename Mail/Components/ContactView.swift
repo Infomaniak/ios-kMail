@@ -16,6 +16,7 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import InfomaniakCore
 import MailCore
 import MailResources
 import SwiftUI
@@ -82,22 +83,7 @@ struct ContactView: View {
         .padding(.top, 16)
     }
 
-    private func writeEmail() {
-        sheet.state = .writeTo(recipient)
-    }
-
-    private func addToContacts() {
-        let contactManager = AccountManager.instance.currentContactManager
-        guard let addressBook = contactManager?.getMainAddressBook() else { return }
-        Task {
-            try? await AccountManager.instance.currentContactManager?.apiFetcher.addContact(recipient, to: addressBook)
-        }
-    }
-
-    private func copyEmail() {
-        UIPasteboard.general.string = recipient.email
-        bottomSheet.close()
-    }
+    // MARK: - Actions
 
     private func handleAction(_ action: ContactAction) {
         switch action {
@@ -110,6 +96,26 @@ struct ContactView: View {
         default:
             return
         }
+        bottomSheet.close()
+    }
+
+    private func writeEmail() {
+        sheet.state = .writeTo(recipient)
+    }
+
+    private func addToContacts() {
+        let contactManager = AccountManager.instance.currentContactManager
+        guard let addressBook = contactManager?.getMainAddressBook() else { return }
+        Task {
+            await tryOrDisplayError {
+                try await contactManager?.addContact(recipient: recipient)
+                IKSnackBar.showSnackBar(message: MailResourcesStrings.snackbarContactSaved)
+            }
+        }
+    }
+
+    private func copyEmail() {
+        UIPasteboard.general.string = recipient.email
     }
 }
 
