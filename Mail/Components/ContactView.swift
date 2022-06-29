@@ -24,6 +24,7 @@ struct ContactView: View {
     var recipient: Recipient
     var isRemoteContact: Bool
     @ObservedObject var bottomSheet: MessageBottomSheet
+    @ObservedObject var sheet: MessageSheet
 
     private struct ContactAction: Hashable {
         let name: String
@@ -82,7 +83,7 @@ struct ContactView: View {
     }
 
     private func writeEmail() {
-        // TODO: handle writeEmail action
+        sheet.state = .writeTo(recipient)
     }
 
     private func addToContacts() {
@@ -114,6 +115,9 @@ struct ContactView: View {
 
 struct ContactView_Previews: PreviewProvider {
     static var previews: some View {
-        ContactView(recipient: PreviewHelper.sampleRecipient1, isRemoteContact: false, bottomSheet: MessageBottomSheet())
+        ContactView(recipient: PreviewHelper.sampleRecipient1,
+                    isRemoteContact: false,
+                    bottomSheet: MessageBottomSheet(),
+                    sheet: MessageSheet())
     }
 }

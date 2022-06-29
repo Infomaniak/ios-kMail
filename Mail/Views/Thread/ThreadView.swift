@@ -27,6 +27,7 @@ class MessageSheet: SheetState<MessageSheet.State> {
         case attachment(Attachment)
         case reply(Message, ReplyMode)
         case edit(Draft)
+        case writeTo(Recipient)
     }
 }
 
@@ -147,6 +148,8 @@ struct ThreadView: View {
                 NewMessageView(isPresented: $sheet.isShowing, mailboxManager: mailboxManager, draft: .replying(to: message, mode: replyMode))
             case let .edit(draft):
                 NewMessageView(isPresented: $sheet.isShowing, mailboxManager: mailboxManager, draft: draft.asUnmanaged())
+            case let .writeTo(recipient):
+                NewMessageView(isPresented: $sheet.isShowing, mailboxManager: mailboxManager, draft: .writingTo(recipient))
             case .none:
                 EmptyView()
             }
@@ -154,7 +157,7 @@ struct ThreadView: View {
         .bottomSheet(bottomSheetPosition: $bottomSheet.position, options: bottomSheetOptions) {
             switch bottomSheet.state {
             case let .contact(recipient, isRemoteContact):
-                ContactView(recipient: recipient, isRemoteContact: isRemoteContact, bottomSheet: bottomSheet)
+                ContactView(recipient: recipient, isRemoteContact: isRemoteContact, bottomSheet: bottomSheet, sheet: sheet)
             case .none:
                 EmptyView()
             }
