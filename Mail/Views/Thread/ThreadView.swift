@@ -101,7 +101,7 @@ struct ThreadView: View {
                 .textStyle(.header2)
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .multilineTextAlignment(.leading)
-                .padding(.top, 32)
+                .padding(.top, 8)
                 .padding([.leading, .trailing], 16)
 
             VStack(spacing: 0) {
@@ -170,7 +170,7 @@ struct ThreadView: View {
                             Image(resource: action.icon)
                                 .resizable()
                                 .scaledToFit()
-                                .frame(width: 24, height: 24)
+                                .frame(width: 22, height: 22)
                         }
                         .dynamicLabelStyle(sizeClass: sizeClass!)
                     }
@@ -183,8 +183,10 @@ struct ThreadView: View {
                         Text(MailResourcesStrings.Localizable.buttonMore)
                             .font(MailTextStyle.caption.font)
                     } icon: {
-                        Image(systemName: "ellipsis")
-                            .frame(width: 24, height: 24)
+                        Image(resource: MailResourcesAsset.plusActions)
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: 22, height: 22)
                     }
                     .dynamicLabelStyle(sizeClass: sizeClass!)
                 }
@@ -261,7 +263,7 @@ struct ThreadView: View {
 
 struct VerticalLabelStyle: LabelStyle {
     func makeBody(configuration: Configuration) -> some View {
-        VStack(spacing: 8) {
+        VStack(spacing: 4) {
             configuration.icon
             configuration.title
         }
