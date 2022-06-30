@@ -17,10 +17,17 @@
  */
 
 import BottomSheet
+import Introspect
 import MailCore
 import MailResources
 import RealmSwift
 import SwiftUI
+
+private struct ScrollOffsetPreferenceKey: PreferenceKey {
+    static var defaultValue: CGPoint = .zero
+
+    static func reduce(value: inout CGPoint, nextValue: () -> CGPoint) {}
+}
 
 class MessageSheet: SheetState<MessageSheet.State> {
     enum State: Equatable {
@@ -43,7 +50,9 @@ class MessageBottomSheet: BottomSheetState<MessageBottomSheet.State, MessageBott
 struct ThreadView: View {
     @ObservedRealmObject var thread: Thread
     private var mailboxManager: MailboxManager
+    private var navigationController: UINavigationController?
 
+    @State private var scrollOffset: CGPoint = .zero
     @StateObject private var sheet = MessageSheet()
     @StateObject private var bottomSheet = MessageBottomSheet()
     @StateObject private var threadBottomSheet = ThreadBottomSheet()
@@ -64,35 +73,65 @@ struct ThreadView: View {
             .sorted { $0.date.compare($1.date) == .orderedAscending }
     }
 
-    init(mailboxManager: MailboxManager, thread: Thread) {
+    private var displayNavigationTitle: Bool {
+        return scrollOffset.y < -85
+    }
+
+    init(mailboxManager: MailboxManager, thread: Thread, navigationController: UINavigationController?) {
         self.mailboxManager = mailboxManager
         self.thread = thread
+        self.navigationController = navigationController
         trashId = mailboxManager.getFolder(with: .trash)?._id ?? ""
     }
 
     var body: some View {
-        ZStack {
-            ScrollView {
-                VStack(spacing: 0) {
-                    ForEach(messages.indices, id: \.self) { index in
-                        let isMessageExpanded = ((index == messages.count - 1) && !messages[index].isDraft) || !messages[index].seen
-                        MessageView(message: messages[index], isMessageExpanded: isMessageExpanded)
-                        if index < messages.count - 1 {
-                            MessageSeparatorView()
-                        }
+        ScrollView {
+            GeometryReader { geometry in
+                Color.clear.preference(
+                    key: ScrollOffsetPreferenceKey.self,
+                    value: geometry.frame(in: .named("scrollView")).origin
+                )
+            }
+            .frame(width: 0, height: 0)
+
+            Text(thread.formattedSubject)
+                .textStyle(.header2)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .multilineTextAlignment(.leading)
+                .padding(.top, 32)
+                .padding([.leading, .trailing], 16)
+
+            VStack(spacing: 0) {
+                ForEach(messages.indices, id: \.self) { index in
+                    let isMessageExpanded = ((index == messages.count - 1) && !messages[index].isDraft) || !messages[index].seen
+                    MessageView(message: messages[index], isMessageExpanded: isMessageExpanded)
+                    if index < messages.count - 1 {
+                        MessageSeparatorView()
                     }
                 }
             }
-            .navigationTitle(thread.formattedSubject)
-            .backButtonDisplayMode(.minimal)
-            .onAppear {
-                MatomoUtils.track(view: ["MessageView"])
-                // Style toolbar
-                let appereance = UIToolbarAppearance()
-                appereance.configureWithOpaqueBackground()
-                appereance.backgroundColor = MailResourcesAsset.backgroundSearchBar.color
-                UIToolbar.appearance().standardAppearance = appereance
-            }
+        }
+        .coordinateSpace(name: "scrollView")
+        .onPreferenceChange(ScrollOffsetPreferenceKey.self) { offset in
+            scrollOffset = offset
+            print(offset)
+        }
+        .navigationTitle(displayNavigationTitle ? thread.formattedSubject : "")
+        .backButtonDisplayMode(.minimal)
+        .onAppear {
+            MatomoUtils.track(view: ["MessageView"])
+            // Style toolbar
+            let appereance = UIToolbarAppearance()
+            appereance.configureWithOpaqueBackground()
+            appereance.backgroundColor = MailResourcesAsset.backgroundSearchBar.color
+            UIToolbar.appearance().standardAppearance = appereance
+            // Style navigation bar
+            let appearance = UINavigationBarAppearance()
+            appearance.configureWithDefaultBackground()
+            navigationController?.navigationBar.standardAppearance = appearance
+            navigationController?.navigationBar.compactAppearance = nil
+            navigationController?.navigationBar.scrollEdgeAppearance = nil
+            navigationController?.navigationBar.compactScrollEdgeAppearance = nil
         }
         .environmentObject(mailboxManager)
         .environmentObject(sheet)
@@ -104,6 +143,17 @@ struct ThreadView: View {
             }
         }
         .toolbar {
+            ToolbarItem(placement: .navigationBarTrailing) {
+                Button {
+                    Task {
+                        await tryOrDisplayError {
+                            try await mailboxManager.toggleStar(thread: thread)
+                        }
+                    }
+                } label: {
+                    Image(resource: thread.flagged ? MailResourcesAsset.starFull : MailResourcesAsset.star)
+                }
+            }
             ToolbarItemGroup(placement: .bottomBar) {
                 Group {
                     Button {
@@ -183,7 +233,8 @@ struct ThreadView_Previews: PreviewProvider {
     static var previews: some View {
         ThreadView(
             mailboxManager: PreviewHelper.sampleMailboxManager,
-            thread: PreviewHelper.sampleThread
+            thread: PreviewHelper.sampleThread,
+            navigationController: nil
         )
     }
 }

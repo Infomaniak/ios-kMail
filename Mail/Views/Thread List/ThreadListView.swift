@@ -57,6 +57,7 @@ struct ThreadListView: View {
     @State private var selectedThread: Thread?
     @StateObject var bottomSheet: ThreadBottomSheet
     @StateObject private var networkMonitor = NetworkMonitor()
+    @State private var navigationController: UINavigationController?
 
     let isCompact: Bool
 
@@ -101,7 +102,7 @@ struct ThreadListView: View {
                                 })
                             } else {
                                 NavigationLink(destination: {
-                                    ThreadView(mailboxManager: viewModel.mailboxManager, thread: thread)
+                                    ThreadView(mailboxManager: viewModel.mailboxManager, thread: thread, navigationController: navigationController)
                                         .onAppear { selectedThread = thread }
                                 }, label: {
                                     ThreadListCell(mailboxManager: viewModel.mailboxManager, thread: thread)
@@ -111,8 +112,8 @@ struct ThreadListView: View {
                         .listRowInsets(.init(top: 0, leading: 12, bottom: 0, trailing: 12))
                         .listRowSeparator(.hidden)
                         .listRowBackground(selectedThread == thread
-                                ? MailResourcesAsset.backgroundCardSelectedColor.swiftUiColor
-                                : MailResourcesAsset.backgroundColor.swiftUiColor)
+                            ? MailResourcesAsset.backgroundCardSelectedColor.swiftUiColor
+                            : MailResourcesAsset.backgroundColor.swiftUiColor)
                         .modifier(ThreadListSwipeAction(thread: thread, viewModel: viewModel))
                         .onAppear {
                             viewModel.loadNextPageIfNeeded(currentItem: thread)
@@ -140,6 +141,9 @@ struct ThreadListView: View {
         }
         .backButtonDisplayMode(.minimal)
         .navigationBarAppStyle()
+        .introspectNavigationController { navigationController in
+            self.navigationController = navigationController
+        }
         .modifier(ThreadListNavigationBar(isCompact: isCompact, folder: $viewModel.folder, avatarImage: $avatarImage))
         .bottomSheet(bottomSheetPosition: $bottomSheet.position, options: bottomSheetOptions) {
             switch bottomSheet.state {
