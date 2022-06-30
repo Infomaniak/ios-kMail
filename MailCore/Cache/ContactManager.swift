@@ -148,22 +148,15 @@ public class ContactManager: ObservableObject {
     public func addContact(recipient: Recipient) async throws {
         guard let addressBook = getMainAddressBook() else { return }
 
-        let newContact = Contact()
-        let name = recipient.name.split(separator: " ", maxSplits: 1)
-        newContact.name = recipient.name
-        newContact.firstname = String(name.first ?? "")
-        newContact.lastname = String((name.count == 2 ? name.last : nil) ?? "")
-        newContact.emails.append(recipient.email)
-
         let contactId = try await apiFetcher.addContact(recipient, to: addressBook)
-        newContact.id = String(contactId)
+        let contacts = try await apiFetcher.contacts()
 
+        guard let newContact = contacts.first(where: { $0.id == String(contactId) }) else { return }
         let realm = getRealm()
         try? realm.safeWrite {
             realm.add(newContact)
         }
-
-        if let mergedContact = getContact(for: recipient.email) {
+        if let mergedContact = mergedContacts[recipient.email] {
             mergedContact.remote = newContact.freeze()
         } else {
             mergedContacts[recipient.email] = MergedContact(email: recipient.email, remote: newContact.freeze(), local: nil)
