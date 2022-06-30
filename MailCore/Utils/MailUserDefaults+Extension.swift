@@ -129,7 +129,7 @@ public extension UserDefaults {
 
     var swipeShortRight: SwipeAction {
         get {
-            return SwipeAction(rawValue: string(forKey: key(.swipeShortRight)) ?? "") ?? .quickAction
+            return SwipeAction(rawValue: string(forKey: key(.swipeShortRight)) ?? "") ?? Constants.defaultSwipeShortRight
         }
         set {
             set(newValue.rawValue, forKey: key(.swipeShortRight))
@@ -138,7 +138,7 @@ public extension UserDefaults {
 
     var swipeLongRight: SwipeAction {
         get {
-            return SwipeAction(rawValue: string(forKey: key(.swipeLongRight)) ?? "") ?? .delete
+            return SwipeAction(rawValue: string(forKey: key(.swipeLongRight)) ?? "") ?? Constants.defaultSwipeLongRight
         }
         set {
             set(newValue.rawValue, forKey: key(.swipeLongRight))
@@ -147,7 +147,7 @@ public extension UserDefaults {
 
     var swipeShortLeft: SwipeAction {
         get {
-            return SwipeAction(rawValue: string(forKey: key(.swipeShortLeft)) ?? "") ?? .none
+            return SwipeAction(rawValue: string(forKey: key(.swipeShortLeft)) ?? "") ?? Constants.defaultSwipeShortLeft
         }
         set {
             set(newValue.rawValue, forKey: key(.swipeShortLeft))
@@ -156,7 +156,7 @@ public extension UserDefaults {
 
     var swipeLongLeft: SwipeAction {
         get {
-            return SwipeAction(rawValue: string(forKey: key(.swipeLongLeft)) ?? "") ?? .readUnread
+            return SwipeAction(rawValue: string(forKey: key(.swipeLongLeft)) ?? "") ?? Constants.defaultSwipeLongLeft
         }
         set {
             set(newValue.rawValue, forKey: key(.swipeLongLeft))

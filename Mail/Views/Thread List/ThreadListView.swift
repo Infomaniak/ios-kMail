@@ -272,11 +272,11 @@ private struct ThreadListSwipeAction: ViewModifier {
     let thread: Thread
     let viewModel: ThreadListViewModel
 
-    @AppStorage(UserDefaults.shared.key(.swipeLongRight)) private var swipeLongRight = SwipeAction.none
-    @AppStorage(UserDefaults.shared.key(.swipeShortRight)) private var swipeShortRight = SwipeAction.none
+    @AppStorage(UserDefaults.shared.key(.swipeLongRight)) private var swipeLongRight = Constants.defaultSwipeLongRight
+    @AppStorage(UserDefaults.shared.key(.swipeShortRight)) private var swipeShortRight = Constants.defaultSwipeShortRight
 
-    @AppStorage(UserDefaults.shared.key(.swipeLongLeft)) private var swipeLongLeft = SwipeAction.none
-    @AppStorage(UserDefaults.shared.key(.swipeShortLeft)) private var swipeShortLeft = SwipeAction.none
+    @AppStorage(UserDefaults.shared.key(.swipeLongLeft)) private var swipeLongLeft = Constants.defaultSwipeLongLeft
+    @AppStorage(UserDefaults.shared.key(.swipeShortLeft)) private var swipeShortLeft = Constants.defaultSwipeShortLeft
 
     func body(content: Content) -> some View {
         content
