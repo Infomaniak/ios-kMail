@@ -57,7 +57,7 @@ struct SettingsToggleCell: View {
     private func enableAppLock() {
              Task {
                  do {
-                     if try await !AppLockHelper.shared.evaluatePolicy(reason: MailResourcesStrings.appSecurityDescription) {
+                     if try await !AppLockHelper.shared.evaluatePolicy(reason: MailResourcesStrings.Localizable.appSecurityDescription) {
                          withAnimation {
                              toggleIsOn.toggle()
                          }

@@ -24,10 +24,10 @@ struct EmptyListView: View {
         VStack {
             Image(resource: MailResourcesAsset.zeroMail)
                 .padding(24)
-            Text(MailResourcesStrings.noEmailTitle)
+            Text(MailResourcesStrings.Localizable.noEmailTitle)
                 .textStyle(.header2)
                 .padding(.bottom, 4)
-            Text(MailResourcesStrings.noEmailDescription)
+            Text(MailResourcesStrings.Localizable.noEmailDescription)
                 .textStyle(.bodySecondary)
                 .multilineTextAlignment(.center)
         }

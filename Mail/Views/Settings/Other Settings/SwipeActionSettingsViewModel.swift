@@ -23,7 +23,7 @@ import SwiftUI
 
 @MainActor class SwipeActionSettingsViewModel: SettingsViewModel {
     init() {
-        super.init(title: MailResourcesStrings.settingsSwipeActionsTitle)
+        super.init(title: MailResourcesStrings.Localizable.settingsSwipeActionsTitle)
         sections = [.rightSwipe, .leftSwipe]
     }
 
@@ -53,23 +53,23 @@ extension SettingsSection {
 private extension SettingsItem {
     static let shortRight = SettingsItem(
         id: 1,
-        title: MailResourcesStrings.settingsSwipeShortRight,
+        title: MailResourcesStrings.Localizable.settingsSwipeShortRight,
         type: .option(.swipeShortRightOption)
     )
     static let longRight = SettingsItem(
         id: 2,
-        title: MailResourcesStrings.settingsSwipeLongRight,
+        title: MailResourcesStrings.Localizable.settingsSwipeLongRight,
         type: .option(.swipeLongRightOption)
     )
 
     static let shortLeft = SettingsItem(
         id: 3,
-        title: MailResourcesStrings.settingsSwipeShortLeft,
+        title: MailResourcesStrings.Localizable.settingsSwipeShortLeft,
         type: .option(.swipeShortLeftOption)
     )
     static let longLeft = SettingsItem(
         id: 4,
-        title: MailResourcesStrings.settingsSwipeLongLeft,
+        title: MailResourcesStrings.Localizable.settingsSwipeLongLeft,
         type: .option(.swipeLongLeftOption)
     )
 }

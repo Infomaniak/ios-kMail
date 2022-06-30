@@ -68,8 +68,8 @@ struct MailboxesManagementView: View {
                         IKDivider(withPadding: true)
                     }
 
-                    MailboxesManagementButtonView(text: MailResourcesStrings.buttonAddAccount, handleAction: addNewAccount)
-                    MailboxesManagementButtonView(text: MailResourcesStrings.buttonManageAccount, handleAction: handleMyAccount)
+                    MailboxesManagementButtonView(text: MailResourcesStrings.Localizable.buttonAddAccount, handleAction: addNewAccount)
+                    MailboxesManagementButtonView(text: MailResourcesStrings.Localizable.buttonManageAccount, handleAction: handleMyAccount)
 
                     IKDivider(withPadding: true)
                 }

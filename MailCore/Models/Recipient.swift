@@ -37,7 +37,7 @@ public class Recipient: EmbeddedObject, Codable {
 
     public var title: String {
         if isCurrentUser {
-            return MailResourcesStrings.contactMe
+            return MailResourcesStrings.Localizable.contactMe
         }
         return contact?.name ?? (name.isEmpty ? email : name)
     }

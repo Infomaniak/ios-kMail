@@ -92,59 +92,59 @@ enum SettingsOption: Equatable {
             SettingsThreadDensityOptionView()
         case .themeOption:
             SettingsOptionView<Theme>(
-                title: MailResourcesStrings.settingsThemeChoiceTitle,
-                subtitle: MailResourcesStrings.settingsTheme,
+                title: MailResourcesStrings.Localizable.settingsThemeChoiceTitle,
+                subtitle: MailResourcesStrings.Localizable.settingsTheme,
                 keyPath: \.theme
             )
         case .accentColor:
             SettingsOptionView<AccentColor>(
-                title: MailResourcesStrings.settingsAccentColor,
-                subtitle: MailResourcesStrings.settingsAccentColorDescription,
+                title: MailResourcesStrings.Localizable.settingsAccentColor,
+                subtitle: MailResourcesStrings.Localizable.settingsAccentColorDescription,
                 keyPath: \.accentColor
             )
         case .displayModeOption:
             SettingsOptionView<ThreadMode>(
-                title: MailResourcesStrings.settingsMessageDisplayTitle,
-                subtitle: MailResourcesStrings.settingsSelectDisplayModeDescription,
+                title: MailResourcesStrings.Localizable.settingsMessageDisplayTitle,
+                subtitle: MailResourcesStrings.Localizable.settingsSelectDisplayModeDescription,
                 keyPath: \.threadMode
             )
         case .externalContentOption:
             SettingsOptionView<ExternalContent>(
-                title: MailResourcesStrings.settingsExternalContentTitle,
-                subtitle: MailResourcesStrings.settingsSelectDisplayModeDescription,
+                title: MailResourcesStrings.Localizable.settingsExternalContentTitle,
+                subtitle: MailResourcesStrings.Localizable.settingsSelectDisplayModeDescription,
                 keyPath: \.displayExternalContent
             )
         case .cancelDelayOption:
             SettingsOptionView<CancelDelay>(
-                title: MailResourcesStrings.settingsCancellationPeriodTitle,
+                title: MailResourcesStrings.Localizable.settingsCancellationPeriodTitle,
                 keyPath: \.cancelSendDelay
             )
         case .forwardMessageOption:
             SettingsOptionView<ForwardMode>(
-                title: MailResourcesStrings.settingsTransferEmailsTitle,
+                title: MailResourcesStrings.Localizable.settingsTransferEmailsTitle,
                 keyPath: \.forwardMode
             )
         case .swipeShortRightOption:
             SettingsOptionView<SwipeAction>(
-                title: MailResourcesStrings.settingsSwipeShortRight,
+                title: MailResourcesStrings.Localizable.settingsSwipeShortRight,
                 keyPath: \.swipeShortRight,
                 excludedKeyPath: [\.swipeLongRight, \.swipeShortLeft, \.swipeLongLeft]
             )
         case .swipeLongRightOption:
             SettingsOptionView<SwipeAction>(
-                title: MailResourcesStrings.settingsSwipeLongRight,
+                title: MailResourcesStrings.Localizable.settingsSwipeLongRight,
                 keyPath: \.swipeLongRight,
                 excludedKeyPath: [\.swipeShortRight, \.swipeShortLeft, \.swipeLongLeft]
             )
         case .swipeShortLeftOption:
             SettingsOptionView<SwipeAction>(
-                title: MailResourcesStrings.settingsSwipeShortLeft,
+                title: MailResourcesStrings.Localizable.settingsSwipeShortLeft,
                 keyPath: \.swipeShortLeft,
                 excludedKeyPath: [\.swipeShortRight, \.swipeLongRight, \.swipeLongLeft]
             )
         case .swipeLongLeftOption:
             SettingsOptionView<SwipeAction>(
-                title: MailResourcesStrings.settingsSwipeLongLeft,
+                title: MailResourcesStrings.Localizable.settingsSwipeLongLeft,
                 keyPath: \.swipeLongLeft,
                 excludedKeyPath: [\.swipeShortRight, \.swipeLongRight, \.swipeShortLeft]
             )

@@ -27,9 +27,9 @@ public enum ThreadMode: String, CaseIterable, SettingsOptionEnum {
     public var title: String {
         switch self {
         case .discussion:
-            return MailResourcesStrings.settingsOptionDiscussions
+            return MailResourcesStrings.Localizable.settingsOptionDiscussions
         case .message:
-            return MailResourcesStrings.settingsOptionMessages
+            return MailResourcesStrings.Localizable.settingsOptionMessages
         }
     }
 

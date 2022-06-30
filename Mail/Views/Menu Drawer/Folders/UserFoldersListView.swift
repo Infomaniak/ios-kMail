@@ -45,7 +45,7 @@ struct UserFoldersListView: View {
                 }
             } label: {
                 HStack {
-                    Text(MailResourcesStrings.buttonFolders)
+                    Text(MailResourcesStrings.Localizable.buttonFolders)
                         .textStyle(.body)
                     Spacer()
                     ChevronIcon(style: isExpanded ? .up : .down)
@@ -61,7 +61,7 @@ struct UserFoldersListView: View {
                     FolderCell(folder: folder, selectedFolder: $selectedFolder, isCompact: isCompact)
                 }
 
-                MenuDrawerItemCell(content: .init(icon: MailResourcesAsset.add, label: MailResourcesStrings.buttonCreateFolder) {
+                MenuDrawerItemCell(content: .init(icon: MailResourcesAsset.add, label: MailResourcesStrings.Localizable.buttonCreateFolder) {
                     // TODO: Create folder
                 })
                 .padding(.top, Constants.menuDrawerVerticalPadding)

@@ -28,9 +28,9 @@ public enum ForwardMode: String, CaseIterable, SettingsOptionEnum {
     public var title: String {
         switch self {
         case .inline:
-            return MailResourcesStrings.settingsTransferInBody
+            return MailResourcesStrings.Localizable.settingsTransferInBody
         case .attachment:
-            return MailResourcesStrings.settingsTransferAsAttachment
+            return MailResourcesStrings.Localizable.settingsTransferAsAttachment
         }
     }
 

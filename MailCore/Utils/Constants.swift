@@ -67,11 +67,11 @@ public enum Constants {
         let to = ListFormatter.localizedString(byJoining: message.to.map(\.htmlDescription))
         return """
         <div class=\"forwardContentMessage\">
-        <div>---------- \(MailResourcesStrings.messageForwardHeader) ---------<br></div>
-        <div>\(MailResourcesStrings.fromTitle) \(message.from.first?.htmlDescription ?? "")<br></div>
-        <div>\(MailResourcesStrings.dateTitle) \(date)<br></div>
-        <div>\(MailResourcesStrings.subjectTitle) \(message.formattedSubject)<br></div>
-        <div>\(MailResourcesStrings.toTitle) \(to)<br></div>
+        <div>---------- \(MailResourcesStrings.Localizable.messageForwardHeader) ---------<br></div>
+        <div>\(MailResourcesStrings.Localizable.fromTitle) \(message.from.first?.htmlDescription ?? "")<br></div>
+        <div>\(MailResourcesStrings.Localizable.dateTitle) \(date)<br></div>
+        <div>\(MailResourcesStrings.Localizable.subjectTitle) \(message.formattedSubject)<br></div>
+        <div>\(MailResourcesStrings.Localizable.toTitle) \(to)<br></div>
         <div><br></div>
         <div><br></div>
         <div class=\"ws-ng-mail-style--6094eJzz9HPyjwAABGYBgQ\">
@@ -82,7 +82,7 @@ public enum Constants {
     }
 
     public static func replyQuote(message: Message) -> String {
-        let headerText = MailResourcesStrings.messageReplyHeader(
+        let headerText = MailResourcesStrings.Localizable.messageReplyHeader(
             DateFormatter.localizedString(from: message.date, dateStyle: .medium, timeStyle: .short),
             message.from.first?.htmlDescription ?? ""
         )

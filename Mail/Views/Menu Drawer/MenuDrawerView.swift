@@ -155,7 +155,7 @@ struct MenuDrawerView: View {
 
                 IKDivider(withPadding: true)
 
-                MenuDrawerItemsListView(title: MailResourcesStrings.menuDrawerAdvancedActions, content: actionsMenuItems)
+                MenuDrawerItemsListView(title: MailResourcesStrings.Localizable.menuDrawerAdvancedActions, content: actionsMenuItems)
 
                 if mailboxManager.mailbox.isLimited {
                     IKDivider(withPadding: true)
@@ -175,14 +175,14 @@ struct MenuDrawerView: View {
 
     private mutating func getMenuItems() {
         helpMenuItems = [
-            MenuItem(icon: MailResourcesAsset.feedbacks, label: MailResourcesStrings.buttonFeedbacks, action: sendFeedback),
-            MenuItem(icon: MailResourcesAsset.help, label: MailResourcesStrings.buttonHelp, action: openSupport)
+            MenuItem(icon: MailResourcesAsset.feedbacks, label: MailResourcesStrings.Localizable.buttonFeedbacks, action: sendFeedback),
+            MenuItem(icon: MailResourcesAsset.help, label: MailResourcesStrings.Localizable.buttonHelp, action: openSupport)
         ]
         actionsMenuItems = [
-            MenuItem(icon: MailResourcesAsset.drawerDownload, label: MailResourcesStrings.buttonImportEmails, action: importMails),
+            MenuItem(icon: MailResourcesAsset.drawerDownload, label: MailResourcesStrings.Localizable.buttonImportEmails, action: importMails),
             MenuItem(
                 icon: MailResourcesAsset.restoreArrow,
-                label: MailResourcesStrings.buttonRestoreEmails,
+                label: MailResourcesStrings.Localizable.buttonRestoreEmails,
                 action: restoreMails
             )
         ]

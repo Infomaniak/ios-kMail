@@ -33,14 +33,14 @@ struct MailboxQuotaView: View {
                 .padding(.trailing, 7)
 
             VStack(alignment: .leading) {
-                Text(MailResourcesStrings.menuDrawerMailboxStorage(
+                Text(MailResourcesStrings.Localizable.menuDrawerMailboxStorage(
                     Int64((quotas?.size ?? 0) * 1000).formatted(.defaultByteCount),
                     Constants.sizeLimit.formatted(.defaultByteCount)
                 ))
                 .textStyle(.header3)
 
                 Button(action: openGetMoreStorage) {
-                    Text(MailResourcesStrings.buttonMoreStorage)
+                    Text(MailResourcesStrings.Localizable.buttonMoreStorage)
                 }
                 .textStyle(.button)
             }

@@ -43,13 +43,13 @@ struct LockedAppView: View {
                         .foregroundColor(.accentColor)
                 }
                 .padding(.bottom, 5)
-            Text(MailResourcesStrings.lockAppTitle)
+            Text(MailResourcesStrings.Localizable.lockAppTitle)
                 .font(.body)
 
             Spacer()
 
             Button(action: unlockApp) {
-                Text(MailResourcesStrings.buttonUnlock)
+                Text(MailResourcesStrings.Localizable.buttonUnlock)
                     .frame(maxWidth: .infinity)
                     .padding([.top, .bottom])
                     .background(Color.accentColor)
@@ -64,7 +64,7 @@ struct LockedAppView: View {
 
     private func unlockApp() {
         Task {
-            if (try? await AppLockHelper.shared.evaluatePolicy(reason: MailResourcesStrings.lockAppTitle)) == true {
+            if (try? await AppLockHelper.shared.evaluatePolicy(reason: MailResourcesStrings.Localizable.lockAppTitle)) == true {
                 await (window?.windowScene?.delegate as? SceneDelegate)?.showMainView()
             }
         }

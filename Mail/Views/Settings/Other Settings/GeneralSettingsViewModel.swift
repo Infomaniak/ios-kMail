@@ -24,7 +24,7 @@ import SwiftUI
 
 @MainActor class GeneralSettingsViewModel: SettingsViewModel {
     init() {
-        super.init(title: MailResourcesStrings.settingsTitle)
+        super.init(title: MailResourcesStrings.Localizable.settingsTitle)
         sections = [.emailAddresses, .general, .appearance]
     }
 
@@ -42,17 +42,17 @@ import SwiftUI
 private extension SettingsSection {
     static let emailAddresses = SettingsSection(
         id: 1,
-        name: MailResourcesStrings.settingsSectionEmailAddresses,
+        name: MailResourcesStrings.Localizable.settingsSectionEmailAddresses,
         items: []
     )
     static let general = SettingsSection(
         id: 2,
-        name: MailResourcesStrings.settingsSectionGeneral,
+        name: MailResourcesStrings.Localizable.settingsSectionGeneral,
         items: [.send, .lock]
     )
     static let appearance = SettingsSection(
         id: 3,
-        name: MailResourcesStrings.settingsSectionAppearance,
+        name: MailResourcesStrings.Localizable.settingsSectionAppearance,
         items: [.threadDensity, .theme, .accentColor, .swipeActions, .displayMode, .externalContent]
     )
 }
@@ -60,42 +60,42 @@ private extension SettingsSection {
 private extension SettingsItem {
     static let send = SettingsItem(
         id: 1,
-        title: MailResourcesStrings.settingsSendTitle,
+        title: MailResourcesStrings.Localizable.settingsSendTitle,
         type: .subMenu(destination: .send)
     )
     static let lock = SettingsItem(
         id: 2,
-        title: MailResourcesStrings.settingsCodeLock,
+        title: MailResourcesStrings.Localizable.settingsCodeLock,
         type: .toggle(userDefaults: \.isAppLockEnabled)
     )
     static let threadDensity = SettingsItem(
         id: 3,
-        title: MailResourcesStrings.settingsThreadListDensityTitle,
+        title: MailResourcesStrings.Localizable.settingsThreadListDensityTitle,
         type: .option(.threadDensityOption)
     )
     static let theme = SettingsItem(
         id: 4,
-        title: MailResourcesStrings.settingsTheme,
+        title: MailResourcesStrings.Localizable.settingsTheme,
         type: .option(.themeOption)
     )
     static let accentColor = SettingsItem(
         id: 8,
-        title: MailResourcesStrings.settingsAccentColor,
+        title: MailResourcesStrings.Localizable.settingsAccentColor,
         type: .option(.accentColor)
     )
     static let swipeActions = SettingsItem(
         id: 5,
-        title: MailResourcesStrings.settingsSwipeActionsTitle,
+        title: MailResourcesStrings.Localizable.settingsSwipeActionsTitle,
         type: .subMenu(destination: .swipe)
     )
     static let displayMode = SettingsItem(
         id: 6,
-        title: MailResourcesStrings.settingsMessageDisplayTitle,
+        title: MailResourcesStrings.Localizable.settingsMessageDisplayTitle,
         type: .option(.displayModeOption)
     )
     static let externalContent = SettingsItem(
         id: 7,
-        title: MailResourcesStrings.settingsExternalContentTitle,
+        title: MailResourcesStrings.Localizable.settingsExternalContentTitle,
         type: .option(.externalContentOption)
     )
 }

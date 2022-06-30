@@ -35,11 +35,11 @@ struct AttachmentsView: View {
                     .frame(width: 14)
                     .foregroundColor(MailResourcesAsset.secondaryTextColor)
 
-                Text("\(MailResourcesStrings.attachmentQuantity(message.attachments.count)) (\(message.attachmentsSize, format: .defaultByteCount))")
+                Text("\(MailResourcesStrings.Localizable.attachmentQuantity(message.attachments.count)) (\(message.attachmentsSize, format: .defaultByteCount))")
                     .fontWeight(.regular)
                     .foregroundColor(MailResourcesAsset.secondaryTextColor)
 
-                Button(MailResourcesStrings.buttonDownloadAll) {
+                Button(MailResourcesStrings.Localizable.buttonDownloadAll) {
                     // TODO: after complete attachment
                 }
             }

@@ -30,8 +30,8 @@ public enum CancelDelay: Int, CaseIterable, SettingsOptionEnum {
 
     public var title: String {
         return self == .disabled
-            ? MailResourcesStrings.settingsDisabled
-            : MailResourcesStrings.settingsDelaySeconds(rawValue)
+            ? MailResourcesStrings.Localizable.settingsDisabled
+            : MailResourcesStrings.Localizable.settingsDelaySeconds(rawValue)
     }
 
     public var image: Image? {

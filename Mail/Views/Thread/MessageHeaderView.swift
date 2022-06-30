@@ -44,7 +44,7 @@ struct MessageHeaderView: View {
             VStack(alignment: .leading, spacing: 0) {
                 if message.isDraft {
                     HStack {
-                        Text(MailResourcesStrings.messageIsDraftOption)
+                        Text(MailResourcesStrings.Localizable.messageIsDraftOption)
                             .foregroundColor(MailResourcesAsset.redActionColor)
                             .textStyle(.header3)
                             .frame(maxWidth: .infinity, alignment: .leading)
@@ -83,12 +83,12 @@ struct MessageHeaderView: View {
                     }
 
                     VStack(alignment: .leading) {
-                        RecipientLabel(title: MailResourcesStrings.toTitle, recipients: message.to)
+                        RecipientLabel(title: MailResourcesStrings.Localizable.toTitle, recipients: message.to)
                         if !message.cc.isEmpty {
-                            RecipientLabel(title: MailResourcesStrings.ccTitle, recipients: message.cc)
+                            RecipientLabel(title: MailResourcesStrings.Localizable.ccTitle, recipients: message.cc)
                         }
                         if !message.bcc.isEmpty {
-                            RecipientLabel(title: MailResourcesStrings.bccTitle, recipients: message.bcc)
+                            RecipientLabel(title: MailResourcesStrings.Localizable.bccTitle, recipients: message.bcc)
                         }
                     }
                     .textStyle(.calloutSecondary)

@@ -29,13 +29,13 @@ public enum SwipeType: String, CaseIterable {
     public var title: String {
         switch self {
         case .shortRight:
-            return MailResourcesStrings.settingsSwipeShortRight
+            return MailResourcesStrings.Localizable.settingsSwipeShortRight
         case .longRight:
-            return MailResourcesStrings.settingsSwipeLongRight
+            return MailResourcesStrings.Localizable.settingsSwipeLongRight
         case .shortLeft:
-            return MailResourcesStrings.settingsSwipeShortLeft
+            return MailResourcesStrings.Localizable.settingsSwipeShortLeft
         case .longLeft:
-            return MailResourcesStrings.settingsSwipeLongLeft
+            return MailResourcesStrings.Localizable.settingsSwipeLongLeft
         }
     }
 
@@ -82,25 +82,25 @@ public enum SwipeAction: String, CaseIterable, SettingsOptionEnum {
     public var title: String {
         switch self {
         case .delete:
-            return MailResourcesStrings.actionDelete
+            return MailResourcesStrings.Localizable.actionDelete
         case .archive:
-            return MailResourcesStrings.actionArchive
+            return MailResourcesStrings.Localizable.actionArchive
         case .readUnread:
-            return MailResourcesStrings.settingsSwipeActionReadUnread
+            return MailResourcesStrings.Localizable.settingsSwipeActionReadUnread
         case .move:
-            return MailResourcesStrings.actionMove
+            return MailResourcesStrings.Localizable.actionMove
         case .favorite:
-            return MailResourcesStrings.favoritesFolder
+            return MailResourcesStrings.Localizable.favoritesFolder
         case .report:
-            return MailResourcesStrings.actionPostpone
+            return MailResourcesStrings.Localizable.actionPostpone
         case .spam:
-            return MailResourcesStrings.actionSpam
+            return MailResourcesStrings.Localizable.actionSpam
         case .readAndAchive:
-            return MailResourcesStrings.settingsSwipeActionReadAndArchive
+            return MailResourcesStrings.Localizable.settingsSwipeActionReadAndArchive
         case .quickAction:
-            return MailResourcesStrings.settingsSwipeActionQuickActionsMenu
+            return MailResourcesStrings.Localizable.settingsSwipeActionQuickActionsMenu
         case .none:
-            return MailResourcesStrings.settingsSwipeActionNone
+            return MailResourcesStrings.Localizable.settingsSwipeActionNone
         }
     }
 

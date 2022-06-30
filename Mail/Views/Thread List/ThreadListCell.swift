@@ -59,7 +59,7 @@ struct ThreadListCell: View {
             VStack(alignment: .leading, spacing: 2) {
                 HStack(spacing: 8) {
                     if thread.hasDrafts {
-                        Text("(\(MailResourcesStrings.messageIsDraftOption))")
+                        Text("(\(MailResourcesStrings.Localizable.messageIsDraftOption))")
                             .foregroundColor(MailResourcesAsset.redActionColor)
                             .textStyle(hasUnreadMessages ? .header2 : .header2Secondary)
                     }

@@ -24,7 +24,7 @@ import SwiftUI
 
 @MainActor class SendSettingsViewModel: SettingsViewModel {
     init() {
-        super.init(title: MailResourcesStrings.settingsSendTitle)
+        super.init(title: MailResourcesStrings.Localizable.settingsSendTitle)
         sections = [.sendPage]
     }
 
@@ -47,22 +47,22 @@ private extension SettingsSection {
 private extension SettingsItem {
     static let cancelDelay = SettingsItem(
         id: 1,
-        title: MailResourcesStrings.settingsCancellationPeriodTitle,
+        title: MailResourcesStrings.Localizable.settingsCancellationPeriodTitle,
         type: .option(.cancelDelayOption)
     )
     static let forwardMessage = SettingsItem(
         id: 2,
-        title: MailResourcesStrings.settingsTransferEmailsTitle,
+        title: MailResourcesStrings.Localizable.settingsTransferEmailsTitle,
         type: .option(.forwardMessageOption)
     )
     static let includeOriginalInReply = SettingsItem(
         id: 3,
-        title: MailResourcesStrings.settingsSendIncludeOriginalMessage,
+        title: MailResourcesStrings.Localizable.settingsSendIncludeOriginalMessage,
         type: .toggle(userDefaults: \.includeOriginalInReply)
     )
     static let acknowledgement = SettingsItem(
         id: 4,
-        title: MailResourcesStrings.settingsSendAcknowledgement,
+        title: MailResourcesStrings.Localizable.settingsSendAcknowledgement,
         type: .toggle(userDefaults: \.acknowledgement)
     )
 }

@@ -28,7 +28,7 @@ struct SearchBarButtonView: View {
                 .scaledToFit()
                 .frame(width: Constants.searchBarIconSize, height: Constants.searchBarIconSize)
 
-            Text(MailResourcesStrings.searchViewHint)
+            Text(MailResourcesStrings.Localizable.searchViewHint)
                 .textStyle(.calloutHint)
             Spacer()
 

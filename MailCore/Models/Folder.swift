@@ -35,21 +35,21 @@ public enum FolderRole: String, Codable, PersistableEnum {
     public var localizedName: String {
         switch self {
         case .archive:
-            return MailResourcesStrings.archiveFolder
+            return MailResourcesStrings.Localizable.archiveFolder
         case .commercial:
-            return MailResourcesStrings.commercialFolder
+            return MailResourcesStrings.Localizable.commercialFolder
         case .draft:
-            return MailResourcesStrings.draftFolder
+            return MailResourcesStrings.Localizable.draftFolder
         case .inbox:
-            return MailResourcesStrings.inboxFolder
+            return MailResourcesStrings.Localizable.inboxFolder
         case .sent:
-            return MailResourcesStrings.sentFolder
+            return MailResourcesStrings.Localizable.sentFolder
         case .socialNetworks:
-            return MailResourcesStrings.socialNetworksFolder
+            return MailResourcesStrings.Localizable.socialNetworksFolder
         case .spam:
-            return MailResourcesStrings.spamFolder
+            return MailResourcesStrings.Localizable.spamFolder
         case .trash:
-            return MailResourcesStrings.trashFolder
+            return MailResourcesStrings.Localizable.trashFolder
         }
     }
 

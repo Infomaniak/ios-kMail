@@ -39,15 +39,15 @@ struct LoginView: View {
                         .resizable()
                         .scaledToFit()
                         .frame(width: 185)
-                    Text(MailResourcesStrings.loginViewTitle)
+                    Text(MailResourcesStrings.Localizable.loginViewTitle)
                         .textStyle(.header3)
                         .padding(.top, 48)
-                    Text(MailResourcesStrings.loginViewDescription)
+                    Text(MailResourcesStrings.Localizable.loginViewDescription)
                         .textStyle(.callout)
                 }
                 .multilineTextAlignment(.center)
                 Spacer()
-                Button(MailResourcesStrings.buttonLogin) {
+                Button(MailResourcesStrings.Localizable.buttonLogin) {
                     InfomaniakLogin.asWebAuthenticationLoginFrom(useEphemeralSession: true) { result in
                         switch result {
                         case .success(let result):
@@ -73,10 +73,10 @@ struct LoginView: View {
                     EmptyView()
                 }
             })
-            .alert(MailResourcesStrings.errorLoginTitle, isPresented: $presentAlert) {
+            .alert(MailResourcesStrings.Localizable.errorLoginTitle, isPresented: $presentAlert) {
                 // Use default button
             } message: {
-                Text(MailResourcesStrings.errorLoginDescription)
+                Text(MailResourcesStrings.Localizable.errorLoginDescription)
             }
         }
         .navigationViewStyle(.stack)

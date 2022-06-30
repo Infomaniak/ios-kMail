@@ -2,8 +2,6 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>ITSAppUsesNonExemptEncryption</key>
-	<false/>
 	<key>AppIdentifierPrefix</key>
 	<string>$(AppIdentifierPrefix)</string>
 	<key>CFBundleDevelopmentRegion</key>
@@ -37,6 +35,8 @@
 	</array>
 	<key>CFBundleVersion</key>
 	<string>1</string>
+	<key>ITSAppUsesNonExemptEncryption</key>
+	<false/>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSBonjourServices</key>
@@ -45,6 +45,8 @@
 	</array>
 	<key>NSContactsUsageDescription</key>
 	<string>Local contacts will be used to show recipient info. We will NOT send them to the server.</string>
+	<key>NSFaceIDUsageDescription</key>
+	<string>To be able to lock the app</string>
 	<key>NSLocalNetworkUsageDescription</key>
 	<string>Atlantis would use Bonjour Service to discover Proxyman app from your local network.</string>
 	<key>UIApplicationSceneManifest</key>

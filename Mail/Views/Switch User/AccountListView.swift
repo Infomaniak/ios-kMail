@@ -29,7 +29,7 @@ struct AccountListView: View {
                 }
             }
         }
-        .navigationBarTitle(MailResourcesStrings.titleMyAccounts, displayMode: .inline)
+        .navigationBarTitle(MailResourcesStrings.Localizable.titleMyAccounts, displayMode: .inline)
         .padding(16)
         .task {
             try? await withThrowingTaskGroup(of: Void.self) { group in

@@ -30,7 +30,7 @@ struct SettingsSwipeActionsView: View {
     var body: some View {
         List {
             Section {
-                Text(MailResourcesStrings.settingsSwipeDescription)
+                Text(MailResourcesStrings.Localizable.settingsSwipeDescription)
                     .textStyle(.header3)
                     .listRowSeparator(.hidden)
             }
