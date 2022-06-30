@@ -27,7 +27,9 @@ import SwiftUI
 private struct ScrollOffsetPreferenceKey: PreferenceKey {
     static var defaultValue: CGPoint = .zero
 
-    static func reduce(value: inout CGPoint, nextValue: () -> CGPoint) {}
+    static func reduce(value: inout CGPoint, nextValue: () -> CGPoint) {
+        // No need to implement it
+    }
 }
 
 class MessageSheet: SheetState<MessageSheet.State> {
