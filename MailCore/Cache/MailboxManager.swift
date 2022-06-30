@@ -254,7 +254,7 @@ public class MailboxManager: ObservableObject {
             if let liveThread = thread.thaw() {
                 let realm = getRealm()
                 try? realm.safeWrite {
-                    liveThread.parent?.unreadCount = (liveThread.parent?.unreadCount ?? 0) - 1
+                    liveThread.parent?.unreadCount = (liveThread.parent?.unreadCount ?? 0) - liveThread.unseenMessages
                     liveThread.unseenMessages = 0
                     for message in thread.messages {
                         message.thaw()?.seen = true
@@ -267,8 +267,8 @@ public class MailboxManager: ObservableObject {
             if let liveThread = thread.thaw() {
                 let realm = getRealm()
                 try? realm.safeWrite {
-                    liveThread.parent?.unreadCount = (liveThread.parent?.unreadCount ?? 0) + 1
                     liveThread.unseenMessages = liveThread.messagesCount
+                    liveThread.parent?.unreadCount = (liveThread.parent?.unreadCount ?? 0) + liveThread.unseenMessages
                     for message in thread.messages {
                         message.thaw()?.seen = false
                     }
