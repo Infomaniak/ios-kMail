@@ -17,6 +17,7 @@
  */
 
 import BottomSheet
+import InfomaniakCore
 import Introspect
 import MailCore
 import MailResources
@@ -58,10 +59,12 @@ struct ThreadView: View {
     @StateObject private var threadBottomSheet = ThreadBottomSheet()
 
     @EnvironmentObject var globalBottomSheet: GlobalBottomSheet
+    @Environment(\.verticalSizeClass) var sizeClass
 
     private let trashId: String
     private let bottomSheetOptions = Constants.bottomSheetOptions + [.absolutePositionValue]
     private let threadBottomSheetOptions = Constants.bottomSheetOptions + [.appleScrollBehavior]
+    private let toolbarActions: [Action] = [.reply, .forward, .archive, .delete]
 
     private var isTrashFolder: Bool {
         return thread.parent?._id == trashId
@@ -122,8 +125,12 @@ struct ThreadView: View {
             // Style toolbar
             let appereance = UIToolbarAppearance()
             appereance.configureWithOpaqueBackground()
-            appereance.backgroundColor = MailResourcesAsset.backgroundSearchBar.color
+            appereance.backgroundColor = MailResourcesAsset.backgroundToolbarColor.color
+            appereance.shadowColor = .clear
             UIToolbar.appearance().standardAppearance = appereance
+            UIToolbar.appearance().scrollEdgeAppearance = appereance
+            navigationController?.toolbar.barTintColor = .white
+            navigationController?.toolbar.setShadowImage(UIImage(), forToolbarPosition: .any)
             // Style navigation bar
             let appearance = UINavigationBarAppearance()
             appearance.configureWithDefaultBackground()
@@ -152,38 +159,35 @@ struct ThreadView: View {
                 }
             }
             ToolbarItemGroup(placement: .bottomBar) {
-                Group {
+                ForEach(toolbarActions) { action in
                     Button {
-                        guard let message = messages.last else { return }
-                        sheet.state = .reply(message, .reply)
+                        didTap(action: action)
                     } label: {
-                        VStack(spacing: 0) {
-                            Image(resource: MailResourcesAsset.emailActionReply)
-                            Text(MailResourcesStrings.Localizable.actionReply)
-                        }
-                    }
-                    Spacer()
-                    Button {
-                        guard let message = messages.last else { return }
-                        sheet.state = .reply(message, .forward)
-                    } label: {
-                        VStack(spacing: 0) {
-                            Image(resource: MailResourcesAsset.emailActionTransfer)
-                            Text(MailResourcesStrings.Localizable.actionForward)
-                        }
-                    }
-                    Spacer()
-                    Button {
-                        threadBottomSheet.open(state: .actions(.thread(thread.thaw() ?? thread)), position: .middle)
-                    } label: {
-                        VStack(spacing: 0) {
-                            Image(systemName: "ellipsis")
+                        Label {
+                            Text(action.title)
+                                .font(MailTextStyle.caption.font)
+                        } icon: {
+                            Image(resource: action.icon)
+                                .resizable()
+                                .scaledToFit()
                                 .frame(width: 24, height: 24)
-                            Text(MailResourcesStrings.Localizable.buttonMore)
                         }
+                        .dynamicLabelStyle(sizeClass: sizeClass!)
                     }
+                    Spacer()
                 }
-                .textStyle(.calloutHighlighted)
+                Button {
+                    threadBottomSheet.open(state: .actions(.thread(thread.thaw() ?? thread)), position: .middle)
+                } label: {
+                    Label {
+                        Text(MailResourcesStrings.Localizable.buttonMore)
+                            .font(MailTextStyle.caption.font)
+                    } icon: {
+                        Image(systemName: "ellipsis")
+                            .frame(width: 24, height: 24)
+                    }
+                    .dynamicLabelStyle(sizeClass: sizeClass!)
+                }
             }
         }
         .sheet(isPresented: $sheet.isShowing) {
@@ -222,6 +226,59 @@ struct ThreadView: View {
             case .none:
                 EmptyView()
             }
+        }
+    }
+
+    private func didTap(action: Action) {
+        switch action {
+        case .reply:
+            guard let message = messages.last else { return }
+            sheet.state = .reply(message, .reply)
+        case .forward:
+            guard let message = messages.last else { return }
+            sheet.state = .reply(message, .forward)
+        case .archive:
+            Task {
+                await tryOrDisplayError {
+                    let response = try await mailboxManager.move(thread: thread, to: .archive)
+                    IKSnackBar.showCancelableSnackBar(message: MailResourcesStrings.Localizable.snackbarThreadMoved(FolderRole.archive.localizedName),
+                                                      cancelSuccessMessage: MailResourcesStrings.Localizable.snackbarMoveCancelled,
+                                                      cancelableResponse: response,
+                                                      mailboxManager: mailboxManager)
+                }
+            }
+        case .delete:
+            Task {
+                await tryOrDisplayError {
+                    try await mailboxManager.moveOrDelete(thread: thread)
+                }
+            }
+        default:
+            break
+        }
+    }
+}
+
+struct VerticalLabelStyle: LabelStyle {
+    func makeBody(configuration: Configuration) -> some View {
+        VStack(spacing: 8) {
+            configuration.icon
+            configuration.title
+        }
+    }
+}
+
+extension LabelStyle where Self == VerticalLabelStyle {
+    static var vertical: VerticalLabelStyle { .init() }
+}
+
+extension Label {
+    @ViewBuilder
+    func dynamicLabelStyle(sizeClass: UserInterfaceSizeClass) -> some View {
+        if sizeClass == .compact {
+            labelStyle(.iconOnly)
+        } else {
+            labelStyle(.vertical)
         }
     }
 }
