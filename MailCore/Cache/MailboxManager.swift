@@ -82,7 +82,8 @@ public class MailboxManager: ObservableObject {
                 Draft.self,
                 SignatureResponse.self,
                 Signature.self,
-                ValidEmail.self
+                ValidEmail.self,
+                MailboxSettings.self
             ]
         )
     }
@@ -700,6 +701,31 @@ public class MailboxManager: ObservableObject {
                 realm.delete(liveThread.messages)
                 realm.delete(liveThread)
             }
+        }
+    }
+
+    // MARK: - Settings
+
+    private func initSettings(using realm: Realm) -> MailboxSettings {
+        let settings = MailboxSettings()
+        try? realm.safeWrite {
+            realm.add(settings)
+        }
+        return settings
+    }
+
+    public func getSettings() -> MailboxSettings {
+        let realm = getRealm()
+        if let settings = realm.objects(MailboxSettings.self).first {
+            return settings
+        }
+        return initSettings(using: realm)
+    }
+
+    public func updateSettings(closure: () -> Void) {
+        let realm = getRealm()
+        try? realm.safeWrite {
+            closure()
         }
     }
 

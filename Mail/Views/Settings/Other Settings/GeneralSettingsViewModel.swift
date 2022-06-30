@@ -40,10 +40,25 @@ import SwiftUI
 }
 
 private extension SettingsSection {
+    private static func getEmailAddresses() -> [SettingsItem] {
+        var result: [SettingsItem] = []
+
+        for mailbox in AccountManager.instance.mailboxes {
+            if let mailboxManager = AccountManager.instance.getMailboxManager(for: mailbox) {
+                result.append(SettingsItem(
+                    id: mailbox.mailboxId,
+                    title: mailbox.email,
+                    type: .subMenu(destination: .emailSettings(mailboxManager: mailboxManager))
+                ))
+            }
+        }
+        return result
+    }
+
     static let emailAddresses = SettingsSection(
         id: 1,
         name: MailResourcesStrings.Localizable.settingsSectionEmailAddresses,
-        items: []
+        items: getEmailAddresses()
     )
     static let general = SettingsSection(
         id: 2,

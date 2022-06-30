@@ -42,25 +42,39 @@ struct SettingsItem: Identifiable, Equatable {
 enum SettingsType: Equatable {
     case subMenu(destination: SettingsDestination)
     case toggle(userDefaults: ReferenceWritableKeyPath<UserDefaults, Bool>)
+    case toggleBinding(keyPath: ReferenceWritableKeyPath<MailboxSettings, Bool>)
     case option(SettingsOption)
 }
 
 // MARK: - SettingsDestination
 
-enum SettingsDestination: String, Equatable {
-    case emailSettings
+enum SettingsDestination: Equatable {
+    case emailSettings(mailboxManager: MailboxManager)
     case send
     case swipe
 
     @MainActor @ViewBuilder
     func getDestination() -> some View {
         switch self {
-        case .emailSettings:
-            EmptyView()
+        case let .emailSettings(mailboxManager):
+            SettingsView(viewModel: EmailAddressSettingsViewModel(mailboxManager: mailboxManager))
         case .send:
             SettingsView(viewModel: SendSettingsViewModel())
         case .swipe:
             SettingsSwipeActionsView(viewModel: SwipeActionSettingsViewModel())
+        }
+    }
+
+    static func == (lhs: SettingsDestination, rhs: SettingsDestination) -> Bool {
+        switch (lhs, rhs) {
+        case (.send, .send):
+            return true
+        case (.swipe, .swipe):
+            return true
+        case let (.emailSettings(lhsType), .emailSettings(rhsType)):
+            return lhsType.mailbox == rhsType.mailbox
+        default:
+            return false
         }
     }
 }
@@ -84,6 +98,11 @@ enum SettingsOption: Equatable {
     case swipeLongRightOption
     case swipeShortLeftOption
     case swipeLongLeftOption
+
+    // Email Address General
+    case signatureOption
+    case autoReplyOption
+    case folderSettingsOption
 
     @ViewBuilder
     func getDestination() -> some View {
@@ -148,6 +167,12 @@ enum SettingsOption: Equatable {
                 keyPath: \.swipeLongLeft,
                 excludedKeyPath: [\.swipeShortRight, \.swipeLongRight, \.swipeShortLeft]
             )
+        case .signatureOption:
+            EmptyView()
+        case .autoReplyOption:
+            EmptyView()
+        case .folderSettingsOption:
+            EmptyView()
         }
     }
 }

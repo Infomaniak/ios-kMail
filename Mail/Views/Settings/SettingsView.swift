@@ -54,6 +54,8 @@ struct SettingsView: View {
                             SettingsSubMenuCell(title: item.title, destination: destination)
                         case let .toggle(userDefaults: userDefaults):
                             SettingsToggleCell(title: item.title, userDefaults: userDefaults)
+						case let .toggleBinding(keyPath: keyPath):
+                            SettingsToggleBindingCell(title: item.title, keyPath: keyPath, viewModel: viewModel as! EmailAddressSettingsViewModel)
                         case let .option(option):
                             SettingsOptionCell(
                                 title: item.title,
