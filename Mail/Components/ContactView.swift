@@ -104,11 +104,9 @@ struct ContactView: View {
     }
 
     private func addToContacts() {
-        let contactManager = AccountManager.instance.currentContactManager
-        guard let addressBook = contactManager?.getMainAddressBook() else { return }
         Task {
             await tryOrDisplayError {
-                try await contactManager?.addContact(recipient: recipient)
+                try await AccountManager.instance.currentContactManager?.addContact(recipient: recipient)
                 IKSnackBar.showSnackBar(message: MailResourcesStrings.snackbarContactSaved)
             }
         }

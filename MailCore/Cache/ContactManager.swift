@@ -150,6 +150,7 @@ public class ContactManager: ObservableObject {
 
         let newContact = Contact()
         let name = recipient.name.split(separator: " ", maxSplits: 1)
+        newContact.name = recipient.name
         newContact.firstname = String(name.first ?? "")
         newContact.lastname = String((name.count == 2 ? name.last : nil) ?? "")
         newContact.emails.append(recipient.email)
@@ -165,7 +166,7 @@ public class ContactManager: ObservableObject {
         if let mergedContact = getContact(for: recipient.email) {
             mergedContact.remote = newContact.freeze()
         } else {
-            mergedContacts[recipient.email] = MergedContact(email: recipient.email, remote: newContact, local: nil)
+            mergedContacts[recipient.email] = MergedContact(email: recipient.email, remote: newContact.freeze(), local: nil)
         }
     }
 
