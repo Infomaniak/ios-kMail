@@ -44,7 +44,7 @@ struct MessageView: View {
                     isMessageExpanded: $isMessageExpanded
                 )
 
-                if !message.attachments.isEmpty {
+                if !message.attachments.filter { $0.contentId == nil }.isEmpty {
                     AttachmentsView(message: message)
                 }
 

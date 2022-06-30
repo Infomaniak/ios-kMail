@@ -26,13 +26,17 @@ struct AttachmentsView: View {
     @EnvironmentObject var mailboxManager: MailboxManager
     @ObservedRealmObject var message: Message
 
+    private var attachments: [Attachment] {
+        return message.attachments.filter { $0.contentId == nil }
+    }
+
     var body: some View {
         VStack(spacing: 16) {
             IKDivider()
 
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack(spacing: 8) {
-                    ForEach(message.attachments) { attachment in
+                    ForEach(attachments) { attachment in
                         Button {
                             sheet.state = .attachment(attachment)
                             if !FileManager.default.fileExists(atPath: attachment.localUrl?.path ?? "") {
@@ -50,7 +54,7 @@ struct AttachmentsView: View {
 
             HStack(spacing: 8) {
                 Label {
-                    Text("\(MailResourcesStrings.Localizable.attachmentQuantity(message.attachments.count)) (\(message.attachmentsSize, format: .defaultByteCount))")
+                    Text("\(MailResourcesStrings.Localizable.attachmentQuantity(attachments.count)) (\(message.attachmentsSize, format: .defaultByteCount))")
                 } icon: {
                     Image(resource: MailResourcesAsset.attachmentMail2)
                         .resizable()
