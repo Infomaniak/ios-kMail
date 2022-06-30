@@ -244,6 +244,7 @@ public class MailboxManager: ObservableObject {
             }
             realm.add(fetchedThreads, update: .modified)
             parentFolder.threads.insert(objectsIn: fetchedThreads)
+            parentFolder.updateUnreadCount()
         }
     }
 
