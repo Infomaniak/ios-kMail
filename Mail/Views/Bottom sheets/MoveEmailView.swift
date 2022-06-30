@@ -57,7 +57,7 @@ struct MoveEmailView: View {
             }
             .textStyle(.button)
         }
-        .padding(.horizontal, 24)
+        .padding(.horizontal, Constants.bottomSheetVerticalPadding)
         .onAppear {
             selectedFolderID = sortedFolders.first?.id ?? ""
         }

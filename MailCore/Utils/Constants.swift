@@ -100,4 +100,6 @@ public enum Constants {
     public static let defaultSwipeLongRight = SwipeAction.readUnread
     public static let defaultSwipeShortLeft = SwipeAction.quickAction
     public static let defaultSwipeLongLeft = SwipeAction.delete
+
+    public static let bottomSheetVerticalPadding: CGFloat = 24
 }

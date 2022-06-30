@@ -164,7 +164,7 @@ struct SplitView: View {
             case .createNewFolder(let mode):
                 CreateFolderView(mailboxManager: mailboxManager, state: bottomSheet, mode: mode)
             case .getMoreStorage:
-                Text("Get more storage")
+                MoreStorageView()
             case .none:
                 EmptyView()
             }
