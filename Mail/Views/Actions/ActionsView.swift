@@ -36,11 +36,12 @@ struct ActionsView: View {
     }
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 24) {
+        VStack(alignment: .leading, spacing: 16) {
             // Header
             Text(MailResourcesStrings.Localizable.actionsMenuTitle)
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .textStyle(.header3)
+                .padding([.leading, .trailing], 24)
             // Quick actions
             HStack(alignment: .top, spacing: 28) {
                 ForEach(viewModel.quickActions) { action in
@@ -48,13 +49,16 @@ struct ActionsView: View {
                 }
                 .fixedSize(horizontal: false, vertical: true)
             }
-            IKDivider()
+            .padding([.leading, .trailing], 24)
+            .padding(.bottom, 16)
             // Actions
             ForEach(viewModel.listActions) { action in
+                IKDivider()
                 ActionView(viewModel: viewModel, action: action)
+                    .padding([.leading, .trailing], 24)
             }
         }
-        .padding([.leading, .trailing], 32)
+        .padding([.leading, .trailing], 8)
         .padding(.top, 16)
     }
 }
@@ -73,6 +77,8 @@ struct QuickActionView: View {
     @ObservedObject var viewModel: ActionsViewModel
     let action: Action
 
+    @AppStorage(UserDefaults.shared.key(.accentColor)) private var accentColor = AccentColor.pink
+
     var body: some View {
         Button {
             Task {
@@ -84,7 +90,7 @@ struct QuickActionView: View {
             VStack(spacing: 8) {
                 ZStack {
                     RoundedRectangle(cornerRadius: 8)
-                        .fill(MailResourcesAsset.backgroundHeaderColor.swiftUiColor)
+                        .fill(accentColor.secondary.swiftUiColor)
 
                     Image(resource: action.icon)
                         .resizable()
@@ -114,13 +120,13 @@ struct ActionView: View {
                 }
             }
         } label: {
-            HStack {
+            HStack(spacing: 20) {
                 Image(resource: action.icon)
                     .resizable()
                     .scaledToFit()
                     .frame(width: 21, height: 21)
                 Text(action.title)
-                    .font(MailTextStyle.body.font)
+                    .textStyle(.body)
             }
         }
     }
