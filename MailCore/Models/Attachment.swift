@@ -17,6 +17,7 @@
  */
 
 import Foundation
+import MailResources
 import PDFKit
 import QuickLookThumbnailing
 import RealmSwift
@@ -28,7 +29,7 @@ public class Attachment: /* Hashable, */ EmbeddedObject, Codable, Identifiable {
     @Persisted public var partId: String // PROBLEM: Sometimes API return a String, sometimes an Int. Check with backend if we can have one type only? -- Asked to Julien A. on 08.09 - To follow up.
     @Persisted public var mimeType: String
     @Persisted public var encoding: String?
-    @Persisted public var size: Int
+    @Persisted public var size: Int64
     @Persisted public var name: String
     @Persisted public var disposition: AttachmentDisposition
     @Persisted public var contentId: String?
@@ -50,6 +51,28 @@ public class Attachment: /* Hashable, */ EmbeddedObject, Codable, Identifiable {
 
     public var uti: UTType? {
         UTType(mimeType: mimeType, conformingTo: .data)
+    }
+
+    public var icon: MailResourcesImages {
+        guard let uti = uti else { return MailResourcesAsset.unknownFile }
+        if uti.conforms(to: .audio) {
+            return MailResourcesAsset.audioFile
+        } else if uti.conforms(to: .archive) {
+            return MailResourcesAsset.zipFile
+        } else if uti.conforms(to: .image) {
+            return MailResourcesAsset.imageFileLandscape
+        } else if uti.conforms(to: .pdf) {
+            return MailResourcesAsset.officeFileAdobe
+        } else if uti.conforms(to: .plainText) {
+            return MailResourcesAsset.commonFileText
+        } else if uti.conforms(to: .presentation) {
+            return MailResourcesAsset.officeFileGraph
+        } else if uti.conforms(to: .spreadsheet) {
+            return MailResourcesAsset.officeFileSheet
+        } else if uti.conforms(to: .video) {
+            return MailResourcesAsset.videoFilePlay
+        }
+        return MailResourcesAsset.unknownFile
     }
 
     private enum CodingKeys: String, CodingKey {
@@ -79,7 +102,7 @@ public class Attachment: /* Hashable, */ EmbeddedObject, Codable, Identifiable {
         }
         mimeType = try values.decode(String.self, forKey: .mimeType)
         encoding = try values.decodeIfPresent(String.self, forKey: .encoding)
-        size = try values.decode(Int.self, forKey: .size)
+        size = try values.decode(Int64.self, forKey: .size)
         name = try values.decode(String.self, forKey: .name)
         disposition = try values.decode(AttachmentDisposition.self, forKey: .disposition)
         contentId = try values.decodeIfPresent(String.self, forKey: .contentId)
@@ -96,7 +119,7 @@ public class Attachment: /* Hashable, */ EmbeddedObject, Codable, Identifiable {
         partId: String,
         mimeType: String,
         encoding: String? = nil,
-        size: Int,
+        size: Int64,
         name: String,
         disposition: AttachmentDisposition,
         contentId: String? = nil,

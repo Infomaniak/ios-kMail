@@ -21,19 +21,27 @@ import MailResources
 import SwiftUI
 
 struct AttachmentCell: View {
-    var attachment: Attachment
+    let attachment: Attachment
 
     var body: some View {
-        ZStack {
-            RoundedRectangle(cornerRadius: 35, style: .continuous)
-                .fill(Color(MailResourcesAsset.backgroundHeaderColor.color))
-            Text(attachment.name)
-                .truncationMode(.middle)
-                .padding([.top, .bottom], 8)
-                .padding([.leading, .trailing], 12)
+        HStack {
+            Image(resource: attachment.icon)
+
+            VStack(alignment: .leading, spacing: 0) {
+                Text(attachment.name)
+                    .textStyle(.callout)
+                    .lineLimit(1)
+                    .truncationMode(.middle)
+                Text(attachment.size, format: .defaultByteCount)
+                    .textStyle(.caption)
+            }
         }
-        .frame(maxWidth: 135)
-        .fixedSize()
+        .padding(6)
+        .overlay(
+            RoundedRectangle(cornerRadius: 6)
+                .stroke(MailResourcesAsset.separatorColor.swiftUiColor, lineWidth: 1)
+        )
+        .frame(maxWidth: 200)
     }
 }
 
