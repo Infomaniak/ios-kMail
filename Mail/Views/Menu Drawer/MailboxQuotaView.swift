@@ -23,6 +23,7 @@ import SwiftUI
 
 struct MailboxQuotaView: View {
     @EnvironmentObject var mailboxManager: MailboxManager
+    @EnvironmentObject var globalSheet: GlobalBottomSheet
 
     @State private var quotas: Quotas?
 
@@ -67,7 +68,7 @@ struct MailboxQuotaView: View {
     }
 
     private func openGetMoreStorage() {
-        // TODO: Open "Get More Storage View"
+        globalSheet.open(state: .getMoreStorage, position: .moveHeight)
     }
 }
 

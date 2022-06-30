@@ -28,6 +28,7 @@ class GlobalBottomSheet: BottomSheetState<GlobalBottomSheet.State, GlobalBottomS
     enum State {
         case move(moveHandler: (Folder) -> Void)
         case createNewFolder(mode: CreateFolderView.Mode)
+        case getMoreStorage
     }
 
     enum Position: CGFloat, CaseIterable {
@@ -162,6 +163,8 @@ struct SplitView: View {
                 MoveEmailView(mailboxManager: mailboxManager, state: bottomSheet, moveHandler: moveHandler)
             case .createNewFolder(let mode):
                 CreateFolderView(mailboxManager: mailboxManager, state: bottomSheet, mode: mode)
+            case .getMoreStorage:
+                Text("Get more storage")
             case .none:
                 EmptyView()
             }
