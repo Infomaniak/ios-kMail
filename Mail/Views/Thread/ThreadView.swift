@@ -112,7 +112,7 @@ struct ThreadView: View {
                     } label: {
                         VStack(spacing: 0) {
                             Image(resource: MailResourcesAsset.emailActionReply)
-                            Text(MailResourcesStrings.actionReply)
+                            Text(MailResourcesStrings.Localizable.actionReply)
                         }
                     }
                     Spacer()
@@ -122,7 +122,7 @@ struct ThreadView: View {
                     } label: {
                         VStack(spacing: 0) {
                             Image(resource: MailResourcesAsset.emailActionTransfer)
-                            Text(MailResourcesStrings.actionForward)
+                            Text(MailResourcesStrings.Localizable.actionForward)
                         }
                     }
                     Spacer()
@@ -132,7 +132,7 @@ struct ThreadView: View {
                         VStack(spacing: 0) {
                             Image(systemName: "ellipsis")
                                 .frame(width: 24, height: 24)
-                            Text(MailResourcesStrings.buttonMore)
+                            Text(MailResourcesStrings.Localizable.buttonMore)
                         }
                     }
                 }

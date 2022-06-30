@@ -58,18 +58,18 @@ public class Thread: Object, Decodable, Identifiable {
     }
 
     public var formattedFrom: String {
-        guard let from = from.last else { return MailResourcesStrings.unknownRecipientTitle }
+        guard let from = from.last else { return MailResourcesStrings.Localizable.unknownRecipientTitle }
         return from.title
     }
 
     public var formattedTo: String {
-        guard let to = to.last else { return MailResourcesStrings.unknownRecipientTitle }
+        guard let to = to.last else { return MailResourcesStrings.Localizable.unknownRecipientTitle }
         return to.title
     }
 
     public var formattedSubject: String {
         guard let subject = subject, !subject.isEmpty else {
-            return MailResourcesStrings.noSubjectTitle
+            return MailResourcesStrings.Localizable.noSubjectTitle
         }
         return subject
     }

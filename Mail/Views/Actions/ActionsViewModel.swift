@@ -27,25 +27,25 @@ struct Action: Identifiable, Equatable {
     let title: String
     let icon: MailResourcesImages
 
-    static let delete = Action(id: 1, title: MailResourcesStrings.actionDelete, icon: MailResourcesAsset.bin)
-    static let reply = Action(id: 2, title: MailResourcesStrings.actionReply, icon: MailResourcesAsset.emailActionReply)
-    static let replyAll = Action(id: 3, title: MailResourcesStrings.actionReplyAll, icon: MailResourcesAsset.emailActionReplyToAll)
-    static let archive = Action(id: 4, title: MailResourcesStrings.actionArchive, icon: MailResourcesAsset.archives)
-    static let forward = Action(id: 5, title: MailResourcesStrings.actionForward, icon: MailResourcesAsset.emailActionTransfer)
-    static let markAsRead = Action(id: 6, title: MailResourcesStrings.actionMarkAsRead, icon: MailResourcesAsset.envelopeOpen)
-    static let markAsUnread = Action(id: 7, title: MailResourcesStrings.actionMarkAsUnread, icon: MailResourcesAsset.envelope)
-    static let move = Action(id: 8, title: MailResourcesStrings.actionMove, icon: MailResourcesAsset.emailActionSend21)
-    static let postpone = Action(id: 9, title: MailResourcesStrings.actionPostpone, icon: MailResourcesAsset.waitingMessage)
-    static let spam = Action(id: 10, title: MailResourcesStrings.actionSpam, icon: MailResourcesAsset.spam)
-    static let nonSpam = Action(id: 19, title: MailResourcesStrings.actionNonSpam, icon: MailResourcesAsset.spam)
-    static let block = Action(id: 11, title: MailResourcesStrings.actionBlockSender, icon: MailResourcesAsset.blockUser)
-    static let phishing = Action(id: 12, title: MailResourcesStrings.actionPhishing, icon: MailResourcesAsset.fishing)
-    static let print = Action(id: 13, title: MailResourcesStrings.actionPrint, icon: MailResourcesAsset.printText)
-    static let saveAsPDF = Action(id: 14, title: MailResourcesStrings.actionSavePDF, icon: MailResourcesAsset.fileDownload)
-    static let openIn = Action(id: 15, title: MailResourcesStrings.actionOpenIn, icon: MailResourcesAsset.sendTo)
-    static let createRule = Action(id: 16, title: MailResourcesStrings.actionCreateRule, icon: MailResourcesAsset.ruleRegle)
-    static let report = Action(id: 17, title: MailResourcesStrings.actionReportDisplayProblem, icon: MailResourcesAsset.feedbacks)
-    static let editMenu = Action(id: 18, title: MailResourcesStrings.actionEditMenu, icon: MailResourcesAsset.editTools)
+    static let delete = Action(id: 1, title: MailResourcesStrings.Localizable.actionDelete, icon: MailResourcesAsset.bin)
+    static let reply = Action(id: 2, title: MailResourcesStrings.Localizable.actionReply, icon: MailResourcesAsset.emailActionReply)
+    static let replyAll = Action(id: 3, title: MailResourcesStrings.Localizable.actionReplyAll, icon: MailResourcesAsset.emailActionReplyToAll)
+    static let archive = Action(id: 4, title: MailResourcesStrings.Localizable.actionArchive, icon: MailResourcesAsset.archives)
+    static let forward = Action(id: 5, title: MailResourcesStrings.Localizable.actionForward, icon: MailResourcesAsset.emailActionTransfer)
+    static let markAsRead = Action(id: 6, title: MailResourcesStrings.Localizable.actionMarkAsRead, icon: MailResourcesAsset.envelopeOpen)
+    static let markAsUnread = Action(id: 7, title: MailResourcesStrings.Localizable.actionMarkAsUnread, icon: MailResourcesAsset.envelope)
+    static let move = Action(id: 8, title: MailResourcesStrings.Localizable.actionMove, icon: MailResourcesAsset.emailActionSend21)
+    static let postpone = Action(id: 9, title: MailResourcesStrings.Localizable.actionPostpone, icon: MailResourcesAsset.waitingMessage)
+    static let spam = Action(id: 10, title: MailResourcesStrings.Localizable.actionSpam, icon: MailResourcesAsset.spam)
+    static let nonSpam = Action(id: 19, title: MailResourcesStrings.Localizable.actionNonSpam, icon: MailResourcesAsset.spam)
+    static let block = Action(id: 11, title: MailResourcesStrings.Localizable.actionBlockSender, icon: MailResourcesAsset.blockUser)
+    static let phishing = Action(id: 12, title: MailResourcesStrings.Localizable.actionPhishing, icon: MailResourcesAsset.fishing)
+    static let print = Action(id: 13, title: MailResourcesStrings.Localizable.actionPrint, icon: MailResourcesAsset.printText)
+    static let saveAsPDF = Action(id: 14, title: MailResourcesStrings.Localizable.actionSavePDF, icon: MailResourcesAsset.fileDownload)
+    static let openIn = Action(id: 15, title: MailResourcesStrings.Localizable.actionOpenIn, icon: MailResourcesAsset.sendTo)
+    static let createRule = Action(id: 16, title: MailResourcesStrings.Localizable.actionCreateRule, icon: MailResourcesAsset.ruleRegle)
+    static let report = Action(id: 17, title: MailResourcesStrings.Localizable.actionReportDisplayProblem, icon: MailResourcesAsset.feedbacks)
+    static let editMenu = Action(id: 18, title: MailResourcesStrings.Localizable.actionEditMenu, icon: MailResourcesAsset.editTools)
 
     static func == (lhs: Action, rhs: Action) -> Bool {
         lhs.id == rhs.id
@@ -204,17 +204,17 @@ enum ActionsTarget: Equatable {
         case .threads(let threads):
             let messages = threads.flatMap(\.messages).map { $0.freezeIfNeeded() }
             response = try await mailboxManager.move(messages: messages, to: folder)
-            snackBarMessage = MailResourcesStrings.snackbarThreadMovedPlural(folder.localizedName)
+            snackBarMessage = MailResourcesStrings.Localizable.snackbarThreadMovedPlural(folder.localizedName)
         case .thread(let thread):
             response = try await mailboxManager.move(thread: thread.freezeIfNeeded(), to: folder)
-            snackBarMessage = MailResourcesStrings.snackbarThreadMoved(folder.localizedName)
+            snackBarMessage = MailResourcesStrings.Localizable.snackbarThreadMoved(folder.localizedName)
         case .message(let message):
             response = try await mailboxManager.move(messages: [message.freezeIfNeeded()], to: folder)
-            snackBarMessage = MailResourcesStrings.snackbarMessageMoved(folder.localizedName)
+            snackBarMessage = MailResourcesStrings.Localizable.snackbarMessageMoved(folder.localizedName)
         }
 
         IKSnackBar.showCancelableSnackBar(message: snackBarMessage,
-                                          cancelSuccessMessage: MailResourcesStrings.snackbarMoveCancelled,
+                                          cancelSuccessMessage: MailResourcesStrings.Localizable.snackbarMoveCancelled,
                                           cancelableResponse: response,
                                           mailboxManager: mailboxManager)
     }
@@ -239,8 +239,8 @@ enum ActionsTarget: Equatable {
             } else {
                 // Move to trash
                 let response = try await mailboxManager.move(messages: [message.freezeIfNeeded()], to: .trash)
-                IKSnackBar.showCancelableSnackBar(message: MailResourcesStrings.snackbarMessageMoved(FolderRole.trash.localizedName),
-                                                  cancelSuccessMessage: MailResourcesStrings.snackbarMoveCancelled,
+                IKSnackBar.showCancelableSnackBar(message: MailResourcesStrings.Localizable.snackbarMessageMoved(FolderRole.trash.localizedName),
+                                                  cancelSuccessMessage: MailResourcesStrings.Localizable.snackbarMoveCancelled,
                                                   cancelableResponse: response,
                                                   mailboxManager: mailboxManager)
             }
@@ -301,17 +301,17 @@ enum ActionsTarget: Equatable {
         switch target {
         case .threads(let threads):
             response = try await mailboxManager.reportSpam(messages: threads.flatMap(\.messages).map { $0.freezeIfNeeded() })
-            snackBarMessage = MailResourcesStrings.snackbarThreadMovedPlural(FolderRole.spam.localizedName)
+            snackBarMessage = MailResourcesStrings.Localizable.snackbarThreadMovedPlural(FolderRole.spam.localizedName)
         case .thread(let thread):
             response = try await mailboxManager.reportSpam(thread: thread.freezeIfNeeded())
-            snackBarMessage = MailResourcesStrings.snackbarThreadMoved(FolderRole.spam.localizedName)
+            snackBarMessage = MailResourcesStrings.Localizable.snackbarThreadMoved(FolderRole.spam.localizedName)
         case .message(let message):
             response = try await mailboxManager.reportSpam(messages: [message.freezeIfNeeded()])
-            snackBarMessage = MailResourcesStrings.snackbarMessageMoved(FolderRole.spam.localizedName)
+            snackBarMessage = MailResourcesStrings.Localizable.snackbarMessageMoved(FolderRole.spam.localizedName)
         }
 
         IKSnackBar.showCancelableSnackBar(message: snackBarMessage,
-                                          cancelSuccessMessage: MailResourcesStrings.snackbarMoveCancelled,
+                                          cancelSuccessMessage: MailResourcesStrings.Localizable.snackbarMoveCancelled,
                                           cancelableResponse: response,
                                           mailboxManager: mailboxManager)
     }
@@ -322,17 +322,17 @@ enum ActionsTarget: Equatable {
         switch target {
         case .threads(let threads):
             response = try await mailboxManager.nonSpam(messages: threads.flatMap(\.messages).map { $0.freezeIfNeeded() })
-            snackBarMessage = MailResourcesStrings.snackbarThreadMovedPlural(FolderRole.inbox.localizedName)
+            snackBarMessage = MailResourcesStrings.Localizable.snackbarThreadMovedPlural(FolderRole.inbox.localizedName)
         case .thread(let thread):
             response = try await mailboxManager.nonSpam(thread: thread.freezeIfNeeded())
-            snackBarMessage = MailResourcesStrings.snackbarThreadMoved(FolderRole.inbox.localizedName)
+            snackBarMessage = MailResourcesStrings.Localizable.snackbarThreadMoved(FolderRole.inbox.localizedName)
         case .message(let message):
             response = try await mailboxManager.nonSpam(messages: [message.freezeIfNeeded()])
-            snackBarMessage = MailResourcesStrings.snackbarMessageMoved(FolderRole.inbox.localizedName)
+            snackBarMessage = MailResourcesStrings.Localizable.snackbarMessageMoved(FolderRole.inbox.localizedName)
         }
 
         IKSnackBar.showCancelableSnackBar(message: snackBarMessage,
-                                          cancelSuccessMessage: MailResourcesStrings.snackbarMoveCancelled,
+                                          cancelSuccessMessage: MailResourcesStrings.Localizable.snackbarMoveCancelled,
                                           cancelableResponse: response,
                                           mailboxManager: mailboxManager)
     }
@@ -342,7 +342,7 @@ enum ActionsTarget: Equatable {
         guard case .message(let message) = target else { return }
         let response = try await mailboxManager.apiFetcher.blockSender(message: message.freezeIfNeeded())
         if response {
-            IKSnackBar.showSnackBar(message: MailResourcesStrings.snackbarSenderBlacklisted)
+            IKSnackBar.showSnackBar(message: MailResourcesStrings.Localizable.snackbarSenderBlacklisted)
         }
     }
 
@@ -352,7 +352,7 @@ enum ActionsTarget: Equatable {
         let response = try await mailboxManager.apiFetcher.reportPhishing(message: message)
         if response {
             _ = try await mailboxManager.reportSpam(messages: [message.freezeIfNeeded()])
-            IKSnackBar.showSnackBar(message: MailResourcesStrings.snackbarReportPhishingConfirmation)
+            IKSnackBar.showSnackBar(message: MailResourcesStrings.Localizable.snackbarReportPhishingConfirmation)
         }
     }
 

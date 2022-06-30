@@ -47,7 +47,7 @@ public extension IKSnackBar {
         return IKSnackBar.showSnackBar(
             message: message,
             duration: duration,
-            action: .init(title: MailResourcesStrings.buttonCancel) {
+            action: .init(title: MailResourcesStrings.Localizable.buttonCancel) {
                 Task {
                     do {
                         try await mailboxManager.apiFetcher.undoAction(resource: cancelableResponse.resource)

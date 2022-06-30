@@ -27,9 +27,9 @@ public enum ExternalContent: String, CaseIterable, SettingsOptionEnum {
     public var title: String {
         switch self {
         case .always:
-            return MailResourcesStrings.settingsOptionAlways
+            return MailResourcesStrings.Localizable.settingsOptionAlways
         case .askMe:
-            return MailResourcesStrings.settingsOptionAskMe
+            return MailResourcesStrings.Localizable.settingsOptionAskMe
         }
     }
 

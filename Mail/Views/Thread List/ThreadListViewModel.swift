@@ -171,8 +171,8 @@ typealias Thread = MailCore.Thread
             response = try await mailboxManager.reportSpam(thread: thread)
             folderRole = .spam
         }
-        IKSnackBar.showCancelableSnackBar(message: MailResourcesStrings.snackbarThreadMoved(folderRole.localizedName),
-                                          cancelSuccessMessage: MailResourcesStrings.snackbarMoveCancelled,
+        IKSnackBar.showCancelableSnackBar(message: MailResourcesStrings.Localizable.snackbarThreadMoved(folderRole.localizedName),
+                                          cancelSuccessMessage: MailResourcesStrings.Localizable.snackbarMoveCancelled,
                                           cancelableResponse: response,
                                           mailboxManager: mailboxManager)
     }
@@ -184,8 +184,8 @@ typealias Thread = MailCore.Thread
 
     private func move(thread: Thread, to folder: Folder) async throws {
         let response = try await mailboxManager.move(thread: thread, to: folder)
-        IKSnackBar.showCancelableSnackBar(message: MailResourcesStrings.snackbarThreadMoved(folder.localizedName),
-                                          cancelSuccessMessage: MailResourcesStrings.snackbarMoveCancelled,
+        IKSnackBar.showCancelableSnackBar(message: MailResourcesStrings.Localizable.snackbarThreadMoved(folder.localizedName),
+                                          cancelSuccessMessage: MailResourcesStrings.Localizable.snackbarMoveCancelled,
                                           cancelableResponse: response,
                                           mailboxManager: mailboxManager)
     }

@@ -16,23 +16,59 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import InfomaniakCore
+import MailResources
 import SwiftUI
 
 struct SettingsToggleCell: View {
     let title: String
     let userDefaults: ReferenceWritableKeyPath<UserDefaults, Bool>
 
+    @State private var toggleIsOn: Bool
+    @State private var lastValue: Bool
+
+    init(title: String, userDefaults: ReferenceWritableKeyPath<UserDefaults, Bool>) {
+        self.title = title
+        self.userDefaults = userDefaults
+        _toggleIsOn = State(wrappedValue: UserDefaults.shared[keyPath: userDefaults])
+        _lastValue = _toggleIsOn
+    }
+
     var body: some View {
         Toggle(isOn: Binding(get: {
-            UserDefaults.shared[keyPath: userDefaults]
+            toggleIsOn
         }, set: { value in
+            lastValue = toggleIsOn
+            toggleIsOn = value
             UserDefaults.shared[keyPath: userDefaults] = value
         })) {
             Text(title)
                 .textStyle(.body)
         }
         .tint(.accentColor)
+        .onChange(of: toggleIsOn) { newValue in
+            guard newValue != lastValue else { return }
+            if userDefaults == \.isAppLockEnabled {
+                enableAppLock()
+            }
+        }
     }
+
+    private func enableAppLock() {
+             Task {
+                 do {
+                     if try await !AppLockHelper.shared.evaluatePolicy(reason: MailResourcesStrings.Localizable.appSecurityDescription) {
+                         withAnimation {
+                             toggleIsOn.toggle()
+                         }
+                     }
+                 } catch {
+                     withAnimation {
+                         toggleIsOn.toggle()
+                     }
+                 }
+             }
+         }
 }
 
 struct SettingsToggleCell_Previews: PreviewProvider {

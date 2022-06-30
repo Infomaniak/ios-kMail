@@ -28,11 +28,11 @@ enum RecipientFieldType: Hashable {
     var title: String {
         switch self {
         case .to:
-            return MailResourcesStrings.toTitle
+            return MailResourcesStrings.Localizable.toTitle
         case .cc:
-            return MailResourcesStrings.ccTitle
+            return MailResourcesStrings.Localizable.ccTitle
         case .bcc:
-            return MailResourcesStrings.bccTitle
+            return MailResourcesStrings.Localizable.bccTitle
         }
     }
 }
@@ -92,7 +92,7 @@ struct NewMessageView: View {
             VStack {
                 if autocompletion.isEmpty {
                     HStack {
-                        Text(MailResourcesStrings.fromTitle)
+                        Text(MailResourcesStrings.Localizable.fromTitle)
                             .textStyle(.bodySecondary)
                         Picker("Mailbox", selection: $selectedMailboxItem) {
                             ForEach(AccountManager.instance.mailboxes.indices, id: \.self) { i in
@@ -115,7 +115,7 @@ struct NewMessageView: View {
 
                 // Show the rest of the view, or the autocompletion list
                 if autocompletion.isEmpty {
-                    NewMessageCell(title: MailResourcesStrings.subjectTitle) {
+                    NewMessageCell(title: MailResourcesStrings.Localizable.subjectTitle) {
                         TextField("", text: $draft.subject)
                     }
 
@@ -139,8 +139,8 @@ struct NewMessageView: View {
                     Task {
                         if let cancelableResponse = await send() {
                             IKSnackBar.showCancelableSnackBar(
-                                message: MailResourcesStrings.emailSentSnackbar,
-                                cancelSuccessMessage: MailResourcesStrings.canceledEmailSendingConfirmationSnackbar,
+                                message: MailResourcesStrings.Localizable.emailSentSnackbar,
+                                cancelSuccessMessage: MailResourcesStrings.Localizable.canceledEmailSendingConfirmationSnackbar,
                                 duration: .custom(CGFloat(draft.delay ?? 3)),
                                 cancelableResponse: cancelableResponse,
                                 mailboxManager: mailboxManager
@@ -206,8 +206,8 @@ struct NewMessageView: View {
                     self.draft.uuid = response.uuid
                     draftHasChanged = false
                     if showSnackBar {
-                        IKSnackBar.showSnackBar(message: MailResourcesStrings.snackBarDraftSaved,
-                                                action: .init(title: MailResourcesStrings.actionDelete) {
+                        IKSnackBar.showSnackBar(message: MailResourcesStrings.Localizable.snackBarDraftSaved,
+                                                action: .init(title: MailResourcesStrings.Localizable.actionDelete) {
                                                     deleteDraft(messageUid: response.uid)
                                                 })
                     }
@@ -279,7 +279,7 @@ struct NewMessageView: View {
         Task {
             await tryOrDisplayError {
                 _ = try await mailboxManager.move(thread: frozenThread, to: .trash)
-                IKSnackBar.showSnackBar(message: MailResourcesStrings.snackBarDraftDeleted)
+                IKSnackBar.showSnackBar(message: MailResourcesStrings.Localizable.snackBarDraftDeleted)
             }
         }
     }

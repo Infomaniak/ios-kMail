@@ -30,9 +30,9 @@ struct LinkView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 24) {
-            Text(MailResourcesStrings.urlEntryTitle)
+            Text(MailResourcesStrings.Localizable.urlEntryTitle)
                 .textStyle(.header3)
-            TextField(MailResourcesStrings.urlPlaceholder, text: $url)
+            TextField(MailResourcesStrings.Localizable.urlPlaceholder, text: $url)
                 .textFieldStyle(.roundedBorder)
                 .focused($isFocused)
                 .keyboardType(.URL)
@@ -46,19 +46,19 @@ struct LinkView: View {
                 Spacer()
                 Button {
                     guard var urlComponents = URLComponents(string: url) else {
-                        IKSnackBar.showSnackBar(message: MailResourcesStrings.snackbarInvalidUrl)
+                        IKSnackBar.showSnackBar(message: MailResourcesStrings.Localizable.snackbarInvalidUrl)
                         return
                     }
                     if urlComponents.scheme == nil {
                         urlComponents.scheme = URLConstants.schemeUrl
                     }
                     guard let url = urlComponents.url?.absoluteString else {
-                        IKSnackBar.showSnackBar(message: MailResourcesStrings.snackbarInvalidUrl)
+                        IKSnackBar.showSnackBar(message: MailResourcesStrings.Localizable.snackbarInvalidUrl)
                         return
                     }
                     actionHandler?(url)
                 } label: {
-                    Text(MailResourcesStrings.buttonValid)
+                    Text(MailResourcesStrings.Localizable.buttonValid)
                         .textStyle(.buttonPill)
                 }
                 .buttonStyle(.borderedProminent)

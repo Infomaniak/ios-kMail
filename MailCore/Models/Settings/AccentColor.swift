@@ -32,9 +32,9 @@ public enum AccentColor: String, CaseIterable, SettingsOptionEnum {
     public var title: String {
         switch self {
         case .pink:
-            return MailResourcesStrings.accentColorPinkTitle
+            return MailResourcesStrings.Localizable.accentColorPinkTitle
         case .blue:
-            return MailResourcesStrings.accentColorBlueTitle
+            return MailResourcesStrings.Localizable.accentColorBlueTitle
         }
     }
 

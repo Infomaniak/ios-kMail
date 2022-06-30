@@ -317,8 +317,8 @@ public class MailboxManager: ObservableObject {
             let response = try await move(thread: thread, to: .trash)
             let folderName = FolderRole.trash.localizedName
             Task.detached {
-                await IKSnackBar.showCancelableSnackBar(message: MailResourcesStrings.snackbarThreadMoved(folderName),
-                                                        cancelSuccessMessage: MailResourcesStrings.snackbarMoveCancelled,
+                await IKSnackBar.showCancelableSnackBar(message: MailResourcesStrings.Localizable.snackbarThreadMoved(folderName),
+                                                        cancelSuccessMessage: MailResourcesStrings.Localizable.snackbarMoveCancelled,
                                                         cancelableResponse: response,
                                                         mailboxManager: self)
             }

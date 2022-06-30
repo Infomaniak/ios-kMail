@@ -28,11 +28,11 @@ public enum ThreadDensity: String, CaseIterable, SettingsOptionEnum {
     public var title: String {
         switch self {
         case .normal:
-            return MailResourcesStrings.settingsDefault
+            return MailResourcesStrings.Localizable.settingsDefault
         case .large:
-            return MailResourcesStrings.settingsDensityOptionLarge
+            return MailResourcesStrings.Localizable.settingsDensityOptionLarge
         case .compact:
-            return MailResourcesStrings.settingsDensityOptionCompact
+            return MailResourcesStrings.Localizable.settingsDensityOptionCompact
         }
     }
 

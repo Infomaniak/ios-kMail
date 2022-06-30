@@ -37,11 +37,11 @@ public enum Theme: String, CaseIterable, SettingsOptionEnum {
     public var title: String {
         switch self {
         case .light:
-            return MailResourcesStrings.settingsOptionLightTheme
+            return MailResourcesStrings.Localizable.settingsOptionLightTheme
         case .dark:
-            return MailResourcesStrings.settingsOptionDarkTheme
+            return MailResourcesStrings.Localizable.settingsOptionDarkTheme
         case .system:
-            return MailResourcesStrings.settingsDefault
+            return MailResourcesStrings.Localizable.settingsDefault
         }
     }
 

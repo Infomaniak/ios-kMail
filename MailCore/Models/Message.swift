@@ -78,7 +78,7 @@ public class Message: Object, Decodable, Identifiable {
     }
 
     public var formattedSubject: String {
-        return subject ?? MailResourcesStrings.noSubjectTitle
+        return subject ?? MailResourcesStrings.Localizable.noSubjectTitle
     }
 
     public var parent: Thread? {

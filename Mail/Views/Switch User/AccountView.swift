@@ -44,7 +44,7 @@ struct AccountView: View {
                     NavigationLink {
                         AccountListView()
                     } label: {
-                        Text(MailResourcesStrings.buttonAccountSwitch)
+                        Text(MailResourcesStrings.Localizable.buttonAccountSwitch)
                             .textStyle(.button)
                     }
                 }
@@ -52,7 +52,7 @@ struct AccountView: View {
                 // TODO: - Show email list
                 IKDivider()
                 HStack {
-                    Text(MailResourcesStrings.buttonAccountAssociatedEmailAddresses)
+                    Text(MailResourcesStrings.Localizable.buttonAccountAssociatedEmailAddresses)
                     Spacer()
                     ChevronIcon(style: .right)
                 }
@@ -64,7 +64,7 @@ struct AccountView: View {
                 Button {
                     // TODO: - Delete account
                 } label: {
-                    Text(MailResourcesStrings.buttonAccountDelete)
+                    Text(MailResourcesStrings.Localizable.buttonAccountDelete)
                         .textStyle(.button)
                 }
 
@@ -77,13 +77,13 @@ struct AccountView: View {
                     }
                     AccountManager.instance.saveAccounts()
                 } label: {
-                    Text(MailResourcesStrings.buttonAccountDisconnect)
+                    Text(MailResourcesStrings.Localizable.buttonAccountDisconnect)
                         .textStyle(.button)
                 }
 
                 Spacer()
             }
-            .navigationBarTitle(MailResourcesStrings.titleMyAccount, displayMode: .inline)
+            .navigationBarTitle(MailResourcesStrings.Localizable.titleMyAccount, displayMode: .inline)
             .backButtonDisplayMode(.minimal)
             .navigationBarItems(leading: Button {
                 isPresented = false

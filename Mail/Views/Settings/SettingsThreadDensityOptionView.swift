@@ -30,7 +30,7 @@ struct SettingsThreadDensityOptionView: View {
 
     var body: some View {
         VStack(spacing: 30) {
-            Text(MailResourcesStrings.settingsSelectDisplayModeDescription)
+            Text(MailResourcesStrings.Localizable.settingsSelectDisplayModeDescription)
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .textStyle(.header3)
             HStack(spacing: 31) {
@@ -52,7 +52,7 @@ struct SettingsThreadDensityOptionView: View {
         .onChange(of: selectedValue) { _ in
             UserDefaults.shared.threadDensity = selectedValue
         }
-        .navigationBarTitle(MailResourcesStrings.settingsThreadListDensityTitle, displayMode: .inline)
+        .navigationBarTitle(MailResourcesStrings.Localizable.settingsThreadListDensityTitle, displayMode: .inline)
         .padding([.leading, .trailing], 16)
         .padding(.top, 30)
     }

@@ -42,9 +42,9 @@ struct CreateFolderView: View {
         var buttonTitle: String {
             switch self {
             case .create:
-                return MailResourcesStrings.buttonCreate
+                return MailResourcesStrings.Localizable.buttonCreate
             case .move:
-                return MailResourcesStrings.actionMove
+                return MailResourcesStrings.Localizable.actionMove
             }
         }
     }
@@ -68,12 +68,12 @@ struct CreateFolderView: View {
                             .padding(4)
                     }
                 }
-                Text(MailResourcesStrings.createFolderTitle)
+                Text(MailResourcesStrings.Localizable.createFolderTitle)
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .textStyle(.header3)
             }
             // Text field
-            TextField(MailResourcesStrings.createFolderName, text: $folderName)
+            TextField(MailResourcesStrings.Localizable.createFolderName, text: $folderName)
                 .padding(12)
                 .overlay(
                     RoundedRectangle(cornerRadius: 4)
@@ -81,8 +81,8 @@ struct CreateFolderView: View {
                 )
                 .textStyle(.body)
             // Picker
-            LargePicker(title: MailResourcesStrings.createFolderParent,
-                        noSelectionText: MailResourcesStrings.createFolderNoParent,
+            LargePicker(title: MailResourcesStrings.Localizable.createFolderParent,
+                        noSelectionText: MailResourcesStrings.Localizable.createFolderNoParent,
                         selection: $selectedFolderID,
                         items: sortedFolders.map { .init(id: $0.id, name: $0.formattedPath) })
             // Button

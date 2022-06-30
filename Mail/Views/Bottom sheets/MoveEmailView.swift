@@ -43,16 +43,16 @@ struct MoveEmailView: View {
 
     var body: some View {
         VStack(alignment: .trailing, spacing: 16) {
-            Text(MailResourcesStrings.moveTitle)
+            Text(MailResourcesStrings.Localizable.moveTitle)
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .textStyle(.header3)
             LargePicker(selection: $selectedFolderID, items: sortedFolders.map { .init(id: $0.id, name: $0.formattedPath) })
-            Button(MailResourcesStrings.actionMove) {
+            Button(MailResourcesStrings.Localizable.actionMove) {
                 moveHandler(sortedFolders.first { $0.id == selectedFolderID }!)
                 state.close()
             }
             .textStyle(.button)
-            Button(MailResourcesStrings.buttonCreateFolder) {
+            Button(MailResourcesStrings.Localizable.buttonCreateFolder) {
                 state.open(state: .createNewFolder(mode: .move(moveHandler: moveHandler)), position: .newFolderHeight)
             }
             .textStyle(.button)
