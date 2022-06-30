@@ -30,7 +30,7 @@ struct MessageHeaderSummaryView: View {
     let moreButtonTapped: () -> Void
 
     var body: some View {
-        HStack(alignment: .top, spacing: 20) {
+        HStack(alignment: .top, spacing: 0) {
             HStack(alignment: .center) {
                 if let recipient = message.from.first {
                     RecipientImage(recipient: recipient, size: 48)
@@ -85,18 +85,21 @@ struct MessageHeaderSummaryView: View {
             Spacer()
 
             if isMessageExpanded {
-                Button(action: replyButtonTapped) {
-                    Image(resource: MailResourcesAsset.emailActionReply)
-                        .resizable()
-                        .scaledToFit()
-                        .frame(width: 20, height: 20)
+                HStack(spacing: 20) {
+                    Button(action: replyButtonTapped) {
+                        Image(resource: MailResourcesAsset.emailActionReply)
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: 20, height: 20)
+                    }
+                    Button(action: moreButtonTapped) {
+                        Image(resource: MailResourcesAsset.plusActions)
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: 20, height: 20)
+                    }
                 }
-                Button(action: moreButtonTapped) {
-                    Image(resource: MailResourcesAsset.plusActions)
-                        .resizable()
-                        .scaledToFit()
-                        .frame(width: 20, height: 20)
-                }
+                .padding(.leading, 8)
             }
         }
     }
@@ -106,6 +109,15 @@ struct MessageHeaderSummaryView_Previews: PreviewProvider {
     static var previews: some View {
         MessageHeaderSummaryView(message: PreviewHelper.sampleMessage,
                                  isMessageExpanded: .constant(false),
+                                 isHeaderExpanded: .constant(false)) {
+            // Preview
+        } replyButtonTapped: {
+            // Preview
+        } moreButtonTapped: {
+            // Preview
+        }
+        MessageHeaderSummaryView(message: PreviewHelper.sampleMessage,
+                                 isMessageExpanded: .constant(true),
                                  isHeaderExpanded: .constant(false)) {
             // Preview
         } replyButtonTapped: {

@@ -114,7 +114,6 @@ struct ThreadView: View {
         .coordinateSpace(name: "scrollView")
         .onPreferenceChange(ScrollOffsetPreferenceKey.self) { offset in
             scrollOffset = offset
-            print(offset)
         }
         .navigationTitle(displayNavigationTitle ? thread.formattedSubject : "")
         .backButtonDisplayMode(.minimal)
@@ -129,9 +128,7 @@ struct ThreadView: View {
             let appearance = UINavigationBarAppearance()
             appearance.configureWithDefaultBackground()
             navigationController?.navigationBar.standardAppearance = appearance
-            navigationController?.navigationBar.compactAppearance = nil
             navigationController?.navigationBar.scrollEdgeAppearance = nil
-            navigationController?.navigationBar.compactScrollEdgeAppearance = nil
         }
         .environmentObject(mailboxManager)
         .environmentObject(sheet)
