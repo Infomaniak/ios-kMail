@@ -16,27 +16,28 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import Foundation
-import Network
+import MailResources
+import SwiftUI
 
-class NetworkMonitor: ObservableObject {
-    @Published var isConnected = false
-    @Published var isCellular = false
+struct AppShadowModifier: ViewModifier {
+    func body(content: Content) -> some View {
+        ZStack {
+            MailResourcesAsset.backgroundColor.swiftUiColor
+                .ignoresSafeArea()
+                .shadow(color: .primary.opacity(0.08), radius: 7, x: 0, y: -1)
 
-    private let monitor = NWPathMonitor()
-    private let queue = DispatchQueue.global()
-
-    public func start() {
-        monitor.start(queue: queue)
-        monitor.pathUpdateHandler = { [weak self] path in
-            DispatchQueue.main.async {
-                self?.isConnected = path.status == .satisfied
-                self?.isCellular = path.usesInterfaceType(.cellular)
-            }
+            content
         }
     }
+}
 
-    public func stop() {
-        monitor.cancel()
+extension View {
+    func appShadow(withPadding: Bool = false) -> some View {
+        modifier(AppShadowModifier())
+            .modifyIf(withPadding) { content in
+                content
+                    .padding(.top, 10)
+                    .background(MailResourcesAsset.backgroundHeaderColor.swiftUiColor)
+            }
     }
 }

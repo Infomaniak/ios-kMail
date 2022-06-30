@@ -1,22 +1,47 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd"> 
+<!--
+ Loco ios export: iOS plural rules
+ Project: kMail
+ Release: Working copy
+ Locale: fr, French
+ Tagged: ios
+ Exported by: Florentin Bekier
+ Exported at: Wed, 29 Jun 2022 13:27:15 +0200 
+--> 
 <plist version="1.0">
-<dict>
-	<key>attachmentQuantity</key>
-	<dict>
-		<key>NSStringLocalizedFormatKey</key>
-		<string>%#@items@</string>
-		<key>items</key>
-		<dict>
-			<key>NSStringFormatSpecTypeKey</key>
-			<string>NSStringPluralRuleType</string>
-			<key>NSStringFormatValueTypeKey</key>
-			<string>d</string>
-			<key>one</key>
-			<string>%d pièce jointe</string>
-			<key>other</key>
-			<string>%d pièces jointes</string>
-		</dict>
-	</dict>
-</dict>
+    <dict> 
+        <key>attachmentQuantity</key>
+        <dict> 
+            <key>NSStringLocalizedFormatKey</key>
+            <string>%#@items@</string>
+            <key>items</key>
+            <dict>
+                <key>NSStringFormatSpecTypeKey</key>
+                <string>NSStringPluralRuleType</string>
+                <key>NSStringFormatValueTypeKey</key>
+                <string>d</string> 
+                <key>one</key>
+                <string>%d pièce jointe</string> 
+                <key>other</key>
+                <string>%d pièces jointes</string> 
+            </dict>
+        </dict> 
+        <key>threadListHeaderUnreadCount</key>
+        <dict> 
+            <key>NSStringLocalizedFormatKey</key>
+            <string>%#@items@</string>
+            <key>items</key>
+            <dict>
+                <key>NSStringFormatSpecTypeKey</key>
+                <string>NSStringPluralRuleType</string>
+                <key>NSStringFormatValueTypeKey</key>
+                <string>d</string> 
+                <key>one</key>
+                <string>%d non lu</string> 
+                <key>other</key>
+                <string>%d non lus</string> 
+            </dict>
+        </dict> 
+    </dict>
 </plist>

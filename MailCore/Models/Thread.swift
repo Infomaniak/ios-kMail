@@ -178,25 +178,6 @@ public class Thread: Object, Decodable, Identifiable {
     }
 }
 
-public enum Filter: String, CaseIterable, Identifiable {
+public enum Filter: String {
     case all, seen, unseen, starred, unstarred
-
-    var title: String {
-        switch self {
-        case .all:
-            return "All"
-        case .seen:
-            return "Seen"
-        case .unseen:
-            return "Unseen"
-        case .starred:
-            return "Starred"
-        case .unstarred:
-            return "Unstarred"
-        }
-    }
-
-    public var id: String {
-        return rawValue
-    }
 }

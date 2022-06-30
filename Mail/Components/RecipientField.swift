@@ -43,7 +43,7 @@ struct RecipientChip: View {
         }
         .padding(.leading, 12)
         .padding(.trailing, 6)
-        .background(Capsule().fill(Color(MailResourcesAsset.backgroundHeaderColor.color)))
+        .background(Capsule().fill(MailResourcesAsset.backgroundHeaderColor.swiftUiColor))
     }
 }
 
