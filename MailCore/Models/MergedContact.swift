@@ -31,12 +31,7 @@ public class MergedContact {
 
     private let contactFormatter = CNContactFormatter()
 
-    public var color: String {
-        if let remote = remote, !remote.color.isEmpty {
-            return remote.color
-        }
-        return "#00bcd4"
-    }
+    public lazy var color: String = remote?.color ?? "#00bcd4"
     public lazy var firstname: String = merge(local?.givenName, remote?.firstname) ?? ""
     public lazy var lastName: String = merge(local?.familyName, remote?.lastname) ?? ""
 

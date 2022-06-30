@@ -146,12 +146,12 @@ public class ContactManager: ObservableObject {
     }
 
     public func addContact(recipient: Recipient) async throws {
-        guard let addressBook = getMainAddressBook() else { return }
+        guard let addressBook = getMainAddressBook() else { throw ContactError.addressBookNotFound }
 
         let contactId = try await apiFetcher.addContact(recipient, to: addressBook)
         let contacts = try await apiFetcher.contacts()
 
-        guard let newContact = contacts.first(where: { $0.id == String(contactId) }) else { return }
+        guard let newContact = contacts.first(where: { $0.id == String(contactId) }) else { throw ContactError.contactNotFound }
         let realm = getRealm()
         try? realm.safeWrite {
             realm.add(newContact)

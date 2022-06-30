@@ -107,13 +107,14 @@ struct ContactView: View {
         Task {
             await tryOrDisplayError {
                 try await AccountManager.instance.currentContactManager?.addContact(recipient: recipient)
-                IKSnackBar.showSnackBar(message: MailResourcesStrings.snackbarContactSaved)
+                IKSnackBar.showSnackBar(message: MailResourcesStrings.Localizable.snackbarContactSaved)
             }
         }
     }
 
     private func copyEmail() {
         UIPasteboard.general.string = recipient.email
+        IKSnackBar.showSnackBar(message: MailResourcesStrings.Localizable.snackbarEmailCopiedToClipboard)
     }
 }
 

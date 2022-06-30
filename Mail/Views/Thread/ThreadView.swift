@@ -37,7 +37,7 @@ class MessageBottomSheet: BottomSheetState<MessageBottomSheet.State, MessageBott
     }
 
     enum Position: CGFloat, CaseIterable {
-        case top = 285, middle = 230, hidden = 0
+        case defaultHeight = 285, remoteContactHeight = 230, hidden = 0
     }
 }
 
