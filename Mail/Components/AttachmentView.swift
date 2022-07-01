@@ -17,8 +17,8 @@
  */
 
 import MailResources
-import SwiftUI
 import PhotosUI
+import SwiftUI
 
 class NewMessageAttachmentSheet: SheetState<NewMessageAttachmentSheet.State> {
     enum State {
@@ -49,7 +49,7 @@ struct AttachmentView: View {
         )
         static let addPhotoFromLibrary = AttachmentAction(
             name: MailResourcesStrings.Localizable.attachmentActionPhotoLibrary,
-            image: MailResourcesAsset.photo.image
+            image: MailResourcesAsset.pictureLandscape.image
         )
         static let openCamera = AttachmentAction(
             name: MailResourcesStrings.Localizable.attachmentActionCamera,
@@ -65,6 +65,7 @@ struct AttachmentView: View {
         VStack(alignment: .leading, spacing: 16) {
             Text(MailResourcesStrings.Localizable.attachmentActionTitle)
                 .textStyle(.header3)
+                .padding([.leading, .trailing], 16)
 
             ForEach(actions, id: \.self) { action in
                 Button {
@@ -85,10 +86,15 @@ struct AttachmentView: View {
                     }
                 }
                 .frame(height: 40)
+                .padding([.leading, .trailing], 24)
+
+                if action != .openCamera {
+                    IKDivider()
+                        .padding([.leading, .trailing], 8)
+                }
             }
         }
         .frame(maxWidth: .infinity, alignment: .leading)
-        .padding([.leading, .trailing], 24)
         .padding(.top, 16)
         .sheet(isPresented: $attachmentSheet.isShowing) {
             switch attachmentSheet.state {
