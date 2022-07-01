@@ -30,7 +30,6 @@ extension UINavigationBar {
         ]
 
         standardAppearance = navigationBarAppearance
-        compactAppearance = navigationBarAppearance
         scrollEdgeAppearance = navigationBarAppearance
     }
 }

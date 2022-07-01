@@ -86,7 +86,7 @@ public class Message: Object, Decodable, Identifiable {
     }
 
     public var attachmentsSize: Int64 {
-        return attachments.reduce(0) { $0 + Int64($1.size) }
+        return attachments.reduce(0) { $0 + $1.size }
     }
 
     public func insertInlineAttachment() {

@@ -26,42 +26,52 @@ struct AttachmentsView: View {
     @EnvironmentObject var mailboxManager: MailboxManager
     @ObservedRealmObject var message: Message
 
+    private var attachments: [Attachment] {
+        return message.attachments.filter { $0.contentId == nil }
+    }
+
     var body: some View {
-        VStack(alignment: .leading, spacing: 22) {
-            HStack {
-                Image(resource: MailResourcesAsset.attachmentMail2)
-                    .resizable()
-                    .scaledToFit()
-                    .frame(width: 14)
-                    .foregroundColor(MailResourcesAsset.secondaryTextColor)
+        VStack(spacing: 16) {
+            IKDivider()
 
-                Text("\(MailResourcesStrings.Localizable.attachmentQuantity(message.attachments.count)) (\(message.attachmentsSize, format: .defaultByteCount))")
-                    .fontWeight(.regular)
-                    .foregroundColor(MailResourcesAsset.secondaryTextColor)
-
-                Button(MailResourcesStrings.Localizable.buttonDownloadAll) {
-                    // TODO: after complete attachment
-                }
-            }
-            .font(.system(size: 14))
-
-            ScrollView(.horizontal) {
-                HStack {
-                    ForEach(message.attachments) { attachment in
-                        AttachmentCell(attachment: attachment)
-                            .onTapGesture {
-                                sheet.state = .attachment(attachment)
-                                if !FileManager.default.fileExists(atPath: attachment.localUrl?.path ?? "") {
-                                    Task {
-                                        await mailboxManager.saveAttachmentLocally(attachment: attachment)
-                                    }
+            ScrollView(.horizontal, showsIndicators: false) {
+                HStack(spacing: 8) {
+                    ForEach(attachments) { attachment in
+                        Button {
+                            sheet.state = .attachment(attachment)
+                            if !FileManager.default.fileExists(atPath: attachment.localUrl?.path ?? "") {
+                                Task {
+                                    await mailboxManager.saveAttachmentLocally(attachment: attachment)
                                 }
                             }
+                        } label: {
+                            AttachmentCell(attachment: attachment)
+                        }
                     }
                 }
-                .padding([.leading, .trailing], 16)
+                .padding([.top, .bottom], 1)
             }
-            .padding([.leading, .trailing], -16)
+
+            HStack(spacing: 8) {
+                Label {
+                    Text("\(MailResourcesStrings.Localizable.attachmentQuantity(attachments.count)) (\(message.attachmentsSize, format: .defaultByteCount))")
+                } icon: {
+                    Image(resource: MailResourcesAsset.attachmentMail2)
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: 15, height: 15)
+                }
+                .textStyle(.calloutSecondary)
+
+                Button(MailResourcesStrings.Localizable.buttonDownloadAll) {
+                    // TODO: Download all attachments
+                }
+                .font(MailTextStyle.callout.font)
+
+                Spacer()
+            }
+
+            IKDivider()
         }
     }
 }

@@ -63,24 +63,25 @@ struct ContactView: View {
                         .textStyle(.bodySecondary)
                 }
             }
-            .frame(height: 40)
+            .padding(.bottom, 8)
 
             ForEach(actions, id: \.self) { action in
                 Button {
                     handleAction(action)
                 } label: {
-                    HStack {
+                    HStack(spacing: 20) {
                         Image(uiImage: action.image)
                         Text(action.name)
                             .textStyle(.body)
                     }
                 }
-                .frame(height: 40)
+                if action != actions.last {
+                    IKDivider()
+                }
             }
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding([.leading, .trailing], 24)
-        .padding(.top, 16)
     }
 
     // MARK: - Actions

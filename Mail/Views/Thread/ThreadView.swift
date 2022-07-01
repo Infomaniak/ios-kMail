@@ -17,10 +17,20 @@
  */
 
 import BottomSheet
+import InfomaniakCore
+import Introspect
 import MailCore
 import MailResources
 import RealmSwift
 import SwiftUI
+
+private struct ScrollOffsetPreferenceKey: PreferenceKey {
+    static var defaultValue: CGPoint = .zero
+
+    static func reduce(value: inout CGPoint, nextValue: () -> CGPoint) {
+        // No need to implement it
+    }
+}
 
 class MessageSheet: SheetState<MessageSheet.State> {
     enum State: Equatable {
@@ -44,16 +54,20 @@ class MessageBottomSheet: BottomSheetState<MessageBottomSheet.State, MessageBott
 struct ThreadView: View {
     @ObservedRealmObject var thread: Thread
     private var mailboxManager: MailboxManager
+    private var navigationController: UINavigationController?
 
+    @State private var scrollOffset: CGPoint = .zero
     @StateObject private var sheet = MessageSheet()
     @StateObject private var bottomSheet = MessageBottomSheet()
     @StateObject private var threadBottomSheet = ThreadBottomSheet()
 
     @EnvironmentObject var globalBottomSheet: GlobalBottomSheet
+    @Environment(\.verticalSizeClass) var sizeClass
 
     private let trashId: String
     private let bottomSheetOptions = Constants.bottomSheetOptions + [.absolutePositionValue]
     private let threadBottomSheetOptions = Constants.bottomSheetOptions + [.appleScrollBehavior]
+    private let toolbarActions: [Action] = [.reply, .forward, .archive, .delete]
 
     private var isTrashFolder: Bool {
         return thread.parent?._id == trashId
@@ -65,35 +79,66 @@ struct ThreadView: View {
             .sorted { $0.date.compare($1.date) == .orderedAscending }
     }
 
-    init(mailboxManager: MailboxManager, thread: Thread) {
+    private var displayNavigationTitle: Bool {
+        return scrollOffset.y < -85
+    }
+
+    init(mailboxManager: MailboxManager, thread: Thread, navigationController: UINavigationController?) {
         self.mailboxManager = mailboxManager
         self.thread = thread
+        self.navigationController = navigationController
         trashId = mailboxManager.getFolder(with: .trash)?._id ?? ""
     }
 
     var body: some View {
-        ZStack {
-            ScrollView {
-                VStack(spacing: 0) {
-                    ForEach(messages.indices, id: \.self) { index in
-                        let isMessageExpanded = ((index == messages.count - 1) && !messages[index].isDraft) || !messages[index].seen
-                        MessageView(message: messages[index], isMessageExpanded: isMessageExpanded)
-                        if index < messages.count - 1 {
-                            MessageSeparatorView()
-                        }
+        ScrollView {
+            GeometryReader { geometry in
+                Color.clear.preference(
+                    key: ScrollOffsetPreferenceKey.self,
+                    value: geometry.frame(in: .named("scrollView")).origin
+                )
+            }
+            .frame(width: 0, height: 0)
+
+            Text(thread.formattedSubject)
+                .textStyle(.header2)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .multilineTextAlignment(.leading)
+                .padding(.top, 8)
+                .padding([.leading, .trailing], 16)
+
+            VStack(spacing: 0) {
+                ForEach(messages.indices, id: \.self) { index in
+                    let isMessageExpanded = ((index == messages.count - 1) && !messages[index].isDraft) || !messages[index].seen
+                    MessageView(message: messages[index], isMessageExpanded: isMessageExpanded)
+                    if index < messages.count - 1 {
+                        MessageSeparatorView()
                     }
                 }
             }
-            .navigationTitle(thread.formattedSubject)
-            .backButtonDisplayMode(.minimal)
-            .onAppear {
-                MatomoUtils.track(view: ["MessageView"])
-                // Style toolbar
-                let appereance = UIToolbarAppearance()
-                appereance.configureWithOpaqueBackground()
-                appereance.backgroundColor = MailResourcesAsset.backgroundSearchBar.color
-                UIToolbar.appearance().standardAppearance = appereance
-            }
+        }
+        .coordinateSpace(name: "scrollView")
+        .onPreferenceChange(ScrollOffsetPreferenceKey.self) { offset in
+            scrollOffset = offset
+        }
+        .navigationTitle(displayNavigationTitle ? thread.formattedSubject : "")
+        .backButtonDisplayMode(.minimal)
+        .onAppear {
+            MatomoUtils.track(view: ["MessageView"])
+            // Style toolbar
+            let appereance = UIToolbarAppearance()
+            appereance.configureWithOpaqueBackground()
+            appereance.backgroundColor = MailResourcesAsset.backgroundToolbarColor.color
+            appereance.shadowColor = .clear
+            UIToolbar.appearance().standardAppearance = appereance
+            UIToolbar.appearance().scrollEdgeAppearance = appereance
+            navigationController?.toolbar.barTintColor = .white
+            navigationController?.toolbar.setShadowImage(UIImage(), forToolbarPosition: .any)
+            // Style navigation bar
+            let appearance = UINavigationBarAppearance()
+            appearance.configureWithDefaultBackground()
+            navigationController?.navigationBar.standardAppearance = appearance
+            navigationController?.navigationBar.scrollEdgeAppearance = nil
         }
         .environmentObject(mailboxManager)
         .environmentObject(sheet)
@@ -105,39 +150,49 @@ struct ThreadView: View {
             }
         }
         .toolbar {
-            ToolbarItemGroup(placement: .bottomBar) {
-                Group {
-                    Button {
-                        guard let message = messages.last else { return }
-                        sheet.state = .reply(message, .reply)
-                    } label: {
-                        VStack(spacing: 0) {
-                            Image(resource: MailResourcesAsset.emailActionReply)
-                            Text(MailResourcesStrings.Localizable.actionReply)
+            ToolbarItem(placement: .navigationBarTrailing) {
+                Button {
+                    Task {
+                        await tryOrDisplayError {
+                            try await mailboxManager.toggleStar(thread: thread)
                         }
                     }
-                    Spacer()
-                    Button {
-                        guard let message = messages.last else { return }
-                        sheet.state = .reply(message, .forward)
-                    } label: {
-                        VStack(spacing: 0) {
-                            Image(resource: MailResourcesAsset.emailActionTransfer)
-                            Text(MailResourcesStrings.Localizable.actionForward)
-                        }
-                    }
-                    Spacer()
-                    Button {
-                        threadBottomSheet.open(state: .actions(.thread(thread.thaw() ?? thread)), position: .middle)
-                    } label: {
-                        VStack(spacing: 0) {
-                            Image(systemName: "ellipsis")
-                                .frame(width: 24, height: 24)
-                            Text(MailResourcesStrings.Localizable.buttonMore)
-                        }
-                    }
+                } label: {
+                    Image(resource: thread.flagged ? MailResourcesAsset.starFull : MailResourcesAsset.star)
                 }
-                .textStyle(.calloutHighlighted)
+            }
+            ToolbarItemGroup(placement: .bottomBar) {
+                ForEach(toolbarActions) { action in
+                    Button {
+                        didTap(action: action)
+                    } label: {
+                        Label {
+                            Text(action.title)
+                                .font(MailTextStyle.caption.font)
+                        } icon: {
+                            Image(resource: action.icon)
+                                .resizable()
+                                .scaledToFit()
+                                .frame(width: 22, height: 22)
+                        }
+                        .dynamicLabelStyle(sizeClass: sizeClass!)
+                    }
+                    Spacer()
+                }
+                Button {
+                    threadBottomSheet.open(state: .actions(.thread(thread.thaw() ?? thread)), position: .middle)
+                } label: {
+                    Label {
+                        Text(MailResourcesStrings.Localizable.buttonMore)
+                            .font(MailTextStyle.caption.font)
+                    } icon: {
+                        Image(resource: MailResourcesAsset.plusActions)
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: 22, height: 22)
+                    }
+                    .dynamicLabelStyle(sizeClass: sizeClass!)
+                }
             }
         }
         .sheet(isPresented: $sheet.isShowing) {
@@ -180,13 +235,67 @@ struct ThreadView: View {
             }
         }
     }
+
+    private func didTap(action: Action) {
+        switch action {
+        case .reply:
+            guard let message = messages.last else { return }
+            sheet.state = .reply(message, .reply)
+        case .forward:
+            guard let message = messages.last else { return }
+            sheet.state = .reply(message, .forward)
+        case .archive:
+            Task {
+                await tryOrDisplayError {
+                    let response = try await mailboxManager.move(thread: thread, to: .archive)
+                    IKSnackBar.showCancelableSnackBar(message: MailResourcesStrings.Localizable.snackbarThreadMoved(FolderRole.archive.localizedName),
+                                                      cancelSuccessMessage: MailResourcesStrings.Localizable.snackbarMoveCancelled,
+                                                      cancelableResponse: response,
+                                                      mailboxManager: mailboxManager)
+                }
+            }
+        case .delete:
+            Task {
+                await tryOrDisplayError {
+                    try await mailboxManager.moveOrDelete(thread: thread)
+                }
+            }
+        default:
+            break
+        }
+    }
+}
+
+struct VerticalLabelStyle: LabelStyle {
+    func makeBody(configuration: Configuration) -> some View {
+        VStack(spacing: 4) {
+            configuration.icon
+            configuration.title
+        }
+    }
+}
+
+extension LabelStyle where Self == VerticalLabelStyle {
+    static var vertical: VerticalLabelStyle { .init() }
+}
+
+extension Label {
+    @ViewBuilder
+    func dynamicLabelStyle(sizeClass: UserInterfaceSizeClass) -> some View {
+        if sizeClass == .compact {
+            labelStyle(.iconOnly)
+        } else {
+            labelStyle(.vertical)
+        }
+    }
 }
 
 struct ThreadView_Previews: PreviewProvider {
     static var previews: some View {
         ThreadView(
             mailboxManager: PreviewHelper.sampleMailboxManager,
-            thread: PreviewHelper.sampleThread
+            thread: PreviewHelper.sampleThread,
+            navigationController: nil
         )
     }
 }
