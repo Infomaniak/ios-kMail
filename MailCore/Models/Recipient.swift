@@ -46,7 +46,7 @@ public class Recipient: EmbeddedObject, Codable {
         if let contact = contact {
             return Color(hex: contact.color)
         }
-        return .gray
+        return UserDefaults.shared.accentColor.primary.swiftUiColor
     }
 
     public var initials: String {

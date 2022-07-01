@@ -89,11 +89,9 @@ struct NewMessageView: View {
 
     var body: some View {
         NavigationView {
-            VStack {
+            VStack(spacing: 12) {
                 if autocompletion.isEmpty {
-                    HStack {
-                        Text(MailResourcesStrings.Localizable.fromTitle)
-                            .textStyle(.bodySecondary)
+                    NewMessageCell(title: MailResourcesStrings.Localizable.fromTitle) {
                         Picker("Mailbox", selection: $selectedMailboxItem) {
                             ForEach(AccountManager.instance.mailboxes.indices, id: \.self) { i in
                                 Text(AccountManager.instance.mailboxes[i].email).tag(i)
@@ -102,8 +100,6 @@ struct NewMessageView: View {
                         .textStyle(.body)
                         Spacer()
                     }
-
-                    IKDivider()
                 }
 
                 recipientCell(type: .to)
@@ -120,13 +116,13 @@ struct NewMessageView: View {
                     }
 
                     RichTextEditor(model: $editor, body: $draft.body)
+                        .padding([.leading, .trailing], 16)
                 } else {
                     AutocompletionView(autocompletion: $autocompletion) { recipient in
                         addRecipientHandler?(recipient)
                     }
                 }
             }
-            .padding()
             .navigationBarTitleDisplayMode(.inline)
             .navigationBarBackButtonHidden(true)
             .navigationBarItems(

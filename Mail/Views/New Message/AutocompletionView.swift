@@ -27,12 +27,18 @@ struct AutocompletionView: View {
         List {
             Section {
                 ForEach(autocompletion, id: \.email) { recipient in
-                    Button {
-                        onSelect(recipient)
-                    } label: {
-                        RecipientAutocompletionCell(recipient: recipient)
+                    VStack(alignment: .leading, spacing: 8) {
+                        Button {
+                            onSelect(recipient)
+                        } label: {
+                            RecipientAutocompletionCell(recipient: recipient)
+                        }
+                        .padding([.leading, .trailing], 24)
+
+                        IKDivider()
                     }
                     .listRowSeparator(.hidden)
+                    .listRowInsets(.init(top: 8, leading: 8, bottom: 0, trailing: 8))
                 }
             }
         }
