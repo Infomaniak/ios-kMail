@@ -82,7 +82,7 @@ struct FolderCellContent: View {
                     .textStyle(.calloutHighlighted)
             }
         }
-        .padding([.top, .bottom], Constants.menuDrawerVerticalPadding)
+        .padding(.vertical, Constants.menuDrawerVerticalPadding)
         .padding(.leading, Constants.menuDrawerHorizontalPadding)
         .padding(.trailing, 18)
         .modifyIf(isSelected) { view in

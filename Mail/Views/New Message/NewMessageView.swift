@@ -124,7 +124,7 @@ struct NewMessageView: View {
                     }
 
                     RichTextEditor(model: $editor, body: $draft.body)
-                        .padding([.leading, .trailing], 16)
+                        .padding(.horizontal, 16)
                 }
             }
             .navigationBarTitleDisplayMode(.inline)

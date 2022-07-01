@@ -53,7 +53,7 @@ struct SettingsThreadDensityOptionView: View {
             UserDefaults.shared.threadDensity = selectedValue
         }
         .navigationBarTitle(MailResourcesStrings.Localizable.settingsThreadListDensityTitle, displayMode: .inline)
-        .padding([.leading, .trailing], 16)
+        .padding(.horizontal, 16)
         .padding(.top, 30)
     }
 }

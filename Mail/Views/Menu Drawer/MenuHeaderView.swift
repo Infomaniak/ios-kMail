@@ -43,7 +43,7 @@ struct MenuHeaderView: View {
             }
             .buttonStyle(.borderless)
         }
-        .padding([.top, .bottom], 16)
+        .padding(.vertical, 16)
         .padding(.leading, 18)
         .padding(.trailing, 14)
         .background(MailResourcesAsset.backgroundColor.swiftUiColor)

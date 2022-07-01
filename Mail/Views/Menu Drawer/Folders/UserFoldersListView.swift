@@ -50,7 +50,7 @@ struct UserFoldersListView: View {
                     Text(MailResourcesStrings.Localizable.buttonFolders)
                         .textStyle(.body)
                     Spacer()
-                    ChevronIcon(style: isExpanded ? .up : .down)
+                    ChevronIcon(style: isExpanded ? .up : .down, color: .primary)
                 }
             }
             .padding(.leading, Constants.menuDrawerHorizontalPadding)
@@ -67,9 +67,9 @@ struct UserFoldersListView: View {
                     globalSheet.open(state: .createNewFolder(mode: .create), position: .newFolderHeight)
                 })
                 .padding(.top, Constants.menuDrawerVerticalPadding)
-                .padding([.leading, .trailing], Constants.menuDrawerHorizontalPadding)
+                .padding(.horizontal, Constants.menuDrawerHorizontalPadding)
             }
         }
-        .padding([.top, .bottom], 19)
+        .padding(.vertical, 19)
     }
 }

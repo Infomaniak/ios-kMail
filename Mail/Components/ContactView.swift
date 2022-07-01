@@ -81,7 +81,7 @@ struct ContactView: View {
             }
         }
         .frame(maxWidth: .infinity, alignment: .leading)
-        .padding([.leading, .trailing], 24)
+        .padding(.horizontal, 24)
     }
 
     // MARK: - Actions

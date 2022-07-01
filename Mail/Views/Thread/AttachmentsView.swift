@@ -33,6 +33,7 @@ struct AttachmentsView: View {
     var body: some View {
         VStack(spacing: 16) {
             IKDivider()
+                .padding(.horizontal, 8)
 
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack(spacing: 8) {
@@ -49,7 +50,8 @@ struct AttachmentsView: View {
                         }
                     }
                 }
-                .padding([.top, .bottom], 1)
+                .padding(.vertical, 1)
+                .padding(.horizontal, 16)
             }
 
             HStack(spacing: 8) {
@@ -70,8 +72,10 @@ struct AttachmentsView: View {
 
                 Spacer()
             }
+            .padding(.horizontal, 16)
 
             IKDivider()
+                .padding(.horizontal, 8)
         }
     }
 }

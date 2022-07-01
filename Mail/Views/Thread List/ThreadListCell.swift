@@ -106,7 +106,7 @@ struct ThreadListCell: View {
                 }
             }
         }
-        .padding([.top, .bottom], density.cellVerticalPadding)
+        .padding(.vertical, density.cellVerticalPadding)
     }
 }
 

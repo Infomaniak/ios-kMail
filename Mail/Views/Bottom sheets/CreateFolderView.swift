@@ -100,7 +100,7 @@ struct CreateFolderView: View {
             }
             .textStyle(.button)
         }
-        .padding([.leading, .trailing], 24)
+        .padding(.horizontal, 24)
     }
 }
 

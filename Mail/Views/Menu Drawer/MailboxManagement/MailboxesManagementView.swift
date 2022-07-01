@@ -51,10 +51,10 @@ struct MailboxesManagementView: View {
                         .textStyle(.header3)
                         .lineLimit(1)
                     Spacer()
-                    ChevronIcon(style: isExpanded ? .up : .down)
+                    ChevronIcon(style: isExpanded ? .up : .down, color: .primary)
                 }
-                .padding([.top, .bottom], 8)
-                .padding([.leading, .trailing], 20)
+                .padding(.vertical, 8)
+                .padding(.horizontal, 20)
                 .background(SelectionBackground())
             }
 

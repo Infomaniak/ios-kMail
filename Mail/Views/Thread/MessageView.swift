@@ -37,13 +37,14 @@ struct MessageView: View {
 
     var body: some View {
         VStack(spacing: 16) {
-            Group {
-                MessageHeaderView(
-                    message: message,
-                    isHeaderExpanded: $isHeaderExpanded,
-                    isMessageExpanded: $isMessageExpanded
-                )
+            MessageHeaderView(
+                message: message,
+                isHeaderExpanded: $isHeaderExpanded,
+                isMessageExpanded: $isMessageExpanded
+            )
+            .padding(.horizontal, 16)
 
+            if isMessageExpanded {
                 if !message.attachments.filter { $0.contentId == nil }.isEmpty {
                     AttachmentsView(message: message)
                 }
@@ -55,11 +56,9 @@ struct MessageView: View {
                     )
                     .redacted(reason: .placeholder)
                     .shimmering()
+                    .padding(.horizontal, 16)
                 }
-            }
-            .padding([.leading, .trailing], 16)
 
-            if isMessageExpanded {
                 GeometryReader { proxy in
                     WebView(model: $model, dynamicHeight: $webViewHeight, proxy: proxy)
                         .frame(height: webViewHeight)
