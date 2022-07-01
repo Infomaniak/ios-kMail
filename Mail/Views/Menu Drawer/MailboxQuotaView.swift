@@ -68,7 +68,7 @@ struct MailboxQuotaView: View {
     }
 
     private func openGetMoreStorage() {
-        globalSheet.open(state: .getMoreStorage, position: .moveHeight)
+        globalSheet.open(state: .getMoreStorage, position: .moreStorageHeight)
     }
 }
 

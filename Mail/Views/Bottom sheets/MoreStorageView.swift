@@ -22,23 +22,65 @@ import MailResources
 import SwiftUI
 
 struct MoreStorageView: View {
+    let state: GlobalBottomSheet
+
     var body: some View {
         VStack(alignment: .leading) {
-            Image(resource: MailResourcesAsset.moreStorage)
-
-            Text(MailResourcesStrings.Localizable.getMoreStorageTitle)
+            Text(MailResourcesStrings.Localizable.moreStorageTitle)
                 .textStyle(.header3)
 
-            Text(MailResourcesStrings.Localizable.getMoreStorageText)
-                .textStyle(.body)
+            Image(resource: MailResourcesAsset.moreStorage)
+                .resizable()
+                .scaledToFit()
+                .frame(width: 245)
+                .frame(maxWidth: .infinity, alignment: .center)
+                .padding(.top, 15)
+                .padding(.bottom, 17)
+
+            VStack(spacing: 15) {
+                Text(MailResourcesStrings.Localizable.moreStorageText1)
+                Text(MailResourcesStrings.Localizable.moreStorageText2)
+            }
+            .textStyle(.body)
+            .padding(.bottom, 24)
+
+            HStack(spacing: 24) {
+                Button(action: dismiss) {
+                    Text(MailResourcesStrings.Localizable.buttonClose)
+                        .foregroundColor(MailResourcesAsset.redActionColor)
+                        .textStyle(.button)
+                }
+
+                Button(action: getMoreStorage) {
+                    Text(MailResourcesStrings.Localizable.buttonAvailableSoon)
+                        .foregroundColor(.white)
+                        .textStyle(.button)
+                        .padding(.horizontal, 24)
+                        .padding(.vertical, 18)
+                        .background(MailResourcesAsset.hintTextColor.swiftUiColor)
+                        .cornerRadius(16)
+                }
+                .disabled(true)
+            }
+            .frame(maxWidth: .infinity, alignment: .trailing)
         }
-        .padding([.leading, .trailing], Constants.bottomSheetVerticalPadding)
+        .padding(.horizontal, Constants.bottomSheetVerticalPadding)
+    }
+
+    // MARK: - Actions
+
+    private func dismiss() {
+        state.close()
+    }
+
+    private func getMoreStorage() {
+        // TODO: Implement when functionality is available
     }
 }
 
 struct MoreStorageView_Previews: PreviewProvider {
     static var previews: some View {
-        MoreStorageView()
+        MoreStorageView(state: GlobalBottomSheet())
             .previewLayout(.sizeThatFits)
     }
 }
