@@ -159,6 +159,59 @@ public struct UnmanagedDraft: Equatable, Encodable, AbstractDraft {
         self.delay = delay
     }
 
+    private enum CodingKeys: String, CodingKey {
+        case uuid
+        case date
+        case identityId
+        case inReplyToUid
+        case forwardedUid
+        case inReplyTo
+        case mimeType
+        case body
+        case quote
+        case to
+        case cc
+        case bcc
+        case subject
+        case ackRequest
+        case priority
+        case stUuid
+        case attachments
+        case isOffline
+        case action
+    }
+
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+
+        try container.encode(uuid, forKey: .uuid)
+        try container.encode(identityId, forKey: .identityId)
+        try container.encode(inReplyToUid, forKey: .inReplyToUid)
+        try container.encode(forwardedUid, forKey: .forwardedUid)
+        try container.encode(inReplyTo, forKey: .inReplyTo)
+        try container.encode(mimeType, forKey: .mimeType)
+        try container.encode(body, forKey: .body)
+        try container.encode(quote, forKey: .quote)
+        if !to.isEmpty {
+            try container.encode(to, forKey: .to)
+        }
+        if !cc.isEmpty {
+            try container.encode(cc, forKey: .cc)
+        }
+        if !bcc.isEmpty {
+            try container.encode(bcc, forKey: .bcc)
+        }
+        try container.encode(subject, forKey: .subject)
+        try container.encode(ackRequest, forKey: .ackRequest)
+        try container.encode(priority, forKey: .priority)
+        try container.encode(stUuid, forKey: .stUuid)
+        let attachmentsArray = attachments?.map { attachment in
+            attachment.uuid
+        }
+        try container.encode(attachmentsArray, forKey: .attachments)
+        try container.encode(action, forKey: .action)
+    }
+
     private func valueToRecipient(_ value: String) -> [Recipient] {
         guard !value.isEmpty else { return [] }
         return value.components(separatedBy: ",").map { Recipient(email: $0, name: "") }

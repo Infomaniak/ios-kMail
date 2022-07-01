@@ -18,6 +18,7 @@
 
 import MailResources
 import SwiftUI
+import PhotosUI
 
 class NewMessageAttachmentSheet: SheetState<NewMessageAttachmentSheet.State> {
     enum State {
@@ -25,13 +26,17 @@ class NewMessageAttachmentSheet: SheetState<NewMessageAttachmentSheet.State> {
     }
 }
 
+enum AttachmentResult {
+    case files([URL])
+    case photos([PHPickerResult])
+}
+
 struct AttachmentView: View {
     @ObservedObject var bottomSheet: NewMessageBottomSheet
+    let didSelectAttachment: (AttachmentResult) -> Void
 
     @StateObject private var attachmentSheet = NewMessageAttachmentSheet()
-
     @State private var image = UIImage()
-
     @State private var isPresenting = false
 
     private struct AttachmentAction: Hashable {
@@ -39,15 +44,15 @@ struct AttachmentView: View {
         let image: UIImage
 
         static let addFile = AttachmentAction(
-            name: MailResourcesStrings.attachmentActionFile,
+            name: MailResourcesStrings.Localizable.attachmentActionFile,
             image: MailResourcesAsset.folder.image
         )
         static let addPhotoFromLibrary = AttachmentAction(
-            name: MailResourcesStrings.attachmentActionPhotoLibrary,
+            name: MailResourcesStrings.Localizable.attachmentActionPhotoLibrary,
             image: MailResourcesAsset.photo.image
         )
         static let openCamera = AttachmentAction(
-            name: MailResourcesStrings.attachmentActionCamera,
+            name: MailResourcesStrings.Localizable.attachmentActionCamera,
             image: MailResourcesAsset.photo.image
         )
     }
@@ -58,7 +63,7 @@ struct AttachmentView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
-            Text(MailResourcesStrings.attachmentActionTitle)
+            Text(MailResourcesStrings.Localizable.attachmentActionTitle)
                 .textStyle(.header3)
 
             ForEach(actions, id: \.self) { action in
@@ -88,10 +93,12 @@ struct AttachmentView: View {
         .sheet(isPresented: $attachmentSheet.isShowing) {
             switch attachmentSheet.state {
             case .fileSelection:
-                DocumentPicker { _ in
+                DocumentPicker { urls in
+                    didSelectAttachment(.files(urls))
                 }
             case .photoLibrary:
-                ImagePicker { _ in
+                ImagePicker { results in
+                    didSelectAttachment(.photos(results))
                 }
             case .camera:
                 CameraPicker(selectedImage: self.$image)
@@ -104,6 +111,6 @@ struct AttachmentView: View {
 
 struct AttachmentView_Previews: PreviewProvider {
     static var previews: some View {
-        AttachmentView(bottomSheet: NewMessageBottomSheet())
+        AttachmentView(bottomSheet: NewMessageBottomSheet()) { _ in /* Preview */ }
     }
 }

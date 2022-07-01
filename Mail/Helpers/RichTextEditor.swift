@@ -238,6 +238,7 @@ class MailEditor: SQTextEditorView {
         case .editText:
             updateToolbarItems(style: toolbarStyle == .main ? .textEdition : .main)
         case .attachment:
+            webView.resignFirstResponder()
             bottomSheet?.open(state: .attachment, position: .attachment)
         case .photo:
             attachmentSheet?.state = .camera

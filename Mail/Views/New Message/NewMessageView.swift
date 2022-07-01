@@ -186,7 +186,18 @@ struct NewMessageView: View {
         .bottomSheet(bottomSheetPosition: $bottomSheet.position, options: bottomSheetOptions) {
             switch bottomSheet.state {
             case .attachment:
-                AttachmentView(bottomSheet: bottomSheet)
+                AttachmentView(bottomSheet: bottomSheet) { attachment in
+                    switch attachment {
+                    case let .files(urls):
+                        Task {
+                            await addDocumentAttachment(urls: urls)
+                        }
+                    case let .photos(results):
+                        Task {
+                            await addImageAttachment(results: results)
+                        }
+                    }
+                }
             case let .link(handler):
                 LinkView(actionHandler: handler)
             case .none:
@@ -297,6 +308,23 @@ struct NewMessageView: View {
     }
 
     // MARK: Attachments
+
+    func addDocumentAttachment(urls: [URL]) async {
+        await withTaskGroup(of: Void.self) { group in
+            for url in urls {
+                group.addTask {
+                    do {
+                        let typeIdentifier = try url.resourceValues(forKeys: [.typeIdentifierKey]).typeIdentifier ?? ""
+
+                        _ = try await self.sendAttachment(typeIdentifier: typeIdentifier, url: url, name: url.lastPathComponent, disposition: .attachment)
+
+                    } catch {
+                        print("Error while creating attachment: \(error.localizedDescription)")
+                    }
+                }
+            }
+        }
+    }
 
     func addImageAttachment(
         results: [PHPickerResult],

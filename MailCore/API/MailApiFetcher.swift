@@ -244,7 +244,7 @@ public class MailApiFetcher: ApiFetcher {
             "x-ws-attachment-mime-type": mimeType,
             "x-ws-attachment-disposition": disposition.rawValue
         ])
-        return try await perform(request: authenticatedRequest(.createAttachment(uuid: mailbox.uuid), parameters: attachmentData,
+        return try await perform(request: authenticatedRequest(.createAttachment(uuid: mailbox.uuid), method: .post, parameters: attachmentData,
                                                                headers: headers)).data
     }
 }
