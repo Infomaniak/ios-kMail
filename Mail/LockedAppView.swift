@@ -36,7 +36,7 @@ struct LockedAppView: View {
                 .frame(width: 187, height: 187)
                 .padding(.bottom, 27)
             Text(MailResourcesStrings.Localizable.lockAppTitle)
-                .font(.system(size: 20, weight: .semibold))
+                .textStyle(.header2)
 
             Spacer()
 
