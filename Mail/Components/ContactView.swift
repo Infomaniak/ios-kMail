@@ -16,13 +16,16 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import InfomaniakCore
 import MailCore
 import MailResources
 import SwiftUI
 
 struct ContactView: View {
     var recipient: Recipient
+    var isRemoteContact: Bool
     @ObservedObject var bottomSheet: MessageBottomSheet
+    @ObservedObject var sheet: MessageSheet
 
     private struct ContactAction: Hashable {
         let name: String
@@ -42,9 +45,12 @@ struct ContactView: View {
         )
     }
 
-    private let actions: [ContactAction] = [
-        .writeEmailAction, .addContactsAction, .copyEmailAction
-    ]
+    private var actions: [ContactAction] {
+        if isRemoteContact {
+            return [.writeEmailAction, .copyEmailAction]
+        }
+        return [.writeEmailAction, .addContactsAction, .copyEmailAction]
+    }
 
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
@@ -77,18 +83,7 @@ struct ContactView: View {
         .padding(.top, 16)
     }
 
-    private func writeEmail() {
-        // TODO: handle writeEmail action
-    }
-
-    private func addToContacts() {
-        // TODO: handle addContacts action
-    }
-
-    private func copyEmail() {
-        UIPasteboard.general.string = recipient.email
-        bottomSheet.close()
-    }
+    // MARK: - Actions
 
     private func handleAction(_ action: ContactAction) {
         switch action {
@@ -101,11 +96,33 @@ struct ContactView: View {
         default:
             return
         }
+        bottomSheet.close()
+    }
+
+    private func writeEmail() {
+        sheet.state = .write(to: recipient)
+    }
+
+    private func addToContacts() {
+        Task {
+            await tryOrDisplayError {
+                try await AccountManager.instance.currentContactManager?.addContact(recipient: recipient)
+                IKSnackBar.showSnackBar(message: MailResourcesStrings.Localizable.snackbarContactSaved)
+            }
+        }
+    }
+
+    private func copyEmail() {
+        UIPasteboard.general.string = recipient.email
+        IKSnackBar.showSnackBar(message: MailResourcesStrings.Localizable.snackbarEmailCopiedToClipboard)
     }
 }
 
 struct ContactView_Previews: PreviewProvider {
     static var previews: some View {
-        ContactView(recipient: PreviewHelper.sampleRecipient1, bottomSheet: MessageBottomSheet())
+        ContactView(recipient: PreviewHelper.sampleRecipient1,
+                    isRemoteContact: false,
+                    bottomSheet: MessageBottomSheet(),
+                    sheet: MessageSheet())
     }
 }

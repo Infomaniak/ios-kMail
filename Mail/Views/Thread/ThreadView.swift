@@ -27,16 +27,17 @@ class MessageSheet: SheetState<MessageSheet.State> {
         case attachment(Attachment)
         case reply(Message, ReplyMode)
         case edit(Draft)
+        case write(to: Recipient)
     }
 }
 
 class MessageBottomSheet: BottomSheetState<MessageBottomSheet.State, MessageBottomSheet.Position> {
     enum State: Equatable {
-        case contact(Recipient)
+        case contact(Recipient, isRemote: Bool)
     }
 
     enum Position: CGFloat, CaseIterable {
-        case top = 285, hidden = 0
+        case defaultHeight = 285, remoteContactHeight = 230, hidden = 0
     }
 }
 
@@ -147,14 +148,16 @@ struct ThreadView: View {
                 NewMessageView(isPresented: $sheet.isShowing, mailboxManager: mailboxManager, draft: .replying(to: message, mode: replyMode))
             case let .edit(draft):
                 NewMessageView(isPresented: $sheet.isShowing, mailboxManager: mailboxManager, draft: draft.asUnmanaged())
+            case let .write(recipient):
+                NewMessageView(isPresented: $sheet.isShowing, mailboxManager: mailboxManager, draft: .writing(to: recipient))
             case .none:
                 EmptyView()
             }
         }
         .bottomSheet(bottomSheetPosition: $bottomSheet.position, options: bottomSheetOptions) {
             switch bottomSheet.state {
-            case let .contact(recipient):
-                ContactView(recipient: recipient, bottomSheet: bottomSheet)
+            case let .contact(recipient, isRemote):
+                ContactView(recipient: recipient, isRemoteContact: isRemote, bottomSheet: bottomSheet, sheet: sheet)
             case .none:
                 EmptyView()
             }

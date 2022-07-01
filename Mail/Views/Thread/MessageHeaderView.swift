@@ -137,7 +137,8 @@ struct MessageHeaderView: View {
     }
 
     private func openContact(recipient: Recipient) {
-        bottomSheet.open(state: .contact(recipient), position: .top)
+        let isRemoteContact = AccountManager.instance.currentContactManager?.getContact(for: recipient.email)?.remote != nil
+        bottomSheet.open(state: .contact(recipient, isRemote: isRemoteContact), position: isRemoteContact ? .remoteContactHeight : .defaultHeight)
     }
 
     private func editDraft(from message: Message) {
