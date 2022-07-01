@@ -21,7 +21,7 @@ import MailCore
 import MailResources
 import SwiftUI
 
-struct LinkView: View {
+struct AddLinkView: View {
     @State var url: String = ""
 
     @FocusState private var isFocused: Bool
@@ -71,8 +71,8 @@ struct LinkView: View {
     }
 }
 
-struct LinkView_Previews: PreviewProvider {
+struct AddLinkView_Previews: PreviewProvider {
     static var previews: some View {
-        LinkView(url: "url")
+        AddLinkView(url: "url")
     }
 }

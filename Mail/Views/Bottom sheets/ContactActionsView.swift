@@ -21,7 +21,7 @@ import MailCore
 import MailResources
 import SwiftUI
 
-struct ContactView: View {
+struct ContactActionsView: View {
     var recipient: Recipient
     var isRemoteContact: Bool
     @ObservedObject var bottomSheet: MessageBottomSheet
@@ -119,9 +119,9 @@ struct ContactView: View {
     }
 }
 
-struct ContactView_Previews: PreviewProvider {
+struct ContactActionsView_Previews: PreviewProvider {
     static var previews: some View {
-        ContactView(recipient: PreviewHelper.sampleRecipient1,
+        ContactActionsView(recipient: PreviewHelper.sampleRecipient1,
                     isRemoteContact: false,
                     bottomSheet: MessageBottomSheet(),
                     sheet: MessageSheet())

@@ -186,7 +186,7 @@ struct NewMessageView: View {
         .bottomSheet(bottomSheetPosition: $bottomSheet.position, options: bottomSheetOptions) {
             switch bottomSheet.state {
             case .attachment:
-                AttachmentView(bottomSheet: bottomSheet) { attachment in
+                AddAttachmentView(bottomSheet: bottomSheet) { attachment in
                     switch attachment {
                     case let .files(urls):
                         Task {
@@ -199,7 +199,7 @@ struct NewMessageView: View {
                     }
                 }
             case let .link(handler):
-                LinkView(actionHandler: handler)
+                AddLinkView(actionHandler: handler)
             case .none:
                 EmptyView()
             }

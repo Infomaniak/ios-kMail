@@ -31,7 +31,7 @@ enum AttachmentResult {
     case photos([PHPickerResult])
 }
 
-struct AttachmentView: View {
+struct AddAttachmentView: View {
     @ObservedObject var bottomSheet: NewMessageBottomSheet
     let didSelectAttachment: (AttachmentResult) -> Void
 
@@ -86,11 +86,11 @@ struct AttachmentView: View {
                     }
                 }
                 .frame(height: 40)
-                .padding([.leading, .trailing], 24)
+                .padding(.horizontal, 24)
 
                 if action != .openCamera {
                     IKDivider()
-                        .padding([.leading, .trailing], 8)
+                        .padding(.horizontal, 8)
                 }
             }
         }
@@ -115,8 +115,8 @@ struct AttachmentView: View {
     }
 }
 
-struct AttachmentView_Previews: PreviewProvider {
+struct AddAttachmentView_Previews: PreviewProvider {
     static var previews: some View {
-        AttachmentView(bottomSheet: NewMessageBottomSheet()) { _ in /* Preview */ }
+        AddAttachmentView(bottomSheet: NewMessageBottomSheet()) { _ in /* Preview */ }
     }
 }

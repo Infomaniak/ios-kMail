@@ -210,7 +210,7 @@ struct ThreadView: View {
         .bottomSheet(bottomSheetPosition: $bottomSheet.position, options: bottomSheetOptions) {
             switch bottomSheet.state {
             case let .contact(recipient, isRemote):
-                ContactView(recipient: recipient, isRemoteContact: isRemote, bottomSheet: bottomSheet, sheet: sheet)
+                ContactActionsView(recipient: recipient, isRemoteContact: isRemote, bottomSheet: bottomSheet, sheet: sheet)
             case .none:
                 EmptyView()
             }
