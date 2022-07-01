@@ -31,6 +31,8 @@ public enum MailError: LocalizedError {
     case unknownToken
     case noMailbox
     case folderNotFound
+    case addressBookNotFound
+    case contactNotFound
 
     public var errorDescription: String? {
         switch self {
@@ -53,6 +55,10 @@ public enum MailError: LocalizedError {
             return "No Mailbox"
         case .folderNotFound:
             return "Folder not found"
+        case .addressBookNotFound:
+            return "Address Book not found"
+        case .contactNotFound:
+            return "Contact not found"
         }
     }
 }

@@ -1,3 +1,4 @@
+//
 /*
  Infomaniak Mail - iOS App
  Copyright (C) 2022 Infomaniak Network SA
@@ -18,16 +19,22 @@
 
 import Foundation
 
-public enum ContactError: LocalizedError {
-    case addressBookNotFound
-    case contactNotFound
+public struct NewContact: Encodable {
+    struct ContactEmail: Encodable {
+        let value: String
+        let type = "HOME"
+    }
 
-    public var errorDescription: String? {
-        switch self {
-        case .addressBookNotFound:
-            return "Address Book not found"
-        case .contactNotFound:
-            return "Contact not found"
-        }
+    let firstname: String
+    let lastname: String
+    let emails: [ContactEmail]
+    let addressbookId: Int
+
+    init(from recipient: Recipient, addressBook: AddressBook) {
+        let name = recipient.name.split(separator: " ", maxSplits: 1)
+        firstname = String(name.first ?? "")
+        lastname = String((name.count == 2 ? name.last : nil) ?? "")
+        emails = [ContactEmail(value: recipient.email)]
+        addressbookId = addressBook.id
     }
 }

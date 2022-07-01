@@ -100,7 +100,7 @@ struct ContactView: View {
     }
 
     private func writeEmail() {
-        sheet.state = .writeTo(recipient)
+        sheet.state = .write(to: recipient)
     }
 
     private func addToContacts() {
