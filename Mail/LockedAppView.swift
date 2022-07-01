@@ -20,46 +20,41 @@ import InfomaniakCore
 import MailResources
 import SwiftUI
 
-// TODO: Update the view when the mock-up is ready (current view based on kDrive)
-
 struct LockedAppView: View {
     @Environment(\.window) var window
 
     var body: some View {
-        VStack {
-            Image(resource: MailResourcesAsset.logoText)
-                .resizable()
-                .scaledToFit()
-                .frame(width: 200)
+        ZStack {
+            VStack(spacing: 27) {
+                Image(resource: MailResourcesAsset.lock)
+                    .frame(width: 187, height: 187)
 
-            Spacer()
-
-            Circle()
-                .frame(width: 175, height: 175)
-                .foregroundColor(MailResourcesAsset.backgroundHeaderColor)
-                .overlay {
-                    Image(systemName: "lock.fill")
-                        .font(.system(size: 60))
-                        .foregroundColor(.accentColor)
-                }
-                .padding(.bottom, 5)
-            Text(MailResourcesStrings.Localizable.lockAppTitle)
-                .font(.body)
-
-            Spacer()
-
-            Button(action: unlockApp) {
-                Text(MailResourcesStrings.Localizable.buttonUnlock)
-                    .frame(maxWidth: .infinity)
-                    .padding([.top, .bottom])
-                    .background(Color.accentColor)
-                    .foregroundColor(.white)
-                    .clipShape(RoundedRectangle(cornerRadius: 5))
+                Text(MailResourcesStrings.Localizable.lockAppTitle)
+                    .textStyle(.header2)
             }
-            .padding([.leading, .trailing], 40)
+
+            VStack {
+                Image(resource: MailResourcesAsset.logoText)
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 214)
+
+                Spacer()
+
+                Button(action: unlockApp) {
+                    Text(MailResourcesStrings.Localizable.buttonUnlock)
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical)
+                        .background(Color.accentColor)
+                        .foregroundColor(.white)
+                        .textStyle(.button)
+                        .clipShape(RoundedRectangle(cornerRadius: 16))
+                }
+                .padding(.horizontal, 40)
+            }
+            .padding(.top, 30)
+            .padding(.bottom, 40)
         }
-        .padding(.top, 20)
-        .padding(.bottom, 75)
     }
 
     private func unlockApp() {
