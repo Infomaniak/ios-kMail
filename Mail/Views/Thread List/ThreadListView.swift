@@ -86,7 +86,7 @@ struct ThreadListView: View {
                              }),
                              unreadFilterOn: $viewModel.filterUnreadOn)
 
-            ZStack(alignment: .bottomTrailing) {
+            ZStack {
                 if viewModel.threads.isEmpty && !viewModel.isLoadingPage {
                     EmptyListView()
                 }
@@ -133,9 +133,6 @@ struct ThreadListView: View {
                 .introspectTableView { tableView in
                     tableView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: 60, right: 0)
                 }
-
-                NewMessageButtonView(sheet: menuSheet)
-                    .padding([.trailing, .bottom], 30)
             }
             .appShadow()
         }
@@ -145,6 +142,9 @@ struct ThreadListView: View {
             self.navigationController = navigationController
         }
         .modifier(ThreadListNavigationBar(isCompact: isCompact, folder: $viewModel.folder, avatarImage: $avatarImage))
+        .floatingActionButton(icon: Image(resource: MailResourcesAsset.edit), title: MailResourcesStrings.Localizable.buttonNewMessage) {
+            menuSheet.state = .newMessage
+        }
         .bottomSheet(bottomSheetPosition: $bottomSheet.position, options: bottomSheetOptions) {
             switch bottomSheet.state {
             case let .actions(target):
@@ -162,7 +162,6 @@ struct ThreadListView: View {
                 EmptyView()
             }
         }
-        .edgesIgnoringSafeArea(.bottom)
         .onAppear {
             if isCompact {
                 selectedThread = nil

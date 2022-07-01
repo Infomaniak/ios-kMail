@@ -19,27 +19,23 @@
 import MailResources
 import SwiftUI
 
-struct NewMessageButtonView: View {
-    @ObservedObject var sheet: MenuSheet
+struct FloatingActionButtonModifier: ViewModifier {
+    let icon: Image
+    let title: String
+    let action: () -> Void
 
-    var body: some View {
-        Button {
-            sheet.state = .newMessage
-        } label: {
-            Text(MailResourcesStrings.Localizable.buttonNewMessage)
-                .textStyle(.buttonPill)
-            Image(resource: MailResourcesAsset.edit)
-                .resizable()
-                .frame(width: 16, height: 16)
+    func body(content: Content) -> some View {
+        ZStack(alignment: .bottomTrailing) {
+            content
+
+            FloatingActionButton(icon: icon, title: title, action: action)
         }
-        .buttonStyle(.borderedProminent)
-        .buttonBorderShape(.roundedRectangle(radius: 50))
-        .controlSize(.large)
+        .edgesIgnoringSafeArea(.bottom)
     }
 }
 
-struct NewMessageButtonView_Previews: PreviewProvider {
-    static var previews: some View {
-        NewMessageButtonView(sheet: MenuSheet())
+extension View {
+    func floatingActionButton(icon: Image, title: String, action: @escaping () -> Void) -> some View {
+        modifier(FloatingActionButtonModifier(icon: icon, title: title, action: action))
     }
 }

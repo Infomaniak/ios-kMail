@@ -20,8 +20,16 @@ import MailCore
 import MailResources
 import SwiftUI
 
+class AccountListSheet: SheetState<AccountListSheet.State> {
+    enum State {
+        case addAccount
+    }
+}
+
 struct AccountListView: View {
     @State private var expandedUserId: Int? = AccountManager.instance.currentUserId
+
+    @StateObject private var sheet = AccountListSheet()
 
     var body: some View {
         ScrollView {
@@ -32,19 +40,17 @@ struct AccountListView: View {
             }
             .padding(8)
         }
-        .navigationBarTitle(MailResourcesStrings.Localizable.titleMyAccounts, displayMode: .inline)
         .appShadow(withPadding: true)
-        .toolbar {
-            ToolbarItem(placement: .navigationBarTrailing) {
-                Button {
-                    // TODO: Add account
-                } label: {
-                    Label {
-                        Text("Add account")
-                    } icon: {
-                        Image(resource: MailResourcesAsset.add)
-                    }
-                }
+        .navigationBarTitle(MailResourcesStrings.Localizable.titleMyAccounts, displayMode: .inline)
+        .floatingActionButton(icon: Image(systemName: "plus"), title: MailResourcesStrings.Localizable.buttonAddAccount) {
+            sheet.state = .addAccount
+        }
+        .sheet(isPresented: $sheet.isShowing) {
+            switch sheet.state {
+            case .addAccount:
+                LoginView(isPresented: $sheet.isShowing)
+            case .none:
+                EmptyView()
             }
         }
         .task {
