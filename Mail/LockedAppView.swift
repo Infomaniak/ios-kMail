@@ -24,35 +24,37 @@ struct LockedAppView: View {
     @Environment(\.window) var window
 
     var body: some View {
-        VStack {
-            Image(resource: MailResourcesAsset.logoText)
-                .resizable()
-                .scaledToFit()
-                .frame(width: 214)
+        ZStack {
+            VStack(spacing: 27) {
+                Image(resource: MailResourcesAsset.lock)
+                    .frame(width: 187, height: 187)
 
-            Spacer()
-
-            Image(resource: MailResourcesAsset.lock)
-                .frame(width: 187, height: 187)
-                .padding(.bottom, 27)
-            Text(MailResourcesStrings.Localizable.lockAppTitle)
-                .textStyle(.header2)
-
-            Spacer()
-
-            Button(action: unlockApp) {
-                Text(MailResourcesStrings.Localizable.buttonUnlock)
-                    .frame(maxWidth: .infinity)
-                    .padding([.top, .bottom])
-                    .background(Color.accentColor)
-                    .foregroundColor(.white)
-                    .textStyle(.button)
-                    .clipShape(RoundedRectangle(cornerRadius: 16))
+                Text(MailResourcesStrings.Localizable.lockAppTitle)
+                    .textStyle(.header2)
             }
-            .padding([.leading, .trailing], 40)
+
+            VStack {
+                Image(resource: MailResourcesAsset.logoText)
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 214)
+
+                Spacer()
+
+                Button(action: unlockApp) {
+                    Text(MailResourcesStrings.Localizable.buttonUnlock)
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical)
+                        .background(Color.accentColor)
+                        .foregroundColor(.white)
+                        .textStyle(.button)
+                        .clipShape(RoundedRectangle(cornerRadius: 16))
+                }
+                .padding(.horizontal, 40)
+            }
+            .padding(.top, 30)
+            .padding(.bottom, 40)
         }
-        .padding(.top, 30)
-        .padding(.bottom, 40)
     }
 
     private func unlockApp() {
