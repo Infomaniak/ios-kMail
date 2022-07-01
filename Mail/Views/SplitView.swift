@@ -152,6 +152,8 @@ struct SplitView: View {
                 SheetView(isPresented: $menuSheet.isShowing) {
                     SettingsView(viewModel: GeneralSettingsViewModel())
                 }
+            case .help:
+                HelpView(isPresented: $menuSheet.isShowing)
             case .none:
                 EmptyView()
             }

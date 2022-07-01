@@ -103,6 +103,8 @@ class NavigationDrawerController: ObservableObject {
 struct MenuDrawerView: View {
     @Environment(\.openURL) var openURL
 
+    @EnvironmentObject var menuSheet: MenuSheet
+
     // swiftlint:disable empty_count
     @ObservedResults(Folder.self, where: { $0.parentLink.count == 0 }) var folders
 
@@ -176,7 +178,7 @@ struct MenuDrawerView: View {
     private mutating func getMenuItems() {
         helpMenuItems = [
             MenuItem(icon: MailResourcesAsset.feedbacks, label: MailResourcesStrings.Localizable.buttonFeedbacks, action: sendFeedback),
-            MenuItem(icon: MailResourcesAsset.help, label: MailResourcesStrings.Localizable.buttonHelp, action: openSupport)
+            MenuItem(icon: MailResourcesAsset.help, label: MailResourcesStrings.Localizable.buttonHelp, action: openHelp)
         ]
         actionsMenuItems = [
             MenuItem(icon: MailResourcesAsset.drawerDownload, label: MailResourcesStrings.Localizable.buttonImportEmails, action: importMails),
@@ -194,8 +196,8 @@ struct MenuDrawerView: View {
         openURL(URLConstants.feedback.url)
     }
 
-    func openSupport() {
-        openURL(URLConstants.support.url)
+    func openHelp() {
+        menuSheet.state = .help
     }
 
     func importMails() {
