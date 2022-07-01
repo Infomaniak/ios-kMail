@@ -63,7 +63,7 @@ struct MoreStorageView: View {
             }
             .frame(maxWidth: .infinity, alignment: .trailing)
         }
-        .padding(.horizontal, Constants.bottomSheetVerticalPadding)
+        .padding(.horizontal, Constants.bottomSheetHorizontalPadding)
     }
 
     // MARK: - Actions
