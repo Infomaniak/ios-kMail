@@ -21,25 +21,45 @@ import MailResources
 import SwiftUI
 
 struct AccountListView: View {
+    @State private var expandedUserId: Int? = AccountManager.instance.currentUserId
+
     var body: some View {
         ScrollView {
             VStack {
                 ForEach(AccountManager.instance.accounts) { account in
-                    AccountCellView(account: account)
+                    AccountCellView(account: account, expandedUserId: $expandedUserId)
+                }
+            }
+            .padding(8)
+        }
+        .navigationBarTitle(MailResourcesStrings.Localizable.titleMyAccounts, displayMode: .inline)
+        .appShadow(withPadding: true)
+        .toolbar {
+            ToolbarItem(placement: .navigationBarTrailing) {
+                Button {
+                    // TODO: Add account
+                } label: {
+                    Label {
+                        Text("Add account")
+                    } icon: {
+                        Image(resource: MailResourcesAsset.add)
+                    }
                 }
             }
         }
-        .navigationBarTitle(MailResourcesStrings.Localizable.titleMyAccounts, displayMode: .inline)
-        .padding(16)
         .task {
-            try? await withThrowingTaskGroup(of: Void.self) { group in
-                for account in AccountManager.instance.accounts where account != AccountManager.instance.currentAccount {
-                    group.addTask {
-                        _ = try await AccountManager.instance.updateUser(for: account, registerToken: false)
-                    }
+            try? await updateUsers()
+        }
+    }
+
+    private func updateUsers() async throws {
+        try await withThrowingTaskGroup(of: Void.self) { group in
+            for account in AccountManager.instance.accounts where account != AccountManager.instance.currentAccount {
+                group.addTask {
+                    _ = try await AccountManager.instance.updateUser(for: account, registerToken: false)
                 }
-                try await group.waitForAll()
             }
+            try await group.waitForAll()
         }
     }
 }

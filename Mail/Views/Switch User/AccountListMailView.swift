@@ -16,38 +16,47 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import InfomaniakCore
 import MailCore
 import MailResources
 import SwiftUI
 
 struct AccountListMailView: View {
-    var mailbox: Mailbox
-    @State var isSelected = false
+    let mailbox: Mailbox
+
+    @State private var unreadCount = 0
+
+    private var isSelected: Bool {
+        return mailbox.userId == AccountManager.instance.currentUserId
+            && mailbox.mailboxId == AccountManager.instance.currentMailboxId
+    }
 
     var body: some View {
-        HStack(alignment: .center, spacing: 16) {
+        HStack(spacing: 16) {
             Image(resource: MailResourcesAsset.envelope)
                 .resizable()
-                .frame(width: 20, height: 20)
+                .frame(width: 24, height: 24)
 
             Text(mailbox.email)
-                .truncationMode(.tail)
                 .lineLimit(1)
 
             Spacer()
 
-            // TODO: - Replace false number
-//            Text("7")
-//                .foregroundColor(.accentColor)
+            if unreadCount > 0 {
+                Text(unreadCount < 100 ? "\(unreadCount)" : "99+")
+                    .foregroundColor(.accentColor)
+            }
         }
         .foregroundColor(isSelected ? Color.accentColor : MailResourcesAsset.primaryTextColor.swiftUiColor)
         .textStyle(isSelected ? .calloutStrong : .callout)
+        .onAppear {
+            // TODO: Get unread count
+        }
     }
 }
 
 struct AccountListMailView_Previews: PreviewProvider {
     static var previews: some View {
         AccountListMailView(mailbox: PreviewHelper.sampleMailbox)
-        AccountListMailView(mailbox: PreviewHelper.sampleMailbox, isSelected: true)
     }
 }
