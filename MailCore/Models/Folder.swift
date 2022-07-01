@@ -168,6 +168,10 @@ public class Folder: Object, Codable, Comparable, Identifiable {
         return lhs.id == rhs.id
     }
 
+    public func updateUnreadCount() {
+        unreadCount = threads.reduce(0) { $0 + $1.unseenMessages }
+    }
+
     public func isParent(of folder: Folder) -> Bool {
         let myComponents = path.components(separatedBy: separator)
         let folderComponents = folder.path.components(separatedBy: separator)
