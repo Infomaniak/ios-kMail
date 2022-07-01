@@ -165,6 +165,6 @@ public class ContactManager: ObservableObject {
 
     public func getMainAddressBook() -> AddressBook? {
         let realm = getRealm()
-        return realm.objects(AddressBook.self).filter { $0.isMain }.first
+        return realm.objects(AddressBook.self).filter { $0.isPrincipal }.first
     }
 }

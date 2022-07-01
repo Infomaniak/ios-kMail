@@ -58,9 +58,10 @@ public class MailApiFetcher: ApiFetcher {
     }
 
     public func addContact(_ recipient: Recipient, to addressBook: AddressBook) async throws -> Int {
-        try await perform(request: authenticatedRequest(.addContact,
-                                                        method: .post,
-                                                        parameters: NewContact(from: recipient, addressBook: addressBook))).data
+        try await perform(request: authenticatedSession.request(Endpoint.addContact.url,
+                                                                method: .post,
+                                                                parameters: NewContact(from: recipient, addressBook: addressBook),
+                                                                encoder: JSONParameterEncoder.default)).data
     }
 
     func signatures(mailbox: Mailbox) async throws -> SignatureResponse {
