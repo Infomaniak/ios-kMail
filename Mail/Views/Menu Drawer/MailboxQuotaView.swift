@@ -47,8 +47,8 @@ struct MailboxQuotaView: View {
 
             Spacer()
         }
-        .padding([.leading, .trailing], Constants.menuDrawerHorizontalPadding)
-        .padding([.top, .bottom], 19)
+        .padding(.vertical, 19)
+        .padding(.horizontal, Constants.menuDrawerHorizontalPadding)
         .task {
             do {
                 quotas = try await mailboxManager.apiFetcher.quotas(mailbox: mailboxManager.mailbox)

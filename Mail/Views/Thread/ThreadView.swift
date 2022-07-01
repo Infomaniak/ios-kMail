@@ -105,14 +105,15 @@ struct ThreadView: View {
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .multilineTextAlignment(.leading)
                 .padding(.top, 8)
-                .padding([.leading, .trailing], 16)
+                .padding(.horizontal, 16)
 
             VStack(spacing: 0) {
                 ForEach(messages.indices, id: \.self) { index in
                     let isMessageExpanded = ((index == messages.count - 1) && !messages[index].isDraft) || !messages[index].seen
                     MessageView(message: messages[index], isMessageExpanded: isMessageExpanded)
                     if index < messages.count - 1 {
-                        MessageSeparatorView()
+                        IKDivider()
+                            .padding(.horizontal, 8)
                     }
                 }
             }

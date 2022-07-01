@@ -31,7 +31,7 @@ struct RecipientChip: View {
         HStack(spacing: 2) {
             Text(recipient.name.isEmpty ? recipient.email : recipient.name)
                 .textStyle(.body)
-                .padding([.top, .bottom], 6)
+                .padding(.vertical, 6)
                 .lineLimit(1)
 
             Button(action: removeButtonTapped) {

@@ -53,10 +53,10 @@ struct NewMessageCell<Content>: View where Content: View {
             }
         }
         .textStyle(.body)
-        .padding([.leading, .trailing], 16)
+        .padding(.horizontal, 16)
 
         IKDivider()
-            .padding([.leading, .trailing], 8)
+            .padding(.horizontal, 8)
     }
 }
 

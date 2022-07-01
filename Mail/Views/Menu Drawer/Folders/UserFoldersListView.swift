@@ -67,9 +67,9 @@ struct UserFoldersListView: View {
                     globalSheet.open(state: .createNewFolder(mode: .create), position: .newFolderHeight)
                 })
                 .padding(.top, Constants.menuDrawerVerticalPadding)
-                .padding([.leading, .trailing], Constants.menuDrawerHorizontalPadding)
+                .padding(.horizontal, Constants.menuDrawerHorizontalPadding)
             }
         }
-        .padding([.top, .bottom], 19)
+        .padding(.vertical, 19)
     }
 }

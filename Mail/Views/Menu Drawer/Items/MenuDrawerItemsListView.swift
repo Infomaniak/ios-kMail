@@ -44,8 +44,8 @@ struct MenuDrawerItemsListView: View {
                 MenuDrawerItemCell(content: item)
             }
         }
-        .padding([.top, .bottom], 19)
-        .padding([.leading, .trailing], Constants.menuDrawerHorizontalPadding)
+        .padding(.vertical, 19)
+        .padding(.horizontal, Constants.menuDrawerHorizontalPadding)
     }
 }
 

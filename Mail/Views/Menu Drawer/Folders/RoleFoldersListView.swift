@@ -35,10 +35,10 @@ struct RoleFoldersListView: View {
 
                 if folder.role == .inbox {
                     IKDivider(withPadding: true)
-                        .padding([.top, .bottom], Constants.menuDrawerVerticalPadding)
+                        .padding(.vertical, Constants.menuDrawerVerticalPadding)
                 }
             }
         }
-        .padding([.top, .bottom], Constants.menuDrawerVerticalPadding)
+        .padding(.vertical, Constants.menuDrawerVerticalPadding)
     }
 }

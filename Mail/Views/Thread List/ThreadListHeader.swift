@@ -89,8 +89,8 @@ struct UnreadToggleStyle: ToggleStyle {
             }
             .font(MailTextStyle.calloutStrong.font)
             .foregroundColor(configuration.isOn ? MailResourcesAsset.backgroundColor.swiftUiColor : Color.accentColor)
-            .padding([.leading, .trailing], 8)
-            .padding([.top, .bottom], 4)
+            .padding(.vertical, 4)
+            .padding(.horizontal, 8)
             .background(
                 Capsule()
                     .fill(configuration.isOn ? Color.accentColor : MailResourcesAsset.backgroundColor.swiftUiColor)

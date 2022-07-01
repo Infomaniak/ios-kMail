@@ -53,8 +53,8 @@ struct MailboxesManagementView: View {
                     Spacer()
                     ChevronIcon(style: isExpanded ? .up : .down)
                 }
-                .padding([.top, .bottom], 8)
-                .padding([.leading, .trailing], 20)
+                .padding(.vertical, 8)
+                .padding(.horizontal, 20)
                 .background(SelectionBackground())
             }
 

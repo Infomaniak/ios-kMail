@@ -56,7 +56,7 @@ struct AccountView: View {
                     Spacer()
                     ChevronIcon(style: .right)
                 }
-                .padding([.leading, .trailing], 14)
+                .padding(.horizontal, 14)
                 IKDivider()
 
                 // TODO: - Appareil list
@@ -90,8 +90,8 @@ struct AccountView: View {
             } label: {
                 Image(systemName: "xmark")
             })
-            .padding([.top, .bottom], 30)
-            .padding([.leading, .trailing], 18)
+            .padding(.vertical, 30)
+            .padding(.horizontal, 18)
         }
         .navigationBarAppStyle()
         .onAppear {

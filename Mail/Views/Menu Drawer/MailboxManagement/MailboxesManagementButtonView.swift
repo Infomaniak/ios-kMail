@@ -45,7 +45,7 @@ struct MailboxesManagementButtonView: View {
                 }
             }
         }
-        .padding([.top, .bottom], 8)
+        .padding(.vertical, 8)
         .padding(.leading, 66)
     }
 }

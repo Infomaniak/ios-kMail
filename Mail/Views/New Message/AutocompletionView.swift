@@ -33,7 +33,7 @@ struct AutocompletionView: View {
                         } label: {
                             RecipientAutocompletionCell(recipient: recipient)
                         }
-                        .padding([.leading, .trailing], 24)
+                        .padding(.horizontal, 24)
 
                         IKDivider()
                     }

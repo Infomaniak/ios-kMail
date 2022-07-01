@@ -41,7 +41,7 @@ struct ActionsView: View {
             Text(MailResourcesStrings.Localizable.actionsMenuTitle)
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .textStyle(.header3)
-                .padding([.leading, .trailing], 24)
+                .padding(.horizontal, 24)
             // Quick actions
             HStack(alignment: .top, spacing: 28) {
                 ForEach(viewModel.quickActions) { action in
@@ -49,16 +49,16 @@ struct ActionsView: View {
                 }
                 .fixedSize(horizontal: false, vertical: true)
             }
-            .padding([.leading, .trailing], 24)
+            .padding(.horizontal, 24)
             .padding(.bottom, 16)
             // Actions
             ForEach(viewModel.listActions) { action in
                 IKDivider()
                 ActionView(viewModel: viewModel, action: action)
-                    .padding([.leading, .trailing], 24)
+                    .padding(.horizontal, 24)
             }
         }
-        .padding([.leading, .trailing], 8)
+        .padding(.horizontal, 8)
         .padding(.top, 16)
     }
 }
