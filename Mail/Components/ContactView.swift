@@ -57,7 +57,7 @@ struct ContactView: View {
             HStack {
                 RecipientImage(recipient: recipient, size: 32)
                 VStack(alignment: .leading) {
-                    Text(recipient.contact?.name ?? recipient.name)
+                    Text(recipient.contact?.name ?? recipient.title)
                         .textStyle(.header3)
                     Text(recipient.contact?.email ?? recipient.email)
                         .textStyle(.bodySecondary)

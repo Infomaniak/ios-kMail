@@ -24,8 +24,8 @@ public class Contact: Object, Codable, Identifiable {
     @Persisted public var color: String
 //    @Persisted public var contactedTimes: [String: Int]
     @Persisted public var emails: List<String>
-    @Persisted public var firstname: String
-    @Persisted public var lastname: String
+    @Persisted public var firstname: String?
+    @Persisted public var lastname: String?
     @Persisted public var name: String
     @Persisted public var other: Bool
     @Persisted public var uuid: String?
@@ -71,8 +71,8 @@ public class Contact: Object, Codable, Identifiable {
         // Will need to investigate this later
 //        contactedTimes = (try? values.decode([String: Int].self, forKey: .contactedTimes)) ?? [:]
         emails = try values.decode(List<String>.self, forKey: .emails)
-        firstname = try values.decode(String.self, forKey: .firstname)
-        lastname = try values.decode(String.self, forKey: .lastname)
+        firstname = try values.decodeIfPresent(String.self, forKey: .firstname)
+        lastname = try values.decodeIfPresent(String.self, forKey: .lastname)
         name = try values.decode(String.self, forKey: .name)
         other = try values.decode(Bool.self, forKey: .other)
         uuid = try values.decodeIfPresent(String.self, forKey: .uuid)
