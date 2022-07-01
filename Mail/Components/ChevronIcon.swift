@@ -37,13 +37,32 @@ struct ChevronIcon: View {
         }
     }
 
+    enum Color {
+        case primary, secondary
+
+        var color: MailResourcesColors {
+            switch self {
+            case .primary:
+                return MailResourcesAsset.primaryTextColor
+            case .secondary:
+                return MailResourcesAsset.secondaryTextColor
+            }
+        }
+    }
+
     let style: Style
+    let color: Color
+
+    init(style: Style, color: Color = .secondary) {
+        self.style = style
+        self.color = color
+    }
 
     var body: some View {
         Image(resource: MailResourcesAsset.arrowUp)
             .resizable()
             .frame(width: 12, height: 12)
-            .foregroundColor(.primary)
+            .foregroundColor(color.color)
             .padding(.vertical, 2)
             .padding(.horizontal, 1.5)
             .rotationEffect(style.rotationAngle)
