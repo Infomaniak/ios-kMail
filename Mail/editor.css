@@ -134,9 +134,7 @@ pre {
     word-wrap: break-word;
 }
 
-* {
-    caret-color: red !important;
-    
+* {    
     /* debug only */
         /* margin: 0 !important;
         position: static !important;

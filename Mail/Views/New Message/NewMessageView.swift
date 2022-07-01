@@ -71,6 +71,10 @@ struct NewMessageView: View {
 
     private let bottomSheetOptions = Constants.bottomSheetOptions + [.absolutePositionValue]
 
+    private var shouldDisplayAutocompletion: Bool {
+        return !autocompletion.isEmpty && focusedRecipientField != nil
+    }
+
     init(isPresented: Binding<Bool>, mailboxManager: MailboxManager, draft: UnmanagedDraft? = nil) {
         _isPresented = isPresented
         self.mailboxManager = mailboxManager
@@ -89,11 +93,9 @@ struct NewMessageView: View {
 
     var body: some View {
         NavigationView {
-            VStack {
-                if autocompletion.isEmpty {
-                    HStack {
-                        Text(MailResourcesStrings.Localizable.fromTitle)
-                            .textStyle(.bodySecondary)
+            VStack(spacing: 12) {
+                if !shouldDisplayAutocompletion {
+                    NewMessageCell(title: MailResourcesStrings.Localizable.fromTitle) {
                         Picker("Mailbox", selection: $selectedMailboxItem) {
                             ForEach(AccountManager.instance.mailboxes.indices, id: \.self) { i in
                                 Text(AccountManager.instance.mailboxes[i].email).tag(i)
@@ -102,8 +104,6 @@ struct NewMessageView: View {
                         .textStyle(.body)
                         Spacer()
                     }
-
-                    IKDivider()
                 }
 
                 recipientCell(type: .to)
@@ -114,19 +114,19 @@ struct NewMessageView: View {
                 }
 
                 // Show the rest of the view, or the autocompletion list
-                if autocompletion.isEmpty {
+                if shouldDisplayAutocompletion {
+                    AutocompletionView(autocompletion: $autocompletion) { recipient in
+                        addRecipientHandler?(recipient)
+                    }
+                } else {
                     NewMessageCell(title: MailResourcesStrings.Localizable.subjectTitle) {
                         TextField("", text: $draft.subject)
                     }
 
                     RichTextEditor(model: $editor, body: $draft.body)
-                } else {
-                    AutocompletionView(autocompletion: $autocompletion) { recipient in
-                        addRecipientHandler?(recipient)
-                    }
+                        .padding([.leading, .trailing], 16)
                 }
             }
-            .padding()
             .navigationBarTitleDisplayMode(.inline)
             .navigationBarBackButtonHidden(true)
             .navigationBarItems(
@@ -235,7 +235,7 @@ struct NewMessageView: View {
     }
 
     private func shouldDisplay(field: RecipientFieldType) -> Bool {
-        return autocompletion.isEmpty || focusedRecipientField == field
+        return !shouldDisplayAutocompletion || focusedRecipientField == field
     }
 
     private func binding(for type: RecipientFieldType) -> Binding<[Recipient]> {

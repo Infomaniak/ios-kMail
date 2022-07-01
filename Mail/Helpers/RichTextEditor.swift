@@ -60,7 +60,7 @@ struct RichTextEditor: UIViewRepresentable {
 
         func editor(_ editor: SQTextEditorView, selectedTextAttributeDidChange attribute: SQTextAttribute) {
             if let mailEditor = editor as? MailEditor {
-                mailEditor.setToolbar(style: mailEditor.toolbarStyle)
+                mailEditor.updateToolbarItems(style: mailEditor.toolbarStyle)
             }
         }
     }
@@ -92,7 +92,7 @@ class RichTextEditorModel: ObservableObject {
 }
 
 class MailEditor: SQTextEditorView {
-    var toolbar = UIToolbar()
+    lazy var toolbar = getToolbar()
     var bottomSheet: NewMessageBottomSheet?
     var toolbarStyle = ToolbarStyle.main
 
@@ -134,7 +134,8 @@ class MailEditor: SQTextEditorView {
         _webView.navigationDelegate = self
         _webView.allowsLinkPreview = false
         _webView.setKeyboardRequiresUserInteraction(false)
-        _webView.addInputAccessoryView(toolbar: self.getToolbar(height: 44, style: .main))
+        _webView.addInputAccessoryView(toolbar: self.toolbar)
+        self.updateToolbarItems(style: .main)
         return _webView
     }()
 
@@ -179,15 +180,8 @@ class MailEditor: SQTextEditorView {
 
     // MARK: - Custom Toolbar
 
-    public func setToolbar(style: ToolbarStyle) {
+    public func updateToolbarItems(style: ToolbarStyle) {
         toolbarStyle = style
-        webView.addInputAccessoryView(toolbar: getToolbar(height: 44, style: toolbarStyle))
-    }
-
-    public func getToolbar(height: Int, style: ToolbarStyle) -> UIToolbar? {
-        toolbar.frame = CGRect(x: 0, y: 50, width: 320, height: height)
-        toolbar.tintColor = MailResourcesAsset.secondaryTextColor.color
-        toolbar.barTintColor = .white
 
         let flexibleSpaceItem = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: self, action: nil)
 
@@ -208,8 +202,22 @@ class MailEditor: SQTextEditorView {
         let barButtonItems = Array(actionItems.map { [$0] }.joined(separator: [flexibleSpaceItem]))
 
         toolbar.setItems(barButtonItems, animated: false)
-        toolbar.isUserInteractionEnabled = true
-        toolbar.sizeToFit()
+        toolbar.setNeedsLayout()
+    }
+
+    public func getToolbar() -> UIToolbar {
+        let toolbar = UIToolbar(frame: CGRect(x: 0, y: 0, width: 320, height: 55))
+        toolbar.tintColor = MailResourcesAsset.secondaryTextColor.color
+        toolbar.barTintColor = MailResourcesAsset.backgroundColor.color
+        toolbar.isTranslucent = false
+
+        // Shadow
+        toolbar.setShadowImage(UIImage(), forToolbarPosition: .any)
+        toolbar.layer.shadowColor = UIColor.black.cgColor
+        toolbar.layer.shadowOpacity = 0.1
+        toolbar.layer.shadowOffset = CGSize(width: 1, height: 1)
+        toolbar.layer.shadowRadius = 2
+        toolbar.layer.masksToBounds = false
 
         return toolbar
     }
@@ -227,8 +235,7 @@ class MailEditor: SQTextEditorView {
         case .unorderedList:
             makeUnorderedList()
         case .editText:
-            setToolbar(style: toolbarStyle == .main ? .textEdition : .main)
-            toolbar.setNeedsLayout()
+            updateToolbarItems(style: toolbarStyle == .main ? .textEdition : .main)
         case .attachment:
             // TODO: Handle Attachment
             break

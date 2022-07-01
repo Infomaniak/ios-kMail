@@ -25,6 +25,8 @@ struct RecipientChip: View {
     let recipient: Recipient
     let removeButtonTapped: () -> Void
 
+    @AppStorage(UserDefaults.shared.key(.accentColor)) private var accentColor = AccentColor.pink
+
     var body: some View {
         HStack(spacing: 2) {
             Text(recipient.name.isEmpty ? recipient.email : recipient.name)
@@ -38,12 +40,12 @@ struct RecipientChip: View {
                     .scaledToFit()
                     .frame(width: 12, height: 12)
                     .padding(6)
+                    .foregroundColor(Color.accentColor)
             }
-            .tint(.primary)
         }
         .padding(.leading, 12)
         .padding(.trailing, 6)
-        .background(Capsule().fill(MailResourcesAsset.backgroundHeaderColor.swiftUiColor))
+        .background(Capsule().fill(accentColor.secondary.swiftUiColor))
     }
 }
 
@@ -66,6 +68,7 @@ struct RecipientField: View {
                         }
                     }
                 }
+                .alignmentGuide(.newMessageCellAlignment) { d in d[.top] + 21 }
             }
             TextField("", text: $currentText)
                 .textContentType(.emailAddress)
