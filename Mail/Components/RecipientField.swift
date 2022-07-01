@@ -68,6 +68,7 @@ struct RecipientField: View {
                         }
                     }
                 }
+                .alignmentGuide(.newMessageCellAlignment) { d in d[.top] + 21 }
             }
             TextField("", text: $currentText)
                 .textContentType(.emailAddress)

@@ -20,6 +20,16 @@ import MailCore
 import MailResources
 import SwiftUI
 
+extension VerticalAlignment {
+    private struct NewMessageCellAlignment: AlignmentID {
+        static func defaultValue(in context: ViewDimensions) -> CGFloat {
+            context[.firstTextBaseline]
+        }
+    }
+
+    static let newMessageCellAlignment = VerticalAlignment(NewMessageCellAlignment.self)
+}
+
 struct NewMessageCell<Content>: View where Content: View {
     let title: String
     let showCc: Binding<Bool>?
@@ -32,7 +42,7 @@ struct NewMessageCell<Content>: View where Content: View {
     }
 
     var body: some View {
-        HStack(alignment: .firstTextBaseline) {
+        HStack(alignment: .newMessageCellAlignment) {
             Text(title)
                 .textStyle(.bodySecondary)
 
