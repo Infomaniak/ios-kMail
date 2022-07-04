@@ -27,17 +27,17 @@ struct SwipeConfigCell: View {
     var actions: [SwipeAction] {
         var actions = [SwipeAction]()
         if section == .rightSwipe {
-            if let action = selectedValues[.swipeLongRightOption] as? SwipeAction, action != .none {
+            if let action = selectedValues[.swipeLongRightOption] as? SwipeAction {
                 actions.append(action)
             }
-            if let action = selectedValues[.swipeShortRightOption] as? SwipeAction, action != .none {
+            if let action = selectedValues[.swipeShortRightOption] as? SwipeAction {
                 actions.append(action)
             }
         } else if section == .leftSwipe {
-            if let action = selectedValues[.swipeLongLeftOption] as? SwipeAction, action != .none {
+            if let action = selectedValues[.swipeLongLeftOption] as? SwipeAction {
                 actions.append(action)
             }
-            if let action = selectedValues[.swipeShortLeftOption] as? SwipeAction, action != .none {
+            if let action = selectedValues[.swipeShortLeftOption] as? SwipeAction {
                 actions.append(action)
             }
         }
@@ -46,14 +46,26 @@ struct SwipeConfigCell: View {
 
     var body: some View {
         HStack(spacing: 0) {
-            ForEach(actions, id: \.rawValue) { action in
+            ForEach(actions.indices, id: \.self) { i in
+                let action = actions[i]
                 ZStack {
-                    action.swipeTint
+                    if action == .none {
+                        if i == 0 {
+                            MailResourcesAsset.separatorColor.swiftUiColor
+                        } else {
+                            MailResourcesAsset.grayActionColor.swiftUiColor
+                        }
 
-                    action.swipeIcon?
-                        .resizable()
-                        .frame(width: 24, height: 24)
-                        .foregroundColor(.white)
+                        Text(MailResourcesStrings.Localizable.settingsSwipeActionToDefine)
+                            .textStyle(.caption)
+                    } else {
+                        action.swipeTint
+
+                        action.swipeIcon?
+                            .resizable()
+                            .frame(width: 24, height: 24)
+                            .foregroundColor(.white)
+                    }
                 }
                 .frame(width: 74)
             }
