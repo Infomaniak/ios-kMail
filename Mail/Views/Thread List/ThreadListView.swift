@@ -28,7 +28,6 @@ class MenuSheet: SheetState<MenuSheet.State> {
         case newMessage
         case reply(Message, ReplyMode)
         case editMessage(draft: Draft)
-        case addAccount
         case manageAccount
         case switchAccount
         case settings

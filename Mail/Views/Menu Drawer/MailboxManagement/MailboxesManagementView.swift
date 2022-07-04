@@ -71,8 +71,12 @@ struct MailboxesManagementView: View {
                         IKDivider(withPadding: true)
                     }
 
-                    MailboxesManagementButtonView(text: MailResourcesStrings.Localizable.buttonAddAccount, handleAction: addNewAccount)
-                    MailboxesManagementButtonView(text: MailResourcesStrings.Localizable.buttonManageAccount, handleAction: handleMyAccount)
+                    MailboxesManagementButtonView(text: MailResourcesStrings.Localizable.buttonManageAccount) {
+                        menuSheet.state = .manageAccount
+                    }
+                    MailboxesManagementButtonView(text: MailResourcesStrings.Localizable.buttonAccountSwitch) {
+                        menuSheet.state = .switchAccount
+                    }
 
                     IKDivider(withPadding: true)
                 }
@@ -92,16 +96,6 @@ struct MailboxesManagementView: View {
     private func updateAccount() async throws {
         guard let account = AccountManager.instance.account(for: mailboxManager.mailbox.userId) else { return }
         try await AccountManager.instance.updateUser(for: account, registerToken: false)
-    }
-
-    // MARK: - Menu actions
-
-    private func addNewAccount() {
-        menuSheet.state = .addAccount
-    }
-
-    private func handleMyAccount() {
-        menuSheet.state = .manageAccount
     }
 }
 

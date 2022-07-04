@@ -16,14 +16,22 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import AuthenticationServices
+import InfomaniakCore
+import InfomaniakLogin
+import MailCore
 import MailResources
 import SwiftUI
 
 struct OnboardingView: View {
     @StateObject var viewModel = OnboardingViewModel()
-    @State private var selection = 1
+    @State private var selection: Int
+    @State private var presentAlert = false
 
-    init() {
+    @Environment(\.window) var window
+
+    init(page: Int = 1) {
+        _selection = State(initialValue: page)
         UIPageControl.appearance().currentPageIndicatorTintColor = .tintColor
         UIPageControl.appearance().pageIndicatorTintColor = MailResourcesAsset.separatorColor.color
     }
@@ -51,9 +59,7 @@ struct OnboardingView: View {
             VStack(spacing: 24) {
                 if selection == viewModel.slides.count {
                     // Show login button
-                    LargeButton(title: MailResourcesStrings.Localizable.buttonLogin) {
-                        // TODO: Login
-                    }
+                    LargeButton(title: MailResourcesStrings.Localizable.buttonLogin, action: login)
                     Button {
                         // TODO: Create account
                     } label: {
@@ -77,6 +83,47 @@ struct OnboardingView: View {
             }
             .frame(height: 140, alignment: .top)
         }
+        .alert(MailResourcesStrings.Localizable.errorLoginTitle, isPresented: $presentAlert) {
+            // Use default button
+        } message: {
+            Text(MailResourcesStrings.Localizable.errorLoginDescription)
+        }
+    }
+
+    // MARK: - Private methods
+
+    private func login() {
+        InfomaniakLogin.asWebAuthenticationLoginFrom(useEphemeralSession: true) { result in
+            switch result {
+            case .success(let result):
+                loginSuccessful(code: result.code, codeVerifier: result.verifier)
+            case .failure(let error):
+                loginFailed(error: error)
+            }
+        }
+    }
+
+    private func loginSuccessful(code: String, codeVerifier verifier: String) {
+        MatomoUtils.track(eventWithCategory: .account, name: "loggedIn")
+        let previousAccount = AccountManager.instance.currentAccount
+        Task {
+            do {
+                _ = try await AccountManager.instance.createAndSetCurrentAccount(code: code, codeVerifier: verifier)
+                MatomoUtils.connectUser()
+                (self.window?.windowScene?.delegate as? SceneDelegate)?.showMainView()
+            } catch {
+                if let previousAccount = previousAccount {
+                    AccountManager.instance.switchAccount(newAccount: previousAccount)
+                }
+                IKSnackBar.showSnackBar(message: error.localizedDescription)
+            }
+        }
+    }
+
+    private func loginFailed(error: Error) {
+        print("Login error: \(error)")
+        guard (error as? ASWebAuthenticationSessionError)?.code != .canceledLogin else { return }
+        presentAlert = true
     }
 }
 
