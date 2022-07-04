@@ -64,12 +64,15 @@ public class MailApiFetcher: ApiFetcher {
                                                                 encoder: JSONParameterEncoder.default)).data
     }
 
-    public func listBackups(mailbox: Mailbox) async throws -> [String] {
+    public func listBackups(mailbox: Mailbox) async throws -> BackupsList {
         try await perform(request: authenticatedRequest(.backups(hostingId: mailbox.hostingId, mailboxName: mailbox.mailbox))).data
     }
 
-    func restoreBackup(mailbox: Mailbox, date: String) async throws {
-
+    @discardableResult
+    public func restoreBackup(mailbox: Mailbox, date: String) async throws -> Bool {
+        try await perform(request: authenticatedRequest(.backups(hostingId: mailbox.hostingId, mailboxName: mailbox.mailbox),
+                                                        method: .put,
+                                                        parameters: ["date": date])).data
     }
 
     func signatures(mailbox: Mailbox) async throws -> SignatureResponse {

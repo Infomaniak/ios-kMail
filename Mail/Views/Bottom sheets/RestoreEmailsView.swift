@@ -16,6 +16,7 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import InfomaniakCore
 import MailCore
 import MailResources
 import SwiftUI
@@ -39,7 +40,7 @@ struct RestoreEmailsView: View {
 
             LargePicker(title: MailResourcesStrings.Localizable.restoreEmailsBackupDate,
                         selection: $selectedDate,
-                        items: availableDates.map { _ in .init(id: "", name: "Hello") })
+                        items: availableDates.map(mapDates))
             .padding(.bottom, 24)
 
             HStack(spacing: 24) {
@@ -62,21 +63,34 @@ struct RestoreEmailsView: View {
         .padding(.horizontal, Constants.bottomSheetHorizontalPadding)
         .task {
             await tryOrDisplayError {
-                let res = try await mailboxManager.apiFetcher.listBackups(mailbox: mailboxManager.mailbox)
-                print(res)
+                availableDates = try await mailboxManager.apiFetcher.listBackups(mailbox: mailboxManager.mailbox).backups
+                selectedDate = availableDates.last ?? ""
             }
         }
     }
-
-    // MARK: - Actions
 
     private func cancel() {
         state.close()
     }
 
     private func restoreEmails() {
-        // Restore email
+        Task {
+            await tryOrDisplayError {
+                try await mailboxManager.apiFetcher.restoreBackup(mailbox: mailboxManager.mailbox, date: selectedDate)
+                await IKSnackBar.showSnackBar(message: MailResourcesStrings.Localizable.snackbarSuccessfulRestoration)
+            }
+        }
         state.close()
+    }
+
+    private func mapDates(_ date: String) -> LargePicker<String>.Item<String> {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss"
+        let formattedDate = dateFormatter.date(from: date)
+
+        let label = formattedDate?.formatted(date: .long, time: .shortened)
+
+        return .init(id: date, name: label ?? date)
     }
 }
 
