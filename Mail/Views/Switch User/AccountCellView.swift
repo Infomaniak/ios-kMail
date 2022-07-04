@@ -22,62 +22,91 @@ import MailResources
 import SwiftUI
 
 struct AccountCellView: View {
+    let account: Account
+    @Binding var expandedUserId: Int?
+
     @Environment(\.window) private var window
 
-    @State private var avatarImage = MailResourcesAsset.placeholderAvatar.image
-    @State var account: Account
+    private var isExpanded: Bool {
+        return expandedUserId == account.userId
+    }
 
-    @State private var showEmailList: Bool
-
-    init(account: Account) {
+    init(account: Account, expandedUserId: Binding<Int?>) {
         self.account = account
-        showEmailList = AccountManager.instance.currentAccount == account
+        _expandedUserId = expandedUserId
     }
 
     var body: some View {
-        VStack {
-            HStack(spacing: 15) {
-                Image(uiImage: avatarImage)
-                    .resizable()
-                    .frame(width: 40, height: 40)
-                    .clipShape(Circle())
+        ZStack {
+            if isExpanded {
+                RoundedRectangle(cornerRadius: 10)
+                    .fill(MailResourcesAsset.backgroundCardSelectedColor.swiftUiColor)
+            }
 
-                VStack(alignment: .leading, spacing: 4) {
-                    Text(account.user.displayName)
-                        .textStyle(.header3)
-                    Text(account.user.email)
-                        .textStyle(.callout)
+            RoundedRectangle(cornerRadius: 10)
+                .stroke(MailResourcesAsset.separatorColor.swiftUiColor, lineWidth: 1)
+
+            VStack {
+                Button {
+                    withAnimation {
+                        expandedUserId = expandedUserId == account.userId ? nil : account.userId
+                    }
+                } label: {
+                    AccountHeaderCell(account: account, isExpanded: Binding(get: {
+                        isExpanded
+                    }, set: {
+                        expandedUserId = $0 ? account.userId : nil
+                    }))
+                    .padding(.leading, 8)
+                    .padding(.trailing, 16)
                 }
 
-                Spacer()
-
-                ChevronButton(isExpanded: $showEmailList)
-            }
-            .padding(.top, 6)
-            .padding(.bottom, 19)
-            .onTapGesture {
-                (window?.windowScene?.delegate as? SceneDelegate)?.switchAccount(account)
-            }
-            if showEmailList {
-                VStack(spacing: 26) {
-                    ForEach(MailboxInfosManager.instance.getMailboxes(for: account.user.id), id: \.mailboxId) { mailbox in
-                        AccountListMailView(
-                            mailbox: mailbox,
-                            isSelected: AccountManager.instance.currentMailboxId == mailbox.mailboxId
-                        )
-                        .onTapGesture {
-                            (window?.windowScene?.delegate as? SceneDelegate)?.switchAccount(account, mailbox: mailbox)
+                if isExpanded {
+                    VStack(spacing: 24) {
+                        ForEach(MailboxInfosManager.instance.getMailboxes(for: account.user.id), id: \.mailboxId) { mailbox in
+                            Button {
+                                (window?.windowScene?.delegate as? SceneDelegate)?.switchAccount(account, mailbox: mailbox)
+                            } label: {
+                                AccountListMailView(mailbox: mailbox)
+                            }
                         }
                     }
+                    .padding(.top, 16)
+                    .padding(.bottom, 4)
+                    .padding(.horizontal, 16)
                 }
-                .padding(.bottom, 28)
-                .padding(.leading, 18)
             }
+            .padding(.vertical, 12)
         }
-        .onAppear {
-            account.user.getAvatar { image in
-                self.avatarImage = image
+    }
+}
+
+struct AccountHeaderCell: View {
+    let account: Account
+    @Binding var isExpanded: Bool
+
+    @State private var avatarImage = Image(resource: MailResourcesAsset.placeholderAvatar)
+
+    var body: some View {
+        HStack(spacing: 8) {
+            avatarImage
+                .resizable()
+                .frame(width: 38, height: 38)
+                .clipShape(Circle())
+
+            VStack(alignment: .leading, spacing: 2) {
+                Text(account.user.displayName)
+                    .textStyle(.header3)
+                Text(account.user.email)
+                    .textStyle(.callout)
             }
+
+            Spacer()
+
+            ChevronIcon(style: isExpanded ? .up : .down)
+        }
+        .task {
+            avatarImage = await account.user.getAvatar()
         }
     }
 }

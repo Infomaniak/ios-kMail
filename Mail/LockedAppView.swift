@@ -41,16 +41,7 @@ struct LockedAppView: View {
 
                 Spacer()
 
-                Button(action: unlockApp) {
-                    Text(MailResourcesStrings.Localizable.buttonUnlock)
-                        .frame(maxWidth: .infinity)
-                        .padding(.vertical)
-                        .background(Color.accentColor)
-                        .foregroundColor(.white)
-                        .textStyle(.button)
-                        .clipShape(RoundedRectangle(cornerRadius: 16))
-                }
-                .padding(.horizontal, 40)
+                LargeButton(title: MailResourcesStrings.Localizable.buttonUnlock, action: unlockApp)
             }
             .padding(.top, 30)
             .padding(.bottom, 40)

@@ -20,26 +20,52 @@ import MailCore
 import MailResources
 import SwiftUI
 
+class AccountListSheet: SheetState<AccountListSheet.State> {
+    enum State {
+        case addAccount
+    }
+}
+
 struct AccountListView: View {
+    @State private var expandedUserId: Int? = AccountManager.instance.currentUserId
+
+    @StateObject private var sheet = AccountListSheet()
+
     var body: some View {
         ScrollView {
             VStack {
                 ForEach(AccountManager.instance.accounts) { account in
-                    AccountCellView(account: account)
+                    AccountCellView(account: account, expandedUserId: $expandedUserId)
                 }
+            }
+            .padding(8)
+        }
+        .appShadow(withPadding: true)
+        .navigationBarTitle(MailResourcesStrings.Localizable.titleMyAccounts, displayMode: .inline)
+        .floatingActionButton(icon: Image(systemName: "plus"), title: MailResourcesStrings.Localizable.buttonAddAccount) {
+            sheet.state = .addAccount
+        }
+        .sheet(isPresented: $sheet.isShowing) {
+            switch sheet.state {
+            case .addAccount:
+                LoginView(isPresented: $sheet.isShowing)
+            case .none:
+                EmptyView()
             }
         }
-        .navigationBarTitle(MailResourcesStrings.Localizable.titleMyAccounts, displayMode: .inline)
-        .padding(16)
         .task {
-            try? await withThrowingTaskGroup(of: Void.self) { group in
-                for account in AccountManager.instance.accounts where account != AccountManager.instance.currentAccount {
-                    group.addTask {
-                        _ = try await AccountManager.instance.updateUser(for: account, registerToken: false)
-                    }
+            try? await updateUsers()
+        }
+    }
+
+    private func updateUsers() async throws {
+        try await withThrowingTaskGroup(of: Void.self) { group in
+            for account in AccountManager.instance.accounts where account != AccountManager.instance.currentAccount {
+                group.addTask {
+                    _ = try await AccountManager.instance.updateUser(for: account, registerToken: false)
                 }
-                try await group.waitForAll()
             }
+            try await group.waitForAll()
         }
     }
 }

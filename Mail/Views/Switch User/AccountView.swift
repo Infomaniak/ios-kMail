@@ -26,19 +26,20 @@ struct AccountView: View {
 
     @Environment(\.window) private var window
 
-    @State private var avatarImage = MailResourcesAsset.placeholderAvatar.image
-    @State private var user: UserProfile! = AccountManager.instance.currentAccount.user
+    @State private var avatarImage = Image(resource: MailResourcesAsset.placeholderAvatar)
+    @State private var account = AccountManager.instance.currentAccount!
 
     var body: some View {
         NavigationView {
-            VStack(spacing: 25) {
-                Image(uiImage: avatarImage)
+            VStack(spacing: 24) {
+                // Header
+                avatarImage
                     .resizable()
                     .frame(width: 110, height: 110)
                     .clipShape(Circle())
 
                 VStack(spacing: 8) {
-                    Text(user.email)
+                    Text(account.user.email)
                         .textStyle(.header2)
 
                     NavigationLink {
@@ -49,39 +50,37 @@ struct AccountView: View {
                     }
                 }
 
-                // TODO: - Show email list
-                IKDivider()
-                HStack {
-                    Text(MailResourcesStrings.Localizable.buttonAccountAssociatedEmailAddresses)
-                    Spacer()
-                    ChevronIcon(style: .right)
-                }
-                .padding(.horizontal, 14)
-                IKDivider()
-
-                // TODO: - Appareil list
-
+                // Email list button
                 Button {
-                    // TODO: - Delete account
+                    // TODO: Show email list
+                } label: {
+                    VStack(alignment: .leading, spacing: 24) {
+                        IKDivider()
+                            .padding(.horizontal, 8)
+                        HStack {
+                            Text(MailResourcesStrings.Localizable.buttonAccountAssociatedEmailAddresses)
+                                .textStyle(.body)
+                                .multilineTextAlignment(.leading)
+                            Spacer()
+                            ChevronIcon(style: .right)
+                        }
+                        .padding(.horizontal, 24)
+                        IKDivider()
+                            .padding(.horizontal, 8)
+                    }
+                }
+
+                // TODO: Device list
+                Spacer()
+
+                // Buttons
+                LargeButton(title: MailResourcesStrings.Localizable.buttonAccountDisconnect, action: logout)
+                Button {
+                    // TODO: Delete account
                 } label: {
                     Text(MailResourcesStrings.Localizable.buttonAccountDelete)
                         .textStyle(.button)
                 }
-
-                Button {
-                    AccountManager.instance.removeTokenAndAccount(token: AccountManager.instance.currentAccount.token)
-                    if let nextAccount = AccountManager.instance.accounts.first {
-                        (window?.windowScene?.delegate as? SceneDelegate)?.switchAccount(nextAccount)
-                    } else {
-                        (window?.windowScene?.delegate as? SceneDelegate)?.showLoginView()
-                    }
-                    AccountManager.instance.saveAccounts()
-                } label: {
-                    Text(MailResourcesStrings.Localizable.buttonAccountDisconnect)
-                        .textStyle(.button)
-                }
-
-                Spacer()
             }
             .navigationBarTitle(MailResourcesStrings.Localizable.titleMyAccount, displayMode: .inline)
             .backButtonDisplayMode(.minimal)
@@ -90,15 +89,23 @@ struct AccountView: View {
             } label: {
                 Image(systemName: "xmark")
             })
-            .padding(.vertical, 30)
-            .padding(.horizontal, 18)
+            .padding(.vertical, 42)
+            .appShadow(withPadding: true)
         }
         .navigationBarAppStyle()
-        .onAppear {
-            user.getAvatar(size: CGSize(width: 110, height: 110)) { image in
-                self.avatarImage = image
-            }
+        .task {
+            avatarImage = await account.user.getAvatar()
         }
+    }
+
+    private func logout() {
+        AccountManager.instance.removeTokenAndAccount(token: account.token)
+        if let nextAccount = AccountManager.instance.accounts.first {
+            (window?.windowScene?.delegate as? SceneDelegate)?.switchAccount(nextAccount)
+        } else {
+            (window?.windowScene?.delegate as? SceneDelegate)?.showLoginView()
+        }
+        AccountManager.instance.saveAccounts()
     }
 }
 
