@@ -27,18 +27,21 @@ struct SlideView: View {
 
     @Environment(\.window) private var window
 
+    @State var orientation: UIInterfaceOrientation?
     @State var segmentedControl: UISegmentedControl?
 
     var body: some View {
         ZStack(alignment: .top) {
             accentColor.secondary.swiftUiColor
-                .frame(height: 427)
+                .frame(maxHeight: 427)
                 .ignoresSafeArea()
 
             VStack(spacing: 24) {
-                slide.illustrationImage
-                    .resizable()
-                    .scaledToFit()
+                if orientation?.isPortrait == true {
+                    slide.illustrationImage
+                        .resizable()
+                        .scaledToFit()
+                }
 
                 Text(slide.title)
                     .textStyle(.header2)
@@ -62,7 +65,7 @@ struct SlideView: View {
                 }
             }
             .multilineTextAlignment(.center)
-            .padding(.top, 112)
+            .padding(.top, 96)
             .padding(.horizontal, 40)
         }
         .frame(maxHeight: .infinity, alignment: .top)
@@ -70,6 +73,12 @@ struct SlideView: View {
             // Handle accent color change
             (window?.windowScene?.delegate as? SceneDelegate)?.updateWindowUI()
             setSegmentedControlStyle()
+        }
+        .onAppear {
+            orientation = window?.windowScene?.interfaceOrientation
+        }
+        .onRotate { orientation in
+            self.orientation = orientation
         }
     }
 

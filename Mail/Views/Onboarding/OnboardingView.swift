@@ -47,7 +47,7 @@ struct OnboardingView: View {
                     }
                 }
                 .tabViewStyle(.page)
-                .ignoresSafeArea()
+                .edgesIgnoringSafeArea(.top)
 
                 Image(resource: MailResourcesAsset.logoText)
                     .resizable()
@@ -81,7 +81,7 @@ struct OnboardingView: View {
                     .buttonBorderShape(.capsule)
                 }
             }
-            .frame(height: 140, alignment: .top)
+            .frame(height: 100, alignment: .top)
         }
         .alert(MailResourcesStrings.Localizable.errorLoginTitle, isPresented: $presentAlert) {
             // Use default button
