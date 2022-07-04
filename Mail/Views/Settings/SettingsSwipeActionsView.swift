@@ -46,7 +46,7 @@ struct SettingsSwipeActionsView: View {
                 } header: {
                     if section == viewModel.sections.first {
                         Text(MailResourcesStrings.Localizable.settingsSwipeDescription)
-                            .textStyle(.header3)
+                            .textStyle(.calloutSecondary)
                     }
                 } footer: {
                     SwipeConfigCell(selectedValues: $viewModel.selectedValues, section: section)

@@ -89,7 +89,7 @@ struct SettingsOptionView<OptionEnum>: View where OptionEnum: CaseIterable, Opti
             } header: {
                 if let subtitle = subtitle {
                     Text(subtitle)
-                        .textStyle(.header3)
+                        .textStyle(.calloutSecondary)
                 } else {
                     EmptyView()
                 }

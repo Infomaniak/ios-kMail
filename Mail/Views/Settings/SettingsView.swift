@@ -49,7 +49,7 @@ struct SettingsView: View {
                 } header: {
                     if let title = section.name {
                         Text(title)
-                            .textStyle(.header3)
+                            .textStyle(.calloutSecondary)
                     } else {
                         EmptyView()
                     }
