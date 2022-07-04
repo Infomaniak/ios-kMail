@@ -104,6 +104,7 @@ struct MenuDrawerView: View {
     @Environment(\.openURL) var openURL
 
     @EnvironmentObject var menuSheet: MenuSheet
+    @EnvironmentObject var bottomSheet: GlobalBottomSheet
 
     // swiftlint:disable empty_count
     @ObservedResults(Folder.self, where: { $0.parentLink.count == 0 }) var folders
@@ -170,6 +171,7 @@ struct MenuDrawerView: View {
         .environmentObject(mailboxManager)
         .onAppear {
             MatomoUtils.track(view: ["MenuDrawer"])
+            restoreMails()
         }
     }
 
@@ -205,7 +207,7 @@ struct MenuDrawerView: View {
     }
 
     func restoreMails() {
-        // TODO: Display "Restore Mails" view
+        bottomSheet.open(state: .restoreEmails, position: .restoreEmailsHeight)
     }
 }
 

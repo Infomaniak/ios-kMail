@@ -72,6 +72,10 @@ public extension Endpoint {
         return .base.appending(path: "/pim/contact")
     }
 
+    static func backups(hostingId: Int, mailboxName: String) -> Endpoint {
+        return .baseManager.appending(path: "/\(hostingId)/mailboxes/\(mailboxName)/backups")
+    }
+
     static func signatures(hostingId: Int, mailboxName: String) -> Endpoint {
         return .baseManager.appending(path: "/\(hostingId)/mailboxes/\(mailboxName)/signatures")
     }
