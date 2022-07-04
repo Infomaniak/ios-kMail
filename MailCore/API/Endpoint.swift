@@ -57,6 +57,12 @@ public extension Endpoint {
         return .base.appending(path: "/mail/\(uuid)")
     }
 
+    static func permissions(mailbox: Mailbox) -> Endpoint {
+        return .base.appending(path: "/mailbox/permissions",
+                               queryItems: [URLQueryItem(name: "user_mailbox_id", value: String(mailbox.linkId)),
+                                            URLQueryItem(name: "product_id", value: String(mailbox.hostingId))])
+    }
+
     static var addressBooks: Endpoint {
         return .base.appending(path: "/pim/addressbook")
     }

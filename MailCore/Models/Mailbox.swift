@@ -50,6 +50,7 @@ public class Mailbox: Object, Codable {
             objectId = MailboxInfosManager.getObjectId(mailboxId: mailboxId, userId: userId)
         }
     }
+    @Persisted public var permissions: MailboxPermissions?
 
     enum CodingKeys: String, CodingKey {
         case uuid

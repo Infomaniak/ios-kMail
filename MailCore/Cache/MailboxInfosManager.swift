@@ -32,7 +32,7 @@ public class MailboxInfosManager {
         realmConfiguration = Realm.Configuration(
             fileURL: MailboxManager.constants.rootDocumentsURL.appendingPathComponent(dbName),
             schemaVersion: MailboxInfosManager.currentDbVersion,
-            objectTypes: [Mailbox.self]
+            objectTypes: [Mailbox.self, MailboxPermissions.self]
         )
         print(MailboxManager.constants.rootDocumentsURL.path)
     }

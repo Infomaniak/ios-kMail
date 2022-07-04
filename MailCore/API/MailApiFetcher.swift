@@ -49,6 +49,10 @@ public class MailApiFetcher: ApiFetcher {
         try await perform(request: authenticatedRequest(.mailboxes)).data
     }
 
+    func permissions(mailbox: Mailbox) async throws -> MailboxPermissions {
+        try await perform(request: authenticatedRequest(.permissions(mailbox: mailbox))).data
+    }
+
     func contacts() async throws -> [Contact] {
         try await perform(request: authenticatedRequest(.contacts)).data
     }
