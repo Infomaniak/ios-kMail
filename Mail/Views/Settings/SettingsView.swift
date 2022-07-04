@@ -45,17 +45,17 @@ struct SettingsView: View {
                         }
                     }
                     .listRowSeparator(.hidden)
+                    .listRowInsets(.init(top: 12, leading: 20, bottom: 12, trailing: 20))
                 } header: {
                     if let title = section.name {
-                        VStack(alignment: .leading, spacing: 16) {
-                            if viewModel.sections.first != section {
-                                IKDivider()
-                            }
-                            Text(title)
-                                .textStyle(.header3)
-                        }
+                        Text(title)
+                            .textStyle(.calloutSecondary)
                     } else {
                         EmptyView()
+                    }
+                } footer: {
+                    if viewModel.sections.last != section {
+                        IKDivider()
                     }
                 }
                 .listSectionSeparator(.hidden)
@@ -64,6 +64,7 @@ struct SettingsView: View {
         .listStyle(.plain)
         .navigationBarTitle(viewModel.title, displayMode: .inline)
         .backButtonDisplayMode(.minimal)
+        .appShadow(withPadding: true)
         .onAppear {
             viewModel.updateSelectedValue()
         }

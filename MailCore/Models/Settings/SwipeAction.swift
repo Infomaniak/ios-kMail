@@ -165,10 +165,6 @@ public enum SwipeAction: String, CaseIterable, SettingsOptionEnum {
             resource = nil
         }
 
-        if let resource = resource {
-            return resource.swiftUiColor
-        } else {
-            return nil
-        }
+        return resource?.swiftUiColor
     }
 }

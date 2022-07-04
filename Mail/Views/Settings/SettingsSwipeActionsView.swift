@@ -29,12 +29,6 @@ struct SettingsSwipeActionsView: View {
 
     var body: some View {
         List {
-            Section {
-                Text(MailResourcesStrings.Localizable.settingsSwipeDescription)
-                    .textStyle(.header3)
-                    .listRowSeparator(.hidden)
-            }
-
             ForEach(viewModel.sections) { section in
                 Section {
                     ForEach(section.items) { item in
@@ -49,6 +43,11 @@ struct SettingsSwipeActionsView: View {
                         }
                     }
                     .listRowSeparator(.hidden)
+                } header: {
+                    if section == viewModel.sections.first {
+                        Text(MailResourcesStrings.Localizable.settingsSwipeDescription)
+                            .textStyle(.calloutSecondary)
+                    }
                 } footer: {
                     SwipeConfigCell(selectedValues: $viewModel.selectedValues, section: section)
                 }
@@ -57,6 +56,8 @@ struct SettingsSwipeActionsView: View {
         }
         .listStyle(.plain)
         .navigationBarTitle(viewModel.title, displayMode: .inline)
+        .backButtonDisplayMode(.minimal)
+        .appShadow(withPadding: true)
         .onAppear {
             viewModel.updateSelectedValue()
         }
