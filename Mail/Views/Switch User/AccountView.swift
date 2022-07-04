@@ -17,9 +17,37 @@
  */
 
 import InfomaniakCore
+import InfomaniakLogin
 import MailCore
 import MailResources
+import Sentry
 import SwiftUI
+
+class AccountViewDelegate: DeleteAccountDelegate {
+    @MainActor func didCompleteDeleteAccount() {
+        guard let account = AccountManager.instance.currentAccount else { return }
+        let window = UIApplication.shared.mainSceneKeyWindow
+        AccountManager.instance.removeTokenAndAccount(token: account.token)
+        if let nextAccount = AccountManager.instance.accounts.first {
+            (window?.windowScene?.delegate as? SceneDelegate)?.switchAccount(nextAccount)
+            IKSnackBar.showSnackBar(message: "Account deleted")
+        } else {
+            (window?.windowScene?.delegate as? SceneDelegate)?.showLoginView()
+        }
+        AccountManager.instance.saveAccounts()
+    }
+
+    @MainActor func didFailDeleteAccount(error: InfomaniakLoginError) {
+        SentrySDK.capture(error: error)
+        IKSnackBar.showSnackBar(message: "Failed to delete account")
+    }
+}
+
+class AccountSheet: SheetState<AccountSheet.State> {
+    enum State {
+        case deleteAccount
+    }
+}
 
 struct AccountView: View {
     @Binding var isPresented: Bool
@@ -28,6 +56,8 @@ struct AccountView: View {
 
     @State private var avatarImage = Image(resource: MailResourcesAsset.placeholderAvatar)
     @State private var account = AccountManager.instance.currentAccount!
+    @StateObject private var sheet = AccountSheet()
+    @State private var delegate = AccountViewDelegate()
 
     var body: some View {
         NavigationView {
@@ -76,7 +106,7 @@ struct AccountView: View {
                 // Buttons
                 LargeButton(title: MailResourcesStrings.Localizable.buttonAccountDisconnect, action: logout)
                 Button {
-                    // TODO: Delete account
+                    sheet.state = .deleteAccount
                 } label: {
                     Text(MailResourcesStrings.Localizable.buttonAccountDelete)
                         .textStyle(.button)
@@ -95,6 +125,14 @@ struct AccountView: View {
         .navigationBarAppStyle()
         .task {
             avatarImage = await account.user.getAvatar()
+        }
+        .sheet(isPresented: $sheet.isShowing) {
+            switch sheet.state {
+            case .deleteAccount:
+                DeleteAccountView(account: account, delegate: delegate)
+            case .none:
+                EmptyView()
+            }
         }
     }
 
