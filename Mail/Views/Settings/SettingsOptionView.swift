@@ -59,20 +59,33 @@ struct SettingsOptionView<OptionEnum>: View where OptionEnum: CaseIterable, Opti
                     Button {
                         selectedValue = value
                     } label: {
-                        HStack(spacing: 21) {
-                            value.image
-                                .foregroundColor(MailResourcesAsset.hintTextColor)
-                            Text(value.title)
-                                .textStyle(value == selectedValue ? .button : .body)
-                            Spacer()
-                            if value == selectedValue {
-                                Image(systemName: "checkmark")
-                                    .foregroundColor(.accentColor)
+                        VStack(spacing: 0) {
+                            HStack(spacing: 16) {
+                                value.image?
+                                    .resizable()
+                                    .scaledToFit()
+                                    .frame(width: 24, height: 24)
+                                    .foregroundColor(MailResourcesAsset.hintTextColor)
+                                Text(value.title)
+                                    .textStyle(.body)
+                                Spacer()
+                                if value == selectedValue {
+                                    Image(systemName: "checkmark")
+                                        .foregroundColor(.accentColor)
+                                }
+                            }
+                            .padding(.vertical, 16)
+                            .padding(.horizontal, 24)
+
+                            if value != values.last {
+                                IKDivider()
+                                    .padding(.horizontal, 8)
                             }
                         }
                     }
                 }
                 .listRowSeparator(.hidden)
+                .listRowInsets(.init())
             } header: {
                 if let subtitle = subtitle {
                     Text(subtitle)
@@ -84,6 +97,7 @@ struct SettingsOptionView<OptionEnum>: View where OptionEnum: CaseIterable, Opti
         }
         .listStyle(.plain)
         .navigationBarTitle(title, displayMode: .inline)
+        .appShadow(withPadding: true)
         .onAppear {
             updateOptions()
         }

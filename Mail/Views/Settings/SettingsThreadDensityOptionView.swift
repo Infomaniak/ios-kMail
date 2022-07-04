@@ -29,23 +29,25 @@ struct SettingsThreadDensityOptionView: View {
     }
 
     var body: some View {
-        VStack(spacing: 30) {
+        VStack(spacing: 16) {
             Text(MailResourcesStrings.Localizable.settingsSelectDisplayModeDescription)
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .textStyle(.header3)
-            HStack(spacing: 31) {
-                Picker("Display mode", selection: $selectedValue) {
-                    ForEach(ThreadDensity.allCases, id: \.rawValue) { value in
-                        Text(value.title)
-                            .tag(value)
-                    }
+                .padding(.bottom, 8)
+
+            Picker("Display mode", selection: $selectedValue) {
+                ForEach(ThreadDensity.allCases, id: \.rawValue) { value in
+                    Text(value.title)
+                        .tag(value)
                 }
-                .pickerStyle(.segmented)
             }
-            selectedValue.image!
+            .pickerStyle(.segmented)
+            .ikSegmentedControl()
+
+            selectedValue.image?
                 .resizable()
                 .scaledToFit()
-                .shadow(color: Color(red: 0, green: 0, blue: 0, opacity: 0.15), radius: 3, x: 0, y: 0)
+                .shadow(color: .black.opacity(0.15), radius: 3, x: 0, y: 0)
 
             Spacer()
         }
@@ -55,6 +57,7 @@ struct SettingsThreadDensityOptionView: View {
         .navigationBarTitle(MailResourcesStrings.Localizable.settingsThreadListDensityTitle, displayMode: .inline)
         .padding(.horizontal, 16)
         .padding(.top, 30)
+        .appShadow(withPadding: true)
     }
 }
 
