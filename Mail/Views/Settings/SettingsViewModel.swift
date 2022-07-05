@@ -53,6 +53,8 @@ enum SettingsDestination: Equatable {
     case send
     case swipe
 
+    case signatureSettings(mailboxManager: MailboxManager)
+
     @MainActor @ViewBuilder
     func getDestination() -> some View {
         switch self {
@@ -62,6 +64,8 @@ enum SettingsDestination: Equatable {
             SettingsView(viewModel: SendSettingsViewModel())
         case .swipe:
             SettingsSwipeActionsView(viewModel: SwipeActionSettingsViewModel())
+        case let .signatureSettings(mailboxManager):
+            SettingsSignatureOptionView(mailboxManager: mailboxManager)
         }
     }
 
@@ -72,6 +76,8 @@ enum SettingsDestination: Equatable {
         case (.swipe, .swipe):
             return true
         case let (.emailSettings(lhsType), .emailSettings(rhsType)):
+            return lhsType.mailbox == rhsType.mailbox
+        case let (.signatureSettings(lhsType), .signatureSettings(rhsType)):
             return lhsType.mailbox == rhsType.mailbox
         default:
             return false
@@ -100,9 +106,14 @@ enum SettingsOption: Equatable {
     case swipeLongLeftOption
 
     // Email Address General
-    case signatureOption
     case autoReplyOption
     case folderSettingsOption
+
+    // Email Address Inbox
+    case inboxTypeOption
+//    case rulesOption
+//    case redirectOption
+//    case aliasOption
 
     @ViewBuilder
     func getDestination() -> some View {
@@ -167,11 +178,11 @@ enum SettingsOption: Equatable {
                 keyPath: \.swipeLongLeft,
                 excludedKeyPath: [\.swipeShortRight, \.swipeLongRight, \.swipeShortLeft]
             )
-        case .signatureOption:
-            EmptyView()
         case .autoReplyOption:
             EmptyView()
         case .folderSettingsOption:
+            EmptyView()
+        case .inboxTypeOption:
             EmptyView()
         }
     }

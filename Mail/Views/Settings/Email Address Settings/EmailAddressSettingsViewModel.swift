@@ -29,10 +29,27 @@ import SwiftUI
         self.mailboxManager = mailboxManager
         settings = mailboxManager.getSettings()
 
+        signature = SettingsItem(
+            id: 1,
+            title: MailResourcesStrings.Localizable.settingsMailboxGeneralSignature,
+            type: .subMenu(destination: .signatureSettings(mailboxManager: mailboxManager))
+        )
+        general = SettingsSection(
+            id: 1,
+            name: MailResourcesStrings.Localizable.settingsSectionGeneral,
+            items: [signature, .autoreply, .foldersSetting, .notifications]
+        )
+
         super.init(title: mailboxManager.mailbox.email)
 
-        sections = [.general /* , .inbox, .security, .privacy */ ]
+        sections = [general /* , .inbox, .security, .privacy */ ]
     }
+
+    // Section
+    var general: SettingsSection
+
+    // Items
+    var signature: SettingsItem
 
     override func updateSelectedValue() {
 //        selectedValues = [
@@ -42,16 +59,11 @@ import SwiftUI
 }
 
 private extension SettingsSection {
-    static let general = SettingsSection(
-        id: 1,
-        name: MailResourcesStrings.Localizable.settingsSectionGeneral,
-        items: [.signature, .autoreply, .foldersSetting, .notifications]
+    static let inbox = SettingsSection(
+        id: 2,
+        name: MailResourcesStrings.Localizable.inboxFolder,
+        items: [.inboxType /* , .rules, .redirect, .alias */ ]
     )
-//    static let inbox = SettingsSection(
-//        id: 2,
-//        name: MailResourcesStrings.inboxFolder,
-//        items: [.inboxType, .rules, .redirect, .alias]
-//    )
 //    static let security = SettingsSection(
 //        id: 3,
 //        name: MailResourcesStrings.settingsSectionSecurity,
@@ -65,11 +77,6 @@ private extension SettingsSection {
 }
 
 private extension SettingsItem {
-    static let signature = SettingsItem(
-        id: 1,
-        title: MailResourcesStrings.Localizable.settingsMailboxGeneralSignature,
-        type: .option(.signatureOption)
-    )
     static let autoreply = SettingsItem(
         id: 2,
         title: MailResourcesStrings.Localizable.settingsMailboxGeneralAutoreply,
@@ -86,11 +93,11 @@ private extension SettingsItem {
         type: .toggleBinding(keyPath: \.notifications)
     )
 
-//    static let inboxType = SettingsItem(
-//        id: 5,
-//        title: MailResourcesStrings.settingsInboxType,
-//        type: .option(<#T##SettingsOption#>)
-//    )
+    static let inboxType = SettingsItem(
+        id: 5,
+        title: MailResourcesStrings.Localizable.settingsInboxType,
+        type: .option(.inboxTypeOption)
+    )
 //    static let rules = SettingsItem(
 //        id: 6,
 //        title: MailResourcesStrings.settingsInboxRules,

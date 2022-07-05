@@ -39,7 +39,7 @@ public class SignatureResponse: Object, Decodable {
     }
 }
 
-public class Signature: Object, Decodable {
+public class Signature: Object, Decodable, Identifiable {
     @Persisted(primaryKey: true) public var id: Int
     @Persisted public var name: String
     @Persisted public var content: String

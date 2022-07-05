@@ -16,10 +16,21 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import Foundation
-import RealmSwift
+import SwiftUI
 
-public class MailboxSettings: Object {
-    @Persisted public var notifications: Bool
-    @Persisted public var signature: Signature?
+struct SettingsSignatureView: View {
+    @State var signatureValue = ""
+
+    var body: some View {
+        ZStack {}
+        TextEditor(text: $signatureValue)
+
+            .navigationBarTitle("Modifier la signature", displayMode: .inline)
+    }
+}
+
+struct SettingsSignatureView_Previews: PreviewProvider {
+    static var previews: some View {
+        SettingsSignatureView()
+    }
 }
