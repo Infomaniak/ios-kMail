@@ -18,7 +18,7 @@
 
 import RealmSwift
 
-public class MailboxPermissions: Object, Codable {
+public class MailboxPermissions: EmbeddedObject, Codable {
     @Persisted public var canManageFilters: Bool
     @Persisted public var canManageSecurity: Bool
     @Persisted public var canManageAliases: Bool
@@ -31,7 +31,7 @@ public class MailboxPermissions: Object, Codable {
     @Persisted public var canRestoreEmails: Bool
     @Persisted public var canManageRules: Bool
     @Persisted public var canAccessLogs: Bool
-    @Persisted public var hasTechnicalRights: Bool
+    @Persisted public var hasTechnicalRight: Bool
     @Persisted public var isLimited: Bool
     @Persisted public var isFree: Bool
     @Persisted public var dailyLimit: Int

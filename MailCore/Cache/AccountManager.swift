@@ -266,6 +266,7 @@ public class AccountManager: RefreshTokenDelegate {
         for mailbox in mailboxesResponse {
             mailbox.permissions = try await mailApiFetcher.permissions(mailbox: mailbox)
         }
+
         MailboxInfosManager.instance.storeMailboxes(user: user, mailboxes: mailboxesResponse)
         let mainMailbox = mailboxesResponse.first!
         setCurrentMailboxForCurrentAccount(mailbox: mainMailbox)
