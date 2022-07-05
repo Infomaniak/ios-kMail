@@ -124,14 +124,4 @@ public struct MailTextStyle {
         font: .system(size: 12),
         color: MailResourcesAsset.secondaryTextColor
     )
-
-    public static let snackbarBody = MailTextStyle(
-        font: .system(size: 14),
-        color: SwiftUI.Color(hex: "#F5F5F5") // FIXME: Add to colors
-    )
-
-    public static let snackbarButton = MailTextStyle(
-        font: .system(size: 14),
-        color: SwiftUI.Color(hex: "#4CB7FF") // FIXME: Add to colors
-    )
 }

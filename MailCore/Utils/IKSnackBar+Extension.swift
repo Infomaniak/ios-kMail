@@ -21,12 +21,31 @@ import InfomaniakCore
 import MailResources
 import SnackBar
 
+public extension SnackBarStyle {
+    static var mailStyle: SnackBarStyle {
+        var snackBarStyle = SnackBarStyle()
+        snackBarStyle.padding = 16
+        snackBarStyle.inViewPadding = 16
+        snackBarStyle.cornerRadius = 8
+        snackBarStyle.background = MailResourcesAsset.primaryTextColor.color
+        snackBarStyle.textColor = MailResourcesAsset.backgroundColor.color
+        snackBarStyle.font = .systemFont(ofSize: 16)
+        snackBarStyle.actionTextColor = MailResourcesAsset.backgroundColor.color
+        snackBarStyle.actionTextColorAlpha = 1
+        snackBarStyle.actionFont = .systemFont(ofSize: 16, weight: .medium)
+        return snackBarStyle
+    }
+}
+
 public extension IKSnackBar {
     @discardableResult
     @MainActor
-    static func showSnackBar(message: String, duration: SnackBar.Duration = .lengthLong,
-                             action: IKSnackBar.Action? = nil) -> IKSnackBar? {
-        let snackbar = IKSnackBar.make(message: message, duration: duration)
+    static func showSnackBar(
+        message: String,
+        duration: SnackBar.Duration = .lengthLong,
+        action: IKSnackBar.Action? = nil
+    ) -> IKSnackBar? {
+        let snackbar = IKSnackBar.make(message: message, duration: duration, style: .mailStyle, elevation: 0)
         if let action = action {
             snackbar?.setAction(action).show()
         } else {
