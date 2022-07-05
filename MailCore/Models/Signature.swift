@@ -19,12 +19,20 @@
 import Foundation
 import RealmSwift
 
+public enum SignaturePosition: String, PersistableEnum, Decodable {
+    case top, bottom
+}
+
 public class SignatureResponse: Object, Decodable {
     @Persisted(primaryKey: true) public var id: Int = 1
     @Persisted public var signatures: List<Signature>
     @Persisted public var defaultSignatureId: Int
     @Persisted public var validEmails: List<ValidEmail>
-    @Persisted public var position: String
+    @Persisted public var position: SignaturePosition
+
+    public var `default`: Signature? {
+        return signatures.first(where: \.isDefault)
+    }
 
     private enum CodingKeys: String, CodingKey {
         case signatures, defaultSignatureId, validEmails, position
@@ -44,9 +52,10 @@ public class Signature: Object, Decodable {
     @Persisted public var senderId: Int
     @Persisted public var hashString: String?
     @Persisted public var isDefault: Bool
+    @Persisted public var position: SignaturePosition
 
     private enum CodingKeys: String, CodingKey {
-        case id, name, content, replyTo, replyToIdn, replyToId, fullName, sender, senderIdn, senderId, isDefault
+        case id, name, content, replyTo, replyToIdn, replyToId, fullName, sender, senderIdn, senderId, isDefault, position
         // Property 'hash' already exists
         case hashString = "hash"
     }
