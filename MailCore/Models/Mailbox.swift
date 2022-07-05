@@ -20,7 +20,7 @@ import Foundation
 import InfomaniakCore
 import RealmSwift
 
-public class Mailbox: Object, Codable {
+public class Mailbox: Object, Codable, Identifiable {
     @Persisted(primaryKey: true) public var objectId = ""
     /*
      Mailbox data
@@ -45,10 +45,15 @@ public class Mailbox: Object, Codable {
     @Persisted public var isLimited: Bool
     @Persisted public var isFree: Bool
     @Persisted public var dailyLimit: Int
+    @Persisted public var unseenMessages = 0
     @Persisted public var userId = 0 {
         didSet {
             objectId = MailboxInfosManager.getObjectId(mailboxId: mailboxId, userId: userId)
         }
+    }
+
+    public var id: Int {
+        return mailboxId
     }
 
     enum CodingKeys: String, CodingKey {
@@ -72,6 +77,7 @@ public class Mailbox: Object, Codable {
         case isLimited
         case isFree
         case dailyLimit
+        case unseenMessages
     }
 
     public convenience init(

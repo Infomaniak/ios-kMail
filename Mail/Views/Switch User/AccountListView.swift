@@ -60,7 +60,7 @@ struct AccountListView: View {
 
     private func updateUsers() async throws {
         try await withThrowingTaskGroup(of: Void.self) { group in
-            for account in AccountManager.instance.accounts where account != AccountManager.instance.currentAccount {
+            for account in AccountManager.instance.accounts {
                 group.addTask {
                     _ = try await AccountManager.instance.updateUser(for: account, registerToken: false)
                 }

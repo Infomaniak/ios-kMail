@@ -20,17 +20,13 @@ import MailCore
 import SwiftUI
 
 struct MailboxCell: View {
+    let mailbox: Mailbox
+
     @Environment(\.window) private var window
 
-    @State var mailbox: Mailbox
-    @State var unreadCount = 0
-
     var body: some View {
-        MailboxesManagementButtonView(text: mailbox.email, detailNumber: unreadCount > 0 ? unreadCount : nil) {
+        MailboxesManagementButtonView(text: mailbox.email, detailNumber: mailbox.unseenMessages > 0 ? mailbox.unseenMessages : nil) {
             (window?.windowScene?.delegate as? SceneDelegate)?.switchMailbox(mailbox)
-        }
-        .onAppear {
-            // TODO: Get unread count
         }
     }
 }

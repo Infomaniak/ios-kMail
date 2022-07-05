@@ -24,8 +24,6 @@ import SwiftUI
 struct AccountListMailView: View {
     let mailbox: Mailbox
 
-    @State private var unreadCount = 0
-
     private var isSelected: Bool {
         return mailbox.userId == AccountManager.instance.currentUserId
             && mailbox.mailboxId == AccountManager.instance.currentMailboxId
@@ -42,8 +40,8 @@ struct AccountListMailView: View {
 
             Spacer()
 
-            if unreadCount > 0 {
-                Text(unreadCount < 100 ? "\(unreadCount)" : "99+")
+            if mailbox.unseenMessages > 0 {
+                Text(mailbox.unseenMessages < 100 ? "\(mailbox.unseenMessages)" : "99+")
                     .foregroundColor(.accentColor)
             }
         }

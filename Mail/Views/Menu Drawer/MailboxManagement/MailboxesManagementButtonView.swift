@@ -40,13 +40,14 @@ struct MailboxesManagementButtonView: View {
                     .lineLimit(1)
                 Spacer()
                 if let detailNumber = detailNumber {
-                    Text("\(detailNumber)")
+                    Text(detailNumber < 100 ? "\(detailNumber)" : "99+")
                         .textStyle(.calloutHighlighted)
                 }
             }
         }
         .padding(.vertical, 8)
         .padding(.leading, 66)
+        .padding(.trailing, Constants.menuDrawerHorizontalPadding)
     }
 }
 
