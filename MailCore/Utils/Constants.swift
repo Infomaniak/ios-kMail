@@ -44,6 +44,7 @@ public enum Constants {
 
     public static let menuDrawerHorizontalPadding: CGFloat = 24
     public static let menuDrawerVerticalPadding: CGFloat = 12
+    public static let menuDrawerSubFolderPadding: CGFloat = 10
 
     public static let unreadIconSize: CGFloat = 8
 
