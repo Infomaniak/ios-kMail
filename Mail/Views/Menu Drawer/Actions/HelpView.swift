@@ -25,8 +25,8 @@ struct HelpView: View {
         let title: String
         let destination: URL
 
-        static let faq = HelpAction(title: "FAQ", destination: URLConstants.faq.url)
-        static let chatbot = HelpAction(title: "Chatbot", destination: URLConstants.chatbot.url)
+        static let faq = HelpAction(title: MailResourcesStrings.Localizable.helpFAQ, destination: URLConstants.faq.url)
+        static let chatbot = HelpAction(title: MailResourcesStrings.Localizable.helpChatbot, destination: URLConstants.chatbot.url)
     }
 
     @Environment(\.openURL) var openURL
@@ -47,7 +47,7 @@ struct HelpView: View {
                 }
                 .listRowSeparatorTint(MailResourcesAsset.separatorColor.swiftUiColor)
             } header: {
-                Text("Pour vous aider")
+                Text(MailResourcesStrings.Localizable.helpSubtitle)
                     .textStyle(.calloutSecondary)
             }
             .listSectionSeparator(.hidden)
