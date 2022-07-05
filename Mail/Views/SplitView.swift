@@ -33,7 +33,7 @@ class GlobalBottomSheet: BottomSheetState<GlobalBottomSheet.State, GlobalBottomS
     }
 
     enum Position: CGFloat, CaseIterable {
-        case moveHeight = 272, newFolderHeight = 300, moreStorageHeight = 480, restoreEmailsHeight = 310, hidden = 0
+        case moveHeight = 272, newFolderHeight = 300, moreStorageHeight = 465, restoreEmailsHeight = 325, hidden = 0
     }
 }
 
@@ -154,7 +154,9 @@ struct SplitView: View {
                     SettingsView(viewModel: GeneralSettingsViewModel())
                 }
             case .help:
-                HelpView(isPresented: $menuSheet.isShowing)
+                SheetView(isPresented: $menuSheet.isShowing) {
+                    HelpView()
+                }
             case .none:
                 EmptyView()
             }

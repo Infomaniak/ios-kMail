@@ -50,16 +50,9 @@ struct MoreStorageView: View {
                         .textStyle(.button)
                 }
 
-                Button(action: getMoreStorage) {
-                    Text(MailResourcesStrings.Localizable.buttonAvailableSoon)
-                        .foregroundColor(.white)
-                        .textStyle(.button)
-                        .padding(.horizontal, 24)
-                        .padding(.vertical, 18)
-                        .background(MailResourcesAsset.hintTextColor.swiftUiColor)
-                        .cornerRadius(16)
-                }
-                .disabled(true)
+                BottomSheetButton(label: MailResourcesStrings.Localizable.buttonAvailableSoon,
+                                  action: getMoreStorage,
+                                  isDisabled: true)
             }
             .frame(maxWidth: .infinity, alignment: .trailing)
         }

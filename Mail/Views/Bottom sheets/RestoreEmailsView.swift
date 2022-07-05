@@ -25,6 +25,8 @@ struct RestoreEmailsView: View {
     @State private var selectedDate = ""
     @State private var availableDates = [String]()
 
+    @State private var pickerNoSelectionText = MailResourcesStrings.Localizable.loadingText
+
     let state: GlobalBottomSheet
     let mailboxManager: MailboxManager
 
@@ -39,6 +41,7 @@ struct RestoreEmailsView: View {
                 .padding(.bottom, 10)
 
             LargePicker(title: MailResourcesStrings.Localizable.restoreEmailsBackupDate,
+                        noSelectionText: pickerNoSelectionText,
                         selection: $selectedDate,
                         items: availableDates.map(mapDates))
             .padding(.bottom, 24)
@@ -48,23 +51,21 @@ struct RestoreEmailsView: View {
                     Text(MailResourcesStrings.Localizable.buttonCancel)
                 }
 
-                Button(action: restoreEmails) {
-                    Text(MailResourcesStrings.Localizable.buttonConfirmRestoreEmails)
-                        .foregroundColor(.white)
-                        .textStyle(.button)
-                        .padding(.horizontal, 24)
-                        .padding(.vertical, 18)
-                        .background(Color.accentColor)
-                        .cornerRadius(16)
-                }
+                BottomSheetButton(label: MailResourcesStrings.Localizable.buttonConfirmRestoreEmails,
+                                  action: restoreEmails,
+                                  isDisabled: availableDates.isEmpty)
             }
             .frame(maxWidth: .infinity, alignment: .trailing)
         }
         .padding(.horizontal, Constants.bottomSheetHorizontalPadding)
         .task {
             await tryOrDisplayError {
-                availableDates = try await mailboxManager.apiFetcher.listBackups(mailbox: mailboxManager.mailbox).backups
-                selectedDate = availableDates.last ?? ""
+                let backupsList = try await mailboxManager.apiFetcher.listBackups(mailbox: mailboxManager.mailbox).backups
+                withAnimation {
+                    availableDates = backupsList
+                    selectedDate = backupsList.last ?? ""
+                    pickerNoSelectionText = MailResourcesStrings.Localizable.pickerNoSelection
+                }
             }
         }
     }
@@ -83,14 +84,14 @@ struct RestoreEmailsView: View {
         state.close()
     }
 
-    private func mapDates(_ date: String) -> LargePicker<String>.Item<String> {
+    private func mapDates(_ backupDate: String) -> LargePicker<String>.Item<String> {
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss"
-        let formattedDate = dateFormatter.date(from: date)
+        let date = dateFormatter.date(from: backupDate)
 
-        let label = formattedDate?.formatted(date: .long, time: .shortened)
+        let formattedDate = date?.formatted(date: .long, time: .shortened)
 
-        return .init(id: date, name: label ?? date)
+        return .init(id: backupDate, name: formattedDate ?? backupDate)
     }
 }
 

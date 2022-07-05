@@ -31,44 +31,35 @@ struct HelpView: View {
 
     @Environment(\.openURL) var openURL
 
-    @Binding var isPresented: Bool
-
     private let actions: [HelpAction] = [.faq, .chatbot]
 
     var body: some View {
-        NavigationView {
-            VStack(alignment: .leading) {
-                Text("Pour vous aider")
-                    .textStyle(.calloutSecondary)
-
+        List {
+            Section {
                 ForEach(actions, id: \.self) { action in
-                    Button(action.title) {
+                    Button {
                         openURL(action.destination)
-                    }
-                    .textStyle(.body)
-
-                    if action != actions.last {
-                        IKDivider()
+                    } label: {
+                        Text(action.title)
+                            .textStyle(.body)
+                            .padding(.leading, 16)
                     }
                 }
-
-                Spacer()
+                .listRowSeparatorTint(MailResourcesAsset.separatorColor.swiftUiColor)
+            } header: {
+                Text("Pour vous aider")
+                    .textStyle(.calloutSecondary)
             }
-            .padding(.top, 24)
-            .padding(.horizontal, 18)
-            .navigationBarTitle(MailResourcesStrings.Localizable.buttonHelp, displayMode: .inline)
-            .navigationBarItems(leading: Button {
-                isPresented = false
-            } label: {
-                Image(systemName: "xmark")
-            })
+            .listSectionSeparator(.hidden)
         }
-        .navigationBarAppStyle()
+        .listStyle(.plain)
+        .appShadow(withPadding: true)
+        .navigationBarTitle(MailResourcesStrings.Localizable.buttonHelp, displayMode: .inline)
     }
 }
 
 struct HelpView_Previews: PreviewProvider {
     static var previews: some View {
-        HelpView(isPresented: .constant(true))
+        HelpView()
     }
 }

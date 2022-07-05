@@ -36,7 +36,7 @@ struct LargePicker<SelectionValue>: View where SelectionValue: Hashable {
     }
 
     init(title: String? = nil,
-         noSelectionText: String = "No selection",
+         noSelectionText: String = MailResourcesStrings.Localizable.pickerNoSelection,
          selection: Binding<SelectionValue>,
          items: [Item<SelectionValue>]) {
         self.title = title
