@@ -126,6 +126,17 @@ struct NewMessageView: View {
                         TextField("", text: $draft.subject)
                     }
 
+                    if let attachments = draft.attachments?.filter { $0.contentId == nil }, !attachments.isEmpty {
+                        ScrollView(.horizontal, showsIndicators: false) {
+                            HStack(spacing: 8) {
+                                ForEach(attachments) { attachment in
+                                    AttachmentCell(attachment: attachment)
+                                }
+                            }
+                            .padding([.top, .bottom], 1)
+                        }
+                    }
+
                     RichTextEditor(model: $editor, body: $draft.body)
                         .padding(.horizontal, 16)
                 }
@@ -316,7 +327,12 @@ struct NewMessageView: View {
                     do {
                         let typeIdentifier = try url.resourceValues(forKeys: [.typeIdentifierKey]).typeIdentifier ?? ""
 
-                        _ = try await self.sendAttachment(typeIdentifier: typeIdentifier, url: url, name: url.lastPathComponent, disposition: .attachment)
+                        _ = try await self.sendAttachment(
+                            typeIdentifier: typeIdentifier,
+                            url: url,
+                            name: url.lastPathComponent,
+                            disposition: .attachment
+                        )
 
                     } catch {
                         print("Error while creating attachment: \(error.localizedDescription)")

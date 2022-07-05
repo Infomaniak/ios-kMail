@@ -101,6 +101,7 @@ struct AddAttachmentView: View {
             case .fileSelection:
                 DocumentPicker { urls in
                     didSelectAttachment(.files(urls))
+                    bottomSheet.close()
                 }
             case .photoLibrary:
                 ImagePicker { results in
