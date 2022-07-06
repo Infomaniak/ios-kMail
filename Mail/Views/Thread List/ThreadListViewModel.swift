@@ -37,11 +37,11 @@ typealias Thread = MailCore.Thread
         var title: String {
             switch self {
             case .today:
-                return "Aujourd'hui"
+                return MailResourcesStrings.Localizable.threadListSectionToday
             case .week:
-                return "Cette semaine"
+                return MailResourcesStrings.Localizable.threadListSectionThisWeek
             case .lastWeek:
-                return "La semaine dernière"
+                return MailResourcesStrings.Localizable.threadListSectionLastWeek
             case .month:
                 return "Ce mois-ci"
             case .year:
@@ -51,30 +51,34 @@ typealias Thread = MailCore.Thread
             }
         }
 
-        var dateComponents: [Calendar.Component] {
-            switch self {
-            case .today:
-                return [.day, .month, .year]
-            case .week, .lastWeek:
-                return [.weekOfYear, .year]
-            case .month:
-                return [.month, .year]
-            case .year:
-                return [.year]
-            case .before:
-                return [.month, .year]
-            }
-        }
-
-        var origin: Date {
+        private var origin: Date {
             switch self {
             case .today, .week, .month, .year:
                 return Date()
             case .lastWeek:
-                return Date()
+                return Calendar.current.date(byAdding: .weekOfYear, value: -1, to: Date())!
             case .before(let date):
                 return date
             }
+        }
+
+        var calendarComponents: Set<Calendar.Component> {
+            switch self {
+            case .today:
+                return Set([.day, .month, .year])
+            case .week, .lastWeek:
+                return Set([.weekOfYear, .year])
+            case .month:
+                return Set([.month, .year])
+            case .year:
+                return Set([.year])
+            case .before:
+                return Set([.month, .year])
+            }
+        }
+
+        var dateComponents: DateComponents {
+            return Calendar.current.dateComponents(Set(calendarComponents), from: origin)
         }
     }
 
@@ -211,7 +215,30 @@ typealias Thread = MailCore.Thread
     }
 
     func sortThreads() {
-        sections = [SectionCategory: [Thread]]()
+        var sortOptions: [SectionCategory] = [.today, .week, .lastWeek, .month, .year]
+        var sortOptionIndex = 0
+
+        var sections = [SectionCategory: [Thread]]()
+        for thread in threads {
+            let currentSortOption = sortOptions[sortOptionIndex]
+            let currentCalendarComponents = Calendar.current.dateComponents(currentSortOption.calendarComponents, from: thread.date)
+
+            if currentCalendarComponents != currentSortOption.dateComponents {
+                if sortOptionIndex != sortOptions.count - 1 {
+                    sortOptionIndex += 1
+                } else {
+                    sortOptions.append(.before(thread.date))
+                    sortOptionIndex += 1
+                }
+            }
+
+            if sections[currentSortOption] == nil {
+                sections[currentSortOption] = []
+            }
+            sections[currentSortOption]?.append(thread)
+        }
+
+        self.sections = sections
     }
 
     // MARK: - Swipe actions
