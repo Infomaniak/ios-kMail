@@ -63,8 +63,6 @@ struct NewMessageView: View {
 
     @StateObject private var bottomSheet = NewMessageBottomSheet()
 
-    let defaultBody = "<div><br></div><div><br></div><div>Envoyé avec Infomaniak Mail pour iOS<br></div>"
-
     static var queue = DispatchQueue(label: "com.infomaniak.mail.saveDraft")
     @State var debouncedBufferWrite: DispatchWorkItem?
     let saveExpiration = 3.0
@@ -80,9 +78,9 @@ struct NewMessageView: View {
         self.mailboxManager = mailboxManager
         selectedMailboxItem = AccountManager.instance.mailboxes
             .firstIndex { $0.mailboxId == mailboxManager.mailbox.mailboxId } ?? 0
-        var initialDraft = draft ?? UnmanagedDraft(body: defaultBody)
+        var initialDraft = draft ?? UnmanagedDraft()
         if let signatureResponse = mailboxManager.getSignatureResponse() {
-            initialDraft.setSender(signatureResponse: signatureResponse)
+            initialDraft.setSignature(signatureResponse)
             sendDisabled = false
         } else {
             sendDisabled = true
@@ -162,7 +160,7 @@ struct NewMessageView: View {
             guard let mailboxManager = AccountManager.instance.getMailboxManager(for: mailbox),
                   let signatureResponse = mailboxManager.getSignatureResponse() else { return }
             self.mailboxManager = mailboxManager
-            draft.setSender(signatureResponse: signatureResponse)
+            draft.setSignature(signatureResponse)
         }
         .onAppear {
             editor.richTextEditor.bottomSheet = bottomSheet

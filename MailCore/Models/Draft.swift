@@ -210,13 +210,20 @@ public struct UnmanagedDraft: Equatable, Encodable, AbstractDraft {
                      stUuid: stUuid)
     }
 
-    public mutating func setSender(signatureResponse: SignatureResponse) {
+    public mutating func setSignature(_ signatureResponse: SignatureResponse) {
         identityId = "\(signatureResponse.defaultSignatureId)"
-        guard let signature = signatureResponse.signatures.first(where: { $0.id == signatureResponse.defaultSignatureId }) else {
+        guard let signature = signatureResponse.default else {
             return
         }
         from = [Recipient(email: signature.sender, name: signature.fullName)]
         replyTo = [Recipient(email: signature.replyTo, name: "")]
+        let html = "<div><br></div><div><br></div><div class=\"editorUserSignature\">\(signature.content)</div>"
+        switch signature.position {
+        case .top:
+            body.insert(contentsOf: html, at: body.startIndex)
+        case .bottom:
+            body.append(contentsOf: html)
+        }
     }
 }
 
