@@ -3,7 +3,7 @@
     {
       "identity" : "alamofire",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/Alamofire/Alamofire.git",
+      "location" : "https://github.com/Alamofire/Alamofire",
       "state" : {
         "revision" : "354dda32d89fc8cd4f5c46487f64957d355f53d8",
         "version" : "5.6.1"
@@ -14,8 +14,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/ProxymanApp/atlantis",
       "state" : {
-        "revision" : "c5039f6d2a8999842a36311b135e84c7b4a45392",
-        "version" : "1.17.0"
+        "revision" : "2f3ec3fe240706fad46c15041b79506a73446cfa",
+        "version" : "1.18.0"
       }
     },
     {
@@ -23,8 +23,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/lucaszischka/BottomSheet",
       "state" : {
-        "revision" : "fd87c1d84d61d4c6fae179fef22d30407737f1e1",
-        "version" : "2.7.0"
+        "revision" : "39f59cd641dfb407cb4033966e3be51237011da4",
+        "version" : "2.8.0"
       }
     },
     {
@@ -42,7 +42,7 @@
       "location" : "https://github.com/Infomaniak/ios-core.git",
       "state" : {
         "branch" : "mail",
-        "revision" : "cb72c916367d671bf8574c674026f8b5ea0c5ea8"
+        "revision" : "c0eb18b23856d4c4e62edb7b353149dcbbfce9f9"
       }
     },
     {
@@ -86,8 +86,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/realm/realm-core",
       "state" : {
-        "revision" : "fd48276f88f3d55dbdcdc9e8cbf32541811d5865",
-        "version" : "12.1.0"
+        "revision" : "55a48c287b5e3a8ca129c257ec7e3b92bcb2a05f",
+        "version" : "12.3.0"
       }
     },
     {
@@ -95,8 +95,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/realm/realm-swift",
       "state" : {
-        "revision" : "d3aaab84885e0de9a7a49955874cee160adee164",
-        "version" : "10.28.1"
+        "revision" : "fd279e0a94b46c5bd65b17e36817a4365c7a5482",
+        "version" : "10.28.2"
       }
     },
     {
@@ -104,8 +104,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/getsentry/sentry-cocoa",
       "state" : {
-        "revision" : "3c40cf37f386e169ce2fa34a1614dff0723f9755",
-        "version" : "7.16.1"
+        "revision" : "d312243b14225623d04cda5fd9d6564d4110d36c",
+        "version" : "7.19.0"
       }
     },
     {
@@ -113,8 +113,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/PhilippeWeidmann/SnackBar.swift",
       "state" : {
-        "revision" : "8d61e42b2e4a73ea04728c25b10150f6ecc995b6",
-        "version" : "0.1.4"
+        "revision" : "9e2f25bad90a7fb4f5764814c47a8448ba5df58d",
+        "version" : "0.1.5"
       }
     },
     {
