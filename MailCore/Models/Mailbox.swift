@@ -39,6 +39,7 @@ public class Mailbox: Object, Codable, Identifiable {
     @Persisted public var isValid: Bool
     @Persisted public var isLocked: Bool
     @Persisted public var hasSocialAndCommercialFiltering: Bool
+//    @Persisted public var hasMoveSpam: Bool?
     @Persisted public var showConfigModal: Bool
     @Persisted public var forceResetPassword: Bool
     @Persisted public var mdaVersion: String

@@ -22,4 +22,7 @@ import RealmSwift
 public class MailboxSettings: Object {
     @Persisted public var notifications: Bool
     @Persisted public var signature: Signature?
+
+    @Persisted public var adsFilter: Bool?
+    @Persisted public var spamFilter: Bool?
 }
