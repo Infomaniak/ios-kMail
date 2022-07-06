@@ -185,6 +185,8 @@ struct NewMessageView: View {
     }
 
     @MainActor private func send() async -> CancelableResponse? {
+        // Cancel any scheduled save
+        debouncedBufferWrite?.cancel()
         do {
             draftHasChanged = false
             return try await mailboxManager.send(draft: draft)
