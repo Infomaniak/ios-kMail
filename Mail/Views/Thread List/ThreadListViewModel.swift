@@ -204,7 +204,7 @@ typealias Thread = MailCore.Thread
     }
 
     private func move(thread: Thread, to folderRole: FolderRole) async throws {
-        guard let folder = mailboxManager.getFolder(with: folderRole) else { return }
+        guard let folder = mailboxManager.getFolder(with: folderRole)?.freeze() else { return }
         try await move(thread: thread, to: folder)
     }
 
