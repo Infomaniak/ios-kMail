@@ -51,8 +51,8 @@ struct MoreStorageView: View {
                 }
 
                 BottomSheetButton(label: MailResourcesStrings.Localizable.buttonAvailableSoon,
-                                  action: getMoreStorage,
-                                  isDisabled: true)
+                                  isDisabled: true,
+                                  action: getMoreStorage)
             }
             .frame(maxWidth: .infinity, alignment: .trailing)
         }

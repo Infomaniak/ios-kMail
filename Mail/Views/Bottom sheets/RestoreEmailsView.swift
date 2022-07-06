@@ -52,8 +52,8 @@ struct RestoreEmailsView: View {
                 }
 
                 BottomSheetButton(label: MailResourcesStrings.Localizable.buttonConfirmRestoreEmails,
-                                  action: restoreEmails,
-                                  isDisabled: availableDates.isEmpty)
+                                  isDisabled: availableDates.isEmpty,
+                                  action: restoreEmails)
             }
             .frame(maxWidth: .infinity, alignment: .trailing)
         }

@@ -21,25 +21,24 @@ import SwiftUI
 
 struct BottomSheetButton: View {
     var label: String
+    var isDisabled = false
     var action: () -> Void
-    var isDisabled: Bool = false
 
     var body: some View {
         Button(action: action) {
             Text(label)
-                .foregroundColor(.white)
-                .textStyle(.button)
+                .textStyle(.buttonPill)
                 .padding(.horizontal, 24)
-                .padding(.vertical, 18)
-                .background(isDisabled ? MailResourcesAsset.hintTextColor.swiftUiColor : Color.accentColor)
-                .cornerRadius(16)
+                .padding(.vertical, 10)
         }
+        .buttonStyle(.borderedProminent)
+        .buttonBorderShape(.roundedRectangle(radius: 16))
         .disabled(isDisabled)
     }
 }
 
 struct BottomSheetButton_Previews: PreviewProvider {
     static var previews: some View {
-        BottomSheetButton(label: "Amazing button") { /* Preview */ }
+        BottomSheetButton(label: "Amazing button", isDisabled: true) { /* Preview */ }
     }
 }

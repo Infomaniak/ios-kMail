@@ -37,15 +37,24 @@ struct HelpView: View {
         List {
             Section {
                 ForEach(actions, id: \.self) { action in
-                    Button {
-                        openURL(action.destination)
-                    } label: {
-                        Text(action.title)
-                            .textStyle(.body)
-                            .padding(.leading, 16)
+                    VStack(alignment: .leading, spacing: 0) {
+                        Button {
+                            openURL(action.destination)
+                        } label: {
+                            Text(action.title)
+                                .textStyle(.body)
+                        }
+                        .padding(.vertical, 16)
+                        .padding(.horizontal, 24)
+
+                        if action != actions.last {
+                            IKDivider()
+                                .padding(.horizontal, 8)
+                        }
                     }
                 }
-                .listRowSeparatorTint(MailResourcesAsset.separatorColor.swiftUiColor)
+                .listRowSeparator(.hidden)
+                .listRowInsets(.init())
             } header: {
                 Text(MailResourcesStrings.Localizable.helpSubtitle)
                     .textStyle(.calloutSecondary)
