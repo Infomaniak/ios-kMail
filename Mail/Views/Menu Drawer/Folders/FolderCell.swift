@@ -46,8 +46,8 @@ struct FolderCell: View {
                 }
             }
 
-            ForEach(folder.children) { children in
-                FolderCell(folder: children, level: level + 1, selectedFolder: $selectedFolder, isCompact: isCompact)
+            ForEach(folder.children) { child in
+                FolderCell(folder: child, level: level + 1, selectedFolder: $selectedFolder, isCompact: isCompact)
             }
         }
     }
