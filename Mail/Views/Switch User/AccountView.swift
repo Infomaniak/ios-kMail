@@ -55,7 +55,7 @@ struct AccountView: View {
     @Environment(\.window) private var window
 
     @State private var avatarImage = Image(resource: MailResourcesAsset.placeholderAvatar)
-    @State private var account = AccountManager.instance.currentAccount!
+    @StateObject private var account = AccountManager.instance.currentAccount!
     @StateObject private var sheet = AccountSheet()
     @State private var delegate = AccountViewDelegate()
 
