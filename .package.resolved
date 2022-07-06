@@ -14,8 +14,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/ProxymanApp/atlantis",
       "state" : {
-        "revision" : "2f3ec3fe240706fad46c15041b79506a73446cfa",
-        "version" : "1.18.0"
+        "revision" : "c5039f6d2a8999842a36311b135e84c7b4a45392",
+        "version" : "1.17.0"
       }
     },
     {
@@ -95,8 +95,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/realm/realm-core",
       "state" : {
-        "revision" : "55a48c287b5e3a8ca129c257ec7e3b92bcb2a05f",
-        "version" : "12.3.0"
+        "revision" : "fd48276f88f3d55dbdcdc9e8cbf32541811d5865",
+        "version" : "12.1.0"
       }
     },
     {
@@ -104,8 +104,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/realm/realm-swift",
       "state" : {
-        "revision" : "fd279e0a94b46c5bd65b17e36817a4365c7a5482",
-        "version" : "10.28.2"
+        "revision" : "d3aaab84885e0de9a7a49955874cee160adee164",
+        "version" : "10.28.1"
       }
     },
     {
@@ -113,8 +113,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/getsentry/sentry-cocoa",
       "state" : {
-        "revision" : "d312243b14225623d04cda5fd9d6564d4110d36c",
-        "version" : "7.19.0"
+        "revision" : "f906913c14eadb6fd31988db1ea9ff10aec9f198",
+        "version" : "7.18.1"
       }
     },
     {
@@ -122,8 +122,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/PhilippeWeidmann/SnackBar.swift",
       "state" : {
-        "revision" : "9e2f25bad90a7fb4f5764814c47a8448ba5df58d",
-        "version" : "0.1.5"
+        "revision" : "8d61e42b2e4a73ea04728c25b10150f6ecc995b6",
+        "version" : "0.1.4"
       }
     },
     {
