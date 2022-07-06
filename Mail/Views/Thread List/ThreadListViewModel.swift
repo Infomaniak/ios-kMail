@@ -26,10 +26,66 @@ import SwiftUI
 typealias Thread = MailCore.Thread
 
 @MainActor class ThreadListViewModel: ObservableObject {
+    enum SectionCategory: Hashable {
+        case today
+        case week
+        case lastWeek
+        case month
+        case year
+        case before(Date)
+
+        var title: String {
+            switch self {
+            case .today:
+                return "Aujourd'hui"
+            case .week:
+                return "Cette semaine"
+            case .lastWeek:
+                return "La semaine dernière"
+            case .month:
+                return "Ce mois-ci"
+            case .year:
+                return "Cette année"
+            case let .before(date):
+                return date.formatted(date: .abbreviated, time: .omitted)
+            }
+        }
+
+        var dateComponents: [Calendar.Component] {
+            switch self {
+            case .today:
+                return [.day, .month, .year]
+            case .week, .lastWeek:
+                return [.weekOfYear, .year]
+            case .month:
+                return [.month, .year]
+            case .year:
+                return [.year]
+            case .before:
+                return [.month, .year]
+            }
+        }
+
+        var origin: Date {
+            switch self {
+            case .today, .week, .month, .year:
+                return Date()
+            case .lastWeek:
+                return Date()
+            case .before(let date):
+                return date
+            }
+        }
+    }
+
     var mailboxManager: MailboxManager
 
     @Published var folder: Folder?
-    @Published var threads: [Thread] = []
+    var threads: [Thread] = [] {
+        didSet {
+            sortThreads()
+        }
+    }
     @Published var isLoadingPage = false
     @Published var lastUpdate: Date?
 
@@ -39,6 +95,8 @@ typealias Thread = MailCore.Thread
     private var resourceNext: String?
     private var observationThreadToken: NotificationToken?
     private var observationLastUpdateToken: NotificationToken?
+
+    @Published var sections = [SectionCategory: [Thread]]()
 
     @Published var filter = Filter.all {
         didSet {
@@ -150,6 +208,10 @@ typealias Thread = MailCore.Thread
                 await fetchNextPage()
             }
         }
+    }
+
+    func sortThreads() {
+        sections = [SectionCategory: [Thread]]()
     }
 
     // MARK: - Swipe actions
