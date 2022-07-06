@@ -146,6 +146,9 @@ public class MailboxManager: ObservableObject {
         let newFolders = getSubFolders(from: folderResult)
 
         let realm = getRealm()
+        for folder in newFolders {
+            keepCacheAttributes(for: folder, using: realm)
+        }
 
         let cachedFolders = realm.objects(Folder.self)
 
@@ -239,6 +242,7 @@ public class MailboxManager: ObservableObject {
         try? realm.safeWrite {
             // Clean old threads after fetching first page
             if result.currentOffset == 0 {
+                parentFolder.lastUpdate = Date()
                 realm.delete(parentFolder.threads.flatMap(\.messages))
                 realm.delete(parentFolder.threads)
             }
@@ -719,6 +723,15 @@ public class MailboxManager: ObservableObject {
         if keepProperties.contains(.isDuplicate) {
             message.isDuplicate = savedMessage.isDuplicate
         }
+    }
+
+    private func keepCacheAttributes(
+        for folder: Folder,
+        using realm: Realm? = nil
+    ) {
+        let realm = realm ?? getRealm()
+        guard let savedFolder = realm.object(ofType: Folder.self, forPrimaryKey: folder._id) else { return }
+        folder.lastUpdate = savedFolder.lastUpdate
     }
 
     func getSubFolders(from folders: [Folder], oldResult: [Folder] = []) -> [Folder] {

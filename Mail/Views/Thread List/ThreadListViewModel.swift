@@ -38,6 +38,7 @@ typealias Thread = MailCore.Thread
 
     private var resourceNext: String?
     private var observationThreadToken: NotificationToken?
+    private var observationLastUpdateToken: NotificationToken?
 
     @Published var filter = Filter.all {
         didSet {
@@ -59,6 +60,7 @@ typealias Thread = MailCore.Thread
     init(mailboxManager: MailboxManager, folder: Folder?, bottomSheet: ThreadBottomSheet) {
         self.mailboxManager = mailboxManager
         self.folder = folder
+        lastUpdate = folder?.lastUpdate
         self.bottomSheet = bottomSheet
         observeChanges()
     }
@@ -76,7 +78,6 @@ typealias Thread = MailCore.Thread
             resourceNext = result.resourceNext
         }
         isLoadingPage = false
-        lastUpdate = Date()
         mailboxManager.draftOffline()
     }
 
@@ -98,6 +99,9 @@ typealias Thread = MailCore.Thread
 
     func updateThreads(with folder: Folder) {
         self.folder = folder
+        withAnimation {
+            lastUpdate = folder.lastUpdate
+        }
         observeChanges()
 
         Task {
@@ -107,6 +111,7 @@ typealias Thread = MailCore.Thread
 
     func observeChanges() {
         observationThreadToken?.invalidate()
+        observationLastUpdateToken?.invalidate()
         if let folder = folder?.thaw() {
             let threadResults = folder.threads.sorted(by: \.date, ascending: false)
             observationThreadToken = threadResults.observe(on: .main) { [weak self] changes in
@@ -118,6 +123,16 @@ typealias Thread = MailCore.Thread
                         self?.threads = Array(results.freezeIfNeeded())
                     }
                 case .error:
+                    break
+                }
+            }
+            observationLastUpdateToken = folder.observe(keyPaths: [\Folder.lastUpdate], on: .main) { [weak self] changes in
+                switch changes {
+                case let .change(folder, _):
+                    withAnimation {
+                        self?.lastUpdate = folder.lastUpdate
+                    }
+                default:
                     break
                 }
             }
