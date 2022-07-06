@@ -26,21 +26,28 @@ struct FolderCell: View {
     @EnvironmentObject var navigationDrawerController: NavigationDrawerController
 
     let folder: Folder
+    var level = 0
     @Binding var selectedFolder: Folder?
 
     var isCompact: Bool
 
     var body: some View {
-        if isCompact {
-            Button(action: updateFolder) {
-                FolderCellContent(folder: folder, selectedFolder: $selectedFolder)
+        Group {
+            if isCompact {
+                Button(action: updateFolder) {
+                    FolderCellContent(folder: folder, level: level, selectedFolder: $selectedFolder)
+                }
+            } else {
+                NavigationLink {
+                    ThreadListView(mailboxManager: mailboxManager, folder: .constant(folder), isCompact: isCompact)
+                        .onAppear { selectedFolder = folder }
+                } label: {
+                    FolderCellContent(folder: folder, level: level, selectedFolder: $selectedFolder)
+                }
             }
-        } else {
-            NavigationLink {
-                ThreadListView(mailboxManager: mailboxManager, folder: .constant(folder), isCompact: isCompact)
-                    .onAppear { selectedFolder = folder }
-            } label: {
-                FolderCellContent(folder: folder, selectedFolder: $selectedFolder)
+
+            ForEach(folder.children) { child in
+                FolderCell(folder: child, level: level + 1, selectedFolder: $selectedFolder, isCompact: isCompact)
             }
         }
     }
@@ -53,6 +60,7 @@ struct FolderCell: View {
 
 struct FolderCellContent: View {
     let folder: Folder
+    let level: Int
     @Binding var selectedFolder: Folder?
 
     private var isSelected: Bool {
@@ -84,6 +92,7 @@ struct FolderCellContent: View {
         }
         .padding(.vertical, Constants.menuDrawerVerticalPadding)
         .padding(.leading, Constants.menuDrawerHorizontalPadding)
+        .padding(.leading, Constants.menuDrawerSubFolderPadding * CGFloat(level))
         .padding(.trailing, 18)
         .modifyIf(isSelected) { view in
             view
