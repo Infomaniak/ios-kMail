@@ -44,7 +44,12 @@ struct SettingsToggleBindingCell: View {
         }, set: { value in
             viewModel.mailboxManager.updateSettings {
                 viewModel.settings[keyPath: keyPath] = value
-                subtitle = viewModel.settings[keyPath: keyPath] == true ? "Activé" : "Désactivé"
+                Task {
+                    await tryOrDisplayError {
+                        _ = try await viewModel.mailboxManager.apiFetcher.updateFilters(ads: viewModel.settings.adsFilter, spam: viewModel.settings.spamFilter, mailbox: viewModel.mailboxManager.mailbox)
+                        subtitle = viewModel.settings[keyPath: keyPath] == true ? "Activé" : "Désactivé"
+                    }
+                }
             }
         })) {
             VStack(alignment: .leading) {

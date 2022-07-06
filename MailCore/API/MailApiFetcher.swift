@@ -243,7 +243,7 @@ public class MailApiFetcher: ApiFetcher {
         try await perform(request: authenticatedRequest(
             .mailboxHosting(hostingId: mailbox.hostingId, mailboxName: mailbox.mailbox),
             method: .patch,
-            parameters: ["has_move_spam": ads, "has_mail_filtering": spam]
+            parameters: ["has_move_spam": spam, "has_mail_filtering": ads]
         ))
         .data
 	}
