@@ -42,7 +42,7 @@ import SwiftUI
 
         super.init(title: mailboxManager.mailbox.email)
 
-        sections = [general /* , .inbox, .security, .privacy */ ]
+        sections = [general, .security /* , .inbox, .security, .privacy */ ]
     }
 
     // Section
@@ -64,11 +64,11 @@ private extension SettingsSection {
         name: MailResourcesStrings.Localizable.inboxFolder,
         items: [.inboxType /* , .rules, .redirect, .alias */ ]
     )
-//    static let security = SettingsSection(
-//        id: 3,
-//        name: MailResourcesStrings.settingsSectionSecurity,
-//        items: [.adsFilter, .spamFilter, .blockedRecipient]
-//    )
+    static let security = SettingsSection(
+        id: 3,
+        name: MailResourcesStrings.Localizable.settingsSectionSecurity,
+        items: [.adsFilter, .spamFilter /*.blockedRecipient*/]
+    )
 //    static let privacy = SettingsSection(
 //        id: 4,
 //        name: MailResourcesStrings.settingsSectionPrivacy,
@@ -114,16 +114,16 @@ private extension SettingsItem {
 //        type: <#T##SettingsType#>
 //    )
 //
-//    static let adsFilter = SettingsItem(
-//        id: 9,
-//        title: MailResourcesStrings.settingsSecurityAdsFilter,
-//        type: <#T##SettingsType#>
-//    )
-//    static let spamFilter = SettingsItem(
-//        id: 10,
-//        title: MailResourcesStrings.settingsSecuritySpamFilter,
-//        type: <#T##SettingsType#>
-//    )
+    static let adsFilter = SettingsItem(
+        id: 9,
+        title: MailResourcesStrings.Localizable.settingsSecurityAdsFilter,
+        type: .toggleBinding(keyPath: \.adsFilter)
+    )
+    static let spamFilter = SettingsItem(
+        id: 10,
+        title: MailResourcesStrings.Localizable.settingsSecuritySpamFilter,
+        type: .toggleBinding(keyPath: \.spamFilter)
+    )
 //    static let blockedRecipient = SettingsItem(
 //        id: 11,
 //        title: MailResourcesStrings.settingsSecurityBlockedRecipients,

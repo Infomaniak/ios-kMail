@@ -22,11 +22,18 @@ import SwiftUI
 
 struct SettingsToggleBindingCell: View {
     let title: String
+    @State var subtitle: String
     let keyPath: ReferenceWritableKeyPath<MailboxSettings, Bool>
     @ObservedObject var viewModel: EmailAddressSettingsViewModel
 
-    init(title: String, keyPath: ReferenceWritableKeyPath<MailboxSettings, Bool>, viewModel: EmailAddressSettingsViewModel) {
+    init(
+        title: String,
+        subtitle: String = "",
+        keyPath: ReferenceWritableKeyPath<MailboxSettings, Bool>,
+        viewModel: EmailAddressSettingsViewModel
+    ) {
         self.title = title
+        self.subtitle = viewModel.settings[keyPath: keyPath] == true ? "Activé" : "Désactivé"
         self.keyPath = keyPath
         self.viewModel = viewModel
     }
@@ -37,11 +44,15 @@ struct SettingsToggleBindingCell: View {
         }, set: { value in
             viewModel.mailboxManager.updateSettings {
                 viewModel.settings[keyPath: keyPath] = value
+                subtitle = viewModel.settings[keyPath: keyPath] == true ? "Activé" : "Désactivé"
             }
-
         })) {
-            Text(title)
-                .textStyle(.body)
+            VStack(alignment: .leading) {
+                Text(title)
+                    .textStyle(.body)
+                Text(subtitle)
+                    .textStyle(.calloutSecondary)
+            }
         }
     }
 }
