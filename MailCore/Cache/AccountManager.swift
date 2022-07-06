@@ -265,6 +265,10 @@ public class AccountManager: RefreshTokenDelegate {
             removeAccount(toDeleteAccount: newAccount)
             throw MailError.unknownError
         }
+        for mailbox in mailboxesResponse {
+            mailbox.permissions = try await mailApiFetcher.permissions(mailbox: mailbox)
+        }
+
         MailboxInfosManager.instance.storeMailboxes(user: user, mailboxes: mailboxesResponse)
         let mainMailbox = mailboxesResponse.first!
         setCurrentMailboxForCurrentAccount(mailbox: mainMailbox)
@@ -288,6 +292,9 @@ public class AccountManager: RefreshTokenDelegate {
         guard !fetchedMailboxes.isEmpty else {
             removeAccount(toDeleteAccount: account)
             throw MailError.noMailbox
+        }
+        for mailbox in fetchedMailboxes {
+            mailbox.permissions = try await apiFetcher.permissions(mailbox: mailbox)
         }
 
         let mailboxRemovedList = MailboxInfosManager.instance.storeMailboxes(user: user, mailboxes: fetchedMailboxes)

@@ -49,6 +49,10 @@ public class MailApiFetcher: ApiFetcher {
         try await perform(request: authenticatedRequest(.mailboxes)).data
     }
 
+    func permissions(mailbox: Mailbox) async throws -> MailboxPermissions {
+        try await perform(request: authenticatedRequest(.permissions(mailbox: mailbox))).data
+    }
+
     func contacts() async throws -> [Contact] {
         try await perform(request: authenticatedRequest(.contacts)).data
     }
@@ -57,11 +61,22 @@ public class MailApiFetcher: ApiFetcher {
         try await perform(request: authenticatedRequest(.addressBooks)).data
     }
 
-    public func addContact(_ recipient: Recipient, to addressBook: AddressBook) async throws -> Int {
+    func addContact(_ recipient: Recipient, to addressBook: AddressBook) async throws -> Int {
         try await perform(request: authenticatedSession.request(Endpoint.addContact.url,
                                                                 method: .post,
                                                                 parameters: NewContact(from: recipient, addressBook: addressBook),
                                                                 encoder: JSONParameterEncoder.default)).data
+    }
+
+    public func listBackups(mailbox: Mailbox) async throws -> BackupsList {
+        try await perform(request: authenticatedRequest(.backups(hostingId: mailbox.hostingId, mailboxName: mailbox.mailbox))).data
+    }
+
+    @discardableResult
+    public func restoreBackup(mailbox: Mailbox, date: String) async throws -> Bool {
+        try await perform(request: authenticatedRequest(.backups(hostingId: mailbox.hostingId, mailboxName: mailbox.mailbox),
+                                                        method: .put,
+                                                        parameters: ["date": date])).data
     }
 
     func signatures(mailbox: Mailbox) async throws -> SignatureResponse {

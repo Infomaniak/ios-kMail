@@ -51,6 +51,7 @@ public class Mailbox: Object, Codable, Identifiable {
             objectId = MailboxInfosManager.getObjectId(mailboxId: mailboxId, userId: userId)
         }
     }
+    @Persisted public var permissions: MailboxPermissions?
 
     public var id: Int {
         return mailboxId

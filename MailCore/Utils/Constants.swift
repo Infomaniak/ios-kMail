@@ -25,7 +25,8 @@ public struct URLConstants {
     public static let feedback = URLConstants(urlString: "https://feedback.userreport.com/9f60b46d-7299-4887-b79d-c756cf474c4d#ideas/popular")
     public static let importMails = URLConstants(urlString: "https://import-email.infomaniak.com")
     public static let matomo = URLConstants(urlString: "https://analytics.infomaniak.com/matomo.php")
-    public static let support = URLConstants(urlString: "https://support.infomaniak.com")
+    public static let faq = URLConstants(urlString: "https://www.infomaniak.com/\(Locale.current.languageCode ?? "fr")/support/faq/admin2/service-mail")
+    public static let chatbot = URLConstants(urlString: "https://www.infomaniak.com/chatbot")
 
     public static let schemeUrl = "http"
 
@@ -101,4 +102,6 @@ public enum Constants {
     public static let defaultSwipeLongRight = SwipeAction.readUnread
     public static let defaultSwipeShortLeft = SwipeAction.quickAction
     public static let defaultSwipeLongLeft = SwipeAction.delete
+
+    public static let bottomSheetHorizontalPadding: CGFloat = 24
 }

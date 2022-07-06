@@ -103,18 +103,21 @@ class NavigationDrawerController: ObservableObject {
 struct MenuDrawerView: View {
     @Environment(\.openURL) var openURL
 
+    @EnvironmentObject var menuSheet: MenuSheet
+    @EnvironmentObject var bottomSheet: GlobalBottomSheet
+
     // swiftlint:disable empty_count
     @ObservedResults(Folder.self, where: { $0.parentLink.count == 0 }) var folders
 
     @StateObject var mailboxManager: MailboxManager
     @State private var showMailboxes = false
 
+    @State private var helpMenuItems = [MenuItem]()
+    @State private var actionsMenuItems = [MenuItem]()
+
     @Binding var selectedFolder: Folder?
 
     var isCompact: Bool
-
-    private var helpMenuItems = [MenuItem]()
-    private var actionsMenuItems = [MenuItem]()
 
     init(mailboxManager: MailboxManager, selectedFolder: Binding<Folder?>, isCompact: Bool) {
         _folders = .init(Folder.self, configuration: AccountManager.instance.currentMailboxManager?.realmConfiguration) {
@@ -123,8 +126,6 @@ struct MenuDrawerView: View {
         _mailboxManager = StateObject(wrappedValue: mailboxManager)
         _selectedFolder = selectedFolder
         self.isCompact = isCompact
-
-        getMenuItems()
     }
 
     var body: some View {
@@ -168,24 +169,34 @@ struct MenuDrawerView: View {
         .environmentObject(mailboxManager)
         .onAppear {
             MatomoUtils.track(view: ["MenuDrawer"])
+            getMenuItems()
         }
     }
 
     // MARK: - Private methods
 
-    private mutating func getMenuItems() {
+    private func getMenuItems() {
         helpMenuItems = [
-            MenuItem(icon: MailResourcesAsset.feedbacks, label: MailResourcesStrings.Localizable.buttonFeedbacks, action: sendFeedback),
-            MenuItem(icon: MailResourcesAsset.help, label: MailResourcesStrings.Localizable.buttonHelp, action: openSupport)
+            MenuItem(icon: MailResourcesAsset.feedbacks,
+                     label: MailResourcesStrings.Localizable.buttonFeedbacks,
+                     action: sendFeedback),
+            MenuItem(icon: MailResourcesAsset.help,
+                     label: MailResourcesStrings.Localizable.buttonHelp,
+                     action: openHelp)
         ]
+
         actionsMenuItems = [
-            MenuItem(icon: MailResourcesAsset.drawerDownload, label: MailResourcesStrings.Localizable.buttonImportEmails, action: importMails),
-            MenuItem(
+            MenuItem(icon: MailResourcesAsset.drawerDownload,
+                     label: MailResourcesStrings.Localizable.buttonImportEmails,
+                     action: importMails)
+        ]
+        if mailboxManager.mailbox.permissions?.canRestoreEmails == true {
+            actionsMenuItems.append(.init(
                 icon: MailResourcesAsset.restoreArrow,
                 label: MailResourcesStrings.Localizable.buttonRestoreEmails,
                 action: restoreMails
-            )
-        ]
+            ))
+        }
     }
 
     // MARK: - Menu actions
@@ -194,8 +205,8 @@ struct MenuDrawerView: View {
         openURL(URLConstants.feedback.url)
     }
 
-    func openSupport() {
-        openURL(URLConstants.support.url)
+    func openHelp() {
+        menuSheet.state = .help
     }
 
     func importMails() {
@@ -203,7 +214,7 @@ struct MenuDrawerView: View {
     }
 
     func restoreMails() {
-        // TODO: Display "Restore Mails" view
+        bottomSheet.open(state: .restoreEmails, position: .restoreEmailsHeight)
     }
 }
 
