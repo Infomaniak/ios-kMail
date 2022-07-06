@@ -37,7 +37,7 @@ struct OnboardingView: View {
     }
 
     var body: some View {
-        VStack(spacing: 16) {
+        VStack(spacing: 0) {
             // Slides
             ZStack(alignment: .top) {
                 TabView(selection: $selection) {
@@ -52,7 +52,7 @@ struct OnboardingView: View {
                 Image(resource: MailResourcesAsset.logoText)
                     .resizable()
                     .scaledToFit()
-                    .frame(height: 72)
+                    .frame(height: Constants.onboardingLogoHeight)
             }
 
             // Buttons
@@ -81,7 +81,7 @@ struct OnboardingView: View {
                     .buttonBorderShape(.capsule)
                 }
             }
-            .frame(height: 100, alignment: .top)
+            .frame(height: Constants.onboardingButtonHeight + Constants.onboardingVerticalPadding, alignment: .top)
         }
         .alert(MailResourcesStrings.Localizable.errorLoginTitle, isPresented: $presentAlert) {
             // Use default button

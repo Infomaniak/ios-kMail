@@ -18,6 +18,7 @@
 
 import Introspect
 import MailCore
+import MailResources
 import SwiftUI
 
 struct SlideView: View {
@@ -27,58 +28,71 @@ struct SlideView: View {
 
     @Environment(\.window) private var window
 
-    @State var orientation: UIInterfaceOrientation?
     @State var segmentedControl: UISegmentedControl?
+    @State var imageSize: CGSize = .zero
 
     var body: some View {
-        ZStack(alignment: .top) {
-            accentColor.secondary.swiftUiColor
-                .frame(maxHeight: 427)
-                .ignoresSafeArea()
+        GeometryReader { proxy in
+            ZStack(alignment: .top) {
+                slide.backgroundImage
+                    .resizable()
+                    .scaledToFit()
+                    .ignoresSafeArea()
+                    .foregroundColor(accentColor.secondary)
+                    // Hide image if it cannot fit
+                    .background(GeometryReader { geometry -> Color in
+                        imageSize = geometry.size
+                        return .clear
+                    })
+                    .opacity(proxy.size.width == imageSize.width ? 1 : 0)
 
-            VStack(spacing: 24) {
-                if orientation?.isPortrait == true {
-                    slide.illustrationImage
-                        .resizable()
-                        .scaledToFit()
-                }
+                VStack(spacing: 0) {
+                    Spacer(minLength: Constants.onboardingLogoHeight + Constants.onboardingVerticalPadding)
 
-                Text(slide.title)
-                    .textStyle(.header2)
+                    if proxy.size.height > 500 {
+                        slide.illustrationImage
+                            .resizable()
+                            .scaledToFit()
+                            .frame(maxWidth: 400, maxHeight: 400)
+                            .aspectRatio(1, contentMode: .fit)
+                        Spacer()
+                    }
 
-                if slide.id == 1 {
-                    Picker("Accent color", selection: $accentColor) {
-                        ForEach(AccentColor.allCases, id: \.rawValue) { color in
-                            Text(color.title)
-                                .tag(color)
+                    Text(slide.title)
+                        .textStyle(.header2)
+
+                    if slide.id == 1 {
+                        Picker("Accent color", selection: $accentColor) {
+                            ForEach(AccentColor.allCases, id: \.rawValue) { color in
+                                Text(color.title)
+                                    .tag(color)
+                            }
                         }
+                        .pickerStyle(.segmented)
+                        .introspectSegmentedControl { segmentedControl in
+                            self.segmentedControl = segmentedControl
+                            setSegmentedControlStyle()
+                        }
+                        .padding(.top, 32)
+                        .padding(.horizontal, 32)
+                        .frame(maxWidth: 350)
+                    } else {
+                        Text(slide.description)
+                            .textStyle(.bodySecondary)
+                            .padding(.top, 24)
                     }
-                    .pickerStyle(.segmented)
-                    .introspectSegmentedControl { segmentedControl in
-                        self.segmentedControl = segmentedControl
-                        setSegmentedControlStyle()
-                    }
-                    .padding(.horizontal, 32)
-                } else {
-                    Text(slide.description)
-                        .textStyle(.bodySecondary)
+
+                    Spacer()
                 }
+                .multilineTextAlignment(.center)
+                .padding(.horizontal, 40)
             }
-            .multilineTextAlignment(.center)
-            .padding(.top, 96)
-            .padding(.horizontal, 40)
+            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
         }
-        .frame(maxHeight: .infinity, alignment: .top)
         .onChange(of: accentColor) { _ in
             // Handle accent color change
             (window?.windowScene?.delegate as? SceneDelegate)?.updateWindowUI()
             setSegmentedControlStyle()
-        }
-        .onAppear {
-            orientation = window?.windowScene?.interfaceOrientation
-        }
-        .onRotate { orientation in
-            self.orientation = orientation
         }
     }
 
@@ -94,8 +108,8 @@ struct SlideView: View {
 struct SlideView_Previews: PreviewProvider {
     static var previews: some View {
         SlideView(slide: Slide(id: 1,
-                               backgroundImage: Image(""),
-                               illustrationImage: Image(""),
+                               backgroundImage: Image(resource: MailResourcesAsset.onboardingBackground1),
+                               illustrationImage: Image(resource: MailResourcesAsset.onboardingIllu1),
                                title: "Title",
                                description: "Description"))
     }

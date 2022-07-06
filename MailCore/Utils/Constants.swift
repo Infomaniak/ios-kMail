@@ -43,6 +43,10 @@ public struct URLConstants {
 public enum Constants {
     public static let sizeLimit = Int64(20 * pow(1024.0, 3.0)) // 20 Go
 
+    public static let onboardingLogoHeight: CGFloat = 72
+    public static let onboardingButtonHeight: CGFloat = 100
+    public static let onboardingVerticalPadding: CGFloat = 16
+
     public static let menuDrawerHorizontalPadding: CGFloat = 24
     public static let menuDrawerVerticalPadding: CGFloat = 12
     public static let menuDrawerSubFolderPadding: CGFloat = 10

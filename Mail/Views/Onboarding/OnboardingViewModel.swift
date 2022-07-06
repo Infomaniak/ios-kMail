@@ -28,26 +28,25 @@ struct Slide: Identifiable {
 }
 
 @MainActor class OnboardingViewModel: ObservableObject {
-    // TODO: Replace images with actual ones
     let slides = [
         Slide(id: 1,
-              backgroundImage: Image(uiImage: UIImage()),
-              illustrationImage: Image(uiImage: UIImage()),
+              backgroundImage: Image(resource: MailResourcesAsset.onboardingBackground1),
+              illustrationImage: Image(resource: MailResourcesAsset.onboardingIllu1),
               title: MailResourcesStrings.Localizable.onBoardingTitle1,
               description: ""),
         Slide(id: 2,
-              backgroundImage: Image(uiImage: UIImage()),
-              illustrationImage: Image(uiImage: UIImage()),
+              backgroundImage: Image(resource: MailResourcesAsset.onboardingBackground2),
+              illustrationImage: Image(resource: MailResourcesAsset.onboardingIllu2),
               title: MailResourcesStrings.Localizable.onBoardingTitle2,
               description: MailResourcesStrings.Localizable.onBoardingDescription2),
         Slide(id: 3,
-              backgroundImage: Image(uiImage: UIImage()),
-              illustrationImage: Image(uiImage: UIImage()),
+              backgroundImage: Image(resource: MailResourcesAsset.onboardingBackground3),
+              illustrationImage: Image(resource: MailResourcesAsset.onboardingIllu3),
               title: MailResourcesStrings.Localizable.onBoardingTitle3,
               description: MailResourcesStrings.Localizable.onBoardingDescription3),
         Slide(id: 4,
-              backgroundImage: Image(uiImage: UIImage()),
-              illustrationImage: Image(uiImage: UIImage()),
+              backgroundImage: Image(resource: MailResourcesAsset.onboardingBackground4),
+              illustrationImage: Image(resource: MailResourcesAsset.onboardingIllu4),
               title: MailResourcesStrings.Localizable.onBoardingTitle4,
               description: MailResourcesStrings.Localizable.onBoardingDescription4)
     ]
