@@ -583,6 +583,7 @@ public class MailboxManager: ObservableObject {
         }
         var draft = draft
         draft.action = .send
+        draft.delay = UserDefaults.shared.cancelSendDelay.rawValue
         let cancelableResponse = try await apiFetcher.send(mailbox: mailbox, draft: draft)
         // Once the draft has been sent, we can delete it from Realm
         delete(draft: draft)

@@ -179,6 +179,7 @@ public struct UnmanagedDraft: Equatable, Encodable, AbstractDraft {
         case attachments
         case isOffline
         case action
+        case delay
     }
 
     public func encode(to encoder: Encoder) throws {
@@ -210,6 +211,7 @@ public struct UnmanagedDraft: Equatable, Encodable, AbstractDraft {
         }
         try container.encode(attachmentsArray, forKey: .attachments)
         try container.encode(action, forKey: .action)
+        try container.encode(delay, forKey: .delay)
     }
 
     private func valueToRecipient(_ value: String) -> [Recipient] {
