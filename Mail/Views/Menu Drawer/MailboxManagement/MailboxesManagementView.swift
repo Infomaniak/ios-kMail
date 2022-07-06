@@ -19,6 +19,7 @@
 import InfomaniakCore
 import MailCore
 import MailResources
+import RealmSwift
 import SwiftUI
 
 struct MailboxesManagementView: View {
@@ -28,8 +29,10 @@ struct MailboxesManagementView: View {
     @State private var isExpanded = false
     @State private var avatarImage = Image(resource: MailResourcesAsset.placeholderAvatar)
 
+    @ObservedResults(Mailbox.self, configuration: MailboxInfosManager.instance.realmConfiguration, sortDescriptor: SortDescriptor(keyPath: \Mailbox.mailboxId)) private var mailboxes
+
     private var otherMailboxes: [Mailbox] {
-        return AccountManager.instance.mailboxes.filter { $0.mailboxId != mailboxManager.mailbox.mailboxId }
+        return mailboxes.filter { $0.mailboxId != mailboxManager.mailbox.mailboxId }
     }
 
     var body: some View {
@@ -60,7 +63,7 @@ struct MailboxesManagementView: View {
 
             if isExpanded {
                 VStack(alignment: .leading) {
-                    ForEach(otherMailboxes, id: \.mailboxId) { mailbox in
+                    ForEach(otherMailboxes) { mailbox in
                         MailboxCell(mailbox: mailbox)
                     }
 
@@ -73,6 +76,9 @@ struct MailboxesManagementView: View {
 
                     IKDivider(withPadding: true)
                 }
+                .task {
+                    try? await updateAccount()
+                }
             }
         }
         .padding(.top, 16)
@@ -81,6 +87,11 @@ struct MailboxesManagementView: View {
                 avatarImage = await user.getAvatar()
             }
         }
+    }
+
+    private func updateAccount() async throws {
+        guard let account = AccountManager.instance.account(for: mailboxManager.mailbox.userId) else { return }
+        try await AccountManager.instance.updateUser(for: account, registerToken: false)
     }
 
     // MARK: - Menu actions

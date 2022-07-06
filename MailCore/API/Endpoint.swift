@@ -50,7 +50,7 @@ public extension Endpoint {
     }
 
     static var mailboxes: Endpoint {
-        return .base.appending(path: "/mailbox")
+        return .base.appending(path: "/mailbox", queryItems: [URLQueryItem(name: "with", value: "unseen")])
     }
 
     private static func mailbox(uuid: String) -> Endpoint {

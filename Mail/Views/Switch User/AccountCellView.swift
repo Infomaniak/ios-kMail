@@ -19,11 +19,14 @@
 import InfomaniakCore
 import MailCore
 import MailResources
+import RealmSwift
 import SwiftUI
 
 struct AccountCellView: View {
     let account: Account
     @Binding var expandedUserId: Int?
+
+    @ObservedResults(Mailbox.self) private var mailboxes
 
     @Environment(\.window) private var window
 
@@ -33,6 +36,10 @@ struct AccountCellView: View {
 
     init(account: Account, expandedUserId: Binding<Int?>) {
         self.account = account
+        _mailboxes = .init(Mailbox.self,
+                           configuration: MailboxInfosManager.instance.realmConfiguration,
+                           where: { $0.userId == account.userId },
+                           sortDescriptor: SortDescriptor(keyPath: \Mailbox.mailboxId))
         _expandedUserId = expandedUserId
     }
 
@@ -63,7 +70,7 @@ struct AccountCellView: View {
 
                 if isExpanded {
                     VStack(spacing: 24) {
-                        ForEach(MailboxInfosManager.instance.getMailboxes(for: account.user.id), id: \.mailboxId) { mailbox in
+                        ForEach(mailboxes) { mailbox in
                             Button {
                                 (window?.windowScene?.delegate as? SceneDelegate)?.switchAccount(account, mailbox: mailbox)
                             } label: {

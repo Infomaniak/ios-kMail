@@ -37,6 +37,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         InfomaniakLogin.initWith(clientId: MailApiFetcher.clientId)
         accountManager = AccountManager.instance
         ApiFetcher.decoder.dateDecodingStrategy = .iso8601
+        refreshCacheData()
 
         return true
     }
