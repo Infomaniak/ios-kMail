@@ -39,7 +39,9 @@ struct DocumentPicker: UIViewControllerRepresentable {
     func updateUIViewController(
         _ uiViewController: DocumentPicker.UIViewControllerType,
         context: UIViewControllerRepresentableContext<DocumentPicker>
-    ) {}
+    ) {
+        // Empty on prupose
+    }
 
     class Coordinator: NSObject, UIDocumentPickerDelegate {
         var parent: DocumentPicker

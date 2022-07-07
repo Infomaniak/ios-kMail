@@ -42,12 +42,16 @@ struct CameraPicker: UIViewControllerRepresentable {
     func updateUIViewController(
         _ uiViewController: CameraPicker.UIViewControllerType,
         context: UIViewControllerRepresentableContext<CameraPicker>
-    ) {}
+    ) {
+        // Empty on prupose
+    }
 
     func imagePickerController(
         _ picker: UIImagePickerController,
         didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey: Any]
-    ) {}
+    ) {
+        // Empty on prupose
+    }
 
     final class Coordinator: NSObject, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
         var parent: CameraPicker

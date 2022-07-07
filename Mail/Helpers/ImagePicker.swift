@@ -39,7 +39,9 @@ struct ImagePicker: UIViewControllerRepresentable {
     func updateUIViewController(
         _ uiViewController: PHPickerViewController,
         context: UIViewControllerRepresentableContext<ImagePicker>
-    ) {}
+    ) {
+        // Empty on prupose
+    }
 
     final class Coordinator: NSObject, PHPickerViewControllerDelegate, UINavigationControllerDelegate {
         var parent: ImagePicker

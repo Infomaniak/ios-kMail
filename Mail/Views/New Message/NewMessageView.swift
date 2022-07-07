@@ -194,7 +194,7 @@ struct NewMessageView: View {
         .sheet(isPresented: $attachmentSheet.isShowing) {
             CameraPicker { data in
                 Task {
-                     await addCameraAttachment(data: data)
+                    await addCameraAttachment(data: data)
                 }
             }
         }
@@ -213,7 +213,7 @@ struct NewMessageView: View {
                         }
                     case let .camera(data):
                         Task {
-                             await addCameraAttachment(data: data)
+                            await addCameraAttachment(data: data)
                         }
                     }
                 }
@@ -353,7 +353,9 @@ struct NewMessageView: View {
     func addImageAttachment(
         results: [PHPickerResult],
         disposition: AttachmentDisposition = .attachment,
-        completion: @escaping (String) -> Void = { _ in }
+        completion: @escaping (String) -> Void = { _ in
+            // TODO: - Manage inline attachment
+        }
     ) async {
         let itemProviders = results.map(\.itemProvider)
         await withTaskGroup(of: Void.self) { group in
@@ -384,7 +386,9 @@ struct NewMessageView: View {
     func addCameraAttachment(
         data: Data,
         disposition: AttachmentDisposition = .attachment,
-        completion: @escaping (String) -> Void = { _ in }
+        completion: @escaping (String) -> Void = { _ in
+            // TODO: - Manage inline attachment
+        }
     ) async {
         do {
             let typeIdentifier = "public.jpeg"
@@ -446,7 +450,6 @@ struct NewMessageView: View {
 
     func sendAttachmentFrom(data: Data, typeIdentifier: String, name: String,
                             disposition: AttachmentDisposition) async throws -> Attachment? {
-
         let uti = UTType(typeIdentifier)
         var name = name
         if let nameExtension = uti?.preferredFilenameExtension {
