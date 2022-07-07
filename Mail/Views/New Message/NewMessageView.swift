@@ -53,7 +53,7 @@ struct NewMessageView: View {
     @Binding var isPresented: Bool
 
     @State private var mailboxManager: MailboxManager
-    @State private var selectedMailboxItem: Int = 0
+    @State private var selectedMailboxItem = 0
     @State private var draft: UnmanagedDraft
     @State private var editor = RichTextEditorModel()
     @State private var showCc = false
@@ -192,7 +192,11 @@ struct NewMessageView: View {
             }
         }
         .sheet(isPresented: $attachmentSheet.isShowing) {
-            CameraPicker(selectedImage: self.$image)
+            CameraPicker { data in
+                Task {
+                     await addCameraAttachment(data: data)
+                }
+            }
         }
         .bottomSheet(bottomSheetPosition: $bottomSheet.position, options: bottomSheetOptions) {
             switch bottomSheet.state {
@@ -206,6 +210,10 @@ struct NewMessageView: View {
                     case let .photos(results):
                         Task {
                             await addImageAttachment(results: results)
+                        }
+                    case let .camera(data):
+                        Task {
+                             await addCameraAttachment(data: data)
                         }
                     }
                 }
@@ -373,6 +381,30 @@ struct NewMessageView: View {
         }
     }
 
+    func addCameraAttachment(
+        data: Data,
+        disposition: AttachmentDisposition = .attachment,
+        completion: @escaping (String) -> Void = { _ in }
+    ) async {
+        do {
+            let typeIdentifier = "public.jpeg"
+            let name = getDefaultFileName()
+
+            let attachment = try await sendAttachmentFrom(
+                data: data,
+                typeIdentifier: typeIdentifier,
+                name: name,
+                disposition: disposition
+            )
+
+            if disposition == .inline, let cid = attachment?.contentId {
+                completion(cid)
+            }
+        } catch {
+            print("Error while creating attachment: \(error.localizedDescription)")
+        }
+    }
+
     func loadFileRepresentation(_ itemProvider: NSItemProvider, typeIdentifier: String) async throws -> URL {
         try await withCheckedThrowingContinuation { continuation in
             itemProvider.loadFileRepresentation(forTypeIdentifier: typeIdentifier) { url, error in
@@ -394,6 +426,26 @@ struct NewMessageView: View {
     func sendAttachment(typeIdentifier: String, url: URL, name: String,
                         disposition: AttachmentDisposition) async throws -> Attachment? {
         let data = try Data(contentsOf: url)
+
+        let uti = UTType(typeIdentifier)
+        var name = name
+        if let nameExtension = uti?.preferredFilenameExtension {
+            name.append(".\(nameExtension)")
+        }
+
+        let attachment = try await mailboxManager.apiFetcher.createAttachment(
+            mailbox: mailboxManager.mailbox,
+            attachmentData: data,
+            disposition: disposition,
+            attachmentName: name,
+            mimeType: uti?.preferredMIMEType ?? "application/octet-stream"
+        )
+        addAttachment(attachment)
+        return attachment
+    }
+
+    func sendAttachmentFrom(data: Data, typeIdentifier: String, name: String,
+                            disposition: AttachmentDisposition) async throws -> Attachment? {
 
         let uti = UTType(typeIdentifier)
         var name = name

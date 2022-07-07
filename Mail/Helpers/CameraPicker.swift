@@ -23,7 +23,7 @@ import UIKit
 struct CameraPicker: UIViewControllerRepresentable {
     var sourceType: UIImagePickerController.SourceType = .camera
 
-    @Binding var selectedImage: UIImage
+    var completion: (Data) -> Void
     @Environment(\.presentationMode) private var presentationMode
 
     func makeUIViewController(context: Context) -> UIImagePickerController {
@@ -60,8 +60,9 @@ struct CameraPicker: UIViewControllerRepresentable {
             _ picker: UIImagePickerController,
             didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey: Any]
         ) {
-            if let image = info[UIImagePickerController.InfoKey.originalImage] as? UIImage {
-                parent.selectedImage = image
+            if let image = info[UIImagePickerController.InfoKey.originalImage] as? UIImage,
+               let data = image.jpegData(compressionQuality: 0.5) {
+                parent.completion(data)
             }
 
             parent.presentationMode.wrappedValue.dismiss()

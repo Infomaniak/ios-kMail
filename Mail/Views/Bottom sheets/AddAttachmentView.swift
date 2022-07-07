@@ -29,6 +29,7 @@ class NewMessageAttachmentSheet: SheetState<NewMessageAttachmentSheet.State> {
 enum AttachmentResult {
     case files([URL])
     case photos([PHPickerResult])
+    case camera(Data)
 }
 
 struct AddAttachmentView: View {
@@ -36,7 +37,6 @@ struct AddAttachmentView: View {
     let didSelectAttachment: (AttachmentResult) -> Void
 
     @StateObject private var attachmentSheet = NewMessageAttachmentSheet()
-    @State private var image = UIImage()
     @State private var isPresenting = false
 
     private struct AttachmentAction: Hashable {
@@ -108,7 +108,9 @@ struct AddAttachmentView: View {
                     didSelectAttachment(.photos(results))
                 }
             case .camera:
-                CameraPicker(selectedImage: self.$image)
+                CameraPicker { data in
+                    didSelectAttachment(.camera(data))
+                }
             case .none:
                 EmptyView()
             }
