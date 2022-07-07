@@ -19,6 +19,7 @@
 import MailCore
 import RealmSwift
 import SwiftUI
+import MailResources
 
 struct SettingsToggleBindingCell: View {
     let title: String
@@ -33,7 +34,7 @@ struct SettingsToggleBindingCell: View {
         viewModel: EmailAddressSettingsViewModel
     ) {
         self.title = title
-        self.subtitle = viewModel.settings[keyPath: keyPath] == true ? "Activé" : "Désactivé"
+        self.subtitle = viewModel.settings[keyPath: keyPath] == true ? MailResourcesStrings.Localizable.settingsEnabled : MailResourcesStrings.Localizable.settingsDisabled
         self.keyPath = keyPath
         self.viewModel = viewModel
     }
@@ -45,9 +46,10 @@ struct SettingsToggleBindingCell: View {
             viewModel.mailboxManager.updateSettings {
                 viewModel.settings[keyPath: keyPath] = value
                 Task {
+                    subtitle = viewModel.settings[keyPath: keyPath] == true ? MailResourcesStrings.Localizable.settingsEnabled : MailResourcesStrings.Localizable.settingsDisabled
                     await tryOrDisplayError {
                         _ = try await viewModel.mailboxManager.apiFetcher.updateFilters(ads: viewModel.settings.adsFilter, spam: viewModel.settings.spamFilter, mailbox: viewModel.mailboxManager.mailbox)
-                        subtitle = viewModel.settings[keyPath: keyPath] == true ? "Activé" : "Désactivé"
+                        //TODO: Handle error
                     }
                 }
             }
