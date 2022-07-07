@@ -77,11 +77,9 @@ public class MailboxInfosManager {
     public func getMailboxes(for userId: Int? = nil, using realm: Realm? = nil) -> [Mailbox] {
         let realm = realm ?? getRealm()
         var realmMailboxList = realm.objects(Mailbox.self)
-            .sorted(byKeyPath: "mailboxId", ascending: true)
+            .sorted(by: \Mailbox.mailboxId)
         if let userId = userId {
-            let filterPredicate: NSPredicate
-            filterPredicate = NSPredicate(format: "userId = %d", userId)
-            realmMailboxList = realmMailboxList.filter(filterPredicate)
+            realmMailboxList = realmMailboxList.where { $0.userId == userId }
         }
         return Array(realmMailboxList.map { $0.freeze() })
     }
