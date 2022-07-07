@@ -40,7 +40,7 @@ struct FolderCell: View {
             } else {
                 NavigationLink {
                     ThreadListView(mailboxManager: mailboxManager, folder: .constant(folder), isCompact: isCompact)
-                        .onAppear { selectedFolder = folder }
+                        .onAppear { selectedFolder = folder.thaw() }
                 } label: {
                     FolderCellContent(folder: folder, level: level, selectedFolder: $selectedFolder)
                 }
@@ -53,7 +53,7 @@ struct FolderCell: View {
     }
 
     private func updateFolder() {
-        selectedFolder = folder
+        selectedFolder = folder.thaw()
         navigationDrawerController.close()
     }
 }
