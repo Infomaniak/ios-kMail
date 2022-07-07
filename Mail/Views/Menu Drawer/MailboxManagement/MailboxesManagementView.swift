@@ -29,7 +29,7 @@ struct MailboxesManagementView: View {
     @State private var isExpanded = false
     @State private var avatarImage = Image(resource: MailResourcesAsset.placeholderAvatar)
 
-    @ObservedResults(Mailbox.self, configuration: MailboxInfosManager.instance.realmConfiguration, sortDescriptor: SortDescriptor(keyPath: \Mailbox.mailboxId)) private var mailboxes
+    @ObservedResults(Mailbox.self, configuration: MailboxInfosManager.instance.realmConfiguration, where: { $0.userId == AccountManager.instance.currentUserId }, sortDescriptor: SortDescriptor(keyPath: \Mailbox.mailboxId)) private var mailboxes
 
     private var otherMailboxes: [Mailbox] {
         return mailboxes.filter { $0.mailboxId != mailboxManager.mailbox.mailboxId }
