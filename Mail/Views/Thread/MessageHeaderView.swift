@@ -40,7 +40,7 @@ struct MessageHeaderView: View {
                                      deleteDraftTapped: deleteDraft) {
                 sheet.state = .reply(message, .reply)
             } moreButtonTapped: {
-                threadBottomSheet.open(state: .actions(.message(message)), position: .middle)
+                threadBottomSheet.open(state: .actions(.message(message.thaw() ?? message)), position: .middle)
             }
 
             if isHeaderExpanded {
