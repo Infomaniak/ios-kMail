@@ -25,60 +25,41 @@ import SwiftUI
 
 typealias Thread = MailCore.Thread
 
+protocol ThreadListSection {
+    var title: String { get }
+
+    func comformToSection(thread: Thread) -> Bool
+}
+
 @MainActor class ThreadListViewModel: ObservableObject {
-    enum SectionCategory: Hashable {
+    enum DateSection: ThreadListSection {
         case today
-        case week
-        case lastWeek
         case month
-        case year
-        case before(Date)
+        case older(Date)
 
         var title: String {
             switch self {
             case .today:
                 return MailResourcesStrings.Localizable.threadListSectionToday
-            case .week:
-                return MailResourcesStrings.Localizable.threadListSectionThisWeek
-            case .lastWeek:
-                return MailResourcesStrings.Localizable.threadListSectionLastWeek
             case .month:
                 return "Ce mois-ci"
-            case .year:
-                return "Cette année"
-            case let .before(date):
-                return date.formatted(date: .abbreviated, time: .omitted)
+            case let .older(date):
+                if Calendar.current.isDate(date, equalTo: Date(), toGranularity: .year) {
+                    return "Month"
+                }
+                return "Month Year"
             }
         }
 
-        private var origin: Date {
-            switch self {
-            case .today, .week, .month, .year:
-                return Date()
-            case .lastWeek:
-                return Calendar.current.date(byAdding: .weekOfYear, value: -1, to: Date())!
-            case .before(let date):
-                return date
-            }
-        }
-
-        var calendarComponents: Set<Calendar.Component> {
+        func comformToSection(thread: Thread) -> Bool {
             switch self {
             case .today:
-                return Set([.day, .month, .year])
-            case .week, .lastWeek:
-                return Set([.weekOfYear, .year])
+                return Calendar.current.isDateInToday(thread.date)
             case .month:
-                return Set([.month, .year])
-            case .year:
-                return Set([.year])
-            case .before:
-                return Set([.month, .year])
+                return Calendar.current.isDate(thread.date, equalTo: Date(), toGranularity: .weekOfYear)
+            case .older(let date):
+                return Calendar.current.isDate(thread.date, equalTo: date, toGranularity: .month)
             }
-        }
-
-        var dateComponents: DateComponents {
-            return Calendar.current.dateComponents(Set(calendarComponents), from: origin)
         }
     }
 
@@ -100,7 +81,7 @@ typealias Thread = MailCore.Thread
     private var observationThreadToken: NotificationToken?
     private var observationLastUpdateToken: NotificationToken?
 
-    @Published var sections = [SectionCategory: [Thread]]()
+    @Published var sections = KeyValuePairs<ThreadListSection, [Thread]>()
 
     @Published var filter = Filter.all {
         didSet {
@@ -215,30 +196,9 @@ typealias Thread = MailCore.Thread
     }
 
     func sortThreads() {
-        var sortOptions: [SectionCategory] = [.today, .week, .lastWeek, .month, .year]
-        var sortOptionIndex = 0
+        let newSections = KeyValuePairs<ThreadListSection, [Thread]>()
 
-        var sections = [SectionCategory: [Thread]]()
-        for thread in threads {
-            let currentSortOption = sortOptions[sortOptionIndex]
-            let currentCalendarComponents = Calendar.current.dateComponents(currentSortOption.calendarComponents, from: thread.date)
-
-            if currentCalendarComponents != currentSortOption.dateComponents {
-                if sortOptionIndex != sortOptions.count - 1 {
-                    sortOptionIndex += 1
-                } else {
-                    sortOptions.append(.before(thread.date))
-                    sortOptionIndex += 1
-                }
-            }
-
-            if sections[currentSortOption] == nil {
-                sections[currentSortOption] = []
-            }
-            sections[currentSortOption]?.append(thread)
-        }
-
-        self.sections = sections
+        self.sections = newSections
     }
 
     // MARK: - Swipe actions

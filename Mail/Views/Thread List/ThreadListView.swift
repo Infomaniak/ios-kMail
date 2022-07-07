@@ -93,11 +93,12 @@ struct ThreadListView: View {
                 }
 
                 List {
-                    ForEach(Array(viewModel.sections.keys), id: \.self) { section in
+                    ForEach(Array(viewModel.sections.indices), id: \.self) { sectionIndex in
                         Section {
-                            threadList(threads: viewModel.sections[section]!)
+                            threadList(threads: viewModel.sections[sectionIndex].value)
                         } header: {
-                            Text(section.title)
+                            Text(viewModel.sections[sectionIndex].key.title)
+                                .textStyle(.callout)
                         }
                     }
 
