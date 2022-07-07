@@ -147,6 +147,7 @@ enum SettingsOption: Equatable {
         case .cancelDelayOption:
             SettingsOptionView<CancelDelay>(
                 title: MailResourcesStrings.Localizable.settingsCancellationPeriodTitle,
+                subtitle: MailResourcesStrings.Localizable.settingsCancellationPeriodDescription,
                 keyPath: \.cancelSendDelay
             )
         case .forwardMessageOption:
