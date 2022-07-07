@@ -429,7 +429,7 @@ struct NewMessageView: View {
 
         let uti = UTType(typeIdentifier)
         var name = name
-        if let nameExtension = uti?.preferredFilenameExtension {
+        if let nameExtension = uti?.preferredFilenameExtension, !name.capitalized.hasSuffix(nameExtension.capitalized) {
             name.append(".\(nameExtension)")
         }
 
