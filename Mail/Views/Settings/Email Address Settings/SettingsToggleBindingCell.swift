@@ -17,9 +17,10 @@
  */
 
 import MailCore
+import MailResources
 import RealmSwift
 import SwiftUI
-import MailResources
+import InfomaniakCore
 
 struct SettingsToggleBindingCell: View {
     let title: String
@@ -45,12 +46,17 @@ struct SettingsToggleBindingCell: View {
         }, set: { value in
             viewModel.mailboxManager.updateSettings {
                 viewModel.settings[keyPath: keyPath] = value
-                Task {
-                    subtitle = viewModel.settings[keyPath: keyPath] == true ? MailResourcesStrings.Localizable.settingsEnabled : MailResourcesStrings.Localizable.settingsDisabled
-                    await tryOrDisplayError {
-                        _ = try await viewModel.mailboxManager.apiFetcher.updateFilters(ads: viewModel.settings.adsFilter, spam: viewModel.settings.spamFilter, mailbox: viewModel.mailboxManager.mailbox)
-                        //TODO: Handle error
+                subtitle = value == true ? MailResourcesStrings.Localizable.settingsEnabled : MailResourcesStrings.Localizable.settingsDisabled
+            }
+            Task {
+                do {
+                    _ = try await viewModel.mailboxManager.apiFetcher.updateFilters(ads: viewModel.settings.adsFilter, spam: viewModel.settings.spamFilter, mailbox: viewModel.mailboxManager.mailbox)
+                } catch {
+                    viewModel.mailboxManager.updateSettings {
+                        viewModel.settings[keyPath: keyPath] = !value
+                        subtitle = viewModel.settings[keyPath: keyPath] == true ? MailResourcesStrings.Localizable.settingsEnabled : MailResourcesStrings.Localizable.settingsDisabled
                     }
+                    IKSnackBar.showSnackBar(message: error.localizedDescription)
                 }
             }
         })) {
