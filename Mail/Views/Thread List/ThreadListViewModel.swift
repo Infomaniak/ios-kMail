@@ -25,52 +25,62 @@ import SwiftUI
 
 typealias Thread = MailCore.Thread
 
-protocol ThreadListSection {
-    var title: String { get }
+class DateSection: Identifiable {
+    enum ReferenceDate {
+        case today, month, older(Date)
+    }
 
-    func comformToSection(thread: Thread) -> Bool
+    var id: Int
+    var title: String {
+        switch referenceDate {
+        case .today:
+            return MailResourcesStrings.Localizable.threadListSectionToday
+        case .month:
+            return MailResourcesStrings.Localizable.threadListSectionThisMonth
+        case let .older(date):
+            let formatter = DateFormatter()
+            if Calendar.current.isDate(date, equalTo: .now, toGranularity: .year) {
+                formatter.dateFormat = "MMMM"
+            } else {
+                formatter.dateFormat = "MMMM yyyy"
+            }
+            return formatter.string(from: date).capitalized
+        }
+    }
+    var threads = [Thread]()
+
+    private var referenceDate: ReferenceDate
+
+    init(id: Int, thread: Thread) {
+        self.id = id
+        if Calendar.current.isDateInToday(thread.date) {
+            referenceDate = .today
+        } else if Calendar.current.isDate(thread.date, equalTo: .now, toGranularity: .month) {
+            referenceDate = .month
+        } else {
+            referenceDate = .older(thread.date)
+        }
+    }
+
+    func threadBelongsToSection(thread: Thread) -> Bool {
+        switch referenceDate {
+        case .today:
+            return Calendar.current.isDateInToday(thread.date)
+        case .month:
+            return Calendar.current.isDate(thread.date, equalTo: .now, toGranularity: .month)
+        case let .older(date):
+            return Calendar.current.isDate(thread.date, equalTo: date, toGranularity: .month)
+        }
+    }
 }
 
 @MainActor class ThreadListViewModel: ObservableObject {
-    enum DateSection: ThreadListSection {
-        case today
-        case month
-        case older(Date)
-
-        var title: String {
-            switch self {
-            case .today:
-                return MailResourcesStrings.Localizable.threadListSectionToday
-            case .month:
-                return "Ce mois-ci"
-            case let .older(date):
-                if Calendar.current.isDate(date, equalTo: Date(), toGranularity: .year) {
-                    return "Month"
-                }
-                return "Month Year"
-            }
-        }
-
-        func comformToSection(thread: Thread) -> Bool {
-            switch self {
-            case .today:
-                return Calendar.current.isDateInToday(thread.date)
-            case .month:
-                return Calendar.current.isDate(thread.date, equalTo: Date(), toGranularity: .weekOfYear)
-            case .older(let date):
-                return Calendar.current.isDate(thread.date, equalTo: date, toGranularity: .month)
-            }
-        }
-    }
-
     var mailboxManager: MailboxManager
 
+    var threads: [Thread] = []
+
     @Published var folder: Folder?
-    var threads: [Thread] = [] {
-        didSet {
-            sortThreads()
-        }
-    }
+    @Published var sections = [DateSection]()
     @Published var isLoadingPage = false
     @Published var lastUpdate: Date?
 
@@ -80,8 +90,6 @@ protocol ThreadListSection {
     private var resourceNext: String?
     private var observationThreadToken: NotificationToken?
     private var observationLastUpdateToken: NotificationToken?
-
-    @Published var sections = KeyValuePairs<ThreadListSection, [Thread]>()
 
     @Published var filter = Filter.all {
         didSet {
@@ -161,9 +169,11 @@ protocol ThreadListSection {
                 switch changes {
                 case let .initial(results):
                     self?.threads = Array(results.freezeIfNeeded())
+                    self?.sortThreadsIntoSections()
                 case let .update(results, _, _, _):
+                    self?.threads = Array(results.freezeIfNeeded())
                     withAnimation {
-                        self?.threads = Array(results.freezeIfNeeded())
+                        self?.sortThreadsIntoSections()
                     }
                 case .error:
                     break
@@ -195,8 +205,17 @@ protocol ThreadListSection {
         }
     }
 
-    func sortThreads() {
-        let newSections = KeyValuePairs<ThreadListSection, [Thread]>()
+    func sortThreadsIntoSections() {
+        var newSections = [DateSection]()
+
+        var currentSection: DateSection?
+        for thread in threads {
+            if currentSection?.threadBelongsToSection(thread: thread) != true {
+                currentSection = DateSection(id: newSections.count, thread: thread)
+                newSections.append(currentSection!)
+            }
+            currentSection?.threads.append(thread)
+        }
 
         self.sections = newSections
     }

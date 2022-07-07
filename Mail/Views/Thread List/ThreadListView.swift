@@ -52,6 +52,8 @@ struct ThreadListView: View {
     @EnvironmentObject var menuSheet: MenuSheet
     @EnvironmentObject var globalBottomSheet: GlobalBottomSheet
 
+    @AppStorage(UserDefaults.shared.key(.threadDensity)) var threadDensity = ThreadDensity.normal
+
     @Binding var currentFolder: Folder?
 
     @State private var avatarImage = Image(resource: MailResourcesAsset.placeholderAvatar)
@@ -93,12 +95,14 @@ struct ThreadListView: View {
                 }
 
                 List {
-                    ForEach(Array(viewModel.sections.indices), id: \.self) { sectionIndex in
+                    ForEach(viewModel.sections) { section in
                         Section {
-                            threadList(threads: viewModel.sections[sectionIndex].value)
+                            threadList(threads: section.threads)
                         } header: {
-                            Text(viewModel.sections[sectionIndex].key.title)
-                                .textStyle(.callout)
+                            if threadDensity != .compact {
+                                Text(section.title)
+                                    .textStyle(.calloutSecondary)
+                            }
                         }
                     }
 
@@ -113,7 +117,7 @@ struct ThreadListView: View {
                 }
                 .listStyle(.plain)
                 .introspectTableView { tableView in
-                    tableView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: 60, right: 0)
+                    tableView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: 100, right: 0)
                 }
             }
             .appShadow()
