@@ -303,6 +303,7 @@ public class MailboxManager: ObservableObject {
         let realm = getRealm()
         if let liveThread = thread.thaw() {
             try? realm.safeWrite {
+                liveThread.parent?.unreadCount = (liveThread.parent?.unreadCount ?? 0) - liveThread.unseenMessages
                 realm.delete(liveThread.messages)
                 realm.delete(liveThread)
             }
@@ -382,8 +383,10 @@ public class MailboxManager: ObservableObject {
     private func moveLocally(thread: Thread, to folder: Folder, using realm: Realm? = nil) throws {
         let realm = realm ?? getRealm()
         try realm.safeWrite {
+            thread.parent?.unreadCount = (thread.parent?.unreadCount ?? 0) - thread.unseenMessages
             thread.parent?.threads.remove(thread)
             folder.threads.insert(thread)
+            folder.unreadCount = (folder.unreadCount ?? 0) + thread.unseenMessages
             for message in thread.messages {
                 message.folder = folder.name
                 message.folderId = folder._id
@@ -540,10 +543,12 @@ public class MailboxManager: ObservableObject {
         try realm.safeWrite {
             for message in messages {
                 if let liveMessage = message.thaw() {
+                    liveMessage.parent?.updateUnseenMessages()
                     liveMessage.folder = folder.name
                     liveMessage.folderId = folder._id
                 }
             }
+            folder.thaw()?.updateUnreadCount()
         }
     }
 
