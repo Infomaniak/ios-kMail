@@ -67,6 +67,7 @@ struct SettingsToggleBindingCell: View {
                     .textStyle(.calloutSecondary)
             }
         }
+        .tint(.accentColor)
     }
 }
 
