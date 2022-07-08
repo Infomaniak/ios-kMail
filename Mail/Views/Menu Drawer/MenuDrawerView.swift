@@ -16,6 +16,7 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import InfomaniakBugTracker
 import MailCore
 import MailResources
 import RealmSwift
@@ -202,7 +203,15 @@ struct MenuDrawerView: View {
     // MARK: - Menu actions
 
     func sendFeedback() {
-        openURL(URLConstants.feedback.url)
+        if AccountManager.instance.currentAccount?.user?.isStaff == true {
+            BugTracker.instance.configure(with: BugTrackerInfo(
+                accessToken: AccountManager.instance.currentAccount.token.accessToken,
+                project: "app-mobile-mail"
+            ))
+            menuSheet.state = .bugTracker
+        } else {
+            openURL(URLConstants.feedback.url)
+        }
     }
 
     func openHelp() {

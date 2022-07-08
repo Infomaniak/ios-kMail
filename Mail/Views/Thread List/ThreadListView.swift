@@ -33,6 +33,7 @@ class MenuSheet: SheetState<MenuSheet.State> {
         case switchAccount
         case settings
         case help
+        case bugTracker
     }
 }
 

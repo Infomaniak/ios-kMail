@@ -37,7 +37,8 @@ let project = Project(name: "Mail",
                           .package(url: "https://github.com/Ambrdctr/SQRichTextEditor", .branch("master")),
                           .package(url: "https://github.com/markiv/SwiftUI-Shimmer", .upToNextMajor(from: "1.0.1")),
                           .package(url: "https://github.com/lucaszischka/BottomSheet", .upToNextMajor(from: "2.7.0")),
-                          .package(url: "https://github.com/dkk/WrappingHStack", .upToNextMajor(from: "2.0.0"))
+                          .package(url: "https://github.com/dkk/WrappingHStack", .upToNextMajor(from: "2.0.0")),
+                          .package(url: "git@github.com:Infomaniak/ios-bug-tracker.git", .upToNextMajor(from: "1.0.0"))
                       ],
                       targets: [
                           Target(name: "Mail",
@@ -65,7 +66,8 @@ let project = Project(name: "Mail",
                                      .package(product: "Introspect"),
                                      .package(product: "SQRichTextEditor"),
                                      .package(product: "Shimmer"),
-                                     .package(product: "WrappingHStack")
+                                     .package(product: "WrappingHStack"),
+                                     .package(product: "InfomaniakBugTracker")
                                  ],
                                  settings: .settings(base: baseSettings),
                                  environment: ["hostname": "\(ProcessInfo.processInfo.hostName)."]),

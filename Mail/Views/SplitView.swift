@@ -17,13 +17,14 @@
  */
 
 import BottomSheet
+import InfomaniakBugTracker
 import InfomaniakCore
 import Introspect
 import MailCore
+import MailResources
 import RealmSwift
 import SwiftUI
 
-import MailResources
 class GlobalBottomSheet: BottomSheetState<GlobalBottomSheet.State, GlobalBottomSheet.Position> {
     enum State {
         case move(moveHandler: (Folder) -> Void)
@@ -157,6 +158,8 @@ struct SplitView: View {
                 SheetView(isPresented: $menuSheet.isShowing) {
                     HelpView()
                 }
+            case .bugTracker:
+                BugTrackerView(isPresented: $menuSheet.isShowing)
             case .none:
                 EmptyView()
             }
@@ -164,9 +167,9 @@ struct SplitView: View {
         .environmentObject(bottomSheet)
         .bottomSheet(bottomSheetPosition: $bottomSheet.position, options: bottomSheetOptions) {
             switch bottomSheet.state {
-            case .move(let moveHandler):
+            case let .move(moveHandler):
                 MoveEmailView(mailboxManager: mailboxManager, state: bottomSheet, moveHandler: moveHandler)
-            case .createNewFolder(let mode):
+            case let .createNewFolder(mode):
                 CreateFolderView(mailboxManager: mailboxManager, state: bottomSheet, mode: mode)
             case .getMoreStorage:
                 MoreStorageView(state: bottomSheet)
