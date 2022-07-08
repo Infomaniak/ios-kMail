@@ -134,7 +134,7 @@ public enum SwipeAction: String, CaseIterable, SettingsOptionEnum {
         }
 
         if let resource = resource {
-            return Image(uiImage: resource.image)
+            return Image(resource.name)
         } else {
             return nil
         }

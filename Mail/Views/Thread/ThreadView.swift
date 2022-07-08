@@ -114,6 +114,7 @@ struct ThreadView: View {
                 }
             }
         }
+        .background(MailResourcesAsset.backgroundColor.swiftUiColor)
         .coordinateSpace(name: "scrollView")
         .onPreferenceChange(ScrollOffsetPreferenceKey.self) { offset in
             displayNavigationTitle = offset.y < -85

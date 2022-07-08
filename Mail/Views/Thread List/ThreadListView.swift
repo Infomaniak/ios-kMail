@@ -89,7 +89,9 @@ struct ThreadListView: View {
                              unreadFilterOn: $viewModel.filterUnreadOn)
 
             ZStack {
-                if viewModel.sections.isEmpty && !viewModel.isLoadingPage {
+                MailResourcesAsset.backgroundColor.swiftUiColor
+
+                if $viewModel.sections.isEmpty && !viewModel.isLoadingPage {
                     EmptyListView()
                 }
 

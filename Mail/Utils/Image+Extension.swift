@@ -21,6 +21,6 @@ import SwiftUI
 
 public extension Image {
     init(resource: MailResourcesImages) {
-        self.init(uiImage: resource.image)
+        self.init(resource.name)
     }
 }

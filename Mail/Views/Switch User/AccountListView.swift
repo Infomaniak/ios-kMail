@@ -40,6 +40,7 @@ struct AccountListView: View {
             }
             .padding(8)
         }
+        .background(MailResourcesAsset.backgroundColor.swiftUiColor)
         .navigationBarTitle(MailResourcesStrings.Localizable.titleMyAccounts, displayMode: .inline)
         .floatingActionButton(icon: Image(systemName: "plus"), title: MailResourcesStrings.Localizable.buttonAddAccount) {
             sheet.state = .addAccount

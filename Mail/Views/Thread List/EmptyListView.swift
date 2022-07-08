@@ -33,6 +33,7 @@ struct EmptyListView: View {
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .padding(48)
+        .background(MailResourcesAsset.backgroundColor.swiftUiColor)
     }
 }
 

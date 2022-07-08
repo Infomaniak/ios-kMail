@@ -37,15 +37,16 @@ public enum ThreadDensity: String, CaseIterable, SettingsOptionEnum {
     }
 
     public var image: Image? {
+        let accentColor = UserDefaults.shared.accentColor
         let resource: MailResourcesImages
         switch self {
         case .normal:
-            resource = MailResourcesAsset.defaultList
+            resource = accentColor == .pink ? MailResourcesAsset.defaultListPink : MailResourcesAsset.defaultListBlue
         case .large:
-            resource = MailResourcesAsset.normalList
+            resource = accentColor == .pink ? MailResourcesAsset.largeListPink : MailResourcesAsset.largeListBlue
         case .compact:
-            resource = MailResourcesAsset.compactList
+            resource = accentColor == .pink ? MailResourcesAsset.compactListPink : MailResourcesAsset.compactListBlue
         }
-        return Image(uiImage: resource.image)
+        return Image(resource.name)
     }
 }

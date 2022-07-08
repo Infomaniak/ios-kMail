@@ -20,12 +20,18 @@ import MailResources
 import SwiftUI
 
 struct AppShadowModifier: ViewModifier {
-    func body(content: Content) -> some View {
-        ZStack {
-            MailResourcesAsset.backgroundColor.swiftUiColor
-                .ignoresSafeArea()
-                .shadow(color: .primary.opacity(0.08), radius: 7, x: 0, y: -1)
+    @Environment(\.colorScheme) var colorScheme
 
+    func body(content: Content) -> some View {
+        if colorScheme == .light {
+            ZStack {
+                MailResourcesAsset.backgroundColor.swiftUiColor
+                    .ignoresSafeArea()
+                    .shadow(color: .primary.opacity(0.08), radius: 7, x: 0, y: -1)
+
+                content
+            }
+        } else {
             content
         }
     }

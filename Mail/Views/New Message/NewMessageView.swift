@@ -151,6 +151,7 @@ struct NewMessageView: View {
                 }
                 .disabled(sendDisabled)
             )
+            .background(MailResourcesAsset.backgroundColor.swiftUiColor)
         }
         .onChange(of: draft) { _ in
             textDidChange()

@@ -207,8 +207,8 @@ class MailEditor: SQTextEditorView {
 
     public func getToolbar() -> UIToolbar {
         let toolbar = UIToolbar(frame: CGRect(x: 0, y: 0, width: 320, height: 55))
-        toolbar.tintColor = MailResourcesAsset.secondaryTextColor.color
-        toolbar.barTintColor = MailResourcesAsset.backgroundColor.color
+        toolbar.tintColor = MailResourcesAsset.toolbarEditorTextColor.color
+        toolbar.barTintColor = MailResourcesAsset.backgroundToolbarEditorColor.color
         toolbar.isTranslucent = false
 
         // Shadow

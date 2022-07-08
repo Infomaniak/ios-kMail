@@ -3,6 +3,16 @@
     {
       "filename" : "compact-list.svg",
       "idiom" : "universal"
+    },
+    {
+      "appearances" : [
+        {
+          "appearance" : "luminosity",
+          "value" : "dark"
+        }
+      ],
+      "filename" : "Large.svg",
+      "idiom" : "universal"
     }
   ],
   "info" : {

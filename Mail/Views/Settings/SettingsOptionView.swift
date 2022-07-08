@@ -84,6 +84,7 @@ struct SettingsOptionView<OptionEnum>: View where OptionEnum: CaseIterable, Opti
                         }
                     }
                 }
+                .listRowBackground(MailResourcesAsset.backgroundColor.swiftUiColor)
                 .listRowSeparator(.hidden)
                 .listRowInsets(.init())
             } header: {
@@ -96,6 +97,7 @@ struct SettingsOptionView<OptionEnum>: View where OptionEnum: CaseIterable, Opti
             }
         }
         .listStyle(.plain)
+        .background(MailResourcesAsset.backgroundColor.swiftUiColor)
         .navigationBarTitle(title, displayMode: .inline)
         .onAppear {
             updateOptions()

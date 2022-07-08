@@ -46,7 +46,7 @@ struct MenuHeaderView: View {
         .padding(.vertical, 16)
         .padding(.leading, 18)
         .padding(.trailing, 14)
-        .background(MailResourcesAsset.backgroundColor.swiftUiColor)
+        .background(MailResourcesAsset.backgroundMenuDrawer.swiftUiColor)
         .clipped()
         .shadow(color: MailResourcesAsset.menuDrawerShadowColor.swiftUiColor, radius: 2, x: 0, y: 3)
     }
