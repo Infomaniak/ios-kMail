@@ -28,7 +28,9 @@ struct RecipientImage: View {
         if recipient.isCurrentUser,
            let url = URL(string: AccountManager.instance.currentAccount.user.avatar) {
             AsyncImage(url: url) { image in
-                image.resizable()
+                image
+                    .resizable()
+                    .scaledToFit()
             } placeholder: {
                 Color.gray
             }

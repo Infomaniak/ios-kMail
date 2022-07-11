@@ -16,8 +16,8 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import SwiftUI
 import MailCore
+import SwiftUI
 
 struct ContactImage: View {
     var contact: MergedContact
@@ -28,6 +28,7 @@ struct ContactImage: View {
             if let image = image {
                 Image(uiImage: image)
                     .resizable()
+                    .scaledToFit()
             } else {
                 Rectangle()
                     .fill(Color.gray)

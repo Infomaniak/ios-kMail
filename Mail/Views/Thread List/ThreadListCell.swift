@@ -80,7 +80,7 @@ struct ThreadListCell: View {
                 }
                 .padding(.bottom, 4)
 
-                HStack(spacing: 3) {
+                HStack(alignment: .top, spacing: 3) {
                     VStack(alignment: .leading) {
                         Text(thread.formattedSubject)
                             .textStyle(textStyle)
@@ -97,11 +97,18 @@ struct ThreadListCell: View {
 
                     Spacer()
 
-                    if thread.flagged {
-                        Image(resource: MailResourcesAsset.starFull)
-                            .resizable()
-                            .scaledToFit()
-                            .frame(width: 20, height: 20)
+                    VStack(spacing: 4) {
+                        if thread.flagged {
+                            Image(resource: MailResourcesAsset.starFull)
+                                .resizable()
+                                .scaledToFit()
+                                .frame(width: 20, height: 20)
+                        }
+
+                        if thread.messagesCount > 1 {
+                            Text("\(thread.messagesCount)")
+                                .textStyle(.bodySecondary)
+                        }
                     }
                 }
             }
