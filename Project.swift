@@ -66,8 +66,7 @@ let project = Project(name: "Mail",
                                      .package(product: "Introspect"),
                                      .package(product: "SQRichTextEditor"),
                                      .package(product: "Shimmer"),
-                                     .package(product: "WrappingHStack"),
-                                     .package(product: "InfomaniakBugTracker")
+                                     .package(product: "WrappingHStack")
                                  ],
                                  settings: .settings(base: baseSettings),
                                  environment: ["hostname": "\(ProcessInfo.processInfo.hostName)."]),
@@ -122,7 +121,8 @@ let project = Project(name: "Mail",
                                   .package(product: "CocoaLumberjackSwift"),
                                   .package(product: "RealmSwift"),
                                   .package(product: "SwiftRegex"),
-                                  .package(product: "BottomSheet")
+                                  .package(product: "BottomSheet"),
+                                  .package(product: "InfomaniakBugTracker")
                               ],
                               settings: .settings(base: baseSettings)
                           )

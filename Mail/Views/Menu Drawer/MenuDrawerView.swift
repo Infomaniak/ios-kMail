@@ -204,10 +204,7 @@ struct MenuDrawerView: View {
 
     func sendFeedback() {
         if AccountManager.instance.currentAccount?.user?.isStaff == true {
-            BugTracker.instance.configure(with: BugTrackerInfo(
-                accessToken: AccountManager.instance.currentAccount.token.accessToken,
-                project: "app-mobile-mail"
-            ))
+            BugTracker.configureForMail()
             menuSheet.state = .bugTracker
         } else {
             openURL(URLConstants.feedback.url)
