@@ -38,7 +38,7 @@ class GlobalBottomSheet: BottomSheetState<GlobalBottomSheet.State, GlobalBottomS
 }
 
 struct SplitView: View {
-    @ObservedObject var mailboxManager = AccountManager.instance.currentMailboxManager!
+    @ObservedObject var mailboxManager: MailboxManager
     @State var selectedFolder: Folder?
     @State var splitViewController: UISplitViewController?
     @StateObject private var navigationDrawerController = NavigationDrawerController()
@@ -55,7 +55,8 @@ struct SplitView: View {
         sizeClass == .compact
     }
 
-    init() {
+    init(mailboxManager: MailboxManager) {
+        self.mailboxManager = mailboxManager
         _selectedFolder = State(wrappedValue: getInbox())
     }
 
