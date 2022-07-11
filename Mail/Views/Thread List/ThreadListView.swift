@@ -90,7 +90,7 @@ struct ThreadListView: View {
                              unreadFilterOn: $viewModel.filterUnreadOn)
 
             ZStack {
-                if viewModel.threads.isEmpty && !viewModel.isLoadingPage {
+                if viewModel.sections.isEmpty && !viewModel.isLoadingPage {
                     EmptyListView()
                 }
 

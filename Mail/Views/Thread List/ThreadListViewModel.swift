@@ -38,13 +38,11 @@ class DateSection: Identifiable {
         case .month:
             return MailResourcesStrings.Localizable.threadListSectionThisMonth
         case let .older(date):
-            let formatter = DateFormatter()
-            if Calendar.current.isDate(date, equalTo: .now, toGranularity: .year) {
-                formatter.dateFormat = "MMMM"
-            } else {
-                formatter.dateFormat = "MMMM yyyy"
+            var formatStyle = Date.FormatStyle.dateTime.month(.wide)
+            if !Calendar.current.isDate(date, equalTo: .now, toGranularity: .year) {
+                formatStyle = formatStyle.year()
             }
-            return formatter.string(from: date).capitalized
+            return date.formatted(formatStyle).capitalized
         }
     }
     var threads = [Thread]()
@@ -76,8 +74,6 @@ class DateSection: Identifiable {
 
 @MainActor class ThreadListViewModel: ObservableObject {
     var mailboxManager: MailboxManager
-
-    var threads: [Thread] = []
 
     @Published var folder: Folder?
     @Published var sections = [DateSection]()
@@ -168,12 +164,10 @@ class DateSection: Identifiable {
             observationThreadToken = threadResults.observe(on: .main) { [weak self] changes in
                 switch changes {
                 case let .initial(results):
-                    self?.threads = Array(results.freezeIfNeeded())
-                    self?.sortThreadsIntoSections()
+                    self?.sortThreadsIntoSections(threads: Array(results.freezeIfNeeded()))
                 case let .update(results, _, _, _):
-                    self?.threads = Array(results.freezeIfNeeded())
                     withAnimation {
-                        self?.sortThreadsIntoSections()
+                        self?.sortThreadsIntoSections(threads: Array(results.freezeIfNeeded()))
                     }
                 case .error:
                     break
@@ -190,22 +184,22 @@ class DateSection: Identifiable {
                 }
             }
         } else {
-            threads = []
+            sections = []
         }
     }
 
     func loadNextPageIfNeeded(currentItem: Thread) {
         // Start loading next page when we reach the second-to-last item
-        guard !threads.isEmpty else { return }
-        let thresholdIndex = threads.index(threads.endIndex, offsetBy: -1)
-        if threads.firstIndex(where: { $0.uid == currentItem.uid }) == thresholdIndex {
+        guard !sections.isEmpty, let lastSection = sections.last else { return }
+        let thresholdIndex = lastSection.threads.index(lastSection.threads.endIndex, offsetBy: -1)
+        if lastSection.threads.firstIndex(where: { $0.uid == currentItem.uid }) == thresholdIndex {
             Task {
                 await fetchNextPage()
             }
         }
     }
 
-    func sortThreadsIntoSections() {
+    func sortThreadsIntoSections(threads: [Thread]) {
         var newSections = [DateSection]()
 
         var currentSection: DateSection?
