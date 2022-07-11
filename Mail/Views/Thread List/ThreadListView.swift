@@ -52,6 +52,8 @@ struct ThreadListView: View {
     @EnvironmentObject var menuSheet: MenuSheet
     @EnvironmentObject var globalBottomSheet: GlobalBottomSheet
 
+    @AppStorage(UserDefaults.shared.key(.threadDensity)) var threadDensity = ThreadDensity.normal
+
     @Binding var currentFolder: Folder?
 
     @State private var avatarImage = Image(resource: MailResourcesAsset.placeholderAvatar)
@@ -88,36 +90,19 @@ struct ThreadListView: View {
                              unreadFilterOn: $viewModel.filterUnreadOn)
 
             ZStack {
-                if viewModel.threads.isEmpty && !viewModel.isLoadingPage {
+                if viewModel.sections.isEmpty && !viewModel.isLoadingPage {
                     EmptyListView()
                 }
 
                 List {
-                    ForEach(viewModel.threads) { thread in
-                        Group {
-                            if currentFolder?.role == .draft {
-                                Button(action: {
-                                    editDraft(from: thread)
-                                }, label: {
-                                    ThreadListCell(mailboxManager: viewModel.mailboxManager, thread: thread)
-                                })
-                            } else {
-                                NavigationLink(destination: {
-                                    ThreadView(mailboxManager: viewModel.mailboxManager, thread: thread, navigationController: navigationController)
-                                        .onAppear { selectedThread = thread }
-                                }, label: {
-                                    ThreadListCell(mailboxManager: viewModel.mailboxManager, thread: thread)
-                                })
+                    ForEach(viewModel.sections) { section in
+                        Section {
+                            threadList(threads: section.threads)
+                        } header: {
+                            if threadDensity != .compact {
+                                Text(section.title)
+                                    .textStyle(.calloutSecondary)
                             }
-                        }
-                        .listRowInsets(.init(top: 0, leading: 12, bottom: 0, trailing: 12))
-                        .listRowSeparator(.hidden)
-                        .listRowBackground(selectedThread == thread
-                            ? MailResourcesAsset.backgroundCardSelectedColor.swiftUiColor
-                            : MailResourcesAsset.backgroundColor.swiftUiColor)
-                        .modifier(ThreadListSwipeAction(thread: thread, viewModel: viewModel))
-                        .onAppear {
-                            viewModel.loadNextPageIfNeeded(currentItem: thread)
                         }
                     }
 
@@ -132,7 +117,7 @@ struct ThreadListView: View {
                 }
                 .listStyle(.plain)
                 .introspectTableView { tableView in
-                    tableView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: 60, right: 0)
+                    tableView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: 100, right: 0)
                 }
             }
             .appShadow()
@@ -185,6 +170,36 @@ struct ThreadListView: View {
         }
         .refreshable {
             await viewModel.fetchThreads()
+        }
+    }
+
+    func threadList(threads: [Thread]) -> some View {
+        ForEach(threads) { thread in
+            Group {
+                if currentFolder?.role == .draft {
+                    Button(action: {
+                        editDraft(from: thread)
+                    }, label: {
+                        ThreadListCell(mailboxManager: viewModel.mailboxManager, thread: thread)
+                    })
+                } else {
+                    NavigationLink(destination: {
+                        ThreadView(mailboxManager: viewModel.mailboxManager, thread: thread, navigationController: navigationController)
+                            .onAppear { selectedThread = thread }
+                    }, label: {
+                        ThreadListCell(mailboxManager: viewModel.mailboxManager, thread: thread)
+                    })
+                }
+            }
+            .listRowInsets(.init(top: 0, leading: 12, bottom: 0, trailing: 12))
+            .listRowSeparator(.hidden)
+            .listRowBackground(selectedThread == thread
+                ? MailResourcesAsset.backgroundCardSelectedColor.swiftUiColor
+                : MailResourcesAsset.backgroundColor.swiftUiColor)
+            .modifier(ThreadListSwipeAction(thread: thread, viewModel: viewModel))
+            .onAppear {
+                viewModel.loadNextPageIfNeeded(currentItem: thread)
+            }
         }
     }
 

@@ -25,11 +25,58 @@ import SwiftUI
 
 typealias Thread = MailCore.Thread
 
+class DateSection: Identifiable {
+    enum ReferenceDate {
+        case today, month, older(Date)
+    }
+
+    var id: Int
+    var title: String {
+        switch referenceDate {
+        case .today:
+            return MailResourcesStrings.Localizable.threadListSectionToday
+        case .month:
+            return MailResourcesStrings.Localizable.threadListSectionThisMonth
+        case let .older(date):
+            var formatStyle = Date.FormatStyle.dateTime.month(.wide)
+            if !Calendar.current.isDate(date, equalTo: .now, toGranularity: .year) {
+                formatStyle = formatStyle.year()
+            }
+            return date.formatted(formatStyle).capitalized
+        }
+    }
+    var threads = [Thread]()
+
+    private var referenceDate: ReferenceDate
+
+    init(id: Int, thread: Thread) {
+        self.id = id
+        if Calendar.current.isDateInToday(thread.date) {
+            referenceDate = .today
+        } else if Calendar.current.isDate(thread.date, equalTo: .now, toGranularity: .month) {
+            referenceDate = .month
+        } else {
+            referenceDate = .older(thread.date)
+        }
+    }
+
+    func threadBelongsToSection(thread: Thread) -> Bool {
+        switch referenceDate {
+        case .today:
+            return Calendar.current.isDateInToday(thread.date)
+        case .month:
+            return Calendar.current.isDate(thread.date, equalTo: .now, toGranularity: .month)
+        case let .older(date):
+            return Calendar.current.isDate(thread.date, equalTo: date, toGranularity: .month)
+        }
+    }
+}
+
 @MainActor class ThreadListViewModel: ObservableObject {
     var mailboxManager: MailboxManager
 
     @Published var folder: Folder?
-    @Published var threads: [Thread] = []
+    @Published var sections = [DateSection]()
     @Published var isLoadingPage = false
     @Published var lastUpdate: Date?
 
@@ -117,10 +164,10 @@ typealias Thread = MailCore.Thread
             observationThreadToken = threadResults.observe(on: .main) { [weak self] changes in
                 switch changes {
                 case let .initial(results):
-                    self?.threads = Array(results.freezeIfNeeded())
+                    self?.sortThreadsIntoSections(threads: Array(results.freezeIfNeeded()))
                 case let .update(results, _, _, _):
                     withAnimation {
-                        self?.threads = Array(results.freezeIfNeeded())
+                        self?.sortThreadsIntoSections(threads: Array(results.freezeIfNeeded()))
                     }
                 case .error:
                     break
@@ -137,19 +184,34 @@ typealias Thread = MailCore.Thread
                 }
             }
         } else {
-            threads = []
+            sections = []
         }
     }
 
     func loadNextPageIfNeeded(currentItem: Thread) {
         // Start loading next page when we reach the second-to-last item
-        guard !threads.isEmpty else { return }
-        let thresholdIndex = threads.index(threads.endIndex, offsetBy: -1)
-        if threads.firstIndex(where: { $0.uid == currentItem.uid }) == thresholdIndex {
+        guard !sections.isEmpty, let lastSection = sections.last else { return }
+        let thresholdIndex = lastSection.threads.index(lastSection.threads.endIndex, offsetBy: -1)
+        if lastSection.threads.firstIndex(where: { $0.uid == currentItem.uid }) == thresholdIndex {
             Task {
                 await fetchNextPage()
             }
         }
+    }
+
+    func sortThreadsIntoSections(threads: [Thread]) {
+        var newSections = [DateSection]()
+
+        var currentSection: DateSection?
+        for thread in threads {
+            if currentSection?.threadBelongsToSection(thread: thread) != true {
+                currentSection = DateSection(id: newSections.count, thread: thread)
+                newSections.append(currentSection!)
+            }
+            currentSection?.threads.append(thread)
+        }
+
+        self.sections = newSections
     }
 
     // MARK: - Swipe actions
