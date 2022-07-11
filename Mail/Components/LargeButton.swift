@@ -18,13 +18,18 @@
 
 import SwiftUI
 
-struct LargeButton: View {
-    let title: String
+struct LargeButton<Label>: View where Label: View {
     let action: () -> Void
+    let label: Label
+
+    init(action: @escaping () -> Void, @ViewBuilder label: () -> Label) {
+        self.action = action
+        self.label = label()
+    }
 
     var body: some View {
         Button(action: action) {
-            Text(title)
+            label
                 .textStyle(.buttonPill)
                 .padding(.vertical, 10)
                 .frame(maxWidth: .infinity)
@@ -32,6 +37,14 @@ struct LargeButton: View {
         .buttonStyle(.borderedProminent)
         .buttonBorderShape(.roundedRectangle(radius: 16))
         .padding(.horizontal, 24)
+    }
+}
+
+extension LargeButton where Label == Text {
+    init(title: String, action: @escaping () -> Void) {
+        self.init(action: action) {
+            Text(title)
+        }
     }
 }
 

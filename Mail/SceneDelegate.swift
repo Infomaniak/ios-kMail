@@ -141,7 +141,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, AccountManagerDelegate 
     }
 
     func showNoMailboxView(animated: Bool = true) {
-        // TODO: No mailbox view
+        setRootView(NoMailboxView(), animated: animated)
     }
 
     func showMainView(animated: Bool = true) {
