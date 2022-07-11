@@ -56,7 +56,7 @@ struct ThreadView: View {
     private var mailboxManager: MailboxManager
     private var navigationController: UINavigationController?
 
-    @State private var scrollOffset: CGPoint = .zero
+    @State private var displayNavigationTitle = false
     @StateObject private var sheet = MessageSheet()
     @StateObject private var bottomSheet = MessageBottomSheet()
     @StateObject private var threadBottomSheet = ThreadBottomSheet()
@@ -77,10 +77,6 @@ struct ThreadView: View {
         return Array(thread.messages)
             .filter { $0.isDuplicate != true && (isTrashFolder || $0.folderId != trashId) }
             .sorted { $0.date.compare($1.date) == .orderedAscending }
-    }
-
-    private var displayNavigationTitle: Bool {
-        return scrollOffset.y < -85
     }
 
     init(mailboxManager: MailboxManager, thread: Thread, navigationController: UINavigationController?) {
@@ -107,7 +103,7 @@ struct ThreadView: View {
                 .padding(.top, 8)
                 .padding(.horizontal, 16)
 
-            VStack(spacing: 0) {
+            LazyVStack(spacing: 0) {
                 ForEach(messages.indices, id: \.self) { index in
                     let isMessageExpanded = ((index == messages.count - 1) && !messages[index].isDraft) || !messages[index].seen
                     MessageView(message: messages[index], isMessageExpanded: isMessageExpanded)
@@ -120,7 +116,7 @@ struct ThreadView: View {
         }
         .coordinateSpace(name: "scrollView")
         .onPreferenceChange(ScrollOffsetPreferenceKey.self) { offset in
-            scrollOffset = offset
+            displayNavigationTitle = offset.y < -85
         }
         .navigationTitle(displayNavigationTitle ? thread.formattedSubject : "")
         .backButtonDisplayMode(.minimal)
