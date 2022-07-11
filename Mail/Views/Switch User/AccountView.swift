@@ -120,9 +120,7 @@ struct AccountView: View {
                 Image(systemName: "xmark")
             })
             .padding(.vertical, 42)
-            .appShadow(withPadding: true)
         }
-        .navigationBarAppStyle()
         .task {
             avatarImage = await account.user.getAvatar()
         }

@@ -36,7 +36,6 @@ struct SheetView<Content>: View where Content: View {
                     Image(systemName: "xmark")
                 })
         }
-        .navigationBarAppStyle()
     }
 }
 

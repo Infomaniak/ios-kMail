@@ -57,7 +57,6 @@ struct SettingsSwipeActionsView: View {
         .listStyle(.plain)
         .navigationBarTitle(viewModel.title, displayMode: .inline)
         .backButtonDisplayMode(.minimal)
-        .appShadow(withPadding: true)
         .onAppear {
             viewModel.updateSelectedValue()
         }
