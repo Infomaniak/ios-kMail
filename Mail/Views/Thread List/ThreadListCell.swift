@@ -62,6 +62,8 @@ struct ThreadListCell: View {
                         Text("(\(MailResourcesStrings.Localizable.messageIsDraftOption))")
                             .foregroundColor(MailResourcesAsset.redActionColor)
                             .textStyle(hasUnreadMessages ? .header2 : .header2Secondary)
+                            .lineLimit(1)
+                            .layoutPriority(1)
                     }
                     Text(thread.messages.allSatisfy(\.isDraft) ? thread.formattedTo : thread.formattedFrom)
                         .textStyle(hasUnreadMessages ? .header2 : .header2Secondary)
@@ -77,6 +79,7 @@ struct ThreadListCell: View {
 
                     Text(thread.date.customRelativeFormatted)
                         .textStyle(hasUnreadMessages ? .calloutStrong : .calloutSecondary)
+                        .lineLimit(1)
                 }
                 .padding(.bottom, 4)
 
@@ -108,6 +111,7 @@ struct ThreadListCell: View {
                         if thread.messagesCount > 1 {
                             Text("\(thread.messagesCount)")
                                 .textStyle(.bodySecondary)
+                                .lineLimit(1)
                         }
                     }
                 }
