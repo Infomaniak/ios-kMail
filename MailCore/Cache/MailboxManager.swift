@@ -549,6 +549,9 @@ public class MailboxManager: ObservableObject {
                 }
             }
             folder.thaw()?.updateUnreadCount()
+            if messages.count == 1, let thread = messages.first?.parent?.thaw() {
+                thread.parent?.threads.remove(thread)
+            }
         }
     }
 
