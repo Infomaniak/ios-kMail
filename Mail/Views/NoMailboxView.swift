@@ -39,6 +39,7 @@ struct NoMailboxView: View {
                 .padding(.bottom, 40)
             LargeButton {
                 // TODO: Add email address
+                showWorkInProgressSnackBar()
             } label: {
                 Label(MailResourcesStrings.Localizable.buttonAddEmailAddress, systemImage: "plus")
             }

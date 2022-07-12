@@ -76,8 +76,10 @@ struct AttachmentPreviewFooter: View {
         }
     }
 
+    @MainActor
     private func downloadAttachment() {
         // TODO: Download attachment
+        showWorkInProgressSnackBar()
     }
 }
 
