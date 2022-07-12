@@ -25,4 +25,23 @@ public class MailboxSettings: Object {
 
     @Persisted public var adsFilter: Bool
     @Persisted public var spamFilter: Bool
+
+    @Persisted public var mailboxHosting: MailboxHosting?
+}
+
+public class MailboxHosting: Object, Codable {
+    @Persisted public var mailboxName: String
+    @Persisted public var mailbox: String
+    @Persisted public var mailboxIdn: String
+    @Persisted public var note: String?
+    @Persisted public var isLimited: Bool
+    @Persisted public var isFreeMail: Bool
+    @Persisted public var isUsedForAccount: Bool
+    @Persisted public var authorizedSenders: List<RecipientLimitation>
+    @Persisted public var blockedSenders: List<RecipientLimitation>
+}
+
+public class RecipientLimitation: Object, Codable {
+    @Persisted public var email: String
+    @Persisted var locked = false
 }

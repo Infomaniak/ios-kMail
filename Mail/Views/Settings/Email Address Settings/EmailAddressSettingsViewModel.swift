@@ -34,22 +34,35 @@ import SwiftUI
             title: MailResourcesStrings.Localizable.settingsMailboxGeneralSignature,
             type: .subMenu(destination: .signatureSettings(mailboxManager: mailboxManager))
         )
+        blockedRecipient = SettingsItem(
+            id: 11,
+            title: MailResourcesStrings.Localizable.settingsSecurityBlockedRecipients,
+            type: .subMenu(destination: .blockedSettings(mailboxManager: mailboxManager))
+        )
+
         general = SettingsSection(
             id: 1,
             name: MailResourcesStrings.Localizable.settingsSectionGeneral,
             items: [signature, .autoreply, .foldersSetting, .notifications]
         )
+        security = SettingsSection(
+            id: 3,
+            name: MailResourcesStrings.Localizable.settingsSectionSecurity,
+            items: [.adsFilter, .spamFilter, blockedRecipient]
+        )
 
         super.init(title: mailboxManager.mailbox.email)
 
-        sections = [general, .security /* , .inbox, .security, .privacy */ ]
+        sections = [general, security /* , .inbox, .security, .privacy */ ]
     }
 
     // Section
     var general: SettingsSection
+    var security: SettingsSection
 
     // Items
     var signature: SettingsItem
+    var blockedRecipient: SettingsItem
 
     override func updateSelectedValue() {
 //        selectedValues = [
@@ -64,11 +77,7 @@ private extension SettingsSection {
         name: MailResourcesStrings.Localizable.inboxFolder,
         items: [.inboxType /* , .rules, .redirect, .alias */ ]
     )
-    static let security = SettingsSection(
-        id: 3,
-        name: MailResourcesStrings.Localizable.settingsSectionSecurity,
-        items: [.adsFilter, .spamFilter /*.blockedRecipient*/]
-    )
+
 //    static let privacy = SettingsSection(
 //        id: 4,
 //        name: MailResourcesStrings.settingsSectionPrivacy,
@@ -124,12 +133,7 @@ private extension SettingsItem {
         title: MailResourcesStrings.Localizable.settingsSecuritySpamFilter,
         type: .toggleBinding(keyPath: \.spamFilter)
     )
-//    static let blockedRecipient = SettingsItem(
-//        id: 11,
-//        title: MailResourcesStrings.settingsSecurityBlockedRecipients,
-//        type: <#T##SettingsType#>
-//    )
-//
+
 //    static let deleteSearchHistory = SettingsItem(
 //        id: 12,
 //        title: MailResourcesStrings.settingsPrivacyDeleteSearchHistory,

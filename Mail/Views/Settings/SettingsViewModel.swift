@@ -54,6 +54,7 @@ enum SettingsDestination: Equatable {
     case swipe
 
     case signatureSettings(mailboxManager: MailboxManager)
+    case blockedSettings(mailboxManager: MailboxManager)
 
     @MainActor @ViewBuilder
     func getDestination() -> some View {
@@ -66,6 +67,8 @@ enum SettingsDestination: Equatable {
             SettingsSwipeActionsView(viewModel: SwipeActionSettingsViewModel())
         case let .signatureSettings(mailboxManager):
             SettingsSignatureOptionView(mailboxManager: mailboxManager)
+        case let .blockedSettings(mailboxManager):
+            SettingsBlockedRecipientOptionView(mailboxManager: mailboxManager)
         }
     }
 
@@ -78,6 +81,8 @@ enum SettingsDestination: Equatable {
         case let (.emailSettings(lhsType), .emailSettings(rhsType)):
             return lhsType.mailbox == rhsType.mailbox
         case let (.signatureSettings(lhsType), .signatureSettings(rhsType)):
+            return lhsType.mailbox == rhsType.mailbox
+        case let (.blockedSettings(lhsType), .blockedSettings(rhsType)):
             return lhsType.mailbox == rhsType.mailbox
         default:
             return false
@@ -114,6 +119,9 @@ enum SettingsOption: Equatable {
 //    case rulesOption
 //    case redirectOption
 //    case aliasOption
+    
+    // Email Address Security
+//    case blockedRecipientOption
 
     @ViewBuilder
     func getDestination() -> some View {
@@ -185,6 +193,8 @@ enum SettingsOption: Equatable {
             EmptyView()
         case .inboxTypeOption:
             EmptyView()
+//        case .blockedRecipientOption:
+//            SettingsBlockedRecipientOptionView()
         }
     }
 }

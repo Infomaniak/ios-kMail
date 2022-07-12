@@ -83,7 +83,9 @@ public class MailboxManager: ObservableObject {
                 SignatureResponse.self,
                 Signature.self,
                 ValidEmail.self,
-                MailboxSettings.self
+                MailboxSettings.self,
+                MailboxHosting.self,
+                RecipientLimitation.self
             ]
         )
     }
@@ -327,7 +329,8 @@ public class MailboxManager: ObservableObject {
             let folderName = FolderRole.trash.localizedName
             Task.detached {
                 await IKSnackBar.showCancelableSnackBar(message: MailResourcesStrings.Localizable.snackbarThreadMoved(folderName),
-                                                        cancelSuccessMessage: MailResourcesStrings.Localizable.snackbarMoveCancelled,
+                                                        cancelSuccessMessage: MailResourcesStrings.Localizable
+                                                            .snackbarMoveCancelled,
                                                         cancelableResponse: response,
                                                         mailboxManager: self)
             }
@@ -714,7 +717,7 @@ public class MailboxManager: ObservableObject {
         return settings
     }
 
-    public func getSettings() -> MailboxSettings {
+    public func getSettings(using realm: Realm? = nil) -> MailboxSettings {
         let realm = getRealm()
         if let settings = realm.objects(MailboxSettings.self).first {
             return settings
@@ -727,6 +730,16 @@ public class MailboxManager: ObservableObject {
         try? realm.safeWrite {
             closure()
         }
+    }
+
+    public func mailboxHosting() async throws -> MailboxHosting {
+        let mailboxHosting = try await apiFetcher.mailboxHosting(mailbox: mailbox)
+        let settings = getSettings()
+        let realm = getRealm()
+        try? realm.safeWrite {
+            settings.mailboxHosting = mailboxHosting
+        }
+        return mailboxHosting.freezeIfNeeded()
     }
 
     // MARK: - Utilities
