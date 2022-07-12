@@ -141,8 +141,6 @@ struct SplitView: View {
                 NewMessageView(isPresented: $menuSheet.isShowing, mailboxManager: mailboxManager, draft: .replying(to: message, mode: replyMode))
             case let .editMessage(draft):
                 NewMessageView(isPresented: $menuSheet.isShowing, mailboxManager: mailboxManager, draft: draft.asUnmanaged())
-            case .addAccount:
-                LoginView(isPresented: $menuSheet.isShowing)
             case .manageAccount:
                 AccountView(isPresented: $menuSheet.isShowing)
             case .switchAccount:
@@ -164,9 +162,9 @@ struct SplitView: View {
         .environmentObject(bottomSheet)
         .bottomSheet(bottomSheetPosition: $bottomSheet.position, options: bottomSheetOptions) {
             switch bottomSheet.state {
-            case .move(let moveHandler):
+            case let .move(moveHandler):
                 MoveEmailView(mailboxManager: mailboxManager, state: bottomSheet, moveHandler: moveHandler)
-            case .createNewFolder(let mode):
+            case let .createNewFolder(mode):
                 CreateFolderView(mailboxManager: mailboxManager, state: bottomSheet, mode: mode)
             case .getMoreStorage:
                 MoreStorageView(state: bottomSheet)

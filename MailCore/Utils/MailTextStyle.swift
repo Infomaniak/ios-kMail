@@ -86,12 +86,12 @@ public struct MailTextStyle {
     )
 
     public static let button = MailTextStyle(
-        font: .system(size: 16, weight: .semibold),
+        font: .system(size: 16, weight: .medium),
         color: \.primary
     )
 
     public static let buttonPill = MailTextStyle(
-        font: .system(size: 16, weight: .semibold),
+        font: .system(size: 16, weight: .medium),
         color: .white
     )
 

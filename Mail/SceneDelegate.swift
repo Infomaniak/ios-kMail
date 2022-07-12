@@ -131,7 +131,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, AccountManagerDelegate 
     // MARK: - Show views
 
     func showLoginView(animated: Bool = true) {
-        setRootView(LoginView(), animated: animated)
+        setRootView(OnboardingView(), animated: animated)
     }
 
     func showMainView(animated: Bool = true) {
