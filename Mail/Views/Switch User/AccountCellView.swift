@@ -47,7 +47,7 @@ struct AccountCellView: View {
         ZStack {
             if isExpanded {
                 RoundedRectangle(cornerRadius: 10)
-                    .fill(MailResourcesAsset.backgroundCardSelectedColor.swiftUiColor)
+                    .fill(MailResourcesAsset.backgroundCardColor.swiftUiColor)
             }
 
             RoundedRectangle(cornerRadius: 10)

@@ -91,8 +91,8 @@ public struct MailTextStyle {
     )
 
     public static let buttonPill = MailTextStyle(
-        font: .system(size: 16, weight: .medium),
-        color: .white
+        font: .system(size: 16, weight: .semibold),
+        color: MailResourcesAsset.buttonPillColor
     )
 
     public static let calloutStrong = MailTextStyle(

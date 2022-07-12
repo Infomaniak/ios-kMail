@@ -40,9 +40,9 @@ public enum ThreadMode: String, CaseIterable, SettingsOptionEnum {
     public var image: Image? {
         switch self {
         case .discussion:
-            return Image(uiImage: MailResourcesAsset.conversationEmail.image)
+            return Image(MailResourcesAsset.conversationEmail.name)
         case .message:
-            return Image(uiImage: MailResourcesAsset.singleEmail.image)
+            return Image(MailResourcesAsset.singleEmail.name)
         }
     }
 }

@@ -48,11 +48,11 @@ public enum Theme: String, CaseIterable, SettingsOptionEnum {
     public var image: Image? {
         switch self {
         case .light:
-            return Image(uiImage: MailResourcesAsset.themeLight.image)
+            return Image(MailResourcesAsset.themeLight.name)
         case .dark:
-            return Image(uiImage: MailResourcesAsset.themeDark.image)
+            return Image(MailResourcesAsset.themeDark.name)
         case .system:
-            return Image(uiImage: MailResourcesAsset.themeTel.image)
+            return Image(MailResourcesAsset.themeTel.name)
         }
     }
 }

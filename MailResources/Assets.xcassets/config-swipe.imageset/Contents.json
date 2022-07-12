@@ -3,6 +3,16 @@
     {
       "filename" : "config-swipe.svg",
       "idiom" : "universal"
+    },
+    {
+      "appearances" : [
+        {
+          "appearance" : "luminosity",
+          "value" : "dark"
+        }
+      ],
+      "filename" : "List-dark.svg",
+      "idiom" : "universal"
     }
   ],
   "info" : {

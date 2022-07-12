@@ -101,7 +101,6 @@ struct RecipientLabel: View {
                                 .lineLimit(1)
                                 .layoutPriority(1)
                         }
-                        .tint(MailResourcesAsset.menuActionColor)
                         if !recipient.name.isEmpty {
                             Text(recipient.email)
                                 .textStyle(.caption)

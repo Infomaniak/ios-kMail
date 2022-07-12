@@ -17,7 +17,9 @@
  */
 
 import MailCore
+import MailResources
 import SwiftUI
+import Introspect
 
 struct SettingsView: View {
     @ObservedObject var viewModel: SettingsViewModel
@@ -30,38 +32,40 @@ struct SettingsView: View {
         List {
             ForEach(viewModel.sections) { section in
                 Section {
-                    ForEach(section.items) { item in
-                        switch item.type {
-                        case let .subMenu(destination: destination):
-                            SettingsSubMenuCell(title: item.title, destination: destination)
-                        case let .toggle(userDefaults: userDefaults):
-                            SettingsToggleCell(title: item.title, userDefaults: userDefaults)
-                        case let .option(option):
-                            SettingsOptionCell(
-                                title: item.title,
-                                subtitle: viewModel.selectedValues[option]?.title ?? "",
-                                option: option
-                            )
+                    Group {
+                        ForEach(section.items) { item in
+                            switch item.type {
+                            case let .subMenu(destination: destination):
+                                SettingsSubMenuCell(title: item.title, destination: destination)
+                            case let .toggle(userDefaults: userDefaults):
+                                SettingsToggleCell(title: item.title, userDefaults: userDefaults)
+                            case let .option(option):
+                                SettingsOptionCell(
+                                    title: item.title,
+                                    subtitle: viewModel.selectedValues[option]?.title ?? "",
+                                    option: option
+                                )
+                            }
+                        }
+
+                        if viewModel.sections.last != section {
+                            IKDivider()
                         }
                     }
-                    .listRowSeparator(.hidden)
+                    .listRowBackground(MailResourcesAsset.backgroundColor.swiftUiColor)
                     .listRowInsets(.init(top: 12, leading: 20, bottom: 12, trailing: 20))
+                    .listRowSeparator(.hidden)
                 } header: {
                     if let title = section.name {
                         Text(title)
                             .textStyle(.calloutSecondary)
-                    } else {
-                        EmptyView()
-                    }
-                } footer: {
-                    if viewModel.sections.last != section {
-                        IKDivider()
                     }
                 }
                 .listSectionSeparator(.hidden)
             }
         }
         .listStyle(.plain)
+        .background(MailResourcesAsset.backgroundColor.swiftUiColor)
         .navigationBarTitle(viewModel.title, displayMode: .inline)
         .backButtonDisplayMode(.minimal)
         .onAppear {

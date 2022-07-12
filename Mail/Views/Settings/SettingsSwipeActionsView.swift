@@ -31,30 +31,34 @@ struct SettingsSwipeActionsView: View {
         List {
             ForEach(viewModel.sections) { section in
                 Section {
-                    ForEach(section.items) { item in
-                        if case let .option(option) = item.type {
-                            SettingsOptionCell(
-                                title: item.title,
-                                subtitle: viewModel.selectedValues[option]?.title ?? "",
-                                option: option
-                            )
-                        } else {
-                            EmptyView()
+                    Group {
+                        ForEach(section.items) { item in
+                            if case let .option(option) = item.type {
+                                SettingsOptionCell(
+                                    title: item.title,
+                                    subtitle: viewModel.selectedValues[option]?.title ?? "",
+                                    option: option
+                                )
+                            } else {
+                                EmptyView()
+                            }
                         }
+
+                        SwipeConfigCell(selectedValues: $viewModel.selectedValues, section: section)
                     }
+                    .listRowBackground(MailResourcesAsset.backgroundColor.swiftUiColor)
                     .listRowSeparator(.hidden)
                 } header: {
                     if section == viewModel.sections.first {
                         Text(MailResourcesStrings.Localizable.settingsSwipeDescription)
                             .textStyle(.calloutSecondary)
                     }
-                } footer: {
-                    SwipeConfigCell(selectedValues: $viewModel.selectedValues, section: section)
                 }
                 .listSectionSeparator(.hidden)
             }
         }
         .listStyle(.plain)
+        .background(MailResourcesAsset.backgroundColor.swiftUiColor)
         .navigationBarTitle(viewModel.title, displayMode: .inline)
         .backButtonDisplayMode(.minimal)
         .onAppear {

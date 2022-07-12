@@ -165,7 +165,7 @@ struct MenuDrawerView: View {
                 }
             }
         }
-        .background(MailResourcesAsset.backgroundColor.swiftUiColor)
+        .background(MailResourcesAsset.backgroundMenuDrawer.swiftUiColor)
         .environmentObject(mailboxManager)
         .onAppear {
             MatomoUtils.track(view: ["MenuDrawer"])

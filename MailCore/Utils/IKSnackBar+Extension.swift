@@ -27,10 +27,10 @@ public extension SnackBarStyle {
         snackBarStyle.padding = 16
         snackBarStyle.inViewPadding = 16
         snackBarStyle.cornerRadius = 8
-        snackBarStyle.background = MailResourcesAsset.primaryTextColor.color
-        snackBarStyle.textColor = MailResourcesAsset.backgroundColor.color
+        snackBarStyle.background = MailResourcesAsset.backgroundSnackbarColor.color
+        snackBarStyle.textColor = MailResourcesAsset.snackbarTextColor.color
         snackBarStyle.font = .systemFont(ofSize: 16)
-        snackBarStyle.actionTextColor = MailResourcesAsset.backgroundColor.color
+        snackBarStyle.actionTextColor = UserDefaults.shared.accentColor.snackbarActionColor.color
         snackBarStyle.actionTextColorAlpha = 1
         snackBarStyle.actionFont = .systemFont(ofSize: 16, weight: .medium)
         return snackBarStyle

@@ -25,7 +25,7 @@ struct RecipientChip: View {
     let recipient: Recipient
     let removeButtonTapped: () -> Void
 
-    @AppStorage(UserDefaults.shared.key(.accentColor)) private var accentColor = AccentColor.pink
+    @AppStorage(UserDefaults.shared.key(.accentColor), store: .shared) private var accentColor = AccentColor.pink
 
     var body: some View {
         HStack(spacing: 2) {

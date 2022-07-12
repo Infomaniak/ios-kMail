@@ -27,6 +27,7 @@ struct SlideView: View {
     @AppStorage(UserDefaults.shared.key(.accentColor), store: .shared) private var accentColor = AccentColor.pink
 
     @Environment(\.window) private var window
+    @Environment(\.colorScheme) private var colorScheme
 
     @State var segmentedControl: UISegmentedControl?
     @State var imageSize: CGSize = .zero
@@ -38,7 +39,7 @@ struct SlideView: View {
                     .resizable()
                     .scaledToFit()
                     .ignoresSafeArea()
-                    .foregroundColor(accentColor.secondary)
+                    .foregroundColor(colorScheme == .light ? accentColor.secondary : MailResourcesAsset.backgroundColor)
                     // Hide image if it cannot fit
                     .background(GeometryReader { geometry -> Color in
                         imageSize = geometry.size
@@ -49,8 +50,8 @@ struct SlideView: View {
                 VStack(spacing: 0) {
                     Spacer(minLength: Constants.onboardingLogoHeight + Constants.onboardingVerticalPadding)
 
-                    if proxy.size.height > 500 {
-                        slide.illustrationImage
+                    if proxy.size.height > 500, let illustrationImage = illustrationImage(for: slide) {
+                        illustrationImage
                             .resizable()
                             .scaledToFit()
                             .frame(maxWidth: 400, maxHeight: 400)
@@ -96,6 +97,27 @@ struct SlideView: View {
         }
     }
 
+    private func illustrationImage(for slide: Slide) -> Image? {
+        let resource: MailResourcesImages?
+        switch slide.id {
+        case 1:
+            resource = accentColor.onboardingIllu1
+        case 2:
+            resource = accentColor.onboardingIllu2
+        case 3:
+            resource = accentColor.onboardingIllu3
+        case 4:
+            resource = accentColor.onboardingIllu4
+        default:
+            resource = nil
+        }
+
+        if let resource = resource {
+            return Image(resource: resource)
+        }
+        return nil
+    }
+
     private func setSegmentedControlStyle() {
         segmentedControl?.selectedSegmentTintColor = .tintColor
         segmentedControl?.setTitleTextAttributes([.foregroundColor: UIColor.white], for: .selected)
@@ -109,7 +131,6 @@ struct SlideView_Previews: PreviewProvider {
     static var previews: some View {
         SlideView(slide: Slide(id: 1,
                                backgroundImage: Image(resource: MailResourcesAsset.onboardingBackground1),
-                               illustrationImage: Image(resource: MailResourcesAsset.onboardingIllu1),
                                title: "Title",
                                description: "Description"))
     }
