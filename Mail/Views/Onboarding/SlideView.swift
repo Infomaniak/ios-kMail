@@ -27,6 +27,7 @@ struct SlideView: View {
     @AppStorage(UserDefaults.shared.key(.accentColor), store: .shared) private var accentColor = AccentColor.pink
 
     @Environment(\.window) private var window
+    @Environment(\.colorScheme) private var colorScheme
 
     @State var segmentedControl: UISegmentedControl?
     @State var imageSize: CGSize = .zero
@@ -38,7 +39,7 @@ struct SlideView: View {
                     .resizable()
                     .scaledToFit()
                     .ignoresSafeArea()
-                    .foregroundColor(accentColor.secondary)
+                    .foregroundColor(colorScheme == .light ? accentColor.secondary : MailResourcesAsset.backgroundColor)
                     // Hide image if it cannot fit
                     .background(GeometryReader { geometry -> Color in
                         imageSize = geometry.size
