@@ -97,7 +97,6 @@ struct SettingsOptionView<OptionEnum>: View where OptionEnum: CaseIterable, Opti
         }
         .listStyle(.plain)
         .navigationBarTitle(title, displayMode: .inline)
-        .appShadow(withPadding: true)
         .onAppear {
             updateOptions()
         }

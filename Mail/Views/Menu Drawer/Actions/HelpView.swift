@@ -62,7 +62,6 @@ struct HelpView: View {
             .listSectionSeparator(.hidden)
         }
         .listStyle(.plain)
-        .appShadow(withPadding: true)
         .navigationBarTitle(MailResourcesStrings.Localizable.buttonHelp, displayMode: .inline)
     }
 }
