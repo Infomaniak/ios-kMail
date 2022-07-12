@@ -29,18 +29,18 @@ struct ReportDisplayProblemView: View {
 
     var body: some View {
         VStack(spacing: 16) {
-            Text("Signaler un problème d’affichage")
+            Text(MailResourcesStrings.Localizable.reportDisplayProblemTitle)
                 .textStyle(.header3)
                 .frame(maxWidth: .infinity, alignment: .leading)
             Image(resource: MailResourcesAsset.displayIssue)
-            Text("Acceptez-vous de partager vos données avec nos développeurs pour qu’ils puissent vous aider concernant votre problématique ?")
+            Text(MailResourcesStrings.Localizable.reportDisplayProblemDescription)
                 .textStyle(.bodySecondary)
             HStack(spacing: 24) {
-                Button("Refuser") {
+                Button(MailResourcesStrings.Localizable.buttonRefuse) {
                     state.close()
                 }
 
-                BottomSheetButton(label: "Accepter", action: report)
+                BottomSheetButton(label: MailResourcesStrings.Localizable.buttonAccept, action: report)
             }
             .frame(maxWidth: .infinity, alignment: .trailing)
             .padding(.top, 8)
@@ -61,7 +61,7 @@ struct ReportDisplayProblemView: View {
                 _ = SentrySDK.capture(message: "Message display problem reported") { scope in
                     scope.add(fileAttachment)
                 }
-                IKSnackBar.showSnackBar(message: "Problème d’affichage signalé")
+                IKSnackBar.showSnackBar(message: MailResourcesStrings.Localizable.snackbarDisplayProblemReported)
             }
         }
     }
