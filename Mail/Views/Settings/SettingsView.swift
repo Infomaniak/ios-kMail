@@ -32,36 +32,39 @@ struct SettingsView: View {
         List {
             ForEach(viewModel.sections) { section in
                 Section {
-                    Group {
-                        ForEach(section.items) { item in
-                            switch item.type {
-                            case let .subMenu(destination: destination):
-                                SettingsSubMenuCell(title: item.title, destination: destination)
-                            case let .toggle(userDefaults: userDefaults):
-                                SettingsToggleCell(title: item.title, userDefaults: userDefaults)
-                            case let .option(option):
-                                SettingsOptionCell(
-                                    title: item.title,
-                                    subtitle: viewModel.selectedValues[option]?.title ?? "",
-                                    option: option
-                                )
-                            }
-                        }
-
-                        if viewModel.sections.last != section {
+                    // Header & separator
+                    VStack(alignment: .leading, spacing: 24) {
+                        if section != viewModel.sections.first {
                             IKDivider()
                         }
+                        if let title = section.name {
+                            Text(title)
+                                .textStyle(.calloutSecondary)
+                                .padding(.horizontal, 8)
+                        }
                     }
-                    .listRowBackground(MailResourcesAsset.backgroundColor.swiftUiColor)
-                    .listRowInsets(.init(top: 12, leading: 20, bottom: 12, trailing: 20))
                     .listRowSeparator(.hidden)
-                } header: {
-                    if let title = section.name {
-                        Text(title)
-                            .textStyle(.calloutSecondary)
+                    .listRowInsets(.init(top: 12, leading: 8, bottom: 4, trailing: 8))
+
+                    ForEach(section.items) { item in
+                        switch item.type {
+                        case let .subMenu(destination: destination):
+                            SettingsSubMenuCell(title: item.title, destination: destination)
+                        case let .toggle(userDefaults: userDefaults):
+                            SettingsToggleCell(title: item.title, userDefaults: userDefaults)
+                        case let .option(option):
+                            SettingsOptionCell(
+                                title: item.title,
+                                subtitle: viewModel.selectedValues[option]?.title ?? "",
+                                option: option
+                            )
+                        }
                     }
+                    .listRowSeparator(.hidden)
+                    .listRowInsets(.init(top: 12, leading: 24, bottom: 12, trailing: 24))
                 }
                 .listSectionSeparator(.hidden)
+                .listRowBackground(MailResourcesAsset.backgroundColor.swiftUiColor)
             }
         }
         .listStyle(.plain)
