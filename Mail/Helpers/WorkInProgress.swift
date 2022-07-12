@@ -1,4 +1,3 @@
-//
 /*
  Infomaniak Mail - iOS App
  Copyright (C) 2022 Infomaniak Network SA
@@ -21,7 +20,7 @@ import Foundation
 import InfomaniakCore
 import MailCore
 
-//To delete: alert to facilitate tests for beta version
+// To delete: alert to facilitate tests for beta version
 @MainActor
 func showWorkInProgressSnackBar() {
     IKSnackBar.showSnackBar(message: Constants.workInProgress)
