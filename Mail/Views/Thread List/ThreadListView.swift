@@ -135,7 +135,10 @@ struct ThreadListView: View {
             self.navigationController = navigationController
         }
         .modifier(ThreadListNavigationBar(isCompact: isCompact, folder: $viewModel.folder, avatarImage: $avatarImage))
-        .floatingActionButton(icon: Image(resource: MailResourcesAsset.edit), title: MailResourcesStrings.Localizable.buttonNewMessage) {
+        .floatingActionButton(
+            icon: Image(resource: MailResourcesAsset.edit),
+            title: MailResourcesStrings.Localizable.buttonNewMessage
+        ) {
             menuSheet.state = .newMessage
         }
         .bottomSheet(bottomSheetPosition: $bottomSheet.position, options: bottomSheetOptions) {
@@ -206,10 +209,10 @@ struct ThreadListView: View {
             .listRowBackground(viewModel.selectedThread?.id == thread.id
                 ? MailResourcesAsset.backgroundCardSelectedColor.swiftUiColor
                 : MailResourcesAsset.backgroundColor.swiftUiColor)
-            .modifier(ThreadListSwipeAction(thread: thread, viewModel: viewModel))
-            .onAppear {
-                viewModel.loadNextPageIfNeeded(currentItem: thread)
-            }
+                .modifier(ThreadListSwipeAction(thread: thread, viewModel: viewModel))
+                .onAppear {
+                    viewModel.loadNextPageIfNeeded(currentItem: thread)
+                }
         }
     }
 
@@ -254,9 +257,8 @@ private struct ThreadListNavigationBar: ViewModifier {
                 }
 
                 ToolbarItemGroup(placement: .navigationBarTrailing) {
-                    Button {
-                        // TODO: Search
-                        showWorkInProgressSnackBar()
+                    NavigationLink {
+                        SearchView()
                     } label: {
                         Image(resource: MailResourcesAsset.search)
                     }

@@ -17,7 +17,44 @@
  */
 
 import Foundation
+import MailResources
 
 class SearchViewModel: ObservableObject {
-    
+    @Published public var filters: [SearchFilter]
+    @Published public var selectedFilters: [SearchFilter] = []
+
+    init() {
+        filters = [
+            .read,
+            .unread,
+            .favorite,
+            .attachment,
+            .folder
+        ]
+    }
+}
+
+public enum SearchFilter: String, Identifiable {
+    public var id: Self { self }
+
+    case read
+    case unread
+    case favorite
+    case attachment
+    case folder
+
+    public var title: String {
+        switch self {
+        case .read:
+            return MailResourcesStrings.Localizable.actionMarkAsRead
+        case .unread:
+            return MailResourcesStrings.Localizable.actionMarkAsUnread
+        case .favorite:
+            return MailResourcesStrings.Localizable.favoritesFolder
+        case .attachment:
+            return MailResourcesStrings.Localizable.attachmentActionTitle
+        case .folder:
+            return "Dossier"
+        }
+    }
 }
