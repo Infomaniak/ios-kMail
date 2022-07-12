@@ -133,6 +133,7 @@ struct AccountView: View {
                 EmptyView()
             }
         }
+        .defaultAppStorage(.shared)
     }
 
     private func logout() {

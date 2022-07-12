@@ -183,6 +183,7 @@ struct NewMessageView: View {
             }
         }
         .navigationViewStyle(.stack)
+        .defaultAppStorage(.shared)
     }
 
     @MainActor private func send() async -> CancelableResponse? {
