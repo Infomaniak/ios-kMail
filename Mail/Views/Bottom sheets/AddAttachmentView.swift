@@ -65,18 +65,19 @@ struct AddAttachmentView: View {
         VStack(alignment: .leading, spacing: 16) {
             Text(MailResourcesStrings.Localizable.attachmentActionTitle)
                 .textStyle(.header3)
-                .padding([.leading, .trailing], 16)
+                .padding(.horizontal, 16)
 
             ForEach(actions, id: \.self) { action in
                 Button {
-                    if action == .addFile {
+                    switch action {
+                    case .addFile:
                         attachmentSheet.state = .fileSelection
-                    }
-                    if action == .addPhotoFromLibrary {
+                    case .addPhotoFromLibrary:
                         attachmentSheet.state = .photoLibrary
-                    }
-                    if action == .openCamera {
+                    case .openCamera:
                         attachmentSheet.state = .camera
+                    default:
+                        break
                     }
                 } label: {
                     HStack {
