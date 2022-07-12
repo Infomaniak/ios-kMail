@@ -60,6 +60,15 @@ public enum AccentColor: String, CaseIterable, SettingsOptionEnum {
         }
     }
 
+    public var snackbarActionColor: MailResourcesColors {
+        switch self {
+        case .pink:
+            return MailResourcesAsset.snackbarActionPinkColor
+        case .blue:
+            return MailResourcesAsset.snackbarActionBlueColor
+        }
+    }
+
     // MARK: - List icons
 
     public var compactListIcon: MailResourcesImages {

@@ -30,7 +30,7 @@ public extension SnackBarStyle {
         snackBarStyle.background = MailResourcesAsset.backgroundSnackbarColor.color
         snackBarStyle.textColor = MailResourcesAsset.snackbarTextColor.color
         snackBarStyle.font = .systemFont(ofSize: 16)
-        snackBarStyle.actionTextColor = UserDefaults.shared.accentColor.primary.color
+        snackBarStyle.actionTextColor = UserDefaults.shared.accentColor.snackbarActionColor.color
         snackBarStyle.actionTextColorAlpha = 1
         snackBarStyle.actionFont = .systemFont(ofSize: 16, weight: .medium)
         return snackBarStyle
