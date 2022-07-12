@@ -62,6 +62,7 @@ struct OnboardingView: View {
                     LargeButton(title: MailResourcesStrings.Localizable.buttonLogin, action: login)
                     Button {
                         // TODO: Create account
+                        showWorkInProgressSnackBar()
                     } label: {
                         Text(MailResourcesStrings.Localizable.buttonCreateAccount)
                             .textStyle(.button)

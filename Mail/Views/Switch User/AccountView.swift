@@ -83,6 +83,7 @@ struct AccountView: View {
                 // Email list button
                 Button {
                     // TODO: Show email list
+                    showWorkInProgressSnackBar()
                 } label: {
                     VStack(alignment: .leading, spacing: 24) {
                         IKDivider()

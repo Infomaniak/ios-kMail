@@ -234,7 +234,7 @@ class DateSection: Identifiable {
             try await mailboxManager.toggleStar(thread: thread)
         case .report:
             // TODO: Report action
-            break
+            showWorkInProgressSnackBar()
         case .spam:
             try await toggleSpam(thread: thread)
         case .readAndAchive:

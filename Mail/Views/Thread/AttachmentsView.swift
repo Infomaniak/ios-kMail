@@ -67,6 +67,7 @@ struct AttachmentsView: View {
 
                 Button(MailResourcesStrings.Localizable.buttonDownloadAll) {
                     // TODO: Download all attachments
+                    showWorkInProgressSnackBar()
                 }
                 .font(MailTextStyle.callout.font)
 

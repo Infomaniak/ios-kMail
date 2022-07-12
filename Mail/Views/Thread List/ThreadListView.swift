@@ -245,6 +245,7 @@ private struct ThreadListNavigationBar: ViewModifier {
                 ToolbarItemGroup(placement: .navigationBarTrailing) {
                     Button {
                         // TODO: Search
+                        showWorkInProgressSnackBar()
                     } label: {
                         Image(resource: MailResourcesAsset.search)
                     }

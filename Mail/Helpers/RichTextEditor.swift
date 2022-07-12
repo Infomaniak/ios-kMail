@@ -254,7 +254,7 @@ class MailEditor: SQTextEditorView {
             }
         case .programMessage:
             // TODO: Handle programmed message
-            break
+            showWorkInProgressSnackBar()
         case .none:
             return
         }

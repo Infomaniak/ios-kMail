@@ -293,6 +293,7 @@ enum ActionsTarget: Equatable {
 
     private func postpone() {
         // TODO: POSTPONE ACTION
+        showWorkInProgressSnackBar()
     }
 
     private func spam() async throws {
@@ -358,25 +359,31 @@ enum ActionsTarget: Equatable {
 
     private func printAction() {
         // TODO: PRINT ACTION
+        showWorkInProgressSnackBar()
     }
 
     private func saveAsPDF() {
         // TODO: SAVE AS PDF ACTION
+        showWorkInProgressSnackBar()
     }
 
     private func openIn() {
         // TODO: OPEN IN ACTION
+        showWorkInProgressSnackBar()
     }
 
     private func createRule() {
         // TODO: CREATE RULE ACTION
+        showWorkInProgressSnackBar()
     }
 
     private func report() {
         // TODO: REPORT ACTION
+        showWorkInProgressSnackBar()
     }
 
     private func editMenu() {
         // TODO: EDIT MENU ACTION
+        showWorkInProgressSnackBar()
     }
 }
