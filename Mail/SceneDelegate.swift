@@ -107,13 +107,15 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, AccountManagerDelegate 
     }
 
     func switchMailbox(_ mailbox: Mailbox) {
-        AccountManager.instance.setCurrentMailboxForCurrentAccount(mailbox: mailbox)
-        AccountManager.instance.saveAccounts()
-        showMainView()
+        accountManager.setCurrentMailboxForCurrentAccount(mailbox: mailbox)
+        accountManager.saveAccounts()
+        if let mailboxManager = accountManager.getMailboxManager(for: mailbox) {
+            showMainView(mailboxManager: mailboxManager)
+        }
     }
 
     func switchAccount(_ account: Account, mailbox: Mailbox? = nil) {
-        AccountManager.instance.switchAccount(newAccount: account)
+        accountManager.switchAccount(newAccount: account)
         (UIApplication.shared.delegate as? AppDelegate)?.refreshCacheData()
 
         if let mailbox = mailbox {
@@ -134,8 +136,20 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, AccountManagerDelegate 
         setRootView(OnboardingView(), animated: animated)
     }
 
+    func showMainView(mailboxManager: MailboxManager, animated: Bool = true) {
+        setRootView(SplitView(mailboxManager: mailboxManager), animated: animated)
+    }
+
+    func showNoMailboxView(animated: Bool = true) {
+        setRootView(NoMailboxView(), animated: animated)
+    }
+
     func showMainView(animated: Bool = true) {
-        setRootView(SplitView(), animated: animated)
+        if let mailboxManager = accountManager.currentMailboxManager {
+            showMainView(mailboxManager: mailboxManager, animated: animated)
+        } else {
+            showNoMailboxView(animated: animated)
+        }
     }
 
     func showLockView() {
