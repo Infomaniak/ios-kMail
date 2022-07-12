@@ -59,4 +59,31 @@ public enum AccentColor: String, CaseIterable, SettingsOptionEnum {
             return MailResourcesAsset.secondaryBlueColor
         }
     }
+
+    public var compactListIcon: MailResourcesImages {
+         switch self {
+         case .pink:
+             return MailResourcesAsset.compactListPink
+         case .blue:
+             return MailResourcesAsset.compactListBlue
+         }
+     }
+
+     public var defaultListIcon: MailResourcesImages {
+         switch self {
+         case .pink:
+             return MailResourcesAsset.defaultListPink
+         case .blue:
+             return MailResourcesAsset.defaultListBlue
+         }
+     }
+
+     public var largeListIcon: MailResourcesImages {
+         switch self {
+         case .pink:
+             return MailResourcesAsset.largeListPink
+         case .blue:
+             return MailResourcesAsset.largeListBlue
+         }
+     }
 }

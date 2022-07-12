@@ -41,11 +41,11 @@ public enum ThreadDensity: String, CaseIterable, SettingsOptionEnum {
         let resource: MailResourcesImages
         switch self {
         case .normal:
-            resource = accentColor == .pink ? MailResourcesAsset.defaultListPink : MailResourcesAsset.defaultListBlue
+            resource = accentColor.defaultListIcon
         case .large:
-            resource = accentColor == .pink ? MailResourcesAsset.largeListPink : MailResourcesAsset.largeListBlue
+            resource = accentColor.largeListIcon
         case .compact:
-            resource = accentColor == .pink ? MailResourcesAsset.compactListPink : MailResourcesAsset.compactListBlue
+            resource = accentColor.compactListIcon
         }
         return Image(resource.name)
     }
