@@ -378,8 +378,10 @@ enum ActionsTarget: Equatable {
     }
 
     private func report() {
-        // TODO: REPORT ACTION
-        showWorkInProgressSnackBar()
+        // This action is only available on a single message
+        guard case .message(let message) = target else { return }
+        state.close()
+        globalSheet.open(state: .reportDisplayProblem(message: message.freezeIfNeeded()), position: .reportDisplayIssueHeight)
     }
 
     private func editMenu() {

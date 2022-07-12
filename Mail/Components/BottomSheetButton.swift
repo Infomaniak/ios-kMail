@@ -28,8 +28,8 @@ struct BottomSheetButton: View {
         Button(action: action) {
             Text(label)
                 .textStyle(.buttonPill)
-                .padding(.horizontal, 24)
-                .padding(.vertical, 10)
+                .padding(.horizontal, 12) // Button has already a 12pt horizontal padding
+                .padding(.vertical, 11) // Button has already a 7pt vertical padding
         }
         .buttonStyle(.borderedProminent)
         .buttonBorderShape(.roundedRectangle(radius: 16))

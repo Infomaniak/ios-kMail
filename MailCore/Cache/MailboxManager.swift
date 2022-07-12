@@ -398,7 +398,7 @@ public class MailboxManager: ObservableObject {
 
     public func message(message: Message) async throws {
         // Get from API
-        let completedMessage = try await apiFetcher.message(mailbox: mailbox, message: message)
+        let completedMessage = try await apiFetcher.message(message: message)
         completedMessage.insertInlineAttachment()
         keepCacheAttributes(for: completedMessage, keepProperties: .isDuplicate)
         completedMessage.fullyDownloaded = true

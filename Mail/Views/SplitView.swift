@@ -30,10 +30,16 @@ class GlobalBottomSheet: BottomSheetState<GlobalBottomSheet.State, GlobalBottomS
         case createNewFolder(mode: CreateFolderView.Mode)
         case getMoreStorage
         case restoreEmails
+        case reportDisplayProblem(message: Message)
     }
 
     enum Position: CGFloat, CaseIterable {
-        case moveHeight = 272, newFolderHeight = 300, moreStorageHeight = 465, restoreEmailsHeight = 325, hidden = 0
+        case moveHeight = 272
+        case newFolderHeight = 300
+        case moreStorageHeight = 465
+        case restoreEmailsHeight = 325
+        case reportDisplayIssueHeight = 400
+        case hidden = 0
     }
 }
 
@@ -171,6 +177,8 @@ struct SplitView: View {
                 MoreStorageView(state: bottomSheet)
             case .restoreEmails:
                 RestoreEmailsView(state: bottomSheet, mailboxManager: mailboxManager)
+            case let .reportDisplayProblem(message):
+                ReportDisplayProblemView(mailboxManager: mailboxManager, state: bottomSheet, message: message)
             case .none:
                 EmptyView()
             }

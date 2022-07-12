@@ -100,11 +100,20 @@ public class MailApiFetcher: ApiFetcher {
         try await perform(request: authenticatedRequest(.resource(resource))).data
     }
 
-    func message(mailbox: Mailbox, message: Message) async throws -> Message {
+    func message(message: Message) async throws -> Message {
         try await perform(request: authenticatedRequest(.resource(message.resource,
                                                                   queryItems: [
                                                                       URLQueryItem(name: "prefered_format", value: "html")
                                                                   ]))).data
+    }
+
+    public func download(message: Message) async throws -> URL {
+        let destination = DownloadRequest.suggestedDownloadDestination(for: .downloadsDirectory, options: [
+            .createIntermediateDirectories,
+            .removePreviousFile
+        ])
+        let download = authenticatedSession.download(Endpoint.resource(message.downloadResource).url, to: destination)
+        return try await download.serializingDownloadedFileURL().value
     }
 
     func markAsSeen(mailbox: Mailbox, messages: [Message]) async throws -> MessageActionResult {
