@@ -3,6 +3,16 @@
     {
       "filename" : "onboarding-illu-3.svg",
       "idiom" : "universal"
+    },
+    {
+      "appearances" : [
+        {
+          "appearance" : "luminosity",
+          "value" : "dark"
+        }
+      ],
+      "filename" : "onboarding-illu-3-pink-dark.png",
+      "idiom" : "universal"
     }
   ],
   "info" : {

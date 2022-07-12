@@ -114,6 +114,7 @@ struct ThreadListView: View {
                             Spacer()
                         }
                         .listRowSeparator(.hidden)
+                        .listRowBackground(MailResourcesAsset.backgroundColor.swiftUiColor)
                     }
                 }
                 .listStyle(.plain)
