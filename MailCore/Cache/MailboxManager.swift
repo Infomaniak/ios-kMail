@@ -427,10 +427,15 @@ public class MailboxManager: ObservableObject {
         do {
             let data = try await attachmentData(attachment: attachment)
             if let url = attachment.localUrl {
+                let parentFolder = url.deletingLastPathComponent()
+                if !FileManager.default.fileExists(atPath: parentFolder.path) {
+                    try FileManager.default.createDirectory(at: parentFolder, withIntermediateDirectories: true)
+                }
                 try data.write(to: url)
             }
         } catch {
             // Handle error
+            print("Failed to save attachment: \(error)")
         }
     }
 

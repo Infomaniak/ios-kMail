@@ -23,33 +23,59 @@ import SwiftUI
 
 struct AttachmentPreview: View {
     @Binding var isPresented: Bool
-    @State var isFullScreen = false
     @ObservedRealmObject var attachment: Attachment
 
+    @Environment(\.verticalSizeClass) var sizeClass
+
     var body: some View {
-        ZStack(alignment: .top) {
-            if let url = attachment.localUrl, FileManager.default.fileExists(atPath: url.path) {
-                PreviewController(url: url)
-            } else {
-                ProgressView()
+        NavigationView {
+            Group {
+                if let url = attachment.localUrl, FileManager.default.fileExists(atPath: url.path) {
+                    PreviewController(url: url)
+                } else {
+                    ProgressView()
+                }
             }
+            .navigationBarTitle(attachment.name, displayMode: .inline)
+            .toolbar {
+                ToolbarItem(placement: .navigationBarLeading) {
+                    Button {
+                        isPresented = false
+                    } label: {
+                        Label(MailResourcesStrings.Localizable.buttonClose, systemImage: "xmark")
+                    }
+                }
 
-            AttachmentPreviewHeader(isPresented: $isPresented, isFullScreen: $isFullScreen)
-
-            if !isFullScreen {
-                VStack {
+                ToolbarItemGroup(placement: .bottomBar) {
+                    Button(action: download) {
+                        Label {
+                            Text(MailResourcesStrings.Localizable.buttonDownload)
+                                .font(MailTextStyle.caption.font)
+                        } icon: {
+                            Image(resource: MailResourcesAsset.download)
+                                .resizable()
+                                .scaledToFit()
+                                .frame(width: 22, height: 22)
+                        }
+                        .dynamicLabelStyle(sizeClass: sizeClass ?? .regular)
+                    }
                     Spacer()
-                    AttachmentPreviewFooter(attachment: attachment)
-                        .background(
-                            RoundedRectangle(cornerRadius: 16)
-                                .frame(maxWidth: .infinity, maxHeight: .infinity)
-                                .foregroundColor(MailResourcesAsset.backgroundColor)
-                        )
-                }.padding(.bottom, -10)
-                    .transition(.move(edge: .bottom))
+                }
             }
         }
-        .ignoresSafeArea(.all, edges: .bottom)
+    }
+
+    private func download() {
+        guard let url = attachment.localUrl,
+              var source = UIApplication.shared.mainSceneKeyWindow?.rootViewController else {
+            return
+        }
+        if let presentedViewController = source.presentedViewController {
+            source = presentedViewController
+        }
+        let vc = UIActivityViewController(activityItems: [url], applicationActivities: nil)
+        vc.popoverPresentationController?.sourceView = source.view
+        source.present(vc, animated: true)
     }
 }
 

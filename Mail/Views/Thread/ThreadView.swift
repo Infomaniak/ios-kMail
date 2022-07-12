@@ -173,7 +173,7 @@ struct ThreadView: View {
                                 .scaledToFit()
                                 .frame(width: 22, height: 22)
                         }
-                        .dynamicLabelStyle(sizeClass: sizeClass!)
+                        .dynamicLabelStyle(sizeClass: sizeClass ?? .regular)
                     }
                     Spacer()
                 }
@@ -189,7 +189,7 @@ struct ThreadView: View {
                             .scaledToFit()
                             .frame(width: 22, height: 22)
                     }
-                    .dynamicLabelStyle(sizeClass: sizeClass!)
+                    .dynamicLabelStyle(sizeClass: sizeClass ?? .regular)
                 }
             }
         }

@@ -131,7 +131,7 @@ struct NewMessageView: View {
                 leading: Button {
                     self.dismiss()
                 } label: {
-                    Image(systemName: "xmark")
+                    Label(MailResourcesStrings.Localizable.buttonClose, systemImage: "xmark")
                 },
                 trailing: Button {
                     Task {

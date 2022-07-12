@@ -44,9 +44,7 @@ public class Attachment: /* Hashable, */ EmbeddedObject, Codable, Identifiable {
 
     public var localUrl: URL? {
         guard let message = parent else { return nil }
-        let urlDescription = "\(message.uid)_\(partId)_\(name)"
-            .addingPercentEncoding(withAllowedCharacters: .urlPathAllowed)
-        return FileManager.default.temporaryDirectory.appendingPathComponent(urlDescription!)
+        return FileManager.default.temporaryDirectory.appendingPathComponent("\(message.uid)_\(partId)/\(name)")
     }
 
     public var uti: UTType? {

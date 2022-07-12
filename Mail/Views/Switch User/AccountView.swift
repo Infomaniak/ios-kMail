@@ -118,7 +118,7 @@ struct AccountView: View {
             .navigationBarItems(leading: Button {
                 isPresented = false
             } label: {
-                Image(systemName: "xmark")
+                Label(MailResourcesStrings.Localizable.buttonClose, systemImage: "xmark")
             })
             .padding(.vertical, 42)
         }
