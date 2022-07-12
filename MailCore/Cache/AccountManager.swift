@@ -18,6 +18,7 @@
 
 import CocoaLumberjackSwift
 import Foundation
+import InfomaniakBugTracker
 import InfomaniakCore
 import InfomaniakLogin
 import RealmSwift
@@ -358,6 +359,16 @@ public class AccountManager: RefreshTokenDelegate {
     public func setCurrentAccount(account: Account) {
         currentAccount = account
         currentUserId = account.userId
+
+        if account.user?.isStaff == true {
+            BugTracker.instance.activateOnScreenshot {
+                // Update token before presenting view
+                BugTracker.configureForMail()
+            }
+        } else {
+            BugTracker.instance.stopActivatingOnScreenshot()
+        }
+
         Task {
             try await currentContactManager?.fetchContactsAndAddressBooks()
         }

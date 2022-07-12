@@ -17,13 +17,14 @@
  */
 
 import BottomSheet
+import InfomaniakBugTracker
 import InfomaniakCore
 import Introspect
 import MailCore
+import MailResources
 import RealmSwift
 import SwiftUI
 
-import MailResources
 class GlobalBottomSheet: BottomSheetState<GlobalBottomSheet.State, GlobalBottomSheet.Position> {
     enum State {
         case move(moveHandler: (Folder) -> Void)
@@ -162,6 +163,8 @@ struct SplitView: View {
                 SheetView(isPresented: $menuSheet.isShowing) {
                     HelpView()
                 }
+            case .bugTracker:
+                BugTrackerView(isPresented: $menuSheet.isShowing)
             case .none:
                 EmptyView()
             }
