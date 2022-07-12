@@ -26,7 +26,7 @@ struct SettingsSubMenuCell: View {
         NavigationLink(destination: destination.getDestination()) {
             Text(title)
                 .textStyle(.body)
-        }   
+        }
     }
 }
 

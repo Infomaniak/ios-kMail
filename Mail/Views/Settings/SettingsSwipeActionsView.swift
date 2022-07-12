@@ -53,8 +53,6 @@ struct SettingsSwipeActionsView: View {
                         Text(MailResourcesStrings.Localizable.settingsSwipeDescription)
                             .textStyle(.calloutSecondary)
                     }
-                } footer: {
-
                 }
                 .listSectionSeparator(.hidden)
             }

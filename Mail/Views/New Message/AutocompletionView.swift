@@ -17,6 +17,7 @@
  */
 
 import MailCore
+import MailResources
 import SwiftUI
 
 struct AutocompletionView: View {
@@ -37,6 +38,7 @@ struct AutocompletionView: View {
 
                         IKDivider()
                     }
+                    .listRowBackground(MailResourcesAsset.backgroundColor.swiftUiColor)
                     .listRowSeparator(.hidden)
                     .listRowInsets(.init(top: 8, leading: 8, bottom: 0, trailing: 8))
                 }

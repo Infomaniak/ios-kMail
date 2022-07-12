@@ -15,7 +15,7 @@
       "scale" : "1x"
     },
     {
-      "filename" : "Blue-swipe.png",
+      "filename" : "blue-select@2x.png",
       "idiom" : "universal",
       "scale" : "2x"
     },
@@ -26,12 +26,12 @@
           "value" : "dark"
         }
       ],
-      "filename" : "Blue-swipe-dark.png",
+      "filename" : "blue-select-dark.png",
       "idiom" : "universal",
       "scale" : "2x"
     },
     {
-      "filename" : "Blue-swipe-1.png",
+      "filename" : "blue-select@3x.png",
       "idiom" : "universal",
       "scale" : "3x"
     },
@@ -42,7 +42,7 @@
           "value" : "dark"
         }
       ],
-      "filename" : "Blue-swipe-dark-1.png",
+      "filename" : "blue-select-dark-1.png",
       "idiom" : "universal",
       "scale" : "3x"
     }
