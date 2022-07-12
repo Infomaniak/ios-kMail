@@ -24,8 +24,12 @@ struct SearchView: View {
 
     var body: some View {
         TextField("SearchField", text: $searchValue)
-        
-        ScrollView {}
+
+        ScrollView(.horizontal) {
+            ForEach(viewModel.filters) { filter in
+                SearchFilterCell(title: filter.title, isSelected: viewModel.selectedFilters.contains(filter))
+            }
+        }
     }
 }
 
