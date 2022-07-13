@@ -28,7 +28,6 @@ import SwiftUI
 class GlobalBottomSheet: BottomSheetState<GlobalBottomSheet.State, GlobalBottomSheet.Position> {
     enum State {
         case move(moveHandler: (Folder) -> Void)
-        case createNewFolder(mode: CreateFolderView.Mode)
         case getMoreStorage
         case restoreEmails
         case reportDisplayProblem(message: Message)
@@ -47,6 +46,12 @@ class GlobalBottomSheet: BottomSheetState<GlobalBottomSheet.State, GlobalBottomS
     }
 }
 
+class GlobalAlert: SheetState<GlobalAlert.State> {
+    enum State {
+        case createNewFolder(mode: CreateFolderView.Mode)
+    }
+}
+
 struct SplitView: View {
     @ObservedObject var mailboxManager: MailboxManager
     @State var selectedFolder: Folder?
@@ -58,6 +63,7 @@ struct SplitView: View {
 
     @StateObject private var menuSheet = MenuSheet()
     @StateObject private var bottomSheet = GlobalBottomSheet()
+    @StateObject private var alert = GlobalAlert()
 
     private let bottomSheetOptions = Constants.bottomSheetOptions + [.absolutePositionValue, .notResizeable]
 
@@ -173,12 +179,11 @@ struct SplitView: View {
             }
         }
         .environmentObject(bottomSheet)
+        .environmentObject(alert)
         .bottomSheet(bottomSheetPosition: $bottomSheet.position, options: bottomSheetOptions) {
             switch bottomSheet.state {
             case let .move(moveHandler):
-                MoveEmailView(mailboxManager: mailboxManager, state: bottomSheet, moveHandler: moveHandler)
-            case let .createNewFolder(mode):
-                CreateFolderView(mailboxManager: mailboxManager, state: bottomSheet, mode: mode)
+                MoveEmailView(mailboxManager: mailboxManager, state: bottomSheet, globalAlert: alert, moveHandler: moveHandler)
             case .getMoreStorage:
                 MoreStorageView(state: bottomSheet)
             case .restoreEmails:
@@ -187,6 +192,14 @@ struct SplitView: View {
                 ReportDisplayProblemView(mailboxManager: mailboxManager, state: bottomSheet, message: message)
             case let .reportPhishing(message):
                 ReportPhishingView(mailboxManager: mailboxManager, state: bottomSheet, message: message)
+            case .none:
+                EmptyView()
+            }
+        }
+        .customAlert(isPresented: $alert.isShowing) {
+            switch alert.state {
+            case let .createNewFolder(mode):
+                CreateFolderView(mailboxManager: mailboxManager, state: alert, mode: mode)
             case .none:
                 EmptyView()
             }

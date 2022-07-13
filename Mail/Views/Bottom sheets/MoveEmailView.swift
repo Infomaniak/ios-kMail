@@ -28,16 +28,18 @@ struct MoveEmailView: View {
     @State private var selectedFolderID: String = ""
 
     private let state: GlobalBottomSheet
+    private let globalAlert: GlobalAlert
     private let moveHandler: (Folder) -> Void
 
     private var sortedFolders: [Folder] {
         return folders.sorted()
     }
 
-    init(mailboxManager: MailboxManager, state: GlobalBottomSheet, moveHandler: @escaping (Folder) -> Void) {
+    init(mailboxManager: MailboxManager, state: GlobalBottomSheet, globalAlert: GlobalAlert, moveHandler: @escaping (Folder) -> Void) {
         _folders = .init(Folder.self, configuration: AccountManager.instance.currentMailboxManager?.realmConfiguration)
         _mailboxManager = StateObject(wrappedValue: mailboxManager)
         self.state = state
+        self.globalAlert = globalAlert
         self.moveHandler = moveHandler
     }
 
@@ -53,7 +55,7 @@ struct MoveEmailView: View {
             }
             .textStyle(.button)
             Button(MailResourcesStrings.Localizable.buttonCreateFolder) {
-                state.open(state: .createNewFolder(mode: .move(moveHandler: moveHandler)), position: .newFolderHeight)
+                globalAlert.state = .createNewFolder(mode: .move(moveHandler: moveHandler))
             }
             .textStyle(.button)
         }
@@ -67,6 +69,7 @@ struct MoveEmailView: View {
 struct MoveEmailView_Previews: PreviewProvider {
     static var previews: some View {
         MoveEmailView(mailboxManager: PreviewHelper.sampleMailboxManager,
-                      state: GlobalBottomSheet()) { _ in }
+                      state: GlobalBottomSheet(),
+                      globalAlert: GlobalAlert()) { _ /* Preview */ in }
     }
 }

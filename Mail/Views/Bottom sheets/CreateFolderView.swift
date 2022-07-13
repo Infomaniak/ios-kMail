@@ -29,7 +29,7 @@ struct CreateFolderView: View {
     @State private var selectedFolderID: String = ""
 
     private var mode: Mode
-    private var state: GlobalBottomSheet
+    private var state: GlobalAlert
 
     private var sortedFolders: [Folder] {
         return folders.sorted()
@@ -49,7 +49,7 @@ struct CreateFolderView: View {
         }
     }
 
-    init(mailboxManager: MailboxManager, state: GlobalBottomSheet, mode: Mode) {
+    init(mailboxManager: MailboxManager, state: GlobalAlert, mode: Mode) {
         _folders = .init(Folder.self, configuration: AccountManager.instance.currentMailboxManager?.realmConfiguration)
         _mailboxManager = StateObject(wrappedValue: mailboxManager)
         self.state = state
@@ -59,19 +59,9 @@ struct CreateFolderView: View {
     var body: some View {
         VStack(alignment: .trailing, spacing: 16) {
             // Header
-            HStack(spacing: 12) {
-                if case let .move(moveHandler) = mode {
-                    Button {
-                        state.open(state: .move(moveHandler: moveHandler), position: .moveHeight)
-                    } label: {
-                        ChevronIcon(style: .left)
-                            .padding(4)
-                    }
-                }
-                Text(MailResourcesStrings.Localizable.createFolderTitle)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .textStyle(.header3)
-            }
+            Text(MailResourcesStrings.Localizable.createFolderTitle)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .textStyle(.header3)
             // Text field
             TextField(MailResourcesStrings.Localizable.createFolderName, text: $folderName)
                 .padding(12)
@@ -86,8 +76,9 @@ struct CreateFolderView: View {
                         selection: $selectedFolderID,
                         items: sortedFolders.map { .init(id: $0.id, name: $0.formattedPath) })
             // Button
-            Button(mode.buttonTitle) {
-                state.close()
+            BottomSheetButtonsView(primaryButtonTitle: mode.buttonTitle,
+                                   secondaryButtonTitle: MailResourcesStrings.Localizable.buttonCancel) {
+                state.state = nil
                 Task {
                     let parent = sortedFolders.first { $0.id == selectedFolderID }
                     await tryOrDisplayError {
@@ -97,16 +88,16 @@ struct CreateFolderView: View {
                         }
                     }
                 }
+            } secondaryButtonAction: {
+                state.state = nil
             }
-            .textStyle(.button)
         }
-        .padding(.horizontal, Constants.bottomSheetHorizontalPadding)
     }
 }
 
 struct CreateFolderView_Previews: PreviewProvider {
     static var previews: some View {
-        CreateFolderView(mailboxManager: PreviewHelper.sampleMailboxManager, state: GlobalBottomSheet(), mode: .create)
-        CreateFolderView(mailboxManager: PreviewHelper.sampleMailboxManager, state: GlobalBottomSheet(), mode: .move { _ in })
+        CreateFolderView(mailboxManager: PreviewHelper.sampleMailboxManager, state: GlobalAlert(), mode: .create)
+        CreateFolderView(mailboxManager: PreviewHelper.sampleMailboxManager, state: GlobalAlert(), mode: .move { _ /* Preview */ in })
     }
 }

@@ -29,7 +29,7 @@ struct UserFoldersListView: View {
     @State private var isExpanded = false
     @Binding var selectedFolder: Folder?
 
-    @EnvironmentObject var globalSheet: GlobalBottomSheet
+    @EnvironmentObject var globalAlert: GlobalAlert
 
     var isCompact: Bool
 
@@ -64,7 +64,9 @@ struct UserFoldersListView: View {
                 }
 
                 MenuDrawerItemCell(content: .init(icon: MailResourcesAsset.add, label: MailResourcesStrings.Localizable.buttonCreateFolder) {
-                    globalSheet.open(state: .createNewFolder(mode: .create), position: .newFolderHeight)
+                    withAnimation {
+                        globalAlert.state = .createNewFolder(mode: .create)
+                    }
                 })
                 .padding(.top, Constants.menuDrawerVerticalPadding)
                 .padding(.horizontal, Constants.menuDrawerHorizontalPadding)
