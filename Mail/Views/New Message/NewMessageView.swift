@@ -66,8 +66,6 @@ struct NewMessageView: View {
     @StateObject private var bottomSheet = NewMessageBottomSheet()
     @StateObject private var attachmentSheet = NewMessageAttachmentSheet()
 
-    @State private var image = UIImage()
-
     static var queue = DispatchQueue(label: "com.infomaniak.mail.saveDraft")
     @State var debouncedBufferWrite: DispatchWorkItem?
     let saveExpiration = 3.0
@@ -133,7 +131,7 @@ struct NewMessageView: View {
                                     AttachmentCell(attachment: attachment)
                                 }
                             }
-                            .padding([.top, .bottom], 1)
+                            .padding([.vertical], 1)
                         }
                     }
 
@@ -191,12 +189,13 @@ struct NewMessageView: View {
                 }
             }
         }
-        .sheet(isPresented: $attachmentSheet.isShowing) {
+        .fullScreenCover(isPresented: $attachmentSheet.isShowing) {
             CameraPicker { data in
                 Task {
                     await addCameraAttachment(data: data)
                 }
             }
+            .ignoresSafeArea()
         }
         .bottomSheet(bottomSheetPosition: $bottomSheet.position, options: bottomSheetOptions) {
             switch bottomSheet.state {
@@ -336,8 +335,8 @@ struct NewMessageView: View {
                         let typeIdentifier = try url.resourceValues(forKeys: [.typeIdentifierKey]).typeIdentifier ?? ""
 
                         _ = try await self.sendAttachment(
-                            typeIdentifier: typeIdentifier,
                             url: url,
+                            typeIdentifier: typeIdentifier,
                             name: url.lastPathComponent,
                             disposition: .attachment
                         )
@@ -367,8 +366,8 @@ struct NewMessageView: View {
                         let name = itemProvider.suggestedName ?? self.getDefaultFileName()
 
                         let attachment = try await self.sendAttachment(
-                            typeIdentifier: typeIdentifier,
                             url: url,
+                            typeIdentifier: typeIdentifier,
                             name: name,
                             disposition: disposition
                         )
@@ -394,8 +393,8 @@ struct NewMessageView: View {
             let typeIdentifier = "public.jpeg"
             let name = getDefaultFileName()
 
-            let attachment = try await sendAttachmentFrom(
-                data: data,
+            let attachment = try await sendAttachment(
+                from: data,
                 typeIdentifier: typeIdentifier,
                 name: name,
                 disposition: disposition
@@ -415,7 +414,7 @@ struct NewMessageView: View {
                 if let url = url {
                     continuation.resume(returning: url)
                 } else {
-                    continuation.resume(throwing: error!)
+                    continuation.resume(throwing: error ?? MailError.unknownError)
                 }
             }
         }
@@ -427,32 +426,22 @@ struct NewMessageView: View {
         return formatter.string(from: Date())
     }
 
-    func sendAttachment(typeIdentifier: String, url: URL, name: String,
+    func sendAttachment(url: URL,
+                        typeIdentifier: String,
+                        name: String,
                         disposition: AttachmentDisposition) async throws -> Attachment? {
         let data = try Data(contentsOf: url)
 
+        return try await sendAttachment(from: data, typeIdentifier: typeIdentifier, name: name, disposition: disposition)
+    }
+
+    func sendAttachment(from data: Data,
+                        typeIdentifier: String,
+                        name: String,
+                        disposition: AttachmentDisposition) async throws -> Attachment? {
         let uti = UTType(typeIdentifier)
         var name = name
         if let nameExtension = uti?.preferredFilenameExtension, !name.capitalized.hasSuffix(nameExtension.capitalized) {
-            name.append(".\(nameExtension)")
-        }
-
-        let attachment = try await mailboxManager.apiFetcher.createAttachment(
-            mailbox: mailboxManager.mailbox,
-            attachmentData: data,
-            disposition: disposition,
-            attachmentName: name,
-            mimeType: uti?.preferredMIMEType ?? "application/octet-stream"
-        )
-        addAttachment(attachment)
-        return attachment
-    }
-
-    func sendAttachmentFrom(data: Data, typeIdentifier: String, name: String,
-                            disposition: AttachmentDisposition) async throws -> Attachment? {
-        let uti = UTType(typeIdentifier)
-        var name = name
-        if let nameExtension = uti?.preferredFilenameExtension {
             name.append(".\(nameExtension)")
         }
 
