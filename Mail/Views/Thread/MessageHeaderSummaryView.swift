@@ -52,7 +52,7 @@ struct MessageHeaderSummaryView: View {
                         }
                         .tint(MailResourcesAsset.redActionColor)
                     } else {
-                        HStack(spacing: 16) {
+                        HStack(alignment: .firstTextBaseline, spacing: 16) {
                             VStack {
                                 ForEach(message.from, id: \.self) { recipient in
                                     Text(recipient.title)
