@@ -32,7 +32,7 @@ struct BottomSheetButton: View {
                 .padding(.vertical, 11) // Button has already a 7pt vertical padding
         }
         .buttonStyle(.borderedProminent)
-        .buttonBorderShape(.roundedRectangle(radius: 16))
+        .buttonBorderShape(.capsule)
         .disabled(isDisabled)
     }
 }

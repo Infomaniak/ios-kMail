@@ -43,18 +43,11 @@ struct MoreStorageView: View {
             .textStyle(.body)
             .padding(.bottom, 24)
 
-            HStack(spacing: 24) {
-                Button(action: dismiss) {
-                    Text(MailResourcesStrings.Localizable.buttonClose)
-                        .foregroundColor(MailResourcesAsset.redActionColor)
-                        .textStyle(.button)
-                }
-
-                BottomSheetButton(label: MailResourcesStrings.Localizable.buttonAvailableSoon,
-                                  isDisabled: true,
-                                  action: getMoreStorage)
-            }
-            .frame(maxWidth: .infinity, alignment: .trailing)
+            BottomSheetButtonsView(primaryButtonTitle: MailResourcesStrings.Localizable.buttonAvailableSoon,
+                                   secondaryButtonTitle: MailResourcesStrings.Localizable.buttonClose,
+                                   primaryButtonEnabled: false,
+                                   primaryButtonAction: getMoreStorage,
+                                   secondaryButtonAction: dismiss)
         }
         .padding(.horizontal, Constants.bottomSheetHorizontalPadding)
     }

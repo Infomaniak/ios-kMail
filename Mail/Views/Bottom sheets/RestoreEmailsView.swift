@@ -44,18 +44,13 @@ struct RestoreEmailsView: View {
                         noSelectionText: pickerNoSelectionText,
                         selection: $selectedDate,
                         items: availableDates.map(mapDates))
-            .padding(.bottom, 24)
+                .padding(.bottom, 24)
 
-            HStack(spacing: 24) {
-                Button(action: cancel) {
-                    Text(MailResourcesStrings.Localizable.buttonCancel)
-                }
-
-                BottomSheetButton(label: MailResourcesStrings.Localizable.buttonConfirmRestoreEmails,
-                                  isDisabled: availableDates.isEmpty,
-                                  action: restoreEmails)
-            }
-            .frame(maxWidth: .infinity, alignment: .trailing)
+            BottomSheetButtonsView(primaryButtonTitle: MailResourcesStrings.Localizable.buttonConfirmRestoreEmails,
+                                   secondaryButtonTitle: MailResourcesStrings.Localizable.buttonCancel,
+                                   primaryButtonEnabled: !availableDates.isEmpty,
+                                   primaryButtonAction: restoreEmails,
+                                   secondaryButtonAction: cancel)
         }
         .padding(.horizontal, Constants.bottomSheetHorizontalPadding)
         .task {
