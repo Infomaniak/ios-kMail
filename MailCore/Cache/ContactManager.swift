@@ -90,11 +90,13 @@ public class ContactManager: ObservableObject {
                 realm.add(addressBooks, update: .modified)
                 realm.add(contacts, update: .modified)
             }
+
+            await mergeContacts()
         } catch {
+            await mergeContacts()
+
             throw error
         }
-
-        await mergeContacts()
     }
 
     public func mergeContacts() async {
