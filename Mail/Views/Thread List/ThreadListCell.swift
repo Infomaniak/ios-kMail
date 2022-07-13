@@ -51,8 +51,8 @@ struct ThreadListCell: View {
                 .foregroundColor(hasUnreadMessages ? Color.accentColor : .clear)
                 .padding(.top, density.unreadCircleTopPadding)
 
-            if density == .large {
-                RecipientImage(recipient: thread.from.last!, size: 32)
+            if density == .large, let recipient = thread.from.last {
+                RecipientImage(recipient: recipient, size: 32)
                     .padding(.trailing, 2)
             }
 
