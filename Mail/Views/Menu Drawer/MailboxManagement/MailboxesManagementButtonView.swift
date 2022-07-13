@@ -36,7 +36,8 @@ struct MailboxesManagementButtonView: View {
         Button(action: handleAction) {
             HStack {
                 Text(text)
-                    .textStyle(detailNumber ?? 0 > 0 ? .calloutHighlighted : .body)
+                    .foregroundColor(detailNumber ?? 0 > 0 ? Color.accentColor : nil)
+                    .textStyle(.body)
                     .lineLimit(1)
                 Spacer()
                 if let detailNumber = detailNumber {
