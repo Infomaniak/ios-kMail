@@ -22,14 +22,13 @@ import SwiftUI
 
 class NewMessageAttachmentSheet: SheetState<NewMessageAttachmentSheet.State> {
     enum State {
-        case fileSelection, photoLibrary, camera
+        case fileSelection, photoLibrary
     }
 }
 
 enum AttachmentResult {
     case files([URL])
     case photos([PHPickerResult])
-    case camera(Data)
 }
 
 struct AddAttachmentView: View {
@@ -39,64 +38,65 @@ struct AddAttachmentView: View {
     @StateObject private var attachmentSheet = NewMessageAttachmentSheet()
     @State private var isPresenting = false
 
-    private struct AttachmentAction: Hashable {
+    private struct AttachmentAction: Identifiable, Equatable {
+        static func == (lhs: AddAttachmentView.AttachmentAction, rhs: AddAttachmentView.AttachmentAction) -> Bool {
+            return lhs.id == rhs.id
+        }
+
+        let id: Int
         let name: String
-        let image: UIImage
+        let image: MailResourcesImages
 
         static let addFile = AttachmentAction(
+            id: 1,
             name: MailResourcesStrings.Localizable.attachmentActionFile,
-            image: MailResourcesAsset.folder.image
+            image: MailResourcesAsset.folder
         )
         static let addPhotoFromLibrary = AttachmentAction(
+            id: 2,
             name: MailResourcesStrings.Localizable.attachmentActionPhotoLibrary,
-            image: MailResourcesAsset.pictureLandscape.image
-        )
-        static let openCamera = AttachmentAction(
-            name: MailResourcesStrings.Localizable.attachmentActionCamera,
-            image: MailResourcesAsset.photo.image
+            image: MailResourcesAsset.pictureLandscape
         )
     }
 
     private let actions: [AttachmentAction] = [
-        .addFile, .addPhotoFromLibrary, .openCamera
+        .addFile, .addPhotoFromLibrary
     ]
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 16) {
+        VStack(alignment: .leading, spacing: 0) {
             Text(MailResourcesStrings.Localizable.attachmentActionTitle)
                 .textStyle(.header3)
                 .padding(.horizontal, 16)
+                .padding(.bottom, 32)
 
-            ForEach(actions, id: \.self) { action in
+            ForEach(actions) { action in
                 Button {
                     switch action {
                     case .addFile:
                         attachmentSheet.state = .fileSelection
                     case .addPhotoFromLibrary:
                         attachmentSheet.state = .photoLibrary
-                    case .openCamera:
-                        attachmentSheet.state = .camera
                     default:
                         break
                     }
                 } label: {
-                    HStack {
-                        Image(uiImage: action.image)
+                    HStack(spacing: 16) {
+                        Image(resource: action.image)
                         Text(action.name)
                             .textStyle(.body)
                     }
+                    .frame(maxWidth: .infinity, alignment: .leading)
                 }
-                .frame(height: 40)
-                .padding(.horizontal, 24)
+                .padding(.horizontal, 32)
 
-                if action != .openCamera {
+                if action != actions.last {
                     IKDivider()
                         .padding(.horizontal, 8)
+                        .padding(.vertical, 16)
                 }
             }
         }
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .padding(.top, 16)
         .sheet(isPresented: $attachmentSheet.isShowing) {
             switch attachmentSheet.state {
             case .fileSelection:
@@ -107,10 +107,6 @@ struct AddAttachmentView: View {
             case .photoLibrary:
                 ImagePicker { results in
                     didSelectAttachment(.photos(results))
-                }
-            case .camera:
-                CameraPicker { data in
-                    didSelectAttachment(.camera(data))
                 }
             case .none:
                 EmptyView()

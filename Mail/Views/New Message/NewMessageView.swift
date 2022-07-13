@@ -45,7 +45,7 @@ class NewMessageBottomSheet: BottomSheetState<NewMessageBottomSheet.State, NewMe
     }
 
     enum Position: CGFloat, CaseIterable {
-        case link = 200, attachment = 250, hidden = 0
+        case link = 200, attachment = 210, hidden = 0
     }
 }
 
@@ -62,15 +62,15 @@ struct NewMessageView: View {
     @State private var autocompletion: [Recipient] = []
     @State private var sendDisabled = false
     @State private var draftHasChanged = false
+    @State private var isShowingCamera = false
 
     @StateObject private var bottomSheet = NewMessageBottomSheet()
-    @StateObject private var attachmentSheet = NewMessageAttachmentSheet()
 
     static var queue = DispatchQueue(label: "com.infomaniak.mail.saveDraft")
     @State var debouncedBufferWrite: DispatchWorkItem?
     let saveExpiration = 3.0
 
-    private let bottomSheetOptions = Constants.bottomSheetOptions + [.absolutePositionValue]
+    private let bottomSheetOptions = Constants.bottomSheetOptions + [.absolutePositionValue, .notResizeable]
 
     private var shouldDisplayAutocompletion: Bool {
         return !autocompletion.isEmpty && focusedRecipientField != nil
@@ -131,7 +131,7 @@ struct NewMessageView: View {
                                     AttachmentCell(attachment: attachment)
                                 }
                             }
-                            .padding([.vertical], 1)
+                            .padding(.vertical, 1)
                         }
                     }
 
@@ -179,7 +179,7 @@ struct NewMessageView: View {
         }
         .onAppear {
             editor.richTextEditor.bottomSheet = bottomSheet
-            editor.richTextEditor.attachmentSheet = attachmentSheet
+            editor.richTextEditor.isShowingCamera = $isShowingCamera
         }
         .onDisappear {
             if draftHasChanged {
@@ -189,7 +189,7 @@ struct NewMessageView: View {
                 }
             }
         }
-        .fullScreenCover(isPresented: $attachmentSheet.isShowing) {
+        .fullScreenCover(isPresented: $isShowingCamera) {
             CameraPicker { data in
                 Task {
                     await addCameraAttachment(data: data)
@@ -209,10 +209,6 @@ struct NewMessageView: View {
                     case let .photos(results):
                         Task {
                             await addImageAttachment(results: results)
-                        }
-                    case let .camera(data):
-                        Task {
-                            await addCameraAttachment(data: data)
                         }
                     }
                 }
