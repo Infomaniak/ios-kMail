@@ -16,10 +16,10 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import Introspect
 import MailCore
 import MailResources
 import SwiftUI
-import Introspect
 
 struct SettingsView: View {
     @ObservedObject var viewModel: SettingsViewModel
@@ -33,18 +33,20 @@ struct SettingsView: View {
             ForEach(viewModel.sections) { section in
                 Section {
                     // Header & separator
-                    VStack(alignment: .leading, spacing: 24) {
-                        if section != viewModel.sections.first {
-                            IKDivider()
+                    if section.name != nil || section != viewModel.sections.first {
+                        VStack(alignment: .leading, spacing: 24) {
+                            if section != viewModel.sections.first {
+                                IKDivider()
+                            }
+                            if let title = section.name {
+                                Text(title)
+                                    .textStyle(.calloutSecondary)
+                                    .padding(.horizontal, 8)
+                            }
                         }
-                        if let title = section.name {
-                            Text(title)
-                                .textStyle(.calloutSecondary)
-                                .padding(.horizontal, 8)
-                        }
+                        .listRowSeparator(.hidden)
+                        .listRowInsets(.init(top: 12, leading: 8, bottom: 4, trailing: 8))
                     }
-                    .listRowSeparator(.hidden)
-                    .listRowInsets(.init(top: 12, leading: 8, bottom: 4, trailing: 8))
 
                     ForEach(section.items) { item in
                         switch item.type {
