@@ -51,6 +51,9 @@ struct SettingsToggleCell: View {
             if userDefaults == \.isAppLockEnabled {
                 enableAppLock()
             }
+            if userDefaults == \.includeOriginalInReply || userDefaults == \.acknowledgement {
+                showWorkInProgressSnackBar()
+            }
         }
     }
 
