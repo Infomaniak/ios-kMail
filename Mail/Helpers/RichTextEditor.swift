@@ -94,6 +94,7 @@ class RichTextEditorModel: ObservableObject {
 class MailEditor: SQTextEditorView {
     lazy var toolbar = getToolbar()
     var bottomSheet: NewMessageBottomSheet?
+    var isShowingCamera: Binding<Bool>?
     var toolbarStyle = ToolbarStyle.main
 
     private lazy var editorWebView: WKWebView = {
@@ -237,11 +238,10 @@ class MailEditor: SQTextEditorView {
         case .editText:
             updateToolbarItems(style: toolbarStyle == .main ? .textEdition : .main)
         case .attachment:
-            // TODO: Handle Attachment
-            break
+            webView.resignFirstResponder()
+            bottomSheet?.open(state: .attachment, position: .attachment)
         case .photo:
-            // TODO: Handle photo
-            break
+            isShowingCamera?.wrappedValue = true
         case .link:
             if selectedTextAttribute.format.hasLink {
                 removeLink()
@@ -250,7 +250,7 @@ class MailEditor: SQTextEditorView {
                 bottomSheet?.open(state: .link { url in
                     self.makeLink(url: url)
                     self.bottomSheet?.close()
-                }, position: .top)
+                }, position: .link)
             }
         case .programMessage:
             // TODO: Handle programmed message

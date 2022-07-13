@@ -19,6 +19,7 @@
 import InfomaniakCore
 import MailCore
 import MailResources
+import PhotosUI
 import RealmSwift
 import SwiftUI
 
@@ -39,11 +40,12 @@ enum RecipientFieldType: Hashable {
 
 class NewMessageBottomSheet: BottomSheetState<NewMessageBottomSheet.State, NewMessageBottomSheet.Position> {
     enum State {
+        case attachment
         case link(handler: (String) -> Void)
     }
 
     enum Position: CGFloat, CaseIterable {
-        case top = 200, hidden = 0
+        case link = 200, attachment = 210, hidden = 0
     }
 }
 
@@ -51,7 +53,7 @@ struct NewMessageView: View {
     @Binding var isPresented: Bool
 
     @State private var mailboxManager: MailboxManager
-    @State private var selectedMailboxItem: Int = 0
+    @State private var selectedMailboxItem = 0
     @State private var draft: UnmanagedDraft
     @State private var editor = RichTextEditorModel()
     @State private var showCc = false
@@ -60,6 +62,7 @@ struct NewMessageView: View {
     @State private var autocompletion: [Recipient] = []
     @State private var sendDisabled = false
     @State private var draftHasChanged = false
+    @State private var isShowingCamera = false
 
     @StateObject private var bottomSheet = NewMessageBottomSheet()
 
@@ -67,7 +70,7 @@ struct NewMessageView: View {
     @State var debouncedBufferWrite: DispatchWorkItem?
     let saveExpiration = 3.0
 
-    private let bottomSheetOptions = Constants.bottomSheetOptions + [.absolutePositionValue]
+    private let bottomSheetOptions = Constants.bottomSheetOptions + [.absolutePositionValue, .notResizeable]
 
     private var shouldDisplayAutocompletion: Bool {
         return !autocompletion.isEmpty && focusedRecipientField != nil
@@ -121,6 +124,17 @@ struct NewMessageView: View {
                         TextField("", text: $draft.subject)
                     }
 
+                    if let attachments = draft.attachments?.filter { $0.contentId == nil }, !attachments.isEmpty {
+                        ScrollView(.horizontal, showsIndicators: false) {
+                            HStack(spacing: 8) {
+                                ForEach(attachments) { attachment in
+                                    AttachmentCell(attachment: attachment)
+                                }
+                            }
+                            .padding(.vertical, 1)
+                        }
+                    }
+
                     RichTextEditor(model: $editor, body: $draft.body)
                         .padding(.horizontal, 16)
                 }
@@ -165,6 +179,7 @@ struct NewMessageView: View {
         }
         .onAppear {
             editor.richTextEditor.bottomSheet = bottomSheet
+            editor.richTextEditor.isShowingCamera = $isShowingCamera
         }
         .onDisappear {
             if draftHasChanged {
@@ -174,10 +189,31 @@ struct NewMessageView: View {
                 }
             }
         }
+        .fullScreenCover(isPresented: $isShowingCamera) {
+            CameraPicker { data in
+                Task {
+                    await addCameraAttachment(data: data)
+                }
+            }
+            .ignoresSafeArea()
+        }
         .bottomSheet(bottomSheetPosition: $bottomSheet.position, options: bottomSheetOptions) {
             switch bottomSheet.state {
-            case .link(let handler):
-                LinkView(actionHandler: handler)
+            case .attachment:
+                AddAttachmentView(bottomSheet: bottomSheet) { attachment in
+                    switch attachment {
+                    case let .files(urls):
+                        Task {
+                            await addDocumentAttachment(urls: urls)
+                        }
+                    case let .photos(results):
+                        Task {
+                            await addImageAttachment(results: results)
+                        }
+                    }
+                }
+            case let .link(handler):
+                AddLinkView(actionHandler: handler)
             case .none:
                 EmptyView()
             }
@@ -283,6 +319,145 @@ struct NewMessageView: View {
                 _ = try await mailboxManager.move(thread: frozenThread, to: .trash)
                 IKSnackBar.showSnackBar(message: MailResourcesStrings.Localizable.snackBarDraftDeleted)
             }
+        }
+    }
+
+    // MARK: Attachments
+
+    func addDocumentAttachment(urls: [URL]) async {
+        await withTaskGroup(of: Void.self) { group in
+            for url in urls {
+                group.addTask {
+                    do {
+                        let typeIdentifier = try url.resourceValues(forKeys: [.typeIdentifierKey]).typeIdentifier ?? ""
+
+                        _ = try await self.sendAttachment(
+                            url: url,
+                            typeIdentifier: typeIdentifier,
+                            name: url.lastPathComponent,
+                            disposition: .attachment
+                        )
+
+                    } catch {
+                        print("Error while creating attachment: \(error.localizedDescription)")
+                    }
+                }
+            }
+        }
+    }
+
+    func addImageAttachment(
+        results: [PHPickerResult],
+        disposition: AttachmentDisposition = .attachment,
+        completion: @escaping (String) -> Void = { _ in
+            // TODO: - Manage inline attachment
+        }
+    ) async {
+        let itemProviders = results.map(\.itemProvider)
+        await withTaskGroup(of: Void.self) { group in
+            for itemProvider in itemProviders {
+                group.addTask {
+                    do {
+                        let typeIdentifier = itemProvider.registeredTypeIdentifiers.first ?? ""
+                        let url = try await self.loadFileRepresentation(itemProvider, typeIdentifier: typeIdentifier)
+                        let name = itemProvider.suggestedName ?? self.getDefaultFileName()
+
+                        let attachment = try await self.sendAttachment(
+                            url: url,
+                            typeIdentifier: typeIdentifier,
+                            name: name,
+                            disposition: disposition
+                        )
+                        if disposition == .inline, let cid = attachment?.contentId {
+                            completion(cid)
+                        }
+                    } catch {
+                        print("Error while creating attachment: \(error.localizedDescription)")
+                    }
+                }
+            }
+        }
+    }
+
+    func addCameraAttachment(
+        data: Data,
+        disposition: AttachmentDisposition = .attachment,
+        completion: @escaping (String) -> Void = { _ in
+            // TODO: - Manage inline attachment
+        }
+    ) async {
+        do {
+            let typeIdentifier = "public.jpeg"
+            let name = getDefaultFileName()
+
+            let attachment = try await sendAttachment(
+                from: data,
+                typeIdentifier: typeIdentifier,
+                name: name,
+                disposition: disposition
+            )
+
+            if disposition == .inline, let cid = attachment?.contentId {
+                completion(cid)
+            }
+        } catch {
+            print("Error while creating attachment: \(error.localizedDescription)")
+        }
+    }
+
+    func loadFileRepresentation(_ itemProvider: NSItemProvider, typeIdentifier: String) async throws -> URL {
+        try await withCheckedThrowingContinuation { continuation in
+            itemProvider.loadFileRepresentation(forTypeIdentifier: typeIdentifier) { url, error in
+                if let url = url {
+                    continuation.resume(returning: url)
+                } else {
+                    continuation.resume(throwing: error ?? MailError.unknownError)
+                }
+            }
+        }
+    }
+
+    public nonisolated func getDefaultFileName() -> String {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyyMMdd_HHmmssSS"
+        return formatter.string(from: Date())
+    }
+
+    func sendAttachment(url: URL,
+                        typeIdentifier: String,
+                        name: String,
+                        disposition: AttachmentDisposition) async throws -> Attachment? {
+        let data = try Data(contentsOf: url)
+
+        return try await sendAttachment(from: data, typeIdentifier: typeIdentifier, name: name, disposition: disposition)
+    }
+
+    func sendAttachment(from data: Data,
+                        typeIdentifier: String,
+                        name: String,
+                        disposition: AttachmentDisposition) async throws -> Attachment? {
+        let uti = UTType(typeIdentifier)
+        var name = name
+        if let nameExtension = uti?.preferredFilenameExtension, !name.capitalized.hasSuffix(nameExtension.capitalized) {
+            name.append(".\(nameExtension)")
+        }
+
+        let attachment = try await mailboxManager.apiFetcher.createAttachment(
+            mailbox: mailboxManager.mailbox,
+            attachmentData: data,
+            disposition: disposition,
+            attachmentName: name,
+            mimeType: uti?.preferredMIMEType ?? "application/octet-stream"
+        )
+        addAttachment(attachment)
+        return attachment
+    }
+
+    func addAttachment(_ attachment: Attachment) {
+        if draft.attachments == nil {
+            draft.attachments = [attachment]
+        } else {
+            draft.attachments?.append(attachment)
         }
     }
 }

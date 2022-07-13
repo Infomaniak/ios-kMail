@@ -77,7 +77,7 @@ public struct UnmanagedDraft: Equatable, Encodable, AbstractDraft {
     public var inReplyTo: String?
     public var inReplyToUid: String?
     public var forwardedUid: String?
-    // attachments
+    public var attachments: [Attachment]?
     public var identityId: String
     public var ackRequest = false
     public var stUuid: String?
@@ -130,6 +130,7 @@ public struct UnmanagedDraft: Equatable, Encodable, AbstractDraft {
                 inReplyTo: String? = nil,
                 inReplyToUid: String? = nil,
                 forwardedUid: String? = nil,
+                attachements: [Attachment]? = nil,
                 identityId: String = "",
                 ackRequest: Bool = false,
                 stUuid: String? = nil,
@@ -149,12 +150,68 @@ public struct UnmanagedDraft: Equatable, Encodable, AbstractDraft {
         self.inReplyTo = inReplyTo
         self.inReplyToUid = inReplyToUid
         self.forwardedUid = forwardedUid
+        attachments = attachements
         self.identityId = identityId
         self.ackRequest = ackRequest
         self.stUuid = stUuid
         self.priority = priority
         self.action = action
         self.delay = delay
+    }
+
+    private enum CodingKeys: String, CodingKey {
+        case uuid
+        case date
+        case identityId
+        case inReplyToUid
+        case forwardedUid
+        case inReplyTo
+        case mimeType
+        case body
+        case quote
+        case to
+        case cc
+        case bcc
+        case subject
+        case ackRequest
+        case priority
+        case stUuid
+        case attachments
+        case isOffline
+        case action
+        case delay
+    }
+
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+
+        try container.encode(uuid, forKey: .uuid)
+        try container.encode(identityId, forKey: .identityId)
+        try container.encode(inReplyToUid, forKey: .inReplyToUid)
+        try container.encode(forwardedUid, forKey: .forwardedUid)
+        try container.encode(inReplyTo, forKey: .inReplyTo)
+        try container.encode(mimeType, forKey: .mimeType)
+        try container.encode(body, forKey: .body)
+        try container.encode(quote, forKey: .quote)
+        if !to.isEmpty {
+            try container.encode(to, forKey: .to)
+        }
+        if !cc.isEmpty {
+            try container.encode(cc, forKey: .cc)
+        }
+        if !bcc.isEmpty {
+            try container.encode(bcc, forKey: .bcc)
+        }
+        try container.encode(subject, forKey: .subject)
+        try container.encode(ackRequest, forKey: .ackRequest)
+        try container.encode(priority, forKey: .priority)
+        try container.encode(stUuid, forKey: .stUuid)
+        let attachmentsArray = attachments?.map { attachment in
+            attachment.uuid
+        }
+        try container.encode(attachmentsArray, forKey: .attachments)
+        try container.encode(action, forKey: .action)
+        try container.encode(delay, forKey: .delay)
     }
 
     private func valueToRecipient(_ value: String) -> [Recipient] {

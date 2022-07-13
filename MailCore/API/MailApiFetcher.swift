@@ -231,6 +231,24 @@ public class MailApiFetcher: ApiFetcher {
     public func create(mailbox: Mailbox, folder: NewFolder) async throws -> Folder {
         try await perform(request: authenticatedRequest(.folders(uuid: mailbox.uuid), method: .post, parameters: folder)).data
     }
+
+    public func createAttachment(
+        mailbox: Mailbox,
+        attachmentData: Data,
+        disposition: AttachmentDisposition,
+        attachmentName: String,
+        mimeType: String
+    ) async throws -> Attachment {
+        let headers = HTTPHeaders([
+            "x-ws-attachment-filename": attachmentName,
+            "x-ws-attachment-mime-type": mimeType,
+            "x-ws-attachment-disposition": disposition.rawValue
+        ])
+        var request = try URLRequest(url: Endpoint.createAttachment(uuid: mailbox.uuid).url, method: .post, headers: headers)
+        request.httpBody = attachmentData
+
+        return try await perform(request: authenticatedSession.request(request)).data
+    }
 }
 
 class SyncedAuthenticator: OAuthAuthenticator {

@@ -68,7 +68,7 @@ struct ActionsView_Previews: PreviewProvider {
         ActionsView(mailboxManager: PreviewHelper.sampleMailboxManager,
                     target: .thread(PreviewHelper.sampleThread),
                     state: ThreadBottomSheet(),
-                    globalSheet: GlobalBottomSheet()) { _, _ in }
+                    globalSheet: GlobalBottomSheet()) { _, _ in /* Preview */ }
             .accentColor(AccentColor.pink.primary.swiftUiColor)
     }
 }
