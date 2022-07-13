@@ -131,7 +131,7 @@ struct NewMessageView: View {
                 leading: Button {
                     self.dismiss()
                 } label: {
-                    Image(systemName: "xmark")
+                    Label(MailResourcesStrings.Localizable.buttonClose, systemImage: "xmark")
                 },
                 trailing: Button {
                     Task {
@@ -183,6 +183,7 @@ struct NewMessageView: View {
             }
         }
         .navigationViewStyle(.stack)
+        .defaultAppStorage(.shared)
     }
 
     @MainActor private func send() async -> CancelableResponse? {

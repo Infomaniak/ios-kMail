@@ -22,6 +22,7 @@ import SwiftUI
 
 struct SettingsSwipeActionsView: View {
     @ObservedObject var viewModel: SwipeActionSettingsViewModel
+    @AppStorage(UserDefaults.shared.key(.accentColor)) var accentColor = AccentColor.pink
 
     init(viewModel: SwipeActionSettingsViewModel) {
         self.viewModel = viewModel
@@ -31,30 +32,38 @@ struct SettingsSwipeActionsView: View {
         List {
             ForEach(viewModel.sections) { section in
                 Section {
-                    Group {
-                        ForEach(section.items) { item in
-                            if case let .option(option) = item.type {
-                                SettingsOptionCell(
-                                    title: item.title,
-                                    subtitle: viewModel.selectedValues[option]?.title ?? "",
-                                    option: option
-                                )
-                            } else {
-                                EmptyView()
-                            }
+                    ForEach(section.items) { item in
+                        if case let .option(option) = item.type {
+                            SettingsOptionCell(
+                                icon: icon(for: option),
+                                title: item.title,
+                                subtitle: viewModel.selectedValues[option]?.title ?? "",
+                                option: option
+                            )
+                            .padding(.horizontal, 8)
+                        } else {
+                            EmptyView()
                         }
-
-                        SwipeConfigCell(selectedValues: $viewModel.selectedValues, section: section)
                     }
-                    .listRowBackground(MailResourcesAsset.backgroundColor.swiftUiColor)
-                    .listRowSeparator(.hidden)
+
+                    VStack(alignment: .leading, spacing: 16) {
+                        SwipeConfigCell(selectedValues: $viewModel.selectedValues, section: section)
+                            .padding(.horizontal, 8)
+                        if section != viewModel.sections.last {
+                            IKDivider()
+                        }
+                    }
                 } header: {
                     if section == viewModel.sections.first {
                         Text(MailResourcesStrings.Localizable.settingsSwipeDescription)
                             .textStyle(.calloutSecondary)
+                            .padding(.horizontal, 8)
                     }
                 }
                 .listSectionSeparator(.hidden)
+                .listRowInsets(.init(top: 8, leading: 8, bottom: 8, trailing: 8))
+                .listRowBackground(MailResourcesAsset.backgroundColor.swiftUiColor)
+                .listRowSeparator(.hidden)
             }
         }
         .listStyle(.plain)
@@ -63,6 +72,27 @@ struct SettingsSwipeActionsView: View {
         .backButtonDisplayMode(.minimal)
         .onAppear {
             viewModel.updateSelectedValue()
+        }
+    }
+
+    private func icon(for option: SettingsOption) -> Image? {
+        let resource: MailResourcesImages?
+        switch option {
+        case .swipeShortRightOption:
+            resource = accentColor.shortRightIcon
+        case .swipeLongRightOption:
+            resource = accentColor.longRightIcon
+        case .swipeShortLeftOption:
+            resource = accentColor.shortLeftIcon
+        case .swipeLongLeftOption:
+            resource = accentColor.longLeftIcon
+        default:
+            resource = nil
+        }
+        if let resource = resource {
+            return Image(resource: resource)
+        } else {
+            return nil
         }
     }
 }

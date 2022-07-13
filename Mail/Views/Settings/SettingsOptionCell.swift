@@ -19,17 +19,28 @@
 import SwiftUI
 
 struct SettingsOptionCell: View {
+    let icon: Image?
     let title: String
     let subtitle: String
     let option: SettingsOption
 
+    init(icon: Image? = nil, title: String, subtitle: String, option: SettingsOption) {
+        self.icon = icon
+        self.title = title
+        self.subtitle = subtitle
+        self.option = option
+    }
+
     var body: some View {
         NavigationLink(destination: option.getDestination()) {
-            VStack(alignment: .leading) {
-                Text(title)
-                    .textStyle(.body)
-                Text(subtitle)
-                    .textStyle(.calloutSecondary)
+            HStack(alignment: .firstTextBaseline, spacing: 8) {
+                icon
+                VStack(alignment: .leading) {
+                    Text(title)
+                        .textStyle(.body)
+                    Text(subtitle)
+                        .textStyle(.calloutSecondary)
+                }
             }
         }
     }

@@ -16,6 +16,7 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import MailResources
 import SwiftUI
 
 struct SheetView<Content>: View where Content: View {
@@ -33,9 +34,10 @@ struct SheetView<Content>: View where Content: View {
                 .navigationBarItems(leading: Button {
                     isPresented = false
                 } label: {
-                    Image(systemName: "xmark")
+                    Label(MailResourcesStrings.Localizable.buttonClose, systemImage: "xmark")
                 })
         }
+        .defaultAppStorage(.shared)
     }
 }
 

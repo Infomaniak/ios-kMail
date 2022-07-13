@@ -21,18 +21,18 @@ import MailResources
 import SwiftUI
 
 public enum ThreadDensity: String, CaseIterable, SettingsOptionEnum {
+    case compact
     case normal
     case large
-    case compact
 
     public var title: String {
         switch self {
-        case .normal:
-            return MailResourcesStrings.Localizable.settingsDefault
-        case .large:
-            return MailResourcesStrings.Localizable.settingsDensityOptionLarge
         case .compact:
             return MailResourcesStrings.Localizable.settingsDensityOptionCompact
+        case .normal:
+            return MailResourcesStrings.Localizable.settingsDensityOptionNormal
+        case .large:
+            return MailResourcesStrings.Localizable.settingsDensityOptionLarge
         }
     }
 
