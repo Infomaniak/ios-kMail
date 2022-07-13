@@ -39,58 +39,33 @@ class LocalContactsHelper {
     let store = CNContactStore()
     let keysToFetch = ([CNContactIdentifierKey, CNContactEmailAddressesKey, CNContactImageDataKey, CNContactNicknameKey, CNContactOrganizationNameKey] as [CNKeyDescriptor]) + [CNContactFormatter.descriptorForRequiredKeys(for: .fullName)]
 
-    func enumerateContacts(usingBlock: @escaping (CNContact, UnsafeMutablePointer<ObjCBool>) -> Void) {
-        checkAuthorization { error in
-            guard error == nil else {
-                if let error = error {
-                    print("Error while checking authorization status: \(error.localizedDescription)")
-                }
-                return
-            }
-            let request = CNContactFetchRequest(keysToFetch: self.keysToFetch)
-            do {
-                try self.store.enumerateContacts(with: request, usingBlock: usingBlock)
-            } catch {
-                print("Error while getting contacts: \(error.localizedDescription)")
-            }
+    func enumerateContacts(usingBlock: @escaping (CNContact, UnsafeMutablePointer<ObjCBool>) -> Void) async {
+        do {
+            try await checkAuthorization()
+            let request = CNContactFetchRequest(keysToFetch: keysToFetch)
+            try store.enumerateContacts(with: request, usingBlock: usingBlock)
+        } catch {
+            print("Error while getting contacts: \(error.localizedDescription)")
         }
     }
 
     func getContact(with identifier: String) async throws -> CNContact {
-        _ = try await checkAuthorization()
+        try await checkAuthorization()
         return try store.unifiedContact(withIdentifier: identifier, keysToFetch: keysToFetch)
     }
 
-    private func checkAuthorization() async throws -> Bool {
-        return try await withCheckedThrowingContinuation { continuation in
-            checkAuthorization { error in
-                if let error = error {
-                    continuation.resume(throwing: error)
-                } else {
-                    continuation.resume(returning: true)
-                }
-            }
-        }
-    }
-
-    private func checkAuthorization(completion: @escaping (Error?) -> Void) {
+    private func checkAuthorization() async throws {
         switch CNContactStore.authorizationStatus(for: .contacts) {
         case .authorized:
             // All ok
-            completion(nil)
+            return
         case .restricted, .denied:
-            completion(ContactError.accessDenied)
+            throw ContactError.accessDenied
         case .notDetermined:
-            // Request authorization
-            store.requestAccess(for: .contacts) { granted, error in
-                if granted {
-                    completion(nil)
-                } else {
-                    completion(error ?? ContactError.accessDenied)
-                }
-            }
+            // Request authozation
+            try await store.requestAccess(for: .contacts)
         @unknown default:
-            completion(ContactError.unhandledCase)
+            throw ContactError.unhandledCase
         }
     }
 }

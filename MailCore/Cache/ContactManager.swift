@@ -91,17 +91,17 @@ public class ContactManager: ObservableObject {
                 realm.add(contacts, update: .modified)
             }
         } catch {
-            mergeContacts()
             throw error
         }
-        mergeContacts()
+
+        await mergeContacts()
     }
 
-    public func mergeContacts() {
+    public func mergeContacts() async {
         var mergeableContacts = [String: (local: CNContact?, remote: Contact?)]()
 
         // Add local contacts
-        localContactsHelper.enumerateContacts { localContact, _ in
+        await localContactsHelper.enumerateContacts { localContact, _ in
             for email in localContact.emailAddresses {
                 let email = email.value as String
                 mergeableContacts[email] = (local: localContact, remote: mergeableContacts[email]?.remote)
@@ -118,9 +118,11 @@ public class ContactManager: ObservableObject {
         }
 
         // Merge
-        _ = mergeableContacts.map { key, value in
-            mergedContacts[key] = MergedContact(email: key, remote: value.remote?.freeze(), local: value.local)
+        var tmpMergedContacts = [String: MergedContact]()
+        mergeableContacts.forEach { key, value in
+            tmpMergedContacts[key] = MergedContact(email: key, remote: value.remote?.freeze(), local: value.local)
         }
+        mergedContacts = tmpMergedContacts
     }
 
     public func getRemoteContact(with identifier: String) -> Contact? {
@@ -165,6 +167,6 @@ public class ContactManager: ObservableObject {
 
     public func getMainAddressBook() -> AddressBook? {
         let realm = getRealm()
-        return realm.objects(AddressBook.self).filter { $0.isPrincipal }.first
+        return realm.objects(AddressBook.self).where { $0.isPrincipal == true }.first
     }
 }
