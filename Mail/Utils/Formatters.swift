@@ -25,8 +25,10 @@ public extension Date {
         } else if Calendar.current.isDateInYesterday(self) {
             let dateMidnight = Calendar.current.date(bySettingHour: 0, minute: 0, second: 0, of: self)!
             return dateMidnight.formatted(.relative(presentation: .named))
-        } else if Calendar.current.isDate(self, equalTo: Date(), toGranularity: .weekOfYear) {
+        } else if Calendar.current.isDate(self, equalTo: .now, toGranularity: .weekOfYear) {
             return self.formatted(.dateTime.weekday(.wide))
+        } else if Calendar.current.isDate(self, equalTo: .now, toGranularity: .year) {
+            return self.formatted(.dateTime.day().month())
         } else {
             return self.formatted(date: .numeric, time: .omitted)
         }
