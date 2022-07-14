@@ -110,6 +110,7 @@ struct MenuDrawerView: View {
     // swiftlint:disable empty_count
     @ObservedResults(Folder.self, where: { $0.parentLink.count == 0 }) var folders
 
+    @ObservedRealmObject private var mailbox: Mailbox
     @StateObject var mailboxManager: MailboxManager
     @State private var showMailboxes = false
 
@@ -127,6 +128,11 @@ struct MenuDrawerView: View {
         _mailboxManager = StateObject(wrappedValue: mailboxManager)
         _selectedFolder = selectedFolder
         self.isCompact = isCompact
+        if let liveMailbox = MailboxInfosManager.instance.getMailbox(objectId: mailboxManager.mailbox.objectId, freeze: false) {
+            mailbox = liveMailbox
+        } else {
+            mailbox = mailboxManager.mailbox
+        }
     }
 
     var body: some View {
@@ -159,10 +165,10 @@ struct MenuDrawerView: View {
 
                 MenuDrawerItemsListView(title: MailResourcesStrings.Localizable.menuDrawerAdvancedActions, content: actionsMenuItems)
 
-                if mailboxManager.mailbox.isLimited {
+                if mailbox.isLimited, let quotas = mailbox.quotas {
                     IKDivider(withPadding: true)
 
-                    MailboxQuotaView()
+                    MailboxQuotaView(quotas: quotas)
                 }
             }
         }
@@ -191,7 +197,7 @@ struct MenuDrawerView: View {
                      label: MailResourcesStrings.Localizable.buttonImportEmails,
                      action: importMails)
         ]
-        if mailboxManager.mailbox.permissions?.canRestoreEmails == true {
+        if mailbox.permissions?.canRestoreEmails == true {
             actionsMenuItems.append(.init(
                 icon: MailResourcesAsset.restoreArrow,
                 label: MailResourcesStrings.Localizable.buttonRestoreEmails,

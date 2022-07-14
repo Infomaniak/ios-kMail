@@ -22,25 +22,26 @@ import MailResources
 import SwiftUI
 
 struct MailboxQuotaView: View {
-    @EnvironmentObject var mailboxManager: MailboxManager
     @EnvironmentObject var globalSheet: GlobalBottomSheet
 
-    @State private var quotas: Quotas?
+    var quotas: Quotas
 
     var body: some View {
         HStack {
-            ProgressView(value: computeProgression())
+            ProgressView(value: quotas.progression)
                 .progressViewStyle(QuotaCircularProgressViewStyle())
                 .padding(.trailing, 7)
 
             VStack(alignment: .leading) {
                 Text(MailResourcesStrings.Localizable.menuDrawerMailboxStorage(
-                    Int64((quotas?.size ?? 0) * 1000).formatted(.defaultByteCount),
+                    Int64(quotas.size * 1000).formatted(.defaultByteCount),
                     Constants.sizeLimit.formatted(.defaultByteCount)
                 ))
                 .textStyle(.header3)
 
-                Button(action: openGetMoreStorage) {
+                Button {
+                    globalSheet.open(state: .getMoreStorage, position: .moreStorageHeight)
+                } label: {
                     Text(MailResourcesStrings.Localizable.buttonMoreStorage)
                 }
                 .textStyle(.button)
@@ -50,25 +51,6 @@ struct MailboxQuotaView: View {
         }
         .padding(.vertical, 19)
         .padding(.horizontal, Constants.menuDrawerHorizontalPadding)
-        .task {
-            do {
-                quotas = try await mailboxManager.apiFetcher.quotas(mailbox: mailboxManager.mailbox)
-            } catch {
-                print("Error while fetching quotas: \(error)")
-            }
-        }
-    }
-
-    // MARK: - Private functions
-
-    private func computeProgression() -> Double {
-        let minimumValue = 0.03
-        let value = Double(quotas?.size ?? 0) / Double(Constants.sizeLimit)
-        return value > minimumValue ? value : minimumValue
-    }
-
-    private func openGetMoreStorage() {
-        globalSheet.open(state: .getMoreStorage, position: .moreStorageHeight)
     }
 }
 

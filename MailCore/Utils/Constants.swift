@@ -41,7 +41,8 @@ public struct URLConstants {
 }
 
 public enum Constants {
-    public static let sizeLimit = Int64(20 * pow(1024.0, 3.0)) // 20 Go
+    public static let sizeLimit = 21_474_836_480 // 20 Go
+    public static let minimumQuotasProgressionToDisplay = 0.03
 
     public static let onboardingLogoHeight: CGFloat = 72
     public static let onboardingButtonHeight: CGFloat = 100
