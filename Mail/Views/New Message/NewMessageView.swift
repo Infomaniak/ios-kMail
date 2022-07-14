@@ -41,11 +41,16 @@ enum RecipientFieldType: Hashable {
 class NewMessageBottomSheet: BottomSheetState<NewMessageBottomSheet.State, NewMessageBottomSheet.Position> {
     enum State {
         case attachment
-        case link(handler: (String) -> Void)
     }
 
     enum Position: CGFloat, CaseIterable {
-        case link = 200, attachment = 210, hidden = 0
+        case attachment = 210, hidden = 0
+    }
+}
+
+class NewMessageAlert: SheetState<NewMessageAlert.State> {
+    enum State {
+        case link(handler: (String) -> Void)
     }
 }
 
@@ -65,6 +70,7 @@ struct NewMessageView: View {
     @State private var isShowingCamera = false
 
     @StateObject private var bottomSheet = NewMessageBottomSheet()
+    @StateObject private var alert = NewMessageAlert()
 
     static var queue = DispatchQueue(label: "com.infomaniak.mail.saveDraft")
     @State var debouncedBufferWrite: DispatchWorkItem?
@@ -179,6 +185,7 @@ struct NewMessageView: View {
         }
         .onAppear {
             editor.richTextEditor.bottomSheet = bottomSheet
+            editor.richTextEditor.alert = alert
             editor.richTextEditor.isShowingCamera = $isShowingCamera
         }
         .onDisappear {
@@ -212,8 +219,14 @@ struct NewMessageView: View {
                         }
                     }
                 }
+            case .none:
+                EmptyView()
+            }
+        }
+        .customAlert(isPresented: $alert.isShowing) {
+            switch alert.state {
             case let .link(handler):
-                AddLinkView(actionHandler: handler)
+                AddLinkView(state: alert, actionHandler: handler)
             case .none:
                 EmptyView()
             }

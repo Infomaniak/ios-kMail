@@ -94,6 +94,7 @@ class RichTextEditorModel: ObservableObject {
 class MailEditor: SQTextEditorView {
     lazy var toolbar = getToolbar()
     var bottomSheet: NewMessageBottomSheet?
+    var alert: NewMessageAlert?
     var isShowingCamera: Binding<Bool>?
     var toolbarStyle = ToolbarStyle.main
 
@@ -247,10 +248,9 @@ class MailEditor: SQTextEditorView {
                 removeLink()
             } else {
                 webView.resignFirstResponder()
-                bottomSheet?.open(state: .link { url in
+                alert?.state = .link { url in
                     self.makeLink(url: url)
-                    self.bottomSheet?.close()
-                }, position: .link)
+                }
             }
         case .programMessage:
             // TODO: Handle programmed message

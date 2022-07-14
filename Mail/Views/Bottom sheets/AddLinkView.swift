@@ -22,8 +22,9 @@ import MailResources
 import SwiftUI
 
 struct AddLinkView: View {
-    @State var url: String = ""
+    let state: NewMessageAlert
 
+    @State private var url: String = ""
     @FocusState private var isFocused: Bool
 
     var actionHandler: ((String) -> Void)?
@@ -39,40 +40,34 @@ struct AddLinkView: View {
                 .disableAutocorrection(true)
                 .autocapitalization(.none)
                 .textContentType(.URL)
-                .onAppear {
-                    isFocused = true
+            BottomSheetButtonsView(primaryButtonTitle: MailResourcesStrings.Localizable.buttonValid,
+                                   secondaryButtonTitle: MailResourcesStrings.Localizable.buttonCancel,
+                                   primaryButtonEnabled: !url.isEmpty) {
+                guard var urlComponents = URLComponents(string: url) else {
+                    IKSnackBar.showSnackBar(message: MailResourcesStrings.Localizable.snackbarInvalidUrl)
+                    return
                 }
-            HStack {
-                Spacer()
-                Button {
-                    guard var urlComponents = URLComponents(string: url) else {
-                        IKSnackBar.showSnackBar(message: MailResourcesStrings.Localizable.snackbarInvalidUrl)
-                        return
-                    }
-                    if urlComponents.scheme == nil {
-                        urlComponents.scheme = URLConstants.schemeUrl
-                    }
-                    guard let url = urlComponents.url?.absoluteString else {
-                        IKSnackBar.showSnackBar(message: MailResourcesStrings.Localizable.snackbarInvalidUrl)
-                        return
-                    }
-                    actionHandler?(url)
-                } label: {
-                    Text(MailResourcesStrings.Localizable.buttonValid)
-                        .textStyle(.buttonPill)
+                if urlComponents.scheme == nil {
+                    urlComponents.scheme = URLConstants.schemeUrl
                 }
-                .buttonStyle(.borderedProminent)
-                .buttonBorderShape(.roundedRectangle(radius: 50))
-                .controlSize(.large)
-                .disabled(url.isEmpty)
+                guard let url = urlComponents.url?.absoluteString else {
+                    IKSnackBar.showSnackBar(message: MailResourcesStrings.Localizable.snackbarInvalidUrl)
+                    return
+                }
+                actionHandler?(url)
+                state.state = nil
+            } secondaryButtonAction: {
+                state.state = nil
             }
         }
-        .padding()
+        .onAppear {
+            isFocused = true
+        }
     }
 }
 
 struct AddLinkView_Previews: PreviewProvider {
     static var previews: some View {
-        AddLinkView(url: "url")
+        AddLinkView(state: NewMessageAlert())
     }
 }
