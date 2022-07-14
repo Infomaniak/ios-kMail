@@ -159,10 +159,10 @@ struct MenuDrawerView: View {
 
                 MenuDrawerItemsListView(title: MailResourcesStrings.Localizable.menuDrawerAdvancedActions, content: actionsMenuItems)
 
-                if mailboxManager.mailbox.isLimited {
+                if mailboxManager.mailbox.isLimited, let quotas = mailboxManager.mailbox.quotas {
                     IKDivider(withPadding: true)
 
-                    MailboxQuotaView()
+                    MailboxQuotaView(quotas: quotas)
                 }
             }
         }

@@ -273,6 +273,7 @@ public class AccountManager: RefreshTokenDelegate {
         }
         for mailbox in mailboxesResponse {
             mailbox.permissions = try await mailApiFetcher.permissions(mailbox: mailbox)
+            mailbox.quotas = try await mailApiFetcher.quotas(mailbox: mailbox)
         }
 
         MailboxInfosManager.instance.storeMailboxes(user: user, mailboxes: mailboxesResponse)
@@ -301,6 +302,7 @@ public class AccountManager: RefreshTokenDelegate {
         }
         for mailbox in fetchedMailboxes {
             mailbox.permissions = try await apiFetcher.permissions(mailbox: mailbox)
+            mailbox.quotas = try await apiFetcher.quotas(mailbox: mailbox)
         }
 
         let mailboxRemovedList = MailboxInfosManager.instance.storeMailboxes(user: user, mailboxes: fetchedMailboxes)
