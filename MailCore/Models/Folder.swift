@@ -171,8 +171,8 @@ public class Folder: Object, Codable, Comparable, Identifiable {
         return lhs.id == rhs.id
     }
 
-    public func updateUnreadCount() {
-        unreadCount = threads.reduce(0) { $0 + $1.unseenMessages }
+    public func incrementUnreadCount(by number: Int = 1) {
+        unreadCount = (unreadCount ?? 0) + number
     }
 
     public func isParent(of folder: Folder) -> Bool {

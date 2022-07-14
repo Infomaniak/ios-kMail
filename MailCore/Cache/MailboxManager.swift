@@ -248,7 +248,7 @@ public class MailboxManager: ObservableObject {
             }
             realm.add(fetchedThreads, update: .modified)
             parentFolder.threads.insert(objectsIn: fetchedThreads)
-            parentFolder.updateUnreadCount()
+            parentFolder.unreadCount = result.folderUnseenMessages
         }
     }
 
@@ -452,6 +452,7 @@ public class MailboxManager: ObservableObject {
                 try? realm.safeWrite {
                     liveMessage.seen = seen
                     liveMessage.parent?.updateUnseenMessages()
+                    liveMessage.parent?.parent?.incrementUnreadCount(by: seen ? -1 : 1)
                 }
             }
         }
@@ -549,11 +550,13 @@ public class MailboxManager: ObservableObject {
             for message in messages {
                 if let liveMessage = message.thaw() {
                     liveMessage.parent?.updateUnseenMessages()
+                    liveMessage.parent?.parent?.incrementUnreadCount(by: -1)
                     liveMessage.folder = folder.name
                     liveMessage.folderId = folder._id
                 }
             }
-            folder.thaw()?.updateUnreadCount()
+            let liveFolder = folder.thaw()
+            liveFolder?.unreadCount = (liveFolder?.unreadCount ?? 0) + messages.filter { !$0.seen }.count
             if messages.count == 1, let thread = messages.first?.parent?.thaw() {
                 thread.parent?.threads.remove(thread)
             }

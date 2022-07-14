@@ -80,7 +80,6 @@ public class Thread: Object, Decodable, Identifiable {
 
     public func updateUnseenMessages() {
         unseenMessages = messages.filter { !$0.seen }.count
-        parent?.updateUnreadCount()
     }
 
     public func updateFlagged() {
