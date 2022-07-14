@@ -44,7 +44,7 @@ struct BottomSheetButtonsView: View {
 
             BottomSheetButton(label: primaryButtonTitle,
                               isDisabled: !primaryButtonEnabled,
-                              action: secondaryButtonAction)
+                              action: primaryButtonAction)
         }
         .frame(maxWidth: .infinity, alignment: .trailing)
     }
