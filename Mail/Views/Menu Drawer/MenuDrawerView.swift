@@ -128,8 +128,7 @@ struct MenuDrawerView: View {
         _mailboxManager = StateObject(wrappedValue: mailboxManager)
         _selectedFolder = selectedFolder
         self.isCompact = isCompact
-        if let liveMailbox = MailboxInfosManager.instance.getRealm()
-            .object(ofType: Mailbox.self, forPrimaryKey: mailboxManager.mailbox.objectId) {
+        if let liveMailbox = MailboxInfosManager.instance.getMailbox(objectId: mailboxManager.mailbox.objectId, freeze: false) {
             mailbox = liveMailbox
         } else {
             mailbox = mailboxManager.mailbox
@@ -198,7 +197,7 @@ struct MenuDrawerView: View {
                      label: MailResourcesStrings.Localizable.buttonImportEmails,
                      action: importMails)
         ]
-        if mailboxManager.mailbox.permissions?.canRestoreEmails == true {
+        if mailbox.permissions?.canRestoreEmails == true {
             actionsMenuItems.append(.init(
                 icon: MailResourcesAsset.restoreArrow,
                 label: MailResourcesStrings.Localizable.buttonRestoreEmails,
