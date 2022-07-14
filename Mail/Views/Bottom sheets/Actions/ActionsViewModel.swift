@@ -350,11 +350,8 @@ enum ActionsTarget: Equatable {
     private func phishing() async throws {
         // This action is only available on a single message
         guard case .message(let message) = target else { return }
-        let response = try await mailboxManager.apiFetcher.reportPhishing(message: message)
-        if response {
-            _ = try await mailboxManager.reportSpam(messages: [message.freezeIfNeeded()])
-            IKSnackBar.showSnackBar(message: MailResourcesStrings.Localizable.snackbarReportPhishingConfirmation)
-        }
+        state.close()
+        globalSheet.open(state: .reportPhishing(message: message.freezeIfNeeded()), position: .reportPhishingHeight)
     }
 
     private func printAction() {

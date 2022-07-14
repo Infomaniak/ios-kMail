@@ -38,14 +38,15 @@ enum RecipientFieldType: Hashable {
     }
 }
 
-class NewMessageBottomSheet: BottomSheetState<NewMessageBottomSheet.State, NewMessageBottomSheet.Position> {
+class NewMessageSheet: SheetState<NewMessageSheet.State> {
     enum State {
-        case attachment
-        case link(handler: (String) -> Void)
+        case fileSelection, photoLibrary
     }
+}
 
-    enum Position: CGFloat, CaseIterable {
-        case link = 200, attachment = 210, hidden = 0
+class NewMessageAlert: SheetState<NewMessageAlert.State> {
+    enum State {
+        case link(handler: (String) -> Void)
     }
 }
 
@@ -64,7 +65,8 @@ struct NewMessageView: View {
     @State private var draftHasChanged = false
     @State private var isShowingCamera = false
 
-    @StateObject private var bottomSheet = NewMessageBottomSheet()
+    @StateObject private var sheet = NewMessageSheet()
+    @StateObject private var alert = NewMessageAlert()
 
     static var queue = DispatchQueue(label: "com.infomaniak.mail.saveDraft")
     @State var debouncedBufferWrite: DispatchWorkItem?
@@ -133,6 +135,7 @@ struct NewMessageView: View {
                             }
                             .padding(.vertical, 1)
                         }
+                        .padding(.horizontal, 16)
                     }
 
                     RichTextEditor(model: $editor, body: $draft.body)
@@ -178,7 +181,8 @@ struct NewMessageView: View {
             draft.setSignature(signatureResponse)
         }
         .onAppear {
-            editor.richTextEditor.bottomSheet = bottomSheet
+            editor.richTextEditor.sheet = sheet
+            editor.richTextEditor.alert = alert
             editor.richTextEditor.isShowingCamera = $isShowingCamera
         }
         .onDisappear {
@@ -197,23 +201,28 @@ struct NewMessageView: View {
             }
             .ignoresSafeArea()
         }
-        .bottomSheet(bottomSheetPosition: $bottomSheet.position, options: bottomSheetOptions) {
-            switch bottomSheet.state {
-            case .attachment:
-                AddAttachmentView(bottomSheet: bottomSheet) { attachment in
-                    switch attachment {
-                    case let .files(urls):
-                        Task {
-                            await addDocumentAttachment(urls: urls)
-                        }
-                    case let .photos(results):
-                        Task {
-                            await addImageAttachment(results: results)
-                        }
+        .sheet(isPresented: $sheet.isShowing) {
+            switch sheet.state {
+            case .fileSelection:
+                DocumentPicker { urls in
+                    Task {
+                        await addDocumentAttachment(urls: urls)
                     }
                 }
+            case .photoLibrary:
+                ImagePicker { results in
+                    Task {
+                        await addImageAttachment(results: results)
+                    }
+                }
+            case .none:
+                EmptyView()
+            }
+        }
+        .customAlert(isPresented: $alert.isShowing) {
+            switch alert.state {
             case let .link(handler):
-                AddLinkView(actionHandler: handler)
+                AddLinkView(state: alert, actionHandler: handler)
             case .none:
                 EmptyView()
             }

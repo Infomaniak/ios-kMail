@@ -19,24 +19,23 @@
 import InfomaniakCore
 import MailCore
 import MailResources
-import Sentry
 import SwiftUI
 
-struct ReportDisplayProblemView: View {
+struct ReportPhishingView: View {
     let mailboxManager: MailboxManager
     @ObservedObject var state: GlobalBottomSheet
     let message: Message
 
     var body: some View {
         VStack(spacing: 16) {
-            Text(MailResourcesStrings.Localizable.reportDisplayProblemTitle)
+            Text(MailResourcesStrings.Localizable.reportPhishingTitle)
                 .textStyle(.header3)
                 .frame(maxWidth: .infinity, alignment: .leading)
-            Image(resource: MailResourcesAsset.displayIssue)
-            Text(MailResourcesStrings.Localizable.reportDisplayProblemDescription)
-                .textStyle(.bodySecondary)
-            BottomSheetButtonsView(primaryButtonTitle: MailResourcesStrings.Localizable.buttonAccept,
-                                   secondaryButtonTitle: MailResourcesStrings.Localizable.buttonRefuse,
+            Image(resource: MailResourcesAsset.phishing)
+            Text(MailResourcesStrings.Localizable.reportPhishingDescription)
+            .textStyle(.bodySecondary)
+            BottomSheetButtonsView(primaryButtonTitle: MailResourcesStrings.Localizable.buttonReport,
+                                   secondaryButtonTitle: MailResourcesStrings.Localizable.buttonCancel,
                                    primaryButtonAction: report) {
                 state.close()
             }
@@ -49,25 +48,20 @@ struct ReportDisplayProblemView: View {
         state.close()
         Task {
             await tryOrDisplayError {
-                // Download message
-                let fileURL = try await mailboxManager.apiFetcher.download(message: message)
-                // Send it via Sentry
-                let fileAttachment = Attachment(path: fileURL.path,
-                                                filename: fileURL.lastPathComponent,
-                                                contentType: "message/rfc822")
-                _ = SentrySDK.capture(message: "Message display problem reported") { scope in
-                    scope.add(fileAttachment)
+                let response = try await mailboxManager.apiFetcher.reportPhishing(message: message)
+                if response {
+                    _ = try await mailboxManager.reportSpam(messages: [message.freezeIfNeeded()])
+                    IKSnackBar.showSnackBar(message: MailResourcesStrings.Localizable.snackbarReportPhishingConfirmation)
                 }
-                IKSnackBar.showSnackBar(message: MailResourcesStrings.Localizable.snackbarDisplayProblemReported)
             }
         }
     }
 }
 
-struct ReportDisplayProblemView_Previews: PreviewProvider {
+struct PhishingView_Previews: PreviewProvider {
     static var previews: some View {
-        ReportDisplayProblemView(mailboxManager: PreviewHelper.sampleMailboxManager,
-                                 state: GlobalBottomSheet(),
-                                 message: PreviewHelper.sampleMessage)
+        ReportPhishingView(mailboxManager: PreviewHelper.sampleMailboxManager,
+                           state: GlobalBottomSheet(),
+                           message: PreviewHelper.sampleMessage)
     }
 }

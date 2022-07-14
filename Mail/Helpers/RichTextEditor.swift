@@ -93,7 +93,8 @@ class RichTextEditorModel: ObservableObject {
 
 class MailEditor: SQTextEditorView {
     lazy var toolbar = getToolbar()
-    var bottomSheet: NewMessageBottomSheet?
+    var sheet: NewMessageSheet?
+    var alert: NewMessageAlert?
     var isShowingCamera: Binding<Bool>?
     var toolbarStyle = ToolbarStyle.main
 
@@ -237,20 +238,20 @@ class MailEditor: SQTextEditorView {
             makeUnorderedList()
         case .editText:
             updateToolbarItems(style: toolbarStyle == .main ? .textEdition : .main)
-        case .attachment:
-            webView.resignFirstResponder()
-            bottomSheet?.open(state: .attachment, position: .attachment)
-        case .photo:
+        case .addFile:
+            sheet?.state = .fileSelection
+        case .addPhoto:
+            sheet?.state = .photoLibrary
+        case .takePhoto:
             isShowingCamera?.wrappedValue = true
         case .link:
             if selectedTextAttribute.format.hasLink {
                 removeLink()
             } else {
                 webView.resignFirstResponder()
-                bottomSheet?.open(state: .link { url in
+                alert?.state = .link { url in
                     self.makeLink(url: url)
-                    self.bottomSheet?.close()
-                }, position: .link)
+                }
             }
         case .programMessage:
             // TODO: Handle programmed message
@@ -269,7 +270,7 @@ enum ToolbarStyle {
     var actions: [ToolbarAction] {
         switch self {
         case .main:
-            return [.editText, .attachment, .photo, .link, .programMessage]
+            return [.editText, .addFile, .addPhoto, .takePhoto, .link, .programMessage]
         case .textEdition:
             return [.editText, .bold, .italic, .underline, .strikeThrough, .unorderedList]
         }
@@ -283,8 +284,9 @@ enum ToolbarAction: Int {
     case strikeThrough
     case unorderedList
     case editText
-    case attachment
-    case photo
+    case addFile
+    case addPhoto
+    case takePhoto
     case link
     case programMessage
 
@@ -302,9 +304,11 @@ enum ToolbarAction: Int {
             return MailResourcesAsset.unorderedList.image
         case .editText:
             return MailResourcesAsset.textModes.image
-        case .attachment:
-            return MailResourcesAsset.attachmentMail2.image
-        case .photo:
+        case .addFile:
+            return MailResourcesAsset.folder.image
+        case .addPhoto:
+            return MailResourcesAsset.pictureLandscape.image
+        case .takePhoto:
             return MailResourcesAsset.photo.image
         case .link:
             return MailResourcesAsset.hyperlink.image
@@ -325,7 +329,7 @@ enum ToolbarAction: Int {
             return textAttribute.format.hasStrikethrough
         case .link:
             return textAttribute.format.hasLink
-        case .unorderedList, .editText, .attachment, .photo, .programMessage:
+        case .unorderedList, .editText, .addFile, .addPhoto, .takePhoto, .programMessage:
             return false
         }
     }
