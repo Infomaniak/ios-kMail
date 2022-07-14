@@ -208,20 +208,20 @@ class MailEditor: SQTextEditorView {
     }
 
     public func getToolbar() -> UIToolbar {
-        let toolbar = UIToolbar(frame: CGRect(x: 0, y: 0, width: 320, height: 55))
-        toolbar.tintColor = MailResourcesAsset.toolbarEditorTextColor.color
-        toolbar.barTintColor = MailResourcesAsset.backgroundToolbarEditorColor.color
-        toolbar.isTranslucent = false
+        let newToolbar = UIToolbar(frame: CGRect(x: 0, y: 0, width: 320, height: 55))
+        newToolbar.tintColor = MailResourcesAsset.toolbarEditorTextColor.color
+        newToolbar.barTintColor = MailResourcesAsset.backgroundToolbarEditorColor.color
+        newToolbar.isTranslucent = false
 
         // Shadow
-        toolbar.setShadowImage(UIImage(), forToolbarPosition: .any)
-        toolbar.layer.shadowColor = UIColor.black.cgColor
-        toolbar.layer.shadowOpacity = 0.1
-        toolbar.layer.shadowOffset = CGSize(width: 1, height: 1)
-        toolbar.layer.shadowRadius = 2
-        toolbar.layer.masksToBounds = false
+        newToolbar.setShadowImage(UIImage(), forToolbarPosition: .any)
+        newToolbar.layer.shadowColor = UIColor.black.cgColor
+        newToolbar.layer.shadowOpacity = 0.1
+        newToolbar.layer.shadowOffset = CGSize(width: 1, height: 1)
+        newToolbar.layer.shadowRadius = 2
+        newToolbar.layer.masksToBounds = false
 
-        return toolbar
+        return newToolbar
     }
 
     @objc func onToolbarClick(sender: UIBarButtonItem) {

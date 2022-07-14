@@ -25,23 +25,23 @@ struct SwipeConfigCell: View {
     var section: SettingsSection
 
     var actions: [SwipeAction] {
-        var actions = [SwipeAction]()
+        var newActions = [SwipeAction]()
         if section == .rightSwipe {
             if let action = selectedValues[.swipeLongRightOption] as? SwipeAction {
-                actions.append(action)
+                newActions.append(action)
             }
             if let action = selectedValues[.swipeShortRightOption] as? SwipeAction {
-                actions.append(action)
+                newActions.append(action)
             }
         } else if section == .leftSwipe {
             if let action = selectedValues[.swipeLongLeftOption] as? SwipeAction {
-                actions.append(action)
+                newActions.append(action)
             }
             if let action = selectedValues[.swipeShortLeftOption] as? SwipeAction {
-                actions.append(action)
+                newActions.append(action)
             }
         }
-        return actions
+        return newActions
     }
 
     var body: some View {
