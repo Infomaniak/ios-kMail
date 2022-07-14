@@ -254,6 +254,7 @@ class MailEditor: SQTextEditorView {
             }
         case .programMessage:
             // TODO: Handle programmed message
+            webView.resignFirstResponder()
             showWorkInProgressSnackBar()
         case .none:
             return
