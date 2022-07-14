@@ -52,6 +52,6 @@ struct AutocompletionView_Previews: PreviewProvider {
     static var previews: some View {
         AutocompletionView(autocompletion: .constant([
             PreviewHelper.sampleRecipient1, PreviewHelper.sampleRecipient2, PreviewHelper.sampleRecipient3
-        ])) { _ in }
+        ])) { _ in /* Preview */ }
     }
 }

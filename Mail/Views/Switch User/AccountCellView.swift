@@ -17,6 +17,7 @@
  */
 
 import InfomaniakCore
+import InfomaniakLogin
 import MailCore
 import MailResources
 import RealmSwift
@@ -118,8 +119,8 @@ struct AccountHeaderCell: View {
     }
 }
 
-// struct AccountCellView_Previews: PreviewProvider {
-//    static var previews: some View {
-//        AccountCellView()
-//    }
-// }
+struct AccountCellView_Previews: PreviewProvider {
+    static var previews: some View {
+        AccountCellView(account: Account(apiToken: ApiToken(accessToken: "", expiresIn: .max, refreshToken: "", scope: "", tokenType: "", userId: 0, expirationDate: .distantFuture)), expandedUserId: .constant(nil))
+    }
+}
