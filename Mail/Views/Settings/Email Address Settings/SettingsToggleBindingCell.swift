@@ -16,11 +16,11 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import InfomaniakCore
 import MailCore
 import MailResources
 import RealmSwift
 import SwiftUI
-import InfomaniakCore
 
 struct SettingsToggleBindingCell: View {
     let title: String
@@ -35,7 +35,9 @@ struct SettingsToggleBindingCell: View {
         viewModel: EmailAddressSettingsViewModel
     ) {
         self.title = title
-        self.subtitle = viewModel.settings[keyPath: keyPath] == true ? MailResourcesStrings.Localizable.settingsEnabled : MailResourcesStrings.Localizable.settingsDisabled
+        self.subtitle = viewModel.settings[keyPath: keyPath] == true
+            ? MailResourcesStrings.Localizable.settingsEnabled
+            : MailResourcesStrings.Localizable.settingsDisabled
         self.keyPath = keyPath
         self.viewModel = viewModel
     }
@@ -46,15 +48,23 @@ struct SettingsToggleBindingCell: View {
         }, set: { value in
             viewModel.mailboxManager.updateSettings {
                 viewModel.settings[keyPath: keyPath] = value
-                subtitle = value == true ? MailResourcesStrings.Localizable.settingsEnabled : MailResourcesStrings.Localizable.settingsDisabled
+                subtitle = value == true
+                    ? MailResourcesStrings.Localizable.settingsEnabled
+                    : MailResourcesStrings.Localizable.settingsDisabled
             }
             Task {
                 do {
-                    _ = try await viewModel.mailboxManager.apiFetcher.updateFilters(ads: viewModel.settings.adsFilter, spam: viewModel.settings.spamFilter, mailbox: viewModel.mailboxManager.mailbox)
+                    _ = try await viewModel.mailboxManager.apiFetcher.updateFilters(
+                        ads: viewModel.settings.adsFilter,
+                        spam: viewModel.settings.spamFilter,
+                        mailbox: viewModel.mailboxManager.mailbox
+                    )
                 } catch {
                     viewModel.mailboxManager.updateSettings {
                         viewModel.settings[keyPath: keyPath] = !value
-                        subtitle = viewModel.settings[keyPath: keyPath] == true ? MailResourcesStrings.Localizable.settingsEnabled : MailResourcesStrings.Localizable.settingsDisabled
+                        subtitle = viewModel.settings[keyPath: keyPath] == true
+                            ? MailResourcesStrings.Localizable.settingsEnabled
+                            : MailResourcesStrings.Localizable.settingsDisabled
                     }
                     IKSnackBar.showSnackBar(message: error.localizedDescription)
                 }

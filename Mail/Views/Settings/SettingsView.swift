@@ -49,20 +49,7 @@ struct SettingsView: View {
                     }
 
                     ForEach(section.items) { item in
-                        switch item.type {
-                        case let .subMenu(destination: destination):
-                            SettingsSubMenuCell(title: item.title, destination: destination)
-                        case let .toggle(userDefaults: userDefaults):
-                            SettingsToggleCell(title: item.title, userDefaults: userDefaults)
-						case let .toggleBinding(keyPath: keyPath):
-                            SettingsToggleBindingCell(title: item.title, keyPath: keyPath, viewModel: viewModel as! EmailAddressSettingsViewModel)
-                        case let .option(option):
-                            SettingsOptionCell(
-                                title: item.title,
-                                subtitle: viewModel.selectedValues[option]?.title ?? "",
-                                option: option
-                            )
-                        }
+                        getSettingView(item: item)
                     }
                     .listRowSeparator(.hidden)
                     .listRowInsets(.init(top: 12, leading: 24, bottom: 12, trailing: 24))
@@ -77,6 +64,28 @@ struct SettingsView: View {
         .backButtonDisplayMode(.minimal)
         .onAppear {
             viewModel.updateSelectedValue()
+        }
+    }
+
+    @ViewBuilder
+    private func getSettingView(item: SettingsItem) -> some View {
+        switch item.type {
+        case let .subMenu(destination: destination):
+            SettingsSubMenuCell(title: item.title, destination: destination)
+        case let .toggle(userDefaults: userDefaults):
+            SettingsToggleCell(title: item.title, userDefaults: userDefaults)
+        case let .toggleBinding(keyPath: keyPath):
+            SettingsToggleBindingCell(
+                title: item.title,
+                keyPath: keyPath,
+                viewModel: viewModel as! EmailAddressSettingsViewModel
+            )
+        case let .option(option):
+            SettingsOptionCell(
+                title: item.title,
+                subtitle: viewModel.selectedValues[option]?.title ?? "",
+                option: option
+            )
         }
     }
 }
