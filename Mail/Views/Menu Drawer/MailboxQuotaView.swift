@@ -34,7 +34,7 @@ struct MailboxQuotaView: View {
 
             VStack(alignment: .leading) {
                 Text(MailResourcesStrings.Localizable.menuDrawerMailboxStorage(
-                    Int64(quotas.size).formatted(.defaultByteCount),
+                    Int64(quotas.size * 1000).formatted(.defaultByteCount),
                     Constants.sizeLimit.formatted(.defaultByteCount)
                 ))
                 .textStyle(.header3)

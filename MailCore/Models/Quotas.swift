@@ -24,7 +24,7 @@ public class Quotas: EmbeddedObject, Codable {
     @Persisted public var sizeCheckedAt: Int64
 
     public var progression: Double {
-        let progression = Double(size) / Double(Constants.sizeLimit)
-        return max(Constants.minimumQuotasProgressionToDisplay, progression)
+        let currentProgression = Double(size) / Double(Constants.sizeLimit)
+        return max(Constants.minimumQuotasProgressionToDisplay, currentProgression)
     }
 }
