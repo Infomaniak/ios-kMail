@@ -117,7 +117,7 @@ struct RecipientField_Previews: PreviewProvider {
             PreviewHelper.sampleRecipient1, PreviewHelper.sampleRecipient2, PreviewHelper.sampleRecipient3
         ]),
         autocompletion: .constant([]),
-        addRecipientHandler: .constant { _ in },
+        addRecipientHandler: .constant { _ in /* Preview */ },
         focusedField: .init(),
         type: .to)
     }
