@@ -108,7 +108,7 @@ public class MailApiFetcher: ApiFetcher {
     }
 
     public func download(message: Message) async throws -> URL {
-        let destination = DownloadRequest.suggestedDownloadDestination(for: .downloadsDirectory, options: [
+        let destination = DownloadRequest.suggestedDownloadDestination(options: [
             .createIntermediateDirectories,
             .removePreviousFile
         ])
