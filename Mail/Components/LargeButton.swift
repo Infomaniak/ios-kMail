@@ -19,30 +19,39 @@
 import SwiftUI
 
 struct LargeButton<Label>: View where Label: View {
+    let isLoading: Bool
     let action: () -> Void
     let label: Label
 
-    init(action: @escaping () -> Void, @ViewBuilder label: () -> Label) {
+    init(isLoading: Bool = false, action: @escaping () -> Void, @ViewBuilder label: () -> Label) {
+        self.isLoading = isLoading
         self.action = action
         self.label = label()
     }
 
     var body: some View {
         Button(action: action) {
-            label
-                .textStyle(.buttonPill)
-                .padding(.vertical, 10)
-                .frame(maxWidth: .infinity)
+            Group {
+                if isLoading {
+                    ProgressView()
+                } else {
+                    label
+                        .textStyle(.buttonPill)
+                }
+            }
+            .padding(.vertical, 10)
+            .frame(maxWidth: .infinity)
         }
         .buttonStyle(.borderedProminent)
         .buttonBorderShape(.roundedRectangle(radius: 16))
         .padding(.horizontal, 24)
+        .disabled(isLoading)
     }
 }
 
 extension LargeButton where Label == Text {
-    init(title: String, action: @escaping () -> Void) {
-        self.init(action: action) {
+    init(title: String, isLoading: Bool = false, action: @escaping () -> Void) {
+        self.init(isLoading: isLoading, action: action) {
             Text(title)
         }
     }

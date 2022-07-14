@@ -45,6 +45,7 @@ class DateSection: Identifiable {
             return date.formatted(formatStyle).capitalized
         }
     }
+
     var threads = [Thread]()
 
     private var referenceDate: ReferenceDate
@@ -103,6 +104,8 @@ class DateSection: Identifiable {
             filter = newValue ? .unseen : .all
         }
     }
+
+    private let loadNextPageThreshold = 10
 
     init(mailboxManager: MailboxManager, folder: Folder?, bottomSheet: ThreadBottomSheet) {
         self.mailboxManager = mailboxManager
@@ -190,9 +193,10 @@ class DateSection: Identifiable {
 
     func loadNextPageIfNeeded(currentItem: Thread) {
         // Start loading next page when we reach the second-to-last item
-        guard !sections.isEmpty, let lastSection = sections.last else { return }
-        let thresholdIndex = lastSection.threads.index(lastSection.threads.endIndex, offsetBy: -1)
-        if lastSection.threads.firstIndex(where: { $0.uid == currentItem.uid }) == thresholdIndex {
+        let threads = sections.flatMap(\.threads)
+        guard threads.count > loadNextPageThreshold else { return }
+        let thresholdIndex = threads.index(threads.endIndex, offsetBy: -loadNextPageThreshold)
+        if threads.firstIndex(where: { $0.uid == currentItem.uid }) == thresholdIndex {
             Task {
                 await fetchNextPage()
             }
@@ -211,7 +215,7 @@ class DateSection: Identifiable {
             currentSection?.threads.append(thread)
         }
 
-        self.sections = newSections
+        sections = newSections
     }
 
     // MARK: - Swipe actions
