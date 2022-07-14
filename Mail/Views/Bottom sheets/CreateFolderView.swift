@@ -27,6 +27,7 @@ struct CreateFolderView: View {
 
     @State private var folderName: String = ""
     @State private var selectedFolderID: String = ""
+    @FocusState private var isFocused
 
     private var mode: Mode
     private var state: GlobalAlert
@@ -70,6 +71,7 @@ struct CreateFolderView: View {
                         .stroke(Color(hex: "#E0E0E0"))
                 )
                 .textStyle(.body)
+                .focused($isFocused)
             // Picker
             LargePicker(title: MailResourcesStrings.Localizable.createFolderParent,
                         noSelectionText: MailResourcesStrings.Localizable.createFolderNoParent,
@@ -91,6 +93,9 @@ struct CreateFolderView: View {
             } secondaryButtonAction: {
                 state.state = nil
             }
+        }
+        .onAppear {
+            isFocused = true
         }
     }
 }

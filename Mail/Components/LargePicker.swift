@@ -19,10 +19,11 @@
 import MailResources
 import SwiftUI
 
-struct LargePicker<SelectionValue>: View where SelectionValue: Hashable {
+struct LargePicker<SelectionValue, ButtonType>: View where SelectionValue: Hashable, ButtonType: View {
     let title: String?
     let noSelectionText: String
     let items: [Item<SelectionValue>]
+    let button: Button<ButtonType>?
 
     @Binding var selection: SelectionValue
 
@@ -38,10 +39,12 @@ struct LargePicker<SelectionValue>: View where SelectionValue: Hashable {
     init(title: String? = nil,
          noSelectionText: String = MailResourcesStrings.Localizable.pickerNoSelection,
          selection: Binding<SelectionValue>,
-         items: [Item<SelectionValue>]) {
+         items: [Item<SelectionValue>],
+         button: Button<ButtonType>?) {
         self.title = title
         self.noSelectionText = noSelectionText
         self.items = items
+        self.button = button
         _selection = selection
     }
 
@@ -53,6 +56,7 @@ struct LargePicker<SelectionValue>: View where SelectionValue: Hashable {
             }
 
             Menu {
+                button
                 Picker(title ?? "", selection: $selection) {
                     ForEach(items) { item in
                         Text(item.name).tag(item.id)
@@ -73,6 +77,20 @@ struct LargePicker<SelectionValue>: View where SelectionValue: Hashable {
             }
         }
     }
+}
+
+extension LargePicker where ButtonType == EmptyView {
+    init(title: String? = nil,
+         noSelectionText: String = MailResourcesStrings.Localizable.pickerNoSelection,
+         selection: Binding<SelectionValue>,
+         items: [Item<SelectionValue>]) {
+        self.title = title
+        self.noSelectionText = noSelectionText
+        self.items = items
+        self.button = nil
+        _selection = selection
+    }
+
 }
 
 struct LargePicker_Previews: PreviewProvider {

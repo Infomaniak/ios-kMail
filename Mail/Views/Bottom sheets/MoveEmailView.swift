@@ -44,20 +44,35 @@ struct MoveEmailView: View {
     }
 
     var body: some View {
-        VStack(alignment: .trailing, spacing: 16) {
+        VStack(alignment: .trailing, spacing: 24) {
             Text(MailResourcesStrings.Localizable.moveTitle)
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .textStyle(.header3)
-            LargePicker(selection: $selectedFolderID, items: sortedFolders.map { .init(id: $0.id, name: $0.formattedPath) })
-            Button(MailResourcesStrings.Localizable.actionMove) {
+            Image(resource: MailResourcesAsset.moveIllu)
+                .resizable()
+                .scaledToFit()
+                .frame(maxWidth: 400)
+            LargePicker(
+                selection: $selectedFolderID,
+                items: sortedFolders.map { .init(id: $0.id, name: $0.formattedPath) },
+                button: Button {
+                    state.close()
+                    globalAlert.state = .createNewFolder(mode: .move(moveHandler: moveHandler))
+                } label: {
+                    Label {
+                        Text(MailResourcesStrings.Localizable.buttonCreateFolder)
+                    } icon: {
+                        Image(resource: MailResourcesAsset.add)
+                    }
+                }
+            )
+            BottomSheetButtonsView(primaryButtonTitle: MailResourcesStrings.Localizable.actionMove,
+                                   secondaryButtonTitle: MailResourcesStrings.Localizable.buttonCancel) {
                 moveHandler(sortedFolders.first { $0.id == selectedFolderID }!)
                 state.close()
+            } secondaryButtonAction: {
+                state.close()
             }
-            .textStyle(.button)
-            Button(MailResourcesStrings.Localizable.buttonCreateFolder) {
-                globalAlert.state = .createNewFolder(mode: .move(moveHandler: moveHandler))
-            }
-            .textStyle(.button)
         }
         .padding(.horizontal, Constants.bottomSheetHorizontalPadding)
         .onAppear {

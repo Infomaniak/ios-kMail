@@ -79,7 +79,7 @@ struct RestoreEmailsView: View {
         state.close()
     }
 
-    private func mapDates(_ backupDate: String) -> LargePicker<String>.Item<String> {
+    private func mapDates(_ backupDate: String) -> LargePicker<String, EmptyView>.Item<String> {
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss"
         let date = dateFormatter.date(from: backupDate)

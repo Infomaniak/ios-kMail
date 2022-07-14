@@ -36,7 +36,7 @@ class GlobalBottomSheet: BottomSheetState<GlobalBottomSheet.State, GlobalBottomS
 
     enum Position: CGFloat, CaseIterable {
         // Height is height of view + 60 for margins
-        case moveHeight = 272
+        case moveHeight = 340
         case newFolderHeight = 300
         case moreStorageHeight = 436
         case restoreEmailsHeight = 292
