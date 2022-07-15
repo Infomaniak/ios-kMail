@@ -96,31 +96,41 @@ struct ThreadListView: View {
                     EmptyListView()
                 }
 
-                List {
-                    ForEach(viewModel.sections) { section in
-                        Section {
-                            threadList(threads: section.threads)
-                        } header: {
-                            if threadDensity != .compact {
-                                Text(section.title)
-                                    .textStyle(.calloutSecondary)
+                ScrollViewReader { proxy in
+                    List {
+                        ForEach(viewModel.sections) { section in
+                            Section {
+                                threadList(threads: section.threads)
+                            } header: {
+                                if threadDensity != .compact {
+                                    Text(section.title)
+                                        .textStyle(.calloutSecondary)
+                                }
                             }
                         }
+
+                        if viewModel.isLoadingPage {
+                            HStack {
+                                Spacer()
+                                ProgressView()
+                                Spacer()
+                            }
+                            .listRowSeparator(.hidden)
+                            .listRowBackground(MailResourcesAsset.backgroundColor.swiftUiColor)
+                        }
+                    }
+                    .onChange(of: viewModel.filterUnreadOn, perform: { value in
+                        if value {
+                            withAnimation {
+                                proxy.scrollTo(0, anchor: .top)
+                            }
+                        }
+                    })
+                    .listStyle(.plain)
+                    .introspectTableView { tableView in
+                        tableView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: 100, right: 0)
                     }
 
-                    if viewModel.isLoadingPage {
-                        HStack {
-                            Spacer()
-                            ProgressView()
-                            Spacer()
-                        }
-                        .listRowSeparator(.hidden)
-                        .listRowBackground(MailResourcesAsset.backgroundColor.swiftUiColor)
-                    }
-                }
-                .listStyle(.plain)
-                .introspectTableView { tableView in
-                    tableView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: 100, right: 0)
                 }
             }
             .appShadow()
