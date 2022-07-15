@@ -92,20 +92,23 @@ struct MessageHeaderView: View {
 
 struct MessageHeaderView_Previews: PreviewProvider {
     static var previews: some View {
-        MessageHeaderView(
-            message: PreviewHelper.sampleMessage,
-            isHeaderExpanded: .constant(false),
-            isMessageExpanded: .constant(false)
-        )
-        MessageHeaderView(
-            message: PreviewHelper.sampleMessage,
-            isHeaderExpanded: .constant(false),
-            isMessageExpanded: .constant(true)
-        )
-        MessageHeaderView(
-            message: PreviewHelper.sampleMessage,
-            isHeaderExpanded: .constant(true),
-            isMessageExpanded: .constant(true)
-        )
+        Group {
+            MessageHeaderView(
+                message: PreviewHelper.sampleMessage,
+                isHeaderExpanded: .constant(false),
+                isMessageExpanded: .constant(false)
+            )
+            MessageHeaderView(
+                message: PreviewHelper.sampleMessage,
+                isHeaderExpanded: .constant(false),
+                isMessageExpanded: .constant(true)
+            )
+            MessageHeaderView(
+                message: PreviewHelper.sampleMessage,
+                isHeaderExpanded: .constant(true),
+                isMessageExpanded: .constant(true)
+            )
+        }
+        .previewLayout(.sizeThatFits)
     }
 }
