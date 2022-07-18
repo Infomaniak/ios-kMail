@@ -31,8 +31,11 @@ struct OnboardingView: View {
 
     @Environment(\.window) var window
 
-    init(page: Int = 1) {
+    var isPresentedModally: Bool
+
+    init(isPresentedModally: Bool = false, page: Int = 1) {
         _selection = State(initialValue: page)
+        self.isPresentedModally = isPresentedModally
         UIPageControl.appearance().currentPageIndicatorTintColor = .tintColor
         UIPageControl.appearance().pageIndicatorTintColor = MailResourcesAsset.separatorColor.color
     }
@@ -54,6 +57,7 @@ struct OnboardingView: View {
                     .resizable()
                     .scaledToFit()
                     .frame(height: Constants.onboardingLogoHeight)
+                    .padding(.top, isPresentedModally ? 15 : 0)
             }
 
             // Buttons
@@ -135,5 +139,6 @@ struct OnboardingView: View {
 struct OnboardingView_Previews: PreviewProvider {
     static var previews: some View {
         OnboardingView()
+        OnboardingView(isPresentedModally: true)
     }
 }

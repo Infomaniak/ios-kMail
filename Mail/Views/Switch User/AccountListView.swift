@@ -48,7 +48,7 @@ struct AccountListView: View {
         .sheet(isPresented: $sheet.isShowing) {
             switch sheet.state {
             case .addAccount:
-                OnboardingView(page: 4)
+                OnboardingView(isPresentedModally: true, page: 4)
             case .none:
                 EmptyView()
             }
