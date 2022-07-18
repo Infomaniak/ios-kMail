@@ -63,7 +63,6 @@ struct SearchView: View {
                         threadList(threads: viewModel.threads)
                     } header: {
                         if !viewModel.threads.isEmpty && threadDensity != .compact {
-                            // TODO: - Fix trad
                             Text(MailResourcesStrings.Localizable.searchAllMessages)
                                 .textStyle(.calloutSecondary)
                         }
@@ -174,7 +173,7 @@ struct SearchView: View {
             .listRowSeparator(.hidden)
             .listRowBackground(MailResourcesAsset.backgroundColor.swiftUiColor)
             .onAppear {
-//                viewModel.loadNextPageIfNeeded(currentItem: thread)
+                viewModel.loadNextPageIfNeeded(currentItem: thread)
             }
         }
     }
