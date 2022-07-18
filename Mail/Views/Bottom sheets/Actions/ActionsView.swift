@@ -127,6 +127,7 @@ struct ActionView: View {
                     .frame(width: 21, height: 21)
                 Text(action.title)
                     .textStyle(.body)
+                    .frame(maxWidth: .infinity, alignment: .leading)
             }
         }
     }
