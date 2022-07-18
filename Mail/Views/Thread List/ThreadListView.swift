@@ -119,18 +119,13 @@ struct ThreadListView: View {
                             .listRowBackground(MailResourcesAsset.backgroundColor.swiftUiColor)
                         }
                     }
-                    .onChange(of: viewModel.filterUnreadOn, perform: { value in
-                        if value {
-                            withAnimation {
-                                proxy.scrollTo(0, anchor: .top)
-                            }
-                        }
-                    })
                     .listStyle(.plain)
+                    .onAppear {
+                        viewModel.scrollViewProxy = proxy
+                    }
                     .introspectTableView { tableView in
                         tableView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: 100, right: 0)
                     }
-
                 }
             }
             .appShadow()

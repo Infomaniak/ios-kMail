@@ -94,6 +94,8 @@ class DateSection: Identifiable {
     var bottomSheet: ThreadBottomSheet
     var globalBottomSheet: GlobalBottomSheet?
 
+    var scrollViewProxy: ScrollViewProxy?
+
     private var resourceNext: String?
     private var observationThreadToken: NotificationToken?
     private var observationLastUpdateToken: NotificationToken?
@@ -102,6 +104,12 @@ class DateSection: Identifiable {
         didSet {
             Task {
                 await fetchThreads()
+                if filter != .all {
+                    withAnimation {
+                        print(self.scrollViewProxy)
+                        self.scrollViewProxy?.scrollTo(0, anchor: .top)
+                    }
+                }
             }
         }
     }
