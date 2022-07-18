@@ -103,7 +103,7 @@ class DateSection: Identifiable {
     @Published var filter = Filter.all {
         didSet {
             Task {
-                observeChanges(animateInitial: true)
+                observeChanges(animateInitialThreadChanges: true)
                 await fetchThreads()
                 if filter != .all {
                     withAnimation {
@@ -170,44 +170,40 @@ class DateSection: Identifiable {
         withAnimation {
             lastUpdate = folder.lastUpdate
         }
-        observeChanges()
 
         if filter != .all {
             filter = .all
         } else {
+            observeChanges()
             Task {
                 await self.fetchThreads()
             }
         }
     }
 
-    func observeChanges(animateInitial: Bool = false) {
+    func observeChanges(animateInitialThreadChanges: Bool = false) {
         observationThreadToken?.invalidate()
         observationLastUpdateToken?.invalidate()
         if let folder = folder?.thaw() {
             var threadResults = folder.threads.sorted(by: \.date, ascending: false)
             if filter != .all {
                 threadResults = threadResults.where { thread in
-                    if filter == .seen {
+                    switch filter {
+                    case .seen:
                         return thread.messagesCount == 0
-                    }
-                    if filter == .unseen {
+                    case .unseen:
                         return thread.unseenMessages != 0
-                    }
-                    if filter == .starred {
+                    case .starred:
                         return thread.flagged
+                    default:
+                        return !thread.flagged
                     }
-                    return !thread.flagged
                 }
             }
             observationThreadToken = threadResults.observe(on: .main) { [weak self] changes in
                 switch changes {
                 case let .initial(results):
-                    if animateInitial {
-                        withAnimation {
-                            self?.sortThreadsIntoSections(threads: Array(results.freezeIfNeeded()))
-                        }
-                    } else {
+                    withAnimation(animateInitialThreadChanges ? .default : nil) {
                         self?.sortThreadsIntoSections(threads: Array(results.freezeIfNeeded()))
                     }
                 case let .update(results, _, _, _):

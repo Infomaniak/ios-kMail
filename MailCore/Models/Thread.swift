@@ -180,19 +180,4 @@ public class Thread: Object, Decodable, Identifiable {
 
 public enum Filter: String {
     case all, seen, unseen, starred, unstarred
-
-    public func accepts(thread: Thread) -> Bool {
-        switch self {
-        case .seen:
-            return thread.unseenMessages == 0
-        case .unseen:
-            return thread.unseenMessages != 0
-        case .starred:
-            return thread.flagged
-        case .unstarred:
-            return !thread.flagged
-        default:
-            return true
-        }
-    }
 }
