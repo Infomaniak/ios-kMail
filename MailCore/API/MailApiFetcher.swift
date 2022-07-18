@@ -97,7 +97,7 @@ public class MailApiFetcher: ApiFetcher {
         ))).data
     }
 
-    func threads(from resource: String) async throws -> ThreadResult {
+    public func threads(from resource: String) async throws -> ThreadResult {
         try await perform(request: authenticatedRequest(.resource(resource))).data
     }
 

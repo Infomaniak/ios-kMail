@@ -131,6 +131,32 @@ import MailResources
         isLoadingPage = false
         mailboxManager.draftOffline()
     }
+
+    func fetchNextPage() async {
+        guard !isLoadingPage, let resource = resourceNext else {
+            return
+        }
+
+        isLoadingPage = true
+
+        await tryOrDisplayError {
+            let threadResult = try await mailboxManager.apiFetcher.threads(from: resource)
+            threads.append(contentsOf: threadResult.threads ?? [])
+            resourceNext = threadResult.resourceNext
+        }
+        isLoadingPage = false
+    }
+
+    func loadNextPageIfNeeded(currentItem: Thread) {
+        // Start loading next page when we reach the second-to-last item
+        guard !threads.isEmpty else { return }
+        let thresholdIndex = threads.index(threads.endIndex, offsetBy: -1)
+        if threads.firstIndex(where: { $0.uid == currentItem.uid }) == thresholdIndex {
+            Task {
+                await fetchNextPage()
+            }
+        }
+    }
 }
 
 public enum SearchFilter: String, Identifiable {
@@ -142,7 +168,6 @@ public enum SearchFilter: String, Identifiable {
     case attachment
     case folder
 
-    // TODO: - Fix trad
     public var title: String {
         switch self {
         case .read:
