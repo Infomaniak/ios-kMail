@@ -24,7 +24,11 @@ struct SettingsToggleCell: View {
     let title: String
     let userDefaults: ReferenceWritableKeyPath<UserDefaults, Bool>
 
-    @State private var toggleIsOn: Bool
+    @State private var toggleIsOn: Bool {
+        didSet {
+            UserDefaults.shared[keyPath: userDefaults] = toggleIsOn
+        }
+    }
     @State private var lastValue: Bool
 
     init(title: String, userDefaults: ReferenceWritableKeyPath<UserDefaults, Bool>) {
@@ -37,10 +41,9 @@ struct SettingsToggleCell: View {
     var body: some View {
         Toggle(isOn: Binding(get: {
             toggleIsOn
-        }, set: { value in
+        }, set: { newValue in
             lastValue = toggleIsOn
-            toggleIsOn = value
-            UserDefaults.shared[keyPath: userDefaults] = value
+            toggleIsOn = newValue
         })) {
             Text(title)
                 .textStyle(.body)
@@ -58,20 +61,20 @@ struct SettingsToggleCell: View {
     }
 
     private func enableAppLock() {
-             Task {
-                 do {
-                     if try await !AppLockHelper.shared.evaluatePolicy(reason: MailResourcesStrings.Localizable.appSecurityDescription) {
-                         withAnimation {
-                             toggleIsOn.toggle()
-                         }
-                     }
-                 } catch {
+         Task {
+             do {
+                 if try await !AppLockHelper.shared.evaluatePolicy(reason: MailResourcesStrings.Localizable.appSecurityDescription) {
                      withAnimation {
                          toggleIsOn.toggle()
                      }
                  }
+             } catch {
+                 withAnimation {
+                     toggleIsOn.toggle()
+                 }
              }
          }
+     }
 }
 
 struct SettingsToggleCell_Previews: PreviewProvider {
