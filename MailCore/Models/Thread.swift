@@ -181,7 +181,7 @@ public class Thread: Object, Decodable, Identifiable {
 public enum Filter: String {
     case all, seen, unseen, starred, unstarred
 
-    public func threadAccepts(_ thread: Thread) -> Bool {
+    public func accepts(thread: Thread) -> Bool {
         switch self {
         case .seen:
             return thread.unseenMessages == 0

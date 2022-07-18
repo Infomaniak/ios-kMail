@@ -231,7 +231,7 @@ class DateSection: Identifiable {
         var newSections = [DateSection]()
 
         var currentSection: DateSection?
-        let filteredThreads = threads.filter(filter.threadAccepts)
+        let filteredThreads = threads.filter(filter.accepts)
         for thread in filteredThreads {
             if currentSection?.threadBelongsToSection(thread: thread) != true {
                 currentSection = DateSection(thread: thread)
