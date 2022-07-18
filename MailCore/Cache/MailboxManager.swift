@@ -205,9 +205,9 @@ public class MailboxManager: ObservableObject {
 
     // MARK: - Thread
 
-    public func threads(folder: Folder, filter: Filter = .all) async throws -> ThreadResult {
+    public func threads(folder: Folder, filter: Filter = .all, searchFilter: [URLQueryItem] = []) async throws -> ThreadResult {
         // Get from API
-        let threadResult = try await apiFetcher.threads(mailbox: mailbox, folder: folder, filter: filter)
+        let threadResult = try await apiFetcher.threads(mailbox: mailbox, folder: folder, filter: filter, searchFilter: searchFilter)
 
         // Save result
         saveThreads(result: threadResult, parent: folder)

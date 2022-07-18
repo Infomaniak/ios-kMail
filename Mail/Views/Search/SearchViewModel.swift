@@ -17,13 +17,31 @@
  */
 
 import Foundation
+import MailCore
 import MailResources
 
-class SearchViewModel: ObservableObject {
+@MainActor class SearchViewModel: ObservableObject {
+    var mailboxManager: MailboxManager
+
     @Published public var filters: [SearchFilter]
     @Published public var selectedFilters: [SearchFilter] = []
+    @Published public var searchValue = ""
 
-    init() {
+    @Published public var threads: [Thread] = []
+
+    public var folder: Folder?
+    @Published var isLoadingPage = false
+
+    private var resourceNext: String?
+
+    // TODO: - IMPORTANT
+//    Si connexion -> Recherche depui s call API uniquement
+//    Si pas de connextion -> Recherche depuis Realm uniquement
+
+    init(folder: Folder?) {
+        mailboxManager = AccountManager.instance.currentMailboxManager!
+        self.folder = folder
+
         filters = [
             .read,
             .unread,
@@ -31,6 +49,87 @@ class SearchViewModel: ObservableObject {
             .attachment,
             .folder
         ]
+    }
+
+    func updateSelection(filter: SearchFilter) {
+        if selectedFilters.contains(filter) {
+            unselect(filter: filter)
+        } else {
+            select(filter: filter)
+        }
+    }
+
+    private func unselect(filter: SearchFilter) {
+        selectedFilters.removeAll {
+            $0 == filter
+        }
+    }
+
+    private func select(filter: SearchFilter) {
+        selectedFilters.append(filter)
+        switch filter {
+        case .read:
+            selectedFilters.removeAll {
+                $0 == .unread || $0 == .favorite
+            }
+        case .unread:
+            selectedFilters.removeAll {
+                $0 == .read || $0 == .favorite
+            }
+        case .favorite:
+            selectedFilters.removeAll {
+                $0 == .read || $0 == .unread
+            }
+        case .attachment:
+            return
+        case .folder:
+            return
+        }
+    }
+
+    func fetchThreads() async {
+        guard !isLoadingPage else {
+            return
+        }
+
+        isLoadingPage = true
+
+        var filter: Filter = .all
+
+        var searchFilters: [URLQueryItem] = []
+
+        searchFilters.append(URLQueryItem(name: "scontains", value: searchValue))
+
+        for selected in selectedFilters {
+            switch selected {
+            case .read:
+                filter = .seen
+            case .unread:
+                filter = .unseen
+            case .favorite:
+                filter = .starred
+            case .attachment:
+                return
+//                searchFilters.append(URLQueryItem(name: "sattachment", value: <#T##String?#>))
+            case .folder:
+                return
+            }
+        }
+
+        await tryOrDisplayError {
+            guard let folder = folder else { return }
+
+            let threadResult = try await mailboxManager.apiFetcher.threads(
+                mailbox: mailboxManager.mailbox,
+                folder: folder,
+                filter: filter,
+                searchFilter: searchFilters
+            )
+            threads.append(contentsOf: threadResult.threads ?? [])
+            resourceNext = threadResult.resourceNext
+        }
+        isLoadingPage = false
+        mailboxManager.draftOffline()
     }
 }
 
@@ -43,6 +142,7 @@ public enum SearchFilter: String, Identifiable {
     case attachment
     case folder
 
+    // TODO: - Fix trad
     public var title: String {
         switch self {
         case .read:
