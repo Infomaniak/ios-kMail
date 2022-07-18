@@ -146,15 +146,15 @@ public enum SearchFilter: String, Identifiable {
     public var title: String {
         switch self {
         case .read:
-            return MailResourcesStrings.Localizable.actionMarkAsRead
+            return MailResourcesStrings.Localizable.searchFilterRead
         case .unread:
-            return MailResourcesStrings.Localizable.actionMarkAsUnread
+            return MailResourcesStrings.Localizable.searchFilterUnread
         case .favorite:
             return MailResourcesStrings.Localizable.favoritesFolder
         case .attachment:
-            return MailResourcesStrings.Localizable.attachmentActionTitle
+            return MailResourcesStrings.Localizable.searchFilterAttachment
         case .folder:
-            return "Dossier"
+            return MailResourcesStrings.Localizable.searchFilterFolder
         }
     }
 }

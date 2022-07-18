@@ -64,7 +64,7 @@ struct SearchView: View {
                     } header: {
                         if !viewModel.threads.isEmpty && threadDensity != .compact {
                             // TODO: - Fix trad
-                            Text("Tous les messages")
+                            Text(MailResourcesStrings.Localizable.searchAllMessages)
                                 .textStyle(.calloutSecondary)
                         }
                     }
