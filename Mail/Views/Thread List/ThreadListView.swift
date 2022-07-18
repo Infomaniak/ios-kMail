@@ -186,15 +186,20 @@ struct ThreadListView: View {
                         ThreadListCell(mailboxManager: viewModel.mailboxManager, thread: thread)
                     })
                 } else {
-                    NavigationLink(destination: {
-                        ThreadView(mailboxManager: viewModel.mailboxManager, thread: thread, navigationController: navigationController)
-                            .onAppear { selectedThread = thread }
-                    }, label: {
+                    ZStack {
+                        NavigationLink(destination: {
+                            ThreadView(mailboxManager: viewModel.mailboxManager,
+                                       thread: thread,
+                                       navigationController: navigationController)
+                                .onAppear { selectedThread = thread }
+                        }, label: { EmptyView() })
+                        .opacity(0)
+
                         ThreadListCell(mailboxManager: viewModel.mailboxManager, thread: thread)
-                    })
+                    }
                 }
             }
-            .listRowInsets(.init(top: 0, leading: 12, bottom: 0, trailing: 12))
+            .listRowInsets(.init(top: 0, leading: 8, bottom: 0, trailing: 12))
             .listRowSeparator(.hidden)
             .listRowBackground(selectedThread == thread
                 ? MailResourcesAsset.backgroundCardSelectedColor.swiftUiColor

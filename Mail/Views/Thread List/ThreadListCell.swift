@@ -45,7 +45,7 @@ struct ThreadListCell: View {
     }
 
     var body: some View {
-        HStack(alignment: .top, spacing: 10) {
+        HStack(alignment: .top, spacing: 8) {
             Circle()
                 .frame(width: Constants.unreadIconSize, height: Constants.unreadIconSize)
                 .foregroundColor(hasUnreadMessages ? Color.accentColor : .clear)
