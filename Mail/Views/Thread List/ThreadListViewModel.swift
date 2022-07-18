@@ -103,6 +103,7 @@ class DateSection: Identifiable {
     @Published var filter = Filter.all {
         didSet {
             Task {
+                observeChanges(animateInitial: true)
                 await fetchThreads()
                 if filter != .all {
                     withAnimation {
@@ -171,8 +172,8 @@ class DateSection: Identifiable {
         }
         observeChanges()
 
-        if filterUnreadOn {
-            filterUnreadOn.toggle()
+        if filter != .all {
+            filter = .all
         } else {
             Task {
                 await self.fetchThreads()
@@ -180,18 +181,38 @@ class DateSection: Identifiable {
         }
     }
 
-    func observeChanges() {
+    func observeChanges(animateInitial: Bool = false) {
         observationThreadToken?.invalidate()
         observationLastUpdateToken?.invalidate()
         if let folder = folder?.thaw() {
-            let threadResults = folder.threads.sorted(by: \.date, ascending: false)
+            var threadResults = folder.threads.sorted(by: \.date, ascending: false)
+            if filter != .all {
+                threadResults = threadResults.where { thread in
+                    if filter == .seen {
+                        return thread.messagesCount == 0
+                    }
+                    if filter == .unseen {
+                        return thread.unseenMessages != 0
+                    }
+                    if filter == .starred {
+                        return thread.flagged
+                    }
+                    return !thread.flagged
+                }
+            }
             observationThreadToken = threadResults.observe(on: .main) { [weak self] changes in
                 switch changes {
                 case let .initial(results):
-                    self?.sortThreadsIntoSections(threads: Array(results.freezeIfNeeded()))
+                    if animateInitial {
+                        withAnimation {
+                            self?.sortThreadsIntoSections(threads: Array(results.freezeIfNeeded()))
+                        }
+                    } else {
+                        self?.sortThreadsIntoSections(threads: Array(results.freezeIfNeeded()))
+                    }
                 case let .update(results, _, _, _):
-                    if self?.filterUnreadOn == true && results.isEmpty == true {
-                        self?.filterUnreadOn.toggle()
+                    if self?.filter != .all && results.isEmpty == true {
+                        self?.filter = .all
                     }
                     withAnimation {
                         self?.sortThreadsIntoSections(threads: Array(results.freezeIfNeeded()))
@@ -231,8 +252,7 @@ class DateSection: Identifiable {
         var newSections = [DateSection]()
 
         var currentSection: DateSection?
-        let filteredThreads = threads.filter(filter.accepts)
-        for thread in filteredThreads {
+        for thread in threads {
             if currentSection?.threadBelongsToSection(thread: thread) != true {
                 currentSection = DateSection(thread: thread)
                 newSections.append(currentSection!)
