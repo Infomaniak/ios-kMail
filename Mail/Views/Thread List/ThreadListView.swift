@@ -258,7 +258,7 @@ private struct ThreadListNavigationBar: ViewModifier {
 
                 ToolbarItemGroup(placement: .navigationBarTrailing) {
                     NavigationLink {
-                        SearchView()
+                        SearchView(viewModel: SearchViewModel(folder: folder))
                     } label: {
                         Image(resource: MailResourcesAsset.search)
                     }

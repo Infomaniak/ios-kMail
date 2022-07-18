@@ -22,7 +22,7 @@ import MailCore
 
 struct SearchFilterCell: View {
     @State public var title: String
-    @State public var isSelected: Bool
+    public var isSelected: Bool
 
     init(title: String, isSelected: Bool = false) {
         self.title = title
@@ -49,9 +49,6 @@ struct SearchFilterCell: View {
             RoundedRectangle(cornerRadius: 30)
                 .stroke(Color(uiColor: UserDefaults.shared.accentColor.primary.color), lineWidth: 1)
         )
-        .onTapGesture {
-            isSelected.toggle()
-        }
     }
 }
 
