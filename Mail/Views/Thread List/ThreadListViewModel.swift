@@ -106,7 +106,6 @@ class DateSection: Identifiable {
                 await fetchThreads()
                 if filter != .all {
                     withAnimation {
-                        print(self.scrollViewProxy)
                         self.scrollViewProxy?.scrollTo(0, anchor: .top)
                     }
                 }
@@ -172,8 +171,12 @@ class DateSection: Identifiable {
         }
         observeChanges()
 
-        Task {
-            await self.fetchThreads()
+        if filterUnreadOn {
+            filterUnreadOn.toggle()
+        } else {
+            Task {
+                await self.fetchThreads()
+            }
         }
     }
 
@@ -187,6 +190,9 @@ class DateSection: Identifiable {
                 case let .initial(results):
                     self?.sortThreadsIntoSections(threads: Array(results.freezeIfNeeded()))
                 case let .update(results, _, _, _):
+                    if self?.filterUnreadOn == true && results.isEmpty == true {
+                        self?.filterUnreadOn.toggle()
+                    }
                     withAnimation {
                         self?.sortThreadsIntoSections(threads: Array(results.freezeIfNeeded()))
                     }
@@ -225,7 +231,8 @@ class DateSection: Identifiable {
         var newSections = [DateSection]()
 
         var currentSection: DateSection?
-        for thread in threads {
+        let filteredThreads = threads.filter(filter.threadAccepts)
+        for thread in filteredThreads {
             if currentSection?.threadBelongsToSection(thread: thread) != true {
                 currentSection = DateSection(thread: thread)
                 newSections.append(currentSection!)
