@@ -55,6 +55,7 @@ struct ThreadView: View {
     @ObservedRealmObject var thread: Thread
     private var mailboxManager: MailboxManager
     private var navigationController: UINavigationController?
+    private var folderId: String?
 
     @State private var displayNavigationTitle = false
     @StateObject private var sheet = MessageSheet()
@@ -80,9 +81,10 @@ struct ThreadView: View {
             .sorted { $0.date.compare($1.date) == .orderedAscending }
     }
 
-    init(mailboxManager: MailboxManager, thread: Thread, navigationController: UINavigationController?) {
+    init(mailboxManager: MailboxManager, thread: Thread, folderId: String?, navigationController: UINavigationController?) {
         self.mailboxManager = mailboxManager
         self.thread = thread
+        self.folderId = folderId
         self.navigationController = navigationController
         trashId = mailboxManager.getFolder(with: .trash)?._id ?? ""
     }
@@ -233,6 +235,11 @@ struct ThreadView: View {
                 EmptyView()
             }
         }
+        .onChange(of: messages) { newMessagesList in
+            if let folderId = folderId, newMessagesList.filter({ $0.folderId == folderId }).isEmpty {
+                dismiss()
+            }
+        }
     }
 
     private func didTap(action: Action) {
@@ -296,6 +303,7 @@ struct ThreadView_Previews: PreviewProvider {
         ThreadView(
             mailboxManager: PreviewHelper.sampleMailboxManager,
             thread: PreviewHelper.sampleThread,
+            folderId: nil,
             navigationController: nil
         )
     }

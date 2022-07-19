@@ -157,9 +157,6 @@ struct ThreadListView: View {
             }
         }
         .onAppear {
-            if isCompact {
-                selectedThread = nil
-            }
             networkMonitor.start()
             viewModel.globalBottomSheet = globalBottomSheet
         }
@@ -195,10 +192,11 @@ struct ThreadListView: View {
                         NavigationLink(destination: {
                             ThreadView(mailboxManager: viewModel.mailboxManager,
                                        thread: thread,
+                                       folderId: viewModel.folder?.id,
                                        navigationController: navigationController)
                                 .onAppear {
                                     selectedThread = thread
-                                    viewModel.cancelObservation()
+                                    viewModel.cancelObservations()
                                 }
                         }, label: { EmptyView() })
                         .opacity(0)

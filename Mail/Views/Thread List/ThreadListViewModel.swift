@@ -96,6 +96,8 @@ class DateSection: Identifiable {
 
     var scrollViewProxy: ScrollViewProxy?
 
+    var currentlyOpenedThread: Thread?
+
     private var resourceNext: String?
     private var observationThreadToken: NotificationToken?
     private var observationLastUpdateToken: NotificationToken?
@@ -183,7 +185,7 @@ class DateSection: Identifiable {
     }
 
     func observeChanges(animateInitialThreadChanges: Bool = false) {
-        cancelObservation()
+        cancelObservations()
         if let folder = folder?.thaw() {
             let threadResults = folder.threads.sorted(by: \.date, ascending: false).filter(filter.predicate.predicateFormat)
             observationThreadToken = threadResults.observe(on: .main) { [weak self] changes in
@@ -193,11 +195,21 @@ class DateSection: Identifiable {
                         self?.sortThreadsIntoSections(threads: Array(results.freezeIfNeeded()))
                     }
                 case let .update(results, _, _, _):
+                    var resultsArray = Array(results.freezeIfNeeded())
+                    if self?.filter != .all {
+                        if resultsArray.isEmpty {
+                            self?.filter = .all
+                        }
+                        if let openedThread = self?.currentlyOpenedThread, !resultsArray.contains(openedThread) {
+                            resultsArray.append(openedThread)
+                            resultsArray.sort { $0.date > $1.date }
+                        }
+                    }
                     if self?.filter != .all && results.isEmpty {
                         self?.filter = .all
                     }
                     withAnimation {
-                        self?.sortThreadsIntoSections(threads: Array(results.freezeIfNeeded()))
+                        self?.sortThreadsIntoSections(threads: resultsArray)
                     }
                 case .error:
                     break
@@ -218,7 +230,7 @@ class DateSection: Identifiable {
         }
     }
 
-    func cancelObservation() {
+    func cancelObservations() {
         observationThreadToken?.invalidate()
         observationLastUpdateToken?.invalidate()
     }
