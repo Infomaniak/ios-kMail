@@ -103,6 +103,8 @@ struct QuickActionView: View {
 
                 Text(action.title)
                     .font(.system(size: 12))
+                    .lineLimit(action.title.split(separator: " ").count > 1 ? nil : 1)
+                    .minimumScaleFactor(0.75)
             }
         }
     }
@@ -127,6 +129,7 @@ struct ActionView: View {
                     .frame(width: 21, height: 21)
                 Text(action.title)
                     .textStyle(.body)
+                    .frame(maxWidth: .infinity, alignment: .leading)
             }
         }
     }
