@@ -51,9 +51,10 @@ struct MessageHeaderView: View {
         .onTapGesture {
             if message.isDraft {
                 editDraft()
-            } else if !isMessageExpanded {
+            } else {
                 withAnimation {
-                    isMessageExpanded = true
+                    isHeaderExpanded = false
+                    isMessageExpanded.toggle()
                 }
             }
         }
