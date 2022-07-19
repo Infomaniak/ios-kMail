@@ -28,9 +28,20 @@ typealias Thread = MailCore.Thread
 class DateSection: Identifiable {
     enum ReferenceDate {
         case today, month, older(Date)
+
+        public var dateInterval: DateInterval {
+            switch self {
+            case .today:
+                return .init(start: .now.startOfDay, end: .now.endOfDay)
+            case .month:
+                return .init(start: .now.startOfMonth, end: .now.endOfMonth)
+            case .older(let date):
+                return .init(start: date.startOfMonth, end: date.endOfMonth)
+            }
+        }
     }
 
-    var id: Int
+    var id: DateInterval { referenceDate.dateInterval }
     var title: String {
         switch referenceDate {
         case .today:
@@ -50,8 +61,7 @@ class DateSection: Identifiable {
 
     private var referenceDate: ReferenceDate
 
-    init(id: Int, thread: Thread) {
-        self.id = id
+    init(thread: Thread) {
         if Calendar.current.isDateInToday(thread.date) {
             referenceDate = .today
         } else if Calendar.current.isDate(thread.date, equalTo: .now, toGranularity: .month) {
@@ -209,7 +219,7 @@ class DateSection: Identifiable {
         var currentSection: DateSection?
         for thread in threads {
             if currentSection?.threadBelongsToSection(thread: thread) != true {
-                currentSection = DateSection(id: newSections.count, thread: thread)
+                currentSection = DateSection(thread: thread)
                 newSections.append(currentSection!)
             }
             currentSection?.threads.append(thread)
