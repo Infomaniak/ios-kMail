@@ -185,21 +185,7 @@ class DateSection: Identifiable {
         observationThreadToken?.invalidate()
         observationLastUpdateToken?.invalidate()
         if let folder = folder?.thaw() {
-            var threadResults = folder.threads.sorted(by: \.date, ascending: false)
-            if filter != .all {
-                threadResults = threadResults.where { thread in
-                    switch filter {
-                    case .seen:
-                        return thread.messagesCount == 0
-                    case .unseen:
-                        return thread.unseenMessages != 0
-                    case .starred:
-                        return thread.flagged
-                    default:
-                        return !thread.flagged
-                    }
-                }
-            }
+            let threadResults = folder.threads.sorted(by: \.date, ascending: false).filter(filter.predicate.predicateFormat)
             observationThreadToken = threadResults.observe(on: .main) { [weak self] changes in
                 switch changes {
                 case let .initial(results):
@@ -207,7 +193,7 @@ class DateSection: Identifiable {
                         self?.sortThreadsIntoSections(threads: Array(results.freezeIfNeeded()))
                     }
                 case let .update(results, _, _, _):
-                    if self?.filter != .all && results.isEmpty == true {
+                    if self?.filter != .all && results.isEmpty {
                         self?.filter = .all
                     }
                     withAnimation {

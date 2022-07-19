@@ -180,4 +180,19 @@ public class Thread: Object, Decodable, Identifiable {
 
 public enum Filter: String {
     case all, seen, unseen, starred, unstarred
+
+    public var predicate: NSPredicate {
+        switch self {
+        case .all:
+            return .init(value: true)
+        case .seen:
+            return .init(format: "unseenMessages == 0")
+        case .unseen:
+            return .init(format: "unseenMessages != 0")
+        case .starred:
+            return .init(format: "flagged == YES")
+        case .unstarred:
+            return .init(format: "flagged == NO")
+        }
+    }
 }
