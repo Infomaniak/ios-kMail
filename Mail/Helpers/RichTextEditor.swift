@@ -138,6 +138,7 @@ class MailEditor: SQTextEditorView {
         _webView.setKeyboardRequiresUserInteraction(false)
         _webView.addInputAccessoryView(toolbar: self.toolbar)
         self.updateToolbarItems(style: .main)
+        _webView.scrollView.keyboardDismissMode = .interactive
         return _webView
     }()
 
