@@ -63,6 +63,7 @@ struct ThreadView: View {
 
     @EnvironmentObject var globalBottomSheet: GlobalBottomSheet
     @Environment(\.verticalSizeClass) var sizeClass
+    @Environment(\.dismiss) var dismiss
 
     private let trashId: String
     private let bottomSheetOptions = Constants.bottomSheetOptions + [.absolutePositionValue]
@@ -250,12 +251,14 @@ struct ThreadView: View {
                                                       cancelSuccessMessage: MailResourcesStrings.Localizable.snackbarMoveCancelled,
                                                       cancelableResponse: response,
                                                       mailboxManager: mailboxManager)
+                    dismiss()
                 }
             }
         case .delete:
             Task {
                 await tryOrDisplayError {
                     try await mailboxManager.moveOrDelete(thread: thread)
+                    dismiss()
                 }
             }
         default:

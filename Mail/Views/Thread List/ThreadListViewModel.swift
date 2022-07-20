@@ -166,12 +166,13 @@ class DateSection: Identifiable {
     }
 
     func updateThreads(with folder: Folder) {
+        let isNewFolder = folder != self.folder
         self.folder = folder
         withAnimation {
             lastUpdate = folder.lastUpdate
         }
 
-        if filter != .all {
+        if isNewFolder && filter != .all {
             filter = .all
         } else {
             observeChanges()
@@ -182,8 +183,7 @@ class DateSection: Identifiable {
     }
 
     func observeChanges(animateInitialThreadChanges: Bool = false) {
-        observationThreadToken?.invalidate()
-        observationLastUpdateToken?.invalidate()
+        cancelObservation()
         if let folder = folder?.thaw() {
             let threadResults = folder.threads.sorted(by: \.date, ascending: false).filter(filter.predicate.predicateFormat)
             observationThreadToken = threadResults.observe(on: .main) { [weak self] changes in
@@ -216,6 +216,11 @@ class DateSection: Identifiable {
         } else {
             sections = []
         }
+    }
+
+    func cancelObservation() {
+        observationThreadToken?.invalidate()
+        observationLastUpdateToken?.invalidate()
     }
 
     func loadNextPageIfNeeded(currentItem: Thread) {

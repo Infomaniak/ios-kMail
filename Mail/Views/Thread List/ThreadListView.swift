@@ -196,7 +196,10 @@ struct ThreadListView: View {
                             ThreadView(mailboxManager: viewModel.mailboxManager,
                                        thread: thread,
                                        navigationController: navigationController)
-                                .onAppear { selectedThread = thread }
+                                .onAppear {
+                                    selectedThread = thread
+                                    viewModel.cancelObservation()
+                                }
                         }, label: { EmptyView() })
                         .opacity(0)
 
