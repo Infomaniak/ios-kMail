@@ -107,9 +107,9 @@ class DateSection: Identifiable {
             Task {
                 observeChanges(animateInitialThreadChanges: true)
                 await fetchThreads()
-                if filter != .all {
+                if filter != .all, let topThread = sections.first?.threads.first?.id {
                     withAnimation {
-                        self.scrollViewProxy?.scrollTo(0, anchor: .top)
+                        self.scrollViewProxy?.scrollTo(topThread, anchor: .top)
                     }
                 }
             }
