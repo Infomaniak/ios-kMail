@@ -195,21 +195,11 @@ class DateSection: Identifiable {
                         self?.sortThreadsIntoSections(threads: Array(results.freezeIfNeeded()))
                     }
                 case let .update(results, _, _, _):
-                    var resultsArray = Array(results.freezeIfNeeded())
-                    if self?.filter != .all {
-                        if resultsArray.isEmpty {
-                            self?.filter = .all
-                        }
-                        if let openedThread = self?.currentlyOpenedThread, !resultsArray.contains(openedThread) {
-                            resultsArray.append(openedThread)
-                            resultsArray.sort { $0.date > $1.date }
-                        }
-                    }
                     if self?.filter != .all && results.isEmpty {
                         self?.filter = .all
                     }
                     withAnimation {
-                        self?.sortThreadsIntoSections(threads: resultsArray)
+                        self?.sortThreadsIntoSections(threads: Array(results.freezeIfNeeded()))
                     }
                 case .error:
                     break
