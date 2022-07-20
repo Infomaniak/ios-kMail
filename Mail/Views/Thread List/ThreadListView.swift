@@ -57,7 +57,6 @@ struct ThreadListView: View {
     @Binding var currentFolder: Folder?
 
     @State private var avatarImage = Image(resource: MailResourcesAsset.placeholderAvatar)
-    @State private var selectedThread: Thread?
     @StateObject var bottomSheet: ThreadBottomSheet
     @StateObject private var networkMonitor = NetworkMonitor()
     @State private var navigationController: UINavigationController?
@@ -158,11 +157,11 @@ struct ThreadListView: View {
         }
         .onAppear {
             networkMonitor.start()
+            viewModel.selectedThread = nil
             viewModel.globalBottomSheet = globalBottomSheet
         }
         .onChange(of: currentFolder) { newFolder in
-            guard let folder = newFolder else { return }
-            selectedThread = nil
+            guard isCompact, let folder = newFolder else { return }
             viewModel.updateThreads(with: folder)
         }
         .task {
@@ -194,10 +193,7 @@ struct ThreadListView: View {
                                        thread: thread,
                                        folderId: viewModel.folder?.id,
                                        navigationController: navigationController)
-                                .onAppear {
-                                    selectedThread = thread
-                                    viewModel.cancelObservations()
-                                }
+                                .onAppear { viewModel.selectedThread = thread }
                         }, label: { EmptyView() })
                         .opacity(0)
 
@@ -207,7 +203,7 @@ struct ThreadListView: View {
             }
             .listRowInsets(.init(top: 0, leading: 8, bottom: 0, trailing: 12))
             .listRowSeparator(.hidden)
-            .listRowBackground(selectedThread == thread
+            .listRowBackground(viewModel.selectedThread?.id == thread.id
                 ? MailResourcesAsset.backgroundCardSelectedColor.swiftUiColor
                 : MailResourcesAsset.backgroundColor.swiftUiColor)
             .modifier(ThreadListSwipeAction(thread: thread, viewModel: viewModel))

@@ -90,13 +90,12 @@ class DateSection: Identifiable {
     @Published var sections = [DateSection]()
     @Published var isLoadingPage = false
     @Published var lastUpdate: Date?
+    @Published var selectedThread: Thread?
 
     var bottomSheet: ThreadBottomSheet
     var globalBottomSheet: GlobalBottomSheet?
 
     var scrollViewProxy: ScrollViewProxy?
-
-    var currentlyOpenedThread: Thread?
 
     private var resourceNext: String?
     private var observationThreadToken: NotificationToken?
@@ -107,7 +106,7 @@ class DateSection: Identifiable {
             Task {
                 observeChanges(animateInitialThreadChanges: true)
                 await fetchThreads()
-                if filter != .all, let topThread = sections.first?.threads.first?.id {
+                if let topThread = sections.first?.threads.first?.id {
                     withAnimation {
                         self.scrollViewProxy?.scrollTo(topThread, anchor: .top)
                     }
@@ -168,7 +167,7 @@ class DateSection: Identifiable {
     }
 
     func updateThreads(with folder: Folder) {
-        let isNewFolder = folder != self.folder
+        let isNewFolder = folder.id != self.folder?.id
         self.folder = folder
         withAnimation {
             lastUpdate = folder.lastUpdate
@@ -185,9 +184,10 @@ class DateSection: Identifiable {
     }
 
     func observeChanges(animateInitialThreadChanges: Bool = false) {
-        cancelObservations()
+        observationThreadToken?.invalidate()
+        observationLastUpdateToken?.invalidate()
         if let folder = folder?.thaw() {
-            let threadResults = folder.threads.sorted(by: \.date, ascending: false).filter(filter.predicate.predicateFormat)
+            let threadResults = folder.threads.sorted(by: \.date, ascending: false)
             observationThreadToken = threadResults.observe(on: .main) { [weak self] changes in
                 switch changes {
                 case let .initial(results):
@@ -195,7 +195,7 @@ class DateSection: Identifiable {
                         self?.sortThreadsIntoSections(threads: Array(results.freezeIfNeeded()))
                     }
                 case let .update(results, _, _, _):
-                    if self?.filter != .all && results.isEmpty {
+                    if self?.filter != .all && results.count == 1 && self?.filter.accepts(thread: results[0]) != true {
                         self?.filter = .all
                     }
                     withAnimation {
@@ -220,11 +220,6 @@ class DateSection: Identifiable {
         }
     }
 
-    func cancelObservations() {
-        observationThreadToken?.invalidate()
-        observationLastUpdateToken?.invalidate()
-    }
-
     func loadNextPageIfNeeded(currentItem: Thread) {
         // Start loading next page when we reach the second-to-last item
         let threads = sections.flatMap(\.threads)
@@ -241,7 +236,8 @@ class DateSection: Identifiable {
         var newSections = [DateSection]()
 
         var currentSection: DateSection?
-        for thread in threads {
+        let filteredThreads = threads.filter { $0.id == selectedThread?.id || filter.accepts(thread: $0) }
+        for thread in filteredThreads {
             if currentSection?.threadBelongsToSection(thread: thread) != true {
                 currentSection = DateSection(thread: thread)
                 newSections.append(currentSection!)

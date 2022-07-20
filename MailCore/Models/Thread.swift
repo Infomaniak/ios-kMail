@@ -181,18 +181,18 @@ public class Thread: Object, Decodable, Identifiable {
 public enum Filter: String {
     case all, seen, unseen, starred, unstarred
 
-    public var predicate: NSPredicate {
+    public func accepts(thread: Thread) -> Bool {
         switch self {
         case .all:
-            return .init(value: true)
+            return true
         case .seen:
-            return .init(format: "unseenMessages == 0")
+            return thread.unseenMessages == 0
         case .unseen:
-            return .init(format: "unseenMessages != 0")
+            return thread.unseenMessages > 0
         case .starred:
-            return .init(format: "flagged == YES")
+            return thread.flagged
         case .unstarred:
-            return .init(format: "flagged == NO")
+            return !thread.flagged
         }
     }
 }
