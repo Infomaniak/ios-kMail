@@ -23,7 +23,12 @@ import SwiftUI
     @Published var editMode = EditMode.inactive
     @Published var selectedItems = Set<Thread>()
 
-    func enableEditMode() {
-        editMode = .active
+    func toggleSelect(thread: Thread) {
+        if selectedItems.contains(thread) {
+            selectedItems.remove(thread)
+        } else {
+            selectedItems.insert(thread)
+            print("HELLLLLO")
+        }
     }
 }

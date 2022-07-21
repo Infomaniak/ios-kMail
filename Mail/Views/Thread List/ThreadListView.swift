@@ -48,6 +48,7 @@ class ThreadBottomSheet: BottomSheetState<ThreadBottomSheet.State, ThreadBottomS
 
 struct ThreadListView: View {
     @StateObject var viewModel: ThreadListViewModel
+    @StateObject var multipleSelectionViewModel: ThreadListMultipleSelectionViewModel
 
     @EnvironmentObject var menuSheet: MenuSheet
     @EnvironmentObject var globalBottomSheet: GlobalBottomSheet
@@ -57,7 +58,6 @@ struct ThreadListView: View {
     @Binding var currentFolder: Folder?
 
     @State private var avatarImage = Image(resource: MailResourcesAsset.placeholderAvatar)
-    @State private var selectedThread: Thread?
     @StateObject var bottomSheet: ThreadBottomSheet
     @StateObject private var networkMonitor = NetworkMonitor()
     @State private var navigationController: UINavigationController?
@@ -72,6 +72,7 @@ struct ThreadListView: View {
         _viewModel = StateObject(wrappedValue: ThreadListViewModel(mailboxManager: mailboxManager,
                                                                    folder: folder.wrappedValue,
                                                                    bottomSheet: threadBottomSheet))
+        _multipleSelectionViewModel = StateObject(wrappedValue: ThreadListMultipleSelectionViewModel())
         _currentFolder = folder
         self.isCompact = isCompact
 
@@ -96,7 +97,7 @@ struct ThreadListView: View {
                     EmptyListView()
                 }
 
-                List(selection: $viewModel.multipleSelectionViewModel.selectedItems) {
+                List(selection: $multipleSelectionViewModel.selectedItems) {
                     ForEach(viewModel.sections) { section in
                         Section {
                             threadList(threads: section.threads)
@@ -119,7 +120,7 @@ struct ThreadListView: View {
                     }
                 }
                 .listStyle(.plain)
-                .environment(\.editMode, $viewModel.multipleSelectionViewModel.editMode)
+                .environment(\.editMode, $multipleSelectionViewModel.editMode)
                 .introspectTableView { tableView in
                     tableView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: 100, right: 0)
                 }
@@ -155,7 +156,7 @@ struct ThreadListView: View {
         .onAppear {
             networkMonitor.start()
             viewModel.globalBottomSheet = globalBottomSheet
-            selectedThread = nil
+            viewModel.selectedThread = nil
         }
         .task {
             if let account = AccountManager.instance.currentAccount {
@@ -176,10 +177,9 @@ struct ThreadListView: View {
 
     func threadList(threads: [Thread]) -> some View {
         ForEach(threads) { thread in
-            ThreadListCell(selectedThread: $selectedThread,
-                           editMode: $viewModel.multipleSelectionViewModel.editMode,
+            ThreadListCell(viewModel: viewModel,
+                           multipleSelectionViewModel: multipleSelectionViewModel,
                            currentFolder: currentFolder,
-                           mailboxManager: viewModel.mailboxManager,
                            thread: thread,
                            navigationController: navigationController,
                            editDraft: editDraft)
@@ -188,7 +188,7 @@ struct ThreadListView: View {
             }
             .listRowInsets(.init(top: 0, leading: 8, bottom: 0, trailing: 12))
             .listRowSeparator(.hidden)
-            .listRowBackground(selectedThread == thread
+            .listRowBackground(viewModel.selectedThread == thread
                 ? MailResourcesAsset.backgroundCardSelectedColor.swiftUiColor
                 : MailResourcesAsset.backgroundColor.swiftUiColor)
             .modifier(ThreadListSwipeAction(thread: thread, viewModel: viewModel))

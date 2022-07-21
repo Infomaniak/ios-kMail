@@ -31,13 +31,12 @@ extension ThreadDensity {
 }
 
 struct ThreadListCell: View {
+    @ObservedObject var viewModel: ThreadListViewModel
+    @ObservedObject var multipleSelectionViewModel: ThreadListMultipleSelectionViewModel
+
     @State private var isLinkEnabled = false
 
-    @Binding var selectedThread: Thread?
-    @Binding var editMode: EditMode
-
     var currentFolder: Folder?
-    var mailboxManager: MailboxManager
     var thread: Thread
     var navigationController: UINavigationController?
 
@@ -47,10 +46,15 @@ struct ThreadListCell: View {
         return currentFolder?.role == .draft
     }
 
+    private var isSelected: Bool {
+        return multipleSelectionViewModel.editMode == .active &&
+        multipleSelectionViewModel.selectedItems.contains(thread)
+    }
+
     var body: some View {
         ZStack {
             if !isInDraftFolder {
-                NavigationLink(destination: ThreadView(mailboxManager: mailboxManager,
+                NavigationLink(destination: ThreadView(mailboxManager: viewModel.mailboxManager,
                                                        thread: thread,
                                                        navigationController: navigationController),
                                isActive: $isLinkEnabled) {
@@ -59,21 +63,27 @@ struct ThreadListCell: View {
                 .opacity(0)
             }
 
-            ThreadListCellContent(mailboxManager: mailboxManager, thread: thread)
+            ThreadListCellContent(mailboxManager: viewModel.mailboxManager, thread: thread)
         }
+        .tag(thread)
         .onTapGesture {
-            selectedThread = thread
-            if isInDraftFolder {
-                editDraft(thread)
+            if multipleSelectionViewModel.editMode == .inactive {
+                viewModel.selectedThread = thread
+                if isInDraftFolder {
+                    editDraft(thread)
+                } else {
+                    isLinkEnabled = true
+                }
             } else {
-                isLinkEnabled = true
+                multipleSelectionViewModel.toggleSelect(thread: thread)
             }
         }
         .onLongPressGesture {
             withAnimation {
-                editMode = editMode == .active ? .inactive : .active
+                multipleSelectionViewModel.editMode = .active
             }
         }
+
     }
 }
 
@@ -170,10 +180,13 @@ private struct ThreadListCellContent: View {
 
 struct ThreadListCell_Previews: PreviewProvider {
     static var previews: some View {
-        ThreadListCell(selectedThread: .constant(nil),
-                       editMode: .constant(EditMode.inactive),
-                       mailboxManager: PreviewHelper.sampleMailboxManager,
-                       thread: PreviewHelper.sampleThread) { _ in /* Preview closure */ }
+        let viewModel = ThreadListViewModel(mailboxManager: PreviewHelper.sampleMailboxManager,
+                                            folder: nil,
+                                            bottomSheet: ThreadBottomSheet())
+
+        ThreadListCell(viewModel: viewModel,
+                       multipleSelectionViewModel: ThreadListMultipleSelectionViewModel(),
+                       thread: PreviewHelper.sampleThread) { _ in /* Preview */ }
         .previewLayout(.sizeThatFits)
         .previewDevice("iPhone 13 Pro")
     }

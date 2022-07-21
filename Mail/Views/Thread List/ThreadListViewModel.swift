@@ -88,10 +88,9 @@ class DateSection: Identifiable {
 
     @Published var folder: Folder?
     @Published var sections = [DateSection]()
+    @Published var selectedThread: Thread?
     @Published var isLoadingPage = false
     @Published var lastUpdate: Date?
-
-    @Published var multipleSelectionViewModel: ThreadListMultipleSelectionViewModel
 
     var bottomSheet: ThreadBottomSheet
     var globalBottomSheet: GlobalBottomSheet?
@@ -123,7 +122,6 @@ class DateSection: Identifiable {
         self.mailboxManager = mailboxManager
         self.folder = folder
         lastUpdate = folder?.lastUpdate
-        self.multipleSelectionViewModel = ThreadListMultipleSelectionViewModel()
         self.bottomSheet = bottomSheet
         observeChanges()
     }
