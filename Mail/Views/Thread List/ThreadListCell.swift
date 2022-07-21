@@ -34,7 +34,7 @@ struct ThreadListCell: View {
     @State private var isLinkEnabled = false
 
     @Binding var selectedThread: Thread?
-    @Binding var isMultipleSelectionEnabled: Bool
+    @Binding var editMode: EditMode
 
     var currentFolder: Folder?
     var mailboxManager: MailboxManager
@@ -70,7 +70,9 @@ struct ThreadListCell: View {
             }
         }
         .onLongPressGesture {
-            isMultipleSelectionEnabled = true
+            withAnimation {
+                editMode = editMode == .active ? .inactive : .active
+            }
         }
     }
 }
@@ -169,7 +171,7 @@ private struct ThreadListCellContent: View {
 struct ThreadListCell_Previews: PreviewProvider {
     static var previews: some View {
         ThreadListCell(selectedThread: .constant(nil),
-                       isMultipleSelectionEnabled: .constant(true),
+                       editMode: .constant(EditMode.inactive),
                        mailboxManager: PreviewHelper.sampleMailboxManager,
                        thread: PreviewHelper.sampleThread) { _ in /* Preview closure */ }
         .previewLayout(.sizeThatFits)

@@ -177,7 +177,7 @@ struct ThreadListView: View {
     func threadList(threads: [Thread]) -> some View {
         ForEach(threads) { thread in
             ThreadListCell(selectedThread: $selectedThread,
-                           isMultipleSelectionEnabled: .constant(true), // TODO: Update
+                           editMode: $viewModel.multipleSelectionViewModel.editMode,
                            currentFolder: currentFolder,
                            mailboxManager: viewModel.mailboxManager,
                            thread: thread,
