@@ -94,6 +94,8 @@ class DateSection: Identifiable {
     var bottomSheet: ThreadBottomSheet
     var globalBottomSheet: GlobalBottomSheet?
 
+    var multipleSelectionViewModel: ThreadListMultipleSelectionViewModel
+
     private var resourceNext: String?
     private var observationThreadToken: NotificationToken?
     private var observationLastUpdateToken: NotificationToken?
@@ -121,6 +123,7 @@ class DateSection: Identifiable {
         self.mailboxManager = mailboxManager
         self.folder = folder
         lastUpdate = folder?.lastUpdate
+        self.multipleSelectionViewModel = ThreadListMultipleSelectionViewModel()
         self.bottomSheet = bottomSheet
         observeChanges()
     }
