@@ -31,6 +31,51 @@ extension ThreadDensity {
 }
 
 struct ThreadListCell: View {
+    @State private var isLinkEnabled = false
+
+    @Binding var selectedThread: Thread?
+    @Binding var isMultipleSelectionEnabled: Bool
+
+    var currentFolder: Folder?
+    var mailboxManager: MailboxManager
+    var thread: Thread
+    var navigationController: UINavigationController?
+
+    var editDraft: (Thread) -> Void
+
+    private var isInDraftFolder: Bool {
+        return currentFolder?.role == .draft
+    }
+
+    var body: some View {
+        ZStack {
+            if !isInDraftFolder {
+                NavigationLink(destination: ThreadView(mailboxManager: mailboxManager,
+                                                       thread: thread,
+                                                       navigationController: navigationController),
+                               isActive: $isLinkEnabled) {
+                    EmptyView()
+                }
+                .opacity(0)
+            }
+
+            ThreadListCellContent(mailboxManager: mailboxManager, thread: thread)
+        }
+        .onTapGesture {
+            selectedThread = thread
+            if isInDraftFolder {
+                editDraft(thread)
+            } else {
+                isLinkEnabled = true
+            }
+        }
+        .onLongPressGesture {
+            isMultipleSelectionEnabled = true
+        }
+    }
+}
+
+private struct ThreadListCellContent: View {
     @AppStorage(UserDefaults.shared.key(.threadDensity)) var density: ThreadDensity = .normal
 
     var mailboxManager: MailboxManager
@@ -123,10 +168,10 @@ struct ThreadListCell: View {
 
 struct ThreadListCell_Previews: PreviewProvider {
     static var previews: some View {
-        ThreadListCell(
-            mailboxManager: PreviewHelper.sampleMailboxManager,
-            thread: PreviewHelper.sampleThread
-        )
+        ThreadListCell(selectedThread: .constant(nil),
+                       isMultipleSelectionEnabled: .constant(true),
+                       mailboxManager: PreviewHelper.sampleMailboxManager,
+                       thread: PreviewHelper.sampleThread) { _ in /* Preview closure */ }
         .previewLayout(.sizeThatFits)
         .previewDevice("iPhone 13 Pro")
     }

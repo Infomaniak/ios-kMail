@@ -155,6 +155,7 @@ struct ThreadListView: View {
         .onAppear {
             networkMonitor.start()
             viewModel.globalBottomSheet = globalBottomSheet
+            selectedThread = nil
         }
         .task {
             if let account = AccountManager.instance.currentAccount {
@@ -175,27 +176,13 @@ struct ThreadListView: View {
 
     func threadList(threads: [Thread]) -> some View {
         ForEach(threads) { thread in
-            Group {
-                if currentFolder?.role == .draft {
-                    Button(action: {
-                        editDraft(from: thread)
-                    }, label: {
-                        ThreadListCell(mailboxManager: viewModel.mailboxManager, thread: thread)
-                    })
-                } else {
-                    ZStack {
-                        NavigationLink(tag: thread,
-                                       selection: $selectedThread) {
-                            ThreadView(mailboxManager: viewModel.mailboxManager,
-                                       thread: thread,
-                                       navigationController: navigationController)
-                        } label: { EmptyView() }
-                        .opacity(0)
-
-                        ThreadListCell(mailboxManager: viewModel.mailboxManager, thread: thread)
-                    }
-                }
-            }
+            ThreadListCell(selectedThread: $selectedThread,
+                           isMultipleSelectionEnabled: .constant(true), // TODO: Update
+                           currentFolder: currentFolder,
+                           mailboxManager: viewModel.mailboxManager,
+                           thread: thread,
+                           navigationController: navigationController,
+                           editDraft: editDraft)
             .onAppear {
                 viewModel.loadNextPageIfNeeded(currentItem: thread)
             }
@@ -205,12 +192,6 @@ struct ThreadListView: View {
                 ? MailResourcesAsset.backgroundCardSelectedColor.swiftUiColor
                 : MailResourcesAsset.backgroundColor.swiftUiColor)
             .modifier(ThreadListSwipeAction(thread: thread, viewModel: viewModel))
-            .onTapGesture {
-                selectedThread = thread
-            }
-            .onLongPressGesture(minimumDuration: 0.3) {
-                print("ENABLE MultipleSelection")
-            }
         }
     }
 
