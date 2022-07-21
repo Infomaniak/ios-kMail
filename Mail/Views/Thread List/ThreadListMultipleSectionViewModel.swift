@@ -17,9 +17,13 @@
  */
 
 import Foundation
+import SwiftUI
 
-@MainActor class ThreadListMultipleSelectionViewModel {
-    var isMultipleSelectionEnabled = false
-
+@MainActor class ThreadListMultipleSelectionViewModel: ObservableObject {
+    @Published var editMode = EditMode.inactive
     @Published var selectedItems = Set<Thread>()
+
+    func enableEditMode() {
+        editMode = .active
+    }
 }

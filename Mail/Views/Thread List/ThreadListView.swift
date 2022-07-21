@@ -96,7 +96,7 @@ struct ThreadListView: View {
                     EmptyListView()
                 }
 
-                List {
+                List(selection: $viewModel.multipleSelectionViewModel.selectedItems) {
                     ForEach(viewModel.sections) { section in
                         Section {
                             threadList(threads: section.threads)
@@ -119,6 +119,7 @@ struct ThreadListView: View {
                     }
                 }
                 .listStyle(.plain)
+                .environment(\.editMode, $viewModel.multipleSelectionViewModel.editMode)
                 .introspectTableView { tableView in
                     tableView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: 100, right: 0)
                 }
@@ -152,16 +153,8 @@ struct ThreadListView: View {
             }
         }
         .onAppear {
-            if isCompact {
-                selectedThread = nil
-            }
             networkMonitor.start()
             viewModel.globalBottomSheet = globalBottomSheet
-        }
-        .onChange(of: currentFolder) { newFolder in
-            guard let folder = newFolder else { return }
-            selectedThread = nil
-            viewModel.updateThreads(with: folder)
         }
         .task {
             if let account = AccountManager.instance.currentAccount {
@@ -170,6 +163,10 @@ struct ThreadListView: View {
             if let folder = currentFolder {
                 viewModel.updateThreads(with: folder)
             }
+        }
+        .onChange(of: currentFolder) { newFolder in
+            guard let folder = newFolder else { return }
+            viewModel.updateThreads(with: folder)
         }
         .refreshable {
             await viewModel.fetchThreads()
@@ -187,17 +184,20 @@ struct ThreadListView: View {
                     })
                 } else {
                     ZStack {
-                        NavigationLink(destination: {
+                        NavigationLink(tag: thread,
+                                       selection: $selectedThread) {
                             ThreadView(mailboxManager: viewModel.mailboxManager,
                                        thread: thread,
                                        navigationController: navigationController)
-                                .onAppear { selectedThread = thread }
-                        }, label: { EmptyView() })
+                        } label: { EmptyView() }
                         .opacity(0)
 
                         ThreadListCell(mailboxManager: viewModel.mailboxManager, thread: thread)
                     }
                 }
+            }
+            .onAppear {
+                viewModel.loadNextPageIfNeeded(currentItem: thread)
             }
             .listRowInsets(.init(top: 0, leading: 8, bottom: 0, trailing: 12))
             .listRowSeparator(.hidden)
@@ -205,8 +205,11 @@ struct ThreadListView: View {
                 ? MailResourcesAsset.backgroundCardSelectedColor.swiftUiColor
                 : MailResourcesAsset.backgroundColor.swiftUiColor)
             .modifier(ThreadListSwipeAction(thread: thread, viewModel: viewModel))
-            .onAppear {
-                viewModel.loadNextPageIfNeeded(currentItem: thread)
+            .onTapGesture {
+                selectedThread = thread
+            }
+            .onLongPressGesture(minimumDuration: 0.3) {
+                print("ENABLE MultipleSelection")
             }
         }
     }

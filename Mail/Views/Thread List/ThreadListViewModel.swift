@@ -91,10 +91,10 @@ class DateSection: Identifiable {
     @Published var isLoadingPage = false
     @Published var lastUpdate: Date?
 
+    @Published var multipleSelectionViewModel: ThreadListMultipleSelectionViewModel
+
     var bottomSheet: ThreadBottomSheet
     var globalBottomSheet: GlobalBottomSheet?
-
-    var multipleSelectionViewModel: ThreadListMultipleSelectionViewModel
 
     private var resourceNext: String?
     private var observationThreadToken: NotificationToken?
