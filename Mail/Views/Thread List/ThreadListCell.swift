@@ -83,7 +83,10 @@ struct ThreadListCell: View {
                 multipleSelectionViewModel.editMode = .active
             }
         }
-
+        .modifyIf(isSelected) { view in
+            view
+                .background(SelectionBackground())
+        }
     }
 }
 

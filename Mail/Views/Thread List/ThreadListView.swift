@@ -132,7 +132,10 @@ struct ThreadListView: View {
         .introspectNavigationController { navigationController in
             self.navigationController = navigationController
         }
-        .modifier(ThreadListNavigationBar(isCompact: isCompact, folder: $viewModel.folder, avatarImage: $avatarImage))
+        .modifier(ThreadListToolbar(isCompact: isCompact,
+                                    multipleSelectionViewModel: multipleSelectionViewModel,
+                                    folder: $viewModel.folder,
+                                    avatarImage: $avatarImage))
         .floatingActionButton(icon: Image(resource: MailResourcesAsset.edit), title: MailResourcesStrings.Localizable.buttonNewMessage) {
             menuSheet.state = .newMessage
         }
@@ -215,8 +218,10 @@ struct ThreadListView: View {
     }
 }
 
-private struct ThreadListNavigationBar: ViewModifier {
+private struct ThreadListToolbar: ViewModifier {
     var isCompact: Bool
+
+    @ObservedObject var multipleSelectionViewModel: ThreadListMultipleSelectionViewModel
 
     @Binding var folder: Folder?
     @Binding var avatarImage: Image
@@ -224,46 +229,73 @@ private struct ThreadListNavigationBar: ViewModifier {
     @EnvironmentObject var menuSheet: MenuSheet
     @EnvironmentObject var navigationDrawerController: NavigationDrawerController
 
+    @ToolbarContentBuilder
+    private var navigationBar: some ToolbarContent {
+        ToolbarItemGroup(placement: .navigationBarTrailing) {
+            Button {
+                // TODO: Search
+                showWorkInProgressSnackBar()
+            } label: {
+                Image(resource: MailResourcesAsset.search)
+            }
+
+            Button {
+                menuSheet.state = .switchAccount
+            } label: {
+                avatarImage
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 30, height: 30)
+                    .clipShape(Circle())
+            }
+        }
+
+        ToolbarItem(placement: .principal) {
+            Text(folder?.localizedName ?? "")
+                .layoutPriority(1)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .textStyle(.header1)
+                .padding(.leading, 8)
+        }
+    }
+
+    @ToolbarContentBuilder
+    private var navigationBarCompact: some ToolbarContent {
+        ToolbarItem(placement: .navigationBarLeading) {
+            Button {
+                navigationDrawerController.open()
+            } label: {
+                Image(resource: MailResourcesAsset.burger)
+            }
+        }
+    }
+
+    @ToolbarContentBuilder
+    private var multipleSelectionNavigationBar: some ToolbarContent {
+        ToolbarItem(placement: .navigationBarLeading) {
+            Button(MailResourcesStrings.Localizable.buttonSelectAll) {}
+        }
+        ToolbarItem(placement: .navigationBarTrailing) {
+            Button(MailResourcesStrings.Localizable.buttonCancel) {
+                multipleSelectionViewModel.editMode = .inactive
+            }
+        }
+    }
+
     func body(content: Content) -> some View {
         content
-            .navigationBarTitle(folder?.localizedName ?? "", displayMode: .inline)
-            .toolbar {
-                ToolbarItem(placement: .principal) {
-                    Text(folder?.localizedName ?? "")
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                        .textStyle(.header1)
-                        .padding(.leading, 8)
-                }
-
-                ToolbarItemGroup(placement: .navigationBarTrailing) {
-                    Button {
-                        // TODO: Search
-                        showWorkInProgressSnackBar()
-                    } label: {
-                        Image(resource: MailResourcesAsset.search)
+            .navigationBarTitleDisplayMode(.inline)
+            .modifyIf(multipleSelectionViewModel.editMode == .inactive) { view in
+                view
+                    .toolbar { navigationBar }
+                    .modifyIf(isCompact) { view in
+                        view.toolbar { navigationBarCompact }
                     }
-
-                    Button {
-                        menuSheet.state = .switchAccount
-                    } label: {
-                        avatarImage
-                            .resizable()
-                            .scaledToFit()
-                            .frame(width: 30, height: 30)
-                            .clipShape(Circle())
-                    }
-                }
             }
-            .modifyIf(isCompact) { view in
-                view.toolbar {
-                    ToolbarItem(placement: .navigationBarLeading) {
-                        Button {
-                            navigationDrawerController.open()
-                        } label: {
-                            Image(resource: MailResourcesAsset.burger)
-                        }
-                    }
-                }
+            .modifyIf(multipleSelectionViewModel.editMode == .active) { view in
+                view
+                    .navigationTitle("0 sélectionné")
+                    .toolbar { multipleSelectionNavigationBar }
             }
     }
 }

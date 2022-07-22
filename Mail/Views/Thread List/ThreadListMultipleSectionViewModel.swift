@@ -28,7 +28,6 @@ import SwiftUI
             selectedItems.remove(thread)
         } else {
             selectedItems.insert(thread)
-            print("HELLLLLO")
         }
     }
 }
