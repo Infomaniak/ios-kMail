@@ -47,12 +47,14 @@ struct MessageHeaderView: View {
                 MessageHeaderDetailView(message: message, recipientTapped: openContact(recipient:))
             }
         }
+        .contentShape(Rectangle())
         .onTapGesture {
             if message.isDraft {
                 editDraft()
-            } else if !isMessageExpanded {
+            } else {
                 withAnimation {
-                    isMessageExpanded = true
+                    isHeaderExpanded = false
+                    isMessageExpanded.toggle()
                 }
             }
         }
