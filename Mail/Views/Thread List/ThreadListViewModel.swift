@@ -90,9 +90,12 @@ class DateSection: Identifiable {
     @Published var sections = [DateSection]()
     @Published var isLoadingPage = false
     @Published var lastUpdate: Date?
+    @Published var selectedThread: Thread?
 
     var bottomSheet: ThreadBottomSheet
     var globalBottomSheet: GlobalBottomSheet?
+
+    var scrollViewProxy: ScrollViewProxy?
 
     private var resourceNext: String?
     private var observationThreadToken: NotificationToken?
@@ -101,7 +104,13 @@ class DateSection: Identifiable {
     @Published var filter = Filter.all {
         didSet {
             Task {
+                observeChanges(animateInitialThreadChanges: true)
                 await fetchThreads()
+                if let topThread = sections.first?.threads.first?.id {
+                    withAnimation {
+                        self.scrollViewProxy?.scrollTo(topThread, anchor: .top)
+                    }
+                }
             }
         }
     }
@@ -158,18 +167,23 @@ class DateSection: Identifiable {
     }
 
     func updateThreads(with folder: Folder) {
+        let isNewFolder = folder.id != self.folder?.id
         self.folder = folder
         withAnimation {
             lastUpdate = folder.lastUpdate
         }
-        observeChanges()
 
-        Task {
-            await self.fetchThreads()
+        if isNewFolder && filter != .all {
+            filter = .all
+        } else {
+            observeChanges()
+            Task {
+                await self.fetchThreads()
+            }
         }
     }
 
-    func observeChanges() {
+    func observeChanges(animateInitialThreadChanges: Bool = false) {
         observationThreadToken?.invalidate()
         observationLastUpdateToken?.invalidate()
         if let folder = folder?.thaw() {
@@ -177,8 +191,13 @@ class DateSection: Identifiable {
             observationThreadToken = threadResults.observe(on: .main) { [weak self] changes in
                 switch changes {
                 case let .initial(results):
-                    self?.sortThreadsIntoSections(threads: Array(results.freezeIfNeeded()))
+                    withAnimation(animateInitialThreadChanges ? .default : nil) {
+                        self?.sortThreadsIntoSections(threads: Array(results.freezeIfNeeded()))
+                    }
                 case let .update(results, _, _, _):
+                    if self?.filter != .all && results.count == 1 && self?.filter.accepts(thread: results[0]) != true {
+                        self?.filter = .all
+                    }
                     withAnimation {
                         self?.sortThreadsIntoSections(threads: Array(results.freezeIfNeeded()))
                     }
@@ -217,7 +236,8 @@ class DateSection: Identifiable {
         var newSections = [DateSection]()
 
         var currentSection: DateSection?
-        for thread in threads {
+        let filteredThreads = threads.filter { $0.id == selectedThread?.id || filter.accepts(thread: $0) }
+        for thread in filteredThreads {
             if currentSection?.threadBelongsToSection(thread: thread) != true {
                 currentSection = DateSection(thread: thread)
                 newSections.append(currentSection!)

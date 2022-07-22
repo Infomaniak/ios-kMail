@@ -57,7 +57,6 @@ struct ThreadListView: View {
     @Binding var currentFolder: Folder?
 
     @State private var avatarImage = Image(resource: MailResourcesAsset.placeholderAvatar)
-    @State private var selectedThread: Thread?
     @StateObject var bottomSheet: ThreadBottomSheet
     @StateObject private var networkMonitor = NetworkMonitor()
     @State private var navigationController: UINavigationController?
@@ -96,31 +95,36 @@ struct ThreadListView: View {
                     EmptyListView()
                 }
 
-                List {
-                    ForEach(viewModel.sections) { section in
-                        Section {
-                            threadList(threads: section.threads)
-                        } header: {
-                            if threadDensity != .compact {
-                                Text(section.title)
-                                    .textStyle(.calloutSecondary)
+                ScrollViewReader { proxy in
+                    List {
+                        ForEach(viewModel.sections) { section in
+                            Section {
+                                threadList(threads: section.threads)
+                            } header: {
+                                if threadDensity != .compact {
+                                    Text(section.title)
+                                        .textStyle(.calloutSecondary)
+                                }
                             }
                         }
-                    }
 
-                    if viewModel.isLoadingPage {
-                        HStack {
-                            Spacer()
-                            ProgressView()
-                            Spacer()
+                        if viewModel.isLoadingPage {
+                            HStack {
+                                Spacer()
+                                ProgressView()
+                                Spacer()
+                            }
+                            .listRowSeparator(.hidden)
+                            .listRowBackground(MailResourcesAsset.backgroundColor.swiftUiColor)
                         }
-                        .listRowSeparator(.hidden)
-                        .listRowBackground(MailResourcesAsset.backgroundColor.swiftUiColor)
                     }
-                }
-                .listStyle(.plain)
-                .introspectTableView { tableView in
-                    tableView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: 100, right: 0)
+                    .listStyle(.plain)
+                    .onAppear {
+                        viewModel.scrollViewProxy = proxy
+                    }
+                    .introspectTableView { tableView in
+                        tableView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: 100, right: 0)
+                    }
                 }
             }
             .appShadow()
@@ -152,15 +156,12 @@ struct ThreadListView: View {
             }
         }
         .onAppear {
-            if isCompact {
-                selectedThread = nil
-            }
             networkMonitor.start()
+            viewModel.selectedThread = nil
             viewModel.globalBottomSheet = globalBottomSheet
         }
         .onChange(of: currentFolder) { newFolder in
-            guard let folder = newFolder else { return }
-            selectedThread = nil
+            guard isCompact, let folder = newFolder else { return }
             viewModel.updateThreads(with: folder)
         }
         .task {
@@ -190,8 +191,9 @@ struct ThreadListView: View {
                         NavigationLink(destination: {
                             ThreadView(mailboxManager: viewModel.mailboxManager,
                                        thread: thread,
+                                       folderId: viewModel.folder?.id,
                                        navigationController: navigationController)
-                                .onAppear { selectedThread = thread }
+                                .onAppear { viewModel.selectedThread = thread }
                         }, label: { EmptyView() })
                         .opacity(0)
 
@@ -201,7 +203,7 @@ struct ThreadListView: View {
             }
             .listRowInsets(.init(top: 0, leading: 8, bottom: 0, trailing: 12))
             .listRowSeparator(.hidden)
-            .listRowBackground(selectedThread == thread
+            .listRowBackground(viewModel.selectedThread?.id == thread.id
                 ? MailResourcesAsset.backgroundCardSelectedColor.swiftUiColor
                 : MailResourcesAsset.backgroundColor.swiftUiColor)
             .modifier(ThreadListSwipeAction(thread: thread, viewModel: viewModel))
