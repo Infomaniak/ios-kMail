@@ -36,14 +36,11 @@ struct ThreadListCell: View {
 
     @State private var isLinkEnabled = false
 
-    var currentFolder: Folder?
     var thread: Thread
     var navigationController: UINavigationController?
 
-    var editDraft: (Thread) -> Void
-
     private var isInDraftFolder: Bool {
-        return currentFolder?.role == .draft
+        return viewModel.folder?.role == .draft
     }
 
     private var isSelected: Bool {
@@ -70,7 +67,7 @@ struct ThreadListCell: View {
             if multipleSelectionViewModel.editMode == .inactive {
                 viewModel.selectedThread = thread
                 if isInDraftFolder {
-                    editDraft(thread)
+                    viewModel.editDraft(from: thread)
                 } else {
                     isLinkEnabled = true
                 }
@@ -189,7 +186,7 @@ struct ThreadListCell_Previews: PreviewProvider {
 
         ThreadListCell(viewModel: viewModel,
                        multipleSelectionViewModel: ThreadListMultipleSelectionViewModel(),
-                       thread: PreviewHelper.sampleThread) { _ in /* Preview */ }
+                       thread: PreviewHelper.sampleThread)
         .previewLayout(.sizeThatFits)
         .previewDevice("iPhone 13 Pro")
     }
