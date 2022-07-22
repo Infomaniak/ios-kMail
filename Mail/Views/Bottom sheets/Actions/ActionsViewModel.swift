@@ -305,15 +305,12 @@ enum ActionsTarget: Equatable {
     }
 
     private func favorites() async throws {
-        switch target {
-        case let .thread(thread):
+        if case let .thread(thread) = target {
             Task {
                 await tryOrDisplayError {
                     try await mailboxManager.toggleStar(thread: thread.freezeIfNeeded())
                 }
             }
-        default:
-            break
         }
     }
 
