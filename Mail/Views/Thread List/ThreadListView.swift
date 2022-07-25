@@ -97,7 +97,7 @@ struct ThreadListView: View {
                     EmptyListView()
                 }
 
-                List(selection: $multipleSelectionViewModel.selectedItems) {
+                List {
                     ForEach(viewModel.sections) { section in
                         Section {
                             threadList(threads: section.threads)
@@ -120,7 +120,6 @@ struct ThreadListView: View {
                     }
                 }
                 .listStyle(.plain)
-                .environment(\.editMode, $multipleSelectionViewModel.editMode)
                 .introspectTableView { tableView in
                     tableView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: 100, right: 0)
                 }
@@ -136,7 +135,8 @@ struct ThreadListView: View {
                                     multipleSelectionViewModel: multipleSelectionViewModel,
                                     folder: $viewModel.folder,
                                     avatarImage: $avatarImage))
-        .floatingActionButton(icon: Image(resource: MailResourcesAsset.edit), title: MailResourcesStrings.Localizable.buttonNewMessage) {
+        .floatingActionButton(icon: Image(resource: MailResourcesAsset.edit),
+                              title: MailResourcesStrings.Localizable.buttonNewMessage) {
             menuSheet.state = .newMessage
         }
         .bottomSheet(bottomSheetPosition: $bottomSheet.position, options: bottomSheetOptions) {
@@ -179,7 +179,7 @@ struct ThreadListView: View {
         }
     }
 
-    func threadList(threads: [Thread]) -> some View {
+    private func threadList(threads: [Thread]) -> some View {
         ForEach(threads) { thread in
             ThreadListCell(viewModel: viewModel,
                            multipleSelectionViewModel: multipleSelectionViewModel,
@@ -193,7 +193,6 @@ struct ThreadListView: View {
             .listRowBackground(viewModel.selectedThread == thread
                 ? MailResourcesAsset.backgroundCardSelectedColor.swiftUiColor
                 : MailResourcesAsset.backgroundColor.swiftUiColor)
-            .modifier(ThreadListSwipeAction(thread: thread, viewModel: viewModel))
         }
     }
 }
@@ -257,7 +256,7 @@ private struct ThreadListToolbar: ViewModifier {
         }
         ToolbarItem(placement: .navigationBarTrailing) {
             Button(MailResourcesStrings.Localizable.buttonCancel) {
-                multipleSelectionViewModel.editMode = .inactive
+                multipleSelectionViewModel.isEnabled = false
             }
         }
     }
@@ -265,71 +264,22 @@ private struct ThreadListToolbar: ViewModifier {
     func body(content: Content) -> some View {
         content
             .navigationBarTitleDisplayMode(.inline)
-            .modifyIf(multipleSelectionViewModel.editMode == .inactive) { view in
+            .toolbar { navigationBar }
+            .modifyIf(isCompact) { view in
+                view.toolbar { navigationBarCompact }
+            }
+            .modifyIf(!multipleSelectionViewModel.isEnabled) { view in
                 view
                     .toolbar { navigationBar }
                     .modifyIf(isCompact) { view in
                         view.toolbar { navigationBarCompact }
                     }
             }
-            .modifyIf(multipleSelectionViewModel.editMode == .active) { view in
+            .modifyIf(multipleSelectionViewModel.isEnabled) { view in
                 view
                     .navigationTitle("0 sélectionné")
                     .toolbar { multipleSelectionNavigationBar }
             }
-    }
-}
-
-private struct SwipeActionView: View {
-    let thread: Thread
-    let viewModel: ThreadListViewModel
-    let action: SwipeAction
-
-    var icon: Image? {
-        if action == .readUnread {
-            return Image(resource: thread.unseenMessages == 0 ? MailResourcesAsset.envelope : MailResourcesAsset.envelopeOpen)
-        }
-        return action.swipeIcon
-    }
-
-    var body: some View {
-        Button {
-            Task {
-                await tryOrDisplayError {
-                    try await viewModel.hanldeSwipeAction(action, thread: thread)
-                }
-            }
-        } label: {
-            Label { Text(action.title) } icon: { icon }
-        }
-        .tint(action.swipeTint)
-    }
-}
-
-private struct ThreadListSwipeAction: ViewModifier {
-    let thread: Thread
-    let viewModel: ThreadListViewModel
-
-    @AppStorage(UserDefaults.shared.key(.swipeLongRight)) private var swipeLongRight = Constants.defaultSwipeLongRight
-    @AppStorage(UserDefaults.shared.key(.swipeShortRight)) private var swipeShortRight = Constants.defaultSwipeShortRight
-
-    @AppStorage(UserDefaults.shared.key(.swipeLongLeft)) private var swipeLongLeft = Constants.defaultSwipeLongLeft
-    @AppStorage(UserDefaults.shared.key(.swipeShortLeft)) private var swipeShortLeft = Constants.defaultSwipeShortLeft
-
-    func body(content: Content) -> some View {
-        content
-            .swipeActions(edge: .leading) {
-                edgeActions([swipeLongRight, swipeShortRight])
-            }
-            .swipeActions(edge: .trailing) {
-                edgeActions([swipeLongLeft, swipeShortLeft])
-            }
-    }
-
-    func edgeActions(_ actions: [SwipeAction]) -> some View {
-        ForEach(actions.filter { $0 != .none }, id: \.rawValue) { action in
-            SwipeActionView(thread: thread, viewModel: viewModel, action: action)
-        }
     }
 }
 

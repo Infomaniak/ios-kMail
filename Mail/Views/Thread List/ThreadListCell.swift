@@ -44,7 +44,7 @@ struct ThreadListCell: View {
     }
 
     private var isSelected: Bool {
-        return multipleSelectionViewModel.editMode == .active &&
+        return multipleSelectionViewModel.isEnabled &&
         multipleSelectionViewModel.selectedItems.contains(thread)
     }
 
@@ -63,8 +63,9 @@ struct ThreadListCell: View {
             ThreadListCellContent(mailboxManager: viewModel.mailboxManager, thread: thread)
         }
         .tag(thread)
+        .swipeActions(thread: thread, viewModel: viewModel)
         .onTapGesture {
-            if multipleSelectionViewModel.editMode == .inactive {
+            if !multipleSelectionViewModel.isEnabled {
                 viewModel.selectedThread = thread
                 if isInDraftFolder {
                     viewModel.editDraft(from: thread)
@@ -72,12 +73,12 @@ struct ThreadListCell: View {
                     isLinkEnabled = true
                 }
             } else {
-                multipleSelectionViewModel.toggleSelect(thread: thread)
+                multipleSelectionViewModel.toggleSelection(of: thread)
             }
         }
-        .onLongPressGesture {
+        .onLongPressGesture(minimumDuration: 0.5) {
             withAnimation {
-                multipleSelectionViewModel.editMode = .active
+                multipleSelectionViewModel.isEnabled.toggle()
             }
         }
         .modifyIf(isSelected) { view in

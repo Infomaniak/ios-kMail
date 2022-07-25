@@ -20,10 +20,10 @@ import Foundation
 import SwiftUI
 
 @MainActor class ThreadListMultipleSelectionViewModel: ObservableObject {
-    @Published var editMode = EditMode.inactive
+    @Published var isEnabled = false
     @Published var selectedItems = Set<Thread>()
 
-    func toggleSelect(thread: Thread) {
+    func toggleSelection(of thread: Thread) {
         if selectedItems.contains(thread) {
             selectedItems.remove(thread)
         } else {
