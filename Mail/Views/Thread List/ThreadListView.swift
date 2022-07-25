@@ -264,10 +264,6 @@ private struct ThreadListToolbar: ViewModifier {
     func body(content: Content) -> some View {
         content
             .navigationBarTitleDisplayMode(.inline)
-            .toolbar { navigationBar }
-            .modifyIf(isCompact) { view in
-                view.toolbar { navigationBarCompact }
-            }
             .modifyIf(!multipleSelectionViewModel.isEnabled) { view in
                 view
                     .toolbar { navigationBar }
@@ -277,7 +273,7 @@ private struct ThreadListToolbar: ViewModifier {
             }
             .modifyIf(multipleSelectionViewModel.isEnabled) { view in
                 view
-                    .navigationTitle("0 sélectionné")
+                    .navigationTitle(MailResourcesStrings.Localizable.multipleSelectionCount(multipleSelectionViewModel.selectedItems.count))
                     .toolbar { multipleSelectionNavigationBar }
             }
     }

@@ -58,6 +58,7 @@ struct ThreadListCell: View {
                     EmptyView()
                 }
                 .opacity(0)
+                .disabled(multipleSelectionViewModel.isEnabled)
             }
 
             ThreadListCellContent(mailboxManager: viewModel.mailboxManager, thread: thread)
