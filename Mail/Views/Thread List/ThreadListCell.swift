@@ -64,7 +64,10 @@ struct ThreadListCell: View {
             ThreadListCellContent(mailboxManager: viewModel.mailboxManager, thread: thread)
         }
         .tag(thread)
-        .swipeActions(thread: thread, viewModel: viewModel)
+        .modifyIf(!multipleSelectionViewModel.isEnabled) { view in
+            view
+                .swipeActions(thread: thread, viewModel: viewModel)
+        }
         .onTapGesture {
             if !multipleSelectionViewModel.isEnabled {
                 viewModel.selectedThread = thread

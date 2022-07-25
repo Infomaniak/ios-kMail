@@ -23,11 +23,28 @@ import SwiftUI
     @Published var isEnabled = false
     @Published var selectedItems = Set<Thread>()
 
+    let toolbarActions: [Action] = [.markAsRead, .archive /* Star */, .delete ]
+
     func toggleSelection(of thread: Thread) {
         if selectedItems.contains(thread) {
             selectedItems.remove(thread)
         } else {
             selectedItems.insert(thread)
+        }
+    }
+
+    func didTap(action: Action) {
+        switch action {
+        case .markAsRead:
+            print("READ")
+        case .markAsUnread:
+            print("UNREAD")
+        case .archive:
+            print("Archive")
+        case .delete:
+            print("Delete")
+        default:
+            break
         }
     }
 }

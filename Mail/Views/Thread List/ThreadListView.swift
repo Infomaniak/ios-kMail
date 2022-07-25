@@ -135,9 +135,12 @@ struct ThreadListView: View {
                                     multipleSelectionViewModel: multipleSelectionViewModel,
                                     folder: $viewModel.folder,
                                     avatarImage: $avatarImage))
-        .floatingActionButton(icon: Image(resource: MailResourcesAsset.edit),
-                              title: MailResourcesStrings.Localizable.buttonNewMessage) {
-            menuSheet.state = .newMessage
+        .modifyIf(!multipleSelectionViewModel.isEnabled) { view in
+            view
+                .floatingActionButton(icon: Image(resource: MailResourcesAsset.edit),
+                                      title: MailResourcesStrings.Localizable.buttonNewMessage) {
+                    menuSheet.state = .newMessage
+                }
         }
         .bottomSheet(bottomSheetPosition: $bottomSheet.position, options: bottomSheetOptions) {
             switch bottomSheet.state {
@@ -252,11 +255,23 @@ private struct ThreadListToolbar: ViewModifier {
     @ToolbarContentBuilder
     private var multipleSelectionNavigationBar: some ToolbarContent {
         ToolbarItem(placement: .navigationBarLeading) {
-            Button(MailResourcesStrings.Localizable.buttonSelectAll) {}
-        }
-        ToolbarItem(placement: .navigationBarTrailing) {
             Button(MailResourcesStrings.Localizable.buttonCancel) {
                 multipleSelectionViewModel.isEnabled = false
+            }
+        }
+        ToolbarItem(placement: .navigationBarTrailing) {
+            Button(MailResourcesStrings.Localizable.buttonSelectAll) {}
+        }
+
+        ToolbarItemGroup(placement: .bottomBar) {
+            ForEach(multipleSelectionViewModel.toolbarActions) { action in
+                ToolbarButton(text: action.title, icon: action.icon) {
+                    print("Hello")
+                }
+                Spacer()
+            }
+            ToolbarButton(text: MailResourcesStrings.Localizable.buttonMore, icon: MailResourcesAsset.plusActions) {
+                
             }
         }
     }
