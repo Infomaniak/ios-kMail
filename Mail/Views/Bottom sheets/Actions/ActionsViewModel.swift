@@ -36,8 +36,8 @@ struct Action: Identifiable, Equatable {
     static let markAsUnread = Action(id: 7, title: MailResourcesStrings.Localizable.actionMarkAsUnread, icon: MailResourcesAsset.envelope)
     static let move = Action(id: 8, title: MailResourcesStrings.Localizable.actionMove, icon: MailResourcesAsset.emailActionSend21)
     static let postpone = Action(id: 9, title: MailResourcesStrings.Localizable.actionPostpone, icon: MailResourcesAsset.waitingMessage)
-    static let addToFavorites = Action(id: 10, title: "Ajouter en favoris", icon: MailResourcesAsset.star)
-    static let deleteFromFavorites = Action(id: 21, title: "Retirer des favoris", icon: MailResourcesAsset.star)
+    static let star = Action(id: 10, title: "Ajouter en favoris", icon: MailResourcesAsset.star)
+    static let unstar = Action(id: 21, title: "Retirer des favoris", icon: MailResourcesAsset.starFull)
     static let spam = Action(id: 11, title: MailResourcesStrings.Localizable.actionSpam, icon: MailResourcesAsset.spam)
     static let nonSpam = Action(id: 20, title: MailResourcesStrings.Localizable.actionNonSpam, icon: MailResourcesAsset.spam)
     static let block = Action(id: 12, title: MailResourcesStrings.Localizable.actionBlockSender, icon: MailResourcesAsset.blockUser)
@@ -111,14 +111,14 @@ enum ActionsTarget: Equatable {
             quickActions = [.reply, .replyAll, .forward, .delete]
 
             let unread = thread.unseenMessages > 0
-            let favorites = thread.flagged
+            let star = thread.flagged
             let spam = thread.parent?.role == .spam
             listActions = [
                 .archive,
                 unread ? .markAsRead : .markAsUnread,
                 .move,
                 .postpone,
-                favorites ? .deleteFromFavorites : .addToFavorites,
+                star ? .unstar : .star,
                 spam ? .nonSpam : .spam,
                 .print,
                 .saveAsPDF,
@@ -128,12 +128,14 @@ enum ActionsTarget: Equatable {
             quickActions = [.reply, .replyAll, .forward, .delete]
 
             let unread = !message.seen
+            let star = message.flagged
             let spam = message.folderId == mailboxManager.getFolder(with: .spam)?._id
             listActions = [
                 .archive,
                 unread ? .markAsRead : .markAsUnread,
                 .move,
                 .postpone,
+                star ? .unstar : .star,
                 spam ? .nonSpam : .spam,
                 .block,
                 .phishing,
@@ -165,8 +167,8 @@ enum ActionsTarget: Equatable {
             move()
         case .postpone:
             postpone()
-        case .addToFavorites, .deleteFromFavorites:
-            try await favorites()
+        case .star, .unstar:
+            try await star()
         case .spam:
             try await spam()
         case .nonSpam:
@@ -304,11 +306,25 @@ enum ActionsTarget: Equatable {
         showWorkInProgressSnackBar()
     }
 
-    private func favorites() async throws {
-        if case let .thread(thread) = target {
+    private func star() async throws {
+        switch target {
+        case .threads:
+            // TODO: FAVORITE ACTION in multiple selection
+            break
+        case let .thread(thread):
             Task {
                 await tryOrDisplayError {
                     try await mailboxManager.toggleStar(thread: thread.freezeIfNeeded())
+                }
+            }
+        case let .message(message):
+            Task {
+                await tryOrDisplayError {
+                    if message.flagged {
+                        _ = try await mailboxManager.unstar(messages: [message.freezeIfNeeded()])
+                    } else {
+                        _ = try await mailboxManager.star(messages: [message.freezeIfNeeded()])
+                    }
                 }
             }
         }
