@@ -36,8 +36,8 @@ struct Action: Identifiable, Equatable {
     static let markAsUnread = Action(id: 7, title: MailResourcesStrings.Localizable.actionMarkAsUnread, icon: MailResourcesAsset.envelope)
     static let move = Action(id: 8, title: MailResourcesStrings.Localizable.actionMove, icon: MailResourcesAsset.emailActionSend21)
     static let postpone = Action(id: 9, title: MailResourcesStrings.Localizable.actionPostpone, icon: MailResourcesAsset.waitingMessage)
-    static let star = Action(id: 10, title: "Ajouter en favoris", icon: MailResourcesAsset.star)
-    static let unstar = Action(id: 21, title: "Retirer des favoris", icon: MailResourcesAsset.starFull)
+    static let star = Action(id: 10, title: MailResourcesStrings.Localizable.actionStar, icon: MailResourcesAsset.star)
+    static let unstar = Action(id: 21, title: MailResourcesStrings.Localizable.actionUnstar, icon: MailResourcesAsset.starFull)
     static let spam = Action(id: 11, title: MailResourcesStrings.Localizable.actionSpam, icon: MailResourcesAsset.spam)
     static let nonSpam = Action(id: 20, title: MailResourcesStrings.Localizable.actionNonSpam, icon: MailResourcesAsset.spam)
     static let block = Action(id: 12, title: MailResourcesStrings.Localizable.actionBlockSender, icon: MailResourcesAsset.blockUser)
@@ -309,7 +309,7 @@ enum ActionsTarget: Equatable {
     private func star() async throws {
         switch target {
         case .threads:
-            // TODO: FAVORITE ACTION in multiple selection
+            // TODO: STAR ACTION in multiple selection
             break
         case let .thread(thread):
             Task {
