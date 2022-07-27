@@ -137,6 +137,7 @@ struct ThreadListView: View {
             self.navigationController = navigationController
         }
         .modifier(ThreadListToolbar(isCompact: isCompact,
+                                    bottomSheet: bottomSheet,
                                     multipleSelectionViewModel: multipleSelectionViewModel,
                                     folder: $viewModel.folder,
                                     avatarImage: $avatarImage))
@@ -208,6 +209,7 @@ struct ThreadListView: View {
 private struct ThreadListToolbar: ViewModifier {
     var isCompact: Bool
 
+    @ObservedObject var bottomSheet: ThreadBottomSheet
     @ObservedObject var multipleSelectionViewModel: ThreadListMultipleSelectionViewModel
 
     @Binding var folder: Folder?
@@ -276,7 +278,7 @@ private struct ThreadListToolbar: ViewModifier {
                 Spacer()
             }
             ToolbarButton(text: MailResourcesStrings.Localizable.buttonMore, icon: MailResourcesAsset.plusActions) {
-                // TODO: Open more
+                bottomSheet.open(state: .actions(.threads(Array(multipleSelectionViewModel.selectedItems))), position: .middle)
             }
         }
     }

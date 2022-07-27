@@ -5,7 +5,7 @@
  * Locale: fr, French
  * Tagged: ios
  * Exported by: Valentin Perignon
- * Exported at: Wed, 27 Jul 2022 16:26:26 +0200
+ * Exported at: Wed, 27 Jul 2022 16:39:22 +0200
  */
 
 /* loco:62bb154d7513e127cb2e9c94 */
@@ -73,6 +73,9 @@
 
 /* loco:62e14b027e61d3640a5bf7e3 */
 "actionShortMarkAsUnread" = "Non lu";
+
+/* loco:62e14df023e4fb767e2391a4 */
+"actionShortStar" = "Favoris";
 
 /* loco:629f0e67a7c8ea4e366cf342 */
 "actionSpam" = "Spam";

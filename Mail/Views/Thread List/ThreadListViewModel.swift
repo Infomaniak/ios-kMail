@@ -91,7 +91,6 @@ class DateSection: Identifiable {
     @Published var selectedThread: Thread?
     @Published var isLoadingPage = false
     @Published var lastUpdate: Date?
-    @Published var selectedThread: Thread?
 
     var bottomSheet: ThreadBottomSheet
     var globalBottomSheet: GlobalBottomSheet?

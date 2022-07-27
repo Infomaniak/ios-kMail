@@ -20,10 +20,16 @@ import Foundation
 import SwiftUI
 
 @MainActor class ThreadListMultipleSelectionViewModel: ObservableObject {
-    @Published var isEnabled = false
+    @Published var isEnabled = false {
+        didSet {
+            if !isEnabled {
+                selectedItems = Set<Thread>()
+            }
+        }
+    }
     @Published var selectedItems = Set<Thread>()
 
-    let toolbarActions: [Action] = [.markAsRead, .archive /* Star */, .delete ]
+    let toolbarActions: [Action] = [.markAsRead, .archive, .star, .delete]
 
     func toggleSelection(of thread: Thread) {
         if selectedItems.contains(thread) {
@@ -40,9 +46,11 @@ import SwiftUI
         case .markAsUnread:
             print("UNREAD")
         case .archive:
-            print("Archive")
+            print("ARCHIVE")
+        case .star:
+            print("STAR")
         case .delete:
-            print("Delete")
+            print("DELETE")
         default:
             break
         }

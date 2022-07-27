@@ -51,9 +51,11 @@ struct ThreadListCell: View {
     var body: some View {
         ZStack {
             if !isInDraftFolder {
-                NavigationLink(destination: ThreadView(mailboxManager: viewModel.mailboxManager,
-                                                       thread: thread,
-                                                       navigationController: navigationController),
+                NavigationLink(destination:
+                                ThreadView(mailboxManager: viewModel.mailboxManager,
+                                           thread: thread,
+                                           folderId: viewModel.folder?.id,
+                                           navigationController: navigationController),
                                isActive: $isLinkEnabled) {
                     EmptyView()
                 }
@@ -83,6 +85,9 @@ struct ThreadListCell: View {
         .onLongPressGesture(minimumDuration: 0.5) {
             withAnimation {
                 multipleSelectionViewModel.isEnabled.toggle()
+                if multipleSelectionViewModel.isEnabled {
+                    multipleSelectionViewModel.toggleSelection(of: thread)
+                }
             }
         }
         .modifyIf(isSelected) { view in
