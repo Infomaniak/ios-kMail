@@ -52,6 +52,7 @@ public class Thread: Object, Decodable, Identifiable {
     @Persisted public var forwarded: Bool
     @Persisted public var size: Int
     @Persisted(originProperty: "threads") public var parentLink: LinkingObjects<Folder>
+    @Persisted public var fromSearch = false
 
     public var id: String {
         return uid

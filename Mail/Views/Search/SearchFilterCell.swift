@@ -16,9 +16,10 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import MailResources
-import SwiftUI
 import MailCore
+import MailResources
+import RealmSwift
+import SwiftUI
 
 struct SearchFilterCell: View {
     @State public var title: String

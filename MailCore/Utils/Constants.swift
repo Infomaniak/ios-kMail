@@ -109,6 +109,8 @@ public enum Constants {
     public static let defaultSwipeLongLeft = SwipeAction.delete
 
     public static let bottomSheetHorizontalPadding: CGFloat = 24
+    
+    public static let searchFolderId = "search_folder_id"
 
     // To delete: alert to facilitate tests for beta version
     public static let workInProgress = "This feature is currently under development."

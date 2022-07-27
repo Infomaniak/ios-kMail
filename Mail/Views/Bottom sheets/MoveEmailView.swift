@@ -23,7 +23,7 @@ import SwiftUI
 
 struct MoveEmailView: View {
     @StateObject var mailboxManager: MailboxManager
-    @ObservedResults(Folder.self) var folders
+    @ObservedResults(Folder.self, where: { $0.toolType == nil }) var folders
 
     @State private var selectedFolderID: String = ""
 
@@ -36,7 +36,9 @@ struct MoveEmailView: View {
     }
 
     init(mailboxManager: MailboxManager, state: GlobalBottomSheet, globalAlert: GlobalAlert, moveHandler: @escaping (Folder) -> Void) {
-        _folders = .init(Folder.self, configuration: AccountManager.instance.currentMailboxManager?.realmConfiguration)
+        _folders = .init(Folder.self, configuration: AccountManager.instance.currentMailboxManager?.realmConfiguration) {
+			$0.toolType == nil
+		}
         _mailboxManager = StateObject(wrappedValue: mailboxManager)
         self.state = state
         self.globalAlert = globalAlert
