@@ -111,7 +111,7 @@ struct MenuDrawerView: View {
     @EnvironmentObject var bottomSheet: GlobalBottomSheet
 
     // swiftlint:disable empty_count
-    @ObservedResults(Folder.self, where: { $0.parentLink.count == 0 }) var folders
+    @ObservedResults(Folder.self, where: { ($0.parentLink.count == 0) && ($0.toolType == nil) }) var folders
 
     @ObservedRealmObject private var mailbox: Mailbox
     @StateObject var mailboxManager: MailboxManager
@@ -126,7 +126,7 @@ struct MenuDrawerView: View {
 
     init(mailboxManager: MailboxManager, selectedFolder: Binding<Folder?>, showMailboxes: Binding<Bool>, isCompact: Bool) {
         _folders = .init(Folder.self, configuration: AccountManager.instance.currentMailboxManager?.realmConfiguration) {
-            $0.parentLink.count == 0
+            ($0.parentLink.count == 0) && ($0.toolType == nil)
         }
         _mailboxManager = StateObject(wrappedValue: mailboxManager)
         _selectedFolder = selectedFolder
@@ -167,7 +167,10 @@ struct MenuDrawerView: View {
 
                 IKDivider(withPadding: true)
 
-                MenuDrawerItemsListView(title: MailResourcesStrings.Localizable.menuDrawerAdvancedActions, content: actionsMenuItems)
+                MenuDrawerItemsListView(
+                    title: MailResourcesStrings.Localizable.menuDrawerAdvancedActions,
+                    content: actionsMenuItems
+                )
 
                 if mailbox.isLimited, let quotas = mailbox.quotas {
                     IKDivider(withPadding: true)
