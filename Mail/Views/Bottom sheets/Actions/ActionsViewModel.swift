@@ -25,6 +25,7 @@ import RealmSwift
 struct Action: Identifiable, Equatable {
     let id: Int
     let title: String
+    let shortTitle: String?
     let icon: MailResourcesImages
 
     static let delete = Action(id: 1, title: MailResourcesStrings.Localizable.actionDelete, icon: MailResourcesAsset.bin)
@@ -32,8 +33,12 @@ struct Action: Identifiable, Equatable {
     static let replyAll = Action(id: 3, title: MailResourcesStrings.Localizable.actionReplyAll, icon: MailResourcesAsset.emailActionReplyToAll)
     static let archive = Action(id: 4, title: MailResourcesStrings.Localizable.actionArchive, icon: MailResourcesAsset.archives)
     static let forward = Action(id: 5, title: MailResourcesStrings.Localizable.actionForward, icon: MailResourcesAsset.emailActionTransfer)
-    static let markAsRead = Action(id: 6, title: MailResourcesStrings.Localizable.actionMarkAsRead, icon: MailResourcesAsset.envelopeOpen)
-    static let markAsUnread = Action(id: 7, title: MailResourcesStrings.Localizable.actionMarkAsUnread, icon: MailResourcesAsset.envelope)
+    static let markAsRead = Action(id: 6, title: MailResourcesStrings.Localizable.actionMarkAsRead,
+                                   shortTitle: MailResourcesStrings.Localizable.actionShortMarkAsRead,
+                                   icon: MailResourcesAsset.envelopeOpen)
+    static let markAsUnread = Action(id: 7, title: MailResourcesStrings.Localizable.actionMarkAsUnread,
+                                     shortTitle: MailResourcesStrings.Localizable.actionShortMarkAsRead,
+                                     icon: MailResourcesAsset.envelope)
     static let move = Action(id: 8, title: MailResourcesStrings.Localizable.actionMove, icon: MailResourcesAsset.emailActionSend21)
     static let postpone = Action(id: 9, title: MailResourcesStrings.Localizable.actionPostpone, icon: MailResourcesAsset.waitingMessage)
     static let spam = Action(id: 10, title: MailResourcesStrings.Localizable.actionSpam, icon: MailResourcesAsset.spam)
@@ -46,6 +51,13 @@ struct Action: Identifiable, Equatable {
     static let createRule = Action(id: 16, title: MailResourcesStrings.Localizable.actionCreateRule, icon: MailResourcesAsset.ruleRegle)
     static let report = Action(id: 17, title: MailResourcesStrings.Localizable.actionReportDisplayProblem, icon: MailResourcesAsset.feedbacks)
     static let editMenu = Action(id: 18, title: MailResourcesStrings.Localizable.actionEditMenu, icon: MailResourcesAsset.editTools)
+
+    init(id: Int, title: String, shortTitle: String? = nil, icon: MailResourcesImages) {
+        self.id = id
+        self.title = title
+        self.shortTitle = shortTitle
+        self.icon = icon
+    }
 
     static func == (lhs: Action, rhs: Action) -> Bool {
         lhs.id == rhs.id

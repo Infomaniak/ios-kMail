@@ -265,13 +265,13 @@ private struct ThreadListToolbar: ViewModifier {
 
         ToolbarItemGroup(placement: .bottomBar) {
             ForEach(multipleSelectionViewModel.toolbarActions) { action in
-                ToolbarButton(text: action.title, icon: action.icon) {
+                ToolbarButton(text: action.shortTitle ?? action.title, icon: action.icon) {
                     print("Hello")
                 }
                 Spacer()
             }
             ToolbarButton(text: MailResourcesStrings.Localizable.buttonMore, icon: MailResourcesAsset.plusActions) {
-                
+                // TODO: Open more
             }
         }
     }
