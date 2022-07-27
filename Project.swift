@@ -50,7 +50,7 @@ let project = Project(name: "Mail",
                                  sources: "Mail/**",
                                  resources: [
                                      "MailResources/**/*.xcassets",
-                                     "Mail/editor.css",
+                                     "Mail/*.css",
                                      "Mail/**/*.storyboard",
                                      "MailResources/**/*.strings",
                                      "MailResources/**/*.stringsdict"
