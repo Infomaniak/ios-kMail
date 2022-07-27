@@ -17,8 +17,11 @@
  */
 
 import Foundation
+import InfomaniakCore
 import MailCore
 import MailResources
+import RealmSwift
+import SwiftUI
 
 @MainActor class SearchViewModel: ObservableObject {
     var mailboxManager: MailboxManager
@@ -26,21 +29,37 @@ import MailResources
     @Published public var filters: [SearchFilter]
     @Published public var selectedFilters: [SearchFilter] = []
     @Published public var searchValue = ""
+    @Published public var selectedFolderId = ""
 
     @Published public var threads: [Thread] = []
 
-    public var folder: Folder?
+    public var searchFolder: Folder
+
+    public var folderId: String?
     @Published var isLoadingPage = false
 
     private var resourceNext: String?
+    private var observationSearchThreadToken: NotificationToken?
 
     // TODO: - IMPORTANT
 //    Si connexion -> Recherche depui s call API uniquement
 //    Si pas de connextion -> Recherche depuis Realm uniquement
 
-    init(folder: Folder?) {
+    var observeSearch: Bool {
+        didSet {
+            if observeSearch {
+                observeChanges()
+            } else {
+                observationSearchThreadToken?.invalidate()
+            }
+        }
+    }
+
+    init(folderId: String?) {
         mailboxManager = AccountManager.instance.currentMailboxManager!
-        self.folder = folder
+        self.folderId = folderId
+
+        searchFolder = mailboxManager.initSearchFolder()
 
         filters = [
             .read,
@@ -49,6 +68,13 @@ import MailResources
             .attachment,
             .folder
         ]
+
+        observeSearch = true
+    }
+
+    public var folderFilterTitle: String {
+        if selectedFilters.contains(.folder) {}
+        return SearchFilter.folder.title
     }
 
     func updateSelection(filter: SearchFilter) {
@@ -56,6 +82,14 @@ import MailResources
             unselect(filter: filter)
         } else {
             select(filter: filter)
+        }
+    }
+
+    func updateSelection(filter: SearchFilter, add: Bool) {
+        if add && !selectedFilters.contains(filter) {
+            select(filter: filter)
+        } else if !add && selectedFilters.contains(filter) {
+            unselect(filter: filter)
         }
     }
 
@@ -88,17 +122,22 @@ import MailResources
     }
 
     func fetchThreads() async {
-        guard !isLoadingPage else {
+        guard !isLoadingPage, let folderId = folderId else {
             return
         }
 
         isLoadingPage = true
 
         var filter: Filter = .all
+        var folderToSearch: String = folderId
 
         var searchFilters: [URLQueryItem] = []
-
-        searchFilters.append(URLQueryItem(name: "scontains", value: searchValue))
+        if !searchValue.isEmpty {
+            searchFilters.append(URLQueryItem(name: "scontains", value: searchValue))
+        }
+        if !selectedFolderId.isEmpty && !selectedFilters.contains(.folder) {
+            selectedFilters.append(.folder)
+        }
 
         for selected in selectedFilters {
             switch selected {
@@ -109,27 +148,23 @@ import MailResources
             case .favorite:
                 filter = .starred
             case .attachment:
-                return
-//                searchFilters.append(URLQueryItem(name: "sattachment", value: <#T##String?#>))
+                searchFilters.append(URLQueryItem(name: "sattachment", value: "yes"))
             case .folder:
-                return
+                searchFilters.append(URLQueryItem(name: "severywhere", value: "0"))
+                folderToSearch = selectedFolderId
             }
         }
 
         await tryOrDisplayError {
-            guard let folder = folder else { return }
-
-            let threadResult = try await mailboxManager.apiFetcher.threads(
-                mailbox: mailboxManager.mailbox,
-                folder: folder,
+            let result = try await mailboxManager.searchThreads(
+                filterFolderId: folderToSearch,
                 filter: filter,
                 searchFilter: searchFilters
             )
-            threads.append(contentsOf: threadResult.threads ?? [])
-            resourceNext = threadResult.resourceNext
+
+            resourceNext = result.resourceNext
         }
         isLoadingPage = false
-        mailboxManager.draftOffline()
     }
 
     func fetchNextPage() async {
@@ -145,6 +180,28 @@ import MailResources
             resourceNext = threadResult.resourceNext
         }
         isLoadingPage = false
+    }
+
+    func observeChanges() {
+        observationSearchThreadToken?.invalidate()
+        if let folder = searchFolder.thaw() {
+            let threadResults = folder.threads.sorted(by: \.date, ascending: false)
+            observationSearchThreadToken = threadResults.observe(on: .main) { [weak self] changes in
+                switch changes {
+                case let .initial(results):
+                    self?.threads = Array(results.freezeIfNeeded())
+                case let .update(results, _, _, _):
+                    withAnimation {
+                        self?.threads = Array(results.freezeIfNeeded())
+                    }
+                case .error:
+                    break
+                }
+            }
+
+        } else {
+            threads = []
+        }
     }
 
     func loadNextPageIfNeeded(currentItem: Thread) {

@@ -207,7 +207,12 @@ public class MailboxManager: ObservableObject {
 
     public func threads(folder: Folder, filter: Filter = .all, searchFilter: [URLQueryItem] = []) async throws -> ThreadResult {
         // Get from API
-        let threadResult = try await apiFetcher.threads(mailbox: mailbox, folder: folder, filter: filter, searchFilter: searchFilter)
+        let threadResult = try await apiFetcher.threads(
+            mailbox: mailbox,
+            folderId: folder._id,
+            filter: filter,
+            searchFilter: searchFilter
+        )
 
         // Save result
         saveThreads(result: threadResult, parent: folder)
@@ -326,7 +331,8 @@ public class MailboxManager: ObservableObject {
             let folderName = FolderRole.trash.localizedName
             Task.detached {
                 await IKSnackBar.showCancelableSnackBar(message: MailResourcesStrings.Localizable.snackbarThreadMoved(folderName),
-                                                        cancelSuccessMessage: MailResourcesStrings.Localizable.snackbarMoveCancelled,
+                                                        cancelSuccessMessage: MailResourcesStrings.Localizable
+                                                            .snackbarMoveCancelled,
                                                         cancelableResponse: response,
                                                         mailboxManager: self)
             }
@@ -392,6 +398,64 @@ public class MailboxManager: ObservableObject {
                 message.folderId = folder._id
             }
         }
+    }
+
+    // MARK: - Search
+
+    public func initSearchFolder() -> Folder {
+        let realm = getRealm()
+
+        let searchFolder = Folder(
+            id: Constants.searchFolderId,
+            path: "",
+            name: "",
+            isFake: false,
+            isCollapsed: false,
+            isFavorite: false,
+            separator: "/",
+            children: [],
+            toolType: .search
+        )
+
+        try? realm.safeWrite {
+            realm.add(searchFolder, update: .modified)
+        }
+
+        return searchFolder
+    }
+
+    private func cleanSearchFolder(using realm: Realm? = nil) {
+        let realm = realm ?? getRealm()
+        guard let folder = realm.object(ofType: Folder.self, forPrimaryKey: Constants.searchFolderId) else { return }
+
+        try? realm.safeWrite {
+            realm.delete(folder.threads.where { $0.fromSearch == true })
+        }
+    }
+
+    public func searchThreads(filterFolderId: String, filter: Filter = .all,
+                              searchFilter: [URLQueryItem] = []) async throws -> ThreadResult {
+        cleanSearchFolder()
+        let realm = getRealm()
+        guard let parent = realm.object(ofType: Folder.self, forPrimaryKey: Constants.searchFolderId) else { fatalError() }
+
+        let threadResult = try await apiFetcher.threads(
+            mailbox: mailbox,
+            folderId: filterFolderId,
+            filter: filter,
+            searchFilter: searchFilter
+        )
+
+        DispatchQueue.main.async {
+            for thread in threadResult.threads ?? [] {
+                if realm.object(ofType: Thread.self, forPrimaryKey: thread.uid) == nil {
+                    thread.fromSearch = true
+                }
+            }
+            self.saveThreads(result: threadResult, parent: parent)
+        }
+
+        return threadResult
     }
 
     // MARK: - Message
