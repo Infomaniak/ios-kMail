@@ -62,7 +62,6 @@ struct MessageView: View {
                 GeometryReader { proxy in
                     WebView(model: $model, dynamicHeight: $webViewHeight, proxy: proxy)
                         .frame(height: webViewHeight)
-                        .background(Color.blue)
                 }
                 .frame(height: webViewHeight)
                 .onAppear {

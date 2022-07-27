@@ -97,31 +97,36 @@ struct ThreadListView: View {
                     EmptyListView()
                 }
 
-                List {
-                    ForEach(viewModel.sections) { section in
-                        Section {
-                            threadList(threads: section.threads)
-                        } header: {
-                            if threadDensity != .compact {
-                                Text(section.title)
-                                    .textStyle(.calloutSecondary)
+                ScrollViewReader { proxy in
+                    List {
+                        ForEach(viewModel.sections) { section in
+                            Section {
+                                threadList(threads: section.threads)
+                            } header: {
+                                if threadDensity != .compact {
+                                    Text(section.title)
+                                        .textStyle(.calloutSecondary)
+                                }
                             }
                         }
-                    }
 
-                    if viewModel.isLoadingPage {
-                        HStack {
-                            Spacer()
-                            ProgressView()
-                            Spacer()
+                        if viewModel.isLoadingPage {
+                            HStack {
+                                Spacer()
+                                ProgressView()
+                                Spacer()
+                            }
+                            .listRowSeparator(.hidden)
+                            .listRowBackground(MailResourcesAsset.backgroundColor.swiftUiColor)
                         }
-                        .listRowSeparator(.hidden)
-                        .listRowBackground(MailResourcesAsset.backgroundColor.swiftUiColor)
                     }
-                }
-                .listStyle(.plain)
-                .introspectTableView { tableView in
-                    tableView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: 100, right: 0)
+                    .listStyle(.plain)
+                    .onAppear {
+                        viewModel.scrollViewProxy = proxy
+                    }
+                    .introspectTableView { tableView in
+                        tableView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: 100, right: 0)
+                    }
                 }
             }
             .appShadow()
@@ -165,6 +170,10 @@ struct ThreadListView: View {
             viewModel.menuSheet = menuSheet
             viewModel.selectedThread = nil
         }
+        .onChange(of: currentFolder) { newFolder in
+            guard let folder = newFolder else { return }
+            viewModel.updateThreads(with: folder)
+        }
         .task {
             if let account = AccountManager.instance.currentAccount {
                 avatarImage = await account.user.getAvatar()
@@ -172,10 +181,6 @@ struct ThreadListView: View {
             if let folder = currentFolder {
                 viewModel.updateThreads(with: folder)
             }
-        }
-        .onChange(of: currentFolder) { newFolder in
-            guard let folder = newFolder else { return }
-            viewModel.updateThreads(with: folder)
         }
         .refreshable {
             await viewModel.fetchThreads()

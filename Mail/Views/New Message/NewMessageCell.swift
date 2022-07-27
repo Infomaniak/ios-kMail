@@ -33,11 +33,15 @@ extension VerticalAlignment {
 struct NewMessageCell<Content>: View where Content: View {
     let title: String
     let showCc: Binding<Bool>?
+    let isFirstCell: Bool
     let content: Content
 
-    init(title: String, showCc: Binding<Bool>? = nil, @ViewBuilder _ content: () -> Content) {
+    let verticalPadding: CGFloat = 12
+
+    init(title: String, showCc: Binding<Bool>? = nil, isFirstCell: Bool = false, @ViewBuilder _ content: () -> Content) {
         self.title = title
         self.showCc = showCc
+        self.isFirstCell = isFirstCell
         self.content = content()
     }
 
@@ -54,6 +58,8 @@ struct NewMessageCell<Content>: View where Content: View {
         }
         .textStyle(.body)
         .padding(.horizontal, 16)
+        .padding(.top, isFirstCell ? 0 : verticalPadding)
+        .padding(.bottom, verticalPadding)
 
         IKDivider()
             .padding(.horizontal, 8)
