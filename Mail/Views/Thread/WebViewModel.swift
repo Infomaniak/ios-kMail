@@ -85,7 +85,7 @@ struct WebView: UIViewRepresentable {
 class WebViewModel: ObservableObject {
     let webView: WKWebView
     var proxy: GeometryProxy?
-    let css: String? = try? String(contentsOfFile: Bundle.main.path(forResource: "editor", ofType: "css") ?? "", encoding: .utf8)
+    let css: String? = try? String(contentsOfFile: Bundle.main.path(forResource: "style", ofType: "css") ?? "", encoding: .utf8)
         .replacingOccurrences(of: "\n", with: "")
     var meta: String {
         return "<meta name=viewport content=\"\(proxy?.size.width ?? 0), initial-scale=1\"><style type=\"text/css\">\(css ?? "")</style>"

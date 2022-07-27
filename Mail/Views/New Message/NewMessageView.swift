@@ -96,9 +96,9 @@ struct NewMessageView: View {
 
     var body: some View {
         NavigationView {
-            VStack(spacing: 12) {
+            VStack(spacing: 0) {
                 if !shouldDisplayAutocompletion {
-                    NewMessageCell(title: MailResourcesStrings.Localizable.fromTitle) {
+                    NewMessageCell(title: MailResourcesStrings.Localizable.fromTitle, isFirstCell: true) {
                         Picker("Mailbox", selection: $selectedMailboxItem) {
                             ForEach(AccountManager.instance.mailboxes.indices, id: \.self) { i in
                                 Text(AccountManager.instance.mailboxes[i].email).tag(i)
@@ -139,7 +139,7 @@ struct NewMessageView: View {
                     }
 
                     RichTextEditor(model: $editor, body: $draft.body)
-                        .padding(.horizontal, 16)
+                        .ignoresSafeArea(.all, edges: .bottom)
                 }
             }
             .navigationBarTitleDisplayMode(.inline)
