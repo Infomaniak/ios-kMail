@@ -29,13 +29,15 @@ import SwiftUI
     @Published public var filters: [SearchFilter]
     @Published public var selectedFilters: [SearchFilter] = []
     @Published public var searchValue = ""
-    @Published public var selectedFolderId = ""
+
+    public var realFolder: Folder?
+    public var lastSearchFolderId: String?
+    @Published public var selectedSearchFolderId: String = ""
 
     @Published public var threads: [Thread] = []
 
     public var searchFolder: Folder
 
-    public var folderId: String?
     @Published var isLoadingPage = false
 
     private var resourceNext: String?
@@ -55,9 +57,9 @@ import SwiftUI
         }
     }
 
-    init(folderId: String?) {
+    init(folder: Folder?) {
         mailboxManager = AccountManager.instance.currentMailboxManager!
-        self.folderId = folderId
+        realFolder = folder
 
         searchFolder = mailboxManager.initSearchFolder()
 
@@ -70,11 +72,6 @@ import SwiftUI
         ]
 
         observeSearch = true
-    }
-
-    public var folderFilterTitle: String {
-        if selectedFilters.contains(.folder) {}
-        return SearchFilter.folder.title
     }
 
     func updateSelection(filter: SearchFilter) {
@@ -114,28 +111,26 @@ import SwiftUI
             selectedFilters.removeAll {
                 $0 == .read || $0 == .unread
             }
-        case .attachment:
-            return
-        case .folder:
+        default:
             return
         }
     }
 
     func fetchThreads() async {
-        guard !isLoadingPage, let folderId = folderId else {
+        guard !isLoadingPage, let realFolder = realFolder else {
             return
         }
 
         isLoadingPage = true
 
         var filter: Filter = .all
-        var folderToSearch: String = folderId
+        var folderToSearch: String = realFolder.id
 
         var searchFilters: [URLQueryItem] = []
         if !searchValue.isEmpty {
             searchFilters.append(URLQueryItem(name: "scontains", value: searchValue))
         }
-        if !selectedFolderId.isEmpty && !selectedFilters.contains(.folder) {
+        if !selectedSearchFolderId.isEmpty && !selectedFilters.contains(.folder) {
             selectedFilters.append(.folder)
         }
 
@@ -151,7 +146,8 @@ import SwiftUI
                 searchFilters.append(URLQueryItem(name: "sattachment", value: "yes"))
             case .folder:
                 searchFilters.append(URLQueryItem(name: "severywhere", value: "0"))
-                folderToSearch = selectedFolderId
+                folderToSearch = selectedSearchFolderId
+                lastSearchFolderId = selectedSearchFolderId
             }
         }
 
