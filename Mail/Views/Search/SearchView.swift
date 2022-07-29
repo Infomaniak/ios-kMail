@@ -18,6 +18,7 @@
 
 import MailCore
 import MailResources
+import RealmSwift
 import SwiftUI
 
 struct SearchView: View {
@@ -33,12 +34,13 @@ struct SearchView: View {
 
     private let bottomSheetOptions = Constants.bottomSheetOptions + [.appleScrollBehavior]
 
-    init(viewModel: SearchViewModel) {
+    @Binding var observeThread: Bool
+
+    init(viewModel: SearchViewModel, observeThread: Binding<Bool>) {
         let threadBottomSheet = ThreadBottomSheet()
         _bottomSheet = StateObject(wrappedValue: threadBottomSheet)
         self.viewModel = viewModel
-
-        print("token: \(AccountManager.instance.currentAccount.token.accessToken)")
+        _observeThread = observeThread
     }
 
     var body: some View {
@@ -46,11 +48,18 @@ struct SearchView: View {
             ScrollView(.horizontal) {
                 HStack {
                     ForEach(viewModel.filters) { filter in
-                        SearchFilterCell(title: filter.title, isSelected: viewModel.selectedFilters.contains(filter))
+                        if filter == .folder {
+                            SearchFilterFolderCell(selection: $viewModel.selectedSearchFolderId)
+                        } else {
+                            SearchFilterCell(
+                                title: filter.title,
+                                isSelected: viewModel.selectedFilters.contains(filter)
+                            )
                             .padding(.vertical, 2)
                             .onTapGesture {
                                 viewModel.updateSelection(filter: filter)
                             }
+                        }
                     }
                 }
             }
@@ -101,22 +110,18 @@ struct SearchView: View {
                 EmptyView()
             }
         }
-//        .onAppear {
-//            if isCompact {
-//                selectedThread = nil
-//            }
-//            networkMonitor.start()
-//            viewModel.globalBottomSheet = globalBottomSheet
-//        }
-//        .onChange(of: currentFolder) { newFolder in
-//            guard let folder = newFolder else { return }
-//            selectedThread = nil
-//            viewModel.updateThreads(with: folder)
-//        }
         .refreshable {
             await viewModel.fetchThreads()
         }
+        .onDisappear {
+            viewModel.observeSearch = false
+            observeThread = true
+        }
         .onAppear {
+            viewModel.searchFolder = viewModel.mailboxManager.initSearchFolder()
+            observeThread = false
+            viewModel.observeSearch = true
+
             MatomoUtils.track(view: ["SearchView"])
             // Style toolbar
             let appereance = UIToolbarAppearance()
@@ -150,23 +155,23 @@ struct SearchView: View {
     func threadList(threads: [Thread]) -> some View {
         ForEach(threads) { thread in
             Group {
-//                if currentFolder?.role == .draft {
+//                if let lastSearch = viewModel.lastSearchFolder, lastSearch.role == .draft {
 //                    Button(action: {
 //                        editDraft(from: thread)
 //                    }, label: {
 //                        ThreadListCell(mailboxManager: viewModel.mailboxManager, thread: thread)
 //                    })
 //                } else {
-                NavigationLink(destination: {
-                    ThreadView(
-                        mailboxManager: viewModel.mailboxManager,
-                        thread: thread,
-                        navigationController: navigationController
-                    )
-                    .onAppear { /* selectedThread = thread */ }
-                }, label: {
-                    ThreadListCell(mailboxManager: viewModel.mailboxManager, thread: thread)
-                })
+                    NavigationLink(destination: {
+                        ThreadView(
+                            mailboxManager: viewModel.mailboxManager,
+                            thread: thread,
+                            navigationController: navigationController
+                        )
+                        .onAppear { /* selectedThread = thread */ }
+                    }, label: {
+                        ThreadListCell(mailboxManager: viewModel.mailboxManager, thread: thread)
+                    })
 //                }
             }
             .listRowInsets(.init(top: 0, leading: 12, bottom: 0, trailing: 12))
@@ -177,10 +182,29 @@ struct SearchView: View {
             }
         }
     }
-}
+    
+    private func editDraft(from thread: Thread) {
+        guard let message = thread.messages.first else { return }
+        var sheetPresented = false
 
-struct SearchView_Previews: PreviewProvider {
-    static var previews: some View {
-        SearchView(viewModel: SearchViewModel(folder: nil))
+        // If we already have the draft locally, present it directly
+        if let draft = viewModel.mailboxManager.draft(messageUid: message.uid)?.detached() {
+            menuSheet.state = .editMessage(draft: draft)
+            sheetPresented = true
+        }
+
+        // Update the draft
+        Task { [sheetPresented] in
+            let draft = try await viewModel.mailboxManager.draft(from: message)
+            if !sheetPresented {
+                menuSheet.state = .editMessage(draft: draft)
+            }
+        }
     }
 }
+
+// struct SearchView_Previews: PreviewProvider {
+//    static var previews: some View {
+//        SearchView(viewModel: SearchViewModel(folder: nil))
+//    }
+// }

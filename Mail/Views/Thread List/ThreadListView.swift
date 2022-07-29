@@ -134,7 +134,12 @@ struct ThreadListView: View {
         .introspectNavigationController { navigationController in
             self.navigationController = navigationController
         }
-        .modifier(ThreadListNavigationBar(isCompact: isCompact, folder: $viewModel.folder, avatarImage: $avatarImage))
+        .modifier(ThreadListNavigationBar(
+            isCompact: isCompact,
+            folder: $viewModel.folder,
+            avatarImage: $avatarImage,
+            observeThread: $viewModel.observeThread
+        ))
         .floatingActionButton(
             icon: Image(resource: MailResourcesAsset.edit),
             title: MailResourcesStrings.Localizable.buttonNewMessage
@@ -242,6 +247,8 @@ private struct ThreadListNavigationBar: ViewModifier {
     @Binding var folder: Folder?
     @Binding var avatarImage: Image
 
+    @Binding var observeThread: Bool
+
     @EnvironmentObject var menuSheet: MenuSheet
     @EnvironmentObject var navigationDrawerController: NavigationDrawerController
 
@@ -258,7 +265,7 @@ private struct ThreadListNavigationBar: ViewModifier {
 
                 ToolbarItemGroup(placement: .navigationBarTrailing) {
                     NavigationLink {
-                        SearchView(viewModel: SearchViewModel(folder: folder))
+                        SearchView(viewModel: SearchViewModel(folder: folder), observeThread: $observeThread)
                     } label: {
                         Image(resource: MailResourcesAsset.search)
                     }

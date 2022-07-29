@@ -124,6 +124,16 @@ class DateSection: Identifiable {
         }
     }
 
+    var observeThread: Bool {
+        didSet {
+            if observeThread {
+                observeChanges()
+            } else {
+                observationThreadToken?.invalidate()
+            }
+        }
+    }
+
     private let loadNextPageThreshold = 10
 
     init(mailboxManager: MailboxManager, folder: Folder?, bottomSheet: ThreadBottomSheet) {
@@ -131,7 +141,7 @@ class DateSection: Identifiable {
         self.folder = folder
         lastUpdate = folder?.lastUpdate
         self.bottomSheet = bottomSheet
-        observeChanges()
+        observeThread = true
     }
 
     func fetchThreads() async {
