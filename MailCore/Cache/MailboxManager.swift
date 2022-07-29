@@ -252,33 +252,27 @@ public class MailboxManager: ObservableObject {
         }
     }
 
-    public func toggleRead(thread: Thread) async throws {
-        if thread.unseenMessages > 0 {
-            // Mark as seen
-            _ = try await apiFetcher.markAsSeen(mailbox: mailbox, messages: Array(thread.messages))
-            if let liveThread = thread.thaw() {
-                let realm = getRealm()
-                try? realm.safeWrite {
-                    liveThread.parent?.unreadCount = (liveThread.parent?.unreadCount ?? 0) - liveThread.unseenMessages
-                    liveThread.unseenMessages = 0
-                    for message in thread.messages {
-                        message.thaw()?.seen = true
-                    }
-                }
+    public func toggleRead(threads: [Thread]) async throws {
+        if threads.contains(where: { $0.unseenMessages > 0 }) {
+            _ = try await apiFetcher.markAsSeen(mailbox: mailbox, messages: threads.flatMap(\.messages))
+            for thread in threads {
+                markAsSeen(thread: thread)
             }
         } else {
-            // Mark as unseen
-            _ = try await apiFetcher.markAsUnseen(mailbox: mailbox, messages: Array(thread.messages))
-            if let liveThread = thread.thaw() {
-                let realm = getRealm()
-                try? realm.safeWrite {
-                    liveThread.unseenMessages = liveThread.messagesCount
-                    liveThread.parent?.unreadCount = (liveThread.parent?.unreadCount ?? 0) + liveThread.unseenMessages
-                    for message in thread.messages {
-                        message.thaw()?.seen = false
-                    }
-                }
+            _ = try await apiFetcher.markAsUnseen(mailbox: mailbox, messages: threads.flatMap(\.messages))
+            for thread in threads {
+                markAsUnseen(thread: thread)
             }
+        }
+    }
+
+    public func toggleRead(thread: Thread) async throws {
+        if thread.unseenMessages > 0 {
+            _ = try await apiFetcher.markAsSeen(mailbox: mailbox, messages: Array(thread.messages))
+            markAsSeen(thread: thread)
+        } else {
+            _ = try await apiFetcher.markAsUnseen(mailbox: mailbox, messages: Array(thread.messages))
+            markAsUnseen(thread: thread)
         }
     }
 
@@ -355,28 +349,28 @@ public class MailboxManager: ObservableObject {
         return response
     }
 
+    public func toggleStar(threads: [Thread]) async throws {
+        if threads.contains(where: \.flagged) {
+            _ = try await apiFetcher.unstar(mailbox: mailbox, messages: threads.flatMap(\.messages))
+            for thread in threads {
+                unstar(thread: thread)
+            }
+        } else {
+            _ = try await apiFetcher.star(mailbox: mailbox, messages: threads.flatMap(\.messages))
+            for thread in threads {
+                star(thread: thread)
+            }
+        }
+    }
+
     public func toggleStar(thread: Thread) async throws {
         if thread.flagged {
             _ = try await apiFetcher.unstar(mailbox: mailbox, messages: Array(thread.messages))
-            if let liveThread = thread.thaw() {
-                let realm = getRealm()
-                try? realm.safeWrite {
-                    liveThread.flagged = false
-                    for message in thread.messages {
-                        message.thaw()?.flagged = false
-                    }
-                }
-            }
+            unstar(thread: thread)
         } else {
             guard let lastMessage = thread.messages.last else { return }
             _ = try await apiFetcher.star(mailbox: mailbox, messages: [lastMessage])
-            if let liveThread = thread.thaw() {
-                let ream = getRealm()
-                try? ream.safeWrite {
-                    liveThread.flagged = true
-                    lastMessage.thaw()?.flagged = true
-                }
-            }
+            star(thread: thread)
         }
     }
 
@@ -390,6 +384,55 @@ public class MailboxManager: ObservableObject {
             for message in thread.messages {
                 message.folder = folder.name
                 message.folderId = folder._id
+            }
+        }
+    }
+
+    private func markAsSeen(thread: Thread) {
+        if let liveThread = thread.thaw() {
+            let realm = getRealm()
+            try? realm.safeWrite {
+                liveThread.parent?.unreadCount = (liveThread.parent?.unreadCount ?? 0) - liveThread.unseenMessages
+                liveThread.unseenMessages = 0
+                for message in thread.messages {
+                    message.thaw()?.seen = true
+                }
+            }
+        }
+    }
+
+    private func markAsUnseen(thread: Thread) {
+        if let liveThread = thread.thaw() {
+            let realm = getRealm()
+            try? realm.safeWrite {
+                liveThread.unseenMessages = liveThread.messagesCount
+                liveThread.parent?.unreadCount = (liveThread.parent?.unreadCount ?? 0) + liveThread.unseenMessages
+                for message in thread.messages {
+                    message.thaw()?.seen = false
+                }
+            }
+        }
+    }
+
+    private func star(thread: Thread) {
+        guard let lastMessage = thread.messages.last else { return }
+        if let liveThread = thread.thaw() {
+            let ream = getRealm()
+            try? ream.safeWrite {
+                liveThread.flagged = true
+                lastMessage.thaw()?.flagged = true
+            }
+        }
+    }
+
+    private func unstar(thread: Thread) {
+        if let liveThread = thread.thaw() {
+            let realm = getRealm()
+            try? realm.safeWrite {
+                liveThread.flagged = false
+                for message in thread.messages {
+                    message.thaw()?.flagged = false
+                }
             }
         }
     }

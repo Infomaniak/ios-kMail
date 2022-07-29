@@ -17,9 +17,14 @@
  */
 
 import Foundation
+import InfomaniakCore
+import MailResources
 import SwiftUI
+import MailCore
 
 @MainActor class ThreadListMultipleSelectionViewModel: ObservableObject {
+    var mailboxManager: MailboxManager
+
     @Published var isEnabled = false {
         didSet {
             if !isEnabled {
@@ -31,6 +36,10 @@ import SwiftUI
 
     let toolbarActions: [Action] = [.markAsRead, .archive, .star, .delete]
 
+    init(mailboxManager: MailboxManager) {
+        self.mailboxManager = mailboxManager
+    }
+
     func toggleSelection(of thread: Thread) {
         if selectedItems.contains(thread) {
             selectedItems.remove(thread)
@@ -39,20 +48,24 @@ import SwiftUI
         }
     }
 
-    func didTap(action: Action) {
+    func didTap(action: Action) async throws {
         switch action {
-        case .markAsRead:
-            print("READ")
-        case .markAsUnread:
-            print("UNREAD")
+        case .markAsRead, .markAsUnread:
+            try await mailboxManager.toggleRead(threads: Array(selectedItems))
         case .archive:
-            print("ARCHIVE")
-        case .star:
-            print("STAR")
+            let undoResponse = try await mailboxManager.move(messages: selectedItems.flatMap(\.messages), to: .archive)
+            IKSnackBar.showCancelableSnackBar(message: MailResourcesStrings.Localizable.actionArchive,
+                                              cancelSuccessMessage: MailResourcesStrings.Localizable.snackbarMoveCancelled,
+                                              cancelableResponse: undoResponse,
+                                              mailboxManager: mailboxManager)
+        case .star, .unstar:
+            try await mailboxManager.toggleStar(threads: Array(selectedItems))
         case .delete:
-            print("DELETE")
+            // TODO: Delete
+            break
         default:
             break
         }
+        isEnabled = false
     }
 }

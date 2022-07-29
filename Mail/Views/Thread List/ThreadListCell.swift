@@ -45,7 +45,7 @@ struct ThreadListCell: View {
 
     private var isSelected: Bool {
         return multipleSelectionViewModel.isEnabled &&
-        multipleSelectionViewModel.selectedItems.contains(thread)
+        multipleSelectionViewModel.selectedItems.map(\.id).contains(thread.id)
     }
 
     var body: some View {
@@ -195,7 +195,7 @@ struct ThreadListCell_Previews: PreviewProvider {
                                             bottomSheet: ThreadBottomSheet())
 
         ThreadListCell(viewModel: viewModel,
-                       multipleSelectionViewModel: ThreadListMultipleSelectionViewModel(),
+                       multipleSelectionViewModel: ThreadListMultipleSelectionViewModel(mailboxManager: PreviewHelper.sampleMailboxManager),
                        thread: PreviewHelper.sampleThread)
         .previewLayout(.sizeThatFits)
         .previewDevice("iPhone 13 Pro")

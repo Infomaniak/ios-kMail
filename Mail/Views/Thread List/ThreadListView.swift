@@ -72,7 +72,7 @@ struct ThreadListView: View {
         _viewModel = StateObject(wrappedValue: ThreadListViewModel(mailboxManager: mailboxManager,
                                                                    folder: folder.wrappedValue,
                                                                    bottomSheet: threadBottomSheet))
-        _multipleSelectionViewModel = StateObject(wrappedValue: ThreadListMultipleSelectionViewModel())
+        _multipleSelectionViewModel = StateObject(wrappedValue: ThreadListMultipleSelectionViewModel(mailboxManager: mailboxManager))
         _currentFolder = folder
         self.isCompact = isCompact
 
@@ -273,7 +273,11 @@ private struct ThreadListToolbar: ViewModifier {
         ToolbarItemGroup(placement: .bottomBar) {
             ForEach(multipleSelectionViewModel.toolbarActions) { action in
                 ToolbarButton(text: action.shortTitle ?? action.title, icon: action.icon) {
-                    print("Hello")
+                    Task {
+                        await tryOrDisplayError {
+                            try await multipleSelectionViewModel.didTap(action: action)
+                        }
+                    }
                 }
                 Spacer()
             }
