@@ -248,7 +248,7 @@ public struct UnmanagedDraft: Equatable, Encodable, AbstractDraft {
                               inReplyTo: message.msgId,
                               inReplyToUid: mode.isReply ? message.uid : nil,
                               forwardedUid: mode == .forward ? message.uid : nil,
-                              attachements: mode == .forward ? attachments : nil)
+                              attachements: attachments)
     }
 
     public func asManaged() -> Draft {

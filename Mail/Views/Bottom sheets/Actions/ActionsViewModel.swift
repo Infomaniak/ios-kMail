@@ -76,7 +76,7 @@ enum ActionsTarget: Equatable {
     private let target: ActionsTarget
     private let state: ThreadBottomSheet
     private let globalSheet: GlobalBottomSheet
-    private let replyHandler: (Message, ReplyMode) -> Void
+    private let replyHandler: (Message, ReplyMode, [Attachment]?) -> Void
 
     @Published var quickActions: [Action] = []
     @Published var listActions: [Action] = []
@@ -85,7 +85,7 @@ enum ActionsTarget: Equatable {
          target: ActionsTarget,
          state: ThreadBottomSheet,
          globalSheet: GlobalBottomSheet,
-         replyHandler: @escaping (Message, ReplyMode) -> Void) {
+         replyHandler: @escaping (Message, ReplyMode, [Attachment]?) -> Void) {
         self.mailboxManager = mailboxManager
         self.target = target
         self.state = state
@@ -259,6 +259,7 @@ enum ActionsTarget: Equatable {
     }
 
     private func reply(mode: ReplyMode) async throws {
+        var attachments: [Attachment]?
         switch target {
         case .threads:
             // We don't handle this action in multiple selection
@@ -269,10 +270,18 @@ enum ActionsTarget: Equatable {
             if !message.fullyDownloaded {
                 try await mailboxManager.message(message: message)
             }
+            if mode == .forward {
+                let attachmentsToForward = AttachmentsToForward(toForwardUids: [message.uid], mode: AttachmentDisposition.attachment.rawValue)
+                attachments = try await mailboxManager.apiFetcher.attachmentsToForward(mailbox: mailboxManager.mailbox, attachmentsToForward: attachmentsToForward).attachments
+            }
             message.realm?.refresh()
-            replyHandler(message, mode)
+            replyHandler(message, mode, attachments)
         case let .message(message):
-            replyHandler(message, mode)
+            if mode == .forward {
+                let attachmentsToForward = AttachmentsToForward(toForwardUids: [message.uid], mode: AttachmentDisposition.attachment.rawValue)
+                attachments = try await mailboxManager.apiFetcher.attachmentsToForward(mailbox: mailboxManager.mailbox, attachmentsToForward: attachmentsToForward).attachments
+            }
+            replyHandler(message, mode, attachments)
         }
     }
 

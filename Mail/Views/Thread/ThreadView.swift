@@ -35,7 +35,7 @@ private struct ScrollOffsetPreferenceKey: PreferenceKey {
 class MessageSheet: SheetState<MessageSheet.State> {
     enum State: Equatable {
         case attachment(Attachment)
-        case reply(Message, ReplyMode)
+        case reply(Message, ReplyMode, [Attachment]?)
         case edit(Draft)
         case write(to: Recipient)
     }
@@ -150,61 +150,60 @@ struct ThreadView: View {
                 try? await mailboxManager.toggleRead(thread: thread)
             }
         }
-        .toolbar {
-            ToolbarItem(placement: .navigationBarTrailing) {
-                Button {
-                    Task {
-                        await tryOrDisplayError {
-                            try await mailboxManager.toggleStar(thread: thread)
-                        }
-                    }
-                } label: {
-                    Image(resource: thread.flagged ? MailResourcesAsset.starFull : MailResourcesAsset.star)
-                }
-            }
-            ToolbarItemGroup(placement: .bottomBar) {
-                ForEach(toolbarActions) { action in
-                    Button {
-                        didTap(action: action)
-                    } label: {
-                        Label {
-                            Text(action.title)
-                                .font(MailTextStyle.caption.font)
-                        } icon: {
-                            Image(resource: action.icon)
-                                .resizable()
-                                .scaledToFit()
-                                .frame(width: 22, height: 22)
-                        }
-                        .dynamicLabelStyle(sizeClass: sizeClass ?? .regular)
-                    }
-                    Spacer()
-                }
-                Button {
-                    threadBottomSheet.open(state: .actions(.thread(thread.thaw() ?? thread)), position: .middle)
-                } label: {
-                    Label {
-                        Text(MailResourcesStrings.Localizable.buttonMore)
-                            .font(MailTextStyle.caption.font)
-                    } icon: {
-                        Image(resource: MailResourcesAsset.plusActions)
-                            .resizable()
-                            .scaledToFit()
-                            .frame(width: 22, height: 22)
-                    }
-                    .dynamicLabelStyle(sizeClass: sizeClass ?? .regular)
-                }
-            }
-        }
+//        .toolbar {
+//            ToolbarItem(placement: .navigationBarTrailing) {
+//                Button {
+//                    Task {
+//                        await tryOrDisplayError {
+//                            try await mailboxManager.toggleStar(thread: thread)
+//                        }
+//                    }
+//                } label: {
+//                    Image(resource: thread.flagged ? MailResourcesAsset.starFull : MailResourcesAsset.star)
+//                }
+//            }
+//            ToolbarItemGroup(placement: .bottomBar) {
+//                ForEach(toolbarActions) { action in
+//                    Button {
+//                        didTap(action: action)
+//                    } label: {
+//                        Label {
+//                            Text(action.title)
+//                                .font(MailTextStyle.caption.font)
+//                        } icon: {
+//                            Image(resource: action.icon)
+//                                .resizable()
+//                                .scaledToFit()
+//                                .frame(width: 22, height: 22)
+//                        }
+//                        .dynamicLabelStyle(sizeClass: sizeClass ?? .regular)
+//                    }
+//                    Spacer()
+//                }
+//                Button {
+//                    threadBottomSheet.open(state: .actions(.thread(thread.thaw() ?? thread)), position: .middle)
+//                } label: {
+//                    Label {
+//                        Text(MailResourcesStrings.Localizable.buttonMore)
+//                            .font(MailTextStyle.caption.font)
+//                    } icon: {
+//                        Image(resource: MailResourcesAsset.plusActions)
+//                            .resizable()
+//                            .scaledToFit()
+//                            .frame(width: 22, height: 22)
+//                    }
+//                    .dynamicLabelStyle(sizeClass: sizeClass ?? .regular)
+//                }
+//            }
+//        }
         .sheet(isPresented: $sheet.isShowing) {
             switch sheet.state {
             case let .attachment(attachment):
                 AttachmentPreview(isPresented: $sheet.isShowing, attachment: attachment)
-            case let .reply(message, replyMode):
-                break
+            case let .reply(message, replyMode, attachments):
 //                let attachmentsToForward = AttachmentsToForward(toForwardUids: [message.uid], mode: AttachmentDisposition.attachment.rawValue)
 //                let attachmentsList = try await mailboxManager.apiFetcher.attachmentsToForward(mailbox: mailboxManager.mailbox, attachmentsToForward: attachmentsToForward).attachments
-//                NewMessageView(isPresented: $sheet.isShowing, mailboxManager: mailboxManager, draft: .replying(to: message, mode: replyMode, attachmentsList))
+                NewMessageView(isPresented: $sheet.isShowing, mailboxManager: mailboxManager, draft: .replying(to: message, mode: replyMode, attachments: attachments))
             case let .edit(draft):
                 NewMessageView(isPresented: $sheet.isShowing, mailboxManager: mailboxManager, draft: draft.asUnmanaged())
             case let .write(recipient):
@@ -230,8 +229,8 @@ struct ThreadView: View {
                     ActionsView(mailboxManager: mailboxManager,
                                 target: target,
                                 state: threadBottomSheet,
-                                globalSheet: globalBottomSheet) { message, replyMode in
-                        sheet.state = .reply(message, replyMode)
+                                globalSheet: globalBottomSheet) { message, replyMode, attachments in
+                        sheet.state = .reply(message, replyMode, attachments)
                     }
                 }
             case .none:
@@ -249,10 +248,10 @@ struct ThreadView: View {
         switch action {
         case .reply:
             guard let message = messages.last else { return }
-            sheet.state = .reply(message, .reply)
+            sheet.state = .reply(message, .reply, nil)
         case .forward:
             guard let message = messages.last else { return }
-            sheet.state = .reply(message, .forward)
+            sheet.state = .reply(message, .forward, nil)
         case .archive:
             Task {
                 await tryOrDisplayError {

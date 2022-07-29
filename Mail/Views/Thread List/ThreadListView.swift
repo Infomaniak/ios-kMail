@@ -26,7 +26,7 @@ import SwiftUI
 class MenuSheet: SheetState<MenuSheet.State> {
     enum State: Equatable {
         case newMessage
-        case reply(Message, ReplyMode)
+        case reply(Message, ReplyMode, [Attachment]?)
         case editMessage(draft: Draft)
         case manageAccount
         case switchAccount
@@ -147,8 +147,8 @@ struct ThreadListView: View {
                     ActionsView(mailboxManager: viewModel.mailboxManager,
                                 target: target,
                                 state: bottomSheet,
-                                globalSheet: globalBottomSheet) { message, replyMode in
-                        menuSheet.state = .reply(message, replyMode)
+                                globalSheet: globalBottomSheet) { message, replyMode, attachments in
+                        menuSheet.state = .reply(message, replyMode, attachments)
                     }
                 }
             default:
