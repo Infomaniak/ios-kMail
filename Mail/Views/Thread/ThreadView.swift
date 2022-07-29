@@ -249,7 +249,11 @@ struct ThreadView: View {
             sheet.state = .reply(message, .reply, nil)
         case .forward:
             guard let message = messages.last else { return }
-            sheet.state = .reply(message, .forward, nil)
+            Task {
+                let attachmentsToForward = AttachmentsToForward(toForwardUids: [message.uid], mode: AttachmentDisposition.inline.rawValue)
+                let attachments = try await mailboxManager.apiFetcher.attachmentsToForward(mailbox: mailboxManager.mailbox, attachmentsToForward: attachmentsToForward).attachments
+                sheet.state = .reply(message, .forward, attachments)
+            }
         case .archive:
             Task {
                 await tryOrDisplayError {
