@@ -21,7 +21,7 @@ import Foundation
 public struct AttachmentsToForward: Encodable {
     public var toForwardUids: [String]
     public var mode: String
-    
+
     public init(toForwardUids: [String], mode: String) {
         self.toForwardUids = toForwardUids
         self.mode = mode

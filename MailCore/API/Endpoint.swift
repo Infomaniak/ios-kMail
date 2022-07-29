@@ -156,7 +156,7 @@ public extension Endpoint {
     static func createAttachment(uuid: String) -> Endpoint {
         return .draft(uuid: uuid).appending(path: "/attachment")
     }
-    
+
     static func attachmentToForward(uuid: String) -> Endpoint {
         return .draft(uuid: uuid).appending(path: "/attachmentsToForward")
     }

@@ -241,9 +241,7 @@ public struct UnmanagedDraft: Equatable, Encodable, AbstractDraft {
         return UnmanagedDraft(subject: subject,
                               body: "<div><br></div><div><br></div>\(quote)",
                               quote: quote,
-                              to: mode.isReply
-                                  ? Array(message.replyTo.isEmpty ? message.from.detached() : message.replyTo.detached())
-                                  : [],
+                              to: mode.isReply ? Array(message.replyTo.isEmpty ? message.from.detached() : message.replyTo.detached()) : [],
                               cc: mode == .replyAll ? Array(message.to.detached()) + Array(message.cc.detached()) : [],
                               inReplyTo: message.msgId,
                               inReplyToUid: mode.isReply ? message.uid : nil,

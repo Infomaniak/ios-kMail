@@ -150,59 +150,57 @@ struct ThreadView: View {
                 try? await mailboxManager.toggleRead(thread: thread)
             }
         }
-//        .toolbar {
-//            ToolbarItem(placement: .navigationBarTrailing) {
-//                Button {
-//                    Task {
-//                        await tryOrDisplayError {
-//                            try await mailboxManager.toggleStar(thread: thread)
-//                        }
-//                    }
-//                } label: {
-//                    Image(resource: thread.flagged ? MailResourcesAsset.starFull : MailResourcesAsset.star)
-//                }
-//            }
-//            ToolbarItemGroup(placement: .bottomBar) {
-//                ForEach(toolbarActions) { action in
-//                    Button {
-//                        didTap(action: action)
-//                    } label: {
-//                        Label {
-//                            Text(action.title)
-//                                .font(MailTextStyle.caption.font)
-//                        } icon: {
-//                            Image(resource: action.icon)
-//                                .resizable()
-//                                .scaledToFit()
-//                                .frame(width: 22, height: 22)
-//                        }
-//                        .dynamicLabelStyle(sizeClass: sizeClass ?? .regular)
-//                    }
-//                    Spacer()
-//                }
-//                Button {
-//                    threadBottomSheet.open(state: .actions(.thread(thread.thaw() ?? thread)), position: .middle)
-//                } label: {
-//                    Label {
-//                        Text(MailResourcesStrings.Localizable.buttonMore)
-//                            .font(MailTextStyle.caption.font)
-//                    } icon: {
-//                        Image(resource: MailResourcesAsset.plusActions)
-//                            .resizable()
-//                            .scaledToFit()
-//                            .frame(width: 22, height: 22)
-//                    }
-//                    .dynamicLabelStyle(sizeClass: sizeClass ?? .regular)
-//                }
-//            }
-//        }
+        .toolbar {
+            ToolbarItem(placement: .navigationBarTrailing) {
+                Button {
+                    Task {
+                        await tryOrDisplayError {
+                            try await mailboxManager.toggleStar(thread: thread)
+                        }
+                    }
+                } label: {
+                    Image(resource: thread.flagged ? MailResourcesAsset.starFull : MailResourcesAsset.star)
+                }
+            }
+            ToolbarItemGroup(placement: .bottomBar) {
+                ForEach(toolbarActions) { action in
+                    Button {
+                        didTap(action: action)
+                    } label: {
+                        Label {
+                            Text(action.title)
+                                .font(MailTextStyle.caption.font)
+                        } icon: {
+                            Image(resource: action.icon)
+                                .resizable()
+                                .scaledToFit()
+                                .frame(width: 22, height: 22)
+                        }
+                        .dynamicLabelStyle(sizeClass: sizeClass ?? .regular)
+                    }
+                    Spacer()
+                }
+                Button {
+                    threadBottomSheet.open(state: .actions(.thread(thread.thaw() ?? thread)), position: .middle)
+                } label: {
+                    Label {
+                        Text(MailResourcesStrings.Localizable.buttonMore)
+                            .font(MailTextStyle.caption.font)
+                    } icon: {
+                        Image(resource: MailResourcesAsset.plusActions)
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: 22, height: 22)
+                    }
+                    .dynamicLabelStyle(sizeClass: sizeClass ?? .regular)
+                }
+            }
+        }
         .sheet(isPresented: $sheet.isShowing) {
             switch sheet.state {
             case let .attachment(attachment):
                 AttachmentPreview(isPresented: $sheet.isShowing, attachment: attachment)
             case let .reply(message, replyMode, attachments):
-//                let attachmentsToForward = AttachmentsToForward(toForwardUids: [message.uid], mode: AttachmentDisposition.attachment.rawValue)
-//                let attachmentsList = try await mailboxManager.apiFetcher.attachmentsToForward(mailbox: mailboxManager.mailbox, attachmentsToForward: attachmentsToForward).attachments
                 NewMessageView(isPresented: $sheet.isShowing, mailboxManager: mailboxManager, draft: .replying(to: message, mode: replyMode, attachments: attachments))
             case let .edit(draft):
                 NewMessageView(isPresented: $sheet.isShowing, mailboxManager: mailboxManager, draft: draft.asUnmanaged())
@@ -256,10 +254,12 @@ struct ThreadView: View {
             Task {
                 await tryOrDisplayError {
                     let response = try await mailboxManager.move(thread: thread, to: .archive)
-                    IKSnackBar.showCancelableSnackBar(message: MailResourcesStrings.Localizable.snackbarThreadMoved(FolderRole.archive.localizedName),
-                                                      cancelSuccessMessage: MailResourcesStrings.Localizable.snackbarMoveCancelled,
-                                                      cancelableResponse: response,
-                                                      mailboxManager: mailboxManager)
+                    IKSnackBar.showCancelableSnackBar(
+                        message: MailResourcesStrings.Localizable.snackbarThreadMoved(FolderRole.archive.localizedName),
+                        cancelSuccessMessage: MailResourcesStrings.Localizable.snackbarMoveCancelled,
+                        cancelableResponse: response,
+                        mailboxManager: mailboxManager
+                    )
                     dismiss()
                 }
             }
