@@ -227,7 +227,7 @@ public struct UnmanagedDraft: Equatable, Encodable, AbstractDraft {
         return UnmanagedDraft(to: [recipient.detached()])
     }
 
-    public static func replying(to message: Message, mode: ReplyMode) -> UnmanagedDraft {
+    public static func replying(to message: Message, mode: ReplyMode, attachments: [Attachment]?) -> UnmanagedDraft {
         let subject: String
         let quote: String
         switch mode {
@@ -241,12 +241,14 @@ public struct UnmanagedDraft: Equatable, Encodable, AbstractDraft {
         return UnmanagedDraft(subject: subject,
                               body: "<div><br></div><div><br></div>\(quote)",
                               quote: quote,
-                              to: mode.isReply ? Array(message.replyTo.isEmpty ? message.from.detached() : message.replyTo.detached()) : [],
+                              to: mode.isReply
+                                  ? Array(message.replyTo.isEmpty ? message.from.detached() : message.replyTo.detached())
+                                  : [],
                               cc: mode == .replyAll ? Array(message.to.detached()) + Array(message.cc.detached()) : [],
                               inReplyTo: message.msgId,
                               inReplyToUid: mode.isReply ? message.uid : nil,
-                              forwardedUid: mode == .forward ? message.uid : nil /* ,
-                               attachments: mode == .forward ? Array(message.attachments) : nil */ )
+                              forwardedUid: mode == .forward ? message.uid : nil,
+                              attachements: mode == .forward ? attachments : nil)
     }
 
     public func asManaged() -> Draft {

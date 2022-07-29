@@ -155,8 +155,11 @@ struct SplitView: View {
             case .newMessage:
                 NewMessageView(isPresented: $menuSheet.isShowing, mailboxManager: mailboxManager)
             case let .reply(message, replyMode):
-                NewMessageView(isPresented: $menuSheet.isShowing, mailboxManager: mailboxManager, draft: .replying(to: message, mode: replyMode))
-            case let .editMessage(draft):
+                
+                let attachmentsToForward = AttachmentsToForward(toForwardUids: [message.uid], mode: AttachmentDisposition.attachment.rawValue)
+                let attachmentsList = try await mailboxManager.apiFetcher.attachmentsToForward(mailbox: mailboxManager.mailbox, attachmentsToForward: attachmentsToForward).attachments
+                NewMessageView(isPresented: $menuSheet.isShowing, mailboxManager: mailboxManager, draft: .replying(to: message, mode: replyMode, attachments: []))
+             case let .editMessage(draft):
                 NewMessageView(isPresented: $menuSheet.isShowing, mailboxManager: mailboxManager, draft: draft.asUnmanaged())
             case .manageAccount:
                 AccountView(isPresented: $menuSheet.isShowing)

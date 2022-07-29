@@ -249,6 +249,10 @@ public class MailApiFetcher: ApiFetcher {
 
         return try await perform(request: authenticatedSession.request(request)).data
     }
+    
+    public func attachmentsToForward(mailbox: Mailbox, attachmentsToForward: AttachmentsToForward) async throws -> AttachmentsToForwardResult {
+        try await perform(request: authenticatedRequest(.attachmentToForward(uuid: mailbox.uuid), method: .post, parameters: attachmentsToForward)).data
+    }
 }
 
 class SyncedAuthenticator: OAuthAuthenticator {
