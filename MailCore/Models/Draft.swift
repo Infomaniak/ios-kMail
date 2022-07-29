@@ -130,7 +130,7 @@ public struct UnmanagedDraft: Equatable, Encodable, AbstractDraft {
                 inReplyTo: String? = nil,
                 inReplyToUid: String? = nil,
                 forwardedUid: String? = nil,
-                attachements: [Attachment]? = nil,
+                attachments: [Attachment]? = nil,
                 identityId: String = "",
                 ackRequest: Bool = false,
                 stUuid: String? = nil,
@@ -150,7 +150,7 @@ public struct UnmanagedDraft: Equatable, Encodable, AbstractDraft {
         self.inReplyTo = inReplyTo
         self.inReplyToUid = inReplyToUid
         self.forwardedUid = forwardedUid
-        attachments = attachements
+        self.attachments = attachments
         self.identityId = identityId
         self.ackRequest = ackRequest
         self.stUuid = stUuid
@@ -246,7 +246,7 @@ public struct UnmanagedDraft: Equatable, Encodable, AbstractDraft {
                               inReplyTo: message.msgId,
                               inReplyToUid: mode.isReply ? message.uid : nil,
                               forwardedUid: mode == .forward ? message.uid : nil,
-                              attachements: attachments)
+                              attachments: attachments)
     }
 
     public func asManaged() -> Draft {
