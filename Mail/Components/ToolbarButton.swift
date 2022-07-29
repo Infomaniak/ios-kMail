@@ -43,10 +43,8 @@ struct ToolbarButton: View {
     }
 }
 
-struct BottomBarButton_Previews: PreviewProvider {
+struct ToolbarButton_Previews: PreviewProvider {
     static var previews: some View {
-        ToolbarButton(text: "Preview", icon: MailResourcesAsset.folder) {
-            /* Preview */
-        }
+        ToolbarButton(text: "Preview", icon: MailResourcesAsset.folder) { /* Preview */ }
     }
 }

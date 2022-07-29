@@ -40,35 +40,27 @@ struct ThreadListCell: View {
     var navigationController: UINavigationController?
 
     private var isInDraftFolder: Bool {
-        return viewModel.folder?.role == .draft
+        viewModel.folder?.role == .draft
     }
 
     private var isSelected: Bool {
-        return multipleSelectionViewModel.isEnabled &&
         multipleSelectionViewModel.selectedItems.map(\.id).contains(thread.id)
     }
 
     var body: some View {
         ZStack {
             if !isInDraftFolder {
-                NavigationLink(destination:
-                                ThreadView(mailboxManager: viewModel.mailboxManager,
-                                           thread: thread,
-                                           folderId: viewModel.folder?.id,
-                                           navigationController: navigationController),
-                               isActive: $isLinkEnabled) {
-                    EmptyView()
-                }
-                .opacity(0)
-                .disabled(multipleSelectionViewModel.isEnabled)
+                NavigationLink(destination: destination, isActive: $isLinkEnabled) { EmptyView() }
+                    .opacity(0)
+                    .disabled(multipleSelectionViewModel.isEnabled)
             }
 
             ThreadListCellContent(mailboxManager: viewModel.mailboxManager, thread: thread)
         }
         .tag(thread)
+        .background(isSelected ? SelectionBackground() : nil)
         .modifyIf(!multipleSelectionViewModel.isEnabled) { view in
-            view
-                .swipeActions(thread: thread, viewModel: viewModel)
+            view.swipeActions(thread: thread, viewModel: viewModel)
         }
         .onTapGesture {
             if !multipleSelectionViewModel.isEnabled {
@@ -90,10 +82,13 @@ struct ThreadListCell: View {
                 }
             }
         }
-        .modifyIf(isSelected) { view in
-            view
-                .background(SelectionBackground())
-        }
+    }
+
+    private var destination: some View {
+        ThreadView(mailboxManager: viewModel.mailboxManager,
+                   thread: thread,
+                   folderId: viewModel.folder?.id,
+                   navigationController: navigationController)
     }
 }
 

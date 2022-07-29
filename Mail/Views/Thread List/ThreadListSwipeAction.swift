@@ -1,4 +1,3 @@
-//
 /*
  Infomaniak Mail - iOS App
  Copyright (C) 2022 Infomaniak Network SA
@@ -26,7 +25,7 @@ private struct SwipeActionView: View {
     let viewModel: ThreadListViewModel
     let action: SwipeAction
 
-    var icon: Image? {
+    private var icon: Image? {
         if action == .readUnread {
             return Image(resource: thread.unseenMessages == 0 ? MailResourcesAsset.envelope : MailResourcesAsset.envelopeOpen)
         }
