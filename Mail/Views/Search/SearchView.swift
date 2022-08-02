@@ -71,7 +71,7 @@ struct SearchView: View {
                     Section {
                         threadList(threads: viewModel.threads)
                     } header: {
-                        if !viewModel.threads.isEmpty && threadDensity != .compact {
+                        if threadDensity != .compact {
                             Text(MailResourcesStrings.Localizable.searchAllMessages)
                                 .textStyle(.calloutSecondary)
                         }
@@ -114,8 +114,9 @@ struct SearchView: View {
             await viewModel.fetchThreads()
         }
         .onDisappear {
-            viewModel.observeSearch = false
-            observeThread = true
+            // TODO: - Manage observer
+//            viewModel.observeSearch = false
+//            observeThread = true
         }
         .onAppear {
             viewModel.searchFolder = viewModel.mailboxManager.initSearchFolder()
@@ -155,24 +156,29 @@ struct SearchView: View {
     func threadList(threads: [Thread]) -> some View {
         ForEach(threads) { thread in
             Group {
-//                if let lastSearch = viewModel.lastSearchFolder, lastSearch.role == .draft {
-//                    Button(action: {
-//                        editDraft(from: thread)
-//                    }, label: {
-//                        ThreadListCell(mailboxManager: viewModel.mailboxManager, thread: thread)
-//                    })
-//                } else {
-                    NavigationLink(destination: {
-                        ThreadView(
-                            mailboxManager: viewModel.mailboxManager,
-                            thread: thread,
-                            navigationController: navigationController
-                        )
-                        .onAppear { /* selectedThread = thread */ }
+                if viewModel.lastSearchFolderId == viewModel.mailboxManager.getFolder(with: .draft)?._id {
+                    Button(action: {
+                        editDraft(from: thread)
                     }, label: {
                         ThreadListCell(mailboxManager: viewModel.mailboxManager, thread: thread)
                     })
-//                }
+                } else {
+                    ZStack {
+                        NavigationLink(destination: {
+                            ThreadView(
+                                mailboxManager: viewModel.mailboxManager,
+                                thread: thread,
+                                folderId: viewModel.lastSearchFolderId,
+                                navigationController: navigationController
+                            )
+                        }, label: {
+                            EmptyView()
+                        })
+                        .opacity(0)
+
+                        ThreadListCell(mailboxManager: viewModel.mailboxManager, thread: thread)
+                    }
+                }
             }
             .listRowInsets(.init(top: 0, leading: 12, bottom: 0, trailing: 12))
             .listRowSeparator(.hidden)
@@ -182,7 +188,7 @@ struct SearchView: View {
             }
         }
     }
-    
+
     private func editDraft(from thread: Thread) {
         guard let message = thread.messages.first else { return }
         var sheetPresented = false

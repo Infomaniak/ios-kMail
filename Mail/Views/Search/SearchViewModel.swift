@@ -32,7 +32,7 @@ import SwiftUI
 
     public var realFolder: Folder?
     public var lastSearchFolderId: String?
-    @Published public var selectedSearchFolderId: String = ""
+    @Published public var selectedSearchFolderId = ""
 
     @Published public var threads: [Thread] = []
 
