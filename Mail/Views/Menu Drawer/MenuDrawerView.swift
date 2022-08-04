@@ -35,7 +35,7 @@ struct NavigationDrawer: View {
     var body: some View {
         GeometryReader { geometryProxy in
             HStack {
-                MenuDrawerView(mailboxManager: mailboxManager, selectedFolder: $folder, isCompact: isCompact)
+                MenuDrawerView(mailboxManager: mailboxManager, selectedFolder: $folder, showMailboxes: $navigationDrawerController.showMailboxes, isCompact: isCompact)
                     .frame(maxWidth: maxWidth)
                     .padding(.trailing, spacing)
                     .offset(x: navigationDrawerController.getOffset(size: geometryProxy.size).width)
@@ -49,6 +49,8 @@ class NavigationDrawerController: ObservableObject {
     @Published private(set) var isOpen = false
     @Published private(set) var isDragging = false
     @Published private(set) var dragOffset = CGSize.zero
+
+    @Published var showMailboxes = false
 
     weak var window: UIWindow?
 
@@ -95,6 +97,7 @@ class NavigationDrawerController: ObservableObject {
     }
 
     func open() {
+        showMailboxes = false
         withAnimation {
             isOpen = true
         }
@@ -112,7 +115,7 @@ struct MenuDrawerView: View {
 
     @ObservedRealmObject private var mailbox: Mailbox
     @StateObject var mailboxManager: MailboxManager
-    @State private var showMailboxes = false
+    @Binding private var showMailboxes: Bool
 
     @State private var helpMenuItems = [MenuItem]()
     @State private var actionsMenuItems = [MenuItem]()
@@ -121,12 +124,13 @@ struct MenuDrawerView: View {
 
     var isCompact: Bool
 
-    init(mailboxManager: MailboxManager, selectedFolder: Binding<Folder?>, isCompact: Bool) {
+    init(mailboxManager: MailboxManager, selectedFolder: Binding<Folder?>, showMailboxes: Binding<Bool>, isCompact: Bool) {
         _folders = .init(Folder.self, configuration: AccountManager.instance.currentMailboxManager?.realmConfiguration) {
             $0.parentLink.count == 0
         }
         _mailboxManager = StateObject(wrappedValue: mailboxManager)
         _selectedFolder = selectedFolder
+        _showMailboxes = showMailboxes
         self.isCompact = isCompact
         if let liveMailbox = MailboxInfosManager.instance.getMailbox(objectId: mailboxManager.mailbox.objectId, freeze: false) {
             mailbox = liveMailbox
@@ -141,7 +145,7 @@ struct MenuDrawerView: View {
                 .zIndex(1)
 
             ScrollView {
-                MailboxesManagementView()
+                MailboxesManagementView(isExpanded: $showMailboxes)
 
                 RoleFoldersListView(
                     folders: $folders,
@@ -233,7 +237,7 @@ struct MenuDrawerView: View {
 struct MenuDrawerView_Previews: PreviewProvider {
     static var previews: some View {
         MenuDrawerView(mailboxManager: PreviewHelper.sampleMailboxManager,
-                       selectedFolder: .constant(nil),
+                       selectedFolder: .constant(nil), showMailboxes: .constant(false),
                        isCompact: false)
     }
 }

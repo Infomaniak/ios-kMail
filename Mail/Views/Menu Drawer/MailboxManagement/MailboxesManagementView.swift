@@ -26,7 +26,7 @@ struct MailboxesManagementView: View {
     @EnvironmentObject var mailboxManager: MailboxManager
     @EnvironmentObject var menuSheet: MenuSheet
 
-    @State private var isExpanded = false
+    @Binding var isExpanded: Bool
     @State private var avatarImage = Image(resource: MailResourcesAsset.placeholderAvatar)
 
     @ObservedResults(Mailbox.self, configuration: MailboxInfosManager.instance.realmConfiguration, where: { $0.userId == AccountManager.instance.currentUserId }, sortDescriptor: SortDescriptor(keyPath: \Mailbox.mailboxId)) private var mailboxes
@@ -101,7 +101,7 @@ struct MailboxesManagementView: View {
 
 struct MailboxesManagementView_Previews: PreviewProvider {
     static var previews: some View {
-        MailboxesManagementView()
+        MailboxesManagementView(isExpanded: .constant(false))
             .environmentObject(PreviewHelper.sampleMailboxManager)
             .previewLayout(.sizeThatFits)
             .accentColor(UserDefaults.shared.accentColor.primary.swiftUiColor)
