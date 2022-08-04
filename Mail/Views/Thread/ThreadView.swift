@@ -35,7 +35,7 @@ private struct ScrollOffsetPreferenceKey: PreferenceKey {
 class MessageSheet: SheetState<MessageSheet.State> {
     enum State: Equatable {
         case attachment(Attachment)
-        case reply(Message, ReplyMode, [Attachment]?)
+        case reply(Message, ReplyMode)
         case edit(Draft)
         case write(to: Recipient)
     }
@@ -200,8 +200,12 @@ struct ThreadView: View {
             switch sheet.state {
             case let .attachment(attachment):
                 AttachmentPreview(isPresented: $sheet.isShowing, attachment: attachment)
-            case let .reply(message, replyMode, attachments):
-                NewMessageView(isPresented: $sheet.isShowing, mailboxManager: mailboxManager, draft: .replying(to: message, mode: replyMode, attachments: attachments))
+            case let .reply(message, replyMode):
+                NewMessageView(
+                    isPresented: $sheet.isShowing,
+                    mailboxManager: mailboxManager,
+                    draft: .replying(to: message, mode: replyMode)
+                )
             case let .edit(draft):
                 NewMessageView(isPresented: $sheet.isShowing, mailboxManager: mailboxManager, draft: draft.asUnmanaged())
             case let .write(recipient):
@@ -227,8 +231,8 @@ struct ThreadView: View {
                     ActionsView(mailboxManager: mailboxManager,
                                 target: target,
                                 state: threadBottomSheet,
-                                globalSheet: globalBottomSheet) { message, replyMode, attachments in
-                        sheet.state = .reply(message, replyMode, attachments)
+                                globalSheet: globalBottomSheet) { message, replyMode in
+                        sheet.state = .reply(message, replyMode)
                     }
                 }
             case .none:
@@ -246,13 +250,15 @@ struct ThreadView: View {
         switch action {
         case .reply:
             guard let message = messages.last else { return }
-            sheet.state = .reply(message, .reply, nil)
+            sheet.state = .reply(message, .reply)
         case .forward:
             guard let message = messages.last else { return }
             Task {
-                let attachmentsToForward = AttachmentsToForward(toForwardUids: [message.uid], mode: AttachmentDisposition.inline.rawValue)
-                let attachments = try await mailboxManager.apiFetcher.attachmentsToForward(mailbox: mailboxManager.mailbox, attachmentsToForward: attachmentsToForward).attachments
-                sheet.state = .reply(message, .forward, attachments)
+                let attachments = try await mailboxManager.apiFetcher.attachmentsToForward(
+                    mailbox: mailboxManager.mailbox,
+                    message: message
+                ).attachments
+                sheet.state = .reply(message, .forward(attachments))
             }
         case .archive:
             Task {

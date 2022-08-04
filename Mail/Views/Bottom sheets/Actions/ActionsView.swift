@@ -27,7 +27,7 @@ struct ActionsView: View {
          target: ActionsTarget,
          state: ThreadBottomSheet,
          globalSheet: GlobalBottomSheet,
-         replyHandler: @escaping (Message, ReplyMode, [Attachment]?) -> Void) {
+         replyHandler: @escaping (Message, ReplyMode) -> Void) {
         viewModel = ActionsViewModel(mailboxManager: mailboxManager,
                                      target: target,
                                      state: state,
@@ -68,7 +68,7 @@ struct ActionsView_Previews: PreviewProvider {
         ActionsView(mailboxManager: PreviewHelper.sampleMailboxManager,
                     target: .thread(PreviewHelper.sampleThread),
                     state: ThreadBottomSheet(),
-                    globalSheet: GlobalBottomSheet()) { _, _, _ in /* Preview */ }
+                    globalSheet: GlobalBottomSheet()) { _, _ in /* Preview */ }
             .accentColor(AccentColor.pink.primary.swiftUiColor)
     }
 }

@@ -154,8 +154,8 @@ struct SplitView: View {
             switch menuSheet.state {
             case .newMessage:
                 NewMessageView(isPresented: $menuSheet.isShowing, mailboxManager: mailboxManager)
-            case let .reply(message, replyMode, attachments):
-                NewMessageView(isPresented: $menuSheet.isShowing, mailboxManager: mailboxManager, draft: .replying(to: message, mode: replyMode, attachments: attachments))
+            case let .reply(message, replyMode):
+                NewMessageView(isPresented: $menuSheet.isShowing, mailboxManager: mailboxManager, draft: .replying(to: message, mode: replyMode))
             case let .editMessage(draft):
                 NewMessageView(isPresented: $menuSheet.isShowing, mailboxManager: mailboxManager, draft: draft.asUnmanaged())
             case .manageAccount:
