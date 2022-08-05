@@ -23,18 +23,34 @@ import MailResources
 import RealmSwift
 import SwiftUI
 
+enum SearchFieldValueType: String {
+    case contact
+    case search
+}
+
 @MainActor class SearchViewModel: ObservableObject {
     var mailboxManager: MailboxManager
+    var contactManager: ContactManager
 
     @Published public var filters: [SearchFilter]
     @Published public var selectedFilters: [SearchFilter] = []
-    @Published public var searchValue = ""
+    @Published public var searchValueType: SearchFieldValueType = .search
+    @Published public var searchValue = "" {
+        didSet {
+            if searchValueType == .search {
+                updateContactSuggestion()
+            } else {
+                searchValueType = .search
+            }
+        }
+    }
 
     public var realFolder: Folder?
     public var lastSearchFolderId: String?
     @Published public var selectedSearchFolderId = ""
 
     @Published public var threads: [Thread] = []
+    @Published public var contacts: [Recipient] = []
 
     public var searchFolder: Folder
 
@@ -58,7 +74,9 @@ import SwiftUI
     }
 
     init(folder: Folder?) {
+        // TODO: - change init from mailboxManager and contactManager
         mailboxManager = AccountManager.instance.currentMailboxManager!
+        contactManager = AccountManager.instance.currentContactManager!
         realFolder = folder
 
         searchFolder = mailboxManager.initSearchFolder()
@@ -72,6 +90,21 @@ import SwiftUI
         ]
 
         observeSearch = true
+    }
+
+    private func updateContactSuggestion() {
+        let contactManager = AccountManager.instance.currentContactManager
+        let autocompleteContacts = contactManager?.contacts(matching: searchValue) ?? []
+        var autocompleteRecipients = autocompleteContacts.map { Recipient(email: $0.email, name: $0.name) }
+        // Append typed email
+        let emailPredicate = NSPredicate(format: "SELF MATCHES %@", Constants.mailRegex)
+        if emailPredicate.evaluate(with: searchValue) && !contacts
+            .contains(where: { $0.email.caseInsensitiveCompare(searchValue) == .orderedSame }) {
+            autocompleteRecipients.append(Recipient(email: searchValue, name: ""))
+        }
+        withAnimation {
+            contacts = autocompleteRecipients
+        }
     }
 
     func updateSelection(filter: SearchFilter) {
@@ -128,7 +161,11 @@ import SwiftUI
 
         var searchFilters: [URLQueryItem] = []
         if !searchValue.isEmpty {
-            searchFilters.append(URLQueryItem(name: "scontains", value: searchValue))
+            if searchValueType == .contact {
+                searchFilters.append(URLQueryItem(name: "sfrom", value: searchValue))
+            } else {
+                searchFilters.append(URLQueryItem(name: "scontains", value: searchValue))
+            }
         }
         if !selectedSearchFolderId.isEmpty && !selectedFilters.contains(.folder) {
             selectedFilters.append(.folder)
