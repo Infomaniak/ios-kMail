@@ -68,30 +68,35 @@ struct SearchView: View {
             }
             .padding(.top, 32)
 
-            if viewModel.threads.isEmpty {
-                Spacer()
-            } else {
-                List {
-                    Section {
-                        threadList(threads: viewModel.threads)
-                    } header: {
-                        if threadDensity != .compact {
-                            Text(MailResourcesStrings.Localizable.searchAllMessages)
-                                .textStyle(.calloutSecondary)
-                        }
-                    }
+            List {
+                Section {
+                    contactList(contacts: viewModel.contacts)
+                } header: {
+                    Text(MailResourcesStrings.Localizable.contactsSearch)
+                        .textStyle(.calloutSecondary)
+                }
 
-                    if viewModel.isLoadingPage {
-                        HStack {
-                            Spacer()
-                            ProgressView()
-                            Spacer()
-                        }
-                        .listRowSeparator(.hidden)
+                Section {
+                    threadList(threads: viewModel.threads)
+                } header: {
+                    if threadDensity != .compact {
+                        Text(MailResourcesStrings.Localizable.searchAllMessages)
+                            .textStyle(.calloutSecondary)
                     }
                 }
-                .listStyle(.plain)
+
+                if viewModel.isLoadingPage {
+                    HStack {
+                        Spacer()
+                        ProgressView()
+                        Spacer()
+                    }
+                    .listRowSeparator(.hidden)
+                }
             }
+            .listStyle(.plain)
+
+            Spacer()
         }
         .navigationBarAppStyle()
         .introspectNavigationController { navigationController in
@@ -187,6 +192,19 @@ struct SearchView: View {
             .onAppear {
                 viewModel.loadNextPageIfNeeded(currentItem: thread)
             }
+        }
+    }
+
+    func contactList(contacts: [Recipient]) -> some View {
+        ForEach(contacts, id: \.email) { contact in
+            RecipientAutocompletionCell(recipient: contact)
+                .onTapGesture {
+                    viewModel.searchValue = contact.email
+                    viewModel.searchValueType = .contact
+                    Task {
+                        await viewModel.fetchThreads()
+                    }
+                }
         }
     }
 
