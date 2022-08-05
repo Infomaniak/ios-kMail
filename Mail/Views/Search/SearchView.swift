@@ -45,17 +45,20 @@ struct SearchView: View {
 
     var body: some View {
         VStack {
-            ScrollView(.horizontal) {
-                HStack {
+            ScrollView(.horizontal, showsIndicators: false) {
+                HStack(spacing: 0) {
                     ForEach(viewModel.filters) { filter in
                         if filter == .folder {
                             SearchFilterFolderCell(selection: $viewModel.selectedSearchFolderId)
+                                .padding(.horizontal, 12)
                         } else {
                             SearchFilterCell(
                                 title: filter.title,
                                 isSelected: viewModel.selectedFilters.contains(filter)
                             )
                             .padding(.vertical, 2)
+                            .padding(.trailing, 0)
+                            .padding(.leading, 12)
                             .onTapGesture {
                                 viewModel.updateSelection(filter: filter)
                             }
@@ -63,6 +66,7 @@ struct SearchView: View {
                     }
                 }
             }
+            .padding(.top, 32)
 
             if viewModel.threads.isEmpty {
                 Spacer()
@@ -140,15 +144,12 @@ struct SearchView: View {
             navigationController?.navigationBar.scrollEdgeAppearance = nil
         }
         .toolbar {
-            ToolbarItem {
-                TextField("SearchField", text: $viewModel.searchValue)
-                    .textFieldStyle(.roundedBorder)
-                    .frame(maxWidth: .infinity)
-                    .onSubmit {
-                        Task {
-                            await viewModel.fetchThreads()
-                        }
+            ToolbarItem(placement: .principal) {
+                SearchTextField(value: $viewModel.searchValue) {
+                    Task {
+                        await viewModel.fetchThreads()
                     }
+                }
             }
         }
     }
