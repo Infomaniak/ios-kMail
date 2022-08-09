@@ -425,20 +425,21 @@ public class MailboxManager: ObservableObject {
         return searchFolder
     }
 
-    private func cleanSearchFolder(using realm: Realm? = nil) {
+    public func cleanSearchFolder(using realm: Realm? = nil) -> Folder {
         let realm = realm ?? getRealm()
-        guard let folder = realm.object(ofType: Folder.self, forPrimaryKey: Constants.searchFolderId) else { return }
-
-        try? realm.safeWrite {
-            realm.delete(folder.threads.where { $0.fromSearch == true })
+        if let folder = realm.object(ofType: Folder.self, forPrimaryKey: Constants.searchFolderId) {
+            try? realm.safeWrite {
+                realm.delete(folder.threads.where { $0.fromSearch == true })
+            }
+            return folder
+        } else {
+            return initSearchFolder()
         }
     }
 
-    public func searchThreads(filterFolderId: String, filter: Filter = .all,
+    public func searchThreads(searchFolder: Folder, filterFolderId: String, filter: Filter = .all,
                               searchFilter: [URLQueryItem] = []) async throws -> ThreadResult {
-        cleanSearchFolder()
         let realm = getRealm()
-        guard let parent = realm.object(ofType: Folder.self, forPrimaryKey: Constants.searchFolderId) else { fatalError() }
 
         let threadResult = try await apiFetcher.threads(
             mailbox: mailbox,
@@ -453,7 +454,7 @@ public class MailboxManager: ObservableObject {
                     thread.fromSearch = true
                 }
             }
-            self.saveThreads(result: threadResult, parent: parent)
+            self.saveThreads(result: threadResult, parent: searchFolder)
         }
 
         return threadResult

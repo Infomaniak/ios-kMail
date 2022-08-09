@@ -59,7 +59,7 @@ enum SearchFieldValueType: String {
     @Published public var threads: [Thread] = []
     @Published public var contacts: [Recipient] = []
 
-    public var searchFolder: Folder
+    @Published public var searchFolder: Folder
 
     @Published var isLoadingPage = false
 
@@ -193,8 +193,12 @@ enum SearchFieldValueType: String {
             }
         }
 
+        searchFolder = mailboxManager.cleanSearchFolder()
+        observeSearch = true
+
         await tryOrDisplayError {
             let result = try await mailboxManager.searchThreads(
+                searchFolder: searchFolder,
                 filterFolderId: folderToSearch,
                 filter: filter,
                 searchFilter: searchFilters
