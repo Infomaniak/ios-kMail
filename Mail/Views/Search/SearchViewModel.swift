@@ -48,7 +48,13 @@ enum SearchFieldValueType: String {
 
     public var realFolder: Folder?
     public var lastSearchFolderId: String?
-    @Published public var selectedSearchFolderId = ""
+    @Published public var selectedSearchFolderId = "" {
+        didSet {
+            Task {
+                await fetchThreads()
+            }
+        }
+    }
 
     @Published public var threads: [Thread] = []
     @Published public var contacts: [Recipient] = []
@@ -116,13 +122,9 @@ enum SearchFieldValueType: String {
         } else {
             select(filter: filter)
         }
-    }
 
-    func updateSelection(filter: SearchFilter, add: Bool) {
-        if add && !selectedFilters.contains(filter) {
-            select(filter: filter)
-        } else if !add && selectedFilters.contains(filter) {
-            unselect(filter: filter)
+        Task {
+            await fetchThreads()
         }
     }
 
