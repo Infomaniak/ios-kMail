@@ -265,7 +265,10 @@ private struct ThreadListNavigationBar: ViewModifier {
 
                 ToolbarItemGroup(placement: .navigationBarTrailing) {
                     NavigationLink {
-                        SearchView(viewModel: SearchViewModel(folder: folder), observeThread: $observeThread)
+                        SearchView(viewModel: SearchViewModel(folder: folder)/*, observeThread: $observeThread*/)
+                            .onAppear {
+                                observeThread = false
+                            }
                     } label: {
                         Image(resource: MailResourcesAsset.search)
                     }

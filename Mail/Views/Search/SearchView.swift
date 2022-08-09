@@ -34,13 +34,10 @@ struct SearchView: View {
 
     private let bottomSheetOptions = Constants.bottomSheetOptions + [.appleScrollBehavior]
 
-    @Binding var observeThread: Bool
-
-    init(viewModel: SearchViewModel, observeThread: Binding<Bool>) {
+    init(viewModel: SearchViewModel/*, observeThread: Binding<Bool>*/) {
         let threadBottomSheet = ThreadBottomSheet()
         _bottomSheet = StateObject(wrappedValue: threadBottomSheet)
         self.viewModel = viewModel
-        _observeThread = observeThread
     }
 
     var body: some View {
@@ -126,10 +123,6 @@ struct SearchView: View {
 //            observeThread = true
         }
         .onAppear {
-            viewModel.searchFolder = viewModel.mailboxManager.initSearchFolder()
-            observeThread = false
-            viewModel.observeSearch = true
-
             MatomoUtils.track(view: ["SearchView"])
             // Style toolbar
             let appereance = UIToolbarAppearance()
