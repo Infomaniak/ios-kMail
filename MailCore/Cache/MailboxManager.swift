@@ -82,7 +82,8 @@ public class MailboxManager: ObservableObject {
                 Draft.self,
                 SignatureResponse.self,
                 Signature.self,
-                ValidEmail.self
+                ValidEmail.self,
+                SearchHistory.self
             ]
         )
     }
@@ -456,6 +457,41 @@ public class MailboxManager: ObservableObject {
         }
 
         return threadResult
+    }
+
+    public func searchHistory(using realm: Realm? = nil) -> SearchHistory {
+        let realm = realm ?? getRealm()
+        if let searchHistory = realm.objects(SearchHistory.self).first {
+            return searchHistory.freeze()
+        }
+        let newSearchHistory = SearchHistory()
+        try? realm.safeWrite {
+            realm.add(newSearchHistory)
+        }
+        return newSearchHistory
+    }
+
+    public func update(searchHistory: SearchHistory, with value: String) -> SearchHistory {
+        let realm = getRealm()
+        realm.refresh()
+        guard let searchHistory = searchHistory.thaw() else { return searchHistory }
+
+        try? realm.safeWrite {
+            if let indexToRemove = searchHistory.history.firstIndex(of: value) {
+                searchHistory.history.remove(at: indexToRemove)
+            }
+            searchHistory.history.insert(value, at: 0)
+        }
+
+        return searchHistory.freeze()
+    }
+
+    public func clearSearchHistory() {
+        let realm = getRealm()
+        let searchHistory = searchHistory(using: realm)
+        try? realm.safeWrite {
+            searchHistory.history.removeAll()
+        }
     }
 
     // MARK: - Message

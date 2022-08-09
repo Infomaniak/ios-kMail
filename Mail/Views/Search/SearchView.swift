@@ -69,29 +69,27 @@ struct SearchView: View {
             .padding(.top, 32)
 
             List {
-                Section {
-                    contactList(contacts: viewModel.contacts)
-                } header: {
-                    Text(MailResourcesStrings.Localizable.contactsSearch)
-                        .textStyle(.calloutSecondary)
-                }
-
-                Section {
-                    threadList(threads: viewModel.threads)
-                } header: {
-                    if threadDensity != .compact {
-                        Text(MailResourcesStrings.Localizable.searchAllMessages)
-                            .textStyle(.calloutSecondary)
+                if viewModel.searchValue.isEmpty || (viewModel.threads.isEmpty && viewModel.contacts.isEmpty) {
+                    if !viewModel.searchHistory.history.isEmpty {
+                        searchHistoryList(history: viewModel.searchHistory)
                     }
-                }
-
-                if viewModel.isLoadingPage {
-                    HStack {
-                        Spacer()
-                        ProgressView()
-                        Spacer()
+                } else {
+                    if !viewModel.contacts.isEmpty {
+                        contactList(contacts: viewModel.contacts)
                     }
-                    .listRowSeparator(.hidden)
+
+                    if !viewModel.threads.isEmpty {
+                        threadList(threads: viewModel.threads)
+                    }
+
+                    if viewModel.isLoadingPage {
+                        HStack {
+                            Spacer()
+                            ProgressView()
+                            Spacer()
+                        }
+                        .listRowSeparator(.hidden)
+                    }
                 }
             }
             .listStyle(.plain)
@@ -160,52 +158,87 @@ struct SearchView: View {
     }
 
     func threadList(threads: [Thread]) -> some View {
-        ForEach(threads) { thread in
-            Group {
-                if viewModel.lastSearchFolderId == viewModel.mailboxManager.getFolder(with: .draft)?._id {
-                    Button(action: {
-                        editDraft(from: thread)
-                    }, label: {
-                        ThreadListCell(mailboxManager: viewModel.mailboxManager, thread: thread)
-                    })
-                } else {
-                    ZStack {
-                        NavigationLink(destination: {
-                            ThreadView(
-                                mailboxManager: viewModel.mailboxManager,
-                                thread: thread,
-                                folderId: viewModel.lastSearchFolderId,
-                                navigationController: navigationController
-                            )
+        Section {
+            ForEach(threads) { thread in
+                Group {
+                    if viewModel.lastSearchFolderId == viewModel.mailboxManager.getFolder(with: .draft)?._id {
+                        Button(action: {
+                            editDraft(from: thread)
                         }, label: {
-                            EmptyView()
+                            ThreadListCell(mailboxManager: viewModel.mailboxManager, thread: thread)
                         })
-                        .opacity(0)
+                    } else {
+                        ZStack {
+                            NavigationLink(destination: {
+                                ThreadView(
+                                    mailboxManager: viewModel.mailboxManager,
+                                    thread: thread,
+                                    folderId: viewModel.lastSearchFolderId,
+                                    navigationController: navigationController
+                                )
+                            }, label: {
+                                EmptyView()
+                            })
+                            .opacity(0)
 
-                        ThreadListCell(mailboxManager: viewModel.mailboxManager, thread: thread)
+                            ThreadListCell(mailboxManager: viewModel.mailboxManager, thread: thread)
+                        }
                     }
                 }
+                .onAppear {
+                    viewModel.loadNextPageIfNeeded(currentItem: thread)
+                }
             }
-            .listRowInsets(.init(top: 0, leading: 12, bottom: 0, trailing: 12))
-            .listRowSeparator(.hidden)
-            .listRowBackground(MailResourcesAsset.backgroundColor.swiftUiColor)
-            .onAppear {
-                viewModel.loadNextPageIfNeeded(currentItem: thread)
+        } header: {
+            if threadDensity != .compact {
+                Text(MailResourcesStrings.Localizable.searchAllMessages)
+                    .textStyle(.calloutSecondary)
             }
         }
+        .listRowInsets(.init(top: 0, leading: 12, bottom: 0, trailing: 12))
+        .listRowSeparator(.hidden)
+        .listRowBackground(MailResourcesAsset.backgroundColor.swiftUiColor)
     }
 
     func contactList(contacts: [Recipient]) -> some View {
-        ForEach(contacts, id: \.email) { contact in
-            RecipientAutocompletionCell(recipient: contact)
-                .onTapGesture {
-                    viewModel.searchValue = contact.email
-                    viewModel.searchValueType = .contact
-                    Task {
-                        await viewModel.fetchThreads()
+        Section {
+            ForEach(contacts, id: \.email) { contact in
+                RecipientAutocompletionCell(recipient: contact)
+                    .onTapGesture {
+                        viewModel.searchValue = contact.email
+                        viewModel.searchValueType = .contact
+                        Task {
+                            await viewModel.fetchThreads()
+                        }
                     }
-                }
+            }
+        } header: {
+            Text(MailResourcesStrings.Localizable.contactsSearch)
+                .textStyle(.calloutSecondary)
         }
+        .listRowInsets(.init(top: 0, leading: 12, bottom: 0, trailing: 12))
+        .listRowSeparator(.hidden)
+        .listRowBackground(MailResourcesAsset.backgroundColor.swiftUiColor)
+    }
+
+    func searchHistoryList(history: SearchHistory) -> some View {
+        Section {
+            ForEach(history.history, id: \.self) { searchItem in
+                Text(searchItem)
+                    .onTapGesture {
+                        viewModel.searchValue = searchItem
+                        Task {
+                            await viewModel.fetchThreads()
+                        }
+                    }
+            }
+        } header: {
+            Text(MailResourcesStrings.Localizable.recentSearchesTitle)
+                .textStyle(.calloutSecondary)
+        }
+        .listRowSeparator(.hidden)
+        .listRowBackground(MailResourcesAsset.backgroundColor.swiftUiColor)
+        .listRowInsets(.init(top: 0, leading: 12, bottom: 0, trailing: 12))
     }
 
     private func editDraft(from thread: Thread) {

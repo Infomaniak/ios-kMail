@@ -31,6 +31,7 @@ enum SearchFieldValueType: String {
 @MainActor class SearchViewModel: ObservableObject {
     var mailboxManager: MailboxManager
     var contactManager: ContactManager
+    @Published var searchHistory: SearchHistory
 
     @Published public var filters: [SearchFilter]
     @Published public var selectedFilters: [SearchFilter] = []
@@ -77,6 +78,8 @@ enum SearchFieldValueType: String {
         // TODO: - change init from mailboxManager and contactManager
         mailboxManager = AccountManager.instance.currentMailboxManager!
         contactManager = AccountManager.instance.currentContactManager!
+
+        searchHistory = mailboxManager.searchHistory()
         realFolder = folder
 
         searchFolder = mailboxManager.initSearchFolder()
@@ -196,6 +199,10 @@ enum SearchFieldValueType: String {
             )
 
             resourceNext = result.resourceNext
+
+            if !searchValue.isEmpty {
+                searchHistory = mailboxManager.update(searchHistory: searchHistory, with: searchValue)
+            }
         }
         isLoadingPage = false
     }
