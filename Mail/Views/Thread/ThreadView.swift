@@ -201,7 +201,11 @@ struct ThreadView: View {
             case let .attachment(attachment):
                 AttachmentPreview(isPresented: $sheet.isShowing, attachment: attachment)
             case let .reply(message, replyMode):
-                NewMessageView(isPresented: $sheet.isShowing, mailboxManager: mailboxManager, draft: .replying(to: message, mode: replyMode))
+                NewMessageView(
+                    isPresented: $sheet.isShowing,
+                    mailboxManager: mailboxManager,
+                    draft: .replying(to: message, mode: replyMode)
+                )
             case let .edit(draft):
                 NewMessageView(isPresented: $sheet.isShowing, mailboxManager: mailboxManager, draft: draft.asUnmanaged())
             case let .write(recipient):
@@ -249,15 +253,23 @@ struct ThreadView: View {
             sheet.state = .reply(message, .reply)
         case .forward:
             guard let message = messages.last else { return }
-            sheet.state = .reply(message, .forward)
+            Task {
+                let attachments = try await mailboxManager.apiFetcher.attachmentsToForward(
+                    mailbox: mailboxManager.mailbox,
+                    message: message
+                ).attachments
+                sheet.state = .reply(message, .forward(attachments))
+            }
         case .archive:
             Task {
                 await tryOrDisplayError {
                     let response = try await mailboxManager.move(thread: thread, to: .archive)
-                    IKSnackBar.showCancelableSnackBar(message: MailResourcesStrings.Localizable.snackbarThreadMoved(FolderRole.archive.localizedName),
-                                                      cancelSuccessMessage: MailResourcesStrings.Localizable.snackbarMoveCancelled,
-                                                      cancelableResponse: response,
-                                                      mailboxManager: mailboxManager)
+                    IKSnackBar.showCancelableSnackBar(
+                        message: MailResourcesStrings.Localizable.snackbarThreadMoved(FolderRole.archive.localizedName),
+                        cancelSuccessMessage: MailResourcesStrings.Localizable.snackbarMoveCancelled,
+                        cancelableResponse: response,
+                        mailboxManager: mailboxManager
+                    )
                     dismiss()
                 }
             }

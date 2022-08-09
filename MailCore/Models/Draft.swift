@@ -26,12 +26,26 @@ public enum SaveDraftOption: String, Codable {
     case send
 }
 
-public enum ReplyMode {
-    case reply, replyAll, forward
+public enum ReplyMode: Equatable {
+    case reply, replyAll
+    case forward([Attachment])
 
     var isReply: Bool {
         return self == .reply || self == .replyAll
     }
+    
+    public static func == (lhs: ReplyMode, rhs: ReplyMode) -> Bool {
+            switch (lhs, rhs) {
+            case (.reply, .reply):
+                return true
+            case (.replyAll, .replyAll):
+                return true
+            case (.forward(_), .forward(_)):
+                return true
+            default:
+                return false
+            }
+        }
 }
 
 public struct DraftResponse: Codable {
@@ -130,7 +144,7 @@ public struct UnmanagedDraft: Equatable, Encodable, AbstractDraft {
                 inReplyTo: String? = nil,
                 inReplyToUid: String? = nil,
                 forwardedUid: String? = nil,
-                attachements: [Attachment]? = nil,
+                attachments: [Attachment]? = nil,
                 identityId: String = "",
                 ackRequest: Bool = false,
                 stUuid: String? = nil,
@@ -150,7 +164,7 @@ public struct UnmanagedDraft: Equatable, Encodable, AbstractDraft {
         self.inReplyTo = inReplyTo
         self.inReplyToUid = inReplyToUid
         self.forwardedUid = forwardedUid
-        attachments = attachements
+        self.attachments = attachments
         self.identityId = identityId
         self.ackRequest = ackRequest
         self.stUuid = stUuid
@@ -230,13 +244,15 @@ public struct UnmanagedDraft: Equatable, Encodable, AbstractDraft {
     public static func replying(to message: Message, mode: ReplyMode) -> UnmanagedDraft {
         let subject: String
         let quote: String
+        var attachments: [Attachment] = []
         switch mode {
         case .reply, .replyAll:
             subject = "Re: \(message.formattedSubject)"
             quote = Constants.replyQuote(message: message)
-        case .forward:
+        case let .forward(attachmentsToForward):
             subject = "Fwd: \(message.formattedSubject)"
             quote = Constants.forwardQuote(message: message)
+            attachments = attachmentsToForward
         }
         return UnmanagedDraft(subject: subject,
                               body: "<div><br></div><div><br></div>\(quote)",
@@ -245,8 +261,8 @@ public struct UnmanagedDraft: Equatable, Encodable, AbstractDraft {
                               cc: mode == .replyAll ? Array(message.to.detached()) + Array(message.cc.detached()) : [],
                               inReplyTo: message.msgId,
                               inReplyToUid: mode.isReply ? message.uid : nil,
-                              forwardedUid: mode == .forward ? message.uid : nil /* ,
-                               attachments: mode == .forward ? Array(message.attachments) : nil */ )
+                              forwardedUid: mode == .forward([]) ? message.uid : nil,
+                              attachments: attachments)
     }
 
     public func asManaged() -> Draft {
