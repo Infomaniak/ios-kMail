@@ -138,7 +138,8 @@ struct ThreadListView: View {
             isCompact: isCompact,
             folder: $viewModel.folder,
             avatarImage: $avatarImage,
-            observeThread: $viewModel.observeThread
+            observeThread: $viewModel.observeThread,
+            navigationController: $navigationController
         ))
         .floatingActionButton(
             icon: Image(resource: MailResourcesAsset.edit),
@@ -203,7 +204,7 @@ struct ThreadListView: View {
                                        navigationController: navigationController)
                                 .onAppear { viewModel.selectedThread = thread }
                         }, label: { EmptyView() })
-                        .opacity(0)
+                            .opacity(0)
 
                         ThreadListCell(mailboxManager: viewModel.mailboxManager, thread: thread)
                     }
@@ -252,6 +253,8 @@ private struct ThreadListNavigationBar: ViewModifier {
     @EnvironmentObject var menuSheet: MenuSheet
     @EnvironmentObject var navigationDrawerController: NavigationDrawerController
 
+    @Binding var navigationController: UINavigationController?
+
     func body(content: Content) -> some View {
         content
             .navigationBarTitle(folder?.localizedName ?? "", displayMode: .inline)
@@ -265,7 +268,7 @@ private struct ThreadListNavigationBar: ViewModifier {
 
                 ToolbarItemGroup(placement: .navigationBarTrailing) {
                     NavigationLink {
-                        SearchView(viewModel: SearchViewModel(folder: folder)/*, observeThread: $observeThread*/)
+                        SearchView(viewModel: SearchViewModel(folder: folder), navigationController: $navigationController)
                             .onAppear {
                                 observeThread = false
                             }

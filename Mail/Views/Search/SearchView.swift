@@ -30,14 +30,15 @@ struct SearchView: View {
     @AppStorage(UserDefaults.shared.key(.threadDensity)) var threadDensity = ThreadDensity.normal
 
     @StateObject var bottomSheet: ThreadBottomSheet
-    @State private var navigationController: UINavigationController?
+    @Binding var navigationController: UINavigationController?
 
     private let bottomSheetOptions = Constants.bottomSheetOptions + [.appleScrollBehavior]
 
-    init(viewModel: SearchViewModel/*, observeThread: Binding<Bool>*/) {
+    init(viewModel: SearchViewModel, navigationController: Binding<UINavigationController?>) {
         let threadBottomSheet = ThreadBottomSheet()
         _bottomSheet = StateObject(wrappedValue: threadBottomSheet)
         self.viewModel = viewModel
+        _navigationController = navigationController
     }
 
     var body: some View {
@@ -92,10 +93,6 @@ struct SearchView: View {
             .listStyle(.plain)
 
             Spacer()
-        }
-        .navigationBarAppStyle()
-        .introspectNavigationController { navigationController in
-            self.navigationController = navigationController
         }
         .bottomSheet(bottomSheetPosition: $bottomSheet.position, options: bottomSheetOptions) {
             switch bottomSheet.state {
