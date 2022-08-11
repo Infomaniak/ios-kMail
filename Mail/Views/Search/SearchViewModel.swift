@@ -190,7 +190,7 @@ enum SearchFieldValueType: String {
             case .favorite:
                 filter = .starred
             case .attachment:
-                searchFilters.append(URLQueryItem(name: "sattachment", value: "yes"))
+                searchFilters.append(URLQueryItem(name: "sattachments", value: "yes"))
             case .folder:
                 folderToSearch = selectedSearchFolderId
                 lastSearchFolderId = selectedSearchFolderId
