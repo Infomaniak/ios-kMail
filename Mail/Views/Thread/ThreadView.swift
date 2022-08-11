@@ -44,10 +44,11 @@ class MessageSheet: SheetState<MessageSheet.State> {
 class MessageBottomSheet: BottomSheetState<MessageBottomSheet.State, MessageBottomSheet.Position> {
     enum State: Equatable {
         case contact(Recipient, isRemote: Bool)
+        case replyOption(Message, isThread: Bool)
     }
 
     enum Position: CGFloat, CaseIterable {
-        case defaultHeight = 285, remoteContactHeight = 230, hidden = 0
+        case defaultHeight = 285, remoteContactHeight = 230, replyHeight = 180, hidden = 0
     }
 }
 
@@ -218,6 +219,15 @@ struct ThreadView: View {
             switch bottomSheet.state {
             case let .contact(recipient, isRemote):
                 ContactActionsView(recipient: recipient, isRemoteContact: isRemote, bottomSheet: bottomSheet, sheet: sheet)
+            case let .replyOption(message, isThread):
+                ReplyActionsView(
+                    mailboxManager: mailboxManager,
+                    target: isThread ? .thread(thread) : .message(message),
+                    state: threadBottomSheet,
+                    globalSheet: globalBottomSheet
+                ) { message, replyMode in
+                    sheet.state = .reply(message, replyMode)
+                }
             case .none:
                 EmptyView()
             }
@@ -250,7 +260,7 @@ struct ThreadView: View {
         switch action {
         case .reply:
             guard let message = messages.last else { return }
-            sheet.state = .reply(message, .reply)
+            bottomSheet.open(state: .replyOption(message, isThread: true), position: .replyHeight)
         case .forward:
             guard let message = messages.last else { return }
             Task {
