@@ -56,6 +56,8 @@ enum SearchFieldValueType: String {
         }
     }
 
+    @Published var selectedThread: Thread?
+
     @Published public var threads: [Thread] = []
     @Published public var contacts: [Recipient] = []
 
@@ -67,8 +69,8 @@ enum SearchFieldValueType: String {
     private var observationSearchThreadToken: NotificationToken?
 
     // TODO: - IMPORTANT
-//    Si connexion -> Recherche depui s call API uniquement
-//    Si pas de connextion -> Recherche depuis Realm uniquement
+//    Si connexion -> Recherche depuis call API uniquement
+//    Si pas de connexion -> Recherche depuis Realm uniquement
 
     var observeSearch: Bool {
         didSet {

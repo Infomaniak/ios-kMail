@@ -268,7 +268,7 @@ private struct ThreadListNavigationBar: ViewModifier {
 
                 ToolbarItemGroup(placement: .navigationBarTrailing) {
                     NavigationLink {
-                        SearchView(viewModel: SearchViewModel(folder: folder), navigationController: $navigationController)
+                        SearchView(viewModel: SearchViewModel(folder: folder), observeThread: $observeThread, navigationController: $navigationController)
                             .onAppear {
                                 observeThread = false
                             }
