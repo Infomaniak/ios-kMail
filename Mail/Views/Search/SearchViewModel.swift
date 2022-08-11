@@ -50,6 +50,11 @@ enum SearchFieldValueType: String {
     public var lastSearchFolderId: String?
     @Published public var selectedSearchFolderId = "" {
         didSet {
+            if selectedSearchFolderId.isEmpty {
+                selectedFilters.removeAll { $0 == .folder }
+            } else if !selectedFilters.contains(.folder) {
+                selectedFilters.append(.folder)
+            }
             Task {
                 await fetchThreads()
             }
@@ -174,9 +179,7 @@ enum SearchFieldValueType: String {
                 searchFilters.append(URLQueryItem(name: "scontains", value: searchValue))
             }
         }
-        if !selectedSearchFolderId.isEmpty && !selectedFilters.contains(.folder) {
-            selectedFilters.append(.folder)
-        }
+        searchFilters.append(URLQueryItem(name: "severywhere", value: selectedFilters.contains(.folder) ? "0" : "1"))
 
         for selected in selectedFilters {
             switch selected {
@@ -189,7 +192,6 @@ enum SearchFieldValueType: String {
             case .attachment:
                 searchFilters.append(URLQueryItem(name: "sattachment", value: "yes"))
             case .folder:
-                searchFilters.append(URLQueryItem(name: "severywhere", value: "0"))
                 folderToSearch = selectedSearchFolderId
                 lastSearchFolderId = selectedSearchFolderId
             }
