@@ -30,7 +30,6 @@ enum SearchFieldValueType: String {
 
 @MainActor class SearchViewModel: ObservableObject {
     var mailboxManager: MailboxManager
-    var contactManager: ContactManager
     @Published var searchHistory: SearchHistory
 
     @Published public var filters: [SearchFilter]
@@ -90,7 +89,6 @@ enum SearchFieldValueType: String {
     init(folder: Folder?) {
         // TODO: - change init from mailboxManager and contactManager
         mailboxManager = AccountManager.instance.currentMailboxManager!
-        contactManager = AccountManager.instance.currentContactManager!
 
         searchHistory = mailboxManager.searchHistory()
         realFolder = folder

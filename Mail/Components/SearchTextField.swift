@@ -35,11 +35,13 @@ struct SearchTextField: View {
 
             TextField("SearchField", text: $value)
                 .textFieldStyle(DefaultTextFieldStyle())
-                .foregroundColor(value.isEmpty ? MailResourcesAsset.textFieldPlaceholderColor : MailResourcesAsset.primaryTextColor)
-                .onSubmit {
-                    onSubmit()
-                }
-                .padding(.vertical, 11)
+                .foregroundColor(value.isEmpty
+                    ? MailResourcesAsset.textFieldPlaceholderColor
+                    : MailResourcesAsset.primaryTextColor)
+                    .onSubmit {
+                        onSubmit()
+                    }
+                    .padding(.vertical, 11)
 
             Button {
                 value = ""
@@ -59,6 +61,6 @@ struct SearchTextField: View {
 
 struct SearchTextField_Previews: PreviewProvider {
     static var previews: some View {
-        SearchTextField(value: .constant("Recherche"), onSubmit: {})
+        SearchTextField(value: .constant("Recherche"), onSubmit: { /* Empty on purpose */ })
     }
 }
