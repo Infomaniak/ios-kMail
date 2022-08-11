@@ -32,12 +32,15 @@ struct SearchView: View {
     @StateObject var bottomSheet: ThreadBottomSheet
     @Binding var navigationController: UINavigationController?
 
+    @Binding var observeThread: Bool
+
     private let bottomSheetOptions = Constants.bottomSheetOptions + [.appleScrollBehavior]
 
-    init(viewModel: SearchViewModel, navigationController: Binding<UINavigationController?>) {
+    init(viewModel: SearchViewModel, observeThread: Binding<Bool>, navigationController: Binding<UINavigationController?>) {
         let threadBottomSheet = ThreadBottomSheet()
         _bottomSheet = StateObject(wrappedValue: threadBottomSheet)
         self.viewModel = viewModel
+        _observeThread = observeThread
         _navigationController = navigationController
     }
 
@@ -115,11 +118,14 @@ struct SearchView: View {
             await viewModel.fetchThreads()
         }
         .onDisappear {
-            // TODO: - Manage observer
-//            viewModel.observeSearch = false
-//            observeThread = true
+            if viewModel.selectedThread == nil {
+                viewModel.observeSearch = false
+                observeThread = true
+            }
         }
         .onAppear {
+            viewModel.selectedThread = nil
+
             MatomoUtils.track(view: ["SearchView"])
             // Style toolbar
             let appereance = UIToolbarAppearance()
@@ -166,6 +172,9 @@ struct SearchView: View {
                                     folderId: viewModel.lastSearchFolderId,
                                     navigationController: navigationController
                                 )
+                                .onAppear {
+                                    viewModel.selectedThread = thread
+                                }
                             }, label: {
                                 EmptyView()
                             })
@@ -202,6 +211,7 @@ struct SearchView: View {
                         }
                     }
             }
+            .padding(.horizontal, 4)
         } header: {
             Text(MailResourcesStrings.Localizable.contactsSearch)
                 .textStyle(.calloutSecondary)
@@ -222,6 +232,7 @@ struct SearchView: View {
                         }
                     }
             }
+            .padding(.horizontal, 4)
         } header: {
             Text(MailResourcesStrings.Localizable.recentSearchesTitle)
                 .textStyle(.calloutSecondary)

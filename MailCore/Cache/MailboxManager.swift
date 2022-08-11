@@ -320,6 +320,9 @@ public class MailboxManager: ObservableObject {
     /// - Parameter thread: Thread to remove
     public func moveOrDelete(thread: Thread) async throws {
         let parentFolder = thread.parent
+        if parentFolder?.toolType == nil {
+            deleteInSearch(thread: thread)
+        }
         if parentFolder?.role == .trash {
             // Delete definitely
             try await delete(thread: thread)
@@ -337,6 +340,16 @@ public class MailboxManager: ObservableObject {
                                                         cancelableResponse: response,
                                                         mailboxManager: self)
             }
+        }
+    }
+
+    private func deleteInSearch(thread: Thread, using realm: Realm? = nil) {
+        let realm = realm ?? getRealm()
+        guard let searchFolder = realm.object(ofType: Folder.self, forPrimaryKey: Constants.searchFolderId),
+              let thread = thread.thaw() else { return }
+
+        try? realm.safeWrite {
+            searchFolder.threads.remove(thread)
         }
     }
 
