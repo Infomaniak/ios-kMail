@@ -78,16 +78,7 @@ struct SearchFilterFolderCell: View {
                 .resizable()
                 .frame(width: 13, height: 13)
         }
-        .padding([.top, .bottom], 6)
-        .padding([.leading, .trailing], 11)
-        .foregroundColor(isSelected ? Color.white : Color(uiColor: UserDefaults.shared.accentColor.primary.color))
-        .background(isSelected ? Color(uiColor: UserDefaults.shared.accentColor.primary.color) : Color
-            .white)
-        .cornerRadius(40)
-        .overlay(
-            RoundedRectangle(cornerRadius: 30)
-                .stroke(Color(uiColor: UserDefaults.shared.accentColor.primary.color), lineWidth: 1)
-        )
+        .filterCellStyle(isSelected: isSelected)
     }
 }
 
