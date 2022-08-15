@@ -69,7 +69,8 @@ public class MailApiFetcher: ApiFetcher {
     }
 
     public func listBackups(mailbox: Mailbox) async throws -> BackupsList {
-        try await perform(request: authenticatedRequest(.backups(hostingId: mailbox.hostingId, mailboxName: mailbox.mailbox))).data
+        try await perform(request: authenticatedRequest(.backups(hostingId: mailbox.hostingId, mailboxName: mailbox.mailbox)))
+            .data
     }
 
     @discardableResult
@@ -88,7 +89,8 @@ public class MailApiFetcher: ApiFetcher {
         try await perform(request: authenticatedRequest(.folders(uuid: mailbox.uuid))).data
     }
 
-    public func threads(mailbox: Mailbox, folderId: String, filter: Filter = .all, searchFilter: [URLQueryItem] = []) async throws -> ThreadResult {
+    public func threads(mailbox: Mailbox, folderId: String, filter: Filter = .all,
+                        searchFilter: [URLQueryItem] = []) async throws -> ThreadResult {
         try await perform(request: authenticatedRequest(.threads(
             uuid: mailbox.uuid,
             folderId: folderId,
@@ -97,8 +99,8 @@ public class MailApiFetcher: ApiFetcher {
         ))).data
     }
 
-    public func threads(from resource: String) async throws -> ThreadResult {
-        try await perform(request: authenticatedRequest(.resource(resource))).data
+    public func threads(from resource: String, searchFilter: [URLQueryItem] = []) async throws -> ThreadResult {
+        try await perform(request: authenticatedRequest(.resource(resource, queryItems: searchFilter))).data
     }
 
     func message(message: Message) async throws -> Message {
@@ -253,7 +255,8 @@ public class MailApiFetcher: ApiFetcher {
 
     public func attachmentsToForward(mailbox: Mailbox, message: Message) async throws -> AttachmentsToForwardResult {
         let attachmentsToForward = AttachmentsToForward(toForwardUids: [message.uid], mode: AttachmentDisposition.inline.rawValue)
-        return try await perform(request: authenticatedRequest(.attachmentToForward(uuid: mailbox.uuid), method: .post, parameters: attachmentsToForward)).data
+        return try await perform(request: authenticatedRequest(.attachmentToForward(uuid: mailbox.uuid), method: .post,
+                                                               parameters: attachmentsToForward)).data
     }
 }
 

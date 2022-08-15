@@ -106,6 +106,35 @@ enum SearchFieldValueType: String {
         observeSearch = true
     }
 
+    private var searchFilters: [URLQueryItem] {
+        var searchFilters: [URLQueryItem] = []
+        if !searchValue.isEmpty {
+            if searchValueType == .contact {
+                searchFilters.append(URLQueryItem(name: "sfrom", value: searchValue))
+            } else {
+                searchFilters.append(URLQueryItem(name: "scontains", value: searchValue))
+            }
+        }
+        searchFilters.append(URLQueryItem(name: "severywhere", value: selectedFilters.contains(.folder) ? "0" : "1"))
+
+        if selectedFilters.contains(.attachment) {
+            searchFilters.append(URLQueryItem(name: "sattachments", value: "yes"))
+        }
+
+        return searchFilters
+    }
+
+    private var filter: Filter {
+        if selectedFilters.contains(.read) {
+            return .seen
+        } else if selectedFilters.contains(.unread) {
+            return .unseen
+        } else if selectedFilters.contains(.favorite) {
+            return .starred
+        }
+        return .all
+    }
+
     private func updateContactSuggestion() {
         let contactManager = AccountManager.instance.currentContactManager
         let autocompleteContacts = contactManager?.contacts(matching: searchValue) ?? []
@@ -166,33 +195,11 @@ enum SearchFieldValueType: String {
 
         isLoadingPage = true
 
-        var filter: Filter = .all
         var folderToSearch: String = realFolder.id
 
-        var searchFilters: [URLQueryItem] = []
-        if !searchValue.isEmpty {
-            if searchValueType == .contact {
-                searchFilters.append(URLQueryItem(name: "sfrom", value: searchValue))
-            } else {
-                searchFilters.append(URLQueryItem(name: "scontains", value: searchValue))
-            }
-        }
-        searchFilters.append(URLQueryItem(name: "severywhere", value: selectedFilters.contains(.folder) ? "0" : "1"))
-
-        for selected in selectedFilters {
-            switch selected {
-            case .read:
-                filter = .seen
-            case .unread:
-                filter = .unseen
-            case .favorite:
-                filter = .starred
-            case .attachment:
-                searchFilters.append(URLQueryItem(name: "sattachments", value: "yes"))
-            case .folder:
-                folderToSearch = selectedSearchFolderId
-                lastSearchFolderId = selectedSearchFolderId
-            }
+        if selectedFilters.contains(.folder) {
+            folderToSearch = selectedSearchFolderId
+            lastSearchFolderId = selectedSearchFolderId
         }
 
         searchFolder = mailboxManager.cleanSearchFolder()
@@ -223,7 +230,11 @@ enum SearchFieldValueType: String {
         isLoadingPage = true
 
         await tryOrDisplayError {
-            let threadResult = try await mailboxManager.apiFetcher.threads(from: resource)
+            let threadResult = try await mailboxManager.searchThreads(
+                searchFolder: searchFolder,
+                from: resource,
+                searchFilter: searchFilters
+            )
             threads.append(contentsOf: threadResult.threads ?? [])
             resourceNext = threadResult.resourceNext
         }

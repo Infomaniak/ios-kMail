@@ -473,6 +473,24 @@ public class MailboxManager: ObservableObject {
         return threadResult
     }
 
+    public func searchThreads(searchFolder: Folder, from resource: String,
+                              searchFilter: [URLQueryItem] = []) async throws -> ThreadResult {
+        let realm = getRealm()
+
+        let threadResult = try await apiFetcher.threads(from: resource, searchFilter: searchFilter)
+
+        DispatchQueue.main.async {
+            for thread in threadResult.threads ?? [] {
+                if realm.object(ofType: Thread.self, forPrimaryKey: thread.uid) == nil {
+                    thread.fromSearch = true
+                }
+            }
+            self.saveThreads(result: threadResult, parent: searchFolder)
+        }
+
+        return threadResult
+    }
+
     public func searchHistory(using realm: Realm? = nil) -> SearchHistory {
         let realm = realm ?? getRealm()
         if let searchHistory = realm.objects(SearchHistory.self).first {
