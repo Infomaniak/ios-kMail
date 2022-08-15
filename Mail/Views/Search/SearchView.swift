@@ -124,6 +124,9 @@ struct SearchView: View {
             }
         }
         .onAppear {
+            if viewModel.selectedThread == nil {
+                viewModel.initSearch()
+            }
             viewModel.selectedThread = nil
 
             MatomoUtils.track(view: ["SearchView"])

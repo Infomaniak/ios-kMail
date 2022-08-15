@@ -106,6 +106,14 @@ enum SearchFieldValueType: String {
         observeSearch = true
     }
 
+    func initSearch() {
+        searchFolder = mailboxManager.cleanSearchFolder()
+        searchValue = ""
+        selectedFilters = []
+        threads = []
+        contacts = []
+    }
+
     private var searchFilters: [URLQueryItem] {
         var searchFilters: [URLQueryItem] = []
         if !searchValue.isEmpty {
