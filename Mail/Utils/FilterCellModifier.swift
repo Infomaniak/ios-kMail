@@ -16,6 +16,7 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import MailResources
 import SwiftUI
 
 struct FilterCellModifier: ViewModifier {
@@ -26,13 +27,14 @@ struct FilterCellModifier: ViewModifier {
             .padding([.top, .bottom], 6)
             .padding([.leading, .trailing], 11)
             .foregroundColor(isSelected ? Color.white : Color(uiColor: UserDefaults.shared.accentColor.primary.color))
-            .background(isSelected ? Color(uiColor: UserDefaults.shared.accentColor.primary.color) : Color
-                .white)
-            .cornerRadius(40)
-            .overlay(
-                RoundedRectangle(cornerRadius: 30)
-                    .stroke(Color(uiColor: UserDefaults.shared.accentColor.primary.color), lineWidth: 1)
-            )
+            .background(isSelected
+                ? Color(uiColor: UserDefaults.shared.accentColor.primary.color)
+                : MailResourcesAsset.backgroundColor.swiftUiColor)
+                .cornerRadius(40)
+                .overlay(
+                    RoundedRectangle(cornerRadius: 30)
+                        .stroke(Color(uiColor: UserDefaults.shared.accentColor.primary.color), lineWidth: 1)
+                )
     }
 }
 
