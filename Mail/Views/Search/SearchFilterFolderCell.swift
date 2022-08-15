@@ -50,33 +50,31 @@ struct SearchFilterFolderCell: View {
     }
 
     var body: some View {
-        HStack(spacing: 11) {
-            if isSelected {
-                Image(uiImage: MailResourcesAsset.check.image)
+        Menu {
+            Picker(selection: $selectedFolderId, label: EmptyView()) {
+                Text(allFoldersItem.name)
+                    .tag(allFoldersItem.id)
+                ForEach(sortedFolders) { folder in
+                    HStack {
+                        folder.icon
+                        Text(folder.formattedPath)
+                    }
+                    .tag(folder.id)
+                }
+                .font(MailTextStyle.body.font)
+            }
+        } label: {
+            HStack(spacing: 11) {
+                if isSelected {
+                    Image(uiImage: MailResourcesAsset.check.image)
+                        .resizable()
+                        .frame(width: 13, height: 13)
+                }
+                Text(selectedFolderName)
+                Image(uiImage: MailResourcesAsset.arrowDown.image)
                     .resizable()
                     .frame(width: 13, height: 13)
             }
-            Menu {
-                Picker(selection: $selectedFolderId, label: EmptyView()) {
-                    Text(allFoldersItem.name)
-                        .tag(allFoldersItem.id)
-                    ForEach(sortedFolders) { folder in
-                        HStack {
-                            folder.icon
-                            Text(folder.formattedPath)
-                        }
-                        .tag(folder.id)
-                    }
-                    .font(MailTextStyle.body.font)
-                }
-
-            } label: {
-                Text(selectedFolderName)
-            }
-
-            Image(uiImage: MailResourcesAsset.arrowDown.image)
-                .resizable()
-                .frame(width: 13, height: 13)
         }
         .filterCellStyle(isSelected: isSelected)
     }
