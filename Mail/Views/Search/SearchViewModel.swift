@@ -151,10 +151,12 @@ enum SearchFieldValueType: String {
     }
 
     func updateSelection(filter: SearchFilter) {
-        if selectedFilters.contains(filter) {
-            unselect(filter: filter)
-        } else {
-            select(filter: filter)
+        withAnimation {
+            if selectedFilters.contains(filter) {
+                unselect(filter: filter)
+            } else {
+                select(filter: filter)
+            }
         }
 
         Task {

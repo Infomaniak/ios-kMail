@@ -51,7 +51,7 @@ struct SearchFilterFolderCell: View {
 
     var body: some View {
         Menu {
-            Picker(selection: $selectedFolderId, label: EmptyView()) {
+            Picker(selection: $selectedFolderId.animation(), label: EmptyView()) {
                 Text(allFoldersItem.name)
                     .tag(allFoldersItem.id)
                 ForEach(sortedFolders) { folder in
