@@ -107,9 +107,13 @@ enum SearchFieldValueType: String {
     }
 
     func initSearch() {
+        clearSearchValue()
+        selectedFilters = []
+    }
+
+    func clearSearchValue() {
         searchFolder = mailboxManager.cleanSearchFolder()
         searchValue = ""
-        selectedFilters = []
         threads = []
         contacts = []
     }

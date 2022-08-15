@@ -151,6 +151,8 @@ struct SearchView: View {
                     Task {
                         await viewModel.fetchThreads()
                     }
+                } onDelete: {
+                    viewModel.clearSearchValue()
                 }
             }
         }

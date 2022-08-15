@@ -22,6 +22,7 @@ import SwiftUI
 struct SearchTextField: View {
     @Binding public var value: String
     public var onSubmit: () -> Void
+    public var onDelete: () -> Void
 
     var body: some View {
         HStack(spacing: 10) {
@@ -44,7 +45,7 @@ struct SearchTextField: View {
                     .padding(.vertical, 11)
 
             Button {
-                value = ""
+                onDelete()
             } label: {
                 Image(uiImage: MailResourcesAsset.plus.image)
                     .rotationEffect(Angle(degrees: 45))
@@ -61,6 +62,6 @@ struct SearchTextField: View {
 
 struct SearchTextField_Previews: PreviewProvider {
     static var previews: some View {
-        SearchTextField(value: .constant("Recherche"), onSubmit: { /* Empty on purpose */ })
+        SearchTextField(value: .constant("Recherche"), onSubmit: { /* Empty on purpose */ }, onDelete: { /* Empty on purpose */ })
     }
 }
