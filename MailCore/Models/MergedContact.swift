@@ -37,9 +37,9 @@ public class MergedContact {
 
     public lazy var name: String = {
         if let local = local, let localName = contactFormatter.string(from: local) {
-            return localName
+            return localName.removePunctuation
         }
-        return remote?.name ?? ""
+        return remote?.name.removePunctuation ?? ""
     }()
 
     public lazy var favorite: Bool? = remote?.favorite

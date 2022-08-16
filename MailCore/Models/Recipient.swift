@@ -39,7 +39,7 @@ public class Recipient: EmbeddedObject, Codable {
         if isCurrentUser {
             return MailResourcesStrings.Localizable.contactMe
         }
-        return contact?.name ?? (name.isEmpty ? email : name)
+        return contact?.name.removePunctuation ?? (name.isEmpty ? email : name.removePunctuation)
     }
 
     public var color: Color {
@@ -51,6 +51,7 @@ public class Recipient: EmbeddedObject, Codable {
 
     public var initials: String {
         return (contact?.name ?? name)
+            .removePunctuation
             .components(separatedBy: .whitespaces)
             .compactMap(\.first)
             .prefix(2)
