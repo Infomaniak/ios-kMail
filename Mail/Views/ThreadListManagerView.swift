@@ -19,12 +19,12 @@
 import MailCore
 import SwiftUI
 
-public class ThreadListManager: ObservableObject {
+public class SplitViewManager: ObservableObject {
     @Published var showSearch = false
 }
 
 struct ThreadListManagerView: View {
-    @EnvironmentObject var threadListManager: ThreadListManager
+    @EnvironmentObject var splitViewManager: SplitViewManager
     var mailboxManager: MailboxManager
     @Binding var currentFolder: Folder?
 
@@ -37,7 +37,7 @@ struct ThreadListManagerView: View {
     }
 
     var body: some View {
-        if threadListManager.showSearch {
+        if splitViewManager.showSearch {
             SearchView(
                 mailboxManager: mailboxManager,
                 folder: $currentFolder,

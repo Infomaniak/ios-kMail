@@ -25,7 +25,7 @@ import SwiftUI
 struct SearchView: View {
     @StateObject var viewModel: SearchViewModel
 
-    @EnvironmentObject var threadListManager: ThreadListManager
+    @EnvironmentObject var splitViewManager: SplitViewManager
     @EnvironmentObject var menuSheet: MenuSheet
     @EnvironmentObject var globalBottomSheet: GlobalBottomSheet
 
@@ -152,7 +152,7 @@ struct SearchView: View {
             ToolbarItem(placement: .navigation) {
                 if isCompact {
                     Button {
-                        threadListManager.showSearch = false
+                        splitViewManager.showSearch = false
                     } label: {
                         Image(uiImage: MailResourcesAsset.arrowLeft.image)
                     }

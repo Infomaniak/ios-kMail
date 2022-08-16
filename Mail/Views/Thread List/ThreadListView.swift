@@ -49,7 +49,7 @@ class ThreadBottomSheet: BottomSheetState<ThreadBottomSheet.State, ThreadBottomS
 struct ThreadListView: View {
     @StateObject var viewModel: ThreadListViewModel
 
-    @EnvironmentObject var threadListManager: ThreadListManager
+    @EnvironmentObject var splitViewManager: SplitViewManager
     @EnvironmentObject var menuSheet: MenuSheet
     @EnvironmentObject var globalBottomSheet: GlobalBottomSheet
 
@@ -169,7 +169,7 @@ struct ThreadListView: View {
             networkMonitor.start()
             viewModel.selectedThread = nil
             viewModel.globalBottomSheet = globalBottomSheet
-            threadListManager.showSearch = false
+            splitViewManager.showSearch = false
         }
         .onChange(of: currentFolder) { newFolder in
             guard isCompact, let folder = newFolder else { return }
@@ -252,7 +252,7 @@ private struct ThreadListNavigationBar: ViewModifier {
 
     @Binding var observeThread: Bool
 
-    @EnvironmentObject var threadListManager: ThreadListManager
+    @EnvironmentObject var splitViewManager: SplitViewManager
     @EnvironmentObject var menuSheet: MenuSheet
     @EnvironmentObject var navigationDrawerController: NavigationDrawerController
 
@@ -271,7 +271,7 @@ private struct ThreadListNavigationBar: ViewModifier {
 
                 ToolbarItemGroup(placement: .navigationBarTrailing) {
                     Button {
-                        threadListManager.showSearch = true
+                        splitViewManager.showSearch = true
                     } label: {
                         Image(resource: MailResourcesAsset.search)
                     }

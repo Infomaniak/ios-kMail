@@ -65,7 +65,7 @@ struct SplitView: View {
     @StateObject private var bottomSheet = GlobalBottomSheet()
     @StateObject private var alert = GlobalAlert()
 
-    @StateObject private var threadListManager = ThreadListManager()
+    @StateObject private var splitViewManager = SplitViewManager()
 
     private let bottomSheetOptions = Constants.bottomSheetOptions + [.absolutePositionValue, .notResizeable]
 
@@ -126,7 +126,7 @@ struct SplitView: View {
                 }
             }
         }
-        .environmentObject(threadListManager)
+        .environmentObject(splitViewManager)
         .environmentObject(menuSheet)
         .environmentObject(navigationDrawerController)
         .defaultAppStorage(.shared)
