@@ -26,8 +26,4 @@ public extension String {
             return components(separatedBy: CharacterSet.punctuationCharacters).joined(separator: "")
         }
     }
-
-    var splitEmail: [Self.SubSequence] {
-        return split(separator: "@")
-    }
 }

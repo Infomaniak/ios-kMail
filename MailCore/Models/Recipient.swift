@@ -50,14 +50,18 @@ public class Recipient: EmbeddedObject, Codable {
     }
 
     public var initials: String {
-        return (contact?.name ?? name)
+        let nameInitials = (contact?.name ?? name)
             .removePunctuation
             .components(separatedBy: .whitespaces)
             .compactMap(\.first)
-            .prefix(2)
-            .map { "\($0)" }
-            .joined()
-            .uppercased()
+        guard let firstLetter = nameInitials.first else {
+            return ""
+        }
+        if let secondLetter = nameInitials.last, nameInitials.count > 1  {
+            return [firstLetter, secondLetter].map { "\($0)" }.joined().uppercased()
+        } else {
+            return [firstLetter].map { "\($0)" }.joined().uppercased()
+        }
     }
 
     public var contact: MergedContact? {
