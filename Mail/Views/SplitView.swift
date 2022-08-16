@@ -65,6 +65,8 @@ struct SplitView: View {
     @StateObject private var bottomSheet = GlobalBottomSheet()
     @StateObject private var alert = GlobalAlert()
 
+    @StateObject private var threadListManager = ThreadListManager()
+
     private let bottomSheetOptions = Constants.bottomSheetOptions + [.absolutePositionValue, .notResizeable]
 
     var isCompact: Bool {
@@ -81,7 +83,7 @@ struct SplitView: View {
             if isCompact {
                 ZStack {
                     NavigationView {
-                        ThreadListView(
+                        ThreadListManagerView(
                             mailboxManager: mailboxManager,
                             folder: $selectedFolder,
                             isCompact: isCompact
@@ -114,7 +116,7 @@ struct SplitView: View {
                     )
                     .navigationBarHidden(true)
 
-                    ThreadListView(
+                    ThreadListManagerView(
                         mailboxManager: mailboxManager,
                         folder: $selectedFolder,
                         isCompact: isCompact
@@ -124,6 +126,7 @@ struct SplitView: View {
                 }
             }
         }
+        .environmentObject(threadListManager)
         .environmentObject(menuSheet)
         .environmentObject(navigationDrawerController)
         .defaultAppStorage(.shared)
@@ -156,7 +159,11 @@ struct SplitView: View {
             case .newMessage:
                 NewMessageView(isPresented: $menuSheet.isShowing, mailboxManager: mailboxManager)
             case let .reply(message, replyMode):
-                NewMessageView(isPresented: $menuSheet.isShowing, mailboxManager: mailboxManager, draft: .replying(to: message, mode: replyMode))
+                NewMessageView(
+                    isPresented: $menuSheet.isShowing,
+                    mailboxManager: mailboxManager,
+                    draft: .replying(to: message, mode: replyMode)
+                )
             case let .editMessage(draft):
                 NewMessageView(isPresented: $menuSheet.isShowing, mailboxManager: mailboxManager, draft: draft.asUnmanaged())
             case .manageAccount:

@@ -16,32 +16,33 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import Introspect
 import MailCore
 import MailResources
 import RealmSwift
 import SwiftUI
 
 struct SearchView: View {
-    @ObservedObject var viewModel: SearchViewModel
+    @StateObject var viewModel: SearchViewModel
 
+    @EnvironmentObject var threadListManager: ThreadListManager
     @EnvironmentObject var menuSheet: MenuSheet
     @EnvironmentObject var globalBottomSheet: GlobalBottomSheet
 
     @AppStorage(UserDefaults.shared.key(.threadDensity)) var threadDensity = ThreadDensity.normal
 
     @StateObject var bottomSheet: ThreadBottomSheet
-    @Binding var navigationController: UINavigationController?
-
-    @Binding var observeThread: Bool
+    @State private var navigationController: UINavigationController?
 
     private let bottomSheetOptions = Constants.bottomSheetOptions + [.appleScrollBehavior]
 
-    init(viewModel: SearchViewModel, observeThread: Binding<Bool>, navigationController: Binding<UINavigationController?>) {
+    let isCompact: Bool
+
+    init(mailboxManager: MailboxManager, folder: Binding<Folder?>, isCompact: Bool) {
         let threadBottomSheet = ThreadBottomSheet()
         _bottomSheet = StateObject(wrappedValue: threadBottomSheet)
-        self.viewModel = viewModel
-        _observeThread = observeThread
-        _navigationController = navigationController
+        _viewModel = StateObject(wrappedValue: SearchViewModel(mailboxManager: mailboxManager, folder: folder.wrappedValue))
+        self.isCompact = isCompact
     }
 
     var body: some View {
@@ -97,6 +98,9 @@ struct SearchView: View {
 
             Spacer()
         }
+        .introspectNavigationController { navigationController in
+            self.navigationController = navigationController
+        }
         .bottomSheet(bottomSheetPosition: $bottomSheet.position, options: bottomSheetOptions) {
             switch bottomSheet.state {
             case let .actions(target):
@@ -120,7 +124,6 @@ struct SearchView: View {
         .onDisappear {
             if viewModel.selectedThread == nil {
                 viewModel.observeSearch = false
-                observeThread = true
             }
         }
         .onAppear {
@@ -146,6 +149,18 @@ struct SearchView: View {
             navigationController?.navigationBar.scrollEdgeAppearance = nil
         }
         .toolbar {
+            ToolbarItem(placement: .navigation) {
+                if isCompact {
+                    Button {
+                        threadListManager.showSearch = false
+                    } label: {
+                        Image(uiImage: MailResourcesAsset.arrowLeft.image)
+                    }
+                } else {
+                    EmptyView()
+                }
+            }
+
             ToolbarItem(placement: .principal) {
                 SearchTextField(value: $viewModel.searchValue) {
                     Task {
@@ -269,10 +284,6 @@ struct SearchView: View {
 
 struct SearchView_Previews: PreviewProvider {
     static var previews: some View {
-        SearchView(
-            viewModel: SearchViewModel(folder: nil),
-            observeThread: .constant(true),
-            navigationController: .constant(nil)
-        )
+        SearchView(mailboxManager: PreviewHelper.sampleMailboxManager, folder: .constant(PreviewHelper.sampleFolder), isCompact: true)
     }
 }

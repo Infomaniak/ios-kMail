@@ -45,7 +45,7 @@ enum SearchFieldValueType: String {
         }
     }
 
-    public var realFolder: Folder?
+    @Published public var realFolder: Folder?
     public var lastSearchFolderId: String?
     @Published public var selectedSearchFolderId = "" {
         didSet {
@@ -86,9 +86,8 @@ enum SearchFieldValueType: String {
         }
     }
 
-    init(folder: Folder?) {
-        // TODO: - change init from mailboxManager and contactManager
-        mailboxManager = AccountManager.instance.currentMailboxManager!
+    init(mailboxManager: MailboxManager, folder: Folder?) {
+        self.mailboxManager = mailboxManager
 
         searchHistory = mailboxManager.searchHistory()
         realFolder = folder
