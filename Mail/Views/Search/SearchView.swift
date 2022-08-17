@@ -71,7 +71,7 @@ struct SearchView: View {
             .padding(.top, 32)
 
             List {
-                if viewModel.threads.isEmpty && viewModel.contacts.isEmpty {
+                if viewModel.threads.isEmpty && viewModel.contacts.isEmpty && !viewModel.isLoadingPage {
                     if !viewModel.searchHistory.history.isEmpty {
                         searchHistoryList(history: viewModel.searchHistory)
                     }

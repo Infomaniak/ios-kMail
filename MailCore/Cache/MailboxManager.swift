@@ -443,6 +443,7 @@ public class MailboxManager: ObservableObject {
         if let folder = realm.object(ofType: Folder.self, forPrimaryKey: Constants.searchFolderId) {
             try? realm.safeWrite {
                 realm.delete(folder.threads.where { $0.fromSearch == true })
+                folder.threads.removeAll()
             }
             return folder
         } else {

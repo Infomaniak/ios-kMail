@@ -206,6 +206,9 @@ enum SearchFieldValueType: String {
             return
         }
 
+        searchFolder = mailboxManager.cleanSearchFolder()
+        observeSearch = true
+        
         isLoadingPage = true
 
         var folderToSearch: String = realFolder.id
@@ -214,9 +217,6 @@ enum SearchFieldValueType: String {
             folderToSearch = selectedSearchFolderId
             lastSearchFolderId = selectedSearchFolderId
         }
-
-        searchFolder = mailboxManager.cleanSearchFolder()
-        observeSearch = true
 
         await tryOrDisplayError {
             let result = try await mailboxManager.searchThreads(
@@ -248,7 +248,6 @@ enum SearchFieldValueType: String {
                 from: resource,
                 searchFilter: searchFilters
             )
-            threads.append(contentsOf: threadResult.threads ?? [])
             resourceNext = threadResult.resourceNext
         }
         isLoadingPage = false
