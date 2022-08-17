@@ -99,7 +99,22 @@ struct SearchView: View {
             Spacer()
         }
         .introspectNavigationController { navigationController in
-            self.navigationController = navigationController
+            let newNavController = navigationController
+            // Style toolbar
+            let appereance = UIToolbarAppearance()
+            appereance.configureWithOpaqueBackground()
+            appereance.backgroundColor = MailResourcesAsset.backgroundToolbarColor.color
+            appereance.shadowColor = .clear
+            UIToolbar.appearance().standardAppearance = appereance
+            UIToolbar.appearance().scrollEdgeAppearance = appereance
+            newNavController.toolbar.barTintColor = .white
+            newNavController.toolbar.setShadowImage(UIImage(), forToolbarPosition: .any)
+            // Style navigation bar
+            let appearance = UINavigationBarAppearance()
+            appearance.configureWithDefaultBackground()
+            newNavController.navigationBar.standardAppearance = appearance
+            newNavController.navigationBar.scrollEdgeAppearance = nil
+            self.navigationController = newNavController
         }
         .bottomSheet(bottomSheetPosition: $bottomSheet.position, options: bottomSheetOptions) {
             switch bottomSheet.state {
@@ -133,20 +148,6 @@ struct SearchView: View {
             viewModel.selectedThread = nil
 
             MatomoUtils.track(view: ["SearchView"])
-            // Style toolbar
-            let appereance = UIToolbarAppearance()
-            appereance.configureWithOpaqueBackground()
-            appereance.backgroundColor = MailResourcesAsset.backgroundToolbarColor.color
-            appereance.shadowColor = .clear
-            UIToolbar.appearance().standardAppearance = appereance
-            UIToolbar.appearance().scrollEdgeAppearance = appereance
-            navigationController?.toolbar.barTintColor = .white
-            navigationController?.toolbar.setShadowImage(UIImage(), forToolbarPosition: .any)
-            // Style navigation bar
-            let appearance = UINavigationBarAppearance()
-            appearance.configureWithDefaultBackground()
-            navigationController?.navigationBar.standardAppearance = appearance
-            navigationController?.navigationBar.scrollEdgeAppearance = nil
         }
         .toolbar {
             ToolbarItem(placement: .navigation) {
