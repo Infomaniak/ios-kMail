@@ -57,7 +57,7 @@ public class Recipient: EmbeddedObject, Codable {
         guard let firstLetter = nameInitials.first else {
             return ""
         }
-        if let secondLetter = nameInitials.last, nameInitials.count > 1  {
+        if let secondLetter = nameInitials.last, nameInitials.count > 1 {
             return [firstLetter, secondLetter].map { "\($0)" }.joined().uppercased()
         } else {
             return [firstLetter].map { "\($0)" }.joined().uppercased()
