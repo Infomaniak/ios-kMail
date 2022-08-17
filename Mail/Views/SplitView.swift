@@ -55,6 +55,10 @@ class GlobalAlert: SheetState<GlobalAlert.State> {
 public class SplitViewManager: ObservableObject {
     @Published var showSearch = false
     @Published var selectedFolder: Folder?
+
+    init(folder: Folder?) {
+        selectedFolder = folder
+    }
 }
 
 struct SplitView: View {
@@ -69,7 +73,7 @@ struct SplitView: View {
     @StateObject private var bottomSheet = GlobalBottomSheet()
     @StateObject private var alert = GlobalAlert()
 
-    @StateObject private var splitViewManager = SplitViewManager()
+    @StateObject private var splitViewManager: SplitViewManager
 
     private let bottomSheetOptions = Constants.bottomSheetOptions + [.absolutePositionValue, .notResizeable]
 
@@ -79,6 +83,8 @@ struct SplitView: View {
 
     init(mailboxManager: MailboxManager) {
         self.mailboxManager = mailboxManager
+        _splitViewManager =
+            StateObject(wrappedValue: SplitViewManager(folder: mailboxManager.getFolder(with: .inbox, shouldRefresh: true)))
     }
 
     var body: some View {
@@ -130,7 +136,6 @@ struct SplitView: View {
         .environmentObject(navigationDrawerController)
         .defaultAppStorage(.shared)
         .onAppear {
-            splitViewManager.selectedFolder = getInbox()
             navigationDrawerController.window = window
         }
         .task {
