@@ -55,8 +55,6 @@ struct ThreadListView: View {
 
     @AppStorage(UserDefaults.shared.key(.threadDensity)) var threadDensity = ThreadDensity.normal
 
-    @Binding var currentFolder: Folder?
-
     @State private var avatarImage = Image(resource: MailResourcesAsset.placeholderAvatar)
     @StateObject var bottomSheet: ThreadBottomSheet
     @StateObject private var networkMonitor = NetworkMonitor()
@@ -66,13 +64,12 @@ struct ThreadListView: View {
 
     private let bottomSheetOptions = Constants.bottomSheetOptions + [.appleScrollBehavior]
 
-    init(mailboxManager: MailboxManager, folder: Binding<Folder?>, isCompact: Bool) {
+    init(mailboxManager: MailboxManager, folder: Folder?, isCompact: Bool) {
         let threadBottomSheet = ThreadBottomSheet()
         _bottomSheet = StateObject(wrappedValue: threadBottomSheet)
         _viewModel = StateObject(wrappedValue: ThreadListViewModel(mailboxManager: mailboxManager,
-                                                                   folder: folder.wrappedValue,
+                                                                   folder: folder,
                                                                    bottomSheet: threadBottomSheet))
-        _currentFolder = folder
         self.isCompact = isCompact
 
         UITableViewCell.appearance().focusEffect = .none
@@ -83,9 +80,9 @@ struct ThreadListView: View {
             ThreadListHeader(isConnected: $networkMonitor.isConnected,
                              lastUpdate: $viewModel.lastUpdate,
                              unreadCount: Binding(get: {
-                                 currentFolder?.unreadCount
+                                 splitViewManager.selectedFolder?.unreadCount
                              }, set: { value in
-                                 currentFolder?.unreadCount = value
+                                 splitViewManager.selectedFolder?.unreadCount = value
                              }),
                              unreadFilterOn: $viewModel.filterUnreadOn)
 
@@ -137,7 +134,6 @@ struct ThreadListView: View {
         }
         .modifier(ThreadListNavigationBar(
             isCompact: isCompact,
-            folder: $viewModel.folder,
             avatarImage: $avatarImage,
             observeThread: $viewModel.observeThread,
             navigationController: $navigationController
@@ -169,9 +165,8 @@ struct ThreadListView: View {
             networkMonitor.start()
             viewModel.selectedThread = nil
             viewModel.globalBottomSheet = globalBottomSheet
-            splitViewManager.showSearch = false
         }
-        .onChange(of: currentFolder) { newFolder in
+        .onChange(of: splitViewManager.selectedFolder) { newFolder in
             guard isCompact, let folder = newFolder else { return }
             viewModel.updateThreads(with: folder)
         }
@@ -179,7 +174,7 @@ struct ThreadListView: View {
             if let account = AccountManager.instance.currentAccount {
                 avatarImage = await account.user.getAvatar()
             }
-            if let folder = currentFolder {
+            if let folder = splitViewManager.selectedFolder {
                 viewModel.updateThreads(with: folder)
             }
         }
@@ -191,7 +186,7 @@ struct ThreadListView: View {
     func threadList(threads: [Thread]) -> some View {
         ForEach(threads) { thread in
             Group {
-                if currentFolder?.role == .draft {
+                if splitViewManager.selectedFolder?.role == .draft {
                     Button(action: {
                         editDraft(from: thread)
                     }, label: {
@@ -246,8 +241,6 @@ struct ThreadListView: View {
 
 private struct ThreadListNavigationBar: ViewModifier {
     var isCompact: Bool
-
-    @Binding var folder: Folder?
     @Binding var avatarImage: Image
 
     @Binding var observeThread: Bool
@@ -260,10 +253,10 @@ private struct ThreadListNavigationBar: ViewModifier {
 
     func body(content: Content) -> some View {
         content
-            .navigationBarTitle(folder?.localizedName ?? "", displayMode: .inline)
+            .navigationBarTitle(splitViewManager.selectedFolder?.localizedName ?? "", displayMode: .inline)
             .toolbar {
                 ToolbarItem(placement: .principal) {
-                    Text(folder?.localizedName ?? "")
+                    Text(splitViewManager.selectedFolder?.localizedName ?? "")
                         .frame(maxWidth: .infinity, alignment: .leading)
                         .textStyle(.header1)
                         .padding(.leading, 8)
@@ -358,7 +351,7 @@ struct ThreadListView_Previews: PreviewProvider {
     static var previews: some View {
         ThreadListView(
             mailboxManager: PreviewHelper.sampleMailboxManager,
-            folder: .constant(PreviewHelper.sampleFolder),
+            folder: PreviewHelper.sampleFolder,
             isCompact: false
         )
         .environmentObject(MenuSheet())

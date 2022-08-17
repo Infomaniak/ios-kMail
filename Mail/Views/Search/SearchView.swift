@@ -38,10 +38,10 @@ struct SearchView: View {
 
     let isCompact: Bool
 
-    init(mailboxManager: MailboxManager, folder: Binding<Folder?>, isCompact: Bool) {
+    init(mailboxManager: MailboxManager, folder: Folder?, isCompact: Bool) {
         let threadBottomSheet = ThreadBottomSheet()
         _bottomSheet = StateObject(wrappedValue: threadBottomSheet)
-        _viewModel = StateObject(wrappedValue: SearchViewModel(mailboxManager: mailboxManager, folder: folder.wrappedValue))
+        _viewModel = StateObject(wrappedValue: SearchViewModel(mailboxManager: mailboxManager, folder: folder))
         self.isCompact = isCompact
     }
 
@@ -284,6 +284,6 @@ struct SearchView: View {
 
 struct SearchView_Previews: PreviewProvider {
     static var previews: some View {
-        SearchView(mailboxManager: PreviewHelper.sampleMailboxManager, folder: .constant(PreviewHelper.sampleFolder), isCompact: true)
+        SearchView(mailboxManager: PreviewHelper.sampleMailboxManager, folder: PreviewHelper.sampleFolder, isCompact: true)
     }
 }

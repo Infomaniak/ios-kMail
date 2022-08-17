@@ -24,14 +24,12 @@ import SwiftUI
 struct RoleFoldersListView: View {
     @ObservedResults(Folder.self) var folders
 
-    @Binding var selectedFolder: Folder?
-
     var isCompact: Bool
 
     var body: some View {
         VStack(spacing: 0) {
             ForEach(Array(folders.filter { $0.role != nil }).sorted()) { folder in
-                FolderCell(folder: folder, selectedFolder: $selectedFolder, isCompact: isCompact)
+                FolderCell(folder: folder, isCompact: isCompact)
 
                 if folder.role == .inbox {
                     IKDivider(withPadding: true)

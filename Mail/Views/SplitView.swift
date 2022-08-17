@@ -52,9 +52,13 @@ class GlobalAlert: SheetState<GlobalAlert.State> {
     }
 }
 
+public class SplitViewManager: ObservableObject {
+    @Published var showSearch = false
+    @Published var selectedFolder: Folder?
+}
+
 struct SplitView: View {
     @ObservedObject var mailboxManager: MailboxManager
-    @State var selectedFolder: Folder?
     @State var splitViewController: UISplitViewController?
     @StateObject private var navigationDrawerController = NavigationDrawerController()
 
@@ -75,7 +79,6 @@ struct SplitView: View {
 
     init(mailboxManager: MailboxManager) {
         self.mailboxManager = mailboxManager
-        _selectedFolder = State(wrappedValue: getInbox())
     }
 
     var body: some View {
@@ -85,7 +88,6 @@ struct SplitView: View {
                     NavigationView {
                         ThreadListManagerView(
                             mailboxManager: mailboxManager,
-                            folder: $selectedFolder,
                             isCompact: isCompact
                         )
                     }
@@ -100,7 +102,6 @@ struct SplitView: View {
 
                         NavigationDrawer(
                             mailboxManager: mailboxManager,
-                            folder: $selectedFolder,
                             isCompact: isCompact
                         )
                     }
@@ -110,7 +111,6 @@ struct SplitView: View {
                 NavigationView {
                     MenuDrawerView(
                         mailboxManager: mailboxManager,
-                        selectedFolder: $selectedFolder,
                         showMailboxes: .constant(false),
                         isCompact: isCompact
                     )
@@ -118,7 +118,6 @@ struct SplitView: View {
 
                     ThreadListManagerView(
                         mailboxManager: mailboxManager,
-                        folder: $selectedFolder,
                         isCompact: isCompact
                     )
 
@@ -131,6 +130,7 @@ struct SplitView: View {
         .environmentObject(navigationDrawerController)
         .defaultAppStorage(.shared)
         .onAppear {
+            splitViewManager.selectedFolder = getInbox()
             navigationDrawerController.window = window
         }
         .task {
@@ -139,8 +139,8 @@ struct SplitView: View {
         .task {
             await fetchFolders()
             // On first launch, select inbox
-            if selectedFolder == nil {
-                selectedFolder = getInbox()
+            if splitViewManager.selectedFolder == nil {
+                splitViewManager.selectedFolder = getInbox()
             }
         }
         .onRotate { orientation in

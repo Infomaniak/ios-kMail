@@ -19,20 +19,14 @@
 import MailCore
 import SwiftUI
 
-public class SplitViewManager: ObservableObject {
-    @Published var showSearch = false
-}
-
 struct ThreadListManagerView: View {
     @EnvironmentObject var splitViewManager: SplitViewManager
     var mailboxManager: MailboxManager
-    @Binding var currentFolder: Folder?
 
     let isCompact: Bool
 
-    init(mailboxManager: MailboxManager, folder: Binding<Folder?>, isCompact: Bool) {
+    init(mailboxManager: MailboxManager, isCompact: Bool) {
         self.mailboxManager = mailboxManager
-        _currentFolder = folder
         self.isCompact = isCompact
     }
 
@@ -40,17 +34,16 @@ struct ThreadListManagerView: View {
         if splitViewManager.showSearch {
             SearchView(
                 mailboxManager: mailboxManager,
-                folder: $currentFolder,
+                folder: splitViewManager.selectedFolder,
                 isCompact: isCompact
             )
         } else {
             ThreadListView(
                 mailboxManager: mailboxManager,
-                folder: $currentFolder,
+                folder: splitViewManager.selectedFolder,
                 isCompact: isCompact
             )
         }
-            
     }
 }
 
@@ -58,7 +51,6 @@ struct ThreadListManagerView_Previews: PreviewProvider {
     static var previews: some View {
         ThreadListManagerView(
             mailboxManager: PreviewHelper.sampleMailboxManager,
-            folder: .constant(PreviewHelper.sampleFolder),
             isCompact: false
         )
     }
