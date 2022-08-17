@@ -167,7 +167,7 @@ enum SearchFieldValueType: String {
         isLoadingPage = true
 
         var filter: Filter = .all
-        var folderToSearch: String = realFolder.id
+        var folderToSearch = realFolder.id
 
         var searchFilters: [URLQueryItem] = []
         if !searchValue.isEmpty {
