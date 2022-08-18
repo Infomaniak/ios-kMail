@@ -38,7 +38,7 @@ struct MessageHeaderView: View {
                                      isMessageExpanded: $isMessageExpanded,
                                      isHeaderExpanded: $isHeaderExpanded,
                                      deleteDraftTapped: deleteDraft) {
-                sheet.state = .reply(message, .reply)
+                bottomSheet.open(state: .replyOption(message, isThread: false), position: .replyHeight)
             } moreButtonTapped: {
                 threadBottomSheet.open(state: .actions(.message(message.thaw() ?? message)), position: .middle)
             }
@@ -62,7 +62,10 @@ struct MessageHeaderView: View {
 
     private func openContact(recipient: Recipient) {
         let isRemoteContact = AccountManager.instance.currentContactManager?.getContact(for: recipient.email)?.remote != nil
-        bottomSheet.open(state: .contact(recipient, isRemote: isRemoteContact), position: isRemoteContact ? .remoteContactHeight : .defaultHeight)
+        bottomSheet.open(
+            state: .contact(recipient, isRemote: isRemoteContact),
+            position: isRemoteContact ? .remoteContactHeight : .defaultHeight
+        )
     }
 
     private func editDraft() {
