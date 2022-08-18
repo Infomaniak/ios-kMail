@@ -211,7 +211,7 @@ enum SearchFieldValueType: String {
         
         isLoadingPage = true
 
-        var folderToSearch: String = realFolder.id
+        var folderToSearch = realFolder.id
 
         if selectedFilters.contains(.folder) {
             folderToSearch = selectedSearchFolderId
