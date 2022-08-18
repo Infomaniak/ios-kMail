@@ -208,7 +208,7 @@ enum SearchFieldValueType: String {
 
         searchFolder = mailboxManager.cleanSearchFolder()
         observeSearch = true
-        
+
         isLoadingPage = true
 
         var folderToSearch = realFolder.id

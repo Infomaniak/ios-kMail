@@ -451,10 +451,8 @@ public class MailboxManager: ObservableObject {
         }
     }
 
-    public func searchThreads(searchFolder: Folder, filterFolderId: String, filter: Filter = .all,
+    public func searchThreads(@ThreadSafe searchFolder: Folder?, filterFolderId: String, filter: Filter = .all,
                               searchFilter: [URLQueryItem] = []) async throws -> ThreadResult {
-        let realm = getRealm()
-
         let threadResult = try await apiFetcher.threads(
             mailbox: mailbox,
             folderId: filterFolderId,
@@ -462,31 +460,33 @@ public class MailboxManager: ObservableObject {
             searchFilter: searchFilter
         )
 
-        DispatchQueue.main.async {
-            for thread in threadResult.threads ?? [] {
-                if realm.object(ofType: Thread.self, forPrimaryKey: thread.uid) == nil {
-                    thread.fromSearch = true
-                }
+        let realm = getRealm()
+        for thread in threadResult.threads ?? [] {
+            if realm.object(ofType: Thread.self, forPrimaryKey: thread.uid) == nil {
+                thread.fromSearch = true
             }
-            self.saveThreads(result: threadResult, parent: searchFolder)
+        }
+
+        if let searchFolder = searchFolder {
+            saveThreads(result: threadResult, parent: searchFolder)
         }
 
         return threadResult
     }
 
-    public func searchThreads(searchFolder: Folder, from resource: String,
+    public func searchThreads(@ThreadSafe searchFolder: Folder?, from resource: String,
                               searchFilter: [URLQueryItem] = []) async throws -> ThreadResult {
-        let realm = getRealm()
-
         let threadResult = try await apiFetcher.threads(from: resource, searchFilter: searchFilter)
 
-        DispatchQueue.main.async {
-            for thread in threadResult.threads ?? [] {
-                if realm.object(ofType: Thread.self, forPrimaryKey: thread.uid) == nil {
-                    thread.fromSearch = true
-                }
+        let realm = getRealm()
+        for thread in threadResult.threads ?? [] {
+            if realm.object(ofType: Thread.self, forPrimaryKey: thread.uid) == nil {
+                thread.fromSearch = true
             }
-            self.saveThreads(result: threadResult, parent: searchFolder)
+        }
+
+        if let searchFolder = searchFolder {
+            saveThreads(result: threadResult, parent: searchFolder)
         }
 
         return threadResult
