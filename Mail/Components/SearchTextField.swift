@@ -34,7 +34,7 @@ struct SearchTextField: View {
             }
             .foregroundColor(MailResourcesAsset.textFieldPlaceholderColor)
 
-            TextField("SearchField", text: $value)
+            TextField(MailResourcesStrings.Localizable.searchFieldPlaceholder, text: $value)
                 .textFieldStyle(DefaultTextFieldStyle())
                 .foregroundColor(value.isEmpty
                     ? MailResourcesAsset.textFieldPlaceholderColor

@@ -43,7 +43,7 @@ struct SearchFilterFolderCell: View {
         return selectedFolderId != allFoldersItem.id
     }
 
-    private var allFoldersItem = (id: "", name: "All folders", icon: MailResourcesAsset.folder.image)
+    private var allFoldersItem = (id: "", name: MailResourcesStrings.Localizable.searchFilterFolder, icon: MailResourcesAsset.folder.image)
 
     private var sortedFolders: [Folder] {
         return folders.sorted()
