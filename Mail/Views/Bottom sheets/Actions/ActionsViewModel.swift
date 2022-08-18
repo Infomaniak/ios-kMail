@@ -180,7 +180,7 @@ enum ActionsTarget: Equatable {
         case .archive:
             try await archive()
         case .forward:
-            try await reply(mode: .forward)
+            try await reply(mode: .forward([]))
         case .markAsRead, .markAsUnread:
             try await toggleRead()
         case .move:
@@ -279,6 +279,7 @@ enum ActionsTarget: Equatable {
     }
 
     private func reply(mode: ReplyMode) async throws {
+        var completeMode = mode
         switch target {
         case .threads:
             // We don't handle this action in multiple selection
@@ -289,10 +290,18 @@ enum ActionsTarget: Equatable {
             if !message.fullyDownloaded {
                 try await mailboxManager.message(message: message)
             }
+            if mode == .forward([]) {
+                let attachments = try await mailboxManager.apiFetcher.attachmentsToForward(mailbox: mailboxManager.mailbox, message: message).attachments
+                completeMode = .forward(attachments)
+            }
             message.realm?.refresh()
-            replyHandler(message, mode)
+            replyHandler(message, completeMode)
         case let .message(message):
-            replyHandler(message, mode)
+            if mode == .forward([]) {
+                let attachments = try await mailboxManager.apiFetcher.attachmentsToForward(mailbox: mailboxManager.mailbox, message: message).attachments
+                completeMode = .forward(attachments)
+            }
+            replyHandler(message, completeMode)
         }
     }
 

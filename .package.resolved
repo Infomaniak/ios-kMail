@@ -5,8 +5,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Alamofire/Alamofire",
       "state" : {
-        "revision" : "354dda32d89fc8cd4f5c46487f64957d355f53d8",
-        "version" : "5.6.1"
+        "revision" : "8dd85aee02e39dd280c75eef88ffdb86eed4b07b",
+        "version" : "5.6.2"
       }
     },
     {
@@ -14,8 +14,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/ProxymanApp/atlantis",
       "state" : {
-        "revision" : "2f3ec3fe240706fad46c15041b79506a73446cfa",
-        "version" : "1.18.0"
+        "revision" : "2b26bf7fe2c5751335dca015b9e77514210d28d4",
+        "version" : "1.18.2"
       }
     },
     {
@@ -51,7 +51,7 @@
       "location" : "https://github.com/Infomaniak/ios-core.git",
       "state" : {
         "branch" : "mail",
-        "revision" : "5b1ee6449f52024cb638ad24418bd35911b1a711"
+        "revision" : "a758fb199acef63f01f2fb0f0158f494747a6f9a"
       }
     },
     {
@@ -86,8 +86,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/matomo-org/matomo-sdk-ios.git",
       "state" : {
-        "revision" : "cea4a1cfcb05d49c5745801e05fff1cfed7a14e3",
-        "version" : "7.5.1"
+        "revision" : "15a645e11eaa8053f93749d73ced03da1e56fd01",
+        "version" : "7.5.2"
       }
     },
     {
@@ -104,8 +104,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/realm/realm-swift",
       "state" : {
-        "revision" : "fd279e0a94b46c5bd65b17e36817a4365c7a5482",
-        "version" : "10.28.2"
+        "revision" : "2d5d121f6cf08aa84eeb076b653131a23f1edd6b",
+        "version" : "10.28.3"
       }
     },
     {
@@ -113,8 +113,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/getsentry/sentry-cocoa",
       "state" : {
-        "revision" : "d312243b14225623d04cda5fd9d6564d4110d36c",
-        "version" : "7.19.0"
+        "revision" : "5bc31fd9bb476539387de7c6ff32acfaf2407157",
+        "version" : "7.23.0"
       }
     },
     {

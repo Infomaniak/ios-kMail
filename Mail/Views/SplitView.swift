@@ -109,6 +109,7 @@ struct SplitView: View {
                     MenuDrawerView(
                         mailboxManager: mailboxManager,
                         selectedFolder: $selectedFolder,
+                        showMailboxes: .constant(false),
                         isCompact: isCompact
                     )
                     .navigationBarHidden(true)
