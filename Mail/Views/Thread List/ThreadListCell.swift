@@ -31,6 +31,8 @@ extension ThreadDensity {
 }
 
 struct ThreadListCell: View {
+    @AppStorage(UserDefaults.shared.key(.threadDensity)) var density: ThreadDensity = .normal
+
     @ObservedObject var viewModel: ThreadListViewModel
     @ObservedObject var multipleSelectionViewModel: ThreadListMultipleSelectionViewModel
 
@@ -42,144 +44,160 @@ struct ThreadListCell: View {
     private var isInDraftFolder: Bool {
         viewModel.folder?.role == .draft
     }
-
-    private var isSelected: Bool {
-        multipleSelectionViewModel.selectedItems.map(\.id).contains(thread.id)
-    }
-
-    var body: some View {
-        ZStack {
-            if !isInDraftFolder {
-                NavigationLink(destination: destination, isActive: $shouldNavigateToThreadList) { EmptyView() }
-                    .opacity(0)
-                    .disabled(multipleSelectionViewModel.isEnabled)
-            }
-
-            ThreadListCellContent(mailboxManager: viewModel.mailboxManager, thread: thread)
-        }
-        .tag(thread)
-        .background(isSelected ? SelectionBackground() : nil)
-        .modifyIf(!multipleSelectionViewModel.isEnabled) { view in
-            view.swipeActions(thread: thread, viewModel: viewModel)
-        }
-        .onTapGesture {
-            if !multipleSelectionViewModel.isEnabled {
-                viewModel.selectedThread = thread
-                if isInDraftFolder {
-                    viewModel.editDraft(from: thread)
-                } else {
-                    shouldNavigateToThreadList = true
-                }
-            } else {
-                multipleSelectionViewModel.toggleSelection(of: thread)
-            }
-        }
-        .onLongPressGesture(minimumDuration: 0.5) {
-            withAnimation {
-                multipleSelectionViewModel.isEnabled.toggle()
-                if multipleSelectionViewModel.isEnabled {
-                    multipleSelectionViewModel.toggleSelection(of: thread)
-                }
-            }
-        }
-    }
-
-    private var destination: some View {
-        ThreadView(mailboxManager: viewModel.mailboxManager,
-                   thread: thread,
-                   folderId: viewModel.folder?.id,
-                   navigationController: navigationController)
-    }
-}
-
-private struct ThreadListCellContent: View {
-    @AppStorage(UserDefaults.shared.key(.threadDensity)) var density: ThreadDensity = .normal
-
-    var mailboxManager: MailboxManager
-    var thread: Thread
-
     private var hasUnreadMessages: Bool {
         thread.unseenMessages > 0
     }
-
+    private var isSelected: Bool {
+        multipleSelectionViewModel.selectedItems.map(\.id).contains(thread.id)
+    }
     private var textStyle: MailTextStyle {
         hasUnreadMessages ? .header3 : .bodySecondary
     }
 
-    var body: some View {
-        HStack(alignment: .top, spacing: 8) {
-            Circle()
-                .frame(width: Constants.unreadIconSize, height: Constants.unreadIconSize)
-                .foregroundColor(hasUnreadMessages ? Color.accentColor : .clear)
-                .padding(.top, density.unreadCircleTopPadding)
+    // MARK: - Views
 
-            if density == .large, let recipient = thread.from.last {
-                RecipientImage(recipient: recipient, size: 32)
-                    .padding(.trailing, 2)
+    var body: some View {
+        ZStack {
+            linkToThreadView
+
+            HStack(alignment: .top, spacing: 8) {
+                newMessageIndicator
+
+                if density == .large, let recipient = thread.from.last {
+                    RecipientImage(recipient: recipient, size: 32)
+                        .padding(.trailing, 2)
+                }
+
+                VStack(alignment: .leading, spacing: 2) {
+                    cellHeader
+
+                    HStack(alignment: .top, spacing: 3) {
+                        threadInfo
+                        Spacer()
+                        threadDetails
+                    }
+                }
+            }
+            .padding(.vertical, density.cellVerticalPadding)
+        }
+        .background(isSelected ? SelectionBackground() : nil)
+        .modifyIf(!multipleSelectionViewModel.isEnabled) { view in
+            view.swipeActions(thread: thread, viewModel: viewModel)
+        }
+        .onTapGesture(perform: didTapCell)
+        .onLongPressGesture(minimumDuration: 0.5, perform: didLongPressCell)
+    }
+
+    @ViewBuilder
+    private var linkToThreadView: some View {
+        if !isInDraftFolder {
+            NavigationLink(destination: ThreadView(mailboxManager: viewModel.mailboxManager,
+                                                   thread: thread,
+                                                   folderId: viewModel.folder?.id,
+                                                   navigationController: navigationController),
+                           isActive: $shouldNavigateToThreadList) { EmptyView() }
+                .opacity(0)
+                .disabled(multipleSelectionViewModel.isEnabled)
+        }
+    }
+
+    private var newMessageIndicator: some View {
+        Circle()
+            .frame(width: Constants.unreadIconSize, height: Constants.unreadIconSize)
+            .foregroundColor(hasUnreadMessages ? Color.accentColor : .clear)
+            .padding(.top, density.unreadCircleTopPadding)
+    }
+
+    private var selectedCircle: some View {
+        Circle()
+            .strokeBorder(Color.accentColor, lineWidth: 2)
+            .background(isSelected ? Color.accentColor : nil)
+            .frame(width: Constants.unreadIconSize, height: Constants.unreadIconSize)
+    }
+
+    private var cellHeader: some View {
+        HStack(spacing: 8) {
+            if thread.hasDrafts {
+                Text("(\(MailResourcesStrings.Localizable.messageIsDraftOption))")
+                    .foregroundColor(MailResourcesAsset.redActionColor)
+                    .textStyle(hasUnreadMessages ? .header2 : .header2Secondary)
+                    .lineLimit(1)
+                    .layoutPriority(1)
+            }
+            Text(thread.messages.allSatisfy(\.isDraft) ? thread.formattedTo : thread.formattedFrom)
+                .textStyle(hasUnreadMessages ? .header2 : .header2Secondary)
+                .lineLimit(1)
+
+            Spacer()
+
+            if thread.hasAttachments {
+                Image(resource: MailResourcesAsset.attachmentMail1)
+                    .foregroundColor(textStyle.color)
+                    .frame(height: 10)
             }
 
-            VStack(alignment: .leading, spacing: 2) {
-                HStack(spacing: 8) {
-                    if thread.hasDrafts {
-                        Text("(\(MailResourcesStrings.Localizable.messageIsDraftOption))")
-                            .foregroundColor(MailResourcesAsset.redActionColor)
-                            .textStyle(hasUnreadMessages ? .header2 : .header2Secondary)
-                            .lineLimit(1)
-                            .layoutPriority(1)
-                    }
-                    Text(thread.messages.allSatisfy(\.isDraft) ? thread.formattedTo : thread.formattedFrom)
-                        .textStyle(hasUnreadMessages ? .header2 : .header2Secondary)
-                        .lineLimit(1)
+            Text(thread.date.customRelativeFormatted)
+                .textStyle(hasUnreadMessages ? .calloutStrong : .calloutSecondary)
+                .lineLimit(1)
+        }
+        .padding(.bottom, 4)
+    }
 
-                    Spacer()
+    private var threadInfo: some View {
+        VStack(alignment: .leading) {
+            Text(thread.formattedSubject)
+                .textStyle(textStyle)
+                .lineLimit(1)
 
-                    if thread.hasAttachments {
-                        Image(resource: MailResourcesAsset.attachmentMail1)
-                            .foregroundColor(textStyle.color)
-                            .frame(height: 10)
-                    }
-
-                    Text(thread.date.customRelativeFormatted)
-                        .textStyle(hasUnreadMessages ? .calloutStrong : .calloutSecondary)
-                        .lineLimit(1)
-                }
-                .padding(.bottom, 4)
-
-                HStack(alignment: .top, spacing: 3) {
-                    VStack(alignment: .leading) {
-                        Text(thread.formattedSubject)
-                            .textStyle(textStyle)
-                            .lineLimit(1)
-
-                        if density != .compact,
-                           let preview = thread.messages.last?.preview,
-                           !preview.isEmpty {
-                            Text(preview)
-                                .textStyle(.bodySecondary)
-                                .lineLimit(1)
-                        }
-                    }
-
-                    Spacer()
-
-                    VStack(spacing: 4) {
-                        if thread.flagged {
-                            Image(resource: MailResourcesAsset.starFull)
-                                .resizable()
-                                .scaledToFit()
-                                .frame(width: 20, height: 20)
-                        }
-
-                        if thread.messagesCount > 1 {
-                            Text("\(thread.messagesCount)")
-                                .textStyle(.bodySecondary)
-                                .lineLimit(1)
-                        }
-                    }
-                }
+            if density != .compact,
+               let preview = thread.messages.last?.preview,
+               !preview.isEmpty {
+                Text(preview)
+                    .textStyle(.bodySecondary)
+                    .lineLimit(1)
             }
         }
-        .padding(.vertical, density.cellVerticalPadding)
+    }
+
+    private var threadDetails: some View {
+        VStack(spacing: 4) {
+            if thread.flagged {
+                Image(resource: MailResourcesAsset.starFull)
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 20, height: 20)
+            }
+
+            if thread.messagesCount > 1 {
+                Text("\(thread.messagesCount)")
+                    .textStyle(.bodySecondary)
+                    .lineLimit(1)
+            }
+        }
+    }
+
+    // MARK: - Actions
+
+    private func didTapCell() {
+        if !multipleSelectionViewModel.isEnabled {
+            viewModel.selectedThread = thread
+            if isInDraftFolder {
+                viewModel.editDraft(from: thread)
+            } else {
+                shouldNavigateToThreadList = true
+            }
+        } else {
+            multipleSelectionViewModel.toggleSelection(of: thread)
+        }
+    }
+
+    private func didLongPressCell() {
+        withAnimation {
+            multipleSelectionViewModel.isEnabled.toggle()
+            if multipleSelectionViewModel.isEnabled {
+                multipleSelectionViewModel.toggleSelection(of: thread)
+            }
+        }
     }
 }
 
