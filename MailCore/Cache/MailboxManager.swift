@@ -276,6 +276,19 @@ public class MailboxManager: ObservableObject {
         }
     }
 
+    public func move(threads: [Thread], to folder: Folder) async throws -> UndoResponse {
+        let response = try await apiFetcher.move(mailbox: mailbox, messages: threads.flatMap(\.messages), destinationId: folder._id)
+
+        if let liveFolder = folder.thaw() {
+            for thread in threads {
+                if let liveThread = thread.thaw() {
+                    try? moveLocally(thread: liveThread, to: liveFolder)
+                }
+            }
+        }
+        return response
+    }
+
     public func move(thread: Thread, to folder: Folder) async throws -> UndoResponse {
         let response = try await apiFetcher.move(mailbox: mailbox, messages: Array(thread.messages), destinationId: folder._id)
 
@@ -286,9 +299,29 @@ public class MailboxManager: ObservableObject {
         return response
     }
 
+    public func move(threads: [Thread], to folderRole: FolderRole) async throws -> UndoResponse {
+        guard let folder = getFolder(with: folderRole)?.freeze() else { throw MailError.folderNotFound }
+        return try await move(threads: threads, to: folder)
+    }
+
     public func move(thread: Thread, to folderRole: FolderRole) async throws -> UndoResponse {
         guard let folder = getFolder(with: folderRole)?.freeze() else { throw MailError.folderNotFound }
         return try await move(thread: thread, to: folder)
+    }
+
+    public func delete(threads: [Thread]) async throws {
+        _ = try await apiFetcher.delete(mailbox: mailbox, messages: threads.flatMap(\.messages))
+
+        let realm = getRealm()
+        for thread in threads {
+            if let liveThread = thread.thaw() {
+                try? realm.safeWrite {
+                    liveThread.parent?.unreadCount = (liveThread.parent?.unreadCount ?? 0) - liveThread.unseenMessages
+                    realm.delete(liveThread.messages)
+                    realm.delete(liveThread)
+                }
+            }
+        }
     }
 
     public func delete(thread: Thread) async throws {
@@ -300,6 +333,28 @@ public class MailboxManager: ObservableObject {
                 liveThread.parent?.unreadCount = (liveThread.parent?.unreadCount ?? 0) - liveThread.unseenMessages
                 realm.delete(liveThread.messages)
                 realm.delete(liveThread)
+            }
+        }
+    }
+
+    public func moveOrDelete(threads: [Thread]) async throws {
+        let draftThreads = threads.filter { $0.parent?.role == .draft && $0.uid.starts(with: Draft.uuidLocalPrefix) }
+        for draft in draftThreads {
+            deleteLocalDraft(thread: draft)
+        }
+
+        let otherThreads = threads.filter { !($0.parent?.role == .draft && $0.uid.starts(with: Draft.uuidLocalPrefix)) }
+        let parentFolder = otherThreads.first?.parent
+        if parentFolder?.role == .trash {
+            try await delete(threads: otherThreads)
+        } else {
+            let response = try await move(threads: threads, to: .trash)
+            let folderName = FolderRole.trash.localizedName
+            Task.detached {
+                await IKSnackBar.showCancelableSnackBar(message: MailResourcesStrings.Localizable.snackbarThreadMoved(folderName),
+                                                        cancelSuccessMessage: MailResourcesStrings.Localizable.snackbarMoveCancelled,
+                                                        cancelableResponse: response,
+                                                        mailboxManager: self)
             }
         }
     }

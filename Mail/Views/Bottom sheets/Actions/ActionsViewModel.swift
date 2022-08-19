@@ -252,7 +252,7 @@ enum ActionsTarget: Equatable {
     private func delete() async throws {
         switch target {
         case let .threads(threads):
-            try await taskGroup(on: threads, method: mailboxManager.moveOrDelete)
+            try await mailboxManager.moveOrDelete(threads: threads.map { $0.freezeIfNeeded() })
         case let .thread(thread):
             try await mailboxManager.moveOrDelete(thread: thread.freezeIfNeeded())
         case let .message(message):

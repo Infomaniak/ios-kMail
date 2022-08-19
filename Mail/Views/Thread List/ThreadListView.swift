@@ -220,6 +220,13 @@ private struct ThreadListToolbar: ViewModifier {
 
     @ToolbarContentBuilder
     private var navigationBar: some ToolbarContent {
+        ToolbarItem(placement: .principal) {
+            Text(folder?.localizedName ?? "")
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .textStyle(.header1)
+                .padding(.leading, 8)
+        }
+
         ToolbarItemGroup(placement: .navigationBarTrailing) {
             Button {
                 // TODO: Search
@@ -237,14 +244,6 @@ private struct ThreadListToolbar: ViewModifier {
                     .frame(width: 30, height: 30)
                     .clipShape(Circle())
             }
-        }
-
-        ToolbarItem(placement: .principal) {
-            Text(folder?.localizedName ?? "")
-                .layoutPriority(1)
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .textStyle(.header1)
-                .padding(.leading, 8)
         }
     }
 

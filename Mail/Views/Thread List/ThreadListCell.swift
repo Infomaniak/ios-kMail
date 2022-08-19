@@ -34,7 +34,7 @@ struct ThreadListCell: View {
     @ObservedObject var viewModel: ThreadListViewModel
     @ObservedObject var multipleSelectionViewModel: ThreadListMultipleSelectionViewModel
 
-    @State private var isLinkEnabled = false
+    @State private var shouldNavigateToThreadList = false
 
     var thread: Thread
     var navigationController: UINavigationController?
@@ -50,7 +50,7 @@ struct ThreadListCell: View {
     var body: some View {
         ZStack {
             if !isInDraftFolder {
-                NavigationLink(destination: destination, isActive: $isLinkEnabled) { EmptyView() }
+                NavigationLink(destination: destination, isActive: $shouldNavigateToThreadList) { EmptyView() }
                     .opacity(0)
                     .disabled(multipleSelectionViewModel.isEnabled)
             }
@@ -68,7 +68,7 @@ struct ThreadListCell: View {
                 if isInDraftFolder {
                     viewModel.editDraft(from: thread)
                 } else {
-                    isLinkEnabled = true
+                    shouldNavigateToThreadList = true
                 }
             } else {
                 multipleSelectionViewModel.toggleSelection(of: thread)

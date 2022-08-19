@@ -61,8 +61,7 @@ import MailCore
         case .star, .unstar:
             try await mailboxManager.toggleStar(threads: Array(selectedItems))
         case .delete:
-            // TODO: Delete
-            break
+            try await mailboxManager.moveOrDelete(threads: Array(selectedItems))
         default:
             break
         }
