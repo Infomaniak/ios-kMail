@@ -118,21 +118,21 @@ enum SearchFieldValueType: String {
     }
 
     private var searchFilters: [URLQueryItem] {
-        var searchFilters: [URLQueryItem] = []
+        var queryItems: [URLQueryItem] = []
         if !searchValue.isEmpty {
             if searchValueType == .contact {
-                searchFilters.append(URLQueryItem(name: "sfrom", value: searchValue))
+                queryItems.append(URLQueryItem(name: "sfrom", value: searchValue))
             } else {
-                searchFilters.append(URLQueryItem(name: "scontains", value: searchValue))
+                queryItems.append(URLQueryItem(name: "scontains", value: searchValue))
             }
         }
-        searchFilters.append(URLQueryItem(name: "severywhere", value: selectedFilters.contains(.folder) ? "0" : "1"))
+        queryItems.append(URLQueryItem(name: "severywhere", value: selectedFilters.contains(.folder) ? "0" : "1"))
 
         if selectedFilters.contains(.attachment) {
-            searchFilters.append(URLQueryItem(name: "sattachments", value: "yes"))
+            queryItems.append(URLQueryItem(name: "sattachments", value: "yes"))
         }
 
-        return searchFilters
+        return queryItems
     }
 
     private var filter: Filter {
