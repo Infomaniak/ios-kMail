@@ -64,8 +64,14 @@ struct ThreadListCell: View {
                 newMessageIndicator
 
                 if density == .large, let recipient = thread.from.last {
-                    RecipientImage(recipient: recipient, size: 32)
-                        .padding(.trailing, 2)
+                    Group {
+                        if isSelected {
+                            selectedCircle
+                        } else {
+                            RecipientImage(recipient: recipient, size: 32)
+                        }
+                    }
+                    .padding(.trailing, 2)
                 }
 
                 VStack(alignment: .leading, spacing: 2) {
@@ -78,14 +84,14 @@ struct ThreadListCell: View {
                     }
                 }
             }
-            .padding(.vertical, density.cellVerticalPadding)
         }
         .background(isSelected ? SelectionBackground() : nil)
+        .padding(.vertical, density.cellVerticalPadding)
+        .onTapGesture(perform: didTapCell)
+        .onLongPressGesture(minimumDuration: 0.3, perform: didLongPressCell)
         .modifyIf(!multipleSelectionViewModel.isEnabled) { view in
             view.swipeActions(thread: thread, viewModel: viewModel)
         }
-        .onTapGesture(perform: didTapCell)
-        .onLongPressGesture(minimumDuration: 0.5, perform: didLongPressCell)
     }
 
     @ViewBuilder
@@ -111,8 +117,15 @@ struct ThreadListCell: View {
     private var selectedCircle: some View {
         Circle()
             .strokeBorder(Color.accentColor, lineWidth: 2)
-            .background(isSelected ? Color.accentColor : nil)
-            .frame(width: Constants.unreadIconSize, height: Constants.unreadIconSize)
+            .background(Circle().fill(isSelected ? Color.accentColor : Color.clear))
+            .frame(width: 32, height: 32)
+            .overlay {
+                if isSelected {
+                    Image(resource: MailResourcesAsset.check)
+                        .foregroundColor(.white)
+                        .frame(height: 15)
+                }
+            }
     }
 
     private var cellHeader: some View {

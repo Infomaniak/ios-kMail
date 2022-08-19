@@ -198,6 +198,7 @@ struct ThreadListView: View {
                 viewModel.loadNextPageIfNeeded(currentItem: thread)
             }
             .listRowInsets(.init(top: 0, leading: 8, bottom: 0, trailing: 12))
+//            .listRowInsets(.init(top: 0, leading: 0, bottom: 0, trailing: 0))
             .listRowSeparator(.hidden)
             .listRowBackground(viewModel.selectedThread == thread
                 ? MailResourcesAsset.backgroundCardSelectedColor.swiftUiColor
