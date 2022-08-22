@@ -36,7 +36,7 @@ private struct SwipeActionView: View {
         Button {
             Task {
                 await tryOrDisplayError {
-                    try await viewModel.hanldeSwipeAction(action, thread: thread)
+                    try await viewModel.handleSwipeAction(action, thread: thread)
                 }
             }
         } label: {

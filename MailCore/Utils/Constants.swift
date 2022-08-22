@@ -53,6 +53,10 @@ public enum Constants {
     public static let menuDrawerSubFolderPadding: CGFloat = 10
 
     public static let unreadIconSize: CGFloat = 8
+    public static let checkboxSize: CGFloat = 32
+    public static let checkmarkSize: CGFloat = 15
+    public static let checkboxCompactSize: CGFloat = 24
+    public static let checkmarkCompactSize: CGFloat = 13
 
     public static let bottomSheetOptions: [BottomSheet.Options] = [
         .background { AnyView(MailResourcesAsset.backgroundBottomSheetColor.swiftUiColor) },

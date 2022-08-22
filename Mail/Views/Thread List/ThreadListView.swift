@@ -125,7 +125,12 @@ struct ThreadListView: View {
                         viewModel.scrollViewProxy = proxy
                     }
                     .introspectTableView { tableView in
-                        tableView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: 100, right: 0)
+                        tableView.contentInset = UIEdgeInsets(
+                            top: 0,
+                            left: 0,
+                            bottom: multipleSelectionViewModel.isEnabled ? 0 : 100,
+                            right: 0
+                        )
                     }
                 }
             }
@@ -198,7 +203,6 @@ struct ThreadListView: View {
                 viewModel.loadNextPageIfNeeded(currentItem: thread)
             }
             .listRowInsets(.init(top: 0, leading: 8, bottom: 0, trailing: 12))
-//            .listRowInsets(.init(top: 0, leading: 0, bottom: 0, trailing: 0))
             .listRowSeparator(.hidden)
             .listRowBackground(viewModel.selectedThread == thread
                 ? MailResourcesAsset.backgroundCardSelectedColor.swiftUiColor
@@ -267,7 +271,9 @@ private struct ThreadListToolbar: ViewModifier {
             }
         }
         ToolbarItem(placement: .navigationBarTrailing) {
-            Button(MailResourcesStrings.Localizable.buttonSelectAll) {}
+            Button(MailResourcesStrings.Localizable.buttonSelectAll) {
+                // TODO: Select all threads
+            }
         }
 
         ToolbarItemGroup(placement: .bottomBar) {

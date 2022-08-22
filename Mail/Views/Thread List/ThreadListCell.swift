@@ -24,10 +24,6 @@ extension ThreadDensity {
     var cellVerticalPadding: CGFloat {
         self == .compact ? 8 : 16
     }
-
-    var unreadCircleTopPadding: CGFloat {
-        self == .large ? 12 : 6
-    }
 }
 
 struct ThreadListCell: View {
@@ -54,27 +50,36 @@ struct ThreadListCell: View {
         hasUnreadMessages ? .header3 : .bodySecondary
     }
 
+    private var checkboxSize: CGFloat {
+        density == .compact ? Constants.checkboxCompactSize : Constants.checkboxSize
+    }
+    private var checkmarkSize: CGFloat {
+        density == .compact ? Constants.checkmarkCompactSize : Constants.checkmarkSize
+    }
+
     // MARK: - Views
 
     var body: some View {
         ZStack {
             linkToThreadView
 
-            HStack(alignment: .top, spacing: 8) {
-                newMessageIndicator
+            HStack(spacing: 8) {
+                unreadIndicator
 
-                if density == .large, let recipient = thread.from.last {
-                    Group {
+                Group {
+                    if density == .large && !isSelected, let recipient = thread.from.last {
                         if isSelected {
-                            selectedCircle
+                            checkbox
                         } else {
                             RecipientImage(recipient: recipient, size: 32)
                         }
+                    } else if multipleSelectionViewModel.isEnabled {
+                        checkbox
                     }
-                    .padding(.trailing, 2)
                 }
+                .padding(.trailing, 4)
 
-                VStack(alignment: .leading, spacing: 2) {
+                VStack(alignment: .leading, spacing: 4) {
                     cellHeader
 
                     HStack(alignment: .top, spacing: 3) {
@@ -85,7 +90,6 @@ struct ThreadListCell: View {
                 }
             }
         }
-        .background(isSelected ? SelectionBackground() : nil)
         .padding(.vertical, density.cellVerticalPadding)
         .onTapGesture(perform: didTapCell)
         .onLongPressGesture(minimumDuration: 0.3, perform: didLongPressCell)
@@ -107,23 +111,22 @@ struct ThreadListCell: View {
         }
     }
 
-    private var newMessageIndicator: some View {
+    private var unreadIndicator: some View {
         Circle()
             .frame(width: Constants.unreadIconSize, height: Constants.unreadIconSize)
             .foregroundColor(hasUnreadMessages ? Color.accentColor : .clear)
-            .padding(.top, density.unreadCircleTopPadding)
     }
 
-    private var selectedCircle: some View {
+    private var checkbox: some View {
         Circle()
             .strokeBorder(Color.accentColor, lineWidth: 2)
             .background(Circle().fill(isSelected ? Color.accentColor : Color.clear))
-            .frame(width: 32, height: 32)
+            .frame(width: checkboxSize, height: checkboxSize)
             .overlay {
                 if isSelected {
                     Image(resource: MailResourcesAsset.check)
                         .foregroundColor(.white)
-                        .frame(height: 15)
+                        .frame(height: checkmarkSize)
                 }
             }
     }
@@ -141,6 +144,17 @@ struct ThreadListCell: View {
                 .textStyle(hasUnreadMessages ? .header2 : .header2Secondary)
                 .lineLimit(1)
 
+            if thread.messagesCount > 1 {
+                Text("\(thread.messagesCount)")
+                    .textStyle(.bodySecondary)
+                    .padding(.horizontal, 3)
+                    .lineLimit(1)
+                    .overlay {
+                        RoundedRectangle(cornerRadius: 3)
+                            .stroke(Color.gray)
+                    }
+            }
+
             Spacer()
 
             if thread.hasAttachments {
@@ -153,7 +167,6 @@ struct ThreadListCell: View {
                 .textStyle(hasUnreadMessages ? .calloutStrong : .calloutSecondary)
                 .lineLimit(1)
         }
-        .padding(.bottom, 4)
     }
 
     private var threadInfo: some View {
@@ -179,12 +192,6 @@ struct ThreadListCell: View {
                     .resizable()
                     .scaledToFit()
                     .frame(width: 20, height: 20)
-            }
-
-            if thread.messagesCount > 1 {
-                Text("\(thread.messagesCount)")
-                    .textStyle(.bodySecondary)
-                    .lineLimit(1)
             }
         }
     }

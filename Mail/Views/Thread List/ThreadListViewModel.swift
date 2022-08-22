@@ -271,7 +271,7 @@ class DateSection: Identifiable {
 
     // MARK: - Swipe actions
 
-    func hanldeSwipeAction(_ action: SwipeAction, thread: Thread) async throws {
+    func handleSwipeAction(_ action: SwipeAction, thread: Thread) async throws {
         switch action {
         case .delete:
             try await mailboxManager.moveOrDelete(thread: thread)
