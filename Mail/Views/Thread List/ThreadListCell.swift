@@ -216,14 +216,47 @@ struct ThreadListCell: View {
 
 struct ThreadListCell_Previews: PreviewProvider {
     static var previews: some View {
+        let userDefaultsList = [
+            updateUserDefaults(threadDensity: .compact),
+            updateUserDefaults(threadDensity: .normal),
+            updateUserDefaults(threadDensity: .large)
+        ]
+
         let viewModel = ThreadListViewModel(mailboxManager: PreviewHelper.sampleMailboxManager,
                                             folder: nil,
                                             bottomSheet: ThreadBottomSheet())
+        let multipleSelectionViewModel = ThreadListMultipleSelectionViewModel(mailboxManager: PreviewHelper.sampleMailboxManager)
+        let selectedMultipleSelectionViewModel = ThreadListMultipleSelectionViewModel(mailboxManager: PreviewHelper.sampleMailboxManager)
 
-        ThreadListCell(viewModel: viewModel,
-                       multipleSelectionViewModel: ThreadListMultipleSelectionViewModel(mailboxManager: PreviewHelper.sampleMailboxManager),
-                       thread: PreviewHelper.sampleThread)
+
+        VStack(alignment: .leading) {
+            ForEach(userDefaultsList, id: \.self) { userDefaults in
+                ThreadListCell(viewModel: viewModel,
+                               multipleSelectionViewModel: multipleSelectionViewModel,
+                               thread: PreviewHelper.sampleThread)
+                .defaultAppStorage(userDefaults)
+            }
+
+            Divider()
+
+            ForEach(userDefaultsList, id: \.self) { userDefaults in
+                ThreadListCell(viewModel: viewModel,
+                               multipleSelectionViewModel: selectedMultipleSelectionViewModel,
+                               thread: PreviewHelper.sampleThread)
+                .defaultAppStorage(userDefaults)
+            }
+        }
+        .onAppear {
+            selectedMultipleSelectionViewModel.isEnabled = true
+            selectedMultipleSelectionViewModel.toggleSelection(of: PreviewHelper.sampleThread)
+        }
         .previewLayout(.sizeThatFits)
         .previewDevice("iPhone 13 Pro")
+    }
+
+    static func updateUserDefaults(threadDensity: ThreadDensity) -> UserDefaults {
+        let userDefaults = UserDefaults(suiteName: "userdefaults_\(threadDensity.rawValue)")!
+        userDefaults.set(threadDensity.rawValue, forKey: userDefaults.key(.threadDensity))
+        return userDefaults
     }
 }
