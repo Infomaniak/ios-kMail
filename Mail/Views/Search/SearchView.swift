@@ -95,8 +95,6 @@ struct SearchView: View {
                 }
             }
             .listStyle(.plain)
-
-            Spacer()
         }
         .introspectNavigationController { navigationController in
             let newNavController = navigationController
