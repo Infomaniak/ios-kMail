@@ -33,19 +33,19 @@ public enum ReplyMode: Equatable {
     var isReply: Bool {
         return self == .reply || self == .replyAll
     }
-    
+
     public static func == (lhs: ReplyMode, rhs: ReplyMode) -> Bool {
-            switch (lhs, rhs) {
-            case (.reply, .reply):
-                return true
-            case (.replyAll, .replyAll):
-                return true
-            case (.forward(_), .forward(_)):
-                return true
-            default:
-                return false
-            }
+        switch (lhs, rhs) {
+        case (.reply, .reply):
+            return true
+        case (.replyAll, .replyAll):
+            return true
+        case (.forward(_), .forward(_)):
+            return true
+        default:
+            return false
         }
+    }
 }
 
 public struct DraftResponse: Codable {
@@ -290,12 +290,14 @@ public struct UnmanagedDraft: Equatable, Encodable, AbstractDraft {
         }
         from = [Recipient(email: signature.sender, name: signature.fullName)]
         replyTo = [Recipient(email: signature.replyTo, name: "")]
-        let html = "<div><br></div><div><br></div><div class=\"editorUserSignature\">\(signature.content)</div>"
-        switch signature.position {
-        case .top:
-            body.insert(contentsOf: html, at: body.startIndex)
-        case .bottom:
-            body.append(contentsOf: html)
+        if !body.contains("editorUserSignature") {
+            let html = "<div><br></div><div><br></div><div class=\"editorUserSignature\">\(signature.content)</div>"
+            switch signature.position {
+            case .top:
+                body.insert(contentsOf: html, at: body.startIndex)
+            case .bottom:
+                body.append(contentsOf: html)
+            }
         }
     }
 }
