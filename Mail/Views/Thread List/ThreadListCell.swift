@@ -28,6 +28,7 @@ extension ThreadDensity {
 
 struct ThreadListCell: View {
     @AppStorage(UserDefaults.shared.key(.threadDensity)) var density: ThreadDensity = .normal
+    @AppStorage(UserDefaults.shared.key(.accentColor)) private var accentColor = AccentColor.pink
 
     @ObservedObject var viewModel: ThreadListViewModel
     @ObservedObject var multipleSelectionViewModel: ThreadListMultipleSelectionViewModel
@@ -90,7 +91,15 @@ struct ThreadListCell: View {
                 }
             }
         }
+        .padding(.leading, multipleSelectionViewModel.isEnabled ? 16 : 8)
+        .padding(.trailing, 12)
         .padding(.vertical, density.cellVerticalPadding)
+        .background( isSelected ?
+            RoundedRectangle(cornerRadius: 10)
+                .fill(accentColor.secondary.swiftUiColor)
+                .offset(x: 8, y: 0)
+             : nil
+        )
         .onTapGesture(perform: didTapCell)
         .onLongPressGesture(minimumDuration: 0.3, perform: didLongPressCell)
         .swipeActions(thread: thread, viewModel: viewModel, multipleSelectionViewModel: multipleSelectionViewModel)
@@ -232,7 +241,6 @@ struct ThreadListCell_Previews: PreviewProvider {
                                             bottomSheet: ThreadBottomSheet())
         let multipleSelectionViewModel = ThreadListMultipleSelectionViewModel(mailboxManager: PreviewHelper.sampleMailboxManager)
         let selectedMultipleSelectionViewModel = ThreadListMultipleSelectionViewModel(mailboxManager: PreviewHelper.sampleMailboxManager)
-
 
         VStack(alignment: .leading) {
             ForEach(userDefaultsList, id: \.self) { userDefaults in

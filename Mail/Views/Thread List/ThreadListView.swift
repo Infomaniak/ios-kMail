@@ -200,7 +200,7 @@ struct ThreadListView: View {
             .onAppear {
                 viewModel.loadNextPageIfNeeded(currentItem: thread)
             }
-            .listRowInsets(.init(top: 0, leading: 8, bottom: 0, trailing: 12))
+            .listRowInsets(.init(top: 0, leading: 0, bottom: 0, trailing: 0))
             .listRowSeparator(.hidden)
             .listRowBackground(viewModel.selectedThread == thread
                 ? MailResourcesAsset.backgroundCardSelectedColor.swiftUiColor
@@ -228,7 +228,9 @@ private struct ThreadListToolbar: ViewModifier {
                 ToolbarItemGroup(placement: .navigationBarLeading) {
                     if multipleSelectionViewModel.isEnabled {
                         Button(MailResourcesStrings.Localizable.buttonCancel) {
-                            multipleSelectionViewModel.isEnabled = false
+                            withAnimation {
+                                multipleSelectionViewModel.isEnabled = false
+                            }
                         }
                     } else {
                         if isCompact {
