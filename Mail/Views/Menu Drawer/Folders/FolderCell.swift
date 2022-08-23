@@ -94,10 +94,7 @@ struct FolderCellContent: View {
         .padding(.leading, Constants.menuDrawerHorizontalPadding)
         .padding(.leading, Constants.menuDrawerSubFolderPadding * CGFloat(level))
         .padding(.trailing, 18)
-        .modifyIf(isSelected) { view in
-            view
-                .background(SelectionBackground())
-        }
+        .background(isSelected ? SelectionBackground() : nil)
     }
 }
 

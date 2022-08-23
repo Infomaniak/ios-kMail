@@ -50,6 +50,7 @@ private struct SwipeActionView: View {
 struct ThreadListSwipeActions: ViewModifier {
     let thread: Thread
     let viewModel: ThreadListViewModel
+    let multipleSelectionViewModel: ThreadListMultipleSelectionViewModel
 
     @AppStorage(UserDefaults.shared.key(.swipeLongRight)) private var swipeLongRight = Constants.defaultSwipeLongRight
     @AppStorage(UserDefaults.shared.key(.swipeShortRight)) private var swipeShortRight = Constants.defaultSwipeShortRight
@@ -60,10 +61,14 @@ struct ThreadListSwipeActions: ViewModifier {
     func body(content: Content) -> some View {
         content
             .swipeActions(edge: .leading) {
-                edgeActions([swipeLongRight, swipeShortRight])
+                if !multipleSelectionViewModel.isEnabled {
+                    edgeActions([swipeLongRight, swipeShortRight])
+                }
             }
             .swipeActions(edge: .trailing) {
-                edgeActions([swipeLongLeft, swipeShortLeft])
+                if !multipleSelectionViewModel.isEnabled {
+                    edgeActions([swipeLongLeft, swipeShortLeft])
+                }
             }
     }
 
@@ -75,8 +80,10 @@ struct ThreadListSwipeActions: ViewModifier {
 }
 
 extension View {
-    func swipeActions(thread: Thread, viewModel: ThreadListViewModel) -> some View {
-        modifier(ThreadListSwipeActions(thread: thread, viewModel: viewModel))
+    func swipeActions(thread: Thread,
+                      viewModel: ThreadListViewModel,
+                      multipleSelectionViewModel: ThreadListMultipleSelectionViewModel) -> some View {
+        modifier(ThreadListSwipeActions(thread: thread, viewModel: viewModel, multipleSelectionViewModel: multipleSelectionViewModel))
     }
 }
 

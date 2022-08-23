@@ -93,9 +93,7 @@ struct ThreadListCell: View {
         .padding(.vertical, density.cellVerticalPadding)
         .onTapGesture(perform: didTapCell)
         .onLongPressGesture(minimumDuration: 0.3, perform: didLongPressCell)
-        .modifyIf(!multipleSelectionViewModel.isEnabled) { view in
-            view.swipeActions(thread: thread, viewModel: viewModel)
-        }
+        .swipeActions(thread: thread, viewModel: viewModel, multipleSelectionViewModel: multipleSelectionViewModel)
     }
 
     @ViewBuilder

@@ -146,13 +146,11 @@ struct ThreadListView: View {
                                     multipleSelectionViewModel: multipleSelectionViewModel,
                                     folder: $viewModel.folder,
                                     avatarImage: $avatarImage))
-        .modifyIf(!multipleSelectionViewModel.isEnabled) { view in
-            view
-                .floatingActionButton(icon: Image(resource: MailResourcesAsset.edit),
-                                      title: MailResourcesStrings.Localizable.buttonNewMessage) {
-                    menuSheet.state = .newMessage
-                }
-        }
+        .floatingActionButton(isEnabled: !multipleSelectionViewModel.isEnabled,
+                              icon: Image(resource: MailResourcesAsset.edit),
+                              title: MailResourcesStrings.Localizable.buttonNewMessage, action: {
+            menuSheet.state = .newMessage
+        })
         .bottomSheet(bottomSheetPosition: $bottomSheet.position, options: bottomSheetOptions) {
             switch bottomSheet.state {
             case let .actions(target):
@@ -223,91 +221,75 @@ private struct ThreadListToolbar: ViewModifier {
     @EnvironmentObject var menuSheet: MenuSheet
     @EnvironmentObject var navigationDrawerController: NavigationDrawerController
 
-    @ToolbarContentBuilder
-    private var navigationBar: some ToolbarContent {
-        ToolbarItem(placement: .principal) {
-            Text(folder?.localizedName ?? "")
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .textStyle(.header1)
-                .padding(.leading, 8)
-        }
-
-        ToolbarItemGroup(placement: .navigationBarTrailing) {
-            Button {
-                // TODO: Search
-                showWorkInProgressSnackBar()
-            } label: {
-                Image(resource: MailResourcesAsset.search)
-            }
-
-            Button {
-                menuSheet.state = .switchAccount
-            } label: {
-                avatarImage
-                    .resizable()
-                    .scaledToFit()
-                    .frame(width: 30, height: 30)
-                    .clipShape(Circle())
-            }
-        }
-    }
-
-    @ToolbarContentBuilder
-    private var navigationBarCompact: some ToolbarContent {
-        ToolbarItem(placement: .navigationBarLeading) {
-            Button {
-                navigationDrawerController.open()
-            } label: {
-                Image(resource: MailResourcesAsset.burger)
-            }
-        }
-    }
-
-    @ToolbarContentBuilder
-    private var multipleSelectionNavigationBar: some ToolbarContent {
-        ToolbarItem(placement: .navigationBarLeading) {
-            Button(MailResourcesStrings.Localizable.buttonCancel) {
-                multipleSelectionViewModel.isEnabled = false
-            }
-        }
-        ToolbarItem(placement: .navigationBarTrailing) {
-            Button(MailResourcesStrings.Localizable.buttonSelectAll) {
-                // TODO: Select all threads
-            }
-        }
-
-        ToolbarItemGroup(placement: .bottomBar) {
-            ForEach(multipleSelectionViewModel.toolbarActions) { action in
-                ToolbarButton(text: action.shortTitle ?? action.title, icon: action.icon) {
-                    Task {
-                        await tryOrDisplayError {
-                            try await multipleSelectionViewModel.didTap(action: action)
-                        }
-                    }
-                }
-                Spacer()
-            }
-            ToolbarButton(text: MailResourcesStrings.Localizable.buttonMore, icon: MailResourcesAsset.plusActions) {
-                bottomSheet.open(state: .actions(.threads(Array(multipleSelectionViewModel.selectedItems))), position: .middle)
-            }
-        }
-    }
-
     func body(content: Content) -> some View {
         content
             .navigationBarTitleDisplayMode(.inline)
-            .modifyIf(!multipleSelectionViewModel.isEnabled) { view in
-                view
-                    .toolbar { navigationBar }
-                    .modifyIf(isCompact) { view in
-                        view.toolbar { navigationBarCompact }
+            .toolbar {
+                ToolbarItemGroup(placement: .navigationBarLeading) {
+                    if multipleSelectionViewModel.isEnabled {
+                        Button(MailResourcesStrings.Localizable.buttonCancel) {
+                            multipleSelectionViewModel.isEnabled = false
+                        }
+                    } else {
+                        if isCompact {
+                            Button {
+                                navigationDrawerController.open()
+                            } label: {
+                                Image(resource: MailResourcesAsset.burger)
+                            }
+                        }
+                        Text(folder?.localizedName ?? "")
+                            .textStyle(.header1)
+                            .padding(.leading, 8)
                     }
+                }
+
+                ToolbarItemGroup(placement: .navigationBarTrailing) {
+                    if !multipleSelectionViewModel.isEnabled {
+                        Button {
+                            // TODO: Search
+                            showWorkInProgressSnackBar()
+                        } label: {
+                            Image(resource: MailResourcesAsset.search)
+                        }
+
+                        Button {
+                            menuSheet.state = .switchAccount
+                        } label: {
+                            avatarImage
+                                .resizable()
+                                .scaledToFit()
+                                .frame(width: 30, height: 30)
+                                .clipShape(Circle())
+                        }
+                    } else {
+                        Button(MailResourcesStrings.Localizable.buttonSelectAll) {
+                            // TODO: Select all threads
+                        }
+                    }
+                }
+
+                ToolbarItemGroup(placement: .bottomBar) {
+                    if multipleSelectionViewModel.isEnabled {
+                        ForEach(multipleSelectionViewModel.toolbarActions) { action in
+                            ToolbarButton(text: action.shortTitle ?? action.title, icon: action.icon) {
+                                Task {
+                                    await tryOrDisplayError {
+                                        try await multipleSelectionViewModel.didTap(action: action)
+                                    }
+                                }
+                            }
+                            Spacer()
+                        }
+                        ToolbarButton(text: MailResourcesStrings.Localizable.buttonMore, icon: MailResourcesAsset.plusActions) {
+                            bottomSheet.open(state: .actions(.threads(Array(multipleSelectionViewModel.selectedItems))), position: .middle)
+                        }
+                    }
+                }
             }
-            .modifyIf(multipleSelectionViewModel.isEnabled) { view in
-                view
-                    .navigationTitle(MailResourcesStrings.Localizable.multipleSelectionCount(multipleSelectionViewModel.selectedItems.count))
-                    .toolbar { multipleSelectionNavigationBar }
-            }
+            .navigationTitle(multipleSelectionViewModel.isEnabled
+                             ? MailResourcesStrings.Localizable.multipleSelectionCount(multipleSelectionViewModel.selectedItems.count)
+                             : "")
     }
 }
 
