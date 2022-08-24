@@ -98,6 +98,7 @@ struct ThreadListCell: View {
             RoundedRectangle(cornerRadius: 10)
                 .fill(accentColor.secondary.swiftUiColor)
                 .offset(x: 8, y: 0)
+                .padding(.vertical, 2)
              : nil
         )
         .onTapGesture(perform: didTapCell)
