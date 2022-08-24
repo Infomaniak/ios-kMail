@@ -193,6 +193,15 @@ public class MailboxManager: ObservableObject {
         }
         return realm.objects(Folder.self).where { $0.role == role }.first
     }
+    
+    /// Get all the real folders in Realm
+    /// - Parameters:
+    ///   - realm: The Realm instance to use. If this parameter is `nil`, a new one will be created.
+    /// - Returns: The list of real folders.
+    public func getFolders(using realm: Realm? = nil) -> [Folder] {
+        let realm = realm ?? getRealm()
+        return Array(realm.objects(Folder.self).where { $0.toolType == nil })
+    }
 
     public func createFolder(name: String, parent: Folder? = nil) async throws -> Folder {
         let folder = try await apiFetcher.create(mailbox: mailbox, folder: NewFolder(name: name, path: parent?.path))

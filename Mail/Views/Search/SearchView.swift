@@ -51,7 +51,7 @@ struct SearchView: View {
                 HStack(spacing: 0) {
                     ForEach(viewModel.filters) { filter in
                         if filter == .folder {
-                            SearchFilterFolderCell(selection: $viewModel.selectedSearchFolderId)
+                            SearchFilterFolderCell(selection: $viewModel.selectedSearchFolderId, folders: viewModel.folderList)
                                 .padding(.horizontal, 12)
                         } else {
                             SearchFilterCell(

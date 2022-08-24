@@ -45,6 +45,7 @@ enum SearchFieldValueType: String {
         }
     }
 
+    @Published public var folderList: [Folder]
     @Published public var realFolder: Folder?
     public var lastSearchFolderId: String?
     @Published public var selectedSearchFolderId = "" {
@@ -103,6 +104,7 @@ enum SearchFieldValueType: String {
         ]
 
         observeSearch = true
+        folderList = mailboxManager.getFolders()
     }
 
     func initSearch() {

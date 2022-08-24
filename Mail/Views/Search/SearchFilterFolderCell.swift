@@ -22,13 +22,11 @@ import RealmSwift
 import SwiftUI
 
 struct SearchFilterFolderCell: View {
-    @ObservedResults(Folder.self, where: { $0.toolType == nil }) var folders
+    var folders: [Folder]
     @Binding public var selectedFolderId: String
 
-    init(selection: Binding<String>) {
-        _folders = .init(Folder.self, configuration: AccountManager.instance.currentMailboxManager?.realmConfiguration) {
-            $0.toolType == nil
-        }
+    init(selection: Binding<String>, folders: [Folder]) {
+        self.folders = folders
         _selectedFolderId = selection
     }
 
@@ -82,6 +80,6 @@ struct SearchFilterFolderCell: View {
 
 struct SearchFilterFolderCell_Previews: PreviewProvider {
     static var previews: some View {
-        SearchFilterFolderCell(selection: .constant("popopo"))
+        SearchFilterFolderCell(selection: .constant("popopo"), folders: [PreviewHelper.sampleFolder])
     }
 }
