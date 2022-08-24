@@ -71,10 +71,8 @@ struct SearchView: View {
             .padding(.top, 32)
 
             List {
-                if viewModel.threads.isEmpty && viewModel.contacts.isEmpty && !viewModel.isLoadingPage {
-                    if !viewModel.searchHistory.history.isEmpty {
-                        searchHistoryList(history: viewModel.searchHistory)
-                    }
+                if viewModel.showHistory {
+                    searchHistoryList(history: viewModel.searchHistory)
                 } else {
                     if !viewModel.contacts.isEmpty {
                         contactList(contacts: viewModel.contacts)
@@ -82,9 +80,12 @@ struct SearchView: View {
 
                     if !viewModel.threads.isEmpty {
                         threadList(threads: viewModel.threads)
+                    } else if viewModel.searchInfo.hasSearched {
+                        // TODO: - Add no result view
+                        EmptyView()
                     }
 
-                    if viewModel.isLoadingPage {
+                    if viewModel.searchInfo.isLoading {
                         HStack {
                             Spacer()
                             ProgressView()

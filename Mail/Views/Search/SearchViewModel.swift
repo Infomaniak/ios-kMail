@@ -31,6 +31,9 @@ enum SearchFieldValueType: String {
 @MainActor class SearchViewModel: ObservableObject {
     var mailboxManager: MailboxManager
     @Published var searchHistory: SearchHistory
+    var showHistory: Bool {
+        return threads.isEmpty && contacts.isEmpty && !searchInfo.isLoading && !searchInfo.hasSearched && !searchHistory.history.isEmpty
+    }
 
     @Published public var filters: [SearchFilter]
     @Published public var selectedFilters: [SearchFilter] = []
@@ -68,7 +71,7 @@ enum SearchFieldValueType: String {
 
     @Published public var searchFolder: Folder
 
-    @Published var isLoadingPage = false
+    @Published var searchInfo = (isLoading: false, hasSearched: false)
 
     private var resourceNext: String?
     private var observationSearchThreadToken: NotificationToken?
@@ -207,14 +210,14 @@ enum SearchFieldValueType: String {
     }
 
     func fetchThreads() async {
-        guard !isLoadingPage, let realFolder = realFolder else {
+        guard !searchInfo.isLoading, let realFolder = realFolder else {
             return
         }
 
         searchFolder = mailboxManager.cleanSearchFolder()
         observeSearch = true
 
-        isLoadingPage = true
+        searchInfo.isLoading = true
 
         var folderToSearch = realFolder.id
 
@@ -236,16 +239,17 @@ enum SearchFieldValueType: String {
             if !searchValue.isEmpty {
                 searchHistory = mailboxManager.update(searchHistory: searchHistory, with: searchValue)
             }
+            searchInfo.isLoading = false
+            searchInfo.hasSearched = true
         }
-        isLoadingPage = false
     }
 
     func fetchNextPage() async {
-        guard !isLoadingPage, let resource = resourceNext else {
+        guard !searchInfo.isLoading, let resource = resourceNext else {
             return
         }
 
-        isLoadingPage = true
+        searchInfo.isLoading = true
 
         await tryOrDisplayError {
             let threadResult = try await mailboxManager.searchThreads(
@@ -255,7 +259,7 @@ enum SearchFieldValueType: String {
             )
             resourceNext = threadResult.resourceNext
         }
-        isLoadingPage = false
+        searchInfo.isLoading = false
     }
 
     func observeChanges() {
