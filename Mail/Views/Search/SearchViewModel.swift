@@ -122,8 +122,11 @@ enum SearchFieldValueType: String {
     private var searchFilters: [URLQueryItem] {
         var queryItems: [URLQueryItem] = []
         if !searchValue.isEmpty {
+            if searchValue.hasPrefix("\"") && searchValue.hasSuffix("\"") {
+                searchValueType = .contact
+            }
             if searchValueType == .contact {
-                queryItems.append(URLQueryItem(name: "sfrom", value: searchValue))
+                queryItems.append(URLQueryItem(name: "sfrom", value: searchValue.replacingOccurrences(of: "\"", with: "")))
             } else {
                 queryItems.append(URLQueryItem(name: "scontains", value: searchValue))
             }

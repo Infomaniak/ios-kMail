@@ -223,7 +223,7 @@ struct SearchView: View {
             ForEach(contacts, id: \.email) { contact in
                 RecipientAutocompletionCell(recipient: contact)
                     .onTapGesture {
-                        viewModel.searchValue = contact.email
+                        viewModel.searchValue = "\"" + contact.email + "\""
                         viewModel.searchValueType = .contact
                         Task {
                             await viewModel.fetchThreads()
