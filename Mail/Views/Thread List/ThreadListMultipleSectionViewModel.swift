@@ -53,7 +53,7 @@ import MailCore
         case .markAsRead, .markAsUnread:
             try await mailboxManager.toggleRead(threads: Array(selectedItems))
         case .archive:
-            let undoResponse = try await mailboxManager.move(messages: selectedItems.flatMap(\.messages), to: .archive)
+            let undoResponse = try await mailboxManager.move(threads: Array(selectedItems), to: .archive)
             IKSnackBar.showCancelableSnackBar(message: MailResourcesStrings.Localizable.actionArchive,
                                               cancelSuccessMessage: MailResourcesStrings.Localizable.snackbarMoveCancelled,
                                               cancelableResponse: undoResponse,
@@ -65,6 +65,8 @@ import MailCore
         default:
             break
         }
-        isEnabled = false
+        withAnimation {
+            isEnabled = false
+        }
     }
 }

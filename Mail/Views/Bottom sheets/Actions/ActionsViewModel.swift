@@ -230,8 +230,7 @@ enum ActionsTarget: Equatable {
         let snackBarMessage: String
         switch target {
         case let .threads(threads):
-            let messages = threads.flatMap(\.messages).map { $0.freezeIfNeeded() }
-            response = try await mailboxManager.move(messages: messages, to: folder)
+            response = try await mailboxManager.move(threads: threads, to: folder)
             snackBarMessage = MailResourcesStrings.Localizable.snackbarThreadsMoved(folder.localizedName)
         case let .thread(thread):
             response = try await mailboxManager.move(thread: thread.freezeIfNeeded(), to: folder)
