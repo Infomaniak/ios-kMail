@@ -243,6 +243,7 @@ private struct ThreadListToolbar: ViewModifier {
                         Text(folder?.localizedName ?? "")
                             .textStyle(.header1)
                             .padding(.leading, 8)
+                            .frame(maxWidth: .infinity, alignment: .leading)
                     }
                 }
 

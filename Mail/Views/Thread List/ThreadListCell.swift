@@ -20,6 +20,19 @@ import MailCore
 import MailResources
 import SwiftUI
 
+extension Animation {
+    static func threadListCheckbox(isMultipleSelectionEnabled isEnabled: Bool) -> Animation {
+        .default
+            .delay(isEnabled ? 0.5 : 0)
+    }
+
+    static func threadListText(isMultipleSelectionEnabled isEnabled: Bool) -> Animation {
+        .default
+            .speed(2)
+            .delay(isEnabled ? 0 : 0.22)
+    }
+}
+
 extension ThreadDensity {
     var cellVerticalPadding: CGFloat {
         self == .compact ? 8 : 16
@@ -79,6 +92,8 @@ struct ThreadListCell: View {
                     }
                 }
                 .padding(.trailing, 4)
+                .animation(.threadListCheckbox(isMultipleSelectionEnabled: multipleSelectionViewModel.isEnabled),
+                           value: multipleSelectionViewModel.isEnabled)
 
                 VStack(alignment: .leading, spacing: 4) {
                     cellHeader
@@ -89,17 +104,18 @@ struct ThreadListCell: View {
                         threadDetails
                     }
                 }
+                .animation(.threadListText(isMultipleSelectionEnabled: multipleSelectionViewModel.isEnabled),
+                           value: multipleSelectionViewModel.isEnabled)
             }
         }
         .padding(.leading, multipleSelectionViewModel.isEnabled ? 16 : 8)
         .padding(.trailing, 12)
         .padding(.vertical, density.cellVerticalPadding)
-        .background( isSelected ?
+        .background(
             RoundedRectangle(cornerRadius: 10)
-                .fill(accentColor.secondary.swiftUiColor)
+                .fill(isSelected ? accentColor.secondary.swiftUiColor : MailResourcesAsset.backgroundColor.swiftUiColor)
                 .offset(x: 8, y: 0)
                 .padding(.vertical, 2)
-             : nil
         )
         .onTapGesture(perform: didTapCell)
         .onLongPressGesture(minimumDuration: 0.3, perform: didLongPressCell)
@@ -215,7 +231,9 @@ struct ThreadListCell: View {
                 shouldNavigateToThreadList = true
             }
         } else {
-            multipleSelectionViewModel.toggleSelection(of: thread)
+            withAnimation(.default.speed(2)) {
+                multipleSelectionViewModel.toggleSelection(of: thread)
+            }
         }
     }
 
