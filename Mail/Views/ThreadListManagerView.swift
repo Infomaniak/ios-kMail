@@ -25,11 +25,6 @@ struct ThreadListManagerView: View {
 
     let isCompact: Bool
 
-    init(mailboxManager: MailboxManager, isCompact: Bool) {
-        self.mailboxManager = mailboxManager
-        self.isCompact = isCompact
-    }
-
     var body: some View {
         ZStack {
             if splitViewManager.showSearch {
