@@ -35,10 +35,14 @@ struct NavigationDrawer: View {
     var body: some View {
         GeometryReader { geometryProxy in
             HStack {
-                MenuDrawerView(mailboxManager: mailboxManager, showMailboxes: $navigationDrawerController.showMailboxes, isCompact: isCompact)
-                    .frame(maxWidth: maxWidth)
-                    .padding(.trailing, spacing)
-                    .offset(x: navigationDrawerController.getOffset(size: geometryProxy.size).width)
+                MenuDrawerView(
+                    mailboxManager: mailboxManager,
+                    showMailboxes: $navigationDrawerController.showMailboxes,
+                    isCompact: isCompact
+                )
+                .frame(maxWidth: maxWidth)
+                .padding(.trailing, spacing)
+                .offset(x: navigationDrawerController.getOffset(size: geometryProxy.size).width)
                 Spacer()
             }
         }
@@ -112,7 +116,7 @@ struct MenuDrawerView: View {
     @EnvironmentObject var bottomSheet: GlobalBottomSheet
 
     // swiftlint:disable empty_count
-    @ObservedResults(Folder.self, where: { ($0.parentLink.count == 0) && ($0.toolType == nil) }) var folders
+    @ObservedResults(Folder.self, where: { $0.parentLink.count == 0 && $0.toolType == nil }) var folders
 
     @ObservedRealmObject private var mailbox: Mailbox
     @StateObject var mailboxManager: MailboxManager
