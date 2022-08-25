@@ -64,12 +64,12 @@ struct SearchFilterFolderCell: View {
         } label: {
             HStack(spacing: 11) {
                 if isSelected {
-                    Image(uiImage: MailResourcesAsset.check.image)
+                    Image(resource: MailResourcesAsset.check)
                         .resizable()
                         .frame(width: 13, height: 13)
                 }
                 Text(selectedFolderName)
-                Image(uiImage: MailResourcesAsset.arrowDown.image)
+                Image(resource: MailResourcesAsset.arrowDown)
                     .resizable()
                     .frame(width: 13, height: 13)
             }

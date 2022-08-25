@@ -156,7 +156,7 @@ struct SearchView: View {
                         Constants.globallyResignFirstResponder()
                         splitViewManager.showSearch = false
                     } label: {
-                        Image(uiImage: MailResourcesAsset.arrowLeft.image)
+                        Image(resource: MailResourcesAsset.arrowLeft)
                     }
                 } else {
                     EmptyView()

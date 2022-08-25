@@ -29,7 +29,7 @@ struct SearchTextField: View {
             Button {
                 onSubmit()
             } label: {
-                Image(uiImage: MailResourcesAsset.search.image)
+                Image(resource: MailResourcesAsset.search)
                     .frame(width: 16, height: 16)
             }
             .foregroundColor(MailResourcesAsset.textFieldPlaceholderColor)
@@ -47,7 +47,7 @@ struct SearchTextField: View {
             Button {
                 onDelete()
             } label: {
-                Image(uiImage: MailResourcesAsset.plus.image)
+                Image(resource: MailResourcesAsset.plus)
                     .rotationEffect(Angle(degrees: 45))
             }
             .foregroundColor(MailResourcesAsset.textFieldPlaceholderColor)

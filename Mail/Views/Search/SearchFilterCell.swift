@@ -28,7 +28,7 @@ struct SearchFilterCell: View {
     var body: some View {
         HStack(spacing: 11) {
             if isSelected {
-                Image(uiImage: MailResourcesAsset.check.image)
+                Image(resource: MailResourcesAsset.check)
                     .resizable()
                     .frame(width: 13, height: 13)
             }
