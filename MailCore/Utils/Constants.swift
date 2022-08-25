@@ -102,6 +102,10 @@ public enum Constants {
         </div>
         """
     }
+    
+    public static func globallyResignFirstResponder() {
+        UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
+    }
 
     public static let defaultSwipeShortRight = SwipeAction.none
     public static let defaultSwipeLongRight = SwipeAction.readUnread

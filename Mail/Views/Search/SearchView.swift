@@ -152,6 +152,7 @@ struct SearchView: View {
             ToolbarItem(placement: .navigation) {
                 if isCompact {
                     Button {
+                        Constants.globallyResignFirstResponder()
                         splitViewManager.showSearch = false
                     } label: {
                         Image(uiImage: MailResourcesAsset.arrowLeft.image)
