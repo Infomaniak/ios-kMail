@@ -24,8 +24,8 @@ struct FilterCellModifier: ViewModifier {
 
     func body(content: Content) -> some View {
         content
-            .padding([.top, .bottom], 6)
-            .padding([.leading, .trailing], 11)
+            .padding(.vertical, 6)
+            .padding(.horizontal, 11)
             .foregroundColor(isSelected ? Color.white : Color(uiColor: UserDefaults.shared.accentColor.primary.color))
             .background(isSelected
                 ? Color(uiColor: UserDefaults.shared.accentColor.primary.color)
