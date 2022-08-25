@@ -26,9 +26,7 @@ struct SearchTextField: View {
 
     var body: some View {
         HStack(spacing: 10) {
-            Button {
-                onSubmit()
-            } label: {
+            Button(action: onSubmit) {
                 Image(resource: MailResourcesAsset.search)
                     .frame(width: 16, height: 16)
             }
@@ -44,9 +42,7 @@ struct SearchTextField: View {
                     }
                     .padding(.vertical, 11)
 
-            Button {
-                onDelete()
-            } label: {
+            Button(action: onDelete) {
                 Image(resource: MailResourcesAsset.plus)
                     .rotationEffect(Angle(degrees: 45))
             }
