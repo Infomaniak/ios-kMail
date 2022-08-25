@@ -405,15 +405,15 @@ public class MailboxManager: ObservableObject {
     }
 
     public func toggleStar(threads: [Thread]) async throws {
-        if threads.contains(where: \.flagged) {
-            _ = try await apiFetcher.unstar(mailbox: mailbox, messages: threads.flatMap(\.messages))
-            for thread in threads {
-                unstar(thread: thread)
-            }
-        } else {
+        if threads.contains(where: { !$0.flagged }) {
             _ = try await apiFetcher.star(mailbox: mailbox, messages: threads.flatMap(\.messages))
             for thread in threads {
                 star(thread: thread)
+            }
+        } else {
+            _ = try await apiFetcher.unstar(mailbox: mailbox, messages: threads.flatMap(\.messages))
+            for thread in threads {
+                unstar(thread: thread)
             }
         }
     }

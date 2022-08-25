@@ -33,11 +33,11 @@ import MailCore
         }
     }
     @Published var selectedItems = Set<Thread>()
-
-    let toolbarActions: [Action] = [.markAsRead, .archive, .star, .delete]
+    @Published var toolbarActions = [Action]()
 
     init(mailboxManager: MailboxManager) {
         self.mailboxManager = mailboxManager
+        setActions()
     }
 
     func toggleSelection(of thread: Thread) {
@@ -46,6 +46,7 @@ import MailCore
         } else {
             selectedItems.insert(thread)
         }
+        setActions()
     }
 
     func didTap(action: Action) async throws {
@@ -58,7 +59,7 @@ import MailCore
                                               cancelSuccessMessage: MailResourcesStrings.Localizable.snackbarMoveCancelled,
                                               cancelableResponse: undoResponse,
                                               mailboxManager: mailboxManager)
-        case .star, .unstar:
+        case .star:
             try await mailboxManager.toggleStar(threads: Array(selectedItems))
         case .delete:
             try await mailboxManager.moveOrDelete(threads: Array(selectedItems))
@@ -68,5 +69,10 @@ import MailCore
         withAnimation {
             isEnabled = false
         }
+    }
+
+    private func setActions() {
+        let read = selectedItems.contains(where: { $0.unseenMessages != 0 }) ? Action.markAsRead : Action.markAsUnread
+        toolbarActions = [read, .archive, .star, .delete]
     }
 }

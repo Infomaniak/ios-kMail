@@ -39,7 +39,7 @@ struct Action: Identifiable, Equatable {
                                    icon: MailResourcesAsset.envelopeOpen)
     static let markAsUnread = Action(id: 7,
                                      title: MailResourcesStrings.Localizable.actionMarkAsUnread,
-                                     shortTitle: MailResourcesStrings.Localizable.actionShortMarkAsRead,
+                                     shortTitle: MailResourcesStrings.Localizable.actionShortMarkAsUnread,
                                      icon: MailResourcesAsset.envelope)
     static let move = Action(id: 8, title: MailResourcesStrings.Localizable.actionMove, icon: MailResourcesAsset.emailActionSend21)
     static let postpone = Action(id: 9, title: MailResourcesStrings.Localizable.actionPostpone, icon: MailResourcesAsset.waitingMessage)
@@ -47,10 +47,7 @@ struct Action: Identifiable, Equatable {
                              title: MailResourcesStrings.Localizable.actionStar,
                              shortTitle: MailResourcesStrings.Localizable.actionShortStar,
                              icon: MailResourcesAsset.star)
-    static let unstar = Action(id: 21,
-                               title: MailResourcesStrings.Localizable.actionUnstar,
-                               shortTitle: MailResourcesStrings.Localizable.actionShortStar,
-                               icon: MailResourcesAsset.starFull)
+    static let unstar = Action(id: 21, title: MailResourcesStrings.Localizable.actionUnstar, icon: MailResourcesAsset.starFull)
     static let spam = Action(id: 11, title: MailResourcesStrings.Localizable.actionSpam, icon: MailResourcesAsset.spam)
     static let nonSpam = Action(id: 20, title: MailResourcesStrings.Localizable.actionNonSpam, icon: MailResourcesAsset.spam)
     static let block = Action(id: 12, title: MailResourcesStrings.Localizable.actionBlockSender, icon: MailResourcesAsset.blockUser)
