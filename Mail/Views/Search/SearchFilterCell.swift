@@ -22,13 +22,8 @@ import RealmSwift
 import SwiftUI
 
 struct SearchFilterCell: View {
-    @State public var title: String
+    public var title: String
     public var isSelected: Bool
-
-    init(title: String, isSelected: Bool = false) {
-        self.title = title
-        self.isSelected = isSelected
-    }
 
     var body: some View {
         HStack(spacing: 11) {
@@ -46,7 +41,6 @@ struct SearchFilterCell: View {
 
 struct SearchFilterCell_Previews: PreviewProvider {
     static var previews: some View {
-        SearchFilterCell(title: "Lus")
         SearchFilterCell(title: "Lus", isSelected: true)
     }
 }
