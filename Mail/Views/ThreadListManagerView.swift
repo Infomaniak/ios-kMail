@@ -31,19 +31,22 @@ struct ThreadListManagerView: View {
     }
 
     var body: some View {
-        if splitViewManager.showSearch {
-            SearchView(
-                mailboxManager: mailboxManager,
-                folder: splitViewManager.selectedFolder,
-                isCompact: isCompact
-            )
-        } else {
-            ThreadListView(
-                mailboxManager: mailboxManager,
-                folder: splitViewManager.selectedFolder,
-                isCompact: isCompact
-            )
+        ZStack {
+            if splitViewManager.showSearch {
+                SearchView(
+                    mailboxManager: mailboxManager,
+                    folder: splitViewManager.selectedFolder,
+                    isCompact: isCompact
+                )
+            } else {
+                ThreadListView(
+                    mailboxManager: mailboxManager,
+                    folder: splitViewManager.selectedFolder,
+                    isCompact: isCompact
+                )
+            }
         }
+        .animation(.easeInOut(duration: 0.25), value: splitViewManager.showSearch)
     }
 }
 
