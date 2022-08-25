@@ -28,6 +28,7 @@ struct SearchTextField: View {
         HStack(spacing: 10) {
             Button(action: onSubmit) {
                 Image(resource: MailResourcesAsset.search)
+                    .resizable()
                     .frame(width: 16, height: 16)
             }
             .foregroundColor(MailResourcesAsset.textFieldPlaceholderColor)
@@ -44,6 +45,8 @@ struct SearchTextField: View {
 
             Button(action: onDelete) {
                 Image(resource: MailResourcesAsset.plus)
+                    .resizable()
+                    .frame(width: 18, height: 18)
                     .rotationEffect(Angle(degrees: 45))
             }
             .foregroundColor(MailResourcesAsset.textFieldPlaceholderColor)
