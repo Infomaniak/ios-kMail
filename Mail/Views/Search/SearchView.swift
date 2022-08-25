@@ -97,6 +97,7 @@ struct SearchView: View {
             }
             .listStyle(.plain)
         }
+        .background(MailResourcesAsset.backgroundColor.swiftUiColor)
         .introspectNavigationController { navigationController in
             let newNavController = navigationController
             // Style toolbar
