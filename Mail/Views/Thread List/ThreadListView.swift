@@ -128,7 +128,7 @@ struct ThreadListView: View {
                         tableView.contentInset = UIEdgeInsets(
                             top: 0,
                             left: 0,
-                            bottom: multipleSelectionViewModel.isEnabled ? 0 : 100,
+                            bottom: multipleSelectionViewModel.isEnabled ? 85 : 100,
                             right: 0
                         )
                     }
@@ -291,7 +291,6 @@ private struct ThreadListToolbar: ViewModifier {
                                 }
                                 .frame(width: reader.size.width / 5, alignment: .center)
                             }
-
                         }
                     }
                 }
