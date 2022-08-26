@@ -120,6 +120,8 @@ enum SearchFieldValueType: String {
         searchValue = ""
         threads = []
         contacts = []
+        searchInfo.isLoading = false
+        searchInfo.hasSearched = false
     }
 
     private var searchFilters: [URLQueryItem] {
