@@ -81,7 +81,8 @@ struct ThreadListView: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            ThreadListHeader(isConnected: $networkMonitor.isConnected,
+            ThreadListHeader(isMultipleSelectionEnabled: multipleSelectionViewModel.isEnabled,
+                             isConnected: $networkMonitor.isConnected,
                              lastUpdate: $viewModel.lastUpdate,
                              unreadCount: Binding(get: {
                                  currentFolder?.unreadCount

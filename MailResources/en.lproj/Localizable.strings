@@ -5,7 +5,7 @@
  * Locale: en, English
  * Tagged: ios
  * Exported by: Valentin Perignon
- * Exported at: Wed, 27 Jul 2022 16:39:22 +0200
+ * Exported at: Fri, 26 Aug 2022 09:07:46 +0200
  */
 
 /* loco:62bb154d7513e127cb2e9c94 */
@@ -228,7 +228,7 @@
 "buttonSeeAll" = "See all";
 
 /* loco:626918473e1b2d7fe4329d52 */
-"buttonSelectAll" = "Select all";
+"buttonSelectAll" = "All";
 
 /* loco:6267af86c6ebf234e9213012 */
 "buttonShare" = "Share";
@@ -271,6 +271,9 @@
 
 /* loco:627cef9a9e08324b604c8612 */
 "contactMe" = "Me";
+
+/* loco:62ed16680ed9e562702a5ab2 */
+"contactsSearch" = "Contacts";
 
 /* loco:628c9d1654bb544229106572 */
 "contentDescriptionButtonBack" = "Back";
@@ -383,9 +386,6 @@
 /* loco:628b90d373427778f14fd442 */
 "messageIsDraftOption" = "Draft";
 
-/* loco:627e10bf9707ba58de137452 */
-"messageNoSubject" = "No subject";
-
 /* loco:628b6d81110f662ac808a165 */
 "messageReplyHeader" = "On %@, %@ wrote:";
 
@@ -409,6 +409,9 @@
 
 /* loco:6266655afabeeb6bc774c932 */
 "newMessagePlaceholderTitle" = "Type your message";
+
+/* loco:62fb875a6743ac5a237b07e3 */
+"noBodyTitle" = "This message is empty.";
 
 /* loco:626a51f5e1663d3865426573 */
 "noEmailDescription" = "Write a new email by clicking on 'New message' in the bottom-right corner";
@@ -461,6 +464,9 @@
 /* loco:62c424189aacc248962d6224 */
 "pickerNoSelection" = "No selection";
 
+/* loco:62f0e594f7dcd16da506af53 */
+"recentSearchesTitle" = "Recent searches";
+
 /* loco:62baabfc07e6a001ca19e535 */
 "refreshTokenError" = "You’ve been disconnected due to a problem. Please log in again";
 
@@ -490,6 +496,9 @@
 
 /* loco:62d558bc5056b05c262abe22 */
 "searchAllMessages" = "All messages";
+
+/* loco:62fe2cd176cfba76ac066f32 */
+"searchFieldPlaceholder" = "Search an email";
 
 /* loco:62d5568245072b538b5aeaa2 */
 "searchFilterAttachment" = "Attachments";

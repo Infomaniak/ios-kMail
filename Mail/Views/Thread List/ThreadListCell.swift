@@ -120,6 +120,7 @@ struct ThreadListCell: View {
         .onTapGesture(perform: didTapCell)
         .onLongPressGesture(minimumDuration: 0.3, perform: didLongPressCell)
         .swipeActions(thread: thread, viewModel: viewModel, multipleSelectionViewModel: multipleSelectionViewModel)
+        .clipped()
     }
 
     @ViewBuilder
@@ -171,7 +172,7 @@ struct ThreadListCell: View {
             if thread.messagesCount > 1 {
                 Text("\(thread.messagesCount)")
                     .textStyle(.bodySecondary)
-                    .padding(.horizontal, 3)
+                    .padding(.horizontal, 4)
                     .lineLimit(1)
                     .overlay {
                         RoundedRectangle(cornerRadius: 3)
