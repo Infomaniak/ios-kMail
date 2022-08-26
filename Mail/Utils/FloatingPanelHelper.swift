@@ -58,18 +58,15 @@ class AdaptiveDriveFloatingPanelController: FloatingPanelController {
 class AdaptiveFloatingPanelLayout: FloatingPanelLayout {
     var position: FloatingPanelPosition = .bottom
     var height: CGFloat
+    var anchors: [FloatingPanelState: FloatingPanelLayoutAnchoring]
+    var initialState: FloatingPanelState = .full
 
     init(height: CGFloat) {
         self.height = height
-    }
-
-    var anchors: [FloatingPanelState: FloatingPanelLayoutAnchoring] {
-        return [
+        anchors = [
             .full: FloatingPanelLayoutAnchor(absoluteInset: height, edge: .bottom, referenceGuide: .safeArea)
         ]
     }
-
-    var initialState: FloatingPanelState = .full
 
     func backdropAlpha(for state: FloatingPanelState) -> CGFloat {
         return 0.2

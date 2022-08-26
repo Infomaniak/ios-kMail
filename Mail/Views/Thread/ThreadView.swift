@@ -54,7 +54,6 @@ struct ThreadView: View {
     private var folderId: String?
 
     @State private var displayNavigationTitle = false
-    @State private var isOpen = false
     @StateObject private var sheet = MessageSheet()
     @StateObject private var bottomSheet = MessageBottomSheet()
     @StateObject private var threadBottomSheet = ThreadBottomSheet()
