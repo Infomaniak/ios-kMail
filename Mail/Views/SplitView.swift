@@ -16,7 +16,6 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import BottomSheet
 import InfomaniakBugTracker
 import InfomaniakCore
 import Introspect
@@ -25,24 +24,13 @@ import MailResources
 import RealmSwift
 import SwiftUI
 
-class GlobalBottomSheet: BottomSheetState<GlobalBottomSheet.State, GlobalBottomSheet.Position> {
+class GlobalBottomSheet: DisplayedFloatingPanelState<GlobalBottomSheet.State> {
     enum State {
         case move(moveHandler: (Folder) -> Void)
         case getMoreStorage
         case restoreEmails
         case reportDisplayProblem(message: Message)
         case reportPhishing(message: Message)
-    }
-
-    enum Position: CGFloat, CaseIterable {
-        // Height is height of view + 60 for margins
-        case moveHeight = 340
-        case newFolderHeight = 300
-        case moreStorageHeight = 436
-        case restoreEmailsHeight = 292
-        case reportDisplayIssueHeight = 380
-        case reportPhishingHeight = 655
-        case hidden = 0
     }
 }
 
@@ -75,7 +63,6 @@ struct SplitView: View {
 
     @StateObject private var splitViewManager: SplitViewManager
 
-    private let bottomSheetOptions = Constants.bottomSheetOptions + [.absolutePositionValue, .notResizeable]
 
     var isCompact: Bool {
         sizeClass == .compact
@@ -193,7 +180,7 @@ struct SplitView: View {
         }
         .environmentObject(bottomSheet)
         .environmentObject(alert)
-        .bottomSheet(bottomSheetPosition: $bottomSheet.position, options: bottomSheetOptions) {
+        .floatingPanel(state: bottomSheet) {
             switch bottomSheet.state {
             case let .move(moveHandler):
                 MoveEmailView(mailboxManager: mailboxManager, state: bottomSheet, globalAlert: alert, moveHandler: moveHandler)

@@ -19,21 +19,21 @@
       }
     },
     {
-      "identity" : "bottomsheet",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/lucaszischka/BottomSheet",
-      "state" : {
-        "revision" : "39f59cd641dfb407cb4033966e3be51237011da4",
-        "version" : "2.8.0"
-      }
-    },
-    {
       "identity" : "cocoalumberjack",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/CocoaLumberjack/CocoaLumberjack.git",
       "state" : {
         "revision" : "80ada1f753b0d53d9b57c465936a7c4169375002",
         "version" : "3.7.4"
+      }
+    },
+    {
+      "identity" : "floatingpanel",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/SCENEE/FloatingPanel",
+      "state" : {
+        "revision" : "639e4221e83a92363ae2c0b30abca44b83854ac9",
+        "version" : "2.5.3"
       }
     },
     {

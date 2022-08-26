@@ -40,7 +40,7 @@ struct MailboxQuotaView: View {
                 .textStyle(.header3)
 
                 Button {
-                    globalSheet.open(state: .getMoreStorage, position: .moreStorageHeight)
+                    globalSheet.open(state: .getMoreStorage)
                 } label: {
                     Text(MailResourcesStrings.Localizable.buttonMoreStorage)
                 }

@@ -72,8 +72,6 @@ struct NewMessageView: View {
     @State var debouncedBufferWrite: DispatchWorkItem?
     let saveExpiration = 3.0
 
-    private let bottomSheetOptions = Constants.bottomSheetOptions + [.absolutePositionValue, .notResizeable]
-
     private var shouldDisplayAutocompletion: Bool {
         return !autocompletion.isEmpty && focusedRecipientField != nil
     }
