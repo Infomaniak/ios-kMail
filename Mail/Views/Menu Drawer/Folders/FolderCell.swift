@@ -46,12 +46,13 @@ struct FolderCell: View {
                         isCompact: isCompact
                     )
                 } label: {
-                    FolderCellContent(folder: folder, level: level, selectedFolder: $splitViewManager.selectedFolder)
-                        .onTapGesture {
-                            splitViewManager.selectedFolder = folder.thaw()
-                            splitViewManager.showSearch = false
-                            self.shouldTransit = true
-                        }
+                    Button {
+                        splitViewManager.selectedFolder = folder.thaw()
+                        splitViewManager.showSearch = false
+                        self.shouldTransit = true
+                    } label: {
+                        FolderCellContent(folder: folder, level: level, selectedFolder: $splitViewManager.selectedFolder)
+                    }
                 }
             }
 
