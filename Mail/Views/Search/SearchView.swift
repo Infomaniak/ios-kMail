@@ -34,6 +34,8 @@ struct SearchView: View {
     @StateObject var bottomSheet: ThreadBottomSheet
     @State private var navigationController: UINavigationController?
 
+    @State public var isSearchFieldFocused = false
+
     private let bottomSheetOptions = Constants.bottomSheetOptions + [.appleScrollBehavior]
 
     let isCompact: Bool
@@ -74,7 +76,7 @@ struct SearchView: View {
                 if viewModel.showHistory {
                     searchHistoryList(history: viewModel.searchHistory)
                 } else {
-                    if !viewModel.contacts.isEmpty {
+                    if !viewModel.contacts.isEmpty && isSearchFieldFocused {
                         contactList(contacts: viewModel.contacts)
                     }
 
@@ -164,7 +166,7 @@ struct SearchView: View {
             }
 
             ToolbarItem(placement: .principal) {
-                SearchTextField(value: $viewModel.searchValue) {
+                SearchTextField(value: $viewModel.searchValue, isFocused: $isSearchFieldFocused) {
                     Task {
                         await viewModel.fetchThreads()
                     }

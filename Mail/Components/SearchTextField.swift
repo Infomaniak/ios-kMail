@@ -21,6 +21,7 @@ import SwiftUI
 
 struct SearchTextField: View {
     @Binding public var value: String
+    @Binding public var isFocused: Bool
     public var onSubmit: () -> Void
     public var onDelete: () -> Void
 
@@ -32,16 +33,17 @@ struct SearchTextField: View {
                     .frame(width: 16, height: 16)
             }
             .foregroundColor(MailResourcesAsset.textFieldPlaceholderColor)
-
-            TextField(MailResourcesStrings.Localizable.searchFieldPlaceholder, text: $value)
-                .textFieldStyle(DefaultTextFieldStyle())
-                .foregroundColor(value.isEmpty
-                    ? MailResourcesAsset.textFieldPlaceholderColor
-                    : MailResourcesAsset.primaryTextColor)
-                    .onSubmit {
-                        onSubmit()
-                    }
-                    .padding(.vertical, 11)
+            TextField(MailResourcesStrings.Localizable.searchFieldPlaceholder, text: $value) { focused in
+                isFocused = focused
+            }
+            .textFieldStyle(DefaultTextFieldStyle())
+            .foregroundColor(value.isEmpty
+                ? MailResourcesAsset.textFieldPlaceholderColor
+                : MailResourcesAsset.primaryTextColor)
+                .onSubmit {
+                    onSubmit()
+                }
+                .padding(.vertical, 11)
 
             Button(action: onDelete) {
                 Image(resource: MailResourcesAsset.plus)
@@ -61,6 +63,11 @@ struct SearchTextField: View {
 
 struct SearchTextField_Previews: PreviewProvider {
     static var previews: some View {
-        SearchTextField(value: .constant("Recherche"), onSubmit: { /* Empty on purpose */ }, onDelete: { /* Empty on purpose */ })
+        SearchTextField(
+            value: .constant("Recherche"),
+            isFocused: .constant(false),
+            onSubmit: { /* Empty on purpose */ },
+            onDelete: { /* Empty on purpose */ }
+        )
     }
 }
