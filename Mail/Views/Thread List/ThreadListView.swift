@@ -120,18 +120,15 @@ struct ThreadListView: View {
                             .listRowSeparator(.hidden)
                             .listRowBackground(MailResourcesAsset.backgroundColor.swiftUiColor)
                         }
+
+                        Spacer()
+                            .frame(height: multipleSelectionViewModel.isEnabled ? 75 : 85)
+                            .listRowSeparator(.hidden)
+                            .listRowBackground(MailResourcesAsset.backgroundColor.swiftUiColor)
                     }
                     .listStyle(.plain)
                     .onAppear {
                         viewModel.scrollViewProxy = proxy
-                    }
-                    .introspectTableView { tableView in
-                        tableView.contentInset = UIEdgeInsets(
-                            top: 0,
-                            left: 0,
-                            bottom: multipleSelectionViewModel.isEnabled ? 85 : 100,
-                            right: 0
-                        )
                     }
                 }
             }
@@ -163,6 +160,9 @@ struct ThreadListView: View {
                                 state: bottomSheet,
                                 globalSheet: globalBottomSheet) { message, replyMode in
                         menuSheet.state = .reply(message, replyMode)
+                    } completionHandler: {
+                        bottomSheet.close()
+                        multipleSelectionViewModel.isEnabled = false
                     }
                 }
             default:
@@ -225,7 +225,6 @@ private struct ThreadListToolbar: ViewModifier {
     func body(content: Content) -> some View {
         GeometryReader { reader in
             content
-                .navigationBarTitleDisplayMode(.inline)
                 .toolbar {
                     ToolbarItemGroup(placement: .navigationBarLeading) {
                         if multipleSelectionViewModel.isEnabled {
@@ -250,7 +249,12 @@ private struct ThreadListToolbar: ViewModifier {
                     }
 
                     ToolbarItemGroup(placement: .navigationBarTrailing) {
-                        if !multipleSelectionViewModel.isEnabled {
+                        if multipleSelectionViewModel.isEnabled {
+                            Button(MailResourcesStrings.Localizable.buttonSelectAll) {
+                                // TODO: Select all threads
+                                showWorkInProgressSnackBar()
+                            }
+                        } else {
                             Button {
                                 // TODO: Search
                                 showWorkInProgressSnackBar()
@@ -267,10 +271,6 @@ private struct ThreadListToolbar: ViewModifier {
                                     .frame(width: 30, height: 30)
                                     .clipShape(Circle())
                             }
-                        } else {
-                            Button(MailResourcesStrings.Localizable.buttonSelectAll) {
-                                // TODO: Select all threads
-                            }
                         }
                     }
 
@@ -278,26 +278,31 @@ private struct ThreadListToolbar: ViewModifier {
                         if multipleSelectionViewModel.isEnabled {
                             HStack(spacing: 0) {
                                 ForEach(multipleSelectionViewModel.toolbarActions) { action in
-                                    ToolbarButton(text: action.shortTitle ?? action.title, icon: action.icon) {
+                                    ToolbarButton(text: action.shortTitle ?? action.title, icon: action.icon, width: reader.size.width / 5) {
                                         Task {
                                             await tryOrDisplayError {
                                                 try await multipleSelectionViewModel.didTap(action: action)
                                             }
                                         }
                                     }
-                                    .frame(width: reader.size.width / 5, alignment: .center)
                                 }
-                                ToolbarButton(text: MailResourcesStrings.Localizable.buttonMore, icon: MailResourcesAsset.plusActions) {
-                                    bottomSheet.open(state: .actions(.threads(Array(multipleSelectionViewModel.selectedItems))), position: .middle)
+
+                                ToolbarButton(text: MailResourcesStrings.Localizable.buttonMore,
+                                              icon: MailResourcesAsset.plusActions,
+                                              width: reader.size.width / 5) {
+                                    bottomSheet.open(state: .actions(.threads(Array(multipleSelectionViewModel.selectedItems))),
+                                                     position: .middle)
                                 }
-                                .frame(width: reader.size.width / 5, alignment: .center)
                             }
                         }
                     }
                 }
-                .navigationTitle(multipleSelectionViewModel.isEnabled
-                                 ? MailResourcesStrings.Localizable.multipleSelectionCount(multipleSelectionViewModel.selectedItems.count)
-                             : "")
+                .navigationTitle(
+                    multipleSelectionViewModel.isEnabled
+                    ? MailResourcesStrings.Localizable.multipleSelectionCount(multipleSelectionViewModel.selectedItems.count)
+                    : ""
+                )
+                .navigationBarTitleDisplayMode(.inline)
         }
     }
 }

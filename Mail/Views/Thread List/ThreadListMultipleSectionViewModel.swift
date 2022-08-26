@@ -72,7 +72,7 @@ import MailCore
     }
 
     private func setActions() {
-        let read = selectedItems.contains(where: { $0.unseenMessages != 0 }) ? Action.markAsRead : Action.markAsUnread
+        let read = selectedItems.contains { $0.unseenMessages != 0 } ? Action.markAsRead : Action.markAsUnread
         toolbarActions = [read, .archive, .star, .delete]
     }
 }

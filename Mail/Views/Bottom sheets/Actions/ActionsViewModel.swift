@@ -94,6 +94,7 @@ enum ActionsTarget: Equatable {
     private let state: ThreadBottomSheet
     private let globalSheet: GlobalBottomSheet
     private let replyHandler: (Message, ReplyMode) -> Void
+    private let completionHandler: (() -> Void)?
 
     @Published var quickActions: [Action] = []
     @Published var listActions: [Action] = []
@@ -102,12 +103,14 @@ enum ActionsTarget: Equatable {
          target: ActionsTarget,
          state: ThreadBottomSheet,
          globalSheet: GlobalBottomSheet,
-         replyHandler: @escaping (Message, ReplyMode) -> Void) {
+         replyHandler: @escaping (Message, ReplyMode) -> Void,
+         completionHandler: (() -> Void)? = nil) {
         self.mailboxManager = mailboxManager
         self.target = target
         self.state = state
         self.globalSheet = globalSheet
         self.replyHandler = replyHandler
+        self.completionHandler = completionHandler
         setActions()
     }
 
@@ -209,17 +212,7 @@ enum ActionsTarget: Equatable {
         default:
             print("Warning: Unhandled action!")
         }
-    }
-
-    private func taskGroup(on threads: [Thread], method: @escaping (Thread) async throws -> Void) async throws {
-        try await withThrowingTaskGroup(of: Void.self) { group in
-            for thread in threads {
-                group.addTask {
-                    try await method(thread)
-                }
-            }
-            try await group.waitForAll()
-        }
+        completionHandler?()
     }
 
     private func move(to folder: Folder) async throws {
@@ -309,7 +302,7 @@ enum ActionsTarget: Equatable {
     private func toggleRead() async throws {
         switch target {
         case let .threads(threads):
-            try await taskGroup(on: threads, method: mailboxManager.toggleRead)
+            try await mailboxManager.toggleRead(threads: threads.map { $0.freezeIfNeeded() })
         case let .thread(thread):
             try await mailboxManager.toggleRead(thread: thread.freezeIfNeeded())
         case let .message(message):
@@ -333,9 +326,8 @@ enum ActionsTarget: Equatable {
 
     private func star() async throws {
         switch target {
-        case .threads:
-            // TODO: STAR ACTION in multiple selection
-            break
+        case let .threads(threads):
+            try await mailboxManager.toggleStar(threads: threads.map { $0.freezeIfNeeded() })
         case let .thread(thread):
             Task {
                 await tryOrDisplayError {
@@ -360,7 +352,7 @@ enum ActionsTarget: Equatable {
         let snackBarMessage: String
         switch target {
         case let .threads(threads):
-            response = try await mailboxManager.reportSpam(messages: threads.flatMap(\.messages).map { $0.freezeIfNeeded() })
+            response = try await mailboxManager.reportSpam(threads: threads.map { $0.freezeIfNeeded() })
             snackBarMessage = MailResourcesStrings.Localizable.snackbarThreadsMoved(FolderRole.spam.localizedName)
         case let .thread(thread):
             response = try await mailboxManager.reportSpam(thread: thread.freezeIfNeeded())
@@ -381,7 +373,7 @@ enum ActionsTarget: Equatable {
         let snackBarMessage: String
         switch target {
         case let .threads(threads):
-            response = try await mailboxManager.nonSpam(messages: threads.flatMap(\.messages).map { $0.freezeIfNeeded() })
+            response = try await mailboxManager.nonSpam(threads: threads.map { $0.freezeIfNeeded() })
             snackBarMessage = MailResourcesStrings.Localizable.snackbarThreadsMoved(FolderRole.inbox.localizedName)
         case let .thread(thread):
             response = try await mailboxManager.nonSpam(thread: thread.freezeIfNeeded())

@@ -23,9 +23,17 @@ import SwiftUI
 struct ToolbarButton: View {
     @Environment(\.verticalSizeClass) private var sizeClass
 
-    var text: String
-    var icon: MailResourcesImages
-    var action: () -> Void
+    let text: String
+    let icon: MailResourcesImages
+    let width: CGFloat?
+    let action: () -> Void
+
+    init(text: String, icon: MailResourcesImages, width: CGFloat? = nil, action: @escaping () -> Void) {
+        self.text = text
+        self.icon = icon
+        self.width = width
+        self.action = action
+    }
 
     var body: some View {
         Button(action: action) {
@@ -40,6 +48,7 @@ struct ToolbarButton: View {
             }
             .dynamicLabelStyle(sizeClass: sizeClass ?? .regular)
         }
+        .frame(width: width, alignment: .center)
     }
 }
 

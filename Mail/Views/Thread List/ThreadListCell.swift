@@ -43,10 +43,10 @@ struct ThreadListCell: View {
     @AppStorage(UserDefaults.shared.key(.threadDensity)) var density: ThreadDensity = .normal
     @AppStorage(UserDefaults.shared.key(.accentColor)) private var accentColor = AccentColor.pink
 
+    @State private var shouldNavigateToThreadList = false
+
     @ObservedObject var viewModel: ThreadListViewModel
     @ObservedObject var multipleSelectionViewModel: ThreadListMultipleSelectionViewModel
-
-    @State private var shouldNavigateToThreadList = false
 
     var thread: Thread
     var navigationController: UINavigationController?
@@ -58,7 +58,7 @@ struct ThreadListCell: View {
         thread.unseenMessages > 0
     }
     private var isSelected: Bool {
-        multipleSelectionViewModel.selectedItems.map(\.id).contains(thread.id)
+        multipleSelectionViewModel.selectedItems.contains { $0.id == thread.id }
     }
     private var textStyle: MailTextStyle {
         hasUnreadMessages ? .header3 : .bodySecondary
@@ -89,11 +89,11 @@ struct ThreadListCell: View {
                         }
                     } else if multipleSelectionViewModel.isEnabled {
                         checkbox
+                            .animation(.threadListCheckbox(isMultipleSelectionEnabled: multipleSelectionViewModel.isEnabled),
+                                       value: multipleSelectionViewModel.isEnabled)
                     }
                 }
                 .padding(.trailing, 4)
-                .animation(.threadListCheckbox(isMultipleSelectionEnabled: multipleSelectionViewModel.isEnabled),
-                           value: multipleSelectionViewModel.isEnabled)
 
                 VStack(alignment: .leading, spacing: 4) {
                     cellHeader
@@ -111,12 +111,7 @@ struct ThreadListCell: View {
         .padding(.leading, multipleSelectionViewModel.isEnabled ? 16 : 8)
         .padding(.trailing, 12)
         .padding(.vertical, density.cellVerticalPadding)
-        .background(
-            RoundedRectangle(cornerRadius: 10)
-                .fill(isSelected ? accentColor.secondary.swiftUiColor : MailResourcesAsset.backgroundColor.swiftUiColor)
-                .offset(x: 8, y: 0)
-                .padding(.vertical, 2)
-        )
+        .background(SelectionBackground(isSelected: isSelected, offsetX: 8, leadingPadding: 0, verticalPadding: 2))
         .onTapGesture(perform: didTapCell)
         .onLongPressGesture(minimumDuration: 0.3, perform: didLongPressCell)
         .swipeActions(thread: thread, viewModel: viewModel, multipleSelectionViewModel: multipleSelectionViewModel)
