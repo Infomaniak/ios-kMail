@@ -16,7 +16,6 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import BottomSheet
 import Introspect
 import MailCore
 import MailResources
@@ -36,13 +35,9 @@ class MenuSheet: SheetState<MenuSheet.State> {
     }
 }
 
-class ThreadBottomSheet: BottomSheetState<ThreadBottomSheet.State, ThreadBottomSheet.Position> {
+class ThreadBottomSheet: DisplayedFloatingPanelState<ThreadBottomSheet.State> {
     enum State: Equatable {
         case actions(ActionsTarget)
-    }
-
-    public enum Position: CGFloat, CaseIterable {
-        case top = 0.975, middle = 0.4, hidden = 0
     }
 }
 
@@ -62,7 +57,6 @@ struct ThreadListView: View {
 
     let isCompact: Bool
 
-    private let bottomSheetOptions = Constants.bottomSheetOptions + [.appleScrollBehavior]
 
     init(mailboxManager: MailboxManager, folder: Folder?, isCompact: Bool) {
         let threadBottomSheet = ThreadBottomSheet()
@@ -144,7 +138,7 @@ struct ThreadListView: View {
         ) {
             menuSheet.state = .newMessage
         }
-        .bottomSheet(bottomSheetPosition: $bottomSheet.position, options: bottomSheetOptions) {
+        .floatingPanel(state: bottomSheet) {
             switch bottomSheet.state {
             case let .actions(target):
                 if target.isInvalidated {

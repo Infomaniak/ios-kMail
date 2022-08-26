@@ -233,7 +233,7 @@ struct MenuDrawerView: View {
     }
 
     func restoreMails() {
-        bottomSheet.open(state: .restoreEmails, position: .restoreEmailsHeight)
+        bottomSheet.open(state: .restoreEmails)
     }
 }
 
