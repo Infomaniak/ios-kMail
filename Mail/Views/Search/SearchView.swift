@@ -68,7 +68,7 @@ struct SearchView: View {
                     }
                 }
             }
-            .padding(.top, 32)
+            .padding(.top, 16)
 
             List {
                 if viewModel.showHistory {
