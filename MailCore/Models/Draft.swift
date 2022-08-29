@@ -255,7 +255,7 @@ public struct UnmanagedDraft: Equatable, Encodable, AbstractDraft {
             attachments = attachmentsToForward
         }
         return UnmanagedDraft(subject: subject,
-                              body: "<div><br></div><div><br></div>\(quote)",
+                              body: "<br><br>\(quote)",
                               quote: quote,
                               to: mode.isReply ? Array(message.replyTo.isEmpty ? message.from.detached() : message.replyTo.detached()) : [],
                               cc: mode == .replyAll ? Array(message.to.detached()) + Array(message.cc.detached()) : [],
@@ -291,7 +291,7 @@ public struct UnmanagedDraft: Equatable, Encodable, AbstractDraft {
         from = [Recipient(email: signature.sender, name: signature.fullName)]
         replyTo = [Recipient(email: signature.replyTo, name: "")]
         if !body.contains("editorUserSignature") {
-            let html = "<div><br></div><div><br></div><div class=\"editorUserSignature\">\(signature.content)</div>"
+            let html = "<br><br><div class=\"editorUserSignature\">\(signature.content)</div>"
             switch signature.position {
             case .top:
                 body.insert(contentsOf: html, at: body.startIndex)
