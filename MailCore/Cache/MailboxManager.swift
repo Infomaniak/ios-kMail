@@ -82,7 +82,8 @@ public class MailboxManager: ObservableObject {
                 Draft.self,
                 SignatureResponse.self,
                 Signature.self,
-                ValidEmail.self
+                ValidEmail.self,
+                SearchHistory.self
             ]
         )
     }
@@ -192,6 +193,15 @@ public class MailboxManager: ObservableObject {
         }
         return realm.objects(Folder.self).where { $0.role == role }.first
     }
+    
+    /// Get all the real folders in Realm
+    /// - Parameters:
+    ///   - realm: The Realm instance to use. If this parameter is `nil`, a new one will be created.
+    /// - Returns: The list of real folders.
+    public func getFolders(using realm: Realm? = nil) -> [Folder] {
+        let realm = realm ?? getRealm()
+        return Array(realm.objects(Folder.self).where { $0.toolType == nil })
+    }
 
     public func createFolder(name: String, parent: Folder? = nil) async throws -> Folder {
         let folder = try await apiFetcher.create(mailbox: mailbox, folder: NewFolder(name: name, path: parent?.path))
@@ -205,9 +215,14 @@ public class MailboxManager: ObservableObject {
 
     // MARK: - Thread
 
-    public func threads(folder: Folder, filter: Filter = .all) async throws -> ThreadResult {
+    public func threads(folder: Folder, filter: Filter = .all, searchFilter: [URLQueryItem] = []) async throws -> ThreadResult {
         // Get from API
-        let threadResult = try await apiFetcher.threads(mailbox: mailbox, folder: folder, filter: filter)
+        let threadResult = try await apiFetcher.threads(
+            mailbox: mailbox,
+            folderId: folder._id,
+            filter: filter,
+            searchFilter: searchFilter
+        )
 
         // Save result
         saveThreads(result: threadResult, parent: folder)
@@ -314,6 +329,9 @@ public class MailboxManager: ObservableObject {
     /// - Parameter thread: Thread to remove
     public func moveOrDelete(thread: Thread) async throws {
         let parentFolder = thread.parent
+        if parentFolder?.toolType == nil {
+            deleteInSearch(thread: thread)
+        }
         if parentFolder?.role == .trash {
             // Delete definitely
             try await delete(thread: thread)
@@ -326,10 +344,21 @@ public class MailboxManager: ObservableObject {
             let folderName = FolderRole.trash.localizedName
             Task.detached {
                 await IKSnackBar.showCancelableSnackBar(message: MailResourcesStrings.Localizable.snackbarThreadMoved(folderName),
-                                                        cancelSuccessMessage: MailResourcesStrings.Localizable.snackbarMoveCancelled,
+                                                        cancelSuccessMessage: MailResourcesStrings.Localizable
+                                                            .snackbarMoveCancelled,
                                                         cancelableResponse: response,
                                                         mailboxManager: self)
             }
+        }
+    }
+
+    private func deleteInSearch(thread: Thread, using realm: Realm? = nil) {
+        let realm = realm ?? getRealm()
+        guard let searchFolder = realm.object(ofType: Folder.self, forPrimaryKey: Constants.searchFolderId),
+              let thread = thread.thaw() else { return }
+
+        try? realm.safeWrite {
+            searchFolder.threads.remove(thread)
         }
     }
 
@@ -391,6 +420,119 @@ public class MailboxManager: ObservableObject {
                 message.folder = folder.name
                 message.folderId = folder._id
             }
+        }
+    }
+
+    // MARK: - Search
+
+    public func initSearchFolder() -> Folder {
+        let realm = getRealm()
+
+        let searchFolder = Folder(
+            id: Constants.searchFolderId,
+            path: "",
+            name: "",
+            isFake: false,
+            isCollapsed: false,
+            isFavorite: false,
+            separator: "/",
+            children: [],
+            toolType: .search
+        )
+
+        try? realm.safeWrite {
+            realm.add(searchFolder, update: .modified)
+        }
+
+        return searchFolder
+    }
+
+    public func cleanSearchFolder(using realm: Realm? = nil) -> Folder {
+        let realm = realm ?? getRealm()
+        if let folder = realm.object(ofType: Folder.self, forPrimaryKey: Constants.searchFolderId) {
+            try? realm.safeWrite {
+                realm.delete(folder.threads.where { $0.fromSearch == true })
+                folder.threads.removeAll()
+            }
+            return folder
+        } else {
+            return initSearchFolder()
+        }
+    }
+
+    public func searchThreads(@ThreadSafe searchFolder: Folder?, filterFolderId: String, filter: Filter = .all,
+                              searchFilter: [URLQueryItem] = []) async throws -> ThreadResult {
+        let threadResult = try await apiFetcher.threads(
+            mailbox: mailbox,
+            folderId: filterFolderId,
+            filter: filter,
+            searchFilter: searchFilter
+        )
+
+        let realm = getRealm()
+        for thread in threadResult.threads ?? [] {
+            if realm.object(ofType: Thread.self, forPrimaryKey: thread.uid) == nil {
+                thread.fromSearch = true
+            }
+        }
+
+        if let searchFolder = searchFolder {
+            saveThreads(result: threadResult, parent: searchFolder)
+        }
+
+        return threadResult
+    }
+
+    public func searchThreads(@ThreadSafe searchFolder: Folder?, from resource: String,
+                              searchFilter: [URLQueryItem] = []) async throws -> ThreadResult {
+        let threadResult = try await apiFetcher.threads(from: resource, searchFilter: searchFilter)
+
+        let realm = getRealm()
+        for thread in threadResult.threads ?? [] {
+            if realm.object(ofType: Thread.self, forPrimaryKey: thread.uid) == nil {
+                thread.fromSearch = true
+            }
+        }
+
+        if let searchFolder = searchFolder {
+            saveThreads(result: threadResult, parent: searchFolder)
+        }
+
+        return threadResult
+    }
+
+    public func searchHistory(using realm: Realm? = nil) -> SearchHistory {
+        let realm = realm ?? getRealm()
+        if let searchHistory = realm.objects(SearchHistory.self).first {
+            return searchHistory.freeze()
+        }
+        let newSearchHistory = SearchHistory()
+        try? realm.safeWrite {
+            realm.add(newSearchHistory)
+        }
+        return newSearchHistory
+    }
+
+    public func update(searchHistory: SearchHistory, with value: String) -> SearchHistory {
+        let realm = getRealm()
+        realm.refresh()
+        guard let searchHistory = searchHistory.thaw() else { return searchHistory }
+
+        try? realm.safeWrite {
+            if let indexToRemove = searchHistory.history.firstIndex(of: value) {
+                searchHistory.history.remove(at: indexToRemove)
+            }
+            searchHistory.history.insert(value, at: 0)
+        }
+
+        return searchHistory.freeze()
+    }
+
+    public func clearSearchHistory() {
+        let realm = getRealm()
+        let searchHistory = searchHistory(using: realm)
+        try? realm.safeWrite {
+            searchHistory.history.removeAll()
         }
     }
 

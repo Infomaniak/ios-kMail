@@ -96,6 +96,10 @@ public enum FolderRole: String, Codable, PersistableEnum {
     }
 }
 
+public enum ToolFolderType: String, PersistableEnum {
+    case search
+}
+
 public class Folder: Object, Codable, Comparable, Identifiable {
     @Persisted(primaryKey: true) public var _id: String
     @Persisted public var path: String
@@ -110,6 +114,7 @@ public class Folder: Object, Codable, Comparable, Identifiable {
     @Persisted public var children: MutableSet<Folder>
     @Persisted public var threads: MutableSet<Thread>
     @Persisted(originProperty: "children") public var parentLink: LinkingObjects<Folder>
+    @Persisted public var toolType: ToolFolderType?
 
     /// Date of last threads update
     @Persisted public var lastUpdate: Date?
@@ -210,7 +215,8 @@ public class Folder: Object, Codable, Comparable, Identifiable {
         isCollapsed: Bool,
         isFavorite: Bool,
         separator: String,
-        children: [Folder]
+        children: [Folder],
+        toolType: ToolFolderType? = nil
     ) {
         self.init()
 
@@ -227,5 +233,7 @@ public class Folder: Object, Codable, Comparable, Identifiable {
 
         self.children = MutableSet()
         self.children.insert(objectsIn: children)
+        
+        self.toolType = toolType
     }
 }

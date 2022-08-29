@@ -16,27 +16,9 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import MailCore
-import MailResources
+import Foundation
 import RealmSwift
-import SwiftUI
 
-struct RoleFoldersListView: View {
-    @ObservedResults(Folder.self) var folders
-
-    var isCompact: Bool
-
-    var body: some View {
-        VStack(spacing: 0) {
-            ForEach(Array(folders.filter { $0.role != nil }).sorted()) { folder in
-                FolderCell(folder: folder, isCompact: isCompact)
-
-                if folder.role == .inbox {
-                    IKDivider(withPadding: true)
-                        .padding(.vertical, Constants.menuDrawerVerticalPadding)
-                }
-            }
-        }
-        .padding(.vertical, Constants.menuDrawerVerticalPadding)
-    }
+public class SearchHistory: Object {
+    @Persisted public var history: List<String>
 }

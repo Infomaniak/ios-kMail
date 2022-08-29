@@ -22,38 +22,48 @@ import MailResources
 import SwiftUI
 
 struct FolderCell: View {
+    @EnvironmentObject var splitViewManager: SplitViewManager
     @EnvironmentObject var mailboxManager: MailboxManager
     @EnvironmentObject var navigationDrawerController: NavigationDrawerController
 
     let folder: Folder
     var level = 0
-    @Binding var selectedFolder: Folder?
 
     var isCompact: Bool
+
+    @State private var shouldTransit = false
 
     var body: some View {
         Group {
             if isCompact {
                 Button(action: updateFolder) {
-                    FolderCellContent(folder: folder, level: level, selectedFolder: $selectedFolder)
+                    FolderCellContent(folder: folder, level: level, selectedFolder: $splitViewManager.selectedFolder)
                 }
             } else {
-                NavigationLink {
-                    ThreadListView(mailboxManager: mailboxManager, folder: .constant(folder), isCompact: isCompact)
-                        .onAppear { selectedFolder = folder.thaw() }
+                NavigationLink(isActive: $shouldTransit) {
+                    ThreadListManagerView(
+                        mailboxManager: mailboxManager,
+                        isCompact: isCompact
+                    )
                 } label: {
-                    FolderCellContent(folder: folder, level: level, selectedFolder: $selectedFolder)
+                    Button {
+                        splitViewManager.selectedFolder = folder.thaw()
+                        splitViewManager.showSearch = false
+                        self.shouldTransit = true
+                    } label: {
+                        FolderCellContent(folder: folder, level: level, selectedFolder: $splitViewManager.selectedFolder)
+                    }
                 }
             }
 
             ForEach(folder.children) { child in
-                FolderCell(folder: child, level: level + 1, selectedFolder: $selectedFolder, isCompact: isCompact)
+                FolderCell(folder: child, level: level + 1, isCompact: isCompact)
             }
         }
     }
 
     private func updateFolder() {
-        selectedFolder = folder.thaw()
+        splitViewManager.selectedFolder = folder.thaw()
         navigationDrawerController.close()
     }
 }
@@ -105,7 +115,6 @@ struct FolderCellView_Previews: PreviewProvider {
     static var previews: some View {
         FolderCell(
             folder: PreviewHelper.sampleFolder,
-            selectedFolder: .constant(PreviewHelper.sampleFolder),
             isCompact: false
         )
         .environmentObject(PreviewHelper.sampleMailboxManager)

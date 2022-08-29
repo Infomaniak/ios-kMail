@@ -52,9 +52,17 @@ class GlobalAlert: SheetState<GlobalAlert.State> {
     }
 }
 
+public class SplitViewManager: ObservableObject {
+    @Published var showSearch = false
+    @Published var selectedFolder: Folder?
+
+    init(folder: Folder?) {
+        selectedFolder = folder
+    }
+}
+
 struct SplitView: View {
     @ObservedObject var mailboxManager: MailboxManager
-    @State var selectedFolder: Folder?
     @State var splitViewController: UISplitViewController?
     @StateObject private var navigationDrawerController = NavigationDrawerController()
 
@@ -65,6 +73,8 @@ struct SplitView: View {
     @StateObject private var bottomSheet = GlobalBottomSheet()
     @StateObject private var alert = GlobalAlert()
 
+    @StateObject private var splitViewManager: SplitViewManager
+
     private let bottomSheetOptions = Constants.bottomSheetOptions + [.absolutePositionValue, .notResizeable]
 
     var isCompact: Bool {
@@ -73,7 +83,8 @@ struct SplitView: View {
 
     init(mailboxManager: MailboxManager) {
         self.mailboxManager = mailboxManager
-        _selectedFolder = State(wrappedValue: getInbox())
+        _splitViewManager =
+            StateObject(wrappedValue: SplitViewManager(folder: mailboxManager.getFolder(with: .inbox, shouldRefresh: true)))
     }
 
     var body: some View {
@@ -81,9 +92,8 @@ struct SplitView: View {
             if isCompact {
                 ZStack {
                     NavigationView {
-                        ThreadListView(
+                        ThreadListManagerView(
                             mailboxManager: mailboxManager,
-                            folder: $selectedFolder,
                             isCompact: isCompact
                         )
                     }
@@ -98,7 +108,6 @@ struct SplitView: View {
 
                         NavigationDrawer(
                             mailboxManager: mailboxManager,
-                            folder: $selectedFolder,
                             isCompact: isCompact
                         )
                     }
@@ -108,15 +117,13 @@ struct SplitView: View {
                 NavigationView {
                     MenuDrawerView(
                         mailboxManager: mailboxManager,
-                        selectedFolder: $selectedFolder,
-                        showMailboxes: .constant(false),
+                        showMailboxes: $navigationDrawerController.showMailboxes,
                         isCompact: isCompact
                     )
                     .navigationBarHidden(true)
 
-                    ThreadListView(
+                    ThreadListManagerView(
                         mailboxManager: mailboxManager,
-                        folder: $selectedFolder,
                         isCompact: isCompact
                     )
 
@@ -124,6 +131,7 @@ struct SplitView: View {
                 }
             }
         }
+        .environmentObject(splitViewManager)
         .environmentObject(menuSheet)
         .environmentObject(navigationDrawerController)
         .defaultAppStorage(.shared)
@@ -136,8 +144,8 @@ struct SplitView: View {
         .task {
             await fetchFolders()
             // On first launch, select inbox
-            if selectedFolder == nil {
-                selectedFolder = getInbox()
+            if splitViewManager.selectedFolder == nil {
+                splitViewManager.selectedFolder = getInbox()
             }
         }
         .onRotate { orientation in
@@ -156,7 +164,11 @@ struct SplitView: View {
             case .newMessage:
                 NewMessageView(isPresented: $menuSheet.isShowing, mailboxManager: mailboxManager)
             case let .reply(message, replyMode):
-                NewMessageView(isPresented: $menuSheet.isShowing, mailboxManager: mailboxManager, draft: .replying(to: message, mode: replyMode))
+                NewMessageView(
+                    isPresented: $menuSheet.isShowing,
+                    mailboxManager: mailboxManager,
+                    draft: .replying(to: message, mode: replyMode)
+                )
             case let .editMessage(draft):
                 NewMessageView(isPresented: $menuSheet.isShowing, mailboxManager: mailboxManager, draft: draft.asUnmanaged())
             case .manageAccount:

@@ -21,22 +21,26 @@ import MailResources
 import RealmSwift
 import SwiftUI
 
-struct RoleFoldersListView: View {
-    @ObservedResults(Folder.self) var folders
-
-    var isCompact: Bool
+struct SearchFilterCell: View {
+    public var title: String
+    public var isSelected: Bool
 
     var body: some View {
-        VStack(spacing: 0) {
-            ForEach(Array(folders.filter { $0.role != nil }).sorted()) { folder in
-                FolderCell(folder: folder, isCompact: isCompact)
-
-                if folder.role == .inbox {
-                    IKDivider(withPadding: true)
-                        .padding(.vertical, Constants.menuDrawerVerticalPadding)
-                }
+        HStack(spacing: 11) {
+            if isSelected {
+                Image(resource: MailResourcesAsset.check)
+                    .resizable()
+                    .frame(width: 13, height: 13)
             }
+            Text(title)
+                .font(MailTextStyle.body.font)
         }
-        .padding(.vertical, Constants.menuDrawerVerticalPadding)
+        .filterCellStyle(isSelected: isSelected)
+    }
+}
+
+struct SearchFilterCell_Previews: PreviewProvider {
+    static var previews: some View {
+        SearchFilterCell(title: "Lus", isSelected: true)
     }
 }

@@ -27,18 +27,22 @@ struct NavigationDrawer: View {
     private let spacing = 60.0
 
     let mailboxManager: MailboxManager
-    @Binding var folder: Folder?
     let isCompact: Bool
 
+    @EnvironmentObject var splitViewManager: SplitViewManager
     @EnvironmentObject var navigationDrawerController: NavigationDrawerController
 
     var body: some View {
         GeometryReader { geometryProxy in
             HStack {
-                MenuDrawerView(mailboxManager: mailboxManager, selectedFolder: $folder, showMailboxes: $navigationDrawerController.showMailboxes, isCompact: isCompact)
-                    .frame(maxWidth: maxWidth)
-                    .padding(.trailing, spacing)
-                    .offset(x: navigationDrawerController.getOffset(size: geometryProxy.size).width)
+                MenuDrawerView(
+                    mailboxManager: mailboxManager,
+                    showMailboxes: $navigationDrawerController.showMailboxes,
+                    isCompact: isCompact
+                )
+                .frame(maxWidth: maxWidth)
+                .padding(.trailing, spacing)
+                .offset(x: navigationDrawerController.getOffset(size: geometryProxy.size).width)
                 Spacer()
             }
         }
@@ -107,11 +111,12 @@ class NavigationDrawerController: ObservableObject {
 struct MenuDrawerView: View {
     @Environment(\.openURL) var openURL
 
+    @EnvironmentObject var splitViewManager: SplitViewManager
     @EnvironmentObject var menuSheet: MenuSheet
     @EnvironmentObject var bottomSheet: GlobalBottomSheet
 
     // swiftlint:disable empty_count
-    @ObservedResults(Folder.self, where: { $0.parentLink.count == 0 }) var folders
+    @ObservedResults(Folder.self, where: { $0.parentLink.count == 0 && $0.toolType == nil }) var folders
 
     @ObservedRealmObject private var mailbox: Mailbox
     @StateObject var mailboxManager: MailboxManager
@@ -120,16 +125,13 @@ struct MenuDrawerView: View {
     @State private var helpMenuItems = [MenuItem]()
     @State private var actionsMenuItems = [MenuItem]()
 
-    @Binding var selectedFolder: Folder?
-
     var isCompact: Bool
 
-    init(mailboxManager: MailboxManager, selectedFolder: Binding<Folder?>, showMailboxes: Binding<Bool>, isCompact: Bool) {
+    init(mailboxManager: MailboxManager, showMailboxes: Binding<Bool>, isCompact: Bool) {
         _folders = .init(Folder.self, configuration: AccountManager.instance.currentMailboxManager?.realmConfiguration) {
-            $0.parentLink.count == 0
+            ($0.parentLink.count == 0) && ($0.toolType == nil)
         }
         _mailboxManager = StateObject(wrappedValue: mailboxManager)
-        _selectedFolder = selectedFolder
         _showMailboxes = showMailboxes
         self.isCompact = isCompact
         if let liveMailbox = MailboxInfosManager.instance.getMailbox(objectId: mailboxManager.mailbox.objectId, freeze: false) {
@@ -149,7 +151,6 @@ struct MenuDrawerView: View {
 
                 RoleFoldersListView(
                     folders: $folders,
-                    selectedFolder: $selectedFolder,
                     isCompact: isCompact
                 )
 
@@ -157,7 +158,6 @@ struct MenuDrawerView: View {
 
                 UserFoldersListView(
                     folders: $folders,
-                    selectedFolder: $selectedFolder,
                     isCompact: isCompact
                 )
 
@@ -167,7 +167,10 @@ struct MenuDrawerView: View {
 
                 IKDivider(withPadding: true)
 
-                MenuDrawerItemsListView(title: MailResourcesStrings.Localizable.menuDrawerAdvancedActions, content: actionsMenuItems)
+                MenuDrawerItemsListView(
+                    title: MailResourcesStrings.Localizable.menuDrawerAdvancedActions,
+                    content: actionsMenuItems
+                )
 
                 if mailbox.isLimited, let quotas = mailbox.quotas {
                     IKDivider(withPadding: true)
@@ -237,7 +240,7 @@ struct MenuDrawerView: View {
 struct MenuDrawerView_Previews: PreviewProvider {
     static var previews: some View {
         MenuDrawerView(mailboxManager: PreviewHelper.sampleMailboxManager,
-                       selectedFolder: .constant(nil), showMailboxes: .constant(false),
+                       showMailboxes: .constant(false),
                        isCompact: false)
     }
 }

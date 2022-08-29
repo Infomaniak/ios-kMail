@@ -90,12 +90,15 @@ public extension Endpoint {
         return .mailbox(uuid: uuid).appending(path: "/folder")
     }
 
-    static func threads(uuid: String, folderId: String, offset: Int = 0, filter: String?) -> Endpoint {
-        return .folders(uuid: uuid).appending(path: "/\(folderId)/message", queryItems: [
+    static func threads(uuid: String, folderId: String, offset: Int = 0, filter: String?,
+                        searchFilters: [URLQueryItem] = []) -> Endpoint {
+        var queryItems = [
             URLQueryItem(name: "offset", value: "\(offset)"),
             URLQueryItem(name: "thread", value: "on"),
             URLQueryItem(name: "filters", value: filter)
-        ])
+        ]
+        queryItems.append(contentsOf: searchFilters)
+        return .folders(uuid: uuid).appending(path: "/\(folderId)/message", queryItems: queryItems)
     }
 
     static func quotas(mailbox: String, productId: Int) -> Endpoint {

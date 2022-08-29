@@ -49,12 +49,11 @@ class ThreadBottomSheet: BottomSheetState<ThreadBottomSheet.State, ThreadBottomS
 struct ThreadListView: View {
     @StateObject var viewModel: ThreadListViewModel
 
+    @EnvironmentObject var splitViewManager: SplitViewManager
     @EnvironmentObject var menuSheet: MenuSheet
     @EnvironmentObject var globalBottomSheet: GlobalBottomSheet
 
     @AppStorage(UserDefaults.shared.key(.threadDensity)) var threadDensity = ThreadDensity.normal
-
-    @Binding var currentFolder: Folder?
 
     @State private var avatarImage = Image(resource: MailResourcesAsset.placeholderAvatar)
     @StateObject var bottomSheet: ThreadBottomSheet
@@ -65,13 +64,12 @@ struct ThreadListView: View {
 
     private let bottomSheetOptions = Constants.bottomSheetOptions + [.appleScrollBehavior]
 
-    init(mailboxManager: MailboxManager, folder: Binding<Folder?>, isCompact: Bool) {
+    init(mailboxManager: MailboxManager, folder: Folder?, isCompact: Bool) {
         let threadBottomSheet = ThreadBottomSheet()
         _bottomSheet = StateObject(wrappedValue: threadBottomSheet)
         _viewModel = StateObject(wrappedValue: ThreadListViewModel(mailboxManager: mailboxManager,
-                                                                   folder: folder.wrappedValue,
+                                                                   folder: folder,
                                                                    bottomSheet: threadBottomSheet))
-        _currentFolder = folder
         self.isCompact = isCompact
 
         UITableViewCell.appearance().focusEffect = .none
@@ -82,9 +80,9 @@ struct ThreadListView: View {
             ThreadListHeader(isConnected: $networkMonitor.isConnected,
                              lastUpdate: $viewModel.lastUpdate,
                              unreadCount: Binding(get: {
-                                 currentFolder?.unreadCount
+                                 splitViewManager.selectedFolder?.unreadCount
                              }, set: { value in
-                                 currentFolder?.unreadCount = value
+                                 splitViewManager.selectedFolder?.unreadCount = value
                              }),
                              unreadFilterOn: $viewModel.filterUnreadOn)
 
@@ -134,8 +132,16 @@ struct ThreadListView: View {
         .introspectNavigationController { navigationController in
             self.navigationController = navigationController
         }
-        .modifier(ThreadListNavigationBar(isCompact: isCompact, folder: $viewModel.folder, avatarImage: $avatarImage))
-        .floatingActionButton(icon: Image(resource: MailResourcesAsset.edit), title: MailResourcesStrings.Localizable.buttonNewMessage) {
+        .modifier(ThreadListNavigationBar(
+            isCompact: isCompact,
+            avatarImage: $avatarImage,
+            observeThread: $viewModel.observeThread,
+            navigationController: $navigationController
+        ))
+        .floatingActionButton(
+            icon: Image(resource: MailResourcesAsset.edit),
+            title: MailResourcesStrings.Localizable.buttonNewMessage
+        ) {
             menuSheet.state = .newMessage
         }
         .bottomSheet(bottomSheetPosition: $bottomSheet.position, options: bottomSheetOptions) {
@@ -160,7 +166,7 @@ struct ThreadListView: View {
             viewModel.selectedThread = nil
             viewModel.globalBottomSheet = globalBottomSheet
         }
-        .onChange(of: currentFolder) { newFolder in
+        .onChange(of: splitViewManager.selectedFolder) { newFolder in
             guard isCompact, let folder = newFolder else { return }
             viewModel.updateThreads(with: folder)
         }
@@ -168,7 +174,7 @@ struct ThreadListView: View {
             if let account = AccountManager.instance.currentAccount {
                 avatarImage = await account.user.getAvatar()
             }
-            if let folder = currentFolder {
+            if let folder = splitViewManager.selectedFolder {
                 viewModel.updateThreads(with: folder)
             }
         }
@@ -180,9 +186,9 @@ struct ThreadListView: View {
     func threadList(threads: [Thread]) -> some View {
         ForEach(threads) { thread in
             Group {
-                if currentFolder?.role == .draft {
+                if splitViewManager.selectedFolder?.role == .draft {
                     Button(action: {
-                        editDraft(from: thread)
+                        DraftUtils.editDraft(from: thread, mailboxManager: viewModel.mailboxManager, menuSheet: menuSheet)
                     }, label: {
                         ThreadListCell(mailboxManager: viewModel.mailboxManager, thread: thread)
                     })
@@ -195,7 +201,7 @@ struct ThreadListView: View {
                                        navigationController: navigationController)
                                 .onAppear { viewModel.selectedThread = thread }
                         }, label: { EmptyView() })
-                        .opacity(0)
+                            .opacity(0)
 
                         ThreadListCell(mailboxManager: viewModel.mailboxManager, thread: thread)
                     }
@@ -206,48 +212,32 @@ struct ThreadListView: View {
             .listRowBackground(viewModel.selectedThread?.id == thread.id
                 ? MailResourcesAsset.backgroundCardSelectedColor.swiftUiColor
                 : MailResourcesAsset.backgroundColor.swiftUiColor)
-            .modifier(ThreadListSwipeAction(thread: thread, viewModel: viewModel))
-            .onAppear {
-                viewModel.loadNextPageIfNeeded(currentItem: thread)
-            }
-        }
-    }
-
-    private func editDraft(from thread: Thread) {
-        guard let message = thread.messages.first else { return }
-        var sheetPresented = false
-
-        // If we already have the draft locally, present it directly
-        if let draft = viewModel.mailboxManager.draft(messageUid: message.uid)?.detached() {
-            menuSheet.state = .editMessage(draft: draft)
-            sheetPresented = true
-        }
-
-        // Update the draft
-        Task { [sheetPresented] in
-            let draft = try await viewModel.mailboxManager.draft(from: message)
-            if !sheetPresented {
-                menuSheet.state = .editMessage(draft: draft)
-            }
+                .modifier(ThreadListSwipeAction(thread: thread, viewModel: viewModel))
+                .onAppear {
+                    viewModel.loadNextPageIfNeeded(currentItem: thread)
+                }
         }
     }
 }
 
 private struct ThreadListNavigationBar: ViewModifier {
     var isCompact: Bool
-
-    @Binding var folder: Folder?
     @Binding var avatarImage: Image
 
+    @Binding var observeThread: Bool
+
+    @EnvironmentObject var splitViewManager: SplitViewManager
     @EnvironmentObject var menuSheet: MenuSheet
     @EnvironmentObject var navigationDrawerController: NavigationDrawerController
 
+    @Binding var navigationController: UINavigationController?
+
     func body(content: Content) -> some View {
         content
-            .navigationBarTitle(folder?.localizedName ?? "", displayMode: .inline)
+            .navigationBarTitle(splitViewManager.selectedFolder?.localizedName ?? "", displayMode: .inline)
             .toolbar {
                 ToolbarItem(placement: .principal) {
-                    Text(folder?.localizedName ?? "")
+                    Text(splitViewManager.selectedFolder?.localizedName ?? "")
                         .frame(maxWidth: .infinity, alignment: .leading)
                         .textStyle(.header1)
                         .padding(.leading, 8)
@@ -255,8 +245,7 @@ private struct ThreadListNavigationBar: ViewModifier {
 
                 ToolbarItemGroup(placement: .navigationBarTrailing) {
                     Button {
-                        // TODO: Search
-                        showWorkInProgressSnackBar()
+                        splitViewManager.showSearch = true
                     } label: {
                         Image(resource: MailResourcesAsset.search)
                     }
@@ -343,7 +332,7 @@ struct ThreadListView_Previews: PreviewProvider {
     static var previews: some View {
         ThreadListView(
             mailboxManager: PreviewHelper.sampleMailboxManager,
-            folder: .constant(PreviewHelper.sampleFolder),
+            folder: PreviewHelper.sampleFolder,
             isCompact: false
         )
         .environmentObject(MenuSheet())
