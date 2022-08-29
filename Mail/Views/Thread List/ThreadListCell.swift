@@ -22,14 +22,14 @@ import SwiftUI
 
 extension Animation {
     static func threadListCheckbox(isMultipleSelectionEnabled isEnabled: Bool) -> Animation {
-        .default
-            .delay(isEnabled ? 0.5 : 0)
+        .default.delay(isEnabled ? 0.5 : 0)
     }
 
-    static func threadListText(isMultipleSelectionEnabled isEnabled: Bool) -> Animation {
-        .default
-            .speed(2)
-            .delay(isEnabled ? 0 : 0.22)
+    static func threadListSlide(density: ThreadDensity, isMultipleSelectionEnabled isEnabled: Bool) -> Animation {
+        if density == .large {
+            return .default
+        }
+        return .default.speed(2).delay(isEnabled ? 0 : 0.22)
     }
 }
 
@@ -79,13 +79,15 @@ struct ThreadListCell: View {
 
             HStack(spacing: 8) {
                 unreadIndicator
+                    .animation(.threadListSlide(density: density, isMultipleSelectionEnabled: multipleSelectionViewModel.isEnabled),
+                               value: multipleSelectionViewModel.isEnabled)
 
                 Group {
-                    if density == .large && !isSelected, let recipient = thread.from.last {
-                        if isSelected {
-                            checkbox
-                        } else {
+                    if density == .large, let recipient = thread.from.last {
+                        ZStack {
                             RecipientImage(recipient: recipient, size: 32)
+                            checkbox
+                                .opacity(isSelected ? 1 : 0)
                         }
                     } else if multipleSelectionViewModel.isEnabled {
                         checkbox
@@ -104,7 +106,7 @@ struct ThreadListCell: View {
                         threadDetails
                     }
                 }
-                .animation(.threadListText(isMultipleSelectionEnabled: multipleSelectionViewModel.isEnabled),
+                .animation(.threadListSlide(density: density, isMultipleSelectionEnabled: multipleSelectionViewModel.isEnabled),
                            value: multipleSelectionViewModel.isEnabled)
             }
         }
@@ -138,17 +140,16 @@ struct ThreadListCell: View {
     }
 
     private var checkbox: some View {
-        Circle()
-            .strokeBorder(Color.accentColor, lineWidth: 2)
-            .background(Circle().fill(isSelected ? Color.accentColor : Color.clear))
-            .frame(width: checkboxSize, height: checkboxSize)
-            .overlay {
-                if isSelected {
-                    Image(resource: MailResourcesAsset.check)
-                        .foregroundColor(.white)
-                        .frame(height: checkmarkSize)
-                }
-            }
+        ZStack {
+            Circle()
+                .strokeBorder(Color.accentColor, lineWidth: 2)
+                .background(Circle().fill(isSelected ? Color.accentColor : Color.clear))
+                .frame(width: checkboxSize, height: checkboxSize)
+            Image(resource: MailResourcesAsset.check)
+                .foregroundColor(.white)
+                .frame(height: checkmarkSize)
+                .opacity(isSelected ? 1 : 0)
+        }
     }
 
     private var cellHeader: some View {
