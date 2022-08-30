@@ -97,7 +97,7 @@ struct RecipientLabel: View {
                         Button {
                             recipientTapped(recipient)
                         } label: {
-                            Text(recipient.name.isEmpty ? recipient.email : recipient.name)
+                            Text(recipient.name.isEmpty ? recipient.email : recipient.name.removePunctuation)
                                 .font(MailTextStyle.callout.font)
                                 .lineLimit(1)
                                 .layoutPriority(1)

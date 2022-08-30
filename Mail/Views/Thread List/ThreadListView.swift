@@ -50,12 +50,11 @@ struct ThreadListView: View {
     @StateObject var viewModel: ThreadListViewModel
     @StateObject var multipleSelectionViewModel: ThreadListMultipleSelectionViewModel
 
+    @EnvironmentObject var splitViewManager: SplitViewManager
     @EnvironmentObject var menuSheet: MenuSheet
     @EnvironmentObject var globalBottomSheet: GlobalBottomSheet
 
     @AppStorage(UserDefaults.shared.key(.threadDensity)) var threadDensity = ThreadDensity.normal
-
-    @Binding var currentFolder: Folder?
 
     @State private var avatarImage = Image(resource: MailResourcesAsset.placeholderAvatar)
     @StateObject var bottomSheet: ThreadBottomSheet
@@ -66,14 +65,13 @@ struct ThreadListView: View {
 
     private let bottomSheetOptions = Constants.bottomSheetOptions + [.appleScrollBehavior]
 
-    init(mailboxManager: MailboxManager, folder: Binding<Folder?>, isCompact: Bool) {
+    init(mailboxManager: MailboxManager, folder: Folder?, isCompact: Bool) {
         let threadBottomSheet = ThreadBottomSheet()
         _bottomSheet = StateObject(wrappedValue: threadBottomSheet)
         _viewModel = StateObject(wrappedValue: ThreadListViewModel(mailboxManager: mailboxManager,
-                                                                   folder: folder.wrappedValue,
+                                                                   folder: folder,
                                                                    bottomSheet: threadBottomSheet))
         _multipleSelectionViewModel = StateObject(wrappedValue: ThreadListMultipleSelectionViewModel(mailboxManager: mailboxManager))
-        _currentFolder = folder
         self.isCompact = isCompact
 
         UITableViewCell.appearance().focusEffect = .none
@@ -85,9 +83,9 @@ struct ThreadListView: View {
                              isConnected: $networkMonitor.isConnected,
                              lastUpdate: $viewModel.lastUpdate,
                              unreadCount: Binding(get: {
-                                 currentFolder?.unreadCount
+                                 splitViewManager.selectedFolder?.unreadCount
                              }, set: { value in
-                                 currentFolder?.unreadCount = value
+                                 splitViewManager.selectedFolder?.unreadCount = value
                              }),
                              unreadFilterOn: $viewModel.filterUnreadOn)
 
@@ -175,15 +173,15 @@ struct ThreadListView: View {
             viewModel.menuSheet = menuSheet
             viewModel.selectedThread = nil
         }
-        .onChange(of: currentFolder) { newFolder in
-            guard let folder = newFolder else { return }
+        .onChange(of: splitViewManager.selectedFolder) { newFolder in
+            guard isCompact, let folder = newFolder else { return }
             viewModel.updateThreads(with: folder)
         }
         .task {
             if let account = AccountManager.instance.currentAccount {
                 avatarImage = await account.user.getAvatar()
             }
-            if let folder = currentFolder {
+            if let folder = splitViewManager.selectedFolder {
                 viewModel.updateThreads(with: folder)
             }
         }
@@ -284,8 +282,13 @@ private struct ThreadListToolbar: ViewModifier {
     @Binding var folder: Folder?
     @Binding var avatarImage: Image
 
+    @Binding var observeThread: Bool
+
+    @EnvironmentObject var splitViewManager: SplitViewManager
     @EnvironmentObject var menuSheet: MenuSheet
     @EnvironmentObject var navigationDrawerController: NavigationDrawerController
+
+    @Binding var navigationController: UINavigationController?
 
     func body(content: Content) -> some View {
         GeometryReader { reader in
@@ -376,7 +379,7 @@ struct ThreadListView_Previews: PreviewProvider {
     static var previews: some View {
         ThreadListView(
             mailboxManager: PreviewHelper.sampleMailboxManager,
-            folder: .constant(PreviewHelper.sampleFolder),
+            folder: PreviewHelper.sampleFolder,
             isCompact: false
         )
         .environmentObject(MenuSheet())

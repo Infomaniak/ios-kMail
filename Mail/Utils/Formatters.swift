@@ -25,7 +25,7 @@ public extension Date {
         } else if Calendar.current.isDateInYesterday(self) {
             let dateMidnight = Calendar.current.date(bySettingHour: 0, minute: 0, second: 0, of: self)!
             return dateMidnight.formatted(.relative(presentation: .named))
-        } else if Calendar.current.isDate(self, equalTo: .now, toGranularity: .weekOfYear) {
+        } else if let lastWeek = Calendar.current.date(byAdding: .day, value: -7, to: Date()), self > lastWeek {
             return self.formatted(.dateTime.weekday(.wide))
         } else if Calendar.current.isDate(self, equalTo: .now, toGranularity: .year) {
             return self.formatted(.dateTime.day().month())

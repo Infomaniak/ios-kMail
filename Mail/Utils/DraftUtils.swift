@@ -16,27 +16,26 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import Foundation
 import MailCore
-import MailResources
-import RealmSwift
-import SwiftUI
 
-struct RoleFoldersListView: View {
-    @ObservedResults(Folder.self) var folders
+class DraftUtils {
+    @MainActor public static func editDraft(from thread: Thread, mailboxManager: MailboxManager, menuSheet: MenuSheet) {
+        guard let message = thread.messages.first else { return }
+        var sheetPresented = false
 
-    var isCompact: Bool
+        // If we already have the draft locally, present it directly
+        if let draft = mailboxManager.draft(messageUid: message.uid)?.detached() {
+            menuSheet.state = .editMessage(draft: draft)
+            sheetPresented = true
+        }
 
-    var body: some View {
-        VStack(spacing: 0) {
-            ForEach(Array(folders.filter { $0.role != nil }).sorted()) { folder in
-                FolderCell(folder: folder, isCompact: isCompact)
-
-                if folder.role == .inbox {
-                    IKDivider(withPadding: true)
-                        .padding(.vertical, Constants.menuDrawerVerticalPadding)
-                }
+        // Update the draft
+        Task { [sheetPresented] in
+            let draft = try await mailboxManager.draft(from: message)
+            if !sheetPresented {
+                menuSheet.state = .editMessage(draft: draft)
             }
         }
-        .padding(.vertical, Constants.menuDrawerVerticalPadding)
     }
 }

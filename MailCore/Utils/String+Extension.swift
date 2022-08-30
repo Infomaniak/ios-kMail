@@ -16,27 +16,14 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import MailCore
-import MailResources
-import RealmSwift
-import SwiftUI
+import Foundation
 
-struct RoleFoldersListView: View {
-    @ObservedResults(Folder.self) var folders
-
-    var isCompact: Bool
-
-    var body: some View {
-        VStack(spacing: 0) {
-            ForEach(Array(folders.filter { $0.role != nil }).sorted()) { folder in
-                FolderCell(folder: folder, isCompact: isCompact)
-
-                if folder.role == .inbox {
-                    IKDivider(withPadding: true)
-                        .padding(.vertical, Constants.menuDrawerVerticalPadding)
-                }
-            }
+public extension String {
+    var removePunctuation: String {
+        if contains("@") {
+            return self
+        } else {
+            return components(separatedBy: CharacterSet.punctuationCharacters).joined(separator: "")
         }
-        .padding(.vertical, Constants.menuDrawerVerticalPadding)
     }
 }

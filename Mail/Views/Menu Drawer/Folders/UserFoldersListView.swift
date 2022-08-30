@@ -27,7 +27,6 @@ struct UserFoldersListView: View {
     @ObservedResults(Folder.self) var folders
 
     @State private var isExpanded = false
-    @Binding var selectedFolder: Folder?
 
     @EnvironmentObject var globalAlert: GlobalAlert
 
@@ -60,7 +59,7 @@ struct UserFoldersListView: View {
                 Spacer(minLength: Constants.menuDrawerVerticalPadding)
 
                 ForEach(folders.sorted(by: foldersSortDescriptors).filter { $0.role == nil }) { folder in
-                    FolderCell(folder: folder, selectedFolder: $selectedFolder, isCompact: isCompact)
+                    FolderCell(folder: folder, isCompact: isCompact)
                 }
 
                 MenuDrawerItemCell(content: .init(icon: MailResourcesAsset.add, label: MailResourcesStrings.Localizable.buttonCreateFolder) {
