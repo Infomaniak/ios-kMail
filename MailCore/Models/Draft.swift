@@ -196,7 +196,6 @@ public struct UnmanagedDraft: Equatable, Encodable, AbstractDraft {
         case attachments
         case isOffline
         case action
-        case didSetSignature
         case delay
     }
 
@@ -229,7 +228,6 @@ public struct UnmanagedDraft: Equatable, Encodable, AbstractDraft {
         }
         try container.encode(attachmentsArray, forKey: .attachments)
         try container.encode(action, forKey: .action)
-        try container.encode(didSetSignature, forKey: .didSetSignature)
         try container.encode(delay, forKey: .delay)
     }
 
@@ -354,8 +352,6 @@ public class Draft: Object, Decodable, Identifiable, AbstractDraft {
         case priority
         case stUuid
         case attachments
-        case isOffline
-        case didSetSignature
     }
 
     override public init() {
