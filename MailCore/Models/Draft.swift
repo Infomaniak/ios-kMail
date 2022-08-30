@@ -99,6 +99,7 @@ public struct UnmanagedDraft: Equatable, Encodable, AbstractDraft {
     public var priority: MessagePriority
     public var action: SaveDraftOption?
     public var delay: Int?
+    public var didSetSignature = false
 
     public var hasLocalUuid: Bool {
         return uuid.isEmpty || uuid.starts(with: Draft.uuidLocalPrefix)
@@ -150,6 +151,7 @@ public struct UnmanagedDraft: Equatable, Encodable, AbstractDraft {
                 stUuid: String? = nil,
                 priority: MessagePriority = .normal,
                 action: SaveDraftOption? = nil,
+                didSetSignature: Bool = false,
                 delay: Int? = UserDefaults.shared.cancelSendDelay.rawValue) {
         self.uuid = uuid
         self.subject = subject
@@ -170,6 +172,7 @@ public struct UnmanagedDraft: Equatable, Encodable, AbstractDraft {
         self.stUuid = stUuid
         self.priority = priority
         self.action = action
+        self.didSetSignature = didSetSignature
         self.delay = delay
     }
 
@@ -193,6 +196,7 @@ public struct UnmanagedDraft: Equatable, Encodable, AbstractDraft {
         case attachments
         case isOffline
         case action
+        case didSetSignature
         case delay
     }
 
@@ -225,6 +229,7 @@ public struct UnmanagedDraft: Equatable, Encodable, AbstractDraft {
         }
         try container.encode(attachmentsArray, forKey: .attachments)
         try container.encode(action, forKey: .action)
+        try container.encode(didSetSignature, forKey: .didSetSignature)
         try container.encode(delay, forKey: .delay)
     }
 
@@ -280,7 +285,8 @@ public struct UnmanagedDraft: Equatable, Encodable, AbstractDraft {
                      subject: subject,
                      ackRequest: ackRequest,
                      priority: priority,
-                     stUuid: stUuid)
+                     stUuid: stUuid,
+                     didSetSignature: didSetSignature)
     }
 
     public mutating func setSignature(_ signatureResponse: SignatureResponse) {
@@ -290,14 +296,12 @@ public struct UnmanagedDraft: Equatable, Encodable, AbstractDraft {
         }
         from = [Recipient(email: signature.sender, name: signature.fullName)]
         replyTo = [Recipient(email: signature.replyTo, name: "")]
-        if !body.contains("editorUserSignature") {
-            let html = "<br><br><div class=\"editorUserSignature\">\(signature.content)</div>"
-            switch signature.position {
-            case .top:
-                body.insert(contentsOf: html, at: body.startIndex)
-            case .bottom:
-                body.append(contentsOf: html)
-            }
+        let html = "<br><br><div class=\"editorUserSignature\">\(signature.content)</div>"
+        switch signature.position {
+        case .beforeReplyMessage:
+            body.insert(contentsOf: html, at: body.startIndex)
+        case .afterReplyMessage:
+            body.append(contentsOf: html)
         }
     }
 }
@@ -325,6 +329,7 @@ public class Draft: Object, Decodable, Identifiable, AbstractDraft {
     @Persisted public var stUuid: String?
     @Persisted public var attachments: List<Attachment>
     @Persisted public var isOffline = true
+    @Persisted public var didSetSignature = false
 
     public var hasLocalUuid: Bool {
         return uuid.isEmpty || uuid.starts(with: Draft.uuidLocalPrefix)
@@ -350,6 +355,7 @@ public class Draft: Object, Decodable, Identifiable, AbstractDraft {
         case stUuid
         case attachments
         case isOffline
+        case didSetSignature
     }
 
     override public init() {
@@ -397,7 +403,8 @@ public class Draft: Object, Decodable, Identifiable, AbstractDraft {
                             priority: MessagePriority = .normal,
                             stUuid: String? = nil,
                             attachments: [Attachment]? = nil,
-                            isOffline: Bool = true) {
+                            isOffline: Bool = true,
+                            didSetSignature: Bool = false) {
         self.init()
 
         self.uuid = uuid
@@ -420,6 +427,7 @@ public class Draft: Object, Decodable, Identifiable, AbstractDraft {
         self.stUuid = stUuid
         self.attachments = attachments?.toRealmList() ?? List()
         self.isOffline = isOffline
+        self.didSetSignature = didSetSignature
     }
 
     public func asUnmanaged() -> UnmanagedDraft {
@@ -437,6 +445,7 @@ public class Draft: Object, Decodable, Identifiable, AbstractDraft {
                               identityId: identityId ?? "",
                               ackRequest: ackRequest,
                               stUuid: stUuid,
-                              priority: priority)
+                              priority: priority,
+                              didSetSignature: didSetSignature)
     }
 }

@@ -571,6 +571,12 @@ public class MailboxManager: ObservableObject {
 
         let realm = getRealm()
 
+        // Get draft from Realm to keep local saved properties
+        if let savedDraft = realm.object(ofType: Draft.self, forPrimaryKey: draft.uuid) {
+            draft.isOffline = savedDraft.isOffline
+            draft.didSetSignature = savedDraft.didSetSignature
+        }
+
         // Update draft in Realm
         try? realm.safeWrite {
             realm.add(draft.detached(), update: .modified)
