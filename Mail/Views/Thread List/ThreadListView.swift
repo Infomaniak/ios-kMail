@@ -141,7 +141,9 @@ struct ThreadListView: View {
                                     bottomSheet: bottomSheet,
                                     multipleSelectionViewModel: multipleSelectionViewModel,
                                     folder: $viewModel.folder,
-                                    avatarImage: $avatarImage))
+                                    avatarImage: $avatarImage,
+                                    observeThread: $viewModel.observeThread,
+                                    navigationController: $navigationController))
         .floatingActionButton(isEnabled: !multipleSelectionViewModel.isEnabled,
                               icon: Image(resource: MailResourcesAsset.edit),
                               title: MailResourcesStrings.Localizable.buttonNewMessage, action: {
@@ -222,7 +224,7 @@ struct ThreadListView: View {
 
     var body: some View {
         ZStack {
-            if viewModel.folder?.role == .draft {
+            if viewModel.folder?.role != .draft {
                 NavigationLink(destination: ThreadView(mailboxManager: viewModel.mailboxManager,
                                                        thread: thread,
                                                        folderId: viewModel.folder?.id,
@@ -232,10 +234,12 @@ struct ThreadListView: View {
                     .disabled(multipleSelectionViewModel.isEnabled)
             }
 
-            ThreadListCell(thread: thread,
-                           navigationController: navigationController,
-                           isMultipleSelectionEnabled: multipleSelectionViewModel.isEnabled,
-                           isSelected: isSelected)
+            ThreadListCell(
+                thread: thread,
+                navigationController: navigationController,
+                isMultipleSelectionEnabled: multipleSelectionViewModel.isEnabled,
+                isSelected: isSelected
+            )
         }
         .onAppear { viewModel.loadNextPageIfNeeded(currentItem: thread) }
         .padding(.leading, multipleSelectionViewModel.isEnabled ? 8 : 0)
@@ -243,22 +247,24 @@ struct ThreadListView: View {
         .onLongPressGesture(minimumDuration: 0.3) { didLongPressCell() }
         .swipeActions(thread: thread, viewModel: viewModel, multipleSelectionViewModel: multipleSelectionViewModel)
         .background(SelectionBackground(isSelected: isSelected, offsetX: 8, leadingPadding: 0, verticalPadding: 2, defaultColor: cellColor))
+        .clipped()
         .listRowInsets(.init(top: 0, leading: 0, bottom: 0, trailing: 0))
         .listRowSeparator(.hidden)
         .listRowBackground(cellColor)
     }
 
     private func didTapCell() {
-        if !multipleSelectionViewModel.isEnabled {
-            viewModel.selectedThread = thread
-            if isInDraftFolder {
-                viewModel.editDraft(from: thread)
-            } else {
-                shouldNavigateToThreadList = true
-            }
-        } else {
+        if multipleSelectionViewModel.isEnabled {
             withAnimation(.default.speed(2)) {
                 multipleSelectionViewModel.toggleSelection(of: thread)
+            }
+        } else {
+            viewModel.selectedThread = thread
+            if isInDraftFolder {
+                guard let menuSheet = viewModel.menuSheet else { return }
+                DraftUtils.editDraft(from: thread, mailboxManager: viewModel.mailboxManager, menuSheet: menuSheet)
+            } else {
+                shouldNavigateToThreadList = true
             }
         }
     }
