@@ -27,10 +27,11 @@ struct SelectionBackground: View {
     let offsetX: CGFloat
     let leadingPadding: CGFloat
     let verticalPadding: CGFloat
+    var defaultColor = MailResourcesAsset.backgroundColor.swiftUiColor
 
     var body: some View {
         RoundedRectangle(cornerRadius: 10)
-            .fill(isSelected ? accentColor.secondary.swiftUiColor : MailResourcesAsset.backgroundColor.swiftUiColor)
+            .fill(isSelected ? accentColor.secondary.swiftUiColor : defaultColor)
             .offset(x: offsetX, y: 0)
             .padding(.leading, leadingPadding)
             .padding(.vertical, verticalPadding)

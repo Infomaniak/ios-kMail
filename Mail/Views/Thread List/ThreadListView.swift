@@ -194,18 +194,83 @@ struct ThreadListView: View {
 
     private func threadList(threads: [Thread]) -> some View {
         ForEach(threads) { thread in
-            ThreadListCell(viewModel: viewModel,
-                           multipleSelectionViewModel: multipleSelectionViewModel,
-                           thread: thread,
-                           navigationController: navigationController)
-            .onAppear {
-                viewModel.loadNextPageIfNeeded(currentItem: thread)
+            Cell(thread: thread,
+                 viewModel: viewModel,
+                 multipleSelectionViewModel: multipleSelectionViewModel,
+                 navigationController: navigationController)
+        }
+    }
+}
+
+@MainActor private struct Cell: View {
+    let thread: Thread
+    @ObservedObject var viewModel: ThreadListViewModel
+    @ObservedObject var multipleSelectionViewModel: ThreadListMultipleSelectionViewModel
+    let navigationController: UINavigationController?
+
+    @State private var shouldNavigateToThreadList = false
+
+    private var cellColor: Color {
+        return viewModel.selectedThread == thread
+        ? MailResourcesAsset.backgroundCardSelectedColor.swiftUiColor
+        : MailResourcesAsset.backgroundColor.swiftUiColor
+    }
+    private var isInDraftFolder: Bool {
+        viewModel.folder?.role == .draft
+    }
+    private var isSelected: Bool {
+        multipleSelectionViewModel.selectedItems.contains { $0.id == thread.id }
+    }
+
+    var body: some View {
+        ZStack {
+            if viewModel.folder?.role == .draft {
+                NavigationLink(destination: ThreadView(mailboxManager: viewModel.mailboxManager,
+                                                       thread: thread,
+                                                       folderId: viewModel.folder?.id,
+                                                       navigationController: navigationController),
+                               isActive: $shouldNavigateToThreadList) { EmptyView() }
+                    .opacity(0)
+                    .disabled(multipleSelectionViewModel.isEnabled)
             }
-            .listRowInsets(.init(top: 0, leading: 0, bottom: 0, trailing: 0))
-            .listRowSeparator(.hidden)
-            .listRowBackground(viewModel.selectedThread == thread
-                ? MailResourcesAsset.backgroundCardSelectedColor.swiftUiColor
-                : MailResourcesAsset.backgroundColor.swiftUiColor)
+
+            ThreadListCell(thread: thread,
+                           navigationController: navigationController,
+                           isMultipleSelectionEnabled: multipleSelectionViewModel.isEnabled,
+                           isSelected: isSelected)
+        }
+        .onAppear { viewModel.loadNextPageIfNeeded(currentItem: thread) }
+        .padding(.leading, multipleSelectionViewModel.isEnabled ? 8 : 0)
+        .onTapGesture { didTapCell() }
+        .onLongPressGesture(minimumDuration: 0.3) { didLongPressCell() }
+        .swipeActions(thread: thread, viewModel: viewModel, multipleSelectionViewModel: multipleSelectionViewModel)
+        .background(SelectionBackground(isSelected: isSelected, offsetX: 8, leadingPadding: 0, verticalPadding: 2, defaultColor: cellColor))
+        .listRowInsets(.init(top: 0, leading: 0, bottom: 0, trailing: 0))
+        .listRowSeparator(.hidden)
+        .listRowBackground(cellColor)
+    }
+
+    private func didTapCell() {
+        if !multipleSelectionViewModel.isEnabled {
+            viewModel.selectedThread = thread
+            if isInDraftFolder {
+                viewModel.editDraft(from: thread)
+            } else {
+                shouldNavigateToThreadList = true
+            }
+        } else {
+            withAnimation(.default.speed(2)) {
+                multipleSelectionViewModel.toggleSelection(of: thread)
+            }
+        }
+    }
+
+    private func didLongPressCell() {
+        withAnimation {
+            multipleSelectionViewModel.isEnabled.toggle()
+            if multipleSelectionViewModel.isEnabled {
+                multipleSelectionViewModel.toggleSelection(of: thread)
+            }
         }
     }
 }

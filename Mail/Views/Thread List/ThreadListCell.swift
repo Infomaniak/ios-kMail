@@ -45,20 +45,14 @@ struct ThreadListCell: View {
 
     @State private var shouldNavigateToThreadList = false
 
-    @ObservedObject var viewModel: ThreadListViewModel
-    @ObservedObject var multipleSelectionViewModel: ThreadListMultipleSelectionViewModel
-
     var thread: Thread
     var navigationController: UINavigationController?
 
-    private var isInDraftFolder: Bool {
-        viewModel.folder?.role == .draft
-    }
+    var isMultipleSelectionEnabled: Bool = false
+    var isSelected: Bool = false
+
     private var hasUnreadMessages: Bool {
         thread.unseenMessages > 0
-    }
-    private var isSelected: Bool {
-        multipleSelectionViewModel.selectedItems.contains { $0.id == thread.id }
     }
     private var textStyle: MailTextStyle {
         hasUnreadMessages ? .header3 : .bodySecondary
@@ -74,63 +68,42 @@ struct ThreadListCell: View {
     // MARK: - Views
 
     var body: some View {
-        ZStack {
-            linkToThreadView
+        HStack(spacing: 8) {
+            unreadIndicator
+                .animation(.threadListSlide(density: density, isMultipleSelectionEnabled: isMultipleSelectionEnabled),
+                           value: isMultipleSelectionEnabled)
 
-            HStack(spacing: 8) {
-                unreadIndicator
-                    .animation(.threadListSlide(density: density, isMultipleSelectionEnabled: multipleSelectionViewModel.isEnabled),
-                               value: multipleSelectionViewModel.isEnabled)
-
-                Group {
-                    if density == .large, let recipient = thread.from.last {
-                        ZStack {
-                            RecipientImage(recipient: recipient, size: 32)
-                            checkbox
-                                .opacity(isSelected ? 1 : 0)
-                        }
-                    } else if multipleSelectionViewModel.isEnabled {
+            Group {
+                if density == .large, let recipient = thread.from.last {
+                    ZStack {
+                        RecipientImage(recipient: recipient, size: 32)
                         checkbox
-                            .animation(.threadListCheckbox(isMultipleSelectionEnabled: multipleSelectionViewModel.isEnabled),
-                                       value: multipleSelectionViewModel.isEnabled)
+                            .opacity(isSelected ? 1 : 0)
                     }
+                } else if isMultipleSelectionEnabled {
+                    checkbox
+                        .animation(.threadListCheckbox(isMultipleSelectionEnabled: isMultipleSelectionEnabled),
+                                   value: isMultipleSelectionEnabled)
                 }
-                .padding(.trailing, 4)
-
-                VStack(alignment: .leading, spacing: 4) {
-                    cellHeader
-
-                    HStack(alignment: .top, spacing: 3) {
-                        threadInfo
-                        Spacer()
-                        threadDetails
-                    }
-                }
-                .animation(.threadListSlide(density: density, isMultipleSelectionEnabled: multipleSelectionViewModel.isEnabled),
-                           value: multipleSelectionViewModel.isEnabled)
             }
+            .padding(.trailing, 4)
+
+            VStack(alignment: .leading, spacing: 4) {
+                cellHeader
+
+                HStack(alignment: .top, spacing: 3) {
+                    threadInfo
+                    Spacer()
+                    threadDetails
+                }
+            }
+            .animation(.threadListSlide(density: density, isMultipleSelectionEnabled: isMultipleSelectionEnabled),
+                       value: isMultipleSelectionEnabled)
         }
-        .padding(.leading, multipleSelectionViewModel.isEnabled ? 16 : 8)
+        .padding(.leading, 8)
         .padding(.trailing, 12)
         .padding(.vertical, density.cellVerticalPadding)
-        .background(SelectionBackground(isSelected: isSelected, offsetX: 8, leadingPadding: 0, verticalPadding: 2))
-        .onTapGesture(perform: didTapCell)
-        .onLongPressGesture(minimumDuration: 0.3, perform: didLongPressCell)
-        .swipeActions(thread: thread, viewModel: viewModel, multipleSelectionViewModel: multipleSelectionViewModel)
         .clipped()
-    }
-
-    @ViewBuilder
-    private var linkToThreadView: some View {
-        if !isInDraftFolder {
-            NavigationLink(destination: ThreadView(mailboxManager: viewModel.mailboxManager,
-                                                   thread: thread,
-                                                   folderId: viewModel.folder?.id,
-                                                   navigationController: navigationController),
-                           isActive: $shouldNavigateToThreadList) { EmptyView() }
-                .opacity(0)
-                .disabled(multipleSelectionViewModel.isEnabled)
-        }
     }
 
     private var unreadIndicator: some View {
@@ -216,71 +189,15 @@ struct ThreadListCell: View {
             }
         }
     }
-
-    // MARK: - Actions
-
-    private func didTapCell() {
-        if !multipleSelectionViewModel.isEnabled {
-            viewModel.selectedThread = thread
-            if isInDraftFolder {
-                viewModel.editDraft(from: thread)
-            } else {
-                shouldNavigateToThreadList = true
-            }
-        } else {
-            withAnimation(.default.speed(2)) {
-                multipleSelectionViewModel.toggleSelection(of: thread)
-            }
-        }
-    }
-
-    private func didLongPressCell() {
-        withAnimation {
-            multipleSelectionViewModel.isEnabled.toggle()
-            if multipleSelectionViewModel.isEnabled {
-                multipleSelectionViewModel.toggleSelection(of: thread)
-            }
-        }
-    }
 }
 
 struct ThreadListCell_Previews: PreviewProvider {
     static var previews: some View {
-        let userDefaultsList = [
-            updateUserDefaults(threadDensity: .compact),
-            updateUserDefaults(threadDensity: .normal),
-            updateUserDefaults(threadDensity: .large)
-        ]
-
-        let viewModel = ThreadListViewModel(mailboxManager: PreviewHelper.sampleMailboxManager,
-                                            folder: nil,
-                                            bottomSheet: ThreadBottomSheet())
-        let multipleSelectionViewModel = ThreadListMultipleSelectionViewModel(mailboxManager: PreviewHelper.sampleMailboxManager)
-        let selectedMultipleSelectionViewModel = ThreadListMultipleSelectionViewModel(mailboxManager: PreviewHelper.sampleMailboxManager)
-
-        VStack(alignment: .leading) {
-            ForEach(userDefaultsList, id: \.self) { userDefaults in
-                ThreadListCell(viewModel: viewModel,
-                               multipleSelectionViewModel: multipleSelectionViewModel,
-                               thread: PreviewHelper.sampleThread)
-                .defaultAppStorage(userDefaults)
-            }
-
-            Divider()
-
-            ForEach(userDefaultsList, id: \.self) { userDefaults in
-                ThreadListCell(viewModel: viewModel,
-                               multipleSelectionViewModel: selectedMultipleSelectionViewModel,
-                               thread: PreviewHelper.sampleThread)
-                .defaultAppStorage(userDefaults)
-            }
-        }
-        .onAppear {
-            selectedMultipleSelectionViewModel.isEnabled = true
-            selectedMultipleSelectionViewModel.toggleSelection(of: PreviewHelper.sampleThread)
-        }
-        .previewLayout(.sizeThatFits)
-        .previewDevice("iPhone 13 Pro")
+        ThreadListCell(thread: PreviewHelper.sampleThread,
+                       isMultipleSelectionEnabled: false,
+                       isSelected: false)
+            .previewLayout(.sizeThatFits)
+            .previewDevice("iPhone 13 Pro")
     }
 
     static func updateUserDefaults(threadDensity: ThreadDensity) -> UserDefaults {
