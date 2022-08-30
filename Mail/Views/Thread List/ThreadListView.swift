@@ -140,7 +140,6 @@ struct ThreadListView: View {
         .modifier(ThreadListToolbar(isCompact: isCompact,
                                     bottomSheet: bottomSheet,
                                     multipleSelectionViewModel: multipleSelectionViewModel,
-                                    folder: $viewModel.folder,
                                     avatarImage: $avatarImage,
                                     observeThread: $viewModel.observeThread,
                                     navigationController: $navigationController))
@@ -285,9 +284,7 @@ private struct ThreadListToolbar: ViewModifier {
     @ObservedObject var bottomSheet: ThreadBottomSheet
     @ObservedObject var multipleSelectionViewModel: ThreadListMultipleSelectionViewModel
 
-    @Binding var folder: Folder?
     @Binding var avatarImage: Image
-
     @Binding var observeThread: Bool
 
     @EnvironmentObject var splitViewManager: SplitViewManager
@@ -315,7 +312,7 @@ private struct ThreadListToolbar: ViewModifier {
                                     Image(resource: MailResourcesAsset.burger)
                                 }
                             }
-                            Text(folder?.localizedName ?? "")
+                            Text(splitViewManager.selectedFolder?.localizedName ?? "")
                                 .textStyle(.header1)
                                 .padding(.leading, 8)
                                 .frame(maxWidth: .infinity, alignment: .leading)
@@ -330,8 +327,7 @@ private struct ThreadListToolbar: ViewModifier {
                             }
                         } else {
                             Button {
-                                // TODO: Search
-                                showWorkInProgressSnackBar()
+                                splitViewManager.showSearch = true
                             } label: {
                                 Image(resource: MailResourcesAsset.search)
                             }
