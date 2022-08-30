@@ -235,7 +235,6 @@ struct ThreadListView: View {
 
             ThreadListCell(
                 thread: thread,
-                navigationController: navigationController,
                 isMultipleSelectionEnabled: multipleSelectionViewModel.isEnabled,
                 isSelected: isSelected
             )

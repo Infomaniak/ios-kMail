@@ -46,7 +46,6 @@ struct ThreadListCell: View {
     @State private var shouldNavigateToThreadList = false
 
     var thread: Thread
-    var navigationController: UINavigationController?
 
     var isMultipleSelectionEnabled: Bool = false
     var isSelected: Bool = false
