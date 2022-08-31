@@ -194,7 +194,6 @@ public struct UnmanagedDraft: Equatable, Encodable, AbstractDraft {
         case priority
         case stUuid
         case attachments
-        case isOffline
         case action
         case delay
     }
