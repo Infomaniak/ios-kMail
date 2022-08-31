@@ -357,12 +357,12 @@ public class MailboxManager: ObservableObject {
 
     public func moveOrDelete(threads: [Thread]) async throws {
         let realm = getRealm()
-        let draftThreads = threads.filter { $0.parent?.role == .draft && $0.uid.starts(with: Draft.uuidLocalPrefix) }
+        let draftThreads = threads.filter(\.isLocalDraft)
         for draft in draftThreads {
             deleteLocalDraft(thread: draft, using: realm)
         }
 
-        let otherThreads = threads.filter { !($0.parent?.role == .draft && $0.uid.starts(with: Draft.uuidLocalPrefix)) }
+        let otherThreads = threads.filter { !$0.isLocalDraft }
         let parentFolder = otherThreads.first?.parent
         if parentFolder?.role == .trash {
             try await delete(threads: otherThreads)
@@ -388,7 +388,7 @@ public class MailboxManager: ObservableObject {
         if parentFolder?.role == .trash {
             // Delete definitely
             try await delete(thread: thread)
-        } else if parentFolder?.role == .draft && thread.uid.starts(with: Draft.uuidLocalPrefix) {
+        } else if thread.isLocalDraft {
             // Delete local draft from Realm
             deleteLocalDraft(thread: thread)
         } else {

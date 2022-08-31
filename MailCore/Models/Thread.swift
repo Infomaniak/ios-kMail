@@ -79,6 +79,10 @@ public class Thread: Object, Decodable, Identifiable {
         return parentLink.first
     }
 
+    public var isLocalDraft: Bool {
+        parent?.role == .draft && uid.starts(with: Draft.uuidLocalPrefix)
+    }
+
     public func updateUnseenMessages() {
         unseenMessages = messages.filter { !$0.seen }.count
     }

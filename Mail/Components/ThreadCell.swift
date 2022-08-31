@@ -144,7 +144,7 @@ struct ThreadCell: View {
                     .lineLimit(1)
                     .overlay {
                         RoundedRectangle(cornerRadius: 3)
-                            .stroke(Color.gray)
+                            .stroke(MailResourcesAsset.snackbarTextColor.swiftUiColor)
                     }
             }
 

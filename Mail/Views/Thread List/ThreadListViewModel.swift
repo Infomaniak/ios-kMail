@@ -259,26 +259,6 @@ class DateSection: Identifiable {
         sections = newSections
     }
 
-    func editDraft(from thread: Thread) {
-        guard let message = thread.messages.first else { return }
-        var sheetPresented = false
-
-        // If we already have the draft locally, present it directly
-        if let draft = mailboxManager.draft(messageUid: message.uid)?.detached() {
-            menuSheet?.state = .editMessage(draft: draft)
-            sheetPresented = true
-        }
-
-        // Update the draft
-        Task { [sheetPresented] in
-            let draft = try await mailboxManager.draft(from: message)
-            if !sheetPresented {
-                menuSheet?.state = .editMessage(draft: draft)
-            }
-        }
-    }
-
-
     // MARK: - Swipe actions
 
     func handleSwipeAction(_ action: SwipeAction, thread: Thread) async throws {
