@@ -16,175 +16,80 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import MailCore
 import MailResources
 import SwiftUI
 
-extension Animation {
-    static func threadListCheckbox(isMultipleSelectionEnabled isEnabled: Bool) -> Animation {
-        .default.delay(isEnabled ? 0.5 : 0)
-    }
-
-    static func threadListSlide(density: ThreadDensity, isMultipleSelectionEnabled isEnabled: Bool) -> Animation {
-        if density == .large {
-            return .default
-        }
-        return .default.speed(2).delay(isEnabled ? 0 : 0.22)
-    }
-}
-
-extension ThreadDensity {
-    var cellVerticalPadding: CGFloat {
-        self == .compact ? 8 : 16
-    }
-}
-
 struct ThreadListCell: View {
-    @AppStorage(UserDefaults.shared.key(.threadDensity)) var density: ThreadDensity = .normal
-    @AppStorage(UserDefaults.shared.key(.accentColor)) private var accentColor = AccentColor.pink
+    let thread: Thread
+    @ObservedObject var viewModel: ThreadListViewModel
+    @ObservedObject var multipleSelectionViewModel: ThreadListMultipleSelectionViewModel
+    let navigationController: UINavigationController?
 
     @State private var shouldNavigateToThreadList = false
 
-    var thread: Thread
-
-    var isMultipleSelectionEnabled: Bool = false
-    var isSelected: Bool = false
-
-    private var hasUnreadMessages: Bool {
-        thread.unseenMessages > 0
+    private var cellColor: Color {
+        return viewModel.selectedThread == thread
+        ? MailResourcesAsset.backgroundCardSelectedColor.swiftUiColor
+        : MailResourcesAsset.backgroundColor.swiftUiColor
     }
-    private var textStyle: MailTextStyle {
-        hasUnreadMessages ? .header3 : .bodySecondary
+    private var isInDraftFolder: Bool {
+        viewModel.folder?.role == .draft
     }
-
-    private var checkboxSize: CGFloat {
-        density == .compact ? Constants.checkboxCompactSize : Constants.checkboxSize
+    private var isSelected: Bool {
+        multipleSelectionViewModel.selectedItems.contains { $0.id == thread.id }
     }
-    private var checkmarkSize: CGFloat {
-        density == .compact ? Constants.checkmarkCompactSize : Constants.checkmarkSize
-    }
-
-    // MARK: - Views
 
     var body: some View {
-        HStack(spacing: 8) {
-            unreadIndicator
-                .animation(.threadListSlide(density: density, isMultipleSelectionEnabled: isMultipleSelectionEnabled),
-                           value: isMultipleSelectionEnabled)
-
-            Group {
-                if density == .large, let recipient = thread.from.last {
-                    ZStack {
-                        RecipientImage(recipient: recipient, size: 32)
-                        checkbox
-                            .opacity(isSelected ? 1 : 0)
-                    }
-                } else if isMultipleSelectionEnabled {
-                    checkbox
-                        .animation(.threadListCheckbox(isMultipleSelectionEnabled: isMultipleSelectionEnabled),
-                                   value: isMultipleSelectionEnabled)
-                }
-            }
-            .padding(.trailing, 4)
-
-            VStack(alignment: .leading, spacing: 4) {
-                cellHeader
-
-                HStack(alignment: .top, spacing: 3) {
-                    threadInfo
-                    Spacer()
-                    threadDetails
-                }
-            }
-            .animation(.threadListSlide(density: density, isMultipleSelectionEnabled: isMultipleSelectionEnabled),
-                       value: isMultipleSelectionEnabled)
-        }
-        .padding(.leading, 8)
-        .padding(.trailing, 12)
-        .padding(.vertical, density.cellVerticalPadding)
-        .clipped()
-    }
-
-    private var unreadIndicator: some View {
-        Circle()
-            .frame(width: Constants.unreadIconSize, height: Constants.unreadIconSize)
-            .foregroundColor(hasUnreadMessages ? Color.accentColor : .clear)
-    }
-
-    private var checkbox: some View {
         ZStack {
-            Circle()
-                .strokeBorder(Color.accentColor, lineWidth: 2)
-                .background(Circle().fill(isSelected ? Color.accentColor : Color.clear))
-                .frame(width: checkboxSize, height: checkboxSize)
-            Image(resource: MailResourcesAsset.check)
-                .foregroundColor(.white)
-                .frame(height: checkmarkSize)
-                .opacity(isSelected ? 1 : 0)
+            if viewModel.folder?.role != .draft {
+                NavigationLink(destination: ThreadView(mailboxManager: viewModel.mailboxManager,
+                                                       thread: thread,
+                                                       folderId: viewModel.folder?.id,
+                                                       navigationController: navigationController),
+                               isActive: $shouldNavigateToThreadList) { EmptyView() }
+                    .opacity(0)
+                    .disabled(multipleSelectionViewModel.isEnabled)
+            }
+
+            ThreadCell(
+                thread: thread,
+                isMultipleSelectionEnabled: multipleSelectionViewModel.isEnabled,
+                isSelected: isSelected
+            )
         }
+        .onAppear { viewModel.loadNextPageIfNeeded(currentItem: thread) }
+        .padding(.leading, multipleSelectionViewModel.isEnabled ? 8 : 0)
+        .onTapGesture { didTapCell() }
+        .onLongPressGesture(minimumDuration: 0.3) { didLongPressCell() }
+        .swipeActions(thread: thread, viewModel: viewModel, multipleSelectionViewModel: multipleSelectionViewModel)
+        .background(SelectionBackground(isSelected: isSelected, offsetX: 8, leadingPadding: 0, verticalPadding: 2, defaultColor: cellColor))
+        .clipped()
+        .listRowInsets(.init(top: 0, leading: 0, bottom: 0, trailing: 0))
+        .listRowSeparator(.hidden)
+        .listRowBackground(cellColor)
     }
 
-    private var cellHeader: some View {
-        HStack(spacing: 8) {
-            if thread.hasDrafts {
-                Text("(\(MailResourcesStrings.Localizable.messageIsDraftOption))")
-                    .foregroundColor(MailResourcesAsset.redActionColor)
-                    .textStyle(hasUnreadMessages ? .header2 : .header2Secondary)
-                    .lineLimit(1)
-                    .layoutPriority(1)
+    private func didTapCell() {
+        if multipleSelectionViewModel.isEnabled {
+            withAnimation(.default.speed(2)) {
+                multipleSelectionViewModel.toggleSelection(of: thread)
             }
-            Text(thread.messages.allSatisfy(\.isDraft) ? thread.formattedTo : thread.formattedFrom)
-                .textStyle(hasUnreadMessages ? .header2 : .header2Secondary)
-                .lineLimit(1)
-
-            if thread.messagesCount > 1 {
-                Text("\(thread.messagesCount)")
-                    .textStyle(.bodySecondary)
-                    .padding(.horizontal, 4)
-                    .lineLimit(1)
-                    .overlay {
-                        RoundedRectangle(cornerRadius: 3)
-                            .stroke(Color.gray)
-                    }
-            }
-
-            Spacer()
-
-            if thread.hasAttachments {
-                Image(resource: MailResourcesAsset.attachmentMail1)
-                    .foregroundColor(textStyle.color)
-                    .frame(height: 10)
-            }
-
-            Text(thread.date.customRelativeFormatted)
-                .textStyle(hasUnreadMessages ? .calloutStrong : .calloutSecondary)
-                .lineLimit(1)
-        }
-    }
-
-    private var threadInfo: some View {
-        VStack(alignment: .leading) {
-            Text(thread.formattedSubject)
-                .textStyle(textStyle)
-                .lineLimit(1)
-
-            if density != .compact,
-               let preview = thread.messages.last?.preview,
-               !preview.isEmpty {
-                Text(preview)
-                    .textStyle(.bodySecondary)
-                    .lineLimit(1)
+        } else {
+            viewModel.selectedThread = thread
+            if isInDraftFolder {
+                guard let menuSheet = viewModel.menuSheet else { return }
+                DraftUtils.editDraft(from: thread, mailboxManager: viewModel.mailboxManager, menuSheet: menuSheet)
+            } else {
+                shouldNavigateToThreadList = true
             }
         }
     }
 
-    private var threadDetails: some View {
-        VStack(spacing: 4) {
-            if thread.flagged {
-                Image(resource: MailResourcesAsset.starFull)
-                    .resizable()
-                    .scaledToFit()
-                    .frame(width: 20, height: 20)
+    private func didLongPressCell() {
+        withAnimation {
+            multipleSelectionViewModel.isEnabled.toggle()
+            if multipleSelectionViewModel.isEnabled {
+                multipleSelectionViewModel.toggleSelection(of: thread)
             }
         }
     }
@@ -192,16 +97,12 @@ struct ThreadListCell: View {
 
 struct ThreadListCell_Previews: PreviewProvider {
     static var previews: some View {
-        ThreadListCell(thread: PreviewHelper.sampleThread,
-                       isMultipleSelectionEnabled: false,
-                       isSelected: false)
-            .previewLayout(.sizeThatFits)
-            .previewDevice("iPhone 13 Pro")
-    }
-
-    static func updateUserDefaults(threadDensity: ThreadDensity) -> UserDefaults {
-        let userDefaults = UserDefaults(suiteName: "userdefaults_\(threadDensity.rawValue)")!
-        userDefaults.set(threadDensity.rawValue, forKey: userDefaults.key(.threadDensity))
-        return userDefaults
+        ThreadListCell(
+            thread: PreviewHelper.sampleThread,
+            viewModel: ThreadListViewModel(mailboxManager: PreviewHelper.sampleMailboxManager,
+                                           folder: nil, bottomSheet: ThreadBottomSheet()),
+            multipleSelectionViewModel: ThreadListMultipleSelectionViewModel(mailboxManager: PreviewHelper.sampleMailboxManager),
+            navigationController: nil
+        )
     }
 }

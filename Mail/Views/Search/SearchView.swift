@@ -181,7 +181,7 @@ struct SearchView: View {
                         Button(action: {
                             DraftUtils.editDraft(from: thread, mailboxManager: viewModel.mailboxManager, menuSheet: menuSheet)
                         }, label: {
-                            ThreadListCell(thread: thread)
+                            ThreadCell(thread: thread)
                         })
                     } else {
                         ZStack {
@@ -200,7 +200,7 @@ struct SearchView: View {
                             })
                             .opacity(0)
 
-                            ThreadListCell(thread: thread)
+                            ThreadCell(thread: thread)
                         }
                     }
                 }
