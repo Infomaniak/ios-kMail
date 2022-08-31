@@ -107,8 +107,6 @@ class DisplayedFloatingPanelState<State>: ObservableObject, FloatingPanelControl
         floatingPanel.halfOpening = halfOpening
         let content = content.introspectScrollView { [weak self] scrollView in
             self?.floatingPanel.trackAndObserve(scrollView: scrollView)
-            // This prevents erratic scrolling on first appearance
-            self?.floatingPanel.invalidateLayout()
         }
         floatingPanel.set(contentViewController: UIHostingController(rootView: content))
     }
