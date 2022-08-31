@@ -116,7 +116,7 @@ struct SearchView: View {
             newNavController.navigationBar.scrollEdgeAppearance = nil
             self.navigationController = newNavController
         }
-        .floatingPanel(state: bottomSheet) {
+        .floatingPanel(state: bottomSheet, halfOpening: true) {
             switch bottomSheet.state {
             case let .actions(target):
                 if target.isInvalidated {

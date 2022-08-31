@@ -23,6 +23,7 @@ import SwiftUI
 
 class AdaptiveDriveFloatingPanelController: FloatingPanelController {
     private var contentSizeObservation: NSKeyValueObservation?
+    var halfOpening = false
 
     deinit {
         contentSizeObservation?.invalidate()
@@ -35,7 +36,9 @@ class AdaptiveDriveFloatingPanelController: FloatingPanelController {
 
     func updateLayout(size: CGSize) {
         guard let trackingScrollView = trackingScrollView else { return }
-        let layout = AdaptiveFloatingPanelLayout(height: min(trackingScrollView.contentSize.height + surfaceView.contentPadding.top, size.height - 96))
+        let layout = AdaptiveFloatingPanelLayout(
+            height: min(trackingScrollView.contentSize.height + surfaceView.contentPadding.top, size.height - 96),
+            halfOpening: halfOpening)
         self.layout = layout
         invalidateLayout()
     }
@@ -59,13 +62,19 @@ class AdaptiveFloatingPanelLayout: FloatingPanelLayout {
     var position: FloatingPanelPosition = .bottom
     var height: CGFloat
     var anchors: [FloatingPanelState: FloatingPanelLayoutAnchoring]
-    var initialState: FloatingPanelState = .full
+    var initialState: FloatingPanelState
 
-    init(height: CGFloat) {
+    init(height: CGFloat, halfOpening: Bool) {
         self.height = height
         anchors = [
             .full: FloatingPanelLayoutAnchor(absoluteInset: height, edge: .bottom, referenceGuide: .safeArea)
         ]
+        initialState = .full
+
+        if halfOpening {
+            initialState = .half
+            anchors[.half] = FloatingPanelLayoutAnchor(fractionalInset: 0.5, edge: .bottom, referenceGuide: .safeArea)
+        }
     }
 
     func backdropAlpha(for state: FloatingPanelState) -> CGFloat {
@@ -94,7 +103,8 @@ class DisplayedFloatingPanelState<State>: ObservableObject, FloatingPanelControl
         floatingPanel.isRemovalInteractionEnabled = true
     }
 
-    func createPanelContent<Content: View>(content: Content) {
+    func createPanelContent<Content: View>(content: Content, halfOpening: Bool) {
+        floatingPanel.halfOpening = halfOpening
         let content = content.introspectScrollView { [weak self] scrollView in
             self?.floatingPanel.trackAndObserve(scrollView: scrollView)
             // This prevents erratic scrolling on first appearance
@@ -136,8 +146,10 @@ class FloatingPanelHelper: FloatingPanelControllerDelegate {
 }
 
 extension View {
-    func floatingPanel<State, Content: View>(state: DisplayedFloatingPanelState<State>, @ViewBuilder content: () -> Content) -> some View {
-        state.createPanelContent(content: ScrollView { content() })
+    func floatingPanel<State, Content: View>(state: DisplayedFloatingPanelState<State>,
+                                             halfOpening: Bool = false,
+                                             @ViewBuilder content: () -> Content) -> some View {
+        state.createPanelContent(content: ScrollView { content() }, halfOpening: halfOpening)
         return self
     }
 }
