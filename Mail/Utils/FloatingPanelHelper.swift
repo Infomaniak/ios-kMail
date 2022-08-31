@@ -37,7 +37,7 @@ class AdaptiveDriveFloatingPanelController: FloatingPanelController {
     func updateLayout(size: CGSize) {
         guard let trackingScrollView = trackingScrollView else { return }
         let layout = AdaptiveFloatingPanelLayout(
-            height: min(trackingScrollView.contentSize.height + surfaceView.contentPadding.top, size.height - 96),
+            height: min(trackingScrollView.contentSize.height + surfaceView.contentPadding.top + surfaceView.contentPadding.bottom, size.height - 96),
             halfOpening: halfOpening)
         self.layout = layout
         invalidateLayout()
@@ -98,7 +98,7 @@ class DisplayedFloatingPanelState<State>: ObservableObject, FloatingPanelControl
         floatingPanel.surfaceView.grabberHandlePadding = 16
         floatingPanel.surfaceView.grabberHandleSize = CGSize(width: 45, height: 5)
         floatingPanel.surfaceView.grabberHandle.barColor = MailResourcesAsset.secondaryBlueColor.color
-        floatingPanel.surfaceView.contentPadding = UIEdgeInsets(top: 32, left: 0, bottom: 0, right: 0)
+        floatingPanel.surfaceView.contentPadding = UIEdgeInsets(top: 32, left: 0, bottom: 16, right: 0)
         floatingPanel.backdropView.dismissalTapGestureRecognizer.isEnabled = true
         floatingPanel.isRemovalInteractionEnabled = true
     }
