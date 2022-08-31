@@ -152,7 +152,7 @@ struct SearchView: View {
             MatomoUtils.track(view: ["SearchView"])
         }
         .toolbar {
-            ToolbarItemGroup(placement: .navigationBarLeading) {
+            ToolbarItem(placement: .navigationBarLeading) {
                 if isCompact {
                     Button {
                         Constants.globallyResignFirstResponder()
@@ -161,7 +161,9 @@ struct SearchView: View {
                         Image(resource: MailResourcesAsset.arrowLeft)
                     }
                 }
+            }
 
+            ToolbarItem(placement: .navigation) {
                 SearchTextField(value: $viewModel.searchValue, isFocused: $isSearchFieldFocused) {
                     Task {
                         await viewModel.fetchThreads()
@@ -169,6 +171,7 @@ struct SearchView: View {
                 } onDelete: {
                     viewModel.clearSearchValue()
                 }
+                .frame(maxWidth: .infinity)
             }
         }
     }
