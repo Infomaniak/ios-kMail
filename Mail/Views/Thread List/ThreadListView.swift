@@ -57,7 +57,6 @@ struct ThreadListView: View {
 
     let isCompact: Bool
 
-
     init(mailboxManager: MailboxManager, folder: Folder?, isCompact: Bool) {
         let threadBottomSheet = ThreadBottomSheet()
         _bottomSheet = StateObject(wrappedValue: threadBottomSheet)
@@ -206,10 +205,10 @@ struct ThreadListView: View {
             .listRowBackground(viewModel.selectedThread?.id == thread.id
                 ? MailResourcesAsset.backgroundCardSelectedColor.swiftUiColor
                 : MailResourcesAsset.backgroundColor.swiftUiColor)
-                .modifier(ThreadListSwipeAction(thread: thread, viewModel: viewModel))
-                .onAppear {
-                    viewModel.loadNextPageIfNeeded(currentItem: thread)
-                }
+            .modifier(ThreadListSwipeAction(thread: thread, viewModel: viewModel))
+            .onAppear {
+                viewModel.loadNextPageIfNeeded(currentItem: thread)
+            }
         }
     }
 }

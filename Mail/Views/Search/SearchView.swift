@@ -36,8 +36,6 @@ struct SearchView: View {
 
     @State public var isSearchFieldFocused = false
 
-    private let bottomSheetOptions = Constants.bottomSheetOptions + [.appleScrollBehavior]
-
     let isCompact: Bool
 
     init(mailboxManager: MailboxManager, folder: Folder?, isCompact: Bool) {
@@ -118,7 +116,7 @@ struct SearchView: View {
             newNavController.navigationBar.scrollEdgeAppearance = nil
             self.navigationController = newNavController
         }
-        .bottomSheet(bottomSheetPosition: $bottomSheet.position, options: bottomSheetOptions) {
+        .floatingPanel(state: bottomSheet) {
             switch bottomSheet.state {
             case let .actions(target):
                 if target.isInvalidated {
