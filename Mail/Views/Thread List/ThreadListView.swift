@@ -138,20 +138,13 @@ struct ThreadListView: View {
             menuSheet.state = .newMessage
         }
         .floatingPanel(state: bottomSheet, halfOpening: true) {
-            switch bottomSheet.state {
-            case let .actions(target):
-                if target.isInvalidated {
-                    EmptyView()
-                } else {
-                    ActionsView(mailboxManager: viewModel.mailboxManager,
-                                target: target,
-                                state: bottomSheet,
-                                globalSheet: globalBottomSheet) { message, replyMode in
-                        menuSheet.state = .reply(message, replyMode)
-                    }
+            if case let .actions(target) = bottomSheet.state, !target.isInvalidated {
+                ActionsView(mailboxManager: viewModel.mailboxManager,
+                            target: target,
+                            state: bottomSheet,
+                            globalSheet: globalBottomSheet) { message, replyMode in
+                    menuSheet.state = .reply(message, replyMode)
                 }
-            default:
-                EmptyView()
             }
         }
         .onAppear {

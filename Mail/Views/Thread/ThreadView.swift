@@ -226,20 +226,13 @@ struct ThreadView: View {
             }
         }
         .floatingPanel(state: threadBottomSheet, halfOpening: true) {
-            switch threadBottomSheet.state {
-            case let .actions(target):
-                if target.isInvalidated {
-                    EmptyView()
-                } else {
-                    ActionsView(mailboxManager: mailboxManager,
-                                target: target,
-                                state: threadBottomSheet,
-                                globalSheet: globalBottomSheet) { message, replyMode in
-                        sheet.state = .reply(message, replyMode)
-                    }
+            if case let .actions(target) = threadBottomSheet.state, !target.isInvalidated {
+                ActionsView(mailboxManager: mailboxManager,
+                            target: target,
+                            state: threadBottomSheet,
+                            globalSheet: globalBottomSheet) { message, replyMode in
+                    sheet.state = .reply(message, replyMode)
                 }
-            case .none:
-                EmptyView()
             }
         }
         .onChange(of: messages) { newMessagesList in
