@@ -225,7 +225,7 @@ struct ThreadView: View {
                 EmptyView()
             }
         }
-        .floatingPanel(state: threadBottomSheet) {
+        .floatingPanel(state: threadBottomSheet, halfOpening: true) {
             switch threadBottomSheet.state {
             case let .actions(target):
                 if target.isInvalidated {

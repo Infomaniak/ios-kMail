@@ -137,7 +137,7 @@ struct ThreadListView: View {
         ) {
             menuSheet.state = .newMessage
         }
-        .floatingPanel(state: bottomSheet) {
+        .floatingPanel(state: bottomSheet, halfOpening: true) {
             switch bottomSheet.state {
             case let .actions(target):
                 if target.isInvalidated {
