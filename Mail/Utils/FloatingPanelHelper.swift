@@ -137,8 +137,10 @@ class FloatingPanelHelper: FloatingPanelControllerDelegate {
     static let shared = FloatingPanelHelper()
 
     private let sharedFloatingPanel = FloatingPanelController()
-    var rootViewController: UIViewController?
-    private init() {}
+    private(set) var rootViewController: UIViewController?
+    private init() {
+        // Protected constructor for singleton
+    }
 
     func attachToViewController(_ viewController: UIViewController) {
         rootViewController = viewController
