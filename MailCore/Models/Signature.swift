@@ -20,7 +20,8 @@ import Foundation
 import RealmSwift
 
 public enum SignaturePosition: String, PersistableEnum, Decodable {
-    case top, bottom
+    case beforeReplyMessage = "top"
+    case afterReplyMessage = "bottom"
 }
 
 public class SignatureResponse: Object, Decodable {

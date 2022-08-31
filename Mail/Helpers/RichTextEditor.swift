@@ -28,6 +28,8 @@ struct RichTextEditor: UIViewRepresentable {
     @Binding var model: RichTextEditorModel
     @Binding var body: String
 
+    var isFirstTime = true
+
     var richTextEditor: SQTextEditorView {
         return model.richTextEditor
     }
@@ -52,9 +54,12 @@ struct RichTextEditor: UIViewRepresentable {
             parent.model.delegateCount += 1
             guard parent.model.isInitialized else { return }
             editor.getHTML { html in
-                if let html = html, self.parent.body.trimmingCharacters(in: .whitespacesAndNewlines) != html {
+                var parentBody = self.parent.body.trimmingCharacters(in: .whitespacesAndNewlines)
+                parentBody = parentBody.replacingOccurrences(of: "\r", with: "")
+                if let html = html, parentBody != html && !self.parent.isFirstTime {
                     self.parent.body = html
                 }
+                self.parent.isFirstTime = false
             }
         }
 
