@@ -20,6 +20,7 @@ import MailResources
 import SwiftUI
 
 struct FloatingActionButtonModifier: ViewModifier {
+    let isEnabled: Bool
     let icon: Image
     let title: String
     let action: () -> Void
@@ -28,14 +29,16 @@ struct FloatingActionButtonModifier: ViewModifier {
         ZStack(alignment: .bottomTrailing) {
             content
 
-            FloatingActionButton(icon: icon, title: title, action: action)
+            if isEnabled {
+                FloatingActionButton(icon: icon, title: title, action: action)
+            }
         }
         .edgesIgnoringSafeArea(.bottom)
     }
 }
 
 extension View {
-    func floatingActionButton(icon: Image, title: String, action: @escaping () -> Void) -> some View {
-        modifier(FloatingActionButtonModifier(icon: icon, title: title, action: action))
+    func floatingActionButton(isEnabled: Bool = true, icon: Image, title: String, action: @escaping () -> Void) -> some View {
+        modifier(FloatingActionButtonModifier(isEnabled: isEnabled, icon: icon, title: title, action: action))
     }
 }

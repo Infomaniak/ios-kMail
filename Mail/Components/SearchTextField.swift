@@ -40,10 +40,10 @@ struct SearchTextField: View {
             .foregroundColor(value.isEmpty
                 ? MailResourcesAsset.textFieldPlaceholderColor
                 : MailResourcesAsset.primaryTextColor)
-                .onSubmit {
-                    onSubmit()
-                }
-                .padding(.vertical, 11)
+            .onSubmit {
+                onSubmit()
+            }
+            .padding(.vertical, 11)
 
             Button(action: onDelete) {
                 Image(resource: MailResourcesAsset.plus)

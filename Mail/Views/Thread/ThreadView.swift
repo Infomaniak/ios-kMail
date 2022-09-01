@@ -147,7 +147,7 @@ struct ThreadView: View {
         .environmentObject(bottomSheet)
         .environmentObject(threadBottomSheet)
         .task {
-            if thread.unseenMessages > 0 {
+            if thread.hasUnseenMessages {
                 try? await mailboxManager.toggleRead(thread: thread)
             }
         }
@@ -165,35 +165,14 @@ struct ThreadView: View {
             }
             ToolbarItemGroup(placement: .bottomBar) {
                 ForEach(toolbarActions) { action in
-                    Button {
+                    ToolbarButton(text: action.title, icon: action.icon) {
                         didTap(action: action)
-                    } label: {
-                        Label {
-                            Text(action.title)
-                                .font(MailTextStyle.caption.font)
-                        } icon: {
-                            Image(resource: action.icon)
-                                .resizable()
-                                .scaledToFit()
-                                .frame(width: 22, height: 22)
-                        }
-                        .dynamicLabelStyle(sizeClass: sizeClass ?? .regular)
                     }
                     Spacer()
                 }
-                Button {
+                ToolbarButton(text: MailResourcesStrings.Localizable.buttonMore,
+                                icon: MailResourcesAsset.plusActions) {
                     threadBottomSheet.open(state: .actions(.thread(thread.thaw() ?? thread)), position: .middle)
-                } label: {
-                    Label {
-                        Text(MailResourcesStrings.Localizable.buttonMore)
-                            .font(MailTextStyle.caption.font)
-                    } icon: {
-                        Image(resource: MailResourcesAsset.plusActions)
-                            .resizable()
-                            .scaledToFit()
-                            .frame(width: 22, height: 22)
-                    }
-                    .dynamicLabelStyle(sizeClass: sizeClass ?? .regular)
                 }
             }
         }

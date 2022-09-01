@@ -79,6 +79,14 @@ public class Thread: Object, Decodable, Identifiable {
         return parentLink.first
     }
 
+    public var isLocalDraft: Bool {
+        parent?.role == .draft && uid.starts(with: Draft.uuidLocalPrefix)
+    }
+
+    public var hasUnseenMessages: Bool {
+        unseenMessages > 0
+    }
+
     public func updateUnseenMessages() {
         unseenMessages = messages.filter { !$0.seen }.count
     }
@@ -189,7 +197,7 @@ public enum Filter: String {
         case .seen:
             return thread.unseenMessages == 0
         case .unseen:
-            return thread.unseenMessages > 0
+            return thread.hasUnseenMessages
         case .starred:
             return thread.flagged
         case .unstarred:

@@ -58,7 +58,7 @@ struct MailboxesManagementView: View {
                 }
                 .padding(.vertical, 8)
                 .padding(.horizontal, 20)
-                .background(SelectionBackground())
+                .background(SelectionBackground(isSelected: true, offsetX: 10, leadingPadding: -2, verticalPadding: 0))
             }
 
             if isExpanded {

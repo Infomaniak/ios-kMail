@@ -103,18 +103,18 @@ struct SearchView: View {
         .introspectNavigationController { navigationController in
             let newNavController = navigationController
             // Style toolbar
-            let appereance = UIToolbarAppearance()
-            appereance.configureWithOpaqueBackground()
-            appereance.backgroundColor = MailResourcesAsset.backgroundToolbarColor.color
-            appereance.shadowColor = .clear
-            UIToolbar.appearance().standardAppearance = appereance
-            UIToolbar.appearance().scrollEdgeAppearance = appereance
+            let toolbarAppearance = UIToolbarAppearance()
+            toolbarAppearance.configureWithOpaqueBackground()
+            toolbarAppearance.backgroundColor = MailResourcesAsset.backgroundToolbarColor.color
+            toolbarAppearance.shadowColor = .clear
+            UIToolbar.appearance().standardAppearance = toolbarAppearance
+            UIToolbar.appearance().scrollEdgeAppearance = toolbarAppearance
             newNavController.toolbar.barTintColor = .white
             newNavController.toolbar.setShadowImage(UIImage(), forToolbarPosition: .any)
             // Style navigation bar
-            let appearance = UINavigationBarAppearance()
-            appearance.configureWithDefaultBackground()
-            newNavController.navigationBar.standardAppearance = appearance
+            let navbarAppearance = UINavigationBarAppearance()
+            navbarAppearance.configureWithDefaultBackground()
+            newNavController.navigationBar.standardAppearance = navbarAppearance
             newNavController.navigationBar.scrollEdgeAppearance = nil
             self.navigationController = newNavController
         }
@@ -152,7 +152,7 @@ struct SearchView: View {
             MatomoUtils.track(view: ["SearchView"])
         }
         .toolbar {
-            ToolbarItem(placement: .navigation) {
+            ToolbarItem(placement: .navigationBarLeading) {
                 if isCompact {
                     Button {
                         Constants.globallyResignFirstResponder()
@@ -160,12 +160,10 @@ struct SearchView: View {
                     } label: {
                         Image(resource: MailResourcesAsset.arrowLeft)
                     }
-                } else {
-                    EmptyView()
                 }
             }
 
-            ToolbarItem(placement: .principal) {
+            ToolbarItem(placement: .navigation) {
                 SearchTextField(value: $viewModel.searchValue, isFocused: $isSearchFieldFocused) {
                     Task {
                         await viewModel.fetchThreads()
@@ -173,6 +171,7 @@ struct SearchView: View {
                 } onDelete: {
                     viewModel.clearSearchValue()
                 }
+                .frame(maxWidth: .infinity)
             }
         }
     }
@@ -185,7 +184,7 @@ struct SearchView: View {
                         Button(action: {
                             DraftUtils.editDraft(from: thread, mailboxManager: viewModel.mailboxManager, menuSheet: menuSheet)
                         }, label: {
-                            ThreadListCell(mailboxManager: viewModel.mailboxManager, thread: thread)
+                            ThreadCell(thread: thread)
                         })
                     } else {
                         ZStack {
@@ -204,7 +203,7 @@ struct SearchView: View {
                             })
                             .opacity(0)
 
-                            ThreadListCell(mailboxManager: viewModel.mailboxManager, thread: thread)
+                            ThreadCell(thread: thread)
                         }
                     }
                 }

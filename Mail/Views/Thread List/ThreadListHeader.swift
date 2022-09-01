@@ -21,6 +21,8 @@ import MailResources
 import SwiftUI
 
 struct ThreadListHeader: View {
+    var isMultipleSelectionEnabled: Bool
+
     @Binding var isConnected: Bool
     @Binding var lastUpdate: Date?
     @Binding var unreadCount: Int?
@@ -34,7 +36,12 @@ struct ThreadListHeader: View {
         in: .common
     ).autoconnect()
 
-    init(isConnected: Binding<Bool>, lastUpdate: Binding<Date?>, unreadCount: Binding<Int?>, unreadFilterOn: Binding<Bool>) {
+    init(isMultipleSelectionEnabled: Bool,
+         isConnected: Binding<Bool>,
+         lastUpdate: Binding<Date?>,
+         unreadCount: Binding<Int?>,
+         unreadFilterOn: Binding<Bool>) {
+        self.isMultipleSelectionEnabled = isMultipleSelectionEnabled
         _isConnected = isConnected
         _lastUpdate = lastUpdate
         _unreadCount = unreadCount
@@ -53,7 +60,7 @@ struct ThreadListHeader: View {
                 NoNetworkView()
             }
             Spacer()
-            if let unreadCount = unreadCount, unreadCount > 0 {
+            if let unreadCount = unreadCount, unreadCount > 0 && !isMultipleSelectionEnabled {
                 Toggle(isOn: $unreadFilterOn) {
                     Text(MailResourcesStrings.Localizable.threadListHeaderUnreadCount(unreadCount))
                 }
@@ -105,11 +112,13 @@ extension ToggleStyle where Self == UnreadToggleStyle {
 
 struct ThreadListHeader_Previews: PreviewProvider {
     static var previews: some View {
-        ThreadListHeader(isConnected: .constant(true),
+        ThreadListHeader(isMultipleSelectionEnabled: false,
+                         isConnected: .constant(true),
                          lastUpdate: .constant(Date()),
                          unreadCount: .constant(2),
                          unreadFilterOn: .constant(false))
-        ThreadListHeader(isConnected: .constant(false),
+        ThreadListHeader(isMultipleSelectionEnabled: false,
+                         isConnected: .constant(false),
                          lastUpdate: .constant(nil),
                          unreadCount: .constant(1),
                          unreadFilterOn: .constant(true))
