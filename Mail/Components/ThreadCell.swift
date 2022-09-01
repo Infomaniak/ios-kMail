@@ -198,10 +198,4 @@ struct ThreadCell_Previews: PreviewProvider {
             .previewLayout(.sizeThatFits)
             .previewDevice("iPhone 13 Pro")
     }
-
-    static func updateUserDefaults(threadDensity: ThreadDensity) -> UserDefaults {
-        let userDefaults = UserDefaults(suiteName: "userdefaults_\(threadDensity.rawValue)")!
-        userDefaults.set(threadDensity.rawValue, forKey: userDefaults.key(.threadDensity))
-        return userDefaults
-    }
 }
