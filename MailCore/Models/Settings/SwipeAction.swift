@@ -75,7 +75,7 @@ public enum SwipeAction: String, CaseIterable, SettingsOptionEnum {
     case favorite
     case report
     case spam
-    case readAndAchive
+    case readAndArchive
     case quickAction
     case none
 
@@ -95,7 +95,7 @@ public enum SwipeAction: String, CaseIterable, SettingsOptionEnum {
             return MailResourcesStrings.Localizable.actionPostpone
         case .spam:
             return MailResourcesStrings.Localizable.actionSpam
-        case .readAndAchive:
+        case .readAndArchive:
             return MailResourcesStrings.Localizable.settingsSwipeActionReadAndArchive
         case .quickAction:
             return MailResourcesStrings.Localizable.settingsSwipeActionQuickActionsMenu
@@ -125,7 +125,7 @@ public enum SwipeAction: String, CaseIterable, SettingsOptionEnum {
             resource = MailResourcesAsset.waitingMessage
         case .spam:
             resource = MailResourcesAsset.spam
-        case .readAndAchive:
+        case .readAndArchive:
             resource = MailResourcesAsset.archives
         case .quickAction:
             resource = MailResourcesAsset.navigationMenu
@@ -157,7 +157,7 @@ public enum SwipeAction: String, CaseIterable, SettingsOptionEnum {
             resource = MailResourcesAsset.lightBlueActionColor
         case .spam:
             resource = MailResourcesAsset.warningColor
-        case .readAndAchive:
+        case .readAndArchive:
             resource = MailResourcesAsset.purpleActionColor
         case .quickAction:
             resource = MailResourcesAsset.menuActionColor
