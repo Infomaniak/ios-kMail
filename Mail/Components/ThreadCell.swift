@@ -50,11 +50,8 @@ struct ThreadCell: View {
     var isMultipleSelectionEnabled: Bool = false
     var isSelected: Bool = false
 
-    private var hasUnreadMessages: Bool {
-        thread.unseenMessages > 0
-    }
     private var textStyle: MailTextStyle {
-        hasUnreadMessages ? .header3 : .bodySecondary
+        thread.hasUnseenMessages ? .header3 : .bodySecondary
     }
 
     private var checkboxSize: CGFloat {
@@ -108,7 +105,7 @@ struct ThreadCell: View {
     private var unreadIndicator: some View {
         Circle()
             .frame(width: Constants.unreadIconSize, height: Constants.unreadIconSize)
-            .foregroundColor(hasUnreadMessages ? Color.accentColor : .clear)
+            .foregroundColor(thread.hasUnseenMessages ? Color.accentColor : .clear)
     }
 
     private var checkbox: some View {
@@ -129,12 +126,12 @@ struct ThreadCell: View {
             if thread.hasDrafts {
                 Text("(\(MailResourcesStrings.Localizable.messageIsDraftOption))")
                     .foregroundColor(MailResourcesAsset.redActionColor)
-                    .textStyle(hasUnreadMessages ? .header2 : .header2Secondary)
+                    .textStyle(thread.hasUnseenMessages ? .header2 : .header2Secondary)
                     .lineLimit(1)
                     .layoutPriority(1)
             }
             Text(thread.messages.allSatisfy(\.isDraft) ? thread.formattedTo : thread.formattedFrom)
-                .textStyle(hasUnreadMessages ? .header2 : .header2Secondary)
+                .textStyle(thread.hasUnseenMessages ? .header2 : .header2Secondary)
                 .lineLimit(1)
 
             if thread.messagesCount > 1 {
@@ -157,7 +154,7 @@ struct ThreadCell: View {
             }
 
             Text(thread.date.customRelativeFormatted)
-                .textStyle(hasUnreadMessages ? .calloutStrong : .calloutSecondary)
+                .textStyle(thread.hasUnseenMessages ? .calloutStrong : .calloutSecondary)
                 .lineLimit(1)
         }
     }

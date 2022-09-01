@@ -283,7 +283,7 @@ class DateSection: Identifiable {
         case .spam:
             try await toggleSpam(thread: thread)
         case .readAndAchive:
-            if thread.unseenMessages > 0 {
+            if thread.hasUnseenMessages {
                 try await mailboxManager.toggleRead(thread: thread)
             }
             try await move(thread: thread, to: .archive)

@@ -268,7 +268,7 @@ public class MailboxManager: ObservableObject {
     }
 
     public func toggleRead(threads: [Thread]) async throws {
-        if threads.contains(where: { $0.unseenMessages > 0 }) {
+        if threads.contains(where: \.hasUnseenMessages) {
             _ = try await apiFetcher.markAsSeen(mailbox: mailbox, messages: threads.flatMap(\.messages))
             let realm = getRealm()
             for thread in threads {
@@ -284,7 +284,7 @@ public class MailboxManager: ObservableObject {
     }
 
     public func toggleRead(thread: Thread) async throws {
-        if thread.unseenMessages > 0 {
+        if thread.hasUnseenMessages {
             _ = try await apiFetcher.markAsSeen(mailbox: mailbox, messages: Array(thread.messages))
             markAsSeen(thread: thread)
         } else {

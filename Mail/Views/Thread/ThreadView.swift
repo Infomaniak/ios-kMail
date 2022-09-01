@@ -147,7 +147,7 @@ struct ThreadView: View {
         .environmentObject(bottomSheet)
         .environmentObject(threadBottomSheet)
         .task {
-            if thread.unseenMessages > 0 {
+            if thread.hasUnseenMessages {
                 try? await mailboxManager.toggleRead(thread: thread)
             }
         }
