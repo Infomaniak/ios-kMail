@@ -232,7 +232,7 @@ public class MailboxManager: ObservableObject {
         )
 
         // Save result
-        saveThreads(result: threadResult, parent: folder)
+        await saveThreads(result: threadResult, parent: folder)
 
         return threadResult
     }
@@ -242,14 +242,14 @@ public class MailboxManager: ObservableObject {
         let threadResult = try await apiFetcher.threads(from: resource)
 
         // Save result
-        saveThreads(result: threadResult, parent: folder)
+        await saveThreads(result: threadResult, parent: folder)
 
         return threadResult
     }
 
-    private func saveThreads(result: ThreadResult, parent: Folder) {
-        guard let parentFolder = parent.thaw() else { return }
-        let realm = getRealm()
+    private func saveThreads(result: ThreadResult, parent: Folder) async {
+        await backgroundRealm.execute { realm in
+            guard let parentFolder = realm.object(ofType: Folder.self, forPrimaryKey: parent.id) else { return }
 
         let fetchedThreads = MutableSet<Thread>()
         fetchedThreads.insert(objectsIn: result.threads ?? [])
@@ -595,13 +595,13 @@ public class MailboxManager: ObservableObject {
                 realm.delete(folder.threads.where { $0.fromSearch == true })
                 folder.threads.removeAll()
             }
-            return folder
+            return folder.freeze()
         } else {
-            return initSearchFolder()
+            return initSearchFolder().freeze()
         }
     }
 
-    public func searchThreads(@ThreadSafe searchFolder: Folder?, filterFolderId: String, filter: Filter = .all,
+    public func searchThreads(searchFolder: Folder?, filterFolderId: String, filter: Filter = .all,
                               searchFilter: [URLQueryItem] = []) async throws -> ThreadResult {
         let threadResult = try await apiFetcher.threads(
             mailbox: mailbox,
@@ -618,13 +618,13 @@ public class MailboxManager: ObservableObject {
         }
 
         if let searchFolder = searchFolder {
-            saveThreads(result: threadResult, parent: searchFolder)
+            await saveThreads(result: threadResult, parent: searchFolder)
         }
 
         return threadResult
     }
 
-    public func searchThreads(@ThreadSafe searchFolder: Folder?, from resource: String,
+    public func searchThreads(searchFolder: Folder?, from resource: String,
                               searchFilter: [URLQueryItem] = []) async throws -> ThreadResult {
         let threadResult = try await apiFetcher.threads(from: resource, searchFilter: searchFilter)
 
@@ -636,7 +636,7 @@ public class MailboxManager: ObservableObject {
         }
 
         if let searchFolder = searchFolder {
-            saveThreads(result: threadResult, parent: searchFolder)
+            await saveThreads(result: threadResult, parent: searchFolder)
         }
 
         return threadResult
