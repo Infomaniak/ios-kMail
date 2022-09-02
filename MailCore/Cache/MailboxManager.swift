@@ -124,11 +124,11 @@ public class MailboxManager: ObservableObject {
         // Get from API
         let signaturesResult = try await apiFetcher.signatures(mailbox: mailbox)
 
-        let realm = getRealm()
-
-        // Update signatures in Realm
-        try? realm.safeWrite {
-            realm.add(signaturesResult, update: .modified)
+        await backgroundRealm.execute { realm in
+            // Update signatures in Realm
+            try? realm.safeWrite {
+                realm.add(signaturesResult, update: .modified)
+            }
         }
     }
 
@@ -148,37 +148,38 @@ public class MailboxManager: ObservableObject {
         let folderResult = try await apiFetcher.folders(mailbox: mailbox)
         let newFolders = getSubFolders(from: folderResult)
 
-        let realm = getRealm()
-        for folder in newFolders {
-            keepCacheAttributes(for: folder, using: realm)
-        }
-
-        let cachedFolders = realm.objects(Folder.self)
-
-        // Update folders in Realm
-        try? realm.safeWrite {
-            // Remove old folders
-            realm.add(folderResult, update: .modified)
-            let toDeleteFolders = Set(cachedFolders).subtracting(Set(newFolders))
-            var toDeleteThreads = [Thread]()
-
-            // Threads contains in folders to delete
-            let mayBeDeletedThreads = Set(toDeleteFolders.flatMap(\.threads))
-            // Delete messages in all threads from folders to delete
-            // If message.folderId is one of folders to delete Id
-            let toDeleteMessages = Set(mayBeDeletedThreads.flatMap(\.messages)
-                .filter { toDeleteFolders.map(\._id).contains($0.folderId) })
-
-            // Delete thread if all his messages are deleted
-            for thread in mayBeDeletedThreads {
-                if Set(thread.messages).isSubset(of: toDeleteMessages) {
-                    toDeleteThreads.append(thread)
-                }
+        await backgroundRealm.execute { realm in
+            for folder in newFolders {
+                keepCacheAttributes(for: folder, using: realm)
             }
 
-            realm.delete(toDeleteMessages)
-            realm.delete(toDeleteThreads)
-            realm.delete(toDeleteFolders)
+            let cachedFolders = realm.objects(Folder.self)
+
+            // Update folders in Realm
+            try? realm.safeWrite {
+                // Remove old folders
+                realm.add(folderResult, update: .modified)
+                let toDeleteFolders = Set(cachedFolders).subtracting(Set(newFolders))
+                var toDeleteThreads = [Thread]()
+
+                // Threads contains in folders to delete
+                let mayBeDeletedThreads = Set(toDeleteFolders.flatMap(\.threads))
+                // Delete messages in all threads from folders to delete
+                // If message.folderId is one of folders to delete Id
+                let toDeleteMessages = Set(mayBeDeletedThreads.flatMap(\.messages)
+                    .filter { toDeleteFolders.map(\._id).contains($0.folderId) })
+
+                // Delete thread if all his messages are deleted
+                for thread in mayBeDeletedThreads {
+                    if Set(thread.messages).isSubset(of: toDeleteMessages) {
+                        toDeleteThreads.append(thread)
+                    }
+                }
+
+                realm.delete(toDeleteMessages)
+                realm.delete(toDeleteThreads)
+                realm.delete(toDeleteFolders)
+            }
         }
     }
 
@@ -195,7 +196,7 @@ public class MailboxManager: ObservableObject {
         }
         return realm.objects(Folder.self).where { $0.role == role }.first
     }
-    
+
     /// Get all the real folders in Realm
     /// - Parameters:
     ///   - realm: The Realm instance to use. If this parameter is `nil`, a new one will be created.
@@ -951,24 +952,25 @@ public class MailboxManager: ObservableObject {
     }
 
     public func draftOffline() {
-        let realm = getRealm()
-        let draftOffline = AnyRealmCollection(realm.objects(Draft.self).where { $0.isOffline == true })
+        backgroundRealm.execute { realm in
+            let draftOffline = AnyRealmCollection(realm.objects(Draft.self).where { $0.isOffline == true })
 
-        let offlineDraftThread = List<Thread>()
+            let offlineDraftThread = List<Thread>()
 
-        guard let folder = getFolder(with: .draft, using: realm) else { return }
+            guard let folder = getFolder(with: .draft, using: realm) else { return }
 
-        for draft in draftOffline {
-            let thread = Thread(draft: draft)
-            let from = Recipient(email: mailbox.email, name: mailbox.emailIdn)
-            thread.from.append(from)
-            offlineDraftThread.append(thread)
-        }
+            for draft in draftOffline {
+                let thread = Thread(draft: draft)
+                let from = Recipient(email: mailbox.email, name: mailbox.emailIdn)
+                thread.from.append(from)
+                offlineDraftThread.append(thread)
+            }
 
-        // Update message in Realm
-        try? realm.safeWrite {
-            realm.add(offlineDraftThread, update: .modified)
-            folder.threads.insert(objectsIn: offlineDraftThread)
+            // Update message in Realm
+            try? realm.safeWrite {
+                realm.add(offlineDraftThread, update: .modified)
+                folder.threads.insert(objectsIn: offlineDraftThread)
+            }
         }
     }
 
