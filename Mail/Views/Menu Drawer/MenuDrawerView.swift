@@ -147,35 +147,37 @@ struct MenuDrawerView: View {
                 .zIndex(1)
 
             ScrollView {
-                MailboxesManagementView(isExpanded: $showMailboxes)
+                VStack(spacing: 0) {
+                    MailboxesManagementView(isExpanded: $showMailboxes)
 
-                RoleFoldersListView(
-                    folders: $folders,
-                    isCompact: isCompact
-                )
+                    RoleFoldersListView(
+                        folders: $folders,
+                        isCompact: isCompact
+                    )
 
-                IKDivider(withPadding: true)
-
-                UserFoldersListView(
-                    folders: $folders,
-                    isCompact: isCompact
-                )
-
-                IKDivider(withPadding: true)
-
-                MenuDrawerItemsListView(content: helpMenuItems)
-
-                IKDivider(withPadding: true)
-
-                MenuDrawerItemsListView(
-                    title: MailResourcesStrings.Localizable.menuDrawerAdvancedActions,
-                    content: actionsMenuItems
-                )
-
-                if mailbox.isLimited, let quotas = mailbox.quotas {
                     IKDivider(withPadding: true)
 
-                    MailboxQuotaView(quotas: quotas)
+                    UserFoldersListView(
+                        folders: $folders,
+                        isCompact: isCompact
+                    )
+
+                    IKDivider(withPadding: true)
+
+                    MenuDrawerItemsListView(content: helpMenuItems)
+
+                    IKDivider(withPadding: true)
+
+                    MenuDrawerItemsListView(
+                        title: MailResourcesStrings.Localizable.menuDrawerAdvancedActions,
+                        content: actionsMenuItems
+                    )
+
+                    if mailbox.isLimited, let quotas = mailbox.quotas {
+                        IKDivider(withPadding: true)
+
+                        MailboxQuotaView(quotas: quotas)
+                    }
                 }
             }
         }

@@ -57,8 +57,8 @@ struct MailboxesManagementView: View {
                     ChevronIcon(style: isExpanded ? .up : .down, color: .primary)
                 }
                 .padding(.vertical, 8)
-                .padding(.horizontal, 20)
-                .background(SelectionBackground(isSelected: true, offsetX: 10, leadingPadding: -2, verticalPadding: 0))
+                .padding(.horizontal, 18)
+                .background(SelectionBackground(isSelected: true, offsetX: 8, leadingPadding: 0, verticalPadding: 0))
             }
 
             if isExpanded {
@@ -77,8 +77,6 @@ struct MailboxesManagementView: View {
                     MailboxesManagementButtonView(text: MailResourcesStrings.Localizable.buttonAccountSwitch) {
                         menuSheet.state = .switchAccount
                     }
-
-                    IKDivider(withPadding: true)
                 }
                 .task {
                     try? await updateAccount()
