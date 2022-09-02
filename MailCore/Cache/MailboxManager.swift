@@ -209,11 +209,11 @@ public class MailboxManager: ObservableObject {
     public func createFolder(name: String, parent: Folder? = nil) async throws -> Folder {
         var folder = try await apiFetcher.create(mailbox: mailbox, folder: NewFolder(name: name, path: parent?.path))
         await backgroundRealm.execute { realm in
-        try? realm.write {
-            realm.add(folder)
+            try? realm.write {
+                realm.add(folder)
                 if let parent = parent {
                     realm.object(ofType: Folder.self, forPrimaryKey: parent.id)?.children.insert(folder)
-        }
+                }
             }
             folder = folder.freeze()
         }
@@ -251,41 +251,47 @@ public class MailboxManager: ObservableObject {
         await backgroundRealm.execute { realm in
             guard let parentFolder = realm.object(ofType: Folder.self, forPrimaryKey: parent.id) else { return }
 
-        let fetchedThreads = MutableSet<Thread>()
-        fetchedThreads.insert(objectsIn: result.threads ?? [])
+            let fetchedThreads = MutableSet<Thread>()
+            fetchedThreads.insert(objectsIn: result.threads ?? [])
 
-        for thread in fetchedThreads {
-            for message in thread.messages {
-                keepCacheAttributes(for: message, keepProperties: .standard, using: realm)
+            for thread in fetchedThreads {
+                for message in thread.messages {
+                    keepCacheAttributes(for: message, keepProperties: .standard, using: realm)
+                }
             }
-        }
 
-        // Update thread in Realm
-        try? realm.safeWrite {
-            // Clean old threads after fetching first page
-            if result.currentOffset == 0 {
-                parentFolder.lastUpdate = Date()
-                realm.delete(parentFolder.threads.flatMap(\.messages))
-                realm.delete(parentFolder.threads)
+            // Update thread in Realm
+            try? realm.safeWrite {
+                // Clean old threads after fetching first page
+                if result.currentOffset == 0 {
+                    parentFolder.lastUpdate = Date()
+                    realm.delete(parentFolder.threads.flatMap(\.messages))
+                    realm.delete(parentFolder.threads)
+                }
+                realm.add(fetchedThreads, update: .modified)
+                parentFolder.threads.insert(objectsIn: fetchedThreads)
+                parentFolder.unreadCount = result.folderUnseenMessages
             }
-            realm.add(fetchedThreads, update: .modified)
-            parentFolder.threads.insert(objectsIn: fetchedThreads)
-            parentFolder.unreadCount = result.folderUnseenMessages
         }
     }
 
     public func toggleRead(threads: [Thread]) async throws {
-        if threads.contains(where: \.hasUnseenMessages) {
-            _ = try await apiFetcher.markAsSeen(mailbox: mailbox, messages: threads.flatMap(\.messages))
-            let realm = getRealm()
-            for thread in threads {
-                markAsSeen(thread: thread, using: realm)
-            }
-        } else {
-            _ = try await apiFetcher.markAsUnseen(mailbox: mailbox, messages: threads.flatMap(\.messages))
-            let realm = getRealm()
-            for thread in threads {
-                markAsUnseen(thread: thread, using: realm)
+        try await withThrowingTaskGroup(of: Void.self) { group in
+            if threads.contains(where: \.hasUnseenMessages) {
+                _ = try await apiFetcher.markAsSeen(mailbox: mailbox, messages: threads.flatMap(\.messages))
+                for thread in threads {
+                    group.addTask { [weak self] in
+                        await self?.markAsSeen(thread: thread)
+                    }
+                }
+
+            } else {
+                _ = try await apiFetcher.markAsUnseen(mailbox: mailbox, messages: threads.flatMap(\.messages))
+                for thread in threads {
+                    group.addTask { [weak self] in
+                        await self?.markAsUnseen(thread: thread)
+                    }
+                }
             }
         }
     }
@@ -293,10 +299,10 @@ public class MailboxManager: ObservableObject {
     public func toggleRead(thread: Thread) async throws {
         if thread.hasUnseenMessages {
             _ = try await apiFetcher.markAsSeen(mailbox: mailbox, messages: Array(thread.messages))
-            markAsSeen(thread: thread)
+            await markAsSeen(thread: thread)
         } else {
             _ = try await apiFetcher.markAsUnseen(mailbox: mailbox, messages: Array(thread.messages))
-            markAsUnseen(thread: thread)
+            await markAsUnseen(thread: thread)
         }
     }
 
@@ -515,27 +521,27 @@ public class MailboxManager: ObservableObject {
         }
     }
 
-    private func markAsSeen(thread: Thread, using realm: Realm? = nil) {
-        if let liveThread = thread.thaw() {
-            let realm = realm ?? getRealm()
+    private func markAsSeen(thread: Thread) async {
+        await backgroundRealm.execute { realm in
+            guard let liveThread = realm.object(ofType: Thread.self, forPrimaryKey: thread.id) else { return }
             try? realm.safeWrite {
                 liveThread.parent?.unreadCount = (liveThread.parent?.unreadCount ?? 0) - liveThread.unseenMessages
                 liveThread.unseenMessages = 0
-                for message in thread.messages {
-                    message.thaw()?.seen = true
+                for message in liveThread.messages {
+                    message.seen = true
                 }
             }
         }
     }
 
-    private func markAsUnseen(thread: Thread, using realm: Realm? = nil) {
-        if let liveThread = thread.thaw() {
-            let realm = realm ?? getRealm()
+    private func markAsUnseen(thread: Thread) async {
+        await backgroundRealm.execute { realm in
+            guard let liveThread = realm.object(ofType: Thread.self, forPrimaryKey: thread.id) else { return }
             try? realm.safeWrite {
                 liveThread.unseenMessages = liveThread.messagesCount
                 liveThread.parent?.unreadCount = (liveThread.parent?.unreadCount ?? 0) + liveThread.unseenMessages
-                for message in thread.messages {
-                    message.thaw()?.seen = false
+                for message in liveThread.messages {
+                    message.seen = false
                 }
             }
         }
