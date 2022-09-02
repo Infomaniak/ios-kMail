@@ -207,13 +207,17 @@ public class MailboxManager: ObservableObject {
     }
 
     public func createFolder(name: String, parent: Folder? = nil) async throws -> Folder {
-        let folder = try await apiFetcher.create(mailbox: mailbox, folder: NewFolder(name: name, path: parent?.path))
-        let realm = getRealm()
+        var folder = try await apiFetcher.create(mailbox: mailbox, folder: NewFolder(name: name, path: parent?.path))
+        await backgroundRealm.execute { realm in
         try? realm.write {
             realm.add(folder)
-            parent?.thaw()?.children.insert(folder)
+                if let parent = parent {
+                    realm.object(ofType: Folder.self, forPrimaryKey: parent.id)?.children.insert(folder)
         }
-        return folder.freeze()
+            }
+            folder = folder.freeze()
+        }
+        return folder
     }
 
     // MARK: - Thread
