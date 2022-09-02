@@ -60,9 +60,10 @@ public class MailboxManager: ObservableObject {
 
     public static let constants = MailboxManagerConstants()
 
-    public var realmConfiguration: Realm.Configuration
-    public var mailbox: Mailbox
+    public let realmConfiguration: Realm.Configuration
+    public let mailbox: Mailbox
     public private(set) var apiFetcher: MailApiFetcher
+    private let backgroundRealm: BackgroundRealm
 
     public init(mailbox: Mailbox, apiFetcher: MailApiFetcher) {
         self.mailbox = mailbox
@@ -86,6 +87,7 @@ public class MailboxManager: ObservableObject {
                 SearchHistory.self
             ]
         )
+        backgroundRealm = BackgroundRealm(configuration: realmConfiguration)
     }
 
     public func getRealm() -> Realm {
