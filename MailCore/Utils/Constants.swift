@@ -44,6 +44,8 @@ public enum Constants {
     public static let sizeLimit = 21_474_836_480 // 20 Go
     public static let minimumQuotasProgressionToDisplay = 0.03
 
+    public static let navbarIconSize: CGFloat = 23
+
     public static let onboardingLogoHeight: CGFloat = 72
     public static let onboardingButtonHeight: CGFloat = 100
     public static let onboardingVerticalPadding: CGFloat = 16
