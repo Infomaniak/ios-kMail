@@ -102,7 +102,13 @@ struct FolderCellContent: View {
         .padding(.vertical, Constants.menuDrawerVerticalPadding)
         .padding(.horizontal, Constants.menuDrawerHorizontalPadding)
         .padding(.leading, Constants.menuDrawerSubFolderPadding * CGFloat(level))
-        .background(SelectionBackground(isSelected: isSelected, offsetX: 8, leadingPadding: 0, verticalPadding: 0))
+        .background(SelectionBackground(
+            isSelected: isSelected,
+            offsetX: 8,
+            leadingPadding: 0,
+            verticalPadding: 0,
+            defaultColor: MailResourcesAsset.backgroundMenuDrawer.swiftUiColor
+        ))
     }
 }
 
