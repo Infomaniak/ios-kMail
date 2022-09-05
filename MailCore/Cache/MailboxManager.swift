@@ -212,7 +212,7 @@ public class MailboxManager: ObservableObject {
             try? realm.write {
                 realm.add(folder)
                 if let parent = parent {
-                    realm.object(ofType: Folder.self, forPrimaryKey: parent.id)?.children.insert(folder)
+                    parent.fresh(using: realm)?.children.insert(folder)
                 }
             }
             folder = folder.freeze()
@@ -249,7 +249,7 @@ public class MailboxManager: ObservableObject {
 
     private func saveThreads(result: ThreadResult, parent: Folder) async {
         await backgroundRealm.execute { realm in
-            guard let parentFolder = realm.object(ofType: Folder.self, forPrimaryKey: parent.id) else { return }
+            guard let parentFolder = parent.fresh(using: realm) else { return }
 
             let fetchedThreads = MutableSet<Thread>()
             fetchedThreads.insert(objectsIn: result.threads ?? [])
@@ -276,21 +276,18 @@ public class MailboxManager: ObservableObject {
     }
 
     public func toggleRead(threads: [Thread]) async throws {
-        try await withThrowingTaskGroup(of: Void.self) { group in
-            if threads.contains(where: \.hasUnseenMessages) {
-                _ = try await apiFetcher.markAsSeen(mailbox: mailbox, messages: threads.flatMap(\.messages))
+        if threads.contains(where: \.hasUnseenMessages) {
+            _ = try await apiFetcher.markAsSeen(mailbox: mailbox, messages: threads.flatMap(\.messages))
+            await backgroundRealm.execute { realm in
                 for thread in threads {
-                    group.addTask { [weak self] in
-                        await self?.markAsSeen(thread: thread)
-                    }
+                    markAsSeen(thread: thread, using: realm)
                 }
-
-            } else {
-                _ = try await apiFetcher.markAsUnseen(mailbox: mailbox, messages: threads.flatMap(\.messages))
+            }
+        } else {
+            _ = try await apiFetcher.markAsUnseen(mailbox: mailbox, messages: threads.flatMap(\.messages))
+            await backgroundRealm.execute { realm in
                 for thread in threads {
-                    group.addTask { [weak self] in
-                        await self?.markAsUnseen(thread: thread)
-                    }
+                    markAsUnseen(thread: thread, using: realm)
                 }
             }
         }
@@ -299,32 +296,40 @@ public class MailboxManager: ObservableObject {
     public func toggleRead(thread: Thread) async throws {
         if thread.hasUnseenMessages {
             _ = try await apiFetcher.markAsSeen(mailbox: mailbox, messages: Array(thread.messages))
-            await markAsSeen(thread: thread)
+            await backgroundRealm.execute { realm in
+                markAsSeen(thread: thread, using: realm)
+            }
         } else {
             _ = try await apiFetcher.markAsUnseen(mailbox: mailbox, messages: Array(thread.messages))
-            await markAsUnseen(thread: thread)
+            await backgroundRealm.execute { realm in
+                markAsUnseen(thread: thread, using: realm)
+            }
         }
     }
 
     public func move(threads: [Thread], to folder: Folder) async throws -> UndoResponse {
         let response = try await apiFetcher.move(mailbox: mailbox, messages: threads.flatMap(\.messages), destinationId: folder._id)
-
-        if let liveFolder = folder.thaw() {
-            let realm = getRealm()
-            for thread in threads {
-                if let liveThread = thread.thaw() {
-                    try? moveLocally(thread: liveThread, to: liveFolder, using: realm)
+        await backgroundRealm.execute { realm in
+            if let liveFolder = folder.fresh(using: realm) {
+                for thread in threads {
+                    if let liveThread = thread.fresh(using: realm) {
+                        try? moveLocally(thread: liveThread, to: liveFolder, using: realm)
+                    }
                 }
             }
         }
+
         return response
     }
 
     public func move(thread: Thread, to folder: Folder) async throws -> UndoResponse {
         let response = try await apiFetcher.move(mailbox: mailbox, messages: Array(thread.messages), destinationId: folder._id)
 
-        if let liveFolder = folder.thaw(), let liveThread = thread.thaw() {
-            try? moveLocally(thread: liveThread, to: liveFolder)
+        await backgroundRealm.execute { realm in
+            if let liveFolder = folder.fresh(using: realm),
+               let liveThread = thread.fresh(using: realm) {
+                try? moveLocally(thread: liveThread, to: liveFolder, using: realm)
+            }
         }
 
         return response
@@ -343,9 +348,24 @@ public class MailboxManager: ObservableObject {
     public func delete(threads: [Thread]) async throws {
         _ = try await apiFetcher.delete(mailbox: mailbox, messages: threads.flatMap(\.messages))
 
-        let realm = getRealm()
-        for thread in threads {
-            if let liveThread = thread.thaw() {
+        await backgroundRealm.execute { realm in
+            for thread in threads {
+                if let liveThread = thread.fresh(using: realm) {
+                    try? realm.safeWrite {
+                        liveThread.parent?.unreadCount = (liveThread.parent?.unreadCount ?? 0) - liveThread.unseenMessages
+                        realm.delete(liveThread.messages)
+                        realm.delete(liveThread)
+                    }
+                }
+            }
+        }
+    }
+
+    public func delete(thread: Thread) async throws {
+        _ = try await apiFetcher.delete(mailbox: mailbox, messages: Array(thread.messages))
+
+        await backgroundRealm.execute { realm in
+            if let liveThread = thread.fresh(using: realm) {
                 try? realm.safeWrite {
                     liveThread.parent?.unreadCount = (liveThread.parent?.unreadCount ?? 0) - liveThread.unseenMessages
                     realm.delete(liveThread.messages)
@@ -355,24 +375,10 @@ public class MailboxManager: ObservableObject {
         }
     }
 
-    public func delete(thread: Thread) async throws {
-        _ = try await apiFetcher.delete(mailbox: mailbox, messages: Array(thread.messages))
-
-        let realm = getRealm()
-        if let liveThread = thread.thaw() {
-            try? realm.safeWrite {
-                liveThread.parent?.unreadCount = (liveThread.parent?.unreadCount ?? 0) - liveThread.unseenMessages
-                realm.delete(liveThread.messages)
-                realm.delete(liveThread)
-            }
-        }
-    }
-
     public func moveOrDelete(threads: [Thread]) async throws {
-        let realm = getRealm()
         let draftThreads = threads.filter(\.isLocalDraft)
         for draft in draftThreads {
-            deleteLocalDraft(thread: draft, using: realm)
+            await deleteLocalDraft(thread: draft)
         }
 
         let otherThreads = threads.filter { !$0.isLocalDraft }
@@ -396,14 +402,14 @@ public class MailboxManager: ObservableObject {
     public func moveOrDelete(thread: Thread) async throws {
         let parentFolder = thread.parent
         if parentFolder?.toolType == nil {
-            deleteInSearch(thread: thread)
+            await deleteInSearch(thread: thread)
         }
         if parentFolder?.role == .trash {
             // Delete definitely
             try await delete(thread: thread)
         } else if thread.isLocalDraft {
             // Delete local draft from Realm
-            deleteLocalDraft(thread: thread)
+            await deleteLocalDraft(thread: thread)
         } else {
             // Move to trash
             let response = try await move(thread: thread, to: .trash)
@@ -418,24 +424,25 @@ public class MailboxManager: ObservableObject {
         }
     }
 
-    private func deleteInSearch(thread: Thread, using realm: Realm? = nil) {
-        let realm = realm ?? getRealm()
-        guard let searchFolder = realm.object(ofType: Folder.self, forPrimaryKey: Constants.searchFolderId),
-              let thread = thread.thaw() else { return }
+    private func deleteInSearch(thread: Thread) async {
+        await backgroundRealm.execute { realm in
+            guard let searchFolder = realm.object(ofType: Folder.self, forPrimaryKey: Constants.searchFolderId),
+                  let thread = thread.fresh(using: realm) else { return }
 
-        try? realm.safeWrite {
-            searchFolder.threads.remove(thread)
+            try? realm.safeWrite {
+                searchFolder.threads.remove(thread)
+            }
         }
     }
 
     public func reportSpam(threads: [Thread]) async throws -> UndoResponse {
         let response = try await apiFetcher.reportSpam(mailbox: mailbox, messages: threads.flatMap(\.messages))
-
-        let realm = getRealm()
-        if let spamFolder = getFolder(with: .spam, using: realm) {
-            for thread in threads {
-                if let liveThread = thread.thaw() {
-                    try? moveLocally(thread: liveThread, to: spamFolder)
+        await backgroundRealm.execute { realm in
+            if let spamFolder = getFolder(with: .spam, using: realm) {
+                for thread in threads {
+                    if let liveThread = thread.fresh(using: realm) {
+                        try? moveLocally(thread: liveThread, to: spamFolder, using: realm)
+                    }
                 }
             }
         }
@@ -445,10 +452,11 @@ public class MailboxManager: ObservableObject {
 
     public func reportSpam(thread: Thread) async throws -> UndoResponse {
         let response = try await apiFetcher.reportSpam(mailbox: mailbox, messages: Array(thread.messages))
-
-        let realm = getRealm()
-        if let spamFolder = getFolder(with: .spam, using: realm), let liveThread = thread.thaw() {
-            try? moveLocally(thread: liveThread, to: spamFolder)
+        await backgroundRealm.execute { realm in
+            if let spamFolder = getFolder(with: .spam, using: realm),
+               let liveThread = thread.fresh(using: realm) {
+                try? moveLocally(thread: liveThread, to: spamFolder, using: realm)
+            }
         }
 
         return response
@@ -456,12 +464,12 @@ public class MailboxManager: ObservableObject {
 
     public func nonSpam(threads: [Thread]) async throws -> UndoResponse {
         let response = try await apiFetcher.nonSpam(mailbox: mailbox, messages: threads.flatMap(\.messages))
-
-        let realm = getRealm()
-        if let inboxFolder = getFolder(with: .inbox, using: realm) {
-            for thread in threads {
-                if let liveThread = thread.thaw() {
-                    try? moveLocally(thread: liveThread, to: inboxFolder)
+        await backgroundRealm.execute { realm in
+            if let inboxFolder = getFolder(with: .inbox, using: realm) {
+                for thread in threads {
+                    if let liveThread = thread.fresh(using: realm) {
+                        try? moveLocally(thread: liveThread, to: inboxFolder, using: realm)
+                    }
                 }
             }
         }
@@ -471,10 +479,11 @@ public class MailboxManager: ObservableObject {
 
     public func nonSpam(thread: Thread) async throws -> UndoResponse {
         let response = try await apiFetcher.nonSpam(mailbox: mailbox, messages: Array(thread.messages))
-
-        let realm = getRealm()
-        if let inboxFolder = getFolder(with: .inbox, using: realm), let liveThread = thread.thaw() {
-            try? moveLocally(thread: liveThread, to: inboxFolder)
+        await backgroundRealm.execute { realm in
+            if let inboxFolder = getFolder(with: .inbox, using: realm),
+               let liveThread = thread.fresh(using: realm) {
+                try? moveLocally(thread: liveThread, to: inboxFolder, using: realm)
+            }
         }
 
         return response
@@ -483,15 +492,17 @@ public class MailboxManager: ObservableObject {
     public func toggleStar(threads: [Thread]) async throws {
         if threads.contains(where: { !$0.flagged }) {
             _ = try await apiFetcher.star(mailbox: mailbox, messages: threads.flatMap(\.messages))
-            let realm = getRealm()
-            for thread in threads {
-                star(thread: thread, using: realm)
+            await backgroundRealm.execute { realm in
+                for thread in threads {
+                    star(thread: thread, using: realm)
+                }
             }
         } else {
             _ = try await apiFetcher.unstar(mailbox: mailbox, messages: threads.flatMap(\.messages))
-            let realm = getRealm()
-            for thread in threads {
-                unstar(thread: thread, using: realm)
+            await backgroundRealm.execute { realm in
+                for thread in threads {
+                    unstar(thread: thread, using: realm)
+                }
             }
         }
     }
@@ -499,16 +510,19 @@ public class MailboxManager: ObservableObject {
     public func toggleStar(thread: Thread) async throws {
         if thread.flagged {
             _ = try await apiFetcher.unstar(mailbox: mailbox, messages: Array(thread.messages))
-            unstar(thread: thread)
+            await backgroundRealm.execute { realm in
+                unstar(thread: thread, using: realm)
+            }
         } else {
             guard let lastMessage = thread.messages.last else { return }
             _ = try await apiFetcher.star(mailbox: mailbox, messages: [lastMessage])
-            star(thread: thread)
+            await backgroundRealm.execute { realm in
+                star(thread: thread, using: realm)
+            }
         }
     }
 
-    private func moveLocally(thread: Thread, to folder: Folder, using realm: Realm? = nil) throws {
-        let realm = realm ?? getRealm()
+    private func moveLocally(thread: Thread, to folder: Folder, using realm: Realm) throws {
         try realm.safeWrite {
             thread.parent?.unreadCount = (thread.parent?.unreadCount ?? 0) - thread.unseenMessages
             thread.parent?.threads.remove(thread)
@@ -521,50 +535,44 @@ public class MailboxManager: ObservableObject {
         }
     }
 
-    private func markAsSeen(thread: Thread) async {
-        await backgroundRealm.execute { realm in
-            guard let liveThread = realm.object(ofType: Thread.self, forPrimaryKey: thread.id) else { return }
-            try? realm.safeWrite {
-                liveThread.parent?.unreadCount = (liveThread.parent?.unreadCount ?? 0) - liveThread.unseenMessages
-                liveThread.unseenMessages = 0
-                for message in liveThread.messages {
-                    message.seen = true
-                }
+    private func markAsSeen(thread: Thread, using realm: Realm) {
+        guard let liveThread = thread.fresh(using: realm) else { return }
+        try? realm.safeWrite {
+            liveThread.parent?.unreadCount = (liveThread.parent?.unreadCount ?? 0) - liveThread.unseenMessages
+            liveThread.unseenMessages = 0
+            for message in liveThread.messages {
+                message.seen = true
             }
         }
     }
 
-    private func markAsUnseen(thread: Thread) async {
-        await backgroundRealm.execute { realm in
-            guard let liveThread = realm.object(ofType: Thread.self, forPrimaryKey: thread.id) else { return }
-            try? realm.safeWrite {
-                liveThread.unseenMessages = liveThread.messagesCount
-                liveThread.parent?.unreadCount = (liveThread.parent?.unreadCount ?? 0) + liveThread.unseenMessages
-                for message in liveThread.messages {
-                    message.seen = false
-                }
+    private func markAsUnseen(thread: Thread, using realm: Realm) {
+        guard let liveThread = thread.fresh(using: realm) else { return }
+        try? realm.safeWrite {
+            liveThread.unseenMessages = liveThread.messagesCount
+            liveThread.parent?.unreadCount = (liveThread.parent?.unreadCount ?? 0) + liveThread.unseenMessages
+            for message in liveThread.messages {
+                message.seen = false
             }
         }
     }
 
-    private func star(thread: Thread, using realm: Realm? = nil) {
+    private func star(thread: Thread, using realm: Realm) {
         guard let lastMessage = thread.messages.last else { return }
-        if let liveThread = thread.thaw() {
-            let realm = realm ?? getRealm()
+        if let liveThread = thread.fresh(using: realm) {
             try? realm.safeWrite {
                 liveThread.flagged = true
-                lastMessage.thaw()?.flagged = true
+                lastMessage.fresh(using: realm)?.flagged = true
             }
         }
     }
 
-    private func unstar(thread: Thread, using realm: Realm? = nil) {
-        if let liveThread = thread.thaw() {
-            let realm = realm ?? getRealm()
+    private func unstar(thread: Thread, using realm: Realm) {
+        if let liveThread = thread.fresh(using: realm) {
             try? realm.safeWrite {
                 liveThread.flagged = false
                 for message in thread.messages {
-                    message.thaw()?.flagged = false
+                    message.fresh(using: realm)?.flagged = false
                 }
             }
         }
@@ -986,18 +994,20 @@ public class MailboxManager: ObservableObject {
 
     /// Delete local draft from its associated thread
     /// - Parameter thread: Thread associated to local draft
-    public func deleteLocalDraft(thread: Thread, using realm: Realm? = nil) {
-        let realm = realm ?? getRealm()
-        if let message = thread.messages.first, let draft = draft(messageUid: message.uid) {
-            try? realm.safeWrite {
-                realm.delete(draft)
+    public func deleteLocalDraft(thread: Thread) async {
+        await backgroundRealm.execute { realm in
+            if let message = thread.messages.first,
+               let draft = draft(messageUid: message.uid) {
+                try? realm.safeWrite {
+                    realm.delete(draft)
+                }
             }
-        }
-        // Delete thread
-        if let liveThread = thread.thaw() {
-            try? realm.safeWrite {
-                realm.delete(liveThread.messages)
-                realm.delete(liveThread)
+            // Delete thread
+            if let liveThread = thread.fresh(using: realm) {
+                try? realm.safeWrite {
+                    realm.delete(liveThread.messages)
+                    realm.delete(liveThread)
+                }
             }
         }
     }

@@ -252,7 +252,7 @@ enum ActionsTarget: Equatable {
             } else if message.isDraft && message.uid.starts(with: Draft.uuidLocalPrefix) {
                 // Delete local draft from Realm
                 if let thread = message.parent {
-                    mailboxManager.deleteLocalDraft(thread: thread)
+                    await mailboxManager.deleteLocalDraft(thread: thread.freezeIfNeeded())
                 }
             } else {
                 // Move to trash
