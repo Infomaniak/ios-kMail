@@ -88,12 +88,13 @@ class DateSection: Identifiable {
 
     @Published var folder: Folder?
     @Published var sections = [DateSection]()
+    @Published var selectedThread: Thread?
     @Published var isLoadingPage = false
     @Published var lastUpdate: Date?
-    @Published var selectedThread: Thread?
 
     var bottomSheet: ThreadBottomSheet
     var globalBottomSheet: GlobalBottomSheet?
+    var menuSheet: MenuSheet?
 
     var scrollViewProxy: ScrollViewProxy?
 
@@ -260,7 +261,7 @@ class DateSection: Identifiable {
 
     // MARK: - Swipe actions
 
-    func hanldeSwipeAction(_ action: SwipeAction, thread: Thread) async throws {
+    func handleSwipeAction(_ action: SwipeAction, thread: Thread) async throws {
         switch action {
         case .delete:
             try await mailboxManager.moveOrDelete(thread: thread)
@@ -282,7 +283,7 @@ class DateSection: Identifiable {
         case .spam:
             try await toggleSpam(thread: thread)
         case .readAndAchive:
-            if thread.unseenMessages > 0 {
+            if thread.hasUnseenMessages {
                 try await mailboxManager.toggleRead(thread: thread)
             }
             try await move(thread: thread, to: .archive)
