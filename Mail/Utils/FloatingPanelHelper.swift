@@ -23,6 +23,7 @@ import SwiftUI
 
 class AdaptiveDriveFloatingPanelController: FloatingPanelController {
     private var contentSizeObservation: NSKeyValueObservation?
+    private let maxPanelWidth = 800.0
     var halfOpening = false
 
     deinit {
@@ -31,6 +32,12 @@ class AdaptiveDriveFloatingPanelController: FloatingPanelController {
 
     override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
         super.viewWillTransition(to: size, with: coordinator)
+        if size.width > maxPanelWidth {
+            let insetWidth = size.width - maxPanelWidth
+            surfaceView.containerMargins = UIEdgeInsets(top: 0, left: insetWidth / 2, bottom: 0, right: insetWidth / 2)
+        } else {
+            surfaceView.containerMargins = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
+        }
         updateLayout(size: size)
     }
 

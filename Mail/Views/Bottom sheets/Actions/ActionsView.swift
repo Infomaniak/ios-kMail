@@ -45,15 +45,12 @@ struct ActionsView: View {
                 .textStyle(.header3)
                 .padding(.horizontal, 24)
             // Quick actions
-            HStack {
-                Spacer()
-                HStack(alignment: .top, spacing: 28) {
-                    ForEach(viewModel.quickActions) { action in
-                        QuickActionView(viewModel: viewModel, action: action)
-                    }
-                    .fixedSize(horizontal: false, vertical: true)
+            HStack(alignment: .top, spacing: 28) {
+                ForEach(viewModel.quickActions) { action in
+                    QuickActionView(viewModel: viewModel, action: action)
+                        .frame(maxWidth: .infinity)
                 }
-                Spacer()
+                .fixedSize(horizontal: false, vertical: true)
             }
             .padding(.horizontal, 24)
             .padding(.bottom, 16)
@@ -103,7 +100,7 @@ struct QuickActionView: View {
                         .frame(maxWidth: .infinity, maxHeight: .infinity)
                         .padding(19)
                 }
-                .frame(maxWidth: 80, maxHeight: 80)
+                .frame(maxWidth: 60, maxHeight: 60)
                 .aspectRatio(1, contentMode: .fit)
 
                 Text(action.title)
