@@ -581,8 +581,6 @@ public class MailboxManager: ObservableObject {
     // MARK: - Search
 
     public func initSearchFolder() -> Folder {
-        let realm = getRealm()
-
         let searchFolder = Folder(
             id: Constants.searchFolderId,
             path: "",
@@ -595,23 +593,24 @@ public class MailboxManager: ObservableObject {
             toolType: .search
         )
 
+        let realm = getRealm()
         try? realm.safeWrite {
             realm.add(searchFolder, update: .modified)
         }
-
         return searchFolder
     }
 
-    public func cleanSearchFolder(using realm: Realm? = nil) -> Folder {
-        let realm = realm ?? getRealm()
-        if let folder = realm.object(ofType: Folder.self, forPrimaryKey: Constants.searchFolderId) {
-            try? realm.safeWrite {
-                realm.delete(folder.threads.where { $0.fromSearch == true })
-                folder.threads.removeAll()
+    public func cleanSearchFolder() async -> Folder {
+        return await backgroundRealm.execute { realm in
+            if let liveFolder = realm.object(ofType: Folder.self, forPrimaryKey: Constants.searchFolderId) {
+                try? realm.safeWrite {
+                    realm.delete(liveFolder.threads.where { $0.fromSearch == true })
+                    liveFolder.threads.removeAll()
+                }
+                return liveFolder.freeze()
+            } else {
+                return initSearchFolder().freeze()
             }
-            return folder.freeze()
-        } else {
-            return initSearchFolder().freeze()
         }
     }
 
@@ -624,10 +623,11 @@ public class MailboxManager: ObservableObject {
             searchFilter: searchFilter
         )
 
-        let realm = getRealm()
-        for thread in threadResult.threads ?? [] {
-            if realm.object(ofType: Thread.self, forPrimaryKey: thread.uid) == nil {
-                thread.fromSearch = true
+        await backgroundRealm.execute { realm in
+            for thread in threadResult.threads ?? [] {
+                if realm.object(ofType: Thread.self, forPrimaryKey: thread.uid) == nil {
+                    thread.fromSearch = true
+                }
             }
         }
 
