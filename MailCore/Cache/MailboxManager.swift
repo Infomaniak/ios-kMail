@@ -876,8 +876,7 @@ public class MailboxManager: ObservableObject {
         // Get from API
         let draft = try await apiFetcher.draft(from: message)
 
-        let realm = getRealm()
-
+        await backgroundRealm.execute { realm in
         // Get draft from Realm to keep local saved properties
         if let savedDraft = realm.object(ofType: Draft.self, forPrimaryKey: draft.uuid) {
             draft.isOffline = savedDraft.isOffline
@@ -887,6 +886,7 @@ public class MailboxManager: ObservableObject {
         // Update draft in Realm
         try? realm.safeWrite {
             realm.add(draft.detached(), update: .modified)
+        }
         }
 
         return draft
@@ -907,7 +907,7 @@ public class MailboxManager: ObservableObject {
         draft.delay = UserDefaults.shared.cancelSendDelay.rawValue
         let cancelableResponse = try await apiFetcher.send(mailbox: mailbox, draft: draft)
         // Once the draft has been sent, we can delete it from Realm
-        delete(draft: draft)
+        await delete(draft: draft)
         return cancelableResponse
     }
 
@@ -955,8 +955,8 @@ public class MailboxManager: ObservableObject {
         }
     }
 
-    public func delete(draft: AbstractDraft) {
-        let realm = getRealm()
+    public func delete(draft: AbstractDraft) async {
+        await backgroundRealm.execute { realm in
         if let draft = realm.object(ofType: Draft.self, forPrimaryKey: draft.uuid) {
             try? realm.safeWrite {
                 realm.delete(draft)
@@ -965,18 +965,19 @@ public class MailboxManager: ObservableObject {
             print("No draft with uuid \(draft.uuid)")
         }
     }
+    }
 
     public func deleteDraft(from message: Message) async throws {
         // Delete from API
         try await apiFetcher.deleteDraft(from: message)
-        if let draft = draft(messageUid: message.uid) {
-            let realm = getRealm()
-
+        await backgroundRealm.execute { realm in
+            if let draft = draft(messageUid: message.uid, using: realm) {
             // Delete draft in Realm
             try? realm.safeWrite {
                 realm.delete(draft)
             }
         }
+    }
     }
 
     public func draftOffline() async {
