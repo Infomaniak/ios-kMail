@@ -758,7 +758,12 @@ public class MailboxManager: ObservableObject {
     public func move(messages: [Message], to folder: Folder) async throws -> UndoResponse {
         let response = try await apiFetcher.move(mailbox: mailbox, messages: messages, destinationId: folder._id)
 
-        try? moveLocally(messages: messages, to: folder)
+        await backgroundRealm.execute { realm in
+            if let folder = folder.fresh(using: realm) {
+                let messages = messages.compactMap { $0.fresh(using: realm) }
+                try? moveLocally(messages: messages, to: folder, using: realm)
+            }
+        }
 
         return response
     }
@@ -792,9 +797,11 @@ public class MailboxManager: ObservableObject {
     public func reportSpam(messages: [Message]) async throws -> UndoResponse {
         let response = try await apiFetcher.reportSpam(mailbox: mailbox, messages: messages)
 
-        let realm = getRealm()
-        guard let spamFolder = getFolder(with: .spam, using: realm)?.freeze() else { return response }
-        try? moveLocally(messages: messages, to: spamFolder, using: realm)
+        await backgroundRealm.execute { realm in
+            if let spamFolder = getFolder(with: .spam, using: realm) {
+                try? moveLocally(messages: messages, to: spamFolder, using: realm)
+            }
+        }
 
         return response
     }
@@ -802,9 +809,11 @@ public class MailboxManager: ObservableObject {
     public func nonSpam(messages: [Message]) async throws -> UndoResponse {
         let response = try await apiFetcher.nonSpam(mailbox: mailbox, messages: messages)
 
-        let realm = getRealm()
-        guard let inboxFolder = getFolder(with: .inbox, using: realm)?.freeze() else { return response }
-        try? moveLocally(messages: messages, to: inboxFolder, using: realm)
+        await backgroundRealm.execute { realm in
+            if let inboxFolder = getFolder(with: .inbox, using: realm) {
+                try? moveLocally(messages: messages, to: inboxFolder, using: realm)
+            }
+        }
 
         return response
     }
@@ -843,20 +852,19 @@ public class MailboxManager: ObservableObject {
         return response
     }
 
-    private func moveLocally(messages: [Message], to folder: Folder, using realm: Realm? = nil) throws {
-        let realm = realm ?? getRealm()
+    private func moveLocally(messages: [Message], to folder: Folder, using realm: Realm) throws {
         try realm.safeWrite {
             for message in messages {
-                if let liveMessage = message.thaw() {
+                if let liveMessage = message.fresh(using: realm) {
                     liveMessage.parent?.updateUnseenMessages()
                     liveMessage.parent?.parent?.incrementUnreadCount(by: -1)
                     liveMessage.folder = folder.name
                     liveMessage.folderId = folder._id
                 }
             }
-            let liveFolder = folder.thaw()
+            let liveFolder = folder.fresh(using: realm)
             liveFolder?.unreadCount = (liveFolder?.unreadCount ?? 0) + messages.filter { !$0.seen }.count
-            if messages.count == 1, let thread = messages.first?.parent?.thaw() {
+            if messages.count == 1, let thread = messages.first?.fresh(using: realm)?.parent {
                 thread.parent?.threads.remove(thread)
             }
         }
