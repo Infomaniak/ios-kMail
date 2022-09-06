@@ -209,7 +209,7 @@ public class MailboxManager: ObservableObject {
     public func createFolder(name: String, parent: Folder? = nil) async throws -> Folder {
         var folder = try await apiFetcher.create(mailbox: mailbox, folder: NewFolder(name: name, path: parent?.path))
         await backgroundRealm.execute { realm in
-            try? realm.write {
+            try? realm.safeWrite {
                 realm.add(folder)
                 if let parent = parent {
                     parent.fresh(using: realm)?.children.insert(folder)
@@ -594,7 +594,7 @@ public class MailboxManager: ObservableObject {
         )
 
         let realm = getRealm()
-        try? realm.safeWrite {
+        try? realm.uncheckedSafeWrite {
             realm.add(searchFolder, update: .modified)
         }
         return searchFolder
@@ -979,8 +979,8 @@ public class MailboxManager: ObservableObject {
         }
     }
 
-    public func draftOffline() {
-        backgroundRealm.execute { realm in
+    public func draftOffline() async {
+        await backgroundRealm.execute { realm in
             let draftOffline = AnyRealmCollection(realm.objects(Draft.self).where { $0.isOffline == true })
 
             let offlineDraftThread = List<Thread>()
@@ -1085,7 +1085,16 @@ public class MailboxManager: ObservableObject {
 }
 
 public extension Realm {
+    func uncheckedSafeWrite(_ block: () throws -> Void) throws {
+        if isInWriteTransaction {
+            try block()
+        } else {
+            try write(block)
+        }
+    }
+
     func safeWrite(_ block: () throws -> Void) throws {
+        assert(Foundation.Thread.isMainThread == false, "Writing on Main Thread is prohibited")
         if isInWriteTransaction {
             try block()
         } else {
