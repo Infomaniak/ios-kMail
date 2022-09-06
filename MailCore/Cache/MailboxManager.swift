@@ -922,7 +922,6 @@ public class MailboxManager: ObservableObject {
         do {
             let saveResponse = try await apiFetcher.save(mailbox: mailbox, draft: draft)
 
-            let realm = getRealm()
             let draft = draft.asManaged()
             let oldUuid = draft.uuid
             draft.uuid = saveResponse.uuid
@@ -930,20 +929,21 @@ public class MailboxManager: ObservableObject {
             draft.isOffline = false
 
             let copyDraft = draft.detached()
-
-            // Update draft in Realm
-            try? realm.safeWrite {
-                realm.add(copyDraft, update: .modified)
-            }
-            if let draft = realm.object(ofType: Draft.self, forPrimaryKey: oldUuid), oldUuid.starts(with: Draft.uuidLocalPrefix) {
-                // Delete local draft in Realm
+            await backgroundRealm.execute { realm in
+                // Update draft in Realm
                 try? realm.safeWrite {
-                    realm.delete(draft)
+                    realm.add(copyDraft, update: .modified)
+                }
+                if let draft = realm.object(ofType: Draft.self, forPrimaryKey: oldUuid), oldUuid.starts(with: Draft.uuidLocalPrefix) {
+                    // Delete local draft in Realm
+                    try? realm.safeWrite {
+                        realm.delete(draft)
+                    }
                 }
             }
+
             return saveResponse
         } catch {
-            let realm = getRealm()
             let draft = draft.asManaged()
             if draft.uuid.isEmpty {
                 draft.uuid = Draft.uuidLocalPrefix + UUID().uuidString
@@ -952,10 +952,13 @@ public class MailboxManager: ObservableObject {
             draft.date = Date()
             let copyDraft = draft.detached()
 
-            // Update draft in Realm
-            try? realm.safeWrite {
-                realm.add(copyDraft, update: .modified)
+            await backgroundRealm.execute { realm in
+                // Update draft in Realm
+                try? realm.safeWrite {
+                    realm.add(copyDraft, update: .modified)
+                }
             }
+
             throw error
         }
     }
