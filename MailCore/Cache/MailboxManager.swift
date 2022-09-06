@@ -711,12 +711,15 @@ public class MailboxManager: ObservableObject {
     public func attachmentData(attachment: Attachment) async throws -> Data {
         let data = try await apiFetcher.attachment(attachment: attachment)
 
-        if let liveAttachment = attachment.thaw() {
-            let realm = getRealm()
-            try? realm.safeWrite {
-                liveAttachment.saved = true
+        let safeAttachment = ThreadSafeReference(to: attachment)
+        await backgroundRealm.execute { realm in
+            if let liveAttachment = realm.resolve(safeAttachment) {
+                try? realm.safeWrite {
+                    liveAttachment.saved = true
+                }
             }
         }
+
         return data
     }
 
