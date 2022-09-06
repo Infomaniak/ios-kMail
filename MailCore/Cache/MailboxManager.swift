@@ -1093,7 +1093,6 @@ public extension Realm {
     }
 
     func safeWrite(_ block: () throws -> Void) throws {
-        assert(!Foundation.Thread.isMainThread, "Writing on Main Thread is prohibited")
         if isInWriteTransaction {
             try block()
         } else {
