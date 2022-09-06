@@ -812,12 +812,13 @@ public class MailboxManager: ObservableObject {
     public func star(messages: [Message]) async throws -> MessageActionResult {
         let response = try await apiFetcher.star(mailbox: mailbox, messages: messages)
 
-        let realm = getRealm()
-        for message in messages {
-            if let liveMessage = message.thaw() {
-                try? realm.safeWrite {
-                    liveMessage.flagged = true
-                    liveMessage.parent?.updateFlagged()
+        await backgroundRealm.execute { realm in
+            try? realm.safeWrite {
+                for message in messages {
+                    if let liveMessage = message.fresh(using: realm) {
+                        liveMessage.flagged = true
+                        liveMessage.parent?.updateFlagged()
+                    }
                 }
             }
         }
@@ -828,12 +829,13 @@ public class MailboxManager: ObservableObject {
     public func unstar(messages: [Message]) async throws -> MessageActionResult {
         let response = try await apiFetcher.unstar(mailbox: mailbox, messages: messages)
 
-        let realm = getRealm()
-        for message in messages {
-            if let liveMessage = message.thaw() {
-                try realm.safeWrite {
-                    liveMessage.flagged = false
-                    liveMessage.parent?.updateFlagged()
+        await backgroundRealm.execute { realm in
+            try? realm.safeWrite {
+                for message in messages {
+                    if let liveMessage = message.fresh(using: realm) {
+                        liveMessage.flagged = false
+                        liveMessage.parent?.updateFlagged()
+                    }
                 }
             }
         }
