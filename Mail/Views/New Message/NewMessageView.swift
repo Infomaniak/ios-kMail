@@ -83,7 +83,10 @@ struct NewMessageView: View {
             .firstIndex { $0.mailboxId == mailboxManager.mailbox.mailboxId } ?? 0
         var initialDraft = draft ?? UnmanagedDraft()
         if let signatureResponse = mailboxManager.getSignatureResponse() {
-            initialDraft.setSignature(signatureResponse)
+            if !initialDraft.didSetSignature {
+                initialDraft.setSignature(signatureResponse)
+                initialDraft.didSetSignature = true
+            }
             sendDisabled = false
         } else {
             sendDisabled = true
