@@ -662,32 +662,22 @@ public class MailboxManager: ObservableObject {
             return searchHistory.freeze()
         }
         let newSearchHistory = SearchHistory()
-        try? realm.safeWrite {
+        try? realm.uncheckedSafeWrite {
             realm.add(newSearchHistory)
         }
         return newSearchHistory
     }
 
-    public func update(searchHistory: SearchHistory, with value: String) -> SearchHistory {
-        let realm = getRealm()
-        realm.refresh()
-        guard let searchHistory = searchHistory.thaw() else { return searchHistory }
-
-        try? realm.safeWrite {
-            if let indexToRemove = searchHistory.history.firstIndex(of: value) {
-                searchHistory.history.remove(at: indexToRemove)
+    public func update(searchHistory: SearchHistory, with value: String) async -> SearchHistory {
+        return await backgroundRealm.execute { realm in
+            guard let searchHistory = searchHistory.fresh(using: realm) else { return searchHistory }
+            try? realm.safeWrite {
+                if let indexToRemove = searchHistory.history.firstIndex(of: value) {
+                    searchHistory.history.remove(at: indexToRemove)
+                }
+                searchHistory.history.insert(value, at: 0)
             }
-            searchHistory.history.insert(value, at: 0)
-        }
-
-        return searchHistory.freeze()
-    }
-
-    public func clearSearchHistory() {
-        let realm = getRealm()
-        let searchHistory = searchHistory(using: realm)
-        try? realm.safeWrite {
-            searchHistory.history.removeAll()
+            return searchHistory.freeze()
         }
     }
 

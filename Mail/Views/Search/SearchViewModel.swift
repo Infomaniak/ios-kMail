@@ -241,7 +241,7 @@ enum SearchFieldValueType: String {
             resourceNext = result.resourceNext
 
             if !searchValue.isEmpty {
-                searchHistory = mailboxManager.update(searchHistory: searchHistory, with: searchValue)
+                searchHistory = await mailboxManager.update(searchHistory: searchHistory, with: searchValue)
             }
             searchInfo.isLoading = false
             searchInfo.hasSearched = true
