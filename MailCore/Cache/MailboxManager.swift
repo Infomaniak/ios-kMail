@@ -700,11 +700,11 @@ public class MailboxManager: ObservableObject {
         keepCacheAttributes(for: completedMessage, keepProperties: .isDuplicate)
         completedMessage.fullyDownloaded = true
 
-        let realm = getRealm()
-
-        // Update message in Realm
-        try? realm.safeWrite {
-            realm.add(completedMessage, update: .modified)
+        await backgroundRealm.execute { realm in
+            // Update message in Realm
+            try? realm.safeWrite {
+                realm.add(completedMessage, update: .modified)
+            }
         }
     }
 
@@ -743,13 +743,14 @@ public class MailboxManager: ObservableObject {
             _ = try await apiFetcher.markAsUnseen(mailbox: mailbox, messages: messages)
         }
 
-        let realm = getRealm()
-        for message in messages {
-            if let liveMessage = message.thaw() {
-                try? realm.safeWrite {
-                    liveMessage.seen = seen
-                    liveMessage.parent?.updateUnseenMessages()
-                    liveMessage.parent?.parent?.incrementUnreadCount(by: seen ? -1 : 1)
+        await backgroundRealm.execute { realm in
+            for message in messages {
+                if let liveMessage = message.fresh(using: realm) {
+                    try? realm.safeWrite {
+                        liveMessage.seen = seen
+                        liveMessage.parent?.updateUnseenMessages()
+                        liveMessage.parent?.parent?.incrementUnreadCount(by: seen ? -1 : 1)
+                    }
                 }
             }
         }
@@ -776,17 +777,18 @@ public class MailboxManager: ObservableObject {
     public func delete(messages: [Message]) async throws {
         _ = try await apiFetcher.delete(mailbox: mailbox, messages: messages)
 
-        let realm = getRealm()
-        for message in messages {
-            if let liveMessage = message.thaw() {
-                let parent = liveMessage.parent
-                try? realm.safeWrite {
-                    realm.delete(liveMessage)
-                    if let parent = parent {
-                        if parent.messages.isEmpty {
-                            realm.delete(parent)
-                        } else {
-                            parent.messagesCount -= 1
+        await backgroundRealm.execute { realm in
+            for message in messages {
+                if let liveMessage = message.fresh(using: realm) {
+                    let parent = liveMessage.parent
+                    try? realm.safeWrite {
+                        realm.delete(liveMessage)
+                        if let parent = parent {
+                            if parent.messages.isEmpty {
+                                realm.delete(parent)
+                            } else {
+                                parent.messagesCount -= 1
+                            }
                         }
                     }
                 }
@@ -877,16 +879,16 @@ public class MailboxManager: ObservableObject {
         let draft = try await apiFetcher.draft(from: message)
 
         await backgroundRealm.execute { realm in
-        // Get draft from Realm to keep local saved properties
-        if let savedDraft = realm.object(ofType: Draft.self, forPrimaryKey: draft.uuid) {
-            draft.isOffline = savedDraft.isOffline
-            draft.didSetSignature = savedDraft.didSetSignature
-        }
+            // Get draft from Realm to keep local saved properties
+            if let savedDraft = realm.object(ofType: Draft.self, forPrimaryKey: draft.uuid) {
+                draft.isOffline = savedDraft.isOffline
+                draft.didSetSignature = savedDraft.didSetSignature
+            }
 
-        // Update draft in Realm
-        try? realm.safeWrite {
-            realm.add(draft.detached(), update: .modified)
-        }
+            // Update draft in Realm
+            try? realm.safeWrite {
+                realm.add(draft.detached(), update: .modified)
+            }
         }
 
         return draft
@@ -957,14 +959,14 @@ public class MailboxManager: ObservableObject {
 
     public func delete(draft: AbstractDraft) async {
         await backgroundRealm.execute { realm in
-        if let draft = realm.object(ofType: Draft.self, forPrimaryKey: draft.uuid) {
-            try? realm.safeWrite {
-                realm.delete(draft)
+            if let draft = realm.object(ofType: Draft.self, forPrimaryKey: draft.uuid) {
+                try? realm.safeWrite {
+                    realm.delete(draft)
+                }
+            } else {
+                print("No draft with uuid \(draft.uuid)")
             }
-        } else {
-            print("No draft with uuid \(draft.uuid)")
         }
-    }
     }
 
     public func deleteDraft(from message: Message) async throws {
@@ -972,12 +974,12 @@ public class MailboxManager: ObservableObject {
         try await apiFetcher.deleteDraft(from: message)
         await backgroundRealm.execute { realm in
             if let draft = draft(messageUid: message.uid, using: realm) {
-            // Delete draft in Realm
-            try? realm.safeWrite {
-                realm.delete(draft)
+                // Delete draft in Realm
+                try? realm.safeWrite {
+                    realm.delete(draft)
+                }
             }
         }
-    }
     }
 
     public func draftOffline() async {
