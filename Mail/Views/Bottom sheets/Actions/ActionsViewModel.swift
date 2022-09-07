@@ -170,6 +170,7 @@ enum ActionsTarget: Equatable {
     }
 
     func didTap(action: Action) async throws {
+        state.close()
         switch action {
         case .delete:
             try await delete()
@@ -264,7 +265,6 @@ enum ActionsTarget: Equatable {
                 )
             }
         }
-        state.close()
     }
 
     private func reply(mode: ReplyMode) async throws {
@@ -311,12 +311,11 @@ enum ActionsTarget: Equatable {
     }
 
     private func move() {
-        state.close()
         globalSheet.open(state: .move { folder in
             Task {
                 try await self.move(to: folder)
             }
-        }, position: .moveHeight)
+        })
     }
 
     private func postpone() {
@@ -401,8 +400,7 @@ enum ActionsTarget: Equatable {
     private func phishing() async throws {
         // This action is only available on a single message
         guard case let .message(message) = target else { return }
-        state.close()
-        globalSheet.open(state: .reportPhishing(message: message.freezeIfNeeded()), position: .reportPhishingHeight)
+        globalSheet.open(state: .reportPhishing(message: message.freezeIfNeeded()))
     }
 
     private func printAction() {
@@ -428,8 +426,7 @@ enum ActionsTarget: Equatable {
     private func report() {
         // This action is only available on a single message
         guard case let .message(message) = target else { return }
-        state.close()
-        globalSheet.open(state: .reportDisplayProblem(message: message.freezeIfNeeded()), position: .reportDisplayIssueHeight)
+        globalSheet.open(state: .reportDisplayProblem(message: message.freezeIfNeeded()))
     }
 
     private func editMenu() {

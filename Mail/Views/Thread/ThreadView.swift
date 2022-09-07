@@ -16,7 +16,6 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import BottomSheet
 import InfomaniakCore
 import Introspect
 import MailCore
@@ -41,14 +40,10 @@ class MessageSheet: SheetState<MessageSheet.State> {
     }
 }
 
-class MessageBottomSheet: BottomSheetState<MessageBottomSheet.State, MessageBottomSheet.Position> {
+class MessageBottomSheet: DisplayedFloatingPanelState<MessageBottomSheet.State> {
     enum State: Equatable {
         case contact(Recipient, isRemote: Bool)
         case replyOption(Message, isThread: Bool)
-    }
-
-    enum Position: CGFloat, CaseIterable {
-        case defaultHeight = 285, remoteContactHeight = 230, replyHeight = 180, hidden = 0
     }
 }
 
@@ -68,8 +63,6 @@ struct ThreadView: View {
     @Environment(\.dismiss) var dismiss
 
     private let trashId: String
-    private let bottomSheetOptions = Constants.bottomSheetOptions + [.absolutePositionValue]
-    private let threadBottomSheetOptions = Constants.bottomSheetOptions + [.appleScrollBehavior]
     private let toolbarActions: [Action] = [.reply, .forward, .archive, .delete]
 
     private var isTrashFolder: Bool {
@@ -172,7 +165,7 @@ struct ThreadView: View {
                 }
                 ToolbarButton(text: MailResourcesStrings.Localizable.buttonMore,
                                 icon: MailResourcesAsset.plusActions) {
-                    threadBottomSheet.open(state: .actions(.thread(thread.thaw() ?? thread)), position: .middle)
+                    threadBottomSheet.open(state: .actions(.thread(thread.thaw() ?? thread)))
                 }
             }
         }
@@ -194,7 +187,7 @@ struct ThreadView: View {
                 EmptyView()
             }
         }
-        .bottomSheet(bottomSheetPosition: $bottomSheet.position, options: bottomSheetOptions) {
+        .floatingPanel(state: bottomSheet) {
             switch bottomSheet.state {
             case let .contact(recipient, isRemote):
                 ContactActionsView(recipient: recipient, isRemoteContact: isRemote, bottomSheet: bottomSheet, sheet: sheet)
@@ -211,21 +204,14 @@ struct ThreadView: View {
                 EmptyView()
             }
         }
-        .bottomSheet(bottomSheetPosition: $threadBottomSheet.position, options: threadBottomSheetOptions) {
-            switch threadBottomSheet.state {
-            case let .actions(target):
-                if target.isInvalidated {
-                    EmptyView()
-                } else {
-                    ActionsView(mailboxManager: mailboxManager,
-                                target: target,
-                                state: threadBottomSheet,
-                                globalSheet: globalBottomSheet) { message, replyMode in
-                        sheet.state = .reply(message, replyMode)
-                    }
+        .floatingPanel(state: threadBottomSheet, halfOpening: true) {
+            if case let .actions(target) = threadBottomSheet.state, !target.isInvalidated {
+                ActionsView(mailboxManager: mailboxManager,
+                            target: target,
+                            state: threadBottomSheet,
+                            globalSheet: globalBottomSheet) { message, replyMode in
+                    sheet.state = .reply(message, replyMode)
                 }
-            case .none:
-                EmptyView()
             }
         }
         .onChange(of: messages) { newMessagesList in
@@ -239,7 +225,7 @@ struct ThreadView: View {
         switch action {
         case .reply:
             guard let message = messages.last else { return }
-            bottomSheet.open(state: .replyOption(message, isThread: true), position: .replyHeight)
+            bottomSheet.open(state: .replyOption(message, isThread: true))
         case .forward:
             guard let message = messages.last else { return }
             Task {

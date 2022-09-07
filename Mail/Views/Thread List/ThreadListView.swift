@@ -16,7 +16,6 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import BottomSheet
 import Introspect
 import MailCore
 import MailResources
@@ -36,13 +35,9 @@ class MenuSheet: SheetState<MenuSheet.State> {
     }
 }
 
-class ThreadBottomSheet: BottomSheetState<ThreadBottomSheet.State, ThreadBottomSheet.Position> {
+class ThreadBottomSheet: DisplayedFloatingPanelState<ThreadBottomSheet.State> {
     enum State: Equatable {
         case actions(ActionsTarget)
-    }
-
-    public enum Position: CGFloat, CaseIterable {
-        case top = 0.975, middle = 0.4, hidden = 0
     }
 }
 
@@ -62,8 +57,6 @@ struct ThreadListView: View {
     @State private var navigationController: UINavigationController?
 
     let isCompact: Bool
-
-    private let bottomSheetOptions = Constants.bottomSheetOptions + [.appleScrollBehavior]
 
     init(mailboxManager: MailboxManager, folder: Folder?, isCompact: Bool) {
         let threadBottomSheet = ThreadBottomSheet()
@@ -145,27 +138,20 @@ struct ThreadListView: View {
                                     navigationController: $navigationController))
         .floatingActionButton(isEnabled: !multipleSelectionViewModel.isEnabled,
                               icon: Image(resource: MailResourcesAsset.edit),
-                              title: MailResourcesStrings.Localizable.buttonNewMessage, action: {
+                              title: MailResourcesStrings.Localizable.buttonNewMessage) {
             menuSheet.state = .newMessage
-        })
-        .bottomSheet(bottomSheetPosition: $bottomSheet.position, options: bottomSheetOptions) {
-            switch bottomSheet.state {
-            case let .actions(target):
-                if target.isInvalidated {
-                    EmptyView()
-                } else {
-                    ActionsView(mailboxManager: viewModel.mailboxManager,
-                                target: target,
-                                state: bottomSheet,
-                                globalSheet: globalBottomSheet) { message, replyMode in
-                        menuSheet.state = .reply(message, replyMode)
-                    } completionHandler: {
-                        bottomSheet.close()
-                        multipleSelectionViewModel.isEnabled = false
-                    }
+        }
+        .floatingPanel(state: bottomSheet, halfOpening: true) {
+            if case let .actions(target) = bottomSheet.state, !target.isInvalidated {
+                ActionsView(mailboxManager: viewModel.mailboxManager,
+                            target: target,
+                            state: bottomSheet,
+                            globalSheet: globalBottomSheet) { message, replyMode in
+                    menuSheet.state = .reply(message, replyMode)
+                } completionHandler: {
+                    bottomSheet.close()
+                    multipleSelectionViewModel.isEnabled = false
                 }
-            default:
-                EmptyView()
             }
         }
         .onAppear {
@@ -194,9 +180,9 @@ struct ThreadListView: View {
     private func threadList(threads: [Thread]) -> some View {
         ForEach(threads) { thread in
             ThreadListCell(thread: thread,
-                 viewModel: viewModel,
-                 multipleSelectionViewModel: multipleSelectionViewModel,
-                 navigationController: navigationController)
+                           viewModel: viewModel,
+                           multipleSelectionViewModel: multipleSelectionViewModel,
+                           navigationController: navigationController)
         }
     }
 }
@@ -283,8 +269,7 @@ private struct ThreadListToolbar: ViewModifier {
                                 ToolbarButton(text: MailResourcesStrings.Localizable.buttonMore,
                                               icon: MailResourcesAsset.plusActions,
                                               width: reader.size.width / 5) {
-                                    bottomSheet.open(state: .actions(.threads(Array(multipleSelectionViewModel.selectedItems))),
-                                                     position: .middle)
+                                    bottomSheet.open(state: .actions(.threads(Array(multipleSelectionViewModel.selectedItems))))
                                 }
                             }
                         }
@@ -292,8 +277,8 @@ private struct ThreadListToolbar: ViewModifier {
                 }
                 .navigationTitle(
                     multipleSelectionViewModel.isEnabled
-                    ? MailResourcesStrings.Localizable.multipleSelectionCount(multipleSelectionViewModel.selectedItems.count)
-                    : ""
+                        ? MailResourcesStrings.Localizable.multipleSelectionCount(multipleSelectionViewModel.selectedItems.count)
+                        : ""
                 )
                 .navigationBarTitleDisplayMode(.inline)
         }

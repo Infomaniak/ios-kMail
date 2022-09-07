@@ -16,20 +16,19 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import BottomSheet
 import SwiftUI
 
-class BottomSheetState<State, PositionEnum>: ObservableObject where PositionEnum: CaseIterable, PositionEnum: Equatable, PositionEnum: RawRepresentable, PositionEnum.RawValue == CGFloat {
-    @Published var position: PositionEnum = .init(rawValue: 0)!
+class BottomSheetState<State>: ObservableObject {
+    @Published var isOpen: Bool = false
     @Published private(set) var state: State?
 
-    func open(state: State, position: PositionEnum) {
+    func open(state: State) {
         self.state = state
-        self.position = position
+        isOpen = true
     }
 
     func close() {
         state = nil
-        position = .init(rawValue: 0)!
+        isOpen = false
     }
 }

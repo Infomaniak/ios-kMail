@@ -48,6 +48,7 @@ struct ActionsView: View {
             HStack(alignment: .top, spacing: 28) {
                 ForEach(viewModel.quickActions) { action in
                     QuickActionView(viewModel: viewModel, action: action)
+                        .frame(maxWidth: .infinity)
                 }
                 .fixedSize(horizontal: false, vertical: true)
             }
@@ -61,7 +62,6 @@ struct ActionsView: View {
             }
         }
         .padding(.horizontal, 8)
-        .padding(.top, 16)
     }
 }
 
@@ -100,7 +100,7 @@ struct QuickActionView: View {
                         .frame(maxWidth: .infinity, maxHeight: .infinity)
                         .padding(19)
                 }
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                .frame(maxWidth: 60, maxHeight: 60)
                 .aspectRatio(1, contentMode: .fit)
 
                 Text(action.title)

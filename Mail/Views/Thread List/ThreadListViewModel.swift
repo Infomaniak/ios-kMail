@@ -274,7 +274,7 @@ class DateSection: Identifiable {
                 Task {
                     try await self.move(thread: thread, to: folder)
                 }
-            }), position: .moveHeight)
+            }))
         case .favorite:
             try await mailboxManager.toggleStar(thread: thread)
         case .report:
@@ -288,7 +288,7 @@ class DateSection: Identifiable {
             }
             try await move(thread: thread, to: .archive)
         case .quickAction:
-            bottomSheet.open(state: .actions(.thread(thread.thaw() ?? thread)), position: .middle)
+            bottomSheet.open(state: .actions(.thread(thread.thaw() ?? thread)))
         case .none:
             break
         }

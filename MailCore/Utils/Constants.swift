@@ -16,7 +16,6 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import BottomSheet
 import Foundation
 import MailResources
 import SwiftUI
@@ -57,17 +56,6 @@ public enum Constants {
     public static let checkmarkSize: CGFloat = 15
     public static let checkboxCompactSize: CGFloat = 24
     public static let checkmarkCompactSize: CGFloat = 13
-
-    public static let bottomSheetOptions: [BottomSheet.Options] = [
-        .background { AnyView(MailResourcesAsset.backgroundBottomSheetColor.swiftUiColor) },
-        .backgroundBlur(effect: .dark),
-        .cornerRadius(20),
-        .dragIndicatorColor(MailResourcesAsset.menuActionColor.swiftUiColor),
-        .noBottomPosition,
-        .shadow(color: Color(.sRGBLinear, white: 0, opacity: 0.1), radius: 30, x: 0, y: -10),
-        .swipeToDismiss,
-        .tapToDismiss
-    ]
 
     public static let mailRegex = "(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|\"(?:[\\x01-\\x08\\x0b\\x0c\\x0e-\\x1f\\x21\\x23-\\x5b\\x5d-\\x7f]|\\\\[\\x01-\\x09\\x0b\\x0c\\x0e-\\x7f])*\")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\\[(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?|[a-z0-9-]*[a-z0-9]:(?:[\\x01-\\x08\\x0b\\x0c\\x0e-\\x1f\\x21-\\x5a\\x53-\\x7f]|\\\\[\\x01-\\x09\\x0b\\x0c\\x0e-\\x7f])+)\\])"
 
