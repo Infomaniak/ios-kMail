@@ -282,7 +282,7 @@ class DateSection: Identifiable {
             showWorkInProgressSnackBar()
         case .spam:
             try await toggleSpam(thread: thread)
-        case .readAndAchive:
+        case .readAndArchive:
             if thread.hasUnseenMessages {
                 try await mailboxManager.toggleRead(thread: thread)
             }

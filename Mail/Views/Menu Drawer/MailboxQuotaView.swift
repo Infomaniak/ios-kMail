@@ -24,7 +24,20 @@ import SwiftUI
 struct MailboxQuotaView: View {
     @EnvironmentObject var globalSheet: GlobalBottomSheet
 
-    var quotas: Quotas
+    let quotas: Quotas
+    var progressString: AttributedString {
+        let localizedText = MailResourcesStrings.Localizable.menuDrawerMailboxStorage(
+            Int64(quotas.size * 1000).formatted(.defaultByteCount),
+            Constants.sizeLimit.formatted(.defaultByteCount)
+        )
+
+        var attributedString = AttributedString(localizedText)
+        if let lastWord = localizedText.split(separator: " ").last, let range = attributedString.range(of: lastWord) {
+            attributedString[range].font = MailTextStyle.header3.font
+        }
+
+        return attributedString
+    }
 
     var body: some View {
         HStack {
@@ -33,11 +46,8 @@ struct MailboxQuotaView: View {
                 .padding(.trailing, 7)
 
             VStack(alignment: .leading) {
-                Text(MailResourcesStrings.Localizable.menuDrawerMailboxStorage(
-                    Int64(quotas.size * 1000).formatted(.defaultByteCount),
-                    Constants.sizeLimit.formatted(.defaultByteCount)
-                ))
-                .textStyle(.header3)
+                Text(progressString)
+                    .textStyle(.header2)
 
                 Button {
                     globalSheet.open(state: .getMoreStorage)
@@ -60,14 +70,14 @@ private struct QuotaCircularProgressViewStyle: ProgressViewStyle {
     func makeBody(configuration: Configuration) -> some View {
         ZStack {
             Circle()
-                .trim(from: 0, to: CGFloat(1 - (configuration.fractionCompleted ?? 0)))
-                .stroke(accentColor.secondary.swiftUiColor, lineWidth: 2)
+                .trim(from: 0, to: 1)
+                .stroke(MailResourcesAsset.progressCircleColor.swiftUiColor, lineWidth: 4)
                 .rotationEffect(.degrees(-90))
                 .frame(width: 46)
 
             Circle()
-                .trim(from: CGFloat(1 - (configuration.fractionCompleted ?? 0)), to: 1)
-                .stroke(Color.accentColor, lineWidth: 2)
+                .trim(from: 0, to: configuration.fractionCompleted ?? 0)
+                .stroke(Color.accentColor, lineWidth: 4)
                 .rotationEffect(.degrees(-90))
                 .frame(width: 46)
 

@@ -219,6 +219,9 @@ private struct ThreadListToolbar: ViewModifier {
                                     navigationDrawerController.open()
                                 } label: {
                                     Image(resource: MailResourcesAsset.burger)
+                                        .resizable()
+                                        .scaledToFit()
+                                        .frame(width: Constants.navbarIconSize, height: Constants.navbarIconSize)
                                 }
                             }
                             Text(splitViewManager.selectedFolder?.localizedName ?? "")
@@ -239,6 +242,9 @@ private struct ThreadListToolbar: ViewModifier {
                                 splitViewManager.showSearch = true
                             } label: {
                                 Image(resource: MailResourcesAsset.search)
+                                    .resizable()
+                                    .scaledToFit()
+                                    .frame(width: Constants.navbarIconSize, height: Constants.navbarIconSize)
                             }
 
                             Button {
@@ -247,7 +253,7 @@ private struct ThreadListToolbar: ViewModifier {
                                 avatarImage
                                     .resizable()
                                     .scaledToFit()
-                                    .frame(width: 30, height: 30)
+                                    .frame(width: 28, height: 28)
                                     .clipShape(Circle())
                             }
                         }

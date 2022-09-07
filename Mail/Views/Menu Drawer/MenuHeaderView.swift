@@ -29,7 +29,7 @@ struct MenuHeaderView: View {
             Image(resource: MailResourcesAsset.logoText)
                 .resizable()
                 .scaledToFit()
-                .frame(height: 52)
+                .frame(height: 48)
 
             Spacer()
 
@@ -43,12 +43,12 @@ struct MenuHeaderView: View {
             }
             .buttonStyle(.borderless)
         }
-        .padding(.vertical, 16)
-        .padding(.leading, 18)
-        .padding(.trailing, 14)
+        .padding(.top, 12)
+        .padding(.bottom, 15)
+        .padding(.horizontal, 17)
         .background(MailResourcesAsset.backgroundMenuDrawer.swiftUiColor)
         .clipped()
-        .shadow(color: MailResourcesAsset.menuDrawerShadowColor.swiftUiColor, radius: 2, x: 0, y: 3)
+        .shadow(color: MailResourcesAsset.menuDrawerShadowColor.swiftUiColor, radius: 1, x: 0, y: 2)
     }
 }
 

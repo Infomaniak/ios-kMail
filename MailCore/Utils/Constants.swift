@@ -43,13 +43,15 @@ public enum Constants {
     public static let sizeLimit = 21_474_836_480 // 20 Go
     public static let minimumQuotasProgressionToDisplay = 0.03
 
+    public static let navbarIconSize: CGFloat = 23
+
     public static let onboardingLogoHeight: CGFloat = 72
     public static let onboardingButtonHeight: CGFloat = 100
     public static let onboardingVerticalPadding: CGFloat = 16
 
-    public static let menuDrawerHorizontalPadding: CGFloat = 24
+    public static let menuDrawerHorizontalPadding: CGFloat = 20
     public static let menuDrawerVerticalPadding: CGFloat = 12
-    public static let menuDrawerSubFolderPadding: CGFloat = 10
+    public static let menuDrawerSubFolderPadding: CGFloat = 15
 
     public static let unreadIconSize: CGFloat = 8
     public static let checkboxSize: CGFloat = 32

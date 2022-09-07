@@ -82,13 +82,12 @@ struct FolderCellContent: View {
     }
 
     var body: some View {
-        HStack(spacing: 0) {
+        HStack(spacing: 24) {
             folder.icon
                 .resizable()
                 .scaledToFit()
                 .frame(width: 24, height: 24)
                 .foregroundColor(.accentColor)
-                .padding(.trailing, 24)
 
             Text(folder.localizedName)
                 .textStyle(textStyle)
@@ -101,10 +100,15 @@ struct FolderCellContent: View {
             }
         }
         .padding(.vertical, Constants.menuDrawerVerticalPadding)
-        .padding(.leading, Constants.menuDrawerHorizontalPadding)
+        .padding(.horizontal, Constants.menuDrawerHorizontalPadding)
         .padding(.leading, Constants.menuDrawerSubFolderPadding * CGFloat(level))
-        .padding(.trailing, 18)
-        .background(SelectionBackground(isSelected: isSelected, offsetX: 10, leadingPadding: -2, verticalPadding: 0))
+        .background(SelectionBackground(
+            isSelected: isSelected,
+            offsetX: 8,
+            leadingPadding: 0,
+            verticalPadding: 0,
+            defaultColor: MailResourcesAsset.backgroundMenuDrawer.swiftUiColor
+        ))
     }
 }
 

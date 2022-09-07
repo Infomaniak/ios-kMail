@@ -84,6 +84,7 @@ struct SplitView: View {
                             isCompact: isCompact
                         )
                     }
+                    .navigationViewStyle(.stack)
 
                     Group {
                         Color.black
