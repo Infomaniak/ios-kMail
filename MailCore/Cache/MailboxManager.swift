@@ -1093,6 +1093,10 @@ public extension Realm {
     }
 
     func safeWrite(_ block: () throws -> Void) throws {
+        #if DEBUG
+        dispatchPrecondition(condition: .notOnQueue(.main))
+        #endif
+
         if isInWriteTransaction {
             try block()
         } else {
