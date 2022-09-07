@@ -892,10 +892,15 @@ public class MailboxManager: ObservableObject {
         return realm.objects(Draft.self).where { $0.messageUid == messageUid }.first
     }
 
+    public func localDraft(uuid: String, using realm: Realm? = nil) -> Draft? {
+        let realm = realm ?? getRealm()
+        return realm.objects(Draft.self).where { $0.uuid == uuid }.first
+    }
+
     public func send(draft: UnmanagedDraft) async throws -> CancelResponse {
         // If the draft has no UUID, we save it first
         if draft.uuid.isEmpty {
-            _ = try await save(draft: draft)
+            _ = await save(draft: draft)
         }
         var draft = draft
         draft.action = .send
@@ -906,7 +911,7 @@ public class MailboxManager: ObservableObject {
         return cancelableResponse
     }
 
-    public func save(draft: UnmanagedDraft) async throws -> DraftResponse {
+    public func save(draft: UnmanagedDraft) async -> (uuid: String, error: Error?) {
         var draft = draft
         draft.action = .save
         do {
@@ -931,8 +936,7 @@ public class MailboxManager: ObservableObject {
                     }
                 }
             }
-
-            return saveResponse
+            return (draft.uuid, nil)
         } catch {
             let draft = draft.asManaged()
             if draft.uuid.isEmpty {
@@ -948,8 +952,7 @@ public class MailboxManager: ObservableObject {
                     realm.add(copyDraft, update: .modified)
                 }
             }
-
-            throw error
+            return (draft.uuid, error)
         }
     }
 
