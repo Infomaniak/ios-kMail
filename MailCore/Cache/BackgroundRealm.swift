@@ -39,14 +39,18 @@ public class BackgroundRealm {
         }
     }
 
-    public func execute<T>(_ block: (Realm) -> T) -> T {
-        return queue.sync { block(realm) }
+    public func execute<T>(_ block: @escaping (Realm) -> T, completion: @escaping (T) -> Void) {
+        queue.async { [weakRealm = realm] in
+            guard let realm = weakRealm else { return }
+            completion(block(realm))
+        }
     }
 
-    public func execute<T>(_ block: (Realm) -> T) async -> T {
+    public func execute<T>(_ block: @escaping (Realm) -> T) async -> T {
         return await withCheckedContinuation { (continuation: CheckedContinuation<T, Never>) in
-            let result = execute(block)
-            continuation.resume(returning: result)
+            execute(block) { result in
+                continuation.resume(returning: result)
+            }
         }
     }
 }
