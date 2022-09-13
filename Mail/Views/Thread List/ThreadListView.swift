@@ -85,10 +85,6 @@ struct ThreadListView: View {
             ZStack {
                 MailResourcesAsset.backgroundColor.swiftUiColor
 
-                if viewModel.folder?.lastUpdate != nil && viewModel.sections.isEmpty && !viewModel.isLoadingPage {
-                    EmptyListView()
-                }
-
                 ScrollViewReader { proxy in
                     List {
                         ForEach(viewModel.sections) { section in
@@ -121,6 +117,10 @@ struct ThreadListView: View {
                     .onAppear {
                         viewModel.scrollViewProxy = proxy
                     }
+                }
+
+                if viewModel.folder?.lastUpdate != nil && viewModel.sections.isEmpty && !viewModel.isLoadingPage {
+                    EmptyListView()
                 }
             }
             .appShadow()
