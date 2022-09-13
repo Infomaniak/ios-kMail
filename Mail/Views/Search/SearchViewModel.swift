@@ -116,12 +116,14 @@ enum SearchFieldValueType: String {
     }
 
     func clearSearchValue() {
-        searchFolder = mailboxManager.cleanSearchFolder()
-        searchValue = ""
-        threads = []
-        contacts = []
-        searchInfo.isLoading = false
-        searchInfo.hasSearched = false
+        Task {
+            searchFolder = await mailboxManager.cleanSearchFolder()
+            searchValue = ""
+            threads = []
+            contacts = []
+            searchInfo.isLoading = false
+            searchInfo.hasSearched = false
+        }
     }
 
     private var searchFilters: [URLQueryItem] {
@@ -216,7 +218,7 @@ enum SearchFieldValueType: String {
             return
         }
 
-        searchFolder = mailboxManager.cleanSearchFolder()
+        searchFolder = await mailboxManager.cleanSearchFolder()
         observeSearch = true
 
         searchInfo.isLoading = true
@@ -239,7 +241,7 @@ enum SearchFieldValueType: String {
             resourceNext = result.resourceNext
 
             if !searchValue.isEmpty {
-                searchHistory = mailboxManager.update(searchHistory: searchHistory, with: searchValue)
+                searchHistory = await mailboxManager.update(searchHistory: searchHistory, with: searchValue)
             }
             searchInfo.isLoading = false
             searchInfo.hasSearched = true

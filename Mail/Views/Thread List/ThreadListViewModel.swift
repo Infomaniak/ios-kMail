@@ -158,7 +158,7 @@ class DateSection: Identifiable {
             resourceNext = result.resourceNext
         }
         isLoadingPage = false
-        mailboxManager.draftOffline()
+        await mailboxManager.draftOffline()
     }
 
     func fetchNextPage() async {
@@ -174,7 +174,7 @@ class DateSection: Identifiable {
             resourceNext = result.resourceNext
         }
         isLoadingPage = false
-        mailboxManager.draftOffline()
+        await mailboxManager.draftOffline()
     }
 
     func updateThreads(with folder: Folder) {

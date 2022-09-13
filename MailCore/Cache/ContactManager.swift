@@ -86,7 +86,7 @@ public class ContactManager: ObservableObject {
 
             let realm = getRealm()
 
-            try? realm.safeWrite {
+            try? realm.uncheckedSafeWrite {
                 realm.add(addressBooks, update: .modified)
                 realm.add(contacts, update: .modified)
             }
@@ -157,7 +157,7 @@ public class ContactManager: ObservableObject {
 
         guard let newContact = contacts.first(where: { $0.id == String(contactId) }) else { throw MailError.contactNotFound }
         let realm = getRealm()
-        try? realm.safeWrite {
+        try? realm.uncheckedSafeWrite {
             realm.add(newContact)
         }
         if let mergedContact = mergedContacts[recipient.email] {

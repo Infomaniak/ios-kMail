@@ -318,7 +318,7 @@ struct NewMessageView: View {
         guard let draft = mailboxManager.draft(messageUid: messageUid, using: realm)?.freeze(),
               let draftFolder = mailboxManager.getFolder(with: .draft, using: realm) else { return }
         let thread = Thread(draft: draft)
-        try? realm.safeWrite {
+        try? realm.uncheckedSafeWrite {
             realm.add(thread, update: .modified)
             draftFolder.threads.insert(thread)
         }
