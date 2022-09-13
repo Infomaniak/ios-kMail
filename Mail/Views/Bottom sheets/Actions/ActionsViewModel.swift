@@ -274,7 +274,7 @@ enum ActionsTarget: Equatable {
             // We don't handle this action in multiple selection
             break
         case let .thread(thread):
-            guard let message = thread.messages.last(where: { !$0.isDraft }) else { return }
+            guard let message = thread.messages.last(where: { !$0.isDraft })?.freeze() else { return }
             // Download message if needed to get body
             if !message.fullyDownloaded {
                 try await mailboxManager.message(message: message)
@@ -283,7 +283,6 @@ enum ActionsTarget: Equatable {
                 let attachments = try await mailboxManager.apiFetcher.attachmentsToForward(mailbox: mailboxManager.mailbox, message: message).attachments
                 completeMode = .forward(attachments)
             }
-            message.realm?.refresh()
             replyHandler(message, completeMode)
         case let .message(message):
             if mode == .forward([]) {
