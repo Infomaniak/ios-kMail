@@ -32,8 +32,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/SCENEE/FloatingPanel",
       "state" : {
-        "revision" : "639e4221e83a92363ae2c0b30abca44b83854ac9",
-        "version" : "2.5.3"
+        "revision" : "b00a05b9ed7717da0e5ce1b760e27ffcbaddd333",
+        "version" : "2.5.4"
       }
     },
     {
@@ -68,8 +68,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/onevcat/Kingfisher",
       "state" : {
-        "revision" : "2235a22ca249199cb736237f4bb9cc12b6ed416a",
-        "version" : "7.3.0"
+        "revision" : "be1a1acb283a702b99b630f586877ba02234b4cb",
+        "version" : "7.3.2"
       }
     },
     {
@@ -95,8 +95,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/realm/realm-core",
       "state" : {
-        "revision" : "55a48c287b5e3a8ca129c257ec7e3b92bcb2a05f",
-        "version" : "12.3.0"
+        "revision" : "5da7744b4056ad185c025bccf0924f17f73f7a91",
+        "version" : "12.6.0"
       }
     },
     {
@@ -104,8 +104,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/realm/realm-swift",
       "state" : {
-        "revision" : "2d5d121f6cf08aa84eeb076b653131a23f1edd6b",
-        "version" : "10.28.3"
+        "revision" : "28c488974f544c9affc4eacdd5b9dfc6785ebbc0",
+        "version" : "10.29.0"
       }
     },
     {
@@ -113,8 +113,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/getsentry/sentry-cocoa",
       "state" : {
-        "revision" : "5bc31fd9bb476539387de7c6ff32acfaf2407157",
-        "version" : "7.23.0"
+        "revision" : "7acc8479b2c773dddacc7c5985e7ce9e4344f5f0",
+        "version" : "7.25.0"
       }
     },
     {
@@ -149,8 +149,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/apple/swift-log.git",
       "state" : {
-        "revision" : "5d66f7ba25daf4f94100e7022febf3c75e37a6c7",
-        "version" : "1.4.2"
+        "revision" : "6fe203dc33195667ce1759bf0182975e4653ba1c",
+        "version" : "1.4.4"
       }
     },
     {
