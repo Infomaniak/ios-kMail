@@ -198,6 +198,7 @@ struct ThreadView: View {
                     state: threadBottomSheet,
                     globalSheet: globalBottomSheet
                 ) { message, replyMode in
+                    bottomSheet.close()
                     sheet.state = .reply(message, replyMode)
                 }
             case .none:
