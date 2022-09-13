@@ -159,10 +159,18 @@ struct ThreadListView: View {
             viewModel.globalBottomSheet = globalBottomSheet
             viewModel.menuSheet = menuSheet
             viewModel.selectedThread = nil
+            Task {
+                await viewModel.fetchThreads()
+            }
         }
         .onChange(of: splitViewManager.selectedFolder) { newFolder in
             guard isCompact, let folder = newFolder else { return }
             viewModel.updateThreads(with: folder)
+        }
+        .onReceive(NotificationCenter.default.publisher(for: UIApplication.willEnterForegroundNotification)) { _ in
+            Task {
+                await viewModel.fetchThreads()
+            }
         }
         .task {
             if let account = AccountManager.instance.currentAccount {
