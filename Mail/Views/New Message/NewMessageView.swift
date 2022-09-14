@@ -158,7 +158,7 @@ struct NewMessageView: View {
                                 message: MailResourcesStrings.Localizable.emailSentSnackbar,
                                 cancelSuccessMessage: MailResourcesStrings.Localizable.canceledEmailSendingConfirmationSnackbar,
                                 duration: .custom(CGFloat(draft.delay ?? 3)),
-                                cancelableResponse: cancelableResponse,
+                                undoRedoAction: UndoRedoAction(undo: cancelableResponse, redo: nil),
                                 mailboxManager: mailboxManager
                             )
                             self.dismiss()

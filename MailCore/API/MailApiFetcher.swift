@@ -193,8 +193,8 @@ public class MailApiFetcher: ApiFetcher {
     }
 
     @discardableResult
-    public func undoAction(resource: String) async throws -> Empty? { // TODO: change return type when bug will be fixed from API
-        try await perform(request: authenticatedRequest(.resource(resource), method: .put)).data
+    public func undoAction(resource: String) async throws -> Bool {
+        try await perform(request: authenticatedRequest(.resource(resource), method: .post)).data
     }
 
     public func reportSpam(mailbox: Mailbox, messages: [Message]) async throws -> UndoResponse {
