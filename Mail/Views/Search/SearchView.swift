@@ -215,7 +215,7 @@ struct SearchView: View {
 
     func contactList(contacts: [Recipient]) -> some View {
         Section {
-            ForEach(contacts, id: \.email) { contact in
+            ForEach(contacts) { contact in
                 RecipientAutocompletionCell(recipient: contact)
                     .onTapGesture {
                         viewModel.searchValue = "\"" + contact.email + "\""
