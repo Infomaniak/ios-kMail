@@ -67,10 +67,6 @@ public class MergedContact {
         }
     }
 
-    private func merge<T>(_ element1: T?, _ element2: T?) -> T? {
-        return element1 ?? element2
-    }
-
     public init(email: String, remote: Contact?, local: CNContact?) {
         self.email = email
         self.remote = remote
