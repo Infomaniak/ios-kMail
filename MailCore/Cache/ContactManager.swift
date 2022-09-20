@@ -200,6 +200,6 @@ public class ContactManager: ObservableObject {
 
     public func getMainAddressBook() -> AddressBook? {
         let realm = getRealm()
-        return realm.objects(AddressBook.self).where { $0.isPrincipal == true }.first
+        return realm.objects(AddressBook.self).where { $0.principalUri.starts(with: "principals") }.first
     }
 }
