@@ -33,7 +33,7 @@ private struct SwipeActionView: View {
     }
 
     var body: some View {
-        Button(role: action == .delete ? .destructive : nil) {
+        Button(role: action.isDestructive ? .destructive : nil) {
             Task {
                 await tryOrDisplayError {
                     try await viewModel.handleSwipeAction(action, thread: thread)

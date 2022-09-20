@@ -104,6 +104,15 @@ public enum SwipeAction: String, CaseIterable, SettingsOptionEnum {
         }
     }
 
+    public var isDestructive: Bool {
+        switch self {
+        case .delete, .archive, .report, .spam, .readAndArchive:
+            return true
+        case .move, .readUnread, .favorite, .quickAction, .none:
+            return false
+        }
+    }
+
     public var image: Image? {
         return nil
     }
