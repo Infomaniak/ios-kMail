@@ -32,8 +32,6 @@ public class MergedContact {
     private let contactFormatter = CNContactFormatter()
 
     public lazy var color: String = remote?.color ?? "#00bcd4"
-    public lazy var firstname: String = merge(local?.givenName, remote?.firstname) ?? ""
-    public lazy var lastName: String = merge(local?.familyName, remote?.lastname) ?? ""
 
     public lazy var name: String = {
         if let local = local, let localName = contactFormatter.string(from: local) {
@@ -41,10 +39,6 @@ public class MergedContact {
         }
         return remote?.name.removePunctuation ?? ""
     }()
-
-    public lazy var favorite: Bool? = remote?.favorite
-    public lazy var nickname: String? = merge(local?.nickname, remote?.nickname)
-    public lazy var organization: String? = merge(local?.organizationName, remote?.organization)
 
     public var isLocal: Bool {
         return local != nil
