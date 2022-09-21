@@ -22,15 +22,24 @@ import MailResources
 import RealmSwift
 import SwiftUI
 
+struct NestableFolder: Identifiable {
+    var id: String {
+        content.id
+    }
+
+    let content: Folder
+    let children: [NestableFolder]
+}
+
 class MenuDrawerViewModel: ObservableObject {
     /// User currently selected mailbox
     @Published var mailbox: Mailbox
     /// Other mailboxes the user owns
     @Published var mailboxes = [Mailbox]()
     /// Special folders (eg. Inbox) for the current mailbox
-    @Published var roleFolders = [Folder]()
+    @Published var roleFolders = [NestableFolder]()
     /// User created folders for the current mailbox
-    @Published var userFolders = [Folder]()
+    @Published var userFolders = [NestableFolder]()
 
     @Published var helpMenuItems = [MenuItem]()
     @Published var actionsMenuItems = [MenuItem]()
@@ -86,8 +95,18 @@ class MenuDrawerViewModel: ObservableObject {
     }
 
     private func handleFoldersUpdate(_ folders: Results<Folder>) {
-        roleFolders = folders.where { $0.role != nil }.sorted()
-        userFolders = Array(folders.where { $0.role == nil }.sorted(by: userFoldersSortDescriptors))
+        roleFolders = recCreateFolderHierarchy(folders: folders.where { $0.role != nil }.sorted())
+        userFolders = recCreateFolderHierarchy(folders: Array(folders.where { $0.role == nil }.sorted(by: userFoldersSortDescriptors)))
+    }
+
+    func recCreateFolderHierarchy(folders: [Folder]) -> [NestableFolder] {
+        var parentFolders = [NestableFolder]()
+        for folder in folders {
+            parentFolders.append(NestableFolder(content: folder,
+                                              children: recCreateFolderHierarchy(folders: folder.children.sorted())))
+        }
+
+        return parentFolders
     }
 
     func createMenuItems(with menuSheet: MenuSheet, bottomSheet: GlobalBottomSheet) {

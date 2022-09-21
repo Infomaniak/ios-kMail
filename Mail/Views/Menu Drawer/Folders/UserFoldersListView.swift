@@ -24,7 +24,7 @@ import SwiftUI
 import UIKit
 
 struct UserFoldersListView: View {
-    var folders: [Folder]
+    var folders: [NestableFolder]
 
     @State private var isExpanded = false
 

@@ -22,7 +22,7 @@ import RealmSwift
 import SwiftUI
 
 struct RoleFoldersListView: View {
-    var folders: [Folder]
+    var folders: [NestableFolder]
 
     var isCompact: Bool
 
@@ -31,7 +31,7 @@ struct RoleFoldersListView: View {
             ForEach(folders) { folder in
                 FolderCell(folder: folder, isCompact: isCompact)
 
-                if folder.role == .inbox {
+                if folder.content.role == .inbox {
                     IKDivider(withPadding: true)
                         .padding(.vertical, Constants.menuDrawerVerticalPadding)
                 }

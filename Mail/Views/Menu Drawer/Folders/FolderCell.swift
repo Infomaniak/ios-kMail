@@ -26,7 +26,7 @@ struct FolderCell: View {
     @EnvironmentObject var mailboxManager: MailboxManager
     @EnvironmentObject var navigationDrawerController: NavigationDrawerController
 
-    let folder: Folder
+    let folder: NestableFolder
     var level = 0
 
     var isCompact: Bool
@@ -37,7 +37,7 @@ struct FolderCell: View {
         Group {
             if isCompact {
                 Button(action: updateFolder) {
-                    FolderCellContent(folder: folder, level: level, selectedFolder: $splitViewManager.selectedFolder)
+                    FolderCellContent(folder: folder.content, level: level, selectedFolder: $splitViewManager.selectedFolder)
                 }
             } else {
                 NavigationLink(isActive: $shouldTransit) {
@@ -47,11 +47,11 @@ struct FolderCell: View {
                     )
                 } label: {
                     Button {
-                        splitViewManager.selectedFolder = folder.thaw()
+                        splitViewManager.selectedFolder = folder.content
                         splitViewManager.showSearch = false
                         self.shouldTransit = true
                     } label: {
-                        FolderCellContent(folder: folder, level: level, selectedFolder: $splitViewManager.selectedFolder)
+                        FolderCellContent(folder: folder.content, level: level, selectedFolder: $splitViewManager.selectedFolder)
                     }
                 }
             }
@@ -63,7 +63,7 @@ struct FolderCell: View {
     }
 
     private func updateFolder() {
-        splitViewManager.selectedFolder = folder.thaw()
+        splitViewManager.selectedFolder = folder.content
         navigationDrawerController.close()
     }
 }
@@ -115,7 +115,7 @@ struct FolderCellContent: View {
 struct FolderCellView_Previews: PreviewProvider {
     static var previews: some View {
         FolderCell(
-            folder: PreviewHelper.sampleFolder,
+            folder: NestableFolder(content: PreviewHelper.sampleFolder, children: []),
             isCompact: false
         )
         .environmentObject(PreviewHelper.sampleMailboxManager)
