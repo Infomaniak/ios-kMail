@@ -22,13 +22,13 @@ import RealmSwift
 import SwiftUI
 
 struct RoleFoldersListView: View {
-    @ObservedResults(Folder.self) var folders
+    var folders: [Folder]
 
     var isCompact: Bool
 
     var body: some View {
         VStack(spacing: 0) {
-            ForEach(Array(folders.filter { $0.role != nil }).sorted()) { folder in
+            ForEach(folders) { folder in
                 FolderCell(folder: folder, isCompact: isCompact)
 
                 if folder.role == .inbox {

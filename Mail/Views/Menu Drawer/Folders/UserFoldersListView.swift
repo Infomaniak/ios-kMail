@@ -24,19 +24,13 @@ import SwiftUI
 import UIKit
 
 struct UserFoldersListView: View {
-    @ObservedResults(Folder.self) var folders
+    var folders: [Folder]
 
     @State private var isExpanded = false
 
     @EnvironmentObject var globalAlert: GlobalAlert
 
     var isCompact: Bool
-
-    private let foldersSortDescriptors = [
-        SortDescriptor(keyPath: \Folder.isFavorite, ascending: false),
-        SortDescriptor(keyPath: \Folder.unreadCount, ascending: false),
-        SortDescriptor(keyPath: \Folder.name)
-    ]
 
     var body: some View {
         VStack(spacing: 0) {
@@ -58,7 +52,7 @@ struct UserFoldersListView: View {
             if isExpanded {
                 Spacer(minLength: Constants.menuDrawerVerticalPadding)
 
-                ForEach(folders.sorted(by: foldersSortDescriptors).filter { $0.role == nil }) { folder in
+                ForEach(folders) { folder in
                     FolderCell(folder: folder, isCompact: isCompact)
                 }
 

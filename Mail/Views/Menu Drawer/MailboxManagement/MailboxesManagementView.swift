@@ -29,7 +29,7 @@ struct MailboxesManagementView: View {
     @Binding var isExpanded: Bool
     @State private var avatarImage = Image(resource: MailResourcesAsset.placeholderAvatar)
 
-    @ObservedResults(Mailbox.self, configuration: MailboxInfosManager.instance.realmConfiguration, where: { $0.userId == AccountManager.instance.currentUserId }, sortDescriptor: SortDescriptor(keyPath: \Mailbox.mailboxId)) private var mailboxes
+    var mailboxes: [Mailbox]
 
     private var otherMailboxes: [Mailbox] {
         return mailboxes.filter { $0.mailboxId != mailboxManager.mailbox.mailboxId }
@@ -99,7 +99,7 @@ struct MailboxesManagementView: View {
 
 struct MailboxesManagementView_Previews: PreviewProvider {
     static var previews: some View {
-        MailboxesManagementView(isExpanded: .constant(false))
+        MailboxesManagementView(isExpanded: .constant(false), mailboxes: [PreviewHelper.sampleMailbox])
             .environmentObject(PreviewHelper.sampleMailboxManager)
             .previewLayout(.sizeThatFits)
             .accentColor(UserDefaults.shared.accentColor.primary.swiftUiColor)
