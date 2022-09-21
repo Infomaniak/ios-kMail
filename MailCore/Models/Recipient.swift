@@ -65,7 +65,7 @@ public class Recipient: EmbeddedObject, Codable {
     }
 
     public var contact: MergedContact? {
-        AccountManager.instance.currentContactManager?.getContact(for: email)
+        AccountManager.instance.currentContactManager?.getContact(for: self)
     }
 
     public var htmlDescription: String {

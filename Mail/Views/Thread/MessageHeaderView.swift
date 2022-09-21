@@ -61,7 +61,7 @@ struct MessageHeaderView: View {
     }
 
     private func openContact(recipient: Recipient) {
-        let isRemoteContact = AccountManager.instance.currentContactManager?.getContact(for: recipient.email)?.remote != nil
+        let isRemoteContact = AccountManager.instance.currentContactManager?.getContact(for: recipient)?.remote != nil
         bottomSheet.open(
             state: .contact(recipient, isRemote: isRemoteContact)
         )

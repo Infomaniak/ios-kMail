@@ -45,10 +45,6 @@ public class AddressBook: Object, Codable, Identifiable {
     @Persisted public var rights: String
     @Persisted public var userId: Int
 
-    public var isPrincipal: Bool {
-        return principalUri.starts(with: "principals")
-    }
-
     enum CodingKeys: String, CodingKey {
         case id
         case uuid
