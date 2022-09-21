@@ -109,36 +109,22 @@ class NavigationDrawerController: ObservableObject {
 }
 
 struct MenuDrawerView: View {
-    @Environment(\.openURL) var openURL
-
     @EnvironmentObject var splitViewManager: SplitViewManager
     @EnvironmentObject var menuSheet: MenuSheet
     @EnvironmentObject var bottomSheet: GlobalBottomSheet
 
-    // swiftlint:disable empty_count
-    @ObservedResults(Folder.self, where: { $0.parentLink.count == 0 && $0.toolType == nil }) var folders
+    @StateObject var viewModel: MenuDrawerViewModel
 
-    @ObservedRealmObject private var mailbox: Mailbox
-    @StateObject var mailboxManager: MailboxManager
+    var mailboxManager: MailboxManager
     @Binding private var showMailboxes: Bool
-
-    @State private var helpMenuItems = [MenuItem]()
-    @State private var actionsMenuItems = [MenuItem]()
 
     var isCompact: Bool
 
     init(mailboxManager: MailboxManager, showMailboxes: Binding<Bool>, isCompact: Bool) {
-        _folders = .init(Folder.self, configuration: AccountManager.instance.currentMailboxManager?.realmConfiguration) {
-            ($0.parentLink.count == 0) && ($0.toolType == nil)
-        }
-        _mailboxManager = StateObject(wrappedValue: mailboxManager)
+        _viewModel = StateObject(wrappedValue: MenuDrawerViewModel(mailboxManager: mailboxManager))
+        self.mailboxManager = mailboxManager
         _showMailboxes = showMailboxes
         self.isCompact = isCompact
-        if let liveMailbox = MailboxInfosManager.instance.getMailbox(objectId: mailboxManager.mailbox.objectId, freeze: false) {
-            mailbox = liveMailbox
-        } else {
-            mailbox = mailboxManager.mailbox
-        }
     }
 
     var body: some View {
@@ -148,32 +134,33 @@ struct MenuDrawerView: View {
 
             ScrollView {
                 VStack(spacing: 0) {
-                    MailboxesManagementView(isExpanded: $showMailboxes)
+                    MailboxesManagementView(isExpanded: $showMailboxes,
+                                            mailboxes: viewModel.mailboxes)
 
                     RoleFoldersListView(
-                        folders: $folders,
+                        folders: viewModel.roleFolders,
                         isCompact: isCompact
                     )
 
                     IKDivider(withPadding: true)
 
                     UserFoldersListView(
-                        folders: $folders,
+                        folders: viewModel.userFolders,
                         isCompact: isCompact
                     )
 
                     IKDivider(withPadding: true)
 
-                    MenuDrawerItemsListView(content: helpMenuItems)
+                    MenuDrawerItemsListView(content: viewModel.helpMenuItems)
 
                     IKDivider(withPadding: true)
 
                     MenuDrawerItemsListView(
                         title: MailResourcesStrings.Localizable.menuDrawerAdvancedActions,
-                        content: actionsMenuItems
+                        content: viewModel.actionsMenuItems
                     )
 
-                    if mailbox.isLimited, let quotas = mailbox.quotas {
+                    if viewModel.mailbox.isLimited, let quotas = viewModel.mailbox.quotas {
                         IKDivider(withPadding: true)
 
                         MailboxQuotaView(quotas: quotas)
@@ -185,57 +172,8 @@ struct MenuDrawerView: View {
         .environmentObject(mailboxManager)
         .onAppear {
             MatomoUtils.track(view: ["MenuDrawer"])
-            getMenuItems()
+            viewModel.createMenuItems(with: menuSheet, bottomSheet: bottomSheet)
         }
-    }
-
-    // MARK: - Private methods
-
-    private func getMenuItems() {
-        helpMenuItems = [
-            MenuItem(icon: MailResourcesAsset.feedbacks,
-                     label: MailResourcesStrings.Localizable.buttonFeedbacks,
-                     action: sendFeedback),
-            MenuItem(icon: MailResourcesAsset.help,
-                     label: MailResourcesStrings.Localizable.buttonHelp,
-                     action: openHelp)
-        ]
-
-        actionsMenuItems = [
-            MenuItem(icon: MailResourcesAsset.drawerDownload,
-                     label: MailResourcesStrings.Localizable.buttonImportEmails,
-                     action: importMails)
-        ]
-        if mailbox.permissions?.canRestoreEmails == true {
-            actionsMenuItems.append(.init(
-                icon: MailResourcesAsset.restoreArrow,
-                label: MailResourcesStrings.Localizable.buttonRestoreEmails,
-                action: restoreMails
-            ))
-        }
-    }
-
-    // MARK: - Menu actions
-
-    func sendFeedback() {
-        if AccountManager.instance.currentAccount?.user?.isStaff == true {
-            BugTracker.configureForMail()
-            menuSheet.state = .bugTracker
-        } else {
-            openURL(URLConstants.feedback.url)
-        }
-    }
-
-    func openHelp() {
-        menuSheet.state = .help
-    }
-
-    func importMails() {
-        openURL(URLConstants.importMails.url)
-    }
-
-    func restoreMails() {
-        bottomSheet.open(state: .restoreEmails)
     }
 }
 
