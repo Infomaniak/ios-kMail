@@ -255,7 +255,7 @@ enum SearchFieldValueType: String {
 
         guard ReachabilityListener.instance.currentStatus != .offline else {
             // Search offline
-            mailboxManager.searchThreadsOffline(
+            await mailboxManager.searchThreadsOffline(
                 searchFolder: searchFolder,
                 filterFolderId: folderToSearch,
                 searchFilters: searchFiltersOffline

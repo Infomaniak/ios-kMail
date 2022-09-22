@@ -605,6 +605,7 @@ public class MailboxManager: ObservableObject {
         return await backgroundRealm.execute { realm in
             if let liveFolder = realm.object(ofType: Folder.self, forPrimaryKey: Constants.searchFolderId) {
                 try? realm.safeWrite {
+                    realm.delete(realm.objects(Message.self).where { $0.uid.contains("offline") })
                     realm.delete(liveFolder.threads.where { $0.fromSearch == true })
                     liveFolder.threads.removeAll()
                 }
@@ -657,105 +658,76 @@ public class MailboxManager: ObservableObject {
         return threadResult
     }
 
-    public func searchThreadsOffline(@ThreadSafe searchFolder: Folder?, filterFolderId: String,
-                                     searchFilters: [SearchCondition]) {
-        let realm = getRealm()
-
-        var predicates: [NSPredicate] = []
-        for searchFilter in searchFilters {
-            switch searchFilter {
-            case let .filter(filter):
-                switch filter {
-                case .seen:
-                    predicates.append(NSPredicate(format: "seen = %@", true))
-                case .unseen:
-                    predicates.append(NSPredicate(format: "seen = %@", false))
-                case .starred:
-                    predicates.append(NSPredicate(format: "flagged = %@", true))
-                case .unstarred:
-                    predicates.append(NSPredicate(format: "flagged = %@", false))
-                default:
-                    break
-                }
-            case let .from(from):
-                predicates.append(NSPredicate(format: "ANY from.email = %@", from))
-            case let .contains(content):
-                predicates
-                    .append(NSPredicate(format: "body.value CONTAINS %@ OR subject CONTAINS %@", content, content))
-            case let .everywhere(searchEverywhere):
-                if !searchEverywhere {
-                    predicates.append(NSPredicate(format: "folderId = %@", filterFolderId))
-                }
-            case let .attachments(searchAttachments):
-                if searchAttachments {
-                    predicates.append(NSPredicate(format: "hasAttachments = %@", true))
+    public func searchThreadsOffline(searchFolder: Folder?, filterFolderId: String,
+                                     searchFilters: [SearchCondition]) async {
+        await backgroundRealm.execute { realm in
+            guard let searchFolder = searchFolder?.fresh(using: realm) else { return }
+            var predicates: [NSPredicate] = []
+            for searchFilter in searchFilters {
+                switch searchFilter {
+                case let .filter(filter):
+                    switch filter {
+                    case .seen:
+                        predicates.append(NSPredicate(format: "seen = %@", true))
+                    case .unseen:
+                        predicates.append(NSPredicate(format: "seen = %@", false))
+                    case .starred:
+                        predicates.append(NSPredicate(format: "flagged = %@", true))
+                    case .unstarred:
+                        predicates.append(NSPredicate(format: "flagged = %@", false))
+                    default:
+                        break
+                    }
+                case let .from(from):
+                    predicates.append(NSPredicate(format: "ANY from.email = %@", from))
+                case let .contains(content):
+                    predicates
+                        .append(NSPredicate(format: "body.value CONTAINS %@ OR subject CONTAINS %@", content, content))
+                case let .everywhere(searchEverywhere):
+                    if !searchEverywhere {
+                        predicates.append(NSPredicate(format: "folderId = %@", filterFolderId))
+                    }
+                case let .attachments(searchAttachments):
+                    if searchAttachments {
+                        predicates.append(NSPredicate(format: "hasAttachments = %@", true))
+                    }
                 }
             }
-        }
 
-        let compoundPredicate = NSCompoundPredicate(andPredicateWithSubpredicates: predicates)
+            let compoundPredicate = NSCompoundPredicate(andPredicateWithSubpredicates: predicates)
 
-        let query = realm.objects(Message.self).filter(compoundPredicate)
+            let query = realm.objects(Message.self).filter(compoundPredicate)
 
-        guard let searchFolder = searchFolder else {
-            return
-        }
+            // Update thread in Realm
+            try? realm.safeWrite {
+                for message in query {
+                    let newMessage = message.detached()
+                    newMessage.uid = "offline\(newMessage.uid)"
 
-        // Update thread in Realm
-        try? realm.safeWrite {
-            for message in query {
-                let newMessage = message.detached()
-//                Message(value: message.freeze())
-                newMessage.uid = "offline\(newMessage.uid)"
-//                realm.add(newMessage)
-//                realm.create(Message.self, value: newMessage)
-                let newThread = Thread(
-                    uid: "offlineThread\(message.uid)",
-                    messagesCount: 1,
-                    uniqueMessagesCount: 1,
-                    deletedMessagesCount: 0,
-                    messages: [newMessage],
-                    unseenMessages: 0,
-                    from: Array(newMessage.from),
-                    to: Array(newMessage.to),
-                    cc: Array(newMessage.cc),
-                    bcc: Array(newMessage.bcc),
-                    date: newMessage.date,
-                    hasAttachments: newMessage.hasAttachments,
-                    hasStAttachments: newMessage.hasAttachments,
-                    hasDrafts: newMessage.isDraft,
-                    flagged: newMessage.flagged,
-                    answered: newMessage.answered,
-                    forwarded: newMessage.forwarded,
-                    size: newMessage.size
-                )
-                newThread.fromSearch = true
-                searchFolder.threads.insert(newThread)
+                    let newThread = Thread(
+                        uid: "offlineThread\(message.uid)",
+                        messagesCount: 1,
+                        uniqueMessagesCount: 1,
+                        deletedMessagesCount: 0,
+                        messages: [newMessage],
+                        unseenMessages: 0,
+                        from: Array(message.from.detached()),
+                        to: Array(message.to.detached()),
+                        cc: Array(message.cc.detached()),
+                        bcc: Array(message.bcc.detached()),
+                        date: newMessage.date,
+                        hasAttachments: newMessage.hasAttachments,
+                        hasStAttachments: newMessage.hasAttachments,
+                        hasDrafts: newMessage.isDraft,
+                        flagged: newMessage.flagged,
+                        answered: newMessage.answered,
+                        forwarded: newMessage.forwarded,
+                        size: newMessage.size
+                    )
+                    newThread.fromSearch = true
+                    searchFolder.threads.insert(newThread)
+                }
             }
-//            searchFolder.threads.insert(objectsIn: query.map { message in
-//                let newMessage = Message(value: message.freeze())
-//                newMessage.uid = "offline\(newMessage.uid)"
-//                return Thread(
-//                    uid: "offlineThread\(message.uid)",
-//                    messagesCount: 1,
-//                    uniqueMessagesCount: 1,
-//                    deletedMessagesCount: 0,
-//                    messages: [newMessage],
-//                    unseenMessages: 0,
-//                    from: Array(newMessage.from),
-//                    to: Array(newMessage.to),
-//                    cc: Array(newMessage.cc),
-//                    bcc: Array(newMessage.bcc),
-//                    date: newMessage.date,
-//                    hasAttachments: newMessage.hasAttachments,
-//                    hasStAttachments: newMessage.hasAttachments,
-//                    hasDrafts: newMessage.isDraft,
-//                    flagged: newMessage.flagged,
-//                    answered: newMessage.answered,
-//                    forwarded: newMessage.forwarded,
-//                    size: newMessage.size
-//                )
-//            })
         }
     }
 
