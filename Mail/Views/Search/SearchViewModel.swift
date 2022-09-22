@@ -32,7 +32,8 @@ enum SearchFieldValueType: String {
     var mailboxManager: MailboxManager
     @Published var searchHistory: SearchHistory
     var showHistory: Bool {
-        return threads.isEmpty && contacts.isEmpty && !searchInfo.isLoading && !searchInfo.hasSearched && !searchHistory.history.isEmpty
+        return threads.isEmpty && contacts.isEmpty && !searchInfo.isLoading && !searchInfo.hasSearched && !searchHistory.history
+            .isEmpty
     }
 
     @Published public var filters: [SearchFilter]
@@ -158,6 +159,28 @@ enum SearchFieldValueType: String {
         return .all
     }
 
+    private var searchFiltersOffline: [SearchCondition] {
+        var queryItems: [SearchCondition] = []
+        queryItems.append(SearchCondition.filter(filter))
+
+        if !searchValue.isEmpty {
+            if searchValue.hasPrefix("\"") && searchValue.hasSuffix("\"") {
+                searchValueType = .contact
+            }
+            if searchValueType == .contact {
+                queryItems.append(SearchCondition.from(searchValue.replacingOccurrences(of: "\"", with: "")))
+            } else {
+                queryItems.append(SearchCondition.contains(searchValue))
+            }
+        }
+        queryItems.append(SearchCondition.everywhere(!selectedFilters.contains(.folder)))
+//        queryItems.append(URLQueryItem(name: "severywhere", value: selectedFilters.contains(.folder) ? "0" : "1"))
+
+        queryItems.append(SearchCondition.attachments(selectedFilters.contains(.attachment)))
+
+        return queryItems
+    }
+
     private func updateContactSuggestion() {
         let contactManager = AccountManager.instance.currentContactManager
         let autocompleteContacts = contactManager?.contacts(matching: searchValue) ?? []
@@ -228,6 +251,16 @@ enum SearchFieldValueType: String {
         if selectedFilters.contains(.folder) {
             folderToSearch = selectedSearchFolderId
             lastSearchFolderId = selectedSearchFolderId
+        }
+
+        guard ReachabilityListener.instance.currentStatus != .offline else {
+            // Search offline
+            mailboxManager.searchThreadsOffline(
+                searchFolder: searchFolder,
+                filterFolderId: folderToSearch,
+                searchFilters: searchFiltersOffline
+            )
+            return
         }
 
         await tryOrDisplayError {
