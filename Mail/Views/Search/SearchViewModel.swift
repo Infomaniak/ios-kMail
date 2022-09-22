@@ -260,6 +260,8 @@ enum SearchFieldValueType: String {
                 filterFolderId: folderToSearch,
                 searchFilters: searchFiltersOffline
             )
+            searchInfo.isLoading = false
+            searchInfo.hasSearched = true
             return
         }
 

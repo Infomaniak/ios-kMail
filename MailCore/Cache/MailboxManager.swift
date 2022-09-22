@@ -308,7 +308,11 @@ public class MailboxManager: ObservableObject {
     }
 
     public func move(threads: [Thread], to folder: Folder) async throws -> UndoResponse {
-        let response = try await apiFetcher.move(mailbox: mailbox, messages: threads.flatMap(\.messages), destinationId: folder._id)
+        let response = try await apiFetcher.move(
+            mailbox: mailbox,
+            messages: threads.flatMap(\.messages),
+            destinationId: folder._id
+        )
         await backgroundRealm.execute { realm in
             if let liveFolder = folder.fresh(using: realm) {
                 for thread in threads {
@@ -606,6 +610,7 @@ public class MailboxManager: ObservableObject {
             if let liveFolder = realm.object(ofType: Folder.self, forPrimaryKey: Constants.searchFolderId) {
                 try? realm.safeWrite {
                     realm.delete(realm.objects(Message.self).where { $0.uid.contains("offline") })
+                    realm.delete(realm.objects(Message.self).where { $0.fromSearch == true })
                     realm.delete(liveFolder.threads.where { $0.fromSearch == true })
                     liveFolder.threads.removeAll()
                 }
@@ -629,6 +634,12 @@ public class MailboxManager: ObservableObject {
             for thread in threadResult.threads ?? [] {
                 if realm.object(ofType: Thread.self, forPrimaryKey: thread.uid) == nil {
                     thread.fromSearch = true
+
+                    for message in thread.messages {
+                        if realm.object(ofType: Message.self, forPrimaryKey: message.uid) == nil {
+                            message.fromSearch = true
+                        }
+                    }
                 }
             }
         }
@@ -648,6 +659,12 @@ public class MailboxManager: ObservableObject {
         for thread in threadResult.threads ?? [] {
             if realm.object(ofType: Thread.self, forPrimaryKey: thread.uid) == nil {
                 thread.fromSearch = true
+
+                for message in thread.messages {
+                    if realm.object(ofType: Message.self, forPrimaryKey: message.uid) == nil {
+                        message.fromSearch = true
+                    }
+                }
             }
         }
 
@@ -999,7 +1016,8 @@ public class MailboxManager: ObservableObject {
                 try? realm.safeWrite {
                     realm.add(copyDraft, update: .modified)
                 }
-                if let draft = realm.object(ofType: Draft.self, forPrimaryKey: oldUuid), oldUuid.starts(with: Draft.uuidLocalPrefix) {
+                if let draft = realm.object(ofType: Draft.self, forPrimaryKey: oldUuid),
+                   oldUuid.starts(with: Draft.uuidLocalPrefix) {
                     // Delete local draft in Realm
                     try? realm.safeWrite {
                         realm.delete(draft)
@@ -1168,7 +1186,7 @@ public extension Realm {
 
     func safeWrite(_ block: () throws -> Void) throws {
         #if DEBUG
-        dispatchPrecondition(condition: .notOnQueue(.main))
+            dispatchPrecondition(condition: .notOnQueue(.main))
         #endif
 
         if isInWriteTransaction {
