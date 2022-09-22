@@ -227,8 +227,7 @@ enum ActionsTarget: Equatable {
             undoRedoAction = try await mailboxManager.move(thread: thread.freezeIfNeeded(), to: folder)
             snackBarMessage = MailResourcesStrings.Localizable.snackbarThreadMoved(folder.localizedName)
         case let .message(message):
-            let undo = try await mailboxManager.move(messages: [message.freezeIfNeeded()], to: folder)
-            undoRedoAction = UndoRedoAction(undo: undo, redo: nil)
+            undoRedoAction = try await mailboxManager.move(messages: [message.freezeIfNeeded()], to: folder)
             snackBarMessage = MailResourcesStrings.Localizable.snackbarMessageMoved(folder.localizedName)
         }
 
@@ -257,11 +256,11 @@ enum ActionsTarget: Equatable {
                 }
             } else {
                 // Move to trash
-                let response = try await mailboxManager.move(messages: [message.freezeIfNeeded()], to: .trash)
+                let undoRedoAction = try await mailboxManager.move(messages: [message.freezeIfNeeded()], to: .trash)
                 IKSnackBar.showCancelableSnackBar(
                     message: MailResourcesStrings.Localizable.snackbarMessageMoved(FolderRole.trash.localizedName),
                     cancelSuccessMessage: MailResourcesStrings.Localizable.snackbarMoveCancelled,
-                    undoRedoAction: UndoRedoAction(undo: response, redo: nil),
+                    undoRedoAction: undoRedoAction,
                     mailboxManager: mailboxManager
                 )
             }
@@ -357,8 +356,7 @@ enum ActionsTarget: Equatable {
             undoRedoAction = try await mailboxManager.reportSpam(thread: thread.freezeIfNeeded())
             snackBarMessage = MailResourcesStrings.Localizable.snackbarThreadMoved(FolderRole.spam.localizedName)
         case let .message(message):
-            let undo = try await mailboxManager.reportSpam(messages: [message.freezeIfNeeded()])
-            undoRedoAction = UndoRedoAction(undo: undo, redo: nil)
+            undoRedoAction = try await mailboxManager.reportSpam(messages: [message.freezeIfNeeded()])
             snackBarMessage = MailResourcesStrings.Localizable.snackbarMessageMoved(FolderRole.spam.localizedName)
         }
 
@@ -379,8 +377,7 @@ enum ActionsTarget: Equatable {
             undoRedoAction = try await mailboxManager.nonSpam(thread: thread.freezeIfNeeded())
             snackBarMessage = MailResourcesStrings.Localizable.snackbarThreadMoved(FolderRole.inbox.localizedName)
         case let .message(message):
-            let undo = try await mailboxManager.nonSpam(messages: [message.freezeIfNeeded()])
-            undoRedoAction = UndoRedoAction(undo: undo, redo: nil)
+            undoRedoAction = try await mailboxManager.nonSpam(messages: [message.freezeIfNeeded()])
             snackBarMessage = MailResourcesStrings.Localizable.snackbarMessageMoved(FolderRole.inbox.localizedName)
         }
 

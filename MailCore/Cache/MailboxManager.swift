@@ -528,8 +528,8 @@ public class MailboxManager: ObservableObject {
 
     @discardableResult
     private func moveLocally(threads: [Thread], to folder: Folder, using realm: Realm) throws -> UndoRedoAction.RedoBlock {
-        // TODO: get previous folder for each thread
-        let previousFolder = threads.first?.parent
+        let previousFolders = threads.compactMap { $0.parent?.freeze() }
+
         try realm.safeWrite {
             for thread in threads {
                 thread.parent?.unreadCount = (thread.parent?.unreadCount ?? 0) - thread.unseenMessages
@@ -542,10 +542,21 @@ public class MailboxManager: ObservableObject {
                 }
             }
         }
+
         return { [weak self] in
-            await self?.backgroundRealm.execute { realm in
-                guard let previousFolder = previousFolder else { return }
-                try? self?.moveLocally(threads: threads, to: previousFolder, using: realm)
+            // Try to do only one API call if possible
+            // FIXME: This is only a temporary solution
+            if previousFolders.allSatisfy({ $0._id == previousFolders.first?._id }),
+               let previousFolder = previousFolders.first {
+                _ = try await self?.threads(folder: previousFolder)
+            } else {
+                await withThrowingTaskGroup(of: Void.self) { group in
+                    for previousFolder in previousFolders {
+                        group.addTask { [weak self] in
+                            _ = try await self?.threads(folder: previousFolder)
+                        }
+                    }
+                }
             }
         }
     }
@@ -764,20 +775,22 @@ public class MailboxManager: ObservableObject {
         }
     }
 
-    public func move(messages: [Message], to folder: Folder) async throws -> UndoResponse {
+    public func move(messages: [Message], to folder: Folder) async throws -> UndoRedoAction {
         let response = try await apiFetcher.move(mailbox: mailbox, messages: messages, destinationId: folder._id)
 
-        await backgroundRealm.execute { realm in
+        let redoBlock = await backgroundRealm.execute { realm in
             if let folder = folder.fresh(using: realm) {
                 let messages = messages.compactMap { $0.fresh(using: realm) }
-                try? self.moveLocally(messages: messages, to: folder, using: realm)
+                return try? self.moveLocally(messages: messages, to: folder, using: realm)
+            } else {
+                return nil
             }
         }
 
-        return response
+        return UndoRedoAction(undo: response, redo: redoBlock)
     }
 
-    public func move(messages: [Message], to folderRole: FolderRole) async throws -> UndoResponse {
+    public func move(messages: [Message], to folderRole: FolderRole) async throws -> UndoRedoAction {
         guard let folder = getFolder(with: folderRole)?.freeze() else { throw MailError.folderNotFound }
         return try await move(messages: messages, to: folder)
     }
@@ -804,28 +817,32 @@ public class MailboxManager: ObservableObject {
         }
     }
 
-    public func reportSpam(messages: [Message]) async throws -> UndoResponse {
+    public func reportSpam(messages: [Message]) async throws -> UndoRedoAction {
         let response = try await apiFetcher.reportSpam(mailbox: mailbox, messages: messages)
 
-        await backgroundRealm.execute { realm in
+        let redoBlock = await backgroundRealm.execute { realm in
             if let spamFolder = self.getFolder(with: .spam, using: realm) {
-                try? self.moveLocally(messages: messages, to: spamFolder, using: realm)
+                return try? self.moveLocally(messages: messages, to: spamFolder, using: realm)
+            } else {
+                return nil
             }
         }
 
-        return response
+        return UndoRedoAction(undo: response, redo: redoBlock)
     }
 
-    public func nonSpam(messages: [Message]) async throws -> UndoResponse {
+    public func nonSpam(messages: [Message]) async throws -> UndoRedoAction {
         let response = try await apiFetcher.nonSpam(mailbox: mailbox, messages: messages)
 
-        await backgroundRealm.execute { realm in
+        let redoBlock = await backgroundRealm.execute { realm in
             if let inboxFolder = self.getFolder(with: .inbox, using: realm) {
-                try? self.moveLocally(messages: messages, to: inboxFolder, using: realm)
+                return try? self.moveLocally(messages: messages, to: inboxFolder, using: realm)
+            } else {
+                return nil
             }
         }
 
-        return response
+        return UndoRedoAction(undo: response, redo: redoBlock)
     }
 
     public func star(messages: [Message]) async throws -> MessageActionResult {
@@ -862,7 +879,10 @@ public class MailboxManager: ObservableObject {
         return response
     }
 
-    private func moveLocally(messages: [Message], to folder: Folder, using realm: Realm) throws {
+    private func moveLocally(messages: [Message], to folder: Folder, using realm: Realm) throws -> UndoRedoAction.RedoBlock {
+        // Keep a dictionary of MessageId -> FolderId in case we want to restore them
+        let previousFolders = messages.compactMap { realm.object(ofType: Folder.self, forPrimaryKey: $0.folderId)?.freeze() }
+
         try realm.safeWrite {
             for message in messages {
                 if let liveMessage = message.fresh(using: realm) {
@@ -876,6 +896,23 @@ public class MailboxManager: ObservableObject {
             liveFolder?.unreadCount = (liveFolder?.unreadCount ?? 0) + messages.filter { !$0.seen }.count
             if messages.count == 1, let thread = messages.first?.fresh(using: realm)?.parent {
                 thread.parent?.threads.remove(thread)
+            }
+        }
+
+        return { [weak self] in
+            // Try to do only one API call if possible
+            // FIXME: This is only a temporary solution
+            if previousFolders.allSatisfy({ $0._id == previousFolders.first?._id }),
+               let previousFolder = previousFolders.first {
+                _ = try await self?.threads(folder: previousFolder)
+            } else {
+                await withThrowingTaskGroup(of: Void.self) { group in
+                    for previousFolder in previousFolders {
+                        group.addTask { [weak self] in
+                            _ = try await self?.threads(folder: previousFolder)
+                        }
+                    }
+                }
             }
         }
     }
