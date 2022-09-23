@@ -742,6 +742,7 @@ public class MailboxManager: ObservableObject {
                         size: newMessage.size
                     )
                     newThread.fromSearch = true
+                    newThread.subject = message.subject
                     searchFolder.threads.insert(newThread)
                 }
             }
