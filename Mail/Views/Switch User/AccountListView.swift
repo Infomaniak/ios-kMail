@@ -16,26 +16,62 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import InfomaniakCore
 import MailCore
 import MailResources
+import RealmSwift
 import SwiftUI
 
-class AccountListSheet: SheetState<AccountListSheet.State> {
-    enum State {
-        case addAccount
+extension Account: Hashable {
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(id)
+    }
+}
+
+class AccountListViewModel: ObservableObject {
+    @Published var expandedUserId: Int? = AccountManager.instance.currentUserId
+    @Published var isShowingNewAccountView = false
+    @Published var accounts = [Account: [Mailbox]]()
+
+    private var mailboxObservationToken: NotificationToken?
+
+    init() {
+        mailboxObservationToken = MailboxInfosManager.instance.getRealm()
+            .objects(Mailbox.self)
+            .sorted(by: \.mailboxId)
+            .observe(on: DispatchQueue.main) { [weak self] results in
+                switch results {
+                case .initial(let mailboxes):
+                    self?.handleMailboxChanged(Array(mailboxes))
+                case .update(let mailboxes, _, _, _):
+                    withAnimation {
+                        self?.handleMailboxChanged(Array(mailboxes))
+                    }
+                case .error:
+                    break
+                }
+            }
+    }
+
+    private func handleMailboxChanged(_ mailboxes: [Mailbox]) {
+        for account in AccountManager.instance.accounts {
+            accounts[account] = mailboxes.filter { $0.userId == account.userId }
+        }
     }
 }
 
 struct AccountListView: View {
-    @State private var expandedUserId: Int? = AccountManager.instance.currentUserId
-
-    @StateObject private var sheet = AccountListSheet()
+    @StateObject private var viewModel = AccountListViewModel()
 
     var body: some View {
         ScrollView {
             VStack {
-                ForEach(AccountManager.instance.accounts) { account in
-                    AccountCellView(account: account, expandedUserId: $expandedUserId)
+                ForEach(Array(viewModel.accounts.keys)) { account in
+                    if let mailboxes = viewModel.accounts[account] {
+                        AccountCellView(account: account,
+                                        expandedUserId: $viewModel.expandedUserId,
+                                        mailboxes: mailboxes)
+                    }
                 }
             }
             .padding(8)
@@ -43,15 +79,10 @@ struct AccountListView: View {
         .background(MailResourcesAsset.backgroundColor.swiftUiColor)
         .navigationBarTitle(MailResourcesStrings.Localizable.titleMyAccounts, displayMode: .inline)
         .floatingActionButton(icon: Image(systemName: "plus"), title: MailResourcesStrings.Localizable.buttonAddAccount) {
-            sheet.state = .addAccount
+            viewModel.isShowingNewAccountView = true
         }
-        .sheet(isPresented: $sheet.isShowing) {
-            switch sheet.state {
-            case .addAccount:
-                OnboardingView(isPresentedModally: true, page: 4)
-            case .none:
-                EmptyView()
-            }
+        .sheet(isPresented: $viewModel.isShowingNewAccountView) {
+            OnboardingView(isPresentedModally: true, page: 4)
         }
         .task {
             try? await updateUsers()
@@ -65,7 +96,6 @@ struct AccountListView: View {
                     _ = try await AccountManager.instance.updateUser(for: account, registerToken: false)
                 }
             }
-            try await group.waitForAll()
         }
     }
 }
