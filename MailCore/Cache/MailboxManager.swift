@@ -685,13 +685,13 @@ public class MailboxManager: ObservableObject {
                 case let .filter(filter):
                     switch filter {
                     case .seen:
-                        predicates.append(NSPredicate(format: "seen = %@", true))
+                        predicates.append(NSPredicate(format: "seen = true"))
                     case .unseen:
-                        predicates.append(NSPredicate(format: "seen = %@", false))
+                        predicates.append(NSPredicate(format: "seen = false"))
                     case .starred:
-                        predicates.append(NSPredicate(format: "flagged = %@", true))
+                        predicates.append(NSPredicate(format: "flagged = true"))
                     case .unstarred:
-                        predicates.append(NSPredicate(format: "flagged = %@", false))
+                        predicates.append(NSPredicate(format: "flagged = false"))
                     default:
                         break
                     }
@@ -706,7 +706,7 @@ public class MailboxManager: ObservableObject {
                     }
                 case let .attachments(searchAttachments):
                     if searchAttachments {
-                        predicates.append(NSPredicate(format: "hasAttachments = %@", true))
+                        predicates.append(NSPredicate(format: "hasAttachments = true"))
                     }
                 }
             }
