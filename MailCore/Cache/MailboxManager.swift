@@ -876,6 +876,7 @@ public class MailboxManager: ObservableObject {
             if let savedDraft = realm.object(ofType: Draft.self, forPrimaryKey: draft.uuid) {
                 draft.isOffline = savedDraft.isOffline
                 draft.didSetSignature = savedDraft.didSetSignature
+                draft.messageUid = message.uid
             }
 
             // Update draft in Realm
@@ -989,11 +990,14 @@ public class MailboxManager: ObservableObject {
 
             guard let folder = self.getFolder(with: .draft, using: realm) else { return }
 
+            let messagesList = realm.objects(Message.self).where { $0.folderId == folder.id }
             for draft in draftOffline {
-                let thread = Thread(draft: draft)
-                let from = Recipient(email: self.mailbox.email, name: self.mailbox.emailIdn)
-                thread.from.append(from)
-                offlineDraftThread.append(thread)
+                if !messagesList.contains(where: { $0.uid == draft.messageUid }) {
+                    let thread = Thread(draft: draft)
+                    let from = Recipient(email: self.mailbox.email, name: self.mailbox.emailIdn)
+                    thread.from.append(from)
+                    offlineDraftThread.append(thread)
+                }
             }
 
             // Update message in Realm
@@ -1096,7 +1100,7 @@ public extension Realm {
 
     func safeWrite(_ block: () throws -> Void) throws {
         #if DEBUG
-        dispatchPrecondition(condition: .notOnQueue(.main))
+            dispatchPrecondition(condition: .notOnQueue(.main))
         #endif
 
         if isInWriteTransaction {
