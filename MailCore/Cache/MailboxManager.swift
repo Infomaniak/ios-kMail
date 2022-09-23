@@ -609,7 +609,6 @@ public class MailboxManager: ObservableObject {
         return await backgroundRealm.execute { realm in
             if let liveFolder = realm.object(ofType: Folder.self, forPrimaryKey: Constants.searchFolderId) {
                 try? realm.safeWrite {
-                    realm.delete(realm.objects(Message.self).where { $0.uid.contains("offline") })
                     realm.delete(realm.objects(Message.self).where { $0.fromSearch == true })
                     realm.delete(liveFolder.threads.where { $0.fromSearch == true })
                     liveFolder.threads.removeAll()
@@ -720,6 +719,7 @@ public class MailboxManager: ObservableObject {
                 for message in query {
                     let newMessage = message.detached()
                     newMessage.uid = "offline\(newMessage.uid)"
+                    newMessage.fromSearch = true
 
                     let newThread = Thread(
                         uid: "offlineThread\(message.uid)",
