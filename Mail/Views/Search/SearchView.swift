@@ -80,9 +80,17 @@ struct SearchView: View {
 
                     if !viewModel.threads.isEmpty {
                         threadList(threads: viewModel.threads)
-                    } else if viewModel.searchInfo.hasSearched {
-                        // TODO: - Add no result view
-                        EmptyView()
+                    } else if viewModel.searchInfo.hasSearched && !viewModel.searchInfo.isLoading {
+                        VStack {
+                            Spacer()
+                            HStack {
+                                Spacer()
+                                SearchNoResultView()
+                                Spacer()
+                            }
+                            Spacer()
+                        }
+                        .listRowSeparator(.hidden)
                     }
 
                     if viewModel.searchInfo.isLoading {

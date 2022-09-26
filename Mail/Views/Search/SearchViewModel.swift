@@ -261,8 +261,7 @@ enum SearchFieldValueType: String {
                 searchFilters: searchFiltersOffline
             )
 
-            searchInfo.isLoading = false
-            searchInfo.hasSearched = true
+            
             return
         }
 
@@ -276,8 +275,6 @@ enum SearchFieldValueType: String {
 
             resourceNext = result.resourceNext
 
-            searchInfo.isLoading = false
-            searchInfo.hasSearched = true
         }
         if !searchValue.isEmpty {
             searchHistory = await mailboxManager.update(searchHistory: searchHistory, with: searchValue)
@@ -310,9 +307,13 @@ enum SearchFieldValueType: String {
                 switch changes {
                 case let .initial(results):
                     self?.threads = Array(results.freezeIfNeeded())
+                    self?.searchInfo.isLoading = false
+                    self?.searchInfo.hasSearched = true
                 case let .update(results, _, _, _):
                     withAnimation {
                         self?.threads = Array(results.freezeIfNeeded())
+                        self?.searchInfo.isLoading = false
+                        self?.searchInfo.hasSearched = true
                     }
                 case .error:
                     break
