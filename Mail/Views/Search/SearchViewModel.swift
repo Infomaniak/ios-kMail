@@ -260,6 +260,7 @@ enum SearchFieldValueType: String {
                 filterFolderId: folderToSearch,
                 searchFilters: searchFiltersOffline
             )
+
             searchInfo.isLoading = false
             searchInfo.hasSearched = true
             return
@@ -275,11 +276,11 @@ enum SearchFieldValueType: String {
 
             resourceNext = result.resourceNext
 
-            if !searchValue.isEmpty {
-                searchHistory = await mailboxManager.update(searchHistory: searchHistory, with: searchValue)
-            }
             searchInfo.isLoading = false
             searchInfo.hasSearched = true
+        }
+        if !searchValue.isEmpty {
+            searchHistory = await mailboxManager.update(searchHistory: searchHistory, with: searchValue)
         }
     }
 
