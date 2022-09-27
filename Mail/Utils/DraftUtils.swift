@@ -30,7 +30,7 @@ class DraftUtils {
             menuSheet.wrappedValue.editedMessageDraft = draft
             sheetPresented = true
         } else if let localDraft = mailboxManager.localDraft(uuid: thread.uid)?.detached() {
-            menuSheet.state = .editMessage(draft: localDraft)
+            menuSheet.wrappedValue.editedMessageDraft = localDraft
             sheetPresented = true
         }
 
