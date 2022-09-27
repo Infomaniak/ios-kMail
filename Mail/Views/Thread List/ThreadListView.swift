@@ -23,12 +23,12 @@ import RealmSwift
 import SwiftUI
 
 class MenuSheet: SheetState<MenuSheet.State> {
-    var isShowingComposeNewMessageView = false
-    
+    @Published var isShowingComposeNewMessageView = false
+    @Published var isShowingManageAccount = false
+
     enum State: Equatable {
         case reply(Message, ReplyMode)
         case editMessage(draft: Draft)
-        case manageAccount
         case switchAccount
         case settings
         case help

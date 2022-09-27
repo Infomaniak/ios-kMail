@@ -148,7 +148,10 @@ struct SplitView: View {
             splitViewController.preferredDisplayMode = .twoDisplaceSecondary
         }
         .sheet(isPresented: $menuSheet.isShowingComposeNewMessageView) {
-            NewMessageView(isPresented: $menuSheet.isShowing, mailboxManager: mailboxManager)
+            NewMessageView(isPresented: $menuSheet.isShowingComposeNewMessageView, mailboxManager: mailboxManager)
+        }
+        .sheet(isPresented: $menuSheet.isShowingManageAccount) {
+            AccountView()
         }
         .sheet(isPresented: $menuSheet.isShowing) {
             switch menuSheet.state {
@@ -162,8 +165,6 @@ struct SplitView: View {
                 )
             case let .editMessage(draft):
                 NewMessageView(isPresented: $menuSheet.isShowing, mailboxManager: mailboxManager, draft: draft.asUnmanaged())
-            case .manageAccount:
-                AccountView(isPresented: $menuSheet.isShowing)
             case .switchAccount:
                 SheetView(isPresented: $menuSheet.isShowing) {
                     AccountListView()
