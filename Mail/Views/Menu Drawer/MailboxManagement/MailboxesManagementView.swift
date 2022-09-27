@@ -75,7 +75,7 @@ struct MailboxesManagementView: View {
                         menuSheet.isShowingManageAccount.toggle()
                     }
                     MailboxesManagementButtonView(text: MailResourcesStrings.Localizable.buttonAccountSwitch) {
-                        menuSheet.state = .switchAccount
+                        menuSheet.isShowingSwitchAccount.toggle()
                     }
                 }
                 .task {

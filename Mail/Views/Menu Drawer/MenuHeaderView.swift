@@ -34,7 +34,7 @@ struct MenuHeaderView: View {
             Spacer()
 
             Button {
-                sheet.state = .settings
+                sheet.isShowingSettings.toggle()
             } label: {
                 Image(resource: MailResourcesAsset.cog)
                     .resizable()

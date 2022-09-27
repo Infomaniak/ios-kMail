@@ -153,6 +153,21 @@ struct SplitView: View {
         .sheet(isPresented: $menuSheet.isShowingManageAccount) {
             AccountView()
         }
+        .sheet(isPresented: $menuSheet.isShowingSettings) {
+            SheetView {
+                SettingsView(viewModel: GeneralSettingsViewModel())
+            }
+        }
+        .sheet(isPresented: $menuSheet.isShowingSwitchAccount) {
+            SheetView {
+                SettingsView(viewModel: GeneralSettingsViewModel())
+            }
+        }
+        .sheet(isPresented: $menuSheet.isShowingHelp) {
+            SheetView {
+                HelpView()
+            }
+        }
         .sheet(isPresented: $menuSheet.isShowing) {
             switch menuSheet.state {
             case let .reply(message, replyMode):
@@ -164,19 +179,7 @@ struct SplitView: View {
                     draft: .replying(to: freshMessage, mode: replyMode)
                 )
             case let .editMessage(draft):
-                NewMessageView(isPresented: $menuSheet.isShowing, mailboxManager: mailboxManager, draft: draft.asUnmanaged())
-            case .switchAccount:
-                SheetView(isPresented: $menuSheet.isShowing) {
-                    AccountListView()
-                }
-            case .settings:
-                SheetView(isPresented: $menuSheet.isShowing) {
-                    SettingsView(viewModel: GeneralSettingsViewModel())
-                }
-            case .help:
-                SheetView(isPresented: $menuSheet.isShowing) {
-                    HelpView()
-                }
+                NewMessageView(isPresented: $menuSheet.isShowing, mailboxManager: mailboxManager, draft: draft.asUnmanaged())                
             case .bugTracker:
                 BugTrackerView(isPresented: $menuSheet.isShowing)
             case .none:

@@ -148,7 +148,7 @@ class MenuDrawerViewModel: ObservableObject {
     }
 
     private func openHelp() {
-        menuSheet?.state = .help
+        menuSheet?.isShowingHelp.toggle()
     }
 
     private func importMails() {
