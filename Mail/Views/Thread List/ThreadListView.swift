@@ -187,11 +187,12 @@ private struct ThreadListToolbar: ViewModifier {
     @ObservedObject var bottomSheet: ThreadBottomSheet
     @ObservedObject var multipleSelectionViewModel: ThreadListMultipleSelectionViewModel
 
+    @State private var isShowingSwitchAccount = false
+
     @Binding var avatarImage: Image
     @Binding var observeThread: Bool
 
     @EnvironmentObject var splitViewManager: SplitViewManager
-    @Environment(\.globalSheetState) var menuSheet
     @EnvironmentObject var navigationDrawerController: NavigationDrawerController
 
     @Binding var navigationController: UINavigationController?
@@ -242,7 +243,7 @@ private struct ThreadListToolbar: ViewModifier {
                             }
 
                             Button {
-                                menuSheet.wrappedValue.isShowingSwitchAccount.toggle()
+                                isShowingSwitchAccount.toggle()
                             } label: {
                                 avatarImage
                                     .resizable()
@@ -281,6 +282,11 @@ private struct ThreadListToolbar: ViewModifier {
                         : ""
                 )
                 .navigationBarTitleDisplayMode(.inline)
+        }
+        .sheet(isPresented: $isShowingSwitchAccount) {
+            SheetView {
+                AccountListView()
+            }
         }
     }
 }

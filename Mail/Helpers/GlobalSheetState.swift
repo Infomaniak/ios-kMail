@@ -22,9 +22,7 @@ import SwiftUI
 
 struct GlobalSheetState {
     var isShowingComposeNewMessageView = false
-    var isShowingManageAccount = false
     var isShowingSettings = false
-    var isShowingSwitchAccount = false
     var isShowingHelp = false
     var isShowingBugTracker = false
     var editedMessageDraft: Draft?

@@ -149,15 +149,7 @@ struct SplitView: View {
         .sheet(isPresented: $menuSheet.isShowingComposeNewMessageView) {
             NewMessageView(mailboxManager: mailboxManager)
         }
-        .sheet(isPresented: $menuSheet.isShowingManageAccount) {
-            AccountView()
-        }
         .sheet(isPresented: $menuSheet.isShowingSettings) {
-            SheetView {
-                SettingsView(viewModel: GeneralSettingsViewModel())
-            }
-        }
-        .sheet(isPresented: $menuSheet.isShowingSwitchAccount) {
             SheetView {
                 SettingsView(viewModel: GeneralSettingsViewModel())
             }
