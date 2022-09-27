@@ -147,10 +147,11 @@ struct SplitView: View {
             setupBehaviour(orientation: interfaceOrientation)
             splitViewController.preferredDisplayMode = .twoDisplaceSecondary
         }
+        .sheet(isPresented: $menuSheet.isShowingComposeNewMessageView) {
+            NewMessageView(isPresented: $menuSheet.isShowing, mailboxManager: mailboxManager)
+        }
         .sheet(isPresented: $menuSheet.isShowing) {
             switch menuSheet.state {
-            case .newMessage:
-                NewMessageView(isPresented: $menuSheet.isShowing, mailboxManager: mailboxManager)
             case let .reply(message, replyMode):
                 // If message doesn't exist anymore try to show the frozen one
                 let freshMessage = message.fresh(using: mailboxManager.getRealm()) ?? message
