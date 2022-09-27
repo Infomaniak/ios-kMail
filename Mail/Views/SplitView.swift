@@ -147,7 +147,7 @@ struct SplitView: View {
             splitViewController.preferredDisplayMode = .twoDisplaceSecondary
         }
         .sheet(isPresented: $menuSheet.isShowingComposeNewMessageView) {
-            NewMessageView(isPresented: $menuSheet.isShowingComposeNewMessageView, mailboxManager: mailboxManager)
+            NewMessageView(mailboxManager: mailboxManager)
         }
         .sheet(isPresented: $menuSheet.isShowingManageAccount) {
             AccountView()
@@ -170,18 +170,16 @@ struct SplitView: View {
         .sheet(isPresented: $menuSheet.isShowingBugTracker) {
             BugTrackerView(isPresented: $menuSheet.isShowingBugTracker)
         }
+        .sheet(item: $menuSheet.editedMessageDraft) { draft in
+            NewMessageView(mailboxManager: mailboxManager, draft: draft.asUnmanaged())
+        }
         .sheet(isPresented: $menuSheet.isShowing) {
             switch menuSheet.state {
             case let .reply(message, replyMode):
                 // If message doesn't exist anymore try to show the frozen one
                 let freshMessage = message.fresh(using: mailboxManager.getRealm()) ?? message
-                NewMessageView(
-                    isPresented: $menuSheet.isShowing,
-                    mailboxManager: mailboxManager,
-                    draft: .replying(to: freshMessage, mode: replyMode)
-                )
-            case let .editMessage(draft):
-                NewMessageView(isPresented: $menuSheet.isShowing, mailboxManager: mailboxManager, draft: draft.asUnmanaged())
+                NewMessageView(mailboxManager: mailboxManager,
+                               draft: .replying(to: freshMessage, mode: replyMode))
             case .none:
                 EmptyView()
             }

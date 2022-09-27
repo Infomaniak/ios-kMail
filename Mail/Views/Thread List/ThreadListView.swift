@@ -29,10 +29,10 @@ class MenuSheet: SheetState<MenuSheet.State> {
     @Published var isShowingSwitchAccount = false
     @Published var isShowingHelp = false
     @Published var isShowingBugTracker = false
+    @Published var editedMessageDraft: Draft?
 
     enum State: Equatable {
         case reply(Message, ReplyMode)
-        case editMessage(draft: Draft)
     }
 }
 

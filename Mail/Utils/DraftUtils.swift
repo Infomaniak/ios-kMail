@@ -26,7 +26,7 @@ class DraftUtils {
 
         // If we already have the draft locally, present it directly
         if let draft = mailboxManager.draft(messageUid: message.uid)?.detached() {
-            menuSheet.state = .editMessage(draft: draft)
+            menuSheet.editedMessageDraft = draft
             sheetPresented = true
         } else if let localDraft = mailboxManager.localDraft(uuid: thread.uid)?.detached() {
             menuSheet.state = .editMessage(draft: localDraft)
@@ -37,7 +37,7 @@ class DraftUtils {
         Task { [sheetPresented] in
             let draft = try await mailboxManager.draft(from: message)
             if !sheetPresented {
-                menuSheet.state = .editMessage(draft: draft)
+                menuSheet.editedMessageDraft = draft
             }
         }
     }

@@ -51,7 +51,7 @@ class NewMessageAlert: SheetState<NewMessageAlert.State> {
 }
 
 struct NewMessageView: View {
-    @Binding var isPresented: Bool
+    @Environment(\.dismiss) private var dismiss
 
     @State private var mailboxManager: MailboxManager
     @State private var selectedMailboxItem = 0
@@ -61,7 +61,7 @@ struct NewMessageView: View {
     @FocusState private var focusedRecipientField: RecipientFieldType?
     @State private var addRecipientHandler: ((Recipient) -> Void)?
     @State private var autocompletion: [Recipient] = []
-    @State private var sendDisabled = false
+    private var sendDisabled = false
     @State private var draftHasChanged = false
     @State private var isShowingCamera = false
 
@@ -76,11 +76,11 @@ struct NewMessageView: View {
         return !autocompletion.isEmpty && focusedRecipientField != nil
     }
 
-    init(isPresented: Binding<Bool>, mailboxManager: MailboxManager, draft: UnmanagedDraft? = nil) {
-        _isPresented = isPresented
-        self.mailboxManager = mailboxManager
-        selectedMailboxItem = AccountManager.instance.mailboxes
+    init(mailboxManager: MailboxManager, draft: UnmanagedDraft? = nil) {
+        _mailboxManager = State(initialValue: mailboxManager)
+        let selectedMailboxItem = AccountManager.instance.mailboxes
             .firstIndex { $0.mailboxId == mailboxManager.mailbox.mailboxId } ?? 0
+        _selectedMailboxItem = State(initialValue: selectedMailboxItem)
         var initialDraft = draft ?? UnmanagedDraft()
         if let signatureResponse = mailboxManager.getSignatureResponse() {
             if !initialDraft.didSetSignature {
@@ -92,7 +92,7 @@ struct NewMessageView: View {
             sendDisabled = true
         }
         initialDraft.delay = UserDefaults.shared.cancelSendDelay.rawValue
-        self.draft = initialDraft
+        _draft = State(initialValue: initialDraft)
     }
 
     var body: some View {
@@ -274,10 +274,6 @@ struct NewMessageView: View {
         }
         NewMessageView.queue.asyncAfter(deadline: .now() + saveExpiration, execute: debouncedWorkItem)
         debouncedBufferWrite = debouncedWorkItem
-    }
-
-    private func dismiss() {
-        isPresented = false
     }
 
     private func shouldDisplay(field: RecipientFieldType) -> Bool {
@@ -472,9 +468,6 @@ struct NewMessageView: View {
 
 struct NewMessageView_Previews: PreviewProvider {
     static var previews: some View {
-        NewMessageView(
-            isPresented: .constant(true),
-            mailboxManager: PreviewHelper.sampleMailboxManager
-        )
+        NewMessageView(mailboxManager: PreviewHelper.sampleMailboxManager)
     }
 }
