@@ -93,6 +93,7 @@ public struct UnmanagedDraft: Equatable, Encodable, AbstractDraft {
     public var forwardedUid: String?
     public var attachments: [Attachment]?
     public var identityId: String
+    public var messageUid: String?
     public var ackRequest = false
     public var stUuid: String?
     // uid?
@@ -147,6 +148,7 @@ public struct UnmanagedDraft: Equatable, Encodable, AbstractDraft {
                 forwardedUid: String? = nil,
                 attachments: [Attachment]? = nil,
                 identityId: String = "",
+                messageUid: String? = nil,
                 ackRequest: Bool = false,
                 stUuid: String? = nil,
                 priority: MessagePriority = .normal,
@@ -168,6 +170,7 @@ public struct UnmanagedDraft: Equatable, Encodable, AbstractDraft {
         self.forwardedUid = forwardedUid
         self.attachments = attachments
         self.identityId = identityId
+        self.messageUid = messageUid
         self.ackRequest = ackRequest
         self.stUuid = stUuid
         self.priority = priority
@@ -270,6 +273,7 @@ public struct UnmanagedDraft: Equatable, Encodable, AbstractDraft {
     public func asManaged() -> Draft {
         return Draft(uuid: uuid,
                      identityId: identityId,
+                     messageUid: messageUid,
                      inReplyToUid: inReplyToUid,
                      forwardedUid: forwardedUid,
                      inReplyTo: inReplyTo,
@@ -438,6 +442,7 @@ public class Draft: Object, Decodable, Identifiable, AbstractDraft {
                               inReplyToUid: inReplyToUid,
                               forwardedUid: forwardedUid,
                               identityId: identityId ?? "",
+                              messageUid: messageUid,
                               ackRequest: ackRequest,
                               stUuid: stUuid,
                               priority: priority,

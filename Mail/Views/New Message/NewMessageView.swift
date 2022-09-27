@@ -249,18 +249,16 @@ struct NewMessageView: View {
             Task {
                 self.draft.body = html!
 
-                do {
-                    let response = try await mailboxManager.save(draft: draft)
-                    self.draft.uuid = response.uuid
-                    draftHasChanged = false
-                    if showSnackBar {
-                        IKSnackBar.showSnackBar(message: MailResourcesStrings.Localizable.snackBarDraftSaved,
-                                                action: .init(title: MailResourcesStrings.Localizable.actionDelete) {
-                                                    deleteDraft(messageUid: response.uid)
-                                                })
-                    }
-                } catch {
+                let response = try await mailboxManager.save(draft: draft)
+                self.draft.uuid = response.uuid
+                draftHasChanged = false
+                if let error = response.error {
                     IKSnackBar.showSnackBar(message: error.localizedDescription)
+                } else if showSnackBar {
+                    IKSnackBar.showSnackBar(message: MailResourcesStrings.Localizable.snackBarDraftSaved,
+                                            action: .init(title: MailResourcesStrings.Localizable.actionDelete) {
+                                                deleteDraft(messageUid: response.uuid)
+                                            })
                 }
             }
         }

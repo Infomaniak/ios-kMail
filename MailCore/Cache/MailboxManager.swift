@@ -928,6 +928,7 @@ public class MailboxManager: ObservableObject {
             if let savedDraft = realm.object(ofType: Draft.self, forPrimaryKey: draft.uuid) {
                 draft.isOffline = savedDraft.isOffline
                 draft.didSetSignature = savedDraft.didSetSignature
+                draft.messageUid = message.uid
             }
 
             // Update draft in Realm
@@ -944,10 +945,15 @@ public class MailboxManager: ObservableObject {
         return realm.objects(Draft.self).where { $0.messageUid == messageUid }.first
     }
 
+    public func localDraft(uuid: String, using realm: Realm? = nil) -> Draft? {
+        let realm = realm ?? getRealm()
+        return realm.objects(Draft.self).where { $0.uuid == uuid }.first
+    }
+
     public func send(draft: UnmanagedDraft) async throws -> CancelResponse {
         // If the draft has no UUID, we save it first
         if draft.uuid.isEmpty {
-            _ = try await save(draft: draft)
+            _ = await save(draft: draft)
         }
         var draft = draft
         draft.action = .send
@@ -958,7 +964,7 @@ public class MailboxManager: ObservableObject {
         return cancelableResponse
     }
 
-    public func save(draft: UnmanagedDraft) async throws -> DraftResponse {
+    public func save(draft: UnmanagedDraft) async -> (uuid: String, error: Error?) {
         var draft = draft
         draft.action = .save
         do {
@@ -983,8 +989,7 @@ public class MailboxManager: ObservableObject {
                     }
                 }
             }
-
-            return saveResponse
+            return (draft.uuid, nil)
         } catch {
             let draft = draft.asManaged()
             if draft.uuid.isEmpty {
@@ -1000,8 +1005,7 @@ public class MailboxManager: ObservableObject {
                     realm.add(copyDraft, update: .modified)
                 }
             }
-
-            throw error
+            return (draft.uuid, error)
         }
     }
 
@@ -1038,11 +1042,14 @@ public class MailboxManager: ObservableObject {
 
             guard let folder = self.getFolder(with: .draft, using: realm) else { return }
 
+            let messagesList = realm.objects(Message.self).where { $0.folderId == folder.id }
             for draft in draftOffline {
-                let thread = Thread(draft: draft)
-                let from = Recipient(email: self.mailbox.email, name: self.mailbox.emailIdn)
-                thread.from.append(from)
-                offlineDraftThread.append(thread)
+                if !messagesList.contains(where: { $0.uid == draft.messageUid }) {
+                    let thread = Thread(draft: draft)
+                    let from = Recipient(email: self.mailbox.email, name: self.mailbox.emailIdn)
+                    thread.from.append(from)
+                    offlineDraftThread.append(thread)
+                }
             }
 
             // Update message in Realm
@@ -1145,7 +1152,7 @@ public extension Realm {
 
     func safeWrite(_ block: () throws -> Void) throws {
         #if DEBUG
-        dispatchPrecondition(condition: .notOnQueue(.main))
+            dispatchPrecondition(condition: .notOnQueue(.main))
         #endif
 
         if isInWriteTransaction {

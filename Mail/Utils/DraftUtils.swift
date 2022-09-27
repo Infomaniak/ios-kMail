@@ -28,6 +28,9 @@ class DraftUtils {
         if let draft = mailboxManager.draft(messageUid: message.uid)?.detached() {
             menuSheet.state = .editMessage(draft: draft)
             sheetPresented = true
+        } else if let localDraft = mailboxManager.localDraft(uuid: thread.uid)?.detached() {
+            menuSheet.state = .editMessage(draft: localDraft)
+            sheetPresented = true
         }
 
         // Update the draft
