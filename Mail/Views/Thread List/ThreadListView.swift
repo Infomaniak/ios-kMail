@@ -22,7 +22,7 @@ import MailResources
 import RealmSwift
 import SwiftUI
 
-class MenuSheet: SheetState<MenuSheet.State> {
+class MenuSheet: ObservableObject {
     @Published var isShowingComposeNewMessageView = false
     @Published var isShowingManageAccount = false
     @Published var isShowingSettings = false
@@ -30,9 +30,15 @@ class MenuSheet: SheetState<MenuSheet.State> {
     @Published var isShowingHelp = false
     @Published var isShowingBugTracker = false
     @Published var editedMessageDraft: Draft?
+    @Published var messageReply: MessageReply?
 
-    enum State: Equatable {
-        case reply(Message, ReplyMode)
+    struct MessageReply: Identifiable {
+        var id: ObjectIdentifier {
+            return message.id
+        }
+
+        let message: Message
+        let replyMode: ReplyMode
     }
 }
 
@@ -148,7 +154,7 @@ struct ThreadListView: View {
                             target: target,
                             state: bottomSheet,
                             globalSheet: globalBottomSheet) { message, replyMode in
-                    menuSheet.state = .reply(message, replyMode)
+                    menuSheet.messageReply = MenuSheet.MessageReply(message: message, replyMode: replyMode)
                 } completionHandler: {
                     bottomSheet.close()
                     multipleSelectionViewModel.isEnabled = false

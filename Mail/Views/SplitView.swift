@@ -173,16 +173,12 @@ struct SplitView: View {
         .sheet(item: $menuSheet.editedMessageDraft) { draft in
             NewMessageView(mailboxManager: mailboxManager, draft: draft.asUnmanaged())
         }
-        .sheet(isPresented: $menuSheet.isShowing) {
-            switch menuSheet.state {
-            case let .reply(message, replyMode):
-                // If message doesn't exist anymore try to show the frozen one
-                let freshMessage = message.fresh(using: mailboxManager.getRealm()) ?? message
-                NewMessageView(mailboxManager: mailboxManager,
-                               draft: .replying(to: freshMessage, mode: replyMode))
-            case .none:
-                EmptyView()
-            }
+        .sheet(item: $menuSheet.messageReply) { messageReply in
+            // If message doesn't exist anymore try to show the frozen one
+            let message = messageReply.message
+            let freshMessage = message.fresh(using: mailboxManager.getRealm()) ?? message
+            NewMessageView(mailboxManager: mailboxManager,
+                           draft: .replying(to: freshMessage, mode: messageReply.replyMode))
         }
         .environmentObject(bottomSheet)
         .environmentObject(alert)

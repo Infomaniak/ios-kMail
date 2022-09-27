@@ -122,7 +122,7 @@ struct SearchView: View {
                             target: target,
                             state: bottomSheet,
                             globalSheet: globalBottomSheet) { message, replyMode in
-                    menuSheet.state = .reply(message, replyMode)
+                    menuSheet.messageReply = MenuSheet.MessageReply(message: message, replyMode: replyMode)
                 }
             }
         }
