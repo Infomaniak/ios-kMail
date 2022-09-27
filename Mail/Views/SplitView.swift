@@ -154,14 +154,6 @@ struct SplitView: View {
                 SettingsView(viewModel: GeneralSettingsViewModel())
             }
         }
-        .sheet(isPresented: $menuSheet.isShowingHelp) {
-            SheetView {
-                HelpView()
-            }
-        }
-        .sheet(isPresented: $menuSheet.isShowingBugTracker) {
-            BugTrackerView(isPresented: $menuSheet.isShowingBugTracker)
-        }
         .sheet(item: $menuSheet.editedMessageDraft) { draft in
             NewMessageView(mailboxManager: mailboxManager, draft: draft.asUnmanaged())
         }

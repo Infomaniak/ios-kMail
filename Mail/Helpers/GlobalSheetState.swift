@@ -23,8 +23,6 @@ import SwiftUI
 struct GlobalSheetState {
     var isShowingComposeNewMessageView = false
     var isShowingSettings = false
-    var isShowingHelp = false
-    var isShowingBugTracker = false
     var editedMessageDraft: Draft?
     var messageReply: MessageReply?
 

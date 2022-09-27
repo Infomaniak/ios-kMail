@@ -43,8 +43,9 @@ class MenuDrawerViewModel: ObservableObject {
 
     @Published var helpMenuItems = [MenuItem]()
     @Published var actionsMenuItems = [MenuItem]()
+    @Published var isShowingHelp = false
+    @Published var isShowingBugTracker = false
 
-    private var menuSheet: Binding<GlobalSheetState>?
     private var bottomSheet: GlobalBottomSheet?
     private var foldersObservationToken: NotificationToken?
     private var mailboxesObservationToken: NotificationToken?
@@ -103,14 +104,13 @@ class MenuDrawerViewModel: ObservableObject {
         var parentFolders = [NestableFolder]()
         for folder in folders {
             parentFolders.append(NestableFolder(content: folder,
-                                              children: recCreateFolderHierarchy(folders: folder.children.sorted())))
+                                                children: recCreateFolderHierarchy(folders: folder.children.sorted())))
         }
 
         return parentFolders
     }
 
-    func createMenuItems(with menuSheet: Binding<GlobalSheetState>, bottomSheet: GlobalBottomSheet) {
-        self.menuSheet = menuSheet
+    func createMenuItems(bottomSheet: GlobalBottomSheet) {
         self.bottomSheet = bottomSheet
 
         helpMenuItems = [
@@ -141,14 +141,14 @@ class MenuDrawerViewModel: ObservableObject {
     private func sendFeedback() {
         if AccountManager.instance.currentAccount?.user?.isStaff == true {
             BugTracker.configureForMail()
-            menuSheet?.wrappedValue.isShowingBugTracker.toggle()
+            isShowingBugTracker.toggle()
         } else {
             UIApplication.shared.open(URLConstants.feedback.url)
         }
     }
 
     private func openHelp() {
-        menuSheet?.wrappedValue.isShowingHelp.toggle()
+        isShowingHelp.toggle()
     }
 
     private func importMails() {

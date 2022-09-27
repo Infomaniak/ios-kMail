@@ -110,7 +110,6 @@ class NavigationDrawerController: ObservableObject {
 
 struct MenuDrawerView: View {
     @EnvironmentObject var splitViewManager: SplitViewManager
-    @Environment(\.globalSheetState) var menuSheet
     @EnvironmentObject var bottomSheet: GlobalBottomSheet
 
     @StateObject var viewModel: MenuDrawerViewModel
@@ -172,7 +171,15 @@ struct MenuDrawerView: View {
         .environmentObject(mailboxManager)
         .onAppear {
             MatomoUtils.track(view: ["MenuDrawer"])
-            viewModel.createMenuItems(with: menuSheet, bottomSheet: bottomSheet)
+            viewModel.createMenuItems(bottomSheet: bottomSheet)
+        }
+        .sheet(isPresented: $viewModel.isShowingHelp) {
+            SheetView {
+                HelpView()
+            }
+        }
+        .sheet(isPresented: $viewModel.isShowingBugTracker) {
+            BugTrackerView(isPresented: $viewModel.isShowingBugTracker)
         }
     }
 }
