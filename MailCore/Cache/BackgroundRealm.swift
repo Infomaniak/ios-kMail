@@ -42,6 +42,7 @@ public class BackgroundRealm {
     public func execute<T>(_ block: @escaping (Realm) -> T, completion: @escaping (T) -> Void) {
         queue.async { [weakRealm = realm] in
             guard let realm = weakRealm else { return }
+            realm.refresh()
             completion(block(realm))
         }
     }

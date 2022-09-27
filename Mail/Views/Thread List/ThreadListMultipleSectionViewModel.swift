@@ -18,9 +18,9 @@
 
 import Foundation
 import InfomaniakCore
+import MailCore
 import MailResources
 import SwiftUI
-import MailCore
 
 @MainActor class ThreadListMultipleSelectionViewModel: ObservableObject {
     var mailboxManager: MailboxManager
@@ -32,6 +32,7 @@ import MailCore
             }
         }
     }
+
     @Published var selectedItems = Set<Thread>()
     @Published var toolbarActions = [Action]()
 
@@ -54,10 +55,10 @@ import MailCore
         case .markAsRead, .markAsUnread:
             try await mailboxManager.toggleRead(threads: Array(selectedItems))
         case .archive:
-            let undoResponse = try await mailboxManager.move(threads: Array(selectedItems), to: .archive)
+            let undoRedoAction = try await mailboxManager.move(threads: Array(selectedItems), to: .archive)
             IKSnackBar.showCancelableSnackBar(message: MailResourcesStrings.Localizable.actionArchive,
                                               cancelSuccessMessage: MailResourcesStrings.Localizable.snackbarMoveCancelled,
-                                              cancelableResponse: undoResponse,
+                                              undoRedoAction: undoRedoAction,
                                               mailboxManager: mailboxManager)
         case .star:
             try await mailboxManager.toggleStar(threads: Array(selectedItems))
