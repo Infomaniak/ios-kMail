@@ -56,6 +56,7 @@ struct ThreadListCell: View {
                 isMultipleSelectionEnabled: multipleSelectionViewModel.isEnabled,
                 isSelected: isSelected
             )
+            .background(cellColor)
         }
         .onAppear { viewModel.loadNextPageIfNeeded(currentItem: thread) }
         .padding(.leading, multipleSelectionViewModel.isEnabled ? 8 : 0)
