@@ -57,7 +57,7 @@ struct SplitView: View {
     @Environment(\.horizontalSizeClass) var sizeClass
     @Environment(\.window) var window
 
-    @StateObject private var menuSheet = MenuSheet()
+    @State private var menuSheet = GlobalSheetState()
     @StateObject private var bottomSheet = GlobalBottomSheet()
     @StateObject private var alert = GlobalAlert()
 
@@ -119,7 +119,7 @@ struct SplitView: View {
             }
         }
         .environmentObject(splitViewManager)
-        .environmentObject(menuSheet)
+        .environment(\.globalSheetState, $menuSheet)
         .environmentObject(navigationDrawerController)
         .defaultAppStorage(.shared)
         .onAppear {

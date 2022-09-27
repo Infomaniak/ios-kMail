@@ -110,7 +110,7 @@ class NavigationDrawerController: ObservableObject {
 
 struct MenuDrawerView: View {
     @EnvironmentObject var splitViewManager: SplitViewManager
-    @EnvironmentObject var menuSheet: MenuSheet
+    @Environment(\.globalSheetState) var menuSheet
     @EnvironmentObject var bottomSheet: GlobalBottomSheet
 
     @StateObject var viewModel: MenuDrawerViewModel

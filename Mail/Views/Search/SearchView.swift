@@ -26,7 +26,7 @@ struct SearchView: View {
     @StateObject var viewModel: SearchViewModel
 
     @EnvironmentObject var splitViewManager: SplitViewManager
-    @EnvironmentObject var menuSheet: MenuSheet
+    @Environment(\.globalSheetState) var menuSheet
     @EnvironmentObject var globalBottomSheet: GlobalBottomSheet
 
     @AppStorage(UserDefaults.shared.key(.threadDensity)) var threadDensity = ThreadDensity.normal
@@ -122,7 +122,7 @@ struct SearchView: View {
                             target: target,
                             state: bottomSheet,
                             globalSheet: globalBottomSheet) { message, replyMode in
-                    menuSheet.messageReply = MenuSheet.MessageReply(message: message, replyMode: replyMode)
+                    menuSheet.wrappedValue.messageReply = GlobalSheetState.MessageReply(message: message, replyMode: replyMode)
                 }
             }
         }

@@ -21,6 +21,7 @@ import SwiftUI
 
 struct ThreadListCell: View {
     let thread: Thread
+    @Environment(\.globalSheetState) var menuSheet
     @ObservedObject var viewModel: ThreadListViewModel
     @ObservedObject var multipleSelectionViewModel: ThreadListMultipleSelectionViewModel
     let navigationController: UINavigationController?
@@ -77,7 +78,6 @@ struct ThreadListCell: View {
         } else {
             viewModel.selectedThread = thread
             if isInDraftFolder {
-                guard let menuSheet = viewModel.menuSheet else { return }
                 DraftUtils.editDraft(from: thread, mailboxManager: viewModel.mailboxManager, menuSheet: menuSheet)
             } else {
                 shouldNavigateToThreadList = true

@@ -44,7 +44,7 @@ class MenuDrawerViewModel: ObservableObject {
     @Published var helpMenuItems = [MenuItem]()
     @Published var actionsMenuItems = [MenuItem]()
 
-    private var menuSheet: MenuSheet?
+    private var menuSheet: Binding<GlobalSheetState>?
     private var bottomSheet: GlobalBottomSheet?
     private var foldersObservationToken: NotificationToken?
     private var mailboxesObservationToken: NotificationToken?
@@ -109,7 +109,7 @@ class MenuDrawerViewModel: ObservableObject {
         return parentFolders
     }
 
-    func createMenuItems(with menuSheet: MenuSheet, bottomSheet: GlobalBottomSheet) {
+    func createMenuItems(with menuSheet: Binding<GlobalSheetState>, bottomSheet: GlobalBottomSheet) {
         self.menuSheet = menuSheet
         self.bottomSheet = bottomSheet
 
@@ -141,14 +141,14 @@ class MenuDrawerViewModel: ObservableObject {
     private func sendFeedback() {
         if AccountManager.instance.currentAccount?.user?.isStaff == true {
             BugTracker.configureForMail()
-            menuSheet?.isShowingBugTracker.toggle()
+            menuSheet?.wrappedValue.isShowingBugTracker.toggle()
         } else {
             UIApplication.shared.open(URLConstants.feedback.url)
         }
     }
 
     private func openHelp() {
-        menuSheet?.isShowingHelp.toggle()
+        menuSheet?.wrappedValue.isShowingHelp.toggle()
     }
 
     private func importMails() {

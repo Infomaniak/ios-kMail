@@ -22,7 +22,7 @@ import SwiftUI
 import UIKit
 
 struct MenuHeaderView: View {
-    @EnvironmentObject var sheet: MenuSheet
+    @Environment(\.globalSheetState) var sheet
 
     var body: some View {
         HStack {
@@ -34,7 +34,7 @@ struct MenuHeaderView: View {
             Spacer()
 
             Button {
-                sheet.isShowingSettings.toggle()
+                sheet.wrappedValue.isShowingSettings.toggle()
             } label: {
                 Image(resource: MailResourcesAsset.cog)
                     .resizable()
