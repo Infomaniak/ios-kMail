@@ -28,11 +28,11 @@ class MenuSheet: SheetState<MenuSheet.State> {
     @Published var isShowingSettings = false
     @Published var isShowingSwitchAccount = false
     @Published var isShowingHelp = false
+    @Published var isShowingBugTracker = false
 
     enum State: Equatable {
         case reply(Message, ReplyMode)
         case editMessage(draft: Draft)
-        case bugTracker
     }
 }
 

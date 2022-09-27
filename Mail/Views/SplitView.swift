@@ -63,7 +63,6 @@ struct SplitView: View {
 
     @StateObject private var splitViewManager: SplitViewManager
 
-
     var isCompact: Bool {
         sizeClass == .compact
     }
@@ -168,6 +167,9 @@ struct SplitView: View {
                 HelpView()
             }
         }
+        .sheet(isPresented: $menuSheet.isShowingBugTracker) {
+            BugTrackerView(isPresented: $menuSheet.isShowingBugTracker)
+        }
         .sheet(isPresented: $menuSheet.isShowing) {
             switch menuSheet.state {
             case let .reply(message, replyMode):
@@ -179,9 +181,7 @@ struct SplitView: View {
                     draft: .replying(to: freshMessage, mode: replyMode)
                 )
             case let .editMessage(draft):
-                NewMessageView(isPresented: $menuSheet.isShowing, mailboxManager: mailboxManager, draft: draft.asUnmanaged())                
-            case .bugTracker:
-                BugTrackerView(isPresented: $menuSheet.isShowing)
+                NewMessageView(isPresented: $menuSheet.isShowing, mailboxManager: mailboxManager, draft: draft.asUnmanaged())
             case .none:
                 EmptyView()
             }

@@ -141,7 +141,7 @@ class MenuDrawerViewModel: ObservableObject {
     private func sendFeedback() {
         if AccountManager.instance.currentAccount?.user?.isStaff == true {
             BugTracker.configureForMail()
-            menuSheet?.state = .bugTracker
+            menuSheet?.isShowingBugTracker.toggle()
         } else {
             UIApplication.shared.open(URLConstants.feedback.url)
         }
