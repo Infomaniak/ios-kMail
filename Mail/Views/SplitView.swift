@@ -146,9 +146,6 @@ struct SplitView: View {
             setupBehaviour(orientation: interfaceOrientation)
             splitViewController.preferredDisplayMode = .twoDisplaceSecondary
         }
-        .sheet(isPresented: $menuSheet.isShowingComposeNewMessageView) {
-            NewMessageView(mailboxManager: mailboxManager)
-        }
         .sheet(item: $menuSheet.editedMessageDraft) { draft in
             NewMessageView(mailboxManager: mailboxManager, draft: draft.asUnmanaged())
         }

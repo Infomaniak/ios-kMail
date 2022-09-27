@@ -39,6 +39,7 @@ struct ThreadListView: View {
     @AppStorage(UserDefaults.shared.key(.threadDensity)) var threadDensity = ThreadDensity.normal
 
     @State private var avatarImage = Image(resource: MailResourcesAsset.placeholderAvatar)
+    @State private var isShowingComposeNewMessageView = false
     @StateObject var bottomSheet: ThreadBottomSheet
     @StateObject private var networkMonitor = NetworkMonitor()
     @State private var navigationController: UINavigationController?
@@ -126,7 +127,7 @@ struct ThreadListView: View {
         .floatingActionButton(isEnabled: !multipleSelectionViewModel.isEnabled,
                               icon: Image(resource: MailResourcesAsset.edit),
                               title: MailResourcesStrings.Localizable.buttonNewMessage) {
-            menuSheet.wrappedValue.isShowingComposeNewMessageView.toggle()
+            isShowingComposeNewMessageView.toggle()
         }
         .floatingPanel(state: bottomSheet, halfOpening: true) {
             if case let .actions(target) = bottomSheet.state, !target.isInvalidated {
@@ -168,6 +169,9 @@ struct ThreadListView: View {
         }
         .refreshable {
             await viewModel.fetchThreads()
+        }
+        .sheet(isPresented: $isShowingComposeNewMessageView) {
+            NewMessageView(mailboxManager: viewModel.mailboxManager)
         }
     }
 

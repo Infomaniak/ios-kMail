@@ -21,7 +21,6 @@ import MailCore
 import SwiftUI
 
 struct GlobalSheetState {
-    var isShowingComposeNewMessageView = false
     var editedMessageDraft: Draft?
     var messageReply: MessageReply?
 
