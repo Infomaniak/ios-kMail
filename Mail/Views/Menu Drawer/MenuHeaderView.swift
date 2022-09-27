@@ -23,6 +23,7 @@ import UIKit
 
 struct MenuHeaderView: View {
     @Environment(\.globalSheetState) var sheet
+    @State private var isShowingSettings = false
 
     var body: some View {
         HStack {
@@ -34,7 +35,7 @@ struct MenuHeaderView: View {
             Spacer()
 
             Button {
-                sheet.wrappedValue.isShowingSettings.toggle()
+                isShowingSettings.toggle()
             } label: {
                 Image(resource: MailResourcesAsset.cog)
                     .resizable()
@@ -49,6 +50,11 @@ struct MenuHeaderView: View {
         .background(MailResourcesAsset.backgroundMenuDrawer.swiftUiColor)
         .clipped()
         .shadow(color: MailResourcesAsset.menuDrawerShadowColor.swiftUiColor, radius: 1, x: 0, y: 2)
+        .sheet(isPresented: $isShowingSettings) {
+            SheetView {
+                SettingsView(viewModel: GeneralSettingsViewModel())
+            }
+        }
     }
 }
 
