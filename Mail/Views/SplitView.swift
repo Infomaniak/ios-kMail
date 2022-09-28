@@ -146,9 +146,6 @@ struct SplitView: View {
             setupBehaviour(orientation: interfaceOrientation)
             splitViewController.preferredDisplayMode = .twoDisplaceSecondary
         }
-        .sheet(item: $menuSheet.editedMessageDraft) { draft in
-            NewMessageView(mailboxManager: mailboxManager, draft: draft.asUnmanaged())
-        }
         .sheet(item: $menuSheet.messageReply) { messageReply in
             // If message doesn't exist anymore try to show the frozen one
             let message = messageReply.message

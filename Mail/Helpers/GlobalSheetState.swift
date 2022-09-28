@@ -21,7 +21,6 @@ import MailCore
 import SwiftUI
 
 struct GlobalSheetState {
-    var editedMessageDraft: Draft?
     var messageReply: MessageReply?
 
     struct MessageReply: Identifiable {

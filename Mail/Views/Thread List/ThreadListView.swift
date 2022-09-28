@@ -43,11 +43,13 @@ struct ThreadListView: View {
     @StateObject var bottomSheet: ThreadBottomSheet
     @StateObject private var networkMonitor = NetworkMonitor()
     @State private var navigationController: UINavigationController?
+    @Binding private var editedMessageDraft: Draft?
 
     let isCompact: Bool
 
-    init(mailboxManager: MailboxManager, folder: Folder?, isCompact: Bool) {
+    init(mailboxManager: MailboxManager, folder: Folder?, editedMessageDraft: Binding<Draft?>, isCompact: Bool) {
         let threadBottomSheet = ThreadBottomSheet()
+        _editedMessageDraft = editedMessageDraft
         _bottomSheet = StateObject(wrappedValue: threadBottomSheet)
         _viewModel = StateObject(wrappedValue: ThreadListViewModel(mailboxManager: mailboxManager,
                                                                    folder: folder,
@@ -180,7 +182,8 @@ struct ThreadListView: View {
             ThreadListCell(thread: thread,
                            viewModel: viewModel,
                            multipleSelectionViewModel: multipleSelectionViewModel,
-                           navigationController: navigationController)
+                           navigationController: navigationController,
+                           editedMessageDraft: $editedMessageDraft)
         }
     }
 }
@@ -300,6 +303,7 @@ struct ThreadListView_Previews: PreviewProvider {
         ThreadListView(
             mailboxManager: PreviewHelper.sampleMailboxManager,
             folder: PreviewHelper.sampleFolder,
+            editedMessageDraft: .constant(nil),
             isCompact: false
         )
         .environment(\.globalSheetState, .constant(GlobalSheetState()))

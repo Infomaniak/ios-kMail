@@ -21,6 +21,8 @@ import SwiftUI
 
 struct ThreadListManagerView: View {
     @EnvironmentObject var splitViewManager: SplitViewManager
+    @State private var editedMessageDraft: Draft?
+
     var mailboxManager: MailboxManager
 
     let isCompact: Bool
@@ -31,17 +33,22 @@ struct ThreadListManagerView: View {
                 SearchView(
                     mailboxManager: mailboxManager,
                     folder: splitViewManager.selectedFolder,
+                    editedMessageDraft: $editedMessageDraft,
                     isCompact: isCompact
                 )
             } else {
                 ThreadListView(
                     mailboxManager: mailboxManager,
                     folder: splitViewManager.selectedFolder,
+                    editedMessageDraft: $editedMessageDraft,
                     isCompact: isCompact
                 )
             }
         }
         .animation(.easeInOut(duration: 0.25), value: splitViewManager.showSearch)
+        .sheet(item: $editedMessageDraft) { draft in
+            NewMessageView(mailboxManager: mailboxManager, draft: draft.asUnmanaged())
+        }
     }
 }
 

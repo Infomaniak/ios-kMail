@@ -16,26 +16,30 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import MailCore
 import MailResources
 import SwiftUI
 
 struct ThreadListCell: View {
     let thread: Thread
-    @Environment(\.globalSheetState) var menuSheet
     @ObservedObject var viewModel: ThreadListViewModel
     @ObservedObject var multipleSelectionViewModel: ThreadListMultipleSelectionViewModel
     let navigationController: UINavigationController?
+
+    @Binding var editedMessageDraft: Draft?
 
     @State private var shouldNavigateToThreadList = false
 
     private var cellColor: Color {
         return viewModel.selectedThread == thread
-        ? MailResourcesAsset.backgroundCardSelectedColor.swiftUiColor
-        : MailResourcesAsset.backgroundColor.swiftUiColor
+            ? MailResourcesAsset.backgroundCardSelectedColor.swiftUiColor
+            : MailResourcesAsset.backgroundColor.swiftUiColor
     }
+
     private var isInDraftFolder: Bool {
         viewModel.folder?.role == .draft
     }
+
     private var isSelected: Bool {
         multipleSelectionViewModel.selectedItems.contains { $0.id == thread.id }
     }
@@ -78,7 +82,7 @@ struct ThreadListCell: View {
         } else {
             viewModel.selectedThread = thread
             if isInDraftFolder {
-                DraftUtils.editDraft(from: thread, mailboxManager: viewModel.mailboxManager, menuSheet: menuSheet)
+                DraftUtils.editDraft(from: thread, mailboxManager: viewModel.mailboxManager, editedMessageDraft: $editedMessageDraft)
             } else {
                 shouldNavigateToThreadList = true
             }
@@ -102,7 +106,8 @@ struct ThreadListCell_Previews: PreviewProvider {
             viewModel: ThreadListViewModel(mailboxManager: PreviewHelper.sampleMailboxManager,
                                            folder: nil, bottomSheet: ThreadBottomSheet()),
             multipleSelectionViewModel: ThreadListMultipleSelectionViewModel(mailboxManager: PreviewHelper.sampleMailboxManager),
-            navigationController: nil
+            navigationController: nil,
+            editedMessageDraft: .constant(nil)
         )
     }
 }
