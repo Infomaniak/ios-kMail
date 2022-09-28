@@ -57,7 +57,6 @@ struct SplitView: View {
     @Environment(\.horizontalSizeClass) var sizeClass
     @Environment(\.window) var window
 
-    @State private var menuSheet = GlobalSheetState()
     @StateObject private var bottomSheet = GlobalBottomSheet()
     @StateObject private var alert = GlobalAlert()
 
@@ -119,7 +118,6 @@ struct SplitView: View {
             }
         }
         .environmentObject(splitViewManager)
-        .environment(\.globalSheetState, $menuSheet)
         .environmentObject(navigationDrawerController)
         .defaultAppStorage(.shared)
         .onAppear {
@@ -145,13 +143,6 @@ struct SplitView: View {
             self.splitViewController = splitViewController
             setupBehaviour(orientation: interfaceOrientation)
             splitViewController.preferredDisplayMode = .twoDisplaceSecondary
-        }
-        .sheet(item: $menuSheet.messageReply) { messageReply in
-            // If message doesn't exist anymore try to show the frozen one
-            let message = messageReply.message
-            let freshMessage = message.fresh(using: mailboxManager.getRealm()) ?? message
-            NewMessageView(mailboxManager: mailboxManager,
-                           draft: .replying(to: freshMessage, mode: messageReply.replyMode))
         }
         .environmentObject(bottomSheet)
         .environmentObject(alert)

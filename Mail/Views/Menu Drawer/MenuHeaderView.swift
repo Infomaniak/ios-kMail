@@ -22,7 +22,6 @@ import SwiftUI
 import UIKit
 
 struct MenuHeaderView: View {
-    @Environment(\.globalSheetState) var sheet
     @State private var isShowingSettings = false
 
     var body: some View {

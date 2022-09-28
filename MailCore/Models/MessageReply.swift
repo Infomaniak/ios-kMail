@@ -17,29 +17,17 @@
  */
 
 import Foundation
-import MailCore
-import SwiftUI
 
-struct GlobalSheetState {
-    var messageReply: MessageReply?
-
-    struct MessageReply: Identifiable {
-        var id: ObjectIdentifier {
-            return message.id
-        }
-
-        let message: Message
-        let replyMode: ReplyMode
+public struct MessageReply: Identifiable {
+    public var id: ObjectIdentifier {
+        return message.id
     }
-}
-
-private struct GlobalSheetStateKey: EnvironmentKey {
-    static let defaultValue: Binding<GlobalSheetState> = .constant(GlobalSheetState())
-}
-
-extension EnvironmentValues {
-    var globalSheetState: Binding<GlobalSheetState> {
-        get { self[GlobalSheetStateKey.self] }
-        set { self[GlobalSheetStateKey.self] = newValue }
+    
+    public let message: Message
+    public let replyMode: ReplyMode
+    
+    public init(message: Message, replyMode: ReplyMode) {
+        self.message = message
+        self.replyMode = replyMode
     }
 }
