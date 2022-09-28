@@ -29,19 +29,17 @@ struct ThreadListCell: View {
 
     private var cellColor: Color {
         return viewModel.selectedThread == thread
-        ? MailResourcesAsset.backgroundCardSelectedColor.swiftUiColor
-        : MailResourcesAsset.backgroundColor.swiftUiColor
+            ? MailResourcesAsset.backgroundCardSelectedColor.swiftUiColor
+            : MailResourcesAsset.backgroundColor.swiftUiColor
     }
-    private var isInDraftFolder: Bool {
-        viewModel.folder?.role == .draft
-    }
+
     private var isSelected: Bool {
         multipleSelectionViewModel.selectedItems.contains { $0.id == thread.id }
     }
 
     var body: some View {
         ZStack {
-            if viewModel.folder?.role != .draft {
+            if !thread.shouldPresentAsDraft {
                 NavigationLink(destination: ThreadView(mailboxManager: viewModel.mailboxManager,
                                                        thread: thread,
                                                        folderId: viewModel.folder?.id,
@@ -76,7 +74,7 @@ struct ThreadListCell: View {
             }
         } else {
             viewModel.selectedThread = thread
-            if isInDraftFolder {
+            if thread.shouldPresentAsDraft {
                 guard let menuSheet = viewModel.menuSheet else { return }
                 DraftUtils.editDraft(from: thread, mailboxManager: viewModel.mailboxManager, menuSheet: menuSheet)
             } else {

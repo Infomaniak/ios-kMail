@@ -171,7 +171,7 @@ struct SearchView: View {
         Section {
             ForEach(threads) { thread in
                 Group {
-                    if viewModel.lastSearchFolderId == viewModel.mailboxManager.getFolder(with: .draft)?._id {
+                    if thread.shouldPresentAsDraft {
                         Button(action: {
                             DraftUtils.editDraft(from: thread, mailboxManager: viewModel.mailboxManager, menuSheet: menuSheet)
                         }, label: {
