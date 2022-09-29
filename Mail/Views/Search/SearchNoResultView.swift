@@ -31,7 +31,10 @@ struct SearchNoResultView: View {
                 .textStyle(.header2)
             Text(MailResourcesStrings.Localizable.searchNoResultsDescription)
                 .textStyle(.bodySecondary)
+                .multilineTextAlignment(.center)
         }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .listRowSeparator(.hidden)
     }
 }
 
