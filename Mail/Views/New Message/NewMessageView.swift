@@ -97,52 +97,59 @@ struct NewMessageView: View {
 
     var body: some View {
         NavigationView {
-            VStack(spacing: 0) {
-                if !shouldDisplayAutocompletion {
-                    NewMessageCell(title: MailResourcesStrings.Localizable.fromTitle, isFirstCell: true) {
-                        Picker("Mailbox", selection: $selectedMailboxItem) {
-                            ForEach(AccountManager.instance.mailboxes.indices, id: \.self) { i in
-                                Text(AccountManager.instance.mailboxes[i].email).tag(i)
-                            }
-                        }
-                        .textStyle(.body)
-                        Spacer()
-                    }
-                }
-
-                recipientCell(type: .to)
-
-                if showCc {
-                    recipientCell(type: .cc)
-                    recipientCell(type: .bcc)
-                }
-
-                // Show the rest of the view, or the autocompletion list
-                if shouldDisplayAutocompletion {
-                    AutocompletionView(autocompletion: $autocompletion) { recipient in
-                        addRecipientHandler?(recipient)
-                    }
-                } else {
-                    NewMessageCell(title: MailResourcesStrings.Localizable.subjectTitle) {
-                        TextField("", text: $draft.subject)
-                    }
-
-                    if let attachments = draft.attachments?.filter { $0.contentId == nil }, !attachments.isEmpty {
-                        ScrollView(.horizontal, showsIndicators: false) {
-                            HStack(spacing: 8) {
-                                ForEach(attachments) { attachment in
-                                    AttachmentCell(attachment: attachment)
+            ScrollView(.vertical, showsIndicators: true) {
+                VStack(spacing: 0) {
+                    if !shouldDisplayAutocompletion {
+                        NewMessageCell(title: MailResourcesStrings.Localizable.fromTitle, isFirstCell: true) {
+                            Picker("Mailbox", selection: $selectedMailboxItem) {
+                                ForEach(AccountManager.instance.mailboxes.indices, id: \.self) { i in
+                                    Text(AccountManager.instance.mailboxes[i].email).tag(i)
                                 }
                             }
-                            .padding(.vertical, 1)
+                            .textStyle(.body)
+                            Spacer()
                         }
-                        .padding(.horizontal, 16)
                     }
 
-                    RichTextEditor(model: $editor, body: $draft.body)
-                        .ignoresSafeArea(.all, edges: .bottom)
+                    recipientCell(type: .to)
+
+                    if showCc {
+                        recipientCell(type: .cc)
+                        recipientCell(type: .bcc)
+                    }
+
+                    // Show the rest of the view, or the autocompletion list
+                    if shouldDisplayAutocompletion {
+                        AutocompletionView(autocompletion: $autocompletion) { recipient in
+                            addRecipientHandler?(recipient)
+                        }
+                    } else {
+                        NewMessageCell(title: MailResourcesStrings.Localizable.subjectTitle) {
+                            TextField("", text: $draft.subject)
+                        }
+
+                        if let attachments = draft.attachments?.filter { $0.contentId == nil }, !attachments.isEmpty {
+                            ScrollView(.horizontal, showsIndicators: false) {
+                                HStack(spacing: 8) {
+                                    ForEach(attachments) { attachment in
+                                        AttachmentCell(attachment: attachment)
+                                    }
+                                }
+                                .padding(.vertical, 1)
+                            }
+                            .padding(.horizontal, 16)
+                        }
+                        RichTextEditor(model: $editor, body: $draft.body)
+                            .ignoresSafeArea(.all, edges: .bottom)
+                            .frame(height: editor.height + 40)
+                            .background(Color.yellow)
+                            .padding([.vertical], 20)
+                    }
                 }
             }
+            .onChange(of: editor.height, perform: { newValue in
+                print("size update: \(newValue)')")
+            })
             .navigationBarTitleDisplayMode(.inline)
             .navigationBarBackButtonHidden(true)
             .navigationBarItems(
