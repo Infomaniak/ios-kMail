@@ -67,8 +67,7 @@ struct RichTextEditor: UIViewRepresentable {
                 }
                 self.parent.isFirstTime = false
             }
-
-            parent.model.cursorPosition = CGFloat(position.y)
+            parent.model.cursorPosition = CGFloat(position.bottom) + 20
         }
 
         func editor(_ editor: SQTextEditorView, selectedTextAttributeDidChange attribute: SQTextAttribute) {
@@ -92,17 +91,13 @@ struct RichTextEditor: UIViewRepresentable {
     }
 }
 
-class RichTextEditorModel: ObservableObject {
-    let richTextEditor: MailEditor
-    @Published var delegateCount = 0
-    @Published var cursorPosition: CGFloat = 0
-    @Published var height: CGFloat = 0
+struct RichTextEditorModel {
+    let richTextEditor = MailEditor()
+    var delegateCount = 0
+    var cursorPosition: CGFloat = 0
+    var height: CGFloat = 0
     var isInitialized: Bool {
         delegateCount > 2
-    }
-
-    init() {
-        richTextEditor = MailEditor()
     }
 }
 

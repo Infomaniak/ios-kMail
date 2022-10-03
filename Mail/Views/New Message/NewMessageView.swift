@@ -144,24 +144,23 @@ struct NewMessageView: View {
                         }
                         RichTextEditor(model: $editor, body: $draft.body)
                             .ignoresSafeArea(.all, edges: .bottom)
-                            .frame(height: editor.height + 40)
-                            .background(Color.yellow)
-                            .padding([.vertical], 20)
+                            .frame(height: editor.height + 20)
+                            .padding([.vertical], 10)
                     }
                 }
             }
             .introspectScrollView { scrollView in
                 self.scrollView = scrollView
             }
-            .onChange(of: editor.height, perform: { newValue in
+            .onChange(of: editor.height) { _ in
                 guard let scrollView = scrollView else { return }
 
                 let fullSize = scrollView.contentSize.height
-                let realPosition = (fullSize - newValue) + editor.cursorPosition
+                let realPosition = (fullSize - editor.height) + editor.cursorPosition
 
                 let rect = CGRect(x: 0, y: realPosition, width: 1, height: 1)
                 scrollView.scrollRectToVisible(rect, animated: true)
-            })
+            }
             .navigationBarTitleDisplayMode(.inline)
             .navigationBarBackButtonHidden(true)
             .navigationBarItems(
