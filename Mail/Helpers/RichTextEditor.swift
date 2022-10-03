@@ -51,14 +51,9 @@ struct RichTextEditor: UIViewRepresentable {
             parent.richTextEditor.webView.scrollView.isScrollEnabled = false
             parent.model.height = CGFloat(editor.contentHeight)
         }
-        
+
         func editor(_ editor: SQTextEditorView, contentHeightDidChange height: Int) {
-            // Size of text editor
             parent.model.height = CGFloat(height)
-            print("new size: \(height)")
-            
-            // Update scroll position
-            
         }
 
         func editor(_ editor: SQTextEditorView, cursorPositionDidChange position: SQEditorCursorPosition) {
@@ -72,9 +67,8 @@ struct RichTextEditor: UIViewRepresentable {
                 }
                 self.parent.isFirstTime = false
             }
-            
-            print("position: \(position)")
-            print("height: \(editor.contentHeight)")
+
+            parent.model.cursorPosition = CGFloat(position.y)
         }
 
         func editor(_ editor: SQTextEditorView, selectedTextAttributeDidChange attribute: SQTextAttribute) {
@@ -101,6 +95,7 @@ struct RichTextEditor: UIViewRepresentable {
 class RichTextEditorModel: ObservableObject {
     let richTextEditor: MailEditor
     @Published var delegateCount = 0
+    @Published var cursorPosition: CGFloat = 0
     @Published var height: CGFloat = 0
     var isInitialized: Bool {
         delegateCount > 2

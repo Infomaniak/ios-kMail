@@ -17,6 +17,7 @@
  */
 
 import InfomaniakCore
+import Introspect
 import MailCore
 import MailResources
 import PhotosUI
@@ -64,6 +65,8 @@ struct NewMessageView: View {
     @State private var sendDisabled = false
     @State private var draftHasChanged = false
     @State private var isShowingCamera = false
+
+    @State var scrollView: UIScrollView?
 
     @StateObject private var sheet = NewMessageSheet()
     @StateObject private var alert = NewMessageAlert()
@@ -147,8 +150,17 @@ struct NewMessageView: View {
                     }
                 }
             }
+            .introspectScrollView { scrollView in
+                self.scrollView = scrollView
+            }
             .onChange(of: editor.height, perform: { newValue in
-                print("size update: \(newValue)')")
+                guard let scrollView = scrollView else { return }
+
+                let fullSize = scrollView.contentSize.height
+                let realPosition = (fullSize - newValue) + editor.cursorPosition
+
+                let rect = CGRect(x: 0, y: realPosition, width: 1, height: 1)
+                scrollView.scrollRectToVisible(rect, animated: true)
             })
             .navigationBarTitleDisplayMode(.inline)
             .navigationBarBackButtonHidden(true)
