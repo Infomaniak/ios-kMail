@@ -17,6 +17,7 @@
  */
 
 import InfomaniakCore
+import Introspect
 import MailCore
 import MailResources
 import PhotosUI
@@ -65,6 +66,8 @@ struct NewMessageView: View {
     @State private var draftHasChanged = false
     @State private var isShowingCamera = false
 
+    @State var scrollView: UIScrollView?
+
     @StateObject private var sheet = NewMessageSheet()
     @StateObject private var alert = NewMessageAlert()
 
@@ -97,51 +100,66 @@ struct NewMessageView: View {
 
     var body: some View {
         NavigationView {
-            VStack(spacing: 0) {
-                if !shouldDisplayAutocompletion {
-                    NewMessageCell(title: MailResourcesStrings.Localizable.fromTitle, isFirstCell: true) {
-                        Picker("Mailbox", selection: $selectedMailboxItem) {
-                            ForEach(AccountManager.instance.mailboxes.indices, id: \.self) { i in
-                                Text(AccountManager.instance.mailboxes[i].email).tag(i)
-                            }
-                        }
-                        .textStyle(.body)
-                        Spacer()
-                    }
-                }
-
-                recipientCell(type: .to)
-
-                if showCc {
-                    recipientCell(type: .cc)
-                    recipientCell(type: .bcc)
-                }
-
-                // Show the rest of the view, or the autocompletion list
-                if shouldDisplayAutocompletion {
-                    AutocompletionView(autocompletion: $autocompletion) { recipient in
-                        addRecipientHandler?(recipient)
-                    }
-                } else {
-                    NewMessageCell(title: MailResourcesStrings.Localizable.subjectTitle) {
-                        TextField("", text: $draft.subject)
-                    }
-
-                    if let attachments = draft.attachments?.filter { $0.contentId == nil }, !attachments.isEmpty {
-                        ScrollView(.horizontal, showsIndicators: false) {
-                            HStack(spacing: 8) {
-                                ForEach(attachments) { attachment in
-                                    AttachmentCell(attachment: attachment)
+            ScrollView(.vertical, showsIndicators: true) {
+                VStack(spacing: 0) {
+                    if !shouldDisplayAutocompletion {
+                        NewMessageCell(title: MailResourcesStrings.Localizable.fromTitle, isFirstCell: true) {
+                            Picker("Mailbox", selection: $selectedMailboxItem) {
+                                ForEach(AccountManager.instance.mailboxes.indices, id: \.self) { i in
+                                    Text(AccountManager.instance.mailboxes[i].email).tag(i)
                                 }
                             }
-                            .padding(.vertical, 1)
+                            .textStyle(.body)
+                            Spacer()
                         }
-                        .padding(.horizontal, 16)
                     }
 
-                    RichTextEditor(model: $editor, body: $draft.body)
-                        .ignoresSafeArea(.all, edges: .bottom)
+                    recipientCell(type: .to)
+
+                    if showCc {
+                        recipientCell(type: .cc)
+                        recipientCell(type: .bcc)
+                    }
+
+                    // Show the rest of the view, or the autocompletion list
+                    if shouldDisplayAutocompletion {
+                        AutocompletionView(autocompletion: $autocompletion) { recipient in
+                            addRecipientHandler?(recipient)
+                        }
+                    } else {
+                        NewMessageCell(title: MailResourcesStrings.Localizable.subjectTitle) {
+                            TextField("", text: $draft.subject)
+                        }
+
+                        if let attachments = draft.attachments?.filter { $0.contentId == nil }, !attachments.isEmpty {
+                            ScrollView(.horizontal, showsIndicators: false) {
+                                HStack(spacing: 8) {
+                                    ForEach(attachments) { attachment in
+                                        AttachmentCell(attachment: attachment)
+                                    }
+                                }
+                                .padding(.vertical, 1)
+                            }
+                            .padding(.horizontal, 16)
+                        }
+                        RichTextEditor(model: $editor, body: $draft.body)
+                            .ignoresSafeArea(.all, edges: .bottom)
+                            .frame(height: editor.height + 20)
+                            .padding([.vertical], 10)
+                    }
                 }
+            }
+            .introspectScrollView { scrollView in
+                self.scrollView = scrollView
+            }
+            .onChange(of: editor.height) { _ in
+                guard let scrollView = scrollView else { return }
+
+                let fullSize = scrollView.contentSize.height
+                let realPosition = (fullSize - editor.height) + editor.cursorPosition
+
+                let rect = CGRect(x: 0, y: realPosition, width: 1, height: 1)
+                scrollView.scrollRectToVisible(rect, animated: true)
             }
             .navigationBarTitleDisplayMode(.inline)
             .navigationBarBackButtonHidden(true)
