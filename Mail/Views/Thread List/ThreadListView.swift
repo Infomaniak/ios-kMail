@@ -22,19 +22,6 @@ import MailResources
 import RealmSwift
 import SwiftUI
 
-class MenuSheet: SheetState<MenuSheet.State> {
-    enum State: Equatable {
-        case newMessage
-        case reply(Message, ReplyMode)
-        case editMessage(draft: Draft)
-        case manageAccount
-        case switchAccount
-        case settings
-        case help
-        case bugTracker
-    }
-}
-
 class ThreadBottomSheet: DisplayedFloatingPanelState<ThreadBottomSheet.State> {
     enum State: Equatable {
         case actions(ActionsTarget)
@@ -46,20 +33,28 @@ struct ThreadListView: View {
     @StateObject var multipleSelectionViewModel: ThreadListMultipleSelectionViewModel
 
     @EnvironmentObject var splitViewManager: SplitViewManager
-    @EnvironmentObject var menuSheet: MenuSheet
     @EnvironmentObject var globalBottomSheet: GlobalBottomSheet
 
     @AppStorage(UserDefaults.shared.key(.threadDensity)) var threadDensity = ThreadDensity.normal
 
     @State private var avatarImage = Image(resource: MailResourcesAsset.placeholderAvatar)
+    @State private var isShowingComposeNewMessageView = false
     @StateObject var bottomSheet: ThreadBottomSheet
     @StateObject private var networkMonitor = NetworkMonitor()
     @State private var navigationController: UINavigationController?
+    @Binding private var editedMessageDraft: Draft?
+    @Binding private var messageReply: MessageReply?
 
     let isCompact: Bool
 
-    init(mailboxManager: MailboxManager, folder: Folder?, isCompact: Bool) {
+    init(mailboxManager: MailboxManager,
+         folder: Folder?,
+         editedMessageDraft: Binding<Draft?>,
+         messageReply: Binding<MessageReply?>,
+         isCompact: Bool) {
         let threadBottomSheet = ThreadBottomSheet()
+        _editedMessageDraft = editedMessageDraft
+        _messageReply = messageReply
         _bottomSheet = StateObject(wrappedValue: threadBottomSheet)
         _viewModel = StateObject(wrappedValue: ThreadListViewModel(mailboxManager: mailboxManager,
                                                                    folder: folder,
@@ -139,7 +134,7 @@ struct ThreadListView: View {
         .floatingActionButton(isEnabled: !multipleSelectionViewModel.isEnabled,
                               icon: Image(resource: MailResourcesAsset.edit),
                               title: MailResourcesStrings.Localizable.buttonNewMessage) {
-            menuSheet.state = .newMessage
+            isShowingComposeNewMessageView.toggle()
         }
         .floatingPanel(state: bottomSheet, halfOpening: true) {
             if case let .actions(target) = bottomSheet.state, !target.isInvalidated {
@@ -147,7 +142,7 @@ struct ThreadListView: View {
                             target: target,
                             state: bottomSheet,
                             globalSheet: globalBottomSheet) { message, replyMode in
-                    menuSheet.state = .reply(message, replyMode)
+                    messageReply = MessageReply(message: message, replyMode: replyMode)
                 } completionHandler: {
                     bottomSheet.close()
                     multipleSelectionViewModel.isEnabled = false
@@ -157,7 +152,6 @@ struct ThreadListView: View {
         .onAppear {
             networkMonitor.start()
             viewModel.globalBottomSheet = globalBottomSheet
-            viewModel.menuSheet = menuSheet
             viewModel.selectedThread = nil
             Task {
                 await viewModel.fetchThreads()
@@ -183,6 +177,9 @@ struct ThreadListView: View {
         .refreshable {
             await viewModel.fetchThreads()
         }
+        .sheet(isPresented: $isShowingComposeNewMessageView) {
+            NewMessageView(mailboxManager: viewModel.mailboxManager)
+        }
     }
 
     private func threadList(threads: [Thread]) -> some View {
@@ -190,7 +187,8 @@ struct ThreadListView: View {
             ThreadListCell(thread: thread,
                            viewModel: viewModel,
                            multipleSelectionViewModel: multipleSelectionViewModel,
-                           navigationController: navigationController)
+                           navigationController: navigationController,
+                           editedMessageDraft: $editedMessageDraft)
         }
     }
 }
@@ -201,11 +199,12 @@ private struct ThreadListToolbar: ViewModifier {
     @ObservedObject var bottomSheet: ThreadBottomSheet
     @ObservedObject var multipleSelectionViewModel: ThreadListMultipleSelectionViewModel
 
+    @State private var isShowingSwitchAccount = false
+
     @Binding var avatarImage: Image
     @Binding var observeThread: Bool
 
     @EnvironmentObject var splitViewManager: SplitViewManager
-    @EnvironmentObject var menuSheet: MenuSheet
     @EnvironmentObject var navigationDrawerController: NavigationDrawerController
 
     @Binding var navigationController: UINavigationController?
@@ -256,7 +255,7 @@ private struct ThreadListToolbar: ViewModifier {
                             }
 
                             Button {
-                                menuSheet.state = .switchAccount
+                                isShowingSwitchAccount.toggle()
                             } label: {
                                 avatarImage
                                     .resizable()
@@ -296,6 +295,11 @@ private struct ThreadListToolbar: ViewModifier {
                 )
                 .navigationBarTitleDisplayMode(.inline)
         }
+        .sheet(isPresented: $isShowingSwitchAccount) {
+            SheetView {
+                AccountListView()
+            }
+        }
     }
 }
 
@@ -304,8 +308,9 @@ struct ThreadListView_Previews: PreviewProvider {
         ThreadListView(
             mailboxManager: PreviewHelper.sampleMailboxManager,
             folder: PreviewHelper.sampleFolder,
+            editedMessageDraft: .constant(nil),
+            messageReply: .constant(nil),
             isCompact: false
         )
-        .environmentObject(MenuSheet())
     }
 }

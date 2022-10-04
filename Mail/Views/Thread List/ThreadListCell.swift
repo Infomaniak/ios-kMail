@@ -16,6 +16,7 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import MailCore
 import MailResources
 import SwiftUI
 
@@ -24,6 +25,8 @@ struct ThreadListCell: View {
     @ObservedObject var viewModel: ThreadListViewModel
     @ObservedObject var multipleSelectionViewModel: ThreadListMultipleSelectionViewModel
     let navigationController: UINavigationController?
+
+    @Binding var editedMessageDraft: Draft?
 
     @State private var shouldNavigateToThreadList = false
 
@@ -54,6 +57,7 @@ struct ThreadListCell: View {
                 isMultipleSelectionEnabled: multipleSelectionViewModel.isEnabled,
                 isSelected: isSelected
             )
+            .background(cellColor)
         }
         .onAppear { viewModel.loadNextPageIfNeeded(currentItem: thread) }
         .padding(.leading, multipleSelectionViewModel.isEnabled ? 8 : 0)
@@ -75,8 +79,7 @@ struct ThreadListCell: View {
         } else {
             viewModel.selectedThread = thread
             if thread.shouldPresentAsDraft {
-                guard let menuSheet = viewModel.menuSheet else { return }
-                DraftUtils.editDraft(from: thread, mailboxManager: viewModel.mailboxManager, menuSheet: menuSheet)
+                DraftUtils.editDraft(from: thread, mailboxManager: viewModel.mailboxManager, editedMessageDraft: $editedMessageDraft)
             } else {
                 shouldNavigateToThreadList = true
             }
@@ -100,7 +103,8 @@ struct ThreadListCell_Previews: PreviewProvider {
             viewModel: ThreadListViewModel(mailboxManager: PreviewHelper.sampleMailboxManager,
                                            folder: nil, bottomSheet: ThreadBottomSheet()),
             multipleSelectionViewModel: ThreadListMultipleSelectionViewModel(mailboxManager: PreviewHelper.sampleMailboxManager),
-            navigationController: nil
+            navigationController: nil,
+            editedMessageDraft: .constant(nil)
         )
     }
 }

@@ -18,18 +18,19 @@
 
 import Foundation
 import MailCore
+import SwiftUI
 
 class DraftUtils {
-    @MainActor public static func editDraft(from thread: Thread, mailboxManager: MailboxManager, menuSheet: MenuSheet) {
+    @MainActor public static func editDraft(from thread: Thread, mailboxManager: MailboxManager, editedMessageDraft: Binding<Draft?>) {
         guard let message = thread.messages.first else { return }
         var sheetPresented = false
 
         // If we already have the draft locally, present it directly
         if let draft = mailboxManager.draft(messageUid: message.uid)?.detached() {
-            menuSheet.state = .editMessage(draft: draft)
+            editedMessageDraft.wrappedValue = draft
             sheetPresented = true
         } else if let localDraft = mailboxManager.localDraft(uuid: thread.uid)?.detached() {
-            menuSheet.state = .editMessage(draft: localDraft)
+            editedMessageDraft.wrappedValue = localDraft
             sheetPresented = true
         }
 
@@ -37,7 +38,7 @@ class DraftUtils {
         Task { [sheetPresented] in
             let draft = try await mailboxManager.draft(from: message)
             if !sheetPresented {
-                menuSheet.state = .editMessage(draft: draft)
+                editedMessageDraft.wrappedValue = draft
             }
         }
     }

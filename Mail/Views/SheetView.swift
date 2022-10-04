@@ -20,11 +20,10 @@ import MailResources
 import SwiftUI
 
 struct SheetView<Content>: View where Content: View {
-    @Binding var isPresented: Bool
+    @Environment(\.dismiss) private var dismiss
     let content: Content
 
-    init(isPresented: Binding<Bool>, @ViewBuilder _ content: () -> Content) {
-        _isPresented = isPresented
+    init(@ViewBuilder _ content: () -> Content) {
         self.content = content()
     }
 
@@ -32,7 +31,7 @@ struct SheetView<Content>: View where Content: View {
         NavigationView {
             content
                 .navigationBarItems(leading: Button {
-                    isPresented = false
+                    dismiss()
                 } label: {
                     Label(MailResourcesStrings.Localizable.buttonClose, systemImage: "xmark")
                 })
@@ -43,7 +42,7 @@ struct SheetView<Content>: View where Content: View {
 
 struct SheetView_Previews: PreviewProvider {
     static var previews: some View {
-        SheetView(isPresented: .constant(true)) {
+        SheetView() {
             EmptyView()
         }
     }
