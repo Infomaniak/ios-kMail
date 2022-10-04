@@ -36,17 +36,13 @@ struct ThreadListCell: View {
             : MailResourcesAsset.backgroundColor.swiftUiColor
     }
 
-    private var isInDraftFolder: Bool {
-        viewModel.folder?.role == .draft
-    }
-
     private var isSelected: Bool {
         multipleSelectionViewModel.selectedItems.contains { $0.id == thread.id }
     }
 
     var body: some View {
         ZStack {
-            if viewModel.folder?.role != .draft {
+            if !thread.shouldPresentAsDraft {
                 NavigationLink(destination: ThreadView(mailboxManager: viewModel.mailboxManager,
                                                        thread: thread,
                                                        folderId: viewModel.folder?.id,
@@ -82,7 +78,7 @@ struct ThreadListCell: View {
             }
         } else {
             viewModel.selectedThread = thread
-            if isInDraftFolder {
+            if thread.shouldPresentAsDraft {
                 DraftUtils.editDraft(from: thread, mailboxManager: viewModel.mailboxManager, editedMessageDraft: $editedMessageDraft)
             } else {
                 shouldNavigateToThreadList = true

@@ -83,6 +83,10 @@ public class Thread: Object, Decodable, Identifiable {
         parent?.role == .draft && uid.starts(with: Draft.uuidLocalPrefix)
     }
 
+    public var shouldPresentAsDraft: Bool {
+        return messages.count == 1 && messages.first?.isDraft == true
+    }
+
     public var hasUnseenMessages: Bool {
         unseenMessages > 0
     }
