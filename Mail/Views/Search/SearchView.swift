@@ -62,7 +62,7 @@ struct SearchView: View {
                             .padding(.trailing, 0)
                             .padding(.leading, 12)
                             .onTapGesture {
-                                viewModel.updateSelection(filter: filter)
+                                viewModel.searchFilter(filter)
                             }
                         }
                     }
@@ -70,40 +70,23 @@ struct SearchView: View {
             }
             .padding(.top, 16)
 
-            List {
-                if viewModel.showHistory {
-                    searchHistoryList(history: viewModel.searchHistory)
-                } else {
-                    if !viewModel.contacts.isEmpty && isSearchFieldFocused {
+            if viewModel.searchState == .noResults {
+                SearchNoResultView()
+            } else if viewModel.searchState == .noHistory {
+                // TODO: maybe add a different view
+                Text("No history")
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+            } else {
+                List {
+                    if viewModel.searchState == .history {
+                        searchHistoryList(history: viewModel.searchHistory)
+                    } else if viewModel.searchState == .results {
                         contactList(contacts: viewModel.contacts)
-                    }
-
-                    if !viewModel.threads.isEmpty {
                         threadList(threads: viewModel.threads)
-                    } else if viewModel.searchInfo.hasSearched && !viewModel.searchInfo.isLoading {
-                        VStack {
-                            Spacer()
-                            HStack {
-                                Spacer()
-                                SearchNoResultView()
-                                Spacer()
-                            }
-                            Spacer()
-                        }
-                        .listRowSeparator(.hidden)
-                    }
-
-                    if viewModel.searchInfo.isLoading {
-                        HStack {
-                            Spacer()
-                            ProgressView()
-                            Spacer()
-                        }
-                        .listRowSeparator(.hidden)
                     }
                 }
+                .listStyle(.plain)
             }
-            .listStyle(.plain)
         }
         .background(MailResourcesAsset.backgroundColor.swiftUiColor)
         .introspectNavigationController { navigationController in
@@ -164,11 +147,9 @@ struct SearchView: View {
 
             ToolbarItem(placement: .navigation) {
                 SearchTextField(value: $viewModel.searchValue, isFocused: $isSearchFieldFocused) {
-                    Task {
-                        await viewModel.fetchThreads()
-                    }
+                    viewModel.searchThreadsForCurrentValue()
                 } onDelete: {
-                    viewModel.clearSearchValue()
+                    viewModel.clearSearch()
                 }
                 .frame(maxWidth: .infinity)
             }
@@ -211,9 +192,15 @@ struct SearchView: View {
                 }
             }
         } header: {
-            if threadDensity != .compact {
+            if threadDensity != .compact && !threads.isEmpty {
                 Text(MailResourcesStrings.Localizable.searchAllMessages)
                     .textStyle(.calloutSecondary)
+            }
+        } footer: {
+            if viewModel.isLoading {
+                ProgressView()
+                    .frame(maxWidth: .infinity)
+                    .id(UUID())
             }
         }
         .listRowInsets(.init(top: 0, leading: 12, bottom: 0, trailing: 12))
@@ -226,17 +213,15 @@ struct SearchView: View {
             ForEach(contacts) { contact in
                 RecipientAutocompletionCell(recipient: contact)
                     .onTapGesture {
-                        viewModel.searchValue = "\"" + contact.email + "\""
-                        viewModel.searchValueType = .contact
-                        Task {
-                            await viewModel.fetchThreads()
-                        }
+                        viewModel.searchThreadsForContact(contact)
                     }
             }
             .padding(.horizontal, 4)
         } header: {
-            Text(MailResourcesStrings.Localizable.contactsSearch)
-                .textStyle(.calloutSecondary)
+            if !contacts.isEmpty {
+                Text(MailResourcesStrings.Localizable.contactsSearch)
+                    .textStyle(.calloutSecondary)
+            }
         }
         .listRowInsets(.init(top: 0, leading: 12, bottom: 0, trailing: 12))
         .listRowSeparator(.hidden)
