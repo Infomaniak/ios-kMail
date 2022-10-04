@@ -50,8 +50,7 @@ class AccountSheet: SheetState<AccountSheet.State> {
 }
 
 struct AccountView: View {
-    @Binding var isPresented: Bool
-
+    @Environment(\.dismiss) private var dismiss
     @Environment(\.window) private var window
 
     @State private var avatarImage = Image(resource: MailResourcesAsset.placeholderAvatar)
@@ -116,7 +115,7 @@ struct AccountView: View {
             .navigationBarTitle(MailResourcesStrings.Localizable.titleMyAccount, displayMode: .inline)
             .backButtonDisplayMode(.minimal)
             .navigationBarItems(leading: Button {
-                isPresented = false
+                dismiss()
             } label: {
                 Label(MailResourcesStrings.Localizable.buttonClose, systemImage: "xmark")
             })
@@ -149,6 +148,6 @@ struct AccountView: View {
 
 struct AccountView_Previews: PreviewProvider {
     static var previews: some View {
-        AccountView(isPresented: .constant(true))
+        AccountView()
     }
 }

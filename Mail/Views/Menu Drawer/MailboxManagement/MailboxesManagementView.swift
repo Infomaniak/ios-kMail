@@ -24,11 +24,12 @@ import SwiftUI
 
 struct MailboxesManagementView: View {
     @EnvironmentObject var mailboxManager: MailboxManager
-    @EnvironmentObject var menuSheet: MenuSheet
 
     @Binding var isExpanded: Bool
     @State private var avatarImage = Image(resource: MailResourcesAsset.placeholderAvatar)
-
+    @State private var isShowingManageAccount = false
+    @State private var isShowingSwitchAccount = false
+    
     var mailboxes: [Mailbox]
 
     private var otherMailboxes: [Mailbox] {
@@ -72,10 +73,10 @@ struct MailboxesManagementView: View {
                     }
 
                     MailboxesManagementButtonView(text: MailResourcesStrings.Localizable.buttonManageAccount) {
-                        menuSheet.state = .manageAccount
+                        isShowingManageAccount.toggle()
                     }
                     MailboxesManagementButtonView(text: MailResourcesStrings.Localizable.buttonAccountSwitch) {
-                        menuSheet.state = .switchAccount
+                        isShowingSwitchAccount.toggle()
                     }
                 }
                 .task {
@@ -88,6 +89,14 @@ struct MailboxesManagementView: View {
             if let user = AccountManager.instance.account(for: mailboxManager.mailbox.userId)?.user {
                 avatarImage = await user.getAvatar()
             }
+        }
+        .sheet(isPresented: $isShowingSwitchAccount) {
+            SheetView {
+                AccountListView()
+            }
+        }
+        .sheet(isPresented: $isShowingManageAccount) {
+            AccountView()
         }
     }
 

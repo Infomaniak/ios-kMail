@@ -21,6 +21,9 @@ import SwiftUI
 
 struct ThreadListManagerView: View {
     @EnvironmentObject var splitViewManager: SplitViewManager
+    @State private var editedMessageDraft: Draft?
+    @State private var messageReply: MessageReply?
+
     var mailboxManager: MailboxManager
 
     let isCompact: Bool
@@ -31,17 +34,31 @@ struct ThreadListManagerView: View {
                 SearchView(
                     mailboxManager: mailboxManager,
                     folder: splitViewManager.selectedFolder,
+                    editedMessageDraft: $editedMessageDraft,
+                    messageReply: $messageReply,
                     isCompact: isCompact
                 )
             } else {
                 ThreadListView(
                     mailboxManager: mailboxManager,
                     folder: splitViewManager.selectedFolder,
+                    editedMessageDraft: $editedMessageDraft,
+                    messageReply: $messageReply,
                     isCompact: isCompact
                 )
             }
         }
         .animation(.easeInOut(duration: 0.25), value: splitViewManager.showSearch)
+        .sheet(item: $editedMessageDraft) { draft in
+            NewMessageView(mailboxManager: mailboxManager, draft: draft.asUnmanaged())
+        }
+        .sheet(item: $messageReply) { messageReply in
+            // If message doesn't exist anymore try to show the frozen one
+            let message = messageReply.message
+            let freshMessage = message.fresh(using: mailboxManager.getRealm()) ?? message
+            NewMessageView(mailboxManager: mailboxManager,
+                           draft: .replying(to: freshMessage, mode: messageReply.replyMode))
+        }
     }
 }
 

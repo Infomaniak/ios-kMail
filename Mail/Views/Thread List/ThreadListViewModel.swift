@@ -94,7 +94,6 @@ class DateSection: Identifiable {
 
     var bottomSheet: ThreadBottomSheet
     var globalBottomSheet: GlobalBottomSheet?
-    var menuSheet: MenuSheet?
 
     var scrollViewProxy: ScrollViewProxy?
 

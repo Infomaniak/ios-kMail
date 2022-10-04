@@ -57,12 +57,10 @@ struct SplitView: View {
     @Environment(\.horizontalSizeClass) var sizeClass
     @Environment(\.window) var window
 
-    @StateObject private var menuSheet = MenuSheet()
     @StateObject private var bottomSheet = GlobalBottomSheet()
     @StateObject private var alert = GlobalAlert()
 
     @StateObject private var splitViewManager: SplitViewManager
-
 
     var isCompact: Bool {
         sizeClass == .compact
@@ -120,7 +118,6 @@ struct SplitView: View {
             }
         }
         .environmentObject(splitViewManager)
-        .environmentObject(menuSheet)
         .environmentObject(navigationDrawerController)
         .defaultAppStorage(.shared)
         .onAppear {
@@ -146,40 +143,6 @@ struct SplitView: View {
             self.splitViewController = splitViewController
             setupBehaviour(orientation: interfaceOrientation)
             splitViewController.preferredDisplayMode = .twoDisplaceSecondary
-        }
-        .sheet(isPresented: $menuSheet.isShowing) {
-            switch menuSheet.state {
-            case .newMessage:
-                NewMessageView(isPresented: $menuSheet.isShowing, mailboxManager: mailboxManager)
-            case let .reply(message, replyMode):
-                // If message doesn't exist anymore try to show the frozen one
-                let freshMessage = message.fresh(using: mailboxManager.getRealm()) ?? message
-                NewMessageView(
-                    isPresented: $menuSheet.isShowing,
-                    mailboxManager: mailboxManager,
-                    draft: .replying(to: freshMessage, mode: replyMode)
-                )
-            case let .editMessage(draft):
-                NewMessageView(isPresented: $menuSheet.isShowing, mailboxManager: mailboxManager, draft: draft.asUnmanaged())
-            case .manageAccount:
-                AccountView(isPresented: $menuSheet.isShowing)
-            case .switchAccount:
-                SheetView(isPresented: $menuSheet.isShowing) {
-                    AccountListView()
-                }
-            case .settings:
-                SheetView(isPresented: $menuSheet.isShowing) {
-                    SettingsView(viewModel: GeneralSettingsViewModel())
-                }
-            case .help:
-                SheetView(isPresented: $menuSheet.isShowing) {
-                    HelpView()
-                }
-            case .bugTracker:
-                BugTrackerView(isPresented: $menuSheet.isShowing)
-            case .none:
-                EmptyView()
-            }
         }
         .environmentObject(bottomSheet)
         .environmentObject(alert)
