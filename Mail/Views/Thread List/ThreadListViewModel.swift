@@ -94,7 +94,6 @@ class DateSection: Identifiable {
 
     var bottomSheet: ThreadBottomSheet
     var globalBottomSheet: GlobalBottomSheet?
-    var menuSheet: MenuSheet?
 
     var scrollViewProxy: ScrollViewProxy?
 
@@ -296,17 +295,17 @@ class DateSection: Identifiable {
 
     private func toggleSpam(thread: Thread) async throws {
         let folderRole: FolderRole
-        let response: UndoResponse
+        let undoRedoAction: UndoRedoAction
         if folder?.role == .spam {
-            response = try await mailboxManager.nonSpam(thread: thread)
+            undoRedoAction = try await mailboxManager.nonSpam(thread: thread)
             folderRole = .inbox
         } else {
-            response = try await mailboxManager.reportSpam(thread: thread)
+            undoRedoAction = try await mailboxManager.reportSpam(thread: thread)
             folderRole = .spam
         }
         IKSnackBar.showCancelableSnackBar(message: MailResourcesStrings.Localizable.snackbarThreadMoved(folderRole.localizedName),
                                           cancelSuccessMessage: MailResourcesStrings.Localizable.snackbarMoveCancelled,
-                                          cancelableResponse: response,
+                                          undoRedoAction: undoRedoAction,
                                           mailboxManager: mailboxManager)
     }
 
@@ -319,7 +318,7 @@ class DateSection: Identifiable {
         let response = try await mailboxManager.move(thread: thread, to: folder)
         IKSnackBar.showCancelableSnackBar(message: MailResourcesStrings.Localizable.snackbarThreadMoved(folder.localizedName),
                                           cancelSuccessMessage: MailResourcesStrings.Localizable.snackbarMoveCancelled,
-                                          cancelableResponse: response,
+                                          undoRedoAction: response,
                                           mailboxManager: mailboxManager)
     }
 }

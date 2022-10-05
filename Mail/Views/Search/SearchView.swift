@@ -26,7 +26,6 @@ struct SearchView: View {
     @StateObject var viewModel: SearchViewModel
 
     @EnvironmentObject var splitViewManager: SplitViewManager
-    @EnvironmentObject var menuSheet: MenuSheet
     @EnvironmentObject var globalBottomSheet: GlobalBottomSheet
 
     @AppStorage(UserDefaults.shared.key(.threadDensity)) var threadDensity = ThreadDensity.normal
@@ -35,11 +34,19 @@ struct SearchView: View {
     @State private var navigationController: UINavigationController?
 
     @State public var isSearchFieldFocused = false
+    @Binding private var editedMessageDraft: Draft?
+    @Binding private var messageReply: MessageReply?
 
     let isCompact: Bool
 
-    init(mailboxManager: MailboxManager, folder: Folder?, isCompact: Bool) {
+    init(mailboxManager: MailboxManager,
+         folder: Folder?,
+         editedMessageDraft: Binding<Draft?>,
+         messageReply: Binding<MessageReply?>,
+         isCompact: Bool) {
         let threadBottomSheet = ThreadBottomSheet()
+        _editedMessageDraft = editedMessageDraft
+        _messageReply = messageReply
         _bottomSheet = StateObject(wrappedValue: threadBottomSheet)
         _viewModel = StateObject(wrappedValue: SearchViewModel(mailboxManager: mailboxManager, folder: folder))
         self.isCompact = isCompact
@@ -113,7 +120,7 @@ struct SearchView: View {
                             target: target,
                             state: bottomSheet,
                             globalSheet: globalBottomSheet) { message, replyMode in
-                    menuSheet.state = .reply(message, replyMode)
+                    messageReply = MessageReply(message: message, replyMode: replyMode)
                 }
             }
         }
@@ -160,9 +167,9 @@ struct SearchView: View {
         Section {
             ForEach(threads) { thread in
                 Group {
-                    if viewModel.lastSearchFolderId == viewModel.mailboxManager.getFolder(with: .draft)?._id {
+                    if thread.shouldPresentAsDraft {
                         Button(action: {
-                            DraftUtils.editDraft(from: thread, mailboxManager: viewModel.mailboxManager, menuSheet: menuSheet)
+                            DraftUtils.editDraft(from: thread, mailboxManager: viewModel.mailboxManager, editedMessageDraft: $editedMessageDraft)
                         }, label: {
                             ThreadCell(thread: thread)
                         })
@@ -252,6 +259,10 @@ struct SearchView: View {
 
 struct SearchView_Previews: PreviewProvider {
     static var previews: some View {
-        SearchView(mailboxManager: PreviewHelper.sampleMailboxManager, folder: PreviewHelper.sampleFolder, isCompact: true)
+        SearchView(mailboxManager: PreviewHelper.sampleMailboxManager,
+                   folder: PreviewHelper.sampleFolder,
+                   editedMessageDraft: .constant(nil),
+                   messageReply: .constant(nil),
+                   isCompact: true)
     }
 }
