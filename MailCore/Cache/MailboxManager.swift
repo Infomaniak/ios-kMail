@@ -626,21 +626,6 @@ public class MailboxManager: ObservableObject {
         return searchFolder
     }
 
-    public func cleanSearchFolder() async -> Folder {
-        return await backgroundRealm.execute { realm in
-            if let liveFolder = realm.object(ofType: Folder.self, forPrimaryKey: Constants.searchFolderId) {
-                try? realm.safeWrite {
-                    realm.delete(realm.objects(Message.self).where { $0.fromSearch == true })
-                    realm.delete(liveFolder.threads.where { $0.fromSearch == true })
-                    liveFolder.threads.removeAll()
-                }
-                return liveFolder.freeze()
-            } else {
-                return self.initSearchFolder().freeze()
-            }
-        }
-    }
-
     public func searchThreads(searchFolder: Folder?, filterFolderId: String, filter: Filter = .all,
                               searchFilter: [URLQueryItem] = []) async throws -> ThreadResult {
         let threadResult = try await apiFetcher.threads(
@@ -699,6 +684,13 @@ public class MailboxManager: ObservableObject {
                                      searchFilters: [SearchCondition]) async {
         await backgroundRealm.execute { realm in
             guard let searchFolder = searchFolder?.fresh(using: realm) else { return }
+
+            try? realm.safeWrite {
+                realm.delete(realm.objects(Message.self).where { $0.fromSearch == true })
+                realm.delete(searchFolder.threads.where { $0.fromSearch == true })
+                searchFolder.threads.removeAll()
+            }
+
             var predicates: [NSPredicate] = []
             for searchFilter in searchFilters {
                 switch searchFilter {
@@ -733,11 +725,11 @@ public class MailboxManager: ObservableObject {
 
             let compoundPredicate = NSCompoundPredicate(andPredicateWithSubpredicates: predicates)
 
-            let query = realm.objects(Message.self).filter(compoundPredicate)
+            let filteredMessages = realm.objects(Message.self).filter(compoundPredicate)
 
             // Update thread in Realm
             try? realm.safeWrite {
-                for message in query {
+                for message in filteredMessages {
                     let newMessage = message.detached()
                     newMessage.uid = "offline\(newMessage.uid)"
                     newMessage.fromSearch = true
