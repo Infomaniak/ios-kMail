@@ -125,7 +125,6 @@ enum SearchState {
     func clearSearch() {
         Task {
             searchValueType = .threadsAndContacts
-            searchFolder = await mailboxManager.cleanSearchFolder()
             searchValue = ""
             threads = []
             contacts = []
@@ -270,8 +269,9 @@ enum SearchState {
 
         isLoading = true
 
-        searchFolder = await mailboxManager.cleanSearchFolder()
-        observeSearch = true
+        let searchFolder = searchFolder.freeze()
+        observeSearch = false
+        threads = []
 
         var folderToSearch = realFolder.id
 
@@ -299,8 +299,9 @@ enum SearchState {
                 resourceNext = result.resourceNext
             }
         }
+        observeSearch = true
 
-        if !searchValue.isEmpty {
+        if searchValue.trimmingCharacters(in: .whitespacesAndNewlines).count >= 3 {
             searchHistory = await mailboxManager.update(searchHistory: searchHistory, with: searchValue)
         }
     }
