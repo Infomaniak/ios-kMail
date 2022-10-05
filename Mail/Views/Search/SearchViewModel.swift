@@ -58,6 +58,7 @@ enum SearchState {
     @Published var folderList: [Folder]
     @Published var realFolder: Folder?
     var lastSearchFolderId: String?
+    var observationSearchThreadToken: NotificationToken?
     @Published var selectedSearchFolderId = "" {
         didSet {
             if selectedSearchFolderId.isEmpty {
@@ -80,18 +81,7 @@ enum SearchState {
     private var searchFolder: Folder
     private var resourceNext: String?
     private var lastSearch = ""
-    private var observationSearchThreadToken: NotificationToken?
     private var searchFieldObservation: AnyCancellable?
-
-    var observeSearch: Bool {
-        didSet {
-            if observeSearch {
-                observeChanges()
-            } else {
-                observationSearchThreadToken?.invalidate()
-            }
-        }
-    }
 
     init(mailboxManager: MailboxManager, folder: Folder?) {
         self.mailboxManager = mailboxManager
@@ -102,7 +92,6 @@ enum SearchState {
 
         searchFolder = mailboxManager.initSearchFolder()
 
-        observeSearch = true
         folderList = mailboxManager.getFolders()
 
         searchFieldObservation = $searchValue
@@ -115,6 +104,7 @@ enum SearchState {
                 self?.searchValueType = .threadsAndContacts
                 self?.performSearch()
             }
+        observeChanges()
     }
 
     func initSearch() {
@@ -270,7 +260,7 @@ enum SearchState {
         isLoading = true
 
         let searchFolder = searchFolder.freeze()
-        observeSearch = false
+        observationSearchThreadToken?.invalidate()
         threads = []
 
         var folderToSearch = realFolder.id
@@ -299,7 +289,7 @@ enum SearchState {
                 resourceNext = result.resourceNext
             }
         }
-        observeSearch = true
+        observeChanges()
 
         if searchValue.trimmingCharacters(in: .whitespacesAndNewlines).count >= 3 {
             searchHistory = await mailboxManager.update(searchHistory: searchHistory, with: searchValue)

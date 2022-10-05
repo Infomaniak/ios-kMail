@@ -129,7 +129,7 @@ struct SearchView: View {
         }
         .onDisappear {
             if viewModel.selectedThread == nil {
-                viewModel.observeSearch = false
+                viewModel.observationSearchThreadToken?.invalidate()
             }
         }
         .onAppear {
