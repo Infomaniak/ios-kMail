@@ -56,72 +56,77 @@ public struct MailTextStyle {
     }
 
     public static let header1 = MailTextStyle(
-        font: .system(size: 22, weight: .semibold),
+        font: .system(size: 21.5, weight: .bold),
         color: MailResourcesAsset.primaryTextColor
     )
 
     public static let header2 = MailTextStyle(
-        font: .system(size: 18, weight: .semibold),
+        font: .system(size: 17.5, weight: .bold),
         color: MailResourcesAsset.primaryTextColor
     )
 
     public static let header2Secondary = MailTextStyle(
-        font: .system(size: 18),
+        font: .system(size: 17.5),
         color: MailResourcesAsset.secondaryTextColor
     )
 
     public static let header3 = MailTextStyle(
-        font: .system(size: 16, weight: .semibold),
+        font: .system(size: 15.5, weight: .bold),
         color: MailResourcesAsset.primaryTextColor
     )
 
     public static let body = MailTextStyle(
-        font: .system(size: 16),
+        font: .system(size: 15.5),
         color: MailResourcesAsset.primaryTextColor
     )
 
     public static let bodySecondary = MailTextStyle(
-        font: .system(size: 16),
+        font: .system(size: 15.5),
         color: MailResourcesAsset.secondaryTextColor
     )
 
     public static let button = MailTextStyle(
-        font: .system(size: 16, weight: .medium),
+        font: .system(size: 15.5, weight: .medium),
         color: \.primary
     )
 
     public static let buttonPill = MailTextStyle(
-        font: .system(size: 16, weight: .semibold),
+        font: .system(size: 15.5, weight: .semibold),
         color: MailResourcesAsset.buttonPillColor
     )
 
     public static let calloutStrong = MailTextStyle(
-        font: .system(size: 14, weight: .semibold),
+        font: .system(size: 13.5, weight: .bold),
         color: MailResourcesAsset.primaryTextColor
     )
 
     public static let callout = MailTextStyle(
-        font: .system(size: 14),
+        font: .system(size: 13.5),
         color: MailResourcesAsset.primaryTextColor
     )
 
+    public static let calloutSection = MailTextStyle(
+        font: .system(size: 14.5),
+        color: MailResourcesAsset.sectionHeaderTextColor
+    )
+    
     public static let calloutSecondary = MailTextStyle(
-        font: .system(size: 14),
+        font: .system(size: 13.5),
         color: MailResourcesAsset.secondaryTextColor
     )
 
     public static let calloutHint = MailTextStyle(
-        font: .system(size: 14),
+        font: .system(size: 13.5),
         color: MailResourcesAsset.hintTextColor
     )
 
     public static let calloutHighlighted = MailTextStyle(
-        font: .system(size: 14),
+        font: .system(size: 13.5),
         color: \.primary
     )
 
     public static let caption = MailTextStyle(
-        font: .system(size: 12),
+        font: .system(size: 11.5),
         color: MailResourcesAsset.secondaryTextColor
     )
 }
