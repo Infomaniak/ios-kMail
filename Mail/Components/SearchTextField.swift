@@ -52,6 +52,7 @@ struct SearchTextField: View {
                     .rotationEffect(Angle(degrees: 45))
             }
             .foregroundColor(MailResourcesAsset.textFieldPlaceholderColor)
+            .opacity(value.isEmpty ? 0 : 1)
         }
         .padding(.horizontal, 12)
         .background {

@@ -45,7 +45,15 @@ enum SearchState {
     @Published var selectedFilters: [SearchFilter] = []
     var searchValueType: SearchFieldValueType = .threadsAndContacts
     @Published var searchValue = ""
-    @Published var searchState: SearchState
+    var searchState: SearchState {
+        if selectedFilters.isEmpty && searchValue.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+            return searchHistory.history.isEmpty ? .noHistory : .history
+        } else if (threads.isEmpty && !isLoading) && contacts.isEmpty {
+            return .noResults
+        } else {
+            return .results
+        }
+    }
 
     @Published var folderList: [Folder]
     @Published var realFolder: Folder?
@@ -59,33 +67,19 @@ enum SearchState {
             }
             Task {
                 await fetchThreads()
-                updateSearchState()
             }
         }
     }
 
     var selectedThread: Thread?
 
-    @Published var threads: [Thread] = [] {
-        didSet {
-            updateSearchState()
-        }
-    }
-
-    @Published var contacts: [Recipient] = [] {
-        didSet {
-            updateSearchState()
-        }
-    }
-
-    @Published var isLoading = false {
-        didSet {
-            updateSearchState()
-        }
-    }
+    @Published var threads: [Thread] = []
+    @Published var contacts: [Recipient] = []
+    @Published var isLoading = false
 
     private var searchFolder: Folder
     private var resourceNext: String?
+    private var lastSearch = ""
     private var observationSearchThreadToken: NotificationToken?
     private var searchFieldObservation: AnyCancellable?
 
@@ -111,11 +105,14 @@ enum SearchState {
         observeSearch = true
         folderList = mailboxManager.getFolders()
 
-        searchState = searchHistory.history.isEmpty ? .noHistory : .history
-
         searchFieldObservation = $searchValue
             .debounce(for: .seconds(0.3), scheduler: DispatchQueue.main)
-            .sink { [weak self] _ in
+            .sink { [weak self] newValue in
+                guard self?.lastSearch.trimmingCharacters(in: .whitespacesAndNewlines) != newValue.trimmingCharacters(in: .whitespacesAndNewlines) else {
+                    return
+                }
+                self?.lastSearch = newValue
+                self?.searchValueType = .threadsAndContacts
                 self?.performSearch()
             }
     }
@@ -128,7 +125,6 @@ enum SearchState {
     func clearSearch() {
         Task {
             searchValueType = .threadsAndContacts
-            searchState = searchHistory.history.isEmpty ? .noHistory : .history
             searchFolder = await mailboxManager.cleanSearchFolder()
             searchValue = ""
             threads = []
@@ -161,7 +157,6 @@ enum SearchState {
     }
 
     private func performSearch() {
-        updateSearchState()
         if searchValueType == .threadsAndContacts {
             updateContactSuggestion()
         } else {
@@ -242,17 +237,6 @@ enum SearchState {
         }
     }
 
-    private func updateSearchState() {
-        if selectedFilters.isEmpty && searchValue.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
-            searchValueType = .threadsAndContacts
-            searchState = searchHistory.history.isEmpty ? .noHistory : .history
-        } else if (threads.isEmpty && !isLoading) && contacts.isEmpty {
-            searchState = .noResults
-        } else {
-            searchState = .results
-        }
-    }
-
     private func unselect(filter: SearchFilter) {
         selectedFilters.removeAll {
             $0 == filter
@@ -284,10 +268,10 @@ enum SearchState {
             return
         }
 
+        isLoading = true
+
         searchFolder = await mailboxManager.cleanSearchFolder()
         observeSearch = true
-
-        isLoading = true
 
         var folderToSearch = realFolder.id
 
@@ -296,27 +280,24 @@ enum SearchState {
             lastSearchFolderId = selectedSearchFolderId
         }
 
-        guard ReachabilityListener.instance.currentStatus != .offline else {
+        if ReachabilityListener.instance.currentStatus == .offline {
             // Search offline
             await mailboxManager.searchThreadsOffline(
                 searchFolder: searchFolder,
                 filterFolderId: folderToSearch,
                 searchFilters: searchFiltersOffline
             )
+        } else {
+            await tryOrDisplayError {
+                let result = try await mailboxManager.searchThreads(
+                    searchFolder: searchFolder,
+                    filterFolderId: folderToSearch,
+                    filter: filter,
+                    searchFilter: searchFilters
+                )
 
-            return
-        }
-
-        await tryOrDisplayError {
-            let result = try await mailboxManager.searchThreads(
-                searchFolder: searchFolder,
-                filterFolderId: folderToSearch,
-                filter: filter,
-                searchFilter: searchFilters
-            )
-
-            resourceNext = result.resourceNext
-            isLoading = false
+                resourceNext = result.resourceNext
+            }
         }
 
         if !searchValue.isEmpty {
@@ -337,8 +318,8 @@ enum SearchState {
                 searchFilter: searchFilters
             )
             resourceNext = threadResult.resourceNext
-            isLoading = false
         }
+        isLoading = false
     }
 
     private func observeChanges() {
@@ -356,6 +337,7 @@ enum SearchState {
                 case .error:
                     break
                 }
+                self?.isLoading = false
             }
 
         } else {
