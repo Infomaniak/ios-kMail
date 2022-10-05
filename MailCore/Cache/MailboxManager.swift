@@ -784,7 +784,7 @@ public class MailboxManager: ObservableObject {
 
     public func update(searchHistory: SearchHistory, with value: String) async -> SearchHistory {
         return await backgroundRealm.execute { realm in
-            guard let searchHistory = searchHistory.fresh(using: realm) else { return searchHistory }
+            guard let searchHistory = realm.objects(SearchHistory.self).first else { return searchHistory }
             try? realm.safeWrite {
                 if let indexToRemove = searchHistory.history.firstIndex(of: value) {
                     searchHistory.history.remove(at: indexToRemove)
