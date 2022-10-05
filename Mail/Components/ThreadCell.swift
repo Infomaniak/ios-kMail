@@ -47,8 +47,8 @@ struct ThreadCell: View {
 
     var thread: Thread
 
-    var isMultipleSelectionEnabled: Bool = false
-    var isSelected: Bool = false
+    var isMultipleSelectionEnabled = false
+    var isSelected = false
 
     private var textStyle: MailTextStyle {
         thread.hasUnseenMessages ? .header3 : .bodySecondary
