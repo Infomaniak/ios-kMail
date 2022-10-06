@@ -178,7 +178,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, AccountManagerDelegate 
                                               bcc: getRecipients(from: urlComponents, name: "bcc"),
                                               identityId: "\(signatureResponse.defaultSignatureId)")
 
-            let newMessageView = NewMessageView(mailboxManager: mailboxManager, draft: draft)
+            let newMessageView = ComposeMessageView(mailboxManager: mailboxManager, draft: draft)
             let viewController = UIHostingController(rootView: newMessageView)
             window?.rootViewController?.present(viewController, animated: true)
         }

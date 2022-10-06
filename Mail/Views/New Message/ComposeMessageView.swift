@@ -45,7 +45,7 @@ class NewMessageAlert: SheetState<NewMessageAlert.State> {
     }
 }
 
-struct NewMessageView: View {
+struct ComposeMessageView: View {
     @Environment(\.dismiss) private var dismiss
 
     @State private var mailboxManager: MailboxManager
@@ -282,7 +282,7 @@ struct NewMessageView: View {
                 await saveDraft()
             }
         }
-        NewMessageView.queue.asyncAfter(deadline: .now() + saveExpiration, execute: debouncedWorkItem)
+        ComposeMessageView.queue.asyncAfter(deadline: .now() + saveExpiration, execute: debouncedWorkItem)
         debouncedBufferWrite = debouncedWorkItem
     }
 
@@ -478,6 +478,6 @@ struct NewMessageView: View {
 
 struct NewMessageView_Previews: PreviewProvider {
     static var previews: some View {
-        NewMessageView(mailboxManager: PreviewHelper.sampleMailboxManager, draft: .empty())
+        ComposeMessageView(mailboxManager: PreviewHelper.sampleMailboxManager, draft: .empty())
     }
 }

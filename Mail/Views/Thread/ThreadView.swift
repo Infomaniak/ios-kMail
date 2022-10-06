@@ -174,11 +174,11 @@ struct ThreadView: View {
             case let .attachment(attachment):
                 AttachmentPreview(isPresented: $sheet.isShowing, attachment: attachment)
             case let .reply(message, replyMode):
-                NewMessageView(mailboxManager: mailboxManager, draft: .replying(to: message, mode: replyMode))
+                ComposeMessageView(mailboxManager: mailboxManager, draft: .replying(to: message, mode: replyMode))
             case let .edit(draft):
-                NewMessageView(mailboxManager: mailboxManager, draft: draft.asUnmanaged())
+                ComposeMessageView(mailboxManager: mailboxManager, draft: draft.asUnmanaged())
             case let .write(recipient):
-                NewMessageView(mailboxManager: mailboxManager, draft: .writing(to: recipient))
+                ComposeMessageView(mailboxManager: mailboxManager, draft: .writing(to: recipient))
             case .none:
                 EmptyView()
             }
