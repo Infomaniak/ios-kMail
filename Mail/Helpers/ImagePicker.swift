@@ -22,7 +22,7 @@ import UIKit
 
 struct ImagePicker: UIViewControllerRepresentable {
     var completion: ([PHPickerResult]) -> Void
-    @Environment(\.presentationMode) private var presentationMode
+    @Environment(\.dismiss) private var dismiss
 
     func makeUIViewController(context: Context) -> PHPickerViewController {
         var configuration = PHPickerConfiguration(photoLibrary: PHPhotoLibrary.shared())
@@ -40,7 +40,7 @@ struct ImagePicker: UIViewControllerRepresentable {
         _ uiViewController: PHPickerViewController,
         context: UIViewControllerRepresentableContext<ImagePicker>
     ) {
-        // Empty on prupose
+        // Empty on purpose
     }
 
     final class Coordinator: NSObject, PHPickerViewControllerDelegate, UINavigationControllerDelegate {
@@ -52,7 +52,7 @@ struct ImagePicker: UIViewControllerRepresentable {
 
         func picker(_ picker: PHPickerViewController, didFinishPicking results: [PHPickerResult]) {
             parent.completion(results)
-            parent.presentationMode.wrappedValue.dismiss()
+            parent.dismiss()
         }
     }
 }

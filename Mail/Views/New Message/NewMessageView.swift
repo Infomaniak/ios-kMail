@@ -39,12 +39,6 @@ enum RecipientFieldType: Hashable {
     }
 }
 
-class NewMessageSheet: SheetState<NewMessageSheet.State> {
-    enum State {
-        case fileSelection, photoLibrary
-    }
-}
-
 class NewMessageAlert: SheetState<NewMessageAlert.State> {
     enum State {
         case link(handler: (String) -> Void)
@@ -65,10 +59,11 @@ struct NewMessageView: View {
     private var sendDisabled = false
     @State private var draftHasChanged = false
     @State private var isShowingCamera = false
+    @State private var isShowingFileSelection = false
+    @State private var isShowingPhotoLibrary = false
 
     @State var scrollView: UIScrollView?
 
-    @StateObject private var sheet = NewMessageSheet()
     @StateObject private var alert = NewMessageAlert()
 
     static var queue = DispatchQueue(label: "com.infomaniak.mail.saveDraft")
@@ -200,9 +195,10 @@ struct NewMessageView: View {
             draft.setSignature(signatureResponse)
         }
         .onAppear {
-            editor.richTextEditor.sheet = sheet
             editor.richTextEditor.alert = alert
             editor.richTextEditor.isShowingCamera = $isShowingCamera
+            editor.richTextEditor.isShowingFileSelection = $isShowingFileSelection
+            editor.richTextEditor.isShowingPhotoLibrary = $isShowingPhotoLibrary
         }
         .onDisappear {
             if draftHasChanged {
@@ -220,22 +216,18 @@ struct NewMessageView: View {
             }
             .ignoresSafeArea()
         }
-        .sheet(isPresented: $sheet.isShowing) {
-            switch sheet.state {
-            case .fileSelection:
-                DocumentPicker { urls in
-                    Task {
-                        await addDocumentAttachment(urls: urls)
-                    }
+        .sheet(isPresented: $isShowingFileSelection) {
+            DocumentPicker { urls in
+                Task {
+                    await addDocumentAttachment(urls: urls)
                 }
-            case .photoLibrary:
-                ImagePicker { results in
-                    Task {
-                        await addImageAttachment(results: results)
-                    }
+            }
+        }
+        .sheet(isPresented: $isShowingPhotoLibrary) {
+            ImagePicker { results in
+                Task {
+                    await addImageAttachment(results: results)
                 }
-            case .none:
-                EmptyView()
             }
         }
         .customAlert(isPresented: $alert.isShowing) {
