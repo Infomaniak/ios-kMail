@@ -74,12 +74,12 @@ struct NewMessageView: View {
         return !autocompletion.isEmpty && focusedRecipientField != nil
     }
 
-    init(mailboxManager: MailboxManager, draft: UnmanagedDraft? = nil) {
+    init(mailboxManager: MailboxManager, draft: UnmanagedDraft) {
+        var initialDraft = draft
         _mailboxManager = State(initialValue: mailboxManager)
         let selectedMailboxItem = AccountManager.instance.mailboxes
             .firstIndex { $0.mailboxId == mailboxManager.mailbox.mailboxId } ?? 0
         _selectedMailboxItem = State(initialValue: selectedMailboxItem)
-        var initialDraft = draft ?? UnmanagedDraft()
         if let signatureResponse = mailboxManager.getSignatureResponse() {
             if !initialDraft.didSetSignature {
                 initialDraft.setSignature(signatureResponse)
@@ -478,6 +478,6 @@ struct NewMessageView: View {
 
 struct NewMessageView_Previews: PreviewProvider {
     static var previews: some View {
-        NewMessageView(mailboxManager: PreviewHelper.sampleMailboxManager)
+        NewMessageView(mailboxManager: PreviewHelper.sampleMailboxManager, draft: .empty())
     }
 }
