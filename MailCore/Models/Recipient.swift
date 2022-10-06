@@ -42,11 +42,8 @@ public class Recipient: EmbeddedObject, Codable {
         return contact?.name.removePunctuation ?? (name.isEmpty ? email : name.removePunctuation)
     }
 
-    public var color: Color {
-        if let contact = contact {
-            return Color(hex: contact.color)
-        }
-        return UserDefaults.shared.accentColor.primary.swiftUiColor
+    public var color: UIColor {
+        return contact?.color ?? UserDefaults.shared.accentColor.primary.color
     }
 
     public var initials: String {

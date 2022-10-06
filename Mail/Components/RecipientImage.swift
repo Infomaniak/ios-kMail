@@ -34,7 +34,7 @@ struct RecipientImage: View {
             } else {
                 ZStack {
                     Circle()
-                        .fill(recipient.color)
+                        .fill(Color(uiColor: recipient.color))
                     Text(recipient.initials)
                         .font(.system(size: size * 0.5, weight: .semibold))
                         .foregroundColor(.white)

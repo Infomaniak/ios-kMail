@@ -31,7 +31,7 @@ public class MergedContact {
 
     private let contactFormatter = CNContactFormatter()
 
-    public lazy var color: String = remote?.color ?? "#00bcd4"
+    public lazy var color: UIColor = UIColor(hex: remote!.color) ?? UserDefaults.shared.accentColor.primary.color
 
     public lazy var name: String = {
         if let local = local, let localName = contactFormatter.string(from: local) {
@@ -62,8 +62,7 @@ public class MergedContact {
                 }
             }
         } else {
-            let backgroundColor = UIColor(hex: color)!
-            completion(UIImage.getInitialsPlaceholder(with: name, size: size, backgroundColor: backgroundColor))
+            completion(UIImage.getInitialsPlaceholder(with: name, size: size, backgroundColor: color))
         }
     }
 
