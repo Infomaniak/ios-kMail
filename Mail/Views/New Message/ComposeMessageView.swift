@@ -97,6 +97,13 @@ struct ComposeMessageView: View {
         return ComposeMessageView(mailboxManager: mailboxManager, draft: .empty())
     }
 
+    static func replyForwardMessage(mailboxManager: MailboxManager, messageReply: MessageReply) -> ComposeMessageView {
+        let message = messageReply.message
+        // If message doesn't exist anymore try to show the frozen one
+        let freshMessage = message.fresh(using: mailboxManager.getRealm()) ?? message
+        return ComposeMessageView(mailboxManager: mailboxManager, draft: .replying(to: freshMessage, mode: messageReply.replyMode))
+    }
+
     var body: some View {
         NavigationView {
             ScrollView(.vertical, showsIndicators: true) {

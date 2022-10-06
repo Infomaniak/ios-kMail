@@ -53,11 +53,7 @@ struct ThreadListManagerView: View {
             ComposeMessageView(mailboxManager: mailboxManager, draft: draft.asUnmanaged())
         }
         .sheet(item: $messageReply) { messageReply in
-            // If message doesn't exist anymore try to show the frozen one
-            let message = messageReply.message
-            let freshMessage = message.fresh(using: mailboxManager.getRealm()) ?? message
-            ComposeMessageView(mailboxManager: mailboxManager,
-                           draft: .replying(to: freshMessage, mode: messageReply.replyMode))
+            ComposeMessageView.replyForwardMessage(mailboxManager: mailboxManager, messageReply: messageReply)
         }
     }
 }
