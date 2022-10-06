@@ -55,6 +55,9 @@ public class Recipient: EmbeddedObject, Codable {
             .components(separatedBy: .whitespaces)
             .compactMap(\.first)
         guard let firstLetter = nameInitials.first else {
+            if let secondaryInitial = email.first {
+                return secondaryInitial.uppercased()
+            }
             return ""
         }
         if let secondLetter = nameInitials.last, nameInitials.count > 1 {

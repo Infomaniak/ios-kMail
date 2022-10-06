@@ -20,30 +20,22 @@ import MailCore
 import SwiftUI
 
 struct ContactImage: View {
-    var contact: MergedContact
-    @State private var image: UIImage?
+    var image: Image
+    var size: CGFloat
 
     var body: some View {
         ZStack {
-            if let image = image {
-                Image(uiImage: image)
-                    .resizable()
-                    .scaledToFit()
-            } else {
-                Rectangle()
-                    .fill(Color.gray)
-            }
-        }
-        .onAppear {
-            contact.getAvatar { avatarImage in
-                image = avatarImage
-            }
+            image
+                .resizable()
+                .scaledToFit()
+                .frame(width: size, height: size)
+                .clipShape(Circle())
         }
     }
 }
 
 struct ContactImage_Previews: PreviewProvider {
     static var previews: some View {
-        ContactImage(contact: PreviewHelper.sampleMergedContact)
+        ContactImage(image: Image(systemName: "person"), size: 40)
     }
 }

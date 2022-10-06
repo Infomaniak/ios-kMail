@@ -24,38 +24,36 @@ struct RecipientImage: View {
     var recipient: Recipient
     var size: CGFloat = 40
 
+    @State private var image = Image(resource: MailResourcesAsset.placeholderAvatar)
+    @State private var showContactImage = false
+
     var body: some View {
-        if recipient.isCurrentUser,
-           let url = URL(string: AccountManager.instance.currentAccount.user.avatar) {
-            AsyncImage(url: url) { image in
-                image
-                    .resizable()
-                    .scaledToFit()
-            } placeholder: {
-                Color.gray
-            }
-            .frame(width: size, height: size)
-            .clipShape(Circle())
-        } else if let contact = recipient.contact, contact.hasAvatar {
-            ContactImage(contact: contact)
+        Group {
+            if showContactImage {
+                ContactImage(image: image, size: size)
+            } else {
+                ZStack {
+                    Circle()
+                        .fill(recipient.color)
+                    Text(recipient.initials)
+                        .font(.system(size: size * 0.5, weight: .semibold))
+                        .foregroundColor(.white)
+                }
                 .frame(width: size, height: size)
-                .clipShape(Circle())
-        } else if recipient.initials.isEmpty {
-            Image(resource: MailResourcesAsset.placeholderAvatar)
-                .resizable()
-                .frame(width: size, height: size)
-                .foregroundColor(recipient.color)
-                .background(Color.white)
-                .clipShape(Circle())
-        } else {
-            ZStack {
-                Circle()
-                    .fill(recipient.color)
-                Text(recipient.initials)
-                    .font(.system(size: size * 0.5, weight: .semibold))
-                    .foregroundColor(.white)
             }
-            .frame(width: size, height: size)
+        }
+        .task {
+            if recipient.isCurrentUser {
+                showContactImage = true
+                image = await AccountManager.instance.currentAccount.user.getAvatar()
+            } else if let contact = recipient.contact, contact.hasAvatar {
+                showContactImage = true
+                contact.getAvatar { contactImage in
+                    image = Image(uiImage: contactImage)
+                }
+            } else if recipient.initials.isEmpty {
+                showContactImage = true
+            }
         }
     }
 }
