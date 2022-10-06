@@ -93,6 +93,10 @@ struct ComposeMessageView: View {
         _draft = State(initialValue: initialDraft)
     }
 
+    static func newMessage(mailboxManager: MailboxManager) -> ComposeMessageView {
+        return ComposeMessageView(mailboxManager: mailboxManager, draft: .empty())
+    }
+
     var body: some View {
         NavigationView {
             ScrollView(.vertical, showsIndicators: true) {

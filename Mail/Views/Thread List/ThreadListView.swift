@@ -178,7 +178,7 @@ struct ThreadListView: View {
             await viewModel.fetchThreads()
         }
         .sheet(isPresented: $isShowingComposeNewMessageView) {
-            ComposeMessageView(mailboxManager: viewModel.mailboxManager, draft: .empty())
+            ComposeMessageView.newMessage(mailboxManager: viewModel.mailboxManager)
         }
     }
 
