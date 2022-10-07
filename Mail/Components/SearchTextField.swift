@@ -36,6 +36,7 @@ struct SearchTextField: View {
             TextField(MailResourcesStrings.Localizable.searchFieldPlaceholder, text: $value) { focused in
                 isFocused = focused
             }
+            .autocorrectionDisabled()
             .textFieldStyle(DefaultTextFieldStyle())
             .foregroundColor(value.isEmpty
                 ? MailResourcesAsset.textFieldPlaceholderColor
