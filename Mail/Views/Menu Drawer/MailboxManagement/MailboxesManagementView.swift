@@ -29,7 +29,7 @@ struct MailboxesManagementView: View {
     @State private var avatarImage = Image(resource: MailResourcesAsset.placeholderAvatar)
     @State private var isShowingManageAccount = false
     @State private var isShowingSwitchAccount = false
-    
+
     var mailboxes: [Mailbox]
 
     private var otherMailboxes: [Mailbox] {
@@ -52,7 +52,7 @@ struct MailboxesManagementView: View {
                         .padding(.trailing, 16)
                     Text(mailboxManager.mailbox.email)
                         .foregroundColor(.accentColor)
-                        .textStyle(.header3)
+                        .textStyle(.header4)
                         .lineLimit(1)
                     Spacer()
                     ChevronIcon(style: isExpanded ? .up : .down, color: .primary)
