@@ -35,7 +35,7 @@ extension Animation {
 
 extension ThreadDensity {
     var cellVerticalPadding: CGFloat {
-        self == .compact ? 8 : 16
+        self == .compact ? 14 : 16
     }
 }
 
