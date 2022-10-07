@@ -86,8 +86,7 @@ enum SearchState {
     init(mailboxManager: MailboxManager, folder: Folder?) {
         self.mailboxManager = mailboxManager
 
-        let searchHistory = mailboxManager.searchHistory()
-        self.searchHistory = searchHistory
+        self.searchHistory = mailboxManager.searchHistory()
         realFolder = folder
 
         searchFolder = mailboxManager.initSearchFolder()
@@ -204,8 +203,6 @@ enum SearchState {
             }
         }
         queryItems.append(SearchCondition.everywhere(!selectedFilters.contains(.folder)))
-//        queryItems.append(URLQueryItem(name: "severywhere", value: selectedFilters.contains(.folder) ? "0" : "1"))
-
         queryItems.append(SearchCondition.attachments(selectedFilters.contains(.attachment)))
 
         return queryItems
@@ -259,7 +256,7 @@ enum SearchState {
 
         isLoading = true
 
-        let searchFolder = searchFolder.freeze()
+        let frozenSearchFolder = searchFolder.freeze()
         observationSearchThreadToken?.invalidate()
         threads = []
 
@@ -273,14 +270,14 @@ enum SearchState {
         if ReachabilityListener.instance.currentStatus == .offline {
             // Search offline
             await mailboxManager.searchThreadsOffline(
-                searchFolder: searchFolder,
+                searchFolder: frozenSearchFolder,
                 filterFolderId: folderToSearch,
                 searchFilters: searchFiltersOffline
             )
         } else {
             await tryOrDisplayError {
                 let result = try await mailboxManager.searchThreads(
-                    searchFolder: searchFolder,
+                    searchFolder: frozenSearchFolder,
                     filterFolderId: folderToSearch,
                     filter: filter,
                     searchFilter: searchFilters
