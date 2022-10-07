@@ -75,6 +75,21 @@ public struct MailTextStyle {
         color: MailResourcesAsset.primaryTextColor
     )
 
+    public static let header3Primary = MailTextStyle(
+        font: .system(size: 15.5, weight: .bold),
+        color: \.primary
+    )
+
+    public static let header4 = MailTextStyle(
+        font: .system(size: 15.5, weight: .semibold),
+        color: MailResourcesAsset.primaryTextColor
+    )
+
+    public static let header5 = MailTextStyle(
+        font: .system(size: 15.5, weight: .medium),
+        color: MailResourcesAsset.primaryTextColor
+    )
+
     public static let body = MailTextStyle(
         font: .system(size: 15.5),
         color: MailResourcesAsset.primaryTextColor
@@ -109,7 +124,12 @@ public struct MailTextStyle {
         font: .system(size: 14.5),
         color: MailResourcesAsset.sectionHeaderTextColor
     )
-    
+
+    public static let calloutSectionSecondary = MailTextStyle(
+        font: .system(size: 14.5),
+        color: MailResourcesAsset.secondaryTextColor
+    )
+
     public static let calloutSecondary = MailTextStyle(
         font: .system(size: 13.5),
         color: MailResourcesAsset.secondaryTextColor
