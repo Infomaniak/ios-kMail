@@ -121,18 +121,18 @@ struct ThreadView: View {
         .onAppear {
             MatomoUtils.track(view: ["MessageView"])
             // Style toolbar
-            let appereance = UIToolbarAppearance()
-            appereance.configureWithOpaqueBackground()
-            appereance.backgroundColor = MailResourcesAsset.backgroundToolbarColor.color
-            appereance.shadowColor = .clear
-            UIToolbar.appearance().standardAppearance = appereance
-            UIToolbar.appearance().scrollEdgeAppearance = appereance
+            let toolbarAppearance = UIToolbarAppearance()
+            toolbarAppearance.configureWithOpaqueBackground()
+            toolbarAppearance.backgroundColor = MailResourcesAsset.backgroundToolbarColor.color
+            toolbarAppearance.shadowColor = .clear
+            UIToolbar.appearance().standardAppearance = toolbarAppearance
+            UIToolbar.appearance().scrollEdgeAppearance = toolbarAppearance
             navigationController?.toolbar.barTintColor = .white
             navigationController?.toolbar.setShadowImage(UIImage(), forToolbarPosition: .any)
             // Style navigation bar
-            let appearance = UINavigationBarAppearance()
-            appearance.configureWithDefaultBackground()
-            navigationController?.navigationBar.standardAppearance = appearance
+            let navBarAppearance = UINavigationBarAppearance()
+            navBarAppearance.configureWithDefaultBackground()
+            navigationController?.navigationBar.standardAppearance = navBarAppearance
             navigationController?.navigationBar.scrollEdgeAppearance = nil
         }
         .environmentObject(mailboxManager)
