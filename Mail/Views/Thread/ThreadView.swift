@@ -222,7 +222,11 @@ struct ThreadView: View {
         switch action {
         case .reply:
             guard let message = messages.last else { return }
-            bottomSheet.open(state: .replyOption(message, isThread: true))
+            if (message.from.count + message.cc.count) > 1 {
+                bottomSheet.open(state: .replyOption(message, isThread: true))
+            } else {
+                sheet.state = .reply(message, .reply)
+            }
         case .forward:
             guard let message = messages.last else { return }
             Task {
