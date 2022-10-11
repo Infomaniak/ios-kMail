@@ -22,9 +22,15 @@ import SwiftUI
 
 struct RecipientImage: View {
     var recipient: Recipient
-    var size: CGFloat = 40
+    var size: CGFloat
 
     @State private var image: Image?
+
+    init(recipient: Recipient, size: CGFloat = 40) {
+        self.image = recipient.cachedAvatarImage
+        self.recipient = recipient
+        self.size = size
+    }
 
     var body: some View {
         if let image = image {
@@ -38,15 +44,10 @@ struct RecipientImage: View {
     }
 
     func fetchAvatar() async {
-        var newImage: Image?
         if let avatarImage = await recipient.avatarImage {
-            newImage = avatarImage
-        } else if recipient.initials.isEmpty {
-            newImage = Image(resource: MailResourcesAsset.placeholderAvatar)
-        }
-
-        withAnimation {
-            image = newImage
+            withAnimation {
+                image = avatarImage
+            }
         }
     }
 }

@@ -19,10 +19,18 @@
 import Contacts
 import Foundation
 import InfomaniakCore
-import Kingfisher
+import Nuke
 import RealmSwift
 import SwiftUI
 import UIKit
+
+extension CNContact {
+    var image: UIImage? {
+        guard let imageData = imageData else { return nil }
+        let localImage = UIImage(data: imageData)
+        return localImage
+    }
+}
 
 public class MergedContact {
     public var email: String
@@ -52,25 +60,27 @@ public class MergedContact {
         return local?.imageData != nil || remote?.avatar != nil
     }
 
-    public func getAvatar(size: CGSize = CGSize(width: 40, height: 40), completion: @escaping (UIImage?) -> Void) {
-        if let data = local?.imageData, let image = UIImage(data: data) {
-            completion(image)
-        } else if let avatarPath = remote?.avatar {
-            KingfisherManager.shared.retrieveImage(with: Endpoint.resource(avatarPath).url) { result in
-                let avatarImage = try? result.get().image
-                completion(avatarImage)
+    public var avatar: UIImage? {
+        get async {
+            if let localImage = local?.image {
+                return localImage
+            } else if let avatarPath = remote?.avatar {
+                let response = try? await ImagePipeline.shared.image(for: Endpoint.resource(avatarPath).url)
+                return response?.image
             }
-        } else {
-            completion(nil)
+
+            return nil
         }
     }
 
-    public func avatar(size: CGSize = CGSize(width: 40, height: 40)) async -> UIImage? {
-        return await withCheckedContinuation {  continuation in
-            getAvatar(size: size) { image in
-                continuation.resume(returning: image)
-            }
+    public var cachedAvatar: UIImage? {
+        if let localImage = local?.image {
+            return localImage
+        } else if let avatarPath = remote?.avatar {
+            return ImagePipeline.shared.cache[Endpoint.resource(avatarPath).url]?.image
         }
+
+        return nil
     }
 
     public init(email: String, remote: Contact?, local: CNContact?) {
