@@ -222,7 +222,12 @@ struct ThreadView: View {
         switch action {
         case .reply:
             guard let message = messages.last else { return }
-            if (message.from.count + message.cc.count) > 1 {
+
+            let from = message.from.where { $0.email != mailboxManager.mailbox.email }
+            let cc = message.cc.where { $0.email != mailboxManager.mailbox.email }
+            let to = message.to.where { $0.email != mailboxManager.mailbox.email }
+
+            if (from.count + cc.count + to.count) > 1 {
                 bottomSheet.open(state: .replyOption(message, isThread: true))
             } else {
                 sheet.state = .reply(message, .reply)

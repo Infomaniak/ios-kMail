@@ -259,11 +259,35 @@ public struct UnmanagedDraft: Equatable, Encodable, AbstractDraft {
             quote = Constants.forwardQuote(message: message)
             attachments = attachmentsToForward
         }
+
+        let userEmail = AccountManager.instance.currentMailboxManager?.mailbox.email ?? ""
+        let cleanedFrom = Array(message.from.detached()).filter { $0.email != userEmail }
+        let cleanedTo = Array(message.to.detached()).filter { $0.email != userEmail }
+        let cleanedReplyTo = Array(message.replyTo.detached()).filter { $0.email != userEmail }
+        let cleanedCc = Array(message.cc.detached()).filter { $0.email != userEmail }
+
+        var to: [Recipient] = []
+        var cc: [Recipient] = []
+
+        if mode.isReply {
+            to = cleanedReplyTo.isEmpty ? cleanedFrom : cleanedReplyTo
+            if to.isEmpty {
+                to = cleanedTo
+            } else if mode == .replyAll {
+                cc = cleanedTo
+            }
+            if to.isEmpty {
+                to = cleanedCc
+            } else if mode == .replyAll {
+                cc.append(contentsOf: cleanedCc)
+            }
+        }
+
         return UnmanagedDraft(subject: subject,
                               body: "<br><br>\(quote)",
                               quote: quote,
-                              to: mode.isReply ? Array(message.replyTo.isEmpty ? message.from.detached() : message.replyTo.detached()) : [],
-                              cc: mode == .replyAll ? Array(message.to.detached()) + Array(message.cc.detached()) : [],
+                              to: to,
+                              cc: cc,
                               inReplyTo: message.msgId,
                               inReplyToUid: mode.isReply ? message.uid : nil,
                               forwardedUid: mode == .forward([]) ? message.uid : nil,
@@ -310,7 +334,7 @@ public struct UnmanagedDraft: Equatable, Encodable, AbstractDraft {
 public class Draft: Object, Decodable, Identifiable, AbstractDraft {
     public static let uuidLocalPrefix = "Local-"
 
-    @Persisted(primaryKey: true) public var uuid: String = ""
+    @Persisted(primaryKey: true) public var uuid = ""
     @Persisted public var date: Date
     @Persisted public var identityId: String?
     @Persisted public var messageUid: String?
