@@ -80,7 +80,7 @@ public class Recipient: EmbeddedObject, Codable {
     public var avatarImage: Image? {
         get async {
             if isCurrentUser {
-                return await AccountManager.instance.currentAccount.user.getAvatar()
+                return await AccountManager.instance.currentAccount.user.avatar()
             } else if let contact = contact,
                       contact.hasAvatar,
                       let uiImage = await contact.avatar {
