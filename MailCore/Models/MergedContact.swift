@@ -60,24 +60,25 @@ public class MergedContact {
         return local?.imageData != nil || remote?.avatar != nil
     }
 
-    public var avatar: UIImage? {
+    public var avatarImage: Image? {
         get async {
             if let localImage = local?.image {
-                return localImage
-            } else if let avatarPath = remote?.avatar {
-                let response = try? await ImagePipeline.shared.image(for: Endpoint.resource(avatarPath).url)
-                return response?.image
+                return Image(uiImage: localImage)
+            } else if let avatarPath = remote?.avatar,
+                      let avatarUIImage = try? await ImagePipeline.shared.image(for: Endpoint.resource(avatarPath).url).image {
+                return Image(uiImage: avatarUIImage)
             }
 
             return nil
         }
     }
 
-    public var cachedAvatar: UIImage? {
+    public var cachedAvatarImage: Image? {
         if let localImage = local?.image {
-            return localImage
-        } else if let avatarPath = remote?.avatar {
-            return ImagePipeline.shared.cache[Endpoint.resource(avatarPath).url]?.image
+            return Image(uiImage: localImage)
+        } else if let avatarPath = remote?.avatar,
+                  let avatarUIImage = ImagePipeline.shared.cache[Endpoint.resource(avatarPath).url]?.image {
+            return Image(uiImage: avatarUIImage)
         }
 
         return nil

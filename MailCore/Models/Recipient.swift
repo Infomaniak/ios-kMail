@@ -80,11 +80,11 @@ public class Recipient: EmbeddedObject, Codable {
     public var avatarImage: Image? {
         get async {
             if isCurrentUser {
-                return await AccountManager.instance.currentAccount.user.avatar()
+                return await AccountManager.instance.currentAccount.user.avatarImage
             } else if let contact = contact,
                       contact.hasAvatar,
-                      let uiImage = await contact.avatar {
-                return Image(uiImage: uiImage)
+                      let avatarImage = await contact.avatarImage {
+                return avatarImage
             } else {
                 return nil
             }
@@ -92,11 +92,12 @@ public class Recipient: EmbeddedObject, Codable {
     }
 
     public var cachedAvatarImage: Image? {
-        if !isCurrentUser,
-           let contact = contact,
-           contact.hasAvatar,
-           let uiImage = contact.cachedAvatar {
-            return Image(uiImage: uiImage)
+        if isCurrentUser {
+            return AccountManager.instance.currentAccount.user.cachedAvatarImage
+        } else if let contact = contact,
+                  contact.hasAvatar,
+                  let avatarImage = contact.cachedAvatarImage {
+            return avatarImage
         } else {
             return nil
         }

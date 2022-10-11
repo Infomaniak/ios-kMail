@@ -104,7 +104,7 @@ struct AccountHeaderCell: View {
             ChevronIcon(style: isExpanded ? .up : .down)
         }
         .task {
-            avatarImage = await account.user.avatar()
+            avatarImage = await account.user.avatarImage
         }
     }
 }

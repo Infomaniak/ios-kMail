@@ -87,7 +87,7 @@ struct MailboxesManagementView: View {
         .padding(.top, 16)
         .task {
             if let user = AccountManager.instance.account(for: mailboxManager.mailbox.userId)?.user {
-                avatarImage = await user.avatar()
+                avatarImage = await user.avatarImage
             }
         }
         .sheet(isPresented: $isShowingSwitchAccount) {

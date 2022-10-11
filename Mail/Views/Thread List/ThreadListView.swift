@@ -168,7 +168,7 @@ struct ThreadListView: View {
         }
         .task {
             if let account = AccountManager.instance.currentAccount {
-                avatarImage = await account.user.avatar()
+                avatarImage = await account.user.avatarImage
             }
             if let folder = splitViewManager.selectedFolder {
                 viewModel.updateThreads(with: folder)

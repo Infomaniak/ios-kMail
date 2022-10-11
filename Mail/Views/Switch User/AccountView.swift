@@ -122,7 +122,7 @@ struct AccountView: View {
             .padding(.vertical, 42)
         }
         .task {
-            avatarImage = await account.user.avatar()
+            avatarImage = await account.user.avatarImage
         }
         .sheet(isPresented: $sheet.isShowing) {
             switch sheet.state {
