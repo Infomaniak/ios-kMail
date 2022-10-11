@@ -42,7 +42,6 @@ public class AddressBook: Object, Codable, Identifiable {
     @Persisted public var isShared: Bool
     // public var owner: Owner
     @Persisted public var principalUri: String
-    @Persisted public var rights: String
     @Persisted public var userId: Int
 
     enum CodingKeys: String, CodingKey {
@@ -56,7 +55,6 @@ public class AddressBook: Object, Codable, Identifiable {
         case isPending
         case isShared
         case principalUri
-        case rights
         case userId
     }
 }
