@@ -37,7 +37,7 @@ struct MenuDrawerItemsListView: View {
         VStack(alignment: .leading, spacing: 16) {
             if let title = title {
                 Text(title)
-                    .textStyle(.calloutSecondary)
+                    .textStyle(.calloutSectionSecondary)
             }
 
             ForEach(content) { item in

@@ -78,7 +78,7 @@ struct FolderCellContent: View {
     }
 
     private var textStyle: MailTextStyle {
-        isSelected ? .button : .body
+        isSelected ? .header3Primary : .header5
     }
 
     var body: some View {
@@ -96,7 +96,8 @@ struct FolderCellContent: View {
 
             if folder.unreadCount != nil {
                 Text(folder.formattedUnreadCount)
-                    .textStyle(.calloutHighlighted)
+                    .foregroundColor(.accentColor)
+                    .textStyle(isSelected ? .calloutStrong : .calloutHighlighted)
             }
         }
         .padding(.vertical, Constants.menuDrawerVerticalPadding)
