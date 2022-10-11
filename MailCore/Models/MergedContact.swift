@@ -31,7 +31,7 @@ public class MergedContact {
 
     private let contactFormatter = CNContactFormatter()
 
-    public lazy var color: UIColor = UIColor(hex: remote!.color) ?? UserDefaults.shared.accentColor.primary.color
+    public lazy var color = UIColor(hex: remote!.color) ?? UserDefaults.shared.accentColor.primary.color
 
     public lazy var name: String = {
         if let local = local, let localName = contactFormatter.string(from: local) {
@@ -52,17 +52,24 @@ public class MergedContact {
         return local?.imageData != nil || remote?.avatar != nil
     }
 
-    public func getAvatar(size: CGSize = CGSize(width: 40, height: 40), completion: @escaping (UIImage) -> Void) {
+    public func getAvatar(size: CGSize = CGSize(width: 40, height: 40), completion: @escaping (UIImage?) -> Void) {
         if let data = local?.imageData, let image = UIImage(data: data) {
             completion(image)
         } else if let avatarPath = remote?.avatar {
             KingfisherManager.shared.retrieveImage(with: Endpoint.resource(avatarPath).url) { result in
-                if let avatarImage = try? result.get().image {
-                    completion(avatarImage)
-                }
+                let avatarImage = try? result.get().image
+                completion(avatarImage)
             }
         } else {
-            completion(UIImage.getInitialsPlaceholder(with: name, size: size, backgroundColor: color))
+            completion(nil)
+        }
+    }
+
+    public func avatar(size: CGSize = CGSize(width: 40, height: 40)) async -> UIImage? {
+        return await withCheckedContinuation {  continuation in
+            getAvatar(size: size) { image in
+                continuation.resume(returning: image)
+            }
         }
     }
 

@@ -76,4 +76,18 @@ public class Recipient: EmbeddedObject, Codable {
             return "\(name) \(emailString)"
         }
     }
+    
+    public var avatarImage: Image? {
+        get async {
+            if isCurrentUser {
+                return await AccountManager.instance.currentAccount.user.getAvatar()
+            } else if let contact = contact,
+                      contact.hasAvatar,
+                      let uiImage = await contact.avatar() {
+                return Image(uiImage: uiImage)
+            } else {
+                return nil
+            }
+        }
+    }
 }

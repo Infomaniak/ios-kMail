@@ -24,36 +24,29 @@ struct RecipientImage: View {
     var recipient: Recipient
     var size: CGFloat = 40
 
-    @State private var image = Image(resource: MailResourcesAsset.placeholderAvatar)
-    @State private var showContactImage = false
+    @State private var image: Image?
 
     var body: some View {
-        Group {
-            if showContactImage {
-                ContactImage(image: image, size: size)
-            } else {
-                ZStack {
-                    Circle()
-                        .fill(Color(uiColor: recipient.color))
-                    Text(recipient.initials)
-                        .font(.system(size: size * 0.5, weight: .semibold))
-                        .foregroundColor(.white)
+        if let image = image {
+            ContactImage(image: image, size: size)
+        } else {
+            InitialsView(initials: recipient.initials, color: recipient.color, size: size)
+                .task {
+                    await fetchAvatar()
                 }
-                .frame(width: size, height: size)
-            }
         }
-        .task {
-            if recipient.isCurrentUser {
-                showContactImage = true
-                image = await AccountManager.instance.currentAccount.user.getAvatar()
-            } else if let contact = recipient.contact, contact.hasAvatar {
-                showContactImage = true
-                contact.getAvatar { contactImage in
-                    image = Image(uiImage: contactImage)
-                }
-            } else if recipient.initials.isEmpty {
-                showContactImage = true
-            }
+    }
+
+    func fetchAvatar() async {
+        var newImage: Image?
+        if let avatarImage = await recipient.avatarImage {
+            newImage = avatarImage
+        } else if recipient.initials.isEmpty {
+            newImage = Image(resource: MailResourcesAsset.placeholderAvatar)
+        }
+
+        withAnimation {
+            image = newImage
         }
     }
 }

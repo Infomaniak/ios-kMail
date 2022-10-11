@@ -58,7 +58,7 @@ public extension InfomaniakLogin {
 public extension InfomaniakUser {
     func getAvatar(size: CGSize = CGSize(width: 40, height: 40)) async -> Image {
         return await withCheckedContinuation { continuation in
-            self.getAvatar(size: size) { image in
+            getAvatar(size: size) { image in
                 continuation.resume(returning: Image(uiImage: image))
             }
         }
