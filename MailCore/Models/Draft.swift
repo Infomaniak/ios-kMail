@@ -244,14 +244,12 @@ public struct UnmanagedDraft: Equatable, Encodable, AbstractDraft {
 
     public static func mailTo(subject: String?,
                               body: String?,
-                              to: [Recipient], cc: [Recipient], bcc: [Recipient],
-                              identityId: String) -> UnmanagedDraft {
+                              to: [Recipient], cc: [Recipient], bcc: [Recipient]) -> UnmanagedDraft {
         return UnmanagedDraft(subject: subject ?? "",
                               body: body ?? "",
                               to: to,
                               cc: cc,
-                              bcc: bcc,
-                              identityId: identityId)
+                              bcc: bcc)
     }
 
     public static func empty() -> UnmanagedDraft {

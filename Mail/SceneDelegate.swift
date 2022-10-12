@@ -165,34 +165,16 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, AccountManagerDelegate 
 
     private func handleUrlOpen(_ url: URL) -> Bool {
         guard let urlComponents = URLComponents(url: url, resolvingAgainstBaseURL: true),
-              let mailboxManager = accountManager.currentMailboxManager,
-              let signatureResponse = mailboxManager.getSignatureResponse() else {
+              let mailboxManager = accountManager.currentMailboxManager else {
             return false
         }
 
         if urlComponents.scheme?.caseInsensitiveCompare("mailto") == .orderedSame {
-            let draft = UnmanagedDraft.mailTo(subject: urlComponents.getQueryItem(named: "subject"),
-                                              body: urlComponents.getQueryItem(named: "body"),
-                                              to: [Recipient(email: urlComponents.path, name: "")],
-                                              cc: getRecipients(from: urlComponents, name: "cc"),
-                                              bcc: getRecipients(from: urlComponents, name: "bcc"),
-                                              identityId: "\(signatureResponse.defaultSignatureId)")
-
-            let newMessageView = ComposeMessageView(mailboxManager: mailboxManager, draft: draft)
+            let newMessageView = ComposeMessageView.mailTo(urlComponents: urlComponents, mailboxManager: mailboxManager)
             let viewController = UIHostingController(rootView: newMessageView)
             window?.rootViewController?.present(viewController, animated: true)
         }
 
         return true
-    }
-
-    private func getRecipients(from urlComponents: URLComponents, name: String) -> [Recipient] {
-        return urlComponents.getQueryItem(named: name)?.split(separator: ",").map { Recipient(email: "\($0)", name: "") } ?? []
-    }
-}
-
-extension URLComponents {
-    func getQueryItem(named name: String) -> String? {
-        return queryItems?.first { $0.name == name }?.value
     }
 }

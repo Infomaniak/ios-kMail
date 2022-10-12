@@ -74,7 +74,7 @@ struct ComposeMessageView: View {
         return !autocompletion.isEmpty && focusedRecipientField != nil
     }
 
-    init(mailboxManager: MailboxManager, draft: UnmanagedDraft?, messageReply: MessageReply? = nil) {
+    private init(mailboxManager: MailboxManager, draft: UnmanagedDraft?, messageReply: MessageReply? = nil) {
         _mailboxManager = State(initialValue: mailboxManager)
         let selectedMailboxItem = AccountManager.instance.mailboxes
             .firstIndex { $0.mailboxId == mailboxManager.mailbox.mailboxId } ?? 0
@@ -106,6 +106,15 @@ struct ComposeMessageView: View {
 
     static func writingTo(recipient: Recipient, mailboxManager: MailboxManager) -> ComposeMessageView {
         return ComposeMessageView(mailboxManager: mailboxManager, draft: .writing(to: recipient))
+    }
+
+    static func mailTo(urlComponents: URLComponents, mailboxManager: MailboxManager) -> ComposeMessageView {
+        let draft = UnmanagedDraft.mailTo(subject: urlComponents.getQueryItem(named: "subject"),
+                                          body: urlComponents.getQueryItem(named: "body"),
+                                          to: [Recipient(email: urlComponents.path, name: "")],
+                                          cc: Recipient.createListUsing(from: urlComponents, name: "cc"),
+                                          bcc: Recipient.createListUsing(from: urlComponents, name: "bcc"))
+        return ComposeMessageView(mailboxManager: mailboxManager, draft: draft)
     }
 
     var body: some View {
