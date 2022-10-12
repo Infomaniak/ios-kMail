@@ -39,7 +39,14 @@ public class MergedContact {
 
     private let contactFormatter = CNContactFormatter()
 
-    public lazy var color = UIColor(hex: remote!.color) ?? UserDefaults.shared.accentColor.primary.color
+    public lazy var color: UIColor = {
+        if let remoteColorHex = remote?.color,
+           let colorFromHex = UIColor(hex: remoteColorHex) {
+            return colorFromHex
+        } else {
+            return UserDefaults.shared.accentColor.primary.color
+        }
+    }()
 
     public lazy var name: String = {
         if let local = local, let localName = contactFormatter.string(from: local) {
