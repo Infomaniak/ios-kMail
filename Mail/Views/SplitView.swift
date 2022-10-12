@@ -55,6 +55,7 @@ struct SplitView: View {
     @StateObject private var navigationDrawerController = NavigationDrawerController()
 
     @Environment(\.horizontalSizeClass) var sizeClass
+    @Environment(\.verticalSizeClass) var verticalSizeClass
     @Environment(\.window) var window
 
     @StateObject private var bottomSheet = GlobalBottomSheet()
@@ -63,7 +64,7 @@ struct SplitView: View {
     @StateObject private var splitViewManager: SplitViewManager
 
     var isCompact: Bool {
-        sizeClass == .compact
+        sizeClass == .compact || verticalSizeClass == .compact
     }
 
     init(mailboxManager: MailboxManager) {
@@ -175,10 +176,13 @@ struct SplitView: View {
     private func setupBehaviour(orientation: UIInterfaceOrientation) {
         if orientation.isLandscape {
             splitViewController?.preferredSplitBehavior = .displace
+            splitViewController?.preferredDisplayMode = splitViewManager.selectedFolder == nil ? .twoDisplaceSecondary : .oneBesideSecondary
         } else if orientation.isPortrait {
             splitViewController?.preferredSplitBehavior = .overlay
+            splitViewController?.preferredDisplayMode = splitViewManager.selectedFolder == nil ? .twoOverSecondary : .oneOverSecondary
         } else {
             splitViewController?.preferredSplitBehavior = .automatic
+            splitViewController?.preferredDisplayMode = .automatic
         }
     }
 

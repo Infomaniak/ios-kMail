@@ -16,6 +16,7 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import Combine
 import Foundation
 import InfomaniakCore
 import MailCore
@@ -25,33 +26,40 @@ import SwiftUI
 
 enum SearchFieldValueType: String {
     case contact
-    case search
+    case threads
+    case threadsAndContacts
+}
+
+enum SearchState {
+    case history
+    case noHistory
+    case results
+    case noResults
 }
 
 @MainActor class SearchViewModel: ObservableObject {
     var mailboxManager: MailboxManager
     @Published var searchHistory: SearchHistory
-    var showHistory: Bool {
-        return threads.isEmpty && contacts.isEmpty && !searchInfo.isLoading && !searchInfo.hasSearched && !searchHistory.history.isEmpty
-    }
 
-    @Published public var filters: [SearchFilter]
-    @Published public var selectedFilters: [SearchFilter] = []
-    @Published public var searchValueType: SearchFieldValueType = .search
-    @Published public var searchValue = "" {
-        didSet {
-            if searchValueType == .search {
-                updateContactSuggestion()
-            } else {
-                searchValueType = .search
-            }
+    public let filters: [SearchFilter] = [.read, .unread, .favorite, .attachment, .folder]
+    @Published var selectedFilters: [SearchFilter] = []
+    var searchValueType: SearchFieldValueType = .threadsAndContacts
+    @Published var searchValue = ""
+    var searchState: SearchState {
+        if selectedFilters.isEmpty && searchValue.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+            return searchHistory.history.isEmpty ? .noHistory : .history
+        } else if (threads.isEmpty && !isLoading) && contacts.isEmpty {
+            return .noResults
+        } else {
+            return .results
         }
     }
 
-    @Published public var folderList: [Folder]
-    @Published public var realFolder: Folder?
-    public var lastSearchFolderId: String?
-    @Published public var selectedSearchFolderId = "" {
+    @Published var folderList: [Folder]
+    @Published var realFolder: Folder?
+    var lastSearchFolderId: String?
+    var observationSearchThreadToken: NotificationToken?
+    @Published var selectedSearchFolderId = "" {
         didSet {
             if selectedSearchFolderId.isEmpty {
                 selectedFilters.removeAll { $0 == .folder }
@@ -64,65 +72,87 @@ enum SearchFieldValueType: String {
         }
     }
 
-    @Published var selectedThread: Thread?
+    var selectedThread: Thread?
 
-    @Published public var threads: [Thread] = []
-    @Published public var contacts: [Recipient] = []
+    @Published var threads: [Thread] = []
+    @Published var contacts: [Recipient] = []
+    @Published var isLoading = false
 
-    @Published public var searchFolder: Folder
-
-    @Published var searchInfo = (isLoading: false, hasSearched: false)
-
+    private var searchFolder: Folder
     private var resourceNext: String?
-    private var observationSearchThreadToken: NotificationToken?
-
-    // TODO: - IMPORTANT
-//    Si connexion -> Recherche depuis call API uniquement
-//    Si pas de connexion -> Recherche depuis Realm uniquement
-
-    var observeSearch: Bool {
-        didSet {
-            if observeSearch {
-                observeChanges()
-            } else {
-                observationSearchThreadToken?.invalidate()
-            }
-        }
-    }
+    private var lastSearch = ""
+    private var searchFieldObservation: AnyCancellable?
 
     init(mailboxManager: MailboxManager, folder: Folder?) {
         self.mailboxManager = mailboxManager
 
-        searchHistory = mailboxManager.searchHistory()
+        self.searchHistory = mailboxManager.searchHistory()
         realFolder = folder
 
         searchFolder = mailboxManager.initSearchFolder()
 
-        filters = [
-            .read,
-            .unread,
-            .favorite,
-            .attachment,
-            .folder
-        ]
-
-        observeSearch = true
         folderList = mailboxManager.getFolders()
+
+        searchFieldObservation = $searchValue
+            .debounce(for: .seconds(0.3), scheduler: DispatchQueue.main)
+            .sink { [weak self] newValue in
+                guard self?.lastSearch.trimmingCharacters(in: .whitespacesAndNewlines) != newValue.trimmingCharacters(in: .whitespacesAndNewlines) else {
+                    return
+                }
+                self?.lastSearch = newValue
+                self?.searchValueType = .threadsAndContacts
+                self?.performSearch()
+            }
+        observeChanges()
     }
 
     func initSearch() {
-        clearSearchValue()
+        clearSearch()
         selectedFilters = []
     }
 
-    func clearSearchValue() {
+    func clearSearch() {
         Task {
-            searchFolder = await mailboxManager.cleanSearchFolder()
+            searchValueType = .threadsAndContacts
             searchValue = ""
             threads = []
             contacts = []
-            searchInfo.isLoading = false
-            searchInfo.hasSearched = false
+            isLoading = false
+        }
+    }
+
+    func searchThreadsForCurrentValue() {
+        searchValueType = .threads
+        performSearch()
+    }
+
+    func searchFilter(_ filter: SearchFilter) {
+        withAnimation {
+            if selectedFilters.contains(filter) {
+                unselect(filter: filter)
+            } else {
+                searchValueType = .threads
+                select(filter: filter)
+            }
+        }
+
+        performSearch()
+    }
+
+    func searchThreadsForContact(_ contact: Recipient) {
+        searchValueType = .contact
+        searchValue = "\"" + contact.email + "\""
+    }
+
+    private func performSearch() {
+        if searchValueType == .threadsAndContacts {
+            updateContactSuggestion()
+        } else {
+            contacts = []
+        }
+
+        Task {
+            await fetchThreads()
         }
     }
 
@@ -158,6 +188,26 @@ enum SearchFieldValueType: String {
         return .all
     }
 
+    private var searchFiltersOffline: [SearchCondition] {
+        var queryItems: [SearchCondition] = []
+        queryItems.append(SearchCondition.filter(filter))
+
+        if !searchValue.isEmpty {
+            if searchValue.hasPrefix("\"") && searchValue.hasSuffix("\"") {
+                searchValueType = .contact
+            }
+            if searchValueType == .contact {
+                queryItems.append(SearchCondition.from(searchValue.replacingOccurrences(of: "\"", with: "")))
+            } else {
+                queryItems.append(SearchCondition.contains(searchValue))
+            }
+        }
+        queryItems.append(SearchCondition.everywhere(!selectedFilters.contains(.folder)))
+        queryItems.append(SearchCondition.attachments(selectedFilters.contains(.attachment)))
+
+        return queryItems
+    }
+
     private func updateContactSuggestion() {
         let contactManager = AccountManager.instance.currentContactManager
         let autocompleteContacts = contactManager?.contacts(matching: searchValue) ?? []
@@ -170,20 +220,6 @@ enum SearchFieldValueType: String {
         }
         withAnimation {
             contacts = autocompleteRecipients
-        }
-    }
-
-    func updateSelection(filter: SearchFilter) {
-        withAnimation {
-            if selectedFilters.contains(filter) {
-                unselect(filter: filter)
-            } else {
-                select(filter: filter)
-            }
-        }
-
-        Task {
-            await fetchThreads()
         }
     }
 
@@ -214,14 +250,15 @@ enum SearchFieldValueType: String {
     }
 
     func fetchThreads() async {
-        guard !searchInfo.isLoading, let realFolder = realFolder else {
+        guard !isLoading, let realFolder = realFolder else {
             return
         }
 
-        searchFolder = await mailboxManager.cleanSearchFolder()
-        observeSearch = true
+        isLoading = true
 
-        searchInfo.isLoading = true
+        let frozenSearchFolder = searchFolder.freeze()
+        observationSearchThreadToken?.invalidate()
+        threads = []
 
         var folderToSearch = realFolder.id
 
@@ -230,31 +267,38 @@ enum SearchFieldValueType: String {
             lastSearchFolderId = selectedSearchFolderId
         }
 
-        await tryOrDisplayError {
-            let result = try await mailboxManager.searchThreads(
-                searchFolder: searchFolder,
+        if ReachabilityListener.instance.currentStatus == .offline {
+            // Search offline
+            await mailboxManager.searchThreadsOffline(
+                searchFolder: frozenSearchFolder,
                 filterFolderId: folderToSearch,
-                filter: filter,
-                searchFilter: searchFilters
+                searchFilters: searchFiltersOffline
             )
+        } else {
+            await tryOrDisplayError {
+                let result = try await mailboxManager.searchThreads(
+                    searchFolder: frozenSearchFolder,
+                    filterFolderId: folderToSearch,
+                    filter: filter,
+                    searchFilter: searchFilters
+                )
 
-            resourceNext = result.resourceNext
-
-            if !searchValue.isEmpty {
-                searchHistory = await mailboxManager.update(searchHistory: searchHistory, with: searchValue)
+                resourceNext = result.resourceNext
             }
-            searchInfo.isLoading = false
-            searchInfo.hasSearched = true
+        }
+        observeChanges()
+
+        if searchValue.trimmingCharacters(in: .whitespacesAndNewlines).count >= 3 {
+            searchHistory = await mailboxManager.update(searchHistory: searchHistory, with: searchValue)
         }
     }
 
     func fetchNextPage() async {
-        guard !searchInfo.isLoading, let resource = resourceNext else {
+        guard !isLoading, let resource = resourceNext else {
             return
         }
 
-        searchInfo.isLoading = true
-
+        isLoading = true
         await tryOrDisplayError {
             let threadResult = try await mailboxManager.searchThreads(
                 searchFolder: searchFolder,
@@ -263,10 +307,10 @@ enum SearchFieldValueType: String {
             )
             resourceNext = threadResult.resourceNext
         }
-        searchInfo.isLoading = false
+        isLoading = false
     }
 
-    func observeChanges() {
+    private func observeChanges() {
         observationSearchThreadToken?.invalidate()
         if let folder = searchFolder.thaw() {
             let threadResults = folder.threads.sorted(by: \.date, ascending: false)
@@ -281,6 +325,7 @@ enum SearchFieldValueType: String {
                 case .error:
                     break
                 }
+                self?.isLoading = false
             }
 
         } else {

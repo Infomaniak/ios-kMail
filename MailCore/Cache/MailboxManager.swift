@@ -626,20 +626,6 @@ public class MailboxManager: ObservableObject {
         return searchFolder
     }
 
-    public func cleanSearchFolder() async -> Folder {
-        return await backgroundRealm.execute { realm in
-            if let liveFolder = realm.object(ofType: Folder.self, forPrimaryKey: Constants.searchFolderId) {
-                try? realm.safeWrite {
-                    realm.delete(liveFolder.threads.where { $0.fromSearch == true })
-                    liveFolder.threads.removeAll()
-                }
-                return liveFolder.freeze()
-            } else {
-                return self.initSearchFolder().freeze()
-            }
-        }
-    }
-
     public func searchThreads(searchFolder: Folder?, filterFolderId: String, filter: Filter = .all,
                               searchFilter: [URLQueryItem] = []) async throws -> ThreadResult {
         let threadResult = try await apiFetcher.threads(
@@ -653,6 +639,12 @@ public class MailboxManager: ObservableObject {
             for thread in threadResult.threads ?? [] {
                 if realm.object(ofType: Thread.self, forPrimaryKey: thread.uid) == nil {
                     thread.fromSearch = true
+
+                    for message in thread.messages {
+                        if realm.object(ofType: Message.self, forPrimaryKey: message.uid) == nil {
+                            message.fromSearch = true
+                        }
+                    }
                 }
             }
         }
@@ -672,6 +664,12 @@ public class MailboxManager: ObservableObject {
         for thread in threadResult.threads ?? [] {
             if realm.object(ofType: Thread.self, forPrimaryKey: thread.uid) == nil {
                 thread.fromSearch = true
+
+                for message in thread.messages {
+                    if realm.object(ofType: Message.self, forPrimaryKey: message.uid) == nil {
+                        message.fromSearch = true
+                    }
+                }
             }
         }
 
@@ -680,6 +678,88 @@ public class MailboxManager: ObservableObject {
         }
 
         return threadResult
+    }
+
+    public func searchThreadsOffline(searchFolder: Folder?, filterFolderId: String,
+                                     searchFilters: [SearchCondition]) async {
+        await backgroundRealm.execute { realm in
+            guard let searchFolder = searchFolder?.fresh(using: realm) else { return }
+
+            try? realm.safeWrite {
+                realm.delete(realm.objects(Message.self).where { $0.fromSearch == true })
+                realm.delete(searchFolder.threads.where { $0.fromSearch == true })
+                searchFolder.threads.removeAll()
+            }
+
+            var predicates: [NSPredicate] = []
+            for searchFilter in searchFilters {
+                switch searchFilter {
+                case let .filter(filter):
+                    switch filter {
+                    case .seen:
+                        predicates.append(NSPredicate(format: "seen = true"))
+                    case .unseen:
+                        predicates.append(NSPredicate(format: "seen = false"))
+                    case .starred:
+                        predicates.append(NSPredicate(format: "flagged = true"))
+                    case .unstarred:
+                        predicates.append(NSPredicate(format: "flagged = false"))
+                    default:
+                        break
+                    }
+                case let .from(from):
+                    predicates.append(NSPredicate(format: "ANY from.email = %@", from))
+                case let .contains(content):
+                    predicates
+                        .append(NSPredicate(format: "body.value CONTAINS %@ OR subject CONTAINS %@", content, content))
+                case let .everywhere(searchEverywhere):
+                    if !searchEverywhere {
+                        predicates.append(NSPredicate(format: "folderId = %@", filterFolderId))
+                    }
+                case let .attachments(searchAttachments):
+                    if searchAttachments {
+                        predicates.append(NSPredicate(format: "hasAttachments = true"))
+                    }
+                }
+            }
+
+            let compoundPredicate = NSCompoundPredicate(andPredicateWithSubpredicates: predicates)
+
+            let filteredMessages = realm.objects(Message.self).filter(compoundPredicate)
+
+            // Update thread in Realm
+            try? realm.safeWrite {
+                for message in filteredMessages {
+                    let newMessage = message.detached()
+                    newMessage.uid = "offline\(newMessage.uid)"
+                    newMessage.fromSearch = true
+
+                    let newThread = Thread(
+                        uid: "offlineThread\(message.uid)",
+                        messagesCount: 1,
+                        uniqueMessagesCount: 1,
+                        deletedMessagesCount: 0,
+                        messages: [newMessage],
+                        unseenMessages: 0,
+                        from: Array(message.from.detached()),
+                        to: Array(message.to.detached()),
+                        cc: Array(message.cc.detached()),
+                        bcc: Array(message.bcc.detached()),
+                        date: newMessage.date,
+                        hasAttachments: newMessage.hasAttachments,
+                        hasStAttachments: newMessage.hasAttachments,
+                        hasDrafts: newMessage.isDraft,
+                        flagged: newMessage.flagged,
+                        answered: newMessage.answered,
+                        forwarded: newMessage.forwarded,
+                        size: newMessage.size
+                    )
+                    newThread.fromSearch = true
+                    newThread.subject = message.subject
+                    searchFolder.threads.insert(newThread)
+                }
+            }
+        }
     }
 
     public func searchHistory(using realm: Realm? = nil) -> SearchHistory {
@@ -696,7 +776,7 @@ public class MailboxManager: ObservableObject {
 
     public func update(searchHistory: SearchHistory, with value: String) async -> SearchHistory {
         return await backgroundRealm.execute { realm in
-            guard let searchHistory = searchHistory.fresh(using: realm) else { return searchHistory }
+            guard let searchHistory = realm.objects(SearchHistory.self).first else { return searchHistory }
             try? realm.safeWrite {
                 if let indexToRemove = searchHistory.history.firstIndex(of: value) {
                     searchHistory.history.remove(at: indexToRemove)
@@ -981,7 +1061,8 @@ public class MailboxManager: ObservableObject {
                 try? realm.safeWrite {
                     realm.add(copyDraft, update: .modified)
                 }
-                if let draft = realm.object(ofType: Draft.self, forPrimaryKey: oldUuid), oldUuid.starts(with: Draft.uuidLocalPrefix) {
+                if let draft = realm.object(ofType: Draft.self, forPrimaryKey: oldUuid),
+                   oldUuid.starts(with: Draft.uuidLocalPrefix) {
                     // Delete local draft in Realm
                     try? realm.safeWrite {
                         realm.delete(draft)

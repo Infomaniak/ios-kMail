@@ -209,3 +209,11 @@ public enum Filter: String {
         }
     }
 }
+
+public enum SearchCondition: Equatable {
+    case filter(Filter)
+    case from(String)
+    case contains(String)
+    case everywhere(Bool)
+    case attachments(Bool)
+}

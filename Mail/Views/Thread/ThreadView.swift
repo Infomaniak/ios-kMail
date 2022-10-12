@@ -113,18 +113,18 @@ struct ThreadView: View {
         .onAppear {
             MatomoUtils.track(view: ["MessageView"])
             // Style toolbar
-            let appereance = UIToolbarAppearance()
-            appereance.configureWithOpaqueBackground()
-            appereance.backgroundColor = MailResourcesAsset.backgroundToolbarColor.color
-            appereance.shadowColor = .clear
-            UIToolbar.appearance().standardAppearance = appereance
-            UIToolbar.appearance().scrollEdgeAppearance = appereance
+            let toolbarAppearance = UIToolbarAppearance()
+            toolbarAppearance.configureWithOpaqueBackground()
+            toolbarAppearance.backgroundColor = MailResourcesAsset.backgroundToolbarColor.color
+            toolbarAppearance.shadowColor = .clear
+            UIToolbar.appearance().standardAppearance = toolbarAppearance
+            UIToolbar.appearance().scrollEdgeAppearance = toolbarAppearance
             navigationController?.toolbar.barTintColor = .white
             navigationController?.toolbar.setShadowImage(UIImage(), forToolbarPosition: .any)
             // Style navigation bar
-            let appearance = UINavigationBarAppearance()
-            appearance.configureWithDefaultBackground()
-            navigationController?.navigationBar.standardAppearance = appearance
+            let navBarAppearance = UINavigationBarAppearance()
+            navBarAppearance.configureWithDefaultBackground()
+            navigationController?.navigationBar.standardAppearance = navBarAppearance
             navigationController?.navigationBar.scrollEdgeAppearance = nil
         }
         .environmentObject(mailboxManager)
@@ -202,7 +202,16 @@ struct ThreadView: View {
         switch action {
         case .reply:
             guard let message = messages.last else { return }
-            bottomSheet.open(state: .replyOption(message, isThread: true))
+
+            let from = message.from.where { $0.email != mailboxManager.mailbox.email }
+            let cc = message.cc.where { $0.email != mailboxManager.mailbox.email }
+            let to = message.to.where { $0.email != mailboxManager.mailbox.email }
+
+            if (from.count + cc.count + to.count) > 1 {
+                bottomSheet.open(state: .replyOption(message, isThread: true))
+            } else {
+                sheet.state = .reply(message, .reply)
+            }
         case .forward:
             guard let message = messages.last else { return }
             Task {

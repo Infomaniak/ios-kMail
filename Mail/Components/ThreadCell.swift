@@ -35,7 +35,7 @@ extension Animation {
 
 extension ThreadDensity {
     var cellVerticalPadding: CGFloat {
-        self == .compact ? 8 : 16
+        self == .compact ? 14 : 16
     }
 }
 
@@ -47,8 +47,8 @@ struct ThreadCell: View {
 
     var thread: Thread
 
-    var isMultipleSelectionEnabled: Bool = false
-    var isSelected: Bool = false
+    var isMultipleSelectionEnabled = false
+    var isSelected = false
 
     private var textStyle: MailTextStyle {
         thread.hasUnseenMessages ? .header3 : .bodySecondary
@@ -149,8 +149,10 @@ struct ThreadCell: View {
 
             if thread.hasAttachments {
                 Image(resource: MailResourcesAsset.attachmentMail1)
+                    .resizable()
                     .foregroundColor(textStyle.color)
-                    .frame(height: 10)
+                    .scaledToFit()
+                    .frame(width: 16)
             }
 
             Text(thread.date.customRelativeFormatted)
@@ -160,7 +162,7 @@ struct ThreadCell: View {
     }
 
     private var threadInfo: some View {
-        VStack(alignment: .leading) {
+        VStack(alignment: .leading, spacing: 1) {
             Text(thread.formattedSubject)
                 .textStyle(textStyle)
                 .lineLimit(1)
@@ -169,7 +171,7 @@ struct ThreadCell: View {
                let preview = thread.messages.last?.preview,
                !preview.isEmpty {
                 Text(preview)
-                    .textStyle(.bodySecondary)
+                    .textStyle(thread.hasUnseenMessages ? .body : .bodySecondary)
                     .lineLimit(1)
             }
         }
@@ -181,7 +183,7 @@ struct ThreadCell: View {
                 Image(resource: MailResourcesAsset.starFull)
                     .resizable()
                     .scaledToFit()
-                    .frame(width: 20, height: 20)
+                    .frame(width: 16, height: 16)
             }
         }
     }

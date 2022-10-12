@@ -19,33 +19,27 @@
 import MailResources
 import SwiftUI
 
-struct FloatingActionButton: View {
-    let icon: Image
-    let title: String
-    let action: () -> Void
-
+struct SearchNoResultView: View {
     var body: some View {
-        Button(action: action) {
-            Label {
-                Text(title)
-                    .textStyle(.buttonPill)
-            } icon: {
-                icon
-                    .resizable()
-                    .frame(width: 18, height: 18)
-            }
+        VStack(alignment: .center, spacing: 4) {
+            Image(resource: MailResourcesAsset.search)
+                .resizable()
+                .frame(width: 74, height: 74)
+                .padding(.bottom, 13)
+                .foregroundColor(MailResourcesAsset.secondaryTextColor)
+            Text(MailResourcesStrings.Localizable.searchNoResultsTitle)
+                .textStyle(.header2)
+            Text(MailResourcesStrings.Localizable.searchNoResultsDescription)
+                .textStyle(.bodySecondary)
+                .multilineTextAlignment(.center)
         }
-        .buttonStyle(.borderedProminent)
-        .buttonBorderShape(.capsule)
-        .controlSize(.large)
-        .padding(.trailing, 24)
-        .padding(.bottom, 70)
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .listRowSeparator(.hidden)
     }
 }
 
-struct NewMessageButtonView_Previews: PreviewProvider {
+struct SearchNoResultView_Previews: PreviewProvider {
     static var previews: some View {
-        FloatingActionButton(icon: Image(resource: MailResourcesAsset.edit),
-                             title: "New message") { /* Preview */ }
+        SearchNoResultView()
     }
 }
