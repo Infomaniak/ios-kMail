@@ -253,6 +253,33 @@ struct ComposeMessageView: View {
         .defaultAppStorage(.shared)
     }
 
+    @ViewBuilder
+    private func recipientCell(type: RecipientFieldType) -> some View {
+        let shouldDisplayField = !shouldDisplayAutocompletion || focusedRecipientField == type
+        if shouldDisplayField {
+            NewMessageCell(title: type.title, showCc: type == .to ? $showCc : nil) {
+                RecipientField(recipients: binding(for: type),
+                               autocompletion: $autocompletion,
+                               addRecipientHandler: $addRecipientHandler,
+                               focusedField: _focusedRecipientField,
+                               type: type)
+            }
+        }
+    }
+
+    private func binding(for type: RecipientFieldType) -> Binding<[Recipient]> {
+        let binding: Binding<[Recipient]>
+        switch type {
+        case .to:
+            binding = $draft.to
+        case .cc:
+            binding = $draft.cc
+        case .bcc:
+            binding = $draft.bcc
+        }
+        return binding
+    }
+
     private func send() {
         Task {
             // Cancel any scheduled save
@@ -306,36 +333,6 @@ struct ComposeMessageView: View {
         debouncedBufferWrite = debouncedWorkItem
     }
 
-    private func shouldDisplay(field: RecipientFieldType) -> Bool {
-        return !shouldDisplayAutocompletion || focusedRecipientField == field
-    }
-
-    private func binding(for type: RecipientFieldType) -> Binding<[Recipient]> {
-        let binding: Binding<[Recipient]>
-        switch type {
-        case .to:
-            binding = $draft.to
-        case .cc:
-            binding = $draft.cc
-        case .bcc:
-            binding = $draft.bcc
-        }
-        return binding
-    }
-
-    @ViewBuilder
-    private func recipientCell(type: RecipientFieldType) -> some View {
-        if shouldDisplay(field: type) {
-            NewMessageCell(title: type.title, showCc: type == .to ? $showCc : nil) {
-                RecipientField(recipients: binding(for: type),
-                               autocompletion: $autocompletion,
-                               addRecipientHandler: $addRecipientHandler,
-                               focusedField: _focusedRecipientField,
-                               type: type)
-            }
-        }
-    }
-
     private func deleteDraft(messageUid: String) {
         // Convert draft to thread
         let realm = mailboxManager.getRealm()
@@ -380,7 +377,7 @@ struct ComposeMessageView: View {
         }
     }
 
-    func addImageAttachment(
+    private func addImageAttachment(
         results: [PHPickerResult],
         disposition: AttachmentDisposition = .attachment,
         completion: @escaping (String) -> Void = { _ in
@@ -413,7 +410,7 @@ struct ComposeMessageView: View {
         }
     }
 
-    func addCameraAttachment(
+    private func addCameraAttachment(
         data: Data,
         disposition: AttachmentDisposition = .attachment,
         completion: @escaping (String) -> Void = { _ in
@@ -439,7 +436,7 @@ struct ComposeMessageView: View {
         }
     }
 
-    func loadFileRepresentation(_ itemProvider: NSItemProvider, typeIdentifier: String) async throws -> URL {
+    private func loadFileRepresentation(_ itemProvider: NSItemProvider, typeIdentifier: String) async throws -> URL {
         try await withCheckedThrowingContinuation { continuation in
             itemProvider.loadFileRepresentation(forTypeIdentifier: typeIdentifier) { url, error in
                 if let url = url {
@@ -451,25 +448,25 @@ struct ComposeMessageView: View {
         }
     }
 
-    public nonisolated func getDefaultFileName() -> String {
+    private nonisolated func getDefaultFileName() -> String {
         let formatter = DateFormatter()
         formatter.dateFormat = "yyyyMMdd_HHmmssSS"
         return formatter.string(from: Date())
     }
 
-    func sendAttachment(url: URL,
-                        typeIdentifier: String,
-                        name: String,
-                        disposition: AttachmentDisposition) async throws -> Attachment? {
+    private func sendAttachment(url: URL,
+                                typeIdentifier: String,
+                                name: String,
+                                disposition: AttachmentDisposition) async throws -> Attachment? {
         let data = try Data(contentsOf: url)
 
         return try await sendAttachment(from: data, typeIdentifier: typeIdentifier, name: name, disposition: disposition)
     }
 
-    func sendAttachment(from data: Data,
-                        typeIdentifier: String,
-                        name: String,
-                        disposition: AttachmentDisposition) async throws -> Attachment? {
+    private func sendAttachment(from data: Data,
+                                typeIdentifier: String,
+                                name: String,
+                                disposition: AttachmentDisposition) async throws -> Attachment? {
         let uti = UTType(typeIdentifier)
         var name = name
         if let nameExtension = uti?.preferredFilenameExtension, !name.capitalized.hasSuffix(nameExtension.capitalized) {
@@ -487,7 +484,7 @@ struct ComposeMessageView: View {
         return attachment
     }
 
-    func addAttachment(_ attachment: Attachment) {
+    private func addAttachment(_ attachment: Attachment) {
         if draft.attachments == nil {
             draft.attachments = [attachment]
         } else {
