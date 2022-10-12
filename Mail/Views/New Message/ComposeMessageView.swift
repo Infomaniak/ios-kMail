@@ -74,19 +74,20 @@ struct ComposeMessageView: View {
         return !autocompletion.isEmpty && focusedRecipientField != nil
     }
 
-    private init(mailboxManager: MailboxManager, draft: UnmanagedDraft?, messageReply: MessageReply? = nil) {
+    private init(mailboxManager: MailboxManager, draft: UnmanagedDraft) {
         _mailboxManager = State(initialValue: mailboxManager)
         let selectedMailboxItem = AccountManager.instance.mailboxes
             .firstIndex { $0.mailboxId == mailboxManager.mailbox.mailboxId } ?? 0
         _selectedMailboxItem = State(initialValue: selectedMailboxItem)
 
-        if var initialDraft = draft {
-            sendDisabled = mailboxManager.getSignatureResponse() == nil
-            initialDraft.delay = UserDefaults.shared.cancelSendDelay.rawValue
-            _draft = State(initialValue: initialDraft)
-        } else {
-            _draft = State(initialValue: .empty())
+        var initialDraft = draft
+        if initialDraft.identityId.isEmpty,
+           let signature = mailboxManager.getSignatureResponse() {
+            initialDraft.setSignature(signature)
         }
+        sendDisabled = mailboxManager.getSignatureResponse() == nil
+        initialDraft.delay = UserDefaults.shared.cancelSendDelay.rawValue
+        _draft = State(initialValue: initialDraft)
     }
 
     static func newMessage(mailboxManager: MailboxManager) -> ComposeMessageView {
