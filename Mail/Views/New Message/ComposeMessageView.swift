@@ -74,30 +74,30 @@ struct ComposeMessageView: View {
         return !autocompletion.isEmpty && focusedRecipientField != nil
     }
 
-    init(mailboxManager: MailboxManager, draft: UnmanagedDraft) {
-        var initialDraft = draft
+    init(mailboxManager: MailboxManager, draft: UnmanagedDraft?, messageReply: MessageReply? = nil) {
         _mailboxManager = State(initialValue: mailboxManager)
         let selectedMailboxItem = AccountManager.instance.mailboxes
             .firstIndex { $0.mailboxId == mailboxManager.mailbox.mailboxId } ?? 0
         _selectedMailboxItem = State(initialValue: selectedMailboxItem)
-        if let signatureResponse = mailboxManager.getSignatureResponse() {
-            if !initialDraft.didSetSignature {
-                initialDraft.setSignature(signatureResponse)
-                initialDraft.didSetSignature = true
+
+        if var initialDraft = draft {
+            if let signatureResponse = mailboxManager.getSignatureResponse() {
+                sendDisabled = false
+            } else {
+                sendDisabled = true
             }
-            sendDisabled = false
+            initialDraft.delay = UserDefaults.shared.cancelSendDelay.rawValue
+            _draft = State(initialValue: initialDraft)
         } else {
-            sendDisabled = true
+            _draft = State(initialValue: .empty())
         }
-        initialDraft.delay = UserDefaults.shared.cancelSendDelay.rawValue
-        _draft = State(initialValue: initialDraft)
     }
 
     static func newMessage(mailboxManager: MailboxManager) -> ComposeMessageView {
         return ComposeMessageView(mailboxManager: mailboxManager, draft: .empty())
     }
 
-    static func replyForwardMessage(mailboxManager: MailboxManager, messageReply: MessageReply) -> ComposeMessageView {
+    static func replyOrForwardMessage(messageReply: MessageReply, mailboxManager: MailboxManager) -> ComposeMessageView {
         let message = messageReply.message
         // If message doesn't exist anymore try to show the frozen one
         let freshMessage = message.fresh(using: mailboxManager.getRealm()) ?? message

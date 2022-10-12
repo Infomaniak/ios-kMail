@@ -34,7 +34,6 @@ private struct ScrollOffsetPreferenceKey: PreferenceKey {
 class MessageSheet: SheetState<MessageSheet.State> {
     enum State: Equatable {
         case attachment(Attachment)
-        case reply(Message, ReplyMode)
         case edit(Draft)
         case write(to: Recipient)
     }
@@ -54,6 +53,7 @@ struct ThreadView: View {
     private var folderId: String?
 
     @State private var displayNavigationTitle = false
+    @State private var messageReply: MessageReply?
     @StateObject private var sheet = MessageSheet()
     @StateObject private var bottomSheet = MessageBottomSheet()
     @StateObject private var threadBottomSheet = ThreadBottomSheet()
@@ -169,12 +169,13 @@ struct ThreadView: View {
                 }
             }
         }
+        .sheet(item: $messageReply) { messageReply in
+            ComposeMessageView.replyOrForwardMessage(messageReply: messageReply, mailboxManager: mailboxManager)
+        }
         .sheet(isPresented: $sheet.isShowing) {
             switch sheet.state {
             case let .attachment(attachment):
                 AttachmentPreview(isPresented: $sheet.isShowing, attachment: attachment)
-            case let .reply(message, replyMode):
-                ComposeMessageView(mailboxManager: mailboxManager, draft: .replying(to: message, mode: replyMode))
             case let .edit(draft):
                 ComposeMessageView(mailboxManager: mailboxManager, draft: draft.asUnmanaged())
             case let .write(recipient):
@@ -195,7 +196,7 @@ struct ThreadView: View {
                     globalSheet: globalBottomSheet
                 ) { message, replyMode in
                     bottomSheet.close()
-                    sheet.state = .reply(message, replyMode)
+                    messageReply = MessageReply(message: message, replyMode: replyMode)
                 }
             case .none:
                 EmptyView()
@@ -207,7 +208,7 @@ struct ThreadView: View {
                             target: target,
                             state: threadBottomSheet,
                             globalSheet: globalBottomSheet) { message, replyMode in
-                    sheet.state = .reply(message, replyMode)
+                    messageReply = MessageReply(message: message, replyMode: replyMode)
                 }
             }
         }
@@ -230,7 +231,7 @@ struct ThreadView: View {
                     mailbox: mailboxManager.mailbox,
                     message: message
                 ).attachments
-                sheet.state = .reply(message, .forward(attachments))
+                messageReply = MessageReply(message: message, replyMode: .forward(attachments))
             }
         case .archive:
             Task {

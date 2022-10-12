@@ -53,7 +53,7 @@ struct ThreadListManagerView: View {
             ComposeMessageView(mailboxManager: mailboxManager, draft: draft.asUnmanaged())
         }
         .sheet(item: $messageReply) { messageReply in
-            ComposeMessageView.replyForwardMessage(mailboxManager: mailboxManager, messageReply: messageReply)
+            ComposeMessageView.replyOrForwardMessage(messageReply: messageReply, mailboxManager: mailboxManager)
         }
     }
 }
