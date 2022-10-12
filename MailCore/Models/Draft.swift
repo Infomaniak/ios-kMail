@@ -260,16 +260,16 @@ public struct UnmanagedDraft: Equatable, Encodable, AbstractDraft {
             attachments = attachmentsToForward
         }
 
-        let userEmail = AccountManager.instance.currentMailboxManager?.mailbox.email ?? ""
-        let cleanedFrom = Array(message.from.detached()).filter { $0.email != userEmail }
-        let cleanedTo = Array(message.to.detached()).filter { $0.email != userEmail }
-        let cleanedReplyTo = Array(message.replyTo.detached()).filter { $0.email != userEmail }
-        let cleanedCc = Array(message.cc.detached()).filter { $0.email != userEmail }
-
         var to: [Recipient] = []
         var cc: [Recipient] = []
 
         if mode.isReply {
+            let userEmail = AccountManager.instance.currentMailboxManager?.mailbox.email ?? ""
+            let cleanedFrom = Array(message.from.detached()).filter { $0.email != userEmail }
+            let cleanedTo = Array(message.to.detached()).filter { $0.email != userEmail }
+            let cleanedReplyTo = Array(message.replyTo.detached()).filter { $0.email != userEmail }
+            let cleanedCc = Array(message.cc.detached()).filter { $0.email != userEmail }
+
             to = cleanedReplyTo.isEmpty ? cleanedFrom : cleanedReplyTo
             if to.isEmpty {
                 to = cleanedTo
