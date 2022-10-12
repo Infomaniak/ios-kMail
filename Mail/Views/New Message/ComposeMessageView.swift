@@ -274,7 +274,7 @@ struct ComposeMessageView: View {
         }
     }
 
-    @MainActor private func saveDraft(showSnackBar: Bool = false) async {
+    private func saveDraft(showSnackBar: Bool = false) async {
         editor.richTextEditor.getHTML { [self] html in
             Task {
                 self.draft.body = html!
