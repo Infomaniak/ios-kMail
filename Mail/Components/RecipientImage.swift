@@ -22,40 +22,32 @@ import SwiftUI
 
 struct RecipientImage: View {
     var recipient: Recipient
-    var size: CGFloat = 40
+    var size: CGFloat
+
+    @State private var image: Image?
+
+    init(recipient: Recipient, size: CGFloat = 40) {
+        self.image = recipient.cachedAvatarImage
+        self.recipient = recipient
+        self.size = size
+    }
 
     var body: some View {
-        if recipient.isCurrentUser,
-           let url = URL(string: AccountManager.instance.currentAccount.user.avatar) {
-            AsyncImage(url: url) { image in
-                image
-                    .resizable()
-                    .scaledToFit()
-            } placeholder: {
-                Color.gray
-            }
-            .frame(width: size, height: size)
-            .clipShape(Circle())
-        } else if let contact = recipient.contact, contact.hasAvatar {
-            ContactImage(contact: contact)
-                .frame(width: size, height: size)
-                .clipShape(Circle())
-        } else if recipient.initials.isEmpty {
-            Image(resource: MailResourcesAsset.placeholderAvatar)
-                .resizable()
-                .frame(width: size, height: size)
-                .foregroundColor(recipient.color)
-                .background(Color.white)
-                .clipShape(Circle())
+        if let image = image {
+            ContactImage(image: image, size: size)
         } else {
-            ZStack {
-                Circle()
-                    .fill(recipient.color)
-                Text(recipient.initials)
-                    .font(.system(size: size * 0.5, weight: .semibold))
-                    .foregroundColor(.white)
+            InitialsView(initials: recipient.initials, color: recipient.color, size: size)
+                .task {
+                    await fetchAvatar()
+                }
+        }
+    }
+
+    func fetchAvatar() async {
+        if let avatarImage = await recipient.avatarImage {
+            withAnimation {
+                image = avatarImage
             }
-            .frame(width: size, height: size)
         }
     }
 }

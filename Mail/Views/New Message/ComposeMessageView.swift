@@ -214,6 +214,7 @@ struct ComposeMessageView: View {
             editor.richTextEditor.isShowingCamera = $isShowingCamera
             editor.richTextEditor.isShowingFileSelection = $isShowingFileSelection
             editor.richTextEditor.isShowingPhotoLibrary = $isShowingPhotoLibrary
+            showCc = !draft.bcc.isEmpty || !draft.cc.isEmpty
         }
         .onDisappear {
             if draftHasChanged {

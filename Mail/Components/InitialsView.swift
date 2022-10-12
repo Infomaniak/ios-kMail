@@ -16,26 +16,27 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import MailCore
 import SwiftUI
 
-struct ContactImage: View {
-    var image: Image
-    var size: CGFloat
+struct InitialsView: View {
+    var initials: String
+    var color: UIColor
+    var size: CGFloat = 40
 
     var body: some View {
         ZStack {
-            image
-                .resizable()
-                .scaledToFit()
-                .frame(width: size, height: size)
-                .clipShape(Circle())
+            Circle()
+                .fill(Color(uiColor: color))
+            Text(initials)
+                .font(.system(size: size * 0.5, weight: .semibold))
+                .foregroundColor(.white)
         }
+        .frame(width: size, height: size)
     }
 }
 
-struct ContactImage_Previews: PreviewProvider {
+struct InitialsView_Previews: PreviewProvider {
     static var previews: some View {
-        ContactImage(image: Image(systemName: "person"), size: 40)
+        InitialsView(initials: "TE", color: .systemRed)
     }
 }

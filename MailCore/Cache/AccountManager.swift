@@ -21,6 +21,7 @@ import Foundation
 import InfomaniakBugTracker
 import InfomaniakCore
 import InfomaniakLogin
+import Nuke
 import RealmSwift
 import Sentry
 import SwiftUI
@@ -56,10 +57,24 @@ public extension InfomaniakLogin {
 }
 
 public extension InfomaniakUser {
-    func getAvatar(size: CGSize = CGSize(width: 40, height: 40)) async -> Image {
-        return await withCheckedContinuation { continuation in
-            self.getAvatar(size: size) { image in
-                continuation.resume(returning: Image(uiImage: image))
+    var cachedAvatarImage: Image? {
+        if let avatarURL = URL(string: avatar),
+           let avatarUIImage = ImagePipeline.shared.cache[avatarURL]?.image {
+            return Image(uiImage: avatarUIImage)
+        }
+
+        return nil
+    }
+
+    var avatarImage: Image {
+        get async {
+            if let avatarURL = URL(string: avatar),
+               let avatarImage = try? await ImagePipeline.shared.image(for: avatarURL).image {
+                return Image(uiImage: avatarImage)
+            } else {
+                let backgroundColor = UIColor.backgroundColor(from: id)
+                let initialsImage = UIImage.getInitialsPlaceholder(with: displayName, size: CGSize(width: 40, height: 40), backgroundColor: backgroundColor)
+                return Image(uiImage: initialsImage)
             }
         }
     }

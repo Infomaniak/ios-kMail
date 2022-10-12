@@ -25,7 +25,7 @@ import SwiftUI
 
 struct AccountCellView: View {
     @Environment(\.window) private var window
-    
+
     let account: Account
     @Binding var expandedUserId: Int?
     let mailboxes: [Mailbox]
@@ -104,7 +104,7 @@ struct AccountHeaderCell: View {
             ChevronIcon(style: isExpanded ? .up : .down)
         }
         .task {
-            avatarImage = await account.user.getAvatar()
+            avatarImage = await account.user.avatarImage
         }
     }
 }
