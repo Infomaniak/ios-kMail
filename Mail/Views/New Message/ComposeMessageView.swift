@@ -81,11 +81,7 @@ struct ComposeMessageView: View {
         _selectedMailboxItem = State(initialValue: selectedMailboxItem)
 
         if var initialDraft = draft {
-            if let signatureResponse = mailboxManager.getSignatureResponse() {
-                sendDisabled = false
-            } else {
-                sendDisabled = true
-            }
+            sendDisabled = mailboxManager.getSignatureResponse() == nil
             initialDraft.delay = UserDefaults.shared.cancelSendDelay.rawValue
             _draft = State(initialValue: initialDraft)
         } else {
@@ -102,6 +98,14 @@ struct ComposeMessageView: View {
         // If message doesn't exist anymore try to show the frozen one
         let freshMessage = message.fresh(using: mailboxManager.getRealm()) ?? message
         return ComposeMessageView(mailboxManager: mailboxManager, draft: .replying(to: freshMessage, mode: messageReply.replyMode))
+    }
+
+    static func editDraft(draft: Draft, mailboxManager: MailboxManager) -> ComposeMessageView {
+        return ComposeMessageView(mailboxManager: mailboxManager, draft: draft.asUnmanaged())
+    }
+
+    static func writingTo(recipient: Recipient, mailboxManager: MailboxManager) -> ComposeMessageView {
+        return ComposeMessageView(mailboxManager: mailboxManager, draft: .writing(to: recipient))
     }
 
     var body: some View {
@@ -489,6 +493,6 @@ struct ComposeMessageView: View {
 
 struct NewMessageView_Previews: PreviewProvider {
     static var previews: some View {
-        ComposeMessageView(mailboxManager: PreviewHelper.sampleMailboxManager, draft: .empty())
+        ComposeMessageView.newMessage(mailboxManager: PreviewHelper.sampleMailboxManager)
     }
 }

@@ -31,14 +31,6 @@ private struct ScrollOffsetPreferenceKey: PreferenceKey {
     }
 }
 
-class MessageSheet: SheetState<MessageSheet.State> {
-    enum State: Equatable {
-        case attachment(Attachment)
-        case edit(Draft)
-        case write(to: Recipient)
-    }
-}
-
 class MessageBottomSheet: DisplayedFloatingPanelState<MessageBottomSheet.State> {
     enum State: Equatable {
         case contact(Recipient, isRemote: Bool)
@@ -54,7 +46,7 @@ struct ThreadView: View {
 
     @State private var displayNavigationTitle = false
     @State private var messageReply: MessageReply?
-    @StateObject private var sheet = MessageSheet()
+
     @StateObject private var bottomSheet = MessageBottomSheet()
     @StateObject private var threadBottomSheet = ThreadBottomSheet()
 
@@ -136,7 +128,6 @@ struct ThreadView: View {
             navigationController?.navigationBar.scrollEdgeAppearance = nil
         }
         .environmentObject(mailboxManager)
-        .environmentObject(sheet)
         .environmentObject(bottomSheet)
         .environmentObject(threadBottomSheet)
         .task {
@@ -172,22 +163,10 @@ struct ThreadView: View {
         .sheet(item: $messageReply) { messageReply in
             ComposeMessageView.replyOrForwardMessage(messageReply: messageReply, mailboxManager: mailboxManager)
         }
-        .sheet(isPresented: $sheet.isShowing) {
-            switch sheet.state {
-            case let .attachment(attachment):
-                AttachmentPreview(isPresented: $sheet.isShowing, attachment: attachment)
-            case let .edit(draft):
-                ComposeMessageView(mailboxManager: mailboxManager, draft: draft.asUnmanaged())
-            case let .write(recipient):
-                ComposeMessageView(mailboxManager: mailboxManager, draft: .writing(to: recipient))
-            case .none:
-                EmptyView()
-            }
-        }
         .floatingPanel(state: bottomSheet) {
             switch bottomSheet.state {
             case let .contact(recipient, isRemote):
-                ContactActionsView(recipient: recipient, isRemoteContact: isRemote, bottomSheet: bottomSheet, sheet: sheet)
+                ContactActionsView(recipient: recipient, isRemoteContact: isRemote, bottomSheet: bottomSheet, mailboxManager: mailboxManager)
             case let .replyOption(message, isThread):
                 ReplyActionsView(
                     mailboxManager: mailboxManager,

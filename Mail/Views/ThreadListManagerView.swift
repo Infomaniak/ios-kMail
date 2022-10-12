@@ -50,7 +50,7 @@ struct ThreadListManagerView: View {
         }
         .animation(.easeInOut(duration: 0.25), value: splitViewManager.showSearch)
         .sheet(item: $editedMessageDraft) { draft in
-            ComposeMessageView(mailboxManager: mailboxManager, draft: draft.asUnmanaged())
+            ComposeMessageView.editDraft(draft: draft, mailboxManager: mailboxManager)
         }
         .sheet(item: $messageReply) { messageReply in
             ComposeMessageView.replyOrForwardMessage(messageReply: messageReply, mailboxManager: mailboxManager)
