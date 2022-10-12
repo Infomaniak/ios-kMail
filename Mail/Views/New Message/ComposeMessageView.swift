@@ -183,25 +183,10 @@ struct ComposeMessageView: View {
             .navigationBarTitleDisplayMode(.inline)
             .navigationBarBackButtonHidden(true)
             .navigationBarItems(
-                leading: Button {
-                    self.dismiss()
-                } label: {
+                leading: Button(action: dismiss.callAsFunction) {
                     Label(MailResourcesStrings.Localizable.buttonClose, systemImage: "xmark")
                 },
-                trailing: Button {
-                    Task {
-                        if let cancelableResponse = await send() {
-                            IKSnackBar.showCancelableSnackBar(
-                                message: MailResourcesStrings.Localizable.emailSentSnackbar,
-                                cancelSuccessMessage: MailResourcesStrings.Localizable.canceledEmailSendingConfirmationSnackbar,
-                                duration: .custom(CGFloat(draft.delay ?? 3)),
-                                undoRedoAction: UndoRedoAction(undo: cancelableResponse, redo: nil),
-                                mailboxManager: mailboxManager
-                            )
-                            self.dismiss()
-                        }
-                    }
-                } label: {
+                trailing: Button(action: send) {
                     Image(resource: MailResourcesAsset.send)
                 }
                 .disabled(sendDisabled)
@@ -267,15 +252,24 @@ struct ComposeMessageView: View {
         .defaultAppStorage(.shared)
     }
 
-    @MainActor private func send() async -> CancelableResponse? {
-        // Cancel any scheduled save
-        debouncedBufferWrite?.cancel()
-        do {
-            draftHasChanged = false
-            return try await mailboxManager.send(draft: draft)
-        } catch {
-            IKSnackBar.showSnackBar(message: error.localizedDescription)
-            return nil
+    private func send() {
+        Task {
+            // Cancel any scheduled save
+            debouncedBufferWrite?.cancel()
+            do {
+                draftHasChanged = false
+                let cancelableResponse = try await mailboxManager.send(draft: draft)
+                IKSnackBar.showCancelableSnackBar(
+                    message: MailResourcesStrings.Localizable.emailSentSnackbar,
+                    cancelSuccessMessage: MailResourcesStrings.Localizable.canceledEmailSendingConfirmationSnackbar,
+                    duration: .custom(CGFloat(draft.delay ?? 3)),
+                    undoRedoAction: UndoRedoAction(undo: cancelableResponse, redo: nil),
+                    mailboxManager: mailboxManager
+                )
+                dismiss()
+            } catch {
+                IKSnackBar.showSnackBar(message: error.localizedDescription)
+            }
         }
     }
 
@@ -284,7 +278,7 @@ struct ComposeMessageView: View {
             Task {
                 self.draft.body = html!
 
-                let response = try await mailboxManager.save(draft: draft)
+                let response = await mailboxManager.save(draft: draft)
                 self.draft.uuid = response.uuid
                 draftHasChanged = false
                 if let error = response.error {
