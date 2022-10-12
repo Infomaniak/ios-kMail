@@ -203,6 +203,7 @@ struct NewMessageView: View {
             editor.richTextEditor.sheet = sheet
             editor.richTextEditor.alert = alert
             editor.richTextEditor.isShowingCamera = $isShowingCamera
+            showCc = !draft.bcc.isEmpty || !draft.cc.isEmpty
         }
         .onDisappear {
             if draftHasChanged {
