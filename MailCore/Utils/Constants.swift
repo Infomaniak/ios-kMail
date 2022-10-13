@@ -73,9 +73,7 @@ public enum Constants {
         <div>\(MailResourcesStrings.Localizable.toTitle) \(to)<br></div>
         <div><br></div>
         <div><br></div>
-        <div class=\"ws-ng-mail-style--6094eJzz9HPyjwAABGYBgQ\">
         \(message.body?.value.replacingOccurrences(of: "'", with: "’") ?? "")
-        </div>
         </div>
         """
     }
@@ -89,14 +87,12 @@ public enum Constants {
         <div id=\"answerContentMessage\" class=\"ik_mail_quote\" >
         <div>\(headerText)</div>
         <blockquote class=\"ws-ng-quote\">
-        <div class=\"ik_mail_quote-6057eJzz9HPyjwAABGYBgQ\">
         \(message.body?.value.replacingOccurrences(of: "'", with: "’") ?? "")
-        </div>
         </blockquote>
         </div>
         """
     }
-    
+
     public static func globallyResignFirstResponder() {
         UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
     }
@@ -107,7 +103,7 @@ public enum Constants {
     public static let defaultSwipeLongLeft = SwipeAction.delete
 
     public static let bottomSheetHorizontalPadding: CGFloat = 24
-    
+
     public static let searchFolderId = "search_folder_id"
 
     // To delete: alert to facilitate tests for beta version
