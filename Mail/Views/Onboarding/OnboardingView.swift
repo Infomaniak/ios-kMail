@@ -29,13 +29,16 @@ struct OnboardingView: View {
     @State private var presentAlert = false
     @State private var isLoading = false
 
+    var isScrollEnabled: Bool
+
     @Environment(\.window) var window
 
     var isPresentedModally: Bool
 
-    init(isPresentedModally: Bool = false, page: Int = 1) {
+    init(isPresentedModally: Bool = false, page: Int = 1, isScrollEnabled: Bool = true) {
         _selection = State(initialValue: page)
         self.isPresentedModally = isPresentedModally
+        self.isScrollEnabled = isScrollEnabled
         UIPageControl.appearance().currentPageIndicatorTintColor = .tintColor
         UIPageControl.appearance().pageIndicatorTintColor = MailResourcesAsset.separatorColor.color
     }
@@ -44,14 +47,18 @@ struct OnboardingView: View {
         VStack(spacing: 0) {
             // Slides
             ZStack(alignment: .top) {
-                TabView(selection: $selection) {
-                    ForEach(viewModel.slides) { slide in
-                        SlideView(slide: slide)
-                            .tag(slide.id)
+                if !isScrollEnabled, let slide = viewModel.slides.first { $0.id == selection } {
+                    SlideView(slide: slide)
+                } else {
+                    TabView(selection: $selection) {
+                        ForEach(viewModel.slides) { slide in
+                            SlideView(slide: slide)
+                                .tag(slide.id)
+                        }
                     }
+                    .tabViewStyle(.page)
+                    .edgesIgnoringSafeArea(.top)
                 }
-                .tabViewStyle(.page)
-                .edgesIgnoringSafeArea(.top)
 
                 Image(resource: MailResourcesAsset.logoText)
                     .resizable()
@@ -102,9 +109,9 @@ struct OnboardingView: View {
         isLoading = true
         InfomaniakLogin.asWebAuthenticationLoginFrom(useEphemeralSession: true) { result in
             switch result {
-            case .success(let result):
+            case let .success(result):
                 loginSuccessful(code: result.code, codeVerifier: result.verifier)
-            case .failure(let error):
+            case let .failure(error):
                 loginFailed(error: error)
             }
         }
