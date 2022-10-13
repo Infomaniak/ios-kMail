@@ -60,7 +60,7 @@ public extension IKSnackBar {
         message: String,
         cancelSuccessMessage: String,
         duration: SnackBar.Duration = .lengthLong,
-        cancelableResponse: CancelableResponse,
+        undoRedoAction: UndoRedoAction,
         mailboxManager: MailboxManager
     ) -> IKSnackBar? {
         return IKSnackBar.showSnackBar(
@@ -69,9 +69,12 @@ public extension IKSnackBar {
             action: .init(title: MailResourcesStrings.Localizable.buttonCancel) {
                 Task {
                     do {
-                        try await mailboxManager.apiFetcher.undoAction(resource: cancelableResponse.resource)
+                        let cancelled = try await mailboxManager.apiFetcher.undoAction(resource: undoRedoAction.undo.resource)
 
-                        IKSnackBar.showSnackBar(message: cancelSuccessMessage)
+                        if cancelled {
+                            IKSnackBar.showSnackBar(message: cancelSuccessMessage)
+                            try await undoRedoAction.redo?()
+                        }
                     } catch {
                         IKSnackBar.showSnackBar(message: error.localizedDescription)
                     }

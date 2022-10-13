@@ -16,7 +16,6 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import BottomSheet
 import Foundation
 import MailResources
 import SwiftUI
@@ -41,28 +40,24 @@ public struct URLConstants {
 }
 
 public enum Constants {
-    public static let sizeLimit = Int64(20 * pow(1024.0, 3.0)) // 20 Go
+    public static let sizeLimit = 21_474_836_480 // 20 Go
+    public static let minimumQuotasProgressionToDisplay = 0.03
+
+    public static let navbarIconSize: CGFloat = 23
 
     public static let onboardingLogoHeight: CGFloat = 72
     public static let onboardingButtonHeight: CGFloat = 100
     public static let onboardingVerticalPadding: CGFloat = 16
 
-    public static let menuDrawerHorizontalPadding: CGFloat = 24
+    public static let menuDrawerHorizontalPadding: CGFloat = 20
     public static let menuDrawerVerticalPadding: CGFloat = 12
-    public static let menuDrawerSubFolderPadding: CGFloat = 10
+    public static let menuDrawerSubFolderPadding: CGFloat = 15
 
     public static let unreadIconSize: CGFloat = 8
-
-    public static let bottomSheetOptions: [BottomSheet.Options] = [
-        .background { AnyView(MailResourcesAsset.backgroundBottomSheetColor.swiftUiColor) },
-        .backgroundBlur(effect: .dark),
-        .cornerRadius(20),
-        .dragIndicatorColor(MailResourcesAsset.menuActionColor.swiftUiColor),
-        .noBottomPosition,
-        .shadow(color: Color(.sRGBLinear, white: 0, opacity: 0.1), radius: 30, x: 0, y: -10),
-        .swipeToDismiss,
-        .tapToDismiss
-    ]
+    public static let checkboxSize: CGFloat = 32
+    public static let checkmarkSize: CGFloat = 15
+    public static let checkboxCompactSize: CGFloat = 24
+    public static let checkmarkCompactSize: CGFloat = 13
 
     public static let mailRegex = "(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|\"(?:[\\x01-\\x08\\x0b\\x0c\\x0e-\\x1f\\x21\\x23-\\x5b\\x5d-\\x7f]|\\\\[\\x01-\\x09\\x0b\\x0c\\x0e-\\x7f])*\")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\\[(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?|[a-z0-9-]*[a-z0-9]:(?:[\\x01-\\x08\\x0b\\x0c\\x0e-\\x1f\\x21-\\x5a\\x53-\\x7f]|\\\\[\\x01-\\x09\\x0b\\x0c\\x0e-\\x7f])+)\\])"
 
@@ -101,6 +96,10 @@ public enum Constants {
         </div>
         """
     }
+    
+    public static func globallyResignFirstResponder() {
+        UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
+    }
 
     public static let defaultSwipeShortRight = SwipeAction.none
     public static let defaultSwipeLongRight = SwipeAction.readUnread
@@ -108,7 +107,9 @@ public enum Constants {
     public static let defaultSwipeLongLeft = SwipeAction.delete
 
     public static let bottomSheetHorizontalPadding: CGFloat = 24
+    
+    public static let searchFolderId = "search_folder_id"
 
     // To delete: alert to facilitate tests for beta version
-    public static let workInProgress = "Cette fonctionalité est en cours de développement"
+    public static let workInProgress = "This feature is currently under development."
 }

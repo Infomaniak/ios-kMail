@@ -25,26 +25,22 @@ struct AutocompletionView: View {
     let onSelect: (Recipient) -> Void
 
     var body: some View {
-        List {
-            Section {
-                ForEach(autocompletion, id: \.email) { recipient in
-                    VStack(alignment: .leading, spacing: 8) {
-                        Button {
-                            onSelect(recipient)
-                        } label: {
-                            RecipientAutocompletionCell(recipient: recipient)
-                        }
-                        .padding(.horizontal, 24)
-
-                        IKDivider()
+        LazyVStack {
+            ForEach(autocompletion, id: \.email) { recipient in
+                VStack(alignment: .leading, spacing: 8) {
+                    Button {
+                        onSelect(recipient)
+                    } label: {
+                        RecipientAutocompletionCell(recipient: recipient)
                     }
-                    .listRowBackground(MailResourcesAsset.backgroundColor.swiftUiColor)
-                    .listRowSeparator(.hidden)
-                    .listRowInsets(.init(top: 8, leading: 8, bottom: 0, trailing: 8))
+                    .padding(.horizontal, 8)
+
+                    IKDivider()
                 }
+                .padding(.horizontal, 8)
             }
         }
-        .listStyle(.plain)
+        .padding(.top, 8)
     }
 }
 
@@ -52,6 +48,6 @@ struct AutocompletionView_Previews: PreviewProvider {
     static var previews: some View {
         AutocompletionView(autocompletion: .constant([
             PreviewHelper.sampleRecipient1, PreviewHelper.sampleRecipient2, PreviewHelper.sampleRecipient3
-        ])) { _ in }
+        ])) { _ in /* Preview */ }
     }
 }

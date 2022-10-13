@@ -17,30 +17,21 @@
  */
 
 import InfomaniakCore
+import InfomaniakLogin
 import MailCore
 import MailResources
 import RealmSwift
 import SwiftUI
 
 struct AccountCellView: View {
+    @Environment(\.window) private var window
+
     let account: Account
     @Binding var expandedUserId: Int?
-
-    @ObservedResults(Mailbox.self) private var mailboxes
-
-    @Environment(\.window) private var window
+    let mailboxes: [Mailbox]
 
     private var isExpanded: Bool {
         return expandedUserId == account.userId
-    }
-
-    init(account: Account, expandedUserId: Binding<Int?>) {
-        self.account = account
-        _mailboxes = .init(Mailbox.self,
-                           configuration: MailboxInfosManager.instance.realmConfiguration,
-                           where: { $0.userId == account.userId },
-                           sortDescriptor: SortDescriptor(keyPath: \Mailbox.mailboxId))
-        _expandedUserId = expandedUserId
     }
 
     var body: some View {
@@ -113,13 +104,16 @@ struct AccountHeaderCell: View {
             ChevronIcon(style: isExpanded ? .up : .down)
         }
         .task {
-            avatarImage = await account.user.getAvatar()
+            avatarImage = await account.user.avatarImage
         }
     }
 }
 
-// struct AccountCellView_Previews: PreviewProvider {
-//    static var previews: some View {
-//        AccountCellView()
-//    }
-// }
+struct AccountCellView_Previews: PreviewProvider {
+    static var previews: some View {
+        AccountCellView(
+            account: Account(apiToken: ApiToken(accessToken: "", expiresIn: .max, refreshToken: "", scope: "", tokenType: "", userId: 0, expirationDate: .distantFuture)),
+            expandedUserId: .constant(nil),
+            mailboxes: [PreviewHelper.sampleMailbox])
+    }
+}

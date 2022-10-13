@@ -22,18 +22,16 @@ import RealmSwift
 import SwiftUI
 
 struct RoleFoldersListView: View {
-    @ObservedResults(Folder.self) var folders
-
-    @Binding var selectedFolder: Folder?
+    var folders: [NestableFolder]
 
     var isCompact: Bool
 
     var body: some View {
         VStack(spacing: 0) {
-            ForEach(Array(folders.filter { $0.role != nil }).sorted()) { folder in
-                FolderCell(folder: folder, selectedFolder: $selectedFolder, isCompact: isCompact)
+            ForEach(folders) { folder in
+                FolderCell(folder: folder, isCompact: isCompact)
 
-                if folder.role == .inbox {
+                if folder.content.role == .inbox {
                     IKDivider(withPadding: true)
                         .padding(.vertical, Constants.menuDrawerVerticalPadding)
                 }

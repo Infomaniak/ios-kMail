@@ -24,12 +24,13 @@ import SwiftUI
 
 struct MailboxesManagementView: View {
     @EnvironmentObject var mailboxManager: MailboxManager
-    @EnvironmentObject var menuSheet: MenuSheet
 
-    @State private var isExpanded = false
+    @Binding var isExpanded: Bool
     @State private var avatarImage = Image(resource: MailResourcesAsset.placeholderAvatar)
+    @State private var isShowingManageAccount = false
+    @State private var isShowingSwitchAccount = false
 
-    @ObservedResults(Mailbox.self, configuration: MailboxInfosManager.instance.realmConfiguration, where: { $0.userId == AccountManager.instance.currentUserId }, sortDescriptor: SortDescriptor(keyPath: \Mailbox.mailboxId)) private var mailboxes
+    var mailboxes: [Mailbox]
 
     private var otherMailboxes: [Mailbox] {
         return mailboxes.filter { $0.mailboxId != mailboxManager.mailbox.mailboxId }
@@ -51,14 +52,14 @@ struct MailboxesManagementView: View {
                         .padding(.trailing, 16)
                     Text(mailboxManager.mailbox.email)
                         .foregroundColor(.accentColor)
-                        .textStyle(.header3)
+                        .textStyle(.header4)
                         .lineLimit(1)
                     Spacer()
                     ChevronIcon(style: isExpanded ? .up : .down, color: .primary)
                 }
                 .padding(.vertical, 8)
-                .padding(.horizontal, 20)
-                .background(SelectionBackground())
+                .padding(.horizontal, 18)
+                .background(SelectionBackground(isSelected: true, offsetX: 8, leadingPadding: 0, verticalPadding: 0))
             }
 
             if isExpanded {
@@ -72,13 +73,11 @@ struct MailboxesManagementView: View {
                     }
 
                     MailboxesManagementButtonView(text: MailResourcesStrings.Localizable.buttonManageAccount) {
-                        menuSheet.state = .manageAccount
+                        isShowingManageAccount.toggle()
                     }
                     MailboxesManagementButtonView(text: MailResourcesStrings.Localizable.buttonAccountSwitch) {
-                        menuSheet.state = .switchAccount
+                        isShowingSwitchAccount.toggle()
                     }
-
-                    IKDivider(withPadding: true)
                 }
                 .task {
                     try? await updateAccount()
@@ -88,8 +87,16 @@ struct MailboxesManagementView: View {
         .padding(.top, 16)
         .task {
             if let user = AccountManager.instance.account(for: mailboxManager.mailbox.userId)?.user {
-                avatarImage = await user.getAvatar()
+                avatarImage = await user.avatarImage
             }
+        }
+        .sheet(isPresented: $isShowingSwitchAccount) {
+            SheetView {
+                AccountListView()
+            }
+        }
+        .sheet(isPresented: $isShowingManageAccount) {
+            AccountView()
         }
     }
 
@@ -101,7 +108,7 @@ struct MailboxesManagementView: View {
 
 struct MailboxesManagementView_Previews: PreviewProvider {
     static var previews: some View {
-        MailboxesManagementView()
+        MailboxesManagementView(isExpanded: .constant(false), mailboxes: [PreviewHelper.sampleMailbox])
             .environmentObject(PreviewHelper.sampleMailboxManager)
             .previewLayout(.sizeThatFits)
             .accentColor(UserDefaults.shared.accentColor.primary.swiftUiColor)

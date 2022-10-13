@@ -52,7 +52,7 @@ struct MessageHeaderSummaryView: View {
                         }
                         .tint(MailResourcesAsset.redActionColor)
                     } else {
-                        HStack(spacing: 16) {
+                        HStack(alignment: .firstTextBaseline, spacing: 16) {
                             VStack {
                                 ForEach(message.from, id: \.self) { recipient in
                                     Text(recipient.title)
@@ -75,7 +75,7 @@ struct MessageHeaderSummaryView: View {
                             ChevronButton(isExpanded: $isHeaderExpanded)
                         }
                     } else {
-                        Text(message.preview)
+                        Text(message.formattedSubject)
                             .textStyle(.bodySecondary)
                             .lineLimit(1)
                     }
@@ -107,23 +107,26 @@ struct MessageHeaderSummaryView: View {
 
 struct MessageHeaderSummaryView_Previews: PreviewProvider {
     static var previews: some View {
-        MessageHeaderSummaryView(message: PreviewHelper.sampleMessage,
-                                 isMessageExpanded: .constant(false),
-                                 isHeaderExpanded: .constant(false)) {
-            // Preview
-        } replyButtonTapped: {
-            // Preview
-        } moreButtonTapped: {
-            // Preview
+        Group {
+            MessageHeaderSummaryView(message: PreviewHelper.sampleMessage,
+                                     isMessageExpanded: .constant(false),
+                                     isHeaderExpanded: .constant(false)) {
+                // Preview
+            } replyButtonTapped: {
+                // Preview
+            } moreButtonTapped: {
+                // Preview
+            }
+            MessageHeaderSummaryView(message: PreviewHelper.sampleMessage,
+                                     isMessageExpanded: .constant(true),
+                                     isHeaderExpanded: .constant(false)) {
+                // Preview
+            } replyButtonTapped: {
+                // Preview
+            } moreButtonTapped: {
+                // Preview
+            }
         }
-        MessageHeaderSummaryView(message: PreviewHelper.sampleMessage,
-                                 isMessageExpanded: .constant(true),
-                                 isHeaderExpanded: .constant(false)) {
-            // Preview
-        } replyButtonTapped: {
-            // Preview
-        } moreButtonTapped: {
-            // Preview
-        }
+        .previewLayout(.sizeThatFits)
     }
 }

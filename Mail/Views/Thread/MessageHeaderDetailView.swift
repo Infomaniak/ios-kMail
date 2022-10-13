@@ -20,6 +20,7 @@ import MailCore
 import MailResources
 import RealmSwift
 import SwiftUI
+import WrappingHStack
 
 struct ViewWidthKey: PreferenceKey {
     static var defaultValue: CGFloat = .zero
@@ -92,11 +93,11 @@ struct RecipientLabel: View {
                 .frame(width: labelWidth, alignment: .leading)
             VStack(alignment: .leading) {
                 ForEach(recipients, id: \.self) { recipient in
-                    HStack(alignment: .firstTextBaseline) {
+                    WrappingHStack(lineSpacing: 2) {
                         Button {
                             recipientTapped(recipient)
                         } label: {
-                            Text(recipient.name.isEmpty ? recipient.email : recipient.name)
+                            Text(recipient.name.isEmpty ? recipient.email : recipient.name.removePunctuation)
                                 .font(MailTextStyle.callout.font)
                                 .lineLimit(1)
                                 .layoutPriority(1)

@@ -69,7 +69,8 @@ public class MailApiFetcher: ApiFetcher {
     }
 
     public func listBackups(mailbox: Mailbox) async throws -> BackupsList {
-        try await perform(request: authenticatedRequest(.backups(hostingId: mailbox.hostingId, mailboxName: mailbox.mailbox))).data
+        try await perform(request: authenticatedRequest(.backups(hostingId: mailbox.hostingId, mailboxName: mailbox.mailbox)))
+            .data
     }
 
     @discardableResult
@@ -88,16 +89,18 @@ public class MailApiFetcher: ApiFetcher {
         try await perform(request: authenticatedRequest(.folders(uuid: mailbox.uuid))).data
     }
 
-    func threads(mailbox: Mailbox, folder: Folder, filter: Filter = .all) async throws -> ThreadResult {
+    public func threads(mailbox: Mailbox, folderId: String, filter: Filter = .all,
+                        searchFilter: [URLQueryItem] = []) async throws -> ThreadResult {
         try await perform(request: authenticatedRequest(.threads(
             uuid: mailbox.uuid,
-            folderId: folder._id,
-            filter: filter == .all ? nil : filter.rawValue
+            folderId: folderId,
+            filter: filter == .all ? nil : filter.rawValue,
+            searchFilters: searchFilter
         ))).data
     }
 
-    func threads(from resource: String) async throws -> ThreadResult {
-        try await perform(request: authenticatedRequest(.resource(resource))).data
+    public func threads(from resource: String, searchFilter: [URLQueryItem] = []) async throws -> ThreadResult {
+        try await perform(request: authenticatedRequest(.resource(resource, queryItems: searchFilter))).data
     }
 
     func message(message: Message) async throws -> Message {
@@ -108,7 +111,7 @@ public class MailApiFetcher: ApiFetcher {
     }
 
     public func download(message: Message) async throws -> URL {
-        let destination = DownloadRequest.suggestedDownloadDestination(for: .downloadsDirectory, options: [
+        let destination = DownloadRequest.suggestedDownloadDestination(options: [
             .createIntermediateDirectories,
             .removePreviousFile
         ])
@@ -190,8 +193,8 @@ public class MailApiFetcher: ApiFetcher {
     }
 
     @discardableResult
-    public func undoAction(resource: String) async throws -> Empty? { // TODO: change return type when bug will be fixed from API
-        try await perform(request: authenticatedRequest(.resource(resource), method: .put)).data
+    public func undoAction(resource: String) async throws -> Bool {
+        try await perform(request: authenticatedRequest(.resource(resource), method: .post)).data
     }
 
     public func reportSpam(mailbox: Mailbox, messages: [Message]) async throws -> UndoResponse {
@@ -271,6 +274,12 @@ public class MailApiFetcher: ApiFetcher {
         request.httpBody = attachmentData
 
         return try await perform(request: authenticatedSession.request(request)).data
+    }
+
+    public func attachmentsToForward(mailbox: Mailbox, message: Message) async throws -> AttachmentsToForwardResult {
+        let attachmentsToForward = AttachmentsToForward(toForwardUids: [message.uid], mode: AttachmentDisposition.inline.rawValue)
+        return try await perform(request: authenticatedRequest(.attachmentToForward(uuid: mailbox.uuid), method: .post,
+                                                               parameters: attachmentsToForward)).data
     }
 }
 

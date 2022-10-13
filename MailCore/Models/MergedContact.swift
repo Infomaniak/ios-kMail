@@ -19,10 +19,18 @@
 import Contacts
 import Foundation
 import InfomaniakCore
-import Kingfisher
+import Nuke
 import RealmSwift
 import SwiftUI
 import UIKit
+
+extension CNContact {
+    var image: UIImage? {
+        guard let imageData = imageData else { return nil }
+        let localImage = UIImage(data: imageData)
+        return localImage
+    }
+}
 
 public class MergedContact {
     public var email: String
@@ -31,20 +39,21 @@ public class MergedContact {
 
     private let contactFormatter = CNContactFormatter()
 
-    public lazy var color: String = remote?.color ?? "#00bcd4"
-    public lazy var firstname: String = merge(local?.givenName, remote?.firstname) ?? ""
-    public lazy var lastName: String = merge(local?.familyName, remote?.lastname) ?? ""
+    public lazy var color: UIColor = {
+        if let remoteColorHex = remote?.color,
+           let colorFromHex = UIColor(hex: remoteColorHex) {
+            return colorFromHex
+        } else {
+            return UserDefaults.shared.accentColor.primary.color
+        }
+    }()
 
     public lazy var name: String = {
         if let local = local, let localName = contactFormatter.string(from: local) {
-            return localName
+            return localName.removePunctuation
         }
-        return remote?.name ?? ""
+        return remote?.name.removePunctuation ?? ""
     }()
-
-    public lazy var favorite: Bool? = remote?.favorite
-    public lazy var nickname: String? = merge(local?.nickname, remote?.nickname)
-    public lazy var organization: String? = merge(local?.organizationName, remote?.organization)
 
     public var isLocal: Bool {
         return local != nil
@@ -58,23 +67,28 @@ public class MergedContact {
         return local?.imageData != nil || remote?.avatar != nil
     }
 
-    public func getAvatar(size: CGSize = CGSize(width: 40, height: 40), completion: @escaping (UIImage) -> Void) {
-        if let data = local?.imageData, let image = UIImage(data: data) {
-            completion(image)
-        } else if let avatarPath = remote?.avatar {
-            KingfisherManager.shared.retrieveImage(with: Endpoint.resource(avatarPath).url) { result in
-                if let avatarImage = try? result.get().image {
-                    completion(avatarImage)
-                }
+    public var avatarImage: Image? {
+        get async {
+            if let localImage = local?.image {
+                return Image(uiImage: localImage)
+            } else if let avatarPath = remote?.avatar,
+                      let avatarUIImage = try? await ImagePipeline.shared.image(for: Endpoint.resource(avatarPath).url).image {
+                return Image(uiImage: avatarUIImage)
             }
-        } else {
-            let backgroundColor = UIColor(hex: color)!
-            completion(UIImage.getInitialsPlaceholder(with: name, size: size, backgroundColor: backgroundColor))
+
+            return nil
         }
     }
 
-    private func merge<T>(_ element1: T?, _ element2: T?) -> T? {
-        return element1 ?? element2
+    public var cachedAvatarImage: Image? {
+        if let localImage = local?.image {
+            return Image(uiImage: localImage)
+        } else if let avatarPath = remote?.avatar,
+                  let avatarUIImage = ImagePipeline.shared.cache[Endpoint.resource(avatarPath).url]?.image {
+            return Image(uiImage: avatarUIImage)
+        }
+
+        return nil
     }
 
     public init(email: String, remote: Contact?, local: CNContact?) {

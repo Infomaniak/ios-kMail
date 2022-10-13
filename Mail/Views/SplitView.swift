@@ -16,7 +16,6 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import BottomSheet
 import InfomaniakBugTracker
 import InfomaniakCore
 import Introspect
@@ -25,46 +24,53 @@ import MailResources
 import RealmSwift
 import SwiftUI
 
-class GlobalBottomSheet: BottomSheetState<GlobalBottomSheet.State, GlobalBottomSheet.Position> {
+class GlobalBottomSheet: DisplayedFloatingPanelState<GlobalBottomSheet.State> {
     enum State {
         case move(moveHandler: (Folder) -> Void)
-        case createNewFolder(mode: CreateFolderView.Mode)
         case getMoreStorage
         case restoreEmails
         case reportDisplayProblem(message: Message)
+        case reportPhishing(message: Message)
     }
+}
 
-    enum Position: CGFloat, CaseIterable {
-        case moveHeight = 272
-        case newFolderHeight = 300
-        case moreStorageHeight = 465
-        case restoreEmailsHeight = 325
-        case reportDisplayIssueHeight = 400
-        case hidden = 0
+class GlobalAlert: SheetState<GlobalAlert.State> {
+    enum State {
+        case createNewFolder(mode: CreateFolderView.Mode)
+    }
+}
+
+public class SplitViewManager: ObservableObject {
+    @Published var showSearch = false
+    @Published var selectedFolder: Folder?
+
+    init(folder: Folder?) {
+        selectedFolder = folder
     }
 }
 
 struct SplitView: View {
     @ObservedObject var mailboxManager: MailboxManager
-    @State var selectedFolder: Folder?
     @State var splitViewController: UISplitViewController?
     @StateObject private var navigationDrawerController = NavigationDrawerController()
 
     @Environment(\.horizontalSizeClass) var sizeClass
+    @Environment(\.verticalSizeClass) var verticalSizeClass
     @Environment(\.window) var window
 
-    @StateObject private var menuSheet = MenuSheet()
     @StateObject private var bottomSheet = GlobalBottomSheet()
+    @StateObject private var alert = GlobalAlert()
 
-    private let bottomSheetOptions = Constants.bottomSheetOptions + [.absolutePositionValue, .notResizeable]
+    @StateObject private var splitViewManager: SplitViewManager
 
     var isCompact: Bool {
-        sizeClass == .compact
+        sizeClass == .compact || verticalSizeClass == .compact
     }
 
     init(mailboxManager: MailboxManager) {
         self.mailboxManager = mailboxManager
-        _selectedFolder = State(wrappedValue: getInbox())
+        _splitViewManager =
+            StateObject(wrappedValue: SplitViewManager(folder: mailboxManager.getFolder(with: .inbox, shouldRefresh: true)))
     }
 
     var body: some View {
@@ -72,12 +78,12 @@ struct SplitView: View {
             if isCompact {
                 ZStack {
                     NavigationView {
-                        ThreadListView(
+                        ThreadListManagerView(
                             mailboxManager: mailboxManager,
-                            folder: $selectedFolder,
                             isCompact: isCompact
                         )
                     }
+                    .navigationViewStyle(.stack)
 
                     Group {
                         Color.black
@@ -89,7 +95,6 @@ struct SplitView: View {
 
                         NavigationDrawer(
                             mailboxManager: mailboxManager,
-                            folder: $selectedFolder,
                             isCompact: isCompact
                         )
                     }
@@ -99,14 +104,13 @@ struct SplitView: View {
                 NavigationView {
                     MenuDrawerView(
                         mailboxManager: mailboxManager,
-                        selectedFolder: $selectedFolder,
+                        showMailboxes: $navigationDrawerController.showMailboxes,
                         isCompact: isCompact
                     )
                     .navigationBarHidden(true)
 
-                    ThreadListView(
+                    ThreadListManagerView(
                         mailboxManager: mailboxManager,
-                        folder: $selectedFolder,
                         isCompact: isCompact
                     )
 
@@ -114,7 +118,7 @@ struct SplitView: View {
                 }
             }
         }
-        .environmentObject(menuSheet)
+        .environmentObject(splitViewManager)
         .environmentObject(navigationDrawerController)
         .defaultAppStorage(.shared)
         .onAppear {
@@ -126,8 +130,8 @@ struct SplitView: View {
         .task {
             await fetchFolders()
             // On first launch, select inbox
-            if selectedFolder == nil {
-                selectedFolder = getInbox()
+            if splitViewManager.selectedFolder == nil {
+                splitViewManager.selectedFolder = getInbox()
             }
         }
         .onRotate { orientation in
@@ -141,47 +145,28 @@ struct SplitView: View {
             setupBehaviour(orientation: interfaceOrientation)
             splitViewController.preferredDisplayMode = .twoDisplaceSecondary
         }
-        .sheet(isPresented: $menuSheet.isShowing) {
-            switch menuSheet.state {
-            case .newMessage:
-                NewMessageView(isPresented: $menuSheet.isShowing, mailboxManager: mailboxManager)
-            case let .reply(message, replyMode):
-                NewMessageView(isPresented: $menuSheet.isShowing, mailboxManager: mailboxManager, draft: .replying(to: message, mode: replyMode))
-            case let .editMessage(draft):
-                NewMessageView(isPresented: $menuSheet.isShowing, mailboxManager: mailboxManager, draft: draft.asUnmanaged())
-            case .manageAccount:
-                AccountView(isPresented: $menuSheet.isShowing)
-            case .switchAccount:
-                SheetView(isPresented: $menuSheet.isShowing) {
-                    AccountListView()
-                }
-            case .settings:
-                SheetView(isPresented: $menuSheet.isShowing) {
-                    SettingsView(viewModel: GeneralSettingsViewModel())
-                }
-            case .help:
-                SheetView(isPresented: $menuSheet.isShowing) {
-                    HelpView()
-                }
-            case .bugTracker:
-                BugTrackerView(isPresented: $menuSheet.isShowing)
-            case .none:
-                EmptyView()
-            }
-        }
         .environmentObject(bottomSheet)
-        .bottomSheet(bottomSheetPosition: $bottomSheet.position, options: bottomSheetOptions) {
+        .environmentObject(alert)
+        .floatingPanel(state: bottomSheet) {
             switch bottomSheet.state {
             case let .move(moveHandler):
-                MoveEmailView(mailboxManager: mailboxManager, state: bottomSheet, moveHandler: moveHandler)
-            case let .createNewFolder(mode):
-                CreateFolderView(mailboxManager: mailboxManager, state: bottomSheet, mode: mode)
+                MoveEmailView(mailboxManager: mailboxManager, state: bottomSheet, globalAlert: alert, moveHandler: moveHandler)
             case .getMoreStorage:
                 MoreStorageView(state: bottomSheet)
             case .restoreEmails:
                 RestoreEmailsView(state: bottomSheet, mailboxManager: mailboxManager)
             case let .reportDisplayProblem(message):
                 ReportDisplayProblemView(mailboxManager: mailboxManager, state: bottomSheet, message: message)
+            case let .reportPhishing(message):
+                ReportPhishingView(mailboxManager: mailboxManager, state: bottomSheet, message: message)
+            case .none:
+                EmptyView()
+            }
+        }
+        .customAlert(isPresented: $alert.isShowing) {
+            switch alert.state {
+            case let .createNewFolder(mode):
+                CreateFolderView(mailboxManager: mailboxManager, state: alert, mode: mode)
             case .none:
                 EmptyView()
             }
@@ -191,10 +176,13 @@ struct SplitView: View {
     private func setupBehaviour(orientation: UIInterfaceOrientation) {
         if orientation.isLandscape {
             splitViewController?.preferredSplitBehavior = .displace
+            splitViewController?.preferredDisplayMode = splitViewManager.selectedFolder == nil ? .twoDisplaceSecondary : .oneBesideSecondary
         } else if orientation.isPortrait {
             splitViewController?.preferredSplitBehavior = .overlay
+            splitViewController?.preferredDisplayMode = splitViewManager.selectedFolder == nil ? .twoOverSecondary : .oneOverSecondary
         } else {
             splitViewController?.preferredSplitBehavior = .automatic
+            splitViewController?.preferredDisplayMode = .automatic
         }
     }
 

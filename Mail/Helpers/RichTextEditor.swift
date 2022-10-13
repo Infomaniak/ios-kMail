@@ -28,6 +28,8 @@ struct RichTextEditor: UIViewRepresentable {
     @Binding var model: RichTextEditorModel
     @Binding var body: String
 
+    var isFirstTime = true
+
     var richTextEditor: SQTextEditorView {
         return model.richTextEditor
     }
@@ -46,16 +48,26 @@ struct RichTextEditor: UIViewRepresentable {
                 }
             }
             parent.model.richTextEditor.moveCursorToStart()
+            parent.richTextEditor.webView.scrollView.isScrollEnabled = false
+            parent.model.height = CGFloat(editor.contentHeight)
+        }
+
+        func editor(_ editor: SQTextEditorView, contentHeightDidChange height: Int) {
+            parent.model.height = CGFloat(height)
         }
 
         func editor(_ editor: SQTextEditorView, cursorPositionDidChange position: SQEditorCursorPosition) {
             parent.model.delegateCount += 1
             guard parent.model.isInitialized else { return }
             editor.getHTML { html in
-                if let html = html, self.parent.body.trimmingCharacters(in: .whitespacesAndNewlines) != html {
+                var parentBody = self.parent.body.trimmingCharacters(in: .whitespacesAndNewlines)
+                parentBody = parentBody.replacingOccurrences(of: "\r", with: "")
+                if let html = html, parentBody != html && !self.parent.isFirstTime {
                     self.parent.body = html
                 }
+                self.parent.isFirstTime = false
             }
+            parent.model.cursorPosition = CGFloat(position.bottom) + 20
         }
 
         func editor(_ editor: SQTextEditorView, selectedTextAttributeDidChange attribute: SQTextAttribute) {
@@ -79,21 +91,20 @@ struct RichTextEditor: UIViewRepresentable {
     }
 }
 
-class RichTextEditorModel: ObservableObject {
-    let richTextEditor: MailEditor
-    @Published var delegateCount = 0
+struct RichTextEditorModel {
+    let richTextEditor = MailEditor()
+    var delegateCount = 0
+    var cursorPosition: CGFloat = 0
+    var height: CGFloat = 0
     var isInitialized: Bool {
         delegateCount > 2
-    }
-
-    init() {
-        richTextEditor = MailEditor()
     }
 }
 
 class MailEditor: SQTextEditorView {
     lazy var toolbar = getToolbar()
-    var bottomSheet: NewMessageBottomSheet?
+    var sheet: NewMessageSheet?
+    var alert: NewMessageAlert?
     var isShowingCamera: Binding<Bool>?
     var toolbarStyle = ToolbarStyle.main
 
@@ -137,6 +148,7 @@ class MailEditor: SQTextEditorView {
         _webView.setKeyboardRequiresUserInteraction(false)
         _webView.addInputAccessoryView(toolbar: self.toolbar)
         self.updateToolbarItems(style: .main)
+        _webView.scrollView.keyboardDismissMode = .interactive
         return _webView
     }()
 
@@ -207,20 +219,20 @@ class MailEditor: SQTextEditorView {
     }
 
     public func getToolbar() -> UIToolbar {
-        let toolbar = UIToolbar(frame: CGRect(x: 0, y: 0, width: 320, height: 55))
-        toolbar.tintColor = MailResourcesAsset.toolbarEditorTextColor.color
-        toolbar.barTintColor = MailResourcesAsset.backgroundToolbarEditorColor.color
-        toolbar.isTranslucent = false
+        let newToolbar = UIToolbar(frame: CGRect(x: 0, y: 0, width: 320, height: 55))
+        newToolbar.tintColor = MailResourcesAsset.toolbarEditorTextColor.color
+        newToolbar.barTintColor = MailResourcesAsset.backgroundToolbarEditorColor.color
+        newToolbar.isTranslucent = false
 
         // Shadow
-        toolbar.setShadowImage(UIImage(), forToolbarPosition: .any)
-        toolbar.layer.shadowColor = UIColor.black.cgColor
-        toolbar.layer.shadowOpacity = 0.1
-        toolbar.layer.shadowOffset = CGSize(width: 1, height: 1)
-        toolbar.layer.shadowRadius = 2
-        toolbar.layer.masksToBounds = false
+        newToolbar.setShadowImage(UIImage(), forToolbarPosition: .any)
+        newToolbar.layer.shadowColor = UIColor.black.cgColor
+        newToolbar.layer.shadowOpacity = 0.1
+        newToolbar.layer.shadowOffset = CGSize(width: 1, height: 1)
+        newToolbar.layer.shadowRadius = 2
+        newToolbar.layer.masksToBounds = false
 
-        return toolbar
+        return newToolbar
     }
 
     @objc func onToolbarClick(sender: UIBarButtonItem) {
@@ -237,23 +249,24 @@ class MailEditor: SQTextEditorView {
             makeUnorderedList()
         case .editText:
             updateToolbarItems(style: toolbarStyle == .main ? .textEdition : .main)
-        case .attachment:
-            webView.resignFirstResponder()
-            bottomSheet?.open(state: .attachment, position: .attachment)
-        case .photo:
+        case .addFile:
+            sheet?.state = .fileSelection
+        case .addPhoto:
+            sheet?.state = .photoLibrary
+        case .takePhoto:
             isShowingCamera?.wrappedValue = true
         case .link:
             if selectedTextAttribute.format.hasLink {
                 removeLink()
             } else {
                 webView.resignFirstResponder()
-                bottomSheet?.open(state: .link { url in
+                alert?.state = .link { url in
                     self.makeLink(url: url)
-                    self.bottomSheet?.close()
-                }, position: .link)
+                }
             }
         case .programMessage:
             // TODO: Handle programmed message
+            webView.resignFirstResponder()
             showWorkInProgressSnackBar()
         case .none:
             return
@@ -268,7 +281,7 @@ enum ToolbarStyle {
     var actions: [ToolbarAction] {
         switch self {
         case .main:
-            return [.editText, .attachment, .photo, .link, .programMessage]
+            return [.editText, .addFile, .addPhoto, .takePhoto, .link, .programMessage]
         case .textEdition:
             return [.editText, .bold, .italic, .underline, .strikeThrough, .unorderedList]
         }
@@ -282,8 +295,9 @@ enum ToolbarAction: Int {
     case strikeThrough
     case unorderedList
     case editText
-    case attachment
-    case photo
+    case addFile
+    case addPhoto
+    case takePhoto
     case link
     case programMessage
 
@@ -301,9 +315,11 @@ enum ToolbarAction: Int {
             return MailResourcesAsset.unorderedList.image
         case .editText:
             return MailResourcesAsset.textModes.image
-        case .attachment:
-            return MailResourcesAsset.attachmentMail2.image
-        case .photo:
+        case .addFile:
+            return MailResourcesAsset.folder.image
+        case .addPhoto:
+            return MailResourcesAsset.pictureLandscape.image
+        case .takePhoto:
             return MailResourcesAsset.photo.image
         case .link:
             return MailResourcesAsset.hyperlink.image
@@ -324,7 +340,7 @@ enum ToolbarAction: Int {
             return textAttribute.format.hasStrikethrough
         case .link:
             return textAttribute.format.hasLink
-        case .unorderedList, .editText, .attachment, .photo, .programMessage:
+        case .unorderedList, .editText, .addFile, .addPhoto, .takePhoto, .programMessage:
             return false
         }
     }

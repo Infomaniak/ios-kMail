@@ -22,6 +22,36 @@ import Foundation
 import InfomaniakCore
 import RealmSwift
 
+protocol IdentifiableFromEmail {
+    func uniqueKeyForEmail(_ email: String) -> String
+}
+
+extension CNContact: IdentifiableFromEmail {
+    func uniqueKeyForEmail(_ email: String) -> String {
+        /*
+         Workspace API creates a "name" field from the first name and the last name with a space in the middle
+         We trim the name in case givenName or familyName is empty
+         */
+        return (givenName + " " + familyName).trimmingCharacters(in: .whitespaces) + email
+    }
+}
+
+extension Contact: IdentifiableFromEmail {
+    func uniqueKeyForEmail(_ email: String) -> String {
+        return name + email
+    }
+}
+
+extension Recipient: Identifiable {
+    public var id: String {
+        return uniqueKey()
+    }
+
+    func uniqueKey() -> String {
+        return name + email
+    }
+}
+
 public class ContactManager: ObservableObject {
     public class ContactManagerConstants {
         private let fileManager = FileManager.default
@@ -86,7 +116,7 @@ public class ContactManager: ObservableObject {
 
             let realm = getRealm()
 
-            try? realm.safeWrite {
+            try? realm.uncheckedSafeWrite {
                 realm.add(addressBooks, update: .modified)
                 realm.add(contacts, update: .modified)
             }
@@ -100,13 +130,13 @@ public class ContactManager: ObservableObject {
     }
 
     public func mergeContacts() async {
-        var mergeableContacts = [String: (local: CNContact?, remote: Contact?)]()
+        var mergeableContacts = [String: (email: String, local: CNContact?, remote: Contact?)]()
 
         // Add local contacts
         await localContactsHelper.enumerateContacts { localContact, _ in
             for email in localContact.emailAddresses {
-                let email = email.value as String
-                mergeableContacts[email] = (local: localContact, remote: mergeableContacts[email]?.remote)
+                let key = localContact.uniqueKeyForEmail(String(email.value))
+                mergeableContacts[key] = (email: String(email.value), local: localContact, remote: nil)
             }
         }
 
@@ -115,14 +145,15 @@ public class ContactManager: ObservableObject {
         let contacts = realm.objects(Contact.self)
         for remoteContact in contacts {
             for email in remoteContact.emails {
-                mergeableContacts[email] = (local: mergeableContacts[email]?.local, remote: remoteContact)
+                let key = remoteContact.uniqueKeyForEmail(email)
+                mergeableContacts[key] = (email: email, local: mergeableContacts[key]?.local, remote: remoteContact)
             }
         }
 
         // Merge
         var tmpMergedContacts = [String: MergedContact]()
         mergeableContacts.forEach { key, value in
-            tmpMergedContacts[key] = MergedContact(email: key, remote: value.remote?.freeze(), local: value.local)
+            tmpMergedContacts[key] = MergedContact(email: value.email, remote: value.remote?.freeze(), local: value.local)
         }
         mergedContacts = tmpMergedContacts
     }
@@ -136,8 +167,8 @@ public class ContactManager: ObservableObject {
         return try? await localContactsHelper.getContact(with: identifier)
     }
 
-    public func getContact(for email: String) -> MergedContact? {
-        return mergedContacts[email]
+    public func getContact(for recipient: Recipient) -> MergedContact? {
+        return mergedContacts[recipient.uniqueKey()]
     }
 
     public func addressBook(with id: Int) -> AddressBook? {
@@ -157,18 +188,18 @@ public class ContactManager: ObservableObject {
 
         guard let newContact = contacts.first(where: { $0.id == String(contactId) }) else { throw MailError.contactNotFound }
         let realm = getRealm()
-        try? realm.safeWrite {
+        try? realm.uncheckedSafeWrite {
             realm.add(newContact)
         }
-        if let mergedContact = mergedContacts[recipient.email] {
+        if let mergedContact = mergedContacts[recipient.uniqueKey()] {
             mergedContact.remote = newContact.freeze()
         } else {
-            mergedContacts[recipient.email] = MergedContact(email: recipient.email, remote: newContact.freeze(), local: nil)
+            mergedContacts[recipient.uniqueKey()] = MergedContact(email: recipient.email, remote: newContact.freeze(), local: nil)
         }
     }
 
     public func getMainAddressBook() -> AddressBook? {
         let realm = getRealm()
-        return realm.objects(AddressBook.self).where { $0.isPrincipal == true }.first
+        return realm.objects(AddressBook.self).where { $0.principalUri.starts(with: "principals") }.first
     }
 }

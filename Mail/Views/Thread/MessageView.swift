@@ -62,7 +62,6 @@ struct MessageView: View {
                 GeometryReader { proxy in
                     WebView(model: $model, dynamicHeight: $webViewHeight, proxy: proxy)
                         .frame(height: webViewHeight)
-                        .background(Color.blue)
                 }
                 .frame(height: webViewHeight)
                 .onAppear {
@@ -91,6 +90,11 @@ struct MessageView: View {
 
 struct MessageView_Previews: PreviewProvider {
     static var previews: some View {
-        MessageView(message: PreviewHelper.sampleMessage)
+        Group {
+            MessageView(message: PreviewHelper.sampleMessage)
+
+            MessageView(message: PreviewHelper.sampleMessage, isMessageExpanded: true)
+        }
+        .previewLayout(.sizeThatFits)
     }
 }

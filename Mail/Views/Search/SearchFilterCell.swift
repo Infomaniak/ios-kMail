@@ -16,6 +16,31 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import Foundation
+import MailCore
+import MailResources
+import RealmSwift
+import SwiftUI
 
-@MainActor class NewMessageViewModel {}
+struct SearchFilterCell: View {
+    public var title: String
+    public var isSelected: Bool
+
+    var body: some View {
+        HStack(spacing: 11) {
+            if isSelected {
+                Image(resource: MailResourcesAsset.check)
+                    .resizable()
+                    .frame(width: 13, height: 13)
+            }
+            Text(title)
+                .font(MailTextStyle.body.font)
+        }
+        .filterCellStyle(isSelected: isSelected)
+    }
+}
+
+struct SearchFilterCell_Previews: PreviewProvider {
+    static var previews: some View {
+        SearchFilterCell(title: "Lus", isSelected: true)
+    }
+}

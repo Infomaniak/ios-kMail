@@ -24,20 +24,13 @@ import SwiftUI
 import UIKit
 
 struct UserFoldersListView: View {
-    @ObservedResults(Folder.self) var folders
+    var folders: [NestableFolder]
 
     @State private var isExpanded = false
-    @Binding var selectedFolder: Folder?
 
-    @EnvironmentObject var globalSheet: GlobalBottomSheet
+    @EnvironmentObject var globalAlert: GlobalAlert
 
     var isCompact: Bool
-
-    private let foldersSortDescriptors = [
-        SortDescriptor(keyPath: \Folder.isFavorite, ascending: false),
-        SortDescriptor(keyPath: \Folder.unreadCount, ascending: false),
-        SortDescriptor(keyPath: \Folder.name)
-    ]
 
     var body: some View {
         VStack(spacing: 0) {
@@ -48,7 +41,7 @@ struct UserFoldersListView: View {
             } label: {
                 HStack {
                     Text(MailResourcesStrings.Localizable.buttonFolders)
-                        .textStyle(.body)
+                        .textStyle(.calloutSectionSecondary)
                     Spacer()
                     ChevronIcon(style: isExpanded ? .up : .down, color: .primary)
                 }
@@ -59,12 +52,14 @@ struct UserFoldersListView: View {
             if isExpanded {
                 Spacer(minLength: Constants.menuDrawerVerticalPadding)
 
-                ForEach(folders.sorted(by: foldersSortDescriptors).filter { $0.role == nil }) { folder in
-                    FolderCell(folder: folder, selectedFolder: $selectedFolder, isCompact: isCompact)
+                ForEach(folders) { folder in
+                    FolderCell(folder: folder, isCompact: isCompact)
                 }
 
                 MenuDrawerItemCell(content: .init(icon: MailResourcesAsset.add, label: MailResourcesStrings.Localizable.buttonCreateFolder) {
-                    globalSheet.open(state: .createNewFolder(mode: .create), position: .newFolderHeight)
+                    withAnimation {
+                        globalAlert.state = .createNewFolder(mode: .create)
+                    }
                 })
                 .padding(.top, Constants.menuDrawerVerticalPadding)
                 .padding(.horizontal, Constants.menuDrawerHorizontalPadding)

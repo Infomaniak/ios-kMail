@@ -87,6 +87,7 @@ struct ContactActionsView: View {
     // MARK: - Actions
 
     private func handleAction(_ action: ContactAction) {
+        bottomSheet.close()
         switch action {
         case .writeEmailAction:
             writeEmail()
@@ -97,7 +98,6 @@ struct ContactActionsView: View {
         default:
             return
         }
-        bottomSheet.close()
     }
 
     private func writeEmail() {

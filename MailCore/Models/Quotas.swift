@@ -19,7 +19,12 @@
 import Foundation
 import RealmSwift
 
-public class Quotas: Object, Codable {
+public class Quotas: EmbeddedObject, Codable {
     @Persisted public var size: Int
     @Persisted public var sizeCheckedAt: Int64
+
+    public var progression: Double {
+        let currentProgression = Double(size) / Double(Constants.sizeLimit)
+        return max(Constants.minimumQuotasProgressionToDisplay, currentProgression)
+    }
 }

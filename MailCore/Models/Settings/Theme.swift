@@ -41,7 +41,7 @@ public enum Theme: String, CaseIterable, SettingsOptionEnum {
         case .dark:
             return MailResourcesStrings.Localizable.settingsOptionDarkTheme
         case .system:
-            return MailResourcesStrings.Localizable.settingsDefault
+            return MailResourcesStrings.Localizable.settingsOptionSystemTheme
         }
     }
 

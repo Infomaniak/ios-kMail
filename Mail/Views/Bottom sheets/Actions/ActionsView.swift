@@ -27,12 +27,14 @@ struct ActionsView: View {
          target: ActionsTarget,
          state: ThreadBottomSheet,
          globalSheet: GlobalBottomSheet,
-         replyHandler: @escaping (Message, ReplyMode) -> Void) {
+         replyHandler: @escaping (Message, ReplyMode) -> Void,
+         completionHandler: (() -> Void)? = nil) {
         viewModel = ActionsViewModel(mailboxManager: mailboxManager,
                                      target: target,
                                      state: state,
                                      globalSheet: globalSheet,
-                                     replyHandler: replyHandler)
+                                     replyHandler: replyHandler,
+                                     completionHandler: completionHandler)
     }
 
     var body: some View {
@@ -46,6 +48,7 @@ struct ActionsView: View {
             HStack(alignment: .top, spacing: 28) {
                 ForEach(viewModel.quickActions) { action in
                     QuickActionView(viewModel: viewModel, action: action)
+                        .frame(maxWidth: .infinity)
                 }
                 .fixedSize(horizontal: false, vertical: true)
             }
@@ -59,7 +62,6 @@ struct ActionsView: View {
             }
         }
         .padding(.horizontal, 8)
-        .padding(.top, 16)
     }
 }
 
@@ -98,11 +100,13 @@ struct QuickActionView: View {
                         .frame(maxWidth: .infinity, maxHeight: .infinity)
                         .padding(19)
                 }
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                .frame(maxWidth: 60, maxHeight: 60)
                 .aspectRatio(1, contentMode: .fit)
 
                 Text(action.title)
                     .font(.system(size: 12))
+                    .lineLimit(action.title.split(separator: " ").count > 1 ? nil : 1)
+                    .minimumScaleFactor(0.75)
             }
         }
     }
@@ -127,6 +131,7 @@ struct ActionView: View {
                     .frame(width: 21, height: 21)
                 Text(action.title)
                     .textStyle(.body)
+                    .frame(maxWidth: .infinity, alignment: .leading)
             }
         }
     }

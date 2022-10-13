@@ -90,6 +90,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, AccountManagerDelegate 
         let view = view.environment(\.window, window)
         // Set root view controller
         let hostingController = UIHostingController(rootView: view)
+        FloatingPanelHelper.shared.attachToViewController(hostingController)
         setRootViewController(hostingController)
     }
 
@@ -177,7 +178,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, AccountManagerDelegate 
                                        bcc: getRecipients(from: urlComponents, name: "bcc"),
                                        identityId: "\(signatureResponse.defaultSignatureId)")
 
-            let newMessageView = NewMessageView(isPresented: .constant(true), mailboxManager: mailboxManager, draft: draft)
+            let newMessageView = NewMessageView(mailboxManager: mailboxManager, draft: draft)
             let viewController = UIHostingController(rootView: newMessageView)
             window?.rootViewController?.present(viewController, animated: true)
         }

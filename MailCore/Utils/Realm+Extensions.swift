@@ -16,6 +16,15 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import UIKit
+import Foundation
+import RealmSwift
 
-class ManageMailAddressViewController: UIViewController {}
+extension Object {
+    public func fresh(using realm: Realm) -> Self? {
+        if let primaryKey = objectSchema.primaryKeyProperty?.name,
+           let primaryKeyValue = value(forKey: primaryKey) {
+            return realm.object(ofType: Self.self, forPrimaryKey: primaryKeyValue)
+        }
+        return nil
+    }
+}

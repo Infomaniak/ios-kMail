@@ -53,6 +53,7 @@ struct HelpView: View {
                         }
                     }
                 }
+                .listRowBackground(MailResourcesAsset.backgroundColor.swiftUiColor)
                 .listRowSeparator(.hidden)
                 .listRowInsets(.init())
             } header: {
@@ -62,6 +63,7 @@ struct HelpView: View {
             .listSectionSeparator(.hidden)
         }
         .listStyle(.plain)
+        .background(MailResourcesAsset.backgroundColor.swiftUiColor)
         .navigationBarTitle(MailResourcesStrings.Localizable.buttonHelp, displayMode: .inline)
     }
 }

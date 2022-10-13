@@ -27,11 +27,15 @@ struct OnboardingView: View {
     @StateObject var viewModel = OnboardingViewModel()
     @State private var selection: Int
     @State private var presentAlert = false
+    @State private var isLoading = false
 
     @Environment(\.window) var window
 
-    init(page: Int = 1) {
+    var isPresentedModally: Bool
+
+    init(isPresentedModally: Bool = false, page: Int = 1) {
         _selection = State(initialValue: page)
+        self.isPresentedModally = isPresentedModally
         UIPageControl.appearance().currentPageIndicatorTintColor = .tintColor
         UIPageControl.appearance().pageIndicatorTintColor = MailResourcesAsset.separatorColor.color
     }
@@ -53,13 +57,14 @@ struct OnboardingView: View {
                     .resizable()
                     .scaledToFit()
                     .frame(height: Constants.onboardingLogoHeight)
+                    .padding(.top, isPresentedModally ? 15 : 0)
             }
 
             // Buttons
             VStack(spacing: 24) {
                 if selection == viewModel.slides.count {
                     // Show login button
-                    LargeButton(title: MailResourcesStrings.Localizable.buttonLogin, action: login)
+                    LargeButton(title: MailResourcesStrings.Localizable.buttonLogin, isLoading: isLoading, action: login)
                     Button {
                         // TODO: Create account
                         showWorkInProgressSnackBar()
@@ -94,6 +99,7 @@ struct OnboardingView: View {
     // MARK: - Private methods
 
     private func login() {
+        isLoading = true
         InfomaniakLogin.asWebAuthenticationLoginFrom(useEphemeralSession: true) { result in
             switch result {
             case .success(let result):
@@ -118,11 +124,13 @@ struct OnboardingView: View {
                 }
                 IKSnackBar.showSnackBar(message: error.localizedDescription)
             }
+            isLoading = false
         }
     }
 
     private func loginFailed(error: Error) {
         print("Login error: \(error)")
+        isLoading = false
         guard (error as? ASWebAuthenticationSessionError)?.code != .canceledLogin else { return }
         presentAlert = true
     }
@@ -131,5 +139,6 @@ struct OnboardingView: View {
 struct OnboardingView_Previews: PreviewProvider {
     static var previews: some View {
         OnboardingView()
+        OnboardingView(isPresentedModally: true)
     }
 }

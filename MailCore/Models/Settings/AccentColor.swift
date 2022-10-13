@@ -42,6 +42,8 @@ public enum AccentColor: String, CaseIterable, SettingsOptionEnum {
         return nil
     }
 
+    // MARK: - Colors
+
     public var primary: MailResourcesColors {
         switch self {
         case .pink:
@@ -59,6 +61,28 @@ public enum AccentColor: String, CaseIterable, SettingsOptionEnum {
             return MailResourcesAsset.secondaryBlueColor
         }
     }
+
+    public var snackbarActionColor: MailResourcesColors {
+        switch self {
+        case .pink:
+            return MailResourcesAsset.snackbarActionPinkColor
+        case .blue:
+            return MailResourcesAsset.snackbarActionBlueColor
+        }
+    }
+
+    // MARK: - Images
+
+    public var zeroMailImage: MailResourcesImages {
+        switch self {
+        case .pink:
+            return MailResourcesAsset.zeroMailPink
+        case .blue:
+            return MailResourcesAsset.zeroMailBlue
+        }
+    }
+
+    // MARK: Swipe settings icons
 
     public var longLeftIcon: MailResourcesImages {
         switch self {
@@ -93,48 +117,39 @@ public enum AccentColor: String, CaseIterable, SettingsOptionEnum {
             return MailResourcesAsset.shortRightPink
         case .blue:
             return MailResourcesAsset.shortRightBlue
-       }
-    }
-
-    public var snackbarActionColor: MailResourcesColors {
-        switch self {
-        case .pink:
-            return MailResourcesAsset.snackbarActionPinkColor
-        case .blue:
-            return MailResourcesAsset.snackbarActionBlueColor
         }
     }
 
-    // MARK: - List icons
+    // MARK: List icons
 
     public var compactListIcon: MailResourcesImages {
-         switch self {
-         case .pink:
-             return MailResourcesAsset.compactListPink
-         case .blue:
-             return MailResourcesAsset.compactListBlue
-         }
-     }
+        switch self {
+        case .pink:
+            return MailResourcesAsset.compactListPink
+        case .blue:
+            return MailResourcesAsset.compactListBlue
+        }
+    }
 
-     public var defaultListIcon: MailResourcesImages {
-         switch self {
-         case .pink:
-             return MailResourcesAsset.defaultListPink
-         case .blue:
-             return MailResourcesAsset.defaultListBlue
-         }
-     }
+    public var defaultListIcon: MailResourcesImages {
+        switch self {
+        case .pink:
+            return MailResourcesAsset.defaultListPink
+        case .blue:
+            return MailResourcesAsset.defaultListBlue
+        }
+    }
 
-     public var largeListIcon: MailResourcesImages {
-         switch self {
-         case .pink:
-             return MailResourcesAsset.largeListPink
-         case .blue:
-             return MailResourcesAsset.largeListBlue
-         }
-     }
+    public var largeListIcon: MailResourcesImages {
+        switch self {
+        case .pink:
+            return MailResourcesAsset.largeListPink
+        case .blue:
+            return MailResourcesAsset.largeListBlue
+        }
+    }
 
-    // MARK: - Onboarding illustration images
+    // MARK: Onboarding illustration images
 
     public var onboardingIllu1: MailResourcesImages {
         switch self {

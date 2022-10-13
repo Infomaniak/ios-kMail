@@ -17,6 +17,7 @@
  */
 
 import InfomaniakCore
+import Introspect
 import MailCore
 import MailResources
 import PhotosUI
@@ -38,19 +39,20 @@ enum RecipientFieldType: Hashable {
     }
 }
 
-class NewMessageBottomSheet: BottomSheetState<NewMessageBottomSheet.State, NewMessageBottomSheet.Position> {
+class NewMessageSheet: SheetState<NewMessageSheet.State> {
     enum State {
-        case attachment
-        case link(handler: (String) -> Void)
+        case fileSelection, photoLibrary
     }
+}
 
-    enum Position: CGFloat, CaseIterable {
-        case link = 200, attachment = 210, hidden = 0
+class NewMessageAlert: SheetState<NewMessageAlert.State> {
+    enum State {
+        case link(handler: (String) -> Void)
     }
 }
 
 struct NewMessageView: View {
-    @Binding var isPresented: Bool
+    @Environment(\.dismiss) private var dismiss
 
     @State private var mailboxManager: MailboxManager
     @State private var selectedMailboxItem = 0
@@ -60,84 +62,104 @@ struct NewMessageView: View {
     @FocusState private var focusedRecipientField: RecipientFieldType?
     @State private var addRecipientHandler: ((Recipient) -> Void)?
     @State private var autocompletion: [Recipient] = []
-    @State private var sendDisabled = false
+    private var sendDisabled = false
     @State private var draftHasChanged = false
     @State private var isShowingCamera = false
 
-    @StateObject private var bottomSheet = NewMessageBottomSheet()
+    @State var scrollView: UIScrollView?
+
+    @StateObject private var sheet = NewMessageSheet()
+    @StateObject private var alert = NewMessageAlert()
 
     static var queue = DispatchQueue(label: "com.infomaniak.mail.saveDraft")
     @State var debouncedBufferWrite: DispatchWorkItem?
     let saveExpiration = 3.0
 
-    private let bottomSheetOptions = Constants.bottomSheetOptions + [.absolutePositionValue, .notResizeable]
-
     private var shouldDisplayAutocompletion: Bool {
         return !autocompletion.isEmpty && focusedRecipientField != nil
     }
 
-    init(isPresented: Binding<Bool>, mailboxManager: MailboxManager, draft: UnmanagedDraft? = nil) {
-        _isPresented = isPresented
-        self.mailboxManager = mailboxManager
-        selectedMailboxItem = AccountManager.instance.mailboxes
+    init(mailboxManager: MailboxManager, draft: UnmanagedDraft? = nil) {
+        _mailboxManager = State(initialValue: mailboxManager)
+        let selectedMailboxItem = AccountManager.instance.mailboxes
             .firstIndex { $0.mailboxId == mailboxManager.mailbox.mailboxId } ?? 0
+        _selectedMailboxItem = State(initialValue: selectedMailboxItem)
         var initialDraft = draft ?? UnmanagedDraft()
         if let signatureResponse = mailboxManager.getSignatureResponse() {
-            initialDraft.setSignature(signatureResponse)
+            if !initialDraft.didSetSignature {
+                initialDraft.setSignature(signatureResponse)
+                initialDraft.didSetSignature = true
+            }
             sendDisabled = false
         } else {
             sendDisabled = true
         }
         initialDraft.delay = UserDefaults.shared.cancelSendDelay.rawValue
-        self.draft = initialDraft
+        _draft = State(initialValue: initialDraft)
     }
 
     var body: some View {
         NavigationView {
-            VStack(spacing: 12) {
-                if !shouldDisplayAutocompletion {
-                    NewMessageCell(title: MailResourcesStrings.Localizable.fromTitle) {
-                        Picker("Mailbox", selection: $selectedMailboxItem) {
-                            ForEach(AccountManager.instance.mailboxes.indices, id: \.self) { i in
-                                Text(AccountManager.instance.mailboxes[i].email).tag(i)
-                            }
-                        }
-                        .textStyle(.body)
-                        Spacer()
-                    }
-                }
-
-                recipientCell(type: .to)
-
-                if showCc {
-                    recipientCell(type: .cc)
-                    recipientCell(type: .bcc)
-                }
-
-                // Show the rest of the view, or the autocompletion list
-                if shouldDisplayAutocompletion {
-                    AutocompletionView(autocompletion: $autocompletion) { recipient in
-                        addRecipientHandler?(recipient)
-                    }
-                } else {
-                    NewMessageCell(title: MailResourcesStrings.Localizable.subjectTitle) {
-                        TextField("", text: $draft.subject)
-                    }
-
-                    if let attachments = draft.attachments?.filter { $0.contentId == nil }, !attachments.isEmpty {
-                        ScrollView(.horizontal, showsIndicators: false) {
-                            HStack(spacing: 8) {
-                                ForEach(attachments) { attachment in
-                                    AttachmentCell(attachment: attachment)
+            ScrollView(.vertical, showsIndicators: true) {
+                VStack(spacing: 0) {
+                    if !shouldDisplayAutocompletion {
+                        NewMessageCell(title: MailResourcesStrings.Localizable.fromTitle, isFirstCell: true) {
+                            Picker("Mailbox", selection: $selectedMailboxItem) {
+                                ForEach(AccountManager.instance.mailboxes.indices, id: \.self) { i in
+                                    Text(AccountManager.instance.mailboxes[i].email).tag(i)
                                 }
                             }
-                            .padding(.vertical, 1)
+                            .textStyle(.body)
+                            Spacer()
                         }
                     }
 
-                    RichTextEditor(model: $editor, body: $draft.body)
-                        .padding(.horizontal, 16)
+                    recipientCell(type: .to)
+
+                    if showCc {
+                        recipientCell(type: .cc)
+                        recipientCell(type: .bcc)
+                    }
+
+                    // Show the rest of the view, or the autocompletion list
+                    if shouldDisplayAutocompletion {
+                        AutocompletionView(autocompletion: $autocompletion) { recipient in
+                            addRecipientHandler?(recipient)
+                        }
+                    } else {
+                        NewMessageCell(title: MailResourcesStrings.Localizable.subjectTitle) {
+                            TextField("", text: $draft.subject)
+                        }
+
+                        if let attachments = draft.attachments?.filter { $0.contentId == nil }, !attachments.isEmpty {
+                            ScrollView(.horizontal, showsIndicators: false) {
+                                HStack(spacing: 8) {
+                                    ForEach(attachments) { attachment in
+                                        AttachmentCell(attachment: attachment)
+                                    }
+                                }
+                                .padding(.vertical, 1)
+                            }
+                            .padding(.horizontal, 16)
+                        }
+                        RichTextEditor(model: $editor, body: $draft.body)
+                            .ignoresSafeArea(.all, edges: .bottom)
+                            .frame(height: editor.height + 20)
+                            .padding([.vertical], 10)
+                    }
                 }
+            }
+            .introspectScrollView { scrollView in
+                self.scrollView = scrollView
+            }
+            .onChange(of: editor.height) { _ in
+                guard let scrollView = scrollView else { return }
+
+                let fullSize = scrollView.contentSize.height
+                let realPosition = (fullSize - editor.height) + editor.cursorPosition
+
+                let rect = CGRect(x: 0, y: realPosition, width: 1, height: 1)
+                scrollView.scrollRectToVisible(rect, animated: true)
             }
             .navigationBarTitleDisplayMode(.inline)
             .navigationBarBackButtonHidden(true)
@@ -154,7 +176,7 @@ struct NewMessageView: View {
                                 message: MailResourcesStrings.Localizable.emailSentSnackbar,
                                 cancelSuccessMessage: MailResourcesStrings.Localizable.canceledEmailSendingConfirmationSnackbar,
                                 duration: .custom(CGFloat(draft.delay ?? 3)),
-                                cancelableResponse: cancelableResponse,
+                                undoRedoAction: UndoRedoAction(undo: cancelableResponse, redo: nil),
                                 mailboxManager: mailboxManager
                             )
                             self.dismiss()
@@ -178,8 +200,10 @@ struct NewMessageView: View {
             draft.setSignature(signatureResponse)
         }
         .onAppear {
-            editor.richTextEditor.bottomSheet = bottomSheet
+            editor.richTextEditor.sheet = sheet
+            editor.richTextEditor.alert = alert
             editor.richTextEditor.isShowingCamera = $isShowingCamera
+            showCc = !draft.bcc.isEmpty || !draft.cc.isEmpty
         }
         .onDisappear {
             if draftHasChanged {
@@ -197,23 +221,28 @@ struct NewMessageView: View {
             }
             .ignoresSafeArea()
         }
-        .bottomSheet(bottomSheetPosition: $bottomSheet.position, options: bottomSheetOptions) {
-            switch bottomSheet.state {
-            case .attachment:
-                AddAttachmentView(bottomSheet: bottomSheet) { attachment in
-                    switch attachment {
-                    case let .files(urls):
-                        Task {
-                            await addDocumentAttachment(urls: urls)
-                        }
-                    case let .photos(results):
-                        Task {
-                            await addImageAttachment(results: results)
-                        }
+        .sheet(isPresented: $sheet.isShowing) {
+            switch sheet.state {
+            case .fileSelection:
+                DocumentPicker { urls in
+                    Task {
+                        await addDocumentAttachment(urls: urls)
                     }
                 }
+            case .photoLibrary:
+                ImagePicker { results in
+                    Task {
+                        await addImageAttachment(results: results)
+                    }
+                }
+            case .none:
+                EmptyView()
+            }
+        }
+        .customAlert(isPresented: $alert.isShowing) {
+            switch alert.state {
             case let .link(handler):
-                AddLinkView(actionHandler: handler)
+                AddLinkView(state: alert, actionHandler: handler)
             case .none:
                 EmptyView()
             }
@@ -239,18 +268,16 @@ struct NewMessageView: View {
             Task {
                 self.draft.body = html!
 
-                do {
-                    let response = try await mailboxManager.save(draft: draft)
-                    self.draft.uuid = response.uuid
-                    draftHasChanged = false
-                    if showSnackBar {
-                        IKSnackBar.showSnackBar(message: MailResourcesStrings.Localizable.snackBarDraftSaved,
-                                                action: .init(title: MailResourcesStrings.Localizable.actionDelete) {
-                                                    deleteDraft(messageUid: response.uid)
-                                                })
-                    }
-                } catch {
+                let response = try await mailboxManager.save(draft: draft)
+                self.draft.uuid = response.uuid
+                draftHasChanged = false
+                if let error = response.error {
                     IKSnackBar.showSnackBar(message: error.localizedDescription)
+                } else if showSnackBar {
+                    IKSnackBar.showSnackBar(message: MailResourcesStrings.Localizable.snackBarDraftSaved,
+                                            action: .init(title: MailResourcesStrings.Localizable.actionDelete) {
+                                                deleteDraft(messageUid: response.uuid)
+                                            })
                 }
             }
         }
@@ -266,10 +293,6 @@ struct NewMessageView: View {
         }
         NewMessageView.queue.asyncAfter(deadline: .now() + saveExpiration, execute: debouncedWorkItem)
         debouncedBufferWrite = debouncedWorkItem
-    }
-
-    private func dismiss() {
-        isPresented = false
     }
 
     private func shouldDisplay(field: RecipientFieldType) -> Bool {
@@ -308,7 +331,7 @@ struct NewMessageView: View {
         guard let draft = mailboxManager.draft(messageUid: messageUid, using: realm)?.freeze(),
               let draftFolder = mailboxManager.getFolder(with: .draft, using: realm) else { return }
         let thread = Thread(draft: draft)
-        try? realm.safeWrite {
+        try? realm.uncheckedSafeWrite {
             realm.add(thread, update: .modified)
             draftFolder.threads.insert(thread)
         }
@@ -464,9 +487,6 @@ struct NewMessageView: View {
 
 struct NewMessageView_Previews: PreviewProvider {
     static var previews: some View {
-        NewMessageView(
-            isPresented: .constant(true),
-            mailboxManager: PreviewHelper.sampleMailboxManager
-        )
+        NewMessageView(mailboxManager: PreviewHelper.sampleMailboxManager)
     }
 }

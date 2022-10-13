@@ -38,29 +38,33 @@ struct MessageHeaderView: View {
                                      isMessageExpanded: $isMessageExpanded,
                                      isHeaderExpanded: $isHeaderExpanded,
                                      deleteDraftTapped: deleteDraft) {
-                sheet.state = .reply(message, .reply)
+                bottomSheet.open(state: .replyOption(message, isThread: false))
             } moreButtonTapped: {
-                threadBottomSheet.open(state: .actions(.message(message.thaw() ?? message)), position: .middle)
+                threadBottomSheet.open(state: .actions(.message(message.thaw() ?? message)))
             }
 
             if isHeaderExpanded {
                 MessageHeaderDetailView(message: message, recipientTapped: openContact(recipient:))
             }
         }
+        .contentShape(Rectangle())
         .onTapGesture {
             if message.isDraft {
                 editDraft()
-            } else if !isMessageExpanded {
+            } else if message.parent?.messagesCount ?? 0 > 1 {
                 withAnimation {
-                    isMessageExpanded = true
+                    isHeaderExpanded = false
+                    isMessageExpanded.toggle()
                 }
             }
         }
     }
 
     private func openContact(recipient: Recipient) {
-        let isRemoteContact = AccountManager.instance.currentContactManager?.getContact(for: recipient.email)?.remote != nil
-        bottomSheet.open(state: .contact(recipient, isRemote: isRemoteContact), position: isRemoteContact ? .remoteContactHeight : .defaultHeight)
+        let isRemoteContact = AccountManager.instance.currentContactManager?.getContact(for: recipient)?.remote != nil
+        bottomSheet.open(
+            state: .contact(recipient, isRemote: isRemoteContact)
+        )
     }
 
     private func editDraft() {
@@ -92,20 +96,23 @@ struct MessageHeaderView: View {
 
 struct MessageHeaderView_Previews: PreviewProvider {
     static var previews: some View {
-        MessageHeaderView(
-            message: PreviewHelper.sampleMessage,
-            isHeaderExpanded: .constant(false),
-            isMessageExpanded: .constant(false)
-        )
-        MessageHeaderView(
-            message: PreviewHelper.sampleMessage,
-            isHeaderExpanded: .constant(false),
-            isMessageExpanded: .constant(true)
-        )
-        MessageHeaderView(
-            message: PreviewHelper.sampleMessage,
-            isHeaderExpanded: .constant(true),
-            isMessageExpanded: .constant(true)
-        )
+        Group {
+            MessageHeaderView(
+                message: PreviewHelper.sampleMessage,
+                isHeaderExpanded: .constant(false),
+                isMessageExpanded: .constant(false)
+            )
+            MessageHeaderView(
+                message: PreviewHelper.sampleMessage,
+                isHeaderExpanded: .constant(false),
+                isMessageExpanded: .constant(true)
+            )
+            MessageHeaderView(
+                message: PreviewHelper.sampleMessage,
+                isHeaderExpanded: .constant(true),
+                isMessageExpanded: .constant(true)
+            )
+        }
+        .previewLayout(.sizeThatFits)
     }
 }

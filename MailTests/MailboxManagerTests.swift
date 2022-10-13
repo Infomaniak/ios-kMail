@@ -48,12 +48,12 @@ final class MailboxManagerTests: XCTestCase {
 
     func testThreads() async throws {
         let folders = try await MailboxManagerTests.mailboxManager.apiFetcher.folders(mailbox: MailboxManagerTests.mailboxManager.mailbox)
-        try await MailboxManagerTests.mailboxManager.threads(folder: folders[0], filter: .all)
+        try await MailboxManagerTests.mailboxManager.apiFetcher.threads(mailbox: MailboxManagerTests.mailboxManager.mailbox, folderId: folders[0]._id)
     }
 
     func testMessage() async throws {
         let folders = try await MailboxManagerTests.mailboxManager.apiFetcher.folders(mailbox: MailboxManagerTests.mailboxManager.mailbox)
-        let threadResult = try await MailboxManagerTests.mailboxManager.apiFetcher.threads(mailbox: MailboxManagerTests.mailboxManager.mailbox, folder: folders[0])
+        let threadResult = try await MailboxManagerTests.mailboxManager.apiFetcher.threads(mailbox: MailboxManagerTests.mailboxManager.mailbox, folderId: folders[0]._id)
         try await MailboxManagerTests.mailboxManager.message(message: threadResult.threads![0].messages[0])
     }
 }

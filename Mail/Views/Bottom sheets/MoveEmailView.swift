@@ -23,39 +23,58 @@ import SwiftUI
 
 struct MoveEmailView: View {
     @StateObject var mailboxManager: MailboxManager
-    @ObservedResults(Folder.self) var folders
+    @ObservedResults(Folder.self, where: { $0.toolType == nil }) var folders
 
     @State private var selectedFolderID: String = ""
 
     private let state: GlobalBottomSheet
+    private let globalAlert: GlobalAlert
     private let moveHandler: (Folder) -> Void
 
     private var sortedFolders: [Folder] {
         return folders.sorted()
     }
 
-    init(mailboxManager: MailboxManager, state: GlobalBottomSheet, moveHandler: @escaping (Folder) -> Void) {
-        _folders = .init(Folder.self, configuration: AccountManager.instance.currentMailboxManager?.realmConfiguration)
+    init(mailboxManager: MailboxManager, state: GlobalBottomSheet, globalAlert: GlobalAlert, moveHandler: @escaping (Folder) -> Void) {
+        _folders = .init(Folder.self, configuration: AccountManager.instance.currentMailboxManager?.realmConfiguration) {
+			$0.toolType == nil
+		}
         _mailboxManager = StateObject(wrappedValue: mailboxManager)
         self.state = state
+        self.globalAlert = globalAlert
         self.moveHandler = moveHandler
     }
 
     var body: some View {
-        VStack(alignment: .trailing, spacing: 16) {
+        VStack(alignment: .trailing, spacing: 24) {
             Text(MailResourcesStrings.Localizable.moveTitle)
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .textStyle(.header3)
-            LargePicker(selection: $selectedFolderID, items: sortedFolders.map { .init(id: $0.id, name: $0.formattedPath) })
-            Button(MailResourcesStrings.Localizable.actionMove) {
+            Image(resource: MailResourcesAsset.moveIllu)
+                .resizable()
+                .scaledToFit()
+                .frame(maxWidth: 400)
+            LargePicker(
+                selection: $selectedFolderID,
+                items: sortedFolders.map { .init(id: $0.id, name: $0.formattedPath) },
+                button: Button {
+                    state.close()
+                    globalAlert.state = .createNewFolder(mode: .move(moveHandler: moveHandler))
+                } label: {
+                    Label {
+                        Text(MailResourcesStrings.Localizable.buttonCreateFolder)
+                    } icon: {
+                        Image(resource: MailResourcesAsset.add)
+                    }
+                }
+            )
+            BottomSheetButtonsView(primaryButtonTitle: MailResourcesStrings.Localizable.actionMove,
+                                   secondaryButtonTitle: MailResourcesStrings.Localizable.buttonCancel) {
                 moveHandler(sortedFolders.first { $0.id == selectedFolderID }!)
                 state.close()
+            } secondaryButtonAction: {
+                state.close()
             }
-            .textStyle(.button)
-            Button(MailResourcesStrings.Localizable.buttonCreateFolder) {
-                state.open(state: .createNewFolder(mode: .move(moveHandler: moveHandler)), position: .newFolderHeight)
-            }
-            .textStyle(.button)
         }
         .padding(.horizontal, Constants.bottomSheetHorizontalPadding)
         .onAppear {
@@ -67,6 +86,7 @@ struct MoveEmailView: View {
 struct MoveEmailView_Previews: PreviewProvider {
     static var previews: some View {
         MoveEmailView(mailboxManager: PreviewHelper.sampleMailboxManager,
-                      state: GlobalBottomSheet()) { _ in }
+                      state: GlobalBottomSheet(),
+                      globalAlert: GlobalAlert()) { _ /* Preview */ in }
     }
 }

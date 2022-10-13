@@ -28,9 +28,20 @@ typealias Thread = MailCore.Thread
 class DateSection: Identifiable {
     enum ReferenceDate {
         case today, month, older(Date)
+
+        public var dateInterval: DateInterval {
+            switch self {
+            case .today:
+                return .init(start: .now.startOfDay, end: .now.endOfDay)
+            case .month:
+                return .init(start: .now.startOfMonth, end: .now.endOfMonth)
+            case .older(let date):
+                return .init(start: date.startOfMonth, end: date.endOfMonth)
+            }
+        }
     }
 
-    var id: Int
+    var id: DateInterval { referenceDate.dateInterval }
     var title: String {
         switch referenceDate {
         case .today:
@@ -45,12 +56,12 @@ class DateSection: Identifiable {
             return date.formatted(formatStyle).capitalized
         }
     }
+
     var threads = [Thread]()
 
     private var referenceDate: ReferenceDate
 
-    init(id: Int, thread: Thread) {
-        self.id = id
+    init(thread: Thread) {
         if Calendar.current.isDateInToday(thread.date) {
             referenceDate = .today
         } else if Calendar.current.isDate(thread.date, equalTo: .now, toGranularity: .month) {
@@ -77,11 +88,14 @@ class DateSection: Identifiable {
 
     @Published var folder: Folder?
     @Published var sections = [DateSection]()
+    @Published var selectedThread: Thread?
     @Published var isLoadingPage = false
     @Published var lastUpdate: Date?
 
     var bottomSheet: ThreadBottomSheet
     var globalBottomSheet: GlobalBottomSheet?
+
+    var scrollViewProxy: ScrollViewProxy?
 
     private var resourceNext: String?
     private var observationThreadToken: NotificationToken?
@@ -90,7 +104,13 @@ class DateSection: Identifiable {
     @Published var filter = Filter.all {
         didSet {
             Task {
+                observeChanges(animateInitialThreadChanges: true)
                 await fetchThreads()
+                if let topThread = sections.first?.threads.first?.id {
+                    withAnimation {
+                        self.scrollViewProxy?.scrollTo(topThread, anchor: .top)
+                    }
+                }
             }
         }
     }
@@ -104,12 +124,24 @@ class DateSection: Identifiable {
         }
     }
 
+    var observeThread: Bool {
+        didSet {
+            if observeThread {
+                observeChanges()
+            } else {
+                observationThreadToken?.invalidate()
+            }
+        }
+    }
+
+    private let loadNextPageThreshold = 10
+
     init(mailboxManager: MailboxManager, folder: Folder?, bottomSheet: ThreadBottomSheet) {
         self.mailboxManager = mailboxManager
         self.folder = folder
         lastUpdate = folder?.lastUpdate
         self.bottomSheet = bottomSheet
-        observeChanges()
+        observeThread = true
     }
 
     func fetchThreads() async {
@@ -125,7 +157,7 @@ class DateSection: Identifiable {
             resourceNext = result.resourceNext
         }
         isLoadingPage = false
-        mailboxManager.draftOffline()
+        await mailboxManager.draftOffline()
     }
 
     func fetchNextPage() async {
@@ -141,22 +173,27 @@ class DateSection: Identifiable {
             resourceNext = result.resourceNext
         }
         isLoadingPage = false
-        mailboxManager.draftOffline()
+        await mailboxManager.draftOffline()
     }
 
     func updateThreads(with folder: Folder) {
+        let isNewFolder = folder.id != self.folder?.id
         self.folder = folder
         withAnimation {
             lastUpdate = folder.lastUpdate
         }
-        observeChanges()
 
-        Task {
-            await self.fetchThreads()
+        if isNewFolder && filter != .all {
+            filter = .all
+        } else {
+            observeChanges()
+            Task {
+                await self.fetchThreads()
+            }
         }
     }
 
-    func observeChanges() {
+    func observeChanges(animateInitialThreadChanges: Bool = false) {
         observationThreadToken?.invalidate()
         observationLastUpdateToken?.invalidate()
         if let folder = folder?.thaw() {
@@ -164,8 +201,13 @@ class DateSection: Identifiable {
             observationThreadToken = threadResults.observe(on: .main) { [weak self] changes in
                 switch changes {
                 case let .initial(results):
-                    self?.sortThreadsIntoSections(threads: Array(results.freezeIfNeeded()))
+                    withAnimation(animateInitialThreadChanges ? .default : nil) {
+                        self?.sortThreadsIntoSections(threads: Array(results.freezeIfNeeded()))
+                    }
                 case let .update(results, _, _, _):
+                    if self?.filter != .all && results.count == 1 && self?.filter.accepts(thread: results[0]) != true {
+                        self?.filter = .all
+                    }
                     withAnimation {
                         self?.sortThreadsIntoSections(threads: Array(results.freezeIfNeeded()))
                     }
@@ -190,9 +232,10 @@ class DateSection: Identifiable {
 
     func loadNextPageIfNeeded(currentItem: Thread) {
         // Start loading next page when we reach the second-to-last item
-        guard !sections.isEmpty, let lastSection = sections.last else { return }
-        let thresholdIndex = lastSection.threads.index(lastSection.threads.endIndex, offsetBy: -1)
-        if lastSection.threads.firstIndex(where: { $0.uid == currentItem.uid }) == thresholdIndex {
+        let threads = sections.flatMap(\.threads)
+        guard threads.count > loadNextPageThreshold else { return }
+        let thresholdIndex = threads.index(threads.endIndex, offsetBy: -loadNextPageThreshold)
+        if threads.firstIndex(where: { $0.uid == currentItem.uid }) == thresholdIndex {
             Task {
                 await fetchNextPage()
             }
@@ -203,20 +246,21 @@ class DateSection: Identifiable {
         var newSections = [DateSection]()
 
         var currentSection: DateSection?
-        for thread in threads {
+        let filteredThreads = threads.filter { $0.id == selectedThread?.id || filter.accepts(thread: $0) }
+        for thread in filteredThreads {
             if currentSection?.threadBelongsToSection(thread: thread) != true {
-                currentSection = DateSection(id: newSections.count, thread: thread)
+                currentSection = DateSection(thread: thread)
                 newSections.append(currentSection!)
             }
             currentSection?.threads.append(thread)
         }
 
-        self.sections = newSections
+        sections = newSections
     }
 
     // MARK: - Swipe actions
 
-    func hanldeSwipeAction(_ action: SwipeAction, thread: Thread) async throws {
+    func handleSwipeAction(_ action: SwipeAction, thread: Thread) async throws {
         switch action {
         case .delete:
             try await mailboxManager.moveOrDelete(thread: thread)
@@ -229,7 +273,7 @@ class DateSection: Identifiable {
                 Task {
                     try await self.move(thread: thread, to: folder)
                 }
-            }), position: .moveHeight)
+            }))
         case .favorite:
             try await mailboxManager.toggleStar(thread: thread)
         case .report:
@@ -237,13 +281,13 @@ class DateSection: Identifiable {
             showWorkInProgressSnackBar()
         case .spam:
             try await toggleSpam(thread: thread)
-        case .readAndAchive:
-            if thread.unseenMessages > 0 {
+        case .readAndArchive:
+            if thread.hasUnseenMessages {
                 try await mailboxManager.toggleRead(thread: thread)
             }
             try await move(thread: thread, to: .archive)
         case .quickAction:
-            bottomSheet.open(state: .actions(.thread(thread.thaw() ?? thread)), position: .middle)
+            bottomSheet.open(state: .actions(.thread(thread.thaw() ?? thread)))
         case .none:
             break
         }
@@ -251,17 +295,17 @@ class DateSection: Identifiable {
 
     private func toggleSpam(thread: Thread) async throws {
         let folderRole: FolderRole
-        let response: UndoResponse
+        let undoRedoAction: UndoRedoAction
         if folder?.role == .spam {
-            response = try await mailboxManager.nonSpam(thread: thread)
+            undoRedoAction = try await mailboxManager.nonSpam(thread: thread)
             folderRole = .inbox
         } else {
-            response = try await mailboxManager.reportSpam(thread: thread)
+            undoRedoAction = try await mailboxManager.reportSpam(thread: thread)
             folderRole = .spam
         }
         IKSnackBar.showCancelableSnackBar(message: MailResourcesStrings.Localizable.snackbarThreadMoved(folderRole.localizedName),
                                           cancelSuccessMessage: MailResourcesStrings.Localizable.snackbarMoveCancelled,
-                                          cancelableResponse: response,
+                                          undoRedoAction: undoRedoAction,
                                           mailboxManager: mailboxManager)
     }
 
@@ -274,7 +318,7 @@ class DateSection: Identifiable {
         let response = try await mailboxManager.move(thread: thread, to: folder)
         IKSnackBar.showCancelableSnackBar(message: MailResourcesStrings.Localizable.snackbarThreadMoved(folder.localizedName),
                                           cancelSuccessMessage: MailResourcesStrings.Localizable.snackbarMoveCancelled,
-                                          cancelableResponse: response,
+                                          undoRedoAction: response,
                                           mailboxManager: mailboxManager)
     }
 }

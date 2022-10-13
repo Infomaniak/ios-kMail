@@ -59,7 +59,7 @@ public extension Endpoint {
 
     static func permissions(mailbox: Mailbox) -> Endpoint {
         return .base.appending(path: "/mailbox/permissions",
-                               queryItems: [URLQueryItem(name: "user_mailbox_id", value: "\((mailbox.linkId))"),
+                               queryItems: [URLQueryItem(name: "user_mailbox_id", value: "\(mailbox.linkId)"),
                                             URLQueryItem(name: "product_id", value: "\(mailbox.hostingId)")])
     }
 
@@ -90,12 +90,15 @@ public extension Endpoint {
         return .mailbox(uuid: uuid).appending(path: "/folder")
     }
 
-    static func threads(uuid: String, folderId: String, offset: Int = 0, filter: String?) -> Endpoint {
-        return .folders(uuid: uuid).appending(path: "/\(folderId)/message", queryItems: [
+    static func threads(uuid: String, folderId: String, offset: Int = 0, filter: String?,
+                        searchFilters: [URLQueryItem] = []) -> Endpoint {
+        var queryItems = [
             URLQueryItem(name: "offset", value: "\(offset)"),
             URLQueryItem(name: "thread", value: "on"),
             URLQueryItem(name: "filters", value: filter)
-        ])
+        ]
+        queryItems.append(contentsOf: searchFilters)
+        return .folders(uuid: uuid).appending(path: "/\(folderId)/message", queryItems: queryItems)
     }
 
     static func quotas(mailbox: String, productId: Int) -> Endpoint {
@@ -161,5 +164,9 @@ public extension Endpoint {
 
 	static func createAttachment(uuid: String) -> Endpoint {
         return .draft(uuid: uuid).appending(path: "/attachment")
+    }
+
+    static func attachmentToForward(uuid: String) -> Endpoint {
+        return .draft(uuid: uuid).appending(path: "/attachmentsToForward")
     }
 }

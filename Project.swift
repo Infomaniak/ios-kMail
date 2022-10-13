@@ -36,9 +36,10 @@ let project = Project(name: "Mail",
                           .package(url: "https://github.com/siteline/SwiftUI-Introspect.git", .upToNextMajor(from: "0.1.4")),
                           .package(url: "https://github.com/Ambrdctr/SQRichTextEditor", .branch("master")),
                           .package(url: "https://github.com/markiv/SwiftUI-Shimmer", .upToNextMajor(from: "1.0.1")),
-                          .package(url: "https://github.com/lucaszischka/BottomSheet", .upToNextMajor(from: "2.7.0")),
                           .package(url: "https://github.com/dkk/WrappingHStack", .upToNextMajor(from: "2.0.0")),
-                          .package(url: "git@github.com:Infomaniak/ios-bug-tracker.git", .upToNextMajor(from: "1.0.0"))
+                          .package(url: "git@github.com:Infomaniak/ios-bug-tracker.git", .upToNextMajor(from: "1.0.0")),
+                          .package(url: "https://github.com/SCENEE/FloatingPanel", .upToNextMajor(from: "2.0.0")),
+                          .package(url: "https://github.com/kean/Nuke", .upToNextMajor(from: "11.3.0"))
                       ],
                       targets: [
                           Target(name: "Mail",
@@ -50,7 +51,7 @@ let project = Project(name: "Mail",
                                  sources: "Mail/**",
                                  resources: [
                                      "MailResources/**/*.xcassets",
-                                     "Mail/editor.css",
+                                     "Mail/*.css",
                                      "Mail/**/*.storyboard",
                                      "MailResources/**/*.strings",
                                      "MailResources/**/*.stringsdict"
@@ -66,7 +67,8 @@ let project = Project(name: "Mail",
                                      .package(product: "Introspect"),
                                      .package(product: "SQRichTextEditor"),
                                      .package(product: "Shimmer"),
-                                     .package(product: "WrappingHStack")
+                                     .package(product: "WrappingHStack"),
+                                     .package(product: "FloatingPanel")
                                  ],
                                  settings: .settings(base: baseSettings),
                                  environment: ["hostname": "\(ProcessInfo.processInfo.hostName)."]),
@@ -121,8 +123,8 @@ let project = Project(name: "Mail",
                                   .package(product: "CocoaLumberjackSwift"),
                                   .package(product: "RealmSwift"),
                                   .package(product: "SwiftRegex"),
-                                  .package(product: "BottomSheet"),
-                                  .package(product: "InfomaniakBugTracker")
+                                  .package(product: "InfomaniakBugTracker"),
+                                  .package(product: "Nuke")
                               ],
                               settings: .settings(base: baseSettings)
                           )

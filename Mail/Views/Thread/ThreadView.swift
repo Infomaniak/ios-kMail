@@ -16,7 +16,6 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import BottomSheet
 import InfomaniakCore
 import Introspect
 import MailCore
@@ -41,13 +40,10 @@ class MessageSheet: SheetState<MessageSheet.State> {
     }
 }
 
-class MessageBottomSheet: BottomSheetState<MessageBottomSheet.State, MessageBottomSheet.Position> {
+class MessageBottomSheet: DisplayedFloatingPanelState<MessageBottomSheet.State> {
     enum State: Equatable {
         case contact(Recipient, isRemote: Bool)
-    }
-
-    enum Position: CGFloat, CaseIterable {
-        case defaultHeight = 285, remoteContactHeight = 230, hidden = 0
+        case replyOption(Message, isThread: Bool)
     }
 }
 
@@ -55,6 +51,7 @@ struct ThreadView: View {
     @ObservedRealmObject var thread: Thread
     private var mailboxManager: MailboxManager
     private var navigationController: UINavigationController?
+    private var folderId: String?
 
     @State private var displayNavigationTitle = false
     @StateObject private var sheet = MessageSheet()
@@ -63,10 +60,9 @@ struct ThreadView: View {
 
     @EnvironmentObject var globalBottomSheet: GlobalBottomSheet
     @Environment(\.verticalSizeClass) var sizeClass
+    @Environment(\.dismiss) var dismiss
 
     private let trashId: String
-    private let bottomSheetOptions = Constants.bottomSheetOptions + [.absolutePositionValue]
-    private let threadBottomSheetOptions = Constants.bottomSheetOptions + [.appleScrollBehavior]
     private let toolbarActions: [Action] = [.reply, .forward, .archive, .delete]
 
     private var isTrashFolder: Bool {
@@ -79,9 +75,10 @@ struct ThreadView: View {
             .sorted { $0.date.compare($1.date) == .orderedAscending }
     }
 
-    init(mailboxManager: MailboxManager, thread: Thread, navigationController: UINavigationController?) {
+    init(mailboxManager: MailboxManager, thread: Thread, folderId: String?, navigationController: UINavigationController?) {
         self.mailboxManager = mailboxManager
         self.thread = thread
+        self.folderId = folderId
         self.navigationController = navigationController
         trashId = mailboxManager.getFolder(with: .trash)?._id ?? ""
     }
@@ -124,18 +121,18 @@ struct ThreadView: View {
         .onAppear {
             MatomoUtils.track(view: ["MessageView"])
             // Style toolbar
-            let appereance = UIToolbarAppearance()
-            appereance.configureWithOpaqueBackground()
-            appereance.backgroundColor = MailResourcesAsset.backgroundToolbarColor.color
-            appereance.shadowColor = .clear
-            UIToolbar.appearance().standardAppearance = appereance
-            UIToolbar.appearance().scrollEdgeAppearance = appereance
+            let toolbarAppearance = UIToolbarAppearance()
+            toolbarAppearance.configureWithOpaqueBackground()
+            toolbarAppearance.backgroundColor = MailResourcesAsset.backgroundToolbarColor.color
+            toolbarAppearance.shadowColor = .clear
+            UIToolbar.appearance().standardAppearance = toolbarAppearance
+            UIToolbar.appearance().scrollEdgeAppearance = toolbarAppearance
             navigationController?.toolbar.barTintColor = .white
             navigationController?.toolbar.setShadowImage(UIImage(), forToolbarPosition: .any)
             // Style navigation bar
-            let appearance = UINavigationBarAppearance()
-            appearance.configureWithDefaultBackground()
-            navigationController?.navigationBar.standardAppearance = appearance
+            let navBarAppearance = UINavigationBarAppearance()
+            navBarAppearance.configureWithDefaultBackground()
+            navigationController?.navigationBar.standardAppearance = navBarAppearance
             navigationController?.navigationBar.scrollEdgeAppearance = nil
         }
         .environmentObject(mailboxManager)
@@ -143,7 +140,7 @@ struct ThreadView: View {
         .environmentObject(bottomSheet)
         .environmentObject(threadBottomSheet)
         .task {
-            if thread.unseenMessages > 0 {
+            if thread.hasUnseenMessages {
                 try? await mailboxManager.toggleRead(thread: thread)
             }
         }
@@ -161,35 +158,14 @@ struct ThreadView: View {
             }
             ToolbarItemGroup(placement: .bottomBar) {
                 ForEach(toolbarActions) { action in
-                    Button {
+                    ToolbarButton(text: action.title, icon: action.icon) {
                         didTap(action: action)
-                    } label: {
-                        Label {
-                            Text(action.title)
-                                .font(MailTextStyle.caption.font)
-                        } icon: {
-                            Image(resource: action.icon)
-                                .resizable()
-                                .scaledToFit()
-                                .frame(width: 22, height: 22)
-                        }
-                        .dynamicLabelStyle(sizeClass: sizeClass ?? .regular)
                     }
                     Spacer()
                 }
-                Button {
-                    threadBottomSheet.open(state: .actions(.thread(thread.thaw() ?? thread)), position: .middle)
-                } label: {
-                    Label {
-                        Text(MailResourcesStrings.Localizable.buttonMore)
-                            .font(MailTextStyle.caption.font)
-                    } icon: {
-                        Image(resource: MailResourcesAsset.plusActions)
-                            .resizable()
-                            .scaledToFit()
-                            .frame(width: 22, height: 22)
-                    }
-                    .dynamicLabelStyle(sizeClass: sizeClass ?? .regular)
+                ToolbarButton(text: MailResourcesStrings.Localizable.buttonMore,
+                              icon: MailResourcesAsset.plusActions) {
+                    threadBottomSheet.open(state: .actions(.thread(thread.thaw() ?? thread)))
                 }
             }
         }
@@ -198,38 +174,46 @@ struct ThreadView: View {
             case let .attachment(attachment):
                 AttachmentPreview(isPresented: $sheet.isShowing, attachment: attachment)
             case let .reply(message, replyMode):
-                NewMessageView(isPresented: $sheet.isShowing, mailboxManager: mailboxManager, draft: .replying(to: message, mode: replyMode))
+                NewMessageView(mailboxManager: mailboxManager, draft: .replying(to: message, mode: replyMode))
             case let .edit(draft):
-                NewMessageView(isPresented: $sheet.isShowing, mailboxManager: mailboxManager, draft: draft.asUnmanaged())
+                NewMessageView(mailboxManager: mailboxManager, draft: draft.asUnmanaged())
             case let .write(recipient):
-                NewMessageView(isPresented: $sheet.isShowing, mailboxManager: mailboxManager, draft: .writing(to: recipient))
+                NewMessageView(mailboxManager: mailboxManager, draft: .writing(to: recipient))
             case .none:
                 EmptyView()
             }
         }
-        .bottomSheet(bottomSheetPosition: $bottomSheet.position, options: bottomSheetOptions) {
+        .floatingPanel(state: bottomSheet) {
             switch bottomSheet.state {
             case let .contact(recipient, isRemote):
                 ContactActionsView(recipient: recipient, isRemoteContact: isRemote, bottomSheet: bottomSheet, sheet: sheet)
+            case let .replyOption(message, isThread):
+                ReplyActionsView(
+                    mailboxManager: mailboxManager,
+                    target: isThread ? .thread(thread) : .message(message),
+                    state: threadBottomSheet,
+                    globalSheet: globalBottomSheet
+                ) { message, replyMode in
+                    bottomSheet.close()
+                    sheet.state = .reply(message, replyMode)
+                }
             case .none:
                 EmptyView()
             }
         }
-        .bottomSheet(bottomSheetPosition: $threadBottomSheet.position, options: threadBottomSheetOptions) {
-            switch threadBottomSheet.state {
-            case let .actions(target):
-                if target.isInvalidated {
-                    EmptyView()
-                } else {
-                    ActionsView(mailboxManager: mailboxManager,
-                                target: target,
-                                state: threadBottomSheet,
-                                globalSheet: globalBottomSheet) { message, replyMode in
-                        sheet.state = .reply(message, replyMode)
-                    }
+        .floatingPanel(state: threadBottomSheet, halfOpening: true) {
+            if case let .actions(target) = threadBottomSheet.state, !target.isInvalidated {
+                ActionsView(mailboxManager: mailboxManager,
+                            target: target,
+                            state: threadBottomSheet,
+                            globalSheet: globalBottomSheet) { message, replyMode in
+                    sheet.state = .reply(message, replyMode)
                 }
-            case .none:
-                EmptyView()
+            }
+        }
+        .onChange(of: messages) { newMessagesList in
+            if let folderId = folderId, newMessagesList.filter({ $0.folderId == folderId }).isEmpty {
+                dismiss()
             }
         }
     }
@@ -238,24 +222,43 @@ struct ThreadView: View {
         switch action {
         case .reply:
             guard let message = messages.last else { return }
-            sheet.state = .reply(message, .reply)
+
+            let from = message.from.where { $0.email != mailboxManager.mailbox.email }
+            let cc = message.cc.where { $0.email != mailboxManager.mailbox.email }
+            let to = message.to.where { $0.email != mailboxManager.mailbox.email }
+
+            if (from.count + cc.count + to.count) > 1 {
+                bottomSheet.open(state: .replyOption(message, isThread: true))
+            } else {
+                sheet.state = .reply(message, .reply)
+            }
         case .forward:
             guard let message = messages.last else { return }
-            sheet.state = .reply(message, .forward)
+            Task {
+                let attachments = try await mailboxManager.apiFetcher.attachmentsToForward(
+                    mailbox: mailboxManager.mailbox,
+                    message: message
+                ).attachments
+                sheet.state = .reply(message, .forward(attachments))
+            }
         case .archive:
             Task {
                 await tryOrDisplayError {
-                    let response = try await mailboxManager.move(thread: thread, to: .archive)
-                    IKSnackBar.showCancelableSnackBar(message: MailResourcesStrings.Localizable.snackbarThreadMoved(FolderRole.archive.localizedName),
-                                                      cancelSuccessMessage: MailResourcesStrings.Localizable.snackbarMoveCancelled,
-                                                      cancelableResponse: response,
-                                                      mailboxManager: mailboxManager)
+                    let undoRedoAction = try await mailboxManager.move(thread: thread, to: .archive)
+                    IKSnackBar.showCancelableSnackBar(
+                        message: MailResourcesStrings.Localizable.snackbarThreadMoved(FolderRole.archive.localizedName),
+                        cancelSuccessMessage: MailResourcesStrings.Localizable.snackbarMoveCancelled,
+                        undoRedoAction: undoRedoAction,
+                        mailboxManager: mailboxManager
+                    )
+                    dismiss()
                 }
             }
         case .delete:
             Task {
                 await tryOrDisplayError {
                     try await mailboxManager.moveOrDelete(thread: thread)
+                    dismiss()
                 }
             }
         default:
@@ -293,6 +296,7 @@ struct ThreadView_Previews: PreviewProvider {
         ThreadView(
             mailboxManager: PreviewHelper.sampleMailboxManager,
             thread: PreviewHelper.sampleThread,
+            folderId: nil,
             navigationController: nil
         )
     }

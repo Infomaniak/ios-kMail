@@ -17,21 +17,29 @@
  */
 
 import MailCore
+import MailResources
 import SwiftUI
 
 struct SelectionBackground: View {
     @AppStorage(UserDefaults.shared.key(.accentColor)) private var accentColor = AccentColor.pink
 
+    let isSelected: Bool
+    let offsetX: CGFloat
+    let leadingPadding: CGFloat
+    let verticalPadding: CGFloat
+    var defaultColor = MailResourcesAsset.backgroundColor.swiftUiColor
+
     var body: some View {
         RoundedRectangle(cornerRadius: 10)
-            .fill(accentColor.secondary.swiftUiColor)
-            .offset(x: 10, y: 0)
-            .padding(.leading, -2)
+            .fill(isSelected ? accentColor.secondary.swiftUiColor : defaultColor)
+            .offset(x: offsetX, y: 0)
+            .padding(.leading, leadingPadding)
+            .padding(.vertical, verticalPadding)
     }
 }
 
 struct SelectionBackground_Previews: PreviewProvider {
     static var previews: some View {
-        SelectionBackground()
+        SelectionBackground(isSelected: true, offsetX: 10, leadingPadding: -2, verticalPadding: 0)
     }
 }

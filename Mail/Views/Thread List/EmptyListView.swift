@@ -16,13 +16,16 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import MailCore
 import MailResources
 import SwiftUI
 
 struct EmptyListView: View {
+    @AppStorage(UserDefaults.shared.key(.accentColor)) var accentColor = AccentColor.pink
+
     var body: some View {
         VStack {
-            Image(resource: MailResourcesAsset.zeroMail)
+            Image(resource: accentColor.zeroMailImage)
                 .padding(24)
             Text(MailResourcesStrings.Localizable.noEmailTitle)
                 .textStyle(.header2)

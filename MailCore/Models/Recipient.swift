@@ -39,28 +39,33 @@ public class Recipient: EmbeddedObject, Codable {
         if isCurrentUser {
             return MailResourcesStrings.Localizable.contactMe
         }
-        return contact?.name ?? (name.isEmpty ? email : name)
+        return contact?.name.removePunctuation ?? (name.isEmpty ? email : name.removePunctuation)
     }
 
-    public var color: Color {
-        if let contact = contact {
-            return Color(hex: contact.color)
-        }
-        return UserDefaults.shared.accentColor.primary.swiftUiColor
+    public var color: UIColor {
+        return contact?.color ?? UserDefaults.shared.accentColor.primary.color
     }
 
     public var initials: String {
-        return (contact?.name ?? name)
+        let nameInitials = (contact?.name ?? name)
+            .removePunctuation
             .components(separatedBy: .whitespaces)
             .compactMap(\.first)
-            .prefix(2)
-            .map { "\($0)" }
-            .joined()
-            .uppercased()
+        guard let firstLetter = nameInitials.first else {
+            if let secondaryInitial = email.first {
+                return secondaryInitial.uppercased()
+            }
+            return ""
+        }
+        if let secondLetter = nameInitials.last, nameInitials.count > 1 {
+            return [firstLetter, secondLetter].map { "\($0)" }.joined().uppercased()
+        } else {
+            return [firstLetter].map { "\($0)" }.joined().uppercased()
+        }
     }
 
     public var contact: MergedContact? {
-        AccountManager.instance.currentContactManager?.getContact(for: email)
+        AccountManager.instance.currentContactManager?.getContact(for: self)
     }
 
     public var htmlDescription: String {
@@ -69,6 +74,32 @@ public class Recipient: EmbeddedObject, Codable {
             return emailString
         } else {
             return "\(name) \(emailString)"
+        }
+    }
+
+    public var avatarImage: Image? {
+        get async {
+            if isCurrentUser {
+                return await AccountManager.instance.currentAccount.user.avatarImage
+            } else if let contact = contact,
+                      contact.hasAvatar,
+                      let avatarImage = await contact.avatarImage {
+                return avatarImage
+            } else {
+                return nil
+            }
+        }
+    }
+
+    public var cachedAvatarImage: Image? {
+        if isCurrentUser {
+            return AccountManager.instance.currentAccount.user.cachedAvatarImage
+        } else if let contact = contact,
+                  contact.hasAvatar,
+                  let avatarImage = contact.cachedAvatarImage {
+            return avatarImage
+        } else {
+            return nil
         }
     }
 }

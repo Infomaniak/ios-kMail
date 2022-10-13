@@ -24,7 +24,7 @@ import Sentry
 
 public class MailboxInfosManager {
     public static let instance = MailboxInfosManager()
-    private static let currentDbVersion: UInt64 = 2
+    private static let currentDbVersion: UInt64 = 3
     public let realmConfiguration: Realm.Configuration
     private let dbName = "MailboxInfos.realm"
 
@@ -32,7 +32,7 @@ public class MailboxInfosManager {
         realmConfiguration = Realm.Configuration(
             fileURL: MailboxManager.constants.rootDocumentsURL.appendingPathComponent(dbName),
             schemaVersion: MailboxInfosManager.currentDbVersion,
-            objectTypes: [Mailbox.self, MailboxPermissions.self]
+            objectTypes: [Mailbox.self, MailboxPermissions.self, Quotas.self]
         )
         print(MailboxManager.constants.rootDocumentsURL.path)
     }

@@ -52,6 +52,7 @@ public class Thread: Object, Decodable, Identifiable {
     @Persisted public var forwarded: Bool
     @Persisted public var size: Int
     @Persisted(originProperty: "threads") public var parentLink: LinkingObjects<Folder>
+    @Persisted public var fromSearch = false
 
     public var id: String {
         return uid
@@ -78,9 +79,20 @@ public class Thread: Object, Decodable, Identifiable {
         return parentLink.first
     }
 
+    public var isLocalDraft: Bool {
+        parent?.role == .draft && uid.starts(with: Draft.uuidLocalPrefix)
+    }
+
+    public var shouldPresentAsDraft: Bool {
+        return messages.count == 1 && messages.first?.isDraft == true
+    }
+
+    public var hasUnseenMessages: Bool {
+        unseenMessages > 0
+    }
+
     public func updateUnseenMessages() {
         unseenMessages = messages.filter { !$0.seen }.count
-        parent?.updateUnreadCount()
     }
 
     public func updateFlagged() {
@@ -181,4 +193,27 @@ public class Thread: Object, Decodable, Identifiable {
 
 public enum Filter: String {
     case all, seen, unseen, starred, unstarred
+
+    public func accepts(thread: Thread) -> Bool {
+        switch self {
+        case .all:
+            return true
+        case .seen:
+            return thread.unseenMessages == 0
+        case .unseen:
+            return thread.hasUnseenMessages
+        case .starred:
+            return thread.flagged
+        case .unstarred:
+            return !thread.flagged
+        }
+    }
+}
+
+public enum SearchCondition: Equatable {
+    case filter(Filter)
+    case from(String)
+    case contains(String)
+    case everywhere(Bool)
+    case attachments(Bool)
 }

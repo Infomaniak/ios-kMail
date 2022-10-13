@@ -22,38 +22,48 @@ import MailResources
 import SwiftUI
 
 struct FolderCell: View {
+    @EnvironmentObject var splitViewManager: SplitViewManager
     @EnvironmentObject var mailboxManager: MailboxManager
     @EnvironmentObject var navigationDrawerController: NavigationDrawerController
 
-    let folder: Folder
+    let folder: NestableFolder
     var level = 0
-    @Binding var selectedFolder: Folder?
 
     var isCompact: Bool
+
+    @State private var shouldTransit = false
 
     var body: some View {
         Group {
             if isCompact {
                 Button(action: updateFolder) {
-                    FolderCellContent(folder: folder, level: level, selectedFolder: $selectedFolder)
+                    FolderCellContent(folder: folder.content, level: level, selectedFolder: $splitViewManager.selectedFolder)
                 }
             } else {
-                NavigationLink {
-                    ThreadListView(mailboxManager: mailboxManager, folder: .constant(folder), isCompact: isCompact)
-                        .onAppear { selectedFolder = folder.thaw() }
+                NavigationLink(isActive: $shouldTransit) {
+                    ThreadListManagerView(
+                        mailboxManager: mailboxManager,
+                        isCompact: isCompact
+                    )
                 } label: {
-                    FolderCellContent(folder: folder, level: level, selectedFolder: $selectedFolder)
+                    Button {
+                        splitViewManager.selectedFolder = folder.content
+                        splitViewManager.showSearch = false
+                        self.shouldTransit = true
+                    } label: {
+                        FolderCellContent(folder: folder.content, level: level, selectedFolder: $splitViewManager.selectedFolder)
+                    }
                 }
             }
 
             ForEach(folder.children) { child in
-                FolderCell(folder: child, level: level + 1, selectedFolder: $selectedFolder, isCompact: isCompact)
+                FolderCell(folder: child, level: level + 1, isCompact: isCompact)
             }
         }
     }
 
     private func updateFolder() {
-        selectedFolder = folder.thaw()
+        splitViewManager.selectedFolder = folder.content
         navigationDrawerController.close()
     }
 }
@@ -68,17 +78,16 @@ struct FolderCellContent: View {
     }
 
     private var textStyle: MailTextStyle {
-        isSelected ? .button : .body
+        isSelected ? .header3Primary : .header5
     }
 
     var body: some View {
-        HStack(spacing: 0) {
+        HStack(spacing: 24) {
             folder.icon
                 .resizable()
                 .scaledToFit()
                 .frame(width: 24, height: 24)
                 .foregroundColor(.accentColor)
-                .padding(.trailing, 24)
 
             Text(folder.localizedName)
                 .textStyle(textStyle)
@@ -87,25 +96,27 @@ struct FolderCellContent: View {
 
             if folder.unreadCount != nil {
                 Text(folder.formattedUnreadCount)
-                    .textStyle(.calloutHighlighted)
+                    .foregroundColor(.accentColor)
+                    .textStyle(isSelected ? .calloutStrong : .calloutHighlighted)
             }
         }
         .padding(.vertical, Constants.menuDrawerVerticalPadding)
-        .padding(.leading, Constants.menuDrawerHorizontalPadding)
+        .padding(.horizontal, Constants.menuDrawerHorizontalPadding)
         .padding(.leading, Constants.menuDrawerSubFolderPadding * CGFloat(level))
-        .padding(.trailing, 18)
-        .modifyIf(isSelected) { view in
-            view
-                .background(SelectionBackground())
-        }
+        .background(SelectionBackground(
+            isSelected: isSelected,
+            offsetX: 8,
+            leadingPadding: 0,
+            verticalPadding: 0,
+            defaultColor: MailResourcesAsset.backgroundMenuDrawer.swiftUiColor
+        ))
     }
 }
 
 struct FolderCellView_Previews: PreviewProvider {
     static var previews: some View {
         FolderCell(
-            folder: PreviewHelper.sampleFolder,
-            selectedFolder: .constant(PreviewHelper.sampleFolder),
+            folder: NestableFolder(content: PreviewHelper.sampleFolder, children: []),
             isCompact: false
         )
         .environmentObject(PreviewHelper.sampleMailboxManager)

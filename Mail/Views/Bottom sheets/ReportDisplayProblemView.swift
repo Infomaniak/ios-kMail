@@ -35,14 +35,11 @@ struct ReportDisplayProblemView: View {
             Image(resource: MailResourcesAsset.displayIssue)
             Text(MailResourcesStrings.Localizable.reportDisplayProblemDescription)
                 .textStyle(.bodySecondary)
-            HStack(spacing: 24) {
-                Button(MailResourcesStrings.Localizable.buttonRefuse) {
-                    state.close()
-                }
-
-                BottomSheetButton(label: MailResourcesStrings.Localizable.buttonAccept, action: report)
+            BottomSheetButtonsView(primaryButtonTitle: MailResourcesStrings.Localizable.buttonAccept,
+                                   secondaryButtonTitle: MailResourcesStrings.Localizable.buttonRefuse,
+                                   primaryButtonAction: report) {
+                state.close()
             }
-            .frame(maxWidth: .infinity, alignment: .trailing)
             .padding(.top, 8)
         }
         .padding(.horizontal, Constants.bottomSheetHorizontalPadding)
