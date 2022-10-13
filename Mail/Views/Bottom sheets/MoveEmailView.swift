@@ -35,10 +35,10 @@ struct MoveEmailView: View {
         return folders.sorted()
     }
 
-    init(mailboxManager: MailboxManager, state: GlobalBottomSheet, globalAlert: GlobalAlert, moveHandler: @escaping (Folder) -> Void) {
+    init(mailboxManager: MailboxManager, currentFolderId: String?, state: GlobalBottomSheet, globalAlert: GlobalAlert, moveHandler: @escaping (Folder) -> Void) {
         _folders = .init(Folder.self, configuration: AccountManager.instance.currentMailboxManager?.realmConfiguration) {
-			$0.toolType == nil
-		}
+            $0.id != currentFolderId ?? "" && $0.toolType == nil
+        }
         _mailboxManager = StateObject(wrappedValue: mailboxManager)
         self.state = state
         self.globalAlert = globalAlert
@@ -86,6 +86,7 @@ struct MoveEmailView: View {
 struct MoveEmailView_Previews: PreviewProvider {
     static var previews: some View {
         MoveEmailView(mailboxManager: PreviewHelper.sampleMailboxManager,
+                      currentFolderId: "",
                       state: GlobalBottomSheet(),
                       globalAlert: GlobalAlert()) { _ /* Preview */ in }
     }
