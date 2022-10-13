@@ -170,10 +170,8 @@ public class MailboxManager: ObservableObject {
                     .filter { toDeleteFolders.map(\._id).contains($0.folderId) })
 
                 // Delete thread if all his messages are deleted
-                for thread in mayBeDeletedThreads {
-                    if Set(thread.messages).isSubset(of: toDeleteMessages) {
-                        toDeleteThreads.append(thread)
-                    }
+                for thread in mayBeDeletedThreads where Set(thread.messages).isSubset(of: toDeleteMessages) {
+                    toDeleteThreads.append(thread)
                 }
 
                 realm.delete(toDeleteMessages)
@@ -636,15 +634,11 @@ public class MailboxManager: ObservableObject {
         )
 
         await backgroundRealm.execute { realm in
-            for thread in threadResult.threads ?? [] {
-                if realm.object(ofType: Thread.self, forPrimaryKey: thread.uid) == nil {
-                    thread.fromSearch = true
+            for thread in threadResult.threads ?? [] where realm.object(ofType: Thread.self, forPrimaryKey: thread.uid) == nil {
+                thread.fromSearch = true
 
-                    for message in thread.messages {
-                        if realm.object(ofType: Message.self, forPrimaryKey: message.uid) == nil {
-                            message.fromSearch = true
-                        }
-                    }
+                for message in thread.messages where realm.object(ofType: Message.self, forPrimaryKey: message.uid) == nil {
+                    message.fromSearch = true
                 }
             }
         }
@@ -661,15 +655,11 @@ public class MailboxManager: ObservableObject {
         let threadResult = try await apiFetcher.threads(from: resource, searchFilter: searchFilter)
 
         let realm = getRealm()
-        for thread in threadResult.threads ?? [] {
-            if realm.object(ofType: Thread.self, forPrimaryKey: thread.uid) == nil {
-                thread.fromSearch = true
+        for thread in threadResult.threads ?? [] where realm.object(ofType: Thread.self, forPrimaryKey: thread.uid) == nil {
+            thread.fromSearch = true
 
-                for message in thread.messages {
-                    if realm.object(ofType: Message.self, forPrimaryKey: message.uid) == nil {
-                        message.fromSearch = true
-                    }
-                }
+            for message in thread.messages where realm.object(ofType: Message.self, forPrimaryKey: message.uid) == nil {
+                message.fromSearch = true
             }
         }
 
@@ -776,14 +766,14 @@ public class MailboxManager: ObservableObject {
 
     public func update(searchHistory: SearchHistory, with value: String) async -> SearchHistory {
         return await backgroundRealm.execute { realm in
-            guard let searchHistory = realm.objects(SearchHistory.self).first else { return searchHistory }
+            guard let liveSearchHistory = realm.objects(SearchHistory.self).first else { return searchHistory }
             try? realm.safeWrite {
-                if let indexToRemove = searchHistory.history.firstIndex(of: value) {
-                    searchHistory.history.remove(at: indexToRemove)
+                if let indexToRemove = liveSearchHistory.history.firstIndex(of: value) {
+                    liveSearchHistory.history.remove(at: indexToRemove)
                 }
-                searchHistory.history.insert(value, at: 0)
+                liveSearchHistory.history.insert(value, at: 0)
             }
-            return searchHistory.freeze()
+            return liveSearchHistory.freeze()
         }
     }
 
@@ -1124,13 +1114,11 @@ public class MailboxManager: ObservableObject {
             guard let folder = self.getFolder(with: .draft, using: realm) else { return }
 
             let messagesList = realm.objects(Message.self).where { $0.folderId == folder.id }
-            for draft in draftOffline {
-                if !messagesList.contains(where: { $0.uid == draft.messageUid }) {
-                    let thread = Thread(draft: draft)
-                    let from = Recipient(email: self.mailbox.email, name: self.mailbox.emailIdn)
-                    thread.from.append(from)
-                    offlineDraftThread.append(thread)
-                }
+            for draft in draftOffline where !messagesList.contains(where: { $0.uid == draft.messageUid }) {
+                let thread = Thread(draft: draft)
+                let from = Recipient(email: self.mailbox.email, name: self.mailbox.emailIdn)
+                thread.from.append(from)
+                offlineDraftThread.append(thread)
             }
 
             // Update message in Realm
