@@ -43,6 +43,7 @@ class GlobalAlert: SheetState<GlobalAlert.State> {
 public class SplitViewManager: ObservableObject {
     @Published var showSearch = false
     @Published var selectedFolder: Folder?
+    var splitViewController: UISplitViewController?
 
     init(folder: Folder?) {
         selectedFolder = folder
@@ -142,6 +143,7 @@ struct SplitView: View {
             guard let splitViewController = navController.splitViewController,
                   let interfaceOrientation = window?.windowScene?.interfaceOrientation else { return }
             self.splitViewController = splitViewController
+            splitViewManager.splitViewController = splitViewController
             setupBehaviour(orientation: interfaceOrientation)
             splitViewController.preferredDisplayMode = .twoDisplaceSecondary
         }
@@ -176,10 +178,14 @@ struct SplitView: View {
     private func setupBehaviour(orientation: UIInterfaceOrientation) {
         if orientation.isLandscape {
             splitViewController?.preferredSplitBehavior = .displace
-            splitViewController?.preferredDisplayMode = splitViewManager.selectedFolder == nil ? .twoDisplaceSecondary : .oneBesideSecondary
+            splitViewController?.preferredDisplayMode = splitViewManager.selectedFolder == nil
+                ? .twoDisplaceSecondary
+                : .oneBesideSecondary
         } else if orientation.isPortrait {
             splitViewController?.preferredSplitBehavior = .overlay
-            splitViewController?.preferredDisplayMode = splitViewManager.selectedFolder == nil ? .twoOverSecondary : .oneOverSecondary
+            splitViewController?.preferredDisplayMode = splitViewManager.selectedFolder == nil
+                ? .twoOverSecondary
+                : .oneOverSecondary
         } else {
             splitViewController?.preferredSplitBehavior = .automatic
             splitViewController?.preferredDisplayMode = .automatic
