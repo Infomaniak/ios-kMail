@@ -97,7 +97,9 @@ struct ComposeMessageView: View {
     static func replyOrForwardMessage(messageReply: MessageReply, mailboxManager: MailboxManager) -> ComposeMessageView {
         let message = messageReply.message
         // If message doesn't exist anymore try to show the frozen one
-        let freshMessage = message.fresh(using: mailboxManager.getRealm()) ?? message
+        let realm = mailboxManager.getRealm()
+        realm.refresh()
+        let freshMessage = message.fresh(using: realm) ?? message
         return ComposeMessageView(mailboxManager: mailboxManager, draft: .replying(to: freshMessage, mode: messageReply.replyMode))
     }
 
@@ -151,24 +153,24 @@ struct ComposeMessageView: View {
                             TextField("", text: $draft.subject)
                         }
 
-                        if let attachments = draft.attachments?.filter { $0.contentId == nil }, !attachments.isEmpty {
-                            ScrollView(.horizontal, showsIndicators: false) {
-                                HStack(spacing: 8) {
-                                    ForEach(attachments) { attachment in
-                                        AttachmentCell(attachment: attachment)
+                            if let attachments = draft.attachments?.filter { $0.contentId == nil }, !attachments.isEmpty {
+                                ScrollView(.horizontal, showsIndicators: false) {
+                                    HStack(spacing: 8) {
+                                        ForEach(attachments) { attachment in
+                                            AttachmentCell(attachment: attachment)
+                                        }
                                     }
+                                    .padding(.vertical, 1)
                                 }
-                                .padding(.vertical, 1)
+                                .padding(.horizontal, 16)
                             }
-                            .padding(.horizontal, 16)
+                            RichTextEditor(model: $editor, body: $draft.body)
+                                .ignoresSafeArea(.all, edges: .bottom)
+                                .frame(height: editor.height + 20)
+                                .padding([.vertical], 10)
                         }
-                        RichTextEditor(model: $editor, body: $draft.body)
-                            .ignoresSafeArea(.all, edges: .bottom)
-                            .frame(height: editor.height + 20)
-                            .padding([.vertical], 10)
                     }
                 }
-            }
             .introspectScrollView { scrollView in
                 self.scrollView = scrollView
             }
