@@ -76,9 +76,9 @@ struct ComposeMessageView: View {
 
     private init(mailboxManager: MailboxManager, draft: UnmanagedDraft) {
         _mailboxManager = State(initialValue: mailboxManager)
-        let selectedMailboxItem = AccountManager.instance.mailboxes
+        let currentAccountSelectedMailboxItem = AccountManager.instance.mailboxes
             .firstIndex { $0.mailboxId == mailboxManager.mailbox.mailboxId } ?? 0
-        _selectedMailboxItem = State(initialValue: selectedMailboxItem)
+        _selectedMailboxItem = State(initialValue: currentAccountSelectedMailboxItem)
 
         var initialDraft = draft
         if initialDraft.identityId.isEmpty,
