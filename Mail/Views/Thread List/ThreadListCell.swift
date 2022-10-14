@@ -83,6 +83,9 @@ struct ThreadListCell: View {
         } else {
             viewModel.selectedThread = thread
             splitViewManager.splitViewController?.hide(.primary)
+            if splitViewManager.splitViewController?.splitBehavior == .overlay {
+                splitViewManager.splitViewController?.hide(.supplementary)
+            }
             if thread.shouldPresentAsDraft {
                 DraftUtils.editDraft(
                     from: thread,
