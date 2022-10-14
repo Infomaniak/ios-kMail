@@ -21,6 +21,8 @@ import MailResources
 import SwiftUI
 
 struct ThreadListCell: View {
+    @EnvironmentObject var splitViewManager: SplitViewManager
+
     let thread: Thread
     @ObservedObject var viewModel: ThreadListViewModel
     @ObservedObject var multipleSelectionViewModel: ThreadListMultipleSelectionViewModel
@@ -65,7 +67,8 @@ struct ThreadListCell: View {
         .onTapGesture { didTapCell() }
         .onLongPressGesture(minimumDuration: 0.3) { didLongPressCell() }
         .swipeActions(thread: thread, viewModel: viewModel, multipleSelectionViewModel: multipleSelectionViewModel)
-        .background(SelectionBackground(isSelected: isSelected, offsetX: 8, leadingPadding: 0, verticalPadding: 2, defaultColor: cellColor))
+        .background(SelectionBackground(isSelected: isSelected, offsetX: 8, leadingPadding: 0, verticalPadding: 2,
+                                        defaultColor: cellColor))
         .clipped()
         .listRowInsets(.init(top: 0, leading: 0, bottom: 0, trailing: 0))
         .listRowSeparator(.hidden)
@@ -79,8 +82,16 @@ struct ThreadListCell: View {
             }
         } else {
             viewModel.selectedThread = thread
+            splitViewManager.splitViewController?.hide(.primary)
+            if splitViewManager.splitViewController?.splitBehavior == .overlay {
+                splitViewManager.splitViewController?.hide(.supplementary)
+            }
             if thread.shouldPresentAsDraft {
-                DraftUtils.editDraft(from: thread, mailboxManager: viewModel.mailboxManager, editedMessageDraft: $editedMessageDraft)
+                DraftUtils.editDraft(
+                    from: thread,
+                    mailboxManager: viewModel.mailboxManager,
+                    editedMessageDraft: $editedMessageDraft
+                )
             } else {
                 shouldNavigateToThreadList = true
             }
