@@ -29,11 +29,11 @@ struct OnboardingView: View {
     @State private var presentAlert = false
     @State private var isLoading = false
 
-    var isScrollEnabled: Bool
+    private var isScrollEnabled: Bool
 
     @Environment(\.window) var window
 
-    var isPresentedModally: Bool
+    private var isPresentedModally: Bool
 
     init(isPresentedModally: Bool = false, page: Int = 1, isScrollEnabled: Bool = true) {
         _selection = State(initialValue: page)
