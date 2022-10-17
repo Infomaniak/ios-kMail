@@ -23,8 +23,12 @@ public class URLSchemeHandler: NSObject, WKURLSchemeHandler {
     public static let scheme = "mail-infomaniak"
     public static let domain = "://mail.infomaniak.com"
 
+    private var tasksInProgress = [String: URLSessionDataTask]()
+
     public func webView(_ webView: WKWebView, start urlSchemeTask: WKURLSchemeTask) {
-        let url = urlSchemeTask.request.url!
+        guard let url = urlSchemeTask.request.url else { return }
+        tasksInProgress[url.absoluteString]?.cancel()
+
         var components = URLComponents(url: url, resolvingAgainstBaseURL: true)
         components?.scheme = "https"
         var request = URLRequest(url: components!.url!)
@@ -33,6 +37,8 @@ public class URLSchemeHandler: NSObject, WKURLSchemeHandler {
             forHTTPHeaderField: "Authorization"
         )
         let task = URLSession.shared.dataTask(with: request) { data, response, error in
+            guard (error as? URLError)?.code != .cancelled else { return }
+
             if let response = response {
                 urlSchemeTask.didReceive(response)
             }
@@ -44,10 +50,12 @@ public class URLSchemeHandler: NSObject, WKURLSchemeHandler {
                 urlSchemeTask.didFailWithError(error)
             }
         }
+        tasksInProgress[url.absoluteString] = task
         task.resume()
     }
 
     public func webView(_ webView: WKWebView, stop urlSchemeTask: WKURLSchemeTask) {
-        // needed for WKURLSchemeHandler
+        guard let url = urlSchemeTask.request.url else { return }
+        tasksInProgress[url.absoluteString]?.cancel()
     }
 }
