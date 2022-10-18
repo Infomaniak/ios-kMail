@@ -23,12 +23,12 @@ import RealmSwift
 import SwiftUI
 
 struct MessageHeaderView: View {
+    @State private var editedDraft: Draft?
     @ObservedRealmObject var message: Message
     @Binding var isHeaderExpanded: Bool
     @Binding var isMessageExpanded: Bool
 
     @EnvironmentObject var mailboxManager: MailboxManager
-    @EnvironmentObject var sheet: MessageSheet
     @EnvironmentObject var bottomSheet: MessageBottomSheet
     @EnvironmentObject var threadBottomSheet: ThreadBottomSheet
 
@@ -58,6 +58,9 @@ struct MessageHeaderView: View {
                 }
             }
         }
+        .sheet(item: $editedDraft) { editedDraft in
+            ComposeMessageView.editDraft(draft: editedDraft, mailboxManager: mailboxManager)
+        }
     }
 
     private func openContact(recipient: Recipient) {
@@ -72,7 +75,7 @@ struct MessageHeaderView: View {
 
         // If we already have the draft locally, present it directly
         if let draft = mailboxManager.draft(messageUid: message.uid)?.detached() {
-            sheet.state = .edit(draft)
+            editedDraft = draft
             sheetPresented = true
         }
 
@@ -80,7 +83,7 @@ struct MessageHeaderView: View {
         Task { [sheetPresented] in
             let draft = try await mailboxManager.draft(from: message)
             if !sheetPresented {
-                sheet.state = .edit(draft)
+                editedDraft = draft
             }
         }
     }

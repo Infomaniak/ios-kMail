@@ -50,14 +50,10 @@ struct ThreadListManagerView: View {
         }
         .animation(.easeInOut(duration: 0.25), value: splitViewManager.showSearch)
         .sheet(item: $editedMessageDraft) { draft in
-            NewMessageView(mailboxManager: mailboxManager, draft: draft.asUnmanaged())
+            ComposeMessageView.editDraft(draft: draft, mailboxManager: mailboxManager)
         }
         .sheet(item: $messageReply) { messageReply in
-            // If message doesn't exist anymore try to show the frozen one
-            let message = messageReply.message
-            let freshMessage = message.fresh(using: mailboxManager.getRealm()) ?? message
-            NewMessageView(mailboxManager: mailboxManager,
-                           draft: .replying(to: freshMessage, mode: messageReply.replyMode))
+            ComposeMessageView.replyOrForwardMessage(messageReply: messageReply, mailboxManager: mailboxManager)
         }
     }
 }

@@ -103,9 +103,10 @@ struct RichTextEditorModel {
 
 class MailEditor: SQTextEditorView {
     lazy var toolbar = getToolbar()
-    var sheet: NewMessageSheet?
     var alert: NewMessageAlert?
     var isShowingCamera: Binding<Bool>?
+    var isShowingFileSelection: Binding<Bool>?
+    var isShowingPhotoLibrary: Binding<Bool>?
     var toolbarStyle = ToolbarStyle.main
 
     private lazy var editorWebView: WKWebView = {
@@ -250,11 +251,11 @@ class MailEditor: SQTextEditorView {
         case .editText:
             updateToolbarItems(style: toolbarStyle == .main ? .textEdition : .main)
         case .addFile:
-            sheet?.state = .fileSelection
+            isShowingFileSelection?.wrappedValue.toggle()
         case .addPhoto:
-            sheet?.state = .photoLibrary
+            isShowingPhotoLibrary?.wrappedValue.toggle()
         case .takePhoto:
-            isShowingCamera?.wrappedValue = true
+            isShowingCamera?.wrappedValue.toggle()
         case .link:
             if selectedTextAttribute.format.hasLink {
                 removeLink()

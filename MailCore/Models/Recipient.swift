@@ -21,6 +21,12 @@ import MailResources
 import RealmSwift
 import SwiftUI
 
+public extension URLComponents {
+    func getQueryItem(named name: String) -> String? {
+        return queryItems?.first { $0.name == name }?.value
+    }
+}
+
 public class Recipient: EmbeddedObject, Codable {
     @Persisted public var email: String
     @Persisted public var name: String
@@ -29,6 +35,10 @@ public class Recipient: EmbeddedObject, Codable {
         self.init()
         self.email = email
         self.name = name
+    }
+
+    public static func createListUsing(from urlComponents: URLComponents, name: String) -> [Recipient] {
+        return urlComponents.getQueryItem(named: name)?.split(separator: ",").map { Recipient(email: "\($0)", name: "") } ?? []
     }
 
     public var isCurrentUser: Bool {

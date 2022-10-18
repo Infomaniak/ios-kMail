@@ -22,7 +22,7 @@ import RealmSwift
 import SwiftUI
 
 struct AttachmentsView: View {
-    @EnvironmentObject var sheet: MessageSheet
+    @State private var previewedAttachment: Attachment?
     @EnvironmentObject var mailboxManager: MailboxManager
     @ObservedRealmObject var message: Message
 
@@ -39,7 +39,7 @@ struct AttachmentsView: View {
                 HStack(spacing: 8) {
                     ForEach(attachments) { attachment in
                         Button {
-                            sheet.state = .attachment(attachment)
+                            previewedAttachment = attachment
                             if !FileManager.default.fileExists(atPath: attachment.localUrl?.path ?? "") {
                                 Task {
                                     await mailboxManager.saveAttachmentLocally(attachment: attachment)
@@ -77,6 +77,9 @@ struct AttachmentsView: View {
 
             IKDivider()
                 .padding(.horizontal, 8)
+        }
+        .sheet(item: $previewedAttachment) { previewedAttachment in
+            AttachmentPreview(attachment: previewedAttachment)
         }
     }
 }

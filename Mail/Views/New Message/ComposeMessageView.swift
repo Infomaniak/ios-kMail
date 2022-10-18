@@ -39,19 +39,13 @@ enum RecipientFieldType: Hashable {
     }
 }
 
-class NewMessageSheet: SheetState<NewMessageSheet.State> {
-    enum State {
-        case fileSelection, photoLibrary
-    }
-}
-
 class NewMessageAlert: SheetState<NewMessageAlert.State> {
     enum State {
         case link(handler: (String) -> Void)
     }
 }
 
-struct NewMessageView: View {
+struct ComposeMessageView: View {
     @Environment(\.dismiss) private var dismiss
 
     @State private var mailboxManager: MailboxManager
@@ -65,10 +59,11 @@ struct NewMessageView: View {
     private var sendDisabled = false
     @State private var draftHasChanged = false
     @State private var isShowingCamera = false
+    @State private var isShowingFileSelection = false
+    @State private var isShowingPhotoLibrary = false
 
     @State var scrollView: UIScrollView?
 
-    @StateObject private var sheet = NewMessageSheet()
     @StateObject private var alert = NewMessageAlert()
 
     static var queue = DispatchQueue(label: "com.infomaniak.mail.saveDraft")
@@ -79,23 +74,50 @@ struct NewMessageView: View {
         return !autocompletion.isEmpty && focusedRecipientField != nil
     }
 
-    init(mailboxManager: MailboxManager, draft: UnmanagedDraft? = nil) {
+    private init(mailboxManager: MailboxManager, draft: UnmanagedDraft) {
         _mailboxManager = State(initialValue: mailboxManager)
-        let selectedMailboxItem = AccountManager.instance.mailboxes
+        let currentAccountSelectedMailboxItem = AccountManager.instance.mailboxes
             .firstIndex { $0.mailboxId == mailboxManager.mailbox.mailboxId } ?? 0
-        _selectedMailboxItem = State(initialValue: selectedMailboxItem)
-        var initialDraft = draft ?? UnmanagedDraft()
-        if let signatureResponse = mailboxManager.getSignatureResponse() {
-            if !initialDraft.didSetSignature {
-                initialDraft.setSignature(signatureResponse)
-                initialDraft.didSetSignature = true
-            }
-            sendDisabled = false
-        } else {
-            sendDisabled = true
+        _selectedMailboxItem = State(initialValue: currentAccountSelectedMailboxItem)
+
+        var initialDraft = draft
+        if initialDraft.identityId.isEmpty,
+           let signature = mailboxManager.getSignatureResponse() {
+            initialDraft.setSignature(signature)
         }
+        sendDisabled = mailboxManager.getSignatureResponse() == nil
         initialDraft.delay = UserDefaults.shared.cancelSendDelay.rawValue
         _draft = State(initialValue: initialDraft)
+    }
+
+    static func newMessage(mailboxManager: MailboxManager) -> ComposeMessageView {
+        return ComposeMessageView(mailboxManager: mailboxManager, draft: .empty())
+    }
+
+    static func replyOrForwardMessage(messageReply: MessageReply, mailboxManager: MailboxManager) -> ComposeMessageView {
+        let message = messageReply.message
+        // If message doesn't exist anymore try to show the frozen one
+        let realm = mailboxManager.getRealm()
+        realm.refresh()
+        let freshMessage = message.fresh(using: realm) ?? message
+        return ComposeMessageView(mailboxManager: mailboxManager, draft: .replying(to: freshMessage, mode: messageReply.replyMode))
+    }
+
+    static func editDraft(draft: Draft, mailboxManager: MailboxManager) -> ComposeMessageView {
+        return ComposeMessageView(mailboxManager: mailboxManager, draft: draft.asUnmanaged())
+    }
+
+    static func writingTo(recipient: Recipient, mailboxManager: MailboxManager) -> ComposeMessageView {
+        return ComposeMessageView(mailboxManager: mailboxManager, draft: .writing(to: recipient))
+    }
+
+    static func mailTo(urlComponents: URLComponents, mailboxManager: MailboxManager) -> ComposeMessageView {
+        let draft = UnmanagedDraft.mailTo(subject: urlComponents.getQueryItem(named: "subject"),
+                                          body: urlComponents.getQueryItem(named: "body"),
+                                          to: [Recipient(email: urlComponents.path, name: "")],
+                                          cc: Recipient.createListUsing(from: urlComponents, name: "cc"),
+                                          bcc: Recipient.createListUsing(from: urlComponents, name: "bcc"))
+        return ComposeMessageView(mailboxManager: mailboxManager, draft: draft)
     }
 
     var body: some View {
@@ -131,24 +153,24 @@ struct NewMessageView: View {
                             TextField("", text: $draft.subject)
                         }
 
-                        if let attachments = draft.attachments?.filter { $0.contentId == nil }, !attachments.isEmpty {
-                            ScrollView(.horizontal, showsIndicators: false) {
-                                HStack(spacing: 8) {
-                                    ForEach(attachments) { attachment in
-                                        AttachmentCell(attachment: attachment)
+                            if let attachments = draft.attachments?.filter { $0.contentId == nil }, !attachments.isEmpty {
+                                ScrollView(.horizontal, showsIndicators: false) {
+                                    HStack(spacing: 8) {
+                                        ForEach(attachments) { attachment in
+                                            AttachmentCell(attachment: attachment)
+                                        }
                                     }
+                                    .padding(.vertical, 1)
                                 }
-                                .padding(.vertical, 1)
+                                .padding(.horizontal, 16)
                             }
-                            .padding(.horizontal, 16)
+                            RichTextEditor(model: $editor, body: $draft.body)
+                                .ignoresSafeArea(.all, edges: .bottom)
+                                .frame(height: editor.height + 20)
+                                .padding([.vertical], 10)
                         }
-                        RichTextEditor(model: $editor, body: $draft.body)
-                            .ignoresSafeArea(.all, edges: .bottom)
-                            .frame(height: editor.height + 20)
-                            .padding([.vertical], 10)
                     }
                 }
-            }
             .introspectScrollView { scrollView in
                 self.scrollView = scrollView
             }
@@ -164,25 +186,10 @@ struct NewMessageView: View {
             .navigationBarTitleDisplayMode(.inline)
             .navigationBarBackButtonHidden(true)
             .navigationBarItems(
-                leading: Button {
-                    self.dismiss()
-                } label: {
+                leading: Button(action: dismiss.callAsFunction) {
                     Label(MailResourcesStrings.Localizable.buttonClose, systemImage: "xmark")
                 },
-                trailing: Button {
-                    Task {
-                        if let cancelableResponse = await send() {
-                            IKSnackBar.showCancelableSnackBar(
-                                message: MailResourcesStrings.Localizable.emailSentSnackbar,
-                                cancelSuccessMessage: MailResourcesStrings.Localizable.canceledEmailSendingConfirmationSnackbar,
-                                duration: .custom(CGFloat(draft.delay ?? 3)),
-                                undoRedoAction: UndoRedoAction(undo: cancelableResponse, redo: nil),
-                                mailboxManager: mailboxManager
-                            )
-                            self.dismiss()
-                        }
-                    }
-                } label: {
+                trailing: Button(action: send) {
                     Image(resource: MailResourcesAsset.send)
                 }
                 .disabled(sendDisabled)
@@ -200,9 +207,10 @@ struct NewMessageView: View {
             draft.setSignature(signatureResponse)
         }
         .onAppear {
-            editor.richTextEditor.sheet = sheet
             editor.richTextEditor.alert = alert
             editor.richTextEditor.isShowingCamera = $isShowingCamera
+            editor.richTextEditor.isShowingFileSelection = $isShowingFileSelection
+            editor.richTextEditor.isShowingPhotoLibrary = $isShowingPhotoLibrary
             showCc = !draft.bcc.isEmpty || !draft.cc.isEmpty
         }
         .onDisappear {
@@ -221,22 +229,18 @@ struct NewMessageView: View {
             }
             .ignoresSafeArea()
         }
-        .sheet(isPresented: $sheet.isShowing) {
-            switch sheet.state {
-            case .fileSelection:
-                DocumentPicker { urls in
-                    Task {
-                        await addDocumentAttachment(urls: urls)
-                    }
+        .sheet(isPresented: $isShowingFileSelection) {
+            DocumentPicker { urls in
+                Task {
+                    await addDocumentAttachment(urls: urls)
                 }
-            case .photoLibrary:
-                ImagePicker { results in
-                    Task {
-                        await addImageAttachment(results: results)
-                    }
+            }
+        }
+        .sheet(isPresented: $isShowingPhotoLibrary) {
+            ImagePicker { results in
+                Task {
+                    await addImageAttachment(results: results)
                 }
-            case .none:
-                EmptyView()
             }
         }
         .customAlert(isPresented: $alert.isShowing) {
@@ -251,24 +255,60 @@ struct NewMessageView: View {
         .defaultAppStorage(.shared)
     }
 
-    @MainActor private func send() async -> CancelableResponse? {
-        // Cancel any scheduled save
-        debouncedBufferWrite?.cancel()
-        do {
-            draftHasChanged = false
-            return try await mailboxManager.send(draft: draft)
-        } catch {
-            IKSnackBar.showSnackBar(message: error.localizedDescription)
-            return nil
+    @ViewBuilder
+    private func recipientCell(type: RecipientFieldType) -> some View {
+        let shouldDisplayField = !shouldDisplayAutocompletion || focusedRecipientField == type
+        if shouldDisplayField {
+            NewMessageCell(title: type.title, showCc: type == .to ? $showCc : nil) {
+                RecipientField(recipients: binding(for: type),
+                               autocompletion: $autocompletion,
+                               addRecipientHandler: $addRecipientHandler,
+                               focusedField: _focusedRecipientField,
+                               type: type)
+            }
         }
     }
 
-    @MainActor private func saveDraft(showSnackBar: Bool = false) async {
+    private func binding(for type: RecipientFieldType) -> Binding<[Recipient]> {
+        let binding: Binding<[Recipient]>
+        switch type {
+        case .to:
+            binding = $draft.to
+        case .cc:
+            binding = $draft.cc
+        case .bcc:
+            binding = $draft.bcc
+        }
+        return binding
+    }
+
+    private func send() {
+        Task {
+            // Cancel any scheduled save
+            debouncedBufferWrite?.cancel()
+            do {
+                draftHasChanged = false
+                let cancelableResponse = try await mailboxManager.send(draft: draft)
+                IKSnackBar.showCancelableSnackBar(
+                    message: MailResourcesStrings.Localizable.emailSentSnackbar,
+                    cancelSuccessMessage: MailResourcesStrings.Localizable.canceledEmailSendingConfirmationSnackbar,
+                    duration: .custom(CGFloat(draft.delay ?? 3)),
+                    undoRedoAction: UndoRedoAction(undo: cancelableResponse, redo: nil),
+                    mailboxManager: mailboxManager
+                )
+                dismiss()
+            } catch {
+                IKSnackBar.showSnackBar(message: error.localizedDescription)
+            }
+        }
+    }
+
+    private func saveDraft(showSnackBar: Bool = false) async {
         editor.richTextEditor.getHTML { [self] html in
             Task {
                 self.draft.body = html!
 
-                let response = try await mailboxManager.save(draft: draft)
+                let response = await mailboxManager.save(draft: draft)
                 self.draft.uuid = response.uuid
                 draftHasChanged = false
                 if let error = response.error {
@@ -291,38 +331,8 @@ struct NewMessageView: View {
                 await saveDraft()
             }
         }
-        NewMessageView.queue.asyncAfter(deadline: .now() + saveExpiration, execute: debouncedWorkItem)
+        ComposeMessageView.queue.asyncAfter(deadline: .now() + saveExpiration, execute: debouncedWorkItem)
         debouncedBufferWrite = debouncedWorkItem
-    }
-
-    private func shouldDisplay(field: RecipientFieldType) -> Bool {
-        return !shouldDisplayAutocompletion || focusedRecipientField == field
-    }
-
-    private func binding(for type: RecipientFieldType) -> Binding<[Recipient]> {
-        let binding: Binding<[Recipient]>
-        switch type {
-        case .to:
-            binding = $draft.to
-        case .cc:
-            binding = $draft.cc
-        case .bcc:
-            binding = $draft.bcc
-        }
-        return binding
-    }
-
-    @ViewBuilder
-    private func recipientCell(type: RecipientFieldType) -> some View {
-        if shouldDisplay(field: type) {
-            NewMessageCell(title: type.title, showCc: type == .to ? $showCc : nil) {
-                RecipientField(recipients: binding(for: type),
-                               autocompletion: $autocompletion,
-                               addRecipientHandler: $addRecipientHandler,
-                               focusedField: _focusedRecipientField,
-                               type: type)
-            }
-        }
     }
 
     private func deleteDraft(messageUid: String) {
@@ -369,7 +379,7 @@ struct NewMessageView: View {
         }
     }
 
-    func addImageAttachment(
+    private func addImageAttachment(
         results: [PHPickerResult],
         disposition: AttachmentDisposition = .attachment,
         completion: @escaping (String) -> Void = { _ in
@@ -402,7 +412,7 @@ struct NewMessageView: View {
         }
     }
 
-    func addCameraAttachment(
+    private func addCameraAttachment(
         data: Data,
         disposition: AttachmentDisposition = .attachment,
         completion: @escaping (String) -> Void = { _ in
@@ -428,7 +438,7 @@ struct NewMessageView: View {
         }
     }
 
-    func loadFileRepresentation(_ itemProvider: NSItemProvider, typeIdentifier: String) async throws -> URL {
+    private func loadFileRepresentation(_ itemProvider: NSItemProvider, typeIdentifier: String) async throws -> URL {
         try await withCheckedThrowingContinuation { continuation in
             itemProvider.loadFileRepresentation(forTypeIdentifier: typeIdentifier) { url, error in
                 if let url = url {
@@ -440,25 +450,25 @@ struct NewMessageView: View {
         }
     }
 
-    public nonisolated func getDefaultFileName() -> String {
+    private nonisolated func getDefaultFileName() -> String {
         let formatter = DateFormatter()
         formatter.dateFormat = "yyyyMMdd_HHmmssSS"
         return formatter.string(from: Date())
     }
 
-    func sendAttachment(url: URL,
-                        typeIdentifier: String,
-                        name: String,
-                        disposition: AttachmentDisposition) async throws -> Attachment? {
+    private func sendAttachment(url: URL,
+                                typeIdentifier: String,
+                                name: String,
+                                disposition: AttachmentDisposition) async throws -> Attachment? {
         let data = try Data(contentsOf: url)
 
         return try await sendAttachment(from: data, typeIdentifier: typeIdentifier, name: name, disposition: disposition)
     }
 
-    func sendAttachment(from data: Data,
-                        typeIdentifier: String,
-                        name: String,
-                        disposition: AttachmentDisposition) async throws -> Attachment? {
+    private func sendAttachment(from data: Data,
+                                typeIdentifier: String,
+                                name: String,
+                                disposition: AttachmentDisposition) async throws -> Attachment? {
         let uti = UTType(typeIdentifier)
         var name = name
         if let nameExtension = uti?.preferredFilenameExtension, !name.capitalized.hasSuffix(nameExtension.capitalized) {
@@ -476,7 +486,7 @@ struct NewMessageView: View {
         return attachment
     }
 
-    func addAttachment(_ attachment: Attachment) {
+    private func addAttachment(_ attachment: Attachment) {
         if draft.attachments == nil {
             draft.attachments = [attachment]
         } else {
@@ -487,6 +497,6 @@ struct NewMessageView: View {
 
 struct NewMessageView_Previews: PreviewProvider {
     static var previews: some View {
-        NewMessageView(mailboxManager: PreviewHelper.sampleMailboxManager)
+        ComposeMessageView.newMessage(mailboxManager: PreviewHelper.sampleMailboxManager)
     }
 }

@@ -25,7 +25,8 @@ struct ContactActionsView: View {
     var recipient: Recipient
     var isRemoteContact: Bool
     @ObservedObject var bottomSheet: MessageBottomSheet
-    @ObservedObject var sheet: MessageSheet
+    var mailboxManager: MailboxManager
+    @State private var writtenToRecipient: Recipient?
 
     private struct ContactAction: Hashable {
         let name: String
@@ -82,18 +83,22 @@ struct ContactActionsView: View {
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(.horizontal, 24)
+        .sheet(item: $writtenToRecipient) { writtenToRecipient in
+            ComposeMessageView.writingTo(recipient: writtenToRecipient, mailboxManager: mailboxManager)
+        }
     }
 
     // MARK: - Actions
 
     private func handleAction(_ action: ContactAction) {
-        bottomSheet.close()
         switch action {
         case .writeEmailAction:
             writeEmail()
         case .addContactsAction:
+            bottomSheet.close()
             addToContacts()
         case .copyEmailAction:
+            bottomSheet.close()
             copyEmail()
         default:
             return
@@ -101,7 +106,7 @@ struct ContactActionsView: View {
     }
 
     private func writeEmail() {
-        sheet.state = .write(to: recipient)
+        writtenToRecipient = recipient
     }
 
     private func addToContacts() {
@@ -122,8 +127,8 @@ struct ContactActionsView: View {
 struct ContactActionsView_Previews: PreviewProvider {
     static var previews: some View {
         ContactActionsView(recipient: PreviewHelper.sampleRecipient1,
-                    isRemoteContact: false,
-                    bottomSheet: MessageBottomSheet(),
-                    sheet: MessageSheet())
+                           isRemoteContact: false,
+                           bottomSheet: MessageBottomSheet(),
+                           mailboxManager: PreviewHelper.sampleMailboxManager)
     }
 }

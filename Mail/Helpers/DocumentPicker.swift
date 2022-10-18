@@ -22,7 +22,7 @@ import UniformTypeIdentifiers
 
 struct DocumentPicker: UIViewControllerRepresentable {
     var completion: ([URL]) -> Void
-    @Environment(\.presentationMode) private var presentationMode
+    @Environment(\.dismiss) private var dismiss
 
     func makeCoordinator() -> DocumentPicker.Coordinator {
         return DocumentPicker.Coordinator(parent: self)
@@ -40,7 +40,7 @@ struct DocumentPicker: UIViewControllerRepresentable {
         _ uiViewController: DocumentPicker.UIViewControllerType,
         context: UIViewControllerRepresentableContext<DocumentPicker>
     ) {
-        // Empty on prupose
+        // Empty on purpose
     }
 
     class Coordinator: NSObject, UIDocumentPickerDelegate {
@@ -52,7 +52,7 @@ struct DocumentPicker: UIViewControllerRepresentable {
 
         func documentPicker(_ controller: UIDocumentPickerViewController, didPickDocumentsAt urls: [URL]) {
             parent.completion(urls)
-            parent.presentationMode.wrappedValue.dismiss()
+            parent.dismiss()
         }
     }
 }

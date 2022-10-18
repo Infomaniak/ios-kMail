@@ -22,7 +22,7 @@ import RealmSwift
 import SwiftUI
 
 struct AttachmentPreview: View {
-    @Binding var isPresented: Bool
+    @Environment(\.dismiss) private var dismiss
     @ObservedRealmObject var attachment: Attachment
 
     @Environment(\.verticalSizeClass) var sizeClass
@@ -40,7 +40,7 @@ struct AttachmentPreview: View {
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
                     Button {
-                        isPresented = false
+                        dismiss()
                     } label: {
                         Label(MailResourcesStrings.Localizable.buttonClose, systemImage: "xmark")
                     }
@@ -81,6 +81,6 @@ struct AttachmentPreview: View {
 
 struct AttachmentPreview_Previews: PreviewProvider {
     static var previews: some View {
-        AttachmentPreview(isPresented: .constant(true), attachment: PreviewHelper.sampleAttachment)
+        AttachmentPreview(attachment: PreviewHelper.sampleAttachment)
     }
 }

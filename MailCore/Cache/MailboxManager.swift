@@ -1007,7 +1007,6 @@ public class MailboxManager: ObservableObject {
             // Get draft from Realm to keep local saved properties
             if let savedDraft = realm.object(ofType: Draft.self, forPrimaryKey: draft.uuid) {
                 draft.isOffline = savedDraft.isOffline
-                draft.didSetSignature = savedDraft.didSetSignature
                 draft.messageUid = message.uid
             }
 

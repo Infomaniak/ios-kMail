@@ -100,7 +100,9 @@ public struct UnmanagedDraft: Equatable, Encodable, AbstractDraft {
     public var priority: MessagePriority
     public var action: SaveDraftOption?
     public var delay: Int?
-    public var didSetSignature = false
+    public var didSetSignature: Bool {
+        return !identityId.isEmpty
+    }
 
     public var hasLocalUuid: Bool {
         return uuid.isEmpty || uuid.starts(with: Draft.uuidLocalPrefix)
@@ -133,28 +135,27 @@ public struct UnmanagedDraft: Equatable, Encodable, AbstractDraft {
         }
     }
 
-    public init(uuid: String = "",
-                subject: String = "",
-                body: String = "",
-                quote: String = "",
-                mimeType: String = UTType.html.preferredMIMEType!,
-                from: [Recipient] = [],
-                replyTo: [Recipient] = [],
-                to: [Recipient] = [],
-                cc: [Recipient] = [],
-                bcc: [Recipient] = [],
-                inReplyTo: String? = nil,
-                inReplyToUid: String? = nil,
-                forwardedUid: String? = nil,
-                attachments: [Attachment]? = nil,
-                identityId: String = "",
-                messageUid: String? = nil,
-                ackRequest: Bool = false,
-                stUuid: String? = nil,
-                priority: MessagePriority = .normal,
-                action: SaveDraftOption? = nil,
-                didSetSignature: Bool = false,
-                delay: Int? = UserDefaults.shared.cancelSendDelay.rawValue) {
+    private init(uuid: String = "",
+                 subject: String = "",
+                 body: String = "",
+                 quote: String = "",
+                 mimeType: String = UTType.html.preferredMIMEType!,
+                 from: [Recipient] = [],
+                 replyTo: [Recipient] = [],
+                 to: [Recipient] = [],
+                 cc: [Recipient] = [],
+                 bcc: [Recipient] = [],
+                 inReplyTo: String? = nil,
+                 inReplyToUid: String? = nil,
+                 forwardedUid: String? = nil,
+                 attachments: [Attachment]? = nil,
+                 identityId: String = "",
+                 messageUid: String? = nil,
+                 ackRequest: Bool = false,
+                 stUuid: String? = nil,
+                 priority: MessagePriority = .normal,
+                 action: SaveDraftOption? = nil,
+                 delay: Int? = UserDefaults.shared.cancelSendDelay.rawValue) {
         self.uuid = uuid
         self.subject = subject
         self.body = body
@@ -175,7 +176,6 @@ public struct UnmanagedDraft: Equatable, Encodable, AbstractDraft {
         self.stUuid = stUuid
         self.priority = priority
         self.action = action
-        self.didSetSignature = didSetSignature
         self.delay = delay
     }
 
@@ -242,6 +242,20 @@ public struct UnmanagedDraft: Equatable, Encodable, AbstractDraft {
         return recipient.map(\.email).joined(separator: ",")
     }
 
+    public static func mailTo(subject: String?,
+                              body: String?,
+                              to: [Recipient], cc: [Recipient], bcc: [Recipient]) -> UnmanagedDraft {
+        return UnmanagedDraft(subject: subject ?? "",
+                              body: body ?? "",
+                              to: to,
+                              cc: cc,
+                              bcc: bcc)
+    }
+
+    public static func empty() -> UnmanagedDraft {
+        return UnmanagedDraft()
+    }
+
     public static func writing(to recipient: Recipient) -> UnmanagedDraft {
         return UnmanagedDraft(to: [recipient.detached()])
     }
@@ -294,6 +308,25 @@ public struct UnmanagedDraft: Equatable, Encodable, AbstractDraft {
                               attachments: attachments)
     }
 
+    public static func toUnmanaged(managedDraft: Draft) -> UnmanagedDraft {
+        return UnmanagedDraft(uuid: managedDraft.uuid,
+                              subject: managedDraft.subject ?? "",
+                              body: managedDraft.body,
+                              quote: managedDraft.quote ?? "",
+                              mimeType: managedDraft.mimeType,
+                              to: Array(managedDraft.to),
+                              cc: Array(managedDraft.cc),
+                              bcc: Array(managedDraft.bcc),
+                              inReplyTo: managedDraft.inReplyTo,
+                              inReplyToUid: managedDraft.inReplyToUid,
+                              forwardedUid: managedDraft.forwardedUid,
+                              identityId: managedDraft.identityId ?? "",
+                              messageUid: managedDraft.messageUid,
+                              ackRequest: managedDraft.ackRequest,
+                              stUuid: managedDraft.stUuid,
+                              priority: managedDraft.priority)
+    }
+
     public func asManaged() -> Draft {
         return Draft(uuid: uuid,
                      identityId: identityId,
@@ -310,8 +343,7 @@ public struct UnmanagedDraft: Equatable, Encodable, AbstractDraft {
                      subject: subject,
                      ackRequest: ackRequest,
                      priority: priority,
-                     stUuid: stUuid,
-                     didSetSignature: didSetSignature)
+                     stUuid: stUuid)
     }
 
     public mutating func setSignature(_ signatureResponse: SignatureResponse) {
@@ -354,7 +386,6 @@ public class Draft: Object, Decodable, Identifiable, AbstractDraft {
     @Persisted public var stUuid: String?
     @Persisted public var attachments: List<Attachment>
     @Persisted public var isOffline = true
-    @Persisted public var didSetSignature = false
 
     public var hasLocalUuid: Bool {
         return uuid.isEmpty || uuid.starts(with: Draft.uuidLocalPrefix)
@@ -426,8 +457,7 @@ public class Draft: Object, Decodable, Identifiable, AbstractDraft {
                             priority: MessagePriority = .normal,
                             stUuid: String? = nil,
                             attachments: [Attachment]? = nil,
-                            isOffline: Bool = true,
-                            didSetSignature: Bool = false) {
+                            isOffline: Bool = true) {
         self.init()
 
         self.uuid = uuid
@@ -450,26 +480,9 @@ public class Draft: Object, Decodable, Identifiable, AbstractDraft {
         self.stUuid = stUuid
         self.attachments = attachments?.toRealmList() ?? List()
         self.isOffline = isOffline
-        self.didSetSignature = didSetSignature
     }
 
     public func asUnmanaged() -> UnmanagedDraft {
-        return UnmanagedDraft(uuid: uuid,
-                              subject: subject ?? "",
-                              body: body,
-                              quote: quote ?? "",
-                              mimeType: mimeType,
-                              to: Array(to),
-                              cc: Array(cc),
-                              bcc: Array(bcc),
-                              inReplyTo: inReplyTo,
-                              inReplyToUid: inReplyToUid,
-                              forwardedUid: forwardedUid,
-                              identityId: identityId ?? "",
-                              messageUid: messageUid,
-                              ackRequest: ackRequest,
-                              stUuid: stUuid,
-                              priority: priority,
-                              didSetSignature: didSetSignature)
+        return .toUnmanaged(managedDraft: self)
     }
 }
