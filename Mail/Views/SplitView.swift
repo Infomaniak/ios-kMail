@@ -152,7 +152,7 @@ struct SplitView: View {
         .floatingPanel(state: bottomSheet) {
             switch bottomSheet.state {
             case let .move(moveHandler):
-                MoveEmailView(mailboxManager: mailboxManager, state: bottomSheet, globalAlert: alert, moveHandler: moveHandler)
+                MoveEmailView(mailboxManager: mailboxManager, currentFolderId: splitViewManager.selectedFolder?.id, state: bottomSheet, globalAlert: alert, moveHandler: moveHandler)
             case .getMoreStorage:
                 MoreStorageView(state: bottomSheet)
             case .restoreEmails:
