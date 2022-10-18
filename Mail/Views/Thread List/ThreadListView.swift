@@ -77,48 +77,42 @@ struct ThreadListView: View {
                              }),
                              unreadFilterOn: $viewModel.filterUnreadOn)
 
-            ZStack {
-                MailResourcesAsset.backgroundColor.swiftUiColor
-
-                ScrollViewReader { proxy in
-                    List {
-                        ForEach(viewModel.sections) { section in
-                            Section {
-                                threadList(threads: section.threads)
-                            } header: {
-                                if threadDensity != .compact {
-                                    Text(section.title)
-                                        .textStyle(.calloutSection)
-                                }
+            ScrollViewReader { proxy in
+                List {
+                    ForEach(viewModel.sections) { section in
+                        Section {
+                            threadList(threads: section.threads)
+                        } header: {
+                            if threadDensity != .compact {
+                                Text(section.title)
+                                    .textStyle(.calloutSection)
                             }
                         }
+                    }
 
-                        if viewModel.isLoadingPage {
-                            HStack {
-                                Spacer()
-                                ProgressView()
-                                Spacer()
-                            }
-                            .listRowSeparator(.hidden)
-                            .listRowBackground(MailResourcesAsset.backgroundColor.swiftUiColor)
-                        }
-
-                        Spacer()
-                            .frame(height: multipleSelectionViewModel.isEnabled ? 75 : 85)
+                    if viewModel.isLoadingPage {
+                        ProgressView()
+                            .id(UUID())
+                            .frame(maxWidth: .infinity)
                             .listRowSeparator(.hidden)
                             .listRowBackground(MailResourcesAsset.backgroundColor.swiftUiColor)
                     }
-                    .listStyle(.plain)
-                    .onAppear {
-                        viewModel.scrollViewProxy = proxy
-                    }
-                }
 
-                if viewModel.folder?.lastUpdate != nil && viewModel.sections.isEmpty && !viewModel.isLoadingPage {
-                    EmptyListView()
+                    if viewModel.folder?.lastUpdate != nil && viewModel.sections.isEmpty && !viewModel.isLoadingPage {
+                        EmptyListView()
+                    }
+
+                    Spacer()
+                        .frame(height: multipleSelectionViewModel.isEnabled ? 75 : 85)
+                        .listRowSeparator(.hidden)
+                        .listRowBackground(MailResourcesAsset.backgroundColor.swiftUiColor)
                 }
+                .listStyle(.plain)
+                .onAppear {
+                    viewModel.scrollViewProxy = proxy
+                }
+                .appShadow()
             }
-            .appShadow()
         }
         .backButtonDisplayMode(.minimal)
         .navigationBarAppStyle()
