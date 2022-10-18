@@ -41,9 +41,9 @@ class AccountListViewModel: ObservableObject {
             .sorted(by: \.mailboxId)
             .observe(on: DispatchQueue.main) { [weak self] results in
                 switch results {
-                case .initial(let mailboxes):
+                case let .initial(mailboxes):
                     self?.handleMailboxChanged(Array(mailboxes))
-                case .update(let mailboxes, _, _, _):
+                case let .update(mailboxes, _, _, _):
                     withAnimation {
                         self?.handleMailboxChanged(Array(mailboxes))
                     }
@@ -82,7 +82,7 @@ struct AccountListView: View {
             viewModel.isShowingNewAccountView = true
         }
         .sheet(isPresented: $viewModel.isShowingNewAccountView) {
-            OnboardingView(isPresentedModally: true, page: 4)
+            OnboardingView(isPresentedModally: true, page: 4, isScrollEnabled: false)
         }
         .task {
             try? await updateUsers()
