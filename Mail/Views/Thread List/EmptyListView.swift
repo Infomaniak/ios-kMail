@@ -22,15 +22,16 @@ import SwiftUI
 
 struct EmptyListView: View {
     @AppStorage(UserDefaults.shared.key(.accentColor)) var accentColor = AccentColor.pink
+    var isInbox: Bool
 
     var body: some View {
         VStack {
             Image(resource: accentColor.zeroMailImage)
                 .padding(24)
-            Text(MailResourcesStrings.Localizable.noEmailTitle)
+            Text(isInbox ? MailResourcesStrings.Localizable.noEmailTitle : MailResourcesStrings.Localizable.emptyFolderTitle)
                 .textStyle(.header2)
                 .padding(.bottom, 4)
-            Text(MailResourcesStrings.Localizable.noEmailDescription)
+            Text(isInbox ? MailResourcesStrings.Localizable.noEmailDescription : MailResourcesStrings.Localizable.emptyFolderDescription)
                 .textStyle(.bodySecondary)
                 .multilineTextAlignment(.center)
         }
@@ -42,6 +43,6 @@ struct EmptyListView: View {
 
 struct EmptyListView_Previews: PreviewProvider {
     static var previews: some View {
-        EmptyListView()
+        EmptyListView(isInbox: true)
     }
 }
