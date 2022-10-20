@@ -220,6 +220,7 @@ struct SearchView: View {
             ForEach(contacts) { contact in
                 RecipientAutocompletionCell(recipient: contact)
                     .onTapGesture {
+                        Constants.globallyResignFirstResponder()
                         viewModel.searchThreadsForContact(contact)
                     }
             }
@@ -240,6 +241,7 @@ struct SearchView: View {
             ForEach(history.history, id: \.self) { searchItem in
                 Text(searchItem)
                     .onTapGesture {
+                        Constants.globallyResignFirstResponder()
                         viewModel.searchValue = searchItem
                         Task {
                             await viewModel.fetchThreads()
