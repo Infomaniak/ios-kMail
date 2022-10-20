@@ -153,24 +153,28 @@ struct ComposeMessageView: View {
                             TextField("", text: $draft.subject)
                         }
 
-                            if let attachments = draft.attachments?.filter { $0.contentId == nil }, !attachments.isEmpty {
-                                ScrollView(.horizontal, showsIndicators: false) {
-                                    HStack(spacing: 8) {
-                                        ForEach(attachments) { attachment in
-                                            AttachmentCell(attachment: attachment)
-                                        }
+                        if let attachments = draft.attachments?.filter { $0.contentId == nil }, !attachments.isEmpty {
+                            ScrollView(.horizontal, showsIndicators: false) {
+                                HStack(spacing: 8) {
+                                    ForEach(attachments) { attachment in
+                                        AttachmentCell(attachment: attachment)
                                     }
-                                    .padding(.vertical, 1)
                                 }
-                                .padding(.horizontal, 16)
+                                .padding(.vertical, 1)
                             }
-                            RichTextEditor(model: $editor, body: $draft.body)
-                                .ignoresSafeArea(.all, edges: .bottom)
-                                .frame(height: editor.height + 20)
-                                .padding([.vertical], 10)
+                            .padding(.horizontal, 16)
                         }
+                        RichTextEditor(model: $editor,
+                                       body: $draft.body,
+                                       isShowingCamera: $isShowingCamera,
+                                       isShowingFileSelection: $isShowingFileSelection,
+                                       isShowingPhotoLibrary: $isShowingPhotoLibrary)
+                            .ignoresSafeArea(.all, edges: .bottom)
+                            .frame(height: editor.height + 20)
+                            .padding([.vertical], 10)
                     }
                 }
+            }
             .introspectScrollView { scrollView in
                 self.scrollView = scrollView
             }
@@ -207,10 +211,7 @@ struct ComposeMessageView: View {
             draft.setSignature(signatureResponse)
         }
         .onAppear {
-            editor.richTextEditor.alert = alert
-            editor.richTextEditor.isShowingCamera = $isShowingCamera
-            editor.richTextEditor.isShowingFileSelection = $isShowingFileSelection
-            editor.richTextEditor.isShowingPhotoLibrary = $isShowingPhotoLibrary
+            // editor.richTextEditor.alert = alert
             showCc = !draft.bcc.isEmpty || !draft.cc.isEmpty
         }
         .onDisappear {
@@ -304,22 +305,16 @@ struct ComposeMessageView: View {
     }
 
     private func saveDraft(showSnackBar: Bool = false) async {
-        editor.richTextEditor.getHTML { [self] html in
-            Task {
-                self.draft.body = html!
-
-                let response = await mailboxManager.save(draft: draft)
-                self.draft.uuid = response.uuid
-                draftHasChanged = false
-                if let error = response.error {
-                    IKSnackBar.showSnackBar(message: error.localizedDescription)
-                } else if showSnackBar {
-                    IKSnackBar.showSnackBar(message: MailResourcesStrings.Localizable.snackBarDraftSaved,
-                                            action: .init(title: MailResourcesStrings.Localizable.actionDelete) {
-                                                deleteDraft(messageUid: response.uuid)
-                                            })
-                }
-            }
+        let response = await mailboxManager.save(draft: draft)
+        draft.uuid = response.uuid
+        draftHasChanged = false
+        if let error = response.error {
+            IKSnackBar.showSnackBar(message: error.localizedDescription)
+        } else if showSnackBar {
+            IKSnackBar.showSnackBar(message: MailResourcesStrings.Localizable.snackBarDraftSaved,
+                                    action: .init(title: MailResourcesStrings.Localizable.actionDelete) {
+                                        deleteDraft(messageUid: response.uuid)
+                                    })
         }
     }
 
