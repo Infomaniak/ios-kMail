@@ -301,7 +301,7 @@ enum SearchState {
         isLoading = true
         await tryOrDisplayError {
             let threadResult = try await mailboxManager.searchThreads(
-                searchFolder: searchFolder,
+                searchFolder: searchFolder.freeze(),
                 from: resource,
                 searchFilter: searchFilters
             )
