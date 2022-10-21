@@ -153,24 +153,24 @@ struct ComposeMessageView: View {
                             TextField("", text: $draft.subject)
                         }
 
-                            if let attachments = draft.attachments?.filter { $0.contentId == nil }, !attachments.isEmpty {
-                                ScrollView(.horizontal, showsIndicators: false) {
-                                    HStack(spacing: 8) {
-                                        ForEach(attachments) { attachment in
-                                            AttachmentCell(attachment: attachment)
-                                        }
+                        if let attachments = draft.attachments?.filter { $0.contentId == nil }, !attachments.isEmpty {
+                            ScrollView(.horizontal, showsIndicators: false) {
+                                HStack(spacing: 8) {
+                                    ForEach(attachments) { attachment in
+                                        AttachmentCell(attachment: attachment)
                                     }
-                                    .padding(.vertical, 1)
                                 }
-                                .padding(.horizontal, 16)
+                                .padding(.vertical, 1)
                             }
-                            RichTextEditor(model: $editor, body: $draft.body)
-                                .ignoresSafeArea(.all, edges: .bottom)
-                                .frame(height: editor.height + 20)
-                                .padding([.vertical], 10)
+                            .padding(.horizontal, 16)
                         }
+                        RichTextEditor(model: $editor, body: $draft.body)
+                            .ignoresSafeArea(.all, edges: .bottom)
+                            .frame(height: editor.height + 20)
+                            .padding([.vertical], 10)
                     }
                 }
+            }
             .introspectScrollView { scrollView in
                 self.scrollView = scrollView
             }
