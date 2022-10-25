@@ -67,16 +67,18 @@ struct OnboardingView: View {
                     .frame(height: Constants.onboardingLogoHeight)
                     .padding(.top, isPresentedModally ? 15 : 0)
 
-                HStack {
-                    Button {
-                        dismiss.callAsFunction()
-                    } label: {
-                        Image(systemName: "xmark")
-                            .resizable()
+                if !isScrollEnabled {
+                    HStack {
+                        Button {
+                            dismiss.callAsFunction()
+                        } label: {
+                            Image(systemName: "xmark")
+                                .resizable()
+                        }
+                        .frame(width: 20, height: 20, alignment: .leading)
+                        .padding(16)
+                        Spacer()
                     }
-                    .frame(width: 20, height: 20, alignment: .leading)
-                    .padding(16)
-                    Spacer()
                 }
             }
 
