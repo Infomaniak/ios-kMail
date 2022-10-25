@@ -35,11 +35,13 @@ struct SlideView: View {
     var body: some View {
         GeometryReader { proxy in
             ZStack(alignment: .top) {
-                slide.backgroundImage
-                    .resizable(resizingMode: .stretch)
-                    .ignoresSafeArea()
-                    .fixedSize(horizontal: false, vertical: true)
-                    .foregroundColor(colorScheme == .light ? accentColor.secondary : MailResourcesAsset.backgroundColor)
+                if UIDevice.current.orientation.isPortrait || (UIDevice.current.userInterfaceIdiom == .pad) {
+                    slide.backgroundImage
+                        .resizable(resizingMode: .stretch)
+                        .ignoresSafeArea()
+                        .fixedSize(horizontal: false, vertical: true)
+                        .foregroundColor(colorScheme == .light ? accentColor.secondary : MailResourcesAsset.backgroundColor)
+                }
 
                 VStack(spacing: 0) {
                     Spacer(minLength: Constants.onboardingLogoHeight + Constants.onboardingVerticalPadding)
