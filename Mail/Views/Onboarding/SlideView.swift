@@ -35,7 +35,7 @@ struct SlideView: View {
     var body: some View {
         GeometryReader { proxy in
             ZStack(alignment: .top) {
-                if UIDevice.current.orientation.isPortrait || (UIDevice.current.userInterfaceIdiom == .pad) {
+                if (proxy.size.height > proxy.size.width) || (UIDevice.current.userInterfaceIdiom == .pad) {
                     slide.backgroundImage
                         .resizable(resizingMode: .stretch)
                         .ignoresSafeArea()
