@@ -78,6 +78,7 @@ public protocol AbstractDraft {
 // We need two draft models because of a bug in Realm…
 // https://github.com/realm/realm-swift/issues/7810
 public struct UnmanagedDraft: Equatable, Encodable, AbstractDraft {
+    public let localUUID = UUID().uuidString
     public var uuid: String
     public var subject: String
     public var body: String

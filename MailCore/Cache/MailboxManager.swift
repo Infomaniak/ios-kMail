@@ -1014,7 +1014,7 @@ public class MailboxManager: ObservableObject {
         return realm.objects(Draft.self).where { $0.messageUid == messageUid }.first
     }
 
-    public func localDraft(uuid: String, using realm: Realm? = nil) -> Draft? {
+    public func draft(uuid: String, using realm: Realm? = nil) -> Draft? {
         let realm = realm ?? getRealm()
         return realm.objects(Draft.self).where { $0.uuid == uuid }.first
     }

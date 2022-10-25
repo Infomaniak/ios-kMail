@@ -66,10 +66,6 @@ struct ComposeMessageView: View {
 
     @StateObject private var alert = NewMessageAlert()
 
-    static var queue = DispatchQueue(label: "com.infomaniak.mail.saveDraft")
-    @State var debouncedBufferWrite: DispatchWorkItem?
-    let saveExpiration = 3.0
-
     private var shouldDisplayAutocompletion: Bool {
         return !autocompletion.isEmpty && focusedRecipientField != nil
     }
@@ -193,15 +189,25 @@ struct ComposeMessageView: View {
                 leading: Button(action: dismiss.callAsFunction) {
                     Label(MailResourcesStrings.Localizable.buttonClose, systemImage: "xmark")
                 },
-                trailing: Button(action: send) {
+                trailing: Button(action: {
+                    draftHasChanged = false
+                    Task {
+                        await DraftManager.shared.send(draft: draft, mailboxManager: mailboxManager)
+                        dismiss()
+                    }
+                }, label: {
                     Image(resource: MailResourcesAsset.send)
-                }
+                })
                 .disabled(sendDisabled)
             )
             .background(MailResourcesAsset.backgroundColor.swiftUiColor)
         }
         .onChange(of: draft) { _ in
-            textDidChange()
+            Task {
+                draftHasChanged = true
+                let newDraftUUID = await DraftManager.shared.saveDraftIfNeeded(draft: draft, mailboxManager: mailboxManager)
+                draft.uuid = newDraftUUID
+            }
         }
         .onChange(of: selectedMailboxItem) { _ in
             let mailbox = AccountManager.instance.mailboxes[selectedMailboxItem]
@@ -211,15 +217,13 @@ struct ComposeMessageView: View {
             draft.setSignature(signatureResponse)
         }
         .onAppear {
-            // editor.richTextEditor.alert = alert
+            //editor.richTextEditor.alert = alert
             showCc = !draft.bcc.isEmpty || !draft.cc.isEmpty
         }
         .onDisappear {
-            if draftHasChanged {
-                debouncedBufferWrite?.cancel()
-                Task {
-                    await saveDraft(showSnackBar: true)
-                }
+            guard draftHasChanged else { return }
+            Task {
+                await DraftManager.shared.saveDraftIfNeeded(draft: draft, mailboxManager: mailboxManager, force: true)
             }
         }
         .fullScreenCover(isPresented: $isShowingCamera) {
@@ -281,73 +285,6 @@ struct ComposeMessageView: View {
             binding = $draft.bcc
         }
         return binding
-    }
-
-    private func send() {
-        Task {
-            // Cancel any scheduled save
-            debouncedBufferWrite?.cancel()
-            do {
-                draftHasChanged = false
-                let cancelableResponse = try await mailboxManager.send(draft: draft)
-                IKSnackBar.showCancelableSnackBar(
-                    message: MailResourcesStrings.Localizable.emailSentSnackbar,
-                    cancelSuccessMessage: MailResourcesStrings.Localizable.canceledEmailSendingConfirmationSnackbar,
-                    duration: .custom(CGFloat(draft.delay ?? 3)),
-                    undoRedoAction: UndoRedoAction(undo: cancelableResponse, redo: nil),
-                    mailboxManager: mailboxManager
-                )
-                dismiss()
-            } catch {
-                IKSnackBar.showSnackBar(message: error.localizedDescription)
-            }
-        }
-    }
-
-    private func saveDraft(showSnackBar: Bool = false) async {
-        let response = await mailboxManager.save(draft: draft)
-        draft.uuid = response.uuid
-        draftHasChanged = false
-        if let error = response.error {
-            IKSnackBar.showSnackBar(message: error.localizedDescription)
-        } else if showSnackBar {
-            IKSnackBar.showSnackBar(message: MailResourcesStrings.Localizable.snackBarDraftSaved,
-                                    action: .init(title: MailResourcesStrings.Localizable.actionDelete) {
-                                        deleteDraft(messageUid: response.uuid)
-                                    })
-        }
-    }
-
-    private func textDidChange() {
-        draftHasChanged = true
-        debouncedBufferWrite?.cancel()
-        let debouncedWorkItem = DispatchWorkItem {
-            Task {
-                await saveDraft()
-            }
-        }
-        ComposeMessageView.queue.asyncAfter(deadline: .now() + saveExpiration, execute: debouncedWorkItem)
-        debouncedBufferWrite = debouncedWorkItem
-    }
-
-    private func deleteDraft(messageUid: String) {
-        // Convert draft to thread
-        let realm = mailboxManager.getRealm()
-        guard let draft = mailboxManager.draft(messageUid: messageUid, using: realm)?.freeze(),
-              let draftFolder = mailboxManager.getFolder(with: .draft, using: realm) else { return }
-        let thread = Thread(draft: draft)
-        try? realm.uncheckedSafeWrite {
-            realm.add(thread, update: .modified)
-            draftFolder.threads.insert(thread)
-        }
-        let frozenThread = thread.freeze()
-        // Delete
-        Task {
-            await tryOrDisplayError {
-                _ = try await mailboxManager.move(thread: frozenThread, to: .trash)
-                IKSnackBar.showSnackBar(message: MailResourcesStrings.Localizable.snackBarDraftDeleted)
-            }
-        }
     }
 
     // MARK: Attachments

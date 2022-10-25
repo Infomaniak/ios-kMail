@@ -111,7 +111,6 @@ struct RichTextEditor: UIViewRepresentable {
 
     static func dismantleUIView(_ uiView: MailEditorView, coordinator: Coordinator) {
         uiView.webView.configuration.userContentController.removeAllScriptMessageHandlers()
-        uiView.timer = nil
     }
 }
 
@@ -133,10 +132,6 @@ class MailEditorView: SQTextEditorView {
         self.isShowingFileSelection = isShowingFileSelection
         self.isShowingPhotoLibrary = isShowingPhotoLibrary
         super.init()
-    }
-    
-    deinit {
-        print("deinit")
     }
 
     private lazy var editorWebView: WKWebView = {
