@@ -30,6 +30,7 @@ struct RichTextEditor: UIViewRepresentable {
     @Binding var isShowingCamera: Bool
     @Binding var isShowingFileSelection: Bool
     @Binding var isShowingPhotoLibrary: Bool
+    var alert: ObservedObject<NewMessageAlert>.Wrapper
 
     private var isFirstTime = true
     private var delegateCount = 0
@@ -38,9 +39,11 @@ struct RichTextEditor: UIViewRepresentable {
     }
 
     init(model: Binding<RichTextEditorModel>, body: Binding<String>,
+         alert: ObservedObject<NewMessageAlert>.Wrapper,
          isShowingCamera: Binding<Bool>, isShowingFileSelection: Binding<Bool>, isShowingPhotoLibrary: Binding<Bool>) {
         _model = model
         _body = body
+        self.alert = alert
         _isShowingCamera = isShowingCamera
         _isShowingFileSelection = isShowingFileSelection
         _isShowingPhotoLibrary = isShowingPhotoLibrary
@@ -98,7 +101,8 @@ struct RichTextEditor: UIViewRepresentable {
     }
 
     func makeUIView(context: Context) -> MailEditorView {
-        let richTextEditor = MailEditorView(isShowingCamera: $isShowingCamera,
+        let richTextEditor = MailEditorView(alert: alert,
+                                            isShowingCamera: $isShowingCamera,
                                             isShowingFileSelection: $isShowingFileSelection,
                                             isShowingPhotoLibrary: $isShowingPhotoLibrary)
         richTextEditor.delegate = context.coordinator
@@ -121,13 +125,16 @@ struct RichTextEditorModel {
 
 class MailEditorView: SQTextEditorView {
     lazy var toolbar = getToolbar()
-    var alert: NewMessageAlert?
+    var alert: ObservedObject<NewMessageAlert>.Wrapper
     var isShowingCamera: Binding<Bool>
     var isShowingFileSelection: Binding<Bool>
     var isShowingPhotoLibrary: Binding<Bool>
+
     var toolbarStyle = ToolbarStyle.main
 
-    init(isShowingCamera: Binding<Bool>, isShowingFileSelection: Binding<Bool>, isShowingPhotoLibrary: Binding<Bool>) {
+    init(alert: ObservedObject<NewMessageAlert>.Wrapper,
+         isShowingCamera: Binding<Bool>, isShowingFileSelection: Binding<Bool>, isShowingPhotoLibrary: Binding<Bool>) {
+        self.alert = alert
         self.isShowingCamera = isShowingCamera
         self.isShowingFileSelection = isShowingFileSelection
         self.isShowingPhotoLibrary = isShowingPhotoLibrary
@@ -286,7 +293,7 @@ class MailEditorView: SQTextEditorView {
                 removeLink()
             } else {
                 webView.resignFirstResponder()
-                alert?.state = .link { url in
+                alert.state.wrappedValue = .link { url in
                     self.makeLink(url: url)
                 }
             }

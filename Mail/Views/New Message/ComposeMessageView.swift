@@ -163,6 +163,7 @@ struct ComposeMessageView: View {
                         }
                         RichTextEditor(model: $editor,
                                        body: $draft.body,
+                                       alert: $alert,
                                        isShowingCamera: $isShowingCamera,
                                        isShowingFileSelection: $isShowingFileSelection,
                                        isShowingPhotoLibrary: $isShowingPhotoLibrary)
@@ -216,9 +217,6 @@ struct ComposeMessageView: View {
                   let signatureResponse = mailboxManager.getSignatureResponse() else { return }
             self.mailboxManager = mailboxManager
             draft.setSignature(signatureResponse)
-        }
-        .onAppear {
-            //editor.richTextEditor.alert = alert
         }
         .onDisappear {
             guard draftHasChanged else { return }
