@@ -84,6 +84,7 @@ struct ComposeMessageView: View {
         sendDisabled = mailboxManager.getSignatureResponse() == nil
         initialDraft.delay = UserDefaults.shared.cancelSendDelay.rawValue
         _draft = State(initialValue: initialDraft)
+        _showCc = State(initialValue: !initialDraft.bcc.isEmpty || !initialDraft.cc.isEmpty)
     }
 
     static func newMessage(mailboxManager: MailboxManager) -> ComposeMessageView {
@@ -218,7 +219,6 @@ struct ComposeMessageView: View {
         }
         .onAppear {
             //editor.richTextEditor.alert = alert
-            showCc = !draft.bcc.isEmpty || !draft.cc.isEmpty
         }
         .onDisappear {
             guard draftHasChanged else { return }
