@@ -44,7 +44,7 @@ public class MergedContact {
            let colorFromHex = UIColor(hex: remoteColorHex) {
             return colorFromHex
         } else {
-            return UserDefaults.shared.accentColor.primary.color
+            return UIColor.backgroundColor(from: email.hash)
         }
     }()
 

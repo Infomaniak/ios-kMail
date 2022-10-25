@@ -53,7 +53,7 @@ public class Recipient: EmbeddedObject, Codable {
     }
 
     public var color: UIColor {
-        return contact?.color ?? UserDefaults.shared.accentColor.primary.color
+        return contact?.color ?? UIColor.backgroundColor(from: email.hash)
     }
 
     public var initials: String {
