@@ -34,6 +34,7 @@ struct EmptyListView: View {
             Text(isInbox ? MailResourcesStrings.Localizable.noEmailDescription : MailResourcesStrings.Localizable.emptyFolderDescription)
                 .textStyle(.bodySecondary)
                 .multilineTextAlignment(.center)
+                .fixedSize(horizontal: false, vertical: true)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .padding(48)

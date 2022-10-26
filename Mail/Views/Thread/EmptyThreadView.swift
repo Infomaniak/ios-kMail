@@ -39,6 +39,7 @@ struct EmptyThreadView: View {
                     .folderMessageCount(splitViewManager.selectedFolder?.totalCount ?? 0))
                 .textStyle(.bodySecondary)
                 .multilineTextAlignment(.center)
+                .fixedSize(horizontal: false, vertical: true)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .padding(48)
