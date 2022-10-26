@@ -123,9 +123,6 @@ struct OnboardingView: View {
                 AppDelegate.orientationLock = .portrait
             }
         }
-        .onDisappear {
-            AppDelegate.orientationLock = .all
-        }
     }
 
     // MARK: - Private methods
