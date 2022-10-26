@@ -70,7 +70,7 @@ struct OnboardingView: View {
                 if !isScrollEnabled {
                     HStack {
                         Button {
-                            dismiss.callAsFunction()
+                            dismiss()
                         } label: {
                             Image(systemName: "xmark")
                                 .resizable()
@@ -124,7 +124,7 @@ struct OnboardingView: View {
             }
         }
         .onDisappear {
-            AppDelegate.orientationLock = .all // Unlocking the rotation when leaving the view
+            AppDelegate.orientationLock = .all
         }
     }
 
