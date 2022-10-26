@@ -116,6 +116,16 @@ struct OnboardingView: View {
         } message: {
             Text(MailResourcesStrings.Localizable.errorLoginDescription)
         }
+        .onAppear {
+            if UIDevice.current.userInterfaceIdiom == .phone {
+                UIDevice.current
+                    .setValue(UIInterfaceOrientation.portrait.rawValue, forKey: "orientation")
+                AppDelegate.orientationLock = .portrait
+            }
+        }
+        .onDisappear {
+            AppDelegate.orientationLock = .all // Unlocking the rotation when leaving the view
+        }
     }
 
     // MARK: - Private methods
