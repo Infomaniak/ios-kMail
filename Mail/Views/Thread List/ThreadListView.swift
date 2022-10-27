@@ -81,7 +81,14 @@ struct ThreadListView: View {
                 List {
                     ForEach(viewModel.sections) { section in
                         Section {
-                            threadList(threads: section.threads)
+                            ForEach(section.threads) { thread in
+                                ThreadListCell(thread: thread,
+                                               viewModel: viewModel,
+                                               multipleSelectionViewModel: multipleSelectionViewModel,
+                                               navigationController: navigationController,
+                                               editedMessageDraft: $editedMessageDraft)
+                               .id(thread.id)
+                            }
                         } header: {
                             if threadDensity != .compact {
                                 Text(section.title)
@@ -173,16 +180,6 @@ struct ThreadListView: View {
         }
         .sheet(isPresented: $isShowingComposeNewMessageView) {
             ComposeMessageView.newMessage(mailboxManager: viewModel.mailboxManager)
-        }
-    }
-
-    private func threadList(threads: [Thread]) -> some View {
-        ForEach(threads) { thread in
-            ThreadListCell(thread: thread,
-                           viewModel: viewModel,
-                           multipleSelectionViewModel: multipleSelectionViewModel,
-                           navigationController: navigationController,
-                           editedMessageDraft: $editedMessageDraft)
         }
     }
 }
