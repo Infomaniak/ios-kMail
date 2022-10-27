@@ -48,6 +48,7 @@ struct ThreadListCell: View {
                 NavigationLink(destination: ThreadView(mailboxManager: viewModel.mailboxManager,
                                                        thread: thread,
                                                        folderId: viewModel.folder?.id,
+                                                       trashFolderId: viewModel.trashFolderId,
                                                        navigationController: navigationController),
                                isActive: $shouldNavigateToThreadList) { EmptyView() }
                     .opacity(0)

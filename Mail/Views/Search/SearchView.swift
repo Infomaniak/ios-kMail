@@ -180,6 +180,7 @@ struct SearchView: View {
                                     mailboxManager: viewModel.mailboxManager,
                                     thread: thread,
                                     folderId: viewModel.lastSearchFolderId,
+                                    trashFolderId: viewModel.trashFolderId,
                                     navigationController: navigationController
                                 )
                                 .onAppear {
