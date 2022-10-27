@@ -59,7 +59,7 @@ struct SettingsOptionView<OptionEnum>: View where OptionEnum: CaseIterable, Opti
                     Button {
                         selectedValue = value
                         switch keyPath {
-                        case \.displayExternalContent, \.threadMode, \.forwardMode:
+                        case \.displayExternalContent, \.forwardMode:
                             showWorkInProgressSnackBar()
                         default:
                             break
