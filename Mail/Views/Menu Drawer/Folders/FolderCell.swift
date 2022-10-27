@@ -78,7 +78,7 @@ struct FolderCellContent: View {
     }
 
     private var textStyle: MailTextStyle {
-        isSelected ? .header3Primary : .header5
+        isSelected ? .header4Accent : .header5
     }
 
     var body: some View {
@@ -94,9 +94,10 @@ struct FolderCellContent: View {
 
             Spacer()
 
-            Text(folder.formattedUnreadCount)
-                .foregroundColor(.accentColor)
-                .textStyle(isSelected ? .calloutStrong : .calloutHighlighted)
+            if folder.unreadCount != nil {
+                Text(folder.formattedUnreadCount)
+                    .textStyle(isSelected ? .calloutStrongAccent : .calloutMediumAccent)
+            }
         }
         .padding(.vertical, Constants.menuDrawerVerticalPadding)
         .padding(.horizontal, Constants.menuDrawerHorizontalPadding)
