@@ -40,12 +40,10 @@ extension ThreadDensity {
 }
 
 struct ThreadCell: View {
-    @AppStorage(UserDefaults.shared.key(.threadDensity)) var density: ThreadDensity = .normal
-    @AppStorage(UserDefaults.shared.key(.accentColor)) private var accentColor = AccentColor.pink
-
-    @State private var shouldNavigateToThreadList = false
-
     var thread: Thread
+
+    var threadDensity: ThreadDensity
+    var accentColor: AccentColor
 
     var isMultipleSelectionEnabled = false
     var isSelected = false
@@ -55,10 +53,11 @@ struct ThreadCell: View {
     }
 
     private var checkboxSize: CGFloat {
-        density == .compact ? Constants.checkboxCompactSize : Constants.checkboxSize
+        threadDensity == .compact ? Constants.checkboxCompactSize : Constants.checkboxSize
     }
+
     private var checkmarkSize: CGFloat {
-        density == .compact ? Constants.checkmarkCompactSize : Constants.checkmarkSize
+        threadDensity == .compact ? Constants.checkmarkCompactSize : Constants.checkmarkSize
     }
 
     // MARK: - Views
@@ -66,11 +65,11 @@ struct ThreadCell: View {
     var body: some View {
         HStack(spacing: 8) {
             unreadIndicator
-                .animation(.threadListSlide(density: density, isMultipleSelectionEnabled: isMultipleSelectionEnabled),
+                .animation(.threadListSlide(density: threadDensity, isMultipleSelectionEnabled: isMultipleSelectionEnabled),
                            value: isMultipleSelectionEnabled)
 
             Group {
-                if density == .large, let recipient = thread.from.last {
+                if threadDensity == .large, let recipient = thread.from.last {
                     ZStack {
                         RecipientImage(recipient: recipient, size: 32)
                         checkbox
@@ -93,12 +92,12 @@ struct ThreadCell: View {
                     threadDetails
                 }
             }
-            .animation(.threadListSlide(density: density, isMultipleSelectionEnabled: isMultipleSelectionEnabled),
+            .animation(.threadListSlide(density: threadDensity, isMultipleSelectionEnabled: isMultipleSelectionEnabled),
                        value: isMultipleSelectionEnabled)
         }
         .padding(.leading, 8)
         .padding(.trailing, 12)
-        .padding(.vertical, density.cellVerticalPadding)
+        .padding(.vertical, threadDensity.cellVerticalPadding)
         .clipped()
     }
 
@@ -167,7 +166,7 @@ struct ThreadCell: View {
                 .textStyle(textStyle)
                 .lineLimit(1)
 
-            if density != .compact,
+            if threadDensity != .compact,
                let preview = thread.messages.last?.preview,
                !preview.isEmpty {
                 Text(preview)
@@ -192,8 +191,10 @@ struct ThreadCell: View {
 struct ThreadCell_Previews: PreviewProvider {
     static var previews: some View {
         ThreadCell(thread: PreviewHelper.sampleThread,
-                       isMultipleSelectionEnabled: false,
-                       isSelected: false)
+                   threadDensity: .large,
+                   accentColor: .pink,
+                   isMultipleSelectionEnabled: false,
+                   isSelected: false)
             .previewLayout(.sizeThatFits)
             .previewDevice("iPhone 13 Pro")
     }

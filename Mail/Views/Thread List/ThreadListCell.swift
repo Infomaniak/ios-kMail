@@ -26,6 +26,10 @@ struct ThreadListCell: View {
     let thread: Thread
     @ObservedObject var viewModel: ThreadListViewModel
     @ObservedObject var multipleSelectionViewModel: ThreadListMultipleSelectionViewModel
+
+    let threadDensity: ThreadDensity
+    let accentColor: AccentColor
+
     let navigationController: UINavigationController?
 
     @Binding var editedMessageDraft: Draft?
@@ -57,6 +61,8 @@ struct ThreadListCell: View {
 
             ThreadCell(
                 thread: thread,
+                threadDensity: threadDensity,
+                accentColor: accentColor,
                 isMultipleSelectionEnabled: multipleSelectionViewModel.isEnabled,
                 isSelected: isSelected
             )
@@ -116,6 +122,8 @@ struct ThreadListCell_Previews: PreviewProvider {
             viewModel: ThreadListViewModel(mailboxManager: PreviewHelper.sampleMailboxManager,
                                            folder: nil, bottomSheet: ThreadBottomSheet()),
             multipleSelectionViewModel: ThreadListMultipleSelectionViewModel(mailboxManager: PreviewHelper.sampleMailboxManager),
+            threadDensity: .large,
+            accentColor: .pink,
             navigationController: nil,
             editedMessageDraft: .constant(nil)
         )
