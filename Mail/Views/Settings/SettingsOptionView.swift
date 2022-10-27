@@ -58,12 +58,6 @@ struct SettingsOptionView<OptionEnum>: View where OptionEnum: CaseIterable, Opti
                 ForEach(values, id: \.rawValue) { value in
                     Button {
                         selectedValue = value
-                        switch keyPath {
-                        case \.displayExternalContent, \.forwardMode:
-                            showWorkInProgressSnackBar()
-                        default:
-                            break
-                        }
                     } label: {
                         VStack(spacing: 0) {
                             HStack(spacing: 16) {

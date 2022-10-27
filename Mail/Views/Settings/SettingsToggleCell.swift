@@ -29,7 +29,12 @@ struct SettingsToggleCell: View {
             UserDefaults.shared[keyPath: userDefaults] = toggleIsOn
         }
     }
+
     @State private var lastValue: Bool
+
+    private var workInProgress: Bool {
+        return userDefaults == \.includeOriginalInReply || userDefaults == \.acknowledgement
+    }
 
     init(title: String, userDefaults: ReferenceWritableKeyPath<UserDefaults, Bool>) {
         self.title = title
@@ -39,46 +44,46 @@ struct SettingsToggleCell: View {
     }
 
     var body: some View {
-        Toggle(isOn: Binding(get: {
-            toggleIsOn
-        }, set: { newValue in
-            lastValue = toggleIsOn
-            toggleIsOn = newValue
-        })) {
-            Text(title)
-                .textStyle(.body)
-        }
-        .tint(.accentColor)
-        .onChange(of: toggleIsOn) { newValue in
-            guard newValue != lastValue else { return }
-            if userDefaults == \.isAppLockEnabled {
-                enableAppLock()
+        if !workInProgress {
+            Toggle(isOn: Binding(get: {
+                toggleIsOn
+            }, set: { newValue in
+                lastValue = toggleIsOn
+                toggleIsOn = newValue
+            })) {
+                Text(title)
+                    .textStyle(.body)
             }
-            if userDefaults == \.includeOriginalInReply || userDefaults == \.acknowledgement {
-                showWorkInProgressSnackBar()
+            .tint(.accentColor)
+            .onChange(of: toggleIsOn) { newValue in
+                guard newValue != lastValue else { return }
+                if userDefaults == \.isAppLockEnabled {
+                    enableAppLock()
+                }
             }
         }
     }
 
     private func enableAppLock() {
-         Task {
-             do {
-                 if try await !AppLockHelper.shared.evaluatePolicy(reason: MailResourcesStrings.Localizable.appSecurityDescription) {
-                     withAnimation {
-                         toggleIsOn.toggle()
-                     }
-                 }
-             } catch {
-                 withAnimation {
-                     toggleIsOn.toggle()
-                 }
-             }
-         }
-     }
+        Task {
+            do {
+                if try await !AppLockHelper.shared
+                    .evaluatePolicy(reason: MailResourcesStrings.Localizable.appSecurityDescription) {
+                    withAnimation {
+                        toggleIsOn.toggle()
+                    }
+                }
+            } catch {
+                withAnimation {
+                    toggleIsOn.toggle()
+                }
+            }
+        }
+    }
 }
 
 struct SettingsToggleCell_Previews: PreviewProvider {
-   static var previews: some View {
-       SettingsToggleCell(title: "Code lock", userDefaults: \.isAppLockEnabled)
-   }
+    static var previews: some View {
+        SettingsToggleCell(title: "Code lock", userDefaults: \.isAppLockEnabled)
+    }
 }

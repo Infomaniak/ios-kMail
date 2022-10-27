@@ -39,7 +39,7 @@ import SwiftUI
     }
 }
 
-private extension SettingsSection {
+extension SettingsSection {
     static let emailAddresses = SettingsSection(
         id: 1,
         name: MailResourcesStrings.Localizable.settingsSectionEmailAddresses,
