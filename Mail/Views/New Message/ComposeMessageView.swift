@@ -51,13 +51,12 @@ struct ComposeMessageView: View {
     @State private var mailboxManager: MailboxManager
     @State private var selectedMailboxItem = 0
     @State private var draft: UnmanagedDraft
+    @State private var originalBody: String
     @State private var editor = RichTextEditorModel()
     @State private var showCc = false
     @FocusState private var focusedRecipientField: RecipientFieldType?
     @State private var addRecipientHandler: ((Recipient) -> Void)?
     @State private var autocompletion: [Recipient] = []
-    private var sendDisabled = false
-    @State private var draftHasChanged = false
     @State private var isShowingCamera = false
     @State private var isShowingFileSelection = false
     @State private var isShowingPhotoLibrary = false
@@ -65,6 +64,8 @@ struct ComposeMessageView: View {
     @State var scrollView: UIScrollView?
 
     @StateObject private var alert = NewMessageAlert()
+    
+    private let sendDisabled: Bool
 
     private var shouldDisplayAutocompletion: Bool {
         return !autocompletion.isEmpty && focusedRecipientField != nil
@@ -85,6 +86,7 @@ struct ComposeMessageView: View {
         initialDraft.delay = UserDefaults.shared.cancelSendDelay.rawValue
         _draft = State(initialValue: initialDraft)
         _showCc = State(initialValue: !initialDraft.bcc.isEmpty || !initialDraft.cc.isEmpty)
+        _originalBody = State(initialValue: initialDraft.body)
     }
 
     static func newMessage(mailboxManager: MailboxManager) -> ComposeMessageView {
@@ -192,7 +194,7 @@ struct ComposeMessageView: View {
                     Label(MailResourcesStrings.Localizable.buttonClose, systemImage: "xmark")
                 },
                 trailing: Button(action: {
-                    draftHasChanged = false
+                    originalBody = draft.body
                     Task {
                         await DraftManager.shared.send(draft: draft, mailboxManager: mailboxManager)
                         dismiss()
@@ -206,7 +208,6 @@ struct ComposeMessageView: View {
         }
         .onChange(of: draft) { _ in
             Task {
-                draftHasChanged = true
                 let newDraftUUID = await DraftManager.shared.saveDraftIfNeeded(draft: draft, mailboxManager: mailboxManager)
                 draft.uuid = newDraftUUID
             }
@@ -219,7 +220,7 @@ struct ComposeMessageView: View {
             draft.setSignature(signatureResponse)
         }
         .onDisappear {
-            guard draftHasChanged else { return }
+            guard draft.body != originalBody || !draft.uuid.isEmpty else { return }
             Task {
                 await DraftManager.shared.saveDraftIfNeeded(draft: draft, mailboxManager: mailboxManager, force: true)
             }

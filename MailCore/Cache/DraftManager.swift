@@ -39,7 +39,6 @@ public class DraftManager {
                 // Debounce the save task
                 try? await Task.sleep(nanoseconds: DraftManager.saveExpirationNanoSec)
 
-                guard !Task.isCancelled else { return }
                 await saveDraft(draft: draft, mailboxManager: mailboxManager, showSnackBar: false)
             }
 
@@ -52,7 +51,7 @@ public class DraftManager {
                            mailboxManager: MailboxManager,
                            showSnackBar: Bool = false) async -> String {
         let response = await mailboxManager.save(draft: draft)
-        if let error = response.error {
+        if let error = response.error, error.shouldDisplay {
             await IKSnackBar.showSnackBar(message: error.localizedDescription)
         } else if showSnackBar {
             await IKSnackBar.showSnackBar(message: MailResourcesStrings.Localizable.snackBarDraftSaved,
