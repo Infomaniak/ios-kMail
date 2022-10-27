@@ -125,12 +125,12 @@ struct ThreadCell: View {
             if thread.hasDrafts {
                 Text("(\(MailResourcesStrings.Localizable.messageIsDraftOption))")
                     .foregroundColor(MailResourcesAsset.redActionColor)
-                    .textStyle(thread.hasUnseenMessages ? .header2 : .header2Secondary)
+                    .textStyle(thread.hasUnseenMessages ? .header2 : .header3Secondary)
                     .lineLimit(1)
                     .layoutPriority(1)
             }
             Text(thread.messages.allSatisfy(\.isDraft) ? thread.formattedTo : thread.formattedFrom)
-                .textStyle(thread.hasUnseenMessages ? .header2 : .header2Secondary)
+                .textStyle(thread.hasUnseenMessages ? .header2 : .header3Secondary)
                 .lineLimit(1)
 
             if thread.uniqueMessagesCount > 1 {

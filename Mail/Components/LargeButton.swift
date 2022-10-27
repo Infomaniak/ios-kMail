@@ -36,7 +36,7 @@ struct LargeButton<Label>: View where Label: View {
                     ProgressView()
                 } else {
                     label
-                        .textStyle(.buttonPill)
+                        .textStyle(.header5FAB)
                 }
             }
             .padding(.vertical, 10)

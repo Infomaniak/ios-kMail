@@ -39,7 +39,7 @@ struct BottomSheetButtonsView: View {
         HStack(spacing: 24) {
             Button(role: .destructive, action: secondaryButtonAction) {
                 Text(secondaryButtonTitle)
-                    .font(MailTextStyle.button.font)
+                    .textStyle(.header5Accent)
             }
 
             BottomSheetButton(label: primaryButtonTitle,
