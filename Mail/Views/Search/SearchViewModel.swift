@@ -38,7 +38,7 @@ enum SearchState {
 }
 
 @MainActor class SearchViewModel: ObservableObject {
-    var mailboxManager: MailboxManager
+    let mailboxManager: MailboxManager
     @Published var searchHistory: SearchHistory
 
     public let filters: [SearchFilter] = [.read, .unread, .favorite, .attachment, .folder]
@@ -58,6 +58,7 @@ enum SearchState {
     @Published var folderList: [Folder]
     @Published var realFolder: Folder?
     var lastSearchFolderId: String?
+    let trashFolderId: String
     var observationSearchThreadToken: NotificationToken?
     @Published var selectedSearchFolderId = "" {
         didSet {
@@ -78,15 +79,15 @@ enum SearchState {
     @Published var contacts: [Recipient] = []
     @Published var isLoading = false
 
-    private var searchFolder: Folder
+    private let searchFolder: Folder
     private var resourceNext: String?
     private var lastSearch = ""
     private var searchFieldObservation: AnyCancellable?
 
     init(mailboxManager: MailboxManager, folder: Folder?) {
         self.mailboxManager = mailboxManager
-
         self.searchHistory = mailboxManager.searchHistory()
+        trashFolderId = mailboxManager.getFolder(with: .trash)?._id ?? ""
         realFolder = folder
 
         searchFolder = mailboxManager.initSearchFolder()

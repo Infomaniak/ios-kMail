@@ -28,7 +28,8 @@ struct SearchView: View {
     @EnvironmentObject var splitViewManager: SplitViewManager
     @EnvironmentObject var globalBottomSheet: GlobalBottomSheet
 
-    @AppStorage(UserDefaults.shared.key(.threadDensity)) var threadDensity = ThreadDensity.normal
+    @AppStorage(UserDefaults.shared.key(.threadDensity)) private var threadDensity = ThreadDensity.normal
+    @AppStorage(UserDefaults.shared.key(.accentColor)) private var accentColor = AccentColor.pink
 
     @StateObject var bottomSheet: ThreadBottomSheet
     @State private var navigationController: UINavigationController?
@@ -171,7 +172,9 @@ struct SearchView: View {
                         Button(action: {
                             DraftUtils.editDraft(from: thread, mailboxManager: viewModel.mailboxManager, editedMessageDraft: $editedMessageDraft)
                         }, label: {
-                            ThreadCell(thread: thread)
+                            ThreadCell(thread: thread,
+                                       threadDensity: threadDensity,
+                                       accentColor: accentColor)
                         })
                     } else {
                         ZStack {
@@ -180,6 +183,7 @@ struct SearchView: View {
                                     mailboxManager: viewModel.mailboxManager,
                                     thread: thread,
                                     folderId: viewModel.lastSearchFolderId,
+                                    trashFolderId: viewModel.trashFolderId,
                                     navigationController: navigationController
                                 )
                                 .onAppear {
@@ -190,7 +194,9 @@ struct SearchView: View {
                             })
                             .opacity(0)
 
-                            ThreadCell(thread: thread)
+                            ThreadCell(thread: thread,
+                                       threadDensity: threadDensity,
+                                       accentColor: accentColor)
                         }
                     }
                 }

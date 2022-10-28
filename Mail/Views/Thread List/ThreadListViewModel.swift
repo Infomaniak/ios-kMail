@@ -84,7 +84,7 @@ class DateSection: Identifiable {
 }
 
 @MainActor class ThreadListViewModel: ObservableObject {
-    var mailboxManager: MailboxManager
+    let mailboxManager: MailboxManager
 
     @Published var folder: Folder?
     @Published var sections = [DateSection]()
@@ -92,7 +92,9 @@ class DateSection: Identifiable {
     @Published var isLoadingPage = false
     @Published var lastUpdate: Date?
 
-    var bottomSheet: ThreadBottomSheet
+    let trashFolderId: String
+
+    let bottomSheet: ThreadBottomSheet
     var globalBottomSheet: GlobalBottomSheet?
 
     var scrollViewProxy: ScrollViewProxy?
@@ -142,6 +144,7 @@ class DateSection: Identifiable {
         lastUpdate = folder?.lastUpdate
         self.bottomSheet = bottomSheet
         observeThread = true
+        trashFolderId = mailboxManager.getFolder(with: .trash)?._id ?? ""
     }
 
     func fetchThreads() async {

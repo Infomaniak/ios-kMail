@@ -40,9 +40,10 @@ class MessageBottomSheet: DisplayedFloatingPanelState<MessageBottomSheet.State> 
 
 struct ThreadView: View {
     @ObservedRealmObject var thread: Thread
-    private var mailboxManager: MailboxManager
-    private var navigationController: UINavigationController?
-    private var folderId: String?
+    private let mailboxManager: MailboxManager
+    private let navigationController: UINavigationController?
+    private let folderId: String?
+    private let trashFolderId: String?
 
     @State private var displayNavigationTitle = false
     @State private var messageReply: MessageReply?
@@ -54,25 +55,24 @@ struct ThreadView: View {
     @Environment(\.verticalSizeClass) var sizeClass
     @Environment(\.dismiss) var dismiss
 
-    private let trashId: String
     private let toolbarActions: [Action] = [.reply, .forward, .archive, .delete]
 
     private var isTrashFolder: Bool {
-        return thread.parent?._id == trashId
+        return thread.parent?._id == trashFolderId
     }
 
     private var messages: [Message] {
         return Array(thread.messages)
-            .filter { $0.isDuplicate != true && (isTrashFolder || $0.folderId != trashId) }
+            .filter { $0.isDuplicate != true && (isTrashFolder || $0.folderId != trashFolderId) }
             .sorted { $0.date.compare($1.date) == .orderedAscending }
     }
 
-    init(mailboxManager: MailboxManager, thread: Thread, folderId: String?, navigationController: UINavigationController?) {
+    init(mailboxManager: MailboxManager, thread: Thread, folderId: String?, trashFolderId: String, navigationController: UINavigationController?) {
         self.mailboxManager = mailboxManager
         self.thread = thread
         self.folderId = folderId
         self.navigationController = navigationController
-        trashId = mailboxManager.getFolder(with: .trash)?._id ?? ""
+        self.trashFolderId = trashFolderId
     }
 
     var body: some View {
@@ -277,6 +277,7 @@ struct ThreadView_Previews: PreviewProvider {
             mailboxManager: PreviewHelper.sampleMailboxManager,
             thread: PreviewHelper.sampleThread,
             folderId: nil,
+            trashFolderId: "",
             navigationController: nil
         )
     }

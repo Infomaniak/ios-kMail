@@ -35,7 +35,8 @@ struct ThreadListView: View {
     @EnvironmentObject var splitViewManager: SplitViewManager
     @EnvironmentObject var globalBottomSheet: GlobalBottomSheet
 
-    @AppStorage(UserDefaults.shared.key(.threadDensity)) var threadDensity = ThreadDensity.normal
+    @AppStorage(UserDefaults.shared.key(.threadDensity)) private var threadDensity = ThreadDensity.normal
+    @AppStorage(UserDefaults.shared.key(.accentColor)) private var accentColor = AccentColor.pink
 
     @State private var avatarImage = Image(resource: MailResourcesAsset.placeholderAvatar)
     @State private var isShowingComposeNewMessageView = false
@@ -81,7 +82,16 @@ struct ThreadListView: View {
                 List {
                     ForEach(viewModel.sections) { section in
                         Section {
-                            threadList(threads: section.threads)
+                            ForEach(section.threads) { thread in
+                                ThreadListCell(thread: thread,
+                                               viewModel: viewModel,
+                                               multipleSelectionViewModel: multipleSelectionViewModel,
+                                               threadDensity: threadDensity,
+                                               accentColor: accentColor,
+                                               navigationController: navigationController,
+                                               editedMessageDraft: $editedMessageDraft)
+                                    .id(thread.id)
+                            }
                         } header: {
                             if threadDensity != .compact {
                                 Text(section.title)
@@ -114,6 +124,7 @@ struct ThreadListView: View {
                 .appShadow()
             }
         }
+        .id("\(accentColor.rawValue) \(threadDensity.rawValue)")
         .backButtonDisplayMode(.minimal)
         .navigationBarAppStyle()
         .introspectNavigationController { navigationController in
@@ -173,16 +184,6 @@ struct ThreadListView: View {
         }
         .sheet(isPresented: $isShowingComposeNewMessageView) {
             ComposeMessageView.newMessage(mailboxManager: viewModel.mailboxManager)
-        }
-    }
-
-    private func threadList(threads: [Thread]) -> some View {
-        ForEach(threads) { thread in
-            ThreadListCell(thread: thread,
-                           viewModel: viewModel,
-                           multipleSelectionViewModel: multipleSelectionViewModel,
-                           navigationController: navigationController,
-                           editedMessageDraft: $editedMessageDraft)
         }
     }
 }
