@@ -30,7 +30,7 @@ extension Account: Hashable {
 
 class AccountListViewModel: ObservableObject {
     @Published var expandedUserId: Int? = AccountManager.instance.currentUserId
-    @Published var isShowingNewAccountView = false
+
     @Published var accounts = [Account: [Mailbox]]()
 
     private var mailboxObservationToken: NotificationToken?
@@ -62,6 +62,7 @@ class AccountListViewModel: ObservableObject {
 
 struct AccountListView: View {
     @StateObject private var viewModel = AccountListViewModel()
+    @State var isShowingNewAccountView = false
 
     var body: some View {
         ScrollView {
@@ -79,11 +80,13 @@ struct AccountListView: View {
         .background(MailResourcesAsset.backgroundColor.swiftUiColor)
         .navigationBarTitle(MailResourcesStrings.Localizable.titleMyAccounts, displayMode: .inline)
         .floatingActionButton(icon: Image(systemName: "plus"), title: MailResourcesStrings.Localizable.buttonAddAccount) {
-            viewModel.isShowingNewAccountView = true
+            isShowingNewAccountView = true
         }
-        .sheet(isPresented: $viewModel.isShowingNewAccountView) {
+        .sheet(isPresented: $isShowingNewAccountView, onDismiss: {
+            AppDelegate.orientationLock = .all
+        }, content: {
             OnboardingView(isPresentedModally: true, page: 4, isScrollEnabled: false)
-        }
+        })
         .task {
             try? await updateUsers()
         }

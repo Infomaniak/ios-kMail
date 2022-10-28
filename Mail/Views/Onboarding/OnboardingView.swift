@@ -32,6 +32,7 @@ struct OnboardingView: View {
     private var isScrollEnabled: Bool
 
     @Environment(\.window) var window
+    @Environment(\.dismiss) private var dismiss
 
     private var isPresentedModally: Bool
 
@@ -65,6 +66,20 @@ struct OnboardingView: View {
                     .scaledToFit()
                     .frame(height: Constants.onboardingLogoHeight)
                     .padding(.top, isPresentedModally ? 15 : 0)
+
+                if !isScrollEnabled {
+                    HStack {
+                        Button {
+                            dismiss()
+                        } label: {
+                            Image(systemName: "xmark")
+                                .resizable()
+                        }
+                        .frame(width: 20, height: 20, alignment: .leading)
+                        .padding(16)
+                        Spacer()
+                    }
+                }
             }
 
             // Buttons
@@ -100,6 +115,17 @@ struct OnboardingView: View {
             // Use default button
         } message: {
             Text(MailResourcesStrings.Localizable.errorLoginDescription)
+        }
+        .onAppear {
+            if UIDevice.current.userInterfaceIdiom == .phone {
+                if #available(iOS 16.0, *) {
+                    window?.windowScene?.requestGeometryUpdate(.iOS(interfaceOrientations: .portrait))
+                } else {
+                    UIDevice.current
+                        .setValue(UIInterfaceOrientation.portrait.rawValue, forKey: "orientation")
+                }
+                AppDelegate.orientationLock = .portrait
+            }
         }
     }
 

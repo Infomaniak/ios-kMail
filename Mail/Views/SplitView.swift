@@ -124,6 +124,7 @@ struct SplitView: View {
         .defaultAppStorage(.shared)
         .onAppear {
             navigationDrawerController.window = window
+            AppDelegate.orientationLock = .all
         }
         .task {
             await fetchSignatures()
