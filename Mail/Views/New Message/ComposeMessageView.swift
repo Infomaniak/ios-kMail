@@ -51,13 +51,12 @@ struct ComposeMessageView: View {
     @State private var mailboxManager: MailboxManager
     @State private var selectedMailboxItem = 0
     @State private var draft: UnmanagedDraft
+    @State private var originalBody: String
     @State private var editor = RichTextEditorModel()
     @State private var showCc = false
     @FocusState private var focusedRecipientField: RecipientFieldType?
     @State private var addRecipientHandler: ((Recipient) -> Void)?
     @State private var autocompletion: [Recipient] = []
-    private var sendDisabled = false
-    @State private var draftHasChanged = false
     @State private var isShowingCamera = false
     @State private var isShowingFileSelection = false
     @State private var isShowingPhotoLibrary = false
@@ -65,10 +64,8 @@ struct ComposeMessageView: View {
     @State var scrollView: UIScrollView?
 
     @StateObject private var alert = NewMessageAlert()
-
-    static var queue = DispatchQueue(label: "com.infomaniak.mail.saveDraft")
-    @State var debouncedBufferWrite: DispatchWorkItem?
-    let saveExpiration = 3.0
+    
+    private let sendDisabled: Bool
 
     private var shouldDisplayAutocompletion: Bool {
         return !autocompletion.isEmpty && focusedRecipientField != nil
@@ -88,6 +85,8 @@ struct ComposeMessageView: View {
         sendDisabled = mailboxManager.getSignatureResponse() == nil
         initialDraft.delay = UserDefaults.shared.cancelSendDelay.rawValue
         _draft = State(initialValue: initialDraft)
+        _showCc = State(initialValue: !initialDraft.bcc.isEmpty || !initialDraft.cc.isEmpty)
+        _originalBody = State(initialValue: initialDraft.body)
     }
 
     static func newMessage(mailboxManager: MailboxManager) -> ComposeMessageView {
@@ -164,7 +163,12 @@ struct ComposeMessageView: View {
                             }
                             .padding(.horizontal, 16)
                         }
-                        RichTextEditor(model: $editor, body: $draft.body)
+                        RichTextEditor(model: $editor,
+                                       body: $draft.body,
+                                       alert: $alert,
+                                       isShowingCamera: $isShowingCamera,
+                                       isShowingFileSelection: $isShowingFileSelection,
+                                       isShowingPhotoLibrary: $isShowingPhotoLibrary)
                             .ignoresSafeArea(.all, edges: .bottom)
                             .frame(height: editor.height + 20)
                             .padding([.vertical], 10)
@@ -189,15 +193,24 @@ struct ComposeMessageView: View {
                 leading: Button(action: dismiss.callAsFunction) {
                     Label(MailResourcesStrings.Localizable.buttonClose, systemImage: "xmark")
                 },
-                trailing: Button(action: send) {
+                trailing: Button(action: {
+                    originalBody = draft.body
+                    Task {
+                        await DraftManager.shared.send(draft: draft, mailboxManager: mailboxManager)
+                        dismiss()
+                    }
+                }, label: {
                     Image(resource: MailResourcesAsset.send)
-                }
+                })
                 .disabled(sendDisabled)
             )
             .background(MailResourcesAsset.backgroundColor.swiftUiColor)
         }
         .onChange(of: draft) { _ in
-            textDidChange()
+            Task {
+                let newDraftUUID = await DraftManager.shared.saveDraftIfNeeded(draft: draft, mailboxManager: mailboxManager)
+                draft.uuid = newDraftUUID
+            }
         }
         .onChange(of: selectedMailboxItem) { _ in
             let mailbox = AccountManager.instance.mailboxes[selectedMailboxItem]
@@ -206,19 +219,10 @@ struct ComposeMessageView: View {
             self.mailboxManager = mailboxManager
             draft.setSignature(signatureResponse)
         }
-        .onAppear {
-            editor.richTextEditor.alert = alert
-            editor.richTextEditor.isShowingCamera = $isShowingCamera
-            editor.richTextEditor.isShowingFileSelection = $isShowingFileSelection
-            editor.richTextEditor.isShowingPhotoLibrary = $isShowingPhotoLibrary
-            showCc = !draft.bcc.isEmpty || !draft.cc.isEmpty
-        }
         .onDisappear {
-            if draftHasChanged {
-                debouncedBufferWrite?.cancel()
-                Task {
-                    await saveDraft(showSnackBar: true)
-                }
+            guard draft.body != originalBody || !draft.uuid.isEmpty else { return }
+            Task {
+                await DraftManager.shared.saveDraftIfNeeded(draft: draft, mailboxManager: mailboxManager, force: true)
             }
         }
         .fullScreenCover(isPresented: $isShowingCamera) {
@@ -280,79 +284,6 @@ struct ComposeMessageView: View {
             binding = $draft.bcc
         }
         return binding
-    }
-
-    private func send() {
-        Task {
-            // Cancel any scheduled save
-            debouncedBufferWrite?.cancel()
-            do {
-                draftHasChanged = false
-                let cancelableResponse = try await mailboxManager.send(draft: draft)
-                IKSnackBar.showCancelableSnackBar(
-                    message: MailResourcesStrings.Localizable.emailSentSnackbar,
-                    cancelSuccessMessage: MailResourcesStrings.Localizable.canceledEmailSendingConfirmationSnackbar,
-                    duration: .custom(CGFloat(draft.delay ?? 3)),
-                    undoRedoAction: UndoRedoAction(undo: cancelableResponse, redo: nil),
-                    mailboxManager: mailboxManager
-                )
-                dismiss()
-            } catch {
-                IKSnackBar.showSnackBar(message: error.localizedDescription)
-            }
-        }
-    }
-
-    private func saveDraft(showSnackBar: Bool = false) async {
-        editor.richTextEditor.getHTML { [self] html in
-            Task {
-                self.draft.body = html!
-
-                let response = await mailboxManager.save(draft: draft)
-                self.draft.uuid = response.uuid
-                draftHasChanged = false
-                if let error = response.error {
-                    IKSnackBar.showSnackBar(message: error.localizedDescription)
-                } else if showSnackBar {
-                    IKSnackBar.showSnackBar(message: MailResourcesStrings.Localizable.snackBarDraftSaved,
-                                            action: .init(title: MailResourcesStrings.Localizable.actionDelete) {
-                                                deleteDraft(messageUid: response.uuid)
-                                            })
-                }
-            }
-        }
-    }
-
-    private func textDidChange() {
-        draftHasChanged = true
-        debouncedBufferWrite?.cancel()
-        let debouncedWorkItem = DispatchWorkItem {
-            Task {
-                await saveDraft()
-            }
-        }
-        ComposeMessageView.queue.asyncAfter(deadline: .now() + saveExpiration, execute: debouncedWorkItem)
-        debouncedBufferWrite = debouncedWorkItem
-    }
-
-    private func deleteDraft(messageUid: String) {
-        // Convert draft to thread
-        let realm = mailboxManager.getRealm()
-        guard let draft = mailboxManager.draft(messageUid: messageUid, using: realm)?.freeze(),
-              let draftFolder = mailboxManager.getFolder(with: .draft, using: realm) else { return }
-        let thread = Thread(draft: draft)
-        try? realm.uncheckedSafeWrite {
-            realm.add(thread, update: .modified)
-            draftFolder.threads.insert(thread)
-        }
-        let frozenThread = thread.freeze()
-        // Delete
-        Task {
-            await tryOrDisplayError {
-                _ = try await mailboxManager.move(thread: frozenThread, to: .trash)
-                IKSnackBar.showSnackBar(message: MailResourcesStrings.Localizable.snackBarDraftDeleted)
-            }
-        }
     }
 
     // MARK: Attachments

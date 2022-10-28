@@ -29,7 +29,8 @@ class DraftUtils {
         if let draft = mailboxManager.draft(messageUid: message.uid)?.detached() {
             editedMessageDraft.wrappedValue = draft
             sheetPresented = true
-        } else if let localDraft = mailboxManager.localDraft(uuid: thread.uid)?.detached() {
+        // Maybe it was an offline draft (If offline draft is created with draft.uuid = thread.uid)
+        } else if let localDraft = mailboxManager.draft(uuid: thread.uid)?.detached() {
             editedMessageDraft.wrappedValue = localDraft
             sheetPresented = true
         }

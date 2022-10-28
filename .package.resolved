@@ -32,8 +32,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/SCENEE/FloatingPanel",
       "state" : {
-        "revision" : "b00a05b9ed7717da0e5ce1b760e27ffcbaddd333",
-        "version" : "2.5.4"
+        "revision" : "4ab7d260301ddf1cab5376ea14e285a128f5ba39",
+        "version" : "2.5.5"
       }
     },
     {
@@ -68,8 +68,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/onevcat/Kingfisher",
       "state" : {
-        "revision" : "be1a1acb283a702b99b630f586877ba02234b4cb",
-        "version" : "7.3.2"
+        "revision" : "44e891bdb61426a95e31492a67c7c0dfad1f87c5",
+        "version" : "7.4.1"
       }
     },
     {
@@ -95,8 +95,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/kean/Nuke",
       "state" : {
-        "revision" : "0d8a0dc3cca7432a6772ec546a7e5e1b20103bda",
-        "version" : "11.3.0"
+        "revision" : "93c8dc78fbc0aa3538a0db460eb389d4180af242",
+        "version" : "11.3.1"
       }
     },
     {
@@ -104,8 +104,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/realm/realm-core",
       "state" : {
-        "revision" : "18abbb4e9dc268620fa499923a92921bf26db8c6",
-        "version" : "12.7.0"
+        "revision" : "3c4b86da569368c4ee5ccca2a112d511cc6fa936",
+        "version" : "12.11.0"
       }
     },
     {
@@ -113,8 +113,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/realm/realm-swift",
       "state" : {
-        "revision" : "437fd367c4fcdaf7c532f1f40cb4ed5fab804e7c",
-        "version" : "10.30.0"
+        "revision" : "dc1672b3011eb992ce95db4feec83cd897626a16",
+        "version" : "10.32.1"
       }
     },
     {
@@ -122,8 +122,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/getsentry/sentry-cocoa",
       "state" : {
-        "revision" : "199000acd6a0a3f9c8e0bff03ef233f930993c71",
-        "version" : "7.25.1"
+        "revision" : "7521e07ce9a73f23ca9f028d6b0f8917c3e72c1b",
+        "version" : "7.29.0"
       }
     },
     {
@@ -150,7 +150,7 @@
       "location" : "https://github.com/Ambrdctr/SQRichTextEditor",
       "state" : {
         "branch" : "master",
-        "revision" : "739cf6a03daf78cd0bfd91449163f81a30b90b07"
+        "revision" : "0031e929633941ac0f63aee5759e1afb8b1dd8c1"
       }
     },
     {
@@ -194,8 +194,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/dkk/WrappingHStack",
       "state" : {
-        "revision" : "f568b78357a26f740998306f156d1ef97b6b9680",
-        "version" : "2.2.1"
+        "revision" : "52eaad02c6a621b9bb5cd56acde94f802ef669f0",
+        "version" : "2.2.4"
       }
     }
   ],

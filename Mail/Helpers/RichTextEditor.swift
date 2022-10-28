@@ -23,15 +23,30 @@ import SwiftUI
 import WebKit
 
 struct RichTextEditor: UIViewRepresentable {
-    typealias UIViewType = UIView
+    typealias UIViewType = MailEditorView
 
     @Binding var model: RichTextEditorModel
     @Binding var body: String
+    @Binding var isShowingCamera: Bool
+    @Binding var isShowingFileSelection: Bool
+    @Binding var isShowingPhotoLibrary: Bool
+    var alert: ObservedObject<NewMessageAlert>.Wrapper
 
-    var isFirstTime = true
+    private var isFirstTime = true
+    private var delegateCount = 0
+    private var isInitialized: Bool {
+        delegateCount > 2
+    }
 
-    var richTextEditor: SQTextEditorView {
-        return model.richTextEditor
+    init(model: Binding<RichTextEditorModel>, body: Binding<String>,
+         alert: ObservedObject<NewMessageAlert>.Wrapper,
+         isShowingCamera: Binding<Bool>, isShowingFileSelection: Binding<Bool>, isShowingPhotoLibrary: Binding<Bool>) {
+        _model = model
+        _body = body
+        self.alert = alert
+        _isShowingCamera = isShowingCamera
+        _isShowingFileSelection = isShowingFileSelection
+        _isShowingPhotoLibrary = isShowingPhotoLibrary
     }
 
     class Coordinator: SQTextEditorDelegate {
@@ -42,13 +57,13 @@ struct RichTextEditor: UIViewRepresentable {
         }
 
         func editorDidLoad(_ editor: SQTextEditorView) {
-            parent.model.richTextEditor.insertHTML(parent.body) { error in
+            editor.insertHTML(parent.body) { error in
                 if let error = error {
                     print("Failed to load editor: \(error)")
                 }
             }
-            parent.model.richTextEditor.moveCursorToStart()
-            parent.richTextEditor.webView.scrollView.isScrollEnabled = false
+            (editor as? MailEditorView)?.moveCursorToStart()
+            editor.webView.scrollView.isScrollEnabled = false
             parent.model.height = CGFloat(editor.contentHeight)
         }
 
@@ -57,23 +72,27 @@ struct RichTextEditor: UIViewRepresentable {
         }
 
         func editor(_ editor: SQTextEditorView, cursorPositionDidChange position: SQEditorCursorPosition) {
-            parent.model.delegateCount += 1
-            guard parent.model.isInitialized else { return }
-            editor.getHTML { html in
-                var parentBody = self.parent.body.trimmingCharacters(in: .whitespacesAndNewlines)
-                parentBody = parentBody.replacingOccurrences(of: "\r", with: "")
-                if let html = html, parentBody != html && !self.parent.isFirstTime {
-                    self.parent.body = html
-                }
-                self.parent.isFirstTime = false
+            parent.delegateCount += 1
+            guard parent.isInitialized else { return }
+            let newCursorPosition = CGFloat(position.bottom) + 20
+            if parent.model.cursorPosition != newCursorPosition {
+                parent.model.cursorPosition = newCursorPosition
             }
-            parent.model.cursorPosition = CGFloat(position.bottom) + 20
         }
 
         func editor(_ editor: SQTextEditorView, selectedTextAttributeDidChange attribute: SQTextAttribute) {
-            if let mailEditor = editor as? MailEditor {
+            if let mailEditor = editor as? MailEditorView {
                 mailEditor.updateToolbarItems(style: mailEditor.toolbarStyle)
             }
+        }
+
+        func editorContentChanged(_ editor: SQTextEditorView, content: String) {
+            var parentBody = parent.body.trimmingCharacters(in: .whitespacesAndNewlines)
+            parentBody = parentBody.replacingOccurrences(of: "\r", with: "")
+            if parentBody != content && !parent.isFirstTime {
+                parent.body = content
+            }
+            parent.isFirstTime = false
         }
     }
 
@@ -81,33 +100,46 @@ struct RichTextEditor: UIViewRepresentable {
         return Coordinator(self)
     }
 
-    func makeUIView(context: Context) -> UIView {
+    func makeUIView(context: Context) -> MailEditorView {
+        let richTextEditor = MailEditorView(alert: alert,
+                                            isShowingCamera: $isShowingCamera,
+                                            isShowingFileSelection: $isShowingFileSelection,
+                                            isShowingPhotoLibrary: $isShowingPhotoLibrary)
         richTextEditor.delegate = context.coordinator
         return richTextEditor
     }
 
-    func updateUIView(_ uiView: UIView, context: Context) {
+    func updateUIView(_ uiView: MailEditorView, context: Context) {
         // Intentionally unimplemented...
+    }
+
+    static func dismantleUIView(_ uiView: MailEditorView, coordinator: Coordinator) {
+        uiView.webView.configuration.userContentController.removeAllScriptMessageHandlers()
     }
 }
 
 struct RichTextEditorModel {
-    let richTextEditor = MailEditor()
-    var delegateCount = 0
     var cursorPosition: CGFloat = 0
     var height: CGFloat = 0
-    var isInitialized: Bool {
-        delegateCount > 2
-    }
 }
 
-class MailEditor: SQTextEditorView {
+class MailEditorView: SQTextEditorView {
     lazy var toolbar = getToolbar()
-    var alert: NewMessageAlert?
-    var isShowingCamera: Binding<Bool>?
-    var isShowingFileSelection: Binding<Bool>?
-    var isShowingPhotoLibrary: Binding<Bool>?
+    var alert: ObservedObject<NewMessageAlert>.Wrapper
+    var isShowingCamera: Binding<Bool>
+    var isShowingFileSelection: Binding<Bool>
+    var isShowingPhotoLibrary: Binding<Bool>
+
     var toolbarStyle = ToolbarStyle.main
+
+    init(alert: ObservedObject<NewMessageAlert>.Wrapper,
+         isShowingCamera: Binding<Bool>, isShowingFileSelection: Binding<Bool>, isShowingPhotoLibrary: Binding<Bool>) {
+        self.alert = alert
+        self.isShowingCamera = isShowingCamera
+        self.isShowingFileSelection = isShowingFileSelection
+        self.isShowingPhotoLibrary = isShowingPhotoLibrary
+        super.init()
+    }
 
     private lazy var editorWebView: WKWebView = {
         let config = WKWebViewConfiguration()
@@ -118,8 +150,8 @@ class MailEditor: SQTextEditorView {
         config.userContentController = WKUserContentController()
         config.setURLSchemeHandler(URLSchemeHandler(), forURLScheme: URLSchemeHandler.scheme)
 
-        JSMessageName.allCases.forEach {
-            config.userContentController.add(self, name: $0.rawValue)
+        for jsMessageName in JSMessageName.allCases {
+            config.userContentController.add(self, name: jsMessageName.rawValue)
         }
 
         // inject css to html
@@ -251,17 +283,17 @@ class MailEditor: SQTextEditorView {
         case .editText:
             updateToolbarItems(style: toolbarStyle == .main ? .textEdition : .main)
         case .addFile:
-            isShowingFileSelection?.wrappedValue.toggle()
+            isShowingFileSelection.wrappedValue.toggle()
         case .addPhoto:
-            isShowingPhotoLibrary?.wrappedValue.toggle()
+            isShowingPhotoLibrary.wrappedValue.toggle()
         case .takePhoto:
-            isShowingCamera?.wrappedValue.toggle()
+            isShowingCamera.wrappedValue.toggle()
         case .link:
             if selectedTextAttribute.format.hasLink {
                 removeLink()
             } else {
                 webView.resignFirstResponder()
-                alert?.state = .link { url in
+                alert.state.wrappedValue = .link { url in
                     self.makeLink(url: url)
                 }
             }
