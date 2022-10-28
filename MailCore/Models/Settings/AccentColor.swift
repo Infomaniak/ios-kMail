@@ -76,9 +76,18 @@ public enum AccentColor: String, CaseIterable, SettingsOptionEnum {
     public var zeroMailImage: MailResourcesImages {
         switch self {
         case .pink:
-            return MailResourcesAsset.zeroMailPink
+            return MailResourcesAsset.folderOpenPink
         case .blue:
-            return MailResourcesAsset.zeroMailBlue
+            return MailResourcesAsset.folderOpenBlue
+        }
+    }
+    
+    public var zeroConvImage: MailResourcesImages {
+        switch self {
+        case .pink:
+            return MailResourcesAsset.mailPink
+        case .blue:
+            return MailResourcesAsset.mailBlue
         }
     }
 

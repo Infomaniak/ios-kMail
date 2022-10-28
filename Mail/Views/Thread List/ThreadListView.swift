@@ -99,7 +99,7 @@ struct ThreadListView: View {
                     }
 
                     if viewModel.folder?.lastUpdate != nil && viewModel.sections.isEmpty && !viewModel.isLoadingPage {
-                        EmptyListView()
+                        EmptyListView(isInbox: viewModel.folder?.role == .inbox)
                     }
 
                     Spacer()

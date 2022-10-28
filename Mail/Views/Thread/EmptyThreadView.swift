@@ -16,13 +16,34 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import MailCore
+import MailResources
 import SwiftUI
 
 struct EmptyThreadView: View {
-    var text = "thread"
+    @AppStorage(UserDefaults.shared.key(.accentColor)) var accentColor = AccentColor.pink
+    @EnvironmentObject var splitViewManager: SplitViewManager
 
     var body: some View {
-        Text("Aucun \(text) sélectionné")
+        VStack {
+            Image(resource: accentColor.zeroConvImage)
+                .padding(24)
+            Text(MailResourcesStrings.Localizable
+                .noConversationSelected(splitViewManager.selectedFolder?.localizedName ?? ""))
+                .textStyle(.header2)
+                .padding(.bottom, 4)
+
+            Text(splitViewManager.selectedFolder?.totalCount ?? 0 < 0
+                ? MailResourcesStrings.Localizable.folderNoMessageCount
+                : MailResourcesStrings.Localizable
+                    .folderMessageCount(splitViewManager.selectedFolder?.totalCount ?? 0))
+                .textStyle(.bodySecondary)
+                .multilineTextAlignment(.center)
+                .fixedSize(horizontal: false, vertical: true)
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .padding(48)
+        .background(MailResourcesAsset.backgroundColor.swiftUiColor)
     }
 }
 
