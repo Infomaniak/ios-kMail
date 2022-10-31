@@ -54,10 +54,9 @@ struct Action: Identifiable, Equatable {
     static let phishing = Action(id: 13, title: MailResourcesStrings.Localizable.actionPhishing, icon: MailResourcesAsset.fishing)
     static let print = Action(id: 14, title: MailResourcesStrings.Localizable.actionPrint, icon: MailResourcesAsset.printText)
     static let saveAsPDF = Action(id: 15, title: MailResourcesStrings.Localizable.actionSavePDF, icon: MailResourcesAsset.fileDownload)
-    static let openIn = Action(id: 16, title: MailResourcesStrings.Localizable.actionOpenIn, icon: MailResourcesAsset.sendTo)
-    static let createRule = Action(id: 17, title: MailResourcesStrings.Localizable.actionCreateRule, icon: MailResourcesAsset.ruleRegle)
-    static let report = Action(id: 18, title: MailResourcesStrings.Localizable.actionReportDisplayProblem, icon: MailResourcesAsset.feedbacks)
-    static let editMenu = Action(id: 19, title: MailResourcesStrings.Localizable.actionEditMenu, icon: MailResourcesAsset.editTools)
+    static let createRule = Action(id: 16, title: MailResourcesStrings.Localizable.actionCreateRule, icon: MailResourcesAsset.ruleRegle)
+    static let report = Action(id: 17, title: MailResourcesStrings.Localizable.actionReportDisplayProblem, icon: MailResourcesAsset.feedbacks)
+    static let editMenu = Action(id: 18, title: MailResourcesStrings.Localizable.actionEditMenu, icon: MailResourcesAsset.editTools)
 
     init(id: Int, title: String, shortTitle: String? = nil, icon: MailResourcesImages) {
         self.id = id
@@ -124,8 +123,7 @@ enum ActionsTarget: Equatable {
             listActions = [
                 .archive,
                 unread ? .markAsRead : .markAsUnread,
-                .print,
-                .openIn
+                .print
             ]
         case let .thread(thread):
             quickActions = [.reply, .replyAll, .forward, .delete]
@@ -141,8 +139,7 @@ enum ActionsTarget: Equatable {
                 star ? .unstar : .star,
                 spam ? .nonSpam : .spam,
                 .print,
-                .saveAsPDF,
-                .openIn
+                .saveAsPDF
             ]
         case let .message(message):
             quickActions = [.reply, .replyAll, .forward, .delete]
@@ -161,7 +158,6 @@ enum ActionsTarget: Equatable {
                 .phishing,
                 .print,
                 .saveAsPDF,
-                .openIn,
                 .createRule,
                 .report,
                 .editMenu
@@ -202,8 +198,6 @@ enum ActionsTarget: Equatable {
             printAction()
         case .saveAsPDF:
             saveAsPDF()
-        case .openIn:
-            openIn()
         case .createRule:
             createRule()
         case .report:
@@ -409,11 +403,6 @@ enum ActionsTarget: Equatable {
 
     private func saveAsPDF() {
         // TODO: SAVE AS PDF ACTION
-        showWorkInProgressSnackBar()
-    }
-
-    private func openIn() {
-        // TODO: OPEN IN ACTION
         showWorkInProgressSnackBar()
     }
 
