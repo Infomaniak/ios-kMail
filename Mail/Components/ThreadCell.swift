@@ -49,7 +49,7 @@ struct ThreadCell: View {
     var isSelected = false
 
     private var textStyle: MailTextStyle {
-        thread.hasUnseenMessages ? .header3 : .bodySecondary
+        thread.hasUnseenMessages ? .header4 : .bodySecondary
     }
 
     private var checkboxSize: CGFloat {
@@ -155,7 +155,7 @@ struct ThreadCell: View {
             }
 
             Text(thread.date.customRelativeFormatted)
-                .textStyle(thread.hasUnseenMessages ? .calloutStrong : .calloutSecondary)
+                .textStyle(thread.hasUnseenMessages ? .calloutStrong : .bodySecondary)
                 .lineLimit(1)
         }
     }

@@ -54,7 +54,7 @@ struct ThreadListHeader: View {
             if isConnected {
                 if let lastUpdateText = lastUpdateText {
                     Text(MailResourcesStrings.Localizable.threadListHeaderLastUpdate(lastUpdateText))
-                        .textStyle(.calloutQuaternary)
+                        .textStyle(.calloutTertiary)
                 }
             } else {
                 NoNetworkView()
