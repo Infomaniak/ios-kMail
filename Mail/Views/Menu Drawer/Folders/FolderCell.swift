@@ -94,11 +94,9 @@ struct FolderCellContent: View {
 
             Spacer()
 
-            if folder.unreadCount != nil {
-                Text(folder.formattedUnreadCount)
-                    .foregroundColor(.accentColor)
-                    .textStyle(isSelected ? .calloutStrong : .calloutHighlighted)
-            }
+            Text(folder.formattedUnreadCount)
+                .foregroundColor(.accentColor)
+                .textStyle(isSelected ? .calloutStrong : .calloutHighlighted)
         }
         .padding(.vertical, Constants.menuDrawerVerticalPadding)
         .padding(.horizontal, Constants.menuDrawerHorizontalPadding)

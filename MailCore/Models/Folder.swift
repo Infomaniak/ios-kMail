@@ -141,7 +141,7 @@ public class Folder: Object, Codable, Comparable, Identifiable {
     }
 
     public var formattedUnreadCount: String {
-        guard let unreadCount = unreadCount else { return "" }
+        guard let unreadCount = (role == .draft ? threads.count : unreadCount) else { return "" }
         if unreadCount >= 100 {
             return "99+"
         }
@@ -233,7 +233,7 @@ public class Folder: Object, Codable, Comparable, Identifiable {
 
         self.children = MutableSet()
         self.children.insert(objectsIn: children)
-        
+
         self.toolType = toolType
     }
 }
