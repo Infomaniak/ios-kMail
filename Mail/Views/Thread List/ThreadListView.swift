@@ -37,6 +37,7 @@ struct ThreadListView: View {
 
     @AppStorage(UserDefaults.shared.key(.threadDensity)) private var threadDensity = ThreadDensity.normal
     @AppStorage(UserDefaults.shared.key(.accentColor)) private var accentColor = AccentColor.pink
+    @AppStorage(UserDefaults.shared.key(.threadMode)) var threadMode: ThreadMode = .discussion
 
     @State private var avatarImage = Image(resource: MailResourcesAsset.placeholderAvatar)
     @State private var isShowingComposeNewMessageView = false
@@ -60,7 +61,8 @@ struct ThreadListView: View {
         _viewModel = StateObject(wrappedValue: ThreadListViewModel(mailboxManager: mailboxManager,
                                                                    folder: folder,
                                                                    bottomSheet: threadBottomSheet))
-        _multipleSelectionViewModel = StateObject(wrappedValue: ThreadListMultipleSelectionViewModel(mailboxManager: mailboxManager))
+        _multipleSelectionViewModel =
+            StateObject(wrappedValue: ThreadListMultipleSelectionViewModel(mailboxManager: mailboxManager))
         self.isCompact = isCompact
 
         UITableViewCell.appearance().focusEffect = .none
@@ -166,6 +168,11 @@ struct ThreadListView: View {
             guard isCompact, let folder = newFolder else { return }
             viewModel.updateThreads(with: folder)
         }
+        .onChange(of: threadMode) { _ in
+            Task {
+                await viewModel.fetchThreads()
+            }
+        }
         .onReceive(NotificationCenter.default.publisher(for: UIApplication.willEnterForegroundNotification)) { _ in
             Task {
                 await viewModel.fetchThreads()
@@ -265,7 +272,11 @@ private struct ThreadListToolbar: ViewModifier {
                         if multipleSelectionViewModel.isEnabled {
                             HStack(spacing: 0) {
                                 ForEach(multipleSelectionViewModel.toolbarActions) { action in
-                                    ToolbarButton(text: action.shortTitle ?? action.title, icon: action.icon, width: reader.size.width / 5) {
+                                    ToolbarButton(
+                                        text: action.shortTitle ?? action.title,
+                                        icon: action.icon,
+                                        width: reader.size.width / 5
+                                    ) {
                                         Task {
                                             await tryOrDisplayError {
                                                 try await multipleSelectionViewModel.didTap(action: action)
