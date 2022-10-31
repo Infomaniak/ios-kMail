@@ -25,12 +25,10 @@ struct EmptyListView: View {
     var isInbox: Bool
 
     var body: some View {
-        VStack {
+        VStack(spacing: 8) {
             Image(resource: accentColor.zeroMailImage)
-                .padding(24)
             Text(isInbox ? MailResourcesStrings.Localizable.noEmailTitle : MailResourcesStrings.Localizable.emptyFolderTitle)
                 .textStyle(.header2)
-                .padding(.bottom, 4)
             Text(isInbox ? MailResourcesStrings.Localizable.noEmailDescription : MailResourcesStrings.Localizable.emptyFolderDescription)
                 .textStyle(.bodySecondary)
                 .multilineTextAlignment(.center)
