@@ -33,7 +33,7 @@ struct MessageHeaderSummaryView: View {
         HStack(alignment: .top, spacing: 0) {
             HStack(alignment: .center) {
                 if let recipient = message.from.first {
-                    RecipientImage(recipient: recipient, size: 48)
+                    RecipientImage(recipient: recipient, size: 40)
                 }
 
                 VStack(alignment: .leading, spacing: 4) {
@@ -41,7 +41,7 @@ struct MessageHeaderSummaryView: View {
                         HStack {
                             Text(MailResourcesStrings.Localizable.messageIsDraftOption)
                                 .foregroundColor(MailResourcesAsset.redActionColor)
-                                .textStyle(.header3)
+                                .textStyle(.header2)
                             Spacer()
                             Button(action: deleteDraftTapped) {
                                 Image(resource: MailResourcesAsset.bin)
@@ -57,13 +57,13 @@ struct MessageHeaderSummaryView: View {
                                 ForEach(message.from, id: \.self) { recipient in
                                     Text(recipient.title)
                                         .lineLimit(1)
-                                        .textStyle(.header3)
+                                        .textStyle(.header5)
                                 }
                             }
                             Text(message.date.customRelativeFormatted)
                                 .lineLimit(1)
                                 .layoutPriority(1)
-                                .textStyle(.calloutSecondary)
+                                .textStyle(.captionSecondary)
                         }
                     }
 

@@ -69,7 +69,7 @@ struct AttachmentsView: View {
                     // TODO: Download all attachments
                     showWorkInProgressSnackBar()
                 }
-                .font(MailTextStyle.callout.font)
+                .textStyle(.calloutAccent)
 
                 Spacer()
             }

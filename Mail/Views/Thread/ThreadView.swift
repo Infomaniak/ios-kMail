@@ -89,6 +89,7 @@ struct ThreadView: View {
                 .textStyle(.header2)
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .multilineTextAlignment(.leading)
+                .lineSpacing(8)
                 .padding(.top, 8)
                 .padding(.horizontal, 16)
 

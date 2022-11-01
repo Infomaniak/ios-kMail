@@ -66,7 +66,6 @@ struct MessageHeaderDetailView: View {
             }
         }
         .frame(maxWidth: .infinity, alignment: .leading)
-        .padding(.leading, 12)
         .onPreferenceChange(ViewWidthKey.self) {
             labelWidth = $0
         }
@@ -91,25 +90,26 @@ struct RecipientLabel: View {
                 .textStyle(.calloutSecondary)
                 .background(ViewGeometry())
                 .frame(width: labelWidth, alignment: .leading)
-            VStack(alignment: .leading) {
+            VStack(alignment: .leading, spacing: 4) {
                 ForEach(recipients, id: \.self) { recipient in
                     WrappingHStack(lineSpacing: 2) {
                         Button {
                             recipientTapped(recipient)
                         } label: {
                             Text(recipient.name.isEmpty ? recipient.email : recipient.name.removePunctuation)
-                                .font(MailTextStyle.callout.font)
+                                .textStyle(.calloutAccent)
                                 .lineLimit(1)
                                 .layoutPriority(1)
                         }
                         if !recipient.name.isEmpty {
                             Text(recipient.email)
-                                .textStyle(.caption)
+                                .textStyle(.captionSecondary)
                                 .lineLimit(1)
                         }
                     }
                 }
             }
         }
+        .padding(.bottom, 2)
     }
 }
