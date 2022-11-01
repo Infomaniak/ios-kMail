@@ -165,17 +165,17 @@ public struct MailTextStyle {
         color: MailResourcesAsset.warningColor
     )
 
-    public static let captionAccent = MailTextStyle(
+    public static let captionMediumAccent = MailTextStyle(
         font: .system(size: 11.5, weight: .medium),
         color: \.primary
     )
-    
-    public static let captionMedium = MailTextStyle(
+
+    public static let captionMediumSecondary = MailTextStyle(
         font: .system(size: 11.5, weight: .medium),
         color: MailResourcesAsset.secondaryTextColor
     )
-    
-    public static let caption = MailTextStyle(
+
+    public static let captionSecondary = MailTextStyle(
         font: .system(size: 11.5),
         color: MailResourcesAsset.secondaryTextColor
     )
