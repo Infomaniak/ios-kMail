@@ -60,7 +60,7 @@ struct AccountCellView: View {
                 }
 
                 if isExpanded {
-                    VStack(spacing: 24) {
+                    VStack(spacing: 16) {
                         ForEach(mailboxes) { mailbox in
                             Button {
                                 (window?.windowScene?.delegate as? SceneDelegate)?.switchAccount(account, mailbox: mailbox)
@@ -74,7 +74,7 @@ struct AccountCellView: View {
                     .padding(.horizontal, 16)
                 }
             }
-            .padding(.vertical, 12)
+            .padding(.vertical, 8)
         }
     }
 }
@@ -94,7 +94,7 @@ struct AccountHeaderCell: View {
 
             VStack(alignment: .leading, spacing: 2) {
                 Text(account.user.displayName)
-                    .textStyle(.header3)
+                    .textStyle(.header4)
                 Text(account.user.email)
                     .textStyle(.callout)
             }
