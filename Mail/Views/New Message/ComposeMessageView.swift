@@ -64,7 +64,7 @@ struct ComposeMessageView: View {
     @State var scrollView: UIScrollView?
 
     @StateObject private var alert = NewMessageAlert()
-    
+
     private let sendDisabled: Bool
 
     private var shouldDisplayAutocompletion: Bool {
