@@ -226,7 +226,8 @@ public class MailboxManager: ObservableObject {
             mailbox: mailbox,
             folderId: folder._id,
             filter: filter,
-            searchFilter: searchFilter
+            searchFilter: searchFilter,
+            isDraftFolder: folder.role == .draft
         )
 
         // Save result

@@ -90,12 +90,13 @@ public class MailApiFetcher: ApiFetcher {
     }
 
     public func threads(mailbox: Mailbox, folderId: String, filter: Filter = .all,
-                        searchFilter: [URLQueryItem] = []) async throws -> ThreadResult {
+                        searchFilter: [URLQueryItem] = [], isDraftFolder: Bool = false) async throws -> ThreadResult {
         try await perform(request: authenticatedRequest(.threads(
             uuid: mailbox.uuid,
             folderId: folderId,
             filter: filter == .all ? nil : filter.rawValue,
-            searchFilters: searchFilter
+            searchFilters: searchFilter,
+            isDraftFolder: isDraftFolder
         ))).data
     }
 
