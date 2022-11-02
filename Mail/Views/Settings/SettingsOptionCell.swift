@@ -24,6 +24,10 @@ struct SettingsOptionCell: View {
     let subtitle: String
     let option: SettingsOption
 
+    private var workInProgress: Bool {
+        return option == .externalContentOption || option == .forwardMessageOption
+    }
+
     init(icon: Image? = nil, title: String, subtitle: String, option: SettingsOption) {
         self.icon = icon
         self.title = title
@@ -32,14 +36,16 @@ struct SettingsOptionCell: View {
     }
 
     var body: some View {
-        NavigationLink(destination: option.getDestination()) {
-            HStack(alignment: .firstTextBaseline, spacing: 8) {
-                icon
-                VStack(alignment: .leading) {
-                    Text(title)
-                        .textStyle(.body)
-                    Text(subtitle)
-                        .textStyle(.calloutSecondary)
+        if !workInProgress {
+            NavigationLink(destination: option.getDestination()) {
+                HStack(alignment: .firstTextBaseline, spacing: 8) {
+                    icon
+                    VStack(alignment: .leading) {
+                        Text(title)
+                            .textStyle(.body)
+                        Text(subtitle)
+                            .textStyle(.calloutSecondary)
+                    }
                 }
             }
         }

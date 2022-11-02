@@ -94,7 +94,7 @@ public extension Endpoint {
                         searchFilters: [URLQueryItem] = []) -> Endpoint {
         var queryItems = [
             URLQueryItem(name: "offset", value: "\(offset)"),
-            URLQueryItem(name: "thread", value: "on"),
+            URLQueryItem(name: "thread", value: UserDefaults.shared.threadMode == .discussion ? "on" : "off"),
             URLQueryItem(name: "filters", value: filter)
         ]
         queryItems.append(contentsOf: searchFilters)
