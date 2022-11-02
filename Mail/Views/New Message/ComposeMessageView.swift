@@ -64,7 +64,7 @@ struct ComposeMessageView: View {
     @State var scrollView: UIScrollView?
 
     @StateObject private var alert = NewMessageAlert()
-    
+
     private let sendDisabled: Bool
 
     private var shouldDisplayAutocompletion: Bool {
@@ -99,7 +99,10 @@ struct ComposeMessageView: View {
         let realm = mailboxManager.getRealm()
         realm.refresh()
         let freshMessage = message.fresh(using: realm) ?? message
-        return ComposeMessageView(mailboxManager: mailboxManager, draft: .replying(to: freshMessage, mode: messageReply.replyMode))
+        return ComposeMessageView(
+            mailboxManager: mailboxManager,
+            draft: .replying(to: freshMessage, mode: messageReply.replyMode)
+        )
     }
 
     static func editDraft(draft: Draft, mailboxManager: MailboxManager) -> ComposeMessageView {
@@ -207,10 +210,7 @@ struct ComposeMessageView: View {
             .background(MailResourcesAsset.backgroundColor.swiftUiColor)
         }
         .onChange(of: draft) { _ in
-            Task {
-                let newDraftUUID = await DraftManager.shared.saveDraftIfNeeded(draft: draft, mailboxManager: mailboxManager)
-                draft.uuid = newDraftUUID
-            }
+            DraftManager.shared.saveDraftLocally(draft: draft, mailboxManager: mailboxManager)
         }
         .onChange(of: selectedMailboxItem) { _ in
             let mailbox = AccountManager.instance.mailboxes[selectedMailboxItem]
@@ -220,9 +220,9 @@ struct ComposeMessageView: View {
             draft.setSignature(signatureResponse)
         }
         .onDisappear {
-            guard draft.body != originalBody || !draft.uuid.isEmpty else { return }
+//            guard draft.body != originalBody || !draft.uuid.isEmpty else { return }
             Task {
-                await DraftManager.shared.saveDraftIfNeeded(draft: draft, mailboxManager: mailboxManager, force: true)
+                await DraftManager.shared.saveDraftOnline(draft: draft, mailboxManager: mailboxManager)
             }
         }
         .fullScreenCover(isPresented: $isShowingCamera) {

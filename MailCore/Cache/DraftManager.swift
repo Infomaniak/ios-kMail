@@ -28,45 +28,40 @@ public class DraftManager {
 
     private init() {}
 
-    public func saveDraftIfNeeded(draft: UnmanagedDraft,
-                                  mailboxManager: MailboxManager,
-                                  force: Bool = false) async -> String {
+    public func saveDraftOnline(draft: UnmanagedDraft, mailboxManager: MailboxManager) async {
         cancelAndRemoveTask(draftUUID: draft.localUUID)
-        if draft.uuid.isEmpty || force {
-            return await saveDraft(draft: draft, mailboxManager: mailboxManager, showSnackBar: force)
-        } else {
-            draftSaveTasksQueued[draft.localUUID] = Task {
-                // Debounce the save task
-                try? await Task.sleep(nanoseconds: DraftManager.saveExpirationNanoSec)
+        await saveDraft(draft: draft, mailboxManager: mailboxManager)
+    }
 
-                await saveDraft(draft: draft, mailboxManager: mailboxManager, showSnackBar: false)
-            }
+    public func saveDraftLocally(draft: UnmanagedDraft, mailboxManager: MailboxManager) {
+        cancelAndRemoveTask(draftUUID: draft.localUUID)
+        draftSaveTasksQueued[draft.localUUID] = Task {
+            // Debounce the save task
+            try? await Task.sleep(nanoseconds: DraftManager.saveExpirationNanoSec)
 
-            return draft.uuid
+            await mailboxManager.saveLocally(draft: draft)
         }
     }
 
-    @discardableResult
     private func saveDraft(draft: UnmanagedDraft,
                            mailboxManager: MailboxManager,
-                           showSnackBar: Bool = false) async -> String {
-        let response = await mailboxManager.save(draft: draft)
-        if let error = response.error, error.shouldDisplay {
+                           showSnackBar: Bool = false) async {
+        let error = await mailboxManager.save(draft: draft)
+        if let error = error, error.shouldDisplay {
             await IKSnackBar.showSnackBar(message: error.localizedDescription)
         } else if showSnackBar {
             await IKSnackBar.showSnackBar(message: MailResourcesStrings.Localizable.snackBarDraftSaved,
                                           action: .init(title: MailResourcesStrings.Localizable.actionDelete) { [weak self] in
-                                              self?.deleteDraft(draftUUID: response.uuid, mailboxManager: mailboxManager)
+                                              self?.deleteDraft(localUuid: draft.localUUID, mailboxManager: mailboxManager)
                                           })
         }
-        return response.uuid
     }
 
-    private func deleteDraft(draftUUID: String, mailboxManager: MailboxManager) {
+    private func deleteDraft(localUuid: String, mailboxManager: MailboxManager) {
         // Convert draft to thread
         let realm = mailboxManager.getRealm()
 
-        guard let draft = mailboxManager.draft(uuid: draftUUID)?.freeze(),
+        guard let draft = mailboxManager.draft(localUuid: localUuid, using: realm)?.freeze(),
               let draftFolder = mailboxManager.getFolder(with: .draft, using: realm) else { return }
         let thread = Thread(draft: draft)
         try? realm.uncheckedSafeWrite {

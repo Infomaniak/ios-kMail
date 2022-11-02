@@ -243,7 +243,7 @@ enum ActionsTarget: Equatable {
             if message.folderId == mailboxManager.getFolder(with: .trash)?._id {
                 // Delete definitely
                 try await mailboxManager.delete(messages: [message.freezeIfNeeded()])
-            } else if message.isDraft && message.uid.starts(with: Draft.uuidLocalPrefix) {
+            } else if message.isLocalDraft {
                 // Delete local draft from Realm
                 if let thread = message.parent {
                     await mailboxManager.deleteLocalDraft(thread: thread.freezeIfNeeded())
