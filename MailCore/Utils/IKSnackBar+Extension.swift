@@ -65,7 +65,9 @@ public extension IKSnackBar {
     ) -> IKSnackBar? {
         return IKSnackBar.showSnackBar(
             message: message,
-            duration: duration /* ,
+            duration: duration
+            // Waiting for new API routes
+            /* ,
              action: .init(title: MailResourcesStrings.Localizable.buttonCancel) {
                  Task {
                      do {
