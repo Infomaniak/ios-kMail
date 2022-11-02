@@ -19,9 +19,10 @@
 import Foundation
 import InfomaniakCore
 import MailCore
+import MailResources
 
 // To delete: alert to facilitate tests for beta version
 @MainActor
 func showWorkInProgressSnackBar() {
-    IKSnackBar.showSnackBar(message: Constants.workInProgress)
+    IKSnackBar.showSnackBar(message: MailResourcesStrings.Localizable.workInProgressTitle)
 }
