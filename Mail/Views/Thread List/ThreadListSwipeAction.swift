@@ -59,17 +59,26 @@ struct ThreadListSwipeActions: ViewModifier {
     @AppStorage(UserDefaults.shared.key(.swipeShortLeft)) private var swipeShortLeft = Constants.defaultSwipeShortLeft
 
     func body(content: Content) -> some View {
-        content
-            .swipeActions(edge: .leading) {
-                if !multipleSelectionViewModel.isEnabled {
-                    edgeActions([swipeLongRight, swipeShortRight])
+        if thread.parent?.role == .draft {
+            content
+                .swipeActions(edge: .trailing) {
+                    if !multipleSelectionViewModel.isEnabled {
+                        edgeActions([.delete])
+                    }
                 }
-            }
-            .swipeActions(edge: .trailing) {
-                if !multipleSelectionViewModel.isEnabled {
-                    edgeActions([swipeLongLeft, swipeShortLeft])
+        } else {
+            content
+                .swipeActions(edge: .leading) {
+                    if !multipleSelectionViewModel.isEnabled {
+                        edgeActions([swipeLongRight, swipeShortRight])
+                    }
                 }
-            }
+                .swipeActions(edge: .trailing) {
+                    if !multipleSelectionViewModel.isEnabled {
+                        edgeActions([swipeLongLeft, swipeShortLeft])
+                    }
+                }
+        }
     }
 
     private func edgeActions(_ actions: [SwipeAction]) -> some View {
