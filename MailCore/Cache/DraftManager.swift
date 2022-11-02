@@ -30,7 +30,7 @@ public class DraftManager {
 
     public func saveDraftOnline(draft: UnmanagedDraft, mailboxManager: MailboxManager) async {
         cancelAndRemoveTask(draftUUID: draft.localUUID)
-        await saveDraft(draft: draft, mailboxManager: mailboxManager)
+        await saveDraft(draft: draft, mailboxManager: mailboxManager, showSnackBar: true)
     }
 
     public func saveDraftLocally(draft: UnmanagedDraft, mailboxManager: MailboxManager) {
