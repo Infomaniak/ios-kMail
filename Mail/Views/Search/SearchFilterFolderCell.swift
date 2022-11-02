@@ -59,7 +59,6 @@ struct SearchFilterFolderCell: View {
                     }
                     .tag(folder.id)
                 }
-                .font(MailTextStyle.body.font)
             }
         } label: {
             HStack(spacing: 11) {
@@ -69,6 +68,7 @@ struct SearchFilterFolderCell: View {
                         .frame(width: 13, height: 13)
                 }
                 Text(selectedFolderName)
+                    .font(MailTextStyle.header5.font)
                 Image(resource: MailResourcesAsset.arrowDown)
                     .resizable()
                     .frame(width: 13, height: 13)
@@ -80,6 +80,6 @@ struct SearchFilterFolderCell: View {
 
 struct SearchFilterFolderCell_Previews: PreviewProvider {
     static var previews: some View {
-        SearchFilterFolderCell(selection: .constant("popopo"), folders: [PreviewHelper.sampleFolder])
+        SearchFilterFolderCell(selection: .constant("folder"), folders: [PreviewHelper.sampleFolder])
     }
 }

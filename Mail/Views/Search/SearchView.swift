@@ -84,6 +84,7 @@ struct SearchView: View {
                 // TODO: maybe add a different view
                 Text("No history")
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    .textStyle(.body)
             } else {
                 List {
                     if viewModel.searchState == .history {
@@ -207,7 +208,7 @@ struct SearchView: View {
         } header: {
             if threadDensity != .compact && !threads.isEmpty {
                 Text(MailResourcesStrings.Localizable.searchAllMessages)
-                    .textStyle(.calloutSecondary)
+                    .textStyle(.calloutTertiary)
             }
         } footer: {
             if viewModel.isLoading {
@@ -234,7 +235,7 @@ struct SearchView: View {
         } header: {
             if !contacts.isEmpty {
                 Text(MailResourcesStrings.Localizable.contactsSearch)
-                    .textStyle(.calloutSecondary)
+                    .textStyle(.calloutTertiary)
             }
         }
         .listRowInsets(.init(top: 0, leading: 12, bottom: 0, trailing: 12))
@@ -257,7 +258,7 @@ struct SearchView: View {
             .padding(.horizontal, 4)
         } header: {
             Text(MailResourcesStrings.Localizable.recentSearchesTitle)
-                .textStyle(.calloutSecondary)
+                .textStyle(.calloutTertiary)
         }
         .listRowSeparator(.hidden)
         .listRowBackground(MailResourcesAsset.backgroundColor.swiftUiColor)
