@@ -406,7 +406,7 @@ public class MailboxManager: ObservableObject {
     /// - Parameter thread: Thread to remove
     public func moveOrDelete(thread: Thread) async throws {
         let parentFolder = thread.parent
-        if parentFolder?.toolType == nil {
+        if parentFolder?.toolType == .search {
             await deleteInSearch(thread: thread)
         }
         if parentFolder?.role == .trash {
