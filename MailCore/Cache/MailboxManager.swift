@@ -419,9 +419,8 @@ public class MailboxManager: ObservableObject {
         if parentFolder?.role == .trash {
             // Delete definitely
             try await delete(thread: thread)
-        } else if thread.isLocalDraft {
-            // Delete local draft from Realm
-            await deleteLocalDraft(thread: thread)
+        } else if parentFolder?.role == .draft {
+            try await deleteDraft(from: thread)
         } else {
             // Move to trash
             let response = try await move(thread: thread, to: .trash)
@@ -1118,6 +1117,33 @@ public class MailboxManager: ObservableObject {
                 }
             } else {
                 print("No draft with localUuid \(draft.localUUID)")
+            }
+        }
+    }
+
+    public func deleteDraft(from thread: Thread) async throws {
+        guard let message = thread.messages.first else { return }
+
+        if !thread.isLocalDraft {
+            _ = try await apiFetcher.delete(mailbox: mailbox, messages: [message])
+        }
+
+        await backgroundRealm.execute { realm in
+            var draft = self.draft(localUuid: thread.uid, using: realm)
+            if !thread.isLocalDraft {
+                draft = self.draft(messageUid: message.uid, using: realm)
+            }
+
+            try? realm.safeWrite {
+                if let draft = draft {
+                    realm.delete(draft)
+                }
+                if let message = message.fresh(using: realm) {
+                    realm.delete(message)
+                }
+                if let thread = thread.fresh(using: realm) {
+                    realm.delete(thread)
+                }
             }
         }
     }
