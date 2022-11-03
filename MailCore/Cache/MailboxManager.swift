@@ -221,17 +221,23 @@ public class MailboxManager: ObservableObject {
     // MARK: - Thread
 
     public func threads(folder: Folder, filter: Filter = .all, searchFilter: [URLQueryItem] = []) async throws -> ThreadResult {
+        let isDraftFolder = folder.role == .draft
+
         // Get from API
         let threadResult = try await apiFetcher.threads(
             mailbox: mailbox,
             folderId: folder._id,
             filter: filter,
             searchFilter: searchFilter,
-            isDraftFolder: folder.role == .draft
+            isDraftFolder: isDraftFolder
         )
 
         // Save result
         await saveThreads(result: threadResult, parent: folder)
+
+        if isDraftFolder {
+            await cleanDrafts()
+        }
 
         return threadResult
     }
@@ -994,6 +1000,28 @@ public class MailboxManager: ObservableObject {
     }
 
     // MARK: - Draft
+
+    public func cleanDrafts() async {
+        await backgroundRealm.execute { realm in
+            guard let draftFolder = (realm.objects(Folder.self).where { $0.role == .draft }.first) else { return }
+            let draftMessagesUid = draftFolder.threads.map { $0.messages.first?.uid }
+
+            let localDrafts = realm.objects(Draft.self)
+
+            var localDraftToDelete: [Draft] = []
+
+            for draft in localDrafts {
+                if let messageUid = draft.messageUid, !messageUid.isEmpty {
+                    if !draftMessagesUid.contains(messageUid) {
+                        localDraftToDelete.append(draft)
+                    }
+                }
+            }
+            try? realm.safeWrite {
+                realm.delete(localDraftToDelete)
+            }
+        }
+    }
 
     public func draft(from message: Message) async throws -> Draft {
         // Get from API
