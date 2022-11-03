@@ -1149,13 +1149,28 @@ public class MailboxManager: ObservableObject {
     }
 
     public func deleteDraft(from message: Message) async throws {
-        // Delete from API
-        try await apiFetcher.deleteDraft(from: message)
+        guard let thread = message.parent else { return }
+        let deleteThread = thread.messages.count <= 1
+
+        if !message.uid.isEmpty {
+            _ = try await apiFetcher.delete(mailbox: mailbox, messages: [message])
+        }
+
         await backgroundRealm.execute { realm in
-            if let draft = self.draft(messageUid: message.uid, using: realm) {
-                // Delete draft in Realm
-                try? realm.safeWrite {
+            var draft = self.draft(localUuid: thread.uid, using: realm)
+            if !message.uid.isEmpty {
+                draft = self.draft(messageUid: message.uid, using: realm)
+            }
+
+            try? realm.safeWrite {
+                if let draft = draft {
                     realm.delete(draft)
+                }
+                if let message = message.fresh(using: realm) {
+                    realm.delete(message)
+                }
+                if deleteThread, let thread = thread.fresh(using: realm) {
+                    realm.delete(thread)
                 }
             }
         }
