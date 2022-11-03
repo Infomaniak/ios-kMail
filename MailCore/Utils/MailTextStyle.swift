@@ -64,7 +64,7 @@ public struct MailTextStyle {
         font: .system(size: 17.5, weight: .bold),
         color: MailResourcesAsset.primaryTextColor
     )
-    
+
     public static let header3 = MailTextStyle(
         font: .system(size: 17.5),
         color: MailResourcesAsset.primaryTextColor
@@ -89,12 +89,12 @@ public struct MailTextStyle {
         font: .system(size: 15.5, weight: .bold),
         color: \.primary
     )
-    
+
     public static let header4Error = MailTextStyle(
         font: .system(size: 15.5, weight: .bold),
         color: MailResourcesAsset.redActionColor
     )
-    
+
     public static let header5 = MailTextStyle(
         font: .system(size: 15.5, weight: .medium),
         color: MailResourcesAsset.primaryTextColor
@@ -104,12 +104,12 @@ public struct MailTextStyle {
         font: .system(size: 15.5, weight: .medium),
         color: \.primary
     )
-    
+
     public static let header5FAB = MailTextStyle(
         font: .system(size: 15.5, weight: .medium),
         color: MailResourcesAsset.buttonPillColor
     )
-    
+
     public static let body = MailTextStyle(
         font: .system(size: 15.5),
         color: MailResourcesAsset.primaryTextColor
@@ -119,7 +119,7 @@ public struct MailTextStyle {
         font: .system(size: 15.5),
         color: MailResourcesAsset.secondaryTextColor
     )
-    
+
     public static let calloutStrongAccent = MailTextStyle(
         font: .system(size: 13.5, weight: .bold),
         color: \.primary
@@ -129,12 +129,12 @@ public struct MailTextStyle {
         font: .system(size: 13.5, weight: .bold),
         color: MailResourcesAsset.primaryTextColor
     )
-    
+
     public static let calloutMediumAccent = MailTextStyle(
         font: .system(size: 13.5, weight: .medium),
         color: \.primary
     )
-    
+
     public static let calloutAccent = MailTextStyle(
         font: .system(size: 13.5),
         color: \.primary
@@ -149,7 +149,7 @@ public struct MailTextStyle {
         font: .system(size: 13.5),
         color: MailResourcesAsset.secondaryTextColor
     )
-    
+
     public static let calloutTertiary = MailTextStyle(
         font: .system(size: 14.5),
         color: MailResourcesAsset.sectionHeaderTextColor
