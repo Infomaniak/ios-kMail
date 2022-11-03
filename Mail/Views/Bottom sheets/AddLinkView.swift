@@ -32,7 +32,7 @@ struct AddLinkView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 24) {
             Text(MailResourcesStrings.Localizable.urlEntryTitle)
-                .textStyle(.header3)
+                .textStyle(.header4)
             TextField(MailResourcesStrings.Localizable.urlPlaceholder, text: $url)
                 .textFieldStyle(.roundedBorder)
                 .focused($isFocused)
@@ -40,6 +40,7 @@ struct AddLinkView: View {
                 .disableAutocorrection(true)
                 .autocapitalization(.none)
                 .textContentType(.URL)
+                .textStyle(.body)
             BottomSheetButtonsView(primaryButtonTitle: MailResourcesStrings.Localizable.buttonValid,
                                    secondaryButtonTitle: MailResourcesStrings.Localizable.buttonCancel,
                                    primaryButtonEnabled: !url.isEmpty) {

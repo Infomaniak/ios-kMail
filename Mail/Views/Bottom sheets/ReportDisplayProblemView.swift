@@ -30,7 +30,7 @@ struct ReportDisplayProblemView: View {
     var body: some View {
         VStack(spacing: 16) {
             Text(MailResourcesStrings.Localizable.reportDisplayProblemTitle)
-                .textStyle(.header3)
+                .textStyle(.header4)
                 .frame(maxWidth: .infinity, alignment: .leading)
             Image(resource: MailResourcesAsset.displayIssue)
             Text(MailResourcesStrings.Localizable.reportDisplayProblemDescription)
