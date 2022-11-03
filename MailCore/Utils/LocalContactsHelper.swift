@@ -62,7 +62,7 @@ class LocalContactsHelper {
         case .restricted, .denied:
             throw ContactError.accessDenied
         case .notDetermined:
-            // Request authozation
+            // Request authorization
             try await store.requestAccess(for: .contacts)
         @unknown default:
             throw ContactError.unhandledCase
