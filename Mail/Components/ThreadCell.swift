@@ -123,7 +123,7 @@ struct ThreadCell: View {
     private var cellHeader: some View {
         HStack(spacing: 8) {
             if thread.hasDrafts {
-                Text("(\(MailResourcesStrings.Localizable.messageIsDraftOption))")
+                Text("\(MailResourcesStrings.Localizable.draftPrefix)")
                     .textStyle(thread.hasUnseenMessages ? .header2Error : .header3Error)
                     .lineLimit(1)
                     .layoutPriority(1)
