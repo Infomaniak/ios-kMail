@@ -19,34 +19,64 @@
 import Foundation
 import InfomaniakCore
 import MailResources
+import UIKit
+
+struct DraftQueueElement {
+    var saveTask: Task<Void, Never>?
+    var backgroundTaskIdentifier: UIBackgroundTaskIdentifier = .invalid
+}
+
+actor DraftQueue {
+    var queue = [String: DraftQueueElement]()
+
+    func cleanQueueElement(uuid: String) {
+        queue[uuid]?.saveTask?.cancel()
+        queue[uuid] = DraftQueueElement()
+    }
+
+    func saveTask(task: () -> Task<Void, Never>, for uuid: String) {
+        queue[uuid]?.saveTask = task()
+    }
+
+    func beginBackgroundTask(identifier: UIBackgroundTaskIdentifier, for uuid: String) {
+        queue[uuid]?.backgroundTaskIdentifier = identifier
+    }
+}
 
 public class DraftManager {
     public static let shared = DraftManager()
 
-    private var draftSaveTasksQueued = [String: Task<Void, Never>]()
+    private let draftQueue = DraftQueue()
     private static let saveExpirationNanoSec: UInt64 = 3_000_000_000 // 3 sec
 
     private init() {}
 
-    public func saveDraftOnline(draft: UnmanagedDraft, mailboxManager: MailboxManager) async {
-        cancelAndRemoveTask(draftUUID: draft.localUUID)
-        await saveDraft(draft: draft, mailboxManager: mailboxManager, showSnackBar: true)
+    public func instantSaveDraftLocally(draft: UnmanagedDraft, mailboxManager: MailboxManager, action: SaveDraftOption) async {
+        await draftQueue.cleanQueueElement(uuid: draft.localUUID)
+        await mailboxManager.saveLocally(draft: draft, action: action)
     }
 
-    public func saveDraftLocally(draft: UnmanagedDraft, mailboxManager: MailboxManager) {
-        cancelAndRemoveTask(draftUUID: draft.localUUID)
-        draftSaveTasksQueued[draft.localUUID] = Task {
-            // Debounce the save task
-            try? await Task.sleep(nanoseconds: DraftManager.saveExpirationNanoSec)
+    public func saveDraftLocally(draft: UnmanagedDraft, mailboxManager: MailboxManager, action: SaveDraftOption) async {
+        await draftQueue.cleanQueueElement(uuid: draft.localUUID)
+        await draftQueue.saveTask(task: {
+            Task {
+                // Debounce the save task
+                try? await Task.sleep(nanoseconds: DraftManager.saveExpirationNanoSec)
 
-            await mailboxManager.saveLocally(draft: draft)
-        }
+                await mailboxManager.saveLocally(draft: draft, action: action)
+            }
+        }, for: draft.localUUID)
     }
 
     private func saveDraft(draft: UnmanagedDraft,
                            mailboxManager: MailboxManager,
                            showSnackBar: Bool = false) async {
+        await draftQueue.cleanQueueElement(uuid: draft.localUUID)
+        let beginIdentifier = await UIApplication.shared.beginBackgroundTask(withName: "Draft Saver") {}
+        await draftQueue.beginBackgroundTask(identifier: beginIdentifier, for: draft.localUUID)
+
         let error = await mailboxManager.save(draft: draft)
+        await UIApplication.shared.endBackgroundTask(draftQueue.queue[draft.localUUID]!.backgroundTaskIdentifier)
         if let error = error, error.shouldDisplay {
             await IKSnackBar.showSnackBar(message: error.localizedDescription)
         } else if showSnackBar {
@@ -79,10 +109,13 @@ public class DraftManager {
     }
 
     public func send(draft: UnmanagedDraft, mailboxManager: MailboxManager) async {
-        // Cancel any scheduled save
-        cancelAndRemoveTask(draftUUID: draft.localUUID)
+        await draftQueue.cleanQueueElement(uuid: draft.localUUID)
+        let identifier = await UIApplication.shared.beginBackgroundTask(withName: "Draft Sender") {}
+        await draftQueue.beginBackgroundTask(identifier: identifier, for: draft.localUUID)
+
         do {
             let cancelableResponse = try await mailboxManager.send(draft: draft)
+            await UIApplication.shared.endBackgroundTask(draftQueue.queue[draft.localUUID]!.backgroundTaskIdentifier)
             await IKSnackBar.showCancelableSnackBar(
                 message: MailResourcesStrings.Localizable.emailSentSnackbar,
                 cancelSuccessMessage: MailResourcesStrings.Localizable.canceledEmailSendingConfirmationSnackbar,
@@ -95,8 +128,23 @@ public class DraftManager {
         }
     }
 
-    private func cancelAndRemoveTask(draftUUID: String) {
-        draftSaveTasksQueued[draftUUID]?.cancel()
-        draftSaveTasksQueued[draftUUID] = nil
+    public func syncDraft(mailboxManager: MailboxManager) {
+        Task {
+            let drafts = await mailboxManager.draftWithPendingAction()
+            for draft in drafts {
+                switch draft.action {
+                case .save:
+                    Task {
+                        await self.saveDraft(draft: draft, mailboxManager: mailboxManager)
+                    }
+                case .send:
+                    Task {
+                        await self.send(draft: draft, mailboxManager: mailboxManager)
+                    }
+                default:
+                    break
+                }
+            }
+        }
     }
 }

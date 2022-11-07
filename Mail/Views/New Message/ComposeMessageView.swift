@@ -199,7 +199,7 @@ struct ComposeMessageView: View {
                 trailing: Button(action: {
                     originalBody = draft.body
                     Task {
-                        await DraftManager.shared.send(draft: draft, mailboxManager: mailboxManager)
+                        await DraftManager.shared.saveDraftLocally(draft: draft, mailboxManager: mailboxManager, action: .send)
                         dismiss()
                     }
                 }, label: {
@@ -210,7 +210,9 @@ struct ComposeMessageView: View {
             .background(MailResourcesAsset.backgroundColor.swiftUiColor)
         }
         .onChange(of: draft) { _ in
-            DraftManager.shared.saveDraftLocally(draft: draft, mailboxManager: mailboxManager)
+            Task {
+                await DraftManager.shared.saveDraftLocally(draft: draft, mailboxManager: mailboxManager, action: .save)
+            }
         }
         .onChange(of: selectedMailboxItem) { _ in
             let mailbox = AccountManager.instance.mailboxes[selectedMailboxItem]
@@ -222,7 +224,13 @@ struct ComposeMessageView: View {
         .onDisappear {
 //            guard draft.body != originalBody || !draft.uuid.isEmpty else { return }
             Task {
-                await DraftManager.shared.saveDraftOnline(draft: draft, mailboxManager: mailboxManager)
+                await DraftManager.shared.instantSaveDraftLocally(
+                    draft: draft,
+                    mailboxManager: mailboxManager,
+                    action: draft.action == .send ? .send : .save
+                )
+
+                DraftManager.shared.syncDraft(mailboxManager: mailboxManager)
             }
         }
         .fullScreenCover(isPresented: $isShowingCamera) {

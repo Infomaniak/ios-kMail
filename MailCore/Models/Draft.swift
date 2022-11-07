@@ -21,7 +21,7 @@ import MailResources
 import RealmSwift
 import UniformTypeIdentifiers
 
-public enum SaveDraftOption: String, Codable {
+public enum SaveDraftOption: String, Codable, PersistableEnum {
     case save
     case send
 }
@@ -314,9 +314,9 @@ public struct UnmanagedDraft: Equatable, Encodable, AbstractDraft {
                               body: managedDraft.body,
                               quote: managedDraft.quote ?? "",
                               mimeType: managedDraft.mimeType,
-                              to: Array(managedDraft.to),
-                              cc: Array(managedDraft.cc),
-                              bcc: Array(managedDraft.bcc),
+                              to: Array(managedDraft.to.freezeIfNeeded()),
+                              cc: Array(managedDraft.cc.freezeIfNeeded()),
+                              bcc: Array(managedDraft.bcc.freezeIfNeeded()),
                               inReplyTo: managedDraft.inReplyTo,
                               inReplyToUid: managedDraft.inReplyToUid,
                               forwardedUid: managedDraft.forwardedUid,
@@ -324,7 +324,8 @@ public struct UnmanagedDraft: Equatable, Encodable, AbstractDraft {
                               messageUid: managedDraft.messageUid,
                               ackRequest: managedDraft.ackRequest,
                               stUuid: managedDraft.stUuid,
-                              priority: managedDraft.priority)
+                              priority: managedDraft.priority,
+                              action: managedDraft.action)
     }
 
     public func asManaged() -> Draft {
@@ -386,6 +387,7 @@ public class Draft: Object, Decodable, Identifiable, AbstractDraft {
     @Persisted public var stUuid: String?
     @Persisted public var attachments: List<Attachment>
     @Persisted public var isOffline = true
+    @Persisted public var action: SaveDraftOption?
 
     private enum CodingKeys: String, CodingKey {
         case remoteUUID = "uuid"
@@ -454,9 +456,11 @@ public class Draft: Object, Decodable, Identifiable, AbstractDraft {
                             priority: MessagePriority = .normal,
                             stUuid: String? = nil,
                             attachments: [Attachment]? = nil,
-                            isOffline: Bool = true) {
+                            isOffline: Bool = true,
+                            action: SaveDraftOption? = nil) {
         self.init()
 
+        self.localUUID = localUUID
         self.remoteUUID = remoteUUID
         self.date = date
         self.identityId = identityId
@@ -477,6 +481,7 @@ public class Draft: Object, Decodable, Identifiable, AbstractDraft {
         self.stUuid = stUuid
         self.attachments = attachments?.toRealmList() ?? List()
         self.isOffline = isOffline
+        self.action = action
     }
 
     public func asUnmanaged() -> UnmanagedDraft {
