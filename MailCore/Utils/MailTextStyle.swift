@@ -109,10 +109,10 @@ public struct MailTextStyle {
         font: .system(size: 15.5, weight: .medium),
         color: \.primary
     )
-    
+
     public static let header5OnAccent = MailTextStyle(
         font: .system(size: 15.5, weight: .medium),
-        color: MailResourcesAsset.buttonPillColor
+        color: .white
     )
 
     public static let header5Error = MailTextStyle(
@@ -137,7 +137,7 @@ public struct MailTextStyle {
 
     public static let calloutStrongOnAccent = MailTextStyle(
         font: .system(size: 13.5, weight: .bold),
-        color: MailResourcesAsset.buttonPillColor
+        color: .white
     )
 
     public static let calloutStrong = MailTextStyle(
