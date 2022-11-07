@@ -40,21 +40,21 @@ struct TextStylePreview: View {
                         .textStyle(.calloutStrong)
                     Text("Callout")
                         .textStyle(.callout)
-                    Text("Callout Accent")
+                    Text("Callout accent")
                         .textStyle(.calloutAccent)
                     Text("Callout secondary")
                         .textStyle(.calloutSecondary)
                 }
                 Group {
-                    Text("Callout Quaternary")
+                    Text("Callout quaternary")
                         .textStyle(.calloutQuaternary)
                     Text("Header 5 accent")
                         .textStyle(.header5Accent)
-                    Text("Header 5 FAB")
+                    Text("Header 5 on accent")
                         .padding()
                         .background(Color.accentColor)
                         .cornerRadius(50)
-                        .textStyle(.header5FAB)
+                        .textStyle(.header5OnAccent)
                 }
             }
             .navigationTitle("Text styles")

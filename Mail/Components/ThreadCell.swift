@@ -124,8 +124,7 @@ struct ThreadCell: View {
         HStack(spacing: 8) {
             if thread.hasDrafts {
                 Text("(\(MailResourcesStrings.Localizable.messageIsDraftOption))")
-                    .foregroundColor(MailResourcesAsset.redActionColor)
-                    .textStyle(thread.hasUnseenMessages ? .header2 : .header3Secondary)
+                    .textStyle(thread.hasUnseenMessages ? .header2Error : .header3Error)
                     .lineLimit(1)
                     .layoutPriority(1)
             }

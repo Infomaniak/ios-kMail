@@ -94,8 +94,7 @@ struct UnreadToggleStyle: ToggleStyle {
                     Image(systemName: "xmark")
                 }
             }
-            .font(MailTextStyle.calloutStrong.font)
-            .foregroundColor(configuration.isOn ? MailResourcesAsset.backgroundColor.swiftUiColor : Color.accentColor)
+            .textStyle(configuration.isOn ? .calloutStrongOnAccent : .calloutStrongAccent)
             .padding(.vertical, 4)
             .padding(.horizontal, 8)
             .background(

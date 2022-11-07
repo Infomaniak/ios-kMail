@@ -40,8 +40,7 @@ struct MessageHeaderSummaryView: View {
                     if message.isDraft {
                         HStack {
                             Text(MailResourcesStrings.Localizable.messageIsDraftOption)
-                                .foregroundColor(MailResourcesAsset.redActionColor)
-                                .textStyle(.header2)
+                                .textStyle(.header5Error)
                             Spacer()
                             Button(action: deleteDraftTapped) {
                                 Image(resource: MailResourcesAsset.bin)
