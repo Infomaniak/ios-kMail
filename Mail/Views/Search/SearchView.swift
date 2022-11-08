@@ -208,7 +208,7 @@ struct SearchView: View {
         } header: {
             if threadDensity != .compact && !threads.isEmpty {
                 Text(MailResourcesStrings.Localizable.searchAllMessages)
-                    .textStyle(.calloutTertiary)
+                    .textStyle(.calloutSecondary)
             }
         } footer: {
             if viewModel.isLoading {
@@ -235,7 +235,7 @@ struct SearchView: View {
         } header: {
             if !contacts.isEmpty {
                 Text(MailResourcesStrings.Localizable.contactsSearch)
-                    .textStyle(.calloutTertiary)
+                    .textStyle(.calloutSecondary)
             }
         }
         .listRowInsets(.init(top: 0, leading: 12, bottom: 0, trailing: 12))
@@ -258,7 +258,7 @@ struct SearchView: View {
             .padding(.horizontal, 4)
         } header: {
             Text(MailResourcesStrings.Localizable.recentSearchesTitle)
-                .textStyle(.calloutTertiary)
+                .textStyle(.calloutSecondary)
         }
         .listRowSeparator(.hidden)
         .listRowBackground(MailResourcesAsset.backgroundColor.swiftUiColor)

@@ -33,7 +33,7 @@ struct NoNetworkView: View {
             }
             .foregroundColor(MailResourcesAsset.warningColor)
             Text(MailResourcesStrings.Localizable.noNetworkDescription)
-                .textStyle(.calloutTertiary)
+                .textStyle(.calloutSecondary)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
     }

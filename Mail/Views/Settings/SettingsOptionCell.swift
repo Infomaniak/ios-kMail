@@ -44,7 +44,7 @@ struct SettingsOptionCell: View {
                         Text(title)
                             .textStyle(.body)
                         Text(subtitle)
-                            .textStyle(.calloutQuaternary)
+                            .textStyle(.calloutTertiary)
                     }
                 }
             }

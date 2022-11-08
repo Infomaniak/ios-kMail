@@ -46,8 +46,8 @@ struct TextStylePreview: View {
                         .textStyle(.calloutSecondary)
                 }
                 Group {
-                    Text("Callout quaternary")
-                        .textStyle(.calloutQuaternary)
+                    Text("Callout tertiary")
+                        .textStyle(.calloutTertiary)
                     Text("Header 5 accent")
                         .textStyle(.header5Accent)
                     Text("Header 5 on accent")
