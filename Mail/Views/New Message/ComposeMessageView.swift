@@ -222,7 +222,7 @@ struct ComposeMessageView: View {
             draft.setSignature(signatureResponse)
         }
         .onDisappear {
-//            guard draft.body != originalBody || !draft.uuid.isEmpty else { return }
+            // TODO: - Compare message body to original body : guard draft.body != originalBody || !draft.uuid.isEmpty else { return }
             Task {
                 await DraftManager.shared.instantSaveDraftLocally(
                     draft: draft,

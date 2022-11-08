@@ -1010,10 +1010,8 @@ public class MailboxManager: ObservableObject {
             var localDraftToDelete: [Draft] = []
 
             for draft in localDrafts {
-                if let messageUid = draft.messageUid, !messageUid.isEmpty {
-                    if !draftMessagesUid.contains(messageUid) {
-                        localDraftToDelete.append(draft)
-                    }
+                if let messageUid = draft.messageUid, !messageUid.isEmpty, !draftMessagesUid.contains(messageUid) {
+                    localDraftToDelete.append(draft)
                 }
             }
             try? realm.safeWrite {

@@ -92,7 +92,8 @@ public extension Endpoint {
 
     static func threads(uuid: String, folderId: String, offset: Int = 0, filter: String?,
                         searchFilters: [URLQueryItem] = [], isDraftFolder: Bool = false) -> Endpoint {
-        let threadModeValue = isDraftFolder ? "off" : (UserDefaults.shared.threadMode == .discussion ? "on" : "off")
+        let threadModeSetting = UserDefaults.shared.threadMode == .discussion ? "on" : "off"
+        let threadModeValue = isDraftFolder ? "off" : threadModeSetting
         var queryItems = [
             URLQueryItem(name: "offset", value: "\(offset)"),
             URLQueryItem(name: "thread", value: threadModeValue),
