@@ -62,7 +62,7 @@ struct MailboxesManagementView: View {
             }
 
             if isExpanded {
-                VStack(alignment: .leading) {
+                VStack(alignment: .leading, spacing: 4) {
                     ForEach(otherMailboxes) { mailbox in
                         MailboxCell(mailbox: mailbox)
                     }
@@ -71,10 +71,10 @@ struct MailboxesManagementView: View {
                         IKDivider(withPadding: true)
                     }
 
-                    MailboxesManagementButtonView(text: MailResourcesStrings.Localizable.buttonManageAccount) {
+                    MailboxesManagementButtonView(icon: MailResourcesAsset.userSetting, text: MailResourcesStrings.Localizable.buttonManageAccount) {
                         isShowingManageAccount.toggle()
                     }
-                    MailboxesManagementButtonView(text: MailResourcesStrings.Localizable.buttonAccountSwitch) {
+                    MailboxesManagementButtonView(icon: MailResourcesAsset.userSwap, text: MailResourcesStrings.Localizable.buttonAccountSwitch) {
                         isShowingSwitchAccount.toggle()
                     }
                 }
@@ -84,6 +84,7 @@ struct MailboxesManagementView: View {
             }
         }
         .padding(.top, 16)
+        .padding(.bottom, 8)
         .task {
             if let user = AccountManager.instance.account(for: mailboxManager.mailbox.userId)?.user {
                 avatarImage = await user.avatarImage
