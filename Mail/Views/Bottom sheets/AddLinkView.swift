@@ -32,7 +32,7 @@ struct AddLinkView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 24) {
             Text(MailResourcesStrings.Localizable.urlEntryTitle)
-                .textStyle(.header4)
+                .textStyle(.header5)
             TextField(MailResourcesStrings.Localizable.urlPlaceholder, text: $url)
                 .textFieldStyle(.roundedBorder)
                 .focused($isFocused)

@@ -116,7 +116,7 @@ struct ThreadView: View {
             // Style toolbar
             let toolbarAppearance = UIToolbarAppearance()
             toolbarAppearance.configureWithOpaqueBackground()
-            toolbarAppearance.backgroundColor = MailResourcesAsset.backgroundToolbarColor.color
+            toolbarAppearance.backgroundColor = MailResourcesAsset.backgroundSecondaryColor.color
             toolbarAppearance.shadowColor = .clear
             UIToolbar.appearance().standardAppearance = toolbarAppearance
             UIToolbar.appearance().scrollEdgeAppearance = toolbarAppearance
