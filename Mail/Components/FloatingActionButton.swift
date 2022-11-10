@@ -40,6 +40,7 @@ struct FloatingActionButton: View {
         .controlSize(.large)
         .padding(.trailing, 24)
         .padding(.bottom, 70)
+        .foregroundColor(MailResourcesAsset.onAccentColor)
     }
 }
 

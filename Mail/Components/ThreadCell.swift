@@ -114,7 +114,7 @@ struct ThreadCell: View {
                 .background(Circle().fill(isSelected ? Color.accentColor : Color.clear))
                 .frame(width: checkboxSize, height: checkboxSize)
             Image(resource: MailResourcesAsset.check)
-                .foregroundColor(.white)
+                .foregroundColor(MailResourcesAsset.onAccentColor)
                 .frame(height: checkmarkSize)
                 .opacity(isSelected ? 1 : 0)
         }

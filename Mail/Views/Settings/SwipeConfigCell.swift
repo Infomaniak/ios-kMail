@@ -64,7 +64,7 @@ struct SwipeConfigCell: View {
                         action.swipeIcon?
                             .resizable()
                             .frame(width: 24, height: 24)
-                            .foregroundColor(.white)
+                            .foregroundColor(MailResourcesAsset.onAccentColor)
                     }
                 }
                 .frame(width: 74)

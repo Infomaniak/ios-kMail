@@ -18,6 +18,7 @@
 
 import Introspect
 import MailCore
+import MailResources
 import SwiftUI
 
 struct SegmentedControlModifier: ViewModifier {
@@ -27,7 +28,7 @@ struct SegmentedControlModifier: ViewModifier {
         content
             .introspectSegmentedControl { segmentedControl in
                 segmentedControl.selectedSegmentTintColor = accentColor.primary.color
-                segmentedControl.setTitleTextAttributes([.foregroundColor: UIColor.white], for: .selected)
+                segmentedControl.setTitleTextAttributes([.foregroundColor: MailResourcesAsset.onAccentColor.color], for: .selected)
                 segmentedControl.setTitleTextAttributes([.foregroundColor: accentColor.primary.color], for: .normal)
                 segmentedControl.backgroundColor = accentColor.secondary.color
             }
