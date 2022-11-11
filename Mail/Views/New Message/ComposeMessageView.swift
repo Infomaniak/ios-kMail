@@ -129,8 +129,7 @@ struct ComposeMessageView: View {
                                 ForEach(AccountManager.instance.mailboxes.indices, id: \.self) { i in
                                     Text(AccountManager.instance.mailboxes[i].email).tag(i)
                                 }
-                            }
-                            .textStyle(.body)
+                            }.tint(MailResourcesAsset.primaryTextColor)
                             Spacer()
                         }
                     }
