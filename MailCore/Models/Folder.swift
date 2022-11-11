@@ -115,6 +115,7 @@ public class Folder: Object, Codable, Comparable, Identifiable {
     @Persisted public var threads: MutableSet<Thread>
     @Persisted(originProperty: "children") public var parentLink: LinkingObjects<Folder>
     @Persisted public var toolType: ToolFolderType?
+    @Persisted public var cursor: String?
 
     /// Date of last threads update
     @Persisted public var lastUpdate: Date?

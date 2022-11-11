@@ -20,6 +20,52 @@ import Foundation
 import MailResources
 import RealmSwift
 
+public class MessageUidsResult: Decodable {
+    public var messageShortUids: [Int]
+    public var cursor: String
+
+    private enum CodingKeys: String, CodingKey {
+        case messageShortUids = "messagesUids"
+        case cursor = "signature"
+    }
+}
+
+public class MessageByUidsResult: Decodable {
+    public var messages: [Message]
+}
+
+public class MessageDeltaResult: Decodable {
+    public var deletedShortUids: [Int]
+    public var addedShortUids: [String]
+    public var updated: [MessageFlags]
+    public var cursor: String
+
+    private enum CodingKeys: String, CodingKey {
+        case deletedShortUids = "deleted"
+        case addedShortUids = "added"
+        case updated
+        case cursor = "signature"
+    }
+}
+
+public class MessageFlags: Decodable {
+    public var shortUid: String
+    public var answered: Bool
+    public var isFavorite: Bool
+    public var forwarded: Bool
+    public var scheduled: Bool
+    public var seen: Bool
+
+    private enum CodingKeys: String, CodingKey {
+        case shortUid = "uid"
+        case answered
+        case isFavorite = "flagged"
+        case forwarded
+        case scheduled
+        case seen
+    }
+}
+
 public enum MessagePriority: String, Codable, PersistableEnum {
     case low, normal, high
 }
@@ -31,7 +77,7 @@ public enum MessageDKIM: String, Codable, PersistableEnum {
 }
 
 public class Message: Object, Decodable, Identifiable {
-    @Persisted(primaryKey: true) public var uid: String = ""
+    @Persisted(primaryKey: true) public var uid = ""
     @Persisted public var msgId: String?
     @Persisted public var subject: String?
     @Persisted public var priority: MessagePriority
@@ -248,7 +294,7 @@ public class Message: Object, Decodable, Identifiable {
         self.flagged = flagged
         self.safeDisplay = safeDisplay
         self.hasUnsubscribeLink = hasUnsubscribeLink
-        self.fullyDownloaded = true
+        fullyDownloaded = true
     }
 
     convenience init(draft: Draft) {
@@ -271,6 +317,30 @@ public class Message: Object, Decodable, Identifiable {
         attachments = draft.attachments.detached()
         references = draft.references
         isDraft = true
+    }
+
+    public func toThread() -> Thread {
+        return Thread(
+            uid: uid,
+            messagesCount: 1,
+            uniqueMessagesCount: 1,
+            deletedMessagesCount: 1,
+            messages: [self],
+            unseenMessages: seen ? 0 : 1,
+            from: Array(from),
+            to: Array(to),
+            cc: Array(cc),
+            bcc: Array(bcc),
+            subject: subject,
+            date: date,
+            hasAttachments: attachments.isEmpty ? false : true,
+            hasStAttachments: false,
+            hasDrafts: (draftResource?.isEmpty ?? true) ? false : true,
+            flagged: flagged,
+            answered: answered,
+            forwarded: forwarded,
+            size: size
+        )
     }
 }
 
