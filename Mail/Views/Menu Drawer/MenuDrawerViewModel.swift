@@ -114,8 +114,8 @@ class MenuDrawerViewModel: ObservableObject {
         self.bottomSheet = bottomSheet
 
         helpMenuItems = [
-            MenuItem(icon: MailResourcesAsset.feedbacks,
-                     label: MailResourcesStrings.Localizable.buttonFeedbacks,
+            MenuItem(icon: MailResourcesAsset.feedback,
+                     label: MailResourcesStrings.Localizable.buttonFeedback,
                      action: sendFeedback),
             MenuItem(icon: MailResourcesAsset.help,
                      label: MailResourcesStrings.Localizable.buttonHelp,
