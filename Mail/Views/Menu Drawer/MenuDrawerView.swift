@@ -150,14 +150,14 @@ struct MenuDrawerView: View {
 
                     IKDivider(withPadding: true)
 
-                    MenuDrawerItemsListView(content: viewModel.helpMenuItems)
-
-                    IKDivider(withPadding: true)
-
                     MenuDrawerItemsListView(
                         title: MailResourcesStrings.Localizable.menuDrawerAdvancedActions,
                         content: viewModel.actionsMenuItems
                     )
+
+                    IKDivider(withPadding: true)
+
+                    MenuDrawerItemsListView(content: viewModel.helpMenuItems)
 
                     if viewModel.mailbox.isLimited, let quotas = viewModel.mailbox.quotas {
                         IKDivider(withPadding: true)
