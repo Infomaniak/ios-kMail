@@ -39,11 +39,19 @@ struct UserFoldersListView: View {
                     isExpanded.toggle()
                 }
             } label: {
-                HStack {
+                HStack(spacing: 12) {
+                    ChevronIcon(style: isExpanded ? .up : .down, color: .secondary)
                     Text(MailResourcesStrings.Localizable.buttonFolders)
                         .textStyle(.calloutSecondary)
                     Spacer()
-                    ChevronIcon(style: isExpanded ? .up : .down, color: .primary)
+                    Button {
+                        globalAlert.state = .createNewFolder(mode: .create)
+                    } label: {
+                        Image(resource: MailResourcesAsset.cross)
+                            .resizable()
+                            .frame(width: 16, height: 16)
+                            .rotationEffect(Angle(degrees: 45))
+                    }
                 }
             }
             .padding(.leading, Constants.menuDrawerHorizontalPadding)
@@ -55,14 +63,6 @@ struct UserFoldersListView: View {
                 ForEach(folders) { folder in
                     FolderCell(folder: folder, isCompact: isCompact)
                 }
-
-                MenuDrawerItemCell(content: .init(icon: MailResourcesAsset.add, label: MailResourcesStrings.Localizable.buttonCreateFolder) {
-                    withAnimation {
-                        globalAlert.state = .createNewFolder(mode: .create)
-                    }
-                })
-                .padding(.top, Constants.menuDrawerVerticalPadding)
-                .padding(.horizontal, Constants.menuDrawerHorizontalPadding)
             }
         }
         .padding(.vertical, 19)
