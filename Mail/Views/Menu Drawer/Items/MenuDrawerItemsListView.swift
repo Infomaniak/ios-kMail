@@ -33,7 +33,7 @@ struct MenuDrawerItemsListView: View {
     var title: String?
     var content: [MenuItem]
 
-    @State private var isExpanded = false
+    @State private var isExpanded = true
 
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {

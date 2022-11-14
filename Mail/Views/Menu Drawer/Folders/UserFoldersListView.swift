@@ -26,7 +26,7 @@ import UIKit
 struct UserFoldersListView: View {
     var folders: [NestableFolder]
 
-    @State private var isExpanded = false
+    @State private var isExpanded = true
 
     @EnvironmentObject var globalAlert: GlobalAlert
 
