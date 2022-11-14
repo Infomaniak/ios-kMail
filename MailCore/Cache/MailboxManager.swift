@@ -306,7 +306,11 @@ public class MailboxManager: ObservableObject {
     }
 
     public func move(threads: [Thread], to folder: Folder) async throws -> UndoRedoAction {
-        let response = try await apiFetcher.move(mailbox: mailbox, messages: threads.flatMap(\.messages), destinationId: folder._id)
+        let response = try await apiFetcher.move(
+            mailbox: mailbox,
+            messages: threads.flatMap(\.messages),
+            destinationId: folder._id
+        )
 
         let redoBlock = await backgroundRealm.execute { realm in
             if let liveFolder = folder.fresh(using: realm) {
@@ -390,7 +394,8 @@ public class MailboxManager: ObservableObject {
             let folderName = FolderRole.trash.localizedName
             Task.detached {
                 await IKSnackBar.showCancelableSnackBar(message: MailResourcesStrings.Localizable.snackbarThreadMoved(folderName),
-                                                        cancelSuccessMessage: MailResourcesStrings.Localizable.snackbarMoveCancelled,
+                                                        cancelSuccessMessage: MailResourcesStrings.Localizable
+                                                            .snackbarMoveCancelled,
                                                         undoRedoAction: undoRedoAction,
                                                         mailboxManager: self)
             }
@@ -791,40 +796,40 @@ public class MailboxManager: ObservableObject {
 
     // MARK: - Message
 
+    private func getUniqueUidsInReverse(folder: Folder, remoteUids: [String]) -> [String] {
+        var localUids = Set(folder.threads.map { self.shortUid(from: $0.uid) })
+        var uniqueUids: Set<String> = Set()
+        var remoteUidsSet = Set(remoteUids)
+        if localUids.isEmpty {
+            uniqueUids = remoteUidsSet
+        } else {
+            uniqueUids = remoteUidsSet.subtracting(localUids.intersection(remoteUidsSet))
+        }
+        return uniqueUids.reversed()
+    }
+
+    private func dateSince() -> String {
+        var dateComponents = DateComponents()
+        dateComponents.month = -3
+
+        let dateformat = DateFormatter()
+        dateformat.dateFormat = "yyyyMMdd"
+
+        guard let date = Calendar.current.date(byAdding: dateComponents, to: Date())
+        else { return dateformat.string(from: Date()) }
+
+        return dateformat.string(from: date)
+    }
+
+    private func longUid(from shortUid: String, folderId: String) -> String {
+        return "\(shortUid)@\(folderId)"
+    }
+
+    private func shortUid(from longUid: String) -> String {
+        return longUid.components(separatedBy: "@")[0]
+    }
+
     public func messages(folder: Folder) async throws {
-        func getUniqueUidsInReverse(remoteUids: [String]) -> [String] {
-            var localUids = Set(folder.threads.map { shortUid(from: $0.uid) })
-            var uniqueUids: Set<String> = Set()
-            var remoteUidsSet = Set(remoteUids)
-            if localUids.isEmpty {
-                uniqueUids = remoteUidsSet
-            } else {
-                uniqueUids = remoteUidsSet.subtracting(localUids.intersection(remoteUidsSet))
-            }
-            return uniqueUids.reversed()
-        }
-
-        func dateSince() -> String {
-            var dateComponents = DateComponents()
-            dateComponents.month = -3
-
-            let dateformat = DateFormatter()
-            dateformat.dateFormat = "yyyyMMdd"
-
-            guard let date = Calendar.current.date(byAdding: dateComponents, to: Date())
-            else { return dateformat.string(from: Date()) }
-
-            return dateformat.string(from: date)
-        }
-
-        func longUid(from shortUid: String, folderId: String) -> String {
-            return "\(shortUid)@\(folderId)"
-        }
-
-        func shortUid(from longUid: String) -> String {
-            return longUid.components(separatedBy: "@")[0]
-        }
-
         let previousCursor = folder.cursor
         var newCursor: String?
 
@@ -847,14 +852,32 @@ public class MailboxManager: ObservableObject {
                 signature: previousCursor!
             )
             newCursor = messageDeltaResult.cursor
-            deletedUids.append(contentsOf: messageDeltaResult.deletedShortUids.map { longUid(from: String($0), folderId: folder.id) })
+            deletedUids
+                .append(contentsOf: messageDeltaResult.deletedShortUids.map { longUid(from: String($0), folderId: folder.id) })
             addedShortUids.append(contentsOf: messageDeltaResult.addedShortUids)
             updated.append(contentsOf: messageDeltaResult.updated)
         }
 
-        if !addedShortUids.isEmpty {
-            let reversedUids: [String] = getUniqueUidsInReverse(remoteUids: addedShortUids)
-            let pageSize = 50 // Change this
+        try await addMessages(shortUids: addedShortUids, folder: folder)
+
+        await deleteMessages(uids: deletedUids)
+
+        await updateMessages(updates: updated, folder: folder)
+
+        await backgroundRealm.execute { realm in
+            if newCursor != nil {
+                guard let folder = folder.fresh(using: realm) else { return }
+                try? realm.safeWrite {
+                    folder.cursor = newCursor
+                }
+            }
+        }
+    }
+
+    private func addMessages(shortUids: [String], folder: Folder) async throws {
+        if !shortUids.isEmpty {
+            let reversedUids: [String] = getUniqueUidsInReverse(folder: folder, remoteUids: shortUids)
+            let pageSize = 200 // Change this
             var offset = 0
             while offset < reversedUids.count {
                 let end = min(offset + pageSize, reversedUids.count)
@@ -877,21 +900,25 @@ public class MailboxManager: ObservableObject {
                 offset += pageSize
             }
         }
+    }
 
-        if !deletedUids.isEmpty {
+    private func deleteMessages(uids: [String]) async {
+        if !uids.isEmpty {
             await backgroundRealm.execute { realm in
-                let messagesToDelete = realm.objects(Message.self).where { $0.uid.in(deletedUids) }
-                let threadsToDelete = realm.objects(Thread.self).where { $0.uid.in(deletedUids) }
+                let messagesToDelete = realm.objects(Message.self).where { $0.uid.in(uids) }
+                let threadsToDelete = realm.objects(Thread.self).where { $0.uid.in(uids) }
                 try? realm.safeWrite {
                     realm.delete(messagesToDelete)
                     realm.delete(threadsToDelete)
                 }
             }
         }
+    }
 
+    private func updateMessages(updates: [MessageFlags], folder: Folder) async {
         await backgroundRealm.execute { realm in
-            for update in updated {
-                let uid = longUid(from: String(update.shortUid), folderId: folder.id)
+            for update in updates {
+                let uid = self.longUid(from: String(update.shortUid), folderId: folder.id)
                 if let message = realm.object(ofType: Message.self, forPrimaryKey: uid), let thread = message.parent {
                     try? realm.safeWrite {
                         message.answered = update.answered
@@ -905,13 +932,6 @@ public class MailboxManager: ObservableObject {
                         thread.forwarded = update.forwarded
                         thread.unseenMessages = update.seen ? 0 : 1
                     }
-                }
-            }
-
-            if newCursor != nil {
-                guard let folder = folder.fresh(using: realm) else { return }
-                try? realm.safeWrite {
-                    folder.cursor = newCursor
                 }
             }
         }
