@@ -26,7 +26,7 @@ struct MenuDrawerItemCell: View {
 
     var body: some View {
         Button(action: content.action) {
-            HStack(spacing: 24) {
+            HStack(spacing: Constants.menuDrawerHorizontalItemSpacing) {
                 Image(resource: content.icon)
                     .resizable()
                     .scaledToFit()
