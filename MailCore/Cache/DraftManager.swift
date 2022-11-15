@@ -38,8 +38,20 @@ actor DraftQueue {
         queue[uuid]?.saveTask = task()
     }
 
-    func beginBackgroundTask(identifier: UIBackgroundTaskIdentifier, for uuid: String) {
-        queue[uuid]?.backgroundTaskIdentifier = identifier
+    func beginBackgroundTask(withName name: String, for uuid: String) async {
+        queue[uuid]?.backgroundTaskIdentifier = await UIApplication.shared.beginBackgroundTask(withName: name) { [self] in
+            endBackgroundTask(uuid: uuid)
+        }
+    }
+
+    func endBackgroundTask(uuid: String) {
+        if let identifier = queue[uuid]?.backgroundTaskIdentifier, identifier != .invalid {
+            Task {
+                await MainActor.run {
+                    UIApplication.shared.endBackgroundTask(identifier)
+                }
+            }
+        }
     }
 }
 
@@ -72,11 +84,10 @@ public class DraftManager {
                            mailboxManager: MailboxManager,
                            showSnackBar: Bool = false) async {
         await draftQueue.cleanQueueElement(uuid: draft.localUUID)
-        let beginIdentifier = await UIApplication.shared.beginBackgroundTask(withName: "Draft Saver") {}
-        await draftQueue.beginBackgroundTask(identifier: beginIdentifier, for: draft.localUUID)
+        await draftQueue.beginBackgroundTask(withName: "Draft Saver", for: draft.localUUID)
 
         let error = await mailboxManager.save(draft: draft)
-        await UIApplication.shared.endBackgroundTask(draftQueue.queue[draft.localUUID]!.backgroundTaskIdentifier)
+        await draftQueue.endBackgroundTask(uuid: draft.localUUID)
         if let error = error, error.shouldDisplay {
             await IKSnackBar.showSnackBar(message: error.localizedDescription)
         } else if showSnackBar {
@@ -110,12 +121,11 @@ public class DraftManager {
 
     public func send(draft: UnmanagedDraft, mailboxManager: MailboxManager) async {
         await draftQueue.cleanQueueElement(uuid: draft.localUUID)
-        let identifier = await UIApplication.shared.beginBackgroundTask(withName: "Draft Sender") {}
-        await draftQueue.beginBackgroundTask(identifier: identifier, for: draft.localUUID)
+        await draftQueue.beginBackgroundTask(withName: "Draft Sender", for: draft.localUUID)
 
         do {
             let cancelableResponse = try await mailboxManager.send(draft: draft)
-            await UIApplication.shared.endBackgroundTask(draftQueue.queue[draft.localUUID]!.backgroundTaskIdentifier)
+            await draftQueue.endBackgroundTask(uuid: draft.localUUID)
             await IKSnackBar.showCancelableSnackBar(
                 message: MailResourcesStrings.Localizable.emailSentSnackbar,
                 cancelSuccessMessage: MailResourcesStrings.Localizable.canceledEmailSendingConfirmationSnackbar,
