@@ -27,30 +27,33 @@ struct DraftQueueElement {
 }
 
 actor DraftQueue {
-    var queue = [String: DraftQueueElement]()
+    private var taskQueue = [String: Task<Void, Never>]()
+    private var identifierQueue = [String: UIBackgroundTaskIdentifier]()
 
     func cleanQueueElement(uuid: String) {
-        queue[uuid]?.saveTask?.cancel()
+        taskQueue[uuid]?.cancel()
         endBackgroundTask(uuid: uuid)
-        queue[uuid] = DraftQueueElement()
+        taskQueue[uuid] = nil
+        identifierQueue[uuid] = .invalid
     }
 
-    func saveTask(task: () -> Task<Void, Never>, for uuid: String) {
-        queue[uuid]?.saveTask = task()
+    func saveTask(task: Task<Void, Never>, for uuid: String) {
+        taskQueue[uuid] = task
     }
 
     func beginBackgroundTask(withName name: String, for uuid: String) async {
-        queue[uuid]?.backgroundTaskIdentifier = await UIApplication.shared.beginBackgroundTask(withName: name) { [self] in
-            endBackgroundTask(uuid: uuid)
+        let identifier = await UIApplication.shared.beginBackgroundTask(withName: name) { [self] in
+            Task {
+                endBackgroundTask(uuid: uuid)
+            }
         }
+        identifierQueue[uuid] = identifier
     }
 
     func endBackgroundTask(uuid: String) {
-        if let identifier = queue[uuid]?.backgroundTaskIdentifier, identifier != .invalid {
+        if let identifier = identifierQueue[uuid], identifier != .invalid {
             Task {
-                await MainActor.run {
-                    UIApplication.shared.endBackgroundTask(identifier)
-                }
+                await UIApplication.shared.endBackgroundTask(identifier)
             }
         }
     }
@@ -71,14 +74,14 @@ public class DraftManager {
 
     public func saveDraftLocally(draft: UnmanagedDraft, mailboxManager: MailboxManager, action: SaveDraftOption) async {
         await draftQueue.cleanQueueElement(uuid: draft.localUUID)
-        await draftQueue.saveTask(task: {
+        await draftQueue.saveTask(task:
             Task {
                 // Debounce the save task
                 try? await Task.sleep(nanoseconds: DraftManager.saveExpirationNanoSec)
 
                 await mailboxManager.saveLocally(draft: draft, action: action)
-            }
-        }, for: draft.localUUID)
+            },
+            for: draft.localUUID)
     }
 
     private func saveDraft(draft: UnmanagedDraft,

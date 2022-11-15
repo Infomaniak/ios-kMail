@@ -386,7 +386,6 @@ public class Draft: Object, Decodable, Identifiable, AbstractDraft {
     @Persisted public var priority: MessagePriority
     @Persisted public var stUuid: String?
     @Persisted public var attachments: List<Attachment>
-    @Persisted public var isOffline = true
     @Persisted public var action: SaveDraftOption?
 
     private enum CodingKeys: String, CodingKey {
@@ -480,7 +479,6 @@ public class Draft: Object, Decodable, Identifiable, AbstractDraft {
         self.priority = priority
         self.stUuid = stUuid
         self.attachments = attachments?.toRealmList() ?? List()
-        self.isOffline = isOffline
         self.action = action
     }
 

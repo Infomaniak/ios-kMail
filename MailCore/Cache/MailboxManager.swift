@@ -1178,7 +1178,7 @@ public class MailboxManager: ObservableObject {
 
     public func draftOffline() async {
         await backgroundRealm.execute { realm in
-            let draftOffline = AnyRealmCollection(realm.objects(Draft.self).where { $0.isOffline == true })
+            let draftOffline = AnyRealmCollection(realm.objects(Draft.self).where { $0.remoteUUID == "" })
 
             let offlineDraftThread = List<Thread>()
 

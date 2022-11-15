@@ -35,7 +35,7 @@ class DateSection: Identifiable {
                 return .init(start: .now.startOfDay, end: .now.endOfDay)
             case .month:
                 return .init(start: .now.startOfMonth, end: .now.endOfMonth)
-            case .older(let date):
+            case let .older(date):
                 return .init(start: date.startOfMonth, end: date.endOfMonth)
             }
         }
