@@ -31,6 +31,7 @@ actor DraftQueue {
 
     func cleanQueueElement(uuid: String) {
         queue[uuid]?.saveTask?.cancel()
+        endBackgroundTask(uuid: uuid)
         queue[uuid] = DraftQueueElement()
     }
 
@@ -134,6 +135,7 @@ public class DraftManager {
                 mailboxManager: mailboxManager
             )
         } catch {
+            await draftQueue.endBackgroundTask(uuid: draft.localUUID)
             await IKSnackBar.showSnackBar(message: error.localizedDescription)
         }
     }
