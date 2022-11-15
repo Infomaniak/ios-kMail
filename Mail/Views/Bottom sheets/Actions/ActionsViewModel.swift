@@ -41,7 +41,7 @@ struct Action: Identifiable, Equatable {
                                      title: MailResourcesStrings.Localizable.actionMarkAsUnread,
                                      shortTitle: MailResourcesStrings.Localizable.actionShortMarkAsUnread,
                                      icon: MailResourcesAsset.envelope)
-    static let move = Action(id: 8, title: MailResourcesStrings.Localizable.actionMove, icon: MailResourcesAsset.emailActionSend21)
+    static let move = Action(id: 8, title: MailResourcesStrings.Localizable.actionMove, icon: MailResourcesAsset.emailActionSend)
     static let postpone = Action(id: 9, title: MailResourcesStrings.Localizable.actionPostpone, icon: MailResourcesAsset.waitingMessage)
     static let star = Action(id: 10,
                              title: MailResourcesStrings.Localizable.actionStar,
