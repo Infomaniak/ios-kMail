@@ -155,7 +155,20 @@ class DateSection: Identifiable {
         await tryOrDisplayError {
             guard let folder = folder else { return }
 
-            try await mailboxManager.messages(folder: folder.freezeIfNeeded())
+            switch folder.role {
+            case .inbox, .sent, .draft:
+                if let inboxFolder = mailboxManager.getFolder(with: .inbox) {
+                    try await mailboxManager.messages(folder: inboxFolder.freezeIfNeeded())
+                }
+                if let sentFolder = mailboxManager.getFolder(with: .sent) {
+                    try await mailboxManager.messages(folder: sentFolder.freezeIfNeeded())
+                }
+                if let draftFolder = mailboxManager.getFolder(with: .draft) {
+                    try await mailboxManager.messages(folder: draftFolder.freezeIfNeeded())
+                }
+            default:
+                try await mailboxManager.messages(folder: folder.freezeIfNeeded())
+            }
         }
         isLoadingPage = false
         await mailboxManager.draftOffline()

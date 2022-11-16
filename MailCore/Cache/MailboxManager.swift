@@ -877,7 +877,7 @@ public class MailboxManager: ObservableObject {
     private func addMessages(shortUids: [String], folder: Folder) async throws {
         if !shortUids.isEmpty {
             let reversedUids: [String] = getUniqueUidsInReverse(folder: folder, remoteUids: shortUids)
-            let pageSize = 200 // Change this
+            let pageSize = 200 // Fix this
             var offset = 0
             while offset < reversedUids.count {
                 let end = min(offset + pageSize, reversedUids.count)
@@ -896,7 +896,7 @@ public class MailboxManager: ObservableObject {
                         }
                     }
                 }
-                sleep(1)
+                sleep(1) // Fix this
                 offset += pageSize
             }
         }
