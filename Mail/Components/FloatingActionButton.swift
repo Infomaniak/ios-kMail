@@ -46,7 +46,7 @@ struct FloatingActionButton: View {
 
 struct NewMessageButtonView_Previews: PreviewProvider {
     static var previews: some View {
-        FloatingActionButton(icon: Image(resource: MailResourcesAsset.edit),
+        FloatingActionButton(icon: Image(resource: MailResourcesAsset.pen),
                              title: "New message") { /* Preview */ }
     }
 }
