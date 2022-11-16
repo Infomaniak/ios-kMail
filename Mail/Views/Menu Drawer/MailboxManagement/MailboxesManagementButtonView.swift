@@ -36,13 +36,12 @@ struct MailboxesManagementButtonView: View {
         Button(action: handleAction) {
             HStack {
                 Text(text)
-                    .foregroundColor(detailNumber ?? 0 > 0 ? Color.accentColor : MailTextStyle.body.color)
-                    .font(MailTextStyle.body.font)
+                    .textStyle(.header5)
                     .lineLimit(1)
                 Spacer()
                 if let detailNumber = detailNumber {
                     Text(detailNumber < 100 ? "\(detailNumber)" : "99+")
-                        .textStyle(.calloutHighlighted)
+                        .textStyle(.calloutMediumAccent)
                 }
             }
         }

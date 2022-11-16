@@ -22,14 +22,14 @@ import SwiftUI
 
 struct NoNetworkView: View {
     var body: some View {
-        VStack(alignment: .leading, spacing: 4) {
+        VStack(alignment: .leading, spacing: 0) {
             HStack {
                 Image(resource: MailResourcesAsset.noSignal)
                     .resizable()
                     .scaledToFit()
                     .frame(width: 18, height: 18)
                 Text(MailResourcesStrings.Localizable.noNetworkTitle)
-                    .font(MailTextStyle.calloutStrong.font)
+                    .textStyle(.calloutWarning)
             }
             .foregroundColor(MailResourcesAsset.warningColor)
             Text(MailResourcesStrings.Localizable.noNetworkDescription)

@@ -182,7 +182,7 @@ struct MenuDrawerView: View {
             BugTrackerView(isPresented: $viewModel.isShowingBugTracker)
         }
     }
-}
+}  
 
 struct MenuDrawerView_Previews: PreviewProvider {
     static var previews: some View {

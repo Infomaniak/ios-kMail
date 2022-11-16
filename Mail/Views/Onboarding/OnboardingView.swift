@@ -92,7 +92,7 @@ struct OnboardingView: View {
                         showWorkInProgressSnackBar()
                     } label: {
                         Text(MailResourcesStrings.Localizable.buttonCreateAccount)
-                            .textStyle(.button)
+                            .textStyle(.header5Accent)
                     }
                 } else {
                     Button {

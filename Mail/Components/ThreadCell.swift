@@ -49,7 +49,7 @@ struct ThreadCell: View {
     var isSelected = false
 
     private var textStyle: MailTextStyle {
-        thread.hasUnseenMessages ? .header3 : .bodySecondary
+        thread.hasUnseenMessages ? .header4 : .bodySecondary
     }
 
     private var checkboxSize: CGFloat {
@@ -123,14 +123,13 @@ struct ThreadCell: View {
     private var cellHeader: some View {
         HStack(spacing: 8) {
             if thread.hasDrafts {
-                Text("(\(MailResourcesStrings.Localizable.messageIsDraftOption))")
-                    .foregroundColor(MailResourcesAsset.redActionColor)
-                    .textStyle(thread.hasUnseenMessages ? .header2 : .header2Secondary)
+                Text("\(MailResourcesStrings.Localizable.draftPrefix)")
+                    .textStyle(thread.hasUnseenMessages ? .header2Error : .header3Error)
                     .lineLimit(1)
                     .layoutPriority(1)
             }
             Text(thread.messages.allSatisfy(\.isDraft) ? thread.formattedTo : thread.formattedFrom)
-                .textStyle(thread.hasUnseenMessages ? .header2 : .header2Secondary)
+                .textStyle(thread.hasUnseenMessages ? .header2 : .header3Secondary)
                 .lineLimit(1)
 
             if thread.uniqueMessagesCount > 1 {
@@ -155,7 +154,7 @@ struct ThreadCell: View {
             }
 
             Text(thread.date.customRelativeFormatted)
-                .textStyle(thread.hasUnseenMessages ? .calloutStrong : .calloutSecondary)
+                .textStyle(thread.hasUnseenMessages ? .calloutStrong : .bodySecondary)
                 .lineLimit(1)
         }
     }

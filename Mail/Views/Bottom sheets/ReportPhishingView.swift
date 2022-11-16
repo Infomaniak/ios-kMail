@@ -29,7 +29,7 @@ struct ReportPhishingView: View {
     var body: some View {
         VStack(spacing: 16) {
             Text(MailResourcesStrings.Localizable.reportPhishingTitle)
-                .textStyle(.header3)
+                .textStyle(.header4)
                 .frame(maxWidth: .infinity, alignment: .leading)
             Image(resource: MailResourcesAsset.phishing)
             Text(MailResourcesStrings.Localizable.reportPhishingDescription)

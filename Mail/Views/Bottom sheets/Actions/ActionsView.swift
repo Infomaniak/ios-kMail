@@ -38,11 +38,11 @@ struct ActionsView: View {
     }
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 16) {
+        VStack(alignment: .leading, spacing: 12) {
             // Header
             Text(MailResourcesStrings.Localizable.actionsMenuTitle)
                 .frame(maxWidth: .infinity, alignment: .leading)
-                .textStyle(.header3)
+                .textStyle(.header5)
                 .padding(.horizontal, 24)
             // Quick actions
             HStack(alignment: .top, spacing: 28) {
@@ -104,7 +104,7 @@ struct QuickActionView: View {
                 .aspectRatio(1, contentMode: .fit)
 
                 Text(action.title)
-                    .font(.system(size: 12))
+                    .textStyle(.captionMediumAccent)
                     .lineLimit(action.title.split(separator: " ").count > 1 ? nil : 1)
                     .minimumScaleFactor(0.75)
             }

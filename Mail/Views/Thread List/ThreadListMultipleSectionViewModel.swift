@@ -23,7 +23,7 @@ import MailResources
 import SwiftUI
 
 @MainActor class ThreadListMultipleSelectionViewModel: ObservableObject {
-    var mailboxManager: MailboxManager
+    let mailboxManager: MailboxManager
 
     @Published var isEnabled = false {
         didSet {

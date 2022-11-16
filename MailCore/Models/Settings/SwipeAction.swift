@@ -155,11 +155,11 @@ public enum SwipeAction: String, CaseIterable, SettingsOptionEnum {
         case .delete:
             resource = MailResourcesAsset.redActionColor
         case .archive:
-            resource = MailResourcesAsset.greenActionColor
+            resource = MailResourcesAsset.purpleActionColor
         case .readUnread:
             resource = MailResourcesAsset.darkBlueActionColor
         case .move:
-            resource = MailResourcesAsset.turquoiseActionColor
+            resource = MailResourcesAsset.greenActionColor
         case .favorite:
             resource = MailResourcesAsset.yellowActionColor
         case .report:
@@ -167,7 +167,7 @@ public enum SwipeAction: String, CaseIterable, SettingsOptionEnum {
         case .spam:
             resource = MailResourcesAsset.warningColor
         case .readAndArchive:
-            resource = MailResourcesAsset.purpleActionColor
+            resource = MailResourcesAsset.darkBlueActionColor
         case .quickAction:
             resource = MailResourcesAsset.menuActionColor
         case .none:

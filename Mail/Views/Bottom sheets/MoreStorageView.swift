@@ -26,7 +26,7 @@ struct MoreStorageView: View {
     var body: some View {
         VStack(alignment: .leading) {
             Text(MailResourcesStrings.Localizable.moreStorageTitle)
-                .textStyle(.header3)
+                .textStyle(.header4)
 
             Image(resource: MailResourcesAsset.moreStorage)
                 .resizable()
@@ -36,11 +36,11 @@ struct MoreStorageView: View {
                 .padding(.top, 15)
                 .padding(.bottom, 17)
 
-            VStack(spacing: 15) {
+            VStack(alignment: .leading, spacing: 15) {
                 Text(MailResourcesStrings.Localizable.moreStorageText1)
                 Text(MailResourcesStrings.Localizable.moreStorageText2)
             }
-            .textStyle(.body)
+            .textStyle(.bodySecondary)
             .padding(.bottom, 24)
 
             BottomSheetButtonsView(primaryButtonTitle: MailResourcesStrings.Localizable.buttonAvailableSoon,

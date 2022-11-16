@@ -84,6 +84,7 @@ struct SearchView: View {
                 // TODO: maybe add a different view
                 Text("No history")
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    .textStyle(.body)
             } else {
                 List {
                     if viewModel.searchState == .history {
@@ -102,7 +103,7 @@ struct SearchView: View {
             // Style toolbar
             let toolbarAppearance = UIToolbarAppearance()
             toolbarAppearance.configureWithOpaqueBackground()
-            toolbarAppearance.backgroundColor = MailResourcesAsset.backgroundToolbarColor.color
+            toolbarAppearance.backgroundColor = MailResourcesAsset.backgroundSecondaryColor.color
             toolbarAppearance.shadowColor = .clear
             UIToolbar.appearance().standardAppearance = toolbarAppearance
             UIToolbar.appearance().scrollEdgeAppearance = toolbarAppearance

@@ -89,6 +89,7 @@ struct ThreadView: View {
                 .textStyle(.header2)
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .multilineTextAlignment(.leading)
+                .lineSpacing(8)
                 .padding(.top, 8)
                 .padding(.horizontal, 16)
 
@@ -115,7 +116,7 @@ struct ThreadView: View {
             // Style toolbar
             let toolbarAppearance = UIToolbarAppearance()
             toolbarAppearance.configureWithOpaqueBackground()
-            toolbarAppearance.backgroundColor = MailResourcesAsset.backgroundToolbarColor.color
+            toolbarAppearance.backgroundColor = MailResourcesAsset.backgroundSecondaryColor.color
             toolbarAppearance.shadowColor = .clear
             UIToolbar.appearance().standardAppearance = toolbarAppearance
             UIToolbar.appearance().scrollEdgeAppearance = toolbarAppearance

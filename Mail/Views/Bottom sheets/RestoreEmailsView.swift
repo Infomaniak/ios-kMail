@@ -33,11 +33,11 @@ struct RestoreEmailsView: View {
     var body: some View {
         VStack(alignment: .leading) {
             Text(MailResourcesStrings.Localizable.restoreEmailsTitle)
-                .textStyle(.header3)
+                .textStyle(.header4)
                 .padding(.bottom, 16)
 
             Text(MailResourcesStrings.Localizable.restoreEmailsText)
-                .textStyle(.body)
+                .textStyle(.bodySecondary)
                 .padding(.bottom, 10)
 
             LargePicker(title: MailResourcesStrings.Localizable.restoreEmailsBackupDate,

@@ -33,7 +33,7 @@ struct AttachmentCell: View {
                     .lineLimit(1)
                     .truncationMode(.middle)
                 Text(attachment.size, format: .defaultByteCount)
-                    .textStyle(.caption)
+                    .textStyle(.captionSecondary)
             }
         }
         .padding(6)

@@ -42,11 +42,10 @@ struct AccountListMailView: View {
 
             if mailbox.unseenMessages > 0 {
                 Text(mailbox.unseenMessages < 100 ? "\(mailbox.unseenMessages)" : "99+")
-                    .foregroundColor(.accentColor)
+                    .textStyle(isSelected ? .calloutMediumAccent : .calloutAccent)
             }
         }
-        .foregroundColor(isSelected ? Color.accentColor : MailResourcesAsset.primaryTextColor.swiftUiColor)
-        .textStyle(isSelected ? .calloutStrong : .callout)
+        .textStyle(isSelected ? .header5Accent : .body)
         .onAppear {
             // TODO: Get unread count
         }

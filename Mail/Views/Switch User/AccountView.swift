@@ -64,18 +64,18 @@ struct AccountView: View {
                 // Header
                 avatarImage
                     .resizable()
-                    .frame(width: 110, height: 110)
+                    .frame(width: 104, height: 104)
                     .clipShape(Circle())
 
                 VStack(spacing: 8) {
                     Text(account.user.email)
-                        .textStyle(.header2)
+                        .textStyle(.header3)
 
                     NavigationLink {
                         AccountListView()
                     } label: {
                         Text(MailResourcesStrings.Localizable.buttonAccountSwitch)
-                            .textStyle(.button)
+                            .textStyle(.header5Accent)
                     }
                 }
 
@@ -109,7 +109,7 @@ struct AccountView: View {
                     sheet.state = .deleteAccount
                 } label: {
                     Text(MailResourcesStrings.Localizable.buttonAccountDelete)
-                        .textStyle(.button)
+                        .textStyle(.header5Accent)
                 }
             }
             .navigationBarTitle(MailResourcesStrings.Localizable.titleMyAccount, displayMode: .inline)
@@ -119,7 +119,8 @@ struct AccountView: View {
             } label: {
                 Label(MailResourcesStrings.Localizable.buttonClose, systemImage: "xmark")
             })
-            .padding(.vertical, 42)
+            .padding(.top, 32)
+            .padding(.bottom, 48)
         }
         .task {
             avatarImage = await account.user.avatarImage
