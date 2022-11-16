@@ -64,7 +64,7 @@ struct MoveEmailView: View {
                     Label {
                         Text(MailResourcesStrings.Localizable.buttonCreateFolder)
                     } icon: {
-                        Image(resource: MailResourcesAsset.add)
+                        Image(resource: MailResourcesAsset.addCircle)
                     }
                 }
             )

@@ -47,10 +47,9 @@ struct SearchTextField: View {
             .padding(.vertical, 11)
 
             Button(action: onDelete) {
-                Image(resource: MailResourcesAsset.plus)
+                Image(resource: MailResourcesAsset.remove)
                     .resizable()
                     .frame(width: 18, height: 18)
-                    .rotationEffect(Angle(degrees: 45))
             }
             .foregroundColor(MailResourcesAsset.textFieldPlaceholderColor)
             .opacity(value.isEmpty ? 0 : 1)

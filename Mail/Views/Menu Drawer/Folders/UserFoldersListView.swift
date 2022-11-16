@@ -47,10 +47,9 @@ struct UserFoldersListView: View {
                     Button {
                         globalAlert.state = .createNewFolder(mode: .create)
                     } label: {
-                        Image(resource: MailResourcesAsset.cross)
+                        Image(resource: MailResourcesAsset.addCircle)
                             .resizable()
                             .frame(width: 16, height: 16)
-                            .rotationEffect(Angle(degrees: 45))
                     }
                 }
             }
