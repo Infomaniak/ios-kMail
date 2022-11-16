@@ -111,6 +111,7 @@ class NavigationDrawerController: ObservableObject {
 struct MenuDrawerView: View {
     @EnvironmentObject var splitViewManager: SplitViewManager
     @EnvironmentObject var bottomSheet: GlobalBottomSheet
+    @EnvironmentObject var navigationDrawerController: NavigationDrawerController
 
     @StateObject var viewModel: MenuDrawerViewModel
 
@@ -181,6 +182,7 @@ struct MenuDrawerView: View {
         .sheet(isPresented: $viewModel.isShowingBugTracker) {
             BugTrackerView(isPresented: $viewModel.isShowingBugTracker)
         }
+        .statusBarHidden(navigationDrawerController.isOpen)
     }
 }  
 
