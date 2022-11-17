@@ -134,27 +134,27 @@ public enum AccentColor: String, CaseIterable, SettingsOptionEnum {
     public var compactListIcon: MailResourcesImages {
         switch self {
         case .pink:
-            return MailResourcesAsset.compactListPink
+            return MailResourcesAsset.densityCompactPink
         case .blue:
-            return MailResourcesAsset.compactListBlue
+            return MailResourcesAsset.densityCompactBlue
         }
     }
 
     public var defaultListIcon: MailResourcesImages {
         switch self {
         case .pink:
-            return MailResourcesAsset.defaultListPink
+            return MailResourcesAsset.densityNormalPink
         case .blue:
-            return MailResourcesAsset.defaultListBlue
+            return MailResourcesAsset.densityNormalBlue
         }
     }
 
     public var largeListIcon: MailResourcesImages {
         switch self {
         case .pink:
-            return MailResourcesAsset.largeListPink
+            return MailResourcesAsset.densityLargePink
         case .blue:
-            return MailResourcesAsset.largeListBlue
+            return MailResourcesAsset.densityLargeBlue
         }
     }
 
