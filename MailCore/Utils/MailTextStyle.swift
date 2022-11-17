@@ -125,6 +125,11 @@ public struct MailTextStyle {
         color: MailResourcesAsset.secondaryTextColor
     )
 
+    public static let bodyError = MailTextStyle(
+        font: .system(size: 15.5),
+        color: MailResourcesAsset.redActionColor
+    )
+
     public static let calloutStrongAccent = MailTextStyle(
         font: .system(size: 13.5, weight: .bold),
         color: \.primary

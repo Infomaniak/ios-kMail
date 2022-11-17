@@ -35,7 +35,7 @@ extension Animation {
 
 extension ThreadDensity {
     var cellVerticalPadding: CGFloat {
-        self == .compact ? 14 : 16
+        self == .compact ? 10 : 8
     }
 }
 
@@ -47,10 +47,6 @@ struct ThreadCell: View {
 
     var isMultipleSelectionEnabled = false
     var isSelected = false
-
-    private var textStyle: MailTextStyle {
-        thread.hasUnseenMessages ? .header4 : .bodySecondary
-    }
 
     private var checkboxSize: CGFloat {
         threadDensity == .compact ? Constants.checkboxCompactSize : Constants.checkboxSize
@@ -83,7 +79,7 @@ struct ThreadCell: View {
             }
             .padding(.trailing, 4)
 
-            VStack(alignment: .leading, spacing: 4) {
+            VStack(alignment: .leading, spacing: 6) {
                 cellHeader
 
                 HStack(alignment: .top, spacing: 3) {
@@ -124,17 +120,17 @@ struct ThreadCell: View {
         HStack(spacing: 8) {
             if thread.hasDrafts {
                 Text("\(MailResourcesStrings.Localizable.draftPrefix)")
-                    .textStyle(thread.hasUnseenMessages ? .header2Error : .header3Error)
+                    .textStyle(.bodyError)
                     .lineLimit(1)
                     .layoutPriority(1)
             }
             Text(thread.messages.allSatisfy(\.isDraft) ? thread.formattedTo : thread.formattedFrom)
-                .textStyle(thread.hasUnseenMessages ? .header2 : .header3Secondary)
+                .textStyle(.header5)
                 .lineLimit(1)
 
             if thread.uniqueMessagesCount > 1 {
                 Text("\(thread.uniqueMessagesCount)")
-                    .textStyle(.bodySecondary)
+                    .textStyle(.calloutSecondary)
                     .padding(.horizontal, 4)
                     .lineLimit(1)
                     .overlay {
@@ -148,28 +144,28 @@ struct ThreadCell: View {
             if thread.hasAttachments {
                 Image(resource: MailResourcesAsset.attachmentMail1)
                     .resizable()
-                    .foregroundColor(textStyle.color)
+                    .foregroundColor(MailResourcesAsset.primaryTextColor)
                     .scaledToFit()
                     .frame(width: 16)
             }
 
             Text(thread.date.customRelativeFormatted)
-                .textStyle(thread.hasUnseenMessages ? .calloutStrong : .bodySecondary)
+                .textStyle(.calloutSecondary)
                 .lineLimit(1)
         }
     }
 
     private var threadInfo: some View {
-        VStack(alignment: .leading, spacing: 1) {
+        VStack(alignment: .leading, spacing: 6) {
             Text(thread.formattedSubject)
-                .textStyle(textStyle)
+                .textStyle(.callout)
                 .lineLimit(1)
 
             if threadDensity != .compact,
                let preview = thread.messages.last?.preview,
                !preview.isEmpty {
                 Text(preview)
-                    .textStyle(thread.hasUnseenMessages ? .body : .bodySecondary)
+                    .textStyle(.calloutSecondary)
                     .lineLimit(1)
             }
         }
