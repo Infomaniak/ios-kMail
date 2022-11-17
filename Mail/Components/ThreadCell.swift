@@ -141,14 +141,6 @@ struct ThreadCell: View {
 
             Spacer()
 
-            if thread.hasAttachments {
-                Image(resource: MailResourcesAsset.attachmentMail1)
-                    .resizable()
-                    .foregroundColor(MailResourcesAsset.primaryTextColor)
-                    .scaledToFit()
-                    .frame(width: 16)
-            }
-
             Text(thread.date.customRelativeFormatted)
                 .textStyle(.calloutSecondary)
                 .lineLimit(1)
@@ -172,7 +164,14 @@ struct ThreadCell: View {
     }
 
     private var threadDetails: some View {
-        VStack(spacing: 4) {
+        HStack(spacing: 8) {
+            if thread.hasAttachments {
+                Image(resource: MailResourcesAsset.attachment)
+                    .resizable()
+                    .foregroundColor(MailResourcesAsset.primaryTextColor)
+                    .scaledToFit()
+                    .frame(height: 16)
+            }
             if thread.flagged {
                 Image(resource: MailResourcesAsset.starFull)
                     .resizable()
