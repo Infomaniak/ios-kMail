@@ -51,8 +51,11 @@ public class Thread: Object, Decodable, Identifiable {
     @Persisted public var answered: Bool
     @Persisted public var forwarded: Bool
     @Persisted public var size: Int
-    @Persisted(originProperty: "threads") public var parentLink: LinkingObjects<Folder>
+    @Persisted(originProperty: "threads") public var parentLink: LinkingObjects<Folder> // Remove this
     @Persisted public var fromSearch = false
+
+    @Persisted public var messageIds: MutableSet<String>
+    @Persisted public var folderIds: MutableSet<String>
 
     public var id: String {
         return uid
@@ -97,6 +100,24 @@ public class Thread: Object, Decodable, Identifiable {
 
     public func updateFlagged() {
         flagged = messages.contains { $0.flagged }
+    }
+
+    public func recompute() {
+        folderIds = messages.map { $0.folderId }.toRealmSet()
+        messageIds = messages.flatMap { $0.linkedUids }.toRealmSet()
+        uniqueMessagesCount = messages.count // Fix unique : use duplicates
+        updateUnseenMessages()
+        from = messages.flatMap { $0.from.detached() }.toRealmList()
+        date = messages.last?.date ?? date
+        size = messages.sum(of: \.size)
+        hasAttachments = messages.map { $0.hasAttachments }.contains(true)
+        hasDrafts = messages.map { $0.isDraft }.contains(true)
+        updateFlagged()
+        answered = messages.map { $0.answered }.contains(true)
+        forwarded = messages.map { $0.forwarded }.contains(true)
+        messagesCount = messages.count
+
+        // TODO: - Order messages by Date
     }
 
     private enum CodingKeys: String, CodingKey {

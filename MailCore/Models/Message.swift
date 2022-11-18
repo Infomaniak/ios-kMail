@@ -96,10 +96,11 @@ public class Message: Object, Decodable, Identifiable {
     @Persisted public var downloadResource: String
     @Persisted public var draftResource: String?
     @Persisted public var stUuid: String?
-    // public var duplicates: []
+    // public var duplicates: [] // need this
     @Persisted public var folderId: String
     @Persisted public var folder: String
     @Persisted public var references: String?
+    @Persisted public var linkedUids: MutableSet<String>
     @Persisted public var preview: String
     @Persisted public var answered: Bool
     @Persisted public var isDuplicate: Bool?
@@ -147,6 +148,14 @@ public class Message: Object, Decodable, Identifiable {
         }
     }
 
+    public func referenced() {
+        guard var refs = references else { return }
+        refs.removeFirst()
+        refs.removeLast()
+        let refsArray = refs.components(separatedBy: "><")
+        linkedUids.insert(objectsIn: refsArray)
+    }
+
     private enum CodingKeys: String, CodingKey {
         case uid
         case msgId
@@ -190,7 +199,10 @@ public class Message: Object, Decodable, Identifiable {
     public required init(from decoder: Decoder) throws {
         let values = try decoder.container(keyedBy: CodingKeys.self)
         uid = try values.decode(String.self, forKey: .uid)
-        msgId = try values.decodeIfPresent(String.self, forKey: .msgId)
+        if let msgId = try? values.decode(String.self, forKey: .msgId) {
+            self.msgId = msgId
+            self.linkedUids = [msgId].toRealmSet()
+        }
         subject = try values.decodeIfPresent(String.self, forKey: .subject)
         priority = try values.decode(MessagePriority.self, forKey: .priority)
         date = try values.decode(Date.self, forKey: .date)
