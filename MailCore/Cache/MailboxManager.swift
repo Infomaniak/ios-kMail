@@ -220,6 +220,139 @@ public class MailboxManager: ObservableObject {
 
     // MARK: - Thread
 
+    public func threads(folder: Folder) async throws {
+        let previousCursor = folder.cursor
+        var newCursor: String?
+
+        var deletedUids = [String]()
+        var addedShortUids = [String]()
+        var updated = [MessageFlags]()
+
+        if previousCursor == nil {
+            let messageUidsResult = try await apiFetcher.messagesUids(
+                mailboxUuid: mailbox.uuid,
+                folderId: folder.id,
+                dateSince: dateSince()
+            )
+            newCursor = messageUidsResult.cursor
+            addedShortUids.append(contentsOf: messageUidsResult.messageShortUids.map { String($0) })
+        } else {
+            let messageDeltaResult = try await apiFetcher.messagesDelta(
+                mailboxUUid: mailbox.uuid,
+                folderId: folder.id,
+                signature: previousCursor!
+            )
+            newCursor = messageDeltaResult.cursor
+            deletedUids
+                .append(contentsOf: messageDeltaResult.deletedShortUids.map { longUid(from: String($0), folderId: folder.id) })
+            addedShortUids.append(contentsOf: messageDeltaResult.addedShortUids)
+            updated.append(contentsOf: messageDeltaResult.updated)
+        }
+
+        try await addMessagesThread(shortUids: addedShortUids, folder: folder)
+
+        await deleteMessagesThread(uids: deletedUids)
+
+        await updateMessagesThread(updates: updated, folder: folder)
+
+        await backgroundRealm.execute { realm in
+            if newCursor != nil {
+                guard let folder = folder.fresh(using: realm) else { return }
+                try? realm.safeWrite {
+                    folder.cursor = newCursor
+                }
+            }
+        }
+    }
+
+    private func addMessagesThread(shortUids: [String], folder: Folder) async throws {
+        if !shortUids.isEmpty {
+            let reversedUids: [String] = getUniqueUidsInReverse(folder: folder, remoteUids: shortUids)
+            let pageSize = 200 // Fix this
+            var offset = 0
+            while offset < reversedUids.count {
+                let end = min(offset + pageSize, reversedUids.count)
+                let newList = Array(reversedUids[offset ..< end])
+                let messageByUidsResult = try await apiFetcher.messagesByUids(
+                    mailboxUuid: mailbox.uuid,
+                    folderId: folder.id,
+                    messageUids: newList
+                )
+
+                await backgroundRealm.execute { realm in
+                    if let folder = folder.fresh(using: realm) {
+                        for message in messageByUidsResult.messages {
+                            try? realm.safeWrite {
+                                message.referenced()
+                                if let thread = realm.objects(Thread.self).first(where: { value in
+                                    value.messageIds.detached().intersects(message.linkedUids.detached())
+                                }) {
+                                    thread.messages.insert(message)
+                                    thread.messageIds.insert(objectsIn: message.linkedUids)
+                                    thread.recompute()
+                                    folder.threads.insert(thread)
+                                } else {
+                                    let thread = message.toThread().detached()
+                                    folder.threads.insert(thread)
+                                    thread.recompute()
+                                }
+                            }
+                        }
+                    }
+                }
+
+                sleep(1) // Fix this
+                offset += pageSize
+            }
+        }
+    }
+
+    private func deleteMessagesThread(uids: [String]) async {
+        if !uids.isEmpty {
+            await backgroundRealm.execute { realm in
+                let messagesToDelete = realm.objects(Message.self).where { $0.uid.in(uids) }
+                var threadsToDelete = [Thread]()
+                var threadsToUpdate = [Thread]()
+                for message in messagesToDelete {
+                    if let thread = message.parent {
+                        if thread.messageIds.count <= 1 {
+                            threadsToDelete.append(thread)
+                        } else {
+                            threadsToUpdate.append(thread)
+                        }
+                    }
+                }
+
+                try? realm.safeWrite {
+                    realm.delete(messagesToDelete)
+                    realm.delete(threadsToDelete)
+                    for update in threadsToUpdate {
+                        update.recompute()
+                    }
+                }
+            }
+        }
+    }
+
+    private func updateMessagesThread(updates: [MessageFlags], folder: Folder) async {
+        await backgroundRealm.execute { realm in
+            for update in updates {
+                let uid = self.longUid(from: String(update.shortUid), folderId: folder.id)
+                if let message = realm.object(ofType: Message.self, forPrimaryKey: uid), let thread = message.parent {
+                    try? realm.safeWrite {
+                        message.answered = update.answered
+                        message.flagged = update.isFavorite
+                        message.forwarded = update.forwarded
+                        message.scheduled = update.scheduled
+                        message.seen = update.seen
+
+                        thread.recompute()
+                    }
+                }
+            }
+        }
+    }
+
     public func threads(folder: Folder, filter: Filter = .all, searchFilter: [URLQueryItem] = []) async throws -> ThreadResult {
         // Get from API
         let threadResult = try await apiFetcher.threads(
