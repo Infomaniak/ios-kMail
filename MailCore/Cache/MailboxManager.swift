@@ -1481,6 +1481,7 @@ public class MailboxManager: ObservableObject {
     ) {
         guard let savedFolder = realm.object(ofType: Folder.self, forPrimaryKey: folder._id) else { return }
         folder.lastUpdate = savedFolder.lastUpdate
+        folder.cursor = savedFolder.cursor
     }
 
     func getSubFolders(from folders: [Folder], oldResult: [Folder] = []) -> [Folder] {
