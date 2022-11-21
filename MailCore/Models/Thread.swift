@@ -36,7 +36,7 @@ public class Thread: Object, Decodable, Identifiable {
     @Persisted public var messagesCount: Int
     @Persisted public var uniqueMessagesCount: Int
     @Persisted public var deletedMessagesCount: Int
-    @Persisted public var messages: MutableSet<Message>
+    @Persisted public var messages: List<Message>
     @Persisted public var unseenMessages: Int
     @Persisted public var from: List<Recipient>
     @Persisted public var to: List<Recipient>
@@ -118,6 +118,10 @@ public class Thread: Object, Decodable, Identifiable {
         messagesCount = messages.count
 
         // TODO: - Order messages by Date
+
+        messages = messages.sorted(by: {
+            $0.date.compare($1.date) == .orderedAscending
+        }).toRealmList()
     }
 
     private enum CodingKeys: String, CodingKey {
@@ -169,8 +173,7 @@ public class Thread: Object, Decodable, Identifiable {
         self.messagesCount = messagesCount
         self.uniqueMessagesCount = uniqueMessagesCount
         self.deletedMessagesCount = deletedMessagesCount
-        self.messages = MutableSet()
-        self.messages.insert(objectsIn: messages)
+        self.messages = messages.toRealmList()
         self.unseenMessages = unseenMessages
         self.from = from.toRealmList()
         self.to = to.toRealmList()
@@ -194,8 +197,7 @@ public class Thread: Object, Decodable, Identifiable {
         messagesCount = 1
         uniqueMessagesCount = 1
         deletedMessagesCount = 0
-        messages = MutableSet()
-        messages.insert(Message(draft: draft))
+        messages = [Message(draft: draft)].toRealmList()
         unseenMessages = 0
         to = draft.to.detached()
         cc = draft.cc.detached()

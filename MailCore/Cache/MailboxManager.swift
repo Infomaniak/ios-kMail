@@ -287,8 +287,7 @@ public class MailboxManager: ObservableObject {
                                 if let thread = realm.objects(Thread.self).first(where: { value in
                                     value.messageIds.detached().intersects(message.linkedUids.detached())
                                 }) {
-                                    thread.messages.insert(message)
-                                    thread.messageIds.insert(objectsIn: message.linkedUids)
+                                    thread.messages.append(message)
                                     thread.recompute()
                                     folder.threads.insert(thread)
                                 } else {
