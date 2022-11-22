@@ -777,6 +777,18 @@ public class MailboxManager: ObservableObject {
         }
     }
 
+    public func delete(searchHistory: SearchHistory, with value: String) async -> SearchHistory {
+        return await backgroundRealm.execute { realm in
+            guard let liveSearchHistory = realm.objects(SearchHistory.self).first else { return searchHistory }
+            try? realm.safeWrite {
+                if let indexToRemove = liveSearchHistory.history.firstIndex(of: value) {
+                    liveSearchHistory.history.remove(at: indexToRemove)
+                }
+            }
+            return liveSearchHistory.freeze()
+        }
+    }
+
     // MARK: - Message
 
     public func message(message: Message) async throws {
