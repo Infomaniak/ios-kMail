@@ -59,8 +59,15 @@ struct UserFoldersListView: View {
             if isExpanded {
                 Spacer(minLength: Constants.menuDrawerVerticalPadding)
 
-                ForEach(folders) { folder in
-                    FolderCell(folder: folder, isCompact: isCompact)
+                if folders.isEmpty {
+                    Text(MailResourcesStrings.Localizable.noFolderTitle)
+                        .textStyle(.calloutSecondary)
+                        .padding(.top, 16)
+                        .padding(.bottom, 8)
+                } else {
+                    ForEach(folders) { folder in
+                        FolderCell(folder: folder, isCompact: isCompact)
+                    }
                 }
             }
         }
