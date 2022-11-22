@@ -3,6 +3,16 @@
     {
       "filename" : "folder-open-bleu.svg",
       "idiom" : "universal"
+    },
+    {
+      "appearances" : [
+        {
+          "appearance" : "luminosity",
+          "value" : "dark"
+        }
+      ],
+      "filename" : "folder-open-blue-dark.svg",
+      "idiom" : "universal"
     }
   ],
   "info" : {

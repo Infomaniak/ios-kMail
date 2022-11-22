@@ -3,6 +3,16 @@
     {
       "filename" : "folder-open-rose.svg",
       "idiom" : "universal"
+    },
+    {
+      "appearances" : [
+        {
+          "appearance" : "luminosity",
+          "value" : "dark"
+        }
+      ],
+      "filename" : "folder-open-pink-dark.svg",
+      "idiom" : "universal"
     }
   ],
   "info" : {
