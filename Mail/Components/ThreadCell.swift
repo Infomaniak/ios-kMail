@@ -154,9 +154,8 @@ struct ThreadCell: View {
                 .lineLimit(1)
 
             if threadDensity != .compact,
-               let preview = thread.messages.last?.preview,
-               !preview.isEmpty {
-                Text(preview)
+               let preview = thread.messages.last?.preview {
+                Text(preview.isEmpty ? MailResourcesStrings.Localizable.noBodyTitle : preview)
                     .textStyle(.calloutSecondary)
                     .lineLimit(1)
             }
