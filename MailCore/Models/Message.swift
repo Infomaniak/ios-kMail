@@ -116,6 +116,7 @@ public class Message: Object, Decodable, Identifiable {
 
     @Persisted public var fullyDownloaded = false
     @Persisted public var fromSearch = false
+    @Persisted public var inTrash = false
 
     public var recipients: [Recipient] {
         return Array(to) + Array(cc)
@@ -148,7 +149,7 @@ public class Message: Object, Decodable, Identifiable {
         }
     }
 
-    public func referenced() {
+    public func computeReference() {
         guard var refs = references else { return }
         refs.removeFirst()
         refs.removeLast()

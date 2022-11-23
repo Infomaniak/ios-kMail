@@ -283,7 +283,8 @@ public class MailboxManager: ObservableObject {
                     if let folder = folder.fresh(using: realm) {
                         for message in messageByUidsResult.messages {
                             try? realm.safeWrite {
-                                message.referenced()
+                                message.computeReference()
+                                message.inTrash = folder.role == .trash
                                 if let thread = realm.objects(Thread.self).first(where: { value in
                                     value.messageIds.detached().intersects(message.linkedUids.detached())
                                 }) {
@@ -1458,6 +1459,7 @@ public class MailboxManager: ObservableObject {
     ) {
         let realm = realm ?? getRealm()
         guard let savedMessage = realm.object(ofType: Message.self, forPrimaryKey: message.uid) else { return }
+        message.inTrash = savedMessage.inTrash
         if keepProperties.contains(.fullyDownloaded) {
             message.fullyDownloaded = savedMessage.fullyDownloaded
         }

@@ -117,11 +117,9 @@ public class Thread: Object, Decodable, Identifiable {
         forwarded = messages.map { $0.forwarded }.contains(true)
         messagesCount = messages.count
 
-        // TODO: - Order messages by Date
-
-        messages = messages.sorted(by: {
+        messages = messages.sorted {
             $0.date.compare($1.date) == .orderedAscending
-        }).toRealmList()
+        }.toRealmList()
     }
 
     private enum CodingKeys: String, CodingKey {
