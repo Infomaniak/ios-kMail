@@ -56,7 +56,9 @@ struct ActionsView: View {
             .padding(.bottom, 16)
             // Actions
             ForEach(viewModel.listActions) { action in
-                IKDivider()
+                if action != viewModel.listActions.first {
+                    IKDivider()
+                }
                 ActionView(viewModel: viewModel, action: action)
                     .padding(.horizontal, 24)
             }
