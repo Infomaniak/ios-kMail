@@ -301,7 +301,6 @@ public class MailboxManager: ObservableObject {
                     }
                 }
 
-                sleep(1) // Fix this
                 offset += pageSize
             }
         }
