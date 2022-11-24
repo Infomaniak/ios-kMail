@@ -155,7 +155,9 @@ struct ComposeMessageView: View {
                             ScrollView(.horizontal, showsIndicators: false) {
                                 HStack(spacing: 8) {
                                     ForEach(attachments) { attachment in
-                                        AttachmentCell(attachment: attachment)
+                                        AttachmentCell(attachment: attachment, isNewMessage: true) { attachmentRemoved in
+                                            removeAttachment(attachmentRemoved)
+                                        }
                                     }
                                 }
                                 .padding(.vertical, 1)
@@ -422,6 +424,10 @@ struct ComposeMessageView: View {
         } else {
             draft.attachments?.append(attachment)
         }
+    }
+    
+    private func removeAttachment(_ attachment: Attachment) {
+        print("Test")
     }
 }
 

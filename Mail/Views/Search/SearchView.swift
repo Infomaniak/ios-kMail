@@ -249,7 +249,9 @@ struct SearchView: View {
                 HStack(spacing: 8) {
                     Text(searchItem)
                         .frame(maxWidth: .infinity, alignment: .leading)
-                    Button(action: { deleteSearchTapped(searchItem: searchItem) }) {
+                    Button {
+                        deleteSearchTapped(searchItem: searchItem)
+                    } label: {
                         Image(resource: MailResourcesAsset.close)
                             .resizable()
                             .scaledToFit()

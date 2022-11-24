@@ -22,6 +22,8 @@ import SwiftUI
 
 struct AttachmentCell: View {
     let attachment: Attachment
+    var isNewMessage = false
+    let attachmentRemoved: ((Attachment) -> Void)?
 
     var body: some View {
         HStack {
@@ -35,6 +37,22 @@ struct AttachmentCell: View {
                 Text(attachment.size, format: .defaultByteCount)
                     .textStyle(.captionSecondary)
             }
+
+            if isNewMessage {
+                Button {
+                    if let attachmentRemoved = attachmentRemoved {
+                        attachmentRemoved(attachment)
+                    }
+                } label: {
+                    Image(resource: MailResourcesAsset.close)
+                        .resizable()
+                        .scaledToFit()
+                        .foregroundColor(MailResourcesAsset.secondaryTextColor)
+                        .frame(width: 16, height: 16)
+                }
+                .buttonStyle(BorderlessButtonStyle())
+                .padding(.leading, 8)
+            }
         }
         .padding(6)
         .overlay(
@@ -42,11 +60,12 @@ struct AttachmentCell: View {
                 .stroke(MailResourcesAsset.separatorColor.swiftUiColor, lineWidth: 1)
         )
         .frame(maxWidth: 200)
+        .padding(.top, isNewMessage ? 16 : 0)
     }
 }
 
 struct AttachmentCell_Previews: PreviewProvider {
     static var previews: some View {
-        AttachmentCell(attachment: PreviewHelper.sampleAttachment)
+        AttachmentCell(attachment: PreviewHelper.sampleAttachment)  { _ in /* Preview */ }
     }
 }
