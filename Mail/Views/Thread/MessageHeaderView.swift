@@ -41,6 +41,8 @@ struct MessageHeaderView: View {
                 bottomSheet.open(state: .replyOption(message, isThread: false))
             } moreButtonTapped: {
                 threadBottomSheet.open(state: .actions(.message(message.thaw() ?? message)))
+            } recipientTapped: { recipient in
+                openContact(recipient: recipient)
             }
 
             if isHeaderExpanded {
