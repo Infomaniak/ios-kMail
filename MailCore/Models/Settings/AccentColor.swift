@@ -39,7 +39,12 @@ public enum AccentColor: String, CaseIterable, SettingsOptionEnum {
     }
 
     public var image: Image? {
-        return nil
+        switch self {
+        case .pink:
+            return Image(MailResourcesAsset.colorPink.name)
+        case .blue:
+            return Image(MailResourcesAsset.colorBlue.name)
+        }
     }
 
     // MARK: - Colors
