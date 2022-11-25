@@ -158,20 +158,16 @@ class DateSection: Identifiable {
             switch folder.role {
             case .inbox, .sent, .draft:
                 if let inboxFolder = mailboxManager.getFolder(with: .inbox) {
-                    try await mailboxManager.threads(folder: inboxFolder.freezeIfNeeded())
-//                    try await mailboxManager.messages(folder: inboxFolder.freezeIfNeeded())
+                    try await mailboxManager.messages(folder: inboxFolder.freezeIfNeeded(), asThread: true)
                 }
                 if let sentFolder = mailboxManager.getFolder(with: .sent) {
-                    try await mailboxManager.threads(folder: sentFolder.freezeIfNeeded())
-//                    try await mailboxManager.messages(folder: sentFolder.freezeIfNeeded())
+                    try await mailboxManager.messages(folder: sentFolder.freezeIfNeeded(), asThread: true)
                 }
                 if let draftFolder = mailboxManager.getFolder(with: .draft) {
-                    try await mailboxManager.threads(folder: draftFolder.freezeIfNeeded())
-//                    try await mailboxManager.messages(folder: draftFolder.freezeIfNeeded())
+                    try await mailboxManager.messages(folder: draftFolder.freezeIfNeeded(), asThread: true)
                 }
             default:
-                try await mailboxManager.threads(folder: folder.freezeIfNeeded())
-//                try await mailboxManager.messages(folder: folder.freezeIfNeeded())
+                try await mailboxManager.messages(folder: folder.freezeIfNeeded(), asThread: true)
             }
         }
         isLoadingPage = false

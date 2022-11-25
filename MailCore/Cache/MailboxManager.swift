@@ -220,92 +220,6 @@ public class MailboxManager: ObservableObject {
 
     // MARK: - Thread
 
-    public func threads(folder: Folder) async throws {
-        let previousCursor = folder.cursor
-        var newCursor: String?
-
-        var deletedUids = [String]()
-        var addedShortUids = [String]()
-        var updated = [MessageFlags]()
-
-        if previousCursor == nil {
-            let messageUidsResult = try await apiFetcher.messagesUids(
-                mailboxUuid: mailbox.uuid,
-                folderId: folder.id,
-                dateSince: dateSince()
-            )
-            newCursor = messageUidsResult.cursor
-            addedShortUids.append(contentsOf: messageUidsResult.messageShortUids.map { String($0) })
-        } else {
-            let messageDeltaResult = try await apiFetcher.messagesDelta(
-                mailboxUUid: mailbox.uuid,
-                folderId: folder.id,
-                signature: previousCursor!
-            )
-            newCursor = messageDeltaResult.cursor
-            deletedUids
-                .append(contentsOf: messageDeltaResult.deletedShortUids.map { longUid(from: String($0), folderId: folder.id) })
-            addedShortUids.append(contentsOf: messageDeltaResult.addedShortUids)
-            updated.append(contentsOf: messageDeltaResult.updated)
-        }
-
-        try await addMessagesThread(shortUids: addedShortUids, folder: folder)
-
-        await deleteMessagesThread(uids: deletedUids)
-
-        await updateMessagesThread(updates: updated, folder: folder)
-
-        await backgroundRealm.execute { realm in
-            if newCursor != nil {
-                guard let folder = folder.fresh(using: realm) else { return }
-                try? realm.safeWrite {
-                    folder.cursor = newCursor
-                }
-            }
-        }
-    }
-
-    private func addMessagesThread(shortUids: [String], folder: Folder) async throws {
-        if !shortUids.isEmpty {
-            let reversedUids: [String] = getUniqueUidsInReverse(folder: folder, remoteUids: shortUids)
-            let pageSize = 200 // Fix this
-            var offset = 0
-            while offset < reversedUids.count {
-                let end = min(offset + pageSize, reversedUids.count)
-                let newList = Array(reversedUids[offset ..< end])
-                let messageByUidsResult = try await apiFetcher.messagesByUids(
-                    mailboxUuid: mailbox.uuid,
-                    folderId: folder.id,
-                    messageUids: newList
-                )
-
-                await backgroundRealm.execute { realm in
-                    if let folder = folder.fresh(using: realm) {
-                        for message in messageByUidsResult.messages {
-                            try? realm.safeWrite {
-                                message.computeReference()
-                                message.inTrash = folder.role == .trash
-                                if let thread = realm.objects(Thread.self).first(where: { value in
-                                    value.messageIds.detached().contains { message.linkedUids.detached().contains($0) }
-                                }) {
-                                    thread.messages.append(message)
-                                    thread.recompute()
-                                    folder.threads.insert(thread)
-                                } else {
-                                    let thread = message.toThread().detached()
-                                    folder.threads.insert(thread)
-                                    thread.recompute()
-                                }
-                            }
-                        }
-                    }
-                }
-
-                offset += pageSize
-            }
-        }
-    }
-
     private func deleteMessagesThread(uids: [String]) async {
         if !uids.isEmpty {
             await backgroundRealm.execute { realm in
@@ -327,25 +241,6 @@ public class MailboxManager: ObservableObject {
                     realm.delete(threadsToDelete)
                     for update in threadsToUpdate {
                         update.recompute()
-                    }
-                }
-            }
-        }
-    }
-
-    private func updateMessagesThread(updates: [MessageFlags], folder: Folder) async {
-        await backgroundRealm.execute { realm in
-            for update in updates {
-                let uid = self.longUid(from: String(update.shortUid), folderId: folder.id)
-                if let message = realm.object(ofType: Message.self, forPrimaryKey: uid), let thread = message.parent {
-                    try? realm.safeWrite {
-                        message.answered = update.answered
-                        message.flagged = update.isFavorite
-                        message.forwarded = update.forwarded
-                        message.scheduled = update.scheduled
-                        message.seen = update.seen
-
-                        thread.recompute()
                     }
                 }
             }
@@ -961,7 +856,7 @@ public class MailboxManager: ObservableObject {
         return longUid.components(separatedBy: "@")[0]
     }
 
-    public func messages(folder: Folder) async throws {
+    public func messages(folder: Folder, asThread: Bool = false) async throws {
         let previousCursor = folder.cursor
         var newCursor: String?
 
@@ -990,10 +885,12 @@ public class MailboxManager: ObservableObject {
             updated.append(contentsOf: messageDeltaResult.updated)
         }
 
-        try await addMessages(shortUids: addedShortUids, folder: folder)
-
-        await deleteMessages(uids: deletedUids)
-
+        try await addMessages(shortUids: addedShortUids, folder: folder, asThread: asThread)
+        if asThread {
+            await deleteMessagesThread(uids: deletedUids)
+        } else {
+            await deleteMessages(uids: deletedUids)
+        }
         await updateMessages(updates: updated, folder: folder)
 
         await backgroundRealm.execute { realm in
@@ -1006,7 +903,7 @@ public class MailboxManager: ObservableObject {
         }
     }
 
-    private func addMessages(shortUids: [String], folder: Folder) async throws {
+    private func addMessages(shortUids: [String], folder: Folder, asThread: Bool = false) async throws {
         if !shortUids.isEmpty {
             let reversedUids: [String] = getUniqueUidsInReverse(folder: folder, remoteUids: shortUids)
             let pageSize = 200 // Fix this
@@ -1022,13 +919,33 @@ public class MailboxManager: ObservableObject {
 
                 await backgroundRealm.execute { realm in
                     if let folder = folder.fresh(using: realm) {
-                        try? realm.safeWrite {
-                            let threads = messageByUidsResult.messages.map { $0.toThread().detached() }
-                            folder.threads.insert(objectsIn: threads)
+                        if asThread {
+                            for message in messageByUidsResult.messages {
+                                try? realm.safeWrite {
+                                    message.computeReference()
+                                    message.inTrash = folder.role == .trash
+                                    if let thread = realm.objects(Thread.self).first(where: { value in
+                                        value.messageIds.detached().contains { message.linkedUids.detached().contains($0) }
+                                    }) {
+                                        thread.messages.append(message)
+                                        thread.recompute()
+                                        folder.threads.insert(thread)
+                                    } else {
+                                        let thread = message.toThread().detached()
+                                        folder.threads.insert(thread)
+                                        thread.recompute()
+                                    }
+                                }
+                            }
+                        } else {
+                            try? realm.safeWrite {
+                                let threads = messageByUidsResult.messages.map { $0.toThread().detached() }
+                                folder.threads.insert(objectsIn: threads)
+                            }
                         }
                     }
                 }
-                sleep(1) // Fix this
+
                 offset += pageSize
             }
         }
@@ -1059,10 +976,7 @@ public class MailboxManager: ObservableObject {
                         message.scheduled = update.scheduled
                         message.seen = update.seen
 
-                        thread.answered = update.answered
-                        thread.flagged = update.isFavorite
-                        thread.forwarded = update.forwarded
-                        thread.unseenMessages = update.seen ? 0 : 1
+                        thread.recompute()
                     }
                 }
             }
