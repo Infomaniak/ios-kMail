@@ -425,9 +425,11 @@ struct ComposeMessageView: View {
             draft.attachments?.append(attachment)
         }
     }
-    
+
     private func removeAttachment(_ attachment: Attachment) {
-        print("Test")
+        if let attachments = draft.attachments, let attachmentToRemove = attachments.firstIndex(of: attachment) {
+            draft.attachments?.remove(at: attachmentToRemove)
+        }
     }
 }
 
