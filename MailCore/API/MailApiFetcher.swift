@@ -104,25 +104,36 @@ public class MailApiFetcher: ApiFetcher {
     }
 
     func messagesUids(mailboxUuid: String, folderId: String, dateSince: String) async throws -> MessageUidsResult {
-        try await perform(request: authenticatedRequest(.messagesUids(mailboxUuid: mailboxUuid, folderId: folderId,
-                                                                      dateSince: dateSince))).data
+        try await perform(request: authenticatedRequest(.messagesUids(
+            mailboxUuid: mailboxUuid,
+            folderId: folderId,
+            dateSince: dateSince
+        ))).data
     }
 
     func messagesByUids(mailboxUuid: String, folderId: String, messageUids: [String]) async throws -> MessageByUidsResult {
-        try await perform(request: authenticatedRequest(.messagesByUids(mailboxUuid: mailboxUuid, folderId: folderId,
-                                                                        messagesUids: messageUids))).data
+        try await perform(request: authenticatedRequest(.messagesByUids(
+            mailboxUuid: mailboxUuid,
+            folderId: folderId,
+            messagesUids: messageUids
+        ))).data
     }
 
     func messagesDelta(mailboxUUid: String, folderId: String, signature: String) async throws -> MessageDeltaResult {
-        try await perform(request: authenticatedRequest(.messagesDelta(mailboxUuid: mailboxUUid, folderId: folderId,
-                                                                       signature: signature))).data
+        try await perform(request: authenticatedRequest(.messagesDelta(
+            mailboxUuid: mailboxUUid,
+            folderId: folderId,
+            signature: signature
+        ))).data
     }
 
     func message(message: Message) async throws -> Message {
-        try await perform(request: authenticatedRequest(.resource(message.resource,
-                                                                  queryItems: [
-                                                                      URLQueryItem(name: "prefered_format", value: "html")
-                                                                  ]))).data
+        try await perform(request: authenticatedRequest(.resource(
+            message.resource,
+            queryItems: [
+                URLQueryItem(name: "prefered_format", value: "html")
+            ]
+        ))).data
     }
 
     public func download(message: Message) async throws -> URL {
