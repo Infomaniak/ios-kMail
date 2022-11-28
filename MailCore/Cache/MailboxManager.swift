@@ -235,27 +235,27 @@ public class MailboxManager: ObservableObject {
     }
 
     private func deleteMessagesThread(uids: [String]) async {
-        if !uids.isEmpty {
-            await backgroundRealm.execute { realm in
-                let messagesToDelete = realm.objects(Message.self).where { $0.uid.in(uids) }
-                var threadsToDelete = [Thread]()
-                var threadsToUpdate = [Thread]()
-                for message in messagesToDelete {
-                    if let thread = message.parent {
-                        if thread.messageIds.count <= 1 {
-                            threadsToDelete.append(thread)
-                        } else {
-                            threadsToUpdate.append(thread)
-                        }
+        guard !uids.isEmpty else { return }
+
+        await backgroundRealm.execute { realm in
+            let messagesToDelete = realm.objects(Message.self).where { $0.uid.in(uids) }
+            var threadsToDelete = [Thread]()
+            var threadsToUpdate = [Thread]()
+            for message in messagesToDelete {
+                if let thread = message.parent {
+                    if thread.messageIds.count <= 1 {
+                        threadsToDelete.append(thread)
+                    } else {
+                        threadsToUpdate.append(thread)
                     }
                 }
+            }
 
-                try? realm.safeWrite {
-                    realm.delete(messagesToDelete)
-                    realm.delete(threadsToDelete)
-                    for update in threadsToUpdate {
-                        update.recompute()
-                    }
+            try? realm.safeWrite {
+                realm.delete(messagesToDelete)
+                realm.delete(threadsToDelete)
+                for thread in threadsToUpdate {
+                    thread.recompute()
                 }
             }
         }
@@ -838,9 +838,9 @@ public class MailboxManager: ObservableObject {
     // MARK: - Message
 
     private func getUniqueUidsInReverse(folder: Folder, remoteUids: [String]) -> [String] {
-        var localUids = Set(folder.threads.map { self.shortUid(from: $0.uid) })
+        let localUids = Set(folder.threads.map { self.shortUid(from: $0.uid) })
+        let remoteUidsSet = Set(remoteUids)
         var uniqueUids: Set<String> = Set()
-        var remoteUidsSet = Set(remoteUids)
         if localUids.isEmpty {
             uniqueUids = remoteUidsSet
         } else {
