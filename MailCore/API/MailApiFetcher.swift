@@ -103,8 +103,6 @@ public class MailApiFetcher: ApiFetcher {
         try await perform(request: authenticatedRequest(.resource(resource, queryItems: searchFilter))).data
     }
 
-    // MARK: - New Routes
-
     func messagesUids(mailboxUuid: String, folderId: String, dateSince: String) async throws -> MessageUidsResult {
         try await perform(request: authenticatedRequest(.messagesUids(mailboxUuid: mailboxUuid, folderId: folderId,
                                                                       dateSince: dateSince))).data
