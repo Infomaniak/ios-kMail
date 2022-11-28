@@ -220,6 +220,20 @@ public class MailboxManager: ObservableObject {
 
     // MARK: - Thread
 
+    public func threads(folder: Folder) async throws {
+        let alwaysFetchedFolders: [FolderRole] = [.inbox, .sent, .draft]
+
+        if alwaysFetchedFolders.contains(where: { $0 == folder.role }) {
+            for folderRole in alwaysFetchedFolders {
+                if let realFolder = getFolder(with: folderRole) {
+                    try await messages(folder: realFolder.freezeIfNeeded(), asThread: true)
+                }
+            }
+        } else {
+            try await messages(folder: folder.freezeIfNeeded(), asThread: true)
+        }
+    }
+
     private func deleteMessagesThread(uids: [String]) async {
         if !uids.isEmpty {
             await backgroundRealm.execute { realm in
