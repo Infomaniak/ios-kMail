@@ -920,7 +920,7 @@ public class MailboxManager: ObservableObject {
                                     message.computeReference()
                                     message.inTrash = folder.role == .trash
                                     if let thread = realm.objects(Thread.self).first(where: { value in
-                                        value.messageIds.detached().contains { message.linkedUids.detached().contains($0) }
+                                        value.messageIds.contains { message.linkedUids.contains($0) }
                                     }) {
                                         thread.messages.append(message)
                                         thread.messageIds.insert(objectsIn: message.linkedUids)
