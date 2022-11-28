@@ -103,7 +103,7 @@ struct ThreadView: View {
             }
         }
         .padding(.top, -8)
-        .background(MailResourcesAsset.backgroundCardColor.swiftUiColor)
+        .background(messages.count > 1 ? MailResourcesAsset.backgroundCardColor.swiftUiColor : MailResourcesAsset.backgroundColor.swiftUiColor)
         .coordinateSpace(name: "scrollView")
         .onPreferenceChange(ScrollOffsetPreferenceKey.self) { offset in
             displayNavigationTitle = offset.y < -85
