@@ -838,7 +838,7 @@ public class MailboxManager: ObservableObject {
     // MARK: - Message
 
     private func getUniqueUidsInReverse(folder: Folder, remoteUids: [String]) -> [String] {
-        let localUids = Set(folder.threads.map { self.shortUid(from: $0.uid) })
+        let localUids = Set(folder.threads.map { Constants.shortUid(from: $0.uid) })
         let remoteUidsSet = Set(remoteUids)
         var uniqueUids: Set<String> = Set()
         if localUids.isEmpty {
@@ -847,27 +847,6 @@ public class MailboxManager: ObservableObject {
             uniqueUids = remoteUidsSet.subtracting(localUids)
         }
         return uniqueUids.reversed()
-    }
-
-    private func dateSince() -> String {
-        var dateComponents = DateComponents()
-        dateComponents.month = -3
-
-        let dateformat = DateFormatter()
-        dateformat.dateFormat = "yyyyMMdd"
-
-        guard let date = Calendar.current.date(byAdding: dateComponents, to: Date())
-        else { return dateformat.string(from: Date()) }
-
-        return dateformat.string(from: date)
-    }
-
-    private func longUid(from shortUid: String, folderId: String) -> String {
-        return "\(shortUid)@\(folderId)"
-    }
-
-    private func shortUid(from longUid: String) -> String {
-        return longUid.components(separatedBy: "@")[0]
     }
 
     public func messages(folder: Folder, asThread: Bool = false) async throws {
@@ -882,7 +861,7 @@ public class MailboxManager: ObservableObject {
             let messageUidsResult = try await apiFetcher.messagesUids(
                 mailboxUuid: mailbox.uuid,
                 folderId: folder.id,
-                dateSince: dateSince()
+                dateSince: Constants.dateSince()
             )
             newCursor = messageUidsResult.cursor
             addedShortUids.append(contentsOf: messageUidsResult.messageShortUids.map { String($0) })
@@ -894,7 +873,8 @@ public class MailboxManager: ObservableObject {
             )
             newCursor = messageDeltaResult.cursor
             deletedUids
-                .append(contentsOf: messageDeltaResult.deletedShortUids.map { longUid(from: String($0), folderId: folder.id) })
+                .append(contentsOf: messageDeltaResult.deletedShortUids
+                    .map { Constants.longUid(from: String($0), folderId: folder.id) })
             addedShortUids.append(contentsOf: messageDeltaResult.addedShortUids)
             updated.append(contentsOf: messageDeltaResult.updated)
         }
@@ -988,7 +968,7 @@ public class MailboxManager: ObservableObject {
     private func updateMessages(updates: [MessageFlags], folder: Folder) async {
         await backgroundRealm.execute { realm in
             for update in updates {
-                let uid = self.longUid(from: String(update.shortUid), folderId: folder.id)
+                let uid = Constants.longUid(from: String(update.shortUid), folderId: folder.id)
                 if let message = realm.object(ofType: Message.self, forPrimaryKey: uid), let thread = message.parent {
                     try? realm.safeWrite {
                         message.answered = update.answered
