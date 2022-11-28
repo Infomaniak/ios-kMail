@@ -21,8 +21,8 @@ import MailResources
 import RealmSwift
 
 public class MessageUidsResult: Decodable {
-    public var messageShortUids: [Int]
-    public var cursor: String
+    public let messageShortUids: [Int]
+    public let cursor: String
 
     private enum CodingKeys: String, CodingKey {
         case messageShortUids = "messagesUids"
@@ -31,14 +31,14 @@ public class MessageUidsResult: Decodable {
 }
 
 public class MessageByUidsResult: Decodable {
-    public var messages: [Message]
+    public let messages: [Message]
 }
 
 public class MessageDeltaResult: Decodable {
-    public var deletedShortUids: [Int]
-    public var addedShortUids: [String]
-    public var updated: [MessageFlags]
-    public var cursor: String
+    public let deletedShortUids: [Int]
+    public let addedShortUids: [String]
+    public let updated: [MessageFlags]
+    public let cursor: String
 
     private enum CodingKeys: String, CodingKey {
         case deletedShortUids = "deleted"
@@ -49,12 +49,12 @@ public class MessageDeltaResult: Decodable {
 }
 
 public class MessageFlags: Decodable {
-    public var shortUid: String
-    public var answered: Bool
-    public var isFavorite: Bool
-    public var forwarded: Bool
-    public var scheduled: Bool
-    public var seen: Bool
+    public let shortUid: String
+    public let answered: Bool
+    public let isFavorite: Bool
+    public let forwarded: Bool
+    public let scheduled: Bool
+    public let seen: Bool
 
     private enum CodingKeys: String, CodingKey {
         case shortUid = "uid"
@@ -96,7 +96,7 @@ public class Message: Object, Decodable, Identifiable {
     @Persisted public var downloadResource: String
     @Persisted public var draftResource: String?
     @Persisted public var stUuid: String?
-    // public var duplicates: [] // need this
+    // public var duplicates: [] // Will be needed to filter duplicates
     @Persisted public var folderId: String
     @Persisted public var folder: String
     @Persisted public var references: String?

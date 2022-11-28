@@ -51,7 +51,8 @@ public class Thread: Object, Decodable, Identifiable {
     @Persisted public var answered: Bool
     @Persisted public var forwarded: Bool
     @Persisted public var size: Int
-    @Persisted(originProperty: "threads") public var parentLink: LinkingObjects<Folder> // Remove this
+    // TODO: - Remove parentLink (need to update actions functions)
+    @Persisted(originProperty: "threads") public var parentLink: LinkingObjects<Folder>
     @Persisted public var fromSearch = false
 
     @Persisted public var messageIds: MutableSet<String>
@@ -110,7 +111,7 @@ public class Thread: Object, Decodable, Identifiable {
         from = messages.flatMap { $0.from.detached() }.toRealmList()
         date = messages.last?.date ?? date
         size = messages.sum(of: \.size)
-        hasAttachments = messages.map { $0.hasAttachments }.contains(true)
+        hasAttachments = messages.contains { $0.hasAttachments }
         hasDrafts = messages.map { $0.isDraft }.contains(true)
         updateFlagged()
         answered = messages.map { $0.answered }.contains(true)

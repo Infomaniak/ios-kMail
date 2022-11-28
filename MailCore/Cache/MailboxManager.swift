@@ -953,14 +953,14 @@ public class MailboxManager: ObservableObject {
     }
 
     private func deleteMessages(uids: [String]) async {
-        if !uids.isEmpty {
-            await backgroundRealm.execute { realm in
-                let messagesToDelete = realm.objects(Message.self).where { $0.uid.in(uids) }
-                let threadsToDelete = realm.objects(Thread.self).where { $0.uid.in(uids) }
-                try? realm.safeWrite {
-                    realm.delete(messagesToDelete)
-                    realm.delete(threadsToDelete)
-                }
+        guard !uids.isEmpty else { return }
+
+        await backgroundRealm.execute { realm in
+            let messagesToDelete = realm.objects(Message.self).where { $0.uid.in(uids) }
+            let threadsToDelete = realm.objects(Thread.self).where { $0.uid.in(uids) }
+            try? realm.safeWrite {
+                realm.delete(messagesToDelete)
+                realm.delete(threadsToDelete)
             }
         }
     }
@@ -969,7 +969,8 @@ public class MailboxManager: ObservableObject {
         await backgroundRealm.execute { realm in
             for update in updates {
                 let uid = Constants.longUid(from: String(update.shortUid), folderId: folder.id)
-                if let message = realm.object(ofType: Message.self, forPrimaryKey: uid), let thread = message.parent {
+                if let message = realm.object(ofType: Message.self, forPrimaryKey: uid),
+                   let thread = message.parent {
                     try? realm.safeWrite {
                         message.answered = update.answered
                         message.flagged = update.isFavorite
