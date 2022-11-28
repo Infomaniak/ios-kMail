@@ -967,11 +967,11 @@ public class MailboxManager: ObservableObject {
 
     private func updateMessages(updates: [MessageFlags], folder: Folder) async {
         await backgroundRealm.execute { realm in
-            for update in updates {
-                let uid = Constants.longUid(from: String(update.shortUid), folderId: folder.id)
-                if let message = realm.object(ofType: Message.self, forPrimaryKey: uid),
-                   let thread = message.parent {
-                    try? realm.safeWrite {
+            try? realm.safeWrite {
+                for update in updates {
+                    let uid = Constants.longUid(from: String(update.shortUid), folderId: folder.id)
+                    if let message = realm.object(ofType: Message.self, forPrimaryKey: uid),
+                       let thread = message.parent {
                         message.answered = update.answered
                         message.flagged = update.isFavorite
                         message.forwarded = update.forwarded
