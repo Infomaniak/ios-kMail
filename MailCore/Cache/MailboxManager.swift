@@ -830,7 +830,7 @@ public class MailboxManager: ObservableObject {
         if localUids.isEmpty {
             uniqueUids = remoteUidsSet
         } else {
-            uniqueUids = remoteUidsSet.subtracting(localUids.intersection(remoteUidsSet))
+            uniqueUids = remoteUidsSet.subtracting(localUids)
         }
         return uniqueUids.reversed()
     }
