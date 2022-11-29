@@ -37,6 +37,12 @@ public class Recipient: EmbeddedObject, Codable {
         self.name = name
     }
 
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(email, forKey: .email)
+        try container.encode(name, forKey: .name)
+    }
+
     public static func createListUsing(from urlComponents: URLComponents, name: String) -> [Recipient] {
         return urlComponents.getQueryItem(named: name)?.split(separator: ",").map { Recipient(email: "\($0)", name: "") } ?? []
     }

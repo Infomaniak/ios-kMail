@@ -21,7 +21,7 @@ import MailResources
 import RealmSwift
 import UniformTypeIdentifiers
 
-public enum SaveDraftOption: String, Codable {
+public enum SaveDraftOption: String, Codable, PersistableEnum {
     case save
     case send
 }
@@ -55,7 +55,7 @@ public struct DraftResponse: Codable {
 }
 
 public protocol AbstractDraft {
-    var uuid: String { get }
+    var localUUID: String { get }
 }
 
 @propertyWrapper public struct EmptyNilEncoded<Content>: Encodable, Equatable where Content: Encodable & Equatable {
@@ -78,8 +78,8 @@ public protocol AbstractDraft {
 // We need two draft models because of a bug in Realm…
 // https://github.com/realm/realm-swift/issues/7810
 public struct UnmanagedDraft: Equatable, Encodable, AbstractDraft {
-    public let localUUID = UUID().uuidString
-    public var uuid: String
+    public var localUUID: String
+    public var remoteUUID: String
     public var subject: String
     public var body: String
     public var quote: String
@@ -103,10 +103,6 @@ public struct UnmanagedDraft: Equatable, Encodable, AbstractDraft {
     public var delay: Int?
     public var didSetSignature: Bool {
         return !identityId.isEmpty
-    }
-
-    public var hasLocalUuid: Bool {
-        return uuid.isEmpty || uuid.starts(with: Draft.uuidLocalPrefix)
     }
 
     public var toValue: String {
@@ -136,7 +132,8 @@ public struct UnmanagedDraft: Equatable, Encodable, AbstractDraft {
         }
     }
 
-    private init(uuid: String = "",
+    private init(localUUID: String = UUID().uuidString,
+                 remoteUUID: String = "",
                  subject: String = "",
                  body: String = "",
                  quote: String = "",
@@ -157,7 +154,8 @@ public struct UnmanagedDraft: Equatable, Encodable, AbstractDraft {
                  priority: MessagePriority = .normal,
                  action: SaveDraftOption? = nil,
                  delay: Int? = UserDefaults.shared.cancelSendDelay.rawValue) {
-        self.uuid = uuid
+        self.localUUID = localUUID
+        self.remoteUUID = remoteUUID
         self.subject = subject
         self.body = body
         self.quote = quote
@@ -181,7 +179,7 @@ public struct UnmanagedDraft: Equatable, Encodable, AbstractDraft {
     }
 
     private enum CodingKeys: String, CodingKey {
-        case uuid
+        case remoteUUID = "uuid"
         case date
         case identityId
         case inReplyToUid
@@ -205,7 +203,7 @@ public struct UnmanagedDraft: Equatable, Encodable, AbstractDraft {
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
 
-        try container.encode(uuid, forKey: .uuid)
+        try container.encode(remoteUUID, forKey: .remoteUUID)
         try container.encode(identityId, forKey: .identityId)
         try container.encode(inReplyToUid, forKey: .inReplyToUid)
         try container.encode(forwardedUid, forKey: .forwardedUid)
@@ -310,14 +308,15 @@ public struct UnmanagedDraft: Equatable, Encodable, AbstractDraft {
     }
 
     public static func toUnmanaged(managedDraft: Draft) -> UnmanagedDraft {
-        return UnmanagedDraft(uuid: managedDraft.uuid,
+        return UnmanagedDraft(localUUID: managedDraft.localUUID,
+                              remoteUUID: managedDraft.remoteUUID,
                               subject: managedDraft.subject ?? "",
                               body: managedDraft.body,
                               quote: managedDraft.quote ?? "",
                               mimeType: managedDraft.mimeType,
-                              to: Array(managedDraft.to),
-                              cc: Array(managedDraft.cc),
-                              bcc: Array(managedDraft.bcc),
+                              to: Array(managedDraft.to.freezeIfNeeded()),
+                              cc: Array(managedDraft.cc.freezeIfNeeded()),
+                              bcc: Array(managedDraft.bcc.freezeIfNeeded()),
                               inReplyTo: managedDraft.inReplyTo,
                               inReplyToUid: managedDraft.inReplyToUid,
                               forwardedUid: managedDraft.forwardedUid,
@@ -325,11 +324,13 @@ public struct UnmanagedDraft: Equatable, Encodable, AbstractDraft {
                               messageUid: managedDraft.messageUid,
                               ackRequest: managedDraft.ackRequest,
                               stUuid: managedDraft.stUuid,
-                              priority: managedDraft.priority)
+                              priority: managedDraft.priority,
+                              action: managedDraft.action)
     }
 
     public func asManaged() -> Draft {
-        return Draft(uuid: uuid,
+        return Draft(localUUID: localUUID,
+                     remoteUUID: remoteUUID,
                      identityId: identityId,
                      messageUid: messageUid,
                      inReplyToUid: inReplyToUid,
@@ -365,9 +366,8 @@ public struct UnmanagedDraft: Equatable, Encodable, AbstractDraft {
 }
 
 public class Draft: Object, Decodable, Identifiable, AbstractDraft {
-    public static let uuidLocalPrefix = "Local-"
-
-    @Persisted(primaryKey: true) public var uuid = ""
+    @Persisted(primaryKey: true) public var localUUID: String
+    @Persisted public var remoteUUID = ""
     @Persisted public var date: Date
     @Persisted public var identityId: String?
     @Persisted public var messageUid: String?
@@ -386,14 +386,10 @@ public class Draft: Object, Decodable, Identifiable, AbstractDraft {
     @Persisted public var priority: MessagePriority
     @Persisted public var stUuid: String?
     @Persisted public var attachments: List<Attachment>
-    @Persisted public var isOffline = true
-
-    public var hasLocalUuid: Bool {
-        return uuid.isEmpty || uuid.starts(with: Draft.uuidLocalPrefix)
-    }
+    @Persisted public var action: SaveDraftOption?
 
     private enum CodingKeys: String, CodingKey {
-        case uuid
+        case remoteUUID = "uuid"
         case date
         case identityId
         case inReplyToUid
@@ -419,7 +415,7 @@ public class Draft: Object, Decodable, Identifiable, AbstractDraft {
 
     public required init(from decoder: Decoder) throws {
         let values = try decoder.container(keyedBy: CodingKeys.self)
-        uuid = try values.decode(String.self, forKey: .uuid)
+        remoteUUID = try values.decode(String.self, forKey: .remoteUUID)
         date = try values.decode(Date.self, forKey: .date)
         identityId = try values.decodeIfPresent(String.self, forKey: .identityId)
         inReplyToUid = try values.decodeIfPresent(String.self, forKey: .inReplyToUid)
@@ -439,7 +435,8 @@ public class Draft: Object, Decodable, Identifiable, AbstractDraft {
         attachments = try values.decode(List<Attachment>.self, forKey: .attachments)
     }
 
-    public convenience init(uuid: String = "",
+    public convenience init(localUUID: String = UUID().uuidString,
+                            remoteUUID: String = "",
                             date: Date = Date(),
                             identityId: String? = nil,
                             messageUid: String? = nil,
@@ -458,10 +455,12 @@ public class Draft: Object, Decodable, Identifiable, AbstractDraft {
                             priority: MessagePriority = .normal,
                             stUuid: String? = nil,
                             attachments: [Attachment]? = nil,
-                            isOffline: Bool = true) {
+                            isOffline: Bool = true,
+                            action: SaveDraftOption? = nil) {
         self.init()
 
-        self.uuid = uuid
+        self.localUUID = localUUID
+        self.remoteUUID = remoteUUID
         self.date = date
         self.identityId = identityId
         self.messageUid = messageUid
@@ -480,7 +479,7 @@ public class Draft: Object, Decodable, Identifiable, AbstractDraft {
         self.priority = priority
         self.stUuid = stUuid
         self.attachments = attachments?.toRealmList() ?? List()
-        self.isOffline = isOffline
+        self.action = action
     }
 
     public func asUnmanaged() -> UnmanagedDraft {

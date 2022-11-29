@@ -262,16 +262,23 @@ public class MailboxManager: ObservableObject {
     }
 
     public func threads(folder: Folder, filter: Filter = .all, searchFilter: [URLQueryItem] = []) async throws -> ThreadResult {
+        let isDraftFolder = folder.role == .draft
+
         // Get from API
         let threadResult = try await apiFetcher.threads(
             mailbox: mailbox,
             folderId: folder._id,
             filter: filter,
-            searchFilter: searchFilter
+            searchFilter: searchFilter,
+            isDraftFolder: isDraftFolder
         )
 
         // Save result
         await saveThreads(result: threadResult, parent: folder)
+
+        if isDraftFolder {
+            await cleanDrafts()
+        }
 
         return threadResult
     }
@@ -447,15 +454,14 @@ public class MailboxManager: ObservableObject {
     /// - Parameter thread: Thread to remove
     public func moveOrDelete(thread: Thread) async throws {
         let parentFolder = thread.parent
-        if parentFolder?.toolType == nil {
+        if parentFolder?.toolType == .search {
             await deleteInSearch(thread: thread)
         }
         if parentFolder?.role == .trash {
             // Delete definitely
             try await delete(thread: thread)
-        } else if thread.isLocalDraft {
-            // Delete local draft from Realm
-            await deleteLocalDraft(thread: thread)
+        } else if parentFolder?.role == .draft {
+            try await deleteDraft(from: thread)
         } else {
             // Move to trash
             let response = try await move(thread: thread, to: .trash)
@@ -1195,14 +1201,41 @@ public class MailboxManager: ObservableObject {
 
     // MARK: - Draft
 
+    public func cleanDrafts() async {
+        await backgroundRealm.execute { realm in
+            guard let draftFolder = (realm.objects(Folder.self).where { $0.role == .draft }.first) else { return }
+            let draftMessagesUid = draftFolder.threads.map { $0.messages.first?.uid }
+
+            let localDrafts = realm.objects(Draft.self)
+
+            var localDraftToDelete: [Draft] = []
+
+            for draft in localDrafts {
+                if let messageUid = draft.messageUid, !messageUid.isEmpty, !draftMessagesUid.contains(messageUid) {
+                    localDraftToDelete.append(draft)
+                }
+            }
+            try? realm.safeWrite {
+                realm.delete(localDraftToDelete)
+            }
+        }
+    }
+
+    public func draftWithPendingAction() async -> [UnmanagedDraft] {
+        let realm = getRealm()
+        let drafts = realm.objects(Draft.self).where { $0.action != nil }
+        let unmanagedDrafts = Array(drafts.compactMap { $0.asUnmanaged() })
+        return unmanagedDrafts
+    }
+
     public func draft(from message: Message) async throws -> Draft {
         // Get from API
         let draft = try await apiFetcher.draft(from: message)
 
         await backgroundRealm.execute { realm in
             // Get draft from Realm to keep local saved properties
-            if let savedDraft = realm.object(ofType: Draft.self, forPrimaryKey: draft.uuid) {
-                draft.isOffline = savedDraft.isOffline
+            if let savedDraft = self.draft(remoteUuid: draft.remoteUUID) {
+                draft.localUUID = savedDraft.localUUID
                 draft.messageUid = message.uid
             }
 
@@ -1220,18 +1253,18 @@ public class MailboxManager: ObservableObject {
         return realm.objects(Draft.self).where { $0.messageUid == messageUid }.first
     }
 
-    public func draft(uuid: String, using realm: Realm? = nil) -> Draft? {
+    public func draft(localUuid: String, using realm: Realm? = nil) -> Draft? {
         let realm = realm ?? getRealm()
-        return realm.objects(Draft.self).where { $0.uuid == uuid }.first
+        return realm.objects(Draft.self).where { $0.localUUID == localUuid }.first
+    }
+
+    public func draft(remoteUuid: String, using realm: Realm? = nil) -> Draft? {
+        let realm = realm ?? getRealm()
+        return realm.objects(Draft.self).where { $0.remoteUUID == remoteUuid }.first
     }
 
     public func send(draft: UnmanagedDraft) async throws -> CancelResponse {
-        // If the draft has no UUID, we save it first
-        if draft.uuid.isEmpty {
-            _ = await save(draft: draft)
-        }
         var draft = draft
-        draft.action = .send
         draft.delay = UserDefaults.shared.cancelSendDelay.rawValue
         let cancelableResponse = try await apiFetcher.send(mailbox: mailbox, draft: draft)
         // Once the draft has been sent, we can delete it from Realm
@@ -1239,72 +1272,106 @@ public class MailboxManager: ObservableObject {
         return cancelableResponse
     }
 
-    public func save(draft: UnmanagedDraft) async -> (uuid: String, error: Error?) {
-        var draft = draft
-        draft.action = .save
+    public func saveLocally(draft: UnmanagedDraft, action: SaveDraftOption = .save) async {
+        let managedDraft = draft.asManaged()
+        var copyDraft = managedDraft.detached()
+        copyDraft.action = action
+        // TODO: - Date needed ?
+
+        await backgroundRealm.execute { realm in
+            // Update draft in realm
+            try? realm.safeWrite {
+                realm.add(copyDraft, update: .modified)
+            }
+        }
+    }
+
+    public func save(draft: UnmanagedDraft) async -> Error? {
         do {
             let saveResponse = try await apiFetcher.save(mailbox: mailbox, draft: draft)
 
-            let draft = draft.asManaged()
-            let oldUuid = draft.uuid
-            draft.uuid = saveResponse.uuid
-            draft.messageUid = saveResponse.uid
-            draft.isOffline = false
+            let managedDraft = draft.asManaged()
+            managedDraft.remoteUUID = saveResponse.uuid
+            managedDraft.messageUid = saveResponse.uid
+            managedDraft.action = nil
 
-            let copyDraft = draft.detached()
+            let copyDraft = managedDraft.detached()
             await backgroundRealm.execute { realm in
                 // Update draft in Realm
                 try? realm.safeWrite {
                     realm.add(copyDraft, update: .modified)
                 }
-                if let draft = realm.object(ofType: Draft.self, forPrimaryKey: oldUuid),
-                   oldUuid.starts(with: Draft.uuidLocalPrefix) {
-                    // Delete local draft in Realm
-                    try? realm.safeWrite {
-                        realm.delete(draft)
-                    }
-                }
             }
-            return (draft.uuid, nil)
+
+            return nil
         } catch {
-            let draft = draft.asManaged()
-            if draft.uuid.isEmpty {
-                draft.uuid = Draft.uuidLocalPrefix + UUID().uuidString
-            }
-            draft.isOffline = true
-            draft.date = Date()
-            let copyDraft = draft.detached()
-
-            await backgroundRealm.execute { realm in
-                // Update draft in Realm
-                try? realm.safeWrite {
-                    realm.add(copyDraft, update: .modified)
-                }
-            }
-            return (draft.uuid, error)
+            await saveLocally(draft: draft)
+            return error
         }
     }
 
     public func delete(draft: AbstractDraft) async {
         await backgroundRealm.execute { realm in
-            if let draft = realm.object(ofType: Draft.self, forPrimaryKey: draft.uuid) {
+            if let draft = realm.object(ofType: Draft.self, forPrimaryKey: draft.localUUID) {
                 try? realm.safeWrite {
                     realm.delete(draft)
                 }
             } else {
-                print("No draft with uuid \(draft.uuid)")
+                print("No draft with localUuid \(draft.localUUID)")
+            }
+        }
+    }
+
+    public func deleteDraft(from thread: Thread) async throws {
+        guard let message = thread.messages.first else { return }
+
+        if !thread.isLocalDraft {
+            _ = try await apiFetcher.delete(mailbox: mailbox, messages: [message])
+        }
+
+        await backgroundRealm.execute { realm in
+            var draft = self.draft(localUuid: thread.uid, using: realm)
+            if !thread.isLocalDraft {
+                draft = self.draft(messageUid: message.uid, using: realm)
+            }
+
+            try? realm.safeWrite {
+                if let draft = draft {
+                    realm.delete(draft)
+                }
+                if let message = message.fresh(using: realm) {
+                    realm.delete(message)
+                }
+                if let thread = thread.fresh(using: realm) {
+                    realm.delete(thread)
+                }
             }
         }
     }
 
     public func deleteDraft(from message: Message) async throws {
-        // Delete from API
-        try await apiFetcher.deleteDraft(from: message)
+        guard let thread = message.parent else { return }
+        let deleteThread = thread.messages.count <= 1
+
+        if !message.uid.isEmpty {
+            _ = try await apiFetcher.delete(mailbox: mailbox, messages: [message])
+        }
+
         await backgroundRealm.execute { realm in
-            if let draft = self.draft(messageUid: message.uid, using: realm) {
-                // Delete draft in Realm
-                try? realm.safeWrite {
+            var draft = self.draft(localUuid: thread.uid, using: realm)
+            if !message.uid.isEmpty {
+                draft = self.draft(messageUid: message.uid, using: realm)
+            }
+
+            try? realm.safeWrite {
+                if let draft = draft {
                     realm.delete(draft)
+                }
+                if let message = message.fresh(using: realm) {
+                    realm.delete(message)
+                }
+                if deleteThread, let thread = thread.fresh(using: realm) {
+                    realm.delete(thread)
                 }
             }
         }
@@ -1312,7 +1379,7 @@ public class MailboxManager: ObservableObject {
 
     public func draftOffline() async {
         await backgroundRealm.execute { realm in
-            let draftOffline = AnyRealmCollection(realm.objects(Draft.self).where { $0.isOffline == true })
+            let draftOffline = AnyRealmCollection(realm.objects(Draft.self).where { $0.remoteUUID == "" })
 
             let offlineDraftThread = List<Thread>()
 

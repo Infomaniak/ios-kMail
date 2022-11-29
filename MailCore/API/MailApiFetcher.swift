@@ -90,12 +90,13 @@ public class MailApiFetcher: ApiFetcher {
     }
 
     public func threads(mailbox: Mailbox, folderId: String, filter: Filter = .all,
-                        searchFilter: [URLQueryItem] = []) async throws -> ThreadResult {
+                        searchFilter: [URLQueryItem] = [], isDraftFolder: Bool = false) async throws -> ThreadResult {
         try await perform(request: authenticatedRequest(.threads(
             uuid: mailbox.uuid,
             folderId: folderId,
             filter: filter == .all ? nil : filter.rawValue,
-            searchFilters: searchFilter
+            searchFilters: searchFilter,
+            isDraftFolder: isDraftFolder
         ))).data
     }
 
@@ -194,16 +195,16 @@ public class MailApiFetcher: ApiFetcher {
 
     func send(mailbox: Mailbox, draft: UnmanagedDraft) async throws -> CancelResponse {
         try await perform(request: authenticatedRequest(
-            draft.uuid.isEmpty ? .draft(uuid: mailbox.uuid) : .draft(uuid: mailbox.uuid, draftUuid: draft.uuid),
-            method: draft.uuid.isEmpty ? .post : .put,
+            draft.remoteUUID.isEmpty ? .draft(uuid: mailbox.uuid) : .draft(uuid: mailbox.uuid, draftUuid: draft.remoteUUID),
+            method: draft.remoteUUID.isEmpty ? .post : .put,
             parameters: draft
         )).data
     }
 
     func save(mailbox: Mailbox, draft: UnmanagedDraft) async throws -> DraftResponse {
         try await perform(request: authenticatedRequest(
-            draft.hasLocalUuid ? .draft(uuid: mailbox.uuid) : .draft(uuid: mailbox.uuid, draftUuid: draft.uuid),
-            method: draft.hasLocalUuid ? .post : .put,
+            draft.remoteUUID.isEmpty ? .draft(uuid: mailbox.uuid) : .draft(uuid: mailbox.uuid, draftUuid: draft.remoteUUID),
+            method: draft.remoteUUID.isEmpty ? .post : .put,
             parameters: draft
         )).data
     }

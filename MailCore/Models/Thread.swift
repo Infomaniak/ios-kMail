@@ -54,6 +54,7 @@ public class Thread: Object, Decodable, Identifiable {
     // TODO: - Remove parentLink (need to update actions functions)
     @Persisted(originProperty: "threads") public var parentLink: LinkingObjects<Folder>
     @Persisted public var fromSearch = false
+    @Persisted public var isLocalDraft = false
 
     @Persisted public var messageIds: MutableSet<String>
     @Persisted public var folderIds: MutableSet<String>
@@ -81,10 +82,6 @@ public class Thread: Object, Decodable, Identifiable {
 
     public var parent: Folder? {
         return parentLink.first
-    }
-
-    public var isLocalDraft: Bool {
-        parent?.role == .draft && uid.starts(with: Draft.uuidLocalPrefix)
     }
 
     public var shouldPresentAsDraft: Bool {
@@ -192,7 +189,7 @@ public class Thread: Object, Decodable, Identifiable {
     public convenience init(draft: Draft) {
         self.init()
 
-        uid = draft.uuid
+        uid = draft.localUUID
         messagesCount = 1
         uniqueMessagesCount = 1
         deletedMessagesCount = 0
@@ -210,6 +207,7 @@ public class Thread: Object, Decodable, Identifiable {
         answered = false
         forwarded = false
         size = 0
+        isLocalDraft = draft.remoteUUID.isEmpty
     }
 }
 
