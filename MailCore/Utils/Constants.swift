@@ -107,13 +107,13 @@ public enum Constants {
         var dateComponents = DateComponents()
         dateComponents.month = -3
 
-        let dateformat = DateFormatter()
-        dateformat.dateFormat = "yyyyMMdd"
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyyMMdd"
 
         guard let date = Calendar.current.date(byAdding: dateComponents, to: Date())
-        else { return dateformat.string(from: Date()) }
+        else { return dateFormatter.string(from: Date()) }
 
-        return dateformat.string(from: date)
+        return dateFormatter.string(from: date)
     }
 
     public static func longUid(from shortUid: String, folderId: String) -> String {
