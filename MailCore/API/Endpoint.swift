@@ -25,6 +25,10 @@ public extension ApiEnvironment {
     var mailHost: String {
         return "mail.\(host)"
     }
+
+    var mailApiPreprod: String {
+        return "mail-mr-3440.\(host)"
+    }
 }
 
 // MARK: - Endpoints
@@ -88,6 +92,34 @@ public extension Endpoint {
 
     static func folders(uuid: String) -> Endpoint {
         return .mailbox(uuid: uuid).appending(path: "/folder")
+    }
+
+    // MARK: - New Routes
+
+    static func messages(mailboxUuid: String, folderId: String) -> Endpoint {
+        return Endpoint(
+            hostKeypath: \.mailApiPreprod,
+            path: "/api/mail/\(mailboxUuid)/folder/\(folderId)/mobile",
+            apiEnvironment: .preprod
+        )
+    }
+
+    static func messagesUids(mailboxUuid: String, folderId: String, dateSince: String) -> Endpoint {
+        return .messages(mailboxUuid: mailboxUuid, folderId: folderId).appending(path: "/messages_uids", queryItems: [
+            URLQueryItem(name: "since", value: dateSince)
+        ])
+    }
+
+    static func messagesByUids(mailboxUuid: String, folderId: String, messagesUids: [String]) -> Endpoint {
+        return .messages(mailboxUuid: mailboxUuid, folderId: folderId).appending(path: "/messages", queryItems: [
+            URLQueryItem(name: "uids", value: messagesUids.joined(separator: ","))
+        ])
+    }
+
+    static func messagesDelta(mailboxUuid: String, folderId: String, signature: String) -> Endpoint {
+        return .messages(mailboxUuid: mailboxUuid, folderId: folderId).appending(path: "/activities", queryItems: [
+            URLQueryItem(name: "signature", value: signature)
+        ])
     }
 
     static func threads(uuid: String, folderId: String, offset: Int = 0, filter: String?,

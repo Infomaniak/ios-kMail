@@ -36,7 +36,7 @@ public class Thread: Object, Decodable, Identifiable {
     @Persisted public var messagesCount: Int
     @Persisted public var uniqueMessagesCount: Int
     @Persisted public var deletedMessagesCount: Int
-    @Persisted public var messages: MutableSet<Message>
+    @Persisted public var messages: List<Message>
     @Persisted public var unseenMessages: Int
     @Persisted public var from: List<Recipient>
     @Persisted public var to: List<Recipient>
@@ -51,8 +51,12 @@ public class Thread: Object, Decodable, Identifiable {
     @Persisted public var answered: Bool
     @Persisted public var forwarded: Bool
     @Persisted public var size: Int
+    // TODO: - Remove parentLink (need to update actions functions)
     @Persisted(originProperty: "threads") public var parentLink: LinkingObjects<Folder>
     @Persisted public var fromSearch = false
+
+    @Persisted public var messageIds: MutableSet<String>
+    @Persisted public var folderIds: MutableSet<String>
 
     public var id: String {
         return uid
@@ -97,6 +101,26 @@ public class Thread: Object, Decodable, Identifiable {
 
     public func updateFlagged() {
         flagged = messages.contains { $0.flagged }
+    }
+
+    public func recompute() {
+        folderIds = messages.map { $0.folderId }.toRealmSet()
+        messageIds = messages.flatMap { $0.linkedUids }.toRealmSet()
+        uniqueMessagesCount = messages.count // Fix unique : use duplicates
+        updateUnseenMessages()
+        from = messages.flatMap { $0.from.detached() }.toRealmList()
+        date = messages.last?.date ?? date
+        size = messages.sum(of: \.size)
+        hasAttachments = messages.contains { $0.hasAttachments }
+        hasDrafts = messages.map { $0.isDraft }.contains(true)
+        updateFlagged()
+        answered = messages.map { $0.answered }.contains(true)
+        forwarded = messages.map { $0.forwarded }.contains(true)
+        messagesCount = messages.count
+
+        messages = messages.sorted {
+            $0.date.compare($1.date) == .orderedAscending
+        }.toRealmList()
     }
 
     private enum CodingKeys: String, CodingKey {
@@ -148,8 +172,7 @@ public class Thread: Object, Decodable, Identifiable {
         self.messagesCount = messagesCount
         self.uniqueMessagesCount = uniqueMessagesCount
         self.deletedMessagesCount = deletedMessagesCount
-        self.messages = MutableSet()
-        self.messages.insert(objectsIn: messages)
+        self.messages = messages.toRealmList()
         self.unseenMessages = unseenMessages
         self.from = from.toRealmList()
         self.to = to.toRealmList()
@@ -173,8 +196,7 @@ public class Thread: Object, Decodable, Identifiable {
         messagesCount = 1
         uniqueMessagesCount = 1
         deletedMessagesCount = 0
-        messages = MutableSet()
-        messages.insert(Message(draft: draft))
+        messages = [Message(draft: draft)].toRealmList()
         unseenMessages = 0
         to = draft.to.detached()
         cc = draft.cc.detached()

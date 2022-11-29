@@ -62,12 +62,20 @@ struct ThreadView: View {
     }
 
     private var messages: [Message] {
-        return Array(thread.messages)
-            .filter { $0.isDuplicate != true && (isTrashFolder || $0.folderId != trashFolderId) }
-            .sorted { $0.date.compare($1.date) == .orderedAscending }
+        return Array(thread.messages.where { $0.isDuplicate != true && ((folderId == trashFolderId)
+                ? $0.inTrash == true
+                : $0.inTrash == false)
+        })
+        .sorted { $0.date.compare($1.date) == .orderedAscending }
     }
 
-    init(mailboxManager: MailboxManager, thread: Thread, folderId: String?, trashFolderId: String, navigationController: UINavigationController?) {
+    init(
+        mailboxManager: MailboxManager,
+        thread: Thread,
+        folderId: String?,
+        trashFolderId: String,
+        navigationController: UINavigationController?
+    ) {
         self.mailboxManager = mailboxManager
         self.thread = thread
         self.folderId = folderId
@@ -168,7 +176,12 @@ struct ThreadView: View {
         .floatingPanel(state: bottomSheet) {
             switch bottomSheet.state {
             case let .contact(recipient, isRemote):
-                ContactActionsView(recipient: recipient, isRemoteContact: isRemote, bottomSheet: bottomSheet, mailboxManager: mailboxManager)
+                ContactActionsView(
+                    recipient: recipient,
+                    isRemoteContact: isRemote,
+                    bottomSheet: bottomSheet,
+                    mailboxManager: mailboxManager
+                )
             case let .replyOption(message, isThread):
                 ReplyActionsView(
                     mailboxManager: mailboxManager,

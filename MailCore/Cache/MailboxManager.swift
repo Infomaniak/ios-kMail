@@ -220,6 +220,47 @@ public class MailboxManager: ObservableObject {
 
     // MARK: - Thread
 
+    public func threads(folder: Folder) async throws {
+        let alwaysFetchedFolders: [FolderRole] = [.inbox, .sent, .draft]
+
+        if alwaysFetchedFolders.contains(where: { $0 == folder.role }) {
+            for folderRole in alwaysFetchedFolders {
+                if let realFolder = getFolder(with: folderRole) {
+                    try await messages(folder: realFolder.freezeIfNeeded(), asThread: true)
+                }
+            }
+        } else {
+            try await messages(folder: folder.freezeIfNeeded(), asThread: true)
+        }
+    }
+
+    private func deleteMessagesThread(uids: [String]) async {
+        guard !uids.isEmpty else { return }
+
+        await backgroundRealm.execute { realm in
+            let messagesToDelete = realm.objects(Message.self).where { $0.uid.in(uids) }
+            var threadsToDelete = [Thread]()
+            var threadsToUpdate = [Thread]()
+            for message in messagesToDelete {
+                if let thread = message.parent {
+                    if thread.messageIds.count <= 1 {
+                        threadsToDelete.append(thread)
+                    } else {
+                        threadsToUpdate.append(thread)
+                    }
+                }
+            }
+
+            try? realm.safeWrite {
+                realm.delete(messagesToDelete)
+                realm.delete(threadsToDelete)
+                for thread in threadsToUpdate {
+                    thread.recompute()
+                }
+            }
+        }
+    }
+
     public func threads(folder: Folder, filter: Filter = .all, searchFilter: [URLQueryItem] = []) async throws -> ThreadResult {
         // Get from API
         let threadResult = try await apiFetcher.threads(
@@ -306,7 +347,11 @@ public class MailboxManager: ObservableObject {
     }
 
     public func move(threads: [Thread], to folder: Folder) async throws -> UndoRedoAction {
-        let response = try await apiFetcher.move(mailbox: mailbox, messages: threads.flatMap(\.messages), destinationId: folder._id)
+        let response = try await apiFetcher.move(
+            mailbox: mailbox,
+            messages: threads.flatMap(\.messages),
+            destinationId: folder._id
+        )
 
         let redoBlock = await backgroundRealm.execute { realm in
             if let liveFolder = folder.fresh(using: realm) {
@@ -390,7 +435,8 @@ public class MailboxManager: ObservableObject {
             let folderName = FolderRole.trash.localizedName
             Task.detached {
                 await IKSnackBar.showCancelableSnackBar(message: MailResourcesStrings.Localizable.snackbarThreadMoved(folderName),
-                                                        cancelSuccessMessage: MailResourcesStrings.Localizable.snackbarMoveCancelled,
+                                                        cancelSuccessMessage: MailResourcesStrings.Localizable
+                                                            .snackbarMoveCancelled,
                                                         undoRedoAction: undoRedoAction,
                                                         mailboxManager: self)
             }
@@ -791,6 +837,154 @@ public class MailboxManager: ObservableObject {
 
     // MARK: - Message
 
+    private func getUniqueUidsInReverse(folder: Folder, remoteUids: [String]) -> [String] {
+        let localUids = Set(folder.threads.map { Constants.shortUid(from: $0.uid) })
+        let remoteUidsSet = Set(remoteUids)
+        var uniqueUids: Set<String> = Set()
+        if localUids.isEmpty {
+            uniqueUids = remoteUidsSet
+        } else {
+            uniqueUids = remoteUidsSet.subtracting(localUids)
+        }
+        return uniqueUids.reversed()
+    }
+
+    public func messages(folder: Folder, asThread: Bool = false) async throws {
+        let previousCursor = folder.cursor
+        var newCursor: String?
+
+        var deletedUids = [String]()
+        var addedShortUids = [String]()
+        var updated = [MessageFlags]()
+
+        if previousCursor == nil {
+            let messageUidsResult = try await apiFetcher.messagesUids(
+                mailboxUuid: mailbox.uuid,
+                folderId: folder.id,
+                dateSince: Constants.dateSince()
+            )
+            newCursor = messageUidsResult.cursor
+            addedShortUids.append(contentsOf: messageUidsResult.messageShortUids.map { String($0) })
+        } else {
+            let messageDeltaResult = try await apiFetcher.messagesDelta(
+                mailboxUUid: mailbox.uuid,
+                folderId: folder.id,
+                signature: previousCursor!
+            )
+            newCursor = messageDeltaResult.cursor
+            deletedUids
+                .append(contentsOf: messageDeltaResult.deletedShortUids
+                    .map { Constants.longUid(from: String($0), folderId: folder.id) })
+            addedShortUids.append(contentsOf: messageDeltaResult.addedShortUids)
+            updated.append(contentsOf: messageDeltaResult.updated)
+        }
+
+        try await addMessages(shortUids: addedShortUids, folder: folder, asThread: asThread)
+        if asThread {
+            await deleteMessagesThread(uids: deletedUids)
+        } else {
+            await deleteMessages(uids: deletedUids)
+        }
+        await updateMessages(updates: updated, folder: folder)
+
+        await backgroundRealm.execute { realm in
+            if newCursor != nil {
+                guard let folder = folder.fresh(using: realm) else { return }
+                try? realm.safeWrite {
+                    folder.cursor = newCursor
+                }
+            }
+        }
+    }
+
+    private func addMessages(shortUids: [String], folder: Folder, asThread: Bool = false) async throws {
+        if !shortUids.isEmpty {
+            let reversedUids: [String] = getUniqueUidsInReverse(folder: folder, remoteUids: shortUids)
+            let pageSize = 50
+            var offset = 0
+            while offset < reversedUids.count {
+                let end = min(offset + pageSize, reversedUids.count)
+                let newList = Array(reversedUids[offset ..< end])
+                let messageByUidsResult = try await apiFetcher.messagesByUids(
+                    mailboxUuid: mailbox.uuid,
+                    folderId: folder.id,
+                    messageUids: newList
+                )
+
+                await backgroundRealm.execute { realm in
+                    if let folder = folder.fresh(using: realm) {
+                        if asThread {
+                            var threadsToUpdate = Set<Thread>()
+                            try? realm.safeWrite {
+                                for message in messageByUidsResult.messages {
+                                    message.computeReference()
+                                    message.inTrash = folder.role == .trash
+                                    if let thread = realm.objects(Thread.self).first(where: { value in
+                                        value.messageIds.contains { message.linkedUids.contains($0) }
+                                    }) {
+                                        thread.messages.append(message)
+                                        thread.messageIds.insert(objectsIn: message.linkedUids)
+                                        folder.threads.insert(thread)
+                                        threadsToUpdate.insert(thread)
+                                    } else {
+                                        let thread = message.toThread().detached()
+                                        thread.messageIds.insert(objectsIn: message.linkedUids)
+                                        folder.threads.insert(thread)
+                                        threadsToUpdate.insert(thread)
+                                    }
+                                }
+                                for thread in threadsToUpdate {
+                                    thread.recompute()
+                                }
+                            }
+
+                        } else {
+                            try? realm.safeWrite {
+                                let threads = messageByUidsResult.messages.map { $0.toThread().detached() }
+                                folder.threads.insert(objectsIn: threads)
+                            }
+                        }
+                    }
+                }
+
+                offset += pageSize
+            }
+        }
+    }
+
+    private func deleteMessages(uids: [String]) async {
+        guard !uids.isEmpty else { return }
+
+        await backgroundRealm.execute { realm in
+            let messagesToDelete = realm.objects(Message.self).where { $0.uid.in(uids) }
+            let threadsToDelete = realm.objects(Thread.self).where { $0.uid.in(uids) }
+            try? realm.safeWrite {
+                realm.delete(messagesToDelete)
+                realm.delete(threadsToDelete)
+            }
+        }
+    }
+
+    private func updateMessages(updates: [MessageFlags], folder: Folder) async {
+        await backgroundRealm.execute { realm in
+            try? realm.safeWrite {
+                for update in updates {
+                    let uid = Constants.longUid(from: String(update.shortUid), folderId: folder.id)
+                    if let message = realm.object(ofType: Message.self, forPrimaryKey: uid),
+                       let thread = message.parent {
+                        message.answered = update.answered
+                        message.flagged = update.isFavorite
+                        message.forwarded = update.forwarded
+                        message.scheduled = update.scheduled
+                        message.seen = update.seen
+
+                        thread.recompute()
+                    }
+                }
+            }
+        }
+    }
+
     public func message(message: Message) async throws {
         // Get from API
         let completedMessage = try await apiFetcher.message(message: message)
@@ -1180,6 +1374,7 @@ public class MailboxManager: ObservableObject {
     ) {
         let realm = realm ?? getRealm()
         guard let savedMessage = realm.object(ofType: Message.self, forPrimaryKey: message.uid) else { return }
+        message.inTrash = savedMessage.inTrash
         if keepProperties.contains(.fullyDownloaded) {
             message.fullyDownloaded = savedMessage.fullyDownloaded
         }
@@ -1202,6 +1397,7 @@ public class MailboxManager: ObservableObject {
     ) {
         guard let savedFolder = realm.object(ofType: Folder.self, forPrimaryKey: folder._id) else { return }
         folder.lastUpdate = savedFolder.lastUpdate
+        folder.cursor = savedFolder.cursor
     }
 
     func getSubFolders(from folders: [Folder], oldResult: [Folder] = []) -> [Folder] {

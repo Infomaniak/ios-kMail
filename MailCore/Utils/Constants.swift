@@ -21,10 +21,14 @@ import MailResources
 import SwiftUI
 
 public struct URLConstants {
-    public static let feedback = URLConstants(urlString: "https://feedback.userreport.com/9f60b46d-7299-4887-b79d-c756cf474c4d#ideas/popular")
+    public static let feedback =
+        URLConstants(urlString: "https://feedback.userreport.com/9f60b46d-7299-4887-b79d-c756cf474c4d#ideas/popular")
     public static let importMails = URLConstants(urlString: "https://import-email.infomaniak.com")
     public static let matomo = URLConstants(urlString: "https://analytics.infomaniak.com/matomo.php")
-    public static let faq = URLConstants(urlString: "https://www.infomaniak.com/\(Locale.current.languageCode ?? "fr")/support/faq/admin2/service-mail")
+    public static let faq =
+        URLConstants(
+            urlString: "https://www.infomaniak.com/\(Locale.current.languageCode ?? "fr")/support/faq/admin2/service-mail"
+        )
     public static let chatbot = URLConstants(urlString: "https://www.infomaniak.com/chatbot")
 
     public static let schemeUrl = "http"
@@ -60,7 +64,8 @@ public enum Constants {
     public static let checkboxCompactSize: CGFloat = 24
     public static let checkmarkCompactSize: CGFloat = 13
 
-    public static let mailRegex = "(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|\"(?:[\\x01-\\x08\\x0b\\x0c\\x0e-\\x1f\\x21\\x23-\\x5b\\x5d-\\x7f]|\\\\[\\x01-\\x09\\x0b\\x0c\\x0e-\\x7f])*\")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\\[(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?|[a-z0-9-]*[a-z0-9]:(?:[\\x01-\\x08\\x0b\\x0c\\x0e-\\x1f\\x21-\\x5a\\x53-\\x7f]|\\\\[\\x01-\\x09\\x0b\\x0c\\x0e-\\x7f])+)\\])"
+    public static let mailRegex =
+        "(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|\"(?:[\\x01-\\x08\\x0b\\x0c\\x0e-\\x1f\\x21\\x23-\\x5b\\x5d-\\x7f]|\\\\[\\x01-\\x09\\x0b\\x0c\\x0e-\\x7f])*\")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\\[(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?|[a-z0-9-]*[a-z0-9]:(?:[\\x01-\\x08\\x0b\\x0c\\x0e-\\x1f\\x21-\\x5a\\x53-\\x7f]|\\\\[\\x01-\\x09\\x0b\\x0c\\x0e-\\x7f])+)\\])"
 
     public static func forwardQuote(message: Message) -> String {
         let date = DateFormatter.localizedString(from: message.date, dateStyle: .medium, timeStyle: .short)
@@ -96,6 +101,27 @@ public enum Constants {
 
     public static func globallyResignFirstResponder() {
         UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
+    }
+
+    public static func dateSince() -> String {
+        var dateComponents = DateComponents()
+        dateComponents.month = -3
+
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyyMMdd"
+
+        guard let date = Calendar.current.date(byAdding: dateComponents, to: Date())
+        else { return dateFormatter.string(from: Date()) }
+
+        return dateFormatter.string(from: date)
+    }
+
+    public static func longUid(from shortUid: String, folderId: String) -> String {
+        return "\(shortUid)@\(folderId)"
+    }
+
+    public static func shortUid(from longUid: String) -> String {
+        return longUid.components(separatedBy: "@")[0]
     }
 
     public static let defaultSwipeShortRight = SwipeAction.none

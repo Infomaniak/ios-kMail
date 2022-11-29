@@ -35,7 +35,7 @@ class DateSection: Identifiable {
                 return .init(start: .now.startOfDay, end: .now.endOfDay)
             case .month:
                 return .init(start: .now.startOfMonth, end: .now.endOfMonth)
-            case .older(let date):
+            case let .older(date):
                 return .init(start: date.startOfMonth, end: date.endOfMonth)
             }
         }
@@ -99,7 +99,6 @@ class DateSection: Identifiable {
 
     var scrollViewProxy: ScrollViewProxy?
 
-    private var resourceNext: String?
     private var observationThreadToken: NotificationToken?
     private var observationLastUpdateToken: NotificationToken?
 
@@ -107,7 +106,6 @@ class DateSection: Identifiable {
         didSet {
             Task {
                 observeChanges(animateInitialThreadChanges: true)
-                await fetchThreads()
                 if let topThread = sections.first?.threads.first?.id {
                     withAnimation {
                         self.scrollViewProxy?.scrollTo(topThread, anchor: .top)
@@ -156,24 +154,8 @@ class DateSection: Identifiable {
 
         await tryOrDisplayError {
             guard let folder = folder else { return }
-            let result = try await mailboxManager.threads(folder: folder.freezeIfNeeded(), filter: filter)
-            resourceNext = result.resourceNext
-        }
-        isLoadingPage = false
-        await mailboxManager.draftOffline()
-    }
 
-    func fetchNextPage() async {
-        guard !isLoadingPage, let resource = resourceNext else {
-            return
-        }
-
-        isLoadingPage = true
-
-        await tryOrDisplayError {
-            guard let folder = folder else { return }
-            let result = try await mailboxManager.threads(folder: folder.freezeIfNeeded(), resource: resource)
-            resourceNext = result.resourceNext
+            try await mailboxManager.threads(folder: folder.freezeIfNeeded())
         }
         isLoadingPage = false
         await mailboxManager.draftOffline()
@@ -230,18 +212,6 @@ class DateSection: Identifiable {
             }
         } else {
             sections = []
-        }
-    }
-
-    func loadNextPageIfNeeded(currentItem: Thread) {
-        // Start loading next page when we reach the second-to-last item
-        let threads = sections.flatMap(\.threads)
-        guard threads.count > loadNextPageThreshold else { return }
-        let thresholdIndex = threads.index(threads.endIndex, offsetBy: -loadNextPageThreshold)
-        if threads.firstIndex(where: { $0.uid == currentItem.uid }) == thresholdIndex {
-            Task {
-                await fetchNextPage()
-            }
         }
     }
 

@@ -67,7 +67,6 @@ struct ThreadListCell: View {
                 isSelected: isSelected
             )
         }
-        .onAppear { viewModel.loadNextPageIfNeeded(currentItem: thread) }
         .padding(.leading, multipleSelectionViewModel.isEnabled ? 8 : -4)
         .onTapGesture { didTapCell() }
         .onLongPressGesture(minimumDuration: 0.3) { didLongPressCell() }
