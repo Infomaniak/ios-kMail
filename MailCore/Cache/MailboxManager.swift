@@ -261,38 +261,6 @@ public class MailboxManager: ObservableObject {
         }
     }
 
-    public func threads(folder: Folder, filter: Filter = .all, searchFilter: [URLQueryItem] = []) async throws -> ThreadResult {
-        let isDraftFolder = folder.role == .draft
-
-        // Get from API
-        let threadResult = try await apiFetcher.threads(
-            mailbox: mailbox,
-            folderId: folder._id,
-            filter: filter,
-            searchFilter: searchFilter,
-            isDraftFolder: isDraftFolder
-        )
-
-        // Save result
-        await saveThreads(result: threadResult, parent: folder)
-
-        if isDraftFolder {
-            await cleanDrafts()
-        }
-
-        return threadResult
-    }
-
-    public func threads(folder: Folder, resource: String) async throws -> ThreadResult {
-        // Get from API
-        let threadResult = try await apiFetcher.threads(from: resource)
-
-        // Save result
-        await saveThreads(result: threadResult, parent: folder)
-
-        return threadResult
-    }
-
     private func saveThreads(result: ThreadResult, parent: Folder) async {
         await backgroundRealm.execute { realm in
             guard let parentFolder = parent.fresh(using: realm) else { return }
