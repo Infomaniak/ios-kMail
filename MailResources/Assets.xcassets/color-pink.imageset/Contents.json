@@ -3,6 +3,16 @@
     {
       "filename" : "color-pink.svg",
       "idiom" : "universal"
+    },
+    {
+      "appearances" : [
+        {
+          "appearance" : "luminosity",
+          "value" : "dark"
+        }
+      ],
+      "filename" : "color-pink-dark.svg",
+      "idiom" : "universal"
     }
   ],
   "info" : {
