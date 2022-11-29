@@ -40,12 +40,13 @@ struct FloatingActionButton: View {
         .controlSize(.large)
         .padding(.trailing, 24)
         .padding(.bottom, 70)
+        .foregroundColor(MailResourcesAsset.onAccentColor)
     }
 }
 
 struct NewMessageButtonView_Previews: PreviewProvider {
     static var previews: some View {
-        FloatingActionButton(icon: Image(resource: MailResourcesAsset.edit),
+        FloatingActionButton(icon: Image(resource: MailResourcesAsset.pen),
                              title: "New message") { /* Preview */ }
     }
 }

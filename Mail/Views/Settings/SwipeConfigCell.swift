@@ -64,7 +64,7 @@ struct SwipeConfigCell: View {
                         action.swipeIcon?
                             .resizable()
                             .frame(width: 24, height: 24)
-                            .foregroundColor(.white)
+                            .foregroundColor(MailResourcesAsset.onAccentColor)
                     }
                 }
                 .frame(width: 74)
@@ -76,7 +76,7 @@ struct SwipeConfigCell: View {
         }
         .frame(height: 80)
         .environment(\.layoutDirection, section == .rightSwipe ? .leftToRight : .rightToLeft)
-        .offset(x: section == .rightSwipe ? 0 : CGFloat(-80 * actions.count), y: 0)
+        .offset(x: section == .rightSwipe ? 70 : -70, y: 0)
     }
 }
 

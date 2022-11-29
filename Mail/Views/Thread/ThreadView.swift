@@ -91,20 +91,19 @@ struct ThreadView: View {
                 .multilineTextAlignment(.leading)
                 .lineSpacing(8)
                 .padding(.top, 8)
+                .padding(.bottom, 16)
                 .padding(.horizontal, 16)
+                .background(MailResourcesAsset.backgroundColor.swiftUiColor)
 
             LazyVStack(spacing: 0) {
                 ForEach(messages.indices, id: \.self) { index in
                     let isMessageExpanded = ((index == messages.count - 1) && !messages[index].isDraft) || !messages[index].seen
                     MessageView(message: messages[index], isMessageExpanded: isMessageExpanded)
-                    if index < messages.count - 1 {
-                        IKDivider()
-                            .padding(.horizontal, 8)
-                    }
                 }
             }
         }
-        .background(MailResourcesAsset.backgroundColor.swiftUiColor)
+        .padding(.top, -8)
+        .background(messages.count > 1 ? MailResourcesAsset.backgroundCardColor.swiftUiColor : MailResourcesAsset.backgroundColor.swiftUiColor)
         .coordinateSpace(name: "scrollView")
         .onPreferenceChange(ScrollOffsetPreferenceKey.self) { offset in
             displayNavigationTitle = offset.y < -85
@@ -125,8 +124,10 @@ struct ThreadView: View {
             // Style navigation bar
             let navBarAppearance = UINavigationBarAppearance()
             navBarAppearance.configureWithDefaultBackground()
+            navBarAppearance.backgroundColor = MailResourcesAsset.backgroundColor.color
+            navBarAppearance.shadowColor = MailResourcesAsset.backgroundColor.color
             navigationController?.navigationBar.standardAppearance = navBarAppearance
-            navigationController?.navigationBar.scrollEdgeAppearance = nil
+            navigationController?.navigationBar.scrollEdgeAppearance = navBarAppearance
         }
         .environmentObject(mailboxManager)
         .environmentObject(bottomSheet)

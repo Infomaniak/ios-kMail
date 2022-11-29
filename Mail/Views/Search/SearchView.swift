@@ -81,10 +81,10 @@ struct SearchView: View {
             if viewModel.searchState == .noResults {
                 SearchNoResultView()
             } else if viewModel.searchState == .noHistory {
-                // TODO: maybe add a different view
-                Text("No history")
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
-                    .textStyle(.body)
+                Text(MailResourcesStrings.Localizable.searchNoHistoryDescription)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
+                    .padding(.top, 16)
+                    .textStyle(.calloutSecondary)
             } else {
                 List {
                     if viewModel.searchState == .history {
@@ -246,14 +246,28 @@ struct SearchView: View {
     func searchHistoryList(history: SearchHistory) -> some View {
         Section {
             ForEach(history.history, id: \.self) { searchItem in
-                Text(searchItem)
-                    .onTapGesture {
-                        Constants.globallyResignFirstResponder()
-                        viewModel.searchValue = searchItem
-                        Task {
-                            await viewModel.fetchThreads()
-                        }
+                HStack(spacing: 8) {
+                    Text(searchItem)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                    Button {
+                        deleteSearchTapped(searchItem: searchItem)
+                    } label: {
+                        Image(resource: MailResourcesAsset.close)
+                            .resizable()
+                            .scaledToFit()
+                            .foregroundColor(Color.accentColor)
+                            .frame(width: 17, height: 17)
                     }
+                    .buttonStyle(BorderlessButtonStyle())
+                }
+                .contentShape(Rectangle())
+                .onTapGesture {
+                    Constants.globallyResignFirstResponder()
+                    viewModel.searchValue = searchItem
+                    Task {
+                        await viewModel.fetchThreads()
+                    }
+                }
             }
             .padding(.horizontal, 4)
         } header: {
@@ -263,6 +277,14 @@ struct SearchView: View {
         .listRowSeparator(.hidden)
         .listRowBackground(MailResourcesAsset.backgroundColor.swiftUiColor)
         .listRowInsets(.init(top: 0, leading: 12, bottom: 0, trailing: 12))
+    }
+
+    private func deleteSearchTapped(searchItem: String) {
+        Task {
+            await tryOrDisplayError {
+                viewModel.searchHistory = await viewModel.mailboxManager.delete(searchHistory: viewModel.searchHistory, with: searchItem)
+            }
+        }
     }
 }
 

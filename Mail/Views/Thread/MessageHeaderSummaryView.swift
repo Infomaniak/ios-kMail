@@ -28,12 +28,17 @@ struct MessageHeaderSummaryView: View {
     let deleteDraftTapped: () -> Void
     let replyButtonTapped: () -> Void
     let moreButtonTapped: () -> Void
+    let recipientTapped: (Recipient) -> Void
 
     var body: some View {
         HStack(alignment: .top, spacing: 0) {
             HStack(alignment: .center) {
                 if let recipient = message.from.first {
-                    RecipientImage(recipient: recipient, size: 40)
+                    Button {
+                        recipientTapped(recipient)
+                    } label: {
+                        RecipientImage(recipient: recipient, size: 40)
+                    }
                 }
 
                 VStack(alignment: .leading, spacing: 4) {
@@ -51,7 +56,7 @@ struct MessageHeaderSummaryView: View {
                         }
                         .tint(MailResourcesAsset.redActionColor)
                     } else {
-                        HStack(alignment: .firstTextBaseline, spacing: 16) {
+                        HStack(alignment: .firstTextBaseline, spacing: 8) {
                             VStack {
                                 ForEach(message.from, id: \.self) { recipient in
                                     Text(recipient.title)
@@ -115,6 +120,8 @@ struct MessageHeaderSummaryView_Previews: PreviewProvider {
                 // Preview
             } moreButtonTapped: {
                 // Preview
+            } recipientTapped: { _ in
+                // Preview
             }
             MessageHeaderSummaryView(message: PreviewHelper.sampleMessage,
                                      isMessageExpanded: .constant(true),
@@ -123,6 +130,8 @@ struct MessageHeaderSummaryView_Previews: PreviewProvider {
             } replyButtonTapped: {
                 // Preview
             } moreButtonTapped: {
+                // Preview
+            } recipientTapped: { _ in
                 // Preview
             }
         }

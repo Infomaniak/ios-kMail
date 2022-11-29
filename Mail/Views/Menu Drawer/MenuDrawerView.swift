@@ -111,6 +111,7 @@ class NavigationDrawerController: ObservableObject {
 struct MenuDrawerView: View {
     @EnvironmentObject var splitViewManager: SplitViewManager
     @EnvironmentObject var bottomSheet: GlobalBottomSheet
+    @EnvironmentObject var navigationDrawerController: NavigationDrawerController
 
     @StateObject var viewModel: MenuDrawerViewModel
 
@@ -150,14 +151,14 @@ struct MenuDrawerView: View {
 
                     IKDivider(withPadding: true)
 
-                    MenuDrawerItemsListView(content: viewModel.helpMenuItems)
-
-                    IKDivider(withPadding: true)
-
                     MenuDrawerItemsListView(
                         title: MailResourcesStrings.Localizable.menuDrawerAdvancedActions,
                         content: viewModel.actionsMenuItems
                     )
+
+                    IKDivider(withPadding: true)
+
+                    MenuDrawerItemsListView(content: viewModel.helpMenuItems)
 
                     if viewModel.mailbox.isLimited, let quotas = viewModel.mailbox.quotas {
                         IKDivider(withPadding: true)
@@ -181,6 +182,7 @@ struct MenuDrawerView: View {
         .sheet(isPresented: $viewModel.isShowingBugTracker) {
             BugTrackerView(isPresented: $viewModel.isShowingBugTracker)
         }
+        .statusBarHidden(navigationDrawerController.isOpen)
     }
 }  
 

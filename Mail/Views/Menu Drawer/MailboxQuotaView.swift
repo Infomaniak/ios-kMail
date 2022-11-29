@@ -48,13 +48,6 @@ struct MailboxQuotaView: View {
             VStack(alignment: .leading, spacing: 6) {
                 Text(progressString)
                     .textStyle(.header5)
-
-                Button {
-                    globalSheet.open(state: .getMoreStorage)
-                } label: {
-                    Text(MailResourcesStrings.Localizable.buttonMoreStorage)
-                }
-                .textStyle(.calloutMediumAccent)
             }
 
             Spacer()

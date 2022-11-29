@@ -82,7 +82,7 @@ struct FolderCellContent: View {
     }
 
     var body: some View {
-        HStack(spacing: 24) {
+        HStack(spacing: Constants.menuDrawerHorizontalItemSpacing) {
             folder.icon
                 .resizable()
                 .scaledToFit()
@@ -91,6 +91,7 @@ struct FolderCellContent: View {
 
             Text(folder.localizedName)
                 .textStyle(textStyle)
+                .lineLimit(1)
 
             Spacer()
 

@@ -139,7 +139,7 @@ struct ThreadListView: View {
                                     observeThread: $viewModel.observeThread,
                                     navigationController: $navigationController))
         .floatingActionButton(isEnabled: !multipleSelectionViewModel.isEnabled,
-                              icon: Image(resource: MailResourcesAsset.edit),
+                              icon: Image(resource: MailResourcesAsset.pen),
                               title: MailResourcesStrings.Localizable.buttonNewMessage) {
             isShowingComposeNewMessageView.toggle()
         }

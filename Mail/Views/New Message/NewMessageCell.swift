@@ -56,7 +56,6 @@ struct NewMessageCell<Content>: View where Content: View {
                 ChevronButton(isExpanded: showCc)
             }
         }
-        .textStyle(.body)
         .padding(.horizontal, 16)
         .padding(.top, isFirstCell ? 0 : verticalPadding)
         .padding(.bottom, verticalPadding)

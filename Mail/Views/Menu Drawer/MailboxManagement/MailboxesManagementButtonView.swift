@@ -22,11 +22,13 @@ import MailResources
 import SwiftUI
 
 struct MailboxesManagementButtonView: View {
+    let icon: MailResourcesImages
     let text: String
     let detailNumber: Int?
     let handleAction: () -> Void
 
-    init(text: String, detailNumber: Int? = nil, handleAction: @escaping () -> Void) {
+    init(icon: MailResourcesImages, text: String, detailNumber: Int? = nil, handleAction: @escaping () -> Void) {
+        self.icon = icon
         self.text = text
         self.detailNumber = detailNumber
         self.handleAction = handleAction
@@ -34,9 +36,14 @@ struct MailboxesManagementButtonView: View {
 
     var body: some View {
         Button(action: handleAction) {
-            HStack {
+            HStack(spacing: 24) {
+                Image(resource: icon)
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 24, height: 24)
+                    .foregroundColor(.accentColor)
                 Text(text)
-                    .textStyle(.header5)
+                    .textStyle(.body)
                     .lineLimit(1)
                 Spacer()
                 if let detailNumber = detailNumber {
@@ -46,14 +53,14 @@ struct MailboxesManagementButtonView: View {
             }
         }
         .padding(.vertical, 8)
-        .padding(.leading, 68)
+        .padding(.leading, 19)
         .padding(.trailing, Constants.menuDrawerHorizontalPadding)
     }
 }
 
 struct MailboxesManagementButtonView_Previews: PreviewProvider {
     static var previews: some View {
-        MailboxesManagementButtonView(text: "Hello") { /* Empty for test */ }
-        MailboxesManagementButtonView(text: "Hello", detailNumber: 10) { /* Empty for test */ }
+        MailboxesManagementButtonView(icon: MailResourcesAsset.folder, text: "Hello") { /* Empty for test */ }
+        MailboxesManagementButtonView(icon: MailResourcesAsset.folder, text: "Hello", detailNumber: 10) { /* Empty for test */ }
     }
 }

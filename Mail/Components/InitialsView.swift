@@ -17,6 +17,7 @@
  */
 
 import SwiftUI
+import MailResources
 
 struct InitialsView: View {
     var initials: String
@@ -29,7 +30,7 @@ struct InitialsView: View {
                 .fill(Color(uiColor: color))
             Text(initials)
                 .font(.system(size: size * 0.5, weight: .semibold))
-                .foregroundColor(.white)
+                .foregroundColor(MailResourcesAsset.onAccentColor)
         }
         .frame(width: size, height: size)
     }

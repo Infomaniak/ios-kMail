@@ -68,8 +68,7 @@ struct ThreadListCell: View {
             )
         }
         .onAppear { viewModel.loadNextPageIfNeeded(currentItem: thread) }
-        .padding(.leading, multipleSelectionViewModel.isEnabled ? 8 : 0)
-        .padding(.vertical, -4)
+        .padding(.leading, multipleSelectionViewModel.isEnabled ? 8 : -4)
         .onTapGesture { didTapCell() }
         .onLongPressGesture(minimumDuration: 0.3) { didLongPressCell() }
         .swipeActions(thread: thread, viewModel: viewModel, multipleSelectionViewModel: multipleSelectionViewModel)

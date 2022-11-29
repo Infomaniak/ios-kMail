@@ -17,6 +17,7 @@
  */
 
 import MailCore
+import MailResources
 import SwiftUI
 
 struct MailboxCell: View {
@@ -25,7 +26,7 @@ struct MailboxCell: View {
     @Environment(\.window) private var window
 
     var body: some View {
-        MailboxesManagementButtonView(text: mailbox.email, detailNumber: mailbox.unseenMessages > 0 ? mailbox.unseenMessages : nil) {
+        MailboxesManagementButtonView(icon: MailResourcesAsset.envelope, text: mailbox.email, detailNumber: mailbox.unseenMessages > 0 ? mailbox.unseenMessages : nil) {
             (window?.windowScene?.delegate as? SceneDelegate)?.switchMailbox(mailbox)
         }
     }

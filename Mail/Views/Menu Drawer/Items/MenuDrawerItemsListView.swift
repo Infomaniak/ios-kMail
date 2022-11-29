@@ -33,15 +33,33 @@ struct MenuDrawerItemsListView: View {
     var title: String?
     var content: [MenuItem]
 
+    @State private var isExpanded = true
+
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
             if let title = title {
-                Text(title)
-                    .textStyle(.calloutSecondary)
-            }
+                Button {
+                    withAnimation {
+                        isExpanded.toggle()
+                    }
+                } label: {
+                    HStack(spacing: 12) {
+                        ChevronIcon(style: isExpanded ? .up : .down, color: .secondary)
+                        Text(title)
+                            .textStyle(.calloutSecondary)
+                        Spacer()
+                    }
+                }
 
-            ForEach(content) { item in
-                MenuDrawerItemCell(content: item)
+                if isExpanded {
+                    ForEach(content) { item in
+                        MenuDrawerItemCell(content: item)
+                    }
+                }
+            } else {
+                ForEach(content) { item in
+                    MenuDrawerItemCell(content: item)
+                }
             }
         }
         .padding(.vertical, 19)

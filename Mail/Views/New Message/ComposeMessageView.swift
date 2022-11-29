@@ -129,8 +129,7 @@ struct ComposeMessageView: View {
                                 ForEach(AccountManager.instance.mailboxes.indices, id: \.self) { i in
                                     Text(AccountManager.instance.mailboxes[i].email).tag(i)
                                 }
-                            }
-                            .textStyle(.body)
+                            }.tint(MailResourcesAsset.primaryTextColor)
                             Spacer()
                         }
                     }
@@ -156,7 +155,9 @@ struct ComposeMessageView: View {
                             ScrollView(.horizontal, showsIndicators: false) {
                                 HStack(spacing: 8) {
                                     ForEach(attachments) { attachment in
-                                        AttachmentCell(attachment: attachment)
+                                        AttachmentCell(attachment: attachment, isNewMessage: true) { attachmentRemoved in
+                                            removeAttachment(attachmentRemoved)
+                                        }
                                     }
                                 }
                                 .padding(.vertical, 1)
@@ -422,6 +423,12 @@ struct ComposeMessageView: View {
             draft.attachments = [attachment]
         } else {
             draft.attachments?.append(attachment)
+        }
+    }
+
+    private func removeAttachment(_ attachment: Attachment) {
+        if let attachments = draft.attachments, let attachmentToRemove = attachments.firstIndex(of: attachment) {
+            draft.attachments?.remove(at: attachmentToRemove)
         }
     }
 }

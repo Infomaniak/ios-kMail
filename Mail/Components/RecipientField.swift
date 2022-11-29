@@ -28,20 +28,11 @@ struct RecipientChip: View {
     @AppStorage(UserDefaults.shared.key(.accentColor), store: .shared) private var accentColor = AccentColor.pink
 
     var body: some View {
-        HStack(spacing: 2) {
+        Button(action: removeButtonTapped) {
             Text(recipient.name.isEmpty ? recipient.email : recipient.name)
                 .textStyle(.body)
                 .padding(.vertical, 6)
                 .lineLimit(1)
-
-            Button(action: removeButtonTapped) {
-                Image(resource: MailResourcesAsset.cross)
-                    .resizable()
-                    .scaledToFit()
-                    .frame(width: 12, height: 12)
-                    .padding(6)
-                    .foregroundColor(Color.accentColor)
-            }
         }
         .padding(.leading, 12)
         .padding(.trailing, 6)

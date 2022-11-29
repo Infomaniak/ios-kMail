@@ -39,7 +39,12 @@ public enum AccentColor: String, CaseIterable, SettingsOptionEnum {
     }
 
     public var image: Image? {
-        return nil
+        switch self {
+        case .pink:
+            return Image(MailResourcesAsset.colorPink.name)
+        case .blue:
+            return Image(MailResourcesAsset.colorBlue.name)
+        }
     }
 
     // MARK: - Colors
@@ -81,7 +86,7 @@ public enum AccentColor: String, CaseIterable, SettingsOptionEnum {
             return MailResourcesAsset.folderOpenBlue
         }
     }
-    
+
     public var zeroConvImage: MailResourcesImages {
         switch self {
         case .pink:
@@ -134,27 +139,27 @@ public enum AccentColor: String, CaseIterable, SettingsOptionEnum {
     public var compactListIcon: MailResourcesImages {
         switch self {
         case .pink:
-            return MailResourcesAsset.compactListPink
+            return MailResourcesAsset.densityCompactPink
         case .blue:
-            return MailResourcesAsset.compactListBlue
+            return MailResourcesAsset.densityCompactBlue
         }
     }
 
     public var defaultListIcon: MailResourcesImages {
         switch self {
         case .pink:
-            return MailResourcesAsset.defaultListPink
+            return MailResourcesAsset.densityNormalPink
         case .blue:
-            return MailResourcesAsset.defaultListBlue
+            return MailResourcesAsset.densityNormalBlue
         }
     }
 
     public var largeListIcon: MailResourcesImages {
         switch self {
         case .pink:
-            return MailResourcesAsset.largeListPink
+            return MailResourcesAsset.densityLargePink
         case .blue:
-            return MailResourcesAsset.largeListBlue
+            return MailResourcesAsset.densityLargeBlue
         }
     }
 

@@ -26,7 +26,7 @@ import UIKit
 struct UserFoldersListView: View {
     var folders: [NestableFolder]
 
-    @State private var isExpanded = false
+    @State private var isExpanded = true
 
     @EnvironmentObject var globalAlert: GlobalAlert
 
@@ -39,11 +39,18 @@ struct UserFoldersListView: View {
                     isExpanded.toggle()
                 }
             } label: {
-                HStack {
+                HStack(spacing: 12) {
+                    ChevronIcon(style: isExpanded ? .up : .down, color: .secondary)
                     Text(MailResourcesStrings.Localizable.buttonFolders)
                         .textStyle(.calloutSecondary)
                     Spacer()
-                    ChevronIcon(style: isExpanded ? .up : .down, color: .primary)
+                    Button {
+                        globalAlert.state = .createNewFolder(mode: .create)
+                    } label: {
+                        Image(resource: MailResourcesAsset.addCircle)
+                            .resizable()
+                            .frame(width: 16, height: 16)
+                    }
                 }
             }
             .padding(.leading, Constants.menuDrawerHorizontalPadding)
@@ -52,17 +59,16 @@ struct UserFoldersListView: View {
             if isExpanded {
                 Spacer(minLength: Constants.menuDrawerVerticalPadding)
 
-                ForEach(folders) { folder in
-                    FolderCell(folder: folder, isCompact: isCompact)
-                }
-
-                MenuDrawerItemCell(content: .init(icon: MailResourcesAsset.add, label: MailResourcesStrings.Localizable.buttonCreateFolder) {
-                    withAnimation {
-                        globalAlert.state = .createNewFolder(mode: .create)
+                if folders.isEmpty {
+                    Text(MailResourcesStrings.Localizable.noFolderTitle)
+                        .textStyle(.calloutSecondary)
+                        .padding(.top, 16)
+                        .padding(.bottom, 8)
+                } else {
+                    ForEach(folders) { folder in
+                        FolderCell(folder: folder, isCompact: isCompact)
                     }
-                })
-                .padding(.top, Constants.menuDrawerVerticalPadding)
-                .padding(.horizontal, Constants.menuDrawerHorizontalPadding)
+                }
             }
         }
         .padding(.vertical, 19)
