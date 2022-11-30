@@ -25,10 +25,6 @@ public extension ApiEnvironment {
     var mailHost: String {
         return "mail.\(host)"
     }
-
-    var mailApiPreprod: String {
-        return "mail-mr-3440.\(host)"
-    }
 }
 
 // MARK: - Endpoints
@@ -98,7 +94,7 @@ public extension Endpoint {
 
     static func messages(mailboxUuid: String, folderId: String) -> Endpoint {
         return Endpoint(
-            hostKeypath: \.mailApiPreprod,
+            hostKeypath: \.mailHost,
             path: "/api/mail/\(mailboxUuid)/folder/\(folderId)/mobile",
             apiEnvironment: .preprod
         )
