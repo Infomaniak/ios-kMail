@@ -579,7 +579,7 @@ public class MailboxManager: ObservableObject {
     private func markAsSeen(thread: Thread, using realm: Realm) {
         guard let liveThread = thread.fresh(using: realm) else { return }
         try? realm.safeWrite {
-            for parent in thread.parents {
+            for parent in liveThread.parents {
                 parent.unreadCount = (parent.unreadCount ?? 0) - liveThread.unseenMessages
             }
             liveThread.unseenMessages = 0
@@ -593,7 +593,7 @@ public class MailboxManager: ObservableObject {
         guard let liveThread = thread.fresh(using: realm) else { return }
         try? realm.safeWrite {
             liveThread.unseenMessages = liveThread.messagesCount
-            for parent in thread.parents {
+            for parent in liveThread.parents {
                 parent.unreadCount = (parent.unreadCount ?? 0) + liveThread.unseenMessages
             }
             for message in liveThread.messages {
