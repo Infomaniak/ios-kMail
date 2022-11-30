@@ -59,7 +59,7 @@ struct ThreadListSwipeActions: ViewModifier {
     @AppStorage(UserDefaults.shared.key(.swipeShortLeft)) private var swipeShortLeft = Constants.defaultSwipeShortLeft
 
     func body(content: Content) -> some View {
-        if thread.parent?.role == .draft {
+        if viewModel.folder?.role == .draft {
             content
                 .swipeActions(edge: .trailing) {
                     if !multipleSelectionViewModel.isEnabled {

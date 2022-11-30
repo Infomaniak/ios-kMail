@@ -105,7 +105,6 @@ public class Message: Object, Decodable, Identifiable {
     @Persisted public var answered: Bool
     @Persisted public var isDuplicate: Bool?
     @Persisted public var isDraft: Bool
-    @Persisted public var isLocalDraft = false
     @Persisted public var hasAttachments: Bool
     @Persisted public var seen: Bool
     @Persisted public var scheduled: Bool
@@ -331,7 +330,6 @@ public class Message: Object, Decodable, Identifiable {
         attachments = draft.attachments.detached()
         references = draft.references
         isDraft = true
-        isLocalDraft = draft.remoteUUID.isEmpty
     }
 
     public func toThread() -> Thread {

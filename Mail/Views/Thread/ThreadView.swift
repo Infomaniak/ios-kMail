@@ -57,10 +57,6 @@ struct ThreadView: View {
 
     private let toolbarActions: [Action] = [.reply, .forward, .archive, .delete]
 
-    private var isTrashFolder: Bool {
-        return thread.parent?._id == trashFolderId
-    }
-
     private var messages: [Message] {
         return Array(thread.messages.where { $0.isDuplicate != true && ((folderId == trashFolderId)
                 ? $0.inTrash == true

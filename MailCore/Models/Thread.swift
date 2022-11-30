@@ -51,10 +51,9 @@ public class Thread: Object, Decodable, Identifiable {
     @Persisted public var answered: Bool
     @Persisted public var forwarded: Bool
     @Persisted public var size: Int
-    // TODO: - Remove parentLink (need to update actions functions)
-    @Persisted(originProperty: "threads") public var parentLink: LinkingObjects<Folder>
+    // TODO: - Remove parentLink (Maybe keep it as an array ?)
+    @Persisted(originProperty: "threads") public var parents: LinkingObjects<Folder>
     @Persisted public var fromSearch = false
-    @Persisted public var isLocalDraft = false
 
     @Persisted public var messageIds: MutableSet<String>
     @Persisted public var folderIds: MutableSet<String>
@@ -78,10 +77,6 @@ public class Thread: Object, Decodable, Identifiable {
             return MailResourcesStrings.Localizable.noSubjectTitle
         }
         return subject
-    }
-
-    public var parent: Folder? {
-        return parentLink.first
     }
 
     public var shouldPresentAsDraft: Bool {
@@ -207,7 +202,6 @@ public class Thread: Object, Decodable, Identifiable {
         answered = false
         forwarded = false
         size = 0
-        isLocalDraft = draft.remoteUUID.isEmpty
     }
 }
 
