@@ -867,6 +867,7 @@ public class MailboxManager: ObservableObject {
                 guard let folder = folder.fresh(using: realm) else { return }
                 try? realm.safeWrite {
                     folder.cursor = newCursor
+                    folder.lastUpdate = Date()
                 }
             }
         }
