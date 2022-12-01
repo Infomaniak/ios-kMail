@@ -165,6 +165,8 @@ struct MenuDrawerView: View {
 
                         MailboxQuotaView(quotas: quotas)
                     }
+
+                    AppVersionView()
                 }
             }
         }
@@ -184,7 +186,15 @@ struct MenuDrawerView: View {
         }
         .statusBarHidden(navigationDrawerController.isOpen)
     }
-}  
+}
+
+struct AppVersionView: View {
+    var body: some View {
+        IKDivider(withPadding: true)
+        Text(Constants.appVersion())
+            .textStyle(.captionSecondary)
+    }
+}
 
 struct MenuDrawerView_Previews: PreviewProvider {
     static var previews: some View {
