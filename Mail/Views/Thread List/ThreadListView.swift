@@ -115,7 +115,7 @@ struct ThreadListView: View {
                     }
 
                     Spacer()
-                        .frame(height: multipleSelectionViewModel.isEnabled ? 75 : 85)
+                        .frame(height: multipleSelectionViewModel.isEnabled ? 100 : 110)
                         .listRowSeparator(.hidden)
                         .listRowBackground(MailResourcesAsset.backgroundColor.swiftUiColor)
                 }
@@ -233,13 +233,15 @@ private struct ThreadListToolbar: ViewModifier {
                                         .frame(width: Constants.navbarIconSize, height: Constants.navbarIconSize)
                                 }
                             }
-                            Text(splitViewManager.selectedFolder?.localizedName ?? "")
-                                .textStyle(.header1)
-                                .padding(.leading, 8)
-                                .frame(maxWidth: .infinity, alignment: .leading)
                         }
                     }
 
+                    ToolbarItem(placement: .principal) {
+                        Text(splitViewManager.selectedFolder?.localizedName ?? "")
+                            .textStyle(.header1)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                    }
+                    
                     ToolbarItemGroup(placement: .navigationBarTrailing) {
                         if multipleSelectionViewModel.isEnabled {
                             Button(MailResourcesStrings.Localizable.buttonSelectAll) {
