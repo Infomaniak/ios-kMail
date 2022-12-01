@@ -100,6 +100,7 @@ public class Message: Object, Decodable, Identifiable {
     @Persisted public var folderId: String
     @Persisted public var folder: String
     @Persisted public var references: String?
+    @Persisted public var inReplyTo: String?
     @Persisted public var linkedUids: MutableSet<String>
     @Persisted public var preview: String
     @Persisted public var answered: Bool
@@ -150,11 +151,20 @@ public class Message: Object, Decodable, Identifiable {
     }
 
     public func computeReference() {
-        guard var refs = references else { return }
-        refs.removeFirst()
-        refs.removeLast()
-        let refsArray = refs.components(separatedBy: "><")
-        linkedUids.insert(objectsIn: refsArray)
+        if var refs = references {
+            refs.removeFirst()
+            refs.removeLast()
+            refs = refs.replacingOccurrences(of: "> <", with: "><")
+            let refsArray = refs.components(separatedBy: "><")
+            linkedUids.insert(objectsIn: refsArray)
+        }
+        if var reply = inReplyTo {
+            reply.removeFirst()
+            reply.removeLast()
+            reply = reply.replacingOccurrences(of: "> <", with: "><")
+            let replyArray = reply.components(separatedBy: "><")
+            linkedUids.insert(objectsIn: replyArray)
+        }
     }
 
     private enum CodingKeys: String, CodingKey {
@@ -180,6 +190,7 @@ public class Message: Object, Decodable, Identifiable {
         case folderId
         case folder
         case references
+        case inReplyTo
         case preview
         case answered
         case isDuplicate
@@ -228,6 +239,7 @@ public class Message: Object, Decodable, Identifiable {
         folderId = try values.decode(String.self, forKey: .folderId)
         folder = try values.decode(String.self, forKey: .folder)
         references = try values.decodeIfPresent(String.self, forKey: .references)
+        inReplyTo = try values.decodeIfPresent(String.self, forKey: .inReplyTo)
         preview = try values.decode(String.self, forKey: .preview)
         answered = try values.decode(Bool.self, forKey: .answered)
         isDuplicate = try values.decodeIfPresent(Bool.self, forKey: .isDuplicate)

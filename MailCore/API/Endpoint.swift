@@ -93,11 +93,7 @@ public extension Endpoint {
     // MARK: - New Routes
 
     static func messages(mailboxUuid: String, folderId: String) -> Endpoint {
-        return Endpoint(
-            hostKeypath: \.mailHost,
-            path: "/api/mail/\(mailboxUuid)/folder/\(folderId)/mobile",
-            apiEnvironment: .preprod
-        )
+        return Endpoint(hostKeypath: \.mailHost, path: "/api/mail/\(mailboxUuid)/folder/\(folderId)/mobile")
     }
 
     static func messagesUids(mailboxUuid: String, folderId: String, dateSince: String) -> Endpoint {
