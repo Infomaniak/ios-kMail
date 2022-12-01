@@ -116,7 +116,7 @@ enum ActionsTarget: Equatable {
     private func setActions() {
         switch target {
         case let .threads(threads):
-            let spam = threads.allSatisfy { $0.parent?.role == .spam }
+            let spam = threads.allSatisfy { $0.parents.contains { $0.role == .spam }}
             quickActions = [.move, .postpone, spam ? .nonSpam : .spam, .delete]
 
             let unread = threads.allSatisfy(\.hasUnseenMessages)
@@ -130,7 +130,7 @@ enum ActionsTarget: Equatable {
 
             let unread = thread.hasUnseenMessages
             let star = thread.flagged
-            let spam = thread.parent?.role == .spam
+            let spam = thread.parents.contains { $0.role == .spam }
             listActions = [
                 .archive,
                 unread ? .markAsRead : .markAsUnread,
@@ -271,13 +271,19 @@ enum ActionsTarget: Equatable {
                 try await mailboxManager.message(message: message)
             }
             if mode == .forward([]) {
-                let attachments = try await mailboxManager.apiFetcher.attachmentsToForward(mailbox: mailboxManager.mailbox, message: message).attachments
+                let attachments = try await mailboxManager.apiFetcher.attachmentsToForward(
+                    mailbox: mailboxManager.mailbox,
+                    message: message
+                ).attachments
                 completeMode = .forward(attachments)
             }
             replyHandler(message, completeMode)
         case let .message(message):
             if mode == .forward([]) {
-                let attachments = try await mailboxManager.apiFetcher.attachmentsToForward(mailbox: mailboxManager.mailbox, message: message).attachments
+                let attachments = try await mailboxManager.apiFetcher.attachmentsToForward(
+                    mailbox: mailboxManager.mailbox,
+                    message: message
+                ).attachments
                 completeMode = .forward(attachments)
             }
             replyHandler(message, completeMode)
