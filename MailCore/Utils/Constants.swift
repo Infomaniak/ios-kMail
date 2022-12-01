@@ -124,6 +124,11 @@ public enum Constants {
         return longUid.components(separatedBy: "@")[0]
     }
 
+    public static func appVersion() -> String {
+        let release = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as! String? ?? "x.x"
+        return "kMail iOS version \(release)-Alpha (26)"
+    }
+
     public static let defaultSwipeShortRight = SwipeAction.none
     public static let defaultSwipeLongRight = SwipeAction.readUnread
     public static let defaultSwipeShortLeft = SwipeAction.quickAction
