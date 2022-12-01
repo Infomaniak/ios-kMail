@@ -126,7 +126,8 @@ public enum Constants {
 
     public static func appVersion() -> String {
         let release = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as! String? ?? "x.x"
-        return "kMail iOS version \(release)-Alpha (26)"
+        let build = Bundle.main.object(forInfoDictionaryKey: "CFBundleVersion") as! String? ?? "x"
+        return "kMail iOS version \(release)-Alpha1 (\(build))"
     }
 
     public static let defaultSwipeShortRight = SwipeAction.none
