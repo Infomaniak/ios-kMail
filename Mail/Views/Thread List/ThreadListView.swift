@@ -115,7 +115,7 @@ struct ThreadListView: View {
                     }
 
                     Spacer()
-                        .frame(height: multipleSelectionViewModel.isEnabled ? 75 : 85)
+                        .frame(height: multipleSelectionViewModel.isEnabled ? 100 : 110)
                         .listRowSeparator(.hidden)
                         .listRowBackground(MailResourcesAsset.backgroundColor.swiftUiColor)
                 }
