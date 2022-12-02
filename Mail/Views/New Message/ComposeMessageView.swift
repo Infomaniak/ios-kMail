@@ -61,6 +61,8 @@ struct ComposeMessageView: View {
     @State private var isShowingFileSelection = false
     @State private var isShowingPhotoLibrary = false
 
+    @State var sendDraft = false
+
     @State var scrollView: UIScrollView?
 
     @StateObject private var alert = NewMessageAlert()
@@ -198,9 +200,10 @@ struct ComposeMessageView: View {
                     Label(MailResourcesStrings.Localizable.buttonClose, systemImage: "xmark")
                 },
                 trailing: Button(action: {
+                    sendDraft = true
                     originalBody = draft.body
                     Task {
-                        await DraftManager.shared.saveDraftLocally(draft: draft, mailboxManager: mailboxManager, action: .send)
+                        await DraftManager.shared.instantSaveDraftLocally(draft: draft, mailboxManager: mailboxManager, action: .send)
                         dismiss()
                     }
                 }, label: {
@@ -224,14 +227,19 @@ struct ComposeMessageView: View {
         }
         .onDisappear {
             // TODO: - Compare message body to original body : guard draft.body != originalBody || !draft.uuid.isEmpty else { return }
+
             Task {
-                await DraftManager.shared.instantSaveDraftLocally(
-                    draft: draft,
-                    mailboxManager: mailboxManager,
-                    action: draft.action == .send ? .send : .save
-                )
+                if !sendDraft {
+                    await DraftManager.shared.instantSaveDraftLocally(
+                        draft: draft,
+                        mailboxManager: mailboxManager,
+                        action: .save
+                    )
+                }
 
                 DraftManager.shared.syncDraft(mailboxManager: mailboxManager)
+                
+                sendDraft = false
             }
         }
         .fullScreenCover(isPresented: $isShowingCamera) {
