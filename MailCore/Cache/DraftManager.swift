@@ -27,7 +27,7 @@ struct DraftQueueElement {
 }
 
 actor DraftQueue {
-    private var taskQueue = [String: Task<Void, Never>]()
+    private var taskQueue = [String: DispatchWorkItem]()
     private var identifierQueue = [String: UIBackgroundTaskIdentifier]()
 
     func cleanQueueElement(uuid: String) {
@@ -37,7 +37,7 @@ actor DraftQueue {
         identifierQueue[uuid] = .invalid
     }
 
-    func saveTask(task: Task<Void, Never>, for uuid: String) {
+    func saveTask(task: DispatchWorkItem, for uuid: String) {
         taskQueue[uuid] = task
     }
 
@@ -63,7 +63,7 @@ public class DraftManager {
     public static let shared = DraftManager()
 
     private let draftQueue = DraftQueue()
-    private static let saveExpirationNanoSec: UInt64 = 3_000_000_000 // 3 sec
+    private static let saveExpirationSec = 3
 
     private init() {}
 
@@ -74,14 +74,16 @@ public class DraftManager {
 
     public func saveDraftLocally(draft: UnmanagedDraft, mailboxManager: MailboxManager, action: SaveDraftOption) async {
         await draftQueue.cleanQueueElement(uuid: draft.localUUID)
-        await draftQueue.saveTask(task:
-            Task {
-                // Debounce the save task
-                try? await Task.sleep(nanoseconds: DraftManager.saveExpirationNanoSec)
 
+        let task = DispatchWorkItem {
+            Task {
                 await mailboxManager.saveLocally(draft: draft, action: action)
-            },
-            for: draft.localUUID)
+            }
+        }
+        await draftQueue.saveTask(task: task, for: draft.localUUID)
+
+        // Debounce the save task
+        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + DispatchTimeInterval.seconds(DraftManager.saveExpirationSec), execute: task)
     }
 
     private func saveDraft(draft: UnmanagedDraft,
