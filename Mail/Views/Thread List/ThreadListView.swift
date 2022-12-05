@@ -188,7 +188,7 @@ struct ThreadListView: View {
         }
         .refreshable {
             guard !viewModel.isLoadingPage else { return }
-            await viewModel.fetchThreads()
+            await viewModel.fetchThreads(refresh: true)
         }
         .sheet(isPresented: $isShowingComposeNewMessageView) {
             ComposeMessageView.newMessage(mailboxManager: viewModel.mailboxManager)

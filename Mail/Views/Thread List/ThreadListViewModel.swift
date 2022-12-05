@@ -145,12 +145,14 @@ class DateSection: Identifiable {
         trashFolderId = mailboxManager.getFolder(with: .trash)?._id ?? ""
     }
 
-    func fetchThreads() async {
+    func fetchThreads(refresh: Bool = false) async {
         guard !isLoadingPage else {
             return
         }
 
-        isLoadingPage = true
+        if !refresh {
+            isLoadingPage = true
+        }
 
         await tryOrDisplayError {
             guard let folder = folder else { return }
