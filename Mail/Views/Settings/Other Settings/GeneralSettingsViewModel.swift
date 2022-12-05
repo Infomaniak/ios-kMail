@@ -53,7 +53,7 @@ extension SettingsSection {
     static let appearance = SettingsSection(
         id: 3,
         name: MailResourcesStrings.Localizable.settingsSectionAppearance,
-        items: [.threadDensity, .theme, .accentColor, .swipeActions, .displayMode, .externalContent]
+        items: [.threadDensity, .theme, .accentColor, .swipeActions]
     )
 }
 
