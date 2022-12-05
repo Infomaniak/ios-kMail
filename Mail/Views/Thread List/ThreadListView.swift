@@ -82,6 +82,14 @@ struct ThreadListView: View {
 
             ScrollViewReader { proxy in
                 List {
+                    if viewModel.isLoadingPage {
+                        ProgressView()
+                            .id(UUID())
+                            .frame(maxWidth: .infinity)
+                            .listRowSeparator(.hidden)
+                            .listRowBackground(MailResourcesAsset.backgroundColor.swiftUiColor)
+                    }
+
                     ForEach(viewModel.sections) { section in
                         Section {
                             ForEach(section.threads) { thread in
@@ -100,14 +108,6 @@ struct ThreadListView: View {
                                     .textStyle(.calloutSecondary)
                             }
                         }
-                    }
-
-                    if viewModel.isLoadingPage {
-                        ProgressView()
-                            .id(UUID())
-                            .frame(maxWidth: .infinity)
-                            .listRowSeparator(.hidden)
-                            .listRowBackground(MailResourcesAsset.backgroundColor.swiftUiColor)
                     }
 
                     if viewModel.folder?.lastUpdate != nil && viewModel.sections.isEmpty && !viewModel.isLoadingPage {
@@ -187,6 +187,7 @@ struct ThreadListView: View {
             }
         }
         .refreshable {
+            guard !viewModel.isLoadingPage else { return }
             await viewModel.fetchThreads()
         }
         .sheet(isPresented: $isShowingComposeNewMessageView) {
