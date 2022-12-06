@@ -585,7 +585,10 @@ public class MailboxManager: ObservableObject {
         guard let liveThread = thread.fresh(using: realm) else { return }
         try? realm.safeWrite {
             for parent in liveThread.parents {
-                parent.unreadCount = (parent.unreadCount ?? 0) - liveThread.unseenMessages
+                let countModifier = liveThread.messages.where { $0.folderId == parent.id }.reduce(0) { partialResult, message in
+                    partialResult - (message.seen ? 0 : 1)
+                }
+                parent.incrementUnreadCount(by: countModifier)
             }
             liveThread.unseenMessages = 0
             for message in liveThread.messages {
@@ -599,7 +602,10 @@ public class MailboxManager: ObservableObject {
         try? realm.safeWrite {
             liveThread.unseenMessages = liveThread.messagesCount
             for parent in liveThread.parents {
-                parent.unreadCount = (parent.unreadCount ?? 0) + liveThread.unseenMessages
+                let countModifier = liveThread.messages.where { $0.folderId == parent.id }.reduce(0) { partialResult, message in
+                    partialResult + (message.seen ? 1 : 0)
+                }
+                parent.incrementUnreadCount(by: countModifier)
             }
             for message in liveThread.messages {
                 message.seen = false
@@ -1438,6 +1444,7 @@ public class MailboxManager: ObservableObject {
         using realm: Realm
     ) {
         guard let savedFolder = realm.object(ofType: Folder.self, forPrimaryKey: folder._id) else { return }
+        folder.unreadCount = savedFolder.unreadCount
         folder.lastUpdate = savedFolder.lastUpdate
         folder.cursor = savedFolder.cursor
     }
