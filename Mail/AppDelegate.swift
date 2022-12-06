@@ -41,6 +41,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         ApiFetcher.decoder.dateDecodingStrategy = .iso8601
         refreshCacheData()
 
+        Task {
+            // This is silent so we don't we ask right from the beginning
+            await NotificationsHelper.askForPermissions()
+        }
+
         BGTaskScheduler.shared.register(forTaskWithIdentifier: MailCore.Constants.backgroundRefreshTaskIdentifier, using: nil) { task in
             self.scheduleAppRefresh()
             BackgroundFetcher.shared.handleAppRefresh(refreshTask: task as! BGAppRefreshTask)
