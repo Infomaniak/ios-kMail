@@ -260,7 +260,7 @@ public class MailboxManager: ObservableObject {
                     thread.recompute()
                 }
                 if let folder = folder.fresh(using: realm) {
-                    folder.unreadCount += unreadCountModififier
+                    folder.incrementUnreadCount(by: unreadCountModififier)
                 }
             }
         }
@@ -919,7 +919,7 @@ public class MailboxManager: ObservableObject {
                                 for thread in threadsToUpdate {
                                     thread.recompute()
                                 }
-                                folder.unreadCount += unreadCountModififier
+                                folder.incrementUnreadCount(by: unreadCountModififier)
                             }
 
                         } else {
@@ -946,7 +946,7 @@ public class MailboxManager: ObservableObject {
                 let unreadCountModifier = messagesToDelete.map(\.seen).reduce(0) { partialResult, seen in
                     partialResult - (seen ? 0 : 1)
                 }
-                folder.unreadCount += unreadCountModifier
+                folder.incrementUnreadCount(by: unreadCountModifier)
             }
             try? realm.safeWrite {
                 realm.delete(messagesToDelete)
@@ -977,7 +977,7 @@ public class MailboxManager: ObservableObject {
                 }
 
                 if let folder = folder.fresh(using: realm) {
-                    folder.unreadCount += unreadCountModifier
+                    folder.incrementUnreadCount(by: unreadCountModifier)
                 }
             }
         }

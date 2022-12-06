@@ -142,11 +142,11 @@ public class Folder: Object, Codable, Comparable, Identifiable {
     }
 
     public var formattedUnreadCount: String {
-        let unreadCount = (role == .draft ? threads.count : unreadCount)
-        if unreadCount >= 100 {
+        let realCount = (role == .draft ? threads.count : unreadCount)
+        if realCount >= 100 {
             return "99+"
         }
-        return unreadCount > 0 ? "\(unreadCount)" : ""
+        return realCount > 0 ? "\(realCount)" : ""
     }
 
     public var formattedPath: String {
@@ -178,7 +178,7 @@ public class Folder: Object, Codable, Comparable, Identifiable {
     }
 
     public func incrementUnreadCount(by number: Int = 1) {
-        unreadCount = (unreadCount ?? 0) + number
+        unreadCount += number
     }
 
     public func isParent(of folder: Folder) -> Bool {
