@@ -16,6 +16,7 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import BackgroundTasks
 import Foundation
 import RealmSwift
 import UserNotifications
@@ -25,16 +26,24 @@ public class BackgroundFetcher {
 
     private init() {}
 
-    public func fetchLastEmailsForAllMailboxes() {
-        Task {
-            await withTaskGroup(of: Void.self) { group in
-                for mailbox in MailboxInfosManager.instance.getMailboxes() {
-                    if let mailboxManager = AccountManager.instance.getMailboxManager(for: mailbox) {
-                        group.addTask {
-                            do {
-                                try await self.fetchEmailsFor(mailboxManager: mailboxManager)
-                            } catch {}
-                        }
+    public func handleAppRefresh(refreshTask: BGAppRefreshTask) {
+        let fetchMailsTask = Task {
+            await fetchLastEmailsForAllMailboxes()
+            refreshTask.setTaskCompleted(success: true)
+        }
+        refreshTask.expirationHandler = {
+            fetchMailsTask.cancel()
+        }
+    }
+
+    private func fetchLastEmailsForAllMailboxes() async {
+        await withTaskGroup(of: Void.self) { group in
+            for mailbox in MailboxInfosManager.instance.getMailboxes() {
+                if let mailboxManager = AccountManager.instance.getMailboxManager(for: mailbox) {
+                    group.addTask {
+                        do {
+                            try await self.fetchEmailsFor(mailboxManager: mailboxManager)
+                        } catch {}
                     }
                 }
             }
