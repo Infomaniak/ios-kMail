@@ -161,7 +161,8 @@ extension View {
     func floatingPanel<State, Content: View>(state: DisplayedFloatingPanelState<State>,
                                              halfOpening: Bool = false,
                                              @ViewBuilder content: () -> Content) -> some View {
-        state.createPanelContent(content: ScrollView { content() }, halfOpening: halfOpening)
+        state.createPanelContent(content: ScrollView { content() }.defaultAppStorage(.shared),
+                                 halfOpening: halfOpening)
         return self
     }
 }
