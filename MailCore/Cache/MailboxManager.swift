@@ -234,14 +234,16 @@ public class MailboxManager: ObservableObject {
         }
     }
 
-    private func deleteMessagesThread(uids: [String]) async {
+    private func deleteMessagesThread(uids: [String], folder: Folder) async {
         guard !uids.isEmpty else { return }
 
         await backgroundRealm.execute { realm in
             let messagesToDelete = realm.objects(Message.self).where { $0.uid.in(uids) }
             var threadsToDelete = [Thread]()
             var threadsToUpdate = [Thread]()
+            var unreadCountModififier = 0
             for message in messagesToDelete {
+                unreadCountModififier -= message.seen ? 0 : 1
                 if let thread = message.parent {
                     if thread.messageIds.count <= 1 {
                         threadsToDelete.append(thread)
@@ -256,6 +258,9 @@ public class MailboxManager: ObservableObject {
                 realm.delete(threadsToDelete)
                 for thread in threadsToUpdate {
                     thread.recompute()
+                }
+                if let folder = folder.fresh(using: realm) {
+                    folder.unreadCount += unreadCountModififier
                 }
             }
         }
@@ -856,9 +861,9 @@ public class MailboxManager: ObservableObject {
 
         try await addMessages(shortUids: addedShortUids, folder: folder, asThread: asThread)
         if asThread {
-            await deleteMessagesThread(uids: deletedUids)
+            await deleteMessagesThread(uids: deletedUids, folder: folder)
         } else {
-            await deleteMessages(uids: deletedUids)
+            await deleteMessages(uids: deletedUids, folder: folder)
         }
         await updateMessages(updates: updated, folder: folder)
 
@@ -891,8 +896,10 @@ public class MailboxManager: ObservableObject {
                     if let folder = folder.fresh(using: realm) {
                         if asThread {
                             var threadsToUpdate = Set<Thread>()
+                            var unreadCountModififier = 0
                             try? realm.safeWrite {
                                 for message in messageByUidsResult.messages {
+                                    unreadCountModififier += message.seen ? 0 : 1
                                     message.computeReference()
                                     message.inTrash = folder.role == .trash
                                     if let thread = realm.objects(Thread.self).first(where: { value in
@@ -912,6 +919,7 @@ public class MailboxManager: ObservableObject {
                                 for thread in threadsToUpdate {
                                     thread.recompute()
                                 }
+                                folder.unreadCount += unreadCountModififier
                             }
 
                         } else {
@@ -928,12 +936,18 @@ public class MailboxManager: ObservableObject {
         }
     }
 
-    private func deleteMessages(uids: [String]) async {
+    private func deleteMessages(uids: [String], folder: Folder) async {
         guard !uids.isEmpty else { return }
 
         await backgroundRealm.execute { realm in
             let messagesToDelete = realm.objects(Message.self).where { $0.uid.in(uids) }
             let threadsToDelete = realm.objects(Thread.self).where { $0.uid.in(uids) }
+            if let folder = folder.fresh(using: realm) {
+                let unreadCountModifier = messagesToDelete.map(\.seen).reduce(0) { partialResult, seen in
+                    partialResult - (seen ? 0 : 1)
+                }
+                folder.unreadCount += unreadCountModifier
+            }
             try? realm.safeWrite {
                 realm.delete(messagesToDelete)
                 realm.delete(threadsToDelete)
@@ -943,6 +957,7 @@ public class MailboxManager: ObservableObject {
 
     private func updateMessages(updates: [MessageFlags], folder: Folder) async {
         await backgroundRealm.execute { realm in
+            var unreadCountModifier = 0
             try? realm.safeWrite {
                 for update in updates {
                     let uid = Constants.longUid(from: String(update.shortUid), folderId: folder.id)
@@ -952,10 +967,17 @@ public class MailboxManager: ObservableObject {
                         message.flagged = update.isFavorite
                         message.forwarded = update.forwarded
                         message.scheduled = update.scheduled
+                        if message.seen != update.seen {
+                            unreadCountModifier += update.seen ? -1 : 1
+                        }
                         message.seen = update.seen
 
                         thread.recompute()
                     }
+                }
+
+                if let folder = folder.fresh(using: realm) {
+                    folder.unreadCount += unreadCountModifier
                 }
             }
         }
@@ -1433,7 +1455,7 @@ public class MailboxManager: ObservableObject {
 
     public func hasUnreadMessages() -> Bool {
         let realm = getRealm()
-        return realm.objects(Folder.self).contains { $0.unreadCount != nil && $0.unreadCount! > 0 }
+        return realm.objects(Folder.self).contains { $0.unreadCount > 0 }
     }
 }
 

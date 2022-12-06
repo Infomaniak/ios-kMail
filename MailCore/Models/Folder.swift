@@ -105,7 +105,7 @@ public class Folder: Object, Codable, Comparable, Identifiable {
     @Persisted public var path: String
     @Persisted public var name: String
     @Persisted public var role: FolderRole?
-    @Persisted public var unreadCount: Int?
+    @Persisted public var unreadCount: Int = 0
     @Persisted public var totalCount: Int?
     @Persisted public var isFake: Bool
     @Persisted public var isCollapsed: Bool
@@ -142,7 +142,7 @@ public class Folder: Object, Codable, Comparable, Identifiable {
     }
 
     public var formattedUnreadCount: String {
-        guard let unreadCount = (role == .draft ? threads.count : unreadCount) else { return "" }
+        let unreadCount = (role == .draft ? threads.count : unreadCount)
         if unreadCount >= 100 {
             return "99+"
         }
@@ -196,7 +196,6 @@ public class Folder: Object, Codable, Comparable, Identifiable {
         case path
         case name
         case role
-        case unreadCount
         case totalCount
         case isFake
         case isCollapsed
@@ -210,7 +209,7 @@ public class Folder: Object, Codable, Comparable, Identifiable {
         path: String,
         name: String,
         role: FolderRole? = nil,
-        unreadCount: Int? = nil,
+        unreadCount: Int = 0,
         totalCount: Int? = nil,
         isFake: Bool,
         isCollapsed: Bool,

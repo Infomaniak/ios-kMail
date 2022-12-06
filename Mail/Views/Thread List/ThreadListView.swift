@@ -76,7 +76,7 @@ struct ThreadListView: View {
                              unreadCount: Binding(get: {
                                  splitViewManager.selectedFolder?.unreadCount
                              }, set: { value in
-                                 splitViewManager.selectedFolder?.unreadCount = value
+                                 splitViewManager.selectedFolder?.unreadCount = value ?? 0
                              }),
                              unreadFilterOn: $viewModel.filterUnreadOn)
 
@@ -241,7 +241,7 @@ private struct ThreadListToolbar: ViewModifier {
                             .textStyle(.header1)
                             .frame(maxWidth: .infinity, alignment: .leading)
                     }
-                    
+
                     ToolbarItemGroup(placement: .navigationBarTrailing) {
                         if multipleSelectionViewModel.isEnabled {
                             Button(MailResourcesStrings.Localizable.buttonSelectAll) {
