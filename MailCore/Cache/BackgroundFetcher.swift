@@ -74,7 +74,7 @@ public class BackgroundFetcher {
             let threadUid = freshInbox?.threads.where {
                 $0.messages.contains(message)
             }.first?.uid
-            triggerNotificationFor(message: message, threadUid: threadUid, mailboxId: mailboxManager.mailbox.id)
+            triggerNotificationFor(message: message, threadUid: threadUid, mailboxId: mailboxManager.mailbox.objectId)
         }
 
         if let inboxCount = freshInbox?.unreadCount {
@@ -84,7 +84,7 @@ public class BackgroundFetcher {
         }
     }
 
-    private func triggerNotificationFor(message: Message, threadUid: String?, mailboxId: Int) {
+    private func triggerNotificationFor(message: Message, threadUid: String?, mailboxId: String) {
         let content = UNMutableNotificationContent()
         if !message.from.isEmpty {
             content.title = message.from.map { $0.name }.joined(separator: ",")

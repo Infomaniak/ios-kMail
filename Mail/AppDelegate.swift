@@ -27,6 +27,7 @@ import UIKit
 
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
+    private let notificationCenterDelegate = NotificationCenterDelegate()
     private var accountManager: AccountManager!
     static var orientationLock = UIInterfaceOrientationMask.all
 
@@ -41,6 +42,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         ApiFetcher.decoder.dateDecodingStrategy = .iso8601
         refreshCacheData()
 
+        UNUserNotificationCenter.current().delegate = notificationCenterDelegate
         Task {
             // This is silent so we don't we ask right from the beginning
             await NotificationsHelper.askForPermissions()

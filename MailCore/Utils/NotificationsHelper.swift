@@ -33,8 +33,8 @@ public enum NotificationsHelper {
         static let disconnected = "accountDisconnected"
     }
 
-    enum UserInfoKeys {
-        static let mailboxId = "mailboxId"
+    public class UserInfoKeys {
+        public static let mailboxId = "mailboxId"
     }
 
     public static var isNotificationEnabled: Bool {
