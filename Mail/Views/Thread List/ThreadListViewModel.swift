@@ -150,14 +150,18 @@ class DateSection: Identifiable {
             return
         }
 
-        isLoadingPage = true
+        withAnimation {
+            isLoadingPage = true
+        }
 
         await tryOrDisplayError {
             guard let folder = folder else { return }
 
             try await mailboxManager.threads(folder: folder.freezeIfNeeded())
         }
-        isLoadingPage = false
+        withAnimation {
+            isLoadingPage = false
+        }
         await mailboxManager.draftOffline()
     }
 
