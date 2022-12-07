@@ -220,15 +220,19 @@ class DateSection: Identifiable {
 
         var currentSection: DateSection?
         let filteredThreads = threads.filter { $0.id == selectedThread?.id || filter.accepts(thread: $0) }
-        for thread in filteredThreads {
-            if currentSection?.threadBelongsToSection(thread: thread) != true {
-                currentSection = DateSection(thread: thread)
-                newSections.append(currentSection!)
+        if filteredThreads.isEmpty && filterUnreadOn {
+            filterUnreadOn.toggle()
+        } else {
+            for thread in filteredThreads {
+                if currentSection?.threadBelongsToSection(thread: thread) != true {
+                    currentSection = DateSection(thread: thread)
+                    newSections.append(currentSection!)
+                }
+                currentSection?.threads.append(thread)
             }
-            currentSection?.threads.append(thread)
-        }
 
-        sections = newSections
+            sections = newSections
+        }
     }
 
     // MARK: - Swipe actions
