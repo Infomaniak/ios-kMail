@@ -21,22 +21,35 @@ import MailCore
 import UIKit
 import UserNotifications
 
+public struct NotificationTappedPayload {
+    public let messageUid: String
+    public let threadUid: String
+}
+
 @MainActor
 class NotificationCenterDelegate: NSObject, UNUserNotificationCenterDelegate {
     private func handleClickOnNotification(scene: UIScene?, content: UNNotificationContent) {
         guard let mailboxId = content.userInfo[NotificationsHelper.UserInfoKeys.mailboxId] as? String,
               let mailbox = MailboxInfosManager.instance.getMailbox(objectId: mailboxId),
-              let mailboxManager = AccountManager.instance.getMailboxManager(for: mailbox) else {
+              let mailboxManager = AccountManager.instance.getMailboxManager(for: mailbox),
+              let messageUid = content.targetContentIdentifier else {
             return
         }
 
         if AccountManager.instance.currentMailboxManager?.mailbox != mailboxManager.mailbox {
             if AccountManager.instance.currentAccount.userId != mailboxManager.mailbox.userId {
-                // (scene.delegate.delegate as? SceneDelegate)?.switchMailbox(mailbox)
+                if let switchedAccount = AccountManager.instance.accounts.first(where: { $0.userId == mailboxManager.mailbox.userId }) {
+                    (scene?.delegate as? SceneDelegate)?.switchAccount(switchedAccount, mailbox: mailbox)
+                }
             } else {
-                // (scene.delegate.delegate as? SceneDelegate)?.switchMailbox(mailbox)
+                (scene?.delegate as? SceneDelegate)?.switchMailbox(mailbox)
             }
         }
+        
+        //TODO: Delay the post if we have to switch account / mailbox redirect
+        NotificationCenter.default.post(name: .onUserTappedNotification, object: NotificationTappedPayload(
+            messageUid: messageUid,
+            threadUid: content.threadIdentifier))
     }
 
     public func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse) async {
@@ -47,4 +60,8 @@ class NotificationCenterDelegate: NSObject, UNUserNotificationCenterDelegate {
             break
         }
     }
+}
+
+public extension Notification.Name {
+    static let onUserTappedNotification = Notification.Name("userTappedNotification")
 }

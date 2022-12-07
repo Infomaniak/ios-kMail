@@ -67,6 +67,12 @@ struct ThreadListCell: View {
                 isSelected: isSelected
             )
         }
+        .onReceive(NotificationCenter.default.publisher(for: .onUserTappedNotification)) { notification in
+            guard let notificationPayload = notification.object as? NotificationTappedPayload else { return }
+            if notificationPayload.threadUid == thread.uid {
+                shouldNavigateToThreadList = true
+            }
+        }
         .padding(.leading, multipleSelectionViewModel.isEnabled ? 8 : -4)
         .onTapGesture { didTapCell() }
         .onLongPressGesture(minimumDuration: 0.3) { didLongPressCell() }
