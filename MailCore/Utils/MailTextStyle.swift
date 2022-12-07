@@ -80,11 +80,6 @@ public struct MailTextStyle {
         color: MailResourcesAsset.primaryTextColor
     )
 
-    public static let header4Accent = MailTextStyle(
-        font: .system(size: 15.5, weight: .bold),
-        color: \.primary
-    )
-
     public static let header5 = MailTextStyle(
         font: .system(size: 15.5, weight: .medium),
         color: MailResourcesAsset.primaryTextColor
