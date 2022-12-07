@@ -177,9 +177,7 @@ struct ThreadListView: View {
             if let account = AccountManager.instance.currentAccount {
                 avatarImage = await account.user.avatarImage
             }
-            if let folder = splitViewManager.selectedFolder {
-                updateFetchingTask(with: folder)
-            }
+            updateFetchingTask(with: splitViewManager.selectedFolder)
         }
         .refreshable {
             withAnimation {
