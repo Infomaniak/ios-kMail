@@ -18,7 +18,9 @@
 
 import BackgroundTasks
 import Foundation
+import MailResources
 import RealmSwift
+import UIKit
 import UserNotifications
 
 public class BackgroundFetcher {
@@ -63,27 +65,43 @@ public class BackgroundFetcher {
             .first?.date ?? Date(timeIntervalSince1970: 0)
         try await mailboxManager.threads(folder: inboxFolder)
 
-        let newUnreadMessages = mailboxManager.getRealm().objects(Message.self)
+        let realm = mailboxManager.getRealm()
+        let freshInbox = mailboxManager.getFolder(with: .inbox, using: realm)
+        let newUnreadMessages = realm.objects(Message.self)
             .where { $0.seen == false && $0.date > lastUnreadDate }
 
         for message in newUnreadMessages {
-            triggerNotificationFor(message: message)
+            let threadUid = freshInbox?.threads.where {
+                $0.messages.contains(message)
+            }.first?.uid
+            triggerNotificationFor(message: message, threadUid: threadUid, mailboxId: mailboxManager.mailbox.id)
+        }
+
+        if let inboxCount = freshInbox?.unreadCount {
+            await MainActor.run {
+                UIApplication.shared.applicationIconBadgeNumber = inboxCount
+            }
         }
     }
 
-    private func triggerNotificationFor(message: Message) {
+    private func triggerNotificationFor(message: Message, threadUid: String?, mailboxId: Int) {
         let content = UNMutableNotificationContent()
-        // TODO: Handle multiple senders
-        if let sender = message.from.first {
-            content.title = sender.name
+        if !message.from.isEmpty {
+            content.title = message.from.map { $0.name }.joined(separator: ",")
         } else {
-            content.title = "Unknown sender"
+            content.title = MailResourcesStrings.Localizable.unknownRecipientTitle
         }
         content.subtitle = message.formattedSubject
         content.body = message.preview
+        if let threadUid {
+            content.threadIdentifier = threadUid
+        }
+        content.targetContentIdentifier = message.uid
+        content.userInfo = [NotificationsHelper.UserInfoKeys.mailboxId: mailboxId]
 
         let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 1, repeats: false)
-        let request = UNNotificationRequest(identifier: message.uid, content: content, trigger: trigger)
+        let notificationId = "\(mailboxId)-\(message.uid)"
+        let request = UNNotificationRequest(identifier: notificationId, content: content, trigger: trigger)
         UNUserNotificationCenter.current().add(request)
     }
 }
