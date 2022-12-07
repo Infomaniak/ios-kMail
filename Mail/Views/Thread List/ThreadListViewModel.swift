@@ -145,14 +145,12 @@ class DateSection: Identifiable {
         trashFolderId = mailboxManager.getFolder(with: .trash)?._id ?? ""
     }
 
-    func fetchThreads(refresh: Bool = false) async {
+    func fetchThreads() async {
         guard !isLoadingPage else {
             return
         }
 
-        if !refresh {
-            isLoadingPage = true
-        }
+        isLoadingPage = true
 
         await tryOrDisplayError {
             guard let folder = folder else { return }
@@ -163,7 +161,7 @@ class DateSection: Identifiable {
         await mailboxManager.draftOffline()
     }
 
-    func updateThreads(with folder: Folder) {
+    func updateThreads(with folder: Folder) async {
         let isNewFolder = folder.id != self.folder?.id
         self.folder = folder
         withAnimation {
@@ -174,9 +172,7 @@ class DateSection: Identifiable {
             filter = .all
         } else {
             observeChanges()
-            Task {
-                await self.fetchThreads()
-            }
+            await fetchThreads()
         }
     }
 
