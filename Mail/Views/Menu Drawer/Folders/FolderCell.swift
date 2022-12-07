@@ -78,7 +78,7 @@ struct FolderCellContent: View {
     }
 
     private var textStyle: MailTextStyle {
-        isSelected ? .header4Accent : .header5
+        isSelected ? .header5Accent : .header5
     }
 
     var body: some View {
