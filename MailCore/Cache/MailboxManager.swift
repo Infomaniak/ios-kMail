@@ -523,7 +523,10 @@ public class MailboxManager: ObservableObject {
                 }
             }
         } else {
-            _ = try await apiFetcher.unstar(mailbox: mailbox, messages: threads.flatMap(\.messages))
+            let messages = threads.flatMap { thread in
+                thread.messages.where { $0.isDraft == false }
+            }
+            _ = try await apiFetcher.unstar(mailbox: mailbox, messages: messages)
             await backgroundRealm.execute { realm in
                 for thread in threads {
                     self.unstar(thread: thread, using: realm)
@@ -534,7 +537,8 @@ public class MailboxManager: ObservableObject {
 
     public func toggleStar(thread: Thread) async throws {
         if thread.flagged {
-            _ = try await apiFetcher.unstar(mailbox: mailbox, messages: Array(thread.messages))
+            let messages = Array(thread.messages.where { $0.isDraft == false })
+            _ = try await apiFetcher.unstar(mailbox: mailbox, messages: messages)
             await backgroundRealm.execute { realm in
                 self.unstar(thread: thread, using: realm)
             }
@@ -631,7 +635,9 @@ public class MailboxManager: ObservableObject {
             try? realm.safeWrite {
                 liveThread.flagged = false
                 for message in thread.messages {
-                    message.fresh(using: realm)?.flagged = false
+                    if !message.isDraft {
+                        message.fresh(using: realm)?.flagged = false
+                    }
                 }
             }
         }
