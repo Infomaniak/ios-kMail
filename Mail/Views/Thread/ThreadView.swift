@@ -93,7 +93,6 @@ struct ThreadView: View {
                 .padding(.top, 8)
                 .padding(.bottom, 16)
                 .padding(.horizontal, 16)
-                .background(MailResourcesAsset.backgroundColor.swiftUiColor)
 
             LazyVStack(spacing: 0) {
                 ForEach(messages.indices, id: \.self) { index in
