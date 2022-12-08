@@ -62,7 +62,7 @@ public enum BarAppearanceConstants {
         ]
         return navigationBarAppearance
     }()
-    
+
     public static let threadViewToolbarAppearance: UIToolbarAppearance = {
         let toolbarAppearance = UIToolbarAppearance()
         toolbarAppearance.configureWithOpaqueBackground()

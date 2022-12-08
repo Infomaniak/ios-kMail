@@ -61,21 +61,33 @@ extension View {
     }
 
     func navigationBarThreadListStyle() -> some View {
-        modifier(NavigationBarStyleViewModifier(standardAppearance: BarAppearanceConstants.threadListNavigationBarAppearance,
-                                                scrollEdgeAppearance: BarAppearanceConstants.threadListNavigationBarAppearance,
-                                                compactAppearance: BarAppearanceConstants.threadListNavigationBarAppearance))
+        if #available(iOS 16.0, *) {
+            return toolbarBackground(MailResourcesAsset.backgroundHeaderColor.swiftUiColor, for: .navigationBar)
+        } else {
+            return modifier(NavigationBarStyleViewModifier(standardAppearance: BarAppearanceConstants.threadListNavigationBarAppearance,
+                                                           scrollEdgeAppearance: BarAppearanceConstants.threadListNavigationBarAppearance,
+                                                           compactAppearance: BarAppearanceConstants.threadListNavigationBarAppearance))
+        }
     }
 
     func navigationBarThreadViewStyle() -> some View {
-        modifier(NavigationBarStyleViewModifier(standardAppearance: BarAppearanceConstants.threadViewNavigationBarAppearance,
-                                                scrollEdgeAppearance: BarAppearanceConstants.threadViewNavigationBarAppearance,
-                                                compactAppearance: BarAppearanceConstants.threadViewNavigationBarAppearance))
+        if #available(iOS 16.0, *) {
+            return toolbarBackground(MailResourcesAsset.backgroundColor.swiftUiColor, for: .navigationBar)
+        } else {
+            return modifier(NavigationBarStyleViewModifier(standardAppearance: BarAppearanceConstants.threadViewNavigationBarAppearance,
+                                                           scrollEdgeAppearance: BarAppearanceConstants.threadViewNavigationBarAppearance,
+                                                           compactAppearance: BarAppearanceConstants.threadViewNavigationBarAppearance))
+        }
     }
 
     func navigationBarSearchListStyle() -> some View {
-        modifier(NavigationBarStyleViewModifier(standardAppearance: BarAppearanceConstants.threadViewNavigationBarAppearance,
-                                                scrollEdgeAppearance: BarAppearanceConstants.threadViewNavigationBarAppearance,
-                                                compactAppearance: nil))
+        if #available(iOS 16.0, *) {
+            return toolbarBackground(MailResourcesAsset.backgroundColor.swiftUiColor, for: .navigationBar)
+        } else {
+            return modifier(NavigationBarStyleViewModifier(standardAppearance: BarAppearanceConstants.threadViewNavigationBarAppearance,
+                                                           scrollEdgeAppearance: BarAppearanceConstants.threadViewNavigationBarAppearance,
+                                                           compactAppearance: nil))
+        }
     }
 
     func toolbarAppStyle() -> some View {
