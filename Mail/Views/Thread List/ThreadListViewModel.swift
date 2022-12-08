@@ -143,6 +143,9 @@ class DateSection: Identifiable {
         self.bottomSheet = bottomSheet
         observeThread = true
         trashFolderId = mailboxManager.getFolder(with: .trash)?._id ?? ""
+        if let folder {
+            sortThreadsIntoSections(threads: Array(folder.threads.sorted(by: \.date, ascending: false).freezeIfNeeded()))
+        }
     }
 
     func fetchThreads() async {
@@ -150,18 +153,22 @@ class DateSection: Identifiable {
             return
         }
 
-        isLoadingPage = true
+        withAnimation {
+            isLoadingPage = true
+        }
 
         await tryOrDisplayError {
             guard let folder = folder else { return }
 
             try await mailboxManager.threads(folder: folder.freezeIfNeeded())
         }
-        isLoadingPage = false
+        withAnimation {
+            isLoadingPage = false
+        }
         await mailboxManager.draftOffline()
     }
 
-    func updateThreads(with folder: Folder) {
+    func updateThreads(with folder: Folder) async {
         let isNewFolder = folder.id != self.folder?.id
         self.folder = folder
         withAnimation {
@@ -172,9 +179,7 @@ class DateSection: Identifiable {
             filter = .all
         } else {
             observeChanges()
-            Task {
-                await self.fetchThreads()
-            }
+            await fetchThreads()
         }
     }
 
