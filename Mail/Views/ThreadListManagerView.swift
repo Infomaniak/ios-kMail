@@ -21,6 +21,7 @@ import SwiftUI
 
 struct ThreadListManagerView: View {
     @EnvironmentObject var splitViewManager: SplitViewManager
+    @State private var shouldNavigateToNotificationThread = false
     @State private var tappedNotificationThread: Thread?
     @State private var editedMessageDraft: Draft?
     @State private var messageReply: MessageReply?
@@ -31,7 +32,7 @@ struct ThreadListManagerView: View {
 
     var body: some View {
         ZStack {
-            NavigationLink(isActive: .constant(tappedNotificationThread != nil)) {
+            NavigationLink(isActive: $shouldNavigateToNotificationThread) {
                 if let tappedNotificationThread,
                    let inboxFolderId = mailboxManager.getFolder(with: .inbox)?.id,
                    let trashFolderId = mailboxManager.getFolder(with: .trash)?.id {
@@ -69,6 +70,7 @@ struct ThreadListManagerView: View {
             guard let notificationPayload = notification.object as? NotificationTappedPayload else { return }
             tappedNotificationThread = mailboxManager.getRealm().object(ofType: Thread.self,
                                                                   forPrimaryKey: notificationPayload.threadUid)
+            shouldNavigateToNotificationThread = true
         }
         .animation(.easeInOut(duration: 0.25), value: splitViewManager.showSearch)
         .sheet(item: $editedMessageDraft) { draft in
