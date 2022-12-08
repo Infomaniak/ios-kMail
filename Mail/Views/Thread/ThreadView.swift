@@ -116,23 +116,8 @@ struct ThreadView: View {
         .backButtonDisplayMode(.minimal)
         .onAppear {
             MatomoUtils.track(view: ["MessageView"])
-            // Style toolbar
-            let toolbarAppearance = UIToolbarAppearance()
-            toolbarAppearance.configureWithOpaqueBackground()
-            toolbarAppearance.backgroundColor = MailResourcesAsset.backgroundSecondaryColor.color
-            toolbarAppearance.shadowColor = .clear
-            UIToolbar.appearance().standardAppearance = toolbarAppearance
-            UIToolbar.appearance().scrollEdgeAppearance = toolbarAppearance
-            navigationController?.toolbar.barTintColor = .white
-            navigationController?.toolbar.setShadowImage(UIImage(), forToolbarPosition: .any)
-            // Style navigation bar
-            let navBarAppearance = UINavigationBarAppearance()
-            navBarAppearance.configureWithDefaultBackground()
-            navBarAppearance.backgroundColor = MailResourcesAsset.backgroundColor.color
-            navBarAppearance.shadowColor = MailResourcesAsset.backgroundColor.color
-            navigationController?.navigationBar.standardAppearance = navBarAppearance
-            navigationController?.navigationBar.scrollEdgeAppearance = navBarAppearance
         }
+        .navigationBarThreadViewStyle()
         .environmentObject(mailboxManager)
         .environmentObject(bottomSheet)
         .environmentObject(threadBottomSheet)

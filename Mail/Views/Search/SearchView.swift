@@ -100,22 +100,8 @@ struct SearchView: View {
         .background(MailResourcesAsset.backgroundColor.swiftUiColor)
         .introspectNavigationController { navigationController in
             let newNavController = navigationController
-            // Style toolbar
-            let toolbarAppearance = UIToolbarAppearance()
-            toolbarAppearance.configureWithOpaqueBackground()
-            toolbarAppearance.backgroundColor = MailResourcesAsset.backgroundSecondaryColor.color
-            toolbarAppearance.shadowColor = .clear
-            UIToolbar.appearance().standardAppearance = toolbarAppearance
-            UIToolbar.appearance().scrollEdgeAppearance = toolbarAppearance
-            newNavController.toolbar.barTintColor = .white
-            newNavController.toolbar.setShadowImage(UIImage(), forToolbarPosition: .any)
-            // Style navigation bar
-            let navbarAppearance = UINavigationBarAppearance()
-            navbarAppearance.configureWithDefaultBackground()
-            newNavController.navigationBar.standardAppearance = navbarAppearance
-            newNavController.navigationBar.scrollEdgeAppearance = nil
-            self.navigationController = newNavController
         }
+        .navigationBarSearchListStyle()
         .floatingPanel(state: bottomSheet, halfOpening: true) {
             if case let .actions(target) = bottomSheet.state, !target.isInvalidated {
                 ActionsView(mailboxManager: viewModel.mailboxManager,

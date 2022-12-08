@@ -17,6 +17,7 @@
  */
 
 import InfomaniakCore
+import MailCore
 import MailResources
 import SwiftUI
 
@@ -59,9 +60,28 @@ extension View {
         return self.tint(tint.swiftUiColor)
     }
 
-    func navigationBarAppStyle() -> some View {
-        return introspectNavigationController { navigationController in
-            navigationController.navigationBar.setAppStyle()
+    func navigationBarThreadListStyle() -> some View {
+        modifier(NavigationBarStyleViewModifier(standardAppearance: BarAppearanceConstants.threadListNavigationBarAppearance,
+                                                scrollEdgeAppearance: BarAppearanceConstants.threadListNavigationBarAppearance,
+                                                compactAppearance: BarAppearanceConstants.threadListNavigationBarAppearance))
+    }
+
+    func navigationBarThreadViewStyle() -> some View {
+        modifier(NavigationBarStyleViewModifier(standardAppearance: BarAppearanceConstants.threadViewNavigationBarAppearance,
+                                                scrollEdgeAppearance: BarAppearanceConstants.threadViewNavigationBarAppearance,
+                                                compactAppearance: BarAppearanceConstants.threadViewNavigationBarAppearance))
+    }
+
+    func navigationBarSearchListStyle() -> some View {
+        modifier(NavigationBarStyleViewModifier(standardAppearance: BarAppearanceConstants.threadViewNavigationBarAppearance,
+                                                scrollEdgeAppearance: BarAppearanceConstants.threadViewNavigationBarAppearance,
+                                                compactAppearance: nil))
+    }
+
+    func toolbarAppStyle() -> some View {
+        return onAppear {
+            UIToolbar.appearance().standardAppearance = BarAppearanceConstants.threadViewToolbarAppearance
+            UIToolbar.appearance().scrollEdgeAppearance = BarAppearanceConstants.threadViewToolbarAppearance
         }
     }
 }

@@ -128,7 +128,8 @@ struct ThreadListView: View {
         }
         .id("\(accentColor.rawValue) \(threadDensity.rawValue)")
         .backButtonDisplayMode(.minimal)
-        .navigationBarAppStyle()
+        .navigationBarThreadListStyle()
+        .toolbarAppStyle()
         .introspectNavigationController { navigationController in
             self.navigationController = navigationController
         }
