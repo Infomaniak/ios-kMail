@@ -90,7 +90,6 @@ struct ThreadListView: View {
                                                multipleSelectionViewModel: multipleSelectionViewModel,
                                                threadDensity: threadDensity,
                                                accentColor: accentColor,
-                                               navigationController: navigationController,
                                                editedMessageDraft: $editedMessageDraft)
                                     .id(thread.id)
                             }

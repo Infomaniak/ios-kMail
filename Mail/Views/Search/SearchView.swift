@@ -16,7 +16,6 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import Introspect
 import MailCore
 import MailResources
 import RealmSwift
@@ -32,7 +31,6 @@ struct SearchView: View {
     @AppStorage(UserDefaults.shared.key(.accentColor)) private var accentColor = AccentColor.pink
 
     @StateObject var bottomSheet: ThreadBottomSheet
-    @State private var navigationController: UINavigationController?
 
     @State public var isSearchFieldFocused = false
     @Binding private var editedMessageDraft: Draft?
@@ -98,9 +96,6 @@ struct SearchView: View {
             }
         }
         .background(MailResourcesAsset.backgroundColor.swiftUiColor)
-        .introspectNavigationController { navigationController in
-            let newNavController = navigationController
-        }
         .navigationBarSearchListStyle()
         .floatingPanel(state: bottomSheet, halfOpening: true) {
             if case let .actions(target) = bottomSheet.state, !target.isInvalidated {
@@ -170,8 +165,7 @@ struct SearchView: View {
                                     mailboxManager: viewModel.mailboxManager,
                                     thread: thread,
                                     folderId: viewModel.lastSearchFolderId,
-                                    trashFolderId: viewModel.trashFolderId,
-                                    navigationController: navigationController
+                                    trashFolderId: viewModel.trashFolderId
                                 )
                                 .onAppear {
                                     viewModel.selectedThread = thread

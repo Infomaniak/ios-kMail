@@ -17,7 +17,6 @@
  */
 
 import InfomaniakCore
-import Introspect
 import MailCore
 import MailResources
 import RealmSwift
@@ -41,7 +40,6 @@ class MessageBottomSheet: DisplayedFloatingPanelState<MessageBottomSheet.State> 
 struct ThreadView: View {
     @ObservedRealmObject var thread: Thread
     private let mailboxManager: MailboxManager
-    private let navigationController: UINavigationController?
     private let folderId: String?
     private let trashFolderId: String?
 
@@ -69,13 +67,11 @@ struct ThreadView: View {
         mailboxManager: MailboxManager,
         thread: Thread,
         folderId: String?,
-        trashFolderId: String,
-        navigationController: UINavigationController?
+        trashFolderId: String
     ) {
         self.mailboxManager = mailboxManager
         self.thread = thread
         self.folderId = folderId
-        self.navigationController = navigationController
         self.trashFolderId = trashFolderId
     }
 
@@ -273,8 +269,7 @@ struct ThreadView_Previews: PreviewProvider {
             mailboxManager: PreviewHelper.sampleMailboxManager,
             thread: PreviewHelper.sampleThread,
             folderId: nil,
-            trashFolderId: "",
-            navigationController: nil
+            trashFolderId: ""
         )
     }
 }
