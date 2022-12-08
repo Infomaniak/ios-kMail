@@ -101,19 +101,19 @@ struct ThreadView: View {
                     MessageView(message: messages[index], isMessageExpanded: isMessageExpanded)
                 }
             }
+            .padding(.top, 8)
+            .background(messages.count > 1 ? MailResourcesAsset.backgroundCardColor.swiftUiColor : MailResourcesAsset.backgroundColor.swiftUiColor)
         }
-        .padding(.top, -8)
-        .background(messages.count > 1 ? MailResourcesAsset.backgroundCardColor.swiftUiColor : MailResourcesAsset.backgroundColor.swiftUiColor)
         .coordinateSpace(name: "scrollView")
         .onPreferenceChange(ScrollOffsetPreferenceKey.self) { offset in
             displayNavigationTitle = offset.y < -85
         }
         .navigationTitle(displayNavigationTitle ? thread.formattedSubject : "")
+        .navigationBarThreadViewStyle()
         .backButtonDisplayMode(.minimal)
         .onAppear {
             MatomoUtils.track(view: ["MessageView"])
         }
-        .navigationBarThreadViewStyle()
         .environmentObject(mailboxManager)
         .environmentObject(bottomSheet)
         .environmentObject(threadBottomSheet)
