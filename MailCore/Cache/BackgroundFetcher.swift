@@ -75,7 +75,7 @@ public class BackgroundFetcher {
             }
 
         for message in newUnreadMessages {
-            let threadUid =  mailboxManager.getFolder(with: .inbox, using: realm)?.threads.where {
+            let threadUid = mailboxManager.getFolder(with: .inbox, using: realm)?.threads.where {
                 $0.messages.contains(message)
             }.first?.uid
             triggerNotificationFor(message: message, threadUid: threadUid, mailboxId: mailboxManager.mailbox.objectId)
