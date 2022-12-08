@@ -46,6 +46,8 @@ struct ThreadListView: View {
     @State private var navigationController: UINavigationController?
     @Binding private var editedMessageDraft: Draft?
     @Binding private var messageReply: MessageReply?
+    @State private var fetchingTask: Task<Void, Never>?
+    @State private var isRefreshing = false
 
     let isCompact: Bool
 
@@ -76,12 +78,20 @@ struct ThreadListView: View {
                              unreadCount: Binding(get: {
                                  splitViewManager.selectedFolder?.unreadCount
                              }, set: { value in
-                                 splitViewManager.selectedFolder?.unreadCount = value
+                                 splitViewManager.selectedFolder?.unreadCount = value ?? 0
                              }),
                              unreadFilterOn: $viewModel.filterUnreadOn)
 
             ScrollViewReader { proxy in
                 List {
+                    if viewModel.isLoadingPage && !isRefreshing {
+                        ProgressView()
+                            .id(UUID())
+                            .frame(maxWidth: .infinity)
+                            .listRowSeparator(.hidden)
+                            .listRowBackground(MailResourcesAsset.backgroundColor.swiftUiColor)
+                    }
+
                     ForEach(viewModel.sections) { section in
                         Section {
                             ForEach(section.threads) { thread in
@@ -100,14 +110,6 @@ struct ThreadListView: View {
                                     .textStyle(.calloutSecondary)
                             }
                         }
-                    }
-
-                    if viewModel.isLoadingPage {
-                        ProgressView()
-                            .id(UUID())
-                            .frame(maxWidth: .infinity)
-                            .listRowSeparator(.hidden)
-                            .listRowBackground(MailResourcesAsset.backgroundColor.swiftUiColor)
                     }
 
                     if viewModel.folder?.lastUpdate != nil && viewModel.sections.isEmpty && !viewModel.isLoadingPage {
@@ -160,37 +162,50 @@ struct ThreadListView: View {
             networkMonitor.start()
             viewModel.globalBottomSheet = globalBottomSheet
             viewModel.selectedThread = nil
-            Task {
-                await viewModel.fetchThreads()
-            }
         }
         .onChange(of: splitViewManager.selectedFolder) { newFolder in
             guard isCompact, let folder = newFolder else { return }
-            viewModel.updateThreads(with: folder)
+            updateFetchingTask(with: folder)
         }
         .onChange(of: threadMode) { _ in
-            Task {
-                await viewModel.fetchThreads()
-            }
+            updateFetchingTask()
         }
         .onReceive(NotificationCenter.default.publisher(for: UIApplication.willEnterForegroundNotification)) { _ in
-            Task {
-                await viewModel.fetchThreads()
-            }
+            updateFetchingTask()
         }
         .task {
             if let account = AccountManager.instance.currentAccount {
                 avatarImage = await account.user.avatarImage
             }
-            if let folder = splitViewManager.selectedFolder {
-                viewModel.updateThreads(with: folder)
-            }
+            updateFetchingTask(with: splitViewManager.selectedFolder)
         }
         .refreshable {
-            await viewModel.fetchThreads()
+            withAnimation {
+                isRefreshing = true
+            }
+            if let fetchingTask {
+                _ = await fetchingTask.result
+            } else {
+                await viewModel.fetchThreads()
+            }
+            withAnimation {
+                isRefreshing = false
+            }
         }
         .sheet(isPresented: $isShowingComposeNewMessageView) {
             ComposeMessageView.newMessage(mailboxManager: viewModel.mailboxManager)
+        }
+    }
+
+    private func updateFetchingTask(with folder: Folder? = nil) {
+        guard fetchingTask == nil else { return }
+        fetchingTask = Task {
+            if let folder = folder {
+                await viewModel.updateThreads(with: folder)
+            } else {
+                await viewModel.fetchThreads()
+            }
+            fetchingTask = nil
         }
     }
 }
@@ -241,7 +256,7 @@ private struct ThreadListToolbar: ViewModifier {
                             .textStyle(.header1)
                             .frame(maxWidth: .infinity, alignment: .leading)
                     }
-                    
+
                     ToolbarItemGroup(placement: .navigationBarTrailing) {
                         if multipleSelectionViewModel.isEnabled {
                             Button(MailResourcesStrings.Localizable.buttonSelectAll) {

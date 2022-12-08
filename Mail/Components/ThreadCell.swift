@@ -35,7 +35,7 @@ extension Animation {
 
 extension ThreadDensity {
     var cellVerticalPadding: CGFloat {
-        self == .compact ? 10 : 8
+        self == .compact ? 10 : 16
     }
 }
 
@@ -79,7 +79,7 @@ struct ThreadCell: View {
             }
             .padding(.trailing, 4)
 
-            VStack(alignment: .leading, spacing: 6) {
+            VStack(alignment: .leading, spacing: 8) {
                 cellHeader
 
                 HStack(alignment: .top, spacing: 3) {
@@ -148,7 +148,7 @@ struct ThreadCell: View {
     }
 
     private var threadInfo: some View {
-        VStack(alignment: .leading, spacing: 6) {
+        VStack(alignment: .leading, spacing: 8) {
             Text(thread.formattedSubject)
                 .textStyle(.callout)
                 .lineLimit(1)

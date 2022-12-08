@@ -44,20 +44,20 @@ struct MailboxesManagementView: View {
                 }
             } label: {
                 HStack(spacing: 0) {
-                    avatarImage
+                    Image(resource: MailResourcesAsset.envelope)
                         .resizable()
                         .scaledToFit()
-                        .frame(width: 32, height: 32)
-                        .clipShape(Circle())
+                        .frame(width: 24, height: 24)
+                        .foregroundColor(.accentColor)
                         .padding(.trailing, 16)
                     Text(mailboxManager.mailbox.email)
-                        .textStyle(.header4Accent)
+                        .textStyle(.header5Accent)
                         .lineLimit(1)
                     Spacer()
                     ChevronIcon(style: isExpanded ? .up : .down, color: .primary)
                 }
-                .padding(.vertical, 8)
-                .padding(.horizontal, 18)
+                .padding(.vertical, Constants.menuDrawerVerticalPadding)
+                .padding(.horizontal, Constants.menuDrawerHorizontalPadding)
                 .background(SelectionBackground(isSelected: true, offsetX: 8, leadingPadding: 0, verticalPadding: 0))
             }
 
@@ -84,7 +84,6 @@ struct MailboxesManagementView: View {
             }
         }
         .padding(.top, 16)
-        .padding(.bottom, 8)
         .task {
             if let user = AccountManager.instance.account(for: mailboxManager.mailbox.userId)?.user {
                 avatarImage = await user.avatarImage
