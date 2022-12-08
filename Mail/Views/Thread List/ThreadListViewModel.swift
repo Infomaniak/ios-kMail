@@ -143,6 +143,9 @@ class DateSection: Identifiable {
         self.bottomSheet = bottomSheet
         observeThread = true
         trashFolderId = mailboxManager.getFolder(with: .trash)?._id ?? ""
+        if let folder {
+            sortThreadsIntoSections(threads: Array(folder.threads.sorted(by: \.date, ascending: false).freezeIfNeeded()))
+        }
     }
 
     func fetchThreads() async {
