@@ -44,12 +44,17 @@ class NotificationCenterDelegate: NSObject, UNUserNotificationCenterDelegate {
             } else {
                 (scene?.delegate as? SceneDelegate)?.switchMailbox(mailbox)
             }
+            // This can certainly be improved, we need to add a delay to get the new switched UI before sending the notification
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                NotificationCenter.default.post(name: .onUserTappedNotification, object: NotificationTappedPayload(
+                    messageUid: messageUid,
+                    threadUid: content.threadIdentifier))
+            }
+        } else {
+            NotificationCenter.default.post(name: .onUserTappedNotification, object: NotificationTappedPayload(
+                messageUid: messageUid,
+                threadUid: content.threadIdentifier))
         }
-        
-        //TODO: Delay the post if we have to switch account / mailbox redirect
-        NotificationCenter.default.post(name: .onUserTappedNotification, object: NotificationTappedPayload(
-            messageUid: messageUid,
-            threadUid: content.threadIdentifier))
     }
 
     public func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse) async {
