@@ -38,7 +38,7 @@ public class BackgroundFetcher {
         }
     }
 
-    private func fetchLastEmailsForAllMailboxes() async {
+    public func fetchLastEmailsForAllMailboxes() async {
         await withTaskGroup(of: Void.self) { group in
             for mailbox in MailboxInfosManager.instance.getMailboxes() {
                 if let mailboxManager = AccountManager.instance.getMailboxManager(for: mailbox) {
@@ -62,7 +62,7 @@ public class BackgroundFetcher {
         let inboxFolderId = inboxFolder.id
         let lastUnreadDate = mailboxManager.getRealm().objects(Message.self)
             .where { $0.seen == false && $0.folderId == inboxFolderId }
-            .sorted(by: \.date, ascending: true)
+            .sorted(by: \.date, ascending: false)
             .first?.date ?? Date(timeIntervalSince1970: 0)
         try await mailboxManager.threads(folder: inboxFolder)
 
