@@ -67,7 +67,6 @@ public class BackgroundFetcher {
         try await mailboxManager.threads(folder: inboxFolder)
 
         let realm = mailboxManager.getRealm()
-        let freshInbox = mailboxManager.getFolder(with: .inbox, using: realm)
         let newUnreadMessages = realm.objects(Message.self)
             .where {
                 $0.seen == false
@@ -76,16 +75,10 @@ public class BackgroundFetcher {
             }
 
         for message in newUnreadMessages {
-            let threadUid = freshInbox?.threads.where {
+            let threadUid =  mailboxManager.getFolder(with: .inbox, using: realm)?.threads.where {
                 $0.messages.contains(message)
             }.first?.uid
             triggerNotificationFor(message: message, threadUid: threadUid, mailboxId: mailboxManager.mailbox.objectId)
-        }
-
-        if let inboxCount = freshInbox?.unreadCount {
-            await MainActor.run {
-                UIApplication.shared.applicationIconBadgeNumber = inboxCount
-            }
         }
     }
 
