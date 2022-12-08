@@ -43,6 +43,34 @@ public struct URLConstants {
     }
 }
 
+public enum BarAppearanceConstants {
+    public static let threadViewNavigationBarAppearance: UINavigationBarAppearance = {
+        let navigationBarAppearance = UINavigationBarAppearance()
+        navigationBarAppearance.configureWithTransparentBackground()
+        navigationBarAppearance.backgroundColor = MailResourcesAsset.backgroundColor.color
+        navigationBarAppearance.shadowColor = MailResourcesAsset.backgroundColor.color
+        return navigationBarAppearance
+    }()
+
+    public static let threadListNavigationBarAppearance: UINavigationBarAppearance = {
+        let navigationBarAppearance = UINavigationBarAppearance()
+        navigationBarAppearance.configureWithTransparentBackground()
+        navigationBarAppearance.backgroundColor = MailResourcesAsset.backgroundHeaderColor.color
+        navigationBarAppearance.largeTitleTextAttributes = [
+            .foregroundColor: MailResourcesAsset.primaryTextColor.color,
+            .font: UIFont.systemFont(ofSize: 22, weight: .semibold)
+        ]
+        return navigationBarAppearance
+    }()
+
+    public static let threadViewToolbarAppearance: UIToolbarAppearance = {
+        let toolbarAppearance = UIToolbarAppearance()
+        toolbarAppearance.configureWithOpaqueBackground()
+        toolbarAppearance.backgroundColor = MailResourcesAsset.backgroundSecondaryColor.color
+        return toolbarAppearance
+    }()
+}
+
 public enum Constants {
     public static let sizeLimit = 21_474_836_480 // 20 Go
     public static let minimumQuotasProgressionToDisplay = 0.03

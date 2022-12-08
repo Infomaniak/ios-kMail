@@ -30,8 +30,6 @@ struct ThreadListCell: View {
     let threadDensity: ThreadDensity
     let accentColor: AccentColor
 
-    let navigationController: UINavigationController?
-
     @Binding var editedMessageDraft: Draft?
 
     @State private var shouldNavigateToThreadList = false
@@ -52,8 +50,7 @@ struct ThreadListCell: View {
                 NavigationLink(destination: ThreadView(mailboxManager: viewModel.mailboxManager,
                                                        thread: thread,
                                                        folderId: viewModel.folder?.id,
-                                                       trashFolderId: viewModel.trashFolderId,
-                                                       navigationController: navigationController),
+                                                       trashFolderId: viewModel.trashFolderId),
                                isActive: $shouldNavigateToThreadList) { EmptyView() }
                     .opacity(0)
                     .disabled(multipleSelectionViewModel.isEnabled)
@@ -121,7 +118,6 @@ struct ThreadListCell_Previews: PreviewProvider {
             multipleSelectionViewModel: ThreadListMultipleSelectionViewModel(mailboxManager: PreviewHelper.sampleMailboxManager),
             threadDensity: .large,
             accentColor: .pink,
-            navigationController: nil,
             editedMessageDraft: .constant(nil)
         )
     }

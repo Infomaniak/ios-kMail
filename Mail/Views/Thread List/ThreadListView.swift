@@ -100,7 +100,6 @@ struct ThreadListView: View {
                                                multipleSelectionViewModel: multipleSelectionViewModel,
                                                threadDensity: threadDensity,
                                                accentColor: accentColor,
-                                               navigationController: navigationController,
                                                editedMessageDraft: $editedMessageDraft)
                                     .id(thread.id)
                             }
@@ -130,7 +129,8 @@ struct ThreadListView: View {
         }
         .id("\(accentColor.rawValue) \(threadDensity.rawValue)")
         .backButtonDisplayMode(.minimal)
-        .navigationBarAppStyle()
+        .navigationBarThreadListStyle()
+        .toolbarAppStyle()
         .introspectNavigationController { navigationController in
             self.navigationController = navigationController
         }

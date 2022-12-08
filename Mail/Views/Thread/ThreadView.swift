@@ -17,7 +17,6 @@
  */
 
 import InfomaniakCore
-import Introspect
 import MailCore
 import MailResources
 import RealmSwift
@@ -41,7 +40,6 @@ class MessageBottomSheet: DisplayedFloatingPanelState<MessageBottomSheet.State> 
 struct ThreadView: View {
     @ObservedRealmObject var thread: Thread
     private let mailboxManager: MailboxManager
-    private let navigationController: UINavigationController?
     private let folderId: String?
     private let trashFolderId: String?
 
@@ -69,13 +67,11 @@ struct ThreadView: View {
         mailboxManager: MailboxManager,
         thread: Thread,
         folderId: String?,
-        trashFolderId: String,
-        navigationController: UINavigationController?
+        trashFolderId: String
     ) {
         self.mailboxManager = mailboxManager
         self.thread = thread
         self.folderId = folderId
-        self.navigationController = navigationController
         self.trashFolderId = trashFolderId
     }
 
@@ -97,7 +93,6 @@ struct ThreadView: View {
                 .padding(.top, 8)
                 .padding(.bottom, 16)
                 .padding(.horizontal, 16)
-                .background(MailResourcesAsset.backgroundColor.swiftUiColor)
 
             LazyVStack(spacing: 0) {
                 ForEach(messages.indices, id: \.self) { index in
@@ -105,33 +100,18 @@ struct ThreadView: View {
                     MessageView(message: messages[index], isMessageExpanded: isMessageExpanded)
                 }
             }
+            .padding(.top, 8)
+            .background(messages.count > 1 ? MailResourcesAsset.backgroundCardColor.swiftUiColor : MailResourcesAsset.backgroundColor.swiftUiColor)
         }
-        .padding(.top, -8)
-        .background(messages.count > 1 ? MailResourcesAsset.backgroundCardColor.swiftUiColor : MailResourcesAsset.backgroundColor.swiftUiColor)
         .coordinateSpace(name: "scrollView")
         .onPreferenceChange(ScrollOffsetPreferenceKey.self) { offset in
             displayNavigationTitle = offset.y < -85
         }
         .navigationTitle(displayNavigationTitle ? thread.formattedSubject : "")
+        .navigationBarThreadViewStyle()
         .backButtonDisplayMode(.minimal)
         .onAppear {
             MatomoUtils.track(view: ["MessageView"])
-            // Style toolbar
-            let toolbarAppearance = UIToolbarAppearance()
-            toolbarAppearance.configureWithOpaqueBackground()
-            toolbarAppearance.backgroundColor = MailResourcesAsset.backgroundSecondaryColor.color
-            toolbarAppearance.shadowColor = .clear
-            UIToolbar.appearance().standardAppearance = toolbarAppearance
-            UIToolbar.appearance().scrollEdgeAppearance = toolbarAppearance
-            navigationController?.toolbar.barTintColor = .white
-            navigationController?.toolbar.setShadowImage(UIImage(), forToolbarPosition: .any)
-            // Style navigation bar
-            let navBarAppearance = UINavigationBarAppearance()
-            navBarAppearance.configureWithDefaultBackground()
-            navBarAppearance.backgroundColor = MailResourcesAsset.backgroundColor.color
-            navBarAppearance.shadowColor = MailResourcesAsset.backgroundColor.color
-            navigationController?.navigationBar.standardAppearance = navBarAppearance
-            navigationController?.navigationBar.scrollEdgeAppearance = navBarAppearance
         }
         .environmentObject(mailboxManager)
         .environmentObject(bottomSheet)
@@ -288,8 +268,7 @@ struct ThreadView_Previews: PreviewProvider {
             mailboxManager: PreviewHelper.sampleMailboxManager,
             thread: PreviewHelper.sampleThread,
             folderId: nil,
-            trashFolderId: "",
-            navigationController: nil
+            trashFolderId: ""
         )
     }
 }

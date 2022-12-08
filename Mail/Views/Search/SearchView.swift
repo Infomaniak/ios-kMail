@@ -16,7 +16,6 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import Introspect
 import MailCore
 import MailResources
 import RealmSwift
@@ -32,7 +31,6 @@ struct SearchView: View {
     @AppStorage(UserDefaults.shared.key(.accentColor)) private var accentColor = AccentColor.pink
 
     @StateObject var bottomSheet: ThreadBottomSheet
-    @State private var navigationController: UINavigationController?
 
     @State public var isSearchFieldFocused = false
     @Binding private var editedMessageDraft: Draft?
@@ -98,24 +96,7 @@ struct SearchView: View {
             }
         }
         .background(MailResourcesAsset.backgroundColor.swiftUiColor)
-        .introspectNavigationController { navigationController in
-            let newNavController = navigationController
-            // Style toolbar
-            let toolbarAppearance = UIToolbarAppearance()
-            toolbarAppearance.configureWithOpaqueBackground()
-            toolbarAppearance.backgroundColor = MailResourcesAsset.backgroundSecondaryColor.color
-            toolbarAppearance.shadowColor = .clear
-            UIToolbar.appearance().standardAppearance = toolbarAppearance
-            UIToolbar.appearance().scrollEdgeAppearance = toolbarAppearance
-            newNavController.toolbar.barTintColor = .white
-            newNavController.toolbar.setShadowImage(UIImage(), forToolbarPosition: .any)
-            // Style navigation bar
-            let navbarAppearance = UINavigationBarAppearance()
-            navbarAppearance.configureWithDefaultBackground()
-            newNavController.navigationBar.standardAppearance = navbarAppearance
-            newNavController.navigationBar.scrollEdgeAppearance = nil
-            self.navigationController = newNavController
-        }
+        .navigationBarSearchListStyle()
         .floatingPanel(state: bottomSheet, halfOpening: true) {
             if case let .actions(target) = bottomSheet.state, !target.isInvalidated {
                 ActionsView(mailboxManager: viewModel.mailboxManager,
@@ -184,8 +165,7 @@ struct SearchView: View {
                                     mailboxManager: viewModel.mailboxManager,
                                     thread: thread,
                                     folderId: viewModel.lastSearchFolderId,
-                                    trashFolderId: viewModel.trashFolderId,
-                                    navigationController: navigationController
+                                    trashFolderId: viewModel.trashFolderId
                                 )
                                 .onAppear {
                                     viewModel.selectedThread = thread
