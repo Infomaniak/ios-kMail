@@ -21,6 +21,7 @@ import SwiftUI
 
 struct ThreadListManagerView: View {
     @EnvironmentObject var splitViewManager: SplitViewManager
+    @State private var tappedNotificationThread: Thread?
     @State private var editedMessageDraft: Draft?
     @State private var messageReply: MessageReply?
 
@@ -30,6 +31,22 @@ struct ThreadListManagerView: View {
 
     var body: some View {
         ZStack {
+            NavigationLink(isActive: .constant(tappedNotificationThread != nil)) {
+                if let tappedNotificationThread,
+                   let inboxFolderId = mailboxManager.getFolder(with: .inbox)?.id,
+                   let trashFolderId = mailboxManager.getFolder(with: .trash)?.id {
+                    ThreadView(mailboxManager: mailboxManager,
+                               thread: tappedNotificationThread,
+                               folderId: inboxFolderId,
+                               trashFolderId: trashFolderId,
+                               navigationController: nil)
+                } else {
+                    EmptyView()
+                }
+            } label: {
+                EmptyView()
+            }
+            .opacity(0)
             if splitViewManager.showSearch {
                 SearchView(
                     mailboxManager: mailboxManager,
@@ -47,6 +64,11 @@ struct ThreadListManagerView: View {
                     isCompact: isCompact
                 )
             }
+        }
+        .onReceive(NotificationCenter.default.publisher(for: .onUserTappedNotification)) { notification in
+            guard let notificationPayload = notification.object as? NotificationTappedPayload else { return }
+            tappedNotificationThread = mailboxManager.getRealm().object(ofType: Thread.self,
+                                                                  forPrimaryKey: notificationPayload.threadUid)
         }
         .animation(.easeInOut(duration: 0.25), value: splitViewManager.showSearch)
         .sheet(item: $editedMessageDraft) { draft in
