@@ -59,8 +59,9 @@ public class BackgroundFetcher {
             return
         }
 
+        let inboxFolderId = inboxFolder.id
         let lastUnreadDate = mailboxManager.getRealm().objects(Message.self)
-            .where { $0.seen == false }
+            .where { $0.seen == false && $0.folderId == inboxFolderId }
             .sorted(by: \.date, ascending: true)
             .first?.date ?? Date(timeIntervalSince1970: 0)
         try await mailboxManager.threads(folder: inboxFolder)
@@ -68,7 +69,11 @@ public class BackgroundFetcher {
         let realm = mailboxManager.getRealm()
         let freshInbox = mailboxManager.getFolder(with: .inbox, using: realm)
         let newUnreadMessages = realm.objects(Message.self)
-            .where { $0.seen == false && $0.date > lastUnreadDate }
+            .where {
+                $0.seen == false
+                    && $0.date > lastUnreadDate
+                    && $0.folderId == inboxFolderId
+            }
 
         for message in newUnreadMessages {
             let threadUid = freshInbox?.threads.where {
