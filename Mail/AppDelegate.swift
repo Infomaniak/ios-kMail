@@ -16,6 +16,7 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import BackgroundTasks
 import CocoaLumberjackSwift
 import InfomaniakCore
 import InfomaniakLogin
@@ -26,6 +27,7 @@ import UIKit
 
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
+    private let notificationCenterDelegate = NotificationCenterDelegate()
     private var accountManager: AccountManager!
     static var orientationLock = UIInterfaceOrientationMask.all
 
@@ -39,6 +41,18 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         accountManager = AccountManager.instance
         ApiFetcher.decoder.dateDecodingStrategy = .iso8601
         refreshCacheData()
+
+        UNUserNotificationCenter.current().delegate = notificationCenterDelegate
+        Task {
+            // Ask permission app launch
+            await NotificationsHelper.askForPermissions()
+        }
+
+        BGTaskScheduler.shared.register(forTaskWithIdentifier: MailCore.Constants.backgroundRefreshTaskIdentifier, using: nil) { task in
+            self.scheduleAppRefresh()
+            BackgroundFetcher.shared.handleAppRefresh(refreshTask: task as! BGAppRefreshTask)
+        }
+        scheduleAppRefresh()
 
         return true
     }
@@ -85,6 +99,17 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             } catch {
                 DDLogError("Error while updating user account: \(error)")
             }
+        }
+    }
+
+    func scheduleAppRefresh() {
+        let request = BGAppRefreshTaskRequest(identifier: MailCore.Constants.backgroundRefreshTaskIdentifier)
+        request.earliestBeginDate = Date(timeIntervalSinceNow: 15 * 60)
+
+        do {
+            try BGTaskScheduler.shared.submit(request)
+        } catch {
+            print("Could not schedule app refresh: \(error)")
         }
     }
 }

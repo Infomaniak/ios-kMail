@@ -33,12 +33,16 @@ public enum NotificationsHelper {
         static let disconnected = "accountDisconnected"
     }
 
+    public class UserInfoKeys {
+        public static let mailboxId = "mailboxId"
+    }
+
     public static var isNotificationEnabled: Bool {
         return UserDefaults.shared.isNotificationEnabled
     }
 
     public static func askForPermissions() async {
-        let options: UNAuthorizationOptions = [.alert, .sound, .badge, .provisional, .providesAppNotificationSettings]
+        let options: UNAuthorizationOptions = [.alert, .sound, .badge, .providesAppNotificationSettings]
         do {
             try await UNUserNotificationCenter.current().requestAuthorization(options: options)
         } catch {

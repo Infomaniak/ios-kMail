@@ -166,4 +166,6 @@ public enum Constants {
     public static let bottomSheetHorizontalPadding: CGFloat = 24
 
     public static let searchFolderId = "search_folder_id"
+
+    public static let backgroundRefreshTaskIdentifier = "com.infomaniak.mail.background-refresh"
 }
