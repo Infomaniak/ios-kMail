@@ -23,6 +23,7 @@ import InfomaniakCore
 import MailResources
 import UIKit
 import UserNotifications
+import RealmSwift
 
 public enum NotificationsHelper {
     public enum CategoryIdentifier {
@@ -33,7 +34,7 @@ public enum NotificationsHelper {
         static let disconnected = "accountDisconnected"
     }
 
-    public class UserInfoKeys {
+    public enum UserInfoKeys {
         public static let mailboxId = "mailboxId"
     }
 
@@ -47,6 +48,35 @@ public enum NotificationsHelper {
             try await UNUserNotificationCenter.current().requestAuthorization(options: options)
         } catch {
             DDLogError("User has declined notifications")
+        }
+    }
+
+    public static func updateUnreadCountBadge() {
+        // Start a background task to update the app badge when going in the background
+        var backgroundTaskIdentifier: UIBackgroundTaskIdentifier = .invalid
+        backgroundTaskIdentifier = UIApplication.shared.beginBackgroundTask(withName: "updateUnreadCountBadge task") {
+            guard backgroundTaskIdentifier != .invalid else { return }
+            UIApplication.shared.endBackgroundTask(backgroundTaskIdentifier)
+            backgroundTaskIdentifier = .invalid
+        }
+
+        var totalUnreadCount = 0
+        for mailbox in MailboxInfosManager.instance.getMailboxes() {
+            if let mailboxManager = AccountManager.instance.getMailboxManager(for: mailbox),
+               let inboxFolder = mailboxManager.getFolder(with: .inbox) {
+                totalUnreadCount += mailboxManager.getRealm()
+                    .objects(Message.self)
+                    .where { $0.seen == false && $0.folderId == inboxFolder.id }
+                    .count
+            }
+        }
+
+        DispatchQueue.main.async {
+            UIApplication.shared.applicationIconBadgeNumber = totalUnreadCount
+            if backgroundTaskIdentifier != .invalid {
+                UIApplication.shared.endBackgroundTask(backgroundTaskIdentifier)
+                backgroundTaskIdentifier = .invalid
+            }
         }
     }
 

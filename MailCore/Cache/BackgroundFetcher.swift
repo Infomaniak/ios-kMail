@@ -80,6 +80,8 @@ public class BackgroundFetcher {
             }.first?.uid
             triggerNotificationFor(message: message, threadUid: threadUid, mailboxId: mailboxManager.mailbox.objectId)
         }
+        
+        NotificationsHelper.updateUnreadCountBadge()
     }
 
     private func triggerNotificationFor(message: Message, threadUid: String?, mailboxId: String) {
