@@ -16,6 +16,7 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import MailCore
 import MailResources
 import SwiftUI
 
@@ -39,7 +40,7 @@ struct FloatingActionButton: View {
         .buttonBorderShape(.capsule)
         .controlSize(.large)
         .padding(.trailing, 24)
-        .padding(.bottom, 70)
+        .padding(.bottom, Constants.floatingButtonBottomPadding)
         .foregroundColor(MailResourcesAsset.onAccentColor)
     }
 }

@@ -33,10 +33,10 @@ struct EmptyListView: View {
                 .textStyle(.bodySecondary)
                 .multilineTextAlignment(.center)
                 .fixedSize(horizontal: false, vertical: true)
+                .padding(.bottom, Constants.floatingButtonBottomPadding + 48)
         }
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
         .padding(48)
-        .background(MailResourcesAsset.backgroundColor.swiftUiColor)
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
 }
 

@@ -111,14 +111,15 @@ struct ThreadListView: View {
                         }
                     }
 
-                    if viewModel.folder?.lastUpdate != nil && viewModel.sections.isEmpty && !viewModel.isLoadingPage {
-                        EmptyListView(isInbox: viewModel.folder?.role == .inbox)
-                    }
-
                     Spacer()
                         .frame(height: multipleSelectionViewModel.isEnabled ? 100 : 110)
                         .listRowSeparator(.hidden)
                         .listRowBackground(Color.clear)
+                }
+                .overlay {
+                    if viewModel.folder?.lastUpdate != nil && viewModel.sections.isEmpty && !viewModel.isLoadingPage {
+                        EmptyListView(isInbox: viewModel.folder?.role == .inbox)
+                    }
                 }
                 .listStyle(.plain)
                 .onAppear {
