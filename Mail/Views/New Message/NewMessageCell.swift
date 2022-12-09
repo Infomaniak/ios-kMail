@@ -52,6 +52,8 @@ struct NewMessageCell<Content>: View where Content: View {
 
             content
 
+            Spacer()
+
             if let showCc = showCc {
                 ChevronButton(isExpanded: showCc)
             }
