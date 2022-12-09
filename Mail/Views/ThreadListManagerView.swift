@@ -39,8 +39,7 @@ struct ThreadListManagerView: View {
                     ThreadView(mailboxManager: mailboxManager,
                                thread: tappedNotificationThread,
                                folderId: inboxFolderId,
-                               trashFolderId: trashFolderId,
-                               navigationController: nil)
+                               trashFolderId: trashFolderId)
                 } else {
                     EmptyView()
                 }
