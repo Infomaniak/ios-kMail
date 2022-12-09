@@ -44,7 +44,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
         UNUserNotificationCenter.current().delegate = notificationCenterDelegate
         Task {
-            // This is silent so we don't ask right from the beginning
+            // Ask permission app launch
             await NotificationsHelper.askForPermissions()
         }
 

@@ -42,7 +42,7 @@ public enum NotificationsHelper {
     }
 
     public static func askForPermissions() async {
-        let options: UNAuthorizationOptions = [.alert, .sound, .badge, .provisional, .providesAppNotificationSettings]
+        let options: UNAuthorizationOptions = [.alert, .sound, .badge, .providesAppNotificationSettings]
         do {
             try await UNUserNotificationCenter.current().requestAuthorization(options: options)
         } catch {
