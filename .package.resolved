@@ -3,10 +3,10 @@
     {
       "identity" : "alamofire",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/Alamofire/Alamofire",
+      "location" : "https://github.com/Alamofire/Alamofire.git",
       "state" : {
-        "revision" : "8dd85aee02e39dd280c75eef88ffdb86eed4b07b",
-        "version" : "5.6.2"
+        "revision" : "78424be314842833c04bc3bef5b72e85fff99204",
+        "version" : "5.6.4"
       }
     },
     {
@@ -14,8 +14,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/ProxymanApp/atlantis",
       "state" : {
-        "revision" : "2b26bf7fe2c5751335dca015b9e77514210d28d4",
-        "version" : "1.18.2"
+        "revision" : "67ed749c6ac1ca8046d759205d6a9b17b4960b54",
+        "version" : "1.20.0"
       }
     },
     {
@@ -23,8 +23,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/CocoaLumberjack/CocoaLumberjack.git",
       "state" : {
-        "revision" : "80ada1f753b0d53d9b57c465936a7c4169375002",
-        "version" : "3.7.4"
+        "revision" : "0188d31089b5881a269e01777be74c7316924346",
+        "version" : "3.8.0"
       }
     },
     {
@@ -41,8 +41,8 @@
       "kind" : "remoteSourceControl",
       "location" : "git@github.com:Infomaniak/ios-bug-tracker.git",
       "state" : {
-        "revision" : "651cd48de2944be19fc179e742c4a8034b0dd8de",
-        "version" : "1.1.0"
+        "revision" : "67477ddc3028f6c6c074d26fd6f84c060876dcf1",
+        "version" : "1.2.0"
       }
     },
     {
@@ -59,8 +59,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Infomaniak/ios-login.git",
       "state" : {
-        "revision" : "b1336feaf2f71924d559364c074b7130cf357882",
-        "version" : "2.1.0"
+        "revision" : "ba10750bd4774a1c9c55ac88bfb01604f26f3b92",
+        "version" : "2.2.0"
       }
     },
     {
@@ -102,10 +102,10 @@
     {
       "identity" : "realm-core",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/realm/realm-core",
+      "location" : "https://github.com/realm/realm-core.git",
       "state" : {
-        "revision" : "3c4b86da569368c4ee5ccca2a112d511cc6fa936",
-        "version" : "12.11.0"
+        "revision" : "b77443ca7fa25407869ca537bf3ae912b1427bff",
+        "version" : "12.13.0"
       }
     },
     {
@@ -113,8 +113,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/realm/realm-swift",
       "state" : {
-        "revision" : "dc1672b3011eb992ce95db4feec83cd897626a16",
-        "version" : "10.32.1"
+        "revision" : "b442ee3e9caa1abab26fd9b23f060f6f0815ff48",
+        "version" : "10.33.0"
       }
     },
     {
@@ -122,8 +122,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/getsentry/sentry-cocoa",
       "state" : {
-        "revision" : "7521e07ce9a73f23ca9f028d6b0f8917c3e72c1b",
-        "version" : "7.29.0"
+        "revision" : "c3c19e29f775ee95b77aa3168f3e2fd6c20deba6",
+        "version" : "7.31.3"
       }
     },
     {
@@ -185,8 +185,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/markiv/SwiftUI-Shimmer",
       "state" : {
-        "revision" : "61411771350a5a4e96666a8a202ae4b2be327a2b",
-        "version" : "1.0.1"
+        "revision" : "965a7cbcbf094cbcf22b9251a2323bdc3432e171",
+        "version" : "1.1.0"
       }
     },
     {
@@ -194,8 +194,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/dkk/WrappingHStack",
       "state" : {
-        "revision" : "52eaad02c6a621b9bb5cd56acde94f802ef669f0",
-        "version" : "2.2.4"
+        "revision" : "44987fbb01112e6ec72098dc6481187dd53ad4d2",
+        "version" : "2.2.9"
       }
     }
   ],
