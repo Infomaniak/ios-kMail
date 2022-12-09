@@ -49,7 +49,6 @@ struct ComposeMessageView: View {
     @Environment(\.dismiss) private var dismiss
 
     @State private var mailboxManager: MailboxManager
-    @State private var selectedMailboxItem = 0
     @State private var draft: UnmanagedDraft
     @State private var originalBody: String
     @State private var editor = RichTextEditorModel()
@@ -75,10 +74,6 @@ struct ComposeMessageView: View {
 
     private init(mailboxManager: MailboxManager, draft: UnmanagedDraft) {
         _mailboxManager = State(initialValue: mailboxManager)
-        let currentAccountSelectedMailboxItem = AccountManager.instance.mailboxes
-            .firstIndex { $0.mailboxId == mailboxManager.mailbox.mailboxId } ?? 0
-        _selectedMailboxItem = State(initialValue: currentAccountSelectedMailboxItem)
-
         var initialDraft = draft
         if initialDraft.identityId.isEmpty,
            let signature = mailboxManager.getSignatureResponse() {
@@ -130,12 +125,8 @@ struct ComposeMessageView: View {
                 VStack(spacing: 0) {
                     if !shouldDisplayAutocompletion {
                         NewMessageCell(title: MailResourcesStrings.Localizable.fromTitle, isFirstCell: true) {
-                            Picker("Mailbox", selection: $selectedMailboxItem) {
-                                ForEach(AccountManager.instance.mailboxes.indices, id: \.self) { i in
-                                    Text(AccountManager.instance.mailboxes[i].email).tag(i)
-                                }
-                            }.tint(MailResourcesAsset.primaryTextColor)
-                            Spacer()
+                            Text(mailboxManager.mailbox.email)
+                                .textStyle(.header5Accent)
                         }
                     }
 
@@ -218,13 +209,6 @@ struct ComposeMessageView: View {
                 await DraftManager.shared.saveDraftLocally(draft: draft, mailboxManager: mailboxManager, action: .save)
             }
         }
-        .onChange(of: selectedMailboxItem) { _ in
-            let mailbox = AccountManager.instance.mailboxes[selectedMailboxItem]
-            guard let mailboxManager = AccountManager.instance.getMailboxManager(for: mailbox),
-                  let signatureResponse = mailboxManager.getSignatureResponse() else { return }
-            self.mailboxManager = mailboxManager
-            draft.setSignature(signatureResponse)
-        }
         .onDisappear {
             // TODO: - Compare message body to original body : guard draft.body != originalBody || !draft.uuid.isEmpty else { return }
 
@@ -238,7 +222,7 @@ struct ComposeMessageView: View {
                 }
 
                 DraftManager.shared.syncDraft(mailboxManager: mailboxManager)
-                
+
                 sendDraft = false
             }
         }
