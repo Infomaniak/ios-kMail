@@ -48,7 +48,7 @@ extension SettingsSection {
     static let general = SettingsSection(
         id: 2,
         name: MailResourcesStrings.Localizable.settingsSectionGeneral,
-        items: [.send, .lock]
+        items: [.lock]
     )
     static let appearance = SettingsSection(
         id: 3,
