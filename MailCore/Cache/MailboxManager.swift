@@ -517,34 +517,25 @@ public class MailboxManager: ObservableObject {
 
     public func toggleStar(threads: [Thread]) async throws {
         if threads.contains(where: { !$0.flagged }) {
-            _ = try await apiFetcher.star(mailbox: mailbox, messages: threads.flatMap(\.messages))
-            await backgroundRealm.execute { realm in
-                for thread in threads {
-                    self.star(thread: thread, using: realm)
-                }
+            let lastMessages = threads.compactMap { thread in
+                thread.messages.last { $0.isDraft == false }
             }
+            _ = try await apiFetcher.star(mailbox: mailbox, messages: lastMessages)
         } else {
-            _ = try await apiFetcher.unstar(mailbox: mailbox, messages: threads.flatMap(\.messages))
-            await backgroundRealm.execute { realm in
-                for thread in threads {
-                    self.unstar(thread: thread, using: realm)
-                }
+            let messages = threads.flatMap { thread in
+                thread.messages.where { $0.isDraft == false }
             }
+            _ = try await apiFetcher.unstar(mailbox: mailbox, messages: messages)
         }
     }
 
     public func toggleStar(thread: Thread) async throws {
         if thread.flagged {
-            _ = try await apiFetcher.unstar(mailbox: mailbox, messages: Array(thread.messages))
-            await backgroundRealm.execute { realm in
-                self.unstar(thread: thread, using: realm)
-            }
+            let messages = Array(thread.messages.where { $0.isDraft == false })
+            _ = try await apiFetcher.unstar(mailbox: mailbox, messages: messages)
         } else {
-            guard let lastMessage = thread.messages.last else { return }
+            guard let lastMessage = thread.messages.last(where: { $0.isDraft == false }) else { return }
             _ = try await apiFetcher.star(mailbox: mailbox, messages: [lastMessage])
-            await backgroundRealm.execute { realm in
-                self.star(thread: thread, using: realm)
-            }
         }
     }
 
