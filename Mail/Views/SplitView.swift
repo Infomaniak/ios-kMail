@@ -94,10 +94,7 @@ struct SplitView: View {
                                 navigationDrawerController.close()
                             }
 
-                        NavigationDrawer(
-                            mailboxManager: mailboxManager,
-                            isCompact: isCompact
-                        )
+                        NavigationDrawer(mailboxManager: mailboxManager)
                     }
                     .gesture(navigationDrawerController.dragGesture)
                 }
