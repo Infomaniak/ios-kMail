@@ -51,15 +51,26 @@ public class Thread: Object, Decodable, Identifiable {
     @Persisted public var answered: Bool
     @Persisted public var forwarded: Bool
     @Persisted public var size: Int
-    // TODO: - Remove parentLink (Maybe keep it as an array ?)
-    @Persisted(originProperty: "threads") public var parents: LinkingObjects<Folder>
+    @Persisted(originProperty: "threads") public var parentLink: LinkingObjects<Folder>
     @Persisted public var fromSearch = false
 
+    @Persisted public var messagePreviewed: Message?
+    @Persisted public var isDraft = false
+
     @Persisted public var messageIds: MutableSet<String>
-    @Persisted public var folderIds: MutableSet<String>
+    @Persisted public var folderId: String // Needed ?
 
     public var id: String {
         return uid
+    }
+
+    public var parent: Folder? {
+        return parentLink.first
+    }
+
+    public func copy(from thread: Thread) {
+        messages.append(objectsIn: thread.messages)
+        messageIds.insert(objectsIn: thread.messageIds)
     }
 
     public var formattedFrom: String {
@@ -96,7 +107,6 @@ public class Thread: Object, Decodable, Identifiable {
     }
 
     public func recompute() {
-        folderIds = messages.map { $0.folderId }.toRealmSet()
         messageIds = messages.flatMap { $0.linkedUids }.toRealmSet()
         uniqueMessagesCount = messages.count // Fix unique : use duplicates
         updateUnseenMessages()
@@ -156,7 +166,8 @@ public class Thread: Object, Decodable, Identifiable {
         flagged: Bool,
         answered: Bool,
         forwarded: Bool,
-        size: Int
+        size: Int,
+        folderId: String = "" // Needed ?
     ) {
         self.init()
 
@@ -179,6 +190,7 @@ public class Thread: Object, Decodable, Identifiable {
         self.answered = answered
         self.forwarded = forwarded
         self.size = size
+        self.folderId = folderId // Needed ?
     }
 
     public convenience init(draft: Draft) {
