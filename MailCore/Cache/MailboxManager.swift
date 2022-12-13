@@ -239,26 +239,33 @@ public class MailboxManager: ObservableObject {
 
         await backgroundRealm.execute { realm in
             let messagesToDelete = realm.objects(Message.self).where { $0.uid.in(uids) }
-            var threadsToDelete = [Thread]()
-            var threadsToUpdate = [Thread]()
+            var threadsToCheck = Set<Thread>()
             var unreadCountModififier = 0
+
             for message in messagesToDelete {
                 unreadCountModififier -= message.seen ? 0 : 1
-                if let thread = message.parent {
-                    if thread.messageIds.count <= 1 {
-                        threadsToDelete.append(thread)
-                    } else {
-                        threadsToUpdate.append(thread)
-                    }
+                for parent in message.parents {
+                    threadsToCheck.insert(parent)
                 }
             }
 
+            var threadsToDelete = Set<Thread>()
+            var threadsToUpdate = Set<Thread>()
+
             try? realm.safeWrite {
                 realm.delete(messagesToDelete)
+                for thread in threadsToCheck {
+                    if thread.messages.isEmpty {
+                        threadsToDelete.insert(thread)
+                    } else {
+                        threadsToUpdate.insert(thread)
+                    }
+                }
                 realm.delete(threadsToDelete)
                 for thread in threadsToUpdate {
                     thread.recompute()
                 }
+
                 if let folder = folder.fresh(using: realm) {
                     folder.incrementUnreadCount(by: unreadCountModififier)
                 }
@@ -870,60 +877,85 @@ public class MailboxManager: ObservableObject {
     }
 
     private func addMessages(shortUids: [String], folder: Folder, asThread: Bool = false) async throws {
-        if !shortUids.isEmpty {
-            let reversedUids: [String] = getUniqueUidsInReverse(folder: folder, remoteUids: shortUids)
-            let pageSize = 50
-            var offset = 0
-            while offset < reversedUids.count {
-                let end = min(offset + pageSize, reversedUids.count)
-                let newList = Array(reversedUids[offset ..< end])
-                let messageByUidsResult = try await apiFetcher.messagesByUids(
-                    mailboxUuid: mailbox.uuid,
-                    folderId: folder.id,
-                    messageUids: newList
-                )
+        guard !shortUids.isEmpty else { return }
+        let reversedUids: [String] = getUniqueUidsInReverse(folder: folder, remoteUids: shortUids)
+        let pageSize = 50
+        var offset = 0
+        while offset < reversedUids.count {
+            let end = min(offset + pageSize, reversedUids.count)
+            let newList = Array(reversedUids[offset ..< end])
+            let messageByUidsResult = try await apiFetcher.messagesByUids(
+                mailboxUuid: mailbox.uuid,
+                folderId: folder.id,
+                messageUids: newList
+            )
 
-                await backgroundRealm.execute { realm in
-                    if let folder = folder.fresh(using: realm) {
-                        if asThread {
-                            var threadsToUpdate = Set<Thread>()
-                            var unreadCountModififier = 0
-                            try? realm.safeWrite {
-                                for message in messageByUidsResult.messages {
-                                    unreadCountModififier += message.seen ? 0 : 1
-                                    message.computeReference()
-                                    message.inTrash = folder.role == .trash
-                                    if let thread = realm.objects(Thread.self).first(where: { value in
-                                        value.messageIds.contains { message.linkedUids.contains($0) }
+            await backgroundRealm.execute { realm in
+                if let folder = folder.fresh(using: realm) {
+                    if asThread {
+                        var threadsToUpdate = Set<Thread>()
+                        var unreadCountModififier = 0
+                        try? realm.safeWrite {
+                            for message in messageByUidsResult.messages {
+                                unreadCountModififier += message.seen ? 0 : 1
+                                message.computeReference()
+                                let outFolderThreads = realm.objects(Thread.self)
+                                    .where {
+                                        $0.folderId != folder.id && $0.messageIds
+                                            .containsAny(in: message.linkedUids)
+                                    }
+
+                                let referenceThread: Thread? = outFolderThreads
+                                    .first // Update this in case of Draft ?
+
+                                if let inFolderThread = realm.objects(Thread.self)
+                                    .first(where: {
+                                        $0.folderId == folder.id && $0.messageIds
+                                            .contains { message.linkedUids.contains($0) }
                                     }) {
+                                    inFolderThread.messages.append(message)
+                                    inFolderThread.messageIds
+                                        .insert(objectsIn: message.linkedUids)
+                                    threadsToUpdate.insert(inFolderThread)
+                                } else if let refThread = referenceThread {
+                                    let thread = message.toThread().detached()
+                                    thread.messageIds.insert(objectsIn: message.linkedUids)
+                                    folder.threads.insert(thread)
+                                    thread.copy(from: refThread)
+                                    threadsToUpdate.insert(thread)
+                                } else {
+                                    let thread = message.toThread().detached()
+                                    thread.messageIds.insert(objectsIn: message.linkedUids)
+                                    folder.threads.insert(thread)
+                                    threadsToUpdate.insert(thread)
+                                }
+
+                                for thread in outFolderThreads {
+                                    if let message = message.fresh(using: realm) {
                                         thread.messages.append(message)
-                                        thread.messageIds.insert(objectsIn: message.linkedUids)
-                                        folder.threads.insert(thread)
-                                        threadsToUpdate.insert(thread)
-                                    } else {
-                                        let thread = message.toThread().detached()
-                                        thread.messageIds.insert(objectsIn: message.linkedUids)
-                                        folder.threads.insert(thread)
+                                        thread.messageIds
+                                            .insert(objectsIn: message.linkedUids)
                                         threadsToUpdate.insert(thread)
                                     }
                                 }
+
                                 for thread in threadsToUpdate {
                                     thread.recompute()
                                 }
                                 folder.incrementUnreadCount(by: unreadCountModififier)
                             }
+                        }
 
-                        } else {
-                            try? realm.safeWrite {
-                                let threads = messageByUidsResult.messages.map { $0.toThread().detached() }
-                                folder.threads.insert(objectsIn: threads)
-                            }
+                    } else {
+                        try? realm.safeWrite {
+                            let threads = messageByUidsResult.messages.map { $0.toThread().detached() }
+                            folder.threads.insert(objectsIn: threads)
                         }
                     }
                 }
-
-                offset += pageSize
             }
+
+            offset += pageSize
         }
     }
 
@@ -948,12 +980,12 @@ public class MailboxManager: ObservableObject {
 
     private func updateMessages(updates: [MessageFlags], folder: Folder) async {
         await backgroundRealm.execute { realm in
-            var unreadCountModifier = 0
+            var threadsToUpdate = Set<Thread>()
             try? realm.safeWrite {
+                var unreadCountModifier = 0
                 for update in updates {
                     let uid = Constants.longUid(from: String(update.shortUid), folderId: folder.id)
-                    if let message = realm.object(ofType: Message.self, forPrimaryKey: uid),
-                       let thread = message.parent {
+                    if let message = realm.object(ofType: Message.self, forPrimaryKey: uid) {
                         message.answered = update.answered
                         message.flagged = update.isFavorite
                         message.forwarded = update.forwarded
@@ -963,8 +995,14 @@ public class MailboxManager: ObservableObject {
                         }
                         message.seen = update.seen
 
-                        thread.recompute()
+                        for parent in message.parents {
+                            threadsToUpdate.insert(parent)
+                        }
                     }
+                }
+
+                for thread in threadsToUpdate {
+                    thread.recompute()
                 }
 
                 if let folder = folder.fresh(using: realm) {
