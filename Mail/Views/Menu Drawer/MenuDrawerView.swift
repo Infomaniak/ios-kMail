@@ -32,19 +32,30 @@ struct NavigationDrawer: View {
     @EnvironmentObject var navigationDrawerController: NavigationDrawerController
 
     var body: some View {
-        GeometryReader { geometryProxy in
-            HStack {
-                MenuDrawerView(
-                    mailboxManager: mailboxManager,
-                    showMailboxes: $navigationDrawerController.showMailboxes,
-                    isCompact: true
-                )
-                .frame(maxWidth: maxWidth)
-                .padding(.trailing, spacing)
-                .offset(x: navigationDrawerController.getOffset(size: geometryProxy.size).width)
-                Spacer()
+        ZStack {
+            Color.black
+                .opacity(navigationDrawerController.isOpen ? 0.5 : 0)
+                .ignoresSafeArea()
+                .onTapGesture {
+                    navigationDrawerController.close()
+                }
+
+            GeometryReader { geometryProxy in
+                HStack {
+                    MenuDrawerView(
+                        mailboxManager: mailboxManager,
+                        showMailboxes: $navigationDrawerController.showMailboxes,
+                        isCompact: true
+                    )
+                    .frame(maxWidth: maxWidth)
+                    .padding(.trailing, spacing)
+                    .offset(x: navigationDrawerController.getOffset(size: geometryProxy.size).width)
+                    Spacer()
+                }
             }
         }
+        .gesture(navigationDrawerController.dragGesture)
+        .statusBarHidden(navigationDrawerController.isOpen)
     }
 }
 
@@ -110,7 +121,6 @@ class NavigationDrawerController: ObservableObject {
 struct MenuDrawerView: View {
     @EnvironmentObject var splitViewManager: SplitViewManager
     @EnvironmentObject var bottomSheet: GlobalBottomSheet
-    @EnvironmentObject var navigationDrawerController: NavigationDrawerController
 
     @StateObject var viewModel: MenuDrawerViewModel
 
@@ -183,7 +193,6 @@ struct MenuDrawerView: View {
         .sheet(isPresented: $viewModel.isShowingBugTracker) {
             BugTrackerView(isPresented: $viewModel.isShowingBugTracker)
         }
-        .statusBarHidden(navigationDrawerController.isOpen)
     }
 }
 

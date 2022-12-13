@@ -86,17 +86,7 @@ struct SplitView: View {
                     }
                     .navigationViewStyle(.stack)
 
-                    Group {
-                        Color.black
-                            .opacity(navigationDrawerController.isOpen ? 0.5 : 0)
-                            .ignoresSafeArea()
-                            .onTapGesture {
-                                navigationDrawerController.close()
-                            }
-
-                        NavigationDrawer(mailboxManager: mailboxManager)
-                    }
-                    .gesture(navigationDrawerController.dragGesture)
+                    NavigationDrawer(mailboxManager: mailboxManager)
                 }
             } else {
                 NavigationView {
