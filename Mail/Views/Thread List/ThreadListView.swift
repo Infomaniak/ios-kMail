@@ -89,7 +89,6 @@ struct ThreadListView: View {
                             .id(UUID())
                             .frame(maxWidth: .infinity)
                             .listRowSeparator(.hidden)
-                            .listRowBackground(MailResourcesAsset.backgroundColor.swiftUiColor)
                     }
 
                     ForEach(viewModel.sections) { section in
