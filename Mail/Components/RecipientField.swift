@@ -35,7 +35,7 @@ struct RecipientChip: View {
                 .lineLimit(1)
         }
         .padding(.leading, 12)
-        .padding(.trailing, 6)
+        .padding(.trailing, 12)
         .background(Capsule().fill(accentColor.secondary.swiftUiColor))
     }
 }
