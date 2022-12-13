@@ -22,11 +22,31 @@ import MailResources
 import RealmSwift
 import UIKit
 import UserNotifications
+import CocoaLumberjackSwift
 
 public class BackgroundFetcher {
     public static let shared = BackgroundFetcher()
 
     private init() {}
+
+    public func registerBackgroundTask() {
+        BGTaskScheduler.shared.register(forTaskWithIdentifier: Constants.backgroundRefreshTaskIdentifier, using: nil) { task in
+            self.scheduleAppRefresh()
+            BackgroundFetcher.shared.handleAppRefresh(refreshTask: task as! BGAppRefreshTask)
+        }
+    }
+
+    public func scheduleAppRefresh() {
+        let request = BGAppRefreshTaskRequest(identifier: Constants.backgroundRefreshTaskIdentifier)
+        request.earliestBeginDate = Date(timeIntervalSinceNow: 15 * 60)
+
+        do {
+            try BGTaskScheduler.shared.submit(request)
+            DDLogInfo("[BackgroundFetcher] Scheduled background fetch task \(Constants.backgroundRefreshTaskIdentifier)")
+        } catch {
+            DDLogError("[BackgroundFetcher] Error scheduling background fetch task \(error)")
+        }
+    }
 
     public func handleAppRefresh(refreshTask: BGAppRefreshTask) {
         let fetchMailsTask = Task {
