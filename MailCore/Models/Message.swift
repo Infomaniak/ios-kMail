@@ -365,7 +365,7 @@ public class Message: Object, Decodable, Identifiable {
             answered: answered,
             forwarded: forwarded,
             size: size,
-            folderId: folderId // Needed ?
+            folderId: folderId
         )
     }
 }

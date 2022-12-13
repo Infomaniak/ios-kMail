@@ -58,7 +58,7 @@ public class Thread: Object, Decodable, Identifiable {
     @Persisted public var isDraft = false
 
     @Persisted public var messageIds: MutableSet<String>
-    @Persisted public var folderId: String // Needed ?
+    @Persisted public var folderId: String
 
     public var id: String {
         return uid
@@ -167,7 +167,7 @@ public class Thread: Object, Decodable, Identifiable {
         answered: Bool,
         forwarded: Bool,
         size: Int,
-        folderId: String = "" // Needed ?
+        folderId: String = ""
     ) {
         self.init()
 
@@ -190,7 +190,7 @@ public class Thread: Object, Decodable, Identifiable {
         self.answered = answered
         self.forwarded = forwarded
         self.size = size
-        self.folderId = folderId // Needed ?
+        self.folderId = folderId
     }
 
     public convenience init(draft: Draft) {
