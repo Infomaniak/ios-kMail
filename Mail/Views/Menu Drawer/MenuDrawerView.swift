@@ -27,7 +27,6 @@ struct NavigationDrawer: View {
     private let spacing = 60.0
 
     let mailboxManager: MailboxManager
-    let isCompact: Bool
 
     @EnvironmentObject var splitViewManager: SplitViewManager
     @EnvironmentObject var navigationDrawerController: NavigationDrawerController
@@ -38,7 +37,7 @@ struct NavigationDrawer: View {
                 MenuDrawerView(
                     mailboxManager: mailboxManager,
                     showMailboxes: $navigationDrawerController.showMailboxes,
-                    isCompact: isCompact
+                    isCompact: true
                 )
                 .frame(maxWidth: maxWidth)
                 .padding(.trailing, spacing)
