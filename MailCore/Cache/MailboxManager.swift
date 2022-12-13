@@ -377,9 +377,7 @@ public class MailboxManager: ObservableObject {
             for thread in threads {
                 if let liveThread = thread.fresh(using: realm) {
                     try? realm.safeWrite {
-                        for parent in liveThread.parents {
-                            parent.unreadCount = (parent.unreadCount ?? 0) - liveThread.unseenMessages
-                        }
+                        liveThread.parent?.unreadCount = (liveThread.parent?.unreadCount ?? 0) - liveThread.unseenMessages
                         realm.delete(liveThread.messages)
                         realm.delete(liveThread)
                     }
@@ -394,9 +392,7 @@ public class MailboxManager: ObservableObject {
         await backgroundRealm.execute { realm in
             if let liveThread = thread.fresh(using: realm) {
                 try? realm.safeWrite {
-                    for parent in liveThread.parents {
-                        parent.unreadCount = (parent.unreadCount ?? 0) - liveThread.unseenMessages
-                    }
+                    liveThread.parent?.unreadCount = (liveThread.parent?.unreadCount ?? 0) - liveThread.unseenMessages
                     realm.delete(liveThread.messages)
                     realm.delete(liveThread)
                 }
@@ -405,7 +401,7 @@ public class MailboxManager: ObservableObject {
     }
 
     public func moveOrDelete(threads: [Thread]) async throws {
-        if !threads.flatMap(\.parents).contains(where: { $0.role != .trash }) {
+        if !threads.compactMap(\.parent).contains(where: { $0.role != .trash }) {
             try await delete(threads: threads)
         } else {
             let undoRedoAction = try await move(threads: threads, to: .trash)
@@ -423,13 +419,14 @@ public class MailboxManager: ObservableObject {
     /// Move to trash or delete thread, depending on its current state
     /// - Parameter thread: Thread to remove
     public func moveOrDelete(thread: Thread) async throws {
-        if thread.parents.contains(where: { $0.toolType == .search }) {
+        let parentFolder = thread.parent
+        if parentFolder?.toolType == .search {
             await deleteInSearch(thread: thread)
         }
-        if !thread.parents.contains(where: { $0.role != .draft }), let message = thread.messages.first {
-            try await deleteDraft(from: message)
-        } else if !thread.parents.contains(where: { $0.role != .trash }) {
+        if parentFolder?.role == .trash {
             try await delete(thread: thread)
+        } else if parentFolder?.role == .draft {
+            try await deleteDraft(from: thread)
         } else {
             // Move to trash
             let response = try await move(thread: thread, to: .trash)
@@ -546,14 +543,12 @@ public class MailboxManager: ObservableObject {
 
     @discardableResult
     private func moveLocally(threads: [Thread], to folder: Folder, using realm: Realm) throws -> UndoRedoAction.RedoBlock {
-        let previousFolders = threads.compactMap { Array($0.parents) }.flatMap { $0 }
+        let previousFolders = threads.compactMap { $0.parent?.freeze() }
 
         try realm.safeWrite {
             for thread in threads {
-                for parent in thread.parents {
-                    parent.unreadCount = (parent.unreadCount ?? 0) - thread.unseenMessages
-                    parent.threads.remove(thread)
-                }
+                thread.parent?.unreadCount = (thread.parent?.unreadCount ?? 0) - thread.unseenMessages
+                thread.parent?.threads.remove(thread)
                 folder.threads.insert(thread)
                 folder.unreadCount = (folder.unreadCount ?? 0) + thread.unseenMessages
                 for message in thread.messages {
@@ -584,12 +579,7 @@ public class MailboxManager: ObservableObject {
     private func markAsSeen(thread: Thread, using realm: Realm) {
         guard let liveThread = thread.fresh(using: realm) else { return }
         try? realm.safeWrite {
-            for parent in liveThread.parents {
-                let countModifier = liveThread.messages.where { $0.folderId == parent.id }.reduce(0) { partialResult, message in
-                    partialResult - (message.seen ? 0 : 1)
-                }
-                parent.incrementUnreadCount(by: countModifier)
-            }
+            liveThread.parent?.unreadCount = (liveThread.parent?.unreadCount ?? 0) - liveThread.unseenMessages
             liveThread.unseenMessages = 0
             for message in liveThread.messages {
                 message.seen = true
@@ -601,12 +591,7 @@ public class MailboxManager: ObservableObject {
         guard let liveThread = thread.fresh(using: realm) else { return }
         try? realm.safeWrite {
             liveThread.unseenMessages = liveThread.messagesCount
-            for parent in liveThread.parents {
-                let countModifier = liveThread.messages.where { $0.folderId == parent.id }.reduce(0) { partialResult, message in
-                    partialResult + (message.seen ? 1 : 0)
-                }
-                parent.incrementUnreadCount(by: countModifier)
-            }
+            liveThread.parent?.unreadCount = (liveThread.parent?.unreadCount ?? 0) + liveThread.unseenMessages
             for message in liveThread.messages {
                 message.seen = false
             }
@@ -1047,11 +1032,9 @@ public class MailboxManager: ObservableObject {
                 if let liveMessage = message.fresh(using: realm) {
                     try? realm.safeWrite {
                         liveMessage.seen = seen
-                        liveMessage.parent?.updateUnseenMessages()
-                        if let parents = liveMessage.parent?.parents {
-                            for parentFolder in parents {
-                                parentFolder.incrementUnreadCount(by: seen ? -1 : 1)
-                            }
+                        if let parentThread = liveMessage.originalParent {
+                            parentThread.updateUnseenMessages()
+                            parentThread.parent?.incrementUnreadCount(by: seen ? -1 : 1)
                         }
                     }
                 }
@@ -1085,7 +1068,7 @@ public class MailboxManager: ObservableObject {
         await backgroundRealm.execute { realm in
             for message in messages {
                 if let liveMessage = message.fresh(using: realm) {
-                    let parent = liveMessage.parent
+                    let parent = liveMessage.originalParent
                     try? realm.safeWrite {
                         realm.delete(liveMessage)
                         if let parent = parent {
@@ -1137,7 +1120,7 @@ public class MailboxManager: ObservableObject {
                 for message in messages {
                     if let liveMessage = message.fresh(using: realm) {
                         liveMessage.flagged = true
-                        liveMessage.parent?.updateFlagged()
+                        liveMessage.originalParent?.updateFlagged()
                     }
                 }
             }
@@ -1154,7 +1137,7 @@ public class MailboxManager: ObservableObject {
                 for message in messages {
                     if let liveMessage = message.fresh(using: realm) {
                         liveMessage.flagged = false
-                        liveMessage.parent?.updateFlagged()
+                        liveMessage.originalParent?.updateFlagged()
                     }
                 }
             }
@@ -1170,9 +1153,9 @@ public class MailboxManager: ObservableObject {
         try realm.safeWrite {
             for message in messages {
                 if let liveMessage = message.fresh(using: realm) {
-                    liveMessage.parent?.updateUnseenMessages()
-                    if let parents = liveMessage.parent?.parents {
-                        for parentFolder in parents {
+                    if let thread = liveMessage.originalParent {
+                        thread.updateUnseenMessages()
+                        if let parentFolder = thread.parent {
                             parentFolder.incrementUnreadCount(by: -1)
                         }
                     }
@@ -1182,11 +1165,12 @@ public class MailboxManager: ObservableObject {
             }
             let liveFolder = folder.fresh(using: realm)
             liveFolder?.unreadCount = (liveFolder?.unreadCount ?? 0) + messages.filter { !$0.seen }.count
-            if messages.count == 1, let thread = messages.first?.fresh(using: realm)?.parent {
-                for parent in thread.parents {
-                    parent.threads.remove(thread)
-                }
-            }
+            // TODO: - Review this / Will be removed ?
+//            if messages.count == 1, let thread = messages.first?.fresh(using: realm)?.parent {
+//                for parent in thread.parents {
+//                    parent.threads.remove(thread)
+//                }
+//            }
         }
 
         return { [weak self] in
@@ -1330,8 +1314,30 @@ public class MailboxManager: ObservableObject {
         }
     }
 
+    public func deleteDraft(from thread: Thread) async throws {
+        guard let message = thread.messages.first else { return }
+
+        _ = try await apiFetcher.delete(mailbox: mailbox, messages: [message])
+
+        await backgroundRealm.execute { realm in
+            let draft = self.draft(localUuid: thread.uid, using: realm)
+
+            try? realm.safeWrite {
+                if let draft = draft {
+                    realm.delete(draft)
+                }
+                if let message = message.fresh(using: realm) {
+                    realm.delete(message)
+                }
+                if let thread = thread.fresh(using: realm) {
+                    realm.delete(thread)
+                }
+            }
+        }
+    }
+
     public func deleteDraft(from message: Message) async throws {
-        guard let thread = message.parent else { return }
+        guard let thread = message.originalParent else { return }
         let deleteThread = thread.messages.count <= 1
 
         if !message.uid.isEmpty {

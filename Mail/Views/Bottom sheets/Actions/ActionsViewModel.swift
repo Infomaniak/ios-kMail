@@ -190,7 +190,7 @@ enum ActionsTarget: Equatable {
     private func setActions() {
         switch target {
         case let .threads(threads):
-            let spam = threads.allSatisfy { $0.parents.contains { $0.role == .spam }}
+            let spam = threads.allSatisfy { $0.parent?.role == .spam }
             quickActions = [.move, .postpone, spam ? .nonSpam : .spam, .delete]
 
             let unread = threads.allSatisfy(\.hasUnseenMessages)
@@ -204,7 +204,7 @@ enum ActionsTarget: Equatable {
 
             let unread = thread.hasUnseenMessages
             let star = thread.flagged
-            let spam = thread.parents.contains { $0.role == .spam }
+            let spam = thread.parent?.role == .spam
             listActions = [
                 .archive,
                 unread ? .markAsRead : .markAsUnread,
