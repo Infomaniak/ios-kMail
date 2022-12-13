@@ -1203,12 +1203,9 @@ public class MailboxManager: ObservableObject {
             }
             let liveFolder = folder.fresh(using: realm)
             liveFolder?.unreadCount = (liveFolder?.unreadCount ?? 0) + messages.filter { !$0.seen }.count
-            // TODO: - Review this / Will be removed ?
-//            if messages.count == 1, let thread = messages.first?.fresh(using: realm)?.parent {
-//                for parent in thread.parents {
-//                    parent.threads.remove(thread)
-//                }
-//            }
+            if messages.count == 1, let thread = messages.first?.fresh(using: realm)?.originalParent {
+                thread.parent?.threads.remove(thread)
+            }
         }
 
         return { [weak self] in
