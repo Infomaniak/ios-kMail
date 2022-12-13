@@ -562,49 +562,6 @@ public class MailboxManager: ObservableObject {
         }
     }
 
-    private func markAsSeen(thread: Thread, using realm: Realm) {
-        guard let liveThread = thread.fresh(using: realm) else { return }
-        try? realm.safeWrite {
-            liveThread.parent?.unreadCount = (liveThread.parent?.unreadCount ?? 0) - liveThread.unseenMessages
-            liveThread.unseenMessages = 0
-            for message in liveThread.messages {
-                message.seen = true
-            }
-        }
-    }
-
-    private func markAsUnseen(thread: Thread, using realm: Realm) {
-        guard let liveThread = thread.fresh(using: realm) else { return }
-        try? realm.safeWrite {
-            liveThread.unseenMessages = liveThread.messagesCount
-            liveThread.parent?.unreadCount = (liveThread.parent?.unreadCount ?? 0) + liveThread.unseenMessages
-            for message in liveThread.messages {
-                message.seen = false
-            }
-        }
-    }
-
-    private func star(thread: Thread, using realm: Realm) {
-        guard let lastMessage = thread.messages.last else { return }
-        if let liveThread = thread.fresh(using: realm) {
-            try? realm.safeWrite {
-                liveThread.flagged = true
-                lastMessage.fresh(using: realm)?.flagged = true
-            }
-        }
-    }
-
-    private func unstar(thread: Thread, using realm: Realm) {
-        if let liveThread = thread.fresh(using: realm) {
-            try? realm.safeWrite {
-                liveThread.flagged = false
-                for message in thread.messages {
-                    message.fresh(using: realm)?.flagged = false
-                }
-            }
-        }
-    }
-
     // MARK: - Search
 
     public func initSearchFolder() -> Folder {
