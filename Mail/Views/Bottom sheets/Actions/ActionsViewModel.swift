@@ -376,7 +376,7 @@ enum ActionsTarget: Equatable {
         case let .thread(thread):
             try await mailboxManager.toggleRead(thread: thread.freezeIfNeeded())
         case let .message(message):
-            try await mailboxManager.markAsSeen(messages: [message.freezeIfNeeded()], seen: !message.seen)
+            try await mailboxManager.markAsSeen(message: message.freezeIfNeeded(), seen: !message.seen)
         }
     }
 
