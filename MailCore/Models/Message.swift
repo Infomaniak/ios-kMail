@@ -113,7 +113,7 @@ public class Message: Object, Decodable, Identifiable {
     @Persisted public var flagged: Bool
     @Persisted public var safeDisplay: Bool?
     @Persisted public var hasUnsubscribeLink: Bool?
-    @Persisted(originProperty: "messages") var parentLink: LinkingObjects<Thread>
+    @Persisted(originProperty: "messages") var parents: LinkingObjects<Thread>
 
     @Persisted public var fullyDownloaded = false
     @Persisted public var fromSearch = false
@@ -123,16 +123,16 @@ public class Message: Object, Decodable, Identifiable {
         return Array(to) + Array(cc)
     }
 
+    public var originalParent: Thread? {
+        return parents.first { $0.folderId == folderId }
+    }
+
     public var shouldComplete: Bool {
         return isDraft || !fullyDownloaded
     }
 
     public var formattedSubject: String {
         return subject ?? MailResourcesStrings.Localizable.noSubjectTitle
-    }
-
-    public var parent: Thread? {
-        return parentLink.first
     }
 
     public var attachmentsSize: Int64 {
@@ -213,7 +213,7 @@ public class Message: Object, Decodable, Identifiable {
         uid = try values.decode(String.self, forKey: .uid)
         if let msgId = try? values.decode(String.self, forKey: .msgId) {
             self.msgId = msgId
-            self.linkedUids = [msgId].toRealmSet()
+            linkedUids = [msgId].toRealmSet()
         }
         subject = try values.decodeIfPresent(String.self, forKey: .subject)
         priority = try values.decode(MessagePriority.self, forKey: .priority)
@@ -346,7 +346,7 @@ public class Message: Object, Decodable, Identifiable {
 
     public func toThread() -> Thread {
         return Thread(
-            uid: uid,
+            uid: "\(folderId)_\(uid)",
             messagesCount: 1,
             uniqueMessagesCount: 1,
             deletedMessagesCount: 1,
@@ -364,7 +364,8 @@ public class Message: Object, Decodable, Identifiable {
             flagged: flagged,
             answered: answered,
             forwarded: forwarded,
-            size: size
+            size: size,
+            folderId: folderId // Needed ?
         )
     }
 }
