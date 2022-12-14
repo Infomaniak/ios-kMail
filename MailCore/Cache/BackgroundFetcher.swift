@@ -22,11 +22,31 @@ import MailResources
 import RealmSwift
 import UIKit
 import UserNotifications
+import CocoaLumberjackSwift
 
 public class BackgroundFetcher {
     public static let shared = BackgroundFetcher()
 
     private init() {}
+
+    public func registerBackgroundTask() {
+        BGTaskScheduler.shared.register(forTaskWithIdentifier: Constants.backgroundRefreshTaskIdentifier, using: nil) { task in
+            self.scheduleAppRefresh()
+            BackgroundFetcher.shared.handleAppRefresh(refreshTask: task as! BGAppRefreshTask)
+        }
+    }
+
+    public func scheduleAppRefresh() {
+        let request = BGAppRefreshTaskRequest(identifier: Constants.backgroundRefreshTaskIdentifier)
+        request.earliestBeginDate = Date(timeIntervalSinceNow: 15 * 60)
+
+        do {
+            try BGTaskScheduler.shared.submit(request)
+            DDLogInfo("[BackgroundFetcher] Scheduled background fetch task \(Constants.backgroundRefreshTaskIdentifier)")
+        } catch {
+            DDLogError("[BackgroundFetcher] Error scheduling background fetch task \(error)")
+        }
+    }
 
     public func handleAppRefresh(refreshTask: BGAppRefreshTask) {
         let fetchMailsTask = Task {
@@ -78,30 +98,9 @@ public class BackgroundFetcher {
             let threadUid = mailboxManager.getFolder(with: .inbox, using: realm)?.threads.where {
                 $0.messages.contains(message)
             }.first?.uid
-            triggerNotificationFor(message: message, threadUid: threadUid, mailboxId: mailboxManager.mailbox.objectId)
+            NotificationsHelper.triggerNotificationFor(message: message, threadUid: threadUid, mailboxId: mailboxManager.mailbox.objectId)
         }
-        
+
         NotificationsHelper.updateUnreadCountBadge()
-    }
-
-    private func triggerNotificationFor(message: Message, threadUid: String?, mailboxId: String) {
-        let content = UNMutableNotificationContent()
-        if !message.from.isEmpty {
-            content.title = message.from.map { $0.name }.joined(separator: ",")
-        } else {
-            content.title = MailResourcesStrings.Localizable.unknownRecipientTitle
-        }
-        content.subtitle = message.formattedSubject
-        content.body = message.preview
-        if let threadUid {
-            content.threadIdentifier = threadUid
-        }
-        content.targetContentIdentifier = message.uid
-        content.userInfo = [NotificationsHelper.UserInfoKeys.mailboxId: mailboxId]
-
-        let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 1, repeats: false)
-        let notificationId = "\(mailboxId)-\(message.uid)"
-        let request = UNNotificationRequest(identifier: notificationId, content: content, trigger: trigger)
-        UNUserNotificationCenter.current().add(request)
     }
 }

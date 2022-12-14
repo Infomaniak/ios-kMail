@@ -21,9 +21,9 @@ import CocoaLumberjackSwift
 import Foundation
 import InfomaniakCore
 import MailResources
+import RealmSwift
 import UIKit
 import UserNotifications
-import RealmSwift
 
 public enum NotificationsHelper {
     public enum CategoryIdentifier {
@@ -107,5 +107,26 @@ public enum NotificationsHelper {
                 }
             }
         }
+    }
+
+    static func triggerNotificationFor(message: Message, threadUid: String?, mailboxId: String) {
+        let content = UNMutableNotificationContent()
+        if !message.from.isEmpty {
+            content.title = message.from.map { $0.name }.joined(separator: ",")
+        } else {
+            content.title = MailResourcesStrings.Localizable.unknownRecipientTitle
+        }
+        content.subtitle = message.formattedSubject
+        content.body = message.preview
+        if let threadUid {
+            content.threadIdentifier = threadUid
+        }
+        content.targetContentIdentifier = message.uid
+        content.userInfo = [NotificationsHelper.UserInfoKeys.mailboxId: mailboxId]
+
+        let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 1, repeats: false)
+        let notificationId = "\(mailboxId)-\(message.uid)"
+        let request = UNNotificationRequest(identifier: notificationId, content: content, trigger: trigger)
+        UNUserNotificationCenter.current().add(request)
     }
 }
