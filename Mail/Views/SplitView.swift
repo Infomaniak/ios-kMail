@@ -92,7 +92,6 @@ struct SplitView: View {
                 NavigationView {
                     MenuDrawerView(
                         mailboxManager: mailboxManager,
-                        showMailboxes: $navigationDrawerController.showMailboxes,
                         isCompact: isCompact
                     )
                     .navigationBarHidden(true)
@@ -110,7 +109,6 @@ struct SplitView: View {
         .environmentObject(navigationDrawerController)
         .defaultAppStorage(.shared)
         .onAppear {
-            navigationDrawerController.window = window
             AppDelegate.orientationLock = .all
         }
         .task {
