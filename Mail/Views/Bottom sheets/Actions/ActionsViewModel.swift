@@ -314,21 +314,7 @@ enum ActionsTarget: Equatable {
         case let .thread(thread):
             try await mailboxManager.moveOrDelete(thread: thread.freezeIfNeeded())
         case let .message(message):
-            if message.folderId == mailboxManager.getFolder(with: .trash)?._id {
-                // Delete definitely
-                try await mailboxManager.delete(messages: [message.freezeIfNeeded()])
-            } else if message.isDraft {
-                try await mailboxManager.deleteDraft(from: message)
-            } else {
-                // Move to trash
-                let undoRedoAction = try await mailboxManager.move(messages: [message.freezeIfNeeded()], to: .trash)
-                IKSnackBar.showCancelableSnackBar(
-                    message: MailResourcesStrings.Localizable.snackbarMessageMoved(FolderRole.trash.localizedName),
-                    cancelSuccessMessage: MailResourcesStrings.Localizable.snackbarMoveCancelled,
-                    undoRedoAction: undoRedoAction,
-                    mailboxManager: mailboxManager
-                )
-            }
+            try await mailboxManager.moveOrDelete(message: message.freezeIfNeeded())
         }
     }
 

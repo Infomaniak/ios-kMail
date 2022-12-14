@@ -376,15 +376,15 @@ public class MailboxManager: ObservableObject {
     public func moveOrDelete(thread: Thread) async throws {
         let parentFolder = thread.parent
         if parentFolder?.toolType == .search {
-            await deleteInSearch(thread: thread)
+            await deleteInSearch(thread: thread) // Review this ?
         }
-        if parentFolder?.role == .trash {
+
+        if parentFolder?.role == .trash || parentFolder?.role == .draft || parentFolder?.role == .spam {
             try await delete(thread: thread)
-        } else if parentFolder?.role == .draft {
-            try await deleteDraft(from: thread)
         } else {
             // Move to trash
-            let response = try await move(thread: thread, to: .trash)
+            let messagesToMove = Array(thread.messages.where { $0.scheduled != true })
+            let response = try await move(messages: messagesToMove, to: .trash)
             let folderName = FolderRole.trash.localizedName
             Task.detached {
                 await IKSnackBar.showCancelableSnackBar(message: MailResourcesStrings.Localizable.snackbarThreadMoved(folderName),
@@ -884,6 +884,28 @@ public class MailboxManager: ObservableObject {
         } catch {
             // Handle error
             print("Failed to save attachment: \(error)")
+        }
+    }
+    
+    /// Move to trash or delete message, depending on its current state
+    /// - Parameter message: Message to remove
+    public func moveOrDelete(message: Message) async throws {
+        if message.folderId == getFolder(with: .trash)?._id
+            || message.folderId == getFolder(with: .spam)?._id
+            || message.folderId == getFolder(with: .draft)?._id {
+            try await delete(messages: [message.freezeIfNeeded()])
+        } else if message.isDraft {
+            try await deleteDraft(from: message)
+        } else {
+            let undoRedoAction = try await move(messages: [message.freezeIfNeeded()], to: .trash)
+            Task.detached {
+                await IKSnackBar.showCancelableSnackBar(
+                    message: MailResourcesStrings.Localizable.snackbarMessageMoved(FolderRole.trash.localizedName),
+                    cancelSuccessMessage: MailResourcesStrings.Localizable.snackbarMoveCancelled,
+                    undoRedoAction: undoRedoAction,
+                    mailboxManager: self
+                )
+            }
         }
     }
 
