@@ -400,25 +400,41 @@ public class MailboxManager: ObservableObject {
     }
 
     public func reportSpam(threads: [Thread]) async throws -> UndoRedoAction {
-        let response = try await apiFetcher.reportSpam(mailbox: mailbox, messages: threads.flatMap(\.messages))
+        let messages = threads.flatMap { thread in
+            thread.messages.where { message in
+                message.scheduled == false
+            }.filter { message in
+                !message.from.contains { $0.email == self.mailbox.email }
+            }
+        }
+        let response = try await apiFetcher.reportSpam(mailbox: mailbox, messages: messages)
         let redoBlock = {}
         return UndoRedoAction(undo: response, redo: redoBlock)
     }
 
     public func reportSpam(thread: Thread) async throws -> UndoRedoAction {
-        let response = try await apiFetcher.reportSpam(mailbox: mailbox, messages: Array(thread.messages))
+        let messages = thread.messages.where { message in
+            message.scheduled == false
+        }.filter { message in
+            !message.from.contains { $0.email == self.mailbox.email }
+        }
+        let response = try await apiFetcher.reportSpam(mailbox: mailbox, messages: Array(messages))
         let redoBlock = {}
         return UndoRedoAction(undo: response, redo: redoBlock)
     }
 
     public func nonSpam(threads: [Thread]) async throws -> UndoRedoAction {
-        let response = try await apiFetcher.nonSpam(mailbox: mailbox, messages: threads.flatMap(\.messages))
+        let messages = threads.flatMap { thread in
+            thread.messages.where { $0.scheduled == false }
+        }
+        let response = try await apiFetcher.nonSpam(mailbox: mailbox, messages: Array(messages))
         let redoBlock = {}
         return UndoRedoAction(undo: response, redo: redoBlock)
     }
 
     public func nonSpam(thread: Thread) async throws -> UndoRedoAction {
-        let response = try await apiFetcher.nonSpam(mailbox: mailbox, messages: Array(thread.messages))
+        let messages = thread.messages.where { $0.scheduled == false }
+        let response = try await apiFetcher.nonSpam(mailbox: mailbox, messages: Array(messages))
         let redoBlock = {}
         return UndoRedoAction(undo: response, redo: redoBlock)
     }
