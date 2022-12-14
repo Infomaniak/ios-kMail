@@ -103,7 +103,6 @@ struct NavigationDrawer: View {
 }
 
 struct MenuDrawerView: View {
-    @EnvironmentObject var navigationDrawerState: NavigationDrawerState
     @EnvironmentObject var splitViewManager: SplitViewManager
     @EnvironmentObject var bottomSheet: GlobalBottomSheet
 
@@ -126,8 +125,7 @@ struct MenuDrawerView: View {
 
             ScrollView {
                 VStack(spacing: 0) {
-                    MailboxesManagementView(isExpanded: $navigationDrawerState.showMailboxes,
-                                            mailboxes: viewModel.mailboxes)
+                    MailboxesManagementView(mailboxes: viewModel.mailboxes)
 
                     RoleFoldersListView(
                         folders: viewModel.roleFolders,
