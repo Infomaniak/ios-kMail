@@ -347,17 +347,9 @@ public class MailboxManager: ObservableObject {
         return try await move(thread: thread, to: folder)
     }
 
-    public func delete(threads: [Thread]) async throws {
-        _ = try await apiFetcher.delete(mailbox: mailbox, messages: threads.flatMap(\.messages))
-    }
-
-    public func delete(thread: Thread) async throws {
-        _ = try await apiFetcher.delete(mailbox: mailbox, messages: Array(thread.messages))
-    }
-
     public func moveOrDelete(threads: [Thread]) async throws {
         if !threads.compactMap(\.parent).contains(where: { $0.role != .trash }) {
-            try await delete(threads: threads)
+            _ = try await apiFetcher.delete(mailbox: mailbox, messages: threads.flatMap(\.messages))
         } else {
             let undoRedoAction = try await move(threads: threads, to: .trash)
             let folderName = FolderRole.trash.localizedName
@@ -380,7 +372,7 @@ public class MailboxManager: ObservableObject {
         }
 
         if parentFolder?.role == .trash || parentFolder?.role == .draft || parentFolder?.role == .spam {
-            try await delete(thread: thread)
+            _ = try await apiFetcher.delete(mailbox: mailbox, messages: Array(thread.messages))
         } else {
             // Move to trash
             let messagesToMove = Array(thread.messages.where { $0.scheduled != true })
