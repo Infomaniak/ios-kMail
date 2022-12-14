@@ -16,7 +16,6 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import Introspect
 import MailCore
 import MailResources
 import RealmSwift
@@ -43,7 +42,6 @@ struct ThreadListView: View {
     @State private var isShowingComposeNewMessageView = false
     @StateObject var bottomSheet: ThreadBottomSheet
     @StateObject private var networkMonitor = NetworkMonitor()
-    @State private var navigationController: UINavigationController?
     @Binding private var editedMessageDraft: Draft?
     @Binding private var messageReply: MessageReply?
     @State private var fetchingTask: Task<Void, Never>?
@@ -131,15 +129,11 @@ struct ThreadListView: View {
         .backButtonDisplayMode(.minimal)
         .navigationBarThreadListStyle()
         .toolbarAppStyle()
-        .introspectNavigationController { navigationController in
-            self.navigationController = navigationController
-        }
         .modifier(ThreadListToolbar(isCompact: isCompact,
                                     bottomSheet: bottomSheet,
                                     multipleSelectionViewModel: multipleSelectionViewModel,
                                     avatarImage: $avatarImage,
-                                    observeThread: $viewModel.observeThread,
-                                    navigationController: $navigationController))
+                                    observeThread: $viewModel.observeThread))
         .floatingActionButton(isEnabled: !multipleSelectionViewModel.isEnabled,
                               icon: Image(resource: MailResourcesAsset.pen),
                               title: MailResourcesStrings.Localizable.buttonNewMessage) {
@@ -223,8 +217,6 @@ private struct ThreadListToolbar: ViewModifier {
 
     @EnvironmentObject var splitViewManager: SplitViewManager
     @EnvironmentObject var navigationDrawerController: NavigationDrawerController
-
-    @Binding var navigationController: UINavigationController?
 
     func body(content: Content) -> some View {
         GeometryReader { reader in
