@@ -321,6 +321,11 @@ public class MailboxManager: ObservableObject {
         }
     }
 
+    public func move(threads: [Thread], to folderRole: FolderRole) async throws -> UndoRedoAction {
+        guard let folder = getFolder(with: folderRole)?.freeze() else { throw MailError.folderNotFound }
+        return try await move(threads: threads, to: folder)
+    }
+
     public func move(threads: [Thread], to folder: Folder) async throws -> UndoRedoAction {
         let response = try await apiFetcher.move(
             mailbox: mailbox,
@@ -331,20 +336,15 @@ public class MailboxManager: ObservableObject {
         return UndoRedoAction(undo: response, redo: redoBlock)
     }
 
+    public func move(thread: Thread, to folderRole: FolderRole) async throws -> UndoRedoAction {
+        guard let folder = getFolder(with: folderRole)?.freeze() else { throw MailError.folderNotFound }
+        return try await move(thread: thread, to: folder)
+    }
+
     public func move(thread: Thread, to folder: Folder) async throws -> UndoRedoAction {
         let response = try await apiFetcher.move(mailbox: mailbox, messages: Array(thread.messages), destinationId: folder._id)
         let redoBlock = {}
         return UndoRedoAction(undo: response, redo: redoBlock)
-    }
-
-    public func move(threads: [Thread], to folderRole: FolderRole) async throws -> UndoRedoAction {
-        guard let folder = getFolder(with: folderRole)?.freeze() else { throw MailError.folderNotFound }
-        return try await move(threads: threads, to: folder)
-    }
-
-    public func move(thread: Thread, to folderRole: FolderRole) async throws -> UndoRedoAction {
-        guard let folder = getFolder(with: folderRole)?.freeze() else { throw MailError.folderNotFound }
-        return try await move(thread: thread, to: folder)
     }
 
     public func moveOrDelete(threads: [Thread]) async throws {
@@ -878,7 +878,7 @@ public class MailboxManager: ObservableObject {
             print("Failed to save attachment: \(error)")
         }
     }
-    
+
     /// Move to trash or delete message, depending on its current state
     /// - Parameter message: Message to remove
     public func moveOrDelete(message: Message) async throws {
@@ -909,15 +909,15 @@ public class MailboxManager: ObservableObject {
         }
     }
 
+    public func move(messages: [Message], to folderRole: FolderRole) async throws -> UndoRedoAction {
+        guard let folder = getFolder(with: folderRole)?.freeze() else { throw MailError.folderNotFound }
+        return try await move(messages: messages, to: folder)
+    }
+
     public func move(messages: [Message], to folder: Folder) async throws -> UndoRedoAction {
         let response = try await apiFetcher.move(mailbox: mailbox, messages: messages, destinationId: folder._id)
         let redoBlock = {}
         return UndoRedoAction(undo: response, redo: redoBlock)
-    }
-
-    public func move(messages: [Message], to folderRole: FolderRole) async throws -> UndoRedoAction {
-        guard let folder = getFolder(with: folderRole)?.freeze() else { throw MailError.folderNotFound }
-        return try await move(messages: messages, to: folder)
     }
 
     public func delete(messages: [Message]) async throws {
