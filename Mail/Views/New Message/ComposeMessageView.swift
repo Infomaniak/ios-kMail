@@ -216,6 +216,9 @@ struct ComposeMessageView: View {
                 await DraftManager.shared.saveDraftLocally(draft: draft, mailboxManager: mailboxManager, action: .save)
             }
         }
+        .onAppear {
+            focusedField = .to
+        }
         .onDisappear {
             // TODO: - Compare message body to original body : guard draft.body != originalBody || !draft.uuid.isEmpty else { return }
 
