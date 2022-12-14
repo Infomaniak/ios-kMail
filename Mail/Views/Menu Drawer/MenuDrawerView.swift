@@ -62,12 +62,9 @@ struct NavigationDrawer: View {
             .onEnded { value in
                 let windowWidth = window?.frame.size.width ?? 0
                 if navigationDrawerState.isOpen && value.translation.width < -(windowWidth / 2) {
-                    // Closing drawer
-                    withAnimation {
-                        offsetWidth = -windowWidth
-                    }
                     navigationDrawerState.close()
                 } else {
+                    // Reset drawer to fully open position
                     withAnimation {
                         offsetWidth = 0
                     }
@@ -99,6 +96,11 @@ struct NavigationDrawer: View {
         }
         .gesture(dragGesture)
         .statusBarHidden(navigationDrawerState.isOpen)
+        .onChange(of: navigationDrawerState.isOpen) { isOpen in
+            if !isOpen {
+                offsetWidth = 0
+            }
+        }
     }
 }
 
