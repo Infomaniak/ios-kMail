@@ -332,8 +332,7 @@ public class MailboxManager: ObservableObject {
             messages: threads.flatMap(\.messages),
             destinationId: folder._id
         )
-        let redoBlock = {}
-        return UndoRedoAction(undo: response, redo: redoBlock)
+        return UndoRedoAction(undo: response, redo: nil)
     }
 
     public func move(thread: Thread, to folderRole: FolderRole) async throws -> UndoRedoAction {
@@ -343,8 +342,7 @@ public class MailboxManager: ObservableObject {
 
     public func move(thread: Thread, to folder: Folder) async throws -> UndoRedoAction {
         let response = try await apiFetcher.move(mailbox: mailbox, messages: Array(thread.messages), destinationId: folder._id)
-        let redoBlock = {}
-        return UndoRedoAction(undo: response, redo: redoBlock)
+        return UndoRedoAction(undo: response, redo: nil)
     }
 
     public func moveOrDelete(threads: [Thread]) async throws {
@@ -408,8 +406,7 @@ public class MailboxManager: ObservableObject {
             }
         }
         let response = try await apiFetcher.reportSpam(mailbox: mailbox, messages: messages)
-        let redoBlock = {}
-        return UndoRedoAction(undo: response, redo: redoBlock)
+        return UndoRedoAction(undo: response, redo: nil)
     }
 
     public func reportSpam(thread: Thread) async throws -> UndoRedoAction {
@@ -419,8 +416,7 @@ public class MailboxManager: ObservableObject {
             !message.from.contains { $0.email == self.mailbox.email }
         }
         let response = try await apiFetcher.reportSpam(mailbox: mailbox, messages: Array(messages))
-        let redoBlock = {}
-        return UndoRedoAction(undo: response, redo: redoBlock)
+        return UndoRedoAction(undo: response, redo: nil)
     }
 
     public func nonSpam(threads: [Thread]) async throws -> UndoRedoAction {
@@ -428,15 +424,13 @@ public class MailboxManager: ObservableObject {
             thread.messages.where { $0.scheduled == false }
         }
         let response = try await apiFetcher.nonSpam(mailbox: mailbox, messages: Array(messages))
-        let redoBlock = {}
-        return UndoRedoAction(undo: response, redo: redoBlock)
+        return UndoRedoAction(undo: response, redo: nil)
     }
 
     public func nonSpam(thread: Thread) async throws -> UndoRedoAction {
         let messages = thread.messages.where { $0.scheduled == false }
         let response = try await apiFetcher.nonSpam(mailbox: mailbox, messages: Array(messages))
-        let redoBlock = {}
-        return UndoRedoAction(undo: response, redo: redoBlock)
+        return UndoRedoAction(undo: response, redo: nil)
     }
 
     public func toggleStar(threads: [Thread]) async throws {
@@ -932,8 +926,7 @@ public class MailboxManager: ObservableObject {
 
     public func move(messages: [Message], to folder: Folder) async throws -> UndoRedoAction {
         let response = try await apiFetcher.move(mailbox: mailbox, messages: messages, destinationId: folder._id)
-        let redoBlock = {}
-        return UndoRedoAction(undo: response, redo: redoBlock)
+        return UndoRedoAction(undo: response, redo: nil)
     }
 
     public func delete(messages: [Message]) async throws {
@@ -942,14 +935,12 @@ public class MailboxManager: ObservableObject {
 
     public func reportSpam(messages: [Message]) async throws -> UndoRedoAction {
         let response = try await apiFetcher.reportSpam(mailbox: mailbox, messages: messages)
-        let redoBlock = {}
-        return UndoRedoAction(undo: response, redo: redoBlock)
+        return UndoRedoAction(undo: response, redo: nil)
     }
 
     public func nonSpam(messages: [Message]) async throws -> UndoRedoAction {
         let response = try await apiFetcher.nonSpam(mailbox: mailbox, messages: messages)
-        let redoBlock = {}
-        return UndoRedoAction(undo: response, redo: redoBlock)
+        return UndoRedoAction(undo: response, redo: nil)
     }
 
     public func star(messages: [Message]) async throws -> MessageActionResult {
