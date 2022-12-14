@@ -24,7 +24,7 @@ import SwiftUI
 struct FolderCell: View {
     @EnvironmentObject var splitViewManager: SplitViewManager
     @EnvironmentObject var mailboxManager: MailboxManager
-    @EnvironmentObject var navigationDrawerController: NavigationDrawerController
+    @EnvironmentObject var navigationDrawerState: NavigationDrawerState
 
     let folder: NestableFolder
     var level = 0
@@ -64,7 +64,7 @@ struct FolderCell: View {
 
     private func updateFolder() {
         splitViewManager.selectedFolder = folder.content
-        navigationDrawerController.close()
+        navigationDrawerState.close()
     }
 }
 
@@ -118,6 +118,6 @@ struct FolderCellView_Previews: PreviewProvider {
             isCompact: false
         )
         .environmentObject(PreviewHelper.sampleMailboxManager)
-        .environmentObject(NavigationDrawerController())
+        .environmentObject(NavigationDrawerState())
     }
 }

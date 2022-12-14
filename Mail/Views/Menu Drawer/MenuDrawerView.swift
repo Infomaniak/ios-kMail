@@ -22,7 +22,7 @@ import MailResources
 import RealmSwift
 import SwiftUI
 
-class NavigationDrawerController: ObservableObject {
+class NavigationDrawerState: ObservableObject {
     @Published private(set) var isOpen = false
     @Published var showMailboxes = false
 
@@ -47,7 +47,7 @@ struct NavigationDrawer: View {
     let mailboxManager: MailboxManager
 
     @EnvironmentObject var splitViewManager: SplitViewManager
-    @EnvironmentObject var navigationDrawerController: NavigationDrawerController
+    @EnvironmentObject var navigationDrawerState: NavigationDrawerState
     @Environment(\.window) var window
 
     @State private var offsetWidth: CGFloat = 0
@@ -55,18 +55,18 @@ struct NavigationDrawer: View {
     private var dragGesture: some Gesture {
         DragGesture()
             .onChanged { value in
-                if (navigationDrawerController.isOpen && value.translation.width < 0) || !navigationDrawerController.isOpen {
+                if (navigationDrawerState.isOpen && value.translation.width < 0) || !navigationDrawerState.isOpen {
                     offsetWidth = value.translation.width
                 }
             }
             .onEnded { value in
                 let windowWidth = window?.frame.size.width ?? 0
-                if navigationDrawerController.isOpen && value.translation.width < -(windowWidth / 2) {
+                if navigationDrawerState.isOpen && value.translation.width < -(windowWidth / 2) {
                     // Closing drawer
                     withAnimation {
                         offsetWidth = -windowWidth
                     }
-                    navigationDrawerController.close()
+                    navigationDrawerState.close()
                 } else {
                     withAnimation {
                         offsetWidth = 0
@@ -78,10 +78,10 @@ struct NavigationDrawer: View {
     var body: some View {
         ZStack {
             Color.black
-                .opacity(navigationDrawerController.isOpen ? 0.5 : 0)
+                .opacity(navigationDrawerState.isOpen ? 0.5 : 0)
                 .ignoresSafeArea()
                 .onTapGesture {
-                    navigationDrawerController.close()
+                    navigationDrawerState.close()
                 }
 
             GeometryReader { geometryProxy in
@@ -92,18 +92,18 @@ struct NavigationDrawer: View {
                     )
                     .frame(maxWidth: maxWidth)
                     .padding(.trailing, spacing)
-                    .offset(x: navigationDrawerController.isOpen ? offsetWidth : -geometryProxy.size.width)
+                    .offset(x: navigationDrawerState.isOpen ? offsetWidth : -geometryProxy.size.width)
                     Spacer()
                 }
             }
         }
         .gesture(dragGesture)
-        .statusBarHidden(navigationDrawerController.isOpen)
+        .statusBarHidden(navigationDrawerState.isOpen)
     }
 }
 
 struct MenuDrawerView: View {
-    @EnvironmentObject var navigationDrawerController: NavigationDrawerController
+    @EnvironmentObject var navigationDrawerState: NavigationDrawerState
     @EnvironmentObject var splitViewManager: SplitViewManager
     @EnvironmentObject var bottomSheet: GlobalBottomSheet
 
@@ -126,7 +126,7 @@ struct MenuDrawerView: View {
 
             ScrollView {
                 VStack(spacing: 0) {
-                    MailboxesManagementView(isExpanded: $navigationDrawerController.showMailboxes,
+                    MailboxesManagementView(isExpanded: $navigationDrawerState.showMailboxes,
                                             mailboxes: viewModel.mailboxes)
 
                     RoleFoldersListView(
