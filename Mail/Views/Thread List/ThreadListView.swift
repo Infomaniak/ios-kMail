@@ -216,7 +216,7 @@ private struct ThreadListToolbar: ViewModifier {
     @Binding var observeThread: Bool
 
     @EnvironmentObject var splitViewManager: SplitViewManager
-    @EnvironmentObject var navigationDrawerController: NavigationDrawerController
+    @EnvironmentObject var navigationDrawerState: NavigationDrawerState
 
     func body(content: Content) -> some View {
         GeometryReader { reader in
@@ -232,7 +232,7 @@ private struct ThreadListToolbar: ViewModifier {
                         } else {
                             if isCompact {
                                 Button {
-                                    navigationDrawerController.open()
+                                    navigationDrawerState.open()
                                 } label: {
                                     Image(resource: MailResourcesAsset.burger)
                                         .resizable()

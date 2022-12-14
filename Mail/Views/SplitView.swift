@@ -53,7 +53,7 @@ public class SplitViewManager: ObservableObject {
 struct SplitView: View {
     @ObservedObject var mailboxManager: MailboxManager
     @State var splitViewController: UISplitViewController?
-    @StateObject private var navigationDrawerController = NavigationDrawerController()
+    @StateObject private var navigationDrawerController = NavigationDrawerState()
 
     @Environment(\.horizontalSizeClass) var sizeClass
     @Environment(\.verticalSizeClass) var verticalSizeClass
