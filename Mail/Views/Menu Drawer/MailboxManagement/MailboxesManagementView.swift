@@ -24,8 +24,8 @@ import SwiftUI
 
 struct MailboxesManagementView: View {
     @EnvironmentObject var mailboxManager: MailboxManager
+    @EnvironmentObject var navigationDrawerState: NavigationDrawerState
 
-    @Binding var isExpanded: Bool
     @State private var avatarImage = Image(resource: MailResourcesAsset.placeholderAvatar)
     @State private var isShowingManageAccount = false
     @State private var isShowingSwitchAccount = false
@@ -40,7 +40,7 @@ struct MailboxesManagementView: View {
         VStack(alignment: .leading) {
             Button {
                 withAnimation {
-                    isExpanded.toggle()
+                    navigationDrawerState.showMailboxes.toggle()
                 }
             } label: {
                 HStack(spacing: 0) {
@@ -54,14 +54,14 @@ struct MailboxesManagementView: View {
                         .textStyle(.header5Accent)
                         .lineLimit(1)
                     Spacer()
-                    ChevronIcon(style: isExpanded ? .up : .down, color: .primary)
+                    ChevronIcon(style: navigationDrawerState.showMailboxes ? .up : .down, color: .primary)
                 }
                 .padding(.vertical, Constants.menuDrawerVerticalPadding)
                 .padding(.horizontal, Constants.menuDrawerHorizontalPadding)
                 .background(SelectionBackground(isSelected: true, offsetX: 8, leadingPadding: 0, verticalPadding: 0))
             }
 
-            if isExpanded {
+            if navigationDrawerState.showMailboxes {
                 VStack(alignment: .leading, spacing: 4) {
                     ForEach(otherMailboxes) { mailbox in
                         MailboxCell(mailbox: mailbox)
@@ -107,7 +107,7 @@ struct MailboxesManagementView: View {
 
 struct MailboxesManagementView_Previews: PreviewProvider {
     static var previews: some View {
-        MailboxesManagementView(isExpanded: .constant(false), mailboxes: [PreviewHelper.sampleMailbox])
+        MailboxesManagementView(mailboxes: [PreviewHelper.sampleMailbox])
             .environmentObject(PreviewHelper.sampleMailboxManager)
             .previewLayout(.sizeThatFits)
             .accentColor(UserDefaults.shared.accentColor.primary.swiftUiColor)

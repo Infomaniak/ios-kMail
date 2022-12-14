@@ -53,7 +53,7 @@ public class SplitViewManager: ObservableObject {
 struct SplitView: View {
     @ObservedObject var mailboxManager: MailboxManager
     @State var splitViewController: UISplitViewController?
-    @StateObject private var navigationDrawerController = NavigationDrawerController()
+    @StateObject private var navigationDrawerController = NavigationDrawerState()
 
     @Environment(\.horizontalSizeClass) var sizeClass
     @Environment(\.verticalSizeClass) var verticalSizeClass
@@ -86,26 +86,12 @@ struct SplitView: View {
                     }
                     .navigationViewStyle(.stack)
 
-                    Group {
-                        Color.black
-                            .opacity(navigationDrawerController.isOpen ? 0.5 : 0)
-                            .ignoresSafeArea()
-                            .onTapGesture {
-                                navigationDrawerController.close()
-                            }
-
-                        NavigationDrawer(
-                            mailboxManager: mailboxManager,
-                            isCompact: isCompact
-                        )
-                    }
-                    .gesture(navigationDrawerController.dragGesture)
+                    NavigationDrawer(mailboxManager: mailboxManager)
                 }
             } else {
                 NavigationView {
                     MenuDrawerView(
                         mailboxManager: mailboxManager,
-                        showMailboxes: $navigationDrawerController.showMailboxes,
                         isCompact: isCompact
                     )
                     .navigationBarHidden(true)
@@ -123,7 +109,6 @@ struct SplitView: View {
         .environmentObject(navigationDrawerController)
         .defaultAppStorage(.shared)
         .onAppear {
-            navigationDrawerController.window = window
             AppDelegate.orientationLock = .all
         }
         .task {
