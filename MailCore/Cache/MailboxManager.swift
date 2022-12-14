@@ -349,32 +349,10 @@ public class MailboxManager: ObservableObject {
 
     public func delete(threads: [Thread]) async throws {
         _ = try await apiFetcher.delete(mailbox: mailbox, messages: threads.flatMap(\.messages))
-
-        await backgroundRealm.execute { realm in
-            for thread in threads {
-                if let liveThread = thread.fresh(using: realm) {
-                    try? realm.safeWrite {
-                        liveThread.parent?.unreadCount = (liveThread.parent?.unreadCount ?? 0) - liveThread.unseenMessages
-                        realm.delete(liveThread.messages)
-                        realm.delete(liveThread)
-                    }
-                }
-            }
-        }
     }
 
     public func delete(thread: Thread) async throws {
         _ = try await apiFetcher.delete(mailbox: mailbox, messages: Array(thread.messages))
-
-        await backgroundRealm.execute { realm in
-            if let liveThread = thread.fresh(using: realm) {
-                try? realm.safeWrite {
-                    liveThread.parent?.unreadCount = (liveThread.parent?.unreadCount ?? 0) - liveThread.unseenMessages
-                    realm.delete(liveThread.messages)
-                    realm.delete(liveThread)
-                }
-            }
-        }
     }
 
     public func moveOrDelete(threads: [Thread]) async throws {
@@ -965,24 +943,6 @@ public class MailboxManager: ObservableObject {
 
     public func delete(messages: [Message]) async throws {
         _ = try await apiFetcher.delete(mailbox: mailbox, messages: messages)
-
-        await backgroundRealm.execute { realm in
-            for message in messages {
-                if let liveMessage = message.fresh(using: realm) {
-                    let parent = liveMessage.originalParent
-                    try? realm.safeWrite {
-                        realm.delete(liveMessage)
-                        if let parent = parent {
-                            if parent.messages.isEmpty {
-                                realm.delete(parent)
-                            } else {
-                                parent.messagesCount -= 1
-                            }
-                        }
-                    }
-                }
-            }
-        }
     }
 
     public func reportSpam(messages: [Message]) async throws -> UndoRedoAction {
@@ -999,35 +959,11 @@ public class MailboxManager: ObservableObject {
 
     public func star(messages: [Message]) async throws -> MessageActionResult {
         let response = try await apiFetcher.star(mailbox: mailbox, messages: messages)
-
-        await backgroundRealm.execute { realm in
-            try? realm.safeWrite {
-                for message in messages {
-                    if let liveMessage = message.fresh(using: realm) {
-                        liveMessage.flagged = true
-                        liveMessage.originalParent?.updateFlagged()
-                    }
-                }
-            }
-        }
-
         return response
     }
 
     public func unstar(messages: [Message]) async throws -> MessageActionResult {
         let response = try await apiFetcher.unstar(mailbox: mailbox, messages: messages)
-
-        await backgroundRealm.execute { realm in
-            try? realm.safeWrite {
-                for message in messages {
-                    if let liveMessage = message.fresh(using: realm) {
-                        liveMessage.flagged = false
-                        liveMessage.originalParent?.updateFlagged()
-                    }
-                }
-            }
-        }
-
         return response
     }
 
