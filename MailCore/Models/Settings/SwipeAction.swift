@@ -73,7 +73,7 @@ public enum SwipeAction: String, CaseIterable, SettingsOptionEnum {
     case readUnread
     case move
     case favorite
-    case report
+    case postPone
     case spam
     case readAndArchive
     case quickAction
@@ -91,7 +91,7 @@ public enum SwipeAction: String, CaseIterable, SettingsOptionEnum {
             return MailResourcesStrings.Localizable.actionMove
         case .favorite:
             return MailResourcesStrings.Localizable.favoritesFolder
-        case .report:
+        case .postPone:
             return MailResourcesStrings.Localizable.actionPostpone
         case .spam:
             return MailResourcesStrings.Localizable.actionSpam
@@ -106,9 +106,9 @@ public enum SwipeAction: String, CaseIterable, SettingsOptionEnum {
 
     public var isDestructive: Bool {
         switch self {
-        case .delete, .archive, .report, .spam, .readAndArchive:
+        case .delete, .archive, .spam, .readAndArchive:
             return true
-        case .move, .readUnread, .favorite, .quickAction, .none:
+        case .move, .readUnread, .postPone, .favorite, .quickAction, .none:
             return false
         }
     }
@@ -130,7 +130,7 @@ public enum SwipeAction: String, CaseIterable, SettingsOptionEnum {
             resource = MailResourcesAsset.emailActionSend
         case .favorite:
             resource = MailResourcesAsset.star
-        case .report:
+        case .postPone:
             resource = MailResourcesAsset.waitingMessage
         case .spam:
             resource = MailResourcesAsset.spam
@@ -162,7 +162,7 @@ public enum SwipeAction: String, CaseIterable, SettingsOptionEnum {
             resource = MailResourcesAsset.greenActionColor
         case .favorite:
             resource = MailResourcesAsset.yellowActionColor
-        case .report:
+        case .postPone:
             resource = MailResourcesAsset.lightBlueActionColor
         case .spam:
             resource = MailResourcesAsset.warningColor

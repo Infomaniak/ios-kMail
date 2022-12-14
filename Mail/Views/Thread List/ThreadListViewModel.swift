@@ -258,7 +258,7 @@ class DateSection: Identifiable {
             }))
         case .favorite:
             try await mailboxManager.toggleStar(thread: thread)
-        case .report:
+        case .postPone:
             // TODO: Report action
             showWorkInProgressSnackBar()
         case .spam:
