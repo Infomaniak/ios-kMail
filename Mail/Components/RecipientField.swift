@@ -44,8 +44,8 @@ struct RecipientField: View {
     @Binding var recipients: [Recipient]
     @Binding var autocompletion: [Recipient]
     @Binding var addRecipientHandler: ((Recipient) -> Void)?
-    @FocusState var focusedField: RecipientFieldType?
-    let type: RecipientFieldType
+    @FocusState var focusedField: ComposeViewFieldType?
+    let type: ComposeViewFieldType
 
     @State private var currentText = ""
 

@@ -24,7 +24,7 @@ import PhotosUI
 import RealmSwift
 import SwiftUI
 
-enum RecipientFieldType: Hashable {
+enum ComposeViewFieldType: Hashable {
     case to, cc, bcc
 
     var title: String {
@@ -53,7 +53,7 @@ struct ComposeMessageView: View {
     @State private var originalBody: String
     @State private var editor = RichTextEditorModel()
     @State private var showCc = false
-    @FocusState private var focusedRecipientField: RecipientFieldType?
+    @FocusState private var focusedField: ComposeViewFieldType?
     @State private var addRecipientHandler: ((Recipient) -> Void)?
     @State private var autocompletion: [Recipient] = []
     @State private var isShowingCamera = false
@@ -69,7 +69,7 @@ struct ComposeMessageView: View {
     private let sendDisabled: Bool
 
     private var shouldDisplayAutocompletion: Bool {
-        return !autocompletion.isEmpty && focusedRecipientField != nil
+        return !autocompletion.isEmpty && focusedField != nil
     }
 
     private init(mailboxManager: MailboxManager, draft: UnmanagedDraft) {
@@ -261,20 +261,21 @@ struct ComposeMessageView: View {
     }
 
     @ViewBuilder
-    private func recipientCell(type: RecipientFieldType) -> some View {
-        let shouldDisplayField = !shouldDisplayAutocompletion || focusedRecipientField == type
+    private func recipientCell(type: ComposeViewFieldType) -> some View {
+        let shouldDisplayField = !shouldDisplayAutocompletion || focusedField == type
         if shouldDisplayField {
-            NewMessageCell(title: type.title, showCc: type == .to ? $showCc : nil) {
+            NewMessageCell(title: type.title,
+                           showCc: type == .to ? $showCc : nil) {
                 RecipientField(recipients: binding(for: type),
                                autocompletion: $autocompletion,
                                addRecipientHandler: $addRecipientHandler,
-                               focusedField: _focusedRecipientField,
+                               focusedField: _focusedField,
                                type: type)
             }
         }
     }
 
-    private func binding(for type: RecipientFieldType) -> Binding<[Recipient]> {
+    private func binding(for type: ComposeViewFieldType) -> Binding<[Recipient]> {
         let binding: Binding<[Recipient]>
         switch type {
         case .to:
