@@ -327,31 +327,13 @@ public class MailboxManager: ObservableObject {
             messages: threads.flatMap(\.messages),
             destinationId: folder._id
         )
-
-        let redoBlock = await backgroundRealm.execute { realm in
-            if let liveFolder = folder.fresh(using: realm) {
-                let liveThreads = threads.compactMap { $0.fresh(using: realm) }
-                return try? self.moveLocally(threads: liveThreads, to: liveFolder, using: realm)
-            } else {
-                return nil
-            }
-        }
-
+        let redoBlock = {}
         return UndoRedoAction(undo: response, redo: redoBlock)
     }
 
     public func move(thread: Thread, to folder: Folder) async throws -> UndoRedoAction {
         let response = try await apiFetcher.move(mailbox: mailbox, messages: Array(thread.messages), destinationId: folder._id)
-
-        let redoBlock = await backgroundRealm.execute { realm in
-            if let liveFolder = folder.fresh(using: realm),
-               let liveThread = thread.fresh(using: realm) {
-                return try? self.moveLocally(threads: [liveThread], to: liveFolder, using: realm)
-            } else {
-                return nil
-            }
-        }
-
+        let redoBlock = {}
         return UndoRedoAction(undo: response, redo: redoBlock)
     }
 
@@ -449,57 +431,25 @@ public class MailboxManager: ObservableObject {
 
     public func reportSpam(threads: [Thread]) async throws -> UndoRedoAction {
         let response = try await apiFetcher.reportSpam(mailbox: mailbox, messages: threads.flatMap(\.messages))
-        let redoBlock = await backgroundRealm.execute { realm in
-            if let spamFolder = self.getFolder(with: .spam, using: realm) {
-                let liveThreads = threads.compactMap { $0.fresh(using: realm) }
-                return try? self.moveLocally(threads: liveThreads, to: spamFolder, using: realm)
-            } else {
-                return nil
-            }
-        }
-
+        let redoBlock = {}
         return UndoRedoAction(undo: response, redo: redoBlock)
     }
 
     public func reportSpam(thread: Thread) async throws -> UndoRedoAction {
         let response = try await apiFetcher.reportSpam(mailbox: mailbox, messages: Array(thread.messages))
-        let redoBlock = await backgroundRealm.execute { realm in
-            if let spamFolder = self.getFolder(with: .spam, using: realm),
-               let liveThread = thread.fresh(using: realm) {
-                return try? self.moveLocally(threads: [liveThread], to: spamFolder, using: realm)
-            } else {
-                return nil
-            }
-        }
-
+        let redoBlock = {}
         return UndoRedoAction(undo: response, redo: redoBlock)
     }
 
     public func nonSpam(threads: [Thread]) async throws -> UndoRedoAction {
         let response = try await apiFetcher.nonSpam(mailbox: mailbox, messages: threads.flatMap(\.messages))
-        let redoBlock = await backgroundRealm.execute { realm in
-            if let inboxFolder = self.getFolder(with: .inbox, using: realm) {
-                let liveThreads = threads.compactMap { $0.fresh(using: realm) }
-                return try? self.moveLocally(threads: liveThreads, to: inboxFolder, using: realm)
-            } else {
-                return nil
-            }
-        }
-
+        let redoBlock = {}
         return UndoRedoAction(undo: response, redo: redoBlock)
     }
 
     public func nonSpam(thread: Thread) async throws -> UndoRedoAction {
         let response = try await apiFetcher.nonSpam(mailbox: mailbox, messages: Array(thread.messages))
-        let redoBlock = await backgroundRealm.execute { realm in
-            if let inboxFolder = self.getFolder(with: .inbox, using: realm),
-               let liveThread = thread.fresh(using: realm) {
-                return try? self.moveLocally(threads: [liveThread], to: inboxFolder, using: realm)
-            } else {
-                return nil
-            }
-        }
-
+        let redoBlock = {}
         return UndoRedoAction(undo: response, redo: redoBlock)
     }
 
@@ -1004,16 +954,7 @@ public class MailboxManager: ObservableObject {
 
     public func move(messages: [Message], to folder: Folder) async throws -> UndoRedoAction {
         let response = try await apiFetcher.move(mailbox: mailbox, messages: messages, destinationId: folder._id)
-
-        let redoBlock = await backgroundRealm.execute { realm in
-            if let folder = folder.fresh(using: realm) {
-                let messages = messages.compactMap { $0.fresh(using: realm) }
-                return try? self.moveLocally(messages: messages, to: folder, using: realm)
-            } else {
-                return nil
-            }
-        }
-
+        let redoBlock = {}
         return UndoRedoAction(undo: response, redo: redoBlock)
     }
 
@@ -1046,29 +987,13 @@ public class MailboxManager: ObservableObject {
 
     public func reportSpam(messages: [Message]) async throws -> UndoRedoAction {
         let response = try await apiFetcher.reportSpam(mailbox: mailbox, messages: messages)
-
-        let redoBlock = await backgroundRealm.execute { realm in
-            if let spamFolder = self.getFolder(with: .spam, using: realm) {
-                return try? self.moveLocally(messages: messages, to: spamFolder, using: realm)
-            } else {
-                return nil
-            }
-        }
-
+        let redoBlock = {}
         return UndoRedoAction(undo: response, redo: redoBlock)
     }
 
     public func nonSpam(messages: [Message]) async throws -> UndoRedoAction {
         let response = try await apiFetcher.nonSpam(mailbox: mailbox, messages: messages)
-
-        let redoBlock = await backgroundRealm.execute { realm in
-            if let inboxFolder = self.getFolder(with: .inbox, using: realm) {
-                return try? self.moveLocally(messages: messages, to: inboxFolder, using: realm)
-            } else {
-                return nil
-            }
-        }
-
+        let redoBlock = {}
         return UndoRedoAction(undo: response, redo: redoBlock)
     }
 
