@@ -455,41 +455,6 @@ public class MailboxManager: ObservableObject {
         }
     }
 
-    @discardableResult
-    private func moveLocally(threads: [Thread], to folder: Folder, using realm: Realm) throws -> UndoRedoAction.RedoBlock {
-        let previousFolders = threads.compactMap { $0.parent?.freeze() }
-
-        try realm.safeWrite {
-            for thread in threads {
-                thread.parent?.unreadCount = (thread.parent?.unreadCount ?? 0) - thread.unseenMessages
-                thread.parent?.threads.remove(thread)
-                folder.threads.insert(thread)
-                folder.unreadCount = (folder.unreadCount ?? 0) + thread.unseenMessages
-                for message in thread.messages {
-                    message.folder = folder.name
-                    message.folderId = folder._id
-                }
-            }
-        }
-
-        return { [weak self] in
-            // Try to do only one API call if possible
-            // FIXME: This is only a temporary solution
-            if previousFolders.allSatisfy({ $0._id == previousFolders.first?._id }),
-               let previousFolder = previousFolders.first {
-                _ = try await self?.threads(folder: previousFolder)
-            } else {
-                await withThrowingTaskGroup(of: Void.self) { group in
-                    for previousFolder in previousFolders {
-                        group.addTask { [weak self] in
-                            _ = try await self?.threads(folder: previousFolder)
-                        }
-                    }
-                }
-            }
-        }
-    }
-
     // MARK: - Search
 
     public func initSearchFolder() -> Folder {
@@ -967,48 +932,6 @@ public class MailboxManager: ObservableObject {
         return response
     }
 
-    private func moveLocally(messages: [Message], to folder: Folder, using realm: Realm) throws -> UndoRedoAction.RedoBlock {
-        // Keep a dictionary of MessageId -> FolderId in case we want to restore them
-        let previousFolders = messages.compactMap { realm.object(ofType: Folder.self, forPrimaryKey: $0.folderId)?.freeze() }
-
-        try realm.safeWrite {
-            for message in messages {
-                if let liveMessage = message.fresh(using: realm) {
-                    if let thread = liveMessage.originalParent {
-                        thread.updateUnseenMessages()
-                        if let parentFolder = thread.parent {
-                            parentFolder.incrementUnreadCount(by: -1)
-                        }
-                    }
-                    liveMessage.folder = folder.name
-                    liveMessage.folderId = folder._id
-                }
-            }
-            let liveFolder = folder.fresh(using: realm)
-            liveFolder?.unreadCount = (liveFolder?.unreadCount ?? 0) + messages.filter { !$0.seen }.count
-            if messages.count == 1, let thread = messages.first?.fresh(using: realm)?.originalParent {
-                thread.parent?.threads.remove(thread)
-            }
-        }
-
-        return { [weak self] in
-            // Try to do only one API call if possible
-            // FIXME: This is only a temporary solution
-            if previousFolders.allSatisfy({ $0._id == previousFolders.first?._id }),
-               let previousFolder = previousFolders.first {
-                _ = try await self?.threads(folder: previousFolder)
-            } else {
-                await withThrowingTaskGroup(of: Void.self) { group in
-                    for previousFolder in previousFolders {
-                        group.addTask { [weak self] in
-                            _ = try await self?.threads(folder: previousFolder)
-                        }
-                    }
-                }
-            }
-        }
-    }
-
     // MARK: - Draft
 
     public func cleanDrafts() async {
@@ -1128,28 +1051,6 @@ public class MailboxManager: ObservableObject {
                 }
             } else {
                 print("No draft with localUuid \(draft.localUUID)")
-            }
-        }
-    }
-
-    public func deleteDraft(from thread: Thread) async throws {
-        guard let message = thread.messages.first else { return }
-
-        _ = try await apiFetcher.delete(mailbox: mailbox, messages: [message])
-
-        await backgroundRealm.execute { realm in
-            let draft = self.draft(localUuid: thread.uid, using: realm)
-
-            try? realm.safeWrite {
-                if let draft = draft {
-                    realm.delete(draft)
-                }
-                if let message = message.fresh(using: realm) {
-                    realm.delete(message)
-                }
-                if let thread = thread.fresh(using: realm) {
-                    realm.delete(thread)
-                }
             }
         }
     }
