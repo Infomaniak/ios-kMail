@@ -128,8 +128,8 @@ struct ThreadCell: View {
                 .textStyle(.header5)
                 .lineLimit(1)
 
-            if thread.uniqueMessagesCount > 1 {
-                Text("\(thread.uniqueMessagesCount)")
+            if thread.messages.count > 1 {
+                Text("\(thread.messages.count)")
                     .textStyle(.calloutSecondary)
                     .padding(.horizontal, 4)
                     .lineLimit(1)

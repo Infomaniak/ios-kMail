@@ -348,7 +348,6 @@ public class Message: Object, Decodable, Identifiable {
         return Thread(
             uid: "\(folderId)_\(uid)",
             messagesCount: 1,
-            uniqueMessagesCount: 1,
             deletedMessagesCount: 1,
             messages: [self],
             unseenMessages: seen ? 0 : 1,

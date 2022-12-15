@@ -34,7 +34,6 @@ public struct ThreadResult: Decodable {
 public class Thread: Object, Decodable, Identifiable {
     @Persisted(primaryKey: true) public var uid: String
     @Persisted public var messagesCount: Int
-    @Persisted public var uniqueMessagesCount: Int
     @Persisted public var deletedMessagesCount: Int
     @Persisted public var messages: List<Message>
     @Persisted public var unseenMessages: Int
@@ -57,6 +56,7 @@ public class Thread: Object, Decodable, Identifiable {
     @Persisted public var messagePreviewed: Message?
     @Persisted public var isDraft = false
 
+    @Persisted public var duplicates = List<Message>()
     @Persisted public var messageIds: MutableSet<String>
     @Persisted public var folderId: String
 
@@ -108,7 +108,6 @@ public class Thread: Object, Decodable, Identifiable {
 
     public func recompute() {
         messageIds = messages.flatMap { $0.linkedUids }.toRealmSet()
-        uniqueMessagesCount = messages.count // Fix unique : use duplicates
         updateUnseenMessages()
         from = messages.flatMap { $0.from.detached() }.toRealmList()
         date = messages.last?.date ?? date
@@ -128,7 +127,6 @@ public class Thread: Object, Decodable, Identifiable {
     private enum CodingKeys: String, CodingKey {
         case uid
         case messagesCount
-        case uniqueMessagesCount
         case deletedMessagesCount
         case messages
         case unseenMessages
@@ -150,7 +148,6 @@ public class Thread: Object, Decodable, Identifiable {
     public convenience init(
         uid: String,
         messagesCount: Int,
-        uniqueMessagesCount: Int,
         deletedMessagesCount: Int,
         messages: [Message],
         unseenMessages: Int,
@@ -173,7 +170,6 @@ public class Thread: Object, Decodable, Identifiable {
 
         self.uid = uid
         self.messagesCount = messagesCount
-        self.uniqueMessagesCount = uniqueMessagesCount
         self.deletedMessagesCount = deletedMessagesCount
         self.messages = messages.toRealmList()
         self.unseenMessages = unseenMessages
@@ -198,7 +194,6 @@ public class Thread: Object, Decodable, Identifiable {
 
         uid = draft.localUUID
         messagesCount = 1
-        uniqueMessagesCount = 1
         deletedMessagesCount = 0
         messages = [Message(draft: draft)].toRealmList()
         unseenMessages = 0
