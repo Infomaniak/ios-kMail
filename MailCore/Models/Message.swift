@@ -78,7 +78,7 @@ public enum MessageDKIM: String, Codable, PersistableEnum {
 
 public class Message: Object, Decodable, Identifiable {
     @Persisted(primaryKey: true) public var uid = ""
-    @Persisted public var msgId: String?
+    @Persisted public var messageId: String?
     @Persisted public var subject: String?
     @Persisted public var priority: MessagePriority
     @Persisted public var date: Date
@@ -96,7 +96,6 @@ public class Message: Object, Decodable, Identifiable {
     @Persisted public var downloadResource: String
     @Persisted public var draftResource: String?
     @Persisted public var stUuid: String?
-    // public var duplicates: [] // Will be needed to filter duplicates
     @Persisted public var folderId: String
     @Persisted public var folder: String
     @Persisted public var references: String?
@@ -212,7 +211,7 @@ public class Message: Object, Decodable, Identifiable {
         let values = try decoder.container(keyedBy: CodingKeys.self)
         uid = try values.decode(String.self, forKey: .uid)
         if let msgId = try? values.decode(String.self, forKey: .msgId) {
-            self.msgId = msgId
+            self.messageId = msgId
             linkedUids = [msgId].toRealmSet()
         }
         subject = try values.decodeIfPresent(String.self, forKey: .subject)
@@ -289,7 +288,7 @@ public class Message: Object, Decodable, Identifiable {
         self.init()
 
         self.uid = uid
-        self.msgId = msgId
+        self.messageId = msgId
         self.subject = subject
         self.priority = priority
         self.date = date

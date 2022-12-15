@@ -301,7 +301,7 @@ public struct UnmanagedDraft: Equatable, Encodable, AbstractDraft {
                               quote: quote,
                               to: to,
                               cc: cc,
-                              inReplyTo: message.msgId,
+                              inReplyTo: message.messageId,
                               inReplyToUid: mode.isReply ? message.uid : nil,
                               forwardedUid: mode == .forward([]) ? message.uid : nil,
                               attachments: attachments)

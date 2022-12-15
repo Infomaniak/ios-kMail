@@ -122,6 +122,7 @@ public class Thread: Object, Decodable, Identifiable {
         messages = messages.sorted {
             $0.date.compare($1.date) == .orderedAscending
         }.toRealmList()
+        messagePreviewed = messages.last { $0.folderId == folderId }
     }
 
     func addMessageWithConditions(newMessage: Message) {
@@ -143,7 +144,7 @@ public class Thread: Object, Decodable, Identifiable {
         }
 
         if shouldAddMessage {
-            if let twinMessage = messages.first(where: { $0.msgId == newMessage.msgId }) {
+            if let twinMessage = messages.first(where: { $0.messageId == newMessage.messageId }) {
                 addDuplicatedMessage(twinMessage: twinMessage, newMessage: newMessage)
             } else {
                 messages.append(newMessage)
@@ -156,7 +157,7 @@ public class Thread: Object, Decodable, Identifiable {
         if isTwinTheRealMessage {
             duplicates.append(newMessage)
         } else {
-            if let index = messages.index(matching: { $0.msgId == twinMessage.msgId }) {
+            if let index = messages.index(matching: { $0.messageId == twinMessage.messageId }) {
                 messages.remove(at: index)
             }
             duplicates.append(twinMessage)
