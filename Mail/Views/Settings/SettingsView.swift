@@ -31,29 +31,27 @@ struct SettingsView: View {
     var body: some View {
         List {
             ForEach(viewModel.sections) { section in
-                if section != .emailAddresses {
-                    Section {
-                        // Header & separator
-                        if section.name != nil || section != viewModel.sections.first {
-                            VStack(alignment: .leading, spacing: 24) {
-                                if section != viewModel.sections.first {
-                                    IKDivider()
-                                }
-                                if let title = section.name {
-                                    Text(title)
-                                        .textStyle(.calloutSecondary)
-                                        .padding(.horizontal, 8)
-                                }
+                Section {
+                    // Header & separator
+                    if section.name != nil || section != viewModel.sections.first {
+                        VStack(alignment: .leading, spacing: 24) {
+                            if section != viewModel.sections.first {
+                                IKDivider()
                             }
-                            .listRowSeparator(.hidden)
-                            .listRowInsets(.init(top: 12, leading: 8, bottom: 4, trailing: 8))
+                            if let title = section.name {
+                                Text(title)
+                                    .textStyle(.calloutSecondary)
+                                    .padding(.horizontal, 8)
+                            }
                         }
-
-                        SettingsViewContent(section: section, viewModel: viewModel)
+                        .listRowSeparator(.hidden)
+                        .listRowInsets(.init(top: 12, leading: 8, bottom: 4, trailing: 8))
                     }
-                    .listSectionSeparator(.hidden)
-                    .listRowBackground(MailResourcesAsset.backgroundColor.swiftUiColor)
+
+                    SettingsViewContent(section: section, viewModel: viewModel)
                 }
+                .listSectionSeparator(.hidden)
+                .listRowBackground(MailResourcesAsset.backgroundColor.swiftUiColor)
             }
         }
         .listStyle(.plain)
