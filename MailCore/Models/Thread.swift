@@ -124,6 +124,46 @@ public class Thread: Object, Decodable, Identifiable {
         }.toRealmList()
     }
 
+    func addMessageWithConditions(newMessage: Message) {
+        messageIds.insert(objectsIn: newMessage.linkedUids)
+
+        let folderRole = parent?.role
+
+        // If the Message is deleted, but we are not in the Trash: ignore it, just leave.
+        if folderRole != .trash && newMessage.inTrash { return }
+
+        let shouldAddMessage: Bool
+        switch folderRole {
+        case .draft:
+            shouldAddMessage = newMessage.isDraft
+        case .trash:
+            shouldAddMessage = newMessage.inTrash
+        default:
+            shouldAddMessage = true
+        }
+
+        if shouldAddMessage {
+            if let twinMessage = messages.first(where: { $0.msgId == newMessage.msgId }) {
+                addDuplicatedMessage(twinMessage: twinMessage, newMessage: newMessage)
+            } else {
+                messages.append(newMessage)
+            }
+        }
+    }
+
+    private func addDuplicatedMessage(twinMessage: Message, newMessage: Message) {
+        let isTwinTheRealMessage = twinMessage.folderId == folderId
+        if isTwinTheRealMessage {
+            duplicates.append(newMessage)
+        } else {
+            if let index = messages.index(matching: { $0.msgId == twinMessage.msgId }) {
+                messages.remove(at: index)
+            }
+            duplicates.append(twinMessage)
+            messages.append(newMessage)
+        }
+    }
+
     private enum CodingKeys: String, CodingKey {
         case uid
         case messagesCount

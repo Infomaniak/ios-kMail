@@ -582,7 +582,7 @@ public class MailboxManager: ObservableObject {
                     let newThread = Thread(
                         uid: "offlineThread\(message.uid)",
                         messagesCount: 1,
-                        uniqueMessagesCount: 1,
+//                        uniqueMessagesCount: 1,
                         deletedMessagesCount: 0,
                         messages: [newMessage],
                         unseenMessages: 0,
@@ -721,63 +721,12 @@ public class MailboxManager: ObservableObject {
                 messageUids: newList
             )
 
-            await backgroundRealm.execute { realm in
+            await backgroundRealm.execute { [self] realm in
                 if let folder = folder.fresh(using: realm) {
                     if asThread {
-                        var threadsToUpdate = Set<Thread>()
-                        var unreadCountModififier = 0
-                        try? realm.safeWrite {
-                            for message in messageByUidsResult.messages {
-                                unreadCountModififier += message.seen ? 0 : 1
-                                message.computeReference()
-                                let outFolderThreads = realm.objects(Thread.self)
-                                    .where {
-                                        $0.folderId != folder.id && $0.messageIds
-                                            .containsAny(in: message.linkedUids)
-                                    }
-
-                                let referenceThread: Thread? = outFolderThreads
-                                    .first // Update this in case of Draft ?
-
-                                if let inFolderThread = realm.objects(Thread.self)
-                                    .first(where: {
-                                        $0.folderId == folder.id && $0.messageIds
-                                            .contains { message.linkedUids.contains($0) }
-                                    }) {
-                                    inFolderThread.messages.append(message)
-                                    inFolderThread.messageIds
-                                        .insert(objectsIn: message.linkedUids)
-                                    threadsToUpdate.insert(inFolderThread)
-                                } else if let refThread = referenceThread {
-                                    let thread = message.toThread().detached()
-                                    thread.messageIds.insert(objectsIn: message.linkedUids)
-                                    folder.threads.insert(thread)
-                                    thread.copy(from: refThread)
-                                    threadsToUpdate.insert(thread)
-                                } else {
-                                    let thread = message.toThread().detached()
-                                    thread.messageIds.insert(objectsIn: message.linkedUids)
-                                    folder.threads.insert(thread)
-                                    threadsToUpdate.insert(thread)
-                                }
-
-                                for thread in outFolderThreads {
-                                    if let message = message.fresh(using: realm) {
-                                        thread.messages.append(message)
-                                        thread.messageIds
-                                            .insert(objectsIn: message.linkedUids)
-                                        threadsToUpdate.insert(thread)
-                                    }
-                                }
-
-                                for thread in threadsToUpdate {
-                                    thread.recompute()
-                                }
-                                folder.incrementUnreadCount(by: unreadCountModififier)
-                            }
-                        }
-
+                        createMultiMessagesThreads(messageByUids: messageByUidsResult, folder: folder, using: realm)
                     } else {
+                        // Create single message threads
                         try? realm.safeWrite {
                             let threads = messageByUidsResult.messages.map { $0.toThread().detached() }
                             folder.threads.insert(objectsIn: threads)
@@ -787,6 +736,53 @@ public class MailboxManager: ObservableObject {
             }
 
             offset += pageSize
+        }
+    }
+
+    private func createMultiMessagesThreads(messageByUids: MessageByUidsResult, folder: Folder, using realm: Realm) {
+        var threadsToUpdate = Set<Thread>()
+        try? realm.safeWrite {
+            for message in messageByUids.messages {
+                message.computeReference()
+                let existingThreads = Array(realm.objects(Thread.self)
+                    .where { $0.messageIds.containsAny(in: message.linkedUids) })
+
+                if let newThread = createNewThreadIfRequired(for: message, folder: folder, existingThreads: existingThreads) {
+                    threadsToUpdate.insert(newThread)
+                }
+
+                for thread in existingThreads {
+                    thread.addMessageWithConditions(newMessage: message.fresh(using: realm) ?? message)
+                    threadsToUpdate.insert(thread)
+                }
+            }
+
+            for thread in threadsToUpdate {
+                thread.recompute()
+            }
+        }
+    }
+
+    private func createNewThreadIfRequired(for message: Message, folder: Folder, existingThreads: [Thread]) -> Thread? {
+        guard !existingThreads.contains(where: { $0.folderId == folder.id }) else { return nil }
+
+        let thread = message.toThread().detached()
+        folder.threads.insert(thread)
+
+        if let refThread = existingThreads.first(where: { $0.parent?.role != .draft && $0.parent?.role != .trash }) {
+            addPreviousMessagesTo(newThread: thread, from: refThread)
+        } else {
+            for existingThread in existingThreads {
+                addPreviousMessagesTo(newThread: thread, from: existingThread)
+            }
+        }
+        return thread
+    }
+
+    private func addPreviousMessagesTo(newThread: Thread, from existingThread: Thread) {
+        newThread.messageIds.insert(objectsIn: existingThread.messageIds)
+        for message in existingThread.messages {
+            newThread.addMessageWithConditions(newMessage: message)
         }
     }
 

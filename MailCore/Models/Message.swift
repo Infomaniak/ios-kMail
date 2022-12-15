@@ -345,7 +345,7 @@ public class Message: Object, Decodable, Identifiable {
     }
 
     public func toThread() -> Thread {
-        return Thread(
+        let thread = Thread(
             uid: "\(folderId)_\(uid)",
             messagesCount: 1,
             deletedMessagesCount: 1,
@@ -366,6 +366,8 @@ public class Message: Object, Decodable, Identifiable {
             size: size,
             folderId: folderId
         )
+        thread.messageIds = linkedUids
+        return thread
     }
 }
 
