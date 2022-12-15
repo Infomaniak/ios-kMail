@@ -178,7 +178,6 @@ class MailEditorView: SQTextEditorView {
         _webView.translatesAutoresizingMaskIntoConstraints = false
         _webView.navigationDelegate = self
         _webView.allowsLinkPreview = false
-        _webView.setKeyboardRequiresUserInteraction(false)
         _webView.addInputAccessoryView(toolbar: self.toolbar)
         self.updateToolbarItems(style: .main)
         _webView.scrollView.keyboardDismissMode = .interactive
