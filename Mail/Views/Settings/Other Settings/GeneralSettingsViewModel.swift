@@ -25,7 +25,7 @@ import SwiftUI
 @MainActor class GeneralSettingsViewModel: SettingsViewModel {
     init() {
         super.init(title: MailResourcesStrings.Localizable.settingsTitle)
-        sections = [.emailAddresses, .general, .appearance]
+        sections = [/*.emailAddresses,*/ .general, .appearance]
     }
 
     override func updateSelectedValue() {
