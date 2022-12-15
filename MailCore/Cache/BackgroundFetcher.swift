@@ -32,7 +32,7 @@ public class BackgroundFetcher {
     public func registerBackgroundTask() {
         BGTaskScheduler.shared.register(forTaskWithIdentifier: Constants.backgroundRefreshTaskIdentifier, using: nil) { task in
             self.scheduleAppRefresh()
-            BackgroundFetcher.shared.handleAppRefresh(refreshTask: task as! BGAppRefreshTask)
+            self.handleAppRefresh(refreshTask: task as! BGAppRefreshTask)
         }
     }
 
