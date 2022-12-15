@@ -37,6 +37,7 @@ struct RecipientAutocompletionCell: View {
                         .textStyle(.bodySecondary)
                 }
             }
+            Spacer()
         }
     }
 }

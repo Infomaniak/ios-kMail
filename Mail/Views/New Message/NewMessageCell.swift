@@ -31,15 +31,21 @@ extension VerticalAlignment {
 }
 
 struct NewMessageCell<Content>: View where Content: View {
-    let title: String
+    let type: ComposeViewFieldType
+    let focusedField: FocusState<ComposeViewFieldType?>?
     let showCc: Binding<Bool>?
     let isFirstCell: Bool
     let content: Content
 
     let verticalPadding: CGFloat = 12
 
-    init(title: String, showCc: Binding<Bool>? = nil, isFirstCell: Bool = false, @ViewBuilder _ content: () -> Content) {
-        self.title = title
+    init(type: ComposeViewFieldType,
+         focusedField: FocusState<ComposeViewFieldType?>? = nil,
+         showCc: Binding<Bool>? = nil,
+         isFirstCell: Bool = false,
+         @ViewBuilder _ content: () -> Content) {
+        self.type = type
+        self.focusedField = focusedField
         self.showCc = showCc
         self.isFirstCell = isFirstCell
         self.content = content()
@@ -47,7 +53,7 @@ struct NewMessageCell<Content>: View where Content: View {
 
     var body: some View {
         HStack(alignment: .newMessageCellAlignment) {
-            Text(title)
+            Text(type.title)
                 .textStyle(.bodySecondary)
 
             content
@@ -61,6 +67,9 @@ struct NewMessageCell<Content>: View where Content: View {
         .padding(.horizontal, 16)
         .padding(.top, isFirstCell ? 0 : verticalPadding)
         .padding(.bottom, verticalPadding)
+        .onTapGesture {
+            focusedField?.wrappedValue = type
+        }
 
         IKDivider()
             .padding(.horizontal, 8)
@@ -69,14 +78,15 @@ struct NewMessageCell<Content>: View where Content: View {
 
 struct RecipientCellView_Previews: PreviewProvider {
     static var previews: some View {
-        NewMessageCell(title: "To:", showCc: .constant(false)) {
+        NewMessageCell(type: .to,
+                       showCc: .constant(false)) {
             RecipientField(recipients: .constant([PreviewHelper.sampleRecipient1]),
                            autocompletion: .constant([]),
                            addRecipientHandler: .constant { _ in /* Preview */ },
                            focusedField: .init(),
                            type: .to)
         }
-        NewMessageCell(title: "Subject:") {
+        NewMessageCell(type: .subject) {
             TextField("", text: .constant(""))
         }
     }

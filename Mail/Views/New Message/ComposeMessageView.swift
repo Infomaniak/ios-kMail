@@ -24,17 +24,21 @@ import PhotosUI
 import RealmSwift
 import SwiftUI
 
-enum RecipientFieldType: Hashable {
-    case to, cc, bcc
+enum ComposeViewFieldType: Hashable {
+    case from, to, cc, bcc, subject
 
     var title: String {
         switch self {
+        case .from:
+            return MailResourcesStrings.Localizable.fromTitle
         case .to:
             return MailResourcesStrings.Localizable.toTitle
         case .cc:
             return MailResourcesStrings.Localizable.ccTitle
         case .bcc:
             return MailResourcesStrings.Localizable.bccTitle
+        case .subject:
+            return MailResourcesStrings.Localizable.subjectTitle
         }
     }
 }
@@ -53,7 +57,7 @@ struct ComposeMessageView: View {
     @State private var originalBody: String
     @State private var editor = RichTextEditorModel()
     @State private var showCc = false
-    @FocusState private var focusedRecipientField: RecipientFieldType?
+    @FocusState private var focusedField: ComposeViewFieldType?
     @State private var addRecipientHandler: ((Recipient) -> Void)?
     @State private var autocompletion: [Recipient] = []
     @State private var isShowingCamera = false
@@ -69,7 +73,7 @@ struct ComposeMessageView: View {
     private let sendDisabled: Bool
 
     private var shouldDisplayAutocompletion: Bool {
-        return !autocompletion.isEmpty && focusedRecipientField != nil
+        return !autocompletion.isEmpty && focusedField != nil
     }
 
     private init(mailboxManager: MailboxManager, draft: UnmanagedDraft) {
@@ -124,7 +128,8 @@ struct ComposeMessageView: View {
             ScrollView(.vertical, showsIndicators: true) {
                 VStack(spacing: 0) {
                     if !shouldDisplayAutocompletion {
-                        NewMessageCell(title: MailResourcesStrings.Localizable.fromTitle, isFirstCell: true) {
+                        NewMessageCell(type: .from,
+                                       isFirstCell: true) {
                             Text(mailboxManager.mailbox.email)
                                 .textStyle(.header5Accent)
                         }
@@ -143,8 +148,10 @@ struct ComposeMessageView: View {
                             addRecipientHandler?(recipient)
                         }
                     } else {
-                        NewMessageCell(title: MailResourcesStrings.Localizable.subjectTitle) {
+                        NewMessageCell(type: .subject,
+                                       focusedField: _focusedField) {
                             TextField("", text: $draft.subject)
+                                .focused($focusedField, equals: .subject)
                         }
 
                         if let attachments = draft.attachments?.filter { $0.contentId == nil }, !attachments.isEmpty {
@@ -209,6 +216,9 @@ struct ComposeMessageView: View {
                 await DraftManager.shared.saveDraftLocally(draft: draft, mailboxManager: mailboxManager, action: .save)
             }
         }
+        .onAppear {
+            focusedField = .to
+        }
         .onDisappear {
             // TODO: - Compare message body to original body : guard draft.body != originalBody || !draft.uuid.isEmpty else { return }
 
@@ -261,20 +271,22 @@ struct ComposeMessageView: View {
     }
 
     @ViewBuilder
-    private func recipientCell(type: RecipientFieldType) -> some View {
-        let shouldDisplayField = !shouldDisplayAutocompletion || focusedRecipientField == type
+    private func recipientCell(type: ComposeViewFieldType) -> some View {
+        let shouldDisplayField = !shouldDisplayAutocompletion || focusedField == type
         if shouldDisplayField {
-            NewMessageCell(title: type.title, showCc: type == .to ? $showCc : nil) {
+            NewMessageCell(type: type,
+                           focusedField: _focusedField,
+                           showCc: type == .to ? $showCc : nil) {
                 RecipientField(recipients: binding(for: type),
                                autocompletion: $autocompletion,
                                addRecipientHandler: $addRecipientHandler,
-                               focusedField: _focusedRecipientField,
+                               focusedField: _focusedField,
                                type: type)
             }
         }
     }
 
-    private func binding(for type: RecipientFieldType) -> Binding<[Recipient]> {
+    private func binding(for type: ComposeViewFieldType) -> Binding<[Recipient]> {
         let binding: Binding<[Recipient]>
         switch type {
         case .to:
@@ -283,6 +295,8 @@ struct ComposeMessageView: View {
             binding = $draft.cc
         case .bcc:
             binding = $draft.bcc
+        default:
+            binding = .constant([])
         }
         return binding
     }
