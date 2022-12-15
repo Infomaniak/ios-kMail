@@ -40,9 +40,8 @@ struct SettingsSwipeActionsView: View {
                                 subtitle: viewModel.selectedValues[option]?.title ?? "",
                                 option: option
                             )
+                            .frame(minHeight: 40)
                             .padding(.horizontal, 8)
-                        } else {
-                            EmptyView()
                         }
                     }
 
@@ -61,8 +60,6 @@ struct SettingsSwipeActionsView: View {
                     }
                 }
                 .listSectionSeparator(.hidden)
-                .listRowInsets(.init(top: 8, leading: 8, bottom: 8, trailing: 8))
-                .listRowBackground(MailResourcesAsset.backgroundColor.swiftUiColor)
                 .listRowSeparator(.hidden)
             }
         }

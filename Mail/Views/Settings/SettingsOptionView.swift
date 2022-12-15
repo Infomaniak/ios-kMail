@@ -84,7 +84,6 @@ struct SettingsOptionView<OptionEnum>: View where OptionEnum: CaseIterable, Opti
                         }
                     }
                 }
-                .listRowBackground(MailResourcesAsset.backgroundColor.swiftUiColor)
                 .listRowSeparator(.hidden)
                 .listRowInsets(.init())
             } header: {
