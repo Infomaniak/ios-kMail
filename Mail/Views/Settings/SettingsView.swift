@@ -51,11 +51,9 @@ struct SettingsView: View {
                     SettingsViewContent(section: section, viewModel: viewModel)
                 }
                 .listSectionSeparator(.hidden)
-                .listRowBackground(MailResourcesAsset.backgroundColor.swiftUiColor)
             }
         }
         .listStyle(.plain)
-        .background(MailResourcesAsset.backgroundColor.swiftUiColor)
         .navigationBarTitle(viewModel.title, displayMode: .inline)
         .backButtonDisplayMode(.minimal)
         .onAppear {
@@ -83,8 +81,8 @@ struct SettingsViewContent: View {
                 )
             }
         }
+        .frame(minHeight: 40)
         .listRowSeparator(.hidden)
-        .listRowInsets(.init(top: 12, leading: 24, bottom: 12, trailing: 24))
     }
 }
 
