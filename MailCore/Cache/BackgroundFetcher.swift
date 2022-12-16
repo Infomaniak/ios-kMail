@@ -32,7 +32,7 @@ public class BackgroundFetcher {
     public func registerBackgroundTask() {
         BGTaskScheduler.shared.register(forTaskWithIdentifier: Constants.backgroundRefreshTaskIdentifier, using: nil) { task in
             self.scheduleAppRefresh()
-            BackgroundFetcher.shared.handleAppRefresh(refreshTask: task as! BGAppRefreshTask)
+            self.handleAppRefresh(refreshTask: task as! BGAppRefreshTask)
         }
     }
 
@@ -80,8 +80,8 @@ public class BackgroundFetcher {
         }
 
         let inboxFolderId = inboxFolder.id
-        let lastUnreadDate = mailboxManager.getRealm().objects(Message.self)
-            .where { $0.seen == false && $0.folderId == inboxFolderId }
+        let lastMessageDate = mailboxManager.getRealm().objects(Message.self)
+            .where { $0.folderId == inboxFolderId }
             .sorted(by: \.date, ascending: false)
             .first?.date ?? Date(timeIntervalSince1970: 0)
         try await mailboxManager.threads(folder: inboxFolder)
@@ -90,7 +90,7 @@ public class BackgroundFetcher {
         let newUnreadMessages = realm.objects(Message.self)
             .where {
                 $0.seen == false
-                    && $0.date > lastUnreadDate
+                    && $0.date > lastMessageDate
                     && $0.folderId == inboxFolderId
             }
 
