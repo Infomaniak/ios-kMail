@@ -68,11 +68,6 @@ public class Thread: Object, Decodable, Identifiable {
         return parentLink.first
     }
 
-    public func copy(from thread: Thread) {
-        messages.append(objectsIn: thread.messages)
-        messageIds.insert(objectsIn: thread.messageIds)
-    }
-
     public var formattedFrom: String {
         guard let from = from.last else { return MailResourcesStrings.Localizable.unknownRecipientTitle }
         return from.title
