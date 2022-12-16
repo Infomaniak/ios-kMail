@@ -35,7 +35,7 @@ struct SettingsThreadDensityOptionView: View {
                 .textStyle(.calloutSecondary)
                 .padding(.bottom, 8)
 
-            Picker("Display mode", selection: $selectedValue) {
+            Picker("Display mode", selection: $selectedValue.animation()) {
                 ForEach(ThreadDensity.allCases, id: \.rawValue) { value in
                     Text(value.title)
                         .tag(value)
