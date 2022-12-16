@@ -40,15 +40,13 @@ struct SettingsSwipeActionsView: View {
                                 subtitle: viewModel.selectedValues[option]?.title ?? "",
                                 option: option
                             )
+                            .frame(minHeight: 40)
                             .padding(.horizontal, 8)
-                        } else {
-                            EmptyView()
                         }
                     }
 
                     VStack(alignment: .leading, spacing: 16) {
                         SwipeConfigCell(selectedValues: $viewModel.selectedValues, section: section)
-                            .padding(.horizontal, 8)
                         if section != viewModel.sections.last {
                             IKDivider()
                         }
@@ -61,8 +59,6 @@ struct SettingsSwipeActionsView: View {
                     }
                 }
                 .listSectionSeparator(.hidden)
-                .listRowInsets(.init(top: 8, leading: 8, bottom: 8, trailing: 8))
-                .listRowBackground(MailResourcesAsset.backgroundColor.swiftUiColor)
                 .listRowSeparator(.hidden)
             }
         }
