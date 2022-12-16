@@ -181,7 +181,7 @@ public class ContactManager: ObservableObject {
     }
 
     public func addContact(recipient: Recipient) async throws {
-        guard let addressBook = getMainAddressBook() else { throw MailError.addressBookNotFound }
+        guard let addressBook = getDefaultAddressBook() else { throw MailError.addressBookNotFound }
 
         let contactId = try await apiFetcher.addContact(recipient, to: addressBook)
         let contacts = try await apiFetcher.contacts()
@@ -198,8 +198,8 @@ public class ContactManager: ObservableObject {
         }
     }
 
-    public func getMainAddressBook() -> AddressBook? {
+    public func getDefaultAddressBook() -> AddressBook? {
         let realm = getRealm()
-        return realm.objects(AddressBook.self).where { $0.principalUri.starts(with: "principals") }.first
+        return realm.objects(AddressBook.self).where { $0.isDefault == true }.first
     }
 }
