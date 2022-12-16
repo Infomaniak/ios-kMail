@@ -239,36 +239,25 @@ public class MailboxManager: ObservableObject {
 
         await backgroundRealm.execute { realm in
             let messagesToDelete = realm.objects(Message.self).where { $0.uid.in(uids) }
-            var threadsToCheck = Set<Thread>()
-            var unreadCountModififier = 0
+            var threadsToUpdate = Set<Thread>()
+            var threadsToDelete = Set<Thread>()
 
             for message in messagesToDelete {
-                unreadCountModififier -= message.seen ? 0 : 1
                 for parent in message.parents {
-                    threadsToCheck.insert(parent)
+                    threadsToUpdate.insert(parent)
                 }
             }
 
-            var threadsToDelete = Set<Thread>()
-            var threadsToUpdate = Set<Thread>()
-
             try? realm.safeWrite {
                 realm.delete(messagesToDelete)
-                for thread in threadsToCheck {
+                for thread in threadsToUpdate {
                     if thread.messages.isEmpty {
                         threadsToDelete.insert(thread)
                     } else {
-                        threadsToUpdate.insert(thread)
+                        thread.recompute()
                     }
                 }
                 realm.delete(threadsToDelete)
-                for thread in threadsToUpdate {
-                    thread.recompute()
-                }
-
-                if let folder = folder.fresh(using: realm) {
-                    folder.incrementUnreadCount(by: unreadCountModififier)
-                }
             }
         }
     }
@@ -792,12 +781,7 @@ public class MailboxManager: ObservableObject {
         await backgroundRealm.execute { realm in
             let messagesToDelete = realm.objects(Message.self).where { $0.uid.in(uids) }
             let threadsToDelete = realm.objects(Thread.self).where { $0.uid.in(uids) }
-            if let folder = folder.fresh(using: realm) {
-                let unreadCountModifier = messagesToDelete.map(\.seen).reduce(0) { partialResult, seen in
-                    partialResult - (seen ? 0 : 1)
-                }
-                folder.incrementUnreadCount(by: unreadCountModifier)
-            }
+
             try? realm.safeWrite {
                 realm.delete(messagesToDelete)
                 realm.delete(threadsToDelete)
@@ -809,7 +793,6 @@ public class MailboxManager: ObservableObject {
         await backgroundRealm.execute { realm in
             var threadsToUpdate = Set<Thread>()
             try? realm.safeWrite {
-                var unreadCountModifier = 0
                 for update in updates {
                     let uid = Constants.longUid(from: String(update.shortUid), folderId: folder.id)
                     if let message = realm.object(ofType: Message.self, forPrimaryKey: uid) {
@@ -817,9 +800,6 @@ public class MailboxManager: ObservableObject {
                         message.flagged = update.isFavorite
                         message.forwarded = update.forwarded
                         message.scheduled = update.scheduled
-                        if message.seen != update.seen {
-                            unreadCountModifier += update.seen ? -1 : 1
-                        }
                         message.seen = update.seen
 
                         for parent in message.parents {
@@ -830,10 +810,6 @@ public class MailboxManager: ObservableObject {
 
                 for thread in threadsToUpdate {
                     thread.recompute()
-                }
-
-                if let folder = folder.fresh(using: realm) {
-                    folder.incrementUnreadCount(by: unreadCountModifier)
                 }
             }
         }
