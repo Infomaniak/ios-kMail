@@ -70,7 +70,7 @@ struct ComposeMessageView: View {
 
     @StateObject private var alert = NewMessageAlert()
 
-    private let sendDisabled: Bool
+    @State private var sendDisabled: Bool
 
     private var shouldDisplayAutocompletion: Bool {
         return !autocompletion.isEmpty && focusedField != nil
@@ -83,7 +83,7 @@ struct ComposeMessageView: View {
            let signature = mailboxManager.getSignatureResponse() {
             initialDraft.setSignature(signature)
         }
-        sendDisabled = mailboxManager.getSignatureResponse() == nil
+        _sendDisabled = State(initialValue: mailboxManager.getSignatureResponse() == nil || draft.to.isEmpty)
         initialDraft.delay = UserDefaults.shared.cancelSendDelay.rawValue
         _draft = State(initialValue: initialDraft)
         _showCc = State(initialValue: !initialDraft.bcc.isEmpty || !initialDraft.cc.isEmpty)
@@ -214,6 +214,7 @@ struct ComposeMessageView: View {
         .onChange(of: draft) { _ in
             Task {
                 await DraftManager.shared.saveDraftLocally(draft: draft, mailboxManager: mailboxManager, action: .save)
+                sendDisabled = draft.to.isEmpty
             }
         }
         .onAppear {
