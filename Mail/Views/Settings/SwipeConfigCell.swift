@@ -46,6 +46,10 @@ struct SwipeConfigCell: View {
 
     var body: some View {
         HStack(spacing: 0) {
+            if section != .rightSwipe {
+                SkeletonSwipeCell(isLeading: false)
+            }
+
             ForEach(actions.indices, id: \.self) { i in
                 let action = actions[i]
                 ZStack {
@@ -60,23 +64,26 @@ struct SwipeConfigCell: View {
                             .textStyle(.calloutSecondary)
                     } else {
                         action.swipeTint
-
                         action.swipeIcon?
                             .resizable()
                             .frame(width: 24, height: 24)
                             .foregroundColor(MailResourcesAsset.onAccentColor)
                     }
                 }
-                .frame(width: 74)
+                .frame(width: 80)
             }
 
-            Image(resource: MailResourcesAsset.configSwipe)
-                .resizable()
-                .aspectRatio(contentMode: .fill)
+            if section == .rightSwipe {
+                SkeletonSwipeCell(isLeading: true)
+            }
         }
+        .cornerRadius(15)
         .frame(height: 80)
-        .environment(\.layoutDirection, section == .rightSwipe ? .leftToRight : .rightToLeft)
-        .offset(x: section == .rightSwipe ? 70 : -70, y: 0)
+        .background(
+            MailResourcesAsset.backgroundColor.swiftUiColor
+                .cornerRadius(15)
+                .shadow(radius: 4)
+        )
     }
 }
 
