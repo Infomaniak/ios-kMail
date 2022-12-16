@@ -47,7 +47,6 @@ struct SettingsSwipeActionsView: View {
 
                     VStack(alignment: .leading, spacing: 16) {
                         SwipeConfigCell(selectedValues: $viewModel.selectedValues, section: section)
-                            .padding(.horizontal, 8)
                         if section != viewModel.sections.last {
                             IKDivider()
                         }
