@@ -51,7 +51,7 @@ struct SettingsThreadDensityOptionView: View {
 
             Spacer()
         }
-        .onChange(of: selectedValue) { _ in
+        .onDisappear {
             UserDefaults.shared.threadDensity = selectedValue
         }
         .navigationBarTitle(MailResourcesStrings.Localizable.settingsThreadListDensityTitle, displayMode: .inline)
