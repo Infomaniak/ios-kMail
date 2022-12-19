@@ -323,12 +323,10 @@ public class MailboxManager: ObservableObject {
     }
 
     public func move(threads: [Thread], to folder: Folder) async throws -> UndoRedoAction {
-        let response = try await apiFetcher.move(
-            mailbox: mailbox,
-            messages: threads.flatMap(\.messages),
-            destinationId: folder._id
-        )
-        return UndoRedoAction(undo: response, redo: nil)
+        var messages = threads.flatMap(\.messages).filter { $0.folderId == threads.first?.folderId }
+        messages.append(contentsOf: messages.flatMap(\.duplicates))
+
+        return try await move(messages: messages, to: folder)
     }
 
     public func move(thread: Thread, to folderRole: FolderRole) async throws -> UndoRedoAction {
@@ -337,8 +335,10 @@ public class MailboxManager: ObservableObject {
     }
 
     public func move(thread: Thread, to folder: Folder) async throws -> UndoRedoAction {
-        let response = try await apiFetcher.move(mailbox: mailbox, messages: Array(thread.messages), destinationId: folder._id)
-        return UndoRedoAction(undo: response, redo: nil)
+        var messages = Array(thread.messages.where { $0.folderId == thread.folderId })
+        messages.append(contentsOf: messages.flatMap(\.duplicates))
+
+        return try await move(messages: messages, to: folder)
     }
 
     public func moveOrDelete(threads: [Thread]) async throws {
@@ -891,7 +891,7 @@ public class MailboxManager: ObservableObject {
             messages.append(contentsOf: message.duplicates)
             try await delete(messages: messages)
         } else if message.isDraft {
-            try await deleteDraft(from: message)
+            try await deleteDraft(from: message) // Keep ?
         } else {
             var messages = [message.freezeIfNeeded()]
             messages.append(contentsOf: message.duplicates)

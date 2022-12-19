@@ -289,19 +289,15 @@ enum ActionsTarget: Equatable {
         let snackBarMessage: String
         switch target {
         case let .threads(threads):
-            guard let parentFolderId = threads.first?.parent?.id else { return }
-            let messagesToMove = threads.flatMap { thread in
-                thread.messages.where { $0.folderId == parentFolderId }
-            }
-            undoRedoAction = try await mailboxManager.move(messages: messagesToMove, to: folder)
+            undoRedoAction = try await mailboxManager.move(threads: threads, to: folder)
             snackBarMessage = MailResourcesStrings.Localizable.snackbarThreadsMoved(folder.localizedName)
         case let .thread(thread):
-            guard let parentFolderId = thread.parent?.id else { return }
-            let messagesToMove = Array(thread.messages.where { $0.folderId == parentFolderId })
-            undoRedoAction = try await mailboxManager.move(messages: messagesToMove, to: folder)
+            undoRedoAction = try await mailboxManager.move(thread: thread, to: folder)
             snackBarMessage = MailResourcesStrings.Localizable.snackbarThreadMoved(folder.localizedName)
         case let .message(message):
-            undoRedoAction = try await mailboxManager.move(messages: [message.freezeIfNeeded()], to: folder)
+            var messages = [message.freezeIfNeeded()]
+            messages.append(contentsOf: message.duplicates)
+            undoRedoAction = try await mailboxManager.move(messages: messages, to: folder)
             snackBarMessage = MailResourcesStrings.Localizable.snackbarMessageMoved(folder.localizedName)
         }
 
