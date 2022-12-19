@@ -401,39 +401,39 @@ public class MailboxManager: ObservableObject {
     }
 
     public func reportSpam(threads: [Thread]) async throws -> UndoRedoAction {
-        let messages = threads.flatMap { thread in
+        var messages = threads.flatMap { thread in
             thread.messages.where { message in
                 message.scheduled == false
-            }.filter { message in
-                !message.from.contains { $0.email == self.mailbox.email }
             }
-        }
-        let response = try await apiFetcher.reportSpam(mailbox: mailbox, messages: messages)
-        return UndoRedoAction(undo: response, redo: nil)
-    }
-
-    public func reportSpam(thread: Thread) async throws -> UndoRedoAction {
-        let messages = thread.messages.where { message in
-            message.scheduled == false
         }.filter { message in
             !message.from.contains { $0.email == self.mailbox.email }
         }
-        let response = try await apiFetcher.reportSpam(mailbox: mailbox, messages: Array(messages))
-        return UndoRedoAction(undo: response, redo: nil)
+        messages.append(contentsOf: messages.flatMap(\.duplicates))
+        return try await reportSpam(messages: messages)
+    }
+
+    public func reportSpam(thread: Thread) async throws -> UndoRedoAction {
+        var messages = Array(thread.messages.where { message in
+            message.scheduled == false
+        }).filter { message in
+            !message.from.contains { $0.email == self.mailbox.email }
+        }
+        messages.append(contentsOf: messages.flatMap(\.duplicates))
+        return try await reportSpam(messages: messages)
     }
 
     public func nonSpam(threads: [Thread]) async throws -> UndoRedoAction {
-        let messages = threads.flatMap { thread in
+        var messages = threads.flatMap { thread in
             thread.messages.where { $0.scheduled == false }
         }
-        let response = try await apiFetcher.nonSpam(mailbox: mailbox, messages: Array(messages))
-        return UndoRedoAction(undo: response, redo: nil)
+        messages.append(contentsOf: messages.flatMap(\.duplicates))
+        return try await nonSpam(messages: messages)
     }
 
     public func nonSpam(thread: Thread) async throws -> UndoRedoAction {
-        let messages = thread.messages.where { $0.scheduled == false }
-        let response = try await apiFetcher.nonSpam(mailbox: mailbox, messages: Array(messages))
-        return UndoRedoAction(undo: response, redo: nil)
+        var messages = Array(thread.messages.where { $0.scheduled == false })
+        messages.append(contentsOf: messages.flatMap(\.duplicates))
+        return try await nonSpam(messages: messages)
     }
 
     public func toggleStar(threads: [Thread]) async throws {
