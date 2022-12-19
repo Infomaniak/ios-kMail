@@ -20,28 +20,33 @@ import MailResources
 import SwiftUI
 
 struct Slide: Identifiable {
-    var id: Int
-    var backgroundImage: Image
-    var title: String
-    var description: String
+    let id: Int
+    let backgroundImage: Image
+    let lottieFile: String
+    let title: String
+    let description: String
 }
 
 @MainActor class OnboardingViewModel: ObservableObject {
     let slides = [
         Slide(id: 1,
               backgroundImage: Image(resource: MailResourcesAsset.onboardingBackground1),
+              lottieFile: "illu_1",
               title: MailResourcesStrings.Localizable.onBoardingTitle1,
               description: ""),
         Slide(id: 2,
               backgroundImage: Image(resource: MailResourcesAsset.onboardingBackground2),
+              lottieFile: "illu_2",
               title: MailResourcesStrings.Localizable.onBoardingTitle2,
               description: MailResourcesStrings.Localizable.onBoardingDescription2),
         Slide(id: 3,
               backgroundImage: Image(resource: MailResourcesAsset.onboardingBackground3),
+              lottieFile: "illu_3",
               title: MailResourcesStrings.Localizable.onBoardingTitle3,
               description: MailResourcesStrings.Localizable.onBoardingDescription3),
         Slide(id: 4,
               backgroundImage: Image(resource: MailResourcesAsset.onboardingBackground4),
+              lottieFile: "illu_4",
               title: MailResourcesStrings.Localizable.onBoardingTitle4,
               description: MailResourcesStrings.Localizable.onBoardingDescription4)
     ]

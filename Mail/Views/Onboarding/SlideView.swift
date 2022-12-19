@@ -29,8 +29,8 @@ struct SlideView: View {
     @Environment(\.window) private var window
     @Environment(\.colorScheme) private var colorScheme
 
-    @State var segmentedControl: UISegmentedControl?
-    @State var imageSize: CGSize = .zero
+    @State private var segmentedControl: UISegmentedControl?
+    @State private var imageSize: CGSize = .zero
 
     var body: some View {
         GeometryReader { proxy in
@@ -46,10 +46,8 @@ struct SlideView: View {
                 VStack(spacing: 0) {
                     Spacer(minLength: Constants.onboardingLogoHeight + Constants.onboardingVerticalPadding)
 
-                    if proxy.size.height > 500, let illustrationImage = illustrationImage(for: slide) {
-                        illustrationImage
-                            .resizable()
-                            .scaledToFit()
+                    if proxy.size.height > 500 {
+                        LottieView(filename: slide.lottieFile)
                             .frame(maxWidth: 400, maxHeight: 400)
                             .aspectRatio(1, contentMode: .fit)
                         Spacer()
@@ -93,27 +91,6 @@ struct SlideView: View {
         }
     }
 
-    private func illustrationImage(for slide: Slide) -> Image? {
-        let resource: MailResourcesImages?
-        switch slide.id {
-        case 1:
-            resource = accentColor.onboardingIllu1
-        case 2:
-            resource = accentColor.onboardingIllu2
-        case 3:
-            resource = accentColor.onboardingIllu3
-        case 4:
-            resource = accentColor.onboardingIllu4
-        default:
-            resource = nil
-        }
-
-        if let resource = resource {
-            return Image(resource: resource)
-        }
-        return nil
-    }
-
     private func setSegmentedControlStyle() {
         segmentedControl?.selectedSegmentTintColor = .tintColor
         segmentedControl?.setTitleTextAttributes([.foregroundColor: MailResourcesAsset.onAccentColor.color], for: .selected)
@@ -127,6 +104,7 @@ struct SlideView_Previews: PreviewProvider {
     static var previews: some View {
         SlideView(slide: Slide(id: 1,
                                backgroundImage: Image(resource: MailResourcesAsset.onboardingBackground1),
+                               lottieFile: "illu_1",
                                title: "Title",
                                description: "Description"))
     }
