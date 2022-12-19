@@ -218,6 +218,17 @@ public class MailboxManager: ObservableObject {
         return folder
     }
 
+    private func refreshFolder(from messages: [Message]) async throws {
+        let realm = getRealm()
+
+        let foldersId = messages.flatMap(\.folderId)
+        for id in foldersId {
+            if let impactedFolder = realm.object(ofType: Folder.self, forPrimaryKey: id) {
+                try await threads(folder: impactedFolder)
+            }
+        }
+    }
+
     // MARK: - Thread
 
     public func threads(folder: Folder) async throws {
@@ -294,13 +305,13 @@ public class MailboxManager: ObservableObject {
         if threads.contains(where: \.hasUnseenMessages) {
             var messages = threads.flatMap(\.messages)
             messages.append(contentsOf: messages.flatMap(\.duplicates))
-            _ = try await apiFetcher.markAsSeen(mailbox: mailbox, messages: messages)
+            try await markAsSeen(messages: messages, seen: true)
         } else {
             var messages = threads.compactMap { thread in
                 thread.messages.last { $0.isDraft == false }
             }
             messages.append(contentsOf: messages.flatMap(\.duplicates))
-            _ = try await apiFetcher.markAsUnseen(mailbox: mailbox, messages: messages)
+            try await markAsSeen(messages: messages, seen: false)
         }
     }
 
@@ -308,12 +319,12 @@ public class MailboxManager: ObservableObject {
         if thread.hasUnseenMessages {
             var messages = Array(thread.messages)
             messages.append(contentsOf: messages.flatMap(\.duplicates))
-            _ = try await apiFetcher.markAsSeen(mailbox: mailbox, messages: messages)
+            try await markAsSeen(messages: messages, seen: true)
         } else {
             guard let lastMessage = thread.messages.last(where: { $0.isDraft == false }) else { return }
             var messages = [lastMessage]
             messages.append(contentsOf: lastMessage.duplicates)
-            _ = try await apiFetcher.markAsUnseen(mailbox: mailbox, messages: messages)
+            try await markAsSeen(messages: messages, seen: false)
         }
     }
 
@@ -345,7 +356,7 @@ public class MailboxManager: ObservableObject {
         if !threads.compactMap(\.parent).contains(where: { $0.role != .trash || $0.role != .draft || $0.role != .spam }) {
             var messages = threads.flatMap(\.messages)
             messages.append(contentsOf: messages.flatMap(\.duplicates))
-            _ = try await apiFetcher.delete(mailbox: mailbox, messages: messages)
+            try await delete(messages: messages)
         } else {
             var messages = threads.flatMap(\.messages).filter { $0.scheduled == false }
             messages.append(contentsOf: messages.flatMap(\.duplicates))
@@ -372,7 +383,7 @@ public class MailboxManager: ObservableObject {
         if parentFolder?.role == .trash || parentFolder?.role == .draft || parentFolder?.role == .spam {
             var messages = Array(thread.messages)
             messages.append(contentsOf: messages.flatMap(\.duplicates))
-            _ = try await apiFetcher.delete(mailbox: mailbox, messages: messages)
+            try await delete(messages: messages)
         } else {
             // Move to trash
             var messages = Array(thread.messages.where { $0.scheduled == false })
@@ -442,13 +453,13 @@ public class MailboxManager: ObservableObject {
                 thread.messages.last { $0.isDraft == false }
             }
             messages.append(contentsOf: messages.flatMap(\.duplicates))
-            _ = try await apiFetcher.star(mailbox: mailbox, messages: messages)
+            _ = try await star(messages: messages)
         } else {
             var messages = threads.flatMap { thread in
                 thread.messages.where { $0.isDraft == false }
             }
             messages.append(contentsOf: messages.flatMap(\.duplicates))
-            _ = try await apiFetcher.unstar(mailbox: mailbox, messages: messages)
+            _ = try await unstar(messages: messages)
         }
     }
 
@@ -456,12 +467,13 @@ public class MailboxManager: ObservableObject {
         if thread.flagged {
             var messages = Array(thread.messages.where { $0.isDraft == false })
             messages.append(contentsOf: messages.flatMap(\.duplicates))
-            _ = try await apiFetcher.unstar(mailbox: mailbox, messages: messages)
+            _ = try await unstar(messages: messages)
+
         } else {
             guard let lastMessage = thread.messages.last(where: { $0.isDraft == false }) else { return }
             var toStar = [lastMessage]
             toStar.append(contentsOf: lastMessage.duplicates)
-            _ = try await apiFetcher.star(mailbox: mailbox, messages: toStar)
+            _ = try await star(messages: toStar)
         }
     }
 
@@ -911,10 +923,19 @@ public class MailboxManager: ObservableObject {
         if seen {
             var messages = [message]
             messages.append(contentsOf: message.duplicates)
+            try await markAsSeen(messages: messages, seen: seen)
+        } else {
+            try await markAsSeen(messages: [message], seen: seen)
+        }
+    }
+
+    private func markAsSeen(messages: [Message], seen: Bool) async throws {
+        if seen {
             _ = try await apiFetcher.markAsSeen(mailbox: mailbox, messages: messages)
         } else {
-            _ = try await apiFetcher.markAsUnseen(mailbox: mailbox, messages: [message])
+            _ = try await apiFetcher.markAsUnseen(mailbox: mailbox, messages: messages)
         }
+        try await refreshFolder(from: messages)
     }
 
     public func move(messages: [Message], to folderRole: FolderRole) async throws -> UndoRedoAction {
@@ -924,30 +945,36 @@ public class MailboxManager: ObservableObject {
 
     public func move(messages: [Message], to folder: Folder) async throws -> UndoRedoAction {
         let response = try await apiFetcher.move(mailbox: mailbox, messages: messages, destinationId: folder._id)
+        try await refreshFolder(from: messages)
         return UndoRedoAction(undo: response, redo: nil)
     }
 
     public func delete(messages: [Message]) async throws {
         _ = try await apiFetcher.delete(mailbox: mailbox, messages: messages)
+        try await refreshFolder(from: messages)
     }
 
     public func reportSpam(messages: [Message]) async throws -> UndoRedoAction {
         let response = try await apiFetcher.reportSpam(mailbox: mailbox, messages: messages)
+        try await refreshFolder(from: messages)
         return UndoRedoAction(undo: response, redo: nil)
     }
 
     public func nonSpam(messages: [Message]) async throws -> UndoRedoAction {
         let response = try await apiFetcher.nonSpam(mailbox: mailbox, messages: messages)
+        try await refreshFolder(from: messages)
         return UndoRedoAction(undo: response, redo: nil)
     }
 
     public func star(messages: [Message]) async throws -> MessageActionResult {
         let response = try await apiFetcher.star(mailbox: mailbox, messages: messages)
+        try await refreshFolder(from: messages)
         return response
     }
 
     public func unstar(messages: [Message]) async throws -> MessageActionResult {
         let response = try await apiFetcher.unstar(mailbox: mailbox, messages: messages)
+        try await refreshFolder(from: messages)
         return response
     }
 
