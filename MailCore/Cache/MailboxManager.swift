@@ -424,25 +424,30 @@ public class MailboxManager: ObservableObject {
 
     public func toggleStar(threads: [Thread]) async throws {
         if threads.contains(where: { !$0.flagged }) {
-            let lastMessages = threads.compactMap { thread in
+            var messages = threads.compactMap { thread in
                 thread.messages.last { $0.isDraft == false }
             }
-            _ = try await apiFetcher.star(mailbox: mailbox, messages: lastMessages)
+            messages.append(contentsOf: messages.flatMap(\.duplicates))
+            _ = try await apiFetcher.star(mailbox: mailbox, messages: messages)
         } else {
-            let messages = threads.flatMap { thread in
+            var messages = threads.flatMap { thread in
                 thread.messages.where { $0.isDraft == false }
             }
+            messages.append(contentsOf: messages.flatMap(\.duplicates))
             _ = try await apiFetcher.unstar(mailbox: mailbox, messages: messages)
         }
     }
 
     public func toggleStar(thread: Thread) async throws {
         if thread.flagged {
-            let messages = Array(thread.messages.where { $0.isDraft == false })
+            var messages = Array(thread.messages.where { $0.isDraft == false })
+            messages.append(contentsOf: messages.flatMap(\.duplicates))
             _ = try await apiFetcher.unstar(mailbox: mailbox, messages: messages)
         } else {
             guard let lastMessage = thread.messages.last(where: { $0.isDraft == false }) else { return }
-            _ = try await apiFetcher.star(mailbox: mailbox, messages: [lastMessage])
+            var toStar = [lastMessage]
+            toStar.append(contentsOf: lastMessage.duplicates)
+            _ = try await apiFetcher.star(mailbox: mailbox, messages: toStar)
         }
     }
 

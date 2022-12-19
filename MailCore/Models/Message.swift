@@ -138,6 +138,11 @@ public class Message: Object, Decodable, Identifiable {
         return attachments.reduce(0) { $0 + $1.size }
     }
 
+    public var duplicates: [Message] {
+        guard let dup = originalParent?.duplicates.where({ $0.messageId == messageId }) else { return [] }
+        return Array(dup)
+    }
+
     public func insertInlineAttachment() {
         for attachment in attachments {
             if let contentId = attachment.contentId, let value = body?.value, let resource = attachment.resource {
@@ -211,7 +216,7 @@ public class Message: Object, Decodable, Identifiable {
         let values = try decoder.container(keyedBy: CodingKeys.self)
         uid = try values.decode(String.self, forKey: .uid)
         if let msgId = try? values.decode(String.self, forKey: .msgId) {
-            self.messageId = msgId
+            messageId = msgId
             linkedUids = [msgId].toRealmSet()
         }
         subject = try values.decodeIfPresent(String.self, forKey: .subject)
@@ -288,7 +293,7 @@ public class Message: Object, Decodable, Identifiable {
         self.init()
 
         self.uid = uid
-        self.messageId = msgId
+        messageId = msgId
         self.subject = subject
         self.priority = priority
         self.date = date
