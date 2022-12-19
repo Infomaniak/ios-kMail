@@ -317,19 +317,6 @@ public class MailboxManager: ObservableObject {
         }
     }
 
-    public func toggleRead(thread: Thread) async throws {
-        if thread.hasUnseenMessages {
-            var messages = Array(thread.messages)
-            messages.append(contentsOf: messages.flatMap(\.duplicates))
-            try await markAsSeen(messages: messages, seen: true)
-        } else {
-            guard let lastMessage = thread.messages.last(where: { $0.isDraft == false }) else { return }
-            var messages = [lastMessage]
-            messages.append(contentsOf: lastMessage.duplicates)
-            try await markAsSeen(messages: messages, seen: false)
-        }
-    }
-
     public func move(threads: [Thread], to folderRole: FolderRole) async throws -> UndoRedoAction {
         guard let folder = getFolder(with: folderRole)?.freeze() else { throw MailError.folderNotFound }
         return try await move(threads: threads, to: folder)
@@ -342,20 +329,19 @@ public class MailboxManager: ObservableObject {
         return try await move(messages: messages, to: folder)
     }
 
-    public func move(thread: Thread, to folderRole: FolderRole) async throws -> UndoRedoAction {
-        guard let folder = getFolder(with: folderRole)?.freeze() else { throw MailError.folderNotFound }
-        return try await move(thread: thread, to: folder)
-    }
-
-    public func move(thread: Thread, to folder: Folder) async throws -> UndoRedoAction {
-        var messages = Array(thread.messages.where { $0.folderId == thread.folderId })
-        messages.append(contentsOf: messages.flatMap(\.duplicates))
-
-        return try await move(messages: messages, to: folder)
-    }
-
+    /// Move to trash or delete threads, depending on its current state
+    /// - Parameter threads: Threads to remove
     public func moveOrDelete(threads: [Thread]) async throws {
-        if !threads.compactMap(\.parent).contains(where: { $0.role != .trash || $0.role != .draft || $0.role != .spam }) {
+        // All threads comes from the same folder
+        guard let parentFolder = threads.first?.parent else { return }
+
+        if parentFolder.toolType == .search {
+            for thread in threads {
+                await deleteInSearch(thread: thread) // Review this ?
+            }
+        }
+
+        if parentFolder.role == .trash || parentFolder.role == .draft || parentFolder.role == .spam {
             var messages = threads.flatMap(\.messages)
             messages.append(contentsOf: messages.flatMap(\.duplicates))
             try await delete(messages: messages)
@@ -369,34 +355,6 @@ public class MailboxManager: ObservableObject {
                                                         cancelSuccessMessage: MailResourcesStrings.Localizable
                                                             .snackbarMoveCancelled,
                                                         undoRedoAction: undoRedoAction,
-                                                        mailboxManager: self)
-            }
-        }
-    }
-
-    /// Move to trash or delete thread, depending on its current state
-    /// - Parameter thread: Thread to remove
-    public func moveOrDelete(thread: Thread) async throws {
-        let parentFolder = thread.parent
-        if parentFolder?.toolType == .search {
-            await deleteInSearch(thread: thread) // Review this ?
-        }
-
-        if parentFolder?.role == .trash || parentFolder?.role == .draft || parentFolder?.role == .spam {
-            var messages = Array(thread.messages)
-            messages.append(contentsOf: messages.flatMap(\.duplicates))
-            try await delete(messages: messages)
-        } else {
-            // Move to trash
-            var messages = Array(thread.messages.where { $0.scheduled == false })
-            messages.append(contentsOf: messages.flatMap(\.duplicates))
-            let response = try await move(messages: messages, to: .trash)
-            let folderName = FolderRole.trash.localizedName
-            Task.detached {
-                await IKSnackBar.showCancelableSnackBar(message: MailResourcesStrings.Localizable.snackbarThreadMoved(folderName),
-                                                        cancelSuccessMessage: MailResourcesStrings.Localizable
-                                                            .snackbarMoveCancelled,
-                                                        undoRedoAction: response,
                                                         mailboxManager: self)
             }
         }
@@ -425,26 +383,10 @@ public class MailboxManager: ObservableObject {
         return try await reportSpam(messages: messages)
     }
 
-    public func reportSpam(thread: Thread) async throws -> UndoRedoAction {
-        var messages = Array(thread.messages.where { message in
-            message.scheduled == false
-        }).filter { message in
-            !message.from.contains { $0.email == self.mailbox.email }
-        }
-        messages.append(contentsOf: messages.flatMap(\.duplicates))
-        return try await reportSpam(messages: messages)
-    }
-
     public func nonSpam(threads: [Thread]) async throws -> UndoRedoAction {
         var messages = threads.flatMap { thread in
             thread.messages.where { $0.scheduled == false }
         }
-        messages.append(contentsOf: messages.flatMap(\.duplicates))
-        return try await nonSpam(messages: messages)
-    }
-
-    public func nonSpam(thread: Thread) async throws -> UndoRedoAction {
-        var messages = Array(thread.messages.where { $0.scheduled == false })
         messages.append(contentsOf: messages.flatMap(\.duplicates))
         return try await nonSpam(messages: messages)
     }
@@ -462,20 +404,6 @@ public class MailboxManager: ObservableObject {
             }
             messages.append(contentsOf: messages.flatMap(\.duplicates))
             _ = try await unstar(messages: messages)
-        }
-    }
-
-    public func toggleStar(thread: Thread) async throws {
-        if thread.flagged {
-            var messages = Array(thread.messages.where { $0.isDraft == false })
-            messages.append(contentsOf: messages.flatMap(\.duplicates))
-            _ = try await unstar(messages: messages)
-
-        } else {
-            guard let lastMessage = thread.messages.last(where: { $0.isDraft == false }) else { return }
-            var toStar = [lastMessage]
-            toStar.append(contentsOf: lastMessage.duplicates)
-            _ = try await star(messages: toStar)
         }
     }
 
@@ -604,7 +532,6 @@ public class MailboxManager: ObservableObject {
                     let newThread = Thread(
                         uid: "offlineThread\(message.uid)",
                         messagesCount: 1,
-//                        uniqueMessagesCount: 1,
                         deletedMessagesCount: 0,
                         messages: [newMessage],
                         unseenMessages: 0,

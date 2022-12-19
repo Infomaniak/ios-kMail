@@ -292,7 +292,7 @@ enum ActionsTarget: Equatable {
             undoRedoAction = try await mailboxManager.move(threads: threads, to: folder)
             snackBarMessage = MailResourcesStrings.Localizable.snackbarThreadsMoved(folder.localizedName)
         case let .thread(thread):
-            undoRedoAction = try await mailboxManager.move(thread: thread, to: folder)
+            undoRedoAction = try await mailboxManager.move(threads: [thread], to: folder)
             snackBarMessage = MailResourcesStrings.Localizable.snackbarThreadMoved(folder.localizedName)
         case let .message(message):
             var messages = [message.freezeIfNeeded()]
@@ -314,7 +314,7 @@ enum ActionsTarget: Equatable {
         case let .threads(threads):
             try await mailboxManager.moveOrDelete(threads: threads.map { $0.freezeIfNeeded() })
         case let .thread(thread):
-            try await mailboxManager.moveOrDelete(thread: thread.freezeIfNeeded())
+            try await mailboxManager.moveOrDelete(threads: [thread.freezeIfNeeded()])
         case let .message(message):
             try await mailboxManager.moveOrDelete(message: message.freezeIfNeeded())
         }
@@ -362,7 +362,7 @@ enum ActionsTarget: Equatable {
         case let .threads(threads):
             try await mailboxManager.toggleRead(threads: threads.map { $0.freezeIfNeeded() })
         case let .thread(thread):
-            try await mailboxManager.toggleRead(thread: thread.freezeIfNeeded())
+            try await mailboxManager.toggleRead(threads: [thread.freezeIfNeeded()])
         case let .message(message):
             try await mailboxManager.markAsSeen(message: message.freezeIfNeeded(), seen: !message.seen)
         }
@@ -388,7 +388,7 @@ enum ActionsTarget: Equatable {
         case let .thread(thread):
             Task {
                 await tryOrDisplayError {
-                    try await mailboxManager.toggleStar(thread: thread.freezeIfNeeded())
+                    try await mailboxManager.toggleStar(threads: [thread.freezeIfNeeded()])
                 }
             }
         case let .message(message):
@@ -412,7 +412,7 @@ enum ActionsTarget: Equatable {
             undoRedoAction = try await mailboxManager.reportSpam(threads: threads.map { $0.freezeIfNeeded() })
             snackBarMessage = MailResourcesStrings.Localizable.snackbarThreadsMoved(FolderRole.spam.localizedName)
         case let .thread(thread):
-            undoRedoAction = try await mailboxManager.reportSpam(thread: thread.freezeIfNeeded())
+            undoRedoAction = try await mailboxManager.reportSpam(threads: [thread.freezeIfNeeded()])
             snackBarMessage = MailResourcesStrings.Localizable.snackbarThreadMoved(FolderRole.spam.localizedName)
         case let .message(message):
             var messages = [message.freezeIfNeeded()]
@@ -435,7 +435,7 @@ enum ActionsTarget: Equatable {
             undoRedoAction = try await mailboxManager.nonSpam(threads: threads.map { $0.freezeIfNeeded() })
             snackBarMessage = MailResourcesStrings.Localizable.snackbarThreadsMoved(FolderRole.inbox.localizedName)
         case let .thread(thread):
-            undoRedoAction = try await mailboxManager.nonSpam(thread: thread.freezeIfNeeded())
+            undoRedoAction = try await mailboxManager.nonSpam(threads: [thread.freezeIfNeeded()])
             snackBarMessage = MailResourcesStrings.Localizable.snackbarThreadMoved(FolderRole.inbox.localizedName)
         case let .message(message):
             var messages = [message.freezeIfNeeded()]
