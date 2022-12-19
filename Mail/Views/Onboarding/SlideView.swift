@@ -47,7 +47,7 @@ struct SlideView: View {
                     Spacer(minLength: Constants.onboardingLogoHeight + Constants.onboardingVerticalPadding)
 
                     if proxy.size.height > 500 {
-                        LottieView(filename: slide.lottieFile)
+                        LottieView(filename: slide.animationFile)
                             .frame(maxWidth: 400, maxHeight: 400)
                             .aspectRatio(1, contentMode: .fit)
                         Spacer()
@@ -104,7 +104,7 @@ struct SlideView_Previews: PreviewProvider {
     static var previews: some View {
         SlideView(slide: Slide(id: 1,
                                backgroundImage: Image(resource: MailResourcesAsset.onboardingBackground1),
-                               lottieFile: "illu_1",
+                               animationFile: "illu_1",
                                title: "Title",
                                description: "Description"))
     }
