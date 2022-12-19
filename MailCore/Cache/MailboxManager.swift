@@ -342,10 +342,14 @@ public class MailboxManager: ObservableObject {
     }
 
     public func moveOrDelete(threads: [Thread]) async throws {
-        if !threads.compactMap(\.parent).contains(where: { $0.role != .trash }) {
-            _ = try await apiFetcher.delete(mailbox: mailbox, messages: threads.flatMap(\.messages))
+        if !threads.compactMap(\.parent).contains(where: { $0.role != .trash || $0.role != .draft || $0.role != .spam }) {
+            var messages = threads.flatMap(\.messages)
+            messages.append(contentsOf: messages.flatMap(\.duplicates))
+            _ = try await apiFetcher.delete(mailbox: mailbox, messages: messages)
         } else {
-            let undoRedoAction = try await move(threads: threads, to: .trash)
+            var messages = threads.flatMap(\.messages).filter { $0.scheduled == false }
+            messages.append(contentsOf: messages.flatMap(\.duplicates))
+            let undoRedoAction = try await move(messages: messages, to: .trash)
             let folderName = FolderRole.trash.localizedName
             Task.detached {
                 await IKSnackBar.showCancelableSnackBar(message: MailResourcesStrings.Localizable.snackbarThreadMoved(folderName),
@@ -366,11 +370,14 @@ public class MailboxManager: ObservableObject {
         }
 
         if parentFolder?.role == .trash || parentFolder?.role == .draft || parentFolder?.role == .spam {
-            _ = try await apiFetcher.delete(mailbox: mailbox, messages: Array(thread.messages))
+            var messages = Array(thread.messages)
+            messages.append(contentsOf: messages.flatMap(\.duplicates))
+            _ = try await apiFetcher.delete(mailbox: mailbox, messages: messages)
         } else {
             // Move to trash
-            let messagesToMove = Array(thread.messages.where { $0.scheduled != true })
-            let response = try await move(messages: messagesToMove, to: .trash)
+            var messages = Array(thread.messages.where { $0.scheduled == false })
+            messages.append(contentsOf: messages.flatMap(\.duplicates))
+            let response = try await move(messages: messages, to: .trash)
             let folderName = FolderRole.trash.localizedName
             Task.detached {
                 await IKSnackBar.showCancelableSnackBar(message: MailResourcesStrings.Localizable.snackbarThreadMoved(folderName),
@@ -880,11 +887,15 @@ public class MailboxManager: ObservableObject {
         if message.folderId == getFolder(with: .trash)?._id
             || message.folderId == getFolder(with: .spam)?._id
             || message.folderId == getFolder(with: .draft)?._id {
-            try await delete(messages: [message.freezeIfNeeded()])
+            var messages = [message.freezeIfNeeded()]
+            messages.append(contentsOf: message.duplicates)
+            try await delete(messages: messages)
         } else if message.isDraft {
             try await deleteDraft(from: message)
         } else {
-            let undoRedoAction = try await move(messages: [message.freezeIfNeeded()], to: .trash)
+            var messages = [message.freezeIfNeeded()]
+            messages.append(contentsOf: message.duplicates)
+            let undoRedoAction = try await move(messages: messages, to: .trash)
             Task.detached {
                 await IKSnackBar.showCancelableSnackBar(
                     message: MailResourcesStrings.Localizable.snackbarMessageMoved(FolderRole.trash.localizedName),
