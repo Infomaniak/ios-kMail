@@ -292,21 +292,28 @@ public class MailboxManager: ObservableObject {
 
     public func toggleRead(threads: [Thread]) async throws {
         if threads.contains(where: \.hasUnseenMessages) {
-            _ = try await apiFetcher.markAsSeen(mailbox: mailbox, messages: threads.flatMap(\.messages))
+            var messages = threads.flatMap(\.messages)
+            messages.append(contentsOf: messages.flatMap(\.duplicates))
+            _ = try await apiFetcher.markAsSeen(mailbox: mailbox, messages: messages)
         } else {
-            let lastMessages = threads.compactMap { thread in
+            var messages = threads.compactMap { thread in
                 thread.messages.last { $0.isDraft == false }
             }
-            _ = try await apiFetcher.markAsUnseen(mailbox: mailbox, messages: lastMessages)
+            messages.append(contentsOf: messages.flatMap(\.duplicates))
+            _ = try await apiFetcher.markAsUnseen(mailbox: mailbox, messages: messages)
         }
     }
 
     public func toggleRead(thread: Thread) async throws {
         if thread.hasUnseenMessages {
-            _ = try await apiFetcher.markAsSeen(mailbox: mailbox, messages: Array(thread.messages))
+            var messages = Array(thread.messages)
+            messages.append(contentsOf: messages.flatMap(\.duplicates))
+            _ = try await apiFetcher.markAsSeen(mailbox: mailbox, messages: messages)
         } else {
             guard let lastMessage = thread.messages.last(where: { $0.isDraft == false }) else { return }
-            _ = try await apiFetcher.markAsUnseen(mailbox: mailbox, messages: [lastMessage])
+            var messages = [lastMessage]
+            messages.append(contentsOf: lastMessage.duplicates)
+            _ = try await apiFetcher.markAsUnseen(mailbox: mailbox, messages: messages)
         }
     }
 
@@ -891,7 +898,9 @@ public class MailboxManager: ObservableObject {
 
     public func markAsSeen(message: Message, seen: Bool = true) async throws {
         if seen {
-            _ = try await apiFetcher.markAsSeen(mailbox: mailbox, messages: [message])
+            var messages = [message]
+            messages.append(contentsOf: message.duplicates)
+            _ = try await apiFetcher.markAsSeen(mailbox: mailbox, messages: messages)
         } else {
             _ = try await apiFetcher.markAsUnseen(mailbox: mailbox, messages: [message])
         }
