@@ -222,10 +222,7 @@ public class MailboxManager: ObservableObject {
         let realm = getRealm()
 
         let foldersId = messages.map(\.folderId)
-        var foldersIdSet = Set<String>()
-        for id in foldersId {
-            foldersIdSet.insert(id)
-        }
+        let foldersIdSet = Set<String>(foldersId)
 
         for id in foldersIdSet {
             if let impactedFolder = realm.object(ofType: Folder.self, forPrimaryKey: id) {
