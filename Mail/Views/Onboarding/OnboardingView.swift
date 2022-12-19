@@ -25,6 +25,7 @@ import SwiftUI
 
 struct OnboardingView: View {
     @StateObject var viewModel = OnboardingViewModel()
+
     @State private var selection: Int
     @State private var presentAlert = false
     @State private var isLoading = false
@@ -34,11 +35,8 @@ struct OnboardingView: View {
     @Environment(\.window) var window
     @Environment(\.dismiss) private var dismiss
 
-    private var isPresentedModally: Bool
-
-    init(isPresentedModally: Bool = false, page: Int = 1, isScrollEnabled: Bool = true) {
+    init(page: Int = 1, isScrollEnabled: Bool = true) {
         _selection = State(initialValue: page)
-        self.isPresentedModally = isPresentedModally
         self.isScrollEnabled = isScrollEnabled
         UIPageControl.appearance().currentPageIndicatorTintColor = .tintColor
         UIPageControl.appearance().pageIndicatorTintColor = MailResourcesAsset.separatorColor.color
@@ -46,8 +44,7 @@ struct OnboardingView: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            // Slides
-            ZStack(alignment: .top) {
+            Group {
                 if !isScrollEnabled, let slide = viewModel.slides.first { $0.id == selection } {
                     SlideView(slide: slide)
                 } else {
@@ -60,26 +57,13 @@ struct OnboardingView: View {
                     .tabViewStyle(.page)
                     .edgesIgnoringSafeArea(.top)
                 }
-
+            }
+            .overlay(alignment: .top) {
                 Image(resource: MailResourcesAsset.logoText)
                     .resizable()
                     .scaledToFit()
                     .frame(height: Constants.onboardingLogoHeight)
-                    .padding(.top, isPresentedModally ? 15 : 0)
-
-                if !isScrollEnabled {
-                    HStack {
-                        Button {
-                            dismiss()
-                        } label: {
-                            Image(systemName: "xmark")
-                                .resizable()
-                        }
-                        .frame(width: 20, height: 20, alignment: .leading)
-                        .padding(16)
-                        Spacer()
-                    }
-                }
+                    .padding(.top, 16)
             }
 
             // Buttons
@@ -111,6 +95,18 @@ struct OnboardingView: View {
             }
             .frame(height: Constants.onboardingButtonHeight + Constants.onboardingVerticalPadding, alignment: .top)
         }
+        .overlay(alignment: .topLeading, content: {
+            if !isScrollEnabled {
+                Button {
+                    dismiss()
+                } label: {
+                    Image(systemName: "xmark")
+                        .resizable()
+                }
+                .frame(width: 20, height: 20)
+                .padding(16)
+            }
+        })
         .alert(MailResourcesStrings.Localizable.errorLoginTitle, isPresented: $presentAlert) {
             // Use default button
         } message: {
@@ -172,6 +168,14 @@ struct OnboardingView: View {
 struct OnboardingView_Previews: PreviewProvider {
     static var previews: some View {
         OnboardingView()
-        OnboardingView(isPresentedModally: true)
+            .previewDisplayName("Onboarding - Dynamic Island")
+
+        OnboardingView()
+            .previewDevice(PreviewDevice(rawValue: "iPhone 14"))
+            .previewDisplayName("Onboarding - Notch")
+
+        OnboardingView()
+            .previewDevice(PreviewDevice(rawValue: "iPhone SE (3rd generation)"))
+            .previewDisplayName("Onboarding - Default")
     }
 }

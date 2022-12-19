@@ -77,7 +77,7 @@ public enum Constants {
 
     public static let navbarIconSize: CGFloat = 23
 
-    public static let onboardingLogoHeight: CGFloat = 72
+    public static let onboardingLogoHeight: CGFloat = 54
     public static let onboardingButtonHeight: CGFloat = 100
     public static let onboardingVerticalPadding: CGFloat = 16
 
