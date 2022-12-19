@@ -221,8 +221,13 @@ public class MailboxManager: ObservableObject {
     private func refreshFolder(from messages: [Message]) async throws {
         let realm = getRealm()
 
-        let foldersId = messages.flatMap(\.folderId)
+        let foldersId = messages.map(\.folderId)
+        var foldersIdSet = Set<String>()
         for id in foldersId {
+            foldersIdSet.insert(id)
+        }
+
+        for id in foldersIdSet {
             if let impactedFolder = realm.object(ofType: Folder.self, forPrimaryKey: id) {
                 try await threads(folder: impactedFolder)
             }
