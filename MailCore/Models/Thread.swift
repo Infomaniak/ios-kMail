@@ -120,7 +120,7 @@ public class Thread: Object, Decodable, Identifiable {
         messagePreviewed = messages.last { $0.folderId == folderId }
     }
 
-    func addMessageWithConditions(newMessage: Message) {
+    func addMessageIfNeeded(newMessage: Message) {
         messageIds.insert(objectsIn: newMessage.linkedUids)
 
         let folderRole = parent?.role

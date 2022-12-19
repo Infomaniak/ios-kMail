@@ -725,7 +725,7 @@ public class MailboxManager: ObservableObject {
             if newCursor != nil {
                 guard let folder = folder.fresh(using: realm) else { return }
                 try? realm.safeWrite {
-                    folder.computeUnreadCount()
+                    folder.computeUnreadCount(using: realm)
                     folder.cursor = newCursor
                     folder.lastUpdate = Date()
                 }
@@ -778,7 +778,7 @@ public class MailboxManager: ObservableObject {
                 }
 
                 for thread in existingThreads {
-                    thread.addMessageWithConditions(newMessage: message.fresh(using: realm) ?? message)
+                    thread.addMessageIfNeeded(newMessage: message.fresh(using: realm) ?? message)
                     threadsToUpdate.insert(thread)
                 }
             }
@@ -808,7 +808,7 @@ public class MailboxManager: ObservableObject {
     private func addPreviousMessagesTo(newThread: Thread, from existingThread: Thread) {
         newThread.messageIds.insert(objectsIn: existingThread.messageIds)
         for message in existingThread.messages {
-            newThread.addMessageWithConditions(newMessage: message)
+            newThread.addMessageIfNeeded(newMessage: message)
         }
     }
 
