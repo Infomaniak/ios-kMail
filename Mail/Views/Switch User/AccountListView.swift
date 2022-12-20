@@ -29,7 +29,7 @@ extension Account: Hashable {
 }
 
 class AccountListViewModel: ObservableObject {
-    @Published var expandedUserId: Int? = AccountManager.instance.currentUserId
+    @Published var selectedUserId: Int? = AccountManager.instance.currentUserId
 
     @Published var accounts = [Account: [Mailbox]]()
 
@@ -70,7 +70,7 @@ struct AccountListView: View {
                 ForEach(Array(viewModel.accounts.keys)) { account in
                     if let mailboxes = viewModel.accounts[account] {
                         AccountCellView(account: account,
-                                        expandedUserId: $viewModel.expandedUserId,
+                                        selectedUserId: $viewModel.selectedUserId,
                                         mailboxes: mailboxes)
                     }
                 }
