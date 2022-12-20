@@ -146,15 +146,12 @@ struct Action: Identifiable, Equatable {
 
 enum ActionsTarget: Equatable {
     case threads([Thread])
-    case thread(Thread)
     case message(Message)
 
     var isInvalidated: Bool {
         switch self {
         case let .threads(threads):
             return threads.contains(where: \.isInvalidated)
-        case let .thread(thread):
-            return thread.isInvalidated
         case let .message(message):
             return message.isInvalidated
         }
@@ -190,31 +187,33 @@ enum ActionsTarget: Equatable {
     private func setActions() {
         switch target {
         case let .threads(threads):
-            let spam = threads.allSatisfy { $0.parent?.role == .spam }
-            quickActions = [.move, .postpone, spam ? .nonSpam : .spam, .delete]
+            if threads.count > 1 {
+                let spam = threads.allSatisfy { $0.parent?.role == .spam }
+                quickActions = [.move, .postpone, spam ? .nonSpam : .spam, .delete]
 
-            let unread = threads.allSatisfy(\.hasUnseenMessages)
-            listActions = [
-                .archive,
-                unread ? .markAsRead : .markAsUnread,
-                .print
-            ]
-        case let .thread(thread):
-            quickActions = [.reply, .replyAll, .forward, .delete]
+                let unread = threads.allSatisfy(\.hasUnseenMessages)
+                listActions = [
+                    .archive,
+                    unread ? .markAsRead : .markAsUnread,
+                    .print
+                ]
+            } else if let thread = threads.first {
+                quickActions = [.reply, .replyAll, .forward, .delete]
 
-            let unread = thread.hasUnseenMessages
-            let star = thread.flagged
-            let spam = thread.parent?.role == .spam
-            listActions = [
-                .archive,
-                unread ? .markAsRead : .markAsUnread,
-                .move,
-                .postpone,
-                star ? .unstar : .star,
-                spam ? .nonSpam : .spam,
-                .print,
-                .saveAsPDF
-            ]
+                let unread = thread.hasUnseenMessages
+                let star = thread.flagged
+                let spam = thread.parent?.role == .spam
+                listActions = [
+                    .archive,
+                    unread ? .markAsRead : .markAsUnread,
+                    .move,
+                    .postpone,
+                    star ? .unstar : .star,
+                    spam ? .nonSpam : .spam,
+                    .print,
+                    .saveAsPDF
+                ]
+            }
         case let .message(message):
             quickActions = [.reply, .replyAll, .forward, .delete]
 
@@ -291,9 +290,6 @@ enum ActionsTarget: Equatable {
         case let .threads(threads):
             undoRedoAction = try await mailboxManager.move(threads: threads, to: folder)
             snackBarMessage = MailResourcesStrings.Localizable.snackbarThreadsMoved(folder.localizedName)
-        case let .thread(thread):
-            undoRedoAction = try await mailboxManager.move(threads: [thread], to: folder)
-            snackBarMessage = MailResourcesStrings.Localizable.snackbarThreadMoved(folder.localizedName)
         case let .message(message):
             var messages = [message.freezeIfNeeded()]
             messages.append(contentsOf: message.duplicates)
@@ -313,8 +309,6 @@ enum ActionsTarget: Equatable {
         switch target {
         case let .threads(threads):
             try await mailboxManager.moveOrDelete(threads: threads.map { $0.freezeIfNeeded() })
-        case let .thread(thread):
-            try await mailboxManager.moveOrDelete(threads: [thread.freezeIfNeeded()])
         case let .message(message):
             try await mailboxManager.moveOrDelete(message: message.freezeIfNeeded())
         }
@@ -323,11 +317,10 @@ enum ActionsTarget: Equatable {
     private func reply(mode: ReplyMode) async throws {
         var completeMode = mode
         switch target {
-        case .threads:
+        case let .threads(threads):
             // We don't handle this action in multiple selection
-            break
-        case let .thread(thread):
-            guard let message = thread.messages.last(where: { !$0.isDraft })?.freeze() else { return }
+            guard threads.count == 1, let thread = threads.first,
+                  let message = thread.messages.last(where: { !$0.isDraft })?.freeze() else { break }
             // Download message if needed to get body
             if !message.fullyDownloaded {
                 try await mailboxManager.message(message: message)
@@ -361,8 +354,6 @@ enum ActionsTarget: Equatable {
         switch target {
         case let .threads(threads):
             try await mailboxManager.toggleRead(threads: threads.map { $0.freezeIfNeeded() })
-        case let .thread(thread):
-            try await mailboxManager.toggleRead(threads: [thread.freezeIfNeeded()])
         case let .message(message):
             try await mailboxManager.markAsSeen(message: message.freezeIfNeeded(), seen: !message.seen)
         }
@@ -384,11 +375,9 @@ enum ActionsTarget: Equatable {
     private func star() async throws {
         switch target {
         case let .threads(threads):
-            try await mailboxManager.toggleStar(threads: threads.map { $0.freezeIfNeeded() })
-        case let .thread(thread):
             Task {
                 await tryOrDisplayError {
-                    try await mailboxManager.toggleStar(threads: [thread.freezeIfNeeded()])
+                    try await mailboxManager.toggleStar(threads: threads.map { $0.freezeIfNeeded() })
                 }
             }
         case let .message(message):
@@ -411,9 +400,6 @@ enum ActionsTarget: Equatable {
         case let .threads(threads):
             undoRedoAction = try await mailboxManager.reportSpam(threads: threads.map { $0.freezeIfNeeded() })
             snackBarMessage = MailResourcesStrings.Localizable.snackbarThreadsMoved(FolderRole.spam.localizedName)
-        case let .thread(thread):
-            undoRedoAction = try await mailboxManager.reportSpam(threads: [thread.freezeIfNeeded()])
-            snackBarMessage = MailResourcesStrings.Localizable.snackbarThreadMoved(FolderRole.spam.localizedName)
         case let .message(message):
             var messages = [message.freezeIfNeeded()]
             messages.append(contentsOf: message.duplicates)
@@ -434,9 +420,6 @@ enum ActionsTarget: Equatable {
         case let .threads(threads):
             undoRedoAction = try await mailboxManager.nonSpam(threads: threads.map { $0.freezeIfNeeded() })
             snackBarMessage = MailResourcesStrings.Localizable.snackbarThreadsMoved(FolderRole.inbox.localizedName)
-        case let .thread(thread):
-            undoRedoAction = try await mailboxManager.nonSpam(threads: [thread.freezeIfNeeded()])
-            snackBarMessage = MailResourcesStrings.Localizable.snackbarThreadMoved(FolderRole.inbox.localizedName)
         case let .message(message):
             var messages = [message.freezeIfNeeded()]
             messages.append(contentsOf: messages.flatMap(\.duplicates))

@@ -52,7 +52,7 @@ struct ReplyActionsView: View {
 struct ReplyActionsView_Previews: PreviewProvider {
     static var previews: some View {
         ReplyActionsView(mailboxManager: PreviewHelper.sampleMailboxManager,
-                        target: .thread(PreviewHelper.sampleThread),
+                        target: .threads([PreviewHelper.sampleThread]),
                         state: ThreadBottomSheet(),
                         globalSheet: GlobalBottomSheet()) { _, _ in /* Preview */ }
             .accentColor(AccentColor.pink.primary.swiftUiColor)

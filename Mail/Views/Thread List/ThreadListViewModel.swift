@@ -269,7 +269,7 @@ class DateSection: Identifiable {
             }
             try await move(thread: thread, to: .archive)
         case .quickAction:
-            bottomSheet.open(state: .actions(.thread(thread.thaw() ?? thread)))
+            bottomSheet.open(state: .actions(.threads([thread.thaw() ?? thread])))
         case .none:
             break
         }
