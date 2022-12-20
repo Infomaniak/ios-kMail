@@ -118,7 +118,7 @@ struct ThreadView: View {
         .environmentObject(threadBottomSheet)
         .task {
             if thread.hasUnseenMessages {
-                try? await mailboxManager.toggleRead(thread: thread)
+                try? await mailboxManager.toggleRead(threads: [thread])
             }
         }
         .toolbar {
@@ -126,7 +126,7 @@ struct ThreadView: View {
                 Button {
                     Task {
                         await tryOrDisplayError {
-                            try await mailboxManager.toggleStar(thread: thread)
+                            try await mailboxManager.toggleStar(threads: [thread])
                         }
                     }
                 } label: {
@@ -142,7 +142,7 @@ struct ThreadView: View {
                 }
                 ToolbarButton(text: MailResourcesStrings.Localizable.buttonMore,
                               icon: MailResourcesAsset.plusActions) {
-                    threadBottomSheet.open(state: .actions(.thread(thread.thaw() ?? thread)))
+                    threadBottomSheet.open(state: .actions(.threads([thread.thaw() ?? thread])))
                 }
             }
         }
@@ -161,7 +161,7 @@ struct ThreadView: View {
             case let .replyOption(message, isThread):
                 ReplyActionsView(
                     mailboxManager: mailboxManager,
-                    target: isThread ? .thread(thread) : .message(message),
+                    target: isThread ? .threads([thread]) : .message(message),
                     state: threadBottomSheet,
                     globalSheet: globalBottomSheet
                 ) { message, replyMode in
@@ -215,7 +215,7 @@ struct ThreadView: View {
         case .archive:
             Task {
                 await tryOrDisplayError {
-                    let undoRedoAction = try await mailboxManager.move(thread: thread, to: .archive)
+                    let undoRedoAction = try await mailboxManager.move(threads: [thread], to: .archive)
                     IKSnackBar.showCancelableSnackBar(
                         message: MailResourcesStrings.Localizable.snackbarThreadMoved(FolderRole.archive.localizedName),
                         cancelSuccessMessage: MailResourcesStrings.Localizable.snackbarMoveCancelled,
@@ -228,7 +228,7 @@ struct ThreadView: View {
         case .delete:
             Task {
                 await tryOrDisplayError {
-                    try await mailboxManager.moveOrDelete(thread: thread)
+                    try await mailboxManager.moveOrDelete(threads: [thread])
                     dismiss()
                 }
             }

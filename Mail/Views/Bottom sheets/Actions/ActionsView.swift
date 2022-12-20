@@ -70,7 +70,7 @@ struct ActionsView: View {
 struct ActionsView_Previews: PreviewProvider {
     static var previews: some View {
         ActionsView(mailboxManager: PreviewHelper.sampleMailboxManager,
-                    target: .thread(PreviewHelper.sampleThread),
+                    target: .threads([PreviewHelper.sampleThread]),
                     state: ThreadBottomSheet(),
                     globalSheet: GlobalBottomSheet()) { _, _ in /* Preview */ }
             .accentColor(AccentColor.pink.primary.swiftUiColor)

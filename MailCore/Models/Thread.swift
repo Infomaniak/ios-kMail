@@ -34,7 +34,6 @@ public struct ThreadResult: Decodable {
 public class Thread: Object, Decodable, Identifiable {
     @Persisted(primaryKey: true) public var uid: String
     @Persisted public var messagesCount: Int
-    @Persisted public var uniqueMessagesCount: Int
     @Persisted public var deletedMessagesCount: Int
     @Persisted public var messages: List<Message>
     @Persisted public var unseenMessages: Int
@@ -51,15 +50,22 @@ public class Thread: Object, Decodable, Identifiable {
     @Persisted public var answered: Bool
     @Persisted public var forwarded: Bool
     @Persisted public var size: Int
-    // TODO: - Remove parentLink (Maybe keep it as an array ?)
-    @Persisted(originProperty: "threads") public var parents: LinkingObjects<Folder>
+    @Persisted(originProperty: "threads") public var parentLink: LinkingObjects<Folder>
     @Persisted public var fromSearch = false
 
+    @Persisted public var messagePreviewed: Message?
+    @Persisted public var isDraft = false
+
+    @Persisted public var duplicates = List<Message>()
     @Persisted public var messageIds: MutableSet<String>
-    @Persisted public var folderIds: MutableSet<String>
+    @Persisted public var folderId: String
 
     public var id: String {
         return uid
+    }
+
+    public var parent: Folder? {
+        return parentLink.first
     }
 
     public var formattedFrom: String {
@@ -96,9 +102,7 @@ public class Thread: Object, Decodable, Identifiable {
     }
 
     public func recompute() {
-        folderIds = messages.map { $0.folderId }.toRealmSet()
         messageIds = messages.flatMap { $0.linkedUids }.toRealmSet()
-        uniqueMessagesCount = messages.count // Fix unique : use duplicates
         updateUnseenMessages()
         from = messages.flatMap { $0.from.detached() }.toRealmList()
         date = messages.last?.date ?? date
@@ -113,12 +117,52 @@ public class Thread: Object, Decodable, Identifiable {
         messages = messages.sorted {
             $0.date.compare($1.date) == .orderedAscending
         }.toRealmList()
+        messagePreviewed = messages.last { $0.folderId == folderId }
+    }
+
+    func addMessageIfNeeded(newMessage: Message) {
+        messageIds.insert(objectsIn: newMessage.linkedUids)
+
+        let folderRole = parent?.role
+
+        // If the Message is deleted, but we are not in the Trash: ignore it, just leave.
+        if folderRole != .trash && newMessage.inTrash { return }
+
+        let shouldAddMessage: Bool
+        switch folderRole {
+        case .draft:
+            shouldAddMessage = newMessage.isDraft
+        case .trash:
+            shouldAddMessage = newMessage.inTrash
+        default:
+            shouldAddMessage = true
+        }
+
+        if shouldAddMessage {
+            if let twinMessage = messages.first(where: { $0.messageId == newMessage.messageId }) {
+                addDuplicatedMessage(twinMessage: twinMessage, newMessage: newMessage)
+            } else {
+                messages.append(newMessage)
+            }
+        }
+    }
+
+    private func addDuplicatedMessage(twinMessage: Message, newMessage: Message) {
+        let isTwinTheRealMessage = twinMessage.folderId == folderId
+        if isTwinTheRealMessage {
+            duplicates.append(newMessage)
+        } else {
+            if let index = messages.index(matching: { $0.messageId == twinMessage.messageId }) {
+                messages.remove(at: index)
+            }
+            duplicates.append(twinMessage)
+            messages.append(newMessage)
+        }
     }
 
     private enum CodingKeys: String, CodingKey {
         case uid
         case messagesCount
-        case uniqueMessagesCount
         case deletedMessagesCount
         case messages
         case unseenMessages
@@ -140,7 +184,6 @@ public class Thread: Object, Decodable, Identifiable {
     public convenience init(
         uid: String,
         messagesCount: Int,
-        uniqueMessagesCount: Int,
         deletedMessagesCount: Int,
         messages: [Message],
         unseenMessages: Int,
@@ -156,13 +199,13 @@ public class Thread: Object, Decodable, Identifiable {
         flagged: Bool,
         answered: Bool,
         forwarded: Bool,
-        size: Int
+        size: Int,
+        folderId: String = ""
     ) {
         self.init()
 
         self.uid = uid
         self.messagesCount = messagesCount
-        self.uniqueMessagesCount = uniqueMessagesCount
         self.deletedMessagesCount = deletedMessagesCount
         self.messages = messages.toRealmList()
         self.unseenMessages = unseenMessages
@@ -179,6 +222,7 @@ public class Thread: Object, Decodable, Identifiable {
         self.answered = answered
         self.forwarded = forwarded
         self.size = size
+        self.folderId = folderId
     }
 
     public convenience init(draft: Draft) {
@@ -186,7 +230,6 @@ public class Thread: Object, Decodable, Identifiable {
 
         uid = draft.localUUID
         messagesCount = 1
-        uniqueMessagesCount = 1
         deletedMessagesCount = 0
         messages = [Message(draft: draft)].toRealmList()
         unseenMessages = 0

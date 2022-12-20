@@ -245,11 +245,11 @@ class DateSection: Identifiable {
     func handleSwipeAction(_ action: SwipeAction, thread: Thread) async throws {
         switch action {
         case .delete:
-            try await mailboxManager.moveOrDelete(thread: thread)
+            try await mailboxManager.moveOrDelete(threads: [thread])
         case .archive:
             try await move(thread: thread, to: .archive)
         case .readUnread:
-            try await mailboxManager.toggleRead(thread: thread)
+            try await mailboxManager.toggleRead(threads: [thread])
         case .move:
             globalBottomSheet?.open(state: .move(moveHandler: { folder in
                 Task {
@@ -257,7 +257,7 @@ class DateSection: Identifiable {
                 }
             }))
         case .favorite:
-            try await mailboxManager.toggleStar(thread: thread)
+            try await mailboxManager.toggleStar(threads: [thread])
         case .postPone:
             // TODO: Report action
             showWorkInProgressSnackBar()
@@ -265,11 +265,11 @@ class DateSection: Identifiable {
             try await toggleSpam(thread: thread)
         case .readAndArchive:
             if thread.hasUnseenMessages {
-                try await mailboxManager.toggleRead(thread: thread)
+                try await mailboxManager.toggleRead(threads: [thread])
             }
             try await move(thread: thread, to: .archive)
         case .quickAction:
-            bottomSheet.open(state: .actions(.thread(thread.thaw() ?? thread)))
+            bottomSheet.open(state: .actions(.threads([thread.thaw() ?? thread])))
         case .none:
             break
         }
@@ -279,10 +279,10 @@ class DateSection: Identifiable {
         let folderRole: FolderRole
         let undoRedoAction: UndoRedoAction
         if folder?.role == .spam {
-            undoRedoAction = try await mailboxManager.nonSpam(thread: thread)
+            undoRedoAction = try await mailboxManager.nonSpam(threads: [thread])
             folderRole = .inbox
         } else {
-            undoRedoAction = try await mailboxManager.reportSpam(thread: thread)
+            undoRedoAction = try await mailboxManager.reportSpam(threads: [thread])
             folderRole = .spam
         }
         IKSnackBar.showCancelableSnackBar(message: MailResourcesStrings.Localizable.snackbarThreadMoved(folderRole.localizedName),
@@ -297,7 +297,7 @@ class DateSection: Identifiable {
     }
 
     private func move(thread: Thread, to folder: Folder) async throws {
-        let response = try await mailboxManager.move(thread: thread, to: folder)
+        let response = try await mailboxManager.move(threads: [thread], to: folder)
         IKSnackBar.showCancelableSnackBar(message: MailResourcesStrings.Localizable.snackbarThreadMoved(folder.localizedName),
                                           cancelSuccessMessage: MailResourcesStrings.Localizable.snackbarMoveCancelled,
                                           undoRedoAction: response,
