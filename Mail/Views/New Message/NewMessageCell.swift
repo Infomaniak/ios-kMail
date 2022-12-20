@@ -18,6 +18,7 @@
 
 import MailCore
 import MailResources
+import RealmSwift
 import SwiftUI
 
 extension VerticalAlignment {
@@ -80,7 +81,7 @@ struct RecipientCellView_Previews: PreviewProvider {
     static var previews: some View {
         NewMessageCell(type: .to,
                        showCc: .constant(false)) {
-            RecipientField(recipients: .constant([PreviewHelper.sampleRecipient1]),
+            RecipientField(recipients: .constant(RealmSwift.List()),
                            autocompletion: .constant([]),
                            addRecipientHandler: .constant { _ in /* Preview */ },
                            focusedField: .init(),

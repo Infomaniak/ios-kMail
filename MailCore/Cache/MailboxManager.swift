@@ -1229,10 +1229,10 @@ public class MailboxManager: ObservableObject {
         }
     }
 
-    public func draftWithPendingAction() async -> [UnmanagedDraft] {
+    public func draftWithPendingAction() async -> [Draft] {
         let realm = getRealm()
         let drafts = realm.objects(Draft.self).where { $0.action != nil }
-        let unmanagedDrafts = Array(drafts.compactMap { $0.asUnmanaged() })
+        let unmanagedDrafts = Array(drafts.compactMap { $0 })
         return unmanagedDrafts
     }
 
@@ -1271,8 +1271,7 @@ public class MailboxManager: ObservableObject {
         return realm.objects(Draft.self).where { $0.remoteUUID == remoteUuid }.first
     }
 
-    public func send(draft: UnmanagedDraft) async throws -> CancelResponse {
-        var draft = draft
+    public func send(draft: Draft) async throws -> CancelResponse {
         draft.delay = UserDefaults.shared.cancelSendDelay.rawValue
         let cancelableResponse = try await apiFetcher.send(mailbox: mailbox, draft: draft)
         // Once the draft has been sent, we can delete it from Realm
@@ -1280,9 +1279,8 @@ public class MailboxManager: ObservableObject {
         return cancelableResponse
     }
 
-    public func saveLocally(draft: UnmanagedDraft, action: SaveDraftOption = .save) async {
-        let managedDraft = draft.asManaged()
-        var copyDraft = managedDraft.detached()
+    public func saveLocally(draft: Draft, action: SaveDraftOption = .save) async {
+        let copyDraft = draft.detached()
         copyDraft.action = action
         // TODO: - Date needed ?
 
@@ -1294,16 +1292,15 @@ public class MailboxManager: ObservableObject {
         }
     }
 
-    public func save(draft: UnmanagedDraft) async -> Error? {
+    public func save(draft: Draft) async -> Error? {
         do {
             let saveResponse = try await apiFetcher.save(mailbox: mailbox, draft: draft)
 
-            let managedDraft = draft.asManaged()
-            managedDraft.remoteUUID = saveResponse.uuid
-            managedDraft.messageUid = saveResponse.uid
-            managedDraft.action = nil
+            draft.remoteUUID = saveResponse.uuid
+            draft.messageUid = saveResponse.uid
+            draft.action = nil
 
-            let copyDraft = managedDraft.detached()
+            let copyDraft = draft.detached()
             await backgroundRealm.execute { realm in
                 // Update draft in Realm
                 try? realm.safeWrite {

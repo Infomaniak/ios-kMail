@@ -67,26 +67,7 @@ public class DraftManager {
 
     private init() {}
 
-    public func instantSaveDraftLocally(draft: UnmanagedDraft, mailboxManager: MailboxManager, action: SaveDraftOption) async {
-        await draftQueue.cleanQueueElement(uuid: draft.localUUID)
-        await mailboxManager.saveLocally(draft: draft, action: action)
-    }
-
-    public func saveDraftLocally(draft: UnmanagedDraft, mailboxManager: MailboxManager, action: SaveDraftOption) async {
-        await draftQueue.cleanQueueElement(uuid: draft.localUUID)
-
-        let task = DispatchWorkItem {
-            Task {
-                await mailboxManager.saveLocally(draft: draft, action: action)
-            }
-        }
-        await draftQueue.saveTask(task: task, for: draft.localUUID)
-
-        // Debounce the save task
-        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + DispatchTimeInterval.seconds(DraftManager.saveExpirationSec), execute: task)
-    }
-
-    private func saveDraft(draft: UnmanagedDraft,
+    private func saveDraft(draft: Draft,
                            mailboxManager: MailboxManager,
                            showSnackBar: Bool = false) async {
         await draftQueue.cleanQueueElement(uuid: draft.localUUID)
@@ -125,7 +106,7 @@ public class DraftManager {
         }
     }
 
-    public func send(draft: UnmanagedDraft, mailboxManager: MailboxManager) async {
+    public func send(draft: Draft, mailboxManager: MailboxManager) async {
         await draftQueue.cleanQueueElement(uuid: draft.localUUID)
         await draftQueue.beginBackgroundTask(withName: "Draft Sender", for: draft.localUUID)
 

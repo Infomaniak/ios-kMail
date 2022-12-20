@@ -193,7 +193,7 @@ public class MailApiFetcher: ApiFetcher {
         return try await perform(request: authenticatedRequest(.resource(resource))).data
     }
 
-    func send(mailbox: Mailbox, draft: UnmanagedDraft) async throws -> CancelResponse {
+    func send(mailbox: Mailbox, draft: Draft) async throws -> CancelResponse {
         try await perform(request: authenticatedRequest(
             draft.remoteUUID.isEmpty ? .draft(uuid: mailbox.uuid) : .draft(uuid: mailbox.uuid, draftUuid: draft.remoteUUID),
             method: draft.remoteUUID.isEmpty ? .post : .put,
@@ -201,7 +201,7 @@ public class MailApiFetcher: ApiFetcher {
         )).data
     }
 
-    func save(mailbox: Mailbox, draft: UnmanagedDraft) async throws -> DraftResponse {
+    func save(mailbox: Mailbox, draft: Draft) async throws -> DraftResponse {
         try await perform(request: authenticatedRequest(
             draft.remoteUUID.isEmpty ? .draft(uuid: mailbox.uuid) : .draft(uuid: mailbox.uuid, draftUuid: draft.remoteUUID),
             method: draft.remoteUUID.isEmpty ? .post : .put,
