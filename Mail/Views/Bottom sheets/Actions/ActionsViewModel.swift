@@ -384,19 +384,15 @@ enum ActionsTarget: Equatable {
     private func star() async throws {
         switch target {
         case let .threads(threads):
-            Task {
-                await tryOrDisplayError {
-                    try await mailboxManager.toggleStar(threads: threads)
-                }
+            await tryOrDisplayError {
+                try await mailboxManager.toggleStar(threads: threads)
             }
         case let .message(message):
-            Task {
-                await tryOrDisplayError {
-                    if message.flagged {
-                        _ = try await mailboxManager.unstar(messages: [message])
-                    } else {
-                        _ = try await mailboxManager.star(messages: [message])
-                    }
+            await tryOrDisplayError {
+                if message.flagged {
+                    _ = try await mailboxManager.unstar(messages: [message])
+                } else {
+                    _ = try await mailboxManager.star(messages: [message])
                 }
             }
         }
