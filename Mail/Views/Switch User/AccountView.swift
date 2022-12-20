@@ -62,51 +62,52 @@ struct AccountView: View {
 
     var body: some View {
         NavigationView {
-            VStack(spacing: 24) {
-                // Header
-                avatarImage
-                    .resizable()
-                    .frame(width: 104, height: 104)
-                    .clipShape(Circle())
+            VStack(spacing: 0) {
+                ScrollView {
+                    // Header
+                    avatarImage
+                        .resizable()
+                        .frame(width: 104, height: 104)
+                        .clipShape(Circle())
+                        .padding(.top, 24)
+                        .padding(.bottom, 16)
 
-                VStack(spacing: 8) {
-                    Text(account.user.email)
-                        .textStyle(.header3)
+                    VStack(spacing: 8) {
+                        Text(account.user.email)
+                            .textStyle(.header3)
 
-                    NavigationLink {
-                        AccountListView()
-                    } label: {
-                        Text(MailResourcesStrings.Localizable.buttonAccountSwitch)
-                            .textStyle(.header5Accent)
-                    }
-                }
-
-                // Email list button
-                Button {
-                    // TODO: Show email list
-                    showWorkInProgressSnackBar()
-                } label: {
-                    VStack(alignment: .leading, spacing: 24) {
-                        IKDivider()
-                            .padding(.horizontal, 8)
-                        HStack {
-                            Text(MailResourcesStrings.Localizable.buttonAccountAssociatedEmailAddresses)
-                                .textStyle(.body)
-                                .multilineTextAlignment(.leading)
-                            Spacer()
-                            ChevronIcon(style: .right)
+                        NavigationLink {
+                            AccountListView()
+                        } label: {
+                            Text(MailResourcesStrings.Localizable.buttonAccountSwitch)
+                                .textStyle(.header5Accent)
                         }
-                        .padding(.horizontal, 24)
-                        IKDivider()
-                            .padding(.horizontal, 8)
                     }
-                }
 
-                // TODO: Device list
-                Spacer()
+                    // Email list
+                    VStack(alignment: .leading, spacing: 12) {
+                        Text(MailResourcesStrings.Localizable.buttonAccountAssociatedEmailAddresses)
+                            .textStyle(.calloutSecondary)
+                            .multilineTextAlignment(.leading)
+                            .padding(.horizontal, 24)
+                            .padding(.bottom, 16)
+
+                        ForEach(mailboxes) { mailbox in
+                            Text(mailbox.email)
+                                .textStyle(.body)
+                                .padding(.horizontal, 24)
+                            if mailbox != mailboxes.last {
+                                IKDivider()
+                                    .padding(.horizontal, 16)
+                            }
+                        }
+                    }
+                    .padding(.top, 24)
+                }
 
                 // Buttons
                 LargeButton(title: MailResourcesStrings.Localizable.buttonAccountDisconnect, action: logout)
+                    .padding(.bottom, 24)
                 Button {
                     sheet.state = .deleteAccount
                 } label: {
@@ -121,7 +122,6 @@ struct AccountView: View {
             } label: {
                 Label(MailResourcesStrings.Localizable.buttonClose, systemImage: "xmark")
             })
-            .padding(.top, 32)
             .padding(.bottom, 48)
         }
         .task {
