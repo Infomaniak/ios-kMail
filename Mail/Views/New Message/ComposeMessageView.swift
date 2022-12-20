@@ -82,11 +82,12 @@ struct ComposeMessageView: View {
            let signature = mailboxManager.getSignatureResponse() {
             draft.setSignature(signature)
         }
-        sendDisabled = mailboxManager.getSignatureResponse() == nil
+        draft.action = .save
         draft.delay = UserDefaults.shared.cancelSendDelay.rawValue
 
-        let realm = mailboxManager.getRealm()
+        sendDisabled = mailboxManager.getSignatureResponse() == nil
 
+        let realm = mailboxManager.getRealm()
         try? realm.write {
             realm.add(draft)
         }

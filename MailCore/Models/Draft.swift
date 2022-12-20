@@ -391,8 +391,7 @@ public class Draft: Object, Decodable, Identifiable, AbstractDraft, Encodable {
     @Persisted public var stUuid: String?
     @Persisted public var attachments: List<Attachment>
     @Persisted public var action: SaveDraftOption?
-
-    public var delay: Int?
+    @Persisted public var delay: Int?
 
     private enum CodingKeys: String, CodingKey {
         case remoteUUID = "uuid"
@@ -413,6 +412,8 @@ public class Draft: Object, Decodable, Identifiable, AbstractDraft, Encodable {
         case priority
         case stUuid
         case attachments
+        case action
+        case delay
     }
 
     override public init() { /* Realm needs an empty constructor */ }
@@ -564,5 +565,35 @@ public class Draft: Object, Decodable, Identifiable, AbstractDraft, Encodable {
         case .afterReplyMessage:
             body.append(contentsOf: html)
         }
+    }
+
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+
+        try container.encode(remoteUUID, forKey: .remoteUUID)
+        try container.encode(identityId, forKey: .identityId)
+        try container.encode(inReplyToUid, forKey: .inReplyToUid)
+        try container.encode(forwardedUid, forKey: .forwardedUid)
+        try container.encode(inReplyTo, forKey: .inReplyTo)
+        try container.encode(mimeType, forKey: .mimeType)
+        try container.encode(body, forKey: .body)
+        try container.encode(quote, forKey: .quote)
+        if !to.isEmpty {
+            try container.encode(to, forKey: .to)
+        }
+        if !cc.isEmpty {
+            try container.encode(cc, forKey: .cc)
+        }
+        if !bcc.isEmpty {
+            try container.encode(bcc, forKey: .bcc)
+        }
+        try container.encode(subject, forKey: .subject)
+        try container.encode(ackRequest, forKey: .ackRequest)
+        try container.encode(priority, forKey: .priority)
+        try container.encode(stUuid, forKey: .stUuid)
+        let attachmentsArray = Array(attachments.compactMap { $0.uuid })
+        try container.encode(attachmentsArray, forKey: .attachments)
+        try container.encode(action, forKey: .action)
+        try container.encode(delay, forKey: .delay)
     }
 }

@@ -127,18 +127,14 @@ public class DraftManager {
     }
 
     public func syncDraft(mailboxManager: MailboxManager) {
-        Task {
-            let drafts = await mailboxManager.draftWithPendingAction()
-            for draft in drafts {
-                switch draft.action {
+        let drafts = mailboxManager.draftWithPendingAction()
+        for draft in drafts {
+            Task { [frozenDraft = draft.freeze()] in
+                switch frozenDraft.action {
                 case .save:
-                    Task {
-                        await self.saveDraft(draft: draft, mailboxManager: mailboxManager)
-                    }
+                    await self.saveDraft(draft: frozenDraft, mailboxManager: mailboxManager)
                 case .send:
-                    Task {
-                        await self.send(draft: draft, mailboxManager: mailboxManager)
-                    }
+                    await self.send(draft: frozenDraft, mailboxManager: mailboxManager)
                 default:
                     break
                 }
