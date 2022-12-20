@@ -311,9 +311,7 @@ private struct ThreadListToolbar: ViewModifier {
                 .navigationBarTitleDisplayMode(.inline)
         }
         .sheet(isPresented: $isShowingSwitchAccount) {
-            SheetView {
-                AccountListView()
-            }
+            AccountView(mailboxes: AccountManager.instance.mailboxes)
         }
     }
 }

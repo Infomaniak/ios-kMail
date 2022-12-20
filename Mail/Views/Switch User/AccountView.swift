@@ -58,6 +58,8 @@ struct AccountView: View {
     @StateObject private var sheet = AccountSheet()
     @State private var delegate = AccountViewDelegate()
 
+    let mailboxes: [Mailbox]
+
     var body: some View {
         NavigationView {
             VStack(spacing: 24) {
@@ -149,6 +151,6 @@ struct AccountView: View {
 
 struct AccountView_Previews: PreviewProvider {
     static var previews: some View {
-        AccountView()
+        AccountView(mailboxes: [PreviewHelper.sampleMailbox])
     }
 }
