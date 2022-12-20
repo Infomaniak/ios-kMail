@@ -68,11 +68,7 @@ struct AccountListView: View {
         ScrollView {
             VStack {
                 ForEach(Array(viewModel.accounts.keys)) { account in
-                    if let mailboxes = viewModel.accounts[account] {
-                        AccountCellView(account: account,
-                                        selectedUserId: $viewModel.selectedUserId,
-                                        mailboxes: mailboxes)
-                    }
+                    AccountCellView(account: account, selectedUserId: $viewModel.selectedUserId)
                 }
             }
             .padding(8)

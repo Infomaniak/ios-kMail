@@ -28,7 +28,6 @@ struct AccountCellView: View {
 
     let account: Account
     @Binding var selectedUserId: Int?
-    let mailboxes: [Mailbox]
 
     private var isSelected: Bool {
         return selectedUserId == account.userId
@@ -102,7 +101,6 @@ struct AccountCellView_Previews: PreviewProvider {
     static var previews: some View {
         AccountCellView(
             account: Account(apiToken: ApiToken(accessToken: "", expiresIn: .max, refreshToken: "", scope: "", tokenType: "", userId: 0, expirationDate: .distantFuture)),
-            selectedUserId: .constant(nil),
-            mailboxes: [PreviewHelper.sampleMailbox])
+            selectedUserId: .constant(nil))
     }
 }
