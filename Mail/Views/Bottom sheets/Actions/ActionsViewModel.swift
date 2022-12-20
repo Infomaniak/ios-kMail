@@ -156,6 +156,15 @@ enum ActionsTarget: Equatable {
             return message.isInvalidated
         }
     }
+
+    func freeze() -> Self {
+        switch self {
+        case let .threads(threads):
+            return .threads(threads.map { $0.freezeIfNeeded() })
+        case let .message(message):
+            return .message(message.freezeIfNeeded())
+        }
+    }
 }
 
 @MainActor class ActionsViewModel: ObservableObject {
@@ -176,7 +185,7 @@ enum ActionsTarget: Equatable {
          replyHandler: @escaping (Message, ReplyMode) -> Void,
          completionHandler: (() -> Void)? = nil) {
         self.mailboxManager = mailboxManager
-        self.target = target
+        self.target = target.freeze()
         self.state = state
         self.globalSheet = globalSheet
         self.replyHandler = replyHandler
@@ -291,7 +300,7 @@ enum ActionsTarget: Equatable {
             undoRedoAction = try await mailboxManager.move(threads: threads, to: folder)
             snackBarMessage = MailResourcesStrings.Localizable.snackbarThreadsMoved(folder.localizedName)
         case let .message(message):
-            var messages = [message.freezeIfNeeded()]
+            var messages = [message]
             messages.append(contentsOf: message.duplicates)
             undoRedoAction = try await mailboxManager.move(messages: messages, to: folder)
             snackBarMessage = MailResourcesStrings.Localizable.snackbarMessageMoved(folder.localizedName)
@@ -308,9 +317,9 @@ enum ActionsTarget: Equatable {
     private func delete() async throws {
         switch target {
         case let .threads(threads):
-            try await mailboxManager.moveOrDelete(threads: threads.map { $0.freezeIfNeeded() })
+            try await mailboxManager.moveOrDelete(threads: threads)
         case let .message(message):
-            try await mailboxManager.moveOrDelete(message: message.freezeIfNeeded())
+            try await mailboxManager.moveOrDelete(message: message)
         }
     }
 
@@ -320,7 +329,7 @@ enum ActionsTarget: Equatable {
         case let .threads(threads):
             // We don't handle this action in multiple selection
             guard threads.count == 1, let thread = threads.first,
-                  let message = thread.messages.last(where: { !$0.isDraft })?.freeze() else { break }
+                  let message = thread.messages.last(where: { !$0.isDraft }) else { break }
             // Download message if needed to get body
             if !message.fullyDownloaded {
                 try await mailboxManager.message(message: message)
@@ -353,9 +362,9 @@ enum ActionsTarget: Equatable {
     private func toggleRead() async throws {
         switch target {
         case let .threads(threads):
-            try await mailboxManager.toggleRead(threads: threads.map { $0.freezeIfNeeded() })
+            try await mailboxManager.toggleRead(threads: threads)
         case let .message(message):
-            try await mailboxManager.markAsSeen(message: message.freezeIfNeeded(), seen: !message.seen)
+            try await mailboxManager.markAsSeen(message: message, seen: !message.seen)
         }
     }
 
@@ -377,16 +386,16 @@ enum ActionsTarget: Equatable {
         case let .threads(threads):
             Task {
                 await tryOrDisplayError {
-                    try await mailboxManager.toggleStar(threads: threads.map { $0.freezeIfNeeded() })
+                    try await mailboxManager.toggleStar(threads: threads)
                 }
             }
         case let .message(message):
             Task {
                 await tryOrDisplayError {
                     if message.flagged {
-                        _ = try await mailboxManager.unstar(messages: [message.freezeIfNeeded()])
+                        _ = try await mailboxManager.unstar(messages: [message])
                     } else {
-                        _ = try await mailboxManager.star(messages: [message.freezeIfNeeded()])
+                        _ = try await mailboxManager.star(messages: [message])
                     }
                 }
             }
@@ -398,10 +407,10 @@ enum ActionsTarget: Equatable {
         let snackBarMessage: String
         switch target {
         case let .threads(threads):
-            undoRedoAction = try await mailboxManager.reportSpam(threads: threads.map { $0.freezeIfNeeded() })
+            undoRedoAction = try await mailboxManager.reportSpam(threads: threads)
             snackBarMessage = MailResourcesStrings.Localizable.snackbarThreadsMoved(FolderRole.spam.localizedName)
         case let .message(message):
-            var messages = [message.freezeIfNeeded()]
+            var messages = [message]
             messages.append(contentsOf: message.duplicates)
             undoRedoAction = try await mailboxManager.reportSpam(messages: messages)
             snackBarMessage = MailResourcesStrings.Localizable.snackbarMessageMoved(FolderRole.spam.localizedName)
@@ -418,10 +427,10 @@ enum ActionsTarget: Equatable {
         let snackBarMessage: String
         switch target {
         case let .threads(threads):
-            undoRedoAction = try await mailboxManager.nonSpam(threads: threads.map { $0.freezeIfNeeded() })
+            undoRedoAction = try await mailboxManager.nonSpam(threads: threads)
             snackBarMessage = MailResourcesStrings.Localizable.snackbarThreadsMoved(FolderRole.inbox.localizedName)
         case let .message(message):
-            var messages = [message.freezeIfNeeded()]
+            var messages = [message]
             messages.append(contentsOf: messages.flatMap(\.duplicates))
             undoRedoAction = try await mailboxManager.nonSpam(messages: messages)
             snackBarMessage = MailResourcesStrings.Localizable.snackbarMessageMoved(FolderRole.inbox.localizedName)
@@ -436,7 +445,7 @@ enum ActionsTarget: Equatable {
     private func block() async throws {
         // This action is only available on a single message
         guard case let .message(message) = target else { return }
-        let response = try await mailboxManager.apiFetcher.blockSender(message: message.freezeIfNeeded())
+        let response = try await mailboxManager.apiFetcher.blockSender(message: message)
         if response {
             IKSnackBar.showSnackBar(message: MailResourcesStrings.Localizable.snackbarSenderBlacklisted)
         }
@@ -445,7 +454,7 @@ enum ActionsTarget: Equatable {
     private func phishing() async throws {
         // This action is only available on a single message
         guard case let .message(message) = target else { return }
-        globalSheet.open(state: .reportPhishing(message: message.freezeIfNeeded()))
+        globalSheet.open(state: .reportPhishing(message: message))
     }
 
     private func printAction() {
@@ -466,7 +475,7 @@ enum ActionsTarget: Equatable {
     private func report() {
         // This action is only available on a single message
         guard case let .message(message) = target else { return }
-        globalSheet.open(state: .reportDisplayProblem(message: message.freezeIfNeeded()))
+        globalSheet.open(state: .reportDisplayProblem(message: message))
     }
 
     private func editMenu() {

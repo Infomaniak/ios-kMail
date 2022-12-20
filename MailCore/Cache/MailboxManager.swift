@@ -828,13 +828,13 @@ public class MailboxManager: ObservableObject {
         if message.folderId == getFolder(with: .trash)?._id
             || message.folderId == getFolder(with: .spam)?._id
             || message.folderId == getFolder(with: .draft)?._id {
-            var messages = [message.freezeIfNeeded()]
+            var messages = [message]
             messages.append(contentsOf: message.duplicates)
             try await delete(messages: messages)
         } else if message.isDraft {
             try await deleteDraft(from: message) // Keep ?
         } else {
-            var messages = [message.freezeIfNeeded()]
+            var messages = [message]
             messages.append(contentsOf: message.duplicates)
             let undoRedoAction = try await move(messages: messages, to: .trash)
             Task.detached {
