@@ -94,23 +94,15 @@ struct RecipientField: View {
     }
 
     private func add(recipient: Recipient) {
-        guard let liveRecipients = recipients.thaw() else { return }
-
-        try? liveRecipients.realm?.write {
-            withAnimation {
-                liveRecipients.append(recipient)
-            }
+        withAnimation {
+            $recipients.append(recipient)
         }
         currentText = ""
     }
 
     private func remove(recipientAt: Int) {
-        guard let liveRecipients = recipients.thaw() else { return }
-
-        try? liveRecipients.realm?.write {
-            withAnimation {
-                liveRecipients.remove(at: recipientAt)
-            }
+        withAnimation {
+            $recipients.remove(at: recipientAt)
         }
     }
 }
