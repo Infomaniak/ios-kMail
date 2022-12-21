@@ -88,7 +88,6 @@ struct AccountView: View {
                     VStack(alignment: .leading, spacing: 12) {
                         Text(MailResourcesStrings.Localizable.buttonAccountAssociatedEmailAddresses)
                             .textStyle(.calloutSecondary)
-                            .multilineTextAlignment(.leading)
                             .padding(.horizontal, 24)
                             .padding(.bottom, 16)
 
@@ -102,6 +101,7 @@ struct AccountView: View {
                             }
                         }
                     }
+                    .frame(maxWidth: .infinity, alignment: .leading)
                     .padding(.top, 24)
                 }
 
