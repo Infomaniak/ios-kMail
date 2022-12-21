@@ -81,7 +81,7 @@ struct RecipientCellView_Previews: PreviewProvider {
     static var previews: some View {
         NewMessageCell(type: .to,
                        showCc: .constant(false)) {
-            RecipientField(recipients: .constant(RealmSwift.List()),
+            RecipientField(recipients: .constant([PreviewHelper.sampleRecipient1].toRealmList()),
                            autocompletion: .constant([]),
                            addRecipientHandler: .constant { _ in /* Preview */ },
                            focusedField: .init(),

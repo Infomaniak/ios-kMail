@@ -109,7 +109,9 @@ struct RecipientField: View {
 
 struct RecipientField_Previews: PreviewProvider {
     static var previews: some View {
-        RecipientField(recipients: .constant(RealmSwift.List()),
+        RecipientField(recipients: .constant([
+            PreviewHelper.sampleRecipient1, PreviewHelper.sampleRecipient2, PreviewHelper.sampleRecipient3
+        ].toRealmList()),
         autocompletion: .constant([]),
         addRecipientHandler: .constant { _ in /* Preview */ },
         focusedField: .init(),
