@@ -38,10 +38,8 @@ class MessageBottomSheet: DisplayedFloatingPanelState<MessageBottomSheet.State> 
 }
 
 struct ThreadView: View {
+    let mailboxManager: MailboxManager
     @ObservedRealmObject var thread: Thread
-    private let mailboxManager: MailboxManager
-    private let folderId: String?
-    private let trashFolderId: String?
 
     @State private var displayNavigationTitle = false
     @State private var messageReply: MessageReply?
@@ -56,23 +54,7 @@ struct ThreadView: View {
     private let toolbarActions: [Action] = [.reply, .forward, .archive, .delete]
 
     private var messages: [Message] {
-        return Array(thread.messages.where { $0.isDuplicate != true && ((folderId == trashFolderId)
-                ? $0.inTrash == true
-                : $0.inTrash == false)
-        })
-        .sorted { $0.date.compare($1.date) == .orderedAscending }
-    }
-
-    init(
-        mailboxManager: MailboxManager,
-        thread: Thread,
-        folderId: String?,
-        trashFolderId: String
-    ) {
-        self.mailboxManager = mailboxManager
-        self.thread = thread
-        self.folderId = folderId
-        self.trashFolderId = trashFolderId
+        return Array(thread.messages)
     }
 
     var body: some View {
@@ -183,7 +165,7 @@ struct ThreadView: View {
             }
         }
         .onChange(of: messages) { newMessagesList in
-            if let folderId = folderId, newMessagesList.filter({ $0.folderId == folderId }).isEmpty {
+            if newMessagesList.isEmpty {
                 dismiss()
             }
         }
@@ -266,9 +248,7 @@ struct ThreadView_Previews: PreviewProvider {
     static var previews: some View {
         ThreadView(
             mailboxManager: PreviewHelper.sampleMailboxManager,
-            thread: PreviewHelper.sampleThread,
-            folderId: nil,
-            trashFolderId: ""
+            thread: PreviewHelper.sampleThread
         )
     }
 }
