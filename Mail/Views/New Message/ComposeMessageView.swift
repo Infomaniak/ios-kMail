@@ -54,7 +54,6 @@ struct ComposeMessageView: View {
 
     @State private var mailboxManager: MailboxManager
     @StateRealmObject var draft: Draft
-    @State private var originalBody: String
     @State private var editor = RichTextEditorModel()
     @State private var showCc = false
     @FocusState private var focusedField: ComposeViewFieldType?
@@ -63,8 +62,6 @@ struct ComposeMessageView: View {
     @State private var isShowingCamera = false
     @State private var isShowingFileSelection = false
     @State private var isShowingPhotoLibrary = false
-
-    @State var sendDraft = false
 
     @State var scrollView: UIScrollView?
 
@@ -95,7 +92,6 @@ struct ComposeMessageView: View {
 
         _draft = StateRealmObject(wrappedValue: draft)
         _showCc = State(initialValue: !draft.bcc.isEmpty || !draft.cc.isEmpty)
-        _originalBody = State(initialValue: draft.body)
     }
 
     static func newMessage(mailboxManager: MailboxManager) -> ComposeMessageView {
@@ -206,9 +202,7 @@ struct ComposeMessageView: View {
                     Label(MailResourcesStrings.Localizable.buttonClose, systemImage: "xmark")
                 },
                 trailing: Button(action: {
-                    sendDraft = true
-                    originalBody = draft.body
-                    dismiss()
+                    sendDraft()
                 }, label: {
                     Image(resource: MailResourcesAsset.send)
                 })
@@ -287,6 +281,15 @@ struct ComposeMessageView: View {
             fatalError("Unhandled binding \(type)")
         }
         return binding
+    }
+
+    private func sendDraft() {
+        if let liveDraft = draft.thaw() {
+            try? liveDraft.realm?.write {
+                liveDraft.action = .send
+            }
+        }
+        dismiss()
     }
 
     // MARK: Attachments
