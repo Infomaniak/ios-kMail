@@ -104,7 +104,6 @@ struct OnboardingView: View {
                     .padding(.top, 28)
             }
 
-            // Buttons
             VStack(spacing: 24) {
                 if selection == slides.count {
                     // Show login button
@@ -206,6 +205,7 @@ struct OnboardingView: View {
 struct OnboardingView_Previews: PreviewProvider {
     static var previews: some View {
         OnboardingView()
+            .previewDevice(PreviewDevice(rawValue: "iPhone 14 Pro"))
             .previewDisplayName("Onboarding - Dynamic Island")
 
         OnboardingView()

@@ -35,23 +35,19 @@ struct SlideView: View {
     var body: some View {
         GeometryReader { proxy in
             ZStack(alignment: .top) {
-                if (proxy.size.height > proxy.size.width) || (UIDevice.current.userInterfaceIdiom == .pad) {
-                    slide.backgroundImage
-                        .resizable(resizingMode: .stretch)
-                        .ignoresSafeArea()
-                        .fixedSize(horizontal: false, vertical: true)
-                        .foregroundColor(colorScheme == .light ? accentColor.secondary : MailResourcesAsset.backgroundColor)
-                }
+                slide.backgroundImage
+                    .resizable()
+                    .frame(width: proxy.size.width, height: proxy.size.width, alignment: .top)
+                    .foregroundColor(colorScheme == .light ? accentColor.secondary : MailResourcesAsset.backgroundColor)
+                    .ignoresSafeArea()
 
                 VStack(spacing: 0) {
                     Spacer(minLength: Constants.onboardingLogoHeight + Constants.onboardingVerticalPadding)
 
-                    if proxy.size.height > 500 {
-                        LottieView(filename: slide.animationFile)
-                            .frame(maxWidth: 400, maxHeight: 400)
-                            .aspectRatio(1, contentMode: .fit)
-                        Spacer()
-                    }
+                    LottieView(filename: slide.animationFile)
+                        .frame(maxHeight: 250)
+
+                    Spacer(minLength: 28)
 
                     Text(slide.title)
                         .textStyle(.header2)
@@ -82,7 +78,6 @@ struct SlideView: View {
                 .multilineTextAlignment(.center)
                 .padding(.horizontal, 40)
             }
-            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
         }
         .onChange(of: accentColor) { _ in
             // Handle accent color change
@@ -102,10 +97,22 @@ struct SlideView: View {
 
 struct SlideView_Previews: PreviewProvider {
     static var previews: some View {
-        SlideView(slide: Slide(id: 1,
-                               backgroundImage: Image(resource: MailResourcesAsset.onboardingBackground1),
-                               animationFile: "illu_1",
-                               title: "Title",
-                               description: "Description"))
+        slideView
+            .previewDevice(PreviewDevice(rawValue: "iPhone 14 Pro"))
+            .previewDisplayName("Large Screen")
+
+        slideView
+            .previewDevice(PreviewDevice(rawValue: "iPhone SE (3rd generation)"))
+            .previewDisplayName("Small Screen")
+    }
+
+    static var slideView: some View {
+        SlideView(slide: Slide(
+            id: 1,
+            backgroundImage: Image(resource: MailResourcesAsset.onboardingBackground1),
+            animationFile: "illu_1",
+            title: "Title",
+            description: "Description"
+        ))
     }
 }
