@@ -163,9 +163,7 @@ struct SearchView: View {
                             NavigationLink(destination: {
                                 ThreadView(
                                     mailboxManager: viewModel.mailboxManager,
-                                    thread: thread,
-                                    folderId: viewModel.lastSearchFolderId,
-                                    trashFolderId: viewModel.trashFolderId
+                                    thread: thread
                                 )
                                 .onAppear {
                                     viewModel.selectedThread = thread

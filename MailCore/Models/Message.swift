@@ -78,7 +78,7 @@ public enum MessageDKIM: String, Codable, PersistableEnum {
 
 public class Message: Object, Decodable, Identifiable {
     @Persisted(primaryKey: true) public var uid = ""
-    @Persisted public var msgId: String?
+    @Persisted public var messageId: String?
     @Persisted public var subject: String?
     @Persisted public var priority: MessagePriority
     @Persisted public var date: Date
@@ -96,7 +96,6 @@ public class Message: Object, Decodable, Identifiable {
     @Persisted public var downloadResource: String
     @Persisted public var draftResource: String?
     @Persisted public var stUuid: String?
-    // public var duplicates: [] // Will be needed to filter duplicates
     @Persisted public var folderId: String
     @Persisted public var folder: String
     @Persisted public var references: String?
@@ -113,7 +112,7 @@ public class Message: Object, Decodable, Identifiable {
     @Persisted public var flagged: Bool
     @Persisted public var safeDisplay: Bool?
     @Persisted public var hasUnsubscribeLink: Bool?
-    @Persisted(originProperty: "messages") var parentLink: LinkingObjects<Thread>
+    @Persisted(originProperty: "messages") var parents: LinkingObjects<Thread>
 
     @Persisted public var fullyDownloaded = false
     @Persisted public var fromSearch = false
@@ -121,6 +120,10 @@ public class Message: Object, Decodable, Identifiable {
 
     public var recipients: [Recipient] {
         return Array(to) + Array(cc)
+    }
+
+    public var originalParent: Thread? {
+        return parents.first { $0.folderId == folderId }
     }
 
     public var shouldComplete: Bool {
@@ -131,12 +134,13 @@ public class Message: Object, Decodable, Identifiable {
         return subject ?? MailResourcesStrings.Localizable.noSubjectTitle
     }
 
-    public var parent: Thread? {
-        return parentLink.first
-    }
-
     public var attachmentsSize: Int64 {
         return attachments.reduce(0) { $0 + $1.size }
+    }
+
+    public var duplicates: [Message] {
+        guard let dup = originalParent?.duplicates.where({ $0.messageId == messageId }) else { return [] }
+        return Array(dup)
     }
 
     public func insertInlineAttachment() {
@@ -212,8 +216,8 @@ public class Message: Object, Decodable, Identifiable {
         let values = try decoder.container(keyedBy: CodingKeys.self)
         uid = try values.decode(String.self, forKey: .uid)
         if let msgId = try? values.decode(String.self, forKey: .msgId) {
-            self.msgId = msgId
-            self.linkedUids = [msgId].toRealmSet()
+            messageId = msgId
+            linkedUids = [msgId].toRealmSet()
         }
         subject = try values.decodeIfPresent(String.self, forKey: .subject)
         priority = try values.decode(MessagePriority.self, forKey: .priority)
@@ -289,7 +293,7 @@ public class Message: Object, Decodable, Identifiable {
         self.init()
 
         self.uid = uid
-        self.msgId = msgId
+        messageId = msgId
         self.subject = subject
         self.priority = priority
         self.date = date
@@ -345,10 +349,9 @@ public class Message: Object, Decodable, Identifiable {
     }
 
     public func toThread() -> Thread {
-        return Thread(
-            uid: uid,
+        let thread = Thread(
+            uid: "\(folderId)_\(uid)",
             messagesCount: 1,
-            uniqueMessagesCount: 1,
             deletedMessagesCount: 1,
             messages: [self],
             unseenMessages: seen ? 0 : 1,
@@ -364,8 +367,11 @@ public class Message: Object, Decodable, Identifiable {
             flagged: flagged,
             answered: answered,
             forwarded: forwarded,
-            size: size
+            size: size,
+            folderId: folderId
         )
+        thread.messageIds = linkedUids
+        return thread
     }
 }
 

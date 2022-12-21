@@ -50,7 +50,9 @@ struct ReportPhishingView: View {
             await tryOrDisplayError {
                 let response = try await mailboxManager.apiFetcher.reportPhishing(message: message)
                 if response {
-                    _ = try await mailboxManager.reportSpam(messages: [message.freezeIfNeeded()])
+                    var messages = [message.freezeIfNeeded()]
+                    messages.append(contentsOf: message.duplicates)
+                    _ = try await mailboxManager.reportSpam(messages: messages)
                     IKSnackBar.showSnackBar(message: MailResourcesStrings.Localizable.snackbarReportPhishingConfirmation)
                 }
             }

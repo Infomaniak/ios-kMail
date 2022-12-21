@@ -96,7 +96,7 @@ public class DraftManager {
         // Delete
         Task {
             await tryOrDisplayError {
-                _ = try await mailboxManager.move(thread: frozenThread, to: .trash)
+                _ = try await mailboxManager.move(threads: [frozenThread], to: .trash)
                 await IKSnackBar.showSnackBar(message: MailResourcesStrings.Localizable.snackBarDraftDeleted)
             }
         }

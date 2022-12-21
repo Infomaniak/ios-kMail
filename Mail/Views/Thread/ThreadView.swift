@@ -38,10 +38,8 @@ class MessageBottomSheet: DisplayedFloatingPanelState<MessageBottomSheet.State> 
 }
 
 struct ThreadView: View {
+    let mailboxManager: MailboxManager
     @ObservedRealmObject var thread: Thread
-    private let mailboxManager: MailboxManager
-    private let folderId: String?
-    private let trashFolderId: String?
 
     @State private var displayNavigationTitle = false
     @State private var messageReply: MessageReply?
@@ -56,23 +54,7 @@ struct ThreadView: View {
     private let toolbarActions: [Action] = [.reply, .forward, .archive, .delete]
 
     private var messages: [Message] {
-        return Array(thread.messages.where { $0.isDuplicate != true && ((folderId == trashFolderId)
-                ? $0.inTrash == true
-                : $0.inTrash == false)
-        })
-        .sorted { $0.date.compare($1.date) == .orderedAscending }
-    }
-
-    init(
-        mailboxManager: MailboxManager,
-        thread: Thread,
-        folderId: String?,
-        trashFolderId: String
-    ) {
-        self.mailboxManager = mailboxManager
-        self.thread = thread
-        self.folderId = folderId
-        self.trashFolderId = trashFolderId
+        return Array(thread.messages)
     }
 
     var body: some View {
@@ -118,7 +100,7 @@ struct ThreadView: View {
         .environmentObject(threadBottomSheet)
         .task {
             if thread.hasUnseenMessages {
-                try? await mailboxManager.toggleRead(thread: thread)
+                try? await mailboxManager.toggleRead(threads: [thread])
             }
         }
         .toolbar {
@@ -126,7 +108,7 @@ struct ThreadView: View {
                 Button {
                     Task {
                         await tryOrDisplayError {
-                            try await mailboxManager.toggleStar(thread: thread)
+                            try await mailboxManager.toggleStar(threads: [thread])
                         }
                     }
                 } label: {
@@ -142,7 +124,7 @@ struct ThreadView: View {
                 }
                 ToolbarButton(text: MailResourcesStrings.Localizable.buttonMore,
                               icon: MailResourcesAsset.plusActions) {
-                    threadBottomSheet.open(state: .actions(.thread(thread.thaw() ?? thread)))
+                    threadBottomSheet.open(state: .actions(.threads([thread.thaw() ?? thread])))
                 }
             }
         }
@@ -161,7 +143,7 @@ struct ThreadView: View {
             case let .replyOption(message, isThread):
                 ReplyActionsView(
                     mailboxManager: mailboxManager,
-                    target: isThread ? .thread(thread) : .message(message),
+                    target: isThread ? .threads([thread]) : .message(message),
                     state: threadBottomSheet,
                     globalSheet: globalBottomSheet
                 ) { message, replyMode in
@@ -183,7 +165,7 @@ struct ThreadView: View {
             }
         }
         .onChange(of: messages) { newMessagesList in
-            if let folderId = folderId, newMessagesList.filter({ $0.folderId == folderId }).isEmpty {
+            if newMessagesList.isEmpty {
                 dismiss()
             }
         }
@@ -215,7 +197,7 @@ struct ThreadView: View {
         case .archive:
             Task {
                 await tryOrDisplayError {
-                    let undoRedoAction = try await mailboxManager.move(thread: thread, to: .archive)
+                    let undoRedoAction = try await mailboxManager.move(threads: [thread], to: .archive)
                     IKSnackBar.showCancelableSnackBar(
                         message: MailResourcesStrings.Localizable.snackbarThreadMoved(FolderRole.archive.localizedName),
                         cancelSuccessMessage: MailResourcesStrings.Localizable.snackbarMoveCancelled,
@@ -228,7 +210,7 @@ struct ThreadView: View {
         case .delete:
             Task {
                 await tryOrDisplayError {
-                    try await mailboxManager.moveOrDelete(thread: thread)
+                    try await mailboxManager.moveOrDelete(threads: [thread])
                     dismiss()
                 }
             }
@@ -266,9 +248,7 @@ struct ThreadView_Previews: PreviewProvider {
     static var previews: some View {
         ThreadView(
             mailboxManager: PreviewHelper.sampleMailboxManager,
-            thread: PreviewHelper.sampleThread,
-            folderId: nil,
-            trashFolderId: ""
+            thread: PreviewHelper.sampleThread
         )
     }
 }

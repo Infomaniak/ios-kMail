@@ -105,7 +105,7 @@ public class Folder: Object, Codable, Comparable, Identifiable {
     @Persisted public var path: String
     @Persisted public var name: String
     @Persisted public var role: FolderRole?
-    @Persisted public var unreadCount: Int = 0
+    @Persisted public var unreadCount = 0
     @Persisted public var totalCount: Int?
     @Persisted public var isFake: Bool
     @Persisted public var isCollapsed: Bool
@@ -177,8 +177,9 @@ public class Folder: Object, Codable, Comparable, Identifiable {
         return lhs.id == rhs.id
     }
 
-    public func incrementUnreadCount(by number: Int = 1) {
-        unreadCount += number
+    public func computeUnreadCount(using realm: Realm) {
+        let unreadMessages = realm.objects(Message.self).where { $0.folderId == self.id && $0.seen == false }
+        unreadCount = unreadMessages.count
     }
 
     public func isParent(of folder: Folder) -> Bool {

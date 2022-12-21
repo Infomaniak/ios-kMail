@@ -33,13 +33,9 @@ struct ThreadListManagerView: View {
     var body: some View {
         ZStack {
             NavigationLink(isActive: $shouldNavigateToNotificationThread) {
-                if let tappedNotificationThread,
-                   let inboxFolderId = mailboxManager.getFolder(with: .inbox)?.id,
-                   let trashFolderId = mailboxManager.getFolder(with: .trash)?.id {
+                if let tappedNotificationThread {
                     ThreadView(mailboxManager: mailboxManager,
-                               thread: tappedNotificationThread,
-                               folderId: inboxFolderId,
-                               trashFolderId: trashFolderId)
+                               thread: tappedNotificationThread)
                 } else {
                     EmptyView()
                 }
@@ -68,7 +64,7 @@ struct ThreadListManagerView: View {
         .onReceive(NotificationCenter.default.publisher(for: .onUserTappedNotification)) { notification in
             guard let notificationPayload = notification.object as? NotificationTappedPayload else { return }
             tappedNotificationThread = mailboxManager.getRealm().object(ofType: Thread.self,
-                                                                  forPrimaryKey: notificationPayload.threadUid)
+                                                                        forPrimaryKey: notificationPayload.threadUid)
             shouldNavigateToNotificationThread = true
         }
         .animation(.easeInOut(duration: 0.25), value: splitViewManager.showSearch)

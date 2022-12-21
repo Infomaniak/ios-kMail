@@ -551,7 +551,7 @@ public class Draft: Object, Decodable, Identifiable, AbstractDraft, Encodable {
 
         return Draft(inReplyToUid: mode.isReply ? message.uid : nil,
                      forwardedUid: mode == .forward([]) ? message.uid : nil,
-                     inReplyTo: message.msgId,
+                     inReplyTo: message.messageId,
                      subject: subject,
                      body: "<br><br>\(quote)",
                      quote: quote,

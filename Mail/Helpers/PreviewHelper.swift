@@ -57,7 +57,6 @@ struct PreviewHelper {
 
     static let sampleThread = Thread(uid: "",
                                      messagesCount: 2,
-                                     uniqueMessagesCount: 2,
                                      deletedMessagesCount: 0,
                                      messages: [sampleMessage],
                                      unseenMessages: 1,

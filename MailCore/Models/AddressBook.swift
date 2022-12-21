@@ -36,6 +36,7 @@ public class AddressBook: Object, Codable, Identifiable {
     @Persisted public var color: String
     @Persisted public var name: String
     @Persisted public var descriptionValue: String
+    @Persisted public var isDefault: Bool
     @Persisted public var isActivated: Bool
     @Persisted public var isHidden: Bool
     @Persisted public var isPending: Bool
@@ -50,6 +51,7 @@ public class AddressBook: Object, Codable, Identifiable {
         case color
         case name
         case descriptionValue = "description"
+        case isDefault = "default"
         case isActivated
         case isHidden
         case isPending
