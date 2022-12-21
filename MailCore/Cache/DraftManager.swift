@@ -123,12 +123,18 @@ public class DraftManager {
 
     public func syncDraft(mailboxManager: MailboxManager) {
         let drafts = mailboxManager.draftWithPendingAction().freezeIfNeeded()
+        let emptyDraftBody = emptyDraftBodyWithSignature(for: mailboxManager)
         Task {
             await withTaskGroup(of: Void.self) { group in
                 for draft in drafts {
                     group.addTask {
                         switch draft.action {
                         case .initialSave:
+                            guard draft.body != emptyDraftBody else {
+                                self.deleteEmptyDraft(draft: draft)
+                                return
+                            }
+
                             await self.saveDraft(draft: draft, mailboxManager: mailboxManager)
                             await IKSnackBar.showSnackBar(message: MailResourcesStrings.Localizable.snackBarDraftSaved,
                                                           action: .init(title: MailResourcesStrings.Localizable.actionDelete) { [weak self] in
@@ -145,5 +151,21 @@ public class DraftManager {
                 }
             }
         }
+    }
+
+    private func deleteEmptyDraft(draft: Draft) {
+        guard let liveDraft = draft.thaw(),
+              let realm = liveDraft.realm else { return }
+        try? realm.write {
+            realm.delete(liveDraft)
+        }
+    }
+
+    private func emptyDraftBodyWithSignature(for mailboxManager: MailboxManager) -> String {
+        let draft = Draft()
+        if let signature = mailboxManager.getSignatureResponse() {
+            draft.setSignature(signature)
+        }
+        return draft.body
     }
 }
