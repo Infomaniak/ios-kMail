@@ -37,16 +37,15 @@ struct SlideView: View {
             ZStack(alignment: .top) {
                 slide.backgroundImage
                     .resizable()
-                    .frame(height: proxy.size.height * 0.6)
+                    .frame(height: proxy.size.height * 0.62)
                     .foregroundColor(colorScheme == .light ? accentColor.secondary : MailResourcesAsset.backgroundColor)
                     .ignoresSafeArea()
 
                 VStack(spacing: 0) {
-                    Spacer(minLength: Constants.onboardingLogoHeight + Constants.onboardingVerticalPadding)
+                    Spacer(minLength: Constants.onboardingLogoHeight + Constants.onboardingVerticalTopPadding)
 
                     LottieView(filename: slide.animationFile)
-                        .frame(height: 0.4 * proxy.size.height)
-                        .border(.red)
+                        .frame(height: 0.43 * proxy.size.height)
 
                     Spacer(minLength: 8)
 
@@ -73,10 +72,10 @@ struct SlideView: View {
                             .padding(.top, 24)
                     }
 
-                    Spacer()
+                    Spacer(minLength: 48)
                 }
                 .multilineTextAlignment(.center)
-                .padding(.horizontal, 40)
+                .padding(.horizontal, 32)
             }
             .onChange(of: accentColor) { _ in
                 // Handle accent color change
