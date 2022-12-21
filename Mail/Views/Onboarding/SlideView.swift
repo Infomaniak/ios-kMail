@@ -45,14 +45,13 @@ struct SlideView: View {
                     Spacer(minLength: Constants.onboardingLogoHeight + Constants.onboardingVerticalPadding)
 
                     LottieView(filename: slide.animationFile)
-                        .frame(maxHeight: min(300, proxy.size.width * 0.6))
+                        .frame(height: 0.4 * proxy.size.height)
                         .border(.red)
 
                     Spacer(minLength: 8)
 
                     Text(slide.title)
                         .textStyle(.header2)
-                        .border(.blue)
 
                     if slide.id == 1 {
                         Picker("Accent color", selection: $accentColor) {

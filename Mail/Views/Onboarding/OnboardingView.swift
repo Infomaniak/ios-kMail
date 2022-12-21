@@ -130,7 +130,7 @@ struct OnboardingView: View {
                     .buttonBorderShape(.capsule)
                 }
             }
-            .frame(height: Constants.onboardingButtonHeight + Constants.onboardingVerticalPadding, alignment: .top)
+            .frame(height: Constants.onboardingButtonHeight + 32, alignment: .top)
         }
         .overlay(alignment: .topLeading, content: {
             if !isScrollEnabled {
