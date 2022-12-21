@@ -151,13 +151,10 @@ struct OnboardingView: View {
         }
         .onAppear {
             if UIDevice.current.userInterfaceIdiom == .phone {
-                if #available(iOS 16.0, *) {
-                    window?.windowScene?.requestGeometryUpdate(.iOS(interfaceOrientations: .portrait))
-                } else {
-                    UIDevice.current
-                        .setValue(UIInterfaceOrientation.portrait.rawValue, forKey: "orientation")
-                }
+                UIDevice.current
+                    .setValue(UIInterfaceOrientation.portrait.rawValue, forKey: "orientation")
                 AppDelegate.orientationLock = .portrait
+                UINavigationController.attemptRotationToDeviceOrientation()
             }
         }
     }
