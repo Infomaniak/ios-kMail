@@ -54,8 +54,7 @@ struct ThreadView: View {
     private let toolbarActions: [Action] = [.reply, .forward, .archive, .delete]
 
     private var messages: [Message] {
-        return thread.messages.filter { $0.isDuplicate != true }
-            .sorted { $0.date.compare($1.date) == .orderedAscending }
+        return Array(thread.messages)
     }
 
     var body: some View {
