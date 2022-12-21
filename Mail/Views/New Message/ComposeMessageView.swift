@@ -67,8 +67,6 @@ struct ComposeMessageView: View {
 
     @StateObject private var alert = NewMessageAlert()
 
-    @State private var sendDisabled: Bool
-
     private var shouldDisplayAutocompletion: Bool {
         return !autocompletion.isEmpty && focusedField != nil
     }
@@ -88,7 +86,6 @@ struct ComposeMessageView: View {
             realm.add(draft, update: .modified)
         }
 
-        _sendDisabled = State(initialValue: mailboxManager.getSignatureResponse() == nil || draft.to.isEmpty)
         _draft = StateRealmObject(wrappedValue: draft)
         _showCc = State(initialValue: !draft.bcc.isEmpty || !draft.cc.isEmpty)
     }
@@ -205,12 +202,9 @@ struct ComposeMessageView: View {
                 }, label: {
                     Image(resource: MailResourcesAsset.send)
                 })
-                .disabled(sendDisabled)
+                .disabled(draft.identityId?.isEmpty == true || draft.to.isEmpty)
             )
             .background(MailResourcesAsset.backgroundColor.swiftUiColor)
-        }
-        .onChange(of: draft) { _ in
-                sendDisabled = draft.to.isEmpty
         }
         .onAppear {
             focusedField = .to
