@@ -58,7 +58,7 @@ struct Slide: Identifiable {
             animationFile: "illu_4",
             title: MailResourcesStrings.Localizable.onBoardingTitle4,
             description: MailResourcesStrings.Localizable.onBoardingDescription4
-        )
+        ),
     ]
 }
 
@@ -93,9 +93,9 @@ struct OnboardingView: View {
                         }
                     }
                     .tabViewStyle(.page)
-                    .edgesIgnoringSafeArea(.top)
                 }
             }
+            .ignoresSafeArea(edges: .top)
             .overlay(alignment: .top) {
                 Image(resource: MailResourcesAsset.logoText)
                     .resizable()

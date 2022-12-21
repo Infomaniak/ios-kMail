@@ -37,7 +37,7 @@ struct SlideView: View {
             ZStack(alignment: .top) {
                 slide.backgroundImage
                     .resizable()
-                    .frame(width: proxy.size.width, height: proxy.size.width, alignment: .top)
+                    .frame(height: proxy.size.height * 0.6)
                     .foregroundColor(colorScheme == .light ? accentColor.secondary : MailResourcesAsset.backgroundColor)
                     .ignoresSafeArea()
 
@@ -45,12 +45,14 @@ struct SlideView: View {
                     Spacer(minLength: Constants.onboardingLogoHeight + Constants.onboardingVerticalPadding)
 
                     LottieView(filename: slide.animationFile)
-                        .frame(maxHeight: 250)
+                        .frame(maxHeight: min(300, proxy.size.width * 0.6))
+                        .border(.red)
 
-                    Spacer(minLength: 28)
+                    Spacer(minLength: 8)
 
                     Text(slide.title)
                         .textStyle(.header2)
+                        .border(.blue)
 
                     if slide.id == 1 {
                         Picker("Accent color", selection: $accentColor) {
@@ -65,8 +67,7 @@ struct SlideView: View {
                             setSegmentedControlStyle()
                         }
                         .padding(.top, 32)
-                        .padding(.horizontal, 32)
-                        .frame(maxWidth: 350)
+                        .frame(maxWidth: 256)
                     } else {
                         Text(slide.description)
                             .textStyle(.bodySecondary)
@@ -78,11 +79,11 @@ struct SlideView: View {
                 .multilineTextAlignment(.center)
                 .padding(.horizontal, 40)
             }
-        }
-        .onChange(of: accentColor) { _ in
-            // Handle accent color change
-            (window?.windowScene?.delegate as? SceneDelegate)?.updateWindowUI()
-            setSegmentedControlStyle()
+            .onChange(of: accentColor) { _ in
+                // Handle accent color change
+                (window?.windowScene?.delegate as? SceneDelegate)?.updateWindowUI()
+                setSegmentedControlStyle()
+            }
         }
     }
 
