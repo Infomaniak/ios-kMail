@@ -72,6 +72,7 @@ struct AccountListView: View {
                 }
             }
             .padding(8)
+            .padding(.bottom, 120)
         }
         .background(MailResourcesAsset.backgroundColor.swiftUiColor)
         .navigationBarTitle(MailResourcesStrings.Localizable.titleMyAccounts, displayMode: .inline)
