@@ -989,14 +989,11 @@ public class MailboxManager: ObservableObject {
         }
     }
 
-    public func delete(draft: AbstractDraft) async {
+    public func delete(draft: Draft) async {
         await backgroundRealm.execute { realm in
-            if let draft = realm.object(ofType: Draft.self, forPrimaryKey: draft.localUUID) {
-                try? realm.safeWrite {
-                    realm.delete(draft)
-                }
-            } else {
-                print("No draft with localUuid \(draft.localUUID)")
+            guard let liveDraft = realm.object(ofType: Draft.self, forPrimaryKey: draft.localUUID) else { return }
+            try? realm.safeWrite {
+                realm.delete(liveDraft)
             }
         }
     }
