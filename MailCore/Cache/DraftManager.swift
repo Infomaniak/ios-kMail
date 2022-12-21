@@ -67,22 +67,18 @@ public class DraftManager {
 
     private init() {}
 
-    private func saveDraft(draft: Draft,
-                           mailboxManager: MailboxManager,
-                           showSnackBar: Bool = false) async {
+    private func saveDraft(draft: Draft, mailboxManager: MailboxManager) async {
         await draftQueue.cleanQueueElement(uuid: draft.localUUID)
         await draftQueue.beginBackgroundTask(withName: "Draft Saver", for: draft.localUUID)
 
-        let error = await mailboxManager.save(draft: draft)
-        await draftQueue.endBackgroundTask(uuid: draft.localUUID)
-        if let error = error, error.shouldDisplay {
-            await IKSnackBar.showSnackBar(message: error.localizedDescription)
-        } else if showSnackBar {
-            await IKSnackBar.showSnackBar(message: MailResourcesStrings.Localizable.snackBarDraftSaved,
-                                          action: .init(title: MailResourcesStrings.Localizable.actionDelete) { [weak self] in
-                                              self?.deleteDraft(localUuid: draft.localUUID, mailboxManager: mailboxManager)
-                                          })
+        do {
+            try await mailboxManager.save(draft: draft)
+        } catch {
+            if error.shouldDisplay {
+                await IKSnackBar.showSnackBar(message: error.localizedDescription)
+            }
         }
+        await draftQueue.endBackgroundTask(uuid: draft.localUUID)
     }
 
     private func deleteDraft(localUuid: String, mailboxManager: MailboxManager) {
@@ -112,7 +108,6 @@ public class DraftManager {
 
         do {
             let cancelableResponse = try await mailboxManager.send(draft: draft)
-            await draftQueue.endBackgroundTask(uuid: draft.localUUID)
             await IKSnackBar.showCancelableSnackBar(
                 message: MailResourcesStrings.Localizable.emailSentSnackbar,
                 cancelSuccessMessage: MailResourcesStrings.Localizable.canceledEmailSendingConfirmationSnackbar,
@@ -121,22 +116,26 @@ public class DraftManager {
                 mailboxManager: mailboxManager
             )
         } catch {
-            await draftQueue.endBackgroundTask(uuid: draft.localUUID)
             await IKSnackBar.showSnackBar(message: error.localizedDescription)
         }
+        await draftQueue.endBackgroundTask(uuid: draft.localUUID)
     }
 
     public func syncDraft(mailboxManager: MailboxManager) {
-        let drafts = mailboxManager.draftWithPendingAction()
-        for draft in drafts {
-            Task { [frozenDraft = draft.freeze()] in
-                switch frozenDraft.action {
-                case .save:
-                    await self.saveDraft(draft: frozenDraft, mailboxManager: mailboxManager)
-                case .send:
-                    await self.send(draft: frozenDraft, mailboxManager: mailboxManager)
-                default:
-                    break
+        let drafts = mailboxManager.draftWithPendingAction().freezeIfNeeded()
+        Task {
+            await withTaskGroup(of: Void.self) { group in
+                for draft in drafts {
+                    group.addTask {
+                        switch draft.action {
+                        case .save:
+                            await self.saveDraft(draft: draft, mailboxManager: mailboxManager)
+                        case .send:
+                            await self.send(draft: draft, mailboxManager: mailboxManager)
+                        default:
+                            break
+                        }
+                    }
                 }
             }
         }

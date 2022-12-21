@@ -1229,11 +1229,9 @@ public class MailboxManager: ObservableObject {
         }
     }
 
-    public func draftWithPendingAction() -> [Draft] {
+    public func draftWithPendingAction() -> Results<Draft> {
         let realm = getRealm()
-        let drafts = realm.objects(Draft.self).where { $0.action != nil }
-        let unmanagedDrafts = Array(drafts.compactMap { $0 })
-        return unmanagedDrafts
+        return realm.objects(Draft.self).where { $0.action != nil }
     }
 
     public func draft(from message: Message) async throws -> Draft {
@@ -1279,22 +1277,16 @@ public class MailboxManager: ObservableObject {
         return cancelableResponse
     }
 
-    public func save(draft: Draft) async -> Error? {
-        do {
-            let saveResponse = try await apiFetcher.save(mailbox: mailbox, draft: draft)
-            await backgroundRealm.execute { realm in
-                // Update draft in Realm
-                guard let liveDraft = realm.object(ofType: Draft.self, forPrimaryKey: draft.localUUID) else { return }
-                try? realm.safeWrite {
-                    liveDraft.remoteUUID = saveResponse.uuid
-                    liveDraft.messageUid = saveResponse.uid
-                    liveDraft.action = nil
-                }
+    public func save(draft: Draft) async throws {
+        let saveResponse = try await apiFetcher.save(mailbox: mailbox, draft: draft)
+        await backgroundRealm.execute { realm in
+            // Update draft in Realm
+            guard let liveDraft = realm.object(ofType: Draft.self, forPrimaryKey: draft.localUUID) else { return }
+            try? realm.safeWrite {
+                liveDraft.remoteUUID = saveResponse.uuid
+                liveDraft.messageUid = saveResponse.uid
+                liveDraft.action = nil
             }
-
-            return nil
-        } catch {
-            return error
         }
     }
 
