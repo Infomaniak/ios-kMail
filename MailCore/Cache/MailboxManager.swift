@@ -931,6 +931,7 @@ public class MailboxManager: ObservableObject {
 
     public func draftWithPendingAction() -> Results<Draft> {
         let realm = getRealm()
+        realm.refresh()
         return realm.objects(Draft.self).where { $0.action != nil }
     }
 
