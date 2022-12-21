@@ -103,6 +103,8 @@ struct AccountView: View {
                     }
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .padding(.top, 24)
+
+                    Spacer()
                 }
 
                 // Buttons
