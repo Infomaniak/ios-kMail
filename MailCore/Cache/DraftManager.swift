@@ -128,6 +128,12 @@ public class DraftManager {
                 for draft in drafts {
                     group.addTask {
                         switch draft.action {
+                        case .initialSave:
+                            await self.saveDraft(draft: draft, mailboxManager: mailboxManager)
+                            await IKSnackBar.showSnackBar(message: MailResourcesStrings.Localizable.snackBarDraftSaved,
+                                                          action: .init(title: MailResourcesStrings.Localizable.actionDelete) { [weak self] in
+                                                              self?.deleteDraft(localUuid: draft.localUUID, mailboxManager: mailboxManager)
+                                                          })
                         case .save:
                             await self.saveDraft(draft: draft, mailboxManager: mailboxManager)
                         case .send:

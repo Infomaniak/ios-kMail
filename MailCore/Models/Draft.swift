@@ -22,8 +22,19 @@ import RealmSwift
 import UniformTypeIdentifiers
 
 public enum SaveDraftOption: String, Codable, PersistableEnum {
+    case initialSave
     case save
     case send
+
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.singleValueContainer()
+        switch self {
+        case .initialSave, .save:
+            try container.encode(SaveDraftOption.save.rawValue)
+        case .send:
+            try container.encode(SaveDraftOption.send.rawValue)
+        }
+    }
 }
 
 public enum ReplyMode: Equatable {
