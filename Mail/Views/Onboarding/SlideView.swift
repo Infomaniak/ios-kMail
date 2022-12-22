@@ -44,7 +44,7 @@ struct SlideView: View {
                 VStack(spacing: 0) {
                     Spacer(minLength: Constants.onboardingLogoHeight + Constants.onboardingVerticalTopPadding)
 
-                    LottieView(filename: slide.animationFile, configuration: slide.lottieConfiguration)
+                    LottieView(slideId: slide.id, filename: slide.animationFile, configuration: slide.lottieConfiguration)
                         .frame(height: 0.43 * proxy.size.height)
 
                     Spacer(minLength: 8)

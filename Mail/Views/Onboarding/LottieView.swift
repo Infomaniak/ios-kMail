@@ -27,6 +27,7 @@ struct LottieConfiguration {
 struct LottieView: UIViewRepresentable {
     private let animationView = LottieAnimationView()
 
+    let slideId: Int
     let filename: String
     let configuration: LottieConfiguration
 
@@ -48,6 +49,8 @@ struct LottieView: UIViewRepresentable {
         animationView.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(animationView)
 
+        updateIllustrationColors()
+
         NSLayoutConstraint.activate([
             animationView.widthAnchor.constraint(equalTo: view.widthAnchor),
             animationView.heightAnchor.constraint(equalTo: view.heightAnchor)
@@ -58,5 +61,9 @@ struct LottieView: UIViewRepresentable {
 
     func updateUIView(_ uiView: UIViewType, context: Context) {
         // Update theme colors here
+    }
+
+    private func updateIllustrationColors() {
+        // Update colors here
     }
 }
