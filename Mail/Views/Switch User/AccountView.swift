@@ -124,7 +124,7 @@ struct AccountView: View {
             } label: {
                 Label(MailResourcesStrings.Localizable.buttonClose, systemImage: "xmark")
             })
-            .padding(.bottom, 48)
+            .padding(.bottom, 24)
         }
         .task {
             avatarImage = await account.user.avatarImage
