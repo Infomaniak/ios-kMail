@@ -696,17 +696,19 @@ public class MailboxManager: ObservableObject {
         var threadsToUpdate = Set<Thread>()
         try? realm.safeWrite {
             for message in messageByUids.messages {
-                message.computeReference()
-                let existingThreads = Array(realm.objects(Thread.self)
-                    .where { $0.messageIds.containsAny(in: message.linkedUids) })
+                if realm.object(ofType: Message.self, forPrimaryKey: message.uid) == nil {
+                    message.computeReference()
+                    let existingThreads = Array(realm.objects(Thread.self)
+                        .where { $0.messageIds.containsAny(in: message.linkedUids) })
 
-                if let newThread = createNewThreadIfRequired(for: message, folder: folder, existingThreads: existingThreads) {
-                    threadsToUpdate.insert(newThread)
-                }
+                    if let newThread = createNewThreadIfRequired(for: message, folder: folder, existingThreads: existingThreads) {
+                        threadsToUpdate.insert(newThread)
+                    }
 
-                for thread in existingThreads {
-                    thread.addMessageIfNeeded(newMessage: message.fresh(using: realm) ?? message)
-                    threadsToUpdate.insert(thread)
+                    for thread in existingThreads {
+                        thread.addMessageIfNeeded(newMessage: message.fresh(using: realm) ?? message)
+                        threadsToUpdate.insert(thread)
+                    }
                 }
             }
 
