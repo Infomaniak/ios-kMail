@@ -1,4 +1,3 @@
-//
 /*
  Infomaniak Mail - iOS App
  Copyright (C) 2022 Infomaniak Network SA
@@ -21,79 +20,252 @@ import Foundation
 import Lottie
 
 extension AnimationKeypath {
-    static func iphoneScreen(group: Int, layer: Int = 1) -> Self {
-        return AnimationKeypath(keys: ["IPHONE SCREEN", "Groupe \(group)", "Fond \(layer)"])
+    enum Category: String {
+        case iPhoneScreen = "IPHONE SCREEN"
+        case point = "POINT"
+        case chat = "CHAT"
+        case notification = "NOTIFICATION"
+        case movingNotification = "MOVING NOTIF"
+        case archives = "ARCHIVES"
+        case hand = "HAND"
+        case star = "STAR"
+        case ben = "BEN"
+        case ring = "RING"
+    }
+
+    static func keyPath(category: Category, numero: Int? = nil, group: Int = 1, border: Int) -> Self {
+        var categoryName = category.rawValue
+        if let numero {
+            categoryName = "\(categoryName) \(numero)"
+        }
+        return AnimationKeypath(keys: [categoryName, "Groupe \(group)", "Contour \(border)"])
+    }
+
+    static func keyPath(category: Category, numero: Int? = nil, group: Int = 1, layer: Int = 1) -> Self {
+        var categoryName = category.rawValue
+        if let numero {
+            categoryName = "\(categoryName) \(numero)"
+        }
+        return AnimationKeypath(keys: [categoryName, "Groupe \(group)", "Fond \(layer)"])
     }
 }
 
 struct IlluColors {
-    let keypath: AnimationKeypath
+    let keyPath: AnimationKeypath
     let lightColor: String
     let darkColor: String
+
+    init(_ keyPath: AnimationKeypath, lightColor: String, darkColor: String) {
+        self.keyPath = keyPath
+        self.lightColor = lightColor
+        self.darkColor = darkColor
+    }
 
     // MARK: - Default colors
 
     static let allColors = [
-        IlluColors(keypath: .iphoneScreen(group: 18), lightColor: "#F5F5F5", darkColor: "#3E3E3E"),
-        IlluColors(keypath: .iphoneScreen(group: 22), lightColor: "#E0E0E0", darkColor: "#4C4C4C"),
-        IlluColors(keypath: .iphoneScreen(group: 25), lightColor: "#E0E0E0", darkColor: "#4C4C4C"),
-        IlluColors(keypath: .iphoneScreen(group: 26), lightColor: "#FAFAFA", darkColor: "#282828"),
-        IlluColors(keypath: .iphoneScreen(group: 27), lightColor: "#E0E0E0", darkColor: "#4C4C4C"),
-        IlluColors(keypath: .iphoneScreen(group: 28), lightColor: "#E0E0E0", darkColor: "#4C4C4C"),
-        IlluColors(keypath: .iphoneScreen(group: 29), lightColor: "#E0E0E0", darkColor: "#4C4C4C"),
-        IlluColors(keypath: .iphoneScreen(group: 30), lightColor: "#E0E0E0", darkColor: "#4C4C4C"),
-        IlluColors(keypath: .iphoneScreen(group: 31), lightColor: "#E0E0E0", darkColor: "#4C4C4C"),
-        IlluColors(keypath: .iphoneScreen(group: 32), lightColor: "#E0E0E0", darkColor: "#4C4C4C"),
-        IlluColors(keypath: .iphoneScreen(group: 33), lightColor: "#E0E0E0", darkColor: "#4C4C4C"),
-        IlluColors(keypath: .iphoneScreen(group: 34), lightColor: "#E0E0E0", darkColor: "#4C4C4C"),
-        IlluColors(keypath: .iphoneScreen(group: 35), lightColor: "#E0E0E0", darkColor: "#4C4C4C"),
-        IlluColors(keypath: .iphoneScreen(group: 36), lightColor: "#E0E0E0", darkColor: "#4C4C4C"),
-        IlluColors(keypath: .iphoneScreen(group: 37), lightColor: "#E0E0E0", darkColor: "#4C4C4C"),
-        IlluColors(keypath: .iphoneScreen(group: 38), lightColor: "#E0E0E0", darkColor: "#4C4C4C"),
-        IlluColors(keypath: .iphoneScreen(group: 39), lightColor: "#C6AC9F", darkColor: "#996452"),
-        IlluColors(keypath: .iphoneScreen(group: 44), lightColor: "#F5F5F5", darkColor: "#3E3E3E"),
-        IlluColors(keypath: .iphoneScreen(group: 49), lightColor: "#C6AC9F", darkColor: "#996452"),
-        IlluColors(keypath: .iphoneScreen(group: 50), lightColor: "#F5F5F5", darkColor: "#3E3E3E"),
-        IlluColors(keypath: .iphoneScreen(group: 62), lightColor: "#F5F5F5", darkColor: "#3E3E3E"),
-        IlluColors(keypath: .iphoneScreen(group: 68), lightColor: "#F5F5F5", darkColor: "#3E3E3E"),
-        IlluColors(keypath: .iphoneScreen(group: 70), lightColor: "#F5F5F5", darkColor: "#3E3E3E")
+        IlluColors(.keyPath(category: .iPhoneScreen, group: 18), lightColor: "#F5F5F5", darkColor: "#3E3E3E"),
+        IlluColors(.keyPath(category: .iPhoneScreen, group: 22), lightColor: "#E0E0E0", darkColor: "#4C4C4C"),
+        IlluColors(.keyPath(category: .iPhoneScreen, group: 25), lightColor: "#E0E0E0", darkColor: "#4C4C4C"),
+        IlluColors(.keyPath(category: .iPhoneScreen, group: 26), lightColor: "#FAFAFA", darkColor: "#282828"),
+        IlluColors(.keyPath(category: .iPhoneScreen, group: 27), lightColor: "#E0E0E0", darkColor: "#4C4C4C"),
+        IlluColors(.keyPath(category: .iPhoneScreen, group: 28), lightColor: "#E0E0E0", darkColor: "#4C4C4C"),
+        IlluColors(.keyPath(category: .iPhoneScreen, group: 29), lightColor: "#E0E0E0", darkColor: "#4C4C4C"),
+        IlluColors(.keyPath(category: .iPhoneScreen, group: 30), lightColor: "#E0E0E0", darkColor: "#4C4C4C"),
+        IlluColors(.keyPath(category: .iPhoneScreen, group: 31), lightColor: "#E0E0E0", darkColor: "#4C4C4C"),
+        IlluColors(.keyPath(category: .iPhoneScreen, group: 32), lightColor: "#E0E0E0", darkColor: "#4C4C4C"),
+        IlluColors(.keyPath(category: .iPhoneScreen, group: 33), lightColor: "#E0E0E0", darkColor: "#4C4C4C"),
+        IlluColors(.keyPath(category: .iPhoneScreen, group: 34), lightColor: "#E0E0E0", darkColor: "#4C4C4C"),
+        IlluColors(.keyPath(category: .iPhoneScreen, group: 35), lightColor: "#E0E0E0", darkColor: "#4C4C4C"),
+        IlluColors(.keyPath(category: .iPhoneScreen, group: 36), lightColor: "#E0E0E0", darkColor: "#4C4C4C"),
+        IlluColors(.keyPath(category: .iPhoneScreen, group: 37), lightColor: "#E0E0E0", darkColor: "#4C4C4C"),
+        IlluColors(.keyPath(category: .iPhoneScreen, group: 38), lightColor: "#E0E0E0", darkColor: "#4C4C4C"),
+        IlluColors(.keyPath(category: .iPhoneScreen, group: 39), lightColor: "#C6AC9F", darkColor: "#996452"),
+        IlluColors(.keyPath(category: .iPhoneScreen, group: 44), lightColor: "#F5F5F5", darkColor: "#3E3E3E"),
+        IlluColors(.keyPath(category: .iPhoneScreen, group: 49), lightColor: "#C6AC9F", darkColor: "#996452"),
+        IlluColors(.keyPath(category: .iPhoneScreen, group: 50), lightColor: "#F5F5F5", darkColor: "#3E3E3E"),
+        IlluColors(.keyPath(category: .iPhoneScreen, group: 62), lightColor: "#F5F5F5", darkColor: "#3E3E3E"),
+        IlluColors(.keyPath(category: .iPhoneScreen, group: 68), lightColor: "#F5F5F5", darkColor: "#3E3E3E"),
+        IlluColors(.keyPath(category: .iPhoneScreen, group: 70), lightColor: "#F5F5F5", darkColor: "#3E3E3E")
     ]
 
     // MARK: - Theme colors
 
     static let pinkColors = [
-        IlluColors(keypath: .iphoneScreen(group: 1), lightColor: "#BC0055", darkColor: "#D0759F"),
-        IlluColors(keypath: .iphoneScreen(group: 2), lightColor: "#BC0055", darkColor: "#D0759F"),
-        IlluColors(keypath: .iphoneScreen(group: 3), lightColor: "#BC0055", darkColor: "#D0759F"),
-        IlluColors(keypath: .iphoneScreen(group: 4), lightColor: "#BC0055", darkColor: "#D0759F"),
-        IlluColors(keypath: .iphoneScreen(group: 5), lightColor: "#BC0055", darkColor: "#D0759F"),
-        IlluColors(keypath: .iphoneScreen(group: 6), lightColor: "#BC0055", darkColor: "#D0759F"),
-        IlluColors(keypath: .iphoneScreen(group: 9), lightColor: "#FF5B97", darkColor: "#EF0057"),
-        IlluColors(keypath: .iphoneScreen(group: 12), lightColor: "#AB2456", darkColor: "#D0759F"),
-        IlluColors(keypath: .iphoneScreen(group: 15), lightColor: "#BC0055", darkColor: "#D0759F"),
-        IlluColors(keypath: .iphoneScreen(group: 19), lightColor: "#BC0055", darkColor: "#D0759F"),
-        IlluColors(keypath: .iphoneScreen(group: 20), lightColor: "#BC0055", darkColor: "#D0759F"),
-        IlluColors(keypath: .iphoneScreen(group: 23), lightColor: "#BC0055", darkColor: "#D0759F"),
-        IlluColors(keypath: .iphoneScreen(group: 24), lightColor: "#BC0055", darkColor: "#D0759F"),
-        IlluColors(keypath: .iphoneScreen(group: 43), lightColor: "#BD95A7", darkColor: "#AE366D"),
-        IlluColors(keypath: .iphoneScreen(group: 48), lightColor: "#BF4C80", darkColor: "#E75F9C")
+        IlluColors(.keyPath(category: .iPhoneScreen, group: 1), lightColor: "#BC0055", darkColor: "#D0759F"),
+        IlluColors(.keyPath(category: .iPhoneScreen, group: 2), lightColor: "#BC0055", darkColor: "#D0759F"),
+        IlluColors(.keyPath(category: .iPhoneScreen, group: 3), lightColor: "#BC0055", darkColor: "#D0759F"),
+        IlluColors(.keyPath(category: .iPhoneScreen, group: 4), lightColor: "#BC0055", darkColor: "#D0759F"),
+        IlluColors(.keyPath(category: .iPhoneScreen, group: 5), lightColor: "#BC0055", darkColor: "#D0759F"),
+        IlluColors(.keyPath(category: .iPhoneScreen, group: 6), lightColor: "#BC0055", darkColor: "#D0759F"),
+        IlluColors(.keyPath(category: .iPhoneScreen, group: 9), lightColor: "#FF5B97", darkColor: "#EF0057"),
+        IlluColors(.keyPath(category: .iPhoneScreen, group: 12), lightColor: "#AB2456", darkColor: "#D0759F"),
+        IlluColors(.keyPath(category: .iPhoneScreen, group: 15), lightColor: "#BC0055", darkColor: "#D0759F"),
+        IlluColors(.keyPath(category: .iPhoneScreen, group: 19), lightColor: "#BC0055", darkColor: "#D0759F"),
+        IlluColors(.keyPath(category: .iPhoneScreen, group: 20), lightColor: "#BC0055", darkColor: "#D0759F"),
+        IlluColors(.keyPath(category: .iPhoneScreen, group: 23), lightColor: "#BC0055", darkColor: "#D0759F"),
+        IlluColors(.keyPath(category: .iPhoneScreen, group: 24), lightColor: "#BC0055", darkColor: "#D0759F"),
+        IlluColors(.keyPath(category: .iPhoneScreen, group: 43), lightColor: "#BD95A7", darkColor: "#AE366D"),
+        IlluColors(.keyPath(category: .iPhoneScreen, group: 48), lightColor: "#BF4C80", darkColor: "#E75F9C")
     ]
 
     static let blueColors = [
-        IlluColors(keypath: .iphoneScreen(group: 1), lightColor: "#0098FF", darkColor: "#0177C7"),
-        IlluColors(keypath: .iphoneScreen(group: 2), lightColor: "#0098FF", darkColor: "#0098FF"),
-        IlluColors(keypath: .iphoneScreen(group: 3), lightColor: "#0098FF", darkColor: "#0177C7"),
-        IlluColors(keypath: .iphoneScreen(group: 4), lightColor: "#0098FF", darkColor: "#0177C7"),
-        IlluColors(keypath: .iphoneScreen(group: 5), lightColor: "#0098FF", darkColor: "#0177C7"),
-        IlluColors(keypath: .iphoneScreen(group: 6), lightColor: "#0098FF", darkColor: "#0177C7"),
-        IlluColors(keypath: .iphoneScreen(group: 9), lightColor: "#69C9FF", darkColor: "#6DCBFF"),
-        IlluColors(keypath: .iphoneScreen(group: 12), lightColor: "#0098FF", darkColor: "#0177C7"),
-        IlluColors(keypath: .iphoneScreen(group: 15), lightColor: "#0098FF", darkColor: "#0177C7"),
-        IlluColors(keypath: .iphoneScreen(group: 19), lightColor: "#0098FF", darkColor: "#0177C7"),
-        IlluColors(keypath: .iphoneScreen(group: 20), lightColor: "#0098FF", darkColor: "#0177C7"),
-        IlluColors(keypath: .iphoneScreen(group: 23), lightColor: "#0098FF", darkColor: "#0177C7"),
-        IlluColors(keypath: .iphoneScreen(group: 24), lightColor: "#0098FF", darkColor: "#0177C7"),
-        IlluColors(keypath: .iphoneScreen(group: 43), lightColor: "#3981AA", darkColor: "#56AFE1"),
-        IlluColors(keypath: .iphoneScreen(group: 48), lightColor: "#289CDD", darkColor: "#0D7DBC")
+        IlluColors(.keyPath(category: .iPhoneScreen, group: 1), lightColor: "#0098FF", darkColor: "#0177C7"),
+        IlluColors(.keyPath(category: .iPhoneScreen, group: 2), lightColor: "#0098FF", darkColor: "#0098FF"),
+        IlluColors(.keyPath(category: .iPhoneScreen, group: 3), lightColor: "#0098FF", darkColor: "#0177C7"),
+        IlluColors(.keyPath(category: .iPhoneScreen, group: 4), lightColor: "#0098FF", darkColor: "#0177C7"),
+        IlluColors(.keyPath(category: .iPhoneScreen, group: 5), lightColor: "#0098FF", darkColor: "#0177C7"),
+        IlluColors(.keyPath(category: .iPhoneScreen, group: 6), lightColor: "#0098FF", darkColor: "#0177C7"),
+        IlluColors(.keyPath(category: .iPhoneScreen, group: 9), lightColor: "#69C9FF", darkColor: "#6DCBFF"),
+        IlluColors(.keyPath(category: .iPhoneScreen, group: 12), lightColor: "#0098FF", darkColor: "#0177C7"),
+        IlluColors(.keyPath(category: .iPhoneScreen, group: 15), lightColor: "#0098FF", darkColor: "#0177C7"),
+        IlluColors(.keyPath(category: .iPhoneScreen, group: 19), lightColor: "#0098FF", darkColor: "#0177C7"),
+        IlluColors(.keyPath(category: .iPhoneScreen, group: 20), lightColor: "#0098FF", darkColor: "#0177C7"),
+        IlluColors(.keyPath(category: .iPhoneScreen, group: 23), lightColor: "#0098FF", darkColor: "#0177C7"),
+        IlluColors(.keyPath(category: .iPhoneScreen, group: 24), lightColor: "#0098FF", darkColor: "#0177C7"),
+        IlluColors(.keyPath(category: .iPhoneScreen, group: 43), lightColor: "#3981AA", darkColor: "#56AFE1"),
+        IlluColors(.keyPath(category: .iPhoneScreen, group: 48), lightColor: "#289CDD", darkColor: "#0D7DBC")
+    ]
+
+    // MARK: - Each illustration
+
+    static let illu1Colors = [
+        IlluColors(.keyPath(category: .point, numero: 1), lightColor: "#FFFFFF", darkColor: "#1A1A1A"),
+        IlluColors(.keyPath(category: .point, numero: 2), lightColor: "#FFFFFF", darkColor: "#1A1A1A"),
+        IlluColors(.keyPath(category: .point, numero: 3), lightColor: "#FFFFFF", darkColor: "#1A1A1A"),
+        IlluColors(.keyPath(category: .point, numero: 4), lightColor: "#FFFFFF", darkColor: "#1A1A1A"),
+        IlluColors(.keyPath(category: .point, numero: 5), lightColor: "#FFFFFF", darkColor: "#1A1A1A"),
+        IlluColors(.keyPath(category: .point, numero: 6), lightColor: "#FFFFFF", darkColor: "#1A1A1A"),
+        IlluColors(.keyPath(category: .iPhoneScreen, group: 56), lightColor: "#F5F5F5", darkColor: "#3E3E3E"),
+        IlluColors(.keyPath(category: .iPhoneScreen, group: 67), lightColor: "#340E00", darkColor: "#996452"),
+        IlluColors(.keyPath(category: .iPhoneScreen, group: 69), lightColor: "#FFFFFF", darkColor: "#1A1A1A")
+    ]
+    static let illu1PinkColors = [
+        IlluColors(.keyPath(category: .chat, numero: 1), lightColor: "#BC0055", darkColor: "#D0759F"),
+        IlluColors(.keyPath(category: .chat, numero: 2), lightColor: "#BD95A7", darkColor: "#AE366D"),
+        IlluColors(.keyPath(category: .iPhoneScreen, group: 55), lightColor: "#DFBDCC", darkColor: "#955873"),
+        IlluColors(.keyPath(category: .iPhoneScreen, group: 61), lightColor: "#BC0055", darkColor: "#D0759F"),
+        IlluColors(.keyPath(category: .iPhoneScreen, group: 66), lightColor: "#824D65", darkColor: "#AB6685")
+    ]
+    static let illu1BlueColors = [
+        IlluColors(.keyPath(category: .chat, numero: 1), lightColor: "#0098FF", darkColor: "#0177C7"),
+        IlluColors(.keyPath(category: .chat, numero: 2), lightColor: "#3981AA", darkColor: "#56AFE1"),
+        IlluColors(.keyPath(category: .iPhoneScreen, group: 55), lightColor: "#84BAD8", darkColor: "#588EAC"),
+        IlluColors(.keyPath(category: .iPhoneScreen, group: 61), lightColor: "#0098FF", darkColor: "#0177C7"),
+        IlluColors(.keyPath(category: .iPhoneScreen, group: 66), lightColor: "#10405B", darkColor: "#10405B")
+    ]
+
+    static let illu2Colors = [
+        IlluColors(.keyPath(category: .notification, numero: 2, group: 5), lightColor: "#C6AC9F", darkColor: "#996452"),
+        IlluColors(.keyPath(category: .notification, numero: 2, group: 6), lightColor: "#F5F5F5", darkColor: "#3E3E3E"),
+        IlluColors(.keyPath(category: .notification, numero: 2, group: 9), lightColor: "#CCCCCC", darkColor: "#818181"),
+        IlluColors(.keyPath(category: .notification, numero: 2, group: 10), lightColor: "#CCCCCC", darkColor: "#818181"),
+        IlluColors(.keyPath(category: .notification, numero: 2, group: 12), lightColor: "#FFFFFF", darkColor: "#1A1A1A"),
+        IlluColors(.keyPath(category: .notification, numero: 2, group: 13), lightColor: "#E0E0E0", darkColor: "#4C4C4C"),
+        IlluColors(.keyPath(category: .notification, numero: 2, group: 14), lightColor: "#F5F5F5", darkColor: "#3E3E3E"),
+        IlluColors(.keyPath(category: .movingNotification, numero: 1, group: 4), lightColor: "#C4C4C4", darkColor: "#7C7C7C"),
+        IlluColors(.keyPath(category: .movingNotification, numero: 1, group: 5), lightColor: "#C4C4C4", darkColor: "#7C7C7C"),
+        IlluColors(.keyPath(category: .movingNotification, numero: 1, group: 6), lightColor: "#C4C4C4", darkColor: "#7C7C7C"),
+        IlluColors(.keyPath(category: .movingNotification, numero: 1, group: 7), lightColor: "#FFFFFF", darkColor: "#1A1A1A"),
+        IlluColors(.keyPath(category: .movingNotification, numero: 1, group: 8), lightColor: "#E0E0E0", darkColor: "#4C4C4C"),
+        IlluColors(.keyPath(category: .movingNotification, numero: 1, group: 9), lightColor: "#E0E0E0", darkColor: "#4C4C4C"),
+        IlluColors(.keyPath(category: .movingNotification, numero: 1, group: 10), lightColor: "#E0E0E0", darkColor: "#4C4C4C"),
+        IlluColors(.keyPath(category: .movingNotification, numero: 1, group: 13), lightColor: "#FFFFFF", darkColor: "#1A1A1A"),
+        IlluColors(.keyPath(category: .movingNotification, numero: 1, group: 14), lightColor: "#C4C4C4", darkColor: "#7C7C7C"),
+        IlluColors(.keyPath(category: .movingNotification, numero: 2, group: 5), lightColor: "#C6AC9F", darkColor: "#996452"),
+        IlluColors(.keyPath(category: .movingNotification, numero: 2, group: 6), lightColor: "#F5F5F5", darkColor: "#3E3E3E"),
+        IlluColors(.keyPath(category: .movingNotification, numero: 2, group: 9), lightColor: "#CCCCCC", darkColor: "#818181"),
+        IlluColors(.keyPath(category: .movingNotification, numero: 2, group: 10), lightColor: "#CCCCCC", darkColor: "#818181"),
+        IlluColors(.keyPath(category: .movingNotification, numero: 2, group: 12), lightColor: "#FFFFFF", darkColor: "#1A1A1A"),
+        IlluColors(.keyPath(category: .movingNotification, numero: 2, group: 13), lightColor: "#E0E0E0", darkColor: "#4C4C4C"),
+        IlluColors(.keyPath(category: .movingNotification, numero: 2, group: 14), lightColor: "#F5F5F5", darkColor: "#3E3E3E"),
+        IlluColors(.keyPath(category: .movingNotification, numero: 2, group: 15), lightColor: "#F5F5F5", darkColor: "#3E3E3E"),
+        IlluColors(.keyPath(category: .archives, group: 1), lightColor: "#FFFFFF", darkColor: "#1A1A1A"),
+        IlluColors(.keyPath(category: .archives, group: 2), lightColor: "#FFFFFF", darkColor: "#1A1A1A"),
+        IlluColors(.keyPath(category: .archives, group: 3), lightColor: "#FFFFFF", darkColor: "#1A1A1A"),
+        IlluColors(.keyPath(category: .archives, group: 4), lightColor: "#FFFFFF", darkColor: "#1A1A1A"),
+    ]
+    static let illu2PinkColors = [
+        IlluColors(.keyPath(category: .notification, numero: 2, group: 4), lightColor: "#BF4C80", darkColor: "#E75F9C"),
+        IlluColors(.keyPath(category: .notification, numero: 2, group: 11), lightColor: "#BC0055", darkColor: "#D0759F"),
+        IlluColors(.keyPath(category: .iPhoneScreen, group: 54), lightColor: "#BF4C80", darkColor: "#E75F9C"),
+        IlluColors(.keyPath(category: .iPhoneScreen, group: 61), lightColor: "#DFBDCC", darkColor: "#955873"),
+        IlluColors(.keyPath(category: .iPhoneScreen, group: 67), lightColor: "#BC0055", darkColor: "#D0759F"),
+        IlluColors(.keyPath(category: .iPhoneScreen, group: 72), lightColor: "#824D65", darkColor: "#AB6685"),
+        IlluColors(.keyPath(category: .hand, group: 1), lightColor: "#824D65", darkColor: "#AB6685"),
+        IlluColors(.keyPath(category: .hand, group: 4), lightColor: "#693D51", darkColor: "#CA799E"),
+        IlluColors(.keyPath(category: .hand, group: 5), lightColor: "#693D51", darkColor: "#CA799E"),
+        IlluColors(.keyPath(category: .movingNotification, numero: 1, group: 15), lightColor: "#BC0055", darkColor: "#D0759F"),
+        IlluColors(.keyPath(category: .movingNotification, numero: 2, group: 4), lightColor: "#BF4C80", darkColor: "#E75F9C"),
+        IlluColors(.keyPath(category: .movingNotification, numero: 2, group: 11), lightColor: "#BC0055", darkColor: "#D0759F")
+    ]
+    static let illu2BlueColors = [
+        IlluColors(.keyPath(category: .notification, numero: 2, group: 4), lightColor: "#289CDD", darkColor: "#0D7DBC"),
+        IlluColors(.keyPath(category: .notification, numero: 2, group: 11), lightColor: "#0098FF", darkColor: "#0177C7"),
+        IlluColors(.keyPath(category: .hand, group: 1), lightColor: "#10405B", darkColor: "#10405B"),
+        IlluColors(.keyPath(category: .hand, group: 4), lightColor: "#0B3547", darkColor: "#266E8D"),
+        IlluColors(.keyPath(category: .hand, group: 5), lightColor: "#0B3547", darkColor: "#266E8D"),
+        IlluColors(.keyPath(category: .movingNotification, numero: 1, group: 15), lightColor: "#0098FF", darkColor: "#0177C7"),
+        IlluColors(.keyPath(category: .movingNotification, numero: 2, group: 4), lightColor: "#289CDD", darkColor: "#0D7DBC"),
+        IlluColors(.keyPath(category: .movingNotification, numero: 2, group: 11), lightColor: "#0098FF", darkColor: "#0177C7")
+    ]
+
+    static let illu3Colors = [
+        IlluColors(.keyPath(category: .notification, numero: 2, group: 1), lightColor: "#E0E0E0", darkColor: "#4C4C4C"),
+        IlluColors(.keyPath(category: .notification, numero: 2, group: 2), lightColor: "#E0E0E0", darkColor: "#4C4C4C"),
+        IlluColors(.keyPath(category: .notification, numero: 2, group: 3), lightColor: "#FFFFFF", darkColor: "#1A1A1A"),
+        IlluColors(.keyPath(category: .notification, numero: 3, group: 1), lightColor: "#E0E0E0", darkColor: "#4C4C4C"),
+        IlluColors(.keyPath(category: .notification, numero: 3, group: 2), lightColor: "#E0E0E0", darkColor: "#4C4C4C"),
+        IlluColors(.keyPath(category: .notification, numero: 3, group: 3), lightColor: "#FFFFFF", darkColor: "#1A1A1A"),
+        IlluColors(.keyPath(category: .notification, numero: 4, group: 1), lightColor: "#E0E0E0", darkColor: "#4C4C4C"),
+        IlluColors(.keyPath(category: .notification, numero: 4, group: 2), lightColor: "#E0E0E0", darkColor: "#4C4C4C"),
+        IlluColors(.keyPath(category: .notification, numero: 4, group: 3), lightColor: "#FFFFFF", darkColor: "#1A1A1A"),
+        IlluColors(.keyPath(category: .star, group: 2), lightColor: "#FAFAFA", darkColor: "#282828"),
+        IlluColors(.keyPath(category: .ben, group: 7), lightColor: "#FAFAFA", darkColor: "#282828"),
+        IlluColors(.keyPath(category: .ring, group: 5), lightColor: "#FAFAFA", darkColor: "#282828")
+    ]
+    static let illu3PinkColors = [
+        IlluColors(.keyPath(category: .notification, numero: 2, group: 4), lightColor: "#BC0055", darkColor: "#D0759F"),
+        IlluColors(.keyPath(category: .notification, numero: 2, group: 5), lightColor: "#F7E8EF", darkColor: "#282828"),
+        IlluColors(.keyPath(category: .notification, numero: 3, group: 4), lightColor: "#BC0055", darkColor: "#D0759F"),
+        IlluColors(.keyPath(category: .notification, numero: 3, group: 5), lightColor: "#F7E8EF", darkColor: "#282828"),
+        IlluColors(.keyPath(category: .notification, numero: 4, group: 4), lightColor: "#BC0055", darkColor: "#D0759F"),
+        IlluColors(.keyPath(category: .notification, numero: 4, group: 5), lightColor: "#F7E8EF", darkColor: "#282828"),
+        IlluColors(.keyPath(category: .hand, group: 1), lightColor: "#824D65", darkColor: "#AB6685"),
+        IlluColors(.keyPath(category: .hand, group: 4), lightColor: "#693D51", darkColor: "#CA799E"),
+        IlluColors(.keyPath(category: .hand, group: 4), lightColor: "#693D51", darkColor: "#CA799E"),
+        IlluColors(.keyPath(category: .star, group: 1, border: 1), lightColor: "#BC0055", darkColor: "#D0759F"),
+        IlluColors(.keyPath(category: .ben, group: 1, border: 1), lightColor: "#BC0055", darkColor: "#D0759F"),
+        IlluColors(.keyPath(category: .ben, group: 2, border: 1), lightColor: "#BC0055", darkColor: "#D0759F"),
+        IlluColors(.keyPath(category: .ben, group: 3, border: 1), lightColor: "#BC0055", darkColor: "#D0759F"),
+        IlluColors(.keyPath(category: .ben, group: 4, border: 1), lightColor: "#BC0055", darkColor: "#D0759F"),
+        IlluColors(.keyPath(category: .ben, group: 5, border: 1), lightColor: "#BC0055", darkColor: "#D0759F"),
+        IlluColors(.keyPath(category: .ben, group: 6, border: 1), lightColor: "#BC0055", darkColor: "#D0759F"),
+        IlluColors(.keyPath(category: .ring, group: 1), lightColor: "#BC0055", darkColor: "#D0759F"),
+        IlluColors(.keyPath(category: .ring, group: 2), lightColor: "#BC0055", darkColor: "#D0759F"),
+        IlluColors(.keyPath(category: .ring, group: 3), lightColor: "#BC0055", darkColor: "#D0759F"),
+        IlluColors(.keyPath(category: .ring, group: 4), lightColor: "#BC0055", darkColor: "#D0759F"),
+    ]
+    static let illu3BlueColors = [
+        IlluColors(.keyPath(category: .notification, numero: 2, group: 4), lightColor: "#0098FF", darkColor: "#0177C7"),
+        IlluColors(.keyPath(category: .notification, numero: 2, group: 5), lightColor: "#EAF8FE", darkColor: "#282828"),
+        IlluColors(.keyPath(category: .notification, numero: 3, group: 4), lightColor: "#0098FF", darkColor: "#0177C7"),
+        IlluColors(.keyPath(category: .notification, numero: 3, group: 5), lightColor: "#EAF8FE", darkColor: "#282828"),
+        IlluColors(.keyPath(category: .notification, numero: 4, group: 4), lightColor: "#0098FF", darkColor: "#0177C7"),
+        IlluColors(.keyPath(category: .notification, numero: 4, group: 5), lightColor: "#EAF8FE", darkColor: "#282828"),
+        IlluColors(.keyPath(category: .hand, group: 1), lightColor: "#10405B", darkColor: "#10405B"),
+        IlluColors(.keyPath(category: .hand, group: 4), lightColor: "#0B3547", darkColor: "#266E8D"),
+        IlluColors(.keyPath(category: .hand, group: 4), lightColor: "#0B3547", darkColor: "#266E8D"),
+        IlluColors(.keyPath(category: .star, group: 1, border: 1), lightColor: "#0098FF", darkColor: "#0177C7"),
+        IlluColors(.keyPath(category: .ben, group: 1, border: 1), lightColor: "#0098FF", darkColor: "#0177C7"),
+        IlluColors(.keyPath(category: .ben, group: 2, border: 1), lightColor: "#0098FF", darkColor: "#0177C7"),
+        IlluColors(.keyPath(category: .ben, group: 3, border: 1), lightColor: "#0098FF", darkColor: "#0177C7"),
+        IlluColors(.keyPath(category: .ben, group: 4, border: 1), lightColor: "#0098FF", darkColor: "#0177C7"),
+        IlluColors(.keyPath(category: .ben, group: 5, border: 1), lightColor: "#0098FF", darkColor: "#0177C7"),
+        IlluColors(.keyPath(category: .ben, group: 6, border: 1), lightColor: "#0098FF", darkColor: "#0177C7"),
+        IlluColors(.keyPath(category: .ring, group: 1), lightColor: "#0098FF", darkColor: "#0177C7"),
+        IlluColors(.keyPath(category: .ring, group: 2), lightColor: "#0098FF", darkColor: "#0177C7"),
+        IlluColors(.keyPath(category: .ring, group: 3), lightColor: "#0098FF", darkColor: "#0177C7"),
+        IlluColors(.keyPath(category: .ring, group: 4), lightColor: "#0098FF", darkColor: "#0177C7")
     ]
 }
