@@ -218,13 +218,16 @@ public class MailboxManager: ObservableObject {
         return folder
     }
 
-    private func refreshFolder(from messages: [Message]) async throws {
-        let realm = getRealm()
+    private func refreshFolder(from messages: [Message], additionalFolderId: String? = nil) async throws {
+        var foldersId = messages.map(\.folderId)
+        if let additionalFolderId = additionalFolderId {
+            foldersId.append(additionalFolderId)
+        }
 
-        let foldersId = messages.map(\.folderId)
-        let foldersIdSet = Set<String>(foldersId)
+        let orderedSet = NSOrderedSet(array: foldersId)
 
-        for id in foldersIdSet {
+        for id in orderedSet {
+            let realm = getRealm()
             if let impactedFolder = realm.object(ofType: Folder.self, forPrimaryKey: id) {
                 try await threads(folder: impactedFolder)
             }
@@ -874,7 +877,7 @@ public class MailboxManager: ObservableObject {
 
     public func move(messages: [Message], to folder: Folder) async throws -> UndoRedoAction {
         let response = try await apiFetcher.move(mailbox: mailbox, messages: messages, destinationId: folder._id)
-        try await refreshFolder(from: messages)
+        try await refreshFolder(from: messages, additionalFolderId: folder.id)
         return UndoRedoAction(undo: response, redo: nil)
     }
 
