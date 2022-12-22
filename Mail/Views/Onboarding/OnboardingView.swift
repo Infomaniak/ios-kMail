@@ -29,6 +29,7 @@ struct Slide: Identifiable {
     let animationFile: String
     let title: String
     let description: String
+    let lottieConfiguration: LottieConfiguration
 
     static let allSlides = [
         Slide(
@@ -36,28 +37,32 @@ struct Slide: Identifiable {
             backgroundImage: Image(resource: MailResourcesAsset.onboardingBackground1),
             animationFile: "illu_1",
             title: MailResourcesStrings.Localizable.onBoardingTitle1,
-            description: ""
+            description: "",
+            lottieConfiguration: LottieConfiguration(loopFrameStart: 54, loopFrameEnd: 138)
         ),
         Slide(
             id: 2,
             backgroundImage: Image(resource: MailResourcesAsset.onboardingBackground2),
             animationFile: "illu_2",
             title: MailResourcesStrings.Localizable.onBoardingTitle2,
-            description: MailResourcesStrings.Localizable.onBoardingDescription2
+            description: MailResourcesStrings.Localizable.onBoardingDescription2,
+            lottieConfiguration: LottieConfiguration(loopFrameStart: 108, loopFrameEnd: 253)
         ),
         Slide(
             id: 3,
             backgroundImage: Image(resource: MailResourcesAsset.onboardingBackground3),
             animationFile: "illu_3",
             title: MailResourcesStrings.Localizable.onBoardingTitle3,
-            description: MailResourcesStrings.Localizable.onBoardingDescription3
+            description: MailResourcesStrings.Localizable.onBoardingDescription3,
+            lottieConfiguration: LottieConfiguration(loopFrameStart: 118, loopFrameEnd: 225)
         ),
         Slide(
             id: 4,
             backgroundImage: Image(resource: MailResourcesAsset.onboardingBackground4),
             animationFile: "illu_4",
             title: MailResourcesStrings.Localizable.onBoardingTitle4,
-            description: MailResourcesStrings.Localizable.onBoardingDescription4
+            description: MailResourcesStrings.Localizable.onBoardingDescription4,
+            lottieConfiguration: LottieConfiguration(loopFrameStart: 127, loopFrameEnd: 236)
         )
     ]
 }

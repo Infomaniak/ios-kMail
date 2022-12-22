@@ -44,7 +44,7 @@ struct SlideView: View {
                 VStack(spacing: 0) {
                     Spacer(minLength: Constants.onboardingLogoHeight + Constants.onboardingVerticalTopPadding)
 
-                    LottieView(filename: slide.animationFile)
+                    LottieView(filename: slide.animationFile, configuration: slide.lottieConfiguration)
                         .frame(height: 0.43 * proxy.size.height)
 
                     Spacer(minLength: 8)
@@ -106,12 +106,6 @@ struct SlideView_Previews: PreviewProvider {
     }
 
     static var slideView: some View {
-        SlideView(slide: Slide(
-            id: 1,
-            backgroundImage: Image(resource: MailResourcesAsset.onboardingBackground1),
-            animationFile: "illu_1",
-            title: "Title",
-            description: "Description"
-        ))
+        SlideView(slide: Slide.allSlides[0])
     }
 }

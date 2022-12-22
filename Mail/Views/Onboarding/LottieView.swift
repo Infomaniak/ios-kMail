@@ -19,10 +19,16 @@
 import Lottie
 import SwiftUI
 
+struct LottieConfiguration {
+    let loopFrameStart: Int
+    let loopFrameEnd: Int
+}
+
 struct LottieView: UIViewRepresentable {
     private let animationView = LottieAnimationView()
 
     let filename: String
+    let configuration: LottieConfiguration
 
     func makeUIView(context: Context) -> some UIView {
         let view = UIView()
@@ -30,7 +36,14 @@ struct LottieView: UIViewRepresentable {
         let animation = LottieAnimation.named(filename)
         animationView.animation = animation
         animationView.contentMode = .scaleAspectFit
-        animationView.play()
+        animationView.loopMode = .playOnce
+        animationView.play { _ in
+            animationView.play(
+                fromFrame: AnimationFrameTime(configuration.loopFrameStart),
+                toFrame: AnimationFrameTime(configuration.loopFrameEnd),
+                loopMode: .loop
+            )
+        }
 
         animationView.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(animationView)
@@ -44,6 +57,6 @@ struct LottieView: UIViewRepresentable {
     }
 
     func updateUIView(_ uiView: UIViewType, context: Context) {
-        // Empty on purpose
+        // Update theme colors here
     }
 }
