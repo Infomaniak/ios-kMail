@@ -31,22 +31,22 @@ extension AnimationKeypath {
         case star = "STAR"
         case ben = "BEN"
         case ring = "RING"
+        case woman = "WOMAN"
+        case men = "MEN"
+        case letter = "LETTER"
     }
 
-    static func keyPath(category: Category, numero: Int? = nil, group: Int = 1, border: Int) -> Self {
+    enum FinalLayer: String {
+        case background = "Fond"
+        case border = "Contour"
+    }
+
+    static func keyPath(category: Category, numero: Int? = nil, group: Int = 1, finalLayer: FinalLayer = .background) -> Self {
         var categoryName = category.rawValue
         if let numero {
             categoryName = "\(categoryName) \(numero)"
         }
-        return AnimationKeypath(keys: [categoryName, "Groupe \(group)", "Contour \(border)"])
-    }
-
-    static func keyPath(category: Category, numero: Int? = nil, group: Int = 1, layer: Int = 1) -> Self {
-        var categoryName = category.rawValue
-        if let numero {
-            categoryName = "\(categoryName) \(numero)"
-        }
-        return AnimationKeypath(keys: [categoryName, "Groupe \(group)", "Fond \(layer)"])
+        return AnimationKeypath(keys: [categoryName, "Groupe \(group)", "\(finalLayer.rawValue) 1"])
     }
 }
 
@@ -180,6 +180,8 @@ struct IlluColors {
         IlluColors(.keyPath(category: .movingNotification, numero: 2, group: 13), lightColor: "#E0E0E0", darkColor: "#4C4C4C"),
         IlluColors(.keyPath(category: .movingNotification, numero: 2, group: 14), lightColor: "#F5F5F5", darkColor: "#3E3E3E"),
         IlluColors(.keyPath(category: .movingNotification, numero: 2, group: 15), lightColor: "#F5F5F5", darkColor: "#3E3E3E"),
+        IlluColors(AnimationKeypath(keys: ["MOVING NOTIF 2 TITLE", "Groupe 1", "Fond 1"]), lightColor: "#E0E0E0", darkColor: "#4C4C4C"),
+        IlluColors(AnimationKeypath(keys: ["MOVING NOTIF 2 PREVIEW", "Groupe 1", "Fond 1"]), lightColor: "#E0E0E0", darkColor: "#4C4C4C"),
         IlluColors(.keyPath(category: .archives, group: 1), lightColor: "#FFFFFF", darkColor: "#1A1A1A"),
         IlluColors(.keyPath(category: .archives, group: 2), lightColor: "#FFFFFF", darkColor: "#1A1A1A"),
         IlluColors(.keyPath(category: .archives, group: 3), lightColor: "#FFFFFF", darkColor: "#1A1A1A"),
@@ -234,17 +236,17 @@ struct IlluColors {
         IlluColors(.keyPath(category: .hand, group: 1), lightColor: "#824D65", darkColor: "#AB6685"),
         IlluColors(.keyPath(category: .hand, group: 4), lightColor: "#693D51", darkColor: "#CA799E"),
         IlluColors(.keyPath(category: .hand, group: 4), lightColor: "#693D51", darkColor: "#CA799E"),
-        IlluColors(.keyPath(category: .star, group: 1, border: 1), lightColor: "#BC0055", darkColor: "#D0759F"),
-        IlluColors(.keyPath(category: .ben, group: 1, border: 1), lightColor: "#BC0055", darkColor: "#D0759F"),
-        IlluColors(.keyPath(category: .ben, group: 2, border: 1), lightColor: "#BC0055", darkColor: "#D0759F"),
-        IlluColors(.keyPath(category: .ben, group: 3, border: 1), lightColor: "#BC0055", darkColor: "#D0759F"),
-        IlluColors(.keyPath(category: .ben, group: 4, border: 1), lightColor: "#BC0055", darkColor: "#D0759F"),
-        IlluColors(.keyPath(category: .ben, group: 5, border: 1), lightColor: "#BC0055", darkColor: "#D0759F"),
-        IlluColors(.keyPath(category: .ben, group: 6, border: 1), lightColor: "#BC0055", darkColor: "#D0759F"),
+        IlluColors(.keyPath(category: .star, group: 1, finalLayer: .border), lightColor: "#BC0055", darkColor: "#D0759F"),
+        IlluColors(.keyPath(category: .ben, group: 1, finalLayer: .border), lightColor: "#BC0055", darkColor: "#D0759F"),
+        IlluColors(.keyPath(category: .ben, group: 2, finalLayer: .border), lightColor: "#BC0055", darkColor: "#D0759F"),
+        IlluColors(.keyPath(category: .ben, group: 3, finalLayer: .border), lightColor: "#BC0055", darkColor: "#D0759F"),
+        IlluColors(.keyPath(category: .ben, group: 4, finalLayer: .border), lightColor: "#BC0055", darkColor: "#D0759F"),
+        IlluColors(.keyPath(category: .ben, group: 5, finalLayer: .border), lightColor: "#BC0055", darkColor: "#D0759F"),
+        IlluColors(.keyPath(category: .ben, group: 6, finalLayer: .border), lightColor: "#BC0055", darkColor: "#D0759F"),
         IlluColors(.keyPath(category: .ring, group: 1), lightColor: "#BC0055", darkColor: "#D0759F"),
         IlluColors(.keyPath(category: .ring, group: 2), lightColor: "#BC0055", darkColor: "#D0759F"),
         IlluColors(.keyPath(category: .ring, group: 3), lightColor: "#BC0055", darkColor: "#D0759F"),
-        IlluColors(.keyPath(category: .ring, group: 4), lightColor: "#BC0055", darkColor: "#D0759F"),
+        IlluColors(.keyPath(category: .ring, group: 4), lightColor: "#BC0055", darkColor: "#D0759F")
     ]
     static let illu3BlueColors = [
         IlluColors(.keyPath(category: .notification, numero: 2, group: 4), lightColor: "#0098FF", darkColor: "#0177C7"),
@@ -256,16 +258,72 @@ struct IlluColors {
         IlluColors(.keyPath(category: .hand, group: 1), lightColor: "#10405B", darkColor: "#10405B"),
         IlluColors(.keyPath(category: .hand, group: 4), lightColor: "#0B3547", darkColor: "#266E8D"),
         IlluColors(.keyPath(category: .hand, group: 4), lightColor: "#0B3547", darkColor: "#266E8D"),
-        IlluColors(.keyPath(category: .star, group: 1, border: 1), lightColor: "#0098FF", darkColor: "#0177C7"),
-        IlluColors(.keyPath(category: .ben, group: 1, border: 1), lightColor: "#0098FF", darkColor: "#0177C7"),
-        IlluColors(.keyPath(category: .ben, group: 2, border: 1), lightColor: "#0098FF", darkColor: "#0177C7"),
-        IlluColors(.keyPath(category: .ben, group: 3, border: 1), lightColor: "#0098FF", darkColor: "#0177C7"),
-        IlluColors(.keyPath(category: .ben, group: 4, border: 1), lightColor: "#0098FF", darkColor: "#0177C7"),
-        IlluColors(.keyPath(category: .ben, group: 5, border: 1), lightColor: "#0098FF", darkColor: "#0177C7"),
-        IlluColors(.keyPath(category: .ben, group: 6, border: 1), lightColor: "#0098FF", darkColor: "#0177C7"),
+        IlluColors(.keyPath(category: .star, group: 1, finalLayer: .border), lightColor: "#0098FF", darkColor: "#0177C7"),
+        IlluColors(.keyPath(category: .ben, group: 1, finalLayer: .border), lightColor: "#0098FF", darkColor: "#0177C7"),
+        IlluColors(.keyPath(category: .ben, group: 2, finalLayer: .border), lightColor: "#0098FF", darkColor: "#0177C7"),
+        IlluColors(.keyPath(category: .ben, group: 3, finalLayer: .border), lightColor: "#0098FF", darkColor: "#0177C7"),
+        IlluColors(.keyPath(category: .ben, group: 4, finalLayer: .border), lightColor: "#0098FF", darkColor: "#0177C7"),
+        IlluColors(.keyPath(category: .ben, group: 5, finalLayer: .border), lightColor: "#0098FF", darkColor: "#0177C7"),
+        IlluColors(.keyPath(category: .ben, group: 6, finalLayer: .border), lightColor: "#0098FF", darkColor: "#0177C7"),
         IlluColors(.keyPath(category: .ring, group: 1), lightColor: "#0098FF", darkColor: "#0177C7"),
         IlluColors(.keyPath(category: .ring, group: 2), lightColor: "#0098FF", darkColor: "#0177C7"),
         IlluColors(.keyPath(category: .ring, group: 3), lightColor: "#0098FF", darkColor: "#0177C7"),
         IlluColors(.keyPath(category: .ring, group: 4), lightColor: "#0098FF", darkColor: "#0177C7")
+    ]
+
+    static let illu4Colors = [
+        IlluColors(.keyPath(category: .woman, group: 5), lightColor: "#C6AC9F", darkColor: "#996452"),
+        IlluColors(.keyPath(category: .woman, group: 6), lightColor: "#F5F5F5", darkColor: "#3E3E3E"),
+        IlluColors(.keyPath(category: .men, group: 5), lightColor: "#C6AC9F", darkColor: "#996452"),
+        IlluColors(.keyPath(category: .men, group: 6), lightColor: "#F5F5F5", darkColor: "#3E3E3E"),
+        IlluColors(.keyPath(category: .letter, group: 3), lightColor: "#FFFFFF", darkColor: "#EAEAEA"),
+        IlluColors(.keyPath(category: .letter, group: 4), lightColor: "#F8F8F8", darkColor: "#E4E4E4")
+    ]
+    static let illu4PinkColors = [
+        IlluColors(.keyPath(category: .woman, group: 4), lightColor: "#BF4C80", darkColor: "#E75F9C"),
+        IlluColors(.keyPath(category: .men, group: 5), lightColor: "#BD95A7", darkColor: "#AE366D"),
+        IlluColors(.keyPath(category: .point, numero: 1), lightColor: "#BF4C80", darkColor: "#E75F9C"),
+        IlluColors(.keyPath(category: .point, numero: 2), lightColor: "#BF4C80", darkColor: "#E75F9C"),
+        IlluColors(.keyPath(category: .point, numero: 3), lightColor: "#BD95A7", darkColor: "#AE366D"),
+        IlluColors(.keyPath(category: .point, numero: 4), lightColor: "#BD95A7", darkColor: "#AE366D"),
+        IlluColors(.keyPath(category: .letter, group: 1), lightColor: "#FF4388", darkColor: "#B80043"),
+        IlluColors(.keyPath(category: .letter, group: 2), lightColor: "#D81B60", darkColor: "#FB2C77"),
+        IlluColors(.keyPath(category: .letter, group: 5), lightColor: "#FAF0F0", darkColor: "#F1DDDD"),
+        IlluColors(.keyPath(category: .letter, group: 6), lightColor: "#E10B59", darkColor: "#DC1A60"),
+        IlluColors(.keyPath(category: .letter, group: 7), lightColor: "#E10B59", darkColor: "#DC1A60")
+    ]
+    static let illu4BlueColors = [
+        IlluColors(.keyPath(category: .woman, group: 4), lightColor: "#289CDD", darkColor: "#0D7DBC"),
+        IlluColors(.keyPath(category: .men, group: 5), lightColor: "#3981AA", darkColor: "#56AFE1"),
+        IlluColors(.keyPath(category: .point, numero: 1), lightColor: "#289CDD", darkColor: "#0D7DBC"),
+        IlluColors(.keyPath(category: .point, numero: 2), lightColor: "#289CDD", darkColor: "#0D7DBC"),
+        IlluColors(.keyPath(category: .point, numero: 3), lightColor: "#3981AA", darkColor: "#56AFE1"),
+        IlluColors(.keyPath(category: .point, numero: 4), lightColor: "#3981AA", darkColor: "#56AFE1"),
+        IlluColors(.keyPath(category: .letter, group: 1), lightColor: "#FF4388", darkColor: "#6DCBFF"),
+        IlluColors(.keyPath(category: .letter, group: 2), lightColor: "#D81B60", darkColor: "#0A85C9"),
+        IlluColors(.keyPath(category: .letter, group: 5), lightColor: "#FAF0F0", darkColor: "#E8F6FF"),
+        IlluColors(.keyPath(category: .letter, group: 6), lightColor: "#E10B59", darkColor: "#0875A5"),
+        IlluColors(.keyPath(category: .letter, group: 7), lightColor: "#E10B59", darkColor: "#0875A5")
+    ]
+
+    // MARK: - Several illustrations
+
+    static let illu234Colors = [
+        IlluColors(.keyPath(category: .iPhoneScreen, group: 73), lightColor: "#340E00", darkColor: "#996452"),
+        IlluColors(.keyPath(category: .iPhoneScreen, group: 74), lightColor: "#F5F5F5", darkColor: "#3E3E3E"),
+        IlluColors(.keyPath(category: .iPhoneScreen, group: 75), lightColor: "#FFFFFF", darkColor: "#1A1A1A"),
+        IlluColors(.keyPath(category: .iPhoneScreen, group: 76), lightColor: "#E0E0E0", darkColor: "#4C4C4C")
+    ]
+    static let illu234PinkColors = [
+        IlluColors(.keyPath(category: .iPhoneScreen, group: 54), lightColor: "#BF4C80", darkColor: "#E75F9C"),
+        IlluColors(.keyPath(category: .iPhoneScreen, group: 61), lightColor: "#DFBDCC", darkColor: "#955873"),
+        IlluColors(.keyPath(category: .iPhoneScreen, group: 67), lightColor: "#BC0055", darkColor: "#D0759F"),
+        IlluColors(.keyPath(category: .iPhoneScreen, group: 72), lightColor: "#824D65", darkColor: "#AB6685")
+    ]
+    static let illu234BlueColors = [
+        IlluColors(.keyPath(category: .iPhoneScreen, group: 54), lightColor: "#289CDD", darkColor: "#3E3E3E"),
+        IlluColors(.keyPath(category: .iPhoneScreen, group: 61), lightColor: "#84BAD8", darkColor: "#588EAC"),
+        IlluColors(.keyPath(category: .iPhoneScreen, group: 67), lightColor: "#0098FF", darkColor: "#0177C7"),
+        IlluColors(.keyPath(category: .iPhoneScreen, group: 72), lightColor: "#10405B", darkColor: "#10405B")
     ]
 }
