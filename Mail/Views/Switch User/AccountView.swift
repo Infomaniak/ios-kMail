@@ -49,6 +49,12 @@ class AccountSheet: SheetState<AccountSheet.State> {
     }
 }
 
+class AccountAlert: SheetState<AccountAlert.State> {
+    enum State {
+        case logout
+    }
+}
+
 struct AccountView: View {
     @Environment(\.dismiss) private var dismiss
     @Environment(\.window) private var window
@@ -56,6 +62,7 @@ struct AccountView: View {
     @State private var avatarImage = Image(resource: MailResourcesAsset.placeholderAvatar)
     @StateObject private var account = AccountManager.instance.currentAccount!
     @StateObject private var sheet = AccountSheet()
+    @StateObject private var alert = AccountAlert()
     @State private var delegate = AccountViewDelegate()
 
     let mailboxes: [Mailbox]
@@ -108,8 +115,9 @@ struct AccountView: View {
                 }
 
                 // Buttons
-                LargeButton(title: MailResourcesStrings.Localizable.buttonAccountDisconnect, action: logout)
-                    .padding(.bottom, 24)
+                LargeButton(title: MailResourcesStrings.Localizable.buttonAccountDisconnect) {
+                    alert.state = .logout
+                }
                 Button {
                     sheet.state = .deleteAccount
                 } label: {
@@ -133,6 +141,14 @@ struct AccountView: View {
             switch sheet.state {
             case .deleteAccount:
                 DeleteAccountView(account: account, delegate: delegate)
+            case .none:
+                EmptyView()
+            }
+        }
+        .customAlert(isPresented: $alert.isShowing) {
+            switch alert.state {
+            case .logout:
+                LogoutConfirmationView(state: alert)
             case .none:
                 EmptyView()
             }
