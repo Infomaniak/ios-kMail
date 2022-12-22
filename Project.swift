@@ -39,7 +39,8 @@ let project = Project(name: "Mail",
                           .package(url: "https://github.com/dkk/WrappingHStack", .upToNextMajor(from: "2.0.0")),
                           .package(url: "git@github.com:Infomaniak/ios-bug-tracker.git", .upToNextMajor(from: "1.0.0")),
                           .package(url: "https://github.com/SCENEE/FloatingPanel", .upToNextMajor(from: "2.0.0")),
-                          .package(url: "https://github.com/kean/Nuke", .upToNextMajor(from: "11.3.0"))
+                          .package(url: "https://github.com/kean/Nuke", .upToNextMajor(from: "11.3.0")),
+                          .package(url: "https://github.com/airbnb/lottie-ios.git", .upToNextMajor(from: "4.0.1"))
                       ],
                       targets: [
                           Target(name: "Mail",
@@ -50,11 +51,12 @@ let project = Project(name: "Mail",
                                  infoPlist: "Mail/Info.plist",
                                  sources: "Mail/**",
                                  resources: [
-                                     "MailResources/**/*.xcassets",
                                      "Mail/*.css",
                                      "Mail/**/*.storyboard",
+                                     "MailResources/**/*.xcassets",
                                      "MailResources/**/*.strings",
-                                     "MailResources/**/*.stringsdict"
+                                     "MailResources/**/*.stringsdict",
+                                     "MailResources/**/*.json"
                                  ],
                                  entitlements: "MailResources/Mail.entitlements",
                                  scripts: [
@@ -68,7 +70,8 @@ let project = Project(name: "Mail",
                                      .package(product: "SQRichTextEditor"),
                                      .package(product: "Shimmer"),
                                      .package(product: "WrappingHStack"),
-                                     .package(product: "FloatingPanel")
+                                     .package(product: "FloatingPanel"),
+                                     .package(product: "Lottie")
                                  ],
                                  settings: .settings(base: baseSettings),
                                  environment: ["hostname": "\(ProcessInfo.processInfo.hostName)."]),
@@ -102,7 +105,8 @@ let project = Project(name: "Mail",
                               resources: [
                                   "MailResources/**/*.xcassets",
                                   "MailResources/**/*.strings",
-                                  "MailResources/**/*.stringsdict"
+                                  "MailResources/**/*.stringsdict",
+                                  "MailResources/**/*.json"
                               ],
                               settings: .settings(base: baseSettings)
                           ),

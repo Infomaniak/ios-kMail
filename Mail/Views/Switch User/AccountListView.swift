@@ -82,10 +82,10 @@ struct AccountListView: View {
         .floatingActionButton(icon: Image(systemName: "plus"), title: MailResourcesStrings.Localizable.buttonAddAccount) {
             isShowingNewAccountView = true
         }
-        .sheet(isPresented: $isShowingNewAccountView, onDismiss: {
+        .fullScreenCover(isPresented: $isShowingNewAccountView, onDismiss: {
             AppDelegate.orientationLock = .all
         }, content: {
-            OnboardingView(isPresentedModally: true, page: 4, isScrollEnabled: false)
+            OnboardingView(page: 4, isScrollEnabled: false)
         })
         .task {
             try? await updateUsers()
