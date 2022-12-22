@@ -697,6 +697,9 @@ public class MailboxManager: ObservableObject {
         try? realm.safeWrite {
             for message in messageByUids.messages {
                 if realm.object(ofType: Message.self, forPrimaryKey: message.uid) == nil {
+                    if folder.role == .trash {
+                        message.inTrash = true
+                    }
                     message.computeReference()
                     let existingThreads = Array(realm.objects(Thread.self)
                         .where { $0.messageIds.containsAny(in: message.linkedUids) })
