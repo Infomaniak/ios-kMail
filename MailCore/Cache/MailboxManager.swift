@@ -267,7 +267,7 @@ public class MailboxManager: ObservableObject {
             try? realm.safeWrite {
                 realm.delete(messagesToDelete)
                 for thread in threadsToUpdate {
-                    if thread.messages.isEmpty {
+                    if thread.messageInFolderCount == 0 {
                         threadsToDelete.insert(thread)
                     } else {
                         thread.recompute()

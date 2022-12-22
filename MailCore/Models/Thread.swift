@@ -68,6 +68,10 @@ public class Thread: Object, Decodable, Identifiable {
         return parentLink.first
     }
 
+    public var messageInFolderCount: Int {
+        return messages.filter { $0.folderId == self.folderId }.count
+    }
+
     public var formattedFrom: String {
         guard let from = from.last else { return MailResourcesStrings.Localizable.unknownRecipientTitle }
         return from.title

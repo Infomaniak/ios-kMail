@@ -168,6 +168,9 @@ struct ThreadView: View {
             if newMessagesList.isEmpty {
                 dismiss()
             }
+            if thread.messageInFolderCount == 0 {
+                dismiss()
+            }
         }
     }
 
