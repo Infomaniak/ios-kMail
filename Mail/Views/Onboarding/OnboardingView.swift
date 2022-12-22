@@ -58,7 +58,7 @@ struct Slide: Identifiable {
             animationFile: "illu_4",
             title: MailResourcesStrings.Localizable.onBoardingTitle4,
             description: MailResourcesStrings.Localizable.onBoardingDescription4
-        ),
+        )
     ]
 }
 
@@ -154,7 +154,7 @@ struct OnboardingView: View {
                 UIDevice.current
                     .setValue(UIInterfaceOrientation.portrait.rawValue, forKey: "orientation")
                 AppDelegate.orientationLock = .portrait
-                UINavigationController.attemptRotationToDeviceOrientation()
+                UIViewController.attemptRotationToDeviceOrientation()
             }
         }
     }
