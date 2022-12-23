@@ -29,7 +29,7 @@ extension Account: Hashable {
 }
 
 class AccountListViewModel: ObservableObject {
-    @Published var expandedUserId: Int? = AccountManager.instance.currentUserId
+    @Published var selectedUserId: Int? = AccountManager.instance.currentUserId
 
     @Published var accounts = [Account: [Mailbox]]()
 
@@ -68,14 +68,11 @@ struct AccountListView: View {
         ScrollView {
             VStack {
                 ForEach(Array(viewModel.accounts.keys)) { account in
-                    if let mailboxes = viewModel.accounts[account] {
-                        AccountCellView(account: account,
-                                        expandedUserId: $viewModel.expandedUserId,
-                                        mailboxes: mailboxes)
-                    }
+                    AccountCellView(account: account, selectedUserId: $viewModel.selectedUserId)
                 }
             }
             .padding(8)
+            .padding(.bottom, 120)
         }
         .background(MailResourcesAsset.backgroundColor.swiftUiColor)
         .navigationBarTitle(MailResourcesStrings.Localizable.titleMyAccounts, displayMode: .inline)

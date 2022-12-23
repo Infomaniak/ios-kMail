@@ -95,7 +95,7 @@ struct MailboxesManagementView: View {
             }
         }
         .sheet(isPresented: $isShowingManageAccount) {
-            AccountView()
+            AccountView(mailboxes: mailboxes)
         }
     }
 

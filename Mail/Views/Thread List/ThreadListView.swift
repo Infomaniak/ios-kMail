@@ -129,6 +129,19 @@ struct ThreadListView: View {
         .backButtonDisplayMode(.minimal)
         .navigationBarThreadListStyle()
         .toolbarAppStyle()
+        .refreshable {
+            withAnimation {
+                isRefreshing = true
+            }
+            if let fetchingTask {
+                _ = await fetchingTask.result
+            } else {
+                await viewModel.fetchThreads()
+            }
+            withAnimation {
+                isRefreshing = false
+            }
+        }
         .modifier(ThreadListToolbar(isCompact: isCompact,
                                     bottomSheet: bottomSheet,
                                     multipleSelectionViewModel: multipleSelectionViewModel,
@@ -172,19 +185,6 @@ struct ThreadListView: View {
                 avatarImage = await account.user.avatarImage
             }
             updateFetchingTask(with: splitViewManager.selectedFolder)
-        }
-        .refreshable {
-            withAnimation {
-                isRefreshing = true
-            }
-            if let fetchingTask {
-                _ = await fetchingTask.result
-            } else {
-                await viewModel.fetchThreads()
-            }
-            withAnimation {
-                isRefreshing = false
-            }
         }
         .sheet(isPresented: $isShowingComposeNewMessageView) {
             ComposeMessageView.newMessage(mailboxManager: viewModel.mailboxManager)
@@ -311,9 +311,7 @@ private struct ThreadListToolbar: ViewModifier {
                 .navigationBarTitleDisplayMode(.inline)
         }
         .sheet(isPresented: $isShowingSwitchAccount) {
-            SheetView {
-                AccountListView()
-            }
+            AccountView(mailboxes: AccountManager.instance.mailboxes)
         }
     }
 }
