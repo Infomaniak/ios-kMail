@@ -60,7 +60,7 @@ struct AccountView: View {
     @Environment(\.window) private var window
 
     @State private var avatarImage = Image(resource: MailResourcesAsset.placeholderAvatar)
-    @StateObject private var account = AccountManager.instance.currentAccount!
+    @StateObject private var account = AccountManager.instance.currentAccount
     @StateObject private var sheet = AccountSheet()
     @StateObject private var alert = AccountAlert()
     @State private var delegate = AccountViewDelegate()
@@ -149,22 +149,12 @@ struct AccountView: View {
         .customAlert(isPresented: $alert.isShowing) {
             switch alert.state {
             case .logout:
-                LogoutConfirmationView(state: alert)
+                LogoutConfirmationView(account: account, state: alert)
             case .none:
                 EmptyView()
             }
         }
         .defaultAppStorage(.shared)
-    }
-
-    private func logout() {
-        AccountManager.instance.removeTokenAndAccount(token: account.token)
-        if let nextAccount = AccountManager.instance.accounts.first {
-            (window?.windowScene?.delegate as? SceneDelegate)?.switchAccount(nextAccount)
-        } else {
-            (window?.windowScene?.delegate as? SceneDelegate)?.showLoginView()
-        }
-        AccountManager.instance.saveAccounts()
     }
 }
 

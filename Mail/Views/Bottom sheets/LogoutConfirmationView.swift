@@ -1,4 +1,3 @@
-//
 /*
  Infomaniak Mail - iOS App
  Copyright (C) 2022 Infomaniak Network SA
@@ -20,12 +19,13 @@
 import SwiftUI
 import MailResources
 import MailCore
+import InfomaniakCore
 
 struct LogoutConfirmationView: View {
 
     @Environment(\.window) private var window
 
-    private let account = AccountManager.instance.currentAccount!
+    let account: Account
 
     let state: AccountAlert
 
@@ -60,6 +60,6 @@ struct LogoutConfirmationView: View {
 
 struct LogoutConfirmationView_Previews: PreviewProvider {
     static var previews: some View {
-        LogoutConfirmationView(state: AccountAlert())
+        LogoutConfirmationView(account: PreviewHelper.sampleAccount, state: AccountAlert())
     }
 }
