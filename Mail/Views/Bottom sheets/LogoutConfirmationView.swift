@@ -31,11 +31,11 @@ struct LogoutConfirmationView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 24) {
-            Text("Me déconnecter du compte \(account.user.email)")
+            Text( MailResourcesStrings.Localizable.confirmLogoutTitle(account.user.email))
                 .textStyle(.header5)
-            Text("Etes-vous sûr de vouloir vous déconnecter ?")
+            Text(MailResourcesStrings.Localizable.confirmLogoutDescription)
                 .textStyle(.bodySecondary)
-            BottomSheetButtonsView(primaryButtonTitle: "Me déconnecter",
+            BottomSheetButtonsView(primaryButtonTitle: MailResourcesStrings.Localizable.buttonLogout,
                                    secondaryButtonTitle: MailResourcesStrings.Localizable.buttonCancel,
                                    primaryButtonAction: logout,
                                    secondaryButtonAction: cancel)

@@ -118,6 +118,7 @@ struct AccountView: View {
                 LargeButton(title: MailResourcesStrings.Localizable.buttonAccountDisconnect) {
                     alert.state = .logout
                 }
+                .padding(.bottom, 24)
                 Button {
                     sheet.state = .deleteAccount
                 } label: {
