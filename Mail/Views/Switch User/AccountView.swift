@@ -49,13 +49,20 @@ class AccountSheet: SheetState<AccountSheet.State> {
     }
 }
 
+class AccountAlert: SheetState<AccountAlert.State> {
+    enum State {
+        case logout
+    }
+}
+
 struct AccountView: View {
     @Environment(\.dismiss) private var dismiss
     @Environment(\.window) private var window
 
     @State private var avatarImage = Image(resource: MailResourcesAsset.placeholderAvatar)
-    @StateObject private var account = AccountManager.instance.currentAccount!
+    @StateObject private var account = AccountManager.instance.currentAccount
     @StateObject private var sheet = AccountSheet()
+    @StateObject private var alert = AccountAlert()
     @State private var delegate = AccountViewDelegate()
 
     let mailboxes: [Mailbox]
@@ -108,8 +115,10 @@ struct AccountView: View {
                 }
 
                 // Buttons
-                LargeButton(title: MailResourcesStrings.Localizable.buttonAccountDisconnect, action: logout)
-                    .padding(.bottom, 24)
+                LargeButton(title: MailResourcesStrings.Localizable.buttonAccountDisconnect) {
+                    alert.state = .logout
+                }
+                .padding(.bottom, 24)
                 Button {
                     sheet.state = .deleteAccount
                 } label: {
@@ -137,17 +146,15 @@ struct AccountView: View {
                 EmptyView()
             }
         }
-        .defaultAppStorage(.shared)
-    }
-
-    private func logout() {
-        AccountManager.instance.removeTokenAndAccount(token: account.token)
-        if let nextAccount = AccountManager.instance.accounts.first {
-            (window?.windowScene?.delegate as? SceneDelegate)?.switchAccount(nextAccount)
-        } else {
-            (window?.windowScene?.delegate as? SceneDelegate)?.showLoginView()
+        .customAlert(isPresented: $alert.isShowing) {
+            switch alert.state {
+            case .logout:
+                LogoutConfirmationView(account: account, state: alert)
+            case .none:
+                EmptyView()
+            }
         }
-        AccountManager.instance.saveAccounts()
+        .defaultAppStorage(.shared)
     }
 }
 
