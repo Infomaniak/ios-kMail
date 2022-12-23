@@ -53,7 +53,6 @@ public class Thread: Object, Decodable, Identifiable {
     @Persisted(originProperty: "threads") public var parentLink: LinkingObjects<Folder>
     @Persisted public var fromSearch = false
 
-    @Persisted public var messagePreviewed: Message?
     @Persisted public var isDraft = false
 
     @Persisted public var duplicates = List<Message>()
@@ -121,7 +120,10 @@ public class Thread: Object, Decodable, Identifiable {
         messages = messages.sorted {
             $0.date.compare($1.date) == .orderedAscending
         }.toRealmList()
-        messagePreviewed = messages.last { $0.folderId == folderId }
+
+        if let lastFolderMessage = messages.last(where: { $0.folderId == folderId }) {
+            date = lastFolderMessage.date
+        }
     }
 
     func addMessageIfNeeded(newMessage: Message) {
