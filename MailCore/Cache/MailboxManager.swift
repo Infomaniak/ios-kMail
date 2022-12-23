@@ -218,13 +218,16 @@ public class MailboxManager: ObservableObject {
         return folder
     }
 
-    private func refreshFolder(from messages: [Message]) async throws {
-        let realm = getRealm()
+    private func refreshFolder(from messages: [Message], additionalFolderId: String? = nil) async throws {
+        var foldersId = messages.map(\.folderId)
+        if let additionalFolderId = additionalFolderId {
+            foldersId.append(additionalFolderId)
+        }
 
-        let foldersId = messages.map(\.folderId)
-        let foldersIdSet = Set<String>(foldersId)
+        let orderedSet = NSOrderedSet(array: foldersId)
 
-        for id in foldersIdSet {
+        for id in orderedSet {
+            let realm = getRealm()
             if let impactedFolder = realm.object(ofType: Folder.self, forPrimaryKey: id) {
                 try await threads(folder: impactedFolder)
             }
@@ -264,7 +267,7 @@ public class MailboxManager: ObservableObject {
             try? realm.safeWrite {
                 realm.delete(messagesToDelete)
                 for thread in threadsToUpdate {
-                    if thread.messages.isEmpty {
+                    if thread.messageInFolderCount == 0 {
                         threadsToDelete.insert(thread)
                     } else {
                         thread.recompute()
@@ -693,17 +696,20 @@ public class MailboxManager: ObservableObject {
         var threadsToUpdate = Set<Thread>()
         try? realm.safeWrite {
             for message in messageByUids.messages {
-                message.computeReference()
-                let existingThreads = Array(realm.objects(Thread.self)
-                    .where { $0.messageIds.containsAny(in: message.linkedUids) })
+                if realm.object(ofType: Message.self, forPrimaryKey: message.uid) == nil {
+                    message.inTrash = folder.role == .trash
+                    message.computeReference()
+                    let existingThreads = Array(realm.objects(Thread.self)
+                        .where { $0.messageIds.containsAny(in: message.linkedUids) })
 
-                if let newThread = createNewThreadIfRequired(for: message, folder: folder, existingThreads: existingThreads) {
-                    threadsToUpdate.insert(newThread)
-                }
+                    if let newThread = createNewThreadIfRequired(for: message, folder: folder, existingThreads: existingThreads) {
+                        threadsToUpdate.insert(newThread)
+                    }
 
-                for thread in existingThreads {
-                    thread.addMessageIfNeeded(newMessage: message.fresh(using: realm) ?? message)
-                    threadsToUpdate.insert(thread)
+                    for thread in existingThreads {
+                        thread.addMessageIfNeeded(newMessage: message.fresh(using: realm) ?? message)
+                        threadsToUpdate.insert(thread)
+                    }
                 }
             }
 
@@ -874,7 +880,7 @@ public class MailboxManager: ObservableObject {
 
     public func move(messages: [Message], to folder: Folder) async throws -> UndoRedoAction {
         let response = try await apiFetcher.move(mailbox: mailbox, messages: messages, destinationId: folder._id)
-        try await refreshFolder(from: messages)
+        try await refreshFolder(from: messages, additionalFolderId: folder.id)
         return UndoRedoAction(undo: response, redo: nil)
     }
 
