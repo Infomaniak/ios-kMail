@@ -33,7 +33,7 @@ import SwiftUI
         }
     }
 
-    @Published var selectedItems = [Thread]()
+    @Published var selectedItems = Set<Thread>()
     @Published var toolbarActions = [Action]()
 
     init(mailboxManager: MailboxManager) {
@@ -42,10 +42,19 @@ import SwiftUI
     }
 
     func toggleSelection(of thread: Thread) {
-        if selectedItems.contains(where: { $0.id == thread.id }) {
-            selectedItems.removeAll { $0.id == thread.id }
+        if selectedItems.contains(thread) {
+            selectedItems.remove(thread)
         } else {
-            selectedItems.append(thread)
+            selectedItems.insert(thread)
+        }
+        setActions()
+    }
+
+    func selectAll(threads: [Thread]) {
+        if threads.count == selectedItems.count {
+            selectedItems.removeAll()
+        } else {
+            selectedItems = Set(threads)
         }
         setActions()
     }

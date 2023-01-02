@@ -97,7 +97,8 @@ struct ThreadListView: View {
                                                multipleSelectionViewModel: multipleSelectionViewModel,
                                                threadDensity: threadDensity,
                                                accentColor: accentColor,
-                                               editedMessageDraft: $editedMessageDraft)
+                                               editedMessageDraft: $editedMessageDraft,
+                                               isSelected: multipleSelectionViewModel.selectedItems.contains(thread))
                                     .id(thread.id)
                             }
                         } header: {
@@ -145,7 +146,12 @@ struct ThreadListView: View {
         .modifier(ThreadListToolbar(isCompact: isCompact,
                                     bottomSheet: bottomSheet,
                                     multipleSelectionViewModel: multipleSelectionViewModel,
-                                    avatarImage: $avatarImage))
+                                    avatarImage: $avatarImage,
+                                    selectAll: {
+                                        withAnimation(.default.speed(2)) {
+                                            multipleSelectionViewModel.selectAll(threads: viewModel.sections.flatMap(\.threads))
+                                        }
+                                    }))
         .floatingActionButton(isEnabled: !multipleSelectionViewModel.isEnabled,
                               icon: Image(resource: MailResourcesAsset.pen),
                               title: MailResourcesStrings.Localizable.buttonNewMessage) {
@@ -215,6 +221,8 @@ private struct ThreadListToolbar: ViewModifier {
     @EnvironmentObject var splitViewManager: SplitViewManager
     @EnvironmentObject var navigationDrawerState: NavigationDrawerState
 
+    var selectAll: () -> Void
+
     func body(content: Content) -> some View {
         GeometryReader { reader in
             content
@@ -249,8 +257,7 @@ private struct ThreadListToolbar: ViewModifier {
                     ToolbarItemGroup(placement: .navigationBarTrailing) {
                         if multipleSelectionViewModel.isEnabled {
                             Button(MailResourcesStrings.Localizable.buttonSelectAll) {
-                                // TODO: Select all threads
-                                showWorkInProgressSnackBar()
+                                selectAll()
                             }
                         } else {
                             Button {
