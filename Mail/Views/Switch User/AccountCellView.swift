@@ -79,7 +79,7 @@ struct AccountHeaderCell: View {
 
             VStack(alignment: .leading, spacing: 2) {
                 Text(account.user.displayName)
-                    .textStyle(.header4)
+                    .textStyle(.header5)
                 Text(account.user.email)
                     .textStyle(.callout)
             }
