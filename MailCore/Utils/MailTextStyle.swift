@@ -65,15 +65,6 @@ public struct MailTextStyle {
         color: MailResourcesAsset.primaryTextColor
     )
 
-    public static let header3 = MailTextStyle(
-        font: .system(size: 17.5),
-        color: MailResourcesAsset.primaryTextColor
-    )
-
-    public static let header3Secondary = MailTextStyle(
-        font: .system(size: 17.5),
-        color: MailResourcesAsset.secondaryTextColor
-    )
 
     public static let header4 = MailTextStyle(
         font: .system(size: 15.5, weight: .bold),

@@ -81,7 +81,7 @@ struct AccountView: View {
 
                     VStack(spacing: 8) {
                         Text(account.user.email)
-                            .textStyle(.header3)
+                            .textStyle(.header2)
 
                         NavigationLink {
                             AccountListView()
