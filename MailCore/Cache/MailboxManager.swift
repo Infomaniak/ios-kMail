@@ -296,8 +296,8 @@ public class MailboxManager: ObservableObject {
                 // Clean old threads after fetching first page
                 if result.currentOffset == 0 {
                     parentFolder.lastUpdate = Date()
-                    realm.delete(parentFolder.threads.flatMap(\.messages))
-                    realm.delete(parentFolder.threads)
+                    realm.delete(parentFolder.threads.flatMap(\.messages).filter { $0.fromSearch == true })
+                    realm.delete(parentFolder.threads.filter { $0.fromSearch == true })
                 }
                 realm.add(fetchedThreads, update: .modified)
                 parentFolder.threads.insert(objectsIn: fetchedThreads)
