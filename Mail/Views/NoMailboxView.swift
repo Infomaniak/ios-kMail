@@ -30,7 +30,7 @@ struct NoMailboxView: View {
                 .frame(width: 110, height: 110)
                 .padding(.bottom, 56)
             Text(MailResourcesStrings.Localizable.noMailboxTitle)
-                .textStyle(.header1)
+                .textStyle(.header2)
                 .padding(.horizontal, 48)
                 .padding(.bottom, 16)
             Text(MailResourcesStrings.Localizable.noMailboxDescription)
