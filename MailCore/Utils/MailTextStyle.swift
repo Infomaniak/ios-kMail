@@ -61,7 +61,7 @@ public struct MailTextStyle {
     )
 
     public static let header2 = MailTextStyle(
-        font: .system(size: 17.5, weight: .bold),
+        font: .system(size: 18, weight: .semibold),
         color: MailResourcesAsset.primaryTextColor
     )
 
