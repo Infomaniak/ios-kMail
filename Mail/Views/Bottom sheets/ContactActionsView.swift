@@ -59,7 +59,7 @@ struct ContactActionsView: View {
                 RecipientImage(recipient: recipient, size: 32)
                 VStack(alignment: .leading) {
                     Text(recipient.contact?.name ?? recipient.title)
-                        .textStyle(.header5)
+                        .textStyle(.bodyMedium)
                     Text(recipient.contact?.email ?? recipient.email)
                         .textStyle(.bodySecondary)
                 }

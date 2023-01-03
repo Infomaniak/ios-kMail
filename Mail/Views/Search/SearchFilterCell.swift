@@ -33,7 +33,7 @@ struct SearchFilterCell: View {
                     .frame(width: 13, height: 13)
             }
             Text(title)
-                .font(MailTextStyle.header5.font)
+                .font(MailTextStyle.bodyMedium.font)
         }
         .filterCellStyle(isSelected: isSelected)
     }

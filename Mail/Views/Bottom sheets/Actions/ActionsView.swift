@@ -42,7 +42,7 @@ struct ActionsView: View {
             // Header
             Text(MailResourcesStrings.Localizable.actionsMenuTitle)
                 .frame(maxWidth: .infinity, alignment: .leading)
-                .textStyle(.header5)
+                .textStyle(.bodyMedium)
                 .padding(.horizontal, 24)
             // Quick actions
             HStack(alignment: .top, spacing: 28) {

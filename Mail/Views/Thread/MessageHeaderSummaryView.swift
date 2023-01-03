@@ -61,7 +61,7 @@ struct MessageHeaderSummaryView: View {
                                 ForEach(message.from, id: \.self) { recipient in
                                     Text(recipient.title)
                                         .lineLimit(1)
-                                        .textStyle(.header5)
+                                        .textStyle(.bodyMedium)
                                 }
                             }
                             Text(message.date.customRelativeFormatted)

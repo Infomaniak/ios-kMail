@@ -33,7 +33,7 @@ struct RestoreEmailsView: View {
     var body: some View {
         VStack(alignment: .leading) {
             Text(MailResourcesStrings.Localizable.restoreEmailsTitle)
-                .textStyle(.header5)
+                .textStyle(.bodyMedium)
                 .padding(.bottom, 16)
 
             Text(MailResourcesStrings.Localizable.restoreEmailsText)

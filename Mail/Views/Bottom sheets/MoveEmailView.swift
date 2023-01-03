@@ -58,7 +58,7 @@ struct MoveEmailView: View {
         VStack(alignment: .trailing, spacing: 24) {
             Text(MailResourcesStrings.Localizable.moveTitle)
                 .frame(maxWidth: .infinity, alignment: .leading)
-                .textStyle(.header5)
+                .textStyle(.bodyMedium)
             Image(resource: MailResourcesAsset.moveIllu)
                 .resizable()
                 .scaledToFit()

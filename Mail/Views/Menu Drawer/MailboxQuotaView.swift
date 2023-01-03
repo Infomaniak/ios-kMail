@@ -40,7 +40,7 @@ struct MailboxQuotaView: View {
 
             VStack(alignment: .leading, spacing: 6) {
                 Text(progressString)
-                    .textStyle(.header5)
+                    .textStyle(.bodyMedium)
             }
 
             Spacer()

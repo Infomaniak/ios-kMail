@@ -125,7 +125,7 @@ struct ThreadCell: View {
                     .layoutPriority(1)
             }
             Text(thread.messages.allSatisfy(\.isDraft) ? thread.formattedTo : thread.formattedFrom)
-                .textStyle(.header5)
+                .textStyle(.header2)
                 .lineLimit(1)
 
             if thread.messages.count > 1 {
