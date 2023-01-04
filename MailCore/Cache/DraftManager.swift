@@ -82,27 +82,6 @@ public class DraftManager {
         await draftQueue.endBackgroundTask(uuid: draft.localUUID)
     }
 
-    private func deleteDraft(localUuid: String, mailboxManager: MailboxManager) {
-        // Convert draft to thread
-        let realm = mailboxManager.getRealm()
-
-        guard let draft = mailboxManager.draft(localUuid: localUuid, using: realm)?.freeze(),
-              let draftFolder = mailboxManager.getFolder(with: .draft, using: realm) else { return }
-        let thread = Thread(draft: draft)
-        try? realm.uncheckedSafeWrite {
-            realm.add(thread, update: .modified)
-            draftFolder.threads.insert(thread)
-        }
-        let frozenThread = thread.freeze()
-        // Delete
-        Task {
-            await tryOrDisplayError {
-                _ = try await mailboxManager.move(threads: [frozenThread], to: .trash)
-                await IKSnackBar.showSnackBar(message: MailResourcesStrings.Localizable.snackBarDraftDeleted)
-            }
-        }
-    }
-
     public func send(draft: Draft, mailboxManager: MailboxManager) async {
         await draftQueue.cleanQueueElement(uuid: draft.localUUID)
         await draftQueue.beginBackgroundTask(withName: "Draft Sender", for: draft.localUUID)
@@ -138,8 +117,13 @@ public class DraftManager {
 
                             await self.saveDraft(draft: draft, mailboxManager: mailboxManager)
                             await IKSnackBar.showSnackBar(message: MailResourcesStrings.Localizable.snackBarDraftSaved,
-                                                          action: .init(title: MailResourcesStrings.Localizable.actionDelete) { [weak self] in
-                                                              self?.deleteDraft(localUuid: draft.localUUID, mailboxManager: mailboxManager)
+                                                          action: .init(title: MailResourcesStrings.Localizable.actionDelete) {
+                                                              Task {
+                                                                  await tryOrDisplayError {
+                                                                      try await mailboxManager.delete(remoteDraftResource: draft.remoteUUID)
+                                                                      await IKSnackBar.showSnackBar(message: MailResourcesStrings.Localizable.snackBarDraftDeleted)
+                                                                  }
+                                                              }
                                                           })
                         case .save:
                             await self.saveDraft(draft: draft, mailboxManager: mailboxManager)
@@ -153,7 +137,6 @@ public class DraftManager {
             }
 
             if let draftFolder = mailboxManager.getFolder(with: .draft)?.freeze() {
-                await mailboxManager.draftOffline()
                 try await mailboxManager.threads(folder: draftFolder)
 
                 if let maxDelaySeconds = drafts.filter({ $0.action == .send }).compactMap({ $0.delay }).sorted().first {

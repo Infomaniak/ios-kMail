@@ -210,12 +210,7 @@ public class MailApiFetcher: ApiFetcher {
     }
 
     @discardableResult
-    // TODO: change return type when bug will be fixed from API
-    func deleteDraft(from message: Message) async throws -> Empty? {
-        guard let resource = message.draftResource else {
-            throw MailError.resourceError
-        }
-
+    func deleteDraft(resource: String) async throws -> Empty? {
         return try await perform(request: authenticatedRequest(.resource(resource), method: .delete)).data
     }
 

@@ -75,7 +75,11 @@ struct MessageHeaderView: View {
     private func deleteDraft() {
         Task {
             await tryOrDisplayError {
-                try await mailboxManager.deleteDraft(from: message)
+                if let draftResource = message.draftResource {
+                    try await mailboxManager.delete(remoteDraftResource: draftResource)
+                } else {
+                    throw MailError.resourceError
+                }
             }
         }
     }
