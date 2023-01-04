@@ -86,17 +86,17 @@ public struct MailTextStyle {
     )
 
     public static let body = MailTextStyle(
-        font: .system(size: 15.5),
+        font: .system(size: 16),
         color: MailResourcesAsset.primaryTextColor
     )
 
     public static let bodySecondary = MailTextStyle(
-        font: .system(size: 15.5),
+        font: .system(size: 16),
         color: MailResourcesAsset.secondaryTextColor
     )
 
     public static let bodyError = MailTextStyle(
-        font: .system(size: 15.5),
+        font: .system(size: 16),
         color: MailResourcesAsset.redActionColor
     )
 
