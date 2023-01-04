@@ -210,8 +210,15 @@ public class MailApiFetcher: ApiFetcher {
     }
 
     @discardableResult
-    func deleteDraft(resource: String) async throws -> Empty? {
-        return try await perform(request: authenticatedRequest(.resource(resource), method: .delete)).data
+    func deleteDraft(mailbox: Mailbox, draftId: String) async throws -> Empty? {
+        // TODO: Remove try? when bug will be fixed from API
+        return try? await perform(request: authenticatedRequest(.draft(uuid: mailbox.uuid, draftUuid: draftId), method: .delete)).data
+    }
+    
+    @discardableResult
+    func deleteDraft(draftResource: String) async throws -> Empty? {
+        // TODO: Remove try? when bug will be fixed from API
+        return try? await perform(request: authenticatedRequest(.resource(draftResource), method: .delete)).data
     }
 
     @discardableResult

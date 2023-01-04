@@ -117,13 +117,8 @@ public class DraftManager {
 
                             await self.saveDraft(draft: draft, mailboxManager: mailboxManager)
                             await IKSnackBar.showSnackBar(message: MailResourcesStrings.Localizable.snackBarDraftSaved,
-                                                          action: .init(title: MailResourcesStrings.Localizable.actionDelete) {
-                                                              Task {
-                                                                  await tryOrDisplayError {
-                                                                      try await mailboxManager.delete(remoteDraftResource: draft.remoteUUID)
-                                                                      await IKSnackBar.showSnackBar(message: MailResourcesStrings.Localizable.snackBarDraftDeleted)
-                                                                  }
-                                                              }
+                                                          action: .init(title: MailResourcesStrings.Localizable.actionDelete) { [weak self] in
+                                                              self?.deleteDraftSnackBarAction(mailboxManager: mailboxManager, draft: draft)
                                                           })
                         case .save:
                             await self.saveDraft(draft: draft, mailboxManager: mailboxManager)
@@ -143,6 +138,20 @@ public class DraftManager {
                     // We need to refresh the draft folder after the mail is sent to make it disappear
                     try await Task.sleep(nanoseconds: UInt64(1_000_000_000 * max(Double(maxDelaySeconds), 1.5)))
                     try await mailboxManager.threads(folder: draftFolder)
+                }
+            }
+        }
+    }
+
+    private func deleteDraftSnackBarAction(mailboxManager: MailboxManager, draft: Draft) {
+        Task {
+            await tryOrDisplayError {
+                if let liveDraft = draft.thaw() {
+                    try await mailboxManager.delete(draft: liveDraft.freeze())
+                    await IKSnackBar.showSnackBar(message: MailResourcesStrings.Localizable.snackBarDraftDeleted)
+                    if let draftFolder = mailboxManager.getFolder(with: .draft)?.freeze() {
+                        try await mailboxManager.threads(folder: draftFolder)
+                    }
                 }
             }
         }
