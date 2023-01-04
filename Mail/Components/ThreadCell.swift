@@ -130,7 +130,7 @@ struct ThreadCell: View {
 
             if thread.messages.count > 1 {
                 Text("\(thread.messages.count)")
-                    .textStyle(.calloutSecondary)
+                    .textStyle(.bodySmallSecondary)
                     .padding(.horizontal, 4)
                     .lineLimit(1)
                     .overlay {
@@ -142,7 +142,7 @@ struct ThreadCell: View {
             Spacer()
 
             Text(thread.date.customRelativeFormatted)
-                .textStyle(.calloutSecondary)
+                .textStyle(.bodySmallSecondary)
                 .lineLimit(1)
         }
     }
@@ -150,13 +150,13 @@ struct ThreadCell: View {
     private var threadInfo: some View {
         VStack(alignment: .leading, spacing: 8) {
             Text(thread.formattedSubject)
-                .textStyle(.callout)
+                .textStyle(.body)
                 .lineLimit(1)
 
             if threadDensity != .compact,
                let preview = thread.messages.last?.preview {
                 Text(preview.isEmpty ? MailResourcesStrings.Localizable.noBodyTitle : preview)
-                    .textStyle(.calloutSecondary)
+                    .textStyle(.bodySmallSecondary)
                     .lineLimit(1)
             }
         }

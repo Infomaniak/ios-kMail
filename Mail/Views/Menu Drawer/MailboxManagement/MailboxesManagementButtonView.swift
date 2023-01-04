@@ -48,7 +48,7 @@ struct MailboxesManagementButtonView: View {
                 Spacer()
                 if let detailNumber = detailNumber {
                     Text(detailNumber < 100 ? "\(detailNumber)" : "99+")
-                        .textStyle(.calloutMediumAccent)
+                        .textStyle(.bodySmallMediumAccent)
                 }
             }
         }

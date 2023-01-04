@@ -103,7 +103,7 @@ struct ThreadListView: View {
                         } header: {
                             if threadDensity != .compact {
                                 Text(section.title)
-                                    .textStyle(.calloutSecondary)
+                                    .textStyle(.bodySmallSecondary)
                             }
                         }
                     }

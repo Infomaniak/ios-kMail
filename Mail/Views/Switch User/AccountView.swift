@@ -94,7 +94,7 @@ struct AccountView: View {
                     // Email list
                     VStack(alignment: .leading, spacing: 12) {
                         Text(MailResourcesStrings.Localizable.buttonAccountAssociatedEmailAddresses)
-                            .textStyle(.calloutSecondary)
+                            .textStyle(.bodySmallSecondary)
                             .padding(.horizontal, 24)
                             .padding(.bottom, 16)
 

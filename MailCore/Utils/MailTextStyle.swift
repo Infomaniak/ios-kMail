@@ -100,48 +100,43 @@ public struct MailTextStyle {
         color: MailResourcesAsset.redActionColor
     )
 
-    public static let calloutStrongAccent = MailTextStyle(
-        font: .system(size: 13.5, weight: .bold),
+    public static let bodySmallMedium = MailTextStyle(
+        font: .system(size: 14, weight: .medium),
+        color: MailResourcesAsset.primaryTextColor
+    )
+
+    public static let bodySmallMediumAccent = MailTextStyle(
+        font: .system(size: 14, weight: .medium),
         color: \.primary
     )
 
-    public static let calloutStrongOnAccent = MailTextStyle(
-        font: .system(size: 13.5, weight: .bold),
+    public static let bodySmallMediumOnAccent = MailTextStyle(
+        font: .system(size: 14, weight: .medium),
         color: MailResourcesAsset.onAccentColor
     )
 
-    public static let calloutStrong = MailTextStyle(
-        font: .system(size: 13.5, weight: .bold),
+    public static let bodySmall = MailTextStyle(
+        font: .system(size: 14),
         color: MailResourcesAsset.primaryTextColor
     )
 
-    public static let calloutMediumAccent = MailTextStyle(
-        font: .system(size: 13.5, weight: .medium),
+    public static let bodySmallAccent = MailTextStyle(
+        font: .system(size: 14),
         color: \.primary
     )
 
-    public static let calloutAccent = MailTextStyle(
-        font: .system(size: 13.5),
-        color: \.primary
-    )
-
-    public static let callout = MailTextStyle(
-        font: .system(size: 13.5),
-        color: MailResourcesAsset.primaryTextColor
-    )
-
-    public static let calloutSecondary = MailTextStyle(
-        font: .system(size: 13.5),
+    public static let bodySmallSecondary = MailTextStyle(
+        font: .system(size: 14),
         color: MailResourcesAsset.secondaryTextColor
     )
 
-    public static let calloutTertiary = MailTextStyle(
-        font: .system(size: 13.5),
+    public static let bodySmallTertiary = MailTextStyle(
+        font: .system(size: 14),
         color: MailResourcesAsset.hintTextColor
     )
 
-    public static let calloutWarning = MailTextStyle(
-        font: .system(size: 13.5),
+    public static let bodySmallWarning = MailTextStyle(
+        font: .system(size: 14),
         color: MailResourcesAsset.warningColor
     )
 

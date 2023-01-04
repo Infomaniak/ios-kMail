@@ -96,7 +96,7 @@ struct FolderCellContent: View {
             Spacer()
 
             Text(folder.formattedUnreadCount)
-                .textStyle(isSelected ? .calloutStrongAccent : .calloutMediumAccent)
+                .textStyle(.bodySmallMediumAccent)
         }
         .padding(.vertical, Constants.menuDrawerVerticalPadding)
         .padding(.horizontal, Constants.menuDrawerHorizontalPadding)

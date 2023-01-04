@@ -82,7 +82,7 @@ struct SearchView: View {
                 Text(MailResourcesStrings.Localizable.searchNoHistoryDescription)
                     .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
                     .padding(.top, 16)
-                    .textStyle(.calloutSecondary)
+                    .textStyle(.bodySmallSecondary)
             } else {
                 List {
                     if viewModel.searchState == .history {
@@ -186,7 +186,7 @@ struct SearchView: View {
         } header: {
             if threadDensity != .compact && !threads.isEmpty {
                 Text(MailResourcesStrings.Localizable.searchAllMessages)
-                    .textStyle(.calloutSecondary)
+                    .textStyle(.bodySmallSecondary)
             }
         } footer: {
             if viewModel.isLoading {
@@ -213,7 +213,7 @@ struct SearchView: View {
         } header: {
             if !contacts.isEmpty {
                 Text(MailResourcesStrings.Localizable.contactsSearch)
-                    .textStyle(.calloutSecondary)
+                    .textStyle(.bodySmallSecondary)
             }
         }
         .listRowInsets(.init(top: 0, leading: 12, bottom: 0, trailing: 12))
@@ -250,7 +250,7 @@ struct SearchView: View {
             .padding(.horizontal, 4)
         } header: {
             Text(MailResourcesStrings.Localizable.recentSearchesTitle)
-                .textStyle(.calloutSecondary)
+                .textStyle(.bodySmallSecondary)
         }
         .listRowSeparator(.hidden)
         .listRowBackground(MailResourcesAsset.backgroundColor.swiftUiColor)

@@ -42,7 +42,7 @@ struct AccountListMailView: View {
 
             if mailbox.unseenMessages > 0 {
                 Text(mailbox.unseenMessages < 100 ? "\(mailbox.unseenMessages)" : "99+")
-                    .textStyle(isSelected ? .calloutMediumAccent : .calloutAccent)
+                    .textStyle(.bodySmallMediumAccent)
             }
         }
         .textStyle(isSelected ? .bodyMediumAccent : .body)

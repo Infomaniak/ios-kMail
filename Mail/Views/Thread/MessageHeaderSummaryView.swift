@@ -75,7 +75,7 @@ struct MessageHeaderSummaryView: View {
                         HStack {
                             Text(message.recipients.map(\.title), format: .list(type: .and))
                                 .lineLimit(1)
-                                .textStyle(.calloutSecondary)
+                                .textStyle(.bodySmallSecondary)
                             ChevronButton(isExpanded: $isHeaderExpanded)
                         }
                     } else {

@@ -58,7 +58,7 @@ struct HelpView: View {
                 .listRowInsets(.init())
             } header: {
                 Text(MailResourcesStrings.Localizable.helpSubtitle)
-                    .textStyle(.calloutSecondary)
+                    .textStyle(.bodySmallSecondary)
             }
             .listSectionSeparator(.hidden)
         }

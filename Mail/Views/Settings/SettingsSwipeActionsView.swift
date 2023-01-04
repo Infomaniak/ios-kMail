@@ -54,7 +54,7 @@ struct SettingsSwipeActionsView: View {
                 } header: {
                     if section == viewModel.sections.first {
                         Text(MailResourcesStrings.Localizable.settingsSwipeDescription)
-                            .textStyle(.calloutSecondary)
+                            .textStyle(.bodySmallSecondary)
                             .padding(.horizontal, 8)
                     }
                 }

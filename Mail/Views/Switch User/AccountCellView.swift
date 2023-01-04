@@ -81,7 +81,7 @@ struct AccountHeaderCell: View {
                 Text(account.user.displayName)
                     .textStyle(.bodyMedium)
                 Text(account.user.email)
-                    .textStyle(.callout)
+                    .textStyle(.bodySmall)
             }
 
             Spacer()
