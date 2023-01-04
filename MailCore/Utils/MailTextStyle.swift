@@ -64,24 +64,24 @@ public struct MailTextStyle {
         font: .system(size: 18, weight: .semibold),
         color: MailResourcesAsset.primaryTextColor
     )
-        
+
     public static let bodyMedium = MailTextStyle(
         font: .system(size: 16, weight: .medium),
         color: MailResourcesAsset.primaryTextColor
     )
 
-    public static let header5Accent = MailTextStyle(
-        font: .system(size: 15.5, weight: .medium),
+    public static let bodyMediumAccent = MailTextStyle(
+        font: .system(size: 16, weight: .medium),
         color: \.primary
     )
 
-    public static let header5OnAccent = MailTextStyle(
-        font: .system(size: 15.5, weight: .medium),
+    public static let bodyMediumOnAccent = MailTextStyle(
+        font: .system(size: 16, weight: .medium),
         color: MailResourcesAsset.onAccentColor
     )
 
-    public static let header5Error = MailTextStyle(
-        font: .system(size: 15.5, weight: .medium),
+    public static let bodyMediumError = MailTextStyle(
+        font: .system(size: 16, weight: .medium),
         color: MailResourcesAsset.redActionColor
     )
 

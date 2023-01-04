@@ -45,7 +45,7 @@ struct AccountListMailView: View {
                     .textStyle(isSelected ? .calloutMediumAccent : .calloutAccent)
             }
         }
-        .textStyle(isSelected ? .header5Accent : .body)
+        .textStyle(isSelected ? .bodyMediumAccent : .body)
         .onAppear {
             // TODO: Get unread count
         }

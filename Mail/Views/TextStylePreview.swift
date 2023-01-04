@@ -44,13 +44,13 @@ struct TextStylePreview: View {
                 Group {
                     Text("Callout tertiary")
                         .textStyle(.calloutTertiary)
-                    Text("Header 5 accent")
-                        .textStyle(.header5Accent)
-                    Text("Header 5 on accent")
+                    Text("Body medium accent")
+                        .textStyle(.bodyMediumAccent)
+                    Text("Body medium on accent")
                         .padding()
                         .background(Color.accentColor)
                         .cornerRadius(50)
-                        .textStyle(.header5OnAccent)
+                        .textStyle(.bodyMediumOnAccent)
                 }
             }
             .navigationTitle("Text styles")

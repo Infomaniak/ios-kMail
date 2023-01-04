@@ -48,7 +48,7 @@ struct NoMailboxView: View {
                 (window?.windowScene?.delegate as? SceneDelegate)?.showLoginView()
             } label: {
                 Text(MailResourcesStrings.Localizable.buttonLogInDifferentAccount)
-                    .textStyle(.header5Accent)
+                    .textStyle(.bodyMediumAccent)
             }
         }
     }

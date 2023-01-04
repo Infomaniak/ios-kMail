@@ -87,7 +87,7 @@ struct AccountView: View {
                             AccountListView()
                         } label: {
                             Text(MailResourcesStrings.Localizable.buttonAccountSwitch)
-                                .textStyle(.header5Accent)
+                                .textStyle(.bodyMediumAccent)
                         }
                     }
 
@@ -123,7 +123,7 @@ struct AccountView: View {
                     sheet.state = .deleteAccount
                 } label: {
                     Text(MailResourcesStrings.Localizable.buttonAccountDelete)
-                        .textStyle(.header5Error)
+                        .textStyle(.bodyMediumError)
                 }
             }
             .navigationBarTitle(MailResourcesStrings.Localizable.titleMyAccount, displayMode: .inline)

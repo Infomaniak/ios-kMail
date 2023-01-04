@@ -51,7 +51,7 @@ struct MailboxesManagementView: View {
                         .foregroundColor(.accentColor)
                         .padding(.trailing, 16)
                     Text(mailboxManager.mailbox.email)
-                        .textStyle(.header5Accent)
+                        .textStyle(.bodyMediumAccent)
                         .lineLimit(1)
                     Spacer()
                     ChevronIcon(style: navigationDrawerState.showMailboxes ? .up : .down, color: .primary)
