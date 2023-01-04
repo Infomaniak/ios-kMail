@@ -54,6 +54,7 @@ actor DraftQueue {
         if let identifier = identifierQueue[uuid], identifier != .invalid {
             Task {
                 await UIApplication.shared.endBackgroundTask(identifier)
+                identifierQueue[uuid] = .invalid
             }
         }
     }
@@ -148,6 +149,17 @@ public class DraftManager {
                             break
                         }
                     }
+                }
+            }
+
+            if let draftFolder = mailboxManager.getFolder(with: .draft)?.freeze() {
+                await mailboxManager.draftOffline()
+                try await mailboxManager.threads(folder: draftFolder)
+
+                if let maxDelaySeconds = drafts.filter({ $0.action == .send }).compactMap({ $0.delay }).sorted().first {
+                    // We need to refresh the draft folder after the mail is sent to make it disappear
+                    try await Task.sleep(nanoseconds: UInt64(1_000_000_000 * max(Double(maxDelaySeconds), 1.5)))
+                    try await mailboxManager.threads(folder: draftFolder)
                 }
             }
         }

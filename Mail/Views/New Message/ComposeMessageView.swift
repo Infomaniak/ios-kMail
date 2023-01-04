@@ -77,12 +77,11 @@ struct ComposeMessageView: View {
            let signature = mailboxManager.getSignatureResponse() {
             draft.setSignature(signature)
         }
-
-        draft.action = draft.action == nil ? .initialSave : .save
-        draft.delay = UserDefaults.shared.cancelSendDelay.rawValue
-
         let realm = mailboxManager.getRealm()
         try? realm.write {
+            draft.action = draft.action == nil && draft.remoteUUID.isEmpty ? .initialSave : .save
+            draft.delay = UserDefaults.shared.cancelSendDelay.rawValue
+
             realm.add(draft, update: .modified)
         }
 
@@ -97,9 +96,7 @@ struct ComposeMessageView: View {
     static func replyOrForwardMessage(messageReply: MessageReply, mailboxManager: MailboxManager) -> ComposeMessageView {
         let message = messageReply.message
         // If message doesn't exist anymore try to show the frozen one
-        let realm = mailboxManager.getRealm()
-        realm.refresh()
-        let freshMessage = message.fresh(using: realm) ?? message
+        let freshMessage = message.thaw() ?? message
         return ComposeMessageView(
             mailboxManager: mailboxManager,
             draft: .replying(to: freshMessage, mode: messageReply.replyMode)
@@ -179,6 +176,13 @@ struct ComposeMessageView: View {
                     }
                 }
             }
+            .overlay {
+                if draft.messageUid != nil && draft.remoteUUID.isEmpty {
+                    ProgressView()
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                        .background(MailResourcesAsset.backgroundColor.swiftUiColor)
+                }
+            }
             .introspectScrollView { scrollView in
                 self.scrollView = scrollView
             }
@@ -242,6 +246,18 @@ struct ComposeMessageView: View {
                 AddLinkView(state: alert, actionHandler: handler)
             case .none:
                 EmptyView()
+            }
+        }
+        .task {
+            if draft.messageUid != nil && draft.remoteUUID.isEmpty {
+                do {
+                    if let fetchedDraft = try await mailboxManager.draft(partialDraft: draft),
+                       let liveFetchedDraft = fetchedDraft.thaw() {
+                        self.draft = liveFetchedDraft
+                    }
+                } catch {
+                    // Fail silently
+                }
             }
         }
         .navigationViewStyle(.stack)

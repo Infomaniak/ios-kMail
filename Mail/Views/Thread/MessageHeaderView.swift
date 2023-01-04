@@ -52,7 +52,7 @@ struct MessageHeaderView: View {
         .contentShape(Rectangle())
         .onTapGesture {
             if message.isDraft {
-                editDraft()
+                DraftUtils.editDraft(from: message, mailboxManager: mailboxManager, editedMessageDraft: $editedDraft)
             } else if message.originalParent?.messagesCount ?? 0 > 1 {
                 withAnimation {
                     isHeaderExpanded = false
@@ -70,24 +70,6 @@ struct MessageHeaderView: View {
         bottomSheet.open(
             state: .contact(recipient, isRemote: isRemoteContact)
         )
-    }
-
-    private func editDraft() {
-        var sheetPresented = false
-
-        // If we already have the draft locally, present it directly
-        if let draft = mailboxManager.draft(messageUid: message.uid)?.detached() {
-            editedDraft = draft
-            sheetPresented = true
-        }
-
-        // Update the draft
-        Task { [sheetPresented] in
-            let draft = try await mailboxManager.draft(from: message)
-            if !sheetPresented {
-                editedDraft = draft
-            }
-        }
     }
 
     private func deleteDraft() {

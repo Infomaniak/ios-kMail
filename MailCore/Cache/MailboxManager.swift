@@ -935,24 +935,25 @@ public class MailboxManager: ObservableObject {
         return realm.objects(Draft.self).where { $0.action != nil }
     }
 
-    public func draft(from message: Message) async throws -> Draft {
+    public func draft(partialDraft: Draft) async throws -> Draft? {
+        guard let associatedMessage = getRealm().object(ofType: Message.self, forPrimaryKey: partialDraft.messageUid)?.freeze()
+        else { return nil }
+
         // Get from API
-        let draft = try await apiFetcher.draft(from: message)
+        let draft = try await apiFetcher.draft(from: associatedMessage)
 
         await backgroundRealm.execute { realm in
-            // Get draft from Realm to keep local saved properties
-            if let savedDraft = self.draft(remoteUuid: draft.remoteUUID) {
-                draft.localUUID = savedDraft.localUUID
-                draft.messageUid = message.uid
-            }
+            draft.localUUID = partialDraft.localUUID
+            draft.action = .save
+            draft.identityId = partialDraft.identityId
+            draft.delay = partialDraft.delay
 
-            // Update draft in Realm
             try? realm.safeWrite {
                 realm.add(draft.detached(), update: .modified)
             }
         }
 
-        return draft
+        return getRealm().object(ofType: Draft.self, forPrimaryKey: draft.localUUID)?.freeze()
     }
 
     public func draft(messageUid: String, using realm: Realm? = nil) -> Draft? {
