@@ -148,6 +148,8 @@ public class DraftManager {
                 try await Task.sleep(nanoseconds: UInt64(1_000_000_000 * max(Double(maxDelaySeconds), 1.5)))
                 try await mailboxManager.threads(folder: draftFolder)
             }
+
+           await mailboxManager.deleteOrphanDrafts()
         }
     }
 

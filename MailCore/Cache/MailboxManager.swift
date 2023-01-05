@@ -996,6 +996,24 @@ public class MailboxManager: ObservableObject {
         }
     }
 
+    public func deleteOrphanDrafts() async {
+        guard let draftFolder = getFolder(with: .draft, shouldRefresh: true) else { return }
+        
+        let existingMessageUids = Set(draftFolder.threads.flatMap(\.messages).map(\.uid))
+
+        await backgroundRealm.execute { realm in
+            try? realm.safeWrite {
+                let noActionDrafts = realm.objects(Draft.self).where { $0.action == nil }
+                for draft in noActionDrafts {
+                    if let messageUid = draft.messageUid,
+                       !existingMessageUids.contains(messageUid) {
+                        realm.delete(draft)
+                    }
+                }
+            }
+        }
+    }
+
     // MARK: - Utilities
 
     struct MessagePropertiesOptions: OptionSet {
