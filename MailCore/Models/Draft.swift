@@ -199,7 +199,7 @@ public class Draft: Object, Decodable, Identifiable, Encodable {
         return Draft(to: [recipient.detached()])
     }
 
-    public static func replying(to message: Message, mode: ReplyMode) -> Draft {
+    public static func replying(to message: Message, mode: ReplyMode, localDraftUUID: String) -> Draft {
         let subject: String
         let quote: String
         var attachments: [Attachment] = []
@@ -236,7 +236,8 @@ public class Draft: Object, Decodable, Identifiable, Encodable {
             }
         }
 
-        return Draft(inReplyToUid: mode.isReply ? message.uid : nil,
+        return Draft(localUUID: localDraftUUID,
+                     inReplyToUid: mode.isReply ? message.uid : nil,
                      forwardedUid: mode == .forward([]) ? message.uid : nil,
                      inReplyTo: message.messageId,
                      subject: subject,

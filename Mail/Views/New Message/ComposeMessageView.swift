@@ -99,7 +99,7 @@ struct ComposeMessageView: View {
         let freshMessage = message.thaw() ?? message
         return ComposeMessageView(
             mailboxManager: mailboxManager,
-            draft: .replying(to: freshMessage, mode: messageReply.replyMode)
+            draft: .replying(to: freshMessage, mode: messageReply.replyMode, localDraftUUID: messageReply.localDraftUUID)
         )
     }
 
