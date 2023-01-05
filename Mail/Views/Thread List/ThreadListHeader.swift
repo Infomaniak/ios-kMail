@@ -94,7 +94,7 @@ struct UnreadToggleStyle: ToggleStyle {
                     Image(systemName: "xmark")
                 }
             }
-            .textStyle(configuration.isOn ? .bodyMediumOnAccent : .bodySmallMediumAccent)
+            .textStyle(configuration.isOn ? .bodySmallMediumOnAccent : .bodySmallMediumAccent)
             .padding(.vertical, 4)
             .padding(.horizontal, 8)
             .background(
