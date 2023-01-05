@@ -140,18 +140,18 @@ public struct MailTextStyle {
         color: MailResourcesAsset.warningColor
     )
 
-    public static let captionMediumAccent = MailTextStyle(
-        font: .system(size: 11.5, weight: .medium),
+    public static let labelMediumAccent = MailTextStyle(
+        font: .system(size: 12, weight: .medium),
         color: \.primary
     )
 
-    public static let captionMediumSecondary = MailTextStyle(
-        font: .system(size: 11.5, weight: .medium),
+    public static let labelMediumSecondary = MailTextStyle(
+        font: .system(size: 12, weight: .medium),
         color: MailResourcesAsset.secondaryTextColor
     )
 
-    public static let captionSecondary = MailTextStyle(
-        font: .system(size: 11.5),
+    public static let labelSecondary = MailTextStyle(
+        font: .system(size: 12),
         color: MailResourcesAsset.secondaryTextColor
     )
 }

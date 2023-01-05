@@ -103,7 +103,7 @@ struct RecipientLabel: View {
                         }
                         if !recipient.name.isEmpty {
                             Text(recipient.email)
-                                .textStyle(.captionSecondary)
+                                .textStyle(.labelSecondary)
                                 .lineLimit(1)
                         }
                     }

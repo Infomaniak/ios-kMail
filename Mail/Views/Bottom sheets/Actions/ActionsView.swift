@@ -106,7 +106,7 @@ struct QuickActionView: View {
                 .aspectRatio(1, contentMode: .fit)
 
                 Text(action.title)
-                    .textStyle(.captionMediumAccent)
+                    .textStyle(.labelMediumAccent)
                     .lineLimit(action.title.split(separator: " ").count > 1 ? nil : 1)
                     .minimumScaleFactor(0.75)
             }

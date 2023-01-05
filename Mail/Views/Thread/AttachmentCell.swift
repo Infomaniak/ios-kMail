@@ -35,7 +35,7 @@ struct AttachmentCell: View {
                     .lineLimit(1)
                     .truncationMode(.middle)
                 Text(attachment.size, format: .defaultByteCount)
-                    .textStyle(.captionSecondary)
+                    .textStyle(.labelSecondary)
             }
 
             if isNewMessage {

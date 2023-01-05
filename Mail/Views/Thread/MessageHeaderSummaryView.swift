@@ -67,7 +67,7 @@ struct MessageHeaderSummaryView: View {
                             Text(message.date.customRelativeFormatted)
                                 .lineLimit(1)
                                 .layoutPriority(1)
-                                .textStyle(.captionSecondary)
+                                .textStyle(.labelSecondary)
                         }
                     }
 
