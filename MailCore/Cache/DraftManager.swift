@@ -19,6 +19,7 @@
 import Foundation
 import InfomaniakCore
 import MailResources
+import RealmSwift
 import UIKit
 
 struct DraftQueueElement {
@@ -118,7 +119,7 @@ public class DraftManager {
                             await self.saveDraft(draft: draft, mailboxManager: mailboxManager)
                             await IKSnackBar.showSnackBar(message: MailResourcesStrings.Localizable.snackBarDraftSaved,
                                                           action: .init(title: MailResourcesStrings.Localizable.actionDelete) { [weak self] in
-                                                              self?.deleteDraftSnackBarAction(mailboxManager: mailboxManager, draft: draft)
+                                                              self?.deleteDraftSnackBarAction(draft: draft, mailboxManager: mailboxManager)
                                                           })
                         case .save:
                             await self.saveDraft(draft: draft, mailboxManager: mailboxManager)
@@ -131,19 +132,26 @@ public class DraftManager {
                 }
             }
 
-            if let draftFolder = mailboxManager.getFolder(with: .draft)?.freeze() {
-                try await mailboxManager.threads(folder: draftFolder)
+            try await refreshDraftFolder(pendingDrafts: drafts, mailboxManager: mailboxManager)
+        }
+    }
 
-                if let maxDelaySeconds = drafts.filter({ $0.action == .send }).compactMap({ $0.delay }).sorted().first {
-                    // We need to refresh the draft folder after the mail is sent to make it disappear
-                    try await Task.sleep(nanoseconds: UInt64(1_000_000_000 * max(Double(maxDelaySeconds), 1.5)))
-                    try await mailboxManager.threads(folder: draftFolder)
-                }
+    private func refreshDraftFolder(pendingDrafts: Results<Draft>, mailboxManager: MailboxManager) async throws {
+        if let draftFolder = mailboxManager.getFolder(with: .draft)?.freeze() {
+            try await mailboxManager.threads(folder: draftFolder)
+
+            if let maxDelaySeconds = pendingDrafts.filter({ $0.action == .send }).compactMap({ $0.delay }).sorted().first {
+                /*
+                    We need to refresh the draft folder after the mail is sent to make it disappear, we wait at least 1.5 seconds
+                    because the sending process is not synchronous
+                 */
+                try await Task.sleep(nanoseconds: UInt64(1_000_000_000 * max(Double(maxDelaySeconds), 1.5)))
+                try await mailboxManager.threads(folder: draftFolder)
             }
         }
     }
 
-    private func deleteDraftSnackBarAction(mailboxManager: MailboxManager, draft: Draft) {
+    private func deleteDraftSnackBarAction(draft: Draft, mailboxManager: MailboxManager) {
         Task {
             await tryOrDisplayError {
                 if let liveDraft = draft.thaw() {
