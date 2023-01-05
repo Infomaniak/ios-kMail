@@ -1002,17 +1002,15 @@ public class MailboxManager: ObservableObject {
         if let draft = getRealm().objects(Draft.self).where({ $0.remoteUUID == draftResource }).first?.freeze() {
             try await deleteLocally(draft: draft)
         }
+
         try await apiFetcher.deleteDraft(draftResource: draftResource)
+        try await refreshFolder(from: [draftMessage])
     }
 
     public func deleteLocally(draft: Draft) async throws {
         await backgroundRealm.execute { realm in
             guard let liveDraft = realm.object(ofType: Draft.self, forPrimaryKey: draft.localUUID) else { return }
             try? realm.safeWrite {
-                if let associatedMessageUid = liveDraft.messageUid {
-                    let associatedMessages = realm.objects(Message.self).where { $0.messageId == associatedMessageUid }
-                    realm.delete(associatedMessages)
-                }
                 realm.delete(liveDraft)
             }
         }
