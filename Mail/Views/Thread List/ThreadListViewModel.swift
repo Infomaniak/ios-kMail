@@ -92,8 +92,6 @@ class DateSection: Identifiable {
     @Published var isLoadingPage = false
     @Published var lastUpdate: Date?
 
-    let trashFolderId: String
-
     let bottomSheet: ThreadBottomSheet
     var globalBottomSheet: GlobalBottomSheet?
 
@@ -123,17 +121,7 @@ class DateSection: Identifiable {
             filter = newValue ? .unseen : .all
         }
     }
-
-    var observeThread: Bool {
-        didSet {
-            if observeThread {
-                observeChanges()
-            } else {
-                observationThreadToken?.invalidate()
-            }
-        }
-    }
-
+    
     private let loadNextPageThreshold = 10
 
     init(mailboxManager: MailboxManager, folder: Folder?, bottomSheet: ThreadBottomSheet) {
@@ -141,8 +129,7 @@ class DateSection: Identifiable {
         self.folder = folder
         lastUpdate = folder?.lastUpdate
         self.bottomSheet = bottomSheet
-        observeThread = true
-        trashFolderId = mailboxManager.getFolder(with: .trash)?._id ?? ""
+        observeChanges()
         if let folder {
             sortThreadsIntoSections(threads: Array(folder.threads.sorted(by: \.date, ascending: false).freezeIfNeeded()))
         }
