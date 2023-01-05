@@ -145,8 +145,7 @@ struct ThreadListView: View {
         .modifier(ThreadListToolbar(isCompact: isCompact,
                                     bottomSheet: bottomSheet,
                                     multipleSelectionViewModel: multipleSelectionViewModel,
-                                    avatarImage: $avatarImage,
-                                    observeThread: $viewModel.observeThread))
+                                    avatarImage: $avatarImage))
         .floatingActionButton(isEnabled: !multipleSelectionViewModel.isEnabled,
                               icon: Image(resource: MailResourcesAsset.pen),
                               title: MailResourcesStrings.Localizable.buttonNewMessage) {
@@ -184,7 +183,6 @@ struct ThreadListView: View {
             if let account = AccountManager.instance.currentAccount {
                 avatarImage = await account.user.avatarImage
             }
-            updateFetchingTask(with: splitViewManager.selectedFolder)
         }
         .sheet(isPresented: $isShowingComposeNewMessageView) {
             ComposeMessageView.newMessage(mailboxManager: viewModel.mailboxManager)
@@ -213,7 +211,6 @@ private struct ThreadListToolbar: ViewModifier {
     @State private var isShowingSwitchAccount = false
 
     @Binding var avatarImage: Image
-    @Binding var observeThread: Bool
 
     @EnvironmentObject var splitViewManager: SplitViewManager
     @EnvironmentObject var navigationDrawerState: NavigationDrawerState
