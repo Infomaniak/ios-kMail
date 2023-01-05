@@ -442,7 +442,7 @@ public class MailboxManager: ObservableObject {
         )
 
         await backgroundRealm.execute { realm in
-            for thread in threadResult.threads ?? [] where realm.object(ofType: Thread.self, forPrimaryKey: thread.uid) == nil {
+            for thread in threadResult.threads ?? [] {
                 thread.fromSearch = true
 
                 for message in thread.messages where realm.object(ofType: Message.self, forPrimaryKey: message.uid) == nil {
@@ -463,7 +463,7 @@ public class MailboxManager: ObservableObject {
         let threadResult = try await apiFetcher.threads(from: resource, searchFilter: searchFilter)
 
         let realm = getRealm()
-        for thread in threadResult.threads ?? [] where realm.object(ofType: Thread.self, forPrimaryKey: thread.uid) == nil {
+        for thread in threadResult.threads ?? [] {
             thread.fromSearch = true
 
             for message in thread.messages where realm.object(ofType: Message.self, forPrimaryKey: message.uid) == nil {
