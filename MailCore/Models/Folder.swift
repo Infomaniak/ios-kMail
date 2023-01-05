@@ -177,7 +177,7 @@ public class Folder: Object, Codable, Comparable, Identifiable {
         return lhs.id == rhs.id
     }
 
-    public func computeUnreadCount(using realm: Realm) {
+    public func computeUnreadCount() {
         unreadCount = threads.where { $0.hasUnseenMessages == true }.count
     }
 
