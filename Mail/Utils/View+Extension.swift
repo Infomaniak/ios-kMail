@@ -23,7 +23,7 @@ import SwiftUI
 
 struct DeviceRotationViewModifier: ViewModifier {
     let action: (UIInterfaceOrientation?) -> Void
-    @State var lastOrientation = UIApplication.shared.mainSceneKeyWindow?.windowScene?.interfaceOrientation
+    @State private var lastOrientation = UIApplication.shared.mainSceneKeyWindow?.windowScene?.interfaceOrientation
 
     func body(content: Content) -> some View {
         content
