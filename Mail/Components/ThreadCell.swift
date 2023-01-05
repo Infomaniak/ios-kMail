@@ -49,11 +49,7 @@ struct ThreadCell: View {
     var isSelected = false
 
     private var checkboxSize: CGFloat {
-        threadDensity == .compact ? Constants.checkboxCompactSize : Constants.checkboxSize
-    }
-
-    private var checkmarkSize: CGFloat {
-        threadDensity == .compact ? Constants.checkmarkCompactSize : Constants.checkmarkSize
+        threadDensity == .large ? Constants.checkboxLargeSize : Constants.checkboxSize
     }
 
     // MARK: - Views
@@ -67,7 +63,7 @@ struct ThreadCell: View {
             Group {
                 if threadDensity == .large, let recipient = thread.from.last {
                     ZStack {
-                        RecipientImage(recipient: recipient, size: 32)
+                        RecipientImage(recipient: recipient)
                         checkbox
                             .opacity(isSelected ? 1 : 0)
                     }
@@ -79,7 +75,7 @@ struct ThreadCell: View {
             }
             .padding(.trailing, 4)
 
-            VStack(alignment: .leading, spacing: 0) {
+            VStack(alignment: .leading, spacing: 4) {
                 cellHeader
 
                 HStack(alignment: .top, spacing: 3) {
@@ -111,7 +107,7 @@ struct ThreadCell: View {
                 .frame(width: checkboxSize, height: checkboxSize)
             Image(resource: MailResourcesAsset.check)
                 .foregroundColor(MailResourcesAsset.onAccentColor)
-                .frame(height: checkmarkSize)
+                .frame(height: Constants.checkmarkSize)
                 .opacity(isSelected ? 1 : 0)
         }
     }
