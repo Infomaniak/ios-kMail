@@ -38,7 +38,7 @@ struct Slide: Identifiable {
             animationFile: "illu_1",
             title: MailResourcesStrings.Localizable.onBoardingTitle1,
             description: "",
-            lottieConfiguration: LottieConfiguration(loopFrameStart: 54, loopFrameEnd: 138)
+            lottieConfiguration: LottieConfiguration(id: 1, loopMode: .playOnce, loopFrameStart: 54, loopFrameEnd: 138)
         ),
         Slide(
             id: 2,
@@ -46,7 +46,7 @@ struct Slide: Identifiable {
             animationFile: "illu_2",
             title: MailResourcesStrings.Localizable.onBoardingTitle2,
             description: MailResourcesStrings.Localizable.onBoardingDescription2,
-            lottieConfiguration: LottieConfiguration(loopFrameStart: 108, loopFrameEnd: 253)
+            lottieConfiguration: LottieConfiguration(id: 2, loopMode: .playOnce, loopFrameStart: 108, loopFrameEnd: 253)
         ),
         Slide(
             id: 3,
@@ -54,7 +54,7 @@ struct Slide: Identifiable {
             animationFile: "illu_3",
             title: MailResourcesStrings.Localizable.onBoardingTitle3,
             description: MailResourcesStrings.Localizable.onBoardingDescription3,
-            lottieConfiguration: LottieConfiguration(loopFrameStart: 118, loopFrameEnd: 225)
+            lottieConfiguration: LottieConfiguration(id: 3, loopMode: .playOnce, loopFrameStart: 118, loopFrameEnd: 225)
         ),
         Slide(
             id: 4,
@@ -62,7 +62,7 @@ struct Slide: Identifiable {
             animationFile: "illu_4",
             title: MailResourcesStrings.Localizable.onBoardingTitle4,
             description: MailResourcesStrings.Localizable.onBoardingDescription4,
-            lottieConfiguration: LottieConfiguration(loopFrameStart: 127, loopFrameEnd: 236)
+            lottieConfiguration: LottieConfiguration(id: 4, loopMode: .playOnce, loopFrameStart: 127, loopFrameEnd: 236)
         )
     ]
 }

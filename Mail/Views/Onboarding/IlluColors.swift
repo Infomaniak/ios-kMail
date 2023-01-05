@@ -46,7 +46,7 @@ extension AnimationKeypath {
         if let numero {
             categoryName = "\(categoryName) \(numero)"
         }
-        return AnimationKeypath(keys: [categoryName, "Groupe \(group)", "\(finalLayer.rawValue) 1"])
+        return AnimationKeypath(keys: [categoryName, "Groupe \(group)", "\(finalLayer.rawValue) 1", "Color"])
     }
 }
 
@@ -180,8 +180,8 @@ struct IlluColors {
         IlluColors(.keyPath(category: .movingNotification, numero: 2, group: 13), lightColor: "#E0E0E0", darkColor: "#4C4C4C"),
         IlluColors(.keyPath(category: .movingNotification, numero: 2, group: 14), lightColor: "#F5F5F5", darkColor: "#3E3E3E"),
         IlluColors(.keyPath(category: .movingNotification, numero: 2, group: 15), lightColor: "#F5F5F5", darkColor: "#3E3E3E"),
-        IlluColors(AnimationKeypath(keys: ["MOVING NOTIF 2 TITLE", "Groupe 1", "Fond 1"]), lightColor: "#E0E0E0", darkColor: "#4C4C4C"),
-        IlluColors(AnimationKeypath(keys: ["MOVING NOTIF 2 PREVIEW", "Groupe 1", "Fond 1"]), lightColor: "#E0E0E0", darkColor: "#4C4C4C"),
+        IlluColors(AnimationKeypath(keys: ["MOVING NOTIF 2 TITLE", "Groupe 1", "Fond 1", "Color"]), lightColor: "#E0E0E0", darkColor: "#4C4C4C"),
+        IlluColors(AnimationKeypath(keys: ["MOVING NOTIF 2 PREVIEW", "Groupe 1", "Fond 1", "Color"]), lightColor: "#E0E0E0", darkColor: "#4C4C4C"),
         IlluColors(.keyPath(category: .archives, group: 1), lightColor: "#FFFFFF", darkColor: "#1A1A1A"),
         IlluColors(.keyPath(category: .archives, group: 2), lightColor: "#FFFFFF", darkColor: "#1A1A1A"),
         IlluColors(.keyPath(category: .archives, group: 3), lightColor: "#FFFFFF", darkColor: "#1A1A1A"),
@@ -326,4 +326,8 @@ struct IlluColors {
         IlluColors(.keyPath(category: .iPhoneScreen, group: 67), lightColor: "#0098FF", darkColor: "#0177C7"),
         IlluColors(.keyPath(category: .iPhoneScreen, group: 72), lightColor: "#10405B", darkColor: "#10405B")
     ]
+
+    func applyColors(to animation: LottieAnimationView) {
+        animation.updateColor(color: lightColor, darkColor: darkColor, for: keyPath)
+    }
 }

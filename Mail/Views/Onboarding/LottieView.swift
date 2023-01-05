@@ -19,17 +19,33 @@
 import Lottie
 import SwiftUI
 
+extension LottieAnimationView {
+    func updateColor(color: String, darkColor: String, for keyPath: AnimationKeypath) {
+        let color = UITraitCollection.current.userInterfaceStyle == .dark ? darkColor : color
+        setColorValueProvider(color: color, keyPath: keyPath)
+    }
+
+    private func setColorValueProvider(color: String, keyPath: AnimationKeypath) {
+        guard let color = UIColor(hex: color) else { return }
+        let colorProvider = ColorValueProvider(color.lottieColorValue)
+        setValueProvider(colorProvider, keypath: keyPath)
+    }
+}
+
 struct LottieConfiguration {
-    let loopFrameStart: Int
-    let loopFrameEnd: Int
+    let id: Int
+    let loopMode: LottieLoopMode
+    let loopFrameStart: Int?
+    let loopFrameEnd: Int?
 }
 
 struct LottieView: UIViewRepresentable {
     private let animationView = LottieAnimationView()
 
-    let slideId: Int
     let filename: String
     let configuration: LottieConfiguration
+
+    let updateColors: ((LottieAnimationView, LottieConfiguration) -> Void)?
 
     func makeUIView(context: Context) -> some UIView {
         let view = UIView()
@@ -37,33 +53,32 @@ struct LottieView: UIViewRepresentable {
         let animation = LottieAnimation.named(filename)
         animationView.animation = animation
         animationView.contentMode = .scaleAspectFit
-        animationView.loopMode = .playOnce
-        animationView.play { _ in
-            animationView.play(
-                fromFrame: AnimationFrameTime(configuration.loopFrameStart),
-                toFrame: AnimationFrameTime(configuration.loopFrameEnd),
-                loopMode: .loop
-            )
-        }
-
+        animationView.loopMode = configuration.loopMode
         animationView.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(animationView)
-
-        updateIllustrationColors()
 
         NSLayoutConstraint.activate([
             animationView.widthAnchor.constraint(equalTo: view.widthAnchor),
             animationView.heightAnchor.constraint(equalTo: view.heightAnchor)
         ])
 
+        updateColors?(animationView, configuration)
+
+        animationView.play { _ in
+            guard let loopFrameStart = configuration.loopFrameStart,
+                  let loopFrameEnd = configuration.loopFrameEnd else { return }
+
+            animationView.play(
+                fromFrame: AnimationFrameTime(loopFrameStart),
+                toFrame: AnimationFrameTime(loopFrameEnd),
+                loopMode: .loop
+            )
+        }
+
         return view
     }
 
     func updateUIView(_ uiView: UIViewType, context: Context) {
-        // Update theme colors here
-    }
-
-    private func updateIllustrationColors() {
-        // Update colors here
+        updateColors?(animationView, configuration)
     }
 }
