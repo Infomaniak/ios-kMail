@@ -907,26 +907,6 @@ public class MailboxManager: ObservableObject {
 
     // MARK: - Draft
 
-    public func cleanDrafts() async {
-        await backgroundRealm.execute { realm in
-            guard let draftFolder = (realm.objects(Folder.self).where { $0.role == .draft }.first) else { return }
-            let draftMessagesUid = draftFolder.threads.map { $0.messages.first?.uid }
-
-            let localDrafts = realm.objects(Draft.self)
-
-            var localDraftToDelete: [Draft] = []
-
-            for draft in localDrafts {
-                if let messageUid = draft.messageUid, !messageUid.isEmpty, !draftMessagesUid.contains(messageUid) {
-                    localDraftToDelete.append(draft)
-                }
-            }
-            try? realm.safeWrite {
-                realm.delete(localDraftToDelete)
-            }
-        }
-    }
-
     public func draftWithPendingAction() -> Results<Draft> {
         let realm = getRealm()
         realm.refresh()
