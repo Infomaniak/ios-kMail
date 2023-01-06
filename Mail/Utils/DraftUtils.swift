@@ -26,7 +26,6 @@ class DraftUtils {
         // If we already have the draft locally, present it directly
         if let draft = mailboxManager.draft(messageUid: message.uid)?.detached() {
             editedMessageDraft.wrappedValue = draft
-            // Maybe it was an offline draft (If offline draft is created with draft.uuid = thread.uid)
         } else {
             DraftUtils.editDraft(from: message, mailboxManager: mailboxManager, editedMessageDraft: editedMessageDraft)
         }
