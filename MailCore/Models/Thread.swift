@@ -108,7 +108,10 @@ public class Thread: Object, Decodable, Identifiable {
         messageIds = messages.flatMap { $0.linkedUids }.toRealmSet()
         updateUnseenMessages()
         from = messages.flatMap { $0.from.detached() }.toRealmList()
-        date = messages.last?.date ?? date
+
+        let newDate = messages.last { $0.isDraft == false }?.date ?? messages.last?.date
+        date = newDate ?? date
+
         size = messages.sum(of: \.size)
         hasAttachments = messages.contains { $0.hasAttachments }
         hasDrafts = messages.map { $0.isDraft }.contains(true)
