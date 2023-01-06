@@ -50,7 +50,7 @@ struct AttachmentPreview: View {
                     Button(action: download) {
                         Label {
                             Text(MailResourcesStrings.Localizable.buttonDownload)
-                                .font(MailTextStyle.captionSecondary.font)
+                                .font(MailTextStyle.labelSecondary.font)
                         } icon: {
                             Image(resource: MailResourcesAsset.download)
                                 .resizable()

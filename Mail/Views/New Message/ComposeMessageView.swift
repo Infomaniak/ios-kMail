@@ -131,7 +131,7 @@ struct ComposeMessageView: View {
                         NewMessageCell(type: .from,
                                        isFirstCell: true) {
                             Text(mailboxManager.mailbox.email)
-                                .textStyle(.header5Accent)
+                                .textStyle(.bodyMediumAccent)
                         }
                     }
 

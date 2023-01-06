@@ -40,7 +40,7 @@ struct SettingsView: View {
                             }
                             if let title = section.name {
                                 Text(title)
-                                    .textStyle(.calloutSecondary)
+                                    .textStyle(.bodySmallSecondary)
                                     .padding(.horizontal, 8)
                             }
                         }

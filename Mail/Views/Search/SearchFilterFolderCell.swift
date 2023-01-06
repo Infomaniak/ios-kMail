@@ -68,7 +68,7 @@ struct SearchFilterFolderCell: View {
                         .frame(width: 13, height: 13)
                 }
                 Text(selectedFolderName)
-                    .font(MailTextStyle.header5.font)
+                    .font(MailTextStyle.bodyMedium.font)
                 Image(resource: MailResourcesAsset.arrowDown)
                     .resizable()
                     .frame(width: 13, height: 13)

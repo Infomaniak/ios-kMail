@@ -25,18 +25,11 @@ struct MailboxQuotaView: View {
     @EnvironmentObject var globalSheet: GlobalBottomSheet
 
     let quotas: Quotas
-    var progressString: AttributedString {
-        let localizedText = MailResourcesStrings.Localizable.menuDrawerMailboxStorage(
+    var progressString: String {
+        return MailResourcesStrings.Localizable.menuDrawerMailboxStorage(
             Int64(quotas.size * 1000).formatted(.defaultByteCount),
             Constants.sizeLimit.formatted(.defaultByteCount)
         )
-
-        var attributedString = AttributedString(localizedText)
-        if let lastWord = localizedText.split(separator: " ").last, let range = attributedString.range(of: lastWord) {
-            attributedString[range].font = MailTextStyle.header3.font
-        }
-
-        return attributedString
     }
 
     var body: some View {
@@ -47,7 +40,7 @@ struct MailboxQuotaView: View {
 
             VStack(alignment: .leading, spacing: 6) {
                 Text(progressString)
-                    .textStyle(.header5)
+                    .textStyle(.bodyMedium)
             }
 
             Spacer()

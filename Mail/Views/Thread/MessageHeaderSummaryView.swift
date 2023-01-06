@@ -45,7 +45,7 @@ struct MessageHeaderSummaryView: View {
                     if message.isDraft {
                         HStack {
                             Text(MailResourcesStrings.Localizable.messageIsDraftOption)
-                                .textStyle(.header5Error)
+                                .textStyle(.bodyMediumError)
                             Spacer()
                             Button(action: deleteDraftTapped) {
                                 Image(resource: MailResourcesAsset.bin)
@@ -61,13 +61,13 @@ struct MessageHeaderSummaryView: View {
                                 ForEach(message.from, id: \.self) { recipient in
                                     Text(recipient.title)
                                         .lineLimit(1)
-                                        .textStyle(.header5)
+                                        .textStyle(.bodyMedium)
                                 }
                             }
                             Text(message.date.customRelativeFormatted)
                                 .lineLimit(1)
                                 .layoutPriority(1)
-                                .textStyle(.captionSecondary)
+                                .textStyle(.labelSecondary)
                         }
                     }
 
@@ -75,7 +75,7 @@ struct MessageHeaderSummaryView: View {
                         HStack {
                             Text(message.recipients.map(\.title), format: .list(type: .and))
                                 .lineLimit(1)
-                                .textStyle(.calloutSecondary)
+                                .textStyle(.bodySmallSecondary)
                             ChevronButton(isExpanded: $isHeaderExpanded)
                         }
                     } else {

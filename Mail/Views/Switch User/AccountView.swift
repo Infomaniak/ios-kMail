@@ -81,20 +81,20 @@ struct AccountView: View {
 
                     VStack(spacing: 8) {
                         Text(account.user.email)
-                            .textStyle(.header3)
+                            .textStyle(.header2)
 
                         NavigationLink {
                             AccountListView()
                         } label: {
                             Text(MailResourcesStrings.Localizable.buttonAccountSwitch)
-                                .textStyle(.header5Accent)
+                                .textStyle(.bodyMediumAccent)
                         }
                     }
 
                     // Email list
                     VStack(alignment: .leading, spacing: 12) {
                         Text(MailResourcesStrings.Localizable.buttonAccountAssociatedEmailAddresses)
-                            .textStyle(.calloutSecondary)
+                            .textStyle(.bodySmallSecondary)
                             .padding(.horizontal, 24)
                             .padding(.bottom, 16)
 
@@ -123,7 +123,7 @@ struct AccountView: View {
                     sheet.state = .deleteAccount
                 } label: {
                     Text(MailResourcesStrings.Localizable.buttonAccountDelete)
-                        .textStyle(.header5Error)
+                        .textStyle(.bodyMediumError)
                 }
             }
             .navigationBarTitle(MailResourcesStrings.Localizable.titleMyAccount, displayMode: .inline)

@@ -35,7 +35,7 @@ extension Animation {
 
 extension ThreadDensity {
     var cellVerticalPadding: CGFloat {
-        self == .compact ? 10 : 16
+        self == .compact ? 10 : 12
     }
 }
 
@@ -49,11 +49,7 @@ struct ThreadCell: View {
     var isSelected = false
 
     private var checkboxSize: CGFloat {
-        threadDensity == .compact ? Constants.checkboxCompactSize : Constants.checkboxSize
-    }
-
-    private var checkmarkSize: CGFloat {
-        threadDensity == .compact ? Constants.checkmarkCompactSize : Constants.checkmarkSize
+        threadDensity == .large ? Constants.checkboxLargeSize : Constants.checkboxSize
     }
 
     // MARK: - Views
@@ -67,7 +63,7 @@ struct ThreadCell: View {
             Group {
                 if threadDensity == .large, let recipient = thread.from.last {
                     ZStack {
-                        RecipientImage(recipient: recipient, size: 32)
+                        RecipientImage(recipient: recipient)
                         checkbox
                             .opacity(isSelected ? 1 : 0)
                     }
@@ -79,7 +75,7 @@ struct ThreadCell: View {
             }
             .padding(.trailing, 4)
 
-            VStack(alignment: .leading, spacing: 8) {
+            VStack(alignment: .leading, spacing: 4) {
                 cellHeader
 
                 HStack(alignment: .top, spacing: 3) {
@@ -111,7 +107,7 @@ struct ThreadCell: View {
                 .frame(width: checkboxSize, height: checkboxSize)
             Image(resource: MailResourcesAsset.check)
                 .foregroundColor(MailResourcesAsset.onAccentColor)
-                .frame(height: checkmarkSize)
+                .frame(height: Constants.checkmarkSize)
                 .opacity(isSelected ? 1 : 0)
         }
     }
@@ -125,12 +121,12 @@ struct ThreadCell: View {
                     .layoutPriority(1)
             }
             Text(thread.messages.allSatisfy(\.isDraft) ? thread.formattedTo : thread.formattedFrom)
-                .textStyle(.header5)
+                .textStyle(.header2)
                 .lineLimit(1)
 
             if thread.messages.count > 1 {
                 Text("\(thread.messages.count)")
-                    .textStyle(.calloutSecondary)
+                    .textStyle(.bodySmallSecondary)
                     .padding(.horizontal, 4)
                     .lineLimit(1)
                     .overlay {
@@ -142,21 +138,21 @@ struct ThreadCell: View {
             Spacer()
 
             Text(thread.date.customRelativeFormatted)
-                .textStyle(.calloutSecondary)
+                .textStyle(.bodySmallSecondary)
                 .lineLimit(1)
         }
     }
 
     private var threadInfo: some View {
-        VStack(alignment: .leading, spacing: 8) {
+        VStack(alignment: .leading, spacing: 4) {
             Text(thread.formattedSubject)
-                .textStyle(.callout)
+                .textStyle(.body)
                 .lineLimit(1)
 
             if threadDensity != .compact,
                let preview = thread.messages.last?.preview {
                 Text(preview.isEmpty ? MailResourcesStrings.Localizable.noBodyTitle : preview)
-                    .textStyle(.calloutSecondary)
+                    .textStyle(.bodySmallSecondary)
                     .lineLimit(1)
             }
         }

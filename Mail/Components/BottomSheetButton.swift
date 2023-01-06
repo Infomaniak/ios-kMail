@@ -27,7 +27,7 @@ struct BottomSheetButton: View {
     var body: some View {
         Button(action: action) {
             Text(label)
-                .textStyle(.header5OnAccent)
+                .textStyle(.bodyMediumOnAccent)
                 .padding(.horizontal, 12) // Button has already a 12pt horizontal padding
                 .padding(.vertical, 11) // Button has already a 7pt vertical padding
         }

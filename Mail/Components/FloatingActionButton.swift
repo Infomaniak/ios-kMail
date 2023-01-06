@@ -29,7 +29,7 @@ struct FloatingActionButton: View {
         Button(action: action) {
             Label {
                 Text(title)
-                    .textStyle(.header5OnAccent)
+                    .textStyle(.bodyMediumOnAccent)
             } icon: {
                 icon
                     .resizable()

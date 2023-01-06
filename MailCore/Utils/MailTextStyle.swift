@@ -56,122 +56,102 @@ public struct MailTextStyle {
     }
 
     public static let header1 = MailTextStyle(
-        font: .system(size: 21.5, weight: .bold),
+        font: .system(size: 22, weight: .semibold),
         color: MailResourcesAsset.primaryTextColor
     )
 
     public static let header2 = MailTextStyle(
-        font: .system(size: 17.5, weight: .bold),
+        font: .system(size: 18, weight: .semibold),
         color: MailResourcesAsset.primaryTextColor
     )
 
-    public static let header3 = MailTextStyle(
-        font: .system(size: 17.5),
+    public static let bodyMedium = MailTextStyle(
+        font: .system(size: 16, weight: .medium),
         color: MailResourcesAsset.primaryTextColor
     )
 
-    public static let header3Secondary = MailTextStyle(
-        font: .system(size: 17.5),
-        color: MailResourcesAsset.secondaryTextColor
-    )
-
-    public static let header4 = MailTextStyle(
-        font: .system(size: 15.5, weight: .bold),
-        color: MailResourcesAsset.primaryTextColor
-    )
-
-    public static let header5 = MailTextStyle(
-        font: .system(size: 15.5, weight: .medium),
-        color: MailResourcesAsset.primaryTextColor
-    )
-
-    public static let header5Accent = MailTextStyle(
-        font: .system(size: 15.5, weight: .medium),
+    public static let bodyMediumAccent = MailTextStyle(
+        font: .system(size: 16, weight: .medium),
         color: \.primary
     )
 
-    public static let header5OnAccent = MailTextStyle(
-        font: .system(size: 15.5, weight: .medium),
+    public static let bodyMediumOnAccent = MailTextStyle(
+        font: .system(size: 16, weight: .medium),
         color: MailResourcesAsset.onAccentColor
     )
 
-    public static let header5Error = MailTextStyle(
-        font: .system(size: 15.5, weight: .medium),
+    public static let bodyMediumError = MailTextStyle(
+        font: .system(size: 16, weight: .medium),
         color: MailResourcesAsset.redActionColor
     )
 
     public static let body = MailTextStyle(
-        font: .system(size: 15.5),
+        font: .system(size: 16),
         color: MailResourcesAsset.primaryTextColor
     )
 
     public static let bodySecondary = MailTextStyle(
-        font: .system(size: 15.5),
+        font: .system(size: 16),
         color: MailResourcesAsset.secondaryTextColor
     )
 
     public static let bodyError = MailTextStyle(
-        font: .system(size: 15.5),
+        font: .system(size: 16),
         color: MailResourcesAsset.redActionColor
     )
 
-    public static let calloutStrongAccent = MailTextStyle(
-        font: .system(size: 13.5, weight: .bold),
+    public static let bodySmallMedium = MailTextStyle(
+        font: .system(size: 14, weight: .medium),
+        color: MailResourcesAsset.primaryTextColor
+    )
+
+    public static let bodySmallMediumAccent = MailTextStyle(
+        font: .system(size: 14, weight: .medium),
         color: \.primary
     )
 
-    public static let calloutStrongOnAccent = MailTextStyle(
-        font: .system(size: 13.5, weight: .bold),
+    public static let bodySmallMediumOnAccent = MailTextStyle(
+        font: .system(size: 14, weight: .medium),
         color: MailResourcesAsset.onAccentColor
     )
 
-    public static let calloutStrong = MailTextStyle(
-        font: .system(size: 13.5, weight: .bold),
+    public static let bodySmall = MailTextStyle(
+        font: .system(size: 14),
         color: MailResourcesAsset.primaryTextColor
     )
 
-    public static let calloutMediumAccent = MailTextStyle(
-        font: .system(size: 13.5, weight: .medium),
+    public static let bodySmallAccent = MailTextStyle(
+        font: .system(size: 14),
         color: \.primary
     )
 
-    public static let calloutAccent = MailTextStyle(
-        font: .system(size: 13.5),
-        color: \.primary
-    )
-
-    public static let callout = MailTextStyle(
-        font: .system(size: 13.5),
-        color: MailResourcesAsset.primaryTextColor
-    )
-
-    public static let calloutSecondary = MailTextStyle(
-        font: .system(size: 13.5),
+    public static let bodySmallSecondary = MailTextStyle(
+        font: .system(size: 14),
         color: MailResourcesAsset.secondaryTextColor
     )
 
-    public static let calloutTertiary = MailTextStyle(
-        font: .system(size: 13.5),
+    public static let bodySmallTertiary = MailTextStyle(
+        font: .system(size: 14),
         color: MailResourcesAsset.hintTextColor
     )
 
-    public static let calloutWarning = MailTextStyle(
-        font: .system(size: 13.5),
+    public static let bodySmallWarning = MailTextStyle(
+        font: .system(size: 14),
         color: MailResourcesAsset.warningColor
     )
 
-    public static let captionMediumAccent = MailTextStyle(
-        font: .system(size: 11.5, weight: .medium),
+    public static let labelMediumAccent = MailTextStyle(
+        font: .system(size: 12, weight: .medium),
         color: \.primary
     )
 
-    public static let captionMediumSecondary = MailTextStyle(
-        font: .system(size: 11.5, weight: .medium),
+    public static let labelMediumSecondary = MailTextStyle(
+        font: .system(size: 12, weight: .medium),
         color: MailResourcesAsset.secondaryTextColor
     )
 
-    public static let captionSecondary = MailTextStyle(
-        font: .system(size: 11.5),
+    public static let labelSecondary = MailTextStyle(
+        font: .system(size: 12),
         color: MailResourcesAsset.secondaryTextColor
     )
 }

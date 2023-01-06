@@ -34,7 +34,7 @@ struct MenuDrawerItemCell: View {
                     .foregroundColor(.accentColor)
 
                 Text(content.label)
-                    .textStyle(.header5)
+                    .textStyle(.bodyMedium)
             }
             .frame(maxWidth: .infinity, alignment: .leading)
         }
