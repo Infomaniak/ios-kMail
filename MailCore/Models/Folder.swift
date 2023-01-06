@@ -177,9 +177,8 @@ public class Folder: Object, Codable, Comparable, Identifiable {
         return lhs.id == rhs.id
     }
 
-    public func computeUnreadCount(using realm: Realm) {
-        let unreadMessages = realm.objects(Message.self).where { $0.folderId == self.id && $0.seen == false }
-        unreadCount = unreadMessages.count
+    public func computeUnreadCount() {
+        unreadCount = threads.where { $0.hasUnseenMessages == true }.count
     }
 
     public func isParent(of folder: Folder) -> Bool {
