@@ -35,6 +35,7 @@ import SwiftUI
 
     @Published var selectedItems = Set<Thread>()
     @Published var toolbarActions = [Action]()
+    let feedbackGenerator = UIImpactFeedbackGenerator(style: .light)
 
     init(mailboxManager: MailboxManager) {
         self.mailboxManager = mailboxManager
@@ -42,20 +43,24 @@ import SwiftUI
     }
 
     func toggleSelection(of thread: Thread) {
+        feedbackGenerator.prepare()
         if selectedItems.contains(thread) {
             selectedItems.remove(thread)
         } else {
             selectedItems.insert(thread)
         }
+        feedbackGenerator.impactOccurred(intensity: 0.8)
         setActions()
     }
 
     func selectAll(threads: [Thread]) {
+        feedbackGenerator.prepare()
         if threads.count == selectedItems.count {
             selectedItems.removeAll()
         } else {
             selectedItems = Set(threads)
         }
+        feedbackGenerator.impactOccurred()
         setActions()
     }
 
