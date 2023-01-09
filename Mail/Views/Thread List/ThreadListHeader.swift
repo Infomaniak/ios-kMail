@@ -79,6 +79,9 @@ struct ThreadListHeader: View {
     }
 
     func formatLastUpdate(date: Date?) -> String? {
+        if let interval = date?.timeIntervalSinceNow, interval > -60 { // Last update less than 60 seconds ago
+            return Date().formatted(Date.RelativeFormatStyle(presentation: .named, capitalizationContext: .middleOfSentence))
+        }
         return date?.formatted(Date.RelativeFormatStyle(presentation: .named, capitalizationContext: .middleOfSentence))
     }
 }
