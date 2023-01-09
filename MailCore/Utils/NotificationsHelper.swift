@@ -64,8 +64,10 @@ public enum NotificationsHelper {
         for mailbox in MailboxInfosManager.instance.getMailboxes() {
             if let mailboxManager = AccountManager.instance.getMailboxManager(for: mailbox),
                let inboxFolder = mailboxManager.getFolder(with: .inbox) {
-                inboxFolder.computeUnreadCount()
-                totalUnreadCount += inboxFolder.unreadCount
+                totalUnreadCount += mailboxManager.getRealm()
+                    .objects(Thread.self)
+                    .where { $0.folderId == inboxFolder.id && $0.hasUnseenMessages == true }
+                    .count
             }
         }
 
