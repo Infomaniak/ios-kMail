@@ -119,6 +119,8 @@ struct SlideView: View {
         }
 
         if UserDefaults.shared.accentColor == .pink {
+            IlluColors.pinkColors.forEach { $0.applyColors(to: animation) }
+
             if configuration.id == 2 || configuration.id == 3 || configuration.id == 4 {
                 IlluColors.illu234PinkColors.forEach { $0.applyColors(to: animation) }
             }
@@ -136,6 +138,8 @@ struct SlideView: View {
                 break
             }
         } else {
+            IlluColors.blueColors.forEach { $0.applyColors(to: animation) }
+
             if configuration.id == 2 || configuration.id == 3 || configuration.id == 4 {
                 IlluColors.illu234BlueColors.forEach { $0.applyColors(to: animation) }
             }

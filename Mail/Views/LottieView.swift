@@ -20,13 +20,8 @@ import Lottie
 import SwiftUI
 
 extension LottieAnimationView {
-    func updateColor(color: String, darkColor: String, for keyPath: AnimationKeypath) {
+    func updateColor(color: UIColor, darkColor: UIColor, for keyPath: AnimationKeypath) {
         let color = UITraitCollection.current.userInterfaceStyle == .dark ? darkColor : color
-        setColorValueProvider(color: color, keyPath: keyPath)
-    }
-
-    private func setColorValueProvider(color: String, keyPath: AnimationKeypath) {
-        guard let color = UIColor(hex: color) else { return }
         let colorProvider = ColorValueProvider(color.lottieColorValue)
         setValueProvider(colorProvider, keypath: keyPath)
     }
