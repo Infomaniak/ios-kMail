@@ -36,26 +36,19 @@ import SwiftUI
     @Published var selectedItems = Set<Thread>()
     @Published var toolbarActions = [Action]()
 
-    private let mediumFeedbackGenerator = UIImpactFeedbackGenerator(style: .medium)
-    private let lightFeedbackGenerator = UIImpactFeedbackGenerator(style: .heavy)
+    private let feedbackGenerator = UIImpactFeedbackGenerator(style: .heavy)
 
     init(mailboxManager: MailboxManager) {
         self.mailboxManager = mailboxManager
         setActions()
     }
 
-    private func hapticFeedback(light: Bool = true) {
-        if light {
-            lightFeedbackGenerator.prepare()
-            lightFeedbackGenerator.impactOccurred()
-        } else {
-            mediumFeedbackGenerator.prepare()
-            mediumFeedbackGenerator.impactOccurred()
-        }
-    }
-
     func toggleSelection(of thread: Thread) {
-        hapticFeedback(light: !selectedItems.isEmpty)
+        if selectedItems.isEmpty {
+            feedbackGenerator.prepare()
+            feedbackGenerator.impactOccurred()
+        }
+
         if selectedItems.contains(thread) {
             selectedItems.remove(thread)
         } else {
@@ -65,7 +58,9 @@ import SwiftUI
     }
 
     func selectAll(threads: [Thread]) {
-        hapticFeedback()
+        feedbackGenerator.prepare()
+        feedbackGenerator.impactOccurred(intensity: 0.6)
+
         if threads.count == selectedItems.count {
             selectedItems.removeAll()
         } else {
