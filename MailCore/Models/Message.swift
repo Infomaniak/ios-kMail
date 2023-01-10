@@ -144,15 +144,15 @@ public class Message: Object, Decodable, Identifiable {
     }
 
     public var canReplyAll: Bool {
-        var recipients = Set(from.map(\.email))
+        var replyAllTo = Set(from.map(\.email))
         for mail in to {
-            recipients.insert(mail.email)
+            replyAllTo.insert(mail.email)
         }
         for mail in cc {
-            recipients.insert(mail.email)
+            replyAllTo.insert(mail.email)
         }
-        recipients.remove(AccountManager.instance.currentMailboxManager?.mailbox.email ?? "")
-        return recipients.count > 1
+        replyAllTo.remove(AccountManager.instance.currentMailboxManager?.mailbox.email ?? "")
+        return replyAllTo.count > 1
     }
 
     public func insertInlineAttachment() {
