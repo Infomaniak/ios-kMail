@@ -372,7 +372,11 @@ struct IlluColors {
         IlluColors(.keyPath(category: .iPhoneScreen, group: 67), colors: .blueColors1),
         IlluColors(.keyPath(category: .iPhoneScreen, group: 72), colors: .blueColors6)
     ]
+}
 
+// MARK: - Functions
+
+extension IlluColors {
     func applyColors(to animation: LottieAnimationView) {
         animation.updateColor(color: colors.lightColor, darkColor: colors.darkColor, for: keyPath)
     }

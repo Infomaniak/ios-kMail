@@ -34,17 +34,23 @@ struct LottieConfiguration {
     let loopFrameEnd: Int?
 }
 
+class LottieViewModel: ObservableObject {
+    var colorScheme = UITraitCollection.current.userInterfaceStyle
+    var accentColor = UserDefaults.shared.accentColor
+}
+
 struct LottieView: UIViewRepresentable {
-    private let animationView = LottieAnimationView()
+    @StateObject private var viewModel = LottieViewModel()
 
     let filename: String
     let configuration: LottieConfiguration
 
     let updateColors: ((LottieAnimationView, LottieConfiguration) -> Void)?
 
-    func makeUIView(context: Context) -> some UIView {
+    func makeUIView(context: Context) -> UIView {
         let view = UIView()
 
+        let animationView = LottieAnimationView()
         let animation = LottieAnimation.named(filename)
         animationView.animation = animation
         animationView.contentMode = .scaleAspectFit
@@ -57,8 +63,6 @@ struct LottieView: UIViewRepresentable {
             animationView.heightAnchor.constraint(equalTo: view.heightAnchor)
         ])
 
-        updateColors?(animationView, configuration)
-
         animationView.play { _ in
             guard let loopFrameStart = configuration.loopFrameStart,
                   let loopFrameEnd = configuration.loopFrameEnd else { return }
@@ -70,10 +74,25 @@ struct LottieView: UIViewRepresentable {
             )
         }
 
+        DispatchQueue.main.async {
+            updateColors?(animationView, configuration)
+        }
+
         return view
     }
 
     func updateUIView(_ uiView: UIViewType, context: Context) {
-        updateColors?(animationView, configuration)
+        guard let animationView = uiView.subviews.first as? LottieAnimationView else { return }
+
+        let newColorScheme = UITraitCollection.current.userInterfaceStyle
+        let newAccentColor = UserDefaults.shared.accentColor
+        guard viewModel.colorScheme != newColorScheme || viewModel.accentColor != newAccentColor else { return }
+
+        viewModel.colorScheme = newColorScheme
+        viewModel.accentColor = newAccentColor
+
+        DispatchQueue.main.async {
+            updateColors?(animationView, configuration)
+        }
     }
 }
