@@ -40,7 +40,7 @@ let project = Project(name: "Mail",
                           .package(url: "git@github.com:Infomaniak/ios-bug-tracker.git", .upToNextMajor(from: "1.0.0")),
                           .package(url: "https://github.com/SCENEE/FloatingPanel", .upToNextMajor(from: "2.0.0")),
                           .package(url: "https://github.com/kean/Nuke", .upToNextMajor(from: "11.3.0")),
-                          .package(url: "https://github.com/airbnb/lottie-ios.git", .upToNextMajor(from: "4.0.1"))
+                          .package(url: "https://github.com/airbnb/lottie-ios.git", .exact("3.5.0"))
                       ],
                       targets: [
                           Target(name: "Mail",
