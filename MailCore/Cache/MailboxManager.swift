@@ -881,7 +881,7 @@ public class MailboxManager: ObservableObject {
     public func move(messages: [Message], to folder: Folder) async throws -> UndoRedoAction {
         let response = try await apiFetcher.move(mailbox: mailbox, messages: messages, destinationId: folder._id)
         try await refreshFolder(from: messages, additionalFolderId: folder.id)
-        return UndoRedoAction(undo: response, redo: nil)
+        return undoRedoAction(for: response, and: messages)
     }
 
     public func delete(messages: [Message]) async throws {
@@ -892,13 +892,13 @@ public class MailboxManager: ObservableObject {
     public func reportSpam(messages: [Message]) async throws -> UndoRedoAction {
         let response = try await apiFetcher.reportSpam(mailbox: mailbox, messages: messages)
         try await refreshFolder(from: messages)
-        return UndoRedoAction(undo: response, redo: nil)
+        return undoRedoAction(for: response, and: messages)
     }
 
     public func nonSpam(messages: [Message]) async throws -> UndoRedoAction {
         let response = try await apiFetcher.nonSpam(mailbox: mailbox, messages: messages)
         try await refreshFolder(from: messages)
-        return UndoRedoAction(undo: response, redo: nil)
+        return undoRedoAction(for: response, and: messages)
     }
 
     public func star(messages: [Message]) async throws -> MessageActionResult {
@@ -911,6 +911,13 @@ public class MailboxManager: ObservableObject {
         let response = try await apiFetcher.unstar(mailbox: mailbox, messages: messages)
         try await refreshFolder(from: messages)
         return response
+    }
+
+    private func undoRedoAction(for cancellableResponse: UndoResponse, and messages: [Message]) -> UndoRedoAction {
+        let redoAction = {
+            try await self.refreshFolder(from: messages)
+        }
+        return UndoRedoAction(undo: cancellableResponse, redo: redoAction)
     }
 
     // MARK: - Draft
