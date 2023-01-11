@@ -206,29 +206,39 @@ enum ActionsTarget: Equatable {
                     .print
                 ]
             } else if let thread = threads.first {
-                quickActions = [.reply, .replyAll, .forward, .delete]
+                if let message = thread.messages.first, message.canReplyAll {
+                    quickActions = [.reply, .replyAll, .forward, .delete]
+                    listActions = [.archive]
+                } else {
+                    quickActions = [.reply, .forward, .archive, .delete]
+                    listActions = []
+                }
 
                 let unread = thread.hasUnseenMessages
                 let star = thread.flagged
                 let spam = thread.parent?.role == .spam
-                listActions = [
-                    .archive,
+                listActions.append(contentsOf: [
                     unread ? .markAsRead : .markAsUnread,
                     .move,
                     star ? .unstar : .star,
                     spam ? .nonSpam : .spam,
                     .print,
                     .saveAsPDF
-                ]
+                ])
             }
         case let .message(message):
-            quickActions = [.reply, .replyAll, .forward, .delete]
+            if message.canReplyAll {
+                quickActions = [.reply, .replyAll, .forward, .delete]
+                listActions = [.archive]
+            } else {
+                quickActions = [.reply, .forward, .archive, .delete]
+                listActions = []
+            }
 
             let unread = !message.seen
             let star = message.flagged
             let spam = message.folderId == mailboxManager.getFolder(with: .spam)?._id
-            listActions = [
-                .archive,
+            listActions.append(contentsOf: [
                 unread ? .markAsRead : .markAsUnread,
                 .move,
                 star ? .unstar : .star,
@@ -240,7 +250,7 @@ enum ActionsTarget: Equatable {
                 .createRule,
                 .report,
                 .editMenu
-            ]
+            ])
         }
     }
 
