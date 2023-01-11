@@ -97,8 +97,10 @@ struct ThreadListCell: View {
 
     private func didLongPressCell() {
         withAnimation {
+            multipleSelectionViewModel.feedbackGenerator.prepare()
             multipleSelectionViewModel.isEnabled.toggle()
             if multipleSelectionViewModel.isEnabled {
+                multipleSelectionViewModel.feedbackGenerator.impactOccurred()
                 multipleSelectionViewModel.toggleSelection(of: thread)
             }
         }
