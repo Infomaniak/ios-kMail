@@ -62,28 +62,25 @@ struct ThreadListSwipeActions: ViewModifier {
         if viewModel.folder?.role == .draft {
             content
                 .swipeActions(edge: .trailing) {
-                    if !multipleSelectionViewModel.isEnabled {
-                        edgeActions([.delete])
-                    }
+                    edgeActions([.delete])
                 }
         } else {
             content
                 .swipeActions(edge: .leading) {
-                    if !multipleSelectionViewModel.isEnabled {
-                        edgeActions([swipeFullLeading, swipeLeading])
-                    }
+                    edgeActions([swipeFullLeading, swipeLeading])
                 }
                 .swipeActions(edge: .trailing) {
-                    if !multipleSelectionViewModel.isEnabled {
-                        edgeActions([swipeFullTrailing, swipeTrailing])
-                    }
+                    edgeActions([swipeFullTrailing, swipeTrailing])
                 }
         }
     }
 
+    @MainActor @ViewBuilder
     private func edgeActions(_ actions: [SwipeAction]) -> some View {
-        ForEach(actions.filter { $0 != .none }, id: \.rawValue) { action in
-            SwipeActionView(thread: thread, viewModel: viewModel, action: action)
+        if !multipleSelectionViewModel.isEnabled {
+            ForEach(actions.filter { $0 != .none }, id: \.rawValue) { action in
+                SwipeActionView(thread: thread, viewModel: viewModel, action: action)
+            }
         }
     }
 }
