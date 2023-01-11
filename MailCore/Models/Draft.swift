@@ -239,6 +239,7 @@ public class Draft: Object, Decodable, Identifiable, Encodable {
         return Draft(localUUID: localDraftUUID,
                      inReplyToUid: mode.isReply ? message.uid : nil,
                      forwardedUid: mode == .forward([]) ? message.uid : nil,
+                     references: message.messageId,
                      inReplyTo: message.messageId,
                      subject: subject,
                      body: "<br><br>\(quote)",
@@ -274,6 +275,7 @@ public class Draft: Object, Decodable, Identifiable, Encodable {
         try container.encode(inReplyToUid, forKey: .inReplyToUid)
         try container.encode(forwardedUid, forKey: .forwardedUid)
         try container.encode(inReplyTo, forKey: .inReplyTo)
+        try container.encode(references, forKey: .references)
         try container.encode(mimeType, forKey: .mimeType)
         try container.encode(body, forKey: .body)
         try container.encode(quote, forKey: .quote)
