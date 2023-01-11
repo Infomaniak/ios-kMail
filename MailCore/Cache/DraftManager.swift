@@ -97,7 +97,7 @@ public class DraftManager {
                 undoRedoAction: UndoRedoAction(undo: cancelableResponse, redo: nil),
                 mailboxManager: mailboxManager
             )
-            sendDate = cancelableResponse.etop
+            sendDate = cancelableResponse.scheduledDate
         } catch {
             await IKSnackBar.showSnackBar(message: error.localizedDescription)
         }

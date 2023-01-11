@@ -24,10 +24,15 @@ public protocol CancelableResponse {
 
 public struct SendResponse: Decodable, CancelableResponse {
     public let cancelResource: String
-    public let etop: Date
+    public let scheduledDate: Date
 
     public var resource: String {
         return cancelResource
+    }
+
+    enum CodingKeys: String, CodingKey {
+        case cancelResource
+        case scheduledDate = "etop"
     }
 }
 
