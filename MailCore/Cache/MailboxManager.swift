@@ -254,14 +254,19 @@ public class MailboxManager: ObservableObject {
             let messagesToDelete = realm.objects(Message.self).where { $0.uid.in(uids) }
             var threadsToUpdate = Set<Thread>()
             var threadsToDelete = Set<Thread>()
+            var draftsToDelete = Set<Draft>()
 
             for message in messagesToDelete {
+                if let draft = self.draft(messageUid: message.uid, using: realm) {
+                    draftsToDelete.insert(draft)
+                }
                 for parent in message.parents {
                     threadsToUpdate.insert(parent)
                 }
             }
 
             try? realm.safeWrite {
+                realm.delete(draftsToDelete)
                 realm.delete(messagesToDelete)
                 for thread in threadsToUpdate {
                     if thread.messages.isEmpty {
