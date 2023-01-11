@@ -22,6 +22,15 @@ public protocol CancelableResponse {
     var resource: String { get }
 }
 
+public struct SendResponse: Decodable, CancelableResponse {
+    public let cancelResource: String
+    public let etop: Date
+
+    public var resource: String {
+        return cancelResource
+    }
+}
+
 public struct CancelResponse: Decodable, CancelableResponse {
     public let cancelResource: String
 

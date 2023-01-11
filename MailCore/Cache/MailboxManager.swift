@@ -954,7 +954,7 @@ public class MailboxManager: ObservableObject {
         return realm.objects(Draft.self).where { $0.remoteUUID == remoteUuid }.first
     }
 
-    public func send(draft: Draft) async throws -> CancelResponse {
+    public func send(draft: Draft) async throws -> SendResponse {
         let cancelableResponse = try await apiFetcher.send(mailbox: mailbox, draft: draft)
         // Once the draft has been sent, we can delete it from Realm
         try await deleteLocally(draft: draft)

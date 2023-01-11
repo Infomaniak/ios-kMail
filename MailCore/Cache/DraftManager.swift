@@ -83,7 +83,8 @@ public class DraftManager {
         await draftQueue.endBackgroundTask(uuid: draft.localUUID)
     }
 
-    public func send(draft: Draft, mailboxManager: MailboxManager) async {
+    public func send(draft: Draft, mailboxManager: MailboxManager) async -> Date? {
+        var sendDate: Date?
         await draftQueue.cleanQueueElement(uuid: draft.localUUID)
         await draftQueue.beginBackgroundTask(withName: "Draft Sender", for: draft.localUUID)
 
@@ -96,24 +97,28 @@ public class DraftManager {
                 undoRedoAction: UndoRedoAction(undo: cancelableResponse, redo: nil),
                 mailboxManager: mailboxManager
             )
+            sendDate = cancelableResponse.etop
         } catch {
             await IKSnackBar.showSnackBar(message: error.localizedDescription)
         }
         await draftQueue.endBackgroundTask(uuid: draft.localUUID)
+        return sendDate
     }
 
     public func syncDraft(mailboxManager: MailboxManager) {
         let drafts = mailboxManager.draftWithPendingAction().freezeIfNeeded()
         let emptyDraftBody = emptyDraftBodyWithSignature(for: mailboxManager)
         Task {
-            await withTaskGroup(of: Void.self) { group in
+            let latestSendDate = await withTaskGroup(of: Date?.self, returning: Date?.self) { group in
                 for draft in drafts {
                     group.addTask {
+                        var sendDate: Date?
+
                         switch draft.action {
                         case .initialSave:
                             guard draft.body != emptyDraftBody else {
                                 self.deleteEmptyDraft(draft: draft)
-                                return
+                                return nil
                             }
 
                             await self.saveDraft(draft: draft, mailboxManager: mailboxManager)
@@ -124,32 +129,40 @@ public class DraftManager {
                         case .save:
                             await self.saveDraft(draft: draft, mailboxManager: mailboxManager)
                         case .send:
-                            await self.send(draft: draft, mailboxManager: mailboxManager)
+                            sendDate = await self.send(draft: draft, mailboxManager: mailboxManager)
                         default:
                             break
                         }
+                        return sendDate
                     }
                 }
+
+                var latestSendDate: Date?
+                for await result in group {
+                    latestSendDate = result
+                }
+                return latestSendDate
             }
 
-            try await refreshDraftFolder(pendingDrafts: drafts, mailboxManager: mailboxManager)
+            try await refreshDraftFolder(pendingDrafts: drafts, latestSendDate: latestSendDate, mailboxManager: mailboxManager)
         }
     }
 
-    private func refreshDraftFolder(pendingDrafts: Results<Draft>, mailboxManager: MailboxManager) async throws {
+    private func refreshDraftFolder(pendingDrafts: Results<Draft>, latestSendDate: Date?, mailboxManager: MailboxManager) async throws {
         if let draftFolder = mailboxManager.getFolder(with: .draft)?.freeze() {
             try await mailboxManager.threads(folder: draftFolder)
 
-            if let maxDelaySeconds = pendingDrafts.filter({ $0.action == .send }).compactMap({ $0.delay }).sorted().first {
+            if let latestSendDate = latestSendDate {
                 /*
                     We need to refresh the draft folder after the mail is sent to make it disappear, we wait at least 1.5 seconds
                     because the sending process is not synchronous
                  */
-                try await Task.sleep(nanoseconds: UInt64(1_000_000_000 * max(Double(maxDelaySeconds), 1.5)))
+                let delay = latestSendDate.timeIntervalSinceNow
+                try await Task.sleep(nanoseconds: UInt64(1_000_000_000 * max(Double(delay), 1.5)))
                 try await mailboxManager.threads(folder: draftFolder)
             }
 
-           await mailboxManager.deleteOrphanDrafts()
+            await mailboxManager.deleteOrphanDrafts()
         }
     }
 
