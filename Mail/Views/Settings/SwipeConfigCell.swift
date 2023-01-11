@@ -61,7 +61,7 @@ struct SwipeConfigCell: View {
                         }
 
                         Text(MailResourcesStrings.Localizable.settingsSwipeActionToDefine)
-                            .textStyle(.calloutSecondary)
+                            .textStyle(.bodySmallSecondary)
                     } else {
                         action.swipeTint
                         action.swipeIcon?

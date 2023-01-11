@@ -26,7 +26,7 @@ struct MoreStorageView: View {
     var body: some View {
         VStack(alignment: .leading) {
             Text(MailResourcesStrings.Localizable.moreStorageTitle)
-                .textStyle(.header4)
+                .textStyle(.bodyMedium)
 
             Image(resource: MailResourcesAsset.moreStorage)
                 .resizable()

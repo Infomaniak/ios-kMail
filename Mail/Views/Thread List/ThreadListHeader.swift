@@ -54,7 +54,7 @@ struct ThreadListHeader: View {
             if isConnected {
                 if let lastUpdateText = lastUpdateText {
                     Text(MailResourcesStrings.Localizable.threadListHeaderLastUpdate(lastUpdateText))
-                        .textStyle(.calloutSecondary)
+                        .textStyle(.bodySmallSecondary)
                 }
             } else {
                 NoNetworkView()
@@ -79,7 +79,12 @@ struct ThreadListHeader: View {
     }
 
     func formatLastUpdate(date: Date?) -> String? {
-        return date?.formatted(Date.RelativeFormatStyle(presentation: .named, capitalizationContext: .middleOfSentence))
+        var dateToUse = date
+        if let interval = date?.timeIntervalSinceNow, interval > -60 {
+            // Last update less than 60 seconds ago
+            dateToUse = Date()
+        }
+        return dateToUse?.formatted(Date.RelativeFormatStyle(presentation: .named, capitalizationContext: .middleOfSentence))
     }
 }
 
@@ -94,7 +99,7 @@ struct UnreadToggleStyle: ToggleStyle {
                     Image(systemName: "xmark")
                 }
             }
-            .textStyle(configuration.isOn ? .calloutStrongOnAccent : .calloutStrongAccent)
+            .textStyle(configuration.isOn ? .bodySmallMediumOnAccent : .bodySmallMediumAccent)
             .padding(.vertical, 4)
             .padding(.horizontal, 8)
             .background(

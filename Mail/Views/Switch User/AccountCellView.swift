@@ -27,16 +27,15 @@ struct AccountCellView: View {
     @Environment(\.window) private var window
 
     let account: Account
-    @Binding var expandedUserId: Int?
-    let mailboxes: [Mailbox]
+    @Binding var selectedUserId: Int?
 
-    private var isExpanded: Bool {
-        return expandedUserId == account.userId
+    private var isSelected: Bool {
+        return selectedUserId == account.userId
     }
 
     var body: some View {
         ZStack {
-            if isExpanded {
+            if isSelected {
                 RoundedRectangle(cornerRadius: 10)
                     .fill(MailResourcesAsset.backgroundSecondaryColor.swiftUiColor)
             }
@@ -47,31 +46,17 @@ struct AccountCellView: View {
             VStack {
                 Button {
                     withAnimation {
-                        expandedUserId = expandedUserId == account.userId ? nil : account.userId
+                        selectedUserId = selectedUserId == account.userId ? nil : account.userId
+                        (window?.windowScene?.delegate as? SceneDelegate)?.switchAccount(account)
                     }
                 } label: {
-                    AccountHeaderCell(account: account, isExpanded: Binding(get: {
-                        isExpanded
+                    AccountHeaderCell(account: account, isSelected: Binding(get: {
+                        isSelected
                     }, set: {
-                        expandedUserId = $0 ? account.userId : nil
+                        selectedUserId = $0 ? account.userId : nil
                     }))
                     .padding(.leading, 8)
                     .padding(.trailing, 16)
-                }
-
-                if isExpanded {
-                    VStack(spacing: 16) {
-                        ForEach(mailboxes) { mailbox in
-                            Button {
-                                (window?.windowScene?.delegate as? SceneDelegate)?.switchAccount(account, mailbox: mailbox)
-                            } label: {
-                                AccountListMailView(mailbox: mailbox)
-                            }
-                        }
-                    }
-                    .padding(.top, 16)
-                    .padding(.bottom, 4)
-                    .padding(.horizontal, 16)
                 }
             }
             .padding(.vertical, 8)
@@ -81,7 +66,7 @@ struct AccountCellView: View {
 
 struct AccountHeaderCell: View {
     let account: Account
-    @Binding var isExpanded: Bool
+    @Binding var isSelected: Bool
 
     @State private var avatarImage = Image(resource: MailResourcesAsset.placeholderAvatar)
 
@@ -94,14 +79,17 @@ struct AccountHeaderCell: View {
 
             VStack(alignment: .leading, spacing: 2) {
                 Text(account.user.displayName)
-                    .textStyle(.header4)
+                    .textStyle(.bodyMedium)
                 Text(account.user.email)
-                    .textStyle(.callout)
+                    .textStyle(.bodySmall)
             }
 
             Spacer()
 
-            ChevronIcon(style: isExpanded ? .up : .down)
+            if isSelected {
+                Image(resource: MailResourcesAsset.check)
+                    .foregroundColor(.accentColor)
+            }
         }
         .task {
             avatarImage = await account.user.avatarImage
@@ -113,7 +101,6 @@ struct AccountCellView_Previews: PreviewProvider {
     static var previews: some View {
         AccountCellView(
             account: Account(apiToken: ApiToken(accessToken: "", expiresIn: .max, refreshToken: "", scope: "", tokenType: "", userId: 0, expirationDate: .distantFuture)),
-            expandedUserId: .constant(nil),
-            mailboxes: [PreviewHelper.sampleMailbox])
+            selectedUserId: .constant(nil))
     }
 }

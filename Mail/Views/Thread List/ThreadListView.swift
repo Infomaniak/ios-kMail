@@ -97,13 +97,14 @@ struct ThreadListView: View {
                                                multipleSelectionViewModel: multipleSelectionViewModel,
                                                threadDensity: threadDensity,
                                                accentColor: accentColor,
-                                               editedMessageDraft: $editedMessageDraft)
+                                               editedMessageDraft: $editedMessageDraft,
+                                               isSelected: multipleSelectionViewModel.selectedItems.contains(thread))
                                     .id(thread.id)
                             }
                         } header: {
                             if threadDensity != .compact {
                                 Text(section.title)
-                                    .textStyle(.calloutSecondary)
+                                    .textStyle(.bodySmallSecondary)
                             }
                         }
                     }
@@ -129,13 +130,30 @@ struct ThreadListView: View {
         .backButtonDisplayMode(.minimal)
         .navigationBarThreadListStyle()
         .toolbarAppStyle()
+        .refreshable {
+            withAnimation {
+                isRefreshing = true
+            }
+            if let fetchingTask {
+                _ = await fetchingTask.result
+            } else {
+                await viewModel.fetchThreads()
+            }
+            withAnimation {
+                isRefreshing = false
+            }
+        }
         .modifier(ThreadListToolbar(isCompact: isCompact,
                                     bottomSheet: bottomSheet,
                                     multipleSelectionViewModel: multipleSelectionViewModel,
                                     avatarImage: $avatarImage,
-                                    observeThread: $viewModel.observeThread))
+                                    selectAll: {
+                                        withAnimation(.default.speed(2)) {
+                                            multipleSelectionViewModel.selectAll(threads: viewModel.sections.flatMap(\.threads))
+                                        }
+                                    }))
         .floatingActionButton(isEnabled: !multipleSelectionViewModel.isEnabled,
-                              icon: Image(resource: MailResourcesAsset.pen),
+                              icon: Image(resource: MailResourcesAsset.pencilPlain),
                               title: MailResourcesStrings.Localizable.buttonNewMessage) {
             isShowingComposeNewMessageView.toggle()
         }
@@ -171,20 +189,6 @@ struct ThreadListView: View {
             if let account = AccountManager.instance.currentAccount {
                 avatarImage = await account.user.avatarImage
             }
-            updateFetchingTask(with: splitViewManager.selectedFolder)
-        }
-        .refreshable {
-            withAnimation {
-                isRefreshing = true
-            }
-            if let fetchingTask {
-                _ = await fetchingTask.result
-            } else {
-                await viewModel.fetchThreads()
-            }
-            withAnimation {
-                isRefreshing = false
-            }
         }
         .sheet(isPresented: $isShowingComposeNewMessageView) {
             ComposeMessageView.newMessage(mailboxManager: viewModel.mailboxManager)
@@ -213,10 +217,11 @@ private struct ThreadListToolbar: ViewModifier {
     @State private var isShowingSwitchAccount = false
 
     @Binding var avatarImage: Image
-    @Binding var observeThread: Bool
 
     @EnvironmentObject var splitViewManager: SplitViewManager
     @EnvironmentObject var navigationDrawerState: NavigationDrawerState
+
+    var selectAll: () -> Void
 
     func body(content: Content) -> some View {
         GeometryReader { reader in
@@ -252,8 +257,7 @@ private struct ThreadListToolbar: ViewModifier {
                     ToolbarItemGroup(placement: .navigationBarTrailing) {
                         if multipleSelectionViewModel.isEnabled {
                             Button(MailResourcesStrings.Localizable.buttonSelectAll) {
-                                // TODO: Select all threads
-                                showWorkInProgressSnackBar()
+                                selectAll()
                             }
                         } else {
                             Button {
@@ -311,9 +315,7 @@ private struct ThreadListToolbar: ViewModifier {
                 .navigationBarTitleDisplayMode(.inline)
         }
         .sheet(isPresented: $isShowingSwitchAccount) {
-            SheetView {
-                AccountListView()
-            }
+            AccountView(mailboxes: AccountManager.instance.mailboxes)
         }
     }
 }

@@ -42,7 +42,7 @@ struct UserFoldersListView: View {
                 HStack(spacing: 12) {
                     ChevronIcon(style: isExpanded ? .up : .down, color: .secondary)
                     Text(MailResourcesStrings.Localizable.buttonFolders)
-                        .textStyle(.calloutSecondary)
+                        .textStyle(.bodySmallSecondary)
                     Spacer()
                     Button {
                         globalAlert.state = .createNewFolder(mode: .create)
@@ -61,7 +61,7 @@ struct UserFoldersListView: View {
 
                 if folders.isEmpty {
                     Text(MailResourcesStrings.Localizable.noFolderTitle)
-                        .textStyle(.calloutSecondary)
+                        .textStyle(.bodySmallSecondary)
                         .padding(.top, 16)
                         .padding(.bottom, 8)
                 } else {

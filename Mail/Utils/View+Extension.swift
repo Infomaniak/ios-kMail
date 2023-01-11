@@ -23,12 +23,15 @@ import SwiftUI
 
 struct DeviceRotationViewModifier: ViewModifier {
     let action: (UIInterfaceOrientation?) -> Void
+    @State private var lastOrientation = UIApplication.shared.mainSceneKeyWindow?.windowScene?.interfaceOrientation
 
     func body(content: Content) -> some View {
         content
-            .onAppear()
             .onReceive(NotificationCenter.default.publisher(for: UIDevice.orientationDidChangeNotification)) { _ in
-                action(UIApplication.shared.mainSceneKeyWindow?.windowScene?.interfaceOrientation)
+                if lastOrientation != UIApplication.shared.mainSceneKeyWindow?.windowScene?.interfaceOrientation {
+                    lastOrientation = UIApplication.shared.mainSceneKeyWindow?.windowScene?.interfaceOrientation
+                    action(lastOrientation)
+                }
             }
     }
 }
@@ -64,9 +67,11 @@ extension View {
         if #available(iOS 16.0, *) {
             return toolbarBackground(MailResourcesAsset.backgroundHeaderColor.swiftUiColor, for: .navigationBar)
         } else {
-            return modifier(NavigationBarStyleViewModifier(standardAppearance: BarAppearanceConstants.threadListNavigationBarAppearance,
-                                                           scrollEdgeAppearance: BarAppearanceConstants.threadListNavigationBarAppearance,
-                                                           compactAppearance: BarAppearanceConstants.threadListNavigationBarAppearance))
+            return modifier(NavigationBarStyleViewModifier(
+                standardAppearance: BarAppearanceConstants.threadListNavigationBarAppearance,
+                scrollEdgeAppearance: BarAppearanceConstants.threadListNavigationBarAppearance,
+                compactAppearance: BarAppearanceConstants.threadListNavigationBarAppearance
+            ))
         }
     }
 
@@ -74,9 +79,11 @@ extension View {
         if #available(iOS 16.0, *) {
             return toolbarBackground(MailResourcesAsset.backgroundColor.swiftUiColor, for: .navigationBar)
         } else {
-            return modifier(NavigationBarStyleViewModifier(standardAppearance: BarAppearanceConstants.threadViewNavigationBarAppearance,
-                                                           scrollEdgeAppearance: BarAppearanceConstants.threadViewNavigationBarAppearance,
-                                                           compactAppearance: BarAppearanceConstants.threadViewNavigationBarAppearance))
+            return modifier(NavigationBarStyleViewModifier(
+                standardAppearance: BarAppearanceConstants.threadViewNavigationBarAppearance,
+                scrollEdgeAppearance: BarAppearanceConstants.threadViewNavigationBarAppearance,
+                compactAppearance: BarAppearanceConstants.threadViewNavigationBarAppearance
+            ))
         }
     }
 
@@ -84,9 +91,11 @@ extension View {
         if #available(iOS 16.0, *) {
             return toolbarBackground(MailResourcesAsset.backgroundColor.swiftUiColor, for: .navigationBar)
         } else {
-            return modifier(NavigationBarStyleViewModifier(standardAppearance: BarAppearanceConstants.threadViewNavigationBarAppearance,
-                                                           scrollEdgeAppearance: BarAppearanceConstants.threadViewNavigationBarAppearance,
-                                                           compactAppearance: nil))
+            return modifier(NavigationBarStyleViewModifier(
+                standardAppearance: BarAppearanceConstants.threadViewNavigationBarAppearance,
+                scrollEdgeAppearance: BarAppearanceConstants.threadViewNavigationBarAppearance,
+                compactAppearance: nil
+            ))
         }
     }
 

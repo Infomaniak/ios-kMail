@@ -29,31 +29,25 @@ struct SlideView: View {
     @Environment(\.window) private var window
     @Environment(\.colorScheme) private var colorScheme
 
-    @State var segmentedControl: UISegmentedControl?
-    @State var imageSize: CGSize = .zero
+    @State private var segmentedControl: UISegmentedControl?
+    @State private var imageSize: CGSize = .zero
 
     var body: some View {
         GeometryReader { proxy in
             ZStack(alignment: .top) {
-                if (proxy.size.height > proxy.size.width) || (UIDevice.current.userInterfaceIdiom == .pad) {
-                    slide.backgroundImage
-                        .resizable(resizingMode: .stretch)
-                        .ignoresSafeArea()
-                        .fixedSize(horizontal: false, vertical: true)
-                        .foregroundColor(colorScheme == .light ? accentColor.secondary : MailResourcesAsset.backgroundColor)
-                }
+                slide.backgroundImage
+                    .resizable()
+                    .frame(height: proxy.size.height * 0.62)
+                    .foregroundColor(colorScheme == .light ? accentColor.secondary : MailResourcesAsset.backgroundColor)
+                    .ignoresSafeArea()
 
                 VStack(spacing: 0) {
-                    Spacer(minLength: Constants.onboardingLogoHeight + Constants.onboardingVerticalPadding)
+                    Spacer(minLength: Constants.onboardingLogoHeight + Constants.onboardingVerticalTopPadding)
 
-                    if proxy.size.height > 500, let illustrationImage = illustrationImage(for: slide) {
-                        illustrationImage
-                            .resizable()
-                            .scaledToFit()
-                            .frame(maxWidth: 400, maxHeight: 400)
-                            .aspectRatio(1, contentMode: .fit)
-                        Spacer()
-                    }
+                    LottieView(filename: slide.animationFile)
+                        .frame(height: 0.43 * proxy.size.height)
+
+                    Spacer(minLength: 8)
 
                     Text(slide.title)
                         .textStyle(.header2)
@@ -71,47 +65,24 @@ struct SlideView: View {
                             setSegmentedControlStyle()
                         }
                         .padding(.top, 32)
-                        .padding(.horizontal, 32)
-                        .frame(maxWidth: 350)
+                        .frame(maxWidth: 256)
                     } else {
                         Text(slide.description)
                             .textStyle(.bodySecondary)
                             .padding(.top, 24)
                     }
 
-                    Spacer()
+                    Spacer(minLength: 48)
                 }
                 .multilineTextAlignment(.center)
-                .padding(.horizontal, 40)
+                .padding(.horizontal, 32)
             }
-            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
+            .onChange(of: accentColor) { _ in
+                // Handle accent color change
+                (window?.windowScene?.delegate as? SceneDelegate)?.updateWindowUI()
+                setSegmentedControlStyle()
+            }
         }
-        .onChange(of: accentColor) { _ in
-            // Handle accent color change
-            (window?.windowScene?.delegate as? SceneDelegate)?.updateWindowUI()
-            setSegmentedControlStyle()
-        }
-    }
-
-    private func illustrationImage(for slide: Slide) -> Image? {
-        let resource: MailResourcesImages?
-        switch slide.id {
-        case 1:
-            resource = accentColor.onboardingIllu1
-        case 2:
-            resource = accentColor.onboardingIllu2
-        case 3:
-            resource = accentColor.onboardingIllu3
-        case 4:
-            resource = accentColor.onboardingIllu4
-        default:
-            resource = nil
-        }
-
-        if let resource = resource {
-            return Image(resource: resource)
-        }
-        return nil
     }
 
     private func setSegmentedControlStyle() {
@@ -125,9 +96,22 @@ struct SlideView: View {
 
 struct SlideView_Previews: PreviewProvider {
     static var previews: some View {
-        SlideView(slide: Slide(id: 1,
-                               backgroundImage: Image(resource: MailResourcesAsset.onboardingBackground1),
-                               title: "Title",
-                               description: "Description"))
+        slideView
+            .previewDevice(PreviewDevice(rawValue: "iPhone 14 Pro"))
+            .previewDisplayName("Large Screen")
+
+        slideView
+            .previewDevice(PreviewDevice(rawValue: "iPhone SE (3rd generation)"))
+            .previewDisplayName("Small Screen")
+    }
+
+    static var slideView: some View {
+        SlideView(slide: Slide(
+            id: 1,
+            backgroundImage: Image(resource: MailResourcesAsset.onboardingBackground1),
+            animationFile: "illu_1",
+            title: "Title",
+            description: "Description"
+        ))
     }
 }

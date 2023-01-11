@@ -49,67 +49,81 @@ class AccountSheet: SheetState<AccountSheet.State> {
     }
 }
 
+class AccountAlert: SheetState<AccountAlert.State> {
+    enum State {
+        case logout
+    }
+}
+
 struct AccountView: View {
     @Environment(\.dismiss) private var dismiss
     @Environment(\.window) private var window
 
     @State private var avatarImage = Image(resource: MailResourcesAsset.placeholderAvatar)
-    @StateObject private var account = AccountManager.instance.currentAccount!
+    @StateObject private var account = AccountManager.instance.currentAccount
     @StateObject private var sheet = AccountSheet()
+    @StateObject private var alert = AccountAlert()
     @State private var delegate = AccountViewDelegate()
+
+    let mailboxes: [Mailbox]
 
     var body: some View {
         NavigationView {
-            VStack(spacing: 24) {
-                // Header
-                avatarImage
-                    .resizable()
-                    .frame(width: 104, height: 104)
-                    .clipShape(Circle())
+            VStack(spacing: 0) {
+                ScrollView {
+                    // Header
+                    avatarImage
+                        .resizable()
+                        .frame(width: 104, height: 104)
+                        .clipShape(Circle())
+                        .padding(.top, 24)
+                        .padding(.bottom, 16)
 
-                VStack(spacing: 8) {
-                    Text(account.user.email)
-                        .textStyle(.header3)
+                    VStack(spacing: 8) {
+                        Text(account.user.email)
+                            .textStyle(.header2)
 
-                    NavigationLink {
-                        AccountListView()
-                    } label: {
-                        Text(MailResourcesStrings.Localizable.buttonAccountSwitch)
-                            .textStyle(.header5Accent)
-                    }
-                }
-
-                // Email list button
-                Button {
-                    // TODO: Show email list
-                    showWorkInProgressSnackBar()
-                } label: {
-                    VStack(alignment: .leading, spacing: 24) {
-                        IKDivider()
-                            .padding(.horizontal, 8)
-                        HStack {
-                            Text(MailResourcesStrings.Localizable.buttonAccountAssociatedEmailAddresses)
-                                .textStyle(.body)
-                                .multilineTextAlignment(.leading)
-                            Spacer()
-                            ChevronIcon(style: .right)
+                        NavigationLink {
+                            AccountListView()
+                        } label: {
+                            Text(MailResourcesStrings.Localizable.buttonAccountSwitch)
+                                .textStyle(.bodyMediumAccent)
                         }
-                        .padding(.horizontal, 24)
-                        IKDivider()
-                            .padding(.horizontal, 8)
                     }
-                }
 
-                // TODO: Device list
-                Spacer()
+                    // Email list
+                    VStack(alignment: .leading, spacing: 12) {
+                        Text(MailResourcesStrings.Localizable.buttonAccountAssociatedEmailAddresses)
+                            .textStyle(.bodySmallSecondary)
+                            .padding(.horizontal, 24)
+                            .padding(.bottom, 16)
+
+                        ForEach(mailboxes) { mailbox in
+                            Text(mailbox.email)
+                                .textStyle(.body)
+                                .padding(.horizontal, 24)
+                            if mailbox != mailboxes.last {
+                                IKDivider()
+                                    .padding(.horizontal, 16)
+                            }
+                        }
+                    }
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding(.top, 24)
+
+                    Spacer()
+                }
 
                 // Buttons
-                LargeButton(title: MailResourcesStrings.Localizable.buttonAccountDisconnect, action: logout)
+                LargeButton(title: MailResourcesStrings.Localizable.buttonAccountDisconnect) {
+                    alert.state = .logout
+                }
+                .padding(.bottom, 24)
                 Button {
                     sheet.state = .deleteAccount
                 } label: {
                     Text(MailResourcesStrings.Localizable.buttonAccountDelete)
-                        .textStyle(.header5Error)
+                        .textStyle(.bodyMediumError)
                 }
             }
             .navigationBarTitle(MailResourcesStrings.Localizable.titleMyAccount, displayMode: .inline)
@@ -119,8 +133,7 @@ struct AccountView: View {
             } label: {
                 Label(MailResourcesStrings.Localizable.buttonClose, systemImage: "xmark")
             })
-            .padding(.top, 32)
-            .padding(.bottom, 48)
+            .padding(.bottom, 24)
         }
         .task {
             avatarImage = await account.user.avatarImage
@@ -133,22 +146,20 @@ struct AccountView: View {
                 EmptyView()
             }
         }
-        .defaultAppStorage(.shared)
-    }
-
-    private func logout() {
-        AccountManager.instance.removeTokenAndAccount(token: account.token)
-        if let nextAccount = AccountManager.instance.accounts.first {
-            (window?.windowScene?.delegate as? SceneDelegate)?.switchAccount(nextAccount)
-        } else {
-            (window?.windowScene?.delegate as? SceneDelegate)?.showLoginView()
+        .customAlert(isPresented: $alert.isShowing) {
+            switch alert.state {
+            case .logout:
+                LogoutConfirmationView(account: account, state: alert)
+            case .none:
+                EmptyView()
+            }
         }
-        AccountManager.instance.saveAccounts()
+        .defaultAppStorage(.shared)
     }
 }
 
 struct AccountView_Previews: PreviewProvider {
     static var previews: some View {
-        AccountView()
+        AccountView(mailboxes: [PreviewHelper.sampleMailbox])
     }
 }

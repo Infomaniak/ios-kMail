@@ -40,9 +40,7 @@ struct ThreadListCell: View {
             : MailResourcesAsset.backgroundColor.swiftUiColor
     }
 
-    private var isSelected: Bool {
-        multipleSelectionViewModel.selectedItems.contains { $0.id == thread.id }
-    }
+    var isSelected: Bool
 
     var body: some View {
         ZStack {
@@ -99,8 +97,10 @@ struct ThreadListCell: View {
 
     private func didLongPressCell() {
         withAnimation {
+            multipleSelectionViewModel.feedbackGenerator.prepare()
             multipleSelectionViewModel.isEnabled.toggle()
             if multipleSelectionViewModel.isEnabled {
+                multipleSelectionViewModel.feedbackGenerator.impactOccurred()
                 multipleSelectionViewModel.toggleSelection(of: thread)
             }
         }
@@ -116,7 +116,8 @@ struct ThreadListCell_Previews: PreviewProvider {
             multipleSelectionViewModel: ThreadListMultipleSelectionViewModel(mailboxManager: PreviewHelper.sampleMailboxManager),
             threadDensity: .large,
             accentColor: .pink,
-            editedMessageDraft: .constant(nil)
+            editedMessageDraft: .constant(nil),
+            isSelected: false
         )
     }
 }

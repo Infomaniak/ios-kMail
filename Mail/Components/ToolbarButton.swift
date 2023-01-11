@@ -39,7 +39,7 @@ struct ToolbarButton: View {
         Button(action: action) {
             Label {
                 Text(text)
-                    .textStyle(MailTextStyle.captionMediumSecondary)
+                    .textStyle(MailTextStyle.labelMediumAccent)
             } icon: {
                 Image(resource: icon)
                     .resizable()

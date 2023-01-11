@@ -31,11 +31,11 @@ struct AttachmentCell: View {
 
             VStack(alignment: .leading, spacing: 0) {
                 Text(attachment.name)
-                    .textStyle(.callout)
+                    .textStyle(.bodySmall)
                     .lineLimit(1)
                     .truncationMode(.middle)
                 Text(attachment.size, format: .defaultByteCount)
-                    .textStyle(.captionSecondary)
+                    .textStyle(.labelSecondary)
             }
 
             if isNewMessage {

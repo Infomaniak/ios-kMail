@@ -183,7 +183,7 @@ struct AppVersionView: View {
     var body: some View {
         IKDivider(withPadding: true)
         Text(Constants.appVersion())
-            .textStyle(.captionSecondary)
+            .textStyle(.labelSecondary)
     }
 }
 

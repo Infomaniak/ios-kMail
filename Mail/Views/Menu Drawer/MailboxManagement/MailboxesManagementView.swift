@@ -51,31 +51,24 @@ struct MailboxesManagementView: View {
                         .foregroundColor(.accentColor)
                         .padding(.trailing, 16)
                     Text(mailboxManager.mailbox.email)
-                        .textStyle(.header5Accent)
+                        .textStyle(.bodyMediumAccent)
                         .lineLimit(1)
                     Spacer()
-                    ChevronIcon(style: navigationDrawerState.showMailboxes ? .up : .down, color: .primary)
+                    if !otherMailboxes.isEmpty {
+                        ChevronIcon(style: navigationDrawerState.showMailboxes ? .up : .down, color: .primary)
+                    }
                 }
+                .environment(\.isEnabled, true)
                 .padding(.vertical, Constants.menuDrawerVerticalPadding)
                 .padding(.horizontal, Constants.menuDrawerHorizontalPadding)
                 .background(SelectionBackground(isSelected: true, offsetX: 8, leadingPadding: 0, verticalPadding: 0))
             }
+            .disabled(otherMailboxes.isEmpty)
 
             if navigationDrawerState.showMailboxes {
                 VStack(alignment: .leading, spacing: 4) {
                     ForEach(otherMailboxes) { mailbox in
                         MailboxCell(mailbox: mailbox)
-                    }
-
-                    if !otherMailboxes.isEmpty {
-                        IKDivider(withPadding: true)
-                    }
-
-                    MailboxesManagementButtonView(icon: MailResourcesAsset.userSetting, text: MailResourcesStrings.Localizable.buttonManageAccount) {
-                        isShowingManageAccount.toggle()
-                    }
-                    MailboxesManagementButtonView(icon: MailResourcesAsset.userSwap, text: MailResourcesStrings.Localizable.buttonAccountSwitch) {
-                        isShowingSwitchAccount.toggle()
                     }
                 }
                 .task {
@@ -95,7 +88,7 @@ struct MailboxesManagementView: View {
             }
         }
         .sheet(isPresented: $isShowingManageAccount) {
-            AccountView()
+            AccountView(mailboxes: mailboxes)
         }
     }
 

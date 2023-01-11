@@ -65,23 +65,21 @@ public extension IKSnackBar {
     ) -> IKSnackBar? {
         return IKSnackBar.showSnackBar(
             message: message,
-            duration: duration
-            // Waiting for new API routes
-            /* ,
-             action: .init(title: MailResourcesStrings.Localizable.buttonCancel) {
-                 Task {
-                     do {
-                         let cancelled = try await mailboxManager.apiFetcher.undoAction(resource: undoRedoAction.undo.resource)
+            duration: duration,
+            action: .init(title: MailResourcesStrings.Localizable.buttonCancel) {
+                Task {
+                    do {
+                        let cancelled = try await mailboxManager.apiFetcher.undoAction(resource: undoRedoAction.undo.resource)
 
-                         if cancelled {
-                             IKSnackBar.showSnackBar(message: cancelSuccessMessage)
-                             try await undoRedoAction.redo?()
-                         }
-                     } catch {
-                         IKSnackBar.showSnackBar(message: error.localizedDescription)
-                     }
-                 }
-             } */
+                        if cancelled {
+                            IKSnackBar.showSnackBar(message: cancelSuccessMessage)
+                            try await undoRedoAction.redo?()
+                        }
+                    } catch {
+                        IKSnackBar.showSnackBar(message: error.localizedDescription)
+                    }
+                }
+            }
         )
     }
 }

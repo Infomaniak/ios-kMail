@@ -143,6 +143,18 @@ public class Message: Object, Decodable, Identifiable {
         return Array(dup)
     }
 
+    public var canReplyAll: Bool {
+        var replyAllTo = Set(from.map(\.email))
+        for mail in to {
+            replyAllTo.insert(mail.email)
+        }
+        for mail in cc {
+            replyAllTo.insert(mail.email)
+        }
+        replyAllTo.remove(AccountManager.instance.currentMailboxManager?.mailbox.email ?? "")
+        return replyAllTo.count > 1
+    }
+
     public func insertInlineAttachment() {
         for attachment in attachments {
             if let contentId = attachment.contentId, let value = body?.value, let resource = attachment.resource {

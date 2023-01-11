@@ -32,7 +32,7 @@ struct SettingsThreadDensityOptionView: View {
         VStack(spacing: 16) {
             Text(MailResourcesStrings.Localizable.settingsSelectDisplayModeDescription)
                 .frame(maxWidth: .infinity, alignment: .leading)
-                .textStyle(.calloutSecondary)
+                .textStyle(.bodySmallSecondary)
                 .padding(.bottom, 8)
 
             Picker("Display mode", selection: $selectedValue.animation()) {

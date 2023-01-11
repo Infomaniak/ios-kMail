@@ -62,7 +62,7 @@ struct CreateFolderView: View {
             // Header
             Text(MailResourcesStrings.Localizable.createFolderTitle)
                 .frame(maxWidth: .infinity, alignment: .leading)
-                .textStyle(.header4)
+                .textStyle(.bodyMedium)
             // Text field
             TextField(MailResourcesStrings.Localizable.createFolderName, text: $folderName)
                 .padding(12)

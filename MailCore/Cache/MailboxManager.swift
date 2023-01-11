@@ -71,7 +71,7 @@ public class MailboxManager: ObservableObject {
         let realmName = "\(mailbox.userId)-\(mailbox.mailboxId).realm"
         realmConfiguration = Realm.Configuration(
             fileURL: MailboxManager.constants.rootDocumentsURL.appendingPathComponent(realmName),
-            schemaVersion: 2,
+            schemaVersion: 3,
             deleteRealmIfMigrationNeeded: true,
             objectTypes: [
                 Folder.self,
@@ -218,13 +218,16 @@ public class MailboxManager: ObservableObject {
         return folder
     }
 
-    private func refreshFolder(from messages: [Message]) async throws {
-        let realm = getRealm()
+    private func refreshFolder(from messages: [Message], additionalFolderId: String? = nil) async throws {
+        var foldersId = messages.map(\.folderId)
+        if let additionalFolderId = additionalFolderId {
+            foldersId.append(additionalFolderId)
+        }
 
-        let foldersId = messages.map(\.folderId)
-        let foldersIdSet = Set<String>(foldersId)
+        let orderedSet = NSOrderedSet(array: foldersId)
 
-        for id in foldersIdSet {
+        for id in orderedSet {
+            let realm = getRealm()
             if let impactedFolder = realm.object(ofType: Folder.self, forPrimaryKey: id) {
                 try await threads(folder: impactedFolder)
             }
@@ -269,7 +272,7 @@ public class MailboxManager: ObservableObject {
                 realm.delete(draftsToDelete)
                 realm.delete(messagesToDelete)
                 for thread in threadsToUpdate {
-                    if thread.messages.isEmpty {
+                    if thread.messageInFolderCount == 0 {
                         threadsToDelete.insert(thread)
                     } else {
                         thread.recompute()
@@ -298,8 +301,8 @@ public class MailboxManager: ObservableObject {
                 // Clean old threads after fetching first page
                 if result.currentOffset == 0 {
                     parentFolder.lastUpdate = Date()
-                    realm.delete(parentFolder.threads.flatMap(\.messages))
-                    realm.delete(parentFolder.threads)
+                    realm.delete(parentFolder.threads.flatMap(\.messages).filter { $0.fromSearch == true })
+                    realm.delete(parentFolder.threads.filter { $0.fromSearch == true })
                 }
                 realm.add(fetchedThreads, update: .modified)
                 parentFolder.threads.insert(objectsIn: fetchedThreads)
@@ -444,7 +447,7 @@ public class MailboxManager: ObservableObject {
         )
 
         await backgroundRealm.execute { realm in
-            for thread in threadResult.threads ?? [] where realm.object(ofType: Thread.self, forPrimaryKey: thread.uid) == nil {
+            for thread in threadResult.threads ?? [] {
                 thread.fromSearch = true
 
                 for message in thread.messages where realm.object(ofType: Message.self, forPrimaryKey: message.uid) == nil {
@@ -465,7 +468,7 @@ public class MailboxManager: ObservableObject {
         let threadResult = try await apiFetcher.threads(from: resource, searchFilter: searchFilter)
 
         let realm = getRealm()
-        for thread in threadResult.threads ?? [] where realm.object(ofType: Thread.self, forPrimaryKey: thread.uid) == nil {
+        for thread in threadResult.threads ?? [] {
             thread.fromSearch = true
 
             for message in thread.messages where realm.object(ofType: Message.self, forPrimaryKey: message.uid) == nil {
@@ -654,7 +657,7 @@ public class MailboxManager: ObservableObject {
             if newCursor != nil {
                 guard let folder = folder.fresh(using: realm) else { return }
                 try? realm.safeWrite {
-                    folder.computeUnreadCount(using: realm)
+                    folder.computeUnreadCount()
                     folder.cursor = newCursor
                     folder.lastUpdate = Date()
                 }
@@ -698,17 +701,20 @@ public class MailboxManager: ObservableObject {
         var threadsToUpdate = Set<Thread>()
         try? realm.safeWrite {
             for message in messageByUids.messages {
-                message.computeReference()
-                let existingThreads = Array(realm.objects(Thread.self)
-                    .where { $0.messageIds.containsAny(in: message.linkedUids) })
+                if realm.object(ofType: Message.self, forPrimaryKey: message.uid) == nil {
+                    message.inTrash = folder.role == .trash
+                    message.computeReference()
+                    let existingThreads = Array(realm.objects(Thread.self)
+                        .where { $0.messageIds.containsAny(in: message.linkedUids) })
 
-                if let newThread = createNewThreadIfRequired(for: message, folder: folder, existingThreads: existingThreads) {
-                    threadsToUpdate.insert(newThread)
-                }
+                    if let newThread = createNewThreadIfRequired(for: message, folder: folder, existingThreads: existingThreads) {
+                        threadsToUpdate.insert(newThread)
+                    }
 
-                for thread in existingThreads {
-                    thread.addMessageIfNeeded(newMessage: message.fresh(using: realm) ?? message)
-                    threadsToUpdate.insert(thread)
+                    for thread in existingThreads {
+                        thread.addMessageIfNeeded(newMessage: message.fresh(using: realm) ?? message)
+                        threadsToUpdate.insert(thread)
+                    }
                 }
             }
 
@@ -877,8 +883,8 @@ public class MailboxManager: ObservableObject {
 
     public func move(messages: [Message], to folder: Folder) async throws -> UndoRedoAction {
         let response = try await apiFetcher.move(mailbox: mailbox, messages: messages, destinationId: folder._id)
-        try await refreshFolder(from: messages)
-        return UndoRedoAction(undo: response, redo: nil)
+        try await refreshFolder(from: messages, additionalFolderId: folder.id)
+        return undoRedoAction(for: response, and: messages)
     }
 
     public func delete(messages: [Message]) async throws {
@@ -889,13 +895,13 @@ public class MailboxManager: ObservableObject {
     public func reportSpam(messages: [Message]) async throws -> UndoRedoAction {
         let response = try await apiFetcher.reportSpam(mailbox: mailbox, messages: messages)
         try await refreshFolder(from: messages)
-        return UndoRedoAction(undo: response, redo: nil)
+        return undoRedoAction(for: response, and: messages)
     }
 
     public func nonSpam(messages: [Message]) async throws -> UndoRedoAction {
         let response = try await apiFetcher.nonSpam(mailbox: mailbox, messages: messages)
         try await refreshFolder(from: messages)
-        return UndoRedoAction(undo: response, redo: nil)
+        return undoRedoAction(for: response, and: messages)
     }
 
     public func star(messages: [Message]) async throws -> MessageActionResult {
@@ -908,6 +914,13 @@ public class MailboxManager: ObservableObject {
         let response = try await apiFetcher.unstar(mailbox: mailbox, messages: messages)
         try await refreshFolder(from: messages)
         return response
+    }
+
+    private func undoRedoAction(for cancellableResponse: UndoResponse, and messages: [Message]) -> UndoRedoAction {
+        let redoAction = {
+            try await self.refreshFolder(from: messages)
+        }
+        return UndoRedoAction(undo: cancellableResponse, redo: redoAction)
     }
 
     // MARK: - Draft

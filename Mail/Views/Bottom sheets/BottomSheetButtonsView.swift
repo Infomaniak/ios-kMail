@@ -39,7 +39,7 @@ struct BottomSheetButtonsView: View {
         HStack(spacing: 24) {
             Button(role: .destructive, action: secondaryButtonAction) {
                 Text(secondaryButtonTitle)
-                    .textStyle(.header5Error)
+                    .textStyle(.bodyMediumError)
             }
 
             BottomSheetButton(label: primaryButtonTitle,

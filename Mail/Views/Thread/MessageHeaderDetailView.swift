@@ -62,7 +62,7 @@ struct MessageHeaderDetailView: View {
                     .frame(width: labelWidth, height: 17, alignment: .leading)
                     .foregroundColor(MailResourcesAsset.secondaryTextColor)
                 Text(message.date.formatted(date: .long, time: .shortened))
-                    .textStyle(.calloutSecondary)
+                    .textStyle(.bodySmallSecondary)
             }
         }
         .frame(maxWidth: .infinity, alignment: .leading)
@@ -87,7 +87,7 @@ struct RecipientLabel: View {
     var body: some View {
         HStack(alignment: .top) {
             Text(title)
-                .textStyle(.calloutSecondary)
+                .textStyle(.bodySmallSecondary)
                 .background(ViewGeometry())
                 .frame(width: labelWidth, alignment: .leading)
             VStack(alignment: .leading, spacing: 4) {
@@ -97,13 +97,13 @@ struct RecipientLabel: View {
                             recipientTapped(recipient)
                         } label: {
                             Text(recipient.name.isEmpty ? recipient.email : recipient.name.removePunctuation)
-                                .textStyle(.calloutAccent)
+                                .textStyle(.bodySmallAccent)
                                 .lineLimit(1)
                                 .layoutPriority(1)
                         }
                         if !recipient.name.isEmpty {
                             Text(recipient.email)
-                                .textStyle(.captionSecondary)
+                                .textStyle(.labelSecondary)
                                 .lineLimit(1)
                         }
                     }

@@ -53,7 +53,6 @@ public class Thread: Object, Decodable, Identifiable {
     @Persisted(originProperty: "threads") public var parentLink: LinkingObjects<Folder>
     @Persisted public var fromSearch = false
 
-    @Persisted public var messagePreviewed: Message?
     @Persisted public var isDraft = false
 
     @Persisted public var duplicates = List<Message>()
@@ -66,6 +65,10 @@ public class Thread: Object, Decodable, Identifiable {
 
     public var parent: Folder? {
         return parentLink.first
+    }
+
+    public var messageInFolderCount: Int {
+        return messages.filter { $0.folderId == self.folderId }.count
     }
 
     public var formattedFrom: String {
@@ -105,7 +108,7 @@ public class Thread: Object, Decodable, Identifiable {
         messageIds = messages.flatMap { $0.linkedUids }.toRealmSet()
         updateUnseenMessages()
         from = messages.flatMap { $0.from.detached() }.toRealmList()
-        date = messages.last?.date ?? date
+        date = messages.last { $0.folderId == folderId }?.date ?? date
         size = messages.sum(of: \.size)
         hasAttachments = messages.contains { $0.hasAttachments }
         hasDrafts = messages.map { $0.isDraft }.contains(true)
@@ -117,7 +120,10 @@ public class Thread: Object, Decodable, Identifiable {
         messages = messages.sorted {
             $0.date.compare($1.date) == .orderedAscending
         }.toRealmList()
-        messagePreviewed = messages.last { $0.folderId == folderId }
+
+        if let lastFolderMessage = messages.last(where: { $0.folderId == folderId }) {
+            date = lastFolderMessage.date
+        }
     }
 
     func addMessageIfNeeded(newMessage: Message) {

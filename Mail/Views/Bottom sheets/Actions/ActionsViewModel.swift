@@ -198,42 +198,49 @@ enum ActionsTarget: Equatable {
         case let .threads(threads):
             if threads.count > 1 {
                 let spam = threads.allSatisfy { $0.parent?.role == .spam }
-                quickActions = [.move, .postpone, spam ? .nonSpam : .spam, .delete]
-
                 let unread = threads.allSatisfy(\.hasUnseenMessages)
+                quickActions = [.move, .archive, spam ? .nonSpam : .spam, .delete]
+
                 listActions = [
-                    .archive,
                     unread ? .markAsRead : .markAsUnread,
                     .print
                 ]
             } else if let thread = threads.first {
-                quickActions = [.reply, .replyAll, .forward, .delete]
+                if let message = thread.messages.first, message.canReplyAll {
+                    quickActions = [.reply, .replyAll, .forward, .delete]
+                    listActions = [.archive]
+                } else {
+                    quickActions = [.reply, .forward, .archive, .delete]
+                    listActions = []
+                }
 
                 let unread = thread.hasUnseenMessages
                 let star = thread.flagged
                 let spam = thread.parent?.role == .spam
-                listActions = [
-                    .archive,
+                listActions.append(contentsOf: [
                     unread ? .markAsRead : .markAsUnread,
                     .move,
-                    .postpone,
                     star ? .unstar : .star,
                     spam ? .nonSpam : .spam,
                     .print,
                     .saveAsPDF
-                ]
+                ])
             }
         case let .message(message):
-            quickActions = [.reply, .replyAll, .forward, .delete]
+            if message.canReplyAll {
+                quickActions = [.reply, .replyAll, .forward, .delete]
+                listActions = [.archive]
+            } else {
+                quickActions = [.reply, .forward, .archive, .delete]
+                listActions = []
+            }
 
             let unread = !message.seen
             let star = message.flagged
             let spam = message.folderId == mailboxManager.getFolder(with: .spam)?._id
-            listActions = [
-                .archive,
+            listActions.append(contentsOf: [
                 unread ? .markAsRead : .markAsUnread,
                 .move,
-                .postpone,
                 star ? .unstar : .star,
                 spam ? .nonSpam : .spam,
                 .block,
@@ -243,7 +250,7 @@ enum ActionsTarget: Equatable {
                 .createRule,
                 .report,
                 .editMenu
-            ]
+            ])
         }
     }
 

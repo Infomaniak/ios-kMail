@@ -52,7 +52,7 @@ struct LargePicker<SelectionValue, ButtonType>: View where SelectionValue: Hasha
         VStack(alignment: .leading, spacing: 4) {
             if let title = title {
                 Text(title)
-                    .textStyle(.callout)
+                    .textStyle(.bodySmall)
             }
 
             Menu {

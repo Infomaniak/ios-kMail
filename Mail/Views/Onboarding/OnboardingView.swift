@@ -23,22 +23,58 @@ import MailCore
 import MailResources
 import SwiftUI
 
+struct Slide: Identifiable {
+    let id: Int
+    let backgroundImage: Image
+    let animationFile: String
+    let title: String
+    let description: String
+
+    static let allSlides = [
+        Slide(
+            id: 1,
+            backgroundImage: Image(resource: MailResourcesAsset.onboardingBackground1),
+            animationFile: "illu_1",
+            title: MailResourcesStrings.Localizable.onBoardingTitle1,
+            description: ""
+        ),
+        Slide(
+            id: 2,
+            backgroundImage: Image(resource: MailResourcesAsset.onboardingBackground2),
+            animationFile: "illu_2",
+            title: MailResourcesStrings.Localizable.onBoardingTitle2,
+            description: MailResourcesStrings.Localizable.onBoardingDescription2
+        ),
+        Slide(
+            id: 3,
+            backgroundImage: Image(resource: MailResourcesAsset.onboardingBackground3),
+            animationFile: "illu_3",
+            title: MailResourcesStrings.Localizable.onBoardingTitle3,
+            description: MailResourcesStrings.Localizable.onBoardingDescription3
+        ),
+        Slide(
+            id: 4,
+            backgroundImage: Image(resource: MailResourcesAsset.onboardingBackground4),
+            animationFile: "illu_4",
+            title: MailResourcesStrings.Localizable.onBoardingTitle4,
+            description: MailResourcesStrings.Localizable.onBoardingDescription4
+        )
+    ]
+}
+
 struct OnboardingView: View {
-    @StateObject var viewModel = OnboardingViewModel()
+    @Environment(\.window) private var window
+    @Environment(\.dismiss) private var dismiss
+
     @State private var selection: Int
     @State private var presentAlert = false
     @State private var isLoading = false
 
     private var isScrollEnabled: Bool
+    private var slides = Slide.allSlides
 
-    @Environment(\.window) var window
-    @Environment(\.dismiss) private var dismiss
-
-    private var isPresentedModally: Bool
-
-    init(isPresentedModally: Bool = false, page: Int = 1, isScrollEnabled: Bool = true) {
+    init(page: Int = 1, isScrollEnabled: Bool = true) {
         _selection = State(initialValue: page)
-        self.isPresentedModally = isPresentedModally
         self.isScrollEnabled = isScrollEnabled
         UIPageControl.appearance().currentPageIndicatorTintColor = .tintColor
         UIPageControl.appearance().pageIndicatorTintColor = MailResourcesAsset.separatorColor.color
@@ -46,45 +82,30 @@ struct OnboardingView: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            // Slides
-            ZStack(alignment: .top) {
-                if !isScrollEnabled, let slide = viewModel.slides.first { $0.id == selection } {
+            Group {
+                if !isScrollEnabled, let slide = slides.first { $0.id == selection } {
                     SlideView(slide: slide)
                 } else {
                     TabView(selection: $selection) {
-                        ForEach(viewModel.slides) { slide in
+                        ForEach(slides) { slide in
                             SlideView(slide: slide)
                                 .tag(slide.id)
                         }
                     }
                     .tabViewStyle(.page)
-                    .edgesIgnoringSafeArea(.top)
                 }
-
+            }
+            .ignoresSafeArea(edges: .top)
+            .overlay(alignment: .top) {
                 Image(resource: MailResourcesAsset.logoText)
                     .resizable()
                     .scaledToFit()
                     .frame(height: Constants.onboardingLogoHeight)
-                    .padding(.top, isPresentedModally ? 15 : 0)
-
-                if !isScrollEnabled {
-                    HStack {
-                        Button {
-                            dismiss()
-                        } label: {
-                            Image(systemName: "xmark")
-                                .resizable()
-                        }
-                        .frame(width: 20, height: 20, alignment: .leading)
-                        .padding(16)
-                        Spacer()
-                    }
-                }
+                    .padding(.top, 28)
             }
 
-            // Buttons
             VStack(spacing: 24) {
-                if selection == viewModel.slides.count {
+                if selection == slides.count {
                     // Show login button
                     LargeButton(title: MailResourcesStrings.Localizable.buttonLogin, isLoading: isLoading, action: login)
                     Button {
@@ -92,7 +113,7 @@ struct OnboardingView: View {
                         showWorkInProgressSnackBar()
                     } label: {
                         Text(MailResourcesStrings.Localizable.buttonCreateAccount)
-                            .textStyle(.header5Accent)
+                            .textStyle(.bodyMediumAccent)
                     }
                 } else {
                     Button {
@@ -109,8 +130,20 @@ struct OnboardingView: View {
                     .buttonBorderShape(.capsule)
                 }
             }
-            .frame(height: Constants.onboardingButtonHeight + Constants.onboardingVerticalPadding, alignment: .top)
+            .frame(height: Constants.onboardingButtonHeight + Constants.onboardingBottomButtonPadding, alignment: .top)
         }
+        .overlay(alignment: .topLeading, content: {
+            if !isScrollEnabled {
+                Button {
+                    dismiss()
+                } label: {
+                    Image(systemName: "xmark")
+                        .resizable()
+                }
+                .frame(width: 20, height: 20)
+                .padding(16)
+            }
+        })
         .alert(MailResourcesStrings.Localizable.errorLoginTitle, isPresented: $presentAlert) {
             // Use default button
         } message: {
@@ -118,13 +151,10 @@ struct OnboardingView: View {
         }
         .onAppear {
             if UIDevice.current.userInterfaceIdiom == .phone {
-                if #available(iOS 16.0, *) {
-                    window?.windowScene?.requestGeometryUpdate(.iOS(interfaceOrientations: .portrait))
-                } else {
-                    UIDevice.current
-                        .setValue(UIInterfaceOrientation.portrait.rawValue, forKey: "orientation")
-                }
+                UIDevice.current
+                    .setValue(UIInterfaceOrientation.portrait.rawValue, forKey: "orientation")
                 AppDelegate.orientationLock = .portrait
+                UIViewController.attemptRotationToDeviceOrientation()
             }
         }
     }
@@ -150,12 +180,12 @@ struct OnboardingView: View {
             do {
                 _ = try await AccountManager.instance.createAndSetCurrentAccount(code: code, codeVerifier: verifier)
                 MatomoUtils.connectUser()
-                (self.window?.windowScene?.delegate as? SceneDelegate)?.showMainView()
+                await (self.window?.windowScene?.delegate as? SceneDelegate)?.showMainView()
             } catch {
                 if let previousAccount = previousAccount {
                     AccountManager.instance.switchAccount(newAccount: previousAccount)
                 }
-                IKSnackBar.showSnackBar(message: error.localizedDescription)
+                await IKSnackBar.showSnackBar(message: error.localizedDescription)
             }
             isLoading = false
         }
@@ -172,6 +202,15 @@ struct OnboardingView: View {
 struct OnboardingView_Previews: PreviewProvider {
     static var previews: some View {
         OnboardingView()
-        OnboardingView(isPresentedModally: true)
+            .previewDevice(PreviewDevice(rawValue: "iPhone 14 Pro"))
+            .previewDisplayName("Onboarding - Dynamic Island")
+
+        OnboardingView()
+            .previewDevice(PreviewDevice(rawValue: "iPhone 14"))
+            .previewDisplayName("Onboarding - Notch")
+
+        OnboardingView()
+            .previewDevice(PreviewDevice(rawValue: "iPhone SE (3rd generation)"))
+            .previewDisplayName("Onboarding - Default")
     }
 }

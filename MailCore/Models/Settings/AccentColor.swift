@@ -162,42 +162,4 @@ public enum AccentColor: String, CaseIterable, SettingsOptionEnum {
             return MailResourcesAsset.densityLargeBlue
         }
     }
-
-    // MARK: Onboarding illustration images
-
-    public var onboardingIllu1: MailResourcesImages {
-        switch self {
-        case .pink:
-            return MailResourcesAsset.onboardingIllu1Pink
-        case .blue:
-            return MailResourcesAsset.onboardingIllu1Blue
-        }
-    }
-
-    public var onboardingIllu2: MailResourcesImages {
-        switch self {
-        case .pink:
-            return MailResourcesAsset.onboardingIllu2Pink
-        case .blue:
-            return MailResourcesAsset.onboardingIllu2Blue
-        }
-    }
-
-    public var onboardingIllu3: MailResourcesImages {
-        switch self {
-        case .pink:
-            return MailResourcesAsset.onboardingIllu3Pink
-        case .blue:
-            return MailResourcesAsset.onboardingIllu3Blue
-        }
-    }
-
-    public var onboardingIllu4: MailResourcesImages {
-        switch self {
-        case .pink:
-            return MailResourcesAsset.onboardingIllu4Pink
-        case .blue:
-            return MailResourcesAsset.onboardingIllu4Blue
-        }
-    }
 }
