@@ -71,9 +71,10 @@ struct WebView: UIViewRepresentable {
         webView.navigationDelegate = context.coordinator
         webView.scrollView.bounces = false
         webView.scrollView.bouncesZoom = false
-        webView.scrollView.isDirectionalLockEnabled = false
         webView.scrollView.showsVerticalScrollIndicator = false
         webView.scrollView.showsHorizontalScrollIndicator = true
+        webView.scrollView.alwaysBounceVertical = false
+        webView.scrollView.alwaysBounceHorizontal = false
         return webView
     }
 
