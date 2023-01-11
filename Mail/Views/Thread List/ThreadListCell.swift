@@ -61,11 +61,11 @@ struct ThreadListCell: View {
             )
         }
         .padding(.leading, multipleSelectionViewModel.isEnabled ? 8 : -4)
+        .background(SelectionBackground(isSelected: isSelected, offsetX: 8, leadingPadding: 0, verticalPadding: 2,
+                                        defaultColor: cellColor))
         .onTapGesture { didTapCell() }
         .onLongPressGesture(minimumDuration: 0.3) { didLongPressCell() }
         .swipeActions(thread: thread, viewModel: viewModel, multipleSelectionViewModel: multipleSelectionViewModel)
-        .background(SelectionBackground(isSelected: isSelected, offsetX: 8, leadingPadding: 0, verticalPadding: 2,
-                                        defaultColor: cellColor))
         .clipped()
         .listRowInsets(.init(top: 0, leading: 0, bottom: 0, trailing: 0))
         .listRowSeparator(.hidden)
