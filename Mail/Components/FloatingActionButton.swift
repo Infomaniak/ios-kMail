@@ -33,7 +33,7 @@ struct FloatingActionButton: View {
             } icon: {
                 icon
                     .resizable()
-                    .frame(width: 18, height: 18)
+                    .frame(width: 16, height: 16)
             }
         }
         .buttonStyle(.borderedProminent)
@@ -47,7 +47,7 @@ struct FloatingActionButton: View {
 
 struct NewMessageButtonView_Previews: PreviewProvider {
     static var previews: some View {
-        FloatingActionButton(icon: Image(resource: MailResourcesAsset.pen),
+        FloatingActionButton(icon: Image(resource: MailResourcesAsset.pencilPlain),
                              title: "New message") { /* Preview */ }
     }
 }
