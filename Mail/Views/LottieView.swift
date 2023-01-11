@@ -42,6 +42,8 @@ class LottieViewModel: ObservableObject {
 struct LottieView: UIViewRepresentable {
     @StateObject private var viewModel = LottieViewModel()
 
+    @Binding var isVisible: Bool
+
     let filename: String
     let configuration: LottieConfiguration
 
@@ -82,11 +84,12 @@ struct LottieView: UIViewRepresentable {
     }
 
     func updateUIView(_ uiView: UIViewType, context: Context) {
-        guard let animationView = uiView.subviews.first as? LottieAnimationView else { return }
+        guard isVisible, let animationView = uiView.subviews.first as? LottieAnimationView else { return }
 
         let newColorScheme = UITraitCollection.current.userInterfaceStyle
         let newAccentColor = UserDefaults.shared.accentColor
-        guard viewModel.colorScheme != newColorScheme || viewModel.accentColor != newAccentColor else { return }
+        guard viewModel.colorScheme != newColorScheme || viewModel.accentColor != newAccentColor
+        else { return }
 
         viewModel.colorScheme = newColorScheme
         viewModel.accentColor = newAccentColor

@@ -42,10 +42,10 @@ extension AnimationKeypath {
         case border = "Contour"
     }
 
-    static func keyPath(category: Category, numero: Int? = nil, group: Int = 1, finalLayer: FinalLayer = .background) -> Self {
+    static func keyPath(category: Category, categoryNumber: Int? = nil, group: Int = 1, finalLayer: FinalLayer = .background) -> Self {
         var categoryName = category.rawValue
-        if let numero {
-            categoryName = "\(categoryName) \(numero)"
+        if let categoryNumber {
+            categoryName = "\(categoryName) \(categoryNumber)"
         }
         return AnimationKeypath(keys: [categoryName, "Groupe \(group)", "\(finalLayer.rawValue) 1", "Color"])
     }
@@ -176,56 +176,56 @@ struct IlluColors {
     // MARK: - Each illustration
 
     static let illu1Colors = [
-        IlluColors(.keyPath(category: .point, numero: 1), colors: .commonColors5),
-        IlluColors(.keyPath(category: .point, numero: 2), colors: .commonColors5),
-        IlluColors(.keyPath(category: .point, numero: 3), colors: .commonColors5),
-        IlluColors(.keyPath(category: .point, numero: 4), colors: .commonColors5),
-        IlluColors(.keyPath(category: .point, numero: 5), colors: .commonColors5),
-        IlluColors(.keyPath(category: .point, numero: 6), colors: .commonColors5),
+        IlluColors(.keyPath(category: .point, categoryNumber: 1), colors: .commonColors5),
+        IlluColors(.keyPath(category: .point, categoryNumber: 2), colors: .commonColors5),
+        IlluColors(.keyPath(category: .point, categoryNumber: 3), colors: .commonColors5),
+        IlluColors(.keyPath(category: .point, categoryNumber: 4), colors: .commonColors5),
+        IlluColors(.keyPath(category: .point, categoryNumber: 5), colors: .commonColors5),
+        IlluColors(.keyPath(category: .point, categoryNumber: 6), colors: .commonColors5),
         IlluColors(.keyPath(category: .iPhoneScreen, group: 56), colors: .commonColors1),
         IlluColors(.keyPath(category: .iPhoneScreen, group: 67), colors: .commonColors6),
         IlluColors(.keyPath(category: .iPhoneScreen, group: 69), colors: .commonColors5)
     ]
     static let illu1PinkColors = [
-        IlluColors(.keyPath(category: .chat, numero: 1), colors: .pinkColors1),
-        IlluColors(.keyPath(category: .chat, numero: 2), colors: .pinkColors4),
+        IlluColors(.keyPath(category: .chat, categoryNumber: 1), colors: .pinkColors1),
+        IlluColors(.keyPath(category: .chat, categoryNumber: 2), colors: .pinkColors4),
         IlluColors(.keyPath(category: .iPhoneScreen, group: 55), colors: .pinkColors6),
         IlluColors(.keyPath(category: .iPhoneScreen, group: 61), colors: .pinkColors1),
         IlluColors(.keyPath(category: .iPhoneScreen, group: 66), colors: .pinkColors7)
     ]
     static let illu1BlueColors = [
-        IlluColors(.keyPath(category: .chat, numero: 1), colors: .blueColors1),
-        IlluColors(.keyPath(category: .chat, numero: 2), colors: .blueColors3),
+        IlluColors(.keyPath(category: .chat, categoryNumber: 1), colors: .blueColors1),
+        IlluColors(.keyPath(category: .chat, categoryNumber: 2), colors: .blueColors3),
         IlluColors(.keyPath(category: .iPhoneScreen, group: 55), colors: .blueColors5),
         IlluColors(.keyPath(category: .iPhoneScreen, group: 61), colors: .blueColors1),
         IlluColors(.keyPath(category: .iPhoneScreen, group: 66), colors: .blueColors6)
     ]
 
     static let illu2Colors = [
-        IlluColors(.keyPath(category: .notification, numero: 2, group: 5), colors: .commonColors4),
-        IlluColors(.keyPath(category: .notification, numero: 2, group: 6), colors: .commonColors1),
-        IlluColors(.keyPath(category: .notification, numero: 2, group: 9), colors: .commonColors7),
-        IlluColors(.keyPath(category: .notification, numero: 2, group: 10), colors: .commonColors7),
-        IlluColors(.keyPath(category: .notification, numero: 2, group: 12), colors: .commonColors5),
-        IlluColors(.keyPath(category: .notification, numero: 2, group: 13), colors: .commonColors2),
-        IlluColors(.keyPath(category: .notification, numero: 2, group: 14), colors: .commonColors1),
-        IlluColors(.keyPath(category: .movingNotification, numero: 1, group: 4), colors: .commonColors8),
-        IlluColors(.keyPath(category: .movingNotification, numero: 1, group: 5), colors: .commonColors8),
-        IlluColors(.keyPath(category: .movingNotification, numero: 1, group: 6), colors: .commonColors8),
-        IlluColors(.keyPath(category: .movingNotification, numero: 1, group: 7), colors: .commonColors5),
-        IlluColors(.keyPath(category: .movingNotification, numero: 1, group: 8), colors: .commonColors2),
-        IlluColors(.keyPath(category: .movingNotification, numero: 1, group: 9), colors: .commonColors2),
-        IlluColors(.keyPath(category: .movingNotification, numero: 1, group: 10), colors: .commonColors2),
-        IlluColors(.keyPath(category: .movingNotification, numero: 1, group: 13), colors: .commonColors5),
-        IlluColors(.keyPath(category: .movingNotification, numero: 1, group: 14), colors: .commonColors8),
-        IlluColors(.keyPath(category: .movingNotification, numero: 2, group: 5), colors: .commonColors4),
-        IlluColors(.keyPath(category: .movingNotification, numero: 2, group: 6), colors: .commonColors1),
-        IlluColors(.keyPath(category: .movingNotification, numero: 2, group: 9), colors: .commonColors7),
-        IlluColors(.keyPath(category: .movingNotification, numero: 2, group: 10), colors: .commonColors7),
-        IlluColors(.keyPath(category: .movingNotification, numero: 2, group: 12), colors: .commonColors5),
-        IlluColors(.keyPath(category: .movingNotification, numero: 2, group: 13), colors: .commonColors2),
-        IlluColors(.keyPath(category: .movingNotification, numero: 2, group: 14), colors: .commonColors1),
-        IlluColors(.keyPath(category: .movingNotification, numero: 2, group: 15), colors: .commonColors1),
+        IlluColors(.keyPath(category: .notification, categoryNumber: 2, group: 5), colors: .commonColors4),
+        IlluColors(.keyPath(category: .notification, categoryNumber: 2, group: 6), colors: .commonColors1),
+        IlluColors(.keyPath(category: .notification, categoryNumber: 2, group: 9), colors: .commonColors7),
+        IlluColors(.keyPath(category: .notification, categoryNumber: 2, group: 10), colors: .commonColors7),
+        IlluColors(.keyPath(category: .notification, categoryNumber: 2, group: 12), colors: .commonColors5),
+        IlluColors(.keyPath(category: .notification, categoryNumber: 2, group: 13), colors: .commonColors2),
+        IlluColors(.keyPath(category: .notification, categoryNumber: 2, group: 14), colors: .commonColors1),
+        IlluColors(.keyPath(category: .movingNotification, categoryNumber: 1, group: 4), colors: .commonColors8),
+        IlluColors(.keyPath(category: .movingNotification, categoryNumber: 1, group: 5), colors: .commonColors8),
+        IlluColors(.keyPath(category: .movingNotification, categoryNumber: 1, group: 6), colors: .commonColors8),
+        IlluColors(.keyPath(category: .movingNotification, categoryNumber: 1, group: 7), colors: .commonColors5),
+        IlluColors(.keyPath(category: .movingNotification, categoryNumber: 1, group: 8), colors: .commonColors2),
+        IlluColors(.keyPath(category: .movingNotification, categoryNumber: 1, group: 9), colors: .commonColors2),
+        IlluColors(.keyPath(category: .movingNotification, categoryNumber: 1, group: 10), colors: .commonColors2),
+        IlluColors(.keyPath(category: .movingNotification, categoryNumber: 1, group: 13), colors: .commonColors5),
+        IlluColors(.keyPath(category: .movingNotification, categoryNumber: 1, group: 14), colors: .commonColors8),
+        IlluColors(.keyPath(category: .movingNotification, categoryNumber: 2, group: 5), colors: .commonColors4),
+        IlluColors(.keyPath(category: .movingNotification, categoryNumber: 2, group: 6), colors: .commonColors1),
+        IlluColors(.keyPath(category: .movingNotification, categoryNumber: 2, group: 9), colors: .commonColors7),
+        IlluColors(.keyPath(category: .movingNotification, categoryNumber: 2, group: 10), colors: .commonColors7),
+        IlluColors(.keyPath(category: .movingNotification, categoryNumber: 2, group: 12), colors: .commonColors5),
+        IlluColors(.keyPath(category: .movingNotification, categoryNumber: 2, group: 13), colors: .commonColors2),
+        IlluColors(.keyPath(category: .movingNotification, categoryNumber: 2, group: 14), colors: .commonColors1),
+        IlluColors(.keyPath(category: .movingNotification, categoryNumber: 2, group: 15), colors: .commonColors1),
         IlluColors(AnimationKeypath(keys: ["MOVING NOTIF 2 TITLE", "Groupe 1", "Fond 1", "Color"]), colors: .commonColors2),
         IlluColors(AnimationKeypath(keys: ["MOVING NOTIF 2 PREVIEW", "Groupe 1", "Fond 1", "Color"]), colors: .commonColors2),
         IlluColors(.keyPath(category: .archives, group: 1), colors: .commonColors5),
@@ -234,8 +234,8 @@ struct IlluColors {
         IlluColors(.keyPath(category: .archives, group: 4), colors: .commonColors5),
     ]
     static let illu2PinkColors = [
-        IlluColors(.keyPath(category: .notification, numero: 2, group: 4), colors: .pinkColors5),
-        IlluColors(.keyPath(category: .notification, numero: 2, group: 11), colors: .pinkColors1),
+        IlluColors(.keyPath(category: .notification, categoryNumber: 2, group: 4), colors: .pinkColors5),
+        IlluColors(.keyPath(category: .notification, categoryNumber: 2, group: 11), colors: .pinkColors1),
         IlluColors(.keyPath(category: .iPhoneScreen, group: 54), colors: .pinkColors5),
         IlluColors(.keyPath(category: .iPhoneScreen, group: 61), colors: .pinkColors6),
         IlluColors(.keyPath(category: .iPhoneScreen, group: 67), colors: .pinkColors1),
@@ -243,42 +243,42 @@ struct IlluColors {
         IlluColors(.keyPath(category: .hand, group: 1), colors: .pinkColors7),
         IlluColors(.keyPath(category: .hand, group: 4), colors: .pinkColors8),
         IlluColors(.keyPath(category: .hand, group: 5), colors: .pinkColors8),
-        IlluColors(.keyPath(category: .movingNotification, numero: 1, group: 15), colors: .pinkColors1),
-        IlluColors(.keyPath(category: .movingNotification, numero: 2, group: 4), colors: .pinkColors5),
-        IlluColors(.keyPath(category: .movingNotification, numero: 2, group: 11), colors: .pinkColors1)
+        IlluColors(.keyPath(category: .movingNotification, categoryNumber: 1, group: 15), colors: .pinkColors1),
+        IlluColors(.keyPath(category: .movingNotification, categoryNumber: 2, group: 4), colors: .pinkColors5),
+        IlluColors(.keyPath(category: .movingNotification, categoryNumber: 2, group: 11), colors: .pinkColors1)
     ]
     static let illu2BlueColors = [
-        IlluColors(.keyPath(category: .notification, numero: 2, group: 4), colors: .blueColors4),
-        IlluColors(.keyPath(category: .notification, numero: 2, group: 11), colors: .blueColors1),
+        IlluColors(.keyPath(category: .notification, categoryNumber: 2, group: 4), colors: .blueColors4),
+        IlluColors(.keyPath(category: .notification, categoryNumber: 2, group: 11), colors: .blueColors1),
         IlluColors(.keyPath(category: .hand, group: 1), colors: .blueColors6),
         IlluColors(.keyPath(category: .hand, group: 4), colors: .blueColors7),
         IlluColors(.keyPath(category: .hand, group: 5), colors: .blueColors7),
-        IlluColors(.keyPath(category: .movingNotification, numero: 1, group: 15), colors: .blueColors1),
-        IlluColors(.keyPath(category: .movingNotification, numero: 2, group: 4), colors: .blueColors4),
-        IlluColors(.keyPath(category: .movingNotification, numero: 2, group: 11), colors: .blueColors1)
+        IlluColors(.keyPath(category: .movingNotification, categoryNumber: 1, group: 15), colors: .blueColors1),
+        IlluColors(.keyPath(category: .movingNotification, categoryNumber: 2, group: 4), colors: .blueColors4),
+        IlluColors(.keyPath(category: .movingNotification, categoryNumber: 2, group: 11), colors: .blueColors1)
     ]
 
     static let illu3Colors = [
-        IlluColors(.keyPath(category: .notification, numero: 2, group: 1), colors: .commonColors2),
-        IlluColors(.keyPath(category: .notification, numero: 2, group: 2), colors: .commonColors2),
-        IlluColors(.keyPath(category: .notification, numero: 2, group: 3), colors: .commonColors5),
-        IlluColors(.keyPath(category: .notification, numero: 3, group: 1), colors: .commonColors2),
-        IlluColors(.keyPath(category: .notification, numero: 3, group: 2), colors: .commonColors2),
-        IlluColors(.keyPath(category: .notification, numero: 3, group: 3), colors: .commonColors5),
-        IlluColors(.keyPath(category: .notification, numero: 4, group: 1), colors: .commonColors2),
-        IlluColors(.keyPath(category: .notification, numero: 4, group: 2), colors: .commonColors2),
-        IlluColors(.keyPath(category: .notification, numero: 4, group: 3), colors: .commonColors5),
+        IlluColors(.keyPath(category: .notification, categoryNumber: 2, group: 1), colors: .commonColors2),
+        IlluColors(.keyPath(category: .notification, categoryNumber: 2, group: 2), colors: .commonColors2),
+        IlluColors(.keyPath(category: .notification, categoryNumber: 2, group: 3), colors: .commonColors5),
+        IlluColors(.keyPath(category: .notification, categoryNumber: 3, group: 1), colors: .commonColors2),
+        IlluColors(.keyPath(category: .notification, categoryNumber: 3, group: 2), colors: .commonColors2),
+        IlluColors(.keyPath(category: .notification, categoryNumber: 3, group: 3), colors: .commonColors5),
+        IlluColors(.keyPath(category: .notification, categoryNumber: 4, group: 1), colors: .commonColors2),
+        IlluColors(.keyPath(category: .notification, categoryNumber: 4, group: 2), colors: .commonColors2),
+        IlluColors(.keyPath(category: .notification, categoryNumber: 4, group: 3), colors: .commonColors5),
         IlluColors(.keyPath(category: .star, group: 2), colors: .commonColors3),
         IlluColors(.keyPath(category: .ben, group: 7), colors: .commonColors3),
         IlluColors(.keyPath(category: .ring, group: 5), colors: .commonColors3)
     ]
     static let illu3PinkColors = [
-        IlluColors(.keyPath(category: .notification, numero: 2, group: 4), colors: .pinkColors1),
-        IlluColors(.keyPath(category: .notification, numero: 2, group: 5), colors: .pinkColors9),
-        IlluColors(.keyPath(category: .notification, numero: 3, group: 4), colors: .pinkColors1),
-        IlluColors(.keyPath(category: .notification, numero: 3, group: 5), colors: .pinkColors9),
-        IlluColors(.keyPath(category: .notification, numero: 4, group: 4), colors: .pinkColors1),
-        IlluColors(.keyPath(category: .notification, numero: 4, group: 5), colors: .pinkColors9),
+        IlluColors(.keyPath(category: .notification, categoryNumber: 2, group: 4), colors: .pinkColors1),
+        IlluColors(.keyPath(category: .notification, categoryNumber: 2, group: 5), colors: .pinkColors9),
+        IlluColors(.keyPath(category: .notification, categoryNumber: 3, group: 4), colors: .pinkColors1),
+        IlluColors(.keyPath(category: .notification, categoryNumber: 3, group: 5), colors: .pinkColors9),
+        IlluColors(.keyPath(category: .notification, categoryNumber: 4, group: 4), colors: .pinkColors1),
+        IlluColors(.keyPath(category: .notification, categoryNumber: 4, group: 5), colors: .pinkColors9),
         IlluColors(.keyPath(category: .hand, group: 1), colors: .pinkColors7),
         IlluColors(.keyPath(category: .hand, group: 4), colors: .pinkColors8),
         IlluColors(.keyPath(category: .hand, group: 4), colors: .pinkColors8),
@@ -295,12 +295,12 @@ struct IlluColors {
         IlluColors(.keyPath(category: .ring, group: 4), colors: .pinkColors1)
     ]
     static let illu3BlueColors = [
-        IlluColors(.keyPath(category: .notification, numero: 2, group: 4), colors: .blueColors1),
-        IlluColors(.keyPath(category: .notification, numero: 2, group: 5), colors: .blueColors8),
-        IlluColors(.keyPath(category: .notification, numero: 3, group: 4), colors: .blueColors1),
-        IlluColors(.keyPath(category: .notification, numero: 3, group: 5), colors: .blueColors8),
-        IlluColors(.keyPath(category: .notification, numero: 4, group: 4), colors: .blueColors1),
-        IlluColors(.keyPath(category: .notification, numero: 4, group: 5), colors: .blueColors8),
+        IlluColors(.keyPath(category: .notification, categoryNumber: 2, group: 4), colors: .blueColors1),
+        IlluColors(.keyPath(category: .notification, categoryNumber: 2, group: 5), colors: .blueColors8),
+        IlluColors(.keyPath(category: .notification, categoryNumber: 3, group: 4), colors: .blueColors1),
+        IlluColors(.keyPath(category: .notification, categoryNumber: 3, group: 5), colors: .blueColors8),
+        IlluColors(.keyPath(category: .notification, categoryNumber: 4, group: 4), colors: .blueColors1),
+        IlluColors(.keyPath(category: .notification, categoryNumber: 4, group: 5), colors: .blueColors8),
         IlluColors(.keyPath(category: .hand, group: 1), colors: .blueColors6),
         IlluColors(.keyPath(category: .hand, group: 4), colors: .blueColors7),
         IlluColors(.keyPath(category: .hand, group: 4), colors: .blueColors7),
@@ -328,10 +328,10 @@ struct IlluColors {
     static let illu4PinkColors = [
         IlluColors(.keyPath(category: .woman, group: 4), colors: .pinkColors5),
         IlluColors(.keyPath(category: .men, group: 5), colors: .pinkColors4),
-        IlluColors(.keyPath(category: .point, numero: 1), colors: .pinkColors5),
-        IlluColors(.keyPath(category: .point, numero: 2), colors: .pinkColors5),
-        IlluColors(.keyPath(category: .point, numero: 3), colors: .pinkColors4),
-        IlluColors(.keyPath(category: .point, numero: 4), colors: .pinkColors4),
+        IlluColors(.keyPath(category: .point, categoryNumber: 1), colors: .pinkColors5),
+        IlluColors(.keyPath(category: .point, categoryNumber: 2), colors: .pinkColors5),
+        IlluColors(.keyPath(category: .point, categoryNumber: 3), colors: .pinkColors4),
+        IlluColors(.keyPath(category: .point, categoryNumber: 4), colors: .pinkColors4),
         IlluColors(.keyPath(category: .letter, group: 1), colors: .pinkColors10),
         IlluColors(.keyPath(category: .letter, group: 2), colors: .pinkColors11),
         IlluColors(.keyPath(category: .letter, group: 5), colors: .pinkColors12),
@@ -341,10 +341,10 @@ struct IlluColors {
     static let illu4BlueColors = [
         IlluColors(.keyPath(category: .woman, group: 4), colors: .blueColors4),
         IlluColors(.keyPath(category: .men, group: 5), colors: .blueColors3),
-        IlluColors(.keyPath(category: .point, numero: 1), colors: .blueColors4),
-        IlluColors(.keyPath(category: .point, numero: 2), colors: .blueColors4),
-        IlluColors(.keyPath(category: .point, numero: 3), colors: .blueColors3),
-        IlluColors(.keyPath(category: .point, numero: 4), colors: .blueColors3),
+        IlluColors(.keyPath(category: .point, categoryNumber: 1), colors: .blueColors4),
+        IlluColors(.keyPath(category: .point, categoryNumber: 2), colors: .blueColors4),
+        IlluColors(.keyPath(category: .point, categoryNumber: 3), colors: .blueColors3),
+        IlluColors(.keyPath(category: .point, categoryNumber: 4), colors: .blueColors3),
         IlluColors(.keyPath(category: .letter, group: 1), colors: .blueColors2),
         IlluColors(.keyPath(category: .letter, group: 2), colors: .blueColors9),
         IlluColors(.keyPath(category: .letter, group: 5), colors: .blueColors10),

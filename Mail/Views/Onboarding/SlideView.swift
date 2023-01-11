@@ -33,6 +33,8 @@ struct SlideView: View {
     @State private var segmentedControl: UISegmentedControl?
     @State private var imageSize: CGSize = .zero
 
+    @State private var isVisible = false
+
     var body: some View {
         GeometryReader { proxy in
             ZStack(alignment: .top) {
@@ -46,6 +48,7 @@ struct SlideView: View {
                     Spacer(minLength: Constants.onboardingLogoHeight + Constants.onboardingVerticalTopPadding)
 
                     LottieView(
+                        isVisible: $isVisible,
                         filename: slide.animationFile,
                         configuration: slide.lottieConfiguration,
                         updateColors: updateAnimationColors
@@ -86,6 +89,12 @@ struct SlideView: View {
                 // Handle accent color change
                 (window?.windowScene?.delegate as? SceneDelegate)?.updateWindowUI()
                 setSegmentedControlStyle()
+            }
+            .onAppear {
+                isVisible = true
+            }
+            .onDisappear {
+                isVisible = false
             }
         }
     }
