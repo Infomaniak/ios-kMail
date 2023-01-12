@@ -89,12 +89,19 @@ extension View {
     func swipeActions(thread: Thread,
                       viewModel: ThreadListViewModel,
                       multipleSelectionViewModel: ThreadListMultipleSelectionViewModel) -> some View {
-        modifier(ThreadListSwipeActions(thread: thread, viewModel: viewModel, multipleSelectionViewModel: multipleSelectionViewModel))
+        modifier(ThreadListSwipeActions(thread: thread,
+                                        viewModel: viewModel,
+                                        multipleSelectionViewModel: multipleSelectionViewModel))
     }
 }
 
 struct ThreadListSwipeAction_Previews: PreviewProvider {
     static var previews: some View {
+        SwipeActionView(thread: PreviewHelper.sampleThread,
+                        viewModel: ThreadListViewModel(mailboxManager: PreviewHelper.sampleMailboxManager,
+                                                       folder: nil,
+                                                       bottomSheet: ThreadBottomSheet()),
+                        action: .delete)
         SwipeActionView(thread: PreviewHelper.sampleThread,
                         viewModel: ThreadListViewModel(mailboxManager: PreviewHelper.sampleMailboxManager,
                                                        folder: nil,
