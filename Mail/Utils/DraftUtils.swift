@@ -20,6 +20,7 @@ import Foundation
 import MailCore
 import SwiftUI
 
+@MainActor
 class DraftUtils {
     public static func editDraft(from thread: Thread, mailboxManager: MailboxManager, editedMessageDraft: Binding<Draft?>) {
         guard let message = thread.messages.first else { return }
