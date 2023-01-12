@@ -17,6 +17,7 @@
  */
 
 import Introspect
+import Lottie
 import MailCore
 import MailResources
 import SwiftUI
@@ -32,6 +33,8 @@ struct SlideView: View {
     @State private var segmentedControl: UISegmentedControl?
     @State private var imageSize: CGSize = .zero
 
+    @State private var isVisible = false
+
     var body: some View {
         GeometryReader { proxy in
             ZStack(alignment: .top) {
@@ -44,8 +47,13 @@ struct SlideView: View {
                 VStack(spacing: 0) {
                     Spacer(minLength: Constants.onboardingLogoHeight + Constants.onboardingVerticalTopPadding)
 
-                    LottieView(filename: slide.animationFile)
-                        .frame(height: 0.43 * proxy.size.height)
+                    LottieView(
+                        isVisible: $isVisible,
+                        filename: slide.animationFile,
+                        configuration: slide.lottieConfiguration,
+                        updateColors: updateAnimationColors
+                    )
+                    .frame(height: 0.43 * proxy.size.height)
 
                     Spacer(minLength: 8)
 
@@ -82,6 +90,12 @@ struct SlideView: View {
                 (window?.windowScene?.delegate as? SceneDelegate)?.updateWindowUI()
                 setSegmentedControlStyle()
             }
+            .onAppear {
+                isVisible = true
+            }
+            .onDisappear {
+                isVisible = false
+            }
         }
     }
 
@@ -91,6 +105,67 @@ struct SlideView: View {
         let nonAccentColor: AccentColor = accentColor == .pink ? .blue : .pink
         segmentedControl?.setTitleTextAttributes([.foregroundColor: nonAccentColor.primary.color], for: .normal)
         segmentedControl?.backgroundColor = nonAccentColor.secondary.color
+    }
+
+    private func updateAnimationColors(_ animation: LottieAnimationView, _ configuration: LottieConfiguration) {
+        IlluColors.allColors.forEach { $0.applyColors(to: animation) }
+
+        if configuration.id == 2 || configuration.id == 3 || configuration.id == 4 {
+            IlluColors.illu234Colors.forEach { $0.applyColors(to: animation) }
+        }
+
+        switch configuration.id {
+        case 1:
+            IlluColors.illu1Colors.forEach { $0.applyColors(to: animation) }
+        case 2:
+            IlluColors.illu2Colors.forEach { $0.applyColors(to: animation) }
+        case 3:
+            IlluColors.illu3Colors.forEach { $0.applyColors(to: animation) }
+        case 4:
+            IlluColors.illu4Colors.forEach { $0.applyColors(to: animation) }
+        default:
+            break
+        }
+
+        if UserDefaults.shared.accentColor == .pink {
+            IlluColors.pinkColors.forEach { $0.applyColors(to: animation) }
+
+            if configuration.id == 2 || configuration.id == 3 || configuration.id == 4 {
+                IlluColors.illu234PinkColors.forEach { $0.applyColors(to: animation) }
+            }
+
+            switch configuration.id {
+            case 1:
+                IlluColors.illu1PinkColors.forEach { $0.applyColors(to: animation) }
+            case 2:
+                IlluColors.illu2PinkColors.forEach { $0.applyColors(to: animation) }
+            case 3:
+                IlluColors.illu3PinkColors.forEach { $0.applyColors(to: animation) }
+            case 4:
+                IlluColors.illu4PinkColors.forEach { $0.applyColors(to: animation) }
+            default:
+                break
+            }
+        } else {
+            IlluColors.blueColors.forEach { $0.applyColors(to: animation) }
+
+            if configuration.id == 2 || configuration.id == 3 || configuration.id == 4 {
+                IlluColors.illu234BlueColors.forEach { $0.applyColors(to: animation) }
+            }
+
+            switch configuration.id {
+            case 1:
+                IlluColors.illu1BlueColors.forEach { $0.applyColors(to: animation) }
+            case 2:
+                IlluColors.illu2BlueColors.forEach { $0.applyColors(to: animation) }
+            case 3:
+                IlluColors.illu3BlueColors.forEach { $0.applyColors(to: animation) }
+            case 4:
+                IlluColors.illu4BlueColors.forEach { $0.applyColors(to: animation) }
+            default:
+                break
+            }
+        }
     }
 }
 
@@ -106,12 +181,6 @@ struct SlideView_Previews: PreviewProvider {
     }
 
     static var slideView: some View {
-        SlideView(slide: Slide(
-            id: 1,
-            backgroundImage: Image(resource: MailResourcesAsset.onboardingBackground1),
-            animationFile: "illu_1",
-            title: "Title",
-            description: "Description"
-        ))
+        SlideView(slide: Slide.allSlides[0])
     }
 }
