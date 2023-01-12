@@ -116,16 +116,7 @@ public class DraftManager {
 
                         switch draft.action {
                         case .initialSave:
-                            guard draft.body != emptyDraftBody else {
-                                self.deleteEmptyDraft(draft: draft)
-                                return nil
-                            }
-
-                            await self.saveDraft(draft: draft, mailboxManager: mailboxManager)
-                            await IKSnackBar.showSnackBar(message: MailResourcesStrings.Localizable.snackBarDraftSaved,
-                                                          action: .init(title: MailResourcesStrings.Localizable.actionDelete) { [weak self] in
-                                                              self?.deleteDraftSnackBarAction(draft: draft, mailboxManager: mailboxManager)
-                                                          })
+                            await self.initialSave(draft: draft, mailboxManager: mailboxManager, emptyDraftBody: emptyDraftBody)
                         case .save:
                             await self.saveDraft(draft: draft, mailboxManager: mailboxManager)
                         case .send:
@@ -144,11 +135,24 @@ public class DraftManager {
                 return latestSendDate
             }
 
-            try await refreshDraftFolder(pendingDrafts: drafts, latestSendDate: latestSendDate, mailboxManager: mailboxManager)
+            try await refreshDraftFolder(latestSendDate: latestSendDate, mailboxManager: mailboxManager)
         }
     }
 
-    private func refreshDraftFolder(pendingDrafts: Results<Draft>, latestSendDate: Date?, mailboxManager: MailboxManager) async throws {
+    private func initialSave(draft: Draft, mailboxManager: MailboxManager, emptyDraftBody: String) async {
+        guard draft.body != emptyDraftBody else {
+            deleteEmptyDraft(draft: draft)
+            return
+        }
+
+        await saveDraft(draft: draft, mailboxManager: mailboxManager)
+        await IKSnackBar.showSnackBar(message: MailResourcesStrings.Localizable.snackBarDraftSaved,
+                                      action: .init(title: MailResourcesStrings.Localizable.actionDelete) { [weak self] in
+                                          self?.deleteDraftSnackBarAction(draft: draft, mailboxManager: mailboxManager)
+                                      })
+    }
+
+    private func refreshDraftFolder(latestSendDate: Date?, mailboxManager: MailboxManager) async throws {
         if let draftFolder = mailboxManager.getFolder(with: .draft)?.freeze() {
             try await mailboxManager.threads(folder: draftFolder)
 
