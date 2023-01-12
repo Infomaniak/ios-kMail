@@ -34,10 +34,10 @@ struct SwipeConfigCell: View {
                 newActions.append(action)
             }
         } else if section == .leftSwipe {
-            if let action = selectedValues[.swipeLongLeftOption] as? SwipeAction {
+            if let action = selectedValues[.swipeShortLeftOption] as? SwipeAction {
                 newActions.append(action)
             }
-            if let action = selectedValues[.swipeShortLeftOption] as? SwipeAction {
+            if let action = selectedValues[.swipeLongLeftOption] as? SwipeAction {
                 newActions.append(action)
             }
         }
@@ -90,8 +90,15 @@ struct SwipeConfigCell: View {
 struct SwipeConfigCell_Previews: PreviewProvider {
     static var previews: some View {
         SwipeConfigCell(selectedValues: .constant([.swipeLongRightOption: SwipeAction.readUnread]), section: .rightSwipe)
+            .previewDisplayName("Swipe Long Right")
+
         SwipeConfigCell(selectedValues: .constant([.swipeLongRightOption: SwipeAction.readUnread, .swipeShortRightOption: SwipeAction.archive]), section: .rightSwipe)
+            .previewDisplayName("Swipe Right")
+
         SwipeConfigCell(selectedValues: .constant([.swipeLongLeftOption: SwipeAction.delete]), section: .leftSwipe)
+            .previewDisplayName("Swipe Long Left")
+
         SwipeConfigCell(selectedValues: .constant([.swipeLongLeftOption: SwipeAction.delete, .swipeShortLeftOption: SwipeAction.quickAction]), section: .leftSwipe)
+            .previewDisplayName("Swipe Left")
     }
 }
