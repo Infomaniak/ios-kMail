@@ -239,7 +239,7 @@ public class Draft: Object, Decodable, Identifiable, Encodable {
         return Draft(localUUID: localDraftUUID,
                      inReplyToUid: mode.isReply ? message.uid : nil,
                      forwardedUid: mode == .forward([]) ? message.uid : nil,
-                     references: message.messageId,
+                     references: "\(message.references ?? "") \(message.messageId ?? "")",
                      inReplyTo: message.messageId,
                      subject: subject,
                      body: "<br><br>\(quote)",
