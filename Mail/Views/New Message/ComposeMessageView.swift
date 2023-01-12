@@ -249,15 +249,15 @@ struct ComposeMessageView: View {
             }
         }
         .task {
-            if draft.messageUid != nil && draft.remoteUUID.isEmpty {
-                do {
-                    if let fetchedDraft = try await mailboxManager.draft(partialDraft: draft),
-                       let liveFetchedDraft = fetchedDraft.thaw() {
-                        self.draft = liveFetchedDraft
-                    }
-                } catch {
-                    // Fail silently
+            guard draft.messageUid != nil && draft.remoteUUID.isEmpty else { return }
+
+            do {
+                if let fetchedDraft = try await mailboxManager.draft(partialDraft: draft),
+                   let liveFetchedDraft = fetchedDraft.thaw() {
+                    self.draft = liveFetchedDraft
                 }
+            } catch {
+                // Fail silently
             }
         }
         .navigationViewStyle(.stack)
