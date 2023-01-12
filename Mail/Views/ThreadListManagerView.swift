@@ -36,8 +36,6 @@ struct ThreadListManagerView: View {
                 if let tappedNotificationThread {
                     ThreadView(mailboxManager: mailboxManager,
                                thread: tappedNotificationThread)
-                } else {
-                    EmptyView()
                 }
             } label: {
                 EmptyView()
