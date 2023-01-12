@@ -58,10 +58,10 @@ struct AttachmentsView: View {
                 Label {
                     Text("\(MailResourcesStrings.Localizable.attachmentQuantity(attachments.count)) (\(message.attachmentsSize, format: .defaultByteCount))")
                 } icon: {
-                    Image(resource: MailResourcesAsset.attachment2)
+                    Image(resource: MailResourcesAsset.attachment)
                         .resizable()
                         .scaledToFit()
-                        .frame(width: 15, height: 15)
+                        .frame(width: 8, height: 16)
                 }
                 .textStyle(.bodySmallSecondary)
 
