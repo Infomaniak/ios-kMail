@@ -25,10 +25,16 @@ public extension Array where Element: RealmCollectionValue {
         list.append(objectsIn: self)
         return list
     }
-    
+
     func toRealmSet() -> MutableSet<Element> {
         let set = MutableSet<Element>()
         set.insert(objectsIn: self)
         return set
+    }
+}
+
+public extension LazyFilterSequence {
+    func toArray() -> [Base.Element] {
+        return Array(self)
     }
 }

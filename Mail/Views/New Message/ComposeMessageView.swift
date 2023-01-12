@@ -151,10 +151,11 @@ struct ComposeMessageView: View {
                                 .focused($focusedField, equals: .subject)
                         }
 
-                        if let attachments = draft.attachments.filter { $0.contentId == nil }, !attachments.isEmpty {
+                        if let attachments = draft.attachments.filter { $0.contentId == nil }.toArray(),
+                           !attachments.isEmpty {
                             ScrollView(.horizontal, showsIndicators: false) {
                                 HStack(spacing: 8) {
-                                    ForEach(Array(attachments)) { attachment in
+                                    ForEach(attachments) { attachment in
                                         AttachmentCell(attachment: attachment, isNewMessage: true) { attachmentRemoved in
                                             removeAttachment(attachmentRemoved)
                                         }
