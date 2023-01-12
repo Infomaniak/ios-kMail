@@ -41,6 +41,7 @@ struct ThreadView: View {
     let mailboxManager: MailboxManager
     @ObservedRealmObject var thread: Thread
 
+    @State private var headerHeight: CGFloat = 0
     @State private var displayNavigationTitle = false
     @State private var messageReply: MessageReply?
 
@@ -56,53 +57,59 @@ struct ThreadView: View {
     private var messages: [Message] {
         return Array(thread.messages)
     }
+    private var threadBackground: Color {
+        messages.count > 1
+            ? MailResourcesAsset.backgroundCardColor.swiftUiColor
+            : MailResourcesAsset.backgroundColor.swiftUiColor
+    }
 
     var body: some View {
         ScrollView {
-            GeometryReader { geometry in
-                Color.clear.preference(
-                    key: ScrollOffsetPreferenceKey.self,
-                    value: geometry.frame(in: .named("scrollView")).origin
-                )
-            }
-            .frame(width: 0, height: 0)
-
-            Text(thread.formattedSubject)
-                .textStyle(.header2)
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .multilineTextAlignment(.leading)
-                .lineSpacing(8)
-                .padding(.top, 8)
-                .padding(.bottom, 16)
-                .padding(.horizontal, 16)
-
-            LazyVStack(spacing: 0) {
-                ForEach(messages.indices, id: \.self) { index in
-                    let isMessageExpanded = ((index == messages.count - 1) && !messages[index].isDraft) || !messages[index].seen
-                    MessageView(message: messages[index], isMessageExpanded: isMessageExpanded)
+            VStack(spacing: 0) {
+                GeometryReader { geometry in
+                    Color.clear.preference(
+                        key: ScrollOffsetPreferenceKey.self,
+                        value: geometry.frame(in: .named("scrollView")).origin
+                    )
                 }
+                .frame(width: 0, height: 0)
+
+                Text(thread.formattedSubject)
+                    .textStyle(.header2)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .multilineTextAlignment(.leading)
+                    .lineSpacing(8)
+                    .padding(.top, 8)
+                    .padding(.bottom, 16)
+                    .padding(.horizontal, 16)
+                    .background(MailResourcesAsset.backgroundColor.swiftUiColor)
+
+                LazyVStack(spacing: 0) {
+                    ForEach(messages.indices, id: \.self) { index in
+                        let isMessageExpanded = ((index == messages.count - 1) && !messages[index].isDraft) || !messages[index].seen
+                        MessageView(message: messages[index], isMessageExpanded: isMessageExpanded)
+                    }
+                }
+                .padding(.top, 8)
+                .background(threadBackground)
             }
-            .padding(.top, 8)
-            .background(messages.count > 1 ? MailResourcesAsset.backgroundCardColor.swiftUiColor : MailResourcesAsset.backgroundColor.swiftUiColor)
         }
         .coordinateSpace(name: "scrollView")
         .onPreferenceChange(ScrollOffsetPreferenceKey.self) { offset in
             displayNavigationTitle = offset.y < -85
         }
-        .navigationTitle(displayNavigationTitle ? thread.formattedSubject : "")
-        .navigationBarThreadViewStyle()
-        .backButtonDisplayMode(.minimal)
         .onAppear {
             MatomoUtils.track(view: ["MessageView"])
         }
-        .environmentObject(mailboxManager)
-        .environmentObject(bottomSheet)
-        .environmentObject(threadBottomSheet)
         .task {
             if thread.hasUnseenMessages {
                 try? await mailboxManager.toggleRead(threads: [thread])
             }
         }
+        .background(scrollViewBackground)
+        .navigationTitle(displayNavigationTitle ? thread.formattedSubject : "")
+        .navigationBarThreadViewStyle()
+        .backButtonDisplayMode(.minimal)
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
                 Button {
@@ -128,6 +135,9 @@ struct ThreadView: View {
                 }
             }
         }
+        .environmentObject(mailboxManager)
+        .environmentObject(bottomSheet)
+        .environmentObject(threadBottomSheet)
         .sheet(item: $messageReply) { messageReply in
             ComposeMessageView.replyOrForwardMessage(messageReply: messageReply, mailboxManager: mailboxManager)
         }
@@ -170,6 +180,16 @@ struct ThreadView: View {
             }
             if thread.messageInFolderCount == 0 {
                 dismiss()
+            }
+        }
+    }
+
+    private var scrollViewBackground: some View {
+        GeometryReader { proxy in
+            VStack(spacing: 0) {
+                MailResourcesAsset.backgroundColor.swiftUiColor
+                    .frame(maxHeight: proxy.size.height * 0.2)
+                threadBackground
             }
         }
     }
