@@ -249,9 +249,11 @@ private struct ThreadListToolbar: ViewModifier {
                     }
 
                     ToolbarItem(placement: .principal) {
-                        Text(splitViewManager.selectedFolder?.localizedName ?? "")
-                            .textStyle(.header1)
-                            .frame(maxWidth: .infinity, alignment: .leading)
+                        if !multipleSelectionViewModel.isEnabled {
+                            Text(splitViewManager.selectedFolder?.localizedName ?? "")
+                                .textStyle(.header1)
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                        }
                     }
 
                     ToolbarItemGroup(placement: .navigationBarTrailing) {
