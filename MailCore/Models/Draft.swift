@@ -200,15 +200,19 @@ public class Draft: Object, Decodable, Identifiable, Encodable {
     }
 
     public static func replying(to message: Message, mode: ReplyMode, localDraftUUID: String) -> Draft {
-        let subject: String
+        var subject = "\(message.formattedSubject)"
         let quote: String
         var attachments: [Attachment] = []
         switch mode {
         case .reply, .replyAll:
-            subject = "Re: \(message.formattedSubject)"
+            if !subject.starts(with: "Re: ") {
+                subject = "Re: \(subject)"
+            }
             quote = Constants.replyQuote(message: message)
         case let .forward(attachmentsToForward):
-            subject = "Fwd: \(message.formattedSubject)"
+            if !subject.starts(with: "Fwd: ") {
+                subject = "Fwd: \(subject)"
+            }
             quote = Constants.forwardQuote(message: message)
             attachments = attachmentsToForward
         }
