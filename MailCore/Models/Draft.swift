@@ -187,7 +187,9 @@ public class Draft: Object, Decodable, Identifiable, Encodable {
 
     public static func mailTo(subject: String?,
                               body: String?,
-                              to: [Recipient], cc: [Recipient], bcc: [Recipient]) -> Draft {
+                              to: [Recipient],
+                              cc: [Recipient],
+                              bcc: [Recipient]) -> Draft {
         return Draft(subject: subject ?? "",
                      body: body ?? "",
                      to: to,
