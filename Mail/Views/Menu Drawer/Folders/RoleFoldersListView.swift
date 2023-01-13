@@ -34,6 +34,5 @@ struct RoleFoldersListView: View {
         }
         .padding(.top, 4)
         .padding(.bottom, 12)
-
     }
 }

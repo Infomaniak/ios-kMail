@@ -72,6 +72,6 @@ struct UserFoldersListView: View {
             }
         }
         .padding(.top, 16)
-        .padding(.bottom, 24)
+        .padding(.bottom, 12)
     }
 }

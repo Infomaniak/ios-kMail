@@ -52,7 +52,7 @@ struct MailboxesManagementButtonView: View {
                 }
             }
         }
-        .padding(.vertical, 12)
+        .padding(.vertical, 10)
         .padding(.horizontal, Constants.menuDrawerHorizontalPadding)
     }
 }
