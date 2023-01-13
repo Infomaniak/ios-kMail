@@ -30,13 +30,9 @@ struct RoleFoldersListView: View {
         VStack(spacing: 0) {
             ForEach(folders) { folder in
                 FolderCell(folder: folder, isCompact: isCompact)
-
-                if folder.content.role == .inbox {
-                    IKDivider(withPadding: true)
-                        .padding(.vertical, Constants.menuDrawerVerticalPadding)
-                }
             }
         }
-        .padding(.vertical, Constants.menuDrawerVerticalPadding)
+        .padding(.top, 4)
+        .padding(.bottom, 12)
     }
 }

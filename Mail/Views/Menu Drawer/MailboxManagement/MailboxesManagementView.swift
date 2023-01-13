@@ -51,7 +51,7 @@ struct MailboxesManagementView: View {
                         .foregroundColor(.accentColor)
                         .padding(.trailing, 16)
                     Text(mailboxManager.mailbox.email)
-                        .textStyle(.bodyMediumAccent)
+                        .textStyle(navigationDrawerState.showMailboxes ? .bodyMediumAccent : .bodyMedium)
                         .lineLimit(1)
                     Spacer()
                     if !otherMailboxes.isEmpty {
@@ -61,12 +61,11 @@ struct MailboxesManagementView: View {
                 .environment(\.isEnabled, true)
                 .padding(.vertical, Constants.menuDrawerVerticalPadding)
                 .padding(.horizontal, Constants.menuDrawerHorizontalPadding)
-                .background(SelectionBackground(isSelected: true, offsetX: 8, leadingPadding: 0, verticalPadding: 0))
             }
             .disabled(otherMailboxes.isEmpty)
 
             if navigationDrawerState.showMailboxes {
-                VStack(alignment: .leading, spacing: 4) {
+                VStack(alignment: .leading) {
                     ForEach(otherMailboxes) { mailbox in
                         MailboxCell(mailbox: mailbox)
                     }
@@ -75,6 +74,9 @@ struct MailboxesManagementView: View {
                     try? await updateAccount()
                 }
             }
+
+            IKDivider(withPadding: true)
+                .padding(.top, 8)
         }
         .padding(.top, 16)
         .task {
