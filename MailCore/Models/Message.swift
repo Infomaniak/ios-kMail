@@ -166,14 +166,12 @@ public class Message: Object, Decodable, Identifiable {
         }
     }
 
-    public func computeReference() {
+    public func computeReference(using regex: NSRegularExpression) {
         if let refs = references, !refs.isEmpty {
-            let refsArray = refs.split { $0 == "<" || $0 == ">" || $0 == " " }.map { String($0) }
-            linkedUids.insert(objectsIn: refsArray)
+            linkedUids.insert(objectsIn: refs.parse(using: regex))
         }
         if let reply = inReplyTo, !reply.isEmpty {
-            let replyArray = reply.split { $0 == "<" || $0 == ">" || $0 == " " }.map { String($0) }
-            linkedUids.insert(objectsIn: replyArray)
+            linkedUids.insert(objectsIn: reply.parse(using: regex))
         }
     }
 
