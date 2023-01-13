@@ -166,12 +166,12 @@ public class Message: Object, Decodable, Identifiable {
         }
     }
 
-    public func computeReference(using regex: NSRegularExpression) {
-        if let refs = references, !refs.isEmpty {
-            linkedUids.insert(objectsIn: refs.parse(using: regex))
+    public func computeReference() {
+        if let references {
+            linkedUids.insert(objectsIn: references.parseMessageIds())
         }
-        if let reply = inReplyTo, !reply.isEmpty {
-            linkedUids.insert(objectsIn: reply.parse(using: regex))
+        if let inReplyTo {
+            linkedUids.insert(objectsIn: inReplyTo.parseMessageIds())
         }
     }
 

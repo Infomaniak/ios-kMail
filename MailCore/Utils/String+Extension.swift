@@ -37,9 +37,9 @@ public extension String {
         return String(dropLast(suffix.count))
     }
 
-    func parse(using regex: NSRegularExpression) -> [String] {
+    func parseMessageIds() -> [String] {
         let string = removePrefix("<").removeSuffix(">")
-        let modString = regex.stringByReplacingMatches(
+        let modString = Constants.referenceRegex.stringByReplacingMatches(
             in: string,
             range: NSRange(location: 0, length: string.count),
             withTemplate: "><"

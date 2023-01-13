@@ -694,39 +694,32 @@ public class MailboxManager: ObservableObject {
 
     private func createMultiMessagesThreads(messageByUids: MessageByUidsResult, folder: Folder, using realm: Realm) {
         var threadsToUpdate = Set<Thread>()
-        do {
-            let regex = try NSRegularExpression(pattern: Constants.referenceRegex)
+        try? realm.safeWrite {
+            for message in messageByUids.messages {
+                if realm.object(ofType: Message.self, forPrimaryKey: message.uid) == nil {
+                    message.inTrash = folder.role == .trash
+                    message.computeReference()
+                    let existingThreads = Array(realm.objects(Thread.self)
+                        .where { $0.messageIds.containsAny(in: message.linkedUids) })
 
-            try? realm.safeWrite {
-                for message in messageByUids.messages {
-                    if realm.object(ofType: Message.self, forPrimaryKey: message.uid) == nil {
-                        message.inTrash = folder.role == .trash
-                        message.computeReference(using: regex)
-                        let existingThreads = Array(realm.objects(Thread.self)
-                            .where { $0.messageIds.containsAny(in: message.linkedUids) })
-
-                        if let newThread = createNewThreadIfRequired(
-                            for: message,
-                            folder: folder,
-                            existingThreads: existingThreads
-                        ) {
-                            threadsToUpdate.insert(newThread)
-                        }
-
-                        for thread in existingThreads {
-                            thread.addMessageIfNeeded(newMessage: message.fresh(using: realm) ?? message)
-                            threadsToUpdate.insert(thread)
-                        }
+                    if let newThread = createNewThreadIfRequired(
+                        for: message,
+                        folder: folder,
+                        existingThreads: existingThreads
+                    ) {
+                        threadsToUpdate.insert(newThread)
                     }
-                }
 
-                for thread in threadsToUpdate {
-                    thread.recompute()
+                    for thread in existingThreads {
+                        thread.addMessageIfNeeded(newMessage: message.fresh(using: realm) ?? message)
+                        threadsToUpdate.insert(thread)
+                    }
                 }
             }
 
-        } catch {
-            DDLogError("Error referencing messages \(error)")
+            for thread in threadsToUpdate {
+                thread.recompute()
+            }
         }
     }
 
