@@ -621,8 +621,7 @@ public class MailboxManager: ObservableObject {
         if previousCursor == nil {
             let messageUidsResult = try await apiFetcher.messagesUids(
                 mailboxUuid: mailbox.uuid,
-                folderId: folder.id,
-                dateSince: Constants.dateSince()
+                folderId: folder.id
             )
             newCursor = messageUidsResult.cursor
             addedShortUids.append(contentsOf: messageUidsResult.messageShortUids.map { String($0) })

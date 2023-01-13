@@ -146,6 +146,8 @@ public enum Constants {
         return dateFormatter.string(from: date)
     }
 
+    public static let messageQuantityLimit = 500
+
     public static func longUid(from shortUid: String, folderId: String) -> String {
         return "\(shortUid)@\(folderId)"
     }

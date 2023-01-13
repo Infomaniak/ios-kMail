@@ -96,9 +96,9 @@ public extension Endpoint {
         return Endpoint(hostKeypath: \.mailHost, path: "/api/mail/\(mailboxUuid)/folder/\(folderId)/mobile")
     }
 
-    static func messagesUids(mailboxUuid: String, folderId: String, dateSince: String) -> Endpoint {
+    static func messagesUids(mailboxUuid: String, folderId: String) -> Endpoint {
         return .messages(mailboxUuid: mailboxUuid, folderId: folderId).appending(path: "/messages_uids", queryItems: [
-            URLQueryItem(name: "since", value: dateSince)
+            URLQueryItem(name: "messages", value: String(Constants.messageQuantityLimit))
         ])
     }
 
