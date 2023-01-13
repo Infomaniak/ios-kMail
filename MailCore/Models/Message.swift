@@ -167,19 +167,11 @@ public class Message: Object, Decodable, Identifiable {
     }
 
     public func computeReference() {
-        if var refs = references, !refs.isEmpty {
-            refs.removeFirst()
-            refs.removeLast()
-            refs = refs.replacingOccurrences(of: "> <", with: "><")
-            let refsArray = refs.components(separatedBy: "><")
-            linkedUids.insert(objectsIn: refsArray)
+        if let references {
+            linkedUids.insert(objectsIn: references.parseMessageIds())
         }
-        if var reply = inReplyTo, !reply.isEmpty {
-            reply.removeFirst()
-            reply.removeLast()
-            reply = reply.replacingOccurrences(of: "> <", with: "><")
-            let replyArray = reply.components(separatedBy: "><")
-            linkedUids.insert(objectsIn: replyArray)
+        if let inReplyTo {
+            linkedUids.insert(objectsIn: inReplyTo.parseMessageIds())
         }
     }
 

@@ -26,4 +26,24 @@ public extension String {
             return components(separatedBy: CharacterSet.punctuationCharacters).joined(separator: "")
         }
     }
+
+    func removePrefix(_ prefix: String) -> String {
+        guard hasPrefix(prefix) else { return self }
+        return String(dropFirst(prefix.count))
+    }
+
+    func removeSuffix(_ suffix: String) -> String {
+        guard hasSuffix(suffix) else { return self }
+        return String(dropLast(suffix.count))
+    }
+
+    func parseMessageIds() -> [String] {
+        let string = removePrefix("<").removeSuffix(">")
+        let modString = Constants.referenceRegex.stringByReplacingMatches(
+            in: string,
+            range: NSRange(location: 0, length: string.count),
+            withTemplate: "><"
+        )
+        return modString.components(separatedBy: "><")
+    }
 }

@@ -702,7 +702,11 @@ public class MailboxManager: ObservableObject {
                     let existingThreads = Array(realm.objects(Thread.self)
                         .where { $0.messageIds.containsAny(in: message.linkedUids) })
 
-                    if let newThread = createNewThreadIfRequired(for: message, folder: folder, existingThreads: existingThreads) {
+                    if let newThread = createNewThreadIfRequired(
+                        for: message,
+                        folder: folder,
+                        existingThreads: existingThreads
+                    ) {
                         threadsToUpdate.insert(newThread)
                     }
 
