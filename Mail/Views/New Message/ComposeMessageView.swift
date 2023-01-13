@@ -62,6 +62,7 @@ struct ComposeMessageView: View {
     @State private var isShowingCamera = false
     @State private var isShowingFileSelection = false
     @State private var isShowingPhotoLibrary = false
+    @StateObject private var attachmentsManager: AttachmentsManager
 
     @State var scrollView: UIScrollView?
 
@@ -87,6 +88,7 @@ struct ComposeMessageView: View {
 
         _draft = StateRealmObject(wrappedValue: draft)
         _showCc = State(initialValue: !draft.bcc.isEmpty || !draft.cc.isEmpty)
+        _attachmentsManager = StateObject(wrappedValue: AttachmentsManager(draft: draft, mailboxManager: mailboxManager))
     }
 
     static func newMessage(mailboxManager: MailboxManager) -> ComposeMessageView {
@@ -151,20 +153,9 @@ struct ComposeMessageView: View {
                                 .focused($focusedField, equals: .subject)
                         }
 
-                        if let attachments = draft.attachments.filter { $0.contentId == nil }.toArray(),
-                           !attachments.isEmpty {
-                            ScrollView(.horizontal, showsIndicators: false) {
-                                HStack(spacing: 8) {
-                                    ForEach(attachments) { attachment in
-                                        AttachmentCell(attachment: attachment, isNewMessage: true) { attachmentRemoved in
-                                            removeAttachment(attachmentRemoved)
-                                        }
-                                    }
-                                }
-                                .padding(.vertical, 1)
-                            }
-                            .padding(.horizontal, 16)
-                        }
+                        AttachmentsHeaderView(attachments: draft.attachments.filter { $0.contentId == nil }.toArray(),
+                                              attachmentsManager: attachmentsManager)
+
                         RichTextEditor(model: $editor,
                                        body: $draft.body,
                                        alert: $alert,
@@ -222,24 +213,18 @@ struct ComposeMessageView: View {
         }
         .fullScreenCover(isPresented: $isShowingCamera) {
             CameraPicker { data in
-                Task {
-                    await addCameraAttachment(data: data)
-                }
+                attachmentsManager.addCameraAttachment(data: data)
             }
             .ignoresSafeArea()
         }
         .sheet(isPresented: $isShowingFileSelection) {
             DocumentPicker { urls in
-                Task {
-                    await addDocumentAttachment(urls: urls)
-                }
+                attachmentsManager.addDocumentAttachment(urls: urls)
             }
         }
         .sheet(isPresented: $isShowingPhotoLibrary) {
             ImagePicker { results in
-                Task {
-                    await addImageAttachment(results: results)
-                }
+                attachmentsManager.addImageAttachment(results: results)
             }
         }
         .customAlert(isPresented: $alert.isShowing) {
@@ -304,147 +289,6 @@ struct ComposeMessageView: View {
             }
         }
         dismiss()
-    }
-
-    // MARK: Attachments
-
-    func addDocumentAttachment(urls: [URL]) async {
-        await withTaskGroup(of: Void.self) { group in
-            for url in urls {
-                group.addTask {
-                    do {
-                        let typeIdentifier = try url.resourceValues(forKeys: [.typeIdentifierKey]).typeIdentifier ?? ""
-
-                        _ = try await self.sendAttachment(
-                            url: url,
-                            typeIdentifier: typeIdentifier,
-                            name: url.lastPathComponent,
-                            disposition: .attachment
-                        )
-
-                    } catch {
-                        print("Error while creating attachment: \(error.localizedDescription)")
-                    }
-                }
-            }
-        }
-    }
-
-    private func addImageAttachment(
-        results: [PHPickerResult],
-        disposition: AttachmentDisposition = .attachment,
-        completion: @escaping (String) -> Void = { _ in
-            // TODO: - Manage inline attachment
-        }
-    ) async {
-        let itemProviders = results.map(\.itemProvider)
-        await withTaskGroup(of: Void.self) { group in
-            for itemProvider in itemProviders {
-                group.addTask {
-                    do {
-                        let typeIdentifier = itemProvider.registeredTypeIdentifiers.first ?? ""
-                        let url = try await self.loadFileRepresentation(itemProvider, typeIdentifier: typeIdentifier)
-                        let name = itemProvider.suggestedName ?? self.getDefaultFileName()
-
-                        let attachment = try await self.sendAttachment(
-                            url: url,
-                            typeIdentifier: typeIdentifier,
-                            name: name,
-                            disposition: disposition
-                        )
-                        if disposition == .inline, let cid = attachment?.contentId {
-                            completion(cid)
-                        }
-                    } catch {
-                        print("Error while creating attachment: \(error.localizedDescription)")
-                    }
-                }
-            }
-        }
-    }
-
-    private func addCameraAttachment(
-        data: Data,
-        disposition: AttachmentDisposition = .attachment,
-        completion: @escaping (String) -> Void = { _ in
-            // TODO: - Manage inline attachment
-        }
-    ) async {
-        do {
-            let typeIdentifier = "public.jpeg"
-            let name = getDefaultFileName()
-
-            let attachment = try await sendAttachment(
-                from: data,
-                typeIdentifier: typeIdentifier,
-                name: name,
-                disposition: disposition
-            )
-
-            if disposition == .inline, let cid = attachment?.contentId {
-                completion(cid)
-            }
-        } catch {
-            print("Error while creating attachment: \(error.localizedDescription)")
-        }
-    }
-
-    private func loadFileRepresentation(_ itemProvider: NSItemProvider, typeIdentifier: String) async throws -> URL {
-        try await withCheckedThrowingContinuation { continuation in
-            itemProvider.loadFileRepresentation(forTypeIdentifier: typeIdentifier) { url, error in
-                if let url = url {
-                    continuation.resume(returning: url)
-                } else {
-                    continuation.resume(throwing: error ?? MailError.unknownError)
-                }
-            }
-        }
-    }
-
-    private nonisolated func getDefaultFileName() -> String {
-        let formatter = DateFormatter()
-        formatter.dateFormat = "yyyyMMdd_HHmmssSS"
-        return formatter.string(from: Date())
-    }
-
-    private func sendAttachment(url: URL,
-                                typeIdentifier: String,
-                                name: String,
-                                disposition: AttachmentDisposition) async throws -> Attachment? {
-        let data = try Data(contentsOf: url)
-
-        return try await sendAttachment(from: data, typeIdentifier: typeIdentifier, name: name, disposition: disposition)
-    }
-
-    private func sendAttachment(from data: Data,
-                                typeIdentifier: String,
-                                name: String,
-                                disposition: AttachmentDisposition) async throws -> Attachment? {
-        let uti = UTType(typeIdentifier)
-        var name = name
-        if let nameExtension = uti?.preferredFilenameExtension, !name.capitalized.hasSuffix(nameExtension.capitalized) {
-            name.append(".\(nameExtension)")
-        }
-
-        let attachment = try await mailboxManager.apiFetcher.createAttachment(
-            mailbox: mailboxManager.mailbox,
-            attachmentData: data,
-            disposition: disposition,
-            attachmentName: name,
-            mimeType: uti?.preferredMIMEType ?? "application/octet-stream"
-        )
-        addAttachment(attachment)
-        return attachment
-    }
-
-    private func addAttachment(_ attachment: Attachment) {
-        draft.attachments.append(attachment)
-    }
-
-    private func removeAttachment(_ attachment: Attachment) {
-        if let attachmentToRemove = draft.attachments.firstIndex(of: attachment) {
-            draft.attachments.remove(at: attachmentToRemove)
-        }
     }
 }
 
