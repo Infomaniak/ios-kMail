@@ -20,27 +20,25 @@ import Foundation
 import MailCore
 import SwiftUI
 
+@MainActor
 class DraftUtils {
-    @MainActor public static func editDraft(from thread: Thread, mailboxManager: MailboxManager, editedMessageDraft: Binding<Draft?>) {
+    public static func editDraft(from thread: Thread, mailboxManager: MailboxManager, editedMessageDraft: Binding<Draft?>) {
         guard let message = thread.messages.first else { return }
-        var sheetPresented = false
-
         // If we already have the draft locally, present it directly
         if let draft = mailboxManager.draft(messageUid: message.uid)?.detached() {
             editedMessageDraft.wrappedValue = draft
-            sheetPresented = true
-        // Maybe it was an offline draft (If offline draft is created with draft.uuid = thread.uid)
-        } else if let localDraft = mailboxManager.draft(localUuid: thread.uid)?.detached() {
-            editedMessageDraft.wrappedValue = localDraft
-            sheetPresented = true
+        } else {
+            DraftUtils.editDraft(from: message, mailboxManager: mailboxManager, editedMessageDraft: editedMessageDraft)
         }
+    }
 
-        // Update the draft
-        Task { [sheetPresented] in
-            let draft = try await mailboxManager.draft(from: message)
-            if !sheetPresented {
-                editedMessageDraft.wrappedValue = draft
-            }
+    public static func editDraft(from message: Message, mailboxManager: MailboxManager, editedMessageDraft: Binding<Draft?>) {
+        // If we already have the draft locally, present it directly
+        if let draft = mailboxManager.draft(messageUid: message.uid)?.detached() {
+            editedMessageDraft.wrappedValue = draft
+            // Draft comes from API, we will update it after showing the ComposeMessageView
+        } else {
+            editedMessageDraft.wrappedValue = Draft(messageUid: message.uid)
         }
     }
 }

@@ -230,28 +230,6 @@ public class Thread: Object, Decodable, Identifiable {
         self.size = size
         self.folderId = folderId
     }
-
-    public convenience init(draft: Draft) {
-        self.init()
-
-        uid = draft.localUUID
-        messagesCount = 1
-        deletedMessagesCount = 0
-        messages = [Message(draft: draft)].toRealmList()
-        unseenMessages = 0
-        to = draft.to.detached()
-        cc = draft.cc.detached()
-        bcc = draft.bcc.detached()
-        subject = draft.subject
-        date = draft.date
-        hasAttachments = false
-        hasStAttachments = false
-        hasDrafts = true
-        flagged = false
-        answered = false
-        forwarded = false
-        size = 0
-    }
 }
 
 public enum Filter: String {

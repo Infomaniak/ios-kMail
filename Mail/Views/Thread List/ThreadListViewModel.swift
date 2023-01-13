@@ -152,7 +152,6 @@ class DateSection: Identifiable {
         withAnimation {
             isLoadingPage = false
         }
-        await mailboxManager.draftOffline()
     }
 
     func updateThreads(with folder: Folder) async {

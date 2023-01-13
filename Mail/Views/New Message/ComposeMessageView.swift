@@ -53,8 +53,7 @@ struct ComposeMessageView: View {
     @Environment(\.dismiss) private var dismiss
 
     @State private var mailboxManager: MailboxManager
-    @State private var draft: UnmanagedDraft
-    @State private var originalBody: String
+    @StateRealmObject var draft: Draft
     @State private var editor = RichTextEditorModel()
     @State private var showCc = false
     @FocusState private var focusedField: ComposeViewFieldType?
@@ -64,50 +63,48 @@ struct ComposeMessageView: View {
     @State private var isShowingFileSelection = false
     @State private var isShowingPhotoLibrary = false
 
-    @State var sendDraft = false
-
     @State var scrollView: UIScrollView?
 
     @StateObject private var alert = NewMessageAlert()
-
-    @State private var sendDisabled: Bool
 
     private var shouldDisplayAutocompletion: Bool {
         return !autocompletion.isEmpty && focusedField != nil
     }
 
-    private init(mailboxManager: MailboxManager, draft: UnmanagedDraft) {
+    private init(mailboxManager: MailboxManager, draft: Draft) {
         _mailboxManager = State(initialValue: mailboxManager)
-        var initialDraft = draft
-        if initialDraft.identityId.isEmpty,
+        if draft.identityId == nil || draft.identityId?.isEmpty == true,
            let signature = mailboxManager.getSignatureResponse() {
-            initialDraft.setSignature(signature)
+            draft.setSignature(signature)
         }
-        _sendDisabled = State(initialValue: mailboxManager.getSignatureResponse() == nil || draft.to.isEmpty)
-        initialDraft.delay = UserDefaults.shared.cancelSendDelay.rawValue
-        _draft = State(initialValue: initialDraft)
-        _showCc = State(initialValue: !initialDraft.bcc.isEmpty || !initialDraft.cc.isEmpty)
-        _originalBody = State(initialValue: initialDraft.body)
+        let realm = mailboxManager.getRealm()
+        try? realm.write {
+            draft.action = draft.action == nil && draft.remoteUUID.isEmpty ? .initialSave : .save
+            draft.delay = UserDefaults.shared.cancelSendDelay.rawValue
+
+            realm.add(draft, update: .modified)
+        }
+
+        _draft = StateRealmObject(wrappedValue: draft)
+        _showCc = State(initialValue: !draft.bcc.isEmpty || !draft.cc.isEmpty)
     }
 
     static func newMessage(mailboxManager: MailboxManager) -> ComposeMessageView {
-        return ComposeMessageView(mailboxManager: mailboxManager, draft: .empty())
+        return ComposeMessageView(mailboxManager: mailboxManager, draft: Draft(localUUID: UUID().uuidString))
     }
 
     static func replyOrForwardMessage(messageReply: MessageReply, mailboxManager: MailboxManager) -> ComposeMessageView {
         let message = messageReply.message
         // If message doesn't exist anymore try to show the frozen one
-        let realm = mailboxManager.getRealm()
-        realm.refresh()
-        let freshMessage = message.fresh(using: realm) ?? message
+        let freshMessage = message.thaw() ?? message
         return ComposeMessageView(
             mailboxManager: mailboxManager,
-            draft: .replying(to: freshMessage, mode: messageReply.replyMode)
+            draft: .replying(to: freshMessage, mode: messageReply.replyMode, localDraftUUID: messageReply.localDraftUUID)
         )
     }
 
     static func editDraft(draft: Draft, mailboxManager: MailboxManager) -> ComposeMessageView {
-        return ComposeMessageView(mailboxManager: mailboxManager, draft: draft.asUnmanaged())
+        return ComposeMessageView(mailboxManager: mailboxManager, draft: draft)
     }
 
     static func writingTo(recipient: Recipient, mailboxManager: MailboxManager) -> ComposeMessageView {
@@ -115,11 +112,11 @@ struct ComposeMessageView: View {
     }
 
     static func mailTo(urlComponents: URLComponents, mailboxManager: MailboxManager) -> ComposeMessageView {
-        let draft = UnmanagedDraft.mailTo(subject: urlComponents.getQueryItem(named: "subject"),
-                                          body: urlComponents.getQueryItem(named: "body"),
-                                          to: [Recipient(email: urlComponents.path, name: "")],
-                                          cc: Recipient.createListUsing(from: urlComponents, name: "cc"),
-                                          bcc: Recipient.createListUsing(from: urlComponents, name: "bcc"))
+        let draft = Draft.mailTo(subject: urlComponents.getQueryItem(named: "subject"),
+                                 body: urlComponents.getQueryItem(named: "body"),
+                                 to: [Recipient(email: urlComponents.path, name: "")],
+                                 cc: Recipient.createListUsing(from: urlComponents, name: "cc"),
+                                 bcc: Recipient.createListUsing(from: urlComponents, name: "bcc"))
         return ComposeMessageView(mailboxManager: mailboxManager, draft: draft)
     }
 
@@ -154,7 +151,8 @@ struct ComposeMessageView: View {
                                 .focused($focusedField, equals: .subject)
                         }
 
-                        if let attachments = draft.attachments?.filter { $0.contentId == nil }, !attachments.isEmpty {
+                        if let attachments = draft.attachments.filter { $0.contentId == nil }.toArray(),
+                           !attachments.isEmpty {
                             ScrollView(.horizontal, showsIndicators: false) {
                                 HStack(spacing: 8) {
                                     ForEach(attachments) { attachment in
@@ -179,6 +177,13 @@ struct ComposeMessageView: View {
                     }
                 }
             }
+            .overlay {
+                if draft.messageUid != nil && draft.remoteUUID.isEmpty {
+                    ProgressView()
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                        .background(MailResourcesAsset.backgroundColor.swiftUiColor)
+                }
+            }
             .introspectScrollView { scrollView in
                 self.scrollView = scrollView
             }
@@ -198,43 +203,20 @@ struct ComposeMessageView: View {
                     Label(MailResourcesStrings.Localizable.buttonClose, systemImage: "xmark")
                 },
                 trailing: Button(action: {
-                    sendDraft = true
-                    originalBody = draft.body
-                    Task {
-                        await DraftManager.shared.instantSaveDraftLocally(draft: draft, mailboxManager: mailboxManager, action: .send)
-                        dismiss()
-                    }
+                    sendDraft()
                 }, label: {
                     Image(resource: MailResourcesAsset.send)
                 })
-                .disabled(sendDisabled)
+                .disabled(draft.identityId?.isEmpty == true || draft.to.isEmpty)
             )
             .background(MailResourcesAsset.backgroundColor.swiftUiColor)
-        }
-        .onChange(of: draft) { _ in
-            Task {
-                await DraftManager.shared.saveDraftLocally(draft: draft, mailboxManager: mailboxManager, action: .save)
-                sendDisabled = draft.to.isEmpty
-            }
         }
         .onAppear {
             focusedField = .to
         }
         .onDisappear {
-            // TODO: - Compare message body to original body : guard draft.body != originalBody || !draft.uuid.isEmpty else { return }
-
             Task {
-                if !sendDraft {
-                    await DraftManager.shared.instantSaveDraftLocally(
-                        draft: draft,
-                        mailboxManager: mailboxManager,
-                        action: .save
-                    )
-                }
-
                 DraftManager.shared.syncDraft(mailboxManager: mailboxManager)
-
-                sendDraft = false
             }
         }
         .fullScreenCover(isPresented: $isShowingCamera) {
@@ -267,6 +249,18 @@ struct ComposeMessageView: View {
                 EmptyView()
             }
         }
+        .task {
+            guard draft.messageUid != nil && draft.remoteUUID.isEmpty else { return }
+
+            do {
+                if let fetchedDraft = try await mailboxManager.draft(partialDraft: draft),
+                   let liveFetchedDraft = fetchedDraft.thaw() {
+                    self.draft = liveFetchedDraft
+                }
+            } catch {
+                // Fail silently
+            }
+        }
         .navigationViewStyle(.stack)
         .defaultAppStorage(.shared)
     }
@@ -287,8 +281,8 @@ struct ComposeMessageView: View {
         }
     }
 
-    private func binding(for type: ComposeViewFieldType) -> Binding<[Recipient]> {
-        let binding: Binding<[Recipient]>
+    private func binding(for type: ComposeViewFieldType) -> Binding<RealmSwift.List<Recipient>> {
+        let binding: Binding<RealmSwift.List<Recipient>>
         switch type {
         case .to:
             binding = $draft.to
@@ -297,9 +291,18 @@ struct ComposeMessageView: View {
         case .bcc:
             binding = $draft.bcc
         default:
-            binding = .constant([])
+            fatalError("Unhandled binding \(type)")
         }
         return binding
+    }
+
+    private func sendDraft() {
+        if let liveDraft = draft.thaw() {
+            try? liveDraft.realm?.write {
+                liveDraft.action = .send
+            }
+        }
+        dismiss()
     }
 
     // MARK: Attachments
@@ -434,16 +437,12 @@ struct ComposeMessageView: View {
     }
 
     private func addAttachment(_ attachment: Attachment) {
-        if draft.attachments == nil {
-            draft.attachments = [attachment]
-        } else {
-            draft.attachments?.append(attachment)
-        }
+        draft.attachments.append(attachment)
     }
 
     private func removeAttachment(_ attachment: Attachment) {
-        if let attachments = draft.attachments, let attachmentToRemove = attachments.firstIndex(of: attachment) {
-            draft.attachments?.remove(at: attachmentToRemove)
+        if let attachmentToRemove = draft.attachments.firstIndex(of: attachment) {
+            draft.attachments.remove(at: attachmentToRemove)
         }
     }
 }

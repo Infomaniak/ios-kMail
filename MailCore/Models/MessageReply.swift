@@ -19,15 +19,17 @@
 import Foundation
 
 public struct MessageReply: Identifiable {
-    public var id: ObjectIdentifier {
-        return message.id
+    public var id: String {
+        return localDraftUUID
     }
 
+    public let localDraftUUID: String
     public let message: Message
     public let replyMode: ReplyMode
 
     public init(message: Message, replyMode: ReplyMode) {
         self.message = message
         self.replyMode = replyMode
+        self.localDraftUUID = UUID().uuidString
     }
 }

@@ -32,12 +32,6 @@ struct RichTextEditor: UIViewRepresentable {
     @Binding var isShowingPhotoLibrary: Bool
     var alert: ObservedObject<NewMessageAlert>.Wrapper
 
-    private var isFirstTime = true
-    private var delegateCount = 0
-    private var isInitialized: Bool {
-        delegateCount > 2
-    }
-
     init(model: Binding<RichTextEditorModel>, body: Binding<String>,
          alert: ObservedObject<NewMessageAlert>.Wrapper,
          isShowingCamera: Binding<Bool>, isShowingFileSelection: Binding<Bool>, isShowingPhotoLibrary: Binding<Bool>) {
@@ -72,8 +66,6 @@ struct RichTextEditor: UIViewRepresentable {
         }
 
         func editor(_ editor: SQTextEditorView, cursorPositionDidChange position: SQEditorCursorPosition) {
-            parent.delegateCount += 1
-            guard parent.isInitialized else { return }
             let newCursorPosition = CGFloat(position.bottom) + 20
             if parent.model.cursorPosition != newCursorPosition {
                 parent.model.cursorPosition = newCursorPosition
@@ -89,10 +81,9 @@ struct RichTextEditor: UIViewRepresentable {
         func editorContentChanged(_ editor: SQTextEditorView, content: String) {
             var parentBody = parent.body.trimmingCharacters(in: .whitespacesAndNewlines)
             parentBody = parentBody.replacingOccurrences(of: "\r", with: "")
-            if parentBody != content && !parent.isFirstTime {
+            if parentBody != content {
                 parent.body = content
             }
-            parent.isFirstTime = false
         }
     }
 

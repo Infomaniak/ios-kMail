@@ -257,14 +257,19 @@ public class MailboxManager: ObservableObject {
             let messagesToDelete = realm.objects(Message.self).where { $0.uid.in(uids) }
             var threadsToUpdate = Set<Thread>()
             var threadsToDelete = Set<Thread>()
+            var draftsToDelete = Set<Draft>()
 
             for message in messagesToDelete {
+                if let draft = self.draft(messageUid: message.uid, using: realm) {
+                    draftsToDelete.insert(draft)
+                }
                 for parent in message.parents {
                     threadsToUpdate.insert(parent)
                 }
             }
 
             try? realm.safeWrite {
+                realm.delete(draftsToDelete)
                 realm.delete(messagesToDelete)
                 for thread in threadsToUpdate {
                     if thread.messageInFolderCount == 0 {
@@ -841,8 +846,6 @@ public class MailboxManager: ObservableObject {
             var messages = [message]
             messages.append(contentsOf: message.duplicates)
             try await delete(messages: messages)
-        } else if message.isDraft {
-            try await deleteDraft(from: message) // Keep ?
         } else {
             var messages = [message]
             messages.append(contentsOf: message.duplicates)
@@ -926,51 +929,31 @@ public class MailboxManager: ObservableObject {
 
     // MARK: - Draft
 
-    public func cleanDrafts() async {
-        await backgroundRealm.execute { realm in
-            guard let draftFolder = (realm.objects(Folder.self).where { $0.role == .draft }.first) else { return }
-            let draftMessagesUid = draftFolder.threads.map { $0.messages.first?.uid }
-
-            let localDrafts = realm.objects(Draft.self)
-
-            var localDraftToDelete: [Draft] = []
-
-            for draft in localDrafts {
-                if let messageUid = draft.messageUid, !messageUid.isEmpty, !draftMessagesUid.contains(messageUid) {
-                    localDraftToDelete.append(draft)
-                }
-            }
-            try? realm.safeWrite {
-                realm.delete(localDraftToDelete)
-            }
-        }
-    }
-
-    public func draftWithPendingAction() async -> [UnmanagedDraft] {
+    public func draftWithPendingAction() -> Results<Draft> {
         let realm = getRealm()
-        let drafts = realm.objects(Draft.self).where { $0.action != nil }
-        let unmanagedDrafts = Array(drafts.compactMap { $0.asUnmanaged() })
-        return unmanagedDrafts
+        realm.refresh()
+        return realm.objects(Draft.self).where { $0.action != nil }
     }
 
-    public func draft(from message: Message) async throws -> Draft {
+    public func draft(partialDraft: Draft) async throws -> Draft? {
+        guard let associatedMessage = getRealm().object(ofType: Message.self, forPrimaryKey: partialDraft.messageUid)?.freeze()
+        else { return nil }
+
         // Get from API
-        let draft = try await apiFetcher.draft(from: message)
+        let draft = try await apiFetcher.draft(from: associatedMessage)
 
         await backgroundRealm.execute { realm in
-            // Get draft from Realm to keep local saved properties
-            if let savedDraft = self.draft(remoteUuid: draft.remoteUUID) {
-                draft.localUUID = savedDraft.localUUID
-                draft.messageUid = message.uid
-            }
+            draft.localUUID = partialDraft.localUUID
+            draft.action = .save
+            draft.identityId = partialDraft.identityId
+            draft.delay = partialDraft.delay
 
-            // Update draft in Realm
             try? realm.safeWrite {
                 realm.add(draft.detached(), update: .modified)
             }
         }
 
-        return draft
+        return getRealm().object(ofType: Draft.self, forPrimaryKey: draft.localUUID)?.freeze()
     }
 
     public func draft(messageUid: String, using realm: Realm? = nil) -> Draft? {
@@ -988,132 +971,66 @@ public class MailboxManager: ObservableObject {
         return realm.objects(Draft.self).where { $0.remoteUUID == remoteUuid }.first
     }
 
-    public func send(draft: UnmanagedDraft) async throws -> CancelResponse {
-        var draft = draft
-        draft.delay = UserDefaults.shared.cancelSendDelay.rawValue
+    public func send(draft: Draft) async throws -> SendResponse {
         let cancelableResponse = try await apiFetcher.send(mailbox: mailbox, draft: draft)
         // Once the draft has been sent, we can delete it from Realm
-        await delete(draft: draft)
+        try await deleteLocally(draft: draft)
         return cancelableResponse
     }
 
-    public func saveLocally(draft: UnmanagedDraft, action: SaveDraftOption = .save) async {
-        let managedDraft = draft.asManaged()
-        var copyDraft = managedDraft.detached()
-        copyDraft.action = action
-        // TODO: - Date needed ?
-
+    public func save(draft: Draft) async throws {
+        let saveResponse = try await apiFetcher.save(mailbox: mailbox, draft: draft)
         await backgroundRealm.execute { realm in
-            // Update draft in realm
+            // Update draft in Realm
+            guard let liveDraft = realm.object(ofType: Draft.self, forPrimaryKey: draft.localUUID) else { return }
             try? realm.safeWrite {
-                realm.add(copyDraft, update: .modified)
+                liveDraft.remoteUUID = saveResponse.uuid
+                liveDraft.messageUid = saveResponse.uid
+                liveDraft.action = nil
             }
         }
     }
 
-    public func save(draft: UnmanagedDraft) async -> Error? {
-        do {
-            let saveResponse = try await apiFetcher.save(mailbox: mailbox, draft: draft)
-
-            let managedDraft = draft.asManaged()
-            managedDraft.remoteUUID = saveResponse.uuid
-            managedDraft.messageUid = saveResponse.uid
-            managedDraft.action = nil
-
-            let copyDraft = managedDraft.detached()
-            await backgroundRealm.execute { realm in
-                // Update draft in Realm
-                try? realm.safeWrite {
-                    realm.add(copyDraft, update: .modified)
-                }
-            }
-
-            return nil
-        } catch {
-            await saveLocally(draft: draft)
-            return error
-        }
+    public func delete(draft: Draft) async throws {
+        try await deleteLocally(draft: draft)
+        try await apiFetcher.deleteDraft(mailbox: mailbox, draftId: draft.remoteUUID)
     }
 
-    public func delete(draft: AbstractDraft) async {
+    public func delete(draftMessage: Message) async throws {
+        guard let draftResource = draftMessage.draftResource else {
+            throw MailError.resourceError
+        }
+
+        if let draft = getRealm().objects(Draft.self).where({ $0.remoteUUID == draftResource }).first?.freeze() {
+            try await deleteLocally(draft: draft)
+        }
+
+        try await apiFetcher.deleteDraft(draftResource: draftResource)
+        try await refreshFolder(from: [draftMessage])
+    }
+
+    public func deleteLocally(draft: Draft) async throws {
         await backgroundRealm.execute { realm in
-            if let draft = realm.object(ofType: Draft.self, forPrimaryKey: draft.localUUID) {
-                try? realm.safeWrite {
-                    realm.delete(draft)
-                }
-            } else {
-                print("No draft with localUuid \(draft.localUUID)")
-            }
-        }
-    }
-
-    public func deleteDraft(from message: Message) async throws {
-        guard let thread = message.originalParent else { return }
-        let deleteThread = thread.messages.count <= 1
-
-        if !message.uid.isEmpty {
-            _ = try await apiFetcher.delete(mailbox: mailbox, messages: [message])
-        }
-
-        await backgroundRealm.execute { realm in
-            var draft = self.draft(localUuid: thread.uid, using: realm)
-            if !message.uid.isEmpty {
-                draft = self.draft(messageUid: message.uid, using: realm)
-            }
-
+            guard let liveDraft = realm.object(ofType: Draft.self, forPrimaryKey: draft.localUUID) else { return }
             try? realm.safeWrite {
-                if let draft = draft {
-                    realm.delete(draft)
-                }
-                if let message = message.fresh(using: realm) {
-                    realm.delete(message)
-                }
-                if deleteThread, let thread = thread.fresh(using: realm) {
-                    realm.delete(thread)
-                }
+                realm.delete(liveDraft)
             }
         }
     }
 
-    public func draftOffline() async {
+    public func deleteOrphanDrafts() async {
+        guard let draftFolder = getFolder(with: .draft, shouldRefresh: true) else { return }
+        
+        let existingMessageUids = Set(draftFolder.threads.flatMap(\.messages).map(\.uid))
+
         await backgroundRealm.execute { realm in
-            let draftOffline = AnyRealmCollection(realm.objects(Draft.self).where { $0.remoteUUID == "" })
-
-            let offlineDraftThread = List<Thread>()
-
-            guard let folder = self.getFolder(with: .draft, using: realm) else { return }
-
-            let messagesList = realm.objects(Message.self).where { $0.folderId == folder.id }
-            for draft in draftOffline where !messagesList.contains(where: { $0.uid == draft.messageUid }) {
-                let thread = Thread(draft: draft)
-                let from = Recipient(email: self.mailbox.email, name: self.mailbox.emailIdn)
-                thread.from.append(from)
-                offlineDraftThread.append(thread)
-            }
-
-            // Update message in Realm
             try? realm.safeWrite {
-                realm.add(offlineDraftThread, update: .modified)
-                folder.threads.insert(objectsIn: offlineDraftThread)
-            }
-        }
-    }
-
-    /// Delete local draft from its associated thread
-    /// - Parameter thread: Thread associated to local draft
-    public func deleteLocalDraft(thread: Thread) async {
-        await backgroundRealm.execute { realm in
-            if let message = thread.messages.first,
-               let draft = self.draft(messageUid: message.uid) {
-                try? realm.safeWrite {
-                    realm.delete(draft)
-                }
-            }
-            // Delete thread
-            if let liveThread = thread.fresh(using: realm) {
-                try? realm.safeWrite {
-                    realm.delete(liveThread.messages)
-                    realm.delete(liveThread)
+                let noActionDrafts = realm.objects(Draft.self).where { $0.action == nil }
+                for draft in noActionDrafts {
+                    if let messageUid = draft.messageUid,
+                       !existingMessageUids.contains(messageUid) {
+                        realm.delete(draft)
+                    }
                 }
             }
         }

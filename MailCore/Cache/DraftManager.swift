@@ -19,6 +19,7 @@
 import Foundation
 import InfomaniakCore
 import MailResources
+import RealmSwift
 import UIKit
 
 struct DraftQueueElement {
@@ -54,6 +55,7 @@ actor DraftQueue {
         if let identifier = identifierQueue[uuid], identifier != .invalid {
             Task {
                 await UIApplication.shared.endBackgroundTask(identifier)
+                identifierQueue[uuid] = .invalid
             }
         }
     }
@@ -67,71 +69,27 @@ public class DraftManager {
 
     private init() {}
 
-    public func instantSaveDraftLocally(draft: UnmanagedDraft, mailboxManager: MailboxManager, action: SaveDraftOption) async {
-        await draftQueue.cleanQueueElement(uuid: draft.localUUID)
-        await mailboxManager.saveLocally(draft: draft, action: action)
-    }
-
-    public func saveDraftLocally(draft: UnmanagedDraft, mailboxManager: MailboxManager, action: SaveDraftOption) async {
-        await draftQueue.cleanQueueElement(uuid: draft.localUUID)
-
-        let task = DispatchWorkItem {
-            Task {
-                await mailboxManager.saveLocally(draft: draft, action: action)
-            }
-        }
-        await draftQueue.saveTask(task: task, for: draft.localUUID)
-
-        // Debounce the save task
-        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + DispatchTimeInterval.seconds(DraftManager.saveExpirationSec), execute: task)
-    }
-
-    private func saveDraft(draft: UnmanagedDraft,
-                           mailboxManager: MailboxManager,
-                           showSnackBar: Bool = false) async {
+    private func saveDraft(draft: Draft, mailboxManager: MailboxManager) async {
         await draftQueue.cleanQueueElement(uuid: draft.localUUID)
         await draftQueue.beginBackgroundTask(withName: "Draft Saver", for: draft.localUUID)
 
-        let error = await mailboxManager.save(draft: draft)
-        await draftQueue.endBackgroundTask(uuid: draft.localUUID)
-        if let error = error, error.shouldDisplay {
-            await IKSnackBar.showSnackBar(message: error.localizedDescription)
-        } else if showSnackBar {
-            await IKSnackBar.showSnackBar(message: MailResourcesStrings.Localizable.snackBarDraftSaved,
-                                          action: .init(title: MailResourcesStrings.Localizable.actionDelete) { [weak self] in
-                                              self?.deleteDraft(localUuid: draft.localUUID, mailboxManager: mailboxManager)
-                                          })
-        }
-    }
-
-    private func deleteDraft(localUuid: String, mailboxManager: MailboxManager) {
-        // Convert draft to thread
-        let realm = mailboxManager.getRealm()
-
-        guard let draft = mailboxManager.draft(localUuid: localUuid, using: realm)?.freeze(),
-              let draftFolder = mailboxManager.getFolder(with: .draft, using: realm) else { return }
-        let thread = Thread(draft: draft)
-        try? realm.uncheckedSafeWrite {
-            realm.add(thread, update: .modified)
-            draftFolder.threads.insert(thread)
-        }
-        let frozenThread = thread.freeze()
-        // Delete
-        Task {
-            await tryOrDisplayError {
-                _ = try await mailboxManager.move(threads: [frozenThread], to: .trash)
-                await IKSnackBar.showSnackBar(message: MailResourcesStrings.Localizable.snackBarDraftDeleted)
+        do {
+            try await mailboxManager.save(draft: draft)
+        } catch {
+            if error.shouldDisplay {
+                await IKSnackBar.showSnackBar(message: error.localizedDescription)
             }
         }
+        await draftQueue.endBackgroundTask(uuid: draft.localUUID)
     }
 
-    public func send(draft: UnmanagedDraft, mailboxManager: MailboxManager) async {
+    public func send(draft: Draft, mailboxManager: MailboxManager) async -> Date? {
+        var sendDate: Date?
         await draftQueue.cleanQueueElement(uuid: draft.localUUID)
         await draftQueue.beginBackgroundTask(withName: "Draft Sender", for: draft.localUUID)
 
         do {
             let cancelableResponse = try await mailboxManager.send(draft: draft)
-            await draftQueue.endBackgroundTask(uuid: draft.localUUID)
             await IKSnackBar.showCancelableSnackBar(
                 message: MailResourcesStrings.Localizable.emailSentSnackbar,
                 cancelSuccessMessage: MailResourcesStrings.Localizable.canceledEmailSendingConfirmationSnackbar,
@@ -139,29 +97,106 @@ public class DraftManager {
                 undoRedoAction: UndoRedoAction(undo: cancelableResponse, redo: nil),
                 mailboxManager: mailboxManager
             )
+            sendDate = cancelableResponse.scheduledDate
         } catch {
-            await draftQueue.endBackgroundTask(uuid: draft.localUUID)
             await IKSnackBar.showSnackBar(message: error.localizedDescription)
         }
+        await draftQueue.endBackgroundTask(uuid: draft.localUUID)
+        return sendDate
     }
 
     public func syncDraft(mailboxManager: MailboxManager) {
+        let drafts = mailboxManager.draftWithPendingAction().freezeIfNeeded()
+        let emptyDraftBody = emptyDraftBodyWithSignature(for: mailboxManager)
         Task {
-            let drafts = await mailboxManager.draftWithPendingAction()
-            for draft in drafts {
-                switch draft.action {
-                case .save:
-                    Task {
-                        await self.saveDraft(draft: draft, mailboxManager: mailboxManager)
+            let latestSendDate = await withTaskGroup(of: Date?.self, returning: Date?.self) { group in
+                for draft in drafts {
+                    group.addTask {
+                        var sendDate: Date?
+
+                        switch draft.action {
+                        case .initialSave:
+                            await self.initialSave(draft: draft, mailboxManager: mailboxManager, emptyDraftBody: emptyDraftBody)
+                        case .save:
+                            await self.saveDraft(draft: draft, mailboxManager: mailboxManager)
+                        case .send:
+                            sendDate = await self.send(draft: draft, mailboxManager: mailboxManager)
+                        default:
+                            break
+                        }
+                        return sendDate
                     }
-                case .send:
-                    Task {
-                        await self.send(draft: draft, mailboxManager: mailboxManager)
+                }
+
+                var latestSendDate: Date?
+                for await result in group {
+                    latestSendDate = result
+                }
+                return latestSendDate
+            }
+
+            try await refreshDraftFolder(latestSendDate: latestSendDate, mailboxManager: mailboxManager)
+        }
+    }
+
+    private func initialSave(draft: Draft, mailboxManager: MailboxManager, emptyDraftBody: String) async {
+        guard draft.body != emptyDraftBody else {
+            deleteEmptyDraft(draft: draft)
+            return
+        }
+
+        await saveDraft(draft: draft, mailboxManager: mailboxManager)
+        await IKSnackBar.showSnackBar(message: MailResourcesStrings.Localizable.snackBarDraftSaved,
+                                      action: .init(title: MailResourcesStrings.Localizable.actionDelete) { [weak self] in
+                                          self?.deleteDraftSnackBarAction(draft: draft, mailboxManager: mailboxManager)
+                                      })
+    }
+
+    private func refreshDraftFolder(latestSendDate: Date?, mailboxManager: MailboxManager) async throws {
+        if let draftFolder = mailboxManager.getFolder(with: .draft)?.freeze() {
+            try await mailboxManager.threads(folder: draftFolder)
+
+            if let latestSendDate = latestSendDate {
+                /*
+                    We need to refresh the draft folder after the mail is sent to make it disappear, we wait at least 1.5 seconds
+                    because the sending process is not synchronous
+                 */
+                let delay = latestSendDate.timeIntervalSinceNow
+                try await Task.sleep(nanoseconds: UInt64(1_000_000_000 * max(Double(delay), 1.5)))
+                try await mailboxManager.threads(folder: draftFolder)
+            }
+
+            await mailboxManager.deleteOrphanDrafts()
+        }
+    }
+
+    private func deleteDraftSnackBarAction(draft: Draft, mailboxManager: MailboxManager) {
+        Task {
+            await tryOrDisplayError {
+                if let liveDraft = draft.thaw() {
+                    try await mailboxManager.delete(draft: liveDraft.freeze())
+                    await IKSnackBar.showSnackBar(message: MailResourcesStrings.Localizable.snackBarDraftDeleted)
+                    if let draftFolder = mailboxManager.getFolder(with: .draft)?.freeze() {
+                        try await mailboxManager.threads(folder: draftFolder)
                     }
-                default:
-                    break
                 }
             }
         }
+    }
+
+    private func deleteEmptyDraft(draft: Draft) {
+        guard let liveDraft = draft.thaw(),
+              let realm = liveDraft.realm else { return }
+        try? realm.write {
+            realm.delete(liveDraft)
+        }
+    }
+
+    private func emptyDraftBodyWithSignature(for mailboxManager: MailboxManager) -> String {
+        let draft = Draft()
+        if let signature = mailboxManager.getSignatureResponse() {
+            draft.setSignature(signature)
+        }
+        return draft.body
     }
 }

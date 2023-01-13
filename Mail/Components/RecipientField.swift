@@ -18,6 +18,7 @@
 
 import MailCore
 import MailResources
+import RealmSwift
 import SwiftUI
 import WrappingHStack
 
@@ -41,7 +42,7 @@ struct RecipientChip: View {
 }
 
 struct RecipientField: View {
-    @Binding var recipients: [Recipient]
+    @Binding var recipients: RealmSwift.List<Recipient>
     @Binding var autocompletion: [Recipient]
     @Binding var addRecipientHandler: ((Recipient) -> Void)?
     @FocusState var focusedField: ComposeViewFieldType?
@@ -54,9 +55,7 @@ struct RecipientField: View {
             if !recipients.isEmpty {
                 WrappingHStack(recipients.indices, spacing: .constant(8), lineSpacing: 8) { i in
                     RecipientChip(recipient: recipients[i]) {
-                        withAnimation {
-                            _ = recipients.remove(at: i)
-                        }
+                        remove(recipientAt: i)
                     }
                 }
                 .alignmentGuide(.newMessageCellAlignment) { d in d[.top] + 21 }
@@ -96,9 +95,15 @@ struct RecipientField: View {
 
     private func add(recipient: Recipient) {
         withAnimation {
-            recipients.append(recipient)
+            $recipients.append(recipient)
         }
         currentText = ""
+    }
+
+    private func remove(recipientAt: Int) {
+        withAnimation {
+            $recipients.remove(at: recipientAt)
+        }
     }
 }
 
@@ -106,7 +111,7 @@ struct RecipientField_Previews: PreviewProvider {
     static var previews: some View {
         RecipientField(recipients: .constant([
             PreviewHelper.sampleRecipient1, PreviewHelper.sampleRecipient2, PreviewHelper.sampleRecipient3
-        ]),
+        ].toRealmList()),
         autocompletion: .constant([]),
         addRecipientHandler: .constant { _ in /* Preview */ },
         focusedField: .init(),
