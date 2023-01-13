@@ -36,7 +36,7 @@ struct MenuDrawerItemsListView: View {
     @State private var isExpanded = true
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 16) {
+        VStack(alignment: .leading, spacing: 24) {
             if let title = title {
                 Button {
                     withAnimation {

@@ -98,7 +98,7 @@ struct FolderCellContent: View {
             Text(folder.formattedUnreadCount)
                 .textStyle(.bodySmallMediumAccent)
         }
-        .padding(.vertical, Constants.menuDrawerVerticalPadding)
+        .padding(.vertical, 16)
         .padding(.horizontal, Constants.menuDrawerHorizontalPadding)
         .padding(.leading, Constants.menuDrawerSubFolderPadding * CGFloat(level))
         .background(SelectionBackground(

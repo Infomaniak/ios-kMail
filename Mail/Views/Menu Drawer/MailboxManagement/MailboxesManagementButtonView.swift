@@ -36,7 +36,7 @@ struct MailboxesManagementButtonView: View {
 
     var body: some View {
         Button(action: handleAction) {
-            HStack(spacing: 24) {
+            HStack(spacing: 16) {
                 Image(resource: icon)
                     .resizable()
                     .scaledToFit()
@@ -52,9 +52,8 @@ struct MailboxesManagementButtonView: View {
                 }
             }
         }
-        .padding(.vertical, 8)
-        .padding(.leading, 19)
-        .padding(.trailing, Constants.menuDrawerHorizontalPadding)
+        .padding(.vertical, 12)
+        .padding(.horizontal, Constants.menuDrawerHorizontalPadding)
     }
 }
 
