@@ -86,6 +86,11 @@ struct Action: Identifiable, Equatable {
         title: MailResourcesStrings.Localizable.actionUnstar,
         icon: MailResourcesAsset.starFull
     )
+    static let reportOptions = Action(
+        id: 22,
+        title: "Signaler comme indésirable", //MailResourcesStrings.Localizable.actionSpam,
+        icon: MailResourcesAsset.spam //To change
+    )
     static let spam = Action(
         id: 11,
         title: MailResourcesStrings.Localizable.actionSpam,
@@ -283,6 +288,8 @@ enum ActionsTarget: Equatable {
             postpone()
         case .star, .unstar:
             try await star()
+        case .reportOptions:
+            displayReportOptions()
         case .spam:
             try await spam()
         case .nonSpam:
@@ -419,6 +426,11 @@ enum ActionsTarget: Equatable {
         }
     }
 
+    private func displayReportOptions() {
+        // TODO:
+        showWorkInProgressSnackBar()
+    }
+    
     private func spam() async throws {
         let undoRedoAction: UndoRedoAction
         let snackBarMessage: String
