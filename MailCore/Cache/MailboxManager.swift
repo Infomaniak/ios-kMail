@@ -242,15 +242,15 @@ public class MailboxManager: ObservableObject {
         if alwaysFetchedFolders.contains(where: { $0 == folder.role }) {
             for folderRole in alwaysFetchedFolders {
                 if let realFolder = getFolder(with: folderRole) {
-                    try await messages(folder: realFolder.freezeIfNeeded(), asThread: true)
+                    try await messages(folder: realFolder.freezeIfNeeded())
                 }
             }
         } else {
-            try await messages(folder: folder.freezeIfNeeded(), asThread: true)
+            try await messages(folder: folder.freezeIfNeeded())
         }
     }
 
-    private func deleteMessagesThread(uids: [String], folder: Folder) async {
+    private func deleteMessages(uids: [String], folder: Folder) async {
         guard !uids.isEmpty else { return }
 
         await backgroundRealm.execute { realm in
@@ -615,7 +615,7 @@ public class MailboxManager: ObservableObject {
         return uniqueUids.reversed()
     }
 
-    public func messages(folder: Folder, asThread: Bool = false) async throws {
+    public func messages(folder: Folder) async throws {
         let previousCursor = folder.cursor
         var newCursor: String?
 
@@ -645,12 +645,8 @@ public class MailboxManager: ObservableObject {
             updated.append(contentsOf: messageDeltaResult.updated)
         }
 
-        try await addMessages(shortUids: addedShortUids, folder: folder, asThread: asThread)
-        if asThread {
-            await deleteMessagesThread(uids: deletedUids, folder: folder)
-        } else {
-            await deleteMessages(uids: deletedUids, folder: folder)
-        }
+        try await addMessages(shortUids: addedShortUids, folder: folder)
+        await deleteMessages(uids: deletedUids, folder: folder)
         await updateMessages(updates: updated, folder: folder)
 
         await backgroundRealm.execute { realm in
@@ -665,7 +661,7 @@ public class MailboxManager: ObservableObject {
         }
     }
 
-    private func addMessages(shortUids: [String], folder: Folder, asThread: Bool = false) async throws {
+    private func addMessages(shortUids: [String], folder: Folder) async throws {
         guard !shortUids.isEmpty else { return }
         let reversedUids: [String] = getUniqueUidsInReverse(folder: folder, remoteUids: shortUids)
         let pageSize = 50
@@ -681,15 +677,7 @@ public class MailboxManager: ObservableObject {
 
             await backgroundRealm.execute { [self] realm in
                 if let folder = folder.fresh(using: realm) {
-                    if asThread {
-                        createMultiMessagesThreads(messageByUids: messageByUidsResult, folder: folder, using: realm)
-                    } else {
-                        // Create single message threads
-                        try? realm.safeWrite {
-                            let threads = messageByUidsResult.messages.map { $0.toThread().detached() }
-                            folder.threads.insert(objectsIn: threads)
-                        }
-                    }
+                    createMultiMessagesThreads(messageByUids: messageByUidsResult, folder: folder, using: realm)
                 }
             }
 
@@ -748,20 +736,6 @@ public class MailboxManager: ObservableObject {
         newThread.messageIds.insert(objectsIn: existingThread.messageIds)
         for message in existingThread.messages {
             newThread.addMessageIfNeeded(newMessage: message)
-        }
-    }
-
-    private func deleteMessages(uids: [String], folder: Folder) async {
-        guard !uids.isEmpty else { return }
-
-        await backgroundRealm.execute { realm in
-            let messagesToDelete = realm.objects(Message.self).where { $0.uid.in(uids) }
-            let threadsToDelete = realm.objects(Thread.self).where { $0.uid.in(uids) }
-
-            try? realm.safeWrite {
-                realm.delete(messagesToDelete)
-                realm.delete(threadsToDelete)
-            }
         }
     }
 
@@ -1020,7 +994,7 @@ public class MailboxManager: ObservableObject {
 
     public func deleteOrphanDrafts() async {
         guard let draftFolder = getFolder(with: .draft, shouldRefresh: true) else { return }
-        
+
         let existingMessageUids = Set(draftFolder.threads.flatMap(\.messages).map(\.uid))
 
         await backgroundRealm.execute { realm in
