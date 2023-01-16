@@ -104,7 +104,7 @@ struct SettingsOptionView<OptionEnum>: View where OptionEnum: CaseIterable, Opti
     }
 
     private func updateOptions() {
-        if let excludedKeyPath = excludedKeyPath {
+        if let excludedKeyPath {
             let excludedValues = excludedKeyPath.map { UserDefaults.shared[keyPath: $0] }
             values = values.filter { !excludedValues.contains($0) || ($0.rawValue as? String) == "none" }
         }
