@@ -36,7 +36,6 @@ struct ThreadListView: View {
 
     @AppStorage(UserDefaults.shared.key(.threadDensity)) private var threadDensity = ThreadDensity.normal
     @AppStorage(UserDefaults.shared.key(.accentColor)) private var accentColor = AccentColor.pink
-    @AppStorage(UserDefaults.shared.key(.threadMode)) var threadMode: ThreadMode = .discussion
 
     @State private var avatarImage = Image(resource: MailResourcesAsset.placeholderAvatar)
     @State private var isShowingComposeNewMessageView = false
@@ -178,9 +177,6 @@ struct ThreadListView: View {
         .onChange(of: splitViewManager.selectedFolder) { newFolder in
             guard isCompact, let folder = newFolder else { return }
             updateFetchingTask(with: folder)
-        }
-        .onChange(of: threadMode) { _ in
-            updateFetchingTask()
         }
         .onReceive(NotificationCenter.default.publisher(for: UIApplication.willEnterForegroundNotification)) { _ in
             updateFetchingTask()
