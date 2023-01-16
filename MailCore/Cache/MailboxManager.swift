@@ -268,6 +268,8 @@ public class MailboxManager: ObservableObject {
                 }
             }
 
+            let foldersToUpdate = Set(threadsToUpdate.compactMap(\.parent))
+
             try? realm.safeWrite {
                 realm.delete(draftsToDelete)
                 realm.delete(messagesToDelete)
@@ -279,6 +281,9 @@ public class MailboxManager: ObservableObject {
                     }
                 }
                 realm.delete(threadsToDelete)
+                for updateFolder in foldersToUpdate {
+                    updateFolder.computeUnreadCount()
+                }
             }
         }
     }
@@ -720,10 +725,7 @@ public class MailboxManager: ObservableObject {
                     }
                 }
             }
-
-            for thread in threadsToUpdate {
-                thread.recompute()
-            }
+            self.updateThreads(threads: threadsToUpdate)
         }
     }
 
@@ -782,11 +784,18 @@ public class MailboxManager: ObservableObject {
                         }
                     }
                 }
-
-                for thread in threadsToUpdate {
-                    thread.recompute()
-                }
+                self.updateThreads(threads: threadsToUpdate)
             }
+        }
+    }
+
+    private func updateThreads(threads: Set<Thread>) {
+        let folders = Set(threads.compactMap(\.parent))
+        for thread in threads {
+            thread.recompute()
+        }
+        for folder in folders {
+            folder.computeUnreadCount()
         }
     }
 
@@ -1019,7 +1028,7 @@ public class MailboxManager: ObservableObject {
 
     public func deleteOrphanDrafts() async {
         guard let draftFolder = getFolder(with: .draft, shouldRefresh: true) else { return }
-        
+
         let existingMessageUids = Set(draftFolder.threads.flatMap(\.messages).map(\.uid))
 
         await backgroundRealm.execute { realm in

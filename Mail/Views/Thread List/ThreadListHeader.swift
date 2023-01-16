@@ -73,6 +73,11 @@ struct ThreadListHeader: View {
         .onChange(of: lastUpdate) { newValue in
             lastUpdateText = formatLastUpdate(date: newValue)
         }
+        .onChange(of: unreadCount) { newValue in
+            if newValue == 0 {
+                unreadFilterOn = false
+            }
+        }
         .onReceive(timer) { _ in
             lastUpdateText = formatLastUpdate(date: lastUpdate)
         }
