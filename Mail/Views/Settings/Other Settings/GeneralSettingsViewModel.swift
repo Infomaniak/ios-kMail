@@ -78,12 +78,12 @@ private extension SettingsItem {
         type: .option(.themeOption)
     )
     static let accentColor = SettingsItem(
-        id: 8,
+        id: 5,
         title: MailResourcesStrings.Localizable.settingsAccentColor,
         type: .option(.accentColor)
     )
     static let swipeActions = SettingsItem(
-        id: 5,
+        id: 6,
         title: MailResourcesStrings.Localizable.settingsSwipeActionsTitle,
         type: .subMenu(destination: .swipe)
     )
