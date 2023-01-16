@@ -186,6 +186,7 @@ struct ComposeMessageView: View {
             }
             .introspectScrollView { scrollView in
                 self.scrollView = scrollView
+                scrollView.keyboardDismissMode = .interactive
             }
             .onChange(of: editor.height) { _ in
                 guard let scrollView = scrollView else { return }
