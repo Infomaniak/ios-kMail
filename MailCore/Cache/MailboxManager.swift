@@ -71,7 +71,7 @@ public class MailboxManager: ObservableObject {
         let realmName = "\(mailbox.userId)-\(mailbox.mailboxId).realm"
         realmConfiguration = Realm.Configuration(
             fileURL: MailboxManager.constants.rootDocumentsURL.appendingPathComponent(realmName),
-            schemaVersion: 3,
+            schemaVersion: 4,
             deleteRealmIfMigrationNeeded: true,
             objectTypes: [
                 Folder.self,
@@ -626,8 +626,7 @@ public class MailboxManager: ObservableObject {
         if previousCursor == nil {
             let messageUidsResult = try await apiFetcher.messagesUids(
                 mailboxUuid: mailbox.uuid,
-                folderId: folder.id,
-                dateSince: Constants.dateSince()
+                folderId: folder.id
             )
             newCursor = messageUidsResult.cursor
             addedShortUids.append(contentsOf: messageUidsResult.messageShortUids.map { String($0) })
