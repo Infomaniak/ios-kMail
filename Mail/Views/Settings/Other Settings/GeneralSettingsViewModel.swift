@@ -33,7 +33,6 @@ import SwiftUI
             .threadDensityOption: UserDefaults.shared.threadDensity,
             .themeOption: UserDefaults.shared.theme,
             .accentColor: UserDefaults.shared.accentColor,
-            .displayModeOption: UserDefaults.shared.threadMode,
             .externalContentOption: UserDefaults.shared.displayExternalContent
         ]
     }
@@ -79,19 +78,14 @@ private extension SettingsItem {
         type: .option(.themeOption)
     )
     static let accentColor = SettingsItem(
-        id: 8,
+        id: 5,
         title: MailResourcesStrings.Localizable.settingsAccentColor,
         type: .option(.accentColor)
     )
     static let swipeActions = SettingsItem(
-        id: 5,
+        id: 6,
         title: MailResourcesStrings.Localizable.settingsSwipeActionsTitle,
         type: .subMenu(destination: .swipe)
-    )
-    static let displayMode = SettingsItem(
-        id: 6,
-        title: MailResourcesStrings.Localizable.settingsMessageDisplayTitle,
-        type: .option(.displayModeOption)
     )
     static let externalContent = SettingsItem(
         id: 7,
