@@ -137,6 +137,18 @@ public class Attachment: /* Hashable, */ EmbeddedObject, Codable, Identifiable {
         self.resource = resource
         self.driveUrl = driveUrl
     }
+
+    public func updateLocalAttachment(with remoteAttachment: Attachment) {
+        uuid = remoteAttachment.uuid
+        partId = remoteAttachment.partId
+        mimeType = remoteAttachment.mimeType
+        size = remoteAttachment.size
+        name = remoteAttachment.name
+        disposition = remoteAttachment.disposition
+        contentId = remoteAttachment.contentId
+        resource = remoteAttachment.resource
+        driveUrl = remoteAttachment.driveUrl
+    }
 }
 
 public enum AttachmentDisposition: String, Codable, PersistableEnum {
