@@ -38,7 +38,6 @@ struct ThreadListView: View {
     @AppStorage(UserDefaults.shared.key(.accentColor)) private var accentColor = AccentColor.pink
     @AppStorage(UserDefaults.shared.key(.threadMode)) var threadMode: ThreadMode = .discussion
 
-    @State private var avatarImage = Image(resource: MailResourcesAsset.placeholderAvatar)
     @State private var isShowingComposeNewMessageView = false
     @StateObject var bottomSheet: ThreadBottomSheet
     @StateObject private var networkMonitor = NetworkMonitor()
@@ -146,7 +145,6 @@ struct ThreadListView: View {
         .modifier(ThreadListToolbar(isCompact: isCompact,
                                     bottomSheet: bottomSheet,
                                     multipleSelectionViewModel: multipleSelectionViewModel,
-                                    avatarImage: $avatarImage,
                                     selectAll: {
                                         withAnimation(.default.speed(2)) {
                                             multipleSelectionViewModel.selectAll(threads: viewModel.sections.flatMap(\.threads))
@@ -176,7 +174,7 @@ struct ThreadListView: View {
             viewModel.selectedThread = nil
         }
         .onChange(of: splitViewManager.selectedFolder) { newFolder in
-            guard isCompact, let folder = newFolder else { return }
+            guard let folder = newFolder else { return }
             updateFetchingTask(with: folder)
         }
         .onChange(of: threadMode) { _ in
@@ -187,7 +185,7 @@ struct ThreadListView: View {
         }
         .task {
             if let account = AccountManager.instance.currentAccount {
-                avatarImage = await account.user.avatarImage
+                splitViewManager.avatarImage = await account.user.avatarImage
             }
         }
         .sheet(isPresented: $isShowingComposeNewMessageView) {
@@ -215,8 +213,6 @@ private struct ThreadListToolbar: ViewModifier {
     @ObservedObject var multipleSelectionViewModel: ThreadListMultipleSelectionViewModel
 
     @State private var isShowingSwitchAccount = false
-
-    @Binding var avatarImage: Image
 
     @EnvironmentObject var splitViewManager: SplitViewManager
     @EnvironmentObject var navigationDrawerState: NavigationDrawerState
@@ -274,7 +270,7 @@ private struct ThreadListToolbar: ViewModifier {
                             Button {
                                 isShowingSwitchAccount.toggle()
                             } label: {
-                                avatarImage
+                                splitViewManager.avatarImage
                                     .resizable()
                                     .scaledToFit()
                                     .frame(width: 28, height: 28)

@@ -44,6 +44,7 @@ public class SplitViewManager: ObservableObject {
     @Published var showSearch = false
     @Published var selectedFolder: Folder?
     var splitViewController: UISplitViewController?
+    @Published var avatarImage = Image(resource: MailResourcesAsset.placeholderAvatar)
 
     init(folder: Folder?) {
         selectedFolder = folder
@@ -138,7 +139,13 @@ struct SplitView: View {
         .floatingPanel(state: bottomSheet) {
             switch bottomSheet.state {
             case let .move(moveHandler):
-                MoveEmailView(mailboxManager: mailboxManager, currentFolderId: splitViewManager.selectedFolder?.id, state: bottomSheet, globalAlert: alert, moveHandler: moveHandler)
+                MoveEmailView(
+                    mailboxManager: mailboxManager,
+                    currentFolderId: splitViewManager.selectedFolder?.id,
+                    state: bottomSheet,
+                    globalAlert: alert,
+                    moveHandler: moveHandler
+                )
             case .getMoreStorage:
                 MoreStorageView(state: bottomSheet)
             case .restoreEmails:

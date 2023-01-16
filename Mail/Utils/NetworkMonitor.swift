@@ -20,7 +20,7 @@ import Foundation
 import Network
 
 class NetworkMonitor: ObservableObject {
-    @Published var isConnected = false
+    @Published var isConnected = true
     @Published var isCellular = false
 
     private let monitor = NWPathMonitor()
