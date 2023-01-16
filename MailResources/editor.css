@@ -1,0 +1,15 @@
+@import "style.css";
+
+:root {
+    color-scheme: light dark;
+}
+
+html {
+    padding: 16px;
+}
+
+@media (prefers-color-scheme: dark) {
+    html {
+        background-color: #101010;
+    }
+}
