@@ -98,9 +98,9 @@ struct OnboardingView: View {
                         }
                     }
                     .tabViewStyle(.page)
+                    .ignoresSafeArea(edges: .top)
                 }
             }
-            .ignoresSafeArea(edges: .top)
             .overlay(alignment: .top) {
                 Image(resource: MailResourcesAsset.logoText)
                     .resizable()

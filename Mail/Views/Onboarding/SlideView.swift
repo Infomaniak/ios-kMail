@@ -42,7 +42,7 @@ struct SlideView: View {
                     .resizable()
                     .frame(height: proxy.size.height * 0.62)
                     .foregroundColor(colorScheme == .light ? accentColor.secondary : MailResourcesAsset.backgroundColor)
-                    .ignoresSafeArea()
+                    .ignoresSafeArea(edges: .top)
 
                 VStack(spacing: 0) {
                     Spacer(minLength: Constants.onboardingLogoHeight + Constants.onboardingVerticalTopPadding)
