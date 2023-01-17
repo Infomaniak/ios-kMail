@@ -199,7 +199,9 @@ struct ThreadListView: View {
             ComposeMessageView.newMessage(mailboxManager: viewModel.mailboxManager)
         }
         .sheet(isPresented: $moveSheet.isShowing) {
-            Text("Hello")
+            if case let .move(handler) = moveSheet.state {
+                MoveMessageView.sheetView(mailboxManager: viewModel.mailboxManager, moveHandler: handler)
+            }
         }
     }
 
