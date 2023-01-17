@@ -26,7 +26,6 @@ import SwiftUI
 
 class GlobalBottomSheet: DisplayedFloatingPanelState<GlobalBottomSheet.State> {
     enum State {
-        case move(moveHandler: (Folder) -> Void)
         case getMoreStorage
         case restoreEmails
         case reportDisplayProblem(message: Message)
@@ -138,14 +137,6 @@ struct SplitView: View {
         .environmentObject(alert)
         .floatingPanel(state: bottomSheet) {
             switch bottomSheet.state {
-            case let .move(moveHandler):
-                MoveEmailView(
-                    mailboxManager: mailboxManager,
-                    currentFolderId: splitViewManager.selectedFolder?.id,
-                    state: bottomSheet,
-                    globalAlert: alert,
-                    moveHandler: moveHandler
-                )
             case .getMoreStorage:
                 MoreStorageView(state: bottomSheet)
             case .restoreEmails:

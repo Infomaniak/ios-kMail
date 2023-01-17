@@ -27,12 +27,14 @@ struct ActionsView: View {
          target: ActionsTarget,
          state: ThreadBottomSheet,
          globalSheet: GlobalBottomSheet,
+         moveSheet: MoveSheet? = nil,
          replyHandler: @escaping (Message, ReplyMode) -> Void,
          completionHandler: (() -> Void)? = nil) {
         viewModel = ActionsViewModel(mailboxManager: mailboxManager,
                                      target: target,
                                      state: state,
                                      globalSheet: globalSheet,
+                                     moveSheet: moveSheet,
                                      replyHandler: replyHandler,
                                      completionHandler: completionHandler)
     }
