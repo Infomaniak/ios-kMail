@@ -69,10 +69,11 @@ struct AttachmentCell: View {
             }
             .padding(6)
             if isNewMessage {
-                ProgressView(value: uploadProgress)
+                IndeterminateProgressView(indeterminate: uploadProgress == 0, progress: uploadProgress)
+                    .opacity(uploadProgress == 1 ? 0 : 1)
             }
         }
-        .overlay(
+        .background(
             RoundedRectangle(cornerRadius: 6)
                 .stroke(MailResourcesAsset.separatorColor.swiftUiColor, lineWidth: 1)
         )
