@@ -67,7 +67,7 @@ public class Attachment: /* Hashable, */ EmbeddedObject, Codable, Identifiable {
             return MailResourcesAsset.officeFileGraph
         } else if uti.conforms(to: .spreadsheet) {
             return MailResourcesAsset.officeFileSheet
-        } else if uti.conforms(to: .video) {
+        } else if uti.conforms(to: .movie) {
             return MailResourcesAsset.videoFilePlay
         }
         return MailResourcesAsset.unknownFile
