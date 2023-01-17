@@ -138,7 +138,7 @@ public class Attachment: /* Hashable, */ EmbeddedObject, Codable, Identifiable {
         self.driveUrl = driveUrl
     }
 
-    public func updateLocalAttachment(with remoteAttachment: Attachment) {
+    public func update(with remoteAttachment: Attachment) {
         uuid = remoteAttachment.uuid
         partId = remoteAttachment.partId
         mimeType = remoteAttachment.mimeType

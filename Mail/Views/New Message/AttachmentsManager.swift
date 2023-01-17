@@ -31,12 +31,12 @@ class AttachmentsManager: ObservableObject {
     }
 
     @MainActor
-    private func updateAttachment(localAttachment: Attachment, remoteAttachment: Attachment) {
-        guard let localAttachment = localAttachment.thaw() else { return }
+    private func updateAttachment(oldAttachment: Attachment, newAttachment: Attachment) {
+        guard let oldAttachment = oldAttachment.thaw() else { return }
 
-        try? localAttachment.realm?.write {
+        try? oldAttachment.realm?.write {
             // We need to update every field of the local attachment because embedded objects don't have a primary key
-            localAttachment.updateLocalAttachment(with: remoteAttachment)
+            oldAttachment.update(with: newAttachment)
         }
 
         objectWillChange.send()
@@ -59,25 +59,37 @@ class AttachmentsManager: ObservableObject {
         return attachment.freeze()
     }
 
-    private func createLocalAttachment(url: URL,
-                                       name: String,
+    private func createLocalAttachment(name: String,
+                                       type: UTType?,
                                        disposition: AttachmentDisposition) async -> Attachment {
-        let urlResources = try? url.resourceValues(forKeys: [.typeIdentifierKey, .fileSizeKey])
-        let uti = UTType(urlResources?.typeIdentifier ?? "")
-        let mimeType = uti?.preferredMIMEType ?? "application/octet-stream"
         let name = nameWithExtension(name: name,
-                                     correspondingTo: uti)
-        let size = Int64(urlResources?.fileSize ?? 0)
-
+                                     correspondingTo: type)
         let attachment = Attachment(uuid: UUID().uuidString,
                                     partId: "",
-                                    mimeType: mimeType,
-                                    size: size,
+                                    mimeType: type?.preferredMIMEType ?? "application/octet-stream",
+                                    size: 0,
                                     name: name,
                                     disposition: disposition)
 
         let savedAttachment = await addLocalAttachment(attachment: attachment)
         return savedAttachment
+    }
+
+    private func updateLocalAttachment(url: URL, attachment: Attachment) async -> Attachment {
+        let urlResources = try? url.resourceValues(forKeys: [.typeIdentifierKey, .fileSizeKey])
+        let uti = UTType(urlResources?.typeIdentifier ?? "")
+        let mimeType = uti?.preferredMIMEType ?? attachment.mimeType
+        let size = Int64(urlResources?.fileSize ?? 0)
+
+        let newAttachment = Attachment(uuid: attachment.uuid,
+                                       partId: "",
+                                       mimeType: mimeType,
+                                       size: size,
+                                       name: attachment.name,
+                                       disposition: attachment.disposition)
+
+        await updateAttachment(oldAttachment: attachment, newAttachment: newAttachment)
+        return newAttachment
     }
 
     func addDocumentAttachment(urls: [URL]) {
@@ -86,10 +98,11 @@ class AttachmentsManager: ObservableObject {
                 for url in urls {
                     group.addTask {
                         do {
-                            let localAttachment = await self.createLocalAttachment(url: url,
-                                                                                   name: url.lastPathComponent,
+                            let localAttachment = await self.createLocalAttachment(name: url.lastPathComponent,
+                                                                                   type: UTType.data,
                                                                                    disposition: .attachment)
-                            _ = try await self.sendAttachment(url: url, localAttachment: localAttachment)
+                            let updatedAttachment = await self.updateLocalAttachment(url: url, attachment: localAttachment)
+                            _ = try await self.sendAttachment(url: url, localAttachment: updatedAttachment)
                         } catch {
                             print("Error while creating attachment: \(error.localizedDescription)")
                         }
@@ -111,15 +124,16 @@ class AttachmentsManager: ObservableObject {
             await withTaskGroup(of: Void.self) { group in
                 for itemProvider in itemProviders {
                     group.addTask {
+                        let typeIdentifier = itemProvider.registeredTypeIdentifiers
+                            .first { UTType($0)?.conforms(to: .image) == true || UTType($0)?.conforms(to: .movie) == true } ?? ""
+                        let name = itemProvider.suggestedName ?? self.getDefaultFileName()
+                        let localAttachment = await self.createLocalAttachment(name: name,
+                                                                               type: UTType(typeIdentifier),
+                                                                               disposition: disposition)
                         do {
-                            let typeIdentifier = itemProvider.registeredTypeIdentifiers
-                                .first { UTType($0)?.conforms(to: .image) == true || UTType($0)?.conforms(to: .movie) == true } ?? ""
                             let url = try await self.loadFileRepresentation(itemProvider, typeIdentifier: typeIdentifier)
-                            let localAttachment = await self.createLocalAttachment(url: url,
-                                                                                   name: itemProvider.suggestedName ?? self.getDefaultFileName(),
-                                                                                   disposition: disposition)
-
-                            let remoteAttachment = try await self.sendAttachment(url: url, localAttachment: localAttachment)
+                            let updatedAttachment = await self.updateLocalAttachment(url: url, attachment: localAttachment)
+                            let remoteAttachment = try await self.sendAttachment(url: url, localAttachment: updatedAttachment)
 
                             if disposition == .inline, let cid = remoteAttachment?.contentId {
                                 completion(cid)
@@ -141,16 +155,17 @@ class AttachmentsManager: ObservableObject {
         }
     ) {
         Task {
+            let temporaryURL = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
+            let temporaryFileURL = temporaryURL.appendingPathComponent(getDefaultFileName()).appendingPathExtension("jpeg")
+            let localAttachment = await self.createLocalAttachment(name: temporaryFileURL.lastPathComponent,
+                                                                   type: UTType.image,
+                                                                   disposition: .attachment)
             do {
-                let temporaryURL = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
-                let temporaryFileURL = temporaryURL.appendingPathComponent(getDefaultFileName()).appendingPathExtension("jpeg")
                 try FileManager.default.createDirectory(at: temporaryURL, withIntermediateDirectories: true)
                 try data.write(to: temporaryFileURL)
 
-                let localAttachment = await self.createLocalAttachment(url: temporaryFileURL,
-                                                                       name: temporaryFileURL.lastPathComponent,
-                                                                       disposition: .attachment)
-                let remoteAttachment = try await self.sendAttachment(url: temporaryFileURL, localAttachment: localAttachment)
+                let updatedAttachment = await self.updateLocalAttachment(url: temporaryURL, attachment: localAttachment)
+                let remoteAttachment = try await self.sendAttachment(url: temporaryFileURL, localAttachment: updatedAttachment)
 
                 if disposition == .inline, let cid = remoteAttachment?.contentId {
                     completion(cid)
@@ -201,14 +216,6 @@ class AttachmentsManager: ObservableObject {
         localAttachment: Attachment
     ) async throws -> Attachment? {
         let data = try Data(contentsOf: url)
-
-        return try await sendAttachment(from: data, localAttachment: localAttachment)
-    }
-
-    private func sendAttachment(
-        from data: Data,
-        localAttachment: Attachment
-    ) async throws -> Attachment? {
         let remoteAttachment = try await mailboxManager.apiFetcher.createAttachment(
             mailbox: mailboxManager.mailbox,
             attachmentData: data,
@@ -216,7 +223,7 @@ class AttachmentsManager: ObservableObject {
             attachmentName: localAttachment.name,
             mimeType: localAttachment.mimeType
         )
-        await updateAttachment(localAttachment: localAttachment, remoteAttachment: remoteAttachment)
+        await updateAttachment(oldAttachment: localAttachment, newAttachment: remoteAttachment)
         return remoteAttachment
     }
 }
