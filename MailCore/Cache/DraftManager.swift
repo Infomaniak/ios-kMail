@@ -90,13 +90,7 @@ public class DraftManager {
 
         do {
             let cancelableResponse = try await mailboxManager.send(draft: draft)
-            await IKSnackBar.showCancelableSnackBar(
-                message: MailResourcesStrings.Localizable.emailSentSnackbar,
-                cancelSuccessMessage: MailResourcesStrings.Localizable.canceledEmailSendingConfirmationSnackbar,
-                duration: .custom(CGFloat(draft.delay ?? 3)),
-                undoRedoAction: UndoRedoAction(undo: cancelableResponse, redo: nil),
-                mailboxManager: mailboxManager
-            )
+            await IKSnackBar.showSnackBar(message: MailResourcesStrings.Localizable.emailSentSnackbar)
             sendDate = cancelableResponse.scheduledDate
         } catch {
             await IKSnackBar.showSnackBar(message: error.localizedDescription)
