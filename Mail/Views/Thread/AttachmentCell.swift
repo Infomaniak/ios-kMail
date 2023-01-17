@@ -22,44 +22,61 @@ import SwiftUI
 
 struct AttachmentCell: View {
     let attachment: Attachment
-    var isNewMessage = false
+    let uploadProgress: Double
+    let isNewMessage: Bool
     let attachmentRemoved: ((Attachment) -> Void)?
 
+    init(attachment: Attachment,
+         uploadProgress: Double = 0,
+         isNewMessage: Bool = false,
+         attachmentRemoved: ((Attachment) -> Void)?) {
+        self.attachment = attachment
+        self.uploadProgress = uploadProgress
+        self.isNewMessage = isNewMessage
+        self.attachmentRemoved = attachmentRemoved
+    }
+
     var body: some View {
-        HStack {
-            Image(resource: attachment.icon)
+        VStack(spacing: 0) {
+            HStack {
+                Image(resource: attachment.icon)
 
-            VStack(alignment: .leading, spacing: 0) {
-                Text(attachment.name)
-                    .textStyle(.bodySmall)
-                    .lineLimit(1)
-                    .truncationMode(.middle)
-                Text(attachment.size, format: .defaultByteCount)
-                    .textStyle(.labelSecondary)
-                    .opacity(attachment.size == 0 ? 0 : 1)
-            }
-
-            if isNewMessage {
-                Button {
-                    if let attachmentRemoved = attachmentRemoved {
-                        attachmentRemoved(attachment)
-                    }
-                } label: {
-                    Image(resource: MailResourcesAsset.close)
-                        .resizable()
-                        .scaledToFit()
-                        .foregroundColor(MailResourcesAsset.secondaryTextColor)
-                        .frame(width: 16, height: 16)
+                VStack(alignment: .leading, spacing: 0) {
+                    Text(attachment.name)
+                        .textStyle(.bodySmall)
+                        .lineLimit(1)
+                        .truncationMode(.middle)
+                    Text(attachment.size, format: .defaultByteCount)
+                        .textStyle(.labelSecondary)
+                        .opacity(attachment.size == 0 ? 0 : 1)
                 }
-                .buttonStyle(BorderlessButtonStyle())
-                .padding(.leading, 8)
+
+                if isNewMessage {
+                    Button {
+                        if let attachmentRemoved = attachmentRemoved {
+                            attachmentRemoved(attachment)
+                        }
+                    } label: {
+                        Image(resource: MailResourcesAsset.close)
+                            .resizable()
+                            .scaledToFit()
+                            .foregroundColor(MailResourcesAsset.secondaryTextColor)
+                            .frame(width: 16, height: 16)
+                    }
+                    .buttonStyle(.borderless)
+                    .padding(.leading, 8)
+                }
+            }
+            .padding(6)
+            if isNewMessage {
+                ProgressView(value: uploadProgress)
             }
         }
-        .padding(6)
         .overlay(
             RoundedRectangle(cornerRadius: 6)
                 .stroke(MailResourcesAsset.separatorColor.swiftUiColor, lineWidth: 1)
         )
+        .cornerRadius(6)
         .frame(maxWidth: 200)
         .padding(.top, isNewMessage ? 16 : 0)
     }

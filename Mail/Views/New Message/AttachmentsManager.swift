@@ -24,6 +24,7 @@ import SwiftUI
 class AttachmentsManager: ObservableObject {
     private let draft: Draft
     private let mailboxManager: MailboxManager
+    private(set) var attachmentsUploadProgress = [String: Double]()
 
     init(draft: Draft, mailboxManager: MailboxManager) {
         self.draft = draft
@@ -57,6 +58,15 @@ class AttachmentsManager: ObservableObject {
             draft.attachments.append(attachment)
         }
         return attachment.freeze()
+    }
+
+    @MainActor
+    private func updateAttachmentUploadProgress(attachment: Attachment, progress: Double) {
+        guard let uuid = attachment.uuid else {return}
+        withAnimation {
+            attachmentsUploadProgress[uuid] = progress
+            objectWillChange.send()
+        }
     }
 
     private func createLocalAttachment(name: String,
@@ -219,10 +229,12 @@ class AttachmentsManager: ObservableObject {
         let remoteAttachment = try await mailboxManager.apiFetcher.createAttachment(
             mailbox: mailboxManager.mailbox,
             attachmentData: data,
-            disposition: localAttachment.disposition,
-            attachmentName: localAttachment.name,
-            mimeType: localAttachment.mimeType
-        )
+            attachment: localAttachment
+        ) { progress in
+            Task { [weak self] in
+                await self?.updateAttachmentUploadProgress(attachment: localAttachment, progress: progress)
+            }
+        }
         await updateAttachment(oldAttachment: localAttachment, newAttachment: remoteAttachment)
         return remoteAttachment
     }

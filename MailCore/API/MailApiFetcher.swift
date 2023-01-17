@@ -213,7 +213,7 @@ public class MailApiFetcher: ApiFetcher {
         // TODO: Remove try? when bug will be fixed from API
         return try? await perform(request: authenticatedRequest(.draft(uuid: mailbox.uuid, draftUuid: draftId), method: .delete)).data
     }
-    
+
     @discardableResult
     func deleteDraft(draftResource: String) async throws -> Empty? {
         // TODO: Remove try? when bug will be fixed from API
@@ -266,19 +266,25 @@ public class MailApiFetcher: ApiFetcher {
     public func createAttachment(
         mailbox: Mailbox,
         attachmentData: Data,
-        disposition: AttachmentDisposition,
-        attachmentName: String,
-        mimeType: String
+        attachment: Attachment,
+        progressObserver: @escaping (Double) -> Void
     ) async throws -> Attachment {
         let headers = HTTPHeaders([
-            "x-ws-attachment-filename": attachmentName,
-            "x-ws-attachment-mime-type": mimeType,
-            "x-ws-attachment-disposition": disposition.rawValue
+            "x-ws-attachment-filename": attachment.name,
+            "x-ws-attachment-mime-type": attachment.mimeType,
+            "x-ws-attachment-disposition": attachment.disposition.rawValue
         ])
         var request = try URLRequest(url: Endpoint.createAttachment(uuid: mailbox.uuid).url, method: .post, headers: headers)
         request.httpBody = attachmentData
 
-        return try await perform(request: authenticatedSession.request(request)).data
+        let uploadRequest = authenticatedSession.request(request)
+        Task {
+            for await progress in uploadRequest.uploadProgress() {
+                progressObserver(progress.fractionCompleted)
+            }
+        }
+
+        return try await perform(request: uploadRequest).data
     }
 
     public func attachmentsToForward(mailbox: Mailbox, message: Message) async throws -> AttachmentsToForwardResult {
