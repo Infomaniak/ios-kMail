@@ -240,6 +240,9 @@ public class Draft: Object, Decodable, Identifiable, Encodable {
             } else if mode == .replyAll {
                 cc.append(contentsOf: cleanedCc)
             }
+            if to.isEmpty {
+                to = Array(message.from.detached())
+            }
         }
 
         return Draft(localUUID: localDraftUUID,
