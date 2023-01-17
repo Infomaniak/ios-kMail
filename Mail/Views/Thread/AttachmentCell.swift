@@ -36,6 +36,7 @@ struct AttachmentCell: View {
                     .truncationMode(.middle)
                 Text(attachment.size, format: .defaultByteCount)
                     .textStyle(.labelSecondary)
+                    .opacity(attachment.size == 0 ? 0 : 1)
             }
 
             if isNewMessage {
@@ -66,6 +67,6 @@ struct AttachmentCell: View {
 
 struct AttachmentCell_Previews: PreviewProvider {
     static var previews: some View {
-        AttachmentCell(attachment: PreviewHelper.sampleAttachment)  { _ in /* Preview */ }
+        AttachmentCell(attachment: PreviewHelper.sampleAttachment) { _ in /* Preview */ }
     }
 }
