@@ -43,9 +43,12 @@ class AttachmentsManager: ObservableObject {
 
     @MainActor
     private func updateAttachment(oldAttachment: Attachment, newAttachment: Attachment) {
-        guard let oldAttachment = oldAttachment.thaw() else { return }
+        guard let realm = draft.realm,
+              let oldAttachment = draft.attachments.first(where: { $0.uuid == oldAttachment.uuid }) else {
+            return
+        }
 
-        try? oldAttachment.realm?.write {
+        try? realm.write {
             // We need to update every field of the local attachment because embedded objects don't have a primary key
             oldAttachment.update(with: newAttachment)
         }
