@@ -21,14 +21,13 @@ import RealmSwift
 import SwiftUI
 
 struct AttachmentsHeaderView: View {
-    var attachments: [Attachment]
     @ObservedObject var attachmentsManager: AttachmentsManager
 
     var body: some View {
-        if !attachments.isEmpty {
+        if !attachmentsManager.attachments.isEmpty {
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack(spacing: 8) {
-                    ForEach(attachments) { attachment in
+                    ForEach(attachmentsManager.attachments) { attachment in
                         AttachmentCell(attachment: attachment,
                                        uploadProgress: attachmentsManager.attachmentsUploadProgress[attachment.uuid ?? ""] ?? 0,
                                        isNewMessage: true) { attachmentRemoved in

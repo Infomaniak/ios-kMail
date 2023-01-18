@@ -153,8 +153,7 @@ struct ComposeMessageView: View {
                                 .focused($focusedField, equals: .subject)
                         }
 
-                        AttachmentsHeaderView(attachments: draft.attachments.filter { $0.contentId == nil }.toArray(),
-                                              attachmentsManager: attachmentsManager)
+                        AttachmentsHeaderView(attachmentsManager: attachmentsManager)
 
                         RichTextEditor(model: $editor,
                                        body: $draft.body,

@@ -24,6 +24,10 @@ import SwiftUI
 class AttachmentsManager: ObservableObject {
     private let draft: Draft
     private let mailboxManager: MailboxManager
+    var attachments: [Attachment] {
+        return draft.attachments.filter { $0.contentId == nil }.toArray()
+    }
+
     private(set) var attachmentsUploadProgress = [String: Double]()
 
     init(draft: Draft, mailboxManager: MailboxManager) {
@@ -45,11 +49,11 @@ class AttachmentsManager: ObservableObject {
 
     @MainActor
     func removeAttachment(_ attachment: Attachment) {
-        if let attachmentToRemove = draft.attachments.firstIndex(where: { $0.uuid == attachment.uuid }) {
-            try? draft.realm?.write {
-                draft.attachments.remove(at: attachmentToRemove)
-            }
+        guard let realm = attachment.realm else { return }
+        try? realm.write {
+            realm.delete(attachment)
         }
+        objectWillChange.send()
     }
 
     @MainActor
@@ -62,11 +66,9 @@ class AttachmentsManager: ObservableObject {
 
     @MainActor
     private func updateAttachmentUploadProgress(attachment: Attachment, progress: Double) {
-        guard let uuid = attachment.uuid else {return}
-        withAnimation {
-            attachmentsUploadProgress[uuid] = progress
-            objectWillChange.send()
-        }
+        guard let uuid = attachment.uuid else { return }
+        attachmentsUploadProgress[uuid] = progress
+        objectWillChange.send()
     }
 
     private func createLocalAttachment(name: String,
