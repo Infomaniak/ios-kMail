@@ -35,6 +35,12 @@ class AttachmentsManager: ObservableObject {
     }
 
     private(set) var attachmentUploadTasks = [String: AttachmentUploadTask]()
+    
+    private lazy var filenameDateFormatter: DateFormatter = {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyyMMdd_HHmmssSS"
+        return formatter
+    }()
 
     init(draft: Draft, mailboxManager: MailboxManager) {
         self.draft = draft
@@ -234,9 +240,7 @@ class AttachmentsManager: ObservableObject {
     }
 
     private func getDefaultFileName() -> String {
-        let formatter = DateFormatter()
-        formatter.dateFormat = "yyyyMMdd_HHmmssSS"
-        return formatter.string(from: Date())
+        return filenameDateFormatter.string(from: Date())
     }
 
     private func nameWithExtension(name: String, correspondingTo type: UTType?) -> String {
