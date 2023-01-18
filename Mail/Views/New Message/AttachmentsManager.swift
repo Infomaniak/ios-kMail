@@ -16,10 +16,16 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import CocoaLumberjackSwift
 import Foundation
 import MailCore
 import PhotosUI
 import SwiftUI
+
+struct AttachmentUploadTask {
+    var progress: Double
+    var error: MailError?
+}
 
 class AttachmentsManager: ObservableObject {
     private let draft: Draft
@@ -28,7 +34,7 @@ class AttachmentsManager: ObservableObject {
         return draft.attachments.filter { $0.contentId == nil }.toArray()
     }
 
-    private(set) var attachmentsUploadProgress = [String: Double]()
+    private(set) var attachmentUploadTasks = [String: AttachmentUploadTask]()
 
     init(draft: Draft, mailboxManager: MailboxManager) {
         self.draft = draft
@@ -67,7 +73,19 @@ class AttachmentsManager: ObservableObject {
     @MainActor
     private func updateAttachmentUploadProgress(attachment: Attachment, progress: Double) {
         guard let uuid = attachment.uuid else { return }
-        attachmentsUploadProgress[uuid] = progress
+        attachmentUploadTasks[uuid]?.progress = progress
+        objectWillChange.send()
+    }
+
+    @MainActor
+    private func updateAttachmentUploadError(attachment: Attachment, error: Error?) {
+        guard let uuid = attachment.uuid else { return }
+
+        if let error = error as? MailError {
+            attachmentUploadTasks[uuid]?.error = error
+        } else {
+            attachmentUploadTasks[uuid]?.error = .unknownError
+        }
         objectWillChange.send()
     }
 
@@ -76,12 +94,14 @@ class AttachmentsManager: ObservableObject {
                                        disposition: AttachmentDisposition) async -> Attachment {
         let name = nameWithExtension(name: name,
                                      correspondingTo: type)
-        let attachment = Attachment(uuid: UUID().uuidString,
+        let attachmentUUID = UUID().uuidString
+        let attachment = Attachment(uuid: attachmentUUID,
                                     partId: "",
                                     mimeType: type?.preferredMIMEType ?? "application/octet-stream",
                                     size: 0,
                                     name: name,
                                     disposition: disposition)
+        attachmentUploadTasks[attachmentUUID] = AttachmentUploadTask(progress: 0, error: nil)
 
         let savedAttachment = await addLocalAttachment(attachment: attachment)
         return savedAttachment
@@ -109,14 +129,15 @@ class AttachmentsManager: ObservableObject {
             await withTaskGroup(of: Void.self) { group in
                 for url in urls {
                     group.addTask {
+                        let localAttachment = await self.createLocalAttachment(name: url.lastPathComponent,
+                                                                               type: UTType.data,
+                                                                               disposition: .attachment)
+                        let updatedAttachment = await self.updateLocalAttachment(url: url, attachment: localAttachment)
                         do {
-                            let localAttachment = await self.createLocalAttachment(name: url.lastPathComponent,
-                                                                                   type: UTType.data,
-                                                                                   disposition: .attachment)
-                            let updatedAttachment = await self.updateLocalAttachment(url: url, attachment: localAttachment)
                             _ = try await self.sendAttachment(url: url, localAttachment: updatedAttachment)
                         } catch {
-                            print("Error while creating attachment: \(error.localizedDescription)")
+                            DDLogError("Error while creating attachment: \(error.localizedDescription)")
+                            await self.updateAttachmentUploadError(attachment: localAttachment, error: error)
                         }
                     }
                 }
@@ -151,7 +172,8 @@ class AttachmentsManager: ObservableObject {
                                 completion(cid)
                             }
                         } catch {
-                            print("Error while creating attachment: \(error.localizedDescription)")
+                            DDLogError("Error while creating attachment: \(error.localizedDescription)")
+                            await self.updateAttachmentUploadError(attachment: localAttachment, error: error)
                         }
                     }
                 }
@@ -183,7 +205,8 @@ class AttachmentsManager: ObservableObject {
                     completion(cid)
                 }
             } catch {
-                print("Error while creating attachment: \(error.localizedDescription)")
+                DDLogError("Error while creating attachment: \(error.localizedDescription)")
+                await updateAttachmentUploadError(attachment: localAttachment, error: error)
             }
         }
     }

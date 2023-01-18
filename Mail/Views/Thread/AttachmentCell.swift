@@ -22,16 +22,16 @@ import SwiftUI
 
 struct AttachmentCell: View {
     let attachment: Attachment
-    let uploadProgress: Double
+    let uploadTask: AttachmentUploadTask?
     let isNewMessage: Bool
     let attachmentRemoved: ((Attachment) -> Void)?
 
     init(attachment: Attachment,
-         uploadProgress: Double = 0,
+         uploadTask: AttachmentUploadTask? = nil,
          isNewMessage: Bool = false,
          attachmentRemoved: ((Attachment) -> Void)?) {
         self.attachment = attachment
-        self.uploadProgress = uploadProgress
+        self.uploadTask = uploadTask
         self.isNewMessage = isNewMessage
         self.attachmentRemoved = attachmentRemoved
     }
@@ -46,9 +46,14 @@ struct AttachmentCell: View {
                         .textStyle(.bodySmall)
                         .lineLimit(1)
                         .truncationMode(.middle)
-                    Text(attachment.size, format: .defaultByteCount)
-                        .textStyle(.labelSecondary)
-                        .opacity(attachment.size == 0 ? 0 : 1)
+                    if let error = uploadTask?.error {
+                        Text(error.localizedDescription)
+                            .textStyle(.labelSecondary)
+                    } else {
+                        Text(attachment.size, format: .defaultByteCount)
+                            .textStyle(.labelSecondary)
+                            .opacity(attachment.size == 0 ? 0 : 1)
+                    }
                 }
 
                 if isNewMessage {
@@ -68,9 +73,9 @@ struct AttachmentCell: View {
                 }
             }
             .padding(6)
-            if isNewMessage {
-                IndeterminateProgressView(indeterminate: uploadProgress == 0, progress: uploadProgress)
-                    .opacity(uploadProgress == 1 ? 0 : 1)
+            if let uploadTask, isNewMessage {
+                IndeterminateProgressView(indeterminate: uploadTask.progress == 0, progress: uploadTask.progress)
+                    .opacity(uploadTask.progress == 1 ? 0 : 1)
             }
         }
         .background(
