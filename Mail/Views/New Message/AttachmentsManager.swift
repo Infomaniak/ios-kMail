@@ -132,24 +132,28 @@ class AttachmentsManager: ObservableObject {
         return newAttachment
     }
 
-    func addDocumentAttachment(urls: [URL]) {
+    func addDocumentAttachments(urls: [URL]) {
         Task {
             await withTaskGroup(of: Void.self) { group in
                 for url in urls {
                     group.addTask {
-                        let localAttachment = await self.createLocalAttachment(name: url.lastPathComponent,
-                                                                               type: UTType.data,
-                                                                               disposition: .attachment)
-                        let updatedAttachment = await self.updateLocalAttachment(url: url, attachment: localAttachment)
-                        do {
-                            _ = try await self.sendAttachment(url: url, localAttachment: updatedAttachment)
-                        } catch {
-                            DDLogError("Error while creating attachment: \(error.localizedDescription)")
-                            await self.updateAttachmentUploadError(attachment: localAttachment, error: error)
-                        }
+                        await self.addDocumentAttachment(url: url)
                     }
                 }
             }
+        }
+    }
+
+    private func addDocumentAttachment(url: URL) async {
+        let localAttachment = await createLocalAttachment(name: url.lastPathComponent,
+                                                          type: UTType.data,
+                                                          disposition: .attachment)
+        let updatedAttachment = await updateLocalAttachment(url: url, attachment: localAttachment)
+        do {
+            _ = try await sendAttachment(url: url, localAttachment: updatedAttachment)
+        } catch {
+            DDLogError("Error while creating attachment: \(error.localizedDescription)")
+            await updateAttachmentUploadError(attachment: localAttachment, error: error)
         }
     }
 

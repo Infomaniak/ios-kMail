@@ -218,7 +218,7 @@ struct ComposeMessageView: View {
         }
         .sheet(isPresented: $isShowingFileSelection) {
             DocumentPicker { urls in
-                attachmentsManager.addDocumentAttachment(urls: urls)
+                attachmentsManager.addDocumentAttachments(urls: urls)
             }
         }
         .sheet(isPresented: $isShowingPhotoLibrary) {
