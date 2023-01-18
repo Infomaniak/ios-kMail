@@ -223,11 +223,10 @@ public class Draft: Object, Decodable, Identifiable, Encodable {
         var cc: [Recipient] = []
 
         if mode.isReply {
-            let userEmail = AccountManager.instance.currentMailboxManager?.mailbox.email ?? ""
-            let cleanedFrom = Array(message.from.detached()).filter { $0.email != userEmail }
-            let cleanedTo = Array(message.to.detached()).filter { $0.email != userEmail }
-            let cleanedReplyTo = Array(message.replyTo.detached()).filter { $0.email != userEmail }
-            let cleanedCc = Array(message.cc.detached()).filter { $0.email != userEmail }
+            let cleanedFrom = Array(message.from.detached()).filter { !$0.isMe }
+            let cleanedTo = Array(message.to.detached()).filter { !$0.isMe }
+            let cleanedReplyTo = Array(message.replyTo.detached()).filter { !$0.isMe }
+            let cleanedCc = Array(message.cc.detached()).filter { !$0.isMe }
 
             to = cleanedReplyTo.isEmpty ? cleanedFrom : cleanedReplyTo
             if to.isEmpty {
