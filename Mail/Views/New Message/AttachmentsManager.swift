@@ -77,6 +77,7 @@ class AttachmentsManager: ObservableObject {
         try? draft.realm?.write {
             draft.attachments.append(attachment)
         }
+        objectWillChange.send()
         return attachment.freeze()
     }
 
