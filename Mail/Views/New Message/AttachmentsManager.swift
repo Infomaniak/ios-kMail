@@ -215,18 +215,19 @@ class AttachmentsManager: ObservableObject {
     func loadFileRepresentation(_ itemProvider: NSItemProvider, typeIdentifier: String) async throws -> URL {
         try await withCheckedThrowingContinuation { continuation in
             itemProvider.loadFileRepresentation(forTypeIdentifier: typeIdentifier) { fileProviderURL, error in
-                if let fileProviderURL {
-                    do {
-                        let temporaryURL = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
-                        let temporaryFileURL = temporaryURL.appendingPathComponent(fileProviderURL.lastPathComponent)
-                        try FileManager.default.createDirectory(at: temporaryURL, withIntermediateDirectories: true)
-                        try FileManager.default.copyItem(atPath: fileProviderURL.path, toPath: temporaryFileURL.path)
-                        continuation.resume(returning: temporaryFileURL)
-                    } catch {
-                        continuation.resume(throwing: error)
-                    }
-                } else {
+                guard let fileProviderURL else {
                     continuation.resume(throwing: error ?? MailError.unknownError)
+                    return
+                }
+
+                do {
+                    let temporaryURL = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
+                    let temporaryFileURL = temporaryURL.appendingPathComponent(fileProviderURL.lastPathComponent)
+                    try FileManager.default.createDirectory(at: temporaryURL, withIntermediateDirectories: true)
+                    try FileManager.default.copyItem(atPath: fileProviderURL.path, toPath: temporaryFileURL.path)
+                    continuation.resume(returning: temporaryFileURL)
+                } catch {
+                    continuation.resume(throwing: error)
                 }
             }
         }
