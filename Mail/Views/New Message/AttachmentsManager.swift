@@ -35,7 +35,7 @@ class AttachmentsManager: ObservableObject {
     }
 
     private(set) var attachmentUploadTasks = [String: AttachmentUploadTask]()
-    
+
     private lazy var filenameDateFormatter: DateFormatter = {
         let formatter = DateFormatter()
         formatter.dateFormat = "yyyyMMdd_HHmmssSS"
@@ -152,49 +152,45 @@ class AttachmentsManager: ObservableObject {
         }
     }
 
-    func addImageAttachment(
-        results: [PHPickerResult],
-        disposition: AttachmentDisposition = .attachment,
-        completion: @escaping (String) -> Void = { _ in
-            // TODO: - Manage inline attachment
-        }
-    ) {
+    func addImageAttachments(results: [PHPickerResult], disposition: AttachmentDisposition = .attachment) {
         Task {
             let itemProviders = results.map(\.itemProvider)
             await withTaskGroup(of: Void.self) { group in
                 for itemProvider in itemProviders {
                     group.addTask {
-                        let typeIdentifier = itemProvider.registeredTypeIdentifiers
-                            .first { UTType($0)?.conforms(to: .image) == true || UTType($0)?.conforms(to: .movie) == true } ?? ""
-                        let name = itemProvider.suggestedName ?? self.getDefaultFileName()
-                        let localAttachment = await self.createLocalAttachment(name: name,
-                                                                               type: UTType(typeIdentifier),
-                                                                               disposition: disposition)
-                        do {
-                            let url = try await self.loadFileRepresentation(itemProvider, typeIdentifier: typeIdentifier)
-                            let updatedAttachment = await self.updateLocalAttachment(url: url, attachment: localAttachment)
-                            let remoteAttachment = try await self.sendAttachment(url: url, localAttachment: updatedAttachment)
-
-                            if disposition == .inline, let cid = remoteAttachment?.contentId {
-                                completion(cid)
-                            }
-                        } catch {
-                            DDLogError("Error while creating attachment: \(error.localizedDescription)")
-                            await self.updateAttachmentUploadError(attachment: localAttachment, error: error)
-                        }
+                        let cid = await self.addImageAttachment(itemProvider: itemProvider, disposition: disposition)
+                        // TODO: - Manage inline attachment
                     }
                 }
             }
         }
     }
 
-    func addCameraAttachment(
-        data: Data,
-        disposition: AttachmentDisposition = .attachment,
-        completion: @escaping (String) -> Void = { _ in
-            // TODO: - Manage inline attachment
+    private func addImageAttachment(itemProvider: NSItemProvider, disposition: AttachmentDisposition) async -> String? {
+        let typeIdentifier = itemProvider.registeredTypeIdentifiers
+            .first { UTType($0)?.conforms(to: .image) == true || UTType($0)?.conforms(to: .movie) == true } ?? ""
+        let name = itemProvider.suggestedName ?? getDefaultFileName()
+        let localAttachment = await createLocalAttachment(name: name,
+                                                          type: UTType(typeIdentifier),
+                                                          disposition: disposition)
+        do {
+            let url = try await loadFileRepresentation(itemProvider, typeIdentifier: typeIdentifier)
+            let updatedAttachment = await updateLocalAttachment(url: url, attachment: localAttachment)
+            let remoteAttachment = try await sendAttachment(url: url, localAttachment: updatedAttachment)
+
+            if disposition == .inline,
+               let cid = remoteAttachment?.contentId {
+                return cid
+            }
+        } catch {
+            DDLogError("Error while creating attachment: \(error.localizedDescription)")
+            await updateAttachmentUploadError(attachment: localAttachment, error: error)
         }
-    ) {
+
+        return nil
+    }
+
+    func addCameraAttachment(data: Data, disposition: AttachmentDisposition = .attachment) {
         Task {
             let temporaryURL = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
             let temporaryFileURL = temporaryURL.appendingPathComponent(getDefaultFileName()).appendingPathExtension("jpeg")
@@ -208,8 +204,9 @@ class AttachmentsManager: ObservableObject {
                 let updatedAttachment = await self.updateLocalAttachment(url: temporaryURL, attachment: localAttachment)
                 let remoteAttachment = try await self.sendAttachment(url: temporaryFileURL, localAttachment: updatedAttachment)
 
-                if disposition == .inline, let cid = remoteAttachment?.contentId {
-                    completion(cid)
+                if disposition == .inline,
+                   let cid = remoteAttachment?.contentId {
+                    // TODO: - Manage inline attachment
                 }
             } catch {
                 DDLogError("Error while creating attachment: \(error.localizedDescription)")

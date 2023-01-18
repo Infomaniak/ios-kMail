@@ -223,7 +223,7 @@ struct ComposeMessageView: View {
         }
         .sheet(isPresented: $isShowingPhotoLibrary) {
             ImagePicker { results in
-                attachmentsManager.addImageAttachment(results: results)
+                attachmentsManager.addImageAttachments(results: results)
             }
         }
         .customAlert(isPresented: $alert.isShowing) {
