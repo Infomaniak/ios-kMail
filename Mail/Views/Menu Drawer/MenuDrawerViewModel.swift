@@ -31,13 +31,24 @@ struct NestableFolder: Identifiable {
     let children: [NestableFolder]
 }
 
-class FolderListViewModel: ObservableObject {
+class MenuDrawerViewModel: ObservableObject {
+    /// User currently selected mailbox
+    @Published var mailbox: Mailbox
+    /// Other mailboxes the user owns
+    @Published var mailboxes = [Mailbox]()
     /// Special folders (eg. Inbox) for the current mailbox
     @Published var roleFolders = [NestableFolder]()
     /// User created folders for the current mailbox
     @Published var userFolders = [NestableFolder]()
 
+    @Published var helpMenuItems = [MenuItem]()
+    @Published var actionsMenuItems = [MenuItem]()
+    @Published var isShowingHelp = false
+    @Published var isShowingBugTracker = false
+
+    private var bottomSheet: GlobalBottomSheet?
     private var foldersObservationToken: NotificationToken?
+    private var mailboxesObservationToken: NotificationToken?
 
     private let userFoldersSortDescriptors = [
         SortDescriptor(keyPath: \Folder.isFavorite, ascending: false),
@@ -46,6 +57,27 @@ class FolderListViewModel: ObservableObject {
     ]
 
     init(mailboxManager: MailboxManager) {
+        if let liveMailbox = MailboxInfosManager.instance.getMailbox(objectId: mailboxManager.mailbox.objectId, freeze: false) {
+            mailbox = liveMailbox
+        } else {
+            mailbox = mailboxManager.mailbox
+        }
+
+        mailboxesObservationToken = MailboxInfosManager.instance.getRealm()
+            .objects(Mailbox.self)
+            .where { $0.userId == AccountManager.instance.currentUserId }
+            .sorted(by: \.mailboxId)
+            .observe(on: DispatchQueue.main) { results in
+                switch results {
+                case .initial(let mailboxes):
+                    self.mailboxes = Array(mailboxes)
+                case .update(let mailboxes, _, _, _):
+                    self.mailboxes = Array(mailboxes)
+                case .error:
+                    break
+                }
+            }
+
         // swiftlint:disable empty_count
         foldersObservationToken = mailboxManager.getRealm()
             .objects(Folder.self).where { $0.parentLink.count == 0 && $0.toolType == nil }
@@ -68,7 +100,7 @@ class FolderListViewModel: ObservableObject {
         userFolders = recCreateFolderHierarchy(folders: Array(folders.where { $0.role == nil }.sorted(by: userFoldersSortDescriptors)))
     }
 
-    private func recCreateFolderHierarchy(folders: [Folder]) -> [NestableFolder] {
+    func recCreateFolderHierarchy(folders: [Folder]) -> [NestableFolder] {
         var parentFolders = [NestableFolder]()
         for folder in folders {
             parentFolders.append(NestableFolder(content: folder,
@@ -76,47 +108,6 @@ class FolderListViewModel: ObservableObject {
         }
 
         return parentFolders
-    }
-}
-
-final class MenuDrawerViewModel: FolderListViewModel {
-    /// User currently selected mailbox
-    @Published var mailbox: Mailbox
-    /// Other mailboxes the user owns
-    @Published var mailboxes = [Mailbox]()
-
-    @Published var helpMenuItems = [MenuItem]()
-    @Published var actionsMenuItems = [MenuItem]()
-    @Published var isShowingHelp = false
-    @Published var isShowingBugTracker = false
-
-    private var bottomSheet: GlobalBottomSheet?
-
-    private var mailboxesObservationToken: NotificationToken?
-
-    override init(mailboxManager: MailboxManager) {
-        if let liveMailbox = MailboxInfosManager.instance.getMailbox(objectId: mailboxManager.mailbox.objectId, freeze: false) {
-            mailbox = liveMailbox
-        } else {
-            mailbox = mailboxManager.mailbox
-        }
-
-        super.init(mailboxManager: mailboxManager)
-
-        mailboxesObservationToken = MailboxInfosManager.instance.getRealm()
-            .objects(Mailbox.self)
-            .where { $0.userId == AccountManager.instance.currentUserId }
-            .sorted(by: \.mailboxId)
-            .observe(on: DispatchQueue.main) { results in
-                switch results {
-                case .initial(let mailboxes):
-                    self.mailboxes = Array(mailboxes)
-                case .update(let mailboxes, _, _, _):
-                    self.mailboxes = Array(mailboxes)
-                case .error:
-                    break
-                }
-            }
     }
 
     func createMenuItems(bottomSheet: GlobalBottomSheet) {

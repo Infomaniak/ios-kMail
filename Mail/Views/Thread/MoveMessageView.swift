@@ -19,25 +19,34 @@
 
 import MailCore
 import MailResources
-import Realm
+import RealmSwift
 import SwiftUI
 
 struct MoveMessageView: View {
-    @ObservedObject private var viewModel: FolderListViewModel
+    let moveHandler: MoveSheet.MoveHandler
 
-    private let moveHandler: MoveSheet.MoveHandler
+    @ObservedResults(Folder.self) var folders
+
+    private var nestableFolderSorted: [NestableFolder] {
+        createNestedFoldersHierarchy(folders: Array(folders))
+    }
 
     init(mailboxManager: MailboxManager, moveHandler: @escaping MoveSheet.MoveHandler) {
-        _viewModel = ObservedObject(wrappedValue: FolderListViewModel(mailboxManager: mailboxManager))
         self.moveHandler = moveHandler
+        // swiftlint:disable empty_count
+        _folders = ObservedResults(
+            Folder.self,
+            configuration: AccountManager.instance.currentMailboxManager?.realmConfiguration,
+            where: { $0.role != .draft && $0.parentLink.count == 0 && $0.toolType == nil }
+        )
     }
 
     var body: some View {
         ScrollView {
             VStack(spacing: 0) {
-                RoleFoldersListView(folders: viewModel.roleFolders, isCompact: true)
-
-                UserFoldersListView(folders: viewModel.userFolders, isCompact: true)
+                ForEach(nestableFolderSorted) { folder in
+                    FolderCell(folder: folder)
+                }
             }
         }
         .navigationTitle(MailResourcesStrings.Localizable.actionMove)
@@ -45,12 +54,23 @@ struct MoveMessageView: View {
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
                 Button {
-                    // TODO: Add folder
+                    // TODO: Create a new folder
                 } label: {
                     Image(resource: MailResourcesAsset.folderAdd)
                 }
             }
         }
+    }
+
+    private func createNestedFoldersHierarchy(folders: [Folder]) -> [NestableFolder] {
+        var parentFolders = [NestableFolder]()
+
+        let sortedFolders = folders.sorted()
+        for folder in sortedFolders {
+            parentFolders.append(NestableFolder(content: folder, children: createNestedFoldersHierarchy(folders: Array(folder.children))))
+        }
+
+        return parentFolders
     }
 }
 
@@ -64,8 +84,6 @@ extension MoveMessageView {
 
 struct MoveMessageView_Previews: PreviewProvider {
     static var previews: some View {
-        MoveMessageView(mailboxManager:
-            MailboxManager(mailbox: PreviewHelper.sampleMailbox, apiFetcher: MailApiFetcher())
-        ) { _ in }
+        MoveMessageView(mailboxManager: PreviewHelper.sampleMailboxManager) { _ in }
     }
 }

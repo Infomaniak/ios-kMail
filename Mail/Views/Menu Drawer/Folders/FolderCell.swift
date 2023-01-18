@@ -29,7 +29,7 @@ struct FolderCell: View {
     let folder: NestableFolder
     var level = 0
 
-    var isCompact: Bool
+    var isCompact = true
 
     @State private var shouldTransit = false
 
