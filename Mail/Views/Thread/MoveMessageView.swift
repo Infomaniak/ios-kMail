@@ -1,4 +1,3 @@
-//
 /*
  Infomaniak Mail - iOS App
  Copyright (C) 2022 Infomaniak Network SA
@@ -23,29 +22,39 @@ import RealmSwift
 import SwiftUI
 
 struct MoveMessageView: View {
-    let moveHandler: MoveSheet.MoveHandler
+    @Environment(\.presentationMode) var presentationMode
 
     @ObservedResults(Folder.self) var folders
+
+    let moveHandler: MoveSheet.MoveHandler
 
     private var nestableFolderSorted: [NestableFolder] {
         createNestedFoldersHierarchy(folders: Array(folders))
     }
 
-    init(mailboxManager: MailboxManager, moveHandler: @escaping MoveSheet.MoveHandler) {
+    init(moveHandler: @escaping MoveSheet.MoveHandler) {
         self.moveHandler = moveHandler
         // swiftlint:disable empty_count
         _folders = ObservedResults(
             Folder.self,
-            configuration: AccountManager.instance.currentMailboxManager?.realmConfiguration,
-            where: { $0.role != .draft && $0.parentLink.count == 0 && $0.toolType == nil }
-        )
+            configuration: AccountManager.instance.currentMailboxManager?.realmConfiguration
+        ) { folder in
+            folder.role != .draft && folder.parentLink.count == 0 && folder.toolType == nil
+        }
     }
 
     var body: some View {
         ScrollView {
-            VStack(spacing: 0) {
+            LazyVStack(spacing: 0) {
                 ForEach(nestableFolderSorted) { folder in
-                    FolderCell(folder: folder)
+                    FolderCell(folder: folder) { folder in
+                        moveHandler(folder)
+                    }
+
+                    if folder.id != nestableFolderSorted.last?.id {
+                        IKDivider()
+                            .padding(.horizontal, 9)
+                    }
                 }
             }
         }
@@ -60,6 +69,7 @@ struct MoveMessageView: View {
                 }
             }
         }
+        .environment(\.folderCellType, .indicator)
     }
 
     private func createNestedFoldersHierarchy(folders: [Folder]) -> [NestableFolder] {
@@ -67,7 +77,10 @@ struct MoveMessageView: View {
 
         let sortedFolders = folders.sorted()
         for folder in sortedFolders {
-            parentFolders.append(NestableFolder(content: folder, children: createNestedFoldersHierarchy(folders: Array(folder.children))))
+            parentFolders.append(NestableFolder(
+                content: folder,
+                children: createNestedFoldersHierarchy(folders: Array(folder.children))
+            ))
         }
 
         return parentFolders
@@ -77,13 +90,13 @@ struct MoveMessageView: View {
 extension MoveMessageView {
     static func sheetView(mailboxManager: MailboxManager, moveHandler: @escaping MoveSheet.MoveHandler) -> some View {
         SheetView {
-            MoveMessageView(mailboxManager: mailboxManager, moveHandler: moveHandler)
+            MoveMessageView(moveHandler: moveHandler)
         }
     }
 }
 
 struct MoveMessageView_Previews: PreviewProvider {
     static var previews: some View {
-        MoveMessageView(mailboxManager: PreviewHelper.sampleMailboxManager) { _ in }
+        MoveMessageView { _ in }
     }
 }
