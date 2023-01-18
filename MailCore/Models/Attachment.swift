@@ -67,7 +67,7 @@ public class Attachment: /* Hashable, */ EmbeddedObject, Codable, Identifiable {
             return MailResourcesAsset.officeFileGraph
         } else if uti.conforms(to: .spreadsheet) {
             return MailResourcesAsset.officeFileSheet
-        } else if uti.conforms(to: .video) {
+        } else if uti.conforms(to: .movie) {
             return MailResourcesAsset.videoFilePlay
         }
         return MailResourcesAsset.unknownFile
@@ -136,6 +136,18 @@ public class Attachment: /* Hashable, */ EmbeddedObject, Codable, Identifiable {
         self.contentId = contentId
         self.resource = resource
         self.driveUrl = driveUrl
+    }
+
+    public func update(with remoteAttachment: Attachment) {
+        uuid = remoteAttachment.uuid
+        partId = remoteAttachment.partId
+        mimeType = remoteAttachment.mimeType
+        size = remoteAttachment.size
+        name = remoteAttachment.name
+        disposition = remoteAttachment.disposition
+        contentId = remoteAttachment.contentId
+        resource = remoteAttachment.resource
+        driveUrl = remoteAttachment.driveUrl
     }
 }
 
