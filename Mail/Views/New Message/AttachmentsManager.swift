@@ -67,6 +67,7 @@ class AttachmentsManager: ObservableObject {
 
     @MainActor
     private func addLocalAttachment(attachment: Attachment) -> Attachment {
+        attachmentUploadTasks[attachment.uuid ?? ""] = AttachmentUploadTask(progress: 0, error: nil)
         try? draft.realm?.write {
             draft.attachments.append(attachment)
         }
@@ -97,15 +98,12 @@ class AttachmentsManager: ObservableObject {
                                        disposition: AttachmentDisposition) async -> Attachment {
         let name = nameWithExtension(name: name,
                                      correspondingTo: type)
-        let attachmentUUID = UUID().uuidString
-        let attachment = Attachment(uuid: attachmentUUID,
+        let attachment = Attachment(uuid: UUID().uuidString,
                                     partId: "",
                                     mimeType: type?.preferredMIMEType ?? "application/octet-stream",
                                     size: 0,
                                     name: name,
                                     disposition: disposition)
-        attachmentUploadTasks[attachmentUUID] = AttachmentUploadTask(progress: 0, error: nil)
-
         let savedAttachment = await addLocalAttachment(attachment: attachment)
         return savedAttachment
     }
