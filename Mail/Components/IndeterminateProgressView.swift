@@ -19,9 +19,11 @@
 import SwiftUI
 
 struct IndeterminateProgressView: View {
-    @State private var animation = 1.0
+    @State private var animationDuration = 1.0
+
     let indeterminate: Bool
     let progress: Double
+
     var body: some View {
         ZStack {
             ProgressView(value: indeterminate ? 0 : progress)
@@ -29,14 +31,14 @@ struct IndeterminateProgressView: View {
                 Capsule()
                     .fill(Color.accentColor)
                     .frame(height: 4)
-                    .opacity(animation)
+                    .opacity(animationDuration)
                     .onAppear {
-                        animation = 0
+                        animationDuration = 0
                     }
                     .animation(
                         .easeInOut(duration: 0.75)
                             .repeatForever(),
-                        value: animation
+                        value: animationDuration
                     )
             }
         }
