@@ -21,7 +21,7 @@ import MailResources
 import RealmSwift
 import SwiftUI
 
-struct MoveMessageView: View {
+struct MoveEmailView: View {
     @EnvironmentObject private var alert: GlobalAlert
 
     @ObservedResults(Folder.self) var folders
@@ -90,16 +90,16 @@ struct MoveMessageView: View {
     }
 }
 
-extension MoveMessageView {
+extension MoveEmailView {
     static func sheetView(mailboxManager: MailboxManager, moveHandler: @escaping MoveSheet.MoveHandler) -> some View {
         SheetView(mailboxManager: mailboxManager) {
-            MoveMessageView(mailboxManager: mailboxManager, moveHandler: moveHandler)
+            MoveEmailView(mailboxManager: mailboxManager, moveHandler: moveHandler)
         }
     }
 }
 
 struct MoveMessageView_Previews: PreviewProvider {
     static var previews: some View {
-        MoveMessageView(mailboxManager: PreviewHelper.sampleMailboxManager) { _ in }
+        MoveEmailView(mailboxManager: PreviewHelper.sampleMailboxManager) { _ in }
     }
 }
