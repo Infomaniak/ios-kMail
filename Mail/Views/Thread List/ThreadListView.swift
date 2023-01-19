@@ -28,10 +28,8 @@ class ThreadBottomSheet: DisplayedFloatingPanelState<ThreadBottomSheet.State> {
 }
 
 class MoveSheet: SheetState<MoveSheet.State> {
-    typealias MoveHandler = (Folder) -> Void
-
     enum State {
-        case move(moveHandler: MoveHandler)
+        case move(moveHandler: MoveEmailView.MoveHandler)
     }
 }
 
@@ -62,14 +60,15 @@ struct ThreadListView: View {
          messageReply: Binding<MessageReply?>,
          isCompact: Bool) {
         let threadBottomSheet = ThreadBottomSheet()
-        let moveSheet = MoveSheet()
+        let moveEmailSheet = MoveSheet()
         _editedMessageDraft = editedMessageDraft
         _messageReply = messageReply
         _bottomSheet = StateObject(wrappedValue: threadBottomSheet)
-        _moveSheet = StateObject(wrappedValue: moveSheet)
+        _moveSheet = StateObject(wrappedValue: moveEmailSheet)
         _viewModel = StateObject(wrappedValue: ThreadListViewModel(mailboxManager: mailboxManager,
                                                                    folder: folder,
-                                                                   bottomSheet: threadBottomSheet, moveSheet: moveSheet))
+                                                                   bottomSheet: threadBottomSheet,
+                                                                   moveSheet: moveEmailSheet))
         _multipleSelectionViewModel =
             StateObject(wrappedValue: ThreadListMultipleSelectionViewModel(mailboxManager: mailboxManager))
         self.isCompact = isCompact

@@ -178,13 +178,12 @@ enum ActionsTarget: Equatable {
 
     @Published var quickActions: [Action] = []
     @Published var listActions: [Action] = []
-    @Published var isShowingMoveSheet = false
 
     init(mailboxManager: MailboxManager,
          target: ActionsTarget,
          state: ThreadBottomSheet,
          globalSheet: GlobalBottomSheet,
-         moveSheet: MoveSheet?,
+         moveSheet: MoveSheet? = nil,
          replyHandler: @escaping (Message, ReplyMode) -> Void,
          completionHandler: (() -> Void)? = nil) {
         self.mailboxManager = mailboxManager

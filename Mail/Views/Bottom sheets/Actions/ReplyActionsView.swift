@@ -33,7 +33,6 @@ struct ReplyActionsView: View {
                                      target: target,
                                      state: state,
                                      globalSheet: globalSheet,
-                                     moveSheet: nil,
                                      replyHandler: replyHandler)
     }
 

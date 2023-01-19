@@ -245,7 +245,6 @@ class DateSection: Identifiable {
                     try await self.move(thread: thread, to: folder)
                 }
             }
-            break
         case .favorite:
             try await mailboxManager.toggleStar(threads: [thread])
         case .postPone:

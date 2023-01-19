@@ -175,7 +175,8 @@ struct ThreadView: View {
                 ActionsView(mailboxManager: mailboxManager,
                             target: target,
                             state: threadBottomSheet,
-                            globalSheet: globalBottomSheet, moveSheet: moveSheet) { message, replyMode in
+                            globalSheet: globalBottomSheet,
+                            moveSheet: moveSheet) { message, replyMode in
                     messageReply = MessageReply(message: message, replyMode: replyMode)
                 }
             }

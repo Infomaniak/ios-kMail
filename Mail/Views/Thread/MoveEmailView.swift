@@ -22,16 +22,18 @@ import RealmSwift
 import SwiftUI
 
 struct MoveEmailView: View {
+    typealias MoveHandler = (Folder) -> Void
+
     @EnvironmentObject private var alert: GlobalAlert
 
     @ObservedResults(Folder.self) var folders
 
     let mailboxManager: MailboxManager
-    let moveHandler: MoveSheet.MoveHandler
+    let moveHandler: MoveEmailView.MoveHandler
 
     private var nestableFolderSorted = [NestableFolder]()
 
-    init(mailboxManager: MailboxManager, moveHandler: @escaping MoveSheet.MoveHandler) {
+    init(mailboxManager: MailboxManager, moveHandler: @escaping MoveEmailView.MoveHandler) {
         self.mailboxManager = mailboxManager
         self.moveHandler = moveHandler
 
@@ -40,7 +42,7 @@ struct MoveEmailView: View {
             Folder.self,
             configuration: AccountManager.instance.currentMailboxManager?.realmConfiguration
         ) { $0.role != .draft && $0.parentLink.count == 0 && $0.toolType == nil }
-        nestableFolderSorted = createNestedFoldersHierarchy(folders: Array(folders))
+        nestableFolderSorted = NestableFolder.createFoldersHierarchy(from: Array(folders))
     }
 
     var body: some View {
@@ -74,24 +76,10 @@ struct MoveEmailView: View {
             }
         }
     }
-
-    private func createNestedFoldersHierarchy(folders: [Folder]) -> [NestableFolder] {
-        var parentFolders = [NestableFolder]()
-
-        let sortedFolders = folders.sorted()
-        for folder in sortedFolders {
-            parentFolders.append(NestableFolder(
-                content: folder,
-                children: createNestedFoldersHierarchy(folders: Array(folder.children))
-            ))
-        }
-
-        return parentFolders
-    }
 }
 
 extension MoveEmailView {
-    static func sheetView(mailboxManager: MailboxManager, moveHandler: @escaping MoveSheet.MoveHandler) -> some View {
+    static func sheetView(mailboxManager: MailboxManager, moveHandler: @escaping MoveEmailView.MoveHandler) -> some View {
         SheetView(mailboxManager: mailboxManager) {
             MoveEmailView(mailboxManager: mailboxManager, moveHandler: moveHandler)
         }
@@ -100,6 +88,6 @@ extension MoveEmailView {
 
 struct MoveMessageView_Previews: PreviewProvider {
     static var previews: some View {
-        MoveEmailView(mailboxManager: PreviewHelper.sampleMailboxManager) { _ in }
+        MoveEmailView(mailboxManager: PreviewHelper.sampleMailboxManager) { _ in /* Preview */ }
     }
 }

@@ -38,7 +38,7 @@ struct CreateFolderView: View {
 
     enum Mode {
         case create
-        case move(moveHandler: MoveSheet.MoveHandler)
+        case move(moveHandler: MoveEmailView.MoveHandler)
 
         var buttonTitle: String {
             switch self {
