@@ -73,7 +73,7 @@ class AttachmentsManager: ObservableObject {
 
     @MainActor
     private func addLocalAttachment(attachment: Attachment) -> Attachment {
-        attachmentUploadTasks[attachment.uuid ?? ""] = AttachmentUploadTask(progress: 0, error: nil)
+        attachmentUploadTasks[attachment.uuid] = AttachmentUploadTask()
         try? draft.realm?.write {
             draft.attachments.append(attachment)
         }
@@ -83,19 +83,16 @@ class AttachmentsManager: ObservableObject {
 
     @MainActor
     private func updateAttachmentUploadProgress(attachment: Attachment, progress: Double) {
-        guard let uuid = attachment.uuid else { return }
-        attachmentUploadTasks[uuid]?.progress = progress
+        attachmentUploadTasks[attachment.uuid]?.progress = progress
         objectWillChange.send()
     }
 
     @MainActor
     private func updateAttachmentUploadError(attachment: Attachment, error: Error?) {
-        guard let uuid = attachment.uuid else { return }
-
         if let error = error as? MailError {
-            attachmentUploadTasks[uuid]?.error = error
+            attachmentUploadTasks[attachment.uuid]?.error = error
         } else {
-            attachmentUploadTasks[uuid]?.error = .unknownError
+            attachmentUploadTasks[attachment.uuid]?.error = .unknownError
         }
         objectWillChange.send()
     }
