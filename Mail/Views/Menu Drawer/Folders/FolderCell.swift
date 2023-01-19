@@ -82,7 +82,7 @@ struct FolderCell: View {
 
             if level < Constants.menuDrawerMaximumSubfolderLevel {
                 ForEach(folder.children) { child in
-                    FolderCell(folder: child, level: level + 1, isCompact: isCompact)
+                    FolderCell(folder: child, level: level + 1, isCompact: isCompact, customCompletion: customCompletion)
                 }
             }
         }

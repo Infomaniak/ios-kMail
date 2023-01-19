@@ -88,6 +88,8 @@ public enum Constants {
     public static let menuDrawerHorizontalItemSpacing: CGFloat = 16
     public static let menuDrawerMaximumSubfolderLevel = 2
 
+    public static let dismissNotificationName = Notification.Name(rawValue: "SheetViewDismiss")
+
     public static let floatingButtonBottomPadding: CGFloat = 70
 
     public static let unreadIconSize: CGFloat = 8

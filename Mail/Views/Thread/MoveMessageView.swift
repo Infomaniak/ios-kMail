@@ -49,6 +49,7 @@ struct MoveMessageView: View {
                 ForEach(nestableFolderSorted) { folder in
                     FolderCell(folder: folder) { folder in
                         moveHandler(folder)
+                        NotificationCenter.default.post(Notification(name: Constants.dismissNotificationName))
                     }
 
                     if folder.id != nestableFolderSorted.last?.id {

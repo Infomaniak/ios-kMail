@@ -16,6 +16,7 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import MailCore
 import MailResources
 import SwiftUI
 
@@ -37,6 +38,9 @@ struct SheetView<Content>: View where Content: View {
                 })
         }
         .defaultAppStorage(.shared)
+        .onReceive(NotificationCenter.default.publisher(for: Constants.dismissNotificationName)) { _ in
+            dismiss()
+        }
     }
 }
 
