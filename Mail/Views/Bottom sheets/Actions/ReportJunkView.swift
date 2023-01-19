@@ -19,7 +19,7 @@
 import MailCore
 import SwiftUI
 
-struct reportOptionsView: View {
+struct ReportJunkView: View {
     @ObservedObject var viewModel: ActionsViewModel
 
     var actions: [Action] = []
@@ -56,9 +56,9 @@ struct reportOptionsView: View {
     }
 }
 
-struct reportOptionsView_Previews: PreviewProvider {
+struct ReportJunkView_Previews: PreviewProvider {
     static var previews: some View {
-        reportOptionsView(mailboxManager: PreviewHelper.sampleMailboxManager,
+        ReportJunkView(mailboxManager: PreviewHelper.sampleMailboxManager,
                           target: .threads([PreviewHelper.sampleThread]),
                           state: ThreadBottomSheet(),
                           globalSheet: GlobalBottomSheet())

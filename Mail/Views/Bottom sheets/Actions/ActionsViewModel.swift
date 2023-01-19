@@ -86,10 +86,10 @@ struct Action: Identifiable, Equatable {
         title: MailResourcesStrings.Localizable.actionUnstar,
         icon: MailResourcesAsset.starFull
     )
-    static let reportOptions = Action(
+    static let reportJunk = Action(
         id: 22,
-        title: "Signaler comme indésirable", //MailResourcesStrings.Localizable.actionSpam,
-        icon: MailResourcesAsset.spam //To change
+        title: MailResourcesStrings.Localizable.actionReportJunk,
+        icon: MailResourcesAsset.report
     )
     static let spam = Action(
         id: 11,
@@ -254,7 +254,7 @@ enum ActionsTarget: Equatable {
                 unread ? .markAsRead : .markAsUnread,
                 .move,
                 star ? .unstar : .star,
-                .reportOptions,
+                .reportJunk,
                 .print,
                 .createRule,
                 .report,
@@ -287,8 +287,8 @@ enum ActionsTarget: Equatable {
             postpone()
         case .star, .unstar:
             try await star()
-        case .reportOptions:
-            displayReportOptions()
+        case .reportJunk:
+            displayReportJunk()
         case .spam:
             try await spam()
         case .nonSpam:
@@ -425,8 +425,8 @@ enum ActionsTarget: Equatable {
         }
     }
 
-    private func displayReportOptions() {
-        globalSheet.open(state: .reportOptions(threadBottomSheet: state, target: target))
+    private func displayReportJunk() {
+        globalSheet.open(state: .reportJunk(threadBottomSheet: state, target: target))
     }
 
     private func spam() async throws {
