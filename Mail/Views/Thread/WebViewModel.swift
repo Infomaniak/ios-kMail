@@ -43,7 +43,9 @@ struct WebView: UIViewRepresentable {
             webView.evaluateJavaScript("document.documentElement.scrollHeight") { height, _ in
                 guard let height = height as? CGFloat else { return }
                 DispatchQueue.main.async { [weak self] in
-                    self?.parent.dynamicHeight = height
+                    withAnimation {
+                        self?.parent.dynamicHeight = height
+                    }
                 }
             }
         }
