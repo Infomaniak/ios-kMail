@@ -36,10 +36,17 @@ public class MailApiFetcher: ApiFetcher {
     override public func perform<T: Decodable>(request: DataRequest) async throws -> (data: T, responseAt: Int?) {
         do {
             return try await super.perform(request: request)
-        } catch let InfomaniakError.apiError(apiError) {
+        } catch InfomaniakError.apiError(let apiError) {
             throw MailError.apiError(apiError)
-        } catch let InfomaniakError.serverError(statusCode: statusCode) {
+        } catch InfomaniakError.serverError(statusCode: let statusCode) {
             throw MailError.serverError(statusCode: statusCode)
+        } catch {
+            if let afError = error.asAFError,
+               case .responseSerializationFailed(let reason) = afError,
+               case .decodingFailed(let error) = reason {
+                SentrySDK.capture(error: error)
+            }
+            throw error
         }
     }
 
