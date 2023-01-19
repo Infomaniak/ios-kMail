@@ -144,15 +144,34 @@ public class Message: Object, Decodable, Identifiable {
     }
 
     public var canReplyAll: Bool {
-        var replyAllTo = Set(from.map(\.email))
-        for mail in to {
-            replyAllTo.insert(mail.email)
+        let holder = recipientsForReplyTo(replyAll: true)
+        return !holder.cc.isEmpty
+    }
+
+    public func recipientsForReplyTo(replyAll: Bool = false) -> RecipientHolder {
+        let cleanedFrom = Array(from.detached()).filter { !$0.isMe }
+        let cleanedTo = Array(to.detached()).filter { !$0.isMe }
+        let cleanedReplyTo = Array(replyTo.detached()).filter { !$0.isMe }
+        let cleanedCc = Array(cc.detached()).filter { !$0.isMe }
+
+        var holder = RecipientHolder()
+        holder.to = cleanedReplyTo.isEmpty ? cleanedFrom : cleanedReplyTo
+
+        if holder.to.isEmpty {
+            holder.to = cleanedTo
+        } else if replyAll {
+            holder.cc = cleanedTo
         }
-        for mail in cc {
-            replyAllTo.insert(mail.email)
+        if holder.to.isEmpty {
+            holder.to = cleanedCc
+        } else if replyAll {
+            holder.cc.append(contentsOf: cleanedCc)
         }
-        replyAllTo.remove(AccountManager.instance.currentMailboxManager?.mailbox.email ?? "")
-        return replyAllTo.count > 1
+        if holder.to.isEmpty {
+            holder.to = Array(from.detached())
+        }
+
+        return holder
     }
 
     public func insertInlineAttachment() {

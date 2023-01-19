@@ -27,6 +27,13 @@ public extension URLComponents {
     }
 }
 
+public struct RecipientHolder {
+    var from = [Recipient]()
+    var to = [Recipient]()
+    var cc = [Recipient]()
+    var bcc = [Recipient]()
+}
+
 public class Recipient: EmbeddedObject, Codable {
     @Persisted public var email: String
     @Persisted public var name: String

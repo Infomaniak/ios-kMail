@@ -219,29 +219,10 @@ public class Draft: Object, Decodable, Identifiable, Encodable {
             attachments = attachmentsToForward
         }
 
-        var to: [Recipient] = []
-        var cc: [Recipient] = []
+        var recipientHolder = RecipientHolder()
 
         if mode.isReply {
-            let cleanedFrom = Array(message.from.detached()).filter { !$0.isMe }
-            let cleanedTo = Array(message.to.detached()).filter { !$0.isMe }
-            let cleanedReplyTo = Array(message.replyTo.detached()).filter { !$0.isMe }
-            let cleanedCc = Array(message.cc.detached()).filter { !$0.isMe }
-
-            to = cleanedReplyTo.isEmpty ? cleanedFrom : cleanedReplyTo
-            if to.isEmpty {
-                to = cleanedTo
-            } else if mode == .replyAll {
-                cc = cleanedTo
-            }
-            if to.isEmpty {
-                to = cleanedCc
-            } else if mode == .replyAll {
-                cc.append(contentsOf: cleanedCc)
-            }
-            if to.isEmpty {
-                to = Array(message.from.detached())
-            }
+            recipientHolder = message.recipientsForReplyTo(replyAll: mode == .replyAll)
         }
 
         return Draft(localUUID: localDraftUUID,
@@ -252,8 +233,8 @@ public class Draft: Object, Decodable, Identifiable, Encodable {
                      subject: subject,
                      body: "<br><br>\(quote)",
                      quote: quote,
-                     to: to,
-                     cc: cc,
+                     to: recipientHolder.to,
+                     cc: recipientHolder.cc,
                      attachments: attachments)
     }
 
