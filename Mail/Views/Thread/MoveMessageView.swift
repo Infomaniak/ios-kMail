@@ -22,25 +22,26 @@ import RealmSwift
 import SwiftUI
 
 struct MoveMessageView: View {
-    @Environment(\.presentationMode) var presentationMode
+    @EnvironmentObject private var alert: GlobalAlert
 
     @ObservedResults(Folder.self) var folders
 
+    let mailboxManager: MailboxManager
     let moveHandler: MoveSheet.MoveHandler
 
     private var nestableFolderSorted: [NestableFolder] {
         createNestedFoldersHierarchy(folders: Array(folders))
     }
 
-    init(moveHandler: @escaping MoveSheet.MoveHandler) {
+    init(mailboxManager: MailboxManager, moveHandler: @escaping MoveSheet.MoveHandler) {
+        self.mailboxManager = mailboxManager
         self.moveHandler = moveHandler
+
         // swiftlint:disable empty_count
         _folders = ObservedResults(
             Folder.self,
             configuration: AccountManager.instance.currentMailboxManager?.realmConfiguration
-        ) { folder in
-            folder.role != .draft && folder.parentLink.count == 0 && folder.toolType == nil
-        }
+        ) { $0.role != .draft && $0.parentLink.count == 0 && $0.toolType == nil }
     }
 
     var body: some View {
@@ -64,12 +65,13 @@ struct MoveMessageView: View {
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
                 Button {
-                    // TODO: Create a new folder
+                    alert.state = .createNewFolder(mode: .move(moveHandler: moveHandler))
                 } label: {
                     Image(resource: MailResourcesAsset.folderAdd)
                 }
             }
         }
+        
         .environment(\.folderCellType, .indicator)
     }
 
@@ -90,14 +92,14 @@ struct MoveMessageView: View {
 
 extension MoveMessageView {
     static func sheetView(mailboxManager: MailboxManager, moveHandler: @escaping MoveSheet.MoveHandler) -> some View {
-        SheetView {
-            MoveMessageView(moveHandler: moveHandler)
+        SheetView(mailboxManager: mailboxManager) {
+            MoveMessageView(mailboxManager: mailboxManager, moveHandler: moveHandler)
         }
     }
 }
 
 struct MoveMessageView_Previews: PreviewProvider {
     static var previews: some View {
-        MoveMessageView { _ in }
+        MoveMessageView(mailboxManager: PreviewHelper.sampleMailboxManager) { _ in }
     }
 }

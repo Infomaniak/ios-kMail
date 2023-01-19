@@ -169,7 +169,7 @@ struct MenuDrawerView: View {
             viewModel.createMenuItems(bottomSheet: bottomSheet)
         }
         .sheet(isPresented: $viewModel.isShowingHelp) {
-            SheetView {
+            SheetView(mailboxManager: mailboxManager) {
                 HelpView()
             }
         }
