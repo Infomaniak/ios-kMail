@@ -51,7 +51,7 @@ struct SheetView<Content>: View where Content: View {
             }
         }
         .defaultAppStorage(.shared)
-        .onReceive(NotificationCenter.default.publisher(for: Constants.dismissNotificationName)) { _ in
+        .onReceive(NotificationCenter.default.publisher(for: Constants.dismissMoveSheetNotificationName)) { _ in
             dismiss()
         }
         .environmentObject(alert)

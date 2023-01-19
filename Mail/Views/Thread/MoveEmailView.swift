@@ -29,9 +29,7 @@ struct MoveEmailView: View {
     let mailboxManager: MailboxManager
     let moveHandler: MoveSheet.MoveHandler
 
-    private var nestableFolderSorted: [NestableFolder] {
-        createNestedFoldersHierarchy(folders: Array(folders))
-    }
+    private var nestableFolderSorted = [NestableFolder]()
 
     init(mailboxManager: MailboxManager, moveHandler: @escaping MoveSheet.MoveHandler) {
         self.mailboxManager = mailboxManager
@@ -42,22 +40,16 @@ struct MoveEmailView: View {
             Folder.self,
             configuration: AccountManager.instance.currentMailboxManager?.realmConfiguration
         ) { $0.role != .draft && $0.parentLink.count == 0 && $0.toolType == nil }
+        nestableFolderSorted = createNestedFoldersHierarchy(folders: Array(folders))
     }
 
     var body: some View {
         ScrollView {
             LazyVStack(spacing: 0) {
-                ForEach(nestableFolderSorted) { folder in
-                    FolderCell(folder: folder) { folder in
-                        moveHandler(folder)
-                        NotificationCenter.default.post(Notification(name: Constants.dismissNotificationName))
-                    }
-
-                    if folder.id != nestableFolderSorted.last?.id {
-                        IKDivider()
-                            .padding(.horizontal, 9)
-                    }
-                }
+                listOfFolders(nestableFolders: nestableFolderSorted.filter { $0.content.role != nil })
+                IKDivider(withPadding: true)
+                    .padding(.top, 8)
+                listOfFolders(nestableFolders: nestableFolderSorted.filter { $0.content.role == nil })
             }
         }
         .navigationTitle(MailResourcesStrings.Localizable.actionMove)
@@ -71,8 +63,16 @@ struct MoveEmailView: View {
                 }
             }
         }
-        
         .environment(\.folderCellType, .indicator)
+    }
+
+    private func listOfFolders(nestableFolders: [NestableFolder]) -> some View {
+        ForEach(nestableFolders) { nestableFolder in
+            FolderCell(folder: nestableFolder) { folder in
+                moveHandler(folder)
+                NotificationCenter.default.post(Notification(name: Constants.dismissMoveSheetNotificationName))
+            }
+        }
     }
 
     private func createNestedFoldersHierarchy(folders: [Folder]) -> [NestableFolder] {

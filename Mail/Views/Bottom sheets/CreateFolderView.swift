@@ -38,7 +38,7 @@ struct CreateFolderView: View {
 
     enum Mode {
         case create
-        case move(moveHandler: (Folder) -> Void)
+        case move(moveHandler: MoveSheet.MoveHandler)
 
         var buttonTitle: String {
             switch self {
@@ -82,7 +82,7 @@ struct CreateFolderView: View {
                         let folder = try await mailboxManager.createFolder(name: folderName, parent: parent)
                         if case let .move(moveHandler) = mode {
                             moveHandler(folder)
-                            NotificationCenter.default.post(Notification(name: Constants.dismissNotificationName))
+                            NotificationCenter.default.post(Notification(name: Constants.dismissMoveSheetNotificationName))
                         }
                     }
                 }
