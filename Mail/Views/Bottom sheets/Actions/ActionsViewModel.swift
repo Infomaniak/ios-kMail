@@ -173,7 +173,7 @@ enum ActionsTarget: Equatable {
     private let state: ThreadBottomSheet
     private let globalSheet: GlobalBottomSheet
     private let moveSheet: MoveSheet?
-    private let replyHandler: (Message, ReplyMode) -> Void
+    private let replyHandler: ((Message, ReplyMode) -> Void)?
     private let completionHandler: (() -> Void)?
 
     @Published var quickActions: [Action] = []
@@ -184,7 +184,7 @@ enum ActionsTarget: Equatable {
          state: ThreadBottomSheet,
          globalSheet: GlobalBottomSheet,
          moveSheet: MoveSheet? = nil,
-         replyHandler: @escaping (Message, ReplyMode) -> Void,
+         replyHandler: ((Message, ReplyMode) -> Void)? = nil,
          completionHandler: (() -> Void)? = nil) {
         self.mailboxManager = mailboxManager
         self.target = target.freeze()
@@ -254,9 +254,7 @@ enum ActionsTarget: Equatable {
                 unread ? .markAsRead : .markAsUnread,
                 .move,
                 star ? .unstar : .star,
-                message.fromMe ? nil : spamAction,
-                message.fromMe ? nil : .block,
-                message.fromMe ? nil : .phishing,
+                .reportOptions,
                 .print,
                 .createRule,
                 .report,
@@ -269,6 +267,7 @@ enum ActionsTarget: Equatable {
 
     func didTap(action: Action) async throws {
         state.close()
+        globalSheet.close()
         switch action {
         case .delete:
             try await delete()
@@ -361,7 +360,7 @@ enum ActionsTarget: Equatable {
                 ).attachments
                 completeMode = .forward(attachments)
             }
-            replyHandler(message, completeMode)
+            replyHandler?(message, completeMode)
         case let .message(message):
             if mode == .forward([]) {
                 let attachments = try await mailboxManager.apiFetcher.attachmentsToForward(
@@ -370,7 +369,7 @@ enum ActionsTarget: Equatable {
                 ).attachments
                 completeMode = .forward(attachments)
             }
-            replyHandler(message, completeMode)
+            replyHandler?(message, completeMode)
         }
     }
 
@@ -427,10 +426,9 @@ enum ActionsTarget: Equatable {
     }
 
     private func displayReportOptions() {
-        // TODO:
-        showWorkInProgressSnackBar()
+        globalSheet.open(state: .reportOptions(threadBottomSheet: state, target: target))
     }
-    
+
     private func spam() async throws {
         let undoRedoAction: UndoRedoAction
         let snackBarMessage: String

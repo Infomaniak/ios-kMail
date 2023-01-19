@@ -28,7 +28,7 @@ struct ActionsView: View {
          state: ThreadBottomSheet,
          globalSheet: GlobalBottomSheet,
          moveSheet: MoveSheet? = nil,
-         replyHandler: @escaping (Message, ReplyMode) -> Void,
+         replyHandler: ((Message, ReplyMode) -> Void)? = nil,
          completionHandler: (() -> Void)? = nil) {
         viewModel = ActionsViewModel(mailboxManager: mailboxManager,
                                      target: target,
