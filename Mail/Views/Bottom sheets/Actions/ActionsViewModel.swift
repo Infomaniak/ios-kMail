@@ -245,10 +245,6 @@ enum ActionsTarget: Equatable {
             let archive = message.canReplyAll
             let unread = !message.seen
             let star = message.flagged
-
-            let spam = message.folderId == mailboxManager.getFolder(with: .spam)?._id
-            let spamAction: Action? = spam ? .nonSpam : .spam
-
             let tempListActions: [Action?] = [
                 archive ? .archive : nil,
                 unread ? .markAsRead : .markAsUnread,

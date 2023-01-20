@@ -32,16 +32,13 @@ struct ReportJunkView: View {
                                      target: target,
                                      state: state,
                                      globalSheet: globalSheet)
-        switch target {
-        case let .message(message):
+        if case let .message(message) = target {
             let spam = message.folderId == mailboxManager.getFolder(with: .spam)?._id
             actions.append(contentsOf: [
                 spam ? .nonSpam : .spam,
                 .phishing,
                 .block
             ])
-        default:
-            break
         }
     }
 
