@@ -37,8 +37,8 @@ struct ReportJunkView: View {
             let spam = message.folderId == mailboxManager.getFolder(with: .spam)?._id
             actions.append(contentsOf: [
                 spam ? .nonSpam : .spam,
-                .block,
-                .phishing
+                .phishing,
+                .block
             ])
         default:
             break
@@ -47,7 +47,7 @@ struct ReportJunkView: View {
 
     var body: some View {
         ForEach(actions) { action in
-            if action != viewModel.listActions.first {
+            if action != actions.first {
                 IKDivider()
             }
             ActionView(viewModel: viewModel, action: action)
