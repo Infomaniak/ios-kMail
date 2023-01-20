@@ -27,32 +27,33 @@ struct MessageBodyView: View {
 
     var body: some View {
         VStack {
-            // Display a shimmer while the body is loading
-            if message.body == nil {
+            if let body = message.body {
+                if body.type == "text/plain" {
+                    Text(message.body?.value ?? "")
+                        .textStyle(.body)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .padding(.horizontal, 16)
+                } else {
+                    GeometryReader { proxy in
+                        WebView(model: $model, dynamicHeight: $webViewHeight, proxy: proxy)
+                            .frame(height: webViewHeight)
+                    }
+                    .frame(height: webViewHeight)
+                    .onAppear {
+                        model.loadHTMLString(value: body.value)
+                    }
+                    .onChange(of: message.body) { _ in
+                        model.loadHTMLString(value: body.value)
+                    }
+                }
+            } else {
+                // Display a shimmer while the body is loading
                 Text(
                     "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras elementum justo quis neque iaculis, eget vehicula metus vulputate. Duis sit amet tempor nisl. Nulla ac semper risus, nec rutrum elit. Maecenas sed volutpat urna. Vestibulum varius ac orci eu eleifend. Sed at ullamcorper odio. Donec sodales, nisl vel pellentesque scelerisque, ligula justo efficitur ex, non vestibulum nisi purus sit amet dui. Praesent ultricies orci et enim hendrerit posuere eget quis leo. Mauris sit amet sollicitudin mi. Suspendisse volutpat odio ante, quis elementum massa congue sed. Sed varius varius tempus."
                 )
                 .redacted(reason: .placeholder)
                 .shimmering()
                 .padding(.horizontal, 16)
-            }
-            if message.body?.type == "text/plain" {
-                Text(message.body?.value ?? "")
-                    .textStyle(.body)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .padding(.horizontal, 16)
-            } else {
-                GeometryReader { proxy in
-                    WebView(model: $model, dynamicHeight: $webViewHeight, proxy: proxy)
-                        .frame(height: webViewHeight)
-                }
-                .frame(height: webViewHeight)
-                .onAppear {
-                    model.loadHTMLString(value: message.body?.value)
-                }
-                .onChange(of: message.body) { _ in
-                    model.loadHTMLString(value: message.body?.value)
-                }
             }
         }
     }
