@@ -143,6 +143,10 @@ public class Message: Object, Decodable, Identifiable {
         return Array(dup)
     }
 
+    public var fromMe: Bool {
+        return from.contains { $0.isMe }
+    }
+
     public var canReplyAll: Bool {
         var replyAllTo = Set(from.map(\.email))
         for mail in to {

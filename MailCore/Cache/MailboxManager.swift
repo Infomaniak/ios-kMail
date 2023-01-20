@@ -390,7 +390,7 @@ public class MailboxManager: ObservableObject {
                 message.scheduled == false
             }
         }.filter { message in
-            !message.from.contains { $0.email == self.mailbox.email }
+            !message.fromMe
         }
         messages.append(contentsOf: messages.flatMap(\.duplicates))
         return try await reportSpam(messages: messages)
