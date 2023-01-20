@@ -155,20 +155,21 @@ public class Message: Object, Decodable, Identifiable {
         let cleanedCc = Array(cc.detached()).filter { !$0.isMe }
 
         var holder = RecipientHolder()
-        holder.to = cleanedReplyTo.isEmpty ? cleanedFrom : cleanedReplyTo
 
-        if holder.to.isEmpty {
-            holder.to = cleanedTo
-        } else if replyAll {
-            holder.cc = cleanedTo
-        }
-        if holder.to.isEmpty {
-            holder.to = cleanedCc
-        } else if replyAll {
-            holder.cc.append(contentsOf: cleanedCc)
-        }
-        if holder.to.isEmpty {
-            holder.to = Array(from.detached())
+        let possibleRecipients: [(recipients: [Recipient], forCc: Bool)] = [
+            (recipients: cleanedReplyTo, forCc: false),
+            (recipients: cleanedFrom, forCc: false),
+            (recipients: cleanedTo, forCc: true),
+            (recipients: cleanedCc, forCc: true),
+            (recipients: from.detached().toArray(), forCc: false)
+        ]
+
+        for value in possibleRecipients {
+            if holder.to.isEmpty {
+                holder.to = value.recipients
+            } else if replyAll && value.forCc {
+                holder.cc.append(contentsOf: value.recipients)
+            }
         }
 
         return holder
