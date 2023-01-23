@@ -39,11 +39,6 @@ struct ActionsView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
-            // Header
-            Text(MailResourcesStrings.Localizable.actionsMenuTitle)
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .textStyle(.bodyMedium)
-                .padding(.horizontal, 24)
             // Quick actions
             HStack(alignment: .top, spacing: 28) {
                 ForEach(viewModel.quickActions) { action in
