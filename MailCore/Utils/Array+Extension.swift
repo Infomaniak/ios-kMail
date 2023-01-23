@@ -33,6 +33,12 @@ public extension Array where Element: RealmCollectionValue {
     }
 }
 
+public extension List {
+    func toArray() -> [Element] {
+        return Array(self)
+    }
+}
+
 public extension LazyFilterSequence {
     func toArray() -> [Base.Element] {
         return Array(self)

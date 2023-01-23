@@ -24,6 +24,7 @@ import SwiftUI
 
 struct MessageHeaderView: View {
     @State private var editedDraft: Draft?
+    @State var messageReply: MessageReply?
     @ObservedRealmObject var message: Message
     @Binding var isHeaderExpanded: Bool
     @Binding var isMessageExpanded: Bool
@@ -38,7 +39,11 @@ struct MessageHeaderView: View {
                                      isMessageExpanded: $isMessageExpanded,
                                      isHeaderExpanded: $isHeaderExpanded,
                                      deleteDraftTapped: deleteDraft) {
-                bottomSheet.open(state: .replyOption(message, isThread: false))
+                if message.canReplyAll {
+                    bottomSheet.open(state: .replyOption(message, isThread: false))
+                } else {
+                    messageReply = MessageReply(message: message, replyMode: .reply)
+                }
             } moreButtonTapped: {
                 threadBottomSheet.open(state: .actions(.message(message.thaw() ?? message)))
             } recipientTapped: { recipient in
@@ -62,6 +67,9 @@ struct MessageHeaderView: View {
         }
         .sheet(item: $editedDraft) { editedDraft in
             ComposeMessageView.editDraft(draft: editedDraft, mailboxManager: mailboxManager)
+        }
+        .sheet(item: $messageReply) { messageReply in
+            ComposeMessageView.replyOrForwardMessage(messageReply: messageReply, mailboxManager: mailboxManager)
         }
     }
 
