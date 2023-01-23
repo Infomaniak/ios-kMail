@@ -90,9 +90,7 @@ struct ThreadView: View {
                         let isMessageExpanded = ((index == messages.count - 1) && !messages[index].isDraft) || !messages[index]
                             .seen
                         MessageView(message: messages[index], isMessageExpanded: isMessageExpanded)
-                            .modifyIf(messages.count > 1) {
-                                $0.padding(.horizontal, 8)
-                            }
+                            .padding(.horizontal, messages.count > 1 ? 8 : 0)
                     }
                 }
                 .padding(.top, 8)
