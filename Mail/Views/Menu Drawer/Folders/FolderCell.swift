@@ -46,12 +46,16 @@ struct FolderCell: View {
     let folder: NestableFolder
     var level = 0
 
-    var isCurrentFolder: Bool
+    var currentFolderId: String?
     var isCompact = true
 
     var customCompletion: ((Folder) -> Void)?
 
     @State private var shouldTransit = false
+
+    private var isCurrentFolder: Bool {
+        folder.id == currentFolderId
+    }
 
     var body: some View {
         Group {
@@ -79,7 +83,7 @@ struct FolderCell: View {
 
             if level < Constants.menuDrawerMaximumSubfolderLevel {
                 ForEach(folder.children) { child in
-                    FolderCell(folder: child, level: level + 1, isCurrentFolder: isCurrentFolder, isCompact: isCompact, customCompletion: customCompletion)
+                    FolderCell(folder: child, level: level + 1, currentFolderId: currentFolderId, isCompact: isCompact, customCompletion: customCompletion)
                 }
             }
         }
@@ -165,7 +169,7 @@ struct FolderCellView_Previews: PreviewProvider {
     static var previews: some View {
         FolderCell(
             folder: NestableFolder(content: PreviewHelper.sampleFolder, children: []),
-            isCurrentFolder: false,
+            currentFolderId: nil,
             isCompact: false
         )
         .environmentObject(PreviewHelper.sampleMailboxManager)

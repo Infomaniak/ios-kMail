@@ -67,7 +67,7 @@ struct UserFoldersListView: View {
                         .padding(.bottom, 8)
                 } else {
                     ForEach(folders) { folder in
-                        FolderCell(folder: folder, isCurrentFolder: folder.id == splitViewManager.selectedFolder?.id, isCompact: isCompact)
+                        FolderCell(folder: folder, currentFolderId: splitViewManager.selectedFolder?.id, isCompact: isCompact)
                     }
                 }
             }

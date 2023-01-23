@@ -143,8 +143,8 @@ struct ThreadView: View {
             ComposeMessageView.replyOrForwardMessage(messageReply: messageReply, mailboxManager: mailboxManager)
         }
         .sheet(isPresented: $moveSheet.isShowing) {
-            if case let .move(handler) = moveSheet.state {
-                MoveEmailView.sheetView(mailboxManager: mailboxManager, from: thread.parent, moveHandler: handler)
+            if case let .move(folderId, handler) = moveSheet.state {
+                MoveEmailView.sheetView(mailboxManager: mailboxManager, from: folderId, moveHandler: handler)
             }
         }
         .floatingPanel(state: bottomSheet) {

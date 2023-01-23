@@ -29,7 +29,7 @@ class ThreadBottomSheet: DisplayedFloatingPanelState<ThreadBottomSheet.State> {
 
 class MoveSheet: SheetState<MoveSheet.State> {
     enum State {
-        case move(moveHandler: MoveEmailView.MoveHandler)
+        case move(folderId: String?, moveHandler: MoveEmailView.MoveHandler)
     }
 }
 
@@ -198,8 +198,8 @@ struct ThreadListView: View {
             ComposeMessageView.newMessage(mailboxManager: viewModel.mailboxManager)
         }
         .sheet(isPresented: $moveSheet.isShowing) {
-            if case let .move(handler) = moveSheet.state {
-                MoveEmailView.sheetView(mailboxManager: viewModel.mailboxManager, from: viewModel.folder, moveHandler: handler)
+            if case let .move(folderId, handler) = moveSheet.state {
+                MoveEmailView.sheetView(mailboxManager: viewModel.mailboxManager, from: folderId, moveHandler: handler)
             }
         }
     }

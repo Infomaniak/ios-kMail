@@ -29,14 +29,14 @@ struct MoveEmailView: View {
     @ObservedResults(Folder.self) var folders
 
     let mailboxManager: MailboxManager
-    let folder: Folder?
+    let currentFolderId: String?
     let moveHandler: MoveEmailView.MoveHandler
 
     private var nestableFolderSorted = [NestableFolder]()
 
-    init(mailboxManager: MailboxManager, from folder: Folder?, moveHandler: @escaping MoveEmailView.MoveHandler) {
+    init(mailboxManager: MailboxManager, from currentFolderId: String?, moveHandler: @escaping MoveEmailView.MoveHandler) {
         self.mailboxManager = mailboxManager
-        self.folder = folder
+        self.currentFolderId = currentFolderId
         self.moveHandler = moveHandler
 
         // swiftlint:disable empty_count
@@ -72,7 +72,7 @@ struct MoveEmailView: View {
 
     private func listOfFolders(nestableFolders: [NestableFolder]) -> some View {
         ForEach(nestableFolders) { nestableFolder in
-            FolderCell(folder: nestableFolder, isCurrentFolder: nestableFolder.id == folder?.id) { folder in
+            FolderCell(folder: nestableFolder, currentFolderId: currentFolderId) { folder in
                 moveHandler(folder)
                 NotificationCenter.default.post(Notification(name: Constants.dismissMoveSheetNotificationName))
             }
@@ -81,9 +81,9 @@ struct MoveEmailView: View {
 }
 
 extension MoveEmailView {
-    static func sheetView(mailboxManager: MailboxManager, from folder: Folder?, moveHandler: @escaping MoveEmailView.MoveHandler) -> some View {
+    static func sheetView(mailboxManager: MailboxManager, from folderId: String?, moveHandler: @escaping MoveEmailView.MoveHandler) -> some View {
         SheetView(mailboxManager: mailboxManager) {
-            MoveEmailView(mailboxManager: mailboxManager, from: folder, moveHandler: moveHandler)
+            MoveEmailView(mailboxManager: mailboxManager, from: folderId, moveHandler: moveHandler)
         }
     }
 }

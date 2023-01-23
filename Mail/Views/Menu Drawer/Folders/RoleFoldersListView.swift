@@ -31,7 +31,7 @@ struct RoleFoldersListView: View {
     var body: some View {
         VStack(spacing: 0) {
             ForEach(folders) { folder in
-                FolderCell(folder: folder, isCurrentFolder: folder.id == splitViewManager.selectedFolder?.id, isCompact: isCompact)
+                FolderCell(folder: folder, currentFolderId: splitViewManager.selectedFolder?.id, isCompact: isCompact)
             }
         }
         .padding(.top, 4)

@@ -379,7 +379,15 @@ enum ActionsTarget: Equatable {
     }
 
     private func move() {
-        moveSheet?.state = .move { folder in
+        let folderId: String?
+        switch target {
+        case let .threads(threads):
+            folderId = threads.first?.parent?.id
+        case let .message(message):
+            folderId = message.folderId
+        }
+
+        moveSheet?.state = .move(folderId: folderId) { folder in
             Task {
                 try await self.move(to: folder)
             }
