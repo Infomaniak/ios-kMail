@@ -212,18 +212,18 @@ struct ComposeMessageView: View {
         }
         .fullScreenCover(isPresented: $isShowingCamera) {
             CameraPicker { data in
-                attachmentsManager.addCameraAttachment(data: data)
+                attachmentsManager.importAttachments(attachments: [data])
             }
             .ignoresSafeArea()
         }
         .sheet(isPresented: $isShowingFileSelection) {
             DocumentPicker { urls in
-                attachmentsManager.addDocumentAttachment(urls: urls)
+                attachmentsManager.importAttachments(attachments: urls)
             }
         }
         .sheet(isPresented: $isShowingPhotoLibrary) {
             ImagePicker { results in
-                attachmentsManager.addImageAttachments(results: results)
+                attachmentsManager.importAttachments(attachments: results)
             }
         }
         .customAlert(isPresented: $alert.isShowing) {

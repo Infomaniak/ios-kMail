@@ -22,8 +22,9 @@ import MailCore
 import PhotosUI
 import SwiftUI
 
-struct AttachmentUploadTask {
-    var progress: Double
+class AttachmentUploadTask {
+    var progress: Double = 0
+    var task: Task<String?, Never>?
     var error: MailError?
 }
 
@@ -73,7 +74,7 @@ class AttachmentsManager: ObservableObject {
 
     @MainActor
     private func addLocalAttachment(attachment: Attachment) -> Attachment {
-        attachmentUploadTasks[attachment.uuid ?? ""] = AttachmentUploadTask(progress: 0, error: nil)
+        attachmentUploadTasks[attachment.uuid] = AttachmentUploadTask()
         try? draft.realm?.write {
             draft.attachments.append(attachment)
         }
@@ -83,26 +84,24 @@ class AttachmentsManager: ObservableObject {
 
     @MainActor
     private func updateAttachmentUploadProgress(attachment: Attachment, progress: Double) {
-        guard let uuid = attachment.uuid else { return }
-        attachmentUploadTasks[uuid]?.progress = progress
+        attachmentUploadTasks[attachment.uuid]?.progress = progress
         objectWillChange.send()
     }
 
     @MainActor
     private func updateAttachmentUploadError(attachment: Attachment, error: Error?) {
-        guard let uuid = attachment.uuid else { return }
-
         if let error = error as? MailError {
-            attachmentUploadTasks[uuid]?.error = error
+            attachmentUploadTasks[attachment.uuid]?.error = error
         } else {
-            attachmentUploadTasks[uuid]?.error = .unknownError
+            attachmentUploadTasks[attachment.uuid]?.error = .unknownError
         }
         objectWillChange.send()
     }
 
+    @MainActor
     private func createLocalAttachment(name: String,
                                        type: UTType?,
-                                       disposition: AttachmentDisposition) async -> Attachment {
+                                       disposition: AttachmentDisposition) -> Attachment {
         let name = nameWithExtension(name: name,
                                      correspondingTo: type)
         let attachment = Attachment(uuid: UUID().uuidString,
@@ -111,13 +110,15 @@ class AttachmentsManager: ObservableObject {
                                     size: 0,
                                     name: name,
                                     disposition: disposition)
-        let savedAttachment = await addLocalAttachment(attachment: attachment)
+        let savedAttachment = addLocalAttachment(attachment: attachment)
         return savedAttachment
     }
 
     private func updateLocalAttachment(url: URL, attachment: Attachment) async -> Attachment {
         let urlResources = try? url.resourceValues(forKeys: [.typeIdentifierKey, .fileSizeKey])
         let uti = UTType(urlResources?.typeIdentifier ?? "")
+        let updatedName = nameWithExtension(name: attachment.name,
+                                            correspondingTo: uti)
         let mimeType = uti?.preferredMIMEType ?? attachment.mimeType
         let size = Int64(urlResources?.fileSize ?? 0)
 
@@ -125,57 +126,28 @@ class AttachmentsManager: ObservableObject {
                                        partId: "",
                                        mimeType: mimeType,
                                        size: size,
-                                       name: attachment.name,
+                                       name: updatedName,
                                        disposition: attachment.disposition)
 
         await updateAttachment(oldAttachment: attachment, newAttachment: newAttachment)
         return newAttachment
     }
 
-    func addDocumentAttachment(urls: [URL]) {
-        Task {
-            await withTaskGroup(of: Void.self) { group in
-                for url in urls {
-                    group.addTask {
-                        let localAttachment = await self.createLocalAttachment(name: url.lastPathComponent,
-                                                                               type: UTType.data,
-                                                                               disposition: .attachment)
-                        let updatedAttachment = await self.updateLocalAttachment(url: url, attachment: localAttachment)
-                        do {
-                            _ = try await self.sendAttachment(url: url, localAttachment: updatedAttachment)
-                        } catch {
-                            DDLogError("Error while creating attachment: \(error.localizedDescription)")
-                            await self.updateAttachmentUploadError(attachment: localAttachment, error: error)
-                        }
-                    }
-                }
+    func importAttachments(attachments: [Attachable], disposition: AttachmentDisposition = .attachment) {
+        for attachment in attachments {
+            Task {
+                let cid = await importAttachment(attachment: attachment, disposition: disposition)
+                // TODO: - Manage inline attachment
             }
         }
     }
 
-    func addImageAttachments(results: [PHPickerResult], disposition: AttachmentDisposition = .attachment) {
-        Task {
-            let itemProviders = results.map(\.itemProvider)
-            await withTaskGroup(of: Void.self) { group in
-                for itemProvider in itemProviders {
-                    group.addTask {
-                        let cid = await self.addImageAttachment(itemProvider: itemProvider, disposition: disposition)
-                        // TODO: - Manage inline attachment
-                    }
-                }
-            }
-        }
-    }
-
-    private func addImageAttachment(itemProvider: NSItemProvider, disposition: AttachmentDisposition) async -> String? {
-        let typeIdentifier = itemProvider.registeredTypeIdentifiers
-            .first { UTType($0)?.conforms(to: .image) == true || UTType($0)?.conforms(to: .movie) == true } ?? ""
-        let name = itemProvider.suggestedName ?? getDefaultFileName()
-        let localAttachment = await createLocalAttachment(name: name,
-                                                          type: UTType(typeIdentifier),
+    private func importAttachment(attachment: Attachable, disposition: AttachmentDisposition) async -> String? {
+        let localAttachment = await createLocalAttachment(name: attachment.suggestedName ?? getDefaultFileName(),
+                                                          type: attachment.type,
                                                           disposition: disposition)
         do {
-            let url = try await loadFileRepresentation(itemProvider, typeIdentifier: typeIdentifier)
+            let url = try await attachment.writeToTemporaryURL()
             let updatedAttachment = await updateLocalAttachment(url: url, attachment: localAttachment)
             let remoteAttachment = try await sendAttachment(url: url, localAttachment: updatedAttachment)
 
@@ -191,56 +163,6 @@ class AttachmentsManager: ObservableObject {
         return nil
     }
 
-    func addCameraAttachment(data: Data, disposition: AttachmentDisposition = .attachment) {
-        Task {
-            let temporaryURL = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
-            let temporaryFileURL = temporaryURL.appendingPathComponent(getDefaultFileName()).appendingPathExtension("jpeg")
-            let localAttachment = await self.createLocalAttachment(name: temporaryFileURL.lastPathComponent,
-                                                                   type: UTType.image,
-                                                                   disposition: .attachment)
-            do {
-                try FileManager.default.createDirectory(at: temporaryURL, withIntermediateDirectories: true)
-                try data.write(to: temporaryFileURL)
-
-                let updatedAttachment = await self.updateLocalAttachment(url: temporaryURL, attachment: localAttachment)
-                let remoteAttachment = try await self.sendAttachment(url: temporaryFileURL, localAttachment: updatedAttachment)
-
-                if disposition == .inline,
-                   let cid = remoteAttachment?.contentId {
-                    // TODO: - Manage inline attachment
-                }
-            } catch {
-                DDLogError("Error while creating attachment: \(error.localizedDescription)")
-                await updateAttachmentUploadError(attachment: localAttachment, error: error)
-            }
-        }
-    }
-
-    func loadFileRepresentation(_ itemProvider: NSItemProvider, typeIdentifier: String) async throws -> URL {
-        try await withCheckedThrowingContinuation { continuation in
-            itemProvider.loadFileRepresentation(forTypeIdentifier: typeIdentifier) { fileProviderURL, error in
-                guard let fileProviderURL else {
-                    continuation.resume(throwing: error ?? MailError.unknownError)
-                    return
-                }
-
-                do {
-                    let temporaryURL = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
-                    let temporaryFileURL = temporaryURL.appendingPathComponent(fileProviderURL.lastPathComponent)
-                    try FileManager.default.createDirectory(at: temporaryURL, withIntermediateDirectories: true)
-                    try FileManager.default.copyItem(atPath: fileProviderURL.path, toPath: temporaryFileURL.path)
-                    continuation.resume(returning: temporaryFileURL)
-                } catch {
-                    continuation.resume(throwing: error)
-                }
-            }
-        }
-    }
-
-    private func getDefaultFileName() -> String {
-        return filenameDateFormatter.string(from: Date())
-    }
-
     private func nameWithExtension(name: String, correspondingTo type: UTType?) -> String {
         guard let filenameExtension = type?.preferredFilenameExtension,
               !name.capitalized.hasSuffix(filenameExtension.capitalized) else {
@@ -248,6 +170,10 @@ class AttachmentsManager: ObservableObject {
         }
 
         return name.appending(".\(filenameExtension)")
+    }
+
+    private func getDefaultFileName() -> String {
+        return filenameDateFormatter.string(from: Date())
     }
 
     private func sendAttachment(
