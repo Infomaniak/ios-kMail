@@ -22,6 +22,8 @@ import RealmSwift
 import SwiftUI
 
 struct RoleFoldersListView: View {
+    @EnvironmentObject var splitViewManager: SplitViewManager
+
     var folders: [NestableFolder]
 
     var isCompact: Bool
@@ -29,7 +31,7 @@ struct RoleFoldersListView: View {
     var body: some View {
         VStack(spacing: 0) {
             ForEach(folders) { folder in
-                FolderCell(folder: folder, isCompact: isCompact)
+                FolderCell(folder: folder, isCurrentFolder: folder.id == splitViewManager.selectedFolder?.id, isCompact: isCompact)
             }
         }
         .padding(.top, 4)

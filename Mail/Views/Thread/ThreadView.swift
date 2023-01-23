@@ -144,7 +144,7 @@ struct ThreadView: View {
         }
         .sheet(isPresented: $moveSheet.isShowing) {
             if case let .move(handler) = moveSheet.state {
-                MoveEmailView.sheetView(mailboxManager: mailboxManager, moveHandler: handler)
+                MoveEmailView.sheetView(mailboxManager: mailboxManager, from: thread.parent, moveHandler: handler)
             }
         }
         .floatingPanel(state: bottomSheet) {

@@ -46,15 +46,12 @@ struct FolderCell: View {
     let folder: NestableFolder
     var level = 0
 
+    var isCurrentFolder: Bool
     var isCompact = true
 
     var customCompletion: ((Folder) -> Void)?
 
     @State private var shouldTransit = false
-
-    private var isButtonDisabled: Bool {
-        cellType == .indicator && folder.id == splitViewManager.selectedFolder?.id
-    }
 
     var body: some View {
         Group {
@@ -62,7 +59,7 @@ struct FolderCell: View {
                 Button(action: didTapButton) {
                     FolderCellContent(folder: folder.content, level: level, selectedFolder: $splitViewManager.selectedFolder)
                 }
-                .disabled(isButtonDisabled)
+                .disabled(isCurrentFolder)
             } else {
                 NavigationLink(isActive: $shouldTransit) {
                     ThreadListManagerView(
@@ -82,7 +79,7 @@ struct FolderCell: View {
 
             if level < Constants.menuDrawerMaximumSubfolderLevel {
                 ForEach(folder.children) { child in
-                    FolderCell(folder: child, level: level + 1, isCompact: isCompact, customCompletion: customCompletion)
+                    FolderCell(folder: child, level: level + 1, isCurrentFolder: isCurrentFolder, isCompact: isCompact, customCompletion: customCompletion)
                 }
             }
         }
@@ -172,6 +169,7 @@ struct FolderCellView_Previews: PreviewProvider {
     static var previews: some View {
         FolderCell(
             folder: NestableFolder(content: PreviewHelper.sampleFolder, children: []),
+            isCurrentFolder: false,
             isCompact: false
         )
         .environmentObject(PreviewHelper.sampleMailboxManager)

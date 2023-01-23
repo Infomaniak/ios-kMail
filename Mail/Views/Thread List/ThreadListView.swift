@@ -199,7 +199,7 @@ struct ThreadListView: View {
         }
         .sheet(isPresented: $moveSheet.isShowing) {
             if case let .move(handler) = moveSheet.state {
-                MoveEmailView.sheetView(mailboxManager: viewModel.mailboxManager, moveHandler: handler)
+                MoveEmailView.sheetView(mailboxManager: viewModel.mailboxManager, from: viewModel.folder, moveHandler: handler)
             }
         }
     }
