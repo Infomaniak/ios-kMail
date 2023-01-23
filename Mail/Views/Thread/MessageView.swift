@@ -50,7 +50,7 @@ struct MessageView: View {
                 .padding(.horizontal, 16)
 
                 if isMessageExpanded {
-                    if !message.attachments.filter { $0.contentId == nil }.isEmpty {
+                    if !message.attachments.filter { $0.disposition == .attachment || $0.contentId == nil }.isEmpty {
                         AttachmentsView(message: message)
                     }
 

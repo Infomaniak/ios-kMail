@@ -27,7 +27,7 @@ struct AttachmentsView: View {
     @ObservedRealmObject var message: Message
 
     private var attachments: [Attachment] {
-        return message.attachments.filter { $0.contentId == nil }
+        return message.attachments.filter { $0.disposition == .attachment || $0.contentId == nil }
     }
 
     var body: some View {
