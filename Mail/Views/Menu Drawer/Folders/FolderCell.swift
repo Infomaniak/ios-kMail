@@ -57,9 +57,9 @@ struct FolderCell: View {
         Group {
             if cellType == .indicator || isCompact {
                 Button(action: didTapButton) {
-                    FolderCellContent(folder: folder.content, level: level, selectedFolder: $splitViewManager.selectedFolder)
+                    FolderCellContent(folder: folder.content, level: level, isCurrentFolder: isCurrentFolder)
                 }
-                .disabled(isCurrentFolder)
+                .disabled(cellType == .indicator && isCurrentFolder)
             } else {
                 NavigationLink(isActive: $shouldTransit) {
                     ThreadListManagerView(
@@ -72,7 +72,7 @@ struct FolderCell: View {
                         splitViewManager.showSearch = false
                         self.shouldTransit = true
                     } label: {
-                        FolderCellContent(folder: folder.content, level: level, selectedFolder: $splitViewManager.selectedFolder)
+                        FolderCellContent(folder: folder.content, level: level, isCurrentFolder: isCurrentFolder)
                     }
                 }
             }
@@ -104,15 +104,11 @@ struct FolderCellContent: View {
 
     let folder: Folder
     let level: Int
-    @Binding var selectedFolder: Folder?
-
-    private var isSelected: Bool {
-        folder.id == selectedFolder?.id
-    }
+    let isCurrentFolder: Bool
 
     private var textStyle: MailTextStyle {
         if cellType == .link {
-            return isSelected ? .bodyMediumAccent : .bodyMedium
+            return isCurrentFolder ? .bodyMediumAccent : .bodyMedium
         }
         return .body
     }
@@ -144,7 +140,7 @@ struct FolderCellContent: View {
         if cellType == .link {
             Text(folder.formattedUnreadCount)
                 .textStyle(.bodySmallMediumAccent)
-        } else if isSelected {
+        } else if isCurrentFolder {
             Image(resource: MailResourcesAsset.check)
                 .resizable()
                 .frame(width: 16, height: 16)
@@ -155,7 +151,7 @@ struct FolderCellContent: View {
     private var background: some View {
         if cellType == .link {
             SelectionBackground(
-                isSelected: isSelected,
+                isSelected: isCurrentFolder,
                 offsetX: 8,
                 leadingPadding: 0,
                 verticalPadding: 0,
