@@ -29,7 +29,7 @@ struct AttachmentsHeaderView: View {
                 HStack(spacing: 8) {
                     ForEach(attachmentsManager.attachments) { attachment in
                         AttachmentUploadCell(attachment: attachment,
-                                             uploadTask: attachmentsManager.attachmentUploadTasks[attachment.uuid]) { attachmentRemoved in
+                                             uploadTask: attachmentsManager.attachmentUploadTaskFor(uuid: attachment.uuid)) { attachmentRemoved in
                             attachmentsManager.removeAttachment(attachmentRemoved)
                         }
                     }

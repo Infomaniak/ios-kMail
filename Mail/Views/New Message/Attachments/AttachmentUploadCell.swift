@@ -22,16 +22,8 @@ import SwiftUI
 
 struct AttachmentUploadCell: View {
     let attachment: Attachment
-    let uploadTask: AttachmentUploadTask?
+    @ObservedObject var uploadTask: AttachmentUploadTask
     let attachmentRemoved: ((Attachment) -> Void)?
-
-    init(attachment: Attachment,
-         uploadTask: AttachmentUploadTask? = nil,
-         attachmentRemoved: ((Attachment) -> Void)?) {
-        self.attachment = attachment
-        self.uploadTask = uploadTask
-        self.attachmentRemoved = attachmentRemoved
-    }
 
     var body: some View {
         VStack(spacing: 0) {
@@ -43,7 +35,7 @@ struct AttachmentUploadCell: View {
                         .textStyle(.bodySmall)
                         .lineLimit(1)
                         .truncationMode(.middle)
-                    if let error = uploadTask?.error {
+                    if let error = uploadTask.error {
                         Text(error.localizedDescription)
                             .textStyle(.labelSecondary)
                     } else {
@@ -85,6 +77,6 @@ struct AttachmentUploadCell: View {
 
 struct AttachmentUploadCell_Previews: PreviewProvider {
     static var previews: some View {
-        AttachmentUploadCell(attachment: PreviewHelper.sampleAttachment) { _ in /* Preview */ }
+        AttachmentUploadCell(attachment: PreviewHelper.sampleAttachment, uploadTask: AttachmentUploadTask()) { _ in /* Preview */ }
     }
 }
