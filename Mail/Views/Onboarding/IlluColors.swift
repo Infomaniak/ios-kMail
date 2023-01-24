@@ -30,8 +30,8 @@ extension AnimationKeypath {
         case archives = "ARCHIVES"
         case hand = "HAND"
         case star = "STAR"
-        case ben = "BEN"
-        case ring = "RING"
+        case bin = "BIN"
+        case clock = "CLOCK"
         case woman = "WOMAN"
         case men = "MEN"
         case letter = "LETTER"
@@ -269,8 +269,8 @@ struct IlluColors {
         IlluColors(.keyPath(category: .notification, categoryNumber: 4, group: 2), colors: .commonColors2),
         IlluColors(.keyPath(category: .notification, categoryNumber: 4, group: 3), colors: .commonColors5),
         IlluColors(.keyPath(category: .star, group: 2), colors: .commonColors3),
-        IlluColors(.keyPath(category: .ben, group: 7), colors: .commonColors3),
-        IlluColors(.keyPath(category: .ring, group: 5), colors: .commonColors3)
+        IlluColors(.keyPath(category: .bin, group: 7), colors: .commonColors3),
+        IlluColors(.keyPath(category: .clock, group: 5), colors: .commonColors3)
     ]
     static let illu3PinkColors = [
         IlluColors(.keyPath(category: .notification, categoryNumber: 2, group: 4), colors: .pinkColors1),
@@ -281,18 +281,18 @@ struct IlluColors {
         IlluColors(.keyPath(category: .notification, categoryNumber: 4, group: 5), colors: .pinkColors9),
         IlluColors(.keyPath(category: .hand, group: 1), colors: .pinkColors7),
         IlluColors(.keyPath(category: .hand, group: 4), colors: .pinkColors8),
-        IlluColors(.keyPath(category: .hand, group: 4), colors: .pinkColors8),
+        IlluColors(.keyPath(category: .hand, group: 5), colors: .pinkColors8),
         IlluColors(.keyPath(category: .star, group: 1, finalLayer: .border), colors: .pinkColors1),
-        IlluColors(.keyPath(category: .ben, group: 1, finalLayer: .border), colors: .pinkColors1),
-        IlluColors(.keyPath(category: .ben, group: 2, finalLayer: .border), colors: .pinkColors1),
-        IlluColors(.keyPath(category: .ben, group: 3, finalLayer: .border), colors: .pinkColors1),
-        IlluColors(.keyPath(category: .ben, group: 4, finalLayer: .border), colors: .pinkColors1),
-        IlluColors(.keyPath(category: .ben, group: 5, finalLayer: .border), colors: .pinkColors1),
-        IlluColors(.keyPath(category: .ben, group: 6, finalLayer: .border), colors: .pinkColors1),
-        IlluColors(.keyPath(category: .ring, group: 1), colors: .pinkColors1),
-        IlluColors(.keyPath(category: .ring, group: 2), colors: .pinkColors1),
-        IlluColors(.keyPath(category: .ring, group: 3), colors: .pinkColors1),
-        IlluColors(.keyPath(category: .ring, group: 4), colors: .pinkColors1)
+        IlluColors(.keyPath(category: .bin, group: 1, finalLayer: .border), colors: .pinkColors1),
+        IlluColors(.keyPath(category: .bin, group: 2, finalLayer: .border), colors: .pinkColors1),
+        IlluColors(.keyPath(category: .bin, group: 3, finalLayer: .border), colors: .pinkColors1),
+        IlluColors(.keyPath(category: .bin, group: 4, finalLayer: .border), colors: .pinkColors1),
+        IlluColors(.keyPath(category: .bin, group: 5, finalLayer: .border), colors: .pinkColors1),
+        IlluColors(.keyPath(category: .bin, group: 6, finalLayer: .border), colors: .pinkColors1),
+        IlluColors(.keyPath(category: .clock, group: 1), colors: .pinkColors1),
+        IlluColors(.keyPath(category: .clock, group: 2), colors: .pinkColors1),
+        IlluColors(.keyPath(category: .clock, group: 3), colors: .pinkColors1),
+        IlluColors(.keyPath(category: .clock, group: 4), colors: .pinkColors1)
     ]
     static let illu3BlueColors = [
         IlluColors(.keyPath(category: .notification, categoryNumber: 2, group: 4), colors: .blueColors1),
@@ -303,18 +303,18 @@ struct IlluColors {
         IlluColors(.keyPath(category: .notification, categoryNumber: 4, group: 5), colors: .blueColors8),
         IlluColors(.keyPath(category: .hand, group: 1), colors: .blueColors6),
         IlluColors(.keyPath(category: .hand, group: 4), colors: .blueColors7),
-        IlluColors(.keyPath(category: .hand, group: 4), colors: .blueColors7),
+        IlluColors(.keyPath(category: .hand, group: 5), colors: .blueColors7),
         IlluColors(.keyPath(category: .star, group: 1, finalLayer: .border), colors: .blueColors1),
-        IlluColors(.keyPath(category: .ben, group: 1, finalLayer: .border), colors: .blueColors1),
-        IlluColors(.keyPath(category: .ben, group: 2, finalLayer: .border), colors: .blueColors1),
-        IlluColors(.keyPath(category: .ben, group: 3, finalLayer: .border), colors: .blueColors1),
-        IlluColors(.keyPath(category: .ben, group: 4, finalLayer: .border), colors: .blueColors1),
-        IlluColors(.keyPath(category: .ben, group: 5, finalLayer: .border), colors: .blueColors1),
-        IlluColors(.keyPath(category: .ben, group: 6, finalLayer: .border), colors: .blueColors1),
-        IlluColors(.keyPath(category: .ring, group: 1), colors: .blueColors1),
-        IlluColors(.keyPath(category: .ring, group: 2), colors: .blueColors1),
-        IlluColors(.keyPath(category: .ring, group: 3), colors: .blueColors1),
-        IlluColors(.keyPath(category: .ring, group: 4), colors: .blueColors1)
+        IlluColors(.keyPath(category: .bin, group: 1, finalLayer: .border), colors: .blueColors1),
+        IlluColors(.keyPath(category: .bin, group: 2, finalLayer: .border), colors: .blueColors1),
+        IlluColors(.keyPath(category: .bin, group: 3, finalLayer: .border), colors: .blueColors1),
+        IlluColors(.keyPath(category: .bin, group: 4, finalLayer: .border), colors: .blueColors1),
+        IlluColors(.keyPath(category: .bin, group: 5, finalLayer: .border), colors: .blueColors1),
+        IlluColors(.keyPath(category: .bin, group: 6, finalLayer: .border), colors: .blueColors1),
+        IlluColors(.keyPath(category: .clock, group: 1), colors: .blueColors1),
+        IlluColors(.keyPath(category: .clock, group: 2), colors: .blueColors1),
+        IlluColors(.keyPath(category: .clock, group: 3), colors: .blueColors1),
+        IlluColors(.keyPath(category: .clock, group: 4), colors: .blueColors1)
     ]
 
     static let illu4Colors = [
