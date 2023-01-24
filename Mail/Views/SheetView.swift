@@ -16,14 +16,20 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import MailCore
 import MailResources
 import SwiftUI
 
 struct SheetView<Content>: View where Content: View {
+    @StateObject private var alert = GlobalAlert()
+
     @Environment(\.dismiss) private var dismiss
+
+    let mailboxManager: MailboxManager
     let content: Content
 
-    init(@ViewBuilder _ content: () -> Content) {
+    init(mailboxManager: MailboxManager, @ViewBuilder _ content: () -> Content) {
+        self.mailboxManager = mailboxManager
         self.content = content()
     }
 
@@ -36,13 +42,25 @@ struct SheetView<Content>: View where Content: View {
                     Label(MailResourcesStrings.Localizable.buttonClose, systemImage: "xmark")
                 })
         }
+        .customAlert(isPresented: $alert.isShowing) {
+            switch alert.state {
+            case let .createNewFolder(mode):
+                CreateFolderView(mailboxManager: mailboxManager, state: alert, mode: mode)
+            case .none:
+                EmptyView()
+            }
+        }
         .defaultAppStorage(.shared)
+        .onReceive(NotificationCenter.default.publisher(for: Constants.dismissMoveSheetNotificationName)) { _ in
+            dismiss()
+        }
+        .environmentObject(alert)
     }
 }
 
 struct SheetView_Previews: PreviewProvider {
     static var previews: some View {
-        SheetView() {
+        SheetView(mailboxManager: PreviewHelper.sampleMailboxManager) {
             EmptyView()
         }
     }

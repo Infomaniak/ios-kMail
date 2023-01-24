@@ -28,6 +28,7 @@ struct UserFoldersListView: View {
 
     @State private var isExpanded = true
 
+    @EnvironmentObject var splitViewManager: SplitViewManager
     @EnvironmentObject var globalAlert: GlobalAlert
 
     var isCompact: Bool
@@ -66,7 +67,7 @@ struct UserFoldersListView: View {
                         .padding(.bottom, 8)
                 } else {
                     ForEach(folders) { folder in
-                        FolderCell(folder: folder, isCompact: isCompact)
+                        FolderCell(folder: folder, currentFolderId: splitViewManager.selectedFolder?.id, isCompact: isCompact)
                     }
                 }
             }

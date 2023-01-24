@@ -172,6 +172,7 @@ enum ActionsTarget: Equatable {
     private let target: ActionsTarget
     private let state: ThreadBottomSheet
     private let globalSheet: GlobalBottomSheet
+    private let moveSheet: MoveSheet?
     private let replyHandler: (Message, ReplyMode) -> Void
     private let completionHandler: (() -> Void)?
 
@@ -182,12 +183,14 @@ enum ActionsTarget: Equatable {
          target: ActionsTarget,
          state: ThreadBottomSheet,
          globalSheet: GlobalBottomSheet,
+         moveSheet: MoveSheet? = nil,
          replyHandler: @escaping (Message, ReplyMode) -> Void,
          completionHandler: (() -> Void)? = nil) {
         self.mailboxManager = mailboxManager
         self.target = target.freeze()
         self.state = state
         self.globalSheet = globalSheet
+        self.moveSheet = moveSheet
         self.replyHandler = replyHandler
         self.completionHandler = completionHandler
         setActions()
@@ -376,11 +379,19 @@ enum ActionsTarget: Equatable {
     }
 
     private func move() {
-        globalSheet.open(state: .move { folder in
+        let folderId: String?
+        switch target {
+        case let .threads(threads):
+            folderId = threads.first?.parent?.id
+        case let .message(message):
+            folderId = message.folderId
+        }
+
+        moveSheet?.state = .move(folderId: folderId) { folder in
             Task {
                 try await self.move(to: folder)
             }
-        })
+        }
     }
 
     private func postpone() {

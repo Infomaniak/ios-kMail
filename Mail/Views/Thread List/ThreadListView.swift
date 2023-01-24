@@ -27,6 +27,12 @@ class ThreadBottomSheet: DisplayedFloatingPanelState<ThreadBottomSheet.State> {
     }
 }
 
+class MoveSheet: SheetState<MoveSheet.State> {
+    enum State {
+        case move(folderId: String?, moveHandler: MoveEmailView.MoveHandler)
+    }
+}
+
 struct ThreadListView: View {
     @StateObject var viewModel: ThreadListViewModel
     @StateObject var multipleSelectionViewModel: ThreadListMultipleSelectionViewModel
@@ -39,6 +45,7 @@ struct ThreadListView: View {
 
     @State private var isShowingComposeNewMessageView = false
     @StateObject var bottomSheet: ThreadBottomSheet
+    @StateObject var moveSheet: MoveSheet
     @StateObject private var networkMonitor = NetworkMonitor()
     @Binding private var editedMessageDraft: Draft?
     @Binding private var messageReply: MessageReply?
@@ -53,12 +60,15 @@ struct ThreadListView: View {
          messageReply: Binding<MessageReply?>,
          isCompact: Bool) {
         let threadBottomSheet = ThreadBottomSheet()
+        let moveEmailSheet = MoveSheet()
         _editedMessageDraft = editedMessageDraft
         _messageReply = messageReply
         _bottomSheet = StateObject(wrappedValue: threadBottomSheet)
+        _moveSheet = StateObject(wrappedValue: moveEmailSheet)
         _viewModel = StateObject(wrappedValue: ThreadListViewModel(mailboxManager: mailboxManager,
                                                                    folder: folder,
-                                                                   bottomSheet: threadBottomSheet))
+                                                                   bottomSheet: threadBottomSheet,
+                                                                   moveSheet: moveEmailSheet))
         _multipleSelectionViewModel =
             StateObject(wrappedValue: ThreadListMultipleSelectionViewModel(mailboxManager: mailboxManager))
         self.isCompact = isCompact
@@ -159,7 +169,7 @@ struct ThreadListView: View {
                 ActionsView(mailboxManager: viewModel.mailboxManager,
                             target: target,
                             state: bottomSheet,
-                            globalSheet: globalBottomSheet) { message, replyMode in
+                            globalSheet: globalBottomSheet, moveSheet: moveSheet) { message, replyMode in
                     messageReply = MessageReply(message: message, replyMode: replyMode)
                 } completionHandler: {
                     bottomSheet.close()
@@ -186,6 +196,11 @@ struct ThreadListView: View {
         }
         .sheet(isPresented: $isShowingComposeNewMessageView) {
             ComposeMessageView.newMessage(mailboxManager: viewModel.mailboxManager)
+        }
+        .sheet(isPresented: $moveSheet.isShowing) {
+            if case let .move(folderId, handler) = moveSheet.state {
+                MoveEmailView.sheetView(mailboxManager: viewModel.mailboxManager, from: folderId, moveHandler: handler)
+            }
         }
     }
 

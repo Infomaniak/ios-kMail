@@ -164,12 +164,13 @@ struct MenuDrawerView: View {
         }
         .background(MailResourcesAsset.backgroundMenuDrawer.swiftUiColor)
         .environmentObject(mailboxManager)
+        .environment(\.folderCellType, .link)
         .onAppear {
             MatomoUtils.track(view: ["MenuDrawer"])
             viewModel.createMenuItems(bottomSheet: bottomSheet)
         }
         .sheet(isPresented: $viewModel.isShowingHelp) {
-            SheetView {
+            SheetView(mailboxManager: mailboxManager) {
                 HelpView()
             }
         }

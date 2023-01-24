@@ -29,6 +29,20 @@ struct NestableFolder: Identifiable {
 
     let content: Folder
     let children: [NestableFolder]
+
+    static func createFoldersHierarchy(from folders: [Folder]) -> [Self] {
+        var parentFolders = [NestableFolder]()
+
+        let sortedFolders = folders.sorted()
+        for folder in sortedFolders {
+            parentFolders.append(NestableFolder(
+                content: folder,
+                children: Self.createFoldersHierarchy(from: Array(folder.children))
+            ))
+        }
+
+        return parentFolders
+    }
 }
 
 class MenuDrawerViewModel: ObservableObject {
@@ -96,18 +110,8 @@ class MenuDrawerViewModel: ObservableObject {
     }
 
     private func handleFoldersUpdate(_ folders: Results<Folder>) {
-        roleFolders = recCreateFolderHierarchy(folders: folders.where { $0.role != nil }.sorted())
-        userFolders = recCreateFolderHierarchy(folders: Array(folders.where { $0.role == nil }.sorted(by: userFoldersSortDescriptors)))
-    }
-
-    func recCreateFolderHierarchy(folders: [Folder]) -> [NestableFolder] {
-        var parentFolders = [NestableFolder]()
-        for folder in folders {
-            parentFolders.append(NestableFolder(content: folder,
-                                                children: recCreateFolderHierarchy(folders: folder.children.sorted())))
-        }
-
-        return parentFolders
+        roleFolders = NestableFolder.createFoldersHierarchy(from: Array(folders.where { $0.role != nil }))
+        userFolders = NestableFolder.createFoldersHierarchy(from: Array(folders.where { $0.role == nil }))
     }
 
     func createMenuItems(bottomSheet: GlobalBottomSheet) {

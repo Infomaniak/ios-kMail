@@ -92,6 +92,7 @@ class DateSection: Identifiable {
     @Published var isLoadingPage = false
     @Published var lastUpdate: Date?
 
+    let moveSheet: MoveSheet
     let bottomSheet: ThreadBottomSheet
     var globalBottomSheet: GlobalBottomSheet?
 
@@ -121,14 +122,15 @@ class DateSection: Identifiable {
             filter = newValue ? .unseen : .all
         }
     }
-    
+
     private let loadNextPageThreshold = 10
 
-    init(mailboxManager: MailboxManager, folder: Folder?, bottomSheet: ThreadBottomSheet) {
+    init(mailboxManager: MailboxManager, folder: Folder?, bottomSheet: ThreadBottomSheet, moveSheet: MoveSheet) {
         self.mailboxManager = mailboxManager
         self.folder = folder
         lastUpdate = folder?.lastUpdate
         self.bottomSheet = bottomSheet
+        self.moveSheet = moveSheet
         observeChanges()
         if let folder {
             sortThreadsIntoSections(threads: Array(folder.threads.sorted(by: \.date, ascending: false).freezeIfNeeded()))
@@ -237,11 +239,11 @@ class DateSection: Identifiable {
         case .readUnread:
             try await mailboxManager.toggleRead(threads: [thread])
         case .move:
-            globalBottomSheet?.open(state: .move(moveHandler: { folder in
+            moveSheet.state = .move(folderId: folder?.id) { folder in
                 Task {
                     try await self.move(thread: thread, to: folder)
                 }
-            }))
+            }
         case .favorite:
             try await mailboxManager.toggleStar(threads: [thread])
         case .postPone:

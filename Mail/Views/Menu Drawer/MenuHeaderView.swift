@@ -22,6 +22,8 @@ import SwiftUI
 import UIKit
 
 struct MenuHeaderView: View {
+    @EnvironmentObject private var mailboxManager: MailboxManager
+
     @State private var isShowingSettings = false
 
     var body: some View {
@@ -50,7 +52,7 @@ struct MenuHeaderView: View {
         .clipped()
         .shadow(color: MailResourcesAsset.menuDrawerShadowColor.swiftUiColor, radius: 1, x: 0, y: 2)
         .sheet(isPresented: $isShowingSettings) {
-            SheetView {
+            SheetView(mailboxManager: mailboxManager) {
                 SettingsView(viewModel: GeneralSettingsViewModel())
             }
         }

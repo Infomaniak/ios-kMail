@@ -45,6 +45,7 @@ struct ThreadView: View {
     @State private var displayNavigationTitle = false
     @State private var messageReply: MessageReply?
 
+    @StateObject private var moveSheet = MoveSheet()
     @StateObject private var bottomSheet = MessageBottomSheet()
     @StateObject private var threadBottomSheet = ThreadBottomSheet()
 
@@ -141,6 +142,11 @@ struct ThreadView: View {
         .sheet(item: $messageReply) { messageReply in
             ComposeMessageView.replyOrForwardMessage(messageReply: messageReply, mailboxManager: mailboxManager)
         }
+        .sheet(isPresented: $moveSheet.isShowing) {
+            if case let .move(folderId, handler) = moveSheet.state {
+                MoveEmailView.sheetView(mailboxManager: mailboxManager, from: folderId, moveHandler: handler)
+            }
+        }
         .floatingPanel(state: bottomSheet) {
             switch bottomSheet.state {
             case let .contact(recipient, isRemote):
@@ -169,7 +175,8 @@ struct ThreadView: View {
                 ActionsView(mailboxManager: mailboxManager,
                             target: target,
                             state: threadBottomSheet,
-                            globalSheet: globalBottomSheet) { message, replyMode in
+                            globalSheet: globalBottomSheet,
+                            moveSheet: moveSheet) { message, replyMode in
                     messageReply = MessageReply(message: message, replyMode: replyMode)
                 }
             }

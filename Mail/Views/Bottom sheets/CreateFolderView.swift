@@ -38,7 +38,7 @@ struct CreateFolderView: View {
 
     enum Mode {
         case create
-        case move(moveHandler: (Folder) -> Void)
+        case move(moveHandler: MoveEmailView.MoveHandler)
 
         var buttonTitle: String {
             switch self {
@@ -72,11 +72,6 @@ struct CreateFolderView: View {
                 )
                 .textStyle(.body)
                 .focused($isFocused)
-            // Picker
-            LargePicker(title: MailResourcesStrings.Localizable.createFolderParent,
-                        noSelectionText: MailResourcesStrings.Localizable.createFolderNoParent,
-                        selection: $selectedFolderID,
-                        items: sortedFolders.map { .init(id: $0.id, name: $0.formattedPath) })
             // Button
             BottomSheetButtonsView(primaryButtonTitle: mode.buttonTitle,
                                    secondaryButtonTitle: MailResourcesStrings.Localizable.buttonCancel) {
@@ -87,6 +82,7 @@ struct CreateFolderView: View {
                         let folder = try await mailboxManager.createFolder(name: folderName, parent: parent)
                         if case let .move(moveHandler) = mode {
                             moveHandler(folder)
+                            NotificationCenter.default.post(Notification(name: Constants.dismissMoveSheetNotificationName))
                         }
                     }
                 }

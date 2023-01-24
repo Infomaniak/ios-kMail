@@ -21,7 +21,24 @@ import MailCore
 import MailResources
 import SwiftUI
 
+struct FolderCellTypeEnvironment: EnvironmentKey {
+    static var defaultValue = FolderCell.CellType.link
+}
+
+extension EnvironmentValues {
+    var folderCellType: FolderCell.CellType {
+        get { self[FolderCellTypeEnvironment.self] }
+        set { self[FolderCellTypeEnvironment.self] = newValue }
+    }
+}
+
 struct FolderCell: View {
+    enum CellType {
+        case link, indicator
+    }
+
+    @Environment(\.folderCellType) var cellType
+
     @EnvironmentObject var splitViewManager: SplitViewManager
     @EnvironmentObject var mailboxManager: MailboxManager
     @EnvironmentObject var navigationDrawerState: NavigationDrawerState
@@ -29,16 +46,24 @@ struct FolderCell: View {
     let folder: NestableFolder
     var level = 0
 
-    var isCompact: Bool
+    var currentFolderId: String?
+    var isCompact = true
+
+    var customCompletion: ((Folder) -> Void)?
 
     @State private var shouldTransit = false
 
+    private var isCurrentFolder: Bool {
+        folder.id == currentFolderId
+    }
+
     var body: some View {
         Group {
-            if isCompact {
-                Button(action: updateFolder) {
-                    FolderCellContent(folder: folder.content, level: level, selectedFolder: $splitViewManager.selectedFolder)
+            if cellType == .indicator || isCompact {
+                Button(action: didTapButton) {
+                    FolderCellContent(folder: folder.content, level: level, isCurrentFolder: isCurrentFolder)
                 }
+                .disabled(cellType == .indicator && isCurrentFolder)
             } else {
                 NavigationLink(isActive: $shouldTransit) {
                     ThreadListManagerView(
@@ -51,14 +76,24 @@ struct FolderCell: View {
                         splitViewManager.showSearch = false
                         self.shouldTransit = true
                     } label: {
-                        FolderCellContent(folder: folder.content, level: level, selectedFolder: $splitViewManager.selectedFolder)
+                        FolderCellContent(folder: folder.content, level: level, isCurrentFolder: isCurrentFolder)
                     }
                 }
             }
 
-            ForEach(folder.children) { child in
-                FolderCell(folder: child, level: level + 1, isCompact: isCompact)
+            if level < Constants.menuDrawerMaximumSubfolderLevel {
+                ForEach(folder.children) { child in
+                    FolderCell(folder: child, level: level + 1, currentFolderId: currentFolderId, isCompact: isCompact, customCompletion: customCompletion)
+                }
             }
+        }
+    }
+
+    private func didTapButton() {
+        if cellType == .indicator {
+            customCompletion?(folder.content)
+        } else {
+            updateFolder()
         }
     }
 
@@ -69,16 +104,17 @@ struct FolderCell: View {
 }
 
 struct FolderCellContent: View {
+    @Environment(\.folderCellType) var cellType
+
     let folder: Folder
     let level: Int
-    @Binding var selectedFolder: Folder?
-
-    private var isSelected: Bool {
-        folder.id == selectedFolder?.id
-    }
+    let isCurrentFolder: Bool
 
     private var textStyle: MailTextStyle {
-        isSelected ? .bodyMediumAccent : .bodyMedium
+        if cellType == .link {
+            return isCurrentFolder ? .bodyMediumAccent : .bodyMedium
+        }
+        return .body
     }
 
     var body: some View {
@@ -95,19 +131,37 @@ struct FolderCellContent: View {
 
             Spacer()
 
-            Text(folder.formattedUnreadCount)
-                .textStyle(.bodySmallMediumAccent)
+            accessory
         }
         .padding(.vertical, 14)
         .padding(.horizontal, Constants.menuDrawerHorizontalPadding)
         .padding(.leading, Constants.menuDrawerSubFolderPadding * CGFloat(level))
-        .background(SelectionBackground(
-            isSelected: isSelected,
-            offsetX: 8,
-            leadingPadding: 0,
-            verticalPadding: 0,
-            defaultColor: MailResourcesAsset.backgroundMenuDrawer.swiftUiColor
-        ))
+        .background(background)
+    }
+
+    @ViewBuilder
+    private var accessory: some View {
+        if cellType == .link {
+            Text(folder.formattedUnreadCount)
+                .textStyle(.bodySmallMediumAccent)
+        } else if isCurrentFolder {
+            Image(resource: MailResourcesAsset.check)
+                .resizable()
+                .frame(width: 16, height: 16)
+        }
+    }
+
+    @ViewBuilder
+    private var background: some View {
+        if cellType == .link {
+            SelectionBackground(
+                isSelected: isCurrentFolder,
+                offsetX: 8,
+                leadingPadding: 0,
+                verticalPadding: 0,
+                defaultColor: MailResourcesAsset.backgroundMenuDrawer.swiftUiColor
+            )
+        }
     }
 }
 
@@ -115,6 +169,7 @@ struct FolderCellView_Previews: PreviewProvider {
     static var previews: some View {
         FolderCell(
             folder: NestableFolder(content: PreviewHelper.sampleFolder, children: []),
+            currentFolderId: nil,
             isCompact: false
         )
         .environmentObject(PreviewHelper.sampleMailboxManager)
