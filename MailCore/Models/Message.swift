@@ -176,7 +176,7 @@ public class Message: Object, Decodable, Identifiable {
     }
 
     public func insertInlineAttachment() {
-        for attachment in attachments {
+        for attachment in attachments.filter({ $0.disposition == .inline }) {
             if let contentId = attachment.contentId, let value = body?.value, let resource = attachment.resource {
                 body?.value = value.replacingOccurrences(
                     of: "cid:\(contentId)",
