@@ -74,28 +74,25 @@ struct ThreadView: View {
                         value: geometry.frame(in: .named("scrollView")).origin
                     )
                 }
-                .frame(width: 0, height: 0)
+                    .frame(width: 0, height: 0)
 
-                Text(thread.formattedSubject)
-                    .textStyle(.header2)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .multilineTextAlignment(.leading)
-                    .lineSpacing(8)
-                    .padding(.top, 8)
-                    .padding(.bottom, 16)
-                    .padding(.horizontal, 16)
-                    .background(MailResourcesAsset.backgroundColor.swiftUiColor)
+                    Text(thread.formattedSubject)
+                        .textStyle(.header2)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .multilineTextAlignment(.leading)
+                        .lineSpacing(8)
+                        .padding(.top, 8)
+                        .padding(.bottom, 16)
+                        .padding(.horizontal, 16)
+                        .background(MailResourcesAsset.backgroundColor.swiftUiColor)
 
-                LazyVStack(spacing: 0) {
-                    ForEach(messages.indices, id: \.self) { index in
-                        let isMessageExpanded = ((index == messages.count - 1) && !messages[index].isDraft) || !messages[index]
-                            .seen
-                        MessageView(message: messages[index], isMessageExpanded: isMessageExpanded)
-                            .padding(.horizontal, messages.count > 1 ? 8 : 0)
-                    }
+                    MessageListView(messages: messages)
+                        .padding(.top, 8)
+                        .background(threadBackground)
                 }
-                .padding(.top, 8)
-                .background(threadBackground)
+            }
+            .onAppear {
+                proxy.scrollTo(messages.last?.uid, anchor: .top)
             }
         }
         .coordinateSpace(name: "scrollView")

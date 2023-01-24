@@ -29,6 +29,8 @@ struct MessageView: View {
     @State var isHeaderExpanded = false
     @State var isMessageExpanded: Bool
 
+    @State private var htmlLoaded = false
+
     init(message: Message, isMessageExpanded: Bool = false) {
         self.message = message
         self.isMessageExpanded = isMessageExpanded
