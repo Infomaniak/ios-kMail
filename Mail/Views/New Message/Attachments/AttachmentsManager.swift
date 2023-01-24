@@ -66,9 +66,11 @@ class AttachmentsManager: ObservableObject {
     @MainActor
     func removeAttachment(_ attachment: Attachment) {
         guard let realm = attachment.realm else { return }
+        let attachmentUUID = attachment.uuid
         try? realm.write {
             realm.delete(attachment)
         }
+        attachmentUploadTasks[attachmentUUID]?.task?.cancel()
         objectWillChange.send()
     }
 
@@ -146,21 +148,27 @@ class AttachmentsManager: ObservableObject {
         let localAttachment = await createLocalAttachment(name: attachment.suggestedName ?? getDefaultFileName(),
                                                           type: attachment.type,
                                                           disposition: disposition)
-        do {
-            let url = try await attachment.writeToTemporaryURL()
-            let updatedAttachment = await updateLocalAttachment(url: url, attachment: localAttachment)
-            let remoteAttachment = try await sendAttachment(url: url, localAttachment: updatedAttachment)
+        let importTask = Task { () -> String? in
+            do {
+                let url = try await attachment.writeToTemporaryURL()
+                let updatedAttachment = await updateLocalAttachment(url: url, attachment: localAttachment)
+                let remoteAttachment = try await sendAttachment(url: url, localAttachment: updatedAttachment)
 
-            if disposition == .inline,
-               let cid = remoteAttachment?.contentId {
-                return cid
+                if disposition == .inline,
+                   let cid = remoteAttachment?.contentId {
+                    return cid
+                }
+            } catch {
+                DDLogError("Error while creating attachment: \(error.localizedDescription)")
+                await updateAttachmentUploadError(attachment: localAttachment, error: error)
             }
-        } catch {
-            DDLogError("Error while creating attachment: \(error.localizedDescription)")
-            await updateAttachmentUploadError(attachment: localAttachment, error: error)
+
+            return nil
         }
 
-        return nil
+        attachmentUploadTasks[localAttachment.uuid]?.task = importTask
+
+        return await importTask.value
     }
 
     private func nameWithExtension(name: String, correspondingTo type: UTType?) -> String {
