@@ -89,10 +89,14 @@ struct ThreadView: View {
                     MessageListView(messages: messages)
                         .padding(.top, 8)
                         .background(threadBackground)
+                        .onAppear {
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+                                withAnimation {
+                                    proxy.scrollTo(messages.last?.uid, anchor: .top)
+                                }
+                            }
+                        }
                 }
-            }
-            .onAppear {
-                proxy.scrollTo(messages.last?.uid, anchor: .top)
             }
         }
         .coordinateSpace(name: "scrollView")
