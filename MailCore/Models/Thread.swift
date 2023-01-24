@@ -71,9 +71,24 @@ public class Thread: Object, Decodable, Identifiable {
         return messages.filter { $0.folderId == self.folderId }.count
     }
 
+    public var messageToDisplay: Message? {
+        messages.last { message in
+            if parent?.role != .sent {
+                return message.folderId == folderId
+            }
+            return message.folderId == folderId
+        }
+    }
+
     public var formattedFrom: String {
-        guard let from = from.last else { return MailResourcesStrings.Localizable.unknownRecipientTitle }
-        return from.title
+        switch from.count {
+        case 0:
+            return MailResourcesStrings.Localizable.unknownRecipientTitle
+        case 1:
+            return from[0].title
+        default:
+            return Set(from).map(\.shortName).joined(separator: ", ")
+        }
     }
 
     public var formattedTo: String {

@@ -40,13 +40,17 @@ extension ThreadDensity {
 }
 
 struct ThreadCell: View {
-    var thread: Thread
+    let thread: Thread
 
-    var threadDensity: ThreadDensity
-    var accentColor: AccentColor
+    let threadDensity: ThreadDensity
+    let accentColor: AccentColor
 
     var isMultipleSelectionEnabled = false
     var isSelected = false
+
+    private var messageToDisplay: Message? {
+        thread.messageToDisplay
+    }
 
     private var checkboxSize: CGFloat {
         threadDensity == .large ? Constants.checkboxLargeSize : Constants.checkboxSize
@@ -57,8 +61,10 @@ struct ThreadCell: View {
     var body: some View {
         HStack(spacing: 8) {
             unreadIndicator
-                .animation(.threadListSlide(density: threadDensity, isMultipleSelectionEnabled: isMultipleSelectionEnabled),
-                           value: isMultipleSelectionEnabled)
+                .animation(
+                    .threadListSlide(density: threadDensity, isMultipleSelectionEnabled: isMultipleSelectionEnabled),
+                    value: isMultipleSelectionEnabled
+                )
 
             Group {
                 if threadDensity == .large, let recipient = thread.from.last {
@@ -69,8 +75,10 @@ struct ThreadCell: View {
                     }
                 } else if isMultipleSelectionEnabled {
                     checkbox
-                        .animation(.threadListCheckbox(isMultipleSelectionEnabled: isMultipleSelectionEnabled),
-                                   value: isMultipleSelectionEnabled)
+                        .animation(
+                            .threadListCheckbox(isMultipleSelectionEnabled: isMultipleSelectionEnabled),
+                            value: isMultipleSelectionEnabled
+                        )
                 }
             }
             .padding(.trailing, 4)
@@ -84,8 +92,10 @@ struct ThreadCell: View {
                     threadDetails
                 }
             }
-            .animation(.threadListSlide(density: threadDensity, isMultipleSelectionEnabled: isMultipleSelectionEnabled),
-                       value: isMultipleSelectionEnabled)
+            .animation(
+                .threadListSlide(density: threadDensity, isMultipleSelectionEnabled: isMultipleSelectionEnabled),
+                value: isMultipleSelectionEnabled
+            )
         }
         .padding(.leading, 8)
         .padding(.trailing, 12)
