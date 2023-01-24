@@ -225,11 +225,7 @@ public class Message: Object, Decodable, Identifiable {
         }
         subject = try values.decodeIfPresent(String.self, forKey: .subject)
         priority = try values.decode(MessagePriority.self, forKey: .priority)
-        if let date = try? values.decode(Date.self, forKey: .date) {
-            self.date = date
-        } else {
-            date = Date()
-        }
+        date = (try? values.decode(Date.self, forKey: .date)) ?? Date()
         size = try values.decode(Int.self, forKey: .size)
         from = try values.decode(List<Recipient>.self, forKey: .from)
         to = try values.decode(List<Recipient>.self, forKey: .to)
