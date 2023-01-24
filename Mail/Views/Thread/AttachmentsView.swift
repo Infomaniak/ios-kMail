@@ -46,7 +46,7 @@ struct AttachmentsView: View {
                                 }
                             }
                         } label: {
-                            AttachmentCell(attachment: attachment, attachmentRemoved: nil)
+                            AttachmentCell(attachment: attachment)
                         }
                     }
                 }

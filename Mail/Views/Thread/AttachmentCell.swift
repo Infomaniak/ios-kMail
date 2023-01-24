@@ -22,19 +22,6 @@ import SwiftUI
 
 struct AttachmentCell: View {
     let attachment: Attachment
-    let uploadTask: AttachmentUploadTask?
-    let isNewMessage: Bool
-    let attachmentRemoved: ((Attachment) -> Void)?
-
-    init(attachment: Attachment,
-         uploadTask: AttachmentUploadTask? = nil,
-         isNewMessage: Bool = false,
-         attachmentRemoved: ((Attachment) -> Void)?) {
-        self.attachment = attachment
-        self.uploadTask = uploadTask
-        self.isNewMessage = isNewMessage
-        self.attachmentRemoved = attachmentRemoved
-    }
 
     var body: some View {
         VStack(spacing: 0) {
@@ -46,37 +33,12 @@ struct AttachmentCell: View {
                         .textStyle(.bodySmall)
                         .lineLimit(1)
                         .truncationMode(.middle)
-                    if let error = uploadTask?.error {
-                        Text(error.localizedDescription)
-                            .textStyle(.labelSecondary)
-                    } else {
-                        Text(attachment.size, format: .defaultByteCount)
-                            .textStyle(.labelSecondary)
-                            .opacity(attachment.size == 0 ? 0 : 1)
-                    }
-                }
-
-                if isNewMessage {
-                    Button {
-                        if let attachmentRemoved = attachmentRemoved {
-                            attachmentRemoved(attachment)
-                        }
-                    } label: {
-                        Image(resource: MailResourcesAsset.close)
-                            .resizable()
-                            .scaledToFit()
-                            .foregroundColor(MailResourcesAsset.secondaryTextColor)
-                            .frame(width: 16, height: 16)
-                    }
-                    .buttonStyle(.borderless)
-                    .padding(.leading, 8)
+                    Text(attachment.size, format: .defaultByteCount)
+                        .textStyle(.labelSecondary)
+                        .opacity(attachment.size == 0 ? 0 : 1)
                 }
             }
             .padding(6)
-            if let uploadTask, isNewMessage {
-                IndeterminateProgressView(indeterminate: uploadTask.progress == 0, progress: uploadTask.progress)
-                    .opacity(uploadTask.progress == 1 ? 0 : 1)
-            }
         }
         .background(
             RoundedRectangle(cornerRadius: 6)
@@ -84,12 +46,11 @@ struct AttachmentCell: View {
         )
         .cornerRadius(6)
         .frame(maxWidth: 200)
-        .padding(.top, isNewMessage ? 16 : 0)
     }
 }
 
 struct AttachmentCell_Previews: PreviewProvider {
     static var previews: some View {
-        AttachmentCell(attachment: PreviewHelper.sampleAttachment) { _ in /* Preview */ }
+        AttachmentCell(attachment: PreviewHelper.sampleAttachment)
     }
 }
