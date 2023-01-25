@@ -209,51 +209,63 @@ enum ActionsTarget: Equatable {
                     .print
                 ]
             } else if let thread = threads.first {
-                if let message = thread.messages.first, message.canReplyAll {
+                let replyAll = thread.messages.first?.canReplyAll ?? false
+                if replyAll {
                     quickActions = [.reply, .replyAll, .forward, .delete]
-                    listActions = [.archive]
                 } else {
                     quickActions = [.reply, .forward, .archive, .delete]
-                    listActions = []
                 }
 
+                let firstFromMe = thread.messages.first?.fromMe ?? false
+                let archive = thread.messages.first?.canReplyAll ?? false
                 let unread = thread.hasUnseenMessages
                 let star = thread.flagged
+
                 let spam = thread.parent?.role == .spam
-                listActions.append(contentsOf: [
+                let spamAction: Action? = spam ? .nonSpam : .spam
+
+                let tempListActions: [Action?] = [
+                    archive ? .archive : nil,
                     unread ? .markAsRead : .markAsUnread,
                     .move,
                     star ? .unstar : .star,
-                    spam ? .nonSpam : .spam,
+                    firstFromMe ? nil : spamAction,
                     .print,
                     .saveAsPDF
-                ])
+                ]
+
+                listActions = tempListActions.compactMap { $0 }
             }
         case let .message(message):
             if message.canReplyAll {
                 quickActions = [.reply, .replyAll, .forward, .delete]
-                listActions = [.archive]
             } else {
                 quickActions = [.reply, .forward, .archive, .delete]
-                listActions = []
             }
 
+            let archive = message.canReplyAll
             let unread = !message.seen
             let star = message.flagged
+
             let spam = message.folderId == mailboxManager.getFolder(with: .spam)?._id
-            listActions.append(contentsOf: [
+            let spamAction: Action? = spam ? .nonSpam : .spam
+
+            let tempListActions: [Action?] = [
+                archive ? .archive : nil,
                 unread ? .markAsRead : .markAsUnread,
                 .move,
                 star ? .unstar : .star,
-                spam ? .nonSpam : .spam,
-                .block,
-                .phishing,
+                message.fromMe ? nil : spamAction,
+                message.fromMe ? nil : .block,
+                message.fromMe ? nil : .phishing,
                 .print,
                 .saveAsPDF,
                 .createRule,
                 .report,
                 .editMenu
-            ])
+            ]
+
+            listActions = tempListActions.compactMap { $0 }
         }
     }
 

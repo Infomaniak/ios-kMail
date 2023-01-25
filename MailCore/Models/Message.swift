@@ -143,6 +143,10 @@ public class Message: Object, Decodable, Identifiable {
         return Array(dup)
     }
 
+    public var fromMe: Bool {
+        return from.contains { $0.isMe }
+    }
+
     public var canReplyAll: Bool {
         let holder = recipientsForReplyTo(replyAll: true)
         return !holder.cc.isEmpty
