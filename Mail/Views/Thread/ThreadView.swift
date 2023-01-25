@@ -74,29 +74,21 @@ struct ThreadView: View {
                         value: geometry.frame(in: .named("scrollView")).origin
                     )
                 }
-                    .frame(width: 0, height: 0)
+                .frame(width: 0, height: 0)
 
-                    Text(thread.formattedSubject)
-                        .textStyle(.header2)
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                        .multilineTextAlignment(.leading)
-                        .lineSpacing(8)
-                        .padding(.top, 8)
-                        .padding(.bottom, 16)
-                        .padding(.horizontal, 16)
-                        .background(MailResourcesAsset.backgroundColor.swiftUiColor)
+                Text(thread.formattedSubject)
+                    .textStyle(.header2)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .multilineTextAlignment(.leading)
+                    .lineSpacing(8)
+                    .padding(.top, 8)
+                    .padding(.bottom, 16)
+                    .padding(.horizontal, 16)
+                    .background(MailResourcesAsset.backgroundColor.swiftUiColor)
 
-                    MessageListView(messages: messages)
-                        .padding(.top, 8)
-                        .background(threadBackground)
-                        .onAppear {
-                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
-                                withAnimation {
-                                    proxy.scrollTo(messages.last?.uid, anchor: .top)
-                                }
-                            }
-                        }
-                }
+                MessageListView(messages: messages)
+                    .padding(.top, 8)
+                    .background(threadBackground)
             }
         }
         .coordinateSpace(name: "scrollView")
