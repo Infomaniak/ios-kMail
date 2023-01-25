@@ -60,9 +60,32 @@ struct CustomAlertModifier<AlertContent>: ViewModifier where AlertContent: View 
     }
 }
 
+struct CustomAlertItemModifier<Item, AlertContent>: ViewModifier where Item: Identifiable, AlertContent: View {
+    @Binding var item: Item?
+    let alertView: (Item) -> AlertContent
+
+    func body(content: Content) -> some View {
+        content
+            .overlay {
+                Group {
+                    if let item {
+                        AlertView {
+                            alertView(item)
+                        }
+                    }
+                }
+                .animation(.default, value: item?.id)
+            }
+    }
+}
+
 extension View {
     func customAlert<Content: View>(isPresented: Binding<Bool>, @ViewBuilder content: () -> Content) -> some View {
         modifier(CustomAlertModifier(isPresented: isPresented, alertView: content()))
+    }
+
+    func customAlert<Item, Content>(item: Binding<Item?>, @ViewBuilder content: @escaping (Item) -> Content) -> some View where Item: Identifiable, Content: View {
+        modifier(CustomAlertItemModifier(item: item, alertView: content))
     }
 }
 
