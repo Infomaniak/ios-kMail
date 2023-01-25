@@ -54,7 +54,7 @@ struct Slide: Identifiable {
             animationFile: "illu_3",
             title: MailResourcesStrings.Localizable.onBoardingTitle3,
             description: MailResourcesStrings.Localizable.onBoardingDescription3,
-            lottieConfiguration: LottieConfiguration(id: 3, loopMode: .playOnce, loopFrameStart: 118, loopFrameEnd: 225)
+            lottieConfiguration: LottieConfiguration(id: 3, loopMode: .playOnce, loopFrameStart: 111, loopFrameEnd: 187)
         ),
         Slide(
             id: 4,
