@@ -210,6 +210,7 @@ struct ComposeMessageView: View {
                 DraftManager.shared.syncDraft(mailboxManager: mailboxManager)
             }
         }
+        .interactiveDismissDisabled()
         .fullScreenCover(isPresented: $isShowingCamera) {
             CameraPicker { data in
                 attachmentsManager.importAttachments(attachments: [data])
