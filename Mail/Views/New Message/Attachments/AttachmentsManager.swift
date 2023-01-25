@@ -22,10 +22,10 @@ import MailCore
 import PhotosUI
 import SwiftUI
 
-class AttachmentUploadTask {
-    var progress: Double = 0
+class AttachmentUploadTask: ObservableObject {
+    @Published var progress: Double = 0
     var task: Task<String?, Never>?
-    var error: MailError?
+    @Published var error: MailError?
 }
 
 class AttachmentsManager: ObservableObject {
@@ -55,12 +55,25 @@ class AttachmentsManager: ObservableObject {
             return
         }
 
+        if oldAttachment.uuid != newAttachment.uuid {
+            attachmentUploadTasks[newAttachment.uuid] = attachmentUploadTasks[oldAttachment.uuid]
+            attachmentUploadTasks.removeValue(forKey: oldAttachment.uuid)
+        }
+
         try? realm.write {
             // We need to update every field of the local attachment because embedded objects don't have a primary key
             oldAttachment.update(with: newAttachment)
         }
 
         objectWillChange.send()
+    }
+
+    @MainActor
+    func attachmentUploadTaskFor(uuid: String) -> AttachmentUploadTask {
+        if attachmentUploadTasks[uuid] == nil {
+            attachmentUploadTasks[uuid] = AttachmentUploadTask()
+        }
+        return attachmentUploadTasks[uuid]!
     }
 
     @MainActor
@@ -71,6 +84,8 @@ class AttachmentsManager: ObservableObject {
             realm.delete(attachment)
         }
         attachmentUploadTasks[attachmentUUID]?.task?.cancel()
+        attachmentUploadTasks.removeValue(forKey: attachmentUUID)
+
         objectWillChange.send()
     }
 
@@ -87,7 +102,6 @@ class AttachmentsManager: ObservableObject {
     @MainActor
     private func updateAttachmentUploadProgress(attachment: Attachment, progress: Double) {
         attachmentUploadTasks[attachment.uuid]?.progress = progress
-        objectWillChange.send()
     }
 
     @MainActor
@@ -97,7 +111,6 @@ class AttachmentsManager: ObservableObject {
         } else {
             attachmentUploadTasks[attachment.uuid]?.error = .unknownError
         }
-        objectWillChange.send()
     }
 
     @MainActor

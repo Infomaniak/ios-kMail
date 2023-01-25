@@ -28,9 +28,8 @@ struct AttachmentsHeaderView: View {
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack(spacing: 8) {
                     ForEach(attachmentsManager.attachments) { attachment in
-                        AttachmentCell(attachment: attachment,
-                                       uploadTask: attachmentsManager.attachmentUploadTasks[attachment.uuid ?? ""],
-                                       isNewMessage: true) { attachmentRemoved in
+                        AttachmentUploadCell(attachment: attachment,
+                                             uploadTask: attachmentsManager.attachmentUploadTaskFor(uuid: attachment.uuid)) { attachmentRemoved in
                             attachmentsManager.removeAttachment(attachmentRemoved)
                         }
                     }
