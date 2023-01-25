@@ -28,7 +28,7 @@ struct MessageListView: View {
             ForEach(messages, id: \.uid) { message in
                 let isMessageExpanded = ((messages.last?.uid == message.uid) && !message.isDraft) || !message.seen
                 MessageView(message: message, isMessageExpanded: isMessageExpanded)
-                    .id(message.uid)
+                    .padding(.horizontal, messages.count > 1 ? 8 : 0)
             }
         }
     }
