@@ -111,11 +111,6 @@ struct Action: Identifiable, Equatable {
         title: MailResourcesStrings.Localizable.actionPrint,
         icon: MailResourcesAsset.printText
     )
-    static let saveAsPDF = Action(
-        id: 15,
-        title: MailResourcesStrings.Localizable.actionSavePDF,
-        icon: MailResourcesAsset.fileDownload
-    )
     static let createRule = Action(
         id: 16,
         title: MailResourcesStrings.Localizable.actionCreateRule,
@@ -230,8 +225,7 @@ enum ActionsTarget: Equatable {
                     .move,
                     star ? .unstar : .star,
                     firstFromMe ? nil : spamAction,
-                    .print,
-                    .saveAsPDF
+                    .print
                 ]
 
                 listActions = tempListActions.compactMap { $0 }
@@ -259,7 +253,6 @@ enum ActionsTarget: Equatable {
                 message.fromMe ? nil : .block,
                 message.fromMe ? nil : .phishing,
                 .print,
-                .saveAsPDF,
                 .createRule,
                 .report,
                 .editMenu
@@ -300,8 +293,6 @@ enum ActionsTarget: Equatable {
             try await phishing()
         case .print:
             printAction()
-        case .saveAsPDF:
-            saveAsPDF()
         case .createRule:
             createRule()
         case .report:
@@ -485,11 +476,6 @@ enum ActionsTarget: Equatable {
 
     private func printAction() {
         // TODO: PRINT ACTION
-        showWorkInProgressSnackBar()
-    }
-
-    private func saveAsPDF() {
-        // TODO: SAVE AS PDF ACTION
         showWorkInProgressSnackBar()
     }
 
