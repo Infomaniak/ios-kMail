@@ -86,16 +86,9 @@ struct ThreadView: View {
                     .padding(.horizontal, 16)
                     .background(MailResourcesAsset.backgroundColor.swiftUiColor)
 
-                LazyVStack(spacing: 0) {
-                    ForEach(messages.indices, id: \.self) { index in
-                        let isMessageExpanded = ((index == messages.count - 1) && !messages[index].isDraft) || !messages[index]
-                            .seen
-                        MessageView(message: messages[index], isMessageExpanded: isMessageExpanded)
-                            .padding(.horizontal, messages.count > 1 ? 8 : 0)
-                    }
-                }
-                .padding(.top, 8)
-                .background(threadBackground)
+                MessageListView(messages: messages)
+                    .padding(.top, 8)
+                    .background(threadBackground)
             }
         }
         .coordinateSpace(name: "scrollView")
