@@ -18,16 +18,14 @@
 
 import InfomaniakCore
 import MailCore
+import MailResources
 import RealmSwift
 import Shimmer
 import SwiftUI
-import MailResources
 
 struct MessageView: View {
     @ObservedRealmObject var message: Message
     @EnvironmentObject var mailboxManager: MailboxManager
-    @State var model = WebViewModel()
-    @State private var webViewHeight: CGFloat = .zero
     @State var isHeaderExpanded = false
     @State var isMessageExpanded: Bool
 
@@ -40,7 +38,6 @@ struct MessageView: View {
         ZStack {
             RoundedRectangle(cornerRadius: 8)
                 .fill(MailResourcesAsset.backgroundColor.swiftUiColor)
-                .padding(.horizontal, 8)
             VStack(spacing: 16) {
                 MessageHeaderView(
                     message: message,
@@ -53,29 +50,7 @@ struct MessageView: View {
                     if !message.attachments.filter { $0.disposition == .attachment || $0.contentId == nil }.isEmpty {
                         AttachmentsView(message: message)
                     }
-
-                    // Display a shimmer while the body is loading
-                    if message.body == nil {
-                        Text(
-                            "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras elementum justo quis neque iaculis, eget vehicula metus vulputate. Duis sit amet tempor nisl. Nulla ac semper risus, nec rutrum elit. Maecenas sed volutpat urna. Vestibulum varius ac orci eu eleifend. Sed at ullamcorper odio. Donec sodales, nisl vel pellentesque scelerisque, ligula justo efficitur ex, non vestibulum nisi purus sit amet dui. Praesent ultricies orci et enim hendrerit posuere eget quis leo. Mauris sit amet sollicitudin mi. Suspendisse volutpat odio ante, quis elementum massa congue sed. Sed varius varius tempus."
-                        )
-                        .redacted(reason: .placeholder)
-                        .shimmering()
-                        .padding(.horizontal, 16)
-                    }
-
-                    GeometryReader { proxy in
-                        WebView(model: $model, dynamicHeight: $webViewHeight, proxy: proxy)
-                            .frame(height: webViewHeight)
-                            .padding(.horizontal, 8)
-                    }
-                    .frame(height: webViewHeight)
-                    .onAppear {
-                        model.loadHTMLString(value: message.body?.value)
-                    }
-                    .onChange(of: message.body) { _ in
-                        model.loadHTMLString(value: message.body?.value)
-                    }
+                    MessageBodyView(message: message)
                 }
             }
             .padding(.top, 16)

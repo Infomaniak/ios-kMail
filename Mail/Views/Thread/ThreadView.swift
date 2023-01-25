@@ -58,6 +58,7 @@ struct ThreadView: View {
     private var messages: [Message] {
         return Array(thread.messages)
     }
+
     private var threadBackground: Color {
         messages.count > 1
             ? MailResourcesAsset.backgroundCardColor.swiftUiColor
@@ -87,8 +88,10 @@ struct ThreadView: View {
 
                 LazyVStack(spacing: 0) {
                     ForEach(messages.indices, id: \.self) { index in
-                        let isMessageExpanded = ((index == messages.count - 1) && !messages[index].isDraft) || !messages[index].seen
+                        let isMessageExpanded = ((index == messages.count - 1) && !messages[index].isDraft) || !messages[index]
+                            .seen
                         MessageView(message: messages[index], isMessageExpanded: isMessageExpanded)
+                            .padding(.horizontal, messages.count > 1 ? 8 : 0)
                     }
                 }
                 .padding(.top, 8)
