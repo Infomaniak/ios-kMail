@@ -56,9 +56,9 @@ struct ReportJunkView: View {
 struct ReportJunkView_Previews: PreviewProvider {
     static var previews: some View {
         ReportJunkView(mailboxManager: PreviewHelper.sampleMailboxManager,
-                          target: .threads([PreviewHelper.sampleThread]),
-                          state: ThreadBottomSheet(),
-                          globalSheet: GlobalBottomSheet())
+                       target: .threads([PreviewHelper.sampleThread]),
+                       state: ThreadBottomSheet(),
+                       globalSheet: GlobalBottomSheet())
             .accentColor(AccentColor.pink.primary.swiftUiColor)
     }
 }

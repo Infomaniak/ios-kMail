@@ -250,7 +250,7 @@ enum ActionsTarget: Equatable {
                 unread ? .markAsRead : .markAsUnread,
                 .move,
                 star ? .unstar : .star,
-                .reportJunk,
+                message.fromMe ? nil : .reportJunk,
                 .print,
                 .createRule,
                 .report,
