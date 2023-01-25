@@ -63,6 +63,7 @@ struct ComposeMessageView: View {
     @State private var isShowingFileSelection = false
     @State private var isShowingPhotoLibrary = false
     @State private var attachmentsManager: AttachmentsManager
+    @State private var isShowingCancelAttachmentsError = false
 
     @State var scrollView: UIScrollView?
 
@@ -190,14 +191,12 @@ struct ComposeMessageView: View {
             .navigationBarTitleDisplayMode(.inline)
             .navigationBarBackButtonHidden(true)
             .navigationBarItems(
-                leading: Button(action: dismiss.callAsFunction) {
+                leading: Button(action: closeDraft) {
                     Label(MailResourcesStrings.Localizable.buttonClose, systemImage: "xmark")
                 },
-                trailing: Button(action: {
-                    sendDraft()
-                }, label: {
+                trailing: Button(action: sendDraft) {
                     Image(resource: MailResourcesAsset.send)
-                })
+                }
                 .disabled(draft.identityId?.isEmpty == true || draft.to.isEmpty)
             )
             .background(MailResourcesAsset.backgroundColor.swiftUiColor)
@@ -233,6 +232,13 @@ struct ComposeMessageView: View {
                 AddLinkView(state: alert, actionHandler: handler)
             case .none:
                 EmptyView()
+            }
+        }
+        .customAlert(isPresented: $isShowingCancelAttachmentsError) {
+            AttachmentsUploadInProgressErrorView(isPresented: $isShowingCancelAttachmentsError) {
+                dismiss()
+            } cancelHandler: {
+                isShowingCancelAttachmentsError = false
             }
         }
         .task {
@@ -280,6 +286,15 @@ struct ComposeMessageView: View {
             fatalError("Unhandled binding \(type)")
         }
         return binding
+    }
+
+    private func closeDraft() {
+        guard attachmentsManager.allAttachmentsUploaded else {
+            isShowingCancelAttachmentsError = true
+            return
+        }
+
+        dismiss()
     }
 
     private func sendDraft() {

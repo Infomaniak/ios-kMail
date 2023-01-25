@@ -26,6 +26,9 @@ class AttachmentUploadTask: ObservableObject {
     @Published var progress: Double = 0
     var task: Task<String?, Never>?
     @Published var error: MailError?
+    var uploadDone: Bool {
+        return progress == 1
+    }
 }
 
 class AttachmentsManager: ObservableObject {
@@ -36,6 +39,9 @@ class AttachmentsManager: ObservableObject {
     }
 
     private(set) var attachmentUploadTasks = [String: AttachmentUploadTask]()
+    var allAttachmentsUploaded: Bool {
+        return attachmentUploadTasks.values.allSatisfy(\.uploadDone)
+    }
 
     private lazy var filenameDateFormatter: DateFormatter = {
         let formatter = DateFormatter()
