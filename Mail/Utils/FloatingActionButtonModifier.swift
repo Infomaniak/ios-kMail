@@ -33,7 +33,6 @@ struct FloatingActionButtonModifier: ViewModifier {
                 FloatingActionButton(icon: icon, title: title, action: action)
             }
         }
-        .edgesIgnoringSafeArea(.bottom)
     }
 }
 
