@@ -51,6 +51,7 @@ public class Mailbox: Object, Codable, Identifiable {
             objectId = MailboxInfosManager.getObjectId(mailboxId: mailboxId, userId: userId)
         }
     }
+
     @Persisted public var permissions: MailboxPermissions?
     @Persisted public var quotas: Quotas?
 
@@ -79,7 +80,6 @@ public class Mailbox: Object, Codable, Identifiable {
         case isLimited
         case isFree
         case dailyLimit
-        case unseenMessages
     }
 
     public convenience init(

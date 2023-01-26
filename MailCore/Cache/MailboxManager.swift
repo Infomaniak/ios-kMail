@@ -661,6 +661,10 @@ public class MailboxManager: ObservableObject {
                 }
             }
         }
+
+        if folder.role == .inbox {
+            MailboxInfosManager.instance.updateUnseen(unseenMessages: folder.unreadCount, for: mailbox)
+        }
     }
 
     private func addMessages(shortUids: [String], folder: Folder) async throws {
