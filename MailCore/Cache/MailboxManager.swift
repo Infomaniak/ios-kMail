@@ -427,8 +427,6 @@ public class MailboxManager: ObservableObject {
             id: Constants.searchFolderId,
             path: "",
             name: "",
-            isFake: false,
-            isCollapsed: false,
             isFavorite: false,
             separator: "/",
             children: [],

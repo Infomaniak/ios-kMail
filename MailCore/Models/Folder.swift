@@ -106,9 +106,6 @@ public class Folder: Object, Codable, Comparable, Identifiable {
     @Persisted public var name: String
     @Persisted public var role: FolderRole?
     @Persisted public var unreadCount = 0
-    @Persisted public var totalCount: Int?
-    @Persisted public var isFake: Bool
-    @Persisted public var isCollapsed: Bool
     @Persisted public var isFavorite: Bool
     @Persisted public var separator: String
     @Persisted public var children: MutableSet<Folder>
@@ -196,9 +193,6 @@ public class Folder: Object, Codable, Comparable, Identifiable {
         case path
         case name
         case role
-        case totalCount
-        case isFake
-        case isCollapsed
         case isFavorite
         case separator
         case children
@@ -210,9 +204,6 @@ public class Folder: Object, Codable, Comparable, Identifiable {
         name: String,
         role: FolderRole? = nil,
         unreadCount: Int = 0,
-        totalCount: Int? = nil,
-        isFake: Bool,
-        isCollapsed: Bool,
         isFavorite: Bool,
         separator: String,
         children: [Folder],
@@ -225,9 +216,6 @@ public class Folder: Object, Codable, Comparable, Identifiable {
         self.name = name
         self.role = role
         self.unreadCount = unreadCount
-        self.totalCount = totalCount
-        self.isFake = isFake
-        self.isCollapsed = isCollapsed
         self.isFavorite = isFavorite
         self.separator = separator
 

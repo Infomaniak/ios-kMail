@@ -50,8 +50,6 @@ struct PreviewHelper {
     static let sampleFolder = Folder(id: "",
                                      path: "Folder",
                                      name: "Folder",
-                                     isFake: false,
-                                     isCollapsed: false,
                                      isFavorite: false,
                                      separator: "",
                                      children: [])
