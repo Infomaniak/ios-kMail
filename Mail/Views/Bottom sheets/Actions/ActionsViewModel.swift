@@ -104,7 +104,7 @@ struct Action: Identifiable, Equatable {
     static let phishing = Action(
         id: 13,
         title: MailResourcesStrings.Localizable.actionPhishing,
-        icon: MailResourcesAsset.fishing
+        icon: MailResourcesAsset.phishing
     )
     static let print = Action(
         id: 14,
@@ -167,6 +167,7 @@ enum ActionsTarget: Equatable {
     private let target: ActionsTarget
     private let state: ThreadBottomSheet
     private let globalSheet: GlobalBottomSheet
+    private let globalAlert: GlobalAlert?
     private let moveSheet: MoveSheet?
     private let replyHandler: (Message, ReplyMode) -> Void
     private let completionHandler: (() -> Void)?
@@ -178,6 +179,7 @@ enum ActionsTarget: Equatable {
          target: ActionsTarget,
          state: ThreadBottomSheet,
          globalSheet: GlobalBottomSheet,
+         globalAlert: GlobalAlert? = nil,
          moveSheet: MoveSheet? = nil,
          replyHandler: @escaping (Message, ReplyMode) -> Void,
          completionHandler: (() -> Void)? = nil) {
@@ -185,6 +187,7 @@ enum ActionsTarget: Equatable {
         self.target = target.freeze()
         self.state = state
         self.globalSheet = globalSheet
+        self.globalAlert = globalAlert
         self.moveSheet = moveSheet
         self.replyHandler = replyHandler
         self.completionHandler = completionHandler
@@ -471,7 +474,7 @@ enum ActionsTarget: Equatable {
     private func phishing() async throws {
         // This action is only available on a single message
         guard case let .message(message) = target else { return }
-        globalSheet.open(state: .reportPhishing(message: message))
+        globalAlert?.state = .reportPhishing(message: message)
     }
 
     private func printAction() {

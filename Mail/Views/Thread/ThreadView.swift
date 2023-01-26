@@ -50,6 +50,7 @@ struct ThreadView: View {
     @StateObject private var threadBottomSheet = ThreadBottomSheet()
 
     @EnvironmentObject var globalBottomSheet: GlobalBottomSheet
+    @EnvironmentObject var globalAlert: GlobalAlert
     @Environment(\.verticalSizeClass) var sizeClass
     @Environment(\.dismiss) var dismiss
 
@@ -172,6 +173,7 @@ struct ThreadView: View {
                             target: target,
                             state: threadBottomSheet,
                             globalSheet: globalBottomSheet,
+                            globalAlert: globalAlert,
                             moveSheet: moveSheet) { message, replyMode in
                     messageReply = MessageReply(message: message, replyMode: replyMode)
                 }
