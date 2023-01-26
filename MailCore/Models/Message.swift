@@ -201,7 +201,7 @@ public class Message: Object, Decodable, Identifiable {
 
     private enum CodingKeys: String, CodingKey {
         case uid
-        case msgId
+        case messageId = "msgId"
         case subject
         case priority
         case date
@@ -243,7 +243,7 @@ public class Message: Object, Decodable, Identifiable {
     public required init(from decoder: Decoder) throws {
         let values = try decoder.container(keyedBy: CodingKeys.self)
         uid = try values.decode(String.self, forKey: .uid)
-        if let msgId = try? values.decode(String.self, forKey: .msgId) {
+        if let msgId = try? values.decode(String.self, forKey: .messageId) {
             messageId = msgId
             linkedUids = [msgId].toRealmSet()
         }
