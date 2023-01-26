@@ -90,7 +90,7 @@ public class DraftManager {
 
         do {
             let cancelableResponse = try await mailboxManager.send(draft: draft)
-            await IKSnackBar.showSnackBar(message: MailResourcesStrings.Localizable.emailSentSnackbar)
+            await IKSnackBar.showSnackBar(message: MailResourcesStrings.Localizable.snackbarEmailSent)
             sendDate = cancelableResponse.scheduledDate
         } catch {
             await IKSnackBar.showSnackBar(message: error.localizedDescription)
@@ -140,7 +140,7 @@ public class DraftManager {
         }
 
         await saveDraft(draft: draft, mailboxManager: mailboxManager)
-        await IKSnackBar.showSnackBar(message: MailResourcesStrings.Localizable.snackBarDraftSaved,
+        await IKSnackBar.showSnackBar(message: MailResourcesStrings.Localizable.snackbarDraftSaved,
                                       action: .init(title: MailResourcesStrings.Localizable.actionDelete) { [weak self] in
                                           self?.deleteDraftSnackBarAction(draft: draft, mailboxManager: mailboxManager)
                                       })
@@ -169,7 +169,7 @@ public class DraftManager {
             await tryOrDisplayError {
                 if let liveDraft = draft.thaw() {
                     try await mailboxManager.delete(draft: liveDraft.freeze())
-                    await IKSnackBar.showSnackBar(message: MailResourcesStrings.Localizable.snackBarDraftDeleted)
+                    await IKSnackBar.showSnackBar(message: MailResourcesStrings.Localizable.snackbarDraftDeleted)
                     if let draftFolder = mailboxManager.getFolder(with: .draft)?.freeze() {
                         try await mailboxManager.threads(folder: draftFolder)
                     }
