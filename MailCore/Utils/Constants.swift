@@ -72,6 +72,7 @@ public enum BarAppearanceConstants {
 }
 
 public enum Constants {
+    public static let maxAttachmentsSize = 26_214_400 // 25 mo
     public static let sizeLimit = 21_474_836_480 // 20 Go
     public static let minimumQuotasProgressionToDisplay = 0.03
 

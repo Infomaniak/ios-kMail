@@ -33,6 +33,7 @@ public enum MailError: LocalizedError {
     case folderNotFound
     case addressBookNotFound
     case contactNotFound
+    case attachmentsSizeLimitReached
 
     public var errorDescription: String? {
         switch self {
@@ -59,6 +60,8 @@ public enum MailError: LocalizedError {
             return "Address Book not found"
         case .contactNotFound:
             return "Contact not found"
+        case .attachmentsSizeLimitReached:
+            return MailResourcesStrings.Localizable.attachmentFileLimitReached
         }
     }
 }

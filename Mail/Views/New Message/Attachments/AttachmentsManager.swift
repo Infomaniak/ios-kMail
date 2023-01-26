@@ -75,6 +75,11 @@ class AttachmentsManager: ObservableObject {
     }
 
     @MainActor
+    func getTotalAttachmentsSize() -> Int64 {
+        return attachments.map { $0.size }.reduce(0) { $0 + $1 }
+    }
+    
+    @MainActor
     func attachmentUploadTaskFor(uuid: String) -> AttachmentUploadTask {
         if attachmentUploadTasks[uuid] == nil {
             attachmentUploadTasks[uuid] = AttachmentUploadTask()
@@ -171,6 +176,10 @@ class AttachmentsManager: ObservableObject {
             do {
                 let url = try await attachment.writeToTemporaryURL()
                 let updatedAttachment = await updateLocalAttachment(url: url, attachment: localAttachment)
+                if await getTotalAttachmentsSize() > Constants.maxAttachmentsSize {
+                    throw MailError.attachmentsSizeLimitReached
+                }
+
                 let remoteAttachment = try await sendAttachment(url: url, localAttachment: updatedAttachment)
 
                 if disposition == .inline,
