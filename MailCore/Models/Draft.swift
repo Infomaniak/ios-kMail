@@ -78,8 +78,6 @@ public class Draft: Object, Decodable, Identifiable, Encodable {
     @Persisted public var mimeType: String = UTType.html.preferredMIMEType!
     @Persisted public var body: String = ""
     @Persisted public var quote: String?
-    @Persisted public var from: List<Recipient>
-    @Persisted public var replyTo: List<Recipient>
     @Persisted public var to: List<Recipient>
     @Persisted public var cc: List<Recipient>
     @Persisted public var bcc: List<Recipient>
@@ -243,9 +241,6 @@ public class Draft: Object, Decodable, Identifiable, Encodable {
         guard let signature = signatureResponse.default else {
             return
         }
-
-        from.append(Recipient(email: signature.sender, name: signature.fullName))
-        replyTo.append(Recipient(email: signature.replyTo, name: ""))
 
         let html = "<br><br><div class=\"editorUserSignature\">\(signature.content)</div>"
         switch signature.position {
