@@ -97,13 +97,11 @@ public class Message: Object, Decodable, Identifiable {
     @Persisted public var draftResource: String?
     @Persisted public var swissTransferUuid: String?
     @Persisted public var folderId: String
-    @Persisted public var folder: String
     @Persisted public var references: String?
     @Persisted public var inReplyTo: String?
     @Persisted public var linkedUids: MutableSet<String>
     @Persisted public var preview: String
     @Persisted public var answered: Bool
-    @Persisted public var isDuplicate: Bool?
     @Persisted public var isDraft: Bool
     @Persisted public var hasAttachments: Bool
     @Persisted public var seen: Bool
@@ -220,12 +218,10 @@ public class Message: Object, Decodable, Identifiable {
         case draftResource
         case swissTransferUuid = "stUuid"
         case folderId
-        case folder
         case references
         case inReplyTo
         case preview
         case answered
-        case isDuplicate
         case isDraft
         case hasAttachments
         case seen
@@ -269,12 +265,10 @@ public class Message: Object, Decodable, Identifiable {
         draftResource = try values.decodeIfPresent(String.self, forKey: .draftResource)
         swissTransferUuid = try values.decodeIfPresent(String.self, forKey: .swissTransferUuid)
         folderId = try values.decode(String.self, forKey: .folderId)
-        folder = try values.decode(String.self, forKey: .folder)
         references = try values.decodeIfPresent(String.self, forKey: .references)
         inReplyTo = try values.decodeIfPresent(String.self, forKey: .inReplyTo)
         preview = try values.decode(String.self, forKey: .preview)
         answered = try values.decode(Bool.self, forKey: .answered)
-        isDuplicate = try values.decodeIfPresent(Bool.self, forKey: .isDuplicate)
         isDraft = try values.decode(Bool.self, forKey: .isDraft)
         hasAttachments = try values.decode(Bool.self, forKey: .hasAttachments)
         seen = try values.decode(Bool.self, forKey: .seen)
@@ -304,11 +298,9 @@ public class Message: Object, Decodable, Identifiable {
         downloadResource: String,
         swissTransferUuid: String? = nil,
         folderId: String,
-        folder: String,
         references: String? = nil,
         preview: String,
         answered: Bool,
-        isDuplicate: Bool? = nil,
         isDraft: Bool,
         hasAttachments: Bool,
         seen: Bool,
@@ -338,11 +330,9 @@ public class Message: Object, Decodable, Identifiable {
         self.downloadResource = downloadResource
         self.swissTransferUuid = swissTransferUuid
         self.folderId = folderId
-        self.folder = folder
         self.references = references
         self.preview = preview
         self.answered = answered
-        self.isDuplicate = isDuplicate
         self.isDraft = isDraft
         self.hasAttachments = hasAttachments
         self.seen = seen
