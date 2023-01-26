@@ -95,7 +95,7 @@ public class Message: Object, Decodable, Identifiable {
     @Persisted public var resource: String
     @Persisted public var downloadResource: String
     @Persisted public var draftResource: String?
-    @Persisted public var stUuid: String?
+    @Persisted public var swissTransferUuid: String?
     @Persisted public var folderId: String
     @Persisted public var folder: String
     @Persisted public var references: String?
@@ -218,7 +218,7 @@ public class Message: Object, Decodable, Identifiable {
         case resource
         case downloadResource
         case draftResource
-        case stUuid
+        case swissTransferUuid = "stUuid"
         case folderId
         case folder
         case references
@@ -267,7 +267,7 @@ public class Message: Object, Decodable, Identifiable {
         resource = try values.decode(String.self, forKey: .resource)
         downloadResource = try values.decode(String.self, forKey: .downloadResource)
         draftResource = try values.decodeIfPresent(String.self, forKey: .draftResource)
-        stUuid = try values.decodeIfPresent(String.self, forKey: .stUuid)
+        swissTransferUuid = try values.decodeIfPresent(String.self, forKey: .swissTransferUuid)
         folderId = try values.decode(String.self, forKey: .folderId)
         folder = try values.decode(String.self, forKey: .folder)
         references = try values.decodeIfPresent(String.self, forKey: .references)
@@ -302,7 +302,7 @@ public class Message: Object, Decodable, Identifiable {
         dkimStatus: MessageDKIM,
         resource: String,
         downloadResource: String,
-        stUuid: String? = nil,
+        swissTransferUuid: String? = nil,
         folderId: String,
         folder: String,
         references: String? = nil,
@@ -336,7 +336,7 @@ public class Message: Object, Decodable, Identifiable {
         self.dkimStatus = dkimStatus
         self.resource = resource
         self.downloadResource = downloadResource
-        self.stUuid = stUuid
+        self.swissTransferUuid = swissTransferUuid
         self.folderId = folderId
         self.folder = folder
         self.references = references
@@ -368,7 +368,7 @@ public class Message: Object, Decodable, Identifiable {
             subject: subject,
             date: date,
             hasAttachments: !attachments.isEmpty,
-            hasStAttachments: false,
+            hasSwissTransferAttachments: false,
             hasDrafts: !(draftResource?.isEmpty ?? true),
             flagged: flagged,
             answered: answered,

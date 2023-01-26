@@ -552,7 +552,7 @@ public class MailboxManager: ObservableObject {
                         bcc: Array(message.bcc.detached()),
                         date: newMessage.date,
                         hasAttachments: newMessage.hasAttachments,
-                        hasStAttachments: newMessage.hasAttachments,
+                        hasSwissTransferAttachments: newMessage.hasAttachments,
                         hasDrafts: newMessage.isDraft,
                         flagged: newMessage.flagged,
                         answered: newMessage.answered,

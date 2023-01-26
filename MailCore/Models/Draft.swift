@@ -84,7 +84,7 @@ public class Draft: Object, Decodable, Identifiable, Encodable {
     @Persisted public var subject: String = ""
     @Persisted public var ackRequest = false
     @Persisted public var priority: MessagePriority = .normal
-    @Persisted public var stUuid: String?
+    @Persisted public var swissTransferUuid: String?
     @Persisted public var attachments: List<Attachment>
     @Persisted public var action: SaveDraftOption?
     @Persisted public var delay: Int?
@@ -106,7 +106,7 @@ public class Draft: Object, Decodable, Identifiable, Encodable {
         case subject
         case ackRequest
         case priority
-        case stUuid
+        case swissTransferUuid = "stUuid"
         case attachments
         case action
         case delay
@@ -132,7 +132,7 @@ public class Draft: Object, Decodable, Identifiable, Encodable {
         subject = try values.decodeIfPresent(String.self, forKey: .subject) ?? ""
         ackRequest = try values.decode(Bool.self, forKey: .ackRequest)
         priority = try values.decode(MessagePriority.self, forKey: .priority)
-        stUuid = try values.decodeIfPresent(String.self, forKey: .stUuid)
+        swissTransferUuid = try values.decodeIfPresent(String.self, forKey: .swissTransferUuid)
         attachments = try values.decode(List<Attachment>.self, forKey: .attachments)
     }
 
@@ -154,7 +154,7 @@ public class Draft: Object, Decodable, Identifiable, Encodable {
                             bcc: [Recipient]? = nil,
                             ackRequest: Bool = false,
                             priority: MessagePriority = .normal,
-                            stUuid: String? = nil,
+                            swissTransferUuid: String? = nil,
                             attachments: [Attachment]? = nil,
                             isOffline: Bool = true,
                             action: SaveDraftOption? = nil) {
@@ -178,7 +178,7 @@ public class Draft: Object, Decodable, Identifiable, Encodable {
         self.subject = subject
         self.ackRequest = ackRequest
         self.priority = priority
-        self.stUuid = stUuid
+        self.swissTransferUuid = swissTransferUuid
         self.attachments = attachments?.toRealmList() ?? List()
         self.action = action
     }
@@ -275,7 +275,7 @@ public class Draft: Object, Decodable, Identifiable, Encodable {
         try container.encode(subject, forKey: .subject)
         try container.encode(ackRequest, forKey: .ackRequest)
         try container.encode(priority, forKey: .priority)
-        try container.encode(stUuid, forKey: .stUuid)
+        try container.encode(swissTransferUuid, forKey: .swissTransferUuid)
         let attachmentsArray = Array(attachments.compactMap { $0.uuid })
         try container.encode(attachmentsArray, forKey: .attachments)
         try container.encode(action, forKey: .action)
