@@ -91,7 +91,7 @@ public class Message: Object, Decodable, Identifiable {
     @Persisted public var body: Body?
     @Persisted public var attachments: List<Attachment>
     @Persisted public var dkimStatus: MessageDKIM
-    @Persisted public var attachmentsResource: String?
+    @Persisted public var attachmentsResources: String?
     @Persisted public var resource: String
     @Persisted public var downloadResource: String
     @Persisted public var draftResource: String?
@@ -214,7 +214,7 @@ public class Message: Object, Decodable, Identifiable {
         case body
         case attachments
         case dkimStatus
-        case attachmentsResource
+        case attachmentsResources
         case resource
         case downloadResource
         case draftResource
@@ -263,7 +263,7 @@ public class Message: Object, Decodable, Identifiable {
             attachments = List()
         }
         dkimStatus = try values.decode(MessageDKIM.self, forKey: .dkimStatus)
-        attachmentsResource = try values.decodeIfPresent(String.self, forKey: .attachmentsResource)
+        attachmentsResources = try values.decodeIfPresent(String.self, forKey: .attachmentsResources)
         resource = try values.decode(String.self, forKey: .resource)
         downloadResource = try values.decode(String.self, forKey: .downloadResource)
         draftResource = try values.decodeIfPresent(String.self, forKey: .draftResource)
