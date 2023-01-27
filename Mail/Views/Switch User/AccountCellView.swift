@@ -35,10 +35,8 @@ struct AccountCellView: View {
 
     var body: some View {
         ZStack {
-            if isSelected {
-                RoundedRectangle(cornerRadius: 10)
-                    .fill(MailResourcesAsset.backgroundSecondaryColor.swiftUiColor)
-            }
+            RoundedRectangle(cornerRadius: 10)
+                .fill(MailResourcesAsset.backgroundToolbarEditorColor.swiftUiColor)
 
             RoundedRectangle(cornerRadius: 10)
                 .stroke(MailResourcesAsset.separatorColor.swiftUiColor, lineWidth: 1)
