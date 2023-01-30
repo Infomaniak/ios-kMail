@@ -40,33 +40,34 @@ extension ThreadDensity {
 }
 
 struct ThreadCellConfiguration {
-    private let thread: Thread
+    var thread: Thread
+    var mailboxManager: MailboxManager
 
-    ///
-    var avatar: Recipient? {
-        let lastMessageNotFromSent = thread.messages.last { $0.folderId != "SENT" } ?? thread.messages.last
+    /// Sender of the last message that is not in the sent folder, otherwise the last message of the thread
+    var recipientImage: Recipient? {
+        let lastMessageNotFromSent = thread.messages.last { $0.folderId != mailboxManager.getFolder(with: .sent)?.id } ?? thread.messages.last
         return lastMessageNotFromSent?.from.last
     }
 
-    ///
-    var date: Date {
-        return thread.date
+    /// Date of the last message of the folder, otherwise the last message of the thread
+    var date: String {
+        return thread.date.customRelativeFormatted
     }
 
-    ///
+    /// Field `to` in the draft folder, otherwise field `from`
     var from: String {
         let isDraftFolder = thread.messages.allSatisfy(\.isDraft)
         return isDraftFolder ? thread.formattedTo : thread.formattedFrom
     }
-    ///
+    /// Subject of the first message
     var subject: String {
         thread.formattedSubject
     }
-    ///
+    /// Last message of the thread, except for the sent folder where we use the last message of the folder
     var preview: String {
         var preview = thread.messages.last?.preview
-        if thread.folderId == "SENT" {
-            preview = thread.lastMessageFromThread?.preview ?? thread.messages.last?.preview
+        if thread.folderId == mailboxManager.getFolder(with: .sent)?.id {
+            preview = thread.lastMessageFromFolder?.preview ?? thread.messages.last?.preview
         }
 
         guard let preview, !preview.isEmpty else {
@@ -74,35 +75,31 @@ struct ThreadCellConfiguration {
         }
         return preview
     }
-
-    init(thread: Thread) {
-        self.thread = thread
-    }
 }
 
 struct ThreadCell: View {
+    @AppStorage(UserDefaults.shared.key(.accentColor)) private var accentColor = AccentColor.pink
+
     let thread: Thread
+    let mailboxManager: MailboxManager
 
-    let threadCellConfiguration: ThreadCellConfiguration
+    var cellConfiguration: ThreadCellConfiguration
 
-    let threadDensity: ThreadDensity
-    let accentColor: AccentColor
-
+    let density: ThreadDensity
     let isMultipleSelectionEnabled: Bool
     let isSelected: Bool
 
     private var checkboxSize: CGFloat {
-        threadDensity == .large ? Constants.checkboxLargeSize : Constants.checkboxSize
+        density == .large ? Constants.checkboxLargeSize : Constants.checkboxSize
     }
 
-    init(thread: Thread, threadDensity: ThreadDensity, accentColor: AccentColor, isMultipleSelectionEnabled: Bool = false, isSelected: Bool = false) {
+    init(thread: Thread, mailboxManager: MailboxManager, density: ThreadDensity, isMultipleSelectionEnabled: Bool = false, isSelected: Bool = false) {
         self.thread = thread
+        self.mailboxManager = mailboxManager
 
-        self.threadCellConfiguration = ThreadCellConfiguration(thread: thread)
+        self.cellConfiguration = ThreadCellConfiguration(thread: thread, mailboxManager: mailboxManager)
 
-        self.threadDensity = threadDensity
-        self.accentColor = accentColor
-
+        self.density = density
         self.isMultipleSelectionEnabled = isMultipleSelectionEnabled
         self.isSelected = isSelected
     }
@@ -113,12 +110,12 @@ struct ThreadCell: View {
         HStack(spacing: 8) {
             unreadIndicator
                 .animation(
-                    .threadListSlide(density: threadDensity, isMultipleSelectionEnabled: isMultipleSelectionEnabled),
+                    .threadListSlide(density: density, isMultipleSelectionEnabled: isMultipleSelectionEnabled),
                     value: isMultipleSelectionEnabled
                 )
 
             Group {
-                if threadDensity == .large, let recipient = threadCellConfiguration.avatar {
+                if density == .large, let recipient = cellConfiguration.recipientImage {
                     ZStack {
                         RecipientImage(recipient: recipient)
                         checkbox
@@ -144,13 +141,13 @@ struct ThreadCell: View {
                 }
             }
             .animation(
-                .threadListSlide(density: threadDensity, isMultipleSelectionEnabled: isMultipleSelectionEnabled),
+                .threadListSlide(density: density, isMultipleSelectionEnabled: isMultipleSelectionEnabled),
                 value: isMultipleSelectionEnabled
             )
         }
         .padding(.leading, 8)
         .padding(.trailing, 12)
-        .padding(.vertical, threadDensity.cellVerticalPadding)
+        .padding(.vertical, density.cellVerticalPadding)
         .clipped()
     }
 
@@ -181,7 +178,7 @@ struct ThreadCell: View {
                     .lineLimit(1)
                     .layoutPriority(1)
             }
-            Text(threadCellConfiguration.from)
+            Text(cellConfiguration.from)
                 .textStyle(.header2)
                 .lineLimit(1)
 
@@ -198,7 +195,7 @@ struct ThreadCell: View {
 
             Spacer()
 
-            Text(threadCellConfiguration.date.customRelativeFormatted)
+            Text(cellConfiguration.date)
                 .textStyle(.bodySmallSecondary)
                 .lineLimit(1)
         }
@@ -206,12 +203,12 @@ struct ThreadCell: View {
 
     private var threadInfo: some View {
         VStack(alignment: .leading, spacing: 4) {
-            Text(threadCellConfiguration.subject)
+            Text(cellConfiguration.subject)
                 .textStyle(.body)
                 .lineLimit(1)
 
-            if threadDensity != .compact {
-                Text(threadCellConfiguration.preview)
+            if density != .compact {
+                Text(cellConfiguration.preview)
                     .textStyle(.bodySmallSecondary)
                     .lineLimit(1)
             }
@@ -240,8 +237,8 @@ struct ThreadCell: View {
 struct ThreadCell_Previews: PreviewProvider {
     static var previews: some View {
         ThreadCell(thread: PreviewHelper.sampleThread,
-                   threadDensity: .large,
-                   accentColor: .pink,
+                   mailboxManager: PreviewHelper.sampleMailboxManager,
+                   density: .large,
                    isMultipleSelectionEnabled: false,
                    isSelected: false)
             .previewLayout(.sizeThatFits)

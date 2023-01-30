@@ -71,7 +71,7 @@ public class Thread: Object, Decodable, Identifiable {
         return messages.filter { $0.folderId == self.folderId }.count
     }
 
-    public var lastMessageFromThread: Message? {
+    public var lastMessageFromFolder: Message? {
         messages.last { $0.folderId == folderId }
     }
 
@@ -118,7 +118,7 @@ public class Thread: Object, Decodable, Identifiable {
         messageIds = messages.flatMap { $0.linkedUids }.toRealmSet()
         updateUnseenMessages()
         from = messages.flatMap { $0.from.detached() }.toRealmList()
-        date = lastMessageFromThread?.date ?? date
+        date = lastMessageFromFolder?.date ?? date
         size = messages.sum(of: \.size)
         hasAttachments = messages.contains { $0.hasAttachments }
         hasDrafts = messages.map { $0.isDraft }.contains(true)

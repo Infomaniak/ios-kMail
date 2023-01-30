@@ -104,7 +104,6 @@ struct ThreadListView: View {
                                                viewModel: viewModel,
                                                multipleSelectionViewModel: multipleSelectionViewModel,
                                                threadDensity: threadDensity,
-                                               accentColor: accentColor,
                                                editedMessageDraft: $editedMessageDraft,
                                                isSelected: multipleSelectionViewModel.selectedItems.contains(thread))
                                     .id(thread.id)

@@ -155,8 +155,8 @@ struct SearchView: View {
                             DraftUtils.editDraft(from: thread, mailboxManager: viewModel.mailboxManager, editedMessageDraft: $editedMessageDraft)
                         }, label: {
                             ThreadCell(thread: thread,
-                                       threadDensity: threadDensity,
-                                       accentColor: accentColor)
+                                       mailboxManager: viewModel.mailboxManager,
+                                       density: threadDensity)
                         })
                     } else {
                         ZStack {
@@ -174,8 +174,8 @@ struct SearchView: View {
                             .opacity(0)
 
                             ThreadCell(thread: thread,
-                                       threadDensity: threadDensity,
-                                       accentColor: accentColor)
+                                       mailboxManager: viewModel.mailboxManager,
+                                       density: threadDensity)
                         }
                     }
                 }
