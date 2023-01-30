@@ -82,7 +82,12 @@ public class Thread: Object, Decodable, Identifiable {
         case 1:
             return from[0].title
         default:
-            return Set(from).map(\.shortName).joined(separator: ", ")
+            var fromArray = [Recipient]()
+            for recipient in from {
+                guard !fromArray.contains(where: { $0.email == recipient.email && $0.name == recipient.name }) else { continue }
+                fromArray.append(recipient)
+            }
+            return fromArray.map(\.shortName).joined(separator: ", ")
         }
     }
 

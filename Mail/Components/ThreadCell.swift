@@ -65,15 +65,15 @@ struct ThreadCellConfiguration {
     }
     /// Last message of the thread, except for the sent folder where we use the last message of the folder
     var preview: String {
-        var preview = thread.messages.last?.preview
+        var content = thread.messages.last?.preview
         if thread.folderId == mailboxManager.getFolder(with: .sent)?.id {
-            preview = thread.lastMessageFromFolder?.preview ?? thread.messages.last?.preview
+            content = thread.lastMessageFromFolder?.preview ?? thread.messages.last?.preview
         }
 
-        guard let preview, !preview.isEmpty else {
+        guard let content, !content.isEmpty else {
             return MailResourcesStrings.Localizable.noBodyTitle
         }
-        return preview
+        return content
     }
 }
 
@@ -83,7 +83,7 @@ struct ThreadCell: View {
     let thread: Thread
     let mailboxManager: MailboxManager
 
-    var cellConfiguration: ThreadCellConfiguration
+    let cellConfiguration: ThreadCellConfiguration
 
     let density: ThreadDensity
     let isMultipleSelectionEnabled: Bool
