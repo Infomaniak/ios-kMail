@@ -39,13 +39,14 @@ extension ThreadDensity {
     }
 }
 
-struct ThreadCellConfiguration {
+struct ThreadDataHolder {
     var thread: Thread
     var mailboxManager: MailboxManager
 
-    /// Sender of the last message that is not in the sent folder, otherwise the last message of the thread
-    var recipientImage: Recipient? {
-        let lastMessageNotFromSent = thread.messages.last { $0.folderId != mailboxManager.getFolder(with: .sent)?.id } ?? thread.messages.last
+    /// Sender of the last message that is not in the Sent folder, otherwise the last message of the thread
+    var recipientToDisplay: Recipient? {
+        let sentFolderId = mailboxManager.getFolder(with: .sent)?.id
+        let lastMessageNotFromSent = thread.messages.last { $0.folderId != sentFolderId } ?? thread.messages.last
         return lastMessageNotFromSent?.from.last
     }
 
@@ -59,15 +60,17 @@ struct ThreadCellConfiguration {
         let isDraftFolder = thread.messages.allSatisfy(\.isDraft)
         return isDraftFolder ? thread.formattedTo : thread.formattedFrom
     }
+
     /// Subject of the first message
     var subject: String {
         thread.formattedSubject
     }
-    /// Last message of the thread, except for the sent folder where we use the last message of the folder
+
+    /// Last message of the thread, except for the Sent folder where we use the last message of the folder
     var preview: String {
         var content = thread.messages.last?.preview
         if thread.folderId == mailboxManager.getFolder(with: .sent)?.id {
-            content = thread.lastMessageFromFolder?.preview ?? thread.messages.last?.preview
+            content = (thread.lastMessageFromFolder ?? thread.messages.last)?.preview
         }
 
         guard let content, !content.isEmpty else {
@@ -83,7 +86,7 @@ struct ThreadCell: View {
     let thread: Thread
     let mailboxManager: MailboxManager
 
-    let cellConfiguration: ThreadCellConfiguration
+    let dataHolder: ThreadDataHolder
 
     let density: ThreadDensity
     let isMultipleSelectionEnabled: Bool
@@ -93,11 +96,17 @@ struct ThreadCell: View {
         density == .large ? Constants.checkboxLargeSize : Constants.checkboxSize
     }
 
-    init(thread: Thread, mailboxManager: MailboxManager, density: ThreadDensity, isMultipleSelectionEnabled: Bool = false, isSelected: Bool = false) {
+    init(
+        thread: Thread,
+        mailboxManager: MailboxManager,
+        density: ThreadDensity,
+        isMultipleSelectionEnabled: Bool = false,
+        isSelected: Bool = false
+    ) {
         self.thread = thread
         self.mailboxManager = mailboxManager
 
-        self.cellConfiguration = ThreadCellConfiguration(thread: thread, mailboxManager: mailboxManager)
+        dataHolder = ThreadDataHolder(thread: thread, mailboxManager: mailboxManager)
 
         self.density = density
         self.isMultipleSelectionEnabled = isMultipleSelectionEnabled
@@ -115,7 +124,7 @@ struct ThreadCell: View {
                 )
 
             Group {
-                if density == .large, let recipient = cellConfiguration.recipientImage {
+                if density == .large, let recipient = dataHolder.recipientToDisplay {
                     ZStack {
                         RecipientImage(recipient: recipient)
                         checkbox
@@ -178,7 +187,7 @@ struct ThreadCell: View {
                     .lineLimit(1)
                     .layoutPriority(1)
             }
-            Text(cellConfiguration.from)
+            Text(dataHolder.from)
                 .textStyle(.header2)
                 .lineLimit(1)
 
@@ -195,7 +204,7 @@ struct ThreadCell: View {
 
             Spacer()
 
-            Text(cellConfiguration.date)
+            Text(dataHolder.date)
                 .textStyle(.bodySmallSecondary)
                 .lineLimit(1)
         }
@@ -203,12 +212,12 @@ struct ThreadCell: View {
 
     private var threadInfo: some View {
         VStack(alignment: .leading, spacing: 4) {
-            Text(cellConfiguration.subject)
+            Text(dataHolder.subject)
                 .textStyle(.body)
                 .lineLimit(1)
 
             if density != .compact {
-                Text(cellConfiguration.preview)
+                Text(dataHolder.preview)
                     .textStyle(.bodySmallSecondary)
                     .lineLimit(1)
             }
