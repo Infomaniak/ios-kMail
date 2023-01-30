@@ -39,21 +39,72 @@ extension ThreadDensity {
     }
 }
 
+struct ThreadCellConfiguration {
+    private let thread: Thread
+
+    ///
+    var avatar: Recipient? {
+        let lastMessageNotFromSent = thread.messages.last { $0.folderId != "SENT" } ?? thread.messages.last
+        return lastMessageNotFromSent?.from.last
+    }
+
+    ///
+    var date: Date {
+        return thread.date
+    }
+
+    ///
+    var from: String {
+        let isDraftFolder = thread.messages.allSatisfy(\.isDraft)
+        return isDraftFolder ? thread.formattedTo : thread.formattedFrom
+    }
+    ///
+    var subject: String {
+        thread.formattedSubject
+    }
+    ///
+    var preview: String {
+        var preview = thread.messages.last?.preview
+        if thread.folderId == "SENT" {
+            preview = thread.lastMessageFromThread?.preview ?? thread.messages.last?.preview
+        }
+
+        guard let preview, !preview.isEmpty else {
+            return MailResourcesStrings.Localizable.noBodyTitle
+        }
+        return preview
+    }
+
+    init(thread: Thread) {
+        self.thread = thread
+    }
+}
+
 struct ThreadCell: View {
     let thread: Thread
+
+    let threadCellConfiguration: ThreadCellConfiguration
 
     let threadDensity: ThreadDensity
     let accentColor: AccentColor
 
-    var isMultipleSelectionEnabled = false
-    var isSelected = false
-
-    private var messageToDisplay: Message? {
-        thread.messageToDisplay
-    }
+    let isMultipleSelectionEnabled: Bool
+    let isSelected: Bool
 
     private var checkboxSize: CGFloat {
         threadDensity == .large ? Constants.checkboxLargeSize : Constants.checkboxSize
+    }
+
+    init(thread: Thread, threadDensity: ThreadDensity, accentColor: AccentColor, isMultipleSelectionEnabled: Bool = false, isSelected: Bool = false) {
+        self.thread = thread
+
+        self.threadCellConfiguration = ThreadCellConfiguration(thread: thread)
+
+        self.threadDensity = threadDensity
+        self.accentColor = accentColor
+
+        self.isMultipleSelectionEnabled = isMultipleSelectionEnabled
+        self.isSelected = isSelected
     }
 
     // MARK: - Views
@@ -67,7 +118,7 @@ struct ThreadCell: View {
                 )
 
             Group {
-                if threadDensity == .large, let recipient = thread.from.last {
+                if threadDensity == .large, let recipient = threadCellConfiguration.avatar {
                     ZStack {
                         RecipientImage(recipient: recipient)
                         checkbox
@@ -130,7 +181,7 @@ struct ThreadCell: View {
                     .lineLimit(1)
                     .layoutPriority(1)
             }
-            Text(thread.messages.allSatisfy(\.isDraft) ? thread.formattedTo : thread.formattedFrom)
+            Text(threadCellConfiguration.from)
                 .textStyle(.header2)
                 .lineLimit(1)
 
@@ -147,7 +198,7 @@ struct ThreadCell: View {
 
             Spacer()
 
-            Text(thread.date.customRelativeFormatted)
+            Text(threadCellConfiguration.date.customRelativeFormatted)
                 .textStyle(.bodySmallSecondary)
                 .lineLimit(1)
         }
@@ -155,13 +206,12 @@ struct ThreadCell: View {
 
     private var threadInfo: some View {
         VStack(alignment: .leading, spacing: 4) {
-            Text(thread.formattedSubject)
+            Text(threadCellConfiguration.subject)
                 .textStyle(.body)
                 .lineLimit(1)
 
-            if threadDensity != .compact,
-               let preview = thread.messages.last?.preview {
-                Text(preview.isEmpty ? MailResourcesStrings.Localizable.noBodyTitle : preview)
+            if threadDensity != .compact {
+                Text(threadCellConfiguration.preview)
                     .textStyle(.bodySmallSecondary)
                     .lineLimit(1)
             }

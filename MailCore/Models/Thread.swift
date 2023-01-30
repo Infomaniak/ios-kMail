@@ -71,13 +71,8 @@ public class Thread: Object, Decodable, Identifiable {
         return messages.filter { $0.folderId == self.folderId }.count
     }
 
-    public var messageToDisplay: Message? {
-        messages.last { message in
-            if parent?.role != .sent {
-                return message.folderId == folderId
-            }
-            return message.folderId == folderId
-        }
+    public var lastMessageFromThread: Message? {
+        messages.last { $0.folderId == folderId }
     }
 
     public var formattedFrom: String {
@@ -123,7 +118,7 @@ public class Thread: Object, Decodable, Identifiable {
         messageIds = messages.flatMap { $0.linkedUids }.toRealmSet()
         updateUnseenMessages()
         from = messages.flatMap { $0.from.detached() }.toRealmList()
-        date = messages.last { $0.folderId == folderId }?.date ?? date
+        date = lastMessageFromThread?.date ?? date
         size = messages.sum(of: \.size)
         hasAttachments = messages.contains { $0.hasAttachments }
         hasDrafts = messages.map { $0.isDraft }.contains(true)
