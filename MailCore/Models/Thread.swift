@@ -123,7 +123,6 @@ public class Thread: Object, Decodable, Identifiable {
         messageIds = messages.flatMap { $0.linkedUids }.toRealmSet()
         updateUnseenMessages()
         from = messages.flatMap { $0.from.detached() }.toRealmList()
-        date = lastMessageFromFolder?.date ?? date
         size = messages.sum(of: \.size)
         hasAttachments = messages.contains { $0.hasAttachments }
         hasDrafts = messages.map { $0.isDraft }.contains(true)
@@ -135,6 +134,9 @@ public class Thread: Object, Decodable, Identifiable {
         messages = messages.sorted {
             $0.date.compare($1.date) == .orderedAscending
         }.toRealmList()
+
+        date = lastMessageFromFolder?.date ?? date
+        subject = messages.first?.subject
 
         if let lastFolderMessage = messages.last(where: { $0.folderId == folderId }) {
             date = lastFolderMessage.date

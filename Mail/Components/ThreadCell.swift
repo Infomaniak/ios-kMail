@@ -39,9 +39,9 @@ extension ThreadDensity {
     }
 }
 
-struct ThreadDataHolder {
-    var thread: Thread
-    var mailboxManager: MailboxManager
+struct ThreadCellDataHolder {
+    let thread: Thread
+    let mailboxManager: MailboxManager
 
     /// Sender of the last message that is not in the Sent folder, otherwise the last message of the thread
     var recipientToDisplay: Recipient? {
@@ -86,7 +86,7 @@ struct ThreadCell: View {
     let thread: Thread
     let mailboxManager: MailboxManager
 
-    let dataHolder: ThreadDataHolder
+    let dataHolder: ThreadCellDataHolder
 
     let density: ThreadDensity
     let isMultipleSelectionEnabled: Bool
@@ -106,7 +106,7 @@ struct ThreadCell: View {
         self.thread = thread
         self.mailboxManager = mailboxManager
 
-        dataHolder = ThreadDataHolder(thread: thread, mailboxManager: mailboxManager)
+        dataHolder = ThreadCellDataHolder(thread: thread, mailboxManager: mailboxManager)
 
         self.density = density
         self.isMultipleSelectionEnabled = isMultipleSelectionEnabled
