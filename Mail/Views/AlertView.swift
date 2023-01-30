@@ -20,6 +20,7 @@ import MailResources
 import SwiftUI
 
 struct AlertView<Content>: View where Content: View {
+    @State private var isShowing = false
     let content: Content
 
     init(@ViewBuilder content: () -> Content) {
@@ -38,6 +39,19 @@ struct AlertView<Content>: View where Content: View {
                 .cornerRadius(16)
                 .padding(16)
         }
+        .opacity(isShowing ? 1 : 0)
+        .background(ClearFullScreenView())
+        .onAppear {
+            // Re-enable animations after the ViewController is presented
+            UIView.setAnimationsEnabled(true)
+            withAnimation(.easeInOut(duration: 0.25)) {
+                isShowing = true
+            }
+        }
+        .onDisappear {
+            // Re-enable animations after the ViewController is dismissed
+            UIView.setAnimationsEnabled(true)
+        }
     }
 }
 
@@ -47,15 +61,14 @@ struct CustomAlertModifier<AlertContent>: ViewModifier where AlertContent: View 
 
     func body(content: Content) -> some View {
         content
-            .overlay {
-                Group {
-                    if isPresented {
-                        AlertView {
-                            alertView
-                        }
-                    }
+            .fullScreenCover(isPresented: $isPresented) {
+                AlertView {
+                    alertView
                 }
-                .animation(.default, value: isPresented)
+            }
+            .onChange(of: isPresented) { _ in
+                // Disable the default slide over animation when presenting / dismissing the ViewController
+                UIView.setAnimationsEnabled(false)
             }
     }
 }
@@ -66,17 +79,41 @@ struct CustomAlertItemModifier<Item, AlertContent>: ViewModifier where Item: Ide
 
     func body(content: Content) -> some View {
         content
-            .overlay {
-                Group {
-                    if let item {
-                        AlertView {
-                            alertView(item)
-                        }
-                    }
+            .fullScreenCover(item: $item) { item in
+                AlertView {
+                    alertView(item)
                 }
-                .animation(.default, value: item?.id)
+            }
+            .onChange(of: item?.id) { _ in
+                UIView.setAnimationsEnabled(false)
             }
     }
+}
+
+private struct ClearFullScreenView: UIViewRepresentable {
+    private class BackgroundRemovalView: UIView {
+        override func didMoveToWindow() {
+            super.didMoveToWindow()
+            clearBackgroundSuperviews(view: self)
+        }
+
+        private func clearBackgroundSuperviews(view: UIView, level: Int = 0) {
+            guard level < 5 else {
+                return
+            }
+
+            if let superview = view.superview {
+                superview.backgroundColor = .clear
+                clearBackgroundSuperviews(view: superview, level: level + 1)
+            }
+        }
+    }
+
+    func makeUIView(context: Context) -> UIView {
+        return BackgroundRemovalView()
+    }
+
+    func updateUIView(_ uiView: UIView, context: Context) {}
 }
 
 extension View {
