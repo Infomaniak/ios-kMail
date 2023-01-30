@@ -52,11 +52,12 @@ public class MailboxInfosManager {
 
     @discardableResult
     func storeMailboxes(user: InfomaniakCore.UserProfile, mailboxes: [Mailbox]) -> [Mailbox] {
+        let realm = getRealm()
         for mailbox in mailboxes {
             initMailboxForRealm(mailbox: mailbox, userId: user.id)
+            keepCacheAttributes(for: mailbox, using: realm)
         }
 
-        let realm = getRealm()
         let mailboxRemoved = getMailboxes(for: user.id, using: realm).filter { currentMailbox in
             !mailboxes.contains { newMailbox in
                 newMailbox.objectId == currentMailbox.objectId
@@ -92,5 +93,19 @@ public class MailboxInfosManager {
         let realm = realm ?? getRealm()
         let mailbox = realm.object(ofType: Mailbox.self, forPrimaryKey: objectId)
         return freeze ? mailbox?.freeze() : mailbox
+    }
+
+    public func updateUnseen(unseenMessages: Int, for mailbox: Mailbox) {
+        let realm = getRealm()
+        let freshMailbox = mailbox.fresh(using: realm)
+        try? realm.safeWrite {
+            freshMailbox?.unseenMessages = unseenMessages
+        }
+    }
+
+    public func keepCacheAttributes(for mailbox: Mailbox, using realm: Realm? = nil) {
+        let realm = realm ?? getRealm()
+        guard let savedMailbox = realm.object(ofType: Mailbox.self, forPrimaryKey: mailbox.objectId) else { return }
+        mailbox.unseenMessages = savedMailbox.unseenMessages
     }
 }

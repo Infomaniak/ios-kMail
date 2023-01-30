@@ -33,10 +33,10 @@ struct EmptyThreadView: View {
                 .textStyle(.header2)
                 .padding(.bottom, 4)
 
-            Text(splitViewManager.selectedFolder?.totalCount ?? 0 < 0
+            Text(splitViewManager.selectedFolder?.unreadCount ?? 0 < 0
                 ? MailResourcesStrings.Localizable.folderNoMessageCount
                 : MailResourcesStrings.Localizable
-                    .folderMessageCount(splitViewManager.selectedFolder?.totalCount ?? 0))
+                    .folderMessageCount(splitViewManager.selectedFolder?.unreadCount ?? 0))
                 .textStyle(.bodySecondary)
                 .multilineTextAlignment(.center)
                 .fixedSize(horizontal: false, vertical: true)

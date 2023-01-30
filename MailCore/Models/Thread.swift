@@ -44,7 +44,7 @@ public class Thread: Object, Decodable, Identifiable {
     @Persisted public var subject: String?
     @Persisted public var date: Date
     @Persisted public var hasAttachments: Bool
-    @Persisted public var hasStAttachments: Bool
+    @Persisted public var hasSwissTransferAttachments: Bool
     @Persisted public var hasDrafts: Bool
     @Persisted public var flagged: Bool
     @Persisted public var answered: Bool
@@ -179,7 +179,7 @@ public class Thread: Object, Decodable, Identifiable {
         case subject
         case date
         case hasAttachments
-        case hasStAttachments
+        case hasSwissTransferAttachments = "hasStAttachments"
         case hasDrafts
         case flagged
         case answered
@@ -200,7 +200,7 @@ public class Thread: Object, Decodable, Identifiable {
         subject: String? = nil,
         date: Date,
         hasAttachments: Bool,
-        hasStAttachments: Bool,
+        hasSwissTransferAttachments: Bool,
         hasDrafts: Bool,
         flagged: Bool,
         answered: Bool,
@@ -222,7 +222,7 @@ public class Thread: Object, Decodable, Identifiable {
         self.subject = subject
         self.date = date
         self.hasAttachments = hasAttachments
-        self.hasStAttachments = hasStAttachments
+        self.hasSwissTransferAttachments = hasSwissTransferAttachments
         self.hasDrafts = hasDrafts
         self.flagged = flagged
         self.answered = answered

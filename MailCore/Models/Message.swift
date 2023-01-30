@@ -91,19 +91,17 @@ public class Message: Object, Decodable, Identifiable {
     @Persisted public var body: Body?
     @Persisted public var attachments: List<Attachment>
     @Persisted public var dkimStatus: MessageDKIM
-    @Persisted public var attachmentsResource: String?
+    @Persisted public var attachmentsResources: String?
     @Persisted public var resource: String
     @Persisted public var downloadResource: String
     @Persisted public var draftResource: String?
-    @Persisted public var stUuid: String?
+    @Persisted public var swissTransferUuid: String?
     @Persisted public var folderId: String
-    @Persisted public var folder: String
     @Persisted public var references: String?
     @Persisted public var inReplyTo: String?
     @Persisted public var linkedUids: MutableSet<String>
     @Persisted public var preview: String
     @Persisted public var answered: Bool
-    @Persisted public var isDuplicate: Bool?
     @Persisted public var isDraft: Bool
     @Persisted public var hasAttachments: Bool
     @Persisted public var seen: Bool
@@ -201,7 +199,7 @@ public class Message: Object, Decodable, Identifiable {
 
     private enum CodingKeys: String, CodingKey {
         case uid
-        case msgId
+        case messageId = "msgId"
         case subject
         case priority
         case date
@@ -214,18 +212,16 @@ public class Message: Object, Decodable, Identifiable {
         case body
         case attachments
         case dkimStatus
-        case attachmentsResource
+        case attachmentsResources
         case resource
         case downloadResource
         case draftResource
-        case stUuid
+        case swissTransferUuid = "stUuid"
         case folderId
-        case folder
         case references
         case inReplyTo
         case preview
         case answered
-        case isDuplicate
         case isDraft
         case hasAttachments
         case seen
@@ -243,7 +239,7 @@ public class Message: Object, Decodable, Identifiable {
     public required init(from decoder: Decoder) throws {
         let values = try decoder.container(keyedBy: CodingKeys.self)
         uid = try values.decode(String.self, forKey: .uid)
-        if let msgId = try? values.decode(String.self, forKey: .msgId) {
+        if let msgId = try? values.decode(String.self, forKey: .messageId) {
             messageId = msgId
             linkedUids = [msgId].toRealmSet()
         }
@@ -263,18 +259,16 @@ public class Message: Object, Decodable, Identifiable {
             attachments = List()
         }
         dkimStatus = try values.decode(MessageDKIM.self, forKey: .dkimStatus)
-        attachmentsResource = try values.decodeIfPresent(String.self, forKey: .attachmentsResource)
+        attachmentsResources = try values.decodeIfPresent(String.self, forKey: .attachmentsResources)
         resource = try values.decode(String.self, forKey: .resource)
         downloadResource = try values.decode(String.self, forKey: .downloadResource)
         draftResource = try values.decodeIfPresent(String.self, forKey: .draftResource)
-        stUuid = try values.decodeIfPresent(String.self, forKey: .stUuid)
+        swissTransferUuid = try values.decodeIfPresent(String.self, forKey: .swissTransferUuid)
         folderId = try values.decode(String.self, forKey: .folderId)
-        folder = try values.decode(String.self, forKey: .folder)
         references = try values.decodeIfPresent(String.self, forKey: .references)
         inReplyTo = try values.decodeIfPresent(String.self, forKey: .inReplyTo)
         preview = try values.decode(String.self, forKey: .preview)
         answered = try values.decode(Bool.self, forKey: .answered)
-        isDuplicate = try values.decodeIfPresent(Bool.self, forKey: .isDuplicate)
         isDraft = try values.decode(Bool.self, forKey: .isDraft)
         hasAttachments = try values.decode(Bool.self, forKey: .hasAttachments)
         seen = try values.decode(Bool.self, forKey: .seen)
@@ -302,13 +296,11 @@ public class Message: Object, Decodable, Identifiable {
         dkimStatus: MessageDKIM,
         resource: String,
         downloadResource: String,
-        stUuid: String? = nil,
+        swissTransferUuid: String? = nil,
         folderId: String,
-        folder: String,
         references: String? = nil,
         preview: String,
         answered: Bool,
-        isDuplicate: Bool? = nil,
         isDraft: Bool,
         hasAttachments: Bool,
         seen: Bool,
@@ -336,13 +328,11 @@ public class Message: Object, Decodable, Identifiable {
         self.dkimStatus = dkimStatus
         self.resource = resource
         self.downloadResource = downloadResource
-        self.stUuid = stUuid
+        self.swissTransferUuid = swissTransferUuid
         self.folderId = folderId
-        self.folder = folder
         self.references = references
         self.preview = preview
         self.answered = answered
-        self.isDuplicate = isDuplicate
         self.isDraft = isDraft
         self.hasAttachments = hasAttachments
         self.seen = seen
@@ -368,7 +358,7 @@ public class Message: Object, Decodable, Identifiable {
             subject: subject,
             date: date,
             hasAttachments: !attachments.isEmpty,
-            hasStAttachments: false,
+            hasSwissTransferAttachments: false,
             hasDrafts: !(draftResource?.isEmpty ?? true),
             flagged: flagged,
             answered: answered,

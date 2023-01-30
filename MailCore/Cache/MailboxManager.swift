@@ -71,7 +71,7 @@ public class MailboxManager: ObservableObject {
         let realmName = "\(mailbox.userId)-\(mailbox.mailboxId).realm"
         realmConfiguration = Realm.Configuration(
             fileURL: MailboxManager.constants.rootDocumentsURL.appendingPathComponent(realmName),
-            schemaVersion: 4,
+            schemaVersion: 5,
             deleteRealmIfMigrationNeeded: true,
             objectTypes: [
                 Folder.self,
@@ -427,8 +427,6 @@ public class MailboxManager: ObservableObject {
             id: Constants.searchFolderId,
             path: "",
             name: "",
-            isFake: false,
-            isCollapsed: false,
             isFavorite: false,
             separator: "/",
             children: [],
@@ -554,7 +552,7 @@ public class MailboxManager: ObservableObject {
                         bcc: Array(message.bcc.detached()),
                         date: newMessage.date,
                         hasAttachments: newMessage.hasAttachments,
-                        hasStAttachments: newMessage.hasAttachments,
+                        hasSwissTransferAttachments: newMessage.hasAttachments,
                         hasDrafts: newMessage.isDraft,
                         flagged: newMessage.flagged,
                         answered: newMessage.answered,
@@ -662,6 +660,10 @@ public class MailboxManager: ObservableObject {
                     folder.lastUpdate = Date()
                 }
             }
+        }
+
+        if folder.role == .inbox {
+            MailboxInfosManager.instance.updateUnseen(unseenMessages: folder.unreadCount, for: mailbox)
         }
     }
 
@@ -777,7 +779,6 @@ public class MailboxManager: ObservableObject {
         // Get from API
         let completedMessage = try await apiFetcher.message(message: message)
         completedMessage.insertInlineAttachment()
-        keepCacheAttributes(for: completedMessage, keepProperties: .isDuplicate)
         completedMessage.fullyDownloaded = true
 
         await backgroundRealm.execute { realm in
@@ -1026,7 +1027,6 @@ public class MailboxManager: ObservableObject {
         static let fullyDownloaded = MessagePropertiesOptions(rawValue: 1 << 0)
         static let body = MessagePropertiesOptions(rawValue: 1 << 1)
         static let attachments = MessagePropertiesOptions(rawValue: 1 << 2)
-        static let isDuplicate = MessagePropertiesOptions(rawValue: 1 << 3)
 
         static let standard: MessagePropertiesOptions = [.fullyDownloaded, .body, .attachments]
     }
@@ -1049,9 +1049,6 @@ public class MailboxManager: ObservableObject {
             for attachment in savedMessage.attachments {
                 message.attachments.append(Attachment(value: attachment.freeze()))
             }
-        }
-        if keepProperties.contains(.isDuplicate) {
-            message.isDuplicate = savedMessage.isDuplicate
         }
     }
 
