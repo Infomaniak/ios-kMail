@@ -27,7 +27,7 @@ class AttachmentUploadTask: ObservableObject {
     var task: Task<String?, Never>?
     @Published var error: MailError?
     var uploadDone: Bool {
-        return progress == 1
+        return progress >= 1
     }
 }
 
