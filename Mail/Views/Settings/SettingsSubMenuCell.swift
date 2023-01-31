@@ -20,12 +20,31 @@ import SwiftUI
 
 struct SettingsSubMenuCell<Content: View>: View {
     let title: String
+    let subtitle: String?
+    let icon: Image?
+
     @ViewBuilder var destination: () -> Content
+
+    init(title: String, subtitle: String? = nil, icon: Image? = nil, destination: @escaping () -> Content) {
+        self.title = title
+        self.subtitle = subtitle
+        self.icon = icon
+        self.destination = destination
+    }
 
     var body: some View {
         NavigationLink(destination: destination) {
-            Text(title)
-                .textStyle(.body)
+            HStack(alignment: .firstTextBaseline, spacing: 8) {
+                icon
+                VStack(alignment: .leading) {
+                    Text(title)
+                        .textStyle(.body)
+                    if let subtitle = subtitle {
+                        Text(subtitle)
+                            .textStyle(.bodySmallTertiary)
+                    }
+                }
+            }
         }
     }
 }

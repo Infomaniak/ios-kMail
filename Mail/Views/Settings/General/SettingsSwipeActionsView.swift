@@ -47,7 +47,7 @@ struct SettingsSwipeActionsView: View {
             ForEach(SwipeSettingsSection.allCases, id: \.self) { section in
                 Section {
                     ForEach(section.items, id: \.self) { item in
-                        SettingsOptionCell(title: item.title, subtitle: settingValue(for: item), icon: icon(for: item)) {
+                        SettingsSubMenuCell(title: item.title, subtitle: settingValue(for: item), icon: icon(for: item)) {
                             SettingsOptionView<SwipeAction>(
                                 title: item.title,
                                 keyPath: item.keyPath,

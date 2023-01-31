@@ -49,7 +49,7 @@ struct SettingsListView: View {
                     .settingSectionHeaderModifier()
 
                 // Thread density
-                SettingsOptionCell(
+                SettingsSubMenuCell(
                     title: MailResourcesStrings.Localizable.settingsThreadListDensityTitle,
                     subtitle: density.title
                 ) {
@@ -58,7 +58,7 @@ struct SettingsListView: View {
                 .settingCellModifier()
 
                 // Theme
-                SettingsOptionCell(
+                SettingsSubMenuCell(
                     title: MailResourcesStrings.Localizable.settingsTheme,
                     subtitle: theme.title
                 ) {
@@ -71,7 +71,7 @@ struct SettingsListView: View {
                 .settingCellModifier()
 
                 // Accent color
-                SettingsOptionCell(
+                SettingsSubMenuCell(
                     title: MailResourcesStrings.Localizable.settingsAccentColor,
                     subtitle: accentColor.title
                 ) {

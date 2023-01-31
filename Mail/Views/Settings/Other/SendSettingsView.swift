@@ -26,7 +26,7 @@ struct SendSettingsView: View {
     var body: some View {
         List {
             // Cancel period
-            SettingsOptionCell(
+            SettingsSubMenuCell(
                 title: MailResourcesStrings.Localizable.settingsCancellationPeriodTitle,
                 subtitle: UserDefaults.shared.threadDensity.title
             ) {
@@ -38,7 +38,7 @@ struct SendSettingsView: View {
             .settingCellModifier()
 
             // Forward mode
-            SettingsOptionCell(
+            SettingsSubMenuCell(
                 title: MailResourcesStrings.Localizable.settingsTransferEmailsTitle,
                 subtitle: UserDefaults.shared.forwardMode.title
             ) {
