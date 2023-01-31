@@ -23,7 +23,7 @@ import SwiftUI
 
 struct ReportPhishingView: View {
     let mailboxManager: MailboxManager
-    @ObservedObject var state: GlobalBottomSheet
+    @ObservedObject var alert: GlobalAlert
     let message: Message
 
     var body: some View {
@@ -31,21 +31,19 @@ struct ReportPhishingView: View {
             Text(MailResourcesStrings.Localizable.reportPhishingTitle)
                 .textStyle(.bodyMedium)
                 .frame(maxWidth: .infinity, alignment: .leading)
-            Image(resource: MailResourcesAsset.phishing)
             Text(MailResourcesStrings.Localizable.reportPhishingDescription)
             .textStyle(.bodySecondary)
             BottomSheetButtonsView(primaryButtonTitle: MailResourcesStrings.Localizable.buttonReport,
                                    secondaryButtonTitle: MailResourcesStrings.Localizable.buttonCancel,
                                    primaryButtonAction: report) {
-                state.close()
+                alert.state = nil
             }
             .padding(.top, 8)
         }
-        .padding(.horizontal, Constants.bottomSheetHorizontalPadding)
     }
 
     private func report() {
-        state.close()
+        alert.state = nil
         Task {
             await tryOrDisplayError {
                 let response = try await mailboxManager.apiFetcher.reportPhishing(message: message)
@@ -63,7 +61,7 @@ struct ReportPhishingView: View {
 struct PhishingView_Previews: PreviewProvider {
     static var previews: some View {
         ReportPhishingView(mailboxManager: PreviewHelper.sampleMailboxManager,
-                           state: GlobalBottomSheet(),
+                           alert: GlobalAlert(),
                            message: PreviewHelper.sampleMessage)
     }
 }

@@ -30,13 +30,13 @@ class GlobalBottomSheet: DisplayedFloatingPanelState<GlobalBottomSheet.State> {
         case restoreEmails
         case reportJunk(threadBottomSheet: ThreadBottomSheet, target: ActionsTarget)
         case reportDisplayProblem(message: Message)
-        case reportPhishing(message: Message)
     }
 }
 
 class GlobalAlert: SheetState<GlobalAlert.State> {
     enum State {
         case createNewFolder(mode: CreateFolderView.Mode)
+        case reportPhishing(message: Message)
     }
 }
 
@@ -146,8 +146,6 @@ struct SplitView: View {
                 ReportJunkView(mailboxManager: mailboxManager, target: target, state: threadBottomSheet, globalSheet: bottomSheet)
             case let .reportDisplayProblem(message):
                 ReportDisplayProblemView(mailboxManager: mailboxManager, state: bottomSheet, message: message)
-            case let .reportPhishing(message):
-                ReportPhishingView(mailboxManager: mailboxManager, state: bottomSheet, message: message)
             case .none:
                 EmptyView()
             }
@@ -156,6 +154,8 @@ struct SplitView: View {
             switch alert.state {
             case let .createNewFolder(mode):
                 CreateFolderView(mailboxManager: mailboxManager, state: alert, mode: mode)
+            case let .reportPhishing(message):
+                ReportPhishingView(mailboxManager: mailboxManager, alert: alert, message: message)
             case .none:
                 EmptyView()
             }

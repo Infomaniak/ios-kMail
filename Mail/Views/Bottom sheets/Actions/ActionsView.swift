@@ -27,6 +27,7 @@ struct ActionsView: View {
          target: ActionsTarget,
          state: ThreadBottomSheet,
          globalSheet: GlobalBottomSheet,
+         globalAlert: GlobalAlert? = nil,
          moveSheet: MoveSheet? = nil,
          replyHandler: ((Message, ReplyMode) -> Void)? = nil,
          completionHandler: (() -> Void)? = nil) {
@@ -34,6 +35,7 @@ struct ActionsView: View {
                                      target: target,
                                      state: state,
                                      globalSheet: globalSheet,
+                                     globalAlert: globalAlert,
                                      moveSheet: moveSheet,
                                      replyHandler: replyHandler,
                                      completionHandler: completionHandler)
@@ -69,7 +71,8 @@ struct ActionsView_Previews: PreviewProvider {
         ActionsView(mailboxManager: PreviewHelper.sampleMailboxManager,
                     target: .threads([PreviewHelper.sampleThread]),
                     state: ThreadBottomSheet(),
-                    globalSheet: GlobalBottomSheet()) { _, _ in /* Preview */ }
+                    globalSheet: GlobalBottomSheet(),
+                    globalAlert: GlobalAlert()) { _, _ in /* Preview */ }
             .accentColor(AccentColor.pink.primary.swiftUiColor)
     }
 }
