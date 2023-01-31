@@ -17,6 +17,7 @@
  */
 
 import MailCore
+import MailResources
 import RealmSwift
 import SwiftUI
 
@@ -24,19 +25,30 @@ struct AttachmentsHeaderView: View {
     @ObservedObject var attachmentsManager: AttachmentsManager
 
     var body: some View {
-        if !attachmentsManager.attachments.isEmpty {
-            ScrollView(.horizontal, showsIndicators: false) {
-                HStack(spacing: 8) {
-                    ForEach(attachmentsManager.attachments) { attachment in
-                        AttachmentUploadCell(attachment: attachment,
-                                             uploadTask: attachmentsManager.attachmentUploadTaskFor(uuid: attachment.uuid)) { attachmentRemoved in
-                            attachmentsManager.removeAttachment(attachmentRemoved)
+        ZStack {
+            if !attachmentsManager.attachments.isEmpty {
+                ScrollView(.horizontal, showsIndicators: false) {
+                    HStack(spacing: 8) {
+                        ForEach(attachmentsManager.attachments) { attachment in
+                            AttachmentUploadCell(attachment: attachment,
+                                                 uploadTask: attachmentsManager.attachmentUploadTaskFor(uuid: attachment.uuid)) { attachmentRemoved in
+                                attachmentsManager.removeAttachment(attachmentRemoved)
+                            }
                         }
                     }
+                    .padding(.vertical, 1)
                 }
-                .padding(.vertical, 1)
+                .padding(.horizontal, 16)
             }
-            .padding(.horizontal, 16)
+        }
+        .customAlert(item: $attachmentsManager.globalError) { error in
+            VStack {
+                Text(error.errorDescription ?? MailError.unknownError.errorDescription ?? "")
+                BottomSheetButtonsView(primaryButtonTitle: MailResourcesStrings.Localizable.buttonClose) {
+                    attachmentsManager.globalError = nil
+                    attachmentsManager.objectWillChange.send()
+                }
+            }
         }
     }
 }

@@ -65,3 +65,9 @@ public enum MailError: LocalizedError {
         }
     }
 }
+
+extension MailError: Identifiable {
+    public var id: String {
+        return errorDescription ?? UUID().uuidString
+    }
+}
