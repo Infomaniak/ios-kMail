@@ -24,9 +24,10 @@ struct SelectionBackground: View {
     @AppStorage(UserDefaults.shared.key(.accentColor)) private var accentColor = AccentColor.pink
 
     let isSelected: Bool
-    let offsetX: CGFloat
-    let leadingPadding: CGFloat
-    let verticalPadding: CGFloat
+
+    var offsetX: CGFloat = 8
+    var leadingPadding: CGFloat = 0
+    var verticalPadding: CGFloat = 0
 
     var body: some View {
         RoundedRectangle(cornerRadius: 10)

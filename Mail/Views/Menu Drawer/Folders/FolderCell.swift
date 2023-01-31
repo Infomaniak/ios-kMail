@@ -154,7 +154,7 @@ struct FolderCellContent: View {
     @ViewBuilder
     private var background: some View {
         if cellType == .link {
-            SelectionBackground(isSelected: isCurrentFolder, offsetX: 8, leadingPadding: 0, verticalPadding: 0)
+            SelectionBackground(isSelected: isCurrentFolder)
         }
     }
 }
