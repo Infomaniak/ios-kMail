@@ -32,10 +32,6 @@ struct SettingsToggleCell: View {
 
     @State private var lastValue: Bool
 
-    private var workInProgress: Bool {
-        return userDefaults == \.includeOriginalInReply || userDefaults == \.acknowledgement
-    }
-
     init(title: String, userDefaults: ReferenceWritableKeyPath<UserDefaults, Bool>) {
         self.title = title
         self.userDefaults = userDefaults
@@ -44,22 +40,20 @@ struct SettingsToggleCell: View {
     }
 
     var body: some View {
-        if !workInProgress {
-            Toggle(isOn: Binding(get: {
-                toggleIsOn
-            }, set: { newValue in
-                lastValue = toggleIsOn
-                toggleIsOn = newValue
-            })) {
-                Text(title)
-                    .textStyle(.body)
-            }
-            .tint(.accentColor)
-            .onChange(of: toggleIsOn) { newValue in
-                guard newValue != lastValue else { return }
-                if userDefaults == \.isAppLockEnabled {
-                    enableAppLock()
-                }
+        Toggle(isOn: Binding(get: {
+            toggleIsOn
+        }, set: { newValue in
+            lastValue = toggleIsOn
+            toggleIsOn = newValue
+        })) {
+            Text(title)
+                .textStyle(.body)
+        }
+        .tint(.accentColor)
+        .onChange(of: toggleIsOn) { newValue in
+            guard newValue != lastValue else { return }
+            if userDefaults == \.isAppLockEnabled {
+                enableAppLock()
             }
         }
     }

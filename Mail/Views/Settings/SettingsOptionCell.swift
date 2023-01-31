@@ -18,34 +18,30 @@
 
 import SwiftUI
 
-struct SettingsOptionCell: View {
-    let icon: Image?
+struct SettingsOptionCell<Content: View>: View {
     let title: String
     let subtitle: String
-    let option: SettingsOption
+    let icon: Image?
 
-    private var workInProgress: Bool {
-        return option == .externalContentOption || option == .forwardMessageOption
-    }
+    @ViewBuilder var destination: () -> Content
 
-    init(icon: Image? = nil, title: String, subtitle: String, option: SettingsOption) {
-        self.icon = icon
+    init(title: String, subtitle: String, icon: Image? = nil, destination: @escaping () -> Content) {
         self.title = title
         self.subtitle = subtitle
-        self.option = option
+        self.icon = icon
+
+        self.destination = destination
     }
 
     var body: some View {
-        if !workInProgress {
-            NavigationLink(destination: option.getDestination()) {
-                HStack(alignment: .firstTextBaseline, spacing: 8) {
-                    icon
-                    VStack(alignment: .leading) {
-                        Text(title)
-                            .textStyle(.body)
-                        Text(subtitle)
-                            .textStyle(.bodySmallTertiary)
-                    }
+        NavigationLink(destination: destination) {
+            HStack(alignment: .firstTextBaseline, spacing: 8) {
+                icon
+                VStack(alignment: .leading) {
+                    Text(title)
+                        .textStyle(.body)
+                    Text(subtitle)
+                        .textStyle(.bodySmallTertiary)
                 }
             }
         }
@@ -54,6 +50,6 @@ struct SettingsOptionCell: View {
 
 struct SettingsOptionCell_Previews: PreviewProvider {
     static var previews: some View {
-        SettingsOptionCell(title: "Theme", subtitle: "Theme", option: .themeOption)
+        SettingsOptionCell(title: "Theme", subtitle: "Theme") { EmptyView() }
     }
 }

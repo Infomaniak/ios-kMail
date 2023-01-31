@@ -20,25 +20,38 @@ import MailCore
 import MailResources
 import SwiftUI
 
+enum SwipeSettingsSection: CaseIterable {
+    case rightSwipe
+    case leftSwipe
+
+    var items: [SwipeType] {
+        switch self {
+        case .rightSwipe:
+            return [.shortRight, .longRight]
+        case .leftSwipe:
+            return [.shortLeft, .longLeft]
+        }
+    }
+}
+
 struct SettingsSwipeActionsView: View {
-    @ObservedObject var viewModel: SwipeActionSettingsViewModel
     @AppStorage(UserDefaults.shared.key(.accentColor)) var accentColor = AccentColor.pink
 
-    init(viewModel: SwipeActionSettingsViewModel) {
-        self.viewModel = viewModel
-    }
+    @AppStorage(UserDefaults.shared.key(.swipeShortRight)) var shortRight = SwipeAction.none
+    @AppStorage(UserDefaults.shared.key(.swipeLongRight)) var longRight = SwipeAction.none
+    @AppStorage(UserDefaults.shared.key(.swipeShortLeft)) var shortLeft = SwipeAction.none
+    @AppStorage(UserDefaults.shared.key(.swipeLongLeft)) var longLeft = SwipeAction.none
 
     var body: some View {
         List {
-            ForEach(viewModel.sections) { section in
+            ForEach(SwipeSettingsSection.allCases, id: \.self) { section in
                 Section {
-                    ForEach(section.items) { item in
-                        if case let .option(option) = item.type {
-                            SettingsOptionCell(
-                                icon: icon(for: option),
+                    ForEach(section.items, id: \.self) { item in
+                        SettingsOptionCell(title: item.title, subtitle: settingValue(for: item), icon: icon(for: item)) {
+                            SettingsOptionView<SwipeAction>(
                                 title: item.title,
-                                subtitle: viewModel.selectedValues[option]?.title ?? "",
-                                option: option
+                                keyPath: item.keyPath,
+                                excludedKeyPath: [\.swipeLongRight]
                             )
                             .frame(minHeight: 40)
                             .padding(.horizontal, 8)
@@ -46,13 +59,13 @@ struct SettingsSwipeActionsView: View {
                     }
 
                     VStack(alignment: .leading, spacing: 16) {
-                        SwipeConfigCell(selectedValues: $viewModel.selectedValues, section: section)
-                        if section != viewModel.sections.last {
+                        SwipeConfigCell(section: section)
+                        if section != SwipeSettingsSection.allCases.last {
                             IKDivider()
                         }
                     }
                 } header: {
-                    if section == viewModel.sections.first {
+                    if section == SwipeSettingsSection.allCases.first {
                         Text(MailResourcesStrings.Localizable.settingsSwipeDescription)
                             .textStyle(.bodySmallSecondary)
                             .padding(.horizontal, 8)
@@ -64,37 +77,41 @@ struct SettingsSwipeActionsView: View {
         }
         .listStyle(.plain)
         .background(MailResourcesAsset.backgroundColor.swiftUiColor)
-        .navigationBarTitle(viewModel.title, displayMode: .inline)
+        .navigationBarTitle(MailResourcesStrings.Localizable.settingsSwipeActionsTitle, displayMode: .inline)
         .backButtonDisplayMode(.minimal)
-        .onAppear {
-            viewModel.updateSelectedValue()
+    }
+
+    private func settingValue(for option: SwipeType) -> String {
+        switch option {
+        case .shortRight:
+            return shortRight.title
+        case .longRight:
+            return longRight.title
+        case .shortLeft:
+            return shortLeft.title
+        case .longLeft:
+            return longLeft.title
         }
     }
 
-    private func icon(for option: SettingsOption) -> Image? {
-        let resource: MailResourcesImages?
+    private func icon(for option: SwipeType) -> Image {
+        let resource: MailResourcesImages
         switch option {
-        case .swipeShortRightOption:
+        case .shortRight:
             resource = accentColor.shortRightIcon
-        case .swipeLongRightOption:
+        case .longRight:
             resource = accentColor.longRightIcon
-        case .swipeShortLeftOption:
+        case .shortLeft:
             resource = accentColor.shortLeftIcon
-        case .swipeLongLeftOption:
+        case .longLeft:
             resource = accentColor.longLeftIcon
-        default:
-            resource = nil
         }
-        if let resource = resource {
-            return Image(resource: resource)
-        } else {
-            return nil
-        }
+        return Image(resource: resource)
     }
 }
 
 struct SettingsSwipeActionsView_Previews: PreviewProvider {
     static var previews: some View {
-        SettingsSwipeActionsView(viewModel: SwipeActionSettingsViewModel())
+        SettingsSwipeActionsView()
     }
 }

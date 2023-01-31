@@ -18,20 +18,28 @@
 
 import SwiftUI
 
-struct SettingsSubMenuCell<Content: View>: View {
-    let title: String
-    @ViewBuilder var destination: () -> Content
-
-    var body: some View {
-        NavigationLink(destination: destination) {
-            Text(title)
-                .textStyle(.body)
-        }
+struct SettingCellModifier: ViewModifier {
+    func body(content: Content) -> some View {
+        content
+            .frame(minHeight: 40)
+            .listRowSeparator(.hidden)
     }
 }
 
-struct SettingsSubMenuCell_Previews: PreviewProvider {
-    static var previews: some View {
-        SettingsSubMenuCell(title: "Settings sub-menu") { EmptyView() }
+struct SettingSectionHeaderModifier: ViewModifier {
+    func body(content: Content) -> some View {
+        content
+            .listRowSeparator(.hidden)
+            .listRowInsets(.init(top: 12, leading: 8, bottom: 4, trailing: 8))
+    }
+}
+
+extension View {
+    func settingCellModifier() -> some View {
+        modifier(SettingCellModifier())
+    }
+
+    func settingSectionHeaderModifier() -> some View {
+        modifier(SettingSectionHeaderModifier())
     }
 }

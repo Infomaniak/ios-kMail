@@ -21,27 +21,15 @@ import MailResources
 import SwiftUI
 
 struct SwipeConfigCell: View {
-    @Binding var selectedValues: [SettingsOption: SettingsOptionEnum]
-    var section: SettingsSection
+    @AppStorage(UserDefaults.shared.key(.swipeShortRight)) var shortRight = SwipeAction.none
+    @AppStorage(UserDefaults.shared.key(.swipeLongRight)) var longRight = SwipeAction.none
+    @AppStorage(UserDefaults.shared.key(.swipeShortLeft)) var shortLeft = SwipeAction.none
+    @AppStorage(UserDefaults.shared.key(.swipeLongLeft)) var longLeft = SwipeAction.none
+
+    var section: SwipeSettingsSection
 
     var actions: [SwipeAction] {
-        var newActions = [SwipeAction]()
-        if section == .rightSwipe {
-            if let action = selectedValues[.swipeLongRightOption] as? SwipeAction {
-                newActions.append(action)
-            }
-            if let action = selectedValues[.swipeShortRightOption] as? SwipeAction {
-                newActions.append(action)
-            }
-        } else if section == .leftSwipe {
-            if let action = selectedValues[.swipeShortLeftOption] as? SwipeAction {
-                newActions.append(action)
-            }
-            if let action = selectedValues[.swipeLongLeftOption] as? SwipeAction {
-                newActions.append(action)
-            }
-        }
-        return newActions
+        return section == .rightSwipe ? [longRight, shortRight] : [shortLeft, longLeft]
     }
 
     var body: some View {
@@ -89,16 +77,10 @@ struct SwipeConfigCell: View {
 
 struct SwipeConfigCell_Previews: PreviewProvider {
     static var previews: some View {
-        SwipeConfigCell(selectedValues: .constant([.swipeLongRightOption: SwipeAction.readUnread]), section: .rightSwipe)
-            .previewDisplayName("Swipe Long Right")
-
-        SwipeConfigCell(selectedValues: .constant([.swipeLongRightOption: SwipeAction.readUnread, .swipeShortRightOption: SwipeAction.archive]), section: .rightSwipe)
+        SwipeConfigCell(section: .rightSwipe)
             .previewDisplayName("Swipe Right")
 
-        SwipeConfigCell(selectedValues: .constant([.swipeLongLeftOption: SwipeAction.delete]), section: .leftSwipe)
-            .previewDisplayName("Swipe Long Left")
-
-        SwipeConfigCell(selectedValues: .constant([.swipeLongLeftOption: SwipeAction.delete, .swipeShortLeftOption: SwipeAction.quickAction]), section: .leftSwipe)
+        SwipeConfigCell(section: .leftSwipe)
             .previewDisplayName("Swipe Left")
     }
 }

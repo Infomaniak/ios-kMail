@@ -46,6 +46,25 @@ public extension UserDefaults.Keys {
 public extension UserDefaults {
     static let shared = UserDefaults(suiteName: AccountManager.appGroup)!
 
+    func initSettings() {
+        UserDefaults.shared.register(defaults: [
+            key(.notificationsEnabled): true,
+            key(.appLock): false,
+            key(.threadDensity): ThreadDensity.normal.rawValue,
+            key(.externalContent): ExternalContent.always.rawValue,
+            key(.theme): Theme.system.rawValue,
+            key(.accentColor): AccentColor.pink.rawValue,
+            key(.swipeShortRight): Constants.defaultSwipeShortRight.rawValue,
+            key(.swipeLongRight): Constants.defaultSwipeLongRight.rawValue,
+            key(.swipeShortLeft): Constants.defaultSwipeShortLeft.rawValue,
+            key(.swipeLongLeft): Constants.defaultSwipeLongLeft.rawValue,
+            key(.cancelDelay): CancelDelay.seconds10.rawValue,
+            key(.forwardMode): ForwardMode.inline.rawValue,
+            key(.acknowledgement): false,
+            key(.includeOriginalInReply): false
+        ])
+    }
+
     var currentMailboxId: Int {
         get {
             return integer(forKey: key(.currentMailboxId))

@@ -95,7 +95,7 @@ struct SkeletonSwipeCell: View {
 
 struct SkeletonSwipeCell_Previews: PreviewProvider {
     static var previews: some View {
-        SwipeConfigCell(selectedValues: .constant([.swipeLongRightOption: SwipeAction.readUnread, .swipeShortRightOption: SwipeAction.archive]), section: .rightSwipe)
-        SwipeConfigCell(selectedValues: .constant([.swipeLongLeftOption: SwipeAction.delete, .swipeShortLeftOption: SwipeAction.quickAction]), section: .leftSwipe)
+        SwipeConfigCell(section: .rightSwipe)
+        SwipeConfigCell(section: .leftSwipe)
     }
 }

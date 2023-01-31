@@ -39,30 +39,16 @@ public enum SwipeType: String, CaseIterable {
         }
     }
 
-    public var setting: SwipeAction {
-        get {
-            switch self {
-            case .shortRight:
-                return UserDefaults.shared.swipeShortRight
-            case .longRight:
-                return UserDefaults.shared.swipeLongRight
-            case .shortLeft:
-                return UserDefaults.shared.swipeShortLeft
-            case .longLeft:
-                return UserDefaults.shared.swipeLongLeft
-            }
-        }
-        set {
-            switch self {
-            case .shortRight:
-                UserDefaults.shared.swipeShortRight = newValue
-            case .longRight:
-                UserDefaults.shared.swipeLongRight = newValue
-            case .shortLeft:
-                UserDefaults.shared.swipeShortLeft = newValue
-            case .longLeft:
-                UserDefaults.shared.swipeLongLeft = newValue
-            }
+    public var keyPath: ReferenceWritableKeyPath<UserDefaults, SwipeAction> {
+        switch self {
+        case .shortRight:
+            return \.swipeShortRight
+        case .longRight:
+            return \.swipeLongRight
+        case .shortLeft:
+            return \.swipeShortLeft
+        case .longLeft:
+            return \.swipeLongLeft
         }
     }
 }
