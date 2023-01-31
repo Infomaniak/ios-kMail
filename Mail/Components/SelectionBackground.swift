@@ -24,17 +24,18 @@ struct SelectionBackground: View {
     @AppStorage(UserDefaults.shared.key(.accentColor)) private var accentColor = AccentColor.pink
 
     let isSelected: Bool
-    let offsetX: CGFloat
-    let leadingPadding: CGFloat
-    let verticalPadding: CGFloat
-    var defaultColor = MailResourcesAsset.backgroundColor.swiftUiColor
+
+    var offsetX: CGFloat = 8
+    var leadingPadding: CGFloat = 0
+    var verticalPadding: CGFloat = 0
 
     var body: some View {
         RoundedRectangle(cornerRadius: 10)
-            .fill(isSelected ? accentColor.secondary.swiftUiColor : defaultColor)
+            .fill(accentColor.secondary.swiftUiColor)
             .offset(x: offsetX, y: 0)
             .padding(.leading, leadingPadding)
             .padding(.vertical, verticalPadding)
+            .opacity(isSelected ? 1 : 0)
     }
 }
 

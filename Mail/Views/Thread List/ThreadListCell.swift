@@ -60,8 +60,7 @@ struct ThreadListCell: View {
             )
         }
         .padding(.leading, multipleSelectionViewModel.isEnabled ? 8 : -4)
-        .background(SelectionBackground(isSelected: isSelected, offsetX: 8, leadingPadding: 0, verticalPadding: 2,
-                                        defaultColor: cellColor))
+        .background(SelectionBackground(isSelected: isSelected, verticalPadding: 2))
         .onTapGesture { didTapCell() }
         .onLongPressGesture(minimumDuration: 0.3) { didLongPressCell() }
         .swipeActions(thread: thread, viewModel: viewModel, multipleSelectionViewModel: multipleSelectionViewModel)
