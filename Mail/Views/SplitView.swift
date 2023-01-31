@@ -28,6 +28,7 @@ class GlobalBottomSheet: DisplayedFloatingPanelState<GlobalBottomSheet.State> {
     enum State {
         case getMoreStorage
         case restoreEmails
+        case reportJunk(threadBottomSheet: ThreadBottomSheet, target: ActionsTarget)
         case reportDisplayProblem(message: Message)
         case reportPhishing(message: Message)
     }
@@ -141,6 +142,8 @@ struct SplitView: View {
                 MoreStorageView(state: bottomSheet)
             case .restoreEmails:
                 RestoreEmailsView(state: bottomSheet, mailboxManager: mailboxManager)
+            case let .reportJunk(threadBottomSheet, target):
+                ReportJunkView(mailboxManager: mailboxManager, target: target, state: threadBottomSheet, globalSheet: bottomSheet)
             case let .reportDisplayProblem(message):
                 ReportDisplayProblemView(mailboxManager: mailboxManager, state: bottomSheet, message: message)
             case let .reportPhishing(message):
