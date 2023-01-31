@@ -91,6 +91,7 @@ struct CustomAlertItemModifier<Item, AlertContent>: ViewModifier where Item: Ide
 }
 
 private struct ClearFullScreenView: UIViewRepresentable {
+    private static let maxSearchDepth = 5
     private class BackgroundRemovalView: UIView {
         override func didMoveToWindow() {
             super.didMoveToWindow()
@@ -98,9 +99,7 @@ private struct ClearFullScreenView: UIViewRepresentable {
         }
 
         private func clearBackgroundSuperviews(view: UIView, level: Int = 0) {
-            guard level < 5 else {
-                return
-            }
+            guard level < maxSearchDepth else { return }
 
             if let superview = view.superview {
                 superview.backgroundColor = .clear
