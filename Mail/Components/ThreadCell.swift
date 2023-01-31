@@ -39,17 +39,78 @@ extension ThreadDensity {
     }
 }
 
+struct ThreadCellDataHolder {
+    let thread: Thread
+    let mailboxManager: MailboxManager
+
+    /// Sender of the last message that is not in the Sent folder, otherwise the last message of the thread
+    var recipientToDisplay: Recipient? {
+        let sentFolderId = mailboxManager.getFolder(with: .sent)?.id
+        let lastMessageNotFromSent = thread.messages.last { $0.folderId != sentFolderId } ?? thread.messages.last
+        return lastMessageNotFromSent?.from.last
+    }
+
+    /// Date of the last message of the folder, otherwise the last message of the thread
+    var date: String {
+        return thread.date.customRelativeFormatted
+    }
+
+    /// Field `to` in the draft folder, otherwise field `from`
+    var from: String {
+        let isDraftFolder = thread.messages.allSatisfy(\.isDraft)
+        return isDraftFolder ? thread.formattedTo : thread.formattedFrom
+    }
+
+    /// Subject of the first message
+    var subject: String {
+        thread.formattedSubject
+    }
+
+    /// Last message of the thread, except for the Sent folder where we use the last message of the folder
+    var preview: String {
+        var content = thread.messages.last?.preview
+        if thread.folderId == mailboxManager.getFolder(with: .sent)?.id {
+            content = (thread.lastMessageFromFolder ?? thread.messages.last)?.preview
+        }
+
+        guard let content, !content.isEmpty else {
+            return MailResourcesStrings.Localizable.noBodyTitle
+        }
+        return content
+    }
+}
+
 struct ThreadCell: View {
-    var thread: Thread
+    @AppStorage(UserDefaults.shared.key(.accentColor)) private var accentColor = AccentColor.pink
 
-    var threadDensity: ThreadDensity
-    var accentColor: AccentColor
+    let thread: Thread
+    let mailboxManager: MailboxManager
 
-    var isMultipleSelectionEnabled = false
-    var isSelected = false
+    let dataHolder: ThreadCellDataHolder
+
+    let density: ThreadDensity
+    let isMultipleSelectionEnabled: Bool
+    let isSelected: Bool
 
     private var checkboxSize: CGFloat {
-        threadDensity == .large ? Constants.checkboxLargeSize : Constants.checkboxSize
+        density == .large ? Constants.checkboxLargeSize : Constants.checkboxSize
+    }
+
+    init(
+        thread: Thread,
+        mailboxManager: MailboxManager,
+        density: ThreadDensity,
+        isMultipleSelectionEnabled: Bool = false,
+        isSelected: Bool = false
+    ) {
+        self.thread = thread
+        self.mailboxManager = mailboxManager
+
+        dataHolder = ThreadCellDataHolder(thread: thread, mailboxManager: mailboxManager)
+
+        self.density = density
+        self.isMultipleSelectionEnabled = isMultipleSelectionEnabled
+        self.isSelected = isSelected
     }
 
     // MARK: - Views
@@ -57,11 +118,13 @@ struct ThreadCell: View {
     var body: some View {
         HStack(spacing: 8) {
             unreadIndicator
-                .animation(.threadListSlide(density: threadDensity, isMultipleSelectionEnabled: isMultipleSelectionEnabled),
-                           value: isMultipleSelectionEnabled)
+                .animation(
+                    .threadListSlide(density: density, isMultipleSelectionEnabled: isMultipleSelectionEnabled),
+                    value: isMultipleSelectionEnabled
+                )
 
             Group {
-                if threadDensity == .large, let recipient = thread.from.last {
+                if density == .large, let recipient = dataHolder.recipientToDisplay {
                     ZStack {
                         RecipientImage(recipient: recipient)
                         checkbox
@@ -69,8 +132,10 @@ struct ThreadCell: View {
                     }
                 } else if isMultipleSelectionEnabled {
                     checkbox
-                        .animation(.threadListCheckbox(isMultipleSelectionEnabled: isMultipleSelectionEnabled),
-                                   value: isMultipleSelectionEnabled)
+                        .animation(
+                            .threadListCheckbox(isMultipleSelectionEnabled: isMultipleSelectionEnabled),
+                            value: isMultipleSelectionEnabled
+                        )
                 }
             }
             .padding(.trailing, 4)
@@ -84,12 +149,14 @@ struct ThreadCell: View {
                     threadDetails
                 }
             }
-            .animation(.threadListSlide(density: threadDensity, isMultipleSelectionEnabled: isMultipleSelectionEnabled),
-                       value: isMultipleSelectionEnabled)
+            .animation(
+                .threadListSlide(density: density, isMultipleSelectionEnabled: isMultipleSelectionEnabled),
+                value: isMultipleSelectionEnabled
+            )
         }
         .padding(.leading, 8)
         .padding(.trailing, 12)
-        .padding(.vertical, threadDensity.cellVerticalPadding)
+        .padding(.vertical, density.cellVerticalPadding)
         .clipped()
     }
 
@@ -120,7 +187,7 @@ struct ThreadCell: View {
                     .lineLimit(1)
                     .layoutPriority(1)
             }
-            Text(thread.messages.allSatisfy(\.isDraft) ? thread.formattedTo : thread.formattedFrom)
+            Text(dataHolder.from)
                 .textStyle(.header2)
                 .lineLimit(1)
 
@@ -137,7 +204,7 @@ struct ThreadCell: View {
 
             Spacer()
 
-            Text(thread.date.customRelativeFormatted)
+            Text(dataHolder.date)
                 .textStyle(.bodySmallSecondary)
                 .lineLimit(1)
         }
@@ -145,13 +212,12 @@ struct ThreadCell: View {
 
     private var threadInfo: some View {
         VStack(alignment: .leading, spacing: 4) {
-            Text(thread.formattedSubject)
+            Text(dataHolder.subject)
                 .textStyle(.body)
                 .lineLimit(1)
 
-            if threadDensity != .compact,
-               let preview = thread.messages.last?.preview {
-                Text(preview.isEmpty ? MailResourcesStrings.Localizable.noBodyTitle : preview)
+            if density != .compact {
+                Text(dataHolder.preview)
                     .textStyle(.bodySmallSecondary)
                     .lineLimit(1)
             }
@@ -180,8 +246,8 @@ struct ThreadCell: View {
 struct ThreadCell_Previews: PreviewProvider {
     static var previews: some View {
         ThreadCell(thread: PreviewHelper.sampleThread,
-                   threadDensity: .large,
-                   accentColor: .pink,
+                   mailboxManager: PreviewHelper.sampleMailboxManager,
+                   density: .large,
                    isMultipleSelectionEnabled: false,
                    isSelected: false)
             .previewLayout(.sizeThatFits)

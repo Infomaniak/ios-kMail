@@ -69,6 +69,12 @@ public class Recipient: EmbeddedObject, Codable {
         return contact?.name.removePunctuation ?? (name.isEmpty ? email : name.removePunctuation)
     }
 
+    public var shortName: String {
+        let emailPredicate = NSPredicate(format: "SELF MATCHES %@", Constants.mailRegex)
+        let delimiter = emailPredicate.evaluate(with: title) ? "@" : " "
+        return title.components(separatedBy: delimiter).first ?? title
+    }
+
     public var color: UIColor {
         return contact?.color ?? UIColor.backgroundColor(from: email.hash)
     }

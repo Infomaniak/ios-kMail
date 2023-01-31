@@ -71,9 +71,25 @@ public class Thread: Object, Decodable, Identifiable {
         return messages.filter { $0.folderId == self.folderId }.count
     }
 
+    public var lastMessageFromFolder: Message? {
+        messages.last { $0.folderId == folderId }
+    }
+
     public var formattedFrom: String {
-        guard let from = from.last else { return MailResourcesStrings.Localizable.unknownRecipientTitle }
-        return from.title
+        switch from.count {
+        case 0:
+            return MailResourcesStrings.Localizable.unknownRecipientTitle
+        case 1:
+            return from[0].title
+        default:
+            var fromArray = [Recipient]()
+            let fromCount = min(from.count, 5)
+            for recipient in from[0..<fromCount] {
+                guard !fromArray.contains(where: { $0.email == recipient.email && $0.name == recipient.name }) else { continue }
+                fromArray.append(recipient)
+            }
+            return fromArray.map(\.shortName).joined(separator: ", ")
+        }
     }
 
     public var formattedTo: String {
@@ -108,7 +124,6 @@ public class Thread: Object, Decodable, Identifiable {
         messageIds = messages.flatMap { $0.linkedUids }.toRealmSet()
         updateUnseenMessages()
         from = messages.flatMap { $0.from.detached() }.toRealmList()
-        date = messages.last { $0.folderId == folderId }?.date ?? date
         size = messages.sum(of: \.size)
         hasAttachments = messages.contains { $0.hasAttachments }
         hasDrafts = messages.map { $0.isDraft }.contains(true)
@@ -120,6 +135,9 @@ public class Thread: Object, Decodable, Identifiable {
         messages = messages.sorted {
             $0.date.compare($1.date) == .orderedAscending
         }.toRealmList()
+
+        date = lastMessageFromFolder?.date ?? date
+        subject = messages.first?.subject
 
         if let lastFolderMessage = messages.last(where: { $0.folderId == folderId }) {
             date = lastFolderMessage.date
