@@ -21,20 +21,20 @@ import MailResources
 import SwiftUI
 
 struct SwipeConfigCell: View {
-    @AppStorage(UserDefaults.shared.key(.swipeShortRight)) var shortRight = SwipeAction.none
-    @AppStorage(UserDefaults.shared.key(.swipeLongRight)) var longRight = SwipeAction.none
-    @AppStorage(UserDefaults.shared.key(.swipeShortLeft)) var shortLeft = SwipeAction.none
-    @AppStorage(UserDefaults.shared.key(.swipeLongLeft)) var longLeft = SwipeAction.none
+    @AppStorage(UserDefaults.shared.key(.swipeLeading)) var leading = SwipeAction.none
+    @AppStorage(UserDefaults.shared.key(.swipeFullLeading)) var fullLeading = SwipeAction.none
+    @AppStorage(UserDefaults.shared.key(.swipeTrailing)) var trailing = SwipeAction.none
+    @AppStorage(UserDefaults.shared.key(.swipeFullTrailing)) var fullTrailing = SwipeAction.none
 
     var section: SwipeSettingsSection
 
     var actions: [SwipeAction] {
-        return section == .rightSwipe ? [longRight, shortRight] : [shortLeft, longLeft]
+        return section == .leadingSwipe ? [fullLeading, leading] : [trailing, fullTrailing]
     }
 
     var body: some View {
         HStack(spacing: 0) {
-            if section != .rightSwipe {
+            if section != .leadingSwipe {
                 SkeletonSwipeCell(isLeading: false)
             }
 
@@ -61,7 +61,7 @@ struct SwipeConfigCell: View {
                 .frame(width: 80)
             }
 
-            if section == .rightSwipe {
+            if section == .leadingSwipe {
                 SkeletonSwipeCell(isLeading: true)
             }
         }
@@ -77,10 +77,10 @@ struct SwipeConfigCell: View {
 
 struct SwipeConfigCell_Previews: PreviewProvider {
     static var previews: some View {
-        SwipeConfigCell(section: .rightSwipe)
+        SwipeConfigCell(section: .leadingSwipe)
             .previewDisplayName("Swipe Right")
 
-        SwipeConfigCell(section: .leftSwipe)
+        SwipeConfigCell(section: .trailingSwipe)
             .previewDisplayName("Swipe Left")
     }
 }

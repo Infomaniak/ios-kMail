@@ -21,15 +21,15 @@ import MailResources
 import SwiftUI
 
 enum SwipeSettingsSection: CaseIterable {
-    case rightSwipe
-    case leftSwipe
+    case leadingSwipe
+    case trailingSwipe
 
     var items: [SwipeType] {
         switch self {
-        case .rightSwipe:
-            return [.shortRight, .longRight]
-        case .leftSwipe:
-            return [.shortLeft, .longLeft]
+        case .leadingSwipe:
+            return [.leading, .fullLeading]
+        case .trailingSwipe:
+            return [.trailing, .fullTrailing]
         }
     }
 }
@@ -37,10 +37,10 @@ enum SwipeSettingsSection: CaseIterable {
 struct SettingsSwipeActionsView: View {
     @AppStorage(UserDefaults.shared.key(.accentColor)) var accentColor = AccentColor.pink
 
-    @AppStorage(UserDefaults.shared.key(.swipeShortRight)) var shortRight = SwipeAction.none
-    @AppStorage(UserDefaults.shared.key(.swipeLongRight)) var longRight = SwipeAction.none
-    @AppStorage(UserDefaults.shared.key(.swipeShortLeft)) var shortLeft = SwipeAction.none
-    @AppStorage(UserDefaults.shared.key(.swipeLongLeft)) var longLeft = SwipeAction.none
+    @AppStorage(UserDefaults.shared.key(.swipeLeading)) var leading = SwipeAction.none
+    @AppStorage(UserDefaults.shared.key(.swipeFullLeading)) var fullLeading = SwipeAction.none
+    @AppStorage(UserDefaults.shared.key(.swipeTrailing)) var trailing = SwipeAction.none
+    @AppStorage(UserDefaults.shared.key(.swipeFullTrailing)) var fullTrailing = SwipeAction.none
 
     var body: some View {
         List {
@@ -51,7 +51,7 @@ struct SettingsSwipeActionsView: View {
                             SettingsOptionView<SwipeAction>(
                                 title: item.title,
                                 keyPath: item.keyPath,
-                                excludedKeyPath: [\.swipeLongRight]
+                                excludedKeyPath: [\.swipeFullLeading]
                             )
                             .frame(minHeight: 40)
                             .padding(.horizontal, 8)
@@ -83,28 +83,28 @@ struct SettingsSwipeActionsView: View {
 
     private func settingValue(for option: SwipeType) -> String {
         switch option {
-        case .shortRight:
-            return shortRight.title
-        case .longRight:
-            return longRight.title
-        case .shortLeft:
-            return shortLeft.title
-        case .longLeft:
-            return longLeft.title
+        case .leading:
+            return leading.title
+        case .fullLeading:
+            return fullLeading.title
+        case .trailing:
+            return trailing.title
+        case .fullTrailing:
+            return fullTrailing.title
         }
     }
 
     private func icon(for option: SwipeType) -> Image {
         let resource: MailResourcesImages
         switch option {
-        case .shortRight:
-            resource = accentColor.shortRightIcon
-        case .longRight:
-            resource = accentColor.longRightIcon
-        case .shortLeft:
-            resource = accentColor.shortLeftIcon
-        case .longLeft:
-            resource = accentColor.longLeftIcon
+        case .leading:
+            resource = accentColor.leadingIcon
+        case .fullLeading:
+            resource = accentColor.fullLeadingIcon
+        case .trailing:
+            resource = accentColor.trailingIcon
+        case .fullTrailing:
+            resource = accentColor.fullTrailingIcon
         }
         return Image(resource: resource)
     }

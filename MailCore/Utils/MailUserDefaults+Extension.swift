@@ -33,10 +33,10 @@ public extension UserDefaults.Keys {
     static let externalContent = UserDefaults.Keys(rawValue: "externalContent")
     static let theme = UserDefaults.Keys(rawValue: "theme")
     static let accentColor = UserDefaults.Keys(rawValue: "accentColor")
-    static let swipeShortRight = UserDefaults.Keys(rawValue: "swipeShortRight")
-    static let swipeLongRight = UserDefaults.Keys(rawValue: "swipeLongRight")
-    static let swipeShortLeft = UserDefaults.Keys(rawValue: "swipeShortLeft")
-    static let swipeLongLeft = UserDefaults.Keys(rawValue: "swipeLongLeft")
+    static let swipeLeading = UserDefaults.Keys(rawValue: "swipeShortRight")
+    static let swipeFullLeading = UserDefaults.Keys(rawValue: "swipeLongRight")
+    static let swipeTrailing = UserDefaults.Keys(rawValue: "swipeShortLeft")
+    static let swipeFullTrailing = UserDefaults.Keys(rawValue: "swipeLongLeft")
     static let cancelDelay = UserDefaults.Keys(rawValue: "cancelDelay")
     static let forwardMode = UserDefaults.Keys(rawValue: "forwardMode")
     static let acknowledgement = UserDefaults.Keys(rawValue: "acknowledgement")
@@ -54,10 +54,10 @@ public extension UserDefaults {
             key(.externalContent): ExternalContent.always.rawValue,
             key(.theme): Theme.system.rawValue,
             key(.accentColor): AccentColor.pink.rawValue,
-            key(.swipeShortRight): Constants.defaultSwipeShortRight.rawValue,
-            key(.swipeLongRight): Constants.defaultSwipeLongRight.rawValue,
-            key(.swipeShortLeft): Constants.defaultSwipeShortLeft.rawValue,
-            key(.swipeLongLeft): Constants.defaultSwipeLongLeft.rawValue,
+            key(.swipeLeading): Constants.defaultSwipeLeading.rawValue,
+            key(.swipeFullLeading): Constants.defaultSwipeFullLeading.rawValue,
+            key(.swipeTrailing): Constants.defaultSwipeTrailing.rawValue,
+            key(.swipeFullTrailing): Constants.defaultSwipeFullTrailing.rawValue,
             key(.cancelDelay): CancelDelay.seconds10.rawValue,
             key(.forwardMode): ForwardMode.inline.rawValue,
             key(.acknowledgement): false,
@@ -145,39 +145,39 @@ public extension UserDefaults {
         }
     }
 
-    var swipeShortRight: SwipeAction {
+    var swipeLeading: SwipeAction {
         get {
-            return SwipeAction(rawValue: string(forKey: key(.swipeShortRight)) ?? "") ?? Constants.defaultSwipeShortRight
+            return SwipeAction(rawValue: string(forKey: key(.swipeLeading)) ?? "") ?? Constants.defaultSwipeLeading
         }
         set {
-            set(newValue.rawValue, forKey: key(.swipeShortRight))
+            set(newValue.rawValue, forKey: key(.swipeLeading))
         }
     }
 
-    var swipeLongRight: SwipeAction {
+    var swipeFullLeading: SwipeAction {
         get {
-            return SwipeAction(rawValue: string(forKey: key(.swipeLongRight)) ?? "") ?? Constants.defaultSwipeLongRight
+            return SwipeAction(rawValue: string(forKey: key(.swipeFullLeading)) ?? "") ?? Constants.defaultSwipeFullLeading
         }
         set {
-            set(newValue.rawValue, forKey: key(.swipeLongRight))
+            set(newValue.rawValue, forKey: key(.swipeFullLeading))
         }
     }
 
-    var swipeShortLeft: SwipeAction {
+    var swipeTrailing: SwipeAction {
         get {
-            return SwipeAction(rawValue: string(forKey: key(.swipeShortLeft)) ?? "") ?? Constants.defaultSwipeShortLeft
+            return SwipeAction(rawValue: string(forKey: key(.swipeTrailing)) ?? "") ?? Constants.defaultSwipeTrailing
         }
         set {
-            set(newValue.rawValue, forKey: key(.swipeShortLeft))
+            set(newValue.rawValue, forKey: key(.swipeTrailing))
         }
     }
 
-    var swipeLongLeft: SwipeAction {
+    var swipeFullTrailing: SwipeAction {
         get {
-            return SwipeAction(rawValue: string(forKey: key(.swipeLongLeft)) ?? "") ?? Constants.defaultSwipeLongLeft
+            return SwipeAction(rawValue: string(forKey: key(.swipeFullTrailing)) ?? "") ?? Constants.defaultSwipeFullTrailing
         }
         set {
-            set(newValue.rawValue, forKey: key(.swipeLongLeft))
+            set(newValue.rawValue, forKey: key(.swipeFullTrailing))
         }
     }
 

@@ -52,11 +52,11 @@ struct ThreadListSwipeActions: ViewModifier {
     let viewModel: ThreadListViewModel
     let multipleSelectionViewModel: ThreadListMultipleSelectionViewModel
 
-    @AppStorage(UserDefaults.shared.key(.swipeLongRight)) private var swipeLongRight = Constants.defaultSwipeLongRight
-    @AppStorage(UserDefaults.shared.key(.swipeShortRight)) private var swipeShortRight = Constants.defaultSwipeShortRight
+    @AppStorage(UserDefaults.shared.key(.swipeFullLeading)) private var swipeFullLeading = Constants.defaultSwipeFullLeading
+    @AppStorage(UserDefaults.shared.key(.swipeLeading)) private var swipeLeading = Constants.defaultSwipeLeading
 
-    @AppStorage(UserDefaults.shared.key(.swipeLongLeft)) private var swipeLongLeft = Constants.defaultSwipeLongLeft
-    @AppStorage(UserDefaults.shared.key(.swipeShortLeft)) private var swipeShortLeft = Constants.defaultSwipeShortLeft
+    @AppStorage(UserDefaults.shared.key(.swipeFullTrailing)) private var swipeFullTrailing = Constants.defaultSwipeFullTrailing
+    @AppStorage(UserDefaults.shared.key(.swipeTrailing)) private var swipeTrailing = Constants.defaultSwipeTrailing
 
     func body(content: Content) -> some View {
         if viewModel.folder?.role == .draft {
@@ -70,12 +70,12 @@ struct ThreadListSwipeActions: ViewModifier {
             content
                 .swipeActions(edge: .leading) {
                     if !multipleSelectionViewModel.isEnabled {
-                        edgeActions([swipeLongRight, swipeShortRight])
+                        edgeActions([swipeFullLeading, swipeLeading])
                     }
                 }
                 .swipeActions(edge: .trailing) {
                     if !multipleSelectionViewModel.isEnabled {
-                        edgeActions([swipeLongLeft, swipeShortLeft])
+                        edgeActions([swipeFullTrailing, swipeTrailing])
                     }
                 }
         }

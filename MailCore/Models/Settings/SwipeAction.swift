@@ -21,34 +21,34 @@ import MailResources
 import SwiftUI
 
 public enum SwipeType: String, CaseIterable {
-    case shortRight
-    case longRight
-    case shortLeft
-    case longLeft
+    case leading
+    case fullLeading
+    case trailing
+    case fullTrailing
 
     public var title: String {
         switch self {
-        case .shortRight:
+        case .leading:
             return MailResourcesStrings.Localizable.settingsSwipeShortRight
-        case .longRight:
+        case .fullLeading:
             return MailResourcesStrings.Localizable.settingsSwipeLongRight
-        case .shortLeft:
+        case .trailing:
             return MailResourcesStrings.Localizable.settingsSwipeShortLeft
-        case .longLeft:
+        case .fullTrailing:
             return MailResourcesStrings.Localizable.settingsSwipeLongLeft
         }
     }
 
     public var keyPath: ReferenceWritableKeyPath<UserDefaults, SwipeAction> {
         switch self {
-        case .shortRight:
-            return \.swipeShortRight
-        case .longRight:
-            return \.swipeLongRight
-        case .shortLeft:
-            return \.swipeShortLeft
-        case .longLeft:
-            return \.swipeLongLeft
+        case .leading:
+            return \.swipeLeading
+        case .fullLeading:
+            return \.swipeFullLeading
+        case .trailing:
+            return \.swipeTrailing
+        case .fullTrailing:
+            return \.swipeFullTrailing
         }
     }
 }

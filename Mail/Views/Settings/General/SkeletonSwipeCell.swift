@@ -95,7 +95,7 @@ struct SkeletonSwipeCell: View {
 
 struct SkeletonSwipeCell_Previews: PreviewProvider {
     static var previews: some View {
-        SwipeConfigCell(section: .rightSwipe)
-        SwipeConfigCell(section: .leftSwipe)
+        SwipeConfigCell(section: .leadingSwipe)
+        SwipeConfigCell(section: .trailingSwipe)
     }
 }
