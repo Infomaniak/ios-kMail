@@ -219,7 +219,6 @@ enum ActionsTarget: Equatable {
                     quickActions = [.reply, .forward, .archive, .delete]
                 }
 
-                let firstFromMe = thread.messages.first?.fromMe ?? false
                 let archive = thread.messages.first?.canReplyAll ?? false
                 let unread = thread.hasUnseenMessages
                 let star = thread.flagged
@@ -232,7 +231,7 @@ enum ActionsTarget: Equatable {
                     unread ? .markAsRead : .markAsUnread,
                     .move,
                     star ? .unstar : .star,
-                    firstFromMe ? nil : spamAction,
+                    spamAction,
                     .print
                 ]
 
@@ -253,7 +252,7 @@ enum ActionsTarget: Equatable {
                 unread ? .markAsRead : .markAsUnread,
                 .move,
                 star ? .unstar : .star,
-                message.fromMe ? nil : .reportJunk,
+                .reportJunk,
                 .print,
                 .createRule,
                 .report,
