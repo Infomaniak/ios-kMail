@@ -22,7 +22,7 @@ import MailResources
 import SwiftUI
 
 struct SegmentedControlModifier: ViewModifier {
-    @AppStorage(UserDefaults.shared.key(.accentColor)) private var accentColor = AccentColor.pink
+    @AppStorage(UserDefaults.shared.key(.accentColor)) private var accentColor = DefaultPreferences.accentColor
 
     func body(content: Content) -> some View {
         content

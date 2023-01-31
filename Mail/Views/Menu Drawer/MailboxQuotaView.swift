@@ -51,7 +51,7 @@ struct MailboxQuotaView: View {
 }
 
 private struct QuotaCircularProgressViewStyle: ProgressViewStyle {
-    @AppStorage(UserDefaults.shared.key(.accentColor)) private var accentColor = AccentColor.pink
+    @AppStorage(UserDefaults.shared.key(.accentColor)) private var accentColor = DefaultPreferences.accentColor
 
     func makeBody(configuration: Configuration) -> some View {
         ZStack {

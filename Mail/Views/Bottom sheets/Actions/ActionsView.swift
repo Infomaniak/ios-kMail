@@ -78,7 +78,7 @@ struct QuickActionView: View {
     @ObservedObject var viewModel: ActionsViewModel
     let action: Action
 
-    @AppStorage(UserDefaults.shared.key(.accentColor)) private var accentColor = AccentColor.pink
+    @AppStorage(UserDefaults.shared.key(.accentColor)) private var accentColor = DefaultPreferences.accentColor
 
     var body: some View {
         Button {

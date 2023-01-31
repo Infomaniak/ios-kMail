@@ -25,7 +25,7 @@ import SwiftUI
 struct SlideView: View {
     let slide: Slide
 
-    @AppStorage(UserDefaults.shared.key(.accentColor), store: .shared) private var accentColor = AccentColor.pink
+    @AppStorage(UserDefaults.shared.key(.accentColor), store: .shared) private var accentColor = DefaultPreferences.accentColor
 
     @Environment(\.window) private var window
     @Environment(\.colorScheme) private var colorScheme

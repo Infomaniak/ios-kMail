@@ -21,10 +21,10 @@ import MailResources
 import SwiftUI
 
 struct SwipeConfigCell: View {
-    @AppStorage(UserDefaults.shared.key(.swipeLeading)) var leading = SwipeAction.none
-    @AppStorage(UserDefaults.shared.key(.swipeFullLeading)) var fullLeading = SwipeAction.none
-    @AppStorage(UserDefaults.shared.key(.swipeTrailing)) var trailing = SwipeAction.none
-    @AppStorage(UserDefaults.shared.key(.swipeFullTrailing)) var fullTrailing = SwipeAction.none
+    @AppStorage(UserDefaults.shared.key(.swipeLeading)) var leading = DefaultPreferences.swipeLeading
+    @AppStorage(UserDefaults.shared.key(.swipeFullLeading)) var fullLeading = DefaultPreferences.swipeFullLeading
+    @AppStorage(UserDefaults.shared.key(.swipeTrailing)) var trailing = DefaultPreferences.swipeTrailing
+    @AppStorage(UserDefaults.shared.key(.swipeFullTrailing)) var fullTrailing = DefaultPreferences.swipeFullTrailing
 
     var section: SwipeSettingsSection
 

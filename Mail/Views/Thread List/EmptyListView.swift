@@ -21,7 +21,7 @@ import MailResources
 import SwiftUI
 
 struct EmptyListView: View {
-    @AppStorage(UserDefaults.shared.key(.accentColor)) var accentColor = AccentColor.pink
+    @AppStorage(UserDefaults.shared.key(.accentColor)) var accentColor = DefaultPreferences.accentColor
     var isInbox: Bool
 
     var body: some View {

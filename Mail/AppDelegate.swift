@@ -40,7 +40,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         accountManager = AccountManager.instance
         ApiFetcher.decoder.dateDecodingStrategy = .iso8601
         refreshCacheData()
-        UserDefaults.shared.initSettings()
 
         UNUserNotificationCenter.current().delegate = notificationCenterDelegate
         Task {

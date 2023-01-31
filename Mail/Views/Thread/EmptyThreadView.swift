@@ -21,7 +21,7 @@ import MailResources
 import SwiftUI
 
 struct EmptyThreadView: View {
-    @AppStorage(UserDefaults.shared.key(.accentColor)) var accentColor = AccentColor.pink
+    @AppStorage(UserDefaults.shared.key(.accentColor)) var accentColor = DefaultPreferences.accentColor
     @EnvironmentObject var splitViewManager: SplitViewManager
 
     var body: some View {

@@ -52,11 +52,11 @@ struct ThreadListSwipeActions: ViewModifier {
     let viewModel: ThreadListViewModel
     let multipleSelectionViewModel: ThreadListMultipleSelectionViewModel
 
-    @AppStorage(UserDefaults.shared.key(.swipeFullLeading)) private var swipeFullLeading = Constants.defaultSwipeFullLeading
-    @AppStorage(UserDefaults.shared.key(.swipeLeading)) private var swipeLeading = Constants.defaultSwipeLeading
+    @AppStorage(UserDefaults.shared.key(.swipeFullLeading)) private var swipeFullLeading = DefaultPreferences.swipeFullLeading
+    @AppStorage(UserDefaults.shared.key(.swipeLeading)) private var swipeLeading = DefaultPreferences.swipeLeading
 
-    @AppStorage(UserDefaults.shared.key(.swipeFullTrailing)) private var swipeFullTrailing = Constants.defaultSwipeFullTrailing
-    @AppStorage(UserDefaults.shared.key(.swipeTrailing)) private var swipeTrailing = Constants.defaultSwipeTrailing
+    @AppStorage(UserDefaults.shared.key(.swipeFullTrailing)) private var swipeFullTrailing = DefaultPreferences.swipeFullTrailing
+    @AppStorage(UserDefaults.shared.key(.swipeTrailing)) private var swipeTrailing = DefaultPreferences.swipeTrailing
 
     func body(content: Content) -> some View {
         if viewModel.folder?.role == .draft {
