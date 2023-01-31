@@ -33,6 +33,7 @@ struct FloatingActionButtonModifier: ViewModifier {
                 FloatingActionButton(icon: icon, title: title, action: action)
             }
         }
+        .ignoresSafeArea(.keyboard)
     }
 }
 
