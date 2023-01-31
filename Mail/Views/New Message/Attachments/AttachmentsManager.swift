@@ -31,6 +31,7 @@ class AttachmentUploadTask: ObservableObject {
     }
 }
 
+@MainActor
 class AttachmentsManager: ObservableObject {
     private let draft: Draft
     private let mailboxManager: MailboxManager
@@ -43,6 +44,8 @@ class AttachmentsManager: ObservableObject {
         return attachmentUploadTasks.values.allSatisfy(\.uploadDone)
     }
 
+    var globalError: MailError?
+
     private lazy var filenameDateFormatter: DateFormatter = {
         let formatter = DateFormatter()
         formatter.dateFormat = "yyyyMMdd_HHmmssSS"
@@ -54,7 +57,6 @@ class AttachmentsManager: ObservableObject {
         self.mailboxManager = mailboxManager
     }
 
-    @MainActor
     private func updateAttachment(oldAttachment: Attachment, newAttachment: Attachment) {
         guard let realm = draft.realm,
               let oldAttachment = draft.attachments.first(where: { $0.uuid == oldAttachment.uuid }) else {
@@ -74,12 +76,6 @@ class AttachmentsManager: ObservableObject {
         objectWillChange.send()
     }
 
-    @MainActor
-    func getTotalAttachmentsSize() -> Int64 {
-        return attachments.map { $0.size }.reduce(0) { $0 + $1 }
-    }
-    
-    @MainActor
     func attachmentUploadTaskFor(uuid: String) -> AttachmentUploadTask {
         if attachmentUploadTasks[uuid] == nil {
             attachmentUploadTasks[uuid] = AttachmentUploadTask()
@@ -87,12 +83,13 @@ class AttachmentsManager: ObservableObject {
         return attachmentUploadTasks[uuid]!
     }
 
-    @MainActor
     func removeAttachment(_ attachment: Attachment) {
-        guard let realm = attachment.realm else { return }
-        let attachmentUUID = attachment.uuid
+        guard let realm = draft.realm,
+              let liveAttachment = draft.attachments.first(where: { $0.uuid == attachment.uuid }) else { return }
+
+        let attachmentUUID = liveAttachment.uuid
         try? realm.write {
-            realm.delete(attachment)
+            realm.delete(liveAttachment)
         }
         attachmentUploadTasks[attachmentUUID]?.task?.cancel()
         attachmentUploadTasks.removeValue(forKey: attachmentUUID)
@@ -100,7 +97,6 @@ class AttachmentsManager: ObservableObject {
         objectWillChange.send()
     }
 
-    @MainActor
     private func addLocalAttachment(attachment: Attachment) -> Attachment {
         attachmentUploadTasks[attachment.uuid] = AttachmentUploadTask()
         try? draft.realm?.write {
@@ -110,12 +106,6 @@ class AttachmentsManager: ObservableObject {
         return attachment.freeze()
     }
 
-    @MainActor
-    private func updateAttachmentUploadProgress(attachment: Attachment, progress: Double) {
-        attachmentUploadTasks[attachment.uuid]?.progress = progress
-    }
-
-    @MainActor
     private func updateAttachmentUploadError(attachment: Attachment, error: Error?) {
         if let error = error as? MailError {
             attachmentUploadTasks[attachment.uuid]?.error = error
@@ -155,7 +145,7 @@ class AttachmentsManager: ObservableObject {
                                        name: updatedName,
                                        disposition: attachment.disposition)
 
-        await updateAttachment(oldAttachment: attachment, newAttachment: newAttachment)
+        updateAttachment(oldAttachment: attachment, newAttachment: newAttachment)
         return newAttachment
     }
 
@@ -169,15 +159,18 @@ class AttachmentsManager: ObservableObject {
     }
 
     private func importAttachment(attachment: Attachable, disposition: AttachmentDisposition) async -> String? {
-        let localAttachment = await createLocalAttachment(name: attachment.suggestedName ?? getDefaultFileName(),
-                                                          type: attachment.type,
-                                                          disposition: disposition)
+        let localAttachment = createLocalAttachment(name: attachment.suggestedName ?? getDefaultFileName(),
+                                                    type: attachment.type,
+                                                    disposition: disposition)
         let importTask = Task { () -> String? in
             do {
                 let url = try await attachment.writeToTemporaryURL()
                 let updatedAttachment = await updateLocalAttachment(url: url, attachment: localAttachment)
-                if await getTotalAttachmentsSize() > Constants.maxAttachmentsSize {
-                    throw MailError.attachmentsSizeLimitReached
+                let totalSize = attachments.map { $0.size }.reduce(0) { $0 + $1 }
+                guard totalSize < Constants.maxAttachmentsSize else {
+                    globalError = MailError.attachmentsSizeLimitReached
+                    removeAttachment(updatedAttachment)
+                    return nil
                 }
 
                 let remoteAttachment = try await sendAttachment(url: url, localAttachment: updatedAttachment)
@@ -188,7 +181,7 @@ class AttachmentsManager: ObservableObject {
                 }
             } catch {
                 DDLogError("Error while creating attachment: \(error.localizedDescription)")
-                await updateAttachmentUploadError(attachment: localAttachment, error: error)
+                updateAttachmentUploadError(attachment: localAttachment, error: error)
             }
 
             return nil
@@ -223,10 +216,10 @@ class AttachmentsManager: ObservableObject {
             attachment: localAttachment
         ) { progress in
             Task { [weak self] in
-                await self?.updateAttachmentUploadProgress(attachment: localAttachment, progress: progress)
+                self?.attachmentUploadTasks[localAttachment.uuid]?.progress = progress
             }
         }
-        await updateAttachment(oldAttachment: localAttachment, newAttachment: remoteAttachment)
+        updateAttachment(oldAttachment: localAttachment, newAttachment: remoteAttachment)
         return remoteAttachment
     }
 }
