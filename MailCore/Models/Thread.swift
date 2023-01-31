@@ -83,7 +83,8 @@ public class Thread: Object, Decodable, Identifiable {
             return from[0].title
         default:
             var fromArray = [Recipient]()
-            for recipient in from {
+            let fromCount = min(from.count, 5)
+            for recipient in from[0..<fromCount] {
                 guard !fromArray.contains(where: { $0.email == recipient.email && $0.name == recipient.name }) else { continue }
                 fromArray.append(recipient)
             }
