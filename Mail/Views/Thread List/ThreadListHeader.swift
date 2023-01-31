@@ -62,7 +62,7 @@ struct ThreadListHeader: View {
             Spacer()
             if let unreadCount = unreadCount, unreadCount > 0 && !isMultipleSelectionEnabled {
                 Toggle(isOn: $unreadFilterOn) {
-                    Text(MailResourcesStrings.Localizable.threadListHeaderUnreadCount(unreadCount))
+                    Text(unreadCount < 100 ? MailResourcesStrings.Localizable.threadListHeaderUnreadCount(unreadCount) : MailResourcesStrings.Localizable.threadListHeaderUnreadCountMore)
                 }
                 .toggleStyle(.unread)
             }
