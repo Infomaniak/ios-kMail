@@ -116,7 +116,7 @@ struct ThreadCell: View {
         HStack(spacing: 8) {
             if thread.hasDrafts {
                 Text("\(MailResourcesStrings.Localizable.draftPrefix)")
-                    .textStyle(.bodyError)
+                    .textStyle(.header2Error)
                     .lineLimit(1)
                     .layoutPriority(1)
             }
