@@ -36,7 +36,7 @@ struct Slide: Identifiable {
         Slide(
             id: 1,
             backgroundImage: Image(resource: MailResourcesAsset.onboardingBackground1),
-            animationFile: "illu_1",
+            animationFile: "illu_onboarding_1",
             title: MailResourcesStrings.Localizable.onBoardingTitle1,
             description: "",
             lottieConfiguration: LottieConfiguration(id: 1, loopMode: .playOnce, loopFrameStart: 54, loopFrameEnd: 138)
@@ -44,7 +44,7 @@ struct Slide: Identifiable {
         Slide(
             id: 2,
             backgroundImage: Image(resource: MailResourcesAsset.onboardingBackground2),
-            animationFile: "illu_2",
+            animationFile: "illu_onboarding_2",
             title: MailResourcesStrings.Localizable.onBoardingTitle2,
             description: MailResourcesStrings.Localizable.onBoardingDescription2,
             lottieConfiguration: LottieConfiguration(id: 2, loopMode: .playOnce, loopFrameStart: 108, loopFrameEnd: 253)
@@ -52,7 +52,7 @@ struct Slide: Identifiable {
         Slide(
             id: 3,
             backgroundImage: Image(resource: MailResourcesAsset.onboardingBackground3),
-            animationFile: "illu_3",
+            animationFile: "illu_onboarding_3",
             title: MailResourcesStrings.Localizable.onBoardingTitle3,
             description: MailResourcesStrings.Localizable.onBoardingDescription3,
             lottieConfiguration: LottieConfiguration(id: 3, loopMode: .playOnce, loopFrameStart: 111, loopFrameEnd: 187)
@@ -60,7 +60,7 @@ struct Slide: Identifiable {
         Slide(
             id: 4,
             backgroundImage: Image(resource: MailResourcesAsset.onboardingBackground4),
-            animationFile: "illu_4",
+            animationFile: "illu_onboarding_4",
             title: MailResourcesStrings.Localizable.onBoardingTitle4,
             description: MailResourcesStrings.Localizable.onBoardingDescription4,
             lottieConfiguration: LottieConfiguration(id: 4, loopMode: .playOnce, loopFrameStart: 127, loopFrameEnd: 236)

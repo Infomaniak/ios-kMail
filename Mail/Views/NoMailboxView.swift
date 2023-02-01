@@ -24,26 +24,29 @@ struct NoMailboxView: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            Image(resource: MailResourcesAsset.logoMail)
+            Image(resource: MailResourcesAsset.logoText)
                 .resizable()
                 .scaledToFit()
                 .frame(width: 110, height: 110)
-                .padding(.bottom, 56)
-            Text(MailResourcesStrings.Localizable.noMailboxTitle)
-                .textStyle(.header2)
-                .padding(.horizontal, 48)
-                .padding(.bottom, 16)
-            Text(MailResourcesStrings.Localizable.noMailboxDescription)
-                .textStyle(.bodySecondary)
-                .padding(.horizontal, 48)
-                .padding(.bottom, 40)
+
+            Spacer()
+
+            VStack(spacing: 16) {
+                Text(MailResourcesStrings.Localizable.noMailboxTitle)
+                    .textStyle(.header2)
+                Text(MailResourcesStrings.Localizable.noMailboxDescription)
+                    .textStyle(.bodySecondary)
+            }
+            .multilineTextAlignment(.center)
+
+            Spacer()
+
             LargeButton {
                 // TODO: Add email address
                 showWorkInProgressSnackBar()
             } label: {
                 Label(MailResourcesStrings.Localizable.buttonAddEmailAddress, systemImage: "plus")
             }
-            .padding(.bottom, 24)
             Button {
                 (window?.windowScene?.delegate as? SceneDelegate)?.showLoginView()
             } label: {
