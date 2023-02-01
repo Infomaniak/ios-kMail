@@ -69,7 +69,7 @@ struct ThreadCellDataHolder {
     /// Last message of the thread, except for the Sent folder where we use the last message of the folder
     var preview: String {
         var content = thread.messages.last?.preview
-        if thread.folderId == mailboxManager.getFolder(with: .sent)?.id {
+        if thread.parent?.role == .sent {
             content = (thread.lastMessageFromFolder ?? thread.messages.last)?.preview
         }
 
