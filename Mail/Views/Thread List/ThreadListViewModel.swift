@@ -264,19 +264,8 @@ class DateSection: Identifiable {
     }
 
     private func toggleSpam(thread: Thread) async throws {
-        let folderRole: FolderRole
-        let undoRedoAction: UndoRedoAction
-        if folder?.role == .spam {
-            undoRedoAction = try await mailboxManager.nonSpam(threads: [thread])
-            folderRole = .inbox
-        } else {
-            undoRedoAction = try await mailboxManager.reportSpam(threads: [thread])
-            folderRole = .spam
-        }
-        IKSnackBar.showCancelableSnackBar(message: MailResourcesStrings.Localizable.snackbarThreadMoved(folderRole.localizedName),
-                                          cancelSuccessMessage: MailResourcesStrings.Localizable.snackbarMoveCancelled,
-                                          undoRedoAction: undoRedoAction,
-                                          mailboxManager: mailboxManager)
+        let destination: FolderRole = folder?.role == .spam ? .inbox : .spam
+        try await move(thread: thread, to: destination)
     }
 
     private func move(thread: Thread, to folderRole: FolderRole) async throws {

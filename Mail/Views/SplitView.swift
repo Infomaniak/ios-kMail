@@ -143,7 +143,13 @@ struct SplitView: View {
             case .restoreEmails:
                 RestoreEmailsView(state: bottomSheet, mailboxManager: mailboxManager)
             case let .reportJunk(threadBottomSheet, target):
-                ReportJunkView(mailboxManager: mailboxManager, target: target, state: threadBottomSheet, globalSheet: bottomSheet)
+                ReportJunkView(
+                    mailboxManager: mailboxManager,
+                    target: target,
+                    state: threadBottomSheet,
+                    globalSheet: bottomSheet,
+                    globalAlert: alert
+                )
             case let .reportDisplayProblem(message):
                 ReportDisplayProblemView(mailboxManager: mailboxManager, state: bottomSheet, message: message)
             case .none:

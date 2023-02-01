@@ -50,7 +50,7 @@ struct ReportPhishingView: View {
                 if response {
                     var messages = [message.freezeIfNeeded()]
                     messages.append(contentsOf: message.duplicates)
-                    _ = try await mailboxManager.reportSpam(messages: messages)
+                    _ = try await mailboxManager.move(messages: messages, to: .spam)
                     IKSnackBar.showSnackBar(message: MailResourcesStrings.Localizable.snackbarReportPhishingConfirmation)
                 }
             }

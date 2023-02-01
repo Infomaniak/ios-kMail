@@ -384,26 +384,6 @@ public class MailboxManager: ObservableObject {
         }
     }
 
-    public func reportSpam(threads: [Thread]) async throws -> UndoRedoAction {
-        var messages = threads.flatMap { thread in
-            thread.messages.where { message in
-                message.scheduled == false
-            }
-        }.filter { message in
-            !message.fromMe
-        }
-        messages.append(contentsOf: messages.flatMap(\.duplicates))
-        return try await reportSpam(messages: messages)
-    }
-
-    public func nonSpam(threads: [Thread]) async throws -> UndoRedoAction {
-        var messages = threads.flatMap { thread in
-            thread.messages.where { $0.scheduled == false }
-        }
-        messages.append(contentsOf: messages.flatMap(\.duplicates))
-        return try await nonSpam(messages: messages)
-    }
-
     public func toggleStar(threads: [Thread]) async throws {
         if threads.contains(where: { !$0.flagged }) {
             var messages = threads.compactMap { thread in
@@ -877,18 +857,6 @@ public class MailboxManager: ObservableObject {
     public func delete(messages: [Message]) async throws {
         _ = try await apiFetcher.delete(mailbox: mailbox, messages: messages)
         try await refreshFolder(from: messages)
-    }
-
-    public func reportSpam(messages: [Message]) async throws -> UndoRedoAction {
-        let response = try await apiFetcher.reportSpam(mailbox: mailbox, messages: messages)
-        try await refreshFolder(from: messages)
-        return undoRedoAction(for: response, and: messages)
-    }
-
-    public func nonSpam(messages: [Message]) async throws -> UndoRedoAction {
-        let response = try await apiFetcher.nonSpam(mailbox: mailbox, messages: messages)
-        try await refreshFolder(from: messages)
-        return undoRedoAction(for: response, and: messages)
     }
 
     public func star(messages: [Message]) async throws -> MessageActionResult {

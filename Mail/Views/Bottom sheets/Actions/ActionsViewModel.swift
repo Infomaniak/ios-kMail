@@ -219,7 +219,6 @@ enum ActionsTarget: Equatable {
                     quickActions = [.reply, .forward, .archive, .delete]
                 }
 
-                let firstFromMe = thread.messages.first?.fromMe ?? false
                 let archive = thread.messages.first?.canReplyAll ?? false
                 let unread = thread.hasUnseenMessages
                 let star = thread.flagged
@@ -232,7 +231,7 @@ enum ActionsTarget: Equatable {
                     unread ? .markAsRead : .markAsUnread,
                     .move,
                     star ? .unstar : .star,
-                    firstFromMe ? nil : spamAction,
+                    spamAction,
                     .print
                 ]
 
@@ -253,7 +252,7 @@ enum ActionsTarget: Equatable {
                 unread ? .markAsRead : .markAsUnread,
                 .move,
                 star ? .unstar : .star,
-                message.fromMe ? nil : .reportJunk,
+                .reportJunk,
                 .print,
                 .createRule,
                 .report,
@@ -429,43 +428,13 @@ enum ActionsTarget: Equatable {
     }
 
     private func spam() async throws {
-        let undoRedoAction: UndoRedoAction
-        let snackBarMessage: String
-        switch target {
-        case let .threads(threads):
-            undoRedoAction = try await mailboxManager.reportSpam(threads: threads)
-            snackBarMessage = MailResourcesStrings.Localizable.snackbarThreadsMoved(FolderRole.spam.localizedName)
-        case let .message(message):
-            var messages = [message]
-            messages.append(contentsOf: message.duplicates)
-            undoRedoAction = try await mailboxManager.reportSpam(messages: messages)
-            snackBarMessage = MailResourcesStrings.Localizable.snackbarMessageMoved(FolderRole.spam.localizedName)
-        }
-
-        IKSnackBar.showCancelableSnackBar(message: snackBarMessage,
-                                          cancelSuccessMessage: MailResourcesStrings.Localizable.snackbarMoveCancelled,
-                                          undoRedoAction: undoRedoAction,
-                                          mailboxManager: mailboxManager)
+        guard let spamFolder = mailboxManager.getFolder(with: .spam)?.freeze() else { return }
+        try await move(to: spamFolder)
     }
 
     private func nonSpam() async throws {
-        let undoRedoAction: UndoRedoAction
-        let snackBarMessage: String
-        switch target {
-        case let .threads(threads):
-            undoRedoAction = try await mailboxManager.nonSpam(threads: threads)
-            snackBarMessage = MailResourcesStrings.Localizable.snackbarThreadsMoved(FolderRole.inbox.localizedName)
-        case let .message(message):
-            var messages = [message]
-            messages.append(contentsOf: messages.flatMap(\.duplicates))
-            undoRedoAction = try await mailboxManager.nonSpam(messages: messages)
-            snackBarMessage = MailResourcesStrings.Localizable.snackbarMessageMoved(FolderRole.inbox.localizedName)
-        }
-
-        IKSnackBar.showCancelableSnackBar(message: snackBarMessage,
-                                          cancelSuccessMessage: MailResourcesStrings.Localizable.snackbarMoveCancelled,
-                                          undoRedoAction: undoRedoAction,
-                                          mailboxManager: mailboxManager)
+        guard let inboxFolder = mailboxManager.getFolder(with: .inbox)?.freeze() else { return }
+        try await move(to: inboxFolder)
     }
 
     private func block() async throws {

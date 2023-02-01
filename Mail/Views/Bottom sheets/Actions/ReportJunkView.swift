@@ -27,11 +27,13 @@ struct ReportJunkView: View {
     init(mailboxManager: MailboxManager,
          target: ActionsTarget,
          state: ThreadBottomSheet,
-         globalSheet: GlobalBottomSheet) {
+         globalSheet: GlobalBottomSheet,
+         globalAlert: GlobalAlert) {
         viewModel = ActionsViewModel(mailboxManager: mailboxManager,
                                      target: target,
                                      state: state,
-                                     globalSheet: globalSheet)
+                                     globalSheet: globalSheet,
+                                     globalAlert: globalAlert)
         if case let .message(message) = target {
             let spam = message.folderId == mailboxManager.getFolder(with: .spam)?._id
             actions.append(contentsOf: [
@@ -58,7 +60,8 @@ struct ReportJunkView_Previews: PreviewProvider {
         ReportJunkView(mailboxManager: PreviewHelper.sampleMailboxManager,
                        target: .threads([PreviewHelper.sampleThread]),
                        state: ThreadBottomSheet(),
-                       globalSheet: GlobalBottomSheet())
+                       globalSheet: GlobalBottomSheet(),
+                       globalAlert: GlobalAlert())
             .accentColor(AccentColor.pink.primary.swiftUiColor)
     }
 }
