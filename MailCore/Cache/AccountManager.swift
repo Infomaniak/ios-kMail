@@ -273,25 +273,23 @@ public class AccountManager: RefreshTokenDelegate {
     }
 
     public func createAndSetCurrentAccount(token: ApiToken) async throws -> Account {
-        let apiFetcher = ApiFetcher(token: token, delegate: self)
-        let user = try await apiFetcher.userProfile(dateFormat: .iso8601)
+        let apiFetcher = MailApiFetcher(token: token, delegate: self)
+        let user = try await apiFetcher.userProfile()
+
+        let mailboxesResponse = try await apiFetcher.mailboxes()
+        guard !mailboxesResponse.isEmpty else {
+            throw MailError.noMailbox
+        }
 
         let newAccount = Account(apiToken: token)
         newAccount.user = user
         addAccount(account: newAccount)
         setCurrentAccount(account: newAccount)
 
-        // add get mailboxes
-        let mailApiFetcher = MailApiFetcher(token: token, delegate: self)
-        let mailboxesResponse = try await mailApiFetcher.mailboxes()
-        guard !mailboxesResponse.isEmpty else {
-            removeAccount(toDeleteAccount: newAccount)
-            throw MailError.unknownError
-        }
         for mailbox in mailboxesResponse {
-            mailbox.permissions = try await mailApiFetcher.permissions(mailbox: mailbox)
+            mailbox.permissions = try await apiFetcher.permissions(mailbox: mailbox)
             if mailbox.isLimited {
-                mailbox.quotas = try await mailApiFetcher.quotas(mailbox: mailbox)
+                mailbox.quotas = try await apiFetcher.quotas(mailbox: mailbox)
             }
         }
 
