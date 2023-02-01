@@ -50,8 +50,26 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Infomaniak/ios-core.git",
       "state" : {
-        "branch" : "mail",
-        "revision" : "a758fb199acef63f01f2fb0f0158f494747a6f9a"
+        "branch" : "mail-di",
+        "revision" : "c257ca6cc2666176a136baa55204c8480762f342"
+      }
+    },
+    {
+      "identity" : "ios-core-ui",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/Infomaniak/ios-core-ui.git",
+      "state" : {
+        "revision" : "4e8b5ca3881020bca6fec5baf0c24a87f8bc0883",
+        "version" : "2.1.0"
+      }
+    },
+    {
+      "identity" : "ios-dependency-injection",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/Infomaniak/ios-dependency-injection",
+      "state" : {
+        "revision" : "24375b0ad0a19e5390fb413ce85bb0a752de8be6",
+        "version" : "1.1.6"
       }
     },
     {
@@ -59,8 +77,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Infomaniak/ios-login.git",
       "state" : {
-        "revision" : "43c76fee13d61f8ce62c801b425692359173a66e",
-        "version" : "2.2.1"
+        "revision" : "35190f66b67eb8a79cbacdbf54ee9a03ab61d7f7",
+        "version" : "4.0.0"
       }
     },
     {
@@ -75,7 +93,7 @@
     {
       "identity" : "localizekit",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/immortal79/LocalizeKit",
+      "location" : "https://github.com/PhilippeWeidmann/LocalizeKit",
       "state" : {
         "revision" : "1abb86ce614ae8d925bf82123c7360ab95827975",
         "version" : "1.0.1"
@@ -104,8 +122,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/kean/Nuke",
       "state" : {
-        "revision" : "2e9337168d08acccf72c039bf9324be24a1cf7d7",
-        "version" : "11.5.3"
+        "revision" : "df6cfba3f49aa6777b8c1084cb7778899ca166d3",
+        "version" : "11.6.0"
       }
     },
     {
@@ -122,8 +140,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/realm/realm-swift",
       "state" : {
-        "revision" : "d63923f1c912b564f2c16e04ddc280cdb71dbbdd",
-        "version" : "10.34.0"
+        "revision" : "b1072f3ef733108dfcc62c2001781e5d65605fbf",
+        "version" : "10.34.1"
       }
     },
     {
@@ -167,8 +185,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/apple/swift-log.git",
       "state" : {
-        "revision" : "6fe203dc33195667ce1759bf0182975e4653ba1c",
-        "version" : "1.4.4"
+        "revision" : "32e8d724467f8fe623624570367e3d50c5638e46",
+        "version" : "1.5.2"
       }
     },
     {

@@ -16,11 +16,13 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import InfomaniakCore
+import InfomaniakCoreUI
+import InfomaniakDI
 import MailResources
 import SwiftUI
 
 struct LockedAppView: View {
+    @InjectService var appLockHelper: AppLockHelper
     @Environment(\.window) var window
 
     var body: some View {
@@ -54,7 +56,7 @@ struct LockedAppView: View {
 
     private func unlockApp() {
         Task {
-            if (try? await AppLockHelper.shared.evaluatePolicy(reason: MailResourcesStrings.Localizable.lockAppTitle)) == true {
+            if (try? await appLockHelper.evaluatePolicy(reason: MailResourcesStrings.Localizable.lockAppTitle)) == true {
                 await (window?.windowScene?.delegate as? SceneDelegate)?.showMainView()
             }
         }

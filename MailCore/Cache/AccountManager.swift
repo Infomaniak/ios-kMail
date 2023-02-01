@@ -20,6 +20,7 @@ import CocoaLumberjackSwift
 import Foundation
 import InfomaniakBugTracker
 import InfomaniakCore
+import InfomaniakDI
 import InfomaniakLogin
 import Nuke
 import RealmSwift
@@ -31,7 +32,7 @@ public protocol AccountManagerDelegate: AnyObject {
 }
 
 public extension InfomaniakLogin {
-    static func apiToken(username: String, applicationPassword: String) async throws -> ApiToken {
+    func apiToken(username: String, applicationPassword: String) async throws -> ApiToken {
         try await withCheckedThrowingContinuation { continuation in
             getApiToken(username: username, applicationPassword: applicationPassword) { token, error in
                 if let token = token {
@@ -43,7 +44,7 @@ public extension InfomaniakLogin {
         }
     }
 
-    static func apiToken(using code: String, codeVerifier: String) async throws -> ApiToken {
+    func apiToken(using code: String, codeVerifier: String) async throws -> ApiToken {
         try await withCheckedThrowingContinuation { continuation in
             getApiTokenUsing(code: code, codeVerifier: codeVerifier) { token, error in
                 if let token = token {
@@ -91,6 +92,7 @@ extension Account: ObservableObject {}
 }
 
 public class AccountManager: RefreshTokenDelegate {
+    @InjectService var networkLoginService: InfomaniakLogin
     private static let appIdentifierPrefix = Bundle.main.infoDictionary!["AppIdentifierPrefix"] as! String
     private static let group = "com.infomaniak.mail"
     public static let appGroup = "group." + group
@@ -266,7 +268,7 @@ public class AccountManager: RefreshTokenDelegate {
     }
 
     public func createAndSetCurrentAccount(code: String, codeVerifier: String) async throws -> Account {
-        let token = try await InfomaniakLogin.apiToken(using: code, codeVerifier: codeVerifier)
+        let token = try await networkLoginService.apiToken(using: code, codeVerifier: codeVerifier)
         return try await createAndSetCurrentAccount(token: token)
     }
 

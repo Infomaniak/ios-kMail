@@ -20,6 +20,7 @@ import Atlantis
 import CocoaLumberjackSwift
 import Foundation
 import InfomaniakCore
+import InfomaniakCoreUI
 import MailResources
 import RealmSwift
 import UIKit

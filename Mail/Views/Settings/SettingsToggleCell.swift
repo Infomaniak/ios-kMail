@@ -16,11 +16,14 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import InfomaniakCore
+import InfomaniakCoreUI
+import InfomaniakDI
 import MailResources
 import SwiftUI
 
 struct SettingsToggleCell: View {
+    @InjectService var appLockHelper: AppLockHelper
+
     let title: String
     let userDefaults: ReferenceWritableKeyPath<UserDefaults, Bool>
 
@@ -67,8 +70,7 @@ struct SettingsToggleCell: View {
     private func enableAppLock() {
         Task {
             do {
-                if try await !AppLockHelper.shared
-                    .evaluatePolicy(reason: MailResourcesStrings.Localizable.appSecurityDescription) {
+                if try await !appLockHelper.evaluatePolicy(reason: MailResourcesStrings.Localizable.appSecurityDescription) {
                     withAnimation {
                         toggleIsOn.toggle()
                     }
