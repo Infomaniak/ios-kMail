@@ -29,9 +29,9 @@ extension LottieAnimationView {
 
 struct LottieConfiguration {
     let id: Int
-    let loopMode: LottieLoopMode
-    let loopFrameStart: Int?
-    let loopFrameEnd: Int?
+    var loopMode: LottieLoopMode = .playOnce
+    var loopFrameStart: Int?
+    var loopFrameEnd: Int?
 }
 
 class LottieViewModel: ObservableObject {
@@ -40,6 +40,8 @@ class LottieViewModel: ObservableObject {
 }
 
 struct LottieView: UIViewRepresentable {
+    typealias UpdateColorsClosure = (LottieAnimationView, LottieConfiguration) -> Void
+
     @StateObject private var viewModel = LottieViewModel()
 
     @Binding var isVisible: Bool
@@ -47,7 +49,14 @@ struct LottieView: UIViewRepresentable {
     let filename: String
     let configuration: LottieConfiguration
 
-    let updateColors: ((LottieAnimationView, LottieConfiguration) -> Void)?
+    let updateColors: UpdateColorsClosure?
+
+    init(filename: String, configuration: LottieConfiguration, isVisible: Binding<Bool>? = nil, updateColors: UpdateColorsClosure? = nil) {
+        self.filename = filename
+        self.configuration = configuration
+        _isVisible = isVisible ?? .constant(true)
+        self.updateColors = updateColors
+    }
 
     func makeUIView(context: Context) -> UIView {
         let view = UIView()

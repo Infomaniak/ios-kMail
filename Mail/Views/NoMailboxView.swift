@@ -16,18 +16,26 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import MailCore
 import MailResources
 import SwiftUI
 
 struct NoMailboxView: View {
     @Environment(\.window) var window
 
+    let lottieConfiguration = LottieConfiguration(id: 1, loopFrameStart: 42, loopFrameEnd: 112)
+
     var body: some View {
         VStack(spacing: 0) {
             Image(resource: MailResourcesAsset.logoText)
                 .resizable()
                 .scaledToFit()
-                .frame(width: 110, height: 110)
+                .frame(width: 152)
+
+            Spacer()
+
+            LottieView(filename: "illu_no_mailbox", configuration: lottieConfiguration)
+                .frame(height: 300)
 
             Spacer()
 
@@ -38,15 +46,16 @@ struct NoMailboxView: View {
                     .textStyle(.bodySecondary)
             }
             .multilineTextAlignment(.center)
+            .padding(.horizontal, 48)
 
             Spacer()
 
             LargeButton {
-                // TODO: Add email address
-                showWorkInProgressSnackBar()
+                UIApplication.shared.open(URLConstants.ikMe.url)
             } label: {
                 Label(MailResourcesStrings.Localizable.buttonAddEmailAddress, systemImage: "plus")
             }
+            .padding(.bottom, 16)
             Button {
                 (window?.windowScene?.delegate as? SceneDelegate)?.showLoginView()
             } label: {
@@ -54,6 +63,7 @@ struct NoMailboxView: View {
                     .textStyle(.bodyMediumAccent)
             }
         }
+        .padding(.vertical, 16)
     }
 }
 

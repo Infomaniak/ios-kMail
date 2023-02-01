@@ -48,9 +48,9 @@ struct SlideView: View {
                     Spacer(minLength: Constants.onboardingLogoHeight + Constants.onboardingVerticalTopPadding)
 
                     LottieView(
-                        isVisible: $isVisible,
                         filename: slide.animationFile,
                         configuration: slide.lottieConfiguration,
+                        isVisible: $isVisible,
                         updateColors: updateAnimationColors
                     )
                     .frame(height: 0.43 * proxy.size.height)
