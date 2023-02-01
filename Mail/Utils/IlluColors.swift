@@ -22,19 +22,20 @@ import UIKit
 
 extension AnimationKeypath {
     enum Category: String {
-        case iPhoneScreen = "IPHONE SCREEN"
-        case point = "POINT"
-        case chat = "CHAT"
-        case notification = "NOTIFICATION"
-        case movingNotification = "MOVING NOTIF"
         case archives = "ARCHIVES"
-        case hand = "HAND"
-        case star = "STAR"
         case bin = "BIN"
+        case chat = "CHAT"
         case clock = "CLOCK"
-        case woman = "WOMAN"
-        case men = "MEN"
+        case hand = "HAND"
+        case iPhoneScreen = "IPHONE SCREEN"
         case letter = "LETTER"
+        case link = "LINK"
+        case men = "MEN"
+        case movingNotification = "MOVING NOTIF"
+        case notification = "NOTIFICATION"
+        case point = "POINT"
+        case star = "STAR"
+        case woman = "WOMAN"
     }
 
     enum FinalLayer: String {
@@ -79,6 +80,7 @@ struct IlluColors {
         static let commonColors8 = Colors(lightColor: "#C4C4C4", darkColor: "#7C7C7C")
         static let commonColors9 = Colors(lightColor: "#FFFFFF", darkColor: "#EAEAEA")
         static let commonColors10 = Colors(lightColor: "#F8F8F8", darkColor: "#E4E4E4")
+        static let commonColors11 = Colors(lightColor: "#D9D9D9", darkColor: "#626262")
 
         static let pinkColors1 = Colors(lightColor: "#BC0055", darkColor: "#D0759F")
         static let pinkColors2 = Colors(lightColor: "#FF5B97", darkColor: "#EF0057")
@@ -106,10 +108,14 @@ struct IlluColors {
         static let blueColors10 = Colors(lightColor: "#F7FCFF", darkColor: "#E8F6FF")
         static let blueColors11 = Colors(lightColor: "#0875A5", darkColor: "#0875A5")
     }
+}
 
-    // MARK: - Default colors
+// MARK: - Onboarding colors
 
-    static let allColors = [
+extension IlluColors {
+    // MARK: Default colors
+
+    static let onBoardingAllColors = [
         IlluColors(.keyPath(category: .iPhoneScreen, group: 18), colors: .commonColors1),
         IlluColors(.keyPath(category: .iPhoneScreen, group: 22), colors: .commonColors2),
         IlluColors(.keyPath(category: .iPhoneScreen, group: 25), colors: .commonColors2),
@@ -135,9 +141,9 @@ struct IlluColors {
         IlluColors(.keyPath(category: .iPhoneScreen, group: 70), colors: .commonColors1)
     ]
 
-    // MARK: - Theme colors
+    // MARK: Theme colors
 
-    static let pinkColors = [
+    static let onBoardingPinkColors = [
         IlluColors(.keyPath(category: .iPhoneScreen, group: 1), colors: .pinkColors1),
         IlluColors(.keyPath(category: .iPhoneScreen, group: 2), colors: .pinkColors1),
         IlluColors(.keyPath(category: .iPhoneScreen, group: 3), colors: .pinkColors1),
@@ -155,7 +161,7 @@ struct IlluColors {
         IlluColors(.keyPath(category: .iPhoneScreen, group: 48), colors: .pinkColors5)
     ]
 
-    static let blueColors = [
+    static let onBoardingBlueColors = [
         IlluColors(.keyPath(category: .iPhoneScreen, group: 1), colors: .blueColors1),
         IlluColors(.keyPath(category: .iPhoneScreen, group: 2), colors: .blueColors1),
         IlluColors(.keyPath(category: .iPhoneScreen, group: 3), colors: .blueColors1),
@@ -173,9 +179,9 @@ struct IlluColors {
         IlluColors(.keyPath(category: .iPhoneScreen, group: 48), colors: .blueColors4)
     ]
 
-    // MARK: - Each illustration
+    // MARK: Each illustration
 
-    static let illu1Colors = [
+    static let illuOnBoarding1Colors = [
         IlluColors(.keyPath(category: .point, categoryNumber: 1), colors: .commonColors5),
         IlluColors(.keyPath(category: .point, categoryNumber: 2), colors: .commonColors5),
         IlluColors(.keyPath(category: .point, categoryNumber: 3), colors: .commonColors5),
@@ -186,14 +192,14 @@ struct IlluColors {
         IlluColors(.keyPath(category: .iPhoneScreen, group: 67), colors: .commonColors6),
         IlluColors(.keyPath(category: .iPhoneScreen, group: 69), colors: .commonColors5)
     ]
-    static let illu1PinkColors = [
+    static let illuOnBoarding1PinkColors = [
         IlluColors(.keyPath(category: .chat, categoryNumber: 1), colors: .pinkColors1),
         IlluColors(.keyPath(category: .chat, categoryNumber: 2), colors: .pinkColors4),
         IlluColors(.keyPath(category: .iPhoneScreen, group: 55), colors: .pinkColors6),
         IlluColors(.keyPath(category: .iPhoneScreen, group: 61), colors: .pinkColors1),
         IlluColors(.keyPath(category: .iPhoneScreen, group: 66), colors: .pinkColors7)
     ]
-    static let illu1BlueColors = [
+    static let illuOnBoarding1BlueColors = [
         IlluColors(.keyPath(category: .chat, categoryNumber: 1), colors: .blueColors1),
         IlluColors(.keyPath(category: .chat, categoryNumber: 2), colors: .blueColors3),
         IlluColors(.keyPath(category: .iPhoneScreen, group: 55), colors: .blueColors5),
@@ -201,7 +207,7 @@ struct IlluColors {
         IlluColors(.keyPath(category: .iPhoneScreen, group: 66), colors: .blueColors6)
     ]
 
-    static let illu2Colors = [
+    static let illuOnBoarding2Colors = [
         IlluColors(.keyPath(category: .notification, categoryNumber: 2, group: 5), colors: .commonColors4),
         IlluColors(.keyPath(category: .notification, categoryNumber: 2, group: 6), colors: .commonColors1),
         IlluColors(.keyPath(category: .notification, categoryNumber: 2, group: 9), colors: .commonColors7),
@@ -231,9 +237,9 @@ struct IlluColors {
         IlluColors(.keyPath(category: .archives, group: 1), colors: .commonColors5),
         IlluColors(.keyPath(category: .archives, group: 2), colors: .commonColors5),
         IlluColors(.keyPath(category: .archives, group: 3), colors: .commonColors5),
-        IlluColors(.keyPath(category: .archives, group: 4), colors: .commonColors5),
+        IlluColors(.keyPath(category: .archives, group: 4), colors: .commonColors5)
     ]
-    static let illu2PinkColors = [
+    static let illuOnBoarding2PinkColors = [
         IlluColors(.keyPath(category: .notification, categoryNumber: 2, group: 4), colors: .pinkColors5),
         IlluColors(.keyPath(category: .notification, categoryNumber: 2, group: 11), colors: .pinkColors1),
         IlluColors(.keyPath(category: .iPhoneScreen, group: 54), colors: .pinkColors5),
@@ -247,7 +253,7 @@ struct IlluColors {
         IlluColors(.keyPath(category: .movingNotification, categoryNumber: 2, group: 4), colors: .pinkColors5),
         IlluColors(.keyPath(category: .movingNotification, categoryNumber: 2, group: 11), colors: .pinkColors1)
     ]
-    static let illu2BlueColors = [
+    static let illuOnBoarding2BlueColors = [
         IlluColors(.keyPath(category: .notification, categoryNumber: 2, group: 4), colors: .blueColors4),
         IlluColors(.keyPath(category: .notification, categoryNumber: 2, group: 11), colors: .blueColors1),
         IlluColors(.keyPath(category: .hand, group: 1), colors: .blueColors6),
@@ -258,7 +264,7 @@ struct IlluColors {
         IlluColors(.keyPath(category: .movingNotification, categoryNumber: 2, group: 11), colors: .blueColors1)
     ]
 
-    static let illu3Colors = [
+    static let illuOnBoarding3Colors = [
         IlluColors(.keyPath(category: .notification, categoryNumber: 2, group: 1), colors: .commonColors2),
         IlluColors(.keyPath(category: .notification, categoryNumber: 2, group: 2), colors: .commonColors2),
         IlluColors(.keyPath(category: .notification, categoryNumber: 2, group: 3), colors: .commonColors5),
@@ -317,7 +323,7 @@ struct IlluColors {
         IlluColors(.keyPath(category: .clock, group: 4), colors: .blueColors1)
     ]
 
-    static let illu4Colors = [
+    static let illuOnBoarding4Colors = [
         IlluColors(.keyPath(category: .woman, group: 5), colors: .commonColors4),
         IlluColors(.keyPath(category: .woman, group: 6), colors: .commonColors1),
         IlluColors(.keyPath(category: .men, group: 5), colors: .commonColors4),
@@ -325,7 +331,7 @@ struct IlluColors {
         IlluColors(.keyPath(category: .letter, group: 3), colors: .commonColors9),
         IlluColors(.keyPath(category: .letter, group: 4), colors: .commonColors10)
     ]
-    static let illu4PinkColors = [
+    static let illuOnBoarding4PinkColors = [
         IlluColors(.keyPath(category: .woman, group: 4), colors: .pinkColors5),
         IlluColors(.keyPath(category: .men, group: 5), colors: .pinkColors4),
         IlluColors(.keyPath(category: .point, categoryNumber: 1), colors: .pinkColors5),
@@ -338,7 +344,7 @@ struct IlluColors {
         IlluColors(.keyPath(category: .letter, group: 6), colors: .pinkColors13),
         IlluColors(.keyPath(category: .letter, group: 7), colors: .pinkColors13)
     ]
-    static let illu4BlueColors = [
+    static let illuOnBoarding4BlueColors = [
         IlluColors(.keyPath(category: .woman, group: 4), colors: .blueColors4),
         IlluColors(.keyPath(category: .men, group: 5), colors: .blueColors3),
         IlluColors(.keyPath(category: .point, categoryNumber: 1), colors: .blueColors4),
@@ -352,25 +358,47 @@ struct IlluColors {
         IlluColors(.keyPath(category: .letter, group: 7), colors: .blueColors11)
     ]
 
-    // MARK: - Several illustrations
+    // MARK: Several illustrations
 
-    static let illu234Colors = [
+    static let illuOnBoarding234Colors = [
         IlluColors(.keyPath(category: .iPhoneScreen, group: 73), colors: .commonColors6),
         IlluColors(.keyPath(category: .iPhoneScreen, group: 74), colors: .commonColors1),
         IlluColors(.keyPath(category: .iPhoneScreen, group: 75), colors: .commonColors5),
         IlluColors(.keyPath(category: .iPhoneScreen, group: 76), colors: .commonColors2)
     ]
-    static let illu234PinkColors = [
+    static let illuOnBoarding234PinkColors = [
         IlluColors(.keyPath(category: .iPhoneScreen, group: 54), colors: .pinkColors5),
         IlluColors(.keyPath(category: .iPhoneScreen, group: 61), colors: .pinkColors6),
         IlluColors(.keyPath(category: .iPhoneScreen, group: 67), colors: .pinkColors1),
         IlluColors(.keyPath(category: .iPhoneScreen, group: 72), colors: .pinkColors7)
     ]
-    static let illu234BlueColors = [
+    static let illuOnBoarding234BlueColors = [
         IlluColors(.keyPath(category: .iPhoneScreen, group: 54), colors: .blueColors4),
         IlluColors(.keyPath(category: .iPhoneScreen, group: 61), colors: .blueColors5),
         IlluColors(.keyPath(category: .iPhoneScreen, group: 67), colors: .blueColors1),
         IlluColors(.keyPath(category: .iPhoneScreen, group: 72), colors: .blueColors6)
+    ]
+}
+
+// MARK: - No Mailbox colors
+
+extension IlluColors {
+    static let noMailboxAllColors = [
+        IlluColors(.keyPath(category: .link), colors: .commonColors11),
+        IlluColors(.keyPath(category: .iPhoneScreen, group: 1), colors: .commonColors5),
+        IlluColors(.keyPath(category: .iPhoneScreen, group: 2), colors: .commonColors2)
+    ]
+
+    static let illuNoMailboxPinkColors = [
+        IlluColors(.keyPath(category: .hand, group: 1), colors: .pinkColors7),
+        IlluColors(.keyPath(category: .hand, group: 4), colors: .pinkColors8),
+        IlluColors(.keyPath(category: .hand, group: 5), colors: .pinkColors8)
+    ]
+
+    static let illuNoMailboxBlueColors = [
+        IlluColors(.keyPath(category: .hand, group: 1), colors: .blueColors6),
+        IlluColors(.keyPath(category: .hand, group: 4), colors: .blueColors7),
+        IlluColors(.keyPath(category: .hand, group: 5), colors: .blueColors7)
     ]
 }
 

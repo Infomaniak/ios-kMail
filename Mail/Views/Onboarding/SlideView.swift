@@ -108,60 +108,60 @@ struct SlideView: View {
     }
 
     private func updateAnimationColors(_ animation: LottieAnimationView, _ configuration: LottieConfiguration) {
-        IlluColors.allColors.forEach { $0.applyColors(to: animation) }
+        IlluColors.onBoardingAllColors.forEach { $0.applyColors(to: animation) }
 
         if configuration.id == 2 || configuration.id == 3 || configuration.id == 4 {
-            IlluColors.illu234Colors.forEach { $0.applyColors(to: animation) }
+            IlluColors.illuOnBoarding234Colors.forEach { $0.applyColors(to: animation) }
         }
 
         switch configuration.id {
         case 1:
-            IlluColors.illu1Colors.forEach { $0.applyColors(to: animation) }
+            IlluColors.illuOnBoarding1Colors.forEach { $0.applyColors(to: animation) }
         case 2:
-            IlluColors.illu2Colors.forEach { $0.applyColors(to: animation) }
+            IlluColors.illuOnBoarding2Colors.forEach { $0.applyColors(to: animation) }
         case 3:
-            IlluColors.illu3Colors.forEach { $0.applyColors(to: animation) }
+            IlluColors.illuOnBoarding3Colors.forEach { $0.applyColors(to: animation) }
         case 4:
-            IlluColors.illu4Colors.forEach { $0.applyColors(to: animation) }
+            IlluColors.illuOnBoarding4Colors.forEach { $0.applyColors(to: animation) }
         default:
             break
         }
 
         if UserDefaults.shared.accentColor == .pink {
-            IlluColors.pinkColors.forEach { $0.applyColors(to: animation) }
+            IlluColors.onBoardingPinkColors.forEach { $0.applyColors(to: animation) }
 
             if configuration.id == 2 || configuration.id == 3 || configuration.id == 4 {
-                IlluColors.illu234PinkColors.forEach { $0.applyColors(to: animation) }
+                IlluColors.illuOnBoarding234PinkColors.forEach { $0.applyColors(to: animation) }
             }
 
             switch configuration.id {
             case 1:
-                IlluColors.illu1PinkColors.forEach { $0.applyColors(to: animation) }
+                IlluColors.illuOnBoarding1PinkColors.forEach { $0.applyColors(to: animation) }
             case 2:
-                IlluColors.illu2PinkColors.forEach { $0.applyColors(to: animation) }
+                IlluColors.illuOnBoarding2PinkColors.forEach { $0.applyColors(to: animation) }
             case 3:
                 IlluColors.illu3PinkColors.forEach { $0.applyColors(to: animation) }
             case 4:
-                IlluColors.illu4PinkColors.forEach { $0.applyColors(to: animation) }
+                IlluColors.illuOnBoarding4PinkColors.forEach { $0.applyColors(to: animation) }
             default:
                 break
             }
         } else {
-            IlluColors.blueColors.forEach { $0.applyColors(to: animation) }
+            IlluColors.onBoardingBlueColors.forEach { $0.applyColors(to: animation) }
 
             if configuration.id == 2 || configuration.id == 3 || configuration.id == 4 {
-                IlluColors.illu234BlueColors.forEach { $0.applyColors(to: animation) }
+                IlluColors.illuOnBoarding234BlueColors.forEach { $0.applyColors(to: animation) }
             }
 
             switch configuration.id {
             case 1:
-                IlluColors.illu1BlueColors.forEach { $0.applyColors(to: animation) }
+                IlluColors.illuOnBoarding1BlueColors.forEach { $0.applyColors(to: animation) }
             case 2:
-                IlluColors.illu2BlueColors.forEach { $0.applyColors(to: animation) }
+                IlluColors.illuOnBoarding2BlueColors.forEach { $0.applyColors(to: animation) }
             case 3:
                 IlluColors.illu3BlueColors.forEach { $0.applyColors(to: animation) }
             case 4:
-                IlluColors.illu4BlueColors.forEach { $0.applyColors(to: animation) }
+                IlluColors.illuOnBoarding4BlueColors.forEach { $0.applyColors(to: animation) }
             default:
                 break
             }
