@@ -24,6 +24,7 @@ import SwiftUI
 
 struct SlideView: View {
     let slide: Slide
+    let updateAnimationColors: LottieView.UpdateColorsClosure
 
     @AppStorage(UserDefaults.shared.key(.accentColor), store: .shared) private var accentColor = DefaultPreferences.accentColor
 
@@ -106,67 +107,6 @@ struct SlideView: View {
         segmentedControl?.setTitleTextAttributes([.foregroundColor: nonAccentColor.primary.color], for: .normal)
         segmentedControl?.backgroundColor = nonAccentColor.secondary.color
     }
-
-    private func updateAnimationColors(_ animation: LottieAnimationView, _ configuration: LottieConfiguration) {
-        IlluColors.onBoardingAllColors.forEach { $0.applyColors(to: animation) }
-
-        if configuration.id == 2 || configuration.id == 3 || configuration.id == 4 {
-            IlluColors.illuOnBoarding234Colors.forEach { $0.applyColors(to: animation) }
-        }
-
-        switch configuration.id {
-        case 1:
-            IlluColors.illuOnBoarding1Colors.forEach { $0.applyColors(to: animation) }
-        case 2:
-            IlluColors.illuOnBoarding2Colors.forEach { $0.applyColors(to: animation) }
-        case 3:
-            IlluColors.illuOnBoarding3Colors.forEach { $0.applyColors(to: animation) }
-        case 4:
-            IlluColors.illuOnBoarding4Colors.forEach { $0.applyColors(to: animation) }
-        default:
-            break
-        }
-
-        if UserDefaults.shared.accentColor == .pink {
-            IlluColors.onBoardingPinkColors.forEach { $0.applyColors(to: animation) }
-
-            if configuration.id == 2 || configuration.id == 3 || configuration.id == 4 {
-                IlluColors.illuOnBoarding234PinkColors.forEach { $0.applyColors(to: animation) }
-            }
-
-            switch configuration.id {
-            case 1:
-                IlluColors.illuOnBoarding1PinkColors.forEach { $0.applyColors(to: animation) }
-            case 2:
-                IlluColors.illuOnBoarding2PinkColors.forEach { $0.applyColors(to: animation) }
-            case 3:
-                IlluColors.illu3PinkColors.forEach { $0.applyColors(to: animation) }
-            case 4:
-                IlluColors.illuOnBoarding4PinkColors.forEach { $0.applyColors(to: animation) }
-            default:
-                break
-            }
-        } else {
-            IlluColors.onBoardingBlueColors.forEach { $0.applyColors(to: animation) }
-
-            if configuration.id == 2 || configuration.id == 3 || configuration.id == 4 {
-                IlluColors.illuOnBoarding234BlueColors.forEach { $0.applyColors(to: animation) }
-            }
-
-            switch configuration.id {
-            case 1:
-                IlluColors.illuOnBoarding1BlueColors.forEach { $0.applyColors(to: animation) }
-            case 2:
-                IlluColors.illuOnBoarding2BlueColors.forEach { $0.applyColors(to: animation) }
-            case 3:
-                IlluColors.illu3BlueColors.forEach { $0.applyColors(to: animation) }
-            case 4:
-                IlluColors.illuOnBoarding4BlueColors.forEach { $0.applyColors(to: animation) }
-            default:
-                break
-            }
-        }
-    }
 }
 
 struct SlideView_Previews: PreviewProvider {
@@ -181,6 +121,6 @@ struct SlideView_Previews: PreviewProvider {
     }
 
     static var slideView: some View {
-        SlideView(slide: Slide.allSlides[0])
+        SlideView(slide: Slide.allSlides[0]) { _, _ in /* Preview */ }
     }
 }

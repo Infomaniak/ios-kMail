@@ -16,6 +16,7 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import Lottie
 import MailCore
 import MailResources
 import SwiftUI
@@ -34,7 +35,7 @@ struct NoMailboxView: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            SlideView(slide: slide)
+            SlideView(slide: slide, updateAnimationColors: updateAnimationColors)
                 .overlay(alignment: .top) {
                     Image(resource: MailResourcesAsset.logoText)
                         .resizable()
@@ -59,45 +60,16 @@ struct NoMailboxView: View {
             }
             .frame(height: Constants.onboardingButtonHeight + Constants.onboardingBottomButtonPadding, alignment: .top)
         }
+    }
 
-//        VStack(spacing: 0) {
-//            Image(resource: MailResourcesAsset.logoText)
-//                .resizable()
-//                .scaledToFit()
-//                .frame(width: 152)
-//
-//            Spacer()
-//
-//            LottieView(filename: "illu_no_mailbox", configuration: lottieConfiguration)
-//                .frame(height: 300)
-//
-//            Spacer()
-//
-//            VStack(spacing: 16) {
-//                Text(MailResourcesStrings.Localizable.noMailboxTitle)
-//                    .textStyle(.header2)
-//                Text(MailResourcesStrings.Localizable.noMailboxDescription)
-//                    .textStyle(.bodySecondary)
-//            }
-//            .multilineTextAlignment(.center)
-//            .padding(.horizontal, 48)
-//
-//            Spacer()
-//
-//            LargeButton {
-//                UIApplication.shared.open(URLConstants.ikMe.url)
-//            } label: {
-//                Label(MailResourcesStrings.Localizable.buttonAddEmailAddress, systemImage: "plus")
-//            }
-//            .padding(.bottom, 16)
-//            Button {
-//                (window?.windowScene?.delegate as? SceneDelegate)?.showLoginView()
-//            } label: {
-//                Text(MailResourcesStrings.Localizable.buttonLogInDifferentAccount)
-//                    .textStyle(.bodyMediumAccent)
-//            }
-//        }
-//        .padding(.vertical, 16)
+    private func updateAnimationColors(_ animation: LottieAnimationView, _ configuration: LottieConfiguration) {
+        IlluColors.noMailboxAllColors.forEach { $0.applyColors(to: animation) }
+
+        if UserDefaults.shared.accentColor == .pink {
+            IlluColors.illuNoMailboxPinkColors.forEach { $0.applyColors(to: animation) }
+        } else {
+            IlluColors.illuNoMailboxBlueColors.forEach { $0.applyColors(to: animation) }
+        }
     }
 }
 
