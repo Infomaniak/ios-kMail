@@ -21,8 +21,6 @@ import MailResources
 import SwiftUI
 
 struct SettingsListView: View {
-    @State private var lockEnable = false
-
     @AppStorage(UserDefaults.shared.key(.threadDensity), store: .shared) private var density = DefaultPreferences.threadDensity
     @AppStorage(UserDefaults.shared.key(.theme), store: .shared) private var theme = DefaultPreferences.theme
     @AppStorage(UserDefaults.shared.key(.accentColor), store: .shared) private var accentColor = DefaultPreferences.accentColor

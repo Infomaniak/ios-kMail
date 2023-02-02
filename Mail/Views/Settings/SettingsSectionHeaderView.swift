@@ -1,4 +1,3 @@
-//
 /*
  Infomaniak Mail - iOS App
  Copyright (C) 2022 Infomaniak Network SA
@@ -21,12 +20,7 @@ import SwiftUI
 
 struct SettingsSectionHeaderView: View {
     let title: String
-    let separator: Bool
-
-    init(title: String, separator: Bool = false) {
-        self.title = title
-        self.separator = separator
-    }
+    @State var separator = false
 
     var body: some View {
         // Header & separator
