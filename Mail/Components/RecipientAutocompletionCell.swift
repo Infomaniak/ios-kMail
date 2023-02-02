@@ -28,11 +28,11 @@ struct RecipientAutocompletionCell: View {
 
             if recipient.name.isEmpty {
                 Text(recipient.email)
-                    .textStyle(.body)
+                    .textStyle(.bodyMedium)
             } else {
                 VStack(alignment: .leading) {
                     Text(recipient.name)
-                        .textStyle(.body)
+                        .textStyle(.bodyMedium)
                     Text(recipient.email)
                         .textStyle(.bodySecondary)
                 }
