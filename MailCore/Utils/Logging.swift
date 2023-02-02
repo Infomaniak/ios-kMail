@@ -20,7 +20,7 @@ import Atlantis
 import CocoaLumberjack
 import CocoaLumberjackSwift
 import Foundation
-import InfomaniakLogin
+import InfomaniakCore
 import RealmSwift
 import Sentry
 

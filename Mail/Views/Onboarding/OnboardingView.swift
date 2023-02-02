@@ -17,7 +17,8 @@
  */
 
 import AuthenticationServices
-import InfomaniakCore
+import InfomaniakCoreUI
+import InfomaniakDI
 import InfomaniakLogin
 import MailCore
 import MailResources
@@ -68,6 +69,8 @@ struct Slide: Identifiable {
 }
 
 struct OnboardingView: View {
+    @InjectService var loginService: InfomaniakLogin
+
     @Environment(\.window) private var window
     @Environment(\.dismiss) private var dismiss
 
@@ -168,7 +171,7 @@ struct OnboardingView: View {
 
     private func login() {
         isLoading = true
-        InfomaniakLogin.asWebAuthenticationLoginFrom(useEphemeralSession: true) { result in
+        loginService.asWebAuthenticationLoginFrom(useEphemeralSession: true) { result in
             switch result {
             case let .success(result):
                 loginSuccessful(code: result.code, codeVerifier: result.verifier)

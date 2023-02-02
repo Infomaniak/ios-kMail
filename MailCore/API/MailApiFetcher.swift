@@ -19,6 +19,7 @@
 import Alamofire
 import Foundation
 import InfomaniakCore
+import InfomaniakDI
 import InfomaniakLogin
 import Sentry
 import UIKit
@@ -290,6 +291,8 @@ public class MailApiFetcher: ApiFetcher {
 }
 
 class SyncedAuthenticator: OAuthAuthenticator {
+    @InjectService var networkLoginService: InfomaniakLogin
+
     override func refresh(
         _ credential: OAuthAuthenticator.Credential,
         for session: Session,
@@ -341,7 +344,8 @@ class SyncedAuthenticator: OAuthAuthenticator {
                     return
                 }
             }
-            InfomaniakLogin.refreshToken(token: credential) { token, error in
+
+            self.networkLoginService.refreshToken(token: credential) { token, error in
                 // New token has been fetched correctly
                 if let token = token {
                     SentrySDK

@@ -17,6 +17,8 @@
  */
 
 import InfomaniakCore
+import InfomaniakCoreUI
+import InfomaniakDI
 import MailCore
 import MailResources
 import SwiftUI
@@ -26,6 +28,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, AccountManagerDelegate 
     var window: UIWindow?
 
     private var accountManager: AccountManager!
+    @InjectService var appLockHelper: AppLockHelper
 
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
         // Use this method to optionally configure and attach the UIWindow `window` to the provided UIWindowScene `scene`.
@@ -58,7 +61,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, AccountManagerDelegate 
     func sceneWillEnterForeground(_ scene: UIScene) {
         // Called as the scene transitions from the background to the foreground.
         // Use this method to undo the changes made on entering the background.
-        if UserDefaults.shared.isAppLockEnabled && AppLockHelper.shared.isAppLocked {
+        if UserDefaults.shared.isAppLockEnabled && appLockHelper.isAppLocked {
             showLockView()
         }
     }
@@ -73,9 +76,9 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, AccountManagerDelegate 
             LockedAppView,
             _EnvironmentKeyWritingModifier<UIWindow?>
         >>.self) != true {
-            AppLockHelper.shared.setTime()
+            appLockHelper.setTime()
         }
-        
+
         BackgroundFetcher.shared.scheduleAppRefresh()
     }
 

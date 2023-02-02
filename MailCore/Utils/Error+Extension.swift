@@ -17,7 +17,7 @@
  */
 
 import Foundation
-import InfomaniakCore
+import InfomaniakCoreUI
 
 public func tryOrDisplayError(_ body: () throws -> Void) {
     do {

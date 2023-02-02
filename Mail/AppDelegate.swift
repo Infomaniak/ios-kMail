@@ -18,6 +18,8 @@
 
 import CocoaLumberjackSwift
 import InfomaniakCore
+import InfomaniakCoreUI
+import InfomaniakDI
 import InfomaniakLogin
 import MailCore
 import Sentry
@@ -35,8 +37,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         willFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil
     ) -> Bool {
         Logging.initLogging()
+        setupDI()
         DDLogInfo("Application starting in foreground ? \(UIApplication.shared.applicationState != .background)")
-        InfomaniakLogin.initWith(clientId: MailApiFetcher.clientId)
         accountManager = AccountManager.instance
         ApiFetcher.decoder.dateDecodingStrategy = .iso8601
         refreshCacheData()
@@ -95,5 +97,21 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 DDLogError("Error while updating user account: \(error)")
             }
         }
+    }
+
+    func setupDI() {
+        let loginService = Factory(type: InfomaniakLogin.self) { _, _ in
+            InfomaniakLogin(clientId: MailApiFetcher.clientId)
+        }
+        let networkLoginService = Factory(type: InfomaniakNetworkLogin.self) { _, _ in
+            InfomaniakNetworkLogin(clientId: MailApiFetcher.clientId)
+        }
+        let appLockService = Factory(type: AppLockHelper.self) { _, _ in
+            AppLockHelper()
+        }
+
+        SimpleResolver.sharedResolver.store(factory: loginService)
+        SimpleResolver.sharedResolver.store(factory: networkLoginService)
+        SimpleResolver.sharedResolver.store(factory: appLockService)
     }
 }
