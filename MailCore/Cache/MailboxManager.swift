@@ -631,7 +631,7 @@ public class MailboxManager: ObservableObject {
         await deleteMessages(uids: deletedUids, folder: folder)
         await updateMessages(updates: updated, folder: folder)
 
-        await backgroundRealm.execute { realm in
+        await backgroundRealm.execute { [self] realm in
             if newCursor != nil {
                 guard let folder = folder.fresh(using: realm) else { return }
                 try? realm.safeWrite {
@@ -640,22 +640,34 @@ public class MailboxManager: ObservableObject {
                     folder.lastUpdate = Date()
                 }
             }
+
+            searchForOrphanMessages(folderId: folder.id, using: realm)
+            searchForOrphanThreads(using: realm)
         }
 
         if folder.role == .inbox {
             MailboxInfosManager.instance.updateUnseen(unseenMessages: folder.unreadCount, for: mailbox)
         }
-
-        try await searchForOrphanMessages(folderId: folder.id)
     }
 
-    private func searchForOrphanMessages(folderId: String) async throws {
-        let realm = getRealm()
+    private func searchForOrphanMessages(folderId: String, using realm: Realm? = nil) {
+        let realm = realm ?? getRealm()
         let orphanMessages = realm.objects(Message.self).where { $0.folderId == folderId }.filter { $0.parents.isEmpty }
         if !orphanMessages.isEmpty {
             SentrySDK.capture(message: "We found some orphan Messages.") { scope in
                 scope.setLevel(.error)
                 scope.setContext(value: ["uids": "\(orphanMessages.map { $0.uid })"], key: "orphanMessages")
+            }
+        }
+    }
+
+    private func searchForOrphanThreads(using realm: Realm? = nil) {
+        let realm = realm ?? getRealm()
+        let orphanThreads = realm.objects(Thread.self).filter { $0.parentLink.isEmpty }
+        if !orphanThreads.isEmpty {
+            SentrySDK.capture(message: "We found some orphan Threads.") { scope in
+                scope.setLevel(.error)
+                scope.setContext(value: ["uids": "\(orphanThreads.map { $0.uid })"], key: "orphanThreads")
             }
         }
     }
