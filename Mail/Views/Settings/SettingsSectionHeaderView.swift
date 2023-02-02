@@ -20,7 +20,7 @@ import SwiftUI
 
 struct SettingsSectionHeaderView: View {
     let title: String
-    @State var separator = false
+    var separator = false
 
     var body: some View {
         // Header & separator
