@@ -627,7 +627,7 @@ public class MailboxManager: ObservableObject {
             updated.append(contentsOf: messageDeltaResult.updated)
         }
 
-        try await addMessages(shortUids: addedShortUids, folder: folder)
+        try await addMessages(shortUids: addedShortUids, folder: folder, newCursor: newCursor)
         await deleteMessages(uids: deletedUids, folder: folder)
         await updateMessages(updates: updated, folder: folder)
 
@@ -641,8 +641,8 @@ public class MailboxManager: ObservableObject {
                 }
             }
 
-            searchForOrphanMessages(folderId: folder.id, using: realm)
-            searchForOrphanThreads(using: realm)
+            searchForOrphanMessages(folderId: folder.id, using: realm, previousCursor: previousCursor, newCursor: newCursor)
+            searchForOrphanThreads(using: realm, previousCursor: previousCursor, newCursor: newCursor)
         }
 
         if folder.role == .inbox {
@@ -650,29 +650,40 @@ public class MailboxManager: ObservableObject {
         }
     }
 
-    private func searchForOrphanMessages(folderId: String, using realm: Realm? = nil) {
+    private func searchForOrphanMessages(
+        folderId: String,
+        using realm: Realm? = nil,
+        previousCursor: String?,
+        newCursor: String?
+    ) {
         let realm = realm ?? getRealm()
         let orphanMessages = realm.objects(Message.self).where { $0.folderId == folderId }.filter { $0.parents.isEmpty }
         if !orphanMessages.isEmpty {
             SentrySDK.capture(message: "We found some orphan Messages.") { scope in
                 scope.setLevel(.error)
-                scope.setContext(value: ["uids": "\(orphanMessages.map { $0.uid })"], key: "orphanMessages")
+                scope.setContext(value: ["uids": "\(orphanMessages.map { $0.uid })",
+                                         "previousCursor": previousCursor ?? "No cursor",
+                                         "newCursor": newCursor ?? "No cursor"],
+                                 key: "orphanMessages")
             }
         }
     }
 
-    private func searchForOrphanThreads(using realm: Realm? = nil) {
+    private func searchForOrphanThreads(using realm: Realm? = nil, previousCursor: String?, newCursor: String?) {
         let realm = realm ?? getRealm()
         let orphanThreads = realm.objects(Thread.self).filter { $0.parentLink.isEmpty }
         if !orphanThreads.isEmpty {
             SentrySDK.capture(message: "We found some orphan Threads.") { scope in
                 scope.setLevel(.error)
-                scope.setContext(value: ["uids": "\(orphanThreads.map { $0.uid })"], key: "orphanThreads")
+                scope.setContext(value: ["uids": "\(orphanThreads.map { $0.uid })",
+                                         "previousCursor": previousCursor ?? "No cursor",
+                                         "newCursor": newCursor ?? "No cursor"],
+                                 key: "orphanThreads")
             }
         }
     }
 
-    private func addMessages(shortUids: [String], folder: Folder) async throws {
+    private func addMessages(shortUids: [String], folder: Folder, newCursor: String?) async throws {
         guard !shortUids.isEmpty else { return }
         let reversedUids: [String] = getUniqueUidsInReverse(folder: folder, remoteUids: shortUids)
         let pageSize = 50
@@ -692,13 +703,18 @@ public class MailboxManager: ObservableObject {
                 }
             }
 
-            sendMissingMessagesSentry(sentUids: newList, receivedMessages: messageByUidsResult.messages, folderId: folder.id)
+            sendMissingMessagesSentry(
+                sentUids: newList,
+                receivedMessages: messageByUidsResult.messages,
+                folder: folder,
+                newCursor: newCursor
+            )
 
             offset += pageSize
         }
     }
 
-    private func sendMissingMessagesSentry(sentUids: [String], receivedMessages: [Message], folderId: String) {
+    private func sendMissingMessagesSentry(sentUids: [String], receivedMessages: [Message], folder: Folder, newCursor: String?) {
         if receivedMessages.count != sentUids.count {
             let receivedUids = Set(receivedMessages.map { Constants.shortUid(from: $0.uid) })
             let missingUids = sentUids.filter { !receivedUids.contains($0) }
@@ -706,7 +722,9 @@ public class MailboxManager: ObservableObject {
                 SentrySDK.capture(message: "We tried to download some Messages, but they were nowhere to be found") { scope in
                     scope.setLevel(.error)
                     scope.setContext(
-                        value: ["uids": "\(missingUids.map { Constants.longUid(from: $0, folderId: folderId) })"],
+                        value: ["uids": "\(missingUids.map { Constants.longUid(from: $0, folderId: folder.id) })",
+                                "previousCursor": folder.cursor ?? "No cursor",
+                                "newCursor": newCursor ?? "No cursor"],
                         key: "missingMessages"
                     )
                 }
