@@ -60,7 +60,7 @@ struct SlideView: View {
                     Text(slide.title)
                         .textStyle(.header2)
 
-                    if slide.id == 1 {
+                    if slide.showPicker {
                         Picker("Accent color", selection: $accentColor) {
                             ForEach(AccentColor.allCases, id: \.rawValue) { color in
                                 Text(color.title)
@@ -74,8 +74,8 @@ struct SlideView: View {
                         }
                         .padding(.top, 32)
                         .frame(maxWidth: 256)
-                    } else {
-                        Text(slide.description)
+                    } else if let description = slide.description {
+                        Text(description)
                             .textStyle(.bodySecondary)
                             .padding(.top, 24)
                     }

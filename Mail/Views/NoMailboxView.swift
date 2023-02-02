@@ -23,47 +23,81 @@ import SwiftUI
 struct NoMailboxView: View {
     @Environment(\.window) var window
 
-    let lottieConfiguration = LottieConfiguration(id: 1, loopFrameStart: 42, loopFrameEnd: 112)
+    let slide = Slide(
+        id: 1,
+        backgroundImage: Image(resource: MailResourcesAsset.onboardingBackground3),
+        title: MailResourcesStrings.Localizable.noMailboxTitle,
+        description: MailResourcesStrings.Localizable.noMailboxDescription,
+        animationFile: "illu_no_mailbox",
+        lottieConfiguration: LottieConfiguration(id: 1, loopFrameStart: 42, loopFrameEnd: 112)
+    )
 
     var body: some View {
         VStack(spacing: 0) {
-            Image(resource: MailResourcesAsset.logoText)
-                .resizable()
-                .scaledToFit()
-                .frame(width: 152)
+            SlideView(slide: slide)
+                .overlay(alignment: .top) {
+                    Image(resource: MailResourcesAsset.logoText)
+                        .resizable()
+                        .scaledToFit()
+                        .frame(height: Constants.onboardingLogoHeight)
+                        .padding(.top, 28)
+                }
 
-            Spacer()
+            VStack(spacing: 24) {
+                LargeButton {
+                    UIApplication.shared.open(URLConstants.ikMe.url)
+                } label: {
+                    Label(MailResourcesStrings.Localizable.buttonAddEmailAddress, systemImage: "plus")
+                }
 
-            LottieView(filename: "illu_no_mailbox", configuration: lottieConfiguration)
-                .frame(height: 300)
-
-            Spacer()
-
-            VStack(spacing: 16) {
-                Text(MailResourcesStrings.Localizable.noMailboxTitle)
-                    .textStyle(.header2)
-                Text(MailResourcesStrings.Localizable.noMailboxDescription)
-                    .textStyle(.bodySecondary)
+                Button {
+                    (window?.windowScene?.delegate as? SceneDelegate)?.showLoginView()
+                } label: {
+                    Text(MailResourcesStrings.Localizable.buttonLogInDifferentAccount)
+                        .textStyle(.bodyMediumAccent)
+                }
             }
-            .multilineTextAlignment(.center)
-            .padding(.horizontal, 48)
-
-            Spacer()
-
-            LargeButton {
-                UIApplication.shared.open(URLConstants.ikMe.url)
-            } label: {
-                Label(MailResourcesStrings.Localizable.buttonAddEmailAddress, systemImage: "plus")
-            }
-            .padding(.bottom, 16)
-            Button {
-                (window?.windowScene?.delegate as? SceneDelegate)?.showLoginView()
-            } label: {
-                Text(MailResourcesStrings.Localizable.buttonLogInDifferentAccount)
-                    .textStyle(.bodyMediumAccent)
-            }
+            .frame(height: Constants.onboardingButtonHeight + Constants.onboardingBottomButtonPadding, alignment: .top)
         }
-        .padding(.vertical, 16)
+
+//        VStack(spacing: 0) {
+//            Image(resource: MailResourcesAsset.logoText)
+//                .resizable()
+//                .scaledToFit()
+//                .frame(width: 152)
+//
+//            Spacer()
+//
+//            LottieView(filename: "illu_no_mailbox", configuration: lottieConfiguration)
+//                .frame(height: 300)
+//
+//            Spacer()
+//
+//            VStack(spacing: 16) {
+//                Text(MailResourcesStrings.Localizable.noMailboxTitle)
+//                    .textStyle(.header2)
+//                Text(MailResourcesStrings.Localizable.noMailboxDescription)
+//                    .textStyle(.bodySecondary)
+//            }
+//            .multilineTextAlignment(.center)
+//            .padding(.horizontal, 48)
+//
+//            Spacer()
+//
+//            LargeButton {
+//                UIApplication.shared.open(URLConstants.ikMe.url)
+//            } label: {
+//                Label(MailResourcesStrings.Localizable.buttonAddEmailAddress, systemImage: "plus")
+//            }
+//            .padding(.bottom, 16)
+//            Button {
+//                (window?.windowScene?.delegate as? SceneDelegate)?.showLoginView()
+//            } label: {
+//                Text(MailResourcesStrings.Localizable.buttonLogInDifferentAccount)
+//                    .textStyle(.bodyMediumAccent)
+//            }
+//        }
+//        .padding(.vertical, 16)
     }
 }
 
