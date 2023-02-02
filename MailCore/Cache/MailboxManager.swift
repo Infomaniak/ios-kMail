@@ -667,7 +667,25 @@ public class MailboxManager: ObservableObject {
                 }
             }
 
+            sendMissingMessagesSentry(sentUids: newList, receivedMessages: messageByUidsResult.messages, folderId: folder.id)
+
             offset += pageSize
+        }
+    }
+
+    private func sendMissingMessagesSentry(sentUids: [String], receivedMessages: [Message], folderId: String) {
+        if receivedMessages.count != sentUids.count {
+            let receivedUids = Set(receivedMessages.map { Constants.shortUid(from: $0.uid) })
+            let missingUids = sentUids.filter { !receivedUids.contains($0) }
+            if !missingUids.isEmpty {
+                SentrySDK.capture(message: "We tried to download some Messages, but they were nowhere to be found") { scope in
+                    scope.setLevel(.error)
+                    scope.setContext(
+                        value: ["uids": "\(missingUids.map { Constants.longUid(from: $0, folderId: folderId) })"],
+                        key: "missingMessages"
+                    )
+                }
+            }
         }
     }
 
