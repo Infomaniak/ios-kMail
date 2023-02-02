@@ -645,6 +645,19 @@ public class MailboxManager: ObservableObject {
         if folder.role == .inbox {
             MailboxInfosManager.instance.updateUnseen(unseenMessages: folder.unreadCount, for: mailbox)
         }
+
+        try await searchForOrphanMessages(folderId: folder.id)
+    }
+
+    private func searchForOrphanMessages(folderId: String) async throws {
+        let realm = getRealm()
+        let orphanMessages = realm.objects(Message.self).where { $0.folderId == folderId }.filter { $0.parents.isEmpty }
+        if !orphanMessages.isEmpty {
+            SentrySDK.capture(message: "We found some orphan Messages.") { scope in
+                scope.setLevel(.error)
+                scope.setContext(value: ["uids": "\(orphanMessages.map { $0.uid })"], key: "orphanMessages")
+            }
+        }
     }
 
     private func addMessages(shortUids: [String], folder: Folder) async throws {
