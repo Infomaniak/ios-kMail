@@ -19,7 +19,6 @@
 import CocoaLumberjackSwift
 import Foundation
 import InfomaniakCore
-import InfomaniakLogin
 import Sentry
 
 public enum KeychainHelper {

@@ -110,13 +110,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             AppLockHelper()
         }
 
-        do {
-            try SimpleResolver.sharedResolver.store(factory: loginService)
-            try SimpleResolver.sharedResolver.store(factory: networkLoginService)
-            try SimpleResolver.sharedResolver.store(factory: appLockService)
-
-        } catch {
-            fatalError("unexpected DI error \(error)")
-        }
+        SimpleResolver.sharedResolver.store(factory: loginService)
+        SimpleResolver.sharedResolver.store(factory: networkLoginService)
+        SimpleResolver.sharedResolver.store(factory: appLockService)
     }
 }
