@@ -62,7 +62,7 @@ struct ComposeMessageView: View {
     @State private var isShowingCamera = false
     @State private var isShowingFileSelection = false
     @State private var isShowingPhotoLibrary = false
-    @State private var attachmentsManager: AttachmentsManager
+    @StateObject private var attachmentsManager: AttachmentsManager
     @State private var isShowingCancelAttachmentsError = false
 
     @State var scrollView: UIScrollView?
@@ -89,7 +89,7 @@ struct ComposeMessageView: View {
 
         _draft = StateRealmObject(wrappedValue: draft)
         _showCc = State(initialValue: !draft.bcc.isEmpty || !draft.cc.isEmpty)
-        _attachmentsManager = State(wrappedValue: AttachmentsManager(draft: draft, mailboxManager: mailboxManager))
+        _attachmentsManager = StateObject(wrappedValue: AttachmentsManager(draft: draft, mailboxManager: mailboxManager))
     }
 
     static func newMessage(mailboxManager: MailboxManager) -> ComposeMessageView {
@@ -197,7 +197,7 @@ struct ComposeMessageView: View {
                 trailing: Button(action: sendDraft) {
                     Image(resource: MailResourcesAsset.send)
                 }
-                .disabled(draft.identityId?.isEmpty == true || draft.to.isEmpty)
+                .disabled(draft.identityId?.isEmpty == true || draft.to.isEmpty || !attachmentsManager.allAttachmentsUploaded)
             )
             .background(MailResourcesAsset.backgroundColor.swiftUiColor)
         }
