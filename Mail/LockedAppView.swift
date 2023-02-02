@@ -18,6 +18,7 @@
 
 import InfomaniakCoreUI
 import InfomaniakDI
+import MailCore
 import MailResources
 import SwiftUI
 
@@ -39,13 +40,13 @@ struct LockedAppView: View {
                 Image(resource: MailResourcesAsset.logoText)
                     .resizable()
                     .scaledToFit()
-                    .frame(width: 214)
+                    .frame(height: Constants.onboardingLogoHeight)
 
                 Spacer()
 
                 LargeButton(title: MailResourcesStrings.Localizable.buttonUnlock, action: unlockApp)
             }
-            .padding(.top, 30)
+            .padding(.top, Constants.onboardingLogoPaddingTop)
             .padding(.bottom, 40)
         }
         .defaultAppStorage(.shared)

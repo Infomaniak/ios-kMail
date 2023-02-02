@@ -111,7 +111,7 @@ struct OnboardingView: View {
                     .resizable()
                     .scaledToFit()
                     .frame(height: Constants.onboardingLogoHeight)
-                    .padding(.top, 28)
+                    .padding(.top, Constants.onboardingLogoPaddingTop)
             }
 
             VStack(spacing: 24) {
