@@ -21,48 +21,34 @@ import MailResources
 import SwiftUI
 
 public enum SwipeType: String, CaseIterable {
-    case shortRight
-    case longRight
-    case shortLeft
-    case longLeft
+    case leading
+    case fullLeading
+    case trailing
+    case fullTrailing
 
     public var title: String {
         switch self {
-        case .shortRight:
+        case .leading:
             return MailResourcesStrings.Localizable.settingsSwipeShortRight
-        case .longRight:
+        case .fullLeading:
             return MailResourcesStrings.Localizable.settingsSwipeLongRight
-        case .shortLeft:
+        case .trailing:
             return MailResourcesStrings.Localizable.settingsSwipeShortLeft
-        case .longLeft:
+        case .fullTrailing:
             return MailResourcesStrings.Localizable.settingsSwipeLongLeft
         }
     }
 
-    public var setting: SwipeAction {
-        get {
-            switch self {
-            case .shortRight:
-                return UserDefaults.shared.swipeShortRight
-            case .longRight:
-                return UserDefaults.shared.swipeLongRight
-            case .shortLeft:
-                return UserDefaults.shared.swipeShortLeft
-            case .longLeft:
-                return UserDefaults.shared.swipeLongLeft
-            }
-        }
-        set {
-            switch self {
-            case .shortRight:
-                UserDefaults.shared.swipeShortRight = newValue
-            case .longRight:
-                UserDefaults.shared.swipeLongRight = newValue
-            case .shortLeft:
-                UserDefaults.shared.swipeShortLeft = newValue
-            case .longLeft:
-                UserDefaults.shared.swipeLongLeft = newValue
-            }
+    public var keyPath: ReferenceWritableKeyPath<UserDefaults, SwipeAction> {
+        switch self {
+        case .leading:
+            return \.swipeLeading
+        case .fullLeading:
+            return \.swipeFullLeading
+        case .trailing:
+            return \.swipeTrailing
+        case .fullTrailing:
+            return \.swipeFullTrailing
         }
     }
 }

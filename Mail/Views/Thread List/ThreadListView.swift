@@ -40,8 +40,8 @@ struct ThreadListView: View {
     @EnvironmentObject var splitViewManager: SplitViewManager
     @EnvironmentObject var globalBottomSheet: GlobalBottomSheet
 
-    @AppStorage(UserDefaults.shared.key(.threadDensity)) private var threadDensity = ThreadDensity.normal
-    @AppStorage(UserDefaults.shared.key(.accentColor)) private var accentColor = AccentColor.pink
+    @AppStorage(UserDefaults.shared.key(.threadDensity)) private var threadDensity = DefaultPreferences.threadDensity
+    @AppStorage(UserDefaults.shared.key(.accentColor)) private var accentColor = DefaultPreferences.accentColor
 
     @State private var isShowingComposeNewMessageView = false
     @StateObject var bottomSheet: ThreadBottomSheet

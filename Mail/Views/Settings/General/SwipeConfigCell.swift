@@ -21,32 +21,20 @@ import MailResources
 import SwiftUI
 
 struct SwipeConfigCell: View {
-    @Binding var selectedValues: [SettingsOption: SettingsOptionEnum]
-    var section: SettingsSection
+    @AppStorage(UserDefaults.shared.key(.swipeLeading)) var leading = DefaultPreferences.swipeLeading
+    @AppStorage(UserDefaults.shared.key(.swipeFullLeading)) var fullLeading = DefaultPreferences.swipeFullLeading
+    @AppStorage(UserDefaults.shared.key(.swipeTrailing)) var trailing = DefaultPreferences.swipeTrailing
+    @AppStorage(UserDefaults.shared.key(.swipeFullTrailing)) var fullTrailing = DefaultPreferences.swipeFullTrailing
+
+    var section: SwipeSettingsSection
 
     var actions: [SwipeAction] {
-        var newActions = [SwipeAction]()
-        if section == .rightSwipe {
-            if let action = selectedValues[.swipeLongRightOption] as? SwipeAction {
-                newActions.append(action)
-            }
-            if let action = selectedValues[.swipeShortRightOption] as? SwipeAction {
-                newActions.append(action)
-            }
-        } else if section == .leftSwipe {
-            if let action = selectedValues[.swipeShortLeftOption] as? SwipeAction {
-                newActions.append(action)
-            }
-            if let action = selectedValues[.swipeLongLeftOption] as? SwipeAction {
-                newActions.append(action)
-            }
-        }
-        return newActions
+        return section == .leadingSwipe ? [fullLeading, leading] : [trailing, fullTrailing]
     }
 
     var body: some View {
         HStack(spacing: 0) {
-            if section != .rightSwipe {
+            if section != .leadingSwipe {
                 SkeletonSwipeCell(isLeading: false)
             }
 
@@ -73,7 +61,7 @@ struct SwipeConfigCell: View {
                 .frame(width: 80)
             }
 
-            if section == .rightSwipe {
+            if section == .leadingSwipe {
                 SkeletonSwipeCell(isLeading: true)
             }
         }
@@ -89,16 +77,10 @@ struct SwipeConfigCell: View {
 
 struct SwipeConfigCell_Previews: PreviewProvider {
     static var previews: some View {
-        SwipeConfigCell(selectedValues: .constant([.swipeLongRightOption: SwipeAction.readUnread]), section: .rightSwipe)
-            .previewDisplayName("Swipe Long Right")
-
-        SwipeConfigCell(selectedValues: .constant([.swipeLongRightOption: SwipeAction.readUnread, .swipeShortRightOption: SwipeAction.archive]), section: .rightSwipe)
+        SwipeConfigCell(section: .leadingSwipe)
             .previewDisplayName("Swipe Right")
 
-        SwipeConfigCell(selectedValues: .constant([.swipeLongLeftOption: SwipeAction.delete]), section: .leftSwipe)
-            .previewDisplayName("Swipe Long Left")
-
-        SwipeConfigCell(selectedValues: .constant([.swipeLongLeftOption: SwipeAction.delete, .swipeShortLeftOption: SwipeAction.quickAction]), section: .leftSwipe)
+        SwipeConfigCell(section: .trailingSwipe)
             .previewDisplayName("Swipe Left")
     }
 }

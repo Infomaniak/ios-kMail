@@ -18,20 +18,39 @@
 
 import SwiftUI
 
-struct SettingsSubMenuCell: View {
+struct SettingsSubMenuCell<Content: View>: View {
     let title: String
-    let destination: SettingsDestination
+    let subtitle: String?
+    let icon: Image?
+
+    @ViewBuilder var destination: () -> Content
+
+    init(title: String, subtitle: String? = nil, icon: Image? = nil, destination: @escaping () -> Content) {
+        self.title = title
+        self.subtitle = subtitle
+        self.icon = icon
+        self.destination = destination
+    }
 
     var body: some View {
-        NavigationLink(destination: destination.getDestination()) {
-            Text(title)
-                .textStyle(.body)
+        NavigationLink(destination: destination) {
+            HStack(alignment: .firstTextBaseline, spacing: 8) {
+                icon
+                VStack(alignment: .leading) {
+                    Text(title)
+                        .textStyle(.body)
+                    if let subtitle = subtitle {
+                        Text(subtitle)
+                            .textStyle(.bodySmallTertiary)
+                    }
+                }
+            }
         }
     }
 }
 
 struct SettingsSubMenuCell_Previews: PreviewProvider {
     static var previews: some View {
-        SettingsSubMenuCell(title: "Settings sub-menu", destination: .emailSettings)
+        SettingsSubMenuCell(title: "Settings sub-menu") { EmptyView() }
     }
 }

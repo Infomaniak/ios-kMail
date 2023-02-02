@@ -98,7 +98,7 @@ public enum AccentColor: String, CaseIterable, SettingsOptionEnum {
 
     // MARK: Swipe settings icons
 
-    public var longLeftIcon: MailResourcesImages {
+    public var fullTrailingIcon: MailResourcesImages {
         switch self {
         case .pink:
             return MailResourcesAsset.longLeftPink
@@ -107,7 +107,7 @@ public enum AccentColor: String, CaseIterable, SettingsOptionEnum {
         }
     }
 
-    public var longRightIcon: MailResourcesImages {
+    public var fullLeadingIcon: MailResourcesImages {
         switch self {
         case .pink:
             return MailResourcesAsset.longRightPink
@@ -116,7 +116,7 @@ public enum AccentColor: String, CaseIterable, SettingsOptionEnum {
         }
     }
 
-    public var shortLeftIcon: MailResourcesImages {
+    public var trailingIcon: MailResourcesImages {
         switch self {
         case .pink:
             return MailResourcesAsset.shortLeftPink
@@ -125,7 +125,7 @@ public enum AccentColor: String, CaseIterable, SettingsOptionEnum {
         }
     }
 
-    public var shortRightIcon: MailResourcesImages {
+    public var leadingIcon: MailResourcesImages {
         switch self {
         case .pink:
             return MailResourcesAsset.shortRightPink

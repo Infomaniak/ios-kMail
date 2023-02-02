@@ -33,10 +33,10 @@ public extension UserDefaults.Keys {
     static let externalContent = UserDefaults.Keys(rawValue: "externalContent")
     static let theme = UserDefaults.Keys(rawValue: "theme")
     static let accentColor = UserDefaults.Keys(rawValue: "accentColor")
-    static let swipeShortRight = UserDefaults.Keys(rawValue: "swipeShortRight")
-    static let swipeLongRight = UserDefaults.Keys(rawValue: "swipeLongRight")
-    static let swipeShortLeft = UserDefaults.Keys(rawValue: "swipeShortLeft")
-    static let swipeLongLeft = UserDefaults.Keys(rawValue: "swipeLongLeft")
+    static let swipeLeading = UserDefaults.Keys(rawValue: "swipeShortRight")
+    static let swipeFullLeading = UserDefaults.Keys(rawValue: "swipeLongRight")
+    static let swipeTrailing = UserDefaults.Keys(rawValue: "swipeShortLeft")
+    static let swipeFullTrailing = UserDefaults.Keys(rawValue: "swipeLongLeft")
     static let cancelDelay = UserDefaults.Keys(rawValue: "cancelDelay")
     static let forwardMode = UserDefaults.Keys(rawValue: "forwardMode")
     static let acknowledgement = UserDefaults.Keys(rawValue: "acknowledgement")
@@ -67,7 +67,7 @@ public extension UserDefaults {
     var isNotificationEnabled: Bool {
         get {
             if object(forKey: key(.notificationsEnabled)) == nil {
-                set(true, forKey: key(.notificationsEnabled))
+                set(DefaultPreferences.notificationsEnabled, forKey: key(.notificationsEnabled))
             }
             return bool(forKey: key(.notificationsEnabled))
         }
@@ -78,6 +78,9 @@ public extension UserDefaults {
 
     var isAppLockEnabled: Bool {
         get {
+            if object(forKey: key(.appLock)) == nil {
+                set(DefaultPreferences.appLock, forKey: key(.appLock))
+            }
             return bool(forKey: key(.appLock))
         }
         set {
@@ -87,7 +90,7 @@ public extension UserDefaults {
 
     var threadDensity: ThreadDensity {
         get {
-            return ThreadDensity(rawValue: string(forKey: key(.threadDensity)) ?? "") ?? .normal
+            return ThreadDensity(rawValue: string(forKey: key(.threadDensity)) ?? "") ?? DefaultPreferences.threadDensity
         }
         set {
             set(newValue.rawValue, forKey: key(.threadDensity))
@@ -96,7 +99,7 @@ public extension UserDefaults {
 
     var displayExternalContent: ExternalContent {
         get {
-            return ExternalContent(rawValue: string(forKey: key(.externalContent)) ?? "") ?? .always
+            return ExternalContent(rawValue: string(forKey: key(.externalContent)) ?? "") ?? DefaultPreferences.externalContent
         }
         set {
             set(newValue.rawValue, forKey: key(.externalContent))
@@ -105,12 +108,7 @@ public extension UserDefaults {
 
     var theme: Theme {
         get {
-            let defaultTheme = Theme.system
-            guard let theme = string(forKey: key(.theme)) else {
-                setValue(defaultTheme.rawValue, forKey: key(.theme))
-                return defaultTheme
-            }
-            return Theme(rawValue: theme) ?? defaultTheme
+            return Theme(rawValue: string(forKey: key(.theme)) ?? "") ?? DefaultPreferences.theme
         }
         set {
             setValue(newValue.rawValue, forKey: key(.theme))
@@ -119,52 +117,52 @@ public extension UserDefaults {
 
     var accentColor: AccentColor {
         get {
-            return AccentColor(rawValue: string(forKey: key(.accentColor)) ?? "") ?? .pink
+            return AccentColor(rawValue: string(forKey: key(.accentColor)) ?? "") ?? DefaultPreferences.accentColor
         }
         set {
             setValue(newValue.rawValue, forKey: key(.accentColor))
         }
     }
 
-    var swipeShortRight: SwipeAction {
+    var swipeLeading: SwipeAction {
         get {
-            return SwipeAction(rawValue: string(forKey: key(.swipeShortRight)) ?? "") ?? Constants.defaultSwipeShortRight
+            return SwipeAction(rawValue: string(forKey: key(.swipeLeading)) ?? "") ?? DefaultPreferences.swipeLeading
         }
         set {
-            set(newValue.rawValue, forKey: key(.swipeShortRight))
+            set(newValue.rawValue, forKey: key(.swipeLeading))
         }
     }
 
-    var swipeLongRight: SwipeAction {
+    var swipeFullLeading: SwipeAction {
         get {
-            return SwipeAction(rawValue: string(forKey: key(.swipeLongRight)) ?? "") ?? Constants.defaultSwipeLongRight
+            return SwipeAction(rawValue: string(forKey: key(.swipeFullLeading)) ?? "") ?? DefaultPreferences.swipeFullLeading
         }
         set {
-            set(newValue.rawValue, forKey: key(.swipeLongRight))
+            set(newValue.rawValue, forKey: key(.swipeFullLeading))
         }
     }
 
-    var swipeShortLeft: SwipeAction {
+    var swipeTrailing: SwipeAction {
         get {
-            return SwipeAction(rawValue: string(forKey: key(.swipeShortLeft)) ?? "") ?? Constants.defaultSwipeShortLeft
+            return SwipeAction(rawValue: string(forKey: key(.swipeTrailing)) ?? "") ?? DefaultPreferences.swipeTrailing
         }
         set {
-            set(newValue.rawValue, forKey: key(.swipeShortLeft))
+            set(newValue.rawValue, forKey: key(.swipeTrailing))
         }
     }
 
-    var swipeLongLeft: SwipeAction {
+    var swipeFullTrailing: SwipeAction {
         get {
-            return SwipeAction(rawValue: string(forKey: key(.swipeLongLeft)) ?? "") ?? Constants.defaultSwipeLongLeft
+            return SwipeAction(rawValue: string(forKey: key(.swipeFullTrailing)) ?? "") ?? DefaultPreferences.swipeFullTrailing
         }
         set {
-            set(newValue.rawValue, forKey: key(.swipeLongLeft))
+            set(newValue.rawValue, forKey: key(.swipeFullTrailing))
         }
     }
 
     var cancelSendDelay: CancelDelay {
         get {
-            return CancelDelay(rawValue: integer(forKey: key(.cancelDelay))) ?? .seconds10
+            return CancelDelay(rawValue: integer(forKey: key(.cancelDelay))) ?? DefaultPreferences.cancelDelay
         }
         set {
             set(newValue.rawValue, forKey: key(.cancelDelay))
@@ -173,7 +171,7 @@ public extension UserDefaults {
 
     var forwardMode: ForwardMode {
         get {
-            ForwardMode(rawValue: string(forKey: key(.forwardMode)) ?? "") ?? .inline
+            ForwardMode(rawValue: string(forKey: key(.forwardMode)) ?? "") ?? DefaultPreferences.forwardMode
         }
         set {
             set(newValue.rawValue, forKey: key(.forwardMode))
@@ -182,6 +180,9 @@ public extension UserDefaults {
 
     var includeOriginalInReply: Bool {
         get {
+            if object(forKey: key(.includeOriginalInReply)) == nil {
+                set(DefaultPreferences.includeOriginalInReply, forKey: key(.includeOriginalInReply))
+            }
             return bool(forKey: key(.includeOriginalInReply))
         }
         set {
@@ -191,6 +192,9 @@ public extension UserDefaults {
 
     var acknowledgement: Bool {
         get {
+            if object(forKey: key(.acknowledgement)) == nil {
+                set(DefaultPreferences.acknowledgement, forKey: key(.acknowledgement))
+            }
             return bool(forKey: key(.acknowledgement))
         }
         set {

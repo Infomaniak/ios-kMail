@@ -16,27 +16,30 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import Introspect
-import MailCore
-import MailResources
 import SwiftUI
 
-struct SegmentedControlModifier: ViewModifier {
-    @AppStorage(UserDefaults.shared.key(.accentColor)) private var accentColor = DefaultPreferences.accentColor
-
+struct SettingCellModifier: ViewModifier {
     func body(content: Content) -> some View {
         content
-            .introspectSegmentedControl { segmentedControl in
-                segmentedControl.selectedSegmentTintColor = accentColor.primary.color
-                segmentedControl.setTitleTextAttributes([.foregroundColor: MailResourcesAsset.onAccentColor.color], for: .selected)
-                segmentedControl.setTitleTextAttributes([.foregroundColor: accentColor.primary.color], for: .normal)
-                segmentedControl.backgroundColor = accentColor.secondary.color
-            }
+            .frame(minHeight: 40)
+            .listRowSeparator(.hidden)
+    }
+}
+
+struct SettingSectionHeaderModifier: ViewModifier {
+    func body(content: Content) -> some View {
+        content
+            .listRowSeparator(.hidden)
+            .listRowInsets(.init(top: 12, leading: 8, bottom: 4, trailing: 8))
     }
 }
 
 extension View {
-    func ikSegmentedControl() -> some View {
-        modifier(SegmentedControlModifier())
+    func settingCellModifier() -> some View {
+        modifier(SettingCellModifier())
+    }
+
+    func settingSectionHeaderModifier() -> some View {
+        modifier(SettingSectionHeaderModifier())
     }
 }

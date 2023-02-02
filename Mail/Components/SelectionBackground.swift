@@ -21,7 +21,7 @@ import MailResources
 import SwiftUI
 
 struct SelectionBackground: View {
-    @AppStorage(UserDefaults.shared.key(.accentColor)) private var accentColor = AccentColor.pink
+    @AppStorage(UserDefaults.shared.key(.accentColor)) private var accentColor = DefaultPreferences.accentColor
 
     let isSelected: Bool
 

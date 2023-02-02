@@ -170,11 +170,6 @@ public enum Constants {
         return "kMail iOS version \(release)-Alpha1 (\(build))"
     }
 
-    public static let defaultSwipeShortRight = SwipeAction.none
-    public static let defaultSwipeLongRight = SwipeAction.readUnread
-    public static let defaultSwipeShortLeft = SwipeAction.quickAction
-    public static let defaultSwipeLongLeft = SwipeAction.delete
-
     public static let bottomSheetHorizontalPadding: CGFloat = 24
 
     public static let searchFolderId = "search_folder_id"

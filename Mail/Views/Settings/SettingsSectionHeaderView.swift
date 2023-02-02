@@ -16,6 +16,27 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import Foundation
+import SwiftUI
 
-@MainActor class EmailAddressSettingsViewModel {}
+struct SettingsSectionHeaderView: View {
+    let title: String
+    var separator = false
+
+    var body: some View {
+        // Header & separator
+        VStack(alignment: .leading, spacing: 24) {
+            if separator {
+                IKDivider()
+            }
+            Text(title)
+                .textStyle(.bodySmallSecondary)
+                .padding(.horizontal, 8)
+        }
+    }
+}
+
+struct SettingsSectionHeaderView_Previews: PreviewProvider {
+    static var previews: some View {
+        SettingsSectionHeaderView(title: "Général")
+    }
+}
