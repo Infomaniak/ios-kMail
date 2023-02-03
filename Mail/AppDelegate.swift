@@ -106,12 +106,16 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         let networkLoginService = Factory(type: InfomaniakNetworkLogin.self) { _, _ in
             InfomaniakNetworkLogin(clientId: MailApiFetcher.clientId)
         }
+        let keychainHelper = Factory(type: KeychainHelper.self) { _, _ in
+            KeychainHelper()
+        }
         let appLockHelper = Factory(type: AppLockHelper.self) { _, _ in
             AppLockHelper()
         }
 
         SimpleResolver.sharedResolver.store(factory: loginService)
         SimpleResolver.sharedResolver.store(factory: networkLoginService)
+        SimpleResolver.sharedResolver.store(factory: keychainHelper)
         SimpleResolver.sharedResolver.store(factory: appLockHelper)
     }
 }

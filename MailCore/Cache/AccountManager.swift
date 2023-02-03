@@ -93,6 +93,8 @@ extension Account: ObservableObject {}
 
 public class AccountManager: RefreshTokenDelegate {
     @InjectService var networkLoginService: InfomaniakLogin
+    @LazyInjectService var keychainHelper: KeychainHelper
+
     private static let appIdentifierPrefix = Bundle.main.infoDictionary!["AppIdentifierPrefix"] as! String
     private static let group = "com.infomaniak.mail"
     public static let appGroup = "group." + group
@@ -173,7 +175,7 @@ public class AccountManager: RefreshTokenDelegate {
     public func reloadTokensAndAccounts() {
         accounts = loadAccounts()
         if !accounts.isEmpty {
-            tokens = KeychainHelper.loadTokens()
+            tokens = keychainHelper.loadTokens()
         }
 
         // Also update current account reference to prevent mismatch
@@ -257,7 +259,7 @@ public class AccountManager: RefreshTokenDelegate {
             )
         }
         tokens.removeAll { $0.userId == token.userId }
-        KeychainHelper.deleteToken(for: token.userId)
+        keychainHelper.deleteToken(for: token.userId)
         if let account = account(for: token.userId) {
             account.token = nil
             if account.userId == currentUserId {
@@ -416,7 +418,7 @@ public class AccountManager: RefreshTokenDelegate {
             removeAccount(toDeleteAccount: account)
         }
         accounts.append(account)
-        KeychainHelper.storeToken(account.token)
+        keychainHelper.storeToken(account.token)
         saveAccounts()
     }
 
@@ -433,7 +435,7 @@ public class AccountManager: RefreshTokenDelegate {
 
     public func removeTokenAndAccount(token: ApiToken) {
         tokens.removeAll { $0.userId == token.userId }
-        KeychainHelper.deleteToken(for: token.userId)
+        keychainHelper.deleteToken(for: token.userId)
         if let account = account(for: token) {
             removeAccount(toDeleteAccount: account)
         }
@@ -448,7 +450,7 @@ public class AccountManager: RefreshTokenDelegate {
     }
 
     public func updateToken(newToken: ApiToken, oldToken: ApiToken) {
-        KeychainHelper.storeToken(newToken)
+        keychainHelper.storeToken(newToken)
         for account in accounts where oldToken.userId == account.userId {
             account.token = newToken
         }

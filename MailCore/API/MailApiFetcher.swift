@@ -297,12 +297,13 @@ class SyncedAuthenticator: OAuthAuthenticator {
         completion: @escaping (Result<OAuthAuthenticator.Credential, Error>) -> Void
     ) {
         AccountManager.instance.refreshTokenLockedQueue.async {
+            @InjectService var keychainHelper: KeychainHelper
             @InjectService var networkLoginService: InfomaniakLogin
 
             SentrySDK
                 .addBreadcrumb(crumb: (credential as ApiToken)
                     .generateBreadcrumb(level: .info, message: "Refreshing token - Starting"))
-            if !KeychainHelper.isKeychainAccessible {
+            if !keychainHelper.isKeychainAccessible {
                 SentrySDK
                     .addBreadcrumb(crumb: (credential as ApiToken)
                         .generateBreadcrumb(level: .error, message: "Refreshing token failed - Keychain unaccessible"))

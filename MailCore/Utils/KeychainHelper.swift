@@ -21,23 +21,25 @@ import Foundation
 import InfomaniakCore
 import Sentry
 
-public enum KeychainHelper {
-    private static let accessGroup = AccountManager.accessGroup
-    private static let tag = "ch.infomaniak.token".data(using: .utf8)!
-    private static let keychainQueue = DispatchQueue(label: "com.infomaniak.keychain")
+public class KeychainHelper {
+    private let accessGroup = AccountManager.accessGroup
+    private let tag = "ch.infomaniak.token".data(using: .utf8)!
+    private let keychainQueue = DispatchQueue(label: "com.infomaniak.keychain")
 
-    private static let lockedKey = "isLockedKey"
-    private static let lockedValue = "locked".data(using: .utf8)!
-    private static var accessibilityValueWritten = false
+    private let lockedKey = "isLockedKey"
+    private let lockedValue = "locked".data(using: .utf8)!
+    private var accessibilityValueWritten = false
 
-    static var isKeychainAccessible: Bool {
+    public init() {}
+
+    var isKeychainAccessible: Bool {
         if !accessibilityValueWritten {
             initKeychainAccessibility()
         }
 
         let query: [String: Any] = [
             kSecClass as String: kSecClassGenericPassword,
-            kSecAttrService as String: KeychainHelper.lockedKey,
+            kSecAttrService as String: lockedKey,
             kSecAttrAccessGroup as String: accessGroup,
             kSecReturnData as String: kCFBooleanTrue as Any,
             kSecReturnAttributes as String: kCFBooleanTrue as Any,
@@ -54,7 +56,7 @@ public enum KeychainHelper {
         if resultCode == noErr, let array = result as? [[String: Any]] {
             for item in array {
                 if let value = item[kSecValueData as String] as? Data {
-                    return value == KeychainHelper.lockedValue
+                    return value == lockedValue
                 }
             }
             return false
@@ -64,14 +66,14 @@ public enum KeychainHelper {
         }
     }
 
-    private static func initKeychainAccessibility() {
+    private func initKeychainAccessibility() {
         accessibilityValueWritten = true
         let queryAdd: [String: Any] = [
             kSecClass as String: kSecClassGenericPassword,
             kSecAttrAccessGroup as String: accessGroup,
             kSecAttrAccessible as String: kSecAttrAccessibleAfterFirstUnlock,
-            kSecAttrService as String: KeychainHelper.lockedKey,
-            kSecValueData as String: KeychainHelper.lockedValue
+            kSecAttrService as String: lockedKey,
+            kSecValueData as String: lockedValue
         ]
         let resultCode = SecItemAdd(queryAdd as CFDictionary, nil)
         DDLogInfo(
@@ -79,7 +81,7 @@ public enum KeychainHelper {
         )
     }
 
-    public static func deleteToken(for userId: Int) {
+    public func deleteToken(for userId: Int) {
         keychainQueue.sync {
             let queryDelete: [String: Any] = [
                 kSecClass as String: kSecClassGenericPassword,
@@ -91,7 +93,7 @@ public enum KeychainHelper {
         }
     }
 
-    public static func storeToken(_ token: ApiToken) {
+    public func storeToken(_ token: ApiToken) {
         var resultCode: OSStatus = noErr
         // swiftlint:disable force_try
         let tokenData = try! JSONEncoder().encode(token)
@@ -135,7 +137,7 @@ public enum KeychainHelper {
         }
     }
 
-    public static func getSavedToken(for userId: Int) -> ApiToken? {
+    public func getSavedToken(for userId: Int) -> ApiToken? {
         var savedToken: ApiToken?
         keychainQueue.sync {
             let queryFindOne: [String: Any] = [
@@ -164,7 +166,7 @@ public enum KeychainHelper {
         return savedToken
     }
 
-    public static func loadTokens() -> [ApiToken] {
+    public func loadTokens() -> [ApiToken] {
         var values = [ApiToken]()
         keychainQueue.sync {
             let query: [String: Any] = [
