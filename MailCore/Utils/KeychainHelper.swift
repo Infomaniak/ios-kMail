@@ -120,6 +120,7 @@ public class KeychainHelper {
             keychainQueue.sync {
                 let queryAdd: [String: Any] = [
                     kSecClass as String: kSecClassGenericPassword,
+                    kSecAttrAccessGroup as String: accessGroup,
                     kSecAttrAccessible as String: kSecAttrAccessibleAfterFirstUnlock,
                     kSecAttrService as String: tag,
                     kSecAttrAccount as String: "\(token.userId)",
@@ -143,6 +144,7 @@ public class KeychainHelper {
             let queryFindOne: [String: Any] = [
                 kSecClass as String: kSecClassGenericPassword,
                 kSecAttrService as String: tag,
+                kSecAttrAccessGroup as String: accessGroup,
                 kSecAttrAccount as String: "\(userId)",
                 kSecReturnData as String: kCFBooleanTrue as Any,
                 kSecReturnAttributes as String: kCFBooleanTrue as Any,
@@ -172,6 +174,7 @@ public class KeychainHelper {
             let query: [String: Any] = [
                 kSecClass as String: kSecClassGenericPassword,
                 kSecAttrService as String: tag,
+                kSecAttrAccessGroup as String: accessGroup,
                 kSecReturnData as String: kCFBooleanTrue as Any,
                 kSecReturnAttributes as String: kCFBooleanTrue as Any,
                 kSecReturnRef as String: kCFBooleanTrue as Any,
