@@ -107,7 +107,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             InfomaniakNetworkLogin(clientId: MailApiFetcher.clientId)
         }
         let keychainHelper = Factory(type: KeychainHelper.self) { _, _ in
-            KeychainHelper()
+            KeychainHelper(accessGroup: AccountManager.accessGroup)
         }
         let appLockHelper = Factory(type: AppLockHelper.self) { _, _ in
             AppLockHelper()
