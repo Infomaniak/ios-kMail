@@ -701,14 +701,13 @@ public class MailboxManager: ObservableObject {
                 if let folder = folder.fresh(using: realm) {
                     createMultiMessagesThreads(messageByUids: messageByUidsResult, folder: folder, using: realm)
                 }
+                sendMissingMessagesSentry(
+                    sentUids: newList,
+                    receivedMessages: messageByUidsResult.messages,
+                    folder: folder,
+                    newCursor: newCursor
+                )
             }
-
-            sendMissingMessagesSentry(
-                sentUids: newList,
-                receivedMessages: messageByUidsResult.messages,
-                folder: folder,
-                newCursor: newCursor
-            )
 
             offset += pageSize
         }
