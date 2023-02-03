@@ -189,6 +189,7 @@ struct OnboardingView: View {
                 _ = try await AccountManager.instance.createAndSetCurrentAccount(code: code, codeVerifier: verifier)
                 MatomoUtils.connectUser()
                 await (self.window?.windowScene?.delegate as? SceneDelegate)?.showMainView()
+                await UIApplication.shared.registerForRemoteNotifications()
             } catch {
                 if let previousAccount = previousAccount {
                     AccountManager.instance.switchAccount(newAccount: previousAccount)

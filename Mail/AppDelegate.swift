@@ -21,6 +21,7 @@ import InfomaniakCore
 import InfomaniakCoreUI
 import InfomaniakDI
 import InfomaniakLogin
+import InfomaniakNotifications
 import MailCore
 import Sentry
 import SwiftUI
@@ -46,6 +47,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             // Ask permission app launch
             await NotificationsHelper.askForPermissions()
         }
+        application.registerForRemoteNotifications()
 
         BackgroundFetcher.shared.registerBackgroundTask()
 
@@ -58,10 +60,25 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         return true
     }
 
+    func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
+        @InjectService var notificationService: InfomaniakNotifications
+        for account in accountManager.accounts {
+            let userApiFetcher = accountManager.getApiFetcher(for: account.userId, token: account.token)
+            Task {
+                await notificationService.registerUserForRemoteNotificationsIfNeeded(tokenData: deviceToken,
+                                                                                     userApiFetcher: userApiFetcher)
+            }
+        }
+    }
+
+    func application(_ application: UIApplication, didFailToRegisterForRemoteNotificationsWithError error: Error) {
+        DDLogError("Failed registering for notifications: \(error)")
+    }
+
     // MARK: UISceneSession Lifecycle
 
     func application(_ application: UIApplication,
-        configurationForConnecting connectingSceneSession: UISceneSession,
+                     configurationForConnecting connectingSceneSession: UISceneSession,
                      options: UIScene.ConnectionOptions) -> UISceneConfiguration {
         // Called when a new scene session is being created.
         // Use this method to select a configuration to create the new scene with.
@@ -100,12 +117,16 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         let networkLoginService = Factory(type: InfomaniakNetworkLogin.self) { _, _ in
             InfomaniakNetworkLogin(clientId: MailApiFetcher.clientId)
         }
+        let notificationService = Factory(type: InfomaniakNotifications.self) { _, _ in
+            InfomaniakNotifications()
+        }
         let appLockService = Factory(type: AppLockHelper.self) { _, _ in
             AppLockHelper()
         }
 
         SimpleResolver.sharedResolver.store(factory: loginService)
         SimpleResolver.sharedResolver.store(factory: networkLoginService)
+        SimpleResolver.sharedResolver.store(factory: notificationService)
         SimpleResolver.sharedResolver.store(factory: appLockService)
     }
 }
