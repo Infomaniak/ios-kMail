@@ -631,7 +631,7 @@ public class MailboxManager: ObservableObject {
         await deleteMessages(uids: deletedUids, folder: folder)
         await updateMessages(updates: updated, folder: folder)
 
-        await backgroundRealm.execute { [self] realm in
+        await backgroundRealm.execute { realm in
             if newCursor != nil {
                 guard let folder = folder.fresh(using: realm) else { return }
                 try? realm.safeWrite {
