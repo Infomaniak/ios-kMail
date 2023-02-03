@@ -28,10 +28,10 @@ public enum KeychainHelper {
 
     private static let lockedKey = "isLockedKey"
     private static let lockedValue = "locked".data(using: .utf8)!
-    private static var accessiblityValueWritten = false
+    private static var accessibilityValueWritten = false
 
     static var isKeychainAccessible: Bool {
-        if !accessiblityValueWritten {
+        if !accessibilityValueWritten {
             initKeychainAccessibility()
         }
 
@@ -65,7 +65,7 @@ public enum KeychainHelper {
     }
 
     private static func initKeychainAccessibility() {
-        accessiblityValueWritten = true
+        accessibilityValueWritten = true
         let queryAdd: [String: Any] = [
             kSecClass as String: kSecClassGenericPassword,
             kSecAttrAccessGroup as String: accessGroup,
