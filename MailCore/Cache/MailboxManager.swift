@@ -641,45 +641,21 @@ public class MailboxManager: ObservableObject {
                 }
             }
 
-            searchForOrphanMessages(folderId: folder.id, using: realm, previousCursor: previousCursor, newCursor: newCursor)
-            searchForOrphanThreads(using: realm, previousCursor: previousCursor, newCursor: newCursor)
+            SentryDebug.searchForOrphanMessages(
+                folderId: folder.id,
+                using: realm,
+                previousCursor: previousCursor,
+                newCursor: newCursor
+            )
+            SentryDebug.searchForOrphanThreads(
+                using: realm,
+                previousCursor: previousCursor,
+                newCursor: newCursor
+            )
         }
 
         if folder.role == .inbox {
             MailboxInfosManager.instance.updateUnseen(unseenMessages: folder.unreadCount, for: mailbox)
-        }
-    }
-
-    private func searchForOrphanMessages(
-        folderId: String,
-        using realm: Realm? = nil,
-        previousCursor: String?,
-        newCursor: String?
-    ) {
-        let realm = realm ?? getRealm()
-        let orphanMessages = realm.objects(Message.self).where { $0.folderId == folderId }.filter { $0.parents.isEmpty }
-        if !orphanMessages.isEmpty {
-            SentrySDK.capture(message: "We found some orphan Messages.") { scope in
-                scope.setLevel(.error)
-                scope.setContext(value: ["uids": "\(orphanMessages.map { $0.uid })",
-                                         "previousCursor": previousCursor ?? "No cursor",
-                                         "newCursor": newCursor ?? "No cursor"],
-                                 key: "orphanMessages")
-            }
-        }
-    }
-
-    private func searchForOrphanThreads(using realm: Realm? = nil, previousCursor: String?, newCursor: String?) {
-        let realm = realm ?? getRealm()
-        let orphanThreads = realm.objects(Thread.self).filter { $0.parentLink.isEmpty }
-        if !orphanThreads.isEmpty {
-            SentrySDK.capture(message: "We found some orphan Threads.") { scope in
-                scope.setLevel(.error)
-                scope.setContext(value: ["uids": "\(orphanThreads.map { $0.uid })",
-                                         "previousCursor": previousCursor ?? "No cursor",
-                                         "newCursor": newCursor ?? "No cursor"],
-                                 key: "orphanThreads")
-            }
         }
     }
 
@@ -701,7 +677,7 @@ public class MailboxManager: ObservableObject {
                 if let folder = folder.fresh(using: realm) {
                     createMultiMessagesThreads(messageByUids: messageByUidsResult, folder: folder, using: realm)
                 }
-                sendMissingMessagesSentry(
+                SentryDebug.sendMissingMessagesSentry(
                     sentUids: newList,
                     receivedMessages: messageByUidsResult.messages,
                     folder: folder,
@@ -710,24 +686,6 @@ public class MailboxManager: ObservableObject {
             }
 
             offset += pageSize
-        }
-    }
-
-    private func sendMissingMessagesSentry(sentUids: [String], receivedMessages: [Message], folder: Folder, newCursor: String?) {
-        if receivedMessages.count != sentUids.count {
-            let receivedUids = Set(receivedMessages.map { Constants.shortUid(from: $0.uid) })
-            let missingUids = sentUids.filter { !receivedUids.contains($0) }
-            if !missingUids.isEmpty {
-                SentrySDK.capture(message: "We tried to download some Messages, but they were nowhere to be found") { scope in
-                    scope.setLevel(.error)
-                    scope.setContext(
-                        value: ["uids": "\(missingUids.map { Constants.longUid(from: $0, folderId: folder.id) })",
-                                "previousCursor": folder.cursor ?? "No cursor",
-                                "newCursor": newCursor ?? "No cursor"],
-                        key: "missingMessages"
-                    )
-                }
-            }
         }
     }
 
