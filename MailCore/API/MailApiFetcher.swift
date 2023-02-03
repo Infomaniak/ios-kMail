@@ -291,14 +291,14 @@ public class MailApiFetcher: ApiFetcher {
 }
 
 class SyncedAuthenticator: OAuthAuthenticator {
-    @InjectService var networkLoginService: InfomaniakLogin
-
     override func refresh(
         _ credential: OAuthAuthenticator.Credential,
         for session: Session,
         completion: @escaping (Result<OAuthAuthenticator.Credential, Error>) -> Void
     ) {
         AccountManager.instance.refreshTokenLockedQueue.async {
+            @InjectService var networkLoginService: InfomaniakLogin
+
             SentrySDK
                 .addBreadcrumb(crumb: (credential as ApiToken)
                     .generateBreadcrumb(level: .info, message: "Refreshing token - Starting"))
@@ -345,7 +345,7 @@ class SyncedAuthenticator: OAuthAuthenticator {
                 }
             }
 
-            self.networkLoginService.refreshToken(token: credential) { token, error in
+            networkLoginService.refreshToken(token: credential) { token, error in
                 // New token has been fetched correctly
                 if let token = token {
                     SentrySDK
