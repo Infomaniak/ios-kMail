@@ -40,7 +40,6 @@ class MessageBottomSheet: DisplayedFloatingPanelState<MessageBottomSheet.State> 
 struct ThreadView: View {
     let mailboxManager: MailboxManager
     @ObservedRealmObject var thread: Thread
-    var fromSearch = false
 
     @State private var headerHeight: CGFloat = 0
     @State private var displayNavigationTitle = false
@@ -184,7 +183,7 @@ struct ThreadView: View {
             if newMessagesList.isEmpty {
                 dismiss()
             }
-            if thread.messageInFolderCount == 0 && !fromSearch {
+            if thread.messageInFolderCount == 0 {
                 dismiss()
             }
         }

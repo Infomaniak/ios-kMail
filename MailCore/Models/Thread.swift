@@ -68,6 +68,7 @@ public class Thread: Object, Decodable, Identifiable {
     }
 
     public var messageInFolderCount: Int {
+        guard !fromSearch else { return 1 }
         return messages.filter { $0.folderId == self.folderId }.count
     }
 
