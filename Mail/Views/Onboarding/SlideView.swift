@@ -24,7 +24,7 @@ import SwiftUI
 
 struct SlideView: View {
     let slide: Slide
-    let updateAnimationColors: LottieView.UpdateColorsClosure
+    var updateAnimationColors: LottieView.UpdateColorsClosure?
 
     @AppStorage(UserDefaults.shared.key(.accentColor), store: .shared) private var accentColor = DefaultPreferences.accentColor
 
@@ -48,12 +48,19 @@ struct SlideView: View {
                 VStack(spacing: 0) {
                     Spacer(minLength: Constants.onboardingLogoHeight + Constants.onboardingVerticalTopPadding)
 
-                    LottieView(
-                        filename: slide.animationFile,
-                        configuration: slide.lottieConfiguration,
-                        isVisible: $isVisible,
-                        updateColors: updateAnimationColors
-                    )
+                    Group {
+                        if let asset = slide.asset {
+                            Image(resource: asset)
+                                .resizable()
+                                .scaledToFit()
+                        } else if let lottieConfiguration = slide.lottieConfiguration {
+                            LottieView(
+                                configuration: lottieConfiguration,
+                                isVisible: $isVisible,
+                                updateColors: updateAnimationColors
+                            )
+                        }
+                    }
                     .frame(height: 0.43 * proxy.size.height)
 
                     Spacer(minLength: 8)
@@ -121,6 +128,6 @@ struct SlideView_Previews: PreviewProvider {
     }
 
     static var slideView: some View {
-        SlideView(slide: Slide.allSlides[0]) { _, _ in /* Preview */ }
+        SlideView(slide: Slide.onBoardingSlides[0]) { _, _ in /* Preview */ }
     }
 }

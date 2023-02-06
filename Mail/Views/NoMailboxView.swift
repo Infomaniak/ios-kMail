@@ -16,7 +16,6 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import Lottie
 import MailCore
 import MailResources
 import SwiftUI
@@ -29,19 +28,18 @@ struct NoMailboxView: View {
         backgroundImage: Image(resource: MailResourcesAsset.onboardingBackground3),
         title: MailResourcesStrings.Localizable.noMailboxTitle,
         description: MailResourcesStrings.Localizable.noMailboxDescription,
-        animationFile: "illu_no_mailbox",
-        lottieConfiguration: LottieConfiguration(id: 1, loopFrameStart: 42, loopFrameEnd: 112)
+        asset: MailResourcesAsset.noMailbox
     )
 
     var body: some View {
         VStack(spacing: 0) {
-            SlideView(slide: slide, updateAnimationColors: updateAnimationColors)
+            SlideView(slide: slide)
                 .overlay(alignment: .top) {
                     Image(resource: MailResourcesAsset.logoText)
                         .resizable()
                         .scaledToFit()
                         .frame(height: Constants.onboardingLogoHeight)
-                        .padding(.top, 28)
+                        .padding(.top, Constants.onboardingLogoPaddingTop)
                 }
 
             VStack(spacing: 24) {
@@ -59,16 +57,6 @@ struct NoMailboxView: View {
                 }
             }
             .frame(height: Constants.onboardingButtonHeight + Constants.onboardingBottomButtonPadding, alignment: .top)
-        }
-    }
-
-    private func updateAnimationColors(_ animation: LottieAnimationView, _ configuration: LottieConfiguration) {
-        IlluColors.noMailboxAllColors.forEach { $0.applyColors(to: animation) }
-
-        if UserDefaults.shared.accentColor == .pink {
-            IlluColors.illuNoMailboxPinkColors.forEach { $0.applyColors(to: animation) }
-        } else {
-            IlluColors.illuNoMailboxBlueColors.forEach { $0.applyColors(to: animation) }
         }
     }
 }

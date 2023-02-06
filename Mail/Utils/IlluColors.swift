@@ -80,7 +80,6 @@ struct IlluColors {
         static let commonColors8 = Colors(lightColor: "#C4C4C4", darkColor: "#7C7C7C")
         static let commonColors9 = Colors(lightColor: "#FFFFFF", darkColor: "#EAEAEA")
         static let commonColors10 = Colors(lightColor: "#F8F8F8", darkColor: "#E4E4E4")
-        static let commonColors11 = Colors(lightColor: "#D9D9D9", darkColor: "#626262")
 
         static let pinkColors1 = Colors(lightColor: "#BC0055", darkColor: "#D0759F")
         static let pinkColors2 = Colors(lightColor: "#FF5B97", darkColor: "#EF0057")
@@ -377,28 +376,6 @@ extension IlluColors {
         IlluColors(.keyPath(category: .iPhoneScreen, group: 61), colors: .blueColors5),
         IlluColors(.keyPath(category: .iPhoneScreen, group: 67), colors: .blueColors1),
         IlluColors(.keyPath(category: .iPhoneScreen, group: 72), colors: .blueColors6)
-    ]
-}
-
-// MARK: - No Mailbox colors
-
-extension IlluColors {
-    static let noMailboxAllColors = [
-        IlluColors(.keyPath(category: .link), colors: .commonColors11),
-        IlluColors(.keyPath(category: .iPhoneScreen, group: 1), colors: .commonColors5),
-        IlluColors(.keyPath(category: .iPhoneScreen, group: 2), colors: .commonColors2)
-    ]
-
-    static let illuNoMailboxPinkColors = [
-        IlluColors(.keyPath(category: .hand, group: 1), colors: .pinkColors7),
-        IlluColors(.keyPath(category: .hand, group: 4), colors: .pinkColors8),
-        IlluColors(.keyPath(category: .hand, group: 5), colors: .pinkColors8)
-    ]
-
-    static let illuNoMailboxBlueColors = [
-        IlluColors(.keyPath(category: .hand, group: 1), colors: .blueColors6),
-        IlluColors(.keyPath(category: .hand, group: 4), colors: .blueColors7),
-        IlluColors(.keyPath(category: .hand, group: 5), colors: .blueColors7)
     ]
 }
 

@@ -31,41 +31,37 @@ struct Slide: Identifiable {
     let title: String
     var description: String?
     var showPicker = false
-    let animationFile: String
-    let lottieConfiguration: LottieConfiguration
+    var asset: MailResourcesImages?
+    var lottieConfiguration: LottieConfiguration?
 
-    static let allSlides = [
+    static let onBoardingSlides = [
         Slide(
             id: 1,
             backgroundImage: Image(resource: MailResourcesAsset.onboardingBackground1),
             title: MailResourcesStrings.Localizable.onBoardingTitle1,
             showPicker: true,
-            animationFile: "illu_onboarding_1",
-            lottieConfiguration: LottieConfiguration(id: 1, loopFrameStart: 54, loopFrameEnd: 138)
+            lottieConfiguration: LottieConfiguration(id: 1, filename: "illu_onboarding_1", loopFrameStart: 54, loopFrameEnd: 138)
         ),
         Slide(
             id: 2,
             backgroundImage: Image(resource: MailResourcesAsset.onboardingBackground2),
             title: MailResourcesStrings.Localizable.onBoardingTitle2,
             description: MailResourcesStrings.Localizable.onBoardingDescription2,
-            animationFile: "illu_onboarding_2",
-            lottieConfiguration: LottieConfiguration(id: 2, loopFrameStart: 108, loopFrameEnd: 253)
+            lottieConfiguration: LottieConfiguration(id: 2, filename: "illu_onboarding_2", loopFrameStart: 108, loopFrameEnd: 253)
         ),
         Slide(
             id: 3,
             backgroundImage: Image(resource: MailResourcesAsset.onboardingBackground3),
             title: MailResourcesStrings.Localizable.onBoardingTitle3,
             description: MailResourcesStrings.Localizable.onBoardingDescription3,
-            animationFile: "illu_onboarding_3",
-            lottieConfiguration: LottieConfiguration(id: 3, loopFrameStart: 111, loopFrameEnd: 187)
+            lottieConfiguration: LottieConfiguration(id: 3, filename: "illu_onboarding_3", loopFrameStart: 111, loopFrameEnd: 187)
         ),
         Slide(
             id: 4,
             backgroundImage: Image(resource: MailResourcesAsset.onboardingBackground4),
             title: MailResourcesStrings.Localizable.onBoardingTitle4,
             description: MailResourcesStrings.Localizable.onBoardingDescription4,
-            animationFile: "illu_onboarding_4",
-            lottieConfiguration: LottieConfiguration(id: 4, loopFrameStart: 127, loopFrameEnd: 236)
+            lottieConfiguration: LottieConfiguration(id: 4, filename: "illu_onboarding_4", loopFrameStart: 127, loopFrameEnd: 236)
         )
     ]
 }
@@ -81,7 +77,7 @@ struct OnboardingView: View {
     @State private var isLoading = false
 
     private var isScrollEnabled: Bool
-    private var slides = Slide.allSlides
+    private var slides = Slide.onBoardingSlides
 
     init(page: Int = 1, isScrollEnabled: Bool = true) {
         _selection = State(initialValue: page)
