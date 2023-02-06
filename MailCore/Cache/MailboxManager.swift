@@ -628,7 +628,7 @@ public class MailboxManager: ObservableObject {
             updated.append(contentsOf: messageDeltaResult.updated)
         }
 
-        try await addMessages(shortUids: addedShortUids, folder: folder)
+        try await addMessages(shortUids: addedShortUids, folder: folder, newCursor: newCursor)
         await deleteMessages(uids: deletedUids, folder: folder)
         await updateMessages(updates: updated, folder: folder)
 
@@ -641,6 +641,18 @@ public class MailboxManager: ObservableObject {
                     folder.lastUpdate = Date()
                 }
             }
+
+            SentryDebug.searchForOrphanMessages(
+                folderId: folder.id,
+                using: realm,
+                previousCursor: previousCursor,
+                newCursor: newCursor
+            )
+            SentryDebug.searchForOrphanThreads(
+                using: realm,
+                previousCursor: previousCursor,
+                newCursor: newCursor
+            )
         }
 
         if folder.role == .inbox {
@@ -648,7 +660,7 @@ public class MailboxManager: ObservableObject {
         }
     }
 
-    private func addMessages(shortUids: [String], folder: Folder) async throws {
+    private func addMessages(shortUids: [String], folder: Folder, newCursor: String?) async throws {
         guard !shortUids.isEmpty else { return }
         let reversedUids: [String] = getUniqueUidsInReverse(folder: folder, remoteUids: shortUids)
         let pageSize = 50
@@ -666,6 +678,12 @@ public class MailboxManager: ObservableObject {
                 if let folder = folder.fresh(using: realm) {
                     createMultiMessagesThreads(messageByUids: messageByUidsResult, folder: folder, using: realm)
                 }
+                SentryDebug.sendMissingMessagesSentry(
+                    sentUids: newList,
+                    receivedMessages: messageByUidsResult.messages,
+                    folder: folder,
+                    newCursor: newCursor
+                )
             }
 
             offset += pageSize
