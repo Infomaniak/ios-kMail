@@ -17,12 +17,12 @@
  */
 
 import BackgroundTasks
+import CocoaLumberjackSwift
 import Foundation
 import MailResources
 import RealmSwift
 import UIKit
 import UserNotifications
-import CocoaLumberjackSwift
 
 public class BackgroundFetcher {
     public static let shared = BackgroundFetcher()
@@ -86,8 +86,7 @@ public class BackgroundFetcher {
             .first?.date ?? Date(timeIntervalSince1970: 0)
         try await mailboxManager.threads(folder: inboxFolder)
 
-        let realm = mailboxManager.getRealm()
-        let newUnreadMessages = realm.objects(Message.self)
+        let newUnreadMessages = mailboxManager.getRealm().objects(Message.self)
             .where {
                 $0.seen == false
                     && $0.date > lastMessageDate
@@ -96,10 +95,14 @@ public class BackgroundFetcher {
 
         for message in newUnreadMessages {
             try await mailboxManager.message(message: message)
-            let threadUid = mailboxManager.getFolder(with: .inbox, using: realm)?.threads.where {
+            let threadUid = mailboxManager.getFolder(with: .inbox)?.threads.where {
                 $0.messages.contains(message)
             }.first?.uid
-            NotificationsHelper.triggerNotificationFor(message: message, threadUid: threadUid, mailboxId: mailboxManager.mailbox.objectId)
+            NotificationsHelper.triggerNotificationFor(
+                message: message,
+                threadUid: threadUid,
+                mailboxId: mailboxManager.mailbox.objectId
+            )
         }
 
         NotificationsHelper.updateUnreadCountBadge()
