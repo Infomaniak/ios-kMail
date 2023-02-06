@@ -22,12 +22,16 @@ import SwiftUI
 
 struct BottomSheetButtonsView: View {
     let primaryButtonTitle: String
-    let secondaryButtonTitle: String
+    let secondaryButtonTitle: String?
     let primaryButtonEnabled: Bool
     let primaryButtonAction: () -> Void
-    let secondaryButtonAction: () -> Void
+    let secondaryButtonAction: (() -> Void)?
 
-    internal init(primaryButtonTitle: String, secondaryButtonTitle: String, primaryButtonEnabled: Bool = true, primaryButtonAction: @escaping () -> Void, secondaryButtonAction: @escaping () -> Void) {
+    internal init(primaryButtonTitle: String,
+                  secondaryButtonTitle: String? = nil,
+                  primaryButtonEnabled: Bool = true,
+                  primaryButtonAction: @escaping () -> Void,
+                  secondaryButtonAction: (() -> Void)? = nil) {
         self.primaryButtonTitle = primaryButtonTitle
         self.secondaryButtonTitle = secondaryButtonTitle
         self.primaryButtonEnabled = primaryButtonEnabled
@@ -37,9 +41,13 @@ struct BottomSheetButtonsView: View {
 
     var body: some View {
         HStack(spacing: 24) {
-            Button(role: .destructive, action: secondaryButtonAction) {
-                Text(secondaryButtonTitle)
-                    .textStyle(.bodyMediumError)
+            if let secondaryButtonTitle {
+                Button(role: .destructive) {
+                    secondaryButtonAction?()
+                } label: {
+                    Text(secondaryButtonTitle)
+                        .textStyle(.bodyMediumError)
+                }
             }
 
             BottomSheetButton(label: primaryButtonTitle,
