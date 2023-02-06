@@ -28,7 +28,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, AccountManagerDelegate 
     var window: UIWindow?
 
     private var accountManager: AccountManager!
-    @InjectService var appLockHelper: AppLockHelper
+    @LazyInjectService var appLockHelper: AppLockHelper
 
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
         // Use this method to optionally configure and attach the UIWindow `window` to the provided UIWindowScene `scene`.

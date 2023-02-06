@@ -92,7 +92,7 @@ extension Account: ObservableObject {}
 }
 
 public class AccountManager: RefreshTokenDelegate {
-    @InjectService var networkLoginService: InfomaniakLogin
+    @LazyInjectService var networkLoginService: InfomaniakLogin
     @LazyInjectService var keychainHelper: KeychainHelper
 
     private static let appIdentifierPrefix = Bundle.main.infoDictionary!["AppIdentifierPrefix"] as! String

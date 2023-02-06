@@ -22,7 +22,7 @@ import MailResources
 import SwiftUI
 
 struct LockedAppView: View {
-    @InjectService var appLockHelper: AppLockHelper
+    @LazyInjectService var appLockHelper: AppLockHelper
     @Environment(\.window) var window
 
     var body: some View {
