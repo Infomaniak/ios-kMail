@@ -116,18 +116,13 @@ struct Action: Identifiable, Equatable {
         title: MailResourcesStrings.Localizable.actionPrint,
         icon: MailResourcesAsset.printText
     )
-    static let createRule = Action(
-        id: 16,
-        title: MailResourcesStrings.Localizable.actionCreateRule,
-        icon: MailResourcesAsset.ruleRegle
-    )
     static let report = Action(
-        id: 17,
+        id: 15,
         title: MailResourcesStrings.Localizable.actionReportDisplayProblem,
         icon: MailResourcesAsset.feedbacks
     )
     static let editMenu = Action(
-        id: 18,
+        id: 16,
         title: MailResourcesStrings.Localizable.actionEditMenu,
         icon: MailResourcesAsset.editTools
     )
@@ -254,7 +249,6 @@ enum ActionsTarget: Equatable {
                 star ? .unstar : .star,
                 .reportJunk,
                 .print,
-                .createRule,
                 .report,
                 .editMenu
             ]
@@ -297,8 +291,6 @@ enum ActionsTarget: Equatable {
             try await phishing()
         case .print:
             printAction()
-        case .createRule:
-            createRule()
         case .report:
             report()
         case .editMenu:
@@ -454,11 +446,6 @@ enum ActionsTarget: Equatable {
 
     private func printAction() {
         // TODO: PRINT ACTION
-        showWorkInProgressSnackBar()
-    }
-
-    private func createRule() {
-        // TODO: CREATE RULE ACTION
         showWorkInProgressSnackBar()
     }
 
