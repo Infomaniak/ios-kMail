@@ -63,7 +63,6 @@ struct FolderCell: View {
                 Button(action: didTapButton) {
                     FolderCellContent(folder: folder.content, level: level, isCurrentFolder: isCurrentFolder)
                 }
-                .disabled(cellType == .indicator && isCurrentFolder)
             } else {
                 NavigationLink(isActive: $shouldTransit) {
                     ThreadListManagerView(
