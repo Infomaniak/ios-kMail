@@ -39,6 +39,12 @@ struct SettingsListView: View {
 
                 SettingsToggleCell(title: MailResourcesStrings.Localizable.settingsAppLock, userDefaults: \.isAppLockEnabled)
                     .settingCellModifier()
+
+                // TODO: - Use when notifications are ready
+//                SettingsSubMenuCell(title: MailResourcesStrings.Localizable.settingsMailboxGeneralNotifications) {
+//                    SettingsNotificationsView()
+//                }
+//                .settingCellModifier()
             }
             .listSectionSeparator(.hidden)
 
