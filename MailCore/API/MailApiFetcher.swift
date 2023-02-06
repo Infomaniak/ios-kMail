@@ -300,12 +300,13 @@ class SyncedAuthenticator: OAuthAuthenticator {
         completion: @escaping (Result<OAuthAuthenticator.Credential, Error>) -> Void
     ) {
         AccountManager.instance.refreshTokenLockedQueue.async {
+            @InjectService var keychainHelper: KeychainHelper
             @InjectService var networkLoginService: InfomaniakLogin
 
             SentrySDK
                 .addBreadcrumb(crumb: (credential as ApiToken)
                     .generateBreadcrumb(level: .info, message: "Refreshing token - Starting"))
-            if !KeychainHelper.isKeychainAccessible {
+            if !keychainHelper.isKeychainAccessible {
                 SentrySDK
                     .addBreadcrumb(crumb: (credential as ApiToken)
                         .generateBreadcrumb(level: .error, message: "Refreshing token failed - Keychain unaccessible"))
@@ -394,7 +395,7 @@ class NetworkRequestRetrier: RequestInterceptor {
         self.maxRetry = maxRetry
     }
 
-    func retry(_ request: Request, for session: Session, dueTo error: Error, completion: @escaping (RetryResult) -> Void) {
+    func retry(_ request: Alamofire.Request, for session: Session, dueTo error: Error, completion: @escaping (RetryResult) -> Void) {
         guard request.task?.response == nil,
               let url = request.request?.url?.absoluteString else {
             removeCachedUrlRequest(url: request.request?.url?.absoluteString)

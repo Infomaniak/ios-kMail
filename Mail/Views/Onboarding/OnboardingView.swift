@@ -69,7 +69,7 @@ struct Slide: Identifiable {
 }
 
 struct OnboardingView: View {
-    @InjectService var loginService: InfomaniakLogin
+    @LazyInjectService var loginService: InfomaniakLogin
 
     @Environment(\.window) private var window
     @Environment(\.dismiss) private var dismiss

@@ -22,7 +22,7 @@ import MailResources
 import SwiftUI
 
 struct SettingsToggleCell: View {
-    @InjectService var appLockHelper: AppLockHelper
+    @LazyInjectService var appLockHelper: AppLockHelper
 
     let title: String
     let userDefaults: ReferenceWritableKeyPath<UserDefaults, Bool>
