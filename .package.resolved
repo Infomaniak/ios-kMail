@@ -51,7 +51,7 @@
       "location" : "https://github.com/Infomaniak/ios-core.git",
       "state" : {
         "branch" : "mail-di",
-        "revision" : "1fffea03e111070dcc50e85e7c183efe8e0e972e"
+        "revision" : "fe83659edb83338306c119eb6068ae4f604ad4c9"
       }
     },
     {
@@ -86,8 +86,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/onevcat/Kingfisher",
       "state" : {
-        "revision" : "90135885ef506506620c4911cefb55a95ca2a9a2",
-        "version" : "7.5.0"
+        "revision" : "2db469112fbcfd83ff0a96c4546772d283f317f5",
+        "version" : "7.6.0"
       }
     },
     {
@@ -122,8 +122,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/kean/Nuke",
       "state" : {
-        "revision" : "df6cfba3f49aa6777b8c1084cb7778899ca166d3",
-        "version" : "11.6.0"
+        "revision" : "3ed0597082b40932481fb8971af8813a4284203c",
+        "version" : "11.6.1"
       }
     },
     {
