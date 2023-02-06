@@ -111,6 +111,7 @@ public class Message: Object, Decodable, Identifiable {
     @Persisted public var safeDisplay: Bool?
     @Persisted public var hasUnsubscribeLink: Bool?
     @Persisted(originProperty: "messages") var parents: LinkingObjects<Thread>
+    @Persisted(originProperty: "duplicates") var parentsAsDuplicate: LinkingObjects<Thread>
 
     @Persisted public var fullyDownloaded = false
     @Persisted public var fromSearch = false
