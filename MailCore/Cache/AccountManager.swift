@@ -278,6 +278,9 @@ public class AccountManager: RefreshTokenDelegate {
 
         let mailboxesResponse = try await apiFetcher.mailboxes()
         guard !mailboxesResponse.isEmpty else {
+            networkLoginService.deleteApiToken(token: token) { error in
+                DDLogError("Failed to delete api token: \(error.localizedDescription)")
+            }
             throw MailError.noMailbox
         }
 
@@ -434,6 +437,9 @@ public class AccountManager: RefreshTokenDelegate {
         KeychainHelper.deleteToken(for: token.userId)
         if let account = account(for: token) {
             removeAccount(toDeleteAccount: account)
+        }
+        networkLoginService.deleteApiToken(token: token) { error in
+            DDLogError("Failed to delete api token: \(error.localizedDescription)")
         }
     }
 
