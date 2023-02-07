@@ -715,7 +715,6 @@ public class MailboxManager: ObservableObject {
 
                     if let message = realm.objects(Message.self).first(where: { $0.uid == message.uid }) {
                         folder.messages.insert(message)
-                        print("coucou")
                     }
                 }
             }
