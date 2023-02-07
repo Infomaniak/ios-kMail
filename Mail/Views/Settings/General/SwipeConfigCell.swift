@@ -45,7 +45,7 @@ struct SwipeConfigCell: View {
                         if i == 0 {
                             MailResourcesAsset.separatorColor.swiftUiColor
                         } else {
-                            MailResourcesAsset.grayActionColor.swiftUiColor
+                            MailResourcesAsset.swipeNoneColor.swiftUiColor
                         }
 
                         Text(MailResourcesStrings.Localizable.settingsSwipeActionToDefine)

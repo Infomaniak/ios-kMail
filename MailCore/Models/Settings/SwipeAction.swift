@@ -63,6 +63,7 @@ public enum SwipeAction: String, CaseIterable, SettingsOptionEnum {
     case spam
     case readAndArchive
     case quickAction
+    case moveToInbox
     case none
 
     public var title: String {
@@ -85,6 +86,8 @@ public enum SwipeAction: String, CaseIterable, SettingsOptionEnum {
             return MailResourcesStrings.Localizable.settingsSwipeActionReadAndArchive
         case .quickAction:
             return MailResourcesStrings.Localizable.settingsSwipeActionQuickActionsMenu
+        case .moveToInbox:
+            return MailResourcesStrings.Localizable.actionMoveToInbox
         case .none:
             return MailResourcesStrings.Localizable.settingsSwipeActionNone
         }
@@ -92,7 +95,7 @@ public enum SwipeAction: String, CaseIterable, SettingsOptionEnum {
 
     public var isDestructive: Bool {
         switch self {
-        case .delete, .archive, .spam, .readAndArchive:
+        case .delete, .archive, .spam, .readAndArchive, .moveToInbox:
             return true
         case .move, .readUnread, .postPone, .favorite, .quickAction, .none:
             return false
@@ -121,9 +124,11 @@ public enum SwipeAction: String, CaseIterable, SettingsOptionEnum {
         case .spam:
             resource = MailResourcesAsset.spam
         case .readAndArchive:
-            resource = MailResourcesAsset.drawer
+            resource = MailResourcesAsset.archives
         case .quickAction:
             resource = MailResourcesAsset.navigationMenu
+        case .moveToInbox:
+            resource = MailResourcesAsset.drawer
         case .none:
             resource = nil
         }
@@ -156,6 +161,8 @@ public enum SwipeAction: String, CaseIterable, SettingsOptionEnum {
             resource = MailResourcesAsset.darkPurpleActionColor
         case .quickAction:
             resource = MailResourcesAsset.menuActionColor
+        case .moveToInbox:
+            resource = MailResourcesAsset.grayActionColor
         case .none:
             resource = nil
         }
