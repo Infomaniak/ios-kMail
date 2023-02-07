@@ -152,7 +152,11 @@ struct SearchView: View {
                 Group {
                     if thread.shouldPresentAsDraft {
                         Button(action: {
-                            DraftUtils.editDraft(from: thread, mailboxManager: viewModel.mailboxManager, editedMessageDraft: $editedMessageDraft)
+                            DraftUtils.editDraft(
+                                from: thread,
+                                mailboxManager: viewModel.mailboxManager,
+                                editedMessageDraft: $editedMessageDraft
+                            )
                         }, label: {
                             ThreadCell(thread: thread,
                                        mailboxManager: viewModel.mailboxManager,
@@ -210,6 +214,7 @@ struct SearchView: View {
                     }
             }
             .padding(.horizontal, 4)
+            .padding(.vertical, threadDensity.cellVerticalPadding)
         } header: {
             if !contacts.isEmpty {
                 Text(MailResourcesStrings.Localizable.contactsSearch)
@@ -260,7 +265,10 @@ struct SearchView: View {
     private func deleteSearchTapped(searchItem: String) {
         Task {
             await tryOrDisplayError {
-                viewModel.searchHistory = await viewModel.mailboxManager.delete(searchHistory: viewModel.searchHistory, with: searchItem)
+                viewModel.searchHistory = await viewModel.mailboxManager.delete(
+                    searchHistory: viewModel.searchHistory,
+                    with: searchItem
+                )
             }
         }
     }
