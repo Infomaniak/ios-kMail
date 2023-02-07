@@ -40,10 +40,9 @@ struct SettingsNotificationsView: View {
 
                 ForEach(AccountManager.instance.mailboxes, id: \.id) { mailbox in
                     Toggle(isOn: Binding(get: {
-                        notifications && UserDefaults.shared.bool(forKey: mailbox.email)
+                        notifications && UserDefaults.shared.bool(forKey: mailbox.objectId)
                     }, set: { newValue in
-                        UserDefaults.shared.set(newValue, forKey: mailbox.email)
-                        
+                        UserDefaults.shared.set(newValue, forKey: mailbox.objectId)
                     })) {
                         Text(mailbox.email)
                             .textStyle(.body)
