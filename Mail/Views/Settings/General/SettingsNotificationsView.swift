@@ -21,7 +21,7 @@ import MailResources
 import SwiftUI
 
 struct SettingsNotificationsView: View {
-    @AppStorage(UserDefaults.shared.key(.notificationsEnabled), store: .shared) private var notifications = DefaultPreferences
+    @AppStorage(UserDefaults.shared.key(.notificationsEnabled)) private var notifications = DefaultPreferences
         .notificationsEnabled
 
     var body: some View {
