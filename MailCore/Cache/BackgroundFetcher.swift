@@ -61,12 +61,11 @@ public class BackgroundFetcher {
     public func fetchLastEmailsForAllMailboxes() async {
         await withTaskGroup(of: Void.self) { group in
             for mailbox in MailboxInfosManager.instance.getMailboxes() {
-                if let mailboxManager = AccountManager.instance.getMailboxManager(for: mailbox) {
-                    group.addTask {
-                        do {
-                            try await self.fetchEmailsFor(mailboxManager: mailboxManager)
-                        } catch {}
-                    }
+                guard let mailboxManager = AccountManager.instance.getMailboxManager(for: mailbox) else { continue }
+                group.addTask {
+                    do {
+                        try await self.fetchEmailsFor(mailboxManager: mailboxManager)
+                    } catch {}
                 }
             }
         }
@@ -92,15 +91,13 @@ public class BackgroundFetcher {
                     && $0.date > lastMessageDate
                     && $0.folderId == inboxFolderId
             }
+            .map { $0.freeze() }
+            .toArray()
 
         for message in newUnreadMessages {
             try await mailboxManager.message(message: message)
-            let threadUid = mailboxManager.getFolder(with: .inbox)?.threads.where {
-                $0.messages.contains(message)
-            }.first?.uid
             NotificationsHelper.triggerNotificationFor(
                 message: message,
-                threadUid: threadUid,
                 mailboxId: mailboxManager.mailbox.objectId
             )
         }

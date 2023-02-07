@@ -44,3 +44,9 @@ public extension LazyFilterSequence {
         return Array(self)
     }
 }
+
+public extension LazyMapSequence {
+    func toArray() -> [Element] {
+        return Array(self)
+    }
+}

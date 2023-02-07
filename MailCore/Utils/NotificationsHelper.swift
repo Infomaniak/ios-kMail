@@ -110,7 +110,7 @@ public enum NotificationsHelper {
         }
     }
 
-    static func triggerNotificationFor(message: Message, threadUid: String?, mailboxId: String) {
+    static func triggerNotificationFor(message: Message, mailboxId: String) {
         let content = UNMutableNotificationContent()
         if !message.from.isEmpty {
             content.title = message.from.map { $0.name }.joined(separator: ",")
@@ -119,9 +119,7 @@ public enum NotificationsHelper {
         }
         content.subtitle = message.formattedSubject
         content.body = message.preview
-        if let threadUid {
-            content.threadIdentifier = threadUid
-        }
+        content.threadIdentifier = mailboxId
         content.targetContentIdentifier = message.uid
         content.userInfo = [NotificationsHelper.UserInfoKeys.mailboxId: mailboxId]
 
