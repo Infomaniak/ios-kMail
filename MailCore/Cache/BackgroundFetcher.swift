@@ -61,12 +61,11 @@ public class BackgroundFetcher {
     public func fetchLastEmailsForAllMailboxes() async {
         await withTaskGroup(of: Void.self) { group in
             for mailbox in MailboxInfosManager.instance.getMailboxes() {
-                if let mailboxManager = AccountManager.instance.getMailboxManager(for: mailbox) {
-                    group.addTask {
-                        do {
-                            try await self.fetchEmailsFor(mailboxManager: mailboxManager)
-                        } catch {}
-                    }
+                guard let mailboxManager = AccountManager.instance.getMailboxManager(for: mailbox) else { continue }
+                group.addTask {
+                    do {
+                        try await self.fetchEmailsFor(mailboxManager: mailboxManager)
+                    } catch {}
                 }
             }
         }
