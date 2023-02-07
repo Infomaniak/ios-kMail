@@ -95,12 +95,8 @@ public class BackgroundFetcher {
 
         for message in newUnreadMessages {
             try await mailboxManager.message(message: message)
-            let threadUid = mailboxManager.getFolder(with: .inbox)?.threads.where {
-                $0.messages.contains(message)
-            }.first?.uid
             NotificationsHelper.triggerNotificationFor(
                 message: message,
-                threadUid: threadUid,
                 mailboxId: mailboxManager.mailbox.objectId
             )
         }
