@@ -92,6 +92,8 @@ public class BackgroundFetcher {
                     && $0.date > lastMessageDate
                     && $0.folderId == inboxFolderId
             }
+            .map { $0.freeze() }
+            .toArray()
 
         for message in newUnreadMessages {
             try await mailboxManager.message(message: message)
