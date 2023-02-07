@@ -188,7 +188,7 @@ struct ThreadCell: View {
                     .layoutPriority(1)
             }
             Text(dataHolder.from)
-                .textStyle(.header2)
+                .textStyle(.bodyMedium)
                 .lineLimit(1)
 
             if thread.messages.count > 1 {
