@@ -30,6 +30,7 @@ public enum MailError: LocalizedError {
     case unknownError
     case unknownToken
     case noMailbox
+    case messageNotFound
     case folderNotFound
     case addressBookNotFound
     case contactNotFound
@@ -60,6 +61,8 @@ public enum MailError: LocalizedError {
             return "Address Book not found"
         case .contactNotFound:
             return "Contact not found"
+        case .messageNotFound:
+            return "Message not found"
         case .attachmentsSizeLimitReached:
             return MailResourcesStrings.Localizable.attachmentFileLimitReached
         }
