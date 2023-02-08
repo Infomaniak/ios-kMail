@@ -86,7 +86,7 @@ enum SearchState {
 
     init(mailboxManager: MailboxManager, folder: Folder?) {
         self.mailboxManager = mailboxManager
-        self.searchHistory = mailboxManager.searchHistory()
+        searchHistory = mailboxManager.searchHistory()
         trashFolderId = mailboxManager.getFolder(with: .trash)?._id ?? ""
         realFolder = folder
 
@@ -97,7 +97,8 @@ enum SearchState {
         searchFieldObservation = $searchValue
             .debounce(for: .seconds(0.3), scheduler: DispatchQueue.main)
             .sink { [weak self] newValue in
-                guard self?.lastSearch.trimmingCharacters(in: .whitespacesAndNewlines) != newValue.trimmingCharacters(in: .whitespacesAndNewlines) else {
+                guard self?.lastSearch.trimmingCharacters(in: .whitespacesAndNewlines) != newValue
+                    .trimmingCharacters(in: .whitespacesAndNewlines) else {
                     return
                 }
                 self?.lastSearch = newValue
@@ -219,8 +220,9 @@ enum SearchState {
             .contains(where: { $0.email.caseInsensitiveCompare(searchValue) == .orderedSame }) {
             autocompleteRecipients.append(Recipient(email: searchValue, name: ""))
         }
+        let contactRange: Range<Int> = 0 ..< min(autocompleteRecipients.count, Constants.contactSuggestionLimit)
         withAnimation {
-            contacts = autocompleteRecipients
+            contacts = Array(autocompleteRecipients[contactRange])
         }
     }
 
