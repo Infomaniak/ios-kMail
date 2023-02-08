@@ -123,7 +123,7 @@ public class Message: Object, Decodable, Identifiable {
     }
 
     public var originalParent: Thread? {
-        return parentThreads.first { $0.folderId == folderId }
+        return parentThreads.first { $0.parent?.id == folderId }
     }
 
     public var originalFolder: Folder? {
@@ -369,8 +369,7 @@ public class Message: Object, Decodable, Identifiable {
             flagged: flagged,
             answered: answered,
             forwarded: forwarded,
-            size: size,
-            folderId: folderId
+            size: size
         )
         thread.messageIds = linkedUids
         return thread

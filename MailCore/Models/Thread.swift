@@ -57,7 +57,6 @@ public class Thread: Object, Decodable, Identifiable {
 
     @Persisted public var duplicates = List<Message>()
     @Persisted public var messageIds: MutableSet<String>
-    @Persisted public var folderId: String
 
     public var id: String {
         return uid
@@ -69,11 +68,11 @@ public class Thread: Object, Decodable, Identifiable {
 
     public var messageInFolderCount: Int {
         guard !fromSearch else { return 1 }
-        return messages.filter { $0.folderId == self.folderId }.count
+        return messages.filter { $0.folderId == self.parent?.id }.count
     }
 
     public var lastMessageFromFolder: Message? {
-        messages.last { $0.folderId == folderId }
+        messages.last { $0.folderId == parent?.id }
     }
 
     public var formattedFrom: String {
@@ -140,7 +139,7 @@ public class Thread: Object, Decodable, Identifiable {
         date = lastMessageFromFolder?.date ?? date
         subject = messages.first?.subject
 
-        if let lastFolderMessage = messages.last(where: { $0.folderId == folderId }) {
+        if let lastFolderMessage = messages.last(where: { $0.folderId == parent?.id }) {
             date = lastFolderMessage.date
         }
     }
@@ -173,7 +172,7 @@ public class Thread: Object, Decodable, Identifiable {
     }
 
     private func addDuplicatedMessage(twinMessage: Message, newMessage: Message) {
-        let isTwinTheRealMessage = twinMessage.folderId == folderId
+        let isTwinTheRealMessage = twinMessage.folderId == parent?.id
         if isTwinTheRealMessage {
             duplicates.append(newMessage)
         } else {
@@ -224,8 +223,7 @@ public class Thread: Object, Decodable, Identifiable {
         flagged: Bool,
         answered: Bool,
         forwarded: Bool,
-        size: Int,
-        folderId: String = ""
+        size: Int
     ) {
         self.init()
 
@@ -247,7 +245,6 @@ public class Thread: Object, Decodable, Identifiable {
         self.answered = answered
         self.forwarded = forwarded
         self.size = size
-        self.folderId = folderId
     }
 }
 

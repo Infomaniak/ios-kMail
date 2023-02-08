@@ -306,7 +306,7 @@ enum ActionsTarget: Equatable {
         let snackBarMessage: String
         switch target {
         case let .threads(threads):
-            guard threads.first?.folderId != folder.id else { return }
+            guard threads.first?.parent != folder else { return }
             undoRedoAction = try await mailboxManager.move(threads: threads, to: folder)
             snackBarMessage = MailResourcesStrings.Localizable.snackbarThreadsMoved(folder.localizedName)
         case let .message(message):

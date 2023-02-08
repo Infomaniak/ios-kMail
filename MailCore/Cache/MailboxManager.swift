@@ -333,7 +333,7 @@ public class MailboxManager: ObservableObject {
     }
 
     public func move(threads: [Thread], to folder: Folder) async throws -> UndoRedoAction {
-        var messages = threads.flatMap(\.messages).filter { $0.folderId == threads.first?.folderId }
+        var messages = threads.flatMap(\.messages).filter { $0.originalFolder == threads.first?.parent }
         messages.append(contentsOf: messages.flatMap(\.duplicates))
 
         return try await move(messages: messages, to: folder)
@@ -719,7 +719,7 @@ public class MailboxManager: ObservableObject {
     }
 
     private func createNewThreadIfRequired(for message: Message, folder: Folder, existingThreads: [Thread]) -> Thread? {
-        guard !existingThreads.contains(where: { $0.folderId == folder.id }) else { return nil }
+        guard !existingThreads.contains(where: { $0.parent == folder }) else { return nil }
 
         let thread = message.toThread().detached()
         folder.threads.insert(thread)
