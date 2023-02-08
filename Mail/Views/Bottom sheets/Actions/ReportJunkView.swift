@@ -35,7 +35,7 @@ struct ReportJunkView: View {
                                      globalSheet: globalSheet,
                                      globalAlert: globalAlert)
         if case let .message(message) = target {
-            let spam = message.originalFolder?.role == .spam
+            let spam = message.parentFolder?.role == .spam
             actions.append(contentsOf: [
                 spam ? .nonSpam : .spam,
                 .phishing,

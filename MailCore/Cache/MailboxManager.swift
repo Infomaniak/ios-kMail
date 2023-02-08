@@ -218,7 +218,7 @@ public class MailboxManager: ObservableObject {
     }
 
     private func refreshFolder(from messages: [Message], additionalFolder: Folder? = nil) async throws {
-        var folders = messages.map(\.originalFolder)
+        var folders = messages.map(\.parentFolder)
         if let additionalFolder = additionalFolder {
             folders.append(additionalFolder)
         }
@@ -333,7 +333,7 @@ public class MailboxManager: ObservableObject {
     }
 
     public func move(threads: [Thread], to folder: Folder) async throws -> UndoRedoAction {
-        var messages = threads.flatMap(\.messages).filter { $0.originalFolder == threads.first?.parent }
+        var messages = threads.flatMap(\.messages).filter { $0.parentFolder == threads.first?.parent }
         messages.append(contentsOf: messages.flatMap(\.duplicates))
 
         return try await move(messages: messages, to: folder)
@@ -822,9 +822,9 @@ public class MailboxManager: ObservableObject {
     /// Move to trash or delete message, depending on its current state
     /// - Parameter message: Message to remove
     public func moveOrDelete(message: Message) async throws {
-        if message.originalFolder?.role == .trash
-            || message.originalFolder?.role == .spam
-            || message.originalFolder?.role == .draft {
+        if message.parentFolder?.role == .trash
+            || message.parentFolder?.role == .spam
+            || message.parentFolder?.role == .draft {
             var messages = [message]
             messages.append(contentsOf: message.duplicates)
             try await delete(messages: messages)

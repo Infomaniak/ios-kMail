@@ -111,7 +111,7 @@ public class Message: Object, Decodable, Identifiable {
     @Persisted public var safeDisplay: Bool?
     @Persisted public var hasUnsubscribeLink: Bool?
     @Persisted(originProperty: "messages") var parentThreads: LinkingObjects<Thread>
-    @Persisted(originProperty: "messages") var parentFolders: LinkingObjects<Folder>
+    @Persisted(originProperty: "messages") private var parentFolders: LinkingObjects<Folder>
     @Persisted(originProperty: "duplicates") var parentThreadsAsDuplicate: LinkingObjects<Thread>
 
     @Persisted public var fullyDownloaded = false
@@ -126,8 +126,8 @@ public class Message: Object, Decodable, Identifiable {
         return parentThreads.first { $0.parent?.id == folderId }
     }
 
-    public var originalFolder: Folder? {
-        return parentFolders.first { $0.id == folderId }
+    public var parentFolder: Folder? {
+        return parentFolders.first
     }
 
     public var shouldComplete: Bool {

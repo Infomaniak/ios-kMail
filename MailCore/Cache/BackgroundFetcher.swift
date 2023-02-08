@@ -79,7 +79,7 @@ public class BackgroundFetcher {
         }
 
         let lastMessageDate = mailboxManager.getRealm().objects(Message.self)
-            .where { $0.originalFolder == inboxFolder }
+            .where { $0.parentFolder == inboxFolder }
             .sorted(by: \.date, ascending: false)
             .first?.date ?? Date(timeIntervalSince1970: 0)
         try await mailboxManager.threads(folder: inboxFolder)
@@ -88,7 +88,7 @@ public class BackgroundFetcher {
             .where {
                 $0.seen == false
                     && $0.date > lastMessageDate
-                    && $0.originalFolder == inboxFolder
+                    && $0.parentFolder == inboxFolder
             }
             .map { $0.freeze() }
             .toArray()
