@@ -98,7 +98,8 @@ public class BackgroundFetcher {
             try await mailboxManager.message(message: message)
             NotificationsHelper.triggerNotificationFor(
                 message: message,
-                mailboxId: mailboxManager.mailbox.objectId
+                mailboxId: mailboxManager.mailbox.mailboxId,
+                userId: mailboxManager.mailbox.userId
             )
         }
 
