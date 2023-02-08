@@ -45,8 +45,7 @@ struct ThreadCellDataHolder {
 
     /// Sender of the last message that is not in the Sent folder, otherwise the last message of the thread
     var recipientToDisplay: Recipient? {
-        let sentFolderId = mailboxManager.getFolder(with: .sent)?.id
-        let lastMessageNotFromSent = thread.messages.last { $0.folderId != sentFolderId } ?? thread.messages.last
+        let lastMessageNotFromSent = thread.messages.last { $0.originalFolder?.role == .sent } ?? thread.messages.last
         return lastMessageNotFromSent?.from.last
     }
 
@@ -69,7 +68,7 @@ struct ThreadCellDataHolder {
     /// Last message of the thread, except for the Sent folder where we use the last message of the folder
     var preview: String {
         var content = thread.messages.last?.preview
-        if thread.folderId == mailboxManager.getFolder(with: .sent)?.id {
+        if thread.parent?.role == .sent {
             content = (thread.lastMessageFromFolder ?? thread.messages.last)?.preview
         }
 
