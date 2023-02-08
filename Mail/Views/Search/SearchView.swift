@@ -183,7 +183,7 @@ struct SearchView: View {
                         }
                     }
                 }
-                .listRowInsets(.init(top: 0, leading: 0, bottom: 0, trailing: 0))
+                .listRowInsets(EdgeInsets())
                 .padding(.leading, -4)
                 .onAppear {
                     viewModel.loadNextPageIfNeeded(currentItem: thread)
