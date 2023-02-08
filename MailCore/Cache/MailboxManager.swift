@@ -165,10 +165,8 @@ public class MailboxManager: ObservableObject {
 
                 // Threads contains in folders to delete
                 let mayBeDeletedThreads = Set(toDeleteFolders.flatMap(\.threads))
-                // Delete messages in all threads from folders to delete
-                // If message.folderId is one of folders to delete Id
-                let toDeleteMessages = Set(mayBeDeletedThreads.flatMap(\.messages)
-                    .filter { toDeleteFolders.map(\._id).contains($0.folderId) })
+                // Messages contains in folders to delete
+                let toDeleteMessages = Set(toDeleteFolders.flatMap(\.messages))
 
                 // Delete thread if all his messages are deleted
                 for thread in mayBeDeletedThreads where Set(thread.messages).isSubset(of: toDeleteMessages) {
@@ -219,19 +217,17 @@ public class MailboxManager: ObservableObject {
         return folder
     }
 
-    private func refreshFolder(from messages: [Message], additionalFolderId: String? = nil) async throws {
-        var foldersId = messages.map(\.folderId)
-        if let additionalFolderId = additionalFolderId {
-            foldersId.append(additionalFolderId)
+    private func refreshFolder(from messages: [Message], additionalFolder: Folder? = nil) async throws {
+        var folders = messages.map(\.originalFolder)
+        if let additionalFolder = additionalFolder {
+            folders.append(additionalFolder)
         }
 
-        let orderedSet = NSOrderedSet(array: foldersId)
+        let orderedSet = NSOrderedSet(array: folders as [Any])
 
-        for id in orderedSet {
-            let realm = getRealm()
-            if let impactedFolder = realm.object(ofType: Folder.self, forPrimaryKey: id) {
-                try await threads(folder: impactedFolder)
-            }
+        for folder in orderedSet {
+            guard let impactedFolder = folder as? Folder else { continue }
+            try await threads(folder: impactedFolder)
         }
     }
 
@@ -826,9 +822,9 @@ public class MailboxManager: ObservableObject {
     /// Move to trash or delete message, depending on its current state
     /// - Parameter message: Message to remove
     public func moveOrDelete(message: Message) async throws {
-        if message.folderId == getFolder(with: .trash)?._id
-            || message.folderId == getFolder(with: .spam)?._id
-            || message.folderId == getFolder(with: .draft)?._id {
+        if message.originalFolder?.role == .trash
+            || message.originalFolder?.role == .spam
+            || message.originalFolder?.role == .draft {
             var messages = [message]
             messages.append(contentsOf: message.duplicates)
             try await delete(messages: messages)
@@ -873,7 +869,7 @@ public class MailboxManager: ObservableObject {
 
     public func move(messages: [Message], to folder: Folder) async throws -> UndoRedoAction {
         let response = try await apiFetcher.move(mailbox: mailbox, messages: messages, destinationId: folder._id)
-        try await refreshFolder(from: messages, additionalFolderId: folder.id)
+        try await refreshFolder(from: messages, additionalFolder: folder)
         return undoRedoAction(for: response, and: messages)
     }
 
