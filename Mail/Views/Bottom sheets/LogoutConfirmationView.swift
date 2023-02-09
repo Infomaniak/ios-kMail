@@ -31,11 +31,11 @@ struct LogoutConfirmationView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 24) {
-            Text( MailResourcesStrings.Localizable.confirmLogoutTitle(account.user.email))
+            Text( MailResourcesStrings.Localizable.confirmLogoutTitle)
                 .textStyle(.bodyMedium)
-            Text(MailResourcesStrings.Localizable.confirmLogoutDescription)
+            Text(MailResourcesStrings.Localizable.confirmLogoutDescription(account.user.email))
                 .textStyle(.bodySecondary)
-            BottomSheetButtonsView(primaryButtonTitle: MailResourcesStrings.Localizable.buttonLogout,
+            BottomSheetButtonsView(primaryButtonTitle: MailResourcesStrings.Localizable.buttonConfirm,
                                    secondaryButtonTitle: MailResourcesStrings.Localizable.buttonCancel,
                                    primaryButtonAction: logout,
                                    secondaryButtonAction: cancel)
