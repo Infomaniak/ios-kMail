@@ -60,12 +60,6 @@ struct ThreadView: View {
         return Array(thread.messages)
     }
 
-    private var threadBackground: Color {
-        messages.count > 1
-            ? MailResourcesAsset.backgroundCardColor.swiftUiColor
-            : MailResourcesAsset.backgroundColor.swiftUiColor
-    }
-
     var body: some View {
         ScrollView {
             VStack(spacing: 0) {
@@ -88,8 +82,7 @@ struct ThreadView: View {
                     .background(MailResourcesAsset.backgroundColor.swiftUiColor)
 
                 MessageListView(messages: messages)
-                    .padding(.top, 8)
-                    .background(threadBackground)
+                    .background(MailResourcesAsset.backgroundColor.swiftUiColor)
             }
         }
         .coordinateSpace(name: "scrollView")
@@ -194,7 +187,6 @@ struct ThreadView: View {
             VStack(spacing: 0) {
                 MailResourcesAsset.backgroundColor.swiftUiColor
                     .frame(maxHeight: proxy.size.height * 0.2)
-                threadBackground
             }
         }
     }
