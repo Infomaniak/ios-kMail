@@ -102,6 +102,13 @@ public enum SwipeAction: String, CaseIterable, SettingsOptionEnum {
         }
     }
 
+    public var isCustomizable: Bool {
+        if self == .moveToInbox {
+            return false
+        }
+        return true
+    }
+
     public var image: Image? {
         return nil
     }

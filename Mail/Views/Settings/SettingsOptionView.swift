@@ -24,10 +24,9 @@ struct SettingsOptionView<OptionEnum>: View where OptionEnum: CaseIterable, Opti
     OptionEnum: SettingsOptionEnum, OptionEnum.AllCases: RandomAccessCollection, OptionEnum.RawValue: Hashable {
     let title: String
     let subtitle: String?
+    let values: [OptionEnum]
     let keyPath: ReferenceWritableKeyPath<UserDefaults, OptionEnum>
     let excludedKeyPath: [ReferenceWritableKeyPath<UserDefaults, OptionEnum>]?
-
-    @State private var values = Array(OptionEnum.allCases)
 
     @State private var selectedValue: OptionEnum {
         didSet {
@@ -43,6 +42,7 @@ struct SettingsOptionView<OptionEnum>: View where OptionEnum: CaseIterable, Opti
 
     init(title: String,
          subtitle: String? = nil,
+         values: [OptionEnum] = Array(OptionEnum.allCases),
          keyPath: ReferenceWritableKeyPath<UserDefaults, OptionEnum>,
          excludedKeyPath: [ReferenceWritableKeyPath<UserDefaults, OptionEnum>]? = nil) {
         self.title = title
@@ -50,6 +50,13 @@ struct SettingsOptionView<OptionEnum>: View where OptionEnum: CaseIterable, Opti
         self.keyPath = keyPath
         self.excludedKeyPath = excludedKeyPath
         _selectedValue = State(wrappedValue: UserDefaults.shared[keyPath: keyPath])
+
+        if let excludedKeyPath {
+            let excludedValues = excludedKeyPath.map { UserDefaults.shared[keyPath: $0] }
+            self.values = values.filter { !excludedValues.contains($0) || ($0.rawValue as? String) == "none" }
+        } else {
+            self.values = values
+        }
     }
 
     var body: some View {
@@ -98,16 +105,6 @@ struct SettingsOptionView<OptionEnum>: View where OptionEnum: CaseIterable, Opti
         .listStyle(.plain)
         .background(MailResourcesAsset.backgroundColor.swiftUiColor)
         .navigationBarTitle(title, displayMode: .inline)
-        .onAppear {
-            updateOptions()
-        }
-    }
-
-    private func updateOptions() {
-        if let excludedKeyPath {
-            let excludedValues = excludedKeyPath.map { UserDefaults.shared[keyPath: $0] }
-            values = values.filter { !excludedValues.contains($0) || ($0.rawValue as? String) == "none" }
-        }
     }
 }
 
