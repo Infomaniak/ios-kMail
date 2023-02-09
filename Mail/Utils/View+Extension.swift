@@ -75,14 +75,18 @@ extension View {
         }
     }
 
-    func navigationBarThreadViewStyle() -> some View {
+    func navigationBarThreadViewStyle(backgroundColor: Color) -> some View {
         if #available(iOS 16.0, *) {
-            return toolbarBackground(MailResourcesAsset.backgroundColor.swiftUiColor, for: .navigationBar)
+            return toolbarBackground(backgroundColor/*MailResourcesAsset.backgroundColor.swiftUiColor*/, for: .navigationBar)
         } else {
+            let navigationBarAppearance = UINavigationBarAppearance()
+            navigationBarAppearance.configureWithTransparentBackground()
+            navigationBarAppearance.backgroundColor = UIColor(backgroundColor)
+            navigationBarAppearance.shadowColor = MailResourcesAsset.backgroundColor.color
             return modifier(NavigationBarStyleViewModifier(
-                standardAppearance: BarAppearanceConstants.threadViewNavigationBarAppearance,
-                scrollEdgeAppearance: BarAppearanceConstants.threadViewNavigationBarAppearance,
-                compactAppearance: BarAppearanceConstants.threadViewNavigationBarAppearance
+                standardAppearance: navigationBarAppearance,
+                scrollEdgeAppearance: navigationBarAppearance,
+                compactAppearance: navigationBarAppearance
             ))
         }
     }
