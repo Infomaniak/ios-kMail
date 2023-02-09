@@ -38,7 +38,7 @@ struct AttachmentCell: View {
                         .opacity(attachment.size == 0 ? 0 : 1)
                 }
             }
-            .padding(6)
+            .padding(4)
         }
         .background(
             RoundedRectangle(cornerRadius: 6)

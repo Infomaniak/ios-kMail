@@ -49,8 +49,10 @@ struct MessageView: View {
                 if isMessageExpanded {
                     if !message.attachments.filter { $0.disposition == .attachment || $0.contentId == nil }.isEmpty {
                         AttachmentsView(message: message)
+                            .padding(.top, 24)
                     }
                     MessageBodyView(message: message)
+                        .padding(.top, 16)
                 }
             }
             .padding(.vertical, 16)
