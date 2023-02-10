@@ -123,7 +123,7 @@ public class Message: Object, Decodable, Identifiable {
     }
 
     public var originalParent: Thread? {
-        return parentThreads.first { $0.parent?.id == folderId }
+        return parentThreads.first { $0.folder?.id == folderId }
     }
 
     public var parentFolder: Folder? {

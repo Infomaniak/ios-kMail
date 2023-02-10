@@ -50,7 +50,7 @@ public class Thread: Object, Decodable, Identifiable {
     @Persisted public var answered: Bool
     @Persisted public var forwarded: Bool
     @Persisted public var size: Int
-    @Persisted(originProperty: "threads") public var parentLink: LinkingObjects<Folder>
+    @Persisted(originProperty: "threads") private var folders: LinkingObjects<Folder>
     @Persisted public var fromSearch = false
 
     @Persisted public var isDraft = false
@@ -62,17 +62,17 @@ public class Thread: Object, Decodable, Identifiable {
         return uid
     }
 
-    public var parent: Folder? {
-        return parentLink.first
+    public var folder: Folder? {
+        return folders.first
     }
 
     public var messageInFolderCount: Int {
         guard !fromSearch else { return 1 }
-        return messages.filter { $0.folderId == self.parent?.id }.count
+        return messages.filter { $0.folderId == self.folder?.id }.count
     }
 
     public var lastMessageFromFolder: Message? {
-        messages.last { $0.folderId == parent?.id }
+        messages.last { $0.folderId == folder?.id }
     }
 
     public var formattedFrom: String {
@@ -139,7 +139,7 @@ public class Thread: Object, Decodable, Identifiable {
         date = lastMessageFromFolder?.date ?? date
         subject = messages.first?.subject
 
-        if let lastFolderMessage = messages.last(where: { $0.folderId == parent?.id }) {
+        if let lastFolderMessage = messages.last(where: { $0.folderId == folder?.id }) {
             date = lastFolderMessage.date
         }
     }
@@ -147,7 +147,7 @@ public class Thread: Object, Decodable, Identifiable {
     func addMessageIfNeeded(newMessage: Message) {
         messageIds.insert(objectsIn: newMessage.linkedUids)
 
-        let folderRole = parent?.role
+        let folderRole = folder?.role
 
         // If the Message is deleted, but we are not in the Trash: ignore it, just leave.
         if folderRole != .trash && newMessage.inTrash { return }
@@ -172,7 +172,7 @@ public class Thread: Object, Decodable, Identifiable {
     }
 
     private func addDuplicatedMessage(twinMessage: Message, newMessage: Message) {
-        let isTwinTheRealMessage = twinMessage.folderId == parent?.id
+        let isTwinTheRealMessage = twinMessage.folderId == folder?.id
         if isTwinTheRealMessage {
             duplicates.append(newMessage)
         } else {

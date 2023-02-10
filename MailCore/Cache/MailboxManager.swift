@@ -265,7 +265,7 @@ public class MailboxManager: ObservableObject {
                 }
             }
 
-            let foldersToUpdate = Set(threadsToUpdate.compactMap(\.parent))
+            let foldersToUpdate = Set(threadsToUpdate.compactMap(\.folder))
 
             try? realm.safeWrite {
                 realm.delete(draftsToDelete)
@@ -333,7 +333,7 @@ public class MailboxManager: ObservableObject {
     }
 
     public func move(threads: [Thread], to folder: Folder) async throws -> UndoRedoAction {
-        var messages = threads.flatMap(\.messages).filter { $0.parentFolder == threads.first?.parent }
+        var messages = threads.flatMap(\.messages).filter { $0.parentFolder == threads.first?.folder }
         messages.append(contentsOf: messages.flatMap(\.duplicates))
 
         return try await move(messages: messages, to: folder)
@@ -343,7 +343,7 @@ public class MailboxManager: ObservableObject {
     /// - Parameter threads: Threads to remove
     public func moveOrDelete(threads: [Thread]) async throws {
         // All threads comes from the same folder
-        guard let parentFolder = threads.first?.parent else { return }
+        guard let parentFolder = threads.first?.folder else { return }
 
         if parentFolder.toolType == .search {
             for thread in threads {
@@ -719,12 +719,12 @@ public class MailboxManager: ObservableObject {
     }
 
     private func createNewThreadIfRequired(for message: Message, folder: Folder, existingThreads: [Thread]) -> Thread? {
-        guard !existingThreads.contains(where: { $0.parent == folder }) else { return nil }
+        guard !existingThreads.contains(where: { $0.folder == folder }) else { return nil }
 
         let thread = message.toThread().detached()
         folder.threads.insert(thread)
 
-        if let refThread = existingThreads.first(where: { $0.parent?.role != .draft && $0.parent?.role != .trash }) {
+        if let refThread = existingThreads.first(where: { $0.folder?.role != .draft && $0.folder?.role != .trash }) {
             addPreviousMessagesTo(newThread: thread, from: refThread)
         } else {
             for existingThread in existingThreads {
@@ -765,7 +765,7 @@ public class MailboxManager: ObservableObject {
     }
 
     private func updateThreads(threads: Set<Thread>) {
-        let folders = Set(threads.compactMap(\.parent))
+        let folders = Set(threads.compactMap(\.folder))
         for thread in threads {
             thread.recompute()
         }
