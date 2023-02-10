@@ -47,7 +47,7 @@ struct SentryDebug {
     ) {
         let realm = realm
         let orphanMessages = realm.objects(Message.self).where { $0.folderId == folderId }
-            .filter { $0.threads.isEmpty && $0.parentThreadsAsDuplicate.isEmpty }
+            .filter { $0.threads.isEmpty && $0.threadsDuplicatedIn.isEmpty }
         if !orphanMessages.isEmpty {
             SentrySDK.capture(message: "We found some orphan Messages.") { scope in
                 scope.setLevel(.error)

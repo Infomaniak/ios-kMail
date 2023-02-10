@@ -112,7 +112,7 @@ public class Message: Object, Decodable, Identifiable {
     @Persisted public var hasUnsubscribeLink: Bool?
     @Persisted(originProperty: "messages") var threads: LinkingObjects<Thread>
     @Persisted(originProperty: "messages") private var folders: LinkingObjects<Folder>
-    @Persisted(originProperty: "duplicates") var parentThreadsAsDuplicate: LinkingObjects<Thread>
+    @Persisted(originProperty: "duplicates") var threadsDuplicatedIn: LinkingObjects<Thread>
 
     @Persisted public var fullyDownloaded = false
     @Persisted public var fromSearch = false
