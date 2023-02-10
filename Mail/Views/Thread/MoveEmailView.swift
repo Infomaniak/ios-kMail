@@ -43,7 +43,7 @@ struct MoveEmailView: View {
         _folders = ObservedResults(
             Folder.self,
             configuration: AccountManager.instance.currentMailboxManager?.realmConfiguration
-        ) { $0.role != .draft && $0.parentLink.count == 0 && $0.toolType == nil }
+        ) { $0.role != .draft && $0.parents.count == 0 && $0.toolType == nil }
         nestableFolderSorted = NestableFolder.createFoldersHierarchy(from: Array(folders))
     }
 
