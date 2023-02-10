@@ -260,7 +260,7 @@ public class MailboxManager: ObservableObject {
                 if let draft = self.draft(messageUid: message.uid, using: realm) {
                     draftsToDelete.insert(draft)
                 }
-                for parent in message.parentThreads {
+                for parent in message.threads {
                     threadsToUpdate.insert(parent)
                 }
             }
@@ -754,7 +754,7 @@ public class MailboxManager: ObservableObject {
                         message.scheduled = update.scheduled
                         message.seen = update.seen
 
-                        for parent in message.parentThreads {
+                        for parent in message.threads {
                             threadsToUpdate.insert(parent)
                         }
                     }

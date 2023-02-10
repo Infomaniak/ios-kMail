@@ -110,7 +110,7 @@ public class Message: Object, Decodable, Identifiable {
     @Persisted public var flagged: Bool
     @Persisted public var safeDisplay: Bool?
     @Persisted public var hasUnsubscribeLink: Bool?
-    @Persisted(originProperty: "messages") var parentThreads: LinkingObjects<Thread>
+    @Persisted(originProperty: "messages") var threads: LinkingObjects<Thread>
     @Persisted(originProperty: "messages") private var parentFolders: LinkingObjects<Folder>
     @Persisted(originProperty: "duplicates") var parentThreadsAsDuplicate: LinkingObjects<Thread>
 
@@ -122,8 +122,8 @@ public class Message: Object, Decodable, Identifiable {
         return Array(to) + Array(cc)
     }
 
-    public var originalParent: Thread? {
-        return parentThreads.first { $0.folder?.id == folderId }
+    public var originalThread: Thread? {
+        return threads.first { $0.folder?.id == folderId }
     }
 
     public var parentFolder: Folder? {
@@ -143,7 +143,7 @@ public class Message: Object, Decodable, Identifiable {
     }
 
     public var duplicates: [Message] {
-        guard let dup = originalParent?.duplicates.where({ $0.messageId == messageId }) else { return [] }
+        guard let dup = originalThread?.duplicates.where({ $0.messageId == messageId }) else { return [] }
         return Array(dup)
     }
 

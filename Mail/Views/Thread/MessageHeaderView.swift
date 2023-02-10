@@ -58,7 +58,7 @@ struct MessageHeaderView: View {
         .onTapGesture {
             if message.isDraft {
                 DraftUtils.editDraft(from: message, mailboxManager: mailboxManager, editedMessageDraft: $editedDraft)
-            } else if message.originalParent?.messagesCount ?? 0 > 1 {
+            } else if message.originalThread?.messagesCount ?? 0 > 1 {
                 withAnimation {
                     isHeaderExpanded = false
                     isMessageExpanded.toggle()

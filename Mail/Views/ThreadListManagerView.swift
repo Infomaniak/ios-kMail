@@ -66,7 +66,7 @@ struct ThreadListManagerView: View {
             let tappedNotificationMessage = mailboxManager.getRealm().object(ofType: Message.self,
                                                                              forPrimaryKey: notificationPayload.messageId)
             // Original parent should always be in the inbox but maybe change in a later stage to always find the parent in inbox
-            if let tappedNotificationThread = tappedNotificationMessage?.originalParent {
+            if let tappedNotificationThread = tappedNotificationMessage?.originalThread {
                 self.tappedNotificationThread = tappedNotificationThread
                 shouldNavigateToNotificationThread = true
             } else {
