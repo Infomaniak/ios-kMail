@@ -722,8 +722,16 @@ public class MailboxManager: ObservableObject {
                         threadsToUpdate.insert(newThread)
                     }
 
+                    var allExistingMessages = Set(existingThreads.flatMap(\.messages))
+                    allExistingMessages.insert(message)
+
                     for thread in existingThreads {
-                        thread.addMessageIfNeeded(newMessage: message.fresh(using: realm) ?? message)
+                        for existingMessage in allExistingMessages {
+                            if !thread.messages.map(\.uid).contains(existingMessage.uid) {
+                                thread.addMessageIfNeeded(newMessage: message.fresh(using: realm) ?? message)
+                            }
+                        }
+
                         threadsToUpdate.insert(thread)
                     }
 
