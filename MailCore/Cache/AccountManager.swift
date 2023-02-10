@@ -94,6 +94,7 @@ extension Account: ObservableObject {}
 public class AccountManager: RefreshTokenDelegate {
     @LazyInjectService var networkLoginService: InfomaniakLogin
     @LazyInjectService var keychainHelper: KeychainHelper
+    @LazyInjectService var bugTracker: BugTracker
 
     private static let appIdentifierPrefix = Bundle.main.infoDictionary!["AppIdentifierPrefix"] as! String
     private static let group = "com.infomaniak.mail"
@@ -387,12 +388,11 @@ public class AccountManager: RefreshTokenDelegate {
         currentUserId = account.userId
 
         if account.user?.isStaff == true {
-            BugTracker.instance.activateOnScreenshot {
-                // Update token before presenting view
-                BugTracker.configureForMail()
-            }
+            bugTracker.activateOnScreenshot()
+            let apiFetcher = getApiFetcher(for: account.userId, token: account.token)
+            bugTracker.configure(with: apiFetcher)
         } else {
-            BugTracker.instance.stopActivatingOnScreenshot()
+            bugTracker.stopActivatingOnScreenshot()
         }
 
         Task {

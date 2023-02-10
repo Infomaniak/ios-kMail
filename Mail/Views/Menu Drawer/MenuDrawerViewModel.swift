@@ -17,6 +17,7 @@
  */
 
 import InfomaniakBugTracker
+import InfomaniakDI
 import MailCore
 import MailResources
 import RealmSwift
@@ -46,6 +47,8 @@ struct NestableFolder: Identifiable {
 }
 
 class MenuDrawerViewModel: ObservableObject {
+    @LazyInjectService var bugTracker: BugTracker
+
     /// User currently selected mailbox
     @Published var mailbox: Mailbox
     /// Other mailboxes the user owns
@@ -144,7 +147,6 @@ class MenuDrawerViewModel: ObservableObject {
 
     private func sendFeedback() {
         if AccountManager.instance.currentAccount?.user?.isStaff == true {
-            BugTracker.configureForMail()
             isShowingBugTracker.toggle()
         } else {
             UIApplication.shared.open(URLConstants.feedback.url)
