@@ -498,7 +498,10 @@ public class MailboxManager: ObservableObject {
                     predicates.append(NSPredicate(format: "ANY from.email = %@", from))
                 case let .contains(content):
                     predicates
-                        .append(NSPredicate(format: "body.value CONTAINS %@ OR subject CONTAINS %@", content, content))
+                        .append(
+                            NSPredicate(format: "body.value CONTAINS[c] %@ OR subject CONTAINS[c] %@ OR preview CONTAINS[c] %@",
+                                        content, content, content)
+                        )
                 case let .everywhere(searchEverywhere):
                     if !searchEverywhere {
                         predicates.append(NSPredicate(format: "folderId = %@", filterFolderId))
