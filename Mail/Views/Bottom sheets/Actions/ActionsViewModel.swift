@@ -84,7 +84,7 @@ struct Action: Identifiable, Equatable {
     static let unstar = Action(
         id: 21,
         title: MailResourcesStrings.Localizable.actionUnstar,
-        icon: MailResourcesAsset.starFull
+        icon: MailResourcesAsset.unstar
     )
     static let reportJunk = Action(
         id: 22,

@@ -21,9 +21,15 @@ import MailResources
 import SwiftUI
 
 private struct SwipeActionView: View {
-    let thread: Thread
-    let viewModel: ThreadListViewModel
-    let action: SwipeAction
+    private let thread: Thread
+    private let viewModel: ThreadListViewModel
+    private let action: SwipeAction
+
+    init(thread: Thread, viewModel: ThreadListViewModel, action: SwipeAction) {
+        self.thread = thread
+        self.viewModel = viewModel
+        self.action = action.fallback(for: thread) ?? action
+    }
 
     var body: some View {
         Button(role: action.isDestructive ? .destructive : nil) {
@@ -40,6 +46,7 @@ private struct SwipeActionView: View {
                     Image(resource: icon)
                 }
             }
+            .labelStyle(.iconOnly)
         }
         .tint(action.swipeTint)
     }

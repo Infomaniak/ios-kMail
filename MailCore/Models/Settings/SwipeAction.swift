@@ -113,21 +113,21 @@ public enum SwipeAction: String, CaseIterable, SettingsOptionEnum {
         return nil
     }
 
-    public func icon(from thread: Thread) -> MailResourcesImages? {
+    public func icon(from thread: Thread? = nil) -> MailResourcesImages? {
         switch self {
         case .delete:
             return MailResourcesAsset.bin
         case .archive:
             return MailResourcesAsset.archives
         case .readUnread:
-            if thread.unseenMessages == 0 {
+            if thread?.unseenMessages == 0 {
                 return MailResourcesAsset.envelope
             }
             return MailResourcesAsset.envelopeOpen
         case .move:
             return MailResourcesAsset.emailActionSend
         case .favorite:
-            if thread.flagged {
+            if thread?.flagged == true {
                 return MailResourcesAsset.unstar
             }
             return MailResourcesAsset.star
@@ -174,5 +174,18 @@ public enum SwipeAction: String, CaseIterable, SettingsOptionEnum {
         }
 
         return resource?.swiftUiColor
+    }
+
+    public func fallback(for thread: Thread) -> Self? {
+        switch self {
+        case .archive, .readAndArchive:
+            guard thread.parent?.role == .archive else { return nil }
+            return .moveToInbox
+        case .spam:
+            guard thread.parent?.role == .spam else { return nil }
+            return .moveToInbox
+        case .delete, .favorite, .move, .readUnread, .postPone, .quickAction, .moveToInbox, .none:
+            return nil
+        }
     }
 }

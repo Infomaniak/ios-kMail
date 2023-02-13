@@ -52,10 +52,12 @@ struct SwipeConfigCell: View {
                             .textStyle(.bodySmallSecondary)
                     } else {
                         action.swipeTint
-                        action.swipeIcon?
-                            .resizable()
-                            .frame(width: 24, height: 24)
-                            .foregroundColor(MailResourcesAsset.onAccentColor)
+                        if let icon = action.icon() {
+                            Image(resource: icon)
+                                .resizable()
+                                .frame(width: 24, height: 24)
+                                .foregroundColor(MailResourcesAsset.onAccentColor)
+                        }
                     }
                 }
                 .frame(width: 80)
