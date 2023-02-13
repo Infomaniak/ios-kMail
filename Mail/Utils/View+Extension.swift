@@ -77,7 +77,7 @@ extension View {
 
     func navigationBarThreadViewStyle(backgroundColor: Color) -> some View {
         if #available(iOS 16.0, *) {
-            return toolbarBackground(backgroundColor/*MailResourcesAsset.backgroundColor.swiftUiColor*/, for: .navigationBar)
+            return toolbarBackground(backgroundColor, for: .navigationBar)
         } else {
             let navigationBarAppearance = UINavigationBarAppearance()
             navigationBarAppearance.configureWithTransparentBackground()
