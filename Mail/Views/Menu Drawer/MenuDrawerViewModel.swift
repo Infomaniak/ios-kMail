@@ -47,8 +47,6 @@ struct NestableFolder: Identifiable {
 }
 
 class MenuDrawerViewModel: ObservableObject {
-    @LazyInjectService var bugTracker: BugTracker
-
     /// User currently selected mailbox
     @Published var mailbox: Mailbox
     /// Other mailboxes the user owns
