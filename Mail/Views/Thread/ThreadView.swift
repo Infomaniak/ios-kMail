@@ -97,7 +97,6 @@ struct ThreadView: View {
                 try? await mailboxManager.toggleRead(threads: [thread])
             }
         }
-        .background(scrollViewBackground)
         .navigationTitle(displayNavigationTitle ? thread.formattedSubject : "")
         .navigationBarThreadViewStyle(backgroundColor: displayNavigationTitle ? MailResourcesAsset.backgroundSecondaryColor.swiftUiColor : MailResourcesAsset.backgroundColor.swiftUiColor)
         .backButtonDisplayMode(.minimal)
@@ -178,15 +177,6 @@ struct ThreadView: View {
             }
             if thread.messageInFolderCount == 0 {
                 dismiss()
-            }
-        }
-    }
-
-    private var scrollViewBackground: some View {
-        GeometryReader { proxy in
-            VStack(spacing: 0) {
-                MailResourcesAsset.backgroundColor.swiftUiColor
-                    .frame(maxHeight: proxy.size.height * 0.2)
             }
         }
     }
