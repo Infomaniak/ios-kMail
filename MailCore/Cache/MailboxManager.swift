@@ -165,10 +165,8 @@ public class MailboxManager: ObservableObject {
 
                 // Threads contains in folders to delete
                 let mayBeDeletedThreads = Set(toDeleteFolders.flatMap(\.threads))
-                // Delete messages in all threads from folders to delete
-                // If message.folderId is one of folders to delete Id
-                let toDeleteMessages = Set(mayBeDeletedThreads.flatMap(\.messages)
-                    .filter { toDeleteFolders.map(\._id).contains($0.folderId) })
+                // Messages contains in folders to delete
+                let toDeleteMessages = Set(toDeleteFolders.flatMap(\.messages))
 
                 // Delete thread if all his messages are deleted
                 for thread in mayBeDeletedThreads where Set(thread.messages).isSubset(of: toDeleteMessages) {
@@ -219,19 +217,17 @@ public class MailboxManager: ObservableObject {
         return folder
     }
 
-    private func refreshFolder(from messages: [Message], additionalFolderId: String? = nil) async throws {
-        var foldersId = messages.map(\.folderId)
-        if let additionalFolderId = additionalFolderId {
-            foldersId.append(additionalFolderId)
+    private func refreshFolder(from messages: [Message], additionalFolder: Folder? = nil) async throws {
+        var folders = messages.map(\.folder)
+        if let additionalFolder = additionalFolder {
+            folders.append(additionalFolder)
         }
 
-        let orderedSet = NSOrderedSet(array: foldersId)
+        let orderedSet = NSOrderedSet(array: folders as [Any])
 
-        for id in orderedSet {
-            let realm = getRealm()
-            if let impactedFolder = realm.object(ofType: Folder.self, forPrimaryKey: id) {
-                try await threads(folder: impactedFolder)
-            }
+        for folder in orderedSet {
+            guard let impactedFolder = folder as? Folder else { continue }
+            try await threads(folder: impactedFolder)
         }
     }
 
@@ -264,12 +260,12 @@ public class MailboxManager: ObservableObject {
                 if let draft = self.draft(messageUid: message.uid, using: realm) {
                     draftsToDelete.insert(draft)
                 }
-                for parent in message.parentThreads {
+                for parent in message.threads {
                     threadsToUpdate.insert(parent)
                 }
             }
 
-            let foldersToUpdate = Set(threadsToUpdate.compactMap(\.parent))
+            let foldersToUpdate = Set(threadsToUpdate.compactMap(\.folder))
 
             try? realm.safeWrite {
                 realm.delete(draftsToDelete)
@@ -337,7 +333,7 @@ public class MailboxManager: ObservableObject {
     }
 
     public func move(threads: [Thread], to folder: Folder) async throws -> UndoRedoAction {
-        var messages = threads.flatMap(\.messages).filter { $0.folderId == threads.first?.folderId }
+        var messages = threads.flatMap(\.messages).filter { $0.folder == threads.first?.folder }
         messages.append(contentsOf: messages.flatMap(\.duplicates))
 
         return try await move(messages: messages, to: folder)
@@ -347,7 +343,7 @@ public class MailboxManager: ObservableObject {
     /// - Parameter threads: Threads to remove
     public func moveOrDelete(threads: [Thread]) async throws {
         // All threads comes from the same folder
-        guard let parentFolder = threads.first?.parent else { return }
+        guard let parentFolder = threads.first?.folder else { return }
 
         if parentFolder.toolType == .search {
             for thread in threads {
@@ -726,12 +722,12 @@ public class MailboxManager: ObservableObject {
     }
 
     private func createNewThreadIfRequired(for message: Message, folder: Folder, existingThreads: [Thread]) -> Thread? {
-        guard !existingThreads.contains(where: { $0.folderId == folder.id }) else { return nil }
+        guard !existingThreads.contains(where: { $0.folder == folder }) else { return nil }
 
         let thread = message.toThread().detached()
         folder.threads.insert(thread)
 
-        if let refThread = existingThreads.first(where: { $0.parent?.role != .draft && $0.parent?.role != .trash }) {
+        if let refThread = existingThreads.first(where: { $0.folder?.role != .draft && $0.folder?.role != .trash }) {
             addPreviousMessagesTo(newThread: thread, from: refThread)
         } else {
             for existingThread in existingThreads {
@@ -761,7 +757,7 @@ public class MailboxManager: ObservableObject {
                         message.scheduled = update.scheduled
                         message.seen = update.seen
 
-                        for parent in message.parentThreads {
+                        for parent in message.threads {
                             threadsToUpdate.insert(parent)
                         }
                     }
@@ -772,7 +768,7 @@ public class MailboxManager: ObservableObject {
     }
 
     private func updateThreads(threads: Set<Thread>) {
-        let folders = Set(threads.compactMap(\.parent))
+        let folders = Set(threads.compactMap(\.folder))
         for thread in threads {
             thread.recompute()
         }
@@ -829,9 +825,9 @@ public class MailboxManager: ObservableObject {
     /// Move to trash or delete message, depending on its current state
     /// - Parameter message: Message to remove
     public func moveOrDelete(message: Message) async throws {
-        if message.folderId == getFolder(with: .trash)?._id
-            || message.folderId == getFolder(with: .spam)?._id
-            || message.folderId == getFolder(with: .draft)?._id {
+        if message.folder?.role == .trash
+            || message.folder?.role == .spam
+            || message.folder?.role == .draft {
             var messages = [message]
             messages.append(contentsOf: message.duplicates)
             try await delete(messages: messages)
@@ -876,7 +872,7 @@ public class MailboxManager: ObservableObject {
 
     public func move(messages: [Message], to folder: Folder) async throws -> UndoRedoAction {
         let response = try await apiFetcher.move(mailbox: mailbox, messages: messages, destinationId: folder._id)
-        try await refreshFolder(from: messages, additionalFolderId: folder.id)
+        try await refreshFolder(from: messages, additionalFolder: folder)
         return undoRedoAction(for: response, and: messages)
     }
 

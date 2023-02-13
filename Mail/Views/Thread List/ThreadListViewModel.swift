@@ -240,7 +240,7 @@ class DateSection: Identifiable {
             try await mailboxManager.toggleRead(threads: [thread])
         case .move:
             moveSheet.state = .move(folderId: folder?.id) { folder in
-                guard thread.folderId != folder.id else { return }
+                guard thread.folder != folder else { return }
                 Task {
                     try await self.move(thread: thread, to: folder)
                 }

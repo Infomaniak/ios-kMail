@@ -47,7 +47,7 @@ struct SentryDebug {
     ) {
         let realm = realm
         let orphanMessages = realm.objects(Message.self).where { $0.folderId == folderId }
-            .filter { $0.parentThreads.isEmpty && $0.parentThreadsAsDuplicate.isEmpty }
+            .filter { $0.threads.isEmpty && $0.threadsDuplicatedIn.isEmpty }
         if !orphanMessages.isEmpty {
             SentrySDK.capture(message: "We found some orphan Messages.") { scope in
                 scope.setLevel(.error)
@@ -61,7 +61,7 @@ struct SentryDebug {
 
     static func searchForOrphanThreads(using realm: Realm, previousCursor: String?, newCursor: String?) {
         let realm = realm
-        let orphanThreads = realm.objects(Thread.self).filter { $0.parentLink.isEmpty }
+        let orphanThreads = realm.objects(Thread.self).filter { $0.folder == nil }
         if !orphanThreads.isEmpty {
             SentrySDK.capture(message: "We found some orphan Threads.") { scope in
                 scope.setLevel(.error)

@@ -198,7 +198,7 @@ enum ActionsTarget: Equatable {
         switch target {
         case let .threads(threads):
             if threads.count > 1 {
-                let spam = threads.allSatisfy { $0.parent?.role == .spam }
+                let spam = threads.allSatisfy { $0.folder?.role == .spam }
                 let unread = threads.allSatisfy(\.hasUnseenMessages)
                 quickActions = [.move, .archive, spam ? .nonSpam : .spam, .delete]
 
@@ -218,7 +218,7 @@ enum ActionsTarget: Equatable {
                 let unread = thread.hasUnseenMessages
                 let star = thread.flagged
 
-                let spam = thread.parent?.role == .spam
+                let spam = thread.folder?.role == .spam
                 let spamAction: Action? = spam ? .nonSpam : .spam
 
                 let tempListActions: [Action?] = [
@@ -306,7 +306,7 @@ enum ActionsTarget: Equatable {
         let snackBarMessage: String
         switch target {
         case let .threads(threads):
-            guard threads.first?.folderId != folder.id else { return }
+            guard threads.first?.folder != folder else { return }
             undoRedoAction = try await mailboxManager.move(threads: threads, to: folder)
             snackBarMessage = MailResourcesStrings.Localizable.snackbarThreadsMoved(folder.localizedName)
         case let .message(message):
@@ -383,7 +383,7 @@ enum ActionsTarget: Equatable {
         let folderId: String?
         switch target {
         case let .threads(threads):
-            folderId = threads.first?.parent?.id
+            folderId = threads.first?.folder?.id
         case let .message(message):
             folderId = message.folderId
         }

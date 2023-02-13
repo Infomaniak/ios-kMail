@@ -58,7 +58,6 @@ enum SearchState {
     @Published var folderList: [Folder]
     @Published var realFolder: Folder?
     var lastSearchFolderId: String?
-    let trashFolderId: String
     var observationSearchThreadToken: NotificationToken?
     @Published var selectedSearchFolderId = "" {
         didSet {
@@ -87,7 +86,6 @@ enum SearchState {
     init(mailboxManager: MailboxManager, folder: Folder?) {
         self.mailboxManager = mailboxManager
         searchHistory = mailboxManager.searchHistory()
-        trashFolderId = mailboxManager.getFolder(with: .trash)?._id ?? ""
         realFolder = folder
 
         searchFolder = mailboxManager.initSearchFolder()
