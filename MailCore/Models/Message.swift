@@ -383,8 +383,8 @@ public struct BodyResult: Codable {
 }
 
 public class Body: EmbeddedObject, Codable {
-    @Persisted public var value: String
-    @Persisted public var type: String
+    @Persisted public var value: String?
+    @Persisted public var type: String?
     @Persisted public var subBody: String?
 }
 

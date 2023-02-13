@@ -29,7 +29,7 @@ struct MessageBodyView: View {
         VStack {
             if let body = message.body {
                 if body.type == "text/plain" {
-                    Text(body.value)
+                    Text(body.value ?? "")
                         .textStyle(.body)
                         .frame(maxWidth: .infinity, alignment: .leading)
                         .padding(.horizontal, 16)
