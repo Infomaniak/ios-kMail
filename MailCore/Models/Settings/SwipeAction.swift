@@ -113,36 +113,35 @@ public enum SwipeAction: String, CaseIterable, SettingsOptionEnum {
         return nil
     }
 
-    public var swipeIcon: Image? {
-        let resource: MailResourcesImages?
+    public func icon(from thread: Thread) -> MailResourcesImages? {
         switch self {
         case .delete:
-            resource = MailResourcesAsset.bin
+            return MailResourcesAsset.bin
         case .archive:
-            resource = MailResourcesAsset.archives
+            return MailResourcesAsset.archives
         case .readUnread:
-            resource = MailResourcesAsset.envelopeOpen
+            if thread.unseenMessages == 0 {
+                return MailResourcesAsset.envelope
+            }
+            return MailResourcesAsset.envelopeOpen
         case .move:
-            resource = MailResourcesAsset.emailActionSend
+            return MailResourcesAsset.emailActionSend
         case .favorite:
-            resource = MailResourcesAsset.star
+            if thread.flagged {
+                return MailResourcesAsset.unstar
+            }
+            return MailResourcesAsset.star
         case .postPone:
-            resource = MailResourcesAsset.waitingMessage
+            return MailResourcesAsset.waitingMessage
         case .spam:
-            resource = MailResourcesAsset.spam
+            return MailResourcesAsset.spam
         case .readAndArchive:
-            resource = MailResourcesAsset.archives
+            return MailResourcesAsset.archives
         case .quickAction:
-            resource = MailResourcesAsset.navigationMenu
+            return MailResourcesAsset.navigationMenu
         case .moveToInbox:
-            resource = MailResourcesAsset.drawer
+            return MailResourcesAsset.drawer
         case .none:
-            resource = nil
-        }
-
-        if let resource = resource {
-            return Image(resource.name)
-        } else {
             return nil
         }
     }

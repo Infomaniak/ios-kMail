@@ -25,13 +25,6 @@ private struct SwipeActionView: View {
     let viewModel: ThreadListViewModel
     let action: SwipeAction
 
-    private var icon: Image? {
-        if action == .readUnread {
-            return Image(resource: thread.unseenMessages == 0 ? MailResourcesAsset.envelope : MailResourcesAsset.envelopeOpen)
-        }
-        return action.swipeIcon
-    }
-
     var body: some View {
         Button(role: action.isDestructive ? .destructive : nil) {
             Task {
@@ -40,8 +33,13 @@ private struct SwipeActionView: View {
                 }
             }
         } label: {
-            Label { Text(action.title) } icon: { icon }
-                .labelStyle(.iconOnly)
+            Label {
+                Text(action.title)
+            } icon: {
+                if let icon = action.icon(from: thread) {
+                    Image(resource: icon)
+                }
+            }
         }
         .tint(action.swipeTint)
     }
