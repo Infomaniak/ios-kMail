@@ -64,7 +64,7 @@ public struct MailTextStyle {
         font: .system(size: 18, weight: .semibold),
         color: MailResourcesAsset.primaryTextColor
     )
-    
+
     public static let header2Error = MailTextStyle(
         font: .system(size: 18, weight: .semibold),
         color: MailResourcesAsset.redActionColor
