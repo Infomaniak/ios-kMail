@@ -26,6 +26,8 @@ public enum SwipeType: String, CaseIterable {
     case trailing
     case fullTrailing
 
+    public typealias SwipeActionKeyPath = ReferenceWritableKeyPath<UserDefaults, SwipeAction>
+
     public var title: String {
         switch self {
         case .leading:
@@ -39,7 +41,7 @@ public enum SwipeType: String, CaseIterable {
         }
     }
 
-    public var keyPath: ReferenceWritableKeyPath<UserDefaults, SwipeAction> {
+    public var keyPath: SwipeActionKeyPath {
         switch self {
         case .leading:
             return \.swipeLeading
@@ -49,6 +51,19 @@ public enum SwipeType: String, CaseIterable {
             return \.swipeTrailing
         case .fullTrailing:
             return \.swipeFullTrailing
+        }
+    }
+
+    public var excludedKeyPaths: [SwipeActionKeyPath] {
+        switch self {
+        case .leading:
+            return [\.swipeFullLeading]
+        case .fullLeading:
+            return [\.swipeLeading]
+        case .trailing:
+            return [\.swipeFullTrailing]
+        case .fullTrailing:
+            return [\.swipeTrailing]
         }
     }
 }
@@ -184,10 +199,10 @@ public enum SwipeAction: String, CaseIterable, SettingsOptionEnum {
     public func fallback(for thread: Thread) -> Self? {
         switch self {
         case .archive, .readAndArchive:
-            guard thread.parent?.role == .archive else { return nil }
+            guard thread.folder?.role == .archive else { return nil }
             return .moveToInbox
         case .spam:
-            guard thread.parent?.role == .spam else { return nil }
+            guard thread.folder?.role == .spam else { return nil }
             return .moveToInbox
         case .delete, .favorite, .move, .readUnread, .postPone, .quickAction, .moveToInbox, .none:
             return nil

@@ -22,12 +22,13 @@ import SwiftUI
 
 struct SettingsOptionView<OptionEnum>: View where OptionEnum: CaseIterable, OptionEnum: Equatable, OptionEnum: RawRepresentable,
     OptionEnum: SettingsOptionEnum, OptionEnum.AllCases: RandomAccessCollection, OptionEnum.RawValue: Hashable {
-    let title: String
-    let subtitle: String?
-    let values: [OptionEnum]
-    let keyPath: ReferenceWritableKeyPath<UserDefaults, OptionEnum>
-    let excludedKeyPath: [ReferenceWritableKeyPath<UserDefaults, OptionEnum>]?
+    private let title: String
+    private let subtitle: String?
+    private let allValues: [OptionEnum]
+    private let keyPath: ReferenceWritableKeyPath<UserDefaults, OptionEnum>
+    private let excludedKeyPaths: [ReferenceWritableKeyPath<UserDefaults, OptionEnum>]?
 
+    @State private var values: [OptionEnum]
     @State private var selectedValue: OptionEnum {
         didSet {
             UserDefaults.shared[keyPath: keyPath] = selectedValue
@@ -48,15 +49,11 @@ struct SettingsOptionView<OptionEnum>: View where OptionEnum: CaseIterable, Opti
         self.title = title
         self.subtitle = subtitle
         self.keyPath = keyPath
-        self.excludedKeyPath = excludedKeyPath
-        _selectedValue = State(wrappedValue: UserDefaults.shared[keyPath: keyPath])
+        self.excludedKeyPaths = excludedKeyPath
+        self.allValues = values
 
-        if let excludedKeyPath {
-            let excludedValues = excludedKeyPath.map { UserDefaults.shared[keyPath: $0] }
-            self.values = values.filter { !excludedValues.contains($0) || ($0.rawValue as? String) == "none" }
-        } else {
-            self.values = values
-        }
+        _values = State(wrappedValue: values)
+        _selectedValue = State(wrappedValue: UserDefaults.shared[keyPath: keyPath])
     }
 
     var body: some View {
@@ -105,6 +102,11 @@ struct SettingsOptionView<OptionEnum>: View where OptionEnum: CaseIterable, Opti
         .listStyle(.plain)
         .background(MailResourcesAsset.backgroundColor.swiftUiColor)
         .navigationBarTitle(title, displayMode: .inline)
+        .onAppear {
+            guard let excludedKeyPaths else { return }
+            let excludedValues = excludedKeyPaths.map { UserDefaults.shared[keyPath: $0] }
+            self.values = allValues.filter { !excludedValues.contains($0) || ($0.rawValue as? String) == "none" }
+        }
     }
 }
 

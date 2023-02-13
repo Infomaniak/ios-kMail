@@ -52,7 +52,7 @@ struct SettingsSwipeActionsView: View {
                                 title: item.title,
                                 values: SwipeAction.allCases.filter(\.isCustomizable),
                                 keyPath: item.keyPath,
-                                excludedKeyPath: [\.swipeFullLeading]
+                                excludedKeyPath: item.excludedKeyPaths
                             )
                             .frame(minHeight: 40)
                             .padding(.horizontal, 8)
