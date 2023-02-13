@@ -32,9 +32,6 @@ struct AttachmentsView: View {
 
     var body: some View {
         VStack(spacing: 16) {
-            IKDivider()
-                .padding(.horizontal, 8)
-
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack(spacing: 8) {
                     ForEach(attachments) { attachment in
@@ -51,7 +48,7 @@ struct AttachmentsView: View {
                     }
                 }
                 .padding(.vertical, 1)
-                .padding(.horizontal, 16)
+                .padding(.horizontal, 15)
             }
 
             HStack(spacing: 8) {
@@ -74,9 +71,6 @@ struct AttachmentsView: View {
                 Spacer()
             }
             .padding(.horizontal, 16)
-
-            IKDivider()
-                .padding(.horizontal, 8)
         }
         .sheet(item: $previewedAttachment) { previewedAttachment in
             AttachmentPreview(attachment: previewedAttachment)
