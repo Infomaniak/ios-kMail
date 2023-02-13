@@ -65,7 +65,7 @@ extension View {
 
     func navigationBarThreadListStyle() -> some View {
         if #available(iOS 16.0, *) {
-            return toolbarBackground(MailResourcesAsset.backgroundHeaderColor.swiftUiColor, for: .navigationBar)
+            return toolbarBackground(MailResourcesAsset.backgroundNavBarColor.swiftUiColor, for: .navigationBar)
         } else {
             return modifier(NavigationBarStyleViewModifier(
                 standardAppearance: BarAppearanceConstants.threadListNavigationBarAppearance,
