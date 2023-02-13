@@ -34,7 +34,8 @@ public extension ApiFetcher {
 public class MailApiFetcher: ApiFetcher {
     public static let clientId = "E90BC22D-67A8-452C-BE93-28DA33588CA4"
 
-    override public func perform<T: Decodable>(request: DataRequest) async throws -> (data: T, responseAt: Int?) {
+    override public func perform<T: Decodable>(request: DataRequest,
+                                               decoder: JSONDecoder = ApiFetcher.decoder) async throws -> (data: T, responseAt: Int?) {
         do {
             return try await super.perform(request: request)
         } catch InfomaniakError.apiError(let apiError) {

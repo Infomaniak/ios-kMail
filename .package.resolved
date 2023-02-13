@@ -41,8 +41,8 @@
       "kind" : "remoteSourceControl",
       "location" : "git@github.com:Infomaniak/ios-bug-tracker.git",
       "state" : {
-        "revision" : "67477ddc3028f6c6c074d26fd6f84c060876dcf1",
-        "version" : "1.2.0"
+        "revision" : "13ad8cb64aeeaf72e910221f2bc0a4e5e75c68a4",
+        "version" : "2.0.0"
       }
     },
     {
@@ -51,7 +51,7 @@
       "location" : "https://github.com/Infomaniak/ios-core.git",
       "state" : {
         "branch" : "mail-di",
-        "revision" : "fe83659edb83338306c119eb6068ae4f604ad4c9"
+        "revision" : "20c33361b760a083d657cb8d60ac2d44e86d814d"
       }
     },
     {
@@ -59,8 +59,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Infomaniak/ios-core-ui.git",
       "state" : {
-        "revision" : "4e8b5ca3881020bca6fec5baf0c24a87f8bc0883",
-        "version" : "2.1.0"
+        "revision" : "852ca2ea76a08ebe30fa801b21fc27e111e1ff50",
+        "version" : "2.1.1"
       }
     },
     {
@@ -122,8 +122,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/kean/Nuke",
       "state" : {
-        "revision" : "3ed0597082b40932481fb8971af8813a4284203c",
-        "version" : "11.6.1"
+        "revision" : "67bd45931180f652159e3342575277a7f197b3ab",
+        "version" : "11.6.2"
       }
     },
     {
