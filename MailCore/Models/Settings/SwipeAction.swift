@@ -113,37 +113,42 @@ public enum SwipeAction: String, CaseIterable, SettingsOptionEnum {
         return nil
     }
 
-    public func icon(from thread: Thread? = nil) -> MailResourcesImages? {
-        switch self {
-        case .delete:
-            return MailResourcesAsset.bin
-        case .archive:
-            return MailResourcesAsset.archives
-        case .readUnread:
-            if thread?.unseenMessages == 0 {
-                return MailResourcesAsset.envelope
+    public func icon(from thread: Thread? = nil) -> Image? {
+        var resource: MailResourcesImages? {
+            switch self {
+            case .delete:
+                return MailResourcesAsset.bin
+            case .archive:
+                return MailResourcesAsset.archives
+            case .readUnread:
+                if thread?.unseenMessages == 0 {
+                    return MailResourcesAsset.envelope
+                }
+                return MailResourcesAsset.envelopeOpen
+            case .move:
+                return MailResourcesAsset.emailActionSend
+            case .favorite:
+                if thread?.flagged == true {
+                    return MailResourcesAsset.unstar
+                }
+                return MailResourcesAsset.star
+            case .postPone:
+                return MailResourcesAsset.waitingMessage
+            case .spam:
+                return MailResourcesAsset.spam
+            case .readAndArchive:
+                return MailResourcesAsset.archives
+            case .quickAction:
+                return MailResourcesAsset.navigationMenu
+            case .moveToInbox:
+                return MailResourcesAsset.drawer
+            case .none:
+                return nil
             }
-            return MailResourcesAsset.envelopeOpen
-        case .move:
-            return MailResourcesAsset.emailActionSend
-        case .favorite:
-            if thread?.flagged == true {
-                return MailResourcesAsset.unstar
-            }
-            return MailResourcesAsset.star
-        case .postPone:
-            return MailResourcesAsset.waitingMessage
-        case .spam:
-            return MailResourcesAsset.spam
-        case .readAndArchive:
-            return MailResourcesAsset.archives
-        case .quickAction:
-            return MailResourcesAsset.navigationMenu
-        case .moveToInbox:
-            return MailResourcesAsset.drawer
-        case .none:
-            return nil
         }
+
+        guard let resource else { return nil }
+        return Image(resource.name)
     }
 
     public var swipeTint: Color? {

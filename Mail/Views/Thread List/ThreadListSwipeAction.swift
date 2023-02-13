@@ -39,14 +39,8 @@ private struct SwipeActionView: View {
                 }
             }
         } label: {
-            Label {
-                Text(action.title)
-            } icon: {
-                if let icon = action.icon(from: thread) {
-                    Image(resource: icon)
-                }
-            }
-            .labelStyle(.iconOnly)
+            Label { Text(action.title) } icon: { action.icon(from: thread) }
+                .labelStyle(.iconOnly)
         }
         .tint(action.swipeTint)
     }
