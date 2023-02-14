@@ -28,7 +28,6 @@ struct SearchView: View {
     @EnvironmentObject var globalBottomSheet: GlobalBottomSheet
 
     @AppStorage(UserDefaults.shared.key(.threadDensity)) private var threadDensity = DefaultPreferences.threadDensity
-    @AppStorage(UserDefaults.shared.key(.accentColor)) private var accentColor = DefaultPreferences.accentColor
 
     @StateObject var bottomSheet: ThreadBottomSheet
 
@@ -240,7 +239,7 @@ struct SearchView: View {
                         Image(resource: MailResourcesAsset.close)
                             .resizable()
                             .scaledToFit()
-                            .foregroundColor(Color.accentColor)
+                            .foregroundColor(.accentColor)
                             .frame(width: 17, height: 17)
                     }
                     .buttonStyle(BorderlessButtonStyle())

@@ -182,8 +182,7 @@ struct ThreadListView: View {
             viewModel.selectedThread = nil
         }
         .onChange(of: splitViewManager.selectedFolder) { newFolder in
-            guard let folder = newFolder else { return }
-            updateFetchingTask(with: folder)
+            changeFolder(newFolder: newFolder)
         }
         .onReceive(NotificationCenter.default.publisher(for: UIApplication.willEnterForegroundNotification)) { _ in
             updateFetchingTask()
@@ -200,6 +199,18 @@ struct ThreadListView: View {
             if case let .move(folderId, handler) = moveSheet.state {
                 MoveEmailView.sheetView(mailboxManager: viewModel.mailboxManager, from: folderId, moveHandler: handler)
             }
+        }
+    }
+
+    private func changeFolder(newFolder: Folder?) {
+        guard let folder = newFolder else { return }
+
+        viewModel.isLoadingPage = false
+        Task {
+            fetchingTask?.cancel()
+            _ = await fetchingTask?.result
+            fetchingTask = nil
+            updateFetchingTask(with: folder)
         }
     }
 

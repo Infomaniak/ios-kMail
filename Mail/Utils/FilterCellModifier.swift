@@ -26,15 +26,13 @@ struct FilterCellModifier: ViewModifier {
         content
             .padding(.vertical, 6)
             .padding(.horizontal, 11)
-            .foregroundColor(isSelected ? MailResourcesAsset.onAccentColor.swiftUiColor : Color(uiColor: UserDefaults.shared.accentColor.primary.color))
-            .background(isSelected
-                ? Color(uiColor: UserDefaults.shared.accentColor.primary.color)
-                : MailResourcesAsset.backgroundColor.swiftUiColor)
-                .cornerRadius(40)
-                .overlay(
-                    RoundedRectangle(cornerRadius: 30)
-                        .stroke(Color(uiColor: UserDefaults.shared.accentColor.primary.color), lineWidth: 1)
-                )
+            .foregroundColor(isSelected ? MailResourcesAsset.onAccentColor.swiftUiColor : .accentColor)
+            .background(isSelected ? .accentColor : MailResourcesAsset.backgroundColor.swiftUiColor)
+            .cornerRadius(40)
+            .overlay(
+                RoundedRectangle(cornerRadius: 30)
+                    .stroke(Color.accentColor, lineWidth: 1)
+            )
     }
 }
 
