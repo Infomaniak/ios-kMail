@@ -38,7 +38,7 @@ extension CNContact: IdentifiableFromEmail {
 
 extension Contact: IdentifiableFromEmail {
     func uniqueKeyForEmail(_ email: String) -> String {
-        return name + email
+        return name ?? "" + email
     }
 }
 
