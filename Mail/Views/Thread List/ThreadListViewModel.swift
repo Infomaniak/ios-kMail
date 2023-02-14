@@ -150,7 +150,7 @@ class DateSection: Identifiable {
             guard let folder = folder else { return }
 
             try await mailboxManager.threads(folder: folder.freezeIfNeeded()) {
-                DispatchQueue.main.async {
+                Task {
                     withAnimation {
                         self.isLoadingPage = false
                     }

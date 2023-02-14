@@ -237,9 +237,9 @@ public class MailboxManager: ObservableObject {
 
     // MARK: - Thread
 
-    public func threads(folder: Folder, earlyCompletion: (() -> Void) = {}) async throws {
+    public func threads(folder: Folder, fetchCurrentFolderCompleted: (() -> Void) = {}) async throws {
         try await messages(folder: folder.freezeIfNeeded())
-        earlyCompletion()
+        fetchCurrentFolderCompleted()
 
         var roles: [FolderRole] {
             switch folder.role {
