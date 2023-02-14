@@ -22,17 +22,17 @@ import UIKit
 import UserNotifications
 
 public struct NotificationTappedPayload {
-    public let messageUid: String
-    public let threadUid: String
+    public let messageId: String
 }
 
 @MainActor
 class NotificationCenterDelegate: NSObject, UNUserNotificationCenterDelegate {
     private func handleClickOnNotification(scene: UIScene?, content: UNNotificationContent) {
-        guard let mailboxId = content.userInfo[NotificationsHelper.UserInfoKeys.mailboxId] as? String,
-              let mailbox = MailboxInfosManager.instance.getMailbox(objectId: mailboxId),
-              let mailboxManager = AccountManager.instance.getMailboxManager(for: mailbox),
-              let messageUid = content.targetContentIdentifier else {
+        guard let messageId = content.userInfo[NotificationsHelper.UserInfoKeys.messageId] as? String,
+              let mailboxId = content.userInfo[NotificationsHelper.UserInfoKeys.mailboxId] as? Int,
+              let userId = content.userInfo[NotificationsHelper.UserInfoKeys.userId] as? Int,
+              let mailbox = MailboxInfosManager.instance.getMailbox(id: mailboxId, userId: userId),
+              let mailboxManager = AccountManager.instance.getMailboxManager(for: mailbox) else {
             return
         }
 
@@ -46,14 +46,12 @@ class NotificationCenterDelegate: NSObject, UNUserNotificationCenterDelegate {
             }
             // This can certainly be improved, we need to add a delay to get the new switched UI before sending the notification
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                NotificationCenter.default.post(name: .onUserTappedNotification, object: NotificationTappedPayload(
-                    messageUid: messageUid,
-                    threadUid: content.threadIdentifier))
+                NotificationCenter.default.post(name: .onUserTappedNotification,
+                                                object: NotificationTappedPayload(messageId: messageId))
             }
         } else {
-            NotificationCenter.default.post(name: .onUserTappedNotification, object: NotificationTappedPayload(
-                messageUid: messageUid,
-                threadUid: content.threadIdentifier))
+            NotificationCenter.default.post(name: .onUserTappedNotification,
+                                            object: NotificationTappedPayload(messageId: messageId))
         }
     }
 

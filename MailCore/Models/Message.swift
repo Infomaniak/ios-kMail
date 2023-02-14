@@ -110,7 +110,9 @@ public class Message: Object, Decodable, Identifiable {
     @Persisted public var flagged: Bool
     @Persisted public var safeDisplay: Bool?
     @Persisted public var hasUnsubscribeLink: Bool?
-    @Persisted(originProperty: "messages") var parents: LinkingObjects<Thread>
+    @Persisted(originProperty: "messages") var threads: LinkingObjects<Thread>
+    @Persisted(originProperty: "messages") private var folders: LinkingObjects<Folder>
+    @Persisted(originProperty: "duplicates") var threadsDuplicatedIn: LinkingObjects<Thread>
 
     @Persisted public var fullyDownloaded = false
     @Persisted public var fromSearch = false
@@ -120,8 +122,12 @@ public class Message: Object, Decodable, Identifiable {
         return Array(to) + Array(cc)
     }
 
-    public var originalParent: Thread? {
-        return parents.first { $0.folderId == folderId }
+    public var originalThread: Thread? {
+        return threads.first { $0.folder?.id == folderId }
+    }
+
+    public var folder: Folder? {
+        return folders.first
     }
 
     public var shouldComplete: Bool {
@@ -137,7 +143,7 @@ public class Message: Object, Decodable, Identifiable {
     }
 
     public var duplicates: [Message] {
-        guard let dup = originalParent?.duplicates.where({ $0.messageId == messageId }) else { return [] }
+        guard let dup = originalThread?.duplicates.where({ $0.messageId == messageId }) else { return [] }
         return Array(dup)
     }
 
@@ -363,8 +369,7 @@ public class Message: Object, Decodable, Identifiable {
             flagged: flagged,
             answered: answered,
             forwarded: forwarded,
-            size: size,
-            folderId: folderId
+            size: size
         )
         thread.messageIds = linkedUids
         return thread
@@ -378,8 +383,8 @@ public struct BodyResult: Codable {
 }
 
 public class Body: EmbeddedObject, Codable {
-    @Persisted public var value: String
-    @Persisted public var type: String
+    @Persisted public var value: String?
+    @Persisted public var type: String?
     @Persisted public var subBody: String?
 }
 

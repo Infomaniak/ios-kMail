@@ -92,7 +92,10 @@ extension Account: ObservableObject {}
 }
 
 public class AccountManager: RefreshTokenDelegate {
-    @InjectService var networkLoginService: InfomaniakLogin
+    @LazyInjectService var networkLoginService: InfomaniakLogin
+    @LazyInjectService var keychainHelper: KeychainHelper
+    @LazyInjectService var bugTracker: BugTracker
+
     private static let appIdentifierPrefix = Bundle.main.infoDictionary!["AppIdentifierPrefix"] as! String
     private static let group = "com.infomaniak.mail"
     public static let appGroup = "group." + group
@@ -173,7 +176,7 @@ public class AccountManager: RefreshTokenDelegate {
     public func reloadTokensAndAccounts() {
         accounts = loadAccounts()
         if !accounts.isEmpty {
-            tokens = KeychainHelper.loadTokens()
+            tokens = keychainHelper.loadTokens()
         }
 
         // Also update current account reference to prevent mismatch
@@ -257,7 +260,7 @@ public class AccountManager: RefreshTokenDelegate {
             )
         }
         tokens.removeAll { $0.userId == token.userId }
-        KeychainHelper.deleteToken(for: token.userId)
+        keychainHelper.deleteToken(for: token.userId)
         if let account = account(for: token.userId) {
             account.token = nil
             if account.userId == currentUserId {
@@ -273,25 +276,26 @@ public class AccountManager: RefreshTokenDelegate {
     }
 
     public func createAndSetCurrentAccount(token: ApiToken) async throws -> Account {
-        let apiFetcher = ApiFetcher(token: token, delegate: self)
-        let user = try await apiFetcher.userProfile(dateFormat: .iso8601)
+        let apiFetcher = MailApiFetcher(token: token, delegate: self)
+        let user = try await apiFetcher.userProfile()
+
+        let mailboxesResponse = try await apiFetcher.mailboxes()
+        guard !mailboxesResponse.isEmpty else {
+            networkLoginService.deleteApiToken(token: token) { error in
+                DDLogError("Failed to delete api token: \(error.localizedDescription)")
+            }
+            throw MailError.noMailbox
+        }
 
         let newAccount = Account(apiToken: token)
         newAccount.user = user
         addAccount(account: newAccount)
         setCurrentAccount(account: newAccount)
 
-        // add get mailboxes
-        let mailApiFetcher = MailApiFetcher(token: token, delegate: self)
-        let mailboxesResponse = try await mailApiFetcher.mailboxes()
-        guard !mailboxesResponse.isEmpty else {
-            removeAccount(toDeleteAccount: newAccount)
-            throw MailError.unknownError
-        }
         for mailbox in mailboxesResponse {
-            mailbox.permissions = try await mailApiFetcher.permissions(mailbox: mailbox)
+            mailbox.permissions = try await apiFetcher.permissions(mailbox: mailbox)
             if mailbox.isLimited {
-                mailbox.quotas = try await mailApiFetcher.quotas(mailbox: mailbox)
+                mailbox.quotas = try await apiFetcher.quotas(mailbox: mailbox)
             }
         }
 
@@ -384,12 +388,11 @@ public class AccountManager: RefreshTokenDelegate {
         currentUserId = account.userId
 
         if account.user?.isStaff == true {
-            BugTracker.instance.activateOnScreenshot {
-                // Update token before presenting view
-                BugTracker.configureForMail()
-            }
+            bugTracker.activateOnScreenshot()
+            let apiFetcher = getApiFetcher(for: account.userId, token: account.token)
+            bugTracker.configure(with: apiFetcher)
         } else {
-            BugTracker.instance.stopActivatingOnScreenshot()
+            bugTracker.stopActivatingOnScreenshot()
         }
 
         Task {
@@ -416,7 +419,7 @@ public class AccountManager: RefreshTokenDelegate {
             removeAccount(toDeleteAccount: account)
         }
         accounts.append(account)
-        KeychainHelper.storeToken(account.token)
+        keychainHelper.storeToken(account.token)
         saveAccounts()
     }
 
@@ -433,9 +436,12 @@ public class AccountManager: RefreshTokenDelegate {
 
     public func removeTokenAndAccount(token: ApiToken) {
         tokens.removeAll { $0.userId == token.userId }
-        KeychainHelper.deleteToken(for: token.userId)
+        keychainHelper.deleteToken(for: token.userId)
         if let account = account(for: token) {
             removeAccount(toDeleteAccount: account)
+        }
+        networkLoginService.deleteApiToken(token: token) { error in
+            DDLogError("Failed to delete api token: \(error.localizedDescription)")
         }
     }
 
@@ -448,7 +454,7 @@ public class AccountManager: RefreshTokenDelegate {
     }
 
     public func updateToken(newToken: ApiToken, oldToken: ApiToken) {
-        KeychainHelper.storeToken(newToken)
+        keychainHelper.storeToken(newToken)
         for account in accounts where oldToken.userId == account.userId {
             account.token = newToken
         }

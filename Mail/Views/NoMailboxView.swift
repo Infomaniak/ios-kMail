@@ -16,40 +16,47 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import MailCore
 import MailResources
 import SwiftUI
 
 struct NoMailboxView: View {
     @Environment(\.window) var window
 
+    let slide = Slide(
+        id: 1,
+        backgroundImage: Image(resource: MailResourcesAsset.onboardingBackground3),
+        title: MailResourcesStrings.Localizable.noMailboxTitle,
+        description: MailResourcesStrings.Localizable.noMailboxDescription,
+        asset: MailResourcesAsset.noMailbox
+    )
+
     var body: some View {
         VStack(spacing: 0) {
-            Image(resource: MailResourcesAsset.logoMail)
-                .resizable()
-                .scaledToFit()
-                .frame(width: 110, height: 110)
-                .padding(.bottom, 56)
-            Text(MailResourcesStrings.Localizable.noMailboxTitle)
-                .textStyle(.header2)
-                .padding(.horizontal, 48)
-                .padding(.bottom, 16)
-            Text(MailResourcesStrings.Localizable.noMailboxDescription)
-                .textStyle(.bodySecondary)
-                .padding(.horizontal, 48)
-                .padding(.bottom, 40)
-            LargeButton {
-                // TODO: Add email address
-                showWorkInProgressSnackBar()
-            } label: {
-                Label(MailResourcesStrings.Localizable.buttonAddEmailAddress, systemImage: "plus")
+            SlideView(slide: slide)
+                .overlay(alignment: .top) {
+                    Image(resource: MailResourcesAsset.logoText)
+                        .resizable()
+                        .scaledToFit()
+                        .frame(height: Constants.onboardingLogoHeight)
+                        .padding(.top, Constants.onboardingLogoPaddingTop)
+                }
+
+            VStack(spacing: 24) {
+                LargeButton {
+                    UIApplication.shared.open(URLConstants.ikMe.url)
+                } label: {
+                    Label(MailResourcesStrings.Localizable.buttonAddEmailAddress, systemImage: "plus")
+                }
+
+                Button {
+                    (window?.windowScene?.delegate as? SceneDelegate)?.showLoginView()
+                } label: {
+                    Text(MailResourcesStrings.Localizable.buttonLogInDifferentAccount)
+                        .textStyle(.bodyMediumAccent)
+                }
             }
-            .padding(.bottom, 24)
-            Button {
-                (window?.windowScene?.delegate as? SceneDelegate)?.showLoginView()
-            } label: {
-                Text(MailResourcesStrings.Localizable.buttonLogInDifferentAccount)
-                    .textStyle(.bodyMediumAccent)
-            }
+            .frame(height: Constants.onboardingButtonHeight + Constants.onboardingBottomButtonPadding, alignment: .top)
         }
     }
 }

@@ -20,10 +20,10 @@ import MailCore
 import MailResources
 import SwiftUI
 
-struct SettingsListView: View {
-    @AppStorage(UserDefaults.shared.key(.threadDensity), store: .shared) private var density = DefaultPreferences.threadDensity
-    @AppStorage(UserDefaults.shared.key(.theme), store: .shared) private var theme = DefaultPreferences.theme
-    @AppStorage(UserDefaults.shared.key(.accentColor), store: .shared) private var accentColor = DefaultPreferences.accentColor
+struct SettingsView: View {
+    @AppStorage(UserDefaults.shared.key(.threadDensity)) private var density = DefaultPreferences.threadDensity
+    @AppStorage(UserDefaults.shared.key(.theme)) private var theme = DefaultPreferences.theme
+    @AppStorage(UserDefaults.shared.key(.accentColor)) private var accentColor = DefaultPreferences.accentColor
 
     var body: some View {
         List {
@@ -39,6 +39,12 @@ struct SettingsListView: View {
 
                 SettingsToggleCell(title: MailResourcesStrings.Localizable.settingsAppLock, userDefaults: \.isAppLockEnabled)
                     .settingCellModifier()
+
+                // TODO: - Use when notifications are ready
+//                SettingsSubMenuCell(title: MailResourcesStrings.Localizable.settingsMailboxGeneralNotifications) {
+//                    SettingsNotificationsView()
+//                }
+//                .settingCellModifier()
             }
             .listSectionSeparator(.hidden)
 
@@ -98,8 +104,8 @@ struct SettingsListView: View {
     }
 }
 
-struct SettingsListView_Previews: PreviewProvider {
+struct SettingsView_Previews: PreviewProvider {
     static var previews: some View {
-        SettingsListView()
+        SettingsView()
     }
 }

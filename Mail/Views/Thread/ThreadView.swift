@@ -60,12 +60,6 @@ struct ThreadView: View {
         return Array(thread.messages)
     }
 
-    private var threadBackground: Color {
-        messages.count > 1
-            ? MailResourcesAsset.backgroundCardColor.swiftUiColor
-            : MailResourcesAsset.backgroundColor.swiftUiColor
-    }
-
     var body: some View {
         ScrollView {
             VStack(spacing: 0) {
@@ -88,8 +82,7 @@ struct ThreadView: View {
                     .background(MailResourcesAsset.backgroundColor.swiftUiColor)
 
                 MessageListView(messages: messages)
-                    .padding(.top, 8)
-                    .background(threadBackground)
+                    .background(MailResourcesAsset.backgroundColor.swiftUiColor)
             }
         }
         .coordinateSpace(name: "scrollView")
@@ -104,9 +97,8 @@ struct ThreadView: View {
                 try? await mailboxManager.toggleRead(threads: [thread])
             }
         }
-        .background(scrollViewBackground)
         .navigationTitle(displayNavigationTitle ? thread.formattedSubject : "")
-        .navigationBarThreadViewStyle()
+        .navigationBarThreadViewStyle(backgroundColor: displayNavigationTitle ? MailResourcesAsset.backgroundSecondaryColor.swiftUiColor : MailResourcesAsset.backgroundColor.swiftUiColor)
         .backButtonDisplayMode(.minimal)
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
@@ -185,16 +177,6 @@ struct ThreadView: View {
             }
             if thread.messageInFolderCount == 0 {
                 dismiss()
-            }
-        }
-    }
-
-    private var scrollViewBackground: some View {
-        GeometryReader { proxy in
-            VStack(spacing: 0) {
-                MailResourcesAsset.backgroundColor.swiftUiColor
-                    .frame(maxHeight: proxy.size.height * 0.2)
-                threadBackground
             }
         }
     }

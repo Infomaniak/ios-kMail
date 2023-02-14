@@ -30,6 +30,7 @@ public struct URLConstants {
             urlString: "https://www.infomaniak.com/\(Locale.current.languageCode ?? "fr")/support/faq/admin2/service-mail"
         )
     public static let chatbot = URLConstants(urlString: "https://www.infomaniak.com/chatbot")
+    public static let ikMe = URLConstants(urlString: "https://www.ik.me")
 
     public static let schemeUrl = "http"
 
@@ -72,11 +73,13 @@ public enum BarAppearanceConstants {
 }
 
 public enum Constants {
+    public static let maxAttachmentsSize = 26_214_400 // 25 mo
     public static let sizeLimit = 21_474_836_480 // 20 Go
     public static let minimumQuotasProgressionToDisplay = 0.03
 
     public static let navbarIconSize: CGFloat = 23
 
+    public static let onboardingLogoPaddingTop: CGFloat = 28
     public static let onboardingLogoHeight: CGFloat = 54
     public static let onboardingButtonHeight: CGFloat = 100
     public static let onboardingVerticalTopPadding: CGFloat = 48
@@ -117,7 +120,7 @@ public enum Constants {
         <div>\(MailResourcesStrings.Localizable.toTitle) \(to)<br></div>
         <div><br></div>
         <div><br></div>
-        \(message.body?.value.replacingOccurrences(of: "'", with: "’") ?? "")
+        \(message.body?.value?.replacingOccurrences(of: "'", with: "’") ?? "")
         </div>
         """
     }
@@ -131,7 +134,7 @@ public enum Constants {
         <div id=\"answerContentMessage\" class=\"ik_mail_quote\" >
         <div>\(headerText)</div>
         <blockquote class=\"ws-ng-quote\">
-        \(message.body?.value.replacingOccurrences(of: "'", with: "’") ?? "")
+        \(message.body?.value?.replacingOccurrences(of: "'", with: "’") ?? "")
         </blockquote>
         </div>
         """
@@ -155,6 +158,7 @@ public enum Constants {
     }
 
     public static let messageQuantityLimit = 500
+    public static let contactSuggestionLimit = 5
 
     public static func longUid(from shortUid: String, folderId: String) -> String {
         return "\(shortUid)@\(folderId)"

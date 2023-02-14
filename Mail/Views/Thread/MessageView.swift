@@ -38,9 +38,7 @@ struct MessageView: View {
 
     var body: some View {
         ZStack {
-            RoundedRectangle(cornerRadius: 8)
-                .fill(MailResourcesAsset.backgroundColor.swiftUiColor)
-            VStack(spacing: 16) {
+            VStack(spacing: 0) {
                 MessageHeaderView(
                     message: message,
                     isHeaderExpanded: $isHeaderExpanded,
@@ -51,19 +49,19 @@ struct MessageView: View {
                 if isMessageExpanded {
                     if !message.attachments.filter { $0.disposition == .attachment || $0.contentId == nil }.isEmpty {
                         AttachmentsView(message: message)
+                            .padding(.top, 24)
                     }
                     MessageBodyView(message: message)
+                        .padding(.top, 16)
                 }
             }
-            .padding(.top, 16)
-            .padding(.bottom, isMessageExpanded ? 8 : 16)
+            .padding(.vertical, 16)
             .task {
                 if self.message.shouldComplete {
                     await fetchMessage()
                 }
             }
         }
-        .padding(.bottom, 8)
     }
 
     @MainActor private func fetchMessage() async {

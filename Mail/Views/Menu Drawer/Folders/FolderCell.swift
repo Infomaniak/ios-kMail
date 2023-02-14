@@ -63,7 +63,6 @@ struct FolderCell: View {
                 Button(action: didTapButton) {
                     FolderCellContent(folder: folder.content, level: level, isCurrentFolder: isCurrentFolder)
                 }
-                .disabled(cellType == .indicator && isCurrentFolder)
             } else {
                 NavigationLink(isActive: $shouldTransit) {
                     ThreadListManagerView(
@@ -83,7 +82,13 @@ struct FolderCell: View {
 
             if level < Constants.menuDrawerMaximumSubfolderLevel {
                 ForEach(folder.children) { child in
-                    FolderCell(folder: child, level: level + 1, currentFolderId: currentFolderId, isCompact: isCompact, customCompletion: customCompletion)
+                    FolderCell(
+                        folder: child,
+                        level: level + 1,
+                        currentFolderId: currentFolderId,
+                        isCompact: isCompact,
+                        customCompletion: customCompletion
+                    )
                 }
             }
         }
@@ -142,8 +147,10 @@ struct FolderCellContent: View {
     @ViewBuilder
     private var accessory: some View {
         if cellType == .link {
-            Text(folder.formattedUnreadCount)
-                .textStyle(.bodySmallMediumAccent)
+            if folder.role != .sent {
+                Text(folder.formattedUnreadCount)
+                    .textStyle(.bodySmallMediumAccent)
+            }
         } else if isCurrentFolder {
             Image(resource: MailResourcesAsset.check)
                 .resizable()

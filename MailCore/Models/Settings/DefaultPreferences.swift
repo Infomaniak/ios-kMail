@@ -21,7 +21,7 @@ import Foundation
 public struct DefaultPreferences {
     public static let notificationsEnabled = true
     public static let appLock = false
-    public static let threadDensity = ThreadDensity.normal
+    public static let threadDensity = ThreadDensity.large
     public static let externalContent = ExternalContent.always
     public static let theme = Theme.system
     public static let accentColor = AccentColor.pink

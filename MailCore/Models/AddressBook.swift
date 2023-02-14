@@ -32,31 +32,11 @@ public struct AddressBookResult: Codable {
 public class AddressBook: Object, Codable, Identifiable {
     @Persisted public var id: Int
     @Persisted(primaryKey: true) public var uuid: String
-    // public var categories: [Category]
-    @Persisted public var color: String
-    @Persisted public var name: String
-    @Persisted public var descriptionValue: String
     @Persisted public var isDefault: Bool
-    @Persisted public var isActivated: Bool
-    @Persisted public var isHidden: Bool
-    @Persisted public var isPending: Bool
-    @Persisted public var isShared: Bool
-    // public var owner: Owner
-    @Persisted public var principalUri: String
-    @Persisted public var userId: Int
 
     enum CodingKeys: String, CodingKey {
         case id
         case uuid
-        case color
-        case name
-        case descriptionValue = "description"
         case isDefault = "default"
-        case isActivated
-        case isHidden
-        case isPending
-        case isShared
-        case principalUri
-        case userId
     }
 }

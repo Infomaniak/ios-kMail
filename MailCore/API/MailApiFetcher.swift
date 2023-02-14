@@ -34,7 +34,8 @@ public extension ApiFetcher {
 public class MailApiFetcher: ApiFetcher {
     public static let clientId = "E90BC22D-67A8-452C-BE93-28DA33588CA4"
 
-    override public func perform<T: Decodable>(request: DataRequest) async throws -> (data: T, responseAt: Int?) {
+    override public func perform<T: Decodable>(request: DataRequest,
+                                               decoder: JSONDecoder = ApiFetcher.decoder) async throws -> (data: T, responseAt: Int?) {
         do {
             return try await super.perform(request: request)
         } catch InfomaniakError.apiError(let apiError) {
@@ -45,7 +46,10 @@ public class MailApiFetcher: ApiFetcher {
             if let afError = error.asAFError,
                case .responseSerializationFailed(let reason) = afError,
                case .decodingFailed(let error) = reason {
-                SentrySDK.capture(error: error)
+                SentrySDK.capture(error: error) { scope in
+                    scope.setExtras(["Request URL": request.request?.url?.absoluteString ?? "No URL",
+                                     "Decoded type": String(describing: T.self)])
+                }
             }
             throw error
         }
@@ -291,18 +295,19 @@ public class MailApiFetcher: ApiFetcher {
 }
 
 class SyncedAuthenticator: OAuthAuthenticator {
-    @InjectService var networkLoginService: InfomaniakLogin
-
     override func refresh(
         _ credential: OAuthAuthenticator.Credential,
         for session: Session,
         completion: @escaping (Result<OAuthAuthenticator.Credential, Error>) -> Void
     ) {
         AccountManager.instance.refreshTokenLockedQueue.async {
+            @InjectService var keychainHelper: KeychainHelper
+            @InjectService var networkLoginService: InfomaniakLogin
+
             SentrySDK
                 .addBreadcrumb(crumb: (credential as ApiToken)
                     .generateBreadcrumb(level: .info, message: "Refreshing token - Starting"))
-            if !KeychainHelper.isKeychainAccessible {
+            if !keychainHelper.isKeychainAccessible {
                 SentrySDK
                     .addBreadcrumb(crumb: (credential as ApiToken)
                         .generateBreadcrumb(level: .error, message: "Refreshing token failed - Keychain unaccessible"))
@@ -345,7 +350,7 @@ class SyncedAuthenticator: OAuthAuthenticator {
                 }
             }
 
-            self.networkLoginService.refreshToken(token: credential) { token, error in
+            networkLoginService.refreshToken(token: credential) { token, error in
                 // New token has been fetched correctly
                 if let token = token {
                     SentrySDK
@@ -391,7 +396,7 @@ class NetworkRequestRetrier: RequestInterceptor {
         self.maxRetry = maxRetry
     }
 
-    func retry(_ request: Request, for session: Session, dueTo error: Error, completion: @escaping (RetryResult) -> Void) {
+    func retry(_ request: Alamofire.Request, for session: Session, dueTo error: Error, completion: @escaping (RetryResult) -> Void) {
         guard request.task?.response == nil,
               let url = request.request?.url?.absoluteString else {
             removeCachedUrlRequest(url: request.request?.url?.absoluteString)

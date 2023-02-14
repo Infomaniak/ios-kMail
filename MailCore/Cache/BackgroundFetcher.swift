@@ -17,12 +17,12 @@
  */
 
 import BackgroundTasks
+import CocoaLumberjackSwift
 import Foundation
 import MailResources
 import RealmSwift
 import UIKit
 import UserNotifications
-import CocoaLumberjackSwift
 
 public class BackgroundFetcher {
     public static let shared = BackgroundFetcher()
@@ -61,12 +61,11 @@ public class BackgroundFetcher {
     public func fetchLastEmailsForAllMailboxes() async {
         await withTaskGroup(of: Void.self) { group in
             for mailbox in MailboxInfosManager.instance.getMailboxes() {
-                if let mailboxManager = AccountManager.instance.getMailboxManager(for: mailbox) {
-                    group.addTask {
-                        do {
-                            try await self.fetchEmailsFor(mailboxManager: mailboxManager)
-                        } catch {}
-                    }
+                guard let mailboxManager = AccountManager.instance.getMailboxManager(for: mailbox) else { continue }
+                group.addTask {
+                    do {
+                        try await self.fetchEmailsFor(mailboxManager: mailboxManager)
+                    } catch {}
                 }
             }
         }
@@ -79,27 +78,28 @@ public class BackgroundFetcher {
             return
         }
 
-        let inboxFolderId = inboxFolder.id
         let lastMessageDate = mailboxManager.getRealm().objects(Message.self)
-            .where { $0.folderId == inboxFolderId }
+            .where { $0.folder == inboxFolder }
             .sorted(by: \.date, ascending: false)
             .first?.date ?? Date(timeIntervalSince1970: 0)
         try await mailboxManager.threads(folder: inboxFolder)
 
-        let realm = mailboxManager.getRealm()
-        let newUnreadMessages = realm.objects(Message.self)
+        let newUnreadMessages = mailboxManager.getRealm().objects(Message.self)
             .where {
                 $0.seen == false
                     && $0.date > lastMessageDate
-                    && $0.folderId == inboxFolderId
+                    && $0.folder == inboxFolder
             }
+            .map { $0.freeze() }
+            .toArray()
 
         for message in newUnreadMessages {
             try await mailboxManager.message(message: message)
-            let threadUid = mailboxManager.getFolder(with: .inbox, using: realm)?.threads.where {
-                $0.messages.contains(message)
-            }.first?.uid
-            NotificationsHelper.triggerNotificationFor(message: message, threadUid: threadUid, mailboxId: mailboxManager.mailbox.objectId)
+            NotificationsHelper.triggerNotificationFor(
+                message: message,
+                mailboxId: mailboxManager.mailbox.mailboxId,
+                userId: mailboxManager.mailbox.userId
+            )
         }
 
         NotificationsHelper.updateUnreadCountBadge()

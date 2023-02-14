@@ -62,7 +62,8 @@ struct ComposeMessageView: View {
     @State private var isShowingCamera = false
     @State private var isShowingFileSelection = false
     @State private var isShowingPhotoLibrary = false
-    @State private var attachmentsManager: AttachmentsManager
+    @StateObject private var attachmentsManager: AttachmentsManager
+    @State private var isShowingCancelAttachmentsError = false
 
     @State var scrollView: UIScrollView?
 
@@ -88,7 +89,7 @@ struct ComposeMessageView: View {
 
         _draft = StateRealmObject(wrappedValue: draft)
         _showCc = State(initialValue: !draft.bcc.isEmpty || !draft.cc.isEmpty)
-        _attachmentsManager = State(wrappedValue: AttachmentsManager(draft: draft, mailboxManager: mailboxManager))
+        _attachmentsManager = StateObject(wrappedValue: AttachmentsManager(draft: draft, mailboxManager: mailboxManager))
     }
 
     static func newMessage(mailboxManager: MailboxManager) -> ComposeMessageView {
@@ -190,15 +191,13 @@ struct ComposeMessageView: View {
             .navigationBarTitleDisplayMode(.inline)
             .navigationBarBackButtonHidden(true)
             .navigationBarItems(
-                leading: Button(action: dismiss.callAsFunction) {
+                leading: Button(action: closeDraft) {
                     Label(MailResourcesStrings.Localizable.buttonClose, systemImage: "xmark")
                 },
-                trailing: Button(action: {
-                    sendDraft()
-                }, label: {
+                trailing: Button(action: sendDraft) {
                     Image(resource: MailResourcesAsset.send)
-                })
-                .disabled(draft.identityId?.isEmpty == true || draft.to.isEmpty)
+                }
+                .disabled(draft.identityId?.isEmpty == true || draft.to.isEmpty || !attachmentsManager.allAttachmentsUploaded)
             )
             .background(MailResourcesAsset.backgroundColor.swiftUiColor)
         }
@@ -210,6 +209,7 @@ struct ComposeMessageView: View {
                 DraftManager.shared.syncDraft(mailboxManager: mailboxManager)
             }
         }
+        .interactiveDismissDisabled()
         .fullScreenCover(isPresented: $isShowingCamera) {
             CameraPicker { data in
                 attachmentsManager.importAttachments(attachments: [data])
@@ -232,6 +232,13 @@ struct ComposeMessageView: View {
                 AddLinkView(state: alert, actionHandler: handler)
             case .none:
                 EmptyView()
+            }
+        }
+        .customAlert(isPresented: $isShowingCancelAttachmentsError) {
+            AttachmentsUploadInProgressErrorView(isPresented: $isShowingCancelAttachmentsError) {
+                dismiss()
+            } cancelHandler: {
+                isShowingCancelAttachmentsError = false
             }
         }
         .task {
@@ -279,6 +286,15 @@ struct ComposeMessageView: View {
             fatalError("Unhandled binding \(type)")
         }
         return binding
+    }
+
+    private func closeDraft() {
+        guard attachmentsManager.allAttachmentsUploaded else {
+            isShowingCancelAttachmentsError = true
+            return
+        }
+
+        dismiss()
     }
 
     private func sendDraft() {

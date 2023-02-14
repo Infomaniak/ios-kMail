@@ -50,8 +50,9 @@ struct SettingsSwipeActionsView: View {
                         SettingsSubMenuCell(title: item.title, subtitle: settingValue(for: item), icon: icon(for: item)) {
                             SettingsOptionView<SwipeAction>(
                                 title: item.title,
+                                values: SwipeAction.allCases.filter(\.isCustomizable),
                                 keyPath: item.keyPath,
-                                excludedKeyPath: [\.swipeFullLeading]
+                                excludedKeyPath: item.excludedKeyPaths
                             )
                             .frame(minHeight: 40)
                             .padding(.horizontal, 8)

@@ -45,8 +45,7 @@ struct ThreadCellDataHolder {
 
     /// Sender of the last message that is not in the Sent folder, otherwise the last message of the thread
     var recipientToDisplay: Recipient? {
-        let sentFolderId = mailboxManager.getFolder(with: .sent)?.id
-        let lastMessageNotFromSent = thread.messages.last { $0.folderId != sentFolderId } ?? thread.messages.last
+        let lastMessageNotFromSent = thread.messages.last { $0.folder?.role == .sent } ?? thread.messages.last
         return lastMessageNotFromSent?.from.last
     }
 
@@ -69,7 +68,7 @@ struct ThreadCellDataHolder {
     /// Last message of the thread, except for the Sent folder where we use the last message of the folder
     var preview: String {
         var content = thread.messages.last?.preview
-        if thread.folderId == mailboxManager.getFolder(with: .sent)?.id {
+        if thread.folder?.role == .sent {
             content = (thread.lastMessageFromFolder ?? thread.messages.last)?.preview
         }
 
@@ -183,12 +182,12 @@ struct ThreadCell: View {
         HStack(spacing: 8) {
             if thread.hasDrafts {
                 Text("\(MailResourcesStrings.Localizable.draftPrefix)")
-                    .textStyle(.header2Error)
+                    .textStyle(.bodyMediumError)
                     .lineLimit(1)
                     .layoutPriority(1)
             }
             Text(dataHolder.from)
-                .textStyle(.header2)
+                .textStyle(.bodyMedium)
                 .lineLimit(1)
 
             if thread.messages.count > 1 {

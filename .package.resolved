@@ -41,8 +41,8 @@
       "kind" : "remoteSourceControl",
       "location" : "git@github.com:Infomaniak/ios-bug-tracker.git",
       "state" : {
-        "revision" : "67477ddc3028f6c6c074d26fd6f84c060876dcf1",
-        "version" : "1.2.0"
+        "revision" : "13ad8cb64aeeaf72e910221f2bc0a4e5e75c68a4",
+        "version" : "2.0.0"
       }
     },
     {
@@ -51,7 +51,7 @@
       "location" : "https://github.com/Infomaniak/ios-core.git",
       "state" : {
         "branch" : "mail-di",
-        "revision" : "c257ca6cc2666176a136baa55204c8480762f342"
+        "revision" : "20c33361b760a083d657cb8d60ac2d44e86d814d"
       }
     },
     {
@@ -59,7 +59,7 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Infomaniak/ios-core-ui.git",
       "state" : {
-        "revision" : "4e8b5ca3881020bca6fec5baf0c24a87f8bc0883",
+        "revision" : "852ca2ea76a08ebe30fa801b21fc27e111e1ff50",
         "version" : "2.1.0"
       }
     },
@@ -86,8 +86,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/onevcat/Kingfisher",
       "state" : {
-        "revision" : "90135885ef506506620c4911cefb55a95ca2a9a2",
-        "version" : "7.5.0"
+        "revision" : "2db469112fbcfd83ff0a96c4546772d283f317f5",
+        "version" : "7.6.0"
       }
     },
     {
@@ -122,8 +122,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/kean/Nuke",
       "state" : {
-        "revision" : "df6cfba3f49aa6777b8c1084cb7778899ca166d3",
-        "version" : "11.6.0"
+        "revision" : "3ed0597082b40932481fb8971af8813a4284203c",
+        "version" : "11.6.1"
       }
     },
     {
@@ -131,8 +131,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/realm/realm-core.git",
       "state" : {
-        "revision" : "b77443ca7fa25407869ca537bf3ae912b1427bff",
-        "version" : "12.13.0"
+        "revision" : "b9467f3ecfead791cc87ab70b4f1c3c290be6ffd",
+        "version" : "13.4.0"
       }
     },
     {
@@ -140,8 +140,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/realm/realm-swift",
       "state" : {
-        "revision" : "b1072f3ef733108dfcc62c2001781e5d65605fbf",
-        "version" : "10.34.1"
+        "revision" : "2ad431604aebedcb7313e1281c62aee4a98fb99e",
+        "version" : "10.35.0"
       }
     },
     {

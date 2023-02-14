@@ -17,6 +17,7 @@
  */
 
 import InfomaniakBugTracker
+import InfomaniakDI
 import MailCore
 import MailResources
 import RealmSwift
@@ -94,7 +95,7 @@ class MenuDrawerViewModel: ObservableObject {
 
         // swiftlint:disable empty_count
         foldersObservationToken = mailboxManager.getRealm()
-            .objects(Folder.self).where { $0.parentLink.count == 0 && $0.toolType == nil }
+            .objects(Folder.self).where { $0.parents.count == 0 && $0.toolType == nil }
             .observe(on: DispatchQueue.main) { [weak self] results in
                 switch results {
                 case .initial(let folders):
@@ -144,7 +145,6 @@ class MenuDrawerViewModel: ObservableObject {
 
     private func sendFeedback() {
         if AccountManager.instance.currentAccount?.user?.isStaff == true {
-            BugTracker.configureForMail()
             isShowingBugTracker.toggle()
         } else {
             UIApplication.shared.open(URLConstants.feedback.url)

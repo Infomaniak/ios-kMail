@@ -17,6 +17,7 @@
  */
 
 import CocoaLumberjackSwift
+import InfomaniakBugTracker
 import InfomaniakCore
 import InfomaniakCoreUI
 import InfomaniakDI
@@ -117,16 +118,24 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         let networkLoginService = Factory(type: InfomaniakNetworkLogin.self) { _, _ in
             InfomaniakNetworkLogin(clientId: MailApiFetcher.clientId)
         }
+        let keychainHelper = Factory(type: KeychainHelper.self) { _, _ in
+            KeychainHelper(accessGroup: AccountManager.accessGroup)
+        }
         let notificationService = Factory(type: InfomaniakNotifications.self) { _, _ in
             InfomaniakNotifications()
         }
-        let appLockService = Factory(type: AppLockHelper.self) { _, _ in
+        let appLockHelper = Factory(type: AppLockHelper.self) { _, _ in
             AppLockHelper()
+        }
+        let bugTracker = Factory(type: BugTracker.self) { _, _ in
+            BugTracker(info: BugTrackerInfo(project: "app-mobile-mail", gitHubRepoName: "ios-mail", appReleaseType: .beta))
         }
 
         SimpleResolver.sharedResolver.store(factory: loginService)
         SimpleResolver.sharedResolver.store(factory: networkLoginService)
         SimpleResolver.sharedResolver.store(factory: notificationService)
-        SimpleResolver.sharedResolver.store(factory: appLockService)
+        SimpleResolver.sharedResolver.store(factory: keychainHelper)
+        SimpleResolver.sharedResolver.store(factory: appLockHelper)
+        SimpleResolver.sharedResolver.store(factory: bugTracker)
     }
 }

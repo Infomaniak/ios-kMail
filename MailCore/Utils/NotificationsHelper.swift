@@ -36,7 +36,9 @@ public enum NotificationsHelper {
     }
 
     public enum UserInfoKeys {
-        public static let mailboxId = "mailboxId"
+        public static let userId = "user_id"
+        public static let mailboxId = "mailbox_id"
+        public static let messageId = "message_id"
     }
 
     public static var isNotificationEnabled: Bool {
@@ -63,11 +65,10 @@ public enum NotificationsHelper {
 
         var totalUnreadCount = 0
         for mailbox in MailboxInfosManager.instance.getMailboxes() {
-            if let mailboxManager = AccountManager.instance.getMailboxManager(for: mailbox),
-               let inboxFolder = mailboxManager.getFolder(with: .inbox) {
+            if let mailboxManager = AccountManager.instance.getMailboxManager(for: mailbox) {
                 totalUnreadCount += mailboxManager.getRealm()
                     .objects(Thread.self)
-                    .where { $0.folderId == inboxFolder.id && $0.hasUnseenMessages == true }
+                    .where { $0.folder.role == .inbox && $0.hasUnseenMessages == true }
                     .count
             }
         }
@@ -110,7 +111,7 @@ public enum NotificationsHelper {
         }
     }
 
-    static func triggerNotificationFor(message: Message, threadUid: String?, mailboxId: String) {
+    static func triggerNotificationFor(message: Message, mailboxId: Int, userId: Int) {
         let content = UNMutableNotificationContent()
         if !message.from.isEmpty {
             content.title = message.from.map { $0.name }.joined(separator: ",")
@@ -119,14 +120,15 @@ public enum NotificationsHelper {
         }
         content.subtitle = message.formattedSubject
         content.body = message.preview
-        if let threadUid {
-            content.threadIdentifier = threadUid
-        }
-        content.targetContentIdentifier = message.uid
-        content.userInfo = [NotificationsHelper.UserInfoKeys.mailboxId: mailboxId]
+        content.threadIdentifier = "\(mailboxId)_\(userId)"
+        content.userInfo = [
+            NotificationsHelper.UserInfoKeys.messageId: message.uid,
+            NotificationsHelper.UserInfoKeys.mailboxId: mailboxId,
+            NotificationsHelper.UserInfoKeys.userId: userId
+        ]
 
         let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 1, repeats: false)
-        let notificationId = "\(mailboxId)-\(message.uid)"
+        let notificationId = "\(userId)_\(mailboxId)_\(message.uid)"
         let request = UNNotificationRequest(identifier: notificationId, content: content, trigger: trigger)
         UNUserNotificationCenter.current().add(request)
     }

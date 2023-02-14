@@ -16,28 +16,27 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import MailCore
-import SwiftUI
 import MailResources
+import SwiftUI
 
-struct MessageListView: View {
-    @State var messages: [Message]
+struct AttachmentsUploadInProgressErrorView: View {
+    @Binding var isPresented: Bool
+    var confirmHandler: () -> Void
+    var cancelHandler: () -> Void
 
     var body: some View {
-        LazyVStack(spacing: 0) {
-            ForEach(messages, id: \.uid) { message in
-                let isMessageExpanded = ((messages.last?.uid == message.uid) && !message.isDraft) || !message.seen
-                MessageView(message: message, isMessageExpanded: isMessageExpanded)
-                if message != messages.last {
-                    IKDivider()
-                }
+        VStack(alignment: .leading, spacing: 24) {
+            Text(MailResourcesStrings.Localizable.errorCancelAttachmentsUploadInProgress)
+                .textStyle(.bodyMedium)
+            BottomSheetButtonsView(primaryButtonTitle: MailResourcesStrings.Localizable.buttonClose,
+                                   secondaryButtonTitle: MailResourcesStrings.Localizable.buttonCancel) {
+                confirmHandler()
+                isPresented = false
+
+            } secondaryButtonAction: {
+                cancelHandler()
+                isPresented = false
             }
         }
-    }
-}
-
-struct MessageListView_Previews: PreviewProvider {
-    static var previews: some View {
-        MessageListView(messages: [])
     }
 }

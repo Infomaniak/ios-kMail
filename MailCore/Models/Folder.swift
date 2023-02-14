@@ -110,7 +110,8 @@ public class Folder: Object, Codable, Comparable, Identifiable {
     @Persisted public var separator: String
     @Persisted public var children: MutableSet<Folder>
     @Persisted public var threads: MutableSet<Thread>
-    @Persisted(originProperty: "children") public var parentLink: LinkingObjects<Folder>
+    @Persisted public var messages: MutableSet<Message>
+    @Persisted(originProperty: "children") public var parents: LinkingObjects<Folder>
     @Persisted public var toolType: ToolFolderType?
     @Persisted public var cursor: String?
 
@@ -126,7 +127,7 @@ public class Folder: Object, Codable, Comparable, Identifiable {
     }
 
     public var parent: Folder? {
-        return parentLink.first
+        return parents.first
     }
 
     public var localizedName: String {
