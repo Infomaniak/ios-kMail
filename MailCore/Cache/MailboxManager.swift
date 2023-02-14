@@ -233,22 +233,32 @@ public class MailboxManager: ObservableObject {
 
     // MARK: - Thread
 
-    public func threads(folder: Folder) async throws {
-        let alwaysFetchedFolders: [FolderRole] = [.inbox, .sent, .draft]
+    public func threads(folder: Folder, fetchCurrentFolderCompleted: (() -> Void) = {}) async throws {
+        try await messages(folder: folder.freezeIfNeeded())
+        fetchCurrentFolderCompleted()
 
-        if alwaysFetchedFolders.contains(where: { $0 == folder.role }) {
-            for folderRole in alwaysFetchedFolders {
-                if let realFolder = getFolder(with: folderRole) {
-                    try await messages(folder: realFolder.freezeIfNeeded())
-                }
+        var roles: [FolderRole] {
+            switch folder.role {
+            case .inbox:
+                return [.sent, .draft]
+            case .sent:
+                return [.inbox, .draft]
+            case .draft:
+                return [.inbox, .sent]
+            default:
+                return []
             }
-        } else {
-            try await messages(folder: folder.freezeIfNeeded())
+        }
+
+        for folderRole in roles {
+            if let realFolder = getFolder(with: folderRole) {
+                try await messages(folder: realFolder.freezeIfNeeded())
+            }
         }
     }
 
     private func deleteMessages(uids: [String], folder: Folder) async {
-        guard !uids.isEmpty else { return }
+        guard !uids.isEmpty && !Task.isCancelled else { return }
 
         await backgroundRealm.execute { realm in
             let messagesToDelete = realm.objects(Message.self).where { $0.uid.in(uids) }
@@ -599,6 +609,8 @@ public class MailboxManager: ObservableObject {
     }
 
     public func messages(folder: Folder) async throws {
+        guard !Task.isCancelled else { return }
+
         let previousCursor = folder.cursor
         var newCursor: String?
 
@@ -631,6 +643,8 @@ public class MailboxManager: ObservableObject {
         await deleteMessages(uids: deletedUids, folder: folder)
         await updateMessages(updates: updated, folder: folder)
 
+        guard !Task.isCancelled else { return }
+
         await backgroundRealm.execute { realm in
             if newCursor != nil {
                 guard let folder = folder.fresh(using: realm) else { return }
@@ -660,11 +674,12 @@ public class MailboxManager: ObservableObject {
     }
 
     private func addMessages(shortUids: [String], folder: Folder, newCursor: String?) async throws {
-        guard !shortUids.isEmpty else { return }
+        guard !shortUids.isEmpty && !Task.isCancelled else { return }
+
         let reversedUids: [String] = getUniqueUidsInReverse(folder: folder, remoteUids: shortUids)
         let pageSize = 50
         var offset = 0
-        while offset < reversedUids.count {
+        while offset < reversedUids.count && !Task.isCancelled {
             let end = min(offset + pageSize, reversedUids.count)
             let newList = Array(reversedUids[offset ..< end])
             let messageByUidsResult = try await apiFetcher.messagesByUids(
@@ -707,8 +722,16 @@ public class MailboxManager: ObservableObject {
                         threadsToUpdate.insert(newThread)
                     }
 
+                    var allExistingMessages = Set(existingThreads.flatMap(\.messages))
+                    allExistingMessages.insert(message)
+
                     for thread in existingThreads {
-                        thread.addMessageIfNeeded(newMessage: message.fresh(using: realm) ?? message)
+                        for existingMessage in allExistingMessages {
+                            if !thread.messages.map(\.uid).contains(existingMessage.uid) {
+                                thread.addMessageIfNeeded(newMessage: message.fresh(using: realm) ?? message)
+                            }
+                        }
+
                         threadsToUpdate.insert(thread)
                     }
 
@@ -745,6 +768,8 @@ public class MailboxManager: ObservableObject {
     }
 
     private func updateMessages(updates: [MessageFlags], folder: Folder) async {
+        guard !Task.isCancelled else { return }
+
         await backgroundRealm.execute { realm in
             var threadsToUpdate = Set<Thread>()
             try? realm.safeWrite {

@@ -149,7 +149,13 @@ class DateSection: Identifiable {
         await tryOrDisplayError {
             guard let folder = folder else { return }
 
-            try await mailboxManager.threads(folder: folder.freezeIfNeeded())
+            try await mailboxManager.threads(folder: folder.freezeIfNeeded()) {
+                Task {
+                    withAnimation {
+                        self.isLoadingPage = false
+                    }
+                }
+            }
         }
         withAnimation {
             isLoadingPage = false
