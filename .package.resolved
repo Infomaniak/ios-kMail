@@ -60,13 +60,13 @@
       "location" : "https://github.com/Infomaniak/ios-core-ui.git",
       "state" : {
         "revision" : "852ca2ea76a08ebe30fa801b21fc27e111e1ff50",
-        "version" : "2.1.1"
+        "version" : "2.1.0"
       }
     },
     {
       "identity" : "ios-dependency-injection",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/Infomaniak/ios-dependency-injection.git",
+      "location" : "https://github.com/Infomaniak/ios-dependency-injection",
       "state" : {
         "revision" : "41a99aeb652d5294355129bfa70d1ea8c17b9980",
         "version" : "1.1.10"
@@ -122,8 +122,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/kean/Nuke",
       "state" : {
-        "revision" : "67bd45931180f652159e3342575277a7f197b3ab",
-        "version" : "11.6.2"
+        "revision" : "3ed0597082b40932481fb8971af8813a4284203c",
+        "version" : "11.6.1"
       }
     },
     {

@@ -261,6 +261,8 @@ class DateSection: Identifiable {
             bottomSheet.open(state: .actions(.threads([thread.thaw() ?? thread])))
         case .none:
             break
+        case .moveToInbox:
+            try await move(thread: thread, to: .inbox)
         }
     }
 

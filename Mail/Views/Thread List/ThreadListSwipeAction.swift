@@ -21,15 +21,14 @@ import MailResources
 import SwiftUI
 
 private struct SwipeActionView: View {
-    let thread: Thread
-    let viewModel: ThreadListViewModel
-    let action: SwipeAction
+    private let thread: Thread
+    private let viewModel: ThreadListViewModel
+    private let action: SwipeAction
 
-    private var icon: Image? {
-        if action == .readUnread {
-            return Image(resource: thread.unseenMessages == 0 ? MailResourcesAsset.envelope : MailResourcesAsset.envelopeOpen)
-        }
-        return action.swipeIcon
+    init(thread: Thread, viewModel: ThreadListViewModel, action: SwipeAction) {
+        self.thread = thread
+        self.viewModel = viewModel
+        self.action = action.fallback(for: thread) ?? action
     }
 
     var body: some View {
@@ -40,7 +39,7 @@ private struct SwipeActionView: View {
                 }
             }
         } label: {
-            Label { Text(action.title) } icon: { icon }
+            Label { Text(action.title) } icon: { action.icon(from: thread) }
                 .labelStyle(.iconOnly)
         }
         .tint(action.swipeTint)
@@ -62,28 +61,25 @@ struct ThreadListSwipeActions: ViewModifier {
         if viewModel.folder?.role == .draft {
             content
                 .swipeActions(edge: .trailing) {
-                    if !multipleSelectionViewModel.isEnabled {
-                        edgeActions([.delete])
-                    }
+                    edgeActions([.delete])
                 }
         } else {
             content
                 .swipeActions(edge: .leading) {
-                    if !multipleSelectionViewModel.isEnabled {
-                        edgeActions([swipeFullLeading, swipeLeading])
-                    }
+                    edgeActions([swipeFullLeading, swipeLeading])
                 }
                 .swipeActions(edge: .trailing) {
-                    if !multipleSelectionViewModel.isEnabled {
-                        edgeActions([swipeFullTrailing, swipeTrailing])
-                    }
+                    edgeActions([swipeFullTrailing, swipeTrailing])
                 }
         }
     }
 
+    @MainActor @ViewBuilder
     private func edgeActions(_ actions: [SwipeAction]) -> some View {
-        ForEach(actions.filter { $0 != .none }, id: \.rawValue) { action in
-            SwipeActionView(thread: thread, viewModel: viewModel, action: action)
+        if !multipleSelectionViewModel.isEnabled {
+            ForEach(actions.filter { $0 != .none }, id: \.rawValue) { action in
+                SwipeActionView(thread: thread, viewModel: viewModel, action: action)
+            }
         }
     }
 }
@@ -92,7 +88,9 @@ extension View {
     func swipeActions(thread: Thread,
                       viewModel: ThreadListViewModel,
                       multipleSelectionViewModel: ThreadListMultipleSelectionViewModel) -> some View {
-        modifier(ThreadListSwipeActions(thread: thread, viewModel: viewModel, multipleSelectionViewModel: multipleSelectionViewModel))
+        modifier(ThreadListSwipeActions(thread: thread,
+                                        viewModel: viewModel,
+                                        multipleSelectionViewModel: multipleSelectionViewModel))
     }
 }
 

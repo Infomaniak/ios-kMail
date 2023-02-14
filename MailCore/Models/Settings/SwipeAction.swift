@@ -26,6 +26,8 @@ public enum SwipeType: String, CaseIterable {
     case trailing
     case fullTrailing
 
+    public typealias SwipeActionKeyPath = ReferenceWritableKeyPath<UserDefaults, SwipeAction>
+
     public var title: String {
         switch self {
         case .leading:
@@ -39,7 +41,7 @@ public enum SwipeType: String, CaseIterable {
         }
     }
 
-    public var keyPath: ReferenceWritableKeyPath<UserDefaults, SwipeAction> {
+    public var keyPath: SwipeActionKeyPath {
         switch self {
         case .leading:
             return \.swipeLeading
@@ -49,6 +51,19 @@ public enum SwipeType: String, CaseIterable {
             return \.swipeTrailing
         case .fullTrailing:
             return \.swipeFullTrailing
+        }
+    }
+
+    public var excludedKeyPaths: [SwipeActionKeyPath] {
+        switch self {
+        case .leading:
+            return [\.swipeFullLeading]
+        case .fullLeading:
+            return [\.swipeLeading]
+        case .trailing:
+            return [\.swipeFullTrailing]
+        case .fullTrailing:
+            return [\.swipeTrailing]
         }
     }
 }
@@ -63,6 +78,7 @@ public enum SwipeAction: String, CaseIterable, SettingsOptionEnum {
     case spam
     case readAndArchive
     case quickAction
+    case moveToInbox
     case none
 
     public var title: String {
@@ -85,6 +101,8 @@ public enum SwipeAction: String, CaseIterable, SettingsOptionEnum {
             return MailResourcesStrings.Localizable.settingsSwipeActionReadAndArchive
         case .quickAction:
             return MailResourcesStrings.Localizable.settingsSwipeActionQuickActionsMenu
+        case .moveToInbox:
+            return MailResourcesStrings.Localizable.actionMoveToInbox
         case .none:
             return MailResourcesStrings.Localizable.settingsSwipeActionNone
         }
@@ -92,47 +110,60 @@ public enum SwipeAction: String, CaseIterable, SettingsOptionEnum {
 
     public var isDestructive: Bool {
         switch self {
-        case .delete, .archive, .spam, .readAndArchive:
+        case .delete, .archive, .spam, .readAndArchive, .moveToInbox:
             return true
         case .move, .readUnread, .postPone, .favorite, .quickAction, .none:
             return false
         }
     }
 
+    public var isCustomizable: Bool {
+        if self == .moveToInbox {
+            return false
+        }
+        return true
+    }
+
     public var image: Image? {
         return nil
     }
 
-    public var swipeIcon: Image? {
-        let resource: MailResourcesImages?
-        switch self {
-        case .delete:
-            resource = MailResourcesAsset.bin
-        case .archive:
-            resource = MailResourcesAsset.archives
-        case .readUnread:
-            resource = MailResourcesAsset.envelopeOpen
-        case .move:
-            resource = MailResourcesAsset.emailActionSend
-        case .favorite:
-            resource = MailResourcesAsset.star
-        case .postPone:
-            resource = MailResourcesAsset.waitingMessage
-        case .spam:
-            resource = MailResourcesAsset.spam
-        case .readAndArchive:
-            resource = MailResourcesAsset.drawer
-        case .quickAction:
-            resource = MailResourcesAsset.navigationMenu
-        case .none:
-            resource = nil
+    public func icon(from thread: Thread? = nil) -> Image? {
+        var resource: MailResourcesImages? {
+            switch self {
+            case .delete:
+                return MailResourcesAsset.bin
+            case .archive:
+                return MailResourcesAsset.archives
+            case .readUnread:
+                if thread?.unseenMessages == 0 {
+                    return MailResourcesAsset.envelope
+                }
+                return MailResourcesAsset.envelopeOpen
+            case .move:
+                return MailResourcesAsset.emailActionSend
+            case .favorite:
+                if thread?.flagged == true {
+                    return MailResourcesAsset.unstar
+                }
+                return MailResourcesAsset.star
+            case .postPone:
+                return MailResourcesAsset.waitingMessage
+            case .spam:
+                return MailResourcesAsset.spam
+            case .readAndArchive:
+                return MailResourcesAsset.archives
+            case .quickAction:
+                return MailResourcesAsset.navigationMenu
+            case .moveToInbox:
+                return MailResourcesAsset.drawer
+            case .none:
+                return nil
+            }
         }
 
-        if let resource = resource {
-            return Image(resource.name)
-        } else {
-            return nil
-        }
+        guard let resource else { return nil }
+        return Image(resource.name)
     }
 
     public var swipeTint: Color? {
@@ -156,10 +187,25 @@ public enum SwipeAction: String, CaseIterable, SettingsOptionEnum {
             resource = MailResourcesAsset.darkPurpleActionColor
         case .quickAction:
             resource = MailResourcesAsset.menuActionColor
+        case .moveToInbox:
+            resource = MailResourcesAsset.grayActionColor
         case .none:
             resource = nil
         }
 
         return resource?.swiftUiColor
+    }
+
+    public func fallback(for thread: Thread) -> Self? {
+        switch self {
+        case .archive, .readAndArchive:
+            guard thread.folder?.role == .archive else { return nil }
+            return .moveToInbox
+        case .spam:
+            guard thread.folder?.role == .spam else { return nil }
+            return .moveToInbox
+        case .delete, .favorite, .move, .readUnread, .postPone, .quickAction, .moveToInbox, .none:
+            return nil
+        }
     }
 }
