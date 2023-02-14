@@ -78,14 +78,14 @@ public class URLSchemeHandler: NSObject, WKURLSchemeHandler {
                 Task { [weak self] in
                     guard (error as? URLError)?.code != .cancelled else { return }
 
-                    if let response = response {
+                    if let response {
                         await self?.taskProgressHandler.didReceive(response, for: url)
                     }
-                    if let data = data {
+                    if let data {
                         await self?.taskProgressHandler.didReceive(data, for: url)
                         await self?.taskProgressHandler.didFinish(for: url)
                     }
-                    if let error = error {
+                    if let error {
                         await self?.taskProgressHandler.didFailWithError(error, for: url)
                     }
                 }
