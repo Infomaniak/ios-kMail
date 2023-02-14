@@ -49,11 +49,15 @@ struct NavigationDrawer: View {
     @EnvironmentObject var splitViewManager: SplitViewManager
     @EnvironmentObject var navigationDrawerState: NavigationDrawerState
     @Environment(\.window) var window
+    @GestureState var isDragGestureActive = false
 
     @State private var offsetWidth: CGFloat = 0
 
     private var dragGesture: some Gesture {
         DragGesture()
+            .updating($isDragGestureActive) { _, active, _ in
+                active = true
+            }
             .onChanged { value in
                 if (navigationDrawerState.isOpen && value.translation.width < 0) || !navigationDrawerState.isOpen {
                     offsetWidth = value.translation.width
@@ -99,6 +103,13 @@ struct NavigationDrawer: View {
         .onChange(of: navigationDrawerState.isOpen) { isOpen in
             if !isOpen {
                 offsetWidth = 0
+            }
+        }
+        .onChange(of: isDragGestureActive) { newIsDragGestureActive in
+            if !newIsDragGestureActive && navigationDrawerState.isOpen {
+                withAnimation {
+                    offsetWidth = 0
+                }
             }
         }
     }
