@@ -120,7 +120,7 @@ public enum Constants {
         <div>\(MailResourcesStrings.Localizable.toTitle) \(to)<br></div>
         <div><br></div>
         <div><br></div>
-        \(message.body?.value.replacingOccurrences(of: "'", with: "’") ?? "")
+        \(message.body?.value?.replacingOccurrences(of: "'", with: "’") ?? "")
         </div>
         """
     }
@@ -134,7 +134,7 @@ public enum Constants {
         <div id=\"answerContentMessage\" class=\"ik_mail_quote\" >
         <div>\(headerText)</div>
         <blockquote class=\"ws-ng-quote\">
-        \(message.body?.value.replacingOccurrences(of: "'", with: "’") ?? "")
+        \(message.body?.value?.replacingOccurrences(of: "'", with: "’") ?? "")
         </blockquote>
         </div>
         """
