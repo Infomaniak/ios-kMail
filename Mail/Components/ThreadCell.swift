@@ -80,8 +80,6 @@ struct ThreadCellDataHolder {
 }
 
 struct ThreadCell: View {
-    @AppStorage(UserDefaults.shared.key(.accentColor)) private var accentColor = AccentColor.pink
-
     let thread: Thread
     let mailboxManager: MailboxManager
 
@@ -162,7 +160,7 @@ struct ThreadCell: View {
     private var unreadIndicator: some View {
         Circle()
             .frame(width: Constants.unreadIconSize, height: Constants.unreadIconSize)
-            .foregroundColor(thread.hasUnseenMessages ? Color.accentColor : .clear)
+            .foregroundColor(thread.hasUnseenMessages ? .accentColor : .clear)
     }
 
     private var checkbox: some View {

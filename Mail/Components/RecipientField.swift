@@ -26,7 +26,7 @@ struct RecipientChip: View {
     let recipient: Recipient
     let removeButtonTapped: () -> Void
 
-    @AppStorage(UserDefaults.shared.key(.accentColor), store: .shared) private var accentColor = DefaultPreferences.accentColor
+    @AppStorage(UserDefaults.shared.key(.accentColor)) private var accentColor = DefaultPreferences.accentColor
 
     var body: some View {
         Button(action: removeButtonTapped) {

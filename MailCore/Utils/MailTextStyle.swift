@@ -77,7 +77,7 @@ public struct MailTextStyle {
 
     public static let bodyMediumAccent = MailTextStyle(
         font: .system(size: 16, weight: .medium),
-        color: \.primary
+        color: .accentColor
     )
 
     public static let bodyMediumOnAccent = MailTextStyle(
@@ -112,7 +112,7 @@ public struct MailTextStyle {
 
     public static let bodySmallMediumAccent = MailTextStyle(
         font: .system(size: 14, weight: .medium),
-        color: \.primary
+        color: .accentColor
     )
 
     public static let bodySmallMediumOnAccent = MailTextStyle(
@@ -127,7 +127,7 @@ public struct MailTextStyle {
 
     public static let bodySmallAccent = MailTextStyle(
         font: .system(size: 14),
-        color: \.primary
+        color: .accentColor
     )
 
     public static let bodySmallSecondary = MailTextStyle(
@@ -147,7 +147,7 @@ public struct MailTextStyle {
 
     public static let labelMediumAccent = MailTextStyle(
         font: .system(size: 12, weight: .medium),
-        color: \.primary
+        color: .accentColor
     )
 
     public static let labelMediumSecondary = MailTextStyle(
