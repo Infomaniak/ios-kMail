@@ -51,7 +51,7 @@ struct SentryDebug {
         if !orphanMessages.isEmpty {
             SentrySDK.capture(message: "We found some orphan Messages.") { scope in
                 scope.setLevel(.error)
-                scope.setContext(value: ["uids": "\(orphanMessages.map { $0.uid })",
+                scope.setContext(value: ["uids": "\(orphanMessages.map { $0.uid }.toArray())",
                                          "previousCursor": previousCursor ?? "No cursor",
                                          "newCursor": newCursor ?? "No cursor"],
                                  key: "orphanMessages")
@@ -65,7 +65,7 @@ struct SentryDebug {
         if !orphanThreads.isEmpty {
             SentrySDK.capture(message: "We found some orphan Threads.") { scope in
                 scope.setLevel(.error)
-                scope.setContext(value: ["uids": "\(orphanThreads.map { $0.uid })",
+                scope.setContext(value: ["uids": "\(orphanThreads.map { $0.uid }.toArray())",
                                          "previousCursor": previousCursor ?? "No cursor",
                                          "newCursor": newCursor ?? "No cursor"],
                                  key: "orphanThreads")
