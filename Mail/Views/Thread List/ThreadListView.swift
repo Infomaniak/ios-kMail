@@ -51,6 +51,7 @@ struct ThreadListView: View {
     @Binding private var messageReply: MessageReply?
     @State private var fetchingTask: Task<Void, Never>?
     @State private var isRefreshing = false
+    @State private var firstLauch = true
 
     let isCompact: Bool
 
@@ -190,6 +191,10 @@ struct ThreadListView: View {
         .task {
             if let account = AccountManager.instance.currentAccount {
                 splitViewManager.avatarImage = await account.user.avatarImage
+            }
+            if firstLauch {
+                updateFetchingTask()
+                firstLauch = false
             }
         }
         .sheet(isPresented: $isShowingComposeNewMessageView) {
