@@ -98,6 +98,14 @@ struct ThreadListView: View {
                             .listRowSeparator(.hidden)
                     }
 
+                    if !viewModel.sections.isEmpty,
+                       viewModel.folder?.role == .trash || viewModel.folder?.role == .spam,
+                       let folder = viewModel.folder {
+                        FlushFolderView(folder: folder)
+                            .listRowSeparator(.hidden)
+                            .listRowInsets(.init())
+                    }
+
                     ForEach(viewModel.sections) { section in
                         Section {
                             ForEach(section.threads) { thread in
@@ -229,6 +237,53 @@ struct ThreadListView: View {
             }
             fetchingTask = nil
         }
+    }
+}
+
+private struct FlushFolderView: View {
+    private static let labels: [FolderRole: String] = [
+        .trash: MailResourcesStrings.Localizable.threadListTrashHint,
+        .spam: MailResourcesStrings.Localizable.threadListSpamHint
+    ]
+    private static let buttons: [FolderRole: String] = [
+        .trash: MailResourcesStrings.Localizable.threadListTrashEmptyButton,
+        .spam: MailResourcesStrings.Localizable.threadListSpamEmptyButton
+    ]
+
+    let folder: Folder
+
+    private var label: String {
+        Self.labels[folder.role ?? .trash] ?? ""
+    }
+    private var button: String {
+        Self.buttons[folder.role ?? .trash] ?? ""
+    }
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 0) {
+            VStack(alignment: .leading, spacing: 8) {
+                Text(label)
+                    .textStyle(.bodySmall)
+
+                Button {
+                    print("Coucou \(folder.id)")
+                } label: {
+                    HStack {
+                        Image(resource: MailResourcesAsset.bin)
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: 16, height: 16)
+                        Text(button)
+                    }
+                    .textStyle(.bodySmallAccent)
+                }
+                .buttonStyle(.borderless)
+            }
+            .padding(16)
+
+            IKDivider()
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
     }
 }
 
