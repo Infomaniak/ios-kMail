@@ -101,7 +101,7 @@ struct ThreadListView: View {
                     if !viewModel.sections.isEmpty,
                        viewModel.folder?.role == .trash || viewModel.folder?.role == .spam,
                        let folder = viewModel.folder {
-                        FlushFolderView(folder: folder)
+                        FlushFolderView(mailboxManager: viewModel.mailboxManager, folder: folder)
                             .listRowSeparator(.hidden)
                             .listRowInsets(.init())
                     }
@@ -250,6 +250,7 @@ private struct FlushFolderView: View {
         .spam: MailResourcesStrings.Localizable.threadListSpamEmptyButton
     ]
 
+    let mailboxManager: MailboxManager
     let folder: Folder
 
     private var label: String {
@@ -266,7 +267,11 @@ private struct FlushFolderView: View {
                     .textStyle(.bodySmall)
 
                 Button {
-                    print("Coucou \(folder.id)")
+                    Task {
+                        await tryOrDisplayError {
+                            _ = try await mailboxManager.flushFolder(folder: folder.freezeIfNeeded())
+                        }
+                    }
                 } label: {
                     HStack {
                         Image(resource: MailResourcesAsset.bin)

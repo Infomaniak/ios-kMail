@@ -108,6 +108,10 @@ public class MailApiFetcher: ApiFetcher {
         try await perform(request: authenticatedRequest(.folders(uuid: mailbox.uuid))).data
     }
 
+    func flushFolder(mailbox: Mailbox, folderId: String) async throws -> Bool {
+        try await perform(request: authenticatedRequest(.flushFolder(mailboxUuid: mailbox.uuid, folderId: folderId), method: .post)).data
+    }
+
     public func threads(mailbox: Mailbox, folderId: String, filter: Filter = .all,
                         searchFilter: [URLQueryItem] = [], isDraftFolder: Bool = false) async throws -> ThreadResult {
         try await perform(request: authenticatedRequest(.threads(
