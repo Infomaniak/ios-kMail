@@ -77,21 +77,18 @@ public class BackgroundFetcher {
             // We do nothing if we don't have an initial cursor
             return
         }
+        @ThreadSafe var threadSafeInboxFolder = inboxFolder
 
-        let lastMessageDate = mailboxManager.getRealm().objects(Message.self)
-            .where { $0.folder == inboxFolder }
+        let lastMessageDate = threadSafeInboxFolder?.messages
             .sorted(by: \.date, ascending: false)
             .first?.date ?? Date(timeIntervalSince1970: 0)
-        try await mailboxManager.threads(folder: inboxFolder)
+        try await mailboxManager.threads(folder: inboxFolder.freezeIfNeeded())
 
-        let newUnreadMessages = mailboxManager.getRealm().objects(Message.self)
-            .where {
-                $0.seen == false
-                    && $0.date > lastMessageDate
-                    && $0.folder == inboxFolder
-            }
+        threadSafeInboxFolder?.realm?.refresh()
+        let newUnreadMessages = threadSafeInboxFolder?.messages
+            .where { $0.seen == false && $0.date > lastMessageDate }
             .map { $0.freeze() }
-            .toArray()
+            .toArray() ?? []
 
         for message in newUnreadMessages {
             try await mailboxManager.message(message: message)
