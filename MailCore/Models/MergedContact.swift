@@ -52,7 +52,7 @@ public class MergedContact {
         if let local = local, let localName = contactFormatter.string(from: local) {
             return localName.removePunctuation
         }
-        return remote?.name.removePunctuation ?? ""
+        return remote?.name?.removePunctuation ?? ""
     }()
 
     public var isLocal: Bool {

@@ -46,9 +46,16 @@ public class MailApiFetcher: ApiFetcher {
             if let afError = error.asAFError,
                case .responseSerializationFailed(let reason) = afError,
                case .decodingFailed(let error) = reason {
+                var rawJson = "No data"
+                if let data = request.data,
+                   let stringData = String(data: data, encoding: .utf8) {
+                    rawJson = stringData
+                }
+
                 SentrySDK.capture(error: error) { scope in
                     scope.setExtras(["Request URL": request.request?.url?.absoluteString ?? "No URL",
-                                     "Decoded type": String(describing: T.self)])
+                                     "Decoded type": String(describing: T.self),
+                                     "Raw JSON": rawJson])
                 }
             }
             throw error

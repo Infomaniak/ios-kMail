@@ -176,7 +176,7 @@ public class Folder: Object, Codable, Comparable, Identifiable {
     }
 
     public func computeUnreadCount() {
-        unreadCount = threads.where { $0.hasUnseenMessages == true }.count
+        unreadCount = threads.where { $0.unseenMessages > 0 }.count
     }
 
     public func isParent(of folder: Folder) -> Bool {

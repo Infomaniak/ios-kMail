@@ -17,11 +17,12 @@
  */
 
 import MailCore
-import SwiftUI
 import MailResources
+import RealmSwift
+import SwiftUI
 
 struct MessageListView: View {
-    @State var messages: [Message]
+    var messages: RealmSwift.List<Message>
 
     var body: some View {
         LazyVStack(spacing: 0) {
@@ -33,11 +34,5 @@ struct MessageListView: View {
                 }
             }
         }
-    }
-}
-
-struct MessageListView_Previews: PreviewProvider {
-    static var previews: some View {
-        MessageListView(messages: [])
     }
 }

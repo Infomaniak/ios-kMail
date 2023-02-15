@@ -56,10 +56,6 @@ struct ThreadView: View {
 
     private let toolbarActions: [Action] = [.reply, .forward, .archive, .delete]
 
-    private var messages: [Message] {
-        return Array(thread.messages)
-    }
-
     var body: some View {
         ScrollView {
             VStack(spacing: 0) {
@@ -81,7 +77,7 @@ struct ThreadView: View {
                     .padding(.horizontal, 16)
                     .background(MailResourcesAsset.backgroundColor.swiftUiColor)
 
-                MessageListView(messages: messages)
+                MessageListView(messages: thread.messages)
                     .background(MailResourcesAsset.backgroundColor.swiftUiColor)
             }
         }
@@ -171,7 +167,7 @@ struct ThreadView: View {
                 }
             }
         }
-        .onChange(of: messages) { newMessagesList in
+        .onChange(of: thread.messages) { newMessagesList in
             if newMessagesList.isEmpty {
                 dismiss()
             }
@@ -184,14 +180,14 @@ struct ThreadView: View {
     private func didTap(action: Action) {
         switch action {
         case .reply:
-            guard let message = messages.last else { return }
+            guard let message = thread.messages.last else { return }
             if message.canReplyAll {
                 bottomSheet.open(state: .replyOption(message, isThread: true))
             } else {
                 messageReply = MessageReply(message: message, replyMode: .reply)
             }
         case .forward:
-            guard let message = messages.last else { return }
+            guard let message = thread.messages.last else { return }
             Task {
                 let attachments = try await mailboxManager.apiFetcher.attachmentsToForward(
                     mailbox: mailboxManager.mailbox,

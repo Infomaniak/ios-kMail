@@ -26,7 +26,7 @@ public class Contact: Object, Codable, Identifiable {
     @Persisted public var emails: List<String>
     @Persisted public var firstname: String?
     @Persisted public var lastname: String?
-    @Persisted public var name: String
+    @Persisted public var name: String?
     @Persisted public var other: Bool
     @Persisted public var uuid: String?
     @Persisted public var addressbookId: Int?
