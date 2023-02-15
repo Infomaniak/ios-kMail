@@ -28,7 +28,7 @@ public struct NotificationTappedPayload {
 @MainActor
 class NotificationCenterDelegate: NSObject, UNUserNotificationCenterDelegate {
     private func handleClickOnNotification(scene: UIScene?, content: UNNotificationContent) {
-        guard let messageId = content.userInfo[NotificationsHelper.UserInfoKeys.messageId] as? String,
+        guard let messageUid = content.userInfo[NotificationsHelper.UserInfoKeys.messageUid] as? String,
               let mailboxId = content.userInfo[NotificationsHelper.UserInfoKeys.mailboxId] as? Int,
               let userId = content.userInfo[NotificationsHelper.UserInfoKeys.userId] as? Int,
               let mailbox = MailboxInfosManager.instance.getMailbox(id: mailboxId, userId: userId),
@@ -47,11 +47,11 @@ class NotificationCenterDelegate: NSObject, UNUserNotificationCenterDelegate {
             // This can certainly be improved, we need to add a delay to get the new switched UI before sending the notification
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
                 NotificationCenter.default.post(name: .onUserTappedNotification,
-                                                object: NotificationTappedPayload(messageId: messageId))
+                                                object: NotificationTappedPayload(messageId: messageUid))
             }
         } else {
             NotificationCenter.default.post(name: .onUserTappedNotification,
-                                            object: NotificationTappedPayload(messageId: messageId))
+                                            object: NotificationTappedPayload(messageId: messageUid))
         }
     }
 

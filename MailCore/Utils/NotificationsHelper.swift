@@ -38,7 +38,7 @@ public enum NotificationsHelper {
     public enum UserInfoKeys {
         public static let userId = "user_id"
         public static let mailboxId = "mailbox_id"
-        public static let messageId = "message_id"
+        public static let messageUid = "message_uid"
     }
 
     public static var isNotificationEnabled: Bool {
@@ -119,7 +119,7 @@ public enum NotificationsHelper {
         content.body = message.preview
         content.threadIdentifier = "\(mailboxId)_\(userId)"
         content.userInfo = [
-            NotificationsHelper.UserInfoKeys.messageId: message.uid,
+            NotificationsHelper.UserInfoKeys.messageUid: message.uid,
             NotificationsHelper.UserInfoKeys.mailboxId: mailboxId,
             NotificationsHelper.UserInfoKeys.userId: userId
         ]

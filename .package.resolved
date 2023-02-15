@@ -66,7 +66,7 @@
     {
       "identity" : "ios-dependency-injection",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/Infomaniak/ios-dependency-injection",
+      "location" : "https://github.com/Infomaniak/ios-dependency-injection.git",
       "state" : {
         "revision" : "41a99aeb652d5294355129bfa70d1ea8c17b9980",
         "version" : "1.1.10"
@@ -79,6 +79,15 @@
       "state" : {
         "revision" : "35190f66b67eb8a79cbacdbf54ee9a03ab61d7f7",
         "version" : "4.0.0"
+      }
+    },
+    {
+      "identity" : "ios-notifications",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/Infomaniak/ios-notifications.git",
+      "state" : {
+        "revision" : "6d518f483282b3b3c0b5457425c6576fc03e8343",
+        "version" : "1.1.0"
       }
     },
     {
