@@ -101,7 +101,9 @@ struct ThreadListView: View {
                     if !viewModel.sections.isEmpty,
                        viewModel.folder?.role == .trash || viewModel.folder?.role == .spam,
                        let folder = viewModel.folder {
-                        FlushFolderView(mailboxManager: viewModel.mailboxManager, folder: folder)
+                        FlushFolderView(mailboxManager: viewModel.mailboxManager,
+                                        folder: folder,
+                                        isShowingFlushAlert: $isShowingFlushAlert)
                             .listRowSeparator(.hidden)
                             .listRowInsets(.init())
                     }
@@ -213,6 +215,16 @@ struct ThreadListView: View {
                 MoveEmailView.sheetView(mailboxManager: viewModel.mailboxManager, from: folderId, moveHandler: handler)
             }
         }
+        .customAlert(isPresented: $isShowingFlushAlert) {
+            FlushFolderAlertView(isPresented: $isShowingFlushAlert) {
+                guard let folder = viewModel.folder?.freezeIfNeeded() else { return }
+                Task {
+                    await tryOrDisplayError {
+                        _ = try await viewModel.mailboxManager.flushFolder(folder: folder)
+                    }
+                }
+            }
+        }
     }
 
     private func changeFolder(newFolder: Folder?) {
@@ -250,7 +262,7 @@ private struct FlushFolderView: View {
         .spam: MailResourcesStrings.Localizable.threadListSpamEmptyButton
     ]
 
-    let mailboxManager: MailboxManager
+    @Binding var isShowingFlushAlert: Bool
     let folder: Folder
 
     private var label: String {
@@ -267,11 +279,7 @@ private struct FlushFolderView: View {
                     .textStyle(.bodySmall)
 
                 Button {
-                    Task {
-                        await tryOrDisplayError {
-                            _ = try await mailboxManager.flushFolder(folder: folder.freezeIfNeeded())
-                        }
-                    }
+                    isShowingFlushAlert.toggle()
                 } label: {
                     HStack {
                         Image(resource: MailResourcesAsset.bin)

@@ -19,21 +19,34 @@
 import MailResources
 import SwiftUI
 
-struct AttachmentsUploadInProgressErrorView: View {
+struct FlushFolderAlertView: View {
     @Binding var isPresented: Bool
+
+    var deletedMessages: Int?
     let confirmHandler: () -> Void
 
     var body: some View {
         VStack(alignment: .leading, spacing: 24) {
-            Text(MailResourcesStrings.Localizable.errorCancelAttachmentsUploadInProgress)
+            Text("Hello")
                 .textStyle(.bodyMedium)
-            BottomSheetButtonsView(primaryButtonTitle: MailResourcesStrings.Localizable.buttonClose,
-                                   secondaryButtonTitle: MailResourcesStrings.Localizable.buttonCancel) {
+
+            Text("Coucou tout le monde")
+                .textStyle(.body)
+
+            BottomSheetButtonsView(primaryButtonTitle: MailResourcesStrings.Localizable.buttonConfirm,
+                                   secondaryButtonTitle: MailResourcesStrings.Localizable.buttonClose) {
                 confirmHandler()
                 isPresented = false
             } secondaryButtonAction: {
                 isPresented = false
             }
+
         }
+    }
+}
+
+struct FlushFolderAlertView_Previews: PreviewProvider {
+    static var previews: some View {
+        FlushFolderAlertView(isPresented: .constant(true)) { /* Preview */ }
     }
 }
