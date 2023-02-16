@@ -69,6 +69,7 @@ let project = Project(name: "Mail",
                                  dependencies: [
                                      .target(name: "MailCore"),
                                      .target(name: "MailResources"),
+                                     .target(name: "MailNotificationServiceExtension"),
                                      .package(product: "MatomoTracker"),
                                      .package(product: "Introspect"),
                                      .package(product: "SQRichTextEditor"),
@@ -98,6 +99,27 @@ let project = Project(name: "Mail",
                               dependencies: [
                                   .target(name: "Mail")
                               ]
+                          ),
+                          Target(
+                            name: "MailNotificationServiceExtension",
+                            platform: .iOS,
+                            product: .appExtension,
+                            bundleId: "com.infomaniak.mail.NotificationServiceExtension",
+                            deploymentTarget: deploymentTarget,
+                            infoPlist: .extendingDefault(with: [
+                                "CFBundleDisplayName": "$(PRODUCT_NAME)",
+                                "NSExtension": [
+                                    "NSExtensionPointIdentifier": "com.apple.usernotifications.service",
+                                    "NSExtensionPrincipalClass": "$(PRODUCT_MODULE_NAME).NotificationService",
+                                ],
+                            ]),
+                            sources: "MailNotificationServiceExtension/**",
+                            entitlements: "MailResources/Mail.entitlements",
+                            dependencies: [
+                                .target(name: "MailCore"),
+                                .target(name: "MailResources"),
+                            ],
+                            settings: .settings(base: baseSettings)
                           ),
                           Target(
                               name: "MailResources",
