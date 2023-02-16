@@ -101,9 +101,7 @@ struct ThreadListView: View {
                     if !viewModel.sections.isEmpty,
                        viewModel.folder?.role == .trash || viewModel.folder?.role == .spam,
                        let folder = viewModel.folder {
-                        FlushFolderView(mailboxManager: viewModel.mailboxManager,
-                                        folder: folder,
-                                        isShowingFlushAlert: $isShowingFlushAlert)
+                        FlushFolderView(isShowingFlushAlert: $isShowingFlushAlert, folder: folder)
                             .listRowSeparator(.hidden)
                             .listRowInsets(.init())
                     }

@@ -27,10 +27,10 @@ struct FlushFolderAlertView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 24) {
-            Text("Hello")
+            Text(MailResourcesStrings.Localizable.threadListFlushFolderAlertTitle(10))
                 .textStyle(.bodyMedium)
 
-            Text("Coucou tout le monde")
+            Text(MailResourcesStrings.Localizable.threadListFlushFolderAlertDescription)
                 .textStyle(.body)
 
             BottomSheetButtonsView(primaryButtonTitle: MailResourcesStrings.Localizable.buttonConfirm,
