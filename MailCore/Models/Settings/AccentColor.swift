@@ -67,6 +67,15 @@ public enum AccentColor: String, CaseIterable, SettingsOptionEnum {
         }
     }
 
+    public var onAccent: MailResourcesColors {
+        switch self {
+        case .pink:
+            return MailResourcesAsset.onAccentPinkColor
+        case .blue:
+            return MailResourcesAsset.onAccentBlueColor
+        }
+    }
+
     public var snackbarActionColor: MailResourcesColors {
         switch self {
         case .pink:

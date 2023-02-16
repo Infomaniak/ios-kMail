@@ -170,7 +170,7 @@ struct ThreadCell: View {
                 .background(Circle().fill(isSelected ? Color.accentColor : Color.clear))
                 .frame(width: checkboxSize, height: checkboxSize)
             Image(resource: MailResourcesAsset.check)
-                .foregroundColor(MailResourcesAsset.onAccentColor)
+                .foregroundColor(UserDefaults.shared.accentColor.onAccent.swiftUiColor)
                 .frame(height: Constants.checkmarkSize)
                 .opacity(isSelected ? 1 : 0)
         }

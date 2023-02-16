@@ -26,7 +26,7 @@ struct FilterCellModifier: ViewModifier {
         content
             .padding(.vertical, 6)
             .padding(.horizontal, 11)
-            .foregroundColor(isSelected ? MailResourcesAsset.onAccentColor.swiftUiColor : .accentColor)
+            .foregroundColor(isSelected ? UserDefaults.shared.accentColor.onAccent.swiftUiColor : .accentColor)
             .background(isSelected ? .accentColor : MailResourcesAsset.backgroundColor.swiftUiColor)
             .cornerRadius(40)
             .overlay(

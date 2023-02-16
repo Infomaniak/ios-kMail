@@ -30,7 +30,7 @@ struct InitialsView: View {
                 .fill(Color(uiColor: color))
             Text(initials)
                 .font(.system(size: size * 0.5, weight: .semibold))
-                .foregroundColor(MailResourcesAsset.onAccentColor)
+                .foregroundColor(MailResourcesAsset.backgroundSecondaryColor)
         }
         .frame(width: size, height: size)
     }

@@ -41,7 +41,7 @@ struct FloatingActionButton: View {
         .controlSize(.large)
         .padding(.trailing, 24)
         .padding(.bottom, Constants.floatingButtonBottomPadding)
-        .foregroundColor(MailResourcesAsset.onAccentColor)
+        .foregroundColor(UserDefaults.shared.accentColor.onAccent.swiftUiColor)
     }
 }
 

@@ -82,7 +82,7 @@ public struct MailTextStyle {
 
     public static let bodyMediumOnAccent = MailTextStyle(
         font: .system(size: 16, weight: .medium),
-        color: MailResourcesAsset.onAccentColor
+        color: UserDefaults.shared.accentColor.onAccent.swiftUiColor
     )
 
     public static let bodyMediumError = MailTextStyle(
@@ -117,7 +117,7 @@ public struct MailTextStyle {
 
     public static let bodySmallMediumOnAccent = MailTextStyle(
         font: .system(size: 14, weight: .medium),
-        color: MailResourcesAsset.onAccentColor
+        color: UserDefaults.shared.accentColor.onAccent.swiftUiColor
     )
 
     public static let bodySmall = MailTextStyle(
