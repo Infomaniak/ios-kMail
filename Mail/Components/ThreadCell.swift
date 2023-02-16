@@ -195,7 +195,7 @@ struct ThreadCell: View {
                     .lineLimit(1)
                     .overlay {
                         RoundedRectangle(cornerRadius: 3)
-                            .stroke(MailResourcesAsset.snackbarTextColor.swiftUiColor)
+                            .stroke(MailResourcesAsset.elementsColor.swiftUiColor)
                     }
             }
 
@@ -226,7 +226,7 @@ struct ThreadCell: View {
             if thread.hasAttachments {
                 Image(resource: MailResourcesAsset.attachment)
                     .resizable()
-                    .foregroundColor(MailResourcesAsset.primaryTextColor)
+                    .foregroundColor(MailResourcesAsset.textPrimaryColor)
                     .scaledToFit()
                     .frame(height: 16)
             }

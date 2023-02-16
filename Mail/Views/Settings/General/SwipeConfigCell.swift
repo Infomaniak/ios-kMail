@@ -43,7 +43,7 @@ struct SwipeConfigCell: View {
                 ZStack {
                     if action == .none {
                         if i == 0 {
-                            MailResourcesAsset.separatorColor.swiftUiColor
+                            MailResourcesAsset.elementsColor.swiftUiColor
                         } else {
                             MailResourcesAsset.swipeNoneColor.swiftUiColor
                         }

@@ -58,7 +58,7 @@ public enum BarAppearanceConstants {
         navigationBarAppearance.configureWithTransparentBackground()
         navigationBarAppearance.backgroundColor = MailResourcesAsset.backgroundNavBarColor.color
         navigationBarAppearance.largeTitleTextAttributes = [
-            .foregroundColor: MailResourcesAsset.primaryTextColor.color,
+            .foregroundColor: MailResourcesAsset.textPrimaryColor.color,
             .font: UIFont.systemFont(ofSize: 22, weight: .semibold)
         ]
         return navigationBarAppearance

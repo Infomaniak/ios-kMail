@@ -69,7 +69,7 @@ struct SettingsOptionView<OptionEnum>: View where OptionEnum: CaseIterable, Opti
                                     .resizable()
                                     .scaledToFit()
                                     .frame(width: 24, height: 24)
-                                    .foregroundColor(MailResourcesAsset.hintTextColor)
+                                    .foregroundColor(MailResourcesAsset.textTertiaryColor)
                                 Text(value.title)
                                     .textStyle(.body)
                                 Spacer()

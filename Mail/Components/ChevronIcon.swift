@@ -43,9 +43,9 @@ struct ChevronIcon: View {
         var color: MailResourcesColors {
             switch self {
             case .primary:
-                return MailResourcesAsset.primaryTextColor
+                return MailResourcesAsset.textPrimaryColor
             case .secondary:
-                return MailResourcesAsset.secondaryTextColor
+                return MailResourcesAsset.textSecondaryColor
             }
         }
     }

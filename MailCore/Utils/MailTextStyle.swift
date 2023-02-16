@@ -57,12 +57,12 @@ public struct MailTextStyle {
 
     public static let header1 = MailTextStyle(
         font: .system(size: 22, weight: .semibold),
-        color: MailResourcesAsset.primaryTextColor
+        color: MailResourcesAsset.textPrimaryColor
     )
 
     public static let header2 = MailTextStyle(
         font: .system(size: 18, weight: .semibold),
-        color: MailResourcesAsset.primaryTextColor
+        color: MailResourcesAsset.textPrimaryColor
     )
 
     public static let header2Error = MailTextStyle(
@@ -72,7 +72,7 @@ public struct MailTextStyle {
 
     public static let bodyMedium = MailTextStyle(
         font: .system(size: 16, weight: .medium),
-        color: MailResourcesAsset.primaryTextColor
+        color: MailResourcesAsset.textPrimaryColor
     )
 
     public static let bodyMediumAccent = MailTextStyle(
@@ -92,12 +92,12 @@ public struct MailTextStyle {
 
     public static let body = MailTextStyle(
         font: .system(size: 16),
-        color: MailResourcesAsset.primaryTextColor
+        color: MailResourcesAsset.textPrimaryColor
     )
 
     public static let bodySecondary = MailTextStyle(
         font: .system(size: 16),
-        color: MailResourcesAsset.secondaryTextColor
+        color: MailResourcesAsset.textSecondaryColor
     )
 
     public static let bodyError = MailTextStyle(
@@ -107,7 +107,7 @@ public struct MailTextStyle {
 
     public static let bodySmallMedium = MailTextStyle(
         font: .system(size: 14, weight: .medium),
-        color: MailResourcesAsset.primaryTextColor
+        color: MailResourcesAsset.textPrimaryColor
     )
 
     public static let bodySmallMediumAccent = MailTextStyle(
@@ -122,7 +122,7 @@ public struct MailTextStyle {
 
     public static let bodySmall = MailTextStyle(
         font: .system(size: 14),
-        color: MailResourcesAsset.primaryTextColor
+        color: MailResourcesAsset.textPrimaryColor
     )
 
     public static let bodySmallAccent = MailTextStyle(
@@ -132,12 +132,12 @@ public struct MailTextStyle {
 
     public static let bodySmallSecondary = MailTextStyle(
         font: .system(size: 14),
-        color: MailResourcesAsset.secondaryTextColor
+        color: MailResourcesAsset.textSecondaryColor
     )
 
     public static let bodySmallTertiary = MailTextStyle(
         font: .system(size: 14),
-        color: MailResourcesAsset.hintTextColor
+        color: MailResourcesAsset.textTertiaryColor
     )
 
     public static let bodySmallWarning = MailTextStyle(
@@ -152,11 +152,11 @@ public struct MailTextStyle {
 
     public static let labelMediumSecondary = MailTextStyle(
         font: .system(size: 12, weight: .medium),
-        color: MailResourcesAsset.secondaryTextColor
+        color: MailResourcesAsset.textSecondaryColor
     )
 
     public static let labelSecondary = MailTextStyle(
         font: .system(size: 12),
-        color: MailResourcesAsset.secondaryTextColor
+        color: MailResourcesAsset.textSecondaryColor
     )
 }

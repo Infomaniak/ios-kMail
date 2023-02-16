@@ -39,7 +39,7 @@ struct AccountCellView: View {
                 .fill(MailResourcesAsset.backgroundSecondaryColor.swiftUiColor)
 
             RoundedRectangle(cornerRadius: 10)
-                .stroke(MailResourcesAsset.separatorColor.swiftUiColor, lineWidth: 1)
+                .stroke(MailResourcesAsset.elementsColor.swiftUiColor, lineWidth: 1)
 
             VStack {
                 Button {
