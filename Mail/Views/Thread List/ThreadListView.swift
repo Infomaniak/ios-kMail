@@ -214,7 +214,7 @@ struct ThreadListView: View {
             }
         }
         .customAlert(isPresented: $isShowingFlushAlert) {
-            FlushFolderAlertView(isPresented: $isShowingFlushAlert) {
+            FlushFolderAlertView(isPresented: $isShowingFlushAlert, folder: viewModel.folder) {
                 guard let folder = viewModel.folder?.freezeIfNeeded() else { return }
                 Task {
                     await tryOrDisplayError {
@@ -266,6 +266,7 @@ private struct FlushFolderView: View {
     private var label: String {
         Self.labels[folder.role ?? .trash] ?? ""
     }
+
     private var button: String {
         Self.buttons[folder.role ?? .trash] ?? ""
     }

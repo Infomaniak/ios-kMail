@@ -16,18 +16,35 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import MailCore
 import MailResources
 import SwiftUI
 
 struct FlushFolderAlertView: View {
     @Binding var isPresented: Bool
 
-    var deletedMessages: Int?
+    var folder: Folder?
+    var deletedMessagesCount: Int?
     let confirmHandler: () -> Void
+
+    var title: String {
+        if let deletedMessagesCount {
+            return MailResourcesStrings.Localizable.threadListFlushFolderAlertTitle(deletedMessagesCount)
+        }
+
+        switch folder?.role {
+        case .trash:
+            return MailResourcesStrings.Localizable.threadListTrashEmptyButton
+        case .spam:
+            return MailResourcesStrings.Localizable.threadListSpamEmptyButton
+        default:
+            return ""
+        }
+    }
 
     var body: some View {
         VStack(alignment: .leading, spacing: 24) {
-            Text(MailResourcesStrings.Localizable.threadListFlushFolderAlertTitle(10))
+            Text(title)
                 .textStyle(.bodyMedium)
 
             Text(MailResourcesStrings.Localizable.threadListFlushFolderAlertDescription)
@@ -47,6 +64,6 @@ struct FlushFolderAlertView: View {
 
 struct FlushFolderAlertView_Previews: PreviewProvider {
     static var previews: some View {
-        FlushFolderAlertView(isPresented: .constant(true)) { /* Preview */ }
+        FlushFolderAlertView(isPresented: .constant(true), folder: PreviewHelper.sampleFolder) { /* Preview */ }
     }
 }
