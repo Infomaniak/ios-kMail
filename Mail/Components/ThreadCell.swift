@@ -233,6 +233,7 @@ struct ThreadCell: View {
             if thread.flagged {
                 Image(resource: MailResourcesAsset.starFull)
                     .resizable()
+                    .foregroundColor(MailResourcesAsset.yellowActionColor)
                     .scaledToFit()
                     .frame(width: 16, height: 16)
             }
