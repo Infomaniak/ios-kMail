@@ -16,6 +16,7 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import InfomaniakCoreUI
 import MailCore
 import MailResources
 import RealmSwift
@@ -84,8 +85,7 @@ struct RecipientField: View {
         let autocompleteContacts = contactManager?.contacts(matching: currentText) ?? []
         var autocompleteRecipients = autocompleteContacts.map { Recipient(email: $0.email, name: $0.name) }
         // Append typed email
-        let emailPredicate = NSPredicate(format: "SELF MATCHES %@", Constants.mailRegex)
-        if emailPredicate.evaluate(with: currentText) && !autocompletion.contains(where: { $0.email.caseInsensitiveCompare(currentText) == .orderedSame }) {
+        if !autocompletion.contains(where: { $0.email.caseInsensitiveCompare(currentText) == .orderedSame }) {
             autocompleteRecipients.append(Recipient(email: currentText, name: ""))
         }
         withAnimation {
@@ -93,11 +93,16 @@ struct RecipientField: View {
         }
     }
 
-    private func add(recipient: Recipient) {
-        withAnimation {
-            $recipients.append(recipient)
+    @MainActor private func add(recipient: Recipient) {
+        let emailPredicate = NSPredicate(format: "SELF MATCHES %@", Constants.mailRegex)
+        if emailPredicate.evaluate(with: recipient.email) {
+            withAnimation {
+                $recipients.append(recipient)
+            }
+            currentText = ""
+        } else {
+            IKSnackBar.showSnackBar(message: MailResourcesStrings.Localizable.addUnknownRecipientInvalidEmail)
         }
-        currentText = ""
     }
 
     private func remove(recipientAt: Int) {
