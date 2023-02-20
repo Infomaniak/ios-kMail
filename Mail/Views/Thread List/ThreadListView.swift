@@ -36,6 +36,7 @@ class MoveSheet: SheetState<MoveSheet.State> {
 class FlushAlertState: ObservableObject {
     @Published var isShowing = false
     var deletedMessages: Int? = nil
+    var completion: (() -> Void)? = nil
 }
 
 struct ThreadListView: View {
@@ -79,7 +80,8 @@ struct ThreadListView: View {
                                                                    bottomSheet: threadBottomSheet,
                                                                    moveSheet: moveEmailSheet))
         _multipleSelectionViewModel =
-            StateObject(wrappedValue: ThreadListMultipleSelectionViewModel(mailboxManager: mailboxManager))
+        StateObject(wrappedValue: ThreadListMultipleSelectionViewModel(mailboxManager: mailboxManager,
+                                                                       flushAlert: flushAlertState))
         self.isCompact = isCompact
 
         UITableViewCell.appearance().focusEffect = .none
@@ -109,7 +111,7 @@ struct ThreadListView: View {
                     if !viewModel.sections.isEmpty,
                        viewModel.folder?.role == .trash || viewModel.folder?.role == .spam,
                        let folder = viewModel.folder {
-                        FlushFolderView(flushAlert: flushAlert, folder: folder)
+                        FlushFolderView(flushAlert: flushAlert, folder: folder, mailboxManager: viewModel.mailboxManager)
                             .listRowSeparator(.hidden)
                             .listRowInsets(.init())
                     }
@@ -223,12 +225,7 @@ struct ThreadListView: View {
         }
         .customAlert(isPresented: $flushAlert.isShowing) {
             FlushFolderAlertView(flushAlert: flushAlert, folder: viewModel.folder) {
-                guard let folder = viewModel.folder?.freezeIfNeeded() else { return }
-                Task {
-                    await tryOrDisplayError {
-                        _ = try await viewModel.mailboxManager.flushFolder(folder: folder)
-                    }
-                }
+
             }
         }
     }
@@ -270,6 +267,7 @@ private struct FlushFolderView: View {
 
     @StateObject var flushAlert: FlushAlertState
     let folder: Folder
+    let mailboxManager: MailboxManager
 
     private var label: String {
         Self.labels[folder.role ?? .trash] ?? ""
@@ -287,6 +285,13 @@ private struct FlushFolderView: View {
 
                 Button {
                     flushAlert.isShowing = true
+                    flushAlert.completion = {
+                        Task {
+                            await tryOrDisplayError {
+                                _ = try await mailboxManager.flushFolder(folder: folder)
+                            }
+                        }
+                    }
                 } label: {
                     HStack {
                         Image(resource: MailResourcesAsset.bin)

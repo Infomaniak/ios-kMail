@@ -24,11 +24,10 @@ struct FlushFolderAlertView: View {
     @StateObject var flushAlert: FlushAlertState
 
     var folder: Folder?
-    var deletedMessagesCount: Int?
     let confirmHandler: () -> Void
 
     var title: String {
-        if let deletedMessagesCount {
+        if let deletedMessagesCount = flushAlert.deletedMessages {
             return MailResourcesStrings.Localizable.threadListFlushFolderAlertTitle(deletedMessagesCount)
         }
 
@@ -52,12 +51,11 @@ struct FlushFolderAlertView: View {
 
             BottomSheetButtonsView(primaryButtonTitle: MailResourcesStrings.Localizable.buttonConfirm,
                                    secondaryButtonTitle: MailResourcesStrings.Localizable.buttonClose) {
-                confirmHandler()
+                flushAlert.completion?()
                 flushAlert.isShowing = false
             } secondaryButtonAction: {
                 flushAlert.isShowing = false
             }
-
         }
     }
 }
