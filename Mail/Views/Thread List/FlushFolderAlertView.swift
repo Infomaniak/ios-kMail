@@ -33,20 +33,26 @@ struct FlushFolderAlertView: View {
 
         switch folder?.role {
         case .trash:
-            return MailResourcesStrings.Localizable.threadListTrashEmptyButton
+            return MailResourcesStrings.Localizable.threadListEmptyTrashButton
         case .spam:
-            return MailResourcesStrings.Localizable.threadListSpamEmptyButton
+            return MailResourcesStrings.Localizable.threadListEmptySpamButton
         default:
             return ""
         }
+    }
+
+    var description: String {
+        if let deletedMessagesCount = flushAlert.deletedMessages {
+            return MailResourcesStrings.Localizable.threadListDeletionConfirmationAlertDescription(deletedMessagesCount)
+        }
+        return MailResourcesStrings.Localizable.threadListEmptyFolderAlertDescription
     }
 
     var body: some View {
         VStack(alignment: .leading, spacing: 24) {
             Text(title)
                 .textStyle(.bodyMedium)
-
-            Text(MailResourcesStrings.Localizable.threadListFlushFolderAlertDescription)
+            Text(description)
                 .textStyle(.body)
 
             BottomSheetButtonsView(primaryButtonTitle: MailResourcesStrings.Localizable.buttonConfirm,

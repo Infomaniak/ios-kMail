@@ -66,5 +66,21 @@
 			<string>Supprimer %d messages</string>
 		</dict>
 	</dict>
+	<key>threadListDeletionConfirmationAlertDescription</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@items@</string>
+		<key>items</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>d</string>
+			<key>one</key>
+			<string>Etes-vous sûr de vouloir supprimer ce message définitivement ?</string>
+			<key>other</key>
+			<string>Etes-vous sûr de vouloir supprimer ces messages définitivement ?</string>
+		</dict>
+	</dict>
 </dict>
 </plist>

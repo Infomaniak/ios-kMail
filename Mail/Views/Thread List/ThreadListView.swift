@@ -261,8 +261,8 @@ private struct FlushFolderView: View {
         .spam: MailResourcesStrings.Localizable.threadListSpamHint
     ]
     private static let buttons: [FolderRole: String] = [
-        .trash: MailResourcesStrings.Localizable.threadListTrashEmptyButton,
-        .spam: MailResourcesStrings.Localizable.threadListSpamEmptyButton
+        .trash: MailResourcesStrings.Localizable.threadListEmptyTrashButton,
+        .spam: MailResourcesStrings.Localizable.threadListEmptySpamButton
     ]
 
     @StateObject var flushAlert: FlushAlertState
@@ -285,6 +285,7 @@ private struct FlushFolderView: View {
 
                 Button {
                     flushAlert.isShowing = true
+                    flushAlert.deletedMessages = nil
                     flushAlert.completion = {
                         Task {
                             await tryOrDisplayError {
