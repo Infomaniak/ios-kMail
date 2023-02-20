@@ -224,9 +224,7 @@ struct ThreadListView: View {
             }
         }
         .customAlert(isPresented: $flushAlert.isShowing) {
-            FlushFolderAlertView(flushAlert: flushAlert, folder: viewModel.folder) {
-
-            }
+            FlushFolderAlertView(flushAlert: flushAlert, folder: viewModel.folder)
         }
     }
 
@@ -289,7 +287,7 @@ private struct FlushFolderView: View {
                     flushAlert.completion = {
                         Task {
                             await tryOrDisplayError {
-                                _ = try await mailboxManager.flushFolder(folder: folder)
+                                _ = try await mailboxManager.flushFolder(folder: folder.freezeIfNeeded())
                             }
                         }
                     }

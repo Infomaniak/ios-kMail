@@ -22,9 +22,7 @@ import SwiftUI
 
 struct FlushFolderAlertView: View {
     @StateObject var flushAlert: FlushAlertState
-
     var folder: Folder?
-    let confirmHandler: () -> Void
 
     var title: String {
         if let deletedMessagesCount = flushAlert.deletedMessages {
@@ -68,6 +66,6 @@ struct FlushFolderAlertView: View {
 
 struct FlushFolderAlertView_Previews: PreviewProvider {
     static var previews: some View {
-        FlushFolderAlertView(flushAlert: FlushAlertState()) { /* Preview */ }
+        FlushFolderAlertView(flushAlert: FlushAlertState())
     }
 }
