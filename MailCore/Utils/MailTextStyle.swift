@@ -147,7 +147,7 @@ public struct MailTextStyle {
 
     public static let bodySmallWarning = MailTextStyle(
         font: .system(size: 14),
-        color: MailResourcesAsset.warningColor
+        color: MailResourcesAsset.orangeActionColor
     )
 
     public static let labelMediumAccent = MailTextStyle(
