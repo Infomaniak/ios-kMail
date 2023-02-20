@@ -387,16 +387,20 @@ public class AccountManager: RefreshTokenDelegate {
         currentAccount = account
         currentUserId = account.userId
 
+        guard !Bundle.main.isExtension else {
+            return
+        }
+
+        Task {
+            try await currentContactManager?.fetchContactsAndAddressBooks()
+        }
+
         if account.user?.isStaff == true {
             bugTracker.activateOnScreenshot()
             let apiFetcher = getApiFetcher(for: account.userId, token: account.token)
             bugTracker.configure(with: apiFetcher)
         } else {
             bugTracker.stopActivatingOnScreenshot()
-        }
-
-        Task {
-            try await currentContactManager?.fetchContactsAndAddressBooks()
         }
     }
 
