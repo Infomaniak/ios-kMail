@@ -53,6 +53,16 @@ public enum NotificationsHelper {
             DDLogError("User has declined notifications")
         }
     }
+    
+    public static func getUnreadCount() -> Int {
+        var totalUnreadCount = 0
+        for mailbox in MailboxInfosManager.instance.getMailboxes() {
+            if let mailboxManager = AccountManager.instance.getMailboxManager(for: mailbox) {
+                totalUnreadCount += mailboxManager.getFolder(with: .inbox)?.unreadCount ?? 0
+            }
+        }
+        return totalUnreadCount
+    }
 
     public static func updateUnreadCountBadge() {
         // Start a background task to update the app badge when going in the background
@@ -63,12 +73,7 @@ public enum NotificationsHelper {
             backgroundTaskIdentifier = .invalid
         }
 
-        var totalUnreadCount = 0
-        for mailbox in MailboxInfosManager.instance.getMailboxes() {
-            if let mailboxManager = AccountManager.instance.getMailboxManager(for: mailbox) {
-                totalUnreadCount += mailboxManager.getFolder(with: .inbox)?.unreadCount ?? 0
-            }
-        }
+        let totalUnreadCount = getUnreadCount()
 
         DispatchQueue.main.async {
             UIApplication.shared.applicationIconBadgeNumber = totalUnreadCount
@@ -119,6 +124,7 @@ public enum NotificationsHelper {
         content.body = message.preview
         content.threadIdentifier = "\(mailboxId)_\(userId)"
         content.targetContentIdentifier = "\(userId)_\(mailboxId)_\(message.uid)"
+        content.badge = (getUnreadCount()) as NSNumber
         return content
     }
 
