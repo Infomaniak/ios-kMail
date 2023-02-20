@@ -21,7 +21,7 @@ import MailResources
 import SwiftUI
 
 struct FlushFolderAlertView: View {
-    @Binding var isPresented: Bool
+    @StateObject var flushAlert: FlushAlertState
 
     var folder: Folder?
     var deletedMessagesCount: Int?
@@ -53,9 +53,9 @@ struct FlushFolderAlertView: View {
             BottomSheetButtonsView(primaryButtonTitle: MailResourcesStrings.Localizable.buttonConfirm,
                                    secondaryButtonTitle: MailResourcesStrings.Localizable.buttonClose) {
                 confirmHandler()
-                isPresented = false
+                flushAlert.isShowing = false
             } secondaryButtonAction: {
-                isPresented = false
+                flushAlert.isShowing = false
             }
 
         }
@@ -64,6 +64,6 @@ struct FlushFolderAlertView: View {
 
 struct FlushFolderAlertView_Previews: PreviewProvider {
     static var previews: some View {
-        FlushFolderAlertView(isPresented: .constant(true), folder: PreviewHelper.sampleFolder) { /* Preview */ }
+        FlushFolderAlertView(flushAlert: FlushAlertState()) { /* Preview */ }
     }
 }

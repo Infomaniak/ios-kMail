@@ -33,6 +33,11 @@ class MoveSheet: SheetState<MoveSheet.State> {
     }
 }
 
+class FlushAlertState: ObservableObject {
+    @Published var isShowing = false
+    var deletedMessages: Int? = nil
+}
+
 struct ThreadListView: View {
     @StateObject var viewModel: ThreadListViewModel
     @StateObject var multipleSelectionViewModel: ThreadListMultipleSelectionViewModel
@@ -46,6 +51,7 @@ struct ThreadListView: View {
     @State private var isShowingComposeNewMessageView = false
     @StateObject var bottomSheet: ThreadBottomSheet
     @StateObject var moveSheet: MoveSheet
+    @StateObject var flushAlert: FlushAlertState
     @StateObject private var networkMonitor = NetworkMonitor()
     @Binding private var editedMessageDraft: Draft?
     @Binding private var messageReply: MessageReply?
@@ -62,10 +68,12 @@ struct ThreadListView: View {
          isCompact: Bool) {
         let threadBottomSheet = ThreadBottomSheet()
         let moveEmailSheet = MoveSheet()
+        let flushAlertState = FlushAlertState()
         _editedMessageDraft = editedMessageDraft
         _messageReply = messageReply
         _bottomSheet = StateObject(wrappedValue: threadBottomSheet)
         _moveSheet = StateObject(wrappedValue: moveEmailSheet)
+        _flushAlert = StateObject(wrappedValue: flushAlertState)
         _viewModel = StateObject(wrappedValue: ThreadListViewModel(mailboxManager: mailboxManager,
                                                                    folder: folder,
                                                                    bottomSheet: threadBottomSheet,
@@ -101,7 +109,7 @@ struct ThreadListView: View {
                     if !viewModel.sections.isEmpty,
                        viewModel.folder?.role == .trash || viewModel.folder?.role == .spam,
                        let folder = viewModel.folder {
-                        FlushFolderView(isShowingFlushAlert: $isShowingFlushAlert, folder: folder)
+                        FlushFolderView(flushAlert: flushAlert, folder: folder)
                             .listRowSeparator(.hidden)
                             .listRowInsets(.init())
                     }
@@ -213,8 +221,8 @@ struct ThreadListView: View {
                 MoveEmailView.sheetView(mailboxManager: viewModel.mailboxManager, from: folderId, moveHandler: handler)
             }
         }
-        .customAlert(isPresented: $isShowingFlushAlert) {
-            FlushFolderAlertView(isPresented: $isShowingFlushAlert, folder: viewModel.folder) {
+        .customAlert(isPresented: $flushAlert.isShowing) {
+            FlushFolderAlertView(flushAlert: flushAlert, folder: viewModel.folder) {
                 guard let folder = viewModel.folder?.freezeIfNeeded() else { return }
                 Task {
                     await tryOrDisplayError {
@@ -260,7 +268,7 @@ private struct FlushFolderView: View {
         .spam: MailResourcesStrings.Localizable.threadListSpamEmptyButton
     ]
 
-    @Binding var isShowingFlushAlert: Bool
+    @StateObject var flushAlert: FlushAlertState
     let folder: Folder
 
     private var label: String {
@@ -278,7 +286,7 @@ private struct FlushFolderView: View {
                     .textStyle(.bodySmall)
 
                 Button {
-                    isShowingFlushAlert.toggle()
+                    flushAlert.isShowing = true
                 } label: {
                     HStack {
                         Image(resource: MailResourcesAsset.bin)
