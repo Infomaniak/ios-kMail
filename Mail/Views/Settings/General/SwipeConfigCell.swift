@@ -45,11 +45,11 @@ struct SwipeConfigCell: View {
                         if i == 0 {
                             MailResourcesAsset.elementsColor.swiftUiColor
                         } else {
-                            MailResourcesAsset.swipeNoneColor.swiftUiColor
+                            MailResourcesAsset.textTertiaryColor.swiftUiColor
                         }
 
                         Text(MailResourcesStrings.Localizable.settingsSwipeActionToDefine)
-                            .textStyle(.bodySmallSecondary)
+                            .textStyle(.bodySmall)
                     } else {
                         action.swipeTint
                         action.icon()?
