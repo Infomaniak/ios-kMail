@@ -259,60 +259,6 @@ struct ThreadListView: View {
     }
 }
 
-private struct FlushFolderView: View {
-    private static let labels: [FolderRole: String] = [
-        .trash: MailResourcesStrings.Localizable.threadListTrashHint,
-        .spam: MailResourcesStrings.Localizable.threadListSpamHint
-    ]
-    private static let buttons: [FolderRole: String] = [
-        .trash: MailResourcesStrings.Localizable.threadListEmptyTrashButton,
-        .spam: MailResourcesStrings.Localizable.threadListEmptySpamButton
-    ]
-
-    @StateObject var flushAlert: FlushAlertState
-    let folder: Folder
-    let mailboxManager: MailboxManager
-
-    private var label: String {
-        Self.labels[folder.role ?? .trash] ?? ""
-    }
-
-    private var button: String {
-        Self.buttons[folder.role ?? .trash] ?? ""
-    }
-
-    var body: some View {
-        VStack(alignment: .leading, spacing: 0) {
-            VStack(alignment: .leading, spacing: 8) {
-                Text(label)
-                    .textStyle(.bodySmall)
-
-                Button {
-                    flushAlert.showAlert {
-                        await tryOrDisplayError {
-                            _ = try await mailboxManager.flushFolder(folder: folder.freezeIfNeeded())
-                        }
-                    }
-                } label: {
-                    HStack {
-                        Image(resource: MailResourcesAsset.bin)
-                            .resizable()
-                            .scaledToFit()
-                            .frame(width: 16, height: 16)
-                        Text(button)
-                    }
-                    .textStyle(.bodySmallAccent)
-                }
-                .buttonStyle(.borderless)
-            }
-            .padding(16)
-
-            IKDivider()
-        }
-        .frame(maxWidth: .infinity, alignment: .leading)
-    }
-}
-
 private struct ThreadListToolbar: ViewModifier {
     var isCompact: Bool
 
