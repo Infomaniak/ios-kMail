@@ -85,7 +85,7 @@ struct RecipientField: View {
         let autocompleteContacts = contactManager?.contacts(matching: currentText) ?? []
         var autocompleteRecipients = autocompleteContacts.map { Recipient(email: $0.email, name: $0.name) }
         // Append typed email
-        if !autocompletion.contains(where: { $0.email.caseInsensitiveCompare(currentText) == .orderedSame }) {
+        if !currentText.isEmpty && !autocompletion.contains(where: { $0.email.caseInsensitiveCompare(currentText) == .orderedSame }) {
             autocompleteRecipients.append(Recipient(email: currentText, name: ""))
         }
         withAnimation {
