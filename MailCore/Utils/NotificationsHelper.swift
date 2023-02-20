@@ -108,7 +108,7 @@ public enum NotificationsHelper {
         }
     }
 
-    static func triggerNotificationFor(message: Message, mailboxId: Int, userId: Int) {
+    public static func generateNotificationFor(message: Message, mailboxId: Int, userId: Int) -> UNMutableNotificationContent {
         let content = UNMutableNotificationContent()
         if !message.from.isEmpty {
             content.title = message.from.map { $0.name }.joined(separator: ",")
@@ -118,15 +118,22 @@ public enum NotificationsHelper {
         content.subtitle = message.formattedSubject
         content.body = message.preview
         content.threadIdentifier = "\(mailboxId)_\(userId)"
-        content.userInfo = [
+        content.targetContentIdentifier = "\(userId)_\(mailboxId)_\(message.uid)"
+        return content
+    }
+
+    static func triggerNotificationFor(message: Message, mailboxId: Int, userId: Int) {
+        let messageNotification = generateNotificationFor(message: message, mailboxId: mailboxId, userId: userId)
+        messageNotification.userInfo = [
             NotificationsHelper.UserInfoKeys.messageUid: message.uid,
             NotificationsHelper.UserInfoKeys.mailboxId: mailboxId,
             NotificationsHelper.UserInfoKeys.userId: userId
         ]
 
         let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 1, repeats: false)
-        let notificationId = "\(userId)_\(mailboxId)_\(message.uid)"
-        let request = UNNotificationRequest(identifier: notificationId, content: content, trigger: trigger)
+        let request = UNNotificationRequest(identifier: messageNotification.targetContentIdentifier ?? UUID().uuidString,
+                                            content: messageNotification,
+                                            trigger: trigger)
         UNUserNotificationCenter.current().add(request)
     }
 }

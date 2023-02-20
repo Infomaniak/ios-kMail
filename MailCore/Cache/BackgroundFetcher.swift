@@ -50,7 +50,7 @@ public class BackgroundFetcher {
 
     public func handleAppRefresh(refreshTask: BGAppRefreshTask) {
         let fetchMailsTask = Task {
-            await fetchLastEmailsForAllMailboxes()
+            await fetchLastMessagesForAllMailboxes()
             refreshTask.setTaskCompleted(success: true)
         }
         refreshTask.expirationHandler = {
@@ -58,20 +58,39 @@ public class BackgroundFetcher {
         }
     }
 
-    public func fetchLastEmailsForAllMailboxes() async {
+    public func fetchLastMessagesForAllMailboxes() async {
         await withTaskGroup(of: Void.self) { group in
             for mailbox in MailboxInfosManager.instance.getMailboxes() {
                 guard let mailboxManager = AccountManager.instance.getMailboxManager(for: mailbox) else { continue }
                 group.addTask {
                     do {
-                        try await self.fetchEmailsFor(mailboxManager: mailboxManager)
+                        try await self.fetchAllUnreadMessagesFor(mailboxManager: mailboxManager)
                     } catch {}
                 }
             }
         }
     }
 
-    private func fetchEmailsFor(mailboxManager: MailboxManager) async throws {
+    public func fetchMessage(uid: String, in mailboxManager: MailboxManager) async throws -> Message? {
+        guard let inboxFolder = mailboxManager.getFolder(with: .inbox),
+              inboxFolder.cursor != nil else {
+            // We do nothing if we don't have an initial cursor
+            return nil
+        }
+        try await mailboxManager.threads(folder: inboxFolder.freezeIfNeeded())
+
+        @ThreadSafe var message = mailboxManager.getRealm().object(ofType: Message.self, forPrimaryKey: uid)
+
+        if let message,
+           !message.fullyDownloaded {
+            try await mailboxManager.message(message: message)
+        }
+
+        message?.realm?.refresh()
+        return message?.freezeIfNeeded()
+    }
+
+    public func fetchAllUnreadMessagesFor(mailboxManager: MailboxManager) async throws {
         guard let inboxFolder = mailboxManager.getFolder(with: .inbox),
               inboxFolder.cursor != nil else {
             // We do nothing if we don't have an initial cursor
@@ -82,6 +101,7 @@ public class BackgroundFetcher {
         let lastMessageDate = threadSafeInboxFolder?.messages
             .sorted(by: \.date, ascending: false)
             .first?.date ?? Date(timeIntervalSince1970: 0)
+
         try await mailboxManager.threads(folder: inboxFolder.freezeIfNeeded())
 
         threadSafeInboxFolder?.realm?.refresh()
@@ -92,13 +112,6 @@ public class BackgroundFetcher {
 
         for message in newUnreadMessages {
             try await mailboxManager.message(message: message)
-            NotificationsHelper.triggerNotificationFor(
-                message: message,
-                mailboxId: mailboxManager.mailbox.mailboxId,
-                userId: mailboxManager.mailbox.userId
-            )
         }
-
-        NotificationsHelper.updateUnreadCountBadge()
     }
 }

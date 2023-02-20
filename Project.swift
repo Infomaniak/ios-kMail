@@ -107,6 +107,7 @@ let project = Project(name: "Mail",
                             bundleId: "com.infomaniak.mail.NotificationServiceExtension",
                             deploymentTarget: deploymentTarget,
                             infoPlist: .extendingDefault(with: [
+                                "AppIdentifierPrefix": "$(AppIdentifierPrefix)",
                                 "CFBundleDisplayName": "$(PRODUCT_NAME)",
                                 "NSExtension": [
                                     "NSExtensionPointIdentifier": "com.apple.usernotifications.service",
