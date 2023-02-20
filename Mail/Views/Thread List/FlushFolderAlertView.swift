@@ -55,7 +55,9 @@ struct FlushFolderAlertView: View {
 
             BottomSheetButtonsView(primaryButtonTitle: MailResourcesStrings.Localizable.buttonConfirm,
                                    secondaryButtonTitle: MailResourcesStrings.Localizable.buttonClose) {
-                flushAlert.completion?()
+                Task {
+                    await flushAlert.completion?()
+                }
                 flushAlert.isShowing = false
             } secondaryButtonAction: {
                 flushAlert.isShowing = false

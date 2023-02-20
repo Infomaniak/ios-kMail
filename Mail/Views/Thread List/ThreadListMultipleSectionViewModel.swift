@@ -82,10 +82,8 @@ import SwiftUI
         case .delete:
             let threads = Array(self.selectedItems)
             if selectedItems.first?.folder?.role == .trash || selectedItems.first?.folder?.role == .spam {
-                flushAlert.isShowing = true
-                flushAlert.deletedMessages = selectedItems.count
-                flushAlert.completion = {
-                    Task {
+                flushAlert.showAlert(deletedMessages: selectedItems.count) {
+                    await tryOrDisplayError {
                         try await self.mailboxManager.moveOrDelete(threads: threads)
                     }
                 }

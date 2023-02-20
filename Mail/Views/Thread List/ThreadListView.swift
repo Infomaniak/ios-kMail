@@ -35,8 +35,14 @@ class MoveSheet: SheetState<MoveSheet.State> {
 
 class FlushAlertState: ObservableObject {
     @Published var isShowing = false
-    var deletedMessages: Int? = nil
-    var completion: (() -> Void)? = nil
+    var deletedMessages: Int?
+    var completion: (() async -> Void)?
+
+    func showAlert(deletedMessages: Int? = nil, completion: @escaping () async -> Void) {
+        isShowing = true
+        self.deletedMessages = deletedMessages
+        self.completion = completion
+    }
 }
 
 struct ThreadListView: View {
@@ -282,13 +288,9 @@ private struct FlushFolderView: View {
                     .textStyle(.bodySmall)
 
                 Button {
-                    flushAlert.isShowing = true
-                    flushAlert.deletedMessages = nil
-                    flushAlert.completion = {
-                        Task {
-                            await tryOrDisplayError {
-                                _ = try await mailboxManager.flushFolder(folder: folder.freezeIfNeeded())
-                            }
+                    flushAlert.showAlert {
+                        await tryOrDisplayError {
+                            _ = try await mailboxManager.flushFolder(folder: folder.freezeIfNeeded())
                         }
                     }
                 } label: {
