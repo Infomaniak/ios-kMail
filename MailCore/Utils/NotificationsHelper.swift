@@ -53,7 +53,7 @@ public enum NotificationsHelper {
             DDLogError("User has declined notifications")
         }
     }
-    
+
     public static func getUnreadCount() -> Int {
         var totalUnreadCount = 0
         for mailbox in MailboxInfosManager.instance.getMailboxes() {
@@ -124,22 +124,7 @@ public enum NotificationsHelper {
         content.body = message.preview
         content.threadIdentifier = "\(mailboxId)_\(userId)"
         content.targetContentIdentifier = "\(userId)_\(mailboxId)_\(message.uid)"
-        content.badge = (getUnreadCount()) as NSNumber
+        content.badge = getUnreadCount() as NSNumber
         return content
-    }
-
-    static func triggerNotificationFor(message: Message, mailboxId: Int, userId: Int) {
-        let messageNotification = generateNotificationFor(message: message, mailboxId: mailboxId, userId: userId)
-        messageNotification.userInfo = [
-            NotificationsHelper.UserInfoKeys.messageUid: message.uid,
-            NotificationsHelper.UserInfoKeys.mailboxId: mailboxId,
-            NotificationsHelper.UserInfoKeys.userId: userId
-        ]
-
-        let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 1, repeats: false)
-        let request = UNNotificationRequest(identifier: messageNotification.targetContentIdentifier ?? UUID().uuidString,
-                                            content: messageNotification,
-                                            trigger: trigger)
-        UNUserNotificationCenter.current().add(request)
     }
 }

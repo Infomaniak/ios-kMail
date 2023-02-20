@@ -20,6 +20,7 @@ import InfomaniakCore
 import InfomaniakDI
 import InfomaniakLogin
 import MailCore
+import RealmSwift
 import UserNotifications
 
 class NotificationService: UNNotificationServiceExtension {
@@ -43,6 +44,25 @@ class NotificationService: UNNotificationServiceExtension {
         SimpleResolver.sharedResolver.store(factory: keychainHelper)
     }
 
+    func fetchMessage(uid: String, in mailboxManager: MailboxManager) async throws -> Message? {
+        guard let inboxFolder = mailboxManager.getFolder(with: .inbox),
+              inboxFolder.cursor != nil else {
+            // We do nothing if we don't have an initial cursor
+            return nil
+        }
+        try await mailboxManager.threads(folder: inboxFolder.freezeIfNeeded())
+
+        @ThreadSafe var message = mailboxManager.getRealm().object(ofType: Message.self, forPrimaryKey: uid)
+
+        if let message,
+           !message.fullyDownloaded {
+            try await mailboxManager.message(message: message)
+        }
+
+        message?.realm?.refresh()
+        return message?.freezeIfNeeded()
+    }
+
     override func didReceive(_ request: UNNotificationRequest, withContentHandler contentHandler: @escaping (UNNotificationContent) -> Void) {
         self.contentHandler = contentHandler
         bestAttemptContent = (request.content.mutableCopy() as? UNMutableNotificationContent)
@@ -56,8 +76,7 @@ class NotificationService: UNNotificationServiceExtension {
                 return contentHandler(bestAttemptContent)
             }
             Task {
-                guard let fetchedMessage = try await BackgroundFetcher.shared.fetchMessage(uid: messageUid,
-                                                                                           in: mailboxManager) else {
+                guard let fetchedMessage = try await fetchMessage(uid: messageUid, in: mailboxManager) else {
                     return contentHandler(bestAttemptContent)
                 }
                 let generatedNotification = NotificationsHelper.generateNotificationFor(message: fetchedMessage,
