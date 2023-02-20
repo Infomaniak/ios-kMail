@@ -71,7 +71,7 @@ struct ComposeMessageView: View {
 
     private var isSendButtonDisabled: Bool {
         return draft.identityId?.isEmpty == true
-            || draft.to.isEmpty || draft.cc.isEmpty || draft.bcc.isEmpty
+            || (draft.to.isEmpty && draft.cc.isEmpty && draft.bcc.isEmpty)
             || !attachmentsManager.allAttachmentsUploaded
     }
 
