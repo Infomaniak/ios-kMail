@@ -19,8 +19,8 @@
 import MailResources
 import SwiftUI
 
-struct BottomSheetButtonStyle: ButtonStyle {
-    @Environment(\.isEnabled) var isEnabled
+struct ModalButtonStyle: ButtonStyle {
+    @Environment(\.isEnabled) private var isEnabled
 
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
@@ -37,7 +37,7 @@ struct BottomSheetButtonStyle: ButtonStyle {
     }
 }
 
-struct BottomSheetButton: View {
+struct ModalButton: View {
     var label: String
     var isDisabled = false
     var action: () -> Void
@@ -47,7 +47,7 @@ struct BottomSheetButton: View {
             Text(label)
                 .textStyle(.bodyMediumOnAccent)
         }
-        .buttonStyle(BottomSheetButtonStyle())
+        .buttonStyle(ModalButtonStyle())
         .disabled(isDisabled)
         .animation(.easeOut(duration: 0.25), value: isDisabled)
     }
@@ -55,7 +55,7 @@ struct BottomSheetButton: View {
 
 struct BottomSheetButton_Previews: PreviewProvider {
     static var previews: some View {
-        BottomSheetButton(label: "Amazing button", isDisabled: false) { /* Preview */ }
-        BottomSheetButton(label: "Amazing button", isDisabled: true) { /* Preview */ }
+        ModalButton(label: "Amazing button", isDisabled: false) { /* Preview */ }
+        ModalButton(label: "Amazing button", isDisabled: true) { /* Preview */ }
     }
 }

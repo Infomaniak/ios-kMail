@@ -73,7 +73,7 @@ struct CreateFolderView: View {
                 .textStyle(.body)
                 .focused($isFocused)
             // Button
-            BottomSheetButtonsView(primaryButtonTitle: mode.buttonTitle,
+            ModalButtonsView(primaryButtonTitle: mode.buttonTitle,
                                    secondaryButtonTitle: MailResourcesStrings.Localizable.buttonCancel,
                                    primaryButtonEnabled: !folderName.isEmpty) {
                 state.state = nil
