@@ -19,6 +19,24 @@
 import MailResources
 import SwiftUI
 
+struct BottomSheetButtonStyle: ButtonStyle {
+    @Environment(\.isEnabled) var isEnabled
+
+    func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+            .textStyle(.bodyMediumOnAccent)
+            .padding(.vertical, 18)
+            .padding(.horizontal, 24)
+            .background(background(configuration: configuration))
+            .clipShape(Capsule())
+    }
+
+    private func background(configuration: Configuration) -> Color {
+        guard isEnabled else { return MailResourcesAsset.progressCircleColor.swiftUIColor }
+        return .accentColor.opacity(configuration.isPressed ? 0.8 : 1)
+    }
+}
+
 struct BottomSheetButton: View {
     var label: String
     var isDisabled = false
@@ -28,17 +46,16 @@ struct BottomSheetButton: View {
         Button(action: action) {
             Text(label)
                 .textStyle(.bodyMediumOnAccent)
-                .padding(.horizontal, 12) // Button has already a 12pt horizontal padding
-                .padding(.vertical, 11) // Button has already a 7pt vertical padding
         }
-        .buttonStyle(.borderedProminent)
-        .buttonBorderShape(.capsule)
+        .buttonStyle(BottomSheetButtonStyle())
         .disabled(isDisabled)
+        .animation(.easeOut(duration: 0.25), value: isDisabled)
     }
 }
 
 struct BottomSheetButton_Previews: PreviewProvider {
     static var previews: some View {
+        BottomSheetButton(label: "Amazing button", isDisabled: false) { /* Preview */ }
         BottomSheetButton(label: "Amazing button", isDisabled: true) { /* Preview */ }
     }
 }
