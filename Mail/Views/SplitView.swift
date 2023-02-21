@@ -46,8 +46,34 @@ public class SplitViewManager: ObservableObject {
     var splitViewController: UISplitViewController?
     @Published var avatarImage = Image(resource: MailResourcesAsset.placeholderAvatar)
 
+    @Published var keyboardHeight: CGFloat = 0
+
     init(folder: Folder?) {
         selectedFolder = folder
+
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(handle(keyboardShowNotification:)),
+            name: UIResponder.keyboardDidShowNotification,
+            object: nil
+        )
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(handle(keyboardHideNotification:)),
+            name: UIResponder.keyboardDidHideNotification,
+            object: nil
+        )
+    }
+
+    @objc private func handle(keyboardShowNotification notification: Notification) {
+        if let userInfo = notification.userInfo,
+           let keyboardFrame = userInfo[UIResponder.keyboardFrameEndUserInfoKey] as? CGRect {
+            keyboardHeight = keyboardFrame.height
+        }
+    }
+    
+    @objc private func handle(keyboardHideNotification notification: Notification) {
+        keyboardHeight = 0
     }
 }
 
