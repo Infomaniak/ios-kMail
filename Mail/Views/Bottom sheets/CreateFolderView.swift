@@ -74,7 +74,8 @@ struct CreateFolderView: View {
                 .focused($isFocused)
             // Button
             BottomSheetButtonsView(primaryButtonTitle: mode.buttonTitle,
-                                   secondaryButtonTitle: MailResourcesStrings.Localizable.buttonCancel) {
+                                   secondaryButtonTitle: MailResourcesStrings.Localizable.buttonCancel,
+                                   primaryButtonEnabled: !folderName.isEmpty) {
                 state.state = nil
                 Task {
                     let parent = sortedFolders.first { $0.id == selectedFolderID }
