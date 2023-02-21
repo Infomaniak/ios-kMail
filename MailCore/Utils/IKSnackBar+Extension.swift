@@ -22,8 +22,9 @@ import MailResources
 import SnackBar
 
 public extension SnackBarStyle {
-    static var mailStyle: SnackBarStyle {
+    static func mailStyle(withAnchor anchor: CGFloat) -> SnackBarStyle {
         var snackBarStyle = SnackBarStyle()
+        snackBarStyle.anchor = anchor
         snackBarStyle.padding = 16
         snackBarStyle.inViewPadding = 16
         snackBarStyle.cornerRadius = 8
@@ -43,9 +44,10 @@ public extension IKSnackBar {
     static func showSnackBar(
         message: String,
         duration: SnackBar.Duration = .lengthLong,
-        action: IKSnackBar.Action? = nil
+        action: IKSnackBar.Action? = nil,
+        anchor: CGFloat = 0
     ) -> IKSnackBar? {
-        let snackbar = IKSnackBar.make(message: message, duration: duration, style: .mailStyle, elevation: 0)
+        let snackbar = IKSnackBar.make(message: message, duration: duration, style: .mailStyle(withAnchor: anchor), elevation: 0)
         if let action = action {
             snackbar?.setAction(action).show()
         } else {
