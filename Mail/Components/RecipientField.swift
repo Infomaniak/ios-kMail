@@ -43,8 +43,6 @@ struct RecipientChip: View {
 }
 
 struct RecipientField: View {
-    @EnvironmentObject var splitViewManager: SplitViewManager
-
     @Binding var recipients: RealmSwift.List<Recipient>
     @Binding var autocompletion: [Recipient]
     @Binding var addRecipientHandler: ((Recipient) -> Void)?
@@ -52,6 +50,7 @@ struct RecipientField: View {
     let type: ComposeViewFieldType
 
     @State private var currentText = ""
+    @State private var keyboardHeight: CGFloat = 0
 
     var body: some View {
         VStack {
@@ -80,6 +79,15 @@ struct RecipientField: View {
             updateAutocompletion()
             addRecipientHandler = add(recipient:)
         }
+        .onReceive(NotificationCenter.default.publisher(for: UIResponder.keyboardDidShowNotification)) { output in
+            if let userInfo = output.userInfo,
+               let keyboardFrame = userInfo[UIResponder.keyboardFrameEndUserInfoKey] as? CGRect {
+                keyboardHeight = keyboardFrame.height
+            }
+        }
+        .onReceive(NotificationCenter.default.publisher(for: UIResponder.keyboardDidHideNotification)) { _ in
+            keyboardHeight = 0
+        }
     }
 
     private func updateAutocompletion() {
@@ -104,7 +112,10 @@ struct RecipientField: View {
             }
             currentText = ""
         } else {
-            IKSnackBar.showSnackBar(message: MailResourcesStrings.Localizable.addUnknownRecipientInvalidEmail, anchor: splitViewManager.keyboardHeight)
+            IKSnackBar.showSnackBar(
+                message: MailResourcesStrings.Localizable.addUnknownRecipientInvalidEmail,
+                anchor: keyboardHeight
+            )
         }
     }
 
