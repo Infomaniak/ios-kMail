@@ -64,7 +64,7 @@ import SwiftUI
         setActions()
     }
 
-    func didTap(action: Action) async throws {
+    func didTap(action: Action, flushAlert: Binding<FlushAlertState?>) async throws {
         switch action {
         case .markAsRead, .markAsUnread:
             try await mailboxManager.toggleRead(threads: Array(selectedItems))
@@ -77,7 +77,16 @@ import SwiftUI
         case .star:
             try await mailboxManager.toggleStar(threads: Array(selectedItems))
         case .delete:
-            try await mailboxManager.moveOrDelete(threads: Array(selectedItems))
+            let threads = Array(self.selectedItems)
+            if selectedItems.first?.folder?.role == .trash || selectedItems.first?.folder?.role == .spam {
+                flushAlert.wrappedValue = FlushAlertState(deletedMessages: selectedItems.count) {
+                    await tryOrDisplayError {
+                        try await self.mailboxManager.moveOrDelete(threads: threads)
+                    }
+                }
+            } else {
+                try await mailboxManager.moveOrDelete(threads: threads)
+            }
         default:
             break
         }

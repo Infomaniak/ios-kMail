@@ -90,6 +90,10 @@ public extension Endpoint {
         return .mailbox(uuid: uuid).appending(path: "/folder")
     }
 
+    static func flushFolder(mailboxUuid: String, folderId: String) -> Endpoint {
+        return .folders(uuid: mailboxUuid).appending(path: "/\(folderId)/flush")
+    }
+
     // MARK: - New Routes
 
     static func messages(mailboxUuid: String, folderId: String) -> Endpoint {

@@ -243,8 +243,6 @@ struct ComposeMessageView: View {
         .customAlert(isPresented: $isShowingCancelAttachmentsError) {
             AttachmentsUploadInProgressErrorView(isPresented: $isShowingCancelAttachmentsError) {
                 dismiss()
-            } cancelHandler: {
-                isShowingCancelAttachmentsError = false
             }
         }
         .task {

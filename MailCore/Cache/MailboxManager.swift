@@ -217,6 +217,12 @@ public class MailboxManager: ObservableObject {
         return folder
     }
 
+    public func flushFolder(folder: Folder) async throws -> Bool {
+        let response = try await apiFetcher.flushFolder(mailbox: mailbox, folderId: folder.id)
+        try await threads(folder: folder)
+        return response
+    }
+
     private func refreshFolder(from messages: [Message], additionalFolder: Folder? = nil) async throws {
         var folders = messages.map(\.folder)
         if let additionalFolder = additionalFolder {
