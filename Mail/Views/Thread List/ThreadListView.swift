@@ -83,7 +83,7 @@ struct ThreadListView: View {
                                                                    bottomSheet: threadBottomSheet,
                                                                    moveSheet: moveEmailSheet))
         _multipleSelectionViewModel =
-        StateObject(wrappedValue: ThreadListMultipleSelectionViewModel(mailboxManager: mailboxManager))
+            StateObject(wrappedValue: ThreadListMultipleSelectionViewModel(mailboxManager: mailboxManager))
         self.isCompact = isCompact
 
         UITableViewCell.appearance().focusEffect = .none
@@ -113,7 +113,7 @@ struct ThreadListView: View {
                     if !viewModel.sections.isEmpty,
                        viewModel.folder?.role == .trash || viewModel.folder?.role == .spam,
                        let folder = viewModel.folder {
-                        FlushFolderView(flushAlert: $flushAlert, folder: folder, mailboxManager: viewModel.mailboxManager)
+                        FlushFolderView(folder: folder, mailboxManager: viewModel.mailboxManager, flushAlert: $flushAlert)
                             .listRowSeparator(.hidden)
                             .listRowInsets(.init())
                     }

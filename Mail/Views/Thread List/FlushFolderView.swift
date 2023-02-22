@@ -30,9 +30,10 @@ struct FlushFolderView: View {
         .spam: MailResourcesStrings.Localizable.threadListEmptySpamButton
     ]
 
-    @Binding var flushAlert: FlushAlertState?
     let folder: Folder
     let mailboxManager: MailboxManager
+
+    @Binding var flushAlert: FlushAlertState?
 
     private var label: String {
         Self.labels[folder.role ?? .trash] ?? ""
@@ -76,8 +77,8 @@ struct FlushFolderView: View {
 
 struct FlushFolderView_Previews: PreviewProvider {
     static var previews: some View {
-        FlushFolderView(flushAlert: .constant(nil),
-                        folder: PreviewHelper.sampleFolder,
-                        mailboxManager: PreviewHelper.sampleMailboxManager)
+        FlushFolderView(folder: PreviewHelper.sampleFolder,
+                        mailboxManager: PreviewHelper.sampleMailboxManager,
+                        flushAlert: .constant(nil))
     }
 }
