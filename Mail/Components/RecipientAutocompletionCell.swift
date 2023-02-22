@@ -39,6 +39,7 @@ struct RecipientAutocompletionCell: View {
             }
             Spacer()
         }
+        .lineLimit(1)
     }
 }
 

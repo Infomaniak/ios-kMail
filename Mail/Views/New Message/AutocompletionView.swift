@@ -26,7 +26,7 @@ struct AutocompletionView: View {
 
     var body: some View {
         LazyVStack {
-            ForEach(autocompletion, id: \.email) { recipient in
+            ForEach(autocompletion) { recipient in
                 VStack(alignment: .leading, spacing: 8) {
                     Button {
                         onSelect(recipient)
