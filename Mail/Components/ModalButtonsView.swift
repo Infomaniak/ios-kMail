@@ -24,7 +24,7 @@ struct ModalButtonsView: View {
     @Environment(\.dismiss) private var dismiss
 
     let primaryButtonTitle: String
-    var secondaryButtonTitle: String?
+    var secondaryButtonTitle: String? = MailResourcesStrings.Localizable.buttonCancel
     var primaryButtonEnabled = true
     let primaryButtonAction: () -> Void
     var secondaryButtonAction: (() -> Void)?

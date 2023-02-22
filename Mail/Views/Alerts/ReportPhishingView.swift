@@ -23,7 +23,6 @@ import SwiftUI
 
 struct ReportPhishingView: View {
     let mailboxManager: MailboxManager
-    @ObservedObject var alert: GlobalAlert
     let message: Message
 
     var body: some View {
@@ -33,12 +32,8 @@ struct ReportPhishingView: View {
                 .frame(maxWidth: .infinity, alignment: .leading)
             Text(MailResourcesStrings.Localizable.reportPhishingDescription)
             .textStyle(.bodySecondary)
-            ModalButtonsView(primaryButtonTitle: MailResourcesStrings.Localizable.buttonReport,
-                                   secondaryButtonTitle: MailResourcesStrings.Localizable.buttonCancel,
-                                   primaryButtonAction: report) {
-                // coucou
-            }
-            .padding(.top, 8)
+            ModalButtonsView(primaryButtonTitle: MailResourcesStrings.Localizable.buttonReport, primaryButtonAction: report)
+                .padding(.top, 8)
         }
     }
 
@@ -50,7 +45,7 @@ struct ReportPhishingView: View {
                     var messages = [message.freezeIfNeeded()]
                     messages.append(contentsOf: message.duplicates)
                     _ = try await mailboxManager.move(messages: messages, to: .spam)
-                    IKSnackBar.showSnackBar(message: MailResourcesStrings.Localizable.snackbarReportPhishingConfirmation)
+                    await IKSnackBar.showSnackBar(message: MailResourcesStrings.Localizable.snackbarReportPhishingConfirmation)
                 }
             }
         }
@@ -59,8 +54,6 @@ struct ReportPhishingView: View {
 
 struct PhishingView_Previews: PreviewProvider {
     static var previews: some View {
-        ReportPhishingView(mailboxManager: PreviewHelper.sampleMailboxManager,
-                           alert: GlobalAlert(),
-                           message: PreviewHelper.sampleMessage)
+        ReportPhishingView(mailboxManager: PreviewHelper.sampleMailboxManager, message: PreviewHelper.sampleMessage)
     }
 }

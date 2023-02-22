@@ -27,7 +27,6 @@ struct RestoreEmailsView: View {
 
     @State private var pickerNoSelectionText = MailResourcesStrings.Localizable.loadingText
 
-    let state: GlobalBottomSheet
     let mailboxManager: MailboxManager
 
     var body: some View {
@@ -47,10 +46,9 @@ struct RestoreEmailsView: View {
                 .padding(.bottom, 24)
 
             ModalButtonsView(primaryButtonTitle: MailResourcesStrings.Localizable.buttonConfirmRestoreEmails,
-                                   secondaryButtonTitle: MailResourcesStrings.Localizable.buttonCancel,
-                                   primaryButtonEnabled: !availableDates.isEmpty,
-                                   primaryButtonAction: restoreEmails,
-                                   secondaryButtonAction: cancel)
+                             secondaryButtonTitle: nil,
+                             primaryButtonEnabled: !availableDates.isEmpty,
+                             primaryButtonAction: restoreEmails)
         }
         .padding(.horizontal, Constants.bottomSheetHorizontalPadding)
         .task {
@@ -63,10 +61,6 @@ struct RestoreEmailsView: View {
                 }
             }
         }
-    }
-
-    private func cancel() {
-        // coucou
     }
 
     private func restoreEmails() {
@@ -91,6 +85,6 @@ struct RestoreEmailsView: View {
 
 struct RestoreEmailsView_Previews: PreviewProvider {
     static var previews: some View {
-        RestoreEmailsView(state: GlobalBottomSheet(), mailboxManager: PreviewHelper.sampleMailboxManager)
+        RestoreEmailsView(mailboxManager: PreviewHelper.sampleMailboxManager)
     }
 }

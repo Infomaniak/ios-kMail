@@ -24,7 +24,6 @@ import SwiftUI
 
 struct ReportDisplayProblemView: View {
     let mailboxManager: MailboxManager
-    @ObservedObject var state: GlobalBottomSheet
     let message: Message
 
     var body: some View {
@@ -36,10 +35,8 @@ struct ReportDisplayProblemView: View {
             Text(MailResourcesStrings.Localizable.reportDisplayProblemDescription)
                 .textStyle(.bodySecondary)
             ModalButtonsView(primaryButtonTitle: MailResourcesStrings.Localizable.buttonAccept,
-                                   secondaryButtonTitle: MailResourcesStrings.Localizable.buttonRefuse,
-                                   primaryButtonAction: report) {
-                // coucou
-            }
+                             secondaryButtonTitle: MailResourcesStrings.Localizable.buttonRefuse,
+                             primaryButtonAction: report)
             .padding(.top, 8)
         }
         .padding(.horizontal, Constants.bottomSheetHorizontalPadding)
@@ -57,7 +54,7 @@ struct ReportDisplayProblemView: View {
                 _ = SentrySDK.capture(message: "Message display problem reported") { scope in
                     scope.add(fileAttachment)
                 }
-                IKSnackBar.showSnackBar(message: MailResourcesStrings.Localizable.snackbarDisplayProblemReported)
+                await IKSnackBar.showSnackBar(message: MailResourcesStrings.Localizable.snackbarDisplayProblemReported)
             }
         }
     }
@@ -65,8 +62,6 @@ struct ReportDisplayProblemView: View {
 
 struct ReportDisplayProblemView_Previews: PreviewProvider {
     static var previews: some View {
-        ReportDisplayProblemView(mailboxManager: PreviewHelper.sampleMailboxManager,
-                                 state: GlobalBottomSheet(),
-                                 message: PreviewHelper.sampleMessage)
+        ReportDisplayProblemView(mailboxManager: PreviewHelper.sampleMailboxManager, message: PreviewHelper.sampleMessage)
     }
 }

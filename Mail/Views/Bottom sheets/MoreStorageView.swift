@@ -21,8 +21,6 @@ import MailResources
 import SwiftUI
 
 struct MoreStorageView: View {
-    let state: GlobalBottomSheet
-
     var body: some View {
         VStack(alignment: .leading) {
             Text(MailResourcesStrings.Localizable.moreStorageTitle)
@@ -44,19 +42,14 @@ struct MoreStorageView: View {
             .padding(.bottom, 24)
 
             ModalButtonsView(primaryButtonTitle: MailResourcesStrings.Localizable.buttonAvailableSoon,
-                                   secondaryButtonTitle: MailResourcesStrings.Localizable.buttonClose,
-                                   primaryButtonEnabled: false,
-                                   primaryButtonAction: getMoreStorage,
-                                   secondaryButtonAction: dismiss)
+                             secondaryButtonTitle: MailResourcesStrings.Localizable.buttonClose,
+                             primaryButtonEnabled: false,
+                             primaryButtonAction: getMoreStorage)
         }
         .padding(.horizontal, Constants.bottomSheetHorizontalPadding)
     }
 
     // MARK: - Actions
-
-    private func dismiss() {
-        // coucou
-    }
 
     private func getMoreStorage() {
         // TODO: Implement when functionality is available
@@ -65,7 +58,7 @@ struct MoreStorageView: View {
 
 struct MoreStorageView_Previews: PreviewProvider {
     static var previews: some View {
-        MoreStorageView(state: GlobalBottomSheet())
+        MoreStorageView()
             .previewLayout(.sizeThatFits)
     }
 }

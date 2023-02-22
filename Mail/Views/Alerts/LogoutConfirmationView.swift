@@ -27,23 +27,14 @@ struct LogoutConfirmationView: View {
 
     let account: Account
 
-    let state: AccountAlert
-
     var body: some View {
         VStack(alignment: .leading, spacing: 24) {
             Text( MailResourcesStrings.Localizable.confirmLogoutTitle)
                 .textStyle(.bodyMedium)
             Text(MailResourcesStrings.Localizable.confirmLogoutDescription(account.user.email))
                 .textStyle(.bodySecondary)
-            ModalButtonsView(primaryButtonTitle: MailResourcesStrings.Localizable.buttonConfirm,
-                                   secondaryButtonTitle: MailResourcesStrings.Localizable.buttonCancel,
-                                   primaryButtonAction: logout,
-                                   secondaryButtonAction: cancel)
+            ModalButtonsView(primaryButtonTitle: MailResourcesStrings.Localizable.buttonConfirm, primaryButtonAction: logout)
         }
-    }
-
-    private func cancel() {
-        // coucou
     }
 
     private func logout() {
@@ -59,6 +50,6 @@ struct LogoutConfirmationView: View {
 
 struct LogoutConfirmationView_Previews: PreviewProvider {
     static var previews: some View {
-        LogoutConfirmationView(account: PreviewHelper.sampleAccount, state: AccountAlert())
+        LogoutConfirmationView(account: PreviewHelper.sampleAccount)
     }
 }

@@ -30,7 +30,6 @@ struct CreateFolderView: View {
     @FocusState private var isFocused
 
     private var mode: Mode
-    private var state: GlobalAlert
 
     private var sortedFolders: [Folder] {
         return folders.sorted()
@@ -50,10 +49,9 @@ struct CreateFolderView: View {
         }
     }
 
-    init(mailboxManager: MailboxManager, state: GlobalAlert, mode: Mode) {
+    init(mailboxManager: MailboxManager, mode: Mode) {
         _folders = .init(Folder.self, configuration: AccountManager.instance.currentMailboxManager?.realmConfiguration)
         _mailboxManager = StateObject(wrappedValue: mailboxManager)
-        self.state = state
         self.mode = mode
     }
 
@@ -73,9 +71,7 @@ struct CreateFolderView: View {
                 .textStyle(.body)
                 .focused($isFocused)
             // Button
-            ModalButtonsView(primaryButtonTitle: mode.buttonTitle,
-                                   secondaryButtonTitle: MailResourcesStrings.Localizable.buttonCancel,
-                                   primaryButtonEnabled: !folderName.isEmpty) {
+            ModalButtonsView(primaryButtonTitle: mode.buttonTitle, primaryButtonEnabled: !folderName.isEmpty) {
                 Task {
                     let parent = sortedFolders.first { $0.id == selectedFolderID }
                     await tryOrDisplayError {
@@ -86,8 +82,6 @@ struct CreateFolderView: View {
                         }
                     }
                 }
-            } secondaryButtonAction: {
-                // coucou
             }
         }
         .onAppear {
@@ -98,7 +92,7 @@ struct CreateFolderView: View {
 
 struct CreateFolderView_Previews: PreviewProvider {
     static var previews: some View {
-        CreateFolderView(mailboxManager: PreviewHelper.sampleMailboxManager, state: GlobalAlert(), mode: .create)
-        CreateFolderView(mailboxManager: PreviewHelper.sampleMailboxManager, state: GlobalAlert(), mode: .move { _ in /* Preview */ })
+        CreateFolderView(mailboxManager: PreviewHelper.sampleMailboxManager, mode: .create)
+        CreateFolderView(mailboxManager: PreviewHelper.sampleMailboxManager, mode: .move { _ in /* Preview */ })
     }
 }
