@@ -21,7 +21,6 @@ import SwiftUI
 
 struct AttachmentsUploadInProgressErrorView: View {
     var confirmHandler: () -> Void
-    var cancelHandler: () -> Void
 
     var body: some View {
         VStack(alignment: .leading, spacing: 24) {
@@ -29,8 +28,6 @@ struct AttachmentsUploadInProgressErrorView: View {
                 .textStyle(.bodyMedium)
             ModalButtonsView(primaryButtonTitle: MailResourcesStrings.Localizable.buttonClose) {
                 confirmHandler()
-            } secondaryButtonAction: {
-                cancelHandler()
             }
         }
     }
