@@ -27,7 +27,7 @@ struct AttachmentsUploadInProgressErrorView: View {
         VStack(alignment: .leading, spacing: 24) {
             Text(MailResourcesStrings.Localizable.errorCancelAttachmentsUploadInProgress)
                 .textStyle(.bodyMedium)
-            BottomSheetButtonsView(primaryButtonTitle: MailResourcesStrings.Localizable.buttonClose,
+            ModalButtonsView(primaryButtonTitle: MailResourcesStrings.Localizable.buttonClose,
                                    secondaryButtonTitle: MailResourcesStrings.Localizable.buttonCancel) {
                 confirmHandler()
                 isPresented = false

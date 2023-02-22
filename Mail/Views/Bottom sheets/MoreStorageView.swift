@@ -43,7 +43,7 @@ struct MoreStorageView: View {
             .textStyle(.bodySecondary)
             .padding(.bottom, 24)
 
-            BottomSheetButtonsView(primaryButtonTitle: MailResourcesStrings.Localizable.buttonAvailableSoon,
+            ModalButtonsView(primaryButtonTitle: MailResourcesStrings.Localizable.buttonAvailableSoon,
                                    secondaryButtonTitle: MailResourcesStrings.Localizable.buttonClose,
                                    primaryButtonEnabled: false,
                                    primaryButtonAction: getMoreStorage,

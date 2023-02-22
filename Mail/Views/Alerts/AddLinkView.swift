@@ -41,7 +41,7 @@ struct AddLinkView: View {
                 .autocapitalization(.none)
                 .textContentType(.URL)
                 .textStyle(.body)
-            BottomSheetButtonsView(primaryButtonTitle: MailResourcesStrings.Localizable.buttonValid,
+            ModalButtonsView(primaryButtonTitle: MailResourcesStrings.Localizable.buttonValid,
                                    secondaryButtonTitle: MailResourcesStrings.Localizable.buttonCancel,
                                    primaryButtonEnabled: !url.isEmpty) {
                 guard var urlComponents = URLComponents(string: url) else {

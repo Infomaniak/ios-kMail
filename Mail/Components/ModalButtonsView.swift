@@ -20,7 +20,7 @@ import MailCore
 import MailResources
 import SwiftUI
 
-struct BottomSheetButtonsView: View {
+struct ModalButtonsView: View {
     let primaryButtonTitle: String
     let secondaryButtonTitle: String?
     let primaryButtonEnabled: Bool
@@ -50,7 +50,7 @@ struct BottomSheetButtonsView: View {
                 }
             }
 
-            BottomSheetButton(label: primaryButtonTitle,
+            ModalButton(label: primaryButtonTitle,
                               isDisabled: !primaryButtonEnabled,
                               action: primaryButtonAction)
         }
@@ -60,7 +60,7 @@ struct BottomSheetButtonsView: View {
 
 struct BottomSheetButtonsView_Previews: PreviewProvider {
     static var previews: some View {
-        BottomSheetButtonsView(primaryButtonTitle: "Save",
+        ModalButtonsView(primaryButtonTitle: "Save",
                                secondaryButtonTitle: "Cancel",
                                primaryButtonEnabled: false,
                                primaryButtonAction: { /* Preview */ },

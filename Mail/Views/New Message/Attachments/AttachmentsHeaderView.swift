@@ -44,7 +44,7 @@ struct AttachmentsHeaderView: View {
         .customAlert(item: $attachmentsManager.globalError) { error in
             VStack {
                 Text(error.errorDescription ?? MailError.unknownError.errorDescription ?? "")
-                BottomSheetButtonsView(primaryButtonTitle: MailResourcesStrings.Localizable.buttonClose) {
+                ModalButtonsView(primaryButtonTitle: MailResourcesStrings.Localizable.buttonClose) {
                     attachmentsManager.globalError = nil
                     attachmentsManager.objectWillChange.send()
                 }

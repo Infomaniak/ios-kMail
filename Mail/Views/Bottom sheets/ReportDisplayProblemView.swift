@@ -35,7 +35,7 @@ struct ReportDisplayProblemView: View {
             Image(resource: MailResourcesAsset.displayIssue)
             Text(MailResourcesStrings.Localizable.reportDisplayProblemDescription)
                 .textStyle(.bodySecondary)
-            BottomSheetButtonsView(primaryButtonTitle: MailResourcesStrings.Localizable.buttonAccept,
+            ModalButtonsView(primaryButtonTitle: MailResourcesStrings.Localizable.buttonAccept,
                                    secondaryButtonTitle: MailResourcesStrings.Localizable.buttonRefuse,
                                    primaryButtonAction: report) {
                 state.close()

@@ -73,7 +73,7 @@ struct CreateFolderView: View {
                 .textStyle(.body)
                 .focused($isFocused)
             // Button
-            BottomSheetButtonsView(primaryButtonTitle: mode.buttonTitle,
+            ModalButtonsView(primaryButtonTitle: mode.buttonTitle,
                                    secondaryButtonTitle: MailResourcesStrings.Localizable.buttonCancel,
                                    primaryButtonEnabled: !folderName.isEmpty) {
                 state.state = nil
@@ -100,6 +100,6 @@ struct CreateFolderView: View {
 struct CreateFolderView_Previews: PreviewProvider {
     static var previews: some View {
         CreateFolderView(mailboxManager: PreviewHelper.sampleMailboxManager, state: GlobalAlert(), mode: .create)
-        CreateFolderView(mailboxManager: PreviewHelper.sampleMailboxManager, state: GlobalAlert(), mode: .move { _ /* Preview */ in })
+        CreateFolderView(mailboxManager: PreviewHelper.sampleMailboxManager, state: GlobalAlert(), mode: .move { _ in /* Preview */ })
     }
 }
