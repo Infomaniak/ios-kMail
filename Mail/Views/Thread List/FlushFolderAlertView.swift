@@ -21,7 +21,9 @@ import MailResources
 import SwiftUI
 
 struct FlushFolderAlertView: View {
-    @StateObject var flushAlert: FlushAlertState
+    @Environment(\.dismiss) private var dismiss
+
+    var flushAlert: FlushAlertState
     var folder: Folder?
 
     private var title: String {
@@ -56,11 +58,11 @@ struct FlushFolderAlertView: View {
             BottomSheetButtonsView(primaryButtonTitle: MailResourcesStrings.Localizable.buttonConfirm,
                                    secondaryButtonTitle: MailResourcesStrings.Localizable.buttonClose) {
                 Task {
-                    await flushAlert.completion?()
+                    await flushAlert.completion()
                 }
-                flushAlert.isShowing = false
+                dismiss()
             } secondaryButtonAction: {
-                flushAlert.isShowing = false
+                dismiss()
             }
         }
     }
@@ -68,6 +70,6 @@ struct FlushFolderAlertView: View {
 
 struct FlushFolderAlertView_Previews: PreviewProvider {
     static var previews: some View {
-        FlushFolderAlertView(flushAlert: FlushAlertState())
+        FlushFolderAlertView(flushAlert: FlushAlertState { /* Preview */ })
     }
 }

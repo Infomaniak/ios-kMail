@@ -30,7 +30,7 @@ struct FlushFolderView: View {
         .spam: MailResourcesStrings.Localizable.threadListEmptySpamButton
     ]
 
-    @StateObject var flushAlert: FlushAlertState
+    @Binding var flushAlert: FlushAlertState?
     let folder: Folder
     let mailboxManager: MailboxManager
 
@@ -49,7 +49,7 @@ struct FlushFolderView: View {
                     .textStyle(.bodySmall)
 
                 Button {
-                    flushAlert.showAlert {
+                    flushAlert = FlushAlertState {
                         await tryOrDisplayError {
                             _ = try await mailboxManager.flushFolder(folder: folder.freezeIfNeeded())
                         }
@@ -76,7 +76,7 @@ struct FlushFolderView: View {
 
 struct FlushFolderView_Previews: PreviewProvider {
     static var previews: some View {
-        FlushFolderView(flushAlert: FlushAlertState(),
+        FlushFolderView(flushAlert: .constant(nil),
                         folder: PreviewHelper.sampleFolder,
                         mailboxManager: PreviewHelper.sampleMailboxManager)
     }

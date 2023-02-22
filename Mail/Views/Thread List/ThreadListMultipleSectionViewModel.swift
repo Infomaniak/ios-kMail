@@ -25,8 +25,6 @@ import SwiftUI
 @MainActor class ThreadListMultipleSelectionViewModel: ObservableObject {
     let mailboxManager: MailboxManager
 
-    let flushAlert: FlushAlertState
-
     @Published var isEnabled = false {
         didSet {
             if !isEnabled {
@@ -40,9 +38,8 @@ import SwiftUI
 
     let feedbackGenerator = UIImpactFeedbackGenerator(style: .medium)
 
-    init(mailboxManager: MailboxManager, flushAlert: FlushAlertState) {
+    init(mailboxManager: MailboxManager) {
         self.mailboxManager = mailboxManager
-        self.flushAlert = flushAlert
         setActions()
     }
 
@@ -67,7 +64,7 @@ import SwiftUI
         setActions()
     }
 
-    func didTap(action: Action) async throws {
+    func didTap(action: Action, flushAlert: Binding<FlushAlertState?>) async throws {
         switch action {
         case .markAsRead, .markAsUnread:
             try await mailboxManager.toggleRead(threads: Array(selectedItems))
@@ -82,7 +79,7 @@ import SwiftUI
         case .delete:
             let threads = Array(self.selectedItems)
             if selectedItems.first?.folder?.role == .trash || selectedItems.first?.folder?.role == .spam {
-                flushAlert.showAlert(deletedMessages: selectedItems.count) {
+                flushAlert.wrappedValue = FlushAlertState(deletedMessages: selectedItems.count) {
                     await tryOrDisplayError {
                         try await self.mailboxManager.moveOrDelete(threads: threads)
                     }

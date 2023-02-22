@@ -33,13 +33,12 @@ class MoveSheet: SheetState<MoveSheet.State> {
     }
 }
 
-class FlushAlertState: ObservableObject {
-    @Published var isShowing = false
-    var deletedMessages: Int?
-    var completion: (() async -> Void)?
+class FlushAlertState: Identifiable {
+    let id = UUID()
+    let deletedMessages: Int?
+    let completion: () async -> Void
 
-    func showAlert(deletedMessages: Int? = nil, completion: @escaping () async -> Void) {
-        isShowing = true
+    init(deletedMessages: Int? = nil, completion: @escaping () async -> Void) {
         self.deletedMessages = deletedMessages
         self.completion = completion
     }
@@ -58,13 +57,13 @@ struct ThreadListView: View {
     @State private var isShowingComposeNewMessageView = false
     @StateObject var bottomSheet: ThreadBottomSheet
     @StateObject var moveSheet: MoveSheet
-    @StateObject var flushAlert: FlushAlertState
     @StateObject private var networkMonitor = NetworkMonitor()
     @Binding private var editedMessageDraft: Draft?
     @Binding private var messageReply: MessageReply?
     @State private var fetchingTask: Task<Void, Never>?
     @State private var isRefreshing = false
     @State private var firstLaunch = true
+    @State private var flushAlert: FlushAlertState?
 
     let isCompact: Bool
 
@@ -75,19 +74,16 @@ struct ThreadListView: View {
          isCompact: Bool) {
         let threadBottomSheet = ThreadBottomSheet()
         let moveEmailSheet = MoveSheet()
-        let flushAlertState = FlushAlertState()
         _editedMessageDraft = editedMessageDraft
         _messageReply = messageReply
         _bottomSheet = StateObject(wrappedValue: threadBottomSheet)
         _moveSheet = StateObject(wrappedValue: moveEmailSheet)
-        _flushAlert = StateObject(wrappedValue: flushAlertState)
         _viewModel = StateObject(wrappedValue: ThreadListViewModel(mailboxManager: mailboxManager,
                                                                    folder: folder,
                                                                    bottomSheet: threadBottomSheet,
                                                                    moveSheet: moveEmailSheet))
         _multipleSelectionViewModel =
-        StateObject(wrappedValue: ThreadListMultipleSelectionViewModel(mailboxManager: mailboxManager,
-                                                                       flushAlert: flushAlertState))
+        StateObject(wrappedValue: ThreadListMultipleSelectionViewModel(mailboxManager: mailboxManager))
         self.isCompact = isCompact
 
         UITableViewCell.appearance().focusEffect = .none
@@ -117,7 +113,7 @@ struct ThreadListView: View {
                     if !viewModel.sections.isEmpty,
                        viewModel.folder?.role == .trash || viewModel.folder?.role == .spam,
                        let folder = viewModel.folder {
-                        FlushFolderView(flushAlert: flushAlert, folder: folder, mailboxManager: viewModel.mailboxManager)
+                        FlushFolderView(flushAlert: $flushAlert, folder: folder, mailboxManager: viewModel.mailboxManager)
                             .listRowSeparator(.hidden)
                             .listRowInsets(.init())
                     }
@@ -176,6 +172,7 @@ struct ThreadListView: View {
             }
         }
         .modifier(ThreadListToolbar(isCompact: isCompact,
+                                    flushAlert: $flushAlert,
                                     bottomSheet: bottomSheet,
                                     multipleSelectionViewModel: multipleSelectionViewModel,
                                     selectAll: {
@@ -229,8 +226,8 @@ struct ThreadListView: View {
                 MoveEmailView.sheetView(mailboxManager: viewModel.mailboxManager, from: folderId, moveHandler: handler)
             }
         }
-        .customAlert(isPresented: $flushAlert.isShowing) {
-            FlushFolderAlertView(flushAlert: flushAlert, folder: viewModel.folder)
+        .customAlert(item: $flushAlert) { item in
+            FlushFolderAlertView(flushAlert: item, folder: viewModel.folder)
         }
     }
 
@@ -261,6 +258,8 @@ struct ThreadListView: View {
 
 private struct ThreadListToolbar: ViewModifier {
     var isCompact: Bool
+
+    @Binding var flushAlert: FlushAlertState?
 
     @ObservedObject var bottomSheet: ThreadBottomSheet
     @ObservedObject var multipleSelectionViewModel: ThreadListMultipleSelectionViewModel
@@ -343,7 +342,7 @@ private struct ThreadListToolbar: ViewModifier {
                                     ) {
                                         Task {
                                             await tryOrDisplayError {
-                                                try await multipleSelectionViewModel.didTap(action: action)
+                                                try await multipleSelectionViewModel.didTap(action: action, flushAlert: $flushAlert)
                                             }
                                         }
                                     }
