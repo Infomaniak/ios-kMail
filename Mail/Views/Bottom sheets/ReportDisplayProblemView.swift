@@ -38,7 +38,7 @@ struct ReportDisplayProblemView: View {
             ModalButtonsView(primaryButtonTitle: MailResourcesStrings.Localizable.buttonAccept,
                                    secondaryButtonTitle: MailResourcesStrings.Localizable.buttonRefuse,
                                    primaryButtonAction: report) {
-                state.close()
+                // coucou
             }
             .padding(.top, 8)
         }
@@ -46,7 +46,6 @@ struct ReportDisplayProblemView: View {
     }
 
     private func report() {
-        state.close()
         Task {
             await tryOrDisplayError {
                 // Download message

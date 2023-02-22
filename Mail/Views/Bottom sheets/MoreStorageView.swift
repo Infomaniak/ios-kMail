@@ -55,7 +55,7 @@ struct MoreStorageView: View {
     // MARK: - Actions
 
     private func dismiss() {
-        state.close()
+        // coucou
     }
 
     private func getMoreStorage() {

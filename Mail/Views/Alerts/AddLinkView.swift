@@ -56,9 +56,8 @@ struct AddLinkView: View {
                     return
                 }
                 actionHandler?(url)
-                state.state = nil
             } secondaryButtonAction: {
-                state.state = nil
+                // coucou
             }
         }
         .onAppear {

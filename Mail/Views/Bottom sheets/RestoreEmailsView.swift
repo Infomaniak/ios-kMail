@@ -66,7 +66,7 @@ struct RestoreEmailsView: View {
     }
 
     private func cancel() {
-        state.close()
+        // coucou
     }
 
     private func restoreEmails() {
@@ -76,7 +76,6 @@ struct RestoreEmailsView: View {
                 await IKSnackBar.showSnackBar(message: MailResourcesStrings.Localizable.snackbarSuccessfulRestoration)
             }
         }
-        state.close()
     }
 
     private func mapDates(_ backupDate: String) -> LargePicker<String, EmptyView>.Item<String> {

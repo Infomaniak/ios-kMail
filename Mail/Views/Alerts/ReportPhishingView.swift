@@ -36,14 +36,13 @@ struct ReportPhishingView: View {
             ModalButtonsView(primaryButtonTitle: MailResourcesStrings.Localizable.buttonReport,
                                    secondaryButtonTitle: MailResourcesStrings.Localizable.buttonCancel,
                                    primaryButtonAction: report) {
-                alert.state = nil
+                // coucou
             }
             .padding(.top, 8)
         }
     }
 
     private func report() {
-        alert.state = nil
         Task {
             await tryOrDisplayError {
                 let response = try await mailboxManager.apiFetcher.reportPhishing(message: message)

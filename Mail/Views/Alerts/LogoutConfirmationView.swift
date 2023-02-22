@@ -43,7 +43,7 @@ struct LogoutConfirmationView: View {
     }
 
     private func cancel() {
-        state.state = nil
+        // coucou
     }
 
     private func logout() {
@@ -54,7 +54,6 @@ struct LogoutConfirmationView: View {
             (window?.windowScene?.delegate as? SceneDelegate)?.showLoginView()
         }
         AccountManager.instance.saveAccounts()
-        state.state = nil
     }
 }
 

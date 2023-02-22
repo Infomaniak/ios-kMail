@@ -76,7 +76,6 @@ struct CreateFolderView: View {
             ModalButtonsView(primaryButtonTitle: mode.buttonTitle,
                                    secondaryButtonTitle: MailResourcesStrings.Localizable.buttonCancel,
                                    primaryButtonEnabled: !folderName.isEmpty) {
-                state.state = nil
                 Task {
                     let parent = sortedFolders.first { $0.id == selectedFolderID }
                     await tryOrDisplayError {
@@ -88,7 +87,7 @@ struct CreateFolderView: View {
                     }
                 }
             } secondaryButtonAction: {
-                state.state = nil
+                // coucou
             }
         }
         .onAppear {

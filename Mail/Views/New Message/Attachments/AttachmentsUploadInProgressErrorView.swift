@@ -30,9 +30,8 @@ struct AttachmentsUploadInProgressErrorView: View {
             ModalButtonsView(primaryButtonTitle: MailResourcesStrings.Localizable.buttonClose,
                                    secondaryButtonTitle: MailResourcesStrings.Localizable.buttonCancel) {
                 confirmHandler()
-                isPresented = false
             } secondaryButtonAction: {
-                isPresented = false
+                cancelHandler()
             }
         }
     }
