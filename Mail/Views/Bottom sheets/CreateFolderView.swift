@@ -45,7 +45,7 @@ struct CreateFolderView: View {
             case .create:
                 return MailResourcesStrings.Localizable.buttonCreate
             case .move:
-                return MailResourcesStrings.Localizable.actionMove
+                return MailResourcesStrings.Localizable.newFolderDialogMovePositiveButton
             }
         }
     }
@@ -60,7 +60,7 @@ struct CreateFolderView: View {
     var body: some View {
         VStack(alignment: .trailing, spacing: 16) {
             // Header
-            Text(MailResourcesStrings.Localizable.createFolderTitle)
+            Text(MailResourcesStrings.Localizable.newFolderDialogTitle)
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .textStyle(.bodyMedium)
             // Text field
@@ -74,7 +74,8 @@ struct CreateFolderView: View {
                 .focused($isFocused)
             // Button
             BottomSheetButtonsView(primaryButtonTitle: mode.buttonTitle,
-                                   secondaryButtonTitle: MailResourcesStrings.Localizable.buttonCancel) {
+                                   secondaryButtonTitle: MailResourcesStrings.Localizable.buttonCancel,
+                                   primaryButtonEnabled: !folderName.isEmpty) {
                 state.state = nil
                 Task {
                     let parent = sortedFolders.first { $0.id == selectedFolderID }
