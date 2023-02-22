@@ -16,7 +16,6 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import MailCore
 import MailResources
 import SwiftUI
 
@@ -52,6 +51,6 @@ struct ModalButtonsView: View {
 
 struct BottomSheetButtonsView_Previews: PreviewProvider {
     static var previews: some View {
-        ModalButtonsView(primaryButtonTitle: "Save", secondaryButtonTitle: "Cancel") { /* Preview */ }
+        ModalButtonsView(primaryButtonTitle: "Save") { /* Preview */ }
     }
 }
