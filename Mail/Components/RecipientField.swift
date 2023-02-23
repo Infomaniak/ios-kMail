@@ -16,6 +16,7 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import InfomaniakCoreUI
 import MailCore
 import MailResources
 import RealmSwift
@@ -49,6 +50,7 @@ struct RecipientField: View {
     let type: ComposeViewFieldType
 
     @State private var currentText = ""
+    @State private var keyboardHeight: CGFloat = 0
 
     var body: some View {
         VStack {
@@ -77,6 +79,15 @@ struct RecipientField: View {
             updateAutocompletion()
             addRecipientHandler = add(recipient:)
         }
+        .onReceive(NotificationCenter.default.publisher(for: UIResponder.keyboardDidShowNotification)) { output in
+            if let userInfo = output.userInfo,
+               let keyboardFrame = userInfo[UIResponder.keyboardFrameEndUserInfoKey] as? CGRect {
+                keyboardHeight = keyboardFrame.height
+            }
+        }
+        .onReceive(NotificationCenter.default.publisher(for: UIResponder.keyboardDidHideNotification)) { _ in
+            keyboardHeight = 0
+        }
     }
 
     private func updateAutocompletion() {
@@ -84,8 +95,8 @@ struct RecipientField: View {
         let autocompleteContacts = contactManager?.contacts(matching: currentText) ?? []
         var autocompleteRecipients = autocompleteContacts.map { Recipient(email: $0.email, name: $0.name) }
         // Append typed email
-        let emailPredicate = NSPredicate(format: "SELF MATCHES %@", Constants.mailRegex)
-        if emailPredicate.evaluate(with: currentText) && !autocompletion.contains(where: { $0.email.caseInsensitiveCompare(currentText) == .orderedSame }) {
+        if !currentText.isEmpty && !autocompletion
+            .contains(where: { $0.email.caseInsensitiveCompare(currentText) == .orderedSame }) {
             autocompleteRecipients.append(Recipient(email: currentText, name: ""))
         }
         withAnimation {
@@ -93,11 +104,19 @@ struct RecipientField: View {
         }
     }
 
-    private func add(recipient: Recipient) {
-        withAnimation {
-            $recipients.append(recipient)
+    @MainActor private func add(recipient: Recipient) {
+        let emailPredicate = NSPredicate(format: "SELF MATCHES %@", Constants.mailRegex)
+        if emailPredicate.evaluate(with: recipient.email) {
+            withAnimation {
+                $recipients.append(recipient)
+            }
+            currentText = ""
+        } else {
+            IKSnackBar.showSnackBar(
+                message: MailResourcesStrings.Localizable.addUnknownRecipientInvalidEmail,
+                anchor: keyboardHeight
+            )
         }
-        currentText = ""
     }
 
     private func remove(recipientAt: Int) {
