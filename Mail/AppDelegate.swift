@@ -94,6 +94,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         Task {
             do {
                 try await accountManager.updateUser(for: currentAccount, registerToken: true)
+                accountManager.enableBugTrackerIfAvailable()
+
+                try await accountManager.currentContactManager?.fetchContactsAndAddressBooks()
             } catch {
                 DDLogError("Error while updating user account: \(error)")
             }
