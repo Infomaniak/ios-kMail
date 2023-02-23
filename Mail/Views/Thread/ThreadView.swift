@@ -95,6 +95,7 @@ struct ThreadView: View {
         }
         .navigationTitle(displayNavigationTitle ? thread.formattedSubject : "")
         .navigationBarThreadViewStyle(backgroundColor: displayNavigationTitle ? MailResourcesAsset.backgroundTabBarColor.swiftUiColor : MailResourcesAsset.backgroundColor.swiftUiColor)
+        .navigationBarVisibility()
         .backButtonDisplayMode(.minimal)
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
