@@ -42,7 +42,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         DDLogInfo("Application starting in foreground ? \(UIApplication.shared.applicationState != .background)")
         accountManager = AccountManager.instance
         ApiFetcher.decoder.dateDecodingStrategy = .iso8601
-        refreshCacheData()
 
         UNUserNotificationCenter.current().delegate = notificationCenterDelegate
         Task {
