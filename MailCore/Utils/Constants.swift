@@ -53,6 +53,13 @@ public enum BarAppearanceConstants {
         return navigationBarAppearance
     }()
 
+    public static let threadViewNavigationBarScrolledAppearance: UINavigationBarAppearance = {
+        let navigationBarAppearance = UINavigationBarAppearance()
+        navigationBarAppearance.configureWithDefaultBackground()
+        navigationBarAppearance.backgroundColor = MailResourcesAsset.backgroundTabBarColor.color
+        return navigationBarAppearance
+    }()
+
     public static let threadListNavigationBarAppearance: UINavigationBarAppearance = {
         let navigationBarAppearance = UINavigationBarAppearance()
         navigationBarAppearance.configureWithTransparentBackground()
