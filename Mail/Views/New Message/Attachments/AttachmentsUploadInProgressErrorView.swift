@@ -20,7 +20,7 @@ import MailResources
 import SwiftUI
 
 struct AttachmentsUploadInProgressErrorView: View {
-    var confirmHandler: () -> Void
+    let confirmHandler: () -> Void
 
     var body: some View {
         VStack(alignment: .leading, spacing: 24) {

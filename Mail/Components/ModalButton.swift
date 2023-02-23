@@ -38,9 +38,9 @@ struct ModalButtonStyle: ButtonStyle {
 }
 
 struct ModalButton: View {
-    var label: String
+    let label: String
     var isEnabled = true
-    var action: () -> Void
+    let action: () -> Void
 
     var body: some View {
         Button(action: action) {
