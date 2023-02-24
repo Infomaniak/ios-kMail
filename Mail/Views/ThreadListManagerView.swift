@@ -63,8 +63,10 @@ struct ThreadListManagerView: View {
         }
         .onReceive(NotificationCenter.default.publisher(for: .onUserTappedNotification)) { notification in
             guard let notificationPayload = notification.object as? NotificationTappedPayload else { return }
-            let tappedNotificationMessage = mailboxManager.getRealm().object(ofType: Message.self,
-                                                                             forPrimaryKey: notificationPayload.messageId)
+            let realm = mailboxManager.getRealm()
+            realm.refresh()
+
+            let tappedNotificationMessage = realm.object(ofType: Message.self, forPrimaryKey: notificationPayload.messageId)
             // Original parent should always be in the inbox but maybe change in a later stage to always find the parent in inbox
             if let tappedNotificationThread = tappedNotificationMessage?.originalThread {
                 self.tappedNotificationThread = tappedNotificationThread
