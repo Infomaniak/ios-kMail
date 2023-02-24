@@ -63,8 +63,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         for account in accountManager.accounts {
             let userApiFetcher = accountManager.getApiFetcher(for: account.userId, token: account.token)
             Task {
-                await notificationService.registerUserForRemoteNotificationsIfNeeded(tokenData: deviceToken,
-                                                                                     userApiFetcher: userApiFetcher)
+                await notificationService.updateRemoteNotificationsTokenIfNeeded(tokenData: deviceToken,
+                                                                                 userApiFetcher: userApiFetcher)
             }
         }
     }

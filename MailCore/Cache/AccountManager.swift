@@ -22,6 +22,7 @@ import InfomaniakBugTracker
 import InfomaniakCore
 import InfomaniakDI
 import InfomaniakLogin
+import InfomaniakNotifications
 import Nuke
 import RealmSwift
 import Sentry
@@ -95,6 +96,7 @@ public class AccountManager: RefreshTokenDelegate {
     @LazyInjectService var networkLoginService: InfomaniakLogin
     @LazyInjectService var keychainHelper: KeychainHelper
     @LazyInjectService var bugTracker: BugTracker
+    @LazyInjectService var notificationService: InfomaniakNotifications
 
     private static let appIdentifierPrefix = Bundle.main.infoDictionary!["AppIdentifierPrefix"] as! String
     private static let group = "com.infomaniak.mail"
@@ -298,6 +300,9 @@ public class AccountManager: RefreshTokenDelegate {
                 mailbox.quotas = try await apiFetcher.quotas(mailbox: mailbox)
             }
         }
+
+        let initialNotificationTopics = mailboxesResponse.map(\.notificationTopicName)
+        await notificationService.updateTopicsIfNeeded(initialNotificationTopics, userApiFetcher: apiFetcher)
 
         MailboxInfosManager.instance.storeMailboxes(user: user, mailboxes: mailboxesResponse)
         let mainMailbox = mailboxesResponse.first!
