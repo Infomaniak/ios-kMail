@@ -38,9 +38,9 @@ struct ModalButtonStyle: ButtonStyle {
 }
 
 struct ModalButton: View {
-    var label: String
-    var isDisabled = false
-    var action: () -> Void
+    let label: String
+    var isEnabled = true
+    let action: () -> Void
 
     var body: some View {
         Button(action: action) {
@@ -48,14 +48,16 @@ struct ModalButton: View {
                 .textStyle(.bodyMediumOnAccent)
         }
         .buttonStyle(ModalButtonStyle())
-        .disabled(isDisabled)
-        .animation(.easeOut(duration: 0.25), value: isDisabled)
+        .disabled(!isEnabled)
+        .animation(.easeOut(duration: 0.25), value: isEnabled)
     }
 }
 
 struct BottomSheetButton_Previews: PreviewProvider {
     static var previews: some View {
-        ModalButton(label: "Amazing button", isDisabled: false) { /* Preview */ }
-        ModalButton(label: "Amazing button", isDisabled: true) { /* Preview */ }
+        ModalButton(label: "Amazing button") { /* Preview */ }
+            .previewDisplayName("Button Enabled")
+        ModalButton(label: "Amazing button", isEnabled: false) { /* Preview */ }
+            .previewDisplayName("Button disabled")
     }
 }

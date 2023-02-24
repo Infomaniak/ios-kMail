@@ -27,7 +27,6 @@ struct RestoreEmailsView: View {
 
     @State private var pickerNoSelectionText = MailResourcesStrings.Localizable.loadingText
 
-    let state: GlobalBottomSheet
     let mailboxManager: MailboxManager
 
     var body: some View {
@@ -47,10 +46,9 @@ struct RestoreEmailsView: View {
                 .padding(.bottom, 24)
 
             ModalButtonsView(primaryButtonTitle: MailResourcesStrings.Localizable.buttonConfirmRestoreEmails,
-                                   secondaryButtonTitle: MailResourcesStrings.Localizable.buttonCancel,
-                                   primaryButtonEnabled: !availableDates.isEmpty,
-                                   primaryButtonAction: restoreEmails,
-                                   secondaryButtonAction: cancel)
+                             secondaryButtonTitle: nil,
+                             primaryButtonEnabled: !availableDates.isEmpty,
+                             primaryButtonAction: restoreEmails)
         }
         .padding(.horizontal, Constants.bottomSheetHorizontalPadding)
         .task {
@@ -65,10 +63,6 @@ struct RestoreEmailsView: View {
         }
     }
 
-    private func cancel() {
-        state.close()
-    }
-
     private func restoreEmails() {
         Task {
             await tryOrDisplayError {
@@ -76,7 +70,6 @@ struct RestoreEmailsView: View {
                 await IKSnackBar.showSnackBar(message: MailResourcesStrings.Localizable.snackbarSuccessfulRestoration)
             }
         }
-        state.close()
     }
 
     private func mapDates(_ backupDate: String) -> LargePicker<String, EmptyView>.Item<String> {
@@ -92,6 +85,6 @@ struct RestoreEmailsView: View {
 
 struct RestoreEmailsView_Previews: PreviewProvider {
     static var previews: some View {
-        RestoreEmailsView(state: GlobalBottomSheet(), mailboxManager: PreviewHelper.sampleMailboxManager)
+        RestoreEmailsView(mailboxManager: PreviewHelper.sampleMailboxManager)
     }
 }

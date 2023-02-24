@@ -22,8 +22,6 @@ import MailResources
 import SwiftUI
 
 struct AddLinkView: View {
-    let state: NewMessageAlert
-
     @State private var url: String = ""
     @FocusState private var isFocused: Bool
 
@@ -41,9 +39,7 @@ struct AddLinkView: View {
                 .autocapitalization(.none)
                 .textContentType(.URL)
                 .textStyle(.body)
-            ModalButtonsView(primaryButtonTitle: MailResourcesStrings.Localizable.buttonValid,
-                                   secondaryButtonTitle: MailResourcesStrings.Localizable.buttonCancel,
-                                   primaryButtonEnabled: !url.isEmpty) {
+            ModalButtonsView(primaryButtonTitle: MailResourcesStrings.Localizable.buttonValid, primaryButtonEnabled: !url.isEmpty) {
                 guard var urlComponents = URLComponents(string: url) else {
                     IKSnackBar.showSnackBar(message: MailResourcesStrings.Localizable.snackbarInvalidUrl)
                     return
@@ -56,9 +52,6 @@ struct AddLinkView: View {
                     return
                 }
                 actionHandler?(url)
-                state.state = nil
-            } secondaryButtonAction: {
-                state.state = nil
             }
         }
         .onAppear {
@@ -69,6 +62,6 @@ struct AddLinkView: View {
 
 struct AddLinkView_Previews: PreviewProvider {
     static var previews: some View {
-        AddLinkView(state: NewMessageAlert())
+        AddLinkView()
     }
 }

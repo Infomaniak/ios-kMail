@@ -235,13 +235,13 @@ struct ComposeMessageView: View {
         .customAlert(isPresented: $alert.isShowing) {
             switch alert.state {
             case let .link(handler):
-                AddLinkView(state: alert, actionHandler: handler)
+                AddLinkView(actionHandler: handler)
             case .none:
                 EmptyView()
             }
         }
         .customAlert(isPresented: $isShowingCancelAttachmentsError) {
-            AttachmentsUploadInProgressErrorView(isPresented: $isShowingCancelAttachmentsError) {
+            AttachmentsUploadInProgressErrorView {
                 dismiss()
             }
         }

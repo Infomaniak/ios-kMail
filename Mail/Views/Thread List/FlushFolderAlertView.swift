@@ -21,9 +21,7 @@ import MailResources
 import SwiftUI
 
 struct FlushFolderAlertView: View {
-    @Environment(\.dismiss) private var dismiss
-
-    var flushAlert: FlushAlertState
+    let flushAlert: FlushAlertState
     var folder: Folder?
 
     private var title: String {
@@ -56,13 +54,10 @@ struct FlushFolderAlertView: View {
                 .textStyle(.body)
 
             ModalButtonsView(primaryButtonTitle: MailResourcesStrings.Localizable.buttonConfirm,
-                                   secondaryButtonTitle: MailResourcesStrings.Localizable.buttonClose) {
+                             secondaryButtonTitle: MailResourcesStrings.Localizable.buttonClose) {
                 Task {
                     await flushAlert.completion()
                 }
-                dismiss()
-            } secondaryButtonAction: {
-                dismiss()
             }
         }
     }

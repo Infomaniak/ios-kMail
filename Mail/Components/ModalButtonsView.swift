@@ -16,43 +16,34 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import MailCore
 import MailResources
 import SwiftUI
 
 struct ModalButtonsView: View {
-    let primaryButtonTitle: String
-    let secondaryButtonTitle: String?
-    let primaryButtonEnabled: Bool
-    let primaryButtonAction: () -> Void
-    let secondaryButtonAction: (() -> Void)?
+    @Environment(\.dismiss) private var dismiss
 
-    internal init(primaryButtonTitle: String,
-                  secondaryButtonTitle: String? = nil,
-                  primaryButtonEnabled: Bool = true,
-                  primaryButtonAction: @escaping () -> Void,
-                  secondaryButtonAction: (() -> Void)? = nil) {
-        self.primaryButtonTitle = primaryButtonTitle
-        self.secondaryButtonTitle = secondaryButtonTitle
-        self.primaryButtonEnabled = primaryButtonEnabled
-        self.primaryButtonAction = primaryButtonAction
-        self.secondaryButtonAction = secondaryButtonAction
-    }
+    let primaryButtonTitle: String
+    var secondaryButtonTitle: String? = MailResourcesStrings.Localizable.buttonCancel
+    var primaryButtonEnabled = true
+    let primaryButtonAction: () -> Void
+    var secondaryButtonAction: (() -> Void)?
 
     var body: some View {
         HStack(spacing: 24) {
             if let secondaryButtonTitle {
                 Button(role: .destructive) {
                     secondaryButtonAction?()
+                    dismiss()
                 } label: {
                     Text(secondaryButtonTitle)
                         .textStyle(.bodyMediumError)
                 }
             }
 
-            ModalButton(label: primaryButtonTitle,
-                              isDisabled: !primaryButtonEnabled,
-                              action: primaryButtonAction)
+            ModalButton(label: primaryButtonTitle, isEnabled: primaryButtonEnabled) {
+                primaryButtonAction()
+                dismiss()
+            }
         }
         .frame(maxWidth: .infinity, alignment: .trailing)
     }
@@ -60,10 +51,6 @@ struct ModalButtonsView: View {
 
 struct BottomSheetButtonsView_Previews: PreviewProvider {
     static var previews: some View {
-        ModalButtonsView(primaryButtonTitle: "Save",
-                               secondaryButtonTitle: "Cancel",
-                               primaryButtonEnabled: false,
-                               primaryButtonAction: { /* Preview */ },
-                               secondaryButtonAction: { /* Preview */ })
+        ModalButtonsView(primaryButtonTitle: "Save") { /* Preview */ }
     }
 }

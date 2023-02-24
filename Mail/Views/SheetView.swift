@@ -45,9 +45,9 @@ struct SheetView<Content>: View where Content: View {
         .customAlert(isPresented: $alert.isShowing) {
             switch alert.state {
             case let .createNewFolder(mode):
-                CreateFolderView(mailboxManager: mailboxManager, state: alert, mode: mode)
+                CreateFolderView(mailboxManager: mailboxManager, mode: mode)
             case let .reportPhishing(message):
-                ReportPhishingView(mailboxManager: mailboxManager, alert: alert, message: message)
+                ReportPhishingView(mailboxManager: mailboxManager, message: message)
             case .none:
                 EmptyView()
             }

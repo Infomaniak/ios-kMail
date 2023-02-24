@@ -144,9 +144,9 @@ struct SplitView: View {
         .floatingPanel(state: bottomSheet) {
             switch bottomSheet.state {
             case .getMoreStorage:
-                MoreStorageView(state: bottomSheet)
+                MoreStorageView()
             case .restoreEmails:
-                RestoreEmailsView(state: bottomSheet, mailboxManager: mailboxManager)
+                RestoreEmailsView(mailboxManager: mailboxManager)
             case let .reportJunk(threadBottomSheet, target):
                 ReportJunkView(
                     mailboxManager: mailboxManager,
@@ -156,7 +156,7 @@ struct SplitView: View {
                     globalAlert: alert
                 )
             case let .reportDisplayProblem(message):
-                ReportDisplayProblemView(mailboxManager: mailboxManager, state: bottomSheet, message: message)
+                ReportDisplayProblemView(mailboxManager: mailboxManager, message: message)
             case .none:
                 EmptyView()
             }
@@ -164,9 +164,9 @@ struct SplitView: View {
         .customAlert(isPresented: $alert.isShowing) {
             switch alert.state {
             case let .createNewFolder(mode):
-                CreateFolderView(mailboxManager: mailboxManager, state: alert, mode: mode)
+                CreateFolderView(mailboxManager: mailboxManager, mode: mode)
             case let .reportPhishing(message):
-                ReportPhishingView(mailboxManager: mailboxManager, alert: alert, message: message)
+                ReportPhishingView(mailboxManager: mailboxManager, message: message)
             case .none:
                 EmptyView()
             }
