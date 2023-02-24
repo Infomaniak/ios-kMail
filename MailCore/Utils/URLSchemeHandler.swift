@@ -19,86 +19,47 @@
 import Foundation
 import WebKit
 
-actor TaskProgressHandler {
-    private var dataTasksInProgress = [String: URLSessionDataTask]()
-    private var urlSchemeTasksInProgress = [String: WKURLSchemeTask]()
-
-    func addDataTask(_ task: URLSessionDataTask, for url: URL) {
-        dataTasksInProgress[url.absoluteString] = task
-    }
-
-    func cancelDataTask(for url: URL) {
-        dataTasksInProgress[url.absoluteString]?.cancel()
-        urlSchemeTasksInProgress[url.absoluteString] = nil
-    }
-
-    func addURLSchemeTask(_ urlSchemeTask: WKURLSchemeTask, for url: URL) {
-        urlSchemeTasksInProgress[url.absoluteString] = urlSchemeTask
-    }
-
-    func didReceive(_ response: URLResponse, for url: URL) {
-        urlSchemeTasksInProgress[url.absoluteString]?.didReceive(response)
-    }
-
-    func didReceive(_ data: Data, for url: URL) {
-        urlSchemeTasksInProgress[url.absoluteString]?.didReceive(data)
-    }
-
-    func didFinish(for url: URL) {
-        urlSchemeTasksInProgress[url.absoluteString]?.didFinish()
-        urlSchemeTasksInProgress[url.absoluteString] = nil
-    }
-
-    func didFailWithError(_ error: Error, for url: URL) {
-        urlSchemeTasksInProgress[url.absoluteString]?.didFailWithError(error)
-        urlSchemeTasksInProgress[url.absoluteString] = nil
-    }
-}
-
 public class URLSchemeHandler: NSObject, WKURLSchemeHandler {
     public static let scheme = "mail-infomaniak"
     public static let domain = "://mail.infomaniak.com"
 
-    private let taskProgressHandler = TaskProgressHandler()
+    private var dataTasksInProgress = [Int: URLSessionDataTask]()
 
     public func webView(_ webView: WKWebView, start urlSchemeTask: WKURLSchemeTask) {
-        guard let url = urlSchemeTask.request.url else { return }
-        Task {
-            await taskProgressHandler.cancelDataTask(for: url)
-            await taskProgressHandler.addURLSchemeTask(urlSchemeTask, for: url)
-
-            var components = URLComponents(url: url, resolvingAgainstBaseURL: true)
-            components?.scheme = "https"
-            var request = URLRequest(url: components!.url!)
-            request.addValue(
-                "Bearer \(AccountManager.instance.currentAccount.token.accessToken)",
-                forHTTPHeaderField: "Authorization"
-            )
-            let task = URLSession.shared.dataTask(with: request) { data, response, error in
-                Task { [weak self] in
-                    guard (error as? URLError)?.code != .cancelled else { return }
-
-                    if let response {
-                        await self?.taskProgressHandler.didReceive(response, for: url)
-                    }
-                    if let data {
-                        await self?.taskProgressHandler.didReceive(data, for: url)
-                        await self?.taskProgressHandler.didFinish(for: url)
-                    }
-                    if let error {
-                        await self?.taskProgressHandler.didFailWithError(error, for: url)
-                    }
-                }
-            }
-            await taskProgressHandler.addDataTask(task, for: url)
-            task.resume()
+        guard let url = urlSchemeTask.request.url else {
+            urlSchemeTask.didFailWithError(MailError.resourceError)
+            return
         }
+
+        var components = URLComponents(url: url, resolvingAgainstBaseURL: true)
+        components?.scheme = "https"
+        var request = URLRequest(url: components!.url!)
+        request.addValue(
+            "Bearer \(AccountManager.instance.currentAccount.token.accessToken)",
+            forHTTPHeaderField: "Authorization"
+        )
+        let dataTask = URLSession.shared.dataTask(with: request) { [weak self] data, response, error in
+            guard (error as? URLError)?.code != .cancelled else { return }
+            self?.dataTasksInProgress[urlSchemeTask.hash] = nil
+
+            if let response {
+                urlSchemeTask.didReceive(response)
+            }
+            if let data {
+                urlSchemeTask.didReceive(data)
+                urlSchemeTask.didFinish()
+            }
+            if let error {
+                urlSchemeTask.didFailWithError(error)
+            }
+        }
+        dataTasksInProgress[urlSchemeTask.hash] = dataTask
+        dataTask.resume()
     }
 
     public func webView(_ webView: WKWebView, stop urlSchemeTask: WKURLSchemeTask) {
-        guard let url = urlSchemeTask.request.url else { return }
-        Task {
-            await taskProgressHandler.cancelDataTask(for: url)
-        }
+        let dataTask = dataTasksInProgress[urlSchemeTask.hash]
+        dataTasksInProgress[urlSchemeTask.hash] = nil
+        dataTask?.cancel()
     }
 }
