@@ -33,7 +33,7 @@ struct ReportPhishingView: View {
                 .frame(maxWidth: .infinity, alignment: .leading)
             Text(MailResourcesStrings.Localizable.reportPhishingDescription)
             .textStyle(.bodySecondary)
-            BottomSheetButtonsView(primaryButtonTitle: MailResourcesStrings.Localizable.buttonReport,
+            ModalButtonsView(primaryButtonTitle: MailResourcesStrings.Localizable.buttonReport,
                                    secondaryButtonTitle: MailResourcesStrings.Localizable.buttonCancel,
                                    primaryButtonAction: report) {
                 alert.state = nil

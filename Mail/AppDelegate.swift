@@ -41,7 +41,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         DDLogInfo("Application starting in foreground ? \(UIApplication.shared.applicationState != .background)")
         accountManager = AccountManager.instance
         ApiFetcher.decoder.dateDecodingStrategy = .iso8601
-        refreshCacheData()
 
         UNUserNotificationCenter.current().delegate = notificationCenterDelegate
         Task {
@@ -103,6 +102,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         Task {
             do {
                 try await accountManager.updateUser(for: currentAccount, registerToken: true)
+                accountManager.enableBugTrackerIfAvailable()
+
+                try await accountManager.currentContactManager?.fetchContactsAndAddressBooks()
             } catch {
                 DDLogError("Error while updating user account: \(error)")
             }

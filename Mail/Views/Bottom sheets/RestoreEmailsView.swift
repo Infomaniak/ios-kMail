@@ -46,7 +46,7 @@ struct RestoreEmailsView: View {
                         items: availableDates.map(mapDates))
                 .padding(.bottom, 24)
 
-            BottomSheetButtonsView(primaryButtonTitle: MailResourcesStrings.Localizable.buttonConfirmRestoreEmails,
+            ModalButtonsView(primaryButtonTitle: MailResourcesStrings.Localizable.buttonConfirmRestoreEmails,
                                    secondaryButtonTitle: MailResourcesStrings.Localizable.buttonCancel,
                                    primaryButtonEnabled: !availableDates.isEmpty,
                                    primaryButtonAction: restoreEmails,

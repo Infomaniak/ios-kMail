@@ -106,6 +106,11 @@ struct SplitView: View {
                 }
             }
         }
+        .onReceive(NotificationCenter.default.publisher(for: UIApplication.willEnterForegroundNotification)) { _ in
+            Task {
+                try await mailboxManager.folders()
+            }
+        }
         .environmentObject(splitViewManager)
         .environmentObject(navigationDrawerController)
         .defaultAppStorage(.shared)

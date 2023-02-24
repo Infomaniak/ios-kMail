@@ -21,20 +21,17 @@ import SwiftUI
 
 struct AttachmentsUploadInProgressErrorView: View {
     @Binding var isPresented: Bool
-    var confirmHandler: () -> Void
-    var cancelHandler: () -> Void
+    let confirmHandler: () -> Void
 
     var body: some View {
         VStack(alignment: .leading, spacing: 24) {
             Text(MailResourcesStrings.Localizable.errorCancelAttachmentsUploadInProgress)
                 .textStyle(.bodyMedium)
-            BottomSheetButtonsView(primaryButtonTitle: MailResourcesStrings.Localizable.buttonClose,
+            ModalButtonsView(primaryButtonTitle: MailResourcesStrings.Localizable.buttonClose,
                                    secondaryButtonTitle: MailResourcesStrings.Localizable.buttonCancel) {
                 confirmHandler()
                 isPresented = false
-
             } secondaryButtonAction: {
-                cancelHandler()
                 isPresented = false
             }
         }

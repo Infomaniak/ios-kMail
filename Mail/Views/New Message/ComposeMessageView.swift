@@ -69,6 +69,12 @@ struct ComposeMessageView: View {
 
     @StateObject private var alert = NewMessageAlert()
 
+    private var isSendButtonDisabled: Bool {
+        return draft.identityId?.isEmpty == true
+            || (draft.to.isEmpty && draft.cc.isEmpty && draft.bcc.isEmpty)
+            || !attachmentsManager.allAttachmentsUploaded
+    }
+
     private var shouldDisplayAutocompletion: Bool {
         return !autocompletion.isEmpty && focusedField != nil
     }
@@ -197,7 +203,7 @@ struct ComposeMessageView: View {
                 trailing: Button(action: sendDraft) {
                     Image(resource: MailResourcesAsset.send)
                 }
-                .disabled(draft.identityId?.isEmpty == true || draft.to.isEmpty || !attachmentsManager.allAttachmentsUploaded)
+                .disabled(isSendButtonDisabled)
             )
             .background(MailResourcesAsset.backgroundColor.swiftUiColor)
         }
@@ -237,8 +243,6 @@ struct ComposeMessageView: View {
         .customAlert(isPresented: $isShowingCancelAttachmentsError) {
             AttachmentsUploadInProgressErrorView(isPresented: $isShowingCancelAttachmentsError) {
                 dismiss()
-            } cancelHandler: {
-                isShowingCancelAttachmentsError = false
             }
         }
         .task {

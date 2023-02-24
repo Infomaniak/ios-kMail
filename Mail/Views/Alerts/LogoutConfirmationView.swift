@@ -35,7 +35,7 @@ struct LogoutConfirmationView: View {
                 .textStyle(.bodyMedium)
             Text(MailResourcesStrings.Localizable.confirmLogoutDescription(account.user.email))
                 .textStyle(.bodySecondary)
-            BottomSheetButtonsView(primaryButtonTitle: MailResourcesStrings.Localizable.buttonConfirm,
+            ModalButtonsView(primaryButtonTitle: MailResourcesStrings.Localizable.buttonConfirm,
                                    secondaryButtonTitle: MailResourcesStrings.Localizable.buttonCancel,
                                    primaryButtonAction: logout,
                                    secondaryButtonAction: cancel)

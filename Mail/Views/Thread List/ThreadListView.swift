@@ -33,6 +33,17 @@ class MoveSheet: SheetState<MoveSheet.State> {
     }
 }
 
+class FlushAlertState: Identifiable {
+    let id = UUID()
+    let deletedMessages: Int?
+    let completion: () async -> Void
+
+    init(deletedMessages: Int? = nil, completion: @escaping () async -> Void) {
+        self.deletedMessages = deletedMessages
+        self.completion = completion
+    }
+}
+
 struct ThreadListView: View {
     @StateObject var viewModel: ThreadListViewModel
     @StateObject var multipleSelectionViewModel: ThreadListMultipleSelectionViewModel
@@ -51,6 +62,8 @@ struct ThreadListView: View {
     @Binding private var messageReply: MessageReply?
     @State private var fetchingTask: Task<Void, Never>?
     @State private var isRefreshing = false
+    @State private var firstLaunch = true
+    @State private var flushAlert: FlushAlertState?
 
     let isCompact: Bool
 
@@ -95,6 +108,14 @@ struct ThreadListView: View {
                             .id(UUID())
                             .frame(maxWidth: .infinity)
                             .listRowSeparator(.hidden)
+                    }
+
+                    if !viewModel.sections.isEmpty,
+                       viewModel.folder?.role == .trash || viewModel.folder?.role == .spam,
+                       let folder = viewModel.folder {
+                        FlushFolderView(folder: folder, mailboxManager: viewModel.mailboxManager, flushAlert: $flushAlert)
+                            .listRowSeparator(.hidden)
+                            .listRowInsets(.init())
                     }
 
                     ForEach(viewModel.sections) { section in
@@ -151,6 +172,7 @@ struct ThreadListView: View {
             }
         }
         .modifier(ThreadListToolbar(isCompact: isCompact,
+                                    flushAlert: $flushAlert,
                                     bottomSheet: bottomSheet,
                                     multipleSelectionViewModel: multipleSelectionViewModel,
                                     selectAll: {
@@ -191,6 +213,10 @@ struct ThreadListView: View {
             if let account = AccountManager.instance.currentAccount {
                 splitViewManager.avatarImage = await account.user.avatarImage
             }
+            if firstLaunch {
+                updateFetchingTask()
+                firstLaunch = false
+            }
         }
         .sheet(isPresented: $isShowingComposeNewMessageView) {
             ComposeMessageView.newMessage(mailboxManager: viewModel.mailboxManager)
@@ -199,6 +225,9 @@ struct ThreadListView: View {
             if case let .move(folderId, handler) = moveSheet.state {
                 MoveEmailView.sheetView(mailboxManager: viewModel.mailboxManager, from: folderId, moveHandler: handler)
             }
+        }
+        .customAlert(item: $flushAlert) { item in
+            FlushFolderAlertView(flushAlert: item, folder: viewModel.folder)
         }
     }
 
@@ -229,6 +258,8 @@ struct ThreadListView: View {
 
 private struct ThreadListToolbar: ViewModifier {
     var isCompact: Bool
+
+    @Binding var flushAlert: FlushAlertState?
 
     @ObservedObject var bottomSheet: ThreadBottomSheet
     @ObservedObject var multipleSelectionViewModel: ThreadListMultipleSelectionViewModel
@@ -311,7 +342,7 @@ private struct ThreadListToolbar: ViewModifier {
                                     ) {
                                         Task {
                                             await tryOrDisplayError {
-                                                try await multipleSelectionViewModel.didTap(action: action)
+                                                try await multipleSelectionViewModel.didTap(action: action, flushAlert: $flushAlert)
                                             }
                                         }
                                     }

@@ -32,8 +32,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/SCENEE/FloatingPanel",
       "state" : {
-        "revision" : "4ab7d260301ddf1cab5376ea14e285a128f5ba39",
-        "version" : "2.5.5"
+        "revision" : "d6bbf92339c9c002ba66895878ba0acaa7c1a05a",
+        "version" : "2.6.0"
       }
     },
     {
@@ -59,8 +59,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Infomaniak/ios-core-ui.git",
       "state" : {
-        "revision" : "852ca2ea76a08ebe30fa801b21fc27e111e1ff50",
-        "version" : "2.1.0"
+        "revision" : "058d8c43c63c23fd6f52cb945bf83ebde8644cfd",
+        "version" : "2.1.2"
       }
     },
     {
@@ -95,8 +95,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/onevcat/Kingfisher",
       "state" : {
-        "revision" : "2db469112fbcfd83ff0a96c4546772d283f317f5",
-        "version" : "7.6.0"
+        "revision" : "af4be924ad984cf4d16f4ae4df424e79a443d435",
+        "version" : "7.6.2"
       }
     },
     {
@@ -131,8 +131,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/kean/Nuke",
       "state" : {
-        "revision" : "3ed0597082b40932481fb8971af8813a4284203c",
-        "version" : "11.6.1"
+        "revision" : "33f7e93be5d4ec027d42af77a8ec4680d1862ad2",
+        "version" : "11.6.4"
       }
     },
     {
@@ -140,8 +140,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/realm/realm-core.git",
       "state" : {
-        "revision" : "b9467f3ecfead791cc87ab70b4f1c3c290be6ffd",
-        "version" : "13.4.0"
+        "revision" : "a7d486d07b821e28ffd3587e99355a63148cbb43",
+        "version" : "13.4.1"
       }
     },
     {
@@ -149,8 +149,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/realm/realm-swift",
       "state" : {
-        "revision" : "2ad431604aebedcb7313e1281c62aee4a98fb99e",
-        "version" : "10.35.0"
+        "revision" : "4d55ba88e78ed427eae439e7c15fac2372f95c64",
+        "version" : "10.36.0"
       }
     },
     {
@@ -167,8 +167,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/PhilippeWeidmann/SnackBar.swift",
       "state" : {
-        "revision" : "9e2f25bad90a7fb4f5764814c47a8448ba5df58d",
-        "version" : "0.1.5"
+        "revision" : "9a3c0c71796625ec3804df993483aa80266fa1ff",
+        "version" : "1.1.0"
       }
     },
     {
@@ -212,8 +212,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/siteline/SwiftUI-Introspect.git",
       "state" : {
-        "revision" : "f2616860a41f9d9932da412a8978fec79c06fe24",
-        "version" : "0.1.4"
+        "revision" : "c18951c747ab62af7c15e17a81bd37d4fd5a9979",
+        "version" : "0.2.3"
       }
     },
     {

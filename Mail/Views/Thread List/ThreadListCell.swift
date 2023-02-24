@@ -110,7 +110,9 @@ struct ThreadListCell_Previews: PreviewProvider {
         ThreadListCell(
             thread: PreviewHelper.sampleThread,
             viewModel: ThreadListViewModel(mailboxManager: PreviewHelper.sampleMailboxManager,
-                                           folder: nil, bottomSheet: ThreadBottomSheet(), moveSheet: MoveSheet()),
+                                           folder: nil,
+                                           bottomSheet: ThreadBottomSheet(),
+                                           moveSheet: MoveSheet()),
             multipleSelectionViewModel: ThreadListMultipleSelectionViewModel(mailboxManager: PreviewHelper.sampleMailboxManager),
             threadDensity: .large,
             editedMessageDraft: .constant(nil),

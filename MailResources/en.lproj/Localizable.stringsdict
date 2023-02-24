@@ -1,63 +1,86 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd"> 
-<!--
- Loco ios export: iOS plural rules
- Project: kMail
- Release: Working copy
- Locale: en, English
- Tagged: ios
- Exported by: Valentin Perignon
- Exported at: Mon, 25 Jul 2022 09:57:32 +0200 
---> 
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
-    <dict> 
-        <key>attachmentQuantity</key>
-        <dict> 
-            <key>NSStringLocalizedFormatKey</key>
-            <string>%#@items@</string>
-            <key>items</key>
-            <dict>
-                <key>NSStringFormatSpecTypeKey</key>
-                <string>NSStringPluralRuleType</string>
-                <key>NSStringFormatValueTypeKey</key>
-                <string>d</string> 
-                <key>one</key>
-                <string>%d attachment</string> 
-                <key>other</key>
-                <string>%d attachments</string> 
-            </dict>
-        </dict> 
-        <key>multipleSelectionCount</key>
-        <dict> 
-            <key>NSStringLocalizedFormatKey</key>
-            <string>%#@items@</string>
-            <key>items</key>
-            <dict>
-                <key>NSStringFormatSpecTypeKey</key>
-                <string>NSStringPluralRuleType</string>
-                <key>NSStringFormatValueTypeKey</key>
-                <string>d</string> 
-                <key>one</key>
-                <string>%d selected</string> 
-                <key>other</key>
-                <string>%d selected</string> 
-            </dict>
-        </dict> 
-        <key>threadListHeaderUnreadCount</key>
-        <dict> 
-            <key>NSStringLocalizedFormatKey</key>
-            <string>%#@items@</string>
-            <key>items</key>
-            <dict>
-                <key>NSStringFormatSpecTypeKey</key>
-                <string>NSStringPluralRuleType</string>
-                <key>NSStringFormatValueTypeKey</key>
-                <string>d</string> 
-                <key>one</key>
-                <string>%d unread</string> 
-                <key>other</key>
-                <string>%d unread</string> 
-            </dict>
-        </dict> 
-    </dict>
+<dict>
+	<key>attachmentQuantity</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@items@</string>
+		<key>items</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>d</string>
+			<key>one</key>
+			<string>%d attachment</string>
+			<key>other</key>
+			<string>%d attachments</string>
+		</dict>
+	</dict>
+	<key>multipleSelectionCount</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@items@</string>
+		<key>items</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>d</string>
+			<key>one</key>
+			<string>%d selected</string>
+			<key>other</key>
+			<string>%d selected</string>
+		</dict>
+	</dict>
+	<key>threadListHeaderUnreadCount</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@items@</string>
+		<key>items</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>d</string>
+			<key>one</key>
+			<string>%d unread</string>
+			<key>other</key>
+			<string>%d unread</string>
+		</dict>
+	</dict>
+	<key>threadListFlushFolderAlertTitle</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@items@</string>
+		<key>items</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>d</string>
+			<key>one</key>
+			<string>Delete %d message</string>
+			<key>other</key>
+			<string>Delete %d messages</string>
+		</dict>
+	</dict>
+	<key>threadListDeletionConfirmationAlertDescription</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@items@</string>
+		<key>items</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>d</string>
+			<key>one</key>
+			<string>Are you sure you want to delete this message permanently?</string>
+			<key>other</key>
+			<string>Are you sure you want to delete these messages permanently?</string>
+		</dict>
+	</dict>
+</dict>
 </plist>

@@ -386,22 +386,6 @@ public class AccountManager: RefreshTokenDelegate {
     public func setCurrentAccount(account: Account) {
         currentAccount = account
         currentUserId = account.userId
-
-        guard !Bundle.main.isExtension else {
-            return
-        }
-
-        Task {
-            try await currentContactManager?.fetchContactsAndAddressBooks()
-        }
-
-        if account.user?.isStaff == true {
-            bugTracker.activateOnScreenshot()
-            let apiFetcher = getApiFetcher(for: account.userId, token: account.token)
-            bugTracker.configure(with: apiFetcher)
-        } else {
-            bugTracker.stopActivatingOnScreenshot()
-        }
     }
 
     private func setSentryUserId(userId: Int) {
@@ -476,6 +460,16 @@ public class AccountManager: RefreshTokenDelegate {
         for contactManager in contactManagers.values
             where contactManager.user.id != currentUserId && contactManager.apiFetcher.currentToken?.userId == newToken.userId {
             contactManager.apiFetcher.currentToken = newToken
+        }
+    }
+
+    public func enableBugTrackerIfAvailable() {
+        if currentAccount.user?.isStaff == true {
+            bugTracker.activateOnScreenshot()
+            let apiFetcher = getApiFetcher(for: currentAccount.userId, token: currentAccount.token)
+            bugTracker.configure(with: apiFetcher)
+        } else {
+            bugTracker.stopActivatingOnScreenshot()
         }
     }
 }

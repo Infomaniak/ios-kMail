@@ -61,6 +61,8 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, AccountManagerDelegate 
     func sceneWillEnterForeground(_ scene: UIScene) {
         // Called as the scene transitions from the background to the foreground.
         // Use this method to undo the changes made on entering the background.
+        (UIApplication.shared.delegate as? AppDelegate)?.refreshCacheData()
+
         if UserDefaults.shared.isAppLockEnabled && appLockHelper.isAppLocked {
             showLockView()
         }
@@ -108,7 +110,6 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, AccountManagerDelegate 
         } else {
             showMainView(animated: false)
         }
-        (UIApplication.shared.delegate as? AppDelegate)?.refreshCacheData()
     }
 
     func switchMailbox(_ mailbox: Mailbox) {
