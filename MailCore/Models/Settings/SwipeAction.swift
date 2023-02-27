@@ -170,23 +170,23 @@ public enum SwipeAction: String, CaseIterable, SettingsOptionEnum {
         let resource: MailResourcesColors?
         switch self {
         case .delete:
-            resource = MailResourcesAsset.redActionColor
+            resource = MailResourcesAsset.swipeDeleteColor
         case .archive:
-            resource = MailResourcesAsset.mauveActionColor
+            resource = MailResourcesAsset.swipeArchiveColor
         case .readUnread:
-            resource = MailResourcesAsset.cobaltActionColor
+            resource = MailResourcesAsset.swipeReadColor
         case .move:
-            resource = MailResourcesAsset.fougereActionColor
+            resource = MailResourcesAsset.swipeMoveColor
         case .favorite:
-            resource = MailResourcesAsset.yellowActionColor
+            resource = MailResourcesAsset.swipeFavoriteColor
         case .postPone:
-            resource = MailResourcesAsset.azurActionColor
+            resource = MailResourcesAsset.swipePostponeColor
         case .spam:
-            resource = MailResourcesAsset.orangeActionColor
+            resource = MailResourcesAsset.swipeSpamColor
         case .readAndArchive:
-            resource = MailResourcesAsset.princeActionColor
+            resource = MailResourcesAsset.swipeReadArchiveColor
         case .quickAction:
-            resource = MailResourcesAsset.appBlueActionColor
+            resource = MailResourcesAsset.swipeQuickActionColor
         case .moveToInbox:
             resource = MailResourcesAsset.grayActionColor
         case .none:
