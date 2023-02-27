@@ -35,7 +35,7 @@ struct AlertView<Content>: View where Content: View {
             content
                 .padding(.vertical, 32)
                 .padding(.horizontal, 24)
-                .background(MailResourcesAsset.backgroundColor.swiftUiColor)
+                .background(MailResourcesAsset.backgroundTertiaryColor.swiftUiColor)
                 .cornerRadius(16)
                 .padding(16)
         }
