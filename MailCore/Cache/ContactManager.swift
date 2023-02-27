@@ -77,9 +77,10 @@ public class ContactManager: ObservableObject {
 
     public static let constants = ContactManagerConstants()
 
-    public var realmConfiguration: Realm.Configuration
-    public var user: InfomaniakCore.UserProfile
-    public private(set) var apiFetcher: MailApiFetcher
+    let realmConfiguration: Realm.Configuration
+    let backgroundRealm: BackgroundRealm
+    let user: InfomaniakCore.UserProfile
+    let apiFetcher: MailApiFetcher
 
     public init(user: InfomaniakCore.UserProfile, apiFetcher: MailApiFetcher) {
         self.user = user
@@ -94,6 +95,7 @@ public class ContactManager: ObservableObject {
                 AddressBook.self
             ]
         )
+        backgroundRealm = BackgroundRealm(configuration: realmConfiguration)
     }
 
     public func getRealm() -> Realm {
@@ -114,11 +116,11 @@ public class ContactManager: ObservableObject {
             let addressBooks = try await apiFetcher.addressBooks().addressbooks
             let contacts = try await apiFetcher.contacts()
 
-            let realm = getRealm()
-
-            try? realm.uncheckedSafeWrite {
-                realm.add(addressBooks, update: .modified)
-                realm.add(contacts, update: .modified)
+            await backgroundRealm.execute { realm in
+                try? realm.safeWrite {
+                    realm.add(addressBooks, update: .modified)
+                    realm.add(contacts, update: .modified)
+                }
             }
 
             await mergeContacts()
@@ -187,14 +189,17 @@ public class ContactManager: ObservableObject {
         let contacts = try await apiFetcher.contacts()
 
         guard let newContact = contacts.first(where: { $0.id == String(contactId) }) else { throw MailError.contactNotFound }
-        let realm = getRealm()
-        try? realm.uncheckedSafeWrite {
-            realm.add(newContact)
+
+        await backgroundRealm.execute { realm in
+            try? realm.safeWrite {
+                realm.add(newContact.detached())
+            }
         }
+
         if let mergedContact = mergedContacts[recipient.uniqueKey()] {
-            mergedContact.remote = newContact.freeze()
+            mergedContact.remote = newContact
         } else {
-            mergedContacts[recipient.uniqueKey()] = MergedContact(email: recipient.email, remote: newContact.freeze(), local: nil)
+            mergedContacts[recipient.uniqueKey()] = MergedContact(email: recipient.email, remote: newContact, local: nil)
         }
     }
 
