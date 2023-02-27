@@ -27,7 +27,7 @@ struct ModalButtonStyle: ButtonStyle {
         configuration.label
             .textStyle(.bodyMediumOnAccent)
             .padding(.vertical, 18)
-            .padding(.horizontal, 24)
+            .padding(.horizontal, 20)
             .background(background(configuration: configuration))
             .clipShape(RoundedRectangle(cornerRadius: Constants.buttonsRadius))
     }
