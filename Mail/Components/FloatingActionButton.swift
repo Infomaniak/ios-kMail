@@ -39,7 +39,7 @@ struct FloatingActionButton: View {
             }
         }
         .buttonStyle(.borderedProminent)
-        .buttonBorderShape(.capsule)
+        .buttonBorderShape(.roundedRectangle(radius: Constants.buttonsRadius))
         .controlSize(.large)
         .padding(.trailing, 24)
         .padding(.bottom, Constants.floatingButtonBottomPadding)

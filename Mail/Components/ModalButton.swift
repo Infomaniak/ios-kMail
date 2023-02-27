@@ -16,6 +16,7 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import MailCore
 import MailResources
 import SwiftUI
 
@@ -28,7 +29,7 @@ struct ModalButtonStyle: ButtonStyle {
             .padding(.vertical, 18)
             .padding(.horizontal, 24)
             .background(background(configuration: configuration))
-            .clipShape(Capsule())
+            .clipShape(RoundedRectangle(cornerRadius: Constants.buttonsRadius))
     }
 
     private func background(configuration: Configuration) -> Color {

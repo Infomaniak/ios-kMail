@@ -107,6 +107,8 @@ public enum Constants {
     public static let checkmarkSize: CGFloat = 14
     public static let checkboxLargeSize: CGFloat = 40
 
+    public static let buttonsRadius: CGFloat = 16
+
     public static let maxFolderNameLength = 255
 
     public static let mailRegex =

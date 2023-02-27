@@ -134,7 +134,7 @@ struct OnboardingView: View {
                             .foregroundColor(accentColor.onAccent.swiftUiColor)
                     }
                     .buttonStyle(.borderedProminent)
-                    .buttonBorderShape(.capsule)
+                    .buttonBorderShape(.roundedRectangle(radius: Constants.buttonsRadius))
                 }
             }
             .frame(height: Constants.onboardingButtonHeight + Constants.onboardingBottomButtonPadding, alignment: .top)

@@ -16,6 +16,7 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import MailCore
 import SwiftUI
 
 struct LargeButton<Label>: View where Label: View {
@@ -43,7 +44,7 @@ struct LargeButton<Label>: View where Label: View {
             .frame(maxWidth: .infinity)
         }
         .buttonStyle(.borderedProminent)
-        .buttonBorderShape(.roundedRectangle(radius: 16))
+        .buttonBorderShape(.roundedRectangle(radius: Constants.buttonsRadius))
         .padding(.horizontal, 24)
         .disabled(isLoading)
     }
