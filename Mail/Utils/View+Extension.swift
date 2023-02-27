@@ -65,7 +65,7 @@ extension View {
 
     func navigationBarThreadListStyle() -> some View {
         if #available(iOS 16.0, *) {
-            return toolbarBackground(MailResourcesAsset.backgroundHeaderColor.swiftUiColor, for: .navigationBar)
+            return toolbarBackground(MailResourcesAsset.backgroundNavBarColor.swiftUiColor, for: .navigationBar)
         } else {
             return modifier(NavigationBarStyleViewModifier(
                 standardAppearance: BarAppearanceConstants.threadListNavigationBarAppearance,
@@ -75,20 +75,12 @@ extension View {
         }
     }
 
-    func navigationBarThreadViewStyle(backgroundColor: Color) -> some View {
-        if #available(iOS 16.0, *) {
-            return toolbarBackground(backgroundColor, for: .navigationBar)
-        } else {
-            let navigationBarAppearance = UINavigationBarAppearance()
-            navigationBarAppearance.configureWithTransparentBackground()
-            navigationBarAppearance.backgroundColor = UIColor(backgroundColor)
-            navigationBarAppearance.shadowColor = MailResourcesAsset.backgroundColor.color
-            return modifier(NavigationBarStyleViewModifier(
-                standardAppearance: navigationBarAppearance,
-                scrollEdgeAppearance: navigationBarAppearance,
-                compactAppearance: navigationBarAppearance
-            ))
-        }
+    func navigationBarThreadViewStyle(appearance: UINavigationBarAppearance) -> some View {
+        return modifier(NavigationBarStyleViewModifier(
+            standardAppearance: appearance,
+            scrollEdgeAppearance: appearance,
+            compactAppearance: appearance
+        ))
     }
 
     func navigationBarSearchListStyle() -> some View {

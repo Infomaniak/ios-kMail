@@ -53,7 +53,7 @@ struct AttachmentUploadCell: View {
                     Image(resource: MailResourcesAsset.close)
                         .resizable()
                         .scaledToFit()
-                        .foregroundColor(MailResourcesAsset.secondaryTextColor)
+                        .foregroundColor(MailResourcesAsset.textSecondaryColor)
                         .frame(width: 16, height: 16)
                 }
                 .buttonStyle(.borderless)
@@ -67,7 +67,7 @@ struct AttachmentUploadCell: View {
         }
         .background(
             RoundedRectangle(cornerRadius: 6)
-                .stroke(MailResourcesAsset.separatorColor.swiftUiColor, lineWidth: 1)
+                .stroke(MailResourcesAsset.elementsColor.swiftUiColor, lineWidth: 1)
         )
         .cornerRadius(6)
         .frame(maxWidth: 200)

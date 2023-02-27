@@ -170,7 +170,7 @@ struct ThreadCell: View {
                 .background(Circle().fill(isSelected ? Color.accentColor : Color.clear))
                 .frame(width: checkboxSize, height: checkboxSize)
             Image(resource: MailResourcesAsset.check)
-                .foregroundColor(MailResourcesAsset.onAccentColor)
+                .foregroundColor(UserDefaults.shared.accentColor.onAccent.swiftUiColor)
                 .frame(height: Constants.checkmarkSize)
                 .opacity(isSelected ? 1 : 0)
         }
@@ -195,7 +195,7 @@ struct ThreadCell: View {
                     .lineLimit(1)
                     .overlay {
                         RoundedRectangle(cornerRadius: 3)
-                            .stroke(MailResourcesAsset.snackbarTextColor.swiftUiColor)
+                            .stroke(MailResourcesAsset.elementsColor.swiftUiColor)
                     }
             }
 
@@ -226,13 +226,14 @@ struct ThreadCell: View {
             if thread.hasAttachments {
                 Image(resource: MailResourcesAsset.attachment)
                     .resizable()
-                    .foregroundColor(MailResourcesAsset.primaryTextColor)
+                    .foregroundColor(MailResourcesAsset.textPrimaryColor)
                     .scaledToFit()
                     .frame(height: 16)
             }
             if thread.flagged {
                 Image(resource: MailResourcesAsset.starFull)
                     .resizable()
+                    .foregroundColor(MailResourcesAsset.yellowActionColor)
                     .scaledToFit()
                     .frame(width: 16, height: 16)
             }

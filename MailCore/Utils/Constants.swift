@@ -53,12 +53,19 @@ public enum BarAppearanceConstants {
         return navigationBarAppearance
     }()
 
+    public static let threadViewNavigationBarScrolledAppearance: UINavigationBarAppearance = {
+        let navigationBarAppearance = UINavigationBarAppearance()
+        navigationBarAppearance.configureWithDefaultBackground()
+        navigationBarAppearance.backgroundColor = MailResourcesAsset.backgroundTabBarColor.color
+        return navigationBarAppearance
+    }()
+
     public static let threadListNavigationBarAppearance: UINavigationBarAppearance = {
         let navigationBarAppearance = UINavigationBarAppearance()
         navigationBarAppearance.configureWithTransparentBackground()
-        navigationBarAppearance.backgroundColor = MailResourcesAsset.backgroundHeaderColor.color
+        navigationBarAppearance.backgroundColor = MailResourcesAsset.backgroundNavBarColor.color
         navigationBarAppearance.largeTitleTextAttributes = [
-            .foregroundColor: MailResourcesAsset.primaryTextColor.color,
+            .foregroundColor: MailResourcesAsset.textPrimaryColor.color,
             .font: UIFont.systemFont(ofSize: 22, weight: .semibold)
         ]
         return navigationBarAppearance
@@ -67,7 +74,7 @@ public enum BarAppearanceConstants {
     public static let threadViewToolbarAppearance: UIToolbarAppearance = {
         let toolbarAppearance = UIToolbarAppearance()
         toolbarAppearance.configureWithOpaqueBackground()
-        toolbarAppearance.backgroundColor = MailResourcesAsset.backgroundSecondaryColor.color
+        toolbarAppearance.backgroundColor = MailResourcesAsset.backgroundTabBarColor.color
         return toolbarAppearance
     }()
 }

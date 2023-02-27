@@ -104,7 +104,7 @@ class DisplayedFloatingPanelState<State>: ObservableObject, FloatingPanelControl
         floatingPanel = AdaptiveDriveFloatingPanelController()
         let appearance = SurfaceAppearance()
         appearance.cornerRadius = 20
-        appearance.backgroundColor = MailResourcesAsset.backgroundBottomSheetColor.color
+        appearance.backgroundColor = MailResourcesAsset.backgroundSecondaryColor.color
         floatingPanel.delegate = self
         floatingPanel.surfaceView.appearance = appearance
         floatingPanel.surfaceView.grabberHandlePadding = 16

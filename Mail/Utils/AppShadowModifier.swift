@@ -43,7 +43,7 @@ extension View {
             .modifyIf(withPadding) { content in
                 content
                     .padding(.top, 10)
-                    .background(MailResourcesAsset.backgroundHeaderColor.swiftUiColor)
+                    .background(MailResourcesAsset.backgroundNavBarColor.swiftUiColor)
             }
     }
 }

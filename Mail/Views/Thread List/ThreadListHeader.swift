@@ -69,7 +69,7 @@ struct ThreadListHeader: View {
         }
         .padding(.top, 8)
         .padding([.leading, .trailing, .bottom], 16)
-        .background(MailResourcesAsset.backgroundHeaderColor.swiftUiColor)
+        .background(MailResourcesAsset.backgroundNavBarColor.swiftUiColor)
         .onChange(of: lastUpdate) { newValue in
             lastUpdateText = formatLastUpdate(date: newValue)
         }

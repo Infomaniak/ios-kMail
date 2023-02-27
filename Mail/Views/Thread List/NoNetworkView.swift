@@ -31,7 +31,7 @@ struct NoNetworkView: View {
                 Text(MailResourcesStrings.Localizable.noNetworkTitle)
                     .textStyle(.bodySmallWarning)
             }
-            .foregroundColor(MailResourcesAsset.warningColor)
+            .foregroundColor(MailResourcesAsset.orangeActionColor)
             Text(MailResourcesStrings.Localizable.noNetworkDescription)
                 .textStyle(.bodySmallSecondary)
         }

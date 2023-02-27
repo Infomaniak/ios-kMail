@@ -26,7 +26,7 @@ struct SearchNoResultView: View {
                 .resizable()
                 .frame(width: 74, height: 74)
                 .padding(.bottom, 13)
-                .foregroundColor(MailResourcesAsset.secondaryTextColor)
+                .foregroundColor(MailResourcesAsset.textSecondaryColor)
             Text(MailResourcesStrings.Localizable.searchNoResultsTitle)
                 .textStyle(.header2)
             Text(MailResourcesStrings.Localizable.searchNoResultsDescription)

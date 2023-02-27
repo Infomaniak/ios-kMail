@@ -49,7 +49,7 @@ struct ModalButtonsView: View {
     }
 }
 
-struct BottomSheetButtonsView_Previews: PreviewProvider {
+struct ModalButtonsView_Previews: PreviewProvider {
     static var previews: some View {
         ModalButtonsView(primaryButtonTitle: "Save") { /* Preview */ }
     }

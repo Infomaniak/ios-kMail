@@ -32,7 +32,7 @@ struct ModalButtonStyle: ButtonStyle {
     }
 
     private func background(configuration: Configuration) -> Color {
-        guard isEnabled else { return MailResourcesAsset.progressCircleColor.swiftUIColor }
+        guard isEnabled else { return MailResourcesAsset.elementsColor.swiftUIColor }
         return .accentColor.opacity(configuration.isPressed ? 0.8 : 1)
     }
 }

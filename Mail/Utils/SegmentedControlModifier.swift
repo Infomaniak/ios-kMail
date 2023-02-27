@@ -28,7 +28,7 @@ struct SegmentedControlModifier: ViewModifier {
         content
             .introspectSegmentedControl { segmentedControl in
                 segmentedControl.selectedSegmentTintColor = accentColor.primary.color
-                segmentedControl.setTitleTextAttributes([.foregroundColor: MailResourcesAsset.onAccentColor.color], for: .selected)
+                segmentedControl.setTitleTextAttributes([.foregroundColor: accentColor.onAccent.color], for: .selected)
                 segmentedControl.setTitleTextAttributes([.foregroundColor: accentColor.primary.color], for: .normal)
                 segmentedControl.backgroundColor = accentColor.secondary.color
             }

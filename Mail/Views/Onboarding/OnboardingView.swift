@@ -83,7 +83,7 @@ struct OnboardingView: View {
         _selection = State(initialValue: page)
         self.isScrollEnabled = isScrollEnabled
         UIPageControl.appearance().currentPageIndicatorTintColor = .tintColor
-        UIPageControl.appearance().pageIndicatorTintColor = MailResourcesAsset.separatorColor.color
+        UIPageControl.appearance().pageIndicatorTintColor = MailResourcesAsset.elementsColor.color
     }
 
     var body: some View {

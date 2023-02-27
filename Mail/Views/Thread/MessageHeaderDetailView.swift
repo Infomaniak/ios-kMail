@@ -60,7 +60,7 @@ struct MessageHeaderDetailView: View {
                     .resizable()
                     .scaledToFit()
                     .frame(width: labelWidth, height: 17, alignment: .leading)
-                    .foregroundColor(MailResourcesAsset.secondaryTextColor)
+                    .foregroundColor(MailResourcesAsset.textSecondaryColor)
                 Text(message.date.formatted(date: .long, time: .shortened))
                     .textStyle(.bodySmallSecondary)
             }

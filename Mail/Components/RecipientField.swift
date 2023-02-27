@@ -32,7 +32,7 @@ struct RecipientChip: View {
     var body: some View {
         Button(action: removeButtonTapped) {
             Text(recipient.name.isEmpty ? recipient.email : recipient.name)
-                .textStyle(.body)
+                .textStyle(.bodyAccent)
                 .padding(.vertical, 6)
                 .lineLimit(1)
         }

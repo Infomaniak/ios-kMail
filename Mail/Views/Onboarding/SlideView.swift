@@ -109,7 +109,7 @@ struct SlideView: View {
 
     private func setSegmentedControlStyle() {
         segmentedControl?.selectedSegmentTintColor = .tintColor
-        segmentedControl?.setTitleTextAttributes([.foregroundColor: MailResourcesAsset.onAccentColor.color], for: .selected)
+        segmentedControl?.setTitleTextAttributes([.foregroundColor: accentColor.onAccent.color], for: .selected)
         let nonAccentColor: AccentColor = accentColor == .pink ? .blue : .pink
         segmentedControl?.setTitleTextAttributes([.foregroundColor: nonAccentColor.primary.color], for: .normal)
         segmentedControl?.backgroundColor = nonAccentColor.secondary.color

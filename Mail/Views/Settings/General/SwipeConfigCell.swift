@@ -43,19 +43,19 @@ struct SwipeConfigCell: View {
                 ZStack {
                     if action == .none {
                         if i == 0 {
-                            MailResourcesAsset.separatorColor.swiftUiColor
+                            MailResourcesAsset.elementsColor.swiftUiColor
                         } else {
-                            MailResourcesAsset.swipeNoneColor.swiftUiColor
+                            MailResourcesAsset.textTertiaryColor.swiftUiColor
                         }
 
                         Text(MailResourcesStrings.Localizable.settingsSwipeActionToDefine)
-                            .textStyle(.bodySmallSecondary)
+                            .textStyle(.bodySmall)
                     } else {
                         action.swipeTint
                         action.icon()?
                             .resizable()
                             .frame(width: 24, height: 24)
-                            .foregroundColor(MailResourcesAsset.onAccentColor)
+                            .foregroundColor(MailResourcesAsset.backgroundSecondaryColor)
                     }
                 }
                 .frame(width: 80)
