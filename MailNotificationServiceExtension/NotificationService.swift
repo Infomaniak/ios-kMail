@@ -67,7 +67,7 @@ class NotificationService: UNNotificationServiceExtension {
         self.contentHandler = contentHandler
         bestAttemptContent = (request.content.mutableCopy() as? UNMutableNotificationContent)
 
-        if let bestAttemptContent = bestAttemptContent {
+        if let bestAttemptContent {
             guard let messageUid = bestAttemptContent.userInfo[NotificationsHelper.UserInfoKeys.messageUid] as? String,
                   let mailboxId = bestAttemptContent.userInfo[NotificationsHelper.UserInfoKeys.mailboxId] as? Int,
                   let userId = bestAttemptContent.userInfo[NotificationsHelper.UserInfoKeys.userId] as? Int,
@@ -91,7 +91,7 @@ class NotificationService: UNNotificationServiceExtension {
     override func serviceExtensionTimeWillExpire() {
         // Called just before the extension will be terminated by the system.
         // Use this as an opportunity to deliver your "best attempt" at modified content, otherwise the original push payload will be used.
-        if let contentHandler = contentHandler, let bestAttemptContent = bestAttemptContent {
+        if let contentHandler, let bestAttemptContent {
             contentHandler(bestAttemptContent)
         }
     }
