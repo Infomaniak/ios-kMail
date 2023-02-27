@@ -18,15 +18,18 @@
 
 import MailResources
 import SwiftUI
+import MailCore
 
 struct FilterCellModifier: ViewModifier {
+    @AppStorage(UserDefaults.shared.key(.accentColor), store: .shared) private var accentColor = DefaultPreferences.accentColor
+
     let isSelected: Bool
 
     func body(content: Content) -> some View {
         content
             .padding(.vertical, 6)
             .padding(.horizontal, 11)
-            .foregroundColor(isSelected ? UserDefaults.shared.accentColor.onAccent.swiftUiColor : .accentColor)
+            .foregroundColor(isSelected ? accentColor.onAccent.swiftUiColor : .accentColor)
             .background(isSelected ? .accentColor : MailResourcesAsset.backgroundColor.swiftUiColor)
             .cornerRadius(40)
             .overlay(

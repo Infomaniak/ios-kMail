@@ -80,6 +80,8 @@ struct ThreadCellDataHolder {
 }
 
 struct ThreadCell: View {
+    @AppStorage(UserDefaults.shared.key(.accentColor), store: .shared) private var accentColor = DefaultPreferences.accentColor
+
     let thread: Thread
     let mailboxManager: MailboxManager
 
@@ -170,7 +172,7 @@ struct ThreadCell: View {
                 .background(Circle().fill(isSelected ? Color.accentColor : Color.clear))
                 .frame(width: checkboxSize, height: checkboxSize)
             Image(resource: MailResourcesAsset.check)
-                .foregroundColor(UserDefaults.shared.accentColor.onAccent.swiftUiColor)
+                .foregroundColor(accentColor.onAccent.swiftUiColor)
                 .frame(height: Constants.checkmarkSize)
                 .opacity(isSelected ? 1 : 0)
         }
