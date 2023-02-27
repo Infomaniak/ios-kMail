@@ -20,28 +20,29 @@ import Foundation
 import RealmSwift
 
 public class BackgroundRealm {
-    private var realm: Realm!
+    private let configuration: Realm.Configuration
     private let queue: DispatchQueue
 
     init(configuration: Realm.Configuration) {
         guard let fileURL = configuration.fileURL else {
             fatalError("Realm configurations without file URL not supported")
         }
+        self.configuration = configuration
         queue = DispatchQueue(label: "com.infomaniak.mail.\(fileURL.lastPathComponent)", autoreleaseFrequency: .workItem)
+    }
 
-        queue.sync {
-            do {
-                realm = try Realm(configuration: configuration, queue: queue)
-            } catch {
-                // We can't recover from this error but at least we report it correctly on Sentry
-                Logging.reportRealmOpeningError(error, realmConfiguration: configuration)
-            }
+    private func getRealm() -> Realm {
+        do {
+            return try Realm(configuration: configuration, queue: queue)
+        } catch {
+            // We can't recover from this error but at least we report it correctly on Sentry
+            Logging.reportRealmOpeningError(error, realmConfiguration: configuration)
         }
     }
 
     public func execute<T>(_ block: @escaping (Realm) -> T, completion: @escaping (T) -> Void) {
-        queue.async { [weakRealm = realm] in
-            guard let realm = weakRealm else { return }
+        queue.async { [weak self] in
+            guard let realm = self?.getRealm() else { return }
             realm.refresh()
             completion(block(realm))
         }
