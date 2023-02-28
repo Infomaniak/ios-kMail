@@ -86,6 +86,7 @@ extension View {
 }
 
 struct MailButton: View {
+    @Environment(\.isEnabled) private var isEnabled
     @Environment(\.mailButtonStyle) private var style: Style
 
     var icon: MailResourcesImages?
@@ -99,7 +100,7 @@ struct MailButton: View {
     }
 
     var body: some View {
-        Button(action: action) {
+        Button(role: style == .destructive ? .destructive : nil, action: action) {
             HStack(spacing: 8) {
                 if let icon {
                     Image(resource: icon)
@@ -114,6 +115,7 @@ struct MailButton: View {
             .frame(maxWidth: fullWidth ? .infinity : nil)
         }
         .buttonStyle(MailButtonStyle(style: style))
+        .animation(.easeOut(duration: 0.25), value: isEnabled)
     }
 }
 
