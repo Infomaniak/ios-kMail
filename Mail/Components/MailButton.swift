@@ -40,10 +40,8 @@ struct MailButtonStyle: ButtonStyle {
         switch style {
         case .large:
             largeStyle(configuration: configuration)
-        case .link, .smallLink:
+        case .link, .smallLink, .destructive:
             linkStyle(configuration: configuration)
-        case .destructive:
-            configuration.label
         }
     }
 
@@ -52,19 +50,32 @@ struct MailButtonStyle: ButtonStyle {
             .textStyle(.bodyMediumOnAccent)
             .padding(.vertical, 18)
             .padding(.horizontal, 20)
-            .background(background(configuration: configuration))
+            .background(largeBackground(configuration: configuration))
             .clipShape(RoundedRectangle(cornerRadius: Constants.buttonsRadius))
     }
 
     @ViewBuilder private func linkStyle(configuration: Configuration) -> some View {
         configuration.label
-            .textStyle(style == .link ? .bodyMediumAccent : .bodySmallAccent)
+            .textStyle(linkTextStyle())
             .opacity(configuration.isPressed ? 0.7 : 1)
     }
 
-    private func background(configuration: Configuration) -> Color {
+    private func largeBackground(configuration: Configuration) -> Color {
         guard isEnabled else { return MailResourcesAsset.elementsColor.swiftUIColor }
         return .accentColor.opacity(configuration.isPressed ? 0.7 : 1)
+    }
+
+    private func linkTextStyle() -> MailTextStyle {
+        switch style {
+        case .link:
+            return .bodyMediumAccent
+        case .smallLink:
+            return .bodySmallAccent
+        case .destructive:
+            return .bodyMediumError
+        default:
+            return .body
+        }
     }
 }
 
@@ -124,28 +135,25 @@ struct MailButton_Previews: PreviewProvider {
     }
 
     static var previews: some View {
-        Group {
-            if #available(iOS 16.0, *) {
-                Grid(alignment: .leading, horizontalSpacing: 30, verticalSpacing: 20) {
-                    buttonsRow
-                    Divider()
-                    buttonsRow
-                        .disabled(true)
-                    Divider()
-                    GridRow {
-                        MailButton(label: "Link") { /* Preview */ }
-                    }
-                    Divider()
-                    GridRow {
-                        MailButton(icon: MailResourcesAsset.pencilPlain, label: "Full Width", fullWidth: true) { /* Preview */ }
-                            .frame(maxWidth: .infinity)
-                    }
-                    .gridCellColumns(6)
+        if #available(iOS 16.0, *) {
+            Grid(alignment: .leading, horizontalSpacing: 30, verticalSpacing: 20) {
+                buttonsRow
+
+                buttonsRow
+                    .disabled(true)
+
+                GridRow {
+                    MailButton(label: "Link") { /* Preview */ }
+                        .mailButton(style: .destructive)
                 }
-            } else {
-                MailButton(label: "Link") { /* Preview */ }
+
+                GridRow {
+                    MailButton(icon: MailResourcesAsset.pencilPlain, label: "Full Width", fullWidth: true) { /* Preview */ }
+                        .frame(maxWidth: .infinity)
+                }
+                .gridCellColumns(6)
             }
+            .previewInterfaceOrientation(.landscapeLeft)
         }
-        .previewInterfaceOrientation(.landscapeLeft)
     }
 }
