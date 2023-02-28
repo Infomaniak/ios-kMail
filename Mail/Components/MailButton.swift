@@ -20,6 +20,17 @@ import MailCore
 import MailResources
 import SwiftUI
 
+struct MailButtonStyleKey: EnvironmentKey {
+    static var defaultValue = MailButton.Style.large
+}
+
+extension EnvironmentValues {
+    var mailButtonStyle: MailButton.Style {
+        get { self[MailButtonStyleKey.self] }
+        set { self[MailButtonStyleKey.self] = newValue }
+    }
+}
+
 struct MailButtonStyle: ButtonStyle {
     @Environment(\.isEnabled) private var isEnabled
 
@@ -48,22 +59,29 @@ struct MailButtonStyle: ButtonStyle {
     @ViewBuilder private func linkStyle(configuration: Configuration) -> some View {
         configuration.label
             .textStyle(style == .link ? .bodyMediumAccent : .bodySmallAccent)
+            .opacity(configuration.isPressed ? 0.7 : 1)
     }
 
     private func background(configuration: Configuration) -> Color {
         guard isEnabled else { return MailResourcesAsset.elementsColor.swiftUIColor }
-        return .accentColor.opacity(configuration.isPressed ? 0.8 : 1)
+        return .accentColor.opacity(configuration.isPressed ? 0.7 : 1)
+    }
+}
+
+extension View {
+    func mailButton(style: MailButton.Style) -> some View {
+        environment(\.mailButtonStyle, style)
     }
 }
 
 struct MailButton: View {
+    @Environment(\.mailButtonStyle) private var style: Style
+
     var icon: MailResourcesImages?
     var label: String?
     var fullWidth = false
 
     let action: () -> Void
-
-    var style = Style.large
 
     enum Style {
         case large, link, smallLink, destructive
@@ -93,12 +111,15 @@ struct MailButton_Previews: PreviewProvider {
     private static var buttonsRow: some View {
         GridRow {
             MailButton(label: "Link") { /* Preview */ }
+                .mailButton(style: .link)
             MailButton(label: "Large") { /* Preview */ }
             MailButton(label: "Small Link") { /* Preview */ }
+                .mailButton(style: .smallLink)
 
             MailButton(icon: MailResourcesAsset.synchronizeArrow, label: "Link") { /* Preview */ }
-            MailButton(icon: MailResourcesAsset.pencil, label: "Large") { /* Preview */ }
-            MailButton(icon: MailResourcesAsset.pencil) { /* Preview */ }
+                .mailButton(style: .link)
+            MailButton(icon: MailResourcesAsset.pencilPlain, label: "Large") { /* Preview */ }
+            MailButton(icon: MailResourcesAsset.pencilPlain) { /* Preview */ }
         }
     }
 
@@ -116,7 +137,7 @@ struct MailButton_Previews: PreviewProvider {
                     }
                     Divider()
                     GridRow {
-                        MailButton(icon: MailResourcesAsset.pencil, label: "Full Width", fullWidth: true) { /* Preview */ }
+                        MailButton(icon: MailResourcesAsset.pencilPlain, label: "Full Width", fullWidth: true) { /* Preview */ }
                             .frame(maxWidth: .infinity)
                     }
                     .gridCellColumns(6)
