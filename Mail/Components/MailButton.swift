@@ -16,8 +16,45 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import MailCore
 import MailResources
 import SwiftUI
+
+struct LargeButtonStyle: ButtonStyle {
+    @Environment(\.isEnabled) private var isEnabled
+
+    func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+            .textStyle(.bodyMediumOnAccent)
+            .padding(.vertical, 18)
+            .padding(.horizontal, 20)
+            .background(background(configuration: configuration))
+            .clipShape(RoundedRectangle(cornerRadius: Constants.buttonsRadius))
+    }
+
+    private func background(configuration: Configuration) -> Color {
+        guard isEnabled else { return MailResourcesAsset.elementsColor.swiftUIColor }
+        return .accentColor.opacity(configuration.isPressed ? 0.8 : 1)
+    }
+}
+
+struct LinkButtonStyle: ButtonStyle {
+    @Environment(\.isEnabled) private var isEnabled
+
+    func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+            .textStyle(.bodyMediumOnAccent)
+            .padding(.vertical, 18)
+            .padding(.horizontal, 20)
+            .background(background(configuration: configuration))
+            .clipShape(RoundedRectangle(cornerRadius: Constants.buttonsRadius))
+    }
+
+    private func background(configuration: Configuration) -> Color {
+        guard isEnabled else { return MailResourcesAsset.elementsColor.swiftUIColor }
+        return .accentColor.opacity(configuration.isPressed ? 0.8 : 1)
+    }
+}
 
 struct MailButton: View {
     let icon: MailResourcesImages?
@@ -38,7 +75,7 @@ struct MailButton: View {
 
     init(icon: MailResourcesImages, action: @escaping () -> Void) {
         self.icon = icon
-        self.label = nil
+        label = nil
         self.action = action
     }
 
@@ -49,12 +86,14 @@ struct MailButton: View {
                     Image(resource: icon)
                         .resizable()
                         .frame(width: 16, height: 16)
+                        .padding(.vertical, 2)
                 }
                 if let label {
                     Text(label)
                 }
             }
         }
+        .buttonStyle(LargeButtonStyle())
     }
 }
 
@@ -75,17 +114,22 @@ struct MailButton_Previews: PreviewProvider {
     static var previews: some View {
         Group {
             if #available(iOS 16.0, *) {
-                Grid(alignment: .leading, horizontalSpacing: 20, verticalSpacing: 20) {
+                Grid(alignment: .leading, horizontalSpacing: 30, verticalSpacing: 20) {
                     buttonsRow
-
+                    Divider()
                     buttonsRow
                         .disabled(true)
-
+                    Divider()
                     GridRow {
-                        MailButton(label: "Red Link") { /* Preview */ }
+                        MailButton(label: "Link") { /* Preview */ }
                     }
+                    Divider()
+                    GridRow {
+                        MailButton(icon: MailResourcesAsset.pencil, label: "Full Width") { /* Preview */ }
+                            .frame(maxWidth: .infinity)
+                    }
+                    .gridCellColumns(6)
                 }
-                MailButton(icon: MailResourcesAsset.pencil, label: "Full Width") { /* Preview */ }
             } else {
                 MailButton(label: "Link") { /* Preview */ }
             }
