@@ -20,10 +20,23 @@ import MailCore
 import MailResources
 import SwiftUI
 
-struct LargeButtonStyle: ButtonStyle {
+struct MailButtonStyle: ButtonStyle {
     @Environment(\.isEnabled) private var isEnabled
 
+    let style: MailButton.Style
+
     func makeBody(configuration: Configuration) -> some View {
+        switch style {
+        case .large:
+            largeStyle(configuration: configuration)
+        case .link, .smallLink:
+            linkStyle(configuration: configuration)
+        case .destructive:
+            configuration.label
+        }
+    }
+
+    @ViewBuilder private func largeStyle(configuration: Configuration) -> some View {
         configuration.label
             .textStyle(.bodyMediumOnAccent)
             .padding(.vertical, 18)
@@ -32,22 +45,9 @@ struct LargeButtonStyle: ButtonStyle {
             .clipShape(RoundedRectangle(cornerRadius: Constants.buttonsRadius))
     }
 
-    private func background(configuration: Configuration) -> Color {
-        guard isEnabled else { return MailResourcesAsset.elementsColor.swiftUIColor }
-        return .accentColor.opacity(configuration.isPressed ? 0.8 : 1)
-    }
-}
-
-struct LinkButtonStyle: ButtonStyle {
-    @Environment(\.isEnabled) private var isEnabled
-
-    func makeBody(configuration: Configuration) -> some View {
+    @ViewBuilder private func linkStyle(configuration: Configuration) -> some View {
         configuration.label
-            .textStyle(.bodyMediumOnAccent)
-            .padding(.vertical, 18)
-            .padding(.horizontal, 20)
-            .background(background(configuration: configuration))
-            .clipShape(RoundedRectangle(cornerRadius: Constants.buttonsRadius))
+            .textStyle(style == .link ? .bodyMediumAccent : .bodySmallAccent)
     }
 
     private func background(configuration: Configuration) -> Color {
@@ -57,26 +57,16 @@ struct LinkButtonStyle: ButtonStyle {
 }
 
 struct MailButton: View {
-    let icon: MailResourcesImages?
-    let label: String?
+    var icon: MailResourcesImages?
+    var label: String?
+    var fullWidth = false
+
     let action: () -> Void
 
-    var style = Style.link
+    var style = Style.large
 
     enum Style {
         case large, link, smallLink, destructive
-    }
-
-    init(icon: MailResourcesImages? = nil, label: String, action: @escaping () -> Void) {
-        self.icon = icon
-        self.label = label
-        self.action = action
-    }
-
-    init(icon: MailResourcesImages, action: @escaping () -> Void) {
-        self.icon = icon
-        label = nil
-        self.action = action
     }
 
     var body: some View {
@@ -92,8 +82,9 @@ struct MailButton: View {
                     Text(label)
                 }
             }
+            .frame(maxWidth: fullWidth ? .infinity : nil)
         }
-        .buttonStyle(LargeButtonStyle())
+        .buttonStyle(MailButtonStyle(style: style))
     }
 }
 
@@ -125,7 +116,7 @@ struct MailButton_Previews: PreviewProvider {
                     }
                     Divider()
                     GridRow {
-                        MailButton(icon: MailResourcesAsset.pencil, label: "Full Width") { /* Preview */ }
+                        MailButton(icon: MailResourcesAsset.pencil, label: "Full Width", fullWidth: true) { /* Preview */ }
                             .frame(maxWidth: .infinity)
                     }
                     .gridCellColumns(6)
