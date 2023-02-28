@@ -18,6 +18,7 @@
 
 import Foundation
 import RealmSwift
+import Sentry
 
 public class BackgroundRealm {
     private let configuration: Realm.Configuration
@@ -41,10 +42,17 @@ public class BackgroundRealm {
     }
 
     public func execute<T>(_ block: @escaping (Realm) -> T, completion: @escaping (T) -> Void) {
-        queue.async { [weak self] in
-            guard let realm = self?.getRealm() else { return }
-            realm.refresh()
-            completion(block(realm))
+        BackgroundExecutor.executeWithBackgroundTask { [weak self] taskCompleted in
+            self?.queue.async {
+                guard let realm = self?.getRealm() else { return }
+                realm.refresh()
+                completion(block(realm))
+                taskCompleted()
+            }
+        } onExpired: {
+            let expiredBreadcrumb = Breadcrumb(level: .warning, category: "BackgroundRealm")
+            expiredBreadcrumb.message = "Task expired before completing"
+            SentrySDK.addBreadcrumb(crumb: expiredBreadcrumb)
         }
     }
 
