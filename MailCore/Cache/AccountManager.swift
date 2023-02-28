@@ -304,6 +304,10 @@ public class AccountManager: RefreshTokenDelegate {
         setCurrentMailboxForCurrentAccount(mailbox: mainMailbox)
         saveAccounts()
 
+        Task {
+            try await currentContactManager?.fetchContactsAndAddressBooks()
+        }
+
         return newAccount
     }
 
