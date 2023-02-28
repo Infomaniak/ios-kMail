@@ -16,12 +16,13 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import MailCore
 import MailResources
 import SwiftUI
 
 struct FloatingActionButtonModifier: ViewModifier {
     let isEnabled: Bool
-    let icon: Image
+    let icon: MailResourcesImages
     let title: String
     let action: () -> Void
 
@@ -30,7 +31,9 @@ struct FloatingActionButtonModifier: ViewModifier {
             content
 
             if isEnabled {
-                FloatingActionButton(icon: icon, title: title, action: action)
+                MailButton(icon: icon, label: title, action: action)
+                    .padding(.trailing, 24)
+                    .padding(.bottom, Constants.floatingButtonBottomPadding)
             }
         }
         .ignoresSafeArea(.keyboard)
@@ -38,7 +41,7 @@ struct FloatingActionButtonModifier: ViewModifier {
 }
 
 extension View {
-    func floatingActionButton(isEnabled: Bool = true, icon: Image, title: String, action: @escaping () -> Void) -> some View {
+    func floatingActionButton(isEnabled: Bool = true, icon: MailResourcesImages, title: String, action: @escaping () -> Void) -> some View {
         modifier(FloatingActionButtonModifier(isEnabled: isEnabled, icon: icon, title: title, action: action))
     }
 }
