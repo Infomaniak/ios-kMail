@@ -115,7 +115,8 @@ struct OnboardingView: View {
             VStack(spacing: 24) {
                 if selection == slides.count {
                     // Show login button
-                    MailButton(label: MailResourcesStrings.Localizable.buttonLogin, fullWidth: true, action: login)
+                    MailButton(label: MailResourcesStrings.Localizable.buttonLogin, action: login)
+                        .mailButtonFullWidth(true)
                         .disabled(isLoading)
 
                     MailButton(label: MailResourcesStrings.Localizable.buttonCreateAccount) {

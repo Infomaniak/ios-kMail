@@ -24,20 +24,40 @@ struct MailButtonStyleKey: EnvironmentKey {
     static var defaultValue = MailButton.Style.large
 }
 
+struct MailButtonFullWidthKey: EnvironmentKey {
+    static var defaultValue = false
+}
+
 extension EnvironmentValues {
     var mailButtonStyle: MailButton.Style {
         get { self[MailButtonStyleKey.self] }
         set { self[MailButtonStyleKey.self] = newValue }
     }
+
+    var mailButtonFullWidth: Bool {
+        get { self[MailButtonFullWidthKey.self] }
+        set { self[MailButtonFullWidthKey.self] = newValue }
+    }
+}
+
+extension View {
+    func mailButtonStyle(_ style: MailButton.Style) -> some View {
+        environment(\.mailButtonStyle, style)
+    }
+
+    func mailButtonFullWidth(_ fullWidth: Bool) -> some View {
+        environment(\.mailButtonFullWidth, fullWidth)
+    }
 }
 
 struct MailButton: View {
     @Environment(\.isEnabled) private var isEnabled
+
     @Environment(\.mailButtonStyle) private var style: Style
+    @Environment(\.mailButtonFullWidth) private var fullWidth: Bool
 
     var icon: MailResourcesImages?
     var label: String?
-    var fullWidth = false
 
     let action: () -> Void
 
@@ -96,7 +116,8 @@ struct MailButton_Previews: PreviewProvider {
                 }
 
                 GridRow {
-                    MailButton(icon: MailResourcesAsset.pencilPlain, label: "Full Width", fullWidth: true) { /* Preview */ }
+                    MailButton(icon: MailResourcesAsset.pencilPlain, label: "Full Width") { /* Preview */ }
+                        .mailButtonFullWidth(true)
                         .frame(maxWidth: .infinity)
                 }
                 .gridCellColumns(6)

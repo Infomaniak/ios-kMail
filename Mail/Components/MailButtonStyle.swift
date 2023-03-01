@@ -68,9 +68,3 @@ struct MailButtonStyle: ButtonStyle {
         }
     }
 }
-
-extension View {
-    func mailButtonStyle(_ style: MailButton.Style) -> some View {
-        environment(\.mailButtonStyle, style)
-    }
-}

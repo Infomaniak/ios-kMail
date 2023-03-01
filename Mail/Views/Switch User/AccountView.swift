@@ -115,11 +115,12 @@ struct AccountView: View {
                 }
 
                 // Buttons
-                MailButton(label: MailResourcesStrings.Localizable.buttonAccountDisconnect, fullWidth: true) {
+                MailButton(label: MailResourcesStrings.Localizable.buttonAccountDisconnect) {
                     alert.state = .logout
                 }
+                .mailButtonFullWidth(true)
                 .padding(.bottom, 24)
-                MailButton(label: MailResourcesStrings.Localizable.buttonAccountDelete, fullWidth: true) {
+                MailButton(label: MailResourcesStrings.Localizable.buttonAccountDelete) {
                     sheet.state = .deleteAccount
                 }
                 .mailButtonStyle(.destructive)
