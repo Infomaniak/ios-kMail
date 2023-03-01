@@ -98,9 +98,10 @@ struct SettingsOptionView<OptionEnum>: View where OptionEnum: CaseIterable, Opti
                     EmptyView()
                 }
             }
+            .background(MailResourcesAsset.backgroundSecondaryColor.swiftUiColor)
         }
         .listStyle(.plain)
-        .background(MailResourcesAsset.backgroundColor.swiftUiColor)
+        .background(MailResourcesAsset.backgroundSecondaryColor.swiftUiColor)
         .navigationBarTitle(title, displayMode: .inline)
         .onAppear {
             guard let excludedKeyPaths else { return }

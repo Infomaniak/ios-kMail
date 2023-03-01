@@ -77,7 +77,7 @@ struct SettingsSwipeActionsView: View {
             }
         }
         .listStyle(.plain)
-        .background(MailResourcesAsset.backgroundColor.swiftUiColor)
+        .background(MailResourcesAsset.backgroundSecondaryColor.swiftUiColor)
         .navigationBarTitle(MailResourcesStrings.Localizable.settingsSwipeActionsTitle, displayMode: .inline)
         .backButtonDisplayMode(.minimal)
     }

@@ -98,6 +98,7 @@ struct SettingsView: View {
             .listSectionSeparator(.hidden)
         }
         .listStyle(.plain)
+        .background(MailResourcesAsset.backgroundSecondaryColor.swiftUiColor)
         .navigationBarTitle(MailResourcesStrings.Localizable.settingsTitle, displayMode: .inline)
         .backButtonDisplayMode(.minimal)
     }
