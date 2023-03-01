@@ -20,12 +20,18 @@ import MailCore
 import MailResources
 import SwiftUI
 
+// MARK: - Modifiers
+
 struct MailButtonStyleKey: EnvironmentKey {
     static var defaultValue = MailButton.Style.large
 }
 
 struct MailButtonFullWidthKey: EnvironmentKey {
     static var defaultValue = false
+}
+
+struct MailButtonIconSizeKey: EnvironmentKey {
+    static var defaultValue: CGFloat = Constants.buttonsIconSize
 }
 
 extension EnvironmentValues {
@@ -38,6 +44,11 @@ extension EnvironmentValues {
         get { self[MailButtonFullWidthKey.self] }
         set { self[MailButtonFullWidthKey.self] = newValue }
     }
+
+    var mailButtonIconSize: CGFloat {
+        get { self[MailButtonIconSizeKey.self] }
+        set { self[MailButtonIconSizeKey.self] = newValue }
+    }
 }
 
 extension View {
@@ -48,13 +59,20 @@ extension View {
     func mailButtonFullWidth(_ fullWidth: Bool) -> some View {
         environment(\.mailButtonFullWidth, fullWidth)
     }
+
+    func mailButtonIconSize(_ size: CGFloat) -> some View {
+        environment(\.mailButtonIconSize, size)
+    }
 }
+
+// MARK: - View
 
 struct MailButton: View {
     @Environment(\.isEnabled) private var isEnabled
 
     @Environment(\.mailButtonStyle) private var style: Style
     @Environment(\.mailButtonFullWidth) private var fullWidth: Bool
+    @Environment(\.mailButtonIconSize) private var iconSize: CGFloat
 
     var icon: MailResourcesImages?
     var label: String?
@@ -71,7 +89,8 @@ struct MailButton: View {
                 if let icon {
                     Image(resource: icon)
                         .resizable()
-                        .frame(width: 16, height: 16)
+                        .scaledToFit()
+                        .frame(width: iconSize, height: iconSize)
                         .padding(.vertical, 2)
                 }
                 if let label {

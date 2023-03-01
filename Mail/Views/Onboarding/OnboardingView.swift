@@ -125,17 +125,12 @@ struct OnboardingView: View {
                     }
                     .mailButtonStyle(.link)
                 } else {
-                    Button {
+                    MailButton(icon: MailResourcesAsset.fullArrowRight) {
                         withAnimation {
                             selection += 1
                         }
-                    } label: {
-                        Image(resource: MailResourcesAsset.arrow)
-                            .frame(width: 36, height: 46)
-                            .foregroundColor(accentColor.onAccent.swiftUiColor)
                     }
-                    .buttonStyle(.borderedProminent)
-                    .buttonBorderShape(.roundedRectangle(radius: Constants.buttonsRadius))
+                    .mailButtonIconSize(Constants.onboardingArrowIconSize)
                 }
             }
             .frame(height: Constants.onboardingButtonHeight + Constants.onboardingBottomButtonPadding, alignment: .top)

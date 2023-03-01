@@ -62,11 +62,11 @@ struct AttachmentsView: View {
                 }
                 .textStyle(.bodySmallSecondary)
 
-                Button(MailResourcesStrings.Localizable.buttonDownloadAll) {
+                MailButton(label: MailResourcesStrings.Localizable.buttonDownloadAll) {
                     // TODO: Download all attachments
                     showWorkInProgressSnackBar()
                 }
-                .textStyle(.bodySmallAccent)
+                .mailButtonStyle(.smallLink)
 
                 Spacer()
             }

@@ -91,6 +91,7 @@ public enum Constants {
     public static let onboardingButtonHeight: CGFloat = 100
     public static let onboardingVerticalTopPadding: CGFloat = 48
     public static let onboardingBottomButtonPadding: CGFloat = 32
+    public static let onboardingArrowIconSize: CGFloat = 24
 
     public static let menuDrawerHorizontalPadding: CGFloat = 20
     public static let menuDrawerVerticalPadding: CGFloat = 12
@@ -108,6 +109,7 @@ public enum Constants {
     public static let checkboxLargeSize: CGFloat = 40
 
     public static let buttonsRadius: CGFloat = 16
+    public static let buttonsIconSize: CGFloat = 16
 
     public static let maxFolderNameLength = 255
 
