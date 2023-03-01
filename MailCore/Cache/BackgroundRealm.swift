@@ -18,32 +18,41 @@
 
 import Foundation
 import RealmSwift
+import Sentry
 
 public class BackgroundRealm {
-    private var realm: Realm!
+    private let configuration: Realm.Configuration
     private let queue: DispatchQueue
 
     init(configuration: Realm.Configuration) {
         guard let fileURL = configuration.fileURL else {
             fatalError("Realm configurations without file URL not supported")
         }
+        self.configuration = configuration
         queue = DispatchQueue(label: "com.infomaniak.mail.\(fileURL.lastPathComponent)", autoreleaseFrequency: .workItem)
+    }
 
-        queue.sync {
-            do {
-                realm = try Realm(configuration: configuration, queue: queue)
-            } catch {
-                // We can't recover from this error but at least we report it correctly on Sentry
-                Logging.reportRealmOpeningError(error, realmConfiguration: configuration)
-            }
+    private func getRealm() -> Realm {
+        do {
+            return try Realm(configuration: configuration, queue: queue)
+        } catch {
+            // We can't recover from this error but at least we report it correctly on Sentry
+            Logging.reportRealmOpeningError(error, realmConfiguration: configuration)
         }
     }
 
     public func execute<T>(_ block: @escaping (Realm) -> T, completion: @escaping (T) -> Void) {
-        queue.async { [weakRealm = realm] in
-            guard let realm = weakRealm else { return }
-            realm.refresh()
-            completion(block(realm))
+        BackgroundExecutor.executeWithBackgroundTask { [weak self] taskCompleted in
+            self?.queue.async {
+                guard let realm = self?.getRealm() else { return }
+                realm.refresh()
+                completion(block(realm))
+                taskCompleted()
+            }
+        } onExpired: {
+            let expiredBreadcrumb = Breadcrumb(level: .warning, category: "BackgroundRealm")
+            expiredBreadcrumb.message = "Task expired before completing"
+            SentrySDK.addBreadcrumb(crumb: expiredBreadcrumb)
         }
     }
 
