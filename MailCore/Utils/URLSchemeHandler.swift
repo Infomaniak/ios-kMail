@@ -51,6 +51,13 @@ public class URLSchemeHandler: NSObject, WKURLSchemeHandler {
                     return
                 }
 
+                guard let httpResponse = response as? HTTPURLResponse,
+                      (200 ... 299).contains(httpResponse.statusCode),
+                      data?.isEmpty == false else {
+                    urlSchemeTask.didFailWithError(MailError.resourceError)
+                    return
+                }
+
                 if let response {
                     urlSchemeTask.didReceive(response)
                 }
