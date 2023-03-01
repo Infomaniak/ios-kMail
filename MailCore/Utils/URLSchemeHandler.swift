@@ -46,6 +46,10 @@ public class URLSchemeHandler: NSObject, WKURLSchemeHandler {
                 else { return }
 
                 self?.dataTasksInProgress[urlSchemeTask.hash] = nil
+                if let error {
+                    urlSchemeTask.didFailWithError(error)
+                    return
+                }
 
                 if let response {
                     urlSchemeTask.didReceive(response)
@@ -53,9 +57,6 @@ public class URLSchemeHandler: NSObject, WKURLSchemeHandler {
                 if let data {
                     urlSchemeTask.didReceive(data)
                     urlSchemeTask.didFinish()
-                }
-                if let error {
-                    urlSchemeTask.didFailWithError(error)
                 }
             }
         }
