@@ -24,6 +24,7 @@ public class URLSchemeHandler: NSObject, WKURLSchemeHandler {
     public static let domain = "://mail.infomaniak.com"
 
     private var dataTasksInProgress = [Int: URLSessionDataTask]()
+    private let syncQueue = DispatchQueue(label: "com.infomaniak.mail.URLSchemeHandler")
 
     public func webView(_ webView: WKWebView, start urlSchemeTask: WKURLSchemeTask) {
         guard let url = urlSchemeTask.request.url else {
@@ -39,18 +40,31 @@ public class URLSchemeHandler: NSObject, WKURLSchemeHandler {
             forHTTPHeaderField: "Authorization"
         )
         let dataTask = URLSession.shared.dataTask(with: request) { [weak self] data, response, error in
-            guard (error as? URLError)?.code != .cancelled else { return }
-            self?.dataTasksInProgress[urlSchemeTask.hash] = nil
+            self?.syncQueue.sync {
+                guard (error as? URLError)?.code != .cancelled,
+                      self?.dataTasksInProgress[urlSchemeTask.hash] != nil
+                else { return }
 
-            if let response {
-                urlSchemeTask.didReceive(response)
-            }
-            if let data {
-                urlSchemeTask.didReceive(data)
-                urlSchemeTask.didFinish()
-            }
-            if let error {
-                urlSchemeTask.didFailWithError(error)
+                self?.dataTasksInProgress[urlSchemeTask.hash] = nil
+                if let error {
+                    urlSchemeTask.didFailWithError(error)
+                    return
+                }
+
+                guard let httpResponse = response as? HTTPURLResponse,
+                      (200 ... 299).contains(httpResponse.statusCode),
+                      data?.isEmpty == false else {
+                    urlSchemeTask.didFailWithError(MailError.resourceError)
+                    return
+                }
+
+                if let response {
+                    urlSchemeTask.didReceive(response)
+                }
+                if let data {
+                    urlSchemeTask.didReceive(data)
+                    urlSchemeTask.didFinish()
+                }
             }
         }
         dataTasksInProgress[urlSchemeTask.hash] = dataTask
@@ -58,8 +72,9 @@ public class URLSchemeHandler: NSObject, WKURLSchemeHandler {
     }
 
     public func webView(_ webView: WKWebView, stop urlSchemeTask: WKURLSchemeTask) {
-        let dataTask = dataTasksInProgress[urlSchemeTask.hash]
-        dataTasksInProgress[urlSchemeTask.hash] = nil
-        dataTask?.cancel()
+        syncQueue.sync {
+            dataTasksInProgress[urlSchemeTask.hash]?.cancel()
+            dataTasksInProgress[urlSchemeTask.hash] = nil
+        }
     }
 }
