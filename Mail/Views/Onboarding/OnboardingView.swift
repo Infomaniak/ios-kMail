@@ -115,14 +115,14 @@ struct OnboardingView: View {
             VStack(spacing: 24) {
                 if selection == slides.count {
                     // Show login button
-                    LargeButton(title: MailResourcesStrings.Localizable.buttonLogin, isLoading: isLoading, action: login)
-                    Button {
+                    MailButton(label: MailResourcesStrings.Localizable.buttonLogin, fullWidth: true, action: login)
+                        .disabled(isLoading)
+
+                    MailButton(label: MailResourcesStrings.Localizable.buttonCreateAccount) {
                         // TODO: Create account
                         showWorkInProgressSnackBar()
-                    } label: {
-                        Text(MailResourcesStrings.Localizable.buttonCreateAccount)
-                            .textStyle(.bodyMediumAccent)
                     }
+                    .mailButtonStyle(.link)
                 } else {
                     Button {
                         withAnimation {
@@ -138,6 +138,7 @@ struct OnboardingView: View {
                 }
             }
             .frame(height: Constants.onboardingButtonHeight + Constants.onboardingBottomButtonPadding, alignment: .top)
+            .padding(.horizontal, 24)
         }
         .overlay(alignment: .topLeading, content: {
             if !isScrollEnabled {

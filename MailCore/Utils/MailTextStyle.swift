@@ -85,6 +85,11 @@ public struct MailTextStyle {
         color: UserDefaults.shared.accentColor.onAccent.swiftUiColor
     )
 
+    public static let bodyMediumOnDisabled = MailTextStyle(
+        font: .system(size: 16, weight: .medium),
+        color: MailResourcesAsset.backgroundSecondaryColor
+    )
+
     public static let bodyMediumError = MailTextStyle(
         font: .system(size: 16, weight: .medium),
         color: MailResourcesAsset.redActionColor

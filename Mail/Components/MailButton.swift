@@ -47,7 +47,7 @@ struct MailButtonStyle: ButtonStyle {
 
     @ViewBuilder private func largeStyle(configuration: Configuration) -> some View {
         configuration.label
-            .textStyle(.bodyMediumOnAccent)
+            .textStyle(isEnabled ? .bodyMediumOnAccent : .bodyMediumOnDisabled)
             .padding(.vertical, 18)
             .padding(.horizontal, 20)
             .background(largeBackground(configuration: configuration))
@@ -61,7 +61,7 @@ struct MailButtonStyle: ButtonStyle {
     }
 
     private func largeBackground(configuration: Configuration) -> Color {
-        guard isEnabled else { return MailResourcesAsset.elementsColor.swiftUIColor }
+        guard isEnabled else { return MailResourcesAsset.textTertiaryColor.swiftUIColor }
         return .accentColor.opacity(configuration.isPressed ? 0.7 : 1)
     }
 
@@ -80,7 +80,7 @@ struct MailButtonStyle: ButtonStyle {
 }
 
 extension View {
-    func mailButton(style: MailButton.Style) -> some View {
+    func mailButtonStyle(_ style: MailButton.Style) -> some View {
         environment(\.mailButtonStyle, style)
     }
 }
@@ -124,13 +124,13 @@ struct MailButton_Previews: PreviewProvider {
     private static var buttonsRow: some View {
         GridRow {
             MailButton(label: "Link") { /* Preview */ }
-                .mailButton(style: .link)
+                .mailButtonStyle(.link)
             MailButton(label: "Large") { /* Preview */ }
             MailButton(label: "Small Link") { /* Preview */ }
-                .mailButton(style: .smallLink)
+                .mailButtonStyle(.smallLink)
 
             MailButton(icon: MailResourcesAsset.synchronizeArrow, label: "Link") { /* Preview */ }
-                .mailButton(style: .link)
+                .mailButtonStyle(.link)
             MailButton(icon: MailResourcesAsset.pencilPlain, label: "Large") { /* Preview */ }
             MailButton(icon: MailResourcesAsset.pencilPlain) { /* Preview */ }
         }
@@ -146,7 +146,7 @@ struct MailButton_Previews: PreviewProvider {
 
                 GridRow {
                     MailButton(label: "Link") { /* Preview */ }
-                        .mailButton(style: .destructive)
+                        .mailButtonStyle(.destructive)
                 }
 
                 GridRow {

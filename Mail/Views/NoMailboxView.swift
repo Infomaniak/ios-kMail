@@ -43,20 +43,17 @@ struct NoMailboxView: View {
                 }
 
             VStack(spacing: 24) {
-                LargeButton {
+                MailButton(icon: MailResourcesAsset.plus, label: MailResourcesStrings.Localizable.buttonAddEmailAddress, fullWidth: true) {
                     UIApplication.shared.open(URLConstants.ikMe.url)
-                } label: {
-                    Label(MailResourcesStrings.Localizable.buttonAddEmailAddress, systemImage: "plus")
                 }
 
-                Button {
+                MailButton(label: MailResourcesStrings.Localizable.buttonLogInDifferentAccount) {
                     (window?.windowScene?.delegate as? SceneDelegate)?.showLoginView()
-                } label: {
-                    Text(MailResourcesStrings.Localizable.buttonLogInDifferentAccount)
-                        .textStyle(.bodyMediumAccent)
                 }
+                .mailButtonStyle(.link)
             }
             .frame(height: Constants.onboardingButtonHeight + Constants.onboardingBottomButtonPadding, alignment: .top)
+            .padding(.horizontal, 24)
         }
     }
 }

@@ -115,17 +115,16 @@ struct AccountView: View {
                 }
 
                 // Buttons
-                LargeButton(title: MailResourcesStrings.Localizable.buttonAccountDisconnect) {
+                MailButton(label: MailResourcesStrings.Localizable.buttonAccountDisconnect, fullWidth: true) {
                     alert.state = .logout
                 }
                 .padding(.bottom, 24)
-                Button {
+                MailButton(label: MailResourcesStrings.Localizable.buttonAccountDelete, fullWidth: true) {
                     sheet.state = .deleteAccount
-                } label: {
-                    Text(MailResourcesStrings.Localizable.buttonAccountDelete)
-                        .textStyle(.bodyMediumError)
                 }
+                .mailButtonStyle(.destructive)
             }
+            .padding(.horizontal, 24)
             .navigationBarTitle(MailResourcesStrings.Localizable.titleMyAccount, displayMode: .inline)
             .backButtonDisplayMode(.minimal)
             .navigationBarItems(leading: Button {
