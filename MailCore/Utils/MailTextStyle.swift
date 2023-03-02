@@ -164,4 +164,9 @@ public struct MailTextStyle {
         font: .system(size: 12),
         color: MailResourcesAsset.textSecondaryColor
     )
+
+    public static let labelError = MailTextStyle(
+        font: .system(size: 12),
+        color: MailResourcesAsset.redActionColor
+    )
 }
