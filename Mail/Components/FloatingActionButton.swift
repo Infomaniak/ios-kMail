@@ -21,7 +21,7 @@ import MailResources
 import SwiftUI
 
 struct FloatingActionButton: View {
-    @AppStorage(UserDefaults.shared.key(.accentColor), store: .shared) private var accentColor = DefaultPreferences.accentColor
+    @AppStorage(UserDefaults.shared.key(.accentColor)) private var accentColor = DefaultPreferences.accentColor
 
     let icon: Image
     let title: String

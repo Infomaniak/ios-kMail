@@ -72,7 +72,7 @@ struct OnboardingView: View {
     @Environment(\.window) private var window
     @Environment(\.dismiss) private var dismiss
 
-    @AppStorage(UserDefaults.shared.key(.accentColor), store: .shared) private var accentColor = DefaultPreferences.accentColor
+    @AppStorage(UserDefaults.shared.key(.accentColor)) private var accentColor = DefaultPreferences.accentColor
 
     @State private var selection: Int
     @State private var presentAlert = false

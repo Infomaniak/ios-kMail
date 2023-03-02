@@ -21,7 +21,7 @@ import SwiftUI
 import MailCore
 
 struct FilterCellModifier: ViewModifier {
-    @AppStorage(UserDefaults.shared.key(.accentColor), store: .shared) private var accentColor = DefaultPreferences.accentColor
+    @AppStorage(UserDefaults.shared.key(.accentColor)) private var accentColor = DefaultPreferences.accentColor
 
     let isSelected: Bool
 
