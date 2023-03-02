@@ -32,6 +32,9 @@ struct NavigationBarStyleViewModifier: ViewModifier {
     func body(content: Content) -> some View {
         content
             .introspectNavigationController { navigationController in
+                guard self.navigationViewController != navigationController else {
+                    return
+                }
                 self.navigationViewController = navigationController
                 updateAppearanceNavigationController()
             }
