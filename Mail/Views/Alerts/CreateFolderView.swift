@@ -22,18 +22,16 @@ import RealmSwift
 import SwiftUI
 
 struct CreateFolderView: View {
-    @StateObject var mailboxManager: MailboxManager
-    @ObservedResults(Folder.self) var folders
+    @StateObject private var mailboxManager: MailboxManager
+    @ObservedResults(Folder.self) private var folders
 
-    @State private var folderName: String = ""
-    @State private var selectedFolderID: String = ""
+    @State private var folderName = ""
+    @State private var error: FolderError?
+    @State private var buttonIsEnabled = false
+
     @FocusState private var isFocused
 
     private var mode: Mode
-
-    private var sortedFolders: [Folder] {
-        return folders.sorted()
-    }
 
     enum Mode {
         case create
@@ -49,6 +47,20 @@ struct CreateFolderView: View {
         }
     }
 
+    private enum FolderError: Error, LocalizedError {
+        case nameTooLong
+        case nameAlreadyExists
+
+        var errorDescription: String? {
+            switch self {
+            case .nameTooLong:
+                return MailResourcesStrings.Localizable.errorNewFolderNameTooLong
+            case .nameAlreadyExists:
+                return MailResourcesStrings.Localizable.errorNewFolderAlreadyExists
+            }
+        }
+    }
+
     init(mailboxManager: MailboxManager, mode: Mode) {
         _folders = .init(Folder.self, configuration: AccountManager.instance.currentMailboxManager?.realmConfiguration)
         _mailboxManager = StateObject(wrappedValue: mailboxManager)
@@ -56,26 +68,31 @@ struct CreateFolderView: View {
     }
 
     var body: some View {
-        VStack(alignment: .trailing, spacing: 16) {
-            // Header
+        VStack(alignment: .leading) {
             Text(MailResourcesStrings.Localizable.newFolderDialogTitle)
-                .frame(maxWidth: .infinity, alignment: .leading)
                 .textStyle(.bodyMedium)
-            // Text field
+                .padding(.bottom, 24)
+
             TextField(MailResourcesStrings.Localizable.createFolderName, text: $folderName)
+                .onChange(of: folderName, perform: checkFolderName)
                 .padding(12)
                 .overlay(
                     RoundedRectangle(cornerRadius: 4)
-                        .stroke(Color(hex: "#E0E0E0"))
+                        .stroke(error == nil ? MailResourcesAsset.textFieldBorder.swiftUIColor : MailResourcesAsset.redActionColor.swiftUIColor)
+                        .animation(.easeInOut, value: error)
                 )
                 .textStyle(.body)
                 .focused($isFocused)
-            // Button
-            ModalButtonsView(primaryButtonTitle: mode.buttonTitle, primaryButtonEnabled: !folderName.isEmpty) {
+
+            Text(error?.localizedDescription ?? "None")
+                .textStyle(.labelError)
+                .padding(.top, 4)
+                .opacity(error == nil ? 0 : 1)
+
+            ModalButtonsView(primaryButtonTitle: mode.buttonTitle, primaryButtonEnabled: buttonIsEnabled) {
                 Task {
-                    let parent = sortedFolders.first { $0.id == selectedFolderID }
                     await tryOrDisplayError {
-                        let folder = try await mailboxManager.createFolder(name: folderName, parent: parent)
+                        let folder = try await mailboxManager.createFolder(name: folderName)
                         if case let .move(moveHandler) = mode {
                             moveHandler(folder)
                             NotificationCenter.default.post(Notification(name: Constants.dismissMoveSheetNotificationName))
@@ -83,10 +100,24 @@ struct CreateFolderView: View {
                     }
                 }
             }
+            .padding(.top, 24)
         }
         .onAppear {
             isFocused = true
         }
+    }
+
+    private func checkFolderName(_ newName: String) {
+        let trimmedName = newName.trimmingCharacters(in: .whitespacesAndNewlines)
+        if trimmedName.count >= Constants.maxFolderNameLength {
+            error = .nameTooLong
+        } else if trimmedName.lowercased() == "inbox" || folders.contains(where: { $0.name == trimmedName }) {
+            error = .nameAlreadyExists
+        } else {
+            error = nil
+        }
+
+        buttonIsEnabled = !folderName.isEmpty && error == nil
     }
 }
 
