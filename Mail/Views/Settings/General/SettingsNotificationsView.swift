@@ -16,38 +16,44 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import InfomaniakDI
+import InfomaniakNotifications
 import MailCore
 import MailResources
 import SwiftUI
 
 struct SettingsNotificationsView: View {
-    @AppStorage(UserDefaults.shared.key(.notificationsEnabled)) private var notifications = DefaultPreferences
+    @LazyInjectService var notificationService: InfomaniakNotifications
+    @AppStorage(UserDefaults.shared.key(.notificationsEnabled)) private var notificationsEnabled = DefaultPreferences
         .notificationsEnabled
+    @State var subscribedTopics: [String]?
 
     var body: some View {
         ScrollView {
             VStack(spacing: 24) {
-                Toggle(isOn: Binding(get: {
-                    notifications
-                }, set: { newValue in
-                    notifications = newValue
-                })) {
+                Toggle(isOn: $notificationsEnabled) {
                     Text(MailResourcesStrings.Localizable.settingsEnableNotifications)
                         .textStyle(.body)
                 }
 
                 IKDivider()
 
-                ForEach(AccountManager.instance.mailboxes, id: \.id) { mailbox in
-                    Toggle(isOn: Binding(get: {
-                        notifications && UserDefaults.shared.bool(forKey: mailbox.objectId)
-                    }, set: { newValue in
-                        UserDefaults.shared.set(newValue, forKey: mailbox.objectId)
-                    })) {
-                        Text(mailbox.email)
-                            .textStyle(.body)
+                if subscribedTopics != nil {
+                    ForEach(AccountManager.instance.mailboxes) { mailbox in
+                        Toggle(isOn: Binding(get: {
+                            notificationsEnabled && subscribedTopics?.contains(mailbox.notificationTopicName) == true
+                        }, set: { on in
+                            if on && subscribedTopics?.contains(mailbox.notificationTopicName) == false {
+                                subscribedTopics?.append(mailbox.notificationTopicName)
+                            } else {
+                                subscribedTopics?.removeAll { $0 == mailbox.notificationTopicName }
+                            }
+                        })) {
+                            Text(mailbox.email)
+                                .textStyle(.body)
+                        }
+                        .disabled(!notificationsEnabled)
                     }
-                    .disabled(!notifications)
                 }
 
                 Spacer()
@@ -56,6 +62,32 @@ struct SettingsNotificationsView: View {
         }
         .background(MailResourcesAsset.backgroundColor.swiftUiColor)
         .navigationBarTitle(MailResourcesStrings.Localizable.settingsMailboxGeneralNotifications, displayMode: .inline)
+        .onChange(of: notificationsEnabled) { enabled in
+            if !enabled {
+                subscribedTopics = []
+            }
+        }
+        .task {
+            await currentTopics()
+        }
+        .onDisappear {
+            updateTopicsForCurrentUserIfNeeded()
+        }
+    }
+
+    func currentTopics() async {
+        let currentSubscription = await notificationService.subscriptionForUser(id: AccountManager.instance.currentUserId)
+        withAnimation {
+            self.subscribedTopics = currentSubscription?.topics
+        }
+    }
+
+    func updateTopicsForCurrentUserIfNeeded() {
+        Task {
+            guard let currentApiFetcher = AccountManager.instance.currentMailboxManager?.apiFetcher,
+                  let subscribedTopics else { return }
+            await notificationService.updateTopicsIfNeeded(subscribedTopics, userApiFetcher: currentApiFetcher)
+        }
     }
 }
 

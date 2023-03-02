@@ -25,9 +25,10 @@ let baseSettings = SettingsDictionary().automaticCodeSigning(devTeam: "864VDCS2Q
 let project = Project(name: "Mail",
                       packages: [
                           .package(url: "https://github.com/Infomaniak/ios-login.git", .upToNextMajor(from: "4.0.0")),
-                          .package(url: "https://github.com/Infomaniak/ios-dependency-injection", .upToNextMajor(from: "1.1.6")),
+                          .package(url: "https://github.com/Infomaniak/ios-dependency-injection.git", .upToNextMajor(from: "1.1.6")),
                           .package(url: "https://github.com/Infomaniak/ios-core.git", .branch("mail-di")),
                           .package(url: "https://github.com/Infomaniak/ios-core-ui.git", .upToNextMajor(from: "2.0.2")),
+                          .package(url: "https://github.com/Infomaniak/ios-notifications.git", .upToNextMajor(from: "2.0.1")),
                           .package(url: "https://github.com/ProxymanApp/atlantis", .upToNextMajor(from: "1.3.0")),
                           .package(url: "https://github.com/Alamofire/Alamofire.git", .upToNextMajor(from: "5.2.2")),
                           .package(url: "https://github.com/CocoaLumberjack/CocoaLumberjack.git", .upToNextMajor(from: "3.7.0")),
@@ -68,6 +69,7 @@ let project = Project(name: "Mail",
                                  dependencies: [
                                      .target(name: "MailCore"),
                                      .target(name: "MailResources"),
+                                     .target(name: "MailNotificationServiceExtension"),
                                      .package(product: "MatomoTracker"),
                                      .package(product: "Introspect"),
                                      .package(product: "SQRichTextEditor"),
@@ -97,6 +99,28 @@ let project = Project(name: "Mail",
                               dependencies: [
                                   .target(name: "Mail")
                               ]
+                          ),
+                          Target(
+                            name: "MailNotificationServiceExtension",
+                            platform: .iOS,
+                            product: .appExtension,
+                            bundleId: "com.infomaniak.mail.NotificationServiceExtension",
+                            deploymentTarget: deploymentTarget,
+                            infoPlist: .extendingDefault(with: [
+                                "AppIdentifierPrefix": "$(AppIdentifierPrefix)",
+                                "CFBundleDisplayName": "$(PRODUCT_NAME)",
+                                "NSExtension": [
+                                    "NSExtensionPointIdentifier": "com.apple.usernotifications.service",
+                                    "NSExtensionPrincipalClass": "$(PRODUCT_MODULE_NAME).NotificationService",
+                                ],
+                            ]),
+                            sources: "MailNotificationServiceExtension/**",
+                            entitlements: "MailResources/Mail.entitlements",
+                            dependencies: [
+                                .target(name: "MailCore"),
+                                .target(name: "MailResources"),
+                            ],
+                            settings: .settings(base: baseSettings)
                           ),
                           Target(
                               name: "MailResources",
@@ -130,10 +154,11 @@ let project = Project(name: "Mail",
                                   .package(product: "InfomaniakCoreUI"),
                                   .package(product: "InfomaniakLogin"),
                                   .package(product: "InfomaniakDI"),
+                                  .package(product: "InfomaniakNotifications"),
+                                  .package(product: "InfomaniakBugTracker"),
                                   .package(product: "CocoaLumberjackSwift"),
                                   .package(product: "RealmSwift"),
                                   .package(product: "SwiftRegex"),
-                                  .package(product: "InfomaniakBugTracker"),
                                   .package(product: "Nuke")
                               ],
                               settings: .settings(base: baseSettings)

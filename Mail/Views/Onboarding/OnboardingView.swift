@@ -248,6 +248,7 @@ struct OnboardingView: View {
                 _ = try await AccountManager.instance.createAndSetCurrentAccount(code: code, codeVerifier: verifier)
                 MatomoUtils.connectUser()
                 await (self.window?.windowScene?.delegate as? SceneDelegate)?.showMainView()
+                await UIApplication.shared.registerForRemoteNotifications()
             } catch MailError.noMailbox {
                 await (self.window?.windowScene?.delegate as? SceneDelegate)?.showNoMailboxView()
             } catch {

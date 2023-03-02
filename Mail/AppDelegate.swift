@@ -22,6 +22,7 @@ import InfomaniakCore
 import InfomaniakCoreUI
 import InfomaniakDI
 import InfomaniakLogin
+import InfomaniakNotifications
 import MailCore
 import Sentry
 import SwiftUI
@@ -33,10 +34,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     private var accountManager: AccountManager!
     static var orientationLock = UIInterfaceOrientationMask.all
 
-    func application(
-        _ application: UIApplication,
-        willFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil
-    ) -> Bool {
+    func application(_ application: UIApplication,
+                     willFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil) -> Bool {
         Logging.initLogging()
         setupDI()
         DDLogInfo("Application starting in foreground ? \(UIApplication.shared.applicationState != .background)")
@@ -48,27 +47,37 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             // Ask permission app launch
             await NotificationsHelper.askForPermissions()
         }
-
-        BackgroundFetcher.shared.registerBackgroundTask()
+        application.registerForRemoteNotifications()
 
         return true
     }
 
-    func application(
-        _ application: UIApplication,
-        didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
-    ) -> Bool {
+    func application(_ application: UIApplication,
+                     didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
         return true
     }
 
+    func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
+        @InjectService var notificationService: InfomaniakNotifications
+        for account in accountManager.accounts {
+            let userApiFetcher = accountManager.getApiFetcher(for: account.userId, token: account.token)
+            Task {
+                await notificationService.updateRemoteNotificationsTokenIfNeeded(tokenData: deviceToken,
+                                                                                 userApiFetcher: userApiFetcher)
+            }
+        }
+    }
+
+    func application(_ application: UIApplication, didFailToRegisterForRemoteNotificationsWithError error: Error) {
+        DDLogError("Failed registering for notifications: \(error)")
+    }
+
     // MARK: UISceneSession Lifecycle
 
-    func application(
-        _ application: UIApplication,
-        configurationForConnecting connectingSceneSession: UISceneSession,
-        options: UIScene.ConnectionOptions
-    ) -> UISceneConfiguration {
+    func application(_ application: UIApplication,
+                     configurationForConnecting connectingSceneSession: UISceneSession,
+                     options: UIScene.ConnectionOptions) -> UISceneConfiguration {
         // Called when a new scene session is being created.
         // Use this method to select a configuration to create the new scene with.
         return UISceneConfiguration(name: "Default Configuration", sessionRole: connectingSceneSession.role)
@@ -112,6 +121,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         let keychainHelper = Factory(type: KeychainHelper.self) { _, _ in
             KeychainHelper(accessGroup: AccountManager.accessGroup)
         }
+        let notificationService = Factory(type: InfomaniakNotifications.self) { _, _ in
+            InfomaniakNotifications()
+        }
         let appLockHelper = Factory(type: AppLockHelper.self) { _, _ in
             AppLockHelper()
         }
@@ -121,6 +133,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
         SimpleResolver.sharedResolver.store(factory: loginService)
         SimpleResolver.sharedResolver.store(factory: networkLoginService)
+        SimpleResolver.sharedResolver.store(factory: notificationService)
         SimpleResolver.sharedResolver.store(factory: keychainHelper)
         SimpleResolver.sharedResolver.store(factory: appLockHelper)
         SimpleResolver.sharedResolver.store(factory: bugTracker)

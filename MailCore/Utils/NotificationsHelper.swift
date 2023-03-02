@@ -38,7 +38,7 @@ public enum NotificationsHelper {
     public enum UserInfoKeys {
         public static let userId = "user_id"
         public static let mailboxId = "mailbox_id"
-        public static let messageId = "message_id"
+        public static let messageUid = "message_uid"
     }
 
     public static var isNotificationEnabled: Bool {
@@ -54,6 +54,16 @@ public enum NotificationsHelper {
         }
     }
 
+    public static func getUnreadCount() -> Int {
+        var totalUnreadCount = 0
+        for mailbox in MailboxInfosManager.instance.getMailboxes() {
+            if let mailboxManager = AccountManager.instance.getMailboxManager(for: mailbox) {
+                totalUnreadCount += mailboxManager.getFolder(with: .inbox)?.unreadCount ?? 0
+            }
+        }
+        return totalUnreadCount
+    }
+
     public static func updateUnreadCountBadge() {
         // Start a background task to update the app badge when going in the background
         var backgroundTaskIdentifier: UIBackgroundTaskIdentifier = .invalid
@@ -63,12 +73,7 @@ public enum NotificationsHelper {
             backgroundTaskIdentifier = .invalid
         }
 
-        var totalUnreadCount = 0
-        for mailbox in MailboxInfosManager.instance.getMailboxes() {
-            if let mailboxManager = AccountManager.instance.getMailboxManager(for: mailbox) {
-                totalUnreadCount += mailboxManager.getFolder(with: .inbox)?.unreadCount ?? 0
-            }
-        }
+        let totalUnreadCount = getUnreadCount()
 
         DispatchQueue.main.async {
             UIApplication.shared.applicationIconBadgeNumber = totalUnreadCount
@@ -108,7 +113,7 @@ public enum NotificationsHelper {
         }
     }
 
-    static func triggerNotificationFor(message: Message, mailboxId: Int, userId: Int) {
+    public static func generateNotificationFor(message: Message, mailboxId: Int, userId: Int) -> UNMutableNotificationContent {
         let content = UNMutableNotificationContent()
         if !message.from.isEmpty {
             content.title = message.from.map { $0.name }.joined(separator: ",")
@@ -118,15 +123,8 @@ public enum NotificationsHelper {
         content.subtitle = message.formattedSubject
         content.body = message.preview
         content.threadIdentifier = "\(mailboxId)_\(userId)"
-        content.userInfo = [
-            NotificationsHelper.UserInfoKeys.messageId: message.uid,
-            NotificationsHelper.UserInfoKeys.mailboxId: mailboxId,
-            NotificationsHelper.UserInfoKeys.userId: userId
-        ]
-
-        let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 1, repeats: false)
-        let notificationId = "\(userId)_\(mailboxId)_\(message.uid)"
-        let request = UNNotificationRequest(identifier: notificationId, content: content, trigger: trigger)
-        UNUserNotificationCenter.current().add(request)
+        content.targetContentIdentifier = "\(userId)_\(mailboxId)_\(message.uid)"
+        content.badge = getUnreadCount() as NSNumber
+        return content
     }
 }

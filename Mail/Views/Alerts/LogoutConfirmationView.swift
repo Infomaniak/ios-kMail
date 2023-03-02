@@ -16,10 +16,12 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import SwiftUI
-import MailResources
-import MailCore
 import InfomaniakCore
+import InfomaniakDI
+import InfomaniakNotifications
+import MailCore
+import MailResources
+import SwiftUI
 
 struct LogoutConfirmationView: View {
 
@@ -38,6 +40,10 @@ struct LogoutConfirmationView: View {
     }
 
     private func logout() {
+        Task {
+            @InjectService var notificationService: InfomaniakNotifications
+            await notificationService.removeStoredTokenFor(userId: account.userId)
+        }
         AccountManager.instance.removeTokenAndAccount(token: account.token)
         if let nextAccount = AccountManager.instance.accounts.first {
             (window?.windowScene?.delegate as? SceneDelegate)?.switchAccount(nextAccount)

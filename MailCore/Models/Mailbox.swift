@@ -59,6 +59,10 @@ public class Mailbox: Object, Codable, Identifiable {
         return mailboxId
     }
 
+    public var notificationTopicName: String {
+        return "mailbox-\(mailboxId)"
+    }
+
     enum CodingKeys: String, CodingKey {
         case uuid
         case email

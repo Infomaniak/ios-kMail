@@ -80,8 +80,6 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, AccountManagerDelegate 
         >>.self) != true {
             appLockHelper.setTime()
         }
-
-        BackgroundFetcher.shared.scheduleAppRefresh()
     }
 
     func setRootViewController(_ viewController: UIViewController, animated: Bool = true) {
