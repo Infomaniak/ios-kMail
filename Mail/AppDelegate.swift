@@ -132,7 +132,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             BugTracker(info: BugTrackerInfo(project: "app-mobile-mail", gitHubRepoName: "ios-mail", appReleaseType: .beta))
         }
         let matomoUtils = Factory(type: MatomoUtils.self) { _, _ in
-            MatomoUtils(siteId: Constants.matomoId, baseURL: URLConstants.matomo.url, userId: String(AccountManager.instance.currentUserId))
+            MatomoUtils(siteId: Constants.matomoId,
+                        baseURL: URLConstants.matomo.url,
+                        userId: String(AccountManager.instance.currentUserId))
         }
 
         SimpleResolver.sharedResolver.store(factory: loginService)

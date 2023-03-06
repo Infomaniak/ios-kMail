@@ -17,6 +17,7 @@
  */
 
 import AuthenticationServices
+import InfomaniakCore
 import InfomaniakCoreUI
 import InfomaniakDI
 import InfomaniakLogin
@@ -239,16 +240,16 @@ struct OnboardingView: View {
     }
 
     private func loginSuccessful(code: String, codeVerifier verifier: String) {
-        // TODO: Update Matomo
-        //MatomoUtils.track(eventWithCategory: .account, name: "loggedIn")
+        @InjectService var matomo: MatomoUtils
+
+        matomo.track(eventWithCategory: .account, name: "loggedIn")
         let previousAccount = AccountManager.instance.currentAccount
         Task {
             do {
                 _ = try await AccountManager.instance.createAndSetCurrentAccount(code: code, codeVerifier: verifier)
-                // TODO: Update Matomo
-                //MatomoUtils.connectUser()
                 await (self.window?.windowScene?.delegate as? SceneDelegate)?.showMainView()
                 await UIApplication.shared.registerForRemoteNotifications()
+                matomo.connectUser(userId: AccountManager.instance.currentUserId)
             } catch MailError.noMailbox {
                 await (self.window?.windowScene?.delegate as? SceneDelegate)?.showNoMailboxView()
             } catch {
