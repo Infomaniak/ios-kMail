@@ -89,7 +89,8 @@ struct ThreadView: View {
             displayNavigationTitle = offset.y < -85
         }
         .onAppear {
-            MatomoUtils.track(view: ["MessageView"])
+            // TODO: Update Matomo
+            //MatomoUtils.track(view: ["MessageView"])
         }
         .task {
             if thread.hasUnseenMessages {

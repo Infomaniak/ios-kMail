@@ -131,6 +131,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         let bugTracker = Factory(type: BugTracker.self) { _, _ in
             BugTracker(info: BugTrackerInfo(project: "app-mobile-mail", gitHubRepoName: "ios-mail", appReleaseType: .beta))
         }
+        let matomoUtils = Factory(type: MatomoUtils.self) { _, _ in
+            MatomoUtils(siteId: Constants.matomoId, baseURL: URLConstants.matomo.url, userId: String(AccountManager.instance.currentUserId))
+        }
 
         SimpleResolver.sharedResolver.store(factory: loginService)
         SimpleResolver.sharedResolver.store(factory: networkLoginService)
@@ -138,5 +141,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         SimpleResolver.sharedResolver.store(factory: keychainHelper)
         SimpleResolver.sharedResolver.store(factory: appLockHelper)
         SimpleResolver.sharedResolver.store(factory: bugTracker)
+        SimpleResolver.sharedResolver.store(factory: matomoUtils)
     }
 }

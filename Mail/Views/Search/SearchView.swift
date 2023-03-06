@@ -120,7 +120,8 @@ struct SearchView: View {
             }
             viewModel.selectedThread = nil
 
-            MatomoUtils.track(view: ["SearchView"])
+            // TODO: Update Matomo
+            //MatomoUtils.track(view: ["SearchView"])
         }
         .toolbar {
             ToolbarItem(placement: .navigationBarLeading) {

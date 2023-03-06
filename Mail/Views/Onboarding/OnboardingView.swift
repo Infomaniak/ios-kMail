@@ -239,12 +239,14 @@ struct OnboardingView: View {
     }
 
     private func loginSuccessful(code: String, codeVerifier verifier: String) {
-        MatomoUtils.track(eventWithCategory: .account, name: "loggedIn")
+        // TODO: Update Matomo
+        //MatomoUtils.track(eventWithCategory: .account, name: "loggedIn")
         let previousAccount = AccountManager.instance.currentAccount
         Task {
             do {
                 _ = try await AccountManager.instance.createAndSetCurrentAccount(code: code, codeVerifier: verifier)
-                MatomoUtils.connectUser()
+                // TODO: Update Matomo
+                //MatomoUtils.connectUser()
                 await (self.window?.windowScene?.delegate as? SceneDelegate)?.showMainView()
                 await UIApplication.shared.registerForRemoteNotifications()
             } catch MailError.noMailbox {
