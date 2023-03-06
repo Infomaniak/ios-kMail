@@ -21,6 +21,7 @@ import MailResources
 import SwiftUI
 
 struct MailButtonStyle: ButtonStyle {
+    @Environment(\.colorScheme) private var colorScheme
     @Environment(\.isEnabled) private var isEnabled
 
     let style: MailButton.Style
@@ -41,6 +42,7 @@ struct MailButtonStyle: ButtonStyle {
             .padding(.horizontal, 20)
             .background(largeBackground(configuration: configuration))
             .clipShape(RoundedRectangle(cornerRadius: Constants.buttonsRadius))
+            .brightness(largeBrightness(configuration: configuration))
     }
 
     @ViewBuilder private func linkStyle(configuration: Configuration) -> some View {
@@ -51,7 +53,17 @@ struct MailButtonStyle: ButtonStyle {
 
     private func largeBackground(configuration: Configuration) -> Color {
         guard isEnabled else { return MailResourcesAsset.textTertiaryColor.swiftUIColor }
-        return .accentColor.opacity(configuration.isPressed ? 0.7 : 1)
+
+        var opacity = 1.0
+        if colorScheme == .light {
+            opacity = configuration.isPressed ? 0.8 : 1
+        }
+        return .accentColor.opacity(opacity)
+    }
+
+    private func largeBrightness(configuration: Configuration) -> Double {
+        guard colorScheme == .dark else { return 0 }
+        return configuration.isPressed ? 0.1 : 0
     }
 
     private func linkTextStyle() -> MailTextStyle {
