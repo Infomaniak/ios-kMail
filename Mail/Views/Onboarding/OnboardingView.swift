@@ -72,6 +72,8 @@ struct OnboardingView: View {
     @Environment(\.window) private var window
     @Environment(\.dismiss) private var dismiss
 
+    @AppStorage(UserDefaults.shared.key(.accentColor)) private var accentColor = DefaultPreferences.accentColor
+
     @State private var selection: Int
     @State private var presentAlert = false
     @State private var isLoading = false
@@ -127,10 +129,9 @@ struct OnboardingView: View {
                             selection += 1
                         }
                     } label: {
-                        Image(systemName: "arrow.right")
-                            .imageScale(.large)
-                            .font(.title3.weight(.semibold))
+                        Image(resource: MailResourcesAsset.arrow)
                             .frame(width: 36, height: 46)
+                            .foregroundColor(accentColor.onAccent.swiftUiColor)
                     }
                     .buttonStyle(.borderedProminent)
                     .buttonBorderShape(.capsule)

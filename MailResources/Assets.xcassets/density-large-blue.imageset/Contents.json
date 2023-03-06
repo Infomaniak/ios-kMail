@@ -1,7 +1,7 @@
 {
   "images" : [
     {
-      "filename" : "density-large-blue.png",
+      "filename" : "density-large-blue-light.svg",
       "idiom" : "universal"
     },
     {
@@ -11,7 +11,7 @@
           "value" : "dark"
         }
       ],
-      "filename" : "density-large-blue-dark.png",
+      "filename" : "density-large-blue-dark.svg",
       "idiom" : "universal"
     }
   ],

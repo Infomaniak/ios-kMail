@@ -21,6 +21,8 @@ import MailResources
 import SwiftUI
 
 struct FloatingActionButton: View {
+    @AppStorage(UserDefaults.shared.key(.accentColor)) private var accentColor = DefaultPreferences.accentColor
+
     let icon: Image
     let title: String
     let action: () -> Void
@@ -41,7 +43,7 @@ struct FloatingActionButton: View {
         .controlSize(.large)
         .padding(.trailing, 24)
         .padding(.bottom, Constants.floatingButtonBottomPadding)
-        .foregroundColor(UserDefaults.shared.accentColor.onAccent.swiftUiColor)
+        .foregroundColor(accentColor.onAccent.swiftUiColor)
     }
 }
 

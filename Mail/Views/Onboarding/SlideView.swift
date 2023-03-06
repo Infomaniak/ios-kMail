@@ -26,7 +26,7 @@ struct SlideView: View {
     let slide: Slide
     var updateAnimationColors: LottieView.UpdateColorsClosure?
 
-    @AppStorage(UserDefaults.shared.key(.accentColor), store: .shared) private var accentColor = DefaultPreferences.accentColor
+    @AppStorage(UserDefaults.shared.key(.accentColor)) private var accentColor = DefaultPreferences.accentColor
 
     @Environment(\.window) private var window
     @Environment(\.colorScheme) private var colorScheme
@@ -42,7 +42,7 @@ struct SlideView: View {
                 slide.backgroundImage
                     .resizable()
                     .frame(height: proxy.size.height * 0.62)
-                    .foregroundColor(colorScheme == .light ? accentColor.secondary : MailResourcesAsset.backgroundColor)
+                    .foregroundColor(colorScheme == .light ? accentColor.secondary : MailResourcesAsset.backgroundSecondaryColor)
                     .ignoresSafeArea(edges: .top)
 
                 VStack(spacing: 0) {

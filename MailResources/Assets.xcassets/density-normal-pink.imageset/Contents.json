@@ -1,7 +1,7 @@
 {
   "images" : [
     {
-      "filename" : "density-normal-pink.png",
+      "filename" : "density-normal-pink-light.svg",
       "idiom" : "universal"
     },
     {
@@ -11,7 +11,7 @@
           "value" : "dark"
         }
       ],
-      "filename" : "density-normal-pink-dark.png",
+      "filename" : "density-normal-pink-dark.svg.svg",
       "idiom" : "universal"
     }
   ],
