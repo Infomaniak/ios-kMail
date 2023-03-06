@@ -31,19 +31,18 @@ struct ModalButtonsView: View {
     var body: some View {
         HStack(spacing: 24) {
             if let secondaryButtonTitle {
-                Button(role: .destructive) {
+                MailButton(label: secondaryButtonTitle) {
                     secondaryButtonAction?()
                     dismiss()
-                } label: {
-                    Text(secondaryButtonTitle)
-                        .textStyle(.bodyMediumError)
                 }
+                .mailButtonStyle(.destructive)
             }
 
-            ModalButton(label: primaryButtonTitle, isEnabled: primaryButtonEnabled) {
+            MailButton(label: primaryButtonTitle) {
                 primaryButtonAction()
                 dismiss()
             }
+            .disabled(!primaryButtonEnabled)
         }
         .frame(maxWidth: .infinity, alignment: .trailing)
     }

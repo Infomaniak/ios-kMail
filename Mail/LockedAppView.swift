@@ -44,11 +44,13 @@ struct LockedAppView: View {
 
                 Spacer()
 
-                LargeButton(title: MailResourcesStrings.Localizable.buttonUnlock, action: unlockApp)
+                MailButton(label: MailResourcesStrings.Localizable.buttonUnlock, action: unlockApp)
+                    .mailButtonFullWidth(true)
             }
             .padding(.top, Constants.onboardingLogoPaddingTop)
             .padding(.bottom, 40)
         }
+        .padding(.horizontal, 24)
         .defaultAppStorage(.shared)
         .onAppear {
             unlockApp()

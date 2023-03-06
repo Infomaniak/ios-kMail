@@ -181,7 +181,7 @@ struct ThreadListView: View {
                                         }
                                     }))
         .floatingActionButton(isEnabled: !multipleSelectionViewModel.isEnabled,
-                              icon: Image(resource: MailResourcesAsset.pencilPlain),
+                              icon: MailResourcesAsset.pencilPlain,
                               title: MailResourcesStrings.Localizable.buttonNewMessage) {
             isShowingComposeNewMessageView.toggle()
         }
