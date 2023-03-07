@@ -214,7 +214,7 @@ public class Draft: Object, Decodable, Identifiable, Encodable {
                 subject = "Fwd: \(subject)"
             }
             quote = Constants.forwardQuote(message: message)
-            attachments = attachmentsToForward
+            attachments = attachmentsToForward.map { Attachment(value: $0) }
         }
 
         var recipientHolder = RecipientHolder()
