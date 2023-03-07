@@ -29,6 +29,7 @@ class NotificationService: UNNotificationServiceExtension {
 
     override init() {
         super.init()
+        Logging.initLogging()
         let loginService = Factory(type: InfomaniakLogin.self) { _, _ in
             InfomaniakLogin(clientId: MailApiFetcher.clientId)
         }
