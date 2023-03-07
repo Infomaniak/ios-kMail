@@ -16,6 +16,7 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import InfomaniakCore
 import MailCore
 import MailResources
 import SwiftUI
@@ -80,6 +81,7 @@ struct SettingsSwipeActionsView: View {
         .background(MailResourcesAsset.backgroundSecondaryColor.swiftUiColor)
         .navigationBarTitle(MailResourcesStrings.Localizable.settingsSwipeActionsTitle, displayMode: .inline)
         .backButtonDisplayMode(.minimal)
+        .matomoView(view: [MatomoUtils.View.settingsView.displayName, "SwipeActions"])
     }
 
     private func settingValue(for option: SwipeType) -> String {

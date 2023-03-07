@@ -16,6 +16,7 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import InfomaniakCore
 import InfomaniakCoreUI
 import MailCore
 import MailResources
@@ -40,6 +41,7 @@ struct ReportDisplayProblemView: View {
             .padding(.top, 8)
         }
         .padding(.horizontal, Constants.bottomSheetHorizontalPadding)
+        .matomoView(view: [MatomoUtils.View.bottomSheet.displayName, "ReportDisplayProblemView"])
     }
 
     private func report() {

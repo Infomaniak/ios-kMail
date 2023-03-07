@@ -16,6 +16,7 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import InfomaniakCore
 import InfomaniakCoreUI
 import MailCore
 import MailResources
@@ -87,10 +88,6 @@ struct ThreadView: View {
         .coordinateSpace(name: "scrollView")
         .onPreferenceChange(ScrollOffsetPreferenceKey.self) { offset in
             displayNavigationTitle = offset.y < -85
-        }
-        .onAppear {
-            // TODO: Update Matomo
-            //MatomoUtils.track(view: ["MessageView"])
         }
         .task {
             if thread.hasUnseenMessages {
@@ -185,6 +182,7 @@ struct ThreadView: View {
         .emptyCase(isEmpty: showEmptyView) {
             EmptyThreadView()
         }
+        .matomoView(view: [MatomoUtils.View.threadView.displayName, "Main"])
     }
 
     private func didTap(action: Action) {

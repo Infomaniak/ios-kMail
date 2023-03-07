@@ -259,6 +259,7 @@ struct ComposeMessageView: View {
         }
         .navigationViewStyle(.stack)
         .defaultAppStorage(.shared)
+        .matomoView(view: ["ComposeMessage"])
     }
 
     @ViewBuilder

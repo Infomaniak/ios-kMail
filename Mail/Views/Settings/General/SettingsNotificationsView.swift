@@ -16,6 +16,7 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import InfomaniakCore
 import InfomaniakDI
 import InfomaniakNotifications
 import MailCore
@@ -73,6 +74,7 @@ struct SettingsNotificationsView: View {
         .onDisappear {
             updateTopicsForCurrentUserIfNeeded()
         }
+        .matomoView(view: [MatomoUtils.View.settingsView.displayName, "Notifications"])
     }
 
     func currentTopics() async {

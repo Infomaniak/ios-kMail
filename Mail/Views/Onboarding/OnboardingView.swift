@@ -163,6 +163,7 @@ struct OnboardingView: View {
                 UIViewController.attemptRotationToDeviceOrientation()
             }
         }
+        .matomoView(view: ["OnBoarding"])
     }
 
     // MARK: - Private methods

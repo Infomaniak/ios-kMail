@@ -16,6 +16,7 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import InfomaniakCore
 import MailResources
 import SwiftUI
 
@@ -63,6 +64,7 @@ struct SendSettingsView: View {
         .listStyle(.plain)
         .navigationBarTitle(MailResourcesStrings.Localizable.settingsSendTitle, displayMode: .inline)
         .backButtonDisplayMode(.minimal)
+        .matomoView(view: [MatomoUtils.View.settingsView.displayName, "Send"])
     }
 }
 

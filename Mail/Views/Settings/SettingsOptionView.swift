@@ -16,6 +16,7 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import InfomaniakCore
 import MailCore
 import MailResources
 import SwiftUI
@@ -108,6 +109,7 @@ struct SettingsOptionView<OptionEnum>: View where OptionEnum: CaseIterable, Opti
             let excludedValues = excludedKeyPaths.map { UserDefaults.shared[keyPath: $0] }
             self.values = allValues.filter { !excludedValues.contains($0) || ($0.rawValue as? String) == "none" }
         }
+        .matomoView(view: [MatomoUtils.View.settingsView.displayName, String(describing: OptionEnum.self)])
     }
 }
 

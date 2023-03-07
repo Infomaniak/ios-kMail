@@ -119,9 +119,6 @@ struct SearchView: View {
                 viewModel.initSearch()
             }
             viewModel.selectedThread = nil
-
-            // TODO: Update Matomo
-            //MatomoUtils.track(view: ["SearchView"])
         }
         .toolbar {
             ToolbarItem(placement: .navigationBarLeading) {
@@ -144,6 +141,7 @@ struct SearchView: View {
                 .frame(maxWidth: .infinity)
             }
         }
+        .matomoView(view: ["SearchView"])
     }
 
     func threadList(threads: [Thread]) -> some View {

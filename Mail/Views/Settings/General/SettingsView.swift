@@ -16,6 +16,7 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import InfomaniakCore
 import MailCore
 import MailResources
 import SwiftUI
@@ -101,6 +102,7 @@ struct SettingsView: View {
         .background(MailResourcesAsset.backgroundSecondaryColor.swiftUiColor)
         .navigationBarTitle(MailResourcesStrings.Localizable.settingsTitle, displayMode: .inline)
         .backButtonDisplayMode(.minimal)
+        .matomoView(view: [MatomoUtils.View.settingsView.displayName, "General"])
     }
 }
 

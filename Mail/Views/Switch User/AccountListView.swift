@@ -87,6 +87,7 @@ struct AccountListView: View {
         .task {
             try? await updateUsers()
         }
+        .matomoView(view: [MatomoUtils.View.accountView.displayName, "AccountListView"])
     }
 
     private func updateUsers() async throws {

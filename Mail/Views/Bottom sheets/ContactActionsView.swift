@@ -16,6 +16,7 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import InfomaniakCore
 import InfomaniakCoreUI
 import MailCore
 import MailResources
@@ -86,6 +87,7 @@ struct ContactActionsView: View {
         .sheet(item: $writtenToRecipient) { writtenToRecipient in
             ComposeMessageView.writingTo(recipient: writtenToRecipient, mailboxManager: mailboxManager)
         }
+        .matomoView(view: [MatomoUtils.View.bottomSheet.displayName, "ContactActionsView"])
     }
 
     // MARK: - Actions

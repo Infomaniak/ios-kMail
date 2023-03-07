@@ -68,6 +68,7 @@ struct MoveEmailView: View {
             }
         }
         .environment(\.folderCellType, .indicator)
+        .matomoView(view: ["MoveEmailView"])
     }
 
     private func listOfFolders(nestableFolders: [NestableFolder]) -> some View {

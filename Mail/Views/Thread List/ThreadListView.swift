@@ -16,6 +16,7 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import InfomaniakCore
 import MailCore
 import MailResources
 import RealmSwift
@@ -230,6 +231,7 @@ struct ThreadListView: View {
         .customAlert(item: $flushAlert) { item in
             FlushFolderAlertView(flushAlert: item, folder: viewModel.folder)
         }
+        .matomoView(view: [MatomoUtils.View.threadListView.displayName, "Main"])
     }
 
     private func changeFolder(newFolder: Folder?) {

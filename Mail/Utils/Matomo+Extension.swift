@@ -18,6 +18,16 @@
 
 import Foundation
 import InfomaniakCore
+import InfomaniakDI
+import SwiftUI
+
+extension MatomoUtils.View {
+    static let accountView = MatomoUtils.View(displayName: "AccountView")
+    static let bottomSheet = MatomoUtils.View(displayName: "BottomSheet")
+    static let threadListView = MatomoUtils.View(displayName: "ThreadListView")
+    static let threadView = MatomoUtils.View(displayName: "ThreadView")
+    static let settingsView = MatomoUtils.View(displayName: "SettingsView")
+}
 
 extension MatomoUtils.EventCategory {
     static let menuDrawer = MatomoUtils.EventCategory(displayName: "menuDrawer")
@@ -42,4 +52,24 @@ extension MatomoUtils.EventCategory {
     static let settingsDensity = MatomoUtils.EventCategory(displayName: "settingsDensity")
     static let settingsTheme = MatomoUtils.EventCategory(displayName: "settingsTheme")
     static let settingsSwipeActions = MatomoUtils.EventCategory(displayName: "settingsSwipeActions")
+}
+
+// MARK: - Track views
+
+struct MatomoView: ViewModifier {
+    let view: [String]
+
+    func body(content: Content) -> some View {
+        content
+            .onAppear {
+                @InjectService var matomo: MatomoUtils
+                matomo.track(view: view)
+            }
+    }
+}
+
+extension View {
+    func matomoView(view: [String]) -> some View {
+        modifier(MatomoView(view: view))
+    }
 }

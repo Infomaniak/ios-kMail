@@ -16,6 +16,7 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import InfomaniakCore
 import InfomaniakCoreUI
 import InfomaniakLogin
 import MailCore
@@ -155,6 +156,7 @@ struct AccountView: View {
             }
         }
         .defaultAppStorage(.shared)
+        .matomoView(view: [MatomoUtils.View.accountView.displayName, "Main"])
     }
 }
 

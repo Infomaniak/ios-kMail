@@ -177,8 +177,6 @@ struct MenuDrawerView: View {
         .environmentObject(mailboxManager)
         .environment(\.folderCellType, .link)
         .onAppear {
-            // TODO: Update Matomo
-            //MatomoUtils.track(view: ["MenuDrawer"])
             viewModel.createMenuItems(bottomSheet: bottomSheet)
         }
         .sheet(isPresented: $viewModel.isShowingHelp) {
@@ -189,6 +187,7 @@ struct MenuDrawerView: View {
         .sheet(isPresented: $viewModel.isShowingBugTracker) {
             BugTrackerView(isPresented: $viewModel.isShowingBugTracker)
         }
+        .matomoView(view: ["MenuDrawer"])
     }
 }
 

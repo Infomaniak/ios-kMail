@@ -16,6 +16,7 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import InfomaniakCore
 import InfomaniakCoreUI
 import MailCore
 import MailResources
@@ -61,6 +62,7 @@ struct RestoreEmailsView: View {
                 }
             }
         }
+        .matomoView(view: [MatomoUtils.View.bottomSheet.displayName, "RestoreEmailsView"])
     }
 
     private func restoreEmails() {

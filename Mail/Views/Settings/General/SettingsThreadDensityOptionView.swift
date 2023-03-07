@@ -16,6 +16,7 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import InfomaniakCore
 import MailCore
 import MailResources
 import SwiftUI
@@ -58,6 +59,7 @@ struct SettingsThreadDensityOptionView: View {
         .padding(.horizontal, 16)
         .padding(.top, 30)
         .background(MailResourcesAsset.backgroundSecondaryColor.swiftUiColor)
+        .matomoView(view: [MatomoUtils.View.settingsView.displayName, "ThreadDensity"])
     }
 }
 

@@ -16,6 +16,7 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import InfomaniakCore
 import MailCore
 import MailResources
 import SwiftUI
@@ -63,6 +64,7 @@ struct ActionsView: View {
             }
         }
         .padding(.horizontal, 8)
+        .matomoView(view: [MatomoUtils.View.bottomSheet.displayName, "ActionsView"])
     }
 }
 

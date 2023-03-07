@@ -16,6 +16,7 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import InfomaniakCore
 import MailCore
 import MailResources
 import SwiftUI
@@ -47,6 +48,7 @@ struct MoreStorageView: View {
                              primaryButtonAction: getMoreStorage)
         }
         .padding(.horizontal, Constants.bottomSheetHorizontalPadding)
+        .matomoView(view: [MatomoUtils.View.bottomSheet.displayName, "MoreStorageView"])
     }
 
     // MARK: - Actions

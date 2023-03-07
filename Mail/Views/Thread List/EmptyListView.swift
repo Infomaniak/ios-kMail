@@ -16,6 +16,7 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import InfomaniakCore
 import MailCore
 import MailResources
 import SwiftUI
@@ -37,6 +38,7 @@ struct EmptyListView: View {
         }
         .padding(48)
         .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .matomoView(view: [MatomoUtils.View.threadListView.displayName, "EmptyListView"])
     }
 }
 
