@@ -124,6 +124,13 @@ public enum Constants {
     public static func forwardQuote(message: Message) -> String {
         let date = DateFormatter.localizedString(from: message.date, dateStyle: .medium, timeStyle: .short)
         let to = ListFormatter.localizedString(byJoining: message.to.map(\.htmlDescription))
+        var cc: String {
+            if !message.cc.isEmpty {
+                return "<div>\(MailResourcesStrings.Localizable.ccTitle) \(ListFormatter.localizedString(byJoining: message.cc.map(\.htmlDescription)))<br></div>"
+            } else {
+                return ""
+            }
+        }
         return """
         <div class=\"forwardContentMessage\">
         <div>---------- \(MailResourcesStrings.Localizable.messageForwardHeader) ---------<br></div>
@@ -131,6 +138,7 @@ public enum Constants {
         <div>\(MailResourcesStrings.Localizable.dateTitle) \(date)<br></div>
         <div>\(MailResourcesStrings.Localizable.subjectTitle) \(message.formattedSubject)<br></div>
         <div>\(MailResourcesStrings.Localizable.toTitle) \(to)<br></div>
+        \(cc)
         <div><br></div>
         <div><br></div>
         \(message.body?.value?.replacingOccurrences(of: "'", with: "’") ?? "")
