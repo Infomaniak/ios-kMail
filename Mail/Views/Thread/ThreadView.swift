@@ -48,6 +48,8 @@ struct ThreadView: View {
     @StateObject private var moveSheet = MoveSheet()
     @StateObject private var bottomSheet = MessageBottomSheet()
     @StateObject private var threadBottomSheet = ThreadBottomSheet()
+    
+    @State private var showEmptyView = false
 
     @EnvironmentObject var globalBottomSheet: GlobalBottomSheet
     @EnvironmentObject var globalAlert: GlobalAlert
@@ -169,11 +171,15 @@ struct ThreadView: View {
         }
         .onChange(of: thread.messages) { newMessagesList in
             if newMessagesList.isEmpty {
+                showEmptyView = true
                 dismiss()
             }
             if thread.messageInFolderCount == 0 {
                 dismiss()
             }
+        }
+        .emptyCase(isEmpty: showEmptyView) {
+            EmptyThreadView()
         }
     }
 
