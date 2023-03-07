@@ -69,6 +69,7 @@ struct Slide: Identifiable {
 
 struct OnboardingView: View {
     @LazyInjectService var loginService: InfomaniakLogin
+    @LazyInjectService var matomo: MatomoUtils
 
     @Environment(\.window) private var window
     @Environment(\.dismiss) private var dismiss
@@ -240,8 +241,6 @@ struct OnboardingView: View {
     }
 
     private func loginSuccessful(code: String, codeVerifier verifier: String) {
-        @InjectService var matomo: MatomoUtils
-
         matomo.track(eventWithCategory: .account, name: "loggedIn")
         let previousAccount = AccountManager.instance.currentAccount
         Task {
@@ -249,7 +248,7 @@ struct OnboardingView: View {
                 _ = try await AccountManager.instance.createAndSetCurrentAccount(code: code, codeVerifier: verifier)
                 await (self.window?.windowScene?.delegate as? SceneDelegate)?.showMainView()
                 await UIApplication.shared.registerForRemoteNotifications()
-                matomo.connectUser(userId: AccountManager.instance.currentUserId)
+                matomo.connectUser(userId: String(AccountManager.instance.currentUserId))
             } catch MailError.noMailbox {
                 await (self.window?.windowScene?.delegate as? SceneDelegate)?.showNoMailboxView()
             } catch {
