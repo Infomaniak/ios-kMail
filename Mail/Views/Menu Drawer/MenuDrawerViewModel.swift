@@ -121,21 +121,25 @@ class MenuDrawerViewModel: ObservableObject {
         helpMenuItems = [
             MenuItem(icon: MailResourcesAsset.feedback,
                      label: MailResourcesStrings.Localizable.buttonFeedback,
+                     matomoName: "feedback",
                      action: sendFeedback),
             MenuItem(icon: MailResourcesAsset.help,
                      label: MailResourcesStrings.Localizable.buttonHelp,
+                     matomoName: "help",
                      action: openHelp)
         ]
 
         actionsMenuItems = [
             MenuItem(icon: MailResourcesAsset.drawerDownload,
                      label: MailResourcesStrings.Localizable.buttonImportEmails,
+                     matomoName: "importEmails",
                      action: importMails)
         ]
         if mailbox.permissions?.canRestoreEmails == true {
             actionsMenuItems.append(.init(
                 icon: MailResourcesAsset.restoreArrow,
                 label: MailResourcesStrings.Localizable.buttonRestoreEmails,
+                matomoName: "restoreEmails",
                 action: restoreMails
             ))
         }

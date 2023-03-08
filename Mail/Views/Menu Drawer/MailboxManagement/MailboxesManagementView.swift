@@ -30,7 +30,8 @@ struct MailboxesManagementView: View {
     @State private var isShowingManageAccount = false
     @State private var isShowingSwitchAccount = false
 
-    var mailboxes: [Mailbox]
+    let mailboxes: [Mailbox]
+    let matomo: MatomoUtils
 
     private var otherMailboxes: [Mailbox] {
         return mailboxes.filter { $0.mailboxId != mailboxManager.mailbox.mailboxId }
@@ -41,6 +42,7 @@ struct MailboxesManagementView: View {
             Button {
                 withAnimation {
                     navigationDrawerState.showMailboxes.toggle()
+                    matomo.track(eventWithCategory: .menuDrawer, name: "mailboxes", value: navigationDrawerState.showMailboxes)
                 }
             } label: {
                 HStack(spacing: 0) {
@@ -67,7 +69,7 @@ struct MailboxesManagementView: View {
             if navigationDrawerState.showMailboxes {
                 VStack(alignment: .leading) {
                     ForEach(otherMailboxes) { mailbox in
-                        MailboxCell(mailbox: mailbox)
+                        MailboxCell(mailbox: mailbox, matomo: matomo)
                     }
                 }
                 .task {
@@ -102,7 +104,7 @@ struct MailboxesManagementView: View {
 
 struct MailboxesManagementView_Previews: PreviewProvider {
     static var previews: some View {
-        MailboxesManagementView(mailboxes: [PreviewHelper.sampleMailbox])
+        MailboxesManagementView(mailboxes: [PreviewHelper.sampleMailbox], matomo: PreviewHelper.sampleMatomo)
             .environmentObject(PreviewHelper.sampleMailboxManager)
             .previewLayout(.sizeThatFits)
             .accentColor(UserDefaults.shared.accentColor.primary.swiftUiColor)

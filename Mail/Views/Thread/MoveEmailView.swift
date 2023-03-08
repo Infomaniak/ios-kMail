@@ -16,6 +16,8 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import InfomaniakCore
+import InfomaniakDI
 import MailCore
 import MailResources
 import RealmSwift
@@ -27,6 +29,8 @@ struct MoveEmailView: View {
     @EnvironmentObject private var alert: GlobalAlert
 
     @ObservedResults(Folder.self) var folders
+
+    @LazyInjectService private var matomo: MatomoUtils
 
     let mailboxManager: MailboxManager
     let currentFolderId: String?
@@ -61,6 +65,7 @@ struct MoveEmailView: View {
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
                 Button {
+                    matomo.track(eventWithCategory: .createFolder, name: "fromMove")
                     alert.state = .createNewFolder(mode: .move(moveHandler: moveHandler))
                 } label: {
                     Image(resource: MailResourcesAsset.folderAdd)

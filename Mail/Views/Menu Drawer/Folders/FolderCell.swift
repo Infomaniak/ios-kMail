@@ -51,6 +51,8 @@ struct FolderCell: View {
 
     var customCompletion: ((Folder) -> Void)?
 
+    var matomo: MatomoUtils?
+
     @State private var shouldTransit = false
 
     private var isCurrentFolder: Bool {
@@ -71,6 +73,7 @@ struct FolderCell: View {
                     )
                 } label: {
                     Button {
+                        matomo?.track(eventWithCategory: .menuDrawer, name: folder.content.matomoName)
                         splitViewManager.selectedFolder = folder.content
                         splitViewManager.showSearch = false
                         self.shouldTransit = true
@@ -103,6 +106,7 @@ struct FolderCell: View {
     }
 
     private func updateFolder() {
+        matomo?.track(eventWithCategory: .menuDrawer, name: folder.content.matomoName)
         splitViewManager.selectedFolder = folder.content
         navigationDrawerState.close()
     }

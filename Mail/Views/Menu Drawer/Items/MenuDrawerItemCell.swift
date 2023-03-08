@@ -23,9 +23,13 @@ import SwiftUI
 
 struct MenuDrawerItemCell: View {
     let content: MenuItem
+    let matomo: MatomoUtils
 
     var body: some View {
-        Button(action: content.action) {
+        Button {
+            matomo.track(eventWithCategory: .menuDrawer, name: content.matomoName)
+            content.action()
+        } label: {
             HStack(spacing: Constants.menuDrawerHorizontalItemSpacing) {
                 Image(resource: content.icon)
                     .resizable()
@@ -44,7 +48,10 @@ struct MenuDrawerItemCell: View {
 
 struct ItemCellView_Previews: PreviewProvider {
     static var previews: some View {
-        MenuDrawerItemCell(content: MenuItem(icon: MailResourcesAsset.drawerDownload, label: "Importer des mails") { print("Hello") })
+        MenuDrawerItemCell(content: MenuItem(icon: MailResourcesAsset.drawerDownload,
+                                             label: "Importer des mails",
+                                             matomoName: "") { print("Hello") },
+                           matomo: PreviewHelper.sampleMatomo)
             .previewLayout(.sizeThatFits)
             .previewDevice(PreviewDevice(stringLiteral: "iPhone 11 Pro"))
     }

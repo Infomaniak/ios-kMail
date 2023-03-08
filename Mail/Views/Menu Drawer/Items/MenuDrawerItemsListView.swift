@@ -16,6 +16,7 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import InfomaniakCore
 import MailCore
 import MailResources
 import SwiftUI
@@ -23,15 +24,19 @@ import SwiftUI
 struct MenuItem: Identifiable {
     let id = UUID()
 
-    var icon: MailResourcesImages
-    var label: String
+    let icon: MailResourcesImages
+    let label: String
+    let matomoName: String
 
-    var action: () -> Void
+    let action: () -> Void
 }
 
 struct MenuDrawerItemsListView: View {
     var title: String?
-    var content: [MenuItem]
+    let content: [MenuItem]
+
+    let matomo: MatomoUtils
+    var matomoName: String?
 
     @State private var isExpanded = false
 
@@ -41,6 +46,9 @@ struct MenuDrawerItemsListView: View {
                 Button {
                     withAnimation {
                         isExpanded.toggle()
+                        if let matomoName {
+                            matomo.track(eventWithCategory: .menuDrawer, name: matomoName, value: isExpanded)
+                        }
                     }
                 } label: {
                     HStack(spacing: 12) {
@@ -54,12 +62,12 @@ struct MenuDrawerItemsListView: View {
 
                 if isExpanded {
                     ForEach(content) { item in
-                        MenuDrawerItemCell(content: item)
+                        MenuDrawerItemCell(content: item, matomo: matomo)
                     }
                 }
             } else {
                 ForEach(content) { item in
-                    MenuDrawerItemCell(content: item)
+                    MenuDrawerItemCell(content: item, matomo: matomo)
                 }
             }
         }
@@ -72,9 +80,14 @@ struct ItemsListView_Previews: PreviewProvider {
     static var previews: some View {
         MenuDrawerItemsListView(title: "Actions avancées",
                                 content: [
-                                    MenuItem(icon: MailResourcesAsset.drawerDownload, label: "Importer des mails") { print("Hello") },
-                                    MenuItem(icon: MailResourcesAsset.restoreArrow, label: "Restaurer des mails") { print("Hello") }
-                                ])
+                                    MenuItem(icon: MailResourcesAsset.drawerDownload,
+                                             label: "Importer des mails",
+                                             matomoName: ""){ print("Hello") },
+                                    MenuItem(icon: MailResourcesAsset.restoreArrow,
+                                             label: "Restaurer des mails",
+                                             matomoName: "") { print("Hello") }
+                                ],
+                                matomo: PreviewHelper.sampleMatomo)
                                 .previewLayout(.sizeThatFits)
                                 .previewDevice(PreviewDevice(stringLiteral: "iPhone 11 Pro"))
     }

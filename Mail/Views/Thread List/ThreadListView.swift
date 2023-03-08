@@ -17,6 +17,7 @@
  */
 
 import InfomaniakCore
+import InfomaniakDI
 import MailCore
 import MailResources
 import RealmSwift
@@ -272,6 +273,8 @@ private struct ThreadListToolbar: ViewModifier {
     @EnvironmentObject var splitViewManager: SplitViewManager
     @EnvironmentObject var navigationDrawerState: NavigationDrawerState
 
+    @LazyInjectService private var matomo: MatomoUtils
+
     var selectAll: () -> Void
 
     func body(content: Content) -> some View {
@@ -288,6 +291,7 @@ private struct ThreadListToolbar: ViewModifier {
                         } else {
                             if isCompact {
                                 Button {
+                                    matomo.track(eventWithCategory: .menuDrawer, name: "openByButton")
                                     navigationDrawerState.open()
                                 } label: {
                                     Image(resource: MailResourcesAsset.burger)

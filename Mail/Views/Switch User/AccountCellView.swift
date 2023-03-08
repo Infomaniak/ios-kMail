@@ -101,6 +101,6 @@ struct AccountCellView_Previews: PreviewProvider {
     static var previews: some View {
         AccountCellView(
             account: Account(apiToken: ApiToken(accessToken: "", expiresIn: .max, refreshToken: "", scope: "", tokenType: "", userId: 0, expirationDate: .distantFuture)),
-            selectedUserId: .constant(nil))
+            selectedUserId: .constant(nil), matomo: PreviewHelper.sampleMatomo)
     }
 }

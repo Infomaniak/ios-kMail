@@ -16,17 +16,20 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import InfomaniakCore
 import MailCore
 import MailResources
 import SwiftUI
 
 struct MailboxCell: View {
     let mailbox: Mailbox
+    let matomo: MatomoUtils
 
     @Environment(\.window) private var window
 
     var body: some View {
         MailboxesManagementButtonView(icon: MailResourcesAsset.envelope, text: mailbox.email, detailNumber: mailbox.unseenMessages > 0 ? mailbox.unseenMessages : nil) {
+            matomo.track(eventWithCategory: .menuDrawer, name: "switchMailbox")
             (window?.windowScene?.delegate as? SceneDelegate)?.switchMailbox(mailbox)
         }
     }
@@ -34,6 +37,6 @@ struct MailboxCell: View {
 
 struct MailboxCell_Previews: PreviewProvider {
     static var previews: some View {
-        MailboxCell(mailbox: PreviewHelper.sampleMailbox)
+        MailboxCell(mailbox: PreviewHelper.sampleMailbox, matomo: PreviewHelper.sampleMatomo)
     }
 }

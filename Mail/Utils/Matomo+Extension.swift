@@ -30,6 +30,7 @@ extension MatomoUtils.View {
 }
 
 extension MatomoUtils.EventCategory {
+    static let createFolder = MatomoUtils.EventCategory(displayName: "createFolder")
     static let menuDrawer = MatomoUtils.EventCategory(displayName: "menuDrawer")
     static let multiSelection = MatomoUtils.EventCategory(displayName: "multiSelection")
     static let newFolderDialog = MatomoUtils.EventCategory(displayName: "newFolderDialog")
