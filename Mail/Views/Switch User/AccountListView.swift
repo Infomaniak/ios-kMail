@@ -17,6 +17,7 @@
  */
 
 import InfomaniakCore
+import InfomaniakDI
 import MailCore
 import MailResources
 import RealmSwift
@@ -64,11 +65,13 @@ struct AccountListView: View {
     @StateObject private var viewModel = AccountListViewModel()
     @State var isShowingNewAccountView = false
 
+    @LazyInjectService private var matomo: MatomoUtils
+
     var body: some View {
         ScrollView {
             VStack {
                 ForEach(Array(viewModel.accounts.keys)) { account in
-                    AccountCellView(account: account, selectedUserId: $viewModel.selectedUserId)
+                    AccountCellView(account: account, selectedUserId: $viewModel.selectedUserId, matomo: matomo)
                 }
             }
             .padding(8)
@@ -77,6 +80,7 @@ struct AccountListView: View {
         .background(MailResourcesAsset.backgroundColor.swiftUiColor)
         .navigationBarTitle(MailResourcesStrings.Localizable.titleMyAccounts, displayMode: .inline)
         .floatingActionButton(icon: MailResourcesAsset.plus, title: MailResourcesStrings.Localizable.buttonAddAccount) {
+            matomo.track(eventWithCategory: .account, name: "add")
             isShowingNewAccountView = true
         }
         .fullScreenCover(isPresented: $isShowingNewAccountView, onDismiss: {

@@ -28,6 +28,7 @@ struct AccountCellView: View {
 
     let account: Account
     @Binding var selectedUserId: Int?
+    let matomo: MatomoUtils
 
     private var isSelected: Bool {
         return selectedUserId == account.userId
@@ -43,6 +44,7 @@ struct AccountCellView: View {
 
             VStack {
                 Button {
+                    matomo.track(eventWithCategory: .account, name: "switch")
                     withAnimation {
                         selectedUserId = selectedUserId == account.userId ? nil : account.userId
                         (window?.windowScene?.delegate as? SceneDelegate)?.switchAccount(account)

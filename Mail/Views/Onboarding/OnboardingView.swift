@@ -124,6 +124,7 @@ struct OnboardingView: View {
                     MailButton(label: MailResourcesStrings.Localizable.buttonCreateAccount) {
                         // TODO: Create account
                         showWorkInProgressSnackBar()
+                        matomo.track(eventWithCategory: .account, name: "openCreationWebview")
                     }
                     .mailButtonStyle(.link)
                 } else {
@@ -231,6 +232,7 @@ struct OnboardingView: View {
 
     private func login() {
         isLoading = true
+        matomo.track(eventWithCategory: .account, name: "openLoginWebview")
         loginService.asWebAuthenticationLoginFrom(useEphemeralSession: true) { result in
             switch result {
             case let .success(result):

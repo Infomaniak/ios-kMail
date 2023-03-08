@@ -24,10 +24,10 @@ import MailResources
 import SwiftUI
 
 struct LogoutConfirmationView: View {
-
     @Environment(\.window) private var window
 
     let account: Account
+    let matomo: MatomoUtils
 
     var body: some View {
         VStack(alignment: .leading, spacing: 24) {
@@ -40,6 +40,7 @@ struct LogoutConfirmationView: View {
     }
 
     private func logout() {
+        matomo.track(eventWithCategory: .account, name: "logOutConfirm")
         Task {
             @InjectService var notificationService: InfomaniakNotifications
             await notificationService.removeStoredTokenFor(userId: account.userId)
