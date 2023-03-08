@@ -55,6 +55,15 @@ class AttachmentsManager: ObservableObject {
     init(draft: Draft, mailboxManager: MailboxManager) {
         self.draft = draft
         self.mailboxManager = mailboxManager
+
+        completeUploadedAttachments()
+    }
+
+    private func completeUploadedAttachments() {
+        for attachment in attachments {
+            var uploadTask = attachmentUploadTaskFor(uuid: attachment.uuid)
+            uploadTask.progress = 1
+        }
     }
 
     private func updateAttachment(oldAttachment: Attachment, newAttachment: Attachment) {
