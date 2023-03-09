@@ -32,11 +32,11 @@ struct ThreadListCell: View {
     @Binding var editedMessageDraft: Draft?
 
     @State private var shouldNavigateToThreadList = false
-    
+
     private var selectionType: SelectionBackgroundKind {
         if isSelected {
             return .multiple
-        } else if viewModel.selectedThread?.uid == thread.uid {
+        } else if !multipleSelectionViewModel.isEnabled && viewModel.selectedThread?.uid == thread.uid {
             return .single
         }
         return .none
