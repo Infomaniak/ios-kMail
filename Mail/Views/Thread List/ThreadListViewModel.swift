@@ -247,8 +247,7 @@ class DateSection: Identifiable {
         var newSections = [DateSection]()
 
         var currentSection: DateSection?
-        let filteredThreads = threads.filter { $0.id == selectedThread?.id || filter.accepts(thread: $0) }
-        self.filteredThreads = filteredThreads
+        filteredThreads = threads.filter { $0.id == selectedThread?.id || filter.accepts(thread: $0) }
         if filteredThreads.isEmpty && filterUnreadOn {
             filterUnreadOn.toggle()
         } else {
