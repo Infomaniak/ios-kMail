@@ -43,7 +43,8 @@ struct ThreadListCell: View {
         ZStack {
             if !thread.shouldPresentAsDraft {
                 NavigationLink(destination: ThreadView(mailboxManager: viewModel.mailboxManager,
-                                                       thread: thread),
+                                                       thread: thread,
+                                                       onDismiss: { viewModel.selectedThread = nil }),
                                isActive: $shouldNavigateToThreadList) { EmptyView() }
                     .opacity(0)
                     .disabled(multipleSelectionViewModel.isEnabled)
@@ -67,6 +68,11 @@ struct ThreadListCell: View {
         .listRowInsets(.init(top: 0, leading: 0, bottom: 0, trailing: 0))
         .listRowSeparator(.hidden)
         .listRowBackground(EmptyView())
+        .onChange(of: viewModel.selectedThread) { newThread in
+            if newThread?.uid == thread.uid {
+                shouldNavigateToThreadList = true
+            }
+        }
     }
 
     private func didTapCell() {
@@ -75,11 +81,6 @@ struct ThreadListCell: View {
                 multipleSelectionViewModel.toggleSelection(of: thread)
             }
         } else {
-            viewModel.selectedThread = thread
-            splitViewManager.splitViewController?.hide(.primary)
-            if splitViewManager.splitViewController?.splitBehavior == .overlay {
-                splitViewManager.splitViewController?.hide(.supplementary)
-            }
             if thread.shouldPresentAsDraft {
                 DraftUtils.editDraft(
                     from: thread,
@@ -87,6 +88,11 @@ struct ThreadListCell: View {
                     editedMessageDraft: $editedMessageDraft
                 )
             } else {
+                splitViewManager.splitViewController?.hide(.primary)
+                if splitViewManager.splitViewController?.splitBehavior == .overlay {
+                    splitViewManager.splitViewController?.hide(.supplementary)
+                }
+                viewModel.selectedThread = thread
                 shouldNavigateToThreadList = true
             }
         }
@@ -111,7 +117,8 @@ struct ThreadListCell_Previews: PreviewProvider {
             viewModel: ThreadListViewModel(mailboxManager: PreviewHelper.sampleMailboxManager,
                                            folder: nil,
                                            bottomSheet: ThreadBottomSheet(),
-                                           moveSheet: MoveSheet()),
+                                           moveSheet: MoveSheet(),
+                                           isCompact: false),
             multipleSelectionViewModel: ThreadListMultipleSelectionViewModel(mailboxManager: PreviewHelper.sampleMailboxManager),
             threadDensity: .large,
             editedMessageDraft: .constant(nil),

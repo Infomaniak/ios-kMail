@@ -81,7 +81,8 @@ struct ThreadListView: View {
         _viewModel = StateObject(wrappedValue: ThreadListViewModel(mailboxManager: mailboxManager,
                                                                    folder: folder,
                                                                    bottomSheet: threadBottomSheet,
-                                                                   moveSheet: moveEmailSheet))
+                                                                   moveSheet: moveEmailSheet,
+                                                                   isCompact: isCompact))
         _multipleSelectionViewModel =
             StateObject(wrappedValue: ThreadListMultipleSelectionViewModel(mailboxManager: mailboxManager))
         self.isCompact = isCompact
@@ -342,7 +343,10 @@ private struct ThreadListToolbar: ViewModifier {
                                     ) {
                                         Task {
                                             await tryOrDisplayError {
-                                                try await multipleSelectionViewModel.didTap(action: action, flushAlert: $flushAlert)
+                                                try await multipleSelectionViewModel.didTap(
+                                                    action: action,
+                                                    flushAlert: $flushAlert
+                                                )
                                             }
                                         }
                                     }

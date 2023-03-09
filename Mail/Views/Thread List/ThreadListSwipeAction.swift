@@ -100,7 +100,8 @@ struct ThreadListSwipeAction_Previews: PreviewProvider {
                         viewModel: ThreadListViewModel(mailboxManager: PreviewHelper.sampleMailboxManager,
                                                        folder: nil,
                                                        bottomSheet: ThreadBottomSheet(),
-                                                       moveSheet: MoveSheet()),
+                                                       moveSheet: MoveSheet(),
+                                                       isCompact: false),
                         action: .delete)
     }
 }
