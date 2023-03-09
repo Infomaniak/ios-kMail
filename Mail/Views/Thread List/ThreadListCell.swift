@@ -16,6 +16,7 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import InfomaniakCore
 import MailCore
 import MailResources
 import SwiftUI
@@ -47,6 +48,8 @@ struct ThreadListCell: View {
     }
 
     var isSelected: Bool
+
+    let matomo: MatomoUtils
 
     var body: some View {
         ZStack {
@@ -111,6 +114,7 @@ struct ThreadListCell: View {
             multipleSelectionViewModel.feedbackGenerator.prepare()
             multipleSelectionViewModel.isEnabled.toggle()
             if multipleSelectionViewModel.isEnabled {
+                matomo.track(eventWithCategory: .multiSelection, name: "enable")
                 multipleSelectionViewModel.feedbackGenerator.impactOccurred()
                 multipleSelectionViewModel.toggleSelection(of: thread)
             }
@@ -130,7 +134,8 @@ struct ThreadListCell_Previews: PreviewProvider {
             multipleSelectionViewModel: ThreadListMultipleSelectionViewModel(mailboxManager: PreviewHelper.sampleMailboxManager),
             threadDensity: .large,
             editedMessageDraft: .constant(nil),
-            isSelected: false
+            isSelected: false,
+            matomo: PreviewHelper.sampleMatomo
         )
     }
 }

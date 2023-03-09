@@ -131,7 +131,8 @@ struct ThreadListView: View {
                                                multipleSelectionViewModel: multipleSelectionViewModel,
                                                threadDensity: threadDensity,
                                                editedMessageDraft: $editedMessageDraft,
-                                               isSelected: multipleSelectionViewModel.selectedItems.contains(thread))
+                                               isSelected: multipleSelectionViewModel.selectedItems.contains(thread),
+                                               matomo: matomo)
                                     .id(thread.id)
                             }
                         } header: {
@@ -287,6 +288,7 @@ private struct ThreadListToolbar: ViewModifier {
                     ToolbarItemGroup(placement: .navigationBarLeading) {
                         if multipleSelectionViewModel.isEnabled {
                             Button(MailResourcesStrings.Localizable.buttonCancel) {
+                                matomo.track(eventWithCategory: .multiSelection, name: "cancel")
                                 withAnimation {
                                     multipleSelectionViewModel.isEnabled = false
                                 }
