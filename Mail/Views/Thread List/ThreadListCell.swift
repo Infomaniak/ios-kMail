@@ -33,10 +33,8 @@ struct ThreadListCell: View {
 
     @State private var shouldNavigateToThreadList = false
 
-    private var cellColor: Color {
-        return viewModel.selectedThread?.uid == thread.uid
-            ? MailResourcesAsset.backgroundCardSelectedColor.swiftUiColor
-            : MailResourcesAsset.backgroundColor.swiftUiColor
+    private var selectedThreadBackground: Bool {
+        return !multipleSelectionViewModel.isEnabled && (viewModel.selectedThread?.uid == thread.uid)
     }
 
     var isSelected: Bool
@@ -61,13 +59,14 @@ struct ThreadListCell: View {
         }
         .padding(.leading, multipleSelectionViewModel.isEnabled ? 8 : -4)
         .background(SelectionBackground(isSelected: isSelected, verticalPadding: 2))
+        .background(SelectionBackground(isSelected: selectedThreadBackground, verticalPadding: 0))
         .onTapGesture { didTapCell() }
         .onLongPressGesture(minimumDuration: 0.3) { didLongPressCell() }
         .swipeActions(thread: thread, viewModel: viewModel, multipleSelectionViewModel: multipleSelectionViewModel)
         .clipped()
         .listRowInsets(.init(top: 0, leading: 0, bottom: 0, trailing: 0))
         .listRowSeparator(.hidden)
-        .listRowBackground(cellColor)
+        .listRowBackground(EmptyView())
     }
 
     private func didTapCell() {
