@@ -32,6 +32,15 @@ struct ThreadListCell: View {
     @Binding var editedMessageDraft: Draft?
 
     @State private var shouldNavigateToThreadList = false
+    
+    private var selectionType: SelectionBackgroundKind {
+        if isSelected {
+            return .multiple
+        } else if viewModel.selectedThread?.uid == thread.uid {
+            return .single
+        }
+        return .none
+    }
 
     private var selectedThreadBackground: Bool {
         return !multipleSelectionViewModel.isEnabled && (viewModel.selectedThread?.uid == thread.uid)
@@ -59,8 +68,7 @@ struct ThreadListCell: View {
             )
         }
         .padding(.leading, multipleSelectionViewModel.isEnabled ? 8 : -4)
-        .background(SelectionBackground(isSelected: isSelected, verticalPadding: 2))
-        .background(SelectionBackground(isSelected: selectedThreadBackground, verticalPadding: 0))
+        .background(SelectionBackground(selectionType: selectionType))
         .onTapGesture { didTapCell() }
         .onLongPressGesture(minimumDuration: 0.3) { didLongPressCell() }
         .swipeActions(thread: thread, viewModel: viewModel, multipleSelectionViewModel: multipleSelectionViewModel)
