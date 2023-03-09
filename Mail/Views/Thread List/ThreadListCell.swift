@@ -34,7 +34,7 @@ struct ThreadListCell: View {
     @State private var shouldNavigateToThreadList = false
 
     private var cellColor: Color {
-        return viewModel.selectedThread == thread
+        return viewModel.selectedThread?.uid == thread.uid
             ? MailResourcesAsset.backgroundCardSelectedColor.swiftUiColor
             : MailResourcesAsset.backgroundColor.swiftUiColor
     }
