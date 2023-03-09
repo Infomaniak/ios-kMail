@@ -17,6 +17,7 @@
  */
 
 import InfomaniakCore
+import InfomaniakDI
 import Introspect
 import MailCore
 import MailResources
@@ -51,6 +52,8 @@ class NewMessageAlert: SheetState<NewMessageAlert.State> {
 
 struct ComposeMessageView: View {
     @Environment(\.dismiss) private var dismiss
+
+    @LazyInjectService private var matomo: MatomoUtils
 
     @State private var mailboxManager: MailboxManager
     @StateRealmObject var draft: Draft
@@ -113,6 +116,8 @@ struct ComposeMessageView: View {
     }
 
     static func editDraft(draft: Draft, mailboxManager: MailboxManager) -> ComposeMessageView {
+        @InjectService var matomo: MatomoUtils
+        matomo.track(eventWithCategory: .newMessage, name: "openFromDraft")
         return ComposeMessageView(mailboxManager: mailboxManager, draft: draft)
     }
 
@@ -273,7 +278,8 @@ struct ComposeMessageView: View {
                                autocompletion: $autocompletion,
                                addRecipientHandler: $addRecipientHandler,
                                focusedField: _focusedField,
-                               type: type)
+                               type: type,
+                               matomo: matomo)
             }
         }
     }
@@ -294,6 +300,7 @@ struct ComposeMessageView: View {
     }
 
     private func closeDraft() {
+        matomo.track(eventWithCategory: .newMessage, name: "saveDraft")
         guard attachmentsManager.allAttachmentsUploaded else {
             isShowingCancelAttachmentsError = true
             return
@@ -303,6 +310,7 @@ struct ComposeMessageView: View {
     }
 
     private func sendDraft() {
+        matomo.trackSendMessage(numberOfTo: draft.to.count, numberOfCc: draft.cc.count, numberOfBcc: draft.bcc.count)
         if let liveDraft = draft.thaw() {
             try? liveDraft.realm?.write {
                 liveDraft.action = .send

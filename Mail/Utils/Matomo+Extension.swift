@@ -21,6 +21,8 @@ import InfomaniakCore
 import InfomaniakDI
 import SwiftUI
 
+// MARK: - Views and Categories
+
 extension MatomoUtils.View {
     static let accountView = MatomoUtils.View(displayName: "AccountView")
     static let bottomSheet = MatomoUtils.View(displayName: "BottomSheet")
@@ -53,6 +55,18 @@ extension MatomoUtils.EventCategory {
     static let settingsDensity = MatomoUtils.EventCategory(displayName: "settingsDensity")
     static let settingsTheme = MatomoUtils.EventCategory(displayName: "settingsTheme")
     static let settingsSwipeActions = MatomoUtils.EventCategory(displayName: "settingsSwipeActions")
+}
+
+// MARK: - Helpers
+
+extension MatomoUtils {
+    func trackSendMessage(numberOfTo: Int, numberOfCc: Int, numberOfBcc: Int) {
+        track(eventWithCategory: .newMessage, name: "sendMail")
+
+        track(eventWithCategory: .newMessage, action: .data, name: "numberOfTo", value: Float(numberOfTo))
+        track(eventWithCategory: .newMessage, action: .data, name: "numberOfCC", value: Float(numberOfCc))
+        track(eventWithCategory: .newMessage, action: .data, name: "numberOfBCC", value: Float(numberOfBcc))
+    }
 }
 
 // MARK: - Track views

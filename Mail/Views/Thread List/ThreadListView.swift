@@ -67,6 +67,8 @@ struct ThreadListView: View {
     @State private var firstLaunch = true
     @State private var flushAlert: FlushAlertState?
 
+    @LazyInjectService private var matomo: MatomoUtils
+
     let isCompact: Bool
 
     init(mailboxManager: MailboxManager,
@@ -186,6 +188,7 @@ struct ThreadListView: View {
         .floatingActionButton(isEnabled: !multipleSelectionViewModel.isEnabled,
                               icon: MailResourcesAsset.pencilPlain,
                               title: MailResourcesStrings.Localizable.buttonNewMessage) {
+            matomo.track(eventWithCategory: .newMessage, name: "openFromFab")
             isShowingComposeNewMessageView.toggle()
         }
         .floatingPanel(state: bottomSheet, halfOpening: true) {

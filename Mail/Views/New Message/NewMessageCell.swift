@@ -85,7 +85,8 @@ struct RecipientCellView_Previews: PreviewProvider {
                            autocompletion: .constant([]),
                            addRecipientHandler: .constant { _ in /* Preview */ },
                            focusedField: .init(),
-                           type: .to)
+                           type: .to,
+                           matomo: PreviewHelper.sampleMatomo)
         }
         NewMessageCell(type: .subject) {
             TextField("", text: .constant(""))

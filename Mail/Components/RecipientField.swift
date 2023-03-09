@@ -16,6 +16,7 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import InfomaniakCore
 import InfomaniakCoreUI
 import MailCore
 import MailResources
@@ -48,6 +49,7 @@ struct RecipientField: View {
     @Binding var addRecipientHandler: ((Recipient) -> Void)?
     @FocusState var focusedField: ComposeViewFieldType?
     let type: ComposeViewFieldType
+    let matomo: MatomoUtils
 
     @State private var currentText = ""
     @State private var keyboardHeight: CGFloat = 0
@@ -73,6 +75,7 @@ struct RecipientField: View {
                     guard let recipient = autocompletion.first else { return }
                     add(recipient: recipient)
                     focusedField = type
+                    matomo.track(eventWithCategory: .newMessage, name: "addNewRecipient")
                 }
         }
         .onChange(of: currentText) { _ in
@@ -134,6 +137,7 @@ struct RecipientField_Previews: PreviewProvider {
         autocompletion: .constant([]),
         addRecipientHandler: .constant { _ in /* Preview */ },
         focusedField: .init(),
-        type: .to)
+        type: .to,
+        matomo: PreviewHelper.sampleMatomo)
     }
 }
