@@ -40,42 +40,42 @@ extension ThreadDensity {
 }
 
 struct ThreadCellDataHolder {
-    let thread: Thread
-    let mailboxManager: MailboxManager
-
     /// Sender of the last message that is not in the Sent folder, otherwise the last message of the thread
-    var recipientToDisplay: Recipient? {
-        let lastMessageNotFromSent = thread.messages.last { $0.folder?.role == .sent } ?? thread.messages.last
-        return lastMessageNotFromSent?.from.last
-    }
+    let recipientToDisplay: Recipient?
 
     /// Date of the last message of the folder, otherwise the last message of the thread
-    var date: String {
-        return thread.date.customRelativeFormatted
-    }
+    let date: String
 
     /// Field `to` in the draft folder, otherwise field `from`
-    var from: String {
-        let isDraftFolder = thread.messages.allSatisfy(\.isDraft)
-        return isDraftFolder ? thread.formattedTo : thread.formattedFrom
-    }
+    let from: String
 
     /// Subject of the first message
-    var subject: String {
-        thread.formattedSubject
-    }
+    let subject: String
 
     /// Last message of the thread, except for the Sent folder where we use the last message of the folder
-    var preview: String {
+    let preview: String
+
+    init(thread: Thread, mailboxManager: MailboxManager) {
+        let lastMessageNotFromSent = thread.messages.last { $0.folder?.role == .sent } ?? thread.messages.last
+        recipientToDisplay = lastMessageNotFromSent?.from.last
+
+        date = thread.date.customRelativeFormatted
+
+        let isDraftFolder = thread.messages.allSatisfy(\.isDraft)
+        from = isDraftFolder ? thread.formattedTo : thread.formattedFrom
+
+        subject = thread.formattedSubject
+
         var content = thread.messages.last?.preview
         if thread.folder?.role == .sent {
             content = (thread.lastMessageFromFolder ?? thread.messages.last)?.preview
         }
 
-        guard let content, !content.isEmpty else {
-            return MailResourcesStrings.Localizable.noBodyTitle
+        if let content, !content.isEmpty {
+            preview = content
+        } else {
+            preview = MailResourcesStrings.Localizable.noBodyTitle
         }
-        return content
     }
 }
 
