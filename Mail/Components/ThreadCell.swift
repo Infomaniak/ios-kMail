@@ -45,7 +45,7 @@ struct ThreadCellDataHolder {
 
     /// Sender of the last message that is not in the Sent folder, otherwise the last message of the thread
     var recipientToDisplay: Recipient? {
-        let lastMessageNotFromSent = thread.messages.last { $0.folder?.role == .sent } ?? thread.messages.last
+        let lastMessageNotFromSent = thread.messages.last { $0.folder?.role != .sent } ?? thread.messages.last
         return lastMessageNotFromSent?.from.last
     }
 
