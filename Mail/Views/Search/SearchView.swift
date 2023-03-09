@@ -134,8 +134,10 @@ struct SearchView: View {
 
             ToolbarItem(placement: .navigation) {
                 SearchTextField(value: $viewModel.searchValue, isFocused: $isSearchFieldFocused) {
+                    viewModel.matomo.track(eventWithCategory: .search, name: "validateSearch")
                     viewModel.searchThreadsForCurrentValue()
                 } onDelete: {
+                    viewModel.matomo.track(eventWithCategory: .search, name: "deleteSearch")
                     viewModel.clearSearch()
                 }
                 .frame(maxWidth: .infinity)
@@ -209,6 +211,7 @@ struct SearchView: View {
             ForEach(contacts) { contact in
                 RecipientAutocompletionCell(recipient: contact)
                     .onTapGesture {
+                        viewModel.matomo.track(eventWithCategory: .search, name: "selectContact")
                         Constants.globallyResignFirstResponder()
                         viewModel.searchThreadsForContact(contact)
                     }
@@ -245,6 +248,7 @@ struct SearchView: View {
                 }
                 .contentShape(Rectangle())
                 .onTapGesture {
+                    viewModel.matomo.track(eventWithCategory: .search, name: "fromHistory")
                     Constants.globallyResignFirstResponder()
                     viewModel.searchValue = searchItem
                     Task {
@@ -263,6 +267,7 @@ struct SearchView: View {
     }
 
     private func deleteSearchTapped(searchItem: String) {
+        viewModel.matomo.track(eventWithCategory: .search, name: "deleteFromHistory")
         Task {
             await tryOrDisplayError {
                 viewModel.searchHistory = await viewModel.mailboxManager.delete(

@@ -17,6 +17,8 @@
  */
 
 import Combine
+import InfomaniakCore
+import InfomaniakDI
 import Foundation
 import InfomaniakCore
 import MailCore
@@ -64,6 +66,7 @@ enum SearchState {
             if selectedSearchFolderId.isEmpty {
                 selectedFilters.removeAll { $0 == .folder }
             } else if !selectedFilters.contains(.folder) {
+                matomo.track(eventWithCategory: .search, name: SearchFilter.folder.matomoName)
                 selectedFilters.append(.folder)
             }
             Task {
@@ -77,6 +80,8 @@ enum SearchState {
     @Published var threads: [Thread] = []
     @Published var contacts: [Recipient] = []
     @Published var isLoading = false
+
+    @LazyInjectService var matomo: MatomoUtils
 
     private let searchFolder: Folder
     private var resourceNext: String?
@@ -131,6 +136,7 @@ enum SearchState {
             if selectedFilters.contains(filter) {
                 unselect(filter: filter)
             } else {
+                matomo.track(eventWithCategory: .search, name: filter.matomoName)
                 searchValueType = .threads
                 select(filter: filter)
             }
@@ -368,5 +374,9 @@ public enum SearchFilter: String, Identifiable {
         case .folder:
             return MailResourcesStrings.Localizable.searchFilterFolder
         }
+    }
+
+    public var matomoName: String {
+        return "\(rawValue)Filter"
     }
 }
