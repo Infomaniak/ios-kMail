@@ -61,6 +61,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
         @InjectService var notificationService: InfomaniakNotifications
         for account in accountManager.accounts {
+            guard account.token != nil else { continue }
             let userApiFetcher = accountManager.getApiFetcher(for: account.userId, token: account.token)
             Task {
                 await notificationService.updateRemoteNotificationsTokenIfNeeded(tokenData: deviceToken,

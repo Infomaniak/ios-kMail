@@ -56,7 +56,7 @@ struct ThreadCellDataHolder {
     let preview: String
 
     init(thread: Thread, mailboxManager: MailboxManager) {
-        let lastMessageNotFromSent = thread.messages.last { $0.folder?.role == .sent } ?? thread.messages.last
+        let lastMessageNotFromSent = thread.messages.last { $0.folder?.role != .sent } ?? thread.messages.last
         recipientToDisplay = lastMessageNotFromSent?.from.last
 
         date = thread.date.customRelativeFormatted
