@@ -57,7 +57,7 @@ public class Recipient: EmbeddedObject, Codable {
     public var isCurrentUser: Bool {
         return AccountManager.instance.currentAccount?.user.email == email
     }
-    
+
     public var isMe: Bool {
         return AccountManager.instance.currentMailboxManager?.mailbox.email == email
     }
@@ -69,17 +69,17 @@ public class Recipient: EmbeddedObject, Codable {
         return contact?.name.removePunctuation ?? (name.isEmpty ? email : name.removePunctuation)
     }
 
-    public var shortName: String {
+    public lazy var shortName: String = {
         let emailPredicate = NSPredicate(format: "SELF MATCHES %@", Constants.mailRegex)
         let delimiter = emailPredicate.evaluate(with: title) ? "@" : " "
         return title.components(separatedBy: delimiter).first ?? title
-    }
+    }()
 
     public var color: UIColor {
         return contact?.color ?? UIColor.backgroundColor(from: email.hash)
     }
 
-    public var initials: String {
+    public lazy var initials: String = {
         let nameInitials = (contact?.name ?? name)
             .removePunctuation
             .components(separatedBy: .whitespaces)
@@ -95,11 +95,9 @@ public class Recipient: EmbeddedObject, Codable {
         } else {
             return [firstLetter].map { "\($0)" }.joined().uppercased()
         }
-    }
+    }()
 
-    public var contact: MergedContact? {
-        AccountManager.instance.currentContactManager?.getContact(for: self)
-    }
+    public lazy var contact: MergedContact? = AccountManager.instance.currentContactManager?.getContact(for: self)
 
     public var htmlDescription: String {
         let emailString = "&lt;\(email)&gt;"
