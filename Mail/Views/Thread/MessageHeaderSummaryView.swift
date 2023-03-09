@@ -16,6 +16,7 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import InfomaniakCore
 import MailCore
 import MailResources
 import RealmSwift
@@ -25,6 +26,7 @@ struct MessageHeaderSummaryView: View {
     @ObservedRealmObject var message: Message
     @Binding var isMessageExpanded: Bool
     @Binding var isHeaderExpanded: Bool
+    let matomo: MatomoUtils
     let deleteDraftTapped: () -> Void
     let replyButtonTapped: () -> Void
     let moreButtonTapped: () -> Void
@@ -35,6 +37,7 @@ struct MessageHeaderSummaryView: View {
             HStack(alignment: .center) {
                 if let recipient = message.from.first {
                     Button {
+                        matomo.track(eventWithCategory: .message, name: "selectAvatar")
                         recipientTapped(recipient)
                     } label: {
                         RecipientImage(recipient: recipient, size: 40)
@@ -67,6 +70,9 @@ struct MessageHeaderSummaryView: View {
                                 .lineLimit(1)
                                 .textStyle(.bodySmallSecondary)
                             ChevronButton(isExpanded: $isHeaderExpanded)
+                                .onChange(of: isHeaderExpanded) { isExpanded in
+                                    matomo.track(eventWithCategory: .message, name: "openDetails", value: isExpanded)
+                                }
                         }
                     } else {
                         Text(message.formattedSubject)
@@ -115,7 +121,8 @@ struct MessageHeaderSummaryView_Previews: PreviewProvider {
         Group {
             MessageHeaderSummaryView(message: PreviewHelper.sampleMessage,
                                      isMessageExpanded: .constant(false),
-                                     isHeaderExpanded: .constant(false)) {
+                                     isHeaderExpanded: .constant(false),
+                                     matomo: PreviewHelper.sampleMatomo) {
                 // Preview
             } replyButtonTapped: {
                 // Preview
@@ -126,7 +133,8 @@ struct MessageHeaderSummaryView_Previews: PreviewProvider {
             }
             MessageHeaderSummaryView(message: PreviewHelper.sampleMessage,
                                      isMessageExpanded: .constant(true),
-                                     isHeaderExpanded: .constant(false)) {
+                                     isHeaderExpanded: .constant(false),
+                                     matomo: PreviewHelper.sampleMatomo) {
                 // Preview
             } replyButtonTapped: {
                 // Preview

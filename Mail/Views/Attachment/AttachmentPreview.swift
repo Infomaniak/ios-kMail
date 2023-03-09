@@ -16,6 +16,7 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import InfomaniakCore
 import MailCore
 import MailResources
 import RealmSwift
@@ -26,6 +27,8 @@ struct AttachmentPreview: View {
     @ObservedRealmObject var attachment: Attachment
 
     @Environment(\.verticalSizeClass) var sizeClass
+
+    let matomo: MatomoUtils
 
     var body: some View {
         NavigationView {
@@ -66,6 +69,7 @@ struct AttachmentPreview: View {
     }
 
     private func download() {
+        matomo.track(eventWithCategory: .message, name: "download")
         guard let url = attachment.localUrl,
               var source = UIApplication.shared.mainSceneKeyWindow?.rootViewController else {
             return
@@ -81,6 +85,6 @@ struct AttachmentPreview: View {
 
 struct AttachmentPreview_Previews: PreviewProvider {
     static var previews: some View {
-        AttachmentPreview(attachment: PreviewHelper.sampleAttachment)
+        AttachmentPreview(attachment: PreviewHelper.sampleAttachment, matomo: PreviewHelper.sampleMatomo)
     }
 }

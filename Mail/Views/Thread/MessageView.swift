@@ -17,6 +17,7 @@
  */
 
 import InfomaniakCore
+import InfomaniakDI
 import MailCore
 import MailResources
 import RealmSwift
@@ -31,6 +32,8 @@ struct MessageView: View {
 
     @State private var htmlLoaded = false
 
+    @LazyInjectService var matomo: MatomoUtils
+
     init(message: Message, isMessageExpanded: Bool = false) {
         self.message = message
         self.isMessageExpanded = isMessageExpanded
@@ -42,13 +45,14 @@ struct MessageView: View {
                 MessageHeaderView(
                     message: message,
                     isHeaderExpanded: $isHeaderExpanded,
-                    isMessageExpanded: $isMessageExpanded
+                    isMessageExpanded: $isMessageExpanded,
+                    matomo: matomo
                 )
                 .padding(.horizontal, 16)
 
                 if isMessageExpanded {
                     if !message.attachments.filter { $0.disposition == .attachment || $0.contentId == nil }.isEmpty {
-                        AttachmentsView(message: message)
+                        AttachmentsView(message: message, matomo: matomo)
                             .padding(.top, 24)
                     }
                     MessageBodyView(message: message)

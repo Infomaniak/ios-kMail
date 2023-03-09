@@ -42,6 +42,7 @@ extension MatomoUtils.EventCategory {
     static let snackbar = MatomoUtils.EventCategory(displayName: "snackbar")
     static let userInfo = MatomoUtils.EventCategory(displayName: "userInfo")
 
+    static let attachmentActions = MatomoUtils.EventCategory(displayName: "attachmentActions")
     static let bottomSheetMessageActions = MatomoUtils.EventCategory(displayName: "bottomSheetMessageActions")
     static let bottomSheetThreadActions = MatomoUtils.EventCategory(displayName: "bottomSheetThreadActions")
     static let contactActions = MatomoUtils.EventCategory(displayName: "contactActions")

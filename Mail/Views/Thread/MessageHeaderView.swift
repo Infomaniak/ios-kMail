@@ -33,11 +33,14 @@ struct MessageHeaderView: View {
     @EnvironmentObject var bottomSheet: MessageBottomSheet
     @EnvironmentObject var threadBottomSheet: ThreadBottomSheet
 
+    let matomo: MatomoUtils
+
     var body: some View {
         VStack(spacing: 12) {
             MessageHeaderSummaryView(message: message,
                                      isMessageExpanded: $isMessageExpanded,
                                      isHeaderExpanded: $isHeaderExpanded,
+                                     matomo: matomo,
                                      deleteDraftTapped: deleteDraft) {
                 if message.canReplyAll {
                     bottomSheet.open(state: .replyOption(message, isThread: false))
@@ -62,6 +65,7 @@ struct MessageHeaderView: View {
                 withAnimation {
                     isHeaderExpanded = false
                     isMessageExpanded.toggle()
+                    matomo.track(eventWithCategory: .message, name: "openMessage", value: isMessageExpanded)
                 }
             }
         }
@@ -74,6 +78,7 @@ struct MessageHeaderView: View {
     }
 
     private func openContact(recipient: Recipient) {
+        matomo.track(eventWithCategory: .message, name: "selectRecipient")
         let isRemoteContact = AccountManager.instance.currentContactManager?.getContact(for: recipient)?.remote != nil
         bottomSheet.open(
             state: .contact(recipient, isRemote: isRemoteContact)
@@ -95,17 +100,20 @@ struct MessageHeaderView_Previews: PreviewProvider {
             MessageHeaderView(
                 message: PreviewHelper.sampleMessage,
                 isHeaderExpanded: .constant(false),
-                isMessageExpanded: .constant(false)
+                isMessageExpanded: .constant(false),
+                matomo: PreviewHelper.sampleMatomo
             )
             MessageHeaderView(
                 message: PreviewHelper.sampleMessage,
                 isHeaderExpanded: .constant(false),
-                isMessageExpanded: .constant(true)
+                isMessageExpanded: .constant(true),
+                matomo: PreviewHelper.sampleMatomo
             )
             MessageHeaderView(
                 message: PreviewHelper.sampleMessage,
                 isHeaderExpanded: .constant(true),
-                isMessageExpanded: .constant(true)
+                isMessageExpanded: .constant(true),
+                matomo: PreviewHelper.sampleMatomo
             )
         }
         .previewLayout(.sizeThatFits)
