@@ -172,7 +172,8 @@ struct ComposeMessageView: View {
                                        alert: $alert,
                                        isShowingCamera: $isShowingCamera,
                                        isShowingFileSelection: $isShowingFileSelection,
-                                       isShowingPhotoLibrary: $isShowingPhotoLibrary)
+                                       isShowingPhotoLibrary: $isShowingPhotoLibrary,
+                                       matomo: matomo)
                             .ignoresSafeArea(.all, edges: .bottom)
                             .frame(height: editor.height + 20)
                             .padding([.vertical], 10)

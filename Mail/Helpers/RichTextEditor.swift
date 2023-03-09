@@ -16,6 +16,7 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import InfomaniakCore
 import MailCore
 import MailResources
 import SQRichTextEditor
@@ -31,16 +32,18 @@ struct RichTextEditor: UIViewRepresentable {
     @Binding var isShowingFileSelection: Bool
     @Binding var isShowingPhotoLibrary: Bool
     var alert: ObservedObject<NewMessageAlert>.Wrapper
+    let matomo: MatomoUtils
 
     init(model: Binding<RichTextEditorModel>, body: Binding<String>,
          alert: ObservedObject<NewMessageAlert>.Wrapper,
-         isShowingCamera: Binding<Bool>, isShowingFileSelection: Binding<Bool>, isShowingPhotoLibrary: Binding<Bool>) {
+         isShowingCamera: Binding<Bool>, isShowingFileSelection: Binding<Bool>, isShowingPhotoLibrary: Binding<Bool>, matomo: MatomoUtils) {
         _model = model
         _body = body
         self.alert = alert
         _isShowingCamera = isShowingCamera
         _isShowingFileSelection = isShowingFileSelection
         _isShowingPhotoLibrary = isShowingPhotoLibrary
+        self.matomo = matomo
     }
 
     class Coordinator: SQTextEditorDelegate {
@@ -95,7 +98,8 @@ struct RichTextEditor: UIViewRepresentable {
         let richTextEditor = MailEditorView(alert: alert,
                                             isShowingCamera: $isShowingCamera,
                                             isShowingFileSelection: $isShowingFileSelection,
-                                            isShowingPhotoLibrary: $isShowingPhotoLibrary)
+                                            isShowingPhotoLibrary: $isShowingPhotoLibrary,
+                                            matomo: matomo)
         richTextEditor.delegate = context.coordinator
         return richTextEditor
     }
@@ -123,12 +127,16 @@ class MailEditorView: SQTextEditorView {
 
     var toolbarStyle = ToolbarStyle.main
 
+    let matomo: MatomoUtils
+
     init(alert: ObservedObject<NewMessageAlert>.Wrapper,
-         isShowingCamera: Binding<Bool>, isShowingFileSelection: Binding<Bool>, isShowingPhotoLibrary: Binding<Bool>) {
+         isShowingCamera: Binding<Bool>, isShowingFileSelection: Binding<Bool>, isShowingPhotoLibrary: Binding<Bool>,
+         matomo: MatomoUtils) {
         self.alert = alert
         self.isShowingCamera = isShowingCamera
         self.isShowingFileSelection = isShowingFileSelection
         self.isShowingPhotoLibrary = isShowingPhotoLibrary
+        self.matomo = matomo
         super.init()
     }
 
@@ -259,7 +267,13 @@ class MailEditorView: SQTextEditorView {
     }
 
     @objc func onToolbarClick(sender: UIBarButtonItem) {
-        switch ToolbarAction(rawValue: sender.tag) {
+        guard let toolbarAction = ToolbarAction(rawValue: sender.tag) else { return }
+
+        if let matomoName = toolbarAction.matomoName {
+            matomo.track(eventWithCategory: .editorActions, name: matomoName)
+        }
+
+        switch toolbarAction {
         case .bold:
             bold()
         case .italic:
@@ -291,8 +305,6 @@ class MailEditorView: SQTextEditorView {
             // TODO: Handle programmed message
             webView.resignFirstResponder()
             showWorkInProgressSnackBar()
-        case .none:
-            return
         }
     }
 }
@@ -348,6 +360,33 @@ enum ToolbarAction: Int {
             return MailResourcesAsset.hyperlink.image
         case .programMessage:
             return MailResourcesAsset.programMessage.image
+        }
+    }
+
+    var matomoName: String? {
+        switch self {
+        case .bold:
+            return "bold"
+        case .italic:
+            return "italic"
+        case .underline:
+            return "underline"
+        case .strikeThrough:
+            return "strikeThrough"
+        case .unorderedList:
+            return "unorderedList"
+        case .addFile:
+            return "importFile"
+        case .addPhoto:
+            return "importImage"
+        case .takePhoto:
+            return "importFromCamera"
+        case .link:
+            return "addLink"
+        case .programMessage:
+            return "postpone"
+        default:
+            return nil
         }
     }
 
