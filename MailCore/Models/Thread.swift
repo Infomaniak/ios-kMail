@@ -76,19 +76,20 @@ public class Thread: Object, Decodable, Identifiable {
     }
 
     public var formattedFrom: String {
-        switch from.count {
+        var fromArray = [Recipient]()
+        for recipient in from {
+            guard !fromArray.contains(where: { $0.email == recipient.email && $0.name == recipient.name }) else { continue }
+            fromArray.append(recipient)
+        }
+
+        switch fromArray.count {
         case 0:
             return MailResourcesStrings.Localizable.unknownRecipientTitle
         case 1:
-            return from[0].title
+            return fromArray[0].title
         default:
-            var fromArray = [Recipient]()
-            let fromCount = min(from.count, 5)
-            for recipient in from[0..<fromCount] {
-                guard !fromArray.contains(where: { $0.email == recipient.email && $0.name == recipient.name }) else { continue }
-                fromArray.append(recipient)
-            }
-            return fromArray.map(\.shortName).joined(separator: ", ")
+            let fromCount = min(fromArray.count, Constants.threadCellMaxRecipients)
+            return fromArray[0..<fromCount].map(\.shortName).joined(separator: ", ")
         }
     }
 
