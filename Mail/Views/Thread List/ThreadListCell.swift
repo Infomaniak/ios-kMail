@@ -75,7 +75,7 @@ struct ThreadListCell: View {
         .clipped()
         .listRowInsets(.init(top: 0, leading: 0, bottom: 0, trailing: 0))
         .listRowSeparator(.hidden)
-        .listRowBackground(EmptyView())
+        .listRowBackground(MailResourcesAsset.backgroundColor.swiftUiColor)
         .onChange(of: viewModel.selectedThread) { newThread in
             if newThread?.uid == thread.uid {
                 shouldNavigateToThreadList = true
