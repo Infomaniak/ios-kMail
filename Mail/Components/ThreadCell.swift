@@ -40,48 +40,46 @@ extension ThreadDensity {
 }
 
 struct ThreadCellDataHolder {
-    let thread: Thread
-    let mailboxManager: MailboxManager
-
     /// Sender of the last message that is not in the Sent folder, otherwise the last message of the thread
-    var recipientToDisplay: Recipient? {
-        let lastMessageNotFromSent = thread.messages.last { $0.folder?.role != .sent } ?? thread.messages.last
-        return lastMessageNotFromSent?.from.last
-    }
+    let recipientToDisplay: Recipient?
 
     /// Date of the last message of the folder, otherwise the last message of the thread
-    var date: String {
-        return thread.date.customRelativeFormatted
-    }
+    let date: String
 
     /// Field `to` in the draft folder, otherwise field `from`
-    var from: String {
-        let isDraftFolder = thread.messages.allSatisfy(\.isDraft)
-        return isDraftFolder ? thread.formattedTo : thread.formattedFrom
-    }
+    let from: String
 
     /// Subject of the first message
-    var subject: String {
-        thread.formattedSubject
-    }
+    let subject: String
 
     /// Last message of the thread, except for the Sent folder where we use the last message of the folder
-    var preview: String {
+    let preview: String
+
+    init(thread: Thread, mailboxManager: MailboxManager) {
+        let lastMessageNotFromSent = thread.messages.last { $0.folder?.role != .sent } ?? thread.messages.last
+        recipientToDisplay = lastMessageNotFromSent?.from.last
+
+        date = thread.date.customRelativeFormatted
+
+        let isDraftFolder = thread.messages.allSatisfy(\.isDraft)
+        from = isDraftFolder ? thread.formattedTo : thread.formattedFrom
+
+        subject = thread.formattedSubject
+
         var content = thread.messages.last?.preview
         if thread.folder?.role == .sent {
             content = (thread.lastMessageFromFolder ?? thread.messages.last)?.preview
         }
 
-        guard let content, !content.isEmpty else {
-            return MailResourcesStrings.Localizable.noBodyTitle
+        if let content, !content.isEmpty {
+            preview = content
+        } else {
+            preview = MailResourcesStrings.Localizable.noBodyTitle
         }
-        return content
     }
 }
 
 struct ThreadCell: View {
-    @AppStorage(UserDefaults.shared.key(.accentColor)) private var accentColor = DefaultPreferences.accentColor
-
     let thread: Thread
     let mailboxManager: MailboxManager
 
@@ -116,7 +114,7 @@ struct ThreadCell: View {
 
     var body: some View {
         HStack(spacing: 8) {
-            unreadIndicator
+            UnreadIndicatorView(hidden: !thread.hasUnseenMessages)
                 .animation(
                     .threadListSlide(density: density, isMultipleSelectionEnabled: isMultipleSelectionEnabled),
                     value: isMultipleSelectionEnabled
@@ -126,11 +124,11 @@ struct ThreadCell: View {
                 if density == .large, let recipient = dataHolder.recipientToDisplay {
                     ZStack {
                         RecipientImage(recipient: recipient)
-                        checkbox
+                        CheckboxView(isSelected: isSelected, density: density)
                             .opacity(isSelected ? 1 : 0)
                     }
                 } else if isMultipleSelectionEnabled {
-                    checkbox
+                    CheckboxView(isSelected: isSelected, density: density)
                         .animation(
                             .threadListCheckbox(isMultipleSelectionEnabled: isMultipleSelectionEnabled),
                             value: isMultipleSelectionEnabled
@@ -140,12 +138,12 @@ struct ThreadCell: View {
             .padding(.trailing, 4)
 
             VStack(alignment: .leading, spacing: 4) {
-                cellHeader
+                ThreadCellHeaderView(thread: thread, dataHolder: dataHolder)
 
                 HStack(alignment: .top, spacing: 3) {
-                    threadInfo
+                    ThreadCellInfoView(dataHolder: dataHolder, density: density)
                     Spacer()
-                    threadDetails
+                    ThreadCellDetailsView(thread: thread)
                 }
             }
             .animation(
@@ -157,89 +155,6 @@ struct ThreadCell: View {
         .padding(.trailing, 12)
         .padding(.vertical, density.cellVerticalPadding)
         .clipped()
-    }
-
-    private var unreadIndicator: some View {
-        Circle()
-            .frame(width: Constants.unreadIconSize, height: Constants.unreadIconSize)
-            .foregroundColor(thread.hasUnseenMessages ? .accentColor : .clear)
-    }
-
-    private var checkbox: some View {
-        ZStack {
-            Circle()
-                .strokeBorder(Color.accentColor, lineWidth: 2)
-                .background(Circle().fill(isSelected ? Color.accentColor : Color.clear))
-                .frame(width: checkboxSize, height: checkboxSize)
-            Image(resource: MailResourcesAsset.check)
-                .foregroundColor(accentColor.onAccent.swiftUiColor)
-                .frame(height: Constants.checkmarkSize)
-                .opacity(isSelected ? 1 : 0)
-        }
-    }
-
-    private var cellHeader: some View {
-        HStack(spacing: 8) {
-            if thread.hasDrafts {
-                Text("\(MailResourcesStrings.Localizable.draftPrefix)")
-                    .textStyle(.bodyMediumError)
-                    .lineLimit(1)
-                    .layoutPriority(1)
-            }
-            Text(dataHolder.from)
-                .textStyle(.bodyMedium)
-                .lineLimit(1)
-
-            if thread.messages.count > 1 {
-                Text("\(thread.messages.count)")
-                    .textStyle(.bodySmallSecondary)
-                    .padding(.horizontal, 4)
-                    .lineLimit(1)
-                    .overlay {
-                        RoundedRectangle(cornerRadius: 3)
-                            .stroke(MailResourcesAsset.elementsColor.swiftUiColor)
-                    }
-            }
-
-            Spacer()
-
-            Text(dataHolder.date)
-                .textStyle(.bodySmallSecondary)
-                .lineLimit(1)
-        }
-    }
-
-    private var threadInfo: some View {
-        VStack(alignment: .leading, spacing: 4) {
-            Text(dataHolder.subject)
-                .textStyle(.body)
-                .lineLimit(1)
-
-            if density != .compact {
-                Text(dataHolder.preview)
-                    .textStyle(.bodySmallSecondary)
-                    .lineLimit(1)
-            }
-        }
-    }
-
-    private var threadDetails: some View {
-        HStack(spacing: 8) {
-            if thread.hasAttachments {
-                Image(resource: MailResourcesAsset.attachment)
-                    .resizable()
-                    .foregroundColor(MailResourcesAsset.textPrimaryColor)
-                    .scaledToFit()
-                    .frame(height: 16)
-            }
-            if thread.flagged {
-                Image(resource: MailResourcesAsset.starFull)
-                    .resizable()
-                    .foregroundColor(MailResourcesAsset.yellowActionColor)
-                    .scaledToFit()
-                    .frame(width: 16, height: 16)
-            }
-        }
     }
 }
 

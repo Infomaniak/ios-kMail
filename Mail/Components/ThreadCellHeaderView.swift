@@ -1,0 +1,55 @@
+/*
+ Infomaniak Mail - iOS App
+ Copyright (C) 2022 Infomaniak Network SA
+
+ This program is free software: you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation, either version 3 of the License, or
+ (at your option) any later version.
+
+ This program is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
+
+ You should have received a copy of the GNU General Public License
+ along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+import MailResources
+import SwiftUI
+
+struct ThreadCellHeaderView: View {
+    let thread: Thread
+    let dataHolder: ThreadCellDataHolder
+    var body: some View {
+        HStack(spacing: 8) {
+            if thread.hasDrafts {
+                Text("\(MailResourcesStrings.Localizable.draftPrefix)")
+                    .textStyle(.bodyMediumError)
+                    .lineLimit(1)
+                    .layoutPriority(1)
+            }
+            Text(dataHolder.from)
+                .textStyle(.bodyMedium)
+                .lineLimit(1)
+
+            if thread.messages.count > 1 {
+                Text("\(thread.messages.count)")
+                    .textStyle(.bodySmallSecondary)
+                    .padding(.horizontal, 4)
+                    .lineLimit(1)
+                    .overlay {
+                        RoundedRectangle(cornerRadius: 3)
+                            .stroke(MailResourcesAsset.elementsColor.swiftUiColor)
+                    }
+            }
+
+            Spacer()
+
+            Text(dataHolder.date)
+                .textStyle(.bodySmallSecondary)
+                .lineLimit(1)
+        }
+    }
+}
