@@ -110,6 +110,8 @@ public enum SwipeAction: String, CaseIterable, SettingsOptionEnum {
 
     public var matomoName: String {
         switch self {
+        case .delete:
+            return "trash"
         case .readUnread:
             return "markAsSeen"
         case .postPone:
@@ -119,6 +121,10 @@ public enum SwipeAction: String, CaseIterable, SettingsOptionEnum {
         default:
             return rawValue
         }
+    }
+
+    public var matomoSettingsName: String {
+        return "\(matomoName)Swipe"
     }
 
     public var isDestructive: Bool {

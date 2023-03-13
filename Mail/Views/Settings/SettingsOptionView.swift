@@ -31,6 +31,8 @@ struct SettingsOptionView<OptionEnum>: View where OptionEnum: CaseIterable, Opti
     private let excludedKeyPaths: [ReferenceWritableKeyPath<UserDefaults, OptionEnum>]?
 
     private let matomoCategory: MatomoUtils.EventCategory?
+    private let matomoValue: Float?
+    private let matomoName: KeyPath<OptionEnum, String>?
 
     @State private var values: [OptionEnum]
     @State private var selectedValue: OptionEnum {
@@ -52,13 +54,18 @@ struct SettingsOptionView<OptionEnum>: View where OptionEnum: CaseIterable, Opti
          values: [OptionEnum] = Array(OptionEnum.allCases),
          keyPath: ReferenceWritableKeyPath<UserDefaults, OptionEnum>,
          excludedKeyPath: [ReferenceWritableKeyPath<UserDefaults, OptionEnum>]? = nil,
-         matomoCategory: MatomoUtils.EventCategory? = nil) {
+         matomoCategory: MatomoUtils.EventCategory? = nil,
+         matomoName: KeyPath<OptionEnum, String>? = nil,
+         matomoValue: Float? = nil) {
         self.title = title
         self.subtitle = subtitle
         self.keyPath = keyPath
         excludedKeyPaths = excludedKeyPath
         allValues = values
+
         self.matomoCategory = matomoCategory
+        self.matomoName = matomoName
+        self.matomoValue = matomoValue
 
         _values = State(wrappedValue: values)
         _selectedValue = State(wrappedValue: UserDefaults.shared[keyPath: keyPath])
@@ -69,8 +76,8 @@ struct SettingsOptionView<OptionEnum>: View where OptionEnum: CaseIterable, Opti
             Section {
                 ForEach(values, id: \.rawValue) { value in
                     Button {
-                        if let matomoCategory {
-                            matomo.track(eventWithCategory: matomoCategory, name: "\(value.rawValue)")
+                        if let matomoCategory, let matomoName {
+                            matomo.track(eventWithCategory: matomoCategory, name: value[keyPath: matomoName], value: matomoValue)
                         }
                         selectedValue = value
                     } label: {

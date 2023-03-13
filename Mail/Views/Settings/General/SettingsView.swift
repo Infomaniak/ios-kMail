@@ -75,7 +75,8 @@ struct SettingsView: View {
                         title: MailResourcesStrings.Localizable.settingsThemeChoiceTitle,
                         subtitle: MailResourcesStrings.Localizable.settingsTheme,
                         keyPath: \.theme,
-                        matomoCategory: .settingsTheme
+                        matomoCategory: .settingsTheme,
+                        matomoName: \.rawValue
                     )
                 }
                 .settingCellModifier()
@@ -88,7 +89,8 @@ struct SettingsView: View {
                     SettingsOptionView(
                         title: MailResourcesStrings.Localizable.settingsAccentColor,
                         keyPath: \.accentColor,
-                        matomoCategory: .settingsAccentColor
+                        matomoCategory: .settingsAccentColor,
+                        matomoName: \.rawValue
                     )
                 }
                 .settingCellModifier()
