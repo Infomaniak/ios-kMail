@@ -68,7 +68,7 @@ struct SwipeConfigCell: View {
         .cornerRadius(15)
         .frame(height: 80)
         .background(
-            MailResourcesAsset.backgroundColor.swiftUiColor
+            MailResourcesAsset.backgroundSecondaryColor.swiftUiColor
                 .cornerRadius(15)
                 .shadow(radius: 4)
         )

@@ -45,9 +45,12 @@ struct SettingsSwipeActionsView: View {
     @AppStorage(UserDefaults.shared.key(.swipeFullTrailing)) var fullTrailing = DefaultPreferences.swipeFullTrailing
 
     var body: some View {
-        List {
-            ForEach(SwipeSettingsSection.allCases, id: \.self) { section in
-                Section {
+        ScrollView {
+            VStack(alignment: .leading, spacing: 24) {
+                Text(MailResourcesStrings.Localizable.settingsSwipeDescription)
+                    .textStyle(.bodySmallSecondary)
+
+                ForEach(SwipeSettingsSection.allCases, id: \.self) { section in
                     ForEach(section.items, id: \.self) { item in
                         SettingsSubMenuCell(title: item.title, subtitle: settingValue(for: item), icon: icon(for: item)) {
                             SettingsOptionView<SwipeAction>(
@@ -60,31 +63,20 @@ struct SettingsSwipeActionsView: View {
                                 matomoValue: item == .leading || item == .fullLeading ? 1 : 0
                             )
                             .frame(minHeight: 40)
-                            .padding(.horizontal, 8)
                         }
                     }
-
                     VStack(alignment: .leading, spacing: 16) {
                         SwipeConfigCell(section: section)
                         if section != SwipeSettingsSection.allCases.last {
                             IKDivider()
                         }
                     }
-                } header: {
-                    if section == SwipeSettingsSection.allCases.first {
-                        Text(MailResourcesStrings.Localizable.settingsSwipeDescription)
-                            .textStyle(.bodySmallSecondary)
-                            .padding(.horizontal, 8)
-                    }
                 }
-                .listSectionSeparator(.hidden)
-                .listRowSeparator(.hidden)
             }
+            .padding(.horizontal, 16)
         }
-        .listStyle(.plain)
-        .background(MailResourcesAsset.backgroundSecondaryColor.swiftUiColor)
+        .background(MailResourcesAsset.backgroundColor.swiftUiColor)
         .navigationBarTitle(MailResourcesStrings.Localizable.settingsSwipeActionsTitle, displayMode: .inline)
-        .backButtonDisplayMode(.minimal)
         .matomoView(view: [MatomoUtils.View.settingsView.displayName, "SwipeActions"])
     }
 
