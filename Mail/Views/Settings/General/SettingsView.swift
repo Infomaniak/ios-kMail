@@ -28,16 +28,10 @@ struct SettingsView: View {
     @AppStorage(UserDefaults.shared.key(.accentColor)) private var accentColor = DefaultPreferences.accentColor
 
     var body: some View {
-        List {
-            // TODO: - Mail address settings
-
-            Section {
-                SettingsSectionHeaderView(title: MailResourcesStrings.Localizable.settingsSectionGeneral, separator: true)
-                    .settingSectionHeaderModifier()
-
-                // TODO: - Send settings
-
-                // TODO: - Programmation settings
+        ScrollView {
+            VStack(alignment: .leading, spacing: 24) {
+                Text(MailResourcesStrings.Localizable.settingsSectionGeneral)
+                    .textStyle(.bodySmallSecondary)
 
                 SettingsToggleCell(
                     title: MailResourcesStrings.Localizable.settingsAppLock,
@@ -50,13 +44,15 @@ struct SettingsView: View {
                 SettingsSubMenuCell(title: MailResourcesStrings.Localizable.settingsMailboxGeneralNotifications) {
                     SettingsNotificationsView()
                 }
-                .settingCellModifier()
-            }
-            .listSectionSeparator(.hidden)
 
-            Section {
-                SettingsSectionHeaderView(title: MailResourcesStrings.Localizable.settingsSectionAppearance, separator: true)
-                    .settingSectionHeaderModifier()
+                IKDivider()
+            }
+            .padding(.horizontal, 16)
+
+            VStack(alignment: .leading, spacing: 24) {
+                Text(MailResourcesStrings.Localizable.settingsSectionAppearance)
+                    .textStyle(.bodySmallSecondary)
+                    .padding(.top, 16)
 
                 // Thread density
                 SettingsSubMenuCell(
@@ -65,7 +61,6 @@ struct SettingsView: View {
                 ) {
                     SettingsThreadDensityOptionView()
                 }
-                .settingCellModifier()
 
                 // Theme
                 SettingsSubMenuCell(
@@ -80,7 +75,6 @@ struct SettingsView: View {
                         matomoName: \.rawValue
                     )
                 }
-                .settingCellModifier()
 
                 // Accent color
                 SettingsSubMenuCell(
@@ -94,24 +88,17 @@ struct SettingsView: View {
                         matomoName: \.rawValue
                     )
                 }
-                .settingCellModifier()
 
                 // Swipe actions
                 SettingsSubMenuCell(title: MailResourcesStrings.Localizable.settingsSwipeActionsTitle) {
                     SettingsSwipeActionsView()
                 }
-                .settingCellModifier()
-
-                // TODO: - Message conversation mode
-
-                // TODO: - Display external content
             }
-            .listSectionSeparator(.hidden)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .padding(.horizontal, 16)
         }
-        .listStyle(.plain)
-        .background(MailResourcesAsset.backgroundSecondaryColor.swiftUiColor)
+        .background(MailResourcesAsset.backgroundColor.swiftUiColor)
         .navigationBarTitle(MailResourcesStrings.Localizable.settingsTitle, displayMode: .inline)
-        .backButtonDisplayMode(.minimal)
         .matomoView(view: [MatomoUtils.View.settingsView.displayName, "General"])
     }
 }
