@@ -43,18 +43,8 @@ struct MessageHeaderSummaryView: View {
 
                 VStack(alignment: .leading, spacing: 4) {
                     if message.isDraft {
-                        HStack {
-                            Text(MailResourcesStrings.Localizable.messageIsDraftOption)
-                                .textStyle(.bodyMediumError)
-                            Spacer()
-                            Button(action: deleteDraftTapped) {
-                                Image(resource: MailResourcesAsset.bin)
-                                    .resizable()
-                                    .scaledToFit()
-                                    .frame(width: 22, height: 22)
-                            }
-                        }
-                        .tint(MailResourcesAsset.redActionColor)
+                        Text(MailResourcesStrings.Localizable.messageIsDraftOption)
+                            .textStyle(.bodyMediumError)
                     } else {
                         HStack(alignment: .firstTextBaseline, spacing: 8) {
                             VStack {
@@ -82,6 +72,16 @@ struct MessageHeaderSummaryView: View {
                         Text(message.formattedSubject)
                             .textStyle(.bodySecondary)
                             .lineLimit(1)
+                    }
+                }
+
+                if message.isDraft {
+                    Spacer()
+                    Button(action: deleteDraftTapped) {
+                        Image(resource: MailResourcesAsset.bin)
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: 22, height: 22)
                     }
                 }
             }
