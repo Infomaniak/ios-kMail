@@ -27,111 +27,132 @@ struct Action: Identifiable, Equatable {
     let title: String
     let shortTitle: String?
     let icon: MailResourcesImages
+    let matomoName: String?
 
     static let delete = Action(
         id: 1,
         title: MailResourcesStrings.Localizable.actionDelete,
-        icon: MailResourcesAsset.bin
+        icon: MailResourcesAsset.bin,
+        matomoName: "delete"
     )
     static let reply = Action(
         id: 2,
         title: MailResourcesStrings.Localizable.actionReply,
-        icon: MailResourcesAsset.emailActionReply
+        icon: MailResourcesAsset.emailActionReply,
+        matomoName: "reply"
     )
     static let replyAll = Action(
         id: 3,
         title: MailResourcesStrings.Localizable.actionReplyAll,
-        icon: MailResourcesAsset.emailActionReplyToAll
+        icon: MailResourcesAsset.emailActionReplyToAll,
+        matomoName: "replyAll"
     )
     static let archive = Action(
         id: 4,
         title: MailResourcesStrings.Localizable.actionArchive,
-        icon: MailResourcesAsset.archives
+        icon: MailResourcesAsset.archives,
+        matomoName: "archive"
     )
     static let forward = Action(
         id: 5,
         title: MailResourcesStrings.Localizable.actionForward,
-        icon: MailResourcesAsset.emailActionTransfer
+        icon: MailResourcesAsset.emailActionTransfer,
+        matomoName: "forward"
     )
     static let markAsRead = Action(
         id: 6,
         title: MailResourcesStrings.Localizable.actionMarkAsRead,
         shortTitle: MailResourcesStrings.Localizable.actionShortMarkAsRead,
-        icon: MailResourcesAsset.envelopeOpen
+        icon: MailResourcesAsset.envelopeOpen,
+        matomoName: "markAsSeen"
     )
     static let markAsUnread = Action(
         id: 7,
         title: MailResourcesStrings.Localizable.actionMarkAsUnread,
         shortTitle: MailResourcesStrings.Localizable.actionShortMarkAsUnread,
-        icon: MailResourcesAsset.envelope
+        icon: MailResourcesAsset.envelope,
+        matomoName: "markAsSeen"
     )
     static let move = Action(
         id: 8,
         title: MailResourcesStrings.Localizable.actionMove,
-        icon: MailResourcesAsset.emailActionSend
+        icon: MailResourcesAsset.emailActionSend,
+        matomoName: "move"
     )
     static let postpone = Action(
         id: 9,
         title: MailResourcesStrings.Localizable.actionPostpone,
-        icon: MailResourcesAsset.waitingMessage
+        icon: MailResourcesAsset.waitingMessage,
+        matomoName: "postpone"
     )
     static let star = Action(
         id: 10,
         title: MailResourcesStrings.Localizable.actionStar,
         shortTitle: MailResourcesStrings.Localizable.actionShortStar,
-        icon: MailResourcesAsset.star
+        icon: MailResourcesAsset.star,
+        matomoName: "favorite"
     )
     static let unstar = Action(
         id: 21,
         title: MailResourcesStrings.Localizable.actionUnstar,
-        icon: MailResourcesAsset.unstar
+        icon: MailResourcesAsset.unstar,
+        matomoName: "favorite"
     )
     static let reportJunk = Action(
         id: 22,
         title: MailResourcesStrings.Localizable.actionReportJunk,
-        icon: MailResourcesAsset.report
+        icon: MailResourcesAsset.report,
+        matomoName: nil
     )
     static let spam = Action(
         id: 11,
         title: MailResourcesStrings.Localizable.actionSpam,
-        icon: MailResourcesAsset.spam
+        icon: MailResourcesAsset.spam,
+        matomoName: "spam"
     )
     static let nonSpam = Action(
         id: 20,
         title: MailResourcesStrings.Localizable.actionNonSpam,
-        icon: MailResourcesAsset.spam
+        icon: MailResourcesAsset.spam,
+        matomoName: "spam"
     )
     static let block = Action(
         id: 12,
         title: MailResourcesStrings.Localizable.actionBlockSender,
-        icon: MailResourcesAsset.blockUser
+        icon: MailResourcesAsset.blockUser,
+        matomoName: "blockUser"
     )
     static let phishing = Action(
         id: 13,
         title: MailResourcesStrings.Localizable.actionPhishing,
-        icon: MailResourcesAsset.phishing
+        icon: MailResourcesAsset.phishing,
+        matomoName: "signalPhishing"
     )
     static let print = Action(
         id: 14,
         title: MailResourcesStrings.Localizable.actionPrint,
-        icon: MailResourcesAsset.printText
+        icon: MailResourcesAsset.printText,
+        matomoName: "print"
     )
     static let report = Action(
         id: 15,
         title: MailResourcesStrings.Localizable.actionReportDisplayProblem,
-        icon: MailResourcesAsset.feedbacks
+        icon: MailResourcesAsset.feedbacks,
+        matomoName: nil
     )
     static let editMenu = Action(
         id: 16,
         title: MailResourcesStrings.Localizable.actionEditMenu,
-        icon: MailResourcesAsset.editTools
+        icon: MailResourcesAsset.editTools,
+        matomoName: "editMenu"
     )
 
-    init(id: Int, title: String, shortTitle: String? = nil, icon: MailResourcesImages) {
+    init(id: Int, title: String, shortTitle: String? = nil, icon: MailResourcesImages, matomoName: String?) {
         self.id = id
         self.title = title
         self.shortTitle = shortTitle
         self.icon = icon
+        self.matomoName = matomoName
     }
 
     static func == (lhs: Action, rhs: Action) -> Bool {

@@ -71,6 +71,9 @@ import SwiftUI
     }
 
     func didTap(action: Action, flushAlert: Binding<FlushAlertState?>) async throws {
+        if let matomoName = action.matomoName {
+            matomo.trackBulkEvent(eventWithCategory: .threadActions, name: matomoName, numberOfItems: selectedItems.count)
+        }
         switch action {
         case .markAsRead, .markAsUnread:
             try await mailboxManager.toggleRead(threads: Array(selectedItems))

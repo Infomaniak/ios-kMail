@@ -110,8 +110,6 @@ public enum SwipeAction: String, CaseIterable, SettingsOptionEnum {
 
     public var matomoName: String {
         switch self {
-        case .delete:
-            return "trash"
         case .readUnread:
             return "markAsSeen"
         case .postPone:

@@ -18,6 +18,7 @@
 
 import InfomaniakCore
 import InfomaniakCoreUI
+import InfomaniakDI
 import MailCore
 import MailResources
 import SwiftUI
@@ -29,21 +30,27 @@ struct ContactActionsView: View {
     var mailboxManager: MailboxManager
     @State private var writtenToRecipient: Recipient?
 
+    @LazyInjectService private var matomo: MatomoUtils
+
     private struct ContactAction: Hashable {
         let name: String
         let image: UIImage
+        let matomoName: String
 
         static let writeEmailAction = ContactAction(
             name: MailResourcesStrings.Localizable.contactActionWriteEmail,
-            image: MailResourcesAsset.pencil.image
+            image: MailResourcesAsset.pencil.image,
+            matomoName: "writeEmail"
         )
         static let addContactsAction = ContactAction(
             name: MailResourcesStrings.Localizable.contactActionAddToContacts,
-            image: MailResourcesAsset.addUser.image
+            image: MailResourcesAsset.addUser.image,
+            matomoName: "addToContacts"
         )
         static let copyEmailAction = ContactAction(
             name: MailResourcesStrings.Localizable.contactActionCopyEmailAddress,
-            image: MailResourcesAsset.duplicate.image
+            image: MailResourcesAsset.duplicate.image,
+            matomoName: "copyEmailAddress"
         )
     }
 
@@ -69,6 +76,7 @@ struct ContactActionsView: View {
 
             ForEach(actions, id: \.self) { action in
                 Button {
+                    matomo.track(eventWithCategory: .contactActions, name: action.matomoName)
                     handleAction(action)
                 } label: {
                     HStack(spacing: 20) {
