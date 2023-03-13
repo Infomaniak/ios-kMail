@@ -38,8 +38,13 @@ struct SettingsView: View {
 
                 // TODO: - Programmation settings
 
-                SettingsToggleCell(title: MailResourcesStrings.Localizable.settingsAppLock, userDefaults: \.isAppLockEnabled)
-                    .settingCellModifier()
+                SettingsToggleCell(
+                    title: MailResourcesStrings.Localizable.settingsAppLock,
+                    userDefaults: \.isAppLockEnabled,
+                    matomoCategory: .settingsGeneral,
+                    matomoName: "lock"
+                )
+                .settingCellModifier()
 
                 SettingsSubMenuCell(title: MailResourcesStrings.Localizable.settingsMailboxGeneralNotifications) {
                     SettingsNotificationsView()
@@ -69,7 +74,8 @@ struct SettingsView: View {
                     SettingsOptionView<Theme>(
                         title: MailResourcesStrings.Localizable.settingsThemeChoiceTitle,
                         subtitle: MailResourcesStrings.Localizable.settingsTheme,
-                        keyPath: \.theme
+                        keyPath: \.theme,
+                        matomoCategory: .settingsTheme
                     )
                 }
                 .settingCellModifier()
@@ -81,7 +87,8 @@ struct SettingsView: View {
                 ) {
                     SettingsOptionView(
                         title: MailResourcesStrings.Localizable.settingsAccentColor,
-                        keyPath: \.accentColor
+                        keyPath: \.accentColor,
+                        matomoCategory: .settingsAccentColor
                     )
                 }
                 .settingCellModifier()

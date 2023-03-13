@@ -17,6 +17,7 @@
  */
 
 import InfomaniakCore
+import InfomaniakDI
 import MailCore
 import MailResources
 import SwiftUI
@@ -24,6 +25,8 @@ import UIKit
 
 struct SettingsThreadDensityOptionView: View {
     @State private var selectedValue: ThreadDensity
+
+    @LazyInjectService private var matomo: MatomoUtils
 
     init() {
         _selectedValue = State(wrappedValue: UserDefaults.shared.threadDensity)
@@ -44,6 +47,9 @@ struct SettingsThreadDensityOptionView: View {
             }
             .pickerStyle(.segmented)
             .ikSegmentedControl()
+            .onChange(of: selectedValue) { newValue in
+                matomo.track(eventWithCategory: .settingsDensity, name: newValue.rawValue)
+            }
 
             selectedValue.image?
                 .resizable()

@@ -17,6 +17,7 @@
  */
 
 import InfomaniakCore
+import InfomaniakDI
 import MailCore
 import MailResources
 import SwiftUI
@@ -28,6 +29,8 @@ struct SettingsOptionView<OptionEnum>: View where OptionEnum: CaseIterable, Opti
     private let allValues: [OptionEnum]
     private let keyPath: ReferenceWritableKeyPath<UserDefaults, OptionEnum>
     private let excludedKeyPaths: [ReferenceWritableKeyPath<UserDefaults, OptionEnum>]?
+
+    private let matomoCategory: MatomoUtils.EventCategory?
 
     @State private var values: [OptionEnum]
     @State private var selectedValue: OptionEnum {
@@ -42,16 +45,20 @@ struct SettingsOptionView<OptionEnum>: View where OptionEnum: CaseIterable, Opti
         }
     }
 
+    @LazyInjectService private var matomo: MatomoUtils
+
     init(title: String,
          subtitle: String? = nil,
          values: [OptionEnum] = Array(OptionEnum.allCases),
          keyPath: ReferenceWritableKeyPath<UserDefaults, OptionEnum>,
-         excludedKeyPath: [ReferenceWritableKeyPath<UserDefaults, OptionEnum>]? = nil) {
+         excludedKeyPath: [ReferenceWritableKeyPath<UserDefaults, OptionEnum>]? = nil,
+         matomoCategory: MatomoUtils.EventCategory? = nil) {
         self.title = title
         self.subtitle = subtitle
         self.keyPath = keyPath
-        self.excludedKeyPaths = excludedKeyPath
-        self.allValues = values
+        excludedKeyPaths = excludedKeyPath
+        allValues = values
+        self.matomoCategory = matomoCategory
 
         _values = State(wrappedValue: values)
         _selectedValue = State(wrappedValue: UserDefaults.shared[keyPath: keyPath])
@@ -62,6 +69,9 @@ struct SettingsOptionView<OptionEnum>: View where OptionEnum: CaseIterable, Opti
             Section {
                 ForEach(values, id: \.rawValue) { value in
                     Button {
+                        if let matomoCategory {
+                            matomo.track(eventWithCategory: matomoCategory, name: "\(value.rawValue)")
+                        }
                         selectedValue = value
                     } label: {
                         VStack(spacing: 0) {
