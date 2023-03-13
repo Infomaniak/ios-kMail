@@ -23,7 +23,7 @@ import SwiftUI
 
 // MARK: - Views and Categories
 
-extension MatomoUtils.View {
+public extension MatomoUtils.View {
     static let accountView = MatomoUtils.View(displayName: "AccountView")
     static let bottomSheet = MatomoUtils.View(displayName: "BottomSheet")
     static let threadListView = MatomoUtils.View(displayName: "ThreadListView")
@@ -31,7 +31,7 @@ extension MatomoUtils.View {
     static let settingsView = MatomoUtils.View(displayName: "SettingsView")
 }
 
-extension MatomoUtils.EventCategory {
+public extension MatomoUtils.EventCategory {
     static let createFolder = MatomoUtils.EventCategory(displayName: "createFolder")
     static let menuDrawer = MatomoUtils.EventCategory(displayName: "menuDrawer")
     static let multiSelection = MatomoUtils.EventCategory(displayName: "multiSelection")
@@ -60,7 +60,7 @@ extension MatomoUtils.EventCategory {
 
 // MARK: - Helpers
 
-extension MatomoUtils {
+public extension MatomoUtils {
     func trackSendMessage(numberOfTo: Int, numberOfCc: Int, numberOfBcc: Int) {
         track(eventWithCategory: .newMessage, name: "sendMail")
 
@@ -84,7 +84,7 @@ struct MatomoView: ViewModifier {
     }
 }
 
-extension View {
+public extension View {
     func matomoView(view: [String]) -> some View {
         modifier(MatomoView(view: view))
     }
