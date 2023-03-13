@@ -54,6 +54,7 @@ public extension MatomoUtils.EventCategory {
     static let settingsGeneral = MatomoUtils.EventCategory(displayName: "settingsGeneral")
     static let settingsAccentColor = MatomoUtils.EventCategory(displayName: "settingsAccentColor")
     static let settingsDensity = MatomoUtils.EventCategory(displayName: "settingsDensity")
+    static let settingsNotifications = MatomoUtils.EventCategory(displayName: "settingsNotifications")
     static let settingsTheme = MatomoUtils.EventCategory(displayName: "settingsTheme")
     static let settingsSwipeActions = MatomoUtils.EventCategory(displayName: "settingsSwipeActions")
 }
