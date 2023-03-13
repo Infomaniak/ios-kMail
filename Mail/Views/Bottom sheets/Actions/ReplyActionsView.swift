@@ -34,6 +34,7 @@ struct ReplyActionsView: View {
                                      target: target,
                                      state: state,
                                      globalSheet: globalSheet,
+                                     matomoCategory: .replyBottomSheet,
                                      replyHandler: replyHandler)
     }
 

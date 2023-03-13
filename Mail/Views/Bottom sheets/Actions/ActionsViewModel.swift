@@ -17,7 +17,9 @@
  */
 
 import Foundation
+import InfomaniakCore
 import InfomaniakCoreUI
+import InfomaniakDI
 import MailCore
 import MailResources
 import RealmSwift
@@ -193,8 +195,12 @@ enum ActionsTarget: Equatable {
     private let replyHandler: ((Message, ReplyMode) -> Void)?
     private let completionHandler: (() -> Void)?
 
+    private let matomoCategory: MatomoUtils.EventCategory?
+
     @Published var quickActions: [Action] = []
     @Published var listActions: [Action] = []
+
+    @LazyInjectService private var matomo: MatomoUtils
 
     init(mailboxManager: MailboxManager,
          target: ActionsTarget,
@@ -202,6 +208,7 @@ enum ActionsTarget: Equatable {
          globalSheet: GlobalBottomSheet,
          globalAlert: GlobalAlert? = nil,
          moveSheet: MoveSheet? = nil,
+         matomoCategory: MatomoUtils.EventCategory? = nil,
          replyHandler: ((Message, ReplyMode) -> Void)? = nil,
          completionHandler: (() -> Void)? = nil) {
         self.mailboxManager = mailboxManager
@@ -212,6 +219,7 @@ enum ActionsTarget: Equatable {
         self.moveSheet = moveSheet
         self.replyHandler = replyHandler
         self.completionHandler = completionHandler
+        self.matomoCategory = matomoCategory
         setActions()
     }
 
@@ -281,6 +289,9 @@ enum ActionsTarget: Equatable {
     func didTap(action: Action) async throws {
         state.close()
         globalSheet.close()
+        if let matomoCategory, let matomoName = action.matomoName {
+            matomo.track(eventWithCategory: matomoCategory, name: matomoName)
+        }
         switch action {
         case .delete:
             try await delete()

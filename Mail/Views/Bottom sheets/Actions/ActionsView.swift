@@ -32,12 +32,18 @@ struct ActionsView: View {
          moveSheet: MoveSheet? = nil,
          replyHandler: ((Message, ReplyMode) -> Void)? = nil,
          completionHandler: (() -> Void)? = nil) {
+        var matomoCategory = MatomoUtils.EventCategory.bottomSheetMessageActions
+        if case .threads = target {
+            matomoCategory = .bottomSheetThreadActions
+        }
+
         viewModel = ActionsViewModel(mailboxManager: mailboxManager,
                                      target: target,
                                      state: state,
                                      globalSheet: globalSheet,
                                      globalAlert: globalAlert,
                                      moveSheet: moveSheet,
+                                     matomoCategory: matomoCategory,
                                      replyHandler: replyHandler,
                                      completionHandler: completionHandler)
     }

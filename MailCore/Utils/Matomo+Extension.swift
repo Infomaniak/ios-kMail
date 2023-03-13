@@ -38,6 +38,7 @@ public extension MatomoUtils.EventCategory {
     static let newFolderDialog = MatomoUtils.EventCategory(displayName: "newFolderDialog")
     static let newMessage = MatomoUtils.EventCategory(displayName: "newMessage")
     static let message = MatomoUtils.EventCategory(displayName: "message")
+    static let replyBottomSheet = MatomoUtils.EventCategory(displayName: "replyBottomSheet")
     static let search = MatomoUtils.EventCategory(displayName: "search")
     static let snackbar = MatomoUtils.EventCategory(displayName: "snackbar")
     static let userInfo = MatomoUtils.EventCategory(displayName: "userInfo")
