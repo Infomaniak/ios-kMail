@@ -34,10 +34,11 @@ public extension MatomoUtils.View {
 public extension MatomoUtils.EventCategory {
     static let createFolder = MatomoUtils.EventCategory(displayName: "createFolder")
     static let menuDrawer = MatomoUtils.EventCategory(displayName: "menuDrawer")
+    static let message = MatomoUtils.EventCategory(displayName: "message")
     static let multiSelection = MatomoUtils.EventCategory(displayName: "multiSelection")
     static let newFolderDialog = MatomoUtils.EventCategory(displayName: "newFolderDialog")
     static let newMessage = MatomoUtils.EventCategory(displayName: "newMessage")
-    static let message = MatomoUtils.EventCategory(displayName: "message")
+    static let onboarding = MatomoUtils.EventCategory(displayName: "onboarding")
     static let replyBottomSheet = MatomoUtils.EventCategory(displayName: "replyBottomSheet")
     static let search = MatomoUtils.EventCategory(displayName: "search")
     static let snackbar = MatomoUtils.EventCategory(displayName: "snackbar")
