@@ -97,6 +97,7 @@ public class AccountManager: RefreshTokenDelegate {
     @LazyInjectService var keychainHelper: KeychainHelper
     @LazyInjectService var bugTracker: BugTracker
     @LazyInjectService var notificationService: InfomaniakNotifications
+    @LazyInjectService var matomo: MatomoUtils
 
     private static let appIdentifierPrefix = Bundle.main.infoDictionary!["AppIdentifierPrefix"] as! String
     private static let group = "com.infomaniak.mail"
@@ -289,7 +290,6 @@ public class AccountManager: RefreshTokenDelegate {
             throw MailError.noMailbox
         }
 
-        @InjectService var matomo: MatomoUtils
         matomo.track(eventWithCategory: .userInfo, name: "nbMailboxes", value: Float(mailboxesResponse.count))
 
         let newAccount = Account(apiToken: token)
@@ -398,6 +398,7 @@ public class AccountManager: RefreshTokenDelegate {
     public func setCurrentAccount(account: Account) {
         currentAccount = account
         currentUserId = account.userId
+        matomo.connectUser(userId: "\(currentUserId)")
     }
 
     private func setSentryUserId(userId: Int) {
