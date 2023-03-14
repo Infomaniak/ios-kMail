@@ -31,7 +31,6 @@ struct SearchView: View {
 
     @StateObject var bottomSheet: ThreadBottomSheet
 
-    @State public var isSearchFieldFocused = false
     @Binding private var editedMessageDraft: Draft?
     @Binding private var messageReply: MessageReply?
 
@@ -135,7 +134,7 @@ struct SearchView: View {
             }
 
             ToolbarItem(placement: .navigation) {
-                SearchTextField(value: $viewModel.searchValue, isFocused: $isSearchFieldFocused) {
+                SearchTextField(value: $viewModel.searchValue) {
                     viewModel.searchThreadsForCurrentValue()
                 } onDelete: {
                     viewModel.clearSearch()

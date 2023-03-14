@@ -21,9 +21,11 @@ import SwiftUI
 
 struct SearchTextField: View {
     @Binding public var value: String
-    @Binding public var isFocused: Bool
+
     public var onSubmit: () -> Void
     public var onDelete: () -> Void
+
+    @FocusState private var isFocused: Bool
 
     var body: some View {
         HStack(spacing: 10) {
@@ -33,18 +35,17 @@ struct SearchTextField: View {
                     .frame(width: 16, height: 16)
             }
             .foregroundColor(MailResourcesAsset.textTertiaryColor)
-            TextField(MailResourcesStrings.Localizable.searchFieldPlaceholder, text: $value) { focused in
-                isFocused = focused
-            }
-            .autocorrectionDisabled()
-            .textFieldStyle(DefaultTextFieldStyle())
-            .foregroundColor(value.isEmpty
-                ? MailResourcesAsset.textTertiaryColor
-                : MailResourcesAsset.textPrimaryColor)
-            .onSubmit {
-                onSubmit()
-            }
-            .padding(.vertical, 11)
+            TextField(MailResourcesStrings.Localizable.searchFieldPlaceholder, text: $value)
+                .focused($isFocused)
+                .autocorrectionDisabled()
+                .textFieldStyle(DefaultTextFieldStyle())
+                .foregroundColor(value.isEmpty
+                    ? MailResourcesAsset.textTertiaryColor
+                    : MailResourcesAsset.textPrimaryColor)
+                .onSubmit {
+                    onSubmit()
+                }
+                .padding(.vertical, 11)
 
             Button(action: onDelete) {
                 Image(resource: MailResourcesAsset.remove)
@@ -53,6 +54,9 @@ struct SearchTextField: View {
             }
             .foregroundColor(MailResourcesAsset.textTertiaryColor)
             .opacity(value.isEmpty ? 0 : 1)
+        }
+        .onAppear {
+            isFocused = true
         }
         .padding(.horizontal, 12)
         .background {
@@ -66,7 +70,6 @@ struct SearchTextField_Previews: PreviewProvider {
     static var previews: some View {
         SearchTextField(
             value: .constant("Recherche"),
-            isFocused: .constant(false),
             onSubmit: { /* Empty on purpose */ },
             onDelete: { /* Empty on purpose */ }
         )
