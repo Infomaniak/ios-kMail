@@ -176,12 +176,13 @@ struct OnboardingView: View {
                         loginHandler.login()
                     }
                     .mailButtonFullWidth(true)
-                    .disabled(loginHandler.isLoading)
+                    .mailButtonLoading(loginHandler.isLoading)
 
                     MailButton(label: MailResourcesStrings.Localizable.buttonCreateAccount) {
                         isPresentingCreateAccount.toggle()
                     }
                     .mailButtonStyle(.link)
+                    .disabled(loginHandler.isLoading)
                 } else {
                     MailButton(icon: MailResourcesAsset.fullArrowRight) {
                         withAnimation {
@@ -194,7 +195,7 @@ struct OnboardingView: View {
             .frame(height: Constants.onboardingButtonHeight + Constants.onboardingBottomButtonPadding, alignment: .top)
             .padding(.horizontal, 24)
         }
-        .overlay(alignment: .topLeading, content: {
+        .overlay(alignment: .topLeading) {
             if !isScrollEnabled {
                 Button {
                     dismiss()
@@ -205,7 +206,7 @@ struct OnboardingView: View {
                 .frame(width: 20, height: 20)
                 .padding(16)
             }
-        })
+        }
         .alert(MailResourcesStrings.Localizable.errorLoginTitle, isPresented: $loginHandler.isPresentingErrorAlert) {
             // Use default button
         } message: {
