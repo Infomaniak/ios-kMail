@@ -367,7 +367,7 @@ private struct ThreadListToolbar: ViewModifier {
                                 ToolbarButton(text: MailResourcesStrings.Localizable.buttonMore,
                                               icon: MailResourcesAsset.plusActions,
                                               width: reader.size.width / 5) {
-                                    bottomSheet.open(state: .actions(.threads(Array(multipleSelectionViewModel.selectedItems))))
+                                    bottomSheet.open(state: .actions(.threads(Array(multipleSelectionViewModel.selectedItems), true)))
                                 }
                             }
                         }

@@ -77,7 +77,7 @@ struct ActionsView: View {
 struct ActionsView_Previews: PreviewProvider {
     static var previews: some View {
         ActionsView(mailboxManager: PreviewHelper.sampleMailboxManager,
-                    target: .threads([PreviewHelper.sampleThread]),
+                    target: .threads([PreviewHelper.sampleThread], false),
                     state: ThreadBottomSheet(),
                     globalSheet: GlobalBottomSheet(),
                     globalAlert: GlobalAlert()) { _, _ in /* Preview */ }

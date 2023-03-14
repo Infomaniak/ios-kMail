@@ -62,7 +62,7 @@ struct ReportJunkView: View {
 struct ReportJunkView_Previews: PreviewProvider {
     static var previews: some View {
         ReportJunkView(mailboxManager: PreviewHelper.sampleMailboxManager,
-                       target: .threads([PreviewHelper.sampleThread]),
+                       target: .threads([PreviewHelper.sampleThread], false),
                        state: ThreadBottomSheet(),
                        globalSheet: GlobalBottomSheet(),
                        globalAlert: GlobalAlert())

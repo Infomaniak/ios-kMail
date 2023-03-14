@@ -163,12 +163,12 @@ struct Action: Identifiable, Equatable {
 }
 
 enum ActionsTarget: Equatable {
-    case threads([Thread])
+    case threads([Thread], Bool)
     case message(Message)
 
     var isInvalidated: Bool {
         switch self {
-        case let .threads(threads):
+        case let .threads(threads, _):
             return threads.contains(where: \.isInvalidated)
         case let .message(message):
             return message.isInvalidated
@@ -177,8 +177,8 @@ enum ActionsTarget: Equatable {
 
     func freeze() -> Self {
         switch self {
-        case let .threads(threads):
-            return .threads(threads.map { $0.freezeIfNeeded() })
+        case let .threads(threads, isMultiSelectionEnabled):
+            return .threads(threads.map { $0.freezeIfNeeded() }, isMultiSelectionEnabled)
         case let .message(message):
             return .message(message.freezeIfNeeded())
         }
@@ -225,7 +225,7 @@ enum ActionsTarget: Equatable {
 
     private func setActions() {
         switch target {
-        case let .threads(threads):
+        case let .threads(threads, _):
             if threads.count > 1 {
                 let spam = threads.allSatisfy { $0.folder?.role == .spam }
                 let unread = threads.allSatisfy(\.hasUnseenMessages)
@@ -290,7 +290,11 @@ enum ActionsTarget: Equatable {
         state.close()
         globalSheet.close()
         if let matomoCategory, let matomoName = action.matomoName {
-            matomo.track(eventWithCategory: matomoCategory, name: matomoName)
+            if case let .threads(threads, isMultipleSelectionEnabled) = target, isMultipleSelectionEnabled {
+                matomo.trackBulkEvent(eventWithCategory: matomoCategory, name: matomoName, numberOfItems: threads.count)
+            } else {
+                matomo.track(eventWithCategory: matomoCategory, name: matomoName)
+            }
         }
         switch action {
         case .delete:
@@ -337,7 +341,7 @@ enum ActionsTarget: Equatable {
         let undoRedoAction: UndoRedoAction
         let snackBarMessage: String
         switch target {
-        case let .threads(threads):
+        case let .threads(threads, _):
             guard threads.first?.folder != folder else { return }
             undoRedoAction = try await mailboxManager.move(threads: threads, to: folder)
             snackBarMessage = MailResourcesStrings.Localizable.snackbarThreadsMoved(folder.localizedName)
@@ -359,7 +363,7 @@ enum ActionsTarget: Equatable {
 
     private func delete() async throws {
         switch target {
-        case let .threads(threads):
+        case let .threads(threads, _):
             try await mailboxManager.moveOrDelete(threads: threads)
         case let .message(message):
             try await mailboxManager.moveOrDelete(message: message)
@@ -369,7 +373,7 @@ enum ActionsTarget: Equatable {
     private func reply(mode: ReplyMode) async throws {
         var completeMode = mode
         switch target {
-        case let .threads(threads):
+        case let .threads(threads, _):
             // We don't handle this action in multiple selection
             guard threads.count == 1, let thread = threads.first,
                   let message = thread.messages.last(where: { !$0.isDraft }) else { break }
@@ -404,7 +408,7 @@ enum ActionsTarget: Equatable {
 
     private func toggleRead() async throws {
         switch target {
-        case let .threads(threads):
+        case let .threads(threads, _):
             try await mailboxManager.toggleRead(threads: threads)
         case let .message(message):
             try await mailboxManager.markAsSeen(message: message, seen: !message.seen)
@@ -414,7 +418,7 @@ enum ActionsTarget: Equatable {
     private func move() {
         let folderId: String?
         switch target {
-        case let .threads(threads):
+        case let .threads(threads, _):
             folderId = threads.first?.folder?.id
         case let .message(message):
             folderId = message.folderId
@@ -434,7 +438,7 @@ enum ActionsTarget: Equatable {
 
     private func star() async throws {
         switch target {
-        case let .threads(threads):
+        case let .threads(threads, _):
             await tryOrDisplayError {
                 try await mailboxManager.toggleStar(threads: threads)
             }

@@ -18,6 +18,7 @@
 
 import InfomaniakCore
 import InfomaniakCoreUI
+import InfomaniakDI
 import MailCore
 import MailResources
 import RealmSwift
@@ -58,6 +59,8 @@ struct ThreadView: View {
     @Environment(\.verticalSizeClass) var sizeClass
     @Environment(\.dismiss) var dismiss
 
+    @LazyInjectService private var matomo: MatomoUtils
+
     private let toolbarActions: [Action] = [.reply, .forward, .archive, .delete]
 
     var body: some View {
@@ -95,7 +98,8 @@ struct ThreadView: View {
             }
         }
         .navigationTitle(displayNavigationTitle ? thread.formattedSubject : "")
-        .navigationBarThreadViewStyle(appearance: displayNavigationTitle ? BarAppearanceConstants.threadViewNavigationBarScrolledAppearance : BarAppearanceConstants.threadViewNavigationBarAppearance)
+        .navigationBarThreadViewStyle(appearance: displayNavigationTitle ? BarAppearanceConstants
+            .threadViewNavigationBarScrolledAppearance : BarAppearanceConstants.threadViewNavigationBarAppearance)
         .backButtonDisplayMode(.minimal)
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
@@ -125,6 +129,9 @@ struct ThreadView: View {
         .environmentObject(mailboxManager)
         .environmentObject(bottomSheet)
         .environmentObject(threadBottomSheet)
+        .onAppear {
+            print("hello", thread.messages.count)
+        }
         .sheet(item: $messageReply) { messageReply in
             ComposeMessageView.replyOrForwardMessage(messageReply: messageReply, mailboxManager: mailboxManager)
         }
@@ -187,6 +194,9 @@ struct ThreadView: View {
     }
 
     private func didTap(action: Action) {
+        if let matomoName = action.matomoName {
+            matomo.track(eventWithCategory: .threadActions, name: matomoName)
+        }
         switch action {
         case .reply:
             guard let message = thread.messages.last else { return }
