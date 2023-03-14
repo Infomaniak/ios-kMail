@@ -20,27 +20,52 @@ import MailCore
 import MailResources
 import SwiftUI
 
+enum SelectionBackgroundKind {
+    case none
+    case multiple
+    case single
+
+    var verticalPadding: CGFloat {
+        switch self {
+        case .multiple:
+            return 2
+        default:
+            return 0
+        }
+    }
+
+    var opacity: Double {
+        switch self {
+        case .none:
+            return 0
+        default:
+            return 1
+        }
+    }
+}
+
 struct SelectionBackground: View {
     @AppStorage(UserDefaults.shared.key(.accentColor)) private var accentColor = DefaultPreferences.accentColor
 
-    let isSelected: Bool
+    let selectionType: SelectionBackgroundKind
 
     var offsetX: CGFloat = 8
-    var leadingPadding: CGFloat = 0
-    var verticalPadding: CGFloat = 0
 
     var body: some View {
         RoundedRectangle(cornerRadius: 10)
             .fill(accentColor.secondary.swiftUiColor)
             .offset(x: offsetX, y: 0)
-            .padding(.leading, leadingPadding)
-            .padding(.vertical, verticalPadding)
-            .opacity(isSelected ? 1 : 0)
+            .padding(.leading, 0)
+            .padding(.vertical, selectionType.verticalPadding)
+            .opacity(selectionType.opacity)
     }
 }
 
 struct SelectionBackground_Previews: PreviewProvider {
     static var previews: some View {
-        SelectionBackground(isSelected: true, offsetX: 10, leadingPadding: -2, verticalPadding: 0)
+        SelectionBackground(
+            selectionType: SelectionBackgroundKind.single,
+            offsetX: 10
+        )
     }
 }

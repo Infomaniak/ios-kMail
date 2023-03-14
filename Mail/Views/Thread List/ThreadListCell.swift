@@ -33,10 +33,17 @@ struct ThreadListCell: View {
 
     @State private var shouldNavigateToThreadList = false
 
-    private var cellColor: Color {
-        return viewModel.selectedThread == thread
-            ? MailResourcesAsset.backgroundCardSelectedColor.swiftUiColor
-            : MailResourcesAsset.backgroundColor.swiftUiColor
+    private var selectionType: SelectionBackgroundKind {
+        if isSelected {
+            return .multiple
+        } else if !multipleSelectionViewModel.isEnabled && viewModel.selectedThread?.uid == thread.uid {
+            return .single
+        }
+        return .none
+    }
+
+    private var selectedThreadBackground: Bool {
+        return !multipleSelectionViewModel.isEnabled && (viewModel.selectedThread?.uid == thread.uid)
     }
 
     var isSelected: Bool
@@ -45,7 +52,8 @@ struct ThreadListCell: View {
         ZStack {
             if !thread.shouldPresentAsDraft {
                 NavigationLink(destination: ThreadView(mailboxManager: viewModel.mailboxManager,
-                                                       thread: thread),
+                                                       thread: thread,
+                                                       onDismiss: { viewModel.selectedThread = nil }),
                                isActive: $shouldNavigateToThreadList) { EmptyView() }
                     .opacity(0)
                     .disabled(multipleSelectionViewModel.isEnabled)
@@ -60,14 +68,19 @@ struct ThreadListCell: View {
             )
         }
         .padding(.leading, multipleSelectionViewModel.isEnabled ? 8 : -4)
-        .background(SelectionBackground(isSelected: isSelected, verticalPadding: 2))
+        .background(SelectionBackground(selectionType: selectionType))
         .onTapGesture { didTapCell() }
         .onLongPressGesture(minimumDuration: 0.3) { didLongPressCell() }
         .swipeActions(thread: thread, viewModel: viewModel, multipleSelectionViewModel: multipleSelectionViewModel)
         .clipped()
         .listRowInsets(.init(top: 0, leading: 0, bottom: 0, trailing: 0))
         .listRowSeparator(.hidden)
-        .listRowBackground(cellColor)
+        .listRowBackground(MailResourcesAsset.backgroundColor.swiftUiColor)
+        .onChange(of: viewModel.selectedThread) { newThread in
+            if newThread?.uid == thread.uid {
+                shouldNavigateToThreadList = true
+            }
+        }
     }
 
     private func didTapCell() {
@@ -76,11 +89,6 @@ struct ThreadListCell: View {
                 multipleSelectionViewModel.toggleSelection(of: thread)
             }
         } else {
-            viewModel.selectedThread = thread
-            splitViewManager.splitViewController?.hide(.primary)
-            if splitViewManager.splitViewController?.splitBehavior == .overlay {
-                splitViewManager.splitViewController?.hide(.supplementary)
-            }
             if thread.shouldPresentAsDraft {
                 DraftUtils.editDraft(
                     from: thread,
@@ -88,6 +96,11 @@ struct ThreadListCell: View {
                     editedMessageDraft: $editedMessageDraft
                 )
             } else {
+                splitViewManager.splitViewController?.hide(.primary)
+                if splitViewManager.splitViewController?.splitBehavior == .overlay {
+                    splitViewManager.splitViewController?.hide(.supplementary)
+                }
+                viewModel.selectedThread = thread
                 shouldNavigateToThreadList = true
             }
         }
@@ -112,7 +125,8 @@ struct ThreadListCell_Previews: PreviewProvider {
             viewModel: ThreadListViewModel(mailboxManager: PreviewHelper.sampleMailboxManager,
                                            folder: nil,
                                            bottomSheet: ThreadBottomSheet(),
-                                           moveSheet: MoveSheet()),
+                                           moveSheet: MoveSheet(),
+                                           isCompact: false),
             multipleSelectionViewModel: ThreadListMultipleSelectionViewModel(mailboxManager: PreviewHelper.sampleMailboxManager),
             threadDensity: .large,
             editedMessageDraft: .constant(nil),

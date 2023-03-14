@@ -88,15 +88,37 @@ class DateSection: Identifiable {
 
     @Published var folder: Folder?
     @Published var sections = [DateSection]()
-    @Published var selectedThread: Thread?
+    @Published var selectedThread: Thread? {
+        didSet {
+            guard !isCompact, !filteredThreads.isEmpty else { return }
+            if selectedThread == nil, let index = selectedThreadIndex {
+                let realIndex = min(index, filteredThreads.count - 1)
+                selectedThread = filteredThreads[realIndex]
+            } else if let thread = selectedThread, let index = filteredThreads.firstIndex(where: { $0.uid == thread.uid }) {
+                selectedThreadIndex = index
+            }
+        }
+    }
+
     @Published var isLoadingPage = false
     @Published var lastUpdate: Date?
+
+    // Used to know thread location
+    private var selectedThreadIndex: Int?
+    private var filteredThreads = [Thread]() {
+        didSet {
+            guard let thread = selectedThread,
+                  let index = filteredThreads.firstIndex(where: { $0.uid == thread.uid }) else { return }
+            selectedThreadIndex = index
+        }
+    }
 
     let moveSheet: MoveSheet
     let bottomSheet: ThreadBottomSheet
     var globalBottomSheet: GlobalBottomSheet?
 
     var scrollViewProxy: ScrollViewProxy?
+    var isCompact: Bool
 
     private var observationThreadToken: NotificationToken?
     private var observationLastUpdateToken: NotificationToken?
@@ -125,12 +147,19 @@ class DateSection: Identifiable {
 
     private let loadNextPageThreshold = 10
 
-    init(mailboxManager: MailboxManager, folder: Folder?, bottomSheet: ThreadBottomSheet, moveSheet: MoveSheet) {
+    init(
+        mailboxManager: MailboxManager,
+        folder: Folder?,
+        bottomSheet: ThreadBottomSheet,
+        moveSheet: MoveSheet,
+        isCompact: Bool
+    ) {
         self.mailboxManager = mailboxManager
         self.folder = folder
         lastUpdate = folder?.lastUpdate
         self.bottomSheet = bottomSheet
         self.moveSheet = moveSheet
+        self.isCompact = isCompact
         observeChanges()
         if let folder {
             sortThreadsIntoSections(threads: Array(folder.threads.sorted(by: \.date, ascending: false).freezeIfNeeded()))
@@ -218,7 +247,7 @@ class DateSection: Identifiable {
         var newSections = [DateSection]()
 
         var currentSection: DateSection?
-        let filteredThreads = threads.filter { $0.id == selectedThread?.id || filter.accepts(thread: $0) }
+        filteredThreads = threads.filter { $0.id == selectedThread?.id || filter.accepts(thread: $0) }
         if filteredThreads.isEmpty && filterUnreadOn {
             filterUnreadOn.toggle()
         } else {

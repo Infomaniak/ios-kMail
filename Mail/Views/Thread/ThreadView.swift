@@ -40,6 +40,7 @@ class MessageBottomSheet: DisplayedFloatingPanelState<MessageBottomSheet.State> 
 struct ThreadView: View {
     let mailboxManager: MailboxManager
     @ObservedRealmObject var thread: Thread
+    var onDismiss: (() -> Void)? = nil
 
     @State private var headerHeight: CGFloat = 0
     @State private var displayNavigationTitle = false
@@ -48,6 +49,8 @@ struct ThreadView: View {
     @StateObject private var moveSheet = MoveSheet()
     @StateObject private var bottomSheet = MessageBottomSheet()
     @StateObject private var threadBottomSheet = ThreadBottomSheet()
+    
+    @State private var showEmptyView = false
 
     @EnvironmentObject var globalBottomSheet: GlobalBottomSheet
     @EnvironmentObject var globalAlert: GlobalAlert
@@ -169,11 +172,17 @@ struct ThreadView: View {
         }
         .onChange(of: thread.messages) { newMessagesList in
             if newMessagesList.isEmpty {
+                showEmptyView = true
+                onDismiss?()
                 dismiss()
             }
             if thread.messageInFolderCount == 0 {
+                onDismiss?()
                 dismiss()
             }
+        }
+        .emptyCase(isEmpty: showEmptyView) {
+            EmptyThreadView()
         }
     }
 

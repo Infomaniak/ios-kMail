@@ -161,7 +161,7 @@ struct FolderCellContent: View {
     @ViewBuilder
     private var background: some View {
         if cellType == .link {
-            SelectionBackground(isSelected: isCurrentFolder)
+            SelectionBackground(selectionType: isCurrentFolder ? .multiple : .none)
         }
     }
 }

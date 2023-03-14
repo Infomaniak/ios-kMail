@@ -101,4 +101,13 @@ extension View {
             UIToolbar.appearance().scrollEdgeAppearance = BarAppearanceConstants.threadViewToolbarAppearance
         }
     }
+
+    @ViewBuilder
+    public func emptyCase<T>(isEmpty: Bool, emptyView: () -> T) -> some View where T: View {
+        if !isEmpty {
+            self
+        } else {
+            emptyView()
+        }
+    }
 }
