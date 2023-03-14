@@ -130,9 +130,5 @@ struct PreviewHelper {
         expirationDate: Date()
     ))
 
-    static let sampleMatomo = MatomoUtils(
-        siteId: "42",
-        baseURL: URL(string: "https://analytics.infomaniak.ch/matomo.php")!,
-        userId: "42"
-    )
+    static let sampleMatomo = MatomoUtils(siteId: "42", baseURL: URLConstants.matomo.url, userId: "42")
 }

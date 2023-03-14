@@ -165,7 +165,6 @@ struct ThreadView: View {
         }
         .floatingPanel(state: threadBottomSheet, halfOpening: true) {
             if case let .actions(target) = threadBottomSheet.state, !target.isInvalidated {
-                let fromMessage = target
                 ActionsView(mailboxManager: mailboxManager,
                             target: target,
                             state: threadBottomSheet,
