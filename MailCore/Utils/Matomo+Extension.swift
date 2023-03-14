@@ -40,8 +40,10 @@ public extension MatomoUtils.EventCategory {
     static let newMessage = MatomoUtils.EventCategory(displayName: "newMessage")
     static let onboarding = MatomoUtils.EventCategory(displayName: "onboarding")
     static let replyBottomSheet = MatomoUtils.EventCategory(displayName: "replyBottomSheet")
+    static let restoreEmailsBottomSheet = MatomoUtils.EventCategory(displayName: "restoreEmailsBottomSheet")
     static let search = MatomoUtils.EventCategory(displayName: "search")
     static let snackbar = MatomoUtils.EventCategory(displayName: "snackbar")
+    static let threadList = MatomoUtils.EventCategory(displayName: "threadList")
     static let userInfo = MatomoUtils.EventCategory(displayName: "userInfo")
 
     static let attachmentActions = MatomoUtils.EventCategory(displayName: "attachmentActions")

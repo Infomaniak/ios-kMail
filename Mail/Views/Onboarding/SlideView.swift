@@ -86,8 +86,8 @@ struct SlideView: View {
                         }
                         .padding(.top, 32)
                         .frame(maxWidth: 256)
-                        .onAppear {
-                            matomo.track(eventWithCategory: .onboarding, name: "switchColor")
+                        .onChange(of: accentColor) { newValue in
+                            matomo.track(eventWithCategory: .onboarding, name: "switchColor", value: newValue == .blue)
                         }
                     } else if let description = slide.description {
                         Text(description)

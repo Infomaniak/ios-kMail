@@ -19,6 +19,7 @@
 import MailCore
 import MailResources
 import SwiftUI
+import InfomaniakCore
 
 struct ThreadListHeader: View {
     var isMultipleSelectionEnabled: Bool
@@ -30,6 +31,8 @@ struct ThreadListHeader: View {
 
     @State private var lastUpdateText: String?
 
+    let matomo: MatomoUtils
+
     let timer = Timer.publish(
         every: 60, // second
         on: .main,
@@ -40,8 +43,10 @@ struct ThreadListHeader: View {
          isConnected: Binding<Bool>,
          lastUpdate: Binding<Date?>,
          unreadCount: Binding<Int?>,
-         unreadFilterOn: Binding<Bool>) {
+         unreadFilterOn: Binding<Bool>,
+         matomo: MatomoUtils) {
         self.isMultipleSelectionEnabled = isMultipleSelectionEnabled
+        self.matomo = matomo
         _isConnected = isConnected
         _lastUpdate = lastUpdate
         _unreadCount = unreadCount
@@ -65,6 +70,11 @@ struct ThreadListHeader: View {
                     Text(unreadCount < 100 ? MailResourcesStrings.Localizable.threadListHeaderUnreadCount(unreadCount) : MailResourcesStrings.Localizable.threadListHeaderUnreadCountMore)
                 }
                 .toggleStyle(.unread)
+                .onChange(of: unreadFilterOn) { newValue in
+                    if newValue {
+                        matomo.track(eventWithCategory: .threadList, name: "unreadFilter")
+                    }
+                }
             }
         }
         .padding(.top, 8)
@@ -125,11 +135,13 @@ struct ThreadListHeader_Previews: PreviewProvider {
                          isConnected: .constant(true),
                          lastUpdate: .constant(Date()),
                          unreadCount: .constant(2),
-                         unreadFilterOn: .constant(false))
+                         unreadFilterOn: .constant(false),
+                         matomo: PreviewHelper.sampleMatomo)
         ThreadListHeader(isMultipleSelectionEnabled: false,
                          isConnected: .constant(false),
                          lastUpdate: .constant(nil),
                          unreadCount: .constant(1),
-                         unreadFilterOn: .constant(true))
+                         unreadFilterOn: .constant(true),
+                         matomo: PreviewHelper.sampleMatomo)
     }
 }

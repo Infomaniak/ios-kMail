@@ -199,7 +199,6 @@ struct MenuDrawerView: View {
         .sheet(isPresented: $viewModel.isShowingBugTracker) {
             BugTrackerView(isPresented: $viewModel.isShowingBugTracker)
         }
-        .matomoView(view: ["MenuDrawer"])
     }
 }
 

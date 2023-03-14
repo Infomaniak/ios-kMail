@@ -104,7 +104,8 @@ struct ThreadListView: View {
                              }, set: { value in
                                  splitViewManager.selectedFolder?.unreadCount = value ?? 0
                              }),
-                             unreadFilterOn: $viewModel.filterUnreadOn)
+                             unreadFilterOn: $viewModel.filterUnreadOn,
+                             matomo: matomo)
 
             ScrollViewReader { proxy in
                 List {
