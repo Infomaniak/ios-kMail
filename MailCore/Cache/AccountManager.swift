@@ -32,7 +32,7 @@ public protocol AccountManagerDelegate: AnyObject {
     func currentAccountNeedsAuthentication()
 }
 
-public extension InfomaniakLogin {
+public extension InfomaniakNetworkLoginable {
     func apiToken(username: String, applicationPassword: String) async throws -> ApiToken {
         try await withCheckedThrowingContinuation { continuation in
             getApiToken(username: username, applicationPassword: applicationPassword) { token, error in
@@ -93,7 +93,7 @@ extension Account: ObservableObject {}
 }
 
 public class AccountManager: RefreshTokenDelegate {
-    @LazyInjectService var networkLoginService: InfomaniakLogin
+    @LazyInjectService var networkLoginService: InfomaniakNetworkLoginable
     @LazyInjectService var keychainHelper: KeychainHelper
     @LazyInjectService var bugTracker: BugTracker
     @LazyInjectService var notificationService: InfomaniakNotifications

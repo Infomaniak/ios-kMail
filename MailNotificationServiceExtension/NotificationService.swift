@@ -30,18 +30,18 @@ class NotificationService: UNNotificationServiceExtension {
     override init() {
         super.init()
         Logging.initLogging()
-        let loginService = Factory(type: InfomaniakLogin.self) { _, _ in
-            InfomaniakLogin(clientId: MailApiFetcher.clientId)
-        }
-        let networkLoginService = Factory(type: InfomaniakNetworkLogin.self) { _, _ in
+        let networkLoginService = Factory(type: InfomaniakNetworkLoginable.self) { _, _ in
             InfomaniakNetworkLogin(clientId: MailApiFetcher.clientId)
+        }
+        let loginService = Factory(type: InfomaniakLoginable.self) { _, _ in
+            InfomaniakLogin(clientId: MailApiFetcher.clientId)
         }
         let keychainHelper = Factory(type: KeychainHelper.self) { _, _ in
             KeychainHelper(accessGroup: AccountManager.accessGroup)
         }
 
-        SimpleResolver.sharedResolver.store(factory: loginService)
         SimpleResolver.sharedResolver.store(factory: networkLoginService)
+        SimpleResolver.sharedResolver.store(factory: loginService)
         SimpleResolver.sharedResolver.store(factory: keychainHelper)
     }
 
@@ -64,7 +64,10 @@ class NotificationService: UNNotificationServiceExtension {
         return message?.freezeIfNeeded()
     }
 
-    override func didReceive(_ request: UNNotificationRequest, withContentHandler contentHandler: @escaping (UNNotificationContent) -> Void) {
+    override func didReceive(
+        _ request: UNNotificationRequest,
+        withContentHandler contentHandler: @escaping (UNNotificationContent) -> Void
+    ) {
         self.contentHandler = contentHandler
         bestAttemptContent = (request.content.mutableCopy() as? UNMutableNotificationContent)
 
@@ -91,7 +94,8 @@ class NotificationService: UNNotificationServiceExtension {
 
     override func serviceExtensionTimeWillExpire() {
         // Called just before the extension will be terminated by the system.
-        // Use this as an opportunity to deliver your "best attempt" at modified content, otherwise the original push payload will be used.
+        // Use this as an opportunity to deliver your "best attempt" at modified content, otherwise the original push payload will
+        // be used.
         if let contentHandler, let bestAttemptContent {
             contentHandler(bestAttemptContent)
         }
