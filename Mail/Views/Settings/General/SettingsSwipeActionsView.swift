@@ -56,7 +56,7 @@ struct SettingsSwipeActionsView: View {
                                 excludedKeyPath: item.excludedKeyPaths,
                                 matomoCategory: .settingsSwipeActions,
                                 matomoName: \.matomoSettingsName,
-                                matomoValue: item == .leading || item == .fullLeading ? 0 : 1
+                                matomoValue: item == .leading || item == .fullLeading ? 1 : 0
                             )
                             .frame(minHeight: 40)
                             .padding(.horizontal, 8)

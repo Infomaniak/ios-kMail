@@ -39,6 +39,7 @@ struct AttachmentsView: View {
                 HStack(spacing: 8) {
                     ForEach(attachments) { attachment in
                         Button {
+                            matomo.track(eventWithCategory: .attachmentActions, name: "open")
                             previewedAttachment = attachment
                             if !FileManager.default.fileExists(atPath: attachment.localUrl?.path ?? "") {
                                 Task {

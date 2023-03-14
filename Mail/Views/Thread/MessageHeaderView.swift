@@ -79,7 +79,6 @@ struct MessageHeaderView: View {
     }
 
     private func openContact(recipient: Recipient) {
-        matomo.track(eventWithCategory: .message, name: "selectRecipient")
         let isRemoteContact = AccountManager.instance.currentContactManager?.getContact(for: recipient)?.remote != nil
         bottomSheet.open(
             state: .contact(recipient, isRemote: isRemoteContact)

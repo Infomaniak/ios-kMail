@@ -148,6 +148,7 @@ public class DraftManager {
         await saveDraft(draft: draft, mailboxManager: mailboxManager)
         await IKSnackBar.showSnackBar(message: MailResourcesStrings.Localizable.snackbarDraftSaved,
                                       action: .init(title: MailResourcesStrings.Localizable.actionDelete) { [weak self] in
+                                          self?.matomo.track(eventWithCategory: .snackbar, name: "deleteDraft")
                                           self?.deleteDraftSnackBarAction(draft: draft, mailboxManager: mailboxManager)
                                       })
     }
