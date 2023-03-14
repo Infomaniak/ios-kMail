@@ -156,6 +156,7 @@ struct ComposeMessageView: View {
                     // Show the rest of the view, or the autocompletion list
                     if shouldDisplayAutocompletion {
                         AutocompletionView(autocompletion: $autocompletion) { recipient in
+                            matomo.track(eventWithCategory: .newMessage, name: "addNewRecipient")
                             addRecipientHandler?(recipient)
                         }
                     } else {
@@ -301,7 +302,6 @@ struct ComposeMessageView: View {
     }
 
     private func closeDraft() {
-        matomo.track(eventWithCategory: .newMessage, name: "saveDraft")
         guard attachmentsManager.allAttachmentsUploaded else {
             isShowingCancelAttachmentsError = true
             return

@@ -75,7 +75,7 @@ struct RecipientField: View {
                     guard let recipient = autocompletion.first else { return }
                     add(recipient: recipient)
                     focusedField = type
-                    matomo.track(eventWithCategory: .newMessage, name: "addNewRecipient")
+                    matomo.track(eventWithCategory: .newMessage, action: .input, name: "addNewRecipient")
                 }
         }
         .onChange(of: currentText) { _ in

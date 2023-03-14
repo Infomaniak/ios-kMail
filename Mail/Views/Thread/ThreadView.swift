@@ -122,7 +122,7 @@ struct ThreadView: View {
                 }
                 ToolbarButton(text: MailResourcesStrings.Localizable.buttonMore,
                               icon: MailResourcesAsset.plusActions) {
-                    threadBottomSheet.open(state: .actions(.threads([thread.thaw() ?? thread])))
+                    threadBottomSheet.open(state: .actions(.threads([thread.thaw() ?? thread], false)))
                 }
             }
         }
@@ -152,7 +152,7 @@ struct ThreadView: View {
             case let .replyOption(message, isThread):
                 ReplyActionsView(
                     mailboxManager: mailboxManager,
-                    target: isThread ? .threads([thread]) : .message(message),
+                    target: isThread ? .threads([thread], false) : .message(message),
                     state: threadBottomSheet,
                     globalSheet: globalBottomSheet
                 ) { message, replyMode in

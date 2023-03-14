@@ -16,14 +16,18 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import InfomaniakCore
 import InfomaniakCoreUI
+import InfomaniakDI
 import MailCore
 import MailResources
 import SwiftUI
 
 struct AddLinkView: View {
-    @State private var url: String = ""
+    @State private var url = ""
     @FocusState private var isFocused: Bool
+
+    @LazyInjectService private var matomo: MatomoUtils
 
     var actionHandler: ((String) -> Void)?
 
@@ -39,7 +43,12 @@ struct AddLinkView: View {
                 .autocapitalization(.none)
                 .textContentType(.URL)
                 .textStyle(.body)
-            ModalButtonsView(primaryButtonTitle: MailResourcesStrings.Localizable.buttonValid, primaryButtonEnabled: !url.isEmpty) {
+            ModalButtonsView(
+                primaryButtonTitle: MailResourcesStrings.Localizable.buttonValid,
+                primaryButtonEnabled: !url.isEmpty
+            ) {
+                matomo.track(eventWithCategory: .editorActions, name: "addLinkConfirm")
+
                 guard var urlComponents = URLComponents(string: url) else {
                     IKSnackBar.showSnackBar(message: MailResourcesStrings.Localizable.snackbarInvalidUrl)
                     return

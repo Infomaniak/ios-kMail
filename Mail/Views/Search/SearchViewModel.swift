@@ -63,10 +63,10 @@ enum SearchState {
     var observationSearchThreadToken: NotificationToken?
     @Published var selectedSearchFolderId = "" {
         didSet {
+            matomo.track(eventWithCategory: .search, name: SearchFilter.folder.matomoName, value: !selectedSearchFolderId.isEmpty)
             if selectedSearchFolderId.isEmpty {
                 selectedFilters.removeAll { $0 == .folder }
             } else if !selectedFilters.contains(.folder) {
-                matomo.track(eventWithCategory: .search, name: SearchFilter.folder.matomoName)
                 selectedFilters.append(.folder)
             }
             Task {
