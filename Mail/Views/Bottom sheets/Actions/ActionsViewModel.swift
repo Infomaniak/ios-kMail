@@ -148,6 +148,13 @@ struct Action: Identifiable, Equatable {
         icon: MailResourcesAsset.editTools,
         matomoName: "editMenu"
     )
+    static let moveToInbox = Action(
+        id: 17,
+        title: MailResourcesStrings.Localizable.actionMoveToInbox,
+        icon: MailResourcesAsset.drawer
+    )
+
+    static let quickActions: [Action] = [.reply, .replyAll, .forward, .delete]
 
     init(id: Int, title: String, shortTitle: String? = nil, icon: MailResourcesImages, matomoName: String?) {
         self.id = id
@@ -229,21 +236,16 @@ enum ActionsTarget: Equatable {
             if threads.count > 1 {
                 let spam = threads.allSatisfy { $0.folder?.role == .spam }
                 let unread = threads.allSatisfy(\.hasUnseenMessages)
-                quickActions = [.move, .archive, spam ? .nonSpam : .spam, .delete]
+                quickActions = Action.quickActions
 
                 listActions = [
                     unread ? .markAsRead : .markAsUnread,
                     .print
                 ]
             } else if let thread = threads.first {
-                let replyAll = thread.messages.first?.canReplyAll ?? false
-                if replyAll {
-                    quickActions = [.reply, .replyAll, .forward, .delete]
-                } else {
-                    quickActions = [.reply, .forward, .archive, .delete]
-                }
+                quickActions = Action.quickActions
 
-                let archive = thread.messages.first?.canReplyAll ?? false
+                let archive = thread.folder?.role != .archive
                 let unread = thread.hasUnseenMessages
                 let star = thread.flagged
 
@@ -251,7 +253,7 @@ enum ActionsTarget: Equatable {
                 let spamAction: Action? = spam ? .nonSpam : .spam
 
                 let tempListActions: [Action?] = [
-                    archive ? .archive : nil,
+                    archive ? .archive : .moveToInbox,
                     unread ? .markAsRead : .markAsUnread,
                     .move,
                     star ? .unstar : .star,
@@ -262,18 +264,14 @@ enum ActionsTarget: Equatable {
                 listActions = tempListActions.compactMap { $0 }
             }
         case let .message(message):
-            if message.canReplyAll {
-                quickActions = [.reply, .replyAll, .forward, .delete]
-            } else {
-                quickActions = [.reply, .forward, .archive, .delete]
-            }
+            quickActions = [.reply, .replyAll, .forward, .delete]
 
-            let archive = message.canReplyAll
+            let archive = message.folder?.role != .archive
             let unread = !message.seen
             let star = message.flagged
             let isStaff = AccountManager.instance.currentAccount?.user?.isStaff ?? false
             let tempListActions: [Action?] = [
-                archive ? .archive : nil,
+                archive ? .archive : .moveToInbox,
                 unread ? .markAsRead : .markAsUnread,
                 .move,
                 star ? .unstar : .star,
