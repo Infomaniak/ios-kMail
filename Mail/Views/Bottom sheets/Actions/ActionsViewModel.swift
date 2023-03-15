@@ -242,6 +242,7 @@ enum ActionsTarget: Equatable {
             let archive = message.canReplyAll
             let unread = !message.seen
             let star = message.flagged
+            let isStaff = AccountManager.instance.currentAccount?.user?.isStaff ?? false
             let tempListActions: [Action?] = [
                 archive ? .archive : nil,
                 unread ? .markAsRead : .markAsUnread,
@@ -249,8 +250,7 @@ enum ActionsTarget: Equatable {
                 star ? .unstar : .star,
                 .reportJunk,
                 .print,
-                .report,
-                .editMenu
+                isStaff ? .report : nil
             ]
 
             listActions = tempListActions.compactMap { $0 }
