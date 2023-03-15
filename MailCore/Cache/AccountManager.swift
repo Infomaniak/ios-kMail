@@ -20,6 +20,7 @@ import CocoaLumberjackSwift
 import Foundation
 import InfomaniakBugTracker
 import InfomaniakCore
+import InfomaniakCoreUI
 import InfomaniakDI
 import InfomaniakLogin
 import InfomaniakNotifications
@@ -75,7 +76,11 @@ public extension InfomaniakUser {
                 return Image(uiImage: avatarImage)
             } else {
                 let backgroundColor = UIColor.backgroundColor(from: id)
-                let initialsImage = UIImage.getInitialsPlaceholder(with: displayName, size: CGSize(width: 40, height: 40), backgroundColor: backgroundColor)
+                let initialsImage = UIImage.getInitialsPlaceholder(
+                    with: displayName,
+                    size: CGSize(width: 40, height: 40),
+                    backgroundColor: backgroundColor
+                )
                 return Image(uiImage: initialsImage)
             }
         }

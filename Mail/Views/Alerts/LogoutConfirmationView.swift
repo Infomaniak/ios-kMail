@@ -17,6 +17,7 @@
  */
 
 import InfomaniakCore
+import InfomaniakCoreUI
 import InfomaniakDI
 import InfomaniakNotifications
 import MailCore
@@ -31,7 +32,7 @@ struct LogoutConfirmationView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 24) {
-            Text( MailResourcesStrings.Localizable.confirmLogoutTitle)
+            Text(MailResourcesStrings.Localizable.confirmLogoutTitle)
                 .textStyle(.bodyMedium)
             Text(MailResourcesStrings.Localizable.confirmLogoutDescription(account.user.email))
                 .textStyle(.bodySecondary)

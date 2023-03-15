@@ -18,6 +18,7 @@
 
 import Combine
 import InfomaniakCore
+import InfomaniakCoreUI
 import InfomaniakDI
 import Foundation
 import InfomaniakCore

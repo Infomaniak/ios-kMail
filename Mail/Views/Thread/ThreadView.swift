@@ -129,9 +129,6 @@ struct ThreadView: View {
         .environmentObject(mailboxManager)
         .environmentObject(bottomSheet)
         .environmentObject(threadBottomSheet)
-        .onAppear {
-            print("hello", thread.messages.count)
-        }
         .sheet(item: $messageReply) { messageReply in
             ComposeMessageView.replyOrForwardMessage(messageReply: messageReply, mailboxManager: mailboxManager)
         }

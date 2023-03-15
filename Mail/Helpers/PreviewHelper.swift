@@ -18,6 +18,7 @@
 
 import Foundation
 import InfomaniakCore
+import InfomaniakCoreUI
 import InfomaniakLogin
 import MailCore
 import RealmSwift
