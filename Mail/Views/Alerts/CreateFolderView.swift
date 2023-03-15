@@ -34,8 +34,6 @@ struct CreateFolderView: View {
 
     @FocusState private var isFocused
 
-    @LazyInjectService private var matomo: MatomoUtils
-
     private var mode: Mode
 
     enum Mode {
@@ -95,6 +93,7 @@ struct CreateFolderView: View {
                 .opacity(error == nil ? 0 : 1)
 
             ModalButtonsView(primaryButtonTitle: mode.buttonTitle, primaryButtonEnabled: buttonIsEnabled) {
+                @InjectService var matomo: MatomoUtils
                 matomo.track(eventWithCategory: .createFolder, name: "confirm")
                 Task {
                     await tryOrDisplayError {
