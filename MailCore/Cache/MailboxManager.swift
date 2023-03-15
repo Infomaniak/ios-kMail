@@ -267,35 +267,42 @@ public class MailboxManager: ObservableObject {
         guard !uids.isEmpty && !Task.isCancelled else { return }
 
         await backgroundRealm.execute { realm in
-            let messagesToDelete = realm.objects(Message.self).where { $0.uid.in(uids) }
-            var threadsToUpdate = Set<Thread>()
-            var threadsToDelete = Set<Thread>()
-            var draftsToDelete = Set<Draft>()
+            let batchSize = 100
+            for index in stride(from: 0, to: uids.count, by: batchSize) {
+                autoreleasepool {
+                    let uidsBatch = Array(uids[index ..< min(index + batchSize, uids.count)])
 
-            for message in messagesToDelete {
-                if let draft = self.draft(messageUid: message.uid, using: realm) {
-                    draftsToDelete.insert(draft)
-                }
-                for parent in message.threads {
-                    threadsToUpdate.insert(parent)
-                }
-            }
+                    let messagesToDelete = realm.objects(Message.self).where { $0.uid.in(uidsBatch) }
+                    var threadsToUpdate = Set<Thread>()
+                    var threadsToDelete = Set<Thread>()
+                    var draftsToDelete = Set<Draft>()
 
-            let foldersToUpdate = Set(threadsToUpdate.compactMap(\.folder))
-
-            try? realm.safeWrite {
-                realm.delete(draftsToDelete)
-                realm.delete(messagesToDelete)
-                for thread in threadsToUpdate {
-                    if thread.messageInFolderCount == 0 {
-                        threadsToDelete.insert(thread)
-                    } else {
-                        thread.recompute()
+                    for message in messagesToDelete {
+                        if let draft = self.draft(messageUid: message.uid, using: realm) {
+                            draftsToDelete.insert(draft)
+                        }
+                        for parent in message.threads {
+                            threadsToUpdate.insert(parent)
+                        }
                     }
-                }
-                realm.delete(threadsToDelete)
-                for updateFolder in foldersToUpdate {
-                    updateFolder.computeUnreadCount()
+
+                    let foldersToUpdate = Set(threadsToUpdate.compactMap(\.folder))
+
+                    try? realm.safeWrite {
+                        realm.delete(draftsToDelete)
+                        realm.delete(messagesToDelete)
+                        for thread in threadsToUpdate {
+                            if thread.messageInFolderCount == 0 {
+                                threadsToDelete.insert(thread)
+                            } else {
+                                thread.recompute()
+                            }
+                        }
+                        realm.delete(threadsToDelete)
+                        for updateFolder in foldersToUpdate {
+                            updateFolder.computeUnreadCount()
+                        }
+                    }
                 }
             }
         }
@@ -493,7 +500,7 @@ public class MailboxManager: ObservableObject {
             var predicates: [NSPredicate] = []
             for searchFilter in searchFilters {
                 switch searchFilter {
-                case let .filter(filter):
+                case .filter(let filter):
                     switch filter {
                     case .seen:
                         predicates.append(NSPredicate(format: "seen = true"))
@@ -506,19 +513,19 @@ public class MailboxManager: ObservableObject {
                     default:
                         break
                     }
-                case let .from(from):
+                case .from(let from):
                     predicates.append(NSPredicate(format: "ANY from.email = %@", from))
-                case let .contains(content):
+                case .contains(let content):
                     predicates
                         .append(
                             NSPredicate(format: "body.value CONTAINS[c] %@ OR subject CONTAINS[c] %@ OR preview CONTAINS[c] %@",
                                         content, content, content)
                         )
-                case let .everywhere(searchEverywhere):
+                case .everywhere(let searchEverywhere):
                     if !searchEverywhere {
                         predicates.append(NSPredicate(format: "folderId = %@", filterFolderId))
                     }
-                case let .attachments(searchAttachments):
+                case .attachments(let searchAttachments):
                     if searchAttachments {
                         predicates.append(NSPredicate(format: "hasAttachments = true"))
                     }
@@ -1111,7 +1118,7 @@ public extension Realm {
 
     func safeWrite(_ block: () throws -> Void) throws {
         #if DEBUG
-            dispatchPrecondition(condition: .notOnQueue(.main))
+        dispatchPrecondition(condition: .notOnQueue(.main))
         #endif
 
         if isInWriteTransaction {
