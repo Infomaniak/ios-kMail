@@ -161,6 +161,7 @@ struct OnboardingView: View {
                 UIViewController.attemptRotationToDeviceOrientation()
             }
         }
+        .defaultAppStorage(.shared)
     }
 
     // MARK: - Private methods
