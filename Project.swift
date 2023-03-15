@@ -67,7 +67,6 @@ let project = Project(name: "Mail",
                                  ],
                                  dependencies: [
                                      .target(name: "MailCore"),
-                                     .target(name: "MailResources"),
                                      .target(name: "MailNotificationServiceExtension"),
                                      .package(product: "Introspect"),
                                      .package(product: "SQRichTextEditor"),
@@ -116,7 +115,6 @@ let project = Project(name: "Mail",
                             entitlements: "MailResources/Mail.entitlements",
                             dependencies: [
                                 .target(name: "MailCore"),
-                                .target(name: "MailResources"),
                             ],
                             settings: .settings(base: baseSettings)
                           ),
