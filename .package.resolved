@@ -51,7 +51,7 @@
       "location" : "https://github.com/Infomaniak/ios-core.git",
       "state" : {
         "branch" : "mail-di",
-        "revision" : "89be8389aef89f8c890aaa02ac38bce7270e7bde"
+        "revision" : "1e4e2ed201c0111b641d190f4d0bf93f821c3a6a"
       }
     },
     {
@@ -59,14 +59,23 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Infomaniak/ios-core-ui.git",
       "state" : {
-        "revision" : "058d8c43c63c23fd6f52cb945bf83ebde8644cfd",
-        "version" : "2.1.2"
+        "revision" : "93051b3183db87262a7c53ead3b479e01f888edf",
+        "version" : "2.2.0"
+      }
+    },
+    {
+      "identity" : "ios-create-account",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/Infomaniak/ios-create-account",
+      "state" : {
+        "revision" : "c5bc197f8934646fb536415e9d905527c4752559",
+        "version" : "1.0.1"
       }
     },
     {
       "identity" : "ios-dependency-injection",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/Infomaniak/ios-dependency-injection",
+      "location" : "https://github.com/Infomaniak/ios-dependency-injection.git",
       "state" : {
         "revision" : "41a99aeb652d5294355129bfa70d1ea8c17b9980",
         "version" : "1.1.10"

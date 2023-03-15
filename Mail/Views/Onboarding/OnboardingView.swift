@@ -19,6 +19,7 @@
 import AuthenticationServices
 import InfomaniakCoreUI
 import InfomaniakDI
+import InfomaniakCreateAccount
 import InfomaniakLogin
 import Lottie
 import MailCore
@@ -85,9 +86,28 @@ class LoginHandler: InfomaniakLoginDelegate, ObservableObject {
         }
     }
 
+    func loginAfterAccountCreation(from viewController: UIViewController) {
+        isLoading = true
+        loginService.setupWebviewNavbar(
+            title: MailResourcesStrings.Localizable.buttonLogin,
+            titleColor: nil,
+            color: nil,
+            buttonColor: nil,
+            clearCookie: false,
+            timeOutMessage: nil
+        )
+        loginService.webviewLoginFrom(viewController: viewController,
+                                      hideCreateAccountButton: true,
+                                      delegate: self)
+    }
+
     func login() {
         isLoading = true
-        loginService.asWebAuthenticationLoginFrom(useEphemeralSession: true) { [weak self] result in
+        loginService.asWebAuthenticationLoginFrom(
+            anchor: ASPresentationAnchor(),
+            useEphemeralSession: true,
+            hideCreateAccountButton: true
+        ) { [weak self] result in
             switch result {
             case .success(let result):
                 self?.loginSuccessful(code: result.code, codeVerifier: result.verifier)
@@ -170,9 +190,8 @@ struct OnboardingView: View {
 
             VStack(spacing: 24) {
                 if selection == slides.count {
-                    // Show login button
                     MailButton(label: MailResourcesStrings.Localizable.buttonLogin) {
-                        loginHandler.sceneDelegate = (window?.windowScene?.delegate as? SceneDelegate)
+                        loginHandler.sceneDelegate = window?.windowScene?.delegate as? SceneDelegate
                         loginHandler.login()
                     }
                     .mailButtonFullWidth(true)
@@ -211,6 +230,13 @@ struct OnboardingView: View {
             // Use default button
         } message: {
             Text(MailResourcesStrings.Localizable.errorLoginDescription)
+        }
+        .sheet(isPresented: $isPresentingCreateAccount) {
+            RegisterView(registrationProcess: .mail) { viewController in
+                guard let viewController else { return }
+                loginHandler.sceneDelegate = window?.windowScene?.delegate as? SceneDelegate
+                loginHandler.loginAfterAccountCreation(from: viewController)
+            }
         }
         .onAppear {
             if UIDevice.current.userInterfaceIdiom == .phone {
