@@ -99,25 +99,25 @@ let project = Project(name: "Mail",
                               ]
                           ),
                           Target(
-                            name: "MailNotificationServiceExtension",
-                            platform: .iOS,
-                            product: .appExtension,
-                            bundleId: "com.infomaniak.mail.NotificationServiceExtension",
-                            deploymentTarget: deploymentTarget,
-                            infoPlist: .extendingDefault(with: [
-                                "AppIdentifierPrefix": "$(AppIdentifierPrefix)",
-                                "CFBundleDisplayName": "$(PRODUCT_NAME)",
-                                "NSExtension": [
-                                    "NSExtensionPointIdentifier": "com.apple.usernotifications.service",
-                                    "NSExtensionPrincipalClass": "$(PRODUCT_MODULE_NAME).NotificationService",
-                                ],
-                            ]),
-                            sources: "MailNotificationServiceExtension/**",
-                            entitlements: "MailResources/Mail.entitlements",
-                            dependencies: [
-                                .target(name: "MailCore"),
-                            ],
-                            settings: .settings(base: baseSettings)
+                              name: "MailNotificationServiceExtension",
+                              platform: .iOS,
+                              product: .appExtension,
+                              bundleId: "com.infomaniak.mail.NotificationServiceExtension",
+                              deploymentTarget: deploymentTarget,
+                              infoPlist: .extendingDefault(with: [
+                                  "AppIdentifierPrefix": "$(AppIdentifierPrefix)",
+                                  "CFBundleDisplayName": "$(PRODUCT_NAME)",
+                                  "NSExtension": [
+                                      "NSExtensionPointIdentifier": "com.apple.usernotifications.service",
+                                      "NSExtensionPrincipalClass": "$(PRODUCT_MODULE_NAME).NotificationService",
+                                  ],
+                              ]),
+                              sources: "MailNotificationServiceExtension/**",
+                              entitlements: "MailResources/Mail.entitlements",
+                              dependencies: [
+                                  .target(name: "MailCore"),
+                              ],
+                              settings: .settings(base: baseSettings)
                           ),
                           Target(
                               name: "MailResources",
