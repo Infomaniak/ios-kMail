@@ -3,7 +3,7 @@
     {
       "identity" : "alamofire",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/Alamofire/Alamofire.git",
+      "location" : "https://github.com/Alamofire/Alamofire",
       "state" : {
         "revision" : "78424be314842833c04bc3bef5b72e85fff99204",
         "version" : "5.6.4"
@@ -21,7 +21,7 @@
     {
       "identity" : "cocoalumberjack",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/CocoaLumberjack/CocoaLumberjack.git",
+      "location" : "https://github.com/CocoaLumberjack/CocoaLumberjack",
       "state" : {
         "revision" : "0188d31089b5881a269e01777be74c7316924346",
         "version" : "3.8.0"
@@ -39,7 +39,7 @@
     {
       "identity" : "ios-bug-tracker",
       "kind" : "remoteSourceControl",
-      "location" : "git@github.com:Infomaniak/ios-bug-tracker.git",
+      "location" : "https://github.com/Infomaniak/ios-bug-tracker",
       "state" : {
         "revision" : "a446f70acbe71c3d5010ced5a5e02b978e31afbb",
         "version" : "2.0.1"
@@ -48,7 +48,7 @@
     {
       "identity" : "ios-core",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/Infomaniak/ios-core.git",
+      "location" : "https://github.com/Infomaniak/ios-core",
       "state" : {
         "branch" : "mail-di",
         "revision" : "1b22b49a63047858d53ac4690c2147b423086188"
@@ -57,7 +57,7 @@
     {
       "identity" : "ios-core-ui",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/Infomaniak/ios-core-ui.git",
+      "location" : "https://github.com/Infomaniak/ios-core-ui",
       "state" : {
         "revision" : "93051b3183db87262a7c53ead3b479e01f888edf",
         "version" : "2.2.0"
@@ -75,7 +75,7 @@
     {
       "identity" : "ios-dependency-injection",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/Infomaniak/ios-dependency-injection.git",
+      "location" : "https://github.com/Infomaniak/ios-dependency-injection",
       "state" : {
         "revision" : "41a99aeb652d5294355129bfa70d1ea8c17b9980",
         "version" : "1.1.10"
@@ -84,7 +84,7 @@
     {
       "identity" : "ios-login",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/Infomaniak/ios-login.git",
+      "location" : "https://github.com/Infomaniak/ios-login",
       "state" : {
         "revision" : "35190f66b67eb8a79cbacdbf54ee9a03ab61d7f7",
         "version" : "4.0.0"
@@ -93,7 +93,7 @@
     {
       "identity" : "ios-notifications",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/Infomaniak/ios-notifications.git",
+      "location" : "https://github.com/Infomaniak/ios-notifications",
       "state" : {
         "revision" : "0da8aa11e60766acaa62e34c84a8049eeb6e933f",
         "version" : "2.0.1"
@@ -120,7 +120,7 @@
     {
       "identity" : "lottie-ios",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/airbnb/lottie-ios.git",
+      "location" : "https://github.com/airbnb/lottie-ios",
       "state" : {
         "revision" : "b4bd0604ded9574807f41b4004b57dd1226a30a4",
         "version" : "3.5.0"
@@ -129,7 +129,7 @@
     {
       "identity" : "matomo-sdk-ios",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/matomo-org/matomo-sdk-ios.git",
+      "location" : "https://github.com/matomo-org/matomo-sdk-ios",
       "state" : {
         "revision" : "15a645e11eaa8053f93749d73ced03da1e56fd01",
         "version" : "7.5.2"
@@ -210,7 +210,7 @@
     {
       "identity" : "swiftregex",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/flowbe/SwiftRegex.git",
+      "location" : "https://github.com/flowbe/SwiftRegex",
       "state" : {
         "revision" : "d8c4846dfbbe04aa8196ae5a5a3cdc6cd7f9f6bc",
         "version" : "1.0.0"
@@ -219,7 +219,7 @@
     {
       "identity" : "swiftui-introspect",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/siteline/SwiftUI-Introspect.git",
+      "location" : "https://github.com/siteline/SwiftUI-Introspect",
       "state" : {
         "revision" : "c18951c747ab62af7c15e17a81bd37d4fd5a9979",
         "version" : "0.2.3"
