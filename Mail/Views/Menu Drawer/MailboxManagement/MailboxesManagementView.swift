@@ -18,6 +18,7 @@
 
 import InfomaniakCore
 import InfomaniakCoreUI
+import InfomaniakDI
 import MailCore
 import MailResources
 import RealmSwift
@@ -32,7 +33,6 @@ struct MailboxesManagementView: View {
     @State private var isShowingSwitchAccount = false
 
     let mailboxes: [Mailbox]
-    let matomo: MatomoUtils
 
     private var otherMailboxes: [Mailbox] {
         return mailboxes.filter { $0.mailboxId != mailboxManager.mailbox.mailboxId }
@@ -43,6 +43,7 @@ struct MailboxesManagementView: View {
             Button {
                 withAnimation {
                     navigationDrawerState.showMailboxes.toggle()
+                    @InjectService var matomo: MatomoUtils
                     matomo.track(eventWithCategory: .menuDrawer, name: "mailboxes", value: navigationDrawerState.showMailboxes)
                 }
             } label: {
@@ -70,7 +71,7 @@ struct MailboxesManagementView: View {
             if navigationDrawerState.showMailboxes {
                 VStack(alignment: .leading) {
                     ForEach(otherMailboxes) { mailbox in
-                        MailboxCell(mailbox: mailbox, matomo: matomo)
+                        MailboxCell(mailbox: mailbox)
                     }
                 }
                 .task {
@@ -105,7 +106,7 @@ struct MailboxesManagementView: View {
 
 struct MailboxesManagementView_Previews: PreviewProvider {
     static var previews: some View {
-        MailboxesManagementView(mailboxes: [PreviewHelper.sampleMailbox], matomo: PreviewHelper.sampleMatomo)
+        MailboxesManagementView(mailboxes: [PreviewHelper.sampleMailbox])
             .environmentObject(PreviewHelper.sampleMailboxManager)
             .previewLayout(.sizeThatFits)
             .accentColor(UserDefaults.shared.accentColor.primary.swiftUiColor)

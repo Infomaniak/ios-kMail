@@ -18,6 +18,7 @@
 
 import InfomaniakCore
 import InfomaniakCoreUI
+import InfomaniakDI
 import MailCore
 import MailResources
 import RealmSwift
@@ -33,7 +34,8 @@ struct UserFoldersListView: View {
     @EnvironmentObject var globalAlert: GlobalAlert
 
     let isCompact: Bool
-    let matomo: MatomoUtils
+
+    @LazyInjectService var matomo: MatomoUtils
 
     var body: some View {
         VStack(spacing: 0) {
@@ -74,7 +76,7 @@ struct UserFoldersListView: View {
                         FolderCell(folder: folder,
                                    currentFolderId: splitViewManager.selectedFolder?.id,
                                    isCompact: isCompact,
-                                   matomo: matomo)
+                                   matomoCategory: .menuDrawer)
                     }
                 }
             }

@@ -46,14 +46,13 @@ struct MessageView: View {
                 MessageHeaderView(
                     message: message,
                     isHeaderExpanded: $isHeaderExpanded,
-                    isMessageExpanded: $isMessageExpanded,
-                    matomo: matomo
+                    isMessageExpanded: $isMessageExpanded
                 )
                 .padding(.horizontal, 16)
 
                 if isMessageExpanded {
                     if !message.attachments.filter { $0.disposition == .attachment || $0.contentId == nil }.isEmpty {
-                        AttachmentsView(message: message, matomo: matomo)
+                        AttachmentsView(message: message)
                             .padding(.top, 24)
                     }
                     MessageBodyView(message: message)

@@ -18,6 +18,7 @@
 
 import InfomaniakCore
 import InfomaniakCoreUI
+import InfomaniakDI
 import MailCore
 import MailResources
 import SQRichTextEditor
@@ -33,18 +34,16 @@ struct RichTextEditor: UIViewRepresentable {
     @Binding var isShowingFileSelection: Bool
     @Binding var isShowingPhotoLibrary: Bool
     var alert: ObservedObject<NewMessageAlert>.Wrapper
-    let matomo: MatomoUtils
 
     init(model: Binding<RichTextEditorModel>, body: Binding<String>,
          alert: ObservedObject<NewMessageAlert>.Wrapper,
-         isShowingCamera: Binding<Bool>, isShowingFileSelection: Binding<Bool>, isShowingPhotoLibrary: Binding<Bool>, matomo: MatomoUtils) {
+         isShowingCamera: Binding<Bool>, isShowingFileSelection: Binding<Bool>, isShowingPhotoLibrary: Binding<Bool>) {
         _model = model
         _body = body
         self.alert = alert
         _isShowingCamera = isShowingCamera
         _isShowingFileSelection = isShowingFileSelection
         _isShowingPhotoLibrary = isShowingPhotoLibrary
-        self.matomo = matomo
     }
 
     class Coordinator: SQTextEditorDelegate {
@@ -99,8 +98,7 @@ struct RichTextEditor: UIViewRepresentable {
         let richTextEditor = MailEditorView(alert: alert,
                                             isShowingCamera: $isShowingCamera,
                                             isShowingFileSelection: $isShowingFileSelection,
-                                            isShowingPhotoLibrary: $isShowingPhotoLibrary,
-                                            matomo: matomo)
+                                            isShowingPhotoLibrary: $isShowingPhotoLibrary)
         richTextEditor.delegate = context.coordinator
         return richTextEditor
     }
@@ -128,16 +126,12 @@ class MailEditorView: SQTextEditorView {
 
     var toolbarStyle = ToolbarStyle.main
 
-    let matomo: MatomoUtils
-
     init(alert: ObservedObject<NewMessageAlert>.Wrapper,
-         isShowingCamera: Binding<Bool>, isShowingFileSelection: Binding<Bool>, isShowingPhotoLibrary: Binding<Bool>,
-         matomo: MatomoUtils) {
+         isShowingCamera: Binding<Bool>, isShowingFileSelection: Binding<Bool>, isShowingPhotoLibrary: Binding<Bool>) {
         self.alert = alert
         self.isShowingCamera = isShowingCamera
         self.isShowingFileSelection = isShowingFileSelection
         self.isShowingPhotoLibrary = isShowingPhotoLibrary
-        self.matomo = matomo
         super.init()
     }
 
@@ -271,6 +265,7 @@ class MailEditorView: SQTextEditorView {
         guard let toolbarAction = ToolbarAction(rawValue: sender.tag) else { return }
 
         if let matomoName = toolbarAction.matomoName {
+            @InjectService var matomo: MatomoUtils
             matomo.track(eventWithCategory: .editorActions, name: matomoName)
         }
 

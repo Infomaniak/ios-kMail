@@ -18,6 +18,7 @@
 
 import InfomaniakCore
 import InfomaniakCoreUI
+import InfomaniakDI
 import MailCore
 import MailResources
 import SwiftUI
@@ -36,7 +37,6 @@ struct MenuDrawerItemsListView: View {
     var title: String?
     let content: [MenuItem]
 
-    let matomo: MatomoUtils
     var matomoName: String?
 
     @State private var isExpanded = false
@@ -48,6 +48,7 @@ struct MenuDrawerItemsListView: View {
                     withAnimation {
                         isExpanded.toggle()
                         if let matomoName {
+                            @InjectService var matomo: MatomoUtils
                             matomo.track(eventWithCategory: .menuDrawer, name: matomoName, value: isExpanded)
                         }
                     }
@@ -63,12 +64,12 @@ struct MenuDrawerItemsListView: View {
 
                 if isExpanded {
                     ForEach(content) { item in
-                        MenuDrawerItemCell(content: item, matomo: matomo)
+                        MenuDrawerItemCell(content: item)
                     }
                 }
             } else {
                 ForEach(content) { item in
-                    MenuDrawerItemCell(content: item, matomo: matomo)
+                    MenuDrawerItemCell(content: item)
                 }
             }
         }
@@ -83,12 +84,11 @@ struct ItemsListView_Previews: PreviewProvider {
                                 content: [
                                     MenuItem(icon: MailResourcesAsset.drawerDownload,
                                              label: "Importer des mails",
-                                             matomoName: ""){ print("Hello") },
+                                             matomoName: "") { print("Hello") },
                                     MenuItem(icon: MailResourcesAsset.restoreArrow,
                                              label: "Restaurer des mails",
                                              matomoName: "") { print("Hello") }
-                                ],
-                                matomo: PreviewHelper.sampleMatomo)
+                                ])
                                 .previewLayout(.sizeThatFits)
                                 .previewDevice(PreviewDevice(stringLiteral: "iPhone 11 Pro"))
     }

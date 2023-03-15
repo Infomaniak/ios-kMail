@@ -105,8 +105,7 @@ struct ThreadListView: View {
                              }, set: { value in
                                  splitViewManager.selectedFolder?.unreadCount = value ?? 0
                              }),
-                             unreadFilterOn: $viewModel.filterUnreadOn,
-                             matomo: matomo)
+                             unreadFilterOn: $viewModel.filterUnreadOn)
 
             ScrollViewReader { proxy in
                 List {
@@ -133,8 +132,7 @@ struct ThreadListView: View {
                                                multipleSelectionViewModel: multipleSelectionViewModel,
                                                threadDensity: threadDensity,
                                                editedMessageDraft: $editedMessageDraft,
-                                               isSelected: multipleSelectionViewModel.selectedItems.contains(thread),
-                                               matomo: matomo)
+                                               isSelected: multipleSelectionViewModel.selectedItems.contains(thread))
                                     .id(thread.id)
                             }
                         } header: {

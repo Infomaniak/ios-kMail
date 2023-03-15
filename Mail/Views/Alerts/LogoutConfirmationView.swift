@@ -28,7 +28,6 @@ struct LogoutConfirmationView: View {
     @Environment(\.window) private var window
 
     let account: Account
-    let matomo: MatomoUtils
 
     var body: some View {
         VStack(alignment: .leading, spacing: 24) {
@@ -41,6 +40,7 @@ struct LogoutConfirmationView: View {
     }
 
     private func logout() {
+        @InjectService var matomo: MatomoUtils
         matomo.track(eventWithCategory: .account, name: "logOutConfirm")
         Task {
             @InjectService var notificationService: InfomaniakNotifications
@@ -58,6 +58,6 @@ struct LogoutConfirmationView: View {
 
 struct LogoutConfirmationView_Previews: PreviewProvider {
     static var previews: some View {
-        LogoutConfirmationView(account: PreviewHelper.sampleAccount, matomo: PreviewHelper.sampleMatomo)
+        LogoutConfirmationView(account: PreviewHelper.sampleAccount)
     }
 }

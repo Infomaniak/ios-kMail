@@ -29,7 +29,6 @@ struct RoleFoldersListView: View {
     var folders: [NestableFolder]
 
     var isCompact: Bool
-    let matomo: MatomoUtils
 
     var body: some View {
         VStack(spacing: 0) {
@@ -37,7 +36,7 @@ struct RoleFoldersListView: View {
                 FolderCell(folder: folder,
                            currentFolderId: splitViewManager.selectedFolder?.id,
                            isCompact: isCompact,
-                           matomo: matomo)
+                           matomoCategory: .menuDrawer)
             }
         }
         .padding(.top, 4)

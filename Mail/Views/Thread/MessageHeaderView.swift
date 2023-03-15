@@ -18,6 +18,7 @@
 
 import InfomaniakCore
 import InfomaniakCoreUI
+import InfomaniakDI
 import MailCore
 import MailResources
 import RealmSwift
@@ -34,14 +35,13 @@ struct MessageHeaderView: View {
     @EnvironmentObject var bottomSheet: MessageBottomSheet
     @EnvironmentObject var threadBottomSheet: ThreadBottomSheet
 
-    let matomo: MatomoUtils
+    @LazyInjectService private var matomo: MatomoUtils
 
     var body: some View {
         VStack(spacing: 12) {
             MessageHeaderSummaryView(message: message,
                                      isMessageExpanded: $isMessageExpanded,
                                      isHeaderExpanded: $isHeaderExpanded,
-                                     matomo: matomo,
                                      deleteDraftTapped: deleteDraft) {
                 matomo.track(eventWithCategory: .messageActions, name: "reply")
                 if message.canReplyAll {
@@ -102,20 +102,17 @@ struct MessageHeaderView_Previews: PreviewProvider {
             MessageHeaderView(
                 message: PreviewHelper.sampleMessage,
                 isHeaderExpanded: .constant(false),
-                isMessageExpanded: .constant(false),
-                matomo: PreviewHelper.sampleMatomo
+                isMessageExpanded: .constant(false)
             )
             MessageHeaderView(
                 message: PreviewHelper.sampleMessage,
                 isHeaderExpanded: .constant(false),
-                isMessageExpanded: .constant(true),
-                matomo: PreviewHelper.sampleMatomo
+                isMessageExpanded: .constant(true)
             )
             MessageHeaderView(
                 message: PreviewHelper.sampleMessage,
                 isHeaderExpanded: .constant(true),
-                isMessageExpanded: .constant(true),
-                matomo: PreviewHelper.sampleMatomo
+                isMessageExpanded: .constant(true)
             )
         }
         .previewLayout(.sizeThatFits)

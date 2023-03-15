@@ -174,8 +174,7 @@ struct ComposeMessageView: View {
                                        alert: $alert,
                                        isShowingCamera: $isShowingCamera,
                                        isShowingFileSelection: $isShowingFileSelection,
-                                       isShowingPhotoLibrary: $isShowingPhotoLibrary,
-                                       matomo: matomo)
+                                       isShowingPhotoLibrary: $isShowingPhotoLibrary)
                             .ignoresSafeArea(.all, edges: .bottom)
                             .frame(height: editor.height + 20)
                             .padding([.vertical], 10)
@@ -281,8 +280,7 @@ struct ComposeMessageView: View {
                                autocompletion: $autocompletion,
                                addRecipientHandler: $addRecipientHandler,
                                focusedField: _focusedField,
-                               type: type,
-                               matomo: matomo)
+                               type: type)
             }
         }
     }

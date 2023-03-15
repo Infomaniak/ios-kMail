@@ -18,6 +18,7 @@
 
 import InfomaniakCore
 import InfomaniakCoreUI
+import InfomaniakDI
 import MailCore
 import MailResources
 import RealmSwift
@@ -28,8 +29,6 @@ struct AttachmentPreview: View {
     @ObservedRealmObject var attachment: Attachment
 
     @Environment(\.verticalSizeClass) var sizeClass
-
-    let matomo: MatomoUtils
 
     var body: some View {
         NavigationView {
@@ -70,6 +69,7 @@ struct AttachmentPreview: View {
     }
 
     private func download() {
+        @InjectService var matomo: MatomoUtils
         matomo.track(eventWithCategory: .message, name: "download")
         guard let url = attachment.localUrl,
               var source = UIApplication.shared.mainSceneKeyWindow?.rootViewController else {
@@ -86,6 +86,6 @@ struct AttachmentPreview: View {
 
 struct AttachmentPreview_Previews: PreviewProvider {
     static var previews: some View {
-        AttachmentPreview(attachment: PreviewHelper.sampleAttachment, matomo: PreviewHelper.sampleMatomo)
+        AttachmentPreview(attachment: PreviewHelper.sampleAttachment)
     }
 }

@@ -18,6 +18,7 @@
 
 import InfomaniakCore
 import InfomaniakCoreUI
+import InfomaniakDI
 import MailCore
 import MailResources
 import RealmSwift
@@ -27,11 +28,12 @@ struct MessageHeaderSummaryView: View {
     @ObservedRealmObject var message: Message
     @Binding var isMessageExpanded: Bool
     @Binding var isHeaderExpanded: Bool
-    let matomo: MatomoUtils
     let deleteDraftTapped: () -> Void
     let replyButtonTapped: () -> Void
     let moreButtonTapped: () -> Void
     let recipientTapped: (Recipient) -> Void
+
+    @LazyInjectService private var matomo: MatomoUtils
 
     var body: some View {
         HStack(alignment: .top, spacing: 0) {
@@ -122,8 +124,7 @@ struct MessageHeaderSummaryView_Previews: PreviewProvider {
         Group {
             MessageHeaderSummaryView(message: PreviewHelper.sampleMessage,
                                      isMessageExpanded: .constant(false),
-                                     isHeaderExpanded: .constant(false),
-                                     matomo: PreviewHelper.sampleMatomo) {
+                                     isHeaderExpanded: .constant(false)) {
                 // Preview
             } replyButtonTapped: {
                 // Preview
@@ -134,8 +135,7 @@ struct MessageHeaderSummaryView_Previews: PreviewProvider {
             }
             MessageHeaderSummaryView(message: PreviewHelper.sampleMessage,
                                      isMessageExpanded: .constant(true),
-                                     isHeaderExpanded: .constant(false),
-                                     matomo: PreviewHelper.sampleMatomo) {
+                                     isHeaderExpanded: .constant(false)) {
                 // Preview
             } replyButtonTapped: {
                 // Preview

@@ -72,7 +72,7 @@ struct AccountListView: View {
         ScrollView {
             VStack {
                 ForEach(Array(viewModel.accounts.keys)) { account in
-                    AccountCellView(account: account, selectedUserId: $viewModel.selectedUserId, matomo: matomo)
+                    AccountCellView(account: account, selectedUserId: $viewModel.selectedUserId)
                 }
             }
             .padding(8)

@@ -18,6 +18,7 @@
 
 import InfomaniakCore
 import InfomaniakCoreUI
+import InfomaniakDI
 import MailCore
 import MailResources
 import RealmSwift
@@ -49,7 +50,6 @@ struct RecipientField: View {
     @Binding var addRecipientHandler: ((Recipient) -> Void)?
     @FocusState var focusedField: ComposeViewFieldType?
     let type: ComposeViewFieldType
-    let matomo: MatomoUtils
 
     @State private var currentText = ""
     @State private var keyboardHeight: CGFloat = 0
@@ -75,6 +75,7 @@ struct RecipientField: View {
                     guard let recipient = autocompletion.first else { return }
                     add(recipient: recipient)
                     focusedField = type
+                    @InjectService var matomo: MatomoUtils
                     matomo.track(eventWithCategory: .newMessage, action: .input, name: "addNewRecipient")
                 }
         }
@@ -137,7 +138,6 @@ struct RecipientField_Previews: PreviewProvider {
         autocompletion: .constant([]),
         addRecipientHandler: .constant { _ in /* Preview */ },
         focusedField: .init(),
-        type: .to,
-        matomo: PreviewHelper.sampleMatomo)
+        type: .to)
     }
 }

@@ -18,6 +18,7 @@
 
 import InfomaniakCore
 import InfomaniakCoreUI
+import InfomaniakDI
 import MailCore
 import MailResources
 import SwiftUI
@@ -50,9 +51,9 @@ struct FolderCell: View {
     var currentFolderId: String?
     var isCompact = true
 
-    var customCompletion: ((Folder) -> Void)?
+    var matomoCategory: MatomoUtils.EventCategory?
 
-    var matomo: MatomoUtils?
+    var customCompletion: ((Folder) -> Void)?
 
     @State private var shouldTransit = false
 
@@ -74,7 +75,10 @@ struct FolderCell: View {
                     )
                 } label: {
                     Button {
-                        matomo?.track(eventWithCategory: .menuDrawer, name: folder.content.matomoName)
+                        if let matomoCategory {
+                            @InjectService var matomo: MatomoUtils
+                            matomo.track(eventWithCategory: matomoCategory, name: folder.content.matomoName)
+                        }
                         splitViewManager.selectedFolder = folder.content
                         splitViewManager.showSearch = false
                         self.shouldTransit = true
@@ -105,7 +109,10 @@ struct FolderCell: View {
     }
 
     private func updateFolder() {
-        matomo?.track(eventWithCategory: .menuDrawer, name: folder.content.matomoName)
+        if let matomoCategory {
+            @InjectService var matomo: MatomoUtils
+            matomo.track(eventWithCategory: .menuDrawer, name: folder.content.matomoName)
+        }
         splitViewManager.selectedFolder = folder.content
         navigationDrawerState.close()
     }

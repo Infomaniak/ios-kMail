@@ -18,6 +18,7 @@
 
 import InfomaniakCore
 import InfomaniakCoreUI
+import InfomaniakDI
 import MailCore
 import MailResources
 import SwiftUI
@@ -32,8 +33,6 @@ struct ThreadListHeader: View {
 
     @State private var lastUpdateText: String?
 
-    let matomo: MatomoUtils
-
     let timer = Timer.publish(
         every: 60, // second
         on: .main,
@@ -44,10 +43,8 @@ struct ThreadListHeader: View {
          isConnected: Binding<Bool>,
          lastUpdate: Binding<Date?>,
          unreadCount: Binding<Int?>,
-         unreadFilterOn: Binding<Bool>,
-         matomo: MatomoUtils) {
+         unreadFilterOn: Binding<Bool>) {
         self.isMultipleSelectionEnabled = isMultipleSelectionEnabled
-        self.matomo = matomo
         _isConnected = isConnected
         _lastUpdate = lastUpdate
         _unreadCount = unreadCount
@@ -75,6 +72,7 @@ struct ThreadListHeader: View {
                 .toggleStyle(.unread)
                 .onChange(of: unreadFilterOn) { newValue in
                     if newValue {
+                        @InjectService var matomo: MatomoUtils
                         matomo.track(eventWithCategory: .threadList, name: "unreadFilter")
                     }
                 }
@@ -138,13 +136,11 @@ struct ThreadListHeader_Previews: PreviewProvider {
                          isConnected: .constant(true),
                          lastUpdate: .constant(Date()),
                          unreadCount: .constant(2),
-                         unreadFilterOn: .constant(false),
-                         matomo: PreviewHelper.sampleMatomo)
+                         unreadFilterOn: .constant(false))
         ThreadListHeader(isMultipleSelectionEnabled: false,
                          isConnected: .constant(false),
                          lastUpdate: .constant(nil),
                          unreadCount: .constant(1),
-                         unreadFilterOn: .constant(true),
-                         matomo: PreviewHelper.sampleMatomo)
+                         unreadFilterOn: .constant(true))
     }
 }

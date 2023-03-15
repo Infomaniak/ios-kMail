@@ -18,6 +18,7 @@
 
 import InfomaniakCore
 import InfomaniakCoreUI
+import InfomaniakDI
 import MailCore
 import MailResources
 import RealmSwift
@@ -28,7 +29,7 @@ struct AttachmentsView: View {
     @EnvironmentObject var mailboxManager: MailboxManager
     @ObservedRealmObject var message: Message
 
-    let matomo: MatomoUtils
+    @LazyInjectService private var matomo: MatomoUtils
 
     private var attachments: [Attachment] {
         return message.attachments.filter { $0.disposition == .attachment || $0.contentId == nil }
@@ -81,13 +82,13 @@ struct AttachmentsView: View {
             .padding(.horizontal, 16)
         }
         .sheet(item: $previewedAttachment) { previewedAttachment in
-            AttachmentPreview(attachment: previewedAttachment, matomo: matomo)
+            AttachmentPreview(attachment: previewedAttachment)
         }
     }
 }
 
 struct AttachmentsView_Previews: PreviewProvider {
     static var previews: some View {
-        AttachmentsView(message: PreviewHelper.sampleMessage, matomo: PreviewHelper.sampleMatomo)
+        AttachmentsView(message: PreviewHelper.sampleMessage)
     }
 }

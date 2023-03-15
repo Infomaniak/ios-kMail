@@ -147,34 +147,25 @@ struct MenuDrawerView: View {
 
             ScrollView {
                 VStack(spacing: 0) {
-                    MailboxesManagementView(mailboxes: viewModel.mailboxes, matomo: matomo)
+                    MailboxesManagementView(mailboxes: viewModel.mailboxes)
 
-                    RoleFoldersListView(
-                        folders: viewModel.roleFolders,
-                        isCompact: isCompact,
-                        matomo: matomo
-                    )
+                    RoleFoldersListView(folders: viewModel.roleFolders, isCompact: isCompact)
 
                     IKDivider(withPadding: true)
 
-                    UserFoldersListView(
-                        folders: viewModel.userFolders,
-                        isCompact: isCompact,
-                        matomo: matomo
-                    )
+                    UserFoldersListView(folders: viewModel.userFolders, isCompact: isCompact)
 
                     IKDivider(withPadding: true)
 
                     MenuDrawerItemsListView(
                         title: MailResourcesStrings.Localizable.menuDrawerAdvancedActions,
                         content: viewModel.actionsMenuItems,
-                        matomo: matomo,
                         matomoName: "advancedActions"
                     )
 
                     IKDivider(withPadding: true)
 
-                    MenuDrawerItemsListView(content: viewModel.helpMenuItems, matomo: matomo)
+                    MenuDrawerItemsListView(content: viewModel.helpMenuItems)
 
                     if viewModel.mailbox.isLimited, let quotas = viewModel.mailbox.quotas {
                         IKDivider(withPadding: true)

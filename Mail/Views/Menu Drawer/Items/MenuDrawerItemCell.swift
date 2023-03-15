@@ -18,16 +18,17 @@
 
 import InfomaniakCore
 import InfomaniakCoreUI
+import InfomaniakDI
 import MailCore
 import MailResources
 import SwiftUI
 
 struct MenuDrawerItemCell: View {
     let content: MenuItem
-    let matomo: MatomoUtils
 
     var body: some View {
         Button {
+            @InjectService var matomo: MatomoUtils
             matomo.track(eventWithCategory: .menuDrawer, name: content.matomoName)
             content.action()
         } label: {
@@ -51,8 +52,7 @@ struct ItemCellView_Previews: PreviewProvider {
     static var previews: some View {
         MenuDrawerItemCell(content: MenuItem(icon: MailResourcesAsset.drawerDownload,
                                              label: "Importer des mails",
-                                             matomoName: "") { print("Hello") },
-                           matomo: PreviewHelper.sampleMatomo)
+                                             matomoName: "") { print("Hello") })
             .previewLayout(.sizeThatFits)
             .previewDevice(PreviewDevice(stringLiteral: "iPhone 11 Pro"))
     }

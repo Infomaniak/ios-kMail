@@ -158,7 +158,7 @@ struct AccountView: View {
         .customAlert(isPresented: $alert.isShowing) {
             switch alert.state {
             case .logout:
-                LogoutConfirmationView(account: account, matomo: matomo)
+                LogoutConfirmationView(account: account)
             case .none:
                 EmptyView()
             }
