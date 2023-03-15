@@ -454,7 +454,7 @@ enum ActionsTarget: Equatable {
     private func report() {
         // This action is only available on a single message
         guard case let .message(message) = target else { return }
-        globalSheet.open(state: .reportDisplayProblem(message: message))
+        globalAlert?.state = .reportDisplayProblem(message: message)
     }
 
     private func editMenu() {
