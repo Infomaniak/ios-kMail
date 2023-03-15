@@ -43,7 +43,7 @@ struct MessageHeaderView: View {
                                      isHeaderExpanded: $isHeaderExpanded,
                                      matomo: matomo,
                                      deleteDraftTapped: deleteDraft) {
-                matomo.track(eventWithCategory: .message, name: "reply")
+                matomo.track(eventWithCategory: .messageActions, name: "reply")
                 if message.canReplyAll {
                     bottomSheet.open(state: .replyOption(message, isThread: false))
                 } else {
@@ -87,7 +87,7 @@ struct MessageHeaderView: View {
     }
 
     private func deleteDraft() {
-        matomo.track(eventWithCategory: .message, name: "deleteDraft")
+        matomo.track(eventWithCategory: .messageActions, name: "deleteDraft")
         Task {
             await tryOrDisplayError {
                 try await mailboxManager.delete(draftMessage: message)
