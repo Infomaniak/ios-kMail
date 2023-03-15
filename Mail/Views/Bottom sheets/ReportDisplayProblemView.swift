@@ -31,7 +31,6 @@ struct ReportDisplayProblemView: View {
             Text(MailResourcesStrings.Localizable.reportDisplayProblemTitle)
                 .textStyle(.bodyMedium)
                 .frame(maxWidth: .infinity, alignment: .leading)
-            Image(resource: MailResourcesAsset.displayIssue)
             Text(MailResourcesStrings.Localizable.reportDisplayProblemDescription)
                 .textStyle(.bodySecondary)
             ModalButtonsView(primaryButtonTitle: MailResourcesStrings.Localizable.buttonAccept,
@@ -39,7 +38,6 @@ struct ReportDisplayProblemView: View {
                              primaryButtonAction: report)
             .padding(.top, 8)
         }
-        .padding(.horizontal, Constants.bottomSheetHorizontalPadding)
     }
 
     private func report() {
