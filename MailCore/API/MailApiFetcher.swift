@@ -313,7 +313,7 @@ class SyncedAuthenticator: OAuthAuthenticator {
     ) {
         AccountManager.instance.refreshTokenLockedQueue.async {
             @InjectService var keychainHelper: KeychainHelper
-            @InjectService var networkLoginService: InfomaniakLogin
+            @InjectService var networkLoginService: InfomaniakNetworkLoginable
 
             SentrySDK
                 .addBreadcrumb(crumb: (credential as ApiToken)

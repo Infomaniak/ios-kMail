@@ -68,7 +68,7 @@ struct Slide: Identifiable {
 }
 
 struct OnboardingView: View {
-    @LazyInjectService var loginService: InfomaniakLogin
+    @LazyInjectService var loginService: InfomaniakLoginable
     @LazyInjectService var matomo: MatomoUtils
 
     @Environment(\.window) private var window
@@ -165,79 +165,84 @@ struct OnboardingView: View {
             }
         }
         .matomoView(view: ["OnBoarding"])
+        .defaultAppStorage(.shared)
     }
 
     // MARK: - Private methods
 
     private func updateAnimationColors(_ animation: LottieAnimationView, _ configuration: LottieConfiguration) {
-            IlluColors.onBoardingAllColors.forEach { $0.applyColors(to: animation) }
+        IlluColors.onBoardingAllColors.forEach { $0.applyColors(to: animation) }
+
+        if configuration.id == 2 || configuration.id == 3 || configuration.id == 4 {
+            IlluColors.illuOnBoarding234Colors.forEach { $0.applyColors(to: animation) }
+        }
+
+        switch configuration.id {
+        case 1:
+            IlluColors.illuOnBoarding1Colors.forEach { $0.applyColors(to: animation) }
+        case 2:
+            IlluColors.illuOnBoarding2Colors.forEach { $0.applyColors(to: animation) }
+        case 3:
+            IlluColors.illuOnBoarding3Colors.forEach { $0.applyColors(to: animation) }
+        case 4:
+            IlluColors.illuOnBoarding4Colors.forEach { $0.applyColors(to: animation) }
+        default:
+            break
+        }
+
+        if UserDefaults.shared.accentColor == .pink {
+            IlluColors.onBoardingPinkColors.forEach { $0.applyColors(to: animation) }
 
             if configuration.id == 2 || configuration.id == 3 || configuration.id == 4 {
-                IlluColors.illuOnBoarding234Colors.forEach { $0.applyColors(to: animation) }
+                IlluColors.illuOnBoarding234PinkColors.forEach { $0.applyColors(to: animation) }
             }
 
             switch configuration.id {
             case 1:
-                IlluColors.illuOnBoarding1Colors.forEach { $0.applyColors(to: animation) }
+                IlluColors.illuOnBoarding1PinkColors.forEach { $0.applyColors(to: animation) }
             case 2:
-                IlluColors.illuOnBoarding2Colors.forEach { $0.applyColors(to: animation) }
+                IlluColors.illuOnBoarding2PinkColors.forEach { $0.applyColors(to: animation) }
             case 3:
-                IlluColors.illuOnBoarding3Colors.forEach { $0.applyColors(to: animation) }
+                IlluColors.illu3PinkColors.forEach { $0.applyColors(to: animation) }
             case 4:
-                IlluColors.illuOnBoarding4Colors.forEach { $0.applyColors(to: animation) }
+                IlluColors.illuOnBoarding4PinkColors.forEach { $0.applyColors(to: animation) }
             default:
                 break
             }
+        } else {
+            IlluColors.onBoardingBlueColors.forEach { $0.applyColors(to: animation) }
 
-            if UserDefaults.shared.accentColor == .pink {
-                IlluColors.onBoardingPinkColors.forEach { $0.applyColors(to: animation) }
-
-                if configuration.id == 2 || configuration.id == 3 || configuration.id == 4 {
-                    IlluColors.illuOnBoarding234PinkColors.forEach { $0.applyColors(to: animation) }
-                }
-
-                switch configuration.id {
-                case 1:
-                    IlluColors.illuOnBoarding1PinkColors.forEach { $0.applyColors(to: animation) }
-                case 2:
-                    IlluColors.illuOnBoarding2PinkColors.forEach { $0.applyColors(to: animation) }
-                case 3:
-                    IlluColors.illu3PinkColors.forEach { $0.applyColors(to: animation) }
-                case 4:
-                    IlluColors.illuOnBoarding4PinkColors.forEach { $0.applyColors(to: animation) }
-                default:
-                    break
-                }
-            } else {
-                IlluColors.onBoardingBlueColors.forEach { $0.applyColors(to: animation) }
-
-                if configuration.id == 2 || configuration.id == 3 || configuration.id == 4 {
-                    IlluColors.illuOnBoarding234BlueColors.forEach { $0.applyColors(to: animation) }
-                }
-
-                switch configuration.id {
-                case 1:
-                    IlluColors.illuOnBoarding1BlueColors.forEach { $0.applyColors(to: animation) }
-                case 2:
-                    IlluColors.illuOnBoarding2BlueColors.forEach { $0.applyColors(to: animation) }
-                case 3:
-                    IlluColors.illu3BlueColors.forEach { $0.applyColors(to: animation) }
-                case 4:
-                    IlluColors.illuOnBoarding4BlueColors.forEach { $0.applyColors(to: animation) }
-                default:
-                    break
-                }
+            if configuration.id == 2 || configuration.id == 3 || configuration.id == 4 {
+                IlluColors.illuOnBoarding234BlueColors.forEach { $0.applyColors(to: animation) }
             }
+
+            switch configuration.id {
+            case 1:
+                IlluColors.illuOnBoarding1BlueColors.forEach { $0.applyColors(to: animation) }
+            case 2:
+                IlluColors.illuOnBoarding2BlueColors.forEach { $0.applyColors(to: animation) }
+            case 3:
+                IlluColors.illu3BlueColors.forEach { $0.applyColors(to: animation) }
+            case 4:
+                IlluColors.illuOnBoarding4BlueColors.forEach { $0.applyColors(to: animation) }
+            default:
+                break
+            }
+        }
     }
 
     private func login() {
         isLoading = true
         matomo.track(eventWithCategory: .account, name: "openLoginWebview")
-        loginService.asWebAuthenticationLoginFrom(useEphemeralSession: true) { result in
+        loginService.asWebAuthenticationLoginFrom(
+            anchor: ASPresentationAnchor(),
+            useEphemeralSession: true,
+            hideCreateAccountButton: true
+        ) { result in
             switch result {
-            case let .success(result):
+            case .success(let result):
                 loginSuccessful(code: result.code, codeVerifier: result.verifier)
-            case let .failure(error):
+            case .failure(let error):
                 loginFailed(error: error)
             }
         }
