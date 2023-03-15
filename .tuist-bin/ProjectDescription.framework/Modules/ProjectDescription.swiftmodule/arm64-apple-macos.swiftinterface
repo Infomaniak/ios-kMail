@@ -41,6 +41,139 @@ public struct BuildAction : Swift.Equatable, Swift.Codable {
   public func encode(to encoder: Swift.Encoder) throws
   public init(from decoder: Swift.Decoder) throws
 }
+extension ProjectDescription.BuildRule {
+  public enum CompilerSpec : Swift.Codable {
+    case appIntentsMetadataExtractor
+    case appShortcutStringsMetadataExtractor
+    case appleClang
+    case assetCatalogCompiler
+    case codeSign
+    case compileRealityComposerProject
+    case compileSceneKitShaders
+    case compileSkybox
+    case compileUSDZ
+    case compressPNG
+    case copyPlistFile
+    case copySceneKitAssets
+    case copyStringsFile
+    case copyTiffFile
+    case coreDataMappingModelCompiler
+    case coreMLModelCompiler
+    case dataModelCompiler
+    case defaultCompiler
+    case dTrace
+    case generateSpriteKitTextureAtlas
+    case iconutil
+    case instrumetsPackageBuilder
+    case intentDefinitionCompiler
+    case interfaceBuilderNIBPostprocessor
+    case interfaceBuilderStoryboardCompiler
+    case interfaceBuilderStoryboardLinker
+    case interfaceBuilderStoryboardPostprocessor
+    case interfaceBuilderXIBCompiler
+    case ioKitInterfaceGenerator
+    case lex
+    case lsRegisterURL
+    case metalCompiler
+    case metalLinker
+    case mig
+    case nasm
+    case nmedit
+    case openCL
+    case osaCompile
+    case pbxcp
+    case processSceneKitDocument
+    case processXCAppExtensionPoints
+    case rez
+    case stripSymbols
+    case swiftCompiler
+    case swiftABIBaselineGenerator
+    case swiftFrameworkABIChecker
+    case textBasedAPITool
+    case unifdef
+    case yacc
+    case customScript
+    public static func == (a: ProjectDescription.BuildRule.CompilerSpec, b: ProjectDescription.BuildRule.CompilerSpec) -> Swift.Bool
+    public func hash(into hasher: inout Swift.Hasher)
+    public func encode(to encoder: Swift.Encoder) throws
+    public var hashValue: Swift.Int {
+      get
+    }
+    public init(from decoder: Swift.Decoder) throws
+  }
+}
+extension ProjectDescription.BuildRule {
+  public enum FileType : Swift.Codable {
+    case instrumentsPackageDefinition
+    case metalAIR
+    case machO
+    case machOObject
+    case siriKitIntent
+    case coreMLMachineLearning
+    case rcProjectDocument
+    case skyboxDocument
+    case interfaceBuilderStoryboard
+    case interfaceBuilder
+    case documentationCatalog
+    case coreMLMachineLearningModelPackage
+    case assemblyAsm
+    case assemblyAsmAsm
+    case llvmAssembly
+    case cSource
+    case clipsSource
+    case cppSource
+    case dtraceSource
+    case dylanSource
+    case fortranSource
+    case glslSource
+    case iigSource
+    case javaSource
+    case lexSource
+    case metalShaderSource
+    case migSource
+    case nasmAssembly
+    case openCLSource
+    case pascalSource
+    case protobufSource
+    case rezSource
+    case swiftSource
+    case yaccSource
+    case localizationString
+    case localizationStringDictionary
+    case xcAppExtensionPoints
+    case xcodeSpecificationPlist
+    case dae
+    case nib
+    case interfaceBuilderStoryboardPackage
+    case classModel
+    case dataModel
+    case dataModelVersion
+    case mappingModel
+    case sourceFilesWithNamesMatching
+    public static func == (a: ProjectDescription.BuildRule.FileType, b: ProjectDescription.BuildRule.FileType) -> Swift.Bool
+    public func hash(into hasher: inout Swift.Hasher)
+    public func encode(to encoder: Swift.Encoder) throws
+    public var hashValue: Swift.Int {
+      get
+    }
+    public init(from decoder: Swift.Decoder) throws
+  }
+}
+public struct BuildRule : Swift.Codable, Swift.Equatable {
+  public let compilerSpec: ProjectDescription.BuildRule.CompilerSpec
+  public let filePatterns: Swift.String?
+  public let fileType: ProjectDescription.BuildRule.FileType
+  public let name: Swift.String?
+  public let outputFiles: [Swift.String]
+  public let inputFiles: [Swift.String]
+  public let outputFilesCompilerFlags: [Swift.String]
+  public let script: Swift.String?
+  public let runOncePerArchitecture: Swift.Bool?
+  public init(name: Swift.String? = nil, fileType: ProjectDescription.BuildRule.FileType, filePatterns: Swift.String? = nil, compilerSpec: ProjectDescription.BuildRule.CompilerSpec, inputFiles: [Swift.String] = [], outputFiles: [Swift.String] = [], outputFilesCompilerFlags: [Swift.String] = [], script: Swift.String? = nil, runOncePerArchitecture: Swift.Bool = false)
+  public static func == (a: ProjectDescription.BuildRule, b: ProjectDescription.BuildRule) -> Swift.Bool
+  public func encode(to encoder: Swift.Encoder) throws
+  public init(from decoder: Swift.Decoder) throws
+}
 public struct Cache : Swift.Codable, Swift.Equatable {
   public struct Profile : Swift.Codable, Swift.Equatable {
     public let name: Swift.String
@@ -583,6 +716,7 @@ public enum Product : Swift.String, Swift.Codable, Swift.Equatable {
   case tvTopShelfExtension
   case messagesExtension
   case stickerPackExtension
+  case xpc
   public init?(rawValue: Swift.String)
   public typealias RawValue = Swift.String
   public var rawValue: Swift.String {
@@ -754,13 +888,14 @@ extension Swift.Array where Element == ProjectDescription.ResourceSynthesizer {
 public struct RunAction : Swift.Equatable, Swift.Codable {
   public let configuration: ProjectDescription.ConfigurationName
   public let attachDebugger: Swift.Bool
+  public let customLLDBInitFile: ProjectDescription.Path?
   public let preActions: [ProjectDescription.ExecutionAction]
   public let postActions: [ProjectDescription.ExecutionAction]
   public let executable: ProjectDescription.TargetReference?
   public let arguments: ProjectDescription.Arguments?
   public let options: ProjectDescription.RunActionOptions
   public let diagnosticsOptions: [ProjectDescription.SchemeDiagnosticsOption]
-  public static func runAction(configuration: ProjectDescription.ConfigurationName = .debug, attachDebugger: Swift.Bool = true, preActions: [ProjectDescription.ExecutionAction] = [], postActions: [ProjectDescription.ExecutionAction] = [], executable: ProjectDescription.TargetReference? = nil, arguments: ProjectDescription.Arguments? = nil, options: ProjectDescription.RunActionOptions = .options(), diagnosticsOptions: [ProjectDescription.SchemeDiagnosticsOption] = [.mainThreadChecker]) -> ProjectDescription.RunAction
+  public static func runAction(configuration: ProjectDescription.ConfigurationName = .debug, attachDebugger: Swift.Bool = true, customLLDBInitFile: ProjectDescription.Path? = nil, preActions: [ProjectDescription.ExecutionAction] = [], postActions: [ProjectDescription.ExecutionAction] = [], executable: ProjectDescription.TargetReference? = nil, arguments: ProjectDescription.Arguments? = nil, options: ProjectDescription.RunActionOptions = .options(), diagnosticsOptions: [ProjectDescription.SchemeDiagnosticsOption] = [.mainThreadChecker]) -> ProjectDescription.RunAction
   public static func == (a: ProjectDescription.RunAction, b: ProjectDescription.RunAction) -> Swift.Bool
   public func encode(to encoder: Swift.Encoder) throws
   public init(from decoder: Swift.Decoder) throws
@@ -1069,7 +1204,8 @@ public struct Target : Swift.Codable, Swift.Equatable {
   public let environment: [Swift.String : Swift.String]
   public let launchArguments: [ProjectDescription.LaunchArgument]
   public let additionalFiles: [ProjectDescription.FileElement]
-  public init(name: Swift.String, platform: ProjectDescription.Platform, product: ProjectDescription.Product, productName: Swift.String? = nil, bundleId: Swift.String, deploymentTarget: ProjectDescription.DeploymentTarget? = nil, infoPlist: ProjectDescription.InfoPlist? = .default, sources: ProjectDescription.SourceFilesList? = nil, resources: ProjectDescription.ResourceFileElements? = nil, copyFiles: [ProjectDescription.CopyFilesAction]? = nil, headers: ProjectDescription.Headers? = nil, entitlements: ProjectDescription.Path? = nil, scripts: [ProjectDescription.TargetScript] = [], dependencies: [ProjectDescription.TargetDependency] = [], settings: ProjectDescription.Settings? = nil, coreDataModels: [ProjectDescription.CoreDataModel] = [], environment: [Swift.String : Swift.String] = [:], launchArguments: [ProjectDescription.LaunchArgument] = [], additionalFiles: [ProjectDescription.FileElement] = [])
+  public let buildRules: [ProjectDescription.BuildRule]
+  public init(name: Swift.String, platform: ProjectDescription.Platform, product: ProjectDescription.Product, productName: Swift.String? = nil, bundleId: Swift.String, deploymentTarget: ProjectDescription.DeploymentTarget? = nil, infoPlist: ProjectDescription.InfoPlist? = .default, sources: ProjectDescription.SourceFilesList? = nil, resources: ProjectDescription.ResourceFileElements? = nil, copyFiles: [ProjectDescription.CopyFilesAction]? = nil, headers: ProjectDescription.Headers? = nil, entitlements: ProjectDescription.Path? = nil, scripts: [ProjectDescription.TargetScript] = [], dependencies: [ProjectDescription.TargetDependency] = [], settings: ProjectDescription.Settings? = nil, coreDataModels: [ProjectDescription.CoreDataModel] = [], environment: [Swift.String : Swift.String] = [:], launchArguments: [ProjectDescription.LaunchArgument] = [], additionalFiles: [ProjectDescription.FileElement] = [], buildRules: [ProjectDescription.BuildRule] = [])
   public static func == (a: ProjectDescription.Target, b: ProjectDescription.Target) -> Swift.Bool
   public func encode(to encoder: Swift.Encoder) throws
   public init(from decoder: Swift.Decoder) throws
@@ -1384,6 +1520,10 @@ extension ProjectDescription.Workspace {
     public init(from decoder: Swift.Decoder) throws
   }
 }
+extension ProjectDescription.BuildRule.CompilerSpec : Swift.Equatable {}
+extension ProjectDescription.BuildRule.CompilerSpec : Swift.Hashable {}
+extension ProjectDescription.BuildRule.FileType : Swift.Equatable {}
+extension ProjectDescription.BuildRule.FileType : Swift.Hashable {}
 extension ProjectDescription.Cloud.Option : Swift.Hashable {}
 extension ProjectDescription.Cloud.Option : Swift.RawRepresentable {}
 extension ProjectDescription.CopyFilesAction.Destination : Swift.Hashable {}
