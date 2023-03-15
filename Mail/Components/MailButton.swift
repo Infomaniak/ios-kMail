@@ -34,6 +34,10 @@ struct MailButtonIconSizeKey: EnvironmentKey {
     static var defaultValue: CGFloat = Constants.buttonsIconSize
 }
 
+struct MailButtonLoadingKey: EnvironmentKey {
+    static var defaultValue = false
+}
+
 extension EnvironmentValues {
     var mailButtonStyle: MailButton.Style {
         get { self[MailButtonStyleKey.self] }
@@ -49,6 +53,11 @@ extension EnvironmentValues {
         get { self[MailButtonIconSizeKey.self] }
         set { self[MailButtonIconSizeKey.self] = newValue }
     }
+
+    var mailButtonLoading: Bool {
+        get { self[MailButtonLoadingKey.self] }
+        set { self[MailButtonLoadingKey.self] = newValue }
+    }
 }
 
 extension View {
@@ -63,6 +72,10 @@ extension View {
     func mailButtonIconSize(_ size: CGFloat) -> some View {
         environment(\.mailButtonIconSize, size)
     }
+
+    func mailButtonLoading(_ loading: Bool) -> some View {
+        environment(\.mailButtonLoading, loading)
+    }
 }
 
 // MARK: - View
@@ -73,6 +86,7 @@ struct MailButton: View {
     @Environment(\.mailButtonStyle) private var style: Style
     @Environment(\.mailButtonFullWidth) private var fullWidth: Bool
     @Environment(\.mailButtonIconSize) private var iconSize: CGFloat
+    @Environment(\.mailButtonLoading) private var loading: Bool
 
     var icon: MailResourcesImages?
     var label: String?
@@ -85,20 +99,27 @@ struct MailButton: View {
 
     var body: some View {
         Button(role: style == .destructive ? .destructive : nil, action: action) {
-            HStack(spacing: 8) {
-                if let icon {
-                    Image(resource: icon)
-                        .resizable()
-                        .scaledToFit()
-                        .frame(width: iconSize, height: iconSize)
-                        .padding(.vertical, 2)
+            ZStack {
+                HStack(spacing: 8) {
+                    if let icon {
+                        Image(resource: icon)
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: iconSize, height: iconSize)
+                            .padding(.vertical, 2)
+                    }
+                    if let label {
+                        Text(label)
+                    }
                 }
-                if let label {
-                    Text(label)
+                .opacity(loading ? 0 : 1)
+                if loading {
+                    LoadingButtonProgressView(style: style)
                 }
             }
             .frame(maxWidth: fullWidth ? .infinity : nil)
         }
+        .disabled(loading || !isEnabled)
         .buttonStyle(MailButtonStyle(style: style))
         .animation(.easeOut(duration: 0.25), value: isEnabled)
     }
@@ -128,6 +149,9 @@ struct MailButton_Previews: PreviewProvider {
 
                 buttonsRow
                     .disabled(true)
+
+                buttonsRow
+                    .mailButtonLoading(true)
 
                 GridRow {
                     MailButton(label: "Link") { /* Preview */ }
