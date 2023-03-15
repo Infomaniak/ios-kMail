@@ -80,16 +80,14 @@ struct FolderCell: View {
                 }
             }
 
-            if level < Constants.menuDrawerMaximumSubfolderLevel {
-                ForEach(folder.children) { child in
-                    FolderCell(
-                        folder: child,
-                        level: level + 1,
-                        currentFolderId: currentFolderId,
-                        isCompact: isCompact,
-                        customCompletion: customCompletion
-                    )
-                }
+            ForEach(folder.children) { child in
+                FolderCell(
+                    folder: child,
+                    level: level + 1,
+                    currentFolderId: currentFolderId,
+                    isCompact: isCompact,
+                    customCompletion: customCompletion
+                )
             }
         }
     }
@@ -111,9 +109,15 @@ struct FolderCell: View {
 struct FolderCellContent: View {
     @Environment(\.folderCellType) var cellType
 
-    let folder: Folder
-    let level: Int
-    let isCurrentFolder: Bool
+    private let folder: Folder
+    private let level: Int
+    private let isCurrentFolder: Bool
+
+    init(folder: Folder, level: Int, isCurrentFolder: Bool) {
+        self.folder = folder
+        self.level = min(level, Constants.menuDrawerMaximumSubfolderLevel)
+        self.isCurrentFolder = isCurrentFolder
+    }
 
     private var textStyle: MailTextStyle {
         if cellType == .link {
