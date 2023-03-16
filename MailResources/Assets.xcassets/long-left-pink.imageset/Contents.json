@@ -1,7 +1,7 @@
 {
   "images" : [
     {
-      "filename" : "long-left.svg",
+      "filename" : "long-left-pink-light.svg",
       "idiom" : "universal"
     },
     {
@@ -11,7 +11,7 @@
           "value" : "dark"
         }
       ],
-      "filename" : "long-left-pink.svg",
+      "filename" : "long-left-pink-dark.svg",
       "idiom" : "universal"
     }
   ],
