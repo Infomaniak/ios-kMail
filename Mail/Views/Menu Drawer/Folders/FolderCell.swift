@@ -111,7 +111,7 @@ struct FolderCell: View {
     private func updateFolder() {
         if let matomoCategory {
             @InjectService var matomo: MatomoUtils
-            matomo.track(eventWithCategory: .menuDrawer, name: folder.content.matomoName)
+            matomo.track(eventWithCategory: matomoCategory, name: folder.content.matomoName)
         }
         splitViewManager.selectedFolder = folder.content
         navigationDrawerState.close()
