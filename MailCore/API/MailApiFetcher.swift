@@ -316,11 +316,10 @@ class SyncedAuthenticator: OAuthAuthenticator {
             @InjectService var networkLoginService: InfomaniakNetworkLoginable
 
             SentrySDK
-                .addBreadcrumb(crumb: (credential as ApiToken)
-                    .generateBreadcrumb(level: .info, message: "Refreshing token - Starting"))
+                .addBreadcrumb((credential as ApiToken).generateBreadcrumb(level: .info, message: "Refreshing token - Starting"))
             if !keychainHelper.isKeychainAccessible {
                 SentrySDK
-                    .addBreadcrumb(crumb: (credential as ApiToken)
+                    .addBreadcrumb((credential as ApiToken)
                         .generateBreadcrumb(level: .error, message: "Refreshing token failed - Keychain unaccessible"))
                 completion(.failure(MailError.noToken))
                 return
@@ -331,8 +330,7 @@ class SyncedAuthenticator: OAuthAuthenticator {
             if let token = AccountManager.instance.getTokenForUserId(credential.userId),
                token.expirationDate > credential.expirationDate {
                 SentrySDK
-                    .addBreadcrumb(crumb: token
-                        .generateBreadcrumb(level: .info, message: "Refreshing token - Success with local"))
+                    .addBreadcrumb(token.generateBreadcrumb(level: .info, message: "Refreshing token - Success with local"))
 
                 completion(.success(token))
                 return
@@ -346,7 +344,7 @@ class SyncedAuthenticator: OAuthAuthenticator {
                     // New token has been fetched correctly
                     if let token {
                         SentrySDK
-                            .addBreadcrumb(crumb: token
+                            .addBreadcrumb(token
                                 .generateBreadcrumb(level: .info, message: "Refreshing token - Success with remote"))
                         self.refreshTokenDelegate?.didUpdateToken(newToken: token, oldToken: credential)
                         completion(.success(token))
@@ -354,14 +352,14 @@ class SyncedAuthenticator: OAuthAuthenticator {
                         // Couldn't refresh the token, API says it's invalid
                         if let error = error as NSError?, error.domain == "invalid_grant" {
                             SentrySDK
-                                .addBreadcrumb(crumb: (credential as ApiToken)
+                                .addBreadcrumb((credential as ApiToken)
                                     .generateBreadcrumb(level: .error, message: "Refreshing token failed - Invalid grant"))
                             self.refreshTokenDelegate?.didFailRefreshToken(credential)
                             completion(.failure(error))
                         } else {
                             // Couldn't refresh the token, keep the old token and fetch it later. Maybe because of bad network ?
                             SentrySDK
-                                .addBreadcrumb(crumb: (credential as ApiToken)
+                                .addBreadcrumb((credential as ApiToken)
                                     .generateBreadcrumb(level: .error,
                                                         message: "Refreshing token failed - Other \(error.debugDescription)"))
                             completion(.success(credential))
@@ -372,9 +370,10 @@ class SyncedAuthenticator: OAuthAuthenticator {
                 }
             } onExpired: {
                 SentrySDK
-                    .addBreadcrumb(crumb: (credential as ApiToken)
+                    .addBreadcrumb((credential as ApiToken)
                         .generateBreadcrumb(level: .error, message: "Refreshing token failed - Background task expired"))
-                // If we didn't fetch the new token in the given time there is not much we can do apart from hoping that it wasn't revoked
+                // If we didn't fetch the new token in the given time there is not much we can do apart from hoping that it wasn't
+                // revoked
                 completion(.failure(MailError.noToken))
                 group.leave()
             }
