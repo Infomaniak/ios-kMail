@@ -433,11 +433,14 @@ public class AccountManager: RefreshTokenDelegate {
         if currentAccount == toDeleteAccount {
             currentAccount = nil
             currentMailboxId = 0
+            currentUserId = 0
         }
         MailboxManager.deleteUserMailbox(userId: toDeleteAccount.userId)
-        accounts.removeAll { account -> Bool in
-            account == toDeleteAccount
-        }
+        ContactManager.deleteUserContacts(userId: toDeleteAccount.userId)
+        MailboxInfosManager.instance.removeMailboxesFor(userId: toDeleteAccount.userId)
+        mailboxManagers.removeAll()
+        contactManagers.removeAll()
+        accounts.removeAll { $0 == toDeleteAccount }
     }
 
     public func removeTokenAndAccount(token: ApiToken) {

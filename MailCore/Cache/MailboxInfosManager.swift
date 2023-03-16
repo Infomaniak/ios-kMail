@@ -34,7 +34,6 @@ public class MailboxInfosManager {
             schemaVersion: MailboxInfosManager.currentDbVersion,
             objectTypes: [Mailbox.self, MailboxPermissions.self, Quotas.self]
         )
-        print(MailboxManager.constants.rootDocumentsURL.path)
     }
 
     public func getRealm() -> Realm {
@@ -107,5 +106,13 @@ public class MailboxInfosManager {
         let realm = realm ?? getRealm()
         guard let savedMailbox = realm.object(ofType: Mailbox.self, forPrimaryKey: mailbox.objectId) else { return }
         mailbox.unseenMessages = savedMailbox.unseenMessages
+    }
+
+    public func removeMailboxesFor(userId: Int) {
+        let realm = getRealm()
+        let userMailboxes = realm.objects(Mailbox.self).where { $0.userId == userId }
+        try? realm.uncheckedSafeWrite {
+            realm.delete(userMailboxes)
+        }
     }
 }
