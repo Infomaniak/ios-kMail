@@ -52,7 +52,7 @@ public class BackgroundRealm {
         } onExpired: {
             let expiredBreadcrumb = Breadcrumb(level: .warning, category: "BackgroundRealm")
             expiredBreadcrumb.message = "Task expired before completing"
-            SentrySDK.addBreadcrumb(crumb: expiredBreadcrumb)
+            SentrySDK.addBreadcrumb(expiredBreadcrumb)
         }
     }
 
