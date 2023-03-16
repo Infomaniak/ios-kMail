@@ -32,9 +32,9 @@ class DateSection: Identifiable {
         public var dateInterval: DateInterval {
             switch self {
             case .today:
-                return .init(start: .now.startOfDay, duration: 86_400)
+                return .init(start: .now.startOfDay, duration: 86400)
             case .yesterday:
-                return .init(start: .yesterday.startOfDay, duration: 86_400)
+                return .init(start: .yesterday.startOfDay, duration: 86400)
             case .thisWeek:
                 return .init(start: .now.startOfWeek, end: .now.endOfWeek)
             case .lastWeek:
@@ -76,7 +76,7 @@ class DateSection: Identifiable {
 
     init(thread: Thread) {
         let sections: [ReferenceDate] = [.today, .yesterday, .thisWeek, .lastWeek, .thisMonth]
-        referenceDate = sections.first(where: { $0.dateInterval.contains(thread.date) }) ?? ReferenceDate.older(thread.date)
+        referenceDate = sections.first { $0.dateInterval.contains(thread.date) } ?? .older(thread.date)
     }
 
     func threadBelongsToSection(thread: Thread) -> Bool {
