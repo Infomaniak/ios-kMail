@@ -72,12 +72,7 @@ class MenuDrawerViewModel: ObservableObject {
     ]
 
     init(mailboxManager: MailboxManager) {
-        if let liveMailbox = MailboxInfosManager.instance.getMailbox(objectId: mailboxManager.mailbox.objectId, freeze: false) {
-            mailbox = liveMailbox
-        } else {
-            mailbox = mailboxManager.mailbox
-        }
-
+        mailbox = mailboxManager.mailbox
         mailboxesObservationToken = MailboxInfosManager.instance.getRealm()
             .objects(Mailbox.self)
             .where { $0.userId == AccountManager.instance.currentUserId }

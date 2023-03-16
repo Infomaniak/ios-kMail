@@ -21,6 +21,7 @@ import Contacts
 import Foundation
 import InfomaniakCore
 import RealmSwift
+import SwiftRegex
 
 protocol IdentifiableFromEmail {
     func uniqueKeyForEmail(_ email: String) -> String
@@ -206,5 +207,22 @@ public class ContactManager: ObservableObject {
     public func getDefaultAddressBook() -> AddressBook? {
         let realm = getRealm()
         return realm.objects(AddressBook.self).where { $0.isDefault == true }.first
+    }
+
+    /// Delete all contact data cache for user
+    /// - Parameters:
+    ///   - userId: User ID
+    public static func deleteUserContacts(userId: Int) {
+        let files = (try? FileManager.default
+            .contentsOfDirectory(at: ContactManager.constants.rootDocumentsURL, includingPropertiesForKeys: nil))
+        files?.forEach { file in
+            if let matches = Regex(pattern: "(\\d+).realm.*")?.firstMatch(in: file.lastPathComponent), matches.count > 1 {
+                let fileUserId = matches[1]
+                if Int(fileUserId) == userId {
+                    DDLogInfo("Deleting file: \(file.lastPathComponent)")
+                    try? FileManager.default.removeItem(at: file)
+                }
+            }
+        }
     }
 }
