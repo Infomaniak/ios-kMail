@@ -27,13 +27,19 @@ typealias Thread = MailCore.Thread
 
 class DateSection: Identifiable {
     enum ReferenceDate {
-        case today, month, older(Date)
+        case today, yesterday, thisWeek, lastWeek, thisMonth, older(Date)
 
         public var dateInterval: DateInterval {
             switch self {
             case .today:
-                return .init(start: .now.startOfDay, end: .now.endOfDay)
-            case .month:
+                return .init(start: .now.startOfDay, duration: 86_400)
+            case .yesterday:
+                return .init(start: .yesterday.startOfDay, duration: 86_400)
+            case .thisWeek:
+                return .init(start: .now.startOfWeek, end: .now.endOfWeek)
+            case .lastWeek:
+                return .init(start: .lastWeek.startOfWeek, end: .lastWeek.endOfWeek)
+            case .thisMonth:
                 return .init(start: .now.startOfMonth, end: .now.endOfMonth)
             case let .older(date):
                 return .init(start: date.startOfMonth, end: date.endOfMonth)
@@ -42,11 +48,18 @@ class DateSection: Identifiable {
     }
 
     var id: DateInterval { referenceDate.dateInterval }
+
     var title: String {
         switch referenceDate {
         case .today:
             return MailResourcesStrings.Localizable.threadListSectionToday
-        case .month:
+        case .yesterday:
+            return MailResourcesStrings.Localizable.messageDetailsYesterday
+        case .thisWeek:
+            return MailResourcesStrings.Localizable.threadListSectionThisWeek
+        case .lastWeek:
+            return MailResourcesStrings.Localizable.threadListSectionLastWeek
+        case .thisMonth:
             return MailResourcesStrings.Localizable.threadListSectionThisMonth
         case let .older(date):
             var formatStyle = Date.FormatStyle.dateTime.month(.wide)
@@ -64,8 +77,14 @@ class DateSection: Identifiable {
     init(thread: Thread) {
         if Calendar.current.isDateInToday(thread.date) {
             referenceDate = .today
+        } else if Calendar.current.isDateInYesterday(thread.date) {
+            referenceDate = .yesterday
+        } else if Calendar.current.isDate(thread.date, equalTo: .now, toGranularity: .weekOfYear) {
+            referenceDate = .thisWeek
+        } else if Calendar.current.isDate(thread.date, equalTo: .lastWeek, toGranularity: .weekOfYear) {
+            referenceDate = .lastWeek
         } else if Calendar.current.isDate(thread.date, equalTo: .now, toGranularity: .month) {
-            referenceDate = .month
+            referenceDate = .thisMonth
         } else {
             referenceDate = .older(thread.date)
         }
@@ -75,7 +94,13 @@ class DateSection: Identifiable {
         switch referenceDate {
         case .today:
             return Calendar.current.isDateInToday(thread.date)
-        case .month:
+        case .yesterday:
+            return Calendar.current.isDateInYesterday(thread.date)
+        case .thisWeek:
+            return Calendar.current.isDate(thread.date, equalTo: .now, toGranularity: .weekOfYear)
+        case .lastWeek:
+            return Calendar.current.isDate(thread.date, equalTo: .lastWeek, toGranularity: .weekOfYear)
+        case .thisMonth:
             return Calendar.current.isDate(thread.date, equalTo: .now, toGranularity: .month)
         case let .older(date):
             return Calendar.current.isDate(thread.date, equalTo: date, toGranularity: .month)
