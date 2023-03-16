@@ -65,7 +65,7 @@ struct SettingsThreadDensityOptionView: View {
         .navigationBarTitle(MailResourcesStrings.Localizable.settingsThreadListDensityTitle, displayMode: .inline)
         .padding(.horizontal, 16)
         .padding(.top, 30)
-        .background(MailResourcesAsset.backgroundSecondaryColor.swiftUiColor)
+        .background(MailResourcesAsset.backgroundColor.swiftUiColor)
         .matomoView(view: [MatomoUtils.View.settingsView.displayName, "ThreadDensity"])
     }
 }
