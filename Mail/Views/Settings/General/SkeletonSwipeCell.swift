@@ -38,20 +38,20 @@ struct SkeletonSwipeCell: View {
         HStack(spacing: 16) {
             VStack {
                 Circle()
-                    .fill(Color(uiColor: .systemGray5))
+                    .fill(Color(uiColor: .systemGray2))
                     .frame(width: 30)
                 Spacer()
             }
             VStack(alignment: .leading) {
                 Capsule()
-                    .fill(Color(uiColor: .systemGray3))
+                    .fill(Color(uiColor: .systemGray2))
                     .frame(width: 72, height: 12)
                 Capsule()
-                    .fill(Color(uiColor: .systemGray5))
+                    .fill(Color(uiColor: .systemGray2))
                     .frame(height: 8)
                     .padding(.trailing, -16)
                 Capsule()
-                    .fill(Color(uiColor: .systemGray5))
+                    .fill(Color(uiColor: .systemGray2))
                     .frame(height: 8)
                     .padding(.trailing, -16)
                 Spacer()
@@ -62,30 +62,26 @@ struct SkeletonSwipeCell: View {
     }
 
     var trailingSkeletonView: some View {
-        GeometryReader { reader in
-            HStack(spacing: 16) {
-                VStack(alignment: .leading) {
-                    Capsule()
-                        .fill(Color(uiColor: .systemGray5))
-                        .frame(width: reader.size.width - 48,
-                               height: 8)
-                        .padding(.leading, -16)
-                    Capsule()
-                        .fill(Color(uiColor: .systemGray5))
-                        .frame(width: reader.size.width / 2,
-                               height: 8)
-                        .padding(.leading, -16)
-                }
-                VStack(alignment: .trailing) {
-                    Capsule()
-                        .fill(Color(uiColor: .systemGray5))
-                        .frame(width: 48, height: 8)
-                        .padding(.bottom, 24)
-                    Image(resource: MailResourcesAsset.star)
-                        .resizable()
-                        .foregroundColor(Color(uiColor: .systemGray5))
-                        .frame(width: 16, height: 16)
-                }
+        HStack(spacing: 24) {
+            VStack(alignment: .leading) {
+                Capsule()
+                    .fill(Color(uiColor: .systemGray2))
+                    .frame(height: 8)
+                    .padding(.leading, -8)
+                Capsule()
+                    .fill(Color(uiColor: .systemGray2))
+                    .frame(width: 50, height: 8)
+                    .padding(.bottom, 24)
+                    .padding(.leading, -8)
+            }
+            .padding(.top, 40)
+            VStack {
+                Capsule()
+                    .fill(Color(uiColor: .systemGray2))
+                    .frame(width: 40,
+                           height: 8)
+                    .padding(.trailing, 16)
+                Spacer()
             }
         }
         .padding([.trailing, .vertical], 16)
