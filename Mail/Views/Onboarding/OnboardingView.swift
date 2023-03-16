@@ -127,7 +127,6 @@ class LoginHandler: InfomaniakLoginDelegate, ObservableObject {
         Task {
             do {
                 _ = try await AccountManager.instance.createAndSetCurrentAccount(code: code, codeVerifier: verifier)
-                MatomoUtils.connectUser()
                 sceneDelegate?.showMainView()
                 UIApplication.shared.registerForRemoteNotifications()
             } catch MailError.noMailbox {

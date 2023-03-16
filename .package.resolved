@@ -51,7 +51,7 @@
       "location" : "https://github.com/Infomaniak/ios-core.git",
       "state" : {
         "branch" : "mail-di",
-        "revision" : "1e4e2ed201c0111b641d190f4d0bf93f821c3a6a"
+        "revision" : "1b22b49a63047858d53ac4690c2147b423086188"
       }
     },
     {
@@ -167,8 +167,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/getsentry/sentry-cocoa",
       "state" : {
-        "revision" : "cf43eac1aa12017868c257ad3854ad87a5de0758",
-        "version" : "7.31.5"
+        "revision" : "2e7899aff930ed3b8d81be1909492f7684bbd481",
+        "version" : "8.3.1"
       }
     },
     {
