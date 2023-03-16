@@ -65,7 +65,8 @@ extension View {
 
     func navigationBarThreadListStyle() -> some View {
         if #available(iOS 16.0, *) {
-            return toolbarBackground(MailResourcesAsset.backgroundNavBarColor.swiftUiColor, for: .navigationBar)
+            @AppStorage(UserDefaults.shared.key(.accentColor)) var accentColor = DefaultPreferences.accentColor
+            return toolbarBackground(accentColor.navBarBackground.swiftUiColor, for: .navigationBar)
         } else {
             return modifier(NavigationBarStyleViewModifier(
                 standardAppearance: BarAppearanceConstants.threadListNavigationBarAppearance,

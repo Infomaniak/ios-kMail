@@ -24,6 +24,8 @@ import MailResources
 import SwiftUI
 
 struct ThreadListHeader: View {
+    @AppStorage(UserDefaults.shared.key(.accentColor)) private var accentColor = DefaultPreferences.accentColor
+
     var isMultipleSelectionEnabled: Bool
 
     @Binding var isConnected: Bool
@@ -80,7 +82,7 @@ struct ThreadListHeader: View {
         }
         .padding(.top, 8)
         .padding([.leading, .trailing, .bottom], 16)
-        .background(MailResourcesAsset.backgroundNavBarColor.swiftUiColor)
+        .background(accentColor.navBarBackground.swiftUIColor)
         .onChange(of: lastUpdate) { newValue in
             lastUpdateText = formatLastUpdate(date: newValue)
         }

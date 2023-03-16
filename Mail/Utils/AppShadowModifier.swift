@@ -38,12 +38,7 @@ struct AppShadowModifier: ViewModifier {
 }
 
 extension View {
-    func appShadow(withPadding: Bool = false) -> some View {
+    func appShadow() -> some View {
         modifier(AppShadowModifier())
-            .modifyIf(withPadding) { content in
-                content
-                    .padding(.top, 10)
-                    .background(MailResourcesAsset.backgroundNavBarColor.swiftUiColor)
-            }
     }
 }

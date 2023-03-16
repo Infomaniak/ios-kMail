@@ -63,7 +63,7 @@ public enum BarAppearanceConstants {
     public static let threadListNavigationBarAppearance: UINavigationBarAppearance = {
         let navigationBarAppearance = UINavigationBarAppearance()
         navigationBarAppearance.configureWithTransparentBackground()
-        navigationBarAppearance.backgroundColor = MailResourcesAsset.backgroundNavBarColor.color
+        navigationBarAppearance.backgroundColor = UserDefaults.shared.accentColor.navBarBackground.color
         navigationBarAppearance.largeTitleTextAttributes = [
             .foregroundColor: MailResourcesAsset.textPrimaryColor.color,
             .font: UIFont.systemFont(ofSize: 22, weight: .semibold)
