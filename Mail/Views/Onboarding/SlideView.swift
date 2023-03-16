@@ -16,6 +16,9 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import InfomaniakCore
+import InfomaniakCoreUI
+import InfomaniakDI
 import Introspect
 import Lottie
 import MailCore
@@ -25,6 +28,8 @@ import SwiftUI
 struct SlideView: View {
     let slide: Slide
     var updateAnimationColors: LottieView.UpdateColorsClosure?
+
+    @LazyInjectService private var matomo: MatomoUtils
 
     @AppStorage(UserDefaults.shared.key(.accentColor)) private var accentColor = DefaultPreferences.accentColor
 
@@ -82,6 +87,9 @@ struct SlideView: View {
                         }
                         .padding(.top, 32)
                         .frame(maxWidth: 256)
+                        .onChange(of: accentColor) { newValue in
+                            matomo.track(eventWithCategory: .onboarding, name: "switchColor", value: newValue == .blue)
+                        }
                     } else if let description = slide.description {
                         Text(description)
                             .textStyle(.bodySecondary)

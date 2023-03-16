@@ -16,6 +16,8 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import InfomaniakCore
+import InfomaniakCoreUI
 import MailCore
 import MailResources
 import SwiftUI
@@ -31,12 +33,18 @@ struct ActionsView: View {
          moveSheet: MoveSheet? = nil,
          replyHandler: ((Message, ReplyMode) -> Void)? = nil,
          completionHandler: (() -> Void)? = nil) {
+        var matomoCategory = MatomoUtils.EventCategory.bottomSheetMessageActions
+        if case .threads = target {
+            matomoCategory = .bottomSheetThreadActions
+        }
+
         viewModel = ActionsViewModel(mailboxManager: mailboxManager,
                                      target: target,
                                      state: state,
                                      globalSheet: globalSheet,
                                      globalAlert: globalAlert,
                                      moveSheet: moveSheet,
+                                     matomoCategory: matomoCategory,
                                      replyHandler: replyHandler,
                                      completionHandler: completionHandler)
     }
@@ -63,13 +71,14 @@ struct ActionsView: View {
             }
         }
         .padding(.horizontal, 8)
+        .matomoView(view: [MatomoUtils.View.bottomSheet.displayName, "ActionsView"])
     }
 }
 
 struct ActionsView_Previews: PreviewProvider {
     static var previews: some View {
         ActionsView(mailboxManager: PreviewHelper.sampleMailboxManager,
-                    target: .threads([PreviewHelper.sampleThread]),
+                    target: .threads([PreviewHelper.sampleThread], false),
                     state: ThreadBottomSheet(),
                     globalSheet: GlobalBottomSheet(),
                     globalAlert: GlobalAlert()) { _, _ in /* Preview */ }
@@ -118,6 +127,8 @@ struct ActionView: View {
     @ObservedObject var viewModel: ActionsViewModel
     let action: Action
 
+    @AppStorage(UserDefaults.shared.key(.accentColor)) private var accentColor = DefaultPreferences.accentColor
+
     var body: some View {
         Button {
             Task {
@@ -131,7 +142,9 @@ struct ActionView: View {
                     .resizable()
                     .scaledToFit()
                     .frame(width: 21, height: 21)
+                    .foregroundColor(action == .report ? MailResourcesAsset.princeActionColor : accentColor.primary)
                 Text(action.title)
+                    .foregroundColor(action == .report ? MailResourcesAsset.princeActionColor : MailResourcesAsset.textPrimaryColor)
                     .textStyle(.body)
                     .frame(maxWidth: .infinity, alignment: .leading)
             }

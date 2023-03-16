@@ -37,4 +37,8 @@ public enum CancelDelay: Int, CaseIterable, SettingsOptionEnum {
     public var image: Image? {
         return nil
     }
+
+    public var matomoName: String {
+        return "\(rawValue)s"
+    }
 }

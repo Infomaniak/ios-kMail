@@ -16,6 +16,8 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import InfomaniakCore
+import InfomaniakCoreUI
 import MailResources
 import SwiftUI
 
@@ -32,7 +34,9 @@ struct SendSettingsView: View {
             ) {
                 SettingsOptionView(
                     title: MailResourcesStrings.Localizable.settingsCancellationPeriodTitle,
-                    keyPath: \.cancelSendDelay
+                    keyPath: \.cancelSendDelay,
+                    matomoCategory: .settingsCancelPeriod,
+                    matomoName: \.matomoName
                 )
             }
             .settingCellModifier()
@@ -42,27 +46,37 @@ struct SendSettingsView: View {
                 title: MailResourcesStrings.Localizable.settingsTransferEmailsTitle,
                 subtitle: UserDefaults.shared.forwardMode.title
             ) {
-                SettingsOptionView(title: MailResourcesStrings.Localizable.settingsTransferEmailsTitle, keyPath: \.forwardMode)
+                SettingsOptionView(
+                    title: MailResourcesStrings.Localizable.settingsTransferEmailsTitle,
+                    keyPath: \.forwardMode,
+                    matomoCategory: .settingsForwardMode,
+                    matomoName: \.rawValue
+                )
             }
             .settingCellModifier()
 
             // Include in reply
             SettingsToggleCell(
                 title: MailResourcesStrings.Localizable.settingsSendIncludeOriginalMessage,
-                userDefaults: \.includeOriginalInReply
+                userDefaults: \.includeOriginalInReply,
+                matomoCategory: .settingsSend,
+                matomoName: "includeOriginalInReply"
             )
             .settingCellModifier()
 
             // Acknowledgement
             SettingsToggleCell(
                 title: MailResourcesStrings.Localizable.settingsSendAcknowledgement,
-                userDefaults: \.acknowledgement
+                userDefaults: \.acknowledgement,
+                matomoCategory: .settingsSend,
+                matomoName: "acknowledgement"
             )
             .settingCellModifier()
         }
         .listStyle(.plain)
         .navigationBarTitle(MailResourcesStrings.Localizable.settingsSendTitle, displayMode: .inline)
         .backButtonDisplayMode(.minimal)
+        .matomoView(view: [MatomoUtils.View.settingsView.displayName, "Send"])
     }
 }
 

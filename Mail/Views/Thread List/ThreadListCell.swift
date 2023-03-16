@@ -16,6 +16,9 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import InfomaniakCore
+import InfomaniakCoreUI
+import InfomaniakDI
 import MailCore
 import MailResources
 import SwiftUI
@@ -111,6 +114,8 @@ struct ThreadListCell: View {
             multipleSelectionViewModel.feedbackGenerator.prepare()
             multipleSelectionViewModel.isEnabled.toggle()
             if multipleSelectionViewModel.isEnabled {
+                @InjectService var matomo: MatomoUtils
+                matomo.track(eventWithCategory: .multiSelection, action: .longPress, name: "enable")
                 multipleSelectionViewModel.feedbackGenerator.impactOccurred()
                 multipleSelectionViewModel.toggleSelection(of: thread)
             }

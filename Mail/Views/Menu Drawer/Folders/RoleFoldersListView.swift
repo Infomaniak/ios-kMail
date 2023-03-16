@@ -16,6 +16,8 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import InfomaniakCore
+import InfomaniakCoreUI
 import MailCore
 import MailResources
 import RealmSwift
@@ -31,7 +33,10 @@ struct RoleFoldersListView: View {
     var body: some View {
         VStack(spacing: 0) {
             ForEach(folders) { folder in
-                FolderCell(folder: folder, currentFolderId: splitViewManager.selectedFolder?.id, isCompact: isCompact)
+                FolderCell(folder: folder,
+                           currentFolderId: splitViewManager.selectedFolder?.id,
+                           isCompact: isCompact,
+                           matomoCategory: .menuDrawer)
             }
         }
         .padding(.top, 4)

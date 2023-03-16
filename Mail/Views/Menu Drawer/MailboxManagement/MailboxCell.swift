@@ -16,6 +16,9 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import InfomaniakCore
+import InfomaniakCoreUI
+import InfomaniakDI
 import MailCore
 import MailResources
 import SwiftUI
@@ -26,7 +29,13 @@ struct MailboxCell: View {
     @Environment(\.window) private var window
 
     var body: some View {
-        MailboxesManagementButtonView(icon: MailResourcesAsset.envelope, text: mailbox.email, detailNumber: mailbox.unseenMessages > 0 ? mailbox.unseenMessages : nil) {
+        MailboxesManagementButtonView(
+            icon: MailResourcesAsset.envelope,
+            text: mailbox.email,
+            detailNumber: mailbox.unseenMessages > 0 ? mailbox.unseenMessages : nil
+        ) {
+            @InjectService var matomo: MatomoUtils
+            matomo.track(eventWithCategory: .menuDrawer, name: "switchMailbox")
             (window?.windowScene?.delegate as? SceneDelegate)?.switchMailbox(mailbox)
         }
     }

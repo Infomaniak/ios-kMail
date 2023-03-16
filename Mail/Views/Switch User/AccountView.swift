@@ -16,7 +16,9 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import InfomaniakCore
 import InfomaniakCoreUI
+import InfomaniakDI
 import InfomaniakLogin
 import MailCore
 import MailResources
@@ -58,6 +60,8 @@ class AccountAlert: SheetState<AccountAlert.State> {
 struct AccountView: View {
     @Environment(\.dismiss) private var dismiss
     @Environment(\.window) private var window
+
+    @LazyInjectService private var matomo: MatomoUtils
 
     @State private var avatarImage = Image(resource: MailResourcesAsset.placeholderAvatar)
     @StateObject private var account = AccountManager.instance.currentAccount
@@ -102,6 +106,9 @@ struct AccountView: View {
                             Text(mailbox.email)
                                 .textStyle(.body)
                                 .padding(.horizontal, 24)
+                                .onTapGesture {
+                                    matomo.track(eventWithCategory: .account, name: "selectMailAddress")
+                                }
                             if mailbox != mailboxes.last {
                                 IKDivider()
                                     .padding(.horizontal, 16)
@@ -116,11 +123,13 @@ struct AccountView: View {
 
                 // Buttons
                 MailButton(label: MailResourcesStrings.Localizable.buttonAccountDisconnect) {
+                    matomo.track(eventWithCategory: .account, name: "logOut")
                     alert.state = .logout
                 }
                 .mailButtonFullWidth(true)
                 .padding(.bottom, 24)
                 MailButton(label: MailResourcesStrings.Localizable.buttonAccountDelete) {
+                    matomo.track(eventWithCategory: .account, name: "deleteAccount")
                     sheet.state = .deleteAccount
                 }
                 .mailButtonStyle(.destructive)
@@ -155,6 +164,7 @@ struct AccountView: View {
             }
         }
         .defaultAppStorage(.shared)
+        .matomoView(view: [MatomoUtils.View.accountView.displayName, "Main"])
     }
 }
 

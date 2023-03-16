@@ -17,6 +17,8 @@
  */
 
 import InfomaniakCore
+import InfomaniakCoreUI
+import InfomaniakDI
 import MailCore
 import MailResources
 import RealmSwift
@@ -33,12 +35,15 @@ struct MessageHeaderView: View {
     @EnvironmentObject var bottomSheet: MessageBottomSheet
     @EnvironmentObject var threadBottomSheet: ThreadBottomSheet
 
+    @LazyInjectService private var matomo: MatomoUtils
+
     var body: some View {
         VStack(spacing: 12) {
             MessageHeaderSummaryView(message: message,
                                      isMessageExpanded: $isMessageExpanded,
                                      isHeaderExpanded: $isHeaderExpanded,
                                      deleteDraftTapped: deleteDraft) {
+                matomo.track(eventWithCategory: .messageActions, name: "reply")
                 if message.canReplyAll {
                     bottomSheet.open(state: .replyOption(message, isThread: false))
                 } else {
@@ -62,6 +67,7 @@ struct MessageHeaderView: View {
                 withAnimation {
                     isHeaderExpanded = false
                     isMessageExpanded.toggle()
+                    matomo.track(eventWithCategory: .message, name: "openMessage", value: isMessageExpanded)
                 }
             }
         }
@@ -81,6 +87,7 @@ struct MessageHeaderView: View {
     }
 
     private func deleteDraft() {
+        matomo.track(eventWithCategory: .messageActions, name: "deleteDraft")
         Task {
             await tryOrDisplayError {
                 try await mailboxManager.delete(draftMessage: message)

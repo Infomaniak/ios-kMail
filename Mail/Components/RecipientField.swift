@@ -16,7 +16,9 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import InfomaniakCore
 import InfomaniakCoreUI
+import InfomaniakDI
 import MailCore
 import MailResources
 import RealmSwift
@@ -73,6 +75,8 @@ struct RecipientField: View {
                     guard let recipient = autocompletion.first else { return }
                     add(recipient: recipient)
                     focusedField = type
+                    @InjectService var matomo: MatomoUtils
+                    matomo.track(eventWithCategory: .newMessage, action: .input, name: "addNewRecipient")
                 }
         }
         .onChange(of: currentText) { _ in

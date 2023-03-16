@@ -17,7 +17,9 @@
  */
 
 import Foundation
+import InfomaniakCore
 import InfomaniakCoreUI
+import InfomaniakDI
 import MailCore
 import MailResources
 import RealmSwift
@@ -27,111 +29,132 @@ struct Action: Identifiable, Equatable {
     let title: String
     let shortTitle: String?
     let icon: MailResourcesImages
+    let matomoName: String?
 
     static let delete = Action(
         id: 1,
         title: MailResourcesStrings.Localizable.actionDelete,
-        icon: MailResourcesAsset.bin
+        icon: MailResourcesAsset.bin,
+        matomoName: "delete"
     )
     static let reply = Action(
         id: 2,
         title: MailResourcesStrings.Localizable.actionReply,
-        icon: MailResourcesAsset.emailActionReply
+        icon: MailResourcesAsset.emailActionReply,
+        matomoName: "reply"
     )
     static let replyAll = Action(
         id: 3,
         title: MailResourcesStrings.Localizable.actionReplyAll,
-        icon: MailResourcesAsset.emailActionReplyToAll
+        icon: MailResourcesAsset.emailActionReplyToAll,
+        matomoName: "replyAll"
     )
     static let archive = Action(
         id: 4,
         title: MailResourcesStrings.Localizable.actionArchive,
-        icon: MailResourcesAsset.archives
+        icon: MailResourcesAsset.archives,
+        matomoName: "archive"
     )
     static let forward = Action(
         id: 5,
         title: MailResourcesStrings.Localizable.actionForward,
-        icon: MailResourcesAsset.emailActionTransfer
+        icon: MailResourcesAsset.emailActionTransfer,
+        matomoName: "forward"
     )
     static let markAsRead = Action(
         id: 6,
         title: MailResourcesStrings.Localizable.actionMarkAsRead,
         shortTitle: MailResourcesStrings.Localizable.actionShortMarkAsRead,
-        icon: MailResourcesAsset.envelopeOpen
+        icon: MailResourcesAsset.envelopeOpen,
+        matomoName: "markAsSeen"
     )
     static let markAsUnread = Action(
         id: 7,
         title: MailResourcesStrings.Localizable.actionMarkAsUnread,
         shortTitle: MailResourcesStrings.Localizable.actionShortMarkAsUnread,
-        icon: MailResourcesAsset.envelope
+        icon: MailResourcesAsset.envelope,
+        matomoName: "markAsSeen"
     )
     static let move = Action(
         id: 8,
         title: MailResourcesStrings.Localizable.actionMove,
-        icon: MailResourcesAsset.emailActionSend
+        icon: MailResourcesAsset.emailActionSend,
+        matomoName: "move"
     )
     static let postpone = Action(
         id: 9,
         title: MailResourcesStrings.Localizable.actionPostpone,
-        icon: MailResourcesAsset.waitingMessage
+        icon: MailResourcesAsset.waitingMessage,
+        matomoName: "postpone"
     )
     static let star = Action(
         id: 10,
         title: MailResourcesStrings.Localizable.actionStar,
         shortTitle: MailResourcesStrings.Localizable.actionShortStar,
-        icon: MailResourcesAsset.star
+        icon: MailResourcesAsset.star,
+        matomoName: "favorite"
     )
     static let unstar = Action(
         id: 21,
         title: MailResourcesStrings.Localizable.actionUnstar,
-        icon: MailResourcesAsset.unstar
+        icon: MailResourcesAsset.unstar,
+        matomoName: "favorite"
     )
     static let reportJunk = Action(
         id: 22,
         title: MailResourcesStrings.Localizable.actionReportJunk,
-        icon: MailResourcesAsset.report
+        icon: MailResourcesAsset.report,
+        matomoName: nil
     )
     static let spam = Action(
         id: 11,
         title: MailResourcesStrings.Localizable.actionSpam,
-        icon: MailResourcesAsset.spam
+        icon: MailResourcesAsset.spam,
+        matomoName: "spam"
     )
     static let nonSpam = Action(
         id: 20,
         title: MailResourcesStrings.Localizable.actionNonSpam,
-        icon: MailResourcesAsset.spam
+        icon: MailResourcesAsset.spam,
+        matomoName: "spam"
     )
     static let block = Action(
         id: 12,
         title: MailResourcesStrings.Localizable.actionBlockSender,
-        icon: MailResourcesAsset.blockUser
+        icon: MailResourcesAsset.blockUser,
+        matomoName: "blockUser"
     )
     static let phishing = Action(
         id: 13,
         title: MailResourcesStrings.Localizable.actionPhishing,
-        icon: MailResourcesAsset.phishing
+        icon: MailResourcesAsset.phishing,
+        matomoName: "signalPhishing"
     )
     static let print = Action(
         id: 14,
         title: MailResourcesStrings.Localizable.actionPrint,
-        icon: MailResourcesAsset.printText
+        icon: MailResourcesAsset.printText,
+        matomoName: "print"
     )
     static let report = Action(
         id: 15,
         title: MailResourcesStrings.Localizable.actionReportDisplayProblem,
-        icon: MailResourcesAsset.feedbacks
+        icon: MailResourcesAsset.feedbacks,
+        matomoName: nil
     )
     static let editMenu = Action(
         id: 16,
         title: MailResourcesStrings.Localizable.actionEditMenu,
-        icon: MailResourcesAsset.editTools
+        icon: MailResourcesAsset.editTools,
+        matomoName: "editMenu"
     )
 
-    init(id: Int, title: String, shortTitle: String? = nil, icon: MailResourcesImages) {
+    init(id: Int, title: String, shortTitle: String? = nil, icon: MailResourcesImages, matomoName: String?) {
         self.id = id
         self.title = title
         self.shortTitle = shortTitle
         self.icon = icon
+        self.matomoName = matomoName
     }
 
     static func == (lhs: Action, rhs: Action) -> Bool {
@@ -140,12 +163,12 @@ struct Action: Identifiable, Equatable {
 }
 
 enum ActionsTarget: Equatable {
-    case threads([Thread])
+    case threads([Thread], Bool)
     case message(Message)
 
     var isInvalidated: Bool {
         switch self {
-        case let .threads(threads):
+        case let .threads(threads, _):
             return threads.contains(where: \.isInvalidated)
         case let .message(message):
             return message.isInvalidated
@@ -154,8 +177,8 @@ enum ActionsTarget: Equatable {
 
     func freeze() -> Self {
         switch self {
-        case let .threads(threads):
-            return .threads(threads.map { $0.freezeIfNeeded() })
+        case let .threads(threads, isMultiSelectionEnabled):
+            return .threads(threads.map { $0.freezeIfNeeded() }, isMultiSelectionEnabled)
         case let .message(message):
             return .message(message.freezeIfNeeded())
         }
@@ -172,8 +195,12 @@ enum ActionsTarget: Equatable {
     private let replyHandler: ((Message, ReplyMode) -> Void)?
     private let completionHandler: (() -> Void)?
 
+    private let matomoCategory: MatomoUtils.EventCategory?
+
     @Published var quickActions: [Action] = []
     @Published var listActions: [Action] = []
+
+    @LazyInjectService private var matomo: MatomoUtils
 
     init(mailboxManager: MailboxManager,
          target: ActionsTarget,
@@ -181,6 +208,7 @@ enum ActionsTarget: Equatable {
          globalSheet: GlobalBottomSheet,
          globalAlert: GlobalAlert? = nil,
          moveSheet: MoveSheet? = nil,
+         matomoCategory: MatomoUtils.EventCategory? = nil,
          replyHandler: ((Message, ReplyMode) -> Void)? = nil,
          completionHandler: (() -> Void)? = nil) {
         self.mailboxManager = mailboxManager
@@ -191,12 +219,13 @@ enum ActionsTarget: Equatable {
         self.moveSheet = moveSheet
         self.replyHandler = replyHandler
         self.completionHandler = completionHandler
+        self.matomoCategory = matomoCategory
         setActions()
     }
 
     private func setActions() {
         switch target {
-        case let .threads(threads):
+        case let .threads(threads, _):
             if threads.count > 1 {
                 let spam = threads.allSatisfy { $0.folder?.role == .spam }
                 let unread = threads.allSatisfy(\.hasUnseenMessages)
@@ -242,6 +271,7 @@ enum ActionsTarget: Equatable {
             let archive = message.canReplyAll
             let unread = !message.seen
             let star = message.flagged
+            let isStaff = AccountManager.instance.currentAccount?.user?.isStaff ?? false
             let tempListActions: [Action?] = [
                 archive ? .archive : nil,
                 unread ? .markAsRead : .markAsUnread,
@@ -249,8 +279,7 @@ enum ActionsTarget: Equatable {
                 star ? .unstar : .star,
                 .reportJunk,
                 .print,
-                .report,
-                .editMenu
+                isStaff ? .report : nil
             ]
 
             listActions = tempListActions.compactMap { $0 }
@@ -260,6 +289,13 @@ enum ActionsTarget: Equatable {
     func didTap(action: Action) async throws {
         state.close()
         globalSheet.close()
+        if let matomoCategory, let matomoName = action.matomoName {
+            if case let .threads(threads, isMultipleSelectionEnabled) = target, isMultipleSelectionEnabled {
+                matomo.trackBulkEvent(eventWithCategory: matomoCategory, name: matomoName, numberOfItems: threads.count)
+            } else {
+                matomo.track(eventWithCategory: matomoCategory, name: matomoName)
+            }
+        }
         switch action {
         case .delete:
             try await delete()
@@ -305,7 +341,7 @@ enum ActionsTarget: Equatable {
         let undoRedoAction: UndoRedoAction
         let snackBarMessage: String
         switch target {
-        case let .threads(threads):
+        case let .threads(threads, _):
             guard threads.first?.folder != folder else { return }
             undoRedoAction = try await mailboxManager.move(threads: threads, to: folder)
             snackBarMessage = MailResourcesStrings.Localizable.snackbarThreadsMoved(folder.localizedName)
@@ -327,7 +363,7 @@ enum ActionsTarget: Equatable {
 
     private func delete() async throws {
         switch target {
-        case let .threads(threads):
+        case let .threads(threads, _):
             try await mailboxManager.moveOrDelete(threads: threads)
         case let .message(message):
             try await mailboxManager.moveOrDelete(message: message)
@@ -337,7 +373,7 @@ enum ActionsTarget: Equatable {
     private func reply(mode: ReplyMode) async throws {
         var completeMode = mode
         switch target {
-        case let .threads(threads):
+        case let .threads(threads, _):
             // We don't handle this action in multiple selection
             guard threads.count == 1, let thread = threads.first,
                   let message = thread.messages.last(where: { !$0.isDraft }) else { break }
@@ -372,7 +408,7 @@ enum ActionsTarget: Equatable {
 
     private func toggleRead() async throws {
         switch target {
-        case let .threads(threads):
+        case let .threads(threads, _):
             try await mailboxManager.toggleRead(threads: threads)
         case let .message(message):
             try await mailboxManager.markAsSeen(message: message, seen: !message.seen)
@@ -382,7 +418,7 @@ enum ActionsTarget: Equatable {
     private func move() {
         let folderId: String?
         switch target {
-        case let .threads(threads):
+        case let .threads(threads, _):
             folderId = threads.first?.folder?.id
         case let .message(message):
             folderId = message.folderId
@@ -402,7 +438,7 @@ enum ActionsTarget: Equatable {
 
     private func star() async throws {
         switch target {
-        case let .threads(threads):
+        case let .threads(threads, _):
             await tryOrDisplayError {
                 try await mailboxManager.toggleStar(threads: threads)
             }
@@ -454,7 +490,7 @@ enum ActionsTarget: Equatable {
     private func report() {
         // This action is only available on a single message
         guard case let .message(message) = target else { return }
-        globalSheet.open(state: .reportDisplayProblem(message: message))
+        globalAlert?.state = .reportDisplayProblem(message: message)
     }
 
     private func editMenu() {

@@ -157,6 +157,16 @@ public class Folder: Object, Codable, Comparable, Identifiable {
         return names.reversed().joined(separator: " > ")
     }
 
+    public var matomoName: String {
+        guard let role else { return "customFolder" }
+
+        var folderName = role.rawValue.lowercased()
+        if role == .socialNetworks {
+            folderName = "socialNetworks"
+        }
+        return "\(folderName)Folder"
+    }
+
     public static func < (lhs: Folder, rhs: Folder) -> Bool {
         if let lhsRole = lhs.role, let rhsRole = rhs.role {
             return lhsRole.order < rhsRole.order

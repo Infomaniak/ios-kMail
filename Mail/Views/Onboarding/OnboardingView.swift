@@ -70,6 +70,8 @@ struct Slide: Identifiable {
 @MainActor
 class LoginHandler: InfomaniakLoginDelegate, ObservableObject {
     @LazyInjectService var loginService: InfomaniakLoginable
+    @LazyInjectService var matomo: MatomoUtils
+    
     @Published var isLoading = false
     @Published var isPresentingErrorAlert = false
     var sceneDelegate: SceneDelegate?
@@ -88,6 +90,7 @@ class LoginHandler: InfomaniakLoginDelegate, ObservableObject {
 
     func loginAfterAccountCreation(from viewController: UIViewController) {
         isLoading = true
+        matomo.track(eventWithCategory: .account, name: "openCreationWebview")
         loginService.setupWebviewNavbar(
             title: MailResourcesStrings.Localizable.buttonLogin,
             titleColor: nil,
@@ -103,6 +106,7 @@ class LoginHandler: InfomaniakLoginDelegate, ObservableObject {
 
     func login() {
         isLoading = true
+        matomo.track(eventWithCategory: .account, name: "openLoginWebview")
         loginService.asWebAuthenticationLoginFrom(
             anchor: ASPresentationAnchor(),
             useEphemeralSession: true,
@@ -118,7 +122,7 @@ class LoginHandler: InfomaniakLoginDelegate, ObservableObject {
     }
 
     private func loginSuccessful(code: String, codeVerifier verifier: String) {
-        MatomoUtils.track(eventWithCategory: .account, name: "loggedIn")
+        matomo.track(eventWithCategory: .account, name: "loggedIn")
         let previousAccount = AccountManager.instance.currentAccount
         Task {
             do {

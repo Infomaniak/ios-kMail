@@ -16,6 +16,9 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import InfomaniakCore
+import InfomaniakCoreUI
+import InfomaniakDI
 import MailCore
 import MailResources
 import RealmSwift
@@ -30,11 +33,14 @@ struct MessageHeaderSummaryView: View {
     let moreButtonTapped: () -> Void
     let recipientTapped: (Recipient) -> Void
 
+    @LazyInjectService private var matomo: MatomoUtils
+
     var body: some View {
         HStack(alignment: .top, spacing: 0) {
             HStack(alignment: .center) {
                 if let recipient = message.from.first {
                     Button {
+                        matomo.track(eventWithCategory: .message, name: "selectAvatar")
                         recipientTapped(recipient)
                     } label: {
                         RecipientImage(recipient: recipient, size: 40)
@@ -67,6 +73,9 @@ struct MessageHeaderSummaryView: View {
                                 .lineLimit(1)
                                 .textStyle(.bodySmallSecondary)
                             ChevronButton(isExpanded: $isHeaderExpanded)
+                                .onChange(of: isHeaderExpanded) { isExpanded in
+                                    matomo.track(eventWithCategory: .message, name: "openDetails", value: isExpanded)
+                                }
                         }
                     } else {
                         Text(message.formattedSubject)

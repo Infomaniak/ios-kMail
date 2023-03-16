@@ -16,6 +16,9 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import InfomaniakCore
+import InfomaniakCoreUI
+import InfomaniakDI
 import MailCore
 import MailResources
 import RealmSwift
@@ -66,6 +69,8 @@ struct AttachmentPreview: View {
     }
 
     private func download() {
+        @InjectService var matomo: MatomoUtils
+        matomo.track(eventWithCategory: .message, name: "download")
         guard let url = attachment.localUrl,
               var source = UIApplication.shared.mainSceneKeyWindow?.rootViewController else {
             return

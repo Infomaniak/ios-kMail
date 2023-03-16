@@ -20,6 +20,7 @@ import CocoaLumberjackSwift
 import Foundation
 import InfomaniakBugTracker
 import InfomaniakCore
+import InfomaniakCoreUI
 import InfomaniakDI
 import InfomaniakLogin
 import InfomaniakNotifications
@@ -75,7 +76,11 @@ public extension InfomaniakUser {
                 return Image(uiImage: avatarImage)
             } else {
                 let backgroundColor = UIColor.backgroundColor(from: id)
-                let initialsImage = UIImage.getInitialsPlaceholder(with: displayName, size: CGSize(width: 40, height: 40), backgroundColor: backgroundColor)
+                let initialsImage = UIImage.getInitialsPlaceholder(
+                    with: displayName,
+                    size: CGSize(width: 40, height: 40),
+                    backgroundColor: backgroundColor
+                )
                 return Image(uiImage: initialsImage)
             }
         }
@@ -97,6 +102,7 @@ public class AccountManager: RefreshTokenDelegate {
     @LazyInjectService var keychainHelper: KeychainHelper
     @LazyInjectService var bugTracker: BugTracker
     @LazyInjectService var notificationService: InfomaniakNotifications
+    @LazyInjectService var matomo: MatomoUtils
 
     private static let appIdentifierPrefix = Bundle.main.infoDictionary!["AppIdentifierPrefix"] as! String
     private static let group = "com.infomaniak.mail"
@@ -289,6 +295,8 @@ public class AccountManager: RefreshTokenDelegate {
             throw MailError.noMailbox
         }
 
+        matomo.track(eventWithCategory: .userInfo, name: "nbMailboxes", value: Float(mailboxesResponse.count))
+
         let newAccount = Account(apiToken: token)
         newAccount.user = user
         addAccount(account: newAccount)
@@ -395,6 +403,7 @@ public class AccountManager: RefreshTokenDelegate {
     public func setCurrentAccount(account: Account) {
         currentAccount = account
         currentUserId = account.userId
+        matomo.connectUser(userId: "\(currentUserId)")
     }
 
     private func setSentryUserId(userId: Int) {

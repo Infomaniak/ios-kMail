@@ -16,6 +16,9 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import InfomaniakCore
+import InfomaniakCoreUI
+import InfomaniakDI
 import MailCore
 import MailResources
 import SwiftUI
@@ -62,9 +65,17 @@ struct ThreadListHeader: View {
             Spacer()
             if let unreadCount = unreadCount, unreadCount > 0 && !isMultipleSelectionEnabled {
                 Toggle(isOn: $unreadFilterOn) {
-                    Text(unreadCount < 100 ? MailResourcesStrings.Localizable.threadListHeaderUnreadCount(unreadCount) : MailResourcesStrings.Localizable.threadListHeaderUnreadCountMore)
+                    Text(unreadCount < 100 ? MailResourcesStrings.Localizable
+                        .threadListHeaderUnreadCount(unreadCount) : MailResourcesStrings.Localizable
+                        .threadListHeaderUnreadCountMore)
                 }
                 .toggleStyle(.unread)
+                .onChange(of: unreadFilterOn) { newValue in
+                    if newValue {
+                        @InjectService var matomo: MatomoUtils
+                        matomo.track(eventWithCategory: .threadList, name: "unreadFilter")
+                    }
+                }
             }
         }
         .padding(.top, 8)

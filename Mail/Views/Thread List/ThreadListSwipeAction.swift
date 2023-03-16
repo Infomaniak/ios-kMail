@@ -16,6 +16,9 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import InfomaniakCore
+import InfomaniakCoreUI
+import InfomaniakDI
 import MailCore
 import MailResources
 import SwiftUI
@@ -25,6 +28,8 @@ private struct SwipeActionView: View {
     private let viewModel: ThreadListViewModel
     private let action: SwipeAction
 
+    @LazyInjectService private var matomo: MatomoUtils
+
     init(thread: Thread, viewModel: ThreadListViewModel, action: SwipeAction) {
         self.thread = thread
         self.viewModel = viewModel
@@ -33,6 +38,7 @@ private struct SwipeActionView: View {
 
     var body: some View {
         Button(role: action.isDestructive ? .destructive : nil) {
+            matomo.track(eventWithCategory: .swipeActions, name: action.matomoName)
             Task {
                 await tryOrDisplayError {
                     try await viewModel.handleSwipeAction(action, thread: thread)

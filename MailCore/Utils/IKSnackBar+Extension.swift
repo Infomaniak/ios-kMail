@@ -16,6 +16,8 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import InfomaniakDI
+import InfomaniakCore
 import Foundation
 import InfomaniakCoreUI
 import MailResources
@@ -71,6 +73,9 @@ public extension IKSnackBar {
             action: .init(title: MailResourcesStrings.Localizable.buttonCancel) {
                 Task {
                     do {
+                        @InjectService var matomo: MatomoUtils
+                        matomo.track(eventWithCategory: .snackbar, name: "undo")
+
                         let cancelled = try await mailboxManager.apiFetcher.undoAction(resource: undoRedoAction.undo.resource)
 
                         if cancelled {

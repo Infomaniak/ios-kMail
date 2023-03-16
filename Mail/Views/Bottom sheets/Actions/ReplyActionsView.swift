@@ -16,6 +16,8 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import InfomaniakCore
+import InfomaniakCoreUI
 import MailCore
 import SwiftUI
 
@@ -33,6 +35,7 @@ struct ReplyActionsView: View {
                                      target: target,
                                      state: state,
                                      globalSheet: globalSheet,
+                                     matomoCategory: .replyBottomSheet,
                                      replyHandler: replyHandler)
     }
 
@@ -46,15 +49,16 @@ struct ReplyActionsView: View {
             Spacer()
         }
         .padding(.horizontal, 24)
+        .matomoView(view: [MatomoUtils.View.bottomSheet.displayName, "ReplyActionsView"])
     }
 }
 
 struct ReplyActionsView_Previews: PreviewProvider {
     static var previews: some View {
         ReplyActionsView(mailboxManager: PreviewHelper.sampleMailboxManager,
-                        target: .threads([PreviewHelper.sampleThread]),
-                        state: ThreadBottomSheet(),
-                        globalSheet: GlobalBottomSheet()) { _, _ in /* Preview */ }
+                         target: .threads([PreviewHelper.sampleThread], false),
+                         state: ThreadBottomSheet(),
+                         globalSheet: GlobalBottomSheet()) { _, _ in /* Preview */ }
             .accentColor(AccentColor.pink.primary.swiftUiColor)
     }
 }

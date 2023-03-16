@@ -16,6 +16,7 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import InfomaniakCoreUI
 import MailCore
 import MailResources
 import RealmSwift
@@ -118,8 +119,6 @@ struct SearchView: View {
                 viewModel.initSearch()
             }
             viewModel.selectedThread = nil
-
-            MatomoUtils.track(view: ["SearchView"])
         }
         .toolbar {
             ToolbarItem(placement: .navigationBarLeading) {
@@ -135,13 +134,16 @@ struct SearchView: View {
 
             ToolbarItem(placement: .navigation) {
                 SearchTextField(value: $viewModel.searchValue) {
+                    viewModel.matomo.track(eventWithCategory: .search, name: "validateSearch")
                     viewModel.searchThreadsForCurrentValue()
                 } onDelete: {
+                    viewModel.matomo.track(eventWithCategory: .search, name: "deleteSearch")
                     viewModel.clearSearch()
                 }
                 .frame(maxWidth: .infinity)
             }
         }
+        .matomoView(view: ["SearchView"])
     }
 
     func threadList(threads: [Thread]) -> some View {
@@ -209,6 +211,7 @@ struct SearchView: View {
             ForEach(contacts) { contact in
                 RecipientAutocompletionCell(recipient: contact)
                     .onTapGesture {
+                        viewModel.matomo.track(eventWithCategory: .search, name: "selectContact")
                         Constants.globallyResignFirstResponder()
                         viewModel.searchThreadsForContact(contact)
                     }
@@ -245,6 +248,7 @@ struct SearchView: View {
                 }
                 .contentShape(Rectangle())
                 .onTapGesture {
+                    viewModel.matomo.track(eventWithCategory: .search, name: "fromHistory")
                     Constants.globallyResignFirstResponder()
                     viewModel.searchValue = searchItem
                     Task {
@@ -263,6 +267,7 @@ struct SearchView: View {
     }
 
     private func deleteSearchTapped(searchItem: String) {
+        viewModel.matomo.track(eventWithCategory: .search, name: "deleteFromHistory")
         Task {
             await tryOrDisplayError {
                 viewModel.searchHistory = await viewModel.mailboxManager.delete(

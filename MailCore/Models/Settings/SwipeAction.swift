@@ -108,6 +108,23 @@ public enum SwipeAction: String, CaseIterable, SettingsOptionEnum {
         }
     }
 
+    public var matomoName: String {
+        switch self {
+        case .readUnread:
+            return "markAsSeen"
+        case .postPone:
+            return "postpone"
+        case .quickAction:
+            return "quickActions"
+        default:
+            return rawValue
+        }
+    }
+
+    public var matomoSettingsName: String {
+        return "\(matomoName)Swipe"
+    }
+
     public var isDestructive: Bool {
         switch self {
         case .delete, .archive, .spam, .readAndArchive, .moveToInbox:

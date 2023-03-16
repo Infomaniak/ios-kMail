@@ -17,6 +17,8 @@
  */
 
 import InfomaniakCore
+import InfomaniakCoreUI
+import InfomaniakDI
 import MailCore
 import MailResources
 import RealmSwift
@@ -30,6 +32,8 @@ struct MessageView: View {
     @State var isMessageExpanded: Bool
 
     @State private var htmlLoaded = false
+
+    @LazyInjectService var matomo: MatomoUtils
 
     init(message: Message, isMessageExpanded: Bool = false) {
         self.message = message
