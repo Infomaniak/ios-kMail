@@ -127,6 +127,8 @@ struct ActionView: View {
     @ObservedObject var viewModel: ActionsViewModel
     let action: Action
 
+    @AppStorage(UserDefaults.shared.key(.accentColor)) private var accentColor = DefaultPreferences.accentColor
+
     var body: some View {
         Button {
             Task {
@@ -140,7 +142,9 @@ struct ActionView: View {
                     .resizable()
                     .scaledToFit()
                     .frame(width: 21, height: 21)
+                    .foregroundColor(action == .report ? MailResourcesAsset.princeActionColor : accentColor.primary)
                 Text(action.title)
+                    .foregroundColor(action == .report ? MailResourcesAsset.princeActionColor : MailResourcesAsset.textPrimaryColor)
                     .textStyle(.body)
                     .frame(maxWidth: .infinity, alignment: .leading)
             }
