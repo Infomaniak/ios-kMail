@@ -64,6 +64,15 @@
       }
     },
     {
+      "identity" : "ios-create-account",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/Infomaniak/ios-create-account",
+      "state" : {
+        "revision" : "c5bc197f8934646fb536415e9d905527c4752559",
+        "version" : "1.0.1"
+      }
+    },
+    {
       "identity" : "ios-dependency-injection",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Infomaniak/ios-dependency-injection.git",

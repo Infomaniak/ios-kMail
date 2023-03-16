@@ -17,9 +17,9 @@
  */
 
 import AuthenticationServices
-import InfomaniakCore
 import InfomaniakCoreUI
 import InfomaniakDI
+import InfomaniakCreateAccount
 import InfomaniakLogin
 import Lottie
 import MailCore
@@ -67,19 +67,96 @@ struct Slide: Identifiable {
     ]
 }
 
-struct OnboardingView: View {
+@MainActor
+class LoginHandler: InfomaniakLoginDelegate, ObservableObject {
     @LazyInjectService var loginService: InfomaniakLoginable
     @LazyInjectService var matomo: MatomoUtils
+    
+    @Published var isLoading = false
+    @Published var isPresentingErrorAlert = false
+    var sceneDelegate: SceneDelegate?
 
+    nonisolated func didCompleteLoginWith(code: String, verifier: String) {
+        Task {
+            await loginSuccessful(code: code, codeVerifier: verifier)
+        }
+    }
+
+    nonisolated func didFailLoginWith(error: Error) {
+        Task {
+            await loginFailed(error: error)
+        }
+    }
+
+    func loginAfterAccountCreation(from viewController: UIViewController) {
+        isLoading = true
+        matomo.track(eventWithCategory: .account, name: "openCreationWebview")
+        loginService.setupWebviewNavbar(
+            title: MailResourcesStrings.Localizable.buttonLogin,
+            titleColor: nil,
+            color: nil,
+            buttonColor: nil,
+            clearCookie: false,
+            timeOutMessage: nil
+        )
+        loginService.webviewLoginFrom(viewController: viewController,
+                                      hideCreateAccountButton: true,
+                                      delegate: self)
+    }
+
+    func login() {
+        isLoading = true
+        matomo.track(eventWithCategory: .account, name: "openLoginWebview")
+        loginService.asWebAuthenticationLoginFrom(
+            anchor: ASPresentationAnchor(),
+            useEphemeralSession: true,
+            hideCreateAccountButton: true
+        ) { [weak self] result in
+            switch result {
+            case .success(let result):
+                self?.loginSuccessful(code: result.code, codeVerifier: result.verifier)
+            case .failure(let error):
+                self?.loginFailed(error: error)
+            }
+        }
+    }
+
+    private func loginSuccessful(code: String, codeVerifier verifier: String) {
+        matomo.track(eventWithCategory: .account, name: "loggedIn")
+        let previousAccount = AccountManager.instance.currentAccount
+        Task {
+            do {
+                _ = try await AccountManager.instance.createAndSetCurrentAccount(code: code, codeVerifier: verifier)
+                sceneDelegate?.showMainView()
+                UIApplication.shared.registerForRemoteNotifications()
+            } catch MailError.noMailbox {
+                sceneDelegate?.showNoMailboxView()
+            } catch {
+                if let previousAccount = previousAccount {
+                    AccountManager.instance.switchAccount(newAccount: previousAccount)
+                }
+                IKSnackBar.showSnackBar(message: error.localizedDescription)
+            }
+            isLoading = false
+        }
+    }
+
+    private func loginFailed(error: Error) {
+        isLoading = false
+        guard (error as? ASWebAuthenticationSessionError)?.code != .canceledLogin else { return }
+        isPresentingErrorAlert = true
+    }
+}
+
+struct OnboardingView: View {
     @Environment(\.window) private var window
     @Environment(\.dismiss) private var dismiss
 
     @AppStorage(UserDefaults.shared.key(.accentColor)) private var accentColor = DefaultPreferences.accentColor
 
     @State private var selection: Int
-    @State private var presentAlert = false
-    @State private var isLoading = false
-
+    @State private var isPresentingCreateAccount = false
+    @StateObject private var loginHandler = LoginHandler()
     private var isScrollEnabled: Bool
     private var slides = Slide.onBoardingSlides
 
@@ -116,17 +193,18 @@ struct OnboardingView: View {
 
             VStack(spacing: 24) {
                 if selection == slides.count {
-                    // Show login button
-                    MailButton(label: MailResourcesStrings.Localizable.buttonLogin, action: login)
-                        .mailButtonFullWidth(true)
-                        .disabled(isLoading)
+                    MailButton(label: MailResourcesStrings.Localizable.buttonLogin) {
+                        loginHandler.sceneDelegate = window?.windowScene?.delegate as? SceneDelegate
+                        loginHandler.login()
+                    }
+                    .mailButtonFullWidth(true)
+                    .mailButtonLoading(loginHandler.isLoading)
 
                     MailButton(label: MailResourcesStrings.Localizable.buttonCreateAccount) {
-                        // TODO: Create account
-                        showWorkInProgressSnackBar()
-                        matomo.track(eventWithCategory: .account, name: "openCreationWebview")
+                        isPresentingCreateAccount.toggle()
                     }
                     .mailButtonStyle(.link)
+                    .disabled(loginHandler.isLoading)
                 } else {
                     MailButton(icon: MailResourcesAsset.fullArrowRight) {
                         withAnimation {
@@ -139,7 +217,7 @@ struct OnboardingView: View {
             .frame(height: Constants.onboardingButtonHeight + Constants.onboardingBottomButtonPadding, alignment: .top)
             .padding(.horizontal, 24)
         }
-        .overlay(alignment: .topLeading, content: {
+        .overlay(alignment: .topLeading) {
             if !isScrollEnabled {
                 Button {
                     dismiss()
@@ -150,11 +228,18 @@ struct OnboardingView: View {
                 .frame(width: 20, height: 20)
                 .padding(16)
             }
-        })
-        .alert(MailResourcesStrings.Localizable.errorLoginTitle, isPresented: $presentAlert) {
+        }
+        .alert(MailResourcesStrings.Localizable.errorLoginTitle, isPresented: $loginHandler.isPresentingErrorAlert) {
             // Use default button
         } message: {
             Text(MailResourcesStrings.Localizable.errorLoginDescription)
+        }
+        .sheet(isPresented: $isPresentingCreateAccount) {
+            RegisterView(registrationProcess: .mail) { viewController in
+                guard let viewController else { return }
+                loginHandler.sceneDelegate = window?.windowScene?.delegate as? SceneDelegate
+                loginHandler.loginAfterAccountCreation(from: viewController)
+            }
         }
         .onAppear {
             if UIDevice.current.userInterfaceIdiom == .phone {
@@ -164,7 +249,6 @@ struct OnboardingView: View {
                 UIViewController.attemptRotationToDeviceOrientation()
             }
         }
-        .matomoView(view: ["OnBoarding"])
         .defaultAppStorage(.shared)
     }
 
@@ -229,50 +313,6 @@ struct OnboardingView: View {
                 break
             }
         }
-    }
-
-    private func login() {
-        isLoading = true
-        matomo.track(eventWithCategory: .account, name: "openLoginWebview")
-        loginService.asWebAuthenticationLoginFrom(
-            anchor: ASPresentationAnchor(),
-            useEphemeralSession: true,
-            hideCreateAccountButton: true
-        ) { result in
-            switch result {
-            case .success(let result):
-                loginSuccessful(code: result.code, codeVerifier: result.verifier)
-            case .failure(let error):
-                loginFailed(error: error)
-            }
-        }
-    }
-
-    private func loginSuccessful(code: String, codeVerifier verifier: String) {
-        matomo.track(eventWithCategory: .account, name: "loggedIn")
-        let previousAccount = AccountManager.instance.currentAccount
-        Task {
-            do {
-                _ = try await AccountManager.instance.createAndSetCurrentAccount(code: code, codeVerifier: verifier)
-                await (self.window?.windowScene?.delegate as? SceneDelegate)?.showMainView()
-                await UIApplication.shared.registerForRemoteNotifications()
-            } catch MailError.noMailbox {
-                await (self.window?.windowScene?.delegate as? SceneDelegate)?.showNoMailboxView()
-            } catch {
-                if let previousAccount = previousAccount {
-                    AccountManager.instance.switchAccount(newAccount: previousAccount)
-                }
-                await IKSnackBar.showSnackBar(message: error.localizedDescription)
-            }
-            isLoading = false
-        }
-    }
-
-    private func loginFailed(error: Error) {
-        print("Login error: \(error)")
-        isLoading = false
-        guard (error as? ASWebAuthenticationSessionError)?.code != .canceledLogin else { return }
-        presentAlert = true
     }
 }
 
