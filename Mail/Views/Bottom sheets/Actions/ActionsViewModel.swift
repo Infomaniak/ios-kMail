@@ -242,6 +242,7 @@ enum ActionsTarget: Equatable {
             let archive = message.canReplyAll
             let unread = !message.seen
             let star = message.flagged
+            let isStaff = AccountManager.instance.currentAccount?.user?.isStaff ?? false
             let tempListActions: [Action?] = [
                 archive ? .archive : nil,
                 unread ? .markAsRead : .markAsUnread,
@@ -249,8 +250,7 @@ enum ActionsTarget: Equatable {
                 star ? .unstar : .star,
                 .reportJunk,
                 .print,
-                .report,
-                .editMenu
+                isStaff ? .report : nil
             ]
 
             listActions = tempListActions.compactMap { $0 }
@@ -454,7 +454,7 @@ enum ActionsTarget: Equatable {
     private func report() {
         // This action is only available on a single message
         guard case let .message(message) = target else { return }
-        globalSheet.open(state: .reportDisplayProblem(message: message))
+        globalAlert?.state = .reportDisplayProblem(message: message)
     }
 
     private func editMenu() {
