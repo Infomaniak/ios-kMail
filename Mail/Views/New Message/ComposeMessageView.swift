@@ -17,6 +17,8 @@
  */
 
 import InfomaniakCore
+import InfomaniakCoreUI
+import InfomaniakDI
 import Introspect
 import MailCore
 import MailResources
@@ -51,6 +53,8 @@ class NewMessageAlert: SheetState<NewMessageAlert.State> {
 
 struct ComposeMessageView: View {
     @Environment(\.dismiss) private var dismiss
+
+    @LazyInjectService private var matomo: MatomoUtils
 
     @State private var mailboxManager: MailboxManager
     @StateRealmObject var draft: Draft
@@ -113,6 +117,8 @@ struct ComposeMessageView: View {
     }
 
     static func editDraft(draft: Draft, mailboxManager: MailboxManager) -> ComposeMessageView {
+        @InjectService var matomo: MatomoUtils
+        matomo.track(eventWithCategory: .newMessage, name: "openFromDraft")
         return ComposeMessageView(mailboxManager: mailboxManager, draft: draft)
     }
 
@@ -151,6 +157,7 @@ struct ComposeMessageView: View {
                     // Show the rest of the view, or the autocompletion list
                     if shouldDisplayAutocompletion {
                         AutocompletionView(autocompletion: $autocompletion) { recipient in
+                            matomo.track(eventWithCategory: .newMessage, name: "addNewRecipient")
                             addRecipientHandler?(recipient)
                         }
                     } else {
@@ -259,6 +266,7 @@ struct ComposeMessageView: View {
         }
         .navigationViewStyle(.stack)
         .defaultAppStorage(.shared)
+        .matomoView(view: ["ComposeMessage"])
     }
 
     @ViewBuilder
@@ -302,6 +310,7 @@ struct ComposeMessageView: View {
     }
 
     private func sendDraft() {
+        matomo.trackSendMessage(numberOfTo: draft.to.count, numberOfCc: draft.cc.count, numberOfBcc: draft.bcc.count)
         if let liveDraft = draft.thaw() {
             try? liveDraft.realm?.write {
                 liveDraft.action = .send

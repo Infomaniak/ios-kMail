@@ -56,6 +56,7 @@ struct NoMailboxView: View {
             .frame(height: Constants.onboardingButtonHeight + Constants.onboardingBottomButtonPadding, alignment: .top)
             .padding(.horizontal, 24)
         }
+        .matomoView(view: ["NoMailboxView"])
     }
 }
 

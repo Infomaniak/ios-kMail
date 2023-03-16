@@ -16,6 +16,9 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import InfomaniakCore
+import InfomaniakCoreUI
+import InfomaniakDI
 import MailCore
 import MailResources
 import RealmSwift
@@ -64,6 +67,8 @@ struct ThreadListView: View {
     @State private var isRefreshing = false
     @State private var firstLaunch = true
     @State private var flushAlert: FlushAlertState?
+
+    @LazyInjectService private var matomo: MatomoUtils
 
     let isCompact: Bool
 
@@ -184,6 +189,7 @@ struct ThreadListView: View {
         .floatingActionButton(isEnabled: !multipleSelectionViewModel.isEnabled,
                               icon: MailResourcesAsset.pencilPlain,
                               title: MailResourcesStrings.Localizable.buttonNewMessage) {
+            matomo.track(eventWithCategory: .newMessage, name: "openFromFab")
             isShowingComposeNewMessageView.toggle()
         }
         .floatingPanel(state: bottomSheet, halfOpening: true) {
@@ -230,6 +236,7 @@ struct ThreadListView: View {
         .customAlert(item: $flushAlert) { item in
             FlushFolderAlertView(flushAlert: item, folder: viewModel.folder)
         }
+        .matomoView(view: [MatomoUtils.View.threadListView.displayName, "Main"])
     }
 
     private func changeFolder(newFolder: Folder?) {
@@ -270,6 +277,8 @@ private struct ThreadListToolbar: ViewModifier {
     @EnvironmentObject var splitViewManager: SplitViewManager
     @EnvironmentObject var navigationDrawerState: NavigationDrawerState
 
+    @LazyInjectService private var matomo: MatomoUtils
+
     var selectAll: () -> Void
 
     func body(content: Content) -> some View {
@@ -279,6 +288,7 @@ private struct ThreadListToolbar: ViewModifier {
                     ToolbarItemGroup(placement: .navigationBarLeading) {
                         if multipleSelectionViewModel.isEnabled {
                             Button(MailResourcesStrings.Localizable.buttonCancel) {
+                                matomo.track(eventWithCategory: .multiSelection, name: "cancel")
                                 withAnimation {
                                     multipleSelectionViewModel.isEnabled = false
                                 }
@@ -286,6 +296,7 @@ private struct ThreadListToolbar: ViewModifier {
                         } else {
                             if isCompact {
                                 Button {
+                                    matomo.track(eventWithCategory: .menuDrawer, name: "openByButton")
                                     navigationDrawerState.open()
                                 } label: {
                                     Image(resource: MailResourcesAsset.burger)
@@ -355,7 +366,7 @@ private struct ThreadListToolbar: ViewModifier {
                                 ToolbarButton(text: MailResourcesStrings.Localizable.buttonMore,
                                               icon: MailResourcesAsset.plusActions,
                                               width: reader.size.width / 5) {
-                                    bottomSheet.open(state: .actions(.threads(Array(multipleSelectionViewModel.selectedItems))))
+                                    bottomSheet.open(state: .actions(.threads(Array(multipleSelectionViewModel.selectedItems), true)))
                                 }
                             }
                         }

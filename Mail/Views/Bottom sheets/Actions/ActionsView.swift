@@ -16,6 +16,8 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import InfomaniakCore
+import InfomaniakCoreUI
 import MailCore
 import MailResources
 import SwiftUI
@@ -31,12 +33,18 @@ struct ActionsView: View {
          moveSheet: MoveSheet? = nil,
          replyHandler: ((Message, ReplyMode) -> Void)? = nil,
          completionHandler: (() -> Void)? = nil) {
+        var matomoCategory = MatomoUtils.EventCategory.bottomSheetMessageActions
+        if case .threads = target {
+            matomoCategory = .bottomSheetThreadActions
+        }
+
         viewModel = ActionsViewModel(mailboxManager: mailboxManager,
                                      target: target,
                                      state: state,
                                      globalSheet: globalSheet,
                                      globalAlert: globalAlert,
                                      moveSheet: moveSheet,
+                                     matomoCategory: matomoCategory,
                                      replyHandler: replyHandler,
                                      completionHandler: completionHandler)
     }
@@ -63,13 +71,14 @@ struct ActionsView: View {
             }
         }
         .padding(.horizontal, 8)
+        .matomoView(view: [MatomoUtils.View.bottomSheet.displayName, "ActionsView"])
     }
 }
 
 struct ActionsView_Previews: PreviewProvider {
     static var previews: some View {
         ActionsView(mailboxManager: PreviewHelper.sampleMailboxManager,
-                    target: .threads([PreviewHelper.sampleThread]),
+                    target: .threads([PreviewHelper.sampleThread], false),
                     state: ThreadBottomSheet(),
                     globalSheet: GlobalBottomSheet(),
                     globalAlert: GlobalAlert()) { _, _ in /* Preview */ }

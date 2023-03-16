@@ -16,6 +16,8 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import InfomaniakCoreUI
+import InfomaniakDI
 import MailCore
 import MailResources
 import SwiftUI
@@ -55,6 +57,10 @@ struct FlushFolderAlertView: View {
 
             ModalButtonsView(primaryButtonTitle: MailResourcesStrings.Localizable.buttonConfirm,
                              secondaryButtonTitle: MailResourcesStrings.Localizable.buttonClose) {
+                if let folder, flushAlert.deletedMessages == nil {
+                    @InjectService var matomo: MatomoUtils
+                    matomo.track(eventWithCategory: .threadList, name: "empty\(folder.matomoName)Confirm")
+                }
                 Task {
                     await flushAlert.completion()
                 }

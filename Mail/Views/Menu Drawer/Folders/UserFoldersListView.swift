@@ -17,6 +17,8 @@
  */
 
 import InfomaniakCore
+import InfomaniakCoreUI
+import InfomaniakDI
 import MailCore
 import MailResources
 import RealmSwift
@@ -31,13 +33,16 @@ struct UserFoldersListView: View {
     @EnvironmentObject var splitViewManager: SplitViewManager
     @EnvironmentObject var globalAlert: GlobalAlert
 
-    var isCompact: Bool
+    let isCompact: Bool
+
+    @LazyInjectService var matomo: MatomoUtils
 
     var body: some View {
         VStack(spacing: 0) {
             Button {
                 withAnimation {
                     isExpanded.toggle()
+                    matomo.track(eventWithCategory: .menuDrawer, name: "customFolders", value: isExpanded)
                 }
             } label: {
                 HStack(spacing: 12) {
@@ -46,6 +51,7 @@ struct UserFoldersListView: View {
                         .textStyle(.bodySmallSecondary)
                     Spacer()
                     Button {
+                        matomo.track(eventWithCategory: .createFolder, name: "fromMenuDrawer")
                         globalAlert.state = .createNewFolder(mode: .create)
                     } label: {
                         Image(resource: MailResourcesAsset.addCircle)
@@ -67,7 +73,10 @@ struct UserFoldersListView: View {
                         .padding(.bottom, 8)
                 } else {
                     ForEach(folders) { folder in
-                        FolderCell(folder: folder, currentFolderId: splitViewManager.selectedFolder?.id, isCompact: isCompact)
+                        FolderCell(folder: folder,
+                                   currentFolderId: splitViewManager.selectedFolder?.id,
+                                   isCompact: isCompact,
+                                   matomoCategory: .menuDrawer)
                     }
                 }
             }

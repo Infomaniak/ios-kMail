@@ -17,6 +17,8 @@
  */
 
 import InfomaniakCore
+import InfomaniakCoreUI
+import InfomaniakDI
 import InfomaniakLogin
 import MailCore
 import MailResources
@@ -43,6 +45,8 @@ struct AccountCellView: View {
 
             VStack {
                 Button {
+                    @InjectService var matomo: MatomoUtils
+                    matomo.track(eventWithCategory: .account, name: "switch")
                     withAnimation {
                         selectedUserId = selectedUserId == account.userId ? nil : account.userId
                         (window?.windowScene?.delegate as? SceneDelegate)?.switchAccount(account)
@@ -98,7 +102,16 @@ struct AccountHeaderCell: View {
 struct AccountCellView_Previews: PreviewProvider {
     static var previews: some View {
         AccountCellView(
-            account: Account(apiToken: ApiToken(accessToken: "", expiresIn: .max, refreshToken: "", scope: "", tokenType: "", userId: 0, expirationDate: .distantFuture)),
-            selectedUserId: .constant(nil))
+            account: Account(apiToken: ApiToken(
+                accessToken: "",
+                expiresIn: .max,
+                refreshToken: "",
+                scope: "",
+                tokenType: "",
+                userId: 0,
+                expirationDate: .distantFuture
+            )),
+            selectedUserId: .constant(nil)
+        )
     }
 }

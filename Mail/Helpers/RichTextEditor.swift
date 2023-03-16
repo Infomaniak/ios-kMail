@@ -16,6 +16,9 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import InfomaniakCore
+import InfomaniakCoreUI
+import InfomaniakDI
 import MailCore
 import MailResources
 import SQRichTextEditor
@@ -259,7 +262,14 @@ class MailEditorView: SQTextEditorView {
     }
 
     @objc func onToolbarClick(sender: UIBarButtonItem) {
-        switch ToolbarAction(rawValue: sender.tag) {
+        guard let toolbarAction = ToolbarAction(rawValue: sender.tag) else { return }
+
+        if let matomoName = toolbarAction.matomoName {
+            @InjectService var matomo: MatomoUtils
+            matomo.track(eventWithCategory: .editorActions, name: matomoName)
+        }
+
+        switch toolbarAction {
         case .bold:
             bold()
         case .italic:
@@ -291,8 +301,6 @@ class MailEditorView: SQTextEditorView {
             // TODO: Handle programmed message
             webView.resignFirstResponder()
             showWorkInProgressSnackBar()
-        case .none:
-            return
         }
     }
 }
@@ -348,6 +356,33 @@ enum ToolbarAction: Int {
             return MailResourcesAsset.hyperlink.image
         case .programMessage:
             return MailResourcesAsset.programMessage.image
+        }
+    }
+
+    var matomoName: String? {
+        switch self {
+        case .bold:
+            return "bold"
+        case .italic:
+            return "italic"
+        case .underline:
+            return "underline"
+        case .strikeThrough:
+            return "strikeThrough"
+        case .unorderedList:
+            return "unorderedList"
+        case .addFile:
+            return "importFile"
+        case .addPhoto:
+            return "importImage"
+        case .takePhoto:
+            return "importFromCamera"
+        case .link:
+            return "addLink"
+        case .programMessage:
+            return "postpone"
+        default:
+            return nil
         }
     }
 

@@ -16,6 +16,9 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import InfomaniakCore
+import InfomaniakCoreUI
+import InfomaniakDI
 import MailCore
 import MailResources
 import RealmSwift
@@ -47,13 +50,33 @@ struct MessageHeaderDetailView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
-            RecipientLabel(labelWidth: $labelWidth, title: MailResourcesStrings.Localizable.fromTitle, recipients: message.from, recipientTapped: recipientTapped)
-            RecipientLabel(labelWidth: $labelWidth, title: MailResourcesStrings.Localizable.toTitle, recipients: message.to, recipientTapped: recipientTapped)
+            RecipientLabel(
+                labelWidth: $labelWidth,
+                title: MailResourcesStrings.Localizable.fromTitle,
+                recipients: message.from,
+                recipientTapped: recipientTapped
+            )
+            RecipientLabel(
+                labelWidth: $labelWidth,
+                title: MailResourcesStrings.Localizable.toTitle,
+                recipients: message.to,
+                recipientTapped: recipientTapped
+            )
             if !message.cc.isEmpty {
-                RecipientLabel(labelWidth: $labelWidth, title: MailResourcesStrings.Localizable.ccTitle, recipients: message.cc, recipientTapped: recipientTapped)
+                RecipientLabel(
+                    labelWidth: $labelWidth,
+                    title: MailResourcesStrings.Localizable.ccTitle,
+                    recipients: message.cc,
+                    recipientTapped: recipientTapped
+                )
             }
             if !message.bcc.isEmpty {
-                RecipientLabel(labelWidth: $labelWidth, title: MailResourcesStrings.Localizable.bccTitle, recipients: message.bcc, recipientTapped: recipientTapped)
+                RecipientLabel(
+                    labelWidth: $labelWidth,
+                    title: MailResourcesStrings.Localizable.bccTitle,
+                    recipients: message.bcc,
+                    recipientTapped: recipientTapped
+                )
             }
             HStack {
                 Image(resource: MailResourcesAsset.calendar)
@@ -84,6 +107,8 @@ struct RecipientLabel: View {
     let recipients: RealmSwift.List<Recipient>
     let recipientTapped: (Recipient) -> Void
 
+    @LazyInjectService private var matomo: MatomoUtils
+
     var body: some View {
         HStack(alignment: .top) {
             Text(title)
@@ -94,6 +119,7 @@ struct RecipientLabel: View {
                 ForEach(recipients, id: \.self) { recipient in
                     WrappingHStack(lineSpacing: 2) {
                         Button {
+                            matomo.track(eventWithCategory: .message, name: "selectRecipient")
                             recipientTapped(recipient)
                         } label: {
                             Text(recipient.name.isEmpty ? recipient.email : recipient.name.removePunctuation)

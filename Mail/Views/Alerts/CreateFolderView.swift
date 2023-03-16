@@ -16,6 +16,9 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import InfomaniakCore
+import InfomaniakCoreUI
+import InfomaniakDI
 import MailCore
 import MailResources
 import RealmSwift
@@ -90,6 +93,8 @@ struct CreateFolderView: View {
                 .opacity(error == nil ? 0 : 1)
 
             ModalButtonsView(primaryButtonTitle: mode.buttonTitle, primaryButtonEnabled: buttonIsEnabled) {
+                @InjectService var matomo: MatomoUtils
+                matomo.track(eventWithCategory: .createFolder, name: "confirm")
                 Task {
                     await tryOrDisplayError {
                         let folder = try await mailboxManager.createFolder(name: folderName)

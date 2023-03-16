@@ -17,6 +17,7 @@
  */
 
 import InfomaniakCore
+import InfomaniakCoreUI
 import InfomaniakDI
 import InfomaniakNotifications
 import MailCore
@@ -24,14 +25,13 @@ import MailResources
 import SwiftUI
 
 struct LogoutConfirmationView: View {
-
     @Environment(\.window) private var window
 
     let account: Account
 
     var body: some View {
         VStack(alignment: .leading, spacing: 24) {
-            Text( MailResourcesStrings.Localizable.confirmLogoutTitle)
+            Text(MailResourcesStrings.Localizable.confirmLogoutTitle)
                 .textStyle(.bodyMedium)
             Text(MailResourcesStrings.Localizable.confirmLogoutDescription(account.user.email))
                 .textStyle(.bodySecondary)
@@ -40,6 +40,8 @@ struct LogoutConfirmationView: View {
     }
 
     private func logout() {
+        @InjectService var matomo: MatomoUtils
+        matomo.track(eventWithCategory: .account, name: "logOutConfirm")
         Task {
             @InjectService var notificationService: InfomaniakNotifications
             await notificationService.removeStoredTokenFor(userId: account.userId)

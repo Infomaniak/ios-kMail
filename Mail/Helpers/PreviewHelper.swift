@@ -17,11 +17,12 @@
  */
 
 import Foundation
+import InfomaniakCore
+import InfomaniakCoreUI
 import InfomaniakLogin
 import MailCore
 import RealmSwift
 import SwiftUI
-import InfomaniakCore
 
 struct PreviewHelper {
     static let sampleMailboxManager = MailboxManager(mailbox: sampleMailbox, apiFetcher: MailApiFetcher())
@@ -120,5 +121,13 @@ struct PreviewHelper {
 
     static let sampleMergedContact = MergedContact(email: "mergedContact@example.com", remote: nil, local: nil)
 
-    static let sampleAccount = Account(apiToken: ApiToken(accessToken: "", expiresIn: 0, refreshToken: "", scope: "", tokenType: "", userId: 0, expirationDate: Date()))
+    static let sampleAccount = Account(apiToken: ApiToken(
+        accessToken: "",
+        expiresIn: 0,
+        refreshToken: "",
+        scope: "",
+        tokenType: "",
+        userId: 0,
+        expirationDate: Date()
+    ))
 }

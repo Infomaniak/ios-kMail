@@ -17,7 +17,9 @@
  */
 
 import Foundation
+import InfomaniakCore
 import InfomaniakCoreUI
+import InfomaniakDI
 import MailCore
 import MailResources
 import SwiftUI
@@ -35,6 +37,8 @@ import SwiftUI
 
     @Published var selectedItems = Set<Thread>()
     @Published var toolbarActions = [Action]()
+
+    @LazyInjectService private var matomo: MatomoUtils
 
     let feedbackGenerator = UIImpactFeedbackGenerator(style: .medium)
 
@@ -58,13 +62,18 @@ import SwiftUI
 
         if threads.count == selectedItems.count {
             selectedItems.removeAll()
+            matomo.track(eventWithCategory: .multiSelection, name: "none")
         } else {
             selectedItems = Set(threads)
+            matomo.track(eventWithCategory: .multiSelection, name: "all")
         }
         setActions()
     }
 
     func didTap(action: Action, flushAlert: Binding<FlushAlertState?>) async throws {
+        if let matomoName = action.matomoName {
+            matomo.trackBulkEvent(eventWithCategory: .threadActions, name: matomoName, numberOfItems: selectedItems.count)
+        }
         switch action {
         case .markAsRead, .markAsUnread:
             try await mailboxManager.toggleRead(threads: Array(selectedItems))
@@ -77,7 +86,7 @@ import SwiftUI
         case .star:
             try await mailboxManager.toggleStar(threads: Array(selectedItems))
         case .delete:
-            let threads = Array(self.selectedItems)
+            let threads = Array(selectedItems)
             if selectedItems.first?.folder?.role == .trash || selectedItems.first?.folder?.role == .spam {
                 flushAlert.wrappedValue = FlushAlertState(deletedMessages: selectedItems.count) {
                     await tryOrDisplayError {

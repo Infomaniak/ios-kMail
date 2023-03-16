@@ -51,7 +51,7 @@
       "location" : "https://github.com/Infomaniak/ios-core.git",
       "state" : {
         "branch" : "mail-di",
-        "revision" : "89be8389aef89f8c890aaa02ac38bce7270e7bde"
+        "revision" : "1e4e2ed201c0111b641d190f4d0bf93f821c3a6a"
       }
     },
     {
@@ -59,8 +59,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Infomaniak/ios-core-ui.git",
       "state" : {
-        "revision" : "058d8c43c63c23fd6f52cb945bf83ebde8644cfd",
-        "version" : "2.1.2"
+        "revision" : "93051b3183db87262a7c53ead3b479e01f888edf",
+        "version" : "2.2.0"
       }
     },
     {

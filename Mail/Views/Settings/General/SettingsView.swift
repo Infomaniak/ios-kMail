@@ -16,6 +16,8 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import InfomaniakCore
+import InfomaniakCoreUI
 import MailCore
 import MailResources
 import SwiftUI
@@ -37,8 +39,13 @@ struct SettingsView: View {
 
                 // TODO: - Programmation settings
 
-                SettingsToggleCell(title: MailResourcesStrings.Localizable.settingsAppLock, userDefaults: \.isAppLockEnabled)
-                    .settingCellModifier()
+                SettingsToggleCell(
+                    title: MailResourcesStrings.Localizable.settingsAppLock,
+                    userDefaults: \.isAppLockEnabled,
+                    matomoCategory: .settingsGeneral,
+                    matomoName: "lock"
+                )
+                .settingCellModifier()
 
                 SettingsSubMenuCell(title: MailResourcesStrings.Localizable.settingsMailboxGeneralNotifications) {
                     SettingsNotificationsView()
@@ -68,7 +75,9 @@ struct SettingsView: View {
                     SettingsOptionView<Theme>(
                         title: MailResourcesStrings.Localizable.settingsThemeChoiceTitle,
                         subtitle: MailResourcesStrings.Localizable.settingsTheme,
-                        keyPath: \.theme
+                        keyPath: \.theme,
+                        matomoCategory: .settingsTheme,
+                        matomoName: \.rawValue
                     )
                 }
                 .settingCellModifier()
@@ -80,7 +89,9 @@ struct SettingsView: View {
                 ) {
                     SettingsOptionView(
                         title: MailResourcesStrings.Localizable.settingsAccentColor,
-                        keyPath: \.accentColor
+                        keyPath: \.accentColor,
+                        matomoCategory: .settingsAccentColor,
+                        matomoName: \.rawValue
                     )
                 }
                 .settingCellModifier()
@@ -101,6 +112,7 @@ struct SettingsView: View {
         .background(MailResourcesAsset.backgroundSecondaryColor.swiftUiColor)
         .navigationBarTitle(MailResourcesStrings.Localizable.settingsTitle, displayMode: .inline)
         .backButtonDisplayMode(.minimal)
+        .matomoView(view: [MatomoUtils.View.settingsView.displayName, "General"])
     }
 }
 

@@ -17,7 +17,9 @@
  */
 
 import Foundation
+import InfomaniakCore
 import InfomaniakCoreUI
+import InfomaniakDI
 import MailResources
 import RealmSwift
 import UIKit
@@ -67,9 +69,13 @@ public class DraftManager {
     private let draftQueue = DraftQueue()
     private static let saveExpirationSec = 3
 
+    @LazyInjectService private var matomo: MatomoUtils
+
     private init() {}
 
     private func saveDraft(draft: Draft, mailboxManager: MailboxManager) async {
+        matomo.track(eventWithCategory: .newMessage, name: "saveDraft")
+
         await draftQueue.cleanQueueElement(uuid: draft.localUUID)
         await draftQueue.beginBackgroundTask(withName: "Draft Saver", for: draft.localUUID)
 
@@ -142,6 +148,7 @@ public class DraftManager {
         await saveDraft(draft: draft, mailboxManager: mailboxManager)
         await IKSnackBar.showSnackBar(message: MailResourcesStrings.Localizable.snackbarDraftSaved,
                                       action: .init(title: MailResourcesStrings.Localizable.actionDelete) { [weak self] in
+                                          self?.matomo.track(eventWithCategory: .snackbar, name: "deleteDraft")
                                           self?.deleteDraftSnackBarAction(draft: draft, mailboxManager: mailboxManager)
                                       })
     }

@@ -17,6 +17,8 @@
  */
 
 import InfomaniakCore
+import InfomaniakCoreUI
+import InfomaniakDI
 import MailCore
 import MailResources
 import RealmSwift
@@ -30,7 +32,7 @@ struct MailboxesManagementView: View {
     @State private var isShowingManageAccount = false
     @State private var isShowingSwitchAccount = false
 
-    var mailboxes: [Mailbox]
+    let mailboxes: [Mailbox]
 
     private var otherMailboxes: [Mailbox] {
         return mailboxes.filter { $0.mailboxId != mailboxManager.mailbox.mailboxId }
@@ -41,6 +43,8 @@ struct MailboxesManagementView: View {
             Button {
                 withAnimation {
                     navigationDrawerState.showMailboxes.toggle()
+                    @InjectService var matomo: MatomoUtils
+                    matomo.track(eventWithCategory: .menuDrawer, name: "mailboxes", value: navigationDrawerState.showMailboxes)
                 }
             } label: {
                 HStack(spacing: 0) {

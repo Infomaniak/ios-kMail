@@ -16,6 +16,8 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import InfomaniakCore
+import InfomaniakCoreUI
 import InfomaniakDI
 import InfomaniakNotifications
 import MailCore
@@ -23,7 +25,9 @@ import MailResources
 import SwiftUI
 
 struct SettingsNotificationsView: View {
-    @LazyInjectService var notificationService: InfomaniakNotifications
+    @LazyInjectService private var notificationService: InfomaniakNotifications
+    @LazyInjectService private var matomo: MatomoUtils
+
     @AppStorage(UserDefaults.shared.key(.notificationsEnabled)) private var notificationsEnabled = DefaultPreferences
         .notificationsEnabled
     @State var subscribedTopics: [String]?
@@ -35,6 +39,9 @@ struct SettingsNotificationsView: View {
                     Text(MailResourcesStrings.Localizable.settingsEnableNotifications)
                         .textStyle(.body)
                 }
+                .onChange(of: notificationsEnabled) { newValue in
+                    matomo.track(eventWithCategory: .settingsNotifications, name: "allNotifications", value: newValue)
+                }
 
                 IKDivider()
 
@@ -43,6 +50,7 @@ struct SettingsNotificationsView: View {
                         Toggle(isOn: Binding(get: {
                             notificationsEnabled && subscribedTopics?.contains(mailbox.notificationTopicName) == true
                         }, set: { on in
+                            matomo.track(eventWithCategory: .settingsNotifications, name: "mailboxNotifications", value: on)
                             if on && subscribedTopics?.contains(mailbox.notificationTopicName) == false {
                                 subscribedTopics?.append(mailbox.notificationTopicName)
                             } else {
@@ -73,6 +81,7 @@ struct SettingsNotificationsView: View {
         .onDisappear {
             updateTopicsForCurrentUserIfNeeded()
         }
+        .matomoView(view: [MatomoUtils.View.settingsView.displayName, "Notifications"])
     }
 
     func currentTopics() async {

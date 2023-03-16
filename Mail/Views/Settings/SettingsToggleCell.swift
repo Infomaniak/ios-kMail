@@ -16,16 +16,22 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import InfomaniakCore
 import InfomaniakCoreUI
 import InfomaniakDI
+import MailCore
 import MailResources
 import SwiftUI
 
 struct SettingsToggleCell: View {
     @LazyInjectService var appLockHelper: AppLockHelper
+    @LazyInjectService var matomo: MatomoUtils
 
     let title: String
     let userDefaults: ReferenceWritableKeyPath<UserDefaults, Bool>
+
+    let matomoCategory: MatomoUtils.EventCategory?
+    let matomoName: String?
 
     @State private var toggleIsOn: Bool {
         didSet {
@@ -35,11 +41,18 @@ struct SettingsToggleCell: View {
 
     @State private var lastValue: Bool
 
-    init(title: String, userDefaults: ReferenceWritableKeyPath<UserDefaults, Bool>) {
+    init(
+        title: String,
+        userDefaults: ReferenceWritableKeyPath<UserDefaults, Bool>,
+        matomoCategory: MatomoUtils.EventCategory? = nil,
+        matomoName: String? = nil
+    ) {
         self.title = title
         self.userDefaults = userDefaults
         _toggleIsOn = State(wrappedValue: UserDefaults.shared[keyPath: userDefaults])
         _lastValue = _toggleIsOn
+        self.matomoCategory = matomoCategory
+        self.matomoName = matomoName
     }
 
     var body: some View {
@@ -48,6 +61,9 @@ struct SettingsToggleCell: View {
         }, set: { newValue in
             lastValue = toggleIsOn
             toggleIsOn = newValue
+            if let matomoCategory, let matomoName {
+                matomo.track(eventWithCategory: matomoCategory, name: matomoName, value: newValue)
+            }
         })) {
             Text(title)
                 .textStyle(.body)

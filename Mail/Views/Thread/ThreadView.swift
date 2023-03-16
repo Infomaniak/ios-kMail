@@ -16,7 +16,9 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import InfomaniakCore
 import InfomaniakCoreUI
+import InfomaniakDI
 import MailCore
 import MailResources
 import RealmSwift
@@ -57,6 +59,8 @@ struct ThreadView: View {
     @Environment(\.verticalSizeClass) var sizeClass
     @Environment(\.dismiss) var dismiss
 
+    @LazyInjectService private var matomo: MatomoUtils
+
     private let toolbarActions: [Action] = [.reply, .forward, .archive, .delete]
 
     var body: some View {
@@ -88,16 +92,14 @@ struct ThreadView: View {
         .onPreferenceChange(ScrollOffsetPreferenceKey.self) { offset in
             displayNavigationTitle = offset.y < -85
         }
-        .onAppear {
-            MatomoUtils.track(view: ["MessageView"])
-        }
         .task {
             if thread.hasUnseenMessages {
                 try? await mailboxManager.toggleRead(threads: [thread])
             }
         }
         .navigationTitle(displayNavigationTitle ? thread.formattedSubject : "")
-        .navigationBarThreadViewStyle(appearance: displayNavigationTitle ? BarAppearanceConstants.threadViewNavigationBarScrolledAppearance : BarAppearanceConstants.threadViewNavigationBarAppearance)
+        .navigationBarThreadViewStyle(appearance: displayNavigationTitle ? BarAppearanceConstants
+            .threadViewNavigationBarScrolledAppearance : BarAppearanceConstants.threadViewNavigationBarAppearance)
         .backButtonDisplayMode(.minimal)
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
@@ -120,7 +122,7 @@ struct ThreadView: View {
                 }
                 ToolbarButton(text: MailResourcesStrings.Localizable.buttonMore,
                               icon: MailResourcesAsset.plusActions) {
-                    threadBottomSheet.open(state: .actions(.threads([thread.thaw() ?? thread])))
+                    threadBottomSheet.open(state: .actions(.threads([thread.thaw() ?? thread], false)))
                 }
             }
         }
@@ -147,7 +149,7 @@ struct ThreadView: View {
             case let .replyOption(message, isThread):
                 ReplyActionsView(
                     mailboxManager: mailboxManager,
-                    target: isThread ? .threads([thread]) : .message(message),
+                    target: isThread ? .threads([thread], false) : .message(message),
                     state: threadBottomSheet,
                     globalSheet: globalBottomSheet
                 ) { message, replyMode in
@@ -184,9 +186,13 @@ struct ThreadView: View {
         .emptyCase(isEmpty: showEmptyView) {
             EmptyThreadView()
         }
+        .matomoView(view: [MatomoUtils.View.threadView.displayName, "Main"])
     }
 
     private func didTap(action: Action) {
+        if let matomoName = action.matomoName {
+            matomo.track(eventWithCategory: .threadActions, name: matomoName)
+        }
         switch action {
         case .reply:
             guard let message = thread.messages.last else { return }

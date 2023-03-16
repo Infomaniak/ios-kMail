@@ -17,6 +17,9 @@
  */
 
 import InfomaniakBugTracker
+import InfomaniakCore
+import InfomaniakCoreUI
+import InfomaniakDI
 import MailCore
 import MailResources
 import RealmSwift
@@ -53,6 +56,8 @@ struct NavigationDrawer: View {
 
     @State private var offsetWidth: CGFloat = 0
 
+    @LazyInjectService private var matomo: MatomoUtils
+
     private var dragGesture: some Gesture {
         DragGesture()
             .updating($isDragGestureActive) { _, active, _ in
@@ -66,6 +71,7 @@ struct NavigationDrawer: View {
             .onEnded { value in
                 let windowWidth = window?.frame.size.width ?? 0
                 if navigationDrawerState.isOpen && value.translation.width < -(windowWidth / 2) {
+                    matomo.track(eventWithCategory: .menuDrawer, name: "closeByGesture")
                     navigationDrawerState.close()
                 } else {
                     // Reset drawer to fully open position
@@ -82,6 +88,7 @@ struct NavigationDrawer: View {
                 .opacity(navigationDrawerState.isOpen ? 0.5 : 0)
                 .ignoresSafeArea()
                 .onTapGesture {
+                    matomo.track(eventWithCategory: .menuDrawer, name: "closeByTap")
                     navigationDrawerState.close()
                 }
 
@@ -121,6 +128,8 @@ struct MenuDrawerView: View {
 
     @StateObject var viewModel: MenuDrawerViewModel
 
+    @LazyInjectService private var matomo: MatomoUtils
+
     var mailboxManager: MailboxManager
 
     var isCompact: Bool
@@ -140,23 +149,18 @@ struct MenuDrawerView: View {
                 VStack(spacing: 0) {
                     MailboxesManagementView(mailboxes: viewModel.mailboxes)
 
-                    RoleFoldersListView(
-                        folders: viewModel.roleFolders,
-                        isCompact: isCompact
-                    )
+                    RoleFoldersListView(folders: viewModel.roleFolders, isCompact: isCompact)
 
                     IKDivider(withPadding: true)
 
-                    UserFoldersListView(
-                        folders: viewModel.userFolders,
-                        isCompact: isCompact
-                    )
+                    UserFoldersListView(folders: viewModel.userFolders, isCompact: isCompact)
 
                     IKDivider(withPadding: true)
 
                     MenuDrawerItemsListView(
                         title: MailResourcesStrings.Localizable.menuDrawerAdvancedActions,
-                        content: viewModel.actionsMenuItems
+                        content: viewModel.actionsMenuItems,
+                        matomoName: "advancedActions"
                     )
 
                     IKDivider(withPadding: true)
@@ -177,7 +181,6 @@ struct MenuDrawerView: View {
         .environmentObject(mailboxManager)
         .environment(\.folderCellType, .link)
         .onAppear {
-            MatomoUtils.track(view: ["MenuDrawer"])
             viewModel.createMenuItems(bottomSheet: bottomSheet)
         }
         .sheet(isPresented: $viewModel.isShowingHelp) {

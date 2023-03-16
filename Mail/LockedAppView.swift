@@ -55,6 +55,7 @@ struct LockedAppView: View {
         .onAppear {
             unlockApp()
         }
+        .matomoView(view: ["LockedAppView"])
     }
 
     private func unlockApp() {

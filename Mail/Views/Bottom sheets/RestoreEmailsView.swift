@@ -16,7 +16,9 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import InfomaniakCore
 import InfomaniakCoreUI
+import InfomaniakDI
 import MailCore
 import MailResources
 import SwiftUI
@@ -26,6 +28,8 @@ struct RestoreEmailsView: View {
     @State private var availableDates = [String]()
 
     @State private var pickerNoSelectionText = MailResourcesStrings.Localizable.loadingText
+
+    @LazyInjectService private var matomo: MatomoUtils
 
     let mailboxManager: MailboxManager
 
@@ -44,6 +48,9 @@ struct RestoreEmailsView: View {
                         selection: $selectedDate,
                         items: availableDates.map(mapDates))
                 .padding(.bottom, 24)
+                .onChange(of: selectedDate) { _ in
+                    matomo.track(eventWithCategory: .restoreEmailsBottomSheet, action: .input, name: "selectDate")
+                }
 
             ModalButtonsView(primaryButtonTitle: MailResourcesStrings.Localizable.buttonConfirmRestoreEmails,
                              secondaryButtonTitle: nil,
@@ -61,9 +68,11 @@ struct RestoreEmailsView: View {
                 }
             }
         }
+        .matomoView(view: [MatomoUtils.View.bottomSheet.displayName, "RestoreEmailsView"])
     }
 
     private func restoreEmails() {
+        matomo.track(eventWithCategory: .restoreEmailsBottomSheet, name: "restore")
         Task {
             await tryOrDisplayError {
                 try await mailboxManager.apiFetcher.restoreBackup(mailbox: mailboxManager.mailbox, date: selectedDate)

@@ -16,6 +16,8 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import InfomaniakCore
+import InfomaniakCoreUI
 import MailCore
 import SwiftUI
 
@@ -45,20 +47,23 @@ struct ReportJunkView: View {
     }
 
     var body: some View {
-        ForEach(actions) { action in
-            if action != actions.first {
-                IKDivider()
+        Group {
+            ForEach(actions) { action in
+                if action != actions.first {
+                    IKDivider()
+                }
+                ActionView(viewModel: viewModel, action: action)
+                    .padding(.horizontal, 24)
             }
-            ActionView(viewModel: viewModel, action: action)
-                .padding(.horizontal, 24)
         }
+        .matomoView(view: [MatomoUtils.View.bottomSheet.displayName, "ReportJunkView"])
     }
 }
 
 struct ReportJunkView_Previews: PreviewProvider {
     static var previews: some View {
         ReportJunkView(mailboxManager: PreviewHelper.sampleMailboxManager,
-                       target: .threads([PreviewHelper.sampleThread]),
+                       target: .threads([PreviewHelper.sampleThread], false),
                        state: ThreadBottomSheet(),
                        globalSheet: GlobalBottomSheet(),
                        globalAlert: GlobalAlert())
