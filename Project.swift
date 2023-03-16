@@ -20,7 +20,10 @@ import Foundation
 import ProjectDescription
 
 let deploymentTarget = DeploymentTarget.iOS(targetVersion: "15.0", devices: [.iphone, .ipad])
-let baseSettings = SettingsDictionary().automaticCodeSigning(devTeam: "864VDCS2QY")
+let baseSettings = SettingsDictionary()
+    .currentProjectVersion("1")
+    .marketingVersion("1.0.0")
+    .automaticCodeSigning(devTeam: "864VDCS2QY")
 
 let project = Project(name: "Mail",
                       packages: [
@@ -107,6 +110,8 @@ let project = Project(name: "Mail",
                               infoPlist: .extendingDefault(with: [
                                   "AppIdentifierPrefix": "$(AppIdentifierPrefix)",
                                   "CFBundleDisplayName": "$(PRODUCT_NAME)",
+                                  "CFBundleShortVersionString": "$(MARKETING_VERSION)",
+                                  "CFBundleVersion": "$(CURRENT_PROJECT_VERSION)",
                                   "NSExtension": [
                                       "NSExtensionPointIdentifier": "com.apple.usernotifications.service",
                                       "NSExtensionPrincipalClass": "$(PRODUCT_MODULE_NAME).NotificationService",
