@@ -118,6 +118,7 @@ struct ThreadView: View {
                     ToolbarButton(text: action.title, icon: action.icon) {
                         didTap(action: action)
                     }
+                    .disabled(action == .archive && thread.folder?.role == .archive)
                     Spacer()
                 }
                 ToolbarButton(text: MailResourcesStrings.Localizable.buttonMore,

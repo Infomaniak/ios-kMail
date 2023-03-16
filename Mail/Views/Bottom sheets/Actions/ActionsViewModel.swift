@@ -148,6 +148,14 @@ struct Action: Identifiable, Equatable {
         icon: MailResourcesAsset.editTools,
         matomoName: "editMenu"
     )
+    static let moveToInbox = Action(
+        id: 17,
+        title: MailResourcesStrings.Localizable.actionMoveToInbox,
+        icon: MailResourcesAsset.drawer,
+        matomoName: "moveToInbox"
+    )
+
+    static let quickActions: [Action] = [.reply, .replyAll, .forward, .delete]
 
     init(id: Int, title: String, shortTitle: String? = nil, icon: MailResourcesImages, matomoName: String?) {
         self.id = id
@@ -236,14 +244,9 @@ enum ActionsTarget: Equatable {
                     .print
                 ]
             } else if let thread = threads.first {
-                let replyAll = thread.messages.first?.canReplyAll ?? false
-                if replyAll {
-                    quickActions = [.reply, .replyAll, .forward, .delete]
-                } else {
-                    quickActions = [.reply, .forward, .archive, .delete]
-                }
+                quickActions = Action.quickActions
 
-                let archive = thread.messages.first?.canReplyAll ?? false
+                let archive = thread.folder?.role != .archive
                 let unread = thread.hasUnseenMessages
                 let star = thread.flagged
 
@@ -251,7 +254,7 @@ enum ActionsTarget: Equatable {
                 let spamAction: Action? = spam ? .nonSpam : .spam
 
                 let tempListActions: [Action?] = [
-                    archive ? .archive : nil,
+                    archive ? .archive : .moveToInbox,
                     unread ? .markAsRead : .markAsUnread,
                     .move,
                     star ? .unstar : .star,
@@ -262,18 +265,14 @@ enum ActionsTarget: Equatable {
                 listActions = tempListActions.compactMap { $0 }
             }
         case let .message(message):
-            if message.canReplyAll {
-                quickActions = [.reply, .replyAll, .forward, .delete]
-            } else {
-                quickActions = [.reply, .forward, .archive, .delete]
-            }
+            quickActions = Action.quickActions
 
-            let archive = message.canReplyAll
+            let archive = message.folder?.role != .archive
             let unread = !message.seen
             let star = message.flagged
             let isStaff = AccountManager.instance.currentAccount?.user?.isStaff ?? false
             let tempListActions: [Action?] = [
-                archive ? .archive : nil,
+                archive ? .archive : .moveToInbox,
                 unread ? .markAsRead : .markAsUnread,
                 .move,
                 star ? .unstar : .star,
@@ -304,7 +303,7 @@ enum ActionsTarget: Equatable {
         case .replyAll:
             try await reply(mode: .replyAll)
         case .archive:
-            try await archive()
+            try await move(to: .archive)
         case .forward:
             try await reply(mode: .forward([]))
         case .markAsRead, .markAsUnread:
@@ -318,9 +317,9 @@ enum ActionsTarget: Equatable {
         case .reportJunk:
             displayReportJunk()
         case .spam:
-            try await spam()
+            try await move(to: .spam)
         case .nonSpam:
-            try await nonSpam()
+            try await move(to: .inbox)
         case .block:
             try await block()
         case .phishing:
@@ -331,6 +330,8 @@ enum ActionsTarget: Equatable {
             report()
         case .editMenu:
             editMenu()
+        case .moveToInbox:
+            try await move(to: .inbox)
         default:
             print("Warning: Unhandled action!")
         }
@@ -357,6 +358,11 @@ enum ActionsTarget: Equatable {
                                           cancelSuccessMessage: MailResourcesStrings.Localizable.snackbarMoveCancelled,
                                           undoRedoAction: undoRedoAction,
                                           mailboxManager: mailboxManager)
+    }
+
+    private func move(to folderRole: FolderRole) async throws {
+        guard let folder = mailboxManager.getFolder(with: folderRole)?.freeze() else { return }
+        try await move(to: folder)
     }
 
     // MARK: - Actions methods
@@ -399,11 +405,6 @@ enum ActionsTarget: Equatable {
             }
             replyHandler?(message, completeMode)
         }
-    }
-
-    private func archive() async throws {
-        guard let archiveFolder = mailboxManager.getFolder(with: .archive)?.freeze() else { return }
-        try await move(to: archiveFolder)
     }
 
     private func toggleRead() async throws {
@@ -455,16 +456,6 @@ enum ActionsTarget: Equatable {
 
     private func displayReportJunk() {
         globalSheet.open(state: .reportJunk(threadBottomSheet: state, target: target))
-    }
-
-    private func spam() async throws {
-        guard let spamFolder = mailboxManager.getFolder(with: .spam)?.freeze() else { return }
-        try await move(to: spamFolder)
-    }
-
-    private func nonSpam() async throws {
-        guard let inboxFolder = mailboxManager.getFolder(with: .inbox)?.freeze() else { return }
-        try await move(to: inboxFolder)
     }
 
     private func block() async throws {
