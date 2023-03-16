@@ -20,7 +20,7 @@ import Foundation
 
 extension Date {
     static var yesterday: Date {
-        Calendar.current.date(byAdding: .day, value: -1, to: .now.startOfWeek)!
+        Calendar.current.date(byAdding: .day, value: -1, to: .now)!
     }
 
     static var lastWeek: Date {

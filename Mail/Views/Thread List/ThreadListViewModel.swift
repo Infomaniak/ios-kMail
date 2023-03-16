@@ -72,39 +72,15 @@ class DateSection: Identifiable {
 
     var threads = [Thread]()
 
-    private var referenceDate: ReferenceDate
+    private let referenceDate: ReferenceDate
 
     init(thread: Thread) {
-        if Calendar.current.isDateInToday(thread.date) {
-            referenceDate = .today
-        } else if Calendar.current.isDateInYesterday(thread.date) {
-            referenceDate = .yesterday
-        } else if Calendar.current.isDate(thread.date, equalTo: .now, toGranularity: .weekOfYear) {
-            referenceDate = .thisWeek
-        } else if Calendar.current.isDate(thread.date, equalTo: .lastWeek, toGranularity: .weekOfYear) {
-            referenceDate = .lastWeek
-        } else if Calendar.current.isDate(thread.date, equalTo: .now, toGranularity: .month) {
-            referenceDate = .thisMonth
-        } else {
-            referenceDate = .older(thread.date)
-        }
+        let sections: [ReferenceDate] = [.today, .yesterday, .thisWeek, .lastWeek, .thisMonth]
+        referenceDate = sections.first(where: { $0.dateInterval.contains(thread.date) }) ?? ReferenceDate.older(thread.date)
     }
 
     func threadBelongsToSection(thread: Thread) -> Bool {
-        switch referenceDate {
-        case .today:
-            return Calendar.current.isDateInToday(thread.date)
-        case .yesterday:
-            return Calendar.current.isDateInYesterday(thread.date)
-        case .thisWeek:
-            return Calendar.current.isDate(thread.date, equalTo: .now, toGranularity: .weekOfYear)
-        case .lastWeek:
-            return Calendar.current.isDate(thread.date, equalTo: .lastWeek, toGranularity: .weekOfYear)
-        case .thisMonth:
-            return Calendar.current.isDate(thread.date, equalTo: .now, toGranularity: .month)
-        case let .older(date):
-            return Calendar.current.isDate(thread.date, equalTo: date, toGranularity: .month)
-        }
+        return referenceDate.dateInterval.contains(thread.date)
     }
 }
 
