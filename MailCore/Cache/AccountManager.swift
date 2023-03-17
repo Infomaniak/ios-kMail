@@ -403,7 +403,9 @@ public class AccountManager: RefreshTokenDelegate {
     public func setCurrentAccount(account: Account) {
         currentAccount = account
         currentUserId = account.userId
-        matomo.connectUser(userId: "\(currentUserId)")
+        if !Bundle.main.isExtension {
+            matomo.connectUser(userId: "\(currentUserId)")
+        }
     }
 
     private func setSentryUserId(userId: Int) {
