@@ -52,23 +52,22 @@ struct ActionsView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
             // Quick actions
-            HStack(alignment: .top, spacing: 28) {
+            HStack(alignment: .top, spacing: 16) {
                 ForEach(viewModel.quickActions) { action in
                     QuickActionView(viewModel: viewModel, action: action)
                         .frame(maxWidth: .infinity)
                 }
-                .fixedSize(horizontal: false, vertical: true)
             }
-            .padding(.horizontal, 24)
             .padding(.bottom, 16)
+            .padding(.horizontal, 16)
             // Actions
             ForEach(viewModel.listActions) { action in
                 if action != viewModel.listActions.first {
                     IKDivider()
                 }
                 ActionView(viewModel: viewModel, action: action)
-                    .padding(.horizontal, 24)
             }
+            .padding(.horizontal, 24)
         }
         .padding(.horizontal, 8)
         .matomoView(view: [MatomoUtils.View.bottomSheet.displayName, "ActionsView"])
@@ -101,24 +100,25 @@ struct QuickActionView: View {
             }
         } label: {
             VStack(spacing: 8) {
-                ZStack {
-                    RoundedRectangle(cornerRadius: 8)
-                        .fill(accentColor.secondary.swiftUIColor)
+                RoundedRectangle(cornerRadius: 8)
+                    .fill(accentColor.secondary.swiftUiColor)
+                    .frame(maxWidth: 56, maxHeight: 56)
+                    .aspectRatio(1, contentMode: .fit)
+                    .overlay {
+                        Image(resource: action.icon)
+                            .resizable()
+                            .scaledToFit()
+                            .padding(16)
+                    }
+                    .padding(.horizontal, 8)
 
-                    action.icon
-                        .resizable()
-                        .scaledToFit()
-                        .frame(maxWidth: .infinity, maxHeight: .infinity)
-                        .padding(19)
-                }
-                .frame(maxWidth: 60, maxHeight: 60)
-                .aspectRatio(1, contentMode: .fit)
-
-                Text(action.title)
+                let title = action.shortTitle ?? action.title
+                Text(title)
                     .textStyle(.labelMediumAccent)
-                    .lineLimit(action.title.split(separator: " ").count > 1 ? nil : 1)
+                    .lineLimit(title.split(separator: " ").count > 1 ? nil : 1)
                     .minimumScaleFactor(0.75)
             }
+//            .border(.red)
         }
     }
 }

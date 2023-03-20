@@ -110,6 +110,7 @@ struct Action: Identifiable, Equatable {
     static let spam = Action(
         id: 11,
         title: MailResourcesStrings.Localizable.actionSpam,
+        shortTitle: MailResourcesStrings.Localizable.actionShortSpam,
         icon: MailResourcesAsset.spam,
         matomoName: "spam"
     )

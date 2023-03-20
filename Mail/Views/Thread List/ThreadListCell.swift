@@ -27,8 +27,9 @@ struct ThreadListCell: View {
     @EnvironmentObject var splitViewManager: SplitViewManager
 
     let thread: Thread
-    let viewModel: ThreadListViewModel
-    let multipleSelectionViewModel: ThreadListMultipleSelectionViewModel
+
+    @ObservedObject var viewModel: ThreadListViewModel
+    @ObservedObject var multipleSelectionViewModel: ThreadListMultipleSelectionViewModel
 
     let threadDensity: ThreadDensity
 
