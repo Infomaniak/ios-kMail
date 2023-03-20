@@ -27,10 +27,12 @@ struct ThreadListCell: View {
     @EnvironmentObject var splitViewManager: SplitViewManager
 
     let thread: Thread
-    @ObservedObject var viewModel: ThreadListViewModel
-    @ObservedObject var multipleSelectionViewModel: ThreadListMultipleSelectionViewModel
+    let viewModel: ThreadListViewModel
+    let multipleSelectionViewModel: ThreadListMultipleSelectionViewModel
 
     let threadDensity: ThreadDensity
+
+    let isSelected: Bool
 
     @Binding var editedMessageDraft: Draft?
 
@@ -48,8 +50,6 @@ struct ThreadListCell: View {
     private var selectedThreadBackground: Bool {
         return !multipleSelectionViewModel.isEnabled && (viewModel.selectedThread?.uid == thread.uid)
     }
-
-    var isSelected: Bool
 
     var body: some View {
         ZStack {
@@ -70,12 +70,10 @@ struct ThreadListCell: View {
                 isSelected: isSelected
             )
         }
-        .padding(.leading, multipleSelectionViewModel.isEnabled ? 8 : -4)
-        .background(SelectionBackground(selectionType: selectionType))
+        .background(SelectionBackground(selectionType: selectionType, paddingLeading: 4))
         .onTapGesture { didTapCell() }
         .onLongPressGesture(minimumDuration: 0.3) { didLongPressCell() }
         .swipeActions(thread: thread, viewModel: viewModel, multipleSelectionViewModel: multipleSelectionViewModel)
-        .clipped()
         .listRowInsets(.init(top: 0, leading: 0, bottom: 0, trailing: 0))
         .listRowSeparator(.hidden)
         .listRowBackground(MailResourcesAsset.backgroundColor.swiftUIColor)
@@ -134,8 +132,7 @@ struct ThreadListCell_Previews: PreviewProvider {
                                            isCompact: false),
             multipleSelectionViewModel: ThreadListMultipleSelectionViewModel(mailboxManager: PreviewHelper.sampleMailboxManager),
             threadDensity: .large,
-            editedMessageDraft: .constant(nil),
-            isSelected: false
-        )
+            isSelected: false,
+            editedMessageDraft: .constant(nil))
     }
 }

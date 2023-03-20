@@ -135,8 +135,8 @@ struct ThreadListView: View {
                                                viewModel: viewModel,
                                                multipleSelectionViewModel: multipleSelectionViewModel,
                                                threadDensity: threadDensity,
-                                               editedMessageDraft: $editedMessageDraft,
-                                               isSelected: multipleSelectionViewModel.selectedItems.contains(thread))
+                                               isSelected: multipleSelectionViewModel.selectedItems.contains(thread),
+                                               editedMessageDraft: $editedMessageDraft)
                                     .id(thread.id)
                             }
                         } header: {
