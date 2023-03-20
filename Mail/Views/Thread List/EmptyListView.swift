@@ -29,9 +29,9 @@ struct EmptyListView: View {
     var body: some View {
         VStack(spacing: 8) {
             Image(resource: accentColor.zeroMailImage)
-            Text(isInbox ? MailResourcesStrings.Localizable.emptyStateFolderTitle : MailResourcesStrings.Localizable.emptyStateFolderTitle)
+            Text(isInbox ? MailResourcesStrings.Localizable.emptyStateInboxTitle : MailResourcesStrings.Localizable.emptyStateFolderTitle)
                 .textStyle(.header2)
-            Text(isInbox ? MailResourcesStrings.Localizable.emptyStateFolderDescription : MailResourcesStrings.Localizable.emptyStateFolderDescription)
+            Text(isInbox ? MailResourcesStrings.Localizable.emptyStateInboxDescription : MailResourcesStrings.Localizable.emptyStateFolderDescription)
                 .textStyle(.bodySecondary)
                 .multilineTextAlignment(.center)
                 .fixedSize(horizontal: false, vertical: true)
