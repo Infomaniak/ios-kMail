@@ -287,11 +287,6 @@ class DateSection: Identifiable {
             showWorkInProgressSnackBar()
         case .spam:
             try await toggleSpam(thread: thread)
-        case .readAndArchive:
-            if thread.hasUnseenMessages {
-                try await mailboxManager.toggleRead(threads: [thread])
-            }
-            try await move(thread: thread, to: .archive)
         case .quickAction:
             bottomSheet.open(state: .actions(.threads([thread.thaw() ?? thread], false)))
         case .none:
