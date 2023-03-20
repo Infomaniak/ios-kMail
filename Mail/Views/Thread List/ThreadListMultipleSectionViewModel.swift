@@ -27,6 +27,8 @@ import SwiftUI
 @MainActor class ThreadListMultipleSelectionViewModel: ObservableObject {
     let mailboxManager: MailboxManager
 
+    @LazyInjectService private var matomo: MatomoUtils
+
     @Published var isEnabled = false {
         didSet {
             if !isEnabled {
@@ -37,8 +39,6 @@ import SwiftUI
 
     @Published var selectedItems = Set<Thread>()
     @Published var toolbarActions = [Action]()
-
-    @LazyInjectService private var matomo: MatomoUtils
 
     let feedbackGenerator = UIImpactFeedbackGenerator(style: .medium)
 
