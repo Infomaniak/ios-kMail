@@ -28,12 +28,10 @@ struct NoNetworkView: View {
                     .resizable()
                     .scaledToFit()
                     .frame(width: 18, height: 18)
-                Text(MailResourcesStrings.Localizable.noNetworkTitle)
+                Text(MailResourcesStrings.Localizable.noNetwork)
                     .textStyle(.bodySmallWarning)
             }
             .foregroundColor(MailResourcesAsset.orangeActionColor)
-            Text(MailResourcesStrings.Localizable.noNetworkDescription)
-                .textStyle(.bodySmallSecondary)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
     }
