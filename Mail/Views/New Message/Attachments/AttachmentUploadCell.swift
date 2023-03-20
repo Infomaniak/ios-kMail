@@ -60,10 +60,8 @@ struct AttachmentUploadCell: View {
                 .padding(.leading, 8)
             }
             .padding(6)
-            if let uploadTask {
-                IndeterminateProgressView(indeterminate: uploadTask.progress == 0, progress: uploadTask.progress)
-                    .opacity(uploadTask.progress == 1 ? 0 : 1)
-            }
+            IndeterminateProgressView(indeterminate: uploadTask.progress == 0, progress: uploadTask.progress)
+                .opacity(uploadTask.progress == 1 ? 0 : 1)
         }
         .background(
             RoundedRectangle(cornerRadius: 6)
