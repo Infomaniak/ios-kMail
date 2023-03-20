@@ -108,6 +108,7 @@ struct SettingsOptionView<OptionEnum>: View where OptionEnum: CaseIterable, Opti
                 }
                 .listRowSeparator(.hidden)
                 .listRowInsets(.init())
+                .background(MailResourcesAsset.backgroundColor.swiftUiColor)
             } header: {
                 if let subtitle = subtitle {
                     Text(subtitle)
@@ -116,10 +117,9 @@ struct SettingsOptionView<OptionEnum>: View where OptionEnum: CaseIterable, Opti
                     EmptyView()
                 }
             }
-            .background(MailResourcesAsset.backgroundSecondaryColor.swiftUiColor)
         }
         .listStyle(.plain)
-        .background(MailResourcesAsset.backgroundSecondaryColor.swiftUiColor)
+        .background(MailResourcesAsset.backgroundColor.swiftUiColor)
         .navigationBarTitle(title, displayMode: .inline)
         .onAppear {
             guard let excludedKeyPaths else { return }

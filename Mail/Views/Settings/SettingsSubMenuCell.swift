@@ -34,16 +34,20 @@ struct SettingsSubMenuCell<Content: View>: View {
 
     var body: some View {
         NavigationLink(destination: destination) {
-            HStack(alignment: .firstTextBaseline, spacing: 8) {
-                icon
-                VStack(alignment: .leading) {
-                    Text(title)
-                        .textStyle(.body)
-                    if let subtitle = subtitle {
-                        Text(subtitle)
-                            .textStyle(.bodySmallTertiary)
+            HStack {
+                HStack(alignment: .firstTextBaseline, spacing: 8) {
+                    icon
+                    VStack(alignment: .leading) {
+                        Text(title)
+                            .textStyle(.body)
+                        if let subtitle = subtitle {
+                            Text(subtitle)
+                                .textStyle(.bodySmallTertiary)
+                        }
                     }
                 }
+                Spacer()
+                ChevronIcon(style: .right, color: .secondary)
             }
         }
     }

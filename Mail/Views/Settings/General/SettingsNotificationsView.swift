@@ -68,7 +68,7 @@ struct SettingsNotificationsView: View {
             }
             .padding(.horizontal, 16)
         }
-        .background(MailResourcesAsset.backgroundSecondaryColor.swiftUiColor)
+        .background(MailResourcesAsset.backgroundColor.swiftUiColor)
         .navigationBarTitle(MailResourcesStrings.Localizable.settingsMailboxGeneralNotifications, displayMode: .inline)
         .onChange(of: notificationsEnabled) { enabled in
             if !enabled {
