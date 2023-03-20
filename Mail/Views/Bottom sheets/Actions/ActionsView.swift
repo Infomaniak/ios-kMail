@@ -116,9 +116,7 @@ struct QuickActionView: View {
                 Text(title)
                     .textStyle(.labelMediumAccent)
                     .lineLimit(title.split(separator: " ").count > 1 ? nil : 1)
-                    .minimumScaleFactor(0.75)
             }
-//            .border(.red)
         }
     }
 }

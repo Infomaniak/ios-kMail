@@ -88,6 +88,7 @@ class DateSection: Identifiable {
     let mailboxManager: MailboxManager
 
     @Published var folder: Folder?
+    @Published var threads = [Thread]()
     @Published var sections = [DateSection]()
     @Published var selectedThread: Thread? {
         didSet {
@@ -241,6 +242,7 @@ class DateSection: Identifiable {
             }
         } else {
             sections = []
+            threads = []
         }
     }
 
@@ -261,6 +263,7 @@ class DateSection: Identifiable {
             }
 
             sections = newSections
+            self.threads = threads
         }
     }
 

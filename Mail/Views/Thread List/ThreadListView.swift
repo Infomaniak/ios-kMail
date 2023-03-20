@@ -186,7 +186,7 @@ struct ThreadListView: View {
                                     multipleSelectionViewModel: multipleSelectionViewModel,
                                     selectAll: {
                                         withAnimation(.default.speed(2)) {
-                                            multipleSelectionViewModel.selectAll(threads: viewModel.sections.flatMap(\.threads))
+                                            multipleSelectionViewModel.selectAll(threads: viewModel.threads)
                                         }
                                     }))
         .floatingActionButton(isEnabled: !multipleSelectionViewModel.isEnabled,
@@ -322,7 +322,7 @@ private struct ThreadListToolbar: ViewModifier {
 
                     ToolbarItemGroup(placement: .navigationBarTrailing) {
                         if multipleSelectionViewModel.isEnabled {
-                            Button(multipleSelectionViewModel.selectedItems.count == viewModel.sections.flatMap(\.threads).count
+                            Button(multipleSelectionViewModel.selectedItems.count == viewModel.threads.count
                                 ? MailResourcesStrings.Localizable.buttonUnselectAll
                                 : MailResourcesStrings.Localizable.buttonSelectAll) {
                                     selectAll()

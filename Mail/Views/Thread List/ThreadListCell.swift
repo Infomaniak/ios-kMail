@@ -134,6 +134,7 @@ struct ThreadListCell_Previews: PreviewProvider {
             multipleSelectionViewModel: ThreadListMultipleSelectionViewModel(mailboxManager: PreviewHelper.sampleMailboxManager),
             threadDensity: .large,
             isSelected: false,
-            editedMessageDraft: .constant(nil))
+            editedMessageDraft: .constant(nil)
+        )
     }
 }
