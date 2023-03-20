@@ -377,6 +377,7 @@ private struct ThreadListToolbar: ViewModifier {
                                         .open(state: .actions(.threads(Array(multipleSelectionViewModel.selectedItems), true)))
                                 }
                             }
+                            .disabled(multipleSelectionViewModel.selectedItems.isEmpty)
                         }
                     }
                 }
