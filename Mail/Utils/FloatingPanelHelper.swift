@@ -41,15 +41,19 @@ class AdaptiveDriveFloatingPanelController: FloatingPanelController {
             let insetWidth = view.frame.width - maxPanelWidth
             surfaceView.containerMargins = UIEdgeInsets(top: 0, left: insetWidth / 2, bottom: 0, right: insetWidth / 2)
         } else {
-            surfaceView.containerMargins = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
+            surfaceView.containerMargins = .zero
         }
     }
 
     func updateLayout(size: CGSize) {
         guard let trackingScrollView = trackingScrollView else { return }
         let layout = AdaptiveFloatingPanelLayout(
-            height: min(trackingScrollView.contentSize.height + surfaceView.contentPadding.top + surfaceView.contentPadding.bottom, size.height - 96),
-            halfOpening: halfOpening)
+            height: min(
+                trackingScrollView.contentSize.height + surfaceView.contentPadding.top + surfaceView.contentPadding.bottom,
+                size.height - 96
+            ),
+            halfOpening: halfOpening
+        )
         self.layout = layout
         invalidateLayout()
     }
