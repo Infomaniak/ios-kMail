@@ -111,6 +111,7 @@ struct ThreadView: View {
                     }
                 } label: {
                     Image(resource: thread.flagged ? MailResourcesAsset.starFull : MailResourcesAsset.star)
+                        .foregroundColor(thread.flagged ? MailResourcesAsset.yellowActionColor.swiftUIColor : .accentColor)
                 }
             }
             ToolbarItemGroup(placement: .bottomBar) {
