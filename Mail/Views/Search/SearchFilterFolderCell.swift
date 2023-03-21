@@ -41,7 +41,11 @@ struct SearchFilterFolderCell: View {
         return selectedFolderId != allFoldersItem.id
     }
 
-    private var allFoldersItem = (id: "", name: MailResourcesStrings.Localizable.searchFilterFolder, icon: MailResourcesAsset.folder.image)
+    private var allFoldersItem = (
+        id: "",
+        name: MailResourcesStrings.Localizable.searchFilterFolder,
+        icon: MailResourcesAsset.allFolders.swiftUIImage
+    )
 
     private var sortedFolders: [Folder] {
         return folders.sorted()
@@ -50,8 +54,12 @@ struct SearchFilterFolderCell: View {
     var body: some View {
         Menu {
             Picker(selection: $selectedFolderId.animation(), label: EmptyView()) {
-                Text(allFoldersItem.name)
-                    .tag(allFoldersItem.id)
+                HStack {
+                    allFoldersItem.icon
+                    Text(allFoldersItem.name)
+                        .tag(allFoldersItem.id)
+                }
+
                 ForEach(sortedFolders) { folder in
                     HStack {
                         folder.icon

@@ -136,7 +136,7 @@ public class Folder: Object, Codable, Comparable, Identifiable {
 
     public var icon: Image {
         let asset = role?.icon ?? (isFavorite ? MailResourcesAsset.folderStar : MailResourcesAsset.folder)
-        return Image(uiImage: asset.image)
+        return asset.swiftUIImage
     }
 
     public var formattedUnreadCount: String {
