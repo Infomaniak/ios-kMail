@@ -110,7 +110,7 @@ struct ThreadView: View {
                         }
                     }
                 } label: {
-                    Image(resource: thread.flagged ? MailResourcesAsset.starFull : MailResourcesAsset.star)
+                    (thread.flagged ? MailResourcesAsset.starFull : MailResourcesAsset.star).swiftUIImage
                         .foregroundColor(thread.flagged ? MailResourcesAsset.yellowActionColor.swiftUIColor : .accentColor)
                 }
             }
@@ -123,7 +123,7 @@ struct ThreadView: View {
                     Spacer()
                 }
                 ToolbarButton(text: MailResourcesStrings.Localizable.buttonMore,
-                              icon: MailResourcesAsset.plusActions) {
+                              icon: MailResourcesAsset.plusActions.swiftUIImage) {
                     threadBottomSheet.open(state: .actions(.threads([thread.thaw() ?? thread], false)))
                 }
             }

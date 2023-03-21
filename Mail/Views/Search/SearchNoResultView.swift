@@ -22,7 +22,7 @@ import SwiftUI
 struct SearchNoResultView: View {
     var body: some View {
         VStack(alignment: .center, spacing: 4) {
-            Image(resource: MailResourcesAsset.search)
+            MailResourcesAsset.search.swiftUIImage
                 .resizable()
                 .frame(width: 74, height: 74)
                 .padding(.bottom, 13)

@@ -28,7 +28,7 @@ struct MoreStorageView: View {
             Text(MailResourcesStrings.Localizable.moreStorageTitle)
                 .textStyle(.bodyMedium)
 
-            Image(resource: MailResourcesAsset.moreStorage)
+            MailResourcesAsset.moreStorage.swiftUIImage
                 .resizable()
                 .scaledToFit()
                 .frame(width: 245)

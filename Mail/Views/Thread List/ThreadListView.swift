@@ -125,7 +125,7 @@ struct ThreadListView: View {
                     }
 
                     if threadDensity == .compact {
-                        ListInsetView(height: 4)
+                        ListVerticalInsetView(height: 4)
                     }
 
                     ForEach(viewModel.sections) { section in
@@ -147,7 +147,7 @@ struct ThreadListView: View {
                         }
                     }
 
-                    ListInsetView(height: multipleSelectionViewModel.isEnabled ? 100 : 110)
+                    ListVerticalInsetView(height: multipleSelectionViewModel.isEnabled ? 100 : 110)
                 }
                 .environment(\.defaultMinListRowHeight, 4)
                 .overlay {
@@ -301,7 +301,7 @@ private struct ThreadListToolbar: ViewModifier {
                                     matomo.track(eventWithCategory: .menuDrawer, name: "openByButton")
                                     navigationDrawerState.open()
                                 } label: {
-                                    Image(resource: MailResourcesAsset.burger)
+                                    MailResourcesAsset.burger.swiftUIImage
                                         .resizable()
                                         .scaledToFit()
                                         .frame(width: Constants.navbarIconSize, height: Constants.navbarIconSize)
@@ -327,7 +327,7 @@ private struct ThreadListToolbar: ViewModifier {
                             Button {
                                 splitViewManager.showSearch = true
                             } label: {
-                                Image(resource: MailResourcesAsset.search)
+                                MailResourcesAsset.search.swiftUIImage
                                     .resizable()
                                     .scaledToFit()
                                     .frame(width: Constants.navbarIconSize, height: Constants.navbarIconSize)
@@ -366,7 +366,7 @@ private struct ThreadListToolbar: ViewModifier {
                                 }
 
                                 ToolbarButton(text: MailResourcesStrings.Localizable.buttonMore,
-                                              icon: MailResourcesAsset.plusActions,
+                                              icon: MailResourcesAsset.plusActions.swiftUIImage,
                                               width: reader.size.width / 5) {
                                     bottomSheet.open(state: .actions(.threads(Array(multipleSelectionViewModel.selectedItems), true)))
                                 }

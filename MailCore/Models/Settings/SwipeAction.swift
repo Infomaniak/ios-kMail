@@ -175,7 +175,7 @@ public enum SwipeAction: String, CaseIterable, SettingsOptionEnum {
         }
 
         guard let resource else { return nil }
-        return Image(resource.name)
+        return resource.swiftUIImage
     }
 
     public var swipeTint: Color? {

@@ -26,7 +26,7 @@ struct AttachmentCell: View {
     var body: some View {
         VStack(spacing: 0) {
             HStack {
-                Image(resource: attachment.icon)
+                attachment.icon.swiftUIImage
 
                 VStack(alignment: .leading, spacing: 0) {
                     Text(attachment.name)

@@ -36,7 +36,7 @@ struct CheckboxView: View {
                 .strokeBorder(Color.accentColor, lineWidth: 2)
                 .background(Circle().fill(isSelected ? Color.accentColor : Color.clear))
                 .frame(width: size, height: size)
-            Image(resource: MailResourcesAsset.check)
+            MailResourcesAsset.check.swiftUIImage
                 .foregroundColor(accentColor.onAccent.swiftUIColor)
                 .frame(height: Constants.checkmarkSize)
                 .opacity(isSelected ? 1 : 0)

@@ -208,7 +208,7 @@ struct ComposeMessageView: View {
                     Label(MailResourcesStrings.Localizable.buttonClose, systemImage: "xmark")
                 },
                 trailing: Button(action: sendDraft) {
-                    Image(resource: MailResourcesAsset.send)
+                    MailResourcesAsset.send.swiftUIImage
                 }
                 .disabled(isSendButtonDisabled)
             )

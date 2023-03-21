@@ -79,7 +79,7 @@ struct MessageHeaderDetailView: View {
                 )
             }
             HStack {
-                Image(resource: MailResourcesAsset.calendar)
+                MailResourcesAsset.calendar.swiftUIImage
                     .resizable()
                     .scaledToFit()
                     .frame(width: labelWidth, height: 17, alignment: .leading)

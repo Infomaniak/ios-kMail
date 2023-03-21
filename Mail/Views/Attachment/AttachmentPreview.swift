@@ -55,7 +55,7 @@ struct AttachmentPreview: View {
                             Text(MailResourcesStrings.Localizable.buttonDownload)
                                 .font(MailTextStyle.labelSecondary.font)
                         } icon: {
-                            Image(resource: MailResourcesAsset.download)
+                            MailResourcesAsset.download.swiftUIImage
                                 .resizable()
                                 .scaledToFit()
                                 .frame(width: 22, height: 22)

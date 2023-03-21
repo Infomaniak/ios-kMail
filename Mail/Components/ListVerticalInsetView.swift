@@ -18,7 +18,7 @@
 
 import SwiftUI
 
-struct ListInsetView: View {
+struct ListVerticalInsetView: View {
     let height: CGFloat
 
     var body: some View {

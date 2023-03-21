@@ -29,7 +29,7 @@ struct LockedAppView: View {
     var body: some View {
         ZStack {
             VStack(spacing: 27) {
-                Image(resource: MailResourcesAsset.lock)
+                MailResourcesAsset.lock.swiftUIImage
                     .frame(width: 187, height: 187)
 
                 Text(MailResourcesStrings.Localizable.lockAppTitle)
@@ -37,7 +37,7 @@ struct LockedAppView: View {
             }
 
             VStack {
-                Image(resource: MailResourcesAsset.logoText)
+                MailResourcesAsset.logoText.swiftUIImage
                     .resizable()
                     .scaledToFit()
                     .frame(height: Constants.onboardingLogoHeight)

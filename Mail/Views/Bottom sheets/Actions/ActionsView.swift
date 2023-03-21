@@ -105,7 +105,7 @@ struct QuickActionView: View {
                     RoundedRectangle(cornerRadius: 8)
                         .fill(accentColor.secondary.swiftUIColor)
 
-                    Image(resource: action.icon)
+                    action.icon
                         .resizable()
                         .scaledToFit()
                         .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -138,7 +138,7 @@ struct ActionView: View {
             }
         } label: {
             HStack(spacing: 20) {
-                Image(resource: action.icon)
+                action.icon
                     .resizable()
                     .scaledToFit()
                     .frame(width: 21, height: 21)

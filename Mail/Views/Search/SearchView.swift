@@ -127,7 +127,7 @@ struct SearchView: View {
                         Constants.globallyResignFirstResponder()
                         splitViewManager.showSearch = false
                     } label: {
-                        Image(resource: MailResourcesAsset.arrowLeft)
+                        MailResourcesAsset.arrowLeft.swiftUIImage
                     }
                 }
             }
@@ -238,7 +238,7 @@ struct SearchView: View {
                     Button {
                         deleteSearchTapped(searchItem: searchItem)
                     } label: {
-                        Image(resource: MailResourcesAsset.close)
+                        MailResourcesAsset.close.swiftUIImage
                             .resizable()
                             .scaledToFit()
                             .foregroundColor(.accentColor)

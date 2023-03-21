@@ -59,7 +59,7 @@ struct ChevronIcon: View {
     }
 
     var body: some View {
-        Image(resource: MailResourcesAsset.arrowUp)
+        MailResourcesAsset.arrowUp.swiftUIImage
             .resizable()
             .frame(width: 12, height: 12)
             .foregroundColor(color.color)

@@ -102,7 +102,7 @@ struct MailButton: View {
             ZStack {
                 HStack(spacing: 8) {
                     if let icon {
-                        Image(resource: icon)
+                        icon.swiftUIImage
                             .resizable()
                             .scaledToFit()
                             .frame(width: iconSize, height: iconSize)

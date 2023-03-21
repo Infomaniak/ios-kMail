@@ -28,7 +28,7 @@ struct EmptyThreadView: View {
 
     var body: some View {
         VStack {
-            Image(resource: accentColor.zeroConvImage)
+            accentColor.zeroConvImage.swiftUIImage
                 .padding(24)
             Text(MailResourcesStrings.Localizable
                 .noConversationSelected(splitViewManager.selectedFolder?.localizedName ?? ""))

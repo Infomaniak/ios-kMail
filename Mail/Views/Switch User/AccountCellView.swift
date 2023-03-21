@@ -70,7 +70,7 @@ struct AccountHeaderCell: View {
     let account: Account
     @Binding var isSelected: Bool
 
-    @State private var avatarImage = Image(resource: MailResourcesAsset.placeholderAvatar)
+    @State private var avatarImage = MailResourcesAsset.placeholderAvatar.swiftUIImage
 
     var body: some View {
         HStack(spacing: 8) {
@@ -89,7 +89,7 @@ struct AccountHeaderCell: View {
             Spacer()
 
             if isSelected {
-                Image(resource: MailResourcesAsset.check)
+                MailResourcesAsset.check.swiftUIImage
                     .foregroundColor(.accentColor)
             }
         }

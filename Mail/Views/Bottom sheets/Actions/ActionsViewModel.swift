@@ -23,12 +23,13 @@ import InfomaniakDI
 import MailCore
 import MailResources
 import RealmSwift
+import SwiftUI
 
 struct Action: Identifiable, Equatable {
     let id: Int
     let title: String
     let shortTitle: String?
-    let icon: MailResourcesImages
+    let icon: Image
     let matomoName: String?
 
     static let delete = Action(
@@ -161,7 +162,7 @@ struct Action: Identifiable, Equatable {
         self.id = id
         self.title = title
         self.shortTitle = shortTitle
-        self.icon = icon
+        self.icon = icon.swiftUIImage
         self.matomoName = matomoName
     }
 

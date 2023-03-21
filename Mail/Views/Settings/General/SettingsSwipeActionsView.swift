@@ -105,7 +105,7 @@ struct SettingsSwipeActionsView: View {
         case .fullTrailing:
             resource = accentColor.fullTrailingIcon
         }
-        return Image(resource: resource)
+        return resource.swiftUIImage
     }
 }
 

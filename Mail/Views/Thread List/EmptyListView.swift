@@ -28,7 +28,7 @@ struct EmptyListView: View {
 
     var body: some View {
         VStack(spacing: 8) {
-            Image(resource: accentColor.zeroMailImage)
+            accentColor.zeroMailImage.swiftUIImage
             Text(isInbox ? MailResourcesStrings.Localizable.emptyStateInboxTitle : MailResourcesStrings.Localizable.emptyStateFolderTitle)
                 .textStyle(.header2)
             Text(isInbox ? MailResourcesStrings.Localizable.emptyStateInboxDescription : MailResourcesStrings.Localizable.emptyStateFolderDescription)

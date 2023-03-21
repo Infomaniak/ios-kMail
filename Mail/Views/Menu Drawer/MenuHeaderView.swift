@@ -28,7 +28,7 @@ struct MenuHeaderView: View {
 
     var body: some View {
         HStack {
-            Image(resource: MailResourcesAsset.logoText)
+            MailResourcesAsset.logoText.swiftUIImage
                 .resizable()
                 .scaledToFit()
                 .frame(height: 48)
@@ -38,7 +38,7 @@ struct MenuHeaderView: View {
             Button {
                 isShowingSettings.toggle()
             } label: {
-                Image(resource: MailResourcesAsset.cog)
+                MailResourcesAsset.cog.swiftUIImage
                     .resizable()
                     .scaledToFit()
                     .frame(width: 24)

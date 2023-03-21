@@ -71,13 +71,13 @@ struct SearchFilterFolderCell: View {
         } label: {
             HStack(spacing: 11) {
                 if isSelected {
-                    Image(resource: MailResourcesAsset.check)
+                    MailResourcesAsset.check.swiftUIImage
                         .resizable()
                         .frame(width: 13, height: 13)
                 }
                 Text(selectedFolderName)
                     .font(MailTextStyle.bodyMedium.font)
-                Image(resource: MailResourcesAsset.arrowDown)
+                MailResourcesAsset.arrowDown.swiftUIImage
                     .resizable()
                     .frame(width: 13, height: 13)
             }

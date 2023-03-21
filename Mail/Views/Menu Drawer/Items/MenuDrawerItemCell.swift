@@ -33,7 +33,7 @@ struct MenuDrawerItemCell: View {
             content.action()
         } label: {
             HStack(spacing: Constants.menuDrawerHorizontalItemSpacing) {
-                Image(resource: content.icon)
+                content.icon.swiftUIImage
                     .resizable()
                     .scaledToFit()
                     .frame(width: 24, height: 24)

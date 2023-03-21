@@ -28,7 +28,7 @@ struct AttachmentUploadCell: View {
     var body: some View {
         VStack(spacing: 0) {
             HStack {
-                Image(resource: attachment.icon)
+                attachment.icon.swiftUIImage
 
                 VStack(alignment: .leading, spacing: 0) {
                     Text(attachment.name)
@@ -50,7 +50,7 @@ struct AttachmentUploadCell: View {
                         attachmentRemoved(attachment)
                     }
                 } label: {
-                    Image(resource: MailResourcesAsset.close)
+                    MailResourcesAsset.close.swiftUIImage
                         .resizable()
                         .scaledToFit()
                         .foregroundColor(MailResourcesAsset.textSecondaryColor)
