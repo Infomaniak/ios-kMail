@@ -24,12 +24,6 @@ import MailResources
 import RealmSwift
 import SwiftUI
 
-extension Account: Hashable {
-    public func hash(into hasher: inout Hasher) {
-        hasher.combine(id)
-    }
-}
-
 class AccountListViewModel: ObservableObject {
     @Published var selectedUserId: Int? = AccountManager.instance.currentUserId
 
@@ -43,9 +37,9 @@ class AccountListViewModel: ObservableObject {
             .sorted(by: \.mailboxId)
             .observe(on: DispatchQueue.main) { [weak self] results in
                 switch results {
-                case let .initial(mailboxes):
+                case .initial(let mailboxes):
                     self?.handleMailboxChanged(Array(mailboxes))
-                case let .update(mailboxes, _, _, _):
+                case .update(let mailboxes, _, _, _):
                     withAnimation {
                         self?.handleMailboxChanged(Array(mailboxes))
                     }
@@ -96,7 +90,7 @@ struct AccountListView: View {
     }
 
     private func updateUsers() async throws {
-        try await withThrowingTaskGroup(of: Void.self) { group in
+        await withThrowingTaskGroup(of: Void.self) { group in
             for account in AccountManager.instance.accounts {
                 group.addTask {
                     _ = try await AccountManager.instance.updateUser(for: account, registerToken: false)
