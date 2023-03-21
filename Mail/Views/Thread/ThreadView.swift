@@ -82,10 +82,10 @@ struct ThreadView: View {
                     .padding(.top, 8)
                     .padding(.bottom, 16)
                     .padding(.horizontal, 16)
-                    .background(MailResourcesAsset.backgroundColor.swiftUiColor)
+                    .background(MailResourcesAsset.backgroundColor.swiftUIColor)
 
                 MessageListView(messages: thread.messages)
-                    .background(MailResourcesAsset.backgroundColor.swiftUiColor)
+                    .background(MailResourcesAsset.backgroundColor.swiftUIColor)
             }
         }
         .coordinateSpace(name: "scrollView")

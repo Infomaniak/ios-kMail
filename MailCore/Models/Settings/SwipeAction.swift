@@ -203,7 +203,7 @@ public enum SwipeAction: String, CaseIterable, SettingsOptionEnum {
             resource = nil
         }
 
-        return resource?.swiftUiColor
+        return resource?.swiftUIColor
     }
 
     public func fallback(for thread: Thread) -> Self? {

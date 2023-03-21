@@ -38,10 +38,10 @@ struct AccountCellView: View {
     var body: some View {
         ZStack {
             RoundedRectangle(cornerRadius: 10)
-                .fill(MailResourcesAsset.backgroundSecondaryColor.swiftUiColor)
+                .fill(MailResourcesAsset.backgroundSecondaryColor.swiftUIColor)
 
             RoundedRectangle(cornerRadius: 10)
-                .stroke(MailResourcesAsset.elementsColor.swiftUiColor, lineWidth: 1)
+                .stroke(MailResourcesAsset.elementsColor.swiftUIColor, lineWidth: 1)
 
             VStack {
                 Button {

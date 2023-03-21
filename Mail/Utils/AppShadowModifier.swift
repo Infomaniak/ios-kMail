@@ -25,7 +25,7 @@ struct AppShadowModifier: ViewModifier {
     func body(content: Content) -> some View {
         if colorScheme == .light {
             ZStack {
-                MailResourcesAsset.backgroundColor.swiftUiColor
+                MailResourcesAsset.backgroundColor.swiftUIColor
                     .ignoresSafeArea()
                     .shadow(color: .primary.opacity(0.08), radius: 2.5, x: 0.5, y: 0.5)
 

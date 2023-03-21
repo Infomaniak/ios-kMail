@@ -67,7 +67,7 @@ struct AttachmentUploadCell: View {
         }
         .background(
             RoundedRectangle(cornerRadius: 6)
-                .stroke(MailResourcesAsset.elementsColor.swiftUiColor, lineWidth: 1)
+                .stroke(MailResourcesAsset.elementsColor.swiftUIColor, lineWidth: 1)
         )
         .cornerRadius(6)
         .frame(maxWidth: 200)

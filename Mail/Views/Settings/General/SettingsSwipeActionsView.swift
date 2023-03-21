@@ -75,7 +75,7 @@ struct SettingsSwipeActionsView: View {
             }
             .padding(.horizontal, 16)
         }
-        .background(MailResourcesAsset.backgroundColor.swiftUiColor)
+        .background(MailResourcesAsset.backgroundColor.swiftUIColor)
         .navigationBarTitle(MailResourcesStrings.Localizable.settingsSwipeActionsTitle, displayMode: .inline)
         .matomoView(view: [MatomoUtils.View.settingsView.displayName, "SwipeActions"])
     }

@@ -20,12 +20,6 @@ import Foundation
 import MailResources
 import SwiftUI
 
-public extension MailResourcesColors {
-    var swiftUiColor: SwiftUI.Color {
-        return SwiftUI.Color(color)
-    }
-}
-
 public enum AccentColor: String, CaseIterable, SettingsOptionEnum {
     case pink, blue
 

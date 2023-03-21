@@ -56,16 +56,16 @@ extension View {
     }
 
     func foregroundColor(_ color: MailResourcesColors) -> some View {
-        return foregroundColor(color.swiftUiColor)
+        return foregroundColor(color.swiftUIColor)
     }
 
     func tint(_ tint: MailResourcesColors) -> some View {
-        return self.tint(tint.swiftUiColor)
+        return self.tint(tint.swiftUIColor)
     }
 
     func navigationBarThreadListStyle() -> some View {
         if #available(iOS 16.0, *) {
-            return toolbarBackground(UserDefaults.shared.accentColor.navBarBackground.swiftUiColor, for: .navigationBar)
+            return toolbarBackground(UserDefaults.shared.accentColor.navBarBackground.swiftUIColor, for: .navigationBar)
         } else {
             return modifier(NavigationBarStyleViewModifier(
                 standardAppearance: BarAppearanceConstants.threadListNavigationBarAppearance,
@@ -85,7 +85,7 @@ extension View {
 
     func navigationBarSearchListStyle() -> some View {
         if #available(iOS 16.0, *) {
-            return toolbarBackground(MailResourcesAsset.backgroundColor.swiftUiColor, for: .navigationBar)
+            return toolbarBackground(MailResourcesAsset.backgroundColor.swiftUIColor, for: .navigationBar)
         } else {
             return modifier(NavigationBarStyleViewModifier(
                 standardAppearance: BarAppearanceConstants.threadViewNavigationBarAppearance,

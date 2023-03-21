@@ -59,6 +59,6 @@ struct ReplyActionsView_Previews: PreviewProvider {
                          target: .threads([PreviewHelper.sampleThread], false),
                          state: ThreadBottomSheet(),
                          globalSheet: GlobalBottomSheet()) { _, _ in /* Preview */ }
-            .accentColor(AccentColor.pink.primary.swiftUiColor)
+            .accentColor(AccentColor.pink.primary.swiftUIColor)
     }
 }

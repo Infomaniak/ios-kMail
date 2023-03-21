@@ -43,9 +43,9 @@ struct SwipeConfigCell: View {
                 ZStack {
                     if action == .none {
                         if i == 0 {
-                            MailResourcesAsset.elementsColor.swiftUiColor
+                            MailResourcesAsset.elementsColor.swiftUIColor
                         } else {
-                            MailResourcesAsset.textTertiaryColor.swiftUiColor
+                            MailResourcesAsset.textTertiaryColor.swiftUIColor
                         }
 
                         Text(MailResourcesStrings.Localizable.settingsSwipeActionToDefine)
@@ -68,7 +68,7 @@ struct SwipeConfigCell: View {
         .cornerRadius(15)
         .frame(height: 80)
         .background(
-            MailResourcesAsset.backgroundSecondaryColor.swiftUiColor
+            MailResourcesAsset.backgroundSecondaryColor.swiftUIColor
                 .cornerRadius(15)
                 .shadow(radius: 4)
         )

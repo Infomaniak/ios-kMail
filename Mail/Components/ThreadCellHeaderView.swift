@@ -41,7 +41,7 @@ struct ThreadCellHeaderView: View {
                     .lineLimit(1)
                     .overlay {
                         RoundedRectangle(cornerRadius: 3)
-                            .stroke(MailResourcesAsset.elementsColor.swiftUiColor)
+                            .stroke(MailResourcesAsset.elementsColor.swiftUIColor)
                     }
             }
 

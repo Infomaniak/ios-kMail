@@ -82,7 +82,7 @@ struct ActionsView_Previews: PreviewProvider {
                     state: ThreadBottomSheet(),
                     globalSheet: GlobalBottomSheet(),
                     globalAlert: GlobalAlert()) { _, _ in /* Preview */ }
-            .accentColor(AccentColor.pink.primary.swiftUiColor)
+            .accentColor(AccentColor.pink.primary.swiftUIColor)
     }
 }
 
@@ -103,7 +103,7 @@ struct QuickActionView: View {
             VStack(spacing: 8) {
                 ZStack {
                     RoundedRectangle(cornerRadius: 8)
-                        .fill(accentColor.secondary.swiftUiColor)
+                        .fill(accentColor.secondary.swiftUIColor)
 
                     Image(resource: action.icon)
                         .resizable()

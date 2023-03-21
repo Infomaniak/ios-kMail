@@ -97,7 +97,7 @@ struct SettingsView: View {
             .frame(maxWidth: .infinity, alignment: .leading)
             .padding(.horizontal, 16)
         }
-        .background(MailResourcesAsset.backgroundColor.swiftUiColor)
+        .background(MailResourcesAsset.backgroundColor.swiftUIColor)
         .navigationBarTitle(MailResourcesStrings.Localizable.settingsTitle, displayMode: .inline)
         .matomoView(view: [MatomoUtils.View.settingsView.displayName, "General"])
     }

@@ -78,7 +78,7 @@ struct AccountListView: View {
             .padding(8)
             .padding(.bottom, 120)
         }
-        .background(MailResourcesAsset.backgroundColor.swiftUiColor)
+        .background(MailResourcesAsset.backgroundColor.swiftUIColor)
         .navigationBarTitle(MailResourcesStrings.Localizable.titleMyAccounts, displayMode: .inline)
         .floatingActionButton(icon: MailResourcesAsset.plus, title: MailResourcesStrings.Localizable.buttonAddAccount) {
             matomo.track(eventWithCategory: .account, name: "add")
