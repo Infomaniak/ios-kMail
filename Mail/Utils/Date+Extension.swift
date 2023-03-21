@@ -19,20 +19,31 @@
 import Foundation
 
 extension Date {
-    var startOfDay: Date {
-        return Calendar.current.startOfDay(for: self)
+    static var yesterday: Date {
+        Calendar.current.date(byAdding: .day, value: -1, to: .now)!
     }
 
-    var endOfDay: Date {
+    static var lastWeek: Date {
+        Calendar.current.date(byAdding: .weekOfYear, value: -1, to: .now)!
+    }
+
+    var startOfDay: Date {
+        Calendar.current.startOfDay(for: self)
+    }
+
+    var startOfWeek: Date {
+        Calendar.current.date(from: Calendar.current.dateComponents([.yearForWeekOfYear, .weekOfYear], from: self))!
+    }
+
+    var endOfWeek: Date {
         var components = DateComponents()
-        components.day = 1
+        components.weekOfYear = 1
         components.second = -1
-        return Calendar.current.date(byAdding: components, to: startOfDay)!
+        return Calendar.current.date(byAdding: components, to: startOfWeek)!
     }
 
     var startOfMonth: Date {
-        let components = Calendar.current.dateComponents([.month, .year], from: self)
-        return Calendar.current.date(from: components)!
+        Calendar.current.date(from: Calendar.current.dateComponents([.month, .year], from: self))!
     }
 
     var endOfMonth: Date {
