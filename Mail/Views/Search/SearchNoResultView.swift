@@ -27,9 +27,9 @@ struct SearchNoResultView: View {
                 .frame(width: 74, height: 74)
                 .padding(.bottom, 13)
                 .foregroundColor(MailResourcesAsset.textSecondaryColor)
-            Text(MailResourcesStrings.Localizable.searchNoResultsTitle)
+            Text(MailResourcesStrings.Localizable.emptyStateSearchTitle)
                 .textStyle(.header2)
-            Text(MailResourcesStrings.Localizable.searchNoResultsDescription)
+            Text(MailResourcesStrings.Localizable.emptyStateSearchDescription)
                 .textStyle(.bodySecondary)
                 .multilineTextAlignment(.center)
         }

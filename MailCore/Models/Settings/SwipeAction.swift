@@ -76,7 +76,6 @@ public enum SwipeAction: String, CaseIterable, SettingsOptionEnum {
     case favorite
     case postPone
     case spam
-    case readAndArchive
     case quickAction
     case moveToInbox
     case none
@@ -97,8 +96,6 @@ public enum SwipeAction: String, CaseIterable, SettingsOptionEnum {
             return MailResourcesStrings.Localizable.actionPostpone
         case .spam:
             return MailResourcesStrings.Localizable.actionSpam
-        case .readAndArchive:
-            return MailResourcesStrings.Localizable.settingsSwipeActionReadAndArchive
         case .quickAction:
             return MailResourcesStrings.Localizable.settingsSwipeActionQuickActionsMenu
         case .moveToInbox:
@@ -127,7 +124,7 @@ public enum SwipeAction: String, CaseIterable, SettingsOptionEnum {
 
     public var isDestructive: Bool {
         switch self {
-        case .delete, .archive, .spam, .readAndArchive, .moveToInbox:
+        case .delete, .archive, .spam, .moveToInbox:
             return true
         case .move, .readUnread, .postPone, .favorite, .quickAction, .none:
             return false
@@ -168,8 +165,6 @@ public enum SwipeAction: String, CaseIterable, SettingsOptionEnum {
                 return MailResourcesAsset.waitingMessage
             case .spam:
                 return MailResourcesAsset.spam
-            case .readAndArchive:
-                return MailResourcesAsset.archives
             case .quickAction:
                 return MailResourcesAsset.navigationMenu
             case .moveToInbox:
@@ -200,8 +195,6 @@ public enum SwipeAction: String, CaseIterable, SettingsOptionEnum {
             resource = MailResourcesAsset.swipePostponeColor
         case .spam:
             resource = MailResourcesAsset.swipeSpamColor
-        case .readAndArchive:
-            resource = MailResourcesAsset.swipeReadArchiveColor
         case .quickAction:
             resource = MailResourcesAsset.swipeQuickActionColor
         case .moveToInbox:
@@ -215,7 +208,7 @@ public enum SwipeAction: String, CaseIterable, SettingsOptionEnum {
 
     public func fallback(for thread: Thread) -> Self? {
         switch self {
-        case .archive, .readAndArchive:
+        case .archive:
             guard thread.folder?.role == .archive else { return nil }
             return .moveToInbox
         case .spam:

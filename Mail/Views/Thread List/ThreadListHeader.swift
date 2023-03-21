@@ -56,13 +56,14 @@ struct ThreadListHeader: View {
 
     var body: some View {
         HStack {
-            if isConnected {
-                if let lastUpdateText = lastUpdateText {
+            VStack(alignment: .leading) {
+                if !isConnected {
+                    NoNetworkView()
+                }
+                if let lastUpdateText {
                     Text(MailResourcesStrings.Localizable.threadListHeaderLastUpdate(lastUpdateText))
                         .textStyle(.bodySmallSecondary)
                 }
-            } else {
-                NoNetworkView()
             }
             Spacer()
             if let unreadCount = unreadCount, unreadCount > 0 && !isMultipleSelectionEnabled {

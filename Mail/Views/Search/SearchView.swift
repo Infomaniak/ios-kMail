@@ -78,7 +78,7 @@ struct SearchView: View {
             if viewModel.searchState == .noResults {
                 SearchNoResultView()
             } else if viewModel.searchState == .noHistory {
-                Text(MailResourcesStrings.Localizable.searchNoHistoryDescription)
+                Text(MailResourcesStrings.Localizable.emptyStateHistoryDescription)
                     .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
                     .padding(.top, 16)
                     .textStyle(.bodySmallSecondary)
