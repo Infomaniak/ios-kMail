@@ -98,7 +98,7 @@ struct SearchView: View {
         .navigationBarSearchListStyle()
         .navigationBarTitleDisplayMode(.inline)
         .floatingPanel(state: bottomSheet, halfOpening: true) {
-            if case let .actions(target) = bottomSheet.state, !target.isInvalidated {
+            if case .actions(let target) = bottomSheet.state, !target.isInvalidated {
                 ActionsView(mailboxManager: viewModel.mailboxManager,
                             target: target,
                             state: bottomSheet,
@@ -123,13 +123,11 @@ struct SearchView: View {
         }
         .toolbar {
             ToolbarItem(placement: .navigationBarLeading) {
-                if isCompact {
-                    Button {
-                        Constants.globallyResignFirstResponder()
-                        splitViewManager.showSearch = false
-                    } label: {
-                        MailResourcesAsset.arrowLeft.swiftUIImage
-                    }
+                Button {
+                    Constants.globallyResignFirstResponder()
+                    splitViewManager.showSearch = false
+                } label: {
+                    Image(isCompact ? MailResourcesAsset.arrowLeft.name : MailResourcesAsset.close.name)
                 }
             }
 
