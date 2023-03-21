@@ -26,11 +26,11 @@ import SwiftUI
 struct ThreadListHeader: View {
     @AppStorage(UserDefaults.shared.key(.accentColor)) private var accentColor = DefaultPreferences.accentColor
 
-    var isMultipleSelectionEnabled: Bool
+    let isMultipleSelectionEnabled: Bool
+    let isConnected: Bool
+    let lastUpdate: Date?
+    let unreadCount: Int?
 
-    @Binding var isConnected: Bool
-    @Binding var lastUpdate: Date?
-    @Binding var unreadCount: Int?
     @Binding var unreadFilterOn: Bool
 
     @State private var lastUpdateText: String?
@@ -42,16 +42,16 @@ struct ThreadListHeader: View {
     ).autoconnect()
 
     init(isMultipleSelectionEnabled: Bool,
-         isConnected: Binding<Bool>,
-         lastUpdate: Binding<Date?>,
-         unreadCount: Binding<Int?>,
+         isConnected: Bool,
+         lastUpdate: Date?,
+         unreadCount: Int?,
          unreadFilterOn: Binding<Bool>) {
         self.isMultipleSelectionEnabled = isMultipleSelectionEnabled
-        _isConnected = isConnected
-        _lastUpdate = lastUpdate
-        _unreadCount = unreadCount
+        self.isConnected = isConnected
+        self.lastUpdate = lastUpdate
+        self.unreadCount = unreadCount
         _unreadFilterOn = unreadFilterOn
-        _lastUpdateText = State(initialValue: formatLastUpdate(date: lastUpdate.wrappedValue))
+        _lastUpdateText = State(initialValue: formatLastUpdate(date: lastUpdate))
     }
 
     var body: some View {
@@ -86,11 +86,6 @@ struct ThreadListHeader: View {
         .background(accentColor.navBarBackground.swiftUIColor)
         .onChange(of: lastUpdate) { newValue in
             lastUpdateText = formatLastUpdate(date: newValue)
-        }
-        .onChange(of: unreadCount) { newValue in
-            if newValue == 0 {
-                unreadFilterOn = false
-            }
         }
         .onReceive(timer) { _ in
             lastUpdateText = formatLastUpdate(date: lastUpdate)
@@ -136,14 +131,14 @@ extension ToggleStyle where Self == UnreadToggleStyle {
 struct ThreadListHeader_Previews: PreviewProvider {
     static var previews: some View {
         ThreadListHeader(isMultipleSelectionEnabled: false,
-                         isConnected: .constant(true),
-                         lastUpdate: .constant(Date()),
-                         unreadCount: .constant(2),
+                         isConnected: true,
+                         lastUpdate: Date(),
+                         unreadCount: 2,
                          unreadFilterOn: .constant(false))
         ThreadListHeader(isMultipleSelectionEnabled: false,
-                         isConnected: .constant(false),
-                         lastUpdate: .constant(nil),
-                         unreadCount: .constant(1),
+                         isConnected: false,
+                         lastUpdate: nil,
+                         unreadCount: 1,
                          unreadFilterOn: .constant(true))
     }
 }
