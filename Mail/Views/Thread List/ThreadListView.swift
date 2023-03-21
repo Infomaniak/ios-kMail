@@ -124,6 +124,10 @@ struct ThreadListView: View {
                             .listRowInsets(.init())
                     }
 
+                    if threadDensity == .compact {
+                        ListInsetView(height: 4)
+                    }
+
                     ForEach(viewModel.sections) { section in
                         Section {
                             ForEach(section.threads) { thread in
@@ -143,11 +147,9 @@ struct ThreadListView: View {
                         }
                     }
 
-                    Spacer()
-                        .frame(height: multipleSelectionViewModel.isEnabled ? 100 : 110)
-                        .listRowSeparator(.hidden)
-                        .listRowBackground(Color.clear)
+                    ListInsetView(height: multipleSelectionViewModel.isEnabled ? 100 : 110)
                 }
+                .environment(\.defaultMinListRowHeight, 4)
                 .overlay {
                     if viewModel.folder?.lastUpdate != nil && viewModel.sections.isEmpty && !viewModel.isLoadingPage {
                         EmptyListView(isInbox: viewModel.folder?.role == .inbox)
