@@ -46,7 +46,8 @@ let project = Project(name: "Mail",
                           .package(url: "https://github.com/dkk/WrappingHStack", .upToNextMajor(from: "2.0.0")),
                           .package(url: "https://github.com/SCENEE/FloatingPanel", .upToNextMajor(from: "2.0.0")),
                           .package(url: "https://github.com/kean/Nuke", .upToNextMajor(from: "11.3.0")),
-                          .package(url: "https://github.com/airbnb/lottie-ios", .exact("3.5.0"))
+                          .package(url: "https://github.com/airbnb/lottie-ios", .exact("3.5.0")),
+						  .package(url: "https://github.com/scinfu/SwiftSoup.git", .upToNextMajor(from: "2.5.3"))
                       ],
                       targets: [
                           Target(name: "Mail",
@@ -162,7 +163,8 @@ let project = Project(name: "Mail",
                                   .package(product: "CocoaLumberjackSwift"),
                                   .package(product: "RealmSwift"),
                                   .package(product: "SwiftRegex"),
-                                  .package(product: "Nuke")
+                                  .package(product: "Nuke"),
+                                  .package(product: "SwiftSoup")
                               ],
                               settings: .settings(base: baseSettings)
                           )
