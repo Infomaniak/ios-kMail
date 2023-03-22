@@ -106,7 +106,7 @@ class DateSection: Identifiable {
 
     // Used to know thread location
     private var selectedThreadIndex: Int?
-    private var filteredThreads = [Thread]() {
+    var filteredThreads = [Thread]() {
         didSet {
             guard let thread = selectedThread,
                   let index = filteredThreads.firstIndex(where: { $0.uid == thread.uid }) else { return }

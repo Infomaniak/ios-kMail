@@ -135,8 +135,8 @@ struct ThreadListView: View {
                                                viewModel: viewModel,
                                                multipleSelectionViewModel: multipleSelectionViewModel,
                                                threadDensity: threadDensity,
-                                               editedMessageDraft: $editedMessageDraft,
-                                               isSelected: multipleSelectionViewModel.selectedItems.contains(thread))
+                                               isSelected: multipleSelectionViewModel.selectedItems.contains { $0.id == thread.id },
+                                               editedMessageDraft: $editedMessageDraft)
                                     .id(thread.id)
                             }
                         } header: {
@@ -182,10 +182,11 @@ struct ThreadListView: View {
         .modifier(ThreadListToolbar(isCompact: isCompact,
                                     flushAlert: $flushAlert,
                                     bottomSheet: bottomSheet,
+                                    viewModel: viewModel,
                                     multipleSelectionViewModel: multipleSelectionViewModel,
                                     selectAll: {
                                         withAnimation(.default.speed(2)) {
-                                            multipleSelectionViewModel.selectAll(threads: viewModel.sections.flatMap(\.threads))
+                                            multipleSelectionViewModel.selectAll(threads: viewModel.filteredThreads)
                                         }
                                     }))
         .floatingActionButton(isEnabled: !multipleSelectionViewModel.isEnabled,
@@ -272,6 +273,7 @@ private struct ThreadListToolbar: ViewModifier {
     @Binding var flushAlert: FlushAlertState?
 
     @ObservedObject var bottomSheet: ThreadBottomSheet
+    @ObservedObject var viewModel: ThreadListViewModel
     @ObservedObject var multipleSelectionViewModel: ThreadListMultipleSelectionViewModel
 
     @State private var isShowingSwitchAccount = false
@@ -320,9 +322,12 @@ private struct ThreadListToolbar: ViewModifier {
 
                     ToolbarItemGroup(placement: .navigationBarTrailing) {
                         if multipleSelectionViewModel.isEnabled {
-                            Button(MailResourcesStrings.Localizable.buttonSelectAll) {
-                                selectAll()
-                            }
+                            Button(multipleSelectionViewModel.selectedItems.count == viewModel.filteredThreads.count
+                                ? MailResourcesStrings.Localizable.buttonUnselectAll
+                                : MailResourcesStrings.Localizable.buttonSelectAll) {
+                                    selectAll()
+                                }
+                                .animation(nil, value: multipleSelectionViewModel.selectedItems)
                         } else {
                             Button {
                                 splitViewManager.showSearch = true
@@ -368,9 +373,11 @@ private struct ThreadListToolbar: ViewModifier {
                                 ToolbarButton(text: MailResourcesStrings.Localizable.buttonMore,
                                               icon: MailResourcesAsset.plusActions.swiftUIImage,
                                               width: reader.size.width / 5) {
-                                    bottomSheet.open(state: .actions(.threads(Array(multipleSelectionViewModel.selectedItems), true)))
+                                    bottomSheet
+                                        .open(state: .actions(.threads(Array(multipleSelectionViewModel.selectedItems), true)))
                                 }
                             }
+                            .disabled(multipleSelectionViewModel.selectedItems.isEmpty)
                         }
                     }
                 }

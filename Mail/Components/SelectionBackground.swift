@@ -44,18 +44,27 @@ enum SelectionBackgroundKind {
     }
 }
 
+struct RoundedCorner: Shape {
+    let radius: CGFloat
+    let corners: UIRectCorner
+
+    func path(in rect: CGRect) -> Path {
+        let path = UIBezierPath(roundedRect: rect, byRoundingCorners: corners, cornerRadii: CGSize(width: radius, height: radius))
+        return Path(path.cgPath)
+    }
+}
+
 struct SelectionBackground: View {
     @AppStorage(UserDefaults.shared.key(.accentColor)) private var accentColor = DefaultPreferences.accentColor
 
     let selectionType: SelectionBackgroundKind
-
-    var offsetX: CGFloat = 8
+    var paddingLeading: CGFloat = 8
 
     var body: some View {
-        RoundedRectangle(cornerRadius: 10)
+        Rectangle()
             .fill(accentColor.secondary.swiftUIColor)
-            .offset(x: offsetX, y: 0)
-            .padding(.leading, 0)
+            .clipShape(RoundedCorner(radius: 8, corners: [.topLeft, .bottomLeft]))
+            .padding(.leading, paddingLeading)
             .padding(.vertical, selectionType.verticalPadding)
             .opacity(selectionType.opacity)
     }
@@ -63,9 +72,6 @@ struct SelectionBackground: View {
 
 struct SelectionBackground_Previews: PreviewProvider {
     static var previews: some View {
-        SelectionBackground(
-            selectionType: SelectionBackgroundKind.single,
-            offsetX: 10
-        )
+        SelectionBackground(selectionType: SelectionBackgroundKind.single, paddingLeading: 10)
     }
 }

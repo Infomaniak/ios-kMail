@@ -27,6 +27,8 @@ import SwiftUI
 @MainActor class ThreadListMultipleSelectionViewModel: ObservableObject {
     let mailboxManager: MailboxManager
 
+    @LazyInjectService private var matomo: MatomoUtils
+
     @Published var isEnabled = false {
         didSet {
             if !isEnabled {
@@ -38,8 +40,6 @@ import SwiftUI
     @Published var selectedItems = Set<Thread>()
     @Published var toolbarActions = [Action]()
 
-    @LazyInjectService private var matomo: MatomoUtils
-
     let feedbackGenerator = UIImpactFeedbackGenerator(style: .medium)
 
     init(mailboxManager: MailboxManager) {
@@ -48,7 +48,7 @@ import SwiftUI
     }
 
     func toggleSelection(of thread: Thread) {
-        if selectedItems.contains(thread) {
+        if let thread = selectedItems.first(where: { $0.id == thread.id }) {
             selectedItems.remove(thread)
         } else {
             selectedItems.insert(thread)
