@@ -40,7 +40,7 @@ struct RecipientChip: View {
         }
         .padding(.leading, 12)
         .padding(.trailing, 12)
-        .background(Capsule().fill(accentColor.secondary.swiftUiColor))
+        .background(Capsule().fill(accentColor.secondary.swiftUIColor))
     }
 }
 

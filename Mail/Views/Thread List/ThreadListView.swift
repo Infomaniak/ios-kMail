@@ -124,6 +124,10 @@ struct ThreadListView: View {
                             .listRowInsets(.init())
                     }
 
+                    if threadDensity == .compact {
+                        ListVerticalInsetView(height: 4)
+                    }
+
                     ForEach(viewModel.sections) { section in
                         Section {
                             ForEach(section.threads) { thread in
@@ -143,11 +147,9 @@ struct ThreadListView: View {
                         }
                     }
 
-                    Spacer()
-                        .frame(height: multipleSelectionViewModel.isEnabled ? 100 : 110)
-                        .listRowSeparator(.hidden)
-                        .listRowBackground(Color.clear)
+                    ListVerticalInsetView(height: multipleSelectionViewModel.isEnabled ? 100 : 110)
                 }
+                .environment(\.defaultMinListRowHeight, 4)
                 .overlay {
                     if viewModel.folder?.lastUpdate != nil && viewModel.sections.isEmpty && !viewModel.isLoadingPage {
                         EmptyListView(isInbox: viewModel.folder?.role == .inbox)
@@ -299,7 +301,7 @@ private struct ThreadListToolbar: ViewModifier {
                                     matomo.track(eventWithCategory: .menuDrawer, name: "openByButton")
                                     navigationDrawerState.open()
                                 } label: {
-                                    Image(resource: MailResourcesAsset.burger)
+                                    MailResourcesAsset.burger.swiftUIImage
                                         .resizable()
                                         .scaledToFit()
                                         .frame(width: Constants.navbarIconSize, height: Constants.navbarIconSize)
@@ -325,7 +327,7 @@ private struct ThreadListToolbar: ViewModifier {
                             Button {
                                 splitViewManager.showSearch = true
                             } label: {
-                                Image(resource: MailResourcesAsset.search)
+                                MailResourcesAsset.search.swiftUIImage
                                     .resizable()
                                     .scaledToFit()
                                     .frame(width: Constants.navbarIconSize, height: Constants.navbarIconSize)
@@ -364,7 +366,7 @@ private struct ThreadListToolbar: ViewModifier {
                                 }
 
                                 ToolbarButton(text: MailResourcesStrings.Localizable.buttonMore,
-                                              icon: MailResourcesAsset.plusActions,
+                                              icon: MailResourcesAsset.plusActions.swiftUIImage,
                                               width: reader.size.width / 5) {
                                     bottomSheet.open(state: .actions(.threads(Array(multipleSelectionViewModel.selectedItems), true)))
                                 }

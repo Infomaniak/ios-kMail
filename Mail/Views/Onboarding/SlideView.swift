@@ -55,7 +55,7 @@ struct SlideView: View {
 
                     Group {
                         if let asset = slide.asset {
-                            Image(resource: asset)
+                            asset
                                 .resizable()
                                 .scaledToFit()
                         } else if let lottieConfiguration = slide.lottieConfiguration {

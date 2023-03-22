@@ -69,7 +69,7 @@ struct MoveEmailView: View {
                     matomo.track(eventWithCategory: .createFolder, name: "fromMove")
                     alert.state = .createNewFolder(mode: .move(moveHandler: moveHandler))
                 } label: {
-                    Image(resource: MailResourcesAsset.folderAdd)
+                    MailResourcesAsset.folderAdd.swiftUIImage
                 }
             }
         }

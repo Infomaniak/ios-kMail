@@ -25,17 +25,17 @@ struct NoMailboxView: View {
 
     let slide = Slide(
         id: 1,
-        backgroundImage: Image(resource: MailResourcesAsset.onboardingBackground3),
+        backgroundImage: MailResourcesAsset.onboardingBackground3.swiftUIImage,
         title: MailResourcesStrings.Localizable.noMailboxTitle,
         description: MailResourcesStrings.Localizable.noMailboxDescription,
-        asset: MailResourcesAsset.noMailbox
+        asset: MailResourcesAsset.noMailbox.swiftUIImage
     )
 
     var body: some View {
         VStack(spacing: 0) {
             SlideView(slide: slide)
                 .overlay(alignment: .top) {
-                    Image(resource: MailResourcesAsset.logoText)
+                    MailResourcesAsset.logoText.swiftUIImage
                         .resizable()
                         .scaledToFit()
                         .frame(height: Constants.onboardingLogoHeight)

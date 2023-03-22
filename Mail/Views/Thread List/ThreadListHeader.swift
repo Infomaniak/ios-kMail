@@ -123,7 +123,7 @@ struct UnreadToggleStyle: ToggleStyle {
             .padding(.horizontal, 8)
             .background(
                 Capsule()
-                    .fill(configuration.isOn ? Color.accentColor : MailResourcesAsset.backgroundColor.swiftUiColor)
+                    .fill(configuration.isOn ? Color.accentColor : MailResourcesAsset.backgroundColor.swiftUIColor)
             )
         }
     }

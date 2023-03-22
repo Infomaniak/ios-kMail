@@ -177,7 +177,7 @@ struct MenuDrawerView: View {
                 }
             }
         }
-        .background(MailResourcesAsset.backgroundSecondaryColor.swiftUiColor)
+        .background(MailResourcesAsset.backgroundSecondaryColor.swiftUIColor)
         .environmentObject(mailboxManager)
         .environment(\.folderCellType, .link)
         .onAppear {

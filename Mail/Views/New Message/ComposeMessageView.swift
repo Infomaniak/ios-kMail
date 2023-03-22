@@ -185,7 +185,7 @@ struct ComposeMessageView: View {
                 if draft.messageUid != nil && draft.remoteUUID.isEmpty {
                     ProgressView()
                         .frame(maxWidth: .infinity, maxHeight: .infinity)
-                        .background(MailResourcesAsset.backgroundColor.swiftUiColor)
+                        .background(MailResourcesAsset.backgroundColor.swiftUIColor)
                 }
             }
             .introspectScrollView { scrollView in
@@ -208,11 +208,11 @@ struct ComposeMessageView: View {
                     Label(MailResourcesStrings.Localizable.buttonClose, systemImage: "xmark")
                 },
                 trailing: Button(action: sendDraft) {
-                    Image(resource: MailResourcesAsset.send)
+                    MailResourcesAsset.send.swiftUIImage
                 }
                 .disabled(isSendButtonDisabled)
             )
-            .background(MailResourcesAsset.backgroundColor.swiftUiColor)
+            .background(MailResourcesAsset.backgroundColor.swiftUIColor)
         }
         .onAppear {
             focusedField = .to

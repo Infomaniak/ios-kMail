@@ -23,7 +23,7 @@ import SwiftUI
 struct NoNetworkView: View {
     var body: some View {
         HStack {
-            Image(resource: MailResourcesAsset.noSignal)
+            MailResourcesAsset.noSignal.swiftUIImage
                 .resizable()
                 .scaledToFit()
                 .frame(width: 18, height: 18)

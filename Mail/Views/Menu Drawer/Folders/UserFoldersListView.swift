@@ -54,7 +54,7 @@ struct UserFoldersListView: View {
                         matomo.track(eventWithCategory: .createFolder, name: "fromMenuDrawer")
                         globalAlert.state = .createNewFolder(mode: .create)
                     } label: {
-                        Image(resource: MailResourcesAsset.addCircle)
+                        MailResourcesAsset.addCircle.swiftUIImage
                             .resizable()
                             .frame(width: 16, height: 16)
                     }

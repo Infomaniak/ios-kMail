@@ -28,7 +28,7 @@ struct MenuHeaderView: View {
 
     var body: some View {
         HStack {
-            Image(resource: MailResourcesAsset.logoText)
+            MailResourcesAsset.logoText.swiftUIImage
                 .resizable()
                 .scaledToFit()
                 .frame(height: 48)
@@ -38,7 +38,7 @@ struct MenuHeaderView: View {
             Button {
                 isShowingSettings.toggle()
             } label: {
-                Image(resource: MailResourcesAsset.cog)
+                MailResourcesAsset.cog.swiftUIImage
                     .resizable()
                     .scaledToFit()
                     .frame(width: 24)
@@ -48,9 +48,9 @@ struct MenuHeaderView: View {
         .padding(.top, 12)
         .padding(.bottom, 15)
         .padding(.horizontal, 17)
-        .background(MailResourcesAsset.backgroundSecondaryColor.swiftUiColor)
+        .background(MailResourcesAsset.backgroundSecondaryColor.swiftUIColor)
         .clipped()
-        .shadow(color: MailResourcesAsset.menuDrawerShadowColor.swiftUiColor, radius: 1, x: 0, y: 2)
+        .shadow(color: MailResourcesAsset.menuDrawerShadowColor.swiftUIColor, radius: 1, x: 0, y: 2)
         .sheet(isPresented: $isShowingSettings) {
             SheetView(mailboxManager: mailboxManager) {
                 SettingsView()

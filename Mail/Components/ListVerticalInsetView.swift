@@ -16,11 +16,16 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import MailResources
 import SwiftUI
 
-public extension Image {
-    init(resource: MailResourcesImages) {
-        self.init(resource.name)
+struct ListVerticalInsetView: View {
+    let height: CGFloat
+
+    var body: some View {
+        Spacer()
+            .frame(height: height)
+            .listRowInsets(.init())
+            .listRowSeparator(.hidden)
+            .listRowBackground(Color.clear)
     }
 }

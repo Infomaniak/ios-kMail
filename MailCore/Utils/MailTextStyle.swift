@@ -29,7 +29,7 @@ public struct MailTextStyle {
         case .staticColor(let color):
             return color
         case .accentColor(let colorKeyPath):
-            return UserDefaults.shared.accentColor[keyPath: colorKeyPath].swiftUiColor
+            return UserDefaults.shared.accentColor[keyPath: colorKeyPath].swiftUIColor
         }
     }
 
@@ -82,7 +82,7 @@ public struct MailTextStyle {
 
     public static let bodyMediumOnAccent = MailTextStyle(
         font: .system(size: 16, weight: .medium),
-        color: UserDefaults.shared.accentColor.onAccent.swiftUiColor
+        color: UserDefaults.shared.accentColor.onAccent.swiftUIColor
     )
 
     public static let bodyMediumOnDisabled = MailTextStyle(
@@ -127,7 +127,7 @@ public struct MailTextStyle {
 
     public static let bodySmallMediumOnAccent = MailTextStyle(
         font: .system(size: 14, weight: .medium),
-        color: UserDefaults.shared.accentColor.onAccent.swiftUiColor
+        color: UserDefaults.shared.accentColor.onAccent.swiftUIColor
     )
 
     public static let bodySmall = MailTextStyle(

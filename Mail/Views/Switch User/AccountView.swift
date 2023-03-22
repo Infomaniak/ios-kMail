@@ -63,7 +63,7 @@ struct AccountView: View {
 
     @LazyInjectService private var matomo: MatomoUtils
 
-    @State private var avatarImage = Image(resource: MailResourcesAsset.placeholderAvatar)
+    @State private var avatarImage = MailResourcesAsset.placeholderAvatar.swiftUIImage
     @StateObject private var account = AccountManager.instance.currentAccount
     @StateObject private var sheet = AccountSheet()
     @StateObject private var alert = AccountAlert()

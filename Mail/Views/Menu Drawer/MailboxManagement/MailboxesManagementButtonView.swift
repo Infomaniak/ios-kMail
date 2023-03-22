@@ -22,13 +22,13 @@ import MailResources
 import SwiftUI
 
 struct MailboxesManagementButtonView: View {
-    let icon: MailResourcesImages
+    let icon: Image
     let text: String
     let detailNumber: Int?
     let handleAction: () -> Void
 
     init(icon: MailResourcesImages, text: String, detailNumber: Int? = nil, handleAction: @escaping () -> Void) {
-        self.icon = icon
+        self.icon = icon.swiftUIImage
         self.text = text
         self.detailNumber = detailNumber
         self.handleAction = handleAction
@@ -37,7 +37,7 @@ struct MailboxesManagementButtonView: View {
     var body: some View {
         Button(action: handleAction) {
             HStack(spacing: 16) {
-                Image(resource: icon)
+                icon
                     .resizable()
                     .scaledToFit()
                     .frame(width: 24, height: 24)

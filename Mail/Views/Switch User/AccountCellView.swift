@@ -38,10 +38,10 @@ struct AccountCellView: View {
     var body: some View {
         ZStack {
             RoundedRectangle(cornerRadius: 10)
-                .fill(MailResourcesAsset.backgroundSecondaryColor.swiftUiColor)
+                .fill(MailResourcesAsset.backgroundSecondaryColor.swiftUIColor)
 
             RoundedRectangle(cornerRadius: 10)
-                .stroke(MailResourcesAsset.elementsColor.swiftUiColor, lineWidth: 1)
+                .stroke(MailResourcesAsset.elementsColor.swiftUIColor, lineWidth: 1)
 
             VStack {
                 Button {
@@ -70,7 +70,7 @@ struct AccountHeaderCell: View {
     let account: Account
     @Binding var isSelected: Bool
 
-    @State private var avatarImage = Image(resource: MailResourcesAsset.placeholderAvatar)
+    @State private var avatarImage = MailResourcesAsset.placeholderAvatar.swiftUIImage
 
     var body: some View {
         HStack(spacing: 8) {
@@ -89,7 +89,7 @@ struct AccountHeaderCell: View {
             Spacer()
 
             if isSelected {
-                Image(resource: MailResourcesAsset.check)
+                MailResourcesAsset.check.swiftUIImage
                     .foregroundColor(.accentColor)
             }
         }

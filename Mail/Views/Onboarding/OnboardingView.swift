@@ -32,34 +32,34 @@ struct Slide: Identifiable {
     let title: String
     var description: String?
     var showPicker = false
-    var asset: MailResourcesImages?
+    var asset: Image?
     var lottieConfiguration: LottieConfiguration?
 
     static let onBoardingSlides = [
         Slide(
             id: 1,
-            backgroundImage: Image(resource: MailResourcesAsset.onboardingBackground1),
+            backgroundImage: MailResourcesAsset.onboardingBackground1.swiftUIImage,
             title: MailResourcesStrings.Localizable.onBoardingTitle1,
             showPicker: true,
             lottieConfiguration: LottieConfiguration(id: 1, filename: "illu_onboarding_1", loopFrameStart: 54, loopFrameEnd: 138)
         ),
         Slide(
             id: 2,
-            backgroundImage: Image(resource: MailResourcesAsset.onboardingBackground2),
+            backgroundImage: MailResourcesAsset.onboardingBackground2.swiftUIImage,
             title: MailResourcesStrings.Localizable.onBoardingTitle2,
             description: MailResourcesStrings.Localizable.onBoardingDescription2,
             lottieConfiguration: LottieConfiguration(id: 2, filename: "illu_onboarding_2", loopFrameStart: 108, loopFrameEnd: 253)
         ),
         Slide(
             id: 3,
-            backgroundImage: Image(resource: MailResourcesAsset.onboardingBackground3),
+            backgroundImage: MailResourcesAsset.onboardingBackground3.swiftUIImage,
             title: MailResourcesStrings.Localizable.onBoardingTitle3,
             description: MailResourcesStrings.Localizable.onBoardingDescription3,
             lottieConfiguration: LottieConfiguration(id: 3, filename: "illu_onboarding_3", loopFrameStart: 111, loopFrameEnd: 187)
         ),
         Slide(
             id: 4,
-            backgroundImage: Image(resource: MailResourcesAsset.onboardingBackground4),
+            backgroundImage: MailResourcesAsset.onboardingBackground4.swiftUIImage,
             title: MailResourcesStrings.Localizable.onBoardingTitle4,
             description: MailResourcesStrings.Localizable.onBoardingDescription4,
             lottieConfiguration: LottieConfiguration(id: 4, filename: "illu_onboarding_4", loopFrameStart: 127, loopFrameEnd: 236)
@@ -184,7 +184,7 @@ struct OnboardingView: View {
                 }
             }
             .overlay(alignment: .top) {
-                Image(resource: MailResourcesAsset.logoText)
+                MailResourcesAsset.logoText.swiftUIImage
                     .resizable()
                     .scaledToFit()
                     .frame(height: Constants.onboardingLogoHeight)

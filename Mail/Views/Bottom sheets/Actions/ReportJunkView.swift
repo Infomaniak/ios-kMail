@@ -67,6 +67,6 @@ struct ReportJunkView_Previews: PreviewProvider {
                        state: ThreadBottomSheet(),
                        globalSheet: GlobalBottomSheet(),
                        globalAlert: GlobalAlert())
-            .accentColor(AccentColor.pink.primary.swiftUiColor)
+            .accentColor(AccentColor.pink.primary.swiftUIColor)
     }
 }

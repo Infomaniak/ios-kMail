@@ -94,7 +94,7 @@ struct SearchView: View {
                 .listStyle(.plain)
             }
         }
-        .background(MailResourcesAsset.backgroundColor.swiftUiColor)
+        .background(MailResourcesAsset.backgroundColor.swiftUIColor)
         .navigationBarSearchListStyle()
         .floatingPanel(state: bottomSheet, halfOpening: true) {
             if case let .actions(target) = bottomSheet.state, !target.isInvalidated {
@@ -127,7 +127,7 @@ struct SearchView: View {
                         Constants.globallyResignFirstResponder()
                         splitViewManager.showSearch = false
                     } label: {
-                        Image(resource: MailResourcesAsset.arrowLeft)
+                        MailResourcesAsset.arrowLeft.swiftUIImage
                     }
                 }
             }
@@ -203,7 +203,7 @@ struct SearchView: View {
         }
         .listRowInsets(.init(top: 0, leading: 12, bottom: 0, trailing: 12))
         .listRowSeparator(.hidden)
-        .listRowBackground(MailResourcesAsset.backgroundColor.swiftUiColor)
+        .listRowBackground(MailResourcesAsset.backgroundColor.swiftUIColor)
     }
 
     func contactList(contacts: [Recipient]) -> some View {
@@ -226,7 +226,7 @@ struct SearchView: View {
         }
         .listRowInsets(.init(top: 0, leading: 12, bottom: 0, trailing: 12))
         .listRowSeparator(.hidden)
-        .listRowBackground(MailResourcesAsset.backgroundColor.swiftUiColor)
+        .listRowBackground(MailResourcesAsset.backgroundColor.swiftUIColor)
     }
 
     func searchHistoryList(history: SearchHistory) -> some View {
@@ -238,7 +238,7 @@ struct SearchView: View {
                     Button {
                         deleteSearchTapped(searchItem: searchItem)
                     } label: {
-                        Image(resource: MailResourcesAsset.close)
+                        MailResourcesAsset.close.swiftUIImage
                             .resizable()
                             .scaledToFit()
                             .foregroundColor(.accentColor)
@@ -262,7 +262,7 @@ struct SearchView: View {
                 .textStyle(.bodySmallSecondary)
         }
         .listRowSeparator(.hidden)
-        .listRowBackground(MailResourcesAsset.backgroundColor.swiftUiColor)
+        .listRowBackground(MailResourcesAsset.backgroundColor.swiftUIColor)
         .listRowInsets(.init(top: 0, leading: 12, bottom: 0, trailing: 12))
     }
 

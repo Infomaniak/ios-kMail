@@ -28,7 +28,7 @@ struct EmptyThreadView: View {
 
     var body: some View {
         VStack {
-            Image(resource: accentColor.zeroConvImage)
+            accentColor.zeroConvImage.swiftUIImage
                 .padding(24)
             Text(MailResourcesStrings.Localizable
                 .noConversationSelected(splitViewManager.selectedFolder?.localizedName ?? ""))
@@ -45,7 +45,7 @@ struct EmptyThreadView: View {
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .padding(48)
-        .background(MailResourcesAsset.backgroundColor.swiftUiColor)
+        .background(MailResourcesAsset.backgroundColor.swiftUIColor)
         .matomoView(view: [MatomoUtils.View.threadView.displayName, "EmptyThreadView"])
     }
 }

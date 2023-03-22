@@ -47,6 +47,6 @@ public enum ThreadDensity: String, CaseIterable, SettingsOptionEnum {
         case .compact:
             resource = accentColor.compactListIcon
         }
-        return Image(resource.name)
+        return resource.swiftUIImage
     }
 }

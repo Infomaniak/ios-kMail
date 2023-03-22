@@ -28,7 +28,7 @@ struct MailboxesManagementView: View {
     @EnvironmentObject var mailboxManager: MailboxManager
     @EnvironmentObject var navigationDrawerState: NavigationDrawerState
 
-    @State private var avatarImage = Image(resource: MailResourcesAsset.placeholderAvatar)
+    @State private var avatarImage = MailResourcesAsset.placeholderAvatar.swiftUIImage
     @State private var isShowingManageAccount = false
     @State private var isShowingSwitchAccount = false
 
@@ -48,7 +48,7 @@ struct MailboxesManagementView: View {
                 }
             } label: {
                 HStack(spacing: 0) {
-                    Image(resource: MailResourcesAsset.envelope)
+                    MailResourcesAsset.envelope.swiftUIImage
                         .resizable()
                         .scaledToFit()
                         .frame(width: 24, height: 24)
@@ -109,6 +109,6 @@ struct MailboxesManagementView_Previews: PreviewProvider {
         MailboxesManagementView(mailboxes: [PreviewHelper.sampleMailbox])
             .environmentObject(PreviewHelper.sampleMailboxManager)
             .previewLayout(.sizeThatFits)
-            .accentColor(UserDefaults.shared.accentColor.primary.swiftUiColor)
+            .accentColor(UserDefaults.shared.accentColor.primary.swiftUIColor)
     }
 }

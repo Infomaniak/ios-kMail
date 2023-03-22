@@ -29,8 +29,8 @@ struct FilterCellModifier: ViewModifier {
         content
             .padding(.vertical, 6)
             .padding(.horizontal, 11)
-            .foregroundColor(isSelected ? accentColor.onAccent.swiftUiColor : .accentColor)
-            .background(isSelected ? .accentColor : MailResourcesAsset.backgroundColor.swiftUiColor)
+            .foregroundColor(isSelected ? accentColor.onAccent.swiftUIColor : .accentColor)
+            .background(isSelected ? .accentColor : MailResourcesAsset.backgroundColor.swiftUIColor)
             .cornerRadius(40)
             .overlay(
                 RoundedRectangle(cornerRadius: 30)

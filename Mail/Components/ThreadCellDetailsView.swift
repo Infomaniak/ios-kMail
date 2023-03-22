@@ -24,14 +24,14 @@ struct ThreadCellDetailsView: View {
     var body: some View {
         HStack(spacing: 8) {
             if thread.hasAttachments {
-                Image(resource: MailResourcesAsset.attachment)
+                MailResourcesAsset.attachment.swiftUIImage
                     .resizable()
                     .foregroundColor(MailResourcesAsset.textPrimaryColor)
                     .scaledToFit()
                     .frame(height: 16)
             }
             if thread.flagged {
-                Image(resource: MailResourcesAsset.starFull)
+                MailResourcesAsset.starFull.swiftUIImage
                     .resizable()
                     .foregroundColor(MailResourcesAsset.yellowActionColor)
                     .scaledToFit()

@@ -82,10 +82,10 @@ struct ThreadView: View {
                     .padding(.top, 8)
                     .padding(.bottom, 16)
                     .padding(.horizontal, 16)
-                    .background(MailResourcesAsset.backgroundColor.swiftUiColor)
+                    .background(MailResourcesAsset.backgroundColor.swiftUIColor)
 
                 MessageListView(messages: thread.messages)
-                    .background(MailResourcesAsset.backgroundColor.swiftUiColor)
+                    .background(MailResourcesAsset.backgroundColor.swiftUIColor)
             }
         }
         .coordinateSpace(name: "scrollView")
@@ -110,7 +110,8 @@ struct ThreadView: View {
                         }
                     }
                 } label: {
-                    Image(resource: thread.flagged ? MailResourcesAsset.starFull : MailResourcesAsset.star)
+                    (thread.flagged ? MailResourcesAsset.starFull : MailResourcesAsset.star).swiftUIImage
+                        .foregroundColor(thread.flagged ? MailResourcesAsset.yellowActionColor.swiftUIColor : .accentColor)
                 }
             }
             ToolbarItemGroup(placement: .bottomBar) {
@@ -122,7 +123,7 @@ struct ThreadView: View {
                     Spacer()
                 }
                 ToolbarButton(text: MailResourcesStrings.Localizable.buttonMore,
-                              icon: MailResourcesAsset.plusActions) {
+                              icon: MailResourcesAsset.plusActions.swiftUIImage) {
                     threadBottomSheet.open(state: .actions(.threads([thread.thaw() ?? thread], false)))
                 }
             }

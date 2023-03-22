@@ -24,11 +24,11 @@ struct ToolbarButton: View {
     @Environment(\.verticalSizeClass) private var sizeClass
 
     let text: String
-    let icon: MailResourcesImages
+    let icon: Image
     let width: CGFloat?
     let action: () -> Void
 
-    init(text: String, icon: MailResourcesImages, width: CGFloat? = nil, action: @escaping () -> Void) {
+    init(text: String, icon: Image, width: CGFloat? = nil, action: @escaping () -> Void) {
         self.text = text
         self.icon = icon
         self.width = width
@@ -41,7 +41,7 @@ struct ToolbarButton: View {
                 Text(text)
                     .textStyle(MailTextStyle.labelMediumAccent)
             } icon: {
-                Image(resource: icon)
+                icon
                     .resizable()
                     .scaledToFit()
                     .frame(width: 22, height: 22)
@@ -54,6 +54,6 @@ struct ToolbarButton: View {
 
 struct ToolbarButton_Previews: PreviewProvider {
     static var previews: some View {
-        ToolbarButton(text: "Preview", icon: MailResourcesAsset.folder) { /* Preview */ }
+        ToolbarButton(text: "Preview", icon: MailResourcesAsset.folder.swiftUIImage) { /* Preview */ }
     }
 }

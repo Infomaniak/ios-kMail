@@ -30,7 +30,7 @@ struct SearchTextField: View {
     var body: some View {
         HStack(spacing: 10) {
             Button(action: onSubmit) {
-                Image(resource: MailResourcesAsset.search)
+                MailResourcesAsset.search.swiftUIImage
                     .resizable()
                     .frame(width: 16, height: 16)
             }
@@ -48,7 +48,7 @@ struct SearchTextField: View {
                 .padding(.vertical, 11)
 
             Button(action: onDelete) {
-                Image(resource: MailResourcesAsset.remove)
+                MailResourcesAsset.remove.swiftUIImage
                     .resizable()
                     .frame(width: 18, height: 18)
             }

@@ -55,7 +55,7 @@ private struct QuotaCircularProgressViewStyle: ProgressViewStyle {
         ZStack {
             Circle()
                 .trim(from: 0, to: 1)
-                .stroke(MailResourcesAsset.elementsColor.swiftUiColor, lineWidth: 4)
+                .stroke(MailResourcesAsset.elementsColor.swiftUIColor, lineWidth: 4)
                 .rotationEffect(.degrees(-90))
                 .frame(width: 46)
 
@@ -65,7 +65,7 @@ private struct QuotaCircularProgressViewStyle: ProgressViewStyle {
                 .rotationEffect(.degrees(-90))
                 .frame(width: 46)
 
-            Image(resource: MailResourcesAsset.drawer)
+            MailResourcesAsset.drawer.swiftUIImage
                 .resizable()
                 .scaledToFit()
                 .frame(width: 18)

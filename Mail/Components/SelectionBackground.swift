@@ -53,7 +53,7 @@ struct SelectionBackground: View {
 
     var body: some View {
         RoundedRectangle(cornerRadius: 10)
-            .fill(accentColor.secondary.swiftUiColor)
+            .fill(accentColor.secondary.swiftUIColor)
             .offset(x: offsetX, y: 0)
             .padding(.leading, 0)
             .padding(.vertical, selectionType.verticalPadding)

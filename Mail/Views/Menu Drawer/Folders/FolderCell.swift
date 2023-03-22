@@ -168,7 +168,7 @@ struct FolderCellContent: View {
                     .textStyle(.bodySmallMediumAccent)
             }
         } else if isCurrentFolder {
-            Image(resource: MailResourcesAsset.check)
+            MailResourcesAsset.check.swiftUIImage
                 .resizable()
                 .frame(width: 16, height: 16)
         }

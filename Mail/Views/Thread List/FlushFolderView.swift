@@ -61,7 +61,7 @@ struct FlushFolderView: View {
                     }
                 } label: {
                     HStack {
-                        Image(resource: MailResourcesAsset.bin)
+                        MailResourcesAsset.bin.swiftUIImage
                             .resizable()
                             .scaledToFit()
                             .frame(width: 16, height: 16)

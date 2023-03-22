@@ -87,7 +87,7 @@ struct MessageHeaderSummaryView: View {
                 if message.isDraft {
                     Spacer()
                     Button(action: deleteDraftTapped) {
-                        Image(resource: MailResourcesAsset.bin)
+                        MailResourcesAsset.bin.swiftUIImage
                             .resizable()
                             .scaledToFit()
                             .frame(width: 22, height: 22)
@@ -101,13 +101,13 @@ struct MessageHeaderSummaryView: View {
             if isMessageExpanded {
                 HStack(spacing: 20) {
                     Button(action: replyButtonTapped) {
-                        Image(resource: MailResourcesAsset.emailActionReply)
+                        MailResourcesAsset.emailActionReply.swiftUIImage
                             .resizable()
                             .scaledToFit()
                             .frame(width: 20, height: 20)
                     }
                     Button(action: moreButtonTapped) {
-                        Image(resource: MailResourcesAsset.plusActions)
+                        MailResourcesAsset.plusActions.swiftUIImage
                             .resizable()
                             .scaledToFit()
                             .frame(width: 20, height: 20)

@@ -26,7 +26,7 @@ struct AttachmentCell: View {
     var body: some View {
         VStack(spacing: 0) {
             HStack {
-                Image(resource: attachment.icon)
+                attachment.icon.swiftUIImage
 
                 VStack(alignment: .leading, spacing: 0) {
                     Text(attachment.name)
@@ -42,7 +42,7 @@ struct AttachmentCell: View {
         }
         .background(
             RoundedRectangle(cornerRadius: 6)
-                .stroke(MailResourcesAsset.elementsColor.swiftUiColor, lineWidth: 1)
+                .stroke(MailResourcesAsset.elementsColor.swiftUIColor, lineWidth: 1)
         )
         .cornerRadius(6)
         .frame(maxWidth: 200)
