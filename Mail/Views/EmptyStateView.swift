@@ -22,29 +22,40 @@ import MailCore
 import MailResources
 import SwiftUI
 
-struct EmptyListView: View {
-    @AppStorage(UserDefaults.shared.key(.accentColor)) var accentColor = DefaultPreferences.accentColor
-    var isInbox: Bool
+struct EmptyStateView: View {
+    let image: Image
+    let title: String
+    let description: String
+
+    let matomoName: String
 
     var body: some View {
         VStack(spacing: 8) {
-            accentColor.zeroMailImage.swiftUIImage
-            Text(isInbox ? MailResourcesStrings.Localizable.emptyStateInboxTitle : MailResourcesStrings.Localizable.emptyStateFolderTitle)
+            image
+
+            Text(title)
                 .textStyle(.header2)
-            Text(isInbox ? MailResourcesStrings.Localizable.emptyStateInboxDescription : MailResourcesStrings.Localizable.emptyStateFolderDescription)
+            Text(description)
                 .textStyle(.bodySecondary)
                 .multilineTextAlignment(.center)
-                .fixedSize(horizontal: false, vertical: true)
-                .padding(.bottom, Constants.floatingButtonBottomPadding + 48)
         }
-        .padding(48)
+        .padding(.horizontal, 48)
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .matomoView(view: [MatomoUtils.View.threadListView.displayName, "EmptyListView"])
     }
 }
 
+extension EmptyStateView {
+    static let emptyFolder = EmptyStateView(
+        image: <#T##Image#>,
+        title: <#T##String#>,
+        description: <#T##String#>,
+        matomoName: <#T##String#>
+    )
+}
+
 struct EmptyListView_Previews: PreviewProvider {
     static var previews: some View {
-        EmptyListView(isInbox: true)
+        EmptyStateView(isInbox: true)
     }
 }
