@@ -24,7 +24,8 @@ struct WebView: UIViewRepresentable {
     typealias UIViewType = WKWebView
 
     @Binding var model: WebViewModel
-    @Binding var dynamicHeight: CGFloat
+    @Binding var shortHeight: CGFloat
+    @Binding var completeHeight: CGFloat
     var proxy: GeometryProxy
 
     var webView: WKWebView {
@@ -39,12 +40,27 @@ struct WebView: UIViewRepresentable {
             parent.model.proxy = parent.proxy
         }
 
+        private func updateHeight(height: CGFloat) {
+            if parent.shortHeight == .zero {
+                withAnimation {
+                    parent.shortHeight = height
+                    parent.completeHeight = height
+                }
+            } else if parent.completeHeight < height {
+                parent.completeHeight = height
+            }
+        }
+
         func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
-            webView.evaluateJavaScript("document.documentElement.scrollHeight") { height, _ in
-                guard let height = height as? CGFloat else { return }
-                DispatchQueue.main.async { [weak self] in
-                    withAnimation {
-                        self?.parent.dynamicHeight = height
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                webView.evaluateJavaScript("document.readyState") { complete, _ in
+                    if complete != nil {
+                        webView.evaluateJavaScript("document.documentElement.scrollHeight") { height, _ in
+                            guard let height = height as? CGFloat else { return }
+                            DispatchQueue.main.async { [weak self] in
+                                self?.updateHeight(height: height)
+                            }
+                        }
                     }
                 }
             }

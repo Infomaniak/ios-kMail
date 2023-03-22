@@ -17,13 +17,22 @@
  */
 
 import MailCore
+import MailResources
 import RealmSwift
 import SwiftUI
 
 struct MessageBodyView: View {
     @ObservedRealmObject var message: Message
     @State var model = WebViewModel()
-    @State private var webViewHeight: CGFloat = .zero
+    @State private var webViewShortHeight: CGFloat = .zero
+    @State private var webViewCompleteHeight: CGFloat = .zero
+
+    @State private var bodyQuote = MessageBodyQuote(messageBody: "", quote: nil)
+    @State private var showBlockQuote = false
+
+    init(message: Message) {
+        self.message = message
+    }
 
     var body: some View {
         VStack {
@@ -35,14 +44,35 @@ struct MessageBodyView: View {
                         .padding(.horizontal, 16)
                 } else {
                     GeometryReader { proxy in
-                        WebView(model: $model, dynamicHeight: $webViewHeight, proxy: proxy)
+                        WebView(
+                            model: $model,
+                            shortHeight: $webViewShortHeight,
+                            completeHeight: $webViewCompleteHeight,
+                            proxy: proxy
+                        )
                     }
-                    .frame(height: webViewHeight)
+                    .frame(height: showBlockQuote ? webViewCompleteHeight : webViewShortHeight)
                     .onAppear {
-                        model.loadHTMLString(value: body.value)
+                        prepareBody()
+                        loadBody(body)
                     }
                     .onChange(of: message.body) { _ in
-                        model.loadHTMLString(value: body.value)
+                        prepareBody()
+                        loadBody(body)
+                    }
+                    .onChange(of: showBlockQuote) { _ in
+                        loadBody(body)
+                    }
+
+                    if bodyQuote.quote != nil {
+                        MailButton(label: showBlockQuote
+                            ? MailResourcesStrings.Localizable.messageHideQuotedText
+                            : MailResourcesStrings.Localizable.messageShowQuotedText) {
+                                showBlockQuote.toggle()
+                            }
+                            .mailButtonStyle(.smallLink)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .padding(.horizontal, 16)
                     }
                 }
             } else {
@@ -50,6 +80,17 @@ struct MessageBodyView: View {
                 ShimmerView()
             }
         }
+    }
+
+    private func prepareBody() {
+        guard let messageBody = message.body?.value,
+              let messageBodyQuote = MessageBodyUtils.splitBodyAndQuote(messageBody: messageBody)
+        else { return }
+        bodyQuote = messageBodyQuote
+    }
+
+    private func loadBody(_ body: Body) {
+        model.loadHTMLString(value: showBlockQuote ? body.value : bodyQuote.messageBody)
     }
 }
 
