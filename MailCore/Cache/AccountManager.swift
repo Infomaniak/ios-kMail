@@ -87,8 +87,6 @@ public extension InfomaniakUser {
     }
 }
 
-extension Account: ObservableObject {}
-
 @globalActor actor AccountActor: GlobalActor {
     static let shared = AccountActor()
 

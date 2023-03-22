@@ -45,18 +45,6 @@ class AccountViewDelegate: DeleteAccountDelegate {
     }
 }
 
-class AccountSheet: SheetState<AccountSheet.State> {
-    enum State {
-        case deleteAccount
-    }
-}
-
-class AccountAlert: SheetState<AccountAlert.State> {
-    enum State {
-        case logout
-    }
-}
-
 struct AccountView: View {
     @Environment(\.dismiss) private var dismiss
     @Environment(\.window) private var window
@@ -64,9 +52,9 @@ struct AccountView: View {
     @LazyInjectService private var matomo: MatomoUtils
 
     @State private var avatarImage = MailResourcesAsset.placeholderAvatar.swiftUIImage
-    @StateObject private var account = AccountManager.instance.currentAccount
-    @StateObject private var sheet = AccountSheet()
-    @StateObject private var alert = AccountAlert()
+    private let account = AccountManager.instance.currentAccount!
+    @State private var isShowingLogoutAlert = false
+    @State private var isShowingDeleteAccount = false
     @State private var delegate = AccountViewDelegate()
 
     let mailboxes: [Mailbox]
@@ -124,13 +112,13 @@ struct AccountView: View {
                 // Buttons
                 MailButton(label: MailResourcesStrings.Localizable.buttonAccountDisconnect) {
                     matomo.track(eventWithCategory: .account, name: "logOut")
-                    alert.state = .logout
+                    isShowingLogoutAlert.toggle()
                 }
                 .mailButtonFullWidth(true)
                 .padding(.bottom, 24)
                 MailButton(label: MailResourcesStrings.Localizable.buttonAccountDelete) {
                     matomo.track(eventWithCategory: .account, name: "deleteAccount")
-                    sheet.state = .deleteAccount
+                    isShowingDeleteAccount.toggle()
                 }
                 .mailButtonStyle(.destructive)
             }
@@ -147,21 +135,11 @@ struct AccountView: View {
         .task {
             avatarImage = await account.user.avatarImage
         }
-        .sheet(isPresented: $sheet.isShowing) {
-            switch sheet.state {
-            case .deleteAccount:
-                DeleteAccountView(account: account, delegate: delegate)
-            case .none:
-                EmptyView()
-            }
+        .sheet(isPresented: $isShowingDeleteAccount) {
+            DeleteAccountView(account: account, delegate: delegate)
         }
-        .customAlert(isPresented: $alert.isShowing) {
-            switch alert.state {
-            case .logout:
-                LogoutConfirmationView(account: account)
-            case .none:
-                EmptyView()
-            }
+        .customAlert(isPresented: $isShowingLogoutAlert) {
+            LogoutConfirmationView(account: account)
         }
         .defaultAppStorage(.shared)
         .matomoView(view: [MatomoUtils.View.accountView.displayName, "Main"])
