@@ -27,6 +27,8 @@ struct EmptyStateView: View {
     let title: String
     let description: String
 
+    var withFABPadding = true
+
     let matomoName: String
 
     var body: some View {
@@ -42,6 +44,7 @@ struct EmptyStateView: View {
                 .multilineTextAlignment(.center)
         }
         .padding(.horizontal, 48)
+        .padding(.bottom, withFABPadding ? Constants.floatingButtonBottomPadding + 56 : 0)
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .matomoView(view: [MatomoUtils.View.threadListView.displayName, "Empty\(matomoName)View"])
     }
@@ -93,6 +96,7 @@ extension EmptyStateView {
         image: UserDefaults.shared.accentColor.emptyThreadImage.swiftUIImage,
         title: MailResourcesStrings.Localizable.emptyStateSearchTitle,
         description: MailResourcesStrings.Localizable.emptyStateSearchDescription,
+        withFABPadding: false,
         matomoName: "Search"
     )
 }

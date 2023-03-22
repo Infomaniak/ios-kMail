@@ -154,11 +154,12 @@ struct ThreadListView: View {
                 }
                 .environment(\.defaultMinListRowHeight, 4)
                 .emptyState(isEmpty: shouldDisplayEmptyView) {
-                    if viewModel.folder?.role == .inbox {
+                    switch viewModel.folder?.role {
+                    case .inbox:
                         EmptyStateView.emptyInbox
-                    } else if viewModel.folder?.role == .trash {
+                    case .trash:
                         EmptyStateView.emptyTrash
-                    } else {
+                    default:
                         EmptyStateView.emptyFolder
                     }
                 }
