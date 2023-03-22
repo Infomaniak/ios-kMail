@@ -17,11 +17,10 @@
  */
 
 import Combine
+import Foundation
 import InfomaniakCore
 import InfomaniakCoreUI
 import InfomaniakDI
-import Foundation
-import InfomaniakCore
 import MailCore
 import MailResources
 import RealmSwift
@@ -324,9 +323,9 @@ enum SearchState {
             let threadResults = folder.threads.sorted(by: \.date, ascending: false)
             observationSearchThreadToken = threadResults.observe(on: .main) { [weak self] changes in
                 switch changes {
-                case let .initial(results):
+                case .initial(let results):
                     self?.threads = Array(results.freezeIfNeeded())
-                case let .update(results, _, _, _):
+                case .update(let results, _, _, _):
                     withAnimation {
                         self?.threads = Array(results.freezeIfNeeded())
                     }
