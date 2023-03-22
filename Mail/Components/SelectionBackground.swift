@@ -62,7 +62,7 @@ struct SelectionBackground: View {
 
     var body: some View {
         Rectangle()
-            .fill(accentColor.secondary.swiftUiColor)
+            .fill(accentColor.secondary.swiftUIColor)
             .clipShape(RoundedCorner(radius: 8, corners: [.topLeft, .bottomLeft]))
             .padding(.leading, paddingLeading)
             .padding(.vertical, selectionType.verticalPadding)

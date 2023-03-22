@@ -101,11 +101,11 @@ struct QuickActionView: View {
         } label: {
             VStack(spacing: 8) {
                 RoundedRectangle(cornerRadius: 8)
-                    .fill(accentColor.secondary.swiftUiColor)
+                    .fill(accentColor.secondary.swiftUIColor)
                     .frame(maxWidth: 56, maxHeight: 56)
                     .aspectRatio(1, contentMode: .fit)
                     .overlay {
-                        Image(resource: action.icon)
+                        action.icon
                             .resizable()
                             .scaledToFit()
                             .padding(16)

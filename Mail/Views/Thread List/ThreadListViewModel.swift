@@ -88,7 +88,6 @@ class DateSection: Identifiable {
     let mailboxManager: MailboxManager
 
     @Published var folder: Folder?
-    @Published var threads = [Thread]()
     @Published var sections = [DateSection]()
     @Published var selectedThread: Thread? {
         didSet {
@@ -107,7 +106,7 @@ class DateSection: Identifiable {
 
     // Used to know thread location
     private var selectedThreadIndex: Int?
-    private var filteredThreads = [Thread]() {
+    var filteredThreads = [Thread]() {
         didSet {
             guard let thread = selectedThread,
                   let index = filteredThreads.firstIndex(where: { $0.uid == thread.uid }) else { return }
@@ -242,7 +241,6 @@ class DateSection: Identifiable {
             }
         } else {
             sections = []
-            threads = []
         }
     }
 
@@ -263,7 +261,6 @@ class DateSection: Identifiable {
             }
 
             sections = newSections
-            self.threads = threads
         }
     }
 

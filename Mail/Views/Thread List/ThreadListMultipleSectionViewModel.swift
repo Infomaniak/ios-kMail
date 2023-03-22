@@ -48,7 +48,7 @@ import SwiftUI
     }
 
     func toggleSelection(of thread: Thread) {
-        if selectedItems.contains(thread) {
+        if let thread = selectedItems.first(where: { $0.id == thread.id }) {
             selectedItems.remove(thread)
         } else {
             selectedItems.insert(thread)

@@ -135,7 +135,7 @@ struct ThreadListView: View {
                                                viewModel: viewModel,
                                                multipleSelectionViewModel: multipleSelectionViewModel,
                                                threadDensity: threadDensity,
-                                               isSelected: multipleSelectionViewModel.selectedItems.contains(thread),
+                                               isSelected: multipleSelectionViewModel.selectedItems.contains { $0.id == thread.id },
                                                editedMessageDraft: $editedMessageDraft)
                                     .id(thread.id)
                             }
@@ -186,7 +186,7 @@ struct ThreadListView: View {
                                     multipleSelectionViewModel: multipleSelectionViewModel,
                                     selectAll: {
                                         withAnimation(.default.speed(2)) {
-                                            multipleSelectionViewModel.selectAll(threads: viewModel.threads)
+                                            multipleSelectionViewModel.selectAll(threads: viewModel.filteredThreads)
                                         }
                                     }))
         .floatingActionButton(isEnabled: !multipleSelectionViewModel.isEnabled,
@@ -322,7 +322,7 @@ private struct ThreadListToolbar: ViewModifier {
 
                     ToolbarItemGroup(placement: .navigationBarTrailing) {
                         if multipleSelectionViewModel.isEnabled {
-                            Button(multipleSelectionViewModel.selectedItems.count == viewModel.threads.count
+                            Button(multipleSelectionViewModel.selectedItems.count == viewModel.filteredThreads.count
                                 ? MailResourcesStrings.Localizable.buttonUnselectAll
                                 : MailResourcesStrings.Localizable.buttonSelectAll) {
                                     selectAll()
