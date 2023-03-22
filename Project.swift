@@ -47,7 +47,7 @@ let project = Project(name: "Mail",
                           .package(url: "https://github.com/SCENEE/FloatingPanel", .upToNextMajor(from: "2.0.0")),
                           .package(url: "https://github.com/kean/Nuke", .upToNextMajor(from: "11.3.0")),
                           .package(url: "https://github.com/airbnb/lottie-ios", .exact("3.5.0")),
-						  .package(url: "https://github.com/scinfu/SwiftSoup.git", .upToNextMajor(from: "2.5.3"))
+                          .package(url: "https://github.com/scinfu/SwiftSoup", .upToNextMajor(from: "2.5.3"))
                       ],
                       targets: [
                           Target(name: "Mail",
@@ -115,13 +115,13 @@ let project = Project(name: "Mail",
                                   "CFBundleVersion": "$(CURRENT_PROJECT_VERSION)",
                                   "NSExtension": [
                                       "NSExtensionPointIdentifier": "com.apple.usernotifications.service",
-                                      "NSExtensionPrincipalClass": "$(PRODUCT_MODULE_NAME).NotificationService",
-                                  ],
+                                      "NSExtensionPrincipalClass": "$(PRODUCT_MODULE_NAME).NotificationService"
+                                  ]
                               ]),
                               sources: "MailNotificationServiceExtension/**",
                               entitlements: "MailResources/Mail.entitlements",
                               dependencies: [
-                                  .target(name: "MailCore"),
+                                  .target(name: "MailCore")
                               ],
                               settings: .settings(base: baseSettings)
                           ),

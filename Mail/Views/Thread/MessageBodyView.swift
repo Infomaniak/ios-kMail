@@ -65,14 +65,14 @@ struct MessageBodyView: View {
                     }
 
                     if bodyQuote.quote != nil {
-                        Button {
-                            showBlockQuote.toggle()
-                        } label: {
-                            Text(showBlockQuote
-                                ? MailResourcesStrings.Localizable.messageHideQuotedText
-                                : MailResourcesStrings.Localizable.messageShowQuotedText)
-                        }
-                        .mailButtonStyle(.smallLink)
+                        MailButton(label: showBlockQuote
+                            ? MailResourcesStrings.Localizable.messageHideQuotedText
+                            : MailResourcesStrings.Localizable.messageShowQuotedText) {
+                                showBlockQuote.toggle()
+                            }
+                            .mailButtonStyle(.smallLink)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .padding(.horizontal, 16)
                     }
                 }
             } else {
