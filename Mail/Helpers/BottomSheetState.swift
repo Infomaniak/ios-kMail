@@ -19,7 +19,7 @@
 import SwiftUI
 
 class BottomSheetState<State>: ObservableObject {
-    @Published var isOpen: Bool = false
+    @Published var isOpen = false
     @Published private(set) var state: State?
 
     func open(state: State) {

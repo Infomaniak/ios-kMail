@@ -41,15 +41,20 @@ class AdaptiveDriveFloatingPanelController: FloatingPanelController {
             let insetWidth = view.frame.width - maxPanelWidth
             surfaceView.containerMargins = UIEdgeInsets(top: 0, left: insetWidth / 2, bottom: 0, right: insetWidth / 2)
         } else {
-            surfaceView.containerMargins = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
+            surfaceView.containerMargins = .zero
         }
     }
 
     func updateLayout(size: CGSize) {
         guard let trackingScrollView = trackingScrollView else { return }
+        let fullHeight = min(
+            trackingScrollView.contentSize.height + surfaceView.contentPadding.top + surfaceView.contentPadding.bottom,
+            size.height - 96
+        )
         let layout = AdaptiveFloatingPanelLayout(
-            height: min(trackingScrollView.contentSize.height + surfaceView.contentPadding.top + surfaceView.contentPadding.bottom, size.height - 96),
-            halfOpening: halfOpening)
+            height: fullHeight,
+            halfOpening: halfOpening && fullHeight > size.height / 2
+        )
         self.layout = layout
         invalidateLayout()
     }
@@ -71,21 +76,21 @@ class AdaptiveDriveFloatingPanelController: FloatingPanelController {
 }
 
 class AdaptiveFloatingPanelLayout: FloatingPanelLayout {
-    var position: FloatingPanelPosition = .bottom
-    var height: CGFloat
-    var anchors: [FloatingPanelState: FloatingPanelLayoutAnchoring]
-    var initialState: FloatingPanelState
+    let position: FloatingPanelPosition = .bottom
+    let anchors: [FloatingPanelState: FloatingPanelLayoutAnchoring]
+    let initialState: FloatingPanelState
 
     init(height: CGFloat, halfOpening: Bool) {
-        self.height = height
-        anchors = [
-            .full: FloatingPanelLayoutAnchor(absoluteInset: height, edge: .bottom, referenceGuide: .safeArea)
-        ]
-        initialState = .full
-
+        initialState = .half
         if halfOpening {
-            initialState = .half
-            anchors[.half] = FloatingPanelLayoutAnchor(fractionalInset: 0.5, edge: .bottom, referenceGuide: .safeArea)
+            anchors = [
+                .half: FloatingPanelLayoutAnchor(fractionalInset: 0.5, edge: .bottom, referenceGuide: .safeArea),
+                .full: FloatingPanelLayoutAnchor(absoluteInset: height, edge: .bottom, referenceGuide: .safeArea)
+            ]
+        } else {
+            anchors = [
+                .half: FloatingPanelLayoutAnchor(absoluteInset: height, edge: .bottom, referenceGuide: .safeArea)
+            ]
         }
     }
 
