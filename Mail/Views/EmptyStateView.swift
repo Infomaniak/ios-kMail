@@ -41,21 +41,62 @@ struct EmptyStateView: View {
         }
         .padding(.horizontal, 48)
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .matomoView(view: [MatomoUtils.View.threadListView.displayName, "EmptyListView"])
+        .matomoView(view: [MatomoUtils.View.threadListView.displayName, "Empty\(matomoName)View"])
     }
 }
 
 extension EmptyStateView {
+    static let emptyInbox = EmptyStateView(
+        image: MailResourcesAsset.emptyStateInbox.swiftUIImage,
+        title: MailResourcesStrings.Localizable.emptyStateInboxTitle,
+        description: MailResourcesStrings.Localizable.emptyStateInboxDescription,
+        matomoName: "Inbox"
+    )
+
+    static let emptyTrash = EmptyStateView(
+        image: MailResourcesAsset.emptyStateTrash.swiftUIImage,
+        title: MailResourcesStrings.Localizable.emptyStateTrashTitle,
+        description: MailResourcesStrings.Localizable.emptyStateTrashDescription,
+        matomoName: "Trash"
+    )
+
     static let emptyFolder = EmptyStateView(
-        image: <#T##Image#>,
-        title: <#T##String#>,
-        description: <#T##String#>,
-        matomoName: <#T##String#>
+        image: MailResourcesAsset.emptyStateFolder.swiftUIImage,
+        title: MailResourcesStrings.Localizable.emptyStateFolderTitle,
+        description: MailResourcesStrings.Localizable.emptyStateFolderDescription,
+        matomoName: "Folder"
+    )
+
+    static func emptyThread(from folder: Folder?) -> EmptyStateView {
+        let name = folder?.localizedName ?? ""
+        let unreadCount = folder?.unreadCount ?? 0
+        return EmptyStateView(
+            image: MailResourcesAsset.emptyStateThread.swiftUIImage,
+            title: MailResourcesStrings.Localizable.noConversationSelected(name),
+            description: unreadCount > 0
+                ? MailResourcesStrings.Localizable.folderNoMessageCount
+                : MailResourcesStrings.Localizable.folderMessageCount(unreadCount),
+            matomoName: "Thread"
+        )
+    }
+
+    static let noNetwork = EmptyStateView(
+        image: MailResourcesAsset.emptyStateNoNetwork.swiftUIImage,
+        title: MailResourcesStrings.Localizable.emptyStateNetworkTitle,
+        description: MailResourcesStrings.Localizable.emptyStateNetworkDescription,
+        matomoName: "Network"
+    )
+
+    static let emptySearch = EmptyStateView(
+        image: UserDefaults.shared.accentColor.emptyThreadImage.swiftUIImage,
+        title: MailResourcesStrings.Localizable.emptyStateSearchTitle,
+        description: MailResourcesStrings.Localizable.emptyStateSearchDescription,
+        matomoName: "Search"
     )
 }
 
 struct EmptyListView_Previews: PreviewProvider {
     static var previews: some View {
-        EmptyStateView(isInbox: true)
+        EmptyStateView.emptyFolder
     }
 }

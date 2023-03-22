@@ -148,7 +148,8 @@ struct ThreadListView: View {
                 .environment(\.defaultMinListRowHeight, 4)
                 .overlay {
                     if viewModel.folder?.lastUpdate != nil && viewModel.sections.isEmpty && !viewModel.isLoadingPage {
-                        EmptyListView(isInbox: viewModel.folder?.role == .inbox)
+                        // TODO: Update with good view
+                        EmptyStateView.emptyInbox
                     }
                 }
                 .listStyle(.plain)
