@@ -40,6 +40,8 @@ class MessageBottomSheet: DisplayedFloatingPanelState<MessageBottomSheet.State> 
 }
 
 struct ThreadView: View {
+    @EnvironmentObject private var splitViewManager: SplitViewManager
+
     let mailboxManager: MailboxManager
     @ObservedRealmObject var thread: Thread
     var onDismiss: (() -> Void)? = nil
@@ -185,8 +187,8 @@ struct ThreadView: View {
                 dismiss()
             }
         }
-        .emptyCase(isEmpty: showEmptyView) {
-            EmptyThreadView()
+        .emptyState(isEmpty: showEmptyView) {
+            EmptyStateView.emptyThread(from: splitViewManager.selectedFolder)
         }
         .matomoView(view: [MatomoUtils.View.threadView.displayName, "Main"])
     }

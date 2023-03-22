@@ -72,6 +72,13 @@ struct ThreadListView: View {
 
     let isCompact: Bool
 
+    private var shouldDisplayEmptyView: Bool {
+        viewModel.folder?.lastUpdate != nil && viewModel.sections.isEmpty && !viewModel.isLoadingPage
+    }
+    private var shouldDisplayNoNetworkView: Bool {
+        !networkMonitor.isConnected && viewModel.folder?.lastUpdate == nil
+    }
+
     init(mailboxManager: MailboxManager,
          folder: Folder?,
          editedMessageDraft: Binding<Draft?>,
@@ -146,11 +153,17 @@ struct ThreadListView: View {
                     ListVerticalInsetView(height: multipleSelectionViewModel.isEnabled ? 100 : 110)
                 }
                 .environment(\.defaultMinListRowHeight, 4)
-                .overlay {
-                    if viewModel.folder?.lastUpdate != nil && viewModel.sections.isEmpty && !viewModel.isLoadingPage {
-                        // TODO: Update with good view
+                .emptyState(isEmpty: shouldDisplayEmptyView) {
+                    if viewModel.folder?.role == .inbox {
                         EmptyStateView.emptyInbox
+                    } else if viewModel.folder?.role == .trash {
+                        EmptyStateView.emptyTrash
+                    } else {
+                        EmptyStateView.emptyFolder
                     }
+                }
+                .emptyState(isEmpty: shouldDisplayNoNetworkView) {
+                    EmptyStateView.noNetwork
                 }
                 .listStyle(.plain)
                 .onAppear {

@@ -30,11 +30,13 @@ struct EmptyStateView: View {
     let matomoName: String
 
     var body: some View {
-        VStack(spacing: 8) {
+        VStack(spacing: 0) {
             image
+                .padding(.bottom, 24)
 
             Text(title)
                 .textStyle(.header2)
+                .padding(.bottom, 4)
             Text(description)
                 .textStyle(.bodySecondary)
                 .multilineTextAlignment(.center)
