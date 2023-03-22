@@ -653,8 +653,8 @@ public class MailboxManager: ObservableObject {
         }
 
         await deleteMessages(uids: deletedUids, folder: folder)
-        try await addMessages(shortUids: addedShortUids, folder: folder, newCursor: newCursor)
         await updateMessages(updates: updated, folder: folder)
+        try await addMessages(shortUids: addedShortUids, folder: folder, newCursor: newCursor)
 
         guard !Task.isCancelled else { return }
 
