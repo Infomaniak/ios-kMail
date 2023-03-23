@@ -28,8 +28,7 @@ public struct NotificationTappedPayload {
 @MainActor
 class NotificationCenterDelegate: NSObject, UNUserNotificationCenterDelegate {
     private func handleClickOnNotification(scene: UIScene?, content: UNNotificationContent) {
-        guard let messageUid = content.userInfo[NotificationsHelper.UserInfoKeys.messageUid] as? String,
-              let mailboxId = content.userInfo[NotificationsHelper.UserInfoKeys.mailboxId] as? Int,
+        guard let mailboxId = content.userInfo[NotificationsHelper.UserInfoKeys.mailboxId] as? Int,
               let userId = content.userInfo[NotificationsHelper.UserInfoKeys.userId] as? Int,
               let mailbox = MailboxInfosManager.instance.getMailbox(id: mailboxId, userId: userId),
               let mailboxManager = AccountManager.instance.getMailboxManager(for: mailbox) else {
@@ -38,21 +37,18 @@ class NotificationCenterDelegate: NSObject, UNUserNotificationCenterDelegate {
 
         if AccountManager.instance.currentMailboxManager?.mailbox != mailboxManager.mailbox {
             if AccountManager.instance.currentAccount.userId != mailboxManager.mailbox.userId {
-                if let switchedAccount = AccountManager.instance.accounts.first(where: { $0.userId == mailboxManager.mailbox.userId }) {
+                if let switchedAccount = AccountManager.instance.accounts
+                    .first(where: { $0.userId == mailboxManager.mailbox.userId }) {
                     (scene?.delegate as? SceneDelegate)?.switchAccount(switchedAccount, mailbox: mailbox)
                 }
             } else {
                 (scene?.delegate as? SceneDelegate)?.switchMailbox(mailbox)
             }
-            // This can certainly be improved, we need to add a delay to get the new switched UI before sending the notification
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                NotificationCenter.default.post(name: .onUserTappedNotification,
-                                                object: NotificationTappedPayload(messageId: messageUid))
-            }
-        } else {
-            NotificationCenter.default.post(name: .onUserTappedNotification,
-                                            object: NotificationTappedPayload(messageId: messageUid))
         }
+
+        guard let messageUid = content.userInfo[NotificationsHelper.UserInfoKeys.messageUid] as? String else { return }
+        NotificationCenter.default.post(name: .onUserTappedNotification,
+                                        object: NotificationTappedPayload(messageId: messageUid))
     }
 
     public func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse) async {

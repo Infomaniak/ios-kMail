@@ -118,8 +118,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, AccountManagerDelegate 
     }
 
     func switchMailbox(_ mailbox: Mailbox) {
-        accountManager.setCurrentMailboxForCurrentAccount(mailbox: mailbox)
-        accountManager.saveAccounts()
+        accountManager.switchMailbox(newMailbox: mailbox)
         if let mailboxManager = accountManager.getMailboxManager(for: mailbox) {
             showMainView(mailboxManager: mailboxManager)
         }
