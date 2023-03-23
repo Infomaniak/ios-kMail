@@ -307,11 +307,9 @@ public class AccountManager: RefreshTokenDelegate {
             }
         }
 
-        let initialNotificationTopics = mailboxesResponse.map(\.notificationTopicName)
-        await notificationService.updateTopicsIfNeeded(initialNotificationTopics, userApiFetcher: apiFetcher)
-
         MailboxInfosManager.instance.storeMailboxes(user: user, mailboxes: mailboxesResponse)
         if let mainMailbox = mailboxesResponse.first(where: { $0.isPrimary }) ?? mailboxesResponse.first {
+            await notificationService.updateTopicsIfNeeded([mainMailbox.notificationTopicName], userApiFetcher: apiFetcher)
             setCurrentMailboxForCurrentAccount(mailbox: mainMailbox)
         }
         saveAccounts()
@@ -397,6 +395,25 @@ public class AccountManager: RefreshTokenDelegate {
         setCurrentAccount(account: newAccount)
         setCurrentMailboxForCurrentAccount(mailbox: mailboxes.first!)
         saveAccounts()
+    }
+
+    public func switchMailbox(newMailbox: Mailbox) {
+        setCurrentMailboxForCurrentAccount(mailbox: newMailbox)
+        saveAccounts()
+
+        guard let mailboxManager = getMailboxManager(for: newMailbox),
+              mailboxManager.getFolder(with: .inbox)?.cursor == nil
+        else { return }
+
+        Task { [notificationTopicName = newMailbox.notificationTopicName] in
+            let currentSubscription = await notificationService.subscriptionForUser(id: currentUserId)
+            guard let currentTopics = currentSubscription?.topics,
+                  !currentTopics.contains(notificationTopicName)
+            else { return }
+
+            let updatedTopics = currentTopics + [notificationTopicName]
+            await notificationService.updateTopicsIfNeeded(updatedTopics, userApiFetcher: mailboxManager.apiFetcher)
+        }
     }
 
     public func setCurrentAccount(account: Account) {
