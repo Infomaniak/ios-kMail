@@ -323,7 +323,7 @@ public class AccountManager: RefreshTokenDelegate {
         return newAccount
     }
 
-    public func updateUser(for account: Account, registerToken: Bool) async throws {
+    public func updateUser(for account: Account) async throws {
         guard account.isConnected else {
             throw MailError.unknownError
         }

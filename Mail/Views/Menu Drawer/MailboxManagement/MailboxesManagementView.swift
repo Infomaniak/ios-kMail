@@ -100,7 +100,7 @@ struct MailboxesManagementView: View {
 
     private func updateAccount() async throws {
         guard let account = AccountManager.instance.account(for: mailboxManager.mailbox.userId) else { return }
-        try await AccountManager.instance.updateUser(for: account, registerToken: false)
+        try await AccountManager.instance.updateUser(for: account)
     }
 }
 

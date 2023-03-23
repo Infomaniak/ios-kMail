@@ -102,7 +102,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
         Task {
             do {
-                try await accountManager.updateUser(for: currentAccount, registerToken: true)
+                try await accountManager.updateUser(for: currentAccount)
                 accountManager.enableBugTrackerIfAvailable()
 
                 try await accountManager.currentContactManager?.fetchContactsAndAddressBooks()
