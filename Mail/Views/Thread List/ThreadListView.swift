@@ -131,7 +131,8 @@ struct ThreadListView: View {
                                                viewModel: viewModel,
                                                multipleSelectionViewModel: multipleSelectionViewModel,
                                                threadDensity: threadDensity,
-                                               isSelected: multipleSelectionViewModel.selectedItems.contains { $0.id == thread.id },
+                                               isSelected: multipleSelectionViewModel.selectedItems
+                                                   .contains { $0.id == thread.id },
                                                editedMessageDraft: $editedMessageDraft)
                                     .id(thread.id)
                             }
@@ -146,6 +147,7 @@ struct ThreadListView: View {
                     ListVerticalInsetView(height: multipleSelectionViewModel.isEnabled ? 100 : 110)
                 }
                 .environment(\.defaultMinListRowHeight, 4)
+                .background(MailResourcesAsset.backgroundColor.swiftUIColor)
                 .overlay {
                     if viewModel.folder?.lastUpdate != nil && viewModel.sections.isEmpty && !viewModel.isLoadingPage {
                         EmptyListView(isInbox: viewModel.folder?.role == .inbox)
@@ -364,6 +366,7 @@ private struct ThreadListToolbar: ViewModifier {
                                             }
                                         }
                                     }
+                                    .disabled(action == .archive && splitViewManager.selectedFolder?.role == .archive)
                                 }
 
                                 ToolbarButton(text: MailResourcesStrings.Localizable.buttonMore,
