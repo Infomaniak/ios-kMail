@@ -75,9 +75,7 @@ struct SearchView: View {
             }
             .padding(.top, 16)
 
-            if viewModel.searchState == .noResults {
-                SearchNoResultView()
-            } else if viewModel.searchState == .noHistory {
+            if viewModel.searchState == .noHistory {
                 Text(MailResourcesStrings.Localizable.emptyStateHistoryDescription)
                     .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
                     .padding(.top, 16)
@@ -97,6 +95,9 @@ struct SearchView: View {
         .background(MailResourcesAsset.backgroundColor.swiftUIColor)
         .navigationBarSearchListStyle()
         .navigationBarTitleDisplayMode(.inline)
+        .emptyState(isEmpty: viewModel.searchState == .noResults) {
+            EmptyStateView.emptySearch
+        }
         .floatingPanel(state: bottomSheet, halfOpening: true) {
             if case .actions(let target) = bottomSheet.state, !target.isInvalidated {
                 ActionsView(mailboxManager: viewModel.mailboxManager,

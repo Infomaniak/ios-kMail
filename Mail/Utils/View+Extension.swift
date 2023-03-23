@@ -102,12 +102,12 @@ extension View {
         }
     }
 
-    @ViewBuilder
-    public func emptyCase<T>(isEmpty: Bool, emptyView: () -> T) -> some View where T: View {
-        if !isEmpty {
-            self
-        } else {
-            emptyView()
-        }
+    func emptyState<T>(isEmpty: Bool, @ViewBuilder emptyView: () -> T) -> some View where T: View {
+        self
+            .overlay {
+                if isEmpty {
+                    emptyView()
+                }
+            }
     }
 }

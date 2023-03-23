@@ -102,7 +102,7 @@ struct SplitView: View {
                         isCompact: isCompact
                     )
 
-                    EmptyThreadView()
+                    EmptyStateView.emptyThread(from: splitViewManager.selectedFolder)
                 }
             }
         }

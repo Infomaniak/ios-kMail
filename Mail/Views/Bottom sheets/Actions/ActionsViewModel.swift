@@ -466,7 +466,7 @@ enum ActionsTarget: Equatable {
         guard case let .message(message) = target else { return }
         let response = try await mailboxManager.apiFetcher.blockSender(message: message)
         if response {
-            IKSnackBar.showSnackBar(message: MailResourcesStrings.Localizable.snackbarSenderBlacklisted)
+            IKSnackBar.showSnackBar(message: MailResourcesStrings.Localizable.snackbarSenderBlacklisted(1))
         }
     }
 

@@ -28,7 +28,6 @@ struct MailboxesManagementView: View {
     @EnvironmentObject var mailboxManager: MailboxManager
     @EnvironmentObject var navigationDrawerState: NavigationDrawerState
 
-    @State private var avatarImage = MailResourcesAsset.placeholderAvatar.swiftUIImage
     @State private var isShowingManageAccount = false
     @State private var isShowingSwitchAccount = false
 
@@ -83,11 +82,6 @@ struct MailboxesManagementView: View {
                 .padding(.top, 8)
         }
         .padding(.top, 16)
-        .task {
-            if let user = AccountManager.instance.account(for: mailboxManager.mailbox.userId)?.user {
-                avatarImage = await user.avatarImage
-            }
-        }
         .sheet(isPresented: $isShowingSwitchAccount) {
             SheetView(mailboxManager: mailboxManager) {
                 AccountListView()
