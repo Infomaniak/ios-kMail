@@ -19,7 +19,7 @@
 import MailResources
 import SwiftUI
 
-struct ThreadUnreadIndicatorView: View {
+struct ThreadCountIndicatorView: View {
     let messagesCount: Int
     let hasUnseenMessages: Bool
 
@@ -27,9 +27,9 @@ struct ThreadUnreadIndicatorView: View {
         Text("\(messagesCount)")
             .textStyle(hasUnseenMessages ? .labelMediumPrimary : .labelSecondary)
             .padding(.horizontal, 4)
+            .padding(.vertical, 1)
             .lineLimit(1)
             .background(hasUnseenMessages ? .clear : MailResourcesAsset.unreadIndicatorBackgroundColor.swiftUIColor)
-            .aspectRatio(1, contentMode: .fill)
             .clipShape(RoundedRectangle(cornerRadius: 3))
             .overlay {
                 RoundedRectangle(cornerRadius: 3)
@@ -40,8 +40,8 @@ struct ThreadUnreadIndicatorView: View {
     }
 }
 
-struct ThreadUnreadIndicatorView_Previews: PreviewProvider {
+struct ThreadCountIndicatorView_Previews: PreviewProvider {
     static var previews: some View {
-        ThreadUnreadIndicatorView(messagesCount: 2, hasUnseenMessages: false)
+        ThreadCountIndicatorView(messagesCount: 2, hasUnseenMessages: false)
     }
 }

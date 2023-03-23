@@ -35,7 +35,7 @@ struct ThreadCellHeaderView: View {
                 .lineLimit(1)
 
             if thread.messages.count > 1 {
-                ThreadUnreadIndicatorView(messagesCount: thread.messages.count, hasUnseenMessages: thread.hasUnseenMessages)
+                ThreadCountIndicatorView(messagesCount: thread.messages.count, hasUnseenMessages: thread.hasUnseenMessages)
             }
 
             Spacer()

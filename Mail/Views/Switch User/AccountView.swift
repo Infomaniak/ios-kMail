@@ -87,23 +87,19 @@ struct AccountView: View {
                     VStack(alignment: .leading, spacing: 12) {
                         Text(MailResourcesStrings.Localizable.buttonAccountAssociatedEmailAddresses)
                             .textStyle(.bodySmallSecondary)
-                            .padding(.horizontal, 24)
                             .padding(.bottom, 16)
 
                         ForEach(mailboxes) { mailbox in
                             Text(mailbox.email)
                                 .textStyle(.body)
-                                .padding(.horizontal, 24)
                                 .onTapGesture {
                                     matomo.track(eventWithCategory: .account, name: "selectMailAddress")
                                 }
                             if mailbox != mailboxes.last {
                                 IKDivider()
-                                    .padding(.horizontal, 16)
                             }
                         }
                     }
-                    .frame(maxWidth: .infinity, alignment: .leading)
                     .padding(.top, 24)
 
                     Spacer()
@@ -130,7 +126,6 @@ struct AccountView: View {
             } label: {
                 Label(MailResourcesStrings.Localizable.buttonClose, systemImage: "xmark")
             })
-            .padding(.bottom, 24)
         }
         .task {
             avatarImage = await account.user.avatarImage
