@@ -160,14 +160,9 @@ public struct MailTextStyle {
         color: .accentColor
     )
 
-    public static let labelMediumPrimary = MailTextStyle(
+    public static let labelMedium = MailTextStyle(
         font: .system(size: 12, weight: .medium),
         color: MailResourcesAsset.textPrimaryColor
-    )
-
-    public static let labelMediumSecondary = MailTextStyle(
-        font: .system(size: 12, weight: .medium),
-        color: MailResourcesAsset.textSecondaryColor
     )
 
     public static let labelSecondary = MailTextStyle(

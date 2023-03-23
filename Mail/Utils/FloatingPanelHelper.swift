@@ -114,7 +114,7 @@ class DisplayedFloatingPanelState<State>: ObservableObject, FloatingPanelControl
         floatingPanel.surfaceView.appearance = appearance
         floatingPanel.surfaceView.grabberHandlePadding = 16
         floatingPanel.surfaceView.grabberHandleSize = CGSize(width: 45, height: 5)
-        floatingPanel.surfaceView.grabberHandle.barColor = MailResourcesAsset.secondaryBlueColor.color
+        floatingPanel.surfaceView.grabberHandle.barColor = MailResourcesAsset.elementsColor.color
         floatingPanel.surfaceView.contentPadding = UIEdgeInsets(top: 32, left: 0, bottom: 16, right: 0)
         floatingPanel.backdropView.dismissalTapGestureRecognizer.isEnabled = true
         floatingPanel.isRemovalInteractionEnabled = true
@@ -125,7 +125,9 @@ class DisplayedFloatingPanelState<State>: ObservableObject, FloatingPanelControl
         let content = content.introspectScrollView { [weak self] scrollView in
             self?.floatingPanel.trackAndObserve(scrollView: scrollView)
         }
-        floatingPanel.set(contentViewController: UIHostingController(rootView: content))
+        let viewController = UIHostingController(rootView: content)
+        viewController.view.backgroundColor = nil
+        floatingPanel.set(contentViewController: viewController)
     }
 
     func open(state: State) {
