@@ -28,7 +28,7 @@ struct FlushFolderAlertView: View {
 
     private var title: String {
         if let deletedMessagesCount = flushAlert.deletedMessages {
-            return MailResourcesStrings.Localizable.threadListFlushFolderAlertTitle(deletedMessagesCount)
+            return MailResourcesStrings.Localizable.threadListDeletionConfirmationAlertTitle(deletedMessagesCount)
         }
 
         switch folder?.role {
