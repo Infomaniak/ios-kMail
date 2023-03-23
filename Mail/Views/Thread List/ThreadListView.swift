@@ -231,9 +231,6 @@ struct ThreadListView: View {
             updateFetchingTask()
         }
         .task {
-            if let account = AccountManager.instance.currentAccount {
-                splitViewManager.avatarImage = await account.user.avatarImage
-            }
             if firstLaunch {
                 updateFetchingTask()
                 firstLaunch = false
@@ -357,6 +354,11 @@ private struct ThreadListToolbar: ViewModifier {
                                     .scaledToFit()
                                     .frame(width: 28, height: 28)
                                     .clipShape(Circle())
+                            }
+                            .task {
+                                if let account = AccountManager.instance.currentAccount {
+                                    splitViewManager.avatarImage = await account.user.avatarImage
+                                }
                             }
                         }
                     }
