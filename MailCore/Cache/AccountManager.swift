@@ -311,8 +311,9 @@ public class AccountManager: RefreshTokenDelegate {
         await notificationService.updateTopicsIfNeeded(initialNotificationTopics, userApiFetcher: apiFetcher)
 
         MailboxInfosManager.instance.storeMailboxes(user: user, mailboxes: mailboxesResponse)
-        let mainMailbox = mailboxesResponse.first!
-        setCurrentMailboxForCurrentAccount(mailbox: mainMailbox)
+        if let mainMailbox = mailboxesResponse.first(where: { $0.isPrimary }) ?? mailboxesResponse.first {
+            setCurrentMailboxForCurrentAccount(mailbox: mainMailbox)
+        }
         saveAccounts()
 
         Task {
