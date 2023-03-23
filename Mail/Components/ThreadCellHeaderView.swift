@@ -35,14 +35,7 @@ struct ThreadCellHeaderView: View {
                 .lineLimit(1)
 
             if thread.messages.count > 1 {
-                Text("\(thread.messages.count)")
-                    .textStyle(.bodySmallSecondary)
-                    .padding(.horizontal, 4)
-                    .lineLimit(1)
-                    .overlay {
-                        RoundedRectangle(cornerRadius: 3)
-                            .stroke(MailResourcesAsset.elementsColor.swiftUIColor)
-                    }
+                ThreadCountIndicatorView(messagesCount: thread.messages.count, hasUnseenMessages: thread.hasUnseenMessages)
             }
 
             Spacer()

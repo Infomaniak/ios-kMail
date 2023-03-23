@@ -75,6 +75,7 @@ struct ThreadListView: View {
     private var shouldDisplayEmptyView: Bool {
         viewModel.folder?.lastUpdate != nil && viewModel.sections.isEmpty && !viewModel.isLoadingPage
     }
+
     private var shouldDisplayNoNetworkView: Bool {
         !networkMonitor.isConnected && viewModel.folder?.lastUpdate == nil
     }
@@ -138,7 +139,8 @@ struct ThreadListView: View {
                                                viewModel: viewModel,
                                                multipleSelectionViewModel: multipleSelectionViewModel,
                                                threadDensity: threadDensity,
-                                               isSelected: multipleSelectionViewModel.selectedItems.contains { $0.id == thread.id },
+                                               isSelected: multipleSelectionViewModel.selectedItems
+                                                   .contains { $0.id == thread.id },
                                                editedMessageDraft: $editedMessageDraft)
                                     .id(thread.id)
                             }
@@ -166,6 +168,7 @@ struct ThreadListView: View {
                 .emptyState(isEmpty: shouldDisplayNoNetworkView) {
                     EmptyStateView.noNetwork
                 }
+                .background(MailResourcesAsset.backgroundColor.swiftUIColor)
                 .listStyle(.plain)
                 .onAppear {
                     viewModel.scrollViewProxy = proxy
@@ -207,7 +210,7 @@ struct ThreadListView: View {
             isShowingComposeNewMessageView.toggle()
         }
         .floatingPanel(state: bottomSheet, halfOpening: true) {
-            if case let .actions(target) = bottomSheet.state, !target.isInvalidated {
+            if case .actions(let target) = bottomSheet.state, !target.isInvalidated {
                 ActionsView(mailboxManager: viewModel.mailboxManager,
                             target: target,
                             state: bottomSheet,
@@ -240,7 +243,7 @@ struct ThreadListView: View {
             ComposeMessageView.newMessage(mailboxManager: viewModel.mailboxManager)
         }
         .sheet(isPresented: $moveSheet.isShowing) {
-            if case let .move(folderId, handler) = moveSheet.state {
+            if case .move(let folderId, let handler) = moveSheet.state {
                 MoveEmailView.sheetView(mailboxManager: viewModel.mailboxManager, from: folderId, moveHandler: handler)
             }
         }
@@ -381,6 +384,7 @@ private struct ThreadListToolbar: ViewModifier {
                                             }
                                         }
                                     }
+                                    .disabled(action == .archive && splitViewManager.selectedFolder?.role == .archive)
                                 }
 
                                 ToolbarButton(text: MailResourcesStrings.Localizable.buttonMore,
