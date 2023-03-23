@@ -102,7 +102,7 @@ struct SplitView: View {
                         isCompact: isCompact
                     )
 
-                    EmptyThreadView()
+                    EmptyStateView.emptyThread(from: splitViewManager.selectedFolder)
                 }
             }
         }
@@ -131,9 +131,9 @@ struct SplitView: View {
             guard let interfaceOrientation = orientation else { return }
             setupBehaviour(orientation: interfaceOrientation)
         }
-        .introspectNavigationController { navController in
-            guard let splitViewController = navController.splitViewController,
-                  let interfaceOrientation = window?.windowScene?.interfaceOrientation else { return }
+        .introspectSplitViewController { splitViewController in
+            guard let interfaceOrientation = window?.windowScene?.interfaceOrientation,
+                  self.splitViewController != splitViewController else { return }
             self.splitViewController = splitViewController
             splitViewManager.splitViewController = splitViewController
             setupBehaviour(orientation: interfaceOrientation)

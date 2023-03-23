@@ -40,6 +40,8 @@ class MessageBottomSheet: DisplayedFloatingPanelState<MessageBottomSheet.State> 
 }
 
 struct ThreadView: View {
+    @EnvironmentObject private var splitViewManager: SplitViewManager
+
     let mailboxManager: MailboxManager
     @ObservedRealmObject var thread: Thread
     var onDismiss: (() -> Void)? = nil
@@ -82,12 +84,11 @@ struct ThreadView: View {
                     .padding(.top, 8)
                     .padding(.bottom, 16)
                     .padding(.horizontal, 16)
-                    .background(MailResourcesAsset.backgroundColor.swiftUIColor)
 
                 MessageListView(messages: thread.messages)
-                    .background(MailResourcesAsset.backgroundColor.swiftUIColor)
             }
         }
+        .background(MailResourcesAsset.backgroundColor.swiftUIColor)
         .coordinateSpace(name: "scrollView")
         .onPreferenceChange(ScrollOffsetPreferenceKey.self) { offset in
             displayNavigationTitle = offset.y < -85
@@ -185,8 +186,8 @@ struct ThreadView: View {
                 dismiss()
             }
         }
-        .emptyCase(isEmpty: showEmptyView) {
-            EmptyThreadView()
+        .emptyState(isEmpty: showEmptyView) {
+            EmptyStateView.emptyThread(from: splitViewManager.selectedFolder)
         }
         .matomoView(view: [MatomoUtils.View.threadView.displayName, "Main"])
     }

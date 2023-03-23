@@ -26,9 +26,9 @@ public struct MailTextStyle {
 
     public var color: SwiftUI.Color {
         switch colorType {
-        case .staticColor(let color):
+        case let .staticColor(color):
             return color
-        case .accentColor(let colorKeyPath):
+        case let .accentColor(colorKeyPath):
             return UserDefaults.shared.accentColor[keyPath: colorKeyPath].swiftUIColor
         }
     }
@@ -160,9 +160,9 @@ public struct MailTextStyle {
         color: .accentColor
     )
 
-    public static let labelMediumSecondary = MailTextStyle(
+    public static let labelMedium = MailTextStyle(
         font: .system(size: 12, weight: .medium),
-        color: MailResourcesAsset.textSecondaryColor
+        color: MailResourcesAsset.textPrimaryColor
     )
 
     public static let labelSecondary = MailTextStyle(

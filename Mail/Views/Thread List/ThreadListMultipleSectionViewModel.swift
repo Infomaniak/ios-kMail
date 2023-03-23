@@ -106,6 +106,7 @@ import SwiftUI
 
     private func setActions() {
         let read = selectedItems.contains { $0.unseenMessages != 0 } ? Action.markAsRead : Action.markAsUnread
-        toolbarActions = [read, .archive, .star, .delete]
+        let star = selectedItems.allSatisfy(\.flagged) ? Action.unstar : Action.star
+        toolbarActions = [read, .archive, star, .delete]
     }
 }
