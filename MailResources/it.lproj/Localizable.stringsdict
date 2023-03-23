@@ -4,7 +4,7 @@
  Loco ios export: iOS plural rules
  Project: kMail
  Release: Working copy
- Locale: fr, French
+ Locale: it, Italian
  Tagged: ios
  Exported by: Valentin Perignon
  Exported at: Thu, 23 Mar 2023 15:33:48 +0100 
@@ -22,11 +22,9 @@
                 <key>NSStringFormatValueTypeKey</key>
                 <string>d</string> 
                 <key>one</key>
-                <string>%d pièce jointe</string> 
+                <string>%d allegato</string> 
                 <key>other</key>
-                <string>%d pièces jointes</string> 
-                <key>many</key>
-                <string>%d de pièces jointes</string> 
+                <string>%d allegati</string> 
             </dict>
         </dict> 
         <key>folderMessageCount</key>
@@ -40,11 +38,9 @@
                 <key>NSStringFormatValueTypeKey</key>
                 <string>d</string> 
                 <key>one</key>
-                <string>Ce dossier contient %d message</string> 
+                <string>Questa cartella contiene %d messaggio</string> 
                 <key>other</key>
-                <string>Ce dossier contient %d messages</string> 
-                <key>many</key>
-                <string>Ce dossier contient %d de messages</string> 
+                <string>Questa cartella contiene %d messaggi</string> 
             </dict>
         </dict> 
         <key>multipleSelectionCount</key>
@@ -58,11 +54,9 @@
                 <key>NSStringFormatValueTypeKey</key>
                 <string>d</string> 
                 <key>one</key>
-                <string>%d sélectionné</string> 
+                <string>%d selezionato</string> 
                 <key>other</key>
-                <string>%d sélectionnés</string> 
-                <key>many</key>
-                <string>%d de sélectionnés</string> 
+                <string>%d selezionati</string> 
             </dict>
         </dict> 
         <key>snackbarSenderBlacklisted</key>
@@ -76,11 +70,9 @@
                 <key>NSStringFormatValueTypeKey</key>
                 <string>d</string> 
                 <key>one</key>
-                <string>Expéditeur blacklisté avec succès</string> 
+                <string>Mittente inserito nella lista nera con successo</string> 
                 <key>other</key>
-                <string>Expéditeurs blacklistés avec succès</string> 
-                <key>many</key>
-                <string>Expéditeurs blacklistés avec succès</string> 
+                <string>Mittenti inseriti nella lista nera con successo</string> 
             </dict>
         </dict> 
         <key>snackbarThreadDeletedPermanently</key>
@@ -94,11 +86,9 @@
                 <key>NSStringFormatValueTypeKey</key>
                 <string>d</string> 
                 <key>one</key>
-                <string>Conversation supprimée</string> 
+                <string>Conversazione cancellata</string> 
                 <key>other</key>
-                <string>Conversations supprimées</string> 
-                <key>many</key>
-                <string>Conversations supprimées</string> 
+                <string>Conversazioni eliminate</string> 
             </dict>
         </dict> 
         <key>threadListDeletionConfirmationAlertDescription</key>
@@ -112,11 +102,9 @@
                 <key>NSStringFormatValueTypeKey</key>
                 <string>d</string> 
                 <key>one</key>
-                <string>Etes-vous sûr de vouloir supprimer ce message définitivement ?</string> 
+                <string>Sei sicuro di voler cancellare questo messaggio in modo permanente?</string> 
                 <key>other</key>
-                <string>Etes-vous sûr de vouloir supprimer ces messages définitivement ?</string> 
-                <key>many</key>
-                <string>Etes-vous sûr de vouloir supprimer ces messages définitivement ?</string> 
+                <string>Siete sicuri di voler eliminare questi messaggi in modo permanente?</string> 
             </dict>
         </dict> 
         <key>threadListDeletionConfirmationAlertTitle</key>
@@ -130,9 +118,9 @@
                 <key>NSStringFormatValueTypeKey</key>
                 <string>d</string> 
                 <key>one</key>
-                <string>Supprimer %d message</string> 
+                <string>Cancellare %d messaggio</string> 
                 <key>other</key>
-                <string>Supprimer %d messages</string> 
+                <string>Cancellare %d messaggi</string> 
             </dict>
         </dict> 
     </dict>
