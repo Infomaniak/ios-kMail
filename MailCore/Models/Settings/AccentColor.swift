@@ -90,21 +90,12 @@ public enum AccentColor: String, CaseIterable, SettingsOptionEnum {
 
     // MARK: - Images
 
-    public var zeroMailImage: MailResourcesImages {
+    public var emptyThreadImage: MailResourcesImages {
         switch self {
         case .pink:
-            return MailResourcesAsset.folderOpenPink
+            return MailResourcesAsset.emptyStateSearchPink
         case .blue:
-            return MailResourcesAsset.folderOpenBlue
-        }
-    }
-
-    public var zeroConvImage: MailResourcesImages {
-        switch self {
-        case .pink:
-            return MailResourcesAsset.mailPink
-        case .blue:
-            return MailResourcesAsset.mailBlue
+            return MailResourcesAsset.emptyStateSearchBlue
         }
     }
 
