@@ -74,13 +74,10 @@ extension EmptyStateView {
 
     static func emptyThread(from folder: Folder?) -> EmptyStateView {
         let name = folder?.localizedName ?? ""
-        let unreadCount = folder?.unreadCount ?? 0
         return EmptyStateView(
             image: MailResourcesAsset.emptyStateThread.swiftUIImage,
             title: MailResourcesStrings.Localizable.noConversationSelected(name),
-            description: unreadCount > 0
-                ? MailResourcesStrings.Localizable.folderNoMessageCount
-                : MailResourcesStrings.Localizable.folderMessageCount(unreadCount),
+            description: "",
             matomoName: "Thread"
         )
     }
