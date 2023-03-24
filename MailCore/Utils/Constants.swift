@@ -21,8 +21,6 @@ import MailResources
 import SwiftUI
 
 public struct URLConstants {
-    public static let feedback =
-        URLConstants(urlString: "https://feedback.userreport.com/9f60b46d-7299-4887-b79d-c756cf474c4d#ideas/popular")
     public static let importMails = URLConstants(urlString: "https://import-email.infomaniak.com")
     public static let matomo = URLConstants(urlString: "https://analytics.infomaniak.com/matomo.php")
     public static let faq =

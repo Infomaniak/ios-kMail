@@ -145,8 +145,8 @@ class MenuDrawerViewModel: ObservableObject {
     private func sendFeedback() {
         if AccountManager.instance.currentAccount?.user?.isStaff == true {
             isShowingBugTracker.toggle()
-        } else {
-            UIApplication.shared.open(URLConstants.feedback.url)
+        } else if let userReportURL = URL(string: MailResourcesStrings.Localizable.urlUserReportiOS) {
+            UIApplication.shared.open(userReportURL)
         }
     }
 
