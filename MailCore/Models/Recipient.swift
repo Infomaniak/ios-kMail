@@ -62,17 +62,27 @@ public class Recipient: EmbeddedObject, Codable {
         return AccountManager.instance.currentMailboxManager?.mailbox.email == email
     }
 
-    public var title: String {
+    public lazy var nameComponents: (givenName: String, familyName: String?) = {
+        let name = contact?.name ?? (name.isEmpty ? email : name)
+
+        let components = name.components(separatedBy: .whitespaces)
+        let givenName = components[0]
+        let familyName = components.count > 1 ? components[1] : nil
+        return (givenName, familyName)
+    }()
+
+    public var formattedName: String {
         if isMe {
             return MailResourcesStrings.Localizable.contactMe
         }
-        return contact?.name.removePunctuation ?? (name.isEmpty ? email : name.removePunctuation)
+        return contact?.name ?? (name.isEmpty ? email : name)
     }
 
-    public lazy var shortName: String = {
-        let emailPredicate = NSPredicate(format: "SELF MATCHES %@", Constants.mailRegex)
-        let delimiter = emailPredicate.evaluate(with: title) ? "@" : " "
-        return title.components(separatedBy: delimiter).first ?? title
+    public lazy var formattedShortName: String = {
+        if Constants.emailPredicate.evaluate(with: formattedName) {
+            return email.components(separatedBy: "@").first ?? email
+        }
+        return isMe ? MailResourcesStrings.Localizable.contactMe : nameComponents.givenName.removePunctuation
     }()
 
     public var color: UIColor {
@@ -80,21 +90,11 @@ public class Recipient: EmbeddedObject, Codable {
     }
 
     public lazy var initials: String = {
-        let nameInitials = (contact?.name ?? name)
-            .removePunctuation
-            .components(separatedBy: .whitespaces)
-            .compactMap(\.first)
-        guard let firstLetter = nameInitials.first else {
-            if let secondaryInitial = email.first {
-                return secondaryInitial.uppercased()
-            }
-            return ""
-        }
-        if let secondLetter = nameInitials.last, nameInitials.count > 1 {
-            return [firstLetter, secondLetter].map { "\($0)" }.joined().uppercased()
-        } else {
-            return [firstLetter].map { "\($0)" }.joined().uppercased()
-        }
+        let initials = [nameComponents.givenName, nameComponents.familyName]
+            .map { $0?.removePunctuation.first }
+            .compactMap { $0 }
+            .map { "\($0)" }
+        return initials.joined().uppercased()
     }()
 
     public lazy var contact: MergedContact? = AccountManager.instance.currentContactManager?.getContact(for: self)
