@@ -63,7 +63,7 @@ public class Recipient: EmbeddedObject, Codable {
     }
 
     public var title: String {
-        if isCurrentUser {
+        if isMe {
             return MailResourcesStrings.Localizable.contactMe
         }
         return contact?.name.removePunctuation ?? (name.isEmpty ? email : name.removePunctuation)
@@ -110,7 +110,7 @@ public class Recipient: EmbeddedObject, Codable {
 
     public var avatarImage: Image? {
         get async {
-            if isCurrentUser {
+            if isCurrentUser && isMe {
                 return await AccountManager.instance.currentAccount.user.avatarImage
             } else if let contact = contact,
                       contact.hasAvatar,
@@ -123,7 +123,7 @@ public class Recipient: EmbeddedObject, Codable {
     }
 
     public var cachedAvatarImage: Image? {
-        if isCurrentUser {
+        if isCurrentUser && isMe {
             return AccountManager.instance.currentAccount.user.cachedAvatarImage
         } else if let contact = contact,
                   contact.hasAvatar,

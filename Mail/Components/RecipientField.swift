@@ -110,7 +110,7 @@ struct RecipientField: View {
 
     @MainActor private func add(recipient: Recipient) {
         let emailPredicate = NSPredicate(format: "SELF MATCHES %@", Constants.mailRegex)
-        if emailPredicate.evaluate(with: recipient.email) {
+        if Constants.emailPredicate.evaluate(with: recipient.email) {
             withAnimation {
                 $recipients.append(recipient)
             }

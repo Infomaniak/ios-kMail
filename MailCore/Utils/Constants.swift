@@ -82,6 +82,8 @@ public enum Constants {
     public static let sizeLimit = 21_474_836_480 // 20 Go
     public static let minimumQuotasProgressionToDisplay = 0.03
 
+    public static let emailPredicate = NSPredicate(format: "SELF MATCHES %@", Constants.mailRegex)
+
     public static let navbarIconSize: CGFloat = 23
 
     public static let onboardingLogoPaddingTop: CGFloat = 28
