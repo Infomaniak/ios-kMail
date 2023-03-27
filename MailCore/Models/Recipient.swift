@@ -71,12 +71,12 @@ public class Recipient: EmbeddedObject, Codable {
         return (givenName, familyName)
     }()
 
-    public var formattedName: String {
+    public lazy var formattedName: String = {
         if isMe {
             return MailResourcesStrings.Localizable.contactMe
         }
         return contact?.name ?? (name.isEmpty ? email : name)
-    }
+    }()
 
     public lazy var formattedShortName: String = {
         if Constants.emailPredicate.evaluate(with: formattedName) {
