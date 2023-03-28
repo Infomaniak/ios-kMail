@@ -24,7 +24,7 @@ struct RecipientAutocompletionCell: View {
 
     var body: some View {
         HStack {
-            RecipientImage(recipient: recipient)
+            AvatarView(avatarDisplayable: recipient, size: 40)
 
             if recipient.name.isEmpty {
                 Text(recipient.email)

@@ -43,7 +43,7 @@ struct MessageHeaderSummaryView: View {
                         matomo.track(eventWithCategory: .message, name: "selectAvatar")
                         recipientTapped(recipient)
                     } label: {
-                        RecipientImage(recipient: recipient, size: 40)
+                        AvatarView(avatarDisplayable: recipient, size: 40)
                     }
                 }
 

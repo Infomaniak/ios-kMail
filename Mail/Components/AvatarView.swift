@@ -26,7 +26,9 @@ struct AvatarView: View {
     var size: CGFloat = 28
 
     var body: some View {
-        if let avatarImageRequest = avatarDisplayable.avatarImageRequest {
+        if let localImage = avatarDisplayable.localImage {
+            localImage
+        } else if let avatarImageRequest = avatarDisplayable.avatarImageRequest {
             LazyImage(request: avatarImageRequest) { state in
                 if let image = state.image {
                     ContactImage(image: image, size: size)

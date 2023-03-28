@@ -63,37 +63,30 @@ public class MergedContact {
         return remote != nil
     }
 
-    public var hasAvatar: Bool {
-        return local?.imageData != nil || remote?.avatar != nil
-    }
-
-    public var avatarImage: Image? {
-        get async {
-            if let localImage = local?.image {
-                return Image(uiImage: localImage)
-            } else if let avatarPath = remote?.avatar,
-                      let avatarUIImage = try? await ImagePipeline.shared.imageWithAuthentication(for: Endpoint.resource(avatarPath).url) {
-                return Image(uiImage: avatarUIImage)
-            }
-
-            return nil
-        }
-    }
-
-    public var cachedAvatarImage: Image? {
-        if let localImage = local?.image {
-            return Image(uiImage: localImage)
-        } else if let avatarPath = remote?.avatar,
-                  let avatarUIImage = ImagePipeline.shared.cache[Endpoint.resource(avatarPath).url]?.image {
-            return Image(uiImage: avatarUIImage)
-        }
-
-        return nil
-    }
-
     public init(email: String, remote: Contact?, local: CNContact?) {
         self.email = email
         self.remote = remote
         self.local = local
+    }
+}
+
+extension MergedContact: AvatarDisplayable {
+    public var localImage: Image? {
+        guard let localUIImage = local?.image else { return nil }
+        return Image(uiImage: localUIImage)
+    }
+
+    public var avatarImageRequest: ImageRequest? {
+        guard let remoteAvatar = remote?.avatar else { return nil }
+        let avatarURL = Endpoint.resource(remoteAvatar).url
+        return AccountManager.instance.currentMailboxManager?.apiFetcher.authenticatedImageRequest(avatarURL)
+    }
+
+    public var initials: String {
+        ""
+    }
+
+    public var initialsBackgroundColor: UIColor {
+        color
     }
 }

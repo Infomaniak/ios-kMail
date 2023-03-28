@@ -64,7 +64,7 @@ struct ContactActionsView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
             HStack {
-                RecipientImage(recipient: recipient, size: 32)
+                AvatarView(avatarDisplayable: recipient, size: 32)
                 VStack(alignment: .leading) {
                     Text(recipient.contact?.name ?? recipient.title)
                         .textStyle(.bodyMedium)

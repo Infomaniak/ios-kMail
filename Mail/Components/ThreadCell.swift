@@ -123,7 +123,7 @@ struct ThreadCell: View {
             Group {
                 if density == .large, let recipient = dataHolder.recipientToDisplay {
                     ZStack {
-                        RecipientImage(recipient: recipient)
+                        AvatarView(avatarDisplayable: recipient, size: 40)
                         CheckboxView(isSelected: isSelected, density: density)
                             .opacity(isSelected ? 1 : 0)
                     }

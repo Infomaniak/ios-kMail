@@ -44,7 +44,6 @@ public class SplitViewManager: ObservableObject {
     @Published var showSearch = false
     @Published var selectedFolder: Folder?
     var splitViewController: UISplitViewController?
-    @Published var avatarImage = MailResourcesAsset.placeholderAvatar.swiftUIImage
 
     init(folder: Folder?) {
         selectedFolder = folder

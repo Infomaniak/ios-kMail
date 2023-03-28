@@ -70,15 +70,9 @@ struct AccountHeaderCell: View {
     let account: Account
     @Binding var isSelected: Bool
 
-    @State private var avatarImage = MailResourcesAsset.placeholderAvatar.swiftUIImage
-
     var body: some View {
         HStack(spacing: 8) {
-            avatarImage
-                .resizable()
-                .frame(width: 38, height: 38)
-                .clipShape(Circle())
-
+            AvatarView(avatarDisplayable: account.user, size: 38)
             VStack(alignment: .leading, spacing: 2) {
                 Text(account.user.displayName)
                     .textStyle(.bodyMedium)
@@ -92,9 +86,6 @@ struct AccountHeaderCell: View {
                 MailResourcesAsset.check.swiftUIImage
                     .foregroundColor(.accentColor)
             }
-        }
-        .task {
-            avatarImage = await account.user.avatarImage
         }
     }
 }
