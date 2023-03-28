@@ -72,7 +72,7 @@ public class MergedContact {
             if let localImage = local?.image {
                 return Image(uiImage: localImage)
             } else if let avatarPath = remote?.avatar,
-                      let avatarUIImage = try? await ImagePipeline.shared.imageWithAuthentication(for: Endpoint.resource(avatarPath).url).image {
+                      let avatarUIImage = try? await ImagePipeline.shared.imageWithAuthentication(for: Endpoint.resource(avatarPath).url) {
                 return Image(uiImage: avatarUIImage)
             }
 

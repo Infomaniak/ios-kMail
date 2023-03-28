@@ -18,15 +18,16 @@
 
 import Foundation
 import Nuke
+import UIKit
 
-extension ImagePipeline {
-    public func imageWithAuthentication(for url: URL, delegate: (any ImageTaskDelegate)? = nil) async throws -> ImageResponse {
+public extension ImagePipeline {
+    func imageWithAuthentication(for url: URL) async throws -> UIImage {
         var urlRequest = URLRequest(url: url)
         urlRequest.addValue(
             "Bearer \(AccountManager.instance.currentAccount.token.accessToken)",
             forHTTPHeaderField: "Authorization"
         )
 
-        return try await image(for: ImageRequest(urlRequest: urlRequest), delegate: delegate)
+        return try await image(for: ImageRequest(urlRequest: urlRequest))
     }
 }

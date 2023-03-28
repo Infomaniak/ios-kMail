@@ -45,7 +45,7 @@ let project = Project(name: "Mail",
                           .package(url: "https://github.com/markiv/SwiftUI-Shimmer", .upToNextMajor(from: "1.0.1")),
                           .package(url: "https://github.com/dkk/WrappingHStack", .upToNextMajor(from: "2.0.0")),
                           .package(url: "https://github.com/SCENEE/FloatingPanel", .upToNextMajor(from: "2.0.0")),
-                          .package(url: "https://github.com/kean/Nuke", .upToNextMajor(from: "11.3.0")),
+                          .package(url: "https://github.com/kean/Nuke", .upToNextMajor(from: "12.0.0")),
                           .package(url: "https://github.com/airbnb/lottie-ios", .exact("3.5.0")),
                           .package(url: "https://github.com/scinfu/SwiftSoup", .upToNextMajor(from: "2.5.3"))
                       ],
@@ -164,6 +164,7 @@ let project = Project(name: "Mail",
                                   .package(product: "RealmSwift"),
                                   .package(product: "SwiftRegex"),
                                   .package(product: "Nuke"),
+                                  .package(product: "NukeUI"),
                                   .package(product: "SwiftSoup")
                               ],
                               settings: .settings(base: baseSettings)

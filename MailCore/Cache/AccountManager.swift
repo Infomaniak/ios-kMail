@@ -72,7 +72,7 @@ public extension InfomaniakUser {
     var avatarImage: Image {
         get async {
             if let avatarURL = URL(string: avatar),
-               let avatarImage = try? await ImagePipeline.shared.image(for: avatarURL).image {
+               let avatarImage = try? await ImagePipeline.shared.image(for: avatarURL) {
                 return Image(uiImage: avatarImage)
             } else {
                 let backgroundColor = UIColor.backgroundColor(from: id)
