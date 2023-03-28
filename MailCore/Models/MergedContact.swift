@@ -25,10 +25,13 @@ import SwiftUI
 import UIKit
 
 extension CNContact {
-    var image: UIImage? {
-        guard let imageData = imageData else { return nil }
-        let localImage = UIImage(data: imageData)
-        return localImage
+    func pngImageData() async -> Data? {
+        // We have to load something that Nuke can cache
+        guard let imageData,
+              let convertedImage = UIImage(data: imageData)?.pngData() else {
+            return nil
+        }
+        return convertedImage
     }
 }
 
@@ -71,15 +74,25 @@ public class MergedContact {
 }
 
 extension MergedContact: AvatarDisplayable {
-    public var localImage: Image? {
-        guard let localUIImage = local?.image else { return nil }
-        return Image(uiImage: localUIImage)
-    }
-
     public var avatarImageRequest: ImageRequest? {
-        guard let remoteAvatar = remote?.avatar else { return nil }
-        let avatarURL = Endpoint.resource(remoteAvatar).url
-        return AccountManager.instance.currentMailboxManager?.apiFetcher.authenticatedImageRequest(avatarURL)
+        if let localContact = local, localContact.imageDataAvailable {
+            var imageRequest = ImageRequest(id: localContact.identifier) {
+                guard let imageData = await localContact.pngImageData() else {
+                    throw MailError.unknownError
+                }
+
+                return imageData
+            }
+            imageRequest.options = [.disableDiskCache]
+            return imageRequest
+        }
+
+        if let remoteAvatar = remote?.avatar {
+            let avatarURL = Endpoint.resource(remoteAvatar).url
+            return AccountManager.instance.currentMailboxManager?.apiFetcher.authenticatedImageRequest(avatarURL)
+        }
+
+        return nil
     }
 
     public var initials: String {

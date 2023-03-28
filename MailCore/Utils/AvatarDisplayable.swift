@@ -23,17 +23,12 @@ import SwiftUI
 import UIKit
 
 public protocol AvatarDisplayable {
-    var localImage: Image? { get }
     var avatarImageRequest: ImageRequest? { get }
     var initials: String { get }
     var initialsBackgroundColor: UIColor { get }
 }
 
 extension UserProfile: AvatarDisplayable {
-    public var localImage: Image? {
-        nil
-    }
-
     public var avatarImageRequest: ImageRequest? {
         guard let avatarURL = URL(string: avatar) else { return nil }
         return ImageRequest(url: avatarURL)
