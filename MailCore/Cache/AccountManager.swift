@@ -75,7 +75,7 @@ public extension InfomaniakUser {
                let avatarImage = try? await ImagePipeline.shared.image(for: avatarURL).image {
                 return Image(uiImage: avatarImage)
             } else {
-                let backgroundColor = UIColor.backgroundColor(from: id)
+                let backgroundColor = UIColor.backgroundColor(from: id, with: UIConstants.avatarColors)
                 let initialsImage = UIImage.getInitialsPlaceholder(
                     with: displayName,
                     size: CGSize(width: 40, height: 40),

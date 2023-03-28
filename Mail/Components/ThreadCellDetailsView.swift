@@ -33,7 +33,7 @@ struct ThreadCellDetailsView: View {
             if thread.flagged {
                 MailResourcesAsset.starFull.swiftUIImage
                     .resizable()
-                    .foregroundColor(MailResourcesAsset.yellowActionColor)
+                    .foregroundColor(MailResourcesAsset.yellowColor)
                     .scaledToFit()
                     .frame(width: 16, height: 16)
             }

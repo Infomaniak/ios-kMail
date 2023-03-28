@@ -67,7 +67,7 @@ public struct MailTextStyle {
 
     public static let header2Error = MailTextStyle(
         font: .system(size: 18, weight: .semibold),
-        color: MailResourcesAsset.redActionColor
+        color: MailResourcesAsset.redColor
     )
 
     public static let bodyMedium = MailTextStyle(
@@ -92,7 +92,7 @@ public struct MailTextStyle {
 
     public static let bodyMediumError = MailTextStyle(
         font: .system(size: 16, weight: .medium),
-        color: MailResourcesAsset.redActionColor
+        color: MailResourcesAsset.redColor
     )
 
     public static let body = MailTextStyle(
@@ -112,7 +112,7 @@ public struct MailTextStyle {
 
     public static let bodyError = MailTextStyle(
         font: .system(size: 16),
-        color: MailResourcesAsset.redActionColor
+        color: MailResourcesAsset.redColor
     )
 
     public static let bodySmallMedium = MailTextStyle(
@@ -152,7 +152,7 @@ public struct MailTextStyle {
 
     public static let bodySmallWarning = MailTextStyle(
         font: .system(size: 14),
-        color: MailResourcesAsset.orangeActionColor
+        color: MailResourcesAsset.orangeColor
     )
 
     public static let labelMediumAccent = MailTextStyle(
@@ -172,6 +172,6 @@ public struct MailTextStyle {
 
     public static let labelError = MailTextStyle(
         font: .system(size: 12),
-        color: MailResourcesAsset.redActionColor
+        color: MailResourcesAsset.redColor
     )
 }

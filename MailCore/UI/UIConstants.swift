@@ -16,26 +16,22 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import MailCore
+import Foundation
 import MailResources
-import SwiftUI
+import UIKit
 
-struct NoNetworkView: View {
-    var body: some View {
-        HStack {
-            MailResourcesAsset.noSignal.swiftUIImage
-                .resizable()
-                .scaledToFit()
-                .frame(width: 18, height: 18)
-            Text(MailResourcesStrings.Localizable.noNetwork)
-                .textStyle(.bodySmallWarning)
-        }
-        .foregroundColor(MailResourcesAsset.orangeColor)
-    }
-}
+public enum UIConstants {
+    public static let avatarColors = [
+        MailResourcesAsset.yellowColor,
+        MailResourcesAsset.coralColor,
+        MailResourcesAsset.grassColor,
+        MailResourcesAsset.fougereColor,
+        MailResourcesAsset.cobaltColor,
+        MailResourcesAsset.jeanColor,
+        MailResourcesAsset.tropicalColor,
+        MailResourcesAsset.mauveColor,
+        MailResourcesAsset.princeColor
+    ].map(\.color)
 
-struct NoNetworkView_Previews: PreviewProvider {
-    static var previews: some View {
-        NoNetworkView()
-    }
+    // TODO: Move the UI constants to this file
 }
