@@ -16,24 +16,28 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import MailCore
-import SwiftUI
+import Foundation
+import InfomaniakCore
+import Nuke
+import UIKit
 
-struct ContactImage: View {
-    let image: Image
-    let size: CGFloat
-
-    var body: some View {
-        image
-            .resizable()
-            .scaledToFit()
-            .frame(width: size, height: size)
-            .clipShape(Circle())
-    }
+public protocol AvatarDisplayable {
+    var avatarImageRequest: ImageRequest? { get }
+    var initials: String { get }
+    var initialsBackgroundColor: UIColor { get }
 }
 
-struct ContactImage_Previews: PreviewProvider {
-    static var previews: some View {
-        ContactImage(image: Image(systemName: "person"), size: 40)
+extension UserProfile: AvatarDisplayable {
+    public var avatarImageRequest: ImageRequest? {
+        guard let avatarURL = URL(string: avatar) else { return nil }
+        return ImageRequest(url: avatarURL)
+    }
+
+    public var initials: String {
+        displayName.initials
+    }
+
+    public var initialsBackgroundColor: UIColor {
+        UIColor.backgroundColor(from: id)
     }
 }
