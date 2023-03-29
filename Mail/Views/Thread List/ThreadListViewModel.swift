@@ -88,30 +88,13 @@ extension Thread {
     let mailboxManager: MailboxManager
 
     @Published var folder: Folder?
-    @Published var selectedThread: Thread? {
-        didSet {
-            guard !isCompact, !filteredThreads.isEmpty else { return }
-            if selectedThread == nil, let index = selectedThreadIndex {
-                let realIndex = min(index, filteredThreads.count - 1)
-                selectedThread = filteredThreads[realIndex]
-            } else if let thread = selectedThread, let index = filteredThreads.firstIndex(where: { $0.uid == thread.uid }) {
-                selectedThreadIndex = index
-            }
-        }
-    }
+    @Published var selectedThread: Thread?
 
     @Published var isLoadingPage = false
     @Published var lastUpdate: Date?
 
     // Used to know thread location
     private var selectedThreadIndex: Int?
-    var filteredThreads = [Thread]() {
-        didSet {
-            guard let thread = selectedThread,
-                  let index = filteredThreads.firstIndex(where: { $0.uid == thread.uid }) else { return }
-            selectedThreadIndex = index
-        }
-    }
 
     let moveSheet: MoveSheet
     let bottomSheet: ThreadBottomSheet
@@ -122,28 +105,6 @@ extension Thread {
 
     private var observationThreadToken: NotificationToken?
     private var observationLastUpdateToken: NotificationToken?
-
-    @Published var filter = Filter.all {
-        didSet {
-            /*Task {
-                observeChanges(animateInitialThreadChanges: true)
-                if let topThread = sections.first?.threads.first?.id {
-                    withAnimation {
-                        self.scrollViewProxy?.scrollTo(topThread, anchor: .top)
-                    }
-                }
-            }*/
-        }
-    }
-
-    var filterUnreadOn: Bool {
-        get {
-            return filter == .unseen
-        }
-        set {
-            filter = newValue ? .unseen : .all
-        }
-    }
 
     private let loadNextPageThreshold = 10
 
@@ -195,18 +156,13 @@ extension Thread {
             lastUpdate = folder.lastUpdate
         }
 
-        if isNewFolder && filter != .all {
-            filter = .all
-        } else {
-            observeChanges()
-            await fetchThreads()
-        }
+        observeChanges()
+        await fetchThreads()
     }
 
     func observeChanges(animateInitialThreadChanges: Bool = false) {
         observationLastUpdateToken?.invalidate()
         if let folder = folder?.thaw() {
-            let threadResults = folder.threads.sorted(by: \.date, ascending: false)
             observationLastUpdateToken = folder.observe(keyPaths: [\Folder.lastUpdate], on: .main) { [weak self] changes in
                 switch changes {
                 case .change(let folder, _):

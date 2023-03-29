@@ -69,6 +69,7 @@ struct ThreadListView: View {
     @State private var flushAlert: FlushAlertState?
     @ObservedSectionedResults(Thread.self,
                               sectionKeyPath: \.sectionDate) var threads
+    @State private var isFilteringUnread = false
 
     @LazyInjectService private var matomo: MatomoUtils
 
@@ -119,7 +120,7 @@ struct ThreadListView: View {
                              isConnected: networkMonitor.isConnected,
                              lastUpdate: viewModel.lastUpdate,
                              unreadCount: splitViewManager.selectedFolder?.unreadCount ?? 0,
-                             unreadFilterOn: $viewModel.filterUnreadOn)
+                             unreadFilterOn: $isFilteringUnread)
 
             ScrollViewReader { proxy in
                 List {
@@ -186,6 +187,15 @@ struct ThreadListView: View {
                 .appShadow()
             }
         }
+        .onChange(of: isFilteringUnread) { newValue in
+            withAnimation {
+                if newValue {
+                    _threads.where = { $0.folders.contains(viewModel.folder!) && $0.unseenMessages > 0 }
+                } else {
+                    _threads.where = { $0.folders.contains(viewModel.folder!) }
+                }
+            }
+        }
         .id("\(accentColor.rawValue) \(threadDensity.rawValue)")
         .backButtonDisplayMode(.minimal)
         .navigationBarThreadListStyle()
@@ -210,7 +220,7 @@ struct ThreadListView: View {
                                     multipleSelectionViewModel: multipleSelectionViewModel,
                                     selectAll: {
                                         withAnimation(.default.speed(2)) {
-                                            multipleSelectionViewModel.selectAll(threads: viewModel.filteredThreads)
+                                            //multipleSelectionViewModel.selectAll(threads: viewModel.filteredThreads)
                                         }
                                     }))
         .floatingActionButton(isEnabled: !multipleSelectionViewModel.isEnabled,
@@ -343,12 +353,12 @@ private struct ThreadListToolbar: ViewModifier {
 
                     ToolbarItemGroup(placement: .navigationBarTrailing) {
                         if multipleSelectionViewModel.isEnabled {
-                            Button(multipleSelectionViewModel.selectedItems.count == viewModel.filteredThreads.count
+                            /*Button(multipleSelectionViewModel.selectedItems.count == viewModel.filteredThreads.count
                                 ? MailResourcesStrings.Localizable.buttonUnselectAll
                                 : MailResourcesStrings.Localizable.buttonSelectAll) {
                                     selectAll()
                                 }
-                                .animation(nil, value: multipleSelectionViewModel.selectedItems)
+                                .animation(nil, value: multipleSelectionViewModel.selectedItems)*/
                         } else {
                             Button {
                                 splitViewManager.showSearch = true
