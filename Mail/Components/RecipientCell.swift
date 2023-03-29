@@ -19,11 +19,11 @@
 import MailCore
 import SwiftUI
 
-struct RecipientAutocompletionCell: View {
+struct RecipientCell: View {
     let recipient: Recipient
 
     var body: some View {
-        HStack {
+        HStack(spacing: 8) {
             AvatarView(avatarDisplayable: recipient, size: 40)
                 .accessibilityHidden(true)
 
@@ -38,9 +38,9 @@ struct RecipientAutocompletionCell: View {
                         .textStyle(.bodySecondary)
                 }
             }
-            Spacer()
         }
         .lineLimit(1)
+        .frame(maxWidth: .infinity, alignment: .leading)
         .accessibilityElement(children: .combine)
         .accessibilityAddTraits(.isButton)
     }
@@ -48,7 +48,7 @@ struct RecipientAutocompletionCell: View {
 
 struct RecipientAutocompletionCell_Previews: PreviewProvider {
     static var previews: some View {
-        RecipientAutocompletionCell(recipient: PreviewHelper.sampleRecipient1)
-        RecipientAutocompletionCell(recipient: PreviewHelper.sampleRecipient3)
+        RecipientCell(recipient: PreviewHelper.sampleRecipient1)
+        RecipientCell(recipient: PreviewHelper.sampleRecipient3)
     }
 }
