@@ -87,11 +87,10 @@ extension Thread {
 @MainActor class ThreadListViewModel: ObservableObject {
     let mailboxManager: MailboxManager
 
-    @Published var folder: Folder?
+    var folder: Folder
     @Published var selectedThread: Thread?
 
     @Published var isLoadingPage = false
-    @Published var lastUpdate: Date?
 
     // Used to know thread location
     private var selectedThreadIndex: Int?
@@ -106,16 +105,14 @@ extension Thread {
 
     init(
         mailboxManager: MailboxManager,
-        folder: Folder?,
+        folder: Folder,
         bottomSheet: ThreadBottomSheet,
         moveSheet: MoveSheet
     ) {
         self.mailboxManager = mailboxManager
         self.folder = folder
-        lastUpdate = folder?.lastUpdate
         self.bottomSheet = bottomSheet
         self.moveSheet = moveSheet
-        observeChanges()
     }
 
     func fetchThreads() async {
@@ -128,8 +125,6 @@ extension Thread {
         }
 
         await tryOrDisplayError {
-            guard let folder = folder else { return }
-
             try await mailboxManager.threads(folder: folder.freezeIfNeeded()) {
                 Task {
                     withAnimation {
@@ -144,30 +139,8 @@ extension Thread {
     }
 
     func updateThreads(with folder: Folder) async {
-        let isNewFolder = folder.id != self.folder?.id
         self.folder = folder
-        withAnimation {
-            lastUpdate = folder.lastUpdate
-        }
-
-        observeChanges()
         await fetchThreads()
-    }
-
-    func observeChanges(animateInitialThreadChanges: Bool = false) {
-        observationLastUpdateToken?.invalidate()
-        if let folder = folder?.thaw() {
-            observationLastUpdateToken = folder.observe(keyPaths: [\Folder.lastUpdate], on: .main) { [weak self] changes in
-                switch changes {
-                case .change(let folder, _):
-                    withAnimation {
-                        self?.lastUpdate = folder.lastUpdate
-                    }
-                default:
-                    break
-                }
-            }
-        }
     }
 
     // MARK: - Swipe actions
@@ -181,7 +154,7 @@ extension Thread {
         case .readUnread:
             try await mailboxManager.toggleRead(threads: [thread])
         case .move:
-            moveSheet.state = .move(folderId: folder?.id) { folder in
+            moveSheet.state = .move(folderId: folder.id) { folder in
                 guard thread.folder != folder else { return }
                 Task {
                     try await self.move(thread: thread, to: folder)
@@ -204,7 +177,7 @@ extension Thread {
     }
 
     private func toggleSpam(thread: Thread) async throws {
-        let destination: FolderRole = folder?.role == .spam ? .inbox : .spam
+        let destination: FolderRole = folder.role == .spam ? .inbox : .spam
         try await move(thread: thread, to: destination)
     }
 

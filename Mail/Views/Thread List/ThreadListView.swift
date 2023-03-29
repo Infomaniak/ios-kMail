@@ -69,6 +69,7 @@ struct ThreadListView: View {
     @State private var flushAlert: FlushAlertState?
     @ObservedSectionedResults(Thread.self, sectionKeyPath: \.sectionDate) var sectionedThreads
     @ObservedResults(Thread.self) var threads
+    @ObservedRealmObject var currentFolder: Folder
     @State private var isFilteringUnread = false
 
     @LazyInjectService private var matomo: MatomoUtils
@@ -76,11 +77,11 @@ struct ThreadListView: View {
     let isCompact: Bool
 
     private var shouldDisplayEmptyView: Bool {
-        viewModel.folder?.lastUpdate != nil && sectionedThreads.isEmpty && !viewModel.isLoadingPage
+        currentFolder.lastUpdate != nil && sectionedThreads.isEmpty && !viewModel.isLoadingPage
     }
 
     private var shouldDisplayNoNetworkView: Bool {
-        !networkMonitor.isConnected && viewModel.folder?.lastUpdate == nil
+        !networkMonitor.isConnected && currentFolder.lastUpdate == nil
     }
 
     init(mailboxManager: MailboxManager,
@@ -112,6 +113,8 @@ struct ThreadListView: View {
 
         _threads = ObservedResults(Thread.self, configuration: mailboxManager.realmConfiguration) { $0.folders.contains(folder) }
 
+        _currentFolder = ObservedRealmObject(wrappedValue: folder)
+
         UITableViewCell.appearance().focusEffect = .none
     }
 
@@ -119,7 +122,7 @@ struct ThreadListView: View {
         VStack(spacing: 0) {
             ThreadListHeader(isMultipleSelectionEnabled: multipleSelectionViewModel.isEnabled,
                              isConnected: networkMonitor.isConnected,
-                             lastUpdate: viewModel.lastUpdate,
+                             lastUpdate: currentFolder.lastUpdate,
                              unreadCount: splitViewManager.selectedFolder?.unreadCount ?? 0,
                              unreadFilterOn: $isFilteringUnread)
 
@@ -132,9 +135,8 @@ struct ThreadListView: View {
                 }
 
                 if !sectionedThreads.isEmpty,
-                   viewModel.folder?.role == .trash || viewModel.folder?.role == .spam,
-                   let folder = viewModel.folder {
-                    FlushFolderView(folder: folder, mailboxManager: viewModel.mailboxManager, flushAlert: $flushAlert)
+                   currentFolder.role == .trash || currentFolder.role == .spam {
+                    FlushFolderView(folder: currentFolder, mailboxManager: viewModel.mailboxManager, flushAlert: $flushAlert)
                         .listRowSeparator(.hidden)
                         .listRowInsets(.init())
                 }
@@ -167,7 +169,7 @@ struct ThreadListView: View {
             }
             .environment(\.defaultMinListRowHeight, 4)
             .emptyState(isEmpty: shouldDisplayEmptyView) {
-                switch viewModel.folder?.role {
+                switch currentFolder.role {
                 case .inbox:
                     EmptyStateView.emptyInbox
                 case .trash:
@@ -186,11 +188,11 @@ struct ThreadListView: View {
         .onChange(of: isFilteringUnread) { newValue in
             withAnimation {
                 if newValue {
-                    _sectionedThreads.where = { $0.folders.contains(viewModel.folder!) && $0.unseenMessages > 0 }
-                    _threads.where = { $0.folders.contains(viewModel.folder!) && $0.unseenMessages > 0 }
+                    _sectionedThreads.where = { $0.folders.contains(currentFolder) && $0.unseenMessages > 0 }
+                    _threads.where = { $0.folders.contains(currentFolder) && $0.unseenMessages > 0 }
                 } else {
-                    _sectionedThreads.where = { $0.folders.contains(viewModel.folder!) }
-                    _threads.where = { $0.folders.contains(viewModel.folder!) }
+                    _sectionedThreads.where = { $0.folders.contains(currentFolder) }
+                    _threads.where = { $0.folders.contains(currentFolder) }
                 }
             }
         }
