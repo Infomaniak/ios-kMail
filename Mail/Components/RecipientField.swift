@@ -25,25 +25,6 @@ import RealmSwift
 import SwiftUI
 import WrappingHStack
 
-struct RecipientChip: View {
-    let recipient: Recipient
-    let removeButtonTapped: () -> Void
-
-    @AppStorage(UserDefaults.shared.key(.accentColor)) private var accentColor = DefaultPreferences.accentColor
-
-    var body: some View {
-        Button(action: removeButtonTapped) {
-            Text(recipient.name.isEmpty ? recipient.email : recipient.name)
-                .textStyle(.bodyAccent)
-                .padding(.vertical, 6)
-                .lineLimit(1)
-        }
-        .padding(.leading, 12)
-        .padding(.trailing, 12)
-        .background(Capsule().fill(accentColor.secondary.swiftUIColor))
-    }
-}
-
 struct RecipientField: View {
     @Binding var recipients: RealmSwift.List<Recipient>
     @Binding var autocompletion: [Recipient]
