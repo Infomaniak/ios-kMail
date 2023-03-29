@@ -100,10 +100,6 @@ extension Thread {
     let bottomSheet: ThreadBottomSheet
     var globalBottomSheet: GlobalBottomSheet?
 
-    var scrollViewProxy: ScrollViewProxy?
-    var isCompact: Bool
-
-    private var observationThreadToken: NotificationToken?
     private var observationLastUpdateToken: NotificationToken?
 
     private let loadNextPageThreshold = 10
@@ -112,15 +108,13 @@ extension Thread {
         mailboxManager: MailboxManager,
         folder: Folder?,
         bottomSheet: ThreadBottomSheet,
-        moveSheet: MoveSheet,
-        isCompact: Bool
+        moveSheet: MoveSheet
     ) {
         self.mailboxManager = mailboxManager
         self.folder = folder
         lastUpdate = folder?.lastUpdate
         self.bottomSheet = bottomSheet
         self.moveSheet = moveSheet
-        self.isCompact = isCompact
         observeChanges()
     }
 

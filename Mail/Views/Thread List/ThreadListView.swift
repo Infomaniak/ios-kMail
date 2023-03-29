@@ -67,8 +67,8 @@ struct ThreadListView: View {
     @State private var isRefreshing = false
     @State private var firstLaunch = true
     @State private var flushAlert: FlushAlertState?
-    @ObservedSectionedResults(Thread.self,
-                              sectionKeyPath: \.sectionDate) var sectionedThreads
+    @ObservedSectionedResults(Thread.self, sectionKeyPath: \.sectionDate) var sectionedThreads
+    @ObservedResults(Thread.self) var threads
     @State private var isFilteringUnread = false
 
     @LazyInjectService private var matomo: MatomoUtils
@@ -82,8 +82,6 @@ struct ThreadListView: View {
     private var shouldDisplayNoNetworkView: Bool {
         !networkMonitor.isConnected && viewModel.folder?.lastUpdate == nil
     }
-
-    @ObservedResults(Thread.self) var threads
 
     init(mailboxManager: MailboxManager,
          folder: Folder?,
@@ -99,8 +97,7 @@ struct ThreadListView: View {
         _viewModel = StateObject(wrappedValue: ThreadListViewModel(mailboxManager: mailboxManager,
                                                                    folder: folder,
                                                                    bottomSheet: threadBottomSheet,
-                                                                   moveSheet: moveEmailSheet,
-                                                                   isCompact: isCompact))
+                                                                   moveSheet: moveEmailSheet))
         _multipleSelectionViewModel =
             StateObject(wrappedValue: ThreadListMultipleSelectionViewModel(mailboxManager: mailboxManager))
         self.isCompact = isCompact
@@ -113,8 +110,7 @@ struct ThreadListView: View {
             configuration: mailboxManager.realmConfiguration
         )
 
-        _threads = ObservedResults(Thread.self,
-                                   configuration: mailboxManager.realmConfiguration) { $0.folders.contains(folder!) }
+        _threads = ObservedResults(Thread.self, configuration: mailboxManager.realmConfiguration) { $0.folders.contains(folder!) }
 
         UITableViewCell.appearance().focusEffect = .none
     }
@@ -127,70 +123,65 @@ struct ThreadListView: View {
                              unreadCount: splitViewManager.selectedFolder?.unreadCount ?? 0,
                              unreadFilterOn: $isFilteringUnread)
 
-            ScrollViewReader { proxy in
-                List {
-                    if viewModel.isLoadingPage && !isRefreshing {
-                        ProgressView()
-                            .id(UUID())
-                            .frame(maxWidth: .infinity)
-                            .listRowSeparator(.hidden)
-                    }
+            List {
+                if viewModel.isLoadingPage && !isRefreshing {
+                    ProgressView()
+                        .id(UUID())
+                        .frame(maxWidth: .infinity)
+                        .listRowSeparator(.hidden)
+                }
 
-                    if !sectionedThreads.isEmpty,
-                       viewModel.folder?.role == .trash || viewModel.folder?.role == .spam,
-                       let folder = viewModel.folder {
-                        FlushFolderView(folder: folder, mailboxManager: viewModel.mailboxManager, flushAlert: $flushAlert)
-                            .listRowSeparator(.hidden)
-                            .listRowInsets(.init())
-                    }
+                if !sectionedThreads.isEmpty,
+                   viewModel.folder?.role == .trash || viewModel.folder?.role == .spam,
+                   let folder = viewModel.folder {
+                    FlushFolderView(folder: folder, mailboxManager: viewModel.mailboxManager, flushAlert: $flushAlert)
+                        .listRowSeparator(.hidden)
+                        .listRowInsets(.init())
+                }
 
-                    if threadDensity == .compact {
-                        ListVerticalInsetView(height: 4)
-                    }
+                if threadDensity == .compact {
+                    ListVerticalInsetView(height: 4)
+                }
 
-                    ForEach(sectionedThreads) { section in
-                        Section {
-                            ForEach(section) { thread in
-                                ThreadListCell(thread: thread,
-                                               viewModel: viewModel,
-                                               multipleSelectionViewModel: multipleSelectionViewModel,
-                                               threadDensity: threadDensity,
-                                               isSelected: multipleSelectionViewModel.selectedItems
-                                                   .contains { $0.id == thread.id },
-                                               editedMessageDraft: $editedMessageDraft)
-                                    .id(thread.id)
-                            }
-                        } header: {
-                            if threadDensity != .compact {
-                                Text(Thread.ReferenceDate.titleFromRawSectionKey(section.key))
-                                    .textStyle(.bodySmallSecondary)
-                            }
+                ForEach(sectionedThreads) { section in
+                    Section {
+                        ForEach(section) { thread in
+                            ThreadListCell(thread: thread,
+                                           viewModel: viewModel,
+                                           multipleSelectionViewModel: multipleSelectionViewModel,
+                                           threadDensity: threadDensity,
+                                           isSelected: multipleSelectionViewModel.selectedItems
+                                               .contains { $0.id == thread.id },
+                                           editedMessageDraft: $editedMessageDraft)
+                                .id(thread.id)
+                        }
+                    } header: {
+                        if threadDensity != .compact {
+                            Text(Thread.ReferenceDate.titleFromRawSectionKey(section.key))
+                                .textStyle(.bodySmallSecondary)
                         }
                     }
+                }
 
-                    ListVerticalInsetView(height: multipleSelectionViewModel.isEnabled ? 100 : 110)
-                }
-                .environment(\.defaultMinListRowHeight, 4)
-                .emptyState(isEmpty: shouldDisplayEmptyView) {
-                    switch viewModel.folder?.role {
-                    case .inbox:
-                        EmptyStateView.emptyInbox
-                    case .trash:
-                        EmptyStateView.emptyTrash
-                    default:
-                        EmptyStateView.emptyFolder
-                    }
-                }
-                .emptyState(isEmpty: shouldDisplayNoNetworkView) {
-                    EmptyStateView.noNetwork
-                }
-                .background(MailResourcesAsset.backgroundColor.swiftUIColor)
-                .listStyle(.plain)
-                .onAppear {
-                    viewModel.scrollViewProxy = proxy
-                }
-                .appShadow()
+                ListVerticalInsetView(height: multipleSelectionViewModel.isEnabled ? 100 : 110)
             }
+            .environment(\.defaultMinListRowHeight, 4)
+            .emptyState(isEmpty: shouldDisplayEmptyView) {
+                switch viewModel.folder?.role {
+                case .inbox:
+                    EmptyStateView.emptyInbox
+                case .trash:
+                    EmptyStateView.emptyTrash
+                default:
+                    EmptyStateView.emptyFolder
+                }
+            }
+            .emptyState(isEmpty: shouldDisplayNoNetworkView) {
+                EmptyStateView.noNetwork
+            }
+            .background(MailResourcesAsset.backgroundColor.swiftUIColor)
+            .listStyle(.plain)
+            .appShadow()
         }
         .onChange(of: isFilteringUnread) { newValue in
             withAnimation {
