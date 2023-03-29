@@ -112,7 +112,7 @@ public class Recipient: EmbeddedObject, Codable {
 
 extension Recipient: AvatarDisplayable {
     public var avatarImageRequest: ImageRequest? {
-        guard !isCurrentUser else {
+        guard !(isCurrentUser && isMe) else {
             return AccountManager.instance.currentAccount.user.avatarImageRequest
         }
         return contact?.avatarImageRequest
