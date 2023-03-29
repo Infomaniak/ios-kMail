@@ -67,13 +67,15 @@ struct ThreadListView: View {
     @State private var isRefreshing = false
     @State private var firstLaunch = true
     @State private var flushAlert: FlushAlertState?
+    @ObservedSectionedResults(Thread.self,
+                              sectionKeyPath: \.sectionDate) var threads
 
     @LazyInjectService private var matomo: MatomoUtils
 
     let isCompact: Bool
 
     private var shouldDisplayEmptyView: Bool {
-        viewModel.folder?.lastUpdate != nil && viewModel.sections.isEmpty && !viewModel.isLoadingPage
+        viewModel.folder?.lastUpdate != nil && threads.isEmpty && !viewModel.isLoadingPage
     }
 
     private var shouldDisplayNoNetworkView: Bool {
@@ -100,6 +102,14 @@ struct ThreadListView: View {
             StateObject(wrappedValue: ThreadListMultipleSelectionViewModel(mailboxManager: mailboxManager))
         self.isCompact = isCompact
 
+        _threads = ObservedSectionedResults(
+            Thread.self,
+            sectionKeyPath: \.sectionDate,
+            sortDescriptors: [SortDescriptor(keyPath: "date", ascending: false)],
+            where: { $0.folders.contains(folder!) },
+            configuration: mailboxManager.realmConfiguration
+        )
+
         UITableViewCell.appearance().focusEffect = .none
     }
 
@@ -120,7 +130,7 @@ struct ThreadListView: View {
                             .listRowSeparator(.hidden)
                     }
 
-                    if !viewModel.sections.isEmpty,
+                    if !threads.isEmpty,
                        viewModel.folder?.role == .trash || viewModel.folder?.role == .spam,
                        let folder = viewModel.folder {
                         FlushFolderView(folder: folder, mailboxManager: viewModel.mailboxManager, flushAlert: $flushAlert)
@@ -132,9 +142,9 @@ struct ThreadListView: View {
                         ListVerticalInsetView(height: 4)
                     }
 
-                    ForEach(viewModel.sections) { section in
+                    ForEach(threads) { section in
                         Section {
-                            ForEach(section.threads) { thread in
+                            ForEach(section) { thread in
                                 ThreadListCell(thread: thread,
                                                viewModel: viewModel,
                                                multipleSelectionViewModel: multipleSelectionViewModel,
@@ -146,7 +156,7 @@ struct ThreadListView: View {
                             }
                         } header: {
                             if threadDensity != .compact {
-                                Text(section.title)
+                                Text(Thread.ReferenceDate.titleFromRawSectionKey(section.key))
                                     .textStyle(.bodySmallSecondary)
                             }
                         }

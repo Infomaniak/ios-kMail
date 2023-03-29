@@ -50,7 +50,7 @@ public class Thread: Object, Decodable, Identifiable {
     @Persisted public var answered: Bool
     @Persisted public var forwarded: Bool
     @Persisted public var size: Int
-    @Persisted(originProperty: "threads") private var folders: LinkingObjects<Folder>
+    @Persisted(originProperty: "threads") public var folders: LinkingObjects<Folder>
     @Persisted public var fromSearch = false
 
     @Persisted public var isDraft = false

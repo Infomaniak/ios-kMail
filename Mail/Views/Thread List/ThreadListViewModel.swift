@@ -25,9 +25,9 @@ import SwiftUI
 
 typealias Thread = MailCore.Thread
 
-class DateSection: Identifiable {
-    enum ReferenceDate {
-        case today, yesterday, thisWeek, lastWeek, thisMonth, older(Date)
+extension Thread {
+    public enum ReferenceDate: String, CaseIterable {
+        case today, yesterday, thisWeek, lastWeek, thisMonth
 
         public var dateInterval: DateInterval {
             switch self {
@@ -41,46 +41,46 @@ class DateSection: Identifiable {
                 return .init(start: .lastWeek.startOfWeek, end: .lastWeek.endOfWeek)
             case .thisMonth:
                 return .init(start: .now.startOfMonth, end: .now.endOfMonth)
-            case let .older(date):
-                return .init(start: date.startOfMonth, end: date.endOfMonth)
             }
         }
-    }
 
-    var id: DateInterval { referenceDate.dateInterval }
+        public static func titleFromRawSectionKey(_ rawKey: String) -> String {
+            if let referenceDate = ReferenceDate(rawValue: rawKey) {
+                return referenceDate.title
+            }
 
-    var title: String {
-        switch referenceDate {
-        case .today:
-            return MailResourcesStrings.Localizable.threadListSectionToday
-        case .yesterday:
-            return MailResourcesStrings.Localizable.messageDetailsYesterday
-        case .thisWeek:
-            return MailResourcesStrings.Localizable.threadListSectionThisWeek
-        case .lastWeek:
-            return MailResourcesStrings.Localizable.threadListSectionLastWeek
-        case .thisMonth:
-            return MailResourcesStrings.Localizable.threadListSectionThisMonth
-        case let .older(date):
+            guard let timeInterval = Double(rawKey) else { return "" }
+            let referenceDate = Date(timeIntervalSince1970: timeInterval)
+
             var formatStyle = Date.FormatStyle.dateTime.month(.wide)
-            if !Calendar.current.isDate(date, equalTo: .now, toGranularity: .year) {
+            if !Calendar.current.isDate(referenceDate, equalTo: .now, toGranularity: .year) {
                 formatStyle = formatStyle.year()
             }
-            return date.formatted(formatStyle).capitalized
+            return referenceDate.formatted(formatStyle).capitalized
+        }
+
+        public var title: String {
+            switch self {
+            case .today:
+                return MailResourcesStrings.Localizable.threadListSectionToday
+            case .yesterday:
+                return MailResourcesStrings.Localizable.messageDetailsYesterday
+            case .thisWeek:
+                return MailResourcesStrings.Localizable.threadListSectionThisWeek
+            case .lastWeek:
+                return MailResourcesStrings.Localizable.threadListSectionLastWeek
+            case .thisMonth:
+                return MailResourcesStrings.Localizable.threadListSectionThisMonth
+            }
         }
     }
 
-    var threads = [Thread]()
-
-    private let referenceDate: ReferenceDate
-
-    init(thread: Thread) {
-        let sections: [ReferenceDate] = [.today, .yesterday, .thisWeek, .lastWeek, .thisMonth]
-        referenceDate = sections.first { $0.dateInterval.contains(thread.date) } ?? .older(thread.date)
-    }
-
-    func threadBelongsToSection(thread: Thread) -> Bool {
-        return referenceDate.dateInterval.contains(thread.date)
+    var sectionDate: String {
+        if let sectionDateInterval = (ReferenceDate.allCases.first { $0.dateInterval.contains(date) }) {
+            return sectionDateInterval.rawValue
+        } else {
+            return "\(date.startOfMonth.timeIntervalSince1970)"
+        }
     }
 }
 
@@ -88,7 +88,6 @@ class DateSection: Identifiable {
     let mailboxManager: MailboxManager
 
     @Published var folder: Folder?
-    @Published var sections = [DateSection]()
     @Published var selectedThread: Thread? {
         didSet {
             guard !isCompact, !filteredThreads.isEmpty else { return }
@@ -126,14 +125,14 @@ class DateSection: Identifiable {
 
     @Published var filter = Filter.all {
         didSet {
-            Task {
+            /*Task {
                 observeChanges(animateInitialThreadChanges: true)
                 if let topThread = sections.first?.threads.first?.id {
                     withAnimation {
                         self.scrollViewProxy?.scrollTo(topThread, anchor: .top)
                     }
                 }
-            }
+            }*/
         }
     }
 
@@ -162,9 +161,6 @@ class DateSection: Identifiable {
         self.moveSheet = moveSheet
         self.isCompact = isCompact
         observeChanges()
-        if let folder {
-            sortThreadsIntoSections(threads: Array(folder.threads.sorted(by: \.date, ascending: false).freezeIfNeeded()))
-        }
     }
 
     func fetchThreads() async {
@@ -208,30 +204,12 @@ class DateSection: Identifiable {
     }
 
     func observeChanges(animateInitialThreadChanges: Bool = false) {
-        observationThreadToken?.invalidate()
         observationLastUpdateToken?.invalidate()
         if let folder = folder?.thaw() {
             let threadResults = folder.threads.sorted(by: \.date, ascending: false)
-            observationThreadToken = threadResults.observe(on: .main) { [weak self] changes in
-                switch changes {
-                case let .initial(results):
-                    withAnimation(animateInitialThreadChanges ? .default : nil) {
-                        self?.sortThreadsIntoSections(threads: Array(results.freezeIfNeeded()))
-                    }
-                case let .update(results, _, _, _):
-                    if self?.filter != .all && results.count == 1 && self?.filter.accepts(thread: results[0]) != true {
-                        self?.filter = .all
-                    }
-                    withAnimation {
-                        self?.sortThreadsIntoSections(threads: Array(results.freezeIfNeeded()))
-                    }
-                case .error:
-                    break
-                }
-            }
             observationLastUpdateToken = folder.observe(keyPaths: [\Folder.lastUpdate], on: .main) { [weak self] changes in
                 switch changes {
-                case let .change(folder, _):
+                case .change(let folder, _):
                     withAnimation {
                         self?.lastUpdate = folder.lastUpdate
                     }
@@ -239,28 +217,6 @@ class DateSection: Identifiable {
                     break
                 }
             }
-        } else {
-            sections = []
-        }
-    }
-
-    func sortThreadsIntoSections(threads: [Thread]) {
-        var newSections = [DateSection]()
-
-        var currentSection: DateSection?
-        filteredThreads = threads.filter { $0.id == selectedThread?.id || filter.accepts(thread: $0) }
-        if filteredThreads.isEmpty && filterUnreadOn {
-            filterUnreadOn.toggle()
-        } else {
-            for thread in filteredThreads {
-                if currentSection?.threadBelongsToSection(thread: thread) != true {
-                    currentSection = DateSection(thread: thread)
-                    newSections.append(currentSection!)
-                }
-                currentSection?.threads.append(thread)
-            }
-
-            sections = newSections
         }
     }
 
