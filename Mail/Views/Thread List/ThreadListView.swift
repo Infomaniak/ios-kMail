@@ -84,7 +84,7 @@ struct ThreadListView: View {
     }
 
     init(mailboxManager: MailboxManager,
-         folder: Folder?,
+         folder: Folder,
          editedMessageDraft: Binding<Draft?>,
          messageReply: Binding<MessageReply?>,
          isCompact: Bool) {
@@ -106,11 +106,11 @@ struct ThreadListView: View {
             Thread.self,
             sectionKeyPath: \.sectionDate,
             sortDescriptors: [SortDescriptor(keyPath: "date", ascending: false)],
-            where: { $0.folders.contains(folder!) },
+            where: { $0.folders.contains(folder) },
             configuration: mailboxManager.realmConfiguration
         )
 
-        _threads = ObservedResults(Thread.self, configuration: mailboxManager.realmConfiguration) { $0.folders.contains(folder!) }
+        _threads = ObservedResults(Thread.self, configuration: mailboxManager.realmConfiguration) { $0.folders.contains(folder) }
 
         UITableViewCell.appearance().focusEffect = .none
     }

@@ -43,22 +43,24 @@ struct ThreadListManagerView: View {
                 EmptyView()
             }
             .opacity(0)
-            if splitViewManager.showSearch {
-                SearchView(
-                    mailboxManager: mailboxManager,
-                    folder: splitViewManager.selectedFolder,
-                    editedMessageDraft: $editedMessageDraft,
-                    messageReply: $messageReply,
-                    isCompact: isCompact
-                )
-            } else {
-                ThreadListView(
-                    mailboxManager: mailboxManager,
-                    folder: splitViewManager.selectedFolder,
-                    editedMessageDraft: $editedMessageDraft,
-                    messageReply: $messageReply,
-                    isCompact: isCompact
-                )
+            if let selectedFolder = splitViewManager.selectedFolder {
+                if splitViewManager.showSearch {
+                    SearchView(
+                        mailboxManager: mailboxManager,
+                        folder: selectedFolder,
+                        editedMessageDraft: $editedMessageDraft,
+                        messageReply: $messageReply,
+                        isCompact: isCompact
+                    )
+                } else {
+                    ThreadListView(
+                        mailboxManager: mailboxManager,
+                        folder: selectedFolder,
+                        editedMessageDraft: $editedMessageDraft,
+                        messageReply: $messageReply,
+                        isCompact: isCompact
+                    )
+                }
             }
         }
         .onReceive(NotificationCenter.default.publisher(for: .onUserTappedNotification)) { notification in
