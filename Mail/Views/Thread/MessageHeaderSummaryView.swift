@@ -92,7 +92,7 @@ struct MessageHeaderSummaryView: View {
                             .scaledToFit()
                             .frame(width: 22, height: 22)
                     }
-                    .tint(MailResourcesAsset.redActionColor)
+                    .tint(MailResourcesAsset.redColor)
                 }
             }
 

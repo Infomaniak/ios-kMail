@@ -81,7 +81,7 @@ struct CreateFolderView: View {
                 .padding(12)
                 .overlay(
                     RoundedRectangle(cornerRadius: 4)
-                        .stroke(error == nil ? MailResourcesAsset.textFieldBorder.swiftUIColor : MailResourcesAsset.redActionColor.swiftUIColor)
+                        .stroke(error == nil ? MailResourcesAsset.textFieldBorder.swiftUIColor : MailResourcesAsset.redColor.swiftUIColor)
                         .animation(.easeInOut, value: error)
                 )
                 .textStyle(.body)

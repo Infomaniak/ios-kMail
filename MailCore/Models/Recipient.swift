@@ -86,7 +86,7 @@ public class Recipient: EmbeddedObject, Codable {
     }()
 
     public var color: UIColor {
-        return contact?.color ?? UIColor.backgroundColor(from: email.hash)
+        return contact?.color ?? UIColor.backgroundColor(from: email.hash, with: UIConstants.avatarColors)
     }
 
     public lazy var initials: String = {
