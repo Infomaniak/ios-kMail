@@ -86,16 +86,16 @@ public class Thread: Object, Decodable, Identifiable {
         case 0:
             return MailResourcesStrings.Localizable.unknownRecipientTitle
         case 1:
-            return fromArray[0].title
+            return fromArray[0].formattedName
         default:
             let fromCount = min(fromArray.count, Constants.threadCellMaxRecipients)
-            return fromArray[0..<fromCount].map(\.shortName).joined(separator: ", ")
+            return fromArray[0..<fromCount].map(\.formattedShortName).joined(separator: ", ")
         }
     }
 
     public var formattedTo: String {
         guard let to = to.last else { return MailResourcesStrings.Localizable.unknownRecipientTitle }
-        return to.title
+        return to.formattedName
     }
 
     public var formattedSubject: String {

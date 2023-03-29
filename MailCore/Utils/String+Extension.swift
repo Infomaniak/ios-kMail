@@ -20,11 +20,9 @@ import Foundation
 
 public extension String {
     var removePunctuation: String {
-        if contains("@") {
-            return self
-        } else {
-            return components(separatedBy: CharacterSet.punctuationCharacters).joined(separator: "")
-        }
+        guard !contains("@") else { return self }
+        let sanitizedString = components(separatedBy: CharacterSet.punctuationCharacters).joined(separator: "")
+        return sanitizedString.isEmpty ? self : sanitizedString
     }
 
     func removePrefix(_ prefix: String) -> String {

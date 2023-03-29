@@ -122,7 +122,7 @@ struct RecipientLabel: View {
                             matomo.track(eventWithCategory: .message, name: "selectRecipient")
                             recipientTapped(recipient)
                         } label: {
-                            Text(recipient.name.isEmpty ? recipient.email : recipient.name.removePunctuation)
+                            Text(recipient.name.isEmpty ? recipient.email : recipient.name)
                                 .textStyle(.bodySmallAccent)
                                 .lineLimit(1)
                                 .layoutPriority(1)
