@@ -55,7 +55,7 @@ struct MessageHeaderSummaryView: View {
                         HStack(alignment: .firstTextBaseline, spacing: 8) {
                             VStack {
                                 ForEach(message.from, id: \.self) { recipient in
-                                    Text(recipient.title)
+                                    Text(recipient.formattedName)
                                         .lineLimit(1)
                                         .textStyle(.bodyMedium)
                                 }
@@ -69,7 +69,7 @@ struct MessageHeaderSummaryView: View {
 
                     if isMessageExpanded {
                         HStack {
-                            Text(message.recipients.map(\.title), format: .list(type: .and))
+                            Text(message.recipients.map(\.formattedName), format: .list(type: .and))
                                 .lineLimit(1)
                                 .textStyle(.bodySmallSecondary)
                             ChevronButton(isExpanded: $isHeaderExpanded)
@@ -92,7 +92,7 @@ struct MessageHeaderSummaryView: View {
                             .scaledToFit()
                             .frame(width: 22, height: 22)
                     }
-                    .tint(MailResourcesAsset.redActionColor)
+                    .tint(MailResourcesAsset.redColor)
                 }
             }
 

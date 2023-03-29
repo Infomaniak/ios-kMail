@@ -140,9 +140,9 @@ struct ActionView: View {
                     .resizable()
                     .scaledToFit()
                     .frame(width: 21, height: 21)
-                    .foregroundColor(action == .report ? MailResourcesAsset.princeActionColor : accentColor.primary)
+                    .foregroundColor(action == .report ? MailResourcesAsset.princeColor : accentColor.primary)
                 Text(action.title)
-                    .foregroundColor(action == .report ? MailResourcesAsset.princeActionColor : MailResourcesAsset.textPrimaryColor)
+                    .foregroundColor(action == .report ? MailResourcesAsset.princeColor : MailResourcesAsset.textPrimaryColor)
                     .textStyle(.body)
                     .frame(maxWidth: .infinity, alignment: .leading)
             }

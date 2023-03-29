@@ -17,28 +17,21 @@
  */
 
 import Foundation
-import InfomaniakCore
-import Nuke
-import SwiftUI
+import MailResources
 import UIKit
 
-public protocol AvatarDisplayable {
-    var avatarImageRequest: ImageRequest? { get }
-    var initials: String { get }
-    var initialsBackgroundColor: UIColor { get }
-}
+public enum UIConstants {
+    public static let avatarColors = [
+        MailResourcesAsset.yellowColor,
+        MailResourcesAsset.coralColor,
+        MailResourcesAsset.grassColor,
+        MailResourcesAsset.fougereColor,
+        MailResourcesAsset.cobaltColor,
+        MailResourcesAsset.jeanColor,
+        MailResourcesAsset.tropicalColor,
+        MailResourcesAsset.mauveColor,
+        MailResourcesAsset.princeColor
+    ].map(\.color)
 
-extension UserProfile: AvatarDisplayable {
-    public var avatarImageRequest: ImageRequest? {
-        guard let avatarURL = URL(string: avatar) else { return nil }
-        return ImageRequest(url: avatarURL)
-    }
-
-    public var initials: String {
-        displayName.initials
-    }
-
-    public var initialsBackgroundColor: UIColor {
-        UIColor.backgroundColor(from: id, with: UIConstants.avatarColors)
-    }
+    // TODO: Move the UI constants to this file
 }

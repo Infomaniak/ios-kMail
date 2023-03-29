@@ -47,15 +47,15 @@ public class MergedContact {
            let colorFromHex = UIColor(hex: remoteColorHex) {
             return colorFromHex
         } else {
-            return UIColor.backgroundColor(from: email.hash)
+            return UIColor.backgroundColor(from: email.hash, with: UIConstants.avatarColors)
         }
     }()
 
     public lazy var name: String = {
         if let local = local, let localName = contactFormatter.string(from: local) {
-            return localName.removePunctuation
+            return localName
         }
-        return remote?.name?.removePunctuation ?? ""
+        return remote?.name ?? ""
     }()
 
     public var isLocal: Bool {

@@ -219,8 +219,7 @@ enum SearchState {
         let autocompleteContacts = contactManager?.contacts(matching: searchValue) ?? []
         var autocompleteRecipients = autocompleteContacts.map { Recipient(email: $0.email, name: $0.name) }
         // Append typed email
-        let emailPredicate = NSPredicate(format: "SELF MATCHES %@", Constants.mailRegex)
-        if emailPredicate.evaluate(with: searchValue) && !contacts
+        if Constants.emailPredicate.evaluate(with: searchValue) && !contacts
             .contains(where: { $0.email.caseInsensitiveCompare(searchValue) == .orderedSame }) {
             autocompleteRecipients.append(Recipient(email: searchValue, name: ""))
         }
