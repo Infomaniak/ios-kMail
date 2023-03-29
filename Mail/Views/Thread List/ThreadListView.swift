@@ -68,7 +68,7 @@ struct ThreadListView: View {
     @State private var firstLaunch = true
     @State private var flushAlert: FlushAlertState?
     @ObservedSectionedResults(Thread.self,
-                              sectionKeyPath: \.sectionDate) var threads
+                              sectionKeyPath: \.sectionDate) var sectionedThreads
     @State private var isFilteringUnread = false
 
     @LazyInjectService private var matomo: MatomoUtils
@@ -76,7 +76,7 @@ struct ThreadListView: View {
     let isCompact: Bool
 
     private var shouldDisplayEmptyView: Bool {
-        viewModel.folder?.lastUpdate != nil && threads.isEmpty && !viewModel.isLoadingPage
+        viewModel.folder?.lastUpdate != nil && sectionedThreads.isEmpty && !viewModel.isLoadingPage
     }
 
     private var shouldDisplayNoNetworkView: Bool {
@@ -103,7 +103,7 @@ struct ThreadListView: View {
             StateObject(wrappedValue: ThreadListMultipleSelectionViewModel(mailboxManager: mailboxManager))
         self.isCompact = isCompact
 
-        _threads = ObservedSectionedResults(
+        _sectionedThreads = ObservedSectionedResults(
             Thread.self,
             sectionKeyPath: \.sectionDate,
             sortDescriptors: [SortDescriptor(keyPath: "date", ascending: false)],
@@ -131,7 +131,7 @@ struct ThreadListView: View {
                             .listRowSeparator(.hidden)
                     }
 
-                    if !threads.isEmpty,
+                    if !sectionedThreads.isEmpty,
                        viewModel.folder?.role == .trash || viewModel.folder?.role == .spam,
                        let folder = viewModel.folder {
                         FlushFolderView(folder: folder, mailboxManager: viewModel.mailboxManager, flushAlert: $flushAlert)
@@ -143,7 +143,7 @@ struct ThreadListView: View {
                         ListVerticalInsetView(height: 4)
                     }
 
-                    ForEach(threads) { section in
+                    ForEach(sectionedThreads) { section in
                         Section {
                             ForEach(section) { thread in
                                 ThreadListCell(thread: thread,
@@ -190,9 +190,9 @@ struct ThreadListView: View {
         .onChange(of: isFilteringUnread) { newValue in
             withAnimation {
                 if newValue {
-                    _threads.where = { $0.folders.contains(viewModel.folder!) && $0.unseenMessages > 0 }
+                    _sectionedThreads.where = { $0.folders.contains(viewModel.folder!) && $0.unseenMessages > 0 }
                 } else {
-                    _threads.where = { $0.folders.contains(viewModel.folder!) }
+                    _sectionedThreads.where = { $0.folders.contains(viewModel.folder!) }
                 }
             }
         }
