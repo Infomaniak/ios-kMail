@@ -23,6 +23,7 @@ import InfomaniakDI
 import MailCore
 import MailResources
 import SwiftUI
+import RealmSwift
 
 @MainActor class ThreadListMultipleSelectionViewModel: ObservableObject {
     let mailboxManager: MailboxManager
@@ -56,7 +57,7 @@ import SwiftUI
         setActions()
     }
 
-    func selectAll(threads: [Thread]) {
+    func selectAll(threads: Results<Thread>) {
         feedbackGenerator.prepare()
         feedbackGenerator.impactOccurred(intensity: 0.6)
 

@@ -83,6 +83,8 @@ struct ThreadListView: View {
         !networkMonitor.isConnected && viewModel.folder?.lastUpdate == nil
     }
 
+    @ObservedResults(Thread.self) var threads
+
     init(mailboxManager: MailboxManager,
          folder: Folder?,
          editedMessageDraft: Binding<Draft?>,
@@ -110,6 +112,9 @@ struct ThreadListView: View {
             where: { $0.folders.contains(folder!) },
             configuration: mailboxManager.realmConfiguration
         )
+
+        _threads = ObservedResults(Thread.self,
+                                   configuration: mailboxManager.realmConfiguration) { $0.folders.contains(folder!) }
 
         UITableViewCell.appearance().focusEffect = .none
     }
@@ -191,8 +196,10 @@ struct ThreadListView: View {
             withAnimation {
                 if newValue {
                     _sectionedThreads.where = { $0.folders.contains(viewModel.folder!) && $0.unseenMessages > 0 }
+                    _threads.where = { $0.folders.contains(viewModel.folder!) && $0.unseenMessages > 0 }
                 } else {
                     _sectionedThreads.where = { $0.folders.contains(viewModel.folder!) }
+                    _threads.where = { $0.folders.contains(viewModel.folder!) }
                 }
             }
         }
@@ -216,11 +223,11 @@ struct ThreadListView: View {
         .modifier(ThreadListToolbar(isCompact: isCompact,
                                     flushAlert: $flushAlert,
                                     bottomSheet: bottomSheet,
-                                    viewModel: viewModel,
+                                    threads: threads,
                                     multipleSelectionViewModel: multipleSelectionViewModel,
                                     selectAll: {
                                         withAnimation(.default.speed(2)) {
-                                            //multipleSelectionViewModel.selectAll(threads: viewModel.filteredThreads)
+                                            multipleSelectionViewModel.selectAll(threads: threads)
                                         }
                                     }))
         .floatingActionButton(isEnabled: !multipleSelectionViewModel.isEnabled,
@@ -304,7 +311,7 @@ private struct ThreadListToolbar: ViewModifier {
     @Binding var flushAlert: FlushAlertState?
 
     @ObservedObject var bottomSheet: ThreadBottomSheet
-    @ObservedObject var viewModel: ThreadListViewModel
+    let threads: Results<Thread>
     @ObservedObject var multipleSelectionViewModel: ThreadListMultipleSelectionViewModel
 
     @State private var isShowingSwitchAccount = false
@@ -353,12 +360,12 @@ private struct ThreadListToolbar: ViewModifier {
 
                     ToolbarItemGroup(placement: .navigationBarTrailing) {
                         if multipleSelectionViewModel.isEnabled {
-                            /*Button(multipleSelectionViewModel.selectedItems.count == viewModel.filteredThreads.count
+                            Button(multipleSelectionViewModel.selectedItems.count == threads.count
                                 ? MailResourcesStrings.Localizable.buttonUnselectAll
                                 : MailResourcesStrings.Localizable.buttonSelectAll) {
                                     selectAll()
                                 }
-                                .animation(nil, value: multipleSelectionViewModel.selectedItems)*/
+                                .animation(nil, value: multipleSelectionViewModel.selectedItems)
                         } else {
                             Button {
                                 splitViewManager.showSearch = true
