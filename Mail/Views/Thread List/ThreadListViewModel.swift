@@ -41,7 +41,7 @@ class DateSection: Identifiable {
                 return .init(start: .lastWeek.startOfWeek, end: .lastWeek.endOfWeek)
             case .thisMonth:
                 return .init(start: .now.startOfMonth, end: .now.endOfMonth)
-            case let .older(date):
+            case .older(let date):
                 return .init(start: date.startOfMonth, end: date.endOfMonth)
             }
         }
@@ -61,7 +61,7 @@ class DateSection: Identifiable {
             return MailResourcesStrings.Localizable.threadListSectionLastWeek
         case .thisMonth:
             return MailResourcesStrings.Localizable.threadListSectionThisMonth
-        case let .older(date):
+        case .older(let date):
             var formatStyle = Date.FormatStyle.dateTime.month(.wide)
             if !Calendar.current.isDate(date, equalTo: .now, toGranularity: .year) {
                 formatStyle = formatStyle.year()
@@ -162,7 +162,7 @@ class DateSection: Identifiable {
         self.moveSheet = moveSheet
         self.isCompact = isCompact
         observeChanges()
-        }
+    }
 
     func fetchThreads() async {
         guard !isLoadingPage else {
