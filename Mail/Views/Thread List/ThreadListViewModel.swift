@@ -123,6 +123,7 @@ class DateSection: Identifiable {
 
     private var observationThreadToken: NotificationToken?
     private var observationLastUpdateToken: NotificationToken?
+    private let observeQueue = DispatchQueue(label: "com.infomaniak.thread-results", qos: .userInteractive)
 
     @Published var filter = Filter.all {
         didSet {
@@ -218,22 +219,30 @@ class DateSection: Identifiable {
             threadResults = folder.threads.sorted(by: \.date, ascending: false)
         }
 
-        observationThreadToken = threadResults.observe(on: .main) { [weak self] changes in
+        observationThreadToken = threadResults.observe(on: observeQueue) { [weak self] changes in
             switch changes {
             case .initial(let results):
                 let filteredThreads = Array(results.freezeIfNeeded())
-                self?.filteredThreads = filteredThreads
-                withAnimation(animateInitialThreadChanges ? .default : nil) {
-                    self?.sortThreadsIntoSections(threads: filteredThreads)
+                guard let newSections = self?.sortThreadsIntoSections(threads: filteredThreads) else { return }
+
+                DispatchQueue.main.sync {
+                    self?.filteredThreads = filteredThreads
+                    withAnimation(animateInitialThreadChanges ? .default : nil) {
+                        self?.sections = newSections
+                    }
                 }
             case .update(let results, _, _, _):
                 let filteredThreads = Array(results.freezeIfNeeded())
-                self?.filteredThreads = filteredThreads
-                if self?.filter != .all && results.count == 1 && self?.filter.accepts(thread: results[0]) != true {
-                    self?.filter = .all
-                }
-                withAnimation {
-                    self?.sortThreadsIntoSections(threads: filteredThreads)
+                guard let newSections = self?.sortThreadsIntoSections(threads: filteredThreads) else { return }
+
+                DispatchQueue.main.sync {
+                    self?.filteredThreads = filteredThreads
+                    if self?.filter != .all && results.count == 1 && self?.filter.accepts(thread: results[0]) != true {
+                        self?.filter = .all
+                    }
+                    withAnimation {
+                        self?.sections = newSections
+                    }
                 }
             case .error:
                 break
@@ -251,12 +260,15 @@ class DateSection: Identifiable {
         }
     }
 
-    func sortThreadsIntoSections(threads: [Thread]) {
+    private func sortThreadsIntoSections(threads: [Thread]) -> [DateSection]? {
         var newSections = [DateSection]()
 
         var currentSection: DateSection?
         if threads.isEmpty && filterUnreadOn {
-            filterUnreadOn.toggle()
+            DispatchQueue.main.sync {
+                filterUnreadOn.toggle()
+            }
+            return nil
         } else {
             for thread in threads {
                 if currentSection?.threadBelongsToSection(thread: thread) != true {
@@ -266,7 +278,7 @@ class DateSection: Identifiable {
                 currentSection?.threads.append(thread)
             }
 
-            sections = newSections
+            return newSections
         }
     }
 
