@@ -41,7 +41,7 @@ struct MailButtonStyle: ButtonStyle {
             .padding(.vertical, 18)
             .padding(.horizontal, 20)
             .background(largeBackground(configuration: configuration))
-            .clipShape(RoundedRectangle(cornerRadius: Constants.buttonsRadius))
+            .clipShape(RoundedRectangle(cornerRadius: UIConstants.buttonsRadius))
             .brightness(largeBrightness(configuration: configuration))
     }
 

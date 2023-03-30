@@ -27,7 +27,7 @@ struct IKDivider: View {
         Divider()
             .frame(height: 1)
             .overlay(MailResourcesAsset.elementsColor.swiftUIColor)
-            .padding(.horizontal, withPadding ? Constants.menuDrawerHorizontalPadding : 0)
+            .padding(.horizontal, withPadding ? UIConstants.menuDrawerHorizontalPadding : 0)
             .padding(.bottom, withPadding ? 8 : 0)
     }
 }

@@ -31,7 +31,7 @@ struct MailButtonFullWidthKey: EnvironmentKey {
 }
 
 struct MailButtonIconSizeKey: EnvironmentKey {
-    static var defaultValue: CGFloat = Constants.buttonsIconSize
+    static var defaultValue: CGFloat = UIConstants.buttonsIconSize
 }
 
 struct MailButtonLoadingKey: EnvironmentKey {

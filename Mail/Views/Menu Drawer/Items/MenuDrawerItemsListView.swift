@@ -74,7 +74,7 @@ struct MenuDrawerItemsListView: View {
             }
         }
         .padding(.bottom, 16)
-        .padding(.horizontal, Constants.menuDrawerHorizontalPadding)
+        .padding(.horizontal, UIConstants.menuDrawerHorizontalPadding)
     }
 }
 

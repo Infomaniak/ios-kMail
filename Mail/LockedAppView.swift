@@ -40,14 +40,14 @@ struct LockedAppView: View {
                 MailResourcesAsset.logoText.swiftUIImage
                     .resizable()
                     .scaledToFit()
-                    .frame(height: Constants.onboardingLogoHeight)
+                    .frame(height: UIConstants.onboardingLogoHeight)
 
                 Spacer()
 
                 MailButton(label: MailResourcesStrings.Localizable.buttonUnlock, action: unlockApp)
                     .mailButtonFullWidth(true)
             }
-            .padding(.top, Constants.onboardingLogoPaddingTop)
+            .padding(.top, UIConstants.onboardingLogoPaddingTop)
             .padding(.bottom, 40)
         }
         .padding(.horizontal, 24)

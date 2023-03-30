@@ -32,7 +32,7 @@ struct MenuDrawerItemCell: View {
             matomo.track(eventWithCategory: .menuDrawer, name: content.matomoName)
             content.action()
         } label: {
-            HStack(spacing: Constants.menuDrawerHorizontalItemSpacing) {
+            HStack(spacing: UIConstants.menuDrawerHorizontalItemSpacing) {
                 content.icon.swiftUIImage
                     .resizable()
                     .scaledToFit()

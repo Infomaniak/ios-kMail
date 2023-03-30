@@ -317,7 +317,7 @@ private struct ThreadListToolbar: ViewModifier {
                                     MailResourcesAsset.burger.swiftUIImage
                                         .resizable()
                                         .scaledToFit()
-                                        .frame(width: Constants.navbarIconSize, height: Constants.navbarIconSize)
+                                        .frame(width: UIConstants.navbarIconSize, height: UIConstants.navbarIconSize)
                                 }
                             }
                         }
@@ -346,7 +346,7 @@ private struct ThreadListToolbar: ViewModifier {
                                 MailResourcesAsset.search.swiftUIImage
                                     .resizable()
                                     .scaledToFit()
-                                    .frame(width: Constants.navbarIconSize, height: Constants.navbarIconSize)
+                                    .frame(width: UIConstants.navbarIconSize, height: UIConstants.navbarIconSize)
                             }
 
                             Button {
