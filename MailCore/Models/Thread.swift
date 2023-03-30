@@ -89,7 +89,7 @@ public class Thread: Object, Decodable, Identifiable {
             return fromArray[0].formattedName
         default:
             let fromCount = min(fromArray.count, Constants.threadCellMaxRecipients)
-            return fromArray[0..<fromCount].map(\.formattedShortName).joined(separator: ", ")
+            return fromArray[0 ..< fromCount].map(\.formattedShortName).joined(separator: ", ")
         }
     }
 
@@ -251,6 +251,21 @@ public class Thread: Object, Decodable, Identifiable {
 
 public enum Filter: String {
     case all, seen, unseen, starred, unstarred
+
+    public var predicate: String? {
+        switch self {
+        case .all:
+            return nil
+        case .seen:
+            return "unseenMessages == 0"
+        case .unseen:
+            return "unseenMessages > 0"
+        case .starred:
+            return "flagged == TRUE"
+        case .unstarred:
+            return "flagged == FALSE"
+        }
+    }
 
     public func accepts(thread: Thread) -> Bool {
         switch self {

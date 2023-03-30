@@ -210,45 +210,55 @@ class DateSection: Identifiable {
             return
         }
 
-            let threadResults = folder.threads.sorted(by: \.date, ascending: false)
-            observationThreadToken = threadResults.observe(on: .main) { [weak self] changes in
-                switch changes {
-                case .initial(let results):
-                    withAnimation(animateInitialThreadChanges ? .default : nil) {
-                        self?.sortThreadsIntoSections(threads: Array(results.freezeIfNeeded()))
-                    }
-                case .update(let results, _, _, _):
-                    if self?.filter != .all && results.count == 1 && self?.filter.accepts(thread: results[0]) != true {
-                        self?.filter = .all
-                    }
-                    withAnimation {
-                        self?.sortThreadsIntoSections(threads: Array(results.freezeIfNeeded()))
-                    }
-                case .error:
-                    break
+        let threadResults: Results<Thread>
+        if let predicate = filter.predicate {
+            threadResults = folder.threads.filter(predicate + " OR uid == %@", selectedThread?.uid ?? "")
+                .sorted(by: \.date, ascending: false)
+        } else {
+            threadResults = folder.threads.sorted(by: \.date, ascending: false)
+        }
+
+        observationThreadToken = threadResults.observe(on: .main) { [weak self] changes in
+            switch changes {
+            case .initial(let results):
+                let filteredThreads = Array(results.freezeIfNeeded())
+                self?.filteredThreads = filteredThreads
+                withAnimation(animateInitialThreadChanges ? .default : nil) {
+                    self?.sortThreadsIntoSections(threads: filteredThreads)
                 }
-            }
-            observationLastUpdateToken = folder.observe(keyPaths: [\Folder.lastUpdate], on: .main) { [weak self] changes in
-                switch changes {
-                case .change(let folder, _):
-                    withAnimation {
-                        self?.lastUpdate = folder.lastUpdate
-                    }
-                default:
-                    break
+            case .update(let results, _, _, _):
+                let filteredThreads = Array(results.freezeIfNeeded())
+                self?.filteredThreads = filteredThreads
+                if self?.filter != .all && results.count == 1 && self?.filter.accepts(thread: results[0]) != true {
+                    self?.filter = .all
                 }
+                withAnimation {
+                    self?.sortThreadsIntoSections(threads: filteredThreads)
+                }
+            case .error:
+                break
             }
+        }
+        observationLastUpdateToken = folder.observe(keyPaths: [\Folder.lastUpdate], on: .main) { [weak self] changes in
+            switch changes {
+            case .change(let folder, _):
+                withAnimation {
+                    self?.lastUpdate = folder.lastUpdate
+                }
+            default:
+                break
+            }
+        }
     }
 
     func sortThreadsIntoSections(threads: [Thread]) {
         var newSections = [DateSection]()
 
         var currentSection: DateSection?
-        filteredThreads = threads.filter { $0.id == selectedThread?.id || filter.accepts(thread: $0) }
-        if filteredThreads.isEmpty && filterUnreadOn {
+        if threads.isEmpty && filterUnreadOn {
             filterUnreadOn.toggle()
         } else {
-            for thread in filteredThreads {
+            for thread in threads {
                 if currentSection?.threadBelongsToSection(thread: thread) != true {
                     currentSection = DateSection(thread: thread)
                     newSections.append(currentSection!)
