@@ -22,21 +22,21 @@ import RealmSwift
 import SwiftUI
 
 struct MessageBodyView: View {
-    @ObservedRealmObject var message: Message
+    @Binding var presentableBody: PresentableBody
+
     @State var model = WebViewModel()
     @State private var webViewShortHeight: CGFloat = .zero
     @State private var webViewCompleteHeight: CGFloat = .zero
 
-    @State private var bodyQuote = MessageBodyQuote(messageBody: "", quote: nil)
     @State private var showBlockQuote = false
 
-    init(message: Message) {
-        self.message = message
+    init(body: Binding<PresentableBody>) {
+        _presentableBody = body
     }
 
     var body: some View {
         VStack {
-            if let body = message.body {
+            if let body = presentableBody.body {
                 if body.type == "text/plain" {
                     Text(body.value ?? "")
                         .textStyle(.body)
@@ -48,23 +48,22 @@ struct MessageBodyView: View {
                             model: $model,
                             shortHeight: $webViewShortHeight,
                             completeHeight: $webViewCompleteHeight,
+                            withQuote: $showBlockQuote,
                             proxy: proxy
                         )
                     }
                     .frame(height: showBlockQuote ? webViewCompleteHeight : webViewShortHeight)
                     .onAppear {
-                        prepareBody()
-                        loadBody(body)
+                        loadBody()
                     }
-                    .onChange(of: message.body) { _ in
-                        prepareBody()
-                        loadBody(body)
+                    .onChange(of: presentableBody) { _ in
+                        loadBody()
                     }
                     .onChange(of: showBlockQuote) { _ in
-                        loadBody(body)
+                        loadBody()
                     }
 
-                    if bodyQuote.quote != nil {
+                    if presentableBody.quote != nil {
                         MailButton(label: showBlockQuote
                             ? MailResourcesStrings.Localizable.messageHideQuotedText
                             : MailResourcesStrings.Localizable.messageShowQuotedText) {
@@ -82,20 +81,13 @@ struct MessageBodyView: View {
         }
     }
 
-    private func prepareBody() {
-        guard let messageBody = message.body?.value,
-              let messageBodyQuote = MessageBodyUtils.splitBodyAndQuote(messageBody: messageBody)
-        else { return }
-        bodyQuote = messageBodyQuote
-    }
-
-    private func loadBody(_ body: Body) {
-        model.loadHTMLString(value: showBlockQuote ? body.value : bodyQuote.messageBody)
+    private func loadBody() {
+        model.loadHTMLString(value: showBlockQuote ? presentableBody.body?.value : presentableBody.compactBody)
     }
 }
 
 struct MessageBodyView_Previews: PreviewProvider {
     static var previews: some View {
-        MessageBodyView(message: PreviewHelper.sampleMessage)
+        MessageBodyView(body: .constant(PreviewHelper.samplePresentableBody))
     }
 }

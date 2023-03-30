@@ -27,16 +27,16 @@ import SwiftUI
 
 struct MessageView: View {
     @ObservedRealmObject var message: Message
+    @State var presentableBody: PresentableBody
     @EnvironmentObject var mailboxManager: MailboxManager
     @State var isHeaderExpanded = false
     @State var isMessageExpanded: Bool
-
-    @State private var htmlLoaded = false
 
     @LazyInjectService var matomo: MatomoUtils
 
     init(message: Message, isMessageExpanded: Bool = false) {
         self.message = message
+        presentableBody = PresentableBody(message: message)
         self.isMessageExpanded = isMessageExpanded
     }
 
@@ -55,7 +55,7 @@ struct MessageView: View {
                         AttachmentsView(message: message)
                             .padding(.top, 24)
                     }
-                    MessageBodyView(message: message)
+                    MessageBodyView(body: $presentableBody)
                         .padding(.top, 16)
                 }
             }
@@ -63,6 +63,21 @@ struct MessageView: View {
             .task {
                 if self.message.shouldComplete {
                     await fetchMessage()
+                } else {
+                    prepareBody() // Error : body still nil
+                    await tryOrDisplayError {
+                        try await insertInlineAttachments()
+                    }
+                }
+            }
+            .onChange(of: message.fullyDownloaded) { _ in
+                if message.fullyDownloaded == true {
+                    Task {
+                        prepareBody()
+                        await tryOrDisplayError {
+                            try await insertInlineAttachments()
+                        }
+                    }
                 }
             }
         }
@@ -71,6 +86,34 @@ struct MessageView: View {
     @MainActor private func fetchMessage() async {
         await tryOrDisplayError {
             try await mailboxManager.message(message: message)
+        }
+    }
+
+    private func prepareBody() {
+        guard let messageBody = message.body else { return }
+        presentableBody.body = messageBody.detached()
+
+        guard let messageBodyQuote = MessageBodyUtils.splitBodyAndQuote(messageBody: messageBody.value ?? "")
+        else { return }
+        presentableBody.compactBody = messageBodyQuote.messageBody
+        presentableBody.quote = messageBodyQuote.quote
+    }
+
+    private func insertInlineAttachments() async throws {
+        let attachmentsArray = message.attachments.filter { $0.disposition == .inline }.toArray()
+        for attachment in attachmentsArray {
+            if let contentId = attachment.contentId {
+                let attachmentData = try await mailboxManager.attachmentData(attachment: attachment)
+
+                presentableBody.body?.value = presentableBody.body?.value?.replacingOccurrences(
+                    of: "cid:\(contentId)",
+                    with: "data:\(attachment.mimeType);base64,\(attachmentData.base64EncodedString())"
+                )
+                presentableBody.compactBody = presentableBody.compactBody?.replacingOccurrences(
+                    of: "cid:\(contentId)",
+                    with: "data:\(attachment.mimeType);base64,\(attachmentData.base64EncodedString())"
+                )
+            }
         }
     }
 }

@@ -26,6 +26,7 @@ struct WebView: UIViewRepresentable {
     @Binding var model: WebViewModel
     @Binding var shortHeight: CGFloat
     @Binding var completeHeight: CGFloat
+    @Binding var withQuote: Bool
     var proxy: GeometryProxy
 
     var webView: WKWebView {
@@ -41,10 +42,12 @@ struct WebView: UIViewRepresentable {
         }
 
         private func updateHeight(height: CGFloat) {
-            if parent.shortHeight == .zero {
-                withAnimation {
-                    parent.shortHeight = height
-                    parent.completeHeight = height
+            if !parent.withQuote {
+                if parent.shortHeight < height {
+                    withAnimation {
+                        parent.shortHeight = height
+                        parent.completeHeight = height
+                    }
                 }
             } else if parent.completeHeight < height {
                 parent.completeHeight = height

@@ -500,7 +500,7 @@ public class MailboxManager: ObservableObject {
             var predicates: [NSPredicate] = []
             for searchFilter in searchFilters {
                 switch searchFilter {
-                case .filter(let filter):
+                case let .filter(filter):
                     switch filter {
                     case .seen:
                         predicates.append(NSPredicate(format: "seen = true"))
@@ -513,19 +513,19 @@ public class MailboxManager: ObservableObject {
                     default:
                         break
                     }
-                case .from(let from):
+                case let .from(from):
                     predicates.append(NSPredicate(format: "ANY from.email = %@", from))
-                case .contains(let content):
+                case let .contains(content):
                     predicates
                         .append(
                             NSPredicate(format: "body.value CONTAINS[c] %@ OR subject CONTAINS[c] %@ OR preview CONTAINS[c] %@",
                                         content, content, content)
                         )
-                case .everywhere(let searchEverywhere):
+                case let .everywhere(searchEverywhere):
                     if !searchEverywhere {
                         predicates.append(NSPredicate(format: "folderId = %@", filterFolderId))
                     }
-                case .attachments(let searchAttachments):
+                case let .attachments(searchAttachments):
                     if searchAttachments {
                         predicates.append(NSPredicate(format: "hasAttachments = true"))
                     }
@@ -818,7 +818,6 @@ public class MailboxManager: ObservableObject {
     public func message(message: Message) async throws {
         // Get from API
         let completedMessage = try await apiFetcher.message(message: message)
-        completedMessage.insertInlineAttachment()
         completedMessage.fullyDownloaded = true
 
         await backgroundRealm.execute { realm in
@@ -1118,7 +1117,7 @@ public extension Realm {
 
     func safeWrite(_ block: () throws -> Void) throws {
         #if DEBUG
-        dispatchPrecondition(condition: .notOnQueue(.main))
+            dispatchPrecondition(condition: .notOnQueue(.main))
         #endif
 
         if isInWriteTransaction {
