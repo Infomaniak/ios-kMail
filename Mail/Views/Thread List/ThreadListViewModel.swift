@@ -45,31 +45,31 @@ class DateSection: Identifiable {
                 return .init(start: date.startOfMonth, end: date.endOfMonth)
             }
         }
-    }
 
-    var id: DateInterval { referenceDate.dateInterval }
-
-    var title: String {
-        switch referenceDate {
-        case .today:
-            return MailResourcesStrings.Localizable.threadListSectionToday
-        case .yesterday:
-            return MailResourcesStrings.Localizable.messageDetailsYesterday
-        case .thisWeek:
-            return MailResourcesStrings.Localizable.threadListSectionThisWeek
-        case .lastWeek:
-            return MailResourcesStrings.Localizable.threadListSectionLastWeek
-        case .thisMonth:
-            return MailResourcesStrings.Localizable.threadListSectionThisMonth
-        case .older(let date):
-            var formatStyle = Date.FormatStyle.dateTime.month(.wide)
-            if !Calendar.current.isDate(date, equalTo: .now, toGranularity: .year) {
-                formatStyle = formatStyle.year()
+        public var title: String {
+            switch self {
+            case .today:
+                return MailResourcesStrings.Localizable.threadListSectionToday
+            case .yesterday:
+                return MailResourcesStrings.Localizable.messageDetailsYesterday
+            case .thisWeek:
+                return MailResourcesStrings.Localizable.threadListSectionThisWeek
+            case .lastWeek:
+                return MailResourcesStrings.Localizable.threadListSectionLastWeek
+            case .thisMonth:
+                return MailResourcesStrings.Localizable.threadListSectionThisMonth
+            case .older(let date):
+                var formatStyle = Date.FormatStyle.dateTime.month(.wide)
+                if !Calendar.current.isDate(date, equalTo: .now, toGranularity: .year) {
+                    formatStyle = formatStyle.year()
+                }
+                return date.formatted(formatStyle).capitalized
             }
-            return date.formatted(formatStyle).capitalized
         }
     }
 
+    let id: DateInterval
+    let title: String
     var threads = [Thread]()
 
     private let referenceDate: ReferenceDate
@@ -77,6 +77,8 @@ class DateSection: Identifiable {
     init(thread: Thread) {
         let sections: [ReferenceDate] = [.today, .yesterday, .thisWeek, .lastWeek, .thisMonth]
         referenceDate = sections.first { $0.dateInterval.contains(thread.date) } ?? .older(thread.date)
+        id = referenceDate.dateInterval
+        title = referenceDate.title
     }
 
     func threadBelongsToSection(thread: Thread) -> Bool {
