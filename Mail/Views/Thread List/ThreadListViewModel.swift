@@ -87,7 +87,7 @@ class DateSection: Identifiable {
 @MainActor class ThreadListViewModel: ObservableObject {
     let mailboxManager: MailboxManager
 
-    @Published var folder: Folder?
+    @Published var folder: Folder
     @Published var sections = [DateSection]()
     @Published var selectedThread: Thread? {
         didSet {
@@ -150,22 +150,20 @@ class DateSection: Identifiable {
 
     init(
         mailboxManager: MailboxManager,
-        folder: Folder?,
+        folder: Folder,
         bottomSheet: ThreadBottomSheet,
         moveSheet: MoveSheet,
         isCompact: Bool
     ) {
         self.mailboxManager = mailboxManager
         self.folder = folder
-        lastUpdate = folder?.lastUpdate
+        lastUpdate = folder.lastUpdate
         self.bottomSheet = bottomSheet
         self.moveSheet = moveSheet
         self.isCompact = isCompact
         observeChanges()
-        if let folder {
             sortThreadsIntoSections(threads: Array(folder.threads.sorted(by: \.date, ascending: false).freezeIfNeeded()))
         }
-    }
 
     func fetchThreads() async {
         guard !isLoadingPage else {
@@ -177,8 +175,6 @@ class DateSection: Identifiable {
         }
 
         await tryOrDisplayError {
-            guard let folder = folder else { return }
-
             try await mailboxManager.threads(folder: folder.freezeIfNeeded()) {
                 Task {
                     withAnimation {
@@ -193,7 +189,7 @@ class DateSection: Identifiable {
     }
 
     func updateThreads(with folder: Folder) async {
-        let isNewFolder = folder.id != self.folder?.id
+        let isNewFolder = folder.id != self.folder.id
         self.folder = folder
         withAnimation {
             lastUpdate = folder.lastUpdate
@@ -210,15 +206,15 @@ class DateSection: Identifiable {
     func observeChanges(animateInitialThreadChanges: Bool = false) {
         observationThreadToken?.invalidate()
         observationLastUpdateToken?.invalidate()
-        if let folder = folder?.thaw() {
+        if let folder = folder.thaw() {
             let threadResults = folder.threads.sorted(by: \.date, ascending: false)
             observationThreadToken = threadResults.observe(on: .main) { [weak self] changes in
                 switch changes {
-                case let .initial(results):
+                case .initial(let results):
                     withAnimation(animateInitialThreadChanges ? .default : nil) {
                         self?.sortThreadsIntoSections(threads: Array(results.freezeIfNeeded()))
                     }
-                case let .update(results, _, _, _):
+                case .update(let results, _, _, _):
                     if self?.filter != .all && results.count == 1 && self?.filter.accepts(thread: results[0]) != true {
                         self?.filter = .all
                     }
@@ -231,7 +227,7 @@ class DateSection: Identifiable {
             }
             observationLastUpdateToken = folder.observe(keyPaths: [\Folder.lastUpdate], on: .main) { [weak self] changes in
                 switch changes {
-                case let .change(folder, _):
+                case .change(let folder, _):
                     withAnimation {
                         self?.lastUpdate = folder.lastUpdate
                     }
@@ -275,7 +271,7 @@ class DateSection: Identifiable {
         case .readUnread:
             try await mailboxManager.toggleRead(threads: [thread])
         case .move:
-            moveSheet.state = .move(folderId: folder?.id) { folder in
+            moveSheet.state = .move(folderId: folder.id) { folder in
                 guard thread.folder != folder else { return }
                 Task {
                     try await self.move(thread: thread, to: folder)
@@ -298,7 +294,7 @@ class DateSection: Identifiable {
     }
 
     private func toggleSpam(thread: Thread) async throws {
-        let destination: FolderRole = folder?.role == .spam ? .inbox : .spam
+        let destination: FolderRole = folder.role == .spam ? .inbox : .spam
         try await move(thread: thread, to: destination)
     }
 

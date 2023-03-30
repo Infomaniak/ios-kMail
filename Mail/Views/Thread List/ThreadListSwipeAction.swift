@@ -64,7 +64,7 @@ struct ThreadListSwipeActions: ViewModifier {
     @AppStorage(UserDefaults.shared.key(.swipeTrailing)) private var swipeTrailing = DefaultPreferences.swipeTrailing
 
     func body(content: Content) -> some View {
-        if viewModel.folder?.role == .draft {
+        if viewModel.folder.role == .draft {
             content
                 .swipeActions(edge: .trailing) {
                     edgeActions([.delete])
@@ -104,7 +104,7 @@ struct ThreadListSwipeAction_Previews: PreviewProvider {
     static var previews: some View {
         SwipeActionView(thread: PreviewHelper.sampleThread,
                         viewModel: ThreadListViewModel(mailboxManager: PreviewHelper.sampleMailboxManager,
-                                                       folder: nil,
+                                                       folder: PreviewHelper.sampleFolder,
                                                        bottomSheet: ThreadBottomSheet(),
                                                        moveSheet: MoveSheet(),
                                                        isCompact: false),

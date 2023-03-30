@@ -73,15 +73,15 @@ struct ThreadListView: View {
     let isCompact: Bool
 
     private var shouldDisplayEmptyView: Bool {
-        viewModel.folder?.lastUpdate != nil && viewModel.sections.isEmpty && !viewModel.isLoadingPage
+        viewModel.folder.lastUpdate != nil && viewModel.sections.isEmpty && !viewModel.isLoadingPage
     }
 
     private var shouldDisplayNoNetworkView: Bool {
-        !networkMonitor.isConnected && viewModel.folder?.lastUpdate == nil
+        !networkMonitor.isConnected && viewModel.folder.lastUpdate == nil
     }
 
     init(mailboxManager: MailboxManager,
-         folder: Folder?,
+         folder: Folder,
          editedMessageDraft: Binding<Draft?>,
          messageReply: Binding<MessageReply?>,
          isCompact: Bool) {
@@ -121,11 +121,14 @@ struct ThreadListView: View {
                     }
 
                     if !viewModel.sections.isEmpty,
-                       viewModel.folder?.role == .trash || viewModel.folder?.role == .spam,
-                       let folder = viewModel.folder {
-                        FlushFolderView(folder: folder, mailboxManager: viewModel.mailboxManager, flushAlert: $flushAlert)
-                            .listRowSeparator(.hidden)
-                            .listRowInsets(.init())
+                       viewModel.folder.role == .trash || viewModel.folder.role == .spam {
+                        FlushFolderView(
+                            folder: viewModel.folder,
+                            mailboxManager: viewModel.mailboxManager,
+                            flushAlert: $flushAlert
+                        )
+                        .listRowSeparator(.hidden)
+                        .listRowInsets(.init())
                     }
 
                     if threadDensity == .compact {
@@ -156,7 +159,7 @@ struct ThreadListView: View {
                 }
                 .environment(\.defaultMinListRowHeight, 4)
                 .emptyState(isEmpty: shouldDisplayEmptyView) {
-                    switch viewModel.folder?.role {
+                    switch viewModel.folder.role {
                     case .inbox:
                         EmptyStateView.emptyInbox
                     case .trash:

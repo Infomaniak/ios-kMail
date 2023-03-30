@@ -127,7 +127,7 @@ struct ThreadListCell_Previews: PreviewProvider {
         ThreadListCell(
             thread: PreviewHelper.sampleThread,
             viewModel: ThreadListViewModel(mailboxManager: PreviewHelper.sampleMailboxManager,
-                                           folder: nil,
+                                           folder: PreviewHelper.sampleFolder,
                                            bottomSheet: ThreadBottomSheet(),
                                            moveSheet: MoveSheet(),
                                            isCompact: false),
