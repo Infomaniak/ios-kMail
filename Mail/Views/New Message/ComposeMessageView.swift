@@ -48,6 +48,7 @@ enum ComposeViewFieldType: Hashable {
 class NewMessageAlert: SheetState<NewMessageAlert.State> {
     enum State {
         case link(handler: (String) -> Void)
+        case emptySubject(handler: () -> Void)
     }
 }
 
@@ -243,6 +244,8 @@ struct ComposeMessageView: View {
             switch alert.state {
             case let .link(handler):
                 AddLinkView(actionHandler: handler)
+            case let .emptySubject(handler):
+                EmptySubjectView(actionHandler: handler)
             case .none:
                 EmptyView()
             }
@@ -310,6 +313,16 @@ struct ComposeMessageView: View {
     }
 
     private func sendDraft() {
+        guard !draft.subject.isEmpty else {
+            matomo.track(eventWithCategory: .newMessage, name: "sendWithoutSubject")
+            alert.state = .emptySubject(handler: send)
+            return
+        }
+
+        send()
+    }
+
+    private func send() {
         matomo.trackSendMessage(numberOfTo: draft.to.count, numberOfCc: draft.cc.count, numberOfBcc: draft.bcc.count)
         if let liveDraft = draft.thaw() {
             try? liveDraft.realm?.write {
