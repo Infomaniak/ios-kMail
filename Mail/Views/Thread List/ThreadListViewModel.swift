@@ -87,21 +87,14 @@ extension Thread {
 @MainActor class ThreadListViewModel: ObservableObject {
     let mailboxManager: MailboxManager
 
-    var folder: Folder
+    private var folder: Folder
     @Published var selectedThread: Thread?
 
     @Published var isLoadingPage = false
-
-    // Used to know thread location
-    private var selectedThreadIndex: Int?
-
     let moveSheet: MoveSheet
     let bottomSheet: ThreadBottomSheet
-    var globalBottomSheet: GlobalBottomSheet?
 
     private var observationLastUpdateToken: NotificationToken?
-
-    private let loadNextPageThreshold = 10
 
     init(
         mailboxManager: MailboxManager,

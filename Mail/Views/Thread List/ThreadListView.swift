@@ -244,7 +244,6 @@ struct ThreadListView: View {
         }
         .onAppear {
             networkMonitor.start()
-            viewModel.globalBottomSheet = globalBottomSheet
             viewModel.selectedThread = nil
         }
         .onChange(of: splitViewManager.selectedFolder) { newFolder in
@@ -268,7 +267,7 @@ struct ThreadListView: View {
             }
         }
         .customAlert(item: $flushAlert) { item in
-            FlushFolderAlertView(flushAlert: item, folder: viewModel.folder)
+            FlushFolderAlertView(flushAlert: item, folder: currentFolder)
         }
         .matomoView(view: [MatomoUtils.View.threadListView.displayName, "Main"])
     }

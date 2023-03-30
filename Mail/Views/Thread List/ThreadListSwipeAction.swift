@@ -39,9 +39,11 @@ private struct SwipeActionView: View {
     var body: some View {
         Button(role: action.isDestructive ? .destructive : nil) {
             matomo.track(eventWithCategory: .swipeActions, name: action.matomoName)
+
+            let frozenThread = thread.freezeIfNeeded()
             Task {
                 await tryOrDisplayError {
-                    try await viewModel.handleSwipeAction(action, thread: thread)
+                    try await viewModel.handleSwipeAction(action, thread: frozenThread)
                 }
             }
         } label: {
@@ -64,7 +66,7 @@ struct ThreadListSwipeActions: ViewModifier {
     @AppStorage(UserDefaults.shared.key(.swipeTrailing)) private var swipeTrailing = DefaultPreferences.swipeTrailing
 
     func body(content: Content) -> some View {
-        if viewModel.folder.role == .draft {
+        if thread.folder?.role == .draft {
             content
                 .swipeActions(edge: .trailing) {
                     edgeActions([.delete])
