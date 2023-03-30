@@ -205,7 +205,11 @@ class DateSection: Identifiable {
     func observeChanges(animateInitialThreadChanges: Bool = false) {
         observationThreadToken?.invalidate()
         observationLastUpdateToken?.invalidate()
-        if let folder = folder.thaw() {
+        guard let folder = folder.thaw() else {
+            sections = []
+            return
+        }
+
             let threadResults = folder.threads.sorted(by: \.date, ascending: false)
             observationThreadToken = threadResults.observe(on: .main) { [weak self] changes in
                 switch changes {
@@ -234,9 +238,6 @@ class DateSection: Identifiable {
                     break
                 }
             }
-        } else {
-            sections = []
-        }
     }
 
     func sortThreadsIntoSections(threads: [Thread]) {
