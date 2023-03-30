@@ -500,7 +500,7 @@ public class MailboxManager: ObservableObject {
             var predicates: [NSPredicate] = []
             for searchFilter in searchFilters {
                 switch searchFilter {
-                case let .filter(filter):
+                case .filter(let filter):
                     switch filter {
                     case .seen:
                         predicates.append(NSPredicate(format: "seen = true"))
@@ -513,19 +513,19 @@ public class MailboxManager: ObservableObject {
                     default:
                         break
                     }
-                case let .from(from):
+                case .from(let from):
                     predicates.append(NSPredicate(format: "ANY from.email = %@", from))
-                case let .contains(content):
+                case .contains(let content):
                     predicates
                         .append(
                             NSPredicate(format: "body.value CONTAINS[c] %@ OR subject CONTAINS[c] %@ OR preview CONTAINS[c] %@",
                                         content, content, content)
                         )
-                case let .everywhere(searchEverywhere):
+                case .everywhere(let searchEverywhere):
                     if !searchEverywhere {
                         predicates.append(NSPredicate(format: "folderId = %@", filterFolderId))
                     }
-                case let .attachments(searchAttachments):
+                case .attachments(let searchAttachments):
                     if searchAttachments {
                         predicates.append(NSPredicate(format: "hasAttachments = true"))
                     }
@@ -1117,7 +1117,7 @@ public extension Realm {
 
     func safeWrite(_ block: () throws -> Void) throws {
         #if DEBUG
-            dispatchPrecondition(condition: .notOnQueue(.main))
+        dispatchPrecondition(condition: .notOnQueue(.main))
         #endif
 
         if isInWriteTransaction {
