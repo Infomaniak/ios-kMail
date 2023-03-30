@@ -51,7 +51,6 @@ struct AccountView: View {
 
     @LazyInjectService private var matomo: MatomoUtils
 
-    @State private var avatarImage = MailResourcesAsset.placeholderAvatar.swiftUIImage
     private let account = AccountManager.instance.currentAccount!
     @State private var isShowingLogoutAlert = false
     @State private var isShowingDeleteAccount = false
@@ -63,11 +62,7 @@ struct AccountView: View {
         NavigationView {
             VStack(spacing: 0) {
                 ScrollView {
-                    // Header
-                    avatarImage
-                        .resizable()
-                        .frame(width: 104, height: 104)
-                        .clipShape(Circle())
+                    AvatarView(avatarDisplayable: account.user, size: 104)
                         .padding(.top, 24)
                         .padding(.bottom, 16)
 
@@ -126,9 +121,6 @@ struct AccountView: View {
             } label: {
                 Label(MailResourcesStrings.Localizable.buttonClose, systemImage: "xmark")
             })
-        }
-        .task {
-            avatarImage = await account.user.avatarImage
         }
         .sheet(isPresented: $isShowingDeleteAccount) {
             DeleteAccountView(account: account, delegate: delegate)

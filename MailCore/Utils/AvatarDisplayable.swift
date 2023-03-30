@@ -17,16 +17,28 @@
  */
 
 import Foundation
+import InfomaniakCore
 import Nuke
+import SwiftUI
+import UIKit
 
-extension ImagePipeline {
-    public func imageWithAuthentication(for url: URL, delegate: (any ImageTaskDelegate)? = nil) async throws -> ImageResponse {
-        var urlRequest = URLRequest(url: url)
-        urlRequest.addValue(
-            "Bearer \(AccountManager.instance.currentAccount.token.accessToken)",
-            forHTTPHeaderField: "Authorization"
-        )
+public protocol AvatarDisplayable {
+    var avatarImageRequest: ImageRequest? { get }
+    var initials: String { get }
+    var initialsBackgroundColor: UIColor { get }
+}
 
-        return try await image(for: ImageRequest(urlRequest: urlRequest), delegate: delegate)
+extension UserProfile: AvatarDisplayable {
+    public var avatarImageRequest: ImageRequest? {
+        guard let avatarURL = URL(string: avatar) else { return nil }
+        return ImageRequest(url: avatarURL)
+    }
+
+    public var initials: String {
+        displayName.initials
+    }
+
+    public var initialsBackgroundColor: UIColor {
+        UIColor.backgroundColor(from: id, with: UIConstants.avatarColors)
     }
 }

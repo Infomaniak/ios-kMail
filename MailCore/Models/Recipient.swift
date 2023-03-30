@@ -18,6 +18,7 @@
 
 import Foundation
 import MailResources
+import Nuke
 import RealmSwift
 import SwiftUI
 
@@ -107,30 +108,17 @@ public class Recipient: EmbeddedObject, Codable {
             return "\(name) \(emailString)"
         }
     }
+}
 
-    public var avatarImage: Image? {
-        get async {
-            if isCurrentUser && isMe {
-                return await AccountManager.instance.currentAccount.user.avatarImage
-            } else if let contact = contact,
-                      contact.hasAvatar,
-                      let avatarImage = await contact.avatarImage {
-                return avatarImage
-            } else {
-                return nil
-            }
+extension Recipient: AvatarDisplayable {
+    public var avatarImageRequest: ImageRequest? {
+        guard !(isCurrentUser && isMe) else {
+            return AccountManager.instance.currentAccount.user.avatarImageRequest
         }
+        return contact?.avatarImageRequest
     }
 
-    public var cachedAvatarImage: Image? {
-        if isCurrentUser && isMe {
-            return AccountManager.instance.currentAccount.user.cachedAvatarImage
-        } else if let contact = contact,
-                  contact.hasAvatar,
-                  let avatarImage = contact.cachedAvatarImage {
-            return avatarImage
-        } else {
-            return nil
-        }
+    public var initialsBackgroundColor: UIColor {
+        color
     }
 }

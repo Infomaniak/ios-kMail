@@ -25,10 +25,13 @@ import SwiftUI
 import UIKit
 
 extension CNContact {
-    var image: UIImage? {
-        guard let imageData = imageData else { return nil }
-        let localImage = UIImage(data: imageData)
-        return localImage
+    func pngImageData() async -> Data? {
+        // We have to load something that Nuke can cache
+        guard let imageData,
+              let convertedImage = UIImage(data: imageData)?.pngData() else {
+            return nil
+        }
+        return convertedImage
     }
 }
 
@@ -63,37 +66,40 @@ public class MergedContact {
         return remote != nil
     }
 
-    public var hasAvatar: Bool {
-        return local?.imageData != nil || remote?.avatar != nil
+    public init(email: String, remote: Contact?, local: CNContact?) {
+        self.email = email
+        self.remote = remote
+        self.local = local
     }
+}
 
-    public var avatarImage: Image? {
-        get async {
-            if let localImage = local?.image {
-                return Image(uiImage: localImage)
-            } else if let avatarPath = remote?.avatar,
-                      let avatarUIImage = try? await ImagePipeline.shared.imageWithAuthentication(for: Endpoint.resource(avatarPath).url).image {
-                return Image(uiImage: avatarUIImage)
+extension MergedContact: AvatarDisplayable {
+    public var avatarImageRequest: ImageRequest? {
+        if let localContact = local, localContact.imageDataAvailable {
+            var imageRequest = ImageRequest(id: localContact.identifier) {
+                guard let imageData = await localContact.pngImageData() else {
+                    throw MailError.unknownError
+                }
+
+                return imageData
             }
-
-            return nil
+            imageRequest.options = [.disableDiskCache]
+            return imageRequest
         }
-    }
 
-    public var cachedAvatarImage: Image? {
-        if let localImage = local?.image {
-            return Image(uiImage: localImage)
-        } else if let avatarPath = remote?.avatar,
-                  let avatarUIImage = ImagePipeline.shared.cache[Endpoint.resource(avatarPath).url]?.image {
-            return Image(uiImage: avatarUIImage)
+        if let remoteAvatar = remote?.avatar {
+            let avatarURL = Endpoint.resource(remoteAvatar).url
+            return AccountManager.instance.currentMailboxManager?.apiFetcher.authenticatedImageRequest(avatarURL)
         }
 
         return nil
     }
 
-    public init(email: String, remote: Contact?, local: CNContact?) {
-        self.email = email
-        self.remote = remote
-        self.local = local
+    public var initials: String {
+        ""
+    }
+
+    public var initialsBackgroundColor: UIColor {
+        color
     }
 }

@@ -59,34 +59,6 @@ public extension InfomaniakNetworkLoginable {
     }
 }
 
-public extension InfomaniakUser {
-    var cachedAvatarImage: Image? {
-        if let avatarURL = URL(string: avatar),
-           let avatarUIImage = ImagePipeline.shared.cache[avatarURL]?.image {
-            return Image(uiImage: avatarUIImage)
-        }
-
-        return nil
-    }
-
-    var avatarImage: Image {
-        get async {
-            if let avatarURL = URL(string: avatar),
-               let avatarImage = try? await ImagePipeline.shared.image(for: avatarURL).image {
-                return Image(uiImage: avatarImage)
-            } else {
-                let backgroundColor = UIColor.backgroundColor(from: id, with: UIConstants.avatarColors)
-                let initialsImage = UIImage.getInitialsPlaceholder(
-                    with: displayName,
-                    size: CGSize(width: 40, height: 40),
-                    backgroundColor: backgroundColor
-                )
-                return Image(uiImage: initialsImage)
-            }
-        }
-    }
-}
-
 @globalActor actor AccountActor: GlobalActor {
     static let shared = AccountActor()
 

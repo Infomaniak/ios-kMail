@@ -352,16 +352,7 @@ private struct ThreadListToolbar: ViewModifier {
                             Button {
                                 isShowingSwitchAccount.toggle()
                             } label: {
-                                splitViewManager.avatarImage
-                                    .resizable()
-                                    .scaledToFit()
-                                    .frame(width: 28, height: 28)
-                                    .clipShape(Circle())
-                            }
-                            .task {
-                                if let account = AccountManager.instance.currentAccount {
-                                    splitViewManager.avatarImage = await account.user.avatarImage
-                                }
+                                AvatarView(avatarDisplayable: AccountManager.instance.currentAccount.user)
                             }
                         }
                     }

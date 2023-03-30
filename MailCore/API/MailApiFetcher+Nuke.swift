@@ -16,24 +16,25 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import MailCore
-import SwiftUI
+import Foundation
+import InfomaniakCore
+import Nuke
 
-struct ContactImage: View {
-    let image: Image
-    let size: CGFloat
+public extension MailApiFetcher {
+    func avatarImageRequestForContact(_ contact: MergedContact) -> ImageRequest? {
+        guard let avatarPath = contact.remote?.avatar else { return nil }
+        let endpoint = Endpoint.resource(avatarPath)
 
-    var body: some View {
-        image
-            .resizable()
-            .scaledToFit()
-            .frame(width: size, height: size)
-            .clipShape(Circle())
+        return authenticatedImageRequest(endpoint.url)
     }
-}
 
-struct ContactImage_Previews: PreviewProvider {
-    static var previews: some View {
-        ContactImage(image: Image(systemName: "person"), size: 40)
+    func authenticatedImageRequest(_ url: URL) -> ImageRequest? {
+        var urlRequest = URLRequest(url: url)
+        urlRequest.addValue(
+            "Bearer \(currentToken?.accessToken ?? "")",
+            forHTTPHeaderField: "Authorization"
+        )
+
+        return ImageRequest(urlRequest: urlRequest)
     }
 }

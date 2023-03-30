@@ -37,7 +37,14 @@ class LocalContactsHelper {
     static let shared = LocalContactsHelper()
 
     let store = CNContactStore()
-    let keysToFetch = ([CNContactIdentifierKey, CNContactEmailAddressesKey, CNContactImageDataKey, CNContactNicknameKey, CNContactOrganizationNameKey] as [CNKeyDescriptor]) + [CNContactFormatter.descriptorForRequiredKeys(for: .fullName)]
+    let keysToFetch = ([
+        CNContactIdentifierKey,
+        CNContactEmailAddressesKey,
+        CNContactImageDataAvailableKey,
+        CNContactImageDataKey,
+        CNContactNicknameKey,
+        CNContactOrganizationNameKey
+    ] as [CNKeyDescriptor]) + [CNContactFormatter.descriptorForRequiredKeys(for: .fullName)]
 
     func enumerateContacts(usingBlock: @escaping (CNContact, UnsafeMutablePointer<ObjCBool>) -> Void) async {
         do {
