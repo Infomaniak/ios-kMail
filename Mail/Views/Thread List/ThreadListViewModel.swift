@@ -162,7 +162,6 @@ class DateSection: Identifiable {
         self.moveSheet = moveSheet
         self.isCompact = isCompact
         observeChanges()
-            sortThreadsIntoSections(threads: Array(folder.threads.sorted(by: \.date, ascending: false).freezeIfNeeded()))
         }
 
     func fetchThreads() async {
