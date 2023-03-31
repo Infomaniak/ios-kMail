@@ -90,7 +90,7 @@ struct ThreadCell: View {
     let isSelected: Bool
 
     private var checkboxSize: CGFloat {
-        density == .large ? Constants.checkboxLargeSize : Constants.checkboxSize
+        density == .large ? UIConstants.checkboxLargeSize : UIConstants.checkboxSize
     }
 
     init(

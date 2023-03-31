@@ -42,81 +42,20 @@ public struct URLConstants {
     }
 }
 
-public enum BarAppearanceConstants {
-    public static let threadViewNavigationBarAppearance: UINavigationBarAppearance = {
-        let navigationBarAppearance = UINavigationBarAppearance()
-        navigationBarAppearance.configureWithTransparentBackground()
-        navigationBarAppearance.backgroundColor = MailResourcesAsset.backgroundColor.color
-        navigationBarAppearance.shadowColor = MailResourcesAsset.backgroundColor.color
-        return navigationBarAppearance
-    }()
-
-    public static let threadViewNavigationBarScrolledAppearance: UINavigationBarAppearance = {
-        let navigationBarAppearance = UINavigationBarAppearance()
-        navigationBarAppearance.configureWithDefaultBackground()
-        navigationBarAppearance.backgroundColor = MailResourcesAsset.backgroundTabBarColor.color
-        return navigationBarAppearance
-    }()
-
-    public static let threadListNavigationBarAppearance: UINavigationBarAppearance = {
-        let navigationBarAppearance = UINavigationBarAppearance()
-        navigationBarAppearance.configureWithTransparentBackground()
-        navigationBarAppearance.backgroundColor = UserDefaults.shared.accentColor.navBarBackground.color
-        navigationBarAppearance.largeTitleTextAttributes = [
-            .foregroundColor: MailResourcesAsset.textPrimaryColor.color,
-            .font: UIFont.systemFont(ofSize: 22, weight: .semibold)
-        ]
-        return navigationBarAppearance
-    }()
-
-    public static let threadViewToolbarAppearance: UIToolbarAppearance = {
-        let toolbarAppearance = UIToolbarAppearance()
-        toolbarAppearance.configureWithOpaqueBackground()
-        toolbarAppearance.backgroundColor = MailResourcesAsset.backgroundTabBarColor.color
-        return toolbarAppearance
-    }()
-}
-
 public enum Constants {
     public static let maxAttachmentsSize = 26_214_400 // 25 mo
     public static let sizeLimit = 21_474_836_480 // 20 Go
     public static let minimumQuotasProgressionToDisplay = 0.03
 
-    public static let emailPredicate = NSPredicate(format: "SELF MATCHES %@", Constants.mailRegex)
-
-    public static let navbarIconSize: CGFloat = 23
-
-    public static let onboardingLogoPaddingTop: CGFloat = 28
-    public static let onboardingLogoHeight: CGFloat = 54
-    public static let onboardingButtonHeight: CGFloat = 100
-    public static let onboardingVerticalTopPadding: CGFloat = 48
-    public static let onboardingBottomButtonPadding: CGFloat = 32
-    public static let onboardingArrowIconSize: CGFloat = 24
-
-    public static let menuDrawerHorizontalPadding: CGFloat = 20
-    public static let menuDrawerVerticalPadding: CGFloat = 12
-    public static let menuDrawerSubFolderPadding: CGFloat = 15
-    public static let menuDrawerHorizontalItemSpacing: CGFloat = 16
-    public static let menuDrawerMaximumSubfolderLevel = 2
-
     public static let threadCellMaxRecipients = 5
 
     public static let dismissMoveSheetNotificationName = Notification.Name(rawValue: "SheetViewDismiss")
-
-    public static let floatingButtonBottomPadding: CGFloat = 24
-
-    public static let unreadIconSize: CGFloat = 8
-    public static let checkboxSize: CGFloat = 32
-    public static let checkmarkSize: CGFloat = 14
-    public static let checkboxLargeSize: CGFloat = 40
-
-    public static let buttonsRadius: CGFloat = 16
-    public static let buttonsIconSize: CGFloat = 16
 
     public static let maxFolderNameLength = 255
 
     public static let matomoId = "9"
 
+    public static let emailPredicate = NSPredicate(format: "SELF MATCHES %@", Constants.mailRegex)
     public static let mailRegex =
         "(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|\"(?:[\\x01-\\x08\\x0b\\x0c\\x0e-\\x1f\\x21\\x23-\\x5b\\x5d-\\x7f]|\\\\[\\x01-\\x09\\x0b\\x0c\\x0e-\\x7f])*\")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\\[(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?|[a-z0-9-]*[a-z0-9]:(?:[\\x01-\\x08\\x0b\\x0c\\x0e-\\x1f\\x21-\\x5a\\x53-\\x7f]|\\\\[\\x01-\\x09\\x0b\\x0c\\x0e-\\x7f])+)\\])"
     public static var referenceRegex: NSRegularExpression = {
@@ -198,8 +137,6 @@ public enum Constants {
         let build = Bundle.main.object(forInfoDictionaryKey: "CFBundleVersion") as! String? ?? "x"
         return "kMail iOS version \(release)-Alpha1 (\(build))"
     }
-
-    public static let bottomSheetHorizontalPadding: CGFloat = 24
 
     public static let searchFolderId = "search_folder_id"
 

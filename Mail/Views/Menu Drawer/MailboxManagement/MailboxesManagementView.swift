@@ -62,8 +62,8 @@ struct MailboxesManagementView: View {
                     }
                 }
                 .environment(\.isEnabled, true)
-                .padding(.vertical, Constants.menuDrawerVerticalPadding)
-                .padding(.horizontal, Constants.menuDrawerHorizontalPadding)
+                .padding(.vertical, UIConstants.menuDrawerVerticalPadding)
+                .padding(.horizontal, UIConstants.menuDrawerHorizontalPadding)
             }
             .disabled(otherMailboxes.isEmpty)
 

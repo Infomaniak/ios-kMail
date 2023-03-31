@@ -39,7 +39,7 @@ struct ReportDisplayProblemView: View {
                              primaryButtonAction: report)
             .padding(.top, 8)
         }
-        .padding(.horizontal, Constants.bottomSheetHorizontalPadding)
+        .padding(.horizontal, UIConstants.bottomSheetHorizontalPadding)
         .matomoView(view: [MatomoUtils.View.bottomSheet.displayName, "ReportDisplayProblemView"])
     }
 

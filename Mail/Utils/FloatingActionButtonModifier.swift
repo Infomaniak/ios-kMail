@@ -33,7 +33,7 @@ struct FloatingActionButtonModifier: ViewModifier {
             if isEnabled {
                 MailButton(icon: icon, label: title, action: action)
                     .padding(.trailing, 24)
-                    .padding(.bottom, Constants.floatingButtonBottomPadding)
+                    .padding(.bottom, UIConstants.floatingButtonBottomPadding)
             }
         }
         .ignoresSafeArea(.keyboard)

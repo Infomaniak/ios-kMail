@@ -27,7 +27,7 @@ struct CheckboxView: View {
 
     init(isSelected: Bool, density: ThreadDensity) {
         self.isSelected = isSelected
-        size = density == .large ? Constants.checkboxLargeSize : Constants.checkboxSize
+        size = density == .large ? UIConstants.checkboxLargeSize : UIConstants.checkboxSize
     }
 
     var body: some View {
@@ -38,7 +38,7 @@ struct CheckboxView: View {
                 .frame(width: size, height: size)
             MailResourcesAsset.check.swiftUIImage
                 .foregroundColor(accentColor.onAccent.swiftUIColor)
-                .frame(height: Constants.checkmarkSize)
+                .frame(height: UIConstants.checkmarkSize)
                 .opacity(isSelected ? 1 : 0)
         }
     }

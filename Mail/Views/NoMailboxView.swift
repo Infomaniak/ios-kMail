@@ -38,8 +38,8 @@ struct NoMailboxView: View {
                     MailResourcesAsset.logoText.swiftUIImage
                         .resizable()
                         .scaledToFit()
-                        .frame(height: Constants.onboardingLogoHeight)
-                        .padding(.top, Constants.onboardingLogoPaddingTop)
+                        .frame(height: UIConstants.onboardingLogoHeight)
+                        .padding(.top, UIConstants.onboardingLogoPaddingTop)
                 }
 
             VStack(spacing: 24) {
@@ -53,7 +53,7 @@ struct NoMailboxView: View {
                 }
                 .mailButtonStyle(.link)
             }
-            .frame(height: Constants.onboardingButtonHeight + Constants.onboardingBottomButtonPadding, alignment: .top)
+            .frame(height: UIConstants.onboardingButtonHeight + UIConstants.onboardingBottomButtonPadding, alignment: .top)
             .padding(.horizontal, 24)
         }
         .matomoView(view: ["NoMailboxView"])

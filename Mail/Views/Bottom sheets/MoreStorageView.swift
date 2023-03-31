@@ -48,7 +48,7 @@ struct MoreStorageView: View {
                              primaryButtonEnabled: false,
                              primaryButtonAction: getMoreStorage)
         }
-        .padding(.horizontal, Constants.bottomSheetHorizontalPadding)
+        .padding(.horizontal, UIConstants.bottomSheetHorizontalPadding)
         .matomoView(view: [MatomoUtils.View.bottomSheet.displayName, "MoreStorageView"])
     }
 

@@ -127,7 +127,7 @@ struct FolderCellContent: View {
 
     init(folder: Folder, level: Int, isCurrentFolder: Bool) {
         self.folder = folder
-        self.level = min(level, Constants.menuDrawerMaximumSubfolderLevel)
+        self.level = min(level, UIConstants.menuDrawerMaximumSubfolderLevel)
         self.isCurrentFolder = isCurrentFolder
     }
 
@@ -139,7 +139,7 @@ struct FolderCellContent: View {
     }
 
     var body: some View {
-        HStack(spacing: Constants.menuDrawerHorizontalItemSpacing) {
+        HStack(spacing: UIConstants.menuDrawerHorizontalItemSpacing) {
             folder.icon
                 .resizable()
                 .scaledToFit()
@@ -155,8 +155,8 @@ struct FolderCellContent: View {
             accessory
         }
         .padding(.vertical, 14)
-        .padding(.horizontal, Constants.menuDrawerHorizontalPadding)
-        .padding(.leading, Constants.menuDrawerSubFolderPadding * CGFloat(level))
+        .padding(.horizontal, UIConstants.menuDrawerHorizontalPadding)
+        .padding(.leading, UIConstants.menuDrawerSubFolderPadding * CGFloat(level))
         .background(background)
     }
 
