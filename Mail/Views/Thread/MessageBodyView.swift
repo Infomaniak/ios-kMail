@@ -30,10 +30,6 @@ struct MessageBodyView: View {
 
     @State private var showBlockQuote = false
 
-    init(body: Binding<PresentableBody>) {
-        _presentableBody = body
-    }
-
     var body: some View {
         VStack {
             if let body = presentableBody.body {
@@ -88,6 +84,6 @@ struct MessageBodyView: View {
 
 struct MessageBodyView_Previews: PreviewProvider {
     static var previews: some View {
-        MessageBodyView(body: .constant(PreviewHelper.samplePresentableBody))
+        MessageBodyView(presentableBody: .constant(PreviewHelper.samplePresentableBody))
     }
 }
