@@ -64,7 +64,7 @@ struct MessageView: View {
                 if self.message.shouldComplete {
                     await fetchMessage()
                 } else {
-                    prepareBody() // Error : body still nil
+                    prepareBody()
                     await tryOrDisplayError {
                         try await insertInlineAttachments()
                     }
