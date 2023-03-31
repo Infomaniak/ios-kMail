@@ -24,8 +24,8 @@ import SwiftUI
 
 struct FlushFolderView: View {
     private static let labels: [FolderRole: String] = [
-        .trash: MailResourcesStrings.Localizable.threadListTrashHint,
-        .spam: MailResourcesStrings.Localizable.threadListSpamHint
+        .spam: MailResourcesStrings.Localizable.threadListSpamHint,
+        .trash: MailResourcesStrings.Localizable.threadListTrashHint
     ]
     private static let buttons: [FolderRole: String] = [
         .trash: MailResourcesStrings.Localizable.threadListEmptyTrashButton,

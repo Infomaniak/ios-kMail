@@ -87,13 +87,14 @@ import SwiftUI
             try await mailboxManager.toggleStar(threads: Array(selectedItems))
         case .delete:
             let threads = Array(selectedItems)
-            if selectedItems.first?.folder?.role == .trash || selectedItems.first?.folder?.role == .spam {
+            switch selectedItems.first?.folder?.role {
+            case .draft, .spam, .trash:
                 flushAlert.wrappedValue = FlushAlertState(deletedMessages: selectedItems.count) {
                     await tryOrDisplayError {
                         try await self.mailboxManager.moveOrDelete(threads: threads)
                     }
                 }
-            } else {
+            default:
                 try await mailboxManager.moveOrDelete(threads: threads)
             }
         default:

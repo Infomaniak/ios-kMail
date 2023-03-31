@@ -32,10 +32,10 @@ struct FlushFolderAlertView: View {
         }
 
         switch folder?.role {
-        case .trash:
-            return MailResourcesStrings.Localizable.threadListEmptyTrashButton
         case .spam:
             return MailResourcesStrings.Localizable.threadListEmptySpamButton
+        case .trash:
+            return MailResourcesStrings.Localizable.threadListEmptyTrashButton
         default:
             return ""
         }
