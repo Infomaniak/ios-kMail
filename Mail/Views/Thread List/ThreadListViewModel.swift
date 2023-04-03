@@ -45,31 +45,31 @@ class DateSection: Identifiable {
                 return .init(start: date.startOfMonth, end: date.endOfMonth)
             }
         }
-    }
 
-    var id: DateInterval { referenceDate.dateInterval }
-
-    var title: String {
-        switch referenceDate {
-        case .today:
-            return MailResourcesStrings.Localizable.threadListSectionToday
-        case .yesterday:
-            return MailResourcesStrings.Localizable.messageDetailsYesterday
-        case .thisWeek:
-            return MailResourcesStrings.Localizable.threadListSectionThisWeek
-        case .lastWeek:
-            return MailResourcesStrings.Localizable.threadListSectionLastWeek
-        case .thisMonth:
-            return MailResourcesStrings.Localizable.threadListSectionThisMonth
-        case .older(let date):
-            var formatStyle = Date.FormatStyle.dateTime.month(.wide)
-            if !Calendar.current.isDate(date, equalTo: .now, toGranularity: .year) {
-                formatStyle = formatStyle.year()
+        public var title: String {
+            switch self {
+            case .today:
+                return MailResourcesStrings.Localizable.threadListSectionToday
+            case .yesterday:
+                return MailResourcesStrings.Localizable.messageDetailsYesterday
+            case .thisWeek:
+                return MailResourcesStrings.Localizable.threadListSectionThisWeek
+            case .lastWeek:
+                return MailResourcesStrings.Localizable.threadListSectionLastWeek
+            case .thisMonth:
+                return MailResourcesStrings.Localizable.threadListSectionThisMonth
+            case .older(let date):
+                var formatStyle = Date.FormatStyle.dateTime.month(.wide)
+                if !Calendar.current.isDate(date, equalTo: .now, toGranularity: .year) {
+                    formatStyle = formatStyle.year()
+                }
+                return date.formatted(formatStyle).capitalized
             }
-            return date.formatted(formatStyle).capitalized
         }
     }
 
+    let id: DateInterval
+    let title: String
     var threads = [Thread]()
 
     private let referenceDate: ReferenceDate
@@ -77,6 +77,8 @@ class DateSection: Identifiable {
     init(thread: Thread) {
         let sections: [ReferenceDate] = [.today, .yesterday, .thisWeek, .lastWeek, .thisMonth]
         referenceDate = sections.first { $0.dateInterval.contains(thread.date) } ?? .older(thread.date)
+        id = referenceDate.dateInterval
+        title = referenceDate.title
     }
 
     func threadBelongsToSection(thread: Thread) -> Bool {
@@ -123,6 +125,7 @@ class DateSection: Identifiable {
 
     private var observationThreadToken: NotificationToken?
     private var observationLastUpdateToken: NotificationToken?
+    private let observeQueue = DispatchQueue(label: "com.infomaniak.thread-results", qos: .userInteractive)
 
     @Published var filter = Filter.all {
         didSet {
@@ -205,49 +208,72 @@ class DateSection: Identifiable {
     func observeChanges(animateInitialThreadChanges: Bool = false) {
         observationThreadToken?.invalidate()
         observationLastUpdateToken?.invalidate()
-        if let folder = folder.thaw() {
-            let threadResults = folder.threads.sorted(by: \.date, ascending: false)
-            observationThreadToken = threadResults.observe(on: .main) { [weak self] changes in
-                switch changes {
-                case .initial(let results):
+        guard let folder = folder.thaw() else {
+            sections = []
+            return
+        }
+
+        let threadResults: Results<Thread>
+        if let predicate = filter.predicate {
+            threadResults = folder.threads.filter(predicate + " OR uid == %@", selectedThread?.uid ?? "")
+                .sorted(by: \.date, ascending: false)
+        } else {
+            threadResults = folder.threads.sorted(by: \.date, ascending: false)
+        }
+
+        observationThreadToken = threadResults.observe(on: observeQueue) { [weak self] changes in
+            switch changes {
+            case .initial(let results):
+                let filteredThreads = Array(results.freezeIfNeeded())
+                guard let newSections = self?.sortThreadsIntoSections(threads: filteredThreads) else { return }
+
+                DispatchQueue.main.sync {
+                    self?.filteredThreads = filteredThreads
                     withAnimation(animateInitialThreadChanges ? .default : nil) {
-                        self?.sortThreadsIntoSections(threads: Array(results.freezeIfNeeded()))
+                        self?.sections = newSections
                     }
-                case .update(let results, _, _, _):
-                    if self?.filter != .all && results.count == 1 && self?.filter.accepts(thread: results[0]) != true {
+                }
+            case .update(let results, _, _, _):
+                let filteredThreads = Array(results.freezeIfNeeded())
+                guard let newSections = self?.sortThreadsIntoSections(threads: filteredThreads) else { return }
+
+                DispatchQueue.main.sync {
+                    self?.filteredThreads = filteredThreads
+                    if self?.filter != .all && filteredThreads.count == 1
+                        && self?.filter.accepts(thread: filteredThreads[0]) != true {
                         self?.filter = .all
                     }
                     withAnimation {
-                        self?.sortThreadsIntoSections(threads: Array(results.freezeIfNeeded()))
+                        self?.sections = newSections
                     }
-                case .error:
-                    break
                 }
+            case .error:
+                break
             }
-            observationLastUpdateToken = folder.observe(keyPaths: [\Folder.lastUpdate], on: .main) { [weak self] changes in
-                switch changes {
-                case .change(let folder, _):
-                    withAnimation {
-                        self?.lastUpdate = folder.lastUpdate
-                    }
-                default:
-                    break
+        }
+        observationLastUpdateToken = folder.observe(keyPaths: [\Folder.lastUpdate], on: .main) { [weak self] changes in
+            switch changes {
+            case .change(let folder, _):
+                withAnimation {
+                    self?.lastUpdate = folder.lastUpdate
                 }
+            default:
+                break
             }
-        } else {
-            sections = []
         }
     }
 
-    func sortThreadsIntoSections(threads: [Thread]) {
+    private func sortThreadsIntoSections(threads: [Thread]) -> [DateSection]? {
         var newSections = [DateSection]()
 
         var currentSection: DateSection?
-        filteredThreads = threads.filter { $0.id == selectedThread?.id || filter.accepts(thread: $0) }
-        if filteredThreads.isEmpty && filterUnreadOn {
-            filterUnreadOn.toggle()
+        if threads.isEmpty && filterUnreadOn {
+            DispatchQueue.main.sync {
+                filterUnreadOn.toggle()
+            }
+            return nil
         } else {
-            for thread in filteredThreads {
+            for thread in threads {
                 if currentSection?.threadBelongsToSection(thread: thread) != true {
                     currentSection = DateSection(thread: thread)
                     newSections.append(currentSection!)
@@ -255,7 +281,7 @@ class DateSection: Identifiable {
                 currentSection?.threads.append(thread)
             }
 
-            sections = newSections
+            return newSections
         }
     }
 
