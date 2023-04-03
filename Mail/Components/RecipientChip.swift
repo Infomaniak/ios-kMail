@@ -16,13 +16,14 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import InfomaniakCoreUI
 import MailCore
 import MailResources
 import SwiftUI
 
 struct RecipientChip: View {
     let recipient: Recipient
-    let removeButtonTapped: () -> Void
+    let removeHandler: () -> Void
 
     @AppStorage(UserDefaults.shared.key(.accentColor)) private var accentColor = DefaultPreferences.accentColor
 
@@ -33,20 +34,24 @@ struct RecipientChip: View {
             .padding(.horizontal, 8)
             .padding(.vertical, 4)
             .background(Capsule().fill(accentColor.secondary.swiftUIColor))
-            .modifier(RecipientDetailsModifier())
+            .modifier(RecipientDetailsModifier(recipient: recipient, removeHandler: removeHandler))
     }
 }
 
 struct RecipientContextMenu: View {
+    let recipient: Recipient
+    let removeHandler: () -> Void
+
     var body: some View {
         Button {
-            // Copy mail address
+            UIPasteboard.general.string = recipient.email
+            IKSnackBar.showSnackBar(message: MailResourcesStrings.Localizable.snackbarEmailCopiedToClipboard)
         } label: {
             Label(MailResourcesStrings.Localizable.contactActionCopyEmailAddress, image: MailResourcesAsset.duplicate.name)
         }
 
         Button {
-            // Remove recipient
+            removeHandler()
         } label: {
             Label(MailResourcesStrings.Localizable.actionDelete, image: MailResourcesAsset.bin.name)
         }
@@ -54,17 +59,22 @@ struct RecipientContextMenu: View {
 }
 
 struct RecipientDetailsModifier: ViewModifier {
+    let recipient: Recipient
+    let removeHandler: () -> Void
+
     func body(content: Content) -> some View {
         if #available(iOS 16.0, *) {
             content
                 .contextMenu {
-                    RecipientContextMenu()
+                    RecipientContextMenu(recipient: recipient, removeHandler: removeHandler)
                 } preview: {
-                    Text("Contact Preview")
+                    RecipientCell(recipient: recipient)
+                        .padding(.vertical, 8)
+                        .padding(.horizontal, 16)
                 }
         } else {
             content
-                .contextMenu { RecipientContextMenu() }
+                .contextMenu { RecipientContextMenu(recipient: recipient, removeHandler: removeHandler) }
         }
     }
 }
