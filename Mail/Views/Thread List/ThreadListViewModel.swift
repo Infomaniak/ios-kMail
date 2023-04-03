@@ -239,7 +239,8 @@ class DateSection: Identifiable {
 
                 DispatchQueue.main.sync {
                     self?.filteredThreads = filteredThreads
-                    if self?.filter != .all && results.count == 1 && self?.filter.accepts(thread: results[0]) != true {
+                    if self?.filter != .all && filteredThreads.count == 1
+                        && self?.filter.accepts(thread: filteredThreads[0]) != true {
                         self?.filter = .all
                     }
                     withAnimation {
