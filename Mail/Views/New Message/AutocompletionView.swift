@@ -22,6 +22,8 @@ import SwiftUI
 
 struct AutocompletionView: View {
     @Binding var autocompletion: [Recipient]
+    @Binding var unknownRecipientAutocompletion: String
+
     let onSelect: (Recipient) -> Void
 
     var body: some View {
@@ -37,10 +39,19 @@ struct AutocompletionView: View {
 
                     IKDivider()
                 }
+            }
+
+            if !unknownRecipientAutocompletion.isEmpty {
+                Button {
+                    onSelect(Recipient(email: unknownRecipientAutocompletion, name: ""))
+                } label: {
+                    AddRecipientCell(recipientEmail: unknownRecipientAutocompletion)
+                }
                 .padding(.horizontal, 8)
             }
         }
         .padding(.top, 8)
+        .padding(.horizontal, 8)
     }
 }
 
@@ -48,6 +59,7 @@ struct AutocompletionView_Previews: PreviewProvider {
     static var previews: some View {
         AutocompletionView(autocompletion: .constant([
             PreviewHelper.sampleRecipient1, PreviewHelper.sampleRecipient2, PreviewHelper.sampleRecipient3
-        ])) { _ in /* Preview */ }
+        ]),
+        unknownRecipientAutocompletion: .constant("")) { _ in /* Preview */ }
     }
 }
