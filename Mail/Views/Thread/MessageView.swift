@@ -71,7 +71,7 @@ struct MessageView: View {
                 }
             }
             .onChange(of: message.fullyDownloaded) { _ in
-                if message.fullyDownloaded == true {
+                if message.fullyDownloaded {
                     Task {
                         prepareBody()
                         await tryOrDisplayError {

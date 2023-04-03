@@ -390,6 +390,4 @@ public struct PresentableBody: Equatable {
     public init(message: Message) {
         body = message.body
     }
-
-    public init() {}
 }

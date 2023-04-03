@@ -104,7 +104,7 @@ struct PreviewHelper {
                                        safeDisplay: false,
                                        hasUnsubscribeLink: true)
 
-    static let samplePresentableBody = PresentableBody()
+    static let samplePresentableBody = PresentableBody(message: sampleMessage)
 
     static let sampleRecipient1 = Recipient(email: "from@example.com", name: "John Doe")
 
