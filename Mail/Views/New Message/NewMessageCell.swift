@@ -83,6 +83,7 @@ struct RecipientCellView_Previews: PreviewProvider {
                        showCc: .constant(false)) {
             RecipientField(recipients: .constant([PreviewHelper.sampleRecipient1].toRealmList()),
                            autocompletion: .constant([]),
+                           unknownRecipientAutocompletion: .constant(""),
                            addRecipientHandler: .constant { _ in /* Preview */ },
                            focusedField: .init(),
                            type: .to)

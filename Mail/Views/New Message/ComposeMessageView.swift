@@ -58,12 +58,16 @@ struct ComposeMessageView: View {
     @LazyInjectService private var matomo: MatomoUtils
 
     @State private var mailboxManager: MailboxManager
+
     @StateRealmObject var draft: Draft
     @State private var editor = RichTextEditorModel()
     @State private var showCc = false
     @FocusState private var focusedField: ComposeViewFieldType?
+
     @State private var addRecipientHandler: ((Recipient) -> Void)?
     @State private var autocompletion: [Recipient] = []
+    @State private var unknownRecipientAutocompletion = ""
+
     @State private var isShowingCamera = false
     @State private var isShowingFileSelection = false
     @State private var isShowingPhotoLibrary = false
@@ -81,7 +85,7 @@ struct ComposeMessageView: View {
     }
 
     private var shouldDisplayAutocompletion: Bool {
-        return !autocompletion.isEmpty && focusedField != nil
+        return (!autocompletion.isEmpty || !unknownRecipientAutocompletion.isEmpty) && focusedField != nil
     }
 
     private init(mailboxManager: MailboxManager, draft: Draft) {
@@ -101,39 +105,6 @@ struct ComposeMessageView: View {
         _draft = StateRealmObject(wrappedValue: draft)
         _showCc = State(initialValue: !draft.bcc.isEmpty || !draft.cc.isEmpty)
         _attachmentsManager = StateObject(wrappedValue: AttachmentsManager(draft: draft, mailboxManager: mailboxManager))
-    }
-
-    static func newMessage(mailboxManager: MailboxManager) -> ComposeMessageView {
-        return ComposeMessageView(mailboxManager: mailboxManager, draft: Draft(localUUID: UUID().uuidString))
-    }
-
-    static func replyOrForwardMessage(messageReply: MessageReply, mailboxManager: MailboxManager) -> ComposeMessageView {
-        let message = messageReply.message
-        // If message doesn't exist anymore try to show the frozen one
-        let freshMessage = message.thaw() ?? message
-        return ComposeMessageView(
-            mailboxManager: mailboxManager,
-            draft: .replying(to: freshMessage, mode: messageReply.replyMode, localDraftUUID: messageReply.localDraftUUID)
-        )
-    }
-
-    static func editDraft(draft: Draft, mailboxManager: MailboxManager) -> ComposeMessageView {
-        @InjectService var matomo: MatomoUtils
-        matomo.track(eventWithCategory: .newMessage, name: "openFromDraft")
-        return ComposeMessageView(mailboxManager: mailboxManager, draft: draft)
-    }
-
-    static func writingTo(recipient: Recipient, mailboxManager: MailboxManager) -> ComposeMessageView {
-        return ComposeMessageView(mailboxManager: mailboxManager, draft: .writing(to: recipient))
-    }
-
-    static func mailTo(urlComponents: URLComponents, mailboxManager: MailboxManager) -> ComposeMessageView {
-        let draft = Draft.mailTo(subject: urlComponents.getQueryItem(named: "subject"),
-                                 body: urlComponents.getQueryItem(named: "body"),
-                                 to: [Recipient(email: urlComponents.path, name: "")],
-                                 cc: Recipient.createListUsing(from: urlComponents, name: "cc"),
-                                 bcc: Recipient.createListUsing(from: urlComponents, name: "bcc"))
-        return ComposeMessageView(mailboxManager: mailboxManager, draft: draft)
     }
 
     var body: some View {
@@ -157,7 +128,8 @@ struct ComposeMessageView: View {
 
                     // Show the rest of the view, or the autocompletion list
                     if shouldDisplayAutocompletion {
-                        AutocompletionView(autocompletion: $autocompletion) { recipient in
+                        AutocompletionView(autocompletion: $autocompletion,
+                                           unknownRecipientAutocompletion: $unknownRecipientAutocompletion) { recipient in
                             matomo.track(eventWithCategory: .newMessage, name: "addNewRecipient")
                             addRecipientHandler?(recipient)
                         }
@@ -281,6 +253,7 @@ struct ComposeMessageView: View {
                            showCc: type == .to ? $showCc : nil) {
                 RecipientField(recipients: binding(for: type),
                                autocompletion: $autocompletion,
+                               unknownRecipientAutocompletion: $unknownRecipientAutocompletion,
                                addRecipientHandler: $addRecipientHandler,
                                focusedField: _focusedField,
                                type: type)
@@ -333,7 +306,42 @@ struct ComposeMessageView: View {
     }
 }
 
-struct NewMessageView_Previews: PreviewProvider {
+extension ComposeMessageView {
+    static func newMessage(mailboxManager: MailboxManager) -> ComposeMessageView {
+        return ComposeMessageView(mailboxManager: mailboxManager, draft: Draft(localUUID: UUID().uuidString))
+    }
+
+    static func replyOrForwardMessage(messageReply: MessageReply, mailboxManager: MailboxManager) -> ComposeMessageView {
+        let message = messageReply.message
+        // If message doesn't exist anymore try to show the frozen one
+        let freshMessage = message.thaw() ?? message
+        return ComposeMessageView(
+            mailboxManager: mailboxManager,
+            draft: .replying(to: freshMessage, mode: messageReply.replyMode, localDraftUUID: messageReply.localDraftUUID)
+        )
+    }
+
+    static func editDraft(draft: Draft, mailboxManager: MailboxManager) -> ComposeMessageView {
+        @InjectService var matomo: MatomoUtils
+        matomo.track(eventWithCategory: .newMessage, name: "openFromDraft")
+        return ComposeMessageView(mailboxManager: mailboxManager, draft: draft)
+    }
+
+    static func writingTo(recipient: Recipient, mailboxManager: MailboxManager) -> ComposeMessageView {
+        return ComposeMessageView(mailboxManager: mailboxManager, draft: .writing(to: recipient))
+    }
+
+    static func mailTo(urlComponents: URLComponents, mailboxManager: MailboxManager) -> ComposeMessageView {
+        let draft = Draft.mailTo(subject: urlComponents.getQueryItem(named: "subject"),
+                                 body: urlComponents.getQueryItem(named: "body"),
+                                 to: [Recipient(email: urlComponents.path, name: "")],
+                                 cc: Recipient.createListUsing(from: urlComponents, name: "cc"),
+                                 bcc: Recipient.createListUsing(from: urlComponents, name: "bcc"))
+        return ComposeMessageView(mailboxManager: mailboxManager, draft: draft)
+    }
+}
+
+struct ComposeMessageView_Previews: PreviewProvider {
     static var previews: some View {
         ComposeMessageView.newMessage(mailboxManager: PreviewHelper.sampleMailboxManager)
     }

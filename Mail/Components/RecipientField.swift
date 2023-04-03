@@ -47,6 +47,7 @@ struct RecipientChip: View {
 struct RecipientField: View {
     @Binding var recipients: RealmSwift.List<Recipient>
     @Binding var autocompletion: [Recipient]
+    @Binding var unknownRecipientAutocompletion: String
     @Binding var addRecipientHandler: ((Recipient) -> Void)?
     @FocusState var focusedField: ComposeViewFieldType?
     let type: ComposeViewFieldType
@@ -95,16 +96,21 @@ struct RecipientField: View {
     }
 
     private func updateAutocompletion() {
+        let trimmedCurrentText = currentText.trimmingCharacters(in: .whitespacesAndNewlines)
+
         let contactManager = AccountManager.instance.currentContactManager
-        let autocompleteContacts = contactManager?.contacts(matching: currentText) ?? []
+        let autocompleteContacts = contactManager?.contacts(matching: trimmedCurrentText) ?? []
         var autocompleteRecipients = autocompleteContacts.map { Recipient(email: $0.email, name: $0.name) }
-        // Append typed email
-        if !currentText.isEmpty && !autocompletion
-            .contains(where: { $0.email.caseInsensitiveCompare(currentText) == .orderedSame }) {
-            autocompleteRecipients.append(Recipient(email: currentText, name: ""))
-        }
+
         withAnimation {
             autocompletion = autocompleteRecipients.filter { !recipients.map(\.email).contains($0.email) }
+
+            if !trimmedCurrentText.isEmpty && !autocompletion
+                .contains(where: { $0.email.caseInsensitiveCompare(trimmedCurrentText) == .orderedSame }) {
+                unknownRecipientAutocompletion = trimmedCurrentText
+            } else {
+                unknownRecipientAutocompletion = ""
+            }
         }
     }
 
@@ -135,6 +141,7 @@ struct RecipientField_Previews: PreviewProvider {
             PreviewHelper.sampleRecipient1, PreviewHelper.sampleRecipient2, PreviewHelper.sampleRecipient3
         ].toRealmList()),
         autocompletion: .constant([]),
+        unknownRecipientAutocompletion: .constant(""),
         addRecipientHandler: .constant { _ in /* Preview */ },
         focusedField: .init(),
         type: .to)
