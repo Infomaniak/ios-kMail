@@ -183,17 +183,6 @@ public class Message: Object, Decodable, Identifiable {
         return holder
     }
 
-    public func insertInlineAttachment() {
-        for attachment in attachments.filter({ $0.disposition == .inline }) {
-            if let contentId = attachment.contentId, let value = body?.value, let resource = attachment.resource {
-                body?.value = value.replacingOccurrences(
-                    of: "cid:\(contentId)",
-                    with: "\(URLSchemeHandler.scheme)\(URLSchemeHandler.domain)\(resource)"
-                )
-            }
-        }
-    }
-
     public func computeReference() {
         if let references {
             linkedUids.insert(objectsIn: references.parseMessageIds())
@@ -390,4 +379,15 @@ public class Body: EmbeddedObject, Codable {
 
 public struct MessageActionResult: Codable {
     public var flagged: Int
+}
+
+public struct PresentableBody: Equatable {
+    public var body: Body?
+
+    public var compactBody: String?
+    public var quote: String?
+
+    public init(message: Message) {
+        body = message.body
+    }
 }

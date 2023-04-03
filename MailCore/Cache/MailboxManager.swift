@@ -818,7 +818,6 @@ public class MailboxManager: ObservableObject {
     public func message(message: Message) async throws {
         // Get from API
         let completedMessage = try await apiFetcher.message(message: message)
-        completedMessage.insertInlineAttachment()
         completedMessage.fullyDownloaded = true
 
         await backgroundRealm.execute { realm in
