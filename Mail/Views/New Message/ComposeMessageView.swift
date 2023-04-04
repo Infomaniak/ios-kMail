@@ -249,7 +249,9 @@ struct ComposeMessageView: View {
         if shouldDisplayField {
             NewMessageCell(type: type,
                            focusedField: _focusedField,
-                           showCc: type == .to ? $showCc : nil) {
+                           showCc: $showCc,
+                           canCollapseCc: canCollapseCc,
+                           isAutocompletionDisplayed: shouldDisplayAutocompletion) {
                 RecipientField(recipients: binding(for: type),
                                autocompletion: $autocompletion,
                                unknownRecipientAutocompletion: $unknownRecipientAutocompletion,

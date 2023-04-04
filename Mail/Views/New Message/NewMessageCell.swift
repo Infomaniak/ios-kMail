@@ -35,6 +35,8 @@ struct NewMessageCell<Content>: View where Content: View {
     let type: ComposeViewFieldType
     let focusedField: FocusState<ComposeViewFieldType?>?
     let showCc: Binding<Bool>?
+    let canCollapseCc: Bool?
+    let isAutocompletionDisplayed: Bool?
     let isFirstCell: Bool
     let content: Content
 
@@ -43,11 +45,15 @@ struct NewMessageCell<Content>: View where Content: View {
     init(type: ComposeViewFieldType,
          focusedField: FocusState<ComposeViewFieldType?>? = nil,
          showCc: Binding<Bool>? = nil,
+         canCollapseCc: Bool? = nil,
+         isAutocompletionDisplayed: Bool? = nil,
          isFirstCell: Bool = false,
          @ViewBuilder _ content: () -> Content) {
         self.type = type
         self.focusedField = focusedField
         self.showCc = showCc
+        self.canCollapseCc = canCollapseCc
+        self.isAutocompletionDisplayed = isAutocompletionDisplayed
         self.isFirstCell = isFirstCell
         self.content = content()
     }
@@ -61,7 +67,7 @@ struct NewMessageCell<Content>: View where Content: View {
 
             Spacer()
 
-            if let showCc = showCc {
+            if type == .to, let showCc, canCollapseCc == true, isAutocompletionDisplayed == false {
                 ChevronButton(isExpanded: showCc)
             }
         }
