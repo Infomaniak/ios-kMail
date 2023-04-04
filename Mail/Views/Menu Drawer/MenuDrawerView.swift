@@ -151,11 +151,11 @@ struct MenuDrawerView: View {
 
                     RoleFoldersListView(folders: viewModel.roleFolders, isCompact: isCompact)
 
-                    IKDivider(withPadding: true)
+                    IKDivider(paddingEdges: .all)
 
                     UserFoldersListView(folders: viewModel.userFolders, isCompact: isCompact)
 
-                    IKDivider(withPadding: true)
+                    IKDivider(paddingEdges: .all)
 
                     MenuDrawerItemsListView(
                         title: MailResourcesStrings.Localizable.menuDrawerAdvancedActions,
@@ -163,12 +163,12 @@ struct MenuDrawerView: View {
                         matomoName: "advancedActions"
                     )
 
-                    IKDivider(withPadding: true)
+                    IKDivider(paddingEdges: .all)
 
                     MenuDrawerItemsListView(content: viewModel.helpMenuItems)
 
                     if viewModel.mailbox.isLimited, let quotas = viewModel.mailbox.quotas {
-                        IKDivider(withPadding: true)
+                        IKDivider(paddingEdges: .all)
 
                         MailboxQuotaView(quotas: quotas)
                     }
@@ -196,7 +196,7 @@ struct MenuDrawerView: View {
 
 struct AppVersionView: View {
     var body: some View {
-        IKDivider(withPadding: true)
+        IKDivider(paddingEdges: .all)
         Text(Constants.appVersion())
             .textStyle(.labelSecondary)
     }
@@ -204,7 +204,8 @@ struct AppVersionView: View {
 
 struct MenuDrawerView_Previews: PreviewProvider {
     static var previews: some View {
-        MenuDrawerView(mailboxManager: PreviewHelper.sampleMailboxManager,
-                       isCompact: false)
+        MenuDrawerView(mailboxManager: PreviewHelper.sampleMailboxManager, isCompact: false)
+            .environmentObject(NavigationDrawerState())
+            .environmentObject(GlobalBottomSheet())
     }
 }

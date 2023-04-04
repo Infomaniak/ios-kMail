@@ -78,8 +78,7 @@ struct MailboxesManagementView: View {
                 }
             }
 
-            IKDivider(withPadding: true)
-                .padding(.top, 8)
+            IKDivider(paddingEdges: .all)
         }
         .padding(.top, 16)
         .sheet(isPresented: $isShowingSwitchAccount) {
