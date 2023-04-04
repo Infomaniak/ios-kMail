@@ -77,7 +77,6 @@ public class Draft: Object, Decodable, Identifiable, Encodable {
     @Persisted public var inReplyTo: String?
     @Persisted public var mimeType: String = UTType.html.preferredMIMEType!
     @Persisted public var body = ""
-    @Persisted public var quote: String?
     @Persisted public var to: List<Recipient>
     @Persisted public var cc: List<Recipient>
     @Persisted public var bcc: List<Recipient>
@@ -99,7 +98,6 @@ public class Draft: Object, Decodable, Identifiable, Encodable {
         case inReplyTo
         case mimeType
         case body
-        case quote
         case to
         case cc
         case bcc
@@ -125,7 +123,6 @@ public class Draft: Object, Decodable, Identifiable, Encodable {
         inReplyTo = try values.decodeIfPresent(String.self, forKey: .inReplyTo)
         mimeType = try values.decode(String.self, forKey: .mimeType)
         body = try values.decode(String.self, forKey: .body)
-        quote = try values.decodeIfPresent(String.self, forKey: .quote)
         to = try values.decode(List<Recipient>.self, forKey: .to)
         cc = try values.decode(List<Recipient>.self, forKey: .cc)
         bcc = try values.decode(List<Recipient>.self, forKey: .bcc)
@@ -148,7 +145,6 @@ public class Draft: Object, Decodable, Identifiable, Encodable {
                             mimeType: String = UTType.html.preferredMIMEType!,
                             subject: String = "",
                             body: String = "",
-                            quote: String? = nil,
                             to: [Recipient]? = nil,
                             cc: [Recipient]? = nil,
                             bcc: [Recipient]? = nil,
@@ -171,7 +167,6 @@ public class Draft: Object, Decodable, Identifiable, Encodable {
         self.inReplyTo = inReplyTo
         self.mimeType = mimeType
         self.body = body
-        self.quote = quote
         self.to = to?.toRealmList() ?? List()
         self.cc = cc?.toRealmList() ?? List()
         self.bcc = bcc?.toRealmList() ?? List()
@@ -232,7 +227,6 @@ public class Draft: Object, Decodable, Identifiable, Encodable {
                      inReplyTo: message.messageId,
                      subject: subject,
                      body: "<br><br>\(quote)",
-                     quote: quote,
                      to: recipientHolder.to,
                      cc: recipientHolder.cc,
                      attachments: attachments)
@@ -264,7 +258,6 @@ public class Draft: Object, Decodable, Identifiable, Encodable {
         try container.encode(references, forKey: .references)
         try container.encode(mimeType, forKey: .mimeType)
         try container.encode(body, forKey: .body)
-        try container.encode(quote, forKey: .quote)
         if !to.isEmpty {
             try container.encode(to, forKey: .to)
         }
