@@ -66,6 +66,15 @@ public enum MessageBodyUtils {
         }
         return nil
     }
+    
+    public static func cleanHtmlContent(rawHtml: String) -> String? {
+        do {
+            return try SwiftSoup.clean(rawHtml, Constants.extendedWhitelist)
+        } catch {
+            DDLogError("An error occurred while parsing body \(error)")
+            return nil
+        }
+    }
 
     private static func findAndRemoveLastParentBlockQuote(htmlDocumentWithoutQuote: Document) throws -> Element? {
         let element = try selectLastParentBlockQuote(document: htmlDocumentWithoutQuote)

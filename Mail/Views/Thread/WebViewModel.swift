@@ -134,7 +134,7 @@ class WebViewModel: ObservableObject {
         }
 
         do {
-            guard let safeHtml = try SwiftSoup.clean(rawHtml, Constants.extendedWhitelist) else { return }
+            guard let safeHtml = MessageBodyUtils.cleanHtmlContent(rawHtml: rawHtml) else { return }
             let parsedHtml = try SwiftSoup.parse(safeHtml)
 
             let head: Element
