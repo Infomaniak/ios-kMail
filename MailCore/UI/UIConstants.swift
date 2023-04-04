@@ -77,6 +77,8 @@ public enum UIConstants {
     public static let onboardingBottomButtonPadding: CGFloat = 32
     public static let onboardingArrowIconSize: CGFloat = 24
 
+    public static let menuDrawerMaxWidth: CGFloat = 352
+    public static let menuDrawerTrailingSpacing: CGFloat = 64
     public static let menuDrawerHorizontalPadding: CGFloat = 24
     public static let menuDrawerVerticalPadding: CGFloat = 14
     public static let menuDrawerSubFolderPadding: CGFloat = 15

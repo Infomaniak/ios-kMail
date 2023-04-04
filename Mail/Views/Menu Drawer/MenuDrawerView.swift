@@ -44,9 +44,6 @@ class NavigationDrawerState: ObservableObject {
 }
 
 struct NavigationDrawer: View {
-    private let maxWidth = 350.0
-    private let spacing = 60.0
-
     let mailboxManager: MailboxManager
 
     @EnvironmentObject var splitViewManager: SplitViewManager
@@ -94,13 +91,10 @@ struct NavigationDrawer: View {
 
             GeometryReader { geometryProxy in
                 HStack {
-                    MenuDrawerView(
-                        mailboxManager: mailboxManager,
-                        isCompact: true
-                    )
-                    .frame(maxWidth: maxWidth)
-                    .padding(.trailing, spacing)
-                    .offset(x: navigationDrawerState.isOpen ? offsetWidth : -geometryProxy.size.width)
+                    MenuDrawerView(mailboxManager: mailboxManager, isCompact: true)
+                        .frame(maxWidth: UIConstants.menuDrawerMaxWidth)
+                        .padding(.trailing, UIConstants.menuDrawerTrailingSpacing)
+                        .offset(x: navigationDrawerState.isOpen ? offsetWidth : -geometryProxy.size.width)
                     Spacer()
                 }
             }
