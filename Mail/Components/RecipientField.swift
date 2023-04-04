@@ -25,22 +25,40 @@ import RealmSwift
 import SwiftUI
 import WrappingHStack
 
-struct RecipientChip: View {
-    let recipient: Recipient
-    let removeButtonTapped: () -> Void
-
+struct ChipButtonStyle: ButtonStyle {
     @AppStorage(UserDefaults.shared.key(.accentColor)) private var accentColor = DefaultPreferences.accentColor
 
+    func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+            .textStyle(.bodyAccent)
+            .lineLimit(1)
+            .padding(.vertical, 6)
+            .padding(.horizontal, 12)
+            .background(Capsule().fill(accentColor.secondary.swiftUIColor))
+    }
+}
+
+struct RecipientChip: View {
+    let recipient: Recipient
+    let removeHandler: () -> Void
+
     var body: some View {
-        Button(action: removeButtonTapped) {
+        Button(action: removeHandler) {
             Text(recipient.name.isEmpty ? recipient.email : recipient.name)
-                .textStyle(.bodyAccent)
-                .padding(.vertical, 6)
-                .lineLimit(1)
         }
-        .padding(.leading, 12)
-        .padding(.trailing, 12)
-        .background(Capsule().fill(accentColor.secondary.swiftUIColor))
+        .buttonStyle(ChipButtonStyle())
+    }
+}
+
+struct RecipientChipCollapsed: View {
+    let hiddenMessagesCount: Int
+    let handler: () -> Void
+
+    var body: some View {
+        Button(action: handler) {
+            Text("+\(hiddenMessagesCount)")
+        }
+        .buttonStyle(ChipButtonStyle())
     }
 }
 
