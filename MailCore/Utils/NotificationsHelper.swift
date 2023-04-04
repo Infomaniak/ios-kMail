@@ -23,6 +23,7 @@ import InfomaniakCore
 import InfomaniakCoreUI
 import MailResources
 import RealmSwift
+import SwiftSoup
 import UIKit
 import UserNotifications
 
@@ -121,7 +122,7 @@ public enum NotificationsHelper {
             content.title = MailResourcesStrings.Localizable.unknownRecipientTitle
         }
         content.subtitle = message.formattedSubject
-        content.body = message.preview
+        content.body = getCleanBodyFromMessage(message)
         content.threadIdentifier = "\(mailboxId)_\(userId)"
         content.targetContentIdentifier = "\(userId)_\(mailboxId)_\(message.uid)"
         content.badge = getUnreadCount() as NSNumber
@@ -129,5 +130,27 @@ public enum NotificationsHelper {
                             NotificationsHelper.UserInfoKeys.mailboxId: mailboxId,
                             NotificationsHelper.UserInfoKeys.messageUid: message.uid]
         return content
+    }
+
+    private static func getCleanBodyFromMessage(_ message: Message) -> String {
+        guard let fullBody = message.body?.value,
+              let bodyType = message.body?.type,
+              let body = MessageBodyUtils.splitBodyAndQuote(messageBody: fullBody)?.messageBody else {
+            return message.preview
+        }
+
+        guard bodyType != "text/plain" else {
+            return body.trimmingCharacters(in: .whitespacesAndNewlines)
+        }
+
+        do {
+            let basicHtml = try SwiftSoup.clean(body, Whitelist.basic())!
+            let parsedBody = try SwiftSoup.parse(basicHtml)
+
+            let rawText = try parsedBody.text(trimAndNormaliseWhitespace: false)
+            return rawText.trimmingCharacters(in: .whitespacesAndNewlines)
+        } catch {
+            return message.preview
+        }
     }
 }
