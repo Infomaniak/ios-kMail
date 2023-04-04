@@ -137,9 +137,13 @@ class WebViewModel: ObservableObject {
             guard let safeHtml = try SwiftSoup.clean(rawHtml, Constants.extendedWhitelist) else { return }
             let parsedHtml = try SwiftSoup.parse(safeHtml)
 
-            let fallbackHead = try parsedHtml.createElement("head")
+            let head: Element
+            if let existingHead = parsedHtml.head() {
+                head = existingHead
+            } else {
+                head = try parsedHtml.appendElement("head")
+            }
 
-            let head = parsedHtml.head() ?? fallbackHead
             try head.append(viewport)
             try head.append(style)
 
