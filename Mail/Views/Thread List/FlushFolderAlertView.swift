@@ -59,7 +59,7 @@ struct FlushFolderAlertView: View {
                              secondaryButtonTitle: MailResourcesStrings.Localizable.buttonClose) {
                 if let folder, flushAlert.deletedMessages == nil {
                     @InjectService var matomo: MatomoUtils
-                    matomo.track(eventWithCategory: .threadList, name: "empty\(folder.matomoName)Confirm")
+                    matomo.track(eventWithCategory: .threadList, name: "empty\(folder.matomoName.capitalized)Confirm")
                 }
                 Task {
                     await flushAlert.completion()

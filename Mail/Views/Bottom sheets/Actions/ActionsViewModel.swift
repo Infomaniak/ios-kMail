@@ -293,7 +293,7 @@ enum ActionsTarget: Equatable {
         globalSheet.close()
         if let matomoCategory, let matomoName = action.matomoName {
             if case let .threads(threads, isMultipleSelectionEnabled) = target, isMultipleSelectionEnabled {
-                matomo.trackBulkEvent(eventWithCategory: matomoCategory, name: matomoName, numberOfItems: threads.count)
+                matomo.trackBulkEvent(eventWithCategory: matomoCategory, name: matomoName.capitalized, numberOfItems: threads.count)
             } else {
                 matomo.track(eventWithCategory: matomoCategory, name: matomoName)
             }
