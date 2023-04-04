@@ -134,7 +134,9 @@ class WebViewModel: ObservableObject {
         }
 
         do {
-            let parsedHtml = try SwiftSoup.parse(rawHtml)
+            guard let safeHtml = try SwiftSoup.clean(rawHtml, Constants.extendedWhitelist) else { return }
+            let parsedHtml = try SwiftSoup.parse(safeHtml)
+
             let fallbackHead = try parsedHtml.createElement("head")
 
             let head = parsedHtml.head() ?? fallbackHead
