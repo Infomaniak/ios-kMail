@@ -133,14 +133,6 @@ pre {
     word-wrap: break-word;
 }
 
-* {    
-    /* debug only */
-        /* margin: 0 !important;
-        position: static !important;
-        float: none !important; */
-    /* end debug */
-}
-
 q {
     quotes: none;
 }
