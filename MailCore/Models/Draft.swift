@@ -165,6 +165,10 @@ public class Draft: Object, Decodable, Identifiable, Encodable {
         self.action = action
     }
 
+    public var hasRecipients: Bool {
+        !to.isEmpty || !cc.isEmpty || !bcc.isEmpty
+    }
+
     public static func mailTo(subject: String?,
                               body: String?,
                               to: [Recipient],

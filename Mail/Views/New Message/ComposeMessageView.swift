@@ -72,23 +72,25 @@ struct ComposeMessageView: View {
     @State private var isShowingCamera = false
     @State private var isShowingFileSelection = false
     @State private var isShowingPhotoLibrary = false
-    @StateObject private var attachmentsManager: AttachmentsManager
     @State private var isShowingCancelAttachmentsError = false
+    @StateObject private var attachmentsManager: AttachmentsManager
 
-    @State var scrollView: UIScrollView?
+    @State private var scrollView: UIScrollView?
 
     @StateObject private var alert = NewMessageAlert()
 
     let messageReply: MessageReply?
 
     private var isSendButtonDisabled: Bool {
-        return draft.identityId?.isEmpty == true
-            || (draft.to.isEmpty && draft.cc.isEmpty && draft.bcc.isEmpty)
-            || !attachmentsManager.allAttachmentsUploaded
+        return draft.identityId?.isEmpty == true || !draft.hasRecipients || !attachmentsManager.allAttachmentsUploaded
     }
 
     private var shouldDisplayAutocompletion: Bool {
         return (!autocompletion.isEmpty || !unknownRecipientAutocompletion.isEmpty) && focusedField != nil
+    }
+
+    private var canCollapseCc: Bool {
+        return draft.cc.isEmpty && draft.bcc.isEmpty
     }
 
     private init(mailboxManager: MailboxManager, draft: Draft, messageReply: MessageReply? = nil) {
@@ -114,11 +116,10 @@ struct ComposeMessageView: View {
 
     var body: some View {
         NavigationView {
-            ScrollView(.vertical, showsIndicators: true) {
+            ScrollView {
                 VStack(spacing: 0) {
                     if !shouldDisplayAutocompletion {
-                        NewMessageCell(type: .from,
-                                       isFirstCell: true) {
+                        NewMessageCell(type: .from, isFirstCell: true) {
                             Text(mailboxManager.mailbox.email)
                                 .textStyle(.body)
                         }
@@ -139,8 +140,7 @@ struct ComposeMessageView: View {
                             addRecipientHandler?(recipient)
                         }
                     } else {
-                        NewMessageCell(type: .subject,
-                                       focusedField: _focusedField) {
+                        NewMessageCell(type: .subject, focusedField: _focusedField) {
                             TextField("", text: $draft.subject)
                                 .focused($focusedField, equals: .subject)
                         }

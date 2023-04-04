@@ -120,18 +120,19 @@ struct RichTextEditorModel {
 class MailEditorView: SQTextEditorView {
     lazy var toolbar = getToolbar()
     var alert: ObservedObject<NewMessageAlert>.Wrapper
-    var isShowingCamera: Binding<Bool>
-    var isShowingFileSelection: Binding<Bool>
-    var isShowingPhotoLibrary: Binding<Bool>
+
+    @Binding var isShowingCamera: Bool
+    @Binding var isShowingFileSelection: Bool
+    @Binding var isShowingPhotoLibrary: Bool
 
     var toolbarStyle = ToolbarStyle.main
 
     init(alert: ObservedObject<NewMessageAlert>.Wrapper,
          isShowingCamera: Binding<Bool>, isShowingFileSelection: Binding<Bool>, isShowingPhotoLibrary: Binding<Bool>) {
         self.alert = alert
-        self.isShowingCamera = isShowingCamera
-        self.isShowingFileSelection = isShowingFileSelection
-        self.isShowingPhotoLibrary = isShowingPhotoLibrary
+        _isShowingCamera = isShowingCamera
+        _isShowingFileSelection = isShowingFileSelection
+        _isShowingPhotoLibrary = isShowingPhotoLibrary
         super.init()
     }
 
@@ -283,11 +284,11 @@ class MailEditorView: SQTextEditorView {
         case .editText:
             updateToolbarItems(style: toolbarStyle == .main ? .textEdition : .main)
         case .addFile:
-            isShowingFileSelection.wrappedValue.toggle()
+            isShowingFileSelection.toggle()
         case .addPhoto:
-            isShowingPhotoLibrary.wrappedValue.toggle()
+            isShowingPhotoLibrary.toggle()
         case .takePhoto:
-            isShowingCamera.wrappedValue.toggle()
+            isShowingCamera.toggle()
         case .link:
             if selectedTextAttribute.format.hasLink {
                 removeLink()
