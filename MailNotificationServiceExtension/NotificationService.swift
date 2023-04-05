@@ -94,13 +94,15 @@ class NotificationService: UNNotificationServiceExtension {
                   let mailbox = MailboxInfosManager.instance.getMailbox(id: mailboxId, userId: userId),
                   let mailboxManager = AccountManager.instance.getMailboxManager(for: mailbox) else {
                 // This should never happen, we received a notification for an unknown mailbox
+                logNotificationFailed(userInfo: userInfos, type: .mailboxNotFound)
                 return contentHandler(bestAttemptContent)
             }
 
             // Prepare a notification in case we can't fetch the message in time / the message doesn't exist anymore
             prepareEmptyMessageNotification(in: mailbox)
             guard let messageUid = userInfos[NotificationsHelper.UserInfoKeys.messageUid] as? String,
-                  let fetchedMessage = try await fetchMessage(uid: messageUid, in: mailboxManager) else {
+                  let fetchedMessage = try? await fetchMessage(uid: messageUid, in: mailboxManager) else {
+                logNotificationFailed(userInfo: userInfos, type: .messageNotFound)
                 return contentHandler(bestAttemptContent)
             }
 
@@ -113,6 +115,7 @@ class NotificationService: UNNotificationServiceExtension {
 
     override func serviceExtensionTimeWillExpire() {
         if let contentHandler, let bestAttemptContent {
+            logNotificationFailed(userInfo: bestAttemptContent.userInfo, type: .expired)
             contentHandler(bestAttemptContent)
         }
     }
