@@ -150,15 +150,15 @@ struct MenuDrawerView: View {
                     Group {
                         MailboxesManagementView(mailboxes: viewModel.mailboxes)
 
-                        IKDivider(hasVerticalPadding: true, horizontalPadding: 24)
+                        IKDivider(hasVerticalPadding: true, horizontalPadding: UIConstants.menuDrawerHorizontalPadding)
 
                         RoleFoldersListView(folders: viewModel.roleFolders, isCompact: isCompact)
 
-                        IKDivider(hasVerticalPadding: true, horizontalPadding: 24)
+                        IKDivider(hasVerticalPadding: true, horizontalPadding: UIConstants.menuDrawerHorizontalPadding)
 
                         UserFoldersListView(folders: viewModel.userFolders, isCompact: isCompact)
 
-                        IKDivider(hasVerticalPadding: true, horizontalPadding: 24)
+                        IKDivider(hasVerticalPadding: true, horizontalPadding: UIConstants.menuDrawerHorizontalPadding)
                     }
                     Group {
                         MenuDrawerItemsListView(
@@ -167,17 +167,17 @@ struct MenuDrawerView: View {
                             matomoName: "advancedActions"
                         )
 
-                        IKDivider(hasVerticalPadding: true, horizontalPadding: 24)
+                        IKDivider(hasVerticalPadding: true, horizontalPadding: UIConstants.menuDrawerHorizontalPadding)
 
                         MenuDrawerItemsListView(content: viewModel.helpMenuItems)
 
                         if viewModel.mailbox.isLimited, let quotas = viewModel.mailbox.quotas {
-                            IKDivider(hasVerticalPadding: true, horizontalPadding: 24)
+                            IKDivider(hasVerticalPadding: true, horizontalPadding: UIConstants.menuDrawerHorizontalPadding)
 
                             MailboxQuotaView(quotas: quotas)
                         }
 
-                        IKDivider(hasVerticalPadding: true, horizontalPadding: 24)
+                        IKDivider(hasVerticalPadding: true, horizontalPadding: UIConstants.menuDrawerHorizontalPadding)
 
                         AppVersionView()
                     }
