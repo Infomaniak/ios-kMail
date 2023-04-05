@@ -22,7 +22,7 @@ import SwiftUI
 
 struct IKDivider: View {
     var hasVerticalPadding = false
-    var horizontalPadding: CGFloat = 24
+    var horizontalPadding: CGFloat = 0
 
     var body: some View {
         Divider()
