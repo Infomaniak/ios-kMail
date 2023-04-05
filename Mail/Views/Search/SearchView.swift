@@ -28,8 +28,6 @@ struct SearchView: View {
     @EnvironmentObject var splitViewManager: SplitViewManager
     @EnvironmentObject var globalBottomSheet: GlobalBottomSheet
 
-    @AppStorage(UserDefaults.shared.key(.threadDensity)) private var threadDensity = DefaultPreferences.threadDensity
-
     @StateObject var bottomSheet: ThreadBottomSheet
 
     @Binding private var editedMessageDraft: Draft?
@@ -85,7 +83,7 @@ struct SearchView: View {
                     if viewModel.searchState == .history {
                         SearchHistorySectionView(viewModel: viewModel)
                     } else if viewModel.searchState == .results {
-                        contactList(contacts: viewModel.contacts)
+                        SearchContactsSectionView(viewModel: viewModel)
                         SearchThreadsSectionView(viewModel: viewModel, editedMessageDraft: $editedMessageDraft)
                     }
                 }
@@ -141,29 +139,6 @@ struct SearchView: View {
             }
         }
         .matomoView(view: ["SearchView"])
-    }
-
-    func contactList(contacts: [Recipient]) -> some View {
-        Section {
-            ForEach(contacts) { contact in
-                RecipientAutocompletionCell(recipient: contact)
-                    .onTapGesture {
-                        viewModel.matomo.track(eventWithCategory: .search, name: "selectContact")
-                        Constants.globallyResignFirstResponder()
-                        viewModel.searchThreadsForContact(contact)
-                    }
-            }
-            .padding(.horizontal, 4)
-            .padding(.vertical, threadDensity.cellVerticalPadding)
-        } header: {
-            if !contacts.isEmpty {
-                Text(MailResourcesStrings.Localizable.contactsSearch)
-                    .textStyle(.bodySmallSecondary)
-            }
-        }
-        .listRowInsets(.init(top: 0, leading: 12, bottom: 0, trailing: 12))
-        .listRowSeparator(.hidden)
-        .listRowBackground(MailResourcesAsset.backgroundColor.swiftUIColor)
     }
 }
 
