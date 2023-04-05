@@ -69,7 +69,9 @@ enum SearchState {
             } else if !selectedFilters.contains(.folder) {
                 selectedFilters.append(.folder)
             }
-            Task {
+
+            currentSearchTask?.cancel()
+            currentSearchTask = Task {
                 await fetchThreads()
             }
         }
@@ -87,6 +89,7 @@ enum SearchState {
     private var resourceNext: String?
     private var lastSearch = ""
     private var searchFieldObservation: AnyCancellable?
+    private var currentSearchTask: Task<Void, Never>?
 
     init(mailboxManager: MailboxManager, folder: Folder) {
         self.mailboxManager = mailboxManager
@@ -157,7 +160,8 @@ enum SearchState {
             contacts = []
         }
 
-        Task {
+        currentSearchTask?.cancel()
+        currentSearchTask = Task {
             await fetchThreads()
         }
     }
