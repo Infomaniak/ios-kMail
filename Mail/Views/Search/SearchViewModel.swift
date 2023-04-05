@@ -58,7 +58,7 @@ enum SearchState {
     }
 
     @Published var folderList: [Folder]
-    @Published var realFolder: Folder?
+    @Published var realFolder: Folder
     var lastSearchFolderId: String?
     var observationSearchThreadToken: NotificationToken?
     @Published var selectedSearchFolderId = "" {
@@ -88,10 +88,10 @@ enum SearchState {
     private var lastSearch = ""
     private var searchFieldObservation: AnyCancellable?
 
-    init(mailboxManager: MailboxManager, folder: Folder?) {
+    init(mailboxManager: MailboxManager, folder: Folder) {
         self.mailboxManager = mailboxManager
         searchHistory = mailboxManager.searchHistory()
-        realFolder = folder
+        realFolder = folder.freezeIfNeeded()
 
         searchFolder = mailboxManager.initSearchFolder()
 
@@ -256,7 +256,7 @@ enum SearchState {
     }
 
     func fetchThreads() async {
-        guard !isLoading, let realFolder = realFolder else {
+        guard !isLoading else {
             return
         }
 

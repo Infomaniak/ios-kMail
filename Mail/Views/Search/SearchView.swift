@@ -38,7 +38,7 @@ struct SearchView: View {
     let isCompact: Bool
 
     init(mailboxManager: MailboxManager,
-         folder: Folder?,
+         folder: Folder,
          editedMessageDraft: Binding<Draft?>,
          messageReply: Binding<MessageReply?>,
          isCompact: Bool) {
