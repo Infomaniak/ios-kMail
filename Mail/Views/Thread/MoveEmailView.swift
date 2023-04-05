@@ -56,7 +56,7 @@ struct MoveEmailView: View {
         ScrollView {
             LazyVStack(spacing: 0) {
                 listOfFolders(nestableFolders: nestableFolderSorted.filter { $0.content.role != nil })
-                IKDivider(paddingEdges: .all)
+                IKDivider(horizontalPadding: 8)
                 listOfFolders(nestableFolders: nestableFolderSorted.filter { $0.content.role == nil })
             }
         }

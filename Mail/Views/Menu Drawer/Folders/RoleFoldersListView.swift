@@ -39,7 +39,5 @@ struct RoleFoldersListView: View {
                            matomoCategory: .menuDrawer)
             }
         }
-        .padding(.top, 4)
-        .padding(.bottom, 12)
     }
 }

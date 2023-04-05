@@ -21,13 +21,15 @@ import MailResources
 import SwiftUI
 
 struct IKDivider: View {
-    var paddingEdges: Edge.Set = []
+    var hasVerticalPadding = false
+    var horizontalPadding: CGFloat = 24
 
     var body: some View {
         Divider()
             .frame(height: 1)
             .overlay(MailResourcesAsset.elementsColor.swiftUIColor)
-            .padding(paddingEdges, 8)
+            .padding(.vertical, hasVerticalPadding ? 8 : 0)
+            .padding(.horizontal, horizontalPadding)
     }
 }
 

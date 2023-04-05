@@ -150,15 +150,15 @@ struct MenuDrawerView: View {
                     Group {
                         MailboxesManagementView(mailboxes: viewModel.mailboxes)
 
-                        IKDivider(paddingEdges: .horizontal)
+                        IKDivider(hasVerticalPadding: true, horizontalPadding: 24)
 
                         RoleFoldersListView(folders: viewModel.roleFolders, isCompact: isCompact)
 
-                        IKDivider(paddingEdges: .horizontal)
+                        IKDivider(hasVerticalPadding: true, horizontalPadding: 24)
 
                         UserFoldersListView(folders: viewModel.userFolders, isCompact: isCompact)
 
-                        IKDivider(paddingEdges: .horizontal)
+                        IKDivider(hasVerticalPadding: true, horizontalPadding: 24)
                     }
                     Group {
                         MenuDrawerItemsListView(
@@ -167,21 +167,22 @@ struct MenuDrawerView: View {
                             matomoName: "advancedActions"
                         )
 
-                        IKDivider(paddingEdges: .horizontal)
+                        IKDivider(hasVerticalPadding: true, horizontalPadding: 24)
 
                         MenuDrawerItemsListView(content: viewModel.helpMenuItems)
 
                         if viewModel.mailbox.isLimited, let quotas = viewModel.mailbox.quotas {
-                            IKDivider(paddingEdges: .horizontal)
+                            IKDivider(hasVerticalPadding: true, horizontalPadding: 24)
 
                             MailboxQuotaView(quotas: quotas)
                         }
 
-                        IKDivider(paddingEdges: .horizontal)
+                        IKDivider(hasVerticalPadding: true, horizontalPadding: 24)
 
                         AppVersionView()
                     }
                 }
+                .padding(.vertical, 16)
             }
         }
         .background(MailResourcesAsset.backgroundSecondaryColor.swiftUIColor.ignoresSafeArea())

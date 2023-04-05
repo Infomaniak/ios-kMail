@@ -60,12 +60,10 @@ struct UserFoldersListView: View {
                     }
                 }
             }
-            .padding(.leading, UIConstants.menuDrawerHorizontalPadding)
-            .padding(.trailing, 18)
+            .padding(.horizontal, UIConstants.menuDrawerHorizontalPadding)
+            .padding(.vertical, UIConstants.menuDrawerVerticalPadding)
 
             if isExpanded {
-                Spacer(minLength: UIConstants.menuDrawerVerticalPadding)
-
                 if folders.isEmpty {
                     Text(MailResourcesStrings.Localizable.noFolderTitle)
                         .textStyle(.bodySmallSecondary)
@@ -81,7 +79,5 @@ struct UserFoldersListView: View {
                 }
             }
         }
-        .padding(.top, 16)
-        .padding(.bottom, 12)
     }
 }

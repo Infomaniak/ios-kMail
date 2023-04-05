@@ -43,7 +43,7 @@ struct MenuDrawerItemsListView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
-            if let title = title {
+            if let title {
                 Button {
                     withAnimation {
                         isExpanded.toggle()
@@ -60,20 +60,15 @@ struct MenuDrawerItemsListView: View {
                         Spacer()
                     }
                 }
-                .padding(.vertical, 16)
+                .padding(.vertical, UIConstants.menuDrawerVerticalPadding)
+            }
 
-                if isExpanded {
-                    ForEach(content) { item in
-                        MenuDrawerItemCell(content: item)
-                    }
-                }
-            } else {
+            if title == nil || isExpanded {
                 ForEach(content) { item in
                     MenuDrawerItemCell(content: item)
                 }
             }
         }
-        .padding(.bottom, 16)
         .padding(.horizontal, UIConstants.menuDrawerHorizontalPadding)
     }
 }
