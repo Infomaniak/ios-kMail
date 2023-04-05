@@ -83,7 +83,7 @@ struct SearchView: View {
             } else {
                 List {
                     if viewModel.searchState == .history {
-                        searchHistoryList(history: viewModel.searchHistory)
+                        SearchHistorySectionView(viewModel: viewModel)
                     } else if viewModel.searchState == .results {
                         contactList(contacts: viewModel.contacts)
                         threadList(threads: viewModel.threads)
@@ -224,55 +224,6 @@ struct SearchView: View {
         .listRowInsets(.init(top: 0, leading: 12, bottom: 0, trailing: 12))
         .listRowSeparator(.hidden)
         .listRowBackground(MailResourcesAsset.backgroundColor.swiftUIColor)
-    }
-
-    func searchHistoryList(history: SearchHistory) -> some View {
-        Section {
-            ForEach(history.history, id: \.self) { searchItem in
-                HStack(spacing: 8) {
-                    Text(searchItem)
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                    Button {
-                        deleteSearchTapped(searchItem: searchItem)
-                    } label: {
-                        MailResourcesAsset.close.swiftUIImage
-                            .resizable()
-                            .scaledToFit()
-                            .foregroundColor(.accentColor)
-                            .frame(width: 17, height: 17)
-                    }
-                    .buttonStyle(BorderlessButtonStyle())
-                }
-                .contentShape(Rectangle())
-                .onTapGesture {
-                    viewModel.matomo.track(eventWithCategory: .search, name: "fromHistory")
-                    Constants.globallyResignFirstResponder()
-                    viewModel.searchValue = searchItem
-                    Task {
-                        await viewModel.fetchThreads()
-                    }
-                }
-            }
-            .padding(.horizontal, 4)
-        } header: {
-            Text(MailResourcesStrings.Localizable.recentSearchesTitle)
-                .textStyle(.bodySmallSecondary)
-        }
-        .listRowSeparator(.hidden)
-        .listRowBackground(MailResourcesAsset.backgroundColor.swiftUIColor)
-        .listRowInsets(.init(top: 0, leading: 12, bottom: 0, trailing: 12))
-    }
-
-    private func deleteSearchTapped(searchItem: String) {
-        viewModel.matomo.track(eventWithCategory: .search, name: "deleteFromHistory")
-        Task {
-            await tryOrDisplayError {
-                viewModel.searchHistory = await viewModel.mailboxManager.delete(
-                    searchHistory: viewModel.searchHistory,
-                    with: searchItem
-                )
-            }
-        }
     }
 }
 
