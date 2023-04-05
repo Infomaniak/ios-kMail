@@ -100,7 +100,7 @@ class NotificationService: UNNotificationServiceExtension {
             // Prepare a notification in case we can't fetch the message in time / the message doesn't exist anymore
             prepareEmptyMessageNotification(in: mailbox)
             guard let messageUid = userInfos[NotificationsHelper.UserInfoKeys.messageUid] as? String,
-                  let fetchedMessage = try await fetchMessage(uid: messageUid, in: mailboxManager) else {
+                  let fetchedMessage = try? await fetchMessage(uid: messageUid, in: mailboxManager) else {
                 return contentHandler(bestAttemptContent)
             }
 
