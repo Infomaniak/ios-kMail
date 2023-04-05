@@ -160,7 +160,7 @@ public class MailboxManager: ObservableObject {
             try? realm.safeWrite {
                 // Remove old folders
                 realm.add(folderResult, update: .modified)
-                let toDeleteFolders = Set(cachedFolders).subtracting(Set(newFolders))
+                let toDeleteFolders = Set(cachedFolders).subtracting(Set(newFolders)).filter { $0.id != Constants.searchFolderId }
                 var toDeleteThreads = [Thread]()
 
                 // Threads contains in folders to delete
