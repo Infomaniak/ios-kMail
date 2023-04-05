@@ -16,7 +16,9 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import CocoaLumberjackSwift
 import MailCore
+import SwiftSoup
 import SwiftUI
 import WebKit
 
@@ -110,8 +112,12 @@ class WebViewModel: ObservableObject {
     var proxy: GeometryProxy?
     let css: String? = try? String(contentsOfFile: Bundle.main.path(forResource: "style", ofType: "css") ?? "", encoding: .utf8)
         .replacingOccurrences(of: "\n", with: "")
-    var meta: String {
-        return "<meta name=viewport content=\"\(proxy?.size.width ?? 0), initial-scale=1\"><style type=\"text/css\">\(css ?? "")</style>"
+    var viewport: String {
+        return "<meta name=viewport content=\"\(proxy?.size.width ?? 0), initial-scale=1\">"
+    }
+
+    var style: String {
+        return "<style>\(css ?? "")</style>"
     }
 
     init() {
@@ -123,9 +129,29 @@ class WebViewModel: ObservableObject {
     }
 
     func loadHTMLString(value: String?) {
-        guard let value = value else {
+        guard let rawHtml = value else {
             return
         }
-        webView.loadHTMLString(meta + value, baseURL: nil)
+
+        do {
+            guard let safeHtml = MessageBodyUtils.cleanHtmlContent(rawHtml: rawHtml) else { return }
+            let parsedHtml = try SwiftSoup.parse(safeHtml)
+
+            let head: Element
+            if let existingHead = parsedHtml.head() {
+                head = existingHead
+            } else {
+                head = try parsedHtml.appendElement("head")
+            }
+
+            try head.append(viewport)
+            try head.append(style)
+
+            let finalHtml = try parsedHtml.html()
+
+            webView.loadHTMLString(finalHtml, baseURL: nil)
+        } catch {
+            DDLogError("An error occurred while parsing body \(error)")
+        }
     }
 }

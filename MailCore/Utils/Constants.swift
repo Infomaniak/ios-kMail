@@ -18,6 +18,7 @@
 
 import Foundation
 import MailResources
+import SwiftSoup
 import SwiftUI
 
 public struct URLConstants {
@@ -63,6 +64,8 @@ public enum Constants {
         // swiftlint:disable force_try
         try! NSRegularExpression(pattern: ">\\s*<|>?\\s+<?")
     }()
+
+    public static let extendedWhitelist = Whitelist.extendedWhitelist
 
     public static func forwardQuote(message: Message) -> String {
         let date = DateFormatter.localizedString(from: message.date, dateStyle: .medium, timeStyle: .short)

@@ -76,12 +76,12 @@ public class Draft: Object, Decodable, Identifiable, Encodable {
     @Persisted public var references: String?
     @Persisted public var inReplyTo: String?
     @Persisted public var mimeType: String = UTType.html.preferredMIMEType!
-    @Persisted public var body: String = ""
+    @Persisted public var body = ""
     @Persisted public var quote: String?
     @Persisted public var to: List<Recipient>
     @Persisted public var cc: List<Recipient>
     @Persisted public var bcc: List<Recipient>
-    @Persisted public var subject: String = ""
+    @Persisted public var subject = ""
     @Persisted public var ackRequest = false
     @Persisted public var priority: MessagePriority = .normal
     @Persisted public var swissTransferUuid: String?
@@ -201,19 +201,19 @@ public class Draft: Object, Decodable, Identifiable, Encodable {
 
     public static func replying(to message: Message, mode: ReplyMode, localDraftUUID: String) -> Draft {
         var subject = "\(message.formattedSubject)"
-        let quote: String
+        let unsafeQuote: String
         var attachments: [Attachment] = []
         switch mode {
         case .reply, .replyAll:
             if !subject.starts(with: "Re: ") {
                 subject = "Re: \(subject)"
             }
-            quote = Constants.replyQuote(message: message)
-        case let .forward(attachmentsToForward):
+            unsafeQuote = Constants.replyQuote(message: message)
+        case .forward(let attachmentsToForward):
             if !subject.starts(with: "Fwd: ") {
                 subject = "Fwd: \(subject)"
             }
-            quote = Constants.forwardQuote(message: message)
+            unsafeQuote = Constants.forwardQuote(message: message)
             attachments = attachmentsToForward.map { Attachment(value: $0) }
         }
 
@@ -222,6 +222,8 @@ public class Draft: Object, Decodable, Identifiable, Encodable {
         if mode.isReply {
             recipientHolder = message.recipientsForReplyTo(replyAll: mode == .replyAll)
         }
+
+        let quote = MessageBodyUtils.cleanHtmlContent(rawHtml: unsafeQuote) ?? ""
 
         return Draft(localUUID: localDraftUUID,
                      inReplyToUid: mode.isReply ? message.uid : nil,
