@@ -77,8 +77,6 @@ struct MailboxesManagementView: View {
                     try? await updateAccount()
                 }
             }
-
-            IKDivider(paddingEdges: .all)
         }
         .padding(.top, 16)
         .sheet(isPresented: $isShowingSwitchAccount) {

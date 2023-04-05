@@ -147,33 +147,40 @@ struct MenuDrawerView: View {
 
             ScrollView {
                 VStack(spacing: 0) {
-                    MailboxesManagementView(mailboxes: viewModel.mailboxes)
+                    Group {
+                        MailboxesManagementView(mailboxes: viewModel.mailboxes)
 
-                    RoleFoldersListView(folders: viewModel.roleFolders, isCompact: isCompact)
+                        IKDivider(paddingEdges: .horizontal)
 
-                    IKDivider(paddingEdges: .all)
+                        RoleFoldersListView(folders: viewModel.roleFolders, isCompact: isCompact)
 
-                    UserFoldersListView(folders: viewModel.userFolders, isCompact: isCompact)
+                        IKDivider(paddingEdges: .horizontal)
 
-                    IKDivider(paddingEdges: .all)
+                        UserFoldersListView(folders: viewModel.userFolders, isCompact: isCompact)
 
-                    MenuDrawerItemsListView(
-                        title: MailResourcesStrings.Localizable.menuDrawerAdvancedActions,
-                        content: viewModel.actionsMenuItems,
-                        matomoName: "advancedActions"
-                    )
-
-                    IKDivider(paddingEdges: .all)
-
-                    MenuDrawerItemsListView(content: viewModel.helpMenuItems)
-
-                    if viewModel.mailbox.isLimited, let quotas = viewModel.mailbox.quotas {
-                        IKDivider(paddingEdges: .all)
-
-                        MailboxQuotaView(quotas: quotas)
+                        IKDivider(paddingEdges: .horizontal)
                     }
+                    Group {
+                        MenuDrawerItemsListView(
+                            title: MailResourcesStrings.Localizable.menuDrawerAdvancedActions,
+                            content: viewModel.actionsMenuItems,
+                            matomoName: "advancedActions"
+                        )
 
-                    AppVersionView()
+                        IKDivider(paddingEdges: .horizontal)
+
+                        MenuDrawerItemsListView(content: viewModel.helpMenuItems)
+
+                        if viewModel.mailbox.isLimited, let quotas = viewModel.mailbox.quotas {
+                            IKDivider(paddingEdges: .horizontal)
+
+                            MailboxQuotaView(quotas: quotas)
+                        }
+
+                        IKDivider(paddingEdges: .horizontal)
+
+                        AppVersionView()
+                    }
                 }
             }
         }
@@ -196,7 +203,6 @@ struct MenuDrawerView: View {
 
 struct AppVersionView: View {
     var body: some View {
-        IKDivider(paddingEdges: .all)
         Text(Constants.appVersion())
             .textStyle(.labelSecondary)
     }
