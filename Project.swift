@@ -58,7 +58,6 @@ let project = Project(name: "Mail",
                                  infoPlist: "Mail/Info.plist",
                                  sources: "Mail/**",
                                  resources: [
-                                     "Mail/*.css",
                                      "Mail/**/*.storyboard",
                                      "MailResources/**/*.xcassets",
                                      "MailResources/**/*.strings",
