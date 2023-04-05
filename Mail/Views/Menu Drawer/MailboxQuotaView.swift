@@ -45,7 +45,7 @@ struct MailboxQuotaView: View {
 
             Spacer()
         }
-        .padding(.vertical, 19)
+        .padding(.vertical, 12)
         .padding(.horizontal, UIConstants.menuDrawerHorizontalPadding)
     }
 }

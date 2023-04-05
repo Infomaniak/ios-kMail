@@ -147,34 +147,42 @@ struct MenuDrawerView: View {
 
             ScrollView {
                 VStack(spacing: 0) {
-                    MailboxesManagementView(mailboxes: viewModel.mailboxes)
+                    Group {
+                        MailboxesManagementView(mailboxes: viewModel.mailboxes)
 
-                    RoleFoldersListView(folders: viewModel.roleFolders, isCompact: isCompact)
+                        IKDivider(hasVerticalPadding: true, horizontalPadding: UIConstants.menuDrawerHorizontalPadding)
 
-                    IKDivider(withPadding: true)
+                        RoleFoldersListView(folders: viewModel.roleFolders, isCompact: isCompact)
 
-                    UserFoldersListView(folders: viewModel.userFolders, isCompact: isCompact)
+                        IKDivider(hasVerticalPadding: true, horizontalPadding: UIConstants.menuDrawerHorizontalPadding)
 
-                    IKDivider(withPadding: true)
+                        UserFoldersListView(folders: viewModel.userFolders, isCompact: isCompact)
 
-                    MenuDrawerItemsListView(
-                        title: MailResourcesStrings.Localizable.menuDrawerAdvancedActions,
-                        content: viewModel.actionsMenuItems,
-                        matomoName: "advancedActions"
-                    )
-
-                    IKDivider(withPadding: true)
-
-                    MenuDrawerItemsListView(content: viewModel.helpMenuItems)
-
-                    if viewModel.mailbox.isLimited, let quotas = viewModel.mailbox.quotas {
-                        IKDivider(withPadding: true)
-
-                        MailboxQuotaView(quotas: quotas)
+                        IKDivider(hasVerticalPadding: true, horizontalPadding: UIConstants.menuDrawerHorizontalPadding)
                     }
+                    Group {
+                        MenuDrawerItemsListView(
+                            title: MailResourcesStrings.Localizable.menuDrawerAdvancedActions,
+                            content: viewModel.actionsMenuItems,
+                            matomoName: "advancedActions"
+                        )
 
-                    AppVersionView()
+                        IKDivider(hasVerticalPadding: true, horizontalPadding: UIConstants.menuDrawerHorizontalPadding)
+
+                        MenuDrawerItemsListView(content: viewModel.helpMenuItems)
+
+                        if viewModel.mailbox.isLimited, let quotas = viewModel.mailbox.quotas {
+                            IKDivider(hasVerticalPadding: true, horizontalPadding: UIConstants.menuDrawerHorizontalPadding)
+
+                            MailboxQuotaView(quotas: quotas)
+                        }
+
+                        IKDivider(hasVerticalPadding: true, horizontalPadding: UIConstants.menuDrawerHorizontalPadding)
+
+                        AppVersionView()
+                    }
                 }
+                .padding(.vertical, 16)
             }
         }
         .background(MailResourcesAsset.backgroundSecondaryColor.swiftUIColor.ignoresSafeArea())
@@ -196,7 +204,6 @@ struct MenuDrawerView: View {
 
 struct AppVersionView: View {
     var body: some View {
-        IKDivider(withPadding: true)
         Text(Constants.appVersion())
             .textStyle(.labelSecondary)
     }
@@ -204,7 +211,8 @@ struct AppVersionView: View {
 
 struct MenuDrawerView_Previews: PreviewProvider {
     static var previews: some View {
-        MenuDrawerView(mailboxManager: PreviewHelper.sampleMailboxManager,
-                       isCompact: false)
+        MenuDrawerView(mailboxManager: PreviewHelper.sampleMailboxManager, isCompact: false)
+            .environmentObject(NavigationDrawerState())
+            .environmentObject(GlobalBottomSheet())
     }
 }

@@ -77,11 +77,7 @@ struct MailboxesManagementView: View {
                     try? await updateAccount()
                 }
             }
-
-            IKDivider(withPadding: true)
-                .padding(.top, 8)
         }
-        .padding(.top, 16)
         .sheet(isPresented: $isShowingSwitchAccount) {
             SheetView(mailboxManager: mailboxManager) {
                 AccountListView()

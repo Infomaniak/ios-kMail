@@ -43,7 +43,7 @@ struct MenuDrawerItemCell: View {
                     .textStyle(.bodyMedium)
             }
             .frame(maxWidth: .infinity, alignment: .leading)
-            .padding(.vertical, 14)
+            .padding(.vertical, UIConstants.menuDrawerVerticalPadding)
         }
     }
 }

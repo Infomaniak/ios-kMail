@@ -23,6 +23,7 @@ import SwiftUI
 enum SelectionBackgroundKind {
     case none
     case multiple
+    case folder
     case single
 
     var verticalPadding: CGFloat {
