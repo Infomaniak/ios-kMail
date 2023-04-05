@@ -117,9 +117,6 @@ struct SearchView: View {
             }
         }
         .onAppear {
-            if viewModel.selectedThread == nil {
-                viewModel.initSearch()
-            }
             viewModel.selectedThread = nil
         }
         .toolbar {

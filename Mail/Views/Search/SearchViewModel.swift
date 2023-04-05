@@ -111,22 +111,14 @@ enum SearchState {
                 self?.searchValueType = .threadsAndContacts
                 self?.performSearch()
             }
-        observeChanges()
-    }
-
-    func initSearch() {
-        clearSearch()
-        selectedFilters = []
     }
 
     func clearSearch() {
-        Task {
-            searchValueType = .threadsAndContacts
-            searchValue = ""
-            threads = []
-            contacts = []
-            isLoading = false
-        }
+        searchValueType = .threadsAndContacts
+        searchValue = ""
+        threads = []
+        contacts = []
+        isLoading = false
     }
 
     func searchThreadsForCurrentValue() {
