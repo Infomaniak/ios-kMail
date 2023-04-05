@@ -277,7 +277,6 @@ enum SearchState {
         }
 
         if ReachabilityListener.instance.currentStatus == .offline {
-            // Search offline
             await mailboxManager.searchThreadsOffline(
                 searchFolder: searchFolder,
                 filterFolderId: folderToSearch,
