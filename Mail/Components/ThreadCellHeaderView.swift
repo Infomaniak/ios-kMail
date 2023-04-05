@@ -36,6 +36,7 @@ struct ThreadCellHeaderView: View {
 
             if thread.messages.count > 1 {
                 ThreadCountIndicatorView(messagesCount: thread.messages.count, hasUnseenMessages: thread.hasUnseenMessages)
+                    .accessibilityHidden(true)
             }
 
             Spacer()
@@ -43,6 +44,7 @@ struct ThreadCellHeaderView: View {
             Text(dataHolder.date)
                 .textStyle(.bodySmallSecondary)
                 .lineLimit(1)
+                .accessibilityHidden(true)
         }
     }
 }

@@ -93,6 +93,17 @@ struct ThreadCell: View {
         density == .large ? UIConstants.checkboxLargeSize : UIConstants.checkboxSize
     }
 
+    private var additionalAccessibilityLabel: String {
+        var label = ""
+        if isSelected {
+            label.append("\(MailResourcesStrings.Localizable.contentDescriptionSelectedItem). ")
+        }
+        if thread.hasUnseenMessages {
+            label.append(MailResourcesStrings.Localizable.actionShortMarkAsUnread)
+        }
+        return label
+    }
+
     init(
         thread: Thread,
         mailboxManager: MailboxManager,
@@ -119,6 +130,8 @@ struct ThreadCell: View {
                     .threadListSlide(density: density, isMultipleSelectionEnabled: isMultipleSelectionEnabled),
                     value: isMultipleSelectionEnabled
                 )
+                .accessibilityLabel(additionalAccessibilityLabel)
+                .accessibilityHidden(additionalAccessibilityLabel.isEmpty)
 
             Group {
                 if density == .large, let recipient = dataHolder.recipientToDisplay {
@@ -127,6 +140,7 @@ struct ThreadCell: View {
                         CheckboxView(isSelected: isSelected, density: density)
                             .opacity(isSelected ? 1 : 0)
                     }
+                    .accessibility(hidden: true)
                 } else if isMultipleSelectionEnabled {
                     CheckboxView(isSelected: isSelected, density: density)
                         .animation(
