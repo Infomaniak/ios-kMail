@@ -86,7 +86,7 @@ struct SearchView: View {
                         SearchHistorySectionView(viewModel: viewModel)
                     } else if viewModel.searchState == .results {
                         contactList(contacts: viewModel.contacts)
-                        threadList(threads: viewModel.threads)
+                        SearchThreadsSectionView(viewModel: viewModel, editedMessageDraft: $editedMessageDraft)
                     }
                 }
                 .listStyle(.plain)
@@ -141,66 +141,6 @@ struct SearchView: View {
             }
         }
         .matomoView(view: ["SearchView"])
-    }
-
-    func threadList(threads: [Thread]) -> some View {
-        Section {
-            ForEach(threads) { thread in
-                Group {
-                    if thread.shouldPresentAsDraft {
-                        Button(action: {
-                            DraftUtils.editDraft(
-                                from: thread,
-                                mailboxManager: viewModel.mailboxManager,
-                                editedMessageDraft: $editedMessageDraft
-                            )
-                        }, label: {
-                            ThreadCell(thread: thread,
-                                       mailboxManager: viewModel.mailboxManager,
-                                       density: threadDensity)
-                        })
-                    } else {
-                        ZStack {
-                            NavigationLink(destination: {
-                                ThreadView(
-                                    mailboxManager: viewModel.mailboxManager,
-                                    thread: thread
-                                )
-                                .onAppear {
-                                    viewModel.selectedThread = thread
-                                }
-                            }, label: {
-                                EmptyView()
-                            })
-                            .opacity(0)
-
-                            ThreadCell(thread: thread,
-                                       mailboxManager: viewModel.mailboxManager,
-                                       density: threadDensity)
-                        }
-                    }
-                }
-                .listRowInsets(EdgeInsets())
-                .padding(.leading, -4)
-                .onAppear {
-                    viewModel.loadNextPageIfNeeded(currentItem: thread)
-                }
-            }
-        } header: {
-            if threadDensity != .compact && !threads.isEmpty {
-                Text(MailResourcesStrings.Localizable.searchAllMessages)
-                    .textStyle(.bodySmallSecondary)
-            }
-        } footer: {
-            if viewModel.isLoading {
-                ProgressView()
-                    .frame(maxWidth: .infinity)
-                    .id(UUID())
-            }
-        }
-        .listRowInsets(.init(top: 0, leading: 12, bottom: 0, trailing: 12))
-        .listRowSeparator(.hidden)
-        .listRowBackground(MailResourcesAsset.backgroundColor.swiftUIColor)
     }
 
     func contactList(contacts: [Recipient]) -> some View {
