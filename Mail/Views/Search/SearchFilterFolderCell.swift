@@ -57,8 +57,8 @@ struct SearchFilterFolderCell: View {
                 HStack {
                     allFoldersItem.icon
                     Text(allFoldersItem.name)
-                        .tag(allFoldersItem.id)
                 }
+                .tag(allFoldersItem.id)
 
                 ForEach(sortedFolders) { folder in
                     HStack {

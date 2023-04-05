@@ -58,7 +58,7 @@ enum SearchState {
     }
 
     @Published var folderList: [Folder]
-    @Published var realFolder: Folder?
+    @Published var realFolder: Folder
     var lastSearchFolderId: String?
     var observationSearchThreadToken: NotificationToken?
     @Published var selectedSearchFolderId = "" {
@@ -69,7 +69,9 @@ enum SearchState {
             } else if !selectedFilters.contains(.folder) {
                 selectedFilters.append(.folder)
             }
-            Task {
+
+            currentSearchTask?.cancel()
+            currentSearchTask = Task {
                 await fetchThreads()
             }
         }
@@ -87,13 +89,14 @@ enum SearchState {
     private var resourceNext: String?
     private var lastSearch = ""
     private var searchFieldObservation: AnyCancellable?
+    private var currentSearchTask: Task<Void, Never>?
 
-    init(mailboxManager: MailboxManager, folder: Folder?) {
+    init(mailboxManager: MailboxManager, folder: Folder) {
         self.mailboxManager = mailboxManager
         searchHistory = mailboxManager.searchHistory()
-        realFolder = folder
+        realFolder = folder.freezeIfNeeded()
 
-        searchFolder = mailboxManager.initSearchFolder()
+        searchFolder = mailboxManager.initSearchFolder().freezeIfNeeded()
 
         folderList = mailboxManager.getFolders()
 
@@ -108,22 +111,14 @@ enum SearchState {
                 self?.searchValueType = .threadsAndContacts
                 self?.performSearch()
             }
-        observeChanges()
-    }
-
-    func initSearch() {
-        clearSearch()
-        selectedFilters = []
     }
 
     func clearSearch() {
-        Task {
-            searchValueType = .threadsAndContacts
-            searchValue = ""
-            threads = []
-            contacts = []
-            isLoading = false
-        }
+        searchValueType = .threadsAndContacts
+        searchValue = ""
+        threads = []
+        contacts = []
+        isLoading = false
     }
 
     func searchThreadsForCurrentValue() {
@@ -157,7 +152,8 @@ enum SearchState {
             contacts = []
         }
 
-        Task {
+        currentSearchTask?.cancel()
+        currentSearchTask = Task {
             await fetchThreads()
         }
     }
@@ -256,13 +252,12 @@ enum SearchState {
     }
 
     func fetchThreads() async {
-        guard !isLoading, let realFolder = realFolder else {
+        guard !isLoading else {
             return
         }
 
         isLoading = true
 
-        let frozenSearchFolder = searchFolder.freeze()
         observationSearchThreadToken?.invalidate()
         threads = []
 
@@ -274,16 +269,15 @@ enum SearchState {
         }
 
         if ReachabilityListener.instance.currentStatus == .offline {
-            // Search offline
             await mailboxManager.searchThreadsOffline(
-                searchFolder: frozenSearchFolder,
+                searchFolder: searchFolder,
                 filterFolderId: folderToSearch,
                 searchFilters: searchFiltersOffline
             )
         } else {
             await tryOrDisplayError {
                 let result = try await mailboxManager.searchThreads(
-                    searchFolder: frozenSearchFolder,
+                    searchFolder: searchFolder,
                     filterFolderId: folderToSearch,
                     filter: filter,
                     searchFilter: searchFilters
