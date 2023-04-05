@@ -93,7 +93,7 @@ enum SearchState {
         searchHistory = mailboxManager.searchHistory()
         realFolder = folder.freezeIfNeeded()
 
-        searchFolder = mailboxManager.initSearchFolder()
+        searchFolder = mailboxManager.initSearchFolder().freezeIfNeeded()
 
         folderList = mailboxManager.getFolders()
 
@@ -262,7 +262,6 @@ enum SearchState {
 
         isLoading = true
 
-        let frozenSearchFolder = searchFolder.freeze()
         observationSearchThreadToken?.invalidate()
         threads = []
 
@@ -276,14 +275,14 @@ enum SearchState {
         if ReachabilityListener.instance.currentStatus == .offline {
             // Search offline
             await mailboxManager.searchThreadsOffline(
-                searchFolder: frozenSearchFolder,
+                searchFolder: searchFolder,
                 filterFolderId: folderToSearch,
                 searchFilters: searchFiltersOffline
             )
         } else {
             await tryOrDisplayError {
                 let result = try await mailboxManager.searchThreads(
-                    searchFolder: frozenSearchFolder,
+                    searchFolder: searchFolder,
                     filterFolderId: folderToSearch,
                     filter: filter,
                     searchFilter: searchFilters
