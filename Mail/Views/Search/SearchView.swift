@@ -73,22 +73,23 @@ struct SearchView: View {
             }
             .padding(.top, 16)
 
-            if viewModel.searchState == .noHistory {
-                Text(MailResourcesStrings.Localizable.emptyStateHistoryDescription)
-                    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
-                    .padding(.top, 16)
-                    .textStyle(.bodySmallSecondary)
-            } else {
-                List {
-                    if viewModel.searchState == .history {
-                        SearchHistorySectionView(viewModel: viewModel)
-                    } else if viewModel.searchState == .results {
-                        SearchContactsSectionView(viewModel: viewModel)
-                        SearchThreadsSectionView(viewModel: viewModel, editedMessageDraft: $editedMessageDraft)
-                    }
+            List {
+                if viewModel.searchState == .noHistory {
+                    Text(MailResourcesStrings.Localizable.emptyStateHistoryDescription)
+                        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
+                        .padding(.top, 16)
+                        .textStyle(.bodySmallSecondary)
+                        .listRowSeparator(.hidden)
+                        .listRowBackground(MailResourcesAsset.backgroundColor.swiftUIColor)
+                        .listRowInsets(.init(top: 0, leading: 12, bottom: 0, trailing: 12))
+                } else if viewModel.searchState == .history {
+                    SearchHistorySectionView(viewModel: viewModel)
+                } else if viewModel.searchState == .results {
+                    SearchContactsSectionView(viewModel: viewModel)
+                    SearchThreadsSectionView(viewModel: viewModel, editedMessageDraft: $editedMessageDraft)
                 }
-                .listStyle(.plain)
             }
+            .listStyle(.plain)
         }
         .background(MailResourcesAsset.backgroundColor.swiftUIColor)
         .navigationBarSearchListStyle()
