@@ -322,6 +322,7 @@ private struct ThreadListToolbar: ViewModifier {
                                         .scaledToFit()
                                         .frame(width: UIConstants.navbarIconSize, height: UIConstants.navbarIconSize)
                                 }
+                                .accessibilityLabel(MailResourcesStrings.Localizable.contentDescriptionButtonMenu)
                             }
                         }
                     }
@@ -357,6 +358,7 @@ private struct ThreadListToolbar: ViewModifier {
                             } label: {
                                 AvatarView(avatarDisplayable: AccountManager.instance.currentAccount.user)
                             }
+                            .accessibilityLabel(MailResourcesStrings.Localizable.contentDescriptionUserAvatar)
                         }
                     }
 
