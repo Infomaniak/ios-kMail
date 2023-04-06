@@ -26,17 +26,24 @@ struct SearchHistorySectionView: View {
     var body: some View {
         Section {
             ForEach(viewModel.searchHistory.history, id: \.self) { searchItem in
-                HStack(spacing: 8) {
+                HStack(spacing: 16) {
+                    MailResourcesAsset.clock.swiftUIImage
+                        .resizable()
+                        .frame(width: 24, height: 24)
+                        .foregroundColor(.accentColor)
+
                     Text(searchItem)
-                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .textStyle(.bodyMedium)
+
+                    Spacer()
+
                     Button {
                         deleteSearchTapped(searchItem: searchItem)
                     } label: {
-                        MailResourcesAsset.close.swiftUIImage
+                        MailResourcesAsset.closeSmall.swiftUIImage
                             .resizable()
-                            .scaledToFit()
-                            .foregroundColor(.accentColor)
-                            .frame(width: 17, height: 17)
+                            .foregroundColor(MailResourcesAsset.textSecondaryColor.swiftUIColor)
+                            .frame(width: 16, height: 16)
                     }
                     .buttonStyle(BorderlessButtonStyle())
                 }
@@ -50,14 +57,13 @@ struct SearchHistorySectionView: View {
                     }
                 }
             }
-            .padding(.horizontal, 4)
         } header: {
             Text(MailResourcesStrings.Localizable.recentSearchesTitle)
                 .textStyle(.bodySmallSecondary)
         }
         .listRowSeparator(.hidden)
         .listRowBackground(MailResourcesAsset.backgroundColor.swiftUIColor)
-        .listRowInsets(.init(top: 0, leading: 12, bottom: 0, trailing: 12))
+        .listRowInsets(.init(top: 0, leading: 16, bottom: 0, trailing: 16))
     }
 
     @MainActor
