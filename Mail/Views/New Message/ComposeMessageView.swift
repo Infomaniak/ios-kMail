@@ -233,16 +233,7 @@ struct ComposeMessageView: View {
             }
         }
         .task {
-            guard draft.messageUid != nil && draft.remoteUUID.isEmpty else { return }
-
-            do {
-                if let fetchedDraft = try await mailboxManager.draft(partialDraft: draft),
-                   let liveFetchedDraft = fetchedDraft.thaw() {
-                    self.draft = liveFetchedDraft
-                }
-            } catch {
-                // Fail silently
-            }
+            await prepareCompleteDraft()
         }
         .task {
             await prepareReplyForwardBodyAndAttachments()
@@ -311,6 +302,19 @@ struct ComposeMessageView: View {
             }
         }
         dismiss()
+    }
+
+    private func prepareCompleteDraft() async {
+        guard draft.messageUid != nil && draft.remoteUUID.isEmpty else { return }
+
+        do {
+            if let fetchedDraft = try await mailboxManager.draft(partialDraft: draft),
+               let liveFetchedDraft = fetchedDraft.thaw() {
+                draft = liveFetchedDraft
+            }
+        } catch {
+            // Fail silently
+        }
     }
 
     private func prepareReplyForwardBodyAndAttachments() async {
