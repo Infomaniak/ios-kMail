@@ -39,23 +39,10 @@ public enum SaveDraftOption: String, Codable, PersistableEnum {
 
 public enum ReplyMode: Equatable {
     case reply, replyAll
-    case forward([Attachment])
+    case forward
 
     var isReply: Bool {
         return self == .reply || self == .replyAll
-    }
-
-    public static func == (lhs: ReplyMode, rhs: ReplyMode) -> Bool {
-        switch (lhs, rhs) {
-        case (.reply, .reply):
-            return true
-        case (.replyAll, .replyAll):
-            return true
-        case (.forward(_), .forward(_)):
-            return true
-        default:
-            return false
-        }
     }
 }
 
@@ -194,22 +181,33 @@ public class Draft: Object, Decodable, Identifiable, Encodable {
         return Draft(to: [recipient.detached()])
     }
 
-    public static func replying(to message: Message, mode: ReplyMode, localDraftUUID: String) -> Draft {
-        var subject = "\(message.formattedSubject)"
+    public static func replyingBody(message: Message, replyMode: ReplyMode) -> String {
         let unsafeQuote: String
-        var attachments: [Attachment] = []
+        switch replyMode {
+        case .reply, .replyAll:
+            unsafeQuote = Constants.replyQuote(message: message)
+        case .forward:
+            unsafeQuote = Constants.forwardQuote(message: message)
+        }
+
+        let quote = MessageBodyUtils.cleanHtmlContent(rawHtml: unsafeQuote) ?? ""
+
+        return "<br><br>" + quote
+    }
+
+    public static func replying(reply: MessageReply) -> Draft {
+        let message = reply.message
+        let mode = reply.replyMode
+        var subject = "\(message.formattedSubject)"
         switch mode {
         case .reply, .replyAll:
             if !subject.starts(with: "Re: ") {
                 subject = "Re: \(subject)"
             }
-            unsafeQuote = Constants.replyQuote(message: message)
-        case .forward(let attachmentsToForward):
+        case .forward:
             if !subject.starts(with: "Fwd: ") {
                 subject = "Fwd: \(subject)"
             }
-            unsafeQuote = Constants.forwardQuote(message: message)
-            attachments = attachmentsToForward.map { Attachment(value: $0) }
         }
 
         var recipientHolder = RecipientHolder()
@@ -218,18 +216,15 @@ public class Draft: Object, Decodable, Identifiable, Encodable {
             recipientHolder = message.recipientsForReplyTo(replyAll: mode == .replyAll)
         }
 
-        let quote = MessageBodyUtils.cleanHtmlContent(rawHtml: unsafeQuote) ?? ""
-
-        return Draft(localUUID: localDraftUUID,
+        return Draft(localUUID: reply.localDraftUUID,
                      inReplyToUid: mode.isReply ? message.uid : nil,
-                     forwardedUid: mode == .forward([]) ? message.uid : nil,
+                     forwardedUid: mode == .forward ? message.uid : nil,
                      references: "\(message.references ?? "") \(message.messageId ?? "")",
                      inReplyTo: message.messageId,
                      subject: subject,
-                     body: "<br><br>\(quote)",
+                     body: "",
                      to: recipientHolder.to,
-                     cc: recipientHolder.cc,
-                     attachments: attachments)
+                     cc: recipientHolder.cc)
     }
 
     public func setSignature(_ signatureResponse: SignatureResponse) {

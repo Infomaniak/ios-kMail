@@ -62,6 +62,7 @@ struct ComposeMessageView: View {
     @StateRealmObject var draft: Draft
     @State private var editor = RichTextEditorModel()
     @State private var showCc = false
+    @State private var isLoadingContent: Bool
     @FocusState private var focusedField: ComposeViewFieldType?
 
     @State private var addRecipientHandler: ((Recipient) -> Void)?
@@ -78,6 +79,8 @@ struct ComposeMessageView: View {
 
     @StateObject private var alert = NewMessageAlert()
 
+    let messageReply: MessageReply?
+
     private var isSendButtonDisabled: Bool {
         return draft.identityId?.isEmpty == true
             || (draft.to.isEmpty && draft.cc.isEmpty && draft.bcc.isEmpty)
@@ -88,7 +91,8 @@ struct ComposeMessageView: View {
         return (!autocompletion.isEmpty || !unknownRecipientAutocompletion.isEmpty) && focusedField != nil
     }
 
-    private init(mailboxManager: MailboxManager, draft: Draft) {
+    private init(mailboxManager: MailboxManager, draft: Draft, messageReply: MessageReply? = nil) {
+        self.messageReply = messageReply
         _mailboxManager = State(initialValue: mailboxManager)
         if draft.identityId == nil || draft.identityId?.isEmpty == true,
            let signature = mailboxManager.getSignatureResponse() {
@@ -105,6 +109,7 @@ struct ComposeMessageView: View {
         _draft = StateRealmObject(wrappedValue: draft)
         _showCc = State(initialValue: !draft.bcc.isEmpty || !draft.cc.isEmpty)
         _attachmentsManager = StateObject(wrappedValue: AttachmentsManager(draft: draft, mailboxManager: mailboxManager))
+        _isLoadingContent = State(initialValue: (draft.messageUid != nil && draft.remoteUUID.isEmpty) || messageReply != nil)
     }
 
     var body: some View {
@@ -155,7 +160,7 @@ struct ComposeMessageView: View {
                 }
             }
             .overlay {
-                if draft.messageUid != nil && draft.remoteUUID.isEmpty {
+                if isLoadingContent {
                     ProgressView()
                         .frame(maxWidth: .infinity, maxHeight: .infinity)
                         .background(MailResourcesAsset.backgroundColor.swiftUIColor)
@@ -214,9 +219,9 @@ struct ComposeMessageView: View {
         }
         .customAlert(isPresented: $alert.isShowing) {
             switch alert.state {
-            case let .link(handler):
+            case .link(let handler):
                 AddLinkView(actionHandler: handler)
-            case let .emptySubject(handler):
+            case .emptySubject(let handler):
                 EmptySubjectView(actionHandler: handler)
             case .none:
                 EmptyView()
@@ -238,6 +243,9 @@ struct ComposeMessageView: View {
             } catch {
                 // Fail silently
             }
+        }
+        .task {
+            await prepareReplyForwardBodyAndAttachments()
         }
         .navigationViewStyle(.stack)
         .defaultAppStorage(.shared)
@@ -304,6 +312,53 @@ struct ComposeMessageView: View {
         }
         dismiss()
     }
+
+    private func prepareReplyForwardBodyAndAttachments() async {
+        guard let messageReply else { return }
+
+        let prepareBodyTask = Task {
+            await prepareBody(message: messageReply.message, replyMode: messageReply.replyMode)
+        }
+
+        let prepareAttachmentsTask = Task {
+            await prepareAttachments(message: messageReply.message, replyMode: messageReply.replyMode)
+        }
+
+        _ = await prepareBodyTask.result
+        _ = await prepareAttachmentsTask.result
+        isLoadingContent = false
+    }
+
+    private func prepareBody(message: Message, replyMode: ReplyMode) async {
+        if !message.fullyDownloaded {
+            do {
+                try await mailboxManager.message(message: message)
+            } catch {
+                // TODO: handle error
+            }
+        }
+
+        guard let freshMessage = message.thaw() else { return }
+        freshMessage.realm?.refresh()
+        $draft.body.wrappedValue = Draft.replyingBody(message: freshMessage, replyMode: replyMode)
+    }
+
+    private func prepareAttachments(message: Message, replyMode: ReplyMode) async {
+        guard replyMode == .forward else { return }
+        do {
+            let attachments = try await mailboxManager.apiFetcher.attachmentsToForward(
+                mailbox: mailboxManager.mailbox,
+                message: message
+            ).attachments
+
+            for attachment in attachments {
+                $draft.attachments.append(attachment)
+            }
+            attachmentsManager.completeUploadedAttachments()
+        } catch {
+            // TODO: handle error
+        }
+    }
 }
 
 extension ComposeMessageView {
@@ -312,12 +367,10 @@ extension ComposeMessageView {
     }
 
     static func replyOrForwardMessage(messageReply: MessageReply, mailboxManager: MailboxManager) -> ComposeMessageView {
-        let message = messageReply.message
-        // If message doesn't exist anymore try to show the frozen one
-        let freshMessage = message.thaw() ?? message
         return ComposeMessageView(
             mailboxManager: mailboxManager,
-            draft: .replying(to: freshMessage, mode: messageReply.replyMode, localDraftUUID: messageReply.localDraftUUID)
+            draft: .replying(reply: messageReply),
+            messageReply: messageReply
         )
     }
 
