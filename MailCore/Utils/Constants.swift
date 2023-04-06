@@ -138,7 +138,7 @@ public enum Constants {
     public static func appVersion() -> String {
         let release = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as! String? ?? "x.x"
         let build = Bundle.main.object(forInfoDictionaryKey: "CFBundleVersion") as! String? ?? "x"
-        return "kMail iOS version \(release)-Alpha1 (\(build))"
+        return "kMail iOS version \(release)-beta\(build)"
     }
 
     public static let searchFolderId = "search_folder_id"
