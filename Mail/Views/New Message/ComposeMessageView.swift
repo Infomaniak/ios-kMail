@@ -312,8 +312,10 @@ struct ComposeMessageView: View {
                let liveFetchedDraft = fetchedDraft.thaw() {
                 draft = liveFetchedDraft
             }
+            isLoadingContent = false
         } catch {
-            // Fail silently
+            dismiss()
+            IKSnackBar.showSnackBar(message: MailError.unknownError.localizedDescription)
         }
     }
 
@@ -321,25 +323,26 @@ struct ComposeMessageView: View {
         guard let messageReply else { return }
 
         let prepareBodyTask = Task {
-            await prepareBody(message: messageReply.message, replyMode: messageReply.replyMode)
+            try await prepareBody(message: messageReply.message, replyMode: messageReply.replyMode)
         }
 
         let prepareAttachmentsTask = Task {
-            await prepareAttachments(message: messageReply.message, replyMode: messageReply.replyMode)
+            try await prepareAttachments(message: messageReply.message, replyMode: messageReply.replyMode)
         }
 
-        _ = await prepareBodyTask.result
-        _ = await prepareAttachmentsTask.result
-        isLoadingContent = false
+        do {
+            _ = try await prepareBodyTask.value
+            _ = try await prepareAttachmentsTask.value
+            isLoadingContent = false
+        } catch {
+            dismiss()
+            IKSnackBar.showSnackBar(message: MailError.unknownError.localizedDescription)
+        }
     }
 
-    private func prepareBody(message: Message, replyMode: ReplyMode) async {
+    private func prepareBody(message: Message, replyMode: ReplyMode) async throws {
         if !message.fullyDownloaded {
-            do {
-                try await mailboxManager.message(message: message)
-            } catch {
-                // TODO: handle error
-            }
+            try await mailboxManager.message(message: message)
         }
 
         guard let freshMessage = message.thaw() else { return }
@@ -347,21 +350,17 @@ struct ComposeMessageView: View {
         $draft.body.wrappedValue = Draft.replyingBody(message: freshMessage, replyMode: replyMode)
     }
 
-    private func prepareAttachments(message: Message, replyMode: ReplyMode) async {
+    private func prepareAttachments(message: Message, replyMode: ReplyMode) async throws {
         guard replyMode == .forward else { return }
-        do {
-            let attachments = try await mailboxManager.apiFetcher.attachmentsToForward(
-                mailbox: mailboxManager.mailbox,
-                message: message
-            ).attachments
+        let attachments = try await mailboxManager.apiFetcher.attachmentsToForward(
+            mailbox: mailboxManager.mailbox,
+            message: message
+        ).attachments
 
-            for attachment in attachments {
-                $draft.attachments.append(attachment)
-            }
-            attachmentsManager.completeUploadedAttachments()
-        } catch {
-            // TODO: handle error
+        for attachment in attachments {
+            $draft.attachments.append(attachment)
         }
+        attachmentsManager.completeUploadedAttachments()
     }
 }
 
