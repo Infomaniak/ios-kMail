@@ -380,15 +380,14 @@ enum ActionsTarget: Equatable {
     }
 
     private func reply(mode: ReplyMode) async throws {
-        var completeMode = mode
         switch target {
         case let .threads(threads, _):
             // We don't handle this action in multiple selection
             guard threads.count == 1, let thread = threads.first,
                   let message = thread.messages.last(where: { !$0.isDraft }) else { break }
-            replyHandler?(message, completeMode)
+            replyHandler?(message, mode)
         case let .message(message):
-            replyHandler?(message, completeMode)
+            replyHandler?(message, mode)
         }
     }
 
