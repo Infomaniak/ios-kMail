@@ -113,13 +113,6 @@ struct ThreadListView: View {
 
             ScrollViewReader { proxy in
                 List {
-                    if viewModel.isLoadingPage && !isRefreshing {
-                        ProgressView()
-                            .id(UUID())
-                            .frame(maxWidth: .infinity)
-                            .listRowSeparator(.hidden)
-                    }
-
                     if !viewModel.sections.isEmpty,
                        viewModel.folder.role == .trash || viewModel.folder.role == .spam {
                         FlushFolderView(
@@ -129,6 +122,13 @@ struct ThreadListView: View {
                         )
                         .listRowSeparator(.hidden)
                         .listRowInsets(.init())
+                    }
+
+                    if viewModel.isLoadingPage && !isRefreshing {
+                        ProgressView()
+                            .id(UUID())
+                            .frame(maxWidth: .infinity)
+                            .listRowSeparator(.hidden)
                     }
 
                     if threadDensity == .compact {
