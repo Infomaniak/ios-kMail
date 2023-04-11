@@ -53,7 +53,7 @@ struct ThreadView: View {
     @StateObject private var moveSheet = MoveSheet()
     @StateObject private var bottomSheet = MessageBottomSheet()
     @StateObject private var threadBottomSheet = ThreadBottomSheet()
-    
+
     @State private var showEmptyView = false
 
     @EnvironmentObject var globalBottomSheet: GlobalBottomSheet
@@ -136,20 +136,20 @@ struct ThreadView: View {
             ComposeMessageView.replyOrForwardMessage(messageReply: messageReply, mailboxManager: mailboxManager)
         }
         .sheet(isPresented: $moveSheet.isShowing) {
-            if case let .move(folderId, handler) = moveSheet.state {
+            if case .move(let folderId, let handler) = moveSheet.state {
                 MoveEmailView.sheetView(mailboxManager: mailboxManager, from: folderId, moveHandler: handler)
             }
         }
         .floatingPanel(state: bottomSheet) {
             switch bottomSheet.state {
-            case let .contact(recipient, isRemote):
+            case .contact(let recipient, let isRemote):
                 ContactActionsView(
                     recipient: recipient,
                     isRemoteContact: isRemote,
                     bottomSheet: bottomSheet,
                     mailboxManager: mailboxManager
                 )
-            case let .replyOption(message, isThread):
+            case .replyOption(let message, let isThread):
                 ReplyActionsView(
                     mailboxManager: mailboxManager,
                     target: isThread ? .threads([thread], false) : .message(message),
@@ -164,7 +164,7 @@ struct ThreadView: View {
             }
         }
         .floatingPanel(state: threadBottomSheet, halfOpening: true) {
-            if case let .actions(target) = threadBottomSheet.state, !target.isInvalidated {
+            if case .actions(let target) = threadBottomSheet.state, !target.isInvalidated {
                 ActionsView(mailboxManager: mailboxManager,
                             target: target,
                             state: threadBottomSheet,
@@ -206,13 +206,7 @@ struct ThreadView: View {
             }
         case .forward:
             guard let message = thread.messages.last else { return }
-            Task {
-                let attachments = try await mailboxManager.apiFetcher.attachmentsToForward(
-                    mailbox: mailboxManager.mailbox,
-                    message: message
-                ).attachments
-                messageReply = MessageReply(message: message, replyMode: .forward(attachments))
-            }
+            messageReply = MessageReply(message: message, replyMode: .forward)
         case .archive:
             Task {
                 await tryOrDisplayError {

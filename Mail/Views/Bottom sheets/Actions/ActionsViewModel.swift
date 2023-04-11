@@ -308,7 +308,7 @@ enum ActionsTarget: Equatable {
         case .archive:
             try await move(to: .archive)
         case .forward:
-            try await reply(mode: .forward([]))
+            try await reply(mode: .forward)
         case .markAsRead, .markAsUnread:
             try await toggleRead()
         case .move:
@@ -380,33 +380,14 @@ enum ActionsTarget: Equatable {
     }
 
     private func reply(mode: ReplyMode) async throws {
-        var completeMode = mode
         switch target {
         case let .threads(threads, _):
             // We don't handle this action in multiple selection
             guard threads.count == 1, let thread = threads.first,
                   let message = thread.messages.last(where: { !$0.isDraft }) else { break }
-            // Download message if needed to get body
-            if !message.fullyDownloaded {
-                try await mailboxManager.message(message: message)
-            }
-            if mode == .forward([]) {
-                let attachments = try await mailboxManager.apiFetcher.attachmentsToForward(
-                    mailbox: mailboxManager.mailbox,
-                    message: message
-                ).attachments
-                completeMode = .forward(attachments)
-            }
-            replyHandler?(message, completeMode)
+            replyHandler?(message, mode)
         case let .message(message):
-            if mode == .forward([]) {
-                let attachments = try await mailboxManager.apiFetcher.attachmentsToForward(
-                    mailbox: mailboxManager.mailbox,
-                    message: message
-                ).attachments
-                completeMode = .forward(attachments)
-            }
-            replyHandler?(message, completeMode)
+            replyHandler?(message, mode)
         }
     }
 
