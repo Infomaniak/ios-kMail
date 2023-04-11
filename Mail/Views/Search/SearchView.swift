@@ -118,7 +118,7 @@ struct SearchView: View {
                     Constants.globallyResignFirstResponder()
                     splitViewManager.showSearch = false
                 } label: {
-                    Image(isCompact ? MailResourcesAsset.arrowLeft.name : MailResourcesAsset.close.name)
+                    Image(isCompact ? MailResourcesAsset.arrowLeft.name : MailResourcesAsset.closeBig.name)
                 }
             }
 
