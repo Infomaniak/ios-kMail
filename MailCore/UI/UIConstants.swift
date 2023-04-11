@@ -68,18 +68,18 @@ public enum UIConstants {
         MailResourcesAsset.princeColor
     ].map(\.color)
 
-    public static let navbarIconSize: CGFloat = 23
+    public static let navbarIconSize: CGFloat = 24
 
-    public static let onboardingLogoPaddingTop: CGFloat = 28
-    public static let onboardingLogoHeight: CGFloat = 54
-    public static let onboardingButtonHeight: CGFloat = 100
+    public static let onboardingLogoPaddingTop: CGFloat = 24
+    public static let onboardingLogoHeight: CGFloat = 56
+    public static let onboardingButtonHeight: CGFloat = 104
     public static let onboardingVerticalTopPadding: CGFloat = 48
     public static let onboardingBottomButtonPadding: CGFloat = 32
     public static let onboardingArrowIconSize: CGFloat = 24
 
     public static let menuDrawerHorizontalPadding: CGFloat = 24
     public static let menuDrawerVerticalPadding: CGFloat = 14
-    public static let menuDrawerSubFolderPadding: CGFloat = 15
+    public static let menuDrawerSubFolderPadding: CGFloat = 16
     public static let menuDrawerHorizontalItemSpacing: CGFloat = 16
     public static let menuDrawerMaximumSubfolderLevel = 2
 

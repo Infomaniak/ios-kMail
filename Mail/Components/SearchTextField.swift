@@ -54,7 +54,6 @@ struct SearchTextField: View {
             }
             .foregroundColor(MailResourcesAsset.textTertiaryColor)
             .opacity(value.isEmpty ? 0 : 1)
-            .animation(.easeInOut(duration: 0.2), value: value)
         }
         .onAppear {
             isFocused = true

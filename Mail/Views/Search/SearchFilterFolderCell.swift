@@ -73,13 +73,13 @@ struct SearchFilterFolderCell: View {
                 if isSelected {
                     MailResourcesAsset.check.swiftUIImage
                         .resizable()
-                        .frame(width: 13, height: 13)
+                        .frame(width: 12, height: 12)
                 }
                 Text(selectedFolderName)
                     .font(MailTextStyle.bodyMedium.font)
                 MailResourcesAsset.arrowDown.swiftUIImage
                     .resizable()
-                    .frame(width: 13, height: 13)
+                    .frame(width: 12, height: 12)
             }
         }
         .filterCellStyle(isSelected: isSelected)

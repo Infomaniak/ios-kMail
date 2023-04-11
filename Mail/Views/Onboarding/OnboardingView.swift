@@ -226,7 +226,8 @@ struct OnboardingView: View {
                         .resizable()
                 }
                 .frame(width: 24, height: 24)
-                .padding(16)
+                .padding(.top, 16)
+                .padding(.leading, 24)
             }
         }
         .alert(MailResourcesStrings.Localizable.errorLoginTitle, isPresented: $loginHandler.isPresentingErrorAlert) {
