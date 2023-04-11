@@ -45,7 +45,7 @@ struct MessageBodyView: View {
                             shortHeight: $webViewShortHeight,
                             completeHeight: $webViewCompleteHeight,
                             withQuote: $showBlockQuote,
-                            proxy: proxy
+                            frameSize: proxy.size
                         )
                     }
                     .frame(height: showBlockQuote ? webViewCompleteHeight : webViewShortHeight)
