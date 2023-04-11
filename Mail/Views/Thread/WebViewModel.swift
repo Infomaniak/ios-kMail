@@ -112,8 +112,10 @@ class WebViewModel: ObservableObject {
     var proxy: GeometryProxy?
     let css: String? = try? String(contentsOfFile: Bundle.main.path(forResource: "style", ofType: "css") ?? "", encoding: .utf8)
         .replacingOccurrences(of: "\n", with: "")
-    var viewport: String {
-        return "<meta name=viewport content=\"\(proxy?.size.width ?? 0), initial-scale=1\">"
+
+    func getViewport(maxWidth: Double) -> String {
+        let width = max(maxWidth, proxy?.size.width ?? 0)
+        return "<meta name=viewport content=\"width=\(width), initial-scale=1\">"
     }
 
     var style: String {
@@ -144,7 +146,17 @@ class WebViewModel: ObservableObject {
                 head = try parsedHtml.appendElement("head")
             }
 
-            try head.append(viewport)
+            let allImages = try parsedHtml.select("img[width]").array()
+            var maxWidth = 0.0
+            for image in allImages {
+                if let widthString = image.getAttributes()?.get(key: "width"),
+                   let width = Double(widthString),
+                   width > maxWidth {
+                    maxWidth = width
+                }
+            }
+
+            try head.append(getViewport(maxWidth: maxWidth))
             try head.append(style)
 
             let finalHtml = try parsedHtml.html()
