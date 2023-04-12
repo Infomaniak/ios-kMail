@@ -19,12 +19,11 @@
 import InfomaniakCoreUI
 import MailCore
 import MailResources
+import Popovers
 import SwiftUI
 
-import Popovers
-
 struct RecipientChip: View {
-    @State private var showPopover = false
+    @Environment(\.window) private var window
 
     let recipient: Recipient
     let removeHandler: () -> Void
@@ -33,11 +32,13 @@ struct RecipientChip: View {
 
     var body: some View {
         Templates.Menu {
+            $0.width = nil
+            $0.originAnchor = .topLeft
+        } content: {
             RecipientCell(recipient: recipient)
                 .padding(.vertical, 8)
                 .padding(.horizontal, 16)
-
-            Templates.MenuDivider()
+                .frame(maxWidth: min(300, window?.screen.bounds.width ?? 300))
 
             Templates.MenuButton(text: Text(MailResourcesStrings.Localizable.contactActionCopyEmailAddress),
                                  image: MailResourcesAsset.duplicate.swiftUIImage) {
@@ -49,78 +50,14 @@ struct RecipientChip: View {
                                  image: MailResourcesAsset.bin.swiftUIImage) {
                 removeHandler()
             }
-        } label: { _ in
+        } label: { isSelected in
             Text(recipient.name.isEmpty ? recipient.email : recipient.name)
                 .textStyle(.bodyAccent)
                 .lineLimit(1)
                 .padding(.horizontal, 8)
                 .padding(.vertical, 4)
                 .background(Capsule().fill(accentColor.secondary.swiftUIColor))
-        }
-
-
-//        Text(recipient.name.isEmpty ? recipient.email : recipient.name)
-//            .textStyle(.bodyAccent)
-//            .lineLimit(1)
-//            .padding(.horizontal, 8)
-//            .padding(.vertical, 4)
-//            .background(Capsule().fill(accentColor.secondary.swiftUIColor))
-//            .onTapGesture {
-//                showPopover = true
-//            }
-//            .popover(present: $showPopover) {
-//                Templates.MenuItem {
-//                    print("hello")
-//                } label: { _ in
-//                    Text("Hello")
-//                }
-//
-//
-//                RecipientContextMenu(recipient: recipient) {
-//                    showPopover = false
-//                    removeHandler()
-//                }
-//            }
-    }
-}
-
-struct RecipientContextMenu: View {
-    let recipient: Recipient
-    let removeHandler: () -> Void
-
-    var body: some View {
-        Button {
-            UIPasteboard.general.string = recipient.email
-            IKSnackBar.showSnackBar(message: MailResourcesStrings.Localizable.snackbarEmailCopiedToClipboard)
-        } label: {
-            Label(MailResourcesStrings.Localizable.contactActionCopyEmailAddress, image: MailResourcesAsset.duplicate.name)
-        }
-
-        Button {
-            removeHandler()
-        } label: {
-            Label(MailResourcesStrings.Localizable.actionDelete, image: MailResourcesAsset.bin.name)
-        }
-    }
-}
-
-struct RecipientDetailsModifier: ViewModifier {
-    let recipient: Recipient
-    let removeHandler: () -> Void
-
-    func body(content: Content) -> some View {
-        if #available(iOS 16.0, *) {
-            content
-                .contextMenu {
-                    RecipientContextMenu(recipient: recipient, removeHandler: removeHandler)
-                } preview: {
-                    RecipientCell(recipient: recipient)
-                        .padding(.vertical, 8)
-                        .padding(.horizontal, 16)
-                }
-        } else {
-            content
-                .contextMenu { RecipientContextMenu(recipient: recipient, removeHandler: removeHandler) }
+                .opacity(isSelected ? 0.8 : 1)
         }
     }
 }
