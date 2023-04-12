@@ -225,8 +225,9 @@ struct OnboardingView: View {
                     Image(systemName: "xmark")
                         .resizable()
                 }
-                .frame(width: 20, height: 20)
-                .padding(16)
+                .frame(width: 24, height: 24)
+                .padding(.top, 16)
+                .padding(.leading, 24)
             }
         }
         .alert(MailResourcesStrings.Localizable.errorLoginTitle, isPresented: $loginHandler.isPresentingErrorAlert) {

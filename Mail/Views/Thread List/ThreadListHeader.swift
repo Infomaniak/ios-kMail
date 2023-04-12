@@ -107,10 +107,13 @@ struct UnreadToggleStyle: ToggleStyle {
         Button {
             configuration.isOn.toggle()
         } label: {
-            HStack(spacing: 5) {
+            HStack(spacing: 8) {
                 configuration.label
                 if configuration.isOn {
-                    Image(systemName: "xmark")
+                    MailResourcesAsset.closeSmall.swiftUIImage
+                        .resizable()
+                        .frame(width: 12, height: 12)
+                        .foregroundColor(.white)
                 }
             }
             .textStyle(configuration.isOn ? .bodySmallMediumOnAccent : .bodySmallMediumAccent)

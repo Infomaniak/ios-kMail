@@ -79,11 +79,14 @@ struct AccountHeaderCell: View {
                 Text(account.user.email)
                     .textStyle(.bodySecondary)
             }
+            .lineLimit(1)
 
             Spacer()
 
             if isSelected {
                 MailResourcesAsset.check.swiftUIImage
+                    .resizable()
+                    .frame(width: 16, height: 16)
                     .foregroundColor(.accentColor)
             }
         }
