@@ -55,8 +55,7 @@ struct FlushFolderAlertView: View {
             Text(description)
                 .textStyle(.body)
 
-            ModalButtonsView(primaryButtonTitle: MailResourcesStrings.Localizable.buttonConfirm,
-                             secondaryButtonTitle: MailResourcesStrings.Localizable.buttonClose) {
+            ModalButtonsView(primaryButtonTitle: MailResourcesStrings.Localizable.buttonConfirm) {
                 if let folder, flushAlert.deletedMessages == nil {
                     @InjectService var matomo: MatomoUtils
                     matomo.track(eventWithCategory: .threadList, name: "empty\(folder.matomoName.capitalized)Confirm")
