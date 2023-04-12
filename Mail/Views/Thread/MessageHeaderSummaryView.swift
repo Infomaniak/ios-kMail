@@ -73,6 +73,7 @@ struct MessageHeaderSummaryView: View {
                                 .lineLimit(1)
                                 .textStyle(.bodySmallSecondary)
                             ChevronButton(isExpanded: $isHeaderExpanded)
+                                .accessibilityLabel(MailResourcesStrings.Localizable.contentDescriptionButtonExpandRecipients)
                                 .onChange(of: isHeaderExpanded) { isExpanded in
                                     matomo.track(eventWithCategory: .message, name: "openDetails", value: isExpanded)
                                 }
