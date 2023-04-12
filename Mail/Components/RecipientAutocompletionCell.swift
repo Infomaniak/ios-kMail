@@ -25,6 +25,7 @@ struct RecipientAutocompletionCell: View {
     var body: some View {
         HStack {
             AvatarView(avatarDisplayable: recipient, size: 40)
+                .accessibilityHidden(true)
 
             if recipient.name.isEmpty {
                 Text(recipient.email)
@@ -40,6 +41,8 @@ struct RecipientAutocompletionCell: View {
             Spacer()
         }
         .lineLimit(1)
+        .accessibilityElement(children: .combine)
+        .accessibilityAddTraits(.isButton)
     }
 }
 

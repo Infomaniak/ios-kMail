@@ -70,7 +70,6 @@ struct ThreadListCell: View {
                 isMultipleSelectionEnabled: multipleSelectionViewModel.isEnabled,
                 isSelected: isSelected
             )
-            .accessibilityElement(children: .combine)
         }
         .background(SelectionBackground(selectionType: selectionType, paddingLeading: 4))
         .onTapGesture { didTapCell() }

@@ -169,6 +169,7 @@ struct ThreadCell: View {
         .padding(.trailing, 16)
         .padding(.vertical, density.cellVerticalPadding)
         .clipped()
+        .accessibilityElement(children: .combine)
     }
 }
 
