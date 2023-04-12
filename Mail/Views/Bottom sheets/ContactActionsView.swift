@@ -44,7 +44,7 @@ struct ContactActionsView: View {
         )
         static let addContactsAction = ContactAction(
             name: MailResourcesStrings.Localizable.contactActionAddToContacts,
-            image: MailResourcesAsset.addUser.image,
+            image: MailResourcesAsset.userAdd.image,
             matomoName: "addToContacts"
         )
         static let copyEmailAction = ContactAction(
