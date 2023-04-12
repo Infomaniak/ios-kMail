@@ -44,6 +44,7 @@ struct MenuHeaderView: View {
                     .frame(width: 24)
             }
             .buttonStyle(.borderless)
+            .accessibilityLabel(MailResourcesStrings.Localizable.settingsTitle)
         }
         .padding(.top, 12)
         .padding(.bottom, 15)

@@ -39,26 +39,32 @@ struct UserFoldersListView: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            Button {
-                withAnimation {
-                    isExpanded.toggle()
-                    matomo.track(eventWithCategory: .menuDrawer, name: "customFolders", value: isExpanded)
-                }
-            } label: {
-                HStack(spacing: 12) {
-                    ChevronIcon(style: isExpanded ? .up : .down, color: .secondary)
-                    Text(MailResourcesStrings.Localizable.buttonFolders)
-                        .textStyle(.bodySmallSecondary)
-                    Spacer()
-                    Button {
-                        matomo.track(eventWithCategory: .createFolder, name: "fromMenuDrawer")
-                        globalAlert.state = .createNewFolder(mode: .create)
-                    } label: {
-                        MailResourcesAsset.addCircle.swiftUIImage
-                            .resizable()
-                            .frame(width: 16, height: 16)
+            HStack(spacing: 12) {
+                Button {
+                    withAnimation {
+                        isExpanded.toggle()
+                        matomo.track(eventWithCategory: .menuDrawer, name: "customFolders", value: isExpanded)
+                    }
+                } label: {
+                    HStack(spacing: 12) {
+                        ChevronIcon(style: isExpanded ? .up : .down, color: .secondary)
+                        Text(MailResourcesStrings.Localizable.buttonFolders)
+                            .textStyle(.bodySmallSecondary)
+                        Spacer()
                     }
                 }
+                .frame(maxWidth: .infinity)
+                .accessibilityLabel(MailResourcesStrings.Localizable.contentDescriptionButtonExpandCustomFolders)
+
+                Button {
+                    matomo.track(eventWithCategory: .createFolder, name: "fromMenuDrawer")
+                    globalAlert.state = .createNewFolder(mode: .create)
+                } label: {
+                    MailResourcesAsset.addCircle.swiftUIImage
+                        .resizable()
+                        .frame(width: 16, height: 16)
+                }
+                .accessibilityLabel(MailResourcesStrings.Localizable.newFolderDialogTitle)
             }
             .padding(.horizontal, UIConstants.menuDrawerHorizontalPadding)
             .padding(.vertical, UIConstants.menuDrawerVerticalPadding)
