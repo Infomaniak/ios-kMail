@@ -21,20 +21,66 @@ import MailCore
 import MailResources
 import SwiftUI
 
+import Popovers
+
 struct RecipientChip: View {
+    @State private var showPopover = false
+
     let recipient: Recipient
     let removeHandler: () -> Void
 
     @AppStorage(UserDefaults.shared.key(.accentColor)) private var accentColor = DefaultPreferences.accentColor
 
     var body: some View {
-        Text(recipient.name.isEmpty ? recipient.email : recipient.name)
-            .textStyle(.bodyAccent)
-            .lineLimit(1)
-            .padding(.horizontal, 8)
-            .padding(.vertical, 4)
-            .background(Capsule().fill(accentColor.secondary.swiftUIColor))
-            .modifier(RecipientDetailsModifier(recipient: recipient, removeHandler: removeHandler))
+        Templates.Menu {
+            RecipientCell(recipient: recipient)
+                .padding(.vertical, 8)
+                .padding(.horizontal, 16)
+
+            Templates.MenuDivider()
+
+            Templates.MenuButton(text: Text(MailResourcesStrings.Localizable.contactActionCopyEmailAddress),
+                                 image: MailResourcesAsset.duplicate.swiftUIImage) {
+                UIPasteboard.general.string = recipient.email
+                IKSnackBar.showSnackBar(message: MailResourcesStrings.Localizable.snackbarEmailCopiedToClipboard)
+            }
+
+            Templates.MenuButton(text: Text(MailResourcesStrings.Localizable.actionDelete),
+                                 image: MailResourcesAsset.bin.swiftUIImage) {
+                removeHandler()
+            }
+        } label: { _ in
+            Text(recipient.name.isEmpty ? recipient.email : recipient.name)
+                .textStyle(.bodyAccent)
+                .lineLimit(1)
+                .padding(.horizontal, 8)
+                .padding(.vertical, 4)
+                .background(Capsule().fill(accentColor.secondary.swiftUIColor))
+        }
+
+
+//        Text(recipient.name.isEmpty ? recipient.email : recipient.name)
+//            .textStyle(.bodyAccent)
+//            .lineLimit(1)
+//            .padding(.horizontal, 8)
+//            .padding(.vertical, 4)
+//            .background(Capsule().fill(accentColor.secondary.swiftUIColor))
+//            .onTapGesture {
+//                showPopover = true
+//            }
+//            .popover(present: $showPopover) {
+//                Templates.MenuItem {
+//                    print("hello")
+//                } label: { _ in
+//                    Text("Hello")
+//                }
+//
+//
+//                RecipientContextMenu(recipient: recipient) {
+//                    showPopover = false
+//                    removeHandler()
+//                }
+//            }
     }
 }
 
