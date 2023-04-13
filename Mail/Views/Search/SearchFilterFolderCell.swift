@@ -63,7 +63,7 @@ struct SearchFilterFolderCell: View {
                 ForEach(sortedFolders) { folder in
                     HStack {
                         folder.icon
-                        Text(folder.formattedPath)
+                        Text(folder.localizedName)
                     }
                     .tag(folder.id)
                 }
