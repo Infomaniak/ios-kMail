@@ -46,20 +46,9 @@ struct RecipientField: View {
                 }
                 .alignmentGuide(.newMessageCellAlignment) { d in d[.top] + 21 }
             }
-            TextField("", text: $currentText)
-                .textContentType(.emailAddress)
-                .keyboardType(.emailAddress)
-                .autocapitalization(.none)
-                .disableAutocorrection(true)
-                .multilineTextAlignment(.leading)
+
+            RecipientsTextFieldView(text: $currentText, onSubmit: submitTextField, onBackspace: handleBackspaceTextField)
                 .focused($focusedField, equals: type)
-                .onSubmit {
-                    guard let recipient = autocompletion.first else { return }
-                    add(recipient: recipient)
-                    focusedField = type
-                    @InjectService var matomo: MatomoUtils
-                    matomo.track(eventWithCategory: .newMessage, action: .input, name: "addNewRecipient")
-                }
         }
         .onChange(of: currentText) { _ in
             updateAutocompletion()
@@ -76,12 +65,29 @@ struct RecipientField: View {
         }
     }
 
+    @MainActor private func submitTextField() {
+        guard let recipient = autocompletion.first else {
+            IKSnackBar.showSnackBar(
+                message: MailResourcesStrings.Localizable.addUnknownRecipientInvalidEmail,
+                anchor: keyboardHeight
+            )
+            return
+        }
+        add(recipient: recipient)
+        @InjectService var matomo: MatomoUtils
+        matomo.track(eventWithCategory: .newMessage, action: .input, name: "addNewRecipient")
+    }
+
+    private func handleBackspaceTextField() {
+        print("Backspace")
+    }
+
     private func updateAutocompletion() {
         let trimmedCurrentText = currentText.trimmingCharacters(in: .whitespacesAndNewlines)
 
         let contactManager = AccountManager.instance.currentContactManager
         let autocompleteContacts = contactManager?.contacts(matching: trimmedCurrentText) ?? []
-        var autocompleteRecipients = autocompleteContacts.map { Recipient(email: $0.email, name: $0.name) }
+        let autocompleteRecipients = autocompleteContacts.map { Recipient(email: $0.email, name: $0.name) }
 
         withAnimation {
             autocompletion = autocompleteRecipients.filter { !recipients.map(\.email).contains($0.email) }
