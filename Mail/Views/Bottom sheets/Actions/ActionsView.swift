@@ -66,8 +66,8 @@ struct ActionsView: View {
                     IKDivider()
                 }
                 ActionView(viewModel: viewModel, action: action)
+                    .padding(.horizontal, 24)
             }
-            .padding(.horizontal, 24)
         }
         .padding(.horizontal, 8)
         .matomoView(view: [MatomoUtils.View.bottomSheet.displayName, "ActionsView"])
