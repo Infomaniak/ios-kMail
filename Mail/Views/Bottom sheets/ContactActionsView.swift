@@ -65,6 +65,7 @@ struct ContactActionsView: View {
         VStack(alignment: .leading, spacing: 16) {
             HStack {
                 AvatarView(avatarDisplayable: recipient, size: 32)
+                    .accessibilityHidden(true)
                 VStack(alignment: .leading) {
                     Text(recipient.contact?.name ?? recipient.formattedName)
                         .textStyle(.bodyMedium)
@@ -73,6 +74,7 @@ struct ContactActionsView: View {
                 }
             }
             .padding(.bottom, 8)
+            .accessibilityElement(children: .combine)
 
             ForEach(actions, id: \.self) { action in
                 Button {

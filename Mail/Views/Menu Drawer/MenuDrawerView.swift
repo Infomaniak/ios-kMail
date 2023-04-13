@@ -105,6 +105,10 @@ struct NavigationDrawer: View {
                 }
             }
         }
+        .accessibilityAction(.escape) {
+            matomo.track(eventWithCategory: .menuDrawer, name: "closeByAccessibility")
+            navigationDrawerState.close()
+        }
         .gesture(dragGesture)
         .statusBarHidden(navigationDrawerState.isOpen)
         .onChange(of: navigationDrawerState.isOpen) { isOpen in

@@ -46,6 +46,7 @@ struct SearchHistorySectionView: View {
                             .frame(width: 16, height: 16)
                     }
                     .buttonStyle(BorderlessButtonStyle())
+                    .accessibilityLabel(MailResourcesStrings.Localizable.contentDescriptionButtonDeleteHistory)
                 }
                 .contentShape(Rectangle())
                 .onTapGesture {

@@ -55,12 +55,15 @@ struct SearchView: View {
                     ForEach(viewModel.filters) { filter in
                         if filter == .folder {
                             SearchFilterFolderCell(selection: $viewModel.selectedSearchFolderId, folders: viewModel.folderList)
+                                .accessibilityHint(MailResourcesStrings.Localizable.contentDescriptionButtonFilterSearch)
                                 .padding(.horizontal, 12)
                         } else {
                             SearchFilterCell(
                                 title: filter.title,
                                 isSelected: viewModel.selectedFilters.contains(filter)
                             )
+                            .accessibilityHint(MailResourcesStrings.Localizable.contentDescriptionButtonFilterSearch)
+                            .accessibilityAddTraits(viewModel.selectedFilters.contains(filter) ? [.isSelected] : [])
                             .padding(.vertical, 2)
                             .padding(.trailing, 0)
                             .padding(.leading, 12)
@@ -120,6 +123,7 @@ struct SearchView: View {
                 } label: {
                     Image(isCompact ? MailResourcesAsset.arrowLeft.name : MailResourcesAsset.closeBig.name)
                 }
+                .accessibilityLabel(MailResourcesStrings.Localizable.contentDescriptionButtonBack)
             }
 
             ToolbarItem(placement: .navigation) {

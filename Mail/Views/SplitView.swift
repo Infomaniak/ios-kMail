@@ -83,6 +83,7 @@ struct SplitView: View {
                             mailboxManager: mailboxManager,
                             isCompact: isCompact
                         )
+                        .accessibilityHidden(navigationDrawerController.isOpen)
                     }
                     .navigationViewStyle(.stack)
 
