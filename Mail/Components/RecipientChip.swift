@@ -26,6 +26,7 @@ struct RecipientChip: View {
     @Environment(\.window) private var window
 
     let recipient: Recipient
+    let isFocused: Bool
     let removeHandler: () -> Void
 
     @AppStorage(UserDefaults.shared.key(.accentColor)) private var accentColor = DefaultPreferences.accentColor
@@ -52,11 +53,11 @@ struct RecipientChip: View {
             }
         } label: { isSelected in
             Text(recipient.name.isEmpty ? recipient.email : recipient.name)
-                .textStyle(.bodyAccent)
+                .textStyle(isFocused ? .bodyAccentSecondary : .bodyAccent)
                 .lineLimit(1)
                 .padding(.horizontal, 8)
                 .padding(.vertical, 4)
-                .background(Capsule().fill(accentColor.secondary.swiftUIColor))
+                .background(Capsule().fill(isFocused ? Color.accentColor : accentColor.secondary.swiftUIColor))
                 .opacity(isSelected ? 0.8 : 1)
         }
     }
@@ -64,6 +65,6 @@ struct RecipientChip: View {
 
 struct RecipientChip_Previews: PreviewProvider {
     static var previews: some View {
-        RecipientChip(recipient: PreviewHelper.sampleRecipient1) { /* Preview */ }
+        RecipientChip(recipient: PreviewHelper.sampleRecipient1, isFocused: false) { /* Preview */ }
     }
 }

@@ -35,12 +35,13 @@ struct RecipientField: View {
 
     @State private var currentText = ""
     @State private var keyboardHeight: CGFloat = 0
+    @State private var lastChipIsFocused = false
 
     var body: some View {
         VStack {
             if !recipients.isEmpty {
                 WrappingHStack(recipients.indices, spacing: .constant(8), lineSpacing: 8) { i in
-                    RecipientChip(recipient: recipients[i]) {
+                    RecipientChip(recipient: recipients[i], isFocused: i == recipients.count - 1 && lastChipIsFocused) {
                         remove(recipientAt: i)
                     }
                 }
@@ -79,7 +80,12 @@ struct RecipientField: View {
     }
 
     private func handleBackspaceTextField() {
-        print("Backspace")
+        if lastChipIsFocused {
+            remove(recipientAt: recipients.count - 1)
+            lastChipIsFocused = false
+        } else {
+            lastChipIsFocused = true
+        }
     }
 
     private func updateAutocompletion() {
