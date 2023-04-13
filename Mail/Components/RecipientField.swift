@@ -52,8 +52,12 @@ struct RecipientField: View {
                 .focused($focusedField, equals: type)
         }
         .onChange(of: currentText) { _ in
+            lastChipIsFocused = false
             updateAutocompletion()
             addRecipientHandler = add(recipient:)
+        }
+        .onChange(of: focusedField) { _ in
+            lastChipIsFocused = false
         }
         .onReceive(NotificationCenter.default.publisher(for: UIResponder.keyboardDidShowNotification)) { output in
             if let userInfo = output.userInfo,
