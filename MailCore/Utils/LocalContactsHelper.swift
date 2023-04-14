@@ -42,8 +42,7 @@ class LocalContactsHelper {
         CNContactEmailAddressesKey,
         CNContactImageDataAvailableKey,
         CNContactImageDataKey,
-        CNContactNicknameKey,
-        CNContactOrganizationNameKey
+        CNContactNicknameKey
     ] as [CNKeyDescriptor]) + [CNContactFormatter.descriptorForRequiredKeys(for: .fullName)]
 
     func enumerateContacts(usingBlock: @escaping (CNContact, UnsafeMutablePointer<ObjCBool>) -> Void) async {
