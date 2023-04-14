@@ -36,8 +36,6 @@ struct SlideView: View {
     @Environment(\.window) private var window
     @Environment(\.colorScheme) private var colorScheme
 
-    @State private var imageSize: CGSize = .zero
-
     @State private var isVisible = false
 
     var body: some View {
