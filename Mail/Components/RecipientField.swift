@@ -30,20 +30,21 @@ struct RecipientField: View {
     @Binding var autocompletion: [Recipient]
     @Binding var unknownRecipientAutocompletion: String
     @Binding var addRecipientHandler: ((Recipient) -> Void)?
+
     @FocusState var focusedField: ComposeViewFieldType?
-    @FocusState var isLastChipFocused: Bool
-    @FocusState var focusChip: Bool
+    @FocusState private var isLastChipFocused: Bool
+    @FocusState private var focusChip: Bool
+
     let type: ComposeViewFieldType
 
     @State private var currentText = ""
     @State private var keyboardHeight: CGFloat = 0
-    @State private var lastChipIsFocused = false
 
     var body: some View {
         VStack {
             if !recipients.isEmpty {
                 WrappingHStack(recipients.indices, spacing: .constant(8), lineSpacing: 8) { i in
-                    RecipientChip(recipient: recipients[i], isFocused: i == recipients.count - 1 && lastChipIsFocused) {
+                    RecipientChip(recipient: recipients[i]) {
                         remove(recipientAt: i)
                     }
                     .focused(i == recipients.count - 1 ? $isLastChipFocused : $focusChip)
@@ -55,12 +56,8 @@ struct RecipientField: View {
                 .focused($focusedField, equals: type)
         }
         .onChange(of: currentText) { _ in
-            lastChipIsFocused = false
             updateAutocompletion()
             addRecipientHandler = add(recipient:)
-        }
-        .onChange(of: focusedField) { _ in
-            lastChipIsFocused = false
         }
         .onReceive(NotificationCenter.default.publisher(for: UIResponder.keyboardDidShowNotification)) { output in
             if let userInfo = output.userInfo,
@@ -87,12 +84,7 @@ struct RecipientField: View {
     }
 
     private func handleBackspaceTextField() {
-        if lastChipIsFocused {
-            remove(recipientAt: recipients.count - 1)
-            lastChipIsFocused = false
-            isLastChipFocused = false
-        } else {
-            lastChipIsFocused = true
+        if currentText.isEmpty {
             isLastChipFocused = true
         }
     }

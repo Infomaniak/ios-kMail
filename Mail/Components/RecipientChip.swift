@@ -27,7 +27,6 @@ struct RecipientChip: View {
     @AppStorage(UserDefaults.shared.key(.accentColor)) private var accentColor = DefaultPreferences.accentColor
 
     let recipient: Recipient
-    let isFocused: Bool
     let removeHandler: () -> Void
 
     @FocusState var isLastChipFocused: Bool
@@ -40,7 +39,7 @@ struct RecipientChip: View {
             RecipientCell(recipient: recipient)
                 .padding(.vertical, 8)
                 .padding(.horizontal, 16)
-                .frame(maxWidth: min(300, window?.screen.bounds.width ?? 300))
+                .frame(maxWidth: min(304, window?.screen.bounds.width ?? 304))
 
             Templates.MenuButton(text: Text(MailResourcesStrings.Localizable.contactActionCopyEmailAddress),
                                  image: MailResourcesAsset.duplicate.swiftUIImage) {
@@ -63,6 +62,6 @@ struct RecipientChip: View {
 
 struct RecipientChip_Previews: PreviewProvider {
     static var previews: some View {
-        RecipientChip(recipient: PreviewHelper.sampleRecipient1, isFocused: false) { /* Preview */ }
+        RecipientChip(recipient: PreviewHelper.sampleRecipient1) { /* Preview */ }
     }
 }
