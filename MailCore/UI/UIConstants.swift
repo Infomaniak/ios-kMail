@@ -96,4 +96,6 @@ public enum UIConstants {
     public static let bottomSheetHorizontalPadding: CGFloat = 24
 
     public static let componentsMaxWidth: CGFloat = 496
+
+    public static let chipInsets = UIEdgeInsets(top: 4, left: 8, bottom: 4, right: 8)
 }

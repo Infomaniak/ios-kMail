@@ -200,12 +200,11 @@ struct ThreadListView: View {
                                     flushAlert: $flushAlert,
                                     bottomSheet: bottomSheet,
                                     viewModel: viewModel,
-                                    multipleSelectionViewModel: multipleSelectionViewModel,
-                                    selectAll: {
-                                        withAnimation(.default.speed(2)) {
-                                            multipleSelectionViewModel.selectAll(threads: viewModel.filteredThreads)
-                                        }
-                                    }))
+                                    multipleSelectionViewModel: multipleSelectionViewModel) {
+            withAnimation(.default.speed(2)) {
+                multipleSelectionViewModel.selectAll(threads: viewModel.filteredThreads)
+            }
+        })
         .floatingActionButton(isEnabled: !multipleSelectionViewModel.isEnabled,
                               icon: MailResourcesAsset.pencilPlain,
                               title: MailResourcesStrings.Localizable.buttonNewMessage) {
@@ -213,7 +212,7 @@ struct ThreadListView: View {
             isShowingComposeNewMessageView.toggle()
         }
         .floatingPanel(state: bottomSheet, halfOpening: true) {
-            if case .actions(let target) = bottomSheet.state, !target.isInvalidated {
+            if case let .actions(target) = bottomSheet.state, !target.isInvalidated {
                 ActionsView(mailboxManager: viewModel.mailboxManager,
                             target: target,
                             state: bottomSheet,
@@ -246,7 +245,7 @@ struct ThreadListView: View {
             ComposeMessageView.newMessage(mailboxManager: viewModel.mailboxManager)
         }
         .sheet(isPresented: $moveSheet.isShowing) {
-            if case .move(let folderId, let handler) = moveSheet.state {
+            if case let .move(folderId, handler) = moveSheet.state {
                 MoveEmailView.sheetView(mailboxManager: viewModel.mailboxManager, from: folderId, moveHandler: handler)
             }
         }
@@ -310,8 +309,25 @@ private struct ThreadListToolbar: ViewModifier {
                                 multipleSelectionViewModel.isEnabled = false
                             }
                         }
-                    } else {
-                        if isCompact {
+                    }
+
+                    ToolbarItem(placement: .principal) {
+                        if !multipleSelectionViewModel.isEnabled {
+                            Text(splitViewManager.selectedFolder?.localizedName ?? "")
+                                .textStyle(.header1)
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                        }
+                    }
+
+                    ToolbarItemGroup(placement: .navigationBarTrailing) {
+                        if multipleSelectionViewModel.isEnabled {
+                            Button(multipleSelectionViewModel.selectedItems.count == viewModel.filteredThreads.count
+                                ? MailResourcesStrings.Localizable.buttonUnselectAll
+                                : MailResourcesStrings.Localizable.buttonSelectAll) {
+                                selectAll()
+                            }
+                            .animation(nil, value: multipleSelectionViewModel.selectedItems)
+                        } else {
                             Button {
                                 matomo.track(eventWithCategory: .menuDrawer, name: "openByButton")
                                 navigationDrawerState.open()

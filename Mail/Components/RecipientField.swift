@@ -31,6 +31,8 @@ struct RecipientField: View {
     @Binding var unknownRecipientAutocompletion: String
     @Binding var addRecipientHandler: ((Recipient) -> Void)?
     @FocusState var focusedField: ComposeViewFieldType?
+    @FocusState var isLastChipFocused: Bool
+    @FocusState var focusChip: Bool
     let type: ComposeViewFieldType
 
     @State private var currentText = ""
@@ -44,6 +46,7 @@ struct RecipientField: View {
                     RecipientChip(recipient: recipients[i], isFocused: i == recipients.count - 1 && lastChipIsFocused) {
                         remove(recipientAt: i)
                     }
+                    .focused(i == recipients.count - 1 ? $isLastChipFocused : $focusChip)
                 }
                 .alignmentGuide(.newMessageCellAlignment) { d in d[.top] + 21 }
             }
@@ -87,8 +90,10 @@ struct RecipientField: View {
         if lastChipIsFocused {
             remove(recipientAt: recipients.count - 1)
             lastChipIsFocused = false
+            isLastChipFocused = false
         } else {
             lastChipIsFocused = true
+            isLastChipFocused = true
         }
     }
 

@@ -24,12 +24,13 @@ import SwiftUI
 
 struct RecipientChip: View {
     @Environment(\.window) private var window
+    @AppStorage(UserDefaults.shared.key(.accentColor)) private var accentColor = DefaultPreferences.accentColor
 
     let recipient: Recipient
     let isFocused: Bool
     let removeHandler: () -> Void
 
-    @AppStorage(UserDefaults.shared.key(.accentColor)) private var accentColor = DefaultPreferences.accentColor
+    @FocusState var isLastChipFocused: Bool
 
     var body: some View {
         Templates.Menu {
@@ -52,12 +53,9 @@ struct RecipientChip: View {
                 removeHandler()
             }
         } label: { isSelected in
-            Text(recipient.name.isEmpty ? recipient.email : recipient.name)
-                .textStyle(isFocused ? .bodyAccentSecondary : .bodyAccent)
-                .lineLimit(1)
-                .padding(.horizontal, 8)
-                .padding(.vertical, 4)
-                .background(Capsule().fill(isFocused ? Color.accentColor : accentColor.secondary.swiftUIColor))
+            RecipientChipLabelView(recipient: recipient, removeHandler: removeHandler)
+                .fixedSize()
+                .focused($isLastChipFocused)
                 .opacity(isSelected ? 0.8 : 1)
         }
     }
