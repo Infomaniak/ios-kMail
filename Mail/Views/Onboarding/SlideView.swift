@@ -36,9 +36,6 @@ struct SlideView: View {
     @Environment(\.window) private var window
     @Environment(\.colorScheme) private var colorScheme
 
-    @State private var segmentedControl: UISegmentedControl?
-    @State private var imageSize: CGSize = .zero
-
     @State private var isVisible = false
 
     var body: some View {
@@ -82,8 +79,7 @@ struct SlideView: View {
                         }
                         .pickerStyle(.segmented)
                         .introspectSegmentedControl { segmentedControl in
-                            self.segmentedControl = segmentedControl
-                            setSegmentedControlStyle()
+                            setSegmentedControlStyle(segmentedControl)
                         }
                         .padding(.top, 32)
                         .frame(maxWidth: 256)
@@ -102,9 +98,7 @@ struct SlideView: View {
                 .padding(.horizontal, 32)
             }
             .onChange(of: accentColor) { _ in
-                // Handle accent color change
                 (window?.windowScene?.delegate as? SceneDelegate)?.updateWindowUI()
-                setSegmentedControlStyle()
             }
             .onAppear {
                 isVisible = true
@@ -115,12 +109,12 @@ struct SlideView: View {
         }
     }
 
-    private func setSegmentedControlStyle() {
-        segmentedControl?.selectedSegmentTintColor = .tintColor
-        segmentedControl?.setTitleTextAttributes([.foregroundColor: accentColor.onAccent.color], for: .selected)
+    private func setSegmentedControlStyle(_ segmentedControl: UISegmentedControl) {
+        segmentedControl.selectedSegmentTintColor = .tintColor
+        segmentedControl.setTitleTextAttributes([.foregroundColor: accentColor.onAccent.color], for: .selected)
         let nonAccentColor: AccentColor = accentColor == .pink ? .blue : .pink
-        segmentedControl?.setTitleTextAttributes([.foregroundColor: nonAccentColor.primary.color], for: .normal)
-        segmentedControl?.backgroundColor = nonAccentColor.secondary.color
+        segmentedControl.setTitleTextAttributes([.foregroundColor: nonAccentColor.primary.color], for: .normal)
+        segmentedControl.backgroundColor = nonAccentColor.secondary.color
     }
 }
 
