@@ -73,6 +73,14 @@ public class MailApiFetcher: ApiFetcher {
         try await perform(request: authenticatedRequest(.mailboxes)).data
     }
 
+    public func addMailbox(mail: String, password: String) async throws -> MailboxLinkedResult {
+        try await perform(request: authenticatedRequest(
+            .addMailbox,
+            method: .post,
+            parameters: ["mail": mail, "password": password, "is_primary": false]
+        )).data
+    }
+
     func permissions(mailbox: Mailbox) async throws -> MailboxPermissions {
         try await perform(request: authenticatedRequest(.permissions(mailbox: mailbox))).data
     }
