@@ -109,7 +109,7 @@ struct RecipientField: View {
     }
 
     @MainActor private func add(recipient: Recipient) {
-        if Constants.emailPredicate.evaluate(with: recipient.email) {
+        if Constants.isEmailAddress(recipient.email) {
             withAnimation {
                 $recipients.append(recipient)
             }
