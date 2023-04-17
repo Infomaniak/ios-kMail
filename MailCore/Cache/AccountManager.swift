@@ -124,6 +124,10 @@ public class AccountManager: RefreshTokenDelegate {
         }
     }
 
+    public var currentApiFetcher: MailApiFetcher? {
+        return apiFetchers[currentUserId]
+    }
+
     private var mailboxManagers = [String: MailboxManager]()
     private var contactManagers = [String: ContactManager]()
     private var apiFetchers = [Int: MailApiFetcher]()
@@ -388,6 +392,12 @@ public class AccountManager: RefreshTokenDelegate {
             let updatedTopics = currentTopics + [notificationTopicName]
             await notificationService.updateTopicsIfNeeded(updatedTopics, userApiFetcher: mailboxManager.apiFetcher)
         }
+    }
+
+    public func addMailbox(mail: String, password: String) async throws {
+        guard let apiFetcher = currentApiFetcher else { return }
+        _ = try await apiFetcher.addMailbox(mail: mail, password: password)
+        try await updateUser(for: currentAccount)
     }
 
     public func setCurrentAccount(account: Account) {

@@ -49,6 +49,8 @@ struct AccountView: View {
     @Environment(\.dismiss) private var dismiss
     @Environment(\.window) private var window
 
+    @AppStorage(UserDefaults.shared.key(.accentColor)) private var accentColor = DefaultPreferences.accentColor
+
     @LazyInjectService private var matomo: MatomoUtils
 
     private let account = AccountManager.instance.currentAccount!
@@ -56,7 +58,7 @@ struct AccountView: View {
     @State private var isShowingDeleteAccount = false
     @State private var delegate = AccountViewDelegate()
 
-    let mailboxes: [Mailbox]
+    @State var mailboxes: [Mailbox]
 
     var body: some View {
         NavigationView {
@@ -80,9 +82,24 @@ struct AccountView: View {
 
                     // Email list
                     VStack(alignment: .leading, spacing: 12) {
-                        Text(MailResourcesStrings.Localizable.buttonAccountAssociatedEmailAddresses)
-                            .textStyle(.bodySmallSecondary)
-                            .padding(.bottom, 16)
+                        HStack(alignment: .center) {
+                            Text(MailResourcesStrings.Localizable.buttonAccountAssociatedEmailAddresses)
+                                .textStyle(.bodySmallSecondary)
+
+                            Spacer()
+
+                            NavigationLink {
+                                AddMailboxView {
+                                    mailboxes = AccountManager.instance.mailboxes
+                                }
+                            } label: {
+                                MailResourcesAsset.addCircle.swiftUIImage
+                                    .resizable()
+                                    .foregroundColor(accentColor.primary)
+                                    .frame(width: 16, height: 16)
+                            }
+                        }
+                        .padding(.bottom, 16)
 
                         ForEach(mailboxes) { mailbox in
                             Text(mailbox.email)
