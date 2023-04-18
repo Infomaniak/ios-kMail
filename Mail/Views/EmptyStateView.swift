@@ -26,6 +26,7 @@ struct EmptyStateView: View {
     let image: Image
     let title: String
     let description: String
+    var background: Color = .clear
 
     var withFABPadding = true
 
@@ -46,6 +47,7 @@ struct EmptyStateView: View {
         .padding(.horizontal, 48)
         .padding(.bottom, withFABPadding ? UIConstants.floatingButtonBottomPadding + 56 : 0)
         .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .background(background)
         .matomoView(view: [MatomoUtils.View.threadListView.displayName, "Empty\(matomoName)View"])
     }
 }
@@ -78,6 +80,7 @@ extension EmptyStateView {
             image: MailResourcesAsset.emptyStateThread.swiftUIImage,
             title: MailResourcesStrings.Localizable.noConversationSelected(name),
             description: "",
+            background: MailResourcesAsset.backgroundColor.swiftUIColor,
             matomoName: "Thread"
         )
     }
