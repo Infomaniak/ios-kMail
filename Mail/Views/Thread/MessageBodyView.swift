@@ -36,9 +36,7 @@ struct MessageBodyView: View {
             VStack {
                 if let body = presentableBody.body {
                     if body.type == "text/plain" {
-                        Text(body.value ?? "")
-                            .textStyle(.body)
-                            .frame(maxWidth: .infinity, alignment: .leading)
+                        SelectableTextView(text: body.value)
                             .padding(.horizontal, 16)
                             .onAppear {
                                 withAnimation {

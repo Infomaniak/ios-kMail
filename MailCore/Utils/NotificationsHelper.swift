@@ -126,6 +126,7 @@ public enum NotificationsHelper {
         content.threadIdentifier = "\(mailboxId)_\(userId)"
         content.targetContentIdentifier = "\(userId)_\(mailboxId)_\(message.uid)"
         content.badge = getUnreadCount() as NSNumber
+        content.sound = .default
         content.userInfo = [NotificationsHelper.UserInfoKeys.userId: userId,
                             NotificationsHelper.UserInfoKeys.mailboxId: mailboxId,
                             NotificationsHelper.UserInfoKeys.messageUid: message.uid]

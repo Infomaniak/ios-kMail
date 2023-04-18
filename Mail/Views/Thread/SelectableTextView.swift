@@ -17,30 +17,24 @@
  */
 
 import Foundation
-import Network
+import MailCore
+import SwiftUI
 
-class NetworkMonitor: ObservableObject {
-    @Published var isConnected = true
-    @Published var isCellular = false
+struct SelectableTextView: UIViewRepresentable {
+    let text: String?
+    func makeUIView(context: Context) -> UITextView {
+        let textView = UITextView()
+        textView.isScrollEnabled = false
+        textView.isEditable = false
+        textView.textContainer.lineFragmentPadding = 0
+        textView.font = .systemFont(ofSize: 16)
+        textView.textColor = UIColor(MailTextStyle.body.color)
 
-    private var monitor: NWPathMonitor?
-    private let queue = DispatchQueue.global()
-
-    public func start() {
-        if monitor == nil {
-            monitor = NWPathMonitor()
-            monitor?.start(queue: queue)
-        }
-        monitor?.pathUpdateHandler = { [weak self] path in
-            DispatchQueue.main.async {
-                self?.isConnected = path.status == .satisfied
-                self?.isCellular = path.usesInterfaceType(.cellular)
-            }
-        }
+        textView.text = text
+        return textView
     }
 
-    public func stop() {
-        monitor?.cancel()
-        monitor = nil
+    func updateUIView(_ uiView: UITextView, context: Context) {
+        uiView.text = text
     }
 }
