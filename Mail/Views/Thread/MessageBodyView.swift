@@ -29,46 +29,56 @@ struct MessageBodyView: View {
     @State private var webViewCompleteHeight: CGFloat = .zero
 
     @State private var showBlockQuote = false
+    @State private var contentLoading = true
 
     var body: some View {
-        VStack {
-            if let body = presentableBody.body {
-                if body.type == "text/plain" {
-                    Text(body.value ?? "")
-                        .textStyle(.body)
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                        .padding(.horizontal, 16)
-                } else {
-                    WebView(
-                        model: $model,
-                        shortHeight: $webViewShortHeight,
-                        completeHeight: $webViewCompleteHeight,
-                        withQuote: $showBlockQuote
-                    )
-                    .frame(minHeight: showBlockQuote ? webViewCompleteHeight : webViewShortHeight)
-                    .onAppear {
-                        loadBody()
-                    }
-                    .onChange(of: presentableBody) { _ in
-                        loadBody()
-                    }
-                    .onChange(of: showBlockQuote) { _ in
-                        loadBody()
-                    }
-
-                    if presentableBody.quote != nil {
-                        MailButton(label: showBlockQuote
-                            ? MailResourcesStrings.Localizable.messageHideQuotedText
-                            : MailResourcesStrings.Localizable.messageShowQuotedText) {
-                                showBlockQuote.toggle()
-                            }
-                            .mailButtonStyle(.smallLink)
+        ZStack {
+            VStack {
+                if let body = presentableBody.body {
+                    if body.type == "text/plain" {
+                        Text(body.value ?? "")
+                            .textStyle(.body)
                             .frame(maxWidth: .infinity, alignment: .leading)
                             .padding(.horizontal, 16)
+                            .onAppear {
+                                withAnimation {
+                                    contentLoading = false
+                                }
+                            }
+                    } else {
+                        WebView(
+                            model: $model,
+                            shortHeight: $webViewShortHeight,
+                            completeHeight: $webViewCompleteHeight,
+                            loading: $contentLoading,
+                            withQuote: $showBlockQuote
+                        )
+                        .frame(minHeight: showBlockQuote ? webViewCompleteHeight : webViewShortHeight)
+                        .onAppear {
+                            loadBody()
+                        }
+                        .onChange(of: presentableBody) { _ in
+                            loadBody()
+                        }
+                        .onChange(of: showBlockQuote) { _ in
+                            loadBody()
+                        }
+
+                        if presentableBody.quote != nil {
+                            MailButton(label: showBlockQuote
+                                ? MailResourcesStrings.Localizable.messageHideQuotedText
+                                : MailResourcesStrings.Localizable.messageShowQuotedText) {
+                                    showBlockQuote.toggle()
+                                }
+                                .mailButtonStyle(.smallLink)
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                                .padding(.horizontal, 16)
+                        }
                     }
                 }
-            } else {
-                // Display a shimmer while the body is loading
+            }
+            .opacity(contentLoading ? 0 : 1)
+            if contentLoading {
                 ShimmerView()
             }
         }

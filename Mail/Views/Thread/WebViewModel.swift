@@ -28,6 +28,7 @@ struct WebView: UIViewRepresentable {
     @Binding var model: WebViewModel
     @Binding var shortHeight: CGFloat
     @Binding var completeHeight: CGFloat
+    @Binding var loading: Bool
     @Binding var withQuote: Bool
 
     var webView: WKWebView {
@@ -44,9 +45,10 @@ struct WebView: UIViewRepresentable {
         private func updateHeight(height: CGFloat) {
             if !parent.withQuote {
                 if parent.shortHeight < height {
+                    parent.shortHeight = height
+                    parent.completeHeight = height
                     withAnimation {
-                        parent.shortHeight = height
-                        parent.completeHeight = height
+                        parent.loading = false
                     }
                 }
             } else if parent.completeHeight < height {
