@@ -44,7 +44,7 @@ struct RecipientField: View {
         VStack {
             if !recipients.isEmpty {
                 WrappingHStack(recipients.indices, spacing: .constant(8), lineSpacing: 8) { i in
-                    RecipientChip(recipient: recipients[i]) {
+                    RecipientChip(recipient: recipients[i], fieldType: type, focusedField: _focusedField, isLastChipFocused: _isLastChipFocused) {
                         remove(recipientAt: i)
                     }
                     .focused(i == recipients.count - 1 ? $isLastChipFocused : $focusChip)

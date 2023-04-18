@@ -27,6 +27,8 @@ struct RecipientChip: View {
     @AppStorage(UserDefaults.shared.key(.accentColor)) private var accentColor = DefaultPreferences.accentColor
 
     let recipient: Recipient
+    let fieldType: ComposeViewFieldType
+    @FocusState var focusedField: ComposeViewFieldType?
     let removeHandler: () -> Void
 
     @FocusState var isLastChipFocused: Bool
@@ -39,7 +41,7 @@ struct RecipientChip: View {
             RecipientCell(recipient: recipient)
                 .padding(.vertical, 8)
                 .padding(.horizontal, 16)
-                .frame(maxWidth: min(304, window?.screen.bounds.width ?? 304))
+                .frame(maxWidth: min(304, 0.8 * (window?.screen.bounds.width ?? 304)))
 
             Templates.MenuButton(text: Text(MailResourcesStrings.Localizable.contactActionCopyEmailAddress),
                                  image: MailResourcesAsset.duplicate.swiftUIImage) {
@@ -52,16 +54,21 @@ struct RecipientChip: View {
                 removeHandler()
             }
         } label: { isSelected in
-            RecipientChipLabelView(recipient: recipient, removeHandler: removeHandler)
+            RecipientChipLabelView(recipient: recipient, removeHandler: removeAndFocus)
                 .fixedSize()
                 .focused($isLastChipFocused)
                 .opacity(isSelected ? 0.8 : 1)
         }
     }
+
+    private func removeAndFocus() {
+        removeHandler()
+        focusedField = fieldType
+    }
 }
 
 struct RecipientChip_Previews: PreviewProvider {
     static var previews: some View {
-        RecipientChip(recipient: PreviewHelper.sampleRecipient1) { /* Preview */ }
+        RecipientChip(recipient: PreviewHelper.sampleRecipient1, fieldType: .to) { /* Preview */ }
     }
 }
