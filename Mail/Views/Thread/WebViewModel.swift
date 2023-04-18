@@ -105,14 +105,12 @@ struct WebView: UIViewRepresentable {
 
 class WebViewModel {
     let webView: WKWebView
-    let css: String? = try? String(contentsOfFile: Bundle.main.path(forResource: "style", ofType: "css") ?? "", encoding: .utf8)
-        .replacingOccurrences(of: "\n", with: "")
     var viewport: String {
         return "<meta name=viewport content=\"width=device-width, initial-scale=1, shrink-to-fit=YES\">"
     }
 
     var style: String {
-        return "<style>\(css ?? "")</style>"
+        return "<style>\(Constants.customCss)</style>"
     }
 
     init() {
