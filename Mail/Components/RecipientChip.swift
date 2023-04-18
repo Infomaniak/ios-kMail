@@ -30,6 +30,7 @@ struct RecipientChip: View {
     let fieldType: ComposeViewFieldType
     @FocusState var focusedField: ComposeViewFieldType?
     let removeHandler: () -> Void
+    let switchFocusHandler: (Bool) -> Void
 
     var body: some View {
         Templates.Menu {
@@ -52,20 +53,24 @@ struct RecipientChip: View {
                 removeHandler()
             }
         } label: { isSelected in
-            RecipientChipLabelView(recipient: recipient, removeHandler: removeAndFocus)
+            RecipientChipLabelView(recipient: recipient, removeHandler: removeAndFocus, switchFocusHandler: switchFocusHandler)
                 .fixedSize()
                 .opacity(isSelected ? 0.8 : 1)
         }
     }
 
     private func removeAndFocus() {
-        removeHandler()
         focusedField = fieldType
+        removeHandler()
     }
 }
 
 struct RecipientChip_Previews: PreviewProvider {
     static var previews: some View {
-        RecipientChip(recipient: PreviewHelper.sampleRecipient1, fieldType: .to) { /* Preview */ }
+        RecipientChip(recipient: PreviewHelper.sampleRecipient1, fieldType: .to) {
+            /* Preview */
+        } switchFocusHandler: { _ in
+            /* Preview */
+        }
     }
 }
