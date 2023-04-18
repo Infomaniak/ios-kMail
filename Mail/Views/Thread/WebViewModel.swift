@@ -139,6 +139,17 @@ class WebViewModel {
                 head = try parsedHtml.appendElement("head")
             }
 
+            let allImages = try parsedHtml.select("img[width]").array()
+            let maxWidth = webView.frame.width
+            for image in allImages {
+                if let widthString = image.getAttributes()?.get(key: "width"),
+                   let width = Double(widthString),
+                   width > maxWidth {
+                    try image.attr("width", "\(maxWidth)")
+                    try image.attr("height", "auto")
+                }
+            }
+
             try head.append(viewport)
             try head.append(style)
 
