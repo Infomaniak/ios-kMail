@@ -28,6 +28,7 @@ import SwiftUI
 
 enum ComposeViewFieldType: Hashable {
     case from, to, cc, bcc, subject
+    case chip(Int, Recipient)
 
     var title: String {
         switch self {
@@ -41,6 +42,8 @@ enum ComposeViewFieldType: Hashable {
             return MailResourcesStrings.Localizable.bccTitle
         case .subject:
             return MailResourcesStrings.Localizable.subjectTitle
+        case .chip:
+            return "Recipient Chip"
         }
     }
 }

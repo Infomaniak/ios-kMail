@@ -31,8 +31,8 @@ struct RecipientChipLabelView: UIViewRepresentable {
         return label
     }
 
-    func updateUIView(_ uiView: RecipientChipLabel, context: Context) {
-        /* Not implemented on purpose */
+    func updateUIView(_ uiLabel: RecipientChipLabel, context: Context) {
+        uiLabel.text = recipient.name.isEmpty ? recipient.email : recipient.name
     }
 }
 

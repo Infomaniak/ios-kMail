@@ -31,8 +31,6 @@ struct RecipientChip: View {
     @FocusState var focusedField: ComposeViewFieldType?
     let removeHandler: () -> Void
 
-    @FocusState var isLastChipFocused: Bool
-
     var body: some View {
         Templates.Menu {
             $0.width = nil
@@ -56,7 +54,6 @@ struct RecipientChip: View {
         } label: { isSelected in
             RecipientChipLabelView(recipient: recipient, removeHandler: removeAndFocus)
                 .fixedSize()
-                .focused($isLastChipFocused)
                 .opacity(isSelected ? 0.8 : 1)
         }
     }

@@ -32,8 +32,6 @@ struct RecipientField: View {
     @Binding var addRecipientHandler: ((Recipient) -> Void)?
 
     @FocusState var focusedField: ComposeViewFieldType?
-    @FocusState private var isLastChipFocused: Bool
-    @FocusState private var focusChip: Bool
 
     let type: ComposeViewFieldType
 
@@ -44,10 +42,13 @@ struct RecipientField: View {
         VStack {
             if !recipients.isEmpty {
                 WrappingHStack(recipients.indices, spacing: .constant(8), lineSpacing: 8) { i in
-                    RecipientChip(recipient: recipients[i], fieldType: type, focusedField: _focusedField, isLastChipFocused: _isLastChipFocused) {
+                    RecipientChip(
+                        recipient: recipients[i],
+                        fieldType: type,
+                        focusedField: _focusedField) {
                         remove(recipientAt: i)
                     }
-                    .focused(i == recipients.count - 1 ? $isLastChipFocused : $focusChip)
+                        .focused($focusedField, equals: .chip(type.hashValue, recipients[i]))
                 }
                 .alignmentGuide(.newMessageCellAlignment) { d in d[.top] + 21 }
             }
@@ -84,8 +85,8 @@ struct RecipientField: View {
     }
 
     private func handleBackspaceTextField() {
-        if currentText.isEmpty {
-            isLastChipFocused = true
+        if let recipient = recipients.last, currentText.isEmpty {
+            focusedField = .chip(type.hashValue, recipient)
         }
     }
 
