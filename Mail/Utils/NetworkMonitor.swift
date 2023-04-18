@@ -23,12 +23,15 @@ class NetworkMonitor: ObservableObject {
     @Published var isConnected = true
     @Published var isCellular = false
 
-    private let monitor = NWPathMonitor()
+    private var monitor: NWPathMonitor?
     private let queue = DispatchQueue.global()
 
     public func start() {
-        monitor.start(queue: queue)
-        monitor.pathUpdateHandler = { [weak self] path in
+        if monitor == nil {
+            monitor = NWPathMonitor()
+            monitor?.start(queue: queue)
+        }
+        monitor?.pathUpdateHandler = { [weak self] path in
             DispatchQueue.main.async {
                 self?.isConnected = path.status == .satisfied
                 self?.isCellular = path.usesInterfaceType(.cellular)
@@ -37,6 +40,7 @@ class NetworkMonitor: ObservableObject {
     }
 
     public func stop() {
-        monitor.cancel()
+        monitor?.cancel()
+        monitor = nil
     }
 }
