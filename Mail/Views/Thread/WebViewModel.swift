@@ -28,8 +28,8 @@ struct WebView: UIViewRepresentable {
     @Binding var model: WebViewModel
     @Binding var shortHeight: CGFloat
     @Binding var completeHeight: CGFloat
+    @Binding var loading: Bool
     @Binding var withQuote: Bool
-    var proxy: GeometryProxy
 
     var webView: WKWebView {
         return model.webView
@@ -40,15 +40,15 @@ struct WebView: UIViewRepresentable {
 
         init(_ parent: WebView) {
             self.parent = parent
-            parent.model.proxy = parent.proxy
         }
 
         private func updateHeight(height: CGFloat) {
             if !parent.withQuote {
                 if parent.shortHeight < height {
+                    parent.shortHeight = height
+                    parent.completeHeight = height
                     withAnimation {
-                        parent.shortHeight = height
-                        parent.completeHeight = height
+                        parent.loading = false
                     }
                 }
             } else if parent.completeHeight < height {
@@ -57,17 +57,13 @@ struct WebView: UIViewRepresentable {
         }
 
         func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                webView.evaluateJavaScript("document.readyState") { complete, _ in
-                    if complete != nil {
-                        webView.evaluateJavaScript("document.documentElement.scrollHeight") { height, _ in
-                            guard let height = height as? CGFloat else { return }
-                            DispatchQueue.main.async { [weak self] in
-                                self?.updateHeight(height: height)
-                            }
-                        }
-                    }
-                }
+            Task { @MainActor in
+                let readyState = try await webView.evaluateJavaScript("document.readyState") as? String
+                guard readyState == "complete" else { return }
+
+                let scrollHeight = try await webView.evaluateJavaScript("document.documentElement.scrollHeight") as? CGFloat
+                guard let scrollHeight else { return }
+                updateHeight(height: scrollHeight)
             }
         }
 
@@ -107,17 +103,14 @@ struct WebView: UIViewRepresentable {
     }
 }
 
-class WebViewModel: ObservableObject {
+class WebViewModel {
     let webView: WKWebView
-    var proxy: GeometryProxy?
-    let css: String? = try? String(contentsOfFile: Bundle.main.path(forResource: "style", ofType: "css") ?? "", encoding: .utf8)
-        .replacingOccurrences(of: "\n", with: "")
     var viewport: String {
-        return "<meta name=viewport content=\"\(proxy?.size.width ?? 0), initial-scale=1\">"
+        return "<meta name=viewport content=\"width=device-width, initial-scale=1, shrink-to-fit=YES\">"
     }
 
     var style: String {
-        return "<style>\(css ?? "")</style>"
+        return "<style>\(Constants.customCss)</style>"
     }
 
     init() {
@@ -142,6 +135,17 @@ class WebViewModel: ObservableObject {
                 head = existingHead
             } else {
                 head = try parsedHtml.appendElement("head")
+            }
+
+            let allImages = try parsedHtml.select("img[width]").array()
+            let maxWidth = webView.frame.width
+            for image in allImages {
+                if let widthString = image.getAttributes()?.get(key: "width"),
+                   let width = Double(widthString),
+                   width > maxWidth {
+                    try image.attr("width", "\(maxWidth)")
+                    try image.attr("height", "auto")
+                }
             }
 
             try head.append(viewport)

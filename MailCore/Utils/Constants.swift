@@ -66,6 +66,8 @@ public enum Constants {
     }()
 
     public static let extendedWhitelist = Whitelist.extendedWhitelist
+    public static let customCss = (try? String(contentsOfFile: Bundle.main.path(forResource: "style", ofType: "css") ?? "",
+                                              encoding: .utf8).replacingOccurrences(of: "\n", with: "")) ?? ""
 
     public static func forwardQuote(message: Message) -> String {
         let date = DateFormatter.localizedString(from: message.date, dateStyle: .medium, timeStyle: .short)
