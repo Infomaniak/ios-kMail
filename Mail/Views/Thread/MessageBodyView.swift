@@ -39,16 +39,13 @@ struct MessageBodyView: View {
                         .frame(maxWidth: .infinity, alignment: .leading)
                         .padding(.horizontal, 16)
                 } else {
-                    GeometryReader { proxy in
-                        WebView(
-                            model: $model,
-                            shortHeight: $webViewShortHeight,
-                            completeHeight: $webViewCompleteHeight,
-                            withQuote: $showBlockQuote,
-                            proxy: proxy
-                        )
-                    }
-                    .frame(height: showBlockQuote ? webViewCompleteHeight : webViewShortHeight)
+                    WebView(
+                        model: $model,
+                        shortHeight: $webViewShortHeight,
+                        completeHeight: $webViewCompleteHeight,
+                        withQuote: $showBlockQuote
+                    )
+                    .frame(minHeight: showBlockQuote ? webViewCompleteHeight : webViewShortHeight)
                     .onAppear {
                         loadBody()
                     }

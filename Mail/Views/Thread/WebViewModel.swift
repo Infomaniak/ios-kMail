@@ -29,7 +29,6 @@ struct WebView: UIViewRepresentable {
     @Binding var shortHeight: CGFloat
     @Binding var completeHeight: CGFloat
     @Binding var withQuote: Bool
-    var proxy: GeometryProxy
 
     var webView: WKWebView {
         return model.webView
@@ -40,7 +39,6 @@ struct WebView: UIViewRepresentable {
 
         init(_ parent: WebView) {
             self.parent = parent
-            parent.model.proxy = parent.proxy
         }
 
         private func updateHeight(height: CGFloat) {
@@ -107,13 +105,12 @@ struct WebView: UIViewRepresentable {
     }
 }
 
-class WebViewModel: ObservableObject {
+class WebViewModel {
     let webView: WKWebView
-    var proxy: GeometryProxy?
     let css: String? = try? String(contentsOfFile: Bundle.main.path(forResource: "style", ofType: "css") ?? "", encoding: .utf8)
         .replacingOccurrences(of: "\n", with: "")
     var viewport: String {
-        return "<meta name=viewport content=\"\(proxy?.size.width ?? 0), initial-scale=1\">"
+        return "<meta name=viewport content=\"width=device-width, initial-scale=1, shrink-to-fit=YES\">"
     }
 
     var style: String {
