@@ -57,17 +57,13 @@ struct WebView: UIViewRepresentable {
         }
 
         func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                webView.evaluateJavaScript("document.readyState") { complete, _ in
-                    if complete != nil {
-                        webView.evaluateJavaScript("document.documentElement.scrollHeight") { height, _ in
-                            guard let height = height as? CGFloat else { return }
-                            DispatchQueue.main.async { [weak self] in
-                                self?.updateHeight(height: height)
-                            }
-                        }
-                    }
-                }
+            Task { @MainActor in
+                let readyState = try await webView.evaluateJavaScript("document.readyState") as? String
+                guard readyState == "complete" else { return }
+
+                let scrollHeight = try await webView.evaluateJavaScript("document.documentElement.scrollHeight") as? CGFloat
+                guard let scrollHeight else { return }
+                updateHeight(height: scrollHeight)
             }
         }
 
