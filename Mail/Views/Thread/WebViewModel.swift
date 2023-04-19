@@ -106,11 +106,11 @@ struct WebView: UIViewRepresentable {
 class WebViewModel {
     let webView: WKWebView
     var viewport: String {
-        return "<meta name=\"viewport\" content=\"width=device-width, initial-scale=1, shrink-to-fit=YES\">"
+        return "<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">"
     }
 
     var style: String {
-        return "<style>\(Constants.customCss)</style>"
+        return "<style>\(Constants.customCSS)</style>"
     }
 
     init() {

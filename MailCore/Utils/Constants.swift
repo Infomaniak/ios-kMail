@@ -66,8 +66,17 @@ public enum Constants {
     }()
 
     public static let extendedWhitelist = Whitelist.extendedWhitelist
-    public static let customCss = (try? String(contentsOfFile: Bundle.main.path(forResource: "style", ofType: "css") ?? "",
-                                              encoding: .utf8).replacingOccurrences(of: "\n", with: "")) ?? ""
+    public static let customCSS = {
+        guard let path = Bundle.main.path(forResource: "style", ofType: "css"),
+              let style = try? String(contentsOfFile: path) else { return "" }
+
+        let variables = """
+        :root {
+            --kmail-primary-color: \(UserDefaults.shared.accentColor.primary.swiftUIColor.hexRepresentation);
+        }
+        """
+        return (variables + style).replacingOccurrences(of: "\n", with: "")
+    }()
 
     public static func forwardQuote(message: Message) -> String {
         let date = DateFormatter.localizedString(from: message.date, dateStyle: .medium, timeStyle: .short)

@@ -1,12 +1,18 @@
+html {
+    margin: 16px;
+}
+
 body {
     font-family: -apple-system, Helvetica,Arial, sans-serif;
     overflow-wrap: break-word;
+    width: 100%;
+    margin: 0;
 }
 
 blockquote {
     padding: 0.2em 1.2em !important;
     margin: 0 !important;
-    border: 3px solid blue !important;
+    border: 3px solid var(--kmail-primary-color) !important;
     border-width: 0 0 0 2px !important;
 }
 
