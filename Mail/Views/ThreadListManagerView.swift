@@ -36,8 +36,7 @@ struct ThreadListManagerView: View {
         ZStack {
             NavigationLink(isActive: $shouldNavigateToNotificationThread) {
                 if let tappedNotificationThread {
-                    ThreadView(mailboxManager: mailboxManager,
-                               thread: tappedNotificationThread)
+                    ThreadView(thread: tappedNotificationThread)
                 }
             } label: {
                 EmptyView()

@@ -45,13 +45,10 @@ struct SearchThreadsSectionView: View {
                     } else {
                         ZStack {
                             NavigationLink(destination: {
-                                ThreadView(
-                                    mailboxManager: viewModel.mailboxManager,
-                                    thread: thread
-                                )
-                                .onAppear {
-                                    viewModel.selectedThread = thread
-                                }
+                                ThreadView(thread: thread)
+                                    .onAppear {
+                                        viewModel.selectedThread = thread
+                                    }
                             }, label: {
                                 EmptyView()
                             })

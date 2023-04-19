@@ -41,10 +41,10 @@ class MessageBottomSheet: DisplayedFloatingPanelState<MessageBottomSheet.State> 
 
 struct ThreadView: View {
     @EnvironmentObject private var splitViewManager: SplitViewManager
+    @EnvironmentObject private var mailboxManager: MailboxManager
 
-    let mailboxManager: MailboxManager
     @ObservedRealmObject var thread: Thread
-    var onDismiss: (() -> Void)? = nil
+    var onDismiss: (() -> Void)?
 
     @State private var headerHeight: CGFloat = 0
     @State private var displayNavigationTitle = false
@@ -259,9 +259,7 @@ extension Label {
 
 struct ThreadView_Previews: PreviewProvider {
     static var previews: some View {
-        ThreadView(
-            mailboxManager: PreviewHelper.sampleMailboxManager,
-            thread: PreviewHelper.sampleThread
-        )
+        ThreadView(thread: PreviewHelper.sampleThread)
+            .environmentObject(PreviewHelper.sampleMailboxManager)
     }
 }

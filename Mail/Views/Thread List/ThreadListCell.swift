@@ -55,8 +55,7 @@ struct ThreadListCell: View {
     var body: some View {
         ZStack {
             if !thread.shouldPresentAsDraft {
-                NavigationLink(destination: ThreadView(mailboxManager: viewModel.mailboxManager,
-                                                       thread: thread,
+                NavigationLink(destination: ThreadView(thread: thread,
                                                        onDismiss: { viewModel.selectedThread = nil }),
                                isActive: $shouldNavigateToThreadList) { EmptyView() }
                     .opacity(0)
