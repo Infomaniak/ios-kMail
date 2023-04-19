@@ -64,7 +64,6 @@ struct ThreadListCell: View {
 
             ThreadCell(
                 thread: thread,
-                mailboxManager: viewModel.mailboxManager,
                 density: threadDensity,
                 isMultipleSelectionEnabled: multipleSelectionViewModel.isEnabled,
                 isSelected: isSelected

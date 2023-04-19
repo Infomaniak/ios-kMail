@@ -38,9 +38,7 @@ struct SearchThreadsSectionView: View {
                                 editedMessageDraft: $editedMessageDraft
                             )
                         }, label: {
-                            ThreadCell(thread: thread,
-                                       mailboxManager: viewModel.mailboxManager,
-                                       density: threadDensity)
+                            ThreadCell(thread: thread, density: threadDensity)
                         })
                     } else {
                         ZStack {
@@ -54,9 +52,7 @@ struct SearchThreadsSectionView: View {
                             })
                             .opacity(0)
 
-                            ThreadCell(thread: thread,
-                                       mailboxManager: viewModel.mailboxManager,
-                                       density: threadDensity)
+                            ThreadCell(thread: thread, density: threadDensity)
                         }
                     }
                 }

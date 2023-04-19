@@ -55,7 +55,7 @@ struct ThreadCellDataHolder {
     /// Last message of the thread, except for the Sent folder where we use the last message of the folder
     let preview: String
 
-    init(thread: Thread, mailboxManager: MailboxManager) {
+    init(thread: Thread) {
         let lastMessageNotFromSent = thread.messages.last { $0.folder?.role != .sent } ?? thread.messages.last
         recipientToDisplay = lastMessageNotFromSent?.from.last
 
@@ -80,8 +80,8 @@ struct ThreadCellDataHolder {
 }
 
 struct ThreadCell: View {
+    @EnvironmentObject var mailboxManager: MailboxManager
     let thread: Thread
-    let mailboxManager: MailboxManager
 
     let dataHolder: ThreadCellDataHolder
 
@@ -106,15 +106,13 @@ struct ThreadCell: View {
 
     init(
         thread: Thread,
-        mailboxManager: MailboxManager,
         density: ThreadDensity,
         isMultipleSelectionEnabled: Bool = false,
         isSelected: Bool = false
     ) {
         self.thread = thread
-        self.mailboxManager = mailboxManager
 
-        dataHolder = ThreadCellDataHolder(thread: thread, mailboxManager: mailboxManager)
+        dataHolder = ThreadCellDataHolder(thread: thread)
 
         self.density = density
         self.isMultipleSelectionEnabled = isMultipleSelectionEnabled
@@ -176,7 +174,6 @@ struct ThreadCell: View {
 struct ThreadCell_Previews: PreviewProvider {
     static var previews: some View {
         ThreadCell(thread: PreviewHelper.sampleThread,
-                   mailboxManager: PreviewHelper.sampleMailboxManager,
                    density: .large,
                    isMultipleSelectionEnabled: false,
                    isSelected: false)
