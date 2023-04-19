@@ -65,8 +65,18 @@ public enum Constants {
         try! NSRegularExpression(pattern: ">\\s*<|>?\\s+<?")
     }()
 
-    public static let customCss = (try? String(contentsOfFile: Bundle.main.path(forResource: "style", ofType: "css") ?? "",
-                                              encoding: .utf8).replacingOccurrences(of: "\n", with: "")) ?? ""
+    public static let extendedWhitelist = Whitelist.extendedWhitelist
+    public static let customCSS = {
+        guard let path = Bundle.main.path(forResource: "style", ofType: "css"),
+              let style = try? String(contentsOfFile: path) else { return "" }
+
+        let variables = """
+        :root {
+            --kmail-primary-color: \(UserDefaults.shared.accentColor.primary.swiftUIColor.hexRepresentation);
+        }
+        """
+        return (variables + style).replacingOccurrences(of: "\n", with: "")
+    }()
 
     public static func isEmailAddress(_ mail: String) -> Bool {
         return emailPredicate.evaluate(with: mail.lowercased())
