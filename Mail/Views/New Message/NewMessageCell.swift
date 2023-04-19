@@ -87,7 +87,7 @@ struct NewMessageCell_Previews: PreviewProvider {
                                unknownRecipientAutocompletion: .constant(""),
                                addRecipientHandler: .constant { _ in /* Preview */ },
                                focusedField: .init(),
-                               type: .to) { _, _ in return .to }
+                               type: .to)
             }
             NewMessageCell(type: .subject) {
                 TextField("", text: .constant(""))

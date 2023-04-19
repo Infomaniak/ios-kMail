@@ -34,7 +34,6 @@ struct RecipientField: View {
     @FocusState var focusedField: ComposeViewFieldType?
 
     let type: ComposeViewFieldType
-    let switchField: (ComposeViewFieldType, Bool) -> ComposeViewFieldType
 
     @State private var currentText = ""
     @State private var keyboardHeight: CGFloat = 0
@@ -45,8 +44,8 @@ struct RecipientField: View {
                 WrappingHStack(recipients.indices, spacing: .constant(8), lineSpacing: 8) { i in
                     RecipientChip(recipient: recipients[i], fieldType: type, focusedField: _focusedField) {
                         remove(recipientAt: i)
-                    } switchFocusHandler: { next in
-                        switchFocus(next: next)
+                    } switchFocusHandler: {
+                        switchFocus()
                     }
                     .focused($focusedField, equals: .chip(type.hashValue, recipients[i]))
                 }
@@ -129,21 +128,13 @@ struct RecipientField: View {
         }
     }
 
-    private func switchFocus(next: Bool) {
+    private func switchFocus() {
         guard case let .chip(hash, recipient) = focusedField else { return }
 
-        if next {
-            if recipient == recipients.last {
-                focusedField = type
-            } else if let recipientIndex = recipients.firstIndex(of: recipient) {
-                focusedField = .chip(hash, recipients[recipientIndex + 1])
-            }
-        } else {
-            if recipient == recipients.first {
-                focusedField = switchField(type, false)
-            } else if let recipientIndex = recipients.firstIndex(of: recipient) {
-                focusedField = .chip(hash, recipients[recipientIndex - 1])
-            }
+        if recipient == recipients.last {
+            focusedField = type
+        } else if let recipientIndex = recipients.firstIndex(of: recipient) {
+            focusedField = .chip(hash, recipients[recipientIndex + 1])
         }
     }
 }
@@ -157,6 +148,6 @@ struct RecipientField_Previews: PreviewProvider {
         unknownRecipientAutocompletion: .constant(""),
         addRecipientHandler: .constant { _ in /* Preview */ },
         focusedField: .init(),
-        type: .to) { _, _ in .to }
+        type: .to)
     }
 }

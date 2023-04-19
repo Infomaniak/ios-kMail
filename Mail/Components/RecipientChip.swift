@@ -30,12 +30,13 @@ struct RecipientChip: View {
     let fieldType: ComposeViewFieldType
     @FocusState var focusedField: ComposeViewFieldType?
     let removeHandler: () -> Void
-    let switchFocusHandler: (Bool) -> Void
+    let switchFocusHandler: () -> Void
 
     var body: some View {
         Templates.Menu {
             $0.width = nil
             $0.originAnchor = .topLeft
+            $0.popoverAnchor = .topLeft
         } content: {
             RecipientCell(recipient: recipient)
                 .padding(.vertical, 8)
@@ -69,7 +70,7 @@ struct RecipientChip_Previews: PreviewProvider {
     static var previews: some View {
         RecipientChip(recipient: PreviewHelper.sampleRecipient1, fieldType: .to) {
             /* Preview */
-        } switchFocusHandler: { _ in
+        } switchFocusHandler: {
             /* Preview */
         }
     }

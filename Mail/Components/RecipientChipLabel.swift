@@ -24,7 +24,7 @@ import UIKit
 struct RecipientChipLabelView: UIViewRepresentable {
     let recipient: Recipient
     let removeHandler: () -> Void
-    let switchFocusHandler: (Bool) -> Void
+    let switchFocusHandler: () -> Void
 
     func makeUIView(context: Context) -> RecipientChipLabel {
         let label = RecipientChipLabel(recipient: recipient)
@@ -40,7 +40,7 @@ struct RecipientChipLabelView: UIViewRepresentable {
 
 class RecipientChipLabel: UILabel, UIKeyInput {
     var removeHandler: (() -> Void)?
-    var switchFocusHandler: ((Bool) -> Void)?
+    var switchFocusHandler: (() -> Void)?
 
     override var intrinsicContentSize: CGSize {
         var contentSize = super.intrinsicContentSize
@@ -88,7 +88,7 @@ class RecipientChipLabel: UILabel, UIKeyInput {
 
     func insertText(_ text: String) {
         if text == "\t" {
-            switchFocusHandler?(true)
+            switchFocusHandler?()
         }
     }
 

@@ -46,10 +46,6 @@ enum ComposeViewFieldType: Hashable {
             return "Recipient Chip"
         }
     }
-
-    static let focusableFields: [Self] = [.to, .cc, .bcc, .subject]
-    static let minimizedFocusableFields: [Self] = [.to, .subject]
-
 }
 
 class NewMessageAlert: SheetState<NewMessageAlert.State> {
@@ -226,9 +222,9 @@ struct ComposeMessageView: View {
         }
         .customAlert(isPresented: $alert.isShowing) {
             switch alert.state {
-            case .link(let handler):
+            case let .link(handler):
                 AddLinkView(actionHandler: handler)
-            case .emptySubject(let handler):
+            case let .emptySubject(handler):
                 EmptySubjectView(actionHandler: handler)
             case .none:
                 EmptyView()
@@ -262,8 +258,7 @@ struct ComposeMessageView: View {
                                unknownRecipientAutocompletion: $unknownRecipientAutocompletion,
                                addRecipientHandler: $addRecipientHandler,
                                focusedField: _focusedField,
-                               type: type,
-                               switchField: switchField)
+                               type: type)
             }
         }
     }
@@ -369,19 +364,6 @@ struct ComposeMessageView: View {
             $draft.attachments.append(attachment)
         }
         attachmentsManager.completeUploadedAttachments()
-    }
-
-    private func switchField(from field: ComposeViewFieldType, next: Bool) -> ComposeViewFieldType {
-        let fields = showCc ? ComposeViewFieldType.focusableFields : ComposeViewFieldType.minimizedFocusableFields
-
-        let currentIndex = Int(fields.firstIndex(of: field) ?? 0)
-        let newIndex: Int
-        if next {
-            newIndex = (currentIndex + 1) % fields.count
-        } else {
-            newIndex = currentIndex > 0 ? currentIndex - 1 : fields.count - 1
-        }
-        return fields[newIndex]
     }
 }
 
