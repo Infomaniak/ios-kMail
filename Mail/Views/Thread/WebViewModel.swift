@@ -106,7 +106,7 @@ struct WebView: UIViewRepresentable {
 class WebViewModel {
     let webView: WKWebView
     var viewport: String {
-        return "<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">"
+        return "<meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">"
     }
 
     var style: String {
