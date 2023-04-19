@@ -21,11 +21,8 @@ import SwiftUI
 
 struct AlertView<Content>: View where Content: View {
     @State private var isShowing = false
-    let content: Content
 
-    init(@ViewBuilder content: () -> Content) {
-        self.content = content()
-    }
+    @ViewBuilder let content: Content
 
     var body: some View {
         ZStack {
@@ -37,6 +34,7 @@ struct AlertView<Content>: View where Content: View {
                 .padding(.horizontal, 24)
                 .background(MailResourcesAsset.backgroundTertiaryColor.swiftUIColor)
                 .cornerRadius(16)
+                .frame(maxWidth: 496)
                 .padding(16)
         }
         .opacity(isShowing ? 1 : 0)
