@@ -25,7 +25,7 @@ import RealmSwift
 import SwiftUI
 
 struct CreateFolderView: View {
-    @StateObject private var mailboxManager: MailboxManager
+    @EnvironmentObject var mailboxManager: MailboxManager
     @ObservedResults(Folder.self) private var folders
 
     @State private var folderName = ""
@@ -34,7 +34,7 @@ struct CreateFolderView: View {
 
     @FocusState private var isFocused
 
-    private var mode: Mode
+    let mode: Mode
 
     enum Mode {
         case create
@@ -62,12 +62,6 @@ struct CreateFolderView: View {
                 return MailResourcesStrings.Localizable.errorNewFolderAlreadyExists
             }
         }
-    }
-
-    init(mailboxManager: MailboxManager, mode: Mode) {
-        _folders = .init(Folder.self, configuration: AccountManager.instance.currentMailboxManager?.realmConfiguration)
-        _mailboxManager = StateObject(wrappedValue: mailboxManager)
-        self.mode = mode
     }
 
     var body: some View {
@@ -128,7 +122,10 @@ struct CreateFolderView: View {
 
 struct CreateFolderView_Previews: PreviewProvider {
     static var previews: some View {
-        CreateFolderView(mailboxManager: PreviewHelper.sampleMailboxManager, mode: .create)
-        CreateFolderView(mailboxManager: PreviewHelper.sampleMailboxManager, mode: .move { _ in /* Preview */ })
+        Group {
+            CreateFolderView(mode: .create)
+            CreateFolderView(mode: .move { _ in /* Preview */ })
+        }
+        .environmentObject(PreviewHelper.sampleMailboxManager)
     }
 }

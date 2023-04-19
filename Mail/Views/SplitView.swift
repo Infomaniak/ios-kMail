@@ -105,10 +105,6 @@ struct SplitView: View {
                 try await mailboxManager.folders()
             }
         }
-        .environmentObject(mailboxManager)
-        .environmentObject(splitViewManager)
-        .environmentObject(navigationDrawerController)
-        .defaultAppStorage(.shared)
         .onAppear {
             AppDelegate.orientationLock = .all
         }
@@ -134,8 +130,6 @@ struct SplitView: View {
             setupBehaviour(orientation: interfaceOrientation)
             splitViewController.preferredDisplayMode = .twoDisplaceSecondary
         }
-        .environmentObject(bottomSheet)
-        .environmentObject(alert)
         .floatingPanel(state: bottomSheet) {
             switch bottomSheet.state {
             case .getMoreStorage:
@@ -157,7 +151,7 @@ struct SplitView: View {
         .customAlert(isPresented: $alert.isShowing) {
             switch alert.state {
             case .createNewFolder(let mode):
-                CreateFolderView(mailboxManager: mailboxManager, mode: mode)
+                CreateFolderView(mode: mode)
             case .reportPhishing(let message):
                 ReportPhishingView(mailboxManager: mailboxManager, message: message)
             case .reportDisplayProblem(let message):
@@ -166,6 +160,13 @@ struct SplitView: View {
                 EmptyView()
             }
         }
+        .environment(\.realmConfiguration, mailboxManager.realmConfiguration)
+        .environmentObject(mailboxManager)
+        .environmentObject(splitViewManager)
+        .environmentObject(navigationDrawerController)
+        .environmentObject(bottomSheet)
+        .environmentObject(alert)
+        .defaultAppStorage(.shared)
     }
 
     private func setupBehaviour(orientation: UIInterfaceOrientation) {
