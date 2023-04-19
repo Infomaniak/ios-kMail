@@ -1,12 +1,12 @@
 html {
-    margin: 16px;
+    margin: 0;
 }
 
 body {
     font-family: -apple-system, Helvetica,Arial, sans-serif;
     overflow-wrap: break-word;
     width: 100%;
-    margin: 0;
+    margin: 16px;
 }
 
 blockquote {

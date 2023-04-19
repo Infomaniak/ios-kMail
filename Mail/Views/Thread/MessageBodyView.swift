@@ -51,7 +51,7 @@ struct MessageBodyView: View {
                             loading: $contentLoading,
                             withQuote: $showBlockQuote
                         )
-                        .frame(minHeight: showBlockQuote ? webViewCompleteHeight : webViewShortHeight)
+                        .frame(height: showBlockQuote ? webViewCompleteHeight : webViewShortHeight)
                         .onAppear {
                             loadBody()
                         }
@@ -76,6 +76,7 @@ struct MessageBodyView: View {
                 }
             }
             .opacity(contentLoading ? 0 : 1)
+
             if contentLoading {
                 ShimmerView()
             }
