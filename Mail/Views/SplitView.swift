@@ -21,8 +21,20 @@ import InfomaniakCore
 import Introspect
 import MailCore
 import MailResources
+import NavigationBackport
 import RealmSwift
 import SwiftUI
+
+struct MailNavigationPathKey: EnvironmentKey {
+    static var defaultValue: Binding<NBNavigationPath>?
+}
+
+extension EnvironmentValues {
+    var mailNavigationPath: Binding<NBNavigationPath>? {
+        get { self[MailNavigationPathKey.self] }
+        set { self[MailNavigationPathKey.self] = newValue }
+    }
+}
 
 class GlobalBottomSheet: DisplayedFloatingPanelState<GlobalBottomSheet.State> {
     enum State {
@@ -62,6 +74,7 @@ struct SplitView: View {
     @StateObject private var alert = GlobalAlert()
 
     @StateObject private var splitViewManager: SplitViewManager
+    @State var path = NBNavigationPath()
 
     var isCompact: Bool {
         sizeClass == .compact || verticalSizeClass == .compact
@@ -77,9 +90,13 @@ struct SplitView: View {
         Group {
             if isCompact {
                 ZStack {
-                    NavigationView {
+                    NBNavigationStack(path: $path) {
                         ThreadListManagerView(isCompact: isCompact)
-                            .accessibilityHidden(navigationDrawerController.isOpen)
+                        .accessibilityHidden(navigationDrawerController.isOpen)
+                        .nbNavigationDestination(for: Thread.self) { thread in
+                            ThreadView(thread: thread)
+                        }
+                        .environment(\.mailNavigationPath, $path)
                     }
                     .navigationViewStyle(.stack)
 

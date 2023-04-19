@@ -25,6 +25,7 @@ import SwiftUI
 
 struct ThreadListCell: View {
     @EnvironmentObject var splitViewManager: SplitViewManager
+    @Environment(\.mailNavigationPath) var path
 
     let thread: Thread
 
@@ -53,22 +54,12 @@ struct ThreadListCell: View {
     }
 
     var body: some View {
-        ZStack {
-            if !thread.shouldPresentAsDraft {
-                NavigationLink(destination: ThreadView(thread: thread,
-                                                       onDismiss: { viewModel.selectedThread = nil }),
-                               isActive: $shouldNavigateToThreadList) { EmptyView() }
-                    .opacity(0)
-                    .disabled(multipleSelectionViewModel.isEnabled)
-            }
-
-            ThreadCell(
-                thread: thread,
-                density: threadDensity,
-                isMultipleSelectionEnabled: multipleSelectionViewModel.isEnabled,
-                isSelected: isSelected
-            )
-        }
+        ThreadCell(
+            thread: thread,
+            density: threadDensity,
+            isMultipleSelectionEnabled: multipleSelectionViewModel.isEnabled,
+            isSelected: isSelected
+        )
         .background(SelectionBackground(selectionType: selectionType, paddingLeading: 4))
         .onTapGesture { didTapCell() }
         .onLongPressGesture(minimumDuration: 0.3) { didLongPressCell() }
@@ -101,7 +92,7 @@ struct ThreadListCell: View {
                     splitViewManager.splitViewController?.hide(.supplementary)
                 }
                 viewModel.selectedThread = thread
-                shouldNavigateToThreadList = true
+                path?.wrappedValue.append(thread)
             }
         }
     }
