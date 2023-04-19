@@ -51,7 +51,7 @@ public class SplitViewManager: ObservableObject {
 }
 
 struct SplitView: View {
-    @ObservedObject var mailboxManager: MailboxManager
+    var mailboxManager: MailboxManager
     @State var splitViewController: UISplitViewController?
     @StateObject private var navigationDrawerController = NavigationDrawerState()
 
@@ -79,15 +79,12 @@ struct SplitView: View {
             if isCompact {
                 ZStack {
                     NavigationView {
-                        ThreadListManagerView(
-                            mailboxManager: mailboxManager,
-                            isCompact: isCompact
-                        )
-                        .accessibilityHidden(navigationDrawerController.isOpen)
+                        ThreadListManagerView(isCompact: isCompact)
+                            .accessibilityHidden(navigationDrawerController.isOpen)
                     }
                     .navigationViewStyle(.stack)
 
-                    NavigationDrawer(mailboxManager: mailboxManager)
+                    NavigationDrawer()
                 }
             } else {
                 NavigationView {
@@ -97,10 +94,7 @@ struct SplitView: View {
                     )
                     .navigationBarHidden(true)
 
-                    ThreadListManagerView(
-                        mailboxManager: mailboxManager,
-                        isCompact: isCompact
-                    )
+                    ThreadListManagerView(isCompact: isCompact)
 
                     EmptyStateView.emptyThread(from: splitViewManager.selectedFolder)
                 }
@@ -111,6 +105,7 @@ struct SplitView: View {
                 try await mailboxManager.folders()
             }
         }
+        .environmentObject(mailboxManager)
         .environmentObject(splitViewManager)
         .environmentObject(navigationDrawerController)
         .defaultAppStorage(.shared)
@@ -147,7 +142,7 @@ struct SplitView: View {
                 MoreStorageView()
             case .restoreEmails:
                 RestoreEmailsView(mailboxManager: mailboxManager)
-            case let .reportJunk(threadBottomSheet, target):
+            case .reportJunk(let threadBottomSheet, let target):
                 ReportJunkView(
                     mailboxManager: mailboxManager,
                     target: target,
@@ -161,11 +156,11 @@ struct SplitView: View {
         }
         .customAlert(isPresented: $alert.isShowing) {
             switch alert.state {
-            case let .createNewFolder(mode):
+            case .createNewFolder(let mode):
                 CreateFolderView(mailboxManager: mailboxManager, mode: mode)
-            case let .reportPhishing(message):
+            case .reportPhishing(let message):
                 ReportPhishingView(mailboxManager: mailboxManager, message: message)
-            case let .reportDisplayProblem(message):
+            case .reportDisplayProblem(let message):
                 ReportDisplayProblemView(mailboxManager: mailboxManager, message: message)
             case .none:
                 EmptyView()

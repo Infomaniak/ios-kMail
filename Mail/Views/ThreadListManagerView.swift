@@ -23,12 +23,12 @@ import SwiftUI
 
 struct ThreadListManagerView: View {
     @EnvironmentObject var splitViewManager: SplitViewManager
+    @EnvironmentObject var mailboxManager: MailboxManager
+
     @State private var shouldNavigateToNotificationThread = false
     @State private var tappedNotificationThread: Thread?
     @State private var editedMessageDraft: Draft?
     @State private var messageReply: MessageReply?
-
-    var mailboxManager: MailboxManager
 
     let isCompact: Bool
 
@@ -90,8 +90,8 @@ struct ThreadListManagerView: View {
 struct ThreadListManagerView_Previews: PreviewProvider {
     static var previews: some View {
         ThreadListManagerView(
-            mailboxManager: PreviewHelper.sampleMailboxManager,
             isCompact: false
         )
+        .environmentObject(PreviewHelper.sampleMailboxManager)
     }
 }

@@ -42,7 +42,6 @@ struct FolderCell: View {
     @Environment(\.folderCellType) var cellType
 
     @EnvironmentObject var splitViewManager: SplitViewManager
-    @EnvironmentObject var mailboxManager: MailboxManager
     @EnvironmentObject var navigationDrawerState: NavigationDrawerState
 
     let folder: NestableFolder
@@ -69,10 +68,7 @@ struct FolderCell: View {
                 }
             } else {
                 NavigationLink(isActive: $shouldTransit) {
-                    ThreadListManagerView(
-                        mailboxManager: mailboxManager,
-                        isCompact: isCompact
-                    )
+                    ThreadListManagerView(isCompact: isCompact)
                 } label: {
                     Button {
                         if let matomoCategory {

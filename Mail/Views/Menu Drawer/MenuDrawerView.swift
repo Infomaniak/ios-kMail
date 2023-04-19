@@ -47,8 +47,7 @@ struct NavigationDrawer: View {
     private let maxWidth = 350.0
     private let spacing = 60.0
 
-    let mailboxManager: MailboxManager
-
+    @EnvironmentObject var mailboxManager: MailboxManager
     @EnvironmentObject var splitViewManager: SplitViewManager
     @EnvironmentObject var navigationDrawerState: NavigationDrawerState
     @Environment(\.window) var window
@@ -190,7 +189,6 @@ struct MenuDrawerView: View {
             }
         }
         .background(MailResourcesAsset.backgroundSecondaryColor.swiftUIColor.ignoresSafeArea())
-        .environmentObject(mailboxManager)
         .environment(\.folderCellType, .link)
         .onAppear {
             viewModel.createMenuItems(bottomSheet: bottomSheet)
