@@ -94,4 +94,6 @@ public enum UIConstants {
     public static let buttonsIconSize: CGFloat = 16
 
     public static let bottomSheetHorizontalPadding: CGFloat = 24
+
+    public static let componentsMaxWidth: CGFloat = 496
 }

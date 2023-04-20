@@ -16,6 +16,7 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import MailCore
 import MailResources
 import SwiftUI
 
@@ -34,7 +35,7 @@ struct AlertView<Content>: View where Content: View {
                 .padding(.horizontal, 24)
                 .background(MailResourcesAsset.backgroundTertiaryColor.swiftUIColor)
                 .cornerRadius(16)
-                .frame(maxWidth: 496)
+                .frame(maxWidth: UIConstants.componentsMaxWidth)
                 .padding(16)
         }
         .opacity(isShowing ? 1 : 0)
@@ -118,7 +119,8 @@ extension View {
         modifier(CustomAlertModifier(isPresented: isPresented, alertView: content()))
     }
 
-    func customAlert<Item, Content>(item: Binding<Item?>, @ViewBuilder content: @escaping (Item) -> Content) -> some View where Item: Identifiable, Content: View {
+    func customAlert<Item, Content>(item: Binding<Item?>, @ViewBuilder content: @escaping (Item) -> Content) -> some View
+        where Item: Identifiable, Content: View {
         modifier(CustomAlertItemModifier(item: item, alertView: content))
     }
 }
