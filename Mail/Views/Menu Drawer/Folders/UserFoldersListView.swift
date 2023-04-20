@@ -29,9 +29,9 @@ struct UserFoldersListView: View {
     var folders: [NestableFolder]
 
     @State private var isExpanded = true
+    @State private var isShowingCreateFolderAlert = false
 
     @EnvironmentObject var splitViewManager: SplitViewManager
-    @EnvironmentObject var globalAlert: GlobalAlert
 
     let isCompact: Bool
 
@@ -58,13 +58,16 @@ struct UserFoldersListView: View {
 
                 Button {
                     matomo.track(eventWithCategory: .createFolder, name: "fromMenuDrawer")
-                    globalAlert.state = .createNewFolder(mode: .create)
+                    isShowingCreateFolderAlert.toggle()
                 } label: {
                     MailResourcesAsset.addCircle.swiftUIImage
                         .resizable()
                         .frame(width: 16, height: 16)
                 }
                 .accessibilityLabel(MailResourcesStrings.Localizable.newFolderDialogTitle)
+                .customAlert(isPresented: $isShowingCreateFolderAlert) {
+                    CreateFolderView(mode: .create)
+                }
             }
             .padding(.horizontal, UIConstants.menuDrawerHorizontalPadding)
             .padding(.vertical, UIConstants.menuDrawerVerticalPadding)

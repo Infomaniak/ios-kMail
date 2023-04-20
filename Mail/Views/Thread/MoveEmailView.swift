@@ -27,11 +27,11 @@ import SwiftUI
 struct MoveEmailView: View {
     typealias MoveHandler = (Folder) -> Void
 
-    @EnvironmentObject private var alert: GlobalAlert
     @EnvironmentObject private var mailboxManager: MailboxManager
 
     // swiftlint:disable empty_count
     @ObservedResults(Folder.self, where: { $0.role != .draft && $0.parents.count == 0 && $0.toolType == nil }) var folders
+    @State private var isShowingCreateFolderAlert = false
 
     @LazyInjectService private var matomo: MatomoUtils
 
@@ -54,7 +54,7 @@ struct MoveEmailView: View {
             ToolbarItem(placement: .navigationBarTrailing) {
                 Button {
                     matomo.track(eventWithCategory: .createFolder, name: "fromMove")
-                    alert.state = .createNewFolder(mode: .move(moveHandler: moveHandler))
+                    isShowingCreateFolderAlert.toggle()
                 } label: {
                     MailResourcesAsset.folderAdd.swiftUIImage
                 }
@@ -62,6 +62,9 @@ struct MoveEmailView: View {
         }
         .environment(\.folderCellType, .indicator)
         .matomoView(view: ["MoveEmailView"])
+        .customAlert(isPresented: $isShowingCreateFolderAlert) {
+            CreateFolderView(mode: .move(moveHandler: moveHandler))
+        }
     }
 
     private func listOfFolders(nestableFolders: [NestableFolder]) -> some View {

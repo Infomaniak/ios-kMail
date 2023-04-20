@@ -34,7 +34,6 @@ class GlobalBottomSheet: DisplayedFloatingPanelState<GlobalBottomSheet.State> {
 
 class GlobalAlert: SheetState<GlobalAlert.State> {
     enum State {
-        case createNewFolder(mode: CreateFolderView.Mode)
         case reportPhishing(message: Message)
         case reportDisplayProblem(message: Message)
     }
@@ -150,8 +149,6 @@ struct SplitView: View {
         }
         .customAlert(isPresented: $alert.isShowing) {
             switch alert.state {
-            case .createNewFolder(let mode):
-                CreateFolderView(mode: mode)
             case .reportPhishing(let message):
                 ReportPhishingView(message: message)
             case .reportDisplayProblem(let message):
