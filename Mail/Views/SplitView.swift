@@ -137,7 +137,6 @@ struct SplitView: View {
             self.splitViewController = splitViewController
             splitViewManager.splitViewController = splitViewController
             setupBehaviour(orientation: interfaceOrientation)
-            splitViewController.preferredDisplayMode = .twoDisplaceSecondary
         }
         .environmentObject(bottomSheet)
         .environmentObject(alert)
