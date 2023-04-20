@@ -21,15 +21,9 @@ import MailResources
 import SwiftUI
 
 struct SheetView<Content>: View where Content: View {
-    @StateObject private var alert = GlobalAlert()
-
     @Environment(\.dismiss) private var dismiss
 
-    let content: Content
-
-    init(@ViewBuilder _ content: () -> Content) {
-        self.content = content()
-    }
+    @ViewBuilder let content: Content
 
     var body: some View {
         NavigationView {
@@ -40,21 +34,9 @@ struct SheetView<Content>: View where Content: View {
                     Label(MailResourcesStrings.Localizable.buttonClose, systemImage: "xmark")
                 })
         }
-        .customAlert(isPresented: $alert.isShowing) {
-            switch alert.state {
-            case let .reportPhishing(message):
-                ReportPhishingView(message: message)
-            case let .reportDisplayProblem(message):
-                ReportDisplayProblemView(message: message)
-            case .none:
-                EmptyView()
-            }
-        }
-        .defaultAppStorage(.shared)
         .onReceive(NotificationCenter.default.publisher(for: Constants.dismissMoveSheetNotificationName)) { _ in
             dismiss()
         }
-        .environmentObject(alert)
     }
 }
 
