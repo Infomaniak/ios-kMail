@@ -25,11 +25,9 @@ struct SheetView<Content>: View where Content: View {
 
     @Environment(\.dismiss) private var dismiss
 
-    let mailboxManager: MailboxManager
     let content: Content
 
-    init(mailboxManager: MailboxManager, @ViewBuilder _ content: () -> Content) {
-        self.mailboxManager = mailboxManager
+    init(@ViewBuilder _ content: () -> Content) {
         self.content = content()
     }
 
@@ -64,7 +62,7 @@ struct SheetView<Content>: View where Content: View {
 
 struct SheetView_Previews: PreviewProvider {
     static var previews: some View {
-        SheetView(mailboxManager: PreviewHelper.sampleMailboxManager) {
+        SheetView {
             EmptyView()
         }
     }

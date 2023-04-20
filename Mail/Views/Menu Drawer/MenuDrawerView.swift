@@ -194,7 +194,7 @@ struct MenuDrawerView: View {
             viewModel.createMenuItems(bottomSheet: bottomSheet)
         }
         .sheet(isPresented: $viewModel.isShowingHelp) {
-            SheetView(mailboxManager: mailboxManager) {
+            SheetView {
                 HelpView()
             }
         }

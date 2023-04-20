@@ -53,7 +53,7 @@ struct MenuHeaderView: View {
         .clipped()
         .shadow(color: MailResourcesAsset.menuDrawerShadowColor.swiftUIColor, radius: 1, x: 0, y: 2)
         .sheet(isPresented: $isShowingSettings) {
-            SheetView(mailboxManager: mailboxManager) {
+            SheetView {
                 SettingsView()
             }
         }
