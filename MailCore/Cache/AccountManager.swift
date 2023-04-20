@@ -365,7 +365,9 @@ public class AccountManager: RefreshTokenDelegate {
 
     public func switchAccount(newAccount: Account) {
         setCurrentAccount(account: newAccount)
-        setCurrentMailboxForCurrentAccount(mailbox: mailboxes.first!)
+        if let defaultMailbox = (mailboxes.first(where: { $0.isPrimary }) ?? mailboxes.first) {
+            setCurrentMailboxForCurrentAccount(mailbox: defaultMailbox)
+        }
         saveAccounts()
     }
 
