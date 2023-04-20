@@ -155,7 +155,7 @@ struct SplitView: View {
             case .reportPhishing(let message):
                 ReportPhishingView(message: message)
             case .reportDisplayProblem(let message):
-                ReportDisplayProblemView(mailboxManager: mailboxManager, message: message)
+                ReportDisplayProblemView(message: message)
             case .none:
                 EmptyView()
             }

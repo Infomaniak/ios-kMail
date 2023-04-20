@@ -24,7 +24,7 @@ import Sentry
 import SwiftUI
 
 struct ReportDisplayProblemView: View {
-    let mailboxManager: MailboxManager
+    @EnvironmentObject var mailboxManager: MailboxManager
     let message: Message
 
     var body: some View {
@@ -63,6 +63,7 @@ struct ReportDisplayProblemView: View {
 
 struct ReportDisplayProblemView_Previews: PreviewProvider {
     static var previews: some View {
-        ReportDisplayProblemView(mailboxManager: PreviewHelper.sampleMailboxManager, message: PreviewHelper.sampleMessage)
+        ReportDisplayProblemView(message: PreviewHelper.sampleMessage)
+            .environmentObject(PreviewHelper.sampleMailboxManager)
     }
 }

@@ -49,7 +49,7 @@ struct SheetView<Content>: View where Content: View {
             case let .reportPhishing(message):
                 ReportPhishingView(message: message)
             case let .reportDisplayProblem(message):
-                ReportDisplayProblemView(mailboxManager: mailboxManager, message: message)
+                ReportDisplayProblemView(message: message)
             case .none:
                 EmptyView()
             }
