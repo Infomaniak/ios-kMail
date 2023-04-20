@@ -153,7 +153,7 @@ struct SplitView: View {
             case .createNewFolder(let mode):
                 CreateFolderView(mode: mode)
             case .reportPhishing(let message):
-                ReportPhishingView(mailboxManager: mailboxManager, message: message)
+                ReportPhishingView(message: message)
             case .reportDisplayProblem(let message):
                 ReportDisplayProblemView(mailboxManager: mailboxManager, message: message)
             case .none:

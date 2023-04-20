@@ -22,7 +22,7 @@ import MailResources
 import SwiftUI
 
 struct ReportPhishingView: View {
-    let mailboxManager: MailboxManager
+    @EnvironmentObject var mailboxManager: MailboxManager
     let message: Message
 
     var body: some View {
@@ -54,6 +54,7 @@ struct ReportPhishingView: View {
 
 struct PhishingView_Previews: PreviewProvider {
     static var previews: some View {
-        ReportPhishingView(mailboxManager: PreviewHelper.sampleMailboxManager, message: PreviewHelper.sampleMessage)
+        ReportPhishingView(message: PreviewHelper.sampleMessage)
+            .environmentObject(PreviewHelper.sampleMailboxManager)
     }
 }

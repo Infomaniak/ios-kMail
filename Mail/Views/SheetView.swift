@@ -47,7 +47,7 @@ struct SheetView<Content>: View where Content: View {
             case let .createNewFolder(mode):
                 CreateFolderView(mode: mode)
             case let .reportPhishing(message):
-                ReportPhishingView(mailboxManager: mailboxManager, message: message)
+                ReportPhishingView(message: message)
             case let .reportDisplayProblem(message):
                 ReportDisplayProblemView(mailboxManager: mailboxManager, message: message)
             case .none:
