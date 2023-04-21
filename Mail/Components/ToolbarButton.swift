@@ -25,13 +25,11 @@ struct ToolbarButton: View {
 
     let text: String
     let icon: Image
-    let width: CGFloat?
     let action: () -> Void
 
-    init(text: String, icon: Image, width: CGFloat? = nil, action: @escaping () -> Void) {
+    init(text: String, icon: Image, action: @escaping () -> Void) {
         self.text = text
         self.icon = icon
-        self.width = width
         self.action = action
     }
 
@@ -42,13 +40,10 @@ struct ToolbarButton: View {
                     .textStyle(MailTextStyle.labelMediumAccent)
             } icon: {
                 icon
-                    .resizable()
-                    .scaledToFit()
-                    .frame(width: 22, height: 22)
             }
             .dynamicLabelStyle(sizeClass: sizeClass ?? .regular)
         }
-        .frame(width: width, alignment: .center)
+        .frame(maxWidth: .infinity)
     }
 }
 

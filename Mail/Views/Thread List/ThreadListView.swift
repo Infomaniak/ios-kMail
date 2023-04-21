@@ -300,110 +300,105 @@ private struct ThreadListToolbar: ViewModifier {
     var selectAll: () -> Void
 
     func body(content: Content) -> some View {
-        GeometryReader { reader in
-            content
-                .toolbar {
-                    ToolbarItemGroup(placement: .navigationBarLeading) {
-                        if multipleSelectionViewModel.isEnabled {
-                            Button(MailResourcesStrings.Localizable.buttonCancel) {
-                                matomo.track(eventWithCategory: .multiSelection, name: "cancel")
-                                withAnimation {
-                                    multipleSelectionViewModel.isEnabled = false
-                                }
-                            }
-                        } else {
-                            if isCompact {
-                                Button {
-                                    matomo.track(eventWithCategory: .menuDrawer, name: "openByButton")
-                                    navigationDrawerState.open()
-                                } label: {
-                                    MailResourcesAsset.burger.swiftUIImage
-                                        .resizable()
-                                        .scaledToFit()
-                                        .frame(width: UIConstants.navbarIconSize, height: UIConstants.navbarIconSize)
-                                }
-                                .accessibilityLabel(MailResourcesStrings.Localizable.contentDescriptionButtonMenu)
+        content
+            .toolbar {
+                ToolbarItemGroup(placement: .navigationBarLeading) {
+                    if multipleSelectionViewModel.isEnabled {
+                        Button(MailResourcesStrings.Localizable.buttonCancel) {
+                            matomo.track(eventWithCategory: .multiSelection, name: "cancel")
+                            withAnimation {
+                                multipleSelectionViewModel.isEnabled = false
                             }
                         }
-                    }
-
-                    ToolbarItem(placement: .principal) {
-                        if !multipleSelectionViewModel.isEnabled {
-                            Text(splitViewManager.selectedFolder?.localizedName ?? "")
-                                .textStyle(.header1)
-                                .frame(maxWidth: .infinity, alignment: .leading)
-                        }
-                    }
-
-                    ToolbarItemGroup(placement: .navigationBarTrailing) {
-                        if multipleSelectionViewModel.isEnabled {
-                            Button(multipleSelectionViewModel.selectedItems.count == viewModel.filteredThreads.count
-                                ? MailResourcesStrings.Localizable.buttonUnselectAll
-                                : MailResourcesStrings.Localizable.buttonSelectAll) {
-                                    selectAll()
-                                }
-                                .animation(nil, value: multipleSelectionViewModel.selectedItems)
-                        } else {
+                    } else {
+                        if isCompact {
                             Button {
-                                splitViewManager.showSearch = true
+                                matomo.track(eventWithCategory: .menuDrawer, name: "openByButton")
+                                navigationDrawerState.open()
                             } label: {
-                                MailResourcesAsset.search.swiftUIImage
+                                MailResourcesAsset.burger.swiftUIImage
                                     .resizable()
                                     .scaledToFit()
                                     .frame(width: UIConstants.navbarIconSize, height: UIConstants.navbarIconSize)
                             }
-
-                            Button {
-                                isShowingSwitchAccount.toggle()
-                            } label: {
-                                AvatarView(avatarDisplayable: AccountManager.instance.currentAccount.user)
-                            }
-                            .accessibilityLabel(MailResourcesStrings.Localizable.contentDescriptionUserAvatar)
-                        }
-                    }
-
-                    ToolbarItemGroup(placement: .bottomBar) {
-                        if multipleSelectionViewModel.isEnabled {
-                            HStack(spacing: 0) {
-                                ForEach(multipleSelectionViewModel.toolbarActions) { action in
-                                    ToolbarButton(
-                                        text: action.shortTitle ?? action.title,
-                                        icon: action.icon,
-                                        width: reader.size.width / 5
-                                    ) {
-                                        Task {
-                                            await tryOrDisplayError {
-                                                try await multipleSelectionViewModel.didTap(
-                                                    action: action,
-                                                    flushAlert: $flushAlert
-                                                )
-                                            }
-                                        }
-                                    }
-                                    .disabled(action == .archive && splitViewManager.selectedFolder?.role == .archive)
-                                }
-
-                                ToolbarButton(text: MailResourcesStrings.Localizable.buttonMore,
-                                              icon: MailResourcesAsset.plusActions.swiftUIImage,
-                                              width: reader.size.width / 5) {
-                                    bottomSheet
-                                        .open(state: .actions(.threads(Array(multipleSelectionViewModel.selectedItems), true)))
-                                }
-                            }
-                            .disabled(multipleSelectionViewModel.selectedItems.isEmpty)
+                            .accessibilityLabel(MailResourcesStrings.Localizable.contentDescriptionButtonMenu)
                         }
                     }
                 }
-                .navigationTitle(
-                    multipleSelectionViewModel.isEnabled
-                        ? MailResourcesStrings.Localizable.multipleSelectionCount(multipleSelectionViewModel.selectedItems.count)
-                        : ""
-                )
-                .navigationBarTitleDisplayMode(.inline)
-        }
-        .sheet(isPresented: $isShowingSwitchAccount) {
-            AccountView(mailboxes: AccountManager.instance.mailboxes)
-        }
+
+                ToolbarItem(placement: .principal) {
+                    if !multipleSelectionViewModel.isEnabled {
+                        Text(splitViewManager.selectedFolder?.localizedName ?? "")
+                            .textStyle(.header1)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                    }
+                }
+
+                ToolbarItemGroup(placement: .navigationBarTrailing) {
+                    if multipleSelectionViewModel.isEnabled {
+                        Button(multipleSelectionViewModel.selectedItems.count == viewModel.filteredThreads.count
+                            ? MailResourcesStrings.Localizable.buttonUnselectAll
+                            : MailResourcesStrings.Localizable.buttonSelectAll) {
+                                selectAll()
+                            }
+                            .animation(nil, value: multipleSelectionViewModel.selectedItems)
+                    } else {
+                        Button {
+                            splitViewManager.showSearch = true
+                        } label: {
+                            MailResourcesAsset.search.swiftUIImage
+                                .resizable()
+                                .scaledToFit()
+                                .frame(width: UIConstants.navbarIconSize, height: UIConstants.navbarIconSize)
+                        }
+
+                        Button {
+                            isShowingSwitchAccount.toggle()
+                        } label: {
+                            AvatarView(avatarDisplayable: AccountManager.instance.currentAccount.user)
+                        }
+                        .accessibilityLabel(MailResourcesStrings.Localizable.contentDescriptionUserAvatar)
+                    }
+                }
+
+                ToolbarItemGroup(placement: .bottomBar) {
+                    if multipleSelectionViewModel.isEnabled {
+                        HStack(spacing: 0) {
+                            ForEach(multipleSelectionViewModel.toolbarActions) { action in
+                                ToolbarButton(
+                                    text: action.shortTitle ?? action.title,
+                                    icon: action.icon) {
+                                    Task {
+                                        await tryOrDisplayError {
+                                            try await multipleSelectionViewModel.didTap(
+                                                action: action,
+                                                flushAlert: $flushAlert
+                                            )
+                                        }
+                                    }
+                                }
+                                .disabled(action == .archive && splitViewManager.selectedFolder?.role == .archive)
+                            }
+
+                            ToolbarButton(text: MailResourcesStrings.Localizable.buttonMore,
+                                          icon: MailResourcesAsset.plusActions.swiftUIImage) {
+                                bottomSheet
+                                    .open(state: .actions(.threads(Array(multipleSelectionViewModel.selectedItems), true)))
+                            }
+                        }
+                        .disabled(multipleSelectionViewModel.selectedItems.isEmpty)
+                    }
+                }
+            }
+            .navigationTitle(
+                multipleSelectionViewModel.isEnabled
+                    ? MailResourcesStrings.Localizable.multipleSelectionCount(multipleSelectionViewModel.selectedItems.count)
+                    : ""
+            )
+            .navigationBarTitleDisplayMode(.inline)
+            .sheet(isPresented: $isShowingSwitchAccount) {
+                AccountView(mailboxes: AccountManager.instance.mailboxes)
+            }
     }
 }
 
