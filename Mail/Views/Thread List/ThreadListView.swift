@@ -53,6 +53,7 @@ struct ThreadListView: View {
 
     @EnvironmentObject var splitViewManager: SplitViewManager
     @EnvironmentObject var globalBottomSheet: GlobalBottomSheet
+    @Environment(\.mailNavigationPath) var path
 
     @AppStorage(UserDefaults.shared.key(.threadDensity)) private var threadDensity = DefaultPreferences.threadDensity
     @AppStorage(UserDefaults.shared.key(.accentColor)) private var accentColor = DefaultPreferences.accentColor
@@ -142,7 +143,8 @@ struct ThreadListView: View {
                                                viewModel: viewModel,
                                                multipleSelectionViewModel: multipleSelectionViewModel,
                                                threadDensity: threadDensity,
-                                               isSelected: multipleSelectionViewModel.selectedItems
+                                               isSelected: viewModel.selectedThread?.uid == thread.uid,
+                                               isMultiSelected: multipleSelectionViewModel.selectedItems
                                                    .contains { $0.id == thread.id },
                                                editedMessageDraft: $editedMessageDraft)
                                     .id(thread.id)
@@ -231,6 +233,13 @@ struct ThreadListView: View {
         }
         .onChange(of: splitViewManager.selectedFolder) { newFolder in
             changeFolder(newFolder: newFolder)
+        }
+        .onChange(of: viewModel.selectedThread) { newThread in
+            if let newThread = newThread {
+                path?.wrappedValue = [newThread]
+            } else {
+                path?.wrappedValue = []
+            }
         }
         .onReceive(NotificationCenter.default.publisher(for: UIApplication.willEnterForegroundNotification)) { _ in
             updateFetchingTask()

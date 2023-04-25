@@ -26,11 +26,11 @@ import RealmSwift
 import SwiftUI
 
 struct MailNavigationPathKey: EnvironmentKey {
-    static var defaultValue: Binding<NBNavigationPath>?
+    static var defaultValue: Binding<[Thread]>?
 }
 
 extension EnvironmentValues {
-    var mailNavigationPath: Binding<NBNavigationPath>? {
+    var mailNavigationPath: Binding<[Thread]>? {
         get { self[MailNavigationPathKey.self] }
         set { self[MailNavigationPathKey.self] = newValue }
     }
@@ -74,7 +74,7 @@ struct SplitView: View {
     @StateObject private var alert = GlobalAlert()
 
     @StateObject private var splitViewManager: SplitViewManager
-    @State var path = NBNavigationPath()
+    @State var path = [Thread]()
 
     var isCompact: Bool {
         sizeClass == .compact || verticalSizeClass == .compact
@@ -96,7 +96,6 @@ struct SplitView: View {
                         .nbNavigationDestination(for: Thread.self) { thread in
                             ThreadView(thread: thread)
                         }
-                        .environment(\.mailNavigationPath, $path)
                     }
                     .navigationViewStyle(.stack)
 
@@ -112,7 +111,11 @@ struct SplitView: View {
 
                     ThreadListManagerView(isCompact: isCompact)
 
-                    EmptyStateView.emptyThread(from: splitViewManager.selectedFolder)
+                    if let thread = path.last {
+                        ThreadView(mailboxManager: mailboxManager, thread: thread)
+                    } else {
+                        EmptyStateView.emptyThread(from: splitViewManager.selectedFolder)
+                    }
                 }
             }
         }
@@ -121,6 +124,10 @@ struct SplitView: View {
                 try await mailboxManager.folders()
             }
         }
+        .environment(\.mailNavigationPath, $path)
+        .environmentObject(splitViewManager)
+        .environmentObject(navigationDrawerController)
+        .defaultAppStorage(.shared)
         .onAppear {
             AppDelegate.orientationLock = .all
         }
