@@ -24,6 +24,7 @@ struct SelectableTextView: UIViewRepresentable {
     let text: String?
     func makeUIView(context: Context) -> UITextView {
         let textView = UITextView()
+        textView.dataDetectorTypes = .all
         textView.isScrollEnabled = false
         textView.isEditable = false
         textView.textContainer.lineFragmentPadding = 0
