@@ -98,6 +98,11 @@ struct AddMailboxView: View {
                         lineWidth: 1
                     )
             }
+            .padding(.bottom, 4)
+
+            Text(MailResourcesStrings.Localizable.errorInvalidCredentials)
+                .textStyle(.labelError)
+                .opacity(showError ? 1 : 0)
 
             Spacer()
 
@@ -129,7 +134,6 @@ struct AddMailboxView: View {
                     password = ""
                 }
                 await IKSnackBar.showSnackBar(message: error.localizedDescription)
-                print("error: \(error.localizedDescription)")
             }
         }
     }

@@ -70,6 +70,7 @@ struct MailboxesManagementButtonView: View {
                     if isSelected {
                         MailResourcesAsset.check.swiftUIImage
                             .frame(width: 16, height: 16)
+                            .foregroundColor(.accentColor)
                     }
                 }
             }
