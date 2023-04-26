@@ -27,37 +27,25 @@ import SwiftUI
 struct MoveEmailView: View {
     typealias MoveHandler = (Folder) -> Void
 
-    @EnvironmentObject private var alert: GlobalAlert
+    @EnvironmentObject private var mailboxManager: MailboxManager
 
-    @ObservedResults(Folder.self) var folders
+    // swiftlint:disable empty_count
+    @ObservedResults(Folder.self, where: { $0.role != .draft && $0.parents.count == 0 && $0.toolType == nil }) var folders
+    @State private var isShowingCreateFolderAlert = false
 
     @LazyInjectService private var matomo: MatomoUtils
 
-    let mailboxManager: MailboxManager
     let currentFolderId: String?
     let moveHandler: MoveEmailView.MoveHandler
-
-    private var nestableFolderSorted = [NestableFolder]()
-
-    init(mailboxManager: MailboxManager, from currentFolderId: String?, moveHandler: @escaping MoveEmailView.MoveHandler) {
-        self.mailboxManager = mailboxManager
-        self.currentFolderId = currentFolderId
-        self.moveHandler = moveHandler
-
-        // swiftlint:disable empty_count
-        _folders = ObservedResults(
-            Folder.self,
-            configuration: AccountManager.instance.currentMailboxManager?.realmConfiguration
-        ) { $0.role != .draft && $0.parents.count == 0 && $0.toolType == nil }
-        nestableFolderSorted = NestableFolder.createFoldersHierarchy(from: Array(folders))
-    }
 
     var body: some View {
         ScrollView {
             LazyVStack(spacing: 0) {
-                listOfFolders(nestableFolders: nestableFolderSorted.filter { $0.content.role != nil })
+                listOfFolders(nestableFolders: NestableFolder
+                    .createFoldersHierarchy(from: Array(folders.where { $0.role != nil })))
                 IKDivider(horizontalPadding: 8)
-                listOfFolders(nestableFolders: nestableFolderSorted.filter { $0.content.role == nil })
+                listOfFolders(nestableFolders: NestableFolder
+                    .createFoldersHierarchy(from: Array(folders.where { $0.role == nil })))
             }
         }
         .navigationTitle(MailResourcesStrings.Localizable.actionMove)
@@ -66,7 +54,7 @@ struct MoveEmailView: View {
             ToolbarItem(placement: .navigationBarTrailing) {
                 Button {
                     matomo.track(eventWithCategory: .createFolder, name: "fromMove")
-                    alert.state = .createNewFolder(mode: .move(moveHandler: moveHandler))
+                    isShowingCreateFolderAlert.toggle()
                 } label: {
                     MailResourcesAsset.folderAdd.swiftUIImage
                 }
@@ -74,6 +62,9 @@ struct MoveEmailView: View {
         }
         .environment(\.folderCellType, .indicator)
         .matomoView(view: ["MoveEmailView"])
+        .customAlert(isPresented: $isShowingCreateFolderAlert) {
+            CreateFolderView(mode: .move(moveHandler: moveHandler))
+        }
     }
 
     private func listOfFolders(nestableFolders: [NestableFolder]) -> some View {
@@ -87,15 +78,17 @@ struct MoveEmailView: View {
 }
 
 extension MoveEmailView {
-    static func sheetView(mailboxManager: MailboxManager, from folderId: String?, moveHandler: @escaping MoveEmailView.MoveHandler) -> some View {
-        SheetView(mailboxManager: mailboxManager) {
-            MoveEmailView(mailboxManager: mailboxManager, from: folderId, moveHandler: moveHandler)
+    static func sheetView(mailboxManager: MailboxManager, from folderId: String?,
+                          moveHandler: @escaping MoveEmailView.MoveHandler) -> some View {
+        SheetView {
+            MoveEmailView(currentFolderId: folderId, moveHandler: moveHandler)
         }
     }
 }
 
 struct MoveMessageView_Previews: PreviewProvider {
     static var previews: some View {
-        MoveEmailView(mailboxManager: PreviewHelper.sampleMailboxManager, from: nil) { _ in /* Preview */ }
+        MoveEmailView(currentFolderId: nil) { _ in /* Preview */ }
+            .environmentObject(PreviewHelper.sampleMailboxManager)
     }
 }

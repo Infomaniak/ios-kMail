@@ -47,12 +47,13 @@ struct NavigationDrawer: View {
     private let maxWidth = 350.0
     private let spacing = 60.0
 
-    let mailboxManager: MailboxManager
+    @Environment(\.window) private var window
 
-    @EnvironmentObject var splitViewManager: SplitViewManager
-    @EnvironmentObject var navigationDrawerState: NavigationDrawerState
-    @Environment(\.window) var window
-    @GestureState var isDragGestureActive = false
+    @EnvironmentObject private var mailboxManager: MailboxManager
+    @EnvironmentObject private var splitViewManager: SplitViewManager
+    @EnvironmentObject private var navigationDrawerState: NavigationDrawerState
+
+    @GestureState private var isDragGestureActive = false
 
     @State private var offsetWidth: CGFloat = 0
 
@@ -190,13 +191,12 @@ struct MenuDrawerView: View {
             }
         }
         .background(MailResourcesAsset.backgroundSecondaryColor.swiftUIColor.ignoresSafeArea())
-        .environmentObject(mailboxManager)
         .environment(\.folderCellType, .link)
         .onAppear {
             viewModel.createMenuItems(bottomSheet: bottomSheet)
         }
         .sheet(isPresented: $viewModel.isShowingHelp) {
-            SheetView(mailboxManager: mailboxManager) {
+            SheetView {
                 HelpView()
             }
         }

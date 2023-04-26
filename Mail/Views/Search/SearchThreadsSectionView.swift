@@ -38,28 +38,21 @@ struct SearchThreadsSectionView: View {
                                 editedMessageDraft: $editedMessageDraft
                             )
                         }, label: {
-                            ThreadCell(thread: thread,
-                                       mailboxManager: viewModel.mailboxManager,
-                                       density: threadDensity)
+                            ThreadCell(thread: thread, density: threadDensity)
                         })
                     } else {
                         ZStack {
                             NavigationLink(destination: {
-                                ThreadView(
-                                    mailboxManager: viewModel.mailboxManager,
-                                    thread: thread
-                                )
-                                .onAppear {
-                                    viewModel.selectedThread = thread
-                                }
+                                ThreadView(thread: thread)
+                                    .onAppear {
+                                        viewModel.selectedThread = thread
+                                    }
                             }, label: {
                                 EmptyView()
                             })
                             .opacity(0)
 
-                            ThreadCell(thread: thread,
-                                       mailboxManager: viewModel.mailboxManager,
-                                       density: threadDensity)
+                            ThreadCell(thread: thread, density: threadDensity)
                         }
                     }
                 }
