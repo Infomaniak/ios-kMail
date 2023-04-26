@@ -49,14 +49,12 @@ struct ThreadView: View {
     @State private var headerHeight: CGFloat = 0
     @State private var displayNavigationTitle = false
     @State private var messageReply: MessageReply?
+    @State private var replyOrReplyAllThread: Thread?
 
     @StateObject private var moveSheet = MoveSheet()
-    @StateObject private var bottomSheet = MessageBottomSheet()
-    @StateObject private var threadBottomSheet = ThreadBottomSheet()
 
     @State private var showEmptyView = false
 
-    @EnvironmentObject var globalBottomSheet: GlobalBottomSheet
     @EnvironmentObject var globalAlert: GlobalAlert
     @Environment(\.verticalSizeClass) var sizeClass
     @Environment(\.dismiss) var dismiss
@@ -125,18 +123,24 @@ struct ThreadView: View {
                 }
                 ToolbarButton(text: MailResourcesStrings.Localizable.buttonMore,
                               icon: MailResourcesAsset.plusActions.swiftUIImage) {
-                    threadBottomSheet.open(state: .actions(.threads([thread.thaw() ?? thread], false)))
+                    //threadBottomSheet.open(state: .actions(.threads([thread.thaw() ?? thread], false)))
                 }
             }
         }
-        .environmentObject(bottomSheet)
-        .environmentObject(threadBottomSheet)
         .sheet(item: $messageReply) { messageReply in
             ComposeMessageView.replyOrForwardMessage(messageReply: messageReply, mailboxManager: mailboxManager)
         }
         .sheet(isPresented: $moveSheet.isShowing) {
             if case .move(let folderId, let handler) = moveSheet.state {
                 MoveEmailView.sheetView(mailboxManager: mailboxManager, from: folderId, moveHandler: handler)
+            }
+        }
+        .floatingPanel(item: $replyOrReplyAllThread) { thread in
+            ReplyActionsView(
+                mailboxManager: mailboxManager,
+                target: .threads([thread], false)
+            ) { message, replyMode in
+                messageReply = MessageReply(message: message, replyMode: replyMode)
             }
         }
         /*.floatingPanel(state: bottomSheet) {
@@ -199,7 +203,7 @@ struct ThreadView: View {
         case .reply:
             guard let message = thread.messages.last else { return }
             if message.canReplyAll {
-                bottomSheet.open(state: .replyOption(message, isThread: true))
+                replyOrReplyAllThread = thread
             } else {
                 messageReply = MessageReply(message: message, replyMode: .reply)
             }

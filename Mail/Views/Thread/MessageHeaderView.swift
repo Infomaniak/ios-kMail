@@ -28,13 +28,13 @@ struct MessageHeaderView: View {
     @State private var editedDraft: Draft?
     @State private var messageReply: MessageReply?
     @State private var contactViewRecipient: Recipient?
+    @State private var replyOrReplyAllMessage: Message?
 
     @ObservedRealmObject var message: Message
     @Binding var isHeaderExpanded: Bool
     @Binding var isMessageExpanded: Bool
 
     @EnvironmentObject var mailboxManager: MailboxManager
-    @EnvironmentObject var bottomSheet: MessageBottomSheet
     @EnvironmentObject var threadBottomSheet: ThreadBottomSheet
 
     @LazyInjectService private var matomo: MatomoUtils
@@ -47,7 +47,7 @@ struct MessageHeaderView: View {
                                      deleteDraftTapped: deleteDraft) {
                 matomo.track(eventWithCategory: .messageActions, name: "reply")
                 if message.canReplyAll {
-                    bottomSheet.open(state: .replyOption(message, isThread: false))
+                    replyOrReplyAllMessage = message
                 } else {
                     messageReply = MessageReply(message: message, replyMode: .reply)
                 }
@@ -83,6 +83,14 @@ struct MessageHeaderView: View {
         }
         .floatingPanel(item: $contactViewRecipient) { recipient in
             ContactActionsView(recipient: recipient)
+        }
+        .floatingPanel(item: $replyOrReplyAllMessage) { message in
+            ReplyActionsView(
+                mailboxManager: mailboxManager,
+                target: .message(message)
+            ) { message, replyMode in
+                messageReply = MessageReply(message: message, replyMode: replyMode)
+            }
         }
     }
 

@@ -82,6 +82,7 @@ struct ActionsView_Previews: PreviewProvider {
 */
 
 struct QuickActionView: View {
+    @Environment(\.dismiss) var dismiss
     @ObservedObject var viewModel: ActionsViewModel
     let action: Action
 
@@ -89,6 +90,7 @@ struct QuickActionView: View {
 
     var body: some View {
         Button {
+            dismiss()
             Task {
                 await tryOrDisplayError {
                     try await viewModel.didTap(action: action)
