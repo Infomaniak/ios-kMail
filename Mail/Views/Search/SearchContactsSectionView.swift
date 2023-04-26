@@ -28,7 +28,7 @@ struct SearchContactsSectionView: View {
     var body: some View {
         Section {
             ForEach(viewModel.contacts) { contact in
-                RecipientAutocompletionCell(recipient: contact)
+                RecipientCell(recipient: contact)
                     .onTapGesture {
                         viewModel.matomo.track(eventWithCategory: .search, name: "selectContact")
                         Constants.globallyResignFirstResponder()

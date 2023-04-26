@@ -77,19 +77,21 @@ struct NewMessageCell<Content>: View where Content: View {
     }
 }
 
-struct RecipientCellView_Previews: PreviewProvider {
+struct NewMessageCell_Previews: PreviewProvider {
     static var previews: some View {
-        NewMessageCell(type: .to,
-                       showCc: .constant(false)) {
-            RecipientField(recipients: .constant([PreviewHelper.sampleRecipient1].toRealmList()),
-                           autocompletion: .constant([]),
-                           unknownRecipientAutocompletion: .constant(""),
-                           addRecipientHandler: .constant { _ in /* Preview */ },
-                           focusedField: .init(),
-                           type: .to)
-        }
-        NewMessageCell(type: .subject) {
-            TextField("", text: .constant(""))
+        VStack {
+            NewMessageCell(type: .to,
+                           showCc: .constant(false)) {
+                RecipientField(recipients: .constant([PreviewHelper.sampleRecipient1].toRealmList()),
+                               autocompletion: .constant([]),
+                               unknownRecipientAutocompletion: .constant(""),
+                               addRecipientHandler: .constant { _ in /* Preview */ },
+                               focusedField: .init(),
+                               type: .to)
+            }
+            NewMessageCell(type: .subject) {
+                TextField("", text: .constant(""))
+            }
         }
     }
 }

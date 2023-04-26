@@ -105,6 +105,11 @@ public struct MailTextStyle {
         color: .accentColor
     )
 
+    public static let bodyAccentSecondary = MailTextStyle(
+        font: .system(size: 16),
+        color: UserDefaults.shared.accentColor.secondary
+    )
+
     public static let bodySecondary = MailTextStyle(
         font: .system(size: 16),
         color: MailResourcesAsset.textSecondaryColor

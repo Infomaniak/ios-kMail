@@ -25,31 +25,14 @@ import RealmSwift
 import SwiftUI
 import WrappingHStack
 
-struct RecipientChip: View {
-    let recipient: Recipient
-    let removeButtonTapped: () -> Void
-
-    @AppStorage(UserDefaults.shared.key(.accentColor)) private var accentColor = DefaultPreferences.accentColor
-
-    var body: some View {
-        Button(action: removeButtonTapped) {
-            Text(recipient.name.isEmpty ? recipient.email : recipient.name)
-                .textStyle(.bodyAccent)
-                .padding(.vertical, 6)
-                .lineLimit(1)
-        }
-        .padding(.leading, 12)
-        .padding(.trailing, 12)
-        .background(Capsule().fill(accentColor.secondary.swiftUIColor))
-    }
-}
-
 struct RecipientField: View {
     @Binding var recipients: RealmSwift.List<Recipient>
     @Binding var autocompletion: [Recipient]
     @Binding var unknownRecipientAutocompletion: String
     @Binding var addRecipientHandler: ((Recipient) -> Void)?
+
     @FocusState var focusedField: ComposeViewFieldType?
+
     let type: ComposeViewFieldType
 
     @State private var currentText = ""
@@ -59,26 +42,18 @@ struct RecipientField: View {
         VStack {
             if !recipients.isEmpty {
                 WrappingHStack(recipients.indices, spacing: .constant(8), lineSpacing: 8) { i in
-                    RecipientChip(recipient: recipients[i]) {
+                    RecipientChip(recipient: recipients[i], fieldType: type, focusedField: _focusedField) {
                         remove(recipientAt: i)
+                    } switchFocusHandler: {
+                        switchFocus()
                     }
+                    .focused($focusedField, equals: .chip(type.hashValue, recipients[i]))
                 }
                 .alignmentGuide(.newMessageCellAlignment) { d in d[.top] + 21 }
             }
-            TextField("", text: $currentText)
-                .textContentType(.emailAddress)
-                .keyboardType(.emailAddress)
-                .autocapitalization(.none)
-                .disableAutocorrection(true)
-                .multilineTextAlignment(.leading)
+
+            RecipientsTextFieldView(text: $currentText, onSubmit: submitTextField, onBackspace: handleBackspaceTextField)
                 .focused($focusedField, equals: type)
-                .onSubmit {
-                    guard let recipient = autocompletion.first else { return }
-                    add(recipient: recipient)
-                    focusedField = type
-                    @InjectService var matomo: MatomoUtils
-                    matomo.track(eventWithCategory: .newMessage, action: .input, name: "addNewRecipient")
-                }
         }
         .onChange(of: currentText) { _ in
             updateAutocompletion()
@@ -95,12 +70,31 @@ struct RecipientField: View {
         }
     }
 
+    @MainActor private func submitTextField() {
+        guard let recipient = autocompletion.first else {
+            IKSnackBar.showSnackBar(
+                message: MailResourcesStrings.Localizable.addUnknownRecipientInvalidEmail,
+                anchor: keyboardHeight
+            )
+            return
+        }
+        add(recipient: recipient)
+        @InjectService var matomo: MatomoUtils
+        matomo.track(eventWithCategory: .newMessage, action: .input, name: "addNewRecipient")
+    }
+
+    private func handleBackspaceTextField(isTextEmpty: Bool) {
+        if let recipient = recipients.last, isTextEmpty {
+            focusedField = .chip(type.hashValue, recipient)
+        }
+    }
+
     private func updateAutocompletion() {
         let trimmedCurrentText = currentText.trimmingCharacters(in: .whitespacesAndNewlines)
 
         let contactManager = AccountManager.instance.currentContactManager
         let autocompleteContacts = contactManager?.contacts(matching: trimmedCurrentText) ?? []
-        var autocompleteRecipients = autocompleteContacts.map { Recipient(email: $0.email, name: $0.name) }
+        let autocompleteRecipients = autocompleteContacts.map { Recipient(email: $0.email, name: $0.name) }
 
         withAnimation {
             autocompletion = autocompleteRecipients.filter { !recipients.map(\.email).contains($0.email) }
@@ -131,6 +125,16 @@ struct RecipientField: View {
     private func remove(recipientAt: Int) {
         withAnimation {
             $recipients.remove(at: recipientAt)
+        }
+    }
+
+    private func switchFocus() {
+        guard case let .chip(hash, recipient) = focusedField else { return }
+
+        if recipient == recipients.last {
+            focusedField = type
+        } else if let recipientIndex = recipients.firstIndex(of: recipient) {
+            focusedField = .chip(hash, recipients[recipientIndex + 1])
         }
     }
 }

@@ -200,12 +200,11 @@ struct ThreadListView: View {
                                     flushAlert: $flushAlert,
                                     bottomSheet: bottomSheet,
                                     viewModel: viewModel,
-                                    multipleSelectionViewModel: multipleSelectionViewModel,
-                                    selectAll: {
-                                        withAnimation(.default.speed(2)) {
-                                            multipleSelectionViewModel.selectAll(threads: viewModel.filteredThreads)
-                                        }
-                                    }))
+                                    multipleSelectionViewModel: multipleSelectionViewModel) {
+                withAnimation(.default.speed(2)) {
+                    multipleSelectionViewModel.selectAll(threads: viewModel.filteredThreads)
+                }
+            })
         .floatingActionButton(isEnabled: !multipleSelectionViewModel.isEnabled,
                               icon: MailResourcesAsset.pencilPlain,
                               title: MailResourcesStrings.Localizable.buttonNewMessage) {
@@ -213,7 +212,7 @@ struct ThreadListView: View {
             isShowingComposeNewMessageView.toggle()
         }
         .floatingPanel(state: bottomSheet, halfOpening: true) {
-            if case .actions(let target) = bottomSheet.state, !target.isInvalidated {
+            if case let .actions(target) = bottomSheet.state, !target.isInvalidated {
                 ActionsView(mailboxManager: viewModel.mailboxManager,
                             target: target,
                             state: bottomSheet,
@@ -246,7 +245,7 @@ struct ThreadListView: View {
             ComposeMessageView.newMessage(mailboxManager: viewModel.mailboxManager)
         }
         .sheet(isPresented: $moveSheet.isShowing) {
-            if case .move(let folderId, let handler) = moveSheet.state {
+            if case let .move(folderId, handler) = moveSheet.state {
                 MoveEmailView.sheetView(mailboxManager: viewModel.mailboxManager, from: folderId, moveHandler: handler)
             }
         }
@@ -367,7 +366,8 @@ private struct ThreadListToolbar: ViewModifier {
                             ForEach(multipleSelectionViewModel.toolbarActions) { action in
                                 ToolbarButton(
                                     text: action.shortTitle ?? action.title,
-                                    icon: action.icon) {
+                                    icon: action.icon
+                                ) {
                                     Task {
                                         await tryOrDisplayError {
                                             try await multipleSelectionViewModel.didTap(
