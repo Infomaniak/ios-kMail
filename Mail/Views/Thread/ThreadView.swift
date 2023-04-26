@@ -129,7 +129,6 @@ struct ThreadView: View {
                 }
             }
         }
-        .environmentObject(mailboxManager)
         .environmentObject(bottomSheet)
         .environmentObject(threadBottomSheet)
         .sheet(item: $messageReply) { messageReply in

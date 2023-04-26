@@ -26,7 +26,9 @@ import SwiftUI
 
 struct MessageHeaderView: View {
     @State private var editedDraft: Draft?
-    @State var messageReply: MessageReply?
+    @State private var messageReply: MessageReply?
+    @State private var contactViewRecipient: Recipient?
+
     @ObservedRealmObject var message: Message
     @Binding var isHeaderExpanded: Bool
     @Binding var isMessageExpanded: Bool
@@ -52,11 +54,13 @@ struct MessageHeaderView: View {
             } moreButtonTapped: {
                 threadBottomSheet.open(state: .actions(.message(message.thaw() ?? message)))
             } recipientTapped: { recipient in
-                openContact(recipient: recipient)
+                contactViewRecipient = recipient
             }
 
             if isHeaderExpanded {
-                MessageHeaderDetailView(message: message, recipientTapped: openContact(recipient:))
+                MessageHeaderDetailView(message: message) { recipient in
+                    contactViewRecipient = recipient
+                }
             }
         }
         .contentShape(Rectangle())
@@ -77,13 +81,9 @@ struct MessageHeaderView: View {
         .sheet(item: $messageReply) { messageReply in
             ComposeMessageView.replyOrForwardMessage(messageReply: messageReply, mailboxManager: mailboxManager)
         }
-    }
-
-    private func openContact(recipient: Recipient) {
-        let isRemoteContact = AccountManager.instance.currentContactManager?.getContact(for: recipient)?.remote != nil
-        bottomSheet.open(
-            state: .contact(recipient, isRemote: isRemoteContact)
-        )
+        .floatingPanel(item: $contactViewRecipient) { recipient in
+            ContactActionsView(recipient: recipient)
+        }
     }
 
     private func deleteDraft() {

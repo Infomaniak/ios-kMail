@@ -24,13 +24,24 @@ import MailResources
 import SwiftUI
 
 struct ContactActionsView: View {
-    var recipient: Recipient
-    var isRemoteContact: Bool
-    @ObservedObject var bottomSheet: MessageBottomSheet
-    var mailboxManager: MailboxManager
+    @EnvironmentObject var mailboxManager: MailboxManager
+    @Environment(\.dismiss) var dismiss
+    @LazyInjectService private var matomo: MatomoUtils
+
     @State private var writtenToRecipient: Recipient?
 
-    @LazyInjectService private var matomo: MatomoUtils
+    private let recipient: Recipient
+    private let actions: [ContactAction]
+
+    init(recipient: Recipient) {
+        self.recipient = recipient
+        let isRemoteContact = AccountManager.instance.currentContactManager?.getContact(for: recipient)?.remote != nil
+        if isRemoteContact {
+            actions = [.writeEmailAction, .copyEmailAction]
+        } else {
+            actions = [.writeEmailAction, .addContactsAction, .copyEmailAction]
+        }
+    }
 
     private struct ContactAction: Hashable {
         let name: String
@@ -52,13 +63,6 @@ struct ContactActionsView: View {
             image: MailResourcesAsset.duplicate.image,
             matomoName: "copyEmailAddress"
         )
-    }
-
-    private var actions: [ContactAction] {
-        if isRemoteContact {
-            return [.writeEmailAction, .copyEmailAction]
-        }
-        return [.writeEmailAction, .addContactsAction, .copyEmailAction]
     }
 
     var body: some View {
@@ -107,10 +111,10 @@ struct ContactActionsView: View {
         case .writeEmailAction:
             writeEmail()
         case .addContactsAction:
-            bottomSheet.close()
+            dismiss()
             addToContacts()
         case .copyEmailAction:
-            bottomSheet.close()
+            dismiss()
             copyEmail()
         default:
             return
@@ -138,9 +142,7 @@ struct ContactActionsView: View {
 
 struct ContactActionsView_Previews: PreviewProvider {
     static var previews: some View {
-        ContactActionsView(recipient: PreviewHelper.sampleRecipient1,
-                           isRemoteContact: false,
-                           bottomSheet: MessageBottomSheet(),
-                           mailboxManager: PreviewHelper.sampleMailboxManager)
+        ContactActionsView(recipient: PreviewHelper.sampleRecipient1)
+            .environmentObject(PreviewHelper.sampleMailboxManager)
     }
 }
