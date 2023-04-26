@@ -53,7 +53,7 @@ struct ThreadListView: View {
 
     @EnvironmentObject var splitViewManager: SplitViewManager
     @EnvironmentObject var globalBottomSheet: GlobalBottomSheet
-    @Environment(\.mailNavigationPath) var path
+    @Environment(\.mailNavigationPath) private var path
 
     @AppStorage(UserDefaults.shared.key(.threadDensity)) private var threadDensity = DefaultPreferences.threadDensity
     @AppStorage(UserDefaults.shared.key(.accentColor)) private var accentColor = DefaultPreferences.accentColor

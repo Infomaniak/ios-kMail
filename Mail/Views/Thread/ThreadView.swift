@@ -41,7 +41,7 @@ class MessageBottomSheet: DisplayedFloatingPanelState<MessageBottomSheet.State> 
 
 struct ThreadView: View {
     @EnvironmentObject private var splitViewManager: SplitViewManager
-    @Environment(\.mailNavigationPath) var path
+    @Environment(\.mailNavigationPath) private var path
     @EnvironmentObject private var mailboxManager: MailboxManager
 
     @ObservedRealmObject var thread: Thread
