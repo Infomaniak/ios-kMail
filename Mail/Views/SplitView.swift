@@ -74,7 +74,7 @@ struct SplitView: View {
     @StateObject private var alert = GlobalAlert()
 
     @StateObject private var splitViewManager: SplitViewManager
-    @State var path = [Thread]()
+    @State private var path = [Thread]()
 
     var isCompact: Bool {
         sizeClass == .compact || verticalSizeClass == .compact

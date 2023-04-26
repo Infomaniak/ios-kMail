@@ -235,7 +235,7 @@ struct ThreadListView: View {
             changeFolder(newFolder: newFolder)
         }
         .onChange(of: viewModel.selectedThread) { newThread in
-            if let newThread = newThread {
+            if let newThread {
                 path?.wrappedValue = [newThread]
             } else {
                 path?.wrappedValue = []

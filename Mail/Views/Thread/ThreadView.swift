@@ -58,8 +58,8 @@ struct ThreadView: View {
 
     @EnvironmentObject var globalBottomSheet: GlobalBottomSheet
     @EnvironmentObject var globalAlert: GlobalAlert
-    @Environment(\.horizontalSizeClass) var sizeClass
-    @Environment(\.verticalSizeClass) var verticalSizeClass
+    @Environment(\.horizontalSizeClass) private var sizeClass
+    @Environment(\.verticalSizeClass) private var verticalSizeClass
     @Environment(\.dismiss) var dismiss
 
     var isCompact: Bool {
