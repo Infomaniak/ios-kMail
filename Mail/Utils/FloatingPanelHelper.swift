@@ -20,6 +20,7 @@ import Combine
 import FloatingPanel
 import MailResources
 import SwiftUI
+import SwiftUIBackports
 
 class AdaptiveDriveFloatingPanelController: FloatingPanelController {
     private var contentSizeObservation: NSKeyValueObservation?
@@ -217,33 +218,57 @@ extension View {
     }
 }
 
+@available(iOS, introduced: 15, deprecated: 16, message: "Use native way")
 struct SelfSizingPanelBackportViewModifier: ViewModifier {
-    func body(content: Content) -> some View {}
-}
-
-@available(iOS 16.0, *)
-struct SelfSizingPanelViewModifier: ViewModifier {
-    @State var currentDetents: Set<PresentationDetent> = [.height(0)]
-    @State var selection: PresentationDetent = .height(0)
+    @State var currentDetents: Set<Backport.PresentationDetent> = [.medium]
+    private let topPadding: CGFloat = 24
 
     func body(content: Content) -> some View {
         ScrollView {
             content
                 .padding(.bottom, 16)
         }
-        .padding(.top, 24)
+        .padding(.top, topPadding)
         .introspectScrollView { scrollView in
-            guard selection != .height(scrollView.contentSize.height) else { return }
+            guard !currentDetents.contains(.large) else { return }
+            let totalPanelContentHeight = scrollView.contentSize.height + topPadding
 
-            scrollView.isScrollEnabled = scrollView.contentSize.height > (scrollView.window?.bounds.height ?? 0)
+            scrollView.isScrollEnabled = totalPanelContentHeight > (scrollView.window?.bounds.height ?? 0)
+            if totalPanelContentHeight > (scrollView.window?.bounds.height ?? 0) / 2 {
+                currentDetents = [.medium, .large]
+            }
+        }
+        .backport.presentationDragIndicator(.visible)
+        .backport.presentationDetents(currentDetents)
+        .ikPresentationCornerRadius(20)
+    }
+}
+
+@available(iOS 16.0, *)
+struct SelfSizingPanelViewModifier: ViewModifier {
+    @State var currentDetents: Set<PresentationDetent> = [.height(0)]
+    @State var selection: PresentationDetent = .height(0)
+    private let topPadding: CGFloat = 24
+
+    func body(content: Content) -> some View {
+        ScrollView {
+            content
+                .padding(.bottom, 16)
+        }
+        .padding(.top, topPadding)
+        .introspectScrollView { scrollView in
+            let totalPanelContentHeight = scrollView.contentSize.height + topPadding
+            guard selection != .height(totalPanelContentHeight) else { return }
+
+            scrollView.isScrollEnabled = totalPanelContentHeight > (scrollView.window?.bounds.height ?? 0)
             DispatchQueue.main.async {
-                currentDetents = [.height(0), .height(scrollView.contentSize.height)]
-                selection = .height(scrollView.contentSize.height)
+                currentDetents = [.height(0), .height(totalPanelContentHeight)]
+                selection = .height(totalPanelContentHeight)
 
                 // Hack to let time for the animation to finish, after animation is complete we can modify the state again
                 // if we don't do this the animation is cut before finishing
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                    currentDetents = [.height(scrollView.contentSize.height)]
+                    currentDetents = [selection]
                 }
             }
         }

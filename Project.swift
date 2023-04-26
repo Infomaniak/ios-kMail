@@ -47,7 +47,8 @@ let project = Project(name: "Mail",
                           .package(url: "https://github.com/SCENEE/FloatingPanel", .upToNextMajor(from: "2.0.0")),
                           .package(url: "https://github.com/kean/Nuke", .upToNextMajor(from: "12.0.0")),
                           .package(url: "https://github.com/airbnb/lottie-ios", .exact("3.5.0")),
-                          .package(url: "https://github.com/scinfu/SwiftSoup", .upToNextMajor(from: "2.5.3"))
+                          .package(url: "https://github.com/scinfu/SwiftSoup", .upToNextMajor(from: "2.5.3")),
+                          .package(url: "https://github.com/shaps80/SwiftUIBackports", .upToNextMajor(from: "1.15.1"))
                       ],
                       targets: [
                           Target(name: "Mail",
@@ -77,7 +78,8 @@ let project = Project(name: "Mail",
                                      .package(product: "Shimmer"),
                                      .package(product: "WrappingHStack"),
                                      .package(product: "FloatingPanel"),
-                                     .package(product: "Lottie")
+                                     .package(product: "Lottie"),
+                                     .package(product: "SwiftUIBackports")
                                  ],
                                  settings: .settings(base: baseSettings),
                                  environment: ["hostname": "\(ProcessInfo.processInfo.hostName)."]),
