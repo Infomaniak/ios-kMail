@@ -44,8 +44,10 @@ struct NoMailboxView: View {
 
             VStack(spacing: 24) {
                 MailButton(icon: MailResourcesAsset.plus, label: MailResourcesStrings.Localizable.buttonAddEmailAddress) {
-                    AddMailboxView {
-                        (window?.windowScene?.delegate as? SceneDelegate)?.showMainView()
+                    AddMailboxView { _ in
+                        DispatchQueue.main.async {
+                            (window?.windowScene?.delegate as? SceneDelegate)?.showMainView()
+                        }
                     }
                 }
                 .mailButtonFullWidth(true)

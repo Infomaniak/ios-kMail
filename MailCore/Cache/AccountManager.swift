@@ -394,10 +394,11 @@ public class AccountManager: RefreshTokenDelegate {
         }
     }
 
-    public func addMailbox(mail: String, password: String) async throws {
+    public func addMailbox(mail: String, password: String, completion: (Mailbox?) -> Void) async throws {
         guard let apiFetcher = currentApiFetcher else { return }
         _ = try await apiFetcher.addMailbox(mail: mail, password: password)
         try await updateUser(for: currentAccount)
+        completion(mailboxes.first(where: { $0.email == mail }))
     }
 
     public func setCurrentAccount(account: Account) {

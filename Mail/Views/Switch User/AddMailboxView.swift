@@ -17,6 +17,7 @@
  */
 
 import InfomaniakCoreUI
+import InfomaniakDI
 import MailCore
 import MailResources
 import SwiftUI
@@ -28,7 +29,7 @@ struct AddMailboxView: View {
 
     @Environment(\.dismiss) var dismiss
 
-    var mailboxAdded: () -> Void
+    var completion: (Mailbox?) -> Void
 
     @State private var newAddress = ""
     @State private var password = ""
@@ -117,10 +118,10 @@ struct AddMailboxView: View {
     private func addMailbox() {
         Task {
             do {
-                try await AccountManager.instance.addMailbox(mail: newAddress, password: password)
-                mailboxAdded()
-                DispatchQueue.main.async {
-                    dismiss()
+                try await AccountManager.instance.addMailbox(mail: newAddress, password: password) { mailbox in
+                    @InjectService var matomo: MatomoUtils
+                    matomo.track(eventWithCategory: .account, name: "addMailboxConfirm")
+                    completion(mailbox)
                 }
             } catch {
                 withAnimation {
@@ -136,6 +137,6 @@ struct AddMailboxView: View {
 
 struct AddMailboxView_Previews: PreviewProvider {
     static var previews: some View {
-        AddMailboxView(mailboxAdded: {})
+        AddMailboxView { _ in }
     }
 }
