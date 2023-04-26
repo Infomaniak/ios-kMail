@@ -50,7 +50,7 @@ struct MailboxCell: View {
             detailNumber: detailNumber,
             isSelected: isSelected
         ) {
-            guard isSelected != true else { return }
+            guard !isSelected else { return }
             @InjectService var matomo: MatomoUtils
             switch origin {
             case .menuDrawer:

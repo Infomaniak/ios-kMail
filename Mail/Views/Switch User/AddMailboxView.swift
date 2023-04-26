@@ -141,6 +141,6 @@ struct AddMailboxView: View {
 
 struct AddMailboxView_Previews: PreviewProvider {
     static var previews: some View {
-        AddMailboxView { _ in }
+        AddMailboxView { _ in /* Preview */ }
     }
 }
