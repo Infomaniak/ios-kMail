@@ -105,14 +105,7 @@ struct AccountView: View {
                         .padding(.bottom, 16)
 
                         ForEach(mailboxes) { mailbox in
-                            Text(mailbox.email)
-                                .textStyle(.body)
-                                .onTapGesture {
-                                    matomo.track(eventWithCategory: .account, name: "selectMailAddress")
-                                }
-                            if mailbox != mailboxes.last {
-                                IKDivider()
-                            }
+                            MailboxCell(mailbox: mailbox, origin: .account)
                         }
                     }
                     .frame(maxWidth: .infinity, alignment: .leading)
@@ -133,8 +126,9 @@ struct AccountView: View {
                     isShowingDeleteAccount.toggle()
                 }
                 .mailButtonStyle(.destructive)
+                .padding(.bottom, 24)
             }
-            .padding(.horizontal, 24)
+            .padding(.horizontal, 16)
             .navigationBarTitle(MailResourcesStrings.Localizable.titleMyAccount, displayMode: .inline)
             .backButtonDisplayMode(.minimal)
             .navigationBarItems(leading: Button {

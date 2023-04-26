@@ -26,40 +26,71 @@ struct MailboxesManagementButtonView: View {
     let text: String
     let detailNumber: Int?
     let handleAction: () -> Void
+    let isSelected: Bool
+    let origin: MailboxManagementOrigin
 
-    init(icon: MailResourcesImages, text: String, detailNumber: Int? = nil, handleAction: @escaping () -> Void) {
+    init(
+        icon: MailResourcesImages,
+        text: String,
+        origin: MailboxManagementOrigin,
+        detailNumber: Int? = nil,
+        isSelected: Bool,
+        handleAction: @escaping () -> Void
+    ) {
         self.icon = icon.swiftUIImage
         self.text = text
+        self.origin = origin
         self.detailNumber = detailNumber
+        self.isSelected = isSelected
         self.handleAction = handleAction
     }
 
     var body: some View {
         Button(action: handleAction) {
-            HStack(spacing: 16) {
-                icon
-                    .resizable()
-                    .scaledToFit()
-                    .frame(width: 24, height: 24)
-                    .foregroundColor(.accentColor)
-                Text(text)
-                    .textStyle(.body)
-                    .lineLimit(1)
-                Spacer()
-                if let detailNumber = detailNumber {
-                    Text(detailNumber < 100 ? "\(detailNumber)" : "99+")
-                        .textStyle(.bodySmallMediumAccent)
+            HStack {
+                HStack(spacing: 16) {
+                    icon
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: 24, height: 24)
+                        .foregroundColor(.accentColor)
+                    Text(text)
+                        .textStyle(.body)
+                        .lineLimit(1)
+                }
+                .frame(maxWidth: .infinity, alignment: .leading)
+
+                switch origin {
+                case .menuDrawer:
+                    if let detailNumber = detailNumber {
+                        Text(detailNumber < 100 ? "\(detailNumber)" : "99+")
+                            .textStyle(.bodySmallMediumAccent)
+                    }
+                case .account:
+                    if isSelected {
+                        MailResourcesAsset.check.swiftUIImage
+                            .frame(width: 16, height: 16)
+                    }
                 }
             }
         }
         .padding(.vertical, 10)
-        .padding(.horizontal, UIConstants.menuDrawerHorizontalPadding)
     }
 }
 
 struct MailboxesManagementButtonView_Previews: PreviewProvider {
     static var previews: some View {
-        MailboxesManagementButtonView(icon: MailResourcesAsset.folder, text: "Hello") { /* Empty for test */ }
-        MailboxesManagementButtonView(icon: MailResourcesAsset.folder, text: "Hello", detailNumber: 10) { /* Empty for test */ }
+        MailboxesManagementButtonView(icon: MailResourcesAsset.folder, text: "Hello", origin: .menuDrawer, isSelected: false) {
+            /* Empty for test */
+        }
+        MailboxesManagementButtonView(
+            icon: MailResourcesAsset.folder,
+            text: "Hello",
+            origin: .menuDrawer,
+            detailNumber: 10,
+            isSelected: false
+        ) {
+            /* Empty for test */
+        }
     }
 }

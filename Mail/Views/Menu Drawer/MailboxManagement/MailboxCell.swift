@@ -23,8 +23,22 @@ import MailCore
 import MailResources
 import SwiftUI
 
+enum MailboxManagementOrigin {
+    case menuDrawer
+    case account
+}
+
 struct MailboxCell: View {
     let mailbox: Mailbox
+    let origin: MailboxManagementOrigin
+
+    private var isSelected: Bool {
+        return AccountManager.instance.currentMailboxManager?.mailbox.objectId == mailbox.objectId
+    }
+
+    private var detailNumber: Int? {
+        return mailbox.unseenMessages > 0 ? mailbox.unseenMessages : nil
+    }
 
     @Environment(\.window) private var window
 
@@ -32,10 +46,18 @@ struct MailboxCell: View {
         MailboxesManagementButtonView(
             icon: MailResourcesAsset.envelope,
             text: mailbox.email,
-            detailNumber: mailbox.unseenMessages > 0 ? mailbox.unseenMessages : nil
+            origin: origin,
+            detailNumber: detailNumber,
+            isSelected: isSelected
         ) {
+            guard isSelected != true else { return }
             @InjectService var matomo: MatomoUtils
-            matomo.track(eventWithCategory: .menuDrawer, name: "switchMailbox")
+            switch origin {
+            case .menuDrawer:
+                matomo.track(eventWithCategory: .menuDrawer, name: "switchMailbox")
+            case .account:
+                matomo.track(eventWithCategory: .account, name: "switchMailbox")
+            }
             (window?.windowScene?.delegate as? SceneDelegate)?.switchMailbox(mailbox)
         }
     }
@@ -43,6 +65,6 @@ struct MailboxCell: View {
 
 struct MailboxCell_Previews: PreviewProvider {
     static var previews: some View {
-        MailboxCell(mailbox: PreviewHelper.sampleMailbox)
+        MailboxCell(mailbox: PreviewHelper.sampleMailbox, origin: .account)
     }
 }
