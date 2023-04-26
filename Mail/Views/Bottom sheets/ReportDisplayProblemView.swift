@@ -24,7 +24,7 @@ import Sentry
 import SwiftUI
 
 struct ReportDisplayProblemView: View {
-    @EnvironmentObject var mailboxManager: MailboxManager
+    @EnvironmentObject private var mailboxManager: MailboxManager
     let message: Message
 
     var body: some View {
@@ -37,7 +37,7 @@ struct ReportDisplayProblemView: View {
             ModalButtonsView(primaryButtonTitle: MailResourcesStrings.Localizable.buttonAccept,
                              secondaryButtonTitle: MailResourcesStrings.Localizable.buttonRefuse,
                              primaryButtonAction: report)
-            .padding(.top, 8)
+                .padding(.top, 8)
         }
         .padding(.horizontal, UIConstants.bottomSheetHorizontalPadding)
         .matomoView(view: [MatomoUtils.View.bottomSheet.displayName, "ReportDisplayProblemView"])

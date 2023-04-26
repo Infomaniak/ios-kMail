@@ -22,7 +22,7 @@ import MailResources
 import SwiftUI
 
 struct ReportPhishingView: View {
-    @EnvironmentObject var mailboxManager: MailboxManager
+    @EnvironmentObject private var mailboxManager: MailboxManager
     let message: Message
 
     var body: some View {
@@ -31,7 +31,7 @@ struct ReportPhishingView: View {
                 .textStyle(.bodyMedium)
                 .frame(maxWidth: .infinity, alignment: .leading)
             Text(MailResourcesStrings.Localizable.reportPhishingDescription)
-            .textStyle(.bodySecondary)
+                .textStyle(.bodySecondary)
             ModalButtonsView(primaryButtonTitle: MailResourcesStrings.Localizable.buttonReport, primaryButtonAction: report)
                 .padding(.top, 8)
         }

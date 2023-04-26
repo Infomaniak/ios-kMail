@@ -25,7 +25,7 @@ import RealmSwift
 import SwiftUI
 
 struct CreateFolderView: View {
-    @EnvironmentObject var mailboxManager: MailboxManager
+    @EnvironmentObject private var mailboxManager: MailboxManager
     @ObservedResults(Folder.self) private var folders
 
     @State private var folderName = ""
@@ -75,7 +75,8 @@ struct CreateFolderView: View {
                 .padding(12)
                 .overlay(
                     RoundedRectangle(cornerRadius: 4)
-                        .stroke(error == nil ? MailResourcesAsset.textFieldBorder.swiftUIColor : MailResourcesAsset.redColor.swiftUIColor)
+                        .stroke(error == nil ? MailResourcesAsset.textFieldBorder.swiftUIColor : MailResourcesAsset.redColor
+                            .swiftUIColor)
                         .animation(.easeInOut, value: error)
                 )
                 .textStyle(.body)
@@ -92,7 +93,7 @@ struct CreateFolderView: View {
                 Task {
                     await tryOrDisplayError {
                         let folder = try await mailboxManager.createFolder(name: folderName)
-                        if case let .move(moveHandler) = mode {
+                        if case .move(let moveHandler) = mode {
                             moveHandler(folder)
                             NotificationCenter.default.post(Notification(name: Constants.dismissMoveSheetNotificationName))
                         }

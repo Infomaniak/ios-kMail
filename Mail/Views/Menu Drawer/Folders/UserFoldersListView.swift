@@ -31,7 +31,7 @@ struct UserFoldersListView: View {
     @State private var isExpanded = true
     @State private var isShowingCreateFolderAlert = false
 
-    @EnvironmentObject var splitViewManager: SplitViewManager
+    @EnvironmentObject private var splitViewManager: SplitViewManager
 
     let isCompact: Bool
 

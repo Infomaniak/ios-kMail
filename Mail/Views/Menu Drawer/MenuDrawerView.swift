@@ -47,11 +47,13 @@ struct NavigationDrawer: View {
     private let maxWidth = 350.0
     private let spacing = 60.0
 
-    @EnvironmentObject var mailboxManager: MailboxManager
-    @EnvironmentObject var splitViewManager: SplitViewManager
-    @EnvironmentObject var navigationDrawerState: NavigationDrawerState
-    @Environment(\.window) var window
-    @GestureState var isDragGestureActive = false
+    @Environment(\.window) private var window
+
+    @EnvironmentObject private var mailboxManager: MailboxManager
+    @EnvironmentObject private var splitViewManager: SplitViewManager
+    @EnvironmentObject private var navigationDrawerState: NavigationDrawerState
+
+    @GestureState private var isDragGestureActive = false
 
     @State private var offsetWidth: CGFloat = 0
 

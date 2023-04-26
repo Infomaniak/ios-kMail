@@ -80,7 +80,7 @@ struct ThreadCellDataHolder {
 }
 
 struct ThreadCell: View {
-    @EnvironmentObject var mailboxManager: MailboxManager
+    @EnvironmentObject private var mailboxManager: MailboxManager
     let thread: Thread
 
     let dataHolder: ThreadCellDataHolder
