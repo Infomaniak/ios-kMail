@@ -23,7 +23,7 @@ struct RecipientsTextFieldView: UIViewRepresentable {
     @Binding var text: String
 
     let onSubmit: () -> Void
-    let onBackspace: () -> Void
+    let onBackspace: (Bool) -> Void
 
     func makeUIView(context: Context) -> UITextField {
         let textField = RecipientsTextField()
@@ -69,7 +69,7 @@ struct RecipientsTextFieldView: UIViewRepresentable {
  * We need to create our own UITextField to benefit from the `deleteBackward()` function
  */
 class RecipientsTextField: UITextField {
-    var onBackspace: (() -> Void)?
+    var onBackspace: ((Bool) -> Void)?
 
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -89,7 +89,7 @@ class RecipientsTextField: UITextField {
     }
 
     override func deleteBackward() {
+        onBackspace?(text?.isEmpty == true)
         super.deleteBackward()
-        onBackspace?()
     }
 }

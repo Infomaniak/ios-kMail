@@ -201,10 +201,10 @@ struct ThreadListView: View {
                                     bottomSheet: bottomSheet,
                                     viewModel: viewModel,
                                     multipleSelectionViewModel: multipleSelectionViewModel) {
-            withAnimation(.default.speed(2)) {
-                multipleSelectionViewModel.selectAll(threads: viewModel.filteredThreads)
-            }
-        })
+                withAnimation(.default.speed(2)) {
+                    multipleSelectionViewModel.selectAll(threads: viewModel.filteredThreads)
+                }
+            })
         .floatingActionButton(isEnabled: !multipleSelectionViewModel.isEnabled,
                               icon: MailResourcesAsset.pencilPlain,
                               title: MailResourcesStrings.Localizable.buttonNewMessage) {
@@ -309,25 +309,8 @@ private struct ThreadListToolbar: ViewModifier {
                                 multipleSelectionViewModel.isEnabled = false
                             }
                         }
-                    }
-
-                    ToolbarItem(placement: .principal) {
-                        if !multipleSelectionViewModel.isEnabled {
-                            Text(splitViewManager.selectedFolder?.localizedName ?? "")
-                                .textStyle(.header1)
-                                .frame(maxWidth: .infinity, alignment: .leading)
-                        }
-                    }
-
-                    ToolbarItemGroup(placement: .navigationBarTrailing) {
-                        if multipleSelectionViewModel.isEnabled {
-                            Button(multipleSelectionViewModel.selectedItems.count == viewModel.filteredThreads.count
-                                ? MailResourcesStrings.Localizable.buttonUnselectAll
-                                : MailResourcesStrings.Localizable.buttonSelectAll) {
-                                selectAll()
-                            }
-                            .animation(nil, value: multipleSelectionViewModel.selectedItems)
-                        } else {
+                    } else {
+                        if isCompact {
                             Button {
                                 matomo.track(eventWithCategory: .menuDrawer, name: "openByButton")
                                 navigationDrawerState.open()
@@ -383,7 +366,8 @@ private struct ThreadListToolbar: ViewModifier {
                             ForEach(multipleSelectionViewModel.toolbarActions) { action in
                                 ToolbarButton(
                                     text: action.shortTitle ?? action.title,
-                                    icon: action.icon) {
+                                    icon: action.icon
+                                ) {
                                     Task {
                                         await tryOrDisplayError {
                                             try await multipleSelectionViewModel.didTap(

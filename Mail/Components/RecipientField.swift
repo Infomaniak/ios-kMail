@@ -83,8 +83,8 @@ struct RecipientField: View {
         matomo.track(eventWithCategory: .newMessage, action: .input, name: "addNewRecipient")
     }
 
-    private func handleBackspaceTextField() {
-        if let recipient = recipients.last, currentText.isEmpty {
+    private func handleBackspaceTextField(isTextEmpty: Bool) {
+        if let recipient = recipients.last, isTextEmpty {
             focusedField = .chip(type.hashValue, recipient)
         }
     }
