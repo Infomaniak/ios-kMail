@@ -229,10 +229,10 @@ class DateSection: Identifiable {
                 }
             case .update(let results, _, _, _):
                 let filteredThreads = Array(results.freezeIfNeeded())
-                self?.nextThreadIfNeeded(from: filteredThreads)
                 guard let newSections = self?.sortThreadsIntoSections(threads: filteredThreads) else { return }
 
                 DispatchQueue.main.sync {
+                    self?.nextThreadIfNeeded(from: filteredThreads)
                     self?.filteredThreads = filteredThreads
                     if self?.filter != .all && filteredThreads.count == 1
                         && self?.filter.accepts(thread: filteredThreads[0]) != true {

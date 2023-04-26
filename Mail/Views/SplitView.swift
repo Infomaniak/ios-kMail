@@ -92,10 +92,10 @@ struct SplitView: View {
                 ZStack {
                     NBNavigationStack(path: $path) {
                         ThreadListManagerView(isCompact: isCompact)
-                        .accessibilityHidden(navigationDrawerController.isOpen)
-                        .nbNavigationDestination(for: Thread.self) { thread in
-                            ThreadView(thread: thread)
-                        }
+                            .accessibilityHidden(navigationDrawerController.isOpen)
+                            .nbNavigationDestination(for: Thread.self) { thread in
+                                ThreadView(thread: thread)
+                            }
                     }
                     .navigationViewStyle(.stack)
 
@@ -112,7 +112,7 @@ struct SplitView: View {
                     ThreadListManagerView(isCompact: isCompact)
 
                     if let thread = path.last {
-                        ThreadView(mailboxManager: mailboxManager, thread: thread)
+                        ThreadView(thread: thread)
                     } else {
                         EmptyStateView.emptyThread(from: splitViewManager.selectedFolder)
                     }
@@ -124,10 +124,6 @@ struct SplitView: View {
                 try await mailboxManager.folders()
             }
         }
-        .environment(\.mailNavigationPath, $path)
-        .environmentObject(splitViewManager)
-        .environmentObject(navigationDrawerController)
-        .defaultAppStorage(.shared)
         .onAppear {
             AppDelegate.orientationLock = .all
         }
@@ -181,6 +177,7 @@ struct SplitView: View {
                 EmptyView()
             }
         }
+        .environment(\.mailNavigationPath, $path)
         .environment(\.realmConfiguration, mailboxManager.realmConfiguration)
         .environmentObject(mailboxManager)
         .environmentObject(splitViewManager)
