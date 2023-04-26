@@ -30,6 +30,25 @@ class AdaptiveDriveFloatingPanelController: FloatingPanelController {
         contentSizeObservation?.invalidate()
     }
 
+    init() {
+        super.init(delegate: nil)
+        let appearance = SurfaceAppearance()
+        appearance.cornerRadius = 20
+        appearance.backgroundColor = MailResourcesAsset.backgroundSecondaryColor.color
+        surfaceView.appearance = appearance
+        surfaceView.grabberHandlePadding = 16
+        surfaceView.grabberHandleSize = CGSize(width: 45, height: 5)
+        surfaceView.grabberHandle.barColor = MailResourcesAsset.elementsColor.color
+        surfaceView.contentPadding = UIEdgeInsets(top: 32, left: 0, bottom: 16, right: 0)
+        backdropView.dismissalTapGestureRecognizer.isEnabled = true
+        isRemovalInteractionEnabled = true
+    }
+
+    @available(*, unavailable)
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
     override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
         super.viewWillTransition(to: size, with: coordinator)
         updateMargins()
@@ -107,17 +126,7 @@ class DisplayedFloatingPanelState<State>: ObservableObject, FloatingPanelControl
 
     init() {
         floatingPanel = AdaptiveDriveFloatingPanelController()
-        let appearance = SurfaceAppearance()
-        appearance.cornerRadius = 20
-        appearance.backgroundColor = MailResourcesAsset.backgroundSecondaryColor.color
         floatingPanel.delegate = self
-        floatingPanel.surfaceView.appearance = appearance
-        floatingPanel.surfaceView.grabberHandlePadding = 16
-        floatingPanel.surfaceView.grabberHandleSize = CGSize(width: 45, height: 5)
-        floatingPanel.surfaceView.grabberHandle.barColor = MailResourcesAsset.elementsColor.color
-        floatingPanel.surfaceView.contentPadding = UIEdgeInsets(top: 32, left: 0, bottom: 16, right: 0)
-        floatingPanel.backdropView.dismissalTapGestureRecognizer.isEnabled = true
-        floatingPanel.isRemovalInteractionEnabled = true
     }
 
     func createPanelContent<Content: View>(content: Content, halfOpening: Bool) {
@@ -171,5 +180,75 @@ extension View {
         state.createPanelContent(content: ScrollView { content() }.defaultAppStorage(.shared),
                                  halfOpening: halfOpening)
         return self
+    }
+}
+
+extension View {
+    func floatingPanel<Content: View>(isPresented: Binding<Bool>,
+                                      @ViewBuilder content: @escaping () -> Content) -> some View {
+        sheet(isPresented: isPresented) {
+            if #available(iOS 16.0, *) {
+                content().modifier(SelfSizingPanelViewModifier())
+            } else {
+                content().modifier(SelfSizingPanelBackportViewModifier())
+            }
+        }
+    }
+
+    func floatingPanel<Item: Identifiable, Content: View>(item: Binding<Item?>,
+                                                          @ViewBuilder content: @escaping (Item) -> Content) -> some View {
+        sheet(item: item) { item in
+            if #available(iOS 16.0, *) {
+                content(item).modifier(SelfSizingPanelViewModifier())
+            } else {
+                content(item).modifier(SelfSizingPanelBackportViewModifier())
+            }
+        }
+    }
+
+    func ikPresentationCornerRadius(_ cornerRadius: CGFloat?) -> some View {
+        if #available(iOS 16.4, *) {
+            return presentationCornerRadius(cornerRadius)
+        } else {
+            return introspectViewController { viewController in
+                viewController.sheetPresentationController?.preferredCornerRadius = cornerRadius
+            }
+        }
+    }
+}
+
+struct SelfSizingPanelBackportViewModifier: ViewModifier {
+    func body(content: Content) -> some View {}
+}
+
+@available(iOS 16.0, *)
+struct SelfSizingPanelViewModifier: ViewModifier {
+    @State var currentDetents: Set<PresentationDetent> = [.height(0)]
+    @State var selection: PresentationDetent = .height(0)
+
+    func body(content: Content) -> some View {
+        ScrollView {
+            content
+                .padding(.bottom, 16)
+        }
+        .padding(.top, 24)
+        .introspectScrollView { scrollView in
+            guard selection != .height(scrollView.contentSize.height) else { return }
+
+            scrollView.isScrollEnabled = scrollView.contentSize.height > (scrollView.window?.bounds.height ?? 0)
+            DispatchQueue.main.async {
+                currentDetents = [.height(0), .height(scrollView.contentSize.height)]
+                selection = .height(scrollView.contentSize.height)
+
+                // Hack to let time for the animation to finish, after animation is complete we can modify the state again
+                // if we don't do this the animation is cut before finishing
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                    currentDetents = [.height(scrollView.contentSize.height)]
+                }
+            }
+        }
+        .presentationDetents(currentDetents, selection: $selection)
+        .presentationDragIndicator(.visible)
+        .ikPresentationCornerRadius(20)
     }
 }

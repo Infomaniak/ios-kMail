@@ -173,7 +173,11 @@ struct Action: Identifiable, Equatable {
     }
 }
 
-enum ActionsTarget: Equatable {
+enum ActionsTarget: Equatable, Identifiable {
+    var id: String {
+        return UUID().uuidString
+    }
+    
     case threads([Thread], Bool)
     case message(Message)
 
@@ -199,9 +203,6 @@ enum ActionsTarget: Equatable {
 @MainActor class ActionsViewModel: ObservableObject {
     private let mailboxManager: MailboxManager
     private let target: ActionsTarget
-    private let state: ThreadBottomSheet
-    private let globalSheet: GlobalBottomSheet
-    private let globalAlert: GlobalAlert?
     private let moveSheet: MoveSheet?
     private let replyHandler: ((Message, ReplyMode) -> Void)?
     private let completionHandler: (() -> Void)?
@@ -215,18 +216,12 @@ enum ActionsTarget: Equatable {
 
     init(mailboxManager: MailboxManager,
          target: ActionsTarget,
-         state: ThreadBottomSheet,
-         globalSheet: GlobalBottomSheet,
-         globalAlert: GlobalAlert? = nil,
          moveSheet: MoveSheet? = nil,
          matomoCategory: MatomoUtils.EventCategory? = nil,
          replyHandler: ((Message, ReplyMode) -> Void)? = nil,
          completionHandler: (() -> Void)? = nil) {
         self.mailboxManager = mailboxManager
         self.target = target.freeze()
-        self.state = state
-        self.globalSheet = globalSheet
-        self.globalAlert = globalAlert
         self.moveSheet = moveSheet
         self.replyHandler = replyHandler
         self.completionHandler = completionHandler
@@ -289,8 +284,6 @@ enum ActionsTarget: Equatable {
     }
 
     func didTap(action: Action) async throws {
-        state.close()
-        globalSheet.close()
         if let matomoCategory, let matomoName = action.matomoName {
             if case let .threads(threads, isMultipleSelectionEnabled) = target, isMultipleSelectionEnabled {
                 matomo.trackBulkEvent(eventWithCategory: matomoCategory, name: matomoName.capitalized, numberOfItems: threads.count)
@@ -439,7 +432,7 @@ enum ActionsTarget: Equatable {
     }
 
     private func displayReportJunk() {
-        globalSheet.open(state: .reportJunk(threadBottomSheet: state, target: target))
+        //globalSheet.open(state: .reportJunk(threadBottomSheet: state, target: target))
     }
 
     private func block() async throws {
@@ -454,7 +447,7 @@ enum ActionsTarget: Equatable {
     private func phishing() async throws {
         // This action is only available on a single message
         guard case let .message(message) = target else { return }
-        globalAlert?.state = .reportPhishing(message: message)
+       // globalAlert?.state = .reportPhishing(message: message)
     }
 
     private func printAction() {
@@ -465,7 +458,7 @@ enum ActionsTarget: Equatable {
     private func report() {
         // This action is only available on a single message
         guard case let .message(message) = target else { return }
-        globalAlert?.state = .reportDisplayProblem(message: message)
+       // globalAlert?.state = .reportDisplayProblem(message: message)
     }
 
     private func editMenu() {

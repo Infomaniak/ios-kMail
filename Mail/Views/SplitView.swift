@@ -54,7 +54,7 @@ struct SplitView: View {
     @State var splitViewController: UISplitViewController?
     @StateObject private var navigationDrawerController = NavigationDrawerState()
 
-    @Environment(\.horizontalSizeClass) var sizeClass
+    @Environment(\.horizontalSizeClass) var horizontalSizeClass
     @Environment(\.verticalSizeClass) var verticalSizeClass
     @Environment(\.window) var window
 
@@ -64,7 +64,7 @@ struct SplitView: View {
     @StateObject private var splitViewManager: SplitViewManager
 
     var isCompact: Bool {
-        sizeClass == .compact || verticalSizeClass == .compact
+        UIConstants.isCompact(horizontalSizeClass: horizontalSizeClass, verticalSizeClass: verticalSizeClass)
     }
 
     init(mailboxManager: MailboxManager) {
@@ -129,24 +129,7 @@ struct SplitView: View {
             setupBehaviour(orientation: interfaceOrientation)
             splitViewController.preferredDisplayMode = .twoDisplaceSecondary
         }
-        .floatingPanel(state: bottomSheet) {
-            switch bottomSheet.state {
-            case .getMoreStorage:
-                MoreStorageView()
-            case .restoreEmails:
-                RestoreEmailsView(mailboxManager: mailboxManager)
-            case .reportJunk(let threadBottomSheet, let target):
-                ReportJunkView(
-                    mailboxManager: mailboxManager,
-                    target: target,
-                    state: threadBottomSheet,
-                    globalSheet: bottomSheet,
-                    globalAlert: alert
-                )
-            case .none:
-                EmptyView()
-            }
-        }
+       
         .customAlert(isPresented: $alert.isShowing) {
             switch alert.state {
             case .reportPhishing(let message):

@@ -32,11 +32,8 @@ struct ReportJunkView: View {
          globalSheet: GlobalBottomSheet,
          globalAlert: GlobalAlert) {
         viewModel = ActionsViewModel(mailboxManager: mailboxManager,
-                                     target: target,
-                                     state: state,
-                                     globalSheet: globalSheet,
-                                     globalAlert: globalAlert)
-        if case let .message(message) = target {
+                                     target: target)
+        if case .message(let message) = target {
             let spam = message.folder?.role == .spam
             actions.append(contentsOf: [
                 spam ? .nonSpam : .spam,

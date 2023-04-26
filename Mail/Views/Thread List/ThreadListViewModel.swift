@@ -105,6 +105,8 @@ class DateSection: Identifiable {
 
     @Published var isLoadingPage = false
     @Published var lastUpdate: Date?
+    @Published var actionsTarget: ActionsTarget?
+
 
     // Used to know thread location
     private var selectedThreadIndex: Int?
@@ -310,7 +312,7 @@ class DateSection: Identifiable {
         case .spam:
             try await toggleSpam(thread: thread)
         case .quickAction:
-            bottomSheet.open(state: .actions(.threads([thread.thaw() ?? thread], false)))
+            actionsTarget = .threads([thread.thaw() ?? thread], false)
         case .none:
             break
         case .moveToInbox:

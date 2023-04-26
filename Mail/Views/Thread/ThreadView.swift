@@ -140,7 +140,7 @@ struct ThreadView: View {
                 MoveEmailView.sheetView(mailboxManager: mailboxManager, from: folderId, moveHandler: handler)
             }
         }
-        .floatingPanel(state: bottomSheet) {
+        /*.floatingPanel(state: bottomSheet) {
             switch bottomSheet.state {
             case .contact(let recipient, let isRemote):
                 ContactActionsView(
@@ -162,8 +162,8 @@ struct ThreadView: View {
             case .none:
                 EmptyView()
             }
-        }
-        .floatingPanel(state: threadBottomSheet, halfOpening: true) {
+        }*/
+        /*.floatingPanel(state: threadBottomSheet, halfOpening: true) {
             if case .actions(let target) = threadBottomSheet.state, !target.isInvalidated {
                 ActionsView(mailboxManager: mailboxManager,
                             target: target,
@@ -174,7 +174,7 @@ struct ThreadView: View {
                     messageReply = MessageReply(message: message, replyMode: replyMode)
                 }
             }
-        }
+        }*/
         .onChange(of: thread.messages) { newMessagesList in
             if newMessagesList.isEmpty {
                 showEmptyView = true

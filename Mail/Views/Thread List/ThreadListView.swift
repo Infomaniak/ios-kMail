@@ -212,19 +212,16 @@ struct ThreadListView: View {
             matomo.track(eventWithCategory: .newMessage, name: "openFromFab")
             isShowingComposeNewMessageView.toggle()
         }
-        .floatingPanel(state: bottomSheet, halfOpening: true) {
-            if case .actions(let target) = bottomSheet.state, !target.isInvalidated {
-                ActionsView(mailboxManager: viewModel.mailboxManager,
-                            target: target,
-                            state: bottomSheet,
-                            globalSheet: globalBottomSheet, moveSheet: moveSheet) { message, replyMode in
-                    messageReply = MessageReply(message: message, replyMode: replyMode)
-                } completionHandler: {
-                    bottomSheet.close()
-                    multipleSelectionViewModel.isEnabled = false
-                }
+        .floatingPanel(item: $viewModel.actionsTarget, content: { target in
+            ActionsView(mailboxManager: viewModel.mailboxManager,
+                        target: target,
+                        moveSheet: moveSheet) { message, replyMode in
+                viewModel.actionsTarget = nil
+                messageReply = MessageReply(message: message, replyMode: replyMode)
+            } completionHandler: {
+                multipleSelectionViewModel.isEnabled = false
             }
-        }
+        })
         .onAppear {
             networkMonitor.start()
             viewModel.globalBottomSheet = globalBottomSheet
@@ -367,7 +364,8 @@ private struct ThreadListToolbar: ViewModifier {
                             ForEach(multipleSelectionViewModel.toolbarActions) { action in
                                 ToolbarButton(
                                     text: action.shortTitle ?? action.title,
-                                    icon: action.icon) {
+                                    icon: action.icon
+                                ) {
                                     Task {
                                         await tryOrDisplayError {
                                             try await multipleSelectionViewModel.didTap(

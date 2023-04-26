@@ -97,9 +97,7 @@ struct SearchView: View {
         .floatingPanel(state: bottomSheet, halfOpening: true) {
             if case .actions(let target) = bottomSheet.state, !target.isInvalidated {
                 ActionsView(mailboxManager: viewModel.mailboxManager,
-                            target: target,
-                            state: bottomSheet,
-                            globalSheet: globalBottomSheet) { message, replyMode in
+                            target: target) { message, replyMode in
                     messageReply = MessageReply(message: message, replyMode: replyMode)
                 }
             }

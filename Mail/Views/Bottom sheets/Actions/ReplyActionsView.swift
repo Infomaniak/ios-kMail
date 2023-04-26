@@ -33,8 +33,6 @@ struct ReplyActionsView: View {
          replyHandler: @escaping (Message, ReplyMode) -> Void) {
         viewModel = ActionsViewModel(mailboxManager: mailboxManager,
                                      target: target,
-                                     state: state,
-                                     globalSheet: globalSheet,
                                      matomoCategory: .replyBottomSheet,
                                      replyHandler: replyHandler)
     }

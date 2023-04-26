@@ -18,6 +18,7 @@
 
 import Foundation
 import MailResources
+import SwiftUI
 import UIKit
 
 public enum BarAppearanceConstants {
@@ -96,4 +97,8 @@ public enum UIConstants {
     public static let bottomSheetHorizontalPadding: CGFloat = 24
 
     public static let componentsMaxWidth: CGFloat = 496
+
+    public static func isCompact(horizontalSizeClass: UserInterfaceSizeClass?, verticalSizeClass: UserInterfaceSizeClass?) -> Bool {
+        return horizontalSizeClass == .compact || verticalSizeClass == .compact
+    }
 }

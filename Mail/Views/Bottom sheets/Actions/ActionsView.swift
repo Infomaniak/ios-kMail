@@ -27,9 +27,6 @@ struct ActionsView: View {
 
     init(mailboxManager: MailboxManager,
          target: ActionsTarget,
-         state: ThreadBottomSheet,
-         globalSheet: GlobalBottomSheet,
-         globalAlert: GlobalAlert? = nil,
          moveSheet: MoveSheet? = nil,
          replyHandler: ((Message, ReplyMode) -> Void)? = nil,
          completionHandler: (() -> Void)? = nil) {
@@ -40,9 +37,6 @@ struct ActionsView: View {
 
         viewModel = ActionsViewModel(mailboxManager: mailboxManager,
                                      target: target,
-                                     state: state,
-                                     globalSheet: globalSheet,
-                                     globalAlert: globalAlert,
                                      moveSheet: moveSheet,
                                      matomoCategory: matomoCategory,
                                      replyHandler: replyHandler,
@@ -74,6 +68,7 @@ struct ActionsView: View {
     }
 }
 
+/*
 struct ActionsView_Previews: PreviewProvider {
     static var previews: some View {
         ActionsView(mailboxManager: PreviewHelper.sampleMailboxManager,
@@ -84,6 +79,7 @@ struct ActionsView_Previews: PreviewProvider {
             .accentColor(AccentColor.pink.primary.swiftUIColor)
     }
 }
+*/
 
 struct QuickActionView: View {
     @ObservedObject var viewModel: ActionsViewModel
