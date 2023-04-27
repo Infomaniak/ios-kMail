@@ -30,6 +30,7 @@ struct ActionsView: View {
          moveSheet: MoveSheet? = nil,
          messageReply: Binding<MessageReply?>? = nil,
          reportJunkActionsTarget: Binding<ActionsTarget?>? = nil,
+         reportedForDisplayProblemMessage: Binding<Message?>? = nil,
          completionHandler: (() -> Void)? = nil) {
         var matomoCategory = MatomoUtils.EventCategory.bottomSheetMessageActions
         if case .threads = target {
@@ -41,6 +42,7 @@ struct ActionsView: View {
                                      moveSheet: moveSheet,
                                      messageReply: messageReply,
                                      reportJunkActionsTarget: reportJunkActionsTarget,
+                                     reportedForDisplayProblemMessage: reportedForDisplayProblemMessage,
                                      matomoCategory: matomoCategory,
                                      completionHandler: completionHandler)
     }

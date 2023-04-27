@@ -35,6 +35,7 @@ struct ActionsPanelViewModifier: ViewModifier {
     @Binding var actionsTarget: ActionsTarget?
     @State var reportJunkActionsTarget: ActionsTarget?
     @State var reportedForPhishingMessage: Message?
+    @State var reportedForDisplayProblemMessage: Message?
 
     var completionHandler: (() -> Void)?
 
@@ -45,7 +46,8 @@ struct ActionsPanelViewModifier: ViewModifier {
                             target: target,
                             moveSheet: moveSheet,
                             messageReply: $navigationStore.messageReply,
-                            reportJunkActionsTarget: $reportJunkActionsTarget) {
+                            reportJunkActionsTarget: $reportJunkActionsTarget,
+                            reportedForDisplayProblemMessage: $reportedForDisplayProblemMessage) {
                     completionHandler?()
                 }
             }
@@ -61,6 +63,9 @@ struct ActionsPanelViewModifier: ViewModifier {
             }
             .customAlert(item: $reportedForPhishingMessage) { message in
                 ReportPhishingView(message: message)
+            }
+            .customAlert(item: $reportedForDisplayProblemMessage) { message in
+                ReportDisplayProblemView(message: message)
             }
     }
 }

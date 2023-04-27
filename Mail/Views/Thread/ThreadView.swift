@@ -43,7 +43,6 @@ struct ThreadView: View {
     @EnvironmentObject private var splitViewManager: SplitViewManager
     @EnvironmentObject private var mailboxManager: MailboxManager
     @EnvironmentObject private var navigationStore: NavigationStore
-    @EnvironmentObject var globalAlert: GlobalAlert
 
     @Environment(\.mailNavigationPath) private var path
     @Environment(\.horizontalSizeClass) private var sizeClass

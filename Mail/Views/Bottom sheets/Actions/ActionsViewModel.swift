@@ -227,6 +227,7 @@ enum ActionsTarget: Equatable, Identifiable {
          messageReply: Binding<MessageReply?>? = nil,
          reportJunkActionsTarget: Binding<ActionsTarget?>? = nil,
          reportedForPhishingMessage: Binding<Message?>? = nil,
+         reportedForDisplayProblemMessage: Binding<Message?>? = nil,
          matomoCategory: MatomoUtils.EventCategory? = nil,
          completionHandler: (() -> Void)? = nil) {
         self.mailboxManager = mailboxManager
@@ -235,6 +236,7 @@ enum ActionsTarget: Equatable, Identifiable {
         self.messageReply = messageReply
         self.reportJunkActionsTarget = reportJunkActionsTarget
         self.reportedForPhishingMessage = reportedForPhishingMessage
+        self.reportedForDisplayProblemMessage = reportedForDisplayProblemMessage
         self.completionHandler = completionHandler
         self.matomoCategory = matomoCategory
         setActions()
@@ -334,7 +336,7 @@ enum ActionsTarget: Equatable, Identifiable {
         case .print:
             printAction()
         case .report:
-            report()
+            reportDisplayProblem()
         case .editMenu:
             editMenu()
         case .moveToInbox:
@@ -476,10 +478,10 @@ enum ActionsTarget: Equatable, Identifiable {
         showWorkInProgressSnackBar()
     }
 
-    private func report() {
+    private func reportDisplayProblem() {
         // This action is only available on a single message
-        guard case let .message(message) = target else { return }
-       // globalAlert?.state = .reportDisplayProblem(message: message)
+        guard case .message(let message) = target else { return }
+        reportedForDisplayProblemMessage?.wrappedValue = message
     }
 
     private func editMenu() {

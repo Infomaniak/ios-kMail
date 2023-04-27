@@ -36,12 +36,6 @@ extension EnvironmentValues {
     }
 }
 
-class GlobalAlert: SheetState<GlobalAlert.State> {
-    enum State {
-        case reportDisplayProblem(message: Message)
-    }
-}
-
 public class SplitViewManager: ObservableObject {
     @Published var showSearch = false
     @Published var selectedFolder: Folder?
@@ -61,8 +55,6 @@ struct SplitView: View {
     @Environment(\.horizontalSizeClass) var horizontalSizeClass
     @Environment(\.verticalSizeClass) var verticalSizeClass
     @Environment(\.window) var window
-
-    @StateObject private var alert = GlobalAlert()
 
     @StateObject private var splitViewManager: SplitViewManager
     @State private var path = [Thread]()
@@ -143,20 +135,11 @@ struct SplitView: View {
             setupBehaviour(orientation: interfaceOrientation)
             splitViewController.preferredDisplayMode = .twoDisplaceSecondary
         }
-        .customAlert(isPresented: $alert.isShowing) {
-            switch alert.state {
-            case .reportDisplayProblem(let message):
-                ReportDisplayProblemView(message: message)
-            case .none:
-                EmptyView()
-            }
-        }
         .environment(\.mailNavigationPath, $path)
         .environment(\.realmConfiguration, mailboxManager.realmConfiguration)
         .environmentObject(mailboxManager)
         .environmentObject(splitViewManager)
         .environmentObject(navigationDrawerController)
-        .environmentObject(alert)
         .environmentObject(navigationStore)
         .defaultAppStorage(.shared)
     }
