@@ -68,18 +68,13 @@ struct ActionsView: View {
     }
 }
 
-/*
 struct ActionsView_Previews: PreviewProvider {
     static var previews: some View {
         ActionsView(mailboxManager: PreviewHelper.sampleMailboxManager,
-                    target: .threads([PreviewHelper.sampleThread], false),
-                    state: ThreadBottomSheet(),
-                    globalSheet: GlobalBottomSheet(),
-                    globalAlert: GlobalAlert()) { _, _ in /* Preview */ }
+                    target: .threads([PreviewHelper.sampleThread], false)) { _, _ in /* Preview */ }
             .accentColor(AccentColor.pink.primary.swiftUIColor)
     }
 }
-*/
 
 struct QuickActionView: View {
     @Environment(\.dismiss) var dismiss
@@ -120,6 +115,7 @@ struct QuickActionView: View {
 }
 
 struct ActionView: View {
+    @Environment(\.dismiss) var dismiss
     @ObservedObject var viewModel: ActionsViewModel
     let action: Action
 
@@ -127,6 +123,7 @@ struct ActionView: View {
 
     var body: some View {
         Button {
+            dismiss()
             Task {
                 await tryOrDisplayError {
                     try await viewModel.didTap(action: action)

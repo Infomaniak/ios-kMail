@@ -65,6 +65,7 @@ struct SplitView: View {
     var mailboxManager: MailboxManager
     @State var splitViewController: UISplitViewController?
     @StateObject private var navigationDrawerController = NavigationDrawerState()
+    @StateObject private var navigationStore = NavigationStore()
 
     @Environment(\.horizontalSizeClass) var horizontalSizeClass
     @Environment(\.verticalSizeClass) var verticalSizeClass
@@ -119,6 +120,9 @@ struct SplitView: View {
                 }
             }
         }
+        .sheet(item: $navigationStore.messageReply) { messageReply in
+            ComposeMessageView.replyOrForwardMessage(messageReply: messageReply, mailboxManager: mailboxManager)
+        }
         .onReceive(NotificationCenter.default.publisher(for: UIApplication.willEnterForegroundNotification)) { _ in
             Task {
                 try await mailboxManager.folders()
@@ -149,7 +153,6 @@ struct SplitView: View {
             setupBehaviour(orientation: interfaceOrientation)
             splitViewController.preferredDisplayMode = .twoDisplaceSecondary
         }
-       
         .customAlert(isPresented: $alert.isShowing) {
             switch alert.state {
             case .reportPhishing(let message):
@@ -167,6 +170,7 @@ struct SplitView: View {
         .environmentObject(navigationDrawerController)
         .environmentObject(bottomSheet)
         .environmentObject(alert)
+        .environmentObject(navigationStore)
         .defaultAppStorage(.shared)
     }
 

@@ -25,17 +25,18 @@ import RealmSwift
 import SwiftUI
 
 struct MessageHeaderView: View {
+    @EnvironmentObject private var navigationStore: NavigationStore
+
     @State private var editedDraft: Draft?
-    @State private var messageReply: MessageReply?
     @State private var contactViewRecipient: Recipient?
     @State private var replyOrReplyAllMessage: Message?
+    @State private var actionsTarget: ActionsTarget?
 
     @ObservedRealmObject var message: Message
     @Binding var isHeaderExpanded: Bool
     @Binding var isMessageExpanded: Bool
 
     @EnvironmentObject var mailboxManager: MailboxManager
-    @EnvironmentObject var threadBottomSheet: ThreadBottomSheet
 
     @LazyInjectService private var matomo: MatomoUtils
 
@@ -49,10 +50,10 @@ struct MessageHeaderView: View {
                 if message.canReplyAll {
                     replyOrReplyAllMessage = message
                 } else {
-                    messageReply = MessageReply(message: message, replyMode: .reply)
+                    navigationStore.messageReply = MessageReply(message: message, replyMode: .reply)
                 }
             } moreButtonTapped: {
-                threadBottomSheet.open(state: .actions(.message(message.thaw() ?? message)))
+                actionsTarget = .message(message)
             } recipientTapped: { recipient in
                 contactViewRecipient = recipient
             }
@@ -78,18 +79,13 @@ struct MessageHeaderView: View {
         .sheet(item: $editedDraft) { editedDraft in
             ComposeMessageView.editDraft(draft: editedDraft, mailboxManager: mailboxManager)
         }
-        .sheet(item: $messageReply) { messageReply in
-            ComposeMessageView.replyOrForwardMessage(messageReply: messageReply, mailboxManager: mailboxManager)
-        }
         .floatingPanel(item: $contactViewRecipient) { recipient in
             ContactActionsView(recipient: recipient)
         }
+        .actionsPanel(actionsTarget: $actionsTarget)
         .floatingPanel(item: $replyOrReplyAllMessage) { message in
-            ReplyActionsView(
-                mailboxManager: mailboxManager,
-                target: .message(message)
-            ) { message, replyMode in
-                messageReply = MessageReply(message: message, replyMode: replyMode)
+            ReplyActionsView(mailboxManager: mailboxManager, message: message) { message, replyMode in
+                navigationStore.messageReply = MessageReply(message: message, replyMode: replyMode)
             }
         }
     }

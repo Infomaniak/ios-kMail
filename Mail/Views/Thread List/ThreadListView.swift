@@ -213,16 +213,9 @@ struct ThreadListView: View {
             matomo.track(eventWithCategory: .newMessage, name: "openFromFab")
             isShowingComposeNewMessageView.toggle()
         }
-        .floatingPanel(item: $viewModel.actionsTarget, content: { target in
-            ActionsView(mailboxManager: viewModel.mailboxManager,
-                        target: target,
-                        moveSheet: moveSheet) { message, replyMode in
-                viewModel.actionsTarget = nil
-                messageReply = MessageReply(message: message, replyMode: replyMode)
-            } completionHandler: {
-                multipleSelectionViewModel.isEnabled = false
-            }
-        })
+        .actionsPanel(actionsTarget: $viewModel.actionsTarget) {
+            multipleSelectionViewModel.isEnabled = false
+        }
         .onAppear {
             networkMonitor.start()
             viewModel.globalBottomSheet = globalBottomSheet
@@ -251,8 +244,8 @@ struct ThreadListView: View {
             ComposeMessageView.newMessage(mailboxManager: viewModel.mailboxManager)
         }
         .sheet(isPresented: $moveSheet.isShowing) {
-            if case let .move(folderId, handler) = moveSheet.state {
-                MoveEmailView.sheetView(mailboxManager: viewModel.mailboxManager, from: folderId, moveHandler: handler)
+            if case .move(let folderId, let handler) = moveSheet.state {
+                MoveEmailView.sheetView(from: folderId, moveHandler: handler)
             }
         }
         .customAlert(item: $flushAlert) { item in
@@ -388,8 +381,7 @@ private struct ThreadListToolbar: ViewModifier {
 
                             ToolbarButton(text: MailResourcesStrings.Localizable.buttonMore,
                                           icon: MailResourcesAsset.plusActions.swiftUIImage) {
-                                bottomSheet
-                                    .open(state: .actions(.threads(Array(multipleSelectionViewModel.selectedItems), true)))
+                                viewModel.actionsTarget = .threads(Array(multipleSelectionViewModel.selectedItems), true)
                             }
                         }
                         .disabled(multipleSelectionViewModel.selectedItems.isEmpty)

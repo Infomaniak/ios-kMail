@@ -23,27 +23,19 @@ import RealmSwift
 import SwiftUI
 
 struct SearchView: View {
+    @EnvironmentObject var splitViewManager: SplitViewManager
+
     @StateObject var viewModel: SearchViewModel
 
-    @EnvironmentObject var splitViewManager: SplitViewManager
-    @EnvironmentObject var globalBottomSheet: GlobalBottomSheet
-
-    @StateObject var bottomSheet: ThreadBottomSheet
-
     @Binding private var editedMessageDraft: Draft?
-    @Binding private var messageReply: MessageReply?
 
     let isCompact: Bool
 
     init(mailboxManager: MailboxManager,
          folder: Folder,
          editedMessageDraft: Binding<Draft?>,
-         messageReply: Binding<MessageReply?>,
          isCompact: Bool) {
-        let threadBottomSheet = ThreadBottomSheet()
         _editedMessageDraft = editedMessageDraft
-        _messageReply = messageReply
-        _bottomSheet = StateObject(wrappedValue: threadBottomSheet)
         _viewModel = StateObject(wrappedValue: SearchViewModel(mailboxManager: mailboxManager, folder: folder))
         self.isCompact = isCompact
     }
@@ -94,14 +86,6 @@ struct SearchView: View {
         .emptyState(isEmpty: viewModel.searchState == .noResults) {
             EmptyStateView.emptySearch
         }
-        .floatingPanel(state: bottomSheet, halfOpening: true) {
-            if case .actions(let target) = bottomSheet.state, !target.isInvalidated {
-                ActionsView(mailboxManager: viewModel.mailboxManager,
-                            target: target) { message, replyMode in
-                    messageReply = MessageReply(message: message, replyMode: replyMode)
-                }
-            }
-        }
         .refreshable {
             await viewModel.fetchThreads()
         }
@@ -144,7 +128,6 @@ struct SearchView_Previews: PreviewProvider {
         SearchView(mailboxManager: PreviewHelper.sampleMailboxManager,
                    folder: PreviewHelper.sampleFolder,
                    editedMessageDraft: .constant(nil),
-                   messageReply: .constant(nil),
                    isCompact: true)
     }
 }

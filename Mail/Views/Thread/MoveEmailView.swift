@@ -78,8 +78,7 @@ struct MoveEmailView: View {
 }
 
 extension MoveEmailView {
-    static func sheetView(mailboxManager: MailboxManager, from folderId: String?,
-                          moveHandler: @escaping MoveEmailView.MoveHandler) -> some View {
+    static func sheetView(from folderId: String?, moveHandler: @escaping MoveEmailView.MoveHandler) -> some View {
         SheetView {
             MoveEmailView(currentFolderId: folderId, moveHandler: moveHandler)
         }

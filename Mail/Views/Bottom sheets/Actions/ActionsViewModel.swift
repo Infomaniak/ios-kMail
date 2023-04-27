@@ -175,7 +175,12 @@ struct Action: Identifiable, Equatable {
 
 enum ActionsTarget: Equatable, Identifiable {
     var id: String {
-        return UUID().uuidString
+        switch self {
+        case .threads(let threads, let isMultiSelectionEnabled):
+            return threads.map {$0.id}.joined()
+        case .message(let message):
+            return message.uid
+        }
     }
     
     case threads([Thread], Bool)
