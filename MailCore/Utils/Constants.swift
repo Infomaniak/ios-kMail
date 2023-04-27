@@ -65,7 +65,6 @@ public enum Constants {
         try! NSRegularExpression(pattern: ">\\s*<|>?\\s+<?")
     }()
 
-    public static let extendedWhitelist = Whitelist.extendedWhitelist
     public static let customCSS = {
         guard let path = Bundle.main.path(forResource: "style", ofType: "css"),
               let style = try? String(contentsOfFile: path) else { return "" }
