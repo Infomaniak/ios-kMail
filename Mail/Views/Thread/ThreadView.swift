@@ -32,13 +32,6 @@ private struct ScrollOffsetPreferenceKey: PreferenceKey {
     }
 }
 
-class MessageBottomSheet: DisplayedFloatingPanelState<MessageBottomSheet.State> {
-    enum State: Equatable {
-        case contact(Recipient, isRemote: Bool)
-        case replyOption(Message, isThread: Bool)
-    }
-}
-
 struct ThreadView: View {
     @EnvironmentObject private var splitViewManager: SplitViewManager
     @EnvironmentObject private var mailboxManager: MailboxManager

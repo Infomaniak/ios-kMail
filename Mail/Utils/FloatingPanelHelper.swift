@@ -21,23 +21,6 @@ import MailResources
 import SwiftUI
 import SwiftUIBackports
 
-class DisplayedFloatingPanelState<State>: ObservableObject {
-    @Published var isOpen = false
-    @Published private(set) var state: State?
-
-    init() {}
-
-    func open(state: State) {
-        self.state = state
-        isOpen = true
-    }
-
-    func close() {
-        state = nil
-        isOpen = false
-    }
-}
-
 extension View {
     func floatingPanel<Content: View>(isPresented: Binding<Bool>,
                                       @ViewBuilder content: @escaping () -> Content) -> some View {

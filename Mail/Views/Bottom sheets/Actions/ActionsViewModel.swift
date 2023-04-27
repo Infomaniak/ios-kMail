@@ -212,6 +212,7 @@ enum ActionsTarget: Equatable, Identifiable {
     private let messageReply: Binding<MessageReply?>?
     private let reportJunkActionsTarget: Binding<ActionsTarget?>?
     private let reportedForPhishingMessage: Binding<Message?>?
+    private let reportedForDisplayProblemMessage: Binding<Message?>?
     private let completionHandler: (() -> Void)?
 
     private let matomoCategory: MatomoUtils.EventCategory?
