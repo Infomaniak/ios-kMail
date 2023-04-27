@@ -211,6 +211,7 @@ enum ActionsTarget: Equatable, Identifiable {
     private let moveSheet: MoveSheet?
     private let messageReply: Binding<MessageReply?>?
     private let reportJunkActionsTarget: Binding<ActionsTarget?>?
+    private let reportedForPhishingMessage: Binding<Message?>?
     private let completionHandler: (() -> Void)?
 
     private let matomoCategory: MatomoUtils.EventCategory?
@@ -225,6 +226,7 @@ enum ActionsTarget: Equatable, Identifiable {
          moveSheet: MoveSheet? = nil,
          messageReply: Binding<MessageReply?>? = nil,
          reportJunkActionsTarget: Binding<ActionsTarget?>? = nil,
+         reportedForPhishingMessage: Binding<Message?>? = nil,
          matomoCategory: MatomoUtils.EventCategory? = nil,
          completionHandler: (() -> Void)? = nil) {
         self.mailboxManager = mailboxManager
@@ -232,6 +234,7 @@ enum ActionsTarget: Equatable, Identifiable {
         self.moveSheet = moveSheet
         self.messageReply = messageReply
         self.reportJunkActionsTarget = reportJunkActionsTarget
+        self.reportedForPhishingMessage = reportedForPhishingMessage
         self.completionHandler = completionHandler
         self.matomoCategory = matomoCategory
         setActions()
@@ -395,8 +398,8 @@ enum ActionsTarget: Equatable, Identifiable {
         // FIXME: There seems to be a bug where SwiftUI looses the "context" and attempts to present
         // the view controller before waiting for the dismiss of the first one if we use a closure
         // (this "fix" is temporary)
-        DispatchQueue.main.async {
-            self.messageReply?.wrappedValue = displayedMessageReply
+        DispatchQueue.main.async { [weak self] in
+            self?.messageReply?.wrappedValue = displayedMessageReply
         }
     }
 
@@ -462,8 +465,10 @@ enum ActionsTarget: Equatable, Identifiable {
 
     private func phishing() async throws {
         // This action is only available on a single message
-        guard case let .message(message) = target else { return }
-       // globalAlert?.state = .reportPhishing(message: message)
+        guard case .message(let message) = target else { return }
+        DispatchQueue.main.async { [weak self] in
+            self?.reportedForPhishingMessage?.wrappedValue = message
+        }
     }
 
     private func printAction() {

@@ -34,6 +34,7 @@ struct ActionsPanelViewModifier: ViewModifier {
 
     @Binding var actionsTarget: ActionsTarget?
     @State var reportJunkActionsTarget: ActionsTarget?
+    @State var reportedForPhishingMessage: Message?
 
     var completionHandler: (() -> Void)?
 
@@ -54,7 +55,12 @@ struct ActionsPanelViewModifier: ViewModifier {
                 }
             }
             .floatingPanel(item: $reportJunkActionsTarget) { target in
-                ReportJunkView(mailboxManager: mailboxManager, target: target)
+                ReportJunkView(mailboxManager: mailboxManager,
+                               target: target,
+                               reportedForPhishingMessage: $reportedForPhishingMessage)
+            }
+            .customAlert(item: $reportedForPhishingMessage) { message in
+                ReportPhishingView(message: message)
             }
     }
 }

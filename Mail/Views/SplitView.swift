@@ -38,7 +38,6 @@ extension EnvironmentValues {
 
 class GlobalAlert: SheetState<GlobalAlert.State> {
     enum State {
-        case reportPhishing(message: Message)
         case reportDisplayProblem(message: Message)
     }
 }
@@ -146,8 +145,6 @@ struct SplitView: View {
         }
         .customAlert(isPresented: $alert.isShowing) {
             switch alert.state {
-            case .reportPhishing(let message):
-                ReportPhishingView(message: message)
             case .reportDisplayProblem(let message):
                 ReportDisplayProblemView(message: message)
             case .none:
