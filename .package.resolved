@@ -135,12 +135,30 @@
       }
     },
     {
+      "identity" : "navigationbackport",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/johnpatrickmorgan/NavigationBackport",
+      "state" : {
+        "revision" : "5096dda355148dd40162810e7f56292ce0a2b09b",
+        "version" : "0.7.5"
+      }
+    },
+    {
       "identity" : "nuke",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/kean/Nuke",
       "state" : {
         "revision" : "f4d9b95788679d0654c032961f73e7e9c16ca6b4",
         "version" : "12.1.0"
+      }
+    },
+    {
+      "identity" : "popovers",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/aheze/Popovers",
+      "state" : {
+        "revision" : "de44c4dd7271ec6413fe350f7efadb14e5e18dce",
+        "version" : "1.3.2"
       }
     },
     {
@@ -166,8 +184,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/getsentry/sentry-cocoa",
       "state" : {
-        "revision" : "ac224c437a3070ffe34460137ac8761eddaf2852",
-        "version" : "8.3.3"
+        "revision" : "92a6472efc750a4e18bdee21c204942ab0bc4dcd",
+        "version" : "8.4.0"
       }
     },
     {

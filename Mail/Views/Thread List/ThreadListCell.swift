@@ -25,6 +25,7 @@ import SwiftUI
 
 struct ThreadListCell: View {
     @EnvironmentObject var splitViewManager: SplitViewManager
+    @Environment(\.mailNavigationPath) private var path
 
     let thread: Thread
 
@@ -34,41 +35,26 @@ struct ThreadListCell: View {
     let threadDensity: ThreadDensity
 
     let isSelected: Bool
+    let isMultiSelected: Bool
 
     @Binding var editedMessageDraft: Draft?
 
     @State private var shouldNavigateToThreadList = false
 
     private var selectionType: SelectionBackgroundKind {
-        if isSelected {
-            return .multiple
-        } else if !multipleSelectionViewModel.isEnabled && viewModel.selectedThread?.uid == thread.uid {
-            return .single
+        if multipleSelectionViewModel.isEnabled {
+            return isMultiSelected ? .multiple : .none
         }
-        return .none
-    }
-
-    private var selectedThreadBackground: Bool {
-        return !multipleSelectionViewModel.isEnabled && (viewModel.selectedThread?.uid == thread.uid)
+        return isSelected ? .single : .none
     }
 
     var body: some View {
-        ZStack {
-            if !thread.shouldPresentAsDraft {
-                NavigationLink(destination: ThreadView(thread: thread,
-                                                       onDismiss: { viewModel.selectedThread = nil }),
-                               isActive: $shouldNavigateToThreadList) { EmptyView() }
-                    .opacity(0)
-                    .disabled(multipleSelectionViewModel.isEnabled)
-            }
-
-            ThreadCell(
-                thread: thread,
-                density: threadDensity,
-                isMultipleSelectionEnabled: multipleSelectionViewModel.isEnabled,
-                isSelected: isSelected
-            )
-        }
+        ThreadCell(
+            thread: thread,
+            density: threadDensity,
+            isMultipleSelectionEnabled: multipleSelectionViewModel.isEnabled,
+            isSelected: isMultiSelected
+        )
         .background(SelectionBackground(selectionType: selectionType, paddingLeading: 4))
         .onTapGesture { didTapCell() }
         .onLongPressGesture(minimumDuration: 0.3) { didLongPressCell() }
@@ -76,11 +62,6 @@ struct ThreadListCell: View {
         .listRowInsets(.init(top: 0, leading: 0, bottom: 0, trailing: 0))
         .listRowSeparator(.hidden)
         .listRowBackground(MailResourcesAsset.backgroundColor.swiftUIColor)
-        .onChange(of: viewModel.selectedThread) { newThread in
-            if newThread?.uid == thread.uid {
-                shouldNavigateToThreadList = true
-            }
-        }
     }
 
     private func didTapCell() {
@@ -101,7 +82,6 @@ struct ThreadListCell: View {
                     splitViewManager.splitViewController?.hide(.supplementary)
                 }
                 viewModel.selectedThread = thread
-                shouldNavigateToThreadList = true
             }
         }
     }
@@ -132,6 +112,7 @@ struct ThreadListCell_Previews: PreviewProvider {
             multipleSelectionViewModel: ThreadListMultipleSelectionViewModel(mailboxManager: PreviewHelper.sampleMailboxManager),
             threadDensity: .large,
             isSelected: false,
+            isMultiSelected: false,
             editedMessageDraft: .constant(nil)
         )
     }

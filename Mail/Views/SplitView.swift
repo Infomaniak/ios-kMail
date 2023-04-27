@@ -21,8 +21,20 @@ import InfomaniakCore
 import Introspect
 import MailCore
 import MailResources
+import NavigationBackport
 import RealmSwift
 import SwiftUI
+
+struct MailNavigationPathKey: EnvironmentKey {
+    static var defaultValue: Binding<[Thread]>?
+}
+
+extension EnvironmentValues {
+    var mailNavigationPath: Binding<[Thread]>? {
+        get { self[MailNavigationPathKey.self] }
+        set { self[MailNavigationPathKey.self] = newValue }
+    }
+}
 
 class GlobalBottomSheet: DisplayedFloatingPanelState<GlobalBottomSheet.State> {
     enum State {
@@ -62,6 +74,7 @@ struct SplitView: View {
     @StateObject private var alert = GlobalAlert()
 
     @StateObject private var splitViewManager: SplitViewManager
+    @State private var path = [Thread]()
 
     var isCompact: Bool {
         UIConstants.isCompact(horizontalSizeClass: horizontalSizeClass, verticalSizeClass: verticalSizeClass)
@@ -77,9 +90,12 @@ struct SplitView: View {
         Group {
             if isCompact {
                 ZStack {
-                    NavigationView {
+                    NBNavigationStack(path: $path) {
                         ThreadListManagerView(isCompact: isCompact)
                             .accessibilityHidden(navigationDrawerController.isOpen)
+                            .nbNavigationDestination(for: Thread.self) { thread in
+                                ThreadView(thread: thread)
+                            }
                     }
                     .navigationViewStyle(.stack)
 
@@ -95,7 +111,11 @@ struct SplitView: View {
 
                     ThreadListManagerView(isCompact: isCompact)
 
-                    EmptyStateView.emptyThread(from: splitViewManager.selectedFolder)
+                    if let thread = path.last {
+                        ThreadView(thread: thread)
+                    } else {
+                        EmptyStateView.emptyThread(from: splitViewManager.selectedFolder)
+                    }
                 }
             }
         }
@@ -140,6 +160,7 @@ struct SplitView: View {
                 EmptyView()
             }
         }
+        .environment(\.mailNavigationPath, $path)
         .environment(\.realmConfiguration, mailboxManager.realmConfiguration)
         .environmentObject(mailboxManager)
         .environmentObject(splitViewManager)

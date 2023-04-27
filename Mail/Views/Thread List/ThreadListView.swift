@@ -53,6 +53,7 @@ struct ThreadListView: View {
 
     @EnvironmentObject var splitViewManager: SplitViewManager
     @EnvironmentObject var globalBottomSheet: GlobalBottomSheet
+    @Environment(\.mailNavigationPath) private var path
 
     @AppStorage(UserDefaults.shared.key(.threadDensity)) private var threadDensity = DefaultPreferences.threadDensity
     @AppStorage(UserDefaults.shared.key(.accentColor)) private var accentColor = DefaultPreferences.accentColor
@@ -142,7 +143,8 @@ struct ThreadListView: View {
                                                viewModel: viewModel,
                                                multipleSelectionViewModel: multipleSelectionViewModel,
                                                threadDensity: threadDensity,
-                                               isSelected: multipleSelectionViewModel.selectedItems
+                                               isSelected: viewModel.selectedThread?.uid == thread.uid,
+                                               isMultiSelected: multipleSelectionViewModel.selectedItems
                                                    .contains { $0.id == thread.id },
                                                editedMessageDraft: $editedMessageDraft)
                                     .id(thread.id)
@@ -200,12 +202,11 @@ struct ThreadListView: View {
                                     flushAlert: $flushAlert,
                                     bottomSheet: bottomSheet,
                                     viewModel: viewModel,
-                                    multipleSelectionViewModel: multipleSelectionViewModel,
-                                    selectAll: {
-                                        withAnimation(.default.speed(2)) {
-                                            multipleSelectionViewModel.selectAll(threads: viewModel.filteredThreads)
-                                        }
-                                    }))
+                                    multipleSelectionViewModel: multipleSelectionViewModel) {
+                withAnimation(.default.speed(2)) {
+                    multipleSelectionViewModel.selectAll(threads: viewModel.filteredThreads)
+                }
+            })
         .floatingActionButton(isEnabled: !multipleSelectionViewModel.isEnabled,
                               icon: MailResourcesAsset.pencilPlain,
                               title: MailResourcesStrings.Localizable.buttonNewMessage) {
@@ -230,6 +231,13 @@ struct ThreadListView: View {
         .onChange(of: splitViewManager.selectedFolder) { newFolder in
             changeFolder(newFolder: newFolder)
         }
+        .onChange(of: viewModel.selectedThread) { newThread in
+            if let newThread {
+                path?.wrappedValue = [newThread]
+            } else {
+                path?.wrappedValue = []
+            }
+        }
         .onReceive(NotificationCenter.default.publisher(for: UIApplication.willEnterForegroundNotification)) { _ in
             updateFetchingTask()
         }
@@ -243,7 +251,7 @@ struct ThreadListView: View {
             ComposeMessageView.newMessage(mailboxManager: viewModel.mailboxManager)
         }
         .sheet(isPresented: $moveSheet.isShowing) {
-            if case .move(let folderId, let handler) = moveSheet.state {
+            if case let .move(folderId, handler) = moveSheet.state {
                 MoveEmailView.sheetView(mailboxManager: viewModel.mailboxManager, from: folderId, moveHandler: handler)
             }
         }

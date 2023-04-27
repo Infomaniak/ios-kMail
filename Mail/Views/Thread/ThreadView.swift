@@ -41,10 +41,10 @@ class MessageBottomSheet: DisplayedFloatingPanelState<MessageBottomSheet.State> 
 
 struct ThreadView: View {
     @EnvironmentObject private var splitViewManager: SplitViewManager
+    @Environment(\.mailNavigationPath) private var path
     @EnvironmentObject private var mailboxManager: MailboxManager
 
     @ObservedRealmObject var thread: Thread
-    var onDismiss: (() -> Void)?
 
     @State private var headerHeight: CGFloat = 0
     @State private var displayNavigationTitle = false
@@ -56,8 +56,13 @@ struct ThreadView: View {
     @State private var showEmptyView = false
 
     @EnvironmentObject var globalAlert: GlobalAlert
-    @Environment(\.verticalSizeClass) var sizeClass
+    @Environment(\.horizontalSizeClass) private var sizeClass
+    @Environment(\.verticalSizeClass) private var verticalSizeClass
     @Environment(\.dismiss) var dismiss
+
+    var isCompact: Bool {
+        sizeClass == .compact || verticalSizeClass == .compact
+    }
 
     @LazyInjectService private var matomo: MatomoUtils
 
@@ -179,18 +184,13 @@ struct ThreadView: View {
             }
         }*/
         .onChange(of: thread.messages) { newMessagesList in
-            if newMessagesList.isEmpty {
-                showEmptyView = true
-                onDismiss?()
-                dismiss()
+            if newMessagesList.isEmpty || thread.messageInFolderCount == 0 {
+                if isCompact {
+                    dismiss() // For iPhone
+                } else {
+                    path?.wrappedValue = [] // For iPad
+                }
             }
-            if thread.messageInFolderCount == 0 {
-                onDismiss?()
-                dismiss()
-            }
-        }
-        .emptyState(isEmpty: showEmptyView) {
-            EmptyStateView.emptyThread(from: splitViewManager.selectedFolder)
         }
         .matomoView(view: [MatomoUtils.View.threadView.displayName, "Main"])
     }

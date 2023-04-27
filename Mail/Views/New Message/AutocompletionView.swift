@@ -33,7 +33,7 @@ struct AutocompletionView: View {
                     Button {
                         onSelect(recipient)
                     } label: {
-                        RecipientAutocompletionCell(recipient: recipient)
+                        RecipientCell(recipient: recipient)
                     }
                     .padding(.horizontal, 8)
 
