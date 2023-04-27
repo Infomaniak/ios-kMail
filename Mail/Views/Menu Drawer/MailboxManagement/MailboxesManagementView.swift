@@ -70,8 +70,9 @@ struct MailboxesManagementView: View {
             if navigationDrawerState.showMailboxes {
                 VStack(alignment: .leading) {
                     ForEach(otherMailboxes) { mailbox in
-                        MailboxCell(mailbox: mailbox, origin: .menuDrawer)
+                        MailboxCell(mailbox: mailbox)
                             .padding(.horizontal, UIConstants.menuDrawerHorizontalPadding)
+                            .mailboxCellStyle(.menuDrawer)
                     }
                 }
                 .task {

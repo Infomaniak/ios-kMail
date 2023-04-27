@@ -105,7 +105,8 @@ struct AccountView: View {
                         .padding(.bottom, 16)
 
                         ForEach(mailboxes) { mailbox in
-                            MailboxCell(mailbox: mailbox, origin: .account)
+                            MailboxCell(mailbox: mailbox)
+                                .mailboxCellStyle(.account)
                         }
                     }
                     .frame(maxWidth: .infinity, alignment: .leading)

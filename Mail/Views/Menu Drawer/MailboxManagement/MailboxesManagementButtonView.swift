@@ -22,24 +22,23 @@ import MailResources
 import SwiftUI
 
 struct MailboxesManagementButtonView: View {
+    @Environment(\.mailboxCellStyle) private var style: MailboxCell.Style
+
     let icon: Image
     let text: String
     let detailNumber: Int?
     let handleAction: () -> Void
     let isSelected: Bool
-    let origin: MailboxManagementOrigin
 
     init(
         icon: MailResourcesImages,
         text: String,
-        origin: MailboxManagementOrigin,
         detailNumber: Int? = nil,
         isSelected: Bool,
         handleAction: @escaping () -> Void
     ) {
         self.icon = icon.swiftUIImage
         self.text = text
-        self.origin = origin
         self.detailNumber = detailNumber
         self.isSelected = isSelected
         self.handleAction = handleAction
@@ -60,7 +59,7 @@ struct MailboxesManagementButtonView: View {
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
 
-                switch origin {
+                switch style {
                 case .menuDrawer:
                     if let detailNumber = detailNumber {
                         Text(detailNumber < 100 ? "\(detailNumber)" : "99+")
@@ -81,13 +80,12 @@ struct MailboxesManagementButtonView: View {
 
 struct MailboxesManagementButtonView_Previews: PreviewProvider {
     static var previews: some View {
-        MailboxesManagementButtonView(icon: MailResourcesAsset.folder, text: "Hello", origin: .menuDrawer, isSelected: false) {
+        MailboxesManagementButtonView(icon: MailResourcesAsset.folder, text: "Hello", isSelected: false) {
             /* Empty for test */
         }
         MailboxesManagementButtonView(
             icon: MailResourcesAsset.folder,
             text: "Hello",
-            origin: .menuDrawer,
             detailNumber: 10,
             isSelected: false
         ) {

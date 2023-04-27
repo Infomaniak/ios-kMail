@@ -23,14 +23,28 @@ import MailCore
 import MailResources
 import SwiftUI
 
-enum MailboxManagementOrigin {
-    case menuDrawer
-    case account
+struct MailboxCellStyleKey: EnvironmentKey {
+    static var defaultValue = MailboxCell.Style.menuDrawer
+}
+
+extension EnvironmentValues {
+    var mailboxCellStyle: MailboxCell.Style {
+        get { self[MailboxCellStyleKey.self] }
+        set { self[MailboxCellStyleKey.self] = newValue }
+    }
+}
+
+extension View {
+    func mailboxCellStyle(_ style: MailboxCell.Style) -> some View {
+        environment(\.mailboxCellStyle, style)
+    }
 }
 
 struct MailboxCell: View {
+    @Environment(\.mailboxCellStyle) private var style: Style
+    @Environment(\.window) private var window
+
     let mailbox: Mailbox
-    let origin: MailboxManagementOrigin
 
     private var isSelected: Bool {
         return AccountManager.instance.currentMailboxManager?.mailbox.objectId == mailbox.objectId
@@ -40,19 +54,20 @@ struct MailboxCell: View {
         return mailbox.unseenMessages > 0 ? mailbox.unseenMessages : nil
     }
 
-    @Environment(\.window) private var window
+    enum Style {
+        case menuDrawer, account
+    }
 
     var body: some View {
         MailboxesManagementButtonView(
             icon: MailResourcesAsset.envelope,
             text: mailbox.email,
-            origin: origin,
             detailNumber: detailNumber,
             isSelected: isSelected
         ) {
             guard !isSelected else { return }
             @InjectService var matomo: MatomoUtils
-            switch origin {
+            switch style {
             case .menuDrawer:
                 matomo.track(eventWithCategory: .menuDrawer, name: "switchMailbox")
             case .account:
@@ -65,6 +80,6 @@ struct MailboxCell: View {
 
 struct MailboxCell_Previews: PreviewProvider {
     static var previews: some View {
-        MailboxCell(mailbox: PreviewHelper.sampleMailbox, origin: .account)
+        MailboxCell(mailbox: PreviewHelper.sampleMailbox)
     }
 }
