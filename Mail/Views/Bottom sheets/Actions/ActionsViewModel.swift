@@ -378,14 +378,22 @@ enum ActionsTarget: Equatable, Identifiable {
     }
 
     private func reply(mode: ReplyMode) async throws {
+        var displayedMessageReply: MessageReply?
         switch target {
-        case let .threads(threads, _):
+        case .threads(let threads, _):
             // We don't handle this action in multiple selection
             guard threads.count == 1, let thread = threads.first,
                   let message = thread.messages.last(where: { !$0.isDraft }) else { break }
-            replyHandler?(message, mode)
-        case let .message(message):
-            replyHandler?(message, mode)
+            displayedMessageReply = MessageReply(message: message, replyMode: mode)
+        case .message(let message):
+            displayedMessageReply = MessageReply(message: message, replyMode: mode)
+        }
+
+        // FIXME: There seems to be a bug where SwiftUI looses the "context" and attempts to present
+        // the view controller before waiting for the dismiss of the first one if we use a closure
+        // (this "fix" is temporary)
+        DispatchQueue.main.async {
+            self.messageReply?.wrappedValue = displayedMessageReply
         }
     }
 

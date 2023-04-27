@@ -54,7 +54,6 @@ struct ThreadView: View {
 
     @State private var headerHeight: CGFloat = 0
     @State private var displayNavigationTitle = false
-    @State private var messageReply: MessageReply?
     @State private var replyOrReplyAllMessage: Message?
     @State private var actionsTarget: ActionsTarget?
 
@@ -132,9 +131,7 @@ struct ThreadView: View {
         }
         .actionsPanel(actionsTarget: $actionsTarget)
         .floatingPanel(item: $replyOrReplyAllMessage) { message in
-            ReplyActionsView(mailboxManager: mailboxManager, message: message) { message, replyMode in
-                navigationStore.messageReply = MessageReply(message: message, replyMode: replyMode)
-            }
+            ReplyActionsView(mailboxManager: mailboxManager, message: message, messageReply: $navigationStore.messageReply)
         }
         .onChange(of: thread.messages) { newMessagesList in
             if newMessagesList.isEmpty || thread.messageInFolderCount == 0 {
@@ -158,11 +155,11 @@ struct ThreadView: View {
             if message.canReplyAll {
                 replyOrReplyAllMessage = message
             } else {
-                messageReply = MessageReply(message: message, replyMode: .reply)
+                navigationStore.messageReply = MessageReply(message: message, replyMode: .reply)
             }
         case .forward:
             guard let message = thread.messages.last else { return }
-            messageReply = MessageReply(message: message, replyMode: .forward)
+            navigationStore.messageReply = MessageReply(message: message, replyMode: .forward)
         case .archive:
             Task {
                 await tryOrDisplayError {

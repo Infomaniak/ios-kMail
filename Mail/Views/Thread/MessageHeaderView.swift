@@ -84,9 +84,7 @@ struct MessageHeaderView: View {
         }
         .actionsPanel(actionsTarget: $actionsTarget)
         .floatingPanel(item: $replyOrReplyAllMessage) { message in
-            ReplyActionsView(mailboxManager: mailboxManager, message: message) { message, replyMode in
-                navigationStore.messageReply = MessageReply(message: message, replyMode: replyMode)
-            }
+            ReplyActionsView(mailboxManager: mailboxManager, message: message, messageReply: $navigationStore.messageReply)
         }
     }
 

@@ -28,7 +28,7 @@ struct ActionsView: View {
     init(mailboxManager: MailboxManager,
          target: ActionsTarget,
          moveSheet: MoveSheet? = nil,
-         replyHandler: ((Message, ReplyMode) -> Void)? = nil,
+         messageReply: Binding<MessageReply?>? = nil,
          completionHandler: (() -> Void)? = nil) {
         var matomoCategory = MatomoUtils.EventCategory.bottomSheetMessageActions
         if case .threads = target {
@@ -38,8 +38,8 @@ struct ActionsView: View {
         viewModel = ActionsViewModel(mailboxManager: mailboxManager,
                                      target: target,
                                      moveSheet: moveSheet,
+                                     messageReply: messageReply,
                                      matomoCategory: matomoCategory,
-                                     replyHandler: replyHandler,
                                      completionHandler: completionHandler)
     }
 
@@ -70,8 +70,7 @@ struct ActionsView: View {
 
 struct ActionsView_Previews: PreviewProvider {
     static var previews: some View {
-        ActionsView(mailboxManager: PreviewHelper.sampleMailboxManager,
-                    target: .threads([PreviewHelper.sampleThread], false)) { _, _ in /* Preview */ }
+        ActionsView(mailboxManager: PreviewHelper.sampleMailboxManager, target: .threads([PreviewHelper.sampleThread], false))
             .accentColor(AccentColor.pink.primary.swiftUIColor)
     }
 }

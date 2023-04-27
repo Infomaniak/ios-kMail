@@ -33,6 +33,8 @@ struct ActionsPanelViewModifier: ViewModifier {
     @StateObject private var moveSheet = MoveSheet()
 
     @Binding var actionsTarget: ActionsTarget?
+    @State var reportDisplayProblemMessage: Message?
+
     var completionHandler: (() -> Void)?
 
     func body(content: Content) -> some View {
@@ -40,14 +42,8 @@ struct ActionsPanelViewModifier: ViewModifier {
             .floatingPanel(item: $actionsTarget) { target in
                 ActionsView(mailboxManager: mailboxManager,
                             target: target,
-                            moveSheet: moveSheet) { message, replyMode in
-                    // FIXME: There seems to be a bug where SwiftUI looses the "context" and attempts to present
-                    // the view controller before waiting for the dismiss of the first one if we use a closure
-                    // (this "fix" is temporary)
-                    DispatchQueue.main.async {
-                        navigationStore.messageReply = MessageReply(message: message, replyMode: replyMode)
-                    }
-                } completionHandler: {
+                            moveSheet: moveSheet,
+                            messageReply: $navigationStore.messageReply) {
                     completionHandler?()
                 }
             }
@@ -55,6 +51,9 @@ struct ActionsPanelViewModifier: ViewModifier {
                 if case .move(let folderId, let handler) = moveSheet.state {
                     MoveEmailView.sheetView(from: folderId, moveHandler: handler)
                 }
+            }
+            .floatingPanel(item: $reportDisplayProblemMessage) { message in
+                ReportJunkView(mailboxManager: mailboxManager, target: .message(message))
             }
     }
 }

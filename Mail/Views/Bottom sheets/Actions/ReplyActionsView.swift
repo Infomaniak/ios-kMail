@@ -28,11 +28,11 @@ struct ReplyActionsView: View {
 
     init(mailboxManager: MailboxManager,
          message: Message,
-         replyHandler: @escaping (Message, ReplyMode) -> Void) {
+         messageReply: Binding<MessageReply?>?) {
         viewModel = ActionsViewModel(mailboxManager: mailboxManager,
                                      target: .message(message),
-                                     matomoCategory: .replyBottomSheet,
-                                     replyHandler: replyHandler)
+                                     messageReply: messageReply,
+                                     matomoCategory: .replyBottomSheet)
     }
 
     var body: some View {
@@ -52,7 +52,8 @@ struct ReplyActionsView: View {
 struct ReplyActionsView_Previews: PreviewProvider {
     static var previews: some View {
         ReplyActionsView(mailboxManager: PreviewHelper.sampleMailboxManager,
-                         message: PreviewHelper.sampleMessage) { _, _ in /* Preview */ }
+                         message: PreviewHelper.sampleMessage,
+                         messageReply: nil)
             .accentColor(AccentColor.pink.primary.swiftUIColor)
     }
 }
