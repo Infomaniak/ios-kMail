@@ -36,12 +36,6 @@ extension EnvironmentValues {
     }
 }
 
-class GlobalBottomSheet: DisplayedFloatingPanelState<GlobalBottomSheet.State> {
-    enum State {
-        case restoreEmails
-    }
-}
-
 class GlobalAlert: SheetState<GlobalAlert.State> {
     enum State {
         case reportPhishing(message: Message)
@@ -69,7 +63,6 @@ struct SplitView: View {
     @Environment(\.verticalSizeClass) var verticalSizeClass
     @Environment(\.window) var window
 
-    @StateObject private var bottomSheet = GlobalBottomSheet()
     @StateObject private var alert = GlobalAlert()
 
     @StateObject private var splitViewManager: SplitViewManager
@@ -166,7 +159,6 @@ struct SplitView: View {
         .environmentObject(mailboxManager)
         .environmentObject(splitViewManager)
         .environmentObject(navigationDrawerController)
-        .environmentObject(bottomSheet)
         .environmentObject(alert)
         .environmentObject(navigationStore)
         .defaultAppStorage(.shared)

@@ -101,7 +101,6 @@ class DateSection: Identifiable {
     @Published var lastUpdate: Date?
     @Published var actionsTarget: ActionsTarget?
 
-
     // Used to know thread location
     private var selectedThreadIndex: Int?
     var filteredThreads = [Thread]() {
@@ -113,7 +112,6 @@ class DateSection: Identifiable {
     }
 
     let moveSheet: MoveSheet
-    var globalBottomSheet: GlobalBottomSheet?
 
     var scrollViewProxy: ScrollViewProxy?
     var isCompact: Bool

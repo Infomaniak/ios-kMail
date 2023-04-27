@@ -24,14 +24,14 @@ import MailResources
 import SwiftUI
 
 struct RestoreEmailsView: View {
+    @EnvironmentObject var mailboxManager: MailboxManager
+
     @State private var selectedDate = ""
     @State private var availableDates = [String]()
 
     @State private var pickerNoSelectionText = MailResourcesStrings.Localizable.loadingText
 
     @LazyInjectService private var matomo: MatomoUtils
-
-    let mailboxManager: MailboxManager
 
     var body: some View {
         VStack(alignment: .leading) {
@@ -94,6 +94,7 @@ struct RestoreEmailsView: View {
 
 struct RestoreEmailsView_Previews: PreviewProvider {
     static var previews: some View {
-        RestoreEmailsView(mailboxManager: PreviewHelper.sampleMailboxManager)
+        RestoreEmailsView()
+            .environmentObject(PreviewHelper.sampleMailboxManager)
     }
 }

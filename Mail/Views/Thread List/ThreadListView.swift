@@ -46,7 +46,6 @@ struct ThreadListView: View {
     @StateObject var multipleSelectionViewModel: ThreadListMultipleSelectionViewModel
 
     @EnvironmentObject var splitViewManager: SplitViewManager
-    @EnvironmentObject var globalBottomSheet: GlobalBottomSheet
     @Environment(\.mailNavigationPath) private var path
 
     @AppStorage(UserDefaults.shared.key(.threadDensity)) private var threadDensity = DefaultPreferences.threadDensity
@@ -207,7 +206,6 @@ struct ThreadListView: View {
         }
         .onAppear {
             networkMonitor.start()
-            viewModel.globalBottomSheet = globalBottomSheet
             viewModel.selectedThread = nil
         }
         .onChange(of: splitViewManager.selectedFolder) { newFolder in
