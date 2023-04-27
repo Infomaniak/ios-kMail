@@ -38,9 +38,7 @@ extension EnvironmentValues {
 
 class GlobalBottomSheet: DisplayedFloatingPanelState<GlobalBottomSheet.State> {
     enum State {
-        case getMoreStorage
         case restoreEmails
-        case reportJunk(target: ActionsTarget)
     }
 }
 

@@ -209,7 +209,8 @@ enum ActionsTarget: Equatable, Identifiable {
     private let mailboxManager: MailboxManager
     private let target: ActionsTarget
     private let moveSheet: MoveSheet?
-    private let replyHandler: ((Message, ReplyMode) -> Void)?
+    private let messageReply: Binding<MessageReply?>?
+    private let reportJunkActionsTarget: Binding<ActionsTarget?>?
     private let completionHandler: (() -> Void)?
 
     private let matomoCategory: MatomoUtils.EventCategory?
@@ -222,13 +223,15 @@ enum ActionsTarget: Equatable, Identifiable {
     init(mailboxManager: MailboxManager,
          target: ActionsTarget,
          moveSheet: MoveSheet? = nil,
+         messageReply: Binding<MessageReply?>? = nil,
+         reportJunkActionsTarget: Binding<ActionsTarget?>? = nil,
          matomoCategory: MatomoUtils.EventCategory? = nil,
-         replyHandler: ((Message, ReplyMode) -> Void)? = nil,
          completionHandler: (() -> Void)? = nil) {
         self.mailboxManager = mailboxManager
         self.target = target.freeze()
         self.moveSheet = moveSheet
-        self.replyHandler = replyHandler
+        self.messageReply = messageReply
+        self.reportJunkActionsTarget = reportJunkActionsTarget
         self.completionHandler = completionHandler
         self.matomoCategory = matomoCategory
         setActions()
@@ -445,7 +448,7 @@ enum ActionsTarget: Equatable, Identifiable {
     }
 
     private func displayReportJunk() {
-        //globalSheet.open(state: .reportJunk(threadBottomSheet: state, target: target))
+        reportJunkActionsTarget?.wrappedValue = target
     }
 
     private func block() async throws {

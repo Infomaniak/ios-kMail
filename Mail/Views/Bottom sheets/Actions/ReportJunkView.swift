@@ -27,9 +27,7 @@ struct ReportJunkView: View {
     var actions: [Action] = []
 
     init(mailboxManager: MailboxManager,
-         target: ActionsTarget,
-         globalSheet: GlobalBottomSheet,
-         globalAlert: GlobalAlert) {
+         target: ActionsTarget) {
         viewModel = ActionsViewModel(mailboxManager: mailboxManager,
                                      target: target)
         if case .message(let message) = target {
@@ -58,10 +56,7 @@ struct ReportJunkView: View {
 
 struct ReportJunkView_Previews: PreviewProvider {
     static var previews: some View {
-        ReportJunkView(mailboxManager: PreviewHelper.sampleMailboxManager,
-                       target: .threads([PreviewHelper.sampleThread], false),
-                       globalSheet: GlobalBottomSheet(),
-                       globalAlert: GlobalAlert())
+        ReportJunkView(mailboxManager: PreviewHelper.sampleMailboxManager, target: .message(PreviewHelper.sampleMessage))
             .accentColor(AccentColor.pink.primary.swiftUIColor)
     }
 }

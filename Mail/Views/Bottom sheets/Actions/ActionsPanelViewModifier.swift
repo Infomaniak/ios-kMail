@@ -33,7 +33,7 @@ struct ActionsPanelViewModifier: ViewModifier {
     @StateObject private var moveSheet = MoveSheet()
 
     @Binding var actionsTarget: ActionsTarget?
-    @State var reportDisplayProblemMessage: Message?
+    @State var reportJunkActionsTarget: ActionsTarget?
 
     var completionHandler: (() -> Void)?
 
@@ -43,7 +43,8 @@ struct ActionsPanelViewModifier: ViewModifier {
                 ActionsView(mailboxManager: mailboxManager,
                             target: target,
                             moveSheet: moveSheet,
-                            messageReply: $navigationStore.messageReply) {
+                            messageReply: $navigationStore.messageReply,
+                            reportJunkActionsTarget: $reportJunkActionsTarget) {
                     completionHandler?()
                 }
             }
@@ -52,8 +53,8 @@ struct ActionsPanelViewModifier: ViewModifier {
                     MoveEmailView.sheetView(from: folderId, moveHandler: handler)
                 }
             }
-            .floatingPanel(item: $reportDisplayProblemMessage) { message in
-                ReportJunkView(mailboxManager: mailboxManager, target: .message(message))
+            .floatingPanel(item: $reportJunkActionsTarget) { target in
+                ReportJunkView(mailboxManager: mailboxManager, target: target)
             }
     }
 }
