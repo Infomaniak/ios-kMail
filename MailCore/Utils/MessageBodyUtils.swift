@@ -67,7 +67,7 @@ public enum MessageBodyUtils {
         return nil
     }
 
-    public static func cleanHtmlContent(rawHtml: String) -> String? {
+    public static func cleanHtmlContent(rawHtml: String) -> Document? {
         do {
             let dirtyDocument = try SwiftSoup.parse(rawHtml)
             let cleanedDocument = try SwiftSoup.Cleaner(headWhitelist: .headWhitelist, bodyWhitelist: .extendedBodyWhitelist)
@@ -84,7 +84,7 @@ public enum MessageBodyUtils {
                 try cleanedDocument.body()?.attr("style", bodyStyleAttribute)
             }
 
-            return try cleanedDocument.outerHtml()
+            return try cleanedDocument
         } catch {
             DDLogError("An error occurred while parsing body \(error)")
             return nil
