@@ -25,17 +25,6 @@ import NavigationBackport
 import RealmSwift
 import SwiftUI
 
-struct MailNavigationPathKey: EnvironmentKey {
-    static var defaultValue: Binding<[Thread]>?
-}
-
-extension EnvironmentValues {
-    var mailNavigationPath: Binding<[Thread]>? {
-        get { self[MailNavigationPathKey.self] }
-        set { self[MailNavigationPathKey.self] = newValue }
-    }
-}
-
 public class SplitViewManager: ObservableObject {
     @Published var showSearch = false
     @Published var selectedFolder: Folder?
@@ -57,7 +46,6 @@ struct SplitView: View {
     @Environment(\.window) var window
 
     @StateObject private var splitViewManager: SplitViewManager
-    @State private var path = [Thread]()
 
     var isCompact: Bool {
         UIConstants.isCompact(horizontalSizeClass: horizontalSizeClass, verticalSizeClass: verticalSizeClass)
@@ -73,7 +61,7 @@ struct SplitView: View {
         Group {
             if isCompact {
                 ZStack {
-                    NBNavigationStack(path: $path) {
+                    NBNavigationStack(path: $navigationStore.threadPath) {
                         ThreadListManagerView(isCompact: isCompact)
                             .accessibilityHidden(navigationDrawerController.isOpen)
                             .nbNavigationDestination(for: Thread.self) { thread in
@@ -94,7 +82,7 @@ struct SplitView: View {
 
                     ThreadListManagerView(isCompact: isCompact)
 
-                    if let thread = path.last {
+                    if let thread = navigationStore.threadPath.last {
                         ThreadView(thread: thread)
                     } else {
                         EmptyStateView.emptyThread(from: splitViewManager.selectedFolder)
@@ -135,7 +123,6 @@ struct SplitView: View {
             setupBehaviour(orientation: interfaceOrientation)
             splitViewController.preferredDisplayMode = .twoDisplaceSecondary
         }
-        .environment(\.mailNavigationPath, $path)
         .environment(\.realmConfiguration, mailboxManager.realmConfiguration)
         .environmentObject(mailboxManager)
         .environmentObject(splitViewManager)

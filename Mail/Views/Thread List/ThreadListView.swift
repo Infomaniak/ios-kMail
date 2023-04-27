@@ -46,7 +46,7 @@ struct ThreadListView: View {
     @StateObject var multipleSelectionViewModel: ThreadListMultipleSelectionViewModel
 
     @EnvironmentObject var splitViewManager: SplitViewManager
-    @Environment(\.mailNavigationPath) private var path
+    @EnvironmentObject var navigationStore: NavigationStore
 
     @AppStorage(UserDefaults.shared.key(.threadDensity)) private var threadDensity = DefaultPreferences.threadDensity
     @AppStorage(UserDefaults.shared.key(.accentColor)) private var accentColor = DefaultPreferences.accentColor
@@ -213,9 +213,9 @@ struct ThreadListView: View {
         }
         .onChange(of: viewModel.selectedThread) { newThread in
             if let newThread {
-                path?.wrappedValue = [newThread]
+                navigationStore.threadPath = [newThread]
             } else {
-                path?.wrappedValue = []
+                navigationStore.threadPath = []
             }
         }
         .onReceive(NotificationCenter.default.publisher(for: UIApplication.willEnterForegroundNotification)) { _ in

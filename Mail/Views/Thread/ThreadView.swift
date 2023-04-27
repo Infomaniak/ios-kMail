@@ -37,7 +37,6 @@ struct ThreadView: View {
     @EnvironmentObject private var mailboxManager: MailboxManager
     @EnvironmentObject private var navigationStore: NavigationStore
 
-    @Environment(\.mailNavigationPath) private var path
     @Environment(\.horizontalSizeClass) private var sizeClass
     @Environment(\.verticalSizeClass) var verticalSizeClass
     @Environment(\.dismiss) var dismiss
@@ -130,7 +129,7 @@ struct ThreadView: View {
                 if isCompact {
                     dismiss() // For iPhone
                 } else {
-                    path?.wrappedValue = [] // For iPad
+                    navigationStore.threadPath = [] // For iPad
                 }
             }
         }

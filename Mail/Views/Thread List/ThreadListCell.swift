@@ -25,7 +25,6 @@ import SwiftUI
 
 struct ThreadListCell: View {
     @EnvironmentObject var splitViewManager: SplitViewManager
-    @Environment(\.mailNavigationPath) private var path
 
     let thread: Thread
 

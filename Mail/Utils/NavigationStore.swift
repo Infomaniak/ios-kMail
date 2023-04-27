@@ -22,4 +22,5 @@ import MailCore
 
 class NavigationStore: ObservableObject {
     @Published var messageReply: MessageReply?
+    @Published var threadPath = [Thread]()
 }
