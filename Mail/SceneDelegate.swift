@@ -101,7 +101,6 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, AccountManagerDelegate 
         let view = view.environment(\.window, window)
         // Set root view controller
         let hostingController = UIHostingController(rootView: view)
-        FloatingPanelHelper.shared.attachToViewController(hostingController)
         setRootViewController(hostingController)
     }
 

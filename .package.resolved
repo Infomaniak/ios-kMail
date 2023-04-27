@@ -28,15 +28,6 @@
       }
     },
     {
-      "identity" : "floatingpanel",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/SCENEE/FloatingPanel",
-      "state" : {
-        "revision" : "2a29cb5b3ecf4beb67cf524a030dd74a11b956c4",
-        "version" : "2.6.1"
-      }
-    },
-    {
       "identity" : "ios-bug-tracker",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Infomaniak/ios-bug-tracker",
@@ -225,6 +216,15 @@
       }
     },
     {
+      "identity" : "swiftbackports",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/shaps80/SwiftBackports",
+      "state" : {
+        "revision" : "fafbeabf78b7e364abbbb7565cdfeee42af16211",
+        "version" : "1.0.2"
+      }
+    },
+    {
       "identity" : "swiftregex",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/flowbe/SwiftRegex",
@@ -258,6 +258,15 @@
       "state" : {
         "revision" : "17b66b0e7d94d2d3f220bbcb021b5026436f06c7",
         "version" : "1.3.0"
+      }
+    },
+    {
+      "identity" : "swiftuibackports",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/shaps80/SwiftUIBackports",
+      "state" : {
+        "revision" : "556d42f391b74059a354b81b8c8e19cc7cb576f4",
+        "version" : "1.15.1"
       }
     },
     {

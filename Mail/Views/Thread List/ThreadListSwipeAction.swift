@@ -105,7 +105,6 @@ struct ThreadListSwipeAction_Previews: PreviewProvider {
         SwipeActionView(thread: PreviewHelper.sampleThread,
                         viewModel: ThreadListViewModel(mailboxManager: PreviewHelper.sampleMailboxManager,
                                                        folder: PreviewHelper.sampleFolder,
-                                                       bottomSheet: ThreadBottomSheet(),
                                                        moveSheet: MoveSheet(),
                                                        isCompact: false),
                         action: .delete)

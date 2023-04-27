@@ -24,12 +24,6 @@ import MailResources
 import RealmSwift
 import SwiftUI
 
-class ThreadBottomSheet: DisplayedFloatingPanelState<ThreadBottomSheet.State> {
-    enum State: Equatable {
-        case actions(ActionsTarget)
-    }
-}
-
 class MoveSheet: SheetState<MoveSheet.State> {
     enum State {
         case move(folderId: String?, moveHandler: MoveEmailView.MoveHandler)
@@ -59,7 +53,6 @@ struct ThreadListView: View {
     @AppStorage(UserDefaults.shared.key(.accentColor)) private var accentColor = DefaultPreferences.accentColor
 
     @State private var isShowingComposeNewMessageView = false
-    @StateObject var bottomSheet: ThreadBottomSheet
     @StateObject var moveSheet: MoveSheet
     @StateObject private var networkMonitor = NetworkMonitor()
     @Binding private var editedMessageDraft: Draft?
@@ -86,15 +79,12 @@ struct ThreadListView: View {
          editedMessageDraft: Binding<Draft?>,
          messageReply: Binding<MessageReply?>,
          isCompact: Bool) {
-        let threadBottomSheet = ThreadBottomSheet()
         let moveEmailSheet = MoveSheet()
         _editedMessageDraft = editedMessageDraft
         _messageReply = messageReply
-        _bottomSheet = StateObject(wrappedValue: threadBottomSheet)
         _moveSheet = StateObject(wrappedValue: moveEmailSheet)
         _viewModel = StateObject(wrappedValue: ThreadListViewModel(mailboxManager: mailboxManager,
                                                                    folder: folder,
-                                                                   bottomSheet: threadBottomSheet,
                                                                    moveSheet: moveEmailSheet,
                                                                    isCompact: isCompact))
         _multipleSelectionViewModel =
@@ -200,7 +190,6 @@ struct ThreadListView: View {
         }
         .modifier(ThreadListToolbar(isCompact: isCompact,
                                     flushAlert: $flushAlert,
-                                    bottomSheet: bottomSheet,
                                     viewModel: viewModel,
                                     multipleSelectionViewModel: multipleSelectionViewModel) {
                 withAnimation(.default.speed(2)) {
@@ -284,7 +273,6 @@ private struct ThreadListToolbar: ViewModifier {
 
     @Binding var flushAlert: FlushAlertState?
 
-    @ObservedObject var bottomSheet: ThreadBottomSheet
     @ObservedObject var viewModel: ThreadListViewModel
     @ObservedObject var multipleSelectionViewModel: ThreadListMultipleSelectionViewModel
 

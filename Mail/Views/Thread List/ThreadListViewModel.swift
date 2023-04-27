@@ -113,7 +113,6 @@ class DateSection: Identifiable {
     }
 
     let moveSheet: MoveSheet
-    let bottomSheet: ThreadBottomSheet
     var globalBottomSheet: GlobalBottomSheet?
 
     var scrollViewProxy: ScrollViewProxy?
@@ -150,14 +149,12 @@ class DateSection: Identifiable {
     init(
         mailboxManager: MailboxManager,
         folder: Folder,
-        bottomSheet: ThreadBottomSheet,
         moveSheet: MoveSheet,
         isCompact: Bool
     ) {
         self.mailboxManager = mailboxManager
         self.folder = folder
         lastUpdate = folder.lastUpdate
-        self.bottomSheet = bottomSheet
         self.moveSheet = moveSheet
         self.isCompact = isCompact
         observeChanges()

@@ -40,7 +40,7 @@ class GlobalBottomSheet: DisplayedFloatingPanelState<GlobalBottomSheet.State> {
     enum State {
         case getMoreStorage
         case restoreEmails
-        case reportJunk(threadBottomSheet: ThreadBottomSheet, target: ActionsTarget)
+        case reportJunk(target: ActionsTarget)
     }
 }
 
