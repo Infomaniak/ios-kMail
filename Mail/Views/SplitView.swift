@@ -147,7 +147,6 @@ struct SplitView: View {
             self.splitViewController = splitViewController
             splitViewManager.splitViewController = splitViewController
             setupBehaviour(orientation: interfaceOrientation)
-            splitViewController.preferredDisplayMode = .twoDisplaceSecondary
         }
         .floatingPanel(state: bottomSheet) {
             switch bottomSheet.state {
