@@ -93,13 +93,7 @@ class DateSection: Identifiable {
     @Published var sections = [DateSection]()
     @Published var selectedThread: Thread? {
         didSet {
-            guard !isCompact, !filteredThreads.isEmpty else { return }
-            if selectedThread == nil, let index = selectedThreadIndex {
-                let realIndex = min(index, filteredThreads.count - 1)
-                selectedThread = filteredThreads[realIndex]
-            } else if let thread = selectedThread, let index = filteredThreads.firstIndex(where: { $0.uid == thread.uid }) {
-                selectedThreadIndex = index
-            }
+            selectedThreadIndex = filteredThreads.firstIndex { $0.uid == selectedThread?.uid }
         }
     }
 
@@ -238,6 +232,7 @@ class DateSection: Identifiable {
                 guard let newSections = self?.sortThreadsIntoSections(threads: filteredThreads) else { return }
 
                 DispatchQueue.main.sync {
+                    self?.nextThreadIfNeeded(from: filteredThreads)
                     self?.filteredThreads = filteredThreads
                     if self?.filter != .all && filteredThreads.count == 1
                         && self?.filter.accepts(thread: filteredThreads[0]) != true {
@@ -261,6 +256,14 @@ class DateSection: Identifiable {
                 break
             }
         }
+    }
+
+    func nextThreadIfNeeded(from threads: [Thread]) {
+        guard !isCompact,
+              !threads.contains(where: { $0.uid == selectedThread?.uid }),
+              let lastIndex = selectedThreadIndex else { return }
+        let validIndex = min(lastIndex, threads.count - 1)
+        selectedThread = threads[validIndex]
     }
 
     private func sortThreadsIntoSections(threads: [Thread]) -> [DateSection]? {
