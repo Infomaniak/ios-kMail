@@ -23,8 +23,6 @@ import SwiftUI
 import WebKit
 
 struct WebView: UIViewRepresentable {
-    typealias UIViewType = WKWebView
-
     @Binding var model: WebViewModel
     @Binding var shortHeight: CGFloat
     @Binding var completeHeight: CGFloat
@@ -105,13 +103,9 @@ struct WebView: UIViewRepresentable {
 
 class WebViewModel {
     let webView: WKWebView
-    var viewport: String {
-        return "<meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">"
-    }
 
-    var style: String {
-        return "<style>\(Constants.customCSS)</style>"
-    }
+    let viewportContent = "width=device-width, initial-scale=1.0"
+    var style: String { "<style>\(Constants.customCSS)</style>" }
 
     init() {
         let configuration = WKWebViewConfiguration()
@@ -122,40 +116,41 @@ class WebViewModel {
     }
 
     func loadHTMLString(value: String?) {
-        guard let rawHtml = value else {
-            return
-        }
+        guard let rawHtml = value else { return }
 
         do {
-            guard let safeHtml = MessageBodyUtils.cleanHtmlContent(rawHtml: rawHtml) else { return }
-            let parsedHtml = try SwiftSoup.parse(safeHtml)
+            guard let safeDocument = MessageBodyUtils.cleanHtmlContent(rawHtml: rawHtml) else { return }
 
-            let head: Element
-            if let existingHead = parsedHtml.head() {
-                head = existingHead
-            } else {
-                head = try parsedHtml.appendElement("head")
-            }
+//            try reduceImageSize(of: safeDocument)
+            try updateHeadContent(of: safeDocument)
 
-            let allImages = try parsedHtml.select("img[width]").array()
-            let maxWidth = webView.frame.width
-            for image in allImages {
-                if let widthString = image.getAttributes()?.get(key: "width"),
-                   let width = Double(widthString),
-                   width > maxWidth {
-                    try image.attr("width", "\(maxWidth)")
-                    try image.attr("height", "auto")
-                }
-            }
-
-            try head.append(viewport)
-            try head.append(style)
-
-            let finalHtml = try parsedHtml.html()
-
+            let finalHtml = try safeDocument.outerHtml()
             webView.loadHTMLString(finalHtml, baseURL: nil)
         } catch {
             DDLogError("An error occurred while parsing body \(error)")
         }
+    }
+
+    private func reduceImageSize(of document: Document) throws {
+        let allImages = try document.select("img[width]").array()
+        let maxWidth = webView.frame.width
+        for image in allImages {
+            if let widthString = image.getAttributes()?.get(key: "width"),
+               let width = Double(widthString),
+               width > maxWidth {
+                try image.attr("width", "\(maxWidth)")
+                try image.attr("height", "auto")
+            }
+        }
+    }
+
+    private func updateHeadContent(of document: Document) throws {
+        let head = document.head()
+        if let viewport = try head?.select("meta[name=\"viewport\"]") {
+            try viewport.attr("content", viewportContent)
+        } else {
+            try head?.append("<meta name=\"viewport\" content=\"\(viewportContent)\">")
+        }
+        try head?.append(style)
     }
 }

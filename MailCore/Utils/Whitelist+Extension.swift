@@ -40,8 +40,8 @@ extension Whitelist {
         do {
             let customWhitelist = try Whitelist.relaxed()
             try customWhitelist
-                .addTags("center", "style")
-                .addAttributes(":all", "style", "width", "height", "class", "id", "align", "bgcolor", "border")
+                .addTags("center", "hr", "style")
+                .addAttributes(":all", "align", "bgcolor", "border", "class", "dir", "height", "id", "style", "width")
                 .addAttributes("td", "valign")
                 .addProtocols("img", "src", "cid", "data")
 
