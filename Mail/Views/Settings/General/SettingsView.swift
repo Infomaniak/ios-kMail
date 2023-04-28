@@ -30,6 +30,20 @@ struct SettingsView: View {
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 24) {
+                Text(MailResourcesStrings.Localizable.settingsSectionEmailAddresses)
+                    .textStyle(.bodySmallSecondary)
+
+                ForEach(AccountManager.instance.mailboxes) { mailbox in
+                    SettingsSubMenuCell(title: mailbox.email) {
+                        MailboxSettingsView(mailbox: mailbox)
+                    }
+                }
+
+                IKDivider()
+            }
+            .padding(.horizontal, 16)
+
+            VStack(alignment: .leading, spacing: 24) {
                 Text(MailResourcesStrings.Localizable.settingsSectionGeneral)
                     .textStyle(.bodySmallSecondary)
 
