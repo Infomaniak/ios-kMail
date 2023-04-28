@@ -104,6 +104,14 @@ public class MailApiFetcher: ApiFetcher {
             .data
     }
 
+    func updateSignature(mailbox: Mailbox, signature: Signature) async throws -> Bool {
+        try await perform(request: authenticatedRequest(
+            .updateSignature(hostingId: mailbox.hostingId, mailboxName: mailbox.mailbox, signatureId: signature.id),
+            method: .patch,
+            parameters: signature
+        )).data
+    }
+
     func folders(mailbox: Mailbox) async throws -> [Folder] {
         try await perform(request: authenticatedRequest(.folders(uuid: mailbox.uuid))).data
     }
