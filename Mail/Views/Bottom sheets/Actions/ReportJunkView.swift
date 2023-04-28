@@ -22,16 +22,16 @@ import MailCore
 import SwiftUI
 
 struct ReportJunkView: View {
-    @ObservedObject var viewModel: ActionsViewModel
+    @StateObject var viewModel: ActionsViewModel
 
     var actions: [Action] = []
 
     init(mailboxManager: MailboxManager,
          target: ActionsTarget,
          reportedForPhishingMessage: Binding<Message?>) {
-        viewModel = ActionsViewModel(mailboxManager: mailboxManager,
-                                     target: target,
-                                     reportedForPhishingMessage: reportedForPhishingMessage)
+        _viewModel = StateObject(wrappedValue: ActionsViewModel(mailboxManager: mailboxManager,
+                                                               target: target,
+                                                               reportedForPhishingMessage: reportedForPhishingMessage))
         if case .message(let message) = target {
             let spam = message.folder?.role == .spam
             actions.append(contentsOf: [

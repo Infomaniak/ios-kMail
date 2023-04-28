@@ -22,17 +22,17 @@ import MailCore
 import SwiftUI
 
 struct ReplyActionsView: View {
-    @ObservedObject var viewModel: ActionsViewModel
+    @StateObject var viewModel: ActionsViewModel
 
     var quickActions: [Action] = [.reply, .replyAll]
 
     init(mailboxManager: MailboxManager,
          message: Message,
          messageReply: Binding<MessageReply?>?) {
-        viewModel = ActionsViewModel(mailboxManager: mailboxManager,
-                                     target: .message(message),
-                                     messageReply: messageReply,
-                                     matomoCategory: .replyBottomSheet)
+        _viewModel = StateObject(wrappedValue: ActionsViewModel(mailboxManager: mailboxManager,
+                                                               target: .message(message),
+                                                               messageReply: messageReply,
+                                                               matomoCategory: .replyBottomSheet))
     }
 
     var body: some View {

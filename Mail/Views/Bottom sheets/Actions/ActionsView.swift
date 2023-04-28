@@ -23,7 +23,7 @@ import MailResources
 import SwiftUI
 
 struct ActionsView: View {
-    @ObservedObject var viewModel: ActionsViewModel
+    @StateObject var viewModel: ActionsViewModel
 
     init(mailboxManager: MailboxManager,
          target: ActionsTarget,
@@ -37,14 +37,14 @@ struct ActionsView: View {
             matomoCategory = .bottomSheetThreadActions
         }
 
-        viewModel = ActionsViewModel(mailboxManager: mailboxManager,
-                                     target: target,
-                                     moveSheet: moveSheet,
-                                     messageReply: messageReply,
-                                     reportJunkActionsTarget: reportJunkActionsTarget,
-                                     reportedForDisplayProblemMessage: reportedForDisplayProblemMessage,
-                                     matomoCategory: matomoCategory,
-                                     completionHandler: completionHandler)
+        _viewModel = StateObject(wrappedValue: ActionsViewModel(mailboxManager: mailboxManager,
+                                                               target: target,
+                                                               moveSheet: moveSheet,
+                                                               messageReply: messageReply,
+                                                               reportJunkActionsTarget: reportJunkActionsTarget,
+                                                               reportedForDisplayProblemMessage: reportedForDisplayProblemMessage,
+                                                               matomoCategory: matomoCategory,
+                                                               completionHandler: completionHandler))
     }
 
     var body: some View {
