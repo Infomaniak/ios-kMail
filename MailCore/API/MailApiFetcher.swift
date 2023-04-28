@@ -34,8 +34,10 @@ public extension ApiFetcher {
 public class MailApiFetcher: ApiFetcher {
     public static let clientId = "E90BC22D-67A8-452C-BE93-28DA33588CA4"
 
-    override public func perform<T: Decodable>(request: DataRequest,
-                                               decoder: JSONDecoder = ApiFetcher.decoder) async throws -> (data: T, responseAt: Int?) {
+    override public func perform<T: Decodable>(
+        request: DataRequest,
+        decoder: JSONDecoder = ApiFetcher.decoder
+    ) async throws -> (data: T, responseAt: Int?) {
         do {
             return try await super.perform(request: request)
         } catch InfomaniakError.apiError(let apiError) {
@@ -117,7 +119,8 @@ public class MailApiFetcher: ApiFetcher {
     }
 
     func flushFolder(mailbox: Mailbox, folderId: String) async throws -> Bool {
-        try await perform(request: authenticatedRequest(.flushFolder(mailboxUuid: mailbox.uuid, folderId: folderId), method: .post)).data
+        try await perform(request: authenticatedRequest(.flushFolder(mailboxUuid: mailbox.uuid, folderId: folderId),
+                                                        method: .post)).data
     }
 
     public func threads(mailbox: Mailbox, folderId: String, filter: Filter = .all,
@@ -242,7 +245,8 @@ public class MailApiFetcher: ApiFetcher {
     @discardableResult
     func deleteDraft(mailbox: Mailbox, draftId: String) async throws -> Empty? {
         // TODO: Remove try? when bug will be fixed from API
-        return try? await perform(request: authenticatedRequest(.draft(uuid: mailbox.uuid, draftUuid: draftId), method: .delete)).data
+        return try? await perform(request: authenticatedRequest(.draft(uuid: mailbox.uuid, draftUuid: draftId), method: .delete))
+            .data
     }
 
     @discardableResult
@@ -400,7 +404,12 @@ class NetworkRequestRetrier: RequestInterceptor {
         self.maxRetry = maxRetry
     }
 
-    func retry(_ request: Alamofire.Request, for session: Session, dueTo error: Error, completion: @escaping (RetryResult) -> Void) {
+    func retry(
+        _ request: Alamofire.Request,
+        for session: Session,
+        dueTo error: Error,
+        completion: @escaping (RetryResult) -> Void
+    ) {
         guard request.task?.response == nil,
               let url = request.request?.url?.absoluteString else {
             removeCachedUrlRequest(url: request.request?.url?.absoluteString)

@@ -917,7 +917,7 @@ public class MailboxManager: ObservableObject {
                                                              "messageId": message.messageId,
                                                              "date": message.date,
                                                              "seen": message.seen,
-                                                             "duplicates": message.duplicates.compactMap {$0.messageId},
+                                                             "duplicates": message.duplicates.compactMap { $0.messageId },
                                                              "references": message.references],
                                                  "Seen": ["Expected": seen, "Actual": liveMessage.seen],
                                                  "Folder": ["id": message.folder?._id,
