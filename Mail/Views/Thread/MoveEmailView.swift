@@ -46,17 +46,33 @@ struct MoveEmailView: View {
     @ObservedResults(Folder.self, where: { $0.role != .draft && $0.parents.count == 0 && $0.toolType == nil }) var folders
     @State private var isShowingCreateFolderAlert = false
 
+    @LazyInjectService private var matomo: MatomoUtils
+
+    private var filteredFolders: [Folder] {
+        guard !searchFilter.isEmpty else { return Array(folders) }
+        return folders.filter {
+            let filter = searchFilter.folding(options: [.caseInsensitive, .diacriticInsensitive], locale: .current)
+            let name = $0.localizedName.folding(options: [.caseInsensitive, .diacriticInsensitive], locale: .current)
+            return name.contains(filter)
+        }
+    }
+
+    @State private var searchFilter = ""
+
+    let currentFolderId: String?
+    let moveHandler: MoveEmailView.MoveHandler
     let moveAction: MoveAction
 
     var body: some View {
         ScrollView {
             LazyVStack(spacing: 0) {
                 listOfFolders(nestableFolders: NestableFolder
-                    .createFoldersHierarchy(from: Array(folders.where { $0.role != nil })))
+                    .createFoldersHierarchy(from: Array(filteredFolders.filter { $0.role != nil })))
                 IKDivider(horizontalPadding: 8)
                 listOfFolders(nestableFolders: NestableFolder
-                    .createFoldersHierarchy(from: Array(folders.where { $0.role == nil })))
+                    .createFoldersHierarchy(from: Array(filteredFolders.filter { $0.role == nil })))
             }
+            .searchable(text: $searchFilter, placement: .navigationBarDrawer(displayMode: .always))
         }
         .navigationTitle(MailResourcesStrings.Localizable.actionMove)
         .navigationBarTitleDisplayMode(.inline)
