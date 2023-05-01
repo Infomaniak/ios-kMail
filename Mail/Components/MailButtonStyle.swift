@@ -43,7 +43,6 @@ struct MailButtonStyle: ButtonStyle {
             .background(largeBackground(configuration: configuration))
             .clipShape(RoundedRectangle(cornerRadius: UIConstants.buttonsRadius))
             .brightness(largeBrightness(configuration: configuration))
-            .frame(maxWidth: UIConstants.componentsMaxWidth, alignment: .trailing)
     }
 
     @ViewBuilder private func linkStyle(configuration: Configuration) -> some View {

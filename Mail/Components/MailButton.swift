@@ -117,7 +117,7 @@ struct MailButton: View {
                     LoadingButtonProgressView(style: style)
                 }
             }
-            .frame(maxWidth: fullWidth ? .infinity : nil)
+            .frame(maxWidth: fullWidth ? UIConstants.componentsMaxWidth : nil)
         }
         .disabled(loading || !isEnabled)
         .buttonStyle(MailButtonStyle(style: style))
