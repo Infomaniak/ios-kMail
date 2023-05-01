@@ -29,7 +29,6 @@ public class Mailbox: Object, Codable, Identifiable {
     @Persisted public var email: String
     @Persisted public var emailIdn: String
     @Persisted public var mailbox: String
-    @Persisted public var realMailbox: String
     @Persisted public var linkId: Int
     @Persisted public var mailboxId: Int
     @Persisted public var hostingId: Int
@@ -68,7 +67,6 @@ public class Mailbox: Object, Codable, Identifiable {
         case email
         case emailIdn
         case mailbox
-        case realMailbox
         case linkId
         case mailboxId
         case hostingId
@@ -114,7 +112,6 @@ public class Mailbox: Object, Codable, Identifiable {
         self.email = email
         self.emailIdn = emailIdn
         self.mailbox = mailbox
-        self.realMailbox = realMailbox
         self.linkId = linkId
         self.mailboxId = mailboxId
         self.hostingId = hostingId
