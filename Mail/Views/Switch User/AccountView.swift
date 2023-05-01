@@ -68,9 +68,14 @@ struct AccountView: View {
                         .padding(.top, 24)
                         .padding(.bottom, 16)
 
-                    VStack(spacing: 8) {
-                        Text(account.user.email)
+                    VStack(spacing: 0) {
+                        Text(account.user.displayName)
                             .textStyle(.header2)
+                            .padding(.bottom, 4)
+
+                        Text(account.user.email)
+                            .textStyle(.bodySmallSecondary)
+                            .padding(.bottom, 16)
 
                         NavigationLink {
                             AccountListView()
