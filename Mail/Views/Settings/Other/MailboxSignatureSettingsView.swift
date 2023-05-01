@@ -35,11 +35,6 @@ struct MailboxSignatureSettingsView: View {
                     } label: {
                         VStack(spacing: 0) {
                             HStack(spacing: 16) {
-                                MailResourcesAsset.signature.swiftUIImage
-                                    .resizable()
-                                    .scaledToFit()
-                                    .frame(width: 24, height: 24)
-                                    .foregroundColor(MailResourcesAsset.textTertiaryColor)
                                 Text(signature.name)
                                     .textStyle(.body)
                                 Spacer()
@@ -61,6 +56,9 @@ struct MailboxSignatureSettingsView: View {
                 .listRowSeparator(.hidden)
                 .listRowInsets(.init())
                 .background(MailResourcesAsset.backgroundColor.swiftUIColor)
+            } header: {
+                Text(MailResourcesStrings.Localizable.settingsSignatureDescription)
+                    .textStyle(.bodySmallSecondary)
             }
         }
         .listStyle(.plain)
