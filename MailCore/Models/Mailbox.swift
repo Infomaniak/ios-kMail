@@ -89,7 +89,6 @@ public class Mailbox: Object, Codable, Identifiable {
         email: String,
         emailIdn: String,
         mailbox: String,
-        realMailbox: String,
         linkId: Int,
         mailboxId: Int,
         hostingId: Int,
