@@ -482,7 +482,9 @@ enum ActionsTarget: Equatable, Identifiable {
     private func reportDisplayProblem() {
         // This action is only available on a single message
         guard case .message(let message) = target else { return }
-        reportedForDisplayProblemMessage?.wrappedValue = message
+        DispatchQueue.main.async { [weak self] in
+            self?.reportedForDisplayProblemMessage?.wrappedValue = message
+        }
     }
 
     private func editMenu() {
