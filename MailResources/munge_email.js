@@ -37,8 +37,7 @@ function normalizeElementWidths(elements) {
         transformContent(element, WEBVIEW_WIDTH, element.scrollWidth);
 
         if (PREFERENCES.normalizeMessageWidths) {
-            const newZoom = documentWidth / element.scrollWidth;
-            element.style.zoom = newZoom;
+            element.style.zoom = documentWidth / element.scrollWidth;
         }
 
         element.style.width = originalWidth;
@@ -46,11 +45,10 @@ function normalizeElementWidths(elements) {
 }
 
 /**
- *
- * @param element
- * @param documentWidth
- * @param elementWidth
- * @returns
+ * Transform the content of a DOM element to munge its children if they are too wide
+ * @param element DOM element to inspect
+ * @param documentWidth Width of the overall document
+ * @param elementWidth Element width before any action is done
  */
 function transformContent(element, documentWidth, elementWidth) {
     if (elementWidth <= documentWidth) { return; }
@@ -148,21 +146,11 @@ function transformContent(element, documentWidth, elementWidth) {
 }
 
 /**
- * Undo previous actions
- * @param actionsLog Previous actions done
- */
-function undoActions(actionsLog) {
-    for (const action of actionsLog) {
-        action['function'].apply(action['object'], action['arguments']);
-    }
-}
-
-/**
- *
- * @param nodes
- * @param documentWidth
- * @param actionsLog
- * @returns
+ * Transform blocks : a div or a textarea
+ * @param nodes Array of blocks to inspect
+ * @param documentWidth Width of the overall document
+ * @param actionsLog Array with all the actions performed
+ * @returns true if any modification is performed
  */
 function transformBlockElements(nodes, documentWidth, actionsLog) {
     let elementsAreModified = false;
@@ -186,11 +174,11 @@ function transformBlockElements(nodes, documentWidth, actionsLog) {
 }
 
 /**
- *
- * @param images
- * @param documentWidth
- * @param actionsLog
- * @returns
+ * Transform images
+ * @param images Array of images to inspect
+ * @param documentWidth Width of the overall document
+ * @param actionsLog Array with all the actions performed
+ * @returns true if any modification is performed
  */
 function transformImages(images, documentWidth, actionsLog) {
     let imagesAreModified = false;
@@ -212,12 +200,12 @@ function transformImages(images, documentWidth, actionsLog) {
 }
 
 /**
- *
- * @param nodes
- * @param conditionFunction
- * @param classToAdd
- * @param actionsLog
- * @returns
+ * Add a class to a DOM element if a condition is fulfilled
+ * @param nodes Array of elements to inspect
+ * @param conditionFunction Function allowing to test a condition with respect to an element. If it is null, the condition is considered true.
+ * @param classToAdd Class to be added
+ * @param actionsLog Array with all the actions performed
+ * @returns true if the class was added to at least one element
  */
 function addClassToElements(nodes, conditionFunction, classToAdd, actionsLog) {
     let classAdded = false;
@@ -233,10 +221,10 @@ function addClassToElements(nodes, conditionFunction, classToAdd, actionsLog) {
 }
 
 /**
- *
- * @param node
- * @param property
- * @param actionsLog
+ * Save a CSS property and its value as a ´data-´ property
+ * @param node DOM element for which the property will be saved
+ * @param property Name of the property to save
+ * @param actionsLog Array with all the actions performed
  */
 function saveStyleProperty(node, property, actionsLog) {
     const savedName = `data-${property}`;
@@ -251,6 +239,16 @@ function saveStyleProperty(node, property, actionsLog) {
  */
 function undoSetProperty(property, savedProperty) {
     this.style[property] = savedProperty ? this.getAttribute(savedProperty) : '';
+}
+
+/**
+ * Undo previous actions
+ * @param actionsLog Previous actions done
+ */
+function undoActions(actionsLog) {
+    for (const action of actionsLog) {
+        action['function'].apply(action['object'], action['arguments']);
+    }
 }
 
 /**
