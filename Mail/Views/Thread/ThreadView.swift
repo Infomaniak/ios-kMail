@@ -107,10 +107,19 @@ struct ThreadView: View {
             }
             ToolbarItemGroup(placement: .bottomBar) {
                 ForEach(toolbarActions) { action in
-                    ToolbarButton(text: action.title, icon: action.icon) {
-                        didTap(action: action)
+                    if action == .reply {
+                        ToolbarButton(text: action.title, icon: action.icon) {
+                            didTap(action: action)
+                        }
+                        .adaptivePanel(item: $replyOrReplyAllMessage) { message in
+                            ReplyActionsView(mailboxManager: mailboxManager, message: message, messageReply: $navigationStore.messageReply)
+                        }
+                    } else {
+                        ToolbarButton(text: action.title, icon: action.icon) {
+                            didTap(action: action)
+                        }
+                        .disabled(action == .archive && thread.folder?.role == .archive)
                     }
-                    .disabled(action == .archive && thread.folder?.role == .archive)
                     Spacer()
                 }
                 ActionsPanelButton(threads: [thread]) {
@@ -118,9 +127,6 @@ struct ThreadView: View {
                                        icon: MailResourcesAsset.plusActions.swiftUIImage)
                 }
             }
-        }
-        .floatingPanel(item: $replyOrReplyAllMessage) { message in
-            ReplyActionsView(mailboxManager: mailboxManager, message: message, messageReply: $navigationStore.messageReply)
         }
         .onChange(of: thread.messages) { newMessagesList in
             if newMessagesList.isEmpty || thread.messageInFolderCount == 0 {

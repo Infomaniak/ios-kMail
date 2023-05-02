@@ -26,6 +26,7 @@ import SwiftUI
 
 struct MessageHeaderView: View {
     @EnvironmentObject private var navigationStore: NavigationStore
+    @EnvironmentObject private var mailboxManager: MailboxManager
 
     @State private var editedDraft: Draft?
     @State private var contactViewRecipient: Recipient?
@@ -35,8 +36,6 @@ struct MessageHeaderView: View {
     @Binding var isHeaderExpanded: Bool
     @Binding var isMessageExpanded: Bool
 
-    @EnvironmentObject var mailboxManager: MailboxManager
-
     @LazyInjectService private var matomo: MatomoUtils
 
     var body: some View {
@@ -44,14 +43,7 @@ struct MessageHeaderView: View {
             MessageHeaderSummaryView(message: message,
                                      isMessageExpanded: $isMessageExpanded,
                                      isHeaderExpanded: $isHeaderExpanded,
-                                     deleteDraftTapped: deleteDraft) {
-                matomo.track(eventWithCategory: .messageActions, name: "reply")
-                if message.canReplyAll {
-                    replyOrReplyAllMessage = message
-                } else {
-                    navigationStore.messageReply = MessageReply(message: message, replyMode: .reply)
-                }
-            } recipientTapped: { recipient in
+                                     deleteDraftTapped: deleteDraft) { recipient in
                 contactViewRecipient = recipient
             }
 
@@ -78,9 +70,6 @@ struct MessageHeaderView: View {
         }
         .floatingPanel(item: $contactViewRecipient) { recipient in
             ContactActionsView(recipient: recipient)
-        }
-        .floatingPanel(item: $replyOrReplyAllMessage) { message in
-            ReplyActionsView(mailboxManager: mailboxManager, message: message, messageReply: $navigationStore.messageReply)
         }
     }
 
