@@ -77,7 +77,6 @@ struct ThreadListView: View {
          editedMessageDraft: Binding<Draft?>,
          messageReply: Binding<MessageReply?>,
          isCompact: Bool) {
-        let moveEmailSheet = MoveSheet()
         _editedMessageDraft = editedMessageDraft
         _messageReply = messageReply
         _viewModel = StateObject(wrappedValue: ThreadListViewModel(mailboxManager: mailboxManager,
