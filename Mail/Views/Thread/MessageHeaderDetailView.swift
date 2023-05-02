@@ -44,7 +44,6 @@ struct ViewGeometry: View {
 
 struct MessageHeaderDetailView: View {
     @ObservedRealmObject var message: Message
-    let recipientTapped: (Recipient) -> Void
 
     @State private var labelWidth: CGFloat = 100
 
@@ -53,29 +52,25 @@ struct MessageHeaderDetailView: View {
             RecipientLabel(
                 labelWidth: $labelWidth,
                 title: MailResourcesStrings.Localizable.fromTitle,
-                recipients: message.from,
-                recipientTapped: recipientTapped
+                recipients: message.from
             )
             RecipientLabel(
                 labelWidth: $labelWidth,
                 title: MailResourcesStrings.Localizable.toTitle,
-                recipients: message.to,
-                recipientTapped: recipientTapped
+                recipients: message.to
             )
             if !message.cc.isEmpty {
                 RecipientLabel(
                     labelWidth: $labelWidth,
                     title: MailResourcesStrings.Localizable.ccTitle,
-                    recipients: message.cc,
-                    recipientTapped: recipientTapped
+                    recipients: message.cc
                 )
             }
             if !message.bcc.isEmpty {
                 RecipientLabel(
                     labelWidth: $labelWidth,
                     title: MailResourcesStrings.Localizable.bccTitle,
-                    recipients: message.bcc,
-                    recipientTapped: recipientTapped
+                    recipients: message.bcc
                 )
             }
             HStack {
@@ -97,7 +92,7 @@ struct MessageHeaderDetailView: View {
 
 struct MessageHeaderDetailView_Previews: PreviewProvider {
     static var previews: some View {
-        MessageHeaderDetailView(message: PreviewHelper.sampleMessage) { _ in /* Preview */ }
+        MessageHeaderDetailView(message: PreviewHelper.sampleMessage)
     }
 }
 
@@ -105,7 +100,8 @@ struct RecipientLabel: View {
     @Binding var labelWidth: CGFloat
     let title: String
     let recipients: RealmSwift.List<Recipient>
-    let recipientTapped: (Recipient) -> Void
+
+    @State private var contactViewRecipient: Recipient?
 
     @LazyInjectService private var matomo: MatomoUtils
 
@@ -120,13 +116,17 @@ struct RecipientLabel: View {
                     WrappingHStack(lineSpacing: 2) {
                         Button {
                             matomo.track(eventWithCategory: .message, name: "selectRecipient")
-                            recipientTapped(recipient)
+                            contactViewRecipient = recipient
                         } label: {
                             Text(recipient.name.isEmpty ? recipient.email : recipient.name)
                                 .textStyle(.bodySmallAccent)
                                 .lineLimit(1)
                                 .layoutPriority(1)
                         }
+                        .adaptivePanel(item: $contactViewRecipient) { recipient in
+                            ContactActionsView(recipient: recipient)
+                        }
+
                         if !recipient.name.isEmpty {
                             Text(recipient.email)
                                 .textStyle(.labelSecondary)

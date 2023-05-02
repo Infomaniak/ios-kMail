@@ -29,11 +29,14 @@ struct MessageHeaderSummaryView: View {
     @EnvironmentObject private var navigationStore: NavigationStore
 
     @ObservedRealmObject var message: Message
+
     @State private var replyOrReplyAllMessage: Message?
+    @State private var contactViewRecipient: Recipient?
+
     @Binding var isMessageExpanded: Bool
     @Binding var isHeaderExpanded: Bool
+
     let deleteDraftTapped: () -> Void
-    let recipientTapped: (Recipient) -> Void
 
     @LazyInjectService private var matomo: MatomoUtils
 
@@ -43,9 +46,12 @@ struct MessageHeaderSummaryView: View {
                 if let recipient = message.from.first {
                     Button {
                         matomo.track(eventWithCategory: .message, name: "selectAvatar")
-                        recipientTapped(recipient)
+                        contactViewRecipient = recipient
                     } label: {
                         AvatarView(avatarDisplayable: recipient, size: 40)
+                    }
+                    .adaptivePanel(item: $contactViewRecipient) { recipient in
+                        ContactActionsView(recipient: recipient)
                     }
                 }
 
@@ -142,14 +148,10 @@ struct MessageHeaderSummaryView_Previews: PreviewProvider {
                                      isMessageExpanded: .constant(false),
                                      isHeaderExpanded: .constant(false)) {
                 // Preview
-            } recipientTapped: { _ in
-                // Preview
             }
             MessageHeaderSummaryView(message: PreviewHelper.sampleMessage,
                                      isMessageExpanded: .constant(true),
                                      isHeaderExpanded: .constant(false)) {
-                // Preview
-            } recipientTapped: { _ in
                 // Preview
             }
         }

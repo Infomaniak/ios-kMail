@@ -29,8 +29,6 @@ struct MessageHeaderView: View {
     @EnvironmentObject private var mailboxManager: MailboxManager
 
     @State private var editedDraft: Draft?
-    @State private var contactViewRecipient: Recipient?
-    @State private var replyOrReplyAllMessage: Message?
 
     @ObservedRealmObject var message: Message
     @Binding var isHeaderExpanded: Bool
@@ -43,14 +41,10 @@ struct MessageHeaderView: View {
             MessageHeaderSummaryView(message: message,
                                      isMessageExpanded: $isMessageExpanded,
                                      isHeaderExpanded: $isHeaderExpanded,
-                                     deleteDraftTapped: deleteDraft) { recipient in
-                contactViewRecipient = recipient
-            }
+                                     deleteDraftTapped: deleteDraft)
 
             if isHeaderExpanded {
-                MessageHeaderDetailView(message: message) { recipient in
-                    contactViewRecipient = recipient
-                }
+                MessageHeaderDetailView(message: message)
             }
         }
         .contentShape(Rectangle())
@@ -67,9 +61,6 @@ struct MessageHeaderView: View {
         }
         .sheet(item: $editedDraft) { editedDraft in
             ComposeMessageView.editDraft(draft: editedDraft, mailboxManager: mailboxManager)
-        }
-        .floatingPanel(item: $contactViewRecipient) { recipient in
-            ContactActionsView(recipient: recipient)
         }
     }
 
