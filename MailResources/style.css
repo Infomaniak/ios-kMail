@@ -1,12 +1,12 @@
 html {
-    margin: 0;
+    margin: 16px;
 }
 
 body {
     font-family: -apple-system, Helvetica,Arial, sans-serif;
     overflow-wrap: break-word;
-    width: 100%;
-    margin: 16px;
+
+    margin: 0px;
 }
 
 blockquote {
@@ -19,4 +19,14 @@ blockquote {
 blockquote blockquote blockquote blockquote {
     padding: 0 !important;
     border: none !important;
+}
+
+table.munged {
+    width: auto !important;
+    table-layout: auto !important;
+}
+
+td.munged {
+    width: auto !important;
+    white-space: normal !important;
 }

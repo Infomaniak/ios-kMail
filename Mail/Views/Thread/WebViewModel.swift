@@ -101,18 +101,54 @@ struct WebView: UIViewRepresentable {
     }
 }
 
-class WebViewModel {
+class WebViewModel: NSObject, WKScriptMessageHandler {
+    func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
+        if message.name == "logHandler" {
+            print("LOG: \(message.body)")
+        }
+    }
+
     let webView: WKWebView
 
     let viewportContent = "width=device-width, initial-scale=1.0"
     var style: String { "<style>\(Constants.customCSS)</style>" }
 
-    init() {
+    override init() {
+
+
         let configuration = WKWebViewConfiguration()
         configuration.dataDetectorTypes = .all
         configuration.defaultWebpagePreferences.allowsContentJavaScript = false
         configuration.setURLSchemeHandler(URLSchemeHandler(), forURLScheme: URLSchemeHandler.scheme)
+
+
+
         webView = WKWebView(frame: .zero, configuration: configuration)
+
+        super.init()
+
+        let source = """
+        function captureLog(msg) { window.webkit.messageHandlers.logHandler.postMessage(msg); }
+        window.console.log = captureLog;
+        window.console.debug = captureLog;
+        window.console.info = captureLog;
+        window.console.table = captureLog;
+        """
+        let script = WKUserScript(source: source, injectionTime: .atDocumentEnd, forMainFrameOnly: true)
+        configuration.userContentController.addUserScript(script)
+        configuration.userContentController.add(self, name: "logHandler")
+
+        if let mungeScriptURL = Bundle.main.url(forResource: "munge_email", withExtension: "js"), let mungeScript = try? String(contentsOf: mungeScriptURL) {
+            configuration.userContentController.addUserScript(WKUserScript(source: mungeScript, injectionTime: .atDocumentEnd, forMainFrameOnly: true))
+        }
+
+        #if DEBUG
+        if #available(iOS 16.4, *) {
+            webView.isInspectable = true
+        }
+        #endif
+
+
     }
 
     func loadHTMLString(value: String?) {
@@ -146,7 +182,7 @@ class WebViewModel {
 
     private func updateHeadContent(of document: Document) throws {
         let head = document.head()
-        if let viewport = try head?.select("meta[name=\"viewport\"]") {
+        if let viewport = try head?.select("meta[name=\"viewport\"]"), !viewport.isEmpty() {
             try viewport.attr("content", viewportContent)
         } else {
             try head?.append("<meta name=\"viewport\" content=\"\(viewportContent)\">")
