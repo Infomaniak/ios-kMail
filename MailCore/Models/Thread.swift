@@ -196,9 +196,9 @@ public class Thread: Object, Decodable, Identifiable {
 
     public func lastMessageAndItsDuplicateToExecuteAction() -> [Message] {
         guard let lastMessage = lastMessageToExecuteAction() else { return [] }
-        var messages = [lastMessage]
-        messages.append(contentsOf: lastMessage.duplicates)
-        return messages
+        var messageAndDuplicates = [lastMessage]
+        messageAndDuplicates.append(contentsOf: lastMessage.duplicates)
+        return messageAndDuplicates
     }
 
     private enum CodingKeys: String, CodingKey {
