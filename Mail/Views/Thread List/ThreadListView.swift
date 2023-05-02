@@ -24,12 +24,6 @@ import MailResources
 import RealmSwift
 import SwiftUI
 
-class MoveSheet: SheetState<MoveSheet.State> {
-    enum State {
-        case move(folderId: String?, moveHandler: MoveEmailView.MoveHandler)
-    }
-}
-
 class FlushAlertState: Identifiable {
     let id = UUID()
     let deletedMessages: Int?

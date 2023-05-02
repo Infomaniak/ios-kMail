@@ -28,8 +28,7 @@ private struct SwipeActionView: View {
 
     @EnvironmentObject private var mailboxManager: MailboxManager
 
-    @ObservedObject var moveSheet: MoveSheet
-
+    @Binding var moveAction: MoveAction?
     @Binding var actionsTarget: ActionsTarget?
 
     let thread: Thread
@@ -60,12 +59,7 @@ private struct SwipeActionView: View {
         case .readUnread:
             try await mailboxManager.toggleRead(threads: [thread])
         case .move:
-            moveSheet.state = .move(folderId: viewModel.folder.id) { folder in
-                guard thread.folder != folder else { return }
-                Task {
-                    try await self.move(thread: thread, to: folder)
-                }
-            }
+            moveAction = MoveAction(fromFolderId: viewModel.folder.id, target: .threads([thread], false))
         case .favorite:
             try await mailboxManager.toggleStar(threads: [thread])
         case .postPone:
@@ -108,8 +102,7 @@ struct ThreadListSwipeActions: ViewModifier {
     @AppStorage(UserDefaults.shared.key(.swipeFullTrailing)) private var swipeFullTrailing = DefaultPreferences.swipeFullTrailing
     @AppStorage(UserDefaults.shared.key(.swipeTrailing)) private var swipeTrailing = DefaultPreferences.swipeTrailing
 
-    @StateObject private var moveSheet = MoveSheet()
-
+    @State private var moveAction: MoveAction?
     @State private var actionsTarget: ActionsTarget?
 
     let thread: Thread
@@ -131,10 +124,8 @@ struct ThreadListSwipeActions: ViewModifier {
                     edgeActions([swipeFullTrailing, swipeTrailing])
                 }
                 .actionsPanel(actionsTarget: $actionsTarget)
-                .sheet(isPresented: $moveSheet.isShowing) {
-                    if case .move(let folderId, let handler) = moveSheet.state {
-                        MoveEmailView.sheetView(from: folderId, moveHandler: handler)
-                    }
+                .sheet(item: $moveAction) { moveAction in
+                    MoveEmailView.sheetView(moveAction: moveAction)
                 }
         }
     }
@@ -143,7 +134,7 @@ struct ThreadListSwipeActions: ViewModifier {
     private func edgeActions(_ actions: [SwipeAction]) -> some View {
         if !multipleSelectionViewModel.isEnabled {
             ForEach(actions.filter { $0 != .none }, id: \.rawValue) { action in
-                SwipeActionView(moveSheet: moveSheet,
+                SwipeActionView(moveAction: $moveAction,
                                 actionsTarget: $actionsTarget,
                                 thread: thread,
                                 viewModel: viewModel,
@@ -165,7 +156,7 @@ extension View {
 
 struct ThreadListSwipeAction_Previews: PreviewProvider {
     static var previews: some View {
-        SwipeActionView(moveSheet: MoveSheet(),
+        SwipeActionView(moveAction: .constant(nil),
                         actionsTarget: .constant(nil),
                         thread: PreviewHelper.sampleThread,
                         viewModel: ThreadListViewModel(mailboxManager: PreviewHelper.sampleMailboxManager,

@@ -27,7 +27,7 @@ struct ActionsView: View {
 
     init(mailboxManager: MailboxManager,
          target: ActionsTarget,
-         moveSheet: MoveSheet? = nil,
+         moveAction: Binding<MoveAction?>? = nil,
          messageReply: Binding<MessageReply?>? = nil,
          reportJunkActionsTarget: Binding<ActionsTarget?>? = nil,
          reportedForDisplayProblemMessage: Binding<Message?>? = nil,
@@ -38,13 +38,13 @@ struct ActionsView: View {
         }
 
         _viewModel = StateObject(wrappedValue: ActionsViewModel(mailboxManager: mailboxManager,
-                                                               target: target,
-                                                               moveSheet: moveSheet,
-                                                               messageReply: messageReply,
-                                                               reportJunkActionsTarget: reportJunkActionsTarget,
-                                                               reportedForDisplayProblemMessage: reportedForDisplayProblemMessage,
-                                                               matomoCategory: matomoCategory,
-                                                               completionHandler: completionHandler))
+                                                                target: target,
+                                                                moveAction: moveAction,
+                                                                messageReply: messageReply,
+                                                                reportJunkActionsTarget: reportJunkActionsTarget,
+                                                                reportedForDisplayProblemMessage: reportedForDisplayProblemMessage,
+                                                                matomoCategory: matomoCategory,
+                                                                completionHandler: completionHandler))
     }
 
     var body: some View {

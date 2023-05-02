@@ -30,11 +30,10 @@ struct ActionsPanelViewModifier: ViewModifier {
     @EnvironmentObject private var mailboxManager: MailboxManager
     @EnvironmentObject private var navigationStore: NavigationStore
 
+    @State private var moveAction: MoveAction?
     @State private var reportJunkActionsTarget: ActionsTarget?
     @State private var reportedForPhishingMessage: Message?
     @State private var reportedForDisplayProblemMessage: Message?
-
-    @StateObject private var moveSheet = MoveSheet()
 
     @Binding var actionsTarget: ActionsTarget?
 
@@ -44,17 +43,15 @@ struct ActionsPanelViewModifier: ViewModifier {
         content.adaptivePanel(item: $actionsTarget) { target in
             ActionsView(mailboxManager: mailboxManager,
                         target: target,
-                        moveSheet: moveSheet,
+                        moveAction: $moveAction,
                         messageReply: $navigationStore.messageReply,
                         reportJunkActionsTarget: $reportJunkActionsTarget,
                         reportedForDisplayProblemMessage: $reportedForDisplayProblemMessage) {
                 completionHandler?()
             }
         }
-        .sheet(isPresented: $moveSheet.isShowing) {
-            if case .move(let folderId, let handler) = moveSheet.state {
-                MoveEmailView.sheetView(from: folderId, moveHandler: handler)
-            }
+        .sheet(item: $moveAction) { moveAction in
+            MoveEmailView.sheetView(moveAction: moveAction)
         }
         .floatingPanel(item: $reportJunkActionsTarget) { target in
             ReportJunkView(mailboxManager: mailboxManager,

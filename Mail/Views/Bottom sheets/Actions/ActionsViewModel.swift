@@ -208,7 +208,7 @@ enum ActionsTarget: Equatable, Identifiable {
 @MainActor class ActionsViewModel: ObservableObject {
     private let mailboxManager: MailboxManager
     private let target: ActionsTarget
-    private let moveSheet: MoveSheet?
+    private let moveAction: Binding<MoveAction?>?
     private let messageReply: Binding<MessageReply?>?
     private let reportJunkActionsTarget: Binding<ActionsTarget?>?
     private let reportedForPhishingMessage: Binding<Message?>?
@@ -224,7 +224,7 @@ enum ActionsTarget: Equatable, Identifiable {
 
     init(mailboxManager: MailboxManager,
          target: ActionsTarget,
-         moveSheet: MoveSheet? = nil,
+         moveAction: Binding<MoveAction?>? = nil,
          messageReply: Binding<MessageReply?>? = nil,
          reportJunkActionsTarget: Binding<ActionsTarget?>? = nil,
          reportedForPhishingMessage: Binding<Message?>? = nil,
@@ -233,7 +233,7 @@ enum ActionsTarget: Equatable, Identifiable {
          completionHandler: (() -> Void)? = nil) {
         self.mailboxManager = mailboxManager
         self.target = target.freeze()
-        self.moveSheet = moveSheet
+        self.moveAction = moveAction
         self.messageReply = messageReply
         self.reportJunkActionsTarget = reportJunkActionsTarget
         self.reportedForPhishingMessage = reportedForPhishingMessage
@@ -424,11 +424,7 @@ enum ActionsTarget: Equatable, Identifiable {
             folderId = message.folderId
         }
 
-        moveSheet?.state = .move(folderId: folderId) { folder in
-            Task {
-                try await self.move(to: folder)
-            }
-        }
+        moveAction?.wrappedValue = MoveAction(fromFolderId: folderId, target: target)
     }
 
     private func postpone() {
