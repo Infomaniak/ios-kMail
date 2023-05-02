@@ -52,7 +52,6 @@ struct ThreadListView: View {
     @AppStorage(UserDefaults.shared.key(.accentColor)) private var accentColor = DefaultPreferences.accentColor
 
     @State private var isShowingComposeNewMessageView = false
-    @StateObject var moveSheet: MoveSheet
     @StateObject private var networkMonitor = NetworkMonitor()
     @Binding private var editedMessageDraft: Draft?
     @Binding private var messageReply: MessageReply?
@@ -81,10 +80,8 @@ struct ThreadListView: View {
         let moveEmailSheet = MoveSheet()
         _editedMessageDraft = editedMessageDraft
         _messageReply = messageReply
-        _moveSheet = StateObject(wrappedValue: moveEmailSheet)
         _viewModel = StateObject(wrappedValue: ThreadListViewModel(mailboxManager: mailboxManager,
                                                                    folder: folder,
-                                                                   moveSheet: moveEmailSheet,
                                                                    isCompact: isCompact))
         _multipleSelectionViewModel =
             StateObject(wrappedValue: ThreadListMultipleSelectionViewModel(mailboxManager: mailboxManager))
@@ -201,9 +198,6 @@ struct ThreadListView: View {
             matomo.track(eventWithCategory: .newMessage, name: "openFromFab")
             isShowingComposeNewMessageView.toggle()
         }
-        .actionsPanel(actionsTarget: $viewModel.actionsTarget) {
-            multipleSelectionViewModel.isEnabled = false
-        }
         .onAppear {
             networkMonitor.start()
             viewModel.selectedThread = nil
@@ -229,11 +223,6 @@ struct ThreadListView: View {
         }
         .sheet(isPresented: $isShowingComposeNewMessageView) {
             ComposeMessageView.newMessage(mailboxManager: viewModel.mailboxManager)
-        }
-        .sheet(isPresented: $moveSheet.isShowing) {
-            if case .move(let folderId, let handler) = moveSheet.state {
-                MoveEmailView.sheetView(from: folderId, moveHandler: handler)
-            }
         }
         .customAlert(item: $flushAlert) { item in
             FlushFolderAlertView(flushAlert: item, folder: viewModel.folder)

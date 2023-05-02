@@ -99,7 +99,6 @@ class DateSection: Identifiable {
 
     @Published var isLoadingPage = false
     @Published var lastUpdate: Date?
-    @Published var actionsTarget: ActionsTarget?
 
     // Used to know thread location
     private var selectedThreadIndex: Int?
@@ -110,8 +109,6 @@ class DateSection: Identifiable {
             selectedThreadIndex = index
         }
     }
-
-    let moveSheet: MoveSheet
 
     var scrollViewProxy: ScrollViewProxy?
     var isCompact: Bool
@@ -147,13 +144,11 @@ class DateSection: Identifiable {
     init(
         mailboxManager: MailboxManager,
         folder: Folder,
-        moveSheet: MoveSheet,
         isCompact: Bool
     ) {
         self.mailboxManager = mailboxManager
         self.folder = folder
         lastUpdate = folder.lastUpdate
-        self.moveSheet = moveSheet
         self.isCompact = isCompact
         observeChanges()
     }
@@ -283,56 +278,5 @@ class DateSection: Identifiable {
 
             return newSections
         }
-    }
-
-    // MARK: - Swipe actions
-
-    func handleSwipeAction(_ action: SwipeAction, thread: Thread) async throws {
-        switch action {
-        case .delete:
-            try await mailboxManager.moveOrDelete(threads: [thread])
-        case .archive:
-            try await move(thread: thread, to: .archive)
-        case .readUnread:
-            try await mailboxManager.toggleRead(threads: [thread])
-        case .move:
-            moveSheet.state = .move(folderId: folder.id) { folder in
-                guard thread.folder != folder else { return }
-                Task {
-                    try await self.move(thread: thread, to: folder)
-                }
-            }
-        case .favorite:
-            try await mailboxManager.toggleStar(threads: [thread])
-        case .postPone:
-            // TODO: Report action
-            showWorkInProgressSnackBar()
-        case .spam:
-            try await toggleSpam(thread: thread)
-        case .quickAction:
-            actionsTarget = .threads([thread.thaw() ?? thread], false)
-        case .none:
-            break
-        case .moveToInbox:
-            try await move(thread: thread, to: .inbox)
-        }
-    }
-
-    private func toggleSpam(thread: Thread) async throws {
-        let destination: FolderRole = folder.role == .spam ? .inbox : .spam
-        try await move(thread: thread, to: destination)
-    }
-
-    private func move(thread: Thread, to folderRole: FolderRole) async throws {
-        guard let folder = mailboxManager.getFolder(with: folderRole)?.freeze() else { return }
-        try await move(thread: thread, to: folder)
-    }
-
-    private func move(thread: Thread, to folder: Folder) async throws {
-        let response = try await mailboxManager.move(threads: [thread], to: folder)
-        IKSnackBar.showCancelableSnackBar(message: MailResourcesStrings.Localizable.snackbarThreadMoved(folder.localizedName),
-                                          cancelSuccessMessage: MailResourcesStrings.Localizable.snackbarMoveCancelled,
-                                          undoRedoAction: response,
-                                          mailboxManager: mailboxManager)
     }
 }

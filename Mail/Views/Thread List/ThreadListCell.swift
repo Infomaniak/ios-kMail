@@ -28,8 +28,8 @@ struct ThreadListCell: View {
 
     let thread: Thread
 
-    @ObservedObject var viewModel: ThreadListViewModel
-    @ObservedObject var multipleSelectionViewModel: ThreadListMultipleSelectionViewModel
+    let viewModel: ThreadListViewModel
+    let multipleSelectionViewModel: ThreadListMultipleSelectionViewModel
 
     let threadDensity: ThreadDensity
 
@@ -103,7 +103,6 @@ struct ThreadListCell_Previews: PreviewProvider {
             thread: PreviewHelper.sampleThread,
             viewModel: ThreadListViewModel(mailboxManager: PreviewHelper.sampleMailboxManager,
                                            folder: PreviewHelper.sampleFolder,
-                                           moveSheet: MoveSheet(),
                                            isCompact: false),
             multipleSelectionViewModel: ThreadListMultipleSelectionViewModel(mailboxManager: PreviewHelper.sampleMailboxManager),
             threadDensity: .large,
