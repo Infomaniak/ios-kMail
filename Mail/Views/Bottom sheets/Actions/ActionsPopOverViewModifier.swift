@@ -30,12 +30,13 @@ struct ActionsPopOverViewModifier: ViewModifier {
     @EnvironmentObject private var mailboxManager: MailboxManager
     @EnvironmentObject private var navigationStore: NavigationStore
 
-    @StateObject private var moveSheet = MoveSheet()
-
-    @Binding var actionsTarget: ActionsTarget?
     @State var reportJunkActionsTarget: ActionsTarget?
     @State var reportedForPhishingMessage: Message?
     @State var reportedForDisplayProblemMessage: Message?
+
+    @StateObject private var moveSheet = MoveSheet()
+
+    @Binding var actionsTarget: ActionsTarget?
 
     var completionHandler: (() -> Void)?
 

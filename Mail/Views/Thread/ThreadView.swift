@@ -33,25 +33,20 @@ private struct ScrollOffsetPreferenceKey: PreferenceKey {
 }
 
 struct ThreadView: View {
+    @LazyInjectService private var matomo: MatomoUtils
+
+    @Environment(\.isCompactWindow) private var isCompactWindow
+    @Environment(\.dismiss) private var dismiss
+
     @EnvironmentObject private var splitViewManager: SplitViewManager
     @EnvironmentObject private var mailboxManager: MailboxManager
     @EnvironmentObject private var navigationStore: NavigationStore
-
-    @Environment(\.horizontalSizeClass) private var sizeClass
-    @Environment(\.verticalSizeClass) private var verticalSizeClass
-    @Environment(\.dismiss) var dismiss
-
-    @ObservedRealmObject var thread: Thread
 
     @State private var headerHeight: CGFloat = 0
     @State private var displayNavigationTitle = false
     @State private var replyOrReplyAllMessage: Message?
 
-    var isCompact: Bool {
-        sizeClass == .compact || verticalSizeClass == .compact
-    }
-
-    @LazyInjectService private var matomo: MatomoUtils
+    @ObservedRealmObject var thread: Thread
 
     private let toolbarActions: [Action] = [.reply, .forward, .archive, .delete]
 
@@ -112,7 +107,11 @@ struct ThreadView: View {
                             didTap(action: action)
                         }
                         .adaptivePanel(item: $replyOrReplyAllMessage) { message in
-                            ReplyActionsView(mailboxManager: mailboxManager, message: message, messageReply: $navigationStore.messageReply)
+                            ReplyActionsView(
+                                mailboxManager: mailboxManager,
+                                message: message,
+                                messageReply: $navigationStore.messageReply
+                            )
                         }
                     } else {
                         ToolbarButton(text: action.title, icon: action.icon) {
@@ -130,7 +129,7 @@ struct ThreadView: View {
         }
         .onChange(of: thread.messages) { newMessagesList in
             if newMessagesList.isEmpty || thread.messageInFolderCount == 0 {
-                if isCompact {
+                if isCompactWindow {
                     dismiss() // For iPhone
                 } else {
                     navigationStore.threadPath = [] // For iPad

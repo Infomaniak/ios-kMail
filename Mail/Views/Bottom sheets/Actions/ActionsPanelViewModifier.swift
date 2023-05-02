@@ -30,12 +30,13 @@ struct ActionsPanelViewModifier: ViewModifier {
     @EnvironmentObject private var mailboxManager: MailboxManager
     @EnvironmentObject private var navigationStore: NavigationStore
 
+    @State private var reportJunkActionsTarget: ActionsTarget?
+    @State private var reportedForPhishingMessage: Message?
+    @State private var reportedForDisplayProblemMessage: Message?
+
     @StateObject private var moveSheet = MoveSheet()
 
     @Binding var actionsTarget: ActionsTarget?
-    @State var reportJunkActionsTarget: ActionsTarget?
-    @State var reportedForPhishingMessage: Message?
-    @State var reportedForDisplayProblemMessage: Message?
 
     var completionHandler: (() -> Void)?
 

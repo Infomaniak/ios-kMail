@@ -25,16 +25,17 @@ import RealmSwift
 import SwiftUI
 
 struct MessageHeaderView: View {
+    @LazyInjectService private var matomo: MatomoUtils
+
     @EnvironmentObject private var navigationStore: NavigationStore
     @EnvironmentObject private var mailboxManager: MailboxManager
 
     @State private var editedDraft: Draft?
 
     @ObservedRealmObject var message: Message
+
     @Binding var isHeaderExpanded: Bool
     @Binding var isMessageExpanded: Bool
-
-    @LazyInjectService private var matomo: MatomoUtils
 
     var body: some View {
         VStack(spacing: 12) {
