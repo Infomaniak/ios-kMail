@@ -37,6 +37,8 @@ public extension String {
 
     func parseMessageIds() -> [String] {
         let string = removePrefix("<").removeSuffix(">")
+        guard !string.isEmpty else { return [] }
+
         let modString = Constants.referenceRegex.stringByReplacingMatches(
             in: string,
             range: NSRange(location: 0, length: string.count),
