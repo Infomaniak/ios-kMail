@@ -130,7 +130,7 @@ struct ThreadListSwipeActions: ViewModifier {
                 .swipeActions(edge: .trailing) {
                     edgeActions([swipeFullTrailing, swipeTrailing])
                 }
-                .adaptiveActions(item: $actionsTarget)
+                .actionsPanel(actionsTarget: $actionsTarget)
                 .sheet(isPresented: $moveSheet.isShowing) {
                     if case .move(let folderId, let handler) = moveSheet.state {
                         MoveEmailView.sheetView(from: folderId, moveHandler: handler)

@@ -41,32 +41,31 @@ struct ActionsPanelViewModifier: ViewModifier {
     var completionHandler: (() -> Void)?
 
     func body(content: Content) -> some View {
-        content
-            .floatingPanel(item: $actionsTarget) { target in
-                ActionsView(mailboxManager: mailboxManager,
-                            target: target,
-                            moveSheet: moveSheet,
-                            messageReply: $navigationStore.messageReply,
-                            reportJunkActionsTarget: $reportJunkActionsTarget,
-                            reportedForDisplayProblemMessage: $reportedForDisplayProblemMessage) {
-                    completionHandler?()
-                }
+        content.adaptivePanel(item: $actionsTarget) { target in
+            ActionsView(mailboxManager: mailboxManager,
+                        target: target,
+                        moveSheet: moveSheet,
+                        messageReply: $navigationStore.messageReply,
+                        reportJunkActionsTarget: $reportJunkActionsTarget,
+                        reportedForDisplayProblemMessage: $reportedForDisplayProblemMessage) {
+                completionHandler?()
             }
-            .sheet(isPresented: $moveSheet.isShowing) {
-                if case .move(let folderId, let handler) = moveSheet.state {
-                    MoveEmailView.sheetView(from: folderId, moveHandler: handler)
-                }
+        }
+        .sheet(isPresented: $moveSheet.isShowing) {
+            if case .move(let folderId, let handler) = moveSheet.state {
+                MoveEmailView.sheetView(from: folderId, moveHandler: handler)
             }
-            .floatingPanel(item: $reportJunkActionsTarget) { target in
-                ReportJunkView(mailboxManager: mailboxManager,
-                               target: target,
-                               reportedForPhishingMessage: $reportedForPhishingMessage)
-            }
-            .customAlert(item: $reportedForPhishingMessage) { message in
-                ReportPhishingView(message: message)
-            }
-            .customAlert(item: $reportedForDisplayProblemMessage) { message in
-                ReportDisplayProblemView(message: message)
-            }
+        }
+        .floatingPanel(item: $reportJunkActionsTarget) { target in
+            ReportJunkView(mailboxManager: mailboxManager,
+                           target: target,
+                           reportedForPhishingMessage: $reportedForPhishingMessage)
+        }
+        .customAlert(item: $reportedForPhishingMessage) { message in
+            ReportPhishingView(message: message)
+        }
+        .customAlert(item: $reportedForDisplayProblemMessage) { message in
+            ReportDisplayProblemView(message: message)
+        }
     }
 }

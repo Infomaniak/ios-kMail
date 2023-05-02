@@ -32,16 +32,6 @@ struct ActionsPanelButton<Content: View>: View {
     @ViewBuilder var label: () -> Content
 
     var body: some View {
-        if isCompactWindow {
-            buttonBody
-                .actionsPanel(actionsTarget: $actionsTarget)
-        } else {
-            buttonBody
-                .actionsPopOver(actionsTarget: $actionsTarget)
-        }
-    }
-
-    var buttonBody: some View {
         Button {
             if let message {
                 actionsTarget = .message(message)
@@ -53,5 +43,6 @@ struct ActionsPanelButton<Content: View>: View {
         } label: {
             label()
         }
+        .actionsPanel(actionsTarget: $actionsTarget)
     }
 }

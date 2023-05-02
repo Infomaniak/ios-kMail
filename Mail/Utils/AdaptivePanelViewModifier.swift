@@ -45,23 +45,3 @@ struct AdaptivePanelViewModifier<Item: Identifiable, PanelContent: View>: ViewMo
         }
     }
 }
-
-extension View {
-    func adaptiveActions(item: Binding<ActionsTarget?>) -> some View {
-        return modifier(AdaptiveActionsViewModifier(item: item))
-    }
-}
-
-struct AdaptiveActionsViewModifier: ViewModifier {
-    @Environment(\.isCompactWindow) private var isCompactWindow
-
-    @Binding var item: ActionsTarget?
-
-    func body(content: Content) -> some View {
-        if isCompactWindow {
-            content.actionsPanel(actionsTarget: $item)
-        } else {
-            content.actionsPopOver(actionsTarget: $item)
-        }
-    }
-}
