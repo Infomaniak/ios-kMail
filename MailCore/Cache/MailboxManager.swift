@@ -342,10 +342,9 @@ public class MailboxManager: ObservableObject {
             messages.append(contentsOf: messages.flatMap(\.duplicates))
             try await markAsSeen(messages: messages, seen: true)
         } else {
-            var messages = threads.compactMap { thread in
-                thread.messages.last { $0.isDraft == false }
+            let messages = threads.flatMap { thread in
+                thread.lastMessageAndItsDuplicateToExecuteAction()
             }
-            messages.append(contentsOf: messages.flatMap(\.duplicates))
             try await markAsSeen(messages: messages, seen: false)
         }
     }
@@ -406,10 +405,9 @@ public class MailboxManager: ObservableObject {
 
     public func toggleStar(threads: [Thread]) async throws {
         if threads.contains(where: { !$0.flagged }) {
-            var messages = threads.compactMap { thread in
-                thread.messages.last { $0.isDraft == false }
+            let messages = threads.flatMap { thread in
+                thread.lastMessageAndItsDuplicateToExecuteAction()
             }
-            messages.append(contentsOf: messages.flatMap(\.duplicates))
             _ = try await star(messages: messages)
         } else {
             var messages = threads.flatMap { thread in
@@ -911,7 +909,7 @@ public class MailboxManager: ObservableObject {
                                                              "messageId": message.messageId,
                                                              "date": message.date,
                                                              "seen": message.seen,
-                                                             "duplicates": message.duplicates.compactMap {$0.messageId},
+                                                             "duplicates": message.duplicates.compactMap { $0.messageId },
                                                              "references": message.references],
                                                  "Seen": ["Expected": seen, "Actual": liveMessage.seen],
                                                  "Folder": ["id": message.folder?._id,
