@@ -163,15 +163,14 @@ extension View {
     }
 }
 
-/*
- struct ThreadListSwipeAction_Previews: PreviewProvider {
-     static var previews: some View {
-         SwipeActionView(thread: PreviewHelper.sampleThread,
-                         viewModel: ThreadListViewModel(mailboxManager: PreviewHelper.sampleMailboxManager,
-                                                        folder: PreviewHelper.sampleFolder,
-                                                        moveSheet: MoveSheet(),
-                                                        isCompact: false),
-                         action: .delete)
-     }
- }
- */
+struct ThreadListSwipeAction_Previews: PreviewProvider {
+    static var previews: some View {
+        SwipeActionView(moveSheet: MoveSheet(),
+                        actionsTarget: .constant(nil),
+                        thread: PreviewHelper.sampleThread,
+                        viewModel: ThreadListViewModel(mailboxManager: PreviewHelper.sampleMailboxManager,
+                                                       folder: PreviewHelper.sampleFolder,
+                                                       isCompact: false),
+                        action: .delete)
+    }
+}
