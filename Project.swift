@@ -65,7 +65,8 @@ let project = Project(name: "Mail",
                                      "MailResources/**/*.strings",
                                      "MailResources/**/*.stringsdict",
                                      "MailResources/**/*.json",
-                                     "MailResources/**/*.css"
+                                     "MailResources/**/*.css",
+                                     "MailResources/**/*.js"
                                  ],
                                  entitlements: "MailResources/Mail.entitlements",
                                  scripts: [
@@ -140,7 +141,8 @@ let project = Project(name: "Mail",
                                   "MailResources/**/*.strings",
                                   "MailResources/**/*.stringsdict",
                                   "MailResources/**/*.json",
-                                  "MailResources/**/*.css"
+                                  "MailResources/**/*.css",
+                                  "MailResources/**/*.js"
                               ],
                               settings: .settings(base: baseSettings)
                           ),
