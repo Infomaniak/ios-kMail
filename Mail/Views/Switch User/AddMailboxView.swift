@@ -50,6 +50,7 @@ struct AddMailboxView: View {
             TextField(MailResourcesStrings.Localizable.attachAddressInputHint, text: $newAddress)
                 .focused($focusedField, equals: .mailAddress)
                 .textContentType(.emailAddress)
+                .keyboardType(.emailAddress)
                 .autocorrectionDisabled()
                 .padding(12)
                 .overlay {

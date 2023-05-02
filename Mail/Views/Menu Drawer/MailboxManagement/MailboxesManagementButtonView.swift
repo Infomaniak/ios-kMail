@@ -61,7 +61,7 @@ struct MailboxesManagementButtonView: View {
 
                 switch style {
                 case .menuDrawer:
-                    if let detailNumber = detailNumber {
+                    if let detailNumber {
                         Text(detailNumber < 100 ? "\(detailNumber)" : "99+")
                             .textStyle(.bodySmallMediumAccent)
                     }
