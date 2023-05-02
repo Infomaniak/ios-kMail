@@ -30,7 +30,6 @@ struct MessageHeaderSummaryView: View {
     @Binding var isHeaderExpanded: Bool
     let deleteDraftTapped: () -> Void
     let replyButtonTapped: () -> Void
-    let moreButtonTapped: () -> Void
     let recipientTapped: (Recipient) -> Void
 
     @LazyInjectService private var matomo: MatomoUtils
@@ -107,7 +106,7 @@ struct MessageHeaderSummaryView: View {
                             .scaledToFit()
                             .frame(width: 20, height: 20)
                     }
-                    Button(action: moreButtonTapped) {
+                    ActionsPanelButton(message: message) {
                         MailResourcesAsset.plusActions.swiftUIImage
                             .resizable()
                             .scaledToFit()
@@ -129,8 +128,6 @@ struct MessageHeaderSummaryView_Previews: PreviewProvider {
                 // Preview
             } replyButtonTapped: {
                 // Preview
-            } moreButtonTapped: {
-                // Preview
             } recipientTapped: { _ in
                 // Preview
             }
@@ -139,8 +136,6 @@ struct MessageHeaderSummaryView_Previews: PreviewProvider {
                                      isHeaderExpanded: .constant(false)) {
                 // Preview
             } replyButtonTapped: {
-                // Preview
-            } moreButtonTapped: {
                 // Preview
             } recipientTapped: { _ in
                 // Preview

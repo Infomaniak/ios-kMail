@@ -38,8 +38,6 @@ struct ThreadListCell: View {
 
     @Binding var editedMessageDraft: Draft?
 
-    @State private var shouldNavigateToThreadList = false
-
     private var selectionType: SelectionBackgroundKind {
         if multipleSelectionViewModel.isEnabled {
             return isMultiSelected ? .multiple : .none

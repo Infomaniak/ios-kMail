@@ -38,7 +38,7 @@ struct ThreadView: View {
     @EnvironmentObject private var navigationStore: NavigationStore
 
     @Environment(\.horizontalSizeClass) private var sizeClass
-    @Environment(\.verticalSizeClass) var verticalSizeClass
+    @Environment(\.verticalSizeClass) private var verticalSizeClass
     @Environment(\.dismiss) var dismiss
 
     @ObservedRealmObject var thread: Thread
@@ -46,7 +46,6 @@ struct ThreadView: View {
     @State private var headerHeight: CGFloat = 0
     @State private var displayNavigationTitle = false
     @State private var replyOrReplyAllMessage: Message?
-    @State private var actionsTarget: ActionsTarget?
 
     var isCompact: Bool {
         sizeClass == .compact || verticalSizeClass == .compact
@@ -114,13 +113,12 @@ struct ThreadView: View {
                     .disabled(action == .archive && thread.folder?.role == .archive)
                     Spacer()
                 }
-                ToolbarButton(text: MailResourcesStrings.Localizable.buttonMore,
-                              icon: MailResourcesAsset.plusActions.swiftUIImage) {
-                    actionsTarget = .threads([thread], false)
+                ActionsPanelButton(threads: [thread]) {
+                    ToolbarButtonLabel(text: MailResourcesStrings.Localizable.buttonMore,
+                                       icon: MailResourcesAsset.plusActions.swiftUIImage)
                 }
             }
         }
-        .actionsPanel(actionsTarget: $actionsTarget)
         .floatingPanel(item: $replyOrReplyAllMessage) { message in
             ReplyActionsView(mailboxManager: mailboxManager, message: message, messageReply: $navigationStore.messageReply)
         }

@@ -30,7 +30,6 @@ struct MessageHeaderView: View {
     @State private var editedDraft: Draft?
     @State private var contactViewRecipient: Recipient?
     @State private var replyOrReplyAllMessage: Message?
-    @State private var actionsTarget: ActionsTarget?
 
     @ObservedRealmObject var message: Message
     @Binding var isHeaderExpanded: Bool
@@ -52,8 +51,6 @@ struct MessageHeaderView: View {
                 } else {
                     navigationStore.messageReply = MessageReply(message: message, replyMode: .reply)
                 }
-            } moreButtonTapped: {
-                actionsTarget = .message(message)
             } recipientTapped: { recipient in
                 contactViewRecipient = recipient
             }
@@ -82,7 +79,6 @@ struct MessageHeaderView: View {
         .floatingPanel(item: $contactViewRecipient) { recipient in
             ContactActionsView(recipient: recipient)
         }
-        .actionsPanel(actionsTarget: $actionsTarget)
         .floatingPanel(item: $replyOrReplyAllMessage) { message in
             ReplyActionsView(mailboxManager: mailboxManager, message: message, messageReply: $navigationStore.messageReply)
         }

@@ -365,9 +365,10 @@ private struct ThreadListToolbar: ViewModifier {
                                 .disabled(action == .archive && splitViewManager.selectedFolder?.role == .archive)
                             }
 
-                            ToolbarButton(text: MailResourcesStrings.Localizable.buttonMore,
-                                          icon: MailResourcesAsset.plusActions.swiftUIImage) {
-                                viewModel.actionsTarget = .threads(Array(multipleSelectionViewModel.selectedItems), true)
+                            ActionsPanelButton(threads: Array(multipleSelectionViewModel.selectedItems),
+                                               isMultiSelectionEnabled: true) {
+                                ToolbarButtonLabel(text: MailResourcesStrings.Localizable.buttonMore,
+                                                   icon: MailResourcesAsset.plusActions.swiftUIImage)
                             }
                         }
                         .disabled(multipleSelectionViewModel.selectedItems.isEmpty)
