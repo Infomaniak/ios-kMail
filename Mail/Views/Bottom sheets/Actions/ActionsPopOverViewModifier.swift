@@ -53,6 +53,7 @@ struct ActionsPopOverViewModifier: ViewModifier {
                     }
                     .padding(.vertical)
                 }
+                .frame(idealWidth: 400)
             }
             .sheet(isPresented: $moveSheet.isShowing) {
                 if case .move(let folderId, let handler) = moveSheet.state {

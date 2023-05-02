@@ -22,8 +22,7 @@ import MailResources
 import SwiftUI
 
 struct ActionsPanelButton<Content: View>: View {
-    @Environment(\.horizontalSizeClass) private var horizontalSizeClass
-    @Environment(\.verticalSizeClass) private var verticalSizeClass
+    @Environment(\.isCompactWindow) private var isCompactWindow
 
     @State private var actionsTarget: ActionsTarget?
 
@@ -32,12 +31,8 @@ struct ActionsPanelButton<Content: View>: View {
     var isMultiSelectionEnabled = false
     @ViewBuilder var label: () -> Content
 
-    var isCompact: Bool {
-        horizontalSizeClass == .compact || verticalSizeClass == .compact
-    }
-
     var body: some View {
-        if isCompact {
+        if isCompactWindow {
             buttonBody
                 .actionsPanel(actionsTarget: $actionsTarget)
         } else {

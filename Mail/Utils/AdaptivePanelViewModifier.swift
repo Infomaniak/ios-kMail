@@ -26,18 +26,13 @@ extension View {
 }
 
 struct AdaptivePanelViewModifier<Item: Identifiable, PanelContent: View>: ViewModifier {
-    @Environment(\.horizontalSizeClass) private var horizontalSizeClass
-    @Environment(\.verticalSizeClass) private var verticalSizeClass
-
-    private var isCompact: Bool {
-        horizontalSizeClass == .compact || verticalSizeClass == .compact
-    }
+    @Environment(\.isCompactWindow) private var isCompactWindow
 
     @Binding var item: Item?
     @ViewBuilder var panelContent: (Item) -> PanelContent
 
     func body(content: Content) -> some View {
-        if isCompact {
+        if isCompactWindow {
             content.floatingPanel(item: $item) { item in
                 panelContent(item)
             }
@@ -45,6 +40,7 @@ struct AdaptivePanelViewModifier<Item: Identifiable, PanelContent: View>: ViewMo
             content.popover(item: $item) { item in
                 panelContent(item)
                     .padding()
+                    .frame(idealWidth: 400)
             }
         }
     }

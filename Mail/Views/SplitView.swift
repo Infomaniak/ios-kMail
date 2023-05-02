@@ -36,18 +36,19 @@ public class SplitViewManager: ObservableObject {
 }
 
 struct SplitView: View {
-    var mailboxManager: MailboxManager
-    @State var splitViewController: UISplitViewController?
-    @StateObject private var navigationDrawerController = NavigationDrawerState()
-    @StateObject private var navigationStore = NavigationStore()
-
     @Environment(\.horizontalSizeClass) var horizontalSizeClass
     @Environment(\.verticalSizeClass) var verticalSizeClass
     @Environment(\.window) var window
 
+    @State var splitViewController: UISplitViewController?
+
+    @StateObject private var navigationDrawerController = NavigationDrawerState()
+    @StateObject private var navigationStore = NavigationStore()
     @StateObject private var splitViewManager: SplitViewManager
 
-    var isCompact: Bool {
+    let mailboxManager: MailboxManager
+
+    private var isCompact: Bool {
         UIConstants.isCompact(horizontalSizeClass: horizontalSizeClass, verticalSizeClass: verticalSizeClass)
     }
 
@@ -124,6 +125,7 @@ struct SplitView: View {
             splitViewController.preferredDisplayMode = .twoDisplaceSecondary
         }
         .environment(\.realmConfiguration, mailboxManager.realmConfiguration)
+        .environment(\.isCompactWindow, horizontalSizeClass == .compact || verticalSizeClass == .compact)
         .environmentObject(mailboxManager)
         .environmentObject(splitViewManager)
         .environmentObject(navigationDrawerController)

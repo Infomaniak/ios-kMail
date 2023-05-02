@@ -29,3 +29,14 @@ public extension EnvironmentValues {
         set { self[WindowKey.self] = newValue }
     }
 }
+
+public struct CompactWindowKey: EnvironmentKey {
+    public static let defaultValue = true
+}
+
+public extension EnvironmentValues {
+    var isCompactWindow: CompactWindowKey.Value {
+        get { return self[CompactWindowKey.self] }
+        set { self[CompactWindowKey.self] = newValue }
+    }
+}
