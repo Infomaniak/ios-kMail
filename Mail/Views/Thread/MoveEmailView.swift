@@ -46,8 +46,6 @@ struct MoveEmailView: View {
     @ObservedResults(Folder.self, where: { $0.role != .draft && $0.toolType == nil }) var folders
     @State private var isShowingCreateFolderAlert = false
 
-    @LazyInjectService private var matomo: MatomoUtils
-
     private var filteredFolders: [NestableFolder] {
         guard !searchFilter.isEmpty else {
             return NestableFolder.createFoldersHierarchy(from: Array(folders.where { $0.parents.count == 0 }))
@@ -61,8 +59,6 @@ struct MoveEmailView: View {
 
     @State private var searchFilter = ""
 
-    let currentFolderId: String?
-    let moveHandler: MoveEmailView.MoveHandler
     let moveAction: MoveAction
 
     var body: some View {
