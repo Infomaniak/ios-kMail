@@ -133,8 +133,14 @@ public class MailboxManager: ObservableObject {
         }
     }
 
+    public func updateSignature(signature: Signature) async throws {
+        _ = try await apiFetcher.updateSignature(mailbox: mailbox, signature: signature)
+        try await signatures()
+    }
+
     public func getSignatureResponse(using realm: Realm? = nil) -> SignatureResponse? {
         let realm = realm ?? getRealm()
+        realm.refresh()
         return realm.object(ofType: SignatureResponse.self, forPrimaryKey: 1)
     }
 

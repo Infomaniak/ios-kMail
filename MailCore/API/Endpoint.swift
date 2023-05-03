@@ -86,6 +86,10 @@ public extension Endpoint {
         return .baseManager.appending(path: "/\(hostingId)/mailboxes/\(mailboxName)/signatures")
     }
 
+    static func updateSignature(hostingId: Int, mailboxName: String, signatureId: Int) -> Endpoint {
+        return .signatures(hostingId: hostingId, mailboxName: mailboxName).appending(path: "/\(signatureId)")
+    }
+
     static func folders(uuid: String) -> Endpoint {
         return .mailbox(uuid: uuid).appending(path: "/folder")
     }

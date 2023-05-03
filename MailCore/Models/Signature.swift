@@ -19,13 +19,13 @@
 import Foundation
 import RealmSwift
 
-public enum SignaturePosition: String, PersistableEnum, Decodable {
+public enum SignaturePosition: String, PersistableEnum, Codable {
     case beforeReplyMessage = "top"
     case afterReplyMessage = "bottom"
 }
 
-public class SignatureResponse: Object, Decodable {
-    @Persisted(primaryKey: true) public var id: Int = 1
+public class SignatureResponse: Object, Decodable, Identifiable {
+    @Persisted(primaryKey: true) public var id = 1
     @Persisted public var signatures: List<Signature>
     @Persisted public var defaultSignatureId: Int
     @Persisted public var validEmails: List<ValidEmail>
@@ -40,7 +40,7 @@ public class SignatureResponse: Object, Decodable {
     }
 }
 
-public class Signature: Object, Decodable {
+public class Signature: Object, Codable, Identifiable {
     @Persisted(primaryKey: true) public var id: Int
     @Persisted public var name: String
     @Persisted public var content: String
