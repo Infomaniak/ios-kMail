@@ -16,11 +16,21 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import Alamofire
 import Foundation
 import InfomaniakCore
 import MailResources
 
 extension ApiError: CustomStringConvertible {}
+
+struct AFErrorWithContext: LocalizedError {
+    let request: DataRequest
+    let afError: AFError
+
+    public var errorDescription: String? {
+        return MailError.unknownError.errorDescription
+    }
+}
 
 public enum MailError: LocalizedError {
     case apiError(ApiError)

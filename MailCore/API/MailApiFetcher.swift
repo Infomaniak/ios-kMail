@@ -45,8 +45,8 @@ public class MailApiFetcher: ApiFetcher {
         } catch InfomaniakError.serverError(statusCode: let statusCode) {
             throw MailError.serverError(statusCode: statusCode)
         } catch {
-            if let afError = error.asAFError,
-               case .responseSerializationFailed(let reason) = afError,
+            if let afError = error.asAFError {
+                if case .responseSerializationFailed(let reason) = afError,
                case .decodingFailed(let error) = reason {
                 var rawJson = "No data"
                 if let data = request.data,
@@ -60,8 +60,11 @@ public class MailApiFetcher: ApiFetcher {
                                      "Raw JSON": rawJson])
                 }
             }
+                throw AFErrorWithContext(request: request, afError: afError)
+            } else {
             throw error
         }
+    }
     }
 
     // MARK: - API methods
