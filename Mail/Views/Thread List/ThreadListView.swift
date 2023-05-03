@@ -257,6 +257,7 @@ private struct ThreadListToolbar: ViewModifier {
     @ObservedObject var multipleSelectionViewModel: ThreadListMultipleSelectionViewModel
 
     @State private var isShowingSwitchAccount = false
+    @State private var multipleSelectionActionsTarget: ActionsTarget?
 
     @EnvironmentObject var splitViewManager: SplitViewManager
     @EnvironmentObject var navigationDrawerState: NavigationDrawerState
@@ -347,14 +348,20 @@ private struct ThreadListToolbar: ViewModifier {
                                 .disabled(action == .archive && splitViewManager.selectedFolder?.role == .archive)
                             }
 
-                            ActionsPanelButton(threads: Array(multipleSelectionViewModel.selectedItems),
-                                               isMultiSelectionEnabled: true) {
-                                ToolbarButtonLabel(text: MailResourcesStrings.Localizable.buttonMore,
-                                                   icon: MailResourcesAsset.plusActions.swiftUIImage)
+                            ToolbarButton(
+                                text: MailResourcesStrings.Localizable.buttonMore,
+                                icon: MailResourcesAsset.plusActions.swiftUIImage
+                            ) {
+                                multipleSelectionActionsTarget = .threads(Array(multipleSelectionViewModel.selectedItems), true)
                             }
                         }
                         .disabled(multipleSelectionViewModel.selectedItems.isEmpty)
                     }
+                }
+            }
+            .actionsPanel(actionsTarget: $multipleSelectionActionsTarget) {
+                withAnimation {
+                    multipleSelectionViewModel.isEnabled = false
                 }
             }
             .navigationTitle(
