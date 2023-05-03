@@ -34,8 +34,10 @@ struct SettingsView: View {
                     .textStyle(.bodySmallSecondary)
 
                 ForEach(AccountManager.instance.mailboxes) { mailbox in
-                    SettingsSubMenuCell(title: mailbox.email) {
-                        MailboxSettingsView(mailbox: mailbox)
+                    if let mailboxManager = AccountManager.instance.getMailboxManager(for: mailbox) {
+                        SettingsSubMenuCell(title: mailbox.email) {
+                            MailboxSettingsView(mailboxManager: mailboxManager)
+                        }
                     }
                 }
 

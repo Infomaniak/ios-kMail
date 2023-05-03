@@ -22,7 +22,7 @@ import MailResources
 import SwiftUI
 
 struct MailboxSettingsView: View {
-    let mailbox: Mailbox
+    let mailboxManager: MailboxManager
 
     var body: some View {
         ScrollView {
@@ -31,12 +31,12 @@ struct MailboxSettingsView: View {
                     .textStyle(.bodySmallSecondary)
 
                 SettingsSubMenuCell(title: MailResourcesStrings.Localizable.settingsMailboxGeneralSignature) {
-                    MailboxSignatureSettingsView()
+                    MailboxSignatureSettingsView(mailboxManager: mailboxManager)
                 }
             }
             .padding(.horizontal, 16)
         }
-        .navigationTitle(mailbox.email)
+        .navigationTitle(mailboxManager.mailbox.email)
         .navigationBarTitleDisplayMode(.inline)
         .backButtonDisplayMode(.minimal)
         .matomoView(view: [MatomoUtils.View.settingsView.displayName, "Mailbox"])
@@ -45,6 +45,6 @@ struct MailboxSettingsView: View {
 
 struct MailboxSettingsView_Previews: PreviewProvider {
     static var previews: some View {
-        MailboxSettingsView(mailbox: PreviewHelper.sampleMailbox)
+        MailboxSettingsView(mailboxManager: PreviewHelper.sampleMailboxManager)
     }
 }

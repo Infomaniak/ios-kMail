@@ -23,8 +23,13 @@ import RealmSwift
 import SwiftUI
 
 struct MailboxSignatureSettingsView: View {
-    @EnvironmentObject var mailboxManager: MailboxManager
-    @ObservedResults(SignatureResponse.self) var signatureResponse
+    @ObservedResults<SignatureResponse> var signatureResponse: Results<SignatureResponse>
+    let mailboxManager: MailboxManager
+
+    init(mailboxManager: MailboxManager) {
+        self.mailboxManager = mailboxManager
+        _signatureResponse = ObservedResults(SignatureResponse.self, configuration: mailboxManager.realmConfiguration)
+    }
 
     var body: some View {
         List {
@@ -66,6 +71,13 @@ struct MailboxSignatureSettingsView: View {
         .navigationBarTitleDisplayMode(.inline)
         .backButtonDisplayMode(.minimal)
         .matomoView(view: [MatomoUtils.View.settingsView.displayName, "Signatures"])
+        .task {
+            do {
+                try await mailboxManager.signatures()
+            } catch {
+                print("error: \(error)")
+            }
+        }
     }
 
     private func setAsDefault(_ signature: Signature) {
@@ -80,6 +92,6 @@ struct MailboxSignatureSettingsView: View {
 
 struct MailboxSignatureSettingsView_Previews: PreviewProvider {
     static var previews: some View {
-        MailboxSignatureSettingsView()
+        MailboxSignatureSettingsView(mailboxManager: PreviewHelper.sampleMailboxManager)
     }
 }
