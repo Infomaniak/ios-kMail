@@ -106,8 +106,8 @@ struct MoveEmailView: View {
             FolderCell(folder: nestableFolder, currentFolderId: moveAction.fromFolderId) { folder in
                 Task {
                     try await move(to: folder)
-                    NotificationCenter.default.post(Notification(name: Constants.dismissMoveSheetNotificationName))
                 }
+                NotificationCenter.default.post(Notification(name: Constants.dismissMoveSheetNotificationName))
             }
         }
     }
