@@ -16,6 +16,7 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import CocoaLumberjackSwift
 import InfomaniakCoreUI
 import MailCore
 import MailResources
@@ -75,7 +76,7 @@ struct MailboxSignatureSettingsView: View {
             do {
                 try await mailboxManager.signatures()
             } catch {
-                print("error: \(error)")
+                DDLogError("Error fetching signatures: \(error.localizedDescription)")
             }
         }
     }
