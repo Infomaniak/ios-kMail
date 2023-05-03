@@ -317,7 +317,7 @@ enum ActionsTarget: Equatable, Identifiable {
         case .replyAll:
             try await reply(mode: .replyAll)
         case .archive:
-            try await move(to: .archive)
+            try await ActionUtils(actionsTarget: target, mailboxManager: mailboxManager).move(to: .archive)
         case .forward:
             try await reply(mode: .forward)
         case .markAsRead, .markAsUnread:
@@ -331,9 +331,9 @@ enum ActionsTarget: Equatable, Identifiable {
         case .reportJunk:
             displayReportJunk()
         case .spam:
-            try await move(to: .spam)
+            try await ActionUtils(actionsTarget: target, mailboxManager: mailboxManager).move(to: .spam)
         case .nonSpam:
-            try await move(to: .inbox)
+            try await ActionUtils(actionsTarget: target, mailboxManager: mailboxManager).move(to: .inbox)
         case .block:
             try await block()
         case .phishing:
@@ -345,38 +345,11 @@ enum ActionsTarget: Equatable, Identifiable {
         case .editMenu:
             editMenu()
         case .moveToInbox:
-            try await move(to: .inbox)
+            try await ActionUtils(actionsTarget: target, mailboxManager: mailboxManager).move(to: .inbox)
         default:
             print("Warning: Unhandled action!")
         }
         completionHandler?()
-    }
-
-    private func move(to folder: Folder) async throws {
-        let undoRedoAction: UndoRedoAction
-        let snackBarMessage: String
-        switch target {
-        case .threads(let threads, _):
-            guard threads.first?.folder != folder else { return }
-            undoRedoAction = try await mailboxManager.move(threads: threads, to: folder)
-            snackBarMessage = MailResourcesStrings.Localizable.snackbarThreadsMoved(folder.localizedName)
-        case .message(let message):
-            guard message.folderId != folder.id else { return }
-            var messages = [message]
-            messages.append(contentsOf: message.duplicates)
-            undoRedoAction = try await mailboxManager.move(messages: messages, to: folder)
-            snackBarMessage = MailResourcesStrings.Localizable.snackbarMessageMoved(folder.localizedName)
-        }
-
-        IKSnackBar.showCancelableSnackBar(message: snackBarMessage,
-                                          cancelSuccessMessage: MailResourcesStrings.Localizable.snackbarMoveCancelled,
-                                          undoRedoAction: undoRedoAction,
-                                          mailboxManager: mailboxManager)
-    }
-
-    private func move(to folderRole: FolderRole) async throws {
-        guard let folder = mailboxManager.getFolder(with: folderRole)?.freeze() else { return }
-        try await move(to: folder)
     }
 
     // MARK: - Actions methods

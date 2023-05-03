@@ -75,39 +75,18 @@ struct MoveEmailView: View {
         .customAlert(isPresented: $isShowingCreateFolderAlert) {
             CreateFolderView(mode: .move { newFolder in
                 Task {
-                    try await move(to: newFolder)
+                    try await ActionUtils(actionsTarget: moveAction.target, mailboxManager: mailboxManager).move(to: newFolder)
                 }
+                dismissModal()
             })
         }
-    }
-
-    private func move(to folder: Folder) async throws {
-        let undoRedoAction: UndoRedoAction
-        let snackBarMessage: String
-        switch moveAction.target {
-        case .threads(let threads, _):
-            guard threads.first?.folder != folder else { return }
-            undoRedoAction = try await mailboxManager.move(threads: threads, to: folder)
-            snackBarMessage = MailResourcesStrings.Localizable.snackbarThreadsMoved(folder.localizedName)
-        case .message(let message):
-            guard message.folderId != folder.id else { return }
-            var messages = [message]
-            messages.append(contentsOf: message.duplicates)
-            undoRedoAction = try await mailboxManager.move(messages: messages, to: folder)
-            snackBarMessage = MailResourcesStrings.Localizable.snackbarMessageMoved(folder.localizedName)
-        }
-
-        IKSnackBar.showCancelableSnackBar(message: snackBarMessage,
-                                          cancelSuccessMessage: MailResourcesStrings.Localizable.snackbarMoveCancelled,
-                                          undoRedoAction: undoRedoAction,
-                                          mailboxManager: mailboxManager)
     }
 
     private func listOfFolders(nestableFolders: [NestableFolder]) -> some View {
         ForEach(nestableFolders) { nestableFolder in
             FolderCell(folder: nestableFolder, currentFolderId: moveAction.fromFolderId) { folder in
                 Task {
-                    try await move(to: folder)
+                    try await ActionUtils(actionsTarget: moveAction.target, mailboxManager: mailboxManager).move(to: folder)
                 }
                 dismissModal()
             }
