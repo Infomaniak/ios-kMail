@@ -50,11 +50,10 @@ struct MoveEmailView: View {
         guard !searchFilter.isEmpty else {
             return NestableFolder.createFoldersHierarchy(from: Array(folders.where { $0.parents.count == 0 }))
         }
-        let filteredFolders = folders.filter {
+        return folders.filter {
             let filter = searchFilter.folding(options: [.caseInsensitive, .diacriticInsensitive], locale: .current)
             return $0.verifyFilter(filter)
-        }
-        return filteredFolders.map { NestableFolder(content: $0, children: []) }
+        }.map { NestableFolder(content: $0, children: []) }
     }
 
     @State private var searchFilter = ""
