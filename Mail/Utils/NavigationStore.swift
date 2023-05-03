@@ -16,19 +16,11 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import Foundation
 import SwiftUI
+import MailCore
 
-class BottomSheetState<State>: ObservableObject {
-    @Published var isOpen = false
-    @Published private(set) var state: State?
-
-    func open(state: State) {
-        self.state = state
-        isOpen = true
-    }
-
-    func close() {
-        state = nil
-        isOpen = false
-    }
+class NavigationStore: ObservableObject {
+    @Published var messageReply: MessageReply?
+    @Published var threadPath = [Thread]()
 }

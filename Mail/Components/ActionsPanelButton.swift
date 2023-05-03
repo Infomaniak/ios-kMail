@@ -16,34 +16,33 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import CocoaLumberjackSwift
 import MailCore
 import MailResources
 import SwiftUI
 
-struct SheetView<Content>: View where Content: View {
-    @Environment(\.dismiss) private var dismiss
+struct ActionsPanelButton<Content: View>: View {
+    @Environment(\.isCompactWindow) private var isCompactWindow
 
-    @ViewBuilder let content: Content
+    @State private var actionsTarget: ActionsTarget?
+
+    var message: Message?
+    var threads: [Thread]?
+    var isMultiSelectionEnabled = false
+    @ViewBuilder var label: () -> Content
 
     var body: some View {
-        NavigationView {
-            content
-                .navigationBarItems(leading: Button {
-                    dismiss()
-                } label: {
-                    Label(MailResourcesStrings.Localizable.buttonClose, systemImage: "xmark")
-                })
+        Button {
+            if let message {
+                actionsTarget = .message(message)
+            } else if let threads {
+                actionsTarget = .threads(threads, isMultiSelectionEnabled)
+            } else {
+                DDLogWarn("MoreButton has no action target, did you forget to set message or threads ?")
+            }
+        } label: {
+            label()
         }
-        .onReceive(NotificationCenter.default.publisher(for: Constants.dismissMoveSheetNotificationName)) { _ in
-            dismiss()
-        }
-    }
-}
-
-struct SheetView_Previews: PreviewProvider {
-    static var previews: some View {
-        SheetView {
-            EmptyView()
-        }
+        .actionsPanel(actionsTarget: $actionsTarget)
     }
 }

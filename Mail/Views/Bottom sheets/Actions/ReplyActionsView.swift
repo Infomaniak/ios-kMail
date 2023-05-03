@@ -22,21 +22,17 @@ import MailCore
 import SwiftUI
 
 struct ReplyActionsView: View {
-    @ObservedObject var viewModel: ActionsViewModel
+    @StateObject var viewModel: ActionsViewModel
 
     var quickActions: [Action] = [.reply, .replyAll]
 
     init(mailboxManager: MailboxManager,
-         target: ActionsTarget,
-         state: ThreadBottomSheet,
-         globalSheet: GlobalBottomSheet,
-         replyHandler: @escaping (Message, ReplyMode) -> Void) {
-        viewModel = ActionsViewModel(mailboxManager: mailboxManager,
-                                     target: target,
-                                     state: state,
-                                     globalSheet: globalSheet,
-                                     matomoCategory: .replyBottomSheet,
-                                     replyHandler: replyHandler)
+         message: Message,
+         messageReply: Binding<MessageReply?>?) {
+        _viewModel = StateObject(wrappedValue: ActionsViewModel(mailboxManager: mailboxManager,
+                                                               target: .message(message),
+                                                               messageReply: messageReply,
+                                                               matomoCategory: .replyBottomSheet))
     }
 
     var body: some View {
@@ -56,9 +52,8 @@ struct ReplyActionsView: View {
 struct ReplyActionsView_Previews: PreviewProvider {
     static var previews: some View {
         ReplyActionsView(mailboxManager: PreviewHelper.sampleMailboxManager,
-                         target: .threads([PreviewHelper.sampleThread], false),
-                         state: ThreadBottomSheet(),
-                         globalSheet: GlobalBottomSheet()) { _, _ in /* Preview */ }
+                         message: PreviewHelper.sampleMessage,
+                         messageReply: nil)
             .accentColor(AccentColor.pink.primary.swiftUIColor)
     }
 }

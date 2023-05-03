@@ -25,12 +25,11 @@ import SwiftUI
 
 struct ThreadListCell: View {
     @EnvironmentObject var splitViewManager: SplitViewManager
-    @Environment(\.mailNavigationPath) private var path
 
     let thread: Thread
 
-    @ObservedObject var viewModel: ThreadListViewModel
-    @ObservedObject var multipleSelectionViewModel: ThreadListMultipleSelectionViewModel
+    let viewModel: ThreadListViewModel
+    let multipleSelectionViewModel: ThreadListMultipleSelectionViewModel
 
     let threadDensity: ThreadDensity
 
@@ -38,8 +37,6 @@ struct ThreadListCell: View {
     let isMultiSelected: Bool
 
     @Binding var editedMessageDraft: Draft?
-
-    @State private var shouldNavigateToThreadList = false
 
     private var selectionType: SelectionBackgroundKind {
         if multipleSelectionViewModel.isEnabled {
@@ -106,8 +103,6 @@ struct ThreadListCell_Previews: PreviewProvider {
             thread: PreviewHelper.sampleThread,
             viewModel: ThreadListViewModel(mailboxManager: PreviewHelper.sampleMailboxManager,
                                            folder: PreviewHelper.sampleFolder,
-                                           bottomSheet: ThreadBottomSheet(),
-                                           moveSheet: MoveSheet(),
                                            isCompact: false),
             multipleSelectionViewModel: ThreadListMultipleSelectionViewModel(mailboxManager: PreviewHelper.sampleMailboxManager),
             threadDensity: .large,

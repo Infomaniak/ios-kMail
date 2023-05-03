@@ -32,41 +32,21 @@ private struct ScrollOffsetPreferenceKey: PreferenceKey {
     }
 }
 
-class MessageBottomSheet: DisplayedFloatingPanelState<MessageBottomSheet.State> {
-    enum State: Equatable {
-        case contact(Recipient, isRemote: Bool)
-        case replyOption(Message, isThread: Bool)
-    }
-}
-
 struct ThreadView: View {
-    @EnvironmentObject private var splitViewManager: SplitViewManager
-    @Environment(\.mailNavigationPath) private var path
-    @EnvironmentObject private var mailboxManager: MailboxManager
+    @LazyInjectService private var matomo: MatomoUtils
 
-    @ObservedRealmObject var thread: Thread
+    @Environment(\.isCompactWindow) private var isCompactWindow
+    @Environment(\.dismiss) private var dismiss
+
+    @EnvironmentObject private var splitViewManager: SplitViewManager
+    @EnvironmentObject private var mailboxManager: MailboxManager
+    @EnvironmentObject private var navigationStore: NavigationStore
 
     @State private var headerHeight: CGFloat = 0
     @State private var displayNavigationTitle = false
-    @State private var messageReply: MessageReply?
+    @State private var replyOrReplyAllMessage: Message?
 
-    @StateObject private var moveSheet = MoveSheet()
-    @StateObject private var bottomSheet = MessageBottomSheet()
-    @StateObject private var threadBottomSheet = ThreadBottomSheet()
-
-    @State private var showEmptyView = false
-
-    @EnvironmentObject var globalBottomSheet: GlobalBottomSheet
-    @EnvironmentObject var globalAlert: GlobalAlert
-    @Environment(\.horizontalSizeClass) private var sizeClass
-    @Environment(\.verticalSizeClass) private var verticalSizeClass
-    @Environment(\.dismiss) var dismiss
-
-    var isCompact: Bool {
-        sizeClass == .compact || verticalSizeClass == .compact
-    }
-
-    @LazyInjectService private var matomo: MatomoUtils
+    @ObservedRealmObject var thread: Thread
 
     private let toolbarActions: [Action] = [.reply, .forward, .archive, .delete]
 
@@ -122,70 +102,37 @@ struct ThreadView: View {
             }
             ToolbarItemGroup(placement: .bottomBar) {
                 ForEach(toolbarActions) { action in
-                    ToolbarButton(text: action.title, icon: action.icon) {
-                        didTap(action: action)
+                    if action == .reply {
+                        ToolbarButton(text: action.title, icon: action.icon) {
+                            didTap(action: action)
+                        }
+                        .adaptivePanel(item: $replyOrReplyAllMessage) { message in
+                            ReplyActionsView(
+                                mailboxManager: mailboxManager,
+                                message: message,
+                                messageReply: $navigationStore.messageReply
+                            )
+                        }
+                    } else {
+                        ToolbarButton(text: action.title, icon: action.icon) {
+                            didTap(action: action)
+                        }
+                        .disabled(action == .archive && thread.folder?.role == .archive)
                     }
-                    .disabled(action == .archive && thread.folder?.role == .archive)
                     Spacer()
                 }
-                ToolbarButton(text: MailResourcesStrings.Localizable.buttonMore,
-                              icon: MailResourcesAsset.plusActions.swiftUIImage) {
-                    threadBottomSheet.open(state: .actions(.threads([thread.thaw() ?? thread], false)))
-                }
-            }
-        }
-        .environmentObject(mailboxManager)
-        .environmentObject(bottomSheet)
-        .environmentObject(threadBottomSheet)
-        .sheet(item: $messageReply) { messageReply in
-            ComposeMessageView.replyOrForwardMessage(messageReply: messageReply, mailboxManager: mailboxManager)
-        }
-        .sheet(isPresented: $moveSheet.isShowing) {
-            if case .move(let folderId, let handler) = moveSheet.state {
-                MoveEmailView.sheetView(mailboxManager: mailboxManager, from: folderId, moveHandler: handler)
-            }
-        }
-        .floatingPanel(state: bottomSheet) {
-            switch bottomSheet.state {
-            case .contact(let recipient, let isRemote):
-                ContactActionsView(
-                    recipient: recipient,
-                    isRemoteContact: isRemote,
-                    bottomSheet: bottomSheet,
-                    mailboxManager: mailboxManager
-                )
-            case .replyOption(let message, let isThread):
-                ReplyActionsView(
-                    mailboxManager: mailboxManager,
-                    target: isThread ? .threads([thread], false) : .message(message),
-                    state: threadBottomSheet,
-                    globalSheet: globalBottomSheet
-                ) { message, replyMode in
-                    bottomSheet.close()
-                    messageReply = MessageReply(message: message, replyMode: replyMode)
-                }
-            case .none:
-                EmptyView()
-            }
-        }
-        .floatingPanel(state: threadBottomSheet, halfOpening: true) {
-            if case .actions(let target) = threadBottomSheet.state, !target.isInvalidated {
-                ActionsView(mailboxManager: mailboxManager,
-                            target: target,
-                            state: threadBottomSheet,
-                            globalSheet: globalBottomSheet,
-                            globalAlert: globalAlert,
-                            moveSheet: moveSheet) { message, replyMode in
-                    messageReply = MessageReply(message: message, replyMode: replyMode)
+                ActionsPanelButton(threads: [thread]) {
+                    ToolbarButtonLabel(text: MailResourcesStrings.Localizable.buttonMore,
+                                       icon: MailResourcesAsset.plusActions.swiftUIImage)
                 }
             }
         }
         .onChange(of: thread.messages) { newMessagesList in
             if newMessagesList.isEmpty || thread.messageInFolderCount == 0 {
-                if isCompact {
+                if isCompactWindow {
                     dismiss() // For iPhone
                 } else {
-                    path?.wrappedValue = [] // For iPad
+                    navigationStore.threadPath = [] // For iPad
                 }
             }
         }
@@ -200,13 +147,13 @@ struct ThreadView: View {
         case .reply:
             guard let message = thread.messages.last else { return }
             if message.canReplyAll {
-                bottomSheet.open(state: .replyOption(message, isThread: true))
+                replyOrReplyAllMessage = message
             } else {
-                messageReply = MessageReply(message: message, replyMode: .reply)
+                navigationStore.messageReply = MessageReply(message: message, replyMode: .reply)
             }
         case .forward:
             guard let message = thread.messages.last else { return }
-            messageReply = MessageReply(message: message, replyMode: .forward)
+            navigationStore.messageReply = MessageReply(message: message, replyMode: .forward)
         case .archive:
             Task {
                 await tryOrDisplayError {

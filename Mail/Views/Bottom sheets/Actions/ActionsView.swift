@@ -23,30 +23,28 @@ import MailResources
 import SwiftUI
 
 struct ActionsView: View {
-    @ObservedObject var viewModel: ActionsViewModel
+    @StateObject var viewModel: ActionsViewModel
 
     init(mailboxManager: MailboxManager,
          target: ActionsTarget,
-         state: ThreadBottomSheet,
-         globalSheet: GlobalBottomSheet,
-         globalAlert: GlobalAlert? = nil,
-         moveSheet: MoveSheet? = nil,
-         replyHandler: ((Message, ReplyMode) -> Void)? = nil,
+         moveAction: Binding<MoveAction?>? = nil,
+         messageReply: Binding<MessageReply?>? = nil,
+         reportJunkActionsTarget: Binding<ActionsTarget?>? = nil,
+         reportedForDisplayProblemMessage: Binding<Message?>? = nil,
          completionHandler: (() -> Void)? = nil) {
         var matomoCategory = MatomoUtils.EventCategory.bottomSheetMessageActions
         if case .threads = target {
             matomoCategory = .bottomSheetThreadActions
         }
 
-        viewModel = ActionsViewModel(mailboxManager: mailboxManager,
-                                     target: target,
-                                     state: state,
-                                     globalSheet: globalSheet,
-                                     globalAlert: globalAlert,
-                                     moveSheet: moveSheet,
-                                     matomoCategory: matomoCategory,
-                                     replyHandler: replyHandler,
-                                     completionHandler: completionHandler)
+        _viewModel = StateObject(wrappedValue: ActionsViewModel(mailboxManager: mailboxManager,
+                                                                target: target,
+                                                                moveAction: moveAction,
+                                                                messageReply: messageReply,
+                                                                reportJunkActionsTarget: reportJunkActionsTarget,
+                                                                reportedForDisplayProblemMessage: reportedForDisplayProblemMessage,
+                                                                matomoCategory: matomoCategory,
+                                                                completionHandler: completionHandler))
     }
 
     var body: some View {
@@ -76,16 +74,13 @@ struct ActionsView: View {
 
 struct ActionsView_Previews: PreviewProvider {
     static var previews: some View {
-        ActionsView(mailboxManager: PreviewHelper.sampleMailboxManager,
-                    target: .threads([PreviewHelper.sampleThread], false),
-                    state: ThreadBottomSheet(),
-                    globalSheet: GlobalBottomSheet(),
-                    globalAlert: GlobalAlert()) { _, _ in /* Preview */ }
+        ActionsView(mailboxManager: PreviewHelper.sampleMailboxManager, target: .threads([PreviewHelper.sampleThread], false))
             .accentColor(AccentColor.pink.primary.swiftUIColor)
     }
 }
 
 struct QuickActionView: View {
+    @Environment(\.dismiss) var dismiss
     @ObservedObject var viewModel: ActionsViewModel
     let action: Action
 
@@ -93,6 +88,7 @@ struct QuickActionView: View {
 
     var body: some View {
         Button {
+            dismiss()
             Task {
                 await tryOrDisplayError {
                     try await viewModel.didTap(action: action)
@@ -122,6 +118,7 @@ struct QuickActionView: View {
 }
 
 struct ActionView: View {
+    @Environment(\.dismiss) var dismiss
     @ObservedObject var viewModel: ActionsViewModel
     let action: Action
 
@@ -129,6 +126,7 @@ struct ActionView: View {
 
     var body: some View {
         Button {
+            dismiss()
             Task {
                 await tryOrDisplayError {
                     try await viewModel.didTap(action: action)

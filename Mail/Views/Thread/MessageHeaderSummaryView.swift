@@ -25,13 +25,18 @@ import RealmSwift
 import SwiftUI
 
 struct MessageHeaderSummaryView: View {
+    @EnvironmentObject private var mailboxManager: MailboxManager
+    @EnvironmentObject private var navigationStore: NavigationStore
+
     @ObservedRealmObject var message: Message
+
+    @State private var replyOrReplyAllMessage: Message?
+    @State private var contactViewRecipient: Recipient?
+
     @Binding var isMessageExpanded: Bool
     @Binding var isHeaderExpanded: Bool
+
     let deleteDraftTapped: () -> Void
-    let replyButtonTapped: () -> Void
-    let moreButtonTapped: () -> Void
-    let recipientTapped: (Recipient) -> Void
 
     @LazyInjectService private var matomo: MatomoUtils
 
@@ -41,9 +46,12 @@ struct MessageHeaderSummaryView: View {
                 if let recipient = message.from.first {
                     Button {
                         matomo.track(eventWithCategory: .message, name: "selectAvatar")
-                        recipientTapped(recipient)
+                        contactViewRecipient = recipient
                     } label: {
                         AvatarView(avatarDisplayable: recipient, size: 40)
+                    }
+                    .adaptivePanel(item: $contactViewRecipient) { recipient in
+                        ContactActionsView(recipient: recipient)
                     }
                 }
 
@@ -101,13 +109,26 @@ struct MessageHeaderSummaryView: View {
 
             if isMessageExpanded {
                 HStack(spacing: 20) {
-                    Button(action: replyButtonTapped) {
+                    Button {
+                        matomo.track(eventWithCategory: .messageActions, name: "reply")
+                        if message.canReplyAll {
+                            replyOrReplyAllMessage = message
+                        } else {
+                            navigationStore.messageReply = MessageReply(message: message, replyMode: .reply)
+                        }
+
+                    } label: {
                         MailResourcesAsset.emailActionReply.swiftUIImage
                             .resizable()
                             .scaledToFit()
                             .frame(width: 20, height: 20)
                     }
-                    Button(action: moreButtonTapped) {
+                    .adaptivePanel(item: $replyOrReplyAllMessage) { message in
+                        ReplyActionsView(mailboxManager: mailboxManager,
+                                         message: message,
+                                         messageReply: $navigationStore.messageReply)
+                    }
+                    ActionsPanelButton(message: message) {
                         MailResourcesAsset.plusActions.swiftUIImage
                             .resizable()
                             .scaledToFit()
@@ -127,22 +148,10 @@ struct MessageHeaderSummaryView_Previews: PreviewProvider {
                                      isMessageExpanded: .constant(false),
                                      isHeaderExpanded: .constant(false)) {
                 // Preview
-            } replyButtonTapped: {
-                // Preview
-            } moreButtonTapped: {
-                // Preview
-            } recipientTapped: { _ in
-                // Preview
             }
             MessageHeaderSummaryView(message: PreviewHelper.sampleMessage,
                                      isMessageExpanded: .constant(true),
                                      isHeaderExpanded: .constant(false)) {
-                // Preview
-            } replyButtonTapped: {
-                // Preview
-            } moreButtonTapped: {
-                // Preview
-            } recipientTapped: { _ in
                 // Preview
             }
         }

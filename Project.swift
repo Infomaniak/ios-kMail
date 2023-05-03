@@ -44,12 +44,12 @@ let project = Project(name: "Mail",
                           .package(url: "https://github.com/Ambrdctr/SQRichTextEditor", .branch("master")),
                           .package(url: "https://github.com/markiv/SwiftUI-Shimmer", .upToNextMajor(from: "1.0.1")),
                           .package(url: "https://github.com/dkk/WrappingHStack", .upToNextMajor(from: "2.0.0")),
-                          .package(url: "https://github.com/SCENEE/FloatingPanel", .upToNextMajor(from: "2.0.0")),
                           .package(url: "https://github.com/kean/Nuke", .upToNextMajor(from: "12.0.0")),
                           .package(url: "https://github.com/airbnb/lottie-ios", .exact("3.5.0")),
                           .package(url: "https://github.com/valentinperignon/SwiftSoup", .branch("try-headcleaner")),
                           .package(url: "https://github.com/johnpatrickmorgan/NavigationBackport", .upToNextMajor(from: "0.7.2")),
-                          .package(url: "https://github.com/aheze/Popovers", .upToNextMajor(from: "1.3.2"))
+                          .package(url: "https://github.com/aheze/Popovers", .upToNextMajor(from: "1.3.2")),
+                          .package(url: "https://github.com/shaps80/SwiftUIBackports", .upToNextMajor(from: "1.15.1"))
                       ],
                       targets: [
                           Target(name: "Mail",
@@ -78,10 +78,10 @@ let project = Project(name: "Mail",
                                      .package(product: "SQRichTextEditor"),
                                      .package(product: "Shimmer"),
                                      .package(product: "WrappingHStack"),
-                                     .package(product: "FloatingPanel"),
                                      .package(product: "Lottie"),
                                      .package(product: "NavigationBackport"),
-                                     .package(product: "Popovers")
+                                     .package(product: "Popovers"),
+                                     .package(product: "SwiftUIBackports")
                                  ],
                                  settings: .settings(base: baseSettings),
                                  environment: ["hostname": "\(ProcessInfo.processInfo.hostName)."]),

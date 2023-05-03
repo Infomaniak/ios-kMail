@@ -48,7 +48,6 @@ struct ThreadListManagerView: View {
                         mailboxManager: mailboxManager,
                         folder: selectedFolder,
                         editedMessageDraft: $editedMessageDraft,
-                        messageReply: $messageReply,
                         isCompact: isCompact
                     )
                 } else {
@@ -79,9 +78,6 @@ struct ThreadListManagerView: View {
         .animation(.easeInOut(duration: 0.25), value: splitViewManager.showSearch)
         .sheet(item: $editedMessageDraft) { draft in
             ComposeMessageView.editDraft(draft: draft, mailboxManager: mailboxManager)
-        }
-        .sheet(item: $messageReply) { messageReply in
-            ComposeMessageView.replyOrForwardMessage(messageReply: messageReply, mailboxManager: mailboxManager)
         }
     }
 }

@@ -173,7 +173,16 @@ struct Action: Identifiable, Equatable {
     }
 }
 
-enum ActionsTarget: Equatable {
+enum ActionsTarget: Equatable, Identifiable {
+    var id: String {
+        switch self {
+        case .threads(let threads, let isMultiSelectionEnabled):
+            return threads.map { $0.id }.joined()
+        case .message(let message):
+            return message.uid
+        }
+    }
+
     case threads([Thread], Bool)
     case message(Message)
 
@@ -199,11 +208,11 @@ enum ActionsTarget: Equatable {
 @MainActor class ActionsViewModel: ObservableObject {
     private let mailboxManager: MailboxManager
     private let target: ActionsTarget
-    private let state: ThreadBottomSheet
-    private let globalSheet: GlobalBottomSheet
-    private let globalAlert: GlobalAlert?
-    private let moveSheet: MoveSheet?
-    private let replyHandler: ((Message, ReplyMode) -> Void)?
+    private let moveAction: Binding<MoveAction?>?
+    private let messageReply: Binding<MessageReply?>?
+    private let reportJunkActionsTarget: Binding<ActionsTarget?>?
+    private let reportedForPhishingMessage: Binding<Message?>?
+    private let reportedForDisplayProblemMessage: Binding<Message?>?
     private let completionHandler: (() -> Void)?
 
     private let matomoCategory: MatomoUtils.EventCategory?
@@ -215,20 +224,20 @@ enum ActionsTarget: Equatable {
 
     init(mailboxManager: MailboxManager,
          target: ActionsTarget,
-         state: ThreadBottomSheet,
-         globalSheet: GlobalBottomSheet,
-         globalAlert: GlobalAlert? = nil,
-         moveSheet: MoveSheet? = nil,
+         moveAction: Binding<MoveAction?>? = nil,
+         messageReply: Binding<MessageReply?>? = nil,
+         reportJunkActionsTarget: Binding<ActionsTarget?>? = nil,
+         reportedForPhishingMessage: Binding<Message?>? = nil,
+         reportedForDisplayProblemMessage: Binding<Message?>? = nil,
          matomoCategory: MatomoUtils.EventCategory? = nil,
-         replyHandler: ((Message, ReplyMode) -> Void)? = nil,
          completionHandler: (() -> Void)? = nil) {
         self.mailboxManager = mailboxManager
         self.target = target.freeze()
-        self.state = state
-        self.globalSheet = globalSheet
-        self.globalAlert = globalAlert
-        self.moveSheet = moveSheet
-        self.replyHandler = replyHandler
+        self.moveAction = moveAction
+        self.messageReply = messageReply
+        self.reportJunkActionsTarget = reportJunkActionsTarget
+        self.reportedForPhishingMessage = reportedForPhishingMessage
+        self.reportedForDisplayProblemMessage = reportedForDisplayProblemMessage
         self.completionHandler = completionHandler
         self.matomoCategory = matomoCategory
         setActions()
@@ -289,8 +298,6 @@ enum ActionsTarget: Equatable {
     }
 
     func didTap(action: Action) async throws {
-        state.close()
-        globalSheet.close()
         if let matomoCategory, let matomoName = action.matomoName {
             if case .threads(let threads, let isMultipleSelectionEnabled) = target, isMultipleSelectionEnabled {
                 matomo.trackBulkEvent(
@@ -310,7 +317,7 @@ enum ActionsTarget: Equatable {
         case .replyAll:
             try await reply(mode: .replyAll)
         case .archive:
-            try await move(to: .archive)
+            try await ActionUtils(actionsTarget: target, mailboxManager: mailboxManager).move(to: .archive)
         case .forward:
             try await reply(mode: .forward)
         case .markAsRead, .markAsUnread:
@@ -324,9 +331,9 @@ enum ActionsTarget: Equatable {
         case .reportJunk:
             displayReportJunk()
         case .spam:
-            try await move(to: .spam)
+            try await ActionUtils(actionsTarget: target, mailboxManager: mailboxManager).move(to: .spam)
         case .nonSpam:
-            try await move(to: .inbox)
+            try await ActionUtils(actionsTarget: target, mailboxManager: mailboxManager).move(to: .inbox)
         case .block:
             try await block()
         case .phishing:
@@ -334,42 +341,15 @@ enum ActionsTarget: Equatable {
         case .print:
             printAction()
         case .report:
-            report()
+            reportDisplayProblem()
         case .editMenu:
             editMenu()
         case .moveToInbox:
-            try await move(to: .inbox)
+            try await ActionUtils(actionsTarget: target, mailboxManager: mailboxManager).move(to: .inbox)
         default:
             print("Warning: Unhandled action!")
         }
         completionHandler?()
-    }
-
-    private func move(to folder: Folder) async throws {
-        let undoRedoAction: UndoRedoAction
-        let snackBarMessage: String
-        switch target {
-        case .threads(let threads, _):
-            guard threads.first?.folder != folder else { return }
-            undoRedoAction = try await mailboxManager.move(threads: threads, to: folder)
-            snackBarMessage = MailResourcesStrings.Localizable.snackbarThreadsMoved(folder.localizedName)
-        case .message(let message):
-            guard message.folderId != folder.id else { return }
-            var messages = [message]
-            messages.append(contentsOf: message.duplicates)
-            undoRedoAction = try await mailboxManager.move(messages: messages, to: folder)
-            snackBarMessage = MailResourcesStrings.Localizable.snackbarMessageMoved(folder.localizedName)
-        }
-
-        IKSnackBar.showCancelableSnackBar(message: snackBarMessage,
-                                          cancelSuccessMessage: MailResourcesStrings.Localizable.snackbarMoveCancelled,
-                                          undoRedoAction: undoRedoAction,
-                                          mailboxManager: mailboxManager)
-    }
-
-    private func move(to folderRole: FolderRole) async throws {
-        guard let folder = mailboxManager.getFolder(with: folderRole)?.freeze() else { return }
-        try await move(to: folder)
     }
 
     // MARK: - Actions methods
@@ -384,14 +364,21 @@ enum ActionsTarget: Equatable {
     }
 
     private func reply(mode: ReplyMode) async throws {
+        var displayedMessageReply: MessageReply?
         switch target {
         case .threads(let threads, _):
             // We don't handle this action in multiple selection
             guard threads.count == 1, let thread = threads.first,
                   let message = thread.lastMessageToExecuteAction() else { break }
-            replyHandler?(message, mode)
+            displayedMessageReply = MessageReply(message: message, replyMode: mode)
         case .message(let message):
-            replyHandler?(message, mode)
+            displayedMessageReply = MessageReply(message: message, replyMode: mode)
+        }
+        // FIXME: There seems to be a bug where SwiftUI looses the "context" and attempts to present
+        // the view controller before waiting for the dismiss of the first one if we use a closure
+        // (this "fix" is temporary)
+        DispatchQueue.main.async { [weak self] in
+            self?.messageReply?.wrappedValue = displayedMessageReply
         }
     }
 
@@ -413,10 +400,8 @@ enum ActionsTarget: Equatable {
             folderId = message.folderId
         }
 
-        moveSheet?.state = .move(folderId: folderId) { folder in
-            Task {
-                try await self.move(to: folder)
-            }
+        DispatchQueue.main.async { [weak self, target] in
+            self?.moveAction?.wrappedValue = MoveAction(fromFolderId: folderId, target: target)
         }
     }
 
@@ -443,7 +428,7 @@ enum ActionsTarget: Equatable {
     }
 
     private func displayReportJunk() {
-        globalSheet.open(state: .reportJunk(threadBottomSheet: state, target: target))
+        reportJunkActionsTarget?.wrappedValue = target
     }
 
     private func block() async throws {
@@ -458,7 +443,9 @@ enum ActionsTarget: Equatable {
     private func phishing() async throws {
         // This action is only available on a single message
         guard case .message(let message) = target else { return }
-        globalAlert?.state = .reportPhishing(message: message)
+        DispatchQueue.main.async { [weak self] in
+            self?.reportedForPhishingMessage?.wrappedValue = message
+        }
     }
 
     private func printAction() {
@@ -466,10 +453,12 @@ enum ActionsTarget: Equatable {
         showWorkInProgressSnackBar()
     }
 
-    private func report() {
+    private func reportDisplayProblem() {
         // This action is only available on a single message
         guard case .message(let message) = target else { return }
-        globalAlert?.state = .reportDisplayProblem(message: message)
+        DispatchQueue.main.async { [weak self] in
+            self?.reportedForDisplayProblemMessage?.wrappedValue = message
+        }
     }
 
     private func editMenu() {

@@ -79,9 +79,8 @@ struct MailboxesManagementView: View {
             }
         }
         .sheet(isPresented: $isShowingSwitchAccount) {
-            SheetView {
-                AccountListView()
-            }
+            AccountListView()
+                .sheetViewStyle()
         }
         .sheet(isPresented: $isShowingManageAccount) {
             AccountView(mailboxes: mailboxes)

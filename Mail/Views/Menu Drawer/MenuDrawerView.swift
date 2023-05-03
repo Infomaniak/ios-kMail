@@ -129,7 +129,6 @@ struct NavigationDrawer: View {
 
 struct MenuDrawerView: View {
     @EnvironmentObject var splitViewManager: SplitViewManager
-    @EnvironmentObject var bottomSheet: GlobalBottomSheet
 
     @StateObject var viewModel: MenuDrawerViewModel
 
@@ -192,16 +191,15 @@ struct MenuDrawerView: View {
         }
         .background(MailResourcesAsset.backgroundSecondaryColor.swiftUIColor.ignoresSafeArea())
         .environment(\.folderCellType, .link)
-        .onAppear {
-            viewModel.createMenuItems(bottomSheet: bottomSheet)
-        }
         .sheet(isPresented: $viewModel.isShowingHelp) {
-            SheetView {
-                HelpView()
-            }
+            HelpView()
+                .sheetViewStyle()
         }
         .sheet(isPresented: $viewModel.isShowingBugTracker) {
             BugTrackerView(isPresented: $viewModel.isShowingBugTracker)
+        }
+        .floatingPanel(isPresented: $viewModel.isShowingRestoreMails) {
+            RestoreEmailsView()
         }
     }
 }
@@ -217,6 +215,5 @@ struct MenuDrawerView_Previews: PreviewProvider {
     static var previews: some View {
         MenuDrawerView(mailboxManager: PreviewHelper.sampleMailboxManager, isCompact: false)
             .environmentObject(NavigationDrawerState())
-            .environmentObject(GlobalBottomSheet())
     }
 }

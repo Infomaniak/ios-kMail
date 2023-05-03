@@ -24,18 +24,6 @@ import MailResources
 import RealmSwift
 import SwiftUI
 
-class ThreadBottomSheet: DisplayedFloatingPanelState<ThreadBottomSheet.State> {
-    enum State: Equatable {
-        case actions(ActionsTarget)
-    }
-}
-
-class MoveSheet: SheetState<MoveSheet.State> {
-    enum State {
-        case move(folderId: String?, moveHandler: MoveEmailView.MoveHandler)
-    }
-}
-
 class FlushAlertState: Identifiable {
     let id = UUID()
     let deletedMessages: Int?
@@ -52,15 +40,12 @@ struct ThreadListView: View {
     @StateObject var multipleSelectionViewModel: ThreadListMultipleSelectionViewModel
 
     @EnvironmentObject var splitViewManager: SplitViewManager
-    @EnvironmentObject var globalBottomSheet: GlobalBottomSheet
-    @Environment(\.mailNavigationPath) private var path
+    @EnvironmentObject var navigationStore: NavigationStore
 
     @AppStorage(UserDefaults.shared.key(.threadDensity)) private var threadDensity = DefaultPreferences.threadDensity
     @AppStorage(UserDefaults.shared.key(.accentColor)) private var accentColor = DefaultPreferences.accentColor
 
     @State private var isShowingComposeNewMessageView = false
-    @StateObject var bottomSheet: ThreadBottomSheet
-    @StateObject var moveSheet: MoveSheet
     @StateObject private var networkMonitor = NetworkMonitor()
     @Binding private var editedMessageDraft: Draft?
     @Binding private var messageReply: MessageReply?
@@ -86,16 +71,10 @@ struct ThreadListView: View {
          editedMessageDraft: Binding<Draft?>,
          messageReply: Binding<MessageReply?>,
          isCompact: Bool) {
-        let threadBottomSheet = ThreadBottomSheet()
-        let moveEmailSheet = MoveSheet()
         _editedMessageDraft = editedMessageDraft
         _messageReply = messageReply
-        _bottomSheet = StateObject(wrappedValue: threadBottomSheet)
-        _moveSheet = StateObject(wrappedValue: moveEmailSheet)
         _viewModel = StateObject(wrappedValue: ThreadListViewModel(mailboxManager: mailboxManager,
                                                                    folder: folder,
-                                                                   bottomSheet: threadBottomSheet,
-                                                                   moveSheet: moveEmailSheet,
                                                                    isCompact: isCompact))
         _multipleSelectionViewModel =
             StateObject(wrappedValue: ThreadListMultipleSelectionViewModel(mailboxManager: mailboxManager))
@@ -200,7 +179,6 @@ struct ThreadListView: View {
         }
         .modifier(ThreadListToolbar(isCompact: isCompact,
                                     flushAlert: $flushAlert,
-                                    bottomSheet: bottomSheet,
                                     viewModel: viewModel,
                                     multipleSelectionViewModel: multipleSelectionViewModel) {
                 withAnimation(.default.speed(2)) {
@@ -213,22 +191,8 @@ struct ThreadListView: View {
             matomo.track(eventWithCategory: .newMessage, name: "openFromFab")
             isShowingComposeNewMessageView.toggle()
         }
-        .floatingPanel(state: bottomSheet, halfOpening: true) {
-            if case let .actions(target) = bottomSheet.state, !target.isInvalidated {
-                ActionsView(mailboxManager: viewModel.mailboxManager,
-                            target: target,
-                            state: bottomSheet,
-                            globalSheet: globalBottomSheet, moveSheet: moveSheet) { message, replyMode in
-                    messageReply = MessageReply(message: message, replyMode: replyMode)
-                } completionHandler: {
-                    bottomSheet.close()
-                    multipleSelectionViewModel.isEnabled = false
-                }
-            }
-        }
         .onAppear {
             networkMonitor.start()
-            viewModel.globalBottomSheet = globalBottomSheet
             viewModel.selectedThread = nil
         }
         .onChange(of: splitViewManager.selectedFolder) { newFolder in
@@ -236,9 +200,9 @@ struct ThreadListView: View {
         }
         .onChange(of: viewModel.selectedThread) { newThread in
             if let newThread {
-                path?.wrappedValue = [newThread]
+                navigationStore.threadPath = [newThread]
             } else {
-                path?.wrappedValue = []
+                navigationStore.threadPath = []
             }
         }
         .onReceive(NotificationCenter.default.publisher(for: UIApplication.willEnterForegroundNotification)) { _ in
@@ -252,11 +216,6 @@ struct ThreadListView: View {
         }
         .sheet(isPresented: $isShowingComposeNewMessageView) {
             ComposeMessageView.newMessage(mailboxManager: viewModel.mailboxManager)
-        }
-        .sheet(isPresented: $moveSheet.isShowing) {
-            if case let .move(folderId, handler) = moveSheet.state {
-                MoveEmailView.sheetView(mailboxManager: viewModel.mailboxManager, from: folderId, moveHandler: handler)
-            }
         }
         .customAlert(item: $flushAlert) { item in
             FlushFolderAlertView(flushAlert: item, folder: viewModel.folder)
@@ -294,11 +253,11 @@ private struct ThreadListToolbar: ViewModifier {
 
     @Binding var flushAlert: FlushAlertState?
 
-    @ObservedObject var bottomSheet: ThreadBottomSheet
     @ObservedObject var viewModel: ThreadListViewModel
     @ObservedObject var multipleSelectionViewModel: ThreadListMultipleSelectionViewModel
 
     @State private var isShowingSwitchAccount = false
+    @State private var multipleSelectionActionsTarget: ActionsTarget?
 
     @EnvironmentObject var splitViewManager: SplitViewManager
     @EnvironmentObject var navigationDrawerState: NavigationDrawerState
@@ -389,14 +348,20 @@ private struct ThreadListToolbar: ViewModifier {
                                 .disabled(action == .archive && splitViewManager.selectedFolder?.role == .archive)
                             }
 
-                            ToolbarButton(text: MailResourcesStrings.Localizable.buttonMore,
-                                          icon: MailResourcesAsset.plusActions.swiftUIImage) {
-                                bottomSheet
-                                    .open(state: .actions(.threads(Array(multipleSelectionViewModel.selectedItems), true)))
+                            ToolbarButton(
+                                text: MailResourcesStrings.Localizable.buttonMore,
+                                icon: MailResourcesAsset.plusActions.swiftUIImage
+                            ) {
+                                multipleSelectionActionsTarget = .threads(Array(multipleSelectionViewModel.selectedItems), true)
                             }
                         }
                         .disabled(multipleSelectionViewModel.selectedItems.isEmpty)
                     }
+                }
+            }
+            .actionsPanel(actionsTarget: $multipleSelectionActionsTarget) {
+                withAnimation {
+                    multipleSelectionViewModel.isEnabled = false
                 }
             }
             .navigationTitle(

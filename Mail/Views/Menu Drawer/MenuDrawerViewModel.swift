@@ -60,8 +60,8 @@ class MenuDrawerViewModel: ObservableObject {
     @Published var actionsMenuItems = [MenuItem]()
     @Published var isShowingHelp = false
     @Published var isShowingBugTracker = false
+    @Published var isShowingRestoreMails = false
 
-    private var bottomSheet: GlobalBottomSheet?
     private var foldersObservationToken: NotificationToken?
     private var mailboxesObservationToken: NotificationToken?
 
@@ -103,6 +103,8 @@ class MenuDrawerViewModel: ObservableObject {
                     break
                 }
             }
+
+        createMenuItems()
     }
 
     private func handleFoldersUpdate(_ folders: Results<Folder>) {
@@ -110,9 +112,7 @@ class MenuDrawerViewModel: ObservableObject {
         userFolders = NestableFolder.createFoldersHierarchy(from: Array(folders.where { $0.role == nil }))
     }
 
-    func createMenuItems(bottomSheet: GlobalBottomSheet) {
-        self.bottomSheet = bottomSheet
-
+    func createMenuItems() {
         helpMenuItems = [
             MenuItem(icon: MailResourcesAsset.feedback,
                      label: MailResourcesStrings.Localizable.buttonFeedback,
@@ -159,6 +159,6 @@ class MenuDrawerViewModel: ObservableObject {
     }
 
     private func restoreMails() {
-        bottomSheet?.open(state: .restoreEmails)
+        isShowingRestoreMails = true
     }
 }

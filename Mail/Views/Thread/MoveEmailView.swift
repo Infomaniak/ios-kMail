@@ -24,19 +24,29 @@ import MailResources
 import RealmSwift
 import SwiftUI
 
+struct MoveAction: Identifiable {
+    var id: String {
+        return "\(target.id)\(fromFolderId ?? "")"
+    }
+
+    let fromFolderId: String?
+    let target: ActionsTarget
+}
+
 struct MoveEmailView: View {
-    typealias MoveHandler = (Folder) -> Void
+    @LazyInjectService private var matomo: MatomoUtils
+
+    @Environment(\.dismissModal) var dismissModal
 
     @EnvironmentObject private var mailboxManager: MailboxManager
+
+    typealias MoveHandler = (Folder) -> Void
 
     // swiftlint:disable empty_count
     @ObservedResults(Folder.self, where: { $0.role != .draft && $0.parents.count == 0 && $0.toolType == nil }) var folders
     @State private var isShowingCreateFolderAlert = false
 
-    @LazyInjectService private var matomo: MatomoUtils
-
-    let currentFolderId: String?
-    let moveHandler: MoveEmailView.MoveHandler
+    let moveAction: MoveAction
 
     var body: some View {
         ScrollView {
@@ -63,32 +73,31 @@ struct MoveEmailView: View {
         .environment(\.folderCellType, .indicator)
         .matomoView(view: ["MoveEmailView"])
         .customAlert(isPresented: $isShowingCreateFolderAlert) {
-            CreateFolderView(mode: .move(moveHandler: moveHandler))
+            CreateFolderView(mode: .move { newFolder in
+                Task {
+                    try await ActionUtils(actionsTarget: moveAction.target, mailboxManager: mailboxManager).move(to: newFolder)
+                }
+                dismissModal()
+            })
         }
     }
 
     private func listOfFolders(nestableFolders: [NestableFolder]) -> some View {
         ForEach(nestableFolders) { nestableFolder in
-            FolderCell(folder: nestableFolder, currentFolderId: currentFolderId) { folder in
-                moveHandler(folder)
-                NotificationCenter.default.post(Notification(name: Constants.dismissMoveSheetNotificationName))
+            FolderCell(folder: nestableFolder, currentFolderId: moveAction.fromFolderId) { folder in
+                Task {
+                    try await ActionUtils(actionsTarget: moveAction.target, mailboxManager: mailboxManager).move(to: folder)
+                }
+                dismissModal()
             }
-        }
-    }
-}
-
-extension MoveEmailView {
-    static func sheetView(mailboxManager: MailboxManager, from folderId: String?,
-                          moveHandler: @escaping MoveEmailView.MoveHandler) -> some View {
-        SheetView {
-            MoveEmailView(currentFolderId: folderId, moveHandler: moveHandler)
         }
     }
 }
 
 struct MoveMessageView_Previews: PreviewProvider {
     static var previews: some View {
-        MoveEmailView(currentFolderId: nil) { _ in /* Preview */ }
+        MoveEmailView(moveAction: MoveAction(fromFolderId: PreviewHelper.sampleFolder.id,
+                                             target: .message(PreviewHelper.sampleMessage)))
             .environmentObject(PreviewHelper.sampleMailboxManager)
     }
 }

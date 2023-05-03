@@ -22,8 +22,6 @@ import MailResources
 import SwiftUI
 
 struct MailboxQuotaView: View {
-    @EnvironmentObject var globalSheet: GlobalBottomSheet
-
     let quotas: Quotas
     var progressString: String {
         return MailResourcesStrings.Localizable.menuDrawerMailboxStorage(

@@ -25,38 +25,27 @@ import RealmSwift
 import SwiftUI
 
 struct MessageHeaderView: View {
+    @LazyInjectService private var matomo: MatomoUtils
+
+    @EnvironmentObject private var navigationStore: NavigationStore
+    @EnvironmentObject private var mailboxManager: MailboxManager
+
     @State private var editedDraft: Draft?
-    @State var messageReply: MessageReply?
+
     @ObservedRealmObject var message: Message
+
     @Binding var isHeaderExpanded: Bool
     @Binding var isMessageExpanded: Bool
-
-    @EnvironmentObject var mailboxManager: MailboxManager
-    @EnvironmentObject var bottomSheet: MessageBottomSheet
-    @EnvironmentObject var threadBottomSheet: ThreadBottomSheet
-
-    @LazyInjectService private var matomo: MatomoUtils
 
     var body: some View {
         VStack(spacing: 12) {
             MessageHeaderSummaryView(message: message,
                                      isMessageExpanded: $isMessageExpanded,
                                      isHeaderExpanded: $isHeaderExpanded,
-                                     deleteDraftTapped: deleteDraft) {
-                matomo.track(eventWithCategory: .messageActions, name: "reply")
-                if message.canReplyAll {
-                    bottomSheet.open(state: .replyOption(message, isThread: false))
-                } else {
-                    messageReply = MessageReply(message: message, replyMode: .reply)
-                }
-            } moreButtonTapped: {
-                threadBottomSheet.open(state: .actions(.message(message.thaw() ?? message)))
-            } recipientTapped: { recipient in
-                openContact(recipient: recipient)
-            }
+                                     deleteDraftTapped: deleteDraft)
 
             if isHeaderExpanded {
-                MessageHeaderDetailView(message: message, recipientTapped: openContact(recipient:))
+                MessageHeaderDetailView(message: message)
             }
         }
         .contentShape(Rectangle())
@@ -74,16 +63,6 @@ struct MessageHeaderView: View {
         .sheet(item: $editedDraft) { editedDraft in
             ComposeMessageView.editDraft(draft: editedDraft, mailboxManager: mailboxManager)
         }
-        .sheet(item: $messageReply) { messageReply in
-            ComposeMessageView.replyOrForwardMessage(messageReply: messageReply, mailboxManager: mailboxManager)
-        }
-    }
-
-    private func openContact(recipient: Recipient) {
-        let isRemoteContact = AccountManager.instance.currentContactManager?.getContact(for: recipient)?.remote != nil
-        bottomSheet.open(
-            state: .contact(recipient, isRemote: isRemoteContact)
-        )
     }
 
     private func deleteDraft() {

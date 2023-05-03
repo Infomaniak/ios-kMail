@@ -22,21 +22,17 @@ import MailCore
 import SwiftUI
 
 struct ReportJunkView: View {
-    @ObservedObject var viewModel: ActionsViewModel
+    @StateObject var viewModel: ActionsViewModel
 
     var actions: [Action] = []
 
     init(mailboxManager: MailboxManager,
          target: ActionsTarget,
-         state: ThreadBottomSheet,
-         globalSheet: GlobalBottomSheet,
-         globalAlert: GlobalAlert) {
-        viewModel = ActionsViewModel(mailboxManager: mailboxManager,
-                                     target: target,
-                                     state: state,
-                                     globalSheet: globalSheet,
-                                     globalAlert: globalAlert)
-        if case let .message(message) = target {
+         reportedForPhishingMessage: Binding<Message?>) {
+        _viewModel = StateObject(wrappedValue: ActionsViewModel(mailboxManager: mailboxManager,
+                                                               target: target,
+                                                               reportedForPhishingMessage: reportedForPhishingMessage))
+        if case .message(let message) = target {
             let spam = message.folder?.role == .spam
             actions.append(contentsOf: [
                 spam ? .nonSpam : .spam,
@@ -63,10 +59,8 @@ struct ReportJunkView: View {
 struct ReportJunkView_Previews: PreviewProvider {
     static var previews: some View {
         ReportJunkView(mailboxManager: PreviewHelper.sampleMailboxManager,
-                       target: .threads([PreviewHelper.sampleThread], false),
-                       state: ThreadBottomSheet(),
-                       globalSheet: GlobalBottomSheet(),
-                       globalAlert: GlobalAlert())
+                       target: .message(PreviewHelper.sampleMessage),
+                       reportedForPhishingMessage: .constant(nil))
             .accentColor(AccentColor.pink.primary.swiftUIColor)
     }
 }

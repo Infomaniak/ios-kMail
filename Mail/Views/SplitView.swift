@@ -25,32 +25,6 @@ import NavigationBackport
 import RealmSwift
 import SwiftUI
 
-struct MailNavigationPathKey: EnvironmentKey {
-    static var defaultValue: Binding<[Thread]>?
-}
-
-extension EnvironmentValues {
-    var mailNavigationPath: Binding<[Thread]>? {
-        get { self[MailNavigationPathKey.self] }
-        set { self[MailNavigationPathKey.self] = newValue }
-    }
-}
-
-class GlobalBottomSheet: DisplayedFloatingPanelState<GlobalBottomSheet.State> {
-    enum State {
-        case getMoreStorage
-        case restoreEmails
-        case reportJunk(threadBottomSheet: ThreadBottomSheet, target: ActionsTarget)
-    }
-}
-
-class GlobalAlert: SheetState<GlobalAlert.State> {
-    enum State {
-        case reportPhishing(message: Message)
-        case reportDisplayProblem(message: Message)
-    }
-}
-
 public class SplitViewManager: ObservableObject {
     @Published var showSearch = false
     @Published var selectedFolder: Folder?
@@ -62,22 +36,20 @@ public class SplitViewManager: ObservableObject {
 }
 
 struct SplitView: View {
-    var mailboxManager: MailboxManager
-    @State var splitViewController: UISplitViewController?
-    @StateObject private var navigationDrawerController = NavigationDrawerState()
-
-    @Environment(\.horizontalSizeClass) var sizeClass
+    @Environment(\.horizontalSizeClass) var horizontalSizeClass
     @Environment(\.verticalSizeClass) var verticalSizeClass
     @Environment(\.window) var window
 
-    @StateObject private var bottomSheet = GlobalBottomSheet()
-    @StateObject private var alert = GlobalAlert()
+    @State var splitViewController: UISplitViewController?
 
+    @StateObject private var navigationDrawerController = NavigationDrawerState()
+    @StateObject private var navigationStore = NavigationStore()
     @StateObject private var splitViewManager: SplitViewManager
-    @State private var path = [Thread]()
 
-    var isCompact: Bool {
-        sizeClass == .compact || verticalSizeClass == .compact
+    let mailboxManager: MailboxManager
+
+    private var isCompact: Bool {
+        UIConstants.isCompact(horizontalSizeClass: horizontalSizeClass, verticalSizeClass: verticalSizeClass)
     }
 
     init(mailboxManager: MailboxManager) {
@@ -90,7 +62,7 @@ struct SplitView: View {
         Group {
             if isCompact {
                 ZStack {
-                    NBNavigationStack(path: $path) {
+                    NBNavigationStack(path: $navigationStore.threadPath) {
                         ThreadListManagerView(isCompact: isCompact)
                             .accessibilityHidden(navigationDrawerController.isOpen)
                             .nbNavigationDestination(for: Thread.self) { thread in
@@ -111,13 +83,16 @@ struct SplitView: View {
 
                     ThreadListManagerView(isCompact: isCompact)
 
-                    if let thread = path.last {
+                    if let thread = navigationStore.threadPath.last {
                         ThreadView(thread: thread)
                     } else {
                         EmptyStateView.emptyThread(from: splitViewManager.selectedFolder)
                     }
                 }
             }
+        }
+        .sheet(item: $navigationStore.messageReply) { messageReply in
+            ComposeMessageView.replyOrForwardMessage(messageReply: messageReply, mailboxManager: mailboxManager)
         }
         .onReceive(NotificationCenter.default.publisher(for: UIApplication.willEnterForegroundNotification)) { _ in
             Task {
@@ -148,41 +123,12 @@ struct SplitView: View {
             splitViewManager.splitViewController = splitViewController
             setupBehaviour(orientation: interfaceOrientation)
         }
-        .floatingPanel(state: bottomSheet) {
-            switch bottomSheet.state {
-            case .getMoreStorage:
-                MoreStorageView()
-            case .restoreEmails:
-                RestoreEmailsView(mailboxManager: mailboxManager)
-            case .reportJunk(let threadBottomSheet, let target):
-                ReportJunkView(
-                    mailboxManager: mailboxManager,
-                    target: target,
-                    state: threadBottomSheet,
-                    globalSheet: bottomSheet,
-                    globalAlert: alert
-                )
-            case .none:
-                EmptyView()
-            }
-        }
-        .customAlert(isPresented: $alert.isShowing) {
-            switch alert.state {
-            case .reportPhishing(let message):
-                ReportPhishingView(message: message)
-            case .reportDisplayProblem(let message):
-                ReportDisplayProblemView(message: message)
-            case .none:
-                EmptyView()
-            }
-        }
-        .environment(\.mailNavigationPath, $path)
         .environment(\.realmConfiguration, mailboxManager.realmConfiguration)
+        .environment(\.isCompactWindow, horizontalSizeClass == .compact || verticalSizeClass == .compact)
         .environmentObject(mailboxManager)
         .environmentObject(splitViewManager)
         .environmentObject(navigationDrawerController)
-        .environmentObject(bottomSheet)
-        .environmentObject(alert)
+        .environmentObject(navigationStore)
         .defaultAppStorage(.shared)
     }
 
