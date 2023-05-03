@@ -51,7 +51,8 @@ struct ActionsPanelViewModifier: ViewModifier {
             }
         }
         .sheet(item: $moveAction) { moveAction in
-            MoveEmailView.sheetView(moveAction: moveAction)
+            MoveEmailView(moveAction: moveAction)
+                .sheetViewStyle()
         }
         .floatingPanel(item: $reportJunkActionsTarget) { target in
             ReportJunkView(mailboxManager: mailboxManager,

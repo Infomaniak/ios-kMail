@@ -125,7 +125,8 @@ struct ThreadListSwipeActions: ViewModifier {
                 }
                 .actionsPanel(actionsTarget: $actionsTarget)
                 .sheet(item: $moveAction) { moveAction in
-                    MoveEmailView.sheetView(moveAction: moveAction)
+                    MoveEmailView(moveAction: moveAction)
+                        .sheetViewStyle()
                 }
         }
     }

@@ -192,9 +192,8 @@ struct MenuDrawerView: View {
         .background(MailResourcesAsset.backgroundSecondaryColor.swiftUIColor.ignoresSafeArea())
         .environment(\.folderCellType, .link)
         .sheet(isPresented: $viewModel.isShowingHelp) {
-            SheetView {
-                HelpView()
-            }
+            HelpView()
+                .sheetViewStyle()
         }
         .sheet(isPresented: $viewModel.isShowingBugTracker) {
             BugTrackerView(isPresented: $viewModel.isShowingBugTracker)

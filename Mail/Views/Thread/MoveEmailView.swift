@@ -36,6 +36,8 @@ struct MoveAction: Identifiable {
 struct MoveEmailView: View {
     @LazyInjectService private var matomo: MatomoUtils
 
+    @Environment(\.dismissModal) var dismissModal
+
     @EnvironmentObject private var mailboxManager: MailboxManager
 
     typealias MoveHandler = (Folder) -> Void
@@ -107,16 +109,8 @@ struct MoveEmailView: View {
                 Task {
                     try await move(to: folder)
                 }
-                NotificationCenter.default.post(Notification(name: Constants.dismissMoveSheetNotificationName))
+                dismissModal()
             }
-        }
-    }
-}
-
-extension MoveEmailView {
-    static func sheetView(moveAction: MoveAction) -> some View {
-        SheetView {
-            MoveEmailView(moveAction: moveAction)
         }
     }
 }
