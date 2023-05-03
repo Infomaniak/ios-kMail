@@ -32,3 +32,8 @@ td.munged {
     width: auto !important;
     white-space: normal !important;
 }
+
+pre {
+    word-wrap: break-word;
+    white-space: pre-wrap;
+}
