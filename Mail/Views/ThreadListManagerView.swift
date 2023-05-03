@@ -33,15 +33,7 @@ struct ThreadListManagerView: View {
     let isCompact: Bool
 
     var body: some View {
-        ZStack {
-            NavigationLink(isActive: $shouldNavigateToNotificationThread) {
-                if let tappedNotificationThread {
-                    ThreadView(thread: tappedNotificationThread)
-                }
-            } label: {
-                EmptyView()
-            }
-            .opacity(0)
+        Group {
             if let selectedFolder = splitViewManager.selectedFolder {
                 if splitViewManager.showSearch {
                     SearchView(
@@ -59,20 +51,6 @@ struct ThreadListManagerView: View {
                         isCompact: isCompact
                     )
                 }
-            }
-        }
-        .onReceive(NotificationCenter.default.publisher(for: .onUserTappedNotification)) { notification in
-            guard let notificationPayload = notification.object as? NotificationTappedPayload else { return }
-            let realm = mailboxManager.getRealm()
-            realm.refresh()
-
-            let tappedNotificationMessage = realm.object(ofType: Message.self, forPrimaryKey: notificationPayload.messageId)
-            // Original parent should always be in the inbox but maybe change in a later stage to always find the parent in inbox
-            if let tappedNotificationThread = tappedNotificationMessage?.originalThread {
-                self.tappedNotificationThread = tappedNotificationThread
-                shouldNavigateToNotificationThread = true
-            } else {
-                IKSnackBar.showSnackBar(message: MailError.messageNotFound.errorDescription ?? "")
             }
         }
         .animation(.easeInOut(duration: 0.25), value: splitViewManager.showSearch)
