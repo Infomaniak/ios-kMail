@@ -1,4 +1,4 @@
-const WEBVIEW_WIDTH = 361;
+const WEBVIEW_WIDTH = 393;
 const PREFERENCES = {
     normalizeMessageWidths: true,
     mungeImages: true,
@@ -6,7 +6,23 @@ const PREFERENCES = {
     minimumEffectiveRatio: 0.7
 };
 
-normalizeElementWidths([document.body]);
+// ----- DEBUG
+function captureLog(msg) { window.webkit.messageHandlers.logHandler.postMessage(msg); }
+window.console.log = captureLog;
+window.console.debug = captureLog;
+window.console.info = captureLog;
+window.console.table = captureLog;
+// ----- DEBUG
+
+if (document.readyState == "complete") {
+    normalizeElementWidths([document.getElementById('kmail-message-content')]);
+} else {
+    document.onreadystatechange = function() {
+        if (document.readyState == "complete") {
+            normalizeElementWidths([document.getElementById('kmail-message-content')]);
+        }
+    }
+}
 
 // Functions
 
@@ -26,10 +42,18 @@ function normalizeElementWidths(elements) {
             element.style.zoom = 1;
         }
 
-        // Remove textAdjustSize for iOS
-        const elementsWithTextSizeAdjust = document.querySelectorAll('[style*=-webkit-text-size-adjust]');
+        // Remove textAdjustSize for iOS (inline)
+        // [style*=-webkit-text-size-adjust]
+        const elementsWithTextSizeAdjust = document.querySelectorAll('*');
         for (const element of elementsWithTextSizeAdjust) {
             element.style.webkitTextSizeAdjust = null;
+        }
+        // Remove textAdjustSize for iOS (property)
+        for (let i = 0; i < document.styleSheets.length; i++) {
+            const styleSheet = document.styleSheets[i];
+            for (let j = 0; j < styleSheet.cssRules.length; j++) {
+                styleSheet.cssRules[j].style?.removeProperty('-webkit-text-size-adjust');
+            }
         }
 
         const originalWidth = element.style.width;

@@ -102,53 +102,37 @@ struct WebView: UIViewRepresentable {
 }
 
 class WebViewModel: NSObject, WKScriptMessageHandler {
-    func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
-        if message.name == "logHandler" {
-            print("LOG: \(message.body)")
-        }
-    }
-
     let webView: WKWebView
 
     let viewportContent = "width=device-width, initial-scale=1.0"
     var style: String { "<style>\(Constants.customCSS)</style>" }
 
     override init() {
-
-
         let configuration = WKWebViewConfiguration()
         configuration.dataDetectorTypes = .all
         configuration.defaultWebpagePreferences.allowsContentJavaScript = false
         configuration.setURLSchemeHandler(URLSchemeHandler(), forURLScheme: URLSchemeHandler.scheme)
 
-
-
         webView = WKWebView(frame: .zero, configuration: configuration)
-
-        super.init()
-
-        let source = """
-        function captureLog(msg) { window.webkit.messageHandlers.logHandler.postMessage(msg); }
-        window.console.log = captureLog;
-        window.console.debug = captureLog;
-        window.console.info = captureLog;
-        window.console.table = captureLog;
-        """
-        let script = WKUserScript(source: source, injectionTime: .atDocumentEnd, forMainFrameOnly: true)
-        configuration.userContentController.addUserScript(script)
-        configuration.userContentController.add(self, name: "logHandler")
-
-        if let mungeScriptURL = Bundle.main.url(forResource: "munge_email", withExtension: "js"), let mungeScript = try? String(contentsOf: mungeScriptURL) {
-            configuration.userContentController.addUserScript(WKUserScript(source: mungeScript, injectionTime: .atDocumentEnd, forMainFrameOnly: true))
-        }
-
         #if DEBUG
         if #available(iOS 16.4, *) {
             webView.isInspectable = true
         }
         #endif
 
+        super.init()
 
+        configuration.userContentController.add(self, name: "logHandler")
+
+        if let mungeScriptURL = Bundle.main.url(forResource: "munge_email", withExtension: "js"), let mungeScript = try? String(contentsOf: mungeScriptURL) {
+            configuration.userContentController.addUserScript(WKUserScript(source: mungeScript, injectionTime: .atDocumentStart, forMainFrameOnly: true))
+        }
+    }
+
+    func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
+        if message.name == "logHandler" {
+            print("LOG: \(message.body)")
+        }
     }
 
     func loadHTMLString(value: String?) {
@@ -159,6 +143,14 @@ class WebViewModel: NSObject, WKScriptMessageHandler {
 
 //            try reduceImageSize(of: safeDocument)
             try updateHeadContent(of: safeDocument)
+
+            // Wrap in #kmail-message-content
+            if let bodyContent = safeDocument.body()?.childNodesCopy() {
+                safeDocument.body()?.empty()
+                try safeDocument.body()?
+                    .appendElement("div").attr("id", "kmail-message-content")
+                    .insertChildren(-1, bodyContent)
+            }
 
             let finalHtml = try safeDocument.outerHtml()
             webView.loadHTMLString(finalHtml, baseURL: nil)
