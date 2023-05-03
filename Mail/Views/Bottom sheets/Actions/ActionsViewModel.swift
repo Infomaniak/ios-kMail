@@ -418,13 +418,15 @@ enum ActionsTarget: Equatable, Identifiable {
     private func move() {
         let folderId: String?
         switch target {
-        case let .threads(threads, _):
+        case .threads(let threads, _):
             folderId = threads.first?.folder?.id
-        case let .message(message):
+        case .message(let message):
             folderId = message.folderId
         }
 
-        moveAction?.wrappedValue = MoveAction(fromFolderId: folderId, target: target)
+        DispatchQueue.main.async { [weak self, target] in
+            self?.moveAction?.wrappedValue = MoveAction(fromFolderId: folderId, target: target)
+        }
     }
 
     private func postpone() {
