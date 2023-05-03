@@ -23,18 +23,12 @@ import MailResources
 import SwiftUI
 
 struct AddMailboxView: View {
-    enum FocusedField {
-        case mailAddress, hiddenPassword, visiblePassword
-    }
-
     @Environment(\.dismiss) var dismiss
 
     var completion: (Mailbox?) -> Void
 
     @State private var newAddress = ""
     @State private var password = ""
-    @State private var isSecured = true
-    @FocusState private var focusedField: FocusedField?
     @State private var showError = false
 
     private var buttonDisabled: Bool {
@@ -48,7 +42,6 @@ struct AddMailboxView: View {
                 .padding(.bottom, 32)
 
             TextField(MailResourcesStrings.Localizable.attachAddressInputHint, text: $newAddress)
-                .focused($focusedField, equals: .mailAddress)
                 .textContentType(.emailAddress)
                 .keyboardType(.emailAddress)
                 .autocorrectionDisabled()
@@ -66,40 +59,18 @@ struct AddMailboxView: View {
                 .textStyle(showError ? .labelError : .labelSecondary)
                 .padding(.bottom, 8)
 
-            HStack {
-                if isSecured {
-                    SecureField(MailResourcesStrings.Localizable.attachAddressPasswordInputHint, text: $password)
-                        .focused($focusedField, equals: .hiddenPassword)
-                        .textContentType(.password)
-                } else {
-                    TextField(MailResourcesStrings.Localizable.attachAddressPasswordInputHint, text: $password)
-                        .focused($focusedField, equals: .visiblePassword)
-                        .textContentType(.password)
+            SecureField(MailResourcesStrings.Localizable.attachAddressPasswordInputHint, text: $password)
+                .textContentType(.password)
+                .padding([.vertical, .leading], 12)
+                .padding(.trailing, 16)
+                .overlay {
+                    RoundedRectangle(cornerRadius: 4, style: .continuous)
+                        .stroke(
+                            showError ? MailResourcesAsset.redColor.swiftUIColor : MailResourcesAsset.elementsColor.swiftUIColor,
+                            lineWidth: 1
+                        )
                 }
-
-                Button {
-                    isSecured.toggle()
-                    focusedField = isSecured ? .hiddenPassword : .visiblePassword
-                } label: {
-                    if isSecured {
-                        MailResourcesAsset.view.swiftUIImage
-                            .foregroundColor(MailResourcesAsset.textSecondaryColor.swiftUIColor)
-                    } else {
-                        MailResourcesAsset.viewOff.swiftUIImage
-                            .foregroundColor(MailResourcesAsset.textSecondaryColor.swiftUIColor)
-                    }
-                }
-            }
-            .padding([.vertical, .leading], 12)
-            .padding(.trailing, 16)
-            .overlay {
-                RoundedRectangle(cornerRadius: 4, style: .continuous)
-                    .stroke(
-                        showError ? MailResourcesAsset.redColor.swiftUIColor : MailResourcesAsset.elementsColor.swiftUIColor,
-                        lineWidth: 1
-                    )
-            }
-            .padding(.bottom, 4)
+                .padding(.bottom, 4)
 
             Text(MailResourcesStrings.Localizable.errorInvalidCredentials)
                 .textStyle(.labelError)
@@ -112,9 +83,6 @@ struct AddMailboxView: View {
             }
             .disabled(buttonDisabled)
             .mailButtonFullWidth(true)
-        }
-        .onAppear {
-            focusedField = .mailAddress
         }
         .navigationBarTitle(MailResourcesStrings.Localizable.attachAddressTitle, displayMode: .inline)
         .padding(.horizontal, 16)
