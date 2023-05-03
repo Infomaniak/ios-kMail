@@ -9,16 +9,14 @@ const PREFERENCES = {
 // ----- DEBUG
 function captureLog(msg) { window.webkit.messageHandlers.logHandler.postMessage(msg); }
 window.console.log = captureLog;
-window.console.debug = captureLog;
 window.console.info = captureLog;
-window.console.table = captureLog;
 // ----- DEBUG
 
-if (document.readyState == "complete") {
+if (document.readyState == 'complete') {
     normalizeElementWidths([document.getElementById('kmail-message-content')]);
 } else {
     document.onreadystatechange = function() {
-        if (document.readyState == "complete") {
+        if (document.readyState == 'complete') {
             normalizeElementWidths([document.getElementById('kmail-message-content')]);
         }
     }
@@ -34,25 +32,34 @@ if (document.readyState == "complete") {
  */
 function normalizeElementWidths(elements) {
     const documentWidth = document.body.offsetWidth;
+    logInfo(`Starts to normalize elements. Document width: ${documentWidth}.`);
 
     for (const element of elements) {
+        logInfo(`Current element: ${elementDebugName(element)}.`);
+
         // Reset any existing normalization
         const originalZoom = element.style.zoom;
         if (originalZoom) {
             element.style.zoom = 1;
+            logInfo(`Initial zoom reset to 1. Old zoom: ${originalZoom}.`);
         }
 
         // Remove textAdjustSize for iOS (inline)
-        // [style*=-webkit-text-size-adjust]
-        const elementsWithTextSizeAdjust = document.querySelectorAll('*');
+        const elementsWithTextSizeAdjust = document.querySelectorAll('[style*=-webkit-text-size-adjust]');
         for (const element of elementsWithTextSizeAdjust) {
             element.style.webkitTextSizeAdjust = null;
+        }
+        if (elementsWithTextSizeAdjust.length > 0) {
+            logInfo(`Property -webkit-text-size-adjust removed from ${elementsWithTextSizeAdjust.length} elements.`);
         }
         // Remove textAdjustSize for iOS (property)
         for (let i = 0; i < document.styleSheets.length; i++) {
             const styleSheet = document.styleSheets[i];
             for (let j = 0; j < styleSheet.cssRules.length; j++) {
-                styleSheet.cssRules[j].style?.removeProperty('-webkit-text-size-adjust');
+                const removedValue = styleSheet.cssRules[j].style?.removeProperty('-webkit-text-size-adjust');
+                if (removedValue) {
+                    logInfo(`Property -webkit-text-size-adjust removed from <style>.`);
+                }
             }
         }
 
@@ -62,6 +69,7 @@ function normalizeElementWidths(elements) {
 
         if (PREFERENCES.normalizeMessageWidths) {
             element.style.zoom = documentWidth / element.scrollWidth;
+            logInfo(`Zoom updated: documentWidth / element.scrollWidth -> ${documentWidth} / ${element.scrollWidth} = ${element.style.zoom}.`);
         }
 
         element.style.width = originalWidth;
@@ -75,7 +83,11 @@ function normalizeElementWidths(elements) {
  * @param elementWidth Element width before any action is done
  */
 function transformContent(element, documentWidth, elementWidth) {
-    if (elementWidth <= documentWidth) { return; }
+    if (elementWidth <= documentWidth) {
+        logInfo(`Element doesn't need to be transformed. Current size: ${elementWidth}, DocumentWidth: ${documentWidth}.`);
+        return;
+    }
+    logInfo(`Element will be transformed.`);
 
     let newWidth = elementWidth;
     let isTransformationDone = false;
@@ -89,9 +101,10 @@ function transformContent(element, documentWidth, elementWidth) {
         const areNodesTransformed = transformBlockElements(nodes, documentWidth, actionsLog);
         if (areNodesTransformed) {
             newWidth = element.scrollWidth;
-            logTransformation('div-width munger', element, elementWidth, newWidth, documentWidth);
+            logTransformation('munge div[style] and textarea[style]', element, elementWidth, newWidth, documentWidth);
             if (newWidth <= documentWidth) {
                 isTransformationDone = true;
+                logInfo('Munging div[style] and textarea[style] is enough.');
             }
         }
     }
@@ -102,9 +115,10 @@ function transformContent(element, documentWidth, elementWidth) {
         const areImagesTransformed = transformImages(images, documentWidth, actionsLog);
         if (areImagesTransformed) {
             newWidth = element.scrollWidth;
-            logTransformation('img munger', element, elementWidth, newWidth, documentWidth);
+            logTransformation('munge img', element, elementWidth, newWidth, documentWidth);
             if (newWidth <= documentWidth) {
                 isTransformationDone = true;
+                logInfo('Munging img is enough.');
             }
         }
     }
@@ -117,9 +131,10 @@ function transformContent(element, documentWidth, elementWidth) {
         const areTablesTransformed = addClassToElements(tables, shouldMungeTable, 'munged', actionsLog);
         if (areTablesTransformed) {
             newWidth = element.scrollWidth;
-            logTransformation('table munger', element, elementWidth, newWidth, documentWidth);
+            logTransformation('munge table', element, elementWidth, newWidth, documentWidth);
             if (newWidth <= documentWidth) {
                 isTransformationDone = true;
+                logInfo('Munging table is enough.');
             }
         }
     }
@@ -132,18 +147,21 @@ function transformContent(element, documentWidth, elementWidth) {
         const areTdsTransformed = addClassToElements(tds, null, 'munged', tmpActionsLog);
         if (areTdsTransformed) {
             newWidth = element.scrollWidth;
-            logTransformation('td munger', element, elementWidth, newWidth, documentWidth);
+            logTransformation('munge td', element, elementWidth, newWidth, documentWidth);
 
             if (newWidth <= documentWidth) {
                 isTransformationDone = true;
+                logInfo('Munging td is enough.');
             } else if (newWidth === beforeTransformationWidth) {
                 // This transform did not improve things, and it is somewhat risky.
                 // Back it out, since it's the last transform and we gained nothing.
                 undoActions(tmpActionsLog);
+                logInfo('Munging td did not improve things, we undo these actions.');
             } else {
                 // The transform WAS effective (although not 100%).
                 // Copy the temporary action log entries over as normal.
                 actionsLog.push(...tmpActionsLog);
+                logInfo('Munging td is not enough but is effective.');
             }
         }
     }
@@ -161,12 +179,14 @@ function transformContent(element, documentWidth, elementWidth) {
         // (except the width->maxWidth change, which is not particularly destructive)
         undoActions(actionsLog);
         if (actionsLog.length > 0) {
-            logInfo('All mungers failed, changes reversed.');
+            logInfo(`All mungers failed, we will reverse ${actionsLog.length} changes.`);
+        } else {
+            logInfo(`No mungers applied, width is still too wide.`);
         }
         return;
     }
 
-    logInfo('Mungers succeeded.');
+    logInfo(`Mungers succeeded. We did ${actionsLog.length} changes.`);
 }
 
 /**
@@ -291,5 +311,11 @@ function logInfo(text) {
 }
 
 function logTransformation(action, element, elementWidth, newWidth, documentWidth) {
-    logInfo(`Ran ${action} on element ${element.tagName} - oldWidth=${elementWidth}, newWidth=${newWidth}, docWidth=${documentWidth}`);
+    logInfo(`Ran ${action} on ${elementDebugName(element)}. OldWidth=${elementWidth}, NewWidth=${newWidth}, DocWidth=${documentWidth}.`);
+}
+
+function elementDebugName(element) {
+    const id = element.id !== '' ? ` #${element.id}` : '';
+    const classes = element.classList.length != 0 ? ` (classes: ${element.classList.value})` : '';
+    return `<${element.tagName}${id}${classes}>`;
 }
