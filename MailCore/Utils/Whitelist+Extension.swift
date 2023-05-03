@@ -20,87 +20,34 @@ import Foundation
 import SwiftSoup
 
 extension Whitelist {
-    static var extendedWhitelist: Whitelist {
+    static var headWhitelist: Whitelist {
         do {
             let customWhitelist = Whitelist.none()
-            let allowedTags = [
-                "a",
-                "b",
-                "blockquote",
-                "body",
-                "br",
-                "caption",
-                "center",
-                "cite",
-                "code",
-                "col",
-                "colgroup",
-                "dd",
-                "div",
-                "dl",
-                "dt",
-                "em",
-                "h1",
-                "h2",
-                "h3",
-                "h4",
-                "h5",
-                "h6",
-                "head",
-                "hr",
-                "html",
-                "i",
-                "img",
-                "li",
-                "meta",
-                "ol",
-                "p",
-                "pre",
-                "q",
-                "small",
-                "span",
-                "strike",
-                "strong",
-                "style",
-                "sub",
-                "sup",
-                "table",
-                "tbody",
-                "td",
-                "tfoot",
-                "th",
-                "thead",
-                "title",
-                "tr",
-                "u",
-                "ul",
-            ]
-
-            for tag in allowedTags {
-                try customWhitelist.addTags(tag)
-                try customWhitelist.addAttributes(tag, "style", "width", "height", "class", "align")
-            }
-
             try customWhitelist
-                .addAttributes("a", "href", "title")
-                .addAttributes("blockquote", "cite")
-                .addAttributes("col", "span")
-                .addAttributes("colgroup", "span")
-                .addAttributes("img", "align", "alt", "src", "title")
-                .addAttributes("ol", "start", "type")
-                .addAttributes("q", "cite")
-                .addAttributes("table", "summary")
-                .addAttributes("td", "abbr", "axis", "colspan", "rowspan")
-                .addAttributes("th", "abbr", "axis", "colspan", "rowspan", "scope")
-                .addAttributes("ul", "type")
+                .addTags("base", "meta", "style", "title")
+                .addAttributes("style", "media", "type")
+                .addAttributes("meta", "charset", "content", "http-equiv", "name")
+                .addAttributes("base", "href", "target")
+                .addProtocols("base", "href", "http", "https")
 
-                .addProtocols("a", "href", "http", "https", "mailto")
-                .addProtocols("blockquote", "cite", "http", "https")
-                .addProtocols("cite", "cite", "http", "https")
-                .addProtocols("q", "cite", "http", "https")
             return customWhitelist
         } catch {
-            fatalError("Couldn't init html whitelist")
+            fatalError("Couldn't init head whitelist")
+        }
+    }
+
+    static var extendedBodyWhitelist: Whitelist {
+        do {
+            let customWhitelist = try Whitelist.relaxed()
+            try customWhitelist
+                .addTags("center", "hr", "style")
+                .addAttributes(":all", "align", "bgcolor", "border", "class", "dir", "height", "id", "style", "width")
+                .addAttributes("td", "valign")
+                .addProtocols("img", "src", "cid", "data")
+
+            return customWhitelist
+        } catch {
+            fatalError("Couldn't init body whitelist")
         }
     }
 }

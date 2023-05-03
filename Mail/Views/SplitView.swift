@@ -122,7 +122,6 @@ struct SplitView: View {
             self.splitViewController = splitViewController
             splitViewManager.splitViewController = splitViewController
             setupBehaviour(orientation: interfaceOrientation)
-            splitViewController.preferredDisplayMode = .twoDisplaceSecondary
         }
         .environment(\.realmConfiguration, mailboxManager.realmConfiguration)
         .environment(\.isCompactWindow, horizontalSizeClass == .compact || verticalSizeClass == .compact)

@@ -177,29 +177,29 @@ enum ActionsTarget: Equatable, Identifiable {
     var id: String {
         switch self {
         case .threads(let threads, let isMultiSelectionEnabled):
-            return threads.map {$0.id}.joined()
+            return threads.map { $0.id }.joined()
         case .message(let message):
             return message.uid
         }
     }
-    
+
     case threads([Thread], Bool)
     case message(Message)
 
     var isInvalidated: Bool {
         switch self {
-        case let .threads(threads, _):
+        case .threads(let threads, _):
             return threads.contains(where: \.isInvalidated)
-        case let .message(message):
+        case .message(let message):
             return message.isInvalidated
         }
     }
 
     func freeze() -> Self {
         switch self {
-        case let .threads(threads, isMultiSelectionEnabled):
+        case .threads(let threads, let isMultiSelectionEnabled):
             return .threads(threads.map { $0.freezeIfNeeded() }, isMultiSelectionEnabled)
-        case let .message(message):
+        case .message(let message):
             return .message(message.freezeIfNeeded())
         }
     }
@@ -245,7 +245,7 @@ enum ActionsTarget: Equatable, Identifiable {
 
     private func setActions() {
         switch target {
-        case let .threads(threads, _):
+        case .threads(let threads, _):
             if threads.count > 1 {
                 let spam = threads.allSatisfy { $0.folder?.role == .spam }
                 let unread = threads.allSatisfy(\.hasUnseenMessages)
@@ -276,7 +276,7 @@ enum ActionsTarget: Equatable, Identifiable {
 
                 listActions = tempListActions.compactMap { $0 }
             }
-        case let .message(message):
+        case .message(let message):
             quickActions = Action.quickActions
 
             let archive = message.folder?.role != .archive
@@ -299,8 +299,12 @@ enum ActionsTarget: Equatable, Identifiable {
 
     func didTap(action: Action) async throws {
         if let matomoCategory, let matomoName = action.matomoName {
-            if case let .threads(threads, isMultipleSelectionEnabled) = target, isMultipleSelectionEnabled {
-                matomo.trackBulkEvent(eventWithCategory: matomoCategory, name: matomoName.capitalized, numberOfItems: threads.count)
+            if case .threads(let threads, let isMultipleSelectionEnabled) = target, isMultipleSelectionEnabled {
+                matomo.trackBulkEvent(
+                    eventWithCategory: matomoCategory,
+                    name: matomoName.capitalized,
+                    numberOfItems: threads.count
+                )
             } else {
                 matomo.track(eventWithCategory: matomoCategory, name: matomoName)
             }
@@ -352,11 +356,11 @@ enum ActionsTarget: Equatable, Identifiable {
         let undoRedoAction: UndoRedoAction
         let snackBarMessage: String
         switch target {
-        case let .threads(threads, _):
+        case .threads(let threads, _):
             guard threads.first?.folder != folder else { return }
             undoRedoAction = try await mailboxManager.move(threads: threads, to: folder)
             snackBarMessage = MailResourcesStrings.Localizable.snackbarThreadsMoved(folder.localizedName)
-        case let .message(message):
+        case .message(let message):
             guard message.folderId != folder.id else { return }
             var messages = [message]
             messages.append(contentsOf: message.duplicates)
@@ -379,9 +383,9 @@ enum ActionsTarget: Equatable, Identifiable {
 
     private func delete() async throws {
         switch target {
-        case let .threads(threads, _):
+        case .threads(let threads, _):
             try await mailboxManager.moveOrDelete(threads: threads)
-        case let .message(message):
+        case .message(let message):
             try await mailboxManager.moveOrDelete(message: message)
         }
     }
@@ -392,12 +396,11 @@ enum ActionsTarget: Equatable, Identifiable {
         case .threads(let threads, _):
             // We don't handle this action in multiple selection
             guard threads.count == 1, let thread = threads.first,
-                  let message = thread.messages.last(where: { !$0.isDraft }) else { break }
+                  let message = thread.lastMessageToExecuteAction() else { break }
             displayedMessageReply = MessageReply(message: message, replyMode: mode)
         case .message(let message):
             displayedMessageReply = MessageReply(message: message, replyMode: mode)
         }
-
         // FIXME: There seems to be a bug where SwiftUI looses the "context" and attempts to present
         // the view controller before waiting for the dismiss of the first one if we use a closure
         // (this "fix" is temporary)
@@ -408,9 +411,9 @@ enum ActionsTarget: Equatable, Identifiable {
 
     private func toggleRead() async throws {
         switch target {
-        case let .threads(threads, _):
+        case .threads(let threads, _):
             try await mailboxManager.toggleRead(threads: threads)
-        case let .message(message):
+        case .message(let message):
             try await mailboxManager.markAsSeen(message: message, seen: !message.seen)
         }
     }
@@ -436,11 +439,11 @@ enum ActionsTarget: Equatable, Identifiable {
 
     private func star() async throws {
         switch target {
-        case let .threads(threads, _):
+        case .threads(let threads, _):
             await tryOrDisplayError {
                 try await mailboxManager.toggleStar(threads: threads)
             }
-        case let .message(message):
+        case .message(let message):
             await tryOrDisplayError {
                 if message.flagged {
                     _ = try await mailboxManager.unstar(messages: [message])
@@ -457,7 +460,7 @@ enum ActionsTarget: Equatable, Identifiable {
 
     private func block() async throws {
         // This action is only available on a single message
-        guard case let .message(message) = target else { return }
+        guard case .message(let message) = target else { return }
         let response = try await mailboxManager.apiFetcher.blockSender(message: message)
         if response {
             IKSnackBar.showSnackBar(message: MailResourcesStrings.Localizable.snackbarSenderBlacklisted(1))

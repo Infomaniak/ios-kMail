@@ -66,10 +66,25 @@ public enum MessageBodyUtils {
         }
         return nil
     }
-    
+
     public static func cleanHtmlContent(rawHtml: String) -> String? {
         do {
-            return try SwiftSoup.clean(rawHtml, Constants.extendedWhitelist)
+            let dirtyDocument = try SwiftSoup.parse(rawHtml)
+            let cleanedDocument = try SwiftSoup.Cleaner(headWhitelist: .headWhitelist, bodyWhitelist: .extendedBodyWhitelist)
+                .clean(dirtyDocument)
+
+            // We need to remove the tag <meta http-equiv="refresh" content="x">
+            let metaRefreshTags = try cleanedDocument.select("meta[http-equiv='refresh']")
+            for metaRefreshTag in metaRefreshTags {
+                try metaRefreshTag.parent()?.removeChild(metaRefreshTag)
+            }
+
+            // If `<body>` has a style attribute, keep it
+            if let bodyStyleAttribute = try dirtyDocument.body()?.attr("style") {
+                try cleanedDocument.body()?.attr("style", bodyStyleAttribute)
+            }
+
+            return try cleanedDocument.outerHtml()
         } catch {
             DDLogError("An error occurred while parsing body \(error)")
             return nil

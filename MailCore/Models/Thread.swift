@@ -185,6 +185,22 @@ public class Thread: Object, Decodable, Identifiable {
         }
     }
 
+    public func lastMessageToExecuteAction() -> Message? {
+        if let message = messages.last(where: { $0.isDraft == false && $0.fromMe == false }) {
+            return message
+        } else if let message = messages.last(where: { $0.isDraft == false }) {
+            return message
+        }
+        return messages.last
+    }
+
+    public func lastMessageAndItsDuplicateToExecuteAction() -> [Message] {
+        guard let lastMessage = lastMessageToExecuteAction() else { return [] }
+        var messageAndDuplicates = [lastMessage]
+        messageAndDuplicates.append(contentsOf: lastMessage.duplicates)
+        return messageAndDuplicates
+    }
+
     private enum CodingKeys: String, CodingKey {
         case uid
         case messagesCount

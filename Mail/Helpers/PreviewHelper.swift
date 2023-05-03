@@ -31,7 +31,6 @@ struct PreviewHelper {
                                        email: "test@example.com",
                                        emailIdn: "",
                                        mailbox: "",
-                                       realMailbox: "",
                                        linkId: 0,
                                        mailboxId: 0,
                                        hostingId: 0,
