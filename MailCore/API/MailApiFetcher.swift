@@ -34,8 +34,10 @@ public extension ApiFetcher {
 public class MailApiFetcher: ApiFetcher {
     public static let clientId = "E90BC22D-67A8-452C-BE93-28DA33588CA4"
 
-    override public func perform<T: Decodable>(request: DataRequest,
-                                               decoder: JSONDecoder = ApiFetcher.decoder) async throws -> (data: T, responseAt: Int?) {
+    override public func perform<T: Decodable>(
+        request: DataRequest,
+        decoder: JSONDecoder = ApiFetcher.decoder
+    ) async throws -> (data: T, responseAt: Int?) {
         do {
             return try await super.perform(request: request)
         } catch InfomaniakError.apiError(let apiError) {
@@ -43,8 +45,8 @@ public class MailApiFetcher: ApiFetcher {
         } catch InfomaniakError.serverError(statusCode: let statusCode) {
             throw MailError.serverError(statusCode: statusCode)
         } catch {
-            if let afError = error.asAFError,
-               case .responseSerializationFailed(let reason) = afError,
+            if let afError = error.asAFError {
+                if case .responseSerializationFailed(let reason) = afError,
                case .decodingFailed(let error) = reason {
                 var rawJson = "No data"
                 if let data = request.data,
@@ -58,8 +60,11 @@ public class MailApiFetcher: ApiFetcher {
                                      "Raw JSON": rawJson])
                 }
             }
+                throw AFErrorWithContext(request: request, afError: afError)
+            } else {
             throw error
         }
+    }
     }
 
     // MARK: - API methods

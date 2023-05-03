@@ -1003,10 +1003,19 @@ public class MailboxManager: ObservableObject {
     }
 
     public func send(draft: Draft) async throws -> SendResponse {
-        let cancelableResponse = try await apiFetcher.send(mailbox: mailbox, draft: draft)
-        // Once the draft has been sent, we can delete it from Realm
-        try await deleteLocally(draft: draft)
-        return cancelableResponse
+        do {
+            let cancelableResponse = try await apiFetcher.send(mailbox: mailbox, draft: draft)
+            // Once the draft has been sent, we can delete it from Realm
+            try await deleteLocally(draft: draft)
+            return cancelableResponse
+        } catch {
+            // Status code is valid but something went wrong eg. we couldn't parse the response
+            if let statusCode = (error as? AFErrorWithContext)?.request.response?.statusCode,
+               (200 ... 299).contains(statusCode) {
+                try await deleteLocally(draft: draft)
+            }
+            throw error
+        }
     }
 
     public func save(draft: Draft) async throws {
