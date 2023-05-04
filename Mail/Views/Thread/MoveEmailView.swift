@@ -64,7 +64,9 @@ struct MoveEmailView: View {
         ScrollView {
             LazyVStack(spacing: 0) {
                 listOfFolders(nestableFolders: filteredFolders.filter { $0.content.role != nil })
-                IKDivider(horizontalPadding: 8)
+                if searchFilter.isEmpty {
+                    IKDivider(horizontalPadding: 8)
+                }
                 listOfFolders(nestableFolders: filteredFolders.filter { $0.content.role == nil })
             }
             .searchable(text: $searchFilter, placement: .navigationBarDrawer(displayMode: .always))
