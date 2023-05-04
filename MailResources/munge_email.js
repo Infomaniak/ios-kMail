@@ -1,4 +1,5 @@
 const WEBVIEW_WIDTH = 393;
+const MESSAGE_SELECTOR = "#kmail-message-content";
 const PREFERENCES = {
     normalizeMessageWidths: true,
     mungeImages: true,
@@ -13,16 +14,20 @@ window.console.info = captureLog;
 // ----- DEBUG
 
 if (document.readyState == 'complete') {
-    normalizeElementWidths([document.getElementById('kmail-message-content')]);
+    normalizeMessageWidth()
 } else {
     document.onreadystatechange = function() {
         if (document.readyState == 'complete') {
-            normalizeElementWidths([document.getElementById('kmail-message-content')]);
+            normalizeMessageWidth()
         }
     }
 }
 
 // Functions
+
+function normalizeMessageWidth() {
+    normalizeElementWidths(document.querySelectorAll(MESSAGE_SELECTOR));
+}
 
 /**
  * Normalizes the width of elements supplied to the document body's overall width.
@@ -44,32 +49,14 @@ function normalizeElementWidths(elements) {
             logInfo(`Initial zoom reset to 1. Old zoom: ${originalZoom}.`);
         }
 
-        // Remove textAdjustSize for iOS (inline)
-        const elementsWithTextSizeAdjust = document.querySelectorAll('[style*=-webkit-text-size-adjust]');
-        for (const element of elementsWithTextSizeAdjust) {
-            element.style.webkitTextSizeAdjust = null;
-        }
-        if (elementsWithTextSizeAdjust.length > 0) {
-            logInfo(`Property -webkit-text-size-adjust removed from ${elementsWithTextSizeAdjust.length} elements.`);
-        }
-        // Remove textAdjustSize for iOS (property)
-        for (let i = 0; i < document.styleSheets.length; i++) {
-            const styleSheet = document.styleSheets[i];
-            for (let j = 0; j < styleSheet.cssRules.length; j++) {
-                const removedValue = styleSheet.cssRules[j].style?.removeProperty('-webkit-text-size-adjust');
-                if (removedValue) {
-                    logInfo(`Property -webkit-text-size-adjust removed from <style>.`);
-                }
-            }
-        }
-
         const originalWidth = element.style.width;
         element.style.width = `${WEBVIEW_WIDTH}px`;
         transformContent(element, WEBVIEW_WIDTH, element.scrollWidth);
 
         if (PREFERENCES.normalizeMessageWidths) {
-            element.style.zoom = documentWidth / element.scrollWidth;
-            logInfo(`Zoom updated: documentWidth / element.scrollWidth -> ${documentWidth} / ${element.scrollWidth} = ${element.style.zoom}.`);
+            const newZoom = documentWidth / element.scrollWidth;
+            logInfo(`Zoom updated: documentWidth / element.scrollWidth -> ${documentWidth} / ${element.scrollWidth} = ${newZoom}.`);
+            element.style.zoom = newZoom;
         }
 
         element.style.width = originalWidth;
