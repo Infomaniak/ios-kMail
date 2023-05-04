@@ -80,7 +80,7 @@ public class Recipient: EmbeddedObject, Codable {
     }()
 
     public lazy var formattedShortName: String = {
-        if Constants.emailPredicate.evaluate(with: formattedName) {
+        if Constants.isEmailAddress(formattedName) {
             return email.components(separatedBy: "@").first ?? email
         }
         return isMe ? MailResourcesStrings.Localizable.contactMe : nameComponents.givenName.removePunctuation

@@ -68,6 +68,10 @@ public enum Constants {
     public static let customCss = (try? String(contentsOfFile: Bundle.main.path(forResource: "style", ofType: "css") ?? "",
                                               encoding: .utf8).replacingOccurrences(of: "\n", with: "")) ?? ""
 
+    public static func isEmailAddress(_ mail: String) -> Bool {
+        return emailPredicate.evaluate(with: mail.lowercased())
+    }
+
     public static func forwardQuote(message: Message) -> String {
         let date = DateFormatter.localizedString(from: message.date, dateStyle: .medium, timeStyle: .short)
         let to = ListFormatter.localizedString(byJoining: message.to.map(\.htmlDescription))

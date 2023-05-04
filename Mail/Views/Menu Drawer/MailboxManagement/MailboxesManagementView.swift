@@ -71,6 +71,8 @@ struct MailboxesManagementView: View {
                 VStack(alignment: .leading) {
                     ForEach(otherMailboxes) { mailbox in
                         MailboxCell(mailbox: mailbox)
+                            .padding(.horizontal, UIConstants.menuDrawerHorizontalPadding)
+                            .mailboxCellStyle(.menuDrawer)
                     }
                 }
                 .task {

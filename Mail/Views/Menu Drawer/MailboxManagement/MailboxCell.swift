@@ -23,19 +23,56 @@ import MailCore
 import MailResources
 import SwiftUI
 
+struct MailboxCellStyleKey: EnvironmentKey {
+    static var defaultValue = MailboxCell.Style.menuDrawer
+}
+
+extension EnvironmentValues {
+    var mailboxCellStyle: MailboxCell.Style {
+        get { self[MailboxCellStyleKey.self] }
+        set { self[MailboxCellStyleKey.self] = newValue }
+    }
+}
+
+extension View {
+    func mailboxCellStyle(_ style: MailboxCell.Style) -> some View {
+        environment(\.mailboxCellStyle, style)
+    }
+}
+
 struct MailboxCell: View {
+    @Environment(\.mailboxCellStyle) private var style: Style
+    @Environment(\.window) private var window
+
     let mailbox: Mailbox
 
-    @Environment(\.window) private var window
+    private var isSelected: Bool {
+        return AccountManager.instance.currentMailboxManager?.mailbox.objectId == mailbox.objectId
+    }
+
+    private var detailNumber: Int? {
+        return mailbox.unseenMessages > 0 ? mailbox.unseenMessages : nil
+    }
+
+    enum Style {
+        case menuDrawer, account
+    }
 
     var body: some View {
         MailboxesManagementButtonView(
             icon: MailResourcesAsset.envelope,
             text: mailbox.email,
-            detailNumber: mailbox.unseenMessages > 0 ? mailbox.unseenMessages : nil
+            detailNumber: detailNumber,
+            isSelected: isSelected
         ) {
+            guard !isSelected else { return }
             @InjectService var matomo: MatomoUtils
-            matomo.track(eventWithCategory: .menuDrawer, name: "switchMailbox")
+            switch style {
+            case .menuDrawer:
+                matomo.track(eventWithCategory: .menuDrawer, name: "switchMailbox")
+            case .account:
+                matomo.track(eventWithCategory: .account, name: "switchMailbox")
+            }
             (window?.windowScene?.delegate as? SceneDelegate)?.switchMailbox(mailbox)
         }
     }
