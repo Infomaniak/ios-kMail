@@ -198,6 +198,10 @@ public class Folder: Object, Codable, Comparable, Identifiable {
         }
         return true
     }
+    
+    public func verifyFilter(_ filter: String) -> Bool {
+        return localizedName.folding(options: [.caseInsensitive, .diacriticInsensitive], locale: .current).contains(filter)
+    }
 
     enum CodingKeys: String, CodingKey {
         case _id = "id"

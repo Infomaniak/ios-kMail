@@ -43,20 +43,33 @@ struct MoveEmailView: View {
     typealias MoveHandler = (Folder) -> Void
 
     // swiftlint:disable empty_count
-    @ObservedResults(Folder.self, where: { $0.role != .draft && $0.parents.count == 0 && $0.toolType == nil }) var folders
+    @ObservedResults(Folder.self, where: { $0.role != .draft && $0.toolType == nil }) var folders
     @State private var isShowingCreateFolderAlert = false
+
+    private var filteredFolders: [NestableFolder] {
+        guard !searchFilter.isEmpty else {
+            return NestableFolder.createFoldersHierarchy(from: Array(folders.where { $0.parents.count == 0 }))
+        }
+        return folders.filter {
+            let filter = searchFilter.folding(options: [.caseInsensitive, .diacriticInsensitive], locale: .current)
+            return $0.verifyFilter(filter)
+        }.map { NestableFolder(content: $0, children: []) }
+    }
+
+    @State private var searchFilter = ""
 
     let moveAction: MoveAction
 
     var body: some View {
         ScrollView {
             LazyVStack(spacing: 0) {
-                listOfFolders(nestableFolders: NestableFolder
-                    .createFoldersHierarchy(from: Array(folders.where { $0.role != nil })))
-                IKDivider(horizontalPadding: 8)
-                listOfFolders(nestableFolders: NestableFolder
-                    .createFoldersHierarchy(from: Array(folders.where { $0.role == nil })))
+                listOfFolders(nestableFolders: filteredFolders.filter { $0.content.role != nil })
+                if searchFilter.isEmpty {
+                    IKDivider(horizontalPadding: 8)
+                }
+                listOfFolders(nestableFolders: filteredFolders.filter { $0.content.role == nil })
             }
+            .searchable(text: $searchFilter, placement: .navigationBarDrawer(displayMode: .always))
         }
         .navigationTitle(MailResourcesStrings.Localizable.actionMove)
         .navigationBarTitleDisplayMode(.inline)
