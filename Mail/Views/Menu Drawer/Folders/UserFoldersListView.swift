@@ -26,16 +26,14 @@ import SwiftUI
 import UIKit
 
 struct UserFoldersListView: View {
-    var folders: [NestableFolder]
+    @LazyInjectService private var matomo: MatomoUtils
+
+    @EnvironmentObject private var splitViewManager: SplitViewManager
 
     @State private var isExpanded = true
     @State private var isShowingCreateFolderAlert = false
 
-    @EnvironmentObject private var splitViewManager: SplitViewManager
-
-    let isCompact: Bool
-
-    @LazyInjectService var matomo: MatomoUtils
+    let folders: [NestableFolder]
 
     var body: some View {
         VStack(spacing: 0) {

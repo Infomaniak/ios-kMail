@@ -26,9 +26,7 @@ import SwiftUI
 struct RoleFoldersListView: View {
     @EnvironmentObject var splitViewManager: SplitViewManager
 
-    var folders: [NestableFolder]
-
-    var isCompact: Bool
+    let folders: [NestableFolder]
 
     var body: some View {
         VStack(spacing: 0) {

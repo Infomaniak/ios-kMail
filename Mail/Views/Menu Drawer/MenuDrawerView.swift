@@ -95,13 +95,10 @@ struct NavigationDrawer: View {
 
             GeometryReader { geometryProxy in
                 HStack {
-                    MenuDrawerView(
-                        mailboxManager: mailboxManager,
-                        isCompact: true
-                    )
-                    .frame(maxWidth: maxWidth)
-                    .padding(.trailing, spacing)
-                    .offset(x: navigationDrawerState.isOpen ? offsetWidth : -geometryProxy.size.width)
+                    MenuDrawerView(mailboxManager: mailboxManager)
+                        .frame(maxWidth: maxWidth)
+                        .padding(.trailing, spacing)
+                        .offset(x: navigationDrawerState.isOpen ? offsetWidth : -geometryProxy.size.width)
                     Spacer()
                 }
             }
@@ -128,20 +125,17 @@ struct NavigationDrawer: View {
 }
 
 struct MenuDrawerView: View {
-    @EnvironmentObject var splitViewManager: SplitViewManager
-
-    @StateObject var viewModel: MenuDrawerViewModel
-
     @LazyInjectService private var matomo: MatomoUtils
 
-    var mailboxManager: MailboxManager
+    @EnvironmentObject private var splitViewManager: SplitViewManager
 
-    var isCompact: Bool
+    @StateObject private var viewModel: MenuDrawerViewModel
 
-    init(mailboxManager: MailboxManager, isCompact: Bool) {
+    let mailboxManager: MailboxManager
+
+    init(mailboxManager: MailboxManager) {
         _viewModel = StateObject(wrappedValue: MenuDrawerViewModel(mailboxManager: mailboxManager))
         self.mailboxManager = mailboxManager
-        self.isCompact = isCompact
     }
 
     var body: some View {
@@ -156,11 +150,11 @@ struct MenuDrawerView: View {
 
                         IKDivider(hasVerticalPadding: true, horizontalPadding: UIConstants.menuDrawerHorizontalPadding)
 
-                        RoleFoldersListView(folders: viewModel.roleFolders, isCompact: isCompact)
+                        RoleFoldersListView(folders: viewModel.roleFolders)
 
                         IKDivider(hasVerticalPadding: true, horizontalPadding: UIConstants.menuDrawerHorizontalPadding)
 
-                        UserFoldersListView(folders: viewModel.userFolders, isCompact: isCompact)
+                        UserFoldersListView(folders: viewModel.userFolders)
 
                         IKDivider(hasVerticalPadding: true, horizontalPadding: UIConstants.menuDrawerHorizontalPadding)
                     }
@@ -213,7 +207,7 @@ struct AppVersionView: View {
 
 struct MenuDrawerView_Previews: PreviewProvider {
     static var previews: some View {
-        MenuDrawerView(mailboxManager: PreviewHelper.sampleMailboxManager, isCompact: false)
+        MenuDrawerView(mailboxManager: PreviewHelper.sampleMailboxManager)
             .environmentObject(NavigationDrawerState())
     }
 }
