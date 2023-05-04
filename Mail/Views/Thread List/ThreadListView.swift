@@ -56,8 +56,6 @@ struct ThreadListView: View {
 
     @LazyInjectService private var matomo: MatomoUtils
 
-    let isCompact: Bool
-
     private var shouldDisplayEmptyView: Bool {
         viewModel.folder.lastUpdate != nil && viewModel.sections.isEmpty && !viewModel.isLoadingPage
     }
@@ -78,7 +76,6 @@ struct ThreadListView: View {
                                                                    isCompact: isCompact))
         _multipleSelectionViewModel =
             StateObject(wrappedValue: ThreadListMultipleSelectionViewModel(mailboxManager: mailboxManager))
-        self.isCompact = isCompact
 
         UITableViewCell.appearance().focusEffect = .none
     }
@@ -177,8 +174,7 @@ struct ThreadListView: View {
                 isRefreshing = false
             }
         }
-        .modifier(ThreadListToolbar(isCompact: isCompact,
-                                    flushAlert: $flushAlert,
+        .modifier(ThreadListToolbar(flushAlert: $flushAlert,
                                     viewModel: viewModel,
                                     multipleSelectionViewModel: multipleSelectionViewModel) {
                 withAnimation(.default.speed(2)) {
@@ -249,20 +245,20 @@ struct ThreadListView: View {
 }
 
 private struct ThreadListToolbar: ViewModifier {
-    var isCompact: Bool
+    @LazyInjectService private var matomo: MatomoUtils
+
+    @Environment(\.isCompactWindow) var isCompactWindow
+
+    @EnvironmentObject private var splitViewManager: SplitViewManager
+    @EnvironmentObject private var navigationDrawerState: NavigationDrawerState
+
+    @State private var isShowingSwitchAccount = false
+    @State private var multipleSelectionActionsTarget: ActionsTarget?
 
     @Binding var flushAlert: FlushAlertState?
 
     @ObservedObject var viewModel: ThreadListViewModel
     @ObservedObject var multipleSelectionViewModel: ThreadListMultipleSelectionViewModel
-
-    @State private var isShowingSwitchAccount = false
-    @State private var multipleSelectionActionsTarget: ActionsTarget?
-
-    @EnvironmentObject var splitViewManager: SplitViewManager
-    @EnvironmentObject var navigationDrawerState: NavigationDrawerState
-
-    @LazyInjectService private var matomo: MatomoUtils
 
     var selectAll: () -> Void
 
@@ -278,7 +274,7 @@ private struct ThreadListToolbar: ViewModifier {
                             }
                         }
                     } else {
-                        if isCompact {
+                        if isCompactWindow {
                             Button {
                                 matomo.track(eventWithCategory: .menuDrawer, name: "openByButton")
                                 navigationDrawerState.open()
