@@ -14,8 +14,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/ProxymanApp/atlantis",
       "state" : {
-        "revision" : "a7b496f4fe0e01709442c775605754e7f209f958",
-        "version" : "1.21.0"
+        "revision" : "f6f7be1330bd4f847b6d52278acd88516eaac471",
+        "version" : "1.21.1"
       }
     },
     {
@@ -49,8 +49,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Infomaniak/ios-core-ui",
       "state" : {
-        "revision" : "0277a957e2342c21c69f3978b422ad0828fa46b6",
-        "version" : "2.3.0"
+        "revision" : "d6aadc19b255fef24ff91ced30c3f52dd982cf4c",
+        "version" : "2.4.0"
       }
     },
     {
@@ -157,8 +157,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/realm/realm-core.git",
       "state" : {
-        "revision" : "e56380f05793998dfea0d87a34b68fdba475961c",
-        "version" : "13.9.0"
+        "revision" : "f2a209b164194190b46747c7f5e36cb30fd5db71",
+        "version" : "13.10.0"
       }
     },
     {
@@ -166,8 +166,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/realm/realm-swift",
       "state" : {
-        "revision" : "71bddc82c4fe3dd6488739ff8b7e99f69183a614",
-        "version" : "10.38.0"
+        "revision" : "9266efac9ef0c79e4e64a2ba36162d8d922893d2",
+        "version" : "10.39.0"
       }
     },
     {
@@ -175,8 +175,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/getsentry/sentry-cocoa",
       "state" : {
-        "revision" : "92a6472efc750a4e18bdee21c204942ab0bc4dcd",
-        "version" : "8.4.0"
+        "revision" : "e6dcfba32f2861438b82c7ad34e058b23c83daf6",
+        "version" : "8.6.0"
       }
     },
     {

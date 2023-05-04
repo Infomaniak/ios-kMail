@@ -93,7 +93,9 @@ public class MailboxManager: ObservableObject {
 
     public func getRealm() -> Realm {
         do {
-            return try Realm(configuration: realmConfiguration)
+            let realm = try Realm(configuration: realmConfiguration)
+            realm.refresh()
+            return realm
         } catch {
             // We can't recover from this error but at least we report it correctly on Sentry
             Logging.reportRealmOpeningError(error, realmConfiguration: realmConfiguration)
@@ -140,7 +142,6 @@ public class MailboxManager: ObservableObject {
 
     public func getSignatureResponse(using realm: Realm? = nil) -> SignatureResponse? {
         let realm = realm ?? getRealm()
-        realm.refresh()
         return realm.object(ofType: SignatureResponse.self, forPrimaryKey: 1)
     }
 
@@ -190,13 +191,9 @@ public class MailboxManager: ObservableObject {
     /// - Parameters:
     ///   - role: Role of the folder.
     ///   - realm: The Realm instance to use. If this parameter is `nil`, a new one will be created.
-    ///   - shouldRefresh: If `true`, the Realm instance will be refreshed before trying to get the folder.
     /// - Returns: The folder with the corresponding role, or `nil` if no such folder has been found.
-    public func getFolder(with role: FolderRole, using realm: Realm? = nil, shouldRefresh: Bool = false) -> Folder? {
+    public func getFolder(with role: FolderRole, using realm: Realm? = nil) -> Folder? {
         let realm = realm ?? getRealm()
-        if shouldRefresh {
-            realm.refresh()
-        }
         return realm.objects(Folder.self).where { $0.role == role }.first
     }
 
@@ -968,7 +965,6 @@ public class MailboxManager: ObservableObject {
 
     public func draftWithPendingAction() -> Results<Draft> {
         let realm = getRealm()
-        realm.refresh()
         return realm.objects(Draft.self).where { $0.action != nil }
     }
 
@@ -1065,7 +1061,7 @@ public class MailboxManager: ObservableObject {
     }
 
     public func deleteOrphanDrafts() async {
-        guard let draftFolder = getFolder(with: .draft, shouldRefresh: true) else { return }
+        guard let draftFolder = getFolder(with: .draft) else { return }
 
         let existingMessageUids = Set(draftFolder.threads.flatMap(\.messages).map(\.uid))
 
