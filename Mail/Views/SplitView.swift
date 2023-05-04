@@ -56,7 +56,7 @@ struct SplitView: View {
     init(mailboxManager: MailboxManager) {
         self.mailboxManager = mailboxManager
         _splitViewManager =
-            StateObject(wrappedValue: SplitViewManager(folder: mailboxManager.getFolder(with: .inbox, shouldRefresh: true)))
+            StateObject(wrappedValue: SplitViewManager(folder: mailboxManager.getFolder(with: .inbox)))
     }
 
     var body: some View {
@@ -176,6 +176,6 @@ struct SplitView: View {
     }
 
     private func getInbox() -> Folder? {
-        return mailboxManager.getFolder(with: .inbox, shouldRefresh: true)
+        return mailboxManager.getFolder(with: .inbox)
     }
 }

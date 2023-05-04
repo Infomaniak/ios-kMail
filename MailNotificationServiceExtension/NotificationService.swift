@@ -54,9 +54,7 @@ class NotificationService: UNNotificationServiceExtension {
         }
         try await mailboxManager.threads(folder: inboxFolder.freezeIfNeeded())
 
-        let realm = mailboxManager.getRealm()
-        realm.refresh()
-        @ThreadSafe var message = realm.object(ofType: Message.self, forPrimaryKey: uid)
+        @ThreadSafe var message = mailboxManager.getRealm().object(ofType: Message.self, forPrimaryKey: uid)
 
         if let message,
            !message.fullyDownloaded {
