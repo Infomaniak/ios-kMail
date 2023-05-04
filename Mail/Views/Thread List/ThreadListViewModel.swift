@@ -252,6 +252,7 @@ class DateSection: Identifiable {
 
     func nextThreadIfNeeded(from threads: [Thread]) {
         guard !isCompact,
+              !threads.isEmpty,
               !threads.contains(where: { $0.uid == selectedThread?.uid }),
               let lastIndex = selectedThreadIndex else { return }
         let validIndex = min(lastIndex, threads.count - 1)
