@@ -22,15 +22,15 @@ import MailResources
 import SwiftUI
 
 struct ThreadListManagerView: View {
-    @EnvironmentObject var splitViewManager: SplitViewManager
-    @EnvironmentObject var mailboxManager: MailboxManager
+    @Environment(\.isCompactWindow) private var isCompactWindow
+
+    @EnvironmentObject private var splitViewManager: SplitViewManager
+    @EnvironmentObject private var mailboxManager: MailboxManager
 
     @State private var shouldNavigateToNotificationThread = false
     @State private var tappedNotificationThread: Thread?
     @State private var editedMessageDraft: Draft?
     @State private var messageReply: MessageReply?
-
-    let isCompact: Bool
 
     var body: some View {
         Group {
@@ -39,8 +39,7 @@ struct ThreadListManagerView: View {
                     SearchView(
                         mailboxManager: mailboxManager,
                         folder: selectedFolder,
-                        editedMessageDraft: $editedMessageDraft,
-                        isCompact: isCompact
+                        editedMessageDraft: $editedMessageDraft
                     )
                 } else {
                     ThreadListView(
@@ -48,7 +47,7 @@ struct ThreadListManagerView: View {
                         folder: selectedFolder,
                         editedMessageDraft: $editedMessageDraft,
                         messageReply: $messageReply,
-                        isCompact: isCompact
+                        isCompact: isCompactWindow
                     )
                 }
             }
@@ -62,9 +61,7 @@ struct ThreadListManagerView: View {
 
 struct ThreadListManagerView_Previews: PreviewProvider {
     static var previews: some View {
-        ThreadListManagerView(
-            isCompact: false
-        )
+        ThreadListManagerView()
         .environmentObject(PreviewHelper.sampleMailboxManager)
     }
 }

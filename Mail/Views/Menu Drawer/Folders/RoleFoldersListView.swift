@@ -26,16 +26,13 @@ import SwiftUI
 struct RoleFoldersListView: View {
     @EnvironmentObject var splitViewManager: SplitViewManager
 
-    var folders: [NestableFolder]
-
-    var isCompact: Bool
+    let folders: [NestableFolder]
 
     var body: some View {
         VStack(spacing: 0) {
             ForEach(folders) { folder in
                 FolderCell(folder: folder,
                            currentFolderId: splitViewManager.selectedFolder?.id,
-                           isCompact: isCompact,
                            matomoCategory: .menuDrawer)
             }
         }
