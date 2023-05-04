@@ -104,7 +104,7 @@ struct SearchView: View {
                 .accessibilityLabel(MailResourcesStrings.Localizable.contentDescriptionButtonBack)
             }
 
-            ToolbarItem(placement: .navigation) {
+            ToolbarItem(placement: .principal) {
                 SearchTextField(value: $viewModel.searchValue) {
                     viewModel.matomo.track(eventWithCategory: .search, name: "validateSearch")
                     viewModel.searchThreadsForCurrentValue()
