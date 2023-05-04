@@ -64,7 +64,7 @@ struct SplitView: View {
             if isCompact {
                 ZStack {
                     NBNavigationStack(path: $navigationStore.threadPath) {
-                        ThreadListManagerView(isCompact: isCompact)
+                        ThreadListManagerView()
                             .accessibilityHidden(navigationDrawerController.isOpen)
                             .nbNavigationDestination(for: Thread.self) { thread in
                                 ThreadView(thread: thread)
@@ -82,7 +82,7 @@ struct SplitView: View {
                     )
                     .navigationBarHidden(true)
 
-                    ThreadListManagerView(isCompact: isCompact)
+                    ThreadListManagerView()
 
                     if let thread = navigationStore.threadPath.last {
                         ThreadView(thread: thread)

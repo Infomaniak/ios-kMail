@@ -23,21 +23,17 @@ import RealmSwift
 import SwiftUI
 
 struct SearchView: View {
-    @EnvironmentObject var splitViewManager: SplitViewManager
+    @Environment(\.isCompactWindow) private var isCompactWindow
 
-    @StateObject var viewModel: SearchViewModel
+    @EnvironmentObject private var splitViewManager: SplitViewManager
+
+    @StateObject private var viewModel: SearchViewModel
 
     @Binding private var editedMessageDraft: Draft?
 
-    let isCompact: Bool
-
-    init(mailboxManager: MailboxManager,
-         folder: Folder,
-         editedMessageDraft: Binding<Draft?>,
-         isCompact: Bool) {
+    init(mailboxManager: MailboxManager, folder: Folder, editedMessageDraft: Binding<Draft?>) {
         _editedMessageDraft = editedMessageDraft
         _viewModel = StateObject(wrappedValue: SearchViewModel(mailboxManager: mailboxManager, folder: folder))
-        self.isCompact = isCompact
     }
 
     var body: some View {
@@ -103,7 +99,7 @@ struct SearchView: View {
                     Constants.globallyResignFirstResponder()
                     splitViewManager.showSearch = false
                 } label: {
-                    Image(isCompact ? MailResourcesAsset.arrowLeft.name : MailResourcesAsset.closeBig.name)
+                    Image(isCompactWindow ? MailResourcesAsset.arrowLeft.name : MailResourcesAsset.closeBig.name)
                 }
                 .accessibilityLabel(MailResourcesStrings.Localizable.contentDescriptionButtonBack)
             }
@@ -127,7 +123,6 @@ struct SearchView_Previews: PreviewProvider {
     static var previews: some View {
         SearchView(mailboxManager: PreviewHelper.sampleMailboxManager,
                    folder: PreviewHelper.sampleFolder,
-                   editedMessageDraft: .constant(nil),
-                   isCompact: true)
+                   editedMessageDraft: .constant(nil))
     }
 }
