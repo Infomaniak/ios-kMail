@@ -39,7 +39,8 @@ struct FolderCell: View {
         case link, indicator
     }
 
-    @Environment(\.folderCellType) var cellType
+    @Environment(\.folderCellType) private var cellType
+    @Environment(\.isCompactWindow) private var isCompactWindow
 
     @EnvironmentObject var splitViewManager: SplitViewManager
     @EnvironmentObject var navigationDrawerState: NavigationDrawerState
@@ -48,7 +49,6 @@ struct FolderCell: View {
     var level = 0
 
     var currentFolderId: String?
-    var isCompact = true
 
     var matomoCategory: MatomoUtils.EventCategory?
 
@@ -62,13 +62,13 @@ struct FolderCell: View {
 
     var body: some View {
         Group {
-            if cellType == .indicator || isCompact {
+            if cellType == .indicator || isCompactWindow {
                 Button(action: didTapButton) {
                     FolderCellContent(folder: folder.content, level: level, isCurrentFolder: isCurrentFolder)
                 }
             } else {
                 NavigationLink(isActive: $shouldTransit) {
-                    ThreadListManagerView(isCompact: isCompact)
+                    ThreadListManagerView()
                 } label: {
                     Button {
                         if let matomoCategory {
@@ -89,7 +89,6 @@ struct FolderCell: View {
                     folder: child,
                     level: level + 1,
                     currentFolderId: currentFolderId,
-                    isCompact: isCompact,
                     customCompletion: customCompletion
                 )
             }
@@ -180,12 +179,8 @@ struct FolderCellContent: View {
 
 struct FolderCellView_Previews: PreviewProvider {
     static var previews: some View {
-        FolderCell(
-            folder: NestableFolder(content: PreviewHelper.sampleFolder, children: []),
-            currentFolderId: nil,
-            isCompact: false
-        )
-        .environmentObject(PreviewHelper.sampleMailboxManager)
-        .environmentObject(NavigationDrawerState())
+        FolderCell(folder: NestableFolder(content: PreviewHelper.sampleFolder, children: []), currentFolderId: nil)
+            .environmentObject(PreviewHelper.sampleMailboxManager)
+            .environmentObject(NavigationDrawerState())
     }
 }

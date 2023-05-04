@@ -35,7 +35,6 @@ struct RoleFoldersListView: View {
             ForEach(folders) { folder in
                 FolderCell(folder: folder,
                            currentFolderId: splitViewManager.selectedFolder?.id,
-                           isCompact: isCompact,
                            matomoCategory: .menuDrawer)
             }
         }
