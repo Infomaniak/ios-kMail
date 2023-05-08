@@ -1,5 +1,3 @@
-removeAllProperties();
-
 function removeAllProperties() {
     const properties = [
         { name: 'position', values: ['absolute'] },

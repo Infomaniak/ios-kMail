@@ -1,4 +1,3 @@
-const WEBVIEW_WIDTH = 393;
 const MESSAGE_SELECTOR = "#kmail-message-content";
 const PREFERENCES = {
     normalizeMessageWidths: true,
@@ -7,26 +6,10 @@ const PREFERENCES = {
     minimumEffectiveRatio: 0.7
 };
 
-// ----- DEBUG
-function captureLog(msg) { window.webkit.messageHandlers.logHandler.postMessage(msg); }
-window.console.log = captureLog;
-window.console.info = captureLog;
-// ----- DEBUG
-
-if (document.readyState == 'complete') {
-    normalizeMessageWidth()
-} else {
-    document.onreadystatechange = function() {
-        if (document.readyState == 'complete') {
-            normalizeMessageWidth()
-        }
-    }
-}
-
 // Functions
 
-function normalizeMessageWidth() {
-    normalizeElementWidths(document.querySelectorAll(MESSAGE_SELECTOR));
+function normalizeMessageWidth(webviewWidth) {
+    normalizeElementWidths(document.querySelectorAll(MESSAGE_SELECTOR), webviewWidth);
 }
 
 /**
@@ -35,7 +18,7 @@ function normalizeMessageWidth() {
  * This method is idempotent.
  * @param elements DOM elements to normalize
  */
-function normalizeElementWidths(elements) {
+function normalizeElementWidths(elements, webviewWidth) {
     const documentWidth = document.body.offsetWidth;
     logInfo(`Starts to normalize elements. Document width: ${documentWidth}.`);
 
@@ -50,8 +33,8 @@ function normalizeElementWidths(elements) {
         }
 
         const originalWidth = element.style.width;
-        element.style.width = `${WEBVIEW_WIDTH}px`;
-        transformContent(element, WEBVIEW_WIDTH, element.scrollWidth);
+        element.style.width = `${webviewWidth}px`;
+        transformContent(element, webviewWidth, element.scrollWidth);
 
         if (PREFERENCES.normalizeMessageWidths) {
             const newZoom = documentWidth / element.scrollWidth;
