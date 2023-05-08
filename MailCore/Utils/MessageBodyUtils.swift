@@ -84,7 +84,7 @@ public enum MessageBodyUtils {
                 try cleanedDocument.body()?.attr("style", bodyStyleAttribute)
             }
 
-            return try cleanedDocument
+            return cleanedDocument
         } catch {
             DDLogError("An error occurred while parsing body \(error)")
             return nil

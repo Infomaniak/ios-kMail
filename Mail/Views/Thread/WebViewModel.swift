@@ -124,9 +124,7 @@ class WebViewModel: NSObject, WKScriptMessageHandler {
 
         configuration.userContentController.add(self, name: "logHandler")
 
-        if let mungeScriptURL = Bundle.main.url(forResource: "munge_email", withExtension: "js"), let mungeScript = try? String(contentsOf: mungeScriptURL) {
-            configuration.userContentController.addUserScript(WKUserScript(source: mungeScript, injectionTime: .atDocumentStart, forMainFrameOnly: true))
-        }
+        loadScripts(configuration: configuration)
     }
 
     func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
@@ -141,7 +139,6 @@ class WebViewModel: NSObject, WKScriptMessageHandler {
         do {
             guard let safeDocument = MessageBodyUtils.cleanHtmlContent(rawHtml: rawHtml) else { return }
 
-//            try reduceImageSize(of: safeDocument)
             try updateHeadContent(of: safeDocument)
 
             // Wrap in #kmail-message-content
@@ -159,16 +156,23 @@ class WebViewModel: NSObject, WKScriptMessageHandler {
         }
     }
 
-    private func reduceImageSize(of document: Document) throws {
-        let allImages = try document.select("img[width]").array()
-        let maxWidth = webView.frame.width
-        for image in allImages {
-            if let widthString = image.getAttributes()?.get(key: "width"),
-               let width = Double(widthString),
-               width > maxWidth {
-                try image.attr("width", "\(maxWidth)")
-                try image.attr("height", "auto")
-            }
+    private func loadScripts(configuration: WKWebViewConfiguration) {
+        let debugScript = """
+        // ----- DEBUG
+        function captureLog(msg) { window.webkit.messageHandlers.logHandler.postMessage(msg); }
+        window.console.log = captureLog;
+        window.console.info = captureLog;
+        // ----- DEBUG
+        """
+        configuration.userContentController.addUserScript(WKUserScript(source: debugScript, injectionTime: .atDocumentStart, forMainFrameOnly: true))
+
+        if let fixEmailStyleScriptURL = Bundle.main.url(forResource: "fix_email_style", withExtension: "js"),
+           let fixEmailStyleScript = try? String(contentsOf: fixEmailStyleScriptURL) {
+            configuration.userContentController.addUserScript(WKUserScript(source: fixEmailStyleScript, injectionTime: .atDocumentStart, forMainFrameOnly: true))
+        }
+
+        if let mungeScriptURL = Bundle.main.url(forResource: "munge_email", withExtension: "js"), let mungeScript = try? String(contentsOf: mungeScriptURL) {
+            configuration.userContentController.addUserScript(WKUserScript(source: mungeScript, injectionTime: .atDocumentStart, forMainFrameOnly: true))
         }
     }
 
