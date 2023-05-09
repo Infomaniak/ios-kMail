@@ -143,8 +143,8 @@ public class Message: Object, Decodable, Identifiable {
     @Persisted public var fromSearch = false
     @Persisted public var inTrash = false
 
-    public var shortUid: String {
-        return Constants.shortUid(from: uid)
+    public var shortUid: Int? {
+        return Int(Constants.shortUid(from: uid))
     }
 
     public var recipients: [Recipient] {

@@ -683,26 +683,33 @@ public class MailboxManager: ObservableObject {
 
         if previousCursor == nil {
             for _ in 0 ..< (Constants.messageQuantityLimit / Constants.pageSize) {
-                // TODO: - exit when empty list
-                let realm = getRealm()
-                guard let offset = realm.objects(Message.self).where({ $0.folderId == folder.id }).sorted(by: \.shortUid).first?
-                    .shortUid else { break }
-
-                let messageUidsResult = try await apiFetcher.messagesUids(
-                    mailboxUuid: mailbox.uuid,
-                    folderId: folder.id,
-                    offset: offset
-                )
-                let messagesUids = MessagesUids(
-                    addedShortUids: messageUidsResult.messageShortUids.map { String($0) },
-                    cursor: messageUidsResult.cursor
-                )
-
-                try await handleMessagesUids(messageUids: messagesUids, folder: folder)
+                if try !(await moreMessages(folder: folder)) {
+                    break
+                }
             }
 
             // TODO: - Update folders
         }
+    }
+
+    public func moreMessages(folder: Folder) async throws -> Bool {
+        let realm = getRealm()
+        guard let offset = realm.objects(Message.self).where({ $0.folderId == folder.id })
+            .sorted(by: { $0.shortUid! < $1.shortUid! }).first?
+            .shortUid?.toString() else { return false }
+
+        let messageUidsResult = try await apiFetcher.messagesUids(
+            mailboxUuid: mailbox.uuid,
+            folderId: folder.id,
+            offset: offset
+        )
+        let messagesUids = MessagesUids(
+            addedShortUids: messageUidsResult.messageShortUids.map { String($0) },
+            cursor: messageUidsResult.cursor
+        )
+
+        try await handleMessagesUids(messageUids: messagesUids, folder: folder)
+        return messagesUids.addedShortUids.count == Constants.pageSize
     }
 
     private func handleMessagesUids(messageUids: MessagesUids, folder: Folder) async throws {
