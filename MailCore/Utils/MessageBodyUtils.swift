@@ -79,11 +79,6 @@ public enum MessageBodyUtils {
                 try metaRefreshTag.parent()?.removeChild(metaRefreshTag)
             }
 
-            // If `<body>` has a style attribute, keep it
-            if let bodyStyleAttribute = try dirtyDocument.body()?.attr("style") {
-                try cleanedDocument.body()?.attr("style", bodyStyleAttribute)
-            }
-
             return cleanedDocument
         } catch {
             DDLogError("An error occurred while parsing body \(error)")
