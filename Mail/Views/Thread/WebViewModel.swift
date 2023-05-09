@@ -61,7 +61,7 @@ struct WebView: UIViewRepresentable {
 
                 // Fix email style
                 _ = try await webView.evaluateJavaScript("removeAllProperties()")
-                _ = try await webView.evaluateJavaScript("normalizeMessageWidth(\(webView.frame.width))")
+                _ = try await webView.evaluateJavaScript("normalizeMessageWidth(\(webView.frame.width), \"\")")
 
                 // Get WKWebView height
                 let scrollHeight = try await webView.evaluateJavaScript("document.documentElement.scrollHeight") as? CGFloat
@@ -150,7 +150,7 @@ class WebViewModel: NSObject, WKScriptMessageHandler {
             if let bodyContent = safeDocument.body()?.childNodesCopy() {
                 safeDocument.body()?.empty()
                 try safeDocument.body()?
-                    .appendElement("div").attr("id", "kmail-message-content")
+                    .appendElement("div").attr("id", Constants.divWrapperId)
                     .insertChildren(-1, bodyContent)
             }
 
@@ -185,8 +185,7 @@ class WebViewModel: NSObject, WKScriptMessageHandler {
                 .addUserScript(WKUserScript(source: fixEmailStyleScript, injectionTime: .atDocumentStart, forMainFrameOnly: true))
         }
 
-        if let mungeScriptURL = Bundle.main.url(forResource: "mungeEmail", withExtension: "js"),
-           let mungeScript = try? String(contentsOf: mungeScriptURL) {
+        if let mungeScript = Constants.mungeEmailScript {
             configuration.userContentController
                 .addUserScript(WKUserScript(source: mungeScript, injectionTime: .atDocumentStart, forMainFrameOnly: true))
         }

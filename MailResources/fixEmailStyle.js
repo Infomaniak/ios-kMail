@@ -53,7 +53,7 @@ function removeCSSProperty(properties) {
                     }
                 }
             }
-        } catch (exception) {
+        } catch (error) {
             // The stylesheet cannot be modified
         }
     }
