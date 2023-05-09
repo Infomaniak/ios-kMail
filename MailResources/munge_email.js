@@ -8,8 +8,9 @@ const PREFERENCES = {
 
 // Functions
 
-function normalizeMessageWidth(webviewWidth) {
-    normalizeElementWidths(document.querySelectorAll(MESSAGE_SELECTOR), webviewWidth);
+function normalizeMessageWidth(webViewWidth) {
+    normalizeElementWidths(document.querySelectorAll(MESSAGE_SELECTOR), webViewWidth);
+    return true;
 }
 
 /**
@@ -18,7 +19,7 @@ function normalizeMessageWidth(webviewWidth) {
  * This method is idempotent.
  * @param elements DOM elements to normalize
  */
-function normalizeElementWidths(elements, webviewWidth) {
+function normalizeElementWidths(elements, webViewWidth) {
     const documentWidth = document.body.offsetWidth;
     logInfo(`Starts to normalize elements. Document width: ${documentWidth}.`);
 
@@ -33,8 +34,8 @@ function normalizeElementWidths(elements, webviewWidth) {
         }
 
         const originalWidth = element.style.width;
-        element.style.width = `${webviewWidth}px`;
-        transformContent(element, webviewWidth, element.scrollWidth);
+        element.style.width = `${webViewWidth}px`;
+        transformContent(element, webViewWidth, element.scrollWidth);
 
         if (PREFERENCES.normalizeMessageWidths) {
             const newZoom = documentWidth / element.scrollWidth;
@@ -43,6 +44,11 @@ function normalizeElementWidths(elements, webviewWidth) {
         }
 
         element.style.width = originalWidth;
+
+        if (document.documentElement.scrollWidth > document.documentElement.clientWidth) {
+            logInfo(`After zooming the mail it can still scroll: found clientWidth / scrollWidth -> ${document.documentElement.clientWidth} / ${document.documentElement.scrollWidth}`);
+            // TODO: Renvoyer la valeur sur Sentry
+        }
     }
 }
 
