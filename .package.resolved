@@ -236,10 +236,10 @@
     {
       "identity" : "swiftsoup",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/valentinperignon/SwiftSoup",
+      "location" : "https://github.com/scinfu/SwiftSoup",
       "state" : {
-        "branch" : "try-headcleaner",
-        "revision" : "05c6c880a5056421de271012faa8bd0a42c2e0a8"
+        "revision" : "0e96a20ffd37a515c5c963952d4335c89bed50a6",
+        "version" : "2.6.0"
       }
     },
     {
