@@ -113,7 +113,6 @@ struct UnreadToggleStyle: ToggleStyle {
                     MailResourcesAsset.closeSmall.swiftUIImage
                         .resizable()
                         .frame(width: 12, height: 12)
-                        .foregroundColor(.white)
                 }
             }
             .textStyle(configuration.isOn ? .bodySmallMediumOnAccent : .bodySmallMediumAccent)
