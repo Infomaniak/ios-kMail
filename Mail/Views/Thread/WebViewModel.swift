@@ -59,6 +59,11 @@ struct WebView: UIViewRepresentable {
                 let readyState = try await webView.evaluateJavaScript("document.readyState") as? String
                 guard readyState == "complete" else { return }
 
+                // Fix email style
+                _ = try await webView.evaluateJavaScript("removeAllProperties()")
+                _ = try await webView.evaluateJavaScript("normalizeMessageWidth(\(webView.frame.width))")
+
+                // Get WKWebView height
                 let scrollHeight = try await webView.evaluateJavaScript("document.documentElement.scrollHeight") as? CGFloat
                 guard let scrollHeight else { return }
                 updateHeight(height: scrollHeight)
