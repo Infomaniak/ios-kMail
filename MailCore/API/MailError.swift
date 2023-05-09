@@ -23,64 +23,59 @@ import MailResources
 
 extension ApiError: CustomStringConvertible {}
 
-struct AFErrorWithContext: LocalizedError {
+class AFErrorWithContext: MailError {
     let request: DataRequest
     let afError: AFError
 
-    public var errorDescription: String? {
-        return MailError.unknownError.errorDescription
+    init(request: DataRequest, afError: AFError) {
+        self.request = request
+        self.afError = afError
+        super.init(code: "afErrorWithContext", shouldDisplay: false)
     }
 }
 
-public enum MailError: LocalizedError {
-    case apiError(ApiError)
-    case serverError(statusCode: Int)
-    case noToken
-    case resourceError
-    case unknownError
-    case unknownToken
-    case noMailbox
-    case messageNotFound
-    case folderNotFound
-    case addressBookNotFound
-    case contactNotFound
-    case attachmentsSizeLimitReached
+public class MailError: LocalizedError {
+    public let code: String
+    public let errorDescription: String
+    public let shouldDisplay: Bool
 
-    public var errorDescription: String? {
-        switch self {
-        case .apiError(let apiError):
-            if let code = ApiErrorCode(rawValue: apiError.code) {
-                return code.localizedDescription
-            }
-            return apiError.description
-        case .noToken:
-            return "No API token"
-        case .resourceError:
-            return "Resource error"
-        case .unknownError:
-            return "Unknown error"
-        case .serverError:
-            return "Server error"
-        case .unknownToken:
-            return "Unknown token"
-        case .noMailbox:
-            return "No Mailbox"
-        case .folderNotFound:
-            return "Folder not found"
-        case .addressBookNotFound:
-            return "Address Book not found"
-        case .contactNotFound:
-            return "Contact not found"
-        case .messageNotFound:
-            return "Message not found"
-        case .attachmentsSizeLimitReached:
-            return MailResourcesStrings.Localizable.attachmentFileLimitReached
-        }
+    init(code: String, localizedDescription: String? = nil, shouldDisplay: Bool = false) {
+        self.code = code
+        errorDescription = localizedDescription ?? "Unknown error"
+        self.shouldDisplay = shouldDisplay
     }
+
+    public static let unknownError = MailError(code: "unknownError", shouldDisplay: true)
+    public static let noToken = MailError(code: "noToken", shouldDisplay: true)
+    public static let resourceError = MailError(code: "resourceError", shouldDisplay: true)
+    public static let unknownToken = MailError(code: "unknownToken", shouldDisplay: true)
+    public static let noMailbox = MailError(code: "noMailbox", shouldDisplay: true)
+    public static let folderNotFound = MailError(code: "folderNotFound", shouldDisplay: true)
+    public static let addressBookNotFound = MailError(code: "addressBookNotFound", shouldDisplay: true)
+    public static let contactNotFound = MailError(code: "contactNotFound", shouldDisplay: true)
+    public static let messageNotFound = MailError(code: "messageNotFound", shouldDisplay: true)
+    public static let attachmentsSizeLimitReached = MailError(code: "attachmentsSizeLimitReached",
+                                                              localizedDescription: MailResourcesStrings.Localizable
+                                                                  .attachmentFileLimitReached,
+                                                              shouldDisplay: true)
 }
 
 extension MailError: Identifiable {
     public var id: String {
-        return errorDescription ?? UUID().uuidString
+        return code
+    }
+}
+
+extension MailError: Equatable {
+    public static func == (lhs: MailError, rhs: MailError) -> Bool {
+        return lhs.code == rhs.code
+    }
+}
+
+public class MailServerError: MailError {
+    let httpStatus: Int
+    init(httpStatus: Int) {
+        self.httpStatus = httpStatus
+        super.init(code: "serverError")
     }
 }

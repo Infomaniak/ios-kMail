@@ -43,9 +43,9 @@ public class MailApiFetcher: ApiFetcher {
         do {
             return try await super.perform(request: request)
         } catch InfomaniakError.apiError(let apiError) {
-            throw MailError.apiError(apiError)
+            throw MailApiError.mailApiErrorWithFallback(apiErrorCode: apiError.code)
         } catch InfomaniakError.serverError(statusCode: let statusCode) {
-            throw MailError.serverError(statusCode: statusCode)
+            throw MailServerError(httpStatus: statusCode)
         } catch {
             if let afError = error.asAFError {
                 if case .responseSerializationFailed(let reason) = afError,
