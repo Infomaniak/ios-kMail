@@ -16,6 +16,7 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import CocoaLumberjackSwift
 import Foundation
 import InfomaniakCoreUI
 
@@ -23,12 +24,7 @@ public func tryOrDisplayError(_ body: () throws -> Void) {
     do {
         try body()
     } catch {
-        if error.shouldDisplay {
-            Task.detached {
-                await IKSnackBar.showSnackBar(message: error.localizedDescription)
-            }
-        }
-        print("Error: \(error)")
+        displayErrorIfNeeded(error: error)
     }
 }
 
@@ -36,12 +32,22 @@ public func tryOrDisplayError(_ body: () async throws -> Void) async {
     do {
         try await body()
     } catch {
-        if error.shouldDisplay {
-            Task.detached {
-                await IKSnackBar.showSnackBar(message: error.localizedDescription)
-            }
+        displayErrorIfNeeded(error: error)
+    }
+}
+
+private func displayErrorIfNeeded(error: Error) {
+    if let error = error as? MailError,
+       error.shouldDisplay {
+        Task.detached {
+            await IKSnackBar.showSnackBar(message: error.errorDescription)
         }
-        print("Error: \(error)")
+        DDLogError("MailError: \(error)")
+    } else if error.shouldDisplay {
+        Task.detached {
+            await IKSnackBar.showSnackBar(message: error.localizedDescription)
+        }
+        DDLogError("Error: \(error)")
     }
 }
 
@@ -50,7 +56,7 @@ public extension Error {
         switch asAFError {
         case .explicitlyCancelled:
             return false
-        case let .sessionTaskFailed(error):
+        case .sessionTaskFailed(let error):
             return (error as NSError).code != NSURLErrorNotConnectedToInternet
         default:
             return true

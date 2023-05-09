@@ -17,6 +17,7 @@
  */
 
 import Foundation
+import MailResources
 
 class MailApiError: MailError {
     static let allErrors: [MailApiError] = [
@@ -32,7 +33,11 @@ class MailApiError: MailError {
         MailApiError(code: "folder__unable_to_move_folder_in_its_sub_folders"),
         MailApiError(code: "folder__destination_folder_already_exists"),
         MailApiError(code: "folder__root_destination_not_exists"),
-        MailApiError(code: "folder__destination_already_exists"),
+        MailApiError(
+            code: "folder__destination_already_exists",
+            localizedDescription: MailResourcesStrings.Localizable.errorNewFolderAlreadyExists,
+            shouldDisplay: true
+        ),
         MailApiError(code: "folder__not_exists"),
 
         // Mail
@@ -52,18 +57,34 @@ class MailApiError: MailError {
         MailApiError(code: "draft__attachment_not_found"),
         MailApiError(code: "draft__not_found"),
         MailApiError(code: "draft__message_not_found"),
-        MailApiError(code: "draft__to_many_recipients"),
+        MailApiError(
+            code: "draft__to_many_recipients",
+            localizedDescription: MailResourcesStrings.Localizable.tooManyRecipients,
+            shouldDisplay: true
+        ),
         MailApiError(code: "draft__max_attachments_size_reached"),
-        MailApiError(code: "draft__need_at_least_one_recipient_to_be_sent"),
-        MailApiError(code: "draft__cannot_modify_scheduled_or_already_sent_message"),
+        MailApiError(
+            code: "draft__need_at_least_one_recipient_to_be_sent",
+            localizedDescription: MailResourcesStrings.Localizable.errorAtLeastOneRecipient,
+            shouldDisplay: true
+        ),
+        MailApiError(
+            code: "draft__cannot_modify_scheduled_or_already_sent_message",
+            localizedDescription: MailResourcesStrings.Localizable.errorEditScheduledMessage,
+            shouldDisplay: true
+        ),
         MailApiError(code: "draft__cannot_cancel_non_scheduled_message"),
         MailApiError(code: "draft__cannot_forward_more_than_one_message_inline"),
         MailApiError(code: "draft__cannot_move_scheduled_message"),
 
         // Send
         MailApiError(code: "send__server_refused_from"),
-        MailApiError(code: "send__server_refused_all_recipients"),
-        MailApiError(code: "send__server_rate_limit_exceeded"),
+        MailApiError(code: "send__server_refused_all_recipients",
+                     localizedDescription: MailResourcesStrings.Localizable.errorRefusedRecipients,
+                     shouldDisplay: true),
+        MailApiError(code: "send__server_rate_limit_exceeded",
+                     localizedDescription: MailResourcesStrings.Localizable.errorSendLimitExceeded,
+                     shouldDisplay: true),
         MailApiError(code: "send__server_unknown_error"),
         MailApiError(code: "send__server_daily_limit_reached"),
         MailApiError(code: "send__spam_rejected"),
@@ -89,6 +110,6 @@ class MailApiError: MailError {
     }
 
     static func mailApiErrorWithFallback(apiErrorCode: String) -> MailError {
-        return allErrors.first { $0.code == apiErrorCode } ?? MailError.unknownError
+        return mailApiErrorFromCode(apiErrorCode) ?? MailError.unknownError
     }
 }
