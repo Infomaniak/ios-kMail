@@ -27,7 +27,9 @@ import UIKit
 public extension ApiFetcher {
     convenience init(token: ApiToken, delegate: RefreshTokenDelegate) {
         self.init()
-        setToken(token, authenticator: SyncedAuthenticator(refreshTokenDelegate: delegate))
+        createAuthenticatedSession(token,
+                                   authenticator: SyncedAuthenticator(refreshTokenDelegate: delegate),
+                                   additionalAdapters: [RequestContextIdAdaptor()])
     }
 }
 
@@ -47,24 +49,27 @@ public class MailApiFetcher: ApiFetcher {
         } catch {
             if let afError = error.asAFError {
                 if case .responseSerializationFailed(let reason) = afError,
-               case .decodingFailed(let error) = reason {
-                var rawJson = "No data"
-                if let data = request.data,
-                   let stringData = String(data: data, encoding: .utf8) {
-                    rawJson = stringData
-                }
+                   case .decodingFailed(let error) = reason {
+                    var rawJson = "No data"
+                    if let data = request.data,
+                       let stringData = String(data: data, encoding: .utf8) {
+                        rawJson = stringData
+                    }
 
-                SentrySDK.capture(error: error) { scope in
-                    scope.setExtras(["Request URL": request.request?.url?.absoluteString ?? "No URL",
-                                     "Decoded type": String(describing: T.self),
-                                     "Raw JSON": rawJson])
+                    SentrySDK.capture(error: error) { scope in
+                        scope.setExtras(["Request URL": request.request?.url?.absoluteString ?? "No URL",
+                                         "Request Id": request.request?
+                                             .value(forHTTPHeaderField: RequestContextIdAdaptor.requestContextIdHeader) ??
+                                             "No request Id",
+                                         "Decoded type": String(describing: T.self),
+                                         "Raw JSON": rawJson])
+                    }
                 }
-            }
                 throw AFErrorWithContext(request: request, afError: afError)
             } else {
-            throw error
+                throw error
+            }
         }
-    }
     }
 
     // MARK: - API methods
