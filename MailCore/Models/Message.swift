@@ -66,6 +66,13 @@ public class MessageDeltaResult: Decodable {
     }
 }
 
+public struct MessagesUids {
+    public let addedShortUids: [String]
+    public var deletedUids = [String]()
+    public var updated = [MessageFlags]()
+    public let cursor: String
+}
+
 public class MessageFlags: Decodable {
     public let shortUid: String
     public let answered: Bool
@@ -135,6 +142,10 @@ public class Message: Object, Decodable, Identifiable {
     @Persisted public var fullyDownloaded = false
     @Persisted public var fromSearch = false
     @Persisted public var inTrash = false
+
+    public var shortUid: String {
+        return Constants.shortUid(from: uid)
+    }
 
     public var recipients: [Recipient] {
         return Array(to) + Array(cc)
