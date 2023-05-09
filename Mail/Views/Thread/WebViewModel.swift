@@ -169,15 +169,26 @@ class WebViewModel: NSObject, WKScriptMessageHandler {
         window.console.info = captureLog;
         // ----- DEBUG
         """
-        configuration.userContentController.addUserScript(WKUserScript(source: debugScript, injectionTime: .atDocumentStart, forMainFrameOnly: true))
+        configuration.userContentController
+            .addUserScript(WKUserScript(source: debugScript, injectionTime: .atDocumentStart, forMainFrameOnly: true))
 
-        if let fixEmailStyleScriptURL = Bundle.main.url(forResource: "fix_email_style", withExtension: "js"),
-           let fixEmailStyleScript = try? String(contentsOf: fixEmailStyleScriptURL) {
-            configuration.userContentController.addUserScript(WKUserScript(source: fixEmailStyleScript, injectionTime: .atDocumentStart, forMainFrameOnly: true))
+        if let javaScriptBridgeScriptURL = Bundle.main.url(forResource: "javaScriptBridge", withExtension: "js"),
+           let javaScriptBridgeScript = try? String(contentsOf: javaScriptBridgeScriptURL) {
+            configuration.userContentController
+                .addUserScript(WKUserScript(source: javaScriptBridgeScript, injectionTime: .atDocumentStart,
+                                            forMainFrameOnly: true))
         }
 
-        if let mungeScriptURL = Bundle.main.url(forResource: "munge_email", withExtension: "js"), let mungeScript = try? String(contentsOf: mungeScriptURL) {
-            configuration.userContentController.addUserScript(WKUserScript(source: mungeScript, injectionTime: .atDocumentStart, forMainFrameOnly: true))
+        if let fixEmailStyleScriptURL = Bundle.main.url(forResource: "fixEmailStyle", withExtension: "js"),
+           let fixEmailStyleScript = try? String(contentsOf: fixEmailStyleScriptURL) {
+            configuration.userContentController
+                .addUserScript(WKUserScript(source: fixEmailStyleScript, injectionTime: .atDocumentStart, forMainFrameOnly: true))
+        }
+
+        if let mungeScriptURL = Bundle.main.url(forResource: "mungeEmail", withExtension: "js"),
+           let mungeScript = try? String(contentsOf: mungeScriptURL) {
+            configuration.userContentController
+                .addUserScript(WKUserScript(source: mungeScript, injectionTime: .atDocumentStart, forMainFrameOnly: true))
         }
     }
 
