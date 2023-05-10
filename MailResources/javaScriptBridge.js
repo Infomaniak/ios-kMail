@@ -21,6 +21,6 @@ function reportOverScroll(clientWidth, scrollWidth, messageId) {
 }
 
 function reportError(error, messageId) {
-
+    
 }
 

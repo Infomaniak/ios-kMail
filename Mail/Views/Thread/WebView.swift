@@ -97,6 +97,11 @@ struct WebView: UIViewRepresentable {
         webView.scrollView.showsHorizontalScrollIndicator = true
         webView.scrollView.alwaysBounceVertical = false
         webView.scrollView.alwaysBounceHorizontal = false
+        #if DEBUG
+        if #available(iOS 16.4, *) {
+            webView.isInspectable = true
+        }
+        #endif
         return webView
     }
 

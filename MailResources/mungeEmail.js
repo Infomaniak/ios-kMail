@@ -29,7 +29,7 @@ const PREFERENCES = {
 /**
  * Normalize the width of the mail displayed
  * @param webViewWidth Width of the webview
- * @param messageUid Id the mail displayed
+ * @param messageUid Id of the displayed mail
  */
 function normalizeMessageWidth(webViewWidth, messageUid) {
     // We want to report any thrown error that our script may encounter
@@ -47,7 +47,7 @@ function normalizeMessageWidth(webViewWidth, messageUid) {
  * This method is idempotent.
  * @param elements DOM elements to normalize
  * @param webViewWidth Width of the webview
- * @param messageUid Id the mail displayed
+ * @param messageUid Id of the displayed mail
  */
 function normalizeElementWidths(elements, webViewWidth, messageUid) {
     const documentWidth = document.body.offsetWidth;

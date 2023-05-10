@@ -22,36 +22,19 @@ import SwiftSoup
 import SwiftUI
 import WebKit
 
-class WebViewModel: NSObject, WKScriptMessageHandler {
+class WebViewModel: NSObject {
     let webView: WKWebView
 
-    let viewportContent = "width=device-width, initial-scale=1.0"
-    var style: String { "<style>\(Constants.customCSS)</style>" }
+    private let viewportContent = "width=device-width, initial-scale=1.0"
+    private let style = "<style>\(Constants.customCSS)</style>"
 
     override init() {
-        let configuration = WKWebViewConfiguration()
-        configuration.dataDetectorTypes = .all
-        configuration.defaultWebpagePreferences.allowsContentJavaScript = false
-        configuration.setURLSchemeHandler(URLSchemeHandler(), forURLScheme: URLSchemeHandler.scheme)
-
-        webView = WKWebView(frame: .zero, configuration: configuration)
-        #if DEBUG
-        if #available(iOS 16.4, *) {
-            webView.isInspectable = true
-        }
-        #endif
+        webView = WKWebView()
 
         super.init()
 
-        configuration.userContentController.add(self, name: "logHandler")
-
-        loadScripts(configuration: configuration)
-    }
-
-    func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
-        if message.name == "logHandler" {
-            print("LOG: \(message.body)")
-        }
+        setUpWebViewConfiguration()
+        loadScripts(configuration: webView.configuration)
     }
 
     func loadHTMLString(value: String?) {
@@ -77,16 +60,28 @@ class WebViewModel: NSObject, WKScriptMessageHandler {
         }
     }
 
+    private func setUpWebViewConfiguration() {
+        webView.configuration.dataDetectorTypes = .all
+        webView.configuration.defaultWebpagePreferences.allowsContentJavaScript = false
+        webView.configuration.setURLSchemeHandler(URLSchemeHandler(), forURLScheme: URLSchemeHandler.scheme)
+
+        webView.configuration.userContentController.add(self, name: JavaScriptMessageTopic.log.rawValue)
+        webView.configuration.userContentController.add(self, name: JavaScriptMessageTopic.overScroll.rawValue)
+        webView.configuration.userContentController.add(self, name: JavaScriptMessageTopic.error.rawValue)
+    }
+
     private func loadScripts(configuration: WKWebViewConfiguration) {
+        #if DEBUG
         let debugScript = """
         // ----- DEBUG
-        function captureLog(msg) { window.webkit.messageHandlers.logHandler.postMessage(msg); }
+        function captureLog(msg) { window.webkit.messageHandlers.log.postMessage(msg); }
         window.console.log = captureLog;
         window.console.info = captureLog;
         // ----- DEBUG
         """
         configuration.userContentController
             .addUserScript(WKUserScript(source: debugScript, injectionTime: .atDocumentStart, forMainFrameOnly: true))
+        #endif
 
         if let javaScriptBridgeScriptURL = Bundle.main.url(forResource: "javaScriptBridge", withExtension: "js"),
            let javaScriptBridgeScript = try? String(contentsOf: javaScriptBridgeScriptURL) {
@@ -115,5 +110,23 @@ class WebViewModel: NSObject, WKScriptMessageHandler {
             try head?.append("<meta name=\"viewport\" content=\"\(viewportContent)\">")
         }
         try head?.append(style)
+    }
+}
+
+extension WebViewModel: WKScriptMessageHandler {
+    private enum JavaScriptMessageTopic: String {
+        case log, overScroll, error
+    }
+
+    func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
+        guard let event = JavaScriptMessageTopic(rawValue: message.name) else { return }
+        switch event {
+        case .log:
+            print(message.body)
+        case .overScroll:
+            print("Overscroll")
+        case .error:
+            print("Error")
+        }
     }
 }
