@@ -20,6 +20,7 @@ import CocoaLumberjackSwift
 import MailCore
 import SwiftSoup
 import SwiftUI
+import Sentry
 import WebKit
 
 class WebViewModel: NSObject {
@@ -109,9 +110,39 @@ extension WebViewModel: WKScriptMessageHandler {
         case .log:
             print(message.body)
         case .overScroll:
-            print("Overscroll")
+            sendOverScrollMessage(message)
         case .error:
-            print("Error")
+            sendJavaScriptError(message)
+        }
+    }
+
+    private func sendOverScrollMessage(_ message: WKScriptMessage) {
+        // body: [scrollWidth, messageId, clientWidth]
+        guard let data = message.body as? [String: String],
+              let messageId = data["messageId"], let clientWidth = data["clientWidth"], let scrollWidth = data["scrollWidth"]
+        else { return }
+
+        SentrySDK.capture(message: "After zooming the mail it can still scroll.") { scope in
+            scope.setTags(["messageUid": messageId])
+            scope.setExtras([
+                "clientWidth": clientWidth,
+                "scrollWidth": scrollWidth
+            ])
+        }
+    }
+
+    private func sendJavaScriptError(_ message: WKScriptMessage) {
+        guard let data = message.body as? [String: String],
+              let messageId = data["messageId"], let name = data["errorName"], let message = data["errorMessage"], let stack = data["errorStack"]
+        else { return }
+
+        SentrySDK.capture(message: "JavaScript returned an error when displaying an email.") { scope in
+            scope.setTags(["messageUid": messageId])
+            scope.setExtras([
+                "errorName": name,
+                "errorMessage": message,
+                "errorStack": stack
+            ])
         }
     }
 }

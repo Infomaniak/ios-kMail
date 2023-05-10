@@ -17,10 +17,15 @@
  */
 
 function reportOverScroll(clientWidth, scrollWidth, messageId) {
-
+    window.webkit.messageHandlers.overScroll.postMessage({ clientWidth, scrollWidth, messageId });
 }
 
 function reportError(error, messageId) {
-    
+    window.webkit.messageHandlers.error.postMessage({
+        errorName: error.name,
+        errorMessage: error.message,
+        errorStack: error.stack,
+        messageId
+    });
 }
 

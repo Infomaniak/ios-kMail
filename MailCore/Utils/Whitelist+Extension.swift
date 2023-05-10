@@ -63,7 +63,7 @@ extension Whitelist {
                 .removeProtocols("a", "href", "ftp", "http", "https", "mailto")
                 .addAttributes("area", "alt", "coords", "href", "shape")
                 .addProtocols("area", "href", "http", "https")
-                .addAttributes("body", "lang", "alink", "bacground", "bgcolor", "link", "text", "vlink")
+                .addAttributes("body", "lang", "alink", "background", "bgcolor", "link", "text", "vlink")
                 .addAttributes("div", "align")
                 .addAttributes("font", "color", "face", "size")
                 .addAttributes("img", "usemap")
