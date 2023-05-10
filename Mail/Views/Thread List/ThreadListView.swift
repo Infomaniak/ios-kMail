@@ -140,8 +140,7 @@ struct ThreadListView: View {
                             .frame(maxWidth: .infinity)
                             .listRowSeparator(.hidden)
                     } else if viewModel.folder.canLoadMore {
-                        // TODO: - Trad
-                        MailButton(label: "Load more") {
+                        MailButton(label: MailResourcesStrings.Localizable.buttonLoadMore) {
                             withAnimation {
                                 isLoadingMore = true
                             }
