@@ -18,9 +18,9 @@
 
 import CocoaLumberjackSwift
 import MailCore
+import Sentry
 import SwiftSoup
 import SwiftUI
-import Sentry
 import WebKit
 
 class WebViewModel: NSObject {
@@ -50,7 +50,8 @@ class WebViewModel: NSObject {
             if let bodyContent = safeDocument.body()?.childNodesCopy() {
                 safeDocument.body()?.empty()
                 try safeDocument.body()?
-                    .appendElement("div").attr("id", Constants.divWrapperId)
+                    .appendElement("div")
+                    .attr("id", Constants.divWrapperId)
                     .insertChildren(-1, bodyContent)
             }
 
@@ -117,31 +118,26 @@ extension WebViewModel: WKScriptMessageHandler {
     }
 
     private func sendOverScrollMessage(_ message: WKScriptMessage) {
-        // body: [scrollWidth, messageId, clientWidth]
-        guard let data = message.body as? [String: String],
-              let messageId = data["messageId"], let clientWidth = data["clientWidth"], let scrollWidth = data["scrollWidth"]
-        else { return }
+        guard let data = message.body as? [String: String] else { return }
 
         SentrySDK.capture(message: "After zooming the mail it can still scroll.") { scope in
-            scope.setTags(["messageUid": messageId])
+            scope.setTags(["messageUid": data["messageId"] ?? ""])
             scope.setExtras([
-                "clientWidth": clientWidth,
-                "scrollWidth": scrollWidth
+                "clientWidth": data["clientWidth"],
+                "scrollWidth": data["scrollWidth"]
             ])
         }
     }
 
     private func sendJavaScriptError(_ message: WKScriptMessage) {
-        guard let data = message.body as? [String: String],
-              let messageId = data["messageId"], let name = data["errorName"], let message = data["errorMessage"], let stack = data["errorStack"]
-        else { return }
+        guard let data = message.body as? [String: String] else { return }
 
         SentrySDK.capture(message: "JavaScript returned an error when displaying an email.") { scope in
-            scope.setTags(["messageUid": messageId])
+            scope.setTags(["messageUid": data["messageId"] ?? ""])
             scope.setExtras([
-                "errorName": name,
-                "errorMessage": message,
-                "errorStack": stack
+                "errorName": data["errorName"],
+                "errorMessage": data["errorMessage"],
+                "errorStack": data["errorStack"]
             ])
         }
     }
