@@ -9,6 +9,8 @@ body {
 
     padding: 0;
     margin: 16px;
+
+    width: auto !important;
 }
 
 blockquote {
