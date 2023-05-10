@@ -1010,12 +1010,13 @@ public class MailboxManager: ObservableObject {
             // Once the draft has been sent, we can delete it from Realm
             try await deleteLocally(draft: draft)
             return cancelableResponse
-        } catch {
+        } catch let error as AFErrorWithContext where (200 ... 299).contains(error.request.response?.statusCode ?? 0) {
             // Status code is valid but something went wrong eg. we couldn't parse the response
-            if let statusCode = (error as? AFErrorWithContext)?.request.response?.statusCode,
-               (200 ... 299).contains(statusCode) {
-                try await deleteLocally(draft: draft)
-            }
+            try await deleteLocally(draft: draft)
+            throw error
+        } catch let error as MailApiError {
+            // The api returned an error
+            try await deleteLocally(draft: draft)
             throw error
         }
     }
