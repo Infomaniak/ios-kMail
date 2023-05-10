@@ -19,6 +19,7 @@
 import CocoaLumberjackSwift
 import Foundation
 import InfomaniakCoreUI
+import Sentry
 
 public func tryOrDisplayError(_ body: () throws -> Void) {
     do {
@@ -37,10 +38,18 @@ public func tryOrDisplayError(_ body: () async throws -> Void) async {
 }
 
 private func displayErrorIfNeeded(error: Error) {
-    if let error = error as? MailError,
-       error.shouldDisplay {
-        Task.detached {
-            await IKSnackBar.showSnackBar(message: error.errorDescription)
+    if let error = error as? MailError {
+        if error.shouldDisplay {
+            Task.detached {
+                await IKSnackBar.showSnackBar(message: error.errorDescription)
+            }
+        } else {
+            SentrySDK.capture(message: "Encountered error that we didn't display to the user") { scope in
+                scope.setContext(
+                    value: ["Code": error.code, "Raw": error],
+                    key: "Error"
+                )
+            }
         }
         DDLogError("MailError: \(error)")
     } else if error.shouldDisplay {
