@@ -27,7 +27,17 @@ class WebViewModel: NSObject {
     let webView: WKWebView
 
     private let viewportContent = "width=device-width, initial-scale=1.0"
-    private let style = "<style>\(Constants.customCSS)</style>"
+    private lazy var style: String = {
+        var fixDisplayCSS = ""
+        if let fixDisplayURL = Bundle.main.url(forResource: "fixDisplay", withExtension: "css") {
+            fixDisplayCSS = (try? String(contentsOf: fixDisplayURL)) ?? ""
+        }
+
+        return """
+        <style>\(Constants.customCSS)</style>
+        <style>\(fixDisplayCSS)</style>
+        """
+    }()
 
     override init() {
         webView = WKWebView()

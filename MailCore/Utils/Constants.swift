@@ -68,8 +68,8 @@ public enum Constants {
     public static let divWrapperId = "kmail-message-content"
 
     public static let customCSS = {
-        guard let path = Bundle.main.path(forResource: "style", ofType: "css"),
-              let style = try? String(contentsOfFile: path) else { return "" }
+        guard let styleURL = Bundle.main.url(forResource: "style", withExtension: "css"),
+              let style = try? String(contentsOf: styleURL) else { return "" }
 
         let variables = """
         :root {

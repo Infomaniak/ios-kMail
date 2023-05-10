@@ -5,7 +5,6 @@ html {
 
 body {
     font-family: -apple-system, Helvetica,Arial, sans-serif;
-    overflow-wrap: break-word;
 
     padding: 0;
     margin: 16px;
@@ -23,19 +22,4 @@ blockquote {
 blockquote blockquote blockquote blockquote {
     padding: 0 !important;
     border: none !important;
-}
-
-table.munged {
-    width: auto !important;
-    table-layout: auto !important;
-}
-
-td.munged {
-    width: auto !important;
-    white-space: normal !important;
-}
-
-pre {
-    word-wrap: break-word;
-    white-space: pre-wrap;
 }
