@@ -71,29 +71,14 @@ class WebViewModel: NSObject {
     }
 
     private func loadScripts(configuration: WKWebViewConfiguration) {
+        var scripts = ["javaScriptBridge", "fixEmailStyle"]
         #if DEBUG
-        let debugScript = """
-        // ----- DEBUG
-        function captureLog(msg) { window.webkit.messageHandlers.log.postMessage(msg); }
-        window.console.log = captureLog;
-        window.console.info = captureLog;
-        // ----- DEBUG
-        """
-        configuration.userContentController
-            .addUserScript(WKUserScript(source: debugScript, injectionTime: .atDocumentStart, forMainFrameOnly: true))
+        scripts.insert("captureLog", at: 0)
         #endif
 
-        if let javaScriptBridgeScriptURL = Bundle.main.url(forResource: "javaScriptBridge", withExtension: "js"),
-           let javaScriptBridgeScript = try? String(contentsOf: javaScriptBridgeScriptURL) {
+        for script in scripts {
             configuration.userContentController
-                .addUserScript(WKUserScript(source: javaScriptBridgeScript, injectionTime: .atDocumentStart,
-                                            forMainFrameOnly: true))
-        }
-
-        if let fixEmailStyleScriptURL = Bundle.main.url(forResource: "fixEmailStyle", withExtension: "js"),
-           let fixEmailStyleScript = try? String(contentsOf: fixEmailStyleScriptURL) {
-            configuration.userContentController
-                .addUserScript(WKUserScript(source: fixEmailStyleScript, injectionTime: .atDocumentStart, forMainFrameOnly: true))
+                .addUserScript(named: script, injectionTime: .atDocumentStart, forMainFrameOnly: true)
         }
 
         if let mungeScript = Constants.mungeEmailScript {
@@ -127,6 +112,14 @@ extension WebViewModel: WKScriptMessageHandler {
             print("Overscroll")
         case .error:
             print("Error")
+        }
+    }
+}
+
+extension WKUserContentController {
+    func addUserScript(named name: String, injectionTime: WKUserScriptInjectionTime, forMainFrameOnly: Bool) {
+        if let url = Bundle.main.url(forResource: name, withExtension: "js"), let script = try? String(contentsOf: url) {
+            addUserScript(WKUserScript(source: script, injectionTime: injectionTime, forMainFrameOnly: forMainFrameOnly))
         }
     }
 }
