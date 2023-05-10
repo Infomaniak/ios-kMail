@@ -709,7 +709,17 @@ public class MailboxManager: ObservableObject {
         )
 
         try await handleMessagesUids(messageUids: messagesUids, folder: folder)
-        return messagesUids.addedShortUids.count == Constants.pageSize
+
+        if messagesUids.addedShortUids.count < Constants.pageSize {
+            await backgroundRealm.execute { realm in
+                let freshFolder = folder.fresh(using: realm)
+                try? realm.safeWrite {
+                    freshFolder?.canLoadMore = false
+                }
+            }
+            return false
+        }
+        return true
     }
 
     private func handleMessagesUids(messageUids: MessagesUids, folder: Folder) async throws {

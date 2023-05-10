@@ -114,6 +114,7 @@ public class Folder: Object, Codable, Comparable, Identifiable {
     @Persisted(originProperty: "children") public var parents: LinkingObjects<Folder>
     @Persisted public var toolType: ToolFolderType?
     @Persisted public var cursor: String?
+    @Persisted public var canLoadMore = true
 
     /// Date of last threads update
     @Persisted public var lastUpdate: Date?

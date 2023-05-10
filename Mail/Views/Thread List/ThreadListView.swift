@@ -53,6 +53,7 @@ struct ThreadListView: View {
     @State private var isRefreshing = false
     @State private var firstLaunch = true
     @State private var flushAlert: FlushAlertState?
+    @State private var isLoadingMore = false
 
     @LazyInjectService private var matomo: MatomoUtils
 
@@ -131,6 +132,28 @@ struct ThreadListView: View {
                                     .textStyle(.bodySmallSecondary)
                             }
                         }
+                    }
+
+                    if isLoadingMore {
+                        ProgressView()
+                            .id(UUID())
+                            .frame(maxWidth: .infinity)
+                            .listRowSeparator(.hidden)
+                    } else if viewModel.folder.canLoadMore {
+                        // TODO: - Trad
+                        MailButton(label: "Load more") {
+                            withAnimation {
+                                isLoadingMore = true
+                            }
+                            Task {
+                                await tryOrDisplayError {
+                                    _ = try await viewModel.mailboxManager
+                                        .moreMessages(folder: viewModel.folder.freeze())
+                                    isLoadingMore = false
+                                }
+                            }
+                        }
+                        .mailButtonStyle(.link)
                     }
 
                     ListVerticalInsetView(height: multipleSelectionViewModel.isEnabled ? 100 : 110)
