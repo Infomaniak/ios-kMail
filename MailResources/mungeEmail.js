@@ -51,7 +51,7 @@ function normalizeMessageWidth(webViewWidth, messageUid) {
  */
 function normalizeElementWidths(elements, webViewWidth, messageUid) {
     const documentWidth = document.body.offsetWidth;
-    logInfo(`Starts to normalize elements. Document width: ${documentWidth}.`);
+    logInfo(`Starts to normalize elements. Document width: ${documentWidth}. WebView width: ${webViewWidth}.`);
 
     for (const element of elements) {
         logInfo(`Current element: ${elementDebugName(element)}.`);

@@ -24,12 +24,14 @@ import SwiftUI
 struct MessageBodyView: View {
     @Binding var presentableBody: PresentableBody
 
-    @State var model = WebViewModel()
+    @State private var model = WebViewModel()
     @State private var webViewShortHeight: CGFloat = .zero
     @State private var webViewCompleteHeight: CGFloat = .zero
 
     @State private var showBlockQuote = false
     @State private var contentLoading = true
+
+    let messageUid: String
 
     var body: some View {
         ZStack {
@@ -49,7 +51,8 @@ struct MessageBodyView: View {
                             shortHeight: $webViewShortHeight,
                             completeHeight: $webViewCompleteHeight,
                             loading: $contentLoading,
-                            withQuote: $showBlockQuote
+                            withQuote: $showBlockQuote,
+                            messageUid: messageUid
                         )
                         .frame(height: showBlockQuote ? webViewCompleteHeight : webViewShortHeight)
                         .onAppear {
@@ -60,6 +63,9 @@ struct MessageBodyView: View {
                         }
                         .onChange(of: showBlockQuote) { _ in
                             loadBody()
+                        }
+                        .onReceive(NotificationCenter.default.publisher(for: UIDevice.orientationDidChangeNotification)) { _ in
+                            // TODO: Rotate device
                         }
 
                         if presentableBody.quote != nil {
@@ -90,6 +96,6 @@ struct MessageBodyView: View {
 
 struct MessageBodyView_Previews: PreviewProvider {
     static var previews: some View {
-        MessageBodyView(presentableBody: .constant(PreviewHelper.samplePresentableBody))
+        MessageBodyView(presentableBody: .constant(PreviewHelper.samplePresentableBody), messageUid: "message_uid")
     }
 }

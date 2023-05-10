@@ -55,7 +55,7 @@ struct MessageView: View {
                         AttachmentsView(message: message)
                             .padding(.top, 24)
                     }
-                    MessageBodyView(presentableBody: $presentableBody)
+                    MessageBodyView(presentableBody: $presentableBody, messageUid: message.uid)
                         .padding(.top, 16)
                 }
             }

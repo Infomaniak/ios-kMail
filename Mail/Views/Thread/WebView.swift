@@ -26,6 +26,8 @@ struct WebView: UIViewRepresentable {
     @Binding var loading: Bool
     @Binding var withQuote: Bool
 
+    let messageUid: String
+
     var webView: WKWebView {
         return model.webView
     }
@@ -58,8 +60,7 @@ struct WebView: UIViewRepresentable {
 
                 // Fix email style
                 _ = try await webView.evaluateJavaScript("removeAllProperties()")
-                _ = try await webView.evaluateJavaScript("normalizeMessageWidth(\(webView.frame.width), \"\")")
-                print("normalizeMessageWidth -> \(webView.frame.width)")
+                _ = try await webView.evaluateJavaScript("normalizeMessageWidth(\(webView.frame.width), '\(parent.messageUid)')")
 
                 // Get WKWebView height
                 let scrollHeight = try await webView.evaluateJavaScript("document.documentElement.scrollHeight") as? CGFloat
