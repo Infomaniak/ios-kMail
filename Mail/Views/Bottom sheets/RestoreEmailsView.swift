@@ -76,7 +76,7 @@ struct RestoreEmailsView: View {
         Task {
             await tryOrDisplayError {
                 try await mailboxManager.apiFetcher.restoreBackup(mailbox: mailboxManager.mailbox, date: selectedDate)
-                await IKSnackBar.showSnackBar(message: MailResourcesStrings.Localizable.snackbarSuccessfulRestoration)
+                IKSnackBar.showSnackBar(message: MailResourcesStrings.Localizable.snackbarRestorationLaunched)
             }
         }
     }

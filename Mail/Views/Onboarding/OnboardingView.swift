@@ -18,8 +18,8 @@
 
 import AuthenticationServices
 import InfomaniakCoreUI
-import InfomaniakDI
 import InfomaniakCreateAccount
+import InfomaniakDI
 import InfomaniakLogin
 import Lottie
 import MailCore
@@ -71,7 +71,7 @@ struct Slide: Identifiable {
 class LoginHandler: InfomaniakLoginDelegate, ObservableObject {
     @LazyInjectService var loginService: InfomaniakLoginable
     @LazyInjectService var matomo: MatomoUtils
-    
+
     @Published var isLoading = false
     @Published var isPresentingErrorAlert = false
     var sceneDelegate: SceneDelegate?
@@ -129,7 +129,7 @@ class LoginHandler: InfomaniakLoginDelegate, ObservableObject {
                 _ = try await AccountManager.instance.createAndSetCurrentAccount(code: code, codeVerifier: verifier)
                 sceneDelegate?.showMainView()
                 UIApplication.shared.registerForRemoteNotifications()
-            } catch MailError.noMailbox {
+            } catch let error as MailError where error == MailError.noMailbox {
                 sceneDelegate?.showNoMailboxView()
             } catch {
                 if let previousAccount = previousAccount {

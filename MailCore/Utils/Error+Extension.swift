@@ -16,19 +16,16 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import CocoaLumberjackSwift
 import Foundation
 import InfomaniakCoreUI
+import Sentry
 
 public func tryOrDisplayError(_ body: () throws -> Void) {
     do {
         try body()
     } catch {
-        if error.shouldDisplay {
-            Task.detached {
-                await IKSnackBar.showSnackBar(message: error.localizedDescription)
-            }
-        }
-        print("Error: \(error)")
+        displayErrorIfNeeded(error: error)
     }
 }
 
@@ -36,12 +33,30 @@ public func tryOrDisplayError(_ body: () async throws -> Void) async {
     do {
         try await body()
     } catch {
+        displayErrorIfNeeded(error: error)
+    }
+}
+
+private func displayErrorIfNeeded(error: Error) {
+    if let error = error as? MailError {
         if error.shouldDisplay {
             Task.detached {
-                await IKSnackBar.showSnackBar(message: error.localizedDescription)
+                await IKSnackBar.showSnackBar(message: error.errorDescription)
+            }
+        } else {
+            SentrySDK.capture(message: "Encountered error that we didn't display to the user") { scope in
+                scope.setContext(
+                    value: ["Code": error.code, "Raw": error],
+                    key: "Error"
+                )
             }
         }
-        print("Error: \(error)")
+        DDLogError("MailError: \(error)")
+    } else if error.shouldDisplay {
+        Task.detached {
+            await IKSnackBar.showSnackBar(message: error.localizedDescription)
+        }
+        DDLogError("Error: \(error)")
     }
 }
 
@@ -50,7 +65,7 @@ public extension Error {
         switch asAFError {
         case .explicitlyCancelled:
             return false
-        case let .sessionTaskFailed(error):
+        case .sessionTaskFailed(let error):
             return (error as NSError).code != NSURLErrorNotConnectedToInternet
         default:
             return true
