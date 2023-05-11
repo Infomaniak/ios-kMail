@@ -28,12 +28,12 @@ public enum MessageWebViewUtils {
     public static func generateCSS(for target: WebViewTarget) -> String {
         var resources = "<style>\(Constants.styleCSS)</style>"
 
-        if let fixDisplayCSS = loadCSS(filename: "improveRendering") {
+        if let fixDisplayCSS = Bundle.main.loadCSS(filename: "improveRendering") {
             resources += "<style>\(fixDisplayCSS)</style>"
         }
 
         if target == .editor {
-            if let editorCSS = loadCSS(filename: "editor")  {
+            if let editorCSS = Bundle.main.loadCSS(filename: "editor") {
                 resources += "<style>\(editorCSS)</style>"
             }
         }
@@ -58,11 +58,5 @@ public enum MessageWebViewUtils {
             DDLogError("An error occurred while parsing body \(error)")
             return nil
         }
-    }
-
-    private static func loadCSS(filename: String) -> String? {
-        guard let url = Bundle.main.url(forResource: filename, withExtension: "css"),
-              let css = try? String(contentsOf: url) else { return nil }
-        return css.replacingOccurrences(of: "\n", with: "")
     }
 }

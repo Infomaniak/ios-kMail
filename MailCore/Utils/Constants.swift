@@ -67,8 +67,7 @@ public enum Constants {
 
     public static let divWrapperId = "kmail-message-content"
     public static let styleCSS = {
-        guard let styleURL = Bundle.main.url(forResource: "style", withExtension: "css"),
-              let style = try? String(contentsOf: styleURL) else { return "" }
+        guard let style = Bundle.main.loadCSS(filename: "style") else { return "" }
 
         let variables = """
         :root {
@@ -78,9 +77,7 @@ public enum Constants {
         return (variables + style).replacingOccurrences(of: "\n", with: "")
     }()
     public static let mungeEmailScript: String? = {
-        guard let mungeScriptURL = Bundle.main.url(forResource: "mungeEmail", withExtension: "js"),
-              let mungeScript = try? String(contentsOf: mungeScriptURL) else { return nil }
-
+        guard let mungeScript = Bundle.main.load(filename: "mungeEmail", withExtension: "js") else { return nil }
         return "const MESSAGE_SELECTOR = \"#\(divWrapperId)\"; \(mungeScript)"
     }()
 

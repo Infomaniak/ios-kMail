@@ -144,8 +144,8 @@ extension WebViewModel: WKScriptMessageHandler {
 }
 
 extension WKUserContentController {
-    func addUserScript(named name: String, injectionTime: WKUserScriptInjectionTime, forMainFrameOnly: Bool) {
-        if let url = Bundle.main.url(forResource: name, withExtension: "js"), let script = try? String(contentsOf: url) {
+    func addUserScript(named filename: String, injectionTime: WKUserScriptInjectionTime, forMainFrameOnly: Bool) {
+        if let script = Bundle.main.load(filename: filename, withExtension: "js") {
             addUserScript(WKUserScript(source: script, injectionTime: injectionTime, forMainFrameOnly: forMainFrameOnly))
         }
     }
