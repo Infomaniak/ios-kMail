@@ -65,6 +65,10 @@ struct ThreadListView: View {
         !networkMonitor.isConnected && viewModel.folder.lastUpdate == nil
     }
 
+    private var displayLoadMoreButton: Bool {
+        return !viewModel.folder.isHistoryComplete && !(viewModel.sections.isEmpty && viewModel.isLoadingPage)
+    }
+
     init(mailboxManager: MailboxManager,
          folder: Folder,
          editedMessageDraft: Binding<Draft?>,
@@ -139,7 +143,7 @@ struct ThreadListView: View {
                             .id(UUID())
                             .frame(maxWidth: .infinity)
                             .listRowSeparator(.hidden)
-                    } else if !viewModel.folder.isHistoryComplete {
+                    } else if displayLoadMoreButton {
                         MailButton(label: MailResourcesStrings.Localizable.buttonLoadMore) {
                             withAnimation {
                                 isLoadingMore = true
