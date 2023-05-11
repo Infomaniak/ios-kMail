@@ -190,7 +190,7 @@ public class Draft: Object, Decodable, Identifiable, Encodable {
             unsafeQuote = Constants.forwardQuote(message: message)
         }
 
-        let quote = (try? MessageBodyUtils.cleanHtmlContent(rawHtml: unsafeQuote)?.outerHtml()) ?? ""
+        let quote = (try? MessageWebViewUtils.cleanHtmlContent(rawHtml: unsafeQuote)?.outerHtml()) ?? ""
 
         return "<br><br>" + quote
     }

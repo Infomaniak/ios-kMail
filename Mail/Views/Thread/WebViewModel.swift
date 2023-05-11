@@ -27,17 +27,7 @@ class WebViewModel: NSObject {
     let webView: WKWebView
 
     private let viewportContent = "width=device-width, initial-scale=1.0"
-    private lazy var style: String = {
-        var fixDisplayCSS = ""
-        if let fixDisplayURL = Bundle.main.url(forResource: "fixDisplay", withExtension: "css") {
-            fixDisplayCSS = (try? String(contentsOf: fixDisplayURL)) ?? ""
-        }
-
-        return """
-        <style>\(Constants.customCSS)</style>
-        <style>\(fixDisplayCSS)</style>
-        """
-    }()
+    private let style: String = MessageWebViewUtils.generateCSS(for: .message)
 
     override init() {
         webView = WKWebView()
@@ -52,7 +42,7 @@ class WebViewModel: NSObject {
         guard let rawHtml = value else { return }
 
         do {
-            guard let safeDocument = MessageBodyUtils.cleanHtmlContent(rawHtml: rawHtml) else { return }
+            guard let safeDocument = MessageWebViewUtils.cleanHtmlContent(rawHtml: rawHtml) else { return }
 
             try updateHeadContent(of: safeDocument)
 
