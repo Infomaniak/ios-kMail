@@ -140,7 +140,7 @@ struct ThreadListView: View {
                             .frame(maxWidth: .infinity)
                             .listRowSeparator(.hidden)
                     } else if !viewModel.folder.isHistoryComplete {
-                        MailButton(label: MailResourcesStrings.Localizable.buttonLoadMore) {
+                        Button {
                             withAnimation {
                                 isLoadingMore = true
                             }
@@ -151,8 +151,12 @@ struct ThreadListView: View {
                                     isLoadingMore = false
                                 }
                             }
+                        } label: {
+                            Text(MailResourcesStrings.Localizable.buttonLoadMore)
+                                .textStyle(.bodySmallAccent)
                         }
-                        .mailButtonStyle(.link)
+                        .buttonStyle(.borderless)
+                        .frame(maxWidth: .infinity, alignment: .center)
                     }
 
                     ListVerticalInsetView(height: multipleSelectionViewModel.isEnabled ? 100 : 110)
