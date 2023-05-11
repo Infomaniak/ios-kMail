@@ -681,14 +681,19 @@ public class MailboxManager: ObservableObject {
             MailboxInfosManager.instance.updateUnseen(unseenMessages: folder.unreadCount, for: mailbox)
         }
 
-        if previousCursor == nil {
-            for _ in 0 ..< (Constants.messageQuantityLimit / Constants.pageSize) {
-                if try !(await moreMessages(folder: folder)) {
-                    break
-                }
+        var remainingOldMessagesToFetch = folder.remainingOldMessagesToFetch
+        while remainingOldMessagesToFetch > 0 {
+            if try !(await moreMessages(folder: folder)) {
+                break
             }
 
-            // TODO: - Update folders
+            remainingOldMessagesToFetch -= 25
+            await backgroundRealm.execute { realm in
+                let folder = folder.fresh(using: realm)
+                try? realm.safeWrite {
+                    folder?.remainingOldMessagesToFetch = remainingOldMessagesToFetch
+                }
+            }
         }
     }
 
@@ -710,11 +715,12 @@ public class MailboxManager: ObservableObject {
 
         try await handleMessagesUids(messageUids: messagesUids, folder: folder)
 
-        if messagesUids.addedShortUids.count < Constants.pageSize {
+        if messagesUids.addedShortUids.count < Constants.pageSize || messagesUids.addedShortUids.contains("1") {
             await backgroundRealm.execute { realm in
                 let freshFolder = folder.fresh(using: realm)
                 try? realm.safeWrite {
-                    freshFolder?.canLoadMore = false
+                    freshFolder?.isHistoryComplete = true
+                    freshFolder?.remainingOldMessagesToFetch = 0
                 }
             }
             return false
@@ -1161,6 +1167,8 @@ public class MailboxManager: ObservableObject {
         folder.unreadCount = savedFolder.unreadCount
         folder.lastUpdate = savedFolder.lastUpdate
         folder.cursor = savedFolder.cursor
+        folder.remainingOldMessagesToFetch = savedFolder.remainingOldMessagesToFetch
+        folder.isHistoryComplete = savedFolder.isHistoryComplete
     }
 
     func getSubFolders(from folders: [Folder], oldResult: [Folder] = []) -> [Folder] {

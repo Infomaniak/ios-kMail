@@ -114,7 +114,8 @@ public class Folder: Object, Codable, Comparable, Identifiable {
     @Persisted(originProperty: "children") public var parents: LinkingObjects<Folder>
     @Persisted public var toolType: ToolFolderType?
     @Persisted public var cursor: String?
-    @Persisted public var canLoadMore = true
+    @Persisted public var remainingOldMessagesToFetch = Constants.messageQuantityLimit
+    @Persisted public var isHistoryComplete = false
 
     /// Date of last threads update
     @Persisted public var lastUpdate: Date?
@@ -199,7 +200,7 @@ public class Folder: Object, Codable, Comparable, Identifiable {
         }
         return true
     }
-    
+
     public func verifyFilter(_ filter: String) -> Bool {
         return localizedName.folding(options: [.caseInsensitive, .diacriticInsensitive], locale: .current).contains(filter)
     }
