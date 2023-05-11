@@ -64,9 +64,6 @@ struct MessageBodyView: View {
                         .onChange(of: showBlockQuote) { _ in
                             loadBody()
                         }
-                        .onReceive(NotificationCenter.default.publisher(for: UIDevice.orientationDidChangeNotification)) { _ in
-                            // TODO: Rotate device
-                        }
 
                         if presentableBody.quote != nil {
                             MailButton(label: showBlockQuote

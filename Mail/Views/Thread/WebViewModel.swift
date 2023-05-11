@@ -26,7 +26,6 @@ import WebKit
 class WebViewModel: NSObject {
     let webView: WKWebView
 
-    private let viewportContent = "width=device-width, initial-scale=1.0"
     private let style: String = MessageWebViewUtils.generateCSS(for: .message)
 
     override init() {
@@ -45,15 +44,7 @@ class WebViewModel: NSObject {
             guard let safeDocument = MessageWebViewUtils.cleanHtmlContent(rawHtml: rawHtml) else { return }
 
             try updateHeadContent(of: safeDocument)
-
-            // Wrap in #kmail-message-content
-            if let bodyContent = safeDocument.body()?.childNodesCopy() {
-                safeDocument.body()?.empty()
-                try safeDocument.body()?
-                    .appendElement("div")
-                    .attr("id", Constants.divWrapperId)
-                    .insertChildren(-1, bodyContent)
-            }
+            try wrapBody(document: safeDocument, inID: Constants.divWrapperId)
 
             let finalHtml = try safeDocument.outerHtml()
             webView.loadHTMLString(finalHtml, baseURL: nil)
@@ -92,11 +83,21 @@ class WebViewModel: NSObject {
     private func updateHeadContent(of document: Document) throws {
         let head = document.head()
         if let viewport = try head?.select("meta[name=\"viewport\"]"), !viewport.isEmpty() {
-            try viewport.attr("content", viewportContent)
+            try viewport.attr("content", Constants.viewportContent)
         } else {
-            try head?.append("<meta name=\"viewport\" content=\"\(viewportContent)\">")
+            try head?.append("<meta name=\"viewport\" content=\"\(Constants.viewportContent)\">")
         }
         try head?.append(style)
+    }
+
+    private func wrapBody(document: Document, inID id: String) throws {
+        if let bodyContent = document.body()?.childNodesCopy() {
+            document.body()?.empty()
+            try document.body()?
+                .appendElement("div")
+                .attr("id", id)
+                .insertChildren(-1, bodyContent)
+        }
     }
 }
 
