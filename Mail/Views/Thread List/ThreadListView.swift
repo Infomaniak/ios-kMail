@@ -140,7 +140,7 @@ struct ThreadListView: View {
                             .frame(maxWidth: .infinity)
                             .listRowSeparator(.hidden)
                     } else if !viewModel.folder.isHistoryComplete {
-                        Button {
+                        MailButton(label: MailResourcesStrings.Localizable.buttonLoadMore) {
                             withAnimation {
                                 isLoadingMore = true
                             }
@@ -151,11 +151,8 @@ struct ThreadListView: View {
                                     isLoadingMore = false
                                 }
                             }
-                        } label: {
-                            Text(MailResourcesStrings.Localizable.buttonLoadMore)
-                                .textStyle(.bodySmallAccent)
                         }
-                        .buttonStyle(.borderless)
+                        .mailButtonStyle(.smallLink)
                         .frame(maxWidth: .infinity, alignment: .center)
                     }
 

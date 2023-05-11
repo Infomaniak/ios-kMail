@@ -634,7 +634,7 @@ public class MailboxManager: ObservableObject {
                 folderId: folder.id
             )
             messagesUids = MessagesUids(
-                addedShortUids: messageUidsResult.messageShortUids.map { String($0) },
+                addedShortUids: messageUidsResult.messageShortUids,
                 cursor: messageUidsResult.cursor
             )
         } else {
