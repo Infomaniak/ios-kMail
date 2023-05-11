@@ -38,7 +38,9 @@ class MailApiError: MailError {
             localizedDescription: MailResourcesStrings.Localizable.errorNewFolderAlreadyExists,
             shouldDisplay: true
         ),
-        MailApiError(code: "folder__not_exists"),
+        MailApiError(code: "folder__not_exists",
+                     localizedDescription: MailResourcesStrings.Localizable.errorFolderNotFound,
+                     shouldDisplay: true),
 
         // Mail
         MailApiError(code: "mail__move_destination_folder_not_found"),

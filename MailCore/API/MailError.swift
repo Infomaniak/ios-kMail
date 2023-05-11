@@ -39,9 +39,11 @@ public class MailError: LocalizedError {
     public let errorDescription: String
     public let shouldDisplay: Bool
 
-    init(code: String, localizedDescription: String? = nil, shouldDisplay: Bool = false) {
+    init(code: String,
+         localizedDescription: String = MailResourcesStrings.Localizable.errorUnknown,
+         shouldDisplay: Bool = false) {
         self.code = code
-        errorDescription = localizedDescription ?? "Unknown error"
+        errorDescription = localizedDescription
         self.shouldDisplay = shouldDisplay
     }
 
@@ -49,11 +51,15 @@ public class MailError: LocalizedError {
     public static let noToken = MailError(code: "noToken", shouldDisplay: true)
     public static let resourceError = MailError(code: "resourceError", shouldDisplay: true)
     public static let unknownToken = MailError(code: "unknownToken", shouldDisplay: true)
-    public static let noMailbox = MailError(code: "noMailbox", shouldDisplay: true)
-    public static let folderNotFound = MailError(code: "folderNotFound", shouldDisplay: true)
+    public static let noMailbox = MailError(code: "noMailbox")
+    public static let folderNotFound = MailError(code: "folderNotFound",
+                                                 localizedDescription: MailResourcesStrings.Localizable.errorFolderNotFound,
+                                                 shouldDisplay: true)
     public static let addressBookNotFound = MailError(code: "addressBookNotFound", shouldDisplay: true)
     public static let contactNotFound = MailError(code: "contactNotFound", shouldDisplay: true)
-    public static let messageNotFound = MailError(code: "messageNotFound", shouldDisplay: true)
+    public static let messageNotFound = MailError(code: "messageNotFound",
+                                                  localizedDescription: MailResourcesStrings.Localizable.errorMessageNotFound,
+                                                  shouldDisplay: true)
     public static let attachmentsSizeLimitReached = MailError(code: "attachmentsSizeLimitReached",
                                                               localizedDescription: MailResourcesStrings.Localizable
                                                                   .attachmentFileLimitReached,
