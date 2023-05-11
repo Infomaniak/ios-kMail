@@ -109,9 +109,9 @@ public extension Endpoint {
     }
 
     static func messagesUids(mailboxUuid: String, folderId: String, offset: String?) -> Endpoint {
-        var queryItems = [URLQueryItem(name: "messages", value: String(Constants.pageSize))]
+        var queryItems = [URLQueryItem(name: "messages", value: Constants.pageSize.toString())]
         if let offset {
-            queryItems.append(URLQueryItem(name: "uid_offset", value: String(offset)))
+            queryItems.append(URLQueryItem(name: "uid_offset", value: offset))
         }
         return .messages(mailboxUuid: mailboxUuid, folderId: folderId).appending(path: "/messages-uids", queryItems: queryItems)
     }
