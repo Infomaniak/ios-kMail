@@ -5,8 +5,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Alamofire/Alamofire",
       "state" : {
-        "revision" : "78424be314842833c04bc3bef5b72e85fff99204",
-        "version" : "5.6.4"
+        "revision" : "bc268c28fb170f494de9e9927c371b8342979ece",
+        "version" : "5.7.1"
       }
     },
     {
@@ -130,8 +130,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/johnpatrickmorgan/NavigationBackport",
       "state" : {
-        "revision" : "5096dda355148dd40162810e7f56292ce0a2b09b",
-        "version" : "0.7.5"
+        "revision" : "f8930907304f03e589487c0158924d49c2a7ae83",
+        "version" : "0.8.1"
       }
     },
     {
@@ -157,8 +157,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/realm/realm-core.git",
       "state" : {
-        "revision" : "f2a209b164194190b46747c7f5e36cb30fd5db71",
-        "version" : "13.10.0"
+        "revision" : "72226e2fd84f3a3a8ab3cffc2890c7951f1351d5",
+        "version" : "13.10.1"
       }
     },
     {
@@ -166,8 +166,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/realm/realm-swift",
       "state" : {
-        "revision" : "9266efac9ef0c79e4e64a2ba36162d8d922893d2",
-        "version" : "10.39.0"
+        "revision" : "08ee98e7f52a5fb11b10b7430e6f84adbb7433a4",
+        "version" : "10.39.1"
       }
     },
     {
@@ -175,8 +175,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/getsentry/sentry-cocoa",
       "state" : {
-        "revision" : "e6dcfba32f2861438b82c7ad34e058b23c83daf6",
-        "version" : "8.6.0"
+        "revision" : "8da8166d3ee068228849f6e4ed93a99d1c4eadc0",
+        "version" : "8.7.0"
       }
     },
     {
@@ -235,10 +235,10 @@
     {
       "identity" : "swiftsoup",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/valentinperignon/SwiftSoup",
+      "location" : "https://github.com/scinfu/SwiftSoup",
       "state" : {
-        "branch" : "try-headcleaner",
-        "revision" : "05c6c880a5056421de271012faa8bd0a42c2e0a8"
+        "revision" : "0e96a20ffd37a515c5c963952d4335c89bed50a6",
+        "version" : "2.6.0"
       }
     },
     {
