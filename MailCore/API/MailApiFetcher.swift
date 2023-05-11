@@ -155,7 +155,7 @@ public class MailApiFetcher: ApiFetcher {
     }
 
     func messagesUids(mailboxUuid: String, folderId: String, offset: String? = nil) async throws -> MessageUidsResult {
-        try await perform(request: authenticatedRequest(.messagesUidsPreprod(
+        try await perform(request: authenticatedRequest(.messagesUids(
             mailboxUuid: mailboxUuid,
             folderId: folderId,
             offset: offset

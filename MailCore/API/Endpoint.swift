@@ -25,10 +25,6 @@ public extension ApiEnvironment {
     var mailHost: String {
         return "mail.\(host)"
     }
-
-    var preprodMailHost: String {
-        return "mail-mr-4138.\(host)"
-    }
 }
 
 // MARK: - Endpoints
@@ -112,22 +108,12 @@ public extension Endpoint {
         return Endpoint(hostKeypath: \.mailHost, path: "/api/mail/\(mailboxUuid)/folder/\(folderId)/mobile")
     }
 
-//    static func messagesUids(mailboxUuid: String, folderId: String) -> Endpoint {
-//        return .messages(mailboxUuid: mailboxUuid, folderId: folderId).appending(path: "/messages_uids", queryItems: [
-//            URLQueryItem(name: "messages", value: String(Constants.messageQuantityLimit))
-//        ])
-//    }
-
-    static func messagesUidsPreprod(mailboxUuid: String, folderId: String, offset: String?) -> Endpoint {
+    static func messagesUids(mailboxUuid: String, folderId: String, offset: String?) -> Endpoint {
         var queryItems = [URLQueryItem(name: "messages", value: String(Constants.pageSize))]
         if let offset {
             queryItems.append(URLQueryItem(name: "uid_offset", value: String(offset)))
         }
-        return Endpoint(
-            hostKeypath: \.preprodMailHost,
-            path: "/api/mail/\(mailboxUuid)/folder/\(folderId)/mobile",
-            apiEnvironment: .preprod
-        ).appending(path: "/messages-uids", queryItems: queryItems)
+        return .messages(mailboxUuid: mailboxUuid, folderId: folderId).appending(path: "/messages-uids", queryItems: queryItems)
     }
 
     static func messagesByUids(mailboxUuid: String, folderId: String, messagesUids: [String]) -> Endpoint {
