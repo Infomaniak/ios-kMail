@@ -130,7 +130,7 @@ public enum Constants {
     }
 
     public static let messageQuantityLimit = 500
-    public static let pageSize = 25
+    public static let pageSize = 50
     public static let contactSuggestionLimit = 5
 
     public static func longUid(from shortUid: String, folderId: String) -> String {
