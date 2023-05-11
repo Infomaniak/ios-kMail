@@ -70,6 +70,7 @@ struct SplitView: View {
                                 ThreadView(thread: thread)
                             }
                     }
+                    .nbUseNavigationStack(.whenAvailable)
                     .navigationViewStyle(.stack)
 
                     NavigationDrawer()
