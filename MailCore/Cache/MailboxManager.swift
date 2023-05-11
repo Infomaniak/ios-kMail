@@ -646,7 +646,7 @@ public class MailboxManager: ObservableObject {
             messagesUids = MessagesUids(
                 addedShortUids: messageDeltaResult.addedShortUids,
                 deletedUids: messageDeltaResult.deletedShortUids
-                    .map { Constants.longUid(from: String($0), folderId: folder.id) },
+                    .map { Constants.longUid(from: $0, folderId: folder.id) },
                 updated: messageDeltaResult.updated,
                 cursor: messageDeltaResult.cursor
             )
@@ -683,6 +683,8 @@ public class MailboxManager: ObservableObject {
 
         var remainingOldMessagesToFetch = folder.remainingOldMessagesToFetch
         while remainingOldMessagesToFetch > 0 {
+            guard !Task.isCancelled else { return }
+
             if try !(await moreMessages(folder: folder)) {
                 break
             }
@@ -709,7 +711,7 @@ public class MailboxManager: ObservableObject {
             offset: offset
         )
         let messagesUids = MessagesUids(
-            addedShortUids: messageUidsResult.messageShortUids.map { String($0) },
+            addedShortUids: messageUidsResult.messageShortUids,
             cursor: messageUidsResult.cursor
         )
 
