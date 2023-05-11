@@ -21,6 +21,8 @@ import CocoaLumberjackSwift
 import Foundation
 import InfomaniakCore
 import InfomaniakCoreUI
+import InfomaniakDI
+import InfomaniakNotifications
 import MailResources
 import RealmSwift
 import SwiftSoup
@@ -55,17 +57,26 @@ public enum NotificationsHelper {
         }
     }
 
-    public static func getUnreadCount() -> Int {
+    public static func getUnreadCount() async -> Int {
         var totalUnreadCount = 0
-        for mailbox in MailboxInfosManager.instance.getMailboxes() {
-            if let mailboxManager = AccountManager.instance.getMailboxManager(for: mailbox) {
-                totalUnreadCount += mailboxManager.getFolder(with: .inbox)?.unreadCount ?? 0
+        @InjectService var notificationService: InfomaniakNotifications
+
+        for account in AccountManager.instance.accounts {
+            let currentSubscription = await notificationService.subscriptionForUser(id: account.userId)
+
+            for mailbox in MailboxInfosManager.instance.getMailboxes(for: account.userId)
+                where currentSubscription?.topics.contains(mailbox.notificationTopicName) == true {
+                if let mailboxManager = AccountManager.instance.getMailboxManager(for: mailbox) {
+                    totalUnreadCount += mailboxManager.getFolder(with: .inbox)?.unreadCount ?? 0
+                }
             }
         }
+
         return totalUnreadCount
     }
 
-    public static func updateUnreadCountBadge() {
+    @MainActor
+    public static func updateUnreadCountBadge() async {
         // Start a background task to update the app badge when going in the background
         var backgroundTaskIdentifier: UIBackgroundTaskIdentifier = .invalid
         backgroundTaskIdentifier = UIApplication.shared.beginBackgroundTask(withName: "updateUnreadCountBadge task") {
@@ -74,14 +85,12 @@ public enum NotificationsHelper {
             backgroundTaskIdentifier = .invalid
         }
 
-        let totalUnreadCount = getUnreadCount()
+        let totalUnreadCount = await getUnreadCount()
 
-        DispatchQueue.main.async {
-            UIApplication.shared.applicationIconBadgeNumber = totalUnreadCount
-            if backgroundTaskIdentifier != .invalid {
-                UIApplication.shared.endBackgroundTask(backgroundTaskIdentifier)
-                backgroundTaskIdentifier = .invalid
-            }
+        UIApplication.shared.applicationIconBadgeNumber = totalUnreadCount
+        if backgroundTaskIdentifier != .invalid {
+            UIApplication.shared.endBackgroundTask(backgroundTaskIdentifier)
+            backgroundTaskIdentifier = .invalid
         }
     }
 
@@ -114,7 +123,9 @@ public enum NotificationsHelper {
         }
     }
 
-    public static func generateNotificationFor(message: Message, mailboxId: Int, userId: Int) -> UNMutableNotificationContent {
+    public static func generateNotificationFor(message: Message,
+                                               mailboxId: Int,
+                                               userId: Int) async -> UNMutableNotificationContent {
         let content = UNMutableNotificationContent()
         if !message.from.isEmpty {
             content.title = message.from.map { $0.name }.joined(separator: ",")
@@ -125,7 +136,7 @@ public enum NotificationsHelper {
         content.body = getCleanBodyFrom(message: message)
         content.threadIdentifier = "\(mailboxId)_\(userId)"
         content.targetContentIdentifier = "\(userId)_\(mailboxId)_\(message.uid)"
-        content.badge = getUnreadCount() as NSNumber
+        content.badge = await getUnreadCount() as NSNumber
         content.sound = .default
         content.userInfo = [NotificationsHelper.UserInfoKeys.userId: userId,
                             NotificationsHelper.UserInfoKeys.mailboxId: mailboxId,
