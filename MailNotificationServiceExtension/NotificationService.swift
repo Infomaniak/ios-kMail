@@ -19,6 +19,7 @@
 import InfomaniakCore
 import InfomaniakDI
 import InfomaniakLogin
+import InfomaniakNotifications
 import MailCore
 import MailResources
 import RealmSwift
@@ -40,10 +41,14 @@ class NotificationService: UNNotificationServiceExtension {
         let keychainHelper = Factory(type: KeychainHelper.self) { _, _ in
             KeychainHelper(accessGroup: AccountManager.accessGroup)
         }
+        let notificationService = Factory(type: InfomaniakNotifications.self) { _, _ in
+            InfomaniakNotifications()
+        }
 
         SimpleResolver.sharedResolver.store(factory: networkLoginService)
         SimpleResolver.sharedResolver.store(factory: loginService)
         SimpleResolver.sharedResolver.store(factory: keychainHelper)
+        SimpleResolver.sharedResolver.store(factory: notificationService)
     }
 
     func fetchMessage(uid: String, in mailboxManager: MailboxManager) async throws -> Message? {
