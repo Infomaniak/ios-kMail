@@ -42,7 +42,7 @@ class NotificationService: UNNotificationServiceExtension {
             KeychainHelper(accessGroup: AccountManager.accessGroup)
         }
         let notificationService = Factory(type: InfomaniakNotifications.self) { _, _ in
-            InfomaniakNotifications()
+            InfomaniakNotifications(appGroup: AccountManager.appGroup)
         }
 
         SimpleResolver.sharedResolver.store(factory: networkLoginService)

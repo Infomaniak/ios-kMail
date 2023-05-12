@@ -123,7 +123,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             KeychainHelper(accessGroup: AccountManager.accessGroup)
         }
         let notificationService = Factory(type: InfomaniakNotifications.self) { _, _ in
-            InfomaniakNotifications()
+            InfomaniakNotifications(appGroup: AccountManager.appGroup)
         }
         let appLockHelper = Factory(type: AppLockHelper.self) { _, _ in
             AppLockHelper()
