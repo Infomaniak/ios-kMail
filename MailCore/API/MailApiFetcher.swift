@@ -154,10 +154,11 @@ public class MailApiFetcher: ApiFetcher {
         try await perform(request: authenticatedRequest(.resource(resource, queryItems: searchFilter))).data
     }
 
-    func messagesUids(mailboxUuid: String, folderId: String) async throws -> MessageUidsResult {
+    func messagesUids(mailboxUuid: String, folderId: String, offset: String? = nil) async throws -> MessageUidsResult {
         try await perform(request: authenticatedRequest(.messagesUids(
             mailboxUuid: mailboxUuid,
-            folderId: folderId
+            folderId: folderId,
+            offset: offset
         ))).data
     }
 

@@ -72,7 +72,7 @@ public class MailboxManager: ObservableObject {
         let realmName = "\(mailbox.userId)-\(mailbox.mailboxId).realm"
         realmConfiguration = Realm.Configuration(
             fileURL: MailboxManager.constants.rootDocumentsURL.appendingPathComponent(realmName),
-            schemaVersion: 7,
+            schemaVersion: 8,
             deleteRealmIfMigrationNeeded: true,
             objectTypes: [
                 Folder.self,
@@ -626,65 +626,114 @@ public class MailboxManager: ObservableObject {
         guard !Task.isCancelled else { return }
 
         let previousCursor = folder.cursor
-        var newCursor: String?
-
-        var deletedUids = [String]()
-        var addedShortUids = [String]()
-        var updated = [MessageFlags]()
+        var messagesUids: MessagesUids
 
         if previousCursor == nil {
             let messageUidsResult = try await apiFetcher.messagesUids(
                 mailboxUuid: mailbox.uuid,
                 folderId: folder.id
             )
-            newCursor = messageUidsResult.cursor
-            addedShortUids.append(contentsOf: messageUidsResult.messageShortUids.map { String($0) })
+            messagesUids = MessagesUids(
+                addedShortUids: messageUidsResult.messageShortUids,
+                cursor: messageUidsResult.cursor
+            )
         } else {
             let messageDeltaResult = try await apiFetcher.messagesDelta(
                 mailboxUUid: mailbox.uuid,
                 folderId: folder.id,
                 signature: previousCursor!
             )
-            newCursor = messageDeltaResult.cursor
-            deletedUids
-                .append(contentsOf: messageDeltaResult.deletedShortUids
-                    .map { Constants.longUid(from: String($0), folderId: folder.id) })
-            addedShortUids.append(contentsOf: messageDeltaResult.addedShortUids)
-            updated.append(contentsOf: messageDeltaResult.updated)
+            messagesUids = MessagesUids(
+                addedShortUids: messageDeltaResult.addedShortUids,
+                deletedUids: messageDeltaResult.deletedShortUids
+                    .map { Constants.longUid(from: $0, folderId: folder.id) },
+                updated: messageDeltaResult.updated,
+                cursor: messageDeltaResult.cursor
+            )
         }
 
-        await deleteMessages(uids: deletedUids, folder: folder)
-        await updateMessages(updates: updated, folder: folder)
-        try await addMessages(shortUids: addedShortUids, folder: folder, newCursor: newCursor)
+        try await handleMessagesUids(messageUids: messagesUids, folder: folder)
 
         guard !Task.isCancelled else { return }
 
         await backgroundRealm.execute { realm in
-            if newCursor != nil {
-                guard let folder = folder.fresh(using: realm) else { return }
-                try? realm.safeWrite {
-                    folder.computeUnreadCount()
-                    folder.cursor = newCursor
-                    folder.lastUpdate = Date()
-                }
+            guard let folder = folder.fresh(using: realm) else { return }
+            try? realm.safeWrite {
+                folder.computeUnreadCount()
+                folder.cursor = messagesUids.cursor
+                folder.lastUpdate = Date()
             }
 
             SentryDebug.searchForOrphanMessages(
                 folderId: folder.id,
                 using: realm,
                 previousCursor: previousCursor,
-                newCursor: newCursor
+                newCursor: messagesUids.cursor
             )
             SentryDebug.searchForOrphanThreads(
                 using: realm,
                 previousCursor: previousCursor,
-                newCursor: newCursor
+                newCursor: messagesUids.cursor
             )
         }
 
         if folder.role == .inbox {
             MailboxInfosManager.instance.updateUnseen(unseenMessages: folder.unreadCount, for: mailbox)
         }
+
+        var remainingOldMessagesToFetch = folder.remainingOldMessagesToFetch
+        while remainingOldMessagesToFetch > 0 {
+            guard !Task.isCancelled else { return }
+
+            if try !(await moreMessages(folder: folder)) {
+                break
+            }
+
+            remainingOldMessagesToFetch -= Constants.pageSize
+            await backgroundRealm.execute { realm in
+                let folder = folder.fresh(using: realm)
+                try? realm.safeWrite {
+                    folder?.remainingOldMessagesToFetch = remainingOldMessagesToFetch
+                }
+            }
+        }
+    }
+
+    public func moreMessages(folder: Folder) async throws -> Bool {
+        let realm = getRealm()
+        guard let offset = realm.objects(Message.self).where({ $0.folderId == folder.id })
+            .sorted(by: { $0.shortUid! < $1.shortUid! }).first?
+            .shortUid?.toString() else { return false }
+
+        let messageUidsResult = try await apiFetcher.messagesUids(
+            mailboxUuid: mailbox.uuid,
+            folderId: folder.id,
+            offset: offset
+        )
+        let messagesUids = MessagesUids(
+            addedShortUids: messageUidsResult.messageShortUids,
+            cursor: messageUidsResult.cursor
+        )
+
+        try await handleMessagesUids(messageUids: messagesUids, folder: folder)
+
+        if messagesUids.addedShortUids.count < Constants.pageSize || messagesUids.addedShortUids.contains("1") {
+            await backgroundRealm.execute { realm in
+                let freshFolder = folder.fresh(using: realm)
+                try? realm.safeWrite {
+                    freshFolder?.isHistoryComplete = true
+                    freshFolder?.remainingOldMessagesToFetch = 0
+                }
+            }
+            return false
+        }
+        return true
+    }
+
+    private func handleMessagesUids(messageUids: MessagesUids, folder: Folder) async throws {
+        await deleteMessages(uids: messageUids.deletedUids, folder: folder)
+        await updateMessages(updates: messageUids.updated, folder: folder)
+        try await addMessages(shortUids: messageUids.addedShortUids, folder: folder, newCursor: messageUids.cursor)
     }
 
     private func addMessages(shortUids: [String], folder: Folder, newCursor: String?) async throws {
@@ -1120,6 +1169,8 @@ public class MailboxManager: ObservableObject {
         folder.unreadCount = savedFolder.unreadCount
         folder.lastUpdate = savedFolder.lastUpdate
         folder.cursor = savedFolder.cursor
+        folder.remainingOldMessagesToFetch = savedFolder.remainingOldMessagesToFetch
+        folder.isHistoryComplete = savedFolder.isHistoryComplete
     }
 
     func getSubFolders(from folders: [Folder], oldResult: [Folder] = []) -> [Folder] {

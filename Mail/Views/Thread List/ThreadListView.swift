@@ -53,6 +53,7 @@ struct ThreadListView: View {
     @State private var isRefreshing = false
     @State private var firstLaunch = true
     @State private var flushAlert: FlushAlertState?
+    @State private var isLoadingMore = false
 
     @LazyInjectService private var matomo: MatomoUtils
 
@@ -62,6 +63,10 @@ struct ThreadListView: View {
 
     private var shouldDisplayNoNetworkView: Bool {
         !networkMonitor.isConnected && viewModel.folder.lastUpdate == nil
+    }
+
+    private var displayLoadMoreButton: Bool {
+        return !viewModel.folder.isHistoryComplete && !(viewModel.sections.isEmpty && viewModel.isLoadingPage)
     }
 
     init(mailboxManager: MailboxManager,
@@ -131,6 +136,28 @@ struct ThreadListView: View {
                                     .textStyle(.bodySmallSecondary)
                             }
                         }
+                    }
+
+                    if isLoadingMore {
+                        ProgressView()
+                            .id(UUID())
+                            .frame(maxWidth: .infinity)
+                            .listRowSeparator(.hidden)
+                    } else if displayLoadMoreButton {
+                        MailButton(label: MailResourcesStrings.Localizable.buttonLoadMore) {
+                            withAnimation {
+                                isLoadingMore = true
+                            }
+                            Task {
+                                await tryOrDisplayError {
+                                    _ = try await viewModel.mailboxManager
+                                        .moreMessages(folder: viewModel.folder.freeze())
+                                    isLoadingMore = false
+                                }
+                            }
+                        }
+                        .mailButtonStyle(.smallLink)
+                        .mailButtonFullWidth(true)
                     }
 
                     ListVerticalInsetView(height: multipleSelectionViewModel.isEnabled ? 100 : 110)
