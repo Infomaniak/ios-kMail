@@ -22,14 +22,9 @@ import RealmSwift
 import SwiftUI
 
 struct MessageBodyView: View {
+    @StateObject private var model = WebViewModel()
+
     @Binding var presentableBody: PresentableBody
-
-    @State private var model = WebViewModel()
-    @State private var webViewShortHeight: CGFloat = .zero
-    @State private var webViewCompleteHeight: CGFloat = .zero
-
-    @State private var showBlockQuote = false
-    @State private var contentLoading = true
 
     let messageUid: String
 
@@ -42,34 +37,27 @@ struct MessageBodyView: View {
                             .padding(.horizontal, 16)
                             .onAppear {
                                 withAnimation {
-                                    contentLoading = false
+                                    model.contentLoading = false
                                 }
                             }
                     } else {
-                        WebView(
-                            model: $model,
-                            shortHeight: $webViewShortHeight,
-                            completeHeight: $webViewCompleteHeight,
-                            loading: $contentLoading,
-                            withQuote: $showBlockQuote,
-                            messageUid: messageUid
-                        )
-                        .frame(height: showBlockQuote ? webViewCompleteHeight : webViewShortHeight)
-                        .onAppear {
-                            loadBody()
-                        }
-                        .onChange(of: presentableBody) { _ in
-                            loadBody()
-                        }
-                        .onChange(of: showBlockQuote) { _ in
-                            loadBody()
-                        }
+                        WebView(model: model, messageUid: messageUid)
+                            .frame(height: model.showBlockQuote ? model.webViewCompleteHeight : model.webViewShortHeight)
+                            .onAppear {
+                                loadBody()
+                            }
+                            .onChange(of: presentableBody) { _ in
+                                loadBody()
+                            }
+                            .onChange(of: model.showBlockQuote) { _ in
+                                loadBody()
+                            }
 
                         if presentableBody.quote != nil {
-                            MailButton(label: showBlockQuote
+                            MailButton(label: model.showBlockQuote
                                 ? MailResourcesStrings.Localizable.messageHideQuotedText
                                 : MailResourcesStrings.Localizable.messageShowQuotedText) {
-                                    showBlockQuote.toggle()
+                                    model.showBlockQuote.toggle()
                                 }
                                 .mailButtonStyle(.smallLink)
                                 .frame(maxWidth: .infinity, alignment: .leading)
@@ -78,16 +66,16 @@ struct MessageBodyView: View {
                     }
                 }
             }
-            .opacity(contentLoading ? 0 : 1)
+            .opacity(model.contentLoading ? 0 : 1)
 
-            if contentLoading {
+            if model.contentLoading {
                 ShimmerView()
             }
         }
     }
 
     private func loadBody() {
-        model.loadHTMLString(value: showBlockQuote ? presentableBody.body?.value : presentableBody.compactBody)
+        model.loadHTMLString(value: model.showBlockQuote ? presentableBody.body?.value : presentableBody.compactBody)
     }
 }
 

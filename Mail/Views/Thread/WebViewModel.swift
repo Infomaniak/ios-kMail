@@ -23,8 +23,14 @@ import SwiftSoup
 import SwiftUI
 import WebKit
 
-class WebViewModel: NSObject {
+class WebViewModel: NSObject, ObservableObject {
     let webView: WKWebView
+
+    @Published var webViewShortHeight: CGFloat = .zero
+    @Published var webViewCompleteHeight: CGFloat = .zero
+
+    @Published var showBlockQuote = false
+    @Published var contentLoading = true
 
     private let style: String = MessageWebViewUtils.generateCSS(for: .message)
 
@@ -118,9 +124,10 @@ extension WebViewModel: WKScriptMessageHandler {
             sendJavaScriptError(message)
         case .displayImproved:
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                self.webView.evaluateJavaScript("getNewSize()") { value, _ in
+                self.webView.evaluateJavaScript("computeMessageContentHeight()") { value, _ in
                     if let height = value as? CGFloat {
                         print(height)
+                        self.webViewShortHeight = height
                     }
                 }
             }

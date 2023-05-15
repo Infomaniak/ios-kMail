@@ -20,11 +20,7 @@ import SwiftUI
 import WebKit
 
 struct WebView: UIViewRepresentable {
-    @Binding var model: WebViewModel
-    @Binding var shortHeight: CGFloat
-    @Binding var completeHeight: CGFloat
-    @Binding var loading: Bool
-    @Binding var withQuote: Bool
+    @ObservedObject var model: WebViewModel
 
     let messageUid: String
 
@@ -40,16 +36,16 @@ struct WebView: UIViewRepresentable {
         }
 
         private func updateHeight(height: CGFloat) {
-            if !parent.withQuote {
-                if parent.shortHeight < height {
-                    parent.shortHeight = height
-                    parent.completeHeight = height
+            if !parent.model.showBlockQuote {
+                if parent.model.webViewShortHeight < height {
+                    parent.model.webViewShortHeight = height
+                    parent.model.webViewCompleteHeight = height
                     withAnimation {
-                        parent.loading = false
+                        parent.model.contentLoading = false
                     }
                 }
-            } else if parent.completeHeight < height {
-                parent.completeHeight = height
+            } else if parent.model.webViewCompleteHeight < height {
+                parent.model.webViewCompleteHeight = height
             }
         }
 

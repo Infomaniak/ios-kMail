@@ -34,32 +34,32 @@ function displayImproved() {
     return true;
 }
 
-function getNewSize() {
-    const content = document.getElementById('kmail-message-content');
-    const contentScrollHeight = content.scrollHeight;
-    const zoom = content.style.zoom;
+function computeMessageContentHeight() {
+    const messageContent = document.querySelector(MESSAGE_SELECTOR);
+    const messageContentScrollHeight = messageContent.scrollHeight;
+    const messageContentZoom = messageContent.style.zoom;
+
     const documentStyle = window.getComputedStyle(document.body);
-    const marginTop = readSizeFromString(documentStyle["marginTop"]);
-    const marginBottom = readSizeFromString(documentStyle["marginBottom"]);
+    const bodyMarginTop = readSizeFromString(documentStyle["marginTop"]);
+    const bodyMarginBottom = readSizeFromString(documentStyle["marginBottom"]);
 
-    const realSize = contentScrollHeight * zoom;
-    const fullSize = Math.ceil(realSize + marginTop + marginBottom);
+    const realMailContentSize = messageContentScrollHeight * messageContentZoom;
+    const fullBodyHeight = Math.ceil(realMailContentSize + bodyMarginTop + bodyMarginBottom);
 
-    console.log("Content scroll height " + contentScrollHeight);
-    console.log("REAL CONTENT SIZE " + realSize);
-    console.log("marginTop " + marginTop);
-    console.log("marginBottom " + marginBottom);
+    console.log("Content scroll height: " + messageContentScrollHeight);
+    console.log("Real mail content size: " + realMailContentSize);
+    console.log("Body margin top: " + bodyMarginTop);
+    console.log("Body margin bottom: " + bodyMarginBottom);
+    console.log("-> Full body height: " + fullBodyHeight);
 
-    console.log("COUCOU : " + fullSize);
-
-    return fullSize;
+    return fullBodyHeight;
 }
 
 function readSizeFromString(data) {
     const index = data ? data.indexOf('px') : -1;
-
     if (index == -1) {
         return 0;
     }
+
     return parseInt(data.slice(0, index), 10);
 }
