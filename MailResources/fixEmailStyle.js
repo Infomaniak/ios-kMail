@@ -19,7 +19,8 @@
 function removeAllProperties() {
     const properties = [
         { name: 'position', values: ['absolute'] },
-        { name: '-webkit-text-size-adjust', values: [] }
+        { name: '-webkit-text-size-adjust', values: [] },
+        { name: 'height', values: ['100%'] }
     ];
     removeCSSProperty(properties);
     return true;
