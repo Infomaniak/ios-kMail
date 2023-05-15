@@ -689,7 +689,7 @@ public class MailboxManager: ObservableObject {
                 break
             }
 
-            remainingOldMessagesToFetch -= 25
+            remainingOldMessagesToFetch -= Constants.pageSize
             await backgroundRealm.execute { realm in
                 let folder = folder.fresh(using: realm)
                 try? realm.safeWrite {
