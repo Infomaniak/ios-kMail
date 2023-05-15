@@ -157,7 +157,7 @@ struct ThreadListView: View {
                             }
                         }
                         .mailButtonStyle(.smallLink)
-                        .frame(maxWidth: .infinity, alignment: .center)
+                        .mailButtonFullWidth(true)
                     }
 
                     ListVerticalInsetView(height: multipleSelectionViewModel.isEnabled ? 100 : 110)
