@@ -61,6 +61,7 @@ class WebViewModel: NSObject {
         webView.configuration.userContentController.add(self, name: JavaScriptMessageTopic.log.rawValue)
         webView.configuration.userContentController.add(self, name: JavaScriptMessageTopic.overScroll.rawValue)
         webView.configuration.userContentController.add(self, name: JavaScriptMessageTopic.error.rawValue)
+        webView.configuration.userContentController.add(self, name: JavaScriptMessageTopic.displayImproved.rawValue)
     }
 
     private func loadScripts(configuration: WKWebViewConfiguration) {
@@ -103,7 +104,7 @@ class WebViewModel: NSObject {
 
 extension WebViewModel: WKScriptMessageHandler {
     private enum JavaScriptMessageTopic: String {
-        case log, overScroll, error
+        case log, overScroll, error, displayImproved
     }
 
     func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
@@ -115,6 +116,14 @@ extension WebViewModel: WKScriptMessageHandler {
             sendOverScrollMessage(message)
         case .error:
             sendJavaScriptError(message)
+        case .displayImproved:
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                self.webView.evaluateJavaScript("getNewSize()") { value, _ in
+                    if let height = value as? CGFloat {
+                        print(height)
+                    }
+                }
+            }
         }
     }
 

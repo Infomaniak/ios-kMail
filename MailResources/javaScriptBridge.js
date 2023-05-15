@@ -29,3 +29,37 @@ function reportError(error, messageId) {
     });
 }
 
+function displayImproved() {
+    window.webkit.messageHandlers.displayImproved.postMessage({ });
+    return true;
+}
+
+function getNewSize() {
+    const content = document.getElementById('kmail-message-content');
+    const contentScrollHeight = content.scrollHeight;
+    const zoom = content.style.zoom;
+    const documentStyle = window.getComputedStyle(document.body);
+    const marginTop = readSizeFromString(documentStyle["marginTop"]);
+    const marginBottom = readSizeFromString(documentStyle["marginBottom"]);
+
+    const realSize = contentScrollHeight * zoom;
+    const fullSize = Math.ceil(realSize + marginTop + marginBottom);
+
+    console.log("Content scroll height " + contentScrollHeight);
+    console.log("REAL CONTENT SIZE " + realSize);
+    console.log("marginTop " + marginTop);
+    console.log("marginBottom " + marginBottom);
+
+    console.log("COUCOU : " + fullSize);
+
+    return fullSize;
+}
+
+function readSizeFromString(data) {
+    const index = data ? data.indexOf('px') : -1;
+
+    if (index == -1) {
+        return 0;
+    }
+    return parseInt(data.slice(0, index), 10);
+}

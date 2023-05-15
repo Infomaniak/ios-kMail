@@ -66,6 +66,8 @@ struct WebView: UIViewRepresentable {
                 let scrollHeight = try await webView.evaluateJavaScript("document.documentElement.scrollHeight") as? CGFloat
                 guard let scrollHeight else { return }
                 updateHeight(height: scrollHeight)
+
+                try await webView.evaluateJavaScript("displayImproved()")
             }
         }
 
