@@ -36,32 +36,30 @@ function displayImproved() {
 
 function computeMessageContentHeight() {
     const messageContent = document.querySelector(MESSAGE_SELECTOR);
+
+    // Applying the style `overflow: auto` will help to get the correct height
+    // If child elements have margins, then the height of the div will take this into account
+    messageContent.style.overflow = 'auto';
+
     const messageContentScrollHeight = messageContent.scrollHeight;
-    const messageContentZoom = messageContent.style.zoom;
+    const messageContentZoom = parseFloat(messageContent.style.zoom) || 1;
 
     const documentStyle = window.getComputedStyle(document.body);
-    const bodyMarginTop = readSizeFromString(documentStyle["marginTop"]);
-    const bodyMarginBottom = readSizeFromString(documentStyle["marginBottom"]);
+    const bodyMarginTop = readSizeFromString(documentStyle['marginTop']);
+    const bodyMarginBottom = readSizeFromString(documentStyle['marginBottom']);
 
     const realMailContentSize = messageContentScrollHeight * messageContentZoom;
     const fullBodyHeight = Math.ceil(realMailContentSize + bodyMarginTop + bodyMarginBottom);
 
-    console.log("Content scroll height: " + messageContentScrollHeight);
-    console.log("Real mail content size: " + realMailContentSize);
-    console.log("Body margin top: " + bodyMarginTop);
-    console.log("Body margin bottom: " + bodyMarginBottom);
-    console.log("-> Full body height: " + fullBodyHeight);
-
-    messageContent.style.overflow = "visible";
+    // We can remove the overflow because it's no longer needed
+    messageContent.style.overflow = null;
 
     return fullBodyHeight;
 }
 
 function readSizeFromString(data) {
-    const index = data ? data.indexOf('px') : -1;
-    if (index == -1) {
+    if (data.indexOf('px') === -1) {
         return 0;
     }
-
-    return parseInt(data.slice(0, index), 10);
+    return parseFloat(data);
 }

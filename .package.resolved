@@ -85,8 +85,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Infomaniak/ios-notifications",
       "state" : {
-        "revision" : "0da8aa11e60766acaa62e34c84a8049eeb6e933f",
-        "version" : "2.0.1"
+        "revision" : "4609e33800a11f9f7acd38df66d1fbaaba0e60a8",
+        "version" : "2.1.0"
       }
     },
     {
