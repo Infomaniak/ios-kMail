@@ -123,7 +123,7 @@ extension WebViewModel: WKScriptMessageHandler {
         case .error:
             sendJavaScriptError(message)
         case .displayImproved:
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) {
                 self.webView.evaluateJavaScript("computeMessageContentHeight()") { value, _ in
                     if let height = value as? CGFloat {
                         print(height)
