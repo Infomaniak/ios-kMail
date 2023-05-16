@@ -42,7 +42,7 @@ struct MessageBodyView: View {
                             }
                     } else {
                         WebView(model: model, messageUid: messageUid)
-                            .frame(height: model.showBlockQuote ? model.webViewCompleteHeight : model.webViewShortHeight)
+                            .frame(height: model.webViewHeight)
                             .onAppear {
                                 loadBody()
                             }

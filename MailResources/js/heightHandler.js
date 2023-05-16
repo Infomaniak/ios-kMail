@@ -16,6 +16,16 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+function listenHeightChanges() {
+    const observer = new ResizeObserver((entries) => {
+        const height = computeMessageContentHeight();
+        window.webkit.messageHandlers.displayImproved.postMessage({ height });
+    });
+
+    observer.observe(document.querySelector(MESSAGE_SELECTOR));
+    return true;
+}
+
 function computeMessageContentHeight() {
     const messageContent = document.querySelector(MESSAGE_SELECTOR);
 

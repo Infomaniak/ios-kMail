@@ -28,8 +28,3 @@ function reportError(error, messageId) {
         messageId
     });
 }
-
-function displayImproved() {
-    window.webkit.messageHandlers.displayImproved.postMessage({ });
-    return true;
-}

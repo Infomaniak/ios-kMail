@@ -26,8 +26,7 @@ import WebKit
 class WebViewModel: NSObject, ObservableObject {
     let webView: WKWebView
 
-    @Published var webViewShortHeight: CGFloat = .zero
-    @Published var webViewCompleteHeight: CGFloat = .zero
+    @Published var webViewHeight: CGFloat = .zero
 
     @Published var showBlockQuote = false
     @Published var contentLoading = true
@@ -123,14 +122,11 @@ extension WebViewModel: WKScriptMessageHandler {
         case .error:
             sendJavaScriptError(message)
         case .displayImproved:
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) {
-                self.webView.evaluateJavaScript("computeMessageContentHeight()") { value, _ in
-                    if let height = value as? CGFloat {
-                        print(height)
-                        self.webViewShortHeight = height
-                        self.webViewCompleteHeight = height
-                    }
-                }
+            if let dict = message.body as? [String: CGFloat], let height = dict["height"] {
+                guard abs(webViewHeight - height) > 5 else { return }
+
+                contentLoading = false
+                webViewHeight = height
             }
         }
     }

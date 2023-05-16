@@ -35,35 +35,16 @@ struct WebView: UIViewRepresentable {
             self.parent = parent
         }
 
-        private func updateHeight(height: CGFloat) {
-            if !parent.model.showBlockQuote {
-                if parent.model.webViewShortHeight < height {
-                    parent.model.webViewShortHeight = height
-                    parent.model.webViewCompleteHeight = height
-                    withAnimation {
-                        parent.model.contentLoading = false
-                    }
-                }
-            } else if parent.model.webViewCompleteHeight < height {
-                parent.model.webViewCompleteHeight = height
-            }
-        }
-
         func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
             Task { @MainActor in
+                try await webView.evaluateJavaScript("listenHeightChanges()")
+
                 let readyState = try await webView.evaluateJavaScript("document.readyState") as? String
                 guard readyState == "complete" else { return }
 
                 // Fix email style
                 _ = try await webView.evaluateJavaScript("removeAllProperties()")
                 _ = try await webView.evaluateJavaScript("normalizeMessageWidth(\(webView.frame.width), '\(parent.messageUid)')")
-
-                // Get WKWebView height
-                let scrollHeight = try await webView.evaluateJavaScript("document.documentElement.scrollHeight") as? CGFloat
-                guard let scrollHeight else { return }
-                updateHeight(height: scrollHeight)
-
-                try await webView.evaluateJavaScript("displayImproved()")
             }
         }
 
