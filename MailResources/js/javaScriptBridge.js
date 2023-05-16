@@ -33,33 +33,3 @@ function displayImproved() {
     window.webkit.messageHandlers.displayImproved.postMessage({ });
     return true;
 }
-
-function computeMessageContentHeight() {
-    const messageContent = document.querySelector(MESSAGE_SELECTOR);
-
-    // Applying the style `overflow: auto` will help to get the correct height
-    // If child elements have margins, then the height of the div will take this into account
-    messageContent.style.overflow = 'auto';
-
-    const messageContentScrollHeight = messageContent.scrollHeight;
-    const messageContentZoom = parseFloat(messageContent.style.zoom) || 1;
-
-    const documentStyle = window.getComputedStyle(document.body);
-    const bodyMarginTop = readSizeFromString(documentStyle['marginTop']);
-    const bodyMarginBottom = readSizeFromString(documentStyle['marginBottom']);
-
-    const realMailContentSize = messageContentScrollHeight * messageContentZoom;
-    const fullBodyHeight = Math.ceil(realMailContentSize + bodyMarginTop + bodyMarginBottom);
-
-    // We can remove the overflow because it's no longer needed
-    messageContent.style.overflow = null;
-
-    return fullBodyHeight;
-}
-
-function readSizeFromString(data) {
-    if (data.indexOf('px') === -1) {
-        return 0;
-    }
-    return parseFloat(data);
-}
