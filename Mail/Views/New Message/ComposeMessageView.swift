@@ -97,10 +97,6 @@ struct ComposeMessageView: View {
     private init(mailboxManager: MailboxManager, draft: Draft, messageReply: MessageReply? = nil) {
         self.messageReply = messageReply
         _mailboxManager = State(initialValue: mailboxManager)
-        if draft.identityId == nil || draft.identityId?.isEmpty == true,
-           let signature = mailboxManager.getSignatureResponse() {
-            draft.setSignature(signature)
-        }
         let realm = mailboxManager.getRealm()
         try? realm.write {
             draft.action = draft.action == nil && draft.remoteUUID.isEmpty ? .initialSave : .save
@@ -222,9 +218,9 @@ struct ComposeMessageView: View {
         }
         .customAlert(isPresented: $alert.isShowing) {
             switch alert.state {
-            case let .link(handler):
+            case .link(let handler):
                 AddLinkView(actionHandler: handler)
-            case let .emptySubject(handler):
+            case .emptySubject(let handler):
                 EmptySubjectView(actionHandler: handler)
             case .none:
                 EmptyView()
@@ -336,10 +332,30 @@ struct ComposeMessageView: View {
         do {
             _ = try await prepareBodyTask.value
             _ = try await prepareAttachmentsTask.value
+
+            if draft.identityId == nil || draft.identityId?.isEmpty == true,
+               let signature = mailboxManager.getSignatureResponse() {
+                try await setSignature(signature)
+            }
             isLoadingContent = false
         } catch {
             dismiss()
             IKSnackBar.showSnackBar(message: MailError.unknownError.localizedDescription)
+        }
+    }
+
+    private func setSignature(_ signatureResponse: SignatureResponse) async throws {
+        $draft.identityId.wrappedValue = "\(signatureResponse.defaultSignatureId)"
+        guard let signature = signatureResponse.default else {
+            return
+        }
+
+        let html = "<br><br><div class=\"editorUserSignature\">\(signature.content)</div>"
+        switch signature.position {
+        case .beforeReplyMessage:
+            $draft.body.wrappedValue.insert(contentsOf: html, at: draft.body.startIndex)
+        case .afterReplyMessage:
+            $draft.body.wrappedValue.append(contentsOf: html)
         }
     }
 
