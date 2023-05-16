@@ -128,6 +128,7 @@ extension WebViewModel: WKScriptMessageHandler {
                     if let height = value as? CGFloat {
                         print(height)
                         self.webViewShortHeight = height
+                        self.webViewCompleteHeight = height
                     }
                 }
             }

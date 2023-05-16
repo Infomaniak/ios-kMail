@@ -36,6 +36,10 @@ function computeMessageContentHeight() {
     // We can remove the overflow because it's no longer needed
     messageContent.style.overflow = null;
 
+    console.log('Scroll height : ' + messageContentScrollHeight);
+    console.log('Real size : ' + realMailContentSize);
+    console.log('Full body height : ' + fullBodyHeight);
+
     return fullBodyHeight;
 }
 
