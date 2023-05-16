@@ -37,7 +37,7 @@ struct WebView: UIViewRepresentable {
 
         func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
             Task { @MainActor in
-                try await webView.evaluateJavaScript("listenHeightChanges()")
+                try await webView.evaluateJavaScript("listenSizeChanges()")
 
                 let readyState = try await webView.evaluateJavaScript("document.readyState") as? String
                 guard readyState == "complete" else { return }

@@ -64,9 +64,9 @@ class WebViewModel: NSObject, ObservableObject {
         webView.configuration.setURLSchemeHandler(URLSchemeHandler(), forURLScheme: URLSchemeHandler.scheme)
 
         webView.configuration.userContentController.add(self, name: JavaScriptMessageTopic.log.rawValue)
+        webView.configuration.userContentController.add(self, name: JavaScriptMessageTopic.sizeChanged.rawValue)
         webView.configuration.userContentController.add(self, name: JavaScriptMessageTopic.overScroll.rawValue)
         webView.configuration.userContentController.add(self, name: JavaScriptMessageTopic.error.rawValue)
-        webView.configuration.userContentController.add(self, name: JavaScriptMessageTopic.displayImproved.rawValue)
     }
 
     private func loadScripts(configuration: WKWebViewConfiguration) {
@@ -109,7 +109,7 @@ class WebViewModel: NSObject, ObservableObject {
 
 extension WebViewModel: WKScriptMessageHandler {
     private enum JavaScriptMessageTopic: String {
-        case log, overScroll, error, displayImproved
+        case log, sizeChanged, overScroll, error
     }
 
     func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
@@ -117,17 +117,21 @@ extension WebViewModel: WKScriptMessageHandler {
         switch event {
         case .log:
             print(message.body)
+        case .sizeChanged:
+            updateWebViewHeight(message)
         case .overScroll:
             sendOverScrollMessage(message)
         case .error:
             sendJavaScriptError(message)
-        case .displayImproved:
-            if let dict = message.body as? [String: CGFloat], let height = dict["height"] {
-                guard abs(webViewHeight - height) > 5 else { return }
+        }
+    }
 
-                contentLoading = false
-                webViewHeight = height
-            }
+    private func updateWebViewHeight(_ message: WKScriptMessage) {
+        guard let data = message.body as? [String: CGFloat] else { return }
+
+        if let height = data["height"], abs(webViewHeight - height) > 5 {
+            contentLoading = false
+            webViewHeight = height
         }
     }
 
