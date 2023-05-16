@@ -52,6 +52,8 @@ function computeMessageContentHeight() {
     console.log("Body margin bottom: " + bodyMarginBottom);
     console.log("-> Full body height: " + fullBodyHeight);
 
+    messageContent.style.overflow = "visible";
+
     return fullBodyHeight;
 }
 
