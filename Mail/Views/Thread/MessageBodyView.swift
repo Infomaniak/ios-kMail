@@ -28,13 +28,16 @@ struct MessageBodyView: View {
 
     let messageUid: String
 
+    @State private var textPlainHeight = CGFloat.zero
+
     var body: some View {
         ZStack {
             VStack {
                 if let body = presentableBody.body {
                     if body.type == "text/plain" {
-                        SelectableTextView(text: body.value)
+                        SelectableTextView(textPlainHeight: $textPlainHeight, text: body.value)
                             .padding(.horizontal, 16)
+                            .frame(height: textPlainHeight)
                             .onAppear {
                                 withAnimation {
                                     model.contentLoading = false

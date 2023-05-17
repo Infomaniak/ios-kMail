@@ -19,9 +19,13 @@
 import Foundation
 import MailCore
 import SwiftUI
+import UIKit
 
 struct SelectableTextView: UIViewRepresentable {
+    @Binding var textPlainHeight: CGFloat
+
     let text: String?
+
     func makeUIView(context: Context) -> UITextView {
         let textView = UITextView()
         textView.dataDetectorTypes = .all
@@ -32,11 +36,15 @@ struct SelectableTextView: UIViewRepresentable {
         textView.textColor = UIColor(MailTextStyle.body.color)
         textView.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
 
-        textView.text = text
         return textView
     }
 
     func updateUIView(_ uiView: UITextView, context: Context) {
         uiView.text = text
+
+        DispatchQueue.main.async {
+            let sizeThatFits = uiView.sizeThatFits(CGSize(width: uiView.frame.width, height: CGFloat.greatestFiniteMagnitude))
+            textPlainHeight = sizeThatFits.height
+        }
     }
 }
