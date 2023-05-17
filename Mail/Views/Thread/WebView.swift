@@ -37,12 +37,12 @@ struct WebView: UIViewRepresentable {
 
         func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
             Task { @MainActor in
-                try await webView.evaluateJavaScript("listenSizeChanges()")
+                try await webView.evaluateJavaScript("listenToSizeChanges()")
 
+                // Fix CSS properties and adapt the mail to the screen size
                 let readyState = try await webView.evaluateJavaScript("document.readyState") as? String
                 guard readyState == "complete" else { return }
 
-                // Fix email style
                 _ = try await webView.evaluateJavaScript("removeAllProperties()")
                 _ = try await webView.evaluateJavaScript("normalizeMessageWidth(\(webView.frame.width), '\(parent.messageUid)')")
             }

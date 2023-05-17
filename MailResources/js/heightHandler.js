@@ -16,7 +16,7 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-function listenSizeChanges() {
+function listenToSizeChanges() {
     const observer = new ResizeObserver((entries) => {
         const height = computeMessageContentHeight();
         window.webkit.messageHandlers.sizeChanged.postMessage({ height });
@@ -36,19 +36,23 @@ function computeMessageContentHeight() {
     const messageContentScrollHeight = messageContent.scrollHeight;
     const messageContentZoom = parseFloat(messageContent.style.zoom) || 1;
 
+    // Compute body extra size (padding, border, margin)
     const documentStyle = window.getComputedStyle(document.body);
-    const bodyMarginTop = readSizeFromString(documentStyle['marginTop']);
-    const bodyMarginBottom = readSizeFromString(documentStyle['marginBottom']);
+    const extraSizeElements = ['padding', 'border', 'margin',];
+    let extraSize = 0;
+    for (const element of extraSizeElements) {
+        const edges = ['top', 'bottom'];
+        for (const edge of edges) {
+            const elementSize = readSizeFromString(documentStyle.getPropertyValue(`${element}-${edge}`));
+            extraSize += elementSize;
+        }
+    }
 
     const realMailContentSize = messageContentScrollHeight * messageContentZoom;
-    const fullBodyHeight = Math.ceil(realMailContentSize + bodyMarginTop + bodyMarginBottom);
+    const fullBodyHeight = Math.ceil(realMailContentSize + extraSize);
 
     // We can remove the overflow because it's no longer needed
     messageContent.style.overflow = null;
-
-    console.log('Scroll height : ' + messageContentScrollHeight);
-    console.log('Real size : ' + realMailContentSize);
-    console.log('Full body height : ' + fullBodyHeight);
 
     return fullBodyHeight;
 }
