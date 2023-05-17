@@ -46,6 +46,24 @@ public class MessageDeltaResult: Decodable {
         case updated
         case cursor = "signature"
     }
+
+    // FIXME: Remove this constructor when mixed Int/String arrayis fixed by backend
+    public required init(from decoder: Decoder) throws {
+        let container: KeyedDecodingContainer<CodingKeys> = try decoder.container(keyedBy: CodingKeys.self)
+
+        if let deletedShortUids = try? container.decode([String].self, forKey: .deletedShortUids) {
+            self.deletedShortUids = deletedShortUids
+        } else {
+            deletedShortUids = try container.decode([Int].self, forKey: .deletedShortUids).map { "\($0)" }
+        }
+        if let addedShortUids = try? container.decode([String].self, forKey: .addedShortUids) {
+            self.addedShortUids = addedShortUids
+        } else {
+            addedShortUids = try container.decode([Int].self, forKey: .addedShortUids).map { "\($0)" }
+        }
+        updated = try container.decode([MessageFlags].self, forKey: .updated)
+        cursor = try container.decode(String.self, forKey: .cursor)
+    }
 }
 
 public struct MessagesUids {
