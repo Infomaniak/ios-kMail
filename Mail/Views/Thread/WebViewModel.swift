@@ -24,12 +24,12 @@ import SwiftUI
 import WebKit
 
 class WebViewModel: NSObject, ObservableObject {
-    let webView: WKWebView
-
     @Published var webViewHeight: CGFloat = .zero
 
     @Published var showBlockQuote = false
     @Published var contentLoading = true
+
+    let webView: WKWebView
 
     private let style: String = MessageWebViewUtils.generateCSS(for: .message)
 
@@ -70,7 +70,7 @@ class WebViewModel: NSObject, ObservableObject {
     }
 
     private func loadScripts(configuration: WKWebViewConfiguration) {
-        var scripts = ["javaScriptBridge", "fixEmailStyle", "heightHandler"]
+        var scripts = ["javaScriptBridge", "fixEmailStyle", "sizeHandler"]
         #if DEBUG
         scripts.insert("captureLog", at: 0)
         #endif
@@ -127,9 +127,11 @@ extension WebViewModel: WKScriptMessageHandler {
     }
 
     private func updateWebViewHeight(_ message: WKScriptMessage) {
-        guard let data = message.body as? [String: CGFloat] else { return }
+        guard let data = message.body as? [String: CGFloat], let height = data["height"] else { return }
 
-        if let height = data["height"], abs(webViewHeight - height) > 5 {
+        // On some messages, the size infinitely increases by 1px ?
+        // Having a threshold avoids this problem
+        if Int(abs(webViewHeight - height)) > Constants.sizeChangeThreshold {
             contentLoading = false
             webViewHeight = height
         }

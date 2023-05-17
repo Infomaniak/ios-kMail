@@ -32,10 +32,8 @@ public enum MessageWebViewUtils {
             resources += "<style>\(fixDisplayCSS)</style>"
         }
 
-        if target == .editor {
-            if let editorCSS = Bundle.main.loadCSS(filename: "editor") {
-                resources += "<style>\(editorCSS)</style>"
-            }
+        if target == .editor, let editorCSS = Bundle.main.loadCSS(filename: "editor") {
+            resources += "<style>\(editorCSS)</style>"
         }
 
         return resources

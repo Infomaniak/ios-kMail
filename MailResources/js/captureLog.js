@@ -16,10 +16,6 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
- * Sends a message to the WKScriptMessageHandler
- * @param message Message content
- */
 function captureLog(message) {
     window.webkit.messageHandlers.log.postMessage(message);
 }
