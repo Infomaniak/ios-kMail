@@ -68,16 +68,6 @@ public enum Constants {
     public static let sizeChangeThreshold = 3
     public static let viewportContent = "width=device-width, initial-scale=1.0"
     public static let divWrapperId = "kmail-message-content"
-    public static let styleCSS = {
-        guard let style = Bundle.main.loadCSS(filename: "style") else { return "" }
-
-        let variables = """
-        :root {
-            --kmail-primary-color: \(UserDefaults.shared.accentColor.primary.swiftUIColor.hexRepresentation);
-        }
-        """
-        return (variables + style).replacingOccurrences(of: "\n", with: "")
-    }()
     public static let mungeEmailScript: String? = {
         guard let mungeScript = Bundle.main.load(filename: "mungeEmail", withExtension: "js") else { return nil }
         return "const MESSAGE_SELECTOR = \"#\(divWrapperId)\"; \(mungeScript)"

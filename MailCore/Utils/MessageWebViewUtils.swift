@@ -26,7 +26,16 @@ public enum MessageWebViewUtils {
     }
 
     public static func generateCSS(for target: WebViewTarget) -> String {
-        var resources = "<style>\(Constants.styleCSS)</style>"
+        var resources = ""
+
+        if let style = Bundle.main.loadCSS(filename: "style") {
+            let variables = """
+            :root {
+                --kmail-primary-color: \(UserDefaults.shared.accentColor.primary.swiftUIColor.hexRepresentation);
+            }
+            """
+            resources += "<style>\(variables + style)</style>".replacingOccurrences(of: "\n", with: "")
+        }
 
         if let fixDisplayCSS = Bundle.main.loadCSS(filename: "improveRendering") {
             resources += "<style>\(fixDisplayCSS)</style>"

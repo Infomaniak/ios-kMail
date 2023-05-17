@@ -24,7 +24,7 @@ struct WebView: UIViewRepresentable {
 
     let messageUid: String
 
-    var webView: WKWebView {
+    private var webView: WKWebView {
         return model.webView
     }
 

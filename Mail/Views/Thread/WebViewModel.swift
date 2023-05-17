@@ -23,7 +23,7 @@ import SwiftSoup
 import SwiftUI
 import WebKit
 
-class WebViewModel: NSObject, ObservableObject {
+final class WebViewModel: NSObject, ObservableObject {
     @Published var webViewHeight: CGFloat = .zero
 
     @Published var showBlockQuote = false
