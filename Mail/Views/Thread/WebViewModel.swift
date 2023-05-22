@@ -18,144 +18,155 @@
 
 import CocoaLumberjackSwift
 import MailCore
+import Sentry
 import SwiftSoup
 import SwiftUI
 import WebKit
 
-struct WebView: UIViewRepresentable {
-    typealias UIViewType = WKWebView
+final class WebViewModel: NSObject, ObservableObject {
+    @Published var webViewHeight: CGFloat = .zero
 
-    @Binding var model: WebViewModel
-    @Binding var shortHeight: CGFloat
-    @Binding var completeHeight: CGFloat
-    @Binding var loading: Bool
-    @Binding var withQuote: Bool
+    @Published var showBlockQuote = false
+    @Published var contentLoading = true
 
-    var webView: WKWebView {
-        return model.webView
-    }
-
-    class Coordinator: NSObject, WKNavigationDelegate {
-        var parent: WebView
-
-        init(_ parent: WebView) {
-            self.parent = parent
-        }
-
-        private func updateHeight(height: CGFloat) {
-            if !parent.withQuote {
-                if parent.shortHeight < height {
-                    parent.shortHeight = height
-                    parent.completeHeight = height
-                    withAnimation {
-                        parent.loading = false
-                    }
-                }
-            } else if parent.completeHeight < height {
-                parent.completeHeight = height
-            }
-        }
-
-        func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
-            Task { @MainActor in
-                let readyState = try await webView.evaluateJavaScript("document.readyState") as? String
-                guard readyState == "complete" else { return }
-
-                let scrollHeight = try await webView.evaluateJavaScript("document.documentElement.scrollHeight") as? CGFloat
-                guard let scrollHeight else { return }
-                updateHeight(height: scrollHeight)
-            }
-        }
-
-        func webView(
-            _ webView: WKWebView,
-            decidePolicyFor navigationAction: WKNavigationAction,
-            decisionHandler: @escaping (WKNavigationActionPolicy) -> Void
-        ) {
-            if navigationAction.navigationType == .linkActivated {
-                if let url = navigationAction.request.url {
-                    decisionHandler(.cancel)
-                    UIApplication.shared.open(url)
-                }
-            } else {
-                decisionHandler(.allow)
-            }
-        }
-    }
-
-    func makeCoordinator() -> Coordinator {
-        Coordinator(self)
-    }
-
-    func makeUIView(context: Context) -> WKWebView {
-        webView.navigationDelegate = context.coordinator
-        webView.scrollView.bounces = false
-        webView.scrollView.bouncesZoom = false
-        webView.scrollView.showsVerticalScrollIndicator = false
-        webView.scrollView.showsHorizontalScrollIndicator = true
-        webView.scrollView.alwaysBounceVertical = false
-        webView.scrollView.alwaysBounceHorizontal = false
-        return webView
-    }
-
-    func updateUIView(_ uiView: WKWebView, context: Context) {
-        // needed for UIViewRepresentable
-    }
-}
-
-class WebViewModel {
     let webView: WKWebView
-    var viewport: String {
-        return "<meta name=viewport content=\"width=device-width, initial-scale=1, shrink-to-fit=YES\">"
-    }
 
-    var style: String {
-        return "<style>\(Constants.customCss)</style>"
-    }
+    private let style: String = MessageWebViewUtils.generateCSS(for: .message)
 
-    init() {
-        let configuration = WKWebViewConfiguration()
-        configuration.dataDetectorTypes = .all
-        configuration.defaultWebpagePreferences.allowsContentJavaScript = false
-        configuration.setURLSchemeHandler(URLSchemeHandler(), forURLScheme: URLSchemeHandler.scheme)
-        webView = WKWebView(frame: .zero, configuration: configuration)
+    override init() {
+        webView = WKWebView()
+
+        super.init()
+
+        setUpWebViewConfiguration()
+        loadScripts(configuration: webView.configuration)
     }
 
     func loadHTMLString(value: String?) {
-        guard let rawHtml = value else {
-            return
-        }
+        guard let rawHtml = value else { return }
 
         do {
-            guard let safeHtml = MessageBodyUtils.cleanHtmlContent(rawHtml: rawHtml) else { return }
-            let parsedHtml = try SwiftSoup.parse(safeHtml)
+            guard let safeDocument = MessageWebViewUtils.cleanHtmlContent(rawHtml: rawHtml) else { return }
 
-            let head: Element
-            if let existingHead = parsedHtml.head() {
-                head = existingHead
-            } else {
-                head = try parsedHtml.appendElement("head")
-            }
+            try updateHeadContent(of: safeDocument)
+            try wrapBody(document: safeDocument, inID: Constants.divWrapperId)
 
-            let allImages = try parsedHtml.select("img[width]").array()
-            let maxWidth = webView.frame.width
-            for image in allImages {
-                if let widthString = image.getAttributes()?.get(key: "width"),
-                   let width = Double(widthString),
-                   width > maxWidth {
-                    try image.attr("width", "\(maxWidth)")
-                    try image.attr("height", "auto")
-                }
-            }
-
-            try head.append(viewport)
-            try head.append(style)
-
-            let finalHtml = try parsedHtml.html()
-
+            let finalHtml = try safeDocument.outerHtml()
             webView.loadHTMLString(finalHtml, baseURL: nil)
         } catch {
             DDLogError("An error occurred while parsing body \(error)")
+        }
+    }
+
+    private func setUpWebViewConfiguration() {
+        webView.configuration.dataDetectorTypes = .all
+        webView.configuration.defaultWebpagePreferences.allowsContentJavaScript = false
+        webView.configuration.setURLSchemeHandler(URLSchemeHandler(), forURLScheme: URLSchemeHandler.scheme)
+
+        webView.configuration.userContentController.add(self, name: JavaScriptMessageTopic.log.rawValue)
+        webView.configuration.userContentController.add(self, name: JavaScriptMessageTopic.sizeChanged.rawValue)
+        webView.configuration.userContentController.add(self, name: JavaScriptMessageTopic.overScroll.rawValue)
+        webView.configuration.userContentController.add(self, name: JavaScriptMessageTopic.error.rawValue)
+    }
+
+    private func loadScripts(configuration: WKWebViewConfiguration) {
+        var scripts = ["javaScriptBridge", "fixEmailStyle", "sizeHandler"]
+        #if DEBUG
+        scripts.insert("captureLog", at: 0)
+        #endif
+
+        for script in scripts {
+            configuration.userContentController
+                .addUserScript(named: script, injectionTime: .atDocumentStart, forMainFrameOnly: true)
+        }
+
+        if let mungeScript = Constants.mungeEmailScript {
+            configuration.userContentController
+                .addUserScript(WKUserScript(source: mungeScript, injectionTime: .atDocumentStart, forMainFrameOnly: true))
+        }
+    }
+
+    private func updateHeadContent(of document: Document) throws {
+        let head = document.head()
+        if let viewport = try head?.select("meta[name=\"viewport\"]"), !viewport.isEmpty() {
+            try viewport.attr("content", Constants.viewportContent)
+        } else {
+            try head?.append("<meta name=\"viewport\" content=\"\(Constants.viewportContent)\">")
+        }
+        try head?.append(style)
+    }
+
+    private func wrapBody(document: Document, inID id: String) throws {
+        if let bodyContent = document.body()?.childNodesCopy() {
+            document.body()?.empty()
+            try document.body()?
+                .appendElement("div")
+                .attr("id", id)
+                .insertChildren(-1, bodyContent)
+        }
+    }
+}
+
+extension WebViewModel: WKScriptMessageHandler {
+    private enum JavaScriptMessageTopic: String {
+        case log, sizeChanged, overScroll, error
+    }
+
+    func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
+        guard let event = JavaScriptMessageTopic(rawValue: message.name) else { return }
+        switch event {
+        case .log:
+            print(message.body)
+        case .sizeChanged:
+            updateWebViewHeight(message)
+        case .overScroll:
+            sendOverScrollMessage(message)
+        case .error:
+            sendJavaScriptError(message)
+        }
+    }
+
+    private func updateWebViewHeight(_ message: WKScriptMessage) {
+        guard let data = message.body as? [String: CGFloat], let height = data["height"] else { return }
+
+        // On some messages, the size infinitely increases by 1px ?
+        // Having a threshold avoids this problem
+        if Int(abs(webViewHeight - height)) > Constants.sizeChangeThreshold {
+            contentLoading = false
+            webViewHeight = height
+        }
+    }
+
+    private func sendOverScrollMessage(_ message: WKScriptMessage) {
+        guard let data = message.body as? [String: String] else { return }
+
+        SentrySDK.capture(message: "After zooming the mail it can still scroll.") { scope in
+            scope.setTags(["messageUid": data["messageId"] ?? ""])
+            scope.setExtras([
+                "clientWidth": data["clientWidth"],
+                "scrollWidth": data["scrollWidth"]
+            ])
+        }
+    }
+
+    private func sendJavaScriptError(_ message: WKScriptMessage) {
+        guard let data = message.body as? [String: String] else { return }
+
+        SentrySDK.capture(message: "JavaScript returned an error when displaying an email.") { scope in
+            scope.setTags(["messageUid": data["messageId"] ?? ""])
+            scope.setExtras([
+                "errorName": data["errorName"],
+                "errorMessage": data["errorMessage"],
+                "errorStack": data["errorStack"]
+            ])
+        }
+    }
+}
+
+extension WKUserContentController {
+    func addUserScript(named filename: String, injectionTime: WKUserScriptInjectionTime, forMainFrameOnly: Bool) {
+        if let script = Bundle.main.load(filename: filename, withExtension: "js") {
+            addUserScript(WKUserScript(source: script, injectionTime: injectionTime, forMainFrameOnly: forMainFrameOnly))
         }
     }
 }

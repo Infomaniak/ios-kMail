@@ -65,8 +65,13 @@ public enum Constants {
         try! NSRegularExpression(pattern: ">\\s*<|>?\\s+<?")
     }()
 
-    public static let customCss = (try? String(contentsOfFile: Bundle.main.path(forResource: "style", ofType: "css") ?? "",
-                                              encoding: .utf8).replacingOccurrences(of: "\n", with: "")) ?? ""
+    public static let sizeChangeThreshold = 3
+    public static let viewportContent = "width=device-width, initial-scale=1.0"
+    public static let divWrapperId = "kmail-message-content"
+    public static let mungeEmailScript: String? = {
+        guard let mungeScript = Bundle.main.load(filename: "mungeEmail", withExtension: "js") else { return nil }
+        return "const MESSAGE_SELECTOR = \"#\(divWrapperId)\"; \(mungeScript)"
+    }()
 
     public static func isEmailAddress(_ mail: String) -> Bool {
         return emailPredicate.evaluate(with: mail.lowercased())
