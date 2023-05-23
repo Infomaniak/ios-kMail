@@ -236,6 +236,7 @@ struct ComposeMessageView: View {
         }
         .task {
             await prepareReplyForwardBodyAndAttachments()
+            await setSignature()
         }
         .navigationViewStyle(.stack)
         .defaultAppStorage(.shared)
@@ -333,10 +334,6 @@ struct ComposeMessageView: View {
             _ = try await prepareBodyTask.value
             _ = try await prepareAttachmentsTask.value
 
-            if draft.identityId == nil || draft.identityId?.isEmpty == true,
-               let signature = mailboxManager.getSignatureResponse() {
-                try await setSignature(signature)
-            }
             isLoadingContent = false
         } catch {
             dismiss()
@@ -344,18 +341,21 @@ struct ComposeMessageView: View {
         }
     }
 
-    private func setSignature(_ signatureResponse: SignatureResponse) async throws {
-        $draft.identityId.wrappedValue = "\(signatureResponse.defaultSignatureId)"
-        guard let signature = signatureResponse.default else {
-            return
-        }
+    private func setSignature() async {
+        if draft.identityId == nil || draft.identityId?.isEmpty == true,
+           let signatureResponse = mailboxManager.getSignatureResponse() {
+            $draft.identityId.wrappedValue = "\(signatureResponse.defaultSignatureId)"
+            guard let signature = signatureResponse.default else {
+                return
+            }
 
-        let html = "<br><br><div class=\"editorUserSignature\">\(signature.content)</div>"
-        switch signature.position {
-        case .beforeReplyMessage:
-            $draft.body.wrappedValue.insert(contentsOf: html, at: draft.body.startIndex)
-        case .afterReplyMessage:
-            $draft.body.wrappedValue.append(contentsOf: html)
+            let html = "<br><br><div class=\"editorUserSignature\">\(signature.content)</div>"
+            switch signature.position {
+            case .beforeReplyMessage:
+                $draft.body.wrappedValue.insert(contentsOf: html, at: draft.body.startIndex)
+            case .afterReplyMessage:
+                $draft.body.wrappedValue.append(contentsOf: html)
+            }
         }
     }
 
