@@ -145,14 +145,14 @@ struct ThreadView: View {
         }
         switch action {
         case .reply:
-            guard let message = thread.messages.last else { return }
+            guard let message = thread.lastMessageToExecuteAction() else { return }
             if message.canReplyAll {
                 replyOrReplyAllMessage = message
             } else {
                 navigationStore.messageReply = MessageReply(message: message, replyMode: .reply)
             }
         case .forward:
-            guard let message = thread.messages.last else { return }
+            guard let message = thread.lastMessageToExecuteAction() else { return }
             navigationStore.messageReply = MessageReply(message: message, replyMode: .forward)
         case .archive:
             Task {
