@@ -25,6 +25,40 @@ import RealmSwift
 import Shimmer
 import SwiftUI
 
+// TODO: move to Core
+extension Sequence {
+    func asyncMap<T>(
+        _ transform: (Element) async throws -> T
+    ) async rethrows -> [T] {
+        var values = [T]()
+
+        for element in self {
+            try await values.append(transform(element))
+        }
+
+        return values
+    }
+}
+
+// TODO: move to core
+extension Sequence {
+    func asyncForEach(
+        _ operation: (Element) async throws -> Void
+    ) async rethrows {
+        for element in self {
+            try await operation(element)
+        }
+    }
+}
+
+// TODO: move to core
+extension Collection {
+    /// Returns the element at the specified index if it is within bounds, otherwise nil.
+    subscript (safe index: Index) -> Element? {
+        return indices.contains(index) ? self[index] : nil
+    }
+}
+
 struct MessageView: View {
     @ObservedRealmObject var message: Message
     @State var presentableBody: PresentableBody
@@ -35,7 +69,7 @@ struct MessageView: View {
     @LazyInjectService var matomo: MatomoUtils
 
     /// Something to process the inline images in the background
-    let inlineImageProcessing = TaskQueue(concurrency: max(4, ProcessInfo.processInfo.activeProcessorCount))
+    let inlineImageProcessing = TaskQueue()
 
     init(message: Message, isMessageExpanded: Bool = false) {
         self.message = message
@@ -103,22 +137,31 @@ struct MessageView: View {
     }
 
     private func insertInlineAttachments() async throws {
-        Task {
+        try await inlineImageProcessing.enqueue {
             print("insertInlineAttachments")
             let start = CFAbsoluteTimeGetCurrent()
-            let attachmentsArray = message.attachments.filter { $0.disposition == .inline }.toArray()
+            let attachmentsArray = await message.attachments.filter { $0.disposition == .inline }.toArray()
 
-            for attachment in attachmentsArray {
-                // background async multithread inline image processing
-                try await inlineImageProcessing.enqueue {
-                    guard let contentId = attachment.contentId else {
-                        return
+            // Since mutation of the DOM is costly, I batch the processing of images, then mutate the DOM.
+            let chunks = attachmentsArray.chunked(into: 5)
+            
+            for chunk in chunks {
+                // Download images for the current chunk
+                let dataArray = try await chunk.asyncMap {
+                    try await mailboxManager.attachmentData(attachment: $0)
+                }
+                
+                // Read the DOM once
+                var body = await presentableBody.body?.value
+                var compactBody = await presentableBody.compactBody
+                
+                // Prepare the new DOM with the loaded images
+                for (index, attachment) in chunk.enumerated() {
+                    guard let contentId = attachment.contentId,
+                            let data = dataArray[safe: index] else {
+                        continue
                     }
-
-                    let data = try await mailboxManager.attachmentData(attachment: attachment)
-                    var body = await presentableBody.body?.value
-                    var compactBody = await presentableBody.compactBody
-
+                    
                     body = body?.replacingOccurrences(
                         of: "cid:\(contentId)",
                         with: "data:\(attachment.mimeType);base64,\(data.base64EncodedString())"
@@ -127,17 +170,18 @@ struct MessageView: View {
                         of: "cid:\(contentId)",
                         with: "data:\(attachment.mimeType);base64,\(data.base64EncodedString())"
                     )
-
-                    print("• render start")
-                    await self.insertInlineAttachment(body: body, compactBody: compactBody)
-                    print("• render end")
                 }
+
+                // Mutate DOM
+                await self.insertInlineAttachment(body: body, compactBody: compactBody)
             }
+
             let diff = CFAbsoluteTimeGetCurrent() - start
             print("diff:\(diff)")
         }
     }
 
+    /// Update the DOM in the main thread
     @MainActor func insertInlineAttachment(body: String?, compactBody: String?) {
         presentableBody.body?.value = body
         presentableBody.compactBody = compactBody
