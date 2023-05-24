@@ -140,7 +140,7 @@ public class DraftManager {
     }
 
     private func initialSave(draft: Draft, mailboxManager: MailboxManager, emptyDraftBody: String) async {
-        guard draft.body != emptyDraftBody else {
+        guard draft.body != emptyDraftBody && !draft.body.isEmpty else {
             deleteEmptyDraft(draft: draft)
             return
         }
