@@ -34,6 +34,9 @@ struct MessageView: View {
 
     @LazyInjectService var matomo: MatomoUtils
 
+    /// Something to process the inline images in the background
+    let inlineImageProcessing = TaskQueue(concurrency: max(4, ProcessInfo.processInfo.activeProcessorCount))
+
     init(message: Message, isMessageExpanded: Bool = false) {
         self.message = message
         presentableBody = PresentableBody(message: message)
@@ -100,21 +103,44 @@ struct MessageView: View {
     }
 
     private func insertInlineAttachments() async throws {
-        let attachmentsArray = message.attachments.filter { $0.disposition == .inline }.toArray()
-        for attachment in attachmentsArray {
-            if let contentId = attachment.contentId {
-                let attachmentData = try await mailboxManager.attachmentData(attachment: attachment)
+        Task {
+            print("insertInlineAttachments")
+            let start = CFAbsoluteTimeGetCurrent()
+            let attachmentsArray = message.attachments.filter { $0.disposition == .inline }.toArray()
 
-                presentableBody.body?.value = presentableBody.body?.value?.replacingOccurrences(
-                    of: "cid:\(contentId)",
-                    with: "data:\(attachment.mimeType);base64,\(attachmentData.base64EncodedString())"
-                )
-                presentableBody.compactBody = presentableBody.compactBody?.replacingOccurrences(
-                    of: "cid:\(contentId)",
-                    with: "data:\(attachment.mimeType);base64,\(attachmentData.base64EncodedString())"
-                )
+            for attachment in attachmentsArray {
+                // background async multithread inline image processing
+                try await inlineImageProcessing.enqueue {
+                    guard let contentId = attachment.contentId else {
+                        return
+                    }
+
+                    let data = try await mailboxManager.attachmentData(attachment: attachment)
+                    var body = await presentableBody.body?.value
+                    var compactBody = await presentableBody.compactBody
+
+                    body = body?.replacingOccurrences(
+                        of: "cid:\(contentId)",
+                        with: "data:\(attachment.mimeType);base64,\(data.base64EncodedString())"
+                    )
+                    compactBody = compactBody?.replacingOccurrences(
+                        of: "cid:\(contentId)",
+                        with: "data:\(attachment.mimeType);base64,\(data.base64EncodedString())"
+                    )
+
+                    print("• render start")
+                    await self.insertInlineAttachment(body: body, compactBody: compactBody)
+                    print("• render end")
+                }
             }
+            let diff = CFAbsoluteTimeGetCurrent() - start
+            print("diff:\(diff)")
         }
+    }
+
+    @MainActor func insertInlineAttachment(body: String?, compactBody: String?) {
+        presentableBody.body?.value = body
+        presentableBody.compactBody = compactBody
     }
 }
 
