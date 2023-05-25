@@ -133,10 +133,10 @@ struct MessageView: View {
         presentableBody.quote = messageBodyQuote.quote
     }
 
-    private func insertInlineAttachments() async throws {
-        Task {
+    private func insertInlineAttachments() {
+        Task.detached() {
             // Since mutation of the DOM is costly, I batch the processing of images, then mutate the DOM.
-            let attachmentsArray = message.attachments.filter { $0.disposition == .inline }.toArray()
+            let attachmentsArray = await message.attachments.filter { $0.disposition == .inline }.toArray()
             let chunks = attachmentsArray.chunked(into: 10)
 
             for chunk in chunks {
@@ -146,8 +146,8 @@ struct MessageView: View {
                 }
 
                 // Read the DOM once
-                var mailBody = presentableBody.body?.value
-                var compactBody = presentableBody.compactBody
+                var mailBody = await presentableBody.body?.value
+                var compactBody = await presentableBody.compactBody
 
                 // Prepare the new DOM with the loaded images
                 for (index, attachment) in chunk.enumerated() {
@@ -167,7 +167,7 @@ struct MessageView: View {
                 }
 
                 // Mutate DOM
-                self.insertInlineAttachment(body: mailBody, compactBody: compactBody)
+                await self.mutate(body: mailBody, compactBody: compactBody)
 
                 // Delay between each chunk processing just enough, so the user feels the UI is responsive.
                 try await Task.sleep(nanoseconds: 4_000_000_000)
@@ -176,7 +176,7 @@ struct MessageView: View {
     }
 
     /// Update the DOM in the main thread
-    @MainActor func insertInlineAttachment(body: String?, compactBody: String?) {
+    @MainActor func mutate(body: String?, compactBody: String?) {
         presentableBody.body?.value = body
         presentableBody.compactBody = compactBody
     }
