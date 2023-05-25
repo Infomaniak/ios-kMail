@@ -54,7 +54,7 @@ extension Sequence {
 // TODO: move to core
 extension Collection {
     /// Returns the element at the specified index if it is within bounds, otherwise nil.
-    subscript (safe index: Index) -> Element? {
+    subscript(safe index: Index) -> Element? {
         return indices.contains(index) ? self[index] : nil
     }
 }
@@ -138,25 +138,25 @@ struct MessageView: View {
             // Since mutation of the DOM is costly, I batch the processing of images, then mutate the DOM.
             let attachmentsArray = message.attachments.filter { $0.disposition == .inline }.toArray()
             let chunks = attachmentsArray.chunked(into: 10)
-            
+
             for chunk in chunks {
                 // Download images for the current chunk
                 let dataArray = try await chunk.asyncMap {
                     try await mailboxManager.attachmentData(attachment: $0)
                 }
-                
+
                 // Read the DOM once
-                var body = presentableBody.body?.value
+                var mailBody = presentableBody.body?.value
                 var compactBody = presentableBody.compactBody
-                
+
                 // Prepare the new DOM with the loaded images
                 for (index, attachment) in chunk.enumerated() {
                     guard let contentId = attachment.contentId,
-                            let data = dataArray[safe: index] else {
+                          let data = dataArray[safe: index] else {
                         continue
                     }
-                    
-                    body = body?.replacingOccurrences(
+
+                    mailBody = mailBody?.replacingOccurrences(
                         of: "cid:\(contentId)",
                         with: "data:\(attachment.mimeType);base64,\(data.base64EncodedString())"
                     )
@@ -167,8 +167,8 @@ struct MessageView: View {
                 }
 
                 // Mutate DOM
-                self.insertInlineAttachment(body: body, compactBody: compactBody)
-                
+                self.insertInlineAttachment(body: mailBody, compactBody: compactBody)
+
                 // Delay between each chunk processing just enough, so the user feels the UI is responsive.
                 try await Task.sleep(nanoseconds: 4_000_000_000)
             }
