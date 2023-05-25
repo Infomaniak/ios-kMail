@@ -66,7 +66,7 @@ struct ThreadListView: View {
     }
 
     private var displayLoadMoreButton: Bool {
-        return !viewModel.folder.isHistoryComplete && !(viewModel.sections.isEmpty && viewModel.isLoadingPage)
+        return !viewModel.folder.isHistoryComplete && !viewModel.sections.isEmpty
     }
 
     init(mailboxManager: MailboxManager,
