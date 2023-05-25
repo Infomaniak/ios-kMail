@@ -75,7 +75,6 @@ public enum MessageBodyUtils {
 
     private static func findFirstKnownParentQuoteDescriptor(htmlDocumentWithoutQuote: Document) throws -> String {
         var currentQuoteDescriptor = ""
-        // note: walk the entire dom each time, can be optimized but not the main issue
         for quoteDescriptor in quoteDescriptors {
             let quotedContentElement = try selectElementAndFollowingSiblings(
                 document: htmlDocumentWithoutQuote,
@@ -100,7 +99,6 @@ public enum MessageBodyUtils {
             }
             return try (htmlDocumentWithQuote.outerHtml(), blockquoteElement?.outerHtml())
         } else if !currentQuoteDescriptor.isEmpty {
-            // This is the main hog
             let quotedContentElements = try selectElementAndFollowingSiblings(
                 document: htmlDocumentWithQuote,
                 quoteDescriptor: currentQuoteDescriptor
