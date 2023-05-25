@@ -68,9 +68,6 @@ struct MessageView: View {
 
     @LazyInjectService var matomo: MatomoUtils
 
-    /// Something to process the inline images in the background
-    let inlineImageProcessing = TaskQueue()
-
     init(message: Message, isMessageExpanded: Bool = false) {
         self.message = message
         presentableBody = PresentableBody(message: message)
@@ -137,13 +134,10 @@ struct MessageView: View {
     }
 
     private func insertInlineAttachments() async throws {
-        try await inlineImageProcessing.enqueue {
-            print("insertInlineAttachments")
-            let start = CFAbsoluteTimeGetCurrent()
-            let attachmentsArray = await message.attachments.filter { $0.disposition == .inline }.toArray()
-
+        Task {
             // Since mutation of the DOM is costly, I batch the processing of images, then mutate the DOM.
-            let chunks = attachmentsArray.chunked(into: 5)
+            let attachmentsArray = message.attachments.filter { $0.disposition == .inline }.toArray()
+            let chunks = attachmentsArray.chunked(into: 10)
             
             for chunk in chunks {
                 // Download images for the current chunk
@@ -152,8 +146,8 @@ struct MessageView: View {
                 }
                 
                 // Read the DOM once
-                var body = await presentableBody.body?.value
-                var compactBody = await presentableBody.compactBody
+                var body = presentableBody.body?.value
+                var compactBody = presentableBody.compactBody
                 
                 // Prepare the new DOM with the loaded images
                 for (index, attachment) in chunk.enumerated() {
@@ -173,11 +167,11 @@ struct MessageView: View {
                 }
 
                 // Mutate DOM
-                await self.insertInlineAttachment(body: body, compactBody: compactBody)
+                self.insertInlineAttachment(body: body, compactBody: compactBody)
+                
+                // Delay between each chunk processing just enough, so the user feels the UI is responsive.
+                try await Task.sleep(nanoseconds: 4_000_000_000)
             }
-
-            let diff = CFAbsoluteTimeGetCurrent() - start
-            print("diff:\(diff)")
         }
     }
 
