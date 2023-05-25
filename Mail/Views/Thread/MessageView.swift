@@ -104,17 +104,11 @@ struct MessageView: View {
         }
 
         Task.detached {
-            print("prepareBody")
-            let start = CFAbsoluteTimeGetCurrent()
-
             guard let messageBodyQuote = MessageBodyUtils.splitBodyAndQuote(messageBody: bodyValue) else {
                 return
             }
 
             await mutate(compactBody: messageBodyQuote.messageBody, quote: messageBodyQuote.quote)
-
-            let diff = CFAbsoluteTimeGetCurrent() - start
-            print("diff:\(diff)")
         }
     }
 
