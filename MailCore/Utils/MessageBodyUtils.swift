@@ -44,22 +44,27 @@ public enum MessageBodyUtils {
 
     public static func splitBodyAndQuote(messageBody: String) -> MessageBodyQuote? {
         do {
+            print("splitBodyAndQuote")
             let htmlDocumentWithQuote = try SwiftSoup.parse(messageBody)
             let htmlDocumentWithoutQuote = try SwiftSoup.parse(messageBody)
 
+            print("splitBodyAndQuote 2")
             let blockquoteElement = try findAndRemoveLastParentBlockQuote(htmlDocumentWithoutQuote: htmlDocumentWithoutQuote)
             var currentQuoteDescriptor =
                 try findFirstKnownParentQuoteDescriptor(htmlDocumentWithoutQuote: htmlDocumentWithoutQuote)
 
+            print("splitBodyAndQuote 3")
             if currentQuoteDescriptor.isEmpty {
                 currentQuoteDescriptor = blockquoteElement == nil ? "" : blockquote
             }
 
+            print("splitBodyAndQuote 4")
             let (body, quote) = try splitBodyAndQuote(
                 blockquoteElement: blockquoteElement,
                 htmlDocumentWithQuote: htmlDocumentWithQuote,
                 currentQuoteDescriptor: currentQuoteDescriptor
             )
+            print("splitBodyAndQuote 5")
             return MessageBodyQuote(messageBody: quote?.isEmpty ?? true ? messageBody : body, quote: quote)
         } catch {
             DDLogError("Error splitting blockquote \(error)")
@@ -75,6 +80,7 @@ public enum MessageBodyUtils {
 
     private static func findFirstKnownParentQuoteDescriptor(htmlDocumentWithoutQuote: Document) throws -> String {
         var currentQuoteDescriptor = ""
+        // note: walk the entire dom each time, can be optimized but not the main issue
         for quoteDescriptor in quoteDescriptors {
             let quotedContentElement = try selectElementAndFollowingSiblings(
                 document: htmlDocumentWithoutQuote,
@@ -99,6 +105,7 @@ public enum MessageBodyUtils {
             }
             return try (htmlDocumentWithQuote.outerHtml(), blockquoteElement?.outerHtml())
         } else if !currentQuoteDescriptor.isEmpty {
+            // This is the main hog
             let quotedContentElements = try selectElementAndFollowingSiblings(
                 document: htmlDocumentWithQuote,
                 quoteDescriptor: currentQuoteDescriptor
@@ -123,6 +130,7 @@ public enum MessageBodyUtils {
     /// And so we match the current block, as well as all those that follow and that are at the same level
     /// - Returns: [Elements] containing all the blocks that have been matched
     private static func selectElementAndFollowingSiblings(document: Document, quoteDescriptor: String) throws -> Elements {
+        print("selectElementAndFollowingSiblings")
         return try document.select("\(quoteDescriptor), \(quoteDescriptor) ~ *")
     }
 

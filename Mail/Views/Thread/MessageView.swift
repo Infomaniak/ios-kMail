@@ -16,6 +16,7 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import CocoaLumberjackSwift
 import InfomaniakCore
 import InfomaniakCoreUI
 import InfomaniakDI
@@ -93,23 +94,30 @@ struct MessageView: View {
         guard let messageBody = message.body else { return }
         presentableBody.body = messageBody.detached()
         let bodyValue = messageBody.value ?? ""
-        
-        Task.detached() {
+
+        // Heuristic to give up on mail too large for "perfect" preprocessing.
+        // 5 Meg looks like a fine threshold
+        guard bodyValue.lengthOfBytes(using: String.Encoding.utf8) < 5_000_000 else {
+            DDLogInfo("give up on processing, file too large")
+            mutate(compactBody: bodyValue, quote: nil)
+            return
+        }
+
+        Task.detached {
             print("prepareBody")
             let start = CFAbsoluteTimeGetCurrent()
-            
+
             guard let messageBodyQuote = MessageBodyUtils.splitBodyAndQuote(messageBody: bodyValue) else {
                 return
             }
-            
-            print("prepareBody 2")
+
             await mutate(compactBody: messageBodyQuote.messageBody, quote: messageBodyQuote.quote)
-            
+
             let diff = CFAbsoluteTimeGetCurrent() - start
             print("diff:\(diff)")
         }
     }
-    
+
     /// Update the DOM in the main thread
     @MainActor func mutate(compactBody: String?, quote: String?) {
         presentableBody.compactBody = compactBody
