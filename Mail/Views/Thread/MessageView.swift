@@ -118,22 +118,52 @@ struct MessageView: View {
         presentableBody.quote = quote
     }
 
-    private func insertInlineAttachments() async throws {
-        let attachmentsArray = message.attachments.filter { $0.disposition == .inline }.toArray()
-        for attachment in attachmentsArray {
-            if let contentId = attachment.contentId {
-                let attachmentData = try await mailboxManager.attachmentData(attachment: attachment)
+    private func insertInlineAttachments() {
+        Task.detached() {
+            // Since mutation of the DOM is costly, I batch the processing of images, then mutate the DOM.
+            let attachmentsArray = await message.attachments.filter { $0.disposition == .inline }.toArray()
+            let chunks = attachmentsArray.chunked(into: 10)
 
-                presentableBody.body?.value = presentableBody.body?.value?.replacingOccurrences(
-                    of: "cid:\(contentId)",
-                    with: "data:\(attachment.mimeType);base64,\(attachmentData.base64EncodedString())"
-                )
-                presentableBody.compactBody = presentableBody.compactBody?.replacingOccurrences(
-                    of: "cid:\(contentId)",
-                    with: "data:\(attachment.mimeType);base64,\(attachmentData.base64EncodedString())"
-                )
+            for chunk in chunks {
+                // Download images for the current chunk
+                let dataArray = try await chunk.asyncMap {
+                    try await mailboxManager.attachmentData(attachment: $0)
+                }
+
+                // Read the DOM once
+                var mailBody = await presentableBody.body?.value
+                var compactBody = await presentableBody.compactBody
+
+                // Prepare the new DOM with the loaded images
+                for (index, attachment) in chunk.enumerated() {
+                    guard let contentId = attachment.contentId,
+                          let data = dataArray[safe: index] else {
+                        continue
+                    }
+
+                    mailBody = mailBody?.replacingOccurrences(
+                        of: "cid:\(contentId)",
+                        with: "data:\(attachment.mimeType);base64,\(data.base64EncodedString())"
+                    )
+                    compactBody = compactBody?.replacingOccurrences(
+                        of: "cid:\(contentId)",
+                        with: "data:\(attachment.mimeType);base64,\(data.base64EncodedString())"
+                    )
+                }
+
+                // Mutate DOM
+                await self.mutate(body: mailBody, compactBody: compactBody)
+
+                // Delay between each chunk processing just enough, so the user feels the UI is responsive.
+                try await Task.sleep(nanoseconds: 4_000_000_000)
             }
         }
+    }
+
+    /// Update the DOM in the main thread
+    @MainActor func mutate(body: String?, compactBody: String?) {
+        presentableBody.body?.value = body
+        presentableBody.compactBody = compactBody
     }
 }
 

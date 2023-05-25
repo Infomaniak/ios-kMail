@@ -29,7 +29,7 @@ let project = Project(name: "Mail",
                       packages: [
                           .package(url: "https://github.com/Infomaniak/ios-login", .upToNextMajor(from: "4.0.0")),
                           .package(url: "https://github.com/Infomaniak/ios-dependency-injection", .upToNextMajor(from: "1.1.6")),
-                          .package(url: "https://github.com/Infomaniak/ios-core", .revision("4c0c389de2e10e615ad79a854d2489977017efe5")),
+                          .package(url: "https://github.com/Infomaniak/ios-core", .revision("9fc1a0f41ce0e830189b756d3b1a42d4e67421cc")),
                           .package(url: "https://github.com/Infomaniak/ios-core-ui", .upToNextMajor(from: "2.3.0")),
                           .package(url: "https://github.com/Infomaniak/ios-notifications", .upToNextMajor(from: "2.1.0")),
                           .package(url: "https://github.com/Infomaniak/ios-create-account", .upToNextMajor(from: "1.1.0")),
