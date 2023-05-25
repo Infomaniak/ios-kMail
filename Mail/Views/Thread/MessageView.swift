@@ -92,11 +92,28 @@ struct MessageView: View {
     private func prepareBody() {
         guard let messageBody = message.body else { return }
         presentableBody.body = messageBody.detached()
-
-        guard let messageBodyQuote = MessageBodyUtils.splitBodyAndQuote(messageBody: messageBody.value ?? "")
-        else { return }
-        presentableBody.compactBody = messageBodyQuote.messageBody
-        presentableBody.quote = messageBodyQuote.quote
+        let bodyValue = messageBody.value ?? ""
+        
+        Task.detached() {
+            print("prepareBody")
+            let start = CFAbsoluteTimeGetCurrent()
+            
+            guard let messageBodyQuote = MessageBodyUtils.splitBodyAndQuote(messageBody: bodyValue) else {
+                return
+            }
+            
+            print("prepareBody 2")
+            await mutate(compactBody: messageBodyQuote.messageBody, quote: messageBodyQuote.quote)
+            
+            let diff = CFAbsoluteTimeGetCurrent() - start
+            print("diff:\(diff)")
+        }
+    }
+    
+    /// Update the DOM in the main thread
+    @MainActor func mutate(compactBody: String?, quote: String?) {
+        presentableBody.compactBody = compactBody
+        presentableBody.quote = quote
     }
 
     private func insertInlineAttachments() async throws {
