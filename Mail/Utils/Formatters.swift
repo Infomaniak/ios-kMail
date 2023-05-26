@@ -20,7 +20,9 @@ import Foundation
 
 public extension Date {
     var customRelativeFormatted: String {
-        if Calendar.current.isDateInToday(self) {
+        if self > .now {
+            return self.formatted(date: .numeric, time: .omitted)
+        } else if Calendar.current.isDateInToday(self) {
             return self.formatted(date: .omitted, time: .shortened)
         } else if Calendar.current.isDateInYesterday(self) {
             let dateMidnight = Calendar.current.date(bySettingHour: 0, minute: 0, second: 0, of: self)!

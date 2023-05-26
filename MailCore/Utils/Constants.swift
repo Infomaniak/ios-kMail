@@ -139,6 +139,11 @@ public enum Constants {
     public static let pageSize = 50
     public static let contactSuggestionLimit = 5
 
+    public static let numberOfSecondsInADay: TimeInterval = 86_400
+
+    public static let shortDateFormatter = Date.FormatStyle.dateTime.month(.wide)
+    public static let longDateFormatter = shortDateFormatter.year()
+
     public static func longUid(from shortUid: String, folderId: String) -> String {
         return "\(shortUid)@\(folderId)"
     }
