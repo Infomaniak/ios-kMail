@@ -22,13 +22,13 @@ import RealmSwift
 import SwiftUI
 
 struct MessageBodyView: View {
+    @State private var textPlainHeight = CGFloat.zero
+
     @StateObject private var model = WebViewModel()
 
     @Binding var presentableBody: PresentableBody
 
     let messageUid: String
-
-    @State private var textPlainHeight = CGFloat.zero
 
     var body: some View {
         ZStack {
