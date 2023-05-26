@@ -26,11 +26,13 @@ import SwiftUI
 typealias Thread = MailCore.Thread
 
 class DateSection: Identifiable {
-    enum ReferenceDate {
-        case today, yesterday, thisWeek, lastWeek, thisMonth, older(Date)
+    enum ReferenceDate: Comparable {
+        case future, today, yesterday, thisWeek, lastWeek, thisMonth, older(Date)
 
         public var dateInterval: DateInterval {
             switch self {
+            case .future:
+                return .init() // return DateInterval.future
             case .today:
                 return .init(start: .now.startOfDay, duration: 86400)
             case .yesterday:
@@ -48,6 +50,8 @@ class DateSection: Identifiable {
 
         public var title: String {
             switch self {
+            case .future:
+                return MailResourcesStrings.Localizable.comingSoon
             case .today:
                 return MailResourcesStrings.Localizable.threadListSectionToday
             case .yesterday:
@@ -66,6 +70,13 @@ class DateSection: Identifiable {
                 return date.formatted(formatStyle).capitalized
             }
         }
+
+        func contains(date: Date) -> Bool {
+            if self == .future {
+                return date > .now
+            }
+            return dateInterval.contains(date)
+        }
     }
 
     let id: DateInterval
@@ -75,14 +86,14 @@ class DateSection: Identifiable {
     private let referenceDate: ReferenceDate
 
     init(thread: Thread) {
-        let sections: [ReferenceDate] = [.today, .yesterday, .thisWeek, .lastWeek, .thisMonth]
-        referenceDate = sections.first { $0.dateInterval.contains(thread.date) } ?? .older(thread.date)
+        let sections: [ReferenceDate] = [.future, .today, .yesterday, .thisWeek, .lastWeek, .thisMonth]
+        referenceDate = sections.first { $0.contains(date: thread.date) } ?? .older(thread.date)
         id = referenceDate.dateInterval
         title = referenceDate.title
     }
 
     func threadBelongsToSection(thread: Thread) -> Bool {
-        return referenceDate.dateInterval.contains(thread.date)
+        return referenceDate.contains(date: thread.date)
     }
 }
 
