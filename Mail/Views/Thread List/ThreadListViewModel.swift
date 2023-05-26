@@ -26,7 +26,7 @@ import SwiftUI
 typealias Thread = MailCore.Thread
 
 class DateSection: Identifiable {
-    enum ReferenceDate: Comparable {
+    enum ReferenceDate {
         case future, today, yesterday, thisWeek, lastWeek, thisMonth, older(Date)
 
         public var dateInterval: DateInterval {
@@ -71,7 +71,7 @@ class DateSection: Identifiable {
         }
 
         func contains(date: Date) -> Bool {
-            if self == .future {
+            if case .future = self {
                 return date > .now
             }
             return dateInterval.contains(date)
