@@ -610,7 +610,7 @@ public class MailboxManager: ObservableObject {
 
     // MARK: - Message
 
-    private func getUniqueUidsInReverse(folder: Folder, remoteUids: [String]) -> [String] {
+    private func getUniqueUids(folder: Folder, remoteUids: [String]) -> [String] {
         let localUids = Set(folder.threads.map { Constants.shortUid(from: $0.uid) })
         let remoteUidsSet = Set(remoteUids)
         var uniqueUids: Set<String> = Set()
@@ -619,7 +619,7 @@ public class MailboxManager: ObservableObject {
         } else {
             uniqueUids = remoteUidsSet.subtracting(localUids)
         }
-        return uniqueUids.reversed()
+        return uniqueUids.toArray()
     }
 
     public func messages(folder: Folder) async throws {
@@ -644,7 +644,7 @@ public class MailboxManager: ObservableObject {
                 signature: previousCursor!
             )
             messagesUids = MessagesUids(
-                addedShortUids: messageDeltaResult.addedShortUids,
+                addedShortUids: [],
                 deletedUids: messageDeltaResult.deletedShortUids
                     .map { Constants.longUid(from: $0, folderId: folder.id) },
                 updated: messageDeltaResult.updated,
@@ -677,6 +677,10 @@ public class MailboxManager: ObservableObject {
             )
         }
 
+        while try await moreMessages(folder: folder, direction: .following) {
+            guard !Task.isCancelled else { return }
+        }
+
         if folder.role == .inbox {
             MailboxInfosManager.instance.updateUnseen(unseenMessages: folder.unreadCount, for: mailbox)
         }
@@ -685,7 +689,7 @@ public class MailboxManager: ObservableObject {
         while remainingOldMessagesToFetch > 0 {
             guard !Task.isCancelled else { return }
 
-            if try !(await moreMessages(folder: folder)) {
+            if try !(await moreMessages(folder: folder, direction: .previous)) {
                 break
             }
 
@@ -699,16 +703,22 @@ public class MailboxManager: ObservableObject {
         }
     }
 
-    public func moreMessages(folder: Folder) async throws -> Bool {
+    public func moreMessages(folder: Folder, direction: NewMessagesDirection) async throws -> Bool {
         let realm = getRealm()
         guard let offset = realm.objects(Message.self).where({ $0.folderId == folder.id })
-            .sorted(by: { $0.shortUid! < $1.shortUid! }).first?
+            .sorted(by: {
+                if direction == .following {
+                    return $0.shortUid! > $1.shortUid!
+                }
+                return $0.shortUid! < $1.shortUid!
+            }).first?
             .shortUid?.toString() else { return false }
 
         let messageUidsResult = try await apiFetcher.messagesUids(
             mailboxUuid: mailbox.uuid,
             folderId: folder.id,
-            offset: offset
+            offset: offset,
+            direction: direction
         )
         let messagesUids = MessagesUids(
             addedShortUids: messageUidsResult.messageShortUids,
@@ -718,11 +728,13 @@ public class MailboxManager: ObservableObject {
         try await handleMessagesUids(messageUids: messagesUids, folder: folder)
 
         if messagesUids.addedShortUids.count < Constants.pageSize || messagesUids.addedShortUids.contains("1") {
-            await backgroundRealm.execute { realm in
-                let freshFolder = folder.fresh(using: realm)
-                try? realm.safeWrite {
-                    freshFolder?.isHistoryComplete = true
-                    freshFolder?.remainingOldMessagesToFetch = 0
+            if direction == .previous {
+                await backgroundRealm.execute { realm in
+                    let freshFolder = folder.fresh(using: realm)
+                    try? realm.safeWrite {
+                        freshFolder?.isHistoryComplete = true
+                        freshFolder?.remainingOldMessagesToFetch = 0
+                    }
                 }
             }
             return false
@@ -739,31 +751,23 @@ public class MailboxManager: ObservableObject {
     private func addMessages(shortUids: [String], folder: Folder, newCursor: String?) async throws {
         guard !shortUids.isEmpty && !Task.isCancelled else { return }
 
-        let reversedUids: [String] = getUniqueUidsInReverse(folder: folder, remoteUids: shortUids)
-        let pageSize = 50
-        var offset = 0
-        while offset < reversedUids.count && !Task.isCancelled {
-            let end = min(offset + pageSize, reversedUids.count)
-            let newList = Array(reversedUids[offset ..< end])
-            let messageByUidsResult = try await apiFetcher.messagesByUids(
-                mailboxUuid: mailbox.uuid,
-                folderId: folder.id,
-                messageUids: newList
-            )
+        let uniqueUids: [String] = getUniqueUids(folder: folder, remoteUids: shortUids)
+        let messageByUidsResult = try await apiFetcher.messagesByUids(
+            mailboxUuid: mailbox.uuid,
+            folderId: folder.id,
+            messageUids: uniqueUids
+        )
 
-            await backgroundRealm.execute { [self] realm in
-                if let folder = folder.fresh(using: realm) {
-                    createMultiMessagesThreads(messageByUids: messageByUidsResult, folder: folder, using: realm)
-                }
-                SentryDebug.sendMissingMessagesSentry(
-                    sentUids: newList,
-                    receivedMessages: messageByUidsResult.messages,
-                    folder: folder,
-                    newCursor: newCursor
-                )
+        await backgroundRealm.execute { [self] realm in
+            if let folder = folder.fresh(using: realm) {
+                createMultiMessagesThreads(messageByUids: messageByUidsResult, folder: folder, using: realm)
             }
-
-            offset += pageSize
+            SentryDebug.sendMissingMessagesSentry(
+                sentUids: uniqueUids,
+                receivedMessages: messageByUidsResult.messages,
+                folder: folder,
+                newCursor: newCursor
+            )
         }
     }
 

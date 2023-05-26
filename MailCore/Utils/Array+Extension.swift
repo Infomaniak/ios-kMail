@@ -50,3 +50,9 @@ public extension LazyMapSequence {
         return Array(self)
     }
 }
+
+public extension Set {
+    func toArray() -> [Element] {
+        return Array(self)
+    }
+}

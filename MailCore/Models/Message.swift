@@ -20,6 +20,11 @@ import Foundation
 import MailResources
 import RealmSwift
 
+public enum NewMessagesDirection: String {
+    case previous
+    case following
+}
+
 public class MessageUidsResult: Decodable {
     public let messageShortUids: [String]
     public let cursor: String
