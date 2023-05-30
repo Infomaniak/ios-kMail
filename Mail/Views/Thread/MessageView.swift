@@ -34,13 +34,111 @@ extension Task {
     }
 }
 
+// TODO: Move to core
+@available(macOS 10.15, iOS 13.0, tvOS 13.0, watchOS 6.0, *)
+public actor ArrayAccumulator<T> {
+    /// Local Error Domain
+    public enum ErrorDomain: Error {
+        case outOfBounds
+    }
+
+    /// A buffer array
+    private var buffer: [T?]
+
+    /// Init an ArrayAccumulator
+    /// - Parameters:
+    ///   - count: The count of items in the accumulator
+    ///   - wrapping: The type of the content wrapped in an array
+    public init(count: Int, wrapping: T.Type) {
+        buffer = [T?](repeating: nil, count: count)
+    }
+
+    /// Set an item at a specified index
+    /// - Parameters:
+    ///   - item: the item to be stored
+    ///   - index: The index where we store the item
+    public func set(item: T?, atIndex index: Int) throws {
+        guard index < buffer.count else {
+            throw ErrorDomain.outOfBounds
+        }
+        buffer[index] = item
+    }
+
+    /// The accumulated ordered nullable content at the time of calling
+    /// - Returns: The ordered nullable content at the time of calling
+    public var accumulation: [T?] {
+        return buffer
+    }
+
+    /// The accumulated ordered result at the time of calling. Nil values are removed.
+    /// - Returns: The ordered result at the time of calling. Nil values are removed.
+    public var compactAccumulation: [T] {
+        return buffer.compactMap { $0 }
+    }
+}
+
+// TODO: Move to core
+@available(macOS 10.15, iOS 13.0, tvOS 13.0, watchOS 6.0, *)
+public struct ParallelTaskMapper {
+    /// internal processing TaskQueue
+    let taskQueue: TaskQueue
+
+    /// Init function
+    /// - Parameter concurrency: execution depth, keep default for optimized threading.
+    public init(concurrency: Int = max(4, ProcessInfo.processInfo.activeProcessorCount) /* parallel by default */ ) {
+        assert(concurrency > 0, "zero concurrency locks execution")
+        print("concurrency = \(concurrency)")
+        taskQueue = TaskQueue(concurrency: concurrency)
+    }
+
+    /// Map a task to a collection of items
+    ///
+    /// With this, you can easily _parallelize_  *async/await* code.
+    ///
+    /// This is using an underlying `TaskQueue` (with an optimized queue depth)
+    /// Using it to apply work to each item of a given collection.
+    /// - Parameters:
+    ///   - collection: The input collection of items to be processed
+    ///   - toOperation: The operation to be applied to the `collection` of items
+    /// - Returns: An ordered processed collection of the desired type
+    public func map<T, U>(collection: [U],
+                          toOperation operation: @escaping @Sendable (_ item: U) async throws -> T?) async throws -> [T?] {
+        // Using an ArrayAccumulator to preserve the order of results
+        let accumulator = ArrayAccumulator(count: collection.count, wrapping: T.self)
+
+        // Using a TaskGroup to track completion
+        _ = try await withThrowingTaskGroup(of: Void.self, returning: Void.self) { taskGroup in
+            for (index, item) in collection.enumerated() {
+                taskGroup.addTask {
+                    let result = try await self.taskQueue.enqueue {
+                        try await operation(item)
+                    }
+
+                    try? await accumulator.set(item: result, atIndex: index)
+                }
+            }
+
+            // await completion of all tasks
+            try await taskGroup.waitForAll()
+        }
+
+        // Get the accumulated results
+        let accumulated = await accumulator.accumulation
+        return accumulated
+    }
+}
+
 struct MessageView: View {
     @ObservedRealmObject var message: Message
     @State var presentableBody: PresentableBody
     @EnvironmentObject var mailboxManager: MailboxManager
     @State var isHeaderExpanded = false
     @State var isMessageExpanded: Bool
+
+    /// True once we finished preprocessing the content
     @State var isMessagePreprocessed = false
+
+    /// The cancellable task used to preprocess the content
     @State var preprocessing: Task<Void, Never>?
 
     @LazyInjectService var matomo: MatomoUtils
@@ -88,15 +186,15 @@ struct MessageView: View {
                     cancelPrepareBodyIfNeeded()
                 }
             }
-            .onAppear() {
+            .onAppear {
                 if message.fullyDownloaded,
-                    isMessageExpanded,
-                    !isMessagePreprocessed,
-                    preprocessing == nil {
+                   isMessageExpanded,
+                   !isMessagePreprocessed,
+                   preprocessing == nil {
                     prepareBodyIfNeeded()
                 }
             }
-            .onDisappear() {
+            .onDisappear {
                 cancelPrepareBodyIfNeeded()
             }
         }
@@ -106,113 +204,6 @@ struct MessageView: View {
         await tryOrDisplayError {
             try await mailboxManager.message(message: message)
         }
-    }
-
-    private func prepareBodyIfNeeded() {
-        print("aa prepareBodyIfNeeded")
-        guard !isMessagePreprocessed else {
-            return
-        }
-
-        preprocessing = Task.detached {
-            guard !Task.isCancelled else { return }
-            await prepareBody()
-            guard !Task.isCancelled else { return }
-            await insertInlineAttachments()
-            guard !Task.isCancelled else { return }
-            await processingCompleted()
-        }
-    }
-
-    private func cancelPrepareBodyIfNeeded() {
-        print("xx cancelPrepareBodyIfNeeded")
-        guard let preprocessing else {
-            return
-        }
-        preprocessing.cancel()
-        print("xx did cancel PrepareBodyIfNeeded")
-    }
-
-    // TODO: split task in struct maybe ?
-    private func prepareBody() async {
-        print("••prepareBody")
-        guard let messageBody = message.body else {
-            return
-        }
-
-        presentableBody.body = messageBody.detached()
-        let bodyValue = messageBody.value ?? ""
-
-        // Heuristic to give up on mail too large for "perfect" preprocessing.
-        // 1 Meg looks like a fine threshold
-        guard bodyValue.lengthOfBytes(using: String.Encoding.utf8) < 1_000_000 else {
-            DDLogInfo("give up on processing, file too large")
-            mutate(compactBody: bodyValue, quote: nil)
-            return
-        }
-
-        let task = Task.detached {
-            guard let messageBodyQuote = MessageBodyUtils.splitBodyAndQuote(messageBody: bodyValue) else {
-                return
-            }
-
-            await mutate(compactBody: messageBodyQuote.messageBody, quote: messageBodyQuote.quote)
-        }
-        await task.finish()
-    }
-
-    private func insertInlineAttachments() async {
-        print("••insertInlineAttachments")
-        let task = Task.detached {
-            // Since mutation of the DOM is costly, I batch the processing of images, then mutate the DOM.
-            let attachmentsArray = await message.attachments.filter { $0.disposition == .inline }.toArray()
-
-            // Early exit, nothing to process
-            guard !attachmentsArray.isEmpty else {
-                return
-            }
-
-            // chunk processing
-            let chunks = attachmentsArray.chunked(into: 10)
-            for chunk in chunks {
-                // Download images for the current chunk
-                let dataArray = try await chunk.asyncMap {
-                    try await mailboxManager.attachmentData(attachment: $0)
-                }
-
-                // Read the DOM once
-                var mailBody = await presentableBody.body?.value
-                var compactBody = await presentableBody.compactBody
-
-                // Prepare the new DOM with the loaded images
-                for (index, attachment) in chunk.enumerated() {
-                    guard !Task.isCancelled else {
-                        break
-                    }
-
-                    guard let contentId = attachment.contentId,
-                          let data = dataArray[safe: index] else {
-                        continue
-                    }
-
-                    mailBody = mailBody?.replacingOccurrences(
-                        of: "cid:\(contentId)",
-                        with: "data:\(attachment.mimeType);base64,\(data.base64EncodedString())"
-                    )
-                    compactBody = compactBody?.replacingOccurrences(
-                        of: "cid:\(contentId)",
-                        with: "data:\(attachment.mimeType);base64,\(data.base64EncodedString())"
-                    )
-                }
-
-                // Mutate DOM
-                await mutate(body: mailBody, compactBody: compactBody)
-
-                // Delay between each chunk processing just enough, so the user feels the UI is responsive.
-                try await Task.sleep(nanoseconds: 4_000_000_000)
-            }
-        }
-        await task.finish()
     }
 
     /// Update the DOM in the main actor

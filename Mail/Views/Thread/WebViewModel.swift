@@ -42,20 +42,24 @@ final class WebViewModel: NSObject, ObservableObject {
         loadScripts(configuration: webView.configuration)
     }
 
-    func loadHTMLString(value: String?) {
-        guard let rawHtml = value else { return }
+    func loadHTMLString(value: String?) async {
+        let task = Task.detached {
+            guard let rawHtml = value else { return }
 
-        do {
-            guard let safeDocument = MessageWebViewUtils.cleanHtmlContent(rawHtml: rawHtml) else { return }
+            do {
+                guard let safeDocument = MessageWebViewUtils.cleanHtmlContent(rawHtml: rawHtml) else { return }
 
-            try updateHeadContent(of: safeDocument)
-            try wrapBody(document: safeDocument, inID: Constants.divWrapperId)
+                try self.updateHeadContent(of: safeDocument)
+                try self.wrapBody(document: safeDocument, inID: Constants.divWrapperId)
 
-            let finalHtml = try safeDocument.outerHtml()
-            webView.loadHTMLString(finalHtml, baseURL: nil)
-        } catch {
-            DDLogError("An error occurred while parsing body \(error)")
+                let finalHtml = try safeDocument.outerHtml()
+                await self.webView.loadHTMLString(finalHtml, baseURL: nil)
+            } catch {
+                DDLogError("An error occurred while parsing body \(error)")
+            }
         }
+
+        await task.finish()
     }
 
     private func setUpWebViewConfiguration() {
