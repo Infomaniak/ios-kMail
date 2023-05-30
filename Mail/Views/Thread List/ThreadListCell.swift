@@ -54,7 +54,7 @@ struct ThreadListCell: View {
         )
         .background(SelectionBackground(selectionType: selectionType, paddingLeading: 4))
         .onTapGesture { didTapCell() }
-        .onLongPressGesture(minimumDuration: 0.3) { didLongPressCell() }
+        .onLongPressGesture { didLongPressCell() }
         .swipeActions(thread: thread, viewModel: viewModel, multipleSelectionViewModel: multipleSelectionViewModel)
         .listRowInsets(.init(top: 0, leading: 0, bottom: 0, trailing: 0))
         .listRowSeparator(.hidden)
