@@ -40,11 +40,13 @@ struct SelectableTextView: UIViewRepresentable {
     }
 
     func updateUIView(_ uiView: UITextView, context: Context) {
-        uiView.text = text
+        Task {
+            uiView.text = text
 
-        DispatchQueue.main.async {
-            let sizeThatFits = uiView.sizeThatFits(CGSize(width: uiView.frame.width, height: CGFloat.greatestFiniteMagnitude))
-            textPlainHeight = sizeThatFits.height
+            await MainActor.run {
+                let sizeThatFits = uiView.sizeThatFits(CGSize(width: uiView.frame.width, height: CGFloat.greatestFiniteMagnitude))
+                textPlainHeight = sizeThatFits.height
+            }
         }
     }
 }
