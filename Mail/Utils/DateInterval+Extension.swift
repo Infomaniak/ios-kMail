@@ -20,6 +20,5 @@ import Foundation
 
 extension DateInterval {
     // We simply want to define the future as an event that happens later
-    // The value of 100 years is arbitrary
-    static let future = DateInterval(start: Calendar.current.date(byAdding: .year, value: 100, to: .now)!, duration: 0)
+    static let future = DateInterval(start: .distantFuture, duration: 0)
 }
