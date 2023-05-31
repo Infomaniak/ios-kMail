@@ -23,9 +23,8 @@ import MailCore
 
 /// MessageView code related to pre-processing
 extension MessageView {
-    
     // MARK: - public interface
-    
+
     func prepareBodyIfNeeded() {
         // Content was processed
         guard !isMessagePreprocessed else {
@@ -34,7 +33,7 @@ extension MessageView {
 
         // Clean task if existing
         cancelPrepareBodyIfNeeded()
-        
+
         preprocessing = Task.detached {
             guard !Task.isCancelled else { return }
             await prepareBody()
@@ -51,7 +50,7 @@ extension MessageView {
         }
         preprocessing.cancel()
     }
-    
+
     // MARK: - private
 
     private func prepareBody() async {
@@ -101,42 +100,49 @@ extension MessageView {
                     break
                 }
 
-                // Download all images for the current chunk in parallel
-                let dataArray = try await downloadMapper.map(collection: chunk) { item in
-                    try await mailboxManager.attachmentData(attachment: item)
-                }.compactMap { $0 }
+                try await processInlineAttachmentsChunk(chunk, downloadMapper: downloadMapper)
+            }
+        }
+        await task.finish()
+    }
 
-                // Read the DOM once
-                var mailBody = await presentableBody.body?.value
-                var compactBody = await presentableBody.compactBody
+    private func processInlineAttachmentsChunk(_ chunk: [Attachment], downloadMapper: ParallelTaskMapper) async throws {
+        let task = Task.detached {
+            // Download all images for the current chunk in parallel
+            let dataArray = try await downloadMapper.map(collection: chunk) { item in
+                try await mailboxManager.attachmentData(attachment: item)
+            }.compactMap { $0 }
 
-                // Prepare the new DOM with the loaded images
-                for (index, attachment) in chunk.enumerated() {
-                    guard !Task.isCancelled else {
-                        break
-                    }
+            // Read the DOM once
+            var mailBody = await presentableBody.body?.value
+            var compactBody = await presentableBody.compactBody
 
-                    guard let contentId = attachment.contentId,
-                          let data = dataArray[safe: index] else {
-                        continue
-                    }
-
-                    mailBody = mailBody?.replacingOccurrences(
-                        of: "cid:\(contentId)",
-                        with: "data:\(attachment.mimeType);base64,\(data.base64EncodedString())"
-                    )
-                    compactBody = compactBody?.replacingOccurrences(
-                        of: "cid:\(contentId)",
-                        with: "data:\(attachment.mimeType);base64,\(data.base64EncodedString())"
-                    )
+            // Prepare the new DOM with the loaded images
+            for (index, attachment) in chunk.enumerated() {
+                guard !Task.isCancelled else {
+                    break
                 }
 
-                // Mutate DOM
-                await mutate(body: mailBody, compactBody: compactBody)
+                guard let contentId = attachment.contentId,
+                      let data = dataArray[safe: index] else {
+                    continue
+                }
 
-                // Delay between each chunk processing just enough, so the user feels the UI is responsive.
-                try await Task.sleep(nanoseconds: 4_000_000_000)
+                mailBody = mailBody?.replacingOccurrences(
+                    of: "cid:\(contentId)",
+                    with: "data:\(attachment.mimeType);base64,\(data.base64EncodedString())"
+                )
+                compactBody = compactBody?.replacingOccurrences(
+                    of: "cid:\(contentId)",
+                    with: "data:\(attachment.mimeType);base64,\(data.base64EncodedString())"
+                )
             }
+
+            // Mutate DOM
+            await mutate(body: mailBody, compactBody: compactBody)
+
+            // Delay between each chunk processing just enough, so the user feels the UI is responsive.
+            try await Task.sleep(nanoseconds: 4_000_000_000)
         }
         await task.finish()
     }
