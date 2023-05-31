@@ -22,6 +22,8 @@ import RealmSwift
 import SwiftUI
 
 struct MessageBodyView: View {
+    @State private var textPlainHeight = CGFloat.zero
+
     @StateObject private var model = WebViewModel()
 
     @Binding var presentableBody: PresentableBody
@@ -33,8 +35,9 @@ struct MessageBodyView: View {
             VStack {
                 if let body = presentableBody.body {
                     if body.type == "text/plain" {
-                        SelectableTextView(text: body.value)
+                        SelectableTextView(textPlainHeight: $textPlainHeight, text: body.value)
                             .padding(.horizontal, 16)
+                            .frame(height: textPlainHeight)
                             .onAppear {
                                 withAnimation {
                                     model.contentLoading = false
