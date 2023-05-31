@@ -60,6 +60,7 @@ struct SelectionBackground: View {
 
     let selectionType: SelectionBackgroundKind
     var paddingLeading: CGFloat = 8
+    var withAnimation = true
 
     var body: some View {
         Rectangle()
@@ -68,6 +69,7 @@ struct SelectionBackground: View {
             .padding(.leading, paddingLeading)
             .padding(.vertical, selectionType.verticalPadding)
             .opacity(selectionType.opacity)
+            .animation(withAnimation ? .default : nil, value: selectionType.opacity)
     }
 }
 

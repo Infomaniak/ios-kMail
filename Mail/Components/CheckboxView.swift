@@ -22,6 +22,7 @@ import SwiftUI
 
 struct CheckboxView: View {
     @AppStorage(UserDefaults.shared.key(.accentColor)) private var accentColor = DefaultPreferences.accentColor
+
     let isSelected: Bool
     let size: CGFloat
 
@@ -41,6 +42,7 @@ struct CheckboxView: View {
                 .frame(height: UIConstants.checkmarkSize)
                 .opacity(isSelected ? 1 : 0)
         }
+        .animation(nil, value: isSelected)
     }
 }
 
