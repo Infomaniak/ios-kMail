@@ -23,6 +23,17 @@ import MailCore
 
 /// MessageView code related to pre-processing
 extension MessageView {
+    
+    /// Maximum body size supported for preprocessing
+    ///
+    /// 1 Meg looks like a fine threshold
+    private static let bodySizeThreshold = 1_000_000
+    
+    /// Cooldown before processing each batch of inline images
+    ///
+    /// 4 seconds feels fine
+    private static let batchCooldown = 4_000_000_000
+    
     // MARK: - public interface
 
     func prepareBodyIfNeeded() {
@@ -62,8 +73,7 @@ extension MessageView {
         let bodyValue = messageBody.value ?? ""
 
         // Heuristic to give up on mail too large for "perfect" preprocessing.
-        // 1 Meg looks like a fine threshold
-        guard bodyValue.lengthOfBytes(using: String.Encoding.utf8) < 1_000_000 else {
+        guard bodyValue.lengthOfBytes(using: String.Encoding.utf8) < Self.bodySizeThreshold else {
             DDLogInfo("give up on processing, file too large")
             mutate(compactBody: bodyValue, quote: nil)
             return
@@ -141,8 +151,8 @@ extension MessageView {
             // Mutate DOM
             await mutate(body: mailBody, compactBody: compactBody)
 
-            // Delay between each chunk processing just enough, so the user feels the UI is responsive.
-            try await Task.sleep(nanoseconds: 4_000_000_000)
+            // Delay between each chunk processing, just enough, so the user feels the UI is responsive.
+            try await Task.sleep(nanoseconds: Self.batchCooldown)
         }
         await task.finish()
     }
