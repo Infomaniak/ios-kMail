@@ -29,7 +29,7 @@ struct ThreadListCell: View {
     let thread: Thread
 
     let viewModel: ThreadListViewModel
-    let multipleSelectionViewModel: ThreadListMultipleSelectionViewModel
+    @ObservedObject var multipleSelectionViewModel: ThreadListMultipleSelectionViewModel
 
     let threadDensity: ThreadDensity
 
@@ -52,7 +52,8 @@ struct ThreadListCell: View {
             isMultipleSelectionEnabled: multipleSelectionViewModel.isEnabled,
             isSelected: isMultiSelected
         )
-        .background(SelectionBackground(selectionType: selectionType, paddingLeading: 4))
+        .background(SelectionBackground(selectionType: selectionType, paddingLeading: 4, withAnimation: false))
+        .contentShape(Rectangle())
         .onTapGesture { didTapCell() }
         .onLongPressGesture { didLongPressCell() }
         .swipeActions(thread: thread, viewModel: viewModel, multipleSelectionViewModel: multipleSelectionViewModel)
