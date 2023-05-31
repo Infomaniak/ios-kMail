@@ -220,7 +220,6 @@ struct MessageView: View {
 
     /// preprocess is finished
     @MainActor func processingCompleted() {
-        print("••processingCompleted")
         isMessagePreprocessed = true
     }
 }

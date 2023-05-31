@@ -27,11 +27,14 @@ extension MessageView {
     // MARK: - public interface
     
     func prepareBodyIfNeeded() {
-        print("aa prepareBodyIfNeeded")
+        // Content was processed
         guard !isMessagePreprocessed else {
             return
         }
 
+        // Clean task if existing
+        cancelPrepareBodyIfNeeded()
+        
         preprocessing = Task.detached {
             guard !Task.isCancelled else { return }
             await prepareBody()
@@ -43,18 +46,15 @@ extension MessageView {
     }
 
     func cancelPrepareBodyIfNeeded() {
-        print("xx cancelPrepareBodyIfNeeded")
         guard let preprocessing else {
             return
         }
         preprocessing.cancel()
-        print("xx did cancel PrepareBodyIfNeeded")
     }
     
     // MARK: - private
 
     private func prepareBody() async {
-        print("••prepareBody")
         guard let messageBody = message.body else {
             return
         }
@@ -81,7 +81,6 @@ extension MessageView {
     }
 
     private func insertInlineAttachments() async {
-        print("••insertInlineAttachments")
         let task = Task.detached {
             // Since mutation of the DOM is costly, I batch the processing of images, then mutate the DOM.
             let attachmentsArray = await message.attachments.filter { $0.disposition == .inline }.toArray()
