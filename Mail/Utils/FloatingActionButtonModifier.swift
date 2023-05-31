@@ -42,7 +42,8 @@ struct FloatingActionButtonModifier: ViewModifier {
 }
 
 extension View {
-    func floatingActionButton(isEnabled: Bool = true, icon: MailResourcesImages, title: String, action: @escaping () -> Void) -> some View {
+    func floatingActionButton(isEnabled: Bool = true, icon: MailResourcesImages, title: String,
+                              action: @escaping () -> Void) -> some View {
         modifier(FloatingActionButtonModifier(isEnabled: isEnabled, icon: icon, title: title, action: action))
     }
 }

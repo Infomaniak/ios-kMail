@@ -21,15 +21,8 @@ import MailResources
 import SwiftUI
 
 extension Animation {
-    static func threadListCheckbox(isMultipleSelectionEnabled isEnabled: Bool) -> Animation {
-        .default.delay(isEnabled ? 0.5 : 0)
-    }
-
-    static func threadListSlide(density: ThreadDensity, isMultipleSelectionEnabled isEnabled: Bool) -> Animation {
-        if density == .large {
-            return .default
-        }
-        return .default.speed(2).delay(isEnabled ? 0 : 0.22)
+    static var threadListSlide: Animation {
+        .default.speed(2)
     }
 }
 
@@ -89,6 +82,8 @@ struct ThreadCell: View {
     let isMultipleSelectionEnabled: Bool
     let isSelected: Bool
 
+    @State private var shouldDisplayCheckbox = false
+
     private var checkboxSize: CGFloat {
         density == .large ? UIConstants.checkboxLargeSize : UIConstants.checkboxSize
     }
@@ -124,10 +119,6 @@ struct ThreadCell: View {
     var body: some View {
         HStack(spacing: 8) {
             UnreadIndicatorView(hidden: !thread.hasUnseenMessages)
-                .animation(
-                    .threadListSlide(density: density, isMultipleSelectionEnabled: isMultipleSelectionEnabled),
-                    value: isMultipleSelectionEnabled
-                )
                 .accessibilityLabel(additionalAccessibilityLabel)
                 .accessibilityHidden(additionalAccessibilityLabel.isEmpty)
 
@@ -137,14 +128,12 @@ struct ThreadCell: View {
                         AvatarView(avatarDisplayable: recipient, size: 40)
                         CheckboxView(isSelected: isSelected, density: density)
                             .opacity(isSelected ? 1 : 0)
+                            .animation(nil, value: isSelected)
                     }
                     .accessibility(hidden: true)
                 } else if isMultipleSelectionEnabled {
                     CheckboxView(isSelected: isSelected, density: density)
-                        .animation(
-                            .threadListCheckbox(isMultipleSelectionEnabled: isMultipleSelectionEnabled),
-                            value: isMultipleSelectionEnabled
-                        )
+                        .opacity(shouldDisplayCheckbox ? 1 : 0)
                 }
             }
             .padding(.trailing, 4)
@@ -159,7 +148,7 @@ struct ThreadCell: View {
                 }
             }
             .animation(
-                .threadListSlide(density: density, isMultipleSelectionEnabled: isMultipleSelectionEnabled),
+                isMultipleSelectionEnabled ? .threadListSlide : .threadListSlide.delay(0.3),
                 value: isMultipleSelectionEnabled
             )
         }
@@ -168,6 +157,17 @@ struct ThreadCell: View {
         .padding(.vertical, density.cellVerticalPadding)
         .clipped()
         .accessibilityElement(children: .combine)
+        .onChange(of: isMultipleSelectionEnabled) { newValue in
+            if newValue {
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+                    withAnimation {
+                        self.shouldDisplayCheckbox = true
+                    }
+                }
+            } else {
+                self.shouldDisplayCheckbox = false
+            }
+        }
     }
 }
 
