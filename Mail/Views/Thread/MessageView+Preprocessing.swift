@@ -32,7 +32,7 @@ extension MessageView {
     /// Cooldown before processing each batch of inline images
     ///
     /// 4 seconds feels fine
-    private static let batchCooldown = 4_000_000_000
+    private static let batchCooldown: UInt64 = 4_000_000_000
     
     // MARK: - public interface
 
