@@ -34,7 +34,7 @@ struct CheckboxView: View {
     var body: some View {
         ZStack {
             Circle()
-                .strokeBorder(Color.accentColor, lineWidth: 2)
+                .strokeBorder(Color.accentColor, lineWidth: isSelected ? 0 : 2)
                 .background(Circle().fill(isSelected ? Color.accentColor : Color.clear))
                 .frame(width: size, height: size)
             MailResourcesAsset.check.swiftUIImage
