@@ -74,6 +74,10 @@ struct ThreadCellDataHolder {
 
 struct ThreadCell: View {
     @EnvironmentObject private var mailboxManager: MailboxManager
+
+    /// With normal or compact density, the checkbox should appear and disappear at different times of the cell offset.
+    @State private var shouldDisplayCheckbox = false
+
     let thread: Thread
 
     let dataHolder: ThreadCellDataHolder
@@ -81,8 +85,6 @@ struct ThreadCell: View {
     let density: ThreadDensity
     let isMultipleSelectionEnabled: Bool
     let isSelected: Bool
-
-    @State private var shouldDisplayCheckbox = false
 
     private var checkboxSize: CGFloat {
         density == .large ? UIConstants.checkboxLargeSize : UIConstants.checkboxSize
@@ -99,12 +101,7 @@ struct ThreadCell: View {
         return label
     }
 
-    init(
-        thread: Thread,
-        density: ThreadDensity,
-        isMultipleSelectionEnabled: Bool = false,
-        isSelected: Bool = false
-    ) {
+    init(thread: Thread, density: ThreadDensity, isMultipleSelectionEnabled: Bool = false, isSelected: Bool = false) {
         self.thread = thread
 
         dataHolder = ThreadCellDataHolder(thread: thread)
@@ -134,6 +131,7 @@ struct ThreadCell: View {
                 } else if isMultipleSelectionEnabled {
                     CheckboxView(isSelected: isSelected, density: density)
                         .opacity(shouldDisplayCheckbox ? 1 : 0)
+                        .animation(.default.speed(1.5), value: shouldDisplayCheckbox)
                 }
             }
             .padding(.trailing, 4)
@@ -148,7 +146,7 @@ struct ThreadCell: View {
                 }
             }
             .animation(
-                isMultipleSelectionEnabled ? .threadListSlide : .threadListSlide.delay(0.3),
+                isMultipleSelectionEnabled ? .threadListSlide : .threadListSlide.delay(UIConstants.checkboxDisappearOffsetDelay),
                 value: isMultipleSelectionEnabled
             )
         }
@@ -157,15 +155,18 @@ struct ThreadCell: View {
         .padding(.vertical, density.cellVerticalPadding)
         .clipped()
         .accessibilityElement(children: .combine)
-        .onChange(of: isMultipleSelectionEnabled) { newValue in
-            if newValue {
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
-                    withAnimation {
+        .onChange(of: isMultipleSelectionEnabled) { isEnabled in
+            guard density != .large else { return }
+
+            withAnimation {
+                if isEnabled {
+                    // We should wait a bit before showing the checkbox
+                    DispatchQueue.main.asyncAfter(deadline: .now() + UIConstants.checkboxAppearDelay) {
                         self.shouldDisplayCheckbox = true
                     }
+                } else {
+                    self.shouldDisplayCheckbox = false
                 }
-            } else {
-                self.shouldDisplayCheckbox = false
             }
         }
     }

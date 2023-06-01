@@ -91,6 +91,9 @@ public enum UIConstants {
     public static let checkmarkSize: CGFloat = 14
     public static let checkboxLargeSize: CGFloat = 40
 
+    public static let checkboxAppearDelay = 0.2
+    public static let checkboxDisappearOffsetDelay = 0.35
+
     public static let buttonsRadius: CGFloat = 16
     public static let buttonsIconSize: CGFloat = 16
 
