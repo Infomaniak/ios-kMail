@@ -26,12 +26,19 @@ import RealmSwift
 import Shimmer
 import SwiftUI
 
+/// Something that can display an email
 struct MessageView: View {
     @ObservedRealmObject var message: Message
     @State var presentableBody: PresentableBody
     @EnvironmentObject var mailboxManager: MailboxManager
     @State var isHeaderExpanded = false
     @State var isMessageExpanded: Bool
+
+    /// True once we finished preprocessing the content
+    @State var isMessagePreprocessed = false
+
+    /// The cancellable task used to preprocess the content
+    @State var preprocessing: Task<Void, Never>?
 
     @LazyInjectService var matomo: MatomoUtils
 
@@ -64,22 +71,30 @@ struct MessageView: View {
             .task {
                 if self.message.shouldComplete {
                     await fetchMessage()
-                } else {
-                    prepareBody()
-                    await tryOrDisplayError {
-                        try await insertInlineAttachments()
-                    }
                 }
             }
             .onChange(of: message.fullyDownloaded) { _ in
-                if message.fullyDownloaded {
-                    Task {
-                        prepareBody()
-                        await tryOrDisplayError {
-                            try await insertInlineAttachments()
-                        }
-                    }
+                if message.fullyDownloaded, isMessageExpanded {
+                    prepareBodyIfNeeded()
                 }
+            }
+            .onChange(of: isMessageExpanded) { _ in
+                if message.fullyDownloaded, isMessageExpanded {
+                    prepareBodyIfNeeded()
+                } else {
+                    cancelPrepareBodyIfNeeded()
+                }
+            }
+            .onAppear {
+                if message.fullyDownloaded,
+                   isMessageExpanded,
+                   !isMessagePreprocessed,
+                   preprocessing == nil {
+                    prepareBodyIfNeeded()
+                }
+            }
+            .onDisappear {
+                cancelPrepareBodyIfNeeded()
             }
         }
     }
@@ -90,80 +105,21 @@ struct MessageView: View {
         }
     }
 
-    private func prepareBody() {
-        guard let messageBody = message.body else { return }
-        presentableBody.body = messageBody.detached()
-        let bodyValue = messageBody.value ?? ""
-
-        // Heuristic to give up on mail too large for "perfect" preprocessing.
-        // 5 Meg looks like a fine threshold
-        guard bodyValue.lengthOfBytes(using: String.Encoding.utf8) < 5_000_000 else {
-            DDLogInfo("give up on processing, file too large")
-            mutate(compactBody: bodyValue, quote: nil)
-            return
-        }
-
-        Task.detached {
-            guard let messageBodyQuote = MessageBodyUtils.splitBodyAndQuote(messageBody: bodyValue) else {
-                return
-            }
-
-            await mutate(compactBody: messageBodyQuote.messageBody, quote: messageBodyQuote.quote)
-        }
-    }
-
-    /// Update the DOM in the main thread
+    /// Update the DOM in the main actor
     @MainActor func mutate(compactBody: String?, quote: String?) {
         presentableBody.compactBody = compactBody
         presentableBody.quote = quote
     }
 
-    private func insertInlineAttachments() {
-        Task.detached() {
-            // Since mutation of the DOM is costly, I batch the processing of images, then mutate the DOM.
-            let attachmentsArray = await message.attachments.filter { $0.disposition == .inline }.toArray()
-            let chunks = attachmentsArray.chunked(into: 10)
-
-            for chunk in chunks {
-                // Download images for the current chunk
-                let dataArray = try await chunk.asyncMap {
-                    try await mailboxManager.attachmentData(attachment: $0)
-                }
-
-                // Read the DOM once
-                var mailBody = await presentableBody.body?.value
-                var compactBody = await presentableBody.compactBody
-
-                // Prepare the new DOM with the loaded images
-                for (index, attachment) in chunk.enumerated() {
-                    guard let contentId = attachment.contentId,
-                          let data = dataArray[safe: index] else {
-                        continue
-                    }
-
-                    mailBody = mailBody?.replacingOccurrences(
-                        of: "cid:\(contentId)",
-                        with: "data:\(attachment.mimeType);base64,\(data.base64EncodedString())"
-                    )
-                    compactBody = compactBody?.replacingOccurrences(
-                        of: "cid:\(contentId)",
-                        with: "data:\(attachment.mimeType);base64,\(data.base64EncodedString())"
-                    )
-                }
-
-                // Mutate DOM
-                await self.mutate(body: mailBody, compactBody: compactBody)
-
-                // Delay between each chunk processing just enough, so the user feels the UI is responsive.
-                try await Task.sleep(nanoseconds: 4_000_000_000)
-            }
-        }
-    }
-
-    /// Update the DOM in the main thread
+    /// Update the DOM in the main actor
     @MainActor func mutate(body: String?, compactBody: String?) {
         presentableBody.body?.value = body
         presentableBody.compactBody = compactBody
+    }
+
+    /// preprocess is finished
+    @MainActor func processingCompleted() {
+        isMessagePreprocessed = true
     }
 }
 

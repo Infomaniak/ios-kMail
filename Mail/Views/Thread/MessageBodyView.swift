@@ -78,7 +78,9 @@ struct MessageBodyView: View {
     }
 
     private func loadBody() {
-        model.loadHTMLString(value: model.showBlockQuote ? presentableBody.body?.value : presentableBody.compactBody)
+        Task {
+            await model.loadHTMLString(value: model.showBlockQuote ? presentableBody.body?.value : presentableBody.compactBody)
+        }
     }
 }
 
