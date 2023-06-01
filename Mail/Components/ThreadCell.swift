@@ -21,15 +21,8 @@ import MailResources
 import SwiftUI
 
 extension Animation {
-    static func threadListCheckbox(isMultipleSelectionEnabled isEnabled: Bool) -> Animation {
-        .default.delay(isEnabled ? 0.5 : 0)
-    }
-
-    static func threadListSlide(density: ThreadDensity, isMultipleSelectionEnabled isEnabled: Bool) -> Animation {
-        if density == .large {
-            return .default
-        }
-        return .default.speed(2).delay(isEnabled ? 0 : 0.22)
+    static var threadListSlide: Animation {
+        .default.speed(2)
     }
 }
 
@@ -81,6 +74,10 @@ struct ThreadCellDataHolder {
 
 struct ThreadCell: View {
     @EnvironmentObject private var mailboxManager: MailboxManager
+
+    /// With normal or compact density, the checkbox should appear and disappear at different times of the cell offset.
+    @State private var shouldDisplayCheckbox = false
+
     let thread: Thread
 
     let dataHolder: ThreadCellDataHolder
@@ -104,12 +101,7 @@ struct ThreadCell: View {
         return label
     }
 
-    init(
-        thread: Thread,
-        density: ThreadDensity,
-        isMultipleSelectionEnabled: Bool = false,
-        isSelected: Bool = false
-    ) {
+    init(thread: Thread, density: ThreadDensity, isMultipleSelectionEnabled: Bool = false, isSelected: Bool = false) {
         self.thread = thread
 
         dataHolder = ThreadCellDataHolder(thread: thread)
@@ -124,10 +116,6 @@ struct ThreadCell: View {
     var body: some View {
         HStack(spacing: 8) {
             UnreadIndicatorView(hidden: !thread.hasUnseenMessages)
-                .animation(
-                    .threadListSlide(density: density, isMultipleSelectionEnabled: isMultipleSelectionEnabled),
-                    value: isMultipleSelectionEnabled
-                )
                 .accessibilityLabel(additionalAccessibilityLabel)
                 .accessibilityHidden(additionalAccessibilityLabel.isEmpty)
 
@@ -137,14 +125,13 @@ struct ThreadCell: View {
                         AvatarView(avatarDisplayable: recipient, size: 40)
                         CheckboxView(isSelected: isSelected, density: density)
                             .opacity(isSelected ? 1 : 0)
+                            .animation(nil, value: isSelected)
                     }
                     .accessibility(hidden: true)
                 } else if isMultipleSelectionEnabled {
                     CheckboxView(isSelected: isSelected, density: density)
-                        .animation(
-                            .threadListCheckbox(isMultipleSelectionEnabled: isMultipleSelectionEnabled),
-                            value: isMultipleSelectionEnabled
-                        )
+                        .opacity(shouldDisplayCheckbox ? 1 : 0)
+                        .animation(.default.speed(1.5), value: shouldDisplayCheckbox)
                 }
             }
             .padding(.trailing, 4)
@@ -159,7 +146,7 @@ struct ThreadCell: View {
                 }
             }
             .animation(
-                .threadListSlide(density: density, isMultipleSelectionEnabled: isMultipleSelectionEnabled),
+                isMultipleSelectionEnabled ? .threadListSlide : .threadListSlide.delay(UIConstants.checkboxDisappearOffsetDelay),
                 value: isMultipleSelectionEnabled
             )
         }
@@ -168,6 +155,20 @@ struct ThreadCell: View {
         .padding(.vertical, density.cellVerticalPadding)
         .clipped()
         .accessibilityElement(children: .combine)
+        .onChange(of: isMultipleSelectionEnabled) { isEnabled in
+            guard density != .large else { return }
+
+            withAnimation {
+                if isEnabled {
+                    // We should wait a bit before showing the checkbox
+                    DispatchQueue.main.asyncAfter(deadline: .now() + UIConstants.checkboxAppearDelay) {
+                        self.shouldDisplayCheckbox = true
+                    }
+                } else {
+                    self.shouldDisplayCheckbox = false
+                }
+            }
+        }
     }
 }
 

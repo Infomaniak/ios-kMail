@@ -22,6 +22,7 @@ import SwiftUI
 
 struct CheckboxView: View {
     @AppStorage(UserDefaults.shared.key(.accentColor)) private var accentColor = DefaultPreferences.accentColor
+
     let isSelected: Bool
     let size: CGFloat
 
@@ -33,7 +34,7 @@ struct CheckboxView: View {
     var body: some View {
         ZStack {
             Circle()
-                .strokeBorder(Color.accentColor, lineWidth: 2)
+                .strokeBorder(Color.accentColor, lineWidth: isSelected ? 0 : 2)
                 .background(Circle().fill(isSelected ? Color.accentColor : Color.clear))
                 .frame(width: size, height: size)
             MailResourcesAsset.check.swiftUIImage
@@ -41,6 +42,7 @@ struct CheckboxView: View {
                 .frame(height: UIConstants.checkmarkSize)
                 .opacity(isSelected ? 1 : 0)
         }
+        .animation(nil, value: isSelected)
     }
 }
 

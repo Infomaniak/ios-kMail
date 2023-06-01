@@ -26,17 +26,17 @@ import SwiftUI
 struct ThreadListCell: View {
     @EnvironmentObject var splitViewManager: SplitViewManager
 
-    let thread: Thread
-
     let viewModel: ThreadListViewModel
-    let multipleSelectionViewModel: ThreadListMultipleSelectionViewModel
+    @ObservedObject var multipleSelectionViewModel: ThreadListMultipleSelectionViewModel
+
+    @Binding var editedMessageDraft: Draft?
+
+    let thread: Thread
 
     let threadDensity: ThreadDensity
 
     let isSelected: Bool
     let isMultiSelected: Bool
-
-    @Binding var editedMessageDraft: Draft?
 
     private var selectionType: SelectionBackgroundKind {
         if multipleSelectionViewModel.isEnabled {
@@ -52,9 +52,10 @@ struct ThreadListCell: View {
             isMultipleSelectionEnabled: multipleSelectionViewModel.isEnabled,
             isSelected: isMultiSelected
         )
-        .background(SelectionBackground(selectionType: selectionType, paddingLeading: 4))
+        .background(SelectionBackground(selectionType: selectionType, paddingLeading: 4, withAnimation: false))
+        .contentShape(Rectangle())
         .onTapGesture { didTapCell() }
-        .onLongPressGesture(minimumDuration: 0.3) { didLongPressCell() }
+        .onLongPressGesture { didLongPressCell() }
         .swipeActions(thread: thread, viewModel: viewModel, multipleSelectionViewModel: multipleSelectionViewModel)
         .listRowInsets(.init(top: 0, leading: 0, bottom: 0, trailing: 0))
         .listRowSeparator(.hidden)
@@ -100,15 +101,15 @@ struct ThreadListCell: View {
 struct ThreadListCell_Previews: PreviewProvider {
     static var previews: some View {
         ThreadListCell(
-            thread: PreviewHelper.sampleThread,
             viewModel: ThreadListViewModel(mailboxManager: PreviewHelper.sampleMailboxManager,
                                            folder: PreviewHelper.sampleFolder,
                                            isCompact: false),
             multipleSelectionViewModel: ThreadListMultipleSelectionViewModel(mailboxManager: PreviewHelper.sampleMailboxManager),
+            editedMessageDraft: .constant(nil),
+            thread: PreviewHelper.sampleThread,
             threadDensity: .large,
             isSelected: false,
-            isMultiSelected: false,
-            editedMessageDraft: .constant(nil)
+            isMultiSelected: false
         )
     }
 }

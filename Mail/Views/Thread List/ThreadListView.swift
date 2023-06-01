@@ -120,14 +120,14 @@ struct ThreadListView: View {
                     ForEach(viewModel.sections) { section in
                         Section {
                             ForEach(section.threads) { thread in
-                                ThreadListCell(thread: thread,
-                                               viewModel: viewModel,
+                                ThreadListCell(viewModel: viewModel,
                                                multipleSelectionViewModel: multipleSelectionViewModel,
+                                               editedMessageDraft: $editedMessageDraft,
+                                               thread: thread,
                                                threadDensity: threadDensity,
                                                isSelected: viewModel.selectedThread?.uid == thread.uid,
                                                isMultiSelected: multipleSelectionViewModel.selectedItems
-                                                   .contains { $0.id == thread.id },
-                                               editedMessageDraft: $editedMessageDraft)
+                                                   .contains { $0.id == thread.id })
                                     .id(thread.id)
                             }
                         } header: {
