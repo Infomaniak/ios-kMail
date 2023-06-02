@@ -204,13 +204,13 @@ struct ThreadListView: View {
                 isRefreshing = false
             }
         }
-        .modifier(ThreadListToolbar(flushAlert: $flushAlert,
-                                    viewModel: viewModel,
-                                    multipleSelectionViewModel: multipleSelectionViewModel) {
-                withAnimation(.default.speed(2)) {
-                    multipleSelectionViewModel.selectAll(threads: viewModel.filteredThreads)
-                }
-            })
+        .threadListToolbar(flushAlert: $flushAlert,
+                           viewModel: viewModel,
+                           multipleSelectionViewModel: multipleSelectionViewModel) {
+            withAnimation(.default.speed(2)) {
+                multipleSelectionViewModel.selectAll(threads: viewModel.filteredThreads)
+            }
+        }
         .floatingActionButton(isEnabled: !multipleSelectionViewModel.isEnabled,
                               icon: MailResourcesAsset.pencilPlain,
                               title: MailResourcesStrings.Localizable.buttonNewMessage) {

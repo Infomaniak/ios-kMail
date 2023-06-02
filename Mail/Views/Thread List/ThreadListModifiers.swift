@@ -26,6 +26,20 @@ extension View {
     func threadListCellAppearance() -> some View {
         modifier(ThreadListCellAppearance())
     }
+
+    func threadListToolbar(
+        flushAlert: Binding<FlushAlertState?>,
+        viewModel: ThreadListViewModel,
+        multipleSelectionViewModel: ThreadListMultipleSelectionViewModel,
+        selectAll: @escaping () -> Void
+    ) -> some View {
+        modifier(ThreadListToolbar(
+            flushAlert: flushAlert,
+            viewModel: viewModel,
+            multipleSelectionViewModel: multipleSelectionViewModel,
+            selectAll: selectAll
+        ))
+    }
 }
 
 struct ThreadListCellAppearance: ViewModifier {
