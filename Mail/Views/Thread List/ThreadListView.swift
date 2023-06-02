@@ -110,6 +110,7 @@ struct ThreadListView: View {
                         ProgressView()
                             .id(UUID())
                             .frame(maxWidth: .infinity)
+                            .padding(.vertical, UIConstants.progressItemsVerticalPadding)
                             .threadListCellAppearance()
                     }
 
@@ -160,7 +161,7 @@ struct ThreadListView: View {
                             .mailButtonFullWidth(true)
                         }
                     }
-                    .padding(.vertical, 8)
+                    .padding(.vertical, UIConstants.progressItemsVerticalPadding)
                     .threadListCellAppearance()
 
                     ListVerticalInsetView(height: multipleSelectionViewModel.isEnabled ? 100 : 110)
