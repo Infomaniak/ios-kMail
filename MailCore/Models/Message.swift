@@ -25,6 +25,11 @@ public enum NewMessagesDirection: String {
     case following
 }
 
+public struct PaginationInfo {
+    let offsetUid: String
+    let direction: NewMessagesDirection
+}
+
 public class MessageUidsResult: Decodable {
     public let messageShortUids: [String]
     public let cursor: String

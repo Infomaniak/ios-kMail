@@ -677,7 +677,7 @@ public class MailboxManager: ObservableObject {
             )
         }
 
-        while try await moreMessages(folder: folder, direction: .following) {
+        while try await fetchOnePage(folder: folder, direction: .following) {
             guard !Task.isCancelled else { return }
         }
 
@@ -689,7 +689,7 @@ public class MailboxManager: ObservableObject {
         while remainingOldMessagesToFetch > 0 {
             guard !Task.isCancelled else { return }
 
-            if try !(await moreMessages(folder: folder, direction: .previous)) {
+            if try !(await fetchOnePage(folder: folder, direction: .previous)) {
                 break
             }
 
@@ -703,22 +703,24 @@ public class MailboxManager: ObservableObject {
         }
     }
 
-    public func moreMessages(folder: Folder, direction: NewMessagesDirection) async throws -> Bool {
+    public func fetchOnePage(folder: Folder, direction: NewMessagesDirection? = nil) async throws -> Bool {
         let realm = getRealm()
-        guard let offset = realm.objects(Message.self).where({ $0.folderId == folder.id })
+        var paginationInfo: PaginationInfo?
+
+        if let offset = realm.objects(Message.self).where({ $0.folderId == folder.id })
             .sorted(by: {
                 if direction == .following {
                     return $0.shortUid! > $1.shortUid!
                 }
                 return $0.shortUid! < $1.shortUid!
-            }).first?
-            .shortUid?.toString() else { return false }
+            }).first?.shortUid?.toString(), let direction {
+            paginationInfo = PaginationInfo(offsetUid: offset, direction: direction)
+        }
 
         let messageUidsResult = try await apiFetcher.messagesUids(
             mailboxUuid: mailbox.uuid,
             folderId: folder.id,
-            offset: offset,
-            direction: direction
+            paginationInfo: paginationInfo
         )
         let messagesUids = MessagesUids(
             addedShortUids: messageUidsResult.messageShortUids,
@@ -726,6 +728,10 @@ public class MailboxManager: ObservableObject {
         )
 
         try await handleMessagesUids(messageUids: messagesUids, folder: folder)
+
+        guard paginationInfo != nil else {
+            return messagesUids.addedShortUids.count > Constants.pageSize
+        }
 
         if messagesUids.addedShortUids.count < Constants.pageSize || messagesUids.addedShortUids.contains("1") {
             if direction == .previous {
@@ -775,36 +781,34 @@ public class MailboxManager: ObservableObject {
         var threadsToUpdate = Set<Thread>()
         try? realm.safeWrite {
             for message in messageByUids.messages {
-                if realm.object(ofType: Message.self, forPrimaryKey: message.uid) == nil {
-                    message.inTrash = folder.role == .trash
-                    message.computeReference()
-                    let existingThreads = Array(realm.objects(Thread.self)
-                        .where { $0.messageIds.containsAny(in: message.linkedUids) })
+                message.inTrash = folder.role == .trash
+                message.computeReference()
+                let existingThreads = Array(realm.objects(Thread.self)
+                    .where { $0.messageIds.containsAny(in: message.linkedUids) })
 
-                    if let newThread = createNewThreadIfRequired(
-                        for: message,
-                        folder: folder,
-                        existingThreads: existingThreads
-                    ) {
-                        threadsToUpdate.insert(newThread)
-                    }
+                if let newThread = createNewThreadIfRequired(
+                    for: message,
+                    folder: folder,
+                    existingThreads: existingThreads
+                ) {
+                    threadsToUpdate.insert(newThread)
+                }
 
-                    var allExistingMessages = Set(existingThreads.flatMap(\.messages))
-                    allExistingMessages.insert(message)
+                var allExistingMessages = Set(existingThreads.flatMap(\.messages))
+                allExistingMessages.insert(message)
 
-                    for thread in existingThreads {
-                        for existingMessage in allExistingMessages {
-                            if !thread.messages.map(\.uid).contains(existingMessage.uid) {
-                                thread.addMessageIfNeeded(newMessage: message.fresh(using: realm) ?? message)
-                            }
+                for thread in existingThreads {
+                    for existingMessage in allExistingMessages {
+                        if !thread.messages.map(\.uid).contains(existingMessage.uid) {
+                            thread.addMessageIfNeeded(newMessage: message.fresh(using: realm) ?? message)
                         }
-
-                        threadsToUpdate.insert(thread)
                     }
 
-                    if let message = realm.objects(Message.self).first(where: { $0.uid == message.uid }) {
-                        folder.messages.insert(message)
-                    }
+                    threadsToUpdate.insert(thread)
+                }
+
+                if let message = realm.objects(Message.self).first(where: { $0.uid == message.uid }) {
+                    folder.messages.insert(message)
                 }
             }
             self.updateThreads(threads: threadsToUpdate)

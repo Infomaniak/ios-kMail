@@ -25,11 +25,6 @@ public extension ApiEnvironment {
     var mailHost: String {
         return "mail.\(host)"
     }
-
-    // TODO: - Remove when in prod
-    var preprodMailHost: String {
-        return "mail-mr-4202.\(host)"
-    }
 }
 
 // MARK: - Endpoints
@@ -109,23 +104,18 @@ public extension Endpoint {
 
     // MARK: - New Routes
 
-    // TODO: - Use prod route
     static func messages(mailboxUuid: String, folderId: String) -> Endpoint {
         return Endpoint(
-            hostKeypath: \.preprodMailHost,
-            path: "/api/mail/\(mailboxUuid)/folder/\(folderId)/mobile",
-            apiEnvironment: .preprod
+            hostKeypath: \.mailHost,
+            path: "/api/mail/\(mailboxUuid)/folder/\(folderId)/mobile"
         )
     }
 
-    static func messagesUids(mailboxUuid: String, folderId: String, offset: String?,
-                             direction: NewMessagesDirection?) -> Endpoint {
+    static func messagesUids(mailboxUuid: String, folderId: String, paginationInfo: PaginationInfo?) -> Endpoint {
         var queryItems = [URLQueryItem(name: "messages", value: Constants.pageSize.toString())]
-        if let offset {
-            queryItems.append(URLQueryItem(name: "uid_offset", value: offset))
-        }
-        if let direction {
-            queryItems.append(URLQueryItem(name: "direction", value: direction.rawValue))
+        if let paginationInfo {
+            queryItems.append(URLQueryItem(name: "uid_offset", value: paginationInfo.offsetUid))
+            queryItems.append(URLQueryItem(name: "direction", value: paginationInfo.direction.rawValue))
         }
         return .messages(mailboxUuid: mailboxUuid, folderId: folderId).appending(path: "/messages-uids", queryItems: queryItems)
     }
