@@ -36,8 +36,7 @@ class FlushAlertState: Identifiable {
 }
 
 struct ThreadListView: View {
-    @StateObject var viewModel: ThreadListViewModel
-    @StateObject var multipleSelectionViewModel: ThreadListMultipleSelectionViewModel
+    @LazyInjectService private var matomo: MatomoUtils
 
     @EnvironmentObject var splitViewManager: SplitViewManager
     @EnvironmentObject var navigationStore: NavigationStore
@@ -46,16 +45,18 @@ struct ThreadListView: View {
     @AppStorage(UserDefaults.shared.key(.accentColor)) private var accentColor = DefaultPreferences.accentColor
 
     @State private var isShowingComposeNewMessageView = false
-    @StateObject private var networkMonitor = NetworkMonitor()
-    @Binding private var editedMessageDraft: Draft?
-    @Binding private var messageReply: MessageReply?
     @State private var fetchingTask: Task<Void, Never>?
     @State private var isRefreshing = false
     @State private var firstLaunch = true
     @State private var flushAlert: FlushAlertState?
     @State private var isLoadingMore = false
 
-    @LazyInjectService private var matomo: MatomoUtils
+    @StateObject var viewModel: ThreadListViewModel
+    @StateObject var multipleSelectionViewModel: ThreadListMultipleSelectionViewModel
+    @StateObject private var networkMonitor = NetworkMonitor()
+
+    @Binding private var editedMessageDraft: Draft?
+    @Binding private var messageReply: MessageReply?
 
     private var shouldDisplayEmptyView: Bool {
         viewModel.folder.lastUpdate != nil && viewModel.sections.isEmpty && !viewModel.isLoadingPage
@@ -143,7 +144,7 @@ struct ThreadListView: View {
                             .id(UUID())
                             .frame(maxWidth: .infinity)
                             .listRowSeparator(.hidden)
-                    } else if displayLoadMoreButton {
+                    } else if displayLoadMoreButton || true {
                         MailButton(label: MailResourcesStrings.Localizable.buttonLoadMore) {
                             withAnimation {
                                 isLoadingMore = true
@@ -268,134 +269,6 @@ struct ThreadListView: View {
             }
             fetchingTask = nil
         }
-    }
-}
-
-private struct ThreadListToolbar: ViewModifier {
-    @LazyInjectService private var matomo: MatomoUtils
-
-    @Environment(\.isCompactWindow) var isCompactWindow
-
-    @EnvironmentObject private var splitViewManager: SplitViewManager
-    @EnvironmentObject private var navigationDrawerState: NavigationDrawerState
-
-    @State private var isShowingSwitchAccount = false
-    @State private var multipleSelectionActionsTarget: ActionsTarget?
-
-    @Binding var flushAlert: FlushAlertState?
-
-    @ObservedObject var viewModel: ThreadListViewModel
-    @ObservedObject var multipleSelectionViewModel: ThreadListMultipleSelectionViewModel
-
-    var selectAll: () -> Void
-
-    func body(content: Content) -> some View {
-        content
-            .toolbar {
-                ToolbarItemGroup(placement: .navigationBarLeading) {
-                    if multipleSelectionViewModel.isEnabled {
-                        Button(MailResourcesStrings.Localizable.buttonCancel) {
-                            matomo.track(eventWithCategory: .multiSelection, name: "cancel")
-                            withAnimation {
-                                multipleSelectionViewModel.isEnabled = false
-                            }
-                        }
-                    } else {
-                        if isCompactWindow {
-                            Button {
-                                matomo.track(eventWithCategory: .menuDrawer, name: "openByButton")
-                                navigationDrawerState.open()
-                            } label: {
-                                MailResourcesAsset.burger.swiftUIImage
-                                    .resizable()
-                                    .scaledToFit()
-                                    .frame(width: UIConstants.navbarIconSize, height: UIConstants.navbarIconSize)
-                            }
-                            .accessibilityLabel(MailResourcesStrings.Localizable.contentDescriptionButtonMenu)
-                        }
-                    }
-                }
-
-                ToolbarItem(placement: .principal) {
-                    if !multipleSelectionViewModel.isEnabled {
-                        Text(splitViewManager.selectedFolder?.localizedName ?? "")
-                            .textStyle(.header1)
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                    }
-                }
-
-                ToolbarItemGroup(placement: .navigationBarTrailing) {
-                    if multipleSelectionViewModel.isEnabled {
-                        Button(multipleSelectionViewModel.selectedItems.count == viewModel.filteredThreads.count
-                            ? MailResourcesStrings.Localizable.buttonUnselectAll
-                            : MailResourcesStrings.Localizable.buttonSelectAll) {
-                                selectAll()
-                            }
-                            .animation(nil, value: multipleSelectionViewModel.selectedItems)
-                    } else {
-                        Button {
-                            splitViewManager.showSearch = true
-                        } label: {
-                            MailResourcesAsset.search.swiftUIImage
-                                .resizable()
-                                .scaledToFit()
-                                .frame(width: UIConstants.navbarIconSize, height: UIConstants.navbarIconSize)
-                        }
-
-                        Button {
-                            isShowingSwitchAccount.toggle()
-                        } label: {
-                            AvatarView(avatarDisplayable: AccountManager.instance.currentAccount.user)
-                        }
-                        .accessibilityLabel(MailResourcesStrings.Localizable.contentDescriptionUserAvatar)
-                    }
-                }
-
-                ToolbarItemGroup(placement: .bottomBar) {
-                    if multipleSelectionViewModel.isEnabled {
-                        HStack(spacing: 0) {
-                            ForEach(multipleSelectionViewModel.toolbarActions) { action in
-                                ToolbarButton(
-                                    text: action.shortTitle ?? action.title,
-                                    icon: action.icon
-                                ) {
-                                    Task {
-                                        await tryOrDisplayError {
-                                            try await multipleSelectionViewModel.didTap(
-                                                action: action,
-                                                flushAlert: $flushAlert
-                                            )
-                                        }
-                                    }
-                                }
-                                .disabled(action == .archive && splitViewManager.selectedFolder?.role == .archive)
-                            }
-
-                            ToolbarButton(
-                                text: MailResourcesStrings.Localizable.buttonMore,
-                                icon: MailResourcesAsset.plusActions.swiftUIImage
-                            ) {
-                                multipleSelectionActionsTarget = .threads(Array(multipleSelectionViewModel.selectedItems), true)
-                            }
-                        }
-                        .disabled(multipleSelectionViewModel.selectedItems.isEmpty)
-                    }
-                }
-            }
-            .actionsPanel(actionsTarget: $multipleSelectionActionsTarget) {
-                withAnimation {
-                    multipleSelectionViewModel.isEnabled = false
-                }
-            }
-            .navigationTitle(
-                multipleSelectionViewModel.isEnabled
-                    ? MailResourcesStrings.Localizable.multipleSelectionCount(multipleSelectionViewModel.selectedItems.count)
-                    : ""
-            )
-            .navigationBarTitleDisplayMode(.inline)
-            .sheet(isPresented: $isShowingSwitchAccount) {
-                AccountView(mailboxes: AccountManager.instance.mailboxes)
-            }
     }
 }
 
