@@ -713,7 +713,8 @@ public class MailboxManager: ObservableObject {
                     return $0.shortUid! > $1.shortUid!
                 }
                 return $0.shortUid! < $1.shortUid!
-            }).first?.shortUid?.toString(), let direction {
+            }).first?.shortUid?.toString(),
+            let direction {
             paginationInfo = PaginationInfo(offsetUid: offset, direction: direction)
         }
 
