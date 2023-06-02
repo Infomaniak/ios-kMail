@@ -286,7 +286,11 @@ public class Message: Object, Decodable, Identifiable {
         cc = try values.decode(List<Recipient>.self, forKey: .cc)
         bcc = try values.decode(List<Recipient>.self, forKey: .bcc)
         replyTo = try values.decode(List<Recipient>.self, forKey: .replyTo)
-        body = try values.decodeIfPresent(Body.self, forKey: .body)
+        
+        let jsonBody = try values.decodeIfPresent(_Body.self, forKey: .body)
+        body = jsonBody?.realmObject()
+        
+        
         if let attachments = try? values.decode(List<Attachment>.self, forKey: .attachments) {
             self.attachments = attachments
         } else {
@@ -410,7 +414,36 @@ public struct BodyResult: Codable {
     let body: Body
 }
 
+/// Proxy class to preprocess JSON
+/// Preprocessing body to not exceed Realm limitations
+class _Body: Codable {
+    public var value: String?
+    public var type: String?
+    public var subBody: String?
+
+    /// Generate a new realm object on the fly
+    public func realmObject() -> Body {
+        let truncatedValue: String?
+        // truncate data if more text that 10MB (realm breaks at 15)
+        if let value  = self.value,
+           value.count > 10_000_000 {
+            let index = value.index(value.startIndex, offsetBy: 10_000_000)
+            truncatedValue = String(value[...index])+" [truncated]"
+        } else {
+            truncatedValue = self.value
+        }
+        
+        let body = Body()
+        body.value = truncatedValue
+        body.type = self.type
+        body.subBody = self.subBody
+        return body
+    }
+}
+
+
 public class Body: EmbeddedObject, Codable {
+    // TODO store ~zstd data -> generate String on the fly
     @Persisted public var value: String?
     @Persisted public var type: String?
     @Persisted public var subBody: String?

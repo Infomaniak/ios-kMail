@@ -1161,7 +1161,11 @@ public class MailboxManager: ObservableObject {
             message.fullyDownloaded = savedMessage.fullyDownloaded
         }
         if keepProperties.contains(.body), let body = savedMessage.body {
-            message.body = Body(value: body)
+            let newBody = Body()
+            newBody.value = body.value
+            newBody.type = body.type
+            newBody.subBody = body.subBody
+            message.body = newBody
         }
         if keepProperties.contains(.attachments) {
             for attachment in savedMessage.attachments {
