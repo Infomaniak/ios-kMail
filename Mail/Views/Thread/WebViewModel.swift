@@ -142,10 +142,10 @@ extension WebViewModel: WKScriptMessageHandler {
     }
 
     private func sendOverScrollMessage(_ message: WKScriptMessage) {
-        guard let data = message.body as? [String: String] else { return }
+        guard let data = message.body as? [String: Any] else { return }
 
         SentrySDK.capture(message: "After zooming the mail it can still scroll.") { scope in
-            scope.setTags(["messageUid": data["messageId"] ?? ""])
+            scope.setTags(["messageUid": data["messageId"] as? String ?? ""])
             scope.setExtras([
                 "clientWidth": data["clientWidth"],
                 "scrollWidth": data["scrollWidth"]
