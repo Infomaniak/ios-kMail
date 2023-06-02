@@ -20,6 +20,16 @@ import Foundation
 import MailResources
 import RealmSwift
 
+public enum NewMessagesDirection: String {
+    case previous
+    case following
+}
+
+public struct PaginationInfo {
+    let offsetUid: String
+    let direction: NewMessagesDirection
+}
+
 public class MessageUidsResult: Decodable {
     public let messageShortUids: [String]
     public let cursor: String

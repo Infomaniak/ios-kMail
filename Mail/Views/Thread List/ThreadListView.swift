@@ -151,8 +151,10 @@ struct ThreadListView: View {
                                 }
                                 Task {
                                     await tryOrDisplayError {
-                                        _ = try await viewModel.mailboxManager
-                                            .moreMessages(folder: viewModel.folder.freeze())
+                                        _ = try await viewModel.mailboxManager.fetchOnePage(
+                                            folder: viewModel.folder.freeze(),
+                                            direction: .previous
+                                        )
                                         isLoadingMore = false
                                     }
                                 }

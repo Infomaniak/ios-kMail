@@ -105,13 +105,17 @@ public extension Endpoint {
     // MARK: - New Routes
 
     static func messages(mailboxUuid: String, folderId: String) -> Endpoint {
-        return Endpoint(hostKeypath: \.mailHost, path: "/api/mail/\(mailboxUuid)/folder/\(folderId)/mobile")
+        return Endpoint(
+            hostKeypath: \.mailHost,
+            path: "/api/mail/\(mailboxUuid)/folder/\(folderId)/mobile"
+        )
     }
 
-    static func messagesUids(mailboxUuid: String, folderId: String, offset: String?) -> Endpoint {
+    static func messagesUids(mailboxUuid: String, folderId: String, paginationInfo: PaginationInfo?) -> Endpoint {
         var queryItems = [URLQueryItem(name: "messages", value: Constants.pageSize.toString())]
-        if let offset {
-            queryItems.append(URLQueryItem(name: "uid_offset", value: offset))
+        if let paginationInfo {
+            queryItems.append(URLQueryItem(name: "uid_offset", value: paginationInfo.offsetUid))
+            queryItems.append(URLQueryItem(name: "direction", value: paginationInfo.direction.rawValue))
         }
         return .messages(mailboxUuid: mailboxUuid, folderId: folderId).appending(path: "/messages-uids", queryItems: queryItems)
     }
