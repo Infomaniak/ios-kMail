@@ -27,7 +27,7 @@ import RealmSwift
 import SwiftUI
 
 enum ComposeViewFieldType: Hashable {
-    case from, to, cc, bcc, subject
+    case from, to, cc, bcc, subject, editor
     case chip(Int, Recipient)
 
     var title: String {
@@ -42,6 +42,8 @@ enum ComposeViewFieldType: Hashable {
             return MailResourcesStrings.Localizable.bccTitle
         case .subject:
             return MailResourcesStrings.Localizable.subjectTitle
+        case .editor:
+            return "editor"
         case .chip:
             return "Recipient Chip"
         }
@@ -66,7 +68,14 @@ struct ComposeMessageView: View {
     @State private var editor = RichTextEditorModel()
     @State private var showCc = false
     @State private var isLoadingContent: Bool
-    @FocusState private var focusedField: ComposeViewFieldType?
+    @FocusState private var focusedField: ComposeViewFieldType? {
+        willSet {
+            let editorInFocus = (newValue == .editor)
+            editorFocus = editorInFocus
+        }
+    }
+
+    @State private var editorFocus = false
 
     @State private var addRecipientHandler: ((Recipient) -> Void)?
     @State private var autocompletion: [Recipient] = []
@@ -151,7 +160,8 @@ struct ComposeMessageView: View {
                                        alert: $alert,
                                        isShowingCamera: $isShowingCamera,
                                        isShowingFileSelection: $isShowingFileSelection,
-                                       isShowingPhotoLibrary: $isShowingPhotoLibrary)
+                                       isShowingPhotoLibrary: $isShowingPhotoLibrary,
+                                       becomeFirstResponder: $editorFocus)
                             .ignoresSafeArea(.all, edges: .bottom)
                             .frame(height: editor.height + 20)
                             .padding([.vertical], 10)
@@ -192,7 +202,12 @@ struct ComposeMessageView: View {
             .background(MailResourcesAsset.backgroundColor.swiftUIColor)
         }
         .onAppear {
-            focusedField = .to
+            switch messageReply?.replyMode {
+            case .reply, .replyAll:
+                focusedField = .editor
+            default:
+                focusedField = .to
+            }
         }
         .onDisappear {
             Task {
@@ -322,17 +337,13 @@ struct ComposeMessageView: View {
     private func prepareReplyForwardBodyAndAttachments() async {
         guard let messageReply else { return }
 
-        let prepareBodyTask = Task {
+        let prepareTask = Task.detached() {
             try await prepareBody(message: messageReply.message, replyMode: messageReply.replyMode)
-        }
-
-        let prepareAttachmentsTask = Task {
             try await prepareAttachments(message: messageReply.message, replyMode: messageReply.replyMode)
         }
 
         do {
-            _ = try await prepareBodyTask.value
-            _ = try await prepareAttachmentsTask.value
+            _ = try await prepareTask.value
 
             isLoadingContent = false
         } catch {

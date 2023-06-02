@@ -33,17 +33,19 @@ struct RichTextEditor: UIViewRepresentable {
     @Binding var isShowingCamera: Bool
     @Binding var isShowingFileSelection: Bool
     @Binding var isShowingPhotoLibrary: Bool
+    @Binding var becomeFirstResponder: Bool
     var alert: ObservedObject<NewMessageAlert>.Wrapper
 
     init(model: Binding<RichTextEditorModel>, body: Binding<String>,
          alert: ObservedObject<NewMessageAlert>.Wrapper,
-         isShowingCamera: Binding<Bool>, isShowingFileSelection: Binding<Bool>, isShowingPhotoLibrary: Binding<Bool>) {
+         isShowingCamera: Binding<Bool>, isShowingFileSelection: Binding<Bool>, isShowingPhotoLibrary: Binding<Bool>, becomeFirstResponder: Binding<Bool>) {
         _model = model
         _body = body
         self.alert = alert
         _isShowingCamera = isShowingCamera
         _isShowingFileSelection = isShowingFileSelection
         _isShowingPhotoLibrary = isShowingPhotoLibrary
+        _becomeFirstResponder = becomeFirstResponder
     }
 
     class Coordinator: SQTextEditorDelegate {
@@ -104,7 +106,12 @@ struct RichTextEditor: UIViewRepresentable {
     }
 
     func updateUIView(_ uiView: MailEditorView, context: Context) {
-        // Intentionally unimplemented...
+        if becomeFirstResponder {
+            DispatchQueue.main.async {
+                uiView.setBecomeFirstResponder()
+                self.becomeFirstResponder = false
+            }
+        }
     }
 
     static func dismantleUIView(_ uiView: MailEditorView, coordinator: Coordinator) {
@@ -133,6 +140,10 @@ class MailEditorView: SQTextEditorView {
         self.isShowingFileSelection = isShowingFileSelection
         self.isShowingPhotoLibrary = isShowingPhotoLibrary
         super.init()
+    }
+
+    public func setBecomeFirstResponder() {
+        webView.becomeFirstResponder()
     }
 
     private lazy var editorWebView: WKWebView = {
