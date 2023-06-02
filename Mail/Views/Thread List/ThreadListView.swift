@@ -103,15 +103,14 @@ struct ThreadListView: View {
                             mailboxManager: viewModel.mailboxManager,
                             flushAlert: $flushAlert
                         )
-                        .listRowSeparator(.hidden)
-                        .listRowInsets(.init())
+                        .threadListCellAppearance()
                     }
 
                     if viewModel.isLoadingPage && !isRefreshing {
                         ProgressView()
                             .id(UUID())
                             .frame(maxWidth: .infinity)
-                            .listRowSeparator(.hidden)
+                            .threadListCellAppearance()
                     }
 
                     if threadDensity == .compact {
@@ -139,27 +138,30 @@ struct ThreadListView: View {
                         }
                     }
 
-                    if isLoadingMore {
-                        ProgressView()
-                            .id(UUID())
-                            .frame(maxWidth: .infinity)
-                            .listRowSeparator(.hidden)
-                    } else if displayLoadMoreButton || true {
-                        MailButton(label: MailResourcesStrings.Localizable.buttonLoadMore) {
-                            withAnimation {
-                                isLoadingMore = true
-                            }
-                            Task {
-                                await tryOrDisplayError {
-                                    _ = try await viewModel.mailboxManager
-                                        .moreMessages(folder: viewModel.folder.freeze())
-                                    isLoadingMore = false
+                    Group {
+                        if isLoadingMore {
+                            ProgressView()
+                                .id(UUID())
+                                .frame(maxWidth: .infinity)
+                        } else if displayLoadMoreButton {
+                            MailButton(label: MailResourcesStrings.Localizable.buttonLoadMore) {
+                                withAnimation {
+                                    isLoadingMore = true
+                                }
+                                Task {
+                                    await tryOrDisplayError {
+                                        _ = try await viewModel.mailboxManager
+                                            .moreMessages(folder: viewModel.folder.freeze())
+                                        isLoadingMore = false
+                                    }
                                 }
                             }
+                            .mailButtonStyle(.smallLink)
+                            .mailButtonFullWidth(true)
                         }
-                        .mailButtonStyle(.smallLink)
-                        .mailButtonFullWidth(true)
                     }
+                    .padding(.vertical, 8)
+                    .threadListCellAppearance()
 
                     ListVerticalInsetView(height: multipleSelectionViewModel.isEnabled ? 100 : 110)
                 }
