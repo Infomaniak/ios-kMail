@@ -86,6 +86,7 @@ public enum UIConstants {
 
     public static let floatingButtonBottomPadding: CGFloat = 24
 
+    public static let progressItemsVerticalPadding: CGFloat = 8
     public static let unreadIconSize: CGFloat = 8
     public static let checkboxSize: CGFloat = 32
     public static let checkmarkSize: CGFloat = 14
