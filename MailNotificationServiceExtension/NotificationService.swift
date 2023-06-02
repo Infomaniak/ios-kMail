@@ -25,7 +25,7 @@ import MailResources
 import RealmSwift
 import UserNotifications
 
-class NotificationService: UNNotificationServiceExtension {
+final class NotificationService: UNNotificationServiceExtension {
     var contentHandler: ((UNNotificationContent) -> Void)?
     var bestAttemptContent: UNMutableNotificationContent?
 
@@ -95,7 +95,7 @@ class NotificationService: UNNotificationServiceExtension {
 
         Task {
             let userInfos = bestAttemptContent.userInfo
-            prepareEmptyNotification()
+            translateKnownNotifications()
             guard let mailboxId = userInfos[NotificationsHelper.UserInfoKeys.mailboxId] as? Int,
                   let userId = userInfos[NotificationsHelper.UserInfoKeys.userId] as? Int,
                   let mailbox = MailboxInfosManager.instance.getMailbox(id: mailboxId, userId: userId),
