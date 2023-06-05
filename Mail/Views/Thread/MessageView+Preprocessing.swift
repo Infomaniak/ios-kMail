@@ -69,8 +69,9 @@ extension MessageView {
             return
         }
 
-        presentableBody.body = messageBody.detached()
-        let bodyValue = messageBody.value ?? ""
+        let detachedMessage = messageBody.detached()
+        presentableBody.body = detachedMessage
+        let bodyValue = detachedMessage.value ?? ""
 
         // Heuristic to give up on mail too large for "perfect" preprocessing.
         guard bodyValue.lengthOfBytes(using: String.Encoding.utf8) < Self.bodySizeThreshold else {
