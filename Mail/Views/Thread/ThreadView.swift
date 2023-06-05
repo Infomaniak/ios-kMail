@@ -121,7 +121,7 @@ struct ThreadView: View {
                         .foregroundColor(thread.flagged ? MailResourcesAsset.yellowColor.swiftUIColor : .accentColor)
                 }
             }
-            ToolbarItemGroup(placement: .bottomBar) {
+            /*ToolbarItemGroup(placement: .bottomBar) {
                 Group {
                     ForEach(toolbarActions) { action in
                         if action == .reply {
@@ -149,6 +149,33 @@ struct ThreadView: View {
                     }
                 }
                 .smallToolbar(smallToolbar)
+            }
+             */
+        }
+        .bottomBar {
+            ForEach(toolbarActions) { action in
+                if action == .reply {
+                    ToolbarButton(text: action.title, icon: action.icon) {
+                        didTap(action: action)
+                    }
+                    .adaptivePanel(item: $replyOrReplyAllMessage) { message in
+                        ReplyActionsView(
+                            mailboxManager: mailboxManager,
+                            message: message,
+                            messageReply: $navigationStore.messageReply
+                        )
+                    }
+                } else {
+                    ToolbarButton(text: action.title, icon: action.icon) {
+                        didTap(action: action)
+                    }
+                    .disabled(action == .archive && thread.folder?.role == .archive)
+                }
+                Spacer()
+            }
+            ActionsPanelButton(threads: [thread]) {
+                ToolbarButtonLabel(text: MailResourcesStrings.Localizable.buttonMore,
+                                   icon: MailResourcesAsset.plusActions.swiftUIImage)
             }
         }
         .onChange(of: thread.messages) { newMessagesList in

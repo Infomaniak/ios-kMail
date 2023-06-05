@@ -52,8 +52,11 @@ struct ToolbarButtonLabel: View {
         Label {
             Text(text)
                 .textStyle(MailTextStyle.labelMediumAccent)
+                .lineLimit(1)
         } icon: {
             icon
+                .resizable()
+                .frame(width: 24, height: 24)
         }
         .dynamicLabelStyle(sizeClass: sizeClass ?? .regular, smallToolbar: smallToolbar)
     }
