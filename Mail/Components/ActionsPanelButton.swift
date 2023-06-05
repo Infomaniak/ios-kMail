@@ -44,5 +44,6 @@ struct ActionsPanelButton<Content: View>: View {
             label()
         }
         .actionsPanel(actionsTarget: $actionsTarget)
+        .frame(maxWidth: .infinity)
     }
 }
