@@ -19,6 +19,7 @@
 import Foundation
 import MailResources
 import RealmSwift
+import Sentry
 
 public enum NewMessagesDirection: String {
     case previous
@@ -286,11 +287,10 @@ public class Message: Object, Decodable, Identifiable {
         cc = try values.decode(List<Recipient>.self, forKey: .cc)
         bcc = try values.decode(List<Recipient>.self, forKey: .bcc)
         replyTo = try values.decode(List<Recipient>.self, forKey: .replyTo)
-        
+
         let jsonBody = try values.decodeIfPresent(_Body.self, forKey: .body)
         body = jsonBody?.realmObject()
-        
-        
+
         if let attachments = try? values.decode(List<Attachment>.self, forKey: .attachments) {
             self.attachments = attachments
         } else {
@@ -421,32 +421,59 @@ class _Body: Codable {
     public var type: String?
     public var subBody: String?
 
-    /// Generate a new realm object on the fly
+    /// Generate a new persisted realm object on the fly
     public func realmObject() -> Body {
         let truncatedValue: String?
         // truncate data if more text that 10MB (realm breaks at 15)
-        if let value  = self.value,
+        if let value = value,
            value.count > 10_000_000 {
             let index = value.index(value.startIndex, offsetBy: 10_000_000)
-            truncatedValue = String(value[...index])+" [truncated]"
+            truncatedValue = String(value[...index]) + " [truncated]"
         } else {
-            truncatedValue = self.value
+            truncatedValue = value
         }
-        
+
         let body = Body()
         body.value = truncatedValue
-        body.type = self.type
-        body.subBody = self.subBody
+        body.type = type
+        body.subBody = subBody
         return body
     }
 }
 
-
 public class Body: EmbeddedObject, Codable {
-    // TODO store ~zstd data -> generate String on the fly
-    @Persisted public var value: String?
+    
+    /// Public facing "value"
+    public var value: String? {
+        get {
+            guard let valueData = valueData,
+                  let decompressedData = try? (valueData as NSData).decompressed(using: .lzfse) else {
+                return nil
+            }
+
+            let decompressedString = String(decoding: decompressedData, as: UTF8.self)
+            return decompressedString
+        } set {
+            do {
+                guard let newValue = newValue,
+                      let stringData: Data = newValue.data(using: .utf8) else {
+                    valueData = nil
+                    return
+                }
+
+                let compressedData = try (stringData as NSData).compressed(using: .lzfse) as Data
+                valueData = compressedData
+            } catch {
+                SentrySDK.capture(error: error)
+            }
+        }
+    }
+    
     @Persisted public var type: String?
     @Persisted public var subBody: String?
+
+    // Store compressed data to reduce realm size.
+    @Persisted var valueData: Data?
 }
 
 public struct MessageActionResult: Codable {
