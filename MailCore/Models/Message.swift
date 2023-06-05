@@ -469,15 +469,15 @@ final class ProxyBody: Codable {
     public var subBody: String?
 
     /// Max length of a message before we truncate it.
-    static let TenMegabytes = 10_000_000
+    static let tenMegabytes = 10_000_000
 
     /// Generate a new persisted realm object on the fly
     public func realmObject() -> Body {
         let truncatedValue: String?
         // truncate message, if more text than 10MB (realm breaks at 15)
         if let value = value,
-           value.count > Self.TenMegabytes {
-            let index = value.index(value.startIndex, offsetBy: Self.TenMegabytes)
+           value.count > Self.tenMegabytes {
+            let index = value.index(value.startIndex, offsetBy: Self.tenMegabytes)
             truncatedValue = String(value[...index]) + " [truncated]"
         } else {
             truncatedValue = value
