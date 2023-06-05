@@ -52,6 +52,7 @@ struct ToolbarButtonLabel: View {
         Label {
             Text(text)
                 .textStyle(MailTextStyle.labelMediumAccent)
+                .minimumScaleFactor(0.8)
                 .lineLimit(1)
         } icon: {
             icon
