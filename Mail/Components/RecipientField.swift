@@ -29,7 +29,7 @@ struct RecipientField: View {
     @Binding var recipients: RealmSwift.List<Recipient>
     @Binding var autocompletion: [Recipient]
     @Binding var unknownRecipientAutocompletion: String
-    @Binding var addRecipientHandler: ((Recipient) -> Void)?
+    @MainActor @Binding var addRecipientHandler: ((Recipient) -> Void)?
 
     @FocusState var focusedField: ComposeViewFieldType?
 
@@ -71,16 +71,39 @@ struct RecipientField: View {
     }
 
     @MainActor private func submitTextField() {
-        guard let recipient = autocompletion.first else {
+        if let recipient = autocompletion.first {
+            add(recipient: recipient)
+        } else if let email = validatedInputEmail() {
+            let recipient = Recipient(email: email, name: "")
+            add(recipient: recipient)
+        } else {
             IKSnackBar.showSnackBar(
                 message: MailResourcesStrings.Localizable.addUnknownRecipientInvalidEmail,
                 anchor: keyboardHeight
             )
-            return
         }
-        add(recipient: recipient)
-        @InjectService var matomo: MatomoUtils
-        matomo.track(eventWithCategory: .newMessage, action: .input, name: "addNewRecipient")
+    }
+
+    @discardableResult
+    private func validatedInputEmail() -> String? {
+        let input = trimmedInputText
+
+        // Correct email validation via regex is actually hard,
+        // checking for "one" @ exactly is a good heuristic.
+        if #available(iOS 16.0, *) {
+            let ranges = input.ranges(of: "@")
+            guard ranges.count == 1 else {
+                return nil
+            }
+            return input
+        }
+        // Fallback, correct enough as only used for UX.
+        else {
+            guard input.contains("@") else {
+                return nil
+            }
+            return input
+        }
     }
 
     private func handleBackspaceTextField(isTextEmpty: Bool) {
@@ -90,7 +113,7 @@ struct RecipientField: View {
     }
 
     private func updateAutocompletion() {
-        let trimmedCurrentText = currentText.trimmingCharacters(in: .whitespacesAndNewlines)
+        let trimmedCurrentText = trimmedInputText
 
         let contactManager = AccountManager.instance.currentContactManager
         let autocompleteContacts = contactManager?.contacts(matching: trimmedCurrentText) ?? []
@@ -108,7 +131,14 @@ struct RecipientField: View {
         }
     }
 
+    private var trimmedInputText: String {
+        currentText.trimmingCharacters(in: .whitespacesAndNewlines)
+    }
+
     @MainActor private func add(recipient: Recipient) {
+        @InjectService var matomo: MatomoUtils
+        matomo.track(eventWithCategory: .newMessage, action: .input, name: "addNewRecipient")
+        
         if Constants.isEmailAddress(recipient.email) {
             withAnimation {
                 $recipients.append(recipient)
@@ -129,7 +159,7 @@ struct RecipientField: View {
     }
 
     private func switchFocus() {
-        guard case let .chip(hash, recipient) = focusedField else { return }
+        guard case .chip(let hash, let recipient) = focusedField else { return }
 
         if recipient == recipients.last {
             focusedField = type
