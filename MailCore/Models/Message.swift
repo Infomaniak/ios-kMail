@@ -288,7 +288,8 @@ public class Message: Object, Decodable, Identifiable {
         bcc = try values.decode(List<Recipient>.self, forKey: .bcc)
         replyTo = try values.decode(List<Recipient>.self, forKey: .replyTo)
 
-        let jsonBody = try values.decodeIfPresent(_Body.self, forKey: .body)
+        /// Preprocessing body with a ProxyBody
+        let jsonBody = try values.decodeIfPresent(ProxyBody.self, forKey: .body)
         body = jsonBody?.realmObject()
 
         if let attachments = try? values.decode(List<Attachment>.self, forKey: .attachments) {
@@ -414,20 +415,23 @@ public struct BodyResult: Codable {
     let body: Body
 }
 
-/// Proxy class to preprocess JSON
-/// Preprocessing body to not exceed Realm limitations
-class _Body: Codable {
+/// Proxy class to preprocess JSON of a Body object
+/// Preprocessing body to remain within Realm limitations
+final class ProxyBody: Codable {
     public var value: String?
     public var type: String?
     public var subBody: String?
 
+    /// Max length of a message before we truncate it.
+    static let TenMegabytes = 10_000_000
+
     /// Generate a new persisted realm object on the fly
     public func realmObject() -> Body {
         let truncatedValue: String?
-        // truncate data if more text that 10MB (realm breaks at 15)
+        // truncate message, if more text than 10MB (realm breaks at 15)
         if let value = value,
-           value.count > 10_000_000 {
-            let index = value.index(value.startIndex, offsetBy: 10_000_000)
+           value.count > Self.TenMegabytes {
+            let index = value.index(value.startIndex, offsetBy: Self.TenMegabytes)
             truncatedValue = String(value[...index]) + " [truncated]"
         } else {
             truncatedValue = value
@@ -442,7 +446,6 @@ class _Body: Codable {
 }
 
 public class Body: EmbeddedObject, Codable {
-    
     /// Public facing "value"
     public var value: String? {
         get {
@@ -468,7 +471,7 @@ public class Body: EmbeddedObject, Codable {
             }
         }
     }
-    
+
     @Persisted public var type: String?
     @Persisted public var subBody: String?
 

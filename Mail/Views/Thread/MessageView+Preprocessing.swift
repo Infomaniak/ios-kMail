@@ -23,17 +23,16 @@ import MailCore
 
 /// MessageView code related to pre-processing
 extension MessageView {
-    
     /// Maximum body size supported for preprocessing
     ///
     /// 1 Meg looks like a fine threshold
     private static let bodySizeThreshold = 1_000_000
-    
+
     /// Cooldown before processing each batch of inline images
     ///
     /// 4 seconds feels fine
     private static let batchCooldown: UInt64 = 4_000_000_000
-    
+
     // MARK: - public interface
 
     func prepareBodyIfNeeded() {
