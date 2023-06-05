@@ -32,6 +32,14 @@ private struct ScrollOffsetPreferenceKey: PreferenceKey {
     }
 }
 
+private struct ToolbarWidthPreferenceKey: PreferenceKey {
+    static var defaultValue: CGFloat = .zero
+
+    static func reduce(value: inout CGFloat, nextValue: () -> CGFloat) {
+        value = nextValue()
+    }
+}
+
 struct ThreadView: View {
     @LazyInjectService private var matomo: MatomoUtils
 
@@ -46,6 +54,8 @@ struct ThreadView: View {
     @State private var displayNavigationTitle = false
     @State private var replyOrReplyAllMessage: Message?
 
+    @State private var smallToolbar = false
+
     @ObservedRealmObject var thread: Thread
 
     private let toolbarActions: [Action] = [.reply, .forward, .archive, .delete]
@@ -53,10 +63,10 @@ struct ThreadView: View {
     var body: some View {
         ScrollView {
             VStack(spacing: 0) {
-                GeometryReader { geometry in
+                GeometryReader { proxy in
                     Color.clear.preference(
                         key: ScrollOffsetPreferenceKey.self,
-                        value: geometry.frame(in: .named("scrollView")).origin
+                        value: proxy.frame(in: .named("scrollView")).origin
                     )
                 }
                 .frame(width: 0, height: 0)
@@ -75,8 +85,19 @@ struct ThreadView: View {
         }
         .background(MailResourcesAsset.backgroundColor.swiftUIColor)
         .coordinateSpace(name: "scrollView")
+        .overlay {
+            GeometryReader { proxy in
+                Color.clear.preference(
+                    key: ToolbarWidthPreferenceKey.self,
+                    value: proxy.size.width
+                )
+            }
+        }
         .onPreferenceChange(ScrollOffsetPreferenceKey.self) { offset in
             displayNavigationTitle = offset.y < -85
+        }
+        .onPreferenceChange(ToolbarWidthPreferenceKey.self) { width in
+            smallToolbar = width < 328
         }
         .task {
             if thread.hasUnseenMessages {
@@ -101,30 +122,33 @@ struct ThreadView: View {
                 }
             }
             ToolbarItemGroup(placement: .bottomBar) {
-                ForEach(toolbarActions) { action in
-                    if action == .reply {
-                        ToolbarButton(text: action.title, icon: action.icon) {
-                            didTap(action: action)
+                Group {
+                    ForEach(toolbarActions) { action in
+                        if action == .reply {
+                            ToolbarButton(text: action.title, icon: action.icon) {
+                                didTap(action: action)
+                            }
+                            .adaptivePanel(item: $replyOrReplyAllMessage) { message in
+                                ReplyActionsView(
+                                    mailboxManager: mailboxManager,
+                                    message: message,
+                                    messageReply: $navigationStore.messageReply
+                                )
+                            }
+                        } else {
+                            ToolbarButton(text: action.title, icon: action.icon) {
+                                didTap(action: action)
+                            }
+                            .disabled(action == .archive && thread.folder?.role == .archive)
                         }
-                        .adaptivePanel(item: $replyOrReplyAllMessage) { message in
-                            ReplyActionsView(
-                                mailboxManager: mailboxManager,
-                                message: message,
-                                messageReply: $navigationStore.messageReply
-                            )
-                        }
-                    } else {
-                        ToolbarButton(text: action.title, icon: action.icon) {
-                            didTap(action: action)
-                        }
-                        .disabled(action == .archive && thread.folder?.role == .archive)
+                        Spacer()
                     }
-                    Spacer()
+                    ActionsPanelButton(threads: [thread]) {
+                        ToolbarButtonLabel(text: MailResourcesStrings.Localizable.buttonMore,
+                                           icon: MailResourcesAsset.plusActions.swiftUIImage)
+                    }
                 }
-                ActionsPanelButton(threads: [thread]) {
-                    ToolbarButtonLabel(text: MailResourcesStrings.Localizable.buttonMore,
-                                       icon: MailResourcesAsset.plusActions.swiftUIImage)
-                }
+                .smallToolbar(smallToolbar)
             }
         }
         .onChange(of: thread.messages) { newMessagesList in
@@ -195,8 +219,8 @@ extension LabelStyle where Self == VerticalLabelStyle {
 
 extension Label {
     @ViewBuilder
-    func dynamicLabelStyle(sizeClass: UserInterfaceSizeClass) -> some View {
-        if sizeClass == .compact {
+    func dynamicLabelStyle(sizeClass: UserInterfaceSizeClass, smallToolbar: Bool = false) -> some View {
+        if sizeClass == .compact || smallToolbar {
             labelStyle(.iconOnly)
         } else {
             labelStyle(.vertical)
