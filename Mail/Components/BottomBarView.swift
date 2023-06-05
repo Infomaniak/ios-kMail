@@ -21,24 +21,28 @@ import MailResources
 import SwiftUI
 
 struct BottomBar<Items: View>: ViewModifier {
+    @Binding var isHidden: Bool
+
     @ViewBuilder var items: () -> Items
 
     func body(content: Content) -> some View {
         VStack {
             content
             Spacer(minLength: 0)
-            BottomBarView(items: items)
+            BottomBarView(isHidden: $isHidden, items: items)
         }
     }
 }
 
 extension View {
-    func bottomBar<Items: View>(@ViewBuilder items: @escaping () -> Items) -> some View {
-        modifier(BottomBar(items: items))
+    func bottomBar<Items: View>(isHidden: Binding<Bool> = .constant(false), @ViewBuilder items: @escaping () -> Items) -> some View {
+        modifier(BottomBar(isHidden: isHidden, items: items))
     }
 }
 
 struct BottomBarView<Items: View>: View {
+    @Binding var isHidden: Bool
+
     @ViewBuilder var items: () -> Items
 
     var body: some View {
@@ -55,6 +59,7 @@ struct BottomBarView<Items: View>: View {
             .padding(.top, 4)
         }
         .background(MailResourcesAsset.backgroundTabBarColor.swiftUIColor)
+        .opacity(isHidden ? 1 : 0)
     }
 }
 
