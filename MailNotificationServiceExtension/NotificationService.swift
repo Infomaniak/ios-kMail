@@ -70,13 +70,6 @@ class NotificationService: UNNotificationServiceExtension {
         return message?.freezeIfNeeded()
     }
 
-    func prepareEmptyNotification() {
-        bestAttemptContent?.title = MailResourcesStrings.Localizable.notificationTitleNewEmail
-        bestAttemptContent?.body = ""
-        bestAttemptContent?.sound = .default
-        bestAttemptContent?.userInfo = [:]
-    }
-
     func prepareEmptyMessageNotification(in mailbox: Mailbox) {
         bestAttemptContent?.title = mailbox.email
         bestAttemptContent?.body = MailResourcesStrings.Localizable.notificationTitleNewEmail
@@ -95,7 +88,6 @@ class NotificationService: UNNotificationServiceExtension {
 
         Task {
             let userInfos = bestAttemptContent.userInfo
-            prepareEmptyNotification()
             guard let mailboxId = userInfos[NotificationsHelper.UserInfoKeys.mailboxId] as? Int,
                   let userId = userInfos[NotificationsHelper.UserInfoKeys.userId] as? Int,
                   let mailbox = MailboxInfosManager.instance.getMailbox(id: mailboxId, userId: userId),
