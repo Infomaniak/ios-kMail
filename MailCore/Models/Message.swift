@@ -21,6 +21,52 @@ import MailResources
 import RealmSwift
 import Sentry
 
+// TODO: move to core
+/// LZFSE Wrapper
+public extension Data {
+    /// Compressed data using a zstd like algorithm: lzfse
+    func compressed() -> Self? {
+        guard let data = try? (self as NSData).compressed(using: .lzfse) as Data else {
+            return nil
+        }
+        return data
+    }
+
+    /// Decompressed data from a lzfse buffer
+    func decompressed() -> Self? {
+        guard let data = try? (self as NSData).decompressed(using: .lzfse) as Data else {
+            return nil
+        }
+        return data
+    }
+
+    // MARK: - String helpers
+
+    /// Decompressed string from a lzfse buffer
+    func decompressedString() -> String? {
+        guard let decompressedData = decompressed() else {
+            return nil
+        }
+        let string = String(decoding: decompressedData, as: UTF8.self)
+        return string
+    }
+}
+
+/// LZFSE Wrapper
+public extension String {
+    func compressed() -> Data? {
+        guard let data = data(using: .utf8),
+              let compressed = data.compressed() else {
+            return nil
+        }
+        return compressed
+    }
+
+    static func decompressed(from data: Data) -> Self? {
+        data.decompressedString()
+    }
+}
+
 public enum NewMessagesDirection: String {
     case previous
     case following
@@ -31,7 +77,7 @@ public struct PaginationInfo {
     let direction: NewMessagesDirection
 }
 
-public class MessageUidsResult: Decodable {
+public final class MessageUidsResult: Decodable {
     public let messageShortUids: [String]
     public let cursor: String
 
@@ -41,11 +87,11 @@ public class MessageUidsResult: Decodable {
     }
 }
 
-public class MessageByUidsResult: Decodable {
+public final class MessageByUidsResult: Decodable {
     public let messages: [Message]
 }
 
-public class MessageDeltaResult: Decodable {
+public final class MessageDeltaResult: Decodable {
     public let deletedShortUids: [String]
     public let addedShortUids: [String]
     public let updated: [MessageFlags]
@@ -112,7 +158,7 @@ public enum MessageDKIM: String, Codable, PersistableEnum {
     case notSigned = "not_signed"
 }
 
-public class Message: Object, Decodable, Identifiable {
+public final class Message: Object, Decodable, Identifiable {
     @Persisted(primaryKey: true) public var uid = ""
     @Persisted public var messageId: String?
     @Persisted public var subject: String?
@@ -445,30 +491,22 @@ final class ProxyBody: Codable {
     }
 }
 
-public class Body: EmbeddedObject, Codable {
-    /// Public facing "value"
+public final class Body: EmbeddedObject, Codable {
+    /// Public facing "value", wrapping `valueData`
     public var value: String? {
         get {
-            guard let valueData = valueData,
-                  let decompressedData = try? (valueData as NSData).decompressed(using: .lzfse) else {
+            guard let decompressedString = valueData?.decompressedString() else {
                 return nil
             }
 
-            let decompressedString = String(decoding: decompressedData, as: UTF8.self)
             return decompressedString
         } set {
-            do {
-                guard let newValue = newValue,
-                      let stringData: Data = newValue.data(using: .utf8) else {
-                    valueData = nil
-                    return
-                }
-
-                let compressedData = try (stringData as NSData).compressed(using: .lzfse) as Data
-                valueData = compressedData
-            } catch {
-                SentrySDK.capture(error: error)
+            guard let data = newValue?.compressed() else {
+                valueData = nil
+                return
             }
+
+            valueData = data
         }
     }
 
