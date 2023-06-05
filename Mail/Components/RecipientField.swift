@@ -71,39 +71,14 @@ struct RecipientField: View {
     }
 
     @MainActor private func submitTextField() {
-        if let recipient = autocompletion.first {
-            add(recipient: recipient)
-        } else if let email = validatedInputEmail() {
-            let recipient = Recipient(email: email, name: "")
-            add(recipient: recipient)
-        } else {
-            IKSnackBar.showSnackBar(
-                message: MailResourcesStrings.Localizable.addUnknownRecipientInvalidEmail,
-                anchor: keyboardHeight
-            )
+        // use first autocompletion result or try to validate current input
+        guard let recipient = autocompletion.first else {
+            let guessRecipient = Recipient(email: trimmedInputText, name: "")
+            add(recipient: guessRecipient)
+            return
         }
-    }
 
-    @discardableResult
-    private func validatedInputEmail() -> String? {
-        let input = trimmedInputText
-
-        // Correct email validation via regex is actually hard,
-        // checking for "one" @ exactly is a good heuristic.
-        if #available(iOS 16.0, *) {
-            let ranges = input.ranges(of: "@")
-            guard ranges.count == 1 else {
-                return nil
-            }
-            return input
-        }
-        // Fallback, correct enough as only used for UX.
-        else {
-            guard input.contains("@") else {
-                return nil
-            }
-            return input
-        }
+        add(recipient: recipient)
     }
 
     private func handleBackspaceTextField(isTextEmpty: Bool) {
@@ -138,7 +113,7 @@ struct RecipientField: View {
     @MainActor private func add(recipient: Recipient) {
         @InjectService var matomo: MatomoUtils
         matomo.track(eventWithCategory: .newMessage, action: .input, name: "addNewRecipient")
-        
+
         if Constants.isEmailAddress(recipient.email) {
             withAnimation {
                 $recipients.append(recipient)
