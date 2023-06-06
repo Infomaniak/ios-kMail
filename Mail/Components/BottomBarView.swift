@@ -19,18 +19,26 @@
 import MailResources
 import SwiftUI
 
+struct BottomSafeAreaKey: PreferenceKey {
+    static var defaultValue: CGFloat = .zero
+
+    static func reduce(value: inout CGFloat, nextValue: () -> CGFloat) {
+        value = nextValue()
+    }
+}
+
 struct BottomBar<Items: View>: ViewModifier {
     let isVisible: Bool
-
     @ViewBuilder var items: () -> Items
 
     func body(content: Content) -> some View {
-        content
-            .safeAreaInset(edge: .bottom) {
-                if isVisible {
-                    BottomBarView(items: items)
-                }
+        VStack {
+            content
+            Spacer(minLength: 0)
+            if isVisible {
+                BottomBarView(items: items)
             }
+        }
     }
 }
 
@@ -41,29 +49,40 @@ extension View {
 }
 
 struct BottomBarView<Items: View>: View {
+    @State private var hasBottomSafeArea = true
+
     @ViewBuilder var items: () -> Items
 
     var body: some View {
-        VStack {
+        HStack {
+            Spacer(minLength: 8)
+            items()
+            Spacer(minLength: 8)
+        }
+        .padding(.top, 8)
+        .padding(.bottom, hasBottomSafeArea ? 4 : 8)
+        .background(MailResourcesAsset.backgroundTabBarColor.swiftUIColor)
+        .overlay(alignment: .top) {
             Divider()
                 .frame(height: 1)
                 .overlay(Color(uiColor: .systemGray3))
-
-            HStack {
-                Spacer(minLength: 8)
-                items()
-                Spacer(minLength: 8)
-            }
-            .padding(.vertical, 4)
         }
-        .background(MailResourcesAsset.backgroundTabBarColor.swiftUIColor)
+        .overlay {
+            GeometryReader { proxy in
+                Color.clear
+                    .preference(key: BottomSafeAreaKey.self, value: proxy.safeAreaInsets.bottom)
+            }
+        }
+        .onPreferenceChange(BottomSafeAreaKey.self) { value in
+            hasBottomSafeArea = value > 0
+        }
     }
 }
 
 struct BottomBarView_Previews: PreviewProvider {
     static var previews: some View {
         NavigationView {
-            VStack {
+            List {
                 Text("View #1")
             }
             .navigationTitle("Title")
