@@ -54,7 +54,7 @@ struct BottomBarView<Items: View>: View {
                 items()
                 Spacer(minLength: 8)
             }
-            .padding(.top, 4)
+            .padding(.vertical, 4)
         }
         .background(MailResourcesAsset.backgroundTabBarColor.swiftUIColor)
     }
