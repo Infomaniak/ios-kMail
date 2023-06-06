@@ -95,6 +95,9 @@ public enum UIConstants {
     public static let checkboxAppearDelay = 0.2
     public static let checkboxDisappearOffsetDelay = 0.35
 
+    public static let selectionBackgroundDefaultLeadingPadding: CGFloat = 8
+    public static let selectionBackgroundVerticalPadding: CGFloat = 2
+
     public static let buttonsRadius: CGFloat = 16
     public static let buttonsIconSize: CGFloat = 16
 
