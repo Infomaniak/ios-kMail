@@ -17,55 +17,10 @@
  */
 
 import Foundation
+import InfomaniakCore
 import MailResources
 import RealmSwift
 import Sentry
-
-// TODO: move to core
-/// LZFSE Wrapper
-public extension Data {
-    /// Compressed data using a zstd like algorithm: lzfse
-    func compressed() -> Self? {
-        guard let data = try? (self as NSData).compressed(using: .lzfse) as Data else {
-            return nil
-        }
-        return data
-    }
-
-    /// Decompressed data from a lzfse buffer
-    func decompressed() -> Self? {
-        guard let data = try? (self as NSData).decompressed(using: .lzfse) as Data else {
-            return nil
-        }
-        return data
-    }
-
-    // MARK: - String helpers
-
-    /// Decompressed string from a lzfse buffer
-    func decompressedString() -> String? {
-        guard let decompressedData = decompressed() else {
-            return nil
-        }
-        let string = String(decoding: decompressedData, as: UTF8.self)
-        return string
-    }
-}
-
-/// LZFSE Wrapper
-public extension String {
-    func compressed() -> Data? {
-        guard let data = data(using: .utf8),
-              let compressed = data.compressed() else {
-            return nil
-        }
-        return compressed
-    }
-
-    static func decompressed(from data: Data) -> Self? {
-        data.decompressedString()
-    }
-}
 
 public enum NewMessagesDirection: String {
     case previous
