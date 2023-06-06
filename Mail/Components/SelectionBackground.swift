@@ -26,15 +26,6 @@ enum SelectionBackgroundKind {
     case folder
     case single
 
-    var verticalPadding: CGFloat {
-        switch self {
-        case .multiple:
-            return 2
-        default:
-            return 0
-        }
-    }
-
     var opacity: Double {
         switch self {
         case .none:
@@ -67,7 +58,7 @@ struct SelectionBackground: View {
             .fill(selectionType == .single ? MailResourcesAsset.elementsColor.swiftUIColor : accentColor.secondary.swiftUIColor)
             .clipShape(RoundedCorner(radius: 8, corners: [.topLeft, .bottomLeft]))
             .padding(.leading, paddingLeading)
-            .padding(.vertical, selectionType.verticalPadding)
+            .padding(.vertical, 2)
             .opacity(selectionType.opacity)
             .animation(withAnimation ? .default : nil, value: selectionType.opacity)
     }
