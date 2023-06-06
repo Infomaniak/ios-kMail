@@ -38,6 +38,11 @@ struct RecipientField: View {
     @State private var currentText = ""
     @State private var keyboardHeight: CGFloat = 0
 
+    /// A trimmed view on `currentText`
+    private var trimmedInputText: String {
+        currentText.trimmingCharacters(in: .whitespacesAndNewlines)
+    }
+
     var body: some View {
         VStack {
             if !recipients.isEmpty {
@@ -81,6 +86,29 @@ struct RecipientField: View {
         add(recipient: recipient)
     }
 
+    @MainActor private func add(recipient: Recipient) {
+        @InjectService var matomo: MatomoUtils
+        matomo.track(eventWithCategory: .newMessage, action: .input, name: "addNewRecipient")
+
+        if Constants.isEmailAddress(recipient.email) {
+            withAnimation {
+                $recipients.append(recipient)
+            }
+            currentText = ""
+        } else {
+            IKSnackBar.showSnackBar(
+                message: MailResourcesStrings.Localizable.addUnknownRecipientInvalidEmail,
+                anchor: keyboardHeight
+            )
+        }
+    }
+
+    @MainActor private func remove(recipientAt: Int) {
+        withAnimation {
+            $recipients.remove(at: recipientAt)
+        }
+    }
+
     private func handleBackspaceTextField(isTextEmpty: Bool) {
         if let recipient = recipients.last, isTextEmpty {
             focusedField = .chip(type.hashValue, recipient)
@@ -103,33 +131,6 @@ struct RecipientField: View {
             } else {
                 unknownRecipientAutocompletion = ""
             }
-        }
-    }
-
-    private var trimmedInputText: String {
-        currentText.trimmingCharacters(in: .whitespacesAndNewlines)
-    }
-
-    @MainActor private func add(recipient: Recipient) {
-        @InjectService var matomo: MatomoUtils
-        matomo.track(eventWithCategory: .newMessage, action: .input, name: "addNewRecipient")
-
-        if Constants.isEmailAddress(recipient.email) {
-            withAnimation {
-                $recipients.append(recipient)
-            }
-            currentText = ""
-        } else {
-            IKSnackBar.showSnackBar(
-                message: MailResourcesStrings.Localizable.addUnknownRecipientInvalidEmail,
-                anchor: keyboardHeight
-            )
-        }
-    }
-
-    private func remove(recipientAt: Int) {
-        withAnimation {
-            $recipients.remove(at: recipientAt)
         }
     }
 
