@@ -126,6 +126,7 @@ struct ThreadView: View {
                 ToolbarButtonLabel(text: MailResourcesStrings.Localizable.buttonMore,
                                    icon: MailResourcesAsset.plusActions.swiftUIImage)
             }
+            .frame(maxWidth: .infinity)
         }
         .onChange(of: thread.messages) { newMessagesList in
             if newMessagesList.isEmpty || thread.messageInFolderCount == 0 {

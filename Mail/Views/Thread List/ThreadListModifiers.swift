@@ -131,7 +131,7 @@ struct ThreadListToolbar: ViewModifier {
                     }
                 }
             }
-            .bottomBar(isHidden: !multipleSelectionViewModel.isEnabled) {
+            .bottomBar(isVisible: multipleSelectionViewModel.isEnabled) {
                 HStack(spacing: 0) {
                     ForEach(multipleSelectionViewModel.toolbarActions) { action in
                         ToolbarButton(
