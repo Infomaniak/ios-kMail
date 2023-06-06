@@ -16,16 +16,9 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import MailCore
 import MailResources
 import SwiftUI
-
-struct BottomSafeAreaKey: PreferenceKey {
-    static var defaultValue: CGFloat = .zero
-
-    static func reduce(value: inout CGFloat, nextValue: () -> CGFloat) {
-        value = nextValue()
-    }
-}
 
 struct BottomBar<Items: View>: ViewModifier {
     let isVisible: Bool
@@ -59,8 +52,8 @@ struct BottomBarView<Items: View>: View {
             items()
             Spacer(minLength: 8)
         }
-        .padding(.top, 8)
-        .padding(.bottom, hasBottomSafeArea ? 4 : 8)
+        .padding(.top, UIConstants.bottomBarVerticalPadding)
+        .padding(.bottom, hasBottomSafeArea ? UIConstants.bottomBarSmallVerticalPadding : UIConstants.bottomBarVerticalPadding)
         .background(MailResourcesAsset.backgroundTabBarColor.swiftUIColor)
         .overlay(alignment: .top) {
             Divider()
@@ -68,10 +61,7 @@ struct BottomBarView<Items: View>: View {
                 .overlay(Color(uiColor: .systemGray3))
         }
         .overlay {
-            GeometryReader { proxy in
-                Color.clear
-                    .preference(key: BottomSafeAreaKey.self, value: proxy.safeAreaInsets.bottom)
-            }
+            ViewGeometry(key: BottomSafeAreaKey.self, property: \.safeAreaInsets.bottom)
         }
         .onPreferenceChange(BottomSafeAreaKey.self) { value in
             hasBottomSafeArea = value > 0
