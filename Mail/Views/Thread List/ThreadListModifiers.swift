@@ -130,37 +130,6 @@ struct ThreadListToolbar: ViewModifier {
                         .accessibilityLabel(MailResourcesStrings.Localizable.contentDescriptionUserAvatar)
                     }
                 }
-
-                /*ToolbarItemGroup(placement: .bottomBar) {
-                    if multipleSelectionViewModel.isEnabled {
-                        HStack(spacing: 0) {
-                            ForEach(multipleSelectionViewModel.toolbarActions) { action in
-                                ToolbarButton(
-                                    text: action.shortTitle ?? action.title,
-                                    icon: action.icon
-                                ) {
-                                    Task {
-                                        await tryOrDisplayError {
-                                            try await multipleSelectionViewModel.didTap(
-                                                action: action,
-                                                flushAlert: $flushAlert
-                                            )
-                                        }
-                                    }
-                                }
-                                .disabled(action == .archive && splitViewManager.selectedFolder?.role == .archive)
-                            }
-
-                            ToolbarButton(
-                                text: MailResourcesStrings.Localizable.buttonMore,
-                                icon: MailResourcesAsset.plusActions.swiftUIImage
-                            ) {
-                                multipleSelectionActionsTarget = .threads(Array(multipleSelectionViewModel.selectedItems), true)
-                            }
-                        }
-                        .disabled(multipleSelectionViewModel.selectedItems.isEmpty)
-                    }
-                }*/
             }
             .bottomBar(isHidden: !multipleSelectionViewModel.isEnabled) {
                 HStack(spacing: 0) {

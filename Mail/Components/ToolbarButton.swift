@@ -20,30 +20,8 @@ import MailCore
 import MailResources
 import SwiftUI
 
-// MARK: - Environment
-
-struct SmallToolbarKey: EnvironmentKey {
-    static var defaultValue = false
-}
-
-extension EnvironmentValues {
-    var smallToolbar: Bool {
-        get { self[SmallToolbarKey.self] }
-        set { self[SmallToolbarKey.self] = newValue }
-    }
-}
-
-extension View {
-    func smallToolbar(_ isSmall: Bool) -> some View {
-        environment(\.smallToolbar, isSmall)
-    }
-}
-
-// MARK: - View
-
 struct ToolbarButtonLabel: View {
     @Environment(\.verticalSizeClass) private var sizeClass
-    @Environment(\.smallToolbar) private var smallToolbar
 
     let text: String
     let icon: Image
@@ -59,7 +37,7 @@ struct ToolbarButtonLabel: View {
                 .resizable()
                 .frame(width: 24, height: 24)
         }
-        .dynamicLabelStyle(sizeClass: sizeClass ?? .regular, smallToolbar: smallToolbar)
+        .dynamicLabelStyle(sizeClass: sizeClass ?? .regular)
     }
 }
 
