@@ -38,13 +38,11 @@ struct MenuHeaderView: View {
             Button {
                 isShowingSettings.toggle()
             } label: {
-                // Some added padding around the asset for a nice touchable zone
-                VStack {
-                    MailResourcesAsset.cog.swiftUIImage
-                        .resizable()
-                        .scaledToFit()
-                        .frame(width: 24)
-                }.padding()
+                MailResourcesAsset.cog.swiftUIImage
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 24)
+                    .padding() // Some added padding for a nice touchable zone
             }
             .buttonStyle(.borderless)
             .accessibilityLabel(MailResourcesStrings.Localizable.settingsTitle)
