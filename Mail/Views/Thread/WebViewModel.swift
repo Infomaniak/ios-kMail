@@ -53,6 +53,8 @@ final class WebViewModel: NSObject, ObservableObject {
                 try self.wrapBody(document: safeDocument, inID: Constants.divWrapperId)
 
                 let finalHtml = try safeDocument.outerHtml()
+
+                try await self.blockRemoteContent()
                 await self.webView.loadHTMLString(finalHtml, baseURL: nil)
             } catch {
                 DDLogError("An error occurred while parsing body \(error)")
@@ -60,6 +62,35 @@ final class WebViewModel: NSObject, ObservableObject {
         }
 
         await task.finish()
+    }
+
+    func allowRemoteContent() {
+        webView.configuration.userContentController.removeAllContentRuleLists()
+    }
+
+    private func blockRemoteContent() async throws {
+        let rules = ContentRuleGenerator.generateContentRulesJSON(rules: [
+            ContentRule(action: ContentRuleAction(type: .block), trigger: ContentRuleTrigger(urlFilter: ".*")),
+            ContentRule(action: ContentRuleAction(type: .ignorePreviousRules),
+                        trigger: ContentRuleTrigger(urlFilter: "infomaniak.com")),
+            ContentRule(action: ContentRuleAction(type: .ignorePreviousRules),
+                        trigger: ContentRuleTrigger(urlFilter: "infomaniak.ch")),
+            ContentRule(action: ContentRuleAction(type: .ignorePreviousRules),
+                        trigger: ContentRuleTrigger(urlFilter: "infomaniak.statslive.info"))
+        ])
+
+        guard let blockRuleList = try await WKContentRuleListStore.default()
+            .compileContentRuleList(
+                forIdentifier: "blockRemoteContent",
+                encodedContentRuleList: rules
+            ) else { return }
+
+        await addContentRuleList(blockRuleList)
+    }
+
+    @MainActor
+    private func addContentRuleList(_ contentRuleList: WKContentRuleList) {
+        webView.configuration.userContentController.add(contentRuleList)
     }
 
     private func setUpWebViewConfiguration() {
