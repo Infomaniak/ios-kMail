@@ -132,21 +132,17 @@ public enum SwipeAction: String, CaseIterable, SettingsOptionEnum {
     }
 
     public var isCustomizable: Bool {
-        switch self {
-        case .moveToInbox:
+        if self == .moveToInbox {
             return false
-        default:
-            return true
         }
+        return true
     }
 
     public var isComingLater: Bool {
-        switch self {
-        case .postPone:
+        if self == .postPone {
             return true
-        default:
-            return false
         }
+        return false 
     }
 
     public var image: Image? {
