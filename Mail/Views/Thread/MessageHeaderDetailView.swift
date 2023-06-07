@@ -25,23 +25,6 @@ import RealmSwift
 import SwiftUI
 import WrappingHStack
 
-struct ViewWidthKey: PreferenceKey {
-    static var defaultValue: CGFloat = .zero
-
-    static func reduce(value: inout CGFloat, nextValue: () -> CGFloat) {
-        value = max(value, nextValue())
-    }
-}
-
-struct ViewGeometry: View {
-    var body: some View {
-        GeometryReader { geometry in
-            Color.clear
-                .preference(key: ViewWidthKey.self, value: geometry.size.width)
-        }
-    }
-}
-
 struct MessageHeaderDetailView: View {
     @ObservedRealmObject var message: Message
 
@@ -109,7 +92,7 @@ struct RecipientLabel: View {
         HStack(alignment: .top) {
             Text(title)
                 .textStyle(.bodySmallSecondary)
-                .background(ViewGeometry())
+                .background(ViewGeometry(key: ViewWidthKey.self, property: \.size.width))
                 .frame(width: labelWidth, alignment: .leading)
             VStack(alignment: .leading, spacing: 4) {
                 ForEach(recipients, id: \.self) { recipient in

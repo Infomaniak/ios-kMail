@@ -20,7 +20,7 @@ import MailCore
 import MailResources
 import SwiftUI
 
-// MARK: - Modifiers
+// MARK: - Environment
 
 struct MailButtonStyleKey: EnvironmentKey {
     static var defaultValue = MailButton.Style.large
