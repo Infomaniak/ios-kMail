@@ -29,11 +29,16 @@ public extension String {
 
     /// Truncate a string for compatibility with Realm if needed
     ///
-    /// the string will be terminated by " [truncated]" if it was
+    /// The string will be terminated by " [truncated]" if it was
     var truncatedForRealmIfNeeded: Self {
         Self.truncatedForRealmIfNeeded(self)
     }
     
+    /// Truncate a string for compatibility with Realm if needed
+    ///
+    /// The string will be terminated by " [truncated]" if it was
+    /// - Parameter input: an input string
+    /// - Returns: The output string truncated if needed
     static func truncatedForRealmIfNeeded(_ input: String) -> String {
         if input.utf8.count > Self.closeToMaxRealmSize {
             let index = input.index(input.startIndex, offsetBy: Self.closeToMaxRealmSize)
