@@ -351,7 +351,7 @@ enum ToolbarAction: Int {
         case .link:
             return MailResourcesAsset.hyperlink.image
         case .programMessage:
-            return MailResourcesAsset.clock.image
+            return MailResourcesAsset.waitingMessage.image
         }
     }
 
