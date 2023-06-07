@@ -35,7 +35,7 @@ struct ModalButtonsView: View {
                     secondaryButtonAction?()
                     dismiss()
                 }
-                .mailButtonStyle(.destructive)
+                .mailButtonStyle(.link)
             }
 
             MailButton(label: primaryButtonTitle) {
