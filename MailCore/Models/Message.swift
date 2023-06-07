@@ -31,12 +31,16 @@ public extension String {
     ///
     /// the string will be terminated by " [truncated]" if it was
     var truncatedForRealmIfNeeded: Self {
-        if utf8.count > Self.closeToMaxRealmSize {
-            let index = index(startIndex, offsetBy: Self.closeToMaxRealmSize)
-            let truncatedValue = String(self[...index]) + " [truncated]"
+        Self.truncatedForRealmIfNeeded(self)
+    }
+    
+    static func truncatedForRealmIfNeeded(_ input: String) -> String {
+        if input.utf8.count > Self.closeToMaxRealmSize {
+            let index = input.index(input.startIndex, offsetBy: Self.closeToMaxRealmSize)
+            let truncatedValue = String(input[...index]) + " [truncated]"
             return truncatedValue
         } else {
-            return self
+            return input
         }
     }
 }
