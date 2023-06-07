@@ -103,6 +103,7 @@ public enum UIConstants {
 
     public static let bottomBarVerticalPadding: CGFloat = 8
     public static let bottomBarSmallVerticalPadding: CGFloat = 4
+    public static let bottomBarHorizontalMinimumSpace: CGFloat = 8
 
     public static let bottomSheetHorizontalPadding: CGFloat = 24
 

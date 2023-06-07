@@ -48,9 +48,9 @@ struct BottomBarView<Items: View>: View {
 
     var body: some View {
         HStack {
-            Spacer(minLength: 8)
+            Spacer(minLength: UIConstants.bottomBarHorizontalMinimumSpace)
             items()
-            Spacer(minLength: 8)
+            Spacer(minLength: UIConstants.bottomBarHorizontalMinimumSpace)
         }
         .padding(.top, UIConstants.bottomBarVerticalPadding)
         .padding(.bottom, hasBottomSafeArea ? UIConstants.bottomBarSmallVerticalPadding : UIConstants.bottomBarVerticalPadding)
