@@ -144,7 +144,7 @@ struct ThreadListView: View {
                             ProgressView()
                                 .id(UUID())
                                 .frame(maxWidth: .infinity)
-                        } else if displayLoadMoreButton {
+                        } else if displayLoadMoreButton && !viewModel.filterUnreadOn {
                             MailButton(label: MailResourcesStrings.Localizable.buttonLoadMore) {
                                 withAnimation {
                                     isLoadingMore = true
