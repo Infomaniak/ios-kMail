@@ -52,7 +52,7 @@ public struct DraftResponse: Codable {
     public var uid: String
 }
 
-public class Draft: Object, Decodable, Identifiable, Encodable {
+public class Draft: Object, Codable, Identifiable {
     @Persisted(primaryKey: true) public var localUUID = UUID().uuidString
     @Persisted public var remoteUUID = ""
     @Persisted public var date = Date()
@@ -109,7 +109,10 @@ public class Draft: Object, Decodable, Identifiable, Encodable {
         references = try values.decodeIfPresent(String.self, forKey: .references)
         inReplyTo = try values.decodeIfPresent(String.self, forKey: .inReplyTo)
         mimeType = try values.decode(String.self, forKey: .mimeType)
-        body = try values.decode(String.self, forKey: .body)
+        
+        let buffer = try values.decode(String.self, forKey: .body)
+        body = buffer.truncatedForRealmIfNeeded
+        
         to = try values.decode(List<Recipient>.self, forKey: .to)
         cc = try values.decode(List<Recipient>.self, forKey: .cc)
         bcc = try values.decode(List<Recipient>.self, forKey: .bcc)
