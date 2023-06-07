@@ -27,6 +27,7 @@ struct MessageBodyView: View {
     @StateObject private var model = WebViewModel()
 
     @Binding var presentableBody: PresentableBody
+    @Binding var blockRemoteContent: Bool
 
     let messageUid: String
 
@@ -55,6 +56,9 @@ struct MessageBodyView: View {
                             .onChange(of: model.showBlockQuote) { _ in
                                 loadBody()
                             }
+                            .onChange(of: blockRemoteContent) { _ in
+                                loadBody()
+                            }
 
                         if presentableBody.quote != nil {
                             MailButton(label: model.showBlockQuote
@@ -79,13 +83,20 @@ struct MessageBodyView: View {
 
     private func loadBody() {
         Task {
-            await model.loadHTMLString(value: model.showBlockQuote ? presentableBody.body?.value : presentableBody.compactBody)
+            await model.loadHTMLString(
+                value: model.showBlockQuote ? presentableBody.body?.value : presentableBody.compactBody,
+                blockRemoteContent: blockRemoteContent
+            )
         }
     }
 }
 
 struct MessageBodyView_Previews: PreviewProvider {
     static var previews: some View {
-        MessageBodyView(presentableBody: .constant(PreviewHelper.samplePresentableBody), messageUid: "message_uid")
+        MessageBodyView(
+            presentableBody: .constant(PreviewHelper.samplePresentableBody),
+            blockRemoteContent: .constant(false),
+            messageUid: "message_uid"
+        )
     }
 }

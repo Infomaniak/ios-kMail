@@ -42,7 +42,7 @@ final class WebViewModel: NSObject, ObservableObject {
         loadScripts(configuration: webView.configuration)
     }
 
-    func loadHTMLString(value: String?) async {
+    func loadHTMLString(value: String?, blockRemoteContent: Bool) async {
         let task = Task.detached {
             guard let rawHtml = value else { return }
 
@@ -54,7 +54,7 @@ final class WebViewModel: NSObject, ObservableObject {
 
                 let finalHtml = try safeDocument.outerHtml()
 
-                try await self.blockRemoteContent()
+                try await self.blockRemoteContent(blockRemoteContent)
                 await self.webView.loadHTMLString(finalHtml, baseURL: nil)
             } catch {
                 DDLogError("An error occurred while parsing body \(error)")
@@ -64,11 +64,12 @@ final class WebViewModel: NSObject, ObservableObject {
         await task.finish()
     }
 
-    func allowRemoteContent() {
-        webView.configuration.userContentController.removeAllContentRuleLists()
-    }
+    private func blockRemoteContent(_ blocked: Bool) async throws {
+        guard blocked else {
+            await allowRemoteContent()
+            return
+        }
 
-    private func blockRemoteContent() async throws {
         let rules = ContentRuleGenerator.generateContentRulesJSON(rules: [
             ContentRule(action: ContentRuleAction(type: .block), trigger: ContentRuleTrigger(urlFilter: ".*")),
             ContentRule(action: ContentRuleAction(type: .ignorePreviousRules),
@@ -86,6 +87,11 @@ final class WebViewModel: NSObject, ObservableObject {
             ) else { return }
 
         await addContentRuleList(blockRuleList)
+    }
+
+    @MainActor
+    private func allowRemoteContent() {
+        webView.configuration.userContentController.removeAllContentRuleLists()
     }
 
     @MainActor

@@ -28,9 +28,11 @@ import SwiftUI
 
 /// Something that can display an email
 struct MessageView: View {
-    @ObservedRealmObject var message: Message
-    @State var presentableBody: PresentableBody
+    @LazyInjectService var matomo: MatomoUtils
+
     @EnvironmentObject var mailboxManager: MailboxManager
+
+    @State var presentableBody: PresentableBody
     @State var isHeaderExpanded = false
     @State var isMessageExpanded: Bool
 
@@ -40,7 +42,9 @@ struct MessageView: View {
     /// The cancellable task used to preprocess the content
     @State var preprocessing: Task<Void, Never>?
 
-    @LazyInjectService var matomo: MatomoUtils
+    @State var isRemoteContentBlocked = true
+
+    @ObservedRealmObject var message: Message
 
     init(message: Message, isMessageExpanded: Bool = false) {
         self.message = message
@@ -59,12 +63,31 @@ struct MessageView: View {
                 .padding(.horizontal, 16)
 
                 if isMessageExpanded {
+                    if isRemoteContentBlocked {
+                        MessageHeaderActionView(
+                            icon: MailResourcesAsset.emailActionWarning.swiftUIImage,
+                            message: MailResourcesStrings.Localizable.alertBlockedImagesDescription
+                        ) {
+                            MailButton(label: MailResourcesStrings.Localizable.alertBlockedImagesDisplayContent) {
+                                withAnimation {
+                                    isRemoteContentBlocked = false
+                                }
+                            }
+                            .mailButtonStyle(.smallLink)
+                        }
+                    }
+
                     if !message.attachments.filter({ $0.disposition == .attachment || $0.contentId == nil }).isEmpty {
                         AttachmentsView(message: message)
                             .padding(.top, 24)
                     }
-                    MessageBodyView(presentableBody: $presentableBody, messageUid: message.uid)
-                        .padding(.top, 16)
+
+                    MessageBodyView(
+                        presentableBody: $presentableBody,
+                        blockRemoteContent: $isRemoteContentBlocked,
+                        messageUid: message.uid
+                    )
+                    .padding(.top, 16)
                 }
             }
             .padding(.vertical, 16)
