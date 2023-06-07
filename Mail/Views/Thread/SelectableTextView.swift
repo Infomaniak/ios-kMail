@@ -34,6 +34,7 @@ struct SelectableTextView: UIViewRepresentable {
         textView.textContainer.lineFragmentPadding = 0
         textView.font = .systemFont(ofSize: 16)
         textView.textColor = UIColor(MailTextStyle.body.color)
+        textView.linkTextAttributes = [.underlineStyle: 1, .foregroundColor: UIColor.tintColor]
         textView.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
 
         return textView
