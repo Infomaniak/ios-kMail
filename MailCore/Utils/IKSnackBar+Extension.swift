@@ -16,10 +16,10 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import InfomaniakDI
-import InfomaniakCore
 import Foundation
+import InfomaniakCore
 import InfomaniakCoreUI
+import InfomaniakDI
 import MailResources
 import SnackBar
 
@@ -40,6 +40,22 @@ public extension SnackBarStyle {
     }
 }
 
+public class SnackbarAvoider {
+    public var snackbarInset: CGFloat = 0
+
+    public init() {}
+
+    public func addAvoider(inset: CGFloat) {
+        if inset != snackbarInset {
+            snackbarInset = inset
+        }
+    }
+
+    public func removeAvoider() {
+        snackbarInset = 0
+    }
+}
+
 public extension IKSnackBar {
     @discardableResult
     @MainActor
@@ -49,7 +65,8 @@ public extension IKSnackBar {
         action: IKSnackBar.Action? = nil,
         anchor: CGFloat = 0
     ) -> IKSnackBar? {
-        let snackbar = IKSnackBar.make(message: message, duration: duration, style: .mailStyle(withAnchor: anchor), elevation: 0)
+        @LazyInjectService var avoider: SnackbarAvoider
+        let snackbar = IKSnackBar.make(message: message, duration: duration, style: .mailStyle(withAnchor: avoider.snackbarInset), elevation: 0)
         if let action = action {
             snackbar?.setAction(action).show()
         } else {

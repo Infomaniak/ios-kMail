@@ -26,6 +26,8 @@ struct FloatingActionButtonModifier: ViewModifier {
     let title: String
     let action: () -> Void
 
+    @State private var snackbarAwareModifier = SnackbarAwareModifier(inset: 0)
+
     func body(content: Content) -> some View {
         ZStack(alignment: .bottomTrailing) {
             content
@@ -34,7 +36,15 @@ struct FloatingActionButtonModifier: ViewModifier {
                 MailButton(icon: icon, label: title, action: action)
                     .padding(.trailing, 24)
                     .padding(.bottom, UIConstants.floatingButtonBottomPadding)
+                    .modifier(snackbarAwareModifier)
                     .accessibilityLabel(title)
+                    .overlay {
+                        ViewGeometry(key: ViewHeightKey.self, property: \.size.height)
+                    }
+                    .onPreferenceChange(ViewHeightKey.self) { value in
+                        snackbarAwareModifier.inset = value
+                    }
+
             }
         }
         .ignoresSafeArea(.keyboard)
