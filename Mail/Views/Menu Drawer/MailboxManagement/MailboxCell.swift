@@ -63,9 +63,14 @@ struct MailboxCell: View {
             icon: MailResourcesAsset.envelope,
             text: mailbox.email,
             detailNumber: detailNumber,
-            isSelected: isSelected
+            isSelected: isSelected,
+            isPasswordValid: mailbox.isPasswordValid
         ) {
             guard !isSelected else { return }
+            guard mailbox.isPasswordValid else {
+                IKSnackBar.showSnackBar(message: MailResourcesStrings.Localizable.frelatedMailbox)
+                return
+            }
             @InjectService var matomo: MatomoUtils
             switch style {
             case .menuDrawer:

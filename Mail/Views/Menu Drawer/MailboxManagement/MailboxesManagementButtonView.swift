@@ -29,18 +29,21 @@ struct MailboxesManagementButtonView: View {
     let detailNumber: Int?
     let handleAction: () -> Void
     let isSelected: Bool
+    let isPasswordValid: Bool
 
     init(
         icon: MailResourcesImages,
         text: String,
         detailNumber: Int? = nil,
         isSelected: Bool,
+        isPasswordValid: Bool,
         handleAction: @escaping () -> Void
     ) {
         self.icon = icon.swiftUIImage
         self.text = text
         self.detailNumber = detailNumber
         self.isSelected = isSelected
+        self.isPasswordValid = isPasswordValid
         self.handleAction = handleAction
     }
 
@@ -59,17 +62,21 @@ struct MailboxesManagementButtonView: View {
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
 
-                switch style {
-                case .menuDrawer:
-                    if let detailNumber {
-                        Text(detailNumber < 100 ? "\(detailNumber)" : "99+")
-                            .textStyle(.bodySmallMediumAccent)
-                    }
-                case .account:
-                    if isSelected {
-                        MailResourcesAsset.check.swiftUIImage
-                            .frame(width: 16, height: 16)
-                            .foregroundColor(.accentColor)
+                if !isPasswordValid {
+                    MailResourcesAsset.warning.swiftUIImage
+                } else {
+                    switch style {
+                    case .menuDrawer:
+                        if let detailNumber {
+                            Text(detailNumber < 100 ? "\(detailNumber)" : "99+")
+                                .textStyle(.bodySmallMediumAccent)
+                        }
+                    case .account:
+                        if isSelected {
+                            MailResourcesAsset.check.swiftUIImage
+                                .frame(width: 16, height: 16)
+                                .foregroundColor(.accentColor)
+                        }
                     }
                 }
             }
@@ -80,14 +87,15 @@ struct MailboxesManagementButtonView: View {
 
 struct MailboxesManagementButtonView_Previews: PreviewProvider {
     static var previews: some View {
-        MailboxesManagementButtonView(icon: MailResourcesAsset.folder, text: "Hello", isSelected: false) {
+        MailboxesManagementButtonView(icon: MailResourcesAsset.folder, text: "Hello", isSelected: false, isPasswordValid: true) {
             /* Empty for test */
         }
         MailboxesManagementButtonView(
             icon: MailResourcesAsset.folder,
             text: "Hello",
             detailNumber: 10,
-            isSelected: false
+            isSelected: false,
+            isPasswordValid: true
         ) {
             /* Empty for test */
         }
