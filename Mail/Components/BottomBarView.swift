@@ -25,13 +25,13 @@ struct BottomBar<Items: View>: ViewModifier {
     @ViewBuilder var items: () -> Items
 
     func body(content: Content) -> some View {
-        VStack {
-            content
-            Spacer(minLength: 0)
-            if isVisible {
-                BottomBarView(items: items)
+        content
+            .safeAreaInset(edge: .bottom) {
+                if isVisible {
+                    BottomBarView(items: items)
+                        .transition(.opacity)
+                }
             }
-        }
     }
 }
 
