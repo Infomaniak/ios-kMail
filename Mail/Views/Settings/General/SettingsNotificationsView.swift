@@ -34,7 +34,10 @@ struct SettingsNotificationsView: View {
 
     var body: some View {
         ScrollView {
-            VStack(spacing: 24) {
+            VStack(alignment: .leading, spacing: 24) {
+                Text(Bundle.main.object(forInfoDictionaryKey: "CFBundleName") as! String)
+                    .textStyle(.bodySmallSecondary)
+
                 Toggle(isOn: $notificationsEnabled) {
                     Text(MailResourcesStrings.Localizable.settingsEnableNotifications)
                         .textStyle(.body)
@@ -43,9 +46,8 @@ struct SettingsNotificationsView: View {
                     matomo.track(eventWithCategory: .settingsNotifications, name: "allNotifications", value: newValue)
                 }
 
-                IKDivider()
-
-                if subscribedTopics != nil {
+                if subscribedTopics != nil && notificationsEnabled {
+                    IKDivider()
                     ForEach(AccountManager.instance.mailboxes) { mailbox in
                         Toggle(isOn: Binding(get: {
                             notificationsEnabled && subscribedTopics?.contains(mailbox.notificationTopicName) == true
@@ -60,7 +62,6 @@ struct SettingsNotificationsView: View {
                             Text(mailbox.email)
                                 .textStyle(.body)
                         }
-                        .disabled(!notificationsEnabled)
                     }
                 }
 
