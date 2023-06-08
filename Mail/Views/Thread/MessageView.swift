@@ -42,7 +42,7 @@ struct MessageView: View {
     /// The cancellable task used to preprocess the content
     @State var preprocessing: Task<Void, Never>?
 
-    @State var isRemoteContentBlocked = true
+    @State var isRemoteContentBlocked = UserDefaults.shared.displayExternalContent == .askMe
     @State var displayContentBlockedActionView = false
 
     @ObservedRealmObject var message: Message
