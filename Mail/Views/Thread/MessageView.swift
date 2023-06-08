@@ -43,6 +43,7 @@ struct MessageView: View {
     @State var preprocessing: Task<Void, Never>?
 
     @State var isRemoteContentBlocked = true
+    @State var displayContentBlockedActionView = false
 
     @ObservedRealmObject var message: Message
 
@@ -63,7 +64,7 @@ struct MessageView: View {
                 .padding(.horizontal, 16)
 
                 if isMessageExpanded {
-                    if isRemoteContentBlocked {
+                    if isRemoteContentBlocked && displayContentBlockedActionView {
                         MessageHeaderActionView(
                             icon: MailResourcesAsset.emailActionWarning.swiftUIImage,
                             message: MailResourcesStrings.Localizable.alertBlockedImagesDescription
@@ -85,6 +86,7 @@ struct MessageView: View {
                     MessageBodyView(
                         presentableBody: $presentableBody,
                         blockRemoteContent: $isRemoteContentBlocked,
+                        displayContentBlockedActionView: $displayContentBlockedActionView,
                         messageUid: message.uid
                     )
                     .padding(.top, 16)

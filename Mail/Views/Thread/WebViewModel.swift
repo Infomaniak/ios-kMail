@@ -30,11 +30,20 @@ final class WebViewModel: NSObject, ObservableObject {
     @Published var contentLoading = true
 
     let webView: WKWebView
+    let contentBlocker: ContentBlockerHelper
 
     private let style: String = MessageWebViewUtils.generateCSS(for: .message)
 
+    enum LoadResult: Equatable {
+        case remoteContentBlocked
+        case remoteContentAuthorized
+        case noRemoteContent
+        case failure
+    }
+
     override init() {
         webView = WKWebView()
+        contentBlocker = ContentBlockerHelper(webView: webView)
 
         super.init()
 
@@ -42,61 +51,30 @@ final class WebViewModel: NSObject, ObservableObject {
         loadScripts(configuration: webView.configuration)
     }
 
-    func loadHTMLString(value: String?, blockRemoteContent: Bool) async {
-        let task = Task.detached {
-            guard let rawHtml = value else { return }
+    func loadHTMLString(value: String?, blockRemoteContent: Bool) async -> LoadResult {
+        guard let rawHtml = value else { return .failure }
 
-            do {
-                guard let safeDocument = MessageWebViewUtils.cleanHtmlContent(rawHtml: rawHtml) else { return }
+        do {
+            guard let safeDocument = MessageWebViewUtils.cleanHtmlContent(rawHtml: rawHtml) else { return .failure }
 
-                try self.updateHeadContent(of: safeDocument)
-                try self.wrapBody(document: safeDocument, inID: Constants.divWrapperId)
+            try updateHeadContent(of: safeDocument)
+            try wrapBody(document: safeDocument, inID: Constants.divWrapperId)
 
-                let finalHtml = try safeDocument.outerHtml()
+            let finalHtml = try safeDocument.outerHtml()
 
-                try await self.blockRemoteContent(blockRemoteContent)
-                await self.webView.loadHTMLString(finalHtml, baseURL: nil)
-            } catch {
-                DDLogError("An error occurred while parsing body \(error)")
+            try await contentBlocker.setRemoteContentBlocked(blockRemoteContent)
+            let hasRemoteContent = try contentBlocker.documentHasRemoteContent(safeDocument)
+            await webView.loadHTMLString(finalHtml, baseURL: nil)
+
+            if hasRemoteContent {
+                return blockRemoteContent ? .remoteContentBlocked : .remoteContentAuthorized
+            } else {
+                return .noRemoteContent
             }
+        } catch {
+            DDLogError("An error occurred while parsing body \(error)")
+            return .failure
         }
-
-        await task.finish()
-    }
-
-    private func blockRemoteContent(_ blocked: Bool) async throws {
-        guard blocked else {
-            await allowRemoteContent()
-            return
-        }
-
-        let rules = ContentRuleGenerator.generateContentRulesJSON(rules: [
-            ContentRule(action: ContentRuleAction(type: .block), trigger: ContentRuleTrigger(urlFilter: ".*")),
-            ContentRule(action: ContentRuleAction(type: .ignorePreviousRules),
-                        trigger: ContentRuleTrigger(urlFilter: "infomaniak.com")),
-            ContentRule(action: ContentRuleAction(type: .ignorePreviousRules),
-                        trigger: ContentRuleTrigger(urlFilter: "infomaniak.ch")),
-            ContentRule(action: ContentRuleAction(type: .ignorePreviousRules),
-                        trigger: ContentRuleTrigger(urlFilter: "infomaniak.statslive.info"))
-        ])
-
-        guard let blockRuleList = try await WKContentRuleListStore.default()
-            .compileContentRuleList(
-                forIdentifier: "blockRemoteContent",
-                encodedContentRuleList: rules
-            ) else { return }
-
-        await addContentRuleList(blockRuleList)
-    }
-
-    @MainActor
-    private func allowRemoteContent() {
-        webView.configuration.userContentController.removeAllContentRuleLists()
-    }
-
-    @MainActor
-    private func addContentRuleList(_ contentRuleList: WKContentRuleList) {
-        webView.configuration.userContentController.add(contentRuleList)
     }
 
     private func setUpWebViewConfiguration() {

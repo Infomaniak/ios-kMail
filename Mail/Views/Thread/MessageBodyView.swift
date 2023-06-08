@@ -28,6 +28,7 @@ struct MessageBodyView: View {
 
     @Binding var presentableBody: PresentableBody
     @Binding var blockRemoteContent: Bool
+    @Binding var displayContentBlockedActionView: Bool
 
     let messageUid: String
 
@@ -83,10 +84,11 @@ struct MessageBodyView: View {
 
     private func loadBody() {
         Task {
-            await model.loadHTMLString(
+            let loadResult = await model.loadHTMLString(
                 value: model.showBlockQuote ? presentableBody.body?.value : presentableBody.compactBody,
                 blockRemoteContent: blockRemoteContent
             )
+            displayContentBlockedActionView = loadResult == .remoteContentBlocked
         }
     }
 }
@@ -96,6 +98,7 @@ struct MessageBodyView_Previews: PreviewProvider {
         MessageBodyView(
             presentableBody: .constant(PreviewHelper.samplePresentableBody),
             blockRemoteContent: .constant(false),
+            displayContentBlockedActionView: .constant(false),
             messageUid: "message_uid"
         )
     }
