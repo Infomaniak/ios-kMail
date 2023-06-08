@@ -26,7 +26,11 @@ import SwiftUI
 
 typealias Thread = MailCore.Thread
 
-final class DateSection: Identifiable {
+final class DateSection: Identifiable, Equatable {
+    static func == (lhs: DateSection, rhs: DateSection) -> Bool {
+        lhs.id == rhs.id && lhs.title == rhs.title && lhs.threads == rhs.threads
+    }
+
     enum ReferenceDate {
         case future, today, yesterday, thisWeek, lastWeek, thisMonth, older(Date)
 
@@ -124,23 +128,34 @@ final class DateSection: Identifiable {
     var scrollViewProxy: ScrollViewProxy?
     var isCompact: Bool
 
+    var testToken: NotificationToken?
+
     var observationUnreadToken: NotificationToken?
     var observationThreadToken: NotificationToken?
     var observationLastUpdateToken: NotificationToken?
     let observeQueue = DispatchQueue(label: "com.infomaniak.thread-results", qos: .userInteractive)
 
-    @Published var unreadCount: Int = 0 {
+    private let loadNextPageThreshold = 10
+
+    @Published var unreadCount = 0 {
         didSet {
             // Disable filter if we have no unread emails left
+            print("unreadCount :\(unreadCount)")
             if unreadCount == 0 && filterUnreadOn {
                 filterUnreadOn = false
             }
         }
     }
-    
+
     @Published var filter = Filter.all {
         didSet {
             Task {
+                if filter == .unseen {
+                    observeFilteredResults()
+                } else {
+                    stopObserveFiltered()
+                }
+                
                 observeChanges(animateInitialThreadChanges: true)
 
                 guard let topThread = sections.first?.threads.first?.id else {
@@ -162,7 +177,7 @@ final class DateSection: Identifiable {
         }
     }
 
-    private let loadNextPageThreshold = 10
+    // MARK: Init
 
     init(
         mailboxManager: MailboxManager,

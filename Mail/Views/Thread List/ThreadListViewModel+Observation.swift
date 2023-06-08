@@ -21,8 +21,8 @@ import MailCore
 import RealmSwift
 import SwiftUI
 
+
 extension ThreadListViewModel {
-    
     private func threadResults() -> Results<Thread>? {
         guard let folder = folder.thaw() else {
             sections = []
@@ -31,15 +31,16 @@ extension ThreadListViewModel {
 
         let threadResults: Results<Thread>
         if let predicate = filter.predicate {
-            threadResults = folder.threads.filter(predicate + " OR uid == %@", selectedThread?.uid ?? "")
+            threadResults = folder.threads
+                .filter(predicate + " OR uid == %@", selectedThread?.uid ?? "")
                 .sorted(by: \.date, ascending: false)
         } else {
             threadResults = folder.threads.sorted(by: \.date, ascending: false)
         }
-        
+
         return threadResults
     }
-    
+
     // MARK: - Observe global changes
 
     func observeChanges(animateInitialThreadChanges: Bool = false) {
@@ -103,6 +104,92 @@ extension ThreadListViewModel {
         observationLastUpdateToken?.invalidate()
     }
 
+    // MARK: - Observe filtered results
+    func observeFilteredResults() {
+        stopObserveFiltered()
+        
+        let allThreadsUIDs = threadResults()?.reduce([String](), { partialResult, thread in
+            return partialResult + [thread.uid]
+        })
+        
+        guard let allThreadsUIDs = allThreadsUIDs else {
+            fatalError("woops")
+        }
+        
+        let containAnyOf = NSPredicate(format: "uid IN %@", allThreadsUIDs)
+        
+        let realm = self.mailboxManager.getRealm()
+        let allThreads = realm.objects(Thread.self).filter(containAnyOf)
+        
+        
+        testToken = allThreads.observe(on: observeQueue) {  [weak self] changes in
+            guard let self = self else {
+                return
+            }
+
+            print("change from displayed thread ")
+            switch changes {
+            case .initial(let all):
+                print("aa :\(all.count)")
+
+            case .update(let all, _, _, let modificationIndexes):
+                print("bb :\(all.count), idx:\(modificationIndexes)")
+                refreshInFilterMode(all: all, changes: modificationIndexes)
+                
+            case .error:
+                break
+            }
+        }
+        
+    }
+    
+    func stopObserveFiltered() {
+        testToken?.invalidate()
+    }
+    
+    // TODO clean
+    /// Refresh filteredThreads when observation is disabled
+    private func refreshInFilterMode(all: Results<Thread>, changes: [Int]) {
+
+        for index in changes {
+            print("index :\(index) self.filteredThreads.count:\(filteredThreads.count)")
+            let updatedThread = all[index]
+            
+            let UID = updatedThread.uid
+            
+            let threadToUpdate2: Thread? = self.sections.reduce(nil as Thread?) { partialResult, section in
+                partialResult ?? section.threads.first(where: { $0.uid == UID })
+            }
+            
+            guard let threadToUpdate2 = threadToUpdate2 else {
+                fatalError("woops")
+            }
+            
+            let sectionToUpdate = self.sections.first { section in
+                ((section.threads.first(where: { $0.uid == UID })) != nil) ? true : false
+            }
+            guard let sectionToUpdate = sectionToUpdate else {
+                fatalError("woops")
+            }
+            
+            let indexSectionToUpdate = self.sections.firstIndex(of: sectionToUpdate)
+            let threadIndexToUpdate = sectionToUpdate.threads.firstIndex(of: threadToUpdate2)
+            guard let threadIndexToUpdate = threadIndexToUpdate else {
+                fatalError("woops")
+            }
+            
+            sectionToUpdate.threads[threadIndexToUpdate] = updatedThread.freeze()
+            
+            
+            Task {
+                await MainActor.run {
+                    objectWillChange.send()
+                }
+            }
+            
+        }
+    }
+        
     // MARK: - Observe unread count
 
     /// Observe the unread count to disable filtering when it reaches 0
@@ -113,22 +200,24 @@ extension ThreadListViewModel {
             guard let self = self else {
                 return
             }
-            
+
             switch changes {
-            case .initial(let changes), .update(let changes, _, _, _):
-                let count = changes.where { $0.unseenMessages > 0 }.count
+            case .initial(let all), .update(let all, _, _, _):
+                let unreadCount = all.where { $0.unseenMessages > 0 }.count
                 Task {
                     await MainActor.run {
-                        self.unreadCount = count
+                        self.unreadCount = unreadCount
                     }
                 }
+                
             case .error:
                 break
             }
         }
     }
-    
+
     func stopObserveUnread() {
         observationUnreadToken?.invalidate()
     }
+
 }
