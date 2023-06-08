@@ -55,7 +55,7 @@ struct SettingsSwipeActionsView: View {
                         SettingsSubMenuCell(title: item.title, subtitle: settingValue(for: item), icon: icon(for: item)) {
                             SettingsOptionView<SwipeAction>(
                                 title: item.title,
-                                values: SwipeAction.allCases.filter(\.isCustomizable),
+                                values: SwipeAction.allCases.filter { $0.isCustomizable && !$0.isComingLater },
                                 keyPath: item.keyPath,
                                 excludedKeyPath: item.excludedKeyPaths,
                                 matomoCategory: .settingsSwipeActions,

@@ -42,6 +42,7 @@ struct MenuHeaderView: View {
                     .resizable()
                     .scaledToFit()
                     .frame(width: 24)
+                    .padding() // Some added padding for a nice touchable zone
             }
             .buttonStyle(.borderless)
             .accessibilityLabel(MailResourcesStrings.Localizable.settingsTitle)

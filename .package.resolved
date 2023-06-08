@@ -49,8 +49,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Infomaniak/ios-core-ui",
       "state" : {
-        "revision" : "d6aadc19b255fef24ff91ced30c3f52dd982cf4c",
-        "version" : "2.4.0"
+        "revision" : "57104919b320d5b0d1bcb4d92a3e8117e98dabb6",
+        "version" : "2.5.0"
       }
     },
     {
@@ -94,8 +94,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/onevcat/Kingfisher",
       "state" : {
-        "revision" : "af4be924ad984cf4d16f4ae4df424e79a443d435",
-        "version" : "7.6.2"
+        "revision" : "e8625b80c413457b13ea9be75d07f6e9f5830c19",
+        "version" : "7.7.0"
       }
     },
     {
@@ -157,8 +157,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/realm/realm-core.git",
       "state" : {
-        "revision" : "72226e2fd84f3a3a8ab3cffc2890c7951f1351d5",
-        "version" : "13.10.1"
+        "revision" : "36b2df44453ba5e830369c76ab0683799a287605",
+        "version" : "13.13.0"
       }
     },
     {
@@ -166,8 +166,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/realm/realm-swift",
       "state" : {
-        "revision" : "08ee98e7f52a5fb11b10b7430e6f84adbb7433a4",
-        "version" : "10.39.1"
+        "revision" : "45ea4a0ec4bb3161c807be0a9a4921161dbe60a2",
+        "version" : "10.40.1"
       }
     },
     {
@@ -175,8 +175,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/getsentry/sentry-cocoa",
       "state" : {
-        "revision" : "8da8166d3ee068228849f6e4ed93a99d1c4eadc0",
-        "version" : "8.7.0"
+        "revision" : "9cf7d2e514af1600cc2b3c5592e2848c6c5a76d6",
+        "version" : "8.7.3"
       }
     },
     {
@@ -246,8 +246,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/siteline/SwiftUI-Introspect",
       "state" : {
-        "revision" : "c18951c747ab62af7c15e17a81bd37d4fd5a9979",
-        "version" : "0.2.3"
+        "revision" : "c29b50a475120fdfa22573622464a7346aaf99a4",
+        "version" : "0.6.0"
       }
     },
     {
@@ -273,8 +273,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/dkk/WrappingHStack",
       "state" : {
-        "revision" : "44987fbb01112e6ec72098dc6481187dd53ad4d2",
-        "version" : "2.2.9"
+        "revision" : "f31b8fdc57759c5aa5fc98c70746db5556e73300",
+        "version" : "2.2.10"
       }
     }
   ],

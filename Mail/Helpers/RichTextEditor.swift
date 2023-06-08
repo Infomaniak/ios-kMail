@@ -324,7 +324,6 @@ class MailEditorView: SQTextEditorView {
             }
         case .programMessage:
             // TODO: Handle programmed message
-            webView.resignFirstResponder()
             showWorkInProgressSnackBar()
         }
     }
@@ -337,7 +336,7 @@ enum ToolbarStyle {
     var actions: [ToolbarAction] {
         switch self {
         case .main:
-            return [.editText, .addFile, .addPhoto, .takePhoto, .link, .programMessage]
+            return [.editText, .addFile, .addPhoto, .takePhoto, .link]
         case .textEdition:
             return [.editText, .bold, .italic, .underline, .strikeThrough, .unorderedList]
         }

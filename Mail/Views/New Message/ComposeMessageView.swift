@@ -50,7 +50,7 @@ enum ComposeViewFieldType: Hashable {
     }
 }
 
-class NewMessageAlert: SheetState<NewMessageAlert.State> {
+final class NewMessageAlert: SheetState<NewMessageAlert.State> {
     enum State {
         case link(handler: (String) -> Void)
         case emptySubject(handler: () -> Void)
