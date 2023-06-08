@@ -22,14 +22,11 @@ import RealmSwift
 import SwiftUI
 
 extension ThreadListViewModel {
-    // MARK: - Observe global changes
-
-    func observeChanges(animateInitialThreadChanges: Bool = false) {
-        stopObserveChanges()
-
+    
+    private func threadResults() -> Results<Thread>? {
         guard let folder = folder.thaw() else {
             sections = []
-            return
+            return nil
         }
 
         let threadResults: Results<Thread>
@@ -39,8 +36,16 @@ extension ThreadListViewModel {
         } else {
             threadResults = folder.threads.sorted(by: \.date, ascending: false)
         }
+        
+        return threadResults
+    }
+    
+    // MARK: - Observe global changes
 
-        observationThreadToken = threadResults.observe(on: observeQueue) { [weak self] changes in
+    func observeChanges(animateInitialThreadChanges: Bool = false) {
+        stopObserveChanges()
+
+        observationThreadToken = threadResults()?.observe(on: observeQueue) { [weak self] changes in
             guard let self = self else {
                 return
             }
@@ -99,7 +104,30 @@ extension ThreadListViewModel {
 
     // MARK: - Observe unread count
 
+    /// Observe the unread count to disable filtering when it reaches 0
     func observeUnreadCount() {
-        // TODO observe the unread count to disable filtering when it reaches 0
+        stopObserveUnread()
+
+        observationUnreadToken = threadResults()?.observe(on: observeQueue) { [weak self] changes in
+            guard let self = self else {
+                return
+            }
+            
+            switch changes {
+            case .initial(let changes), .update(let changes, _, _, _):
+                let count = changes.where { $0.unseenMessages > 0 }.count
+                Task {
+                    await MainActor.run {
+                        self.unreadCount = count
+                    }
+                }
+            case .error:
+                break
+            }
+        }
+    }
+    
+    func stopObserveUnread() {
+        observationUnreadToken?.invalidate()
     }
 }

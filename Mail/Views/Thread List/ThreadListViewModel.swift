@@ -129,6 +129,15 @@ final class DateSection: Identifiable {
     var observationLastUpdateToken: NotificationToken?
     let observeQueue = DispatchQueue(label: "com.infomaniak.thread-results", qos: .userInteractive)
 
+    @Published var unreadCount: Int = 0 {
+        didSet {
+            // Disable filter if we have no unread emails left
+            if unreadCount == 0 && filterUnreadOn {
+                filterUnreadOn = false
+            }
+        }
+    }
+    
     @Published var filter = Filter.all {
         didSet {
             Task {
@@ -165,6 +174,7 @@ final class DateSection: Identifiable {
         lastUpdate = folder.lastUpdate
         self.isCompact = isCompact
         observeChanges()
+        observeUnreadCount()
     }
 
     func fetchThreads() async {
