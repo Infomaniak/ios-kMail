@@ -68,8 +68,9 @@ extension ThreadListViewModel {
                 DispatchQueue.main.sync {
                     self.nextThreadIfNeeded(from: filteredThreads)
                     self.filteredThreads = filteredThreads
-                    if self.filter != .all && filteredThreads.count == 1
-                        && self.filter.accepts(thread: filteredThreads[0]) != true {
+                    if self.filter != .all,
+                       filteredThreads.count == 1,
+                       !self.filter.accepts(thread: filteredThreads[0]) {
                         self.filter = .all
                     }
                     withAnimation {
