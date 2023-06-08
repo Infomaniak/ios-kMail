@@ -41,7 +41,7 @@ struct SettingsNotificationsInstructionsView: View {
         }
 
         if UIApplication.shared.canOpenURL(settingsUrl) {
-            UIApplication.shared.open(settingsUrl) { _ in }
+            UIApplication.shared.open(settingsUrl)
         }
     }
 }
