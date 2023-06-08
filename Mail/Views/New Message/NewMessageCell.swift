@@ -31,26 +31,15 @@ extension VerticalAlignment {
     static let newMessageCellAlignment = VerticalAlignment(NewMessageCellAlignment.self)
 }
 
-struct NewMessageCell<Content>: View where Content: View {
+struct NewMessageCell<Content: View>: View {
+    @FocusState var focusedField: ComposeViewFieldType?
+
+    @Binding var showCc: Bool
+
     let type: ComposeViewFieldType
-    let focusedField: FocusState<ComposeViewFieldType?>?
-    let showCc: Binding<Bool>?
-    let isFirstCell: Bool
-    let content: Content
+    var isFirstCell = false
 
-    let verticalPadding: CGFloat = 12
-
-    init(type: ComposeViewFieldType,
-         focusedField: FocusState<ComposeViewFieldType?>? = nil,
-         showCc: Binding<Bool>? = nil,
-         isFirstCell: Bool = false,
-         @ViewBuilder _ content: () -> Content) {
-        self.type = type
-        self.focusedField = focusedField
-        self.showCc = showCc
-        self.isFirstCell = isFirstCell
-        self.content = content()
-    }
+    @ViewBuilder var content: Content
 
     var body: some View {
         HStack(alignment: .newMessageCellAlignment) {
@@ -58,18 +47,17 @@ struct NewMessageCell<Content>: View where Content: View {
                 .textStyle(.bodySecondary)
 
             content
+                .frame(maxWidth: .infinity, alignment: .leading)
 
-            Spacer()
-
-            if let showCc = showCc {
-                ChevronButton(isExpanded: showCc)
+            if type == .to {
+                ChevronButton(isExpanded: $showCc)
             }
         }
         .padding(.horizontal, 16)
-        .padding(.top, isFirstCell ? 0 : verticalPadding)
-        .padding(.bottom, verticalPadding)
+        .padding(.top, isFirstCell ? 0 : UIConstants.newMessageCellVerticalPadding)
+        .padding(.bottom, UIConstants.newMessageCellVerticalPadding)
         .onTapGesture {
-            focusedField?.wrappedValue = type
+            focusedField = type
         }
 
         IKDivider()
@@ -80,8 +68,7 @@ struct NewMessageCell<Content>: View where Content: View {
 struct NewMessageCell_Previews: PreviewProvider {
     static var previews: some View {
         VStack {
-            NewMessageCell(type: .to,
-                           showCc: .constant(false)) {
+            NewMessageCell(showCc: .constant(false), type: .to) {
                 RecipientField(recipients: .constant([PreviewHelper.sampleRecipient1].toRealmList()),
                                autocompletion: .constant([]),
                                unknownRecipientAutocompletion: .constant(""),
@@ -89,7 +76,8 @@ struct NewMessageCell_Previews: PreviewProvider {
                                focusedField: .init(),
                                type: .to)
             }
-            NewMessageCell(type: .subject) {
+
+            NewMessageCell(showCc: .constant(false), type: .subject) {
                 TextField("", text: .constant(""))
             }
         }

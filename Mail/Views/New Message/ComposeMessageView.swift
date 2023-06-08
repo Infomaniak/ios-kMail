@@ -125,8 +125,7 @@ struct ComposeMessageView: View {
             ScrollView(.vertical, showsIndicators: true) {
                 VStack(spacing: 0) {
                     if !shouldDisplayAutocompletion {
-                        NewMessageCell(type: .from,
-                                       isFirstCell: true) {
+                        NewMessageCell(showCc: $showCc, type: .from, isFirstCell: true) {
                             Text(mailboxManager.mailbox.email)
                                 .textStyle(.body)
                         }
@@ -147,8 +146,7 @@ struct ComposeMessageView: View {
                             addRecipientHandler?(recipient)
                         }
                     } else {
-                        NewMessageCell(type: .subject,
-                                       focusedField: _focusedField) {
+                        NewMessageCell(focusedField: _focusedField, showCc: $showCc, type: .subject) {
                             TextField("", text: $draft.subject)
                                 .focused($focusedField, equals: .subject)
                         }
@@ -233,9 +231,9 @@ struct ComposeMessageView: View {
         }
         .customAlert(isPresented: $alert.isShowing) {
             switch alert.state {
-            case .link(let handler):
+            case let .link(handler):
                 AddLinkView(actionHandler: handler)
-            case .emptySubject(let handler):
+            case let .emptySubject(handler):
                 EmptySubjectView(actionHandler: handler)
             case .none:
                 EmptyView()
@@ -262,9 +260,7 @@ struct ComposeMessageView: View {
     private func recipientCell(type: ComposeViewFieldType) -> some View {
         let shouldDisplayField = !shouldDisplayAutocompletion || focusedField == type
         if shouldDisplayField {
-            NewMessageCell(type: type,
-                           focusedField: _focusedField,
-                           showCc: type == .to ? $showCc : nil) {
+            NewMessageCell(focusedField: _focusedField, showCc: $showCc, type: type) {
                 RecipientField(recipients: binding(for: type),
                                autocompletion: $autocompletion,
                                unknownRecipientAutocompletion: $unknownRecipientAutocompletion,
@@ -337,7 +333,7 @@ struct ComposeMessageView: View {
     private func prepareReplyForwardBodyAndAttachments() async {
         guard let messageReply else { return }
 
-        let prepareTask = Task.detached() {
+        let prepareTask = Task.detached {
             try await prepareBody(message: messageReply.message, replyMode: messageReply.replyMode)
             try await prepareAttachments(message: messageReply.message, replyMode: messageReply.replyMode)
         }
