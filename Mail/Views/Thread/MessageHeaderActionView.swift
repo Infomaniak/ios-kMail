@@ -57,7 +57,7 @@ struct MessageHeaderActionView_Previews: PreviewProvider {
             icon: MailResourcesAsset.emailActionWarning.swiftUIImage,
             message: MailResourcesStrings.Localizable.alertBlockedImagesDescription
         ) {
-            MailButton(label: MailResourcesStrings.Localizable.alertBlockedImagesDisplayContent) {}
+            MailButton(label: MailResourcesStrings.Localizable.alertBlockedImagesDisplayContent) { /* Preview */ }
                 .mailButtonStyle(.smallLink)
         }
     }

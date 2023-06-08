@@ -52,10 +52,9 @@ public class ContentBlockerHelper {
     public func srcListContainsRemoteHosts(_ srcList: [String]) -> Bool {
         for src in srcList {
             if let srcURL = URL(string: src),
-               let host = srcURL.host {
-                if !isHostAllowed(host) {
-                    return true
-                }
+               let host = srcURL.host,
+               !isHostAllowed(host) {
+                return true
             }
         }
         return false
