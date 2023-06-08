@@ -42,10 +42,13 @@ struct MessageView: View {
     /// The cancellable task used to preprocess the content
     @State var preprocessing: Task<Void, Never>?
 
-    @State var isRemoteContentBlocked = UserDefaults.shared.displayExternalContent == .askMe
     @State var displayContentBlockedActionView = false
 
     @ObservedRealmObject var message: Message
+
+    private var isRemoteContentBlocked: Bool {
+        return UserDefaults.shared.displayExternalContent == .askMe && message.safeDisplay == false
+    }
 
     init(message: Message, isMessageExpanded: Bool = false) {
         self.message = message
@@ -71,7 +74,7 @@ struct MessageView: View {
                         ) {
                             MailButton(label: MailResourcesStrings.Localizable.alertBlockedImagesDisplayContent) {
                                 withAnimation {
-                                    isRemoteContentBlocked = false
+                                    $message.safeDisplay.wrappedValue = true
                                 }
                             }
                             .mailButtonStyle(.smallLink)
@@ -85,7 +88,7 @@ struct MessageView: View {
 
                     MessageBodyView(
                         presentableBody: $presentableBody,
-                        blockRemoteContent: $isRemoteContentBlocked,
+                        blockRemoteContent: isRemoteContentBlocked,
                         displayContentBlockedActionView: $displayContentBlockedActionView,
                         messageUid: message.uid
                     )

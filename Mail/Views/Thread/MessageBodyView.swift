@@ -27,7 +27,7 @@ struct MessageBodyView: View {
     @StateObject private var model = WebViewModel()
 
     @Binding var presentableBody: PresentableBody
-    @Binding var blockRemoteContent: Bool
+    var blockRemoteContent: Bool
     @Binding var displayContentBlockedActionView: Bool
 
     let messageUid: String
@@ -49,16 +49,16 @@ struct MessageBodyView: View {
                         WebView(model: model, messageUid: messageUid)
                             .frame(height: model.webViewHeight)
                             .onAppear {
-                                loadBody()
+                                loadBody(blockRemoteContent: blockRemoteContent)
                             }
                             .onChange(of: presentableBody) { _ in
-                                loadBody()
+                                loadBody(blockRemoteContent: blockRemoteContent)
                             }
                             .onChange(of: model.showBlockQuote) { _ in
-                                loadBody()
+                                loadBody(blockRemoteContent: blockRemoteContent)
                             }
-                            .onChange(of: blockRemoteContent) { _ in
-                                loadBody()
+                            .onChange(of: blockRemoteContent) { newValue in
+                                loadBody(blockRemoteContent: newValue)
                             }
 
                         if presentableBody.quote != nil {
@@ -82,7 +82,7 @@ struct MessageBodyView: View {
         }
     }
 
-    private func loadBody() {
+    private func loadBody(blockRemoteContent: Bool) {
         Task {
             let loadResult = await model.loadHTMLString(
                 value: model.showBlockQuote ? presentableBody.body?.value : presentableBody.compactBody,
@@ -97,7 +97,7 @@ struct MessageBodyView_Previews: PreviewProvider {
     static var previews: some View {
         MessageBodyView(
             presentableBody: .constant(PreviewHelper.samplePresentableBody),
-            blockRemoteContent: .constant(false),
+            blockRemoteContent: false,
             displayContentBlockedActionView: .constant(false),
             messageUid: "message_uid"
         )
