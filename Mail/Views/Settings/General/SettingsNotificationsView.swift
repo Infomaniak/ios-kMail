@@ -32,9 +32,39 @@ struct SettingsNotificationsView: View {
         .notificationsEnabled
     @State var subscribedTopics: [String]?
 
+    @State private var showAlertNotification = false
+    @State private var showWarning = false
+
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 24) {
+                if showWarning {
+                    HStack {
+                        VStack(spacing: 8) {
+                            Text(MailResourcesStrings.Localizable.warningNotificationsDisabledDescription)
+                                .textStyle(.bodySecondary)
+                            MailButton(label: MailResourcesStrings.Localizable.warningNotificationsDisabledButton) {
+                                guard let settingsUrl = URL(string: UIApplication.openSettingsURLString) else {
+                                    return
+                                }
+
+                                if UIApplication.shared.canOpenURL(settingsUrl) {
+                                    UIApplication.shared.open(settingsUrl) { _ in }
+                                }
+                            }
+                            .mailButtonStyle(.link)
+                        }
+                        .padding(16)
+                        .frame(maxWidth: .infinity)
+                        .background(
+                            RoundedRectangle(cornerRadius: 8)
+                                .fill(MailResourcesAsset.backgroundBlueNavBarColor.swiftUIColor)
+                        )
+                    }
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 16)
+                }
+
                 Text(Bundle.main.object(forInfoDictionaryKey: "CFBundleName") as! String)
                     .textStyle(.bodySmallSecondary)
 
@@ -74,6 +104,21 @@ struct SettingsNotificationsView: View {
         .onChange(of: notificationsEnabled) { enabled in
             if !enabled {
                 subscribedTopics = []
+            } else {
+                if showWarning {
+                    notificationsEnabled = false
+                    showAlertNotification = true
+                }
+            }
+        }
+        .onReceive(NotificationCenter.default.publisher(for: UIApplication.willEnterForegroundNotification)) { _ in
+            settingsNotificationEnabled { enabled in
+                showWarning = !enabled
+            }
+        }
+        .onAppear {
+            settingsNotificationEnabled { enabled in
+                showWarning = !enabled
             }
         }
         .task {
@@ -81,6 +126,9 @@ struct SettingsNotificationsView: View {
         }
         .onDisappear {
             updateTopicsForCurrentUserIfNeeded()
+        }
+        .customAlert(isPresented: $showAlertNotification) {
+            SettingsNotificationsInstructionsView()
         }
         .matomoView(view: [MatomoUtils.View.settingsView.displayName, "Notifications"])
     }
@@ -97,6 +145,17 @@ struct SettingsNotificationsView: View {
             guard let currentApiFetcher = AccountManager.instance.currentMailboxManager?.apiFetcher,
                   let subscribedTopics else { return }
             await notificationService.updateTopicsIfNeeded(subscribedTopics, userApiFetcher: currentApiFetcher)
+        }
+    }
+
+    private func settingsNotificationEnabled(completion: @escaping ((Bool) -> Void)) {
+        UNUserNotificationCenter.current().getNotificationSettings { settings in
+            switch settings.authorizationStatus {
+            case .notDetermined, .denied:
+                completion(false)
+            default:
+                completion(true)
+            }
         }
     }
 }
