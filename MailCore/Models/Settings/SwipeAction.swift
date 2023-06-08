@@ -138,6 +138,13 @@ public enum SwipeAction: String, CaseIterable, SettingsOptionEnum {
         return true
     }
 
+    public var isComingLater: Bool {
+        if self == .postPone {
+            return true
+        }
+        return false 
+    }
+
     public var image: Image? {
         return nil
     }
