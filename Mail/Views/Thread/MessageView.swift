@@ -47,7 +47,8 @@ struct MessageView: View {
     @ObservedRealmObject var message: Message
 
     private var isRemoteContentBlocked: Bool {
-        return UserDefaults.shared.displayExternalContent == .askMe && !message.localSafeDisplay
+        return (UserDefaults.shared.displayExternalContent == .askMe || message.folder?.role == .spam)
+        && !message.localSafeDisplay
     }
 
     init(message: Message, isMessageExpanded: Bool = false) {
