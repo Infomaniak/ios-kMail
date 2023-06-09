@@ -24,8 +24,18 @@ import MailResources
 import RealmSwift
 import SwiftUI
 
+struct AllAttachmentsURL: Identifiable {
+    let id = UUID()
+    let url: URL
+}
+
 struct AttachmentsView: View {
+    @State private var showDocumentPicker = false
+
     @State private var previewedAttachment: Attachment?
+    @State private var downloadInProgress = false
+    @State private var allAttachmentsURL: AllAttachmentsURL?
+
     @EnvironmentObject var mailboxManager: MailboxManager
     @ObservedRealmObject var message: Message
 
@@ -71,11 +81,18 @@ struct AttachmentsView: View {
                 .textStyle(.bodySmallSecondary)
 
                 MailButton(label: MailResourcesStrings.Localizable.buttonDownloadAll) {
-                    // TODO: Download all attachments
-                    matomo.track(eventWithCategory: .message, name: "downloadAll")
-                    showWorkInProgressSnackBar()
+                    Task {
+                        await tryOrDisplayError {
+                            matomo.track(eventWithCategory: .message, name: "downloadAll")
+                            downloadInProgress = true
+                            let attachmentURL = try await mailboxManager.apiFetcher.downloadAttachments(message: message)
+                            allAttachmentsURL = AllAttachmentsURL(url: attachmentURL)
+                            downloadInProgress = false
+                        }
+                    }
                 }
                 .mailButtonStyle(.smallLink)
+                .mailButtonLoading(downloadInProgress)
 
                 Spacer()
             }
@@ -83,6 +100,10 @@ struct AttachmentsView: View {
         }
         .sheet(item: $previewedAttachment) { previewedAttachment in
             AttachmentPreview(attachment: previewedAttachment)
+        }
+        .sheet(item: $allAttachmentsURL) { allAttachmentsURL in
+            DocumentPicker(pickerType: .exportContent([allAttachmentsURL.url]))
+                .ignoresSafeArea()
         }
     }
 }

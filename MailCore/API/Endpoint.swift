@@ -183,6 +183,10 @@ public extension Endpoint {
         return .mailbox(uuid: uuid).appending(path: "/message/unstar")
     }
 
+    static func downloadAttachments(messageResource: String) -> Endpoint {
+        return .resource(messageResource).appending(path: "/attachmentsArchive")
+    }
+
     static func blockSender(messageResource: String) -> Endpoint {
         return .resource(messageResource).appending(path: "/blacklist")
     }

@@ -42,14 +42,14 @@ public class MailApiFetcher: ApiFetcher {
     ) async throws -> (data: T, responseAt: Int?) {
         do {
             return try await super.perform(request: request)
-        } catch InfomaniakError.apiError(let apiError) {
+        } catch let InfomaniakError.apiError(apiError) {
             throw MailApiError.mailApiErrorWithFallback(apiErrorCode: apiError.code)
-        } catch InfomaniakError.serverError(statusCode: let statusCode) {
+        } catch let InfomaniakError.serverError(statusCode: statusCode) {
             throw MailServerError(httpStatus: statusCode)
         } catch {
             if let afError = error.asAFError {
-                if case .responseSerializationFailed(let reason) = afError,
-                   case .decodingFailed(let error) = reason {
+                if case let .responseSerializationFailed(reason) = afError,
+                   case let .decodingFailed(error) = reason {
                     var rawJson = "No data"
                     if let data = request.data,
                        let stringData = String(data: data, encoding: .utf8) {
@@ -291,6 +291,18 @@ public class MailApiFetcher: ApiFetcher {
         try await perform(request: authenticatedRequest(.unstar(uuid: mailbox.uuid),
                                                         method: .post,
                                                         parameters: ["uids": messages.map(\.uid)])).data
+    }
+
+    public func downloadAttachments(message: Message) async throws -> URL {
+        let destination = DownloadRequest.suggestedDownloadDestination(options: [
+            .createIntermediateDirectories,
+            .removePreviousFile
+        ])
+        let download = authenticatedSession.download(
+            Endpoint.downloadAttachments(messageResource: message.resource).url,
+            to: destination
+        )
+        return try await download.serializingDownloadedFileURL().value
     }
 
     public func blockSender(message: Message) async throws -> Bool {
