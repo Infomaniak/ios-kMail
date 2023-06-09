@@ -113,9 +113,9 @@ struct MailButton: View {
                     }
                 }
                 .opacity(loading ? 0 : 1)
-                if loading {
-                    LoadingButtonProgressView(style: style)
-                }
+
+                LoadingButtonProgressView(style: style)
+                    .opacity(loading ? 1 : 0)
             }
             .frame(maxWidth: fullWidth ? UIConstants.componentsMaxWidth : nil)
         }
