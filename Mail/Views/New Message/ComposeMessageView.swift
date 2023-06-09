@@ -50,7 +50,7 @@ enum ComposeViewFieldType: Hashable {
     }
 }
 
-class NewMessageAlert: SheetState<NewMessageAlert.State> {
+final class NewMessageAlert: SheetState<NewMessageAlert.State> {
     enum State {
         case link(handler: (String) -> Void)
         case emptySubject(handler: () -> Void)
@@ -101,6 +101,10 @@ struct ComposeMessageView: View {
 
     private var shouldDisplayAutocompletion: Bool {
         return (!autocompletion.isEmpty || !unknownRecipientAutocompletion.isEmpty) && focusedField != nil
+    }
+
+    private var isRemoteContentBlocked: Bool {
+        return UserDefaults.shared.displayExternalContent == .askMe && messageReply?.message.localSafeDisplay == false
     }
 
     private init(mailboxManager: MailboxManager, draft: Draft, messageReply: MessageReply? = nil) {
@@ -161,7 +165,8 @@ struct ComposeMessageView: View {
                                        isShowingCamera: $isShowingCamera,
                                        isShowingFileSelection: $isShowingFileSelection,
                                        isShowingPhotoLibrary: $isShowingPhotoLibrary,
-                                       becomeFirstResponder: $editorFocus)
+                                       becomeFirstResponder: $editorFocus,
+                                       blockRemoteContent: isRemoteContentBlocked)
                             .ignoresSafeArea(.all, edges: .bottom)
                             .frame(height: editor.height + 20)
                             .padding([.vertical], 10)
@@ -337,7 +342,7 @@ struct ComposeMessageView: View {
     private func prepareReplyForwardBodyAndAttachments() async {
         guard let messageReply else { return }
 
-        let prepareTask = Task.detached() {
+        let prepareTask = Task.detached {
             try await prepareBody(message: messageReply.message, replyMode: messageReply.replyMode)
             try await prepareAttachments(message: messageReply.message, replyMode: messageReply.replyMode)
         }

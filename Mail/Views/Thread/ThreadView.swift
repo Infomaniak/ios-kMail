@@ -53,10 +53,10 @@ struct ThreadView: View {
     var body: some View {
         ScrollView {
             VStack(spacing: 0) {
-                GeometryReader { geometry in
+                GeometryReader { proxy in
                     Color.clear.preference(
                         key: ScrollOffsetPreferenceKey.self,
-                        value: geometry.frame(in: .named("scrollView")).origin
+                        value: proxy.frame(in: .named("scrollView")).origin
                     )
                 }
                 .frame(width: 0, height: 0)
@@ -100,32 +100,33 @@ struct ThreadView: View {
                         .foregroundColor(thread.flagged ? MailResourcesAsset.yellowColor.swiftUIColor : .accentColor)
                 }
             }
-            ToolbarItemGroup(placement: .bottomBar) {
-                ForEach(toolbarActions) { action in
-                    if action == .reply {
-                        ToolbarButton(text: action.title, icon: action.icon) {
-                            didTap(action: action)
-                        }
-                        .adaptivePanel(item: $replyOrReplyAllMessage) { message in
-                            ReplyActionsView(
-                                mailboxManager: mailboxManager,
-                                message: message,
-                                messageReply: $navigationStore.messageReply
-                            )
-                        }
-                    } else {
-                        ToolbarButton(text: action.title, icon: action.icon) {
-                            didTap(action: action)
-                        }
-                        .disabled(action == .archive && thread.folder?.role == .archive)
+        }
+        .bottomBar {
+            ForEach(toolbarActions) { action in
+                if action == .reply {
+                    ToolbarButton(text: action.title, icon: action.icon) {
+                        didTap(action: action)
                     }
-                    Spacer()
+                    .adaptivePanel(item: $replyOrReplyAllMessage) { message in
+                        ReplyActionsView(
+                            mailboxManager: mailboxManager,
+                            message: message,
+                            messageReply: $navigationStore.messageReply
+                        )
+                    }
+                } else {
+                    ToolbarButton(text: action.title, icon: action.icon) {
+                        didTap(action: action)
+                    }
+                    .disabled(action == .archive && thread.folder?.role == .archive)
                 }
-                ActionsPanelButton(threads: [thread]) {
-                    ToolbarButtonLabel(text: MailResourcesStrings.Localizable.buttonMore,
-                                       icon: MailResourcesAsset.plusActions.swiftUIImage)
-                }
+                Spacer()
             }
+            ActionsPanelButton(threads: [thread]) {
+                ToolbarButtonLabel(text: MailResourcesStrings.Localizable.buttonMore,
+                                   icon: MailResourcesAsset.plusActions.swiftUIImage)
+            }
+            .frame(maxWidth: .infinity)
         }
         .onChange(of: thread.messages) { newMessagesList in
             if newMessagesList.isEmpty || thread.messageInFolderCount == 0 {

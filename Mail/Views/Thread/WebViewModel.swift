@@ -30,11 +30,20 @@ final class WebViewModel: NSObject, ObservableObject {
     @Published var contentLoading = true
 
     let webView: WKWebView
+    let contentBlocker: ContentBlocker
 
     private let style: String = MessageWebViewUtils.generateCSS(for: .message)
 
+    enum LoadResult: Equatable {
+        case remoteContentBlocked
+        case remoteContentAuthorized
+        case noRemoteContent
+        case failure
+    }
+
     override init() {
         webView = WKWebView()
+        contentBlocker = ContentBlocker(webView: webView)
 
         super.init()
 
@@ -42,24 +51,30 @@ final class WebViewModel: NSObject, ObservableObject {
         loadScripts(configuration: webView.configuration)
     }
 
-    func loadHTMLString(value: String?) async {
-        let task = Task.detached {
-            guard let rawHtml = value else { return }
+    func loadHTMLString(value: String?, blockRemoteContent: Bool) async -> LoadResult {
+        guard let rawHtml = value else { return .failure }
 
-            do {
-                guard let safeDocument = MessageWebViewUtils.cleanHtmlContent(rawHtml: rawHtml) else { return }
+        do {
+            guard let safeDocument = MessageWebViewUtils.cleanHtmlContent(rawHtml: rawHtml) else { return .failure }
 
-                try self.updateHeadContent(of: safeDocument)
-                try self.wrapBody(document: safeDocument, inID: Constants.divWrapperId)
+            try updateHeadContent(of: safeDocument)
+            try wrapBody(document: safeDocument, inID: Constants.divWrapperId)
 
-                let finalHtml = try safeDocument.outerHtml()
-                await self.webView.loadHTMLString(finalHtml, baseURL: nil)
-            } catch {
-                DDLogError("An error occurred while parsing body \(error)")
+            let finalHtml = try safeDocument.outerHtml()
+
+            try await contentBlocker.setRemoteContentBlocked(blockRemoteContent)
+            let hasRemoteContent = try contentBlocker.documentHasRemoteContent(safeDocument)
+            await webView.loadHTMLString(finalHtml, baseURL: nil)
+
+            if hasRemoteContent {
+                return blockRemoteContent ? .remoteContentBlocked : .remoteContentAuthorized
+            } else {
+                return .noRemoteContent
             }
+        } catch {
+            DDLogError("An error occurred while parsing body \(error)")
+            return .failure
         }
-
-        await task.finish()
     }
 
     private func setUpWebViewConfiguration() {

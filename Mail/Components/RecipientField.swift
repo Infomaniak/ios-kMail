@@ -29,7 +29,7 @@ struct RecipientField: View {
     @Binding var recipients: RealmSwift.List<Recipient>
     @Binding var autocompletion: [Recipient]
     @Binding var unknownRecipientAutocompletion: String
-    @Binding var addRecipientHandler: ((Recipient) -> Void)?
+    @MainActor @Binding var addRecipientHandler: ((Recipient) -> Void)?
 
     @FocusState var focusedField: ComposeViewFieldType?
 
@@ -37,6 +37,11 @@ struct RecipientField: View {
 
     @State private var currentText = ""
     @State private var keyboardHeight: CGFloat = 0
+
+    /// A trimmed view on `currentText`
+    private var trimmedInputText: String {
+        currentText.trimmingCharacters(in: .whitespacesAndNewlines)
+    }
 
     var body: some View {
         VStack {
@@ -71,16 +76,37 @@ struct RecipientField: View {
     }
 
     @MainActor private func submitTextField() {
+        // use first autocompletion result or try to validate current input
         guard let recipient = autocompletion.first else {
+            let guessRecipient = Recipient(email: trimmedInputText, name: "")
+            add(recipient: guessRecipient)
+            return
+        }
+
+        add(recipient: recipient)
+    }
+
+    @MainActor private func add(recipient: Recipient) {
+        @InjectService var matomo: MatomoUtils
+        matomo.track(eventWithCategory: .newMessage, action: .input, name: "addNewRecipient")
+
+        if Constants.isEmailAddress(recipient.email) {
+            withAnimation {
+                $recipients.append(recipient)
+            }
+            currentText = ""
+        } else {
             IKSnackBar.showSnackBar(
                 message: MailResourcesStrings.Localizable.addUnknownRecipientInvalidEmail,
                 anchor: keyboardHeight
             )
-            return
         }
-        add(recipient: recipient)
-        @InjectService var matomo: MatomoUtils
-        matomo.track(eventWithCategory: .newMessage, action: .input, name: "addNewRecipient")
+    }
+
+    @MainActor private func remove(recipientAt: Int) {
+        withAnimation {
+            $recipients.remove(at: recipientAt)
+        }
     }
 
     private func handleBackspaceTextField(isTextEmpty: Bool) {
@@ -90,7 +116,7 @@ struct RecipientField: View {
     }
 
     private func updateAutocompletion() {
-        let trimmedCurrentText = currentText.trimmingCharacters(in: .whitespacesAndNewlines)
+        let trimmedCurrentText = trimmedInputText
 
         let contactManager = AccountManager.instance.currentContactManager
         let autocompleteContacts = contactManager?.contacts(matching: trimmedCurrentText) ?? []
@@ -108,28 +134,8 @@ struct RecipientField: View {
         }
     }
 
-    @MainActor private func add(recipient: Recipient) {
-        if Constants.isEmailAddress(recipient.email) {
-            withAnimation {
-                $recipients.append(recipient)
-            }
-            currentText = ""
-        } else {
-            IKSnackBar.showSnackBar(
-                message: MailResourcesStrings.Localizable.addUnknownRecipientInvalidEmail,
-                anchor: keyboardHeight
-            )
-        }
-    }
-
-    private func remove(recipientAt: Int) {
-        withAnimation {
-            $recipients.remove(at: recipientAt)
-        }
-    }
-
     private func switchFocus() {
-        guard case let .chip(hash, recipient) = focusedField else { return }
+        guard case .chip(let hash, let recipient) = focusedField else { return }
 
         if recipient == recipients.last {
             focusedField = type

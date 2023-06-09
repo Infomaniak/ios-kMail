@@ -70,7 +70,8 @@ public extension Endpoint {
     static var contacts: Endpoint {
         return .base.appending(
             path: "/pim/contact/all",
-            queryItems: [URLQueryItem(name: "with", value: "emails,details,others,contacted_times")]
+            queryItems: [URLQueryItem(name: "with", value: "emails,details,others,contacted_times"),
+                         URLQueryItem(name: "filters", value: "has_email")]
         )
     }
 

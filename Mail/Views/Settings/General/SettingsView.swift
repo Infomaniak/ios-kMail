@@ -26,6 +26,7 @@ struct SettingsView: View {
     @AppStorage(UserDefaults.shared.key(.threadDensity)) private var density = DefaultPreferences.threadDensity
     @AppStorage(UserDefaults.shared.key(.theme)) private var theme = DefaultPreferences.theme
     @AppStorage(UserDefaults.shared.key(.accentColor)) private var accentColor = DefaultPreferences.accentColor
+    @AppStorage(UserDefaults.shared.key(.externalContent)) private var externalContent = DefaultPreferences.externalContent
 
     var body: some View {
         ScrollView {
@@ -108,6 +109,20 @@ struct SettingsView: View {
                 // Swipe actions
                 SettingsSubMenuCell(title: MailResourcesStrings.Localizable.settingsSwipeActionsTitle) {
                     SettingsSwipeActionsView()
+                }
+
+                // External content
+                SettingsSubMenuCell(
+                    title: MailResourcesStrings.Localizable.settingsExternalContentTitle,
+                    subtitle: externalContent.title
+                ) {
+                    SettingsOptionView(
+                        title: MailResourcesStrings.Localizable.settingsExternalContentTitle,
+                        subtitle: MailResourcesStrings.Localizable.settingsSelectDisplayModeDescription,
+                        keyPath: \.displayExternalContent,
+                        matomoCategory: .settingsDisplayExternalContent,
+                        matomoName: \.rawValue
+                    )
                 }
             }
             .frame(maxWidth: .infinity, alignment: .leading)

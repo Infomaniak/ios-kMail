@@ -63,6 +63,7 @@ public extension MatomoUtils.EventCategory {
     static let settingsTheme = MatomoUtils.EventCategory(displayName: "settingsTheme")
     static let settingsSend = MatomoUtils.EventCategory(displayName: "settingsSend")
     static let settingsSwipeActions = MatomoUtils.EventCategory(displayName: "settingsSwipeActions")
+    static let settingsDisplayExternalContent = MatomoUtils.EventCategory(displayName: "settingsDisplayExternalContent")
 }
 
 // MARK: - Helpers
