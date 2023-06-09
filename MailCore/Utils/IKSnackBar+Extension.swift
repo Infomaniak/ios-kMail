@@ -43,7 +43,7 @@ public extension SnackBarStyle {
 public class SnackBarAvoider {
     public var snackBarInset: CGFloat = 0
 
-    public init() {}
+    public init() { /* Needed to init */ }
 
     public func addAvoider(inset: CGFloat) {
         if inset != snackBarInset {
