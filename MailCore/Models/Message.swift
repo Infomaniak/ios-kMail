@@ -143,7 +143,7 @@ public class Message: Object, Decodable, Identifiable {
     @Persisted public var scheduled: Bool
     @Persisted public var forwarded: Bool
     @Persisted public var flagged: Bool
-    @Persisted public var safeDisplay: Bool?
+    @Persisted private var safeDisplay: Bool?
     @Persisted public var hasUnsubscribeLink: Bool?
     @Persisted(originProperty: "messages") var threads: LinkingObjects<Thread>
     @Persisted(originProperty: "messages") private var folders: LinkingObjects<Folder>
@@ -152,6 +152,7 @@ public class Message: Object, Decodable, Identifiable {
     @Persisted public var fullyDownloaded = false
     @Persisted public var fromSearch = false
     @Persisted public var inTrash = false
+    @Persisted public var localSafeDisplay = false
 
     public var shortUid: Int? {
         return Int(Constants.shortUid(from: uid))

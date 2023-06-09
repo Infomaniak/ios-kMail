@@ -104,7 +104,7 @@ struct ComposeMessageView: View {
     }
 
     private var isRemoteContentBlocked: Bool {
-        return UserDefaults.shared.displayExternalContent == .askMe && messageReply?.message.safeDisplay == false
+        return UserDefaults.shared.displayExternalContent == .askMe && messageReply?.message.localSafeDisplay == false
     }
 
     private init(mailboxManager: MailboxManager, draft: Draft, messageReply: MessageReply? = nil) {

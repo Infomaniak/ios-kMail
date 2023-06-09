@@ -47,7 +47,7 @@ struct MessageView: View {
     @ObservedRealmObject var message: Message
 
     private var isRemoteContentBlocked: Bool {
-        return UserDefaults.shared.displayExternalContent == .askMe && message.safeDisplay == false
+        return UserDefaults.shared.displayExternalContent == .askMe && !message.localSafeDisplay
     }
 
     init(message: Message, isMessageExpanded: Bool = false) {
@@ -74,7 +74,7 @@ struct MessageView: View {
                         ) {
                             MailButton(label: MailResourcesStrings.Localizable.alertBlockedImagesDisplayContent) {
                                 withAnimation {
-                                    $message.safeDisplay.wrappedValue = true
+                                    $message.localSafeDisplay.wrappedValue = true
                                 }
                             }
                             .mailButtonStyle(.smallLink)
