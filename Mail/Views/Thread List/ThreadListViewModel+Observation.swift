@@ -105,7 +105,7 @@ extension ThreadListViewModel {
     // MARK: - Observe filtered results
 
     static let containAnyOfUIDs = "uid IN %@"
-    
+
     /// Observe filtered threads, when global observation is disabled.
     func observeFilteredResults() {
         stopObserveFilteredThreads()
@@ -128,7 +128,7 @@ extension ThreadListViewModel {
             }
 
             switch changes {
-            case .initial(_):
+            case .initial:
                 break
             case .update(let all, _, _, let modificationIndexes):
                 refreshInFilterMode(all: all, changes: modificationIndexes)
@@ -146,20 +146,18 @@ extension ThreadListViewModel {
     private func refreshInFilterMode(all: Results<Thread>, changes: [Int]) {
         for index in changes {
             let updatedThread = all[index]
-            let UID = updatedThread.uid
+            let uid = updatedThread.uid
 
             let threadToUpdate: Thread? = sections.reduce(nil as Thread?) { partialResult, section in
-                partialResult ?? section.threads.first(where: { $0.uid == UID })
-            }
-
-            guard let threadToUpdate = threadToUpdate else {
-                return
+                partialResult ?? section.threads.first(where: { $0.uid == uid })
             }
 
             let sectionToUpdate = sections.first { section in
-                (section.threads.first(where: { $0.uid == UID })) != nil
+                (section.threads.first(where: { $0.uid == uid })) != nil
             }
-            guard let sectionToUpdate = sectionToUpdate else {
+
+            guard let threadToUpdate = threadToUpdate,
+                  let sectionToUpdate = sectionToUpdate else {
                 return
             }
 
