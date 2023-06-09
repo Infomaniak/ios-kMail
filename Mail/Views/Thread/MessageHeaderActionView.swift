@@ -29,6 +29,7 @@ struct MessageHeaderActionView<Content: View>: View {
 
     var body: some View {
         VStack(alignment: .leading) {
+            IKDivider()
             VStack(alignment: .leading) {
                 HStack {
                     icon
@@ -44,6 +45,7 @@ struct MessageHeaderActionView<Content: View>: View {
                 }
                 .padding(.leading, iconSize + 8)
             }
+            .padding(.vertical, 4)
             .padding(.horizontal)
             IKDivider()
         }
