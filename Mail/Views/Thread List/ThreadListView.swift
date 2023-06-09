@@ -57,7 +57,7 @@ struct ThreadListView: View {
 
     @Binding private var editedMessageDraft: Draft?
     @Binding private var messageReply: MessageReply?
-
+    
     private var shouldDisplayEmptyView: Bool {
         viewModel.folder.lastUpdate != nil && viewModel.sections.isEmpty && !viewModel.isLoadingPage
     }

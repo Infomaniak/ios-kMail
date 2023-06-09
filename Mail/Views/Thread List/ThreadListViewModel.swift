@@ -128,8 +128,9 @@ final class DateSection: Identifiable, Equatable {
     var scrollViewProxy: ScrollViewProxy?
     var isCompact: Bool
 
-    var testToken: NotificationToken?
-
+    /// Observe a filtered thread
+    var observeFilteredThreadsToken: NotificationToken?
+    /// Observe unread count
     var observationUnreadToken: NotificationToken?
     var observationThreadToken: NotificationToken?
     var observationLastUpdateToken: NotificationToken?
@@ -140,7 +141,6 @@ final class DateSection: Identifiable, Equatable {
     @Published var unreadCount = 0 {
         didSet {
             // Disable filter if we have no unread emails left
-            print("unreadCount :\(unreadCount)")
             if unreadCount == 0 && filterUnreadOn {
                 filterUnreadOn = false
             }
@@ -153,9 +153,9 @@ final class DateSection: Identifiable, Equatable {
                 if filter == .unseen {
                     observeFilteredResults()
                 } else {
-                    stopObserveFiltered()
+                    stopObserveFilteredThreads()
                 }
-                
+
                 observeChanges(animateInitialThreadChanges: true)
 
                 guard let topThread = sections.first?.threads.first?.id else {

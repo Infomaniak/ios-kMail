@@ -1,4 +1,3 @@
-//
 /*
  Infomaniak Mail - iOS App
  Copyright (C) 2022 Infomaniak Network SA
@@ -20,7 +19,6 @@
 import MailCore
 import RealmSwift
 import SwiftUI
-
 
 extension ThreadListViewModel {
     private func threadResults() -> Results<Thread>? {
@@ -105,91 +103,81 @@ extension ThreadListViewModel {
     }
 
     // MARK: - Observe filtered results
+
+    static let containAnyOfUIDs = "uid IN %@"
+    
+    /// Observe filtered threads, when global observation is disabled.
     func observeFilteredResults() {
-        stopObserveFiltered()
-        
-        let allThreadsUIDs = threadResults()?.reduce([String](), { partialResult, thread in
-            return partialResult + [thread.uid]
-        })
-        
-        guard let allThreadsUIDs = allThreadsUIDs else {
-            fatalError("woops")
+        stopObserveFilteredThreads()
+
+        let allThreadsUIDs = threadResults()?.reduce([String]()) { partialResult, thread in
+            partialResult + [thread.uid]
         }
-        
-        let containAnyOf = NSPredicate(format: "uid IN %@", allThreadsUIDs)
-        
-        let realm = self.mailboxManager.getRealm()
+
+        guard let allThreadsUIDs = allThreadsUIDs else {
+            return
+        }
+
+        let containAnyOf = NSPredicate(format: Self.containAnyOfUIDs, allThreadsUIDs)
+        let realm = mailboxManager.getRealm()
         let allThreads = realm.objects(Thread.self).filter(containAnyOf)
-        
-        
-        testToken = allThreads.observe(on: observeQueue) {  [weak self] changes in
+
+        observeFilteredThreadsToken = allThreads.observe(on: observeQueue) { [weak self] changes in
             guard let self = self else {
                 return
             }
 
-            print("change from displayed thread ")
             switch changes {
-            case .initial(let all):
-                print("aa :\(all.count)")
-
+            case .initial(_):
+                break
             case .update(let all, _, _, let modificationIndexes):
-                print("bb :\(all.count), idx:\(modificationIndexes)")
                 refreshInFilterMode(all: all, changes: modificationIndexes)
-                
             case .error:
                 break
             }
         }
-        
     }
-    
-    func stopObserveFiltered() {
-        testToken?.invalidate()
-    }
-    
-    // TODO clean
-    /// Refresh filteredThreads when observation is disabled
-    private func refreshInFilterMode(all: Results<Thread>, changes: [Int]) {
 
+    func stopObserveFilteredThreads() {
+        observeFilteredThreadsToken?.invalidate()
+    }
+
+    /// Update filtered threads on observation change.
+    private func refreshInFilterMode(all: Results<Thread>, changes: [Int]) {
         for index in changes {
-            print("index :\(index) self.filteredThreads.count:\(filteredThreads.count)")
             let updatedThread = all[index]
-            
             let UID = updatedThread.uid
-            
-            let threadToUpdate2: Thread? = self.sections.reduce(nil as Thread?) { partialResult, section in
+
+            let threadToUpdate: Thread? = sections.reduce(nil as Thread?) { partialResult, section in
                 partialResult ?? section.threads.first(where: { $0.uid == UID })
             }
-            
-            guard let threadToUpdate2 = threadToUpdate2 else {
-                fatalError("woops")
+
+            guard let threadToUpdate = threadToUpdate else {
+                return
             }
-            
-            let sectionToUpdate = self.sections.first { section in
-                ((section.threads.first(where: { $0.uid == UID })) != nil) ? true : false
+
+            let sectionToUpdate = sections.first { section in
+                (section.threads.first(where: { $0.uid == UID })) != nil
             }
             guard let sectionToUpdate = sectionToUpdate else {
-                fatalError("woops")
+                return
             }
-            
-            let indexSectionToUpdate = self.sections.firstIndex(of: sectionToUpdate)
-            let threadIndexToUpdate = sectionToUpdate.threads.firstIndex(of: threadToUpdate2)
-            guard let threadIndexToUpdate = threadIndexToUpdate else {
-                fatalError("woops")
+
+            let threadToUpdateIndex = sectionToUpdate.threads.firstIndex(of: threadToUpdate)
+            guard let threadToUpdateIndex = threadToUpdateIndex else {
+                return
             }
-            
-            sectionToUpdate.threads[threadIndexToUpdate] = updatedThread.freeze()
-            
-            
+
+            sectionToUpdate.threads[threadToUpdateIndex] = updatedThread.freeze()
+
             Task {
                 await MainActor.run {
                     objectWillChange.send()
                 }
             }
-            
         }
     }
-        
+
     // MARK: - Observe unread count
 
     /// Observe the unread count to disable filtering when it reaches 0
@@ -209,7 +197,7 @@ extension ThreadListViewModel {
                         self.unreadCount = unreadCount
                     }
                 }
-                
+
             case .error:
                 break
             }
@@ -219,5 +207,4 @@ extension ThreadListViewModel {
     func stopObserveUnread() {
         observationUnreadToken?.invalidate()
     }
-
 }
