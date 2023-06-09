@@ -33,3 +33,5 @@ opt_in_rules:
 excluded:
  - .tuist-bin/*
  - Derived/Sources/*
+ - DerivedData/
+ - Derived/

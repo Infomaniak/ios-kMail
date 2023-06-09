@@ -17,6 +17,7 @@
  */
 
 import Foundation
+import InfomaniakCore
 import InfomaniakCoreUI
 import MailCore
 import MailResources
@@ -25,7 +26,11 @@ import SwiftUI
 
 typealias Thread = MailCore.Thread
 
-class DateSection: Identifiable {
+final class DateSection: Identifiable, Equatable {
+    static func == (lhs: DateSection, rhs: DateSection) -> Bool {
+        lhs.id == rhs.id && lhs.title == rhs.title && lhs.threads == rhs.threads
+    }
+
     enum ReferenceDate {
         case future, today, yesterday, thisWeek, lastWeek, thisMonth, older(Date)
 
@@ -43,7 +48,7 @@ class DateSection: Identifiable {
                 return .init(start: .lastWeek.startOfWeek, end: .lastWeek.endOfWeek)
             case .thisMonth:
                 return .init(start: .now.startOfMonth, end: .now.endOfMonth)
-            case let .older(date):
+            case .older(let date):
                 return .init(start: date.startOfMonth, end: date.endOfMonth)
             }
         }
@@ -62,7 +67,7 @@ class DateSection: Identifiable {
                 return MailResourcesStrings.Localizable.threadListSectionLastWeek
             case .thisMonth:
                 return MailResourcesStrings.Localizable.threadListSectionThisMonth
-            case let .older(date):
+            case .older(let date):
                 let formatStyle = Calendar.current.isDate(date, equalTo: .now, toGranularity: .year)
                     ? Constants.shortDateFormatter
                     : Constants.longDateFormatter
@@ -123,18 +128,41 @@ class DateSection: Identifiable {
     var scrollViewProxy: ScrollViewProxy?
     var isCompact: Bool
 
-    private var observationThreadToken: NotificationToken?
-    private var observationLastUpdateToken: NotificationToken?
-    private let observeQueue = DispatchQueue(label: "com.infomaniak.thread-results", qos: .userInteractive)
+    /// Observe a filtered thread
+    var observeFilteredThreadsToken: NotificationToken?
+    /// Observe unread count
+    var observationUnreadToken: NotificationToken?
+    var observationThreadToken: NotificationToken?
+    var observationLastUpdateToken: NotificationToken?
+    let observeQueue = DispatchQueue(label: "com.infomaniak.thread-results", qos: .userInteractive)
+
+    private let loadNextPageThreshold = 10
+
+    @Published var unreadCount = 0 {
+        didSet {
+            // Disable filter if we have no unread emails left
+            if unreadCount == 0 && filterUnreadOn {
+                filterUnreadOn = false
+            }
+        }
+    }
 
     @Published var filter = Filter.all {
         didSet {
             Task {
+                if filter == .unseen {
+                    observeFilteredResults()
+                } else {
+                    stopObserveFilteredThreads()
+                }
+
                 observeChanges(animateInitialThreadChanges: true)
-                if let topThread = sections.first?.threads.first?.id {
-                    withAnimation {
-                        self.scrollViewProxy?.scrollTo(topThread, anchor: .top)
-                    }
+
+                guard let topThread = sections.first?.threads.first?.id else {
+                    return
+                }
+                withAnimation {
+                    self.scrollViewProxy?.scrollTo(topThread, anchor: .top)
                 }
             }
         }
@@ -149,7 +177,7 @@ class DateSection: Identifiable {
         }
     }
 
-    private let loadNextPageThreshold = 10
+    // MARK: Init
 
     init(
         mailboxManager: MailboxManager,
@@ -161,6 +189,7 @@ class DateSection: Identifiable {
         lastUpdate = folder.lastUpdate
         self.isCompact = isCompact
         observeChanges()
+        observeUnreadCount()
     }
 
     func fetchThreads() async {
@@ -201,65 +230,6 @@ class DateSection: Identifiable {
         }
     }
 
-    func observeChanges(animateInitialThreadChanges: Bool = false) {
-        observationThreadToken?.invalidate()
-        observationLastUpdateToken?.invalidate()
-        guard let folder = folder.thaw() else {
-            sections = []
-            return
-        }
-
-        let threadResults: Results<Thread>
-        if let predicate = filter.predicate {
-            threadResults = folder.threads.filter(predicate + " OR uid == %@", selectedThread?.uid ?? "")
-                .sorted(by: \.date, ascending: false)
-        } else {
-            threadResults = folder.threads.sorted(by: \.date, ascending: false)
-        }
-
-        observationThreadToken = threadResults.observe(on: observeQueue) { [weak self] changes in
-            switch changes {
-            case let .initial(results):
-                let filteredThreads = Array(results.freezeIfNeeded())
-                guard let newSections = self?.sortThreadsIntoSections(threads: filteredThreads) else { return }
-
-                DispatchQueue.main.sync {
-                    self?.filteredThreads = filteredThreads
-                    withAnimation(animateInitialThreadChanges ? .default : nil) {
-                        self?.sections = newSections
-                    }
-                }
-            case let .update(results, _, _, _):
-                let filteredThreads = Array(results.freezeIfNeeded())
-                guard let newSections = self?.sortThreadsIntoSections(threads: filteredThreads) else { return }
-
-                DispatchQueue.main.sync {
-                    self?.nextThreadIfNeeded(from: filteredThreads)
-                    self?.filteredThreads = filteredThreads
-                    if self?.filter != .all && filteredThreads.count == 1
-                        && self?.filter.accepts(thread: filteredThreads[0]) != true {
-                        self?.filter = .all
-                    }
-                    withAnimation {
-                        self?.sections = newSections
-                    }
-                }
-            case .error:
-                break
-            }
-        }
-        observationLastUpdateToken = folder.observe(keyPaths: [\Folder.lastUpdate], on: .main) { [weak self] changes in
-            switch changes {
-            case let .change(folder, _):
-                withAnimation {
-                    self?.lastUpdate = folder.lastUpdate
-                }
-            default:
-                break
-            }
-        }
-    }
-
     func nextThreadIfNeeded(from threads: [Thread]) {
         guard !isCompact,
               !threads.isEmpty,
@@ -269,7 +239,7 @@ class DateSection: Identifiable {
         selectedThread = threads[validIndex]
     }
 
-    private func sortThreadsIntoSections(threads: [Thread]) -> [DateSection]? {
+    func sortThreadsIntoSections(threads: [Thread]) -> [DateSection]? {
         var newSections = [DateSection]()
 
         var currentSection: DateSection?
