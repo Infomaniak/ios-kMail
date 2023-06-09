@@ -63,8 +63,9 @@ struct DocumentPicker: UIViewControllerRepresentable {
         }
 
         func documentPicker(_ controller: UIDocumentPickerViewController, didPickDocumentsAt urls: [URL]) {
-            // TODO: Get completion
-            //parent.completion(urls)
+            if case let .selectContent(_, completion) = parent.pickerType {
+                completion(urls)
+            }
             parent.dismiss()
         }
     }
