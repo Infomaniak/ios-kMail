@@ -20,7 +20,7 @@ import Foundation
 import SwiftSoup
 import WebKit
 
-public class ContentBlockerHelper {
+public class ContentBlocker {
     private let allowedHosts = ["infomaniak.com", "infomaniak.ch", "infomaniak.statslive.info"]
     private let webView: WKWebView
     private let contentBlockRules: String?

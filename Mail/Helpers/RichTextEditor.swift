@@ -173,7 +173,7 @@ class MailEditorView: SQTextEditorView {
         webView.becomeFirstResponder()
     }
 
-    lazy var contentBlocker = ContentBlockerHelper(webView: editorWebView)
+    lazy var contentBlocker = ContentBlocker(webView: editorWebView)
 
     private lazy var editorWebView: WKWebView = {
         let config = WKWebViewConfiguration()

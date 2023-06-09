@@ -30,7 +30,7 @@ final class WebViewModel: NSObject, ObservableObject {
     @Published var contentLoading = true
 
     let webView: WKWebView
-    let contentBlocker: ContentBlockerHelper
+    let contentBlocker: ContentBlocker
 
     private let style: String = MessageWebViewUtils.generateCSS(for: .message)
 
@@ -43,7 +43,7 @@ final class WebViewModel: NSObject, ObservableObject {
 
     override init() {
         webView = WKWebView()
-        contentBlocker = ContentBlockerHelper(webView: webView)
+        contentBlocker = ContentBlocker(webView: webView)
 
         super.init()
 
