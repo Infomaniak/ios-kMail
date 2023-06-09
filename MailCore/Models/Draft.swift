@@ -92,7 +92,7 @@ public class Draft: Object, Codable, Identifiable {
         }
     }
 
-    // Store compressed data to reduce realm size.
+    /// Store compressed data to reduce realm size.
     @Persisted var bodyData: Data?
 
     private enum CodingKeys: String, CodingKey {
