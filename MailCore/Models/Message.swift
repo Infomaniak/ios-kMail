@@ -487,7 +487,7 @@ public final class Body: EmbeddedObject, Codable {
     @Persisted public var type: String?
     @Persisted public var subBody: String?
 
-    // Store compressed data to reduce realm size.
+    /// Store compressed data to reduce realm size.
     @Persisted var valueData: Data?
 }
 
