@@ -25,7 +25,7 @@ import RealmSwift
 import SwiftUI
 
 struct AllAttachmentsURL: Identifiable {
-    let id = UUID()
+    var id: String { url.absoluteString }
     let url: URL
 }
 
