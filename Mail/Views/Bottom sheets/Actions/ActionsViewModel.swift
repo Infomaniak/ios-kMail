@@ -252,8 +252,7 @@ enum ActionsTarget: Equatable, Identifiable {
                 quickActions = [.move, .archive, spam ? .nonSpam : .spam, .delete]
 
                 listActions = [
-                    unread ? .markAsRead : .markAsUnread,
-                    .print
+                    unread ? .markAsRead : .markAsUnread
                 ]
             } else if let thread = threads.first {
                 quickActions = Action.quickActions
@@ -270,8 +269,7 @@ enum ActionsTarget: Equatable, Identifiable {
                     unread ? .markAsRead : .markAsUnread,
                     .move,
                     star ? .unstar : .star,
-                    spamAction,
-                    .print
+                    spamAction
                 ]
 
                 listActions = tempListActions.compactMap { $0 }
@@ -289,7 +287,6 @@ enum ActionsTarget: Equatable, Identifiable {
                 .move,
                 star ? .unstar : .star,
                 .reportJunk,
-                .print,
                 isStaff ? .report : nil
             ]
 
