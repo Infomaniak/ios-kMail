@@ -135,8 +135,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         let matomoUtils = Factory(type: MatomoUtils.self) { _, _ in
             MatomoUtils(siteId: Constants.matomoId, baseURL: URLConstants.matomo.url)
         }
-        let avoider = Factory(type: SnackbarAvoider.self) { _, _ in
-            SnackbarAvoider()
+        let avoider = Factory(type: SnackBarAvoider.self) { _, _ in
+            SnackBarAvoider()
         }
 
         SimpleResolver.sharedResolver.store(factory: networkLoginService)

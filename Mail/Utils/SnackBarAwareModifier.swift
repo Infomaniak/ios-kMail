@@ -20,8 +20,8 @@ import InfomaniakDI
 import MailCore
 import SwiftUI
 
-struct SnackbarAwareModifier: ViewModifier {
-    @InjectService var avoider: SnackbarAvoider
+struct SnackBarAwareModifier: ViewModifier {
+    @InjectService var avoider: SnackBarAvoider
     var inset: CGFloat {
         didSet {
             avoider.addAvoider(inset: inset)
@@ -37,7 +37,7 @@ struct SnackbarAwareModifier: ViewModifier {
                 avoider.addAvoider(inset: inset)
             }
             .onDisappear {
-                if avoider.snackbarInset == inset {
+                if avoider.snackBarInset == inset {
                     avoider.removeAvoider()
                 }
             }

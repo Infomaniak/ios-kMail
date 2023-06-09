@@ -43,7 +43,7 @@ extension View {
 
 struct BottomBarView<Items: View>: View {
     @State private var hasBottomSafeArea = true
-    @State private var snackbarAwareModifier = SnackbarAwareModifier(inset: 0)
+    @State private var snackBarAwareModifier = SnackBarAwareModifier(inset: 0)
 
     @ViewBuilder var items: () -> Items
 
@@ -53,7 +53,7 @@ struct BottomBarView<Items: View>: View {
             items()
             Spacer(minLength: UIConstants.bottomBarHorizontalMinimumSpace)
         }
-        .modifier(snackbarAwareModifier)
+        .modifier(snackBarAwareModifier)
         .padding(.top, UIConstants.bottomBarVerticalPadding)
         .padding(.bottom, hasBottomSafeArea ? UIConstants.bottomBarSmallVerticalPadding : UIConstants.bottomBarVerticalPadding)
         .background(MailResourcesAsset.backgroundTabBarColor.swiftUIColor)
@@ -67,7 +67,7 @@ struct BottomBarView<Items: View>: View {
         }
         .onPreferenceChange(BottomSafeAreaKey.self) { value in
             hasBottomSafeArea = value > 0
-            snackbarAwareModifier.inset = value + 16
+            snackBarAwareModifier.inset = value + 16
         }
     }
 }

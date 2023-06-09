@@ -40,19 +40,19 @@ public extension SnackBarStyle {
     }
 }
 
-public class SnackbarAvoider {
-    public var snackbarInset: CGFloat = 0
+public class SnackBarAvoider {
+    public var snackBarInset: CGFloat = 0
 
     public init() {}
 
     public func addAvoider(inset: CGFloat) {
-        if inset != snackbarInset {
-            snackbarInset = inset
+        if inset != snackBarInset {
+            snackBarInset = inset
         }
     }
 
     public func removeAvoider() {
-        snackbarInset = 0
+        snackBarInset = 0
     }
 }
 
@@ -65,8 +65,8 @@ public extension IKSnackBar {
         action: IKSnackBar.Action? = nil,
         anchor: CGFloat = 0
     ) -> IKSnackBar? {
-        @LazyInjectService var avoider: SnackbarAvoider
-        let snackbar = IKSnackBar.make(message: message, duration: duration, style: .mailStyle(withAnchor: avoider.snackbarInset), elevation: 0)
+        @LazyInjectService var avoider: SnackBarAvoider
+        let snackbar = IKSnackBar.make(message: message, duration: duration, style: .mailStyle(withAnchor: avoider.snackBarInset), elevation: 0)
         if let action = action {
             snackbar?.setAction(action).show()
         } else {
