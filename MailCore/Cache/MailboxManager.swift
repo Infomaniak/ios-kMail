@@ -685,21 +685,8 @@ public class MailboxManager: ObservableObject {
             MailboxInfosManager.instance.updateUnseen(unseenMessages: folder.unreadCount, for: mailbox)
         }
 
-        var remainingOldMessagesToFetch = folder.remainingOldMessagesToFetch
-        while remainingOldMessagesToFetch > 0 {
+        while try await fetchOnePage(folder: folder, direction: .previous) {
             guard !Task.isCancelled else { return }
-
-            if try !(await fetchOnePage(folder: folder, direction: .previous)) {
-                break
-            }
-
-            remainingOldMessagesToFetch -= Constants.pageSize
-            await backgroundRealm.execute { realm in
-                let folder = folder.fresh(using: realm)
-                try? realm.safeWrite {
-                    folder?.remainingOldMessagesToFetch = remainingOldMessagesToFetch
-                }
-            }
         }
     }
 
@@ -730,23 +717,36 @@ public class MailboxManager: ObservableObject {
 
         try await handleMessagesUids(messageUids: messagesUids, folder: folder)
 
-        guard paginationInfo != nil else {
-            return messagesUids.addedShortUids.count > Constants.pageSize
-        }
-
-        if messagesUids.addedShortUids.count < Constants.pageSize || messagesUids.addedShortUids.contains("1") {
-            if direction == .previous {
-                await backgroundRealm.execute { realm in
-                    let freshFolder = folder.fresh(using: realm)
+        switch direction {
+        case .previous:
+            return await backgroundRealm.execute { realm in
+                let freshFolder = folder.fresh(using: realm)
+                if messagesUids.addedShortUids.count < Constants.pageSize || messagesUids.addedShortUids.contains("1") {
                     try? realm.safeWrite {
                         freshFolder?.isHistoryComplete = true
                         freshFolder?.remainingOldMessagesToFetch = 0
                     }
+                    return false
+                } else {
+                    try? realm.safeWrite {
+                        freshFolder?.remainingOldMessagesToFetch -= Constants.pageSize
+                    }
+                    return true
                 }
             }
-            return false
+        case .following:
+            if paginationInfo == nil {
+                await backgroundRealm.execute { realm in
+                    let freshFolder = folder.fresh(using: realm)
+                    try? realm.safeWrite {
+                        freshFolder?.resetHistoryInfo()
+                    }
+                }
+            }
+        default:
+            break
         }
-        return true
+        return messagesUids.addedShortUids.count == Constants.pageSize
     }
 
     private func handleMessagesUids(messageUids: MessagesUids, folder: Folder) async throws {
