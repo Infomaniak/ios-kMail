@@ -17,8 +17,38 @@
  */
 
 import Foundation
+import InfomaniakCore
 import MailResources
 import RealmSwift
+import Sentry
+
+// TODO move to core
+public extension String {
+    /// Max length of a string before we need to truncate it.
+    static let closeToMaxRealmSize = 14_000_000
+
+    /// Truncate a string for compatibility with Realm if needed
+    ///
+    /// The string will be terminated by " [truncated]" if it was
+    var truncatedForRealmIfNeeded: Self {
+        Self.truncatedForRealmIfNeeded(self)
+    }
+    
+    /// Truncate a string for compatibility with Realm if needed
+    ///
+    /// The string will be terminated by " [truncated]" if it was
+    /// - Parameter input: an input string
+    /// - Returns: The output string truncated if needed
+    static func truncatedForRealmIfNeeded(_ input: String) -> String {
+        if input.utf8.count > Self.closeToMaxRealmSize {
+            let index = input.index(input.startIndex, offsetBy: Self.closeToMaxRealmSize)
+            let truncatedValue = String(input[...index]) + " [truncated]"
+            return truncatedValue
+        } else {
+            return input
+        }
+    }
+}
 
 public enum NewMessagesDirection: String {
     case previous
@@ -30,7 +60,7 @@ public struct PaginationInfo {
     let direction: NewMessagesDirection
 }
 
-public class MessageUidsResult: Decodable {
+public final class MessageUidsResult: Decodable {
     public let messageShortUids: [String]
     public let cursor: String
 
@@ -40,11 +70,11 @@ public class MessageUidsResult: Decodable {
     }
 }
 
-public class MessageByUidsResult: Decodable {
+public final class MessageByUidsResult: Decodable {
     public let messages: [Message]
 }
 
-public class MessageDeltaResult: Decodable {
+public final class MessageDeltaResult: Decodable {
     public let deletedShortUids: [String]
     public let addedShortUids: [String]
     public let updated: [MessageFlags]
@@ -111,7 +141,7 @@ public enum MessageDKIM: String, Codable, PersistableEnum {
     case notSigned = "not_signed"
 }
 
-public class Message: Object, Decodable, Identifiable {
+public final class Message: Object, Decodable, Identifiable {
     @Persisted(primaryKey: true) public var uid = ""
     @Persisted public var messageId: String?
     @Persisted public var subject: String?
@@ -287,7 +317,11 @@ public class Message: Object, Decodable, Identifiable {
         cc = try values.decode(List<Recipient>.self, forKey: .cc)
         bcc = try values.decode(List<Recipient>.self, forKey: .bcc)
         replyTo = try values.decode(List<Recipient>.self, forKey: .replyTo)
-        body = try values.decodeIfPresent(Body.self, forKey: .body)
+
+        /// Preprocessing body with a ProxyBody
+        let jsonBody = try values.decodeIfPresent(ProxyBody.self, forKey: .body)
+        body = jsonBody?.realmObject()
+
         if let attachments = try? values.decode(List<Attachment>.self, forKey: .attachments) {
             self.attachments = attachments
         } else {
@@ -411,10 +445,51 @@ public struct BodyResult: Codable {
     let body: Body
 }
 
-public class Body: EmbeddedObject, Codable {
-    @Persisted public var value: String?
+/// Proxy class to preprocess JSON of a Body object
+/// Preprocessing body to remain within Realm limitations
+final class ProxyBody: Codable {
+    public var value: String?
+    public var type: String?
+    public var subBody: String?
+
+    /// Generate a new persisted realm object on the fly
+    public func realmObject() -> Body {
+        
+        // truncate message if needed
+        let truncatedValue = value?.truncatedForRealmIfNeeded
+        
+        let body = Body()
+        body.value = truncatedValue
+        body.type = type
+        body.subBody = subBody
+        return body
+    }
+}
+
+public final class Body: EmbeddedObject, Codable {
+    /// Public facing "value", wrapping `valueData`
+    public var value: String? {
+        get {
+            guard let decompressedString = valueData?.decompressedString() else {
+                return nil
+            }
+
+            return decompressedString
+        } set {
+            guard let data = newValue?.compressed() else {
+                valueData = nil
+                return
+            }
+
+            valueData = data
+        }
+    }
+
     @Persisted public var type: String?
     @Persisted public var subBody: String?
+
+    /// Store compressed data to reduce realm size.
+    @Persisted var valueData: Data?
 }
 
 public struct MessageActionResult: Codable {

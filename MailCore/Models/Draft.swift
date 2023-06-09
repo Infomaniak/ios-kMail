@@ -52,7 +52,7 @@ public struct DraftResponse: Codable {
     public var uid: String
 }
 
-public class Draft: Object, Decodable, Identifiable, Encodable {
+public class Draft: Object, Codable, Identifiable {
     @Persisted(primaryKey: true) public var localUUID = UUID().uuidString
     @Persisted public var remoteUUID = ""
     @Persisted public var date = Date()
@@ -63,7 +63,6 @@ public class Draft: Object, Decodable, Identifiable, Encodable {
     @Persisted public var references: String?
     @Persisted public var inReplyTo: String?
     @Persisted public var mimeType: String = UTType.html.preferredMIMEType!
-    @Persisted public var body = ""
     @Persisted public var to: List<Recipient>
     @Persisted public var cc: List<Recipient>
     @Persisted public var bcc: List<Recipient>
@@ -74,6 +73,27 @@ public class Draft: Object, Decodable, Identifiable, Encodable {
     @Persisted public var attachments: List<Attachment>
     @Persisted public var action: SaveDraftOption?
     @Persisted public var delay: Int?
+
+    /// Public facing "body", wrapping `bodyData`
+    public var body: String {
+        get {
+            guard let decompressedString = bodyData?.decompressedString() else {
+                return ""
+            }
+
+            return decompressedString
+        } set {
+            guard let data = newValue.compressed() else {
+                bodyData = nil
+                return
+            }
+
+            bodyData = data
+        }
+    }
+
+    /// Store compressed data to reduce realm size.
+    @Persisted var bodyData: Data?
 
     private enum CodingKeys: String, CodingKey {
         case remoteUUID = "uuid"
@@ -101,6 +121,13 @@ public class Draft: Object, Decodable, Identifiable, Encodable {
 
     public required init(from decoder: Decoder) throws {
         let values = try decoder.container(keyedBy: CodingKeys.self)
+
+        var buffer = try values.decode(String.self, forKey: .body)
+        buffer = String.truncatedForRealmIfNeeded(buffer)
+        if let compressedData = buffer.compressed() {
+            bodyData = compressedData
+        }
+
         remoteUUID = try values.decode(String.self, forKey: .remoteUUID)
         date = try values.decode(Date.self, forKey: .date)
         identityId = try values.decodeIfPresent(String.self, forKey: .identityId)
@@ -109,7 +136,6 @@ public class Draft: Object, Decodable, Identifiable, Encodable {
         references = try values.decodeIfPresent(String.self, forKey: .references)
         inReplyTo = try values.decodeIfPresent(String.self, forKey: .inReplyTo)
         mimeType = try values.decode(String.self, forKey: .mimeType)
-        body = try values.decode(String.self, forKey: .body)
         to = try values.decode(List<Recipient>.self, forKey: .to)
         cc = try values.decode(List<Recipient>.self, forKey: .cc)
         bcc = try values.decode(List<Recipient>.self, forKey: .bcc)
