@@ -228,14 +228,16 @@ struct ComposeMessageView: View {
             .ignoresSafeArea()
         }
         .sheet(isPresented: $isShowingFileSelection) {
-            DocumentPicker { urls in
+            DocumentPicker(pickerType: .selectContent([.item]) { urls in
                 attachmentsManager.importAttachments(attachments: urls)
-            }
+            })
+            .ignoresSafeArea()
         }
         .sheet(isPresented: $isShowingPhotoLibrary) {
             ImagePicker { results in
                 attachmentsManager.importAttachments(attachments: results)
             }
+            .ignoresSafeArea()
         }
         .customAlert(isPresented: $alert.isShowing) {
             switch alert.state {

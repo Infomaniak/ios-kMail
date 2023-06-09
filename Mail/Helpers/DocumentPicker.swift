@@ -21,17 +21,29 @@ import UIKit
 import UniformTypeIdentifiers
 
 struct DocumentPicker: UIViewControllerRepresentable {
-    var completion: ([URL]) -> Void
+    enum PickerType {
+        case selectContent([UTType], ([URL]) -> Void)
+        case exportContent([URL])
+    }
+
     @Environment(\.dismiss) private var dismiss
+
+    let pickerType: PickerType
 
     func makeCoordinator() -> DocumentPicker.Coordinator {
         return DocumentPicker.Coordinator(parent: self)
     }
 
-    func makeUIViewController(context: UIViewControllerRepresentableContext<DocumentPicker>) -> UIDocumentPickerViewController {
-        let supportedTypes: [UTType] = [UTType.item]
-        let picker = UIDocumentPickerViewController(forOpeningContentTypes: supportedTypes, asCopy: true)
-        picker.allowsMultipleSelection = true
+    func makeUIViewController(context: Context) -> UIDocumentPickerViewController {
+        let picker: UIDocumentPickerViewController
+        switch pickerType {
+        case let .selectContent(types, _):
+            picker = UIDocumentPickerViewController(forOpeningContentTypes: types, asCopy: true)
+            picker.allowsMultipleSelection = true
+        case let .exportContent(urls):
+            picker = UIDocumentPickerViewController(forExporting: urls, asCopy: true)
+        }
+
         picker.delegate = context.coordinator
         return picker
     }
@@ -51,7 +63,9 @@ struct DocumentPicker: UIViewControllerRepresentable {
         }
 
         func documentPicker(_ controller: UIDocumentPickerViewController, didPickDocumentsAt urls: [URL]) {
-            parent.completion(urls)
+            if case let .selectContent(_, completion) = parent.pickerType {
+                completion(urls)
+            }
             parent.dismiss()
         }
     }
