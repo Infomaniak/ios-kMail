@@ -163,12 +163,12 @@ extension ThreadListViewModel {
 
             guard let threadToUpdate = threadToUpdate,
                   let sectionToUpdate = sectionToUpdate else {
-                return
+                continue
             }
 
             let threadToUpdateIndex = sectionToUpdate.threads.firstIndex(of: threadToUpdate)
             guard let threadToUpdateIndex = threadToUpdateIndex else {
-                return
+                continue
             }
 
             sectionToUpdate.threads[threadToUpdateIndex] = updatedThread.freeze()

@@ -43,7 +43,15 @@ enum SearchState {
     @Published var searchHistory: SearchHistory
 
     public let filters: [SearchFilter] = [.read, .unread, .favorite, .attachment, .folder]
-    @Published var selectedFilters: [SearchFilter] = []
+    @Published var selectedFilters: [SearchFilter] = [] {
+        willSet {
+            // cancel current running tasks
+            self.stopObserveChanges()
+            self.currentSearchTask?.cancel()
+            self.threads = []
+        }
+    }
+    
     var searchValueType: SearchFieldValueType = .threadsAndContacts
     @Published var searchValue = ""
     var searchState: SearchState {
@@ -80,6 +88,8 @@ enum SearchState {
 
     @Published var threads: [Thread] = []
     @Published var contacts: [Recipient] = []
+    
+    // TODO: isLoading should be computed (if running loading task)
     @Published var isLoading = false
 
     @LazyInjectService var matomo: MatomoUtils

@@ -35,7 +35,7 @@ extension SearchViewModel {
             }
 
             switch changes {
-            case .initial(let results), .update(let results, _, _, _):
+            case .initial(let results):
                 let results = Array(results.freezeIfNeeded())
                 Task {
                     await MainActor.run {
@@ -45,6 +45,11 @@ extension SearchViewModel {
                         self.isLoading = false
                     }
                 }
+
+            case .update(let results, _, _, let modificationIndexes):
+                let results = Array(results.freezeIfNeeded())
+                refreshInUnreadFilterMode(all: results, changes: modificationIndexes)
+
             case .error:
                 break
             }
@@ -53,5 +58,28 @@ extension SearchViewModel {
 
     func stopObserveChanges() {
         observationSearchThreadToken?.invalidate()
+    }
+
+    /// Update filtered threads on observation change.
+    private func refreshInUnreadFilterMode(all: [Thread], changes: [Int]) {
+        Task.detached {
+            for index in changes {
+                guard let updatedThread = all[safe: index] else {
+                    continue
+                }
+
+                // Swap the updated thread at index
+                await MainActor.run {
+                    withAnimation {
+                        self.threads[index] = updatedThread
+                    }
+                }
+            }
+
+            // finish with changing the loading state
+            await MainActor.run {
+                self.isLoading = false
+            }
+        }
     }
 }
