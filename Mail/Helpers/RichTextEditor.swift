@@ -34,11 +34,14 @@ struct RichTextEditor: UIViewRepresentable {
     @Binding var isShowingFileSelection: Bool
     @Binding var isShowingPhotoLibrary: Bool
     @Binding var becomeFirstResponder: Bool
+    let blockRemoteContent: Bool
     var alert: ObservedObject<NewMessageAlert>.Wrapper
 
     init(model: Binding<RichTextEditorModel>, body: Binding<String>,
          alert: ObservedObject<NewMessageAlert>.Wrapper,
-         isShowingCamera: Binding<Bool>, isShowingFileSelection: Binding<Bool>, isShowingPhotoLibrary: Binding<Bool>, becomeFirstResponder: Binding<Bool>) {
+         isShowingCamera: Binding<Bool>, isShowingFileSelection: Binding<Bool>, isShowingPhotoLibrary: Binding<Bool>,
+         becomeFirstResponder: Binding<Bool>,
+         blockRemoteContent: Bool) {
         _model = model
         _body = body
         self.alert = alert
@@ -46,6 +49,7 @@ struct RichTextEditor: UIViewRepresentable {
         _isShowingFileSelection = isShowingFileSelection
         _isShowingPhotoLibrary = isShowingPhotoLibrary
         _becomeFirstResponder = becomeFirstResponder
+        self.blockRemoteContent = blockRemoteContent
     }
 
     class Coordinator: SQTextEditorDelegate {
@@ -55,15 +59,24 @@ struct RichTextEditor: UIViewRepresentable {
             self.parent = parent // tell the coordinator what its parent is, so it can modify values there directly
         }
 
+        @MainActor
+        private func insertBody(editor: SQTextEditorView) async throws {
+            guard let editor = (editor as? MailEditorView) else { throw MailError.unknownError }
+            try await editor.contentBlocker.setRemoteContentBlocked(parent.blockRemoteContent)
+            try await editor.insertHtml(parent.body)
+            editor.moveCursorToStart()
+            editor.webView.scrollView.isScrollEnabled = false
+            parent.model.height = CGFloat(editor.contentHeight)
+        }
+
         func editorDidLoad(_ editor: SQTextEditorView) {
-            editor.insertHTML(parent.body) { error in
-                if let error = error {
+            Task {
+                do {
+                    try await insertBody(editor: editor)
+                } catch {
                     print("Failed to load editor: \(error)")
                 }
             }
-            (editor as? MailEditorView)?.moveCursorToStart()
-            editor.webView.scrollView.isScrollEnabled = false
-            parent.model.height = CGFloat(editor.contentHeight)
         }
 
         func editor(_ editor: SQTextEditorView, contentHeightDidChange height: Int) {
@@ -119,6 +132,20 @@ struct RichTextEditor: UIViewRepresentable {
     }
 }
 
+extension SQTextEditorView {
+    func insertHtml(_ html: String) async throws {
+        return try await withCheckedThrowingContinuation { continuation in
+            insertHTML(html) { error in
+                if let error {
+                    continuation.resume(throwing: error)
+                } else {
+                    continuation.resume()
+                }
+            }
+        }
+    }
+}
+
 struct RichTextEditorModel {
     var cursorPosition: CGFloat = 0
     var height: CGFloat = 0
@@ -145,6 +172,8 @@ class MailEditorView: SQTextEditorView {
     public func setBecomeFirstResponder() {
         webView.becomeFirstResponder()
     }
+
+    lazy var contentBlocker = ContentBlocker(webView: editorWebView)
 
     private lazy var editorWebView: WKWebView = {
         let config = WKWebViewConfiguration()
