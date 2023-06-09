@@ -149,11 +149,11 @@ extension ThreadListViewModel {
             let uid = updatedThread.uid
 
             let threadToUpdate: Thread? = sections.reduce(nil as Thread?) { partialResult, section in
-                partialResult ?? section.threads.first(where: { $0.uid == uid })
+                partialResult ?? section.threads.first { $0.uid == uid }
             }
 
             let sectionToUpdate = sections.first { section in
-                (section.threads.first(where: { $0.uid == uid })) != nil
+                section.threads.contains { $0.uid == uid }
             }
 
             guard let threadToUpdate = threadToUpdate,
