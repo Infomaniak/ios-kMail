@@ -181,6 +181,7 @@ struct ComposeMessageView: View {
                 }
             }
             .introspectScrollView { scrollView in
+                guard self.scrollView != scrollView else { return }
                 self.scrollView = scrollView
                 scrollView.keyboardDismissMode = .interactive
             }
