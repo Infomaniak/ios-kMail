@@ -39,29 +39,27 @@ struct SettingsNotificationsView: View {
         ScrollView {
             VStack(alignment: .leading, spacing: 24) {
                 if showWarning {
-                    HStack {
-                        VStack(spacing: 8) {
-                            Text(MailResourcesStrings.Localizable.warningNotificationsDisabledDescription)
-                                .textStyle(.bodySecondary)
-                            MailButton(label: MailResourcesStrings.Localizable.warningNotificationsDisabledButton) {
-                                guard let settingsUrl = URL(string: UIApplication.openSettingsURLString) else {
-                                    return
-                                }
-
-                                if UIApplication.shared.canOpenURL(settingsUrl) {
-                                    UIApplication.shared.open(settingsUrl)
-                                }
+                    VStack(alignment: .leading, spacing: 8) {
+                        Text(MailResourcesStrings.Localizable.warningNotificationsDisabledDescription)
+                            .textStyle(.bodySecondary)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                        MailButton(label: MailResourcesStrings.Localizable.warningNotificationsDisabledButton) {
+                            guard let settingsUrl = URL(string: UIApplication.openSettingsURLString) else {
+                                return
                             }
-                            .mailButtonStyle(.link)
+
+                            if UIApplication.shared.canOpenURL(settingsUrl) {
+                                UIApplication.shared.open(settingsUrl)
+                            }
                         }
-                        .padding(16)
-                        .frame(maxWidth: .infinity)
-                        .background(
-                            RoundedRectangle(cornerRadius: 8)
-                                .fill(MailResourcesAsset.backgroundBlueNavBarColor.swiftUIColor)
-                        )
+                        .mailButtonStyle(.link)
                     }
+                    .padding(16)
                     .frame(maxWidth: .infinity)
+                    .background(
+                        RoundedRectangle(cornerRadius: 8)
+                            .fill(MailResourcesAsset.backgroundBlueNavBarColor.swiftUIColor)
+                    )
                     .padding(.vertical, 16)
                 }
 

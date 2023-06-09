@@ -20,7 +20,7 @@ import MailResources
 import SwiftUI
 
 struct SettingsNotificationsInstructionsView: View {
-    @Environment(\.dismiss) var dismiss
+    @Environment(\.dismiss) private var dismiss
 
     var body: some View {
         VStack(alignment: .leading, spacing: 24) {
