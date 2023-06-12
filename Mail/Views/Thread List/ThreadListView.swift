@@ -57,7 +57,7 @@ struct ThreadListView: View {
 
     @Binding private var editedMessageDraft: Draft?
     @Binding private var messageReply: MessageReply?
-    
+
     private var shouldDisplayEmptyView: Bool {
         viewModel.folder.lastUpdate != nil && viewModel.sections.isEmpty && !viewModel.isLoadingPage
     }
@@ -129,7 +129,6 @@ struct ThreadListView: View {
                                                isSelected: viewModel.selectedThread?.uid == thread.uid,
                                                isMultiSelected: multipleSelectionViewModel.selectedItems
                                                    .contains { $0.id == thread.id })
-                                    .id(thread.id)
                             }
                         } header: {
                             if threadDensity != .compact {
