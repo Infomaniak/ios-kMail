@@ -110,25 +110,24 @@ struct ThreadListSwipeActions: ViewModifier {
     let multipleSelectionViewModel: ThreadListMultipleSelectionViewModel
 
     func body(content: Content) -> some View {
-        if viewModel.folder.role == .draft {
-            content
-                .swipeActions(edge: .trailing) {
-                    edgeActions([.delete])
-                }
-        } else {
-            content
-                .swipeActions(edge: .leading) {
+        content
+            .swipeActions(edge: .leading) {
+                if viewModel.folder.role != .draft {
                     edgeActions([swipeFullLeading, swipeLeading])
                 }
-                .swipeActions(edge: .trailing) {
+            }
+            .swipeActions(edge: .trailing) {
+                if viewModel.folder.role == .draft {
+                    edgeActions([.delete])
+                } else {
                     edgeActions([swipeFullTrailing, swipeTrailing])
                 }
-                .actionsPanel(actionsTarget: $actionsTarget)
-                .sheet(item: $moveAction) { moveAction in
-                    MoveEmailView(moveAction: moveAction)
-                        .sheetViewStyle()
-                }
-        }
+            }
+            //.actionsPanel(actionsTarget: $actionsTarget)
+            .sheet(item: $moveAction) { moveAction in
+                MoveEmailView(moveAction: moveAction)
+                    .sheetViewStyle()
+            }
     }
 
     @MainActor @ViewBuilder
