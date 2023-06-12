@@ -90,6 +90,7 @@ public class DraftManager {
     }
 
     public func send(draft: Draft, mailboxManager: MailboxManager) async -> Date? {
+        await IKSnackBar.showSnackBar(message: MailResourcesStrings.Localizable.snackbarEmailSending)
         var sendDate: Date?
         await draftQueue.cleanQueueElement(uuid: draft.localUUID)
         await draftQueue.beginBackgroundTask(withName: "Draft Sender", for: draft.localUUID)
