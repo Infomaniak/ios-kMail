@@ -16,10 +16,13 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import MailCore
 import SwiftUI
 import WebKit
 
 struct WebView: UIViewRepresentable {
+    @Environment(\.window) private var window
+
     @ObservedObject var model: WebViewModel
 
     let messageUid: String
@@ -53,6 +56,12 @@ struct WebView: UIViewRepresentable {
             decidePolicyFor navigationAction: WKNavigationAction,
             decisionHandler: @escaping (WKNavigationActionPolicy) -> Void
         ) {
+            if let url = navigationAction.request.url, Constants.isMailTo(url) {
+                decisionHandler(.cancel)
+                (parent.window?.windowScene?.delegate as? SceneDelegate)?.handleUrlOpen(url)
+                return
+            }
+
             if navigationAction.navigationType == .linkActivated {
                 if let url = navigationAction.request.url {
                     decisionHandler(.cancel)
