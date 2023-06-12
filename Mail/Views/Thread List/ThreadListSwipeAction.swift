@@ -123,7 +123,7 @@ struct ThreadListSwipeActions: ViewModifier {
                     edgeActions([swipeFullTrailing, swipeTrailing])
                 }
             }
-            //.actionsPanel(actionsTarget: $actionsTarget)
+            .actionsPanel(actionsTarget: $actionsTarget)
             .sheet(item: $moveAction) { moveAction in
                 MoveEmailView(moveAction: moveAction)
                     .sheetViewStyle()
