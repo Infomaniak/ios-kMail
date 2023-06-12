@@ -68,12 +68,13 @@ struct SearchView: View {
                 if viewModel.searchState == .noHistory {
                     SearchNoHistoryView()
                 } else if viewModel.searchState == .history {
-                    SearchHistorySectionView(viewModel: viewModel)
+                    SearchHistorySectionView()
                 } else if viewModel.searchState == .results {
-                    SearchContactsSectionView(viewModel: viewModel)
-                    SearchThreadsSectionView(viewModel: viewModel, editedMessageDraft: $editedMessageDraft)
+                    SearchContactsSectionView()
+                    SearchThreadsSectionView(editedMessageDraft: $editedMessageDraft)
                 }
             }
+            .environmentObject(viewModel)
             .listStyle(.plain)
         }
         .background(MailResourcesAsset.backgroundColor.swiftUIColor)

@@ -21,7 +21,7 @@ import MailResources
 import SwiftUI
 
 struct SearchHistorySectionView: View {
-    let viewModel: SearchViewModel
+    @EnvironmentObject var viewModel: SearchViewModel
 
     var body: some View {
         Section {

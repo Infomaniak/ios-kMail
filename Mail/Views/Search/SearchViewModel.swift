@@ -46,12 +46,12 @@ enum SearchState {
     @Published var selectedFilters: [SearchFilter] = [] {
         willSet {
             // cancel current running tasks
-            self.stopObserveChanges()
-            self.currentSearchTask?.cancel()
-            self.threads = []
+            stopObserveChanges()
+            currentSearchTask?.cancel()
+            threads = []
         }
     }
-    
+
     var searchValueType: SearchFieldValueType = .threadsAndContacts
     @Published var searchValue = ""
     var searchState: SearchState {
@@ -67,6 +67,7 @@ enum SearchState {
     @Published var folderList: [Folder]
     @Published var realFolder: Folder
     var lastSearchFolderId: String?
+    var observationFilteredThreadToken: NotificationToken?
     var observationSearchThreadToken: NotificationToken?
     @Published var selectedSearchFolderId = "" {
         didSet {
@@ -88,8 +89,6 @@ enum SearchState {
 
     @Published var threads: [Thread] = []
     @Published var contacts: [Recipient] = []
-    
-    // TODO: isLoading should be computed (if running loading task)
     @Published var isLoading = false
 
     @LazyInjectService var matomo: MatomoUtils
@@ -172,7 +171,7 @@ enum SearchState {
                 resourceNext = result.resourceNext
             }
         }
-        observeChanges()
+        observeSearchResult()
 
         if searchValue.trimmingCharacters(in: .whitespacesAndNewlines).count >= 3 {
             searchHistory = await mailboxManager.update(searchHistory: searchHistory, with: searchValue)

@@ -19,9 +19,12 @@
 import SwiftUI
 
 extension SearchViewModel {
+    // MARK: Current folder search observation
+
     /// Observe changes on the current folder
-    func observeChanges() {
+    func observeSearchResult() {
         stopObserveChanges()
+        stopObserveFilteredThreads()
 
         guard let folder = searchFolder.thaw() else {
             threads = []
@@ -29,7 +32,50 @@ extension SearchViewModel {
         }
 
         let threadResults = folder.threads.sorted(by: \.date, ascending: false)
-        observationSearchThreadToken = threadResults.observe(on: observeQueue) { [weak self] changes in
+        observationSearchThreadToken = threadResults.observe(on: .main) { [weak self] changes in
+            guard let self = self else {
+                return
+            }
+
+            switch changes {
+            case .initial(let results):
+                let results = Array(results.freezeIfNeeded())
+                Task {
+                    await MainActor.run {
+                        withAnimation {
+                            self.threads = results
+                        }
+                        self.isLoading = false
+
+                        print("start observing results")
+                        self.observeFilteredChanges()
+                    }
+                }
+
+            default:
+                break
+            }
+        }
+    }
+
+    func stopObserveChanges() {
+        observationSearchThreadToken?.invalidate()
+    }
+
+    // MARK: Filtered Threads observation
+
+    static let containAnyOfUIDs = "uid IN %@"
+
+    func observeFilteredChanges() {
+        stopObserveFilteredThreads()
+
+        let allThreadsUIDs = threads.map { $0.uid }
+        print("observing :\(allThreadsUIDs.count)")
+        let containAnyOf = NSPredicate(format: Self.containAnyOfUIDs, allThreadsUIDs)
+        let realm = mailboxManager.getRealm()
+        let allThreads = realm.objects(Thread.self).filter(containAnyOf)
+
+        observationFilteredThreadToken = allThreads.observe(on: observeQueue) { [weak self] changes in
             guard let self = self else {
                 return
             }
@@ -56,19 +102,21 @@ extension SearchViewModel {
         }
     }
 
-    func stopObserveChanges() {
-        observationSearchThreadToken?.invalidate()
+    func stopObserveFilteredThreads() {
+        observationFilteredThreadToken?.invalidate()
     }
 
     /// Update filtered threads on observation change.
     private func refreshInUnreadFilterMode(all: [Thread], changes: [Int]) {
-        Task.detached {
+        Task {
             for index in changes {
+                print("change index: \(index)")
                 guard let updatedThread = all[safe: index] else {
                     continue
                 }
 
                 // Swap the updated thread at index
+//                self.threads[index] = updatedThread
                 await MainActor.run {
                     withAnimation {
                         self.threads[index] = updatedThread
@@ -78,7 +126,9 @@ extension SearchViewModel {
 
             // finish with changing the loading state
             await MainActor.run {
+                self.threads = all
                 self.isLoading = false
+                objectWillChange.send()
             }
         }
     }
