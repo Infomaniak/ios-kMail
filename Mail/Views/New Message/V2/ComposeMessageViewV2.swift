@@ -16,33 +16,39 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import MailCore
 import MailResources
+import RealmSwift
 import SwiftUI
 
 // TODO: Rename without V2
 
 struct ComposeMessageViewV2: View {
     @Environment(\.dismiss) private var dismiss
+    @EnvironmentObject private var mailboxManager: MailboxManager
 
     var body: some View {
         NavigationView {
-            ScrollView {}
-                .navigationTitle(MailResourcesStrings.Localizable.buttonNewMessage)
-                .navigationBarTitleDisplayMode(.inline)
-                .toolbar {
-                    ToolbarItem(placement: .navigationBarLeading) {
-                        Button(action: dismissDraft) {
-                            Label(MailResourcesStrings.Localizable.buttonClose, systemImage: "xmark")
-                        }
-                    }
-
-                    ToolbarItem(placement: .navigationBarTrailing) {
-                        Button(action: sendDraft) {
-                            Label(MailResourcesStrings.Localizable.buttonClose, image: "xmark")
-                            Label(MailResourcesStrings.Localizable.send, image: MailResourcesAsset.send.name)
-                        }
+            ScrollView {
+                VStack(spacing: 0) {
+                    ComposeMessageHeaderViewV2()
+                }
+            }
+            .navigationTitle(MailResourcesStrings.Localizable.buttonNewMessage)
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .navigationBarLeading) {
+                    Button(action: dismissDraft) {
+                        Label(MailResourcesStrings.Localizable.buttonClose, systemImage: "xmark")
                     }
                 }
+
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Button(action: sendDraft) {
+                        Label(MailResourcesStrings.Localizable.send, image: MailResourcesAsset.send.name)
+                    }
+                }
+            }
         }
     }
 
