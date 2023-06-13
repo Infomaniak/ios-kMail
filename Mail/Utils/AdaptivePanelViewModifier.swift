@@ -30,35 +30,20 @@ struct AdaptivePanelViewModifier<Item: Identifiable, PanelContent: View>: ViewMo
 
     @Binding var item: Item?
     @ViewBuilder var panelContent: (Item) -> PanelContent
-
-    enum AdaptiveSizeType {
-        case compact
-        case regular
-    }
-
     func body(content: Content) -> some View {
         content
-            .floatingPanel(item: getBindingForSize(.compact)) { item in
-                panelContent(item)
+            .popover(item: $item) { item in
+                if isCompactWindow {
+                    if #available(iOS 16.0, *) {
+                        panelContent(item).modifier(SelfSizingPanelViewModifier())
+                    } else {
+                        panelContent(item).modifier(SelfSizingPanelBackportViewModifier())
+                    }
+                } else {
+                    panelContent(item)
+                        .padding()
+                        .frame(idealWidth: 400)
+                }
             }
-            .popover(item: getBindingForSize(.regular)) { item in
-                panelContent(item)
-                    .padding()
-                    .frame(idealWidth: 400)
-            }
-    }
-
-    func getBindingForSize(_ size: AdaptiveSizeType) -> Binding<Item?> {
-        // We can't use if statement in this modifier because this creates performance issues in the List:
-        // => SwiftUI needs to  create each element of the list before rendering if an if statement is present)
-        Binding(get: {
-            if isCompactWindow && size == .compact || !isCompactWindow && size == .regular {
-                return item
-            } else {
-                return nil
-            }
-        }, set: { newItem in
-            item = newItem
-        })
     }
 }
