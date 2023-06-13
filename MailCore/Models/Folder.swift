@@ -191,6 +191,11 @@ public class Folder: Object, Codable, Comparable, Identifiable {
         unreadCount = threads.where { $0.unseenMessages > 0 }.count
     }
 
+    public func resetHistoryInfo() {
+        remainingOldMessagesToFetch = Constants.messageQuantityLimit
+        isHistoryComplete = false
+    }
+
     public func isParent(of folder: Folder) -> Bool {
         let myComponents = path.components(separatedBy: separator)
         let folderComponents = folder.path.components(separatedBy: separator)
