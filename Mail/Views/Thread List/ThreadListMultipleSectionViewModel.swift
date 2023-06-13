@@ -100,9 +100,7 @@ import SwiftUI
         default:
             break
         }
-        withAnimation {
-            isEnabled = false
-        }
+        isEnabled = false
     }
 
     private func setActions() {

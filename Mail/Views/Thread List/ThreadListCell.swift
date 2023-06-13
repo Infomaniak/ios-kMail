@@ -83,15 +83,13 @@ struct ThreadListCell: View {
     }
 
     private func didLongPressCell() {
-        withAnimation {
-            multipleSelectionViewModel.feedbackGenerator.prepare()
-            multipleSelectionViewModel.isEnabled.toggle()
-            if multipleSelectionViewModel.isEnabled {
-                @InjectService var matomo: MatomoUtils
-                matomo.track(eventWithCategory: .multiSelection, action: .longPress, name: "enable")
-                multipleSelectionViewModel.feedbackGenerator.impactOccurred()
-                multipleSelectionViewModel.toggleSelection(of: thread)
-            }
+        multipleSelectionViewModel.feedbackGenerator.prepare()
+        multipleSelectionViewModel.isEnabled.toggle()
+        if multipleSelectionViewModel.isEnabled {
+            @InjectService var matomo: MatomoUtils
+            matomo.track(eventWithCategory: .multiSelection, action: .longPress, name: "enable")
+            multipleSelectionViewModel.feedbackGenerator.impactOccurred()
+            multipleSelectionViewModel.toggleSelection(of: thread)
         }
     }
 }
