@@ -63,9 +63,9 @@ public class Recipient: EmbeddedObject, Codable {
         for address in addresses {
             if Constants.isEmailAddress(address) {
                 recipients.append(Recipient(email: address, name: ""))
-            } else if let matches = Regex(pattern: "(.+)<(.+)>")?.matches(in: address).first,
-                      matches.count >= 3, Constants.isEmailAddress(matches[2]) {
-                recipients.append(Recipient(email: matches[2], name: matches[1].removingPercentEncoding ?? matches[1]))
+            } else if let match = Regex(pattern: "(.+)<(.+)>")?.matches(in: address).first,
+                      match.count >= 3, Constants.isEmailAddress(match[2]) {
+                recipients.append(Recipient(email: match[2], name: match[1].removingPercentEncoding ?? match[1]))
             }
         }
 

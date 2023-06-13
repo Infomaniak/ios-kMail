@@ -369,12 +369,16 @@ struct ComposeMessageView: View {
             }
 
             let html = "<br><br><div class=\"editorUserSignature\">\(signature.content)</div>"
-            switch signature.position {
-            case .beforeReplyMessage:
-                $draft.body.wrappedValue.insert(contentsOf: html, at: draft.body.startIndex)
-            case .afterReplyMessage:
-                $draft.body.wrappedValue.append(contentsOf: html)
+            var signaturePosition = draft.body.endIndex
+            if messageReply != nil {
+                switch signature.position {
+                case .beforeReplyMessage:
+                    signaturePosition = draft.body.startIndex
+                case .afterReplyMessage:
+                    signaturePosition = draft.body.endIndex
+                }
             }
+            $draft.body.wrappedValue.insert(contentsOf: html, at: signaturePosition)
         }
     }
 
