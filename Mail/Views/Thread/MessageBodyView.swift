@@ -16,15 +16,12 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import InfomaniakCore
 import MailCore
 import MailResources
 import RealmSwift
 import SwiftUI
 
 struct MessageBodyView: View {
-    let taskQueue = TaskQueue()
-
     @State private var textPlainHeight = CGFloat.zero
 
     @StateObject private var model = WebViewModel()
@@ -88,15 +85,13 @@ struct MessageBodyView: View {
 
     private func loadBody(blockRemoteContent: Bool) {
         Task.detached {
-            try await taskQueue.enqueue {
-                let loadResult = await model.loadHTMLString(
-                    value: model.showBlockQuote ? presentableBody.body?.value : presentableBody.compactBody,
-                    blockRemoteContent: blockRemoteContent
-                )
+            let loadResult = await model.loadHTMLString(
+                value: model.showBlockQuote ? presentableBody.body?.value : presentableBody.compactBody,
+                blockRemoteContent: blockRemoteContent
+            )
 
-                await MainActor.run {
-                    displayContentBlockedActionView = (loadResult == .remoteContentBlocked)
-                }
+            await MainActor.run {
+                displayContentBlockedActionView = (loadResult == .remoteContentBlocked)
             }
         }
     }
