@@ -431,9 +431,11 @@ extension ComposeMessageView {
 
     static func mailTo(urlComponents: URLComponents, mailboxManager: MailboxManager) -> ComposeMessageView {
         let draft = Draft.mailTo(subject: urlComponents.getQueryItem(named: "subject"),
-                                 body: urlComponents.getQueryItem(named: "body"),
+                                 body: urlComponents.getQueryItem(named: "body")?
+                                     .replacingOccurrences(of: "\r", with: "")
+                                     .replacingOccurrences(of: "\n", with: "<br>"),
                                  to: Recipient.createListUsing(listOfAddresses: urlComponents.path)
-                                        + Recipient.createListUsing(from: urlComponents, name: "to"),
+                                     + Recipient.createListUsing(from: urlComponents, name: "to"),
                                  cc: Recipient.createListUsing(from: urlComponents, name: "cc"),
                                  bcc: Recipient.createListUsing(from: urlComponents, name: "bcc"))
         return ComposeMessageView(mailboxManager: mailboxManager, draft: draft)
