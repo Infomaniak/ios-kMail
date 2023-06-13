@@ -19,12 +19,12 @@
 import SwiftUI
 
 extension SearchViewModel {
-    // MARK: Current folder search observation
+    // MARK: Current folder Search observation
 
     /// Observe changes on the current folder
-    func observeSearchResult() {
-        stopObserveChanges()
-        stopObserveFilteredThreads()
+    func observeSearch() {
+        stopObserveSearch()
+        stopObserveSearchResultsChanges()
 
         guard let folder = searchFolder.thaw() else {
             threads = []
@@ -48,7 +48,7 @@ extension SearchViewModel {
                         self.isLoading = false
 
                         // start observing loaded results
-                        self.observeFilteredChanges()
+                        self.observeSearchResultsChanges()
                     }
                 }
 
@@ -58,16 +58,16 @@ extension SearchViewModel {
         }
     }
 
-    func stopObserveChanges() {
+    func stopObserveSearch() {
         observationSearchThreadToken?.invalidate()
     }
 
-    // MARK: Filtered Threads observation
+    // MARK: Search Results Changes observation
 
     static let containAnyOfUIDs = "uid IN %@"
 
-    func observeFilteredChanges() {
-        stopObserveFilteredThreads()
+    func observeSearchResultsChanges() {
+        stopObserveSearchResultsChanges()
 
         let allThreadsUIDs = threads.map { $0.uid }
         let containAnyOf = NSPredicate(format: Self.containAnyOfUIDs, allThreadsUIDs)
@@ -82,7 +82,7 @@ extension SearchViewModel {
             switch changes {
             case .update(let results, _, _, let modificationIndexes):
                 let results = Array(results.freezeIfNeeded())
-                refreshInUnreadFilterMode(all: results, changes: modificationIndexes)
+                refreshObservedSearchResults(all: results, changes: modificationIndexes)
 
             default:
                 break
@@ -90,12 +90,12 @@ extension SearchViewModel {
         }
     }
 
-    func stopObserveFilteredThreads() {
+    func stopObserveSearchResultsChanges() {
         observationFilteredThreadToken?.invalidate()
     }
 
-    /// Update filtered threads on observation change.
-    private func refreshInUnreadFilterMode(all: [Thread], changes: [Int]) {
+    /// Update search result threads on observation change.
+    private func refreshObservedSearchResults(all: [Thread], changes: [Int]) {
         Task {
             for index in changes {
                 guard let updatedThread = all[safe: index] else {
@@ -110,7 +110,7 @@ extension SearchViewModel {
                 }
             }
 
-            // finish with changing the loading state
+            // finish by changing the loading state
             await MainActor.run {
                 self.isLoading = false
             }

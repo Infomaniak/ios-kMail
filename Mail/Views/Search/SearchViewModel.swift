@@ -46,7 +46,7 @@ enum SearchState {
     @Published var selectedFilters: [SearchFilter] = [] {
         willSet {
             // cancel current running tasks
-            stopObserveChanges()
+            stopObserveSearch()
             currentSearchTask?.cancel()
             threads = []
         }
@@ -143,7 +143,7 @@ enum SearchState {
         }
 
         isLoading = true
-        stopObserveChanges()
+        stopObserveSearch()
         threads = []
 
         var folderToSearch = realFolder.id
@@ -171,7 +171,7 @@ enum SearchState {
                 resourceNext = result.resourceNext
             }
         }
-        observeSearchResult()
+        observeSearch()
 
         if searchValue.trimmingCharacters(in: .whitespacesAndNewlines).count >= 3 {
             searchHistory = await mailboxManager.update(searchHistory: searchHistory, with: searchValue)
