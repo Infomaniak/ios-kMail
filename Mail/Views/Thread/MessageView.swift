@@ -23,7 +23,6 @@ import InfomaniakDI
 import MailCore
 import MailResources
 import RealmSwift
-import Shimmer
 import SwiftUI
 
 /// Something that can display an email
@@ -88,12 +87,16 @@ struct MessageView: View {
                     }
 
                     MessageBodyView(
+                        isMessagePreprocessed: $isMessagePreprocessed,
                         presentableBody: $presentableBody,
                         blockRemoteContent: isRemoteContentBlocked,
                         displayContentBlockedActionView: $displayContentBlockedActionView,
                         messageUid: message.uid
                     )
                     .padding(.top, 16)
+                    .onChange(of: isMessagePreprocessed) { _ in
+                        // Keep it for event propagation to work
+                    }
                 }
             }
             .padding(.vertical, 16)

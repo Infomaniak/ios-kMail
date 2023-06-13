@@ -18,6 +18,7 @@
  */
 
 import SwiftUI
+import Shimmer
 
 struct ShimmerView: View {
     var body: some View {
