@@ -25,13 +25,15 @@ struct BottomBar<Items: View>: ViewModifier {
     @ViewBuilder var items: () -> Items
 
     func body(content: Content) -> some View {
-        content
-            .safeAreaInset(edge: .bottom) {
-                if isVisible {
-                    BottomBarView(items: items)
-                        .transition(.opacity)
-                }
+        VStack(spacing: 0) {
+            content
+            Spacer(minLength: 0)
+            if isVisible {
+                BottomBarView(items: items)
             }
+        }
+//        .animation(.nil, value: isVisible)
+        .ignoresSafeArea(.keyboard, edges: .bottom)
     }
 }
 
