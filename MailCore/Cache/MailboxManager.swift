@@ -226,7 +226,7 @@ public class MailboxManager: ObservableObject {
         return response
     }
 
-    private func refreshFolder(from messages: [Message], additionalFolder: Folder? = nil) async throws {
+    public func refreshFolder(from messages: [Message], additionalFolder: Folder? = nil) async throws {
         var folders = messages.map(\.folder)
         if let additionalFolder = additionalFolder {
             folders.append(additionalFolder)
