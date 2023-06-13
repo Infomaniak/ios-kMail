@@ -32,7 +32,6 @@ struct BottomBar<Items: View>: ViewModifier {
                 BottomBarView(items: items)
             }
         }
-//        .animation(.nil, value: isVisible)
         .ignoresSafeArea(.keyboard, edges: .bottom)
     }
 }
