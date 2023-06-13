@@ -44,6 +44,7 @@ struct ThreadListView: View {
     @AppStorage(UserDefaults.shared.key(.threadDensity)) private var threadDensity = DefaultPreferences.threadDensity
     @AppStorage(UserDefaults.shared.key(.accentColor)) private var accentColor = DefaultPreferences.accentColor
 
+    @State private var isShowingV2 = false
     @State private var isShowingComposeNewMessageView = false
     @State private var fetchingTask: Task<Void, Never>?
     @State private var isRefreshing = false
@@ -219,6 +220,11 @@ struct ThreadListView: View {
             matomo.track(eventWithCategory: .newMessage, name: "openFromFab")
             isShowingComposeNewMessageView.toggle()
         }
+        .overlay(alignment: .bottomLeading, content: {
+            MailButton(icon: MailResourcesAsset.pencil, label: "Show V2") {
+                isShowingV2 = true
+            }
+        })
         .onAppear {
             networkMonitor.start()
             if viewModel.isCompact {
@@ -246,6 +252,11 @@ struct ThreadListView: View {
         }
         .sheet(isPresented: $isShowingComposeNewMessageView) {
             ComposeMessageView.newMessage(mailboxManager: viewModel.mailboxManager)
+        }
+        .sheet(isPresented: $isShowingV2) {
+            NavigationView {
+                ComposeMessageViewV2()
+            }
         }
         .customAlert(item: $flushAlert) { item in
             FlushFolderAlertView(flushAlert: item, folder: viewModel.folder)
