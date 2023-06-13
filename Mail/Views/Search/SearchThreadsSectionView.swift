@@ -23,7 +23,7 @@ import SwiftUI
 struct SearchThreadsSectionView: View {
     @AppStorage(UserDefaults.shared.key(.threadDensity)) private var threadDensity = DefaultPreferences.threadDensity
 
-    @EnvironmentObject var viewModel: SearchViewModel
+    let viewModel: SearchViewModel
     @Binding var editedMessageDraft: Draft?
 
     var body: some View {

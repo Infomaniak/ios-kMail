@@ -23,7 +23,7 @@ import SwiftUI
 struct SearchContactsSectionView: View {
     @AppStorage(UserDefaults.shared.key(.threadDensity)) private var threadDensity = DefaultPreferences.threadDensity
 
-    @EnvironmentObject var viewModel: SearchViewModel
+    let viewModel: SearchViewModel
 
     var body: some View {
         Section {
