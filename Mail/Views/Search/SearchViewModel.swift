@@ -67,8 +67,13 @@ enum SearchState {
     @Published var folderList: [Folder]
     @Published var realFolder: Folder
     var lastSearchFolderId: String?
-    var observationFilteredThreadToken: NotificationToken?
+
+    /// Token to observe the search itself
     var observationSearchThreadToken: NotificationToken?
+
+    /// Token to observe the fetched search results changes
+    var observationSearchResultsChangesToken: NotificationToken?
+
     @Published var selectedSearchFolderId = "" {
         didSet {
             matomo.track(eventWithCategory: .search, name: SearchFilter.folder.matomoName, value: !selectedSearchFolderId.isEmpty)

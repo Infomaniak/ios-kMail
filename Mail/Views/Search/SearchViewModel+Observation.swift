@@ -74,7 +74,7 @@ extension SearchViewModel {
         let realm = mailboxManager.getRealm()
         let allThreads = realm.objects(Thread.self).filter(containAnyOf)
 
-        observationFilteredThreadToken = allThreads.observe(on: observeQueue) { [weak self] changes in
+        observationSearchResultsChangesToken = allThreads.observe(on: observeQueue) { [weak self] changes in
             guard let self = self else {
                 return
             }
@@ -91,7 +91,7 @@ extension SearchViewModel {
     }
 
     func stopObserveSearchResultsChanges() {
-        observationFilteredThreadToken?.invalidate()
+        observationSearchResultsChangesToken?.invalidate()
     }
 
     /// Update search result threads on observation change.
