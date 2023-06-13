@@ -47,7 +47,7 @@ extension SearchViewModel {
                         }
                         self.isLoading = false
 
-                        print("start observing results")
+                        // start observing loaded results
                         self.observeFilteredChanges()
                     }
                 }
@@ -70,7 +70,6 @@ extension SearchViewModel {
         stopObserveFilteredThreads()
 
         let allThreadsUIDs = threads.map { $0.uid }
-        print("observing :\(allThreadsUIDs.count)")
         let containAnyOf = NSPredicate(format: Self.containAnyOfUIDs, allThreadsUIDs)
         let realm = mailboxManager.getRealm()
         let allThreads = realm.objects(Thread.self).filter(containAnyOf)
@@ -81,22 +80,11 @@ extension SearchViewModel {
             }
 
             switch changes {
-            case .initial(let results):
-                let results = Array(results.freezeIfNeeded())
-                Task {
-                    await MainActor.run {
-                        withAnimation {
-                            self.threads = results
-                        }
-                        self.isLoading = false
-                    }
-                }
-
             case .update(let results, _, _, let modificationIndexes):
                 let results = Array(results.freezeIfNeeded())
                 refreshInUnreadFilterMode(all: results, changes: modificationIndexes)
 
-            case .error:
+            default:
                 break
             }
         }
@@ -110,13 +98,11 @@ extension SearchViewModel {
     private func refreshInUnreadFilterMode(all: [Thread], changes: [Int]) {
         Task {
             for index in changes {
-                print("change index: \(index)")
                 guard let updatedThread = all[safe: index] else {
                     continue
                 }
 
                 // Swap the updated thread at index
-//                self.threads[index] = updatedThread
                 await MainActor.run {
                     withAnimation {
                         self.threads[index] = updatedThread
@@ -126,9 +112,7 @@ extension SearchViewModel {
 
             // finish with changing the loading state
             await MainActor.run {
-                self.threads = all
                 self.isLoading = false
-                objectWillChange.send()
             }
         }
     }
