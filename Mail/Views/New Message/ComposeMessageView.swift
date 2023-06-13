@@ -241,9 +241,9 @@ struct ComposeMessageView: View {
         }
         .customAlert(isPresented: $alert.isShowing) {
             switch alert.state {
-            case .link(let handler):
+            case let .link(handler):
                 AddLinkView(actionHandler: handler)
-            case .emptySubject(let handler):
+            case let .emptySubject(handler):
                 EmptySubjectView(actionHandler: handler)
             case .none:
                 EmptyView()
@@ -428,7 +428,8 @@ extension ComposeMessageView {
     static func mailTo(urlComponents: URLComponents, mailboxManager: MailboxManager) -> ComposeMessageView {
         let draft = Draft.mailTo(subject: urlComponents.getQueryItem(named: "subject"),
                                  body: urlComponents.getQueryItem(named: "body"),
-                                 to: Recipient.createListUsing(from: urlComponents, name: "to"),
+                                 to: Recipient.createListUsing(listOfAddresses: urlComponents.path)
+                                        + Recipient.createListUsing(from: urlComponents, name: "to"),
                                  cc: Recipient.createListUsing(from: urlComponents, name: "cc"),
                                  bcc: Recipient.createListUsing(from: urlComponents, name: "bcc"))
         return ComposeMessageView(mailboxManager: mailboxManager, draft: draft)

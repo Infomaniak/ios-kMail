@@ -20,6 +20,7 @@ import Foundation
 import MailResources
 import Nuke
 import RealmSwift
+import SwiftRegex
 import SwiftUI
 
 public extension URLComponents {
@@ -52,7 +53,23 @@ public class Recipient: EmbeddedObject, Codable {
     }
 
     public static func createListUsing(from urlComponents: URLComponents, name: String) -> [Recipient] {
-        return urlComponents.getQueryItem(named: name)?.split(separator: ",").map { Recipient(email: "\($0)", name: "") } ?? []
+        return createListUsing(listOfAddresses: urlComponents.getQueryItem(named: name))
+    }
+
+    public static func createListUsing(listOfAddresses: String?) -> [Recipient] {
+        guard let addresses = listOfAddresses?.components(separatedBy: CharacterSet(charactersIn: ",;")) else { return [] }
+
+        var recipients = [Recipient]()
+        for address in addresses {
+            if Constants.isEmailAddress(address) {
+                recipients.append(Recipient(email: address, name: ""))
+            } else if let matches = Regex(pattern: "(.+)<(.+)>")?.matches(in: address).first,
+                      matches.count >= 3, Constants.isEmailAddress(matches[2]) {
+                recipients.append(Recipient(email: matches[2], name: matches[1].removingPercentEncoding ?? matches[1]))
+            }
+        }
+
+        return recipients
     }
 
     public var isCurrentUser: Bool {
