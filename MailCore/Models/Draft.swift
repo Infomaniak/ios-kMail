@@ -95,6 +95,10 @@ public class Draft: Object, Codable, Identifiable {
     /// Store compressed data to reduce realm size.
     @Persisted var bodyData: Data?
 
+    public var recipientsAreEmpty: Bool {
+        to.isEmpty && cc.isEmpty && bcc.isEmpty
+    }
+
     private enum CodingKeys: String, CodingKey {
         case remoteUUID = "uuid"
         case date

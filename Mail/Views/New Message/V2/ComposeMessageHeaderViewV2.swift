@@ -46,6 +46,9 @@ struct ComposeMessageHeaderViewV2: View {
             IKDivider()
         }
         .padding(.horizontal, 16)
+        .onAppear {
+            showRecipientsFields = !draft.bcc.isEmpty || !draft.cc.isEmpty
+        }
     }
 }
 

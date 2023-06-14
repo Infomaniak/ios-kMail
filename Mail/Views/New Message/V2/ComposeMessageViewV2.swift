@@ -23,6 +23,37 @@ import SwiftUI
 
 // TODO: Rename without V2
 
+enum ComposeViewFieldType: Hashable {
+    case from, to, cc, bcc, subject, editor
+    case chip(Int, Recipient)
+
+    var title: String {
+        switch self {
+        case .from:
+            return MailResourcesStrings.Localizable.fromTitle
+        case .to:
+            return MailResourcesStrings.Localizable.toTitle
+        case .cc:
+            return MailResourcesStrings.Localizable.ccTitle
+        case .bcc:
+            return MailResourcesStrings.Localizable.bccTitle
+        case .subject:
+            return MailResourcesStrings.Localizable.subjectTitle
+        case .editor:
+            return "editor"
+        case .chip:
+            return "Recipient Chip"
+        }
+    }
+}
+
+final class NewMessageAlert: SheetState<NewMessageAlert.State> {
+    enum State {
+        case link(handler: (String) -> Void)
+        case emptySubject(handler: () -> Void)
+    }
+}
+
 struct ComposeMessageViewV2: View {
     @Environment(\.dismiss) private var dismiss
 
@@ -32,7 +63,15 @@ struct ComposeMessageViewV2: View {
 
     @StateRealmObject private var draft: Draft
 
-    init(draft: Draft, mailboxManager: MailboxManager) {
+    let messageReply: MessageReply?
+
+    private var isSendButtonDisabled: Bool {
+        return draft.identityId?.isEmpty == true || draft.recipientsAreEmpty || !attachmentsManager.allAttachmentsUploaded
+    }
+
+    init(draft: Draft, mailboxManager: MailboxManager, messageReply: MessageReply? = nil) {
+        self.messageReply = messageReply
+
         Self.saveNewDraftInRealm(mailboxManager.getRealm(), draft: draft)
         _draft = StateRealmObject(wrappedValue: draft)
 
@@ -46,9 +85,15 @@ struct ComposeMessageViewV2: View {
                 VStack(spacing: 0) {
                     ComposeMessageHeaderViewV2(draft: draft)
 
-                    ComposeMessageBodyViewV2(attachmentsManager: attachmentsManager, alert: alert, draft: draft)
+                    ComposeMessageBodyViewV2(
+                        attachmentsManager: attachmentsManager,
+                        alert: alert,
+                        draft: draft,
+                        messageReply: messageReply
+                    )
                 }
             }
+            .background(MailResourcesAsset.backgroundColor.swiftUIColor)
             .navigationTitle(MailResourcesStrings.Localizable.buttonNewMessage)
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
@@ -61,10 +106,12 @@ struct ComposeMessageViewV2: View {
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button(action: sendDraft) {
                         Label(MailResourcesStrings.Localizable.send, image: MailResourcesAsset.send.name)
+                            .disabled(isSendButtonDisabled)
                     }
                 }
             }
         }
+        .matomoView(view: ["ComposeMessage"])
     }
 
     private func dismissDraft() {

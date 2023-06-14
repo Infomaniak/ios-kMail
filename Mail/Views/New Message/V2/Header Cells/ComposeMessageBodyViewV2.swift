@@ -31,6 +31,12 @@ struct ComposeMessageBodyViewV2: View {
     @ObservedObject var alert: NewMessageAlert
     @ObservedRealmObject var draft: Draft
 
+    let messageReply: MessageReply?
+
+    private var isRemoteContentBlocked: Bool {
+        return UserDefaults.shared.displayExternalContent == .askMe && messageReply?.message.localSafeDisplay == false
+    }
+
     var body: some View {
         VStack {
             AttachmentsHeaderView(attachmentsManager: attachmentsManager)
@@ -43,11 +49,11 @@ struct ComposeMessageBodyViewV2: View {
                 isShowingFileSelection: $isShowingFileSelection,
                 isShowingPhotoLibrary: $isShowingPhotoLibrary,
                 becomeFirstResponder: .constant(false), // TODO: Give real value
-                blockRemoteContent: false // TODO: Give real value
+                blockRemoteContent: isRemoteContentBlocked
             )
             .ignoresSafeArea(.all, edges: .bottom)
             .frame(height: editorModel.height + 20)
-            .padding([.vertical], 10)
+            .padding([.vertical], 8)
         }
         .fullScreenCover(isPresented: $isShowingCamera) {
             CameraPicker { data in
@@ -75,7 +81,8 @@ struct ComposeMessageBodyViewV2_Previews: PreviewProvider {
         ComposeMessageBodyViewV2(
             attachmentsManager: AttachmentsManager(draft: Draft(), mailboxManager: PreviewHelper.sampleMailboxManager),
             alert: NewMessageAlert(),
-            draft: Draft()
+            draft: Draft(),
+            messageReply: nil
         )
     }
 }

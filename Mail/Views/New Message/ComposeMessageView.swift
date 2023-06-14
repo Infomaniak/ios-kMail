@@ -27,37 +27,6 @@ import RealmSwift
 import Sentry
 import SwiftUI
 
-enum ComposeViewFieldType: Hashable {
-    case from, to, cc, bcc, subject, editor
-    case chip(Int, Recipient)
-
-    var title: String {
-        switch self {
-        case .from:
-            return MailResourcesStrings.Localizable.fromTitle
-        case .to:
-            return MailResourcesStrings.Localizable.toTitle
-        case .cc:
-            return MailResourcesStrings.Localizable.ccTitle
-        case .bcc:
-            return MailResourcesStrings.Localizable.bccTitle
-        case .subject:
-            return MailResourcesStrings.Localizable.subjectTitle
-        case .editor:
-            return "editor"
-        case .chip:
-            return "Recipient Chip"
-        }
-    }
-}
-
-final class NewMessageAlert: SheetState<NewMessageAlert.State> {
-    enum State {
-        case link(handler: (String) -> Void)
-        case emptySubject(handler: () -> Void)
-    }
-}
-
 struct ComposeMessageView: View {
     @Environment(\.dismiss) private var dismiss
 
