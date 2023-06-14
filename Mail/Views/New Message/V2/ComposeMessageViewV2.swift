@@ -16,6 +16,8 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import InfomaniakCoreUI
+import InfomaniakDI
 import MailCore
 import MailResources
 import RealmSwift
@@ -56,6 +58,10 @@ final class NewMessageAlert: SheetState<NewMessageAlert.State> {
 
 struct ComposeMessageViewV2: View {
     @Environment(\.dismiss) private var dismiss
+
+    @LazyInjectService private var matomo: MatomoUtils
+
+    @State private var isShowingCancelAttachmentsError = false
 
     @StateObject private var mailboxManager: MailboxManager
     @StateObject private var attachmentsManager: AttachmentsManager
@@ -98,29 +104,61 @@ struct ComposeMessageViewV2: View {
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
-                    Button(action: dismissDraft) {
+                    Button(action: didTouchDismiss) {
                         Label(MailResourcesStrings.Localizable.buttonClose, systemImage: "xmark")
                     }
                 }
 
                 ToolbarItem(placement: .navigationBarTrailing) {
-                    Button(action: sendDraft) {
+                    Button(action: didTouchSend) {
                         Label(MailResourcesStrings.Localizable.send, image: MailResourcesAsset.send.name)
                             .disabled(isSendButtonDisabled)
                     }
                 }
             }
+            .customAlert(isPresented: $alert.isShowing) {
+                switch alert.state {
+                case let .link(handler):
+                    AddLinkView(actionHandler: handler)
+                case let .emptySubject(handler):
+                    EmptySubjectView(actionHandler: handler)
+                case .none:
+                    EmptyView()
+                }
+            }
+            .customAlert(isPresented: $isShowingCancelAttachmentsError) {
+                AttachmentsUploadInProgressErrorView {
+                    dismiss()
+                }
+            }
+            .matomoView(view: ["ComposeMessage"])
         }
-        .matomoView(view: ["ComposeMessage"])
     }
 
-    private func dismissDraft() {
-        // TODO: Check attachments
+    private func didTouchDismiss() {
+        guard attachmentsManager.allAttachmentsUploaded else {
+            isShowingCancelAttachmentsError = true
+            return
+        }
         dismiss()
     }
 
+    private func didTouchSend() {
+        guard !draft.subject.isEmpty else {
+            matomo.track(eventWithCategory: .newMessage, name: "sendWithoutSubject")
+            alert.state = .emptySubject(handler: sendDraft)
+            return
+        }
+        sendDraft()
+    }
+
     private func sendDraft() {
-        // TODO: Check attachments
+        matomo.trackSendMessage(numberOfTo: draft.to.count, numberOfCc: draft.cc.count, numberOfBcc: draft.bcc.count)
+        if let liveDraft = draft.thaw() {
+            try? liveDraft.realm?.write {
+                liveDraft.action = .send
+            }
+        }
         dismiss()
     }
 
