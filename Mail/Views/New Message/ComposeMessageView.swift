@@ -241,9 +241,9 @@ struct ComposeMessageView: View {
         }
         .customAlert(isPresented: $alert.isShowing) {
             switch alert.state {
-            case .link(let handler):
+            case let .link(handler):
                 AddLinkView(actionHandler: handler)
-            case .emptySubject(let handler):
+            case let .emptySubject(handler):
                 EmptySubjectView(actionHandler: handler)
             case .none:
                 EmptyView()
@@ -369,12 +369,16 @@ struct ComposeMessageView: View {
             }
 
             let html = "<br><br><div class=\"editorUserSignature\">\(signature.content)</div>"
-            switch signature.position {
-            case .beforeReplyMessage:
-                $draft.body.wrappedValue.insert(contentsOf: html, at: draft.body.startIndex)
-            case .afterReplyMessage:
-                $draft.body.wrappedValue.append(contentsOf: html)
+            var signaturePosition = draft.body.endIndex
+            if messageReply != nil {
+                switch signature.position {
+                case .beforeReplyMessage:
+                    signaturePosition = draft.body.startIndex
+                case .afterReplyMessage:
+                    signaturePosition = draft.body.endIndex
+                }
             }
+            $draft.body.wrappedValue.insert(contentsOf: html, at: signaturePosition)
         }
     }
 
@@ -427,8 +431,11 @@ extension ComposeMessageView {
 
     static func mailTo(urlComponents: URLComponents, mailboxManager: MailboxManager) -> ComposeMessageView {
         let draft = Draft.mailTo(subject: urlComponents.getQueryItem(named: "subject"),
-                                 body: urlComponents.getQueryItem(named: "body"),
-                                 to: [Recipient(email: urlComponents.path, name: "")],
+                                 body: urlComponents.getQueryItem(named: "body")?
+                                     .replacingOccurrences(of: "\r", with: "")
+                                     .replacingOccurrences(of: "\n", with: "<br>"),
+                                 to: Recipient.createListUsing(listOfAddresses: urlComponents.path)
+                                     + Recipient.createListUsing(from: urlComponents, name: "to"),
                                  cc: Recipient.createListUsing(from: urlComponents, name: "cc"),
                                  bcc: Recipient.createListUsing(from: urlComponents, name: "bcc"))
         return ComposeMessageView(mailboxManager: mailboxManager, draft: draft)

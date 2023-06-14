@@ -77,6 +77,10 @@ public enum Constants {
         return emailPredicate.evaluate(with: mail.lowercased())
     }
 
+    public static func isMailTo(_ url: URL) -> Bool {
+        return url.scheme?.caseInsensitiveCompare("mailto") == .orderedSame
+    }
+
     public static func forwardQuote(message: Message) -> String {
         let date = DateFormatter.localizedString(from: message.date, dateStyle: .medium, timeStyle: .short)
         let to = ListFormatter.localizedString(byJoining: message.to.map(\.htmlDescription))

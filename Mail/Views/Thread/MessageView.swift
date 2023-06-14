@@ -133,7 +133,11 @@ struct MessageView: View {
 
     @MainActor private func fetchMessage() async {
         await tryOrDisplayError {
-            try await mailboxManager.message(message: message)
+            do {
+                try await mailboxManager.message(message: message)
+            } catch let error as MailApiError where error == .apiMessageNotFound {
+                try await mailboxManager.refreshFolder(from: [message])
+            }
         }
     }
 

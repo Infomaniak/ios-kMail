@@ -174,13 +174,13 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, AccountManagerDelegate 
     }
 
     @discardableResult
-    private func handleUrlOpen(_ url: URL) -> Bool {
+    func handleUrlOpen(_ url: URL) -> Bool {
         guard let urlComponents = URLComponents(url: url, resolvingAgainstBaseURL: true),
               let mailboxManager = accountManager.currentMailboxManager else {
             return false
         }
 
-        if urlComponents.scheme?.caseInsensitiveCompare("mailto") == .orderedSame {
+        if Constants.isMailTo(url) {
             let newMessageView = ComposeMessageView.mailTo(urlComponents: urlComponents, mailboxManager: mailboxManager)
             let viewController = UIHostingController(rootView: newMessageView)
             window?.rootViewController?.present(viewController, animated: true)

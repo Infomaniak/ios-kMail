@@ -19,7 +19,12 @@
 import Foundation
 import MailResources
 
-class MailApiError: MailError {
+public class MailApiError: MailError {
+    public static let apiMessageNotFound = MailApiError(code: "mail__message_not_found",
+                                                        localizedDescription: MailResourcesStrings.Localizable
+                                                            .errorMessageNotFound,
+                                                        shouldDisplay: true)
+
     static let allErrors: [MailApiError] = [
         // General
         MailApiError(code: "not_authorized"),
@@ -50,7 +55,7 @@ class MailApiError: MailError {
         MailApiError(code: "mail__imap_connection_timedout"),
         MailApiError(code: "mail__cannot_connect_to_smtp_server"),
         MailApiError(code: "mail__smtp_authentication_failed"),
-        MailApiError(code: "mail__message_not_found"),
+        apiMessageNotFound,
         MailApiError(code: "mail__message_attachment_not_found"),
         MailApiError(code: "mail__unable_to_undo_move_action"),
         MailApiError(code: "mail__unable_to_move_emails"),

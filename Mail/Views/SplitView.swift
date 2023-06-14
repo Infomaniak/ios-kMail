@@ -108,7 +108,7 @@ struct SplitView: View {
             if let tappedNotificationThread = tappedNotificationMessage?.originalThread {
                 navigationStore.threadPath = [tappedNotificationThread]
             } else {
-                IKSnackBar.showSnackBar(message: MailError.messageNotFound.errorDescription)
+                IKSnackBar.showSnackBar(message: MailError.localMessageNotFound.errorDescription)
             }
         }
         .onAppear {

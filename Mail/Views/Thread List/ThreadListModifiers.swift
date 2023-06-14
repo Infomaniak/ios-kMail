@@ -76,9 +76,7 @@ struct ThreadListToolbar: ViewModifier {
                     if multipleSelectionViewModel.isEnabled {
                         Button(MailResourcesStrings.Localizable.buttonCancel) {
                             matomo.track(eventWithCategory: .multiSelection, name: "cancel")
-                            withAnimation {
-                                multipleSelectionViewModel.isEnabled = false
-                            }
+                            multipleSelectionViewModel.isEnabled = false
                         }
                     } else {
                         if isCompactWindow {
@@ -160,9 +158,7 @@ struct ThreadListToolbar: ViewModifier {
                 .disabled(multipleSelectionViewModel.selectedItems.isEmpty)
             }
             .actionsPanel(actionsTarget: $multipleSelectionActionsTarget) {
-                withAnimation {
-                    multipleSelectionViewModel.isEnabled = false
-                }
+                multipleSelectionViewModel.isEnabled = false
             }
             .navigationTitle(
                 multipleSelectionViewModel.isEnabled
