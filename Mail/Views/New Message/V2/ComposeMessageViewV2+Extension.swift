@@ -23,19 +23,6 @@ import RealmSwift
 extension ComposeMessageViewV2 {
     static func newMessage(mailboxManager: MailboxManager) -> ComposeMessageViewV2 {
         let draft = Draft(localUUID: UUID().uuidString)
-        saveDraftInRealm(mailboxManager.getRealm(), draft: draft)
-
-        return ComposeMessageViewV2(draft: draft)
-    }
-}
-
-extension ComposeMessageViewV2 {
-    private static func saveDraftInRealm(_ realm: Realm, draft: Draft) {
-        try? realm.write {
-            draft.action = draft.action == nil && draft.remoteUUID.isEmpty ? .initialSave : .save
-            draft.delay = UserDefaults.shared.cancelSendDelay.rawValue
-
-            realm.add(draft, update: .modified)
-        }
+        return ComposeMessageViewV2(draft: draft, mailboxManager: mailboxManager)
     }
 }

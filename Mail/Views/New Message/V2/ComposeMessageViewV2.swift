@@ -25,15 +25,27 @@ import SwiftUI
 
 struct ComposeMessageViewV2: View {
     @Environment(\.dismiss) private var dismiss
-    @EnvironmentObject private var mailboxManager: MailboxManager
 
-    @StateRealmObject var draft: Draft
+    @StateObject private var mailboxManager: MailboxManager
+    @StateObject private var attachmentsManager: AttachmentsManager
+
+    @StateRealmObject private var draft: Draft
+
+    init(draft: Draft, mailboxManager: MailboxManager) {
+        Self.saveNewDraftInRealm(mailboxManager.getRealm(), draft: draft)
+        _draft = StateRealmObject(wrappedValue: draft)
+
+        _mailboxManager = StateObject(wrappedValue: mailboxManager)
+        _attachmentsManager = StateObject(wrappedValue: AttachmentsManager(draft: draft, mailboxManager: mailboxManager))
+    }
 
     var body: some View {
         NavigationView {
             ScrollView {
                 VStack(spacing: 0) {
                     ComposeMessageHeaderViewV2(draft: draft)
+
+                    ComposeMessageBodyViewV2(attachmentsManager: attachmentsManager)
                 }
             }
             .navigationTitle(MailResourcesStrings.Localizable.buttonNewMessage)
@@ -62,6 +74,15 @@ struct ComposeMessageViewV2: View {
     private func sendDraft() {
         // TODO: Check attachments
         dismiss()
+    }
+
+    private static func saveNewDraftInRealm(_ realm: Realm, draft: Draft) {
+        try? realm.write {
+            draft.action = draft.action == nil && draft.remoteUUID.isEmpty ? .initialSave : .save
+            draft.delay = UserDefaults.shared.cancelSendDelay.rawValue
+
+            realm.add(draft, update: .modified)
+        }
     }
 }
 
