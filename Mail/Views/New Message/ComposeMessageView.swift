@@ -24,6 +24,7 @@ import MailCore
 import MailResources
 import PhotosUI
 import RealmSwift
+import Sentry
 import SwiftUI
 
 enum ComposeViewFieldType: Hashable {
@@ -241,9 +242,9 @@ struct ComposeMessageView: View {
         }
         .customAlert(isPresented: $alert.isShowing) {
             switch alert.state {
-            case let .link(handler):
+            case .link(let handler):
                 AddLinkView(actionHandler: handler)
-            case let .emptySubject(handler):
+            case .emptySubject(let handler):
                 EmptySubjectView(actionHandler: handler)
             case .none:
                 EmptyView()
@@ -339,6 +340,12 @@ struct ComposeMessageView: View {
         } catch {
             dismiss()
             IKSnackBar.showSnackBar(message: MailError.unknownError.localizedDescription)
+            SentrySDK.capture(message: "Error thrown in prepareCompleteDraft()") { scope in
+                scope.setLevel(.error)
+                scope.setContext(value: ["uid": "\(String(describing: draft.messageUid))",
+                                         "error": error],
+                                 key: "message")
+            }
         }
     }
 
@@ -357,6 +364,12 @@ struct ComposeMessageView: View {
         } catch {
             dismiss()
             IKSnackBar.showSnackBar(message: MailError.unknownError.localizedDescription)
+            SentrySDK.capture(message: "Error thrown in prepareReplyForwardBodyAndAttachments()") { scope in
+                scope.setLevel(.error)
+                scope.setContext(value: ["uid": "\(String(describing: messageReply.message.uid))",
+                                         "error": error],
+                                 key: "message")
+            }
         }
     }
 
