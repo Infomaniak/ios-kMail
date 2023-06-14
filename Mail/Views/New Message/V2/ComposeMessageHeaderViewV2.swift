@@ -22,22 +22,29 @@ import SwiftUI
 struct ComposeMessageHeaderViewV2: View {
     @EnvironmentObject private var mailboxManager: MailboxManager
 
+    @State private var showAllRecipientsFields = false
+
     var body: some View {
         VStack {
             ComposeMessageCellStaticTextV2(type: .from, text: mailboxManager.mailbox.email)
             IKDivider()
+
             ComposeMessageCellRecipientsV2(recipients: .constant([
                 PreviewHelper.sampleRecipient1, PreviewHelper.sampleRecipient2, PreviewHelper.sampleRecipient3
-            ].toRealmList()), type: .to)
+            ].toRealmList()), showAllRecipientsFields: $showAllRecipientsFields, type: .to)
             IKDivider()
-            ComposeMessageCellRecipientsV2(recipients: .constant([
-                PreviewHelper.sampleRecipient1, PreviewHelper.sampleRecipient2, PreviewHelper.sampleRecipient3
-            ].toRealmList()), type: .cc)
-            IKDivider()
-            ComposeMessageCellRecipientsV2(recipients: .constant([
-                PreviewHelper.sampleRecipient1, PreviewHelper.sampleRecipient2, PreviewHelper.sampleRecipient3
-            ].toRealmList()), type: .bcc)
-            IKDivider()
+
+            if showAllRecipientsFields {
+                ComposeMessageCellRecipientsV2(recipients: .constant([
+                    PreviewHelper.sampleRecipient1, PreviewHelper.sampleRecipient2, PreviewHelper.sampleRecipient3
+                ].toRealmList()), showAllRecipientsFields: $showAllRecipientsFields, type: .cc)
+                IKDivider()
+                ComposeMessageCellRecipientsV2(recipients: .constant([
+                    PreviewHelper.sampleRecipient1, PreviewHelper.sampleRecipient2, PreviewHelper.sampleRecipient3
+                ].toRealmList()), showAllRecipientsFields: $showAllRecipientsFields, type: .bcc)
+                IKDivider()
+            }
+
             ComposeMessageCellTextFieldV2(text: .constant(""), type: .subject)
             IKDivider()
         }
