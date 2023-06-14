@@ -66,7 +66,7 @@ struct ComposeMessageView: View {
     @State private var mailboxManager: MailboxManager
 
     @StateRealmObject var draft: Draft
-    @State private var editor = RichTextEditorModel()
+    @StateObject private var editor = RichTextEditorModel()
     @State private var showCc = false
     @State private var isLoadingContent: Bool
     @FocusState private var focusedField: ComposeViewFieldType? {
@@ -160,7 +160,7 @@ struct ComposeMessageView: View {
 
                         AttachmentsHeaderView(attachmentsManager: attachmentsManager)
 
-                        RichTextEditor(model: $editor,
+                        RichTextEditor(model: editor,
                                        body: $draft.body,
                                        alert: $alert,
                                        isShowingCamera: $isShowingCamera,

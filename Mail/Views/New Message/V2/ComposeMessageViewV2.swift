@@ -28,6 +28,7 @@ struct ComposeMessageViewV2: View {
 
     @StateObject private var mailboxManager: MailboxManager
     @StateObject private var attachmentsManager: AttachmentsManager
+    @StateObject private var alert = NewMessageAlert()
 
     @StateRealmObject private var draft: Draft
 
@@ -45,7 +46,7 @@ struct ComposeMessageViewV2: View {
                 VStack(spacing: 0) {
                     ComposeMessageHeaderViewV2(draft: draft)
 
-                    ComposeMessageBodyViewV2(attachmentsManager: attachmentsManager)
+                    ComposeMessageBodyViewV2(attachmentsManager: attachmentsManager, alert: alert, draft: draft)
                 }
             }
             .navigationTitle(MailResourcesStrings.Localizable.buttonNewMessage)

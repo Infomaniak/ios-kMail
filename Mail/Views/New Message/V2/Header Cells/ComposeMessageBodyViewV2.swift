@@ -17,21 +17,44 @@
  */
 
 import MailCore
+import RealmSwift
 import SwiftUI
 
 struct ComposeMessageBodyViewV2: View {
+    @State private var isShowingCamera = false
+    @State private var isShowingFileSelection = false
+    @State private var isShowingPhotoLibrary = false
+
+    @StateObject private var editorModel = RichTextEditorModel()
+
     @ObservedObject var attachmentsManager: AttachmentsManager
+    @ObservedObject var alert: NewMessageAlert
+    @ObservedRealmObject var draft: Draft
 
     var body: some View {
         VStack {
             AttachmentsHeaderView(attachmentsManager: attachmentsManager)
+
+            RichTextEditor(
+                model: editorModel,
+                body: $draft.body,
+                alert: $alert,
+                isShowingCamera: $isShowingCamera,
+                isShowingFileSelection: $isShowingFileSelection,
+                isShowingPhotoLibrary: $isShowingPhotoLibrary,
+                becomeFirstResponder: .constant(false), // TODO: Give real value
+                blockRemoteContent: false // TODO: Give real value
+            )
         }
     }
 }
 
 struct ComposeMessageBodyViewV2_Previews: PreviewProvider {
     static var previews: some View {
-        ComposeMessageBodyViewV2(attachmentsManager: AttachmentsManager(draft: Draft(),
-                                                                        mailboxManager: PreviewHelper.sampleMailboxManager))
+        ComposeMessageBodyViewV2(
+            attachmentsManager: AttachmentsManager(draft: Draft(), mailboxManager: PreviewHelper.sampleMailboxManager),
+            alert: NewMessageAlert(),
+            draft: Draft()
+        )
     }
 }
