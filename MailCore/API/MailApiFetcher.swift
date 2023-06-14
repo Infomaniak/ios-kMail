@@ -36,20 +36,27 @@ public extension ApiFetcher {
 public class MailApiFetcher: ApiFetcher {
     public static let clientId = "E90BC22D-67A8-452C-BE93-28DA33588CA4"
 
+    /// All status except 401 are handled by our code, 401 status is handled by Alamofire's Authenticator code
+    private lazy var handledHttpStatus: Set<Int> = {
+        var allStatus = Set(200 ... 500)
+        allStatus.remove(401)
+        return allStatus
+    }()
+
     override public func perform<T: Decodable>(
         request: DataRequest,
         decoder: JSONDecoder = ApiFetcher.decoder
     ) async throws -> (data: T, responseAt: Int?) {
         do {
-            return try await super.perform(request: request)
-        } catch let InfomaniakError.apiError(apiError) {
+            return try await super.perform(request: request.validate(statusCode: handledHttpStatus))
+        } catch InfomaniakError.apiError(let apiError) {
             throw MailApiError.mailApiErrorWithFallback(apiErrorCode: apiError.code)
-        } catch let InfomaniakError.serverError(statusCode: statusCode) {
+        } catch InfomaniakError.serverError(statusCode: let statusCode) {
             throw MailServerError(httpStatus: statusCode)
         } catch {
             if let afError = error.asAFError {
-                if case let .responseSerializationFailed(reason) = afError,
-                   case let .decodingFailed(error) = reason {
+                if case .responseSerializationFailed(let reason) = afError,
+                   case .decodingFailed(let error) = reason {
                     var rawJson = "No data"
                     if let data = request.data,
                        let stringData = String(data: data, encoding: .utf8) {

@@ -37,6 +37,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, AccountManagerDelegate 
         // `application:configurationForConnectingSceneSession` instead).
         guard let _ = (scene as? UIWindowScene) else { return }
         accountManager = AccountManager.instance
+        accountManager.delegate = self
         updateWindowUI()
         setupLaunch()
         if let mailToURL = connectionOptions.urlContexts.first?.url {
@@ -107,7 +108,9 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, AccountManagerDelegate 
     }
 
     func currentAccountNeedsAuthentication() {
-        showLoginView()
+        DispatchQueue.main.async { [weak self] in
+            self?.showLoginView()
+        }
     }
 
     private func setupLaunch() {
