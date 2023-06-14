@@ -782,6 +782,17 @@ public class MailboxManager: ObservableObject {
         var threadsToUpdate = Set<Thread>()
         try? realm.safeWrite {
             for message in messageByUids.messages {
+                guard realm.object(ofType: Message.self, forPrimaryKey: message.uid) == nil else {
+                    SentrySDK.capture(message: "Found already existing message") { scope in
+                        scope.setContext(value: ["Message": ["uid": message.uid,
+                                                             "messageId": message.messageId],
+                                                 "Folder": ["id": message.folder?._id,
+                                                            "name": message.folder?.name,
+                                                            "cursor": message.folder?.cursor]],
+                                         key: "Message context")
+                    }
+                    continue
+                }
                 message.inTrash = folder.role == .trash
                 message.computeReference()
                 let existingThreads = Array(realm.objects(Thread.self)
