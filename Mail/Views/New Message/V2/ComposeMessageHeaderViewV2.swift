@@ -16,11 +16,32 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import MailCore
 import SwiftUI
 
 struct ComposeMessageHeaderViewV2: View {
+    @EnvironmentObject private var mailboxManager: MailboxManager
+
     var body: some View {
-        Text("Liste des champs")
+        VStack {
+            ComposeMessageCellStaticTextV2(type: .from, text: mailboxManager.mailbox.email)
+            IKDivider()
+            ComposeMessageCellRecipientsV2(recipients: .constant([
+                PreviewHelper.sampleRecipient1, PreviewHelper.sampleRecipient2, PreviewHelper.sampleRecipient3
+            ].toRealmList()), type: .to)
+            IKDivider()
+            ComposeMessageCellRecipientsV2(recipients: .constant([
+                PreviewHelper.sampleRecipient1, PreviewHelper.sampleRecipient2, PreviewHelper.sampleRecipient3
+            ].toRealmList()), type: .cc)
+            IKDivider()
+            ComposeMessageCellRecipientsV2(recipients: .constant([
+                PreviewHelper.sampleRecipient1, PreviewHelper.sampleRecipient2, PreviewHelper.sampleRecipient3
+            ].toRealmList()), type: .bcc)
+            IKDivider()
+            ComposeMessageCellTextFieldV2(text: .constant(""), type: .subject)
+            IKDivider()
+        }
+        .padding(.horizontal, 16)
     }
 }
 

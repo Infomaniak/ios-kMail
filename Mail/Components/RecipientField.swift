@@ -26,6 +26,9 @@ import SwiftUI
 import WrappingHStack
 
 struct RecipientField: View {
+    @State private var currentText = ""
+    @State private var keyboardHeight: CGFloat = 0
+
     @Binding var recipients: RealmSwift.List<Recipient>
     @Binding var autocompletion: [Recipient]
     @Binding var unknownRecipientAutocompletion: String
@@ -34,9 +37,6 @@ struct RecipientField: View {
     @FocusState var focusedField: ComposeViewFieldType?
 
     let type: ComposeViewFieldType
-
-    @State private var currentText = ""
-    @State private var keyboardHeight: CGFloat = 0
 
     /// A trimmed view on `currentText`
     private var trimmedInputText: String {
