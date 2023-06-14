@@ -18,34 +18,31 @@
 
 import MailCore
 import SwiftUI
+import RealmSwift
 
 struct ComposeMessageHeaderViewV2: View {
     @EnvironmentObject private var mailboxManager: MailboxManager
 
-    @State private var showAllRecipientsFields = false
+    @State private var showRecipientsFields = false
+
+    @StateRealmObject var draft: Draft
 
     var body: some View {
         VStack {
             ComposeMessageCellStaticTextV2(type: .from, text: mailboxManager.mailbox.email)
             IKDivider()
 
-            ComposeMessageCellRecipientsV2(recipients: .constant([
-                PreviewHelper.sampleRecipient1, PreviewHelper.sampleRecipient2, PreviewHelper.sampleRecipient3
-            ].toRealmList()), showAllRecipientsFields: $showAllRecipientsFields, type: .to)
+            ComposeMessageCellRecipientsV2(recipients: $draft.to, showRecipientsFields: $showRecipientsFields, type: .to)
             IKDivider()
 
-            if showAllRecipientsFields {
-                ComposeMessageCellRecipientsV2(recipients: .constant([
-                    PreviewHelper.sampleRecipient1, PreviewHelper.sampleRecipient2, PreviewHelper.sampleRecipient3
-                ].toRealmList()), showAllRecipientsFields: $showAllRecipientsFields, type: .cc)
+            if showRecipientsFields {
+                ComposeMessageCellRecipientsV2(recipients: $draft.cc, showRecipientsFields: $showRecipientsFields, type: .cc)
                 IKDivider()
-                ComposeMessageCellRecipientsV2(recipients: .constant([
-                    PreviewHelper.sampleRecipient1, PreviewHelper.sampleRecipient2, PreviewHelper.sampleRecipient3
-                ].toRealmList()), showAllRecipientsFields: $showAllRecipientsFields, type: .bcc)
+                ComposeMessageCellRecipientsV2(recipients: $draft.bcc, showRecipientsFields: $showRecipientsFields, type: .bcc)
                 IKDivider()
             }
 
-            ComposeMessageCellTextFieldV2(text: .constant(""), type: .subject)
+            ComposeMessageCellTextFieldV2(text: $draft.subject, type: .subject)
             IKDivider()
         }
         .padding(.horizontal, 16)
@@ -54,6 +51,6 @@ struct ComposeMessageHeaderViewV2: View {
 
 struct ComposeMessageHeaderViewV2_Previews: PreviewProvider {
     static var previews: some View {
-        ComposeMessageHeaderViewV2()
+        ComposeMessageHeaderViewV2(draft: Draft())
     }
 }

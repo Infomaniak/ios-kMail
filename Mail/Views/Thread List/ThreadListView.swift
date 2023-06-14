@@ -254,7 +254,7 @@ struct ThreadListView: View {
             ComposeMessageView.newMessage(mailboxManager: viewModel.mailboxManager)
         }
         .sheet(isPresented: $isShowingV2) {
-            ComposeMessageViewV2()
+            ComposeMessageViewV2.newMessage(mailboxManager: viewModel.mailboxManager)
         }
         .customAlert(item: $flushAlert) { item in
             FlushFolderAlertView(flushAlert: item, folder: viewModel.folder)

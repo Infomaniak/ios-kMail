@@ -27,11 +27,13 @@ struct ComposeMessageViewV2: View {
     @Environment(\.dismiss) private var dismiss
     @EnvironmentObject private var mailboxManager: MailboxManager
 
+    @StateRealmObject var draft: Draft
+
     var body: some View {
         NavigationView {
             ScrollView {
                 VStack(spacing: 0) {
-                    ComposeMessageHeaderViewV2()
+                    ComposeMessageHeaderViewV2(draft: draft)
                 }
             }
             .navigationTitle(MailResourcesStrings.Localizable.buttonNewMessage)
@@ -65,6 +67,6 @@ struct ComposeMessageViewV2: View {
 
 struct ComposeMessageViewV2_Previews: PreviewProvider {
     static var previews: some View {
-        ComposeMessageViewV2()
+        ComposeMessageViewV2.newMessage(mailboxManager: PreviewHelper.sampleMailboxManager)
     }
 }

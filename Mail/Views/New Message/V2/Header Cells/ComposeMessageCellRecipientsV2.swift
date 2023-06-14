@@ -22,7 +22,7 @@ import SwiftUI
 
 struct ComposeMessageCellRecipientsV2: View {
     @Binding var recipients: RealmSwift.List<Recipient>
-    @Binding var showAllRecipientsFields: Bool
+    @Binding var showRecipientsFields: Bool
 
     let type: ComposeViewFieldType
 
@@ -41,7 +41,7 @@ struct ComposeMessageCellRecipientsV2: View {
 
             if type == .to {
                 Spacer()
-                ChevronButton(isExpanded: $showAllRecipientsFields)
+                ChevronButton(isExpanded: $showRecipientsFields)
             }
         }
         .frame(maxWidth: .infinity, alignment: .leading)
@@ -52,6 +52,6 @@ struct ComposeMessageCellRecipientsV2_Previews: PreviewProvider {
     static var previews: some View {
         ComposeMessageCellRecipientsV2(recipients: .constant([
             PreviewHelper.sampleRecipient1, PreviewHelper.sampleRecipient2, PreviewHelper.sampleRecipient3
-        ].toRealmList()), showAllRecipientsFields: .constant(false), type: .to)
+        ].toRealmList()), showRecipientsFields: .constant(false), type: .to)
     }
 }
