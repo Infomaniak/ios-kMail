@@ -94,9 +94,7 @@ struct MessageView: View {
                         messageUid: message.uid
                     )
                     .padding(.top, 16)
-                    .onChange(of: isMessagePreprocessed) { _ in
-                        // Keep it for event propagation to work
-                    }
+                    .id("\(message.uid)_\(isMessagePreprocessed)")
                 }
             }
             .padding(.vertical, 16)

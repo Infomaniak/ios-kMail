@@ -81,6 +81,7 @@ struct MessageBodyView: View {
                 ShimmerView()
             }
         }
+        .id("\(presentableBody)_\(isMessagePreprocessed)_\(model.contentLoading)")
     }
 
     private func loadBody(blockRemoteContent: Bool) {
