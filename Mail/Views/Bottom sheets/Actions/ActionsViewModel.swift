@@ -232,7 +232,16 @@ enum ActionsTarget: Equatable, Identifiable {
          matomoCategory: MatomoUtils.EventCategory? = nil,
          completionHandler: (() -> Void)? = nil) {
         self.mailboxManager = mailboxManager
-        self.target = target.freeze()
+        switch target {
+        case .threads(let threads, _):
+            if threads.count == 1, let thread = threads.first, thread.messages.count == 1, let message = thread.messages.first {
+                self.target = ActionsTarget.message(message).freeze()
+            } else {
+                self.target = target.freeze()
+            }
+        case .message:
+            self.target = target.freeze()
+        }
         self.moveAction = moveAction
         self.messageReply = messageReply
         self.reportJunkActionsTarget = reportJunkActionsTarget
