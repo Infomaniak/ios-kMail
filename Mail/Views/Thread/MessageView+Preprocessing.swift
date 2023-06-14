@@ -139,14 +139,23 @@ extension MessageView {
                     continue
                 }
 
-                mailBody = mailBody?.replacingOccurrences(
-                    of: "cid:\(contentId)",
-                    with: "data:\(attachment.mimeType);base64,\(data.base64EncodedString())"
+                base64Encoder.replaceContentIdForBase64Image(
+                    in: &mailBody,
+                    contentId: contentId,
+                    mimeType: attachment.mimeType,
+                    contentData: data
                 )
-                compactBody = compactBody?.replacingOccurrences(
-                    of: "cid:\(contentId)",
-                    with: "data:\(attachment.mimeType);base64,\(data.base64EncodedString())"
+
+                base64Encoder.replaceContentIdForBase64Image(
+                    in: &compactBody,
+                    contentId: contentId,
+                    mimeType: attachment.mimeType,
+                    contentData: data
                 )
+            }
+
+            guard !Task.isCancelled else {
+                return
             }
 
             // Mutate DOM
@@ -156,5 +165,14 @@ extension MessageView {
             try await Task.sleep(nanoseconds: Self.batchCooldown)
         }
         await task.finish()
+    }
+}
+
+struct Base64Encoder {
+    func replaceContentIdForBase64Image(in body: inout String?, contentId: String, mimeType: String, contentData: Data) {
+        body = body?.replacingOccurrences(
+            of: "cid:\(contentId)",
+            with: "data:\(mimeType);base64,\(contentData.base64EncodedString())"
+        )
     }
 }

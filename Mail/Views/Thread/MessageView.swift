@@ -45,9 +45,12 @@ struct MessageView: View {
 
     @ObservedRealmObject var message: Message
 
+    /// Something to base64 encode images
+    let base64Encoder = Base64Encoder()
+
     private var isRemoteContentBlocked: Bool {
         return (UserDefaults.shared.displayExternalContent == .askMe || message.folder?.role == .spam)
-        && !message.localSafeDisplay
+            && !message.localSafeDisplay
     }
 
     init(message: Message, isMessageExpanded: Bool = false) {
