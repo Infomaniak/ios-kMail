@@ -87,14 +87,13 @@ struct MessageView: View {
                     }
 
                     MessageBodyView(
-                        isMessagePreprocessed: $isMessagePreprocessed,
+                        isMessagePreprocessed: isMessagePreprocessed,
                         presentableBody: $presentableBody,
                         blockRemoteContent: isRemoteContentBlocked,
                         displayContentBlockedActionView: $displayContentBlockedActionView,
                         messageUid: message.uid
                     )
                     .padding(.top, 16)
-                    .id("\(message.uid)_\(isMessagePreprocessed)")
                 }
             }
             .padding(.vertical, 16)
