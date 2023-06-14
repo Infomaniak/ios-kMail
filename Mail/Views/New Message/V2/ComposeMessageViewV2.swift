@@ -104,6 +104,11 @@ struct ComposeMessageViewV2: View {
                 }
             }
             .background(MailResourcesAsset.backgroundColor.swiftUIColor)
+            .onDisappear {
+                Task {
+                    DraftManager.shared.syncDraft(mailboxManager: mailboxManager)
+                }
+            }
             .navigationTitle(MailResourcesStrings.Localizable.buttonNewMessage)
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
