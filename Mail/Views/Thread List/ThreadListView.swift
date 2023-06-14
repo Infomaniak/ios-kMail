@@ -221,7 +221,9 @@ struct ThreadListView: View {
         }
         .onAppear {
             networkMonitor.start()
-            viewModel.selectedThread = nil
+            if viewModel.isCompact {
+                viewModel.selectedThread = nil
+            }
         }
         .onChange(of: splitViewManager.selectedFolder) { newFolder in
             changeFolder(newFolder: newFolder)
