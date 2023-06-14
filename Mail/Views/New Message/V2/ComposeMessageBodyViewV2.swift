@@ -16,20 +16,27 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import InfomaniakCoreUI
 import MailCore
 import RealmSwift
 import SwiftUI
 
 struct ComposeMessageBodyViewV2: View {
+    @Environment(\.dismiss) private var dismiss
+    @EnvironmentObject private var mailboxManager: MailboxManager
+
     @State private var isShowingCamera = false
     @State private var isShowingFileSelection = false
     @State private var isShowingPhotoLibrary = false
 
     @StateObject private var editorModel = RichTextEditorModel()
 
+    @StateRealmObject var draft: Draft
+
+    @Binding var isLoadingContent: Bool
+
     @ObservedObject var attachmentsManager: AttachmentsManager
     @ObservedObject var alert: NewMessageAlert
-    @ObservedRealmObject var draft: Draft
 
     let messageReply: MessageReply?
 
@@ -55,6 +62,13 @@ struct ComposeMessageBodyViewV2: View {
             .frame(height: editorModel.height + 20)
             .padding([.vertical], 8)
         }
+        .task {
+            await prepareCompleteDraft()
+        }
+        .task {
+            await prepareReplyForwardBodyAndAttachments()
+            await setSignature()
+        }
         .fullScreenCover(isPresented: $isShowingCamera) {
             CameraPicker { data in
                 attachmentsManager.importAttachments(attachments: [data])
@@ -74,14 +88,89 @@ struct ComposeMessageBodyViewV2: View {
             .ignoresSafeArea()
         }
     }
+
+    private func prepareCompleteDraft() async {
+        guard draft.messageUid != nil && draft.remoteUUID.isEmpty else { return }
+
+        do {
+            if let fetchedDraft = try await mailboxManager.draft(partialDraft: draft),
+               let liveFetchedDraft = fetchedDraft.thaw() {
+                draft = liveFetchedDraft
+            }
+            isLoadingContent = false
+        } catch {
+            dismiss()
+            IKSnackBar.showSnackBar(message: MailError.unknownError.localizedDescription)
+        }
+    }
+
+    private func prepareReplyForwardBodyAndAttachments() async {
+        guard let messageReply else { return }
+
+        let prepareTask = Task.detached {
+            try await prepareBody(message: messageReply.message, replyMode: messageReply.replyMode)
+            try await prepareAttachments(message: messageReply.message, replyMode: messageReply.replyMode)
+        }
+
+        do {
+            _ = try await prepareTask.value
+
+            isLoadingContent = false
+        } catch {
+            dismiss()
+            IKSnackBar.showSnackBar(message: MailError.unknownError.localizedDescription)
+        }
+    }
+
+    private func setSignature() async {
+        if draft.identityId == nil || draft.identityId?.isEmpty == true,
+           let signatureResponse = mailboxManager.getSignatureResponse() {
+            $draft.identityId.wrappedValue = "\(signatureResponse.defaultSignatureId)"
+            guard let signature = signatureResponse.default else {
+                return
+            }
+
+            let html = "<br><br><div class=\"editorUserSignature\">\(signature.content)</div>"
+            switch signature.position {
+            case .beforeReplyMessage:
+                $draft.body.wrappedValue.insert(contentsOf: html, at: draft.body.startIndex)
+            case .afterReplyMessage:
+                $draft.body.wrappedValue.append(contentsOf: html)
+            }
+        }
+    }
+
+    private func prepareBody(message: Message, replyMode: ReplyMode) async throws {
+        if !message.fullyDownloaded {
+            try await mailboxManager.message(message: message)
+        }
+
+        guard let freshMessage = message.thaw() else { return }
+        freshMessage.realm?.refresh()
+        $draft.body.wrappedValue = Draft.replyingBody(message: freshMessage, replyMode: replyMode)
+    }
+
+    private func prepareAttachments(message: Message, replyMode: ReplyMode) async throws {
+        guard replyMode == .forward else { return }
+        let attachments = try await mailboxManager.apiFetcher.attachmentsToForward(
+            mailbox: mailboxManager.mailbox,
+            message: message
+        ).attachments
+
+        for attachment in attachments {
+            $draft.attachments.append(attachment)
+        }
+        attachmentsManager.completeUploadedAttachments()
+    }
 }
 
 struct ComposeMessageBodyViewV2_Previews: PreviewProvider {
     static var previews: some View {
         ComposeMessageBodyViewV2(
+            draft: Draft(),
+            isLoadingContent: .constant(false),
             attachmentsManager: AttachmentsManager(draft: Draft(), mailboxManager: PreviewHelper.sampleMailboxManager),
             alert: NewMessageAlert(),
-            draft: Draft(),
             messageReply: nil
         )
     }

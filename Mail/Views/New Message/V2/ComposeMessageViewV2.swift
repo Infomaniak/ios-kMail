@@ -61,6 +61,7 @@ struct ComposeMessageViewV2: View {
 
     @LazyInjectService private var matomo: MatomoUtils
 
+    @State private var isLoadingContent: Bool
     @State private var isShowingCancelAttachmentsError = false
 
     @StateObject private var mailboxManager: MailboxManager
@@ -81,6 +82,8 @@ struct ComposeMessageViewV2: View {
         Self.saveNewDraftInRealm(mailboxManager.getRealm(), draft: draft)
         _draft = StateRealmObject(wrappedValue: draft)
 
+        _isLoadingContent = State(wrappedValue: (draft.messageUid != nil && draft.remoteUUID.isEmpty) || messageReply != nil)
+
         _mailboxManager = StateObject(wrappedValue: mailboxManager)
         _attachmentsManager = StateObject(wrappedValue: AttachmentsManager(draft: draft, mailboxManager: mailboxManager))
     }
@@ -92,9 +95,10 @@ struct ComposeMessageViewV2: View {
                     ComposeMessageHeaderViewV2(draft: draft)
 
                     ComposeMessageBodyViewV2(
+                        draft: draft,
+                        isLoadingContent: $isLoadingContent,
                         attachmentsManager: attachmentsManager,
                         alert: alert,
-                        draft: draft,
                         messageReply: messageReply
                     )
                 }
@@ -112,8 +116,8 @@ struct ComposeMessageViewV2: View {
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button(action: didTouchSend) {
                         Label(MailResourcesStrings.Localizable.send, image: MailResourcesAsset.send.name)
-                            .disabled(isSendButtonDisabled)
                     }
+                    .disabled(isSendButtonDisabled)
                 }
             }
             .customAlert(isPresented: $alert.isShowing) {
