@@ -59,6 +59,7 @@ extension MessageView {
             return
         }
         preprocessing.cancel()
+        self.preprocessing = nil
     }
 
     // MARK: - private

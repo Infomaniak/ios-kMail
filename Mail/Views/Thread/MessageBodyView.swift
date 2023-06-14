@@ -26,6 +26,7 @@ struct MessageBodyView: View {
 
     @StateObject private var model = WebViewModel()
 
+    let isMessagePreprocessed: Bool
     @Binding var presentableBody: PresentableBody
     var blockRemoteContent: Bool
     @Binding var displayContentBlockedActionView: Bool
@@ -76,7 +77,7 @@ struct MessageBodyView: View {
             }
             .opacity(model.contentLoading ? 0 : 1)
 
-            if model.contentLoading {
+            if model.contentLoading || !isMessagePreprocessed {
                 ShimmerView()
             }
         }
@@ -88,7 +89,8 @@ struct MessageBodyView: View {
                 value: model.showBlockQuote ? presentableBody.body?.value : presentableBody.compactBody,
                 blockRemoteContent: blockRemoteContent
             )
-            displayContentBlockedActionView = loadResult == .remoteContentBlocked
+
+            displayContentBlockedActionView = (loadResult == .remoteContentBlocked)
         }
     }
 }
@@ -96,6 +98,7 @@ struct MessageBodyView: View {
 struct MessageBodyView_Previews: PreviewProvider {
     static var previews: some View {
         MessageBodyView(
+            isMessagePreprocessed: true,
             presentableBody: .constant(PreviewHelper.samplePresentableBody),
             blockRemoteContent: false,
             displayContentBlockedActionView: .constant(false),

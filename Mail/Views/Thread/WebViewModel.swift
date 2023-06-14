@@ -38,7 +38,9 @@ final class WebViewModel: NSObject, ObservableObject {
         case remoteContentBlocked
         case remoteContentAuthorized
         case noRemoteContent
-        case failure
+        case errorEmptyInputValue
+        case errorCleanHTMLContent
+        case errorParsingBody
     }
 
     override init() {
@@ -52,10 +54,10 @@ final class WebViewModel: NSObject, ObservableObject {
     }
 
     func loadHTMLString(value: String?, blockRemoteContent: Bool) async -> LoadResult {
-        guard let rawHtml = value else { return .failure }
+        guard let rawHtml = value else { return .errorEmptyInputValue }
 
         do {
-            guard let safeDocument = MessageWebViewUtils.cleanHtmlContent(rawHtml: rawHtml) else { return .failure }
+            guard let safeDocument = MessageWebViewUtils.cleanHtmlContent(rawHtml: rawHtml) else { return .errorCleanHTMLContent }
 
             try updateHeadContent(of: safeDocument)
             try wrapBody(document: safeDocument, inID: Constants.divWrapperId)
@@ -73,7 +75,7 @@ final class WebViewModel: NSObject, ObservableObject {
             }
         } catch {
             DDLogError("An error occurred while parsing body \(error)")
-            return .failure
+            return .errorParsingBody
         }
     }
 
