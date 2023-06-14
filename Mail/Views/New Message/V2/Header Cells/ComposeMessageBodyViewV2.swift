@@ -45,6 +45,27 @@ struct ComposeMessageBodyViewV2: View {
                 becomeFirstResponder: .constant(false), // TODO: Give real value
                 blockRemoteContent: false // TODO: Give real value
             )
+            .ignoresSafeArea(.all, edges: .bottom)
+            .frame(height: editorModel.height + 20)
+            .padding([.vertical], 10)
+        }
+        .fullScreenCover(isPresented: $isShowingCamera) {
+            CameraPicker { data in
+                attachmentsManager.importAttachments(attachments: [data])
+            }
+            .ignoresSafeArea()
+        }
+        .sheet(isPresented: $isShowingFileSelection) {
+            DocumentPicker(pickerType: .selectContent([.item]) { urls in
+                attachmentsManager.importAttachments(attachments: urls)
+            })
+            .ignoresSafeArea()
+        }
+        .sheet(isPresented: $isShowingPhotoLibrary) {
+            ImagePicker { results in
+                attachmentsManager.importAttachments(attachments: results)
+            }
+            .ignoresSafeArea()
         }
     }
 }
