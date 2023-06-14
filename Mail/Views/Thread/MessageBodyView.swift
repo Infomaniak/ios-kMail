@@ -85,15 +85,13 @@ struct MessageBodyView: View {
     }
 
     private func loadBody(blockRemoteContent: Bool) {
-        Task.detached {
+        Task {
             let loadResult = await model.loadHTMLString(
                 value: model.showBlockQuote ? presentableBody.body?.value : presentableBody.compactBody,
                 blockRemoteContent: blockRemoteContent
             )
 
-            await MainActor.run {
-                displayContentBlockedActionView = (loadResult == .remoteContentBlocked)
-            }
+            displayContentBlockedActionView = (loadResult == .remoteContentBlocked)
         }
     }
 }
