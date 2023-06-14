@@ -57,7 +57,7 @@ public class MailError: LocalizedError {
                                                  shouldDisplay: true)
     public static let addressBookNotFound = MailError(code: "addressBookNotFound", shouldDisplay: true)
     public static let contactNotFound = MailError(code: "contactNotFound", shouldDisplay: true)
-    public static let messageNotFound = MailError(code: "messageNotFound",
+    public static let localMessageNotFound = MailError(code: "messageNotFound",
                                                   localizedDescription: MailResourcesStrings.Localizable.errorMessageNotFound,
                                                   shouldDisplay: true)
     public static let attachmentsSizeLimitReached = MailError(code: "attachmentsSizeLimitReached",
