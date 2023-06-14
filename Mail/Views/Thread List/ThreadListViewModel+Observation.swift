@@ -85,11 +85,16 @@ extension ThreadListViewModel {
                 self.stopObserveChanges()
             }
         }
-        observationLastUpdateToken = folder.observe(keyPaths: [\Folder.lastUpdate], on: .main) { [weak self] changes in
+        observationLastUpdateToken = folder.observe(keyPaths: [\Folder.lastUpdate], on: observeQueue) { [weak self] changes in
             switch changes {
             case .change(let folder, _):
-                withAnimation {
-                    self?.lastUpdate = folder.lastUpdate
+                let lastUpdate = folder.freezeIfNeeded().lastUpdate
+                Task {
+                    await MainActor.run {
+                        withAnimation {
+                            self?.lastUpdate = lastUpdate
+                        }
+                    }
                 }
             default:
                 break
@@ -158,12 +163,12 @@ extension ThreadListViewModel {
 
             guard let threadToUpdate = threadToUpdate,
                   let sectionToUpdate = sectionToUpdate else {
-                return
+                continue
             }
 
             let threadToUpdateIndex = sectionToUpdate.threads.firstIndex(of: threadToUpdate)
             guard let threadToUpdateIndex = threadToUpdateIndex else {
-                return
+                continue
             }
 
             sectionToUpdate.threads[threadToUpdateIndex] = updatedThread.freeze()

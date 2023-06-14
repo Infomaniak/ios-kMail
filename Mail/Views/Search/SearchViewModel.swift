@@ -22,7 +22,6 @@ import InfomaniakCore
 import InfomaniakCoreUI
 import InfomaniakDI
 import MailCore
-import MailResources
 import RealmSwift
 import SwiftUI
 
@@ -44,7 +43,15 @@ enum SearchState {
     @Published var searchHistory: SearchHistory
 
     public let filters: [SearchFilter] = [.read, .unread, .favorite, .attachment, .folder]
-    @Published var selectedFilters: [SearchFilter] = []
+    @Published var selectedFilters: [SearchFilter] = [] {
+        willSet {
+            // cancel current running tasks
+            stopObserveSearch()
+            currentSearchTask?.cancel()
+            threads = []
+        }
+    }
+
     var searchValueType: SearchFieldValueType = .threadsAndContacts
     @Published var searchValue = ""
     var searchState: SearchState {
@@ -60,7 +67,13 @@ enum SearchState {
     @Published var folderList: [Folder]
     @Published var realFolder: Folder
     var lastSearchFolderId: String?
+
+    /// Token to observe the search itself
     var observationSearchThreadToken: NotificationToken?
+
+    /// Token to observe the fetched search results changes
+    var observationSearchResultsChangesToken: NotificationToken?
+
     @Published var selectedSearchFolderId = "" {
         didSet {
             matomo.track(eventWithCategory: .search, name: SearchFilter.folder.matomoName, value: !selectedSearchFolderId.isEmpty)
@@ -71,8 +84,8 @@ enum SearchState {
             }
 
             currentSearchTask?.cancel()
-            currentSearchTask = Task {
-                await fetchThreads()
+            currentSearchTask = Task.detached {
+                await self.fetchThreads()
             }
         }
     }
@@ -85,132 +98,36 @@ enum SearchState {
 
     @LazyInjectService var matomo: MatomoUtils
 
-    private let searchFolder: Folder
-    private var resourceNext: String?
-    private var lastSearch = ""
-    private var searchFieldObservation: AnyCancellable?
-    private var currentSearchTask: Task<Void, Never>?
+    let searchFolder: Folder
+    var resourceNext: String?
+    var lastSearch = ""
+    var searchFieldObservation: AnyCancellable?
+    var currentSearchTask: Task<Void, Never>?
+    let observeQueue = DispatchQueue(label: "com.infomaniak.observation.SearchViewModel", qos: .userInteractive)
 
     init(mailboxManager: MailboxManager, folder: Folder) {
         self.mailboxManager = mailboxManager
+
         searchHistory = mailboxManager.searchHistory()
         realFolder = folder.freezeIfNeeded()
-
         searchFolder = mailboxManager.initSearchFolder().freezeIfNeeded()
-
         folderList = mailboxManager.getFolders()
 
         searchFieldObservation = $searchValue
             .debounce(for: .seconds(0.3), scheduler: DispatchQueue.main)
             .sink { [weak self] newValue in
-                guard self?.lastSearch.trimmingCharacters(in: .whitespacesAndNewlines) != newValue
-                    .trimmingCharacters(in: .whitespacesAndNewlines) else {
+                guard let self = self,
+                      self.lastSearch.trimmingCharacters(in: .whitespacesAndNewlines) != newValue
+                      .trimmingCharacters(in: .whitespacesAndNewlines) else {
                     return
                 }
-                self?.lastSearch = newValue
-                self?.searchValueType = .threadsAndContacts
-                self?.performSearch()
+                self.lastSearch = newValue
+                self.searchValueType = .threadsAndContacts
+                self.performSearch()
             }
     }
 
-    func clearSearch() {
-        searchValueType = .threadsAndContacts
-        searchValue = ""
-        threads = []
-        contacts = []
-        isLoading = false
-    }
-
-    func searchThreadsForCurrentValue() {
-        searchValueType = .threads
-        performSearch()
-    }
-
-    func searchFilter(_ filter: SearchFilter) {
-        withAnimation {
-            if selectedFilters.contains(filter) {
-                unselect(filter: filter)
-            } else {
-                matomo.track(eventWithCategory: .search, name: filter.matomoName)
-                searchValueType = .threads
-                select(filter: filter)
-            }
-        }
-
-        performSearch()
-    }
-
-    func searchThreadsForContact(_ contact: Recipient) {
-        searchValueType = .contact
-        searchValue = "\"" + contact.email + "\""
-    }
-
-    private func performSearch() {
-        if searchValueType == .threadsAndContacts {
-            updateContactSuggestion()
-        } else {
-            contacts = []
-        }
-
-        currentSearchTask?.cancel()
-        currentSearchTask = Task {
-            await fetchThreads()
-        }
-    }
-
-    private var searchFilters: [URLQueryItem] {
-        var queryItems: [URLQueryItem] = []
-        if !searchValue.isEmpty {
-            if searchValue.hasPrefix("\"") && searchValue.hasSuffix("\"") {
-                searchValueType = .contact
-            }
-            if searchValueType == .contact {
-                queryItems.append(URLQueryItem(name: "sfrom", value: searchValue.replacingOccurrences(of: "\"", with: "")))
-            } else {
-                queryItems.append(URLQueryItem(name: "scontains", value: searchValue))
-            }
-        }
-        queryItems.append(URLQueryItem(name: "severywhere", value: selectedFilters.contains(.folder) ? "0" : "1"))
-
-        if selectedFilters.contains(.attachment) {
-            queryItems.append(URLQueryItem(name: "sattachments", value: "yes"))
-        }
-
-        return queryItems
-    }
-
-    private var filter: Filter {
-        if selectedFilters.contains(.read) {
-            return .seen
-        } else if selectedFilters.contains(.unread) {
-            return .unseen
-        } else if selectedFilters.contains(.favorite) {
-            return .starred
-        }
-        return .all
-    }
-
-    private var searchFiltersOffline: [SearchCondition] {
-        var queryItems: [SearchCondition] = []
-        queryItems.append(SearchCondition.filter(filter))
-
-        if !searchValue.isEmpty {
-            if searchValue.hasPrefix("\"") && searchValue.hasSuffix("\"") {
-                searchValueType = .contact
-            }
-            if searchValueType == .contact {
-                queryItems.append(SearchCondition.from(searchValue.replacingOccurrences(of: "\"", with: "")))
-            } else {
-                queryItems.append(SearchCondition.contains(searchValue))
-            }
-        }
-        queryItems.append(SearchCondition.everywhere(!selectedFilters.contains(.folder)))
-        queryItems.append(SearchCondition.attachments(selectedFilters.contains(.attachment)))
-
-        return queryItems
-    }
-
-    private func updateContactSuggestion() {
+    func updateContactSuggestion() {
         let contactManager = AccountManager.instance.currentContactManager
         let autocompleteContacts = contactManager?.contacts(matching: searchValue) ?? []
         var autocompleteRecipients = autocompleteContacts.map { Recipient(email: $0.email, name: $0.name) }
@@ -225,40 +142,13 @@ enum SearchState {
         }
     }
 
-    private func unselect(filter: SearchFilter) {
-        selectedFilters.removeAll {
-            $0 == filter
-        }
-    }
-
-    private func select(filter: SearchFilter) {
-        selectedFilters.append(filter)
-        switch filter {
-        case .read:
-            selectedFilters.removeAll {
-                $0 == .unread || $0 == .favorite
-            }
-        case .unread:
-            selectedFilters.removeAll {
-                $0 == .read || $0 == .favorite
-            }
-        case .favorite:
-            selectedFilters.removeAll {
-                $0 == .read || $0 == .unread
-            }
-        default:
-            return
-        }
-    }
-
     func fetchThreads() async {
         guard !isLoading else {
             return
         }
 
         isLoading = true
-
-        observationSearchThreadToken?.invalidate()
+        stopObserveSearch()
         threads = []
 
         var folderToSearch = realFolder.id
@@ -286,7 +176,7 @@ enum SearchState {
                 resourceNext = result.resourceNext
             }
         }
-        observeChanges()
+        observeSearch()
 
         if searchValue.trimmingCharacters(in: .whitespacesAndNewlines).count >= 3 {
             searchHistory = await mailboxManager.update(searchHistory: searchHistory, with: searchValue)
@@ -310,29 +200,6 @@ enum SearchState {
         isLoading = false
     }
 
-    private func observeChanges() {
-        observationSearchThreadToken?.invalidate()
-        if let folder = searchFolder.thaw() {
-            let threadResults = folder.threads.sorted(by: \.date, ascending: false)
-            observationSearchThreadToken = threadResults.observe(on: .main) { [weak self] changes in
-                switch changes {
-                case .initial(let results):
-                    self?.threads = Array(results.freezeIfNeeded())
-                case .update(let results, _, _, _):
-                    withAnimation {
-                        self?.threads = Array(results.freezeIfNeeded())
-                    }
-                case .error:
-                    break
-                }
-                self?.isLoading = false
-            }
-
-        } else {
-            threads = []
-        }
-    }
-
     func loadNextPageIfNeeded(currentItem: Thread) {
         // Start loading next page when we reach the second-to-last item
         guard !threads.isEmpty else { return }
@@ -342,34 +209,5 @@ enum SearchState {
                 await fetchNextPage()
             }
         }
-    }
-}
-
-public enum SearchFilter: String, Identifiable {
-    public var id: Self { self }
-
-    case read
-    case unread
-    case favorite
-    case attachment
-    case folder
-
-    public var title: String {
-        switch self {
-        case .read:
-            return MailResourcesStrings.Localizable.searchFilterRead
-        case .unread:
-            return MailResourcesStrings.Localizable.searchFilterUnread
-        case .favorite:
-            return MailResourcesStrings.Localizable.favoritesFolder
-        case .attachment:
-            return MailResourcesStrings.Localizable.searchFilterAttachment
-        case .folder:
-            return MailResourcesStrings.Localizable.searchFilterFolder
-        }
-    }
-
-    public var matomoName: String {
-        return "\(rawValue)Filter"
     }
 }

@@ -134,7 +134,7 @@ final class DateSection: Identifiable, Equatable {
     var observationUnreadToken: NotificationToken?
     var observationThreadToken: NotificationToken?
     var observationLastUpdateToken: NotificationToken?
-    let observeQueue = DispatchQueue(label: "com.infomaniak.thread-results", qos: .userInteractive)
+    let observeQueue = DispatchQueue(label: "com.infomaniak.observation.ThreadListViewModel", qos: .userInteractive)
 
     private let loadNextPageThreshold = 10
 
