@@ -21,30 +21,29 @@ import RealmSwift
 import SwiftUI
 
 struct ComposeMessageCellRecipientsV2: View {
+    @State private var currentText = ""
+
     @Binding var recipients: RealmSwift.List<Recipient>
     @Binding var showRecipientsFields: Bool
 
     let type: ComposeViewFieldType
 
     var body: some View {
-        HStack {
-            Text(type.title)
-                .textStyle(.bodySecondary)
+        VStack {
+            HStack {
+                Text(type.title)
+                    .textStyle(.bodySecondary)
 
-            RecipientField(
-                recipients: $recipients,
-                autocompletion: .constant([]),
-                unknownRecipientAutocompletion: .constant(""),
-                addRecipientHandler: .constant(nil),
-                type: type
-            )
+                RecipientFieldV2(currentText: $currentText, recipients: $recipients, type: type)
 
-            if type == .to {
-                Spacer()
-                ChevronButton(isExpanded: $showRecipientsFields)
+                if type == .to {
+                    Spacer()
+                    ChevronButton(isExpanded: $showRecipientsFields)
+                }
             }
+            .frame(maxWidth: .infinity, alignment: .leading)
+            IKDivider()
         }
-        .frame(maxWidth: .infinity, alignment: .leading)
     }
 }
 
@@ -52,6 +51,6 @@ struct ComposeMessageCellRecipientsV2_Previews: PreviewProvider {
     static var previews: some View {
         ComposeMessageCellRecipientsV2(recipients: .constant([
             PreviewHelper.sampleRecipient1, PreviewHelper.sampleRecipient2, PreviewHelper.sampleRecipient3
-        ].toRealmList()), showRecipientsFields: .constant(false), type: .to)
+        ].toRealmList()), showRecipientsFields: .constant(false), type: .bcc)
     }
 }

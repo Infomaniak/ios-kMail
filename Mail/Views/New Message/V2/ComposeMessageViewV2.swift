@@ -26,7 +26,7 @@ import SwiftUI
 // TODO: Rename without V2
 
 enum ComposeViewFieldType: Hashable {
-    case from, to, cc, bcc, subject, editor
+    case from, to, cc, bcc, subject, editor, autocomplete
     case chip(Int, Recipient)
 
     var title: String {
@@ -45,6 +45,8 @@ enum ComposeViewFieldType: Hashable {
             return "editor"
         case .chip:
             return "Recipient Chip"
+        case .autocomplete:
+            return "autocomplete"
         }
     }
 }
@@ -64,11 +66,20 @@ struct ComposeMessageViewV2: View {
     @State private var isLoadingContent: Bool
     @State private var isShowingCancelAttachmentsError = false
 
+    @State private var editorFocus = false
+
     @StateObject private var mailboxManager: MailboxManager
     @StateObject private var attachmentsManager: AttachmentsManager
     @StateObject private var alert = NewMessageAlert()
 
     @StateRealmObject private var draft: Draft
+
+    @FocusState private var focusedField: ComposeViewFieldType? {
+        willSet {
+            let editorInFocus = (newValue == .editor)
+            editorFocus = editorInFocus
+        }
+    }
 
     let messageReply: MessageReply?
 
@@ -92,7 +103,7 @@ struct ComposeMessageViewV2: View {
         NavigationView {
             ScrollView {
                 VStack(spacing: 0) {
-                    ComposeMessageHeaderViewV2(draft: draft)
+                    ComposeMessageHeaderViewV2(draft: draft, focusedField: _focusedField)
 
                     ComposeMessageBodyViewV2(
                         draft: draft,
@@ -104,6 +115,14 @@ struct ComposeMessageViewV2: View {
                 }
             }
             .background(MailResourcesAsset.backgroundColor.swiftUIColor)
+            .onAppear {
+                switch messageReply?.replyMode {
+                case .reply, .replyAll:
+                    focusedField = .editor
+                default:
+                    focusedField = .to
+                }
+            }
             .onDisappear {
                 Task {
                     DraftManager.shared.syncDraft(mailboxManager: mailboxManager)

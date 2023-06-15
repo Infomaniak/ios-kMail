@@ -17,8 +17,8 @@
  */
 
 import MailCore
-import SwiftUI
 import RealmSwift
+import SwiftUI
 
 struct ComposeMessageHeaderViewV2: View {
     @EnvironmentObject private var mailboxManager: MailboxManager
@@ -27,19 +27,31 @@ struct ComposeMessageHeaderViewV2: View {
 
     @StateRealmObject var draft: Draft
 
+    @FocusState var focusedField: ComposeViewFieldType?
+
     var body: some View {
         VStack {
             ComposeMessageCellStaticTextV2(type: .from, text: mailboxManager.mailbox.email)
             IKDivider()
 
-            ComposeMessageCellRecipientsV2(recipients: $draft.to, showRecipientsFields: $showRecipientsFields, type: .to)
-            IKDivider()
+            ComposeMessageCellRecipientsV2(
+                recipients: $draft.to,
+                showRecipientsFields: $showRecipientsFields,
+                type: .to
+            )
 
             if showRecipientsFields {
-                ComposeMessageCellRecipientsV2(recipients: $draft.cc, showRecipientsFields: $showRecipientsFields, type: .cc)
-                IKDivider()
-                ComposeMessageCellRecipientsV2(recipients: $draft.bcc, showRecipientsFields: $showRecipientsFields, type: .bcc)
-                IKDivider()
+                ComposeMessageCellRecipientsV2(
+                    recipients: $draft.cc,
+                    showRecipientsFields: $showRecipientsFields,
+                    type: .cc
+                )
+
+                ComposeMessageCellRecipientsV2(
+                    recipients: $draft.bcc,
+                    showRecipientsFields: $showRecipientsFields,
+                    type: .bcc
+                )
             }
 
             ComposeMessageCellTextFieldV2(text: $draft.subject, type: .subject)
