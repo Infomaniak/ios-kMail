@@ -77,7 +77,7 @@ struct MessageBodyView: View {
             }
             .opacity(model.contentLoading ? 0 : 1)
 
-            if model.contentLoading || !isMessagePreprocessed {
+            if isMessagePreprocessed && !model.contentLoading {
                 ShimmerView()
             }
         }
