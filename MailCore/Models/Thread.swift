@@ -139,10 +139,6 @@ public class Thread: Object, Decodable, Identifiable {
 
         date = lastMessageFromFolder?.date ?? date
         subject = messages.first?.subject
-
-        if let lastFolderMessage = messages.last(where: { $0.folderId == folder?.id }) {
-            date = lastFolderMessage.date
-        }
     }
 
     func addMessageIfNeeded(newMessage: Message) {
