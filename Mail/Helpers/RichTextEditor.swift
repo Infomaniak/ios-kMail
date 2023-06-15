@@ -29,7 +29,7 @@ struct RichTextEditor: UIViewRepresentable {
     typealias UIViewType = MailEditorView
 
     @Binding var model: RichTextEditorModel
-    @Binding var body: String
+    @MainActor @Binding var body: String
     @Binding var isShowingCamera: Bool
     @Binding var isShowingFileSelection: Bool
     @Binding var isShowingPhotoLibrary: Bool
@@ -96,11 +96,29 @@ struct RichTextEditor: UIViewRepresentable {
             }
         }
 
+        @MainActor
         func editorContentChanged(_ editor: SQTextEditorView, content: String) {
-            var parentBody = parent.body.trimmingCharacters(in: .whitespacesAndNewlines)
-            parentBody = parentBody.replacingOccurrences(of: "\r", with: "")
-            if parentBody != content {
-                parent.body = content
+            let parentBody = parent.body
+            Task.detached {
+                var parentBody = parentBody
+                parentBody = parentBody.trimmingCharacters(in: .whitespacesAndNewlines)
+                parentBody = parentBody.replacingOccurrences(of: "\r", with: "")
+                
+                // Remove explicit dark text css and caret for simple darkmode support.
+                parentBody = parentBody.replacingOccurrences(of: "caret-color: rgb(0, 0, 0);", with: "")
+                parentBody = parentBody.replacingOccurrences(of: "caret-color: rgb(0, 0, 0)", with: "")
+                parentBody = parentBody.replacingOccurrences(of: "color: rgb(0, 0, 0);", with: "")
+                parentBody = parentBody.replacingOccurrences(of: "color: rgb(0, 0, 0)", with: "")
+                parentBody = parentBody.replacingOccurrences(of: "color: #000000;", with: "")
+                parentBody = parentBody.replacingOccurrences(of: "color: #000000", with: "")
+
+                guard parentBody != content else {
+                    return
+                }
+
+                await MainActor.run {
+                    self.parent.body = content
+                }
             }
         }
     }
