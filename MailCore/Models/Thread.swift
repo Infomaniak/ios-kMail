@@ -19,6 +19,7 @@
 import Foundation
 import MailResources
 import RealmSwift
+import Sentry
 
 public struct ThreadResult: Decodable {
     public let threads: [Thread]?
@@ -137,7 +138,19 @@ public class Thread: Object, Decodable, Identifiable {
             $0.date.compare($1.date) == .orderedAscending
         }.toRealmList()
 
-        date = lastMessageFromFolder?.date ?? date
+        let lastMessageFromFolderDate = lastMessageFromFolder?.date
+        let oneHour = Double(60 * 60)
+        if lastMessageFromFolderDate == nil && Date().timeIntervalSince1970 - date.timeIntervalSince1970 < oneHour {
+            SentrySDK.capture(message: "Thread has nil lastMessageFromFolderDate") { [self] scope in
+                scope.setContext(value: ["dates": "\(messages.map { $0.date })",
+                                         "ids": "\(messages.map { $0.id })"],
+                                 key: "all messages")
+                scope.setContext(value: ["id": "\(lastMessageFromFolder?.uid ?? "nil")"],
+                                 key: "lastMessageFromFolder")
+                scope.setContext(value: ["date": date], key: "thread")
+            }
+        }
+        date = lastMessageFromFolderDate ?? date
         subject = messages.first?.subject
     }
 
