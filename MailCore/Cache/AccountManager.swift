@@ -443,6 +443,7 @@ public class AccountManager: RefreshTokenDelegate {
         MailboxInfosManager.instance.removeMailboxesFor(userId: toDeleteAccount.userId)
         mailboxManagers.removeAll()
         contactManagers.removeAll()
+        apiFetchers.removeAll()
         accounts.removeAll { $0 == toDeleteAccount }
     }
 
