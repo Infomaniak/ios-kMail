@@ -93,7 +93,7 @@ extension MessageView {
     private func insertInlineAttachments() async {
         let task = Task.detached {
             // Since mutation of the DOM is costly, I batch the processing of images, then mutate the DOM.
-            let attachmentsArray = await message.attachments.filter { $0.disposition == .inline }.toArray()
+            let attachmentsArray = await message.attachments.filter { $0.contentId != nil }.toArray()
 
             // Early exit, nothing to process
             guard !attachmentsArray.isEmpty else {
