@@ -29,6 +29,8 @@ struct RecipientsTextFieldView: UIViewRepresentable {
         let textField = RecipientsTextField()
         textField.delegate = context.coordinator
         textField.addTarget(context.coordinator, action: #selector(context.coordinator.textDidChanged(_:)), for: .editingChanged)
+        textField.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
+        textField.setContentHuggingPriority(.defaultHigh, for: .vertical)
         textField.onBackspace = onBackspace
         return textField
     }
