@@ -142,42 +142,4 @@ final class MailBase64Encoder: XCTestCase {
             XCTFail("Unexpected error :\(error)")
         }
     }
-
-    // MARK: - Sanity tests, check is SwiftSoup validation works
-
-    /* Swift Soup validation is NOOP for now
-     func testSwiftSoupValidationWorks_missingClosingNode() {
-         // GIVEN
-         let brokenHTML = """
-         <html>
-         <head>
-         </head>
-         <body>
-             <\\h1> this node is not valid
-             <img src="cid:1337"/>
-         </body>
-         </html>
-         """
-
-         do {
-             // WHEN asking for a strict parsing
-             let treeBuilder: TreeBuilder = HtmlTreeBuilder()
-             let parseErrorList = ParseErrorList.tracking(1)
-             let document = try treeBuilder.parse(brokenHTML, "", parseErrorList, ParseSettings.preserveCase)
-
-             print("treeBuilder.errors:\(treeBuilder.errors)")
-
-             // THEN
-             // Hacky way to check internal validation errors of SwiftSoup using a tiny parseErrorList.
-             XCTAssertFalse(
-                 parseErrorList.canAddError(),
-                 "We should not be able to canAddError() since validation errors should be present"
-             )
-
-         } catch Exception.Error(let type, let message) {
-             print("validation issue :\(message) :\(type)")
-         } catch {
-             print("error :\(error)")
-         }
-     }*/
 }
