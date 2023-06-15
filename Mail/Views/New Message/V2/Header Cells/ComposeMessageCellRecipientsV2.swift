@@ -25,24 +25,38 @@ struct ComposeMessageCellRecipientsV2: View {
 
     @Binding var recipients: RealmSwift.List<Recipient>
     @Binding var showRecipientsFields: Bool
+    @Binding var autocompletionType: ComposeViewFieldType?
 
     let type: ComposeViewFieldType
 
     var body: some View {
         VStack {
-            HStack {
-                Text(type.title)
-                    .textStyle(.bodySecondary)
+            if autocompletionType == nil || autocompletionType == type {
+                HStack {
+                    Text(type.title)
+                        .textStyle(.bodySecondary)
 
-                RecipientFieldV2(currentText: $currentText, recipients: $recipients, type: type)
+                    RecipientFieldV2(currentText: $currentText, recipients: $recipients, type: type)
 
-                if type == .to {
-                    Spacer()
-                    ChevronButton(isExpanded: $showRecipientsFields)
+                    if type == .to && autocompletionType == nil {
+                        Spacer()
+                        ChevronButton(isExpanded: $showRecipientsFields)
+                    }
+                }
+                .frame(maxWidth: .infinity, alignment: .leading)
+                IKDivider()
+            }
+
+            // TODO: Add autocomplete
+        }
+        .onChange(of: currentText) { newValue in
+            withAnimation {
+                if newValue.isEmpty {
+                    autocompletionType = nil
+                } else {
+                    autocompletionType = type
                 }
             }
-            .frame(maxWidth: .infinity, alignment: .leading)
-            IKDivider()
         }
     }
 }
@@ -51,6 +65,6 @@ struct ComposeMessageCellRecipientsV2_Previews: PreviewProvider {
     static var previews: some View {
         ComposeMessageCellRecipientsV2(recipients: .constant([
             PreviewHelper.sampleRecipient1, PreviewHelper.sampleRecipient2, PreviewHelper.sampleRecipient3
-        ].toRealmList()), showRecipientsFields: .constant(false), type: .bcc)
+        ].toRealmList()), showRecipientsFields: .constant(false), autocompletionType: .constant(nil), type: .bcc)
     }
 }

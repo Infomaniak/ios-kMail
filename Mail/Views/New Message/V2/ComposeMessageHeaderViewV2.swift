@@ -29,14 +29,20 @@ struct ComposeMessageHeaderViewV2: View {
 
     @FocusState var focusedField: ComposeViewFieldType?
 
+    @Binding var autocompletionType: ComposeViewFieldType?
+
     var body: some View {
         VStack {
-            ComposeMessageCellStaticTextV2(type: .from, text: mailboxManager.mailbox.email)
-            IKDivider()
+            ComposeMessageCellStaticTextV2(
+                autocompletionType: $autocompletionType,
+                type: .from,
+                text: mailboxManager.mailbox.email
+            )
 
             ComposeMessageCellRecipientsV2(
                 recipients: $draft.to,
                 showRecipientsFields: $showRecipientsFields,
+                autocompletionType: $autocompletionType,
                 type: .to
             )
 
@@ -44,18 +50,19 @@ struct ComposeMessageHeaderViewV2: View {
                 ComposeMessageCellRecipientsV2(
                     recipients: $draft.cc,
                     showRecipientsFields: $showRecipientsFields,
+                    autocompletionType: $autocompletionType,
                     type: .cc
                 )
 
                 ComposeMessageCellRecipientsV2(
                     recipients: $draft.bcc,
                     showRecipientsFields: $showRecipientsFields,
+                    autocompletionType: $autocompletionType,
                     type: .bcc
                 )
             }
 
-            ComposeMessageCellTextFieldV2(text: $draft.subject, type: .subject)
-            IKDivider()
+            ComposeMessageCellTextFieldV2(text: $draft.subject, autocompletionType: $autocompletionType, type: .subject)
         }
         .padding(.horizontal, 16)
         .onAppear {
@@ -66,6 +73,6 @@ struct ComposeMessageHeaderViewV2: View {
 
 struct ComposeMessageHeaderViewV2_Previews: PreviewProvider {
     static var previews: some View {
-        ComposeMessageHeaderViewV2(draft: Draft())
+        ComposeMessageHeaderViewV2(draft: Draft(), autocompletionType: .constant(nil))
     }
 }

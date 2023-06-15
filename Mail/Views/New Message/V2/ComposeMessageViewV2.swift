@@ -23,8 +23,6 @@ import MailResources
 import RealmSwift
 import SwiftUI
 
-// TODO: Rename without V2
-
 enum ComposeViewFieldType: Hashable {
     case from, to, cc, bcc, subject, editor, autocomplete
     case chip(Int, Recipient)
@@ -65,7 +63,8 @@ struct ComposeMessageViewV2: View {
 
     @State private var isLoadingContent: Bool
     @State private var isShowingCancelAttachmentsError = false
-
+    @State private var autocompletionField: ComposeViewFieldType?
+    @State private var autocompletionType: ComposeViewFieldType?
     @State private var editorFocus = false
 
     @StateObject private var mailboxManager: MailboxManager
@@ -103,15 +102,17 @@ struct ComposeMessageViewV2: View {
         NavigationView {
             ScrollView {
                 VStack(spacing: 0) {
-                    ComposeMessageHeaderViewV2(draft: draft, focusedField: _focusedField)
+                    ComposeMessageHeaderViewV2(draft: draft, focusedField: _focusedField, autocompletionType: $autocompletionType)
 
-                    ComposeMessageBodyViewV2(
-                        draft: draft,
-                        isLoadingContent: $isLoadingContent,
-                        attachmentsManager: attachmentsManager,
-                        alert: alert,
-                        messageReply: messageReply
-                    )
+                    if autocompletionType == nil {
+                        ComposeMessageBodyViewV2(
+                            draft: draft,
+                            isLoadingContent: $isLoadingContent,
+                            attachmentsManager: attachmentsManager,
+                            alert: alert,
+                            messageReply: messageReply
+                        )
+                    }
                 }
             }
             .background(MailResourcesAsset.backgroundColor.swiftUIColor)

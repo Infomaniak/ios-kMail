@@ -19,23 +19,30 @@
 import SwiftUI
 
 struct ComposeMessageCellStaticTextV2: View {
+    @Binding var autocompletionType: ComposeViewFieldType?
+
     let type: ComposeViewFieldType
     let text: String
 
     var body: some View {
-        HStack {
-            Text(type.title)
-                .textStyle(.bodySecondary)
+        if autocompletionType == nil {
+            VStack {
+                HStack {
+                    Text(type.title)
+                        .textStyle(.bodySecondary)
 
-            Text(text)
-                .textStyle(.body)
+                    Text(text)
+                        .textStyle(.body)
+                }
+                .frame(maxWidth: .infinity, alignment: .leading)
+                IKDivider()
+            }
         }
-        .frame(maxWidth: .infinity, alignment: .leading)
     }
 }
 
 struct ComposeMessageStaticTextV2_Previews: PreviewProvider {
     static var previews: some View {
-        ComposeMessageCellStaticTextV2(type: .from, text: "myaddress@email.com")
+        ComposeMessageCellStaticTextV2(autocompletionType: .constant(nil), type: .from, text: "myaddress@email.com")
     }
 }
