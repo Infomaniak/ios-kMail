@@ -34,6 +34,7 @@ struct ComposeMessageBodyViewV2: View {
     @StateRealmObject var draft: Draft
 
     @Binding var isLoadingContent: Bool
+    @Binding var editorFocus: Bool
 
     @ObservedObject var attachmentsManager: AttachmentsManager
     @ObservedObject var alert: NewMessageAlert
@@ -55,7 +56,7 @@ struct ComposeMessageBodyViewV2: View {
                 isShowingCamera: $isShowingCamera,
                 isShowingFileSelection: $isShowingFileSelection,
                 isShowingPhotoLibrary: $isShowingPhotoLibrary,
-                becomeFirstResponder: .constant(false), // TODO: Give real value
+                becomeFirstResponder: $editorFocus,
                 blockRemoteContent: isRemoteContentBlocked
             )
             .ignoresSafeArea(.all, edges: .bottom)
@@ -169,6 +170,7 @@ struct ComposeMessageBodyViewV2_Previews: PreviewProvider {
         ComposeMessageBodyViewV2(
             draft: Draft(),
             isLoadingContent: .constant(false),
+            editorFocus: .constant(false),
             attachmentsManager: AttachmentsManager(draft: Draft(), mailboxManager: PreviewHelper.sampleMailboxManager),
             alert: NewMessageAlert(),
             messageReply: nil

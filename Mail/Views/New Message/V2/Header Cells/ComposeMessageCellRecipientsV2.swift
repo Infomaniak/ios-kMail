@@ -81,7 +81,7 @@ struct ComposeMessageCellRecipientsV2: View {
 
         if Constants.isEmailAddress(recipient.email) {
             withAnimation {
-                recipients.append(recipient)
+                $recipients.append(recipient)
             }
             currentText = ""
         } else {

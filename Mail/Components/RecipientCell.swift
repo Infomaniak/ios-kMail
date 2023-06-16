@@ -23,18 +23,6 @@ struct RecipientCell: View {
     let recipient: Recipient
     var highlight: String?
 
-    var name: AttributedString {
-        let data = AttributedString(recipient.name)
-
-        return data
-    }
-
-    var message: AttributedString {
-        let data = AttributedString(recipient.name)
-
-        return data
-    }
-
     var body: some View {
         HStack(spacing: 8) {
             AvatarView(avatarDisplayable: recipient, size: 40)

@@ -108,6 +108,7 @@ struct ComposeMessageViewV2: View {
                         ComposeMessageBodyViewV2(
                             draft: draft,
                             isLoadingContent: $isLoadingContent,
+                            editorFocus: $editorFocus,
                             attachmentsManager: attachmentsManager,
                             alert: alert,
                             messageReply: messageReply
@@ -145,6 +146,8 @@ struct ComposeMessageViewV2: View {
                     .disabled(isSendButtonDisabled)
                 }
             }
+        }
+        .interactiveDismissDisabled()
             .customAlert(isPresented: $alert.isShowing) {
                 switch alert.state {
                 case let .link(handler):
@@ -161,7 +164,6 @@ struct ComposeMessageViewV2: View {
                 }
             }
             .matomoView(view: ["ComposeMessage"])
-        }
     }
 
     private func didTouchDismiss() {
