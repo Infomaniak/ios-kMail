@@ -18,6 +18,7 @@
 
 import InfomaniakCoreUI
 import InfomaniakDI
+import Introspect
 import MailCore
 import MailResources
 import RealmSwift
@@ -63,7 +64,6 @@ struct ComposeMessageViewV2: View {
 
     @State private var isLoadingContent: Bool
     @State private var isShowingCancelAttachmentsError = false
-    @State private var autocompletionField: ComposeViewFieldType?
     @State private var autocompletionType: ComposeViewFieldType?
     @State private var editorFocus = false
 
@@ -130,6 +130,16 @@ struct ComposeMessageViewV2: View {
                     DraftManager.shared.syncDraft(mailboxManager: mailboxManager)
                 }
             }
+            .overlay {
+                if isLoadingContent {
+                    ProgressView()
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                        .background(MailResourcesAsset.backgroundColor.swiftUIColor)
+                }
+            }
+            .introspectScrollView { scrollView in
+                scrollView.keyboardDismissMode = .interactive
+            }
             .navigationTitle(MailResourcesStrings.Localizable.buttonNewMessage)
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
@@ -148,22 +158,22 @@ struct ComposeMessageViewV2: View {
             }
         }
         .interactiveDismissDisabled()
-            .customAlert(isPresented: $alert.isShowing) {
-                switch alert.state {
-                case let .link(handler):
-                    AddLinkView(actionHandler: handler)
-                case let .emptySubject(handler):
-                    EmptySubjectView(actionHandler: handler)
-                case .none:
-                    EmptyView()
-                }
+        .customAlert(isPresented: $alert.isShowing) {
+            switch alert.state {
+            case let .link(handler):
+                AddLinkView(actionHandler: handler)
+            case let .emptySubject(handler):
+                EmptySubjectView(actionHandler: handler)
+            case .none:
+                EmptyView()
             }
-            .customAlert(isPresented: $isShowingCancelAttachmentsError) {
-                AttachmentsUploadInProgressErrorView {
-                    dismiss()
-                }
+        }
+        .customAlert(isPresented: $isShowingCancelAttachmentsError) {
+            AttachmentsUploadInProgressErrorView {
+                dismiss()
             }
-            .matomoView(view: ["ComposeMessage"])
+        }
+        .matomoView(view: ["ComposeMessage"])
     }
 
     private func didTouchDismiss() {
