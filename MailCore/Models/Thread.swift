@@ -122,7 +122,7 @@ public class Thread: Object, Decodable, Identifiable {
         flagged = messages.contains { $0.flagged }
     }
 
-    public func recompute() {
+    public func recomputeOrFail() throws {
         messageIds = messages.flatMap { $0.linkedUids }.toRealmSet()
         updateUnseenMessages()
         from = messages.flatMap { $0.from.detached() }.toRealmList()
@@ -138,19 +138,12 @@ public class Thread: Object, Decodable, Identifiable {
             $0.date.compare($1.date) == .orderedAscending
         }.toRealmList()
 
-        let lastMessageFromFolderDate = lastMessageFromFolder?.date
-        let oneHour = Double(60 * 60)
-        if lastMessageFromFolderDate == nil && Date().timeIntervalSince1970 - date.timeIntervalSince1970 < oneHour {
-            SentrySDK.capture(message: "Thread has nil lastMessageFromFolderDate") { [self] scope in
-                scope.setContext(value: ["dates": "\(messages.map { $0.date })",
-                                         "ids": "\(messages.map { $0.id })"],
-                                 key: "all messages")
-                scope.setContext(value: ["id": "\(lastMessageFromFolder?.uid ?? "nil")"],
-                                 key: "lastMessageFromFolder")
-                scope.setContext(value: ["date": date], key: "thread")
-            }
+        if let lastMessageFromFolderDate = lastMessageFromFolder?.date {
+            date = lastMessageFromFolderDate
+        } else {
+            throw MailError.incoherentThreadDate
         }
-        date = lastMessageFromFolderDate ?? date
+
         subject = messages.first?.subject
     }
 

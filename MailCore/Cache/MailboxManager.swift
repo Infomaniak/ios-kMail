@@ -298,7 +298,19 @@ public class MailboxManager: ObservableObject {
                             if thread.messageInFolderCount == 0 {
                                 threadsToDelete.insert(thread)
                             } else {
-                                thread.recompute()
+                                do {
+                                    try thread.recomputeOrFail()
+                                } catch {
+                                    threadsToDelete.insert(thread)
+                                    SentrySDK.capture(message: "Thread has nil lastMessageFromFolderDate") { scope in
+                                        scope.setContext(value: ["dates": "\(thread.messages.map { $0.date })",
+                                                                 "ids": "\(thread.messages.map { $0.id })"],
+                                                         key: "all messages")
+                                        scope.setContext(value: ["id": "\(thread.lastMessageFromFolder?.uid ?? "nil")"],
+                                                         key: "lastMessageFromFolder")
+                                        scope.setContext(value: ["date before error": thread.date], key: "thread")
+                                    }
+                                }
                             }
                         }
                         realm.delete(threadsToDelete)
@@ -823,7 +835,7 @@ public class MailboxManager: ObservableObject {
                     folder.messages.insert(message)
                 }
             }
-            self.updateThreads(threads: threadsToUpdate)
+            self.updateThreads(threads: threadsToUpdate, realm: realm)
         }
     }
 
@@ -870,15 +882,27 @@ public class MailboxManager: ObservableObject {
                         }
                     }
                 }
-                self.updateThreads(threads: threadsToUpdate)
+                self.updateThreads(threads: threadsToUpdate, realm: realm)
             }
         }
     }
 
-    private func updateThreads(threads: Set<Thread>) {
+    private func updateThreads(threads: Set<Thread>, realm: Realm) {
         let folders = Set(threads.compactMap(\.folder))
         for thread in threads {
-            thread.recompute()
+            do {
+               try thread.recomputeOrFail()
+            } catch {
+                SentrySDK.capture(message: "Thread has nil lastMessageFromFolderDate") { scope in
+                    scope.setContext(value: ["dates": "\(thread.messages.map { $0.date })",
+                                             "ids": "\(thread.messages.map { $0.id })"],
+                                     key: "all messages")
+                    scope.setContext(value: ["id": "\(thread.lastMessageFromFolder?.uid ?? "nil")"],
+                                     key: "lastMessageFromFolder")
+                    scope.setContext(value: ["date before error": thread.date], key: "thread")
+                }
+                realm.delete(thread)
+            }
         }
         for folder in folders {
             folder.computeUnreadCount()

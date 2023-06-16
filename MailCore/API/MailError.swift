@@ -64,6 +64,7 @@ public class MailError: LocalizedError {
                                                               localizedDescription: MailResourcesStrings.Localizable
                                                                   .attachmentFileLimitReached,
                                                               shouldDisplay: true)
+    public static let incoherentThreadDate = MailError(code: "incoherentThreadDate")
 }
 
 extension MailError: Identifiable {
