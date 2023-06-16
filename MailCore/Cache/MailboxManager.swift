@@ -681,8 +681,9 @@ public class MailboxManager: ObservableObject {
             guard !Task.isCancelled else { return }
         }
 
-        if folder.role == .inbox {
-            MailboxInfosManager.instance.updateUnseen(unseenMessages: folder.unreadCount, for: mailbox)
+        if folder.role == .inbox,
+           let freshFolder = folder.fresh(using: getRealm()) {
+            MailboxInfosManager.instance.updateUnseen(unseenMessages: freshFolder.unreadCount, for: mailbox)
         }
 
         while try await fetchOnePage(folder: folder, direction: .previous) {
