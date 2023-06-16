@@ -30,7 +30,7 @@ final class WebViewModel: NSObject, ObservableObject {
     @Published var showBlockQuote = false
     @Published var contentLoading = true
 
-    /// Only true the first time the content loads, then keeps false. Eg. when loading subsequent images.
+    /// Only true the first time the content loads, then false. Eg. when loading subsequent images.
     @Published var initialContentLoading = true
     private var contentLoadingSubscriber: AnyCancellable?
 
@@ -54,7 +54,7 @@ final class WebViewModel: NSObject, ObservableObject {
 
         super.init()
 
-        /// only register the first flip of contentLoading to false
+        // only register the first flip of contentLoading to false
         contentLoadingSubscriber = $contentLoading
             .filter { $0 == false }
             .prefix(1)
