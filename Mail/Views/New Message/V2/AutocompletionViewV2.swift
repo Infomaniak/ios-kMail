@@ -16,25 +16,23 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import InfomaniakCoreUI
-import InfomaniakDI
 import MailCore
-import MailResources
 import RealmSwift
 import SwiftUI
 
 struct AutocompletionViewV2: View {
-    @State private var recipients = [Recipient]()
-
+    @Binding var autocompletion: [Recipient]
     @Binding var currentSearch: String
     @Binding var addedRecipients: RealmSwift.List<Recipient>
 
+    let addRecipient: @MainActor (Recipient) -> Void
+
     var body: some View {
         LazyVStack {
-            ForEach(recipients) { recipient in
+            ForEach(autocompletion) { recipient in
                 VStack(alignment: .leading, spacing: 8) {
                     Button {
-                        addNewRecipient(recipient)
+                        addRecipient(recipient)
                     } label: {
                         RecipientCell(recipient: recipient)
                     }
@@ -47,25 +45,10 @@ struct AutocompletionViewV2: View {
         .onChange(of: currentSearch, perform: updateAutocompletion)
     }
 
-    @MainActor private func addNewRecipient(_ recipient: Recipient) {
-        @InjectService var matomo: MatomoUtils
-        matomo.track(eventWithCategory: .newMessage, name: "addNewRecipient")
-
-        if Constants.isEmailAddress(recipient.email) {
-            withAnimation {
-                addedRecipients.append(recipient)
-            }
-            currentSearch = ""
-        } else {
-            IKSnackBar
-                .showSnackBar(message: MailResourcesStrings.Localizable.addUnknownRecipientInvalidEmail)
-        }
-    }
-
     private func updateAutocompletion(_ search: String) {
         guard let contactManager = AccountManager.instance.currentContactManager else {
             withAnimation {
-                recipients = []
+                autocompletion = []
             }
             return
         }
@@ -73,10 +56,15 @@ struct AutocompletionViewV2: View {
         let trimmedSearch = search.trimmingCharacters(in: .whitespacesAndNewlines)
 
         let autocompleteContacts = contactManager.contacts(matching: trimmedSearch)
-        let autocompleteRecipients = autocompleteContacts.map { Recipient(email: $0.email, name: $0.name) }
+        var autocompleteRecipients = autocompleteContacts.map { Recipient(email: $0.email, name: $0.name) }
+
+        let realResults = autocompleteRecipients.filter { !addedRecipients.map(\.email).contains($0.email) }
+        if !currentSearch.isEmpty && realResults.isEmpty {
+            autocompleteRecipients.append(Recipient(email: currentSearch, name: ""))
+        }
 
         withAnimation {
-            recipients = autocompleteRecipients
+            autocompletion = autocompleteRecipients
         }
     }
 }
@@ -84,8 +72,9 @@ struct AutocompletionViewV2: View {
 struct AutocompletionViewV2_Previews: PreviewProvider {
     static var previews: some View {
         AutocompletionViewV2(
+            autocompletion: .constant([]),
             currentSearch: .constant(""),
             addedRecipients: .constant([PreviewHelper.sampleRecipient1].toRealmList())
-        )
+        ) { _ in /* Preview */ }
     }
 }

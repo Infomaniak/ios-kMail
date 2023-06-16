@@ -16,12 +16,16 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import InfomaniakCoreUI
+import InfomaniakDI
 import MailCore
+import MailResources
 import RealmSwift
 import SwiftUI
 
 struct ComposeMessageCellRecipientsV2: View {
     @State private var currentText = ""
+    @State private var autocompletion = [Recipient]()
 
     @Binding var recipients: RealmSwift.List<Recipient>
     @Binding var showRecipientsFields: Bool
@@ -36,7 +40,11 @@ struct ComposeMessageCellRecipientsV2: View {
                     Text(type.title)
                         .textStyle(.bodySecondary)
 
-                    RecipientFieldV2(currentText: $currentText, recipients: $recipients, type: type)
+                    RecipientFieldV2(currentText: $currentText, recipients: $recipients, type: type) {
+                        if let bestMatch = autocompletion.first {
+                            addNewRecipient(bestMatch)
+                        }
+                    }
 
                     if type == .to && autocompletionType == nil {
                         Spacer()
@@ -48,7 +56,12 @@ struct ComposeMessageCellRecipientsV2: View {
             }
 
             if autocompletionType == type {
-                AutocompletionViewV2(currentSearch: $currentText, addedRecipients: $recipients)
+                AutocompletionViewV2(
+                    autocompletion: $autocompletion,
+                    currentSearch: $currentText,
+                    addedRecipients: $recipients,
+                    addRecipient: addNewRecipient
+                )
             }
         }
         .onChange(of: currentText) { newValue in
@@ -59,6 +72,21 @@ struct ComposeMessageCellRecipientsV2: View {
                     autocompletionType = type
                 }
             }
+        }
+    }
+
+    @MainActor private func addNewRecipient(_ recipient: Recipient) {
+        @InjectService var matomo: MatomoUtils
+        matomo.track(eventWithCategory: .newMessage, name: "addNewRecipient")
+
+        if Constants.isEmailAddress(recipient.email) {
+            withAnimation {
+                recipients.append(recipient)
+            }
+            currentText = ""
+        } else {
+            IKSnackBar
+                .showSnackBar(message: MailResourcesStrings.Localizable.addUnknownRecipientInvalidEmail)
         }
     }
 }
