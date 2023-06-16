@@ -16,7 +16,10 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import InfomaniakCoreUI
+import InfomaniakDI
 import MailCore
+import MailResources
 import RealmSwift
 import SwiftUI
 
@@ -31,7 +34,7 @@ struct AutocompletionViewV2: View {
             ForEach(recipients) { recipient in
                 VStack(alignment: .leading, spacing: 8) {
                     Button {
-                        addedRecipients.append(recipient)
+                        addNewRecipient(recipient)
                     } label: {
                         RecipientCell(recipient: recipient)
                     }
@@ -44,17 +47,30 @@ struct AutocompletionViewV2: View {
         .onChange(of: currentSearch, perform: updateAutocompletion)
     }
 
+    @MainActor private func addNewRecipient(_ recipient: Recipient) {
+        @InjectService var matomo: MatomoUtils
+        matomo.track(eventWithCategory: .newMessage, name: "addNewRecipient")
+
+        if Constants.isEmailAddress(recipient.email) {
+            withAnimation {
+                addedRecipients.append(recipient)
+            }
+            currentSearch = ""
+        } else {
+            IKSnackBar
+                .showSnackBar(message: MailResourcesStrings.Localizable.addUnknownRecipientInvalidEmail)
+        }
+    }
+
     private func updateAutocompletion(_ search: String) {
-        let trimmedSearch = search.trimmingCharacters(in: .whitespacesAndNewlines)
-
-        print("coucou")
-
         guard let contactManager = AccountManager.instance.currentContactManager else {
             withAnimation {
                 recipients = []
             }
             return
-          }
+        }
+
+        let trimmedSearch = search.trimmingCharacters(in: .whitespacesAndNewlines)
 
         let autocompleteContacts = contactManager.contacts(matching: trimmedSearch)
         let autocompleteRecipients = autocompleteContacts.map { Recipient(email: $0.email, name: $0.name) }

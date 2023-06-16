@@ -25,7 +25,7 @@ struct ComposeMessageHeaderViewV2: View {
 
     @State private var showRecipientsFields = false
 
-    @StateRealmObject var draft: Draft
+    @ObservedRealmObject var draft: Draft
 
     @FocusState var focusedField: ComposeViewFieldType?
 

@@ -51,7 +51,6 @@ struct ComposeMessageCellRecipientsV2: View {
                 AutocompletionViewV2(currentSearch: $currentText, addedRecipients: $recipients)
             }
         }
-        .border(.red)
         .onChange(of: currentText) { newValue in
             withAnimation {
                 if newValue.isEmpty {
