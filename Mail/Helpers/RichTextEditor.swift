@@ -103,7 +103,7 @@ struct RichTextEditor: UIViewRepresentable {
                 var parentBody = parentBody
                 parentBody = parentBody.trimmingCharacters(in: .whitespacesAndNewlines)
                 parentBody = parentBody.replacingOccurrences(of: "\r", with: "")
-                
+
                 // Remove explicit dark text css and caret for simple darkmode support.
                 parentBody = parentBody.replacingOccurrences(of: "caret-color: rgb(0, 0, 0);", with: "")
                 parentBody = parentBody.replacingOccurrences(of: "caret-color: rgb(0, 0, 0)", with: "")
@@ -169,6 +169,29 @@ struct RichTextEditorModel {
     var height: CGFloat = 0
 }
 
+extension MailEditorView {
+    private enum JavaScriptMessageTopic: String {
+        case log
+        case paste
+    }
+
+    override func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
+        super.userContentController(userContentController, didReceive: message)
+
+        guard let event = JavaScriptMessageTopic(rawValue: message.name) else {
+            return
+        }
+        Task {
+            switch event {
+            case .log:
+                print(message.body)
+            case .paste:
+                print("paste :\(message.body)")
+            }
+        }
+    }
+}
+
 class MailEditorView: SQTextEditorView {
     lazy var toolbar = getToolbar()
     var alert: ObservedObject<NewMessageAlert>.Wrapper
@@ -211,6 +234,14 @@ class MailEditorView: SQTextEditorView {
         let cssScript = WKUserScript(source: cssStyle, injectionTime: .atDocumentEnd, forMainFrameOnly: false)
         config.userContentController.addUserScript(cssScript)
 
+        // capture logs in webView
+        config.userContentController.addUserScript(named: "captureLog", injectionTime: .atDocumentStart, forMainFrameOnly: true)
+
+        // capture paste events in webView
+        let pasteScriptSource = Constants.listenToPasteScript
+        let pasteScript = WKUserScript(source: pasteScriptSource, injectionTime: .atDocumentEnd, forMainFrameOnly: false)
+        config.userContentController.addUserScript(pasteScript)
+
         let _webView = WKWebView(frame: .zero, configuration: config)
         _webView.translatesAutoresizingMaskIntoConstraints = false
         _webView.navigationDelegate = self
@@ -218,6 +249,17 @@ class MailEditorView: SQTextEditorView {
         _webView.addInputAccessoryView(toolbar: self.toolbar)
         self.updateToolbarItems(style: .main)
         _webView.scrollView.keyboardDismissMode = .interactive
+
+        // todo remove
+        if #available(iOS 16.4, *) {
+            _webView.isInspectable = true
+        } else {
+            // Fallback on earlier versions
+        }
+
+        _webView.configuration.userContentController.add(self, name: JavaScriptMessageTopic.log.rawValue)
+        _webView.configuration.userContentController.add(self, name: JavaScriptMessageTopic.paste.rawValue)
+
         return _webView
     }()
 

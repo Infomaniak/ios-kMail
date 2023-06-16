@@ -73,6 +73,28 @@ public enum Constants {
         return "const MESSAGE_SELECTOR = \"#\(divWrapperId)\"; \(mungeScript)"
     }()
 
+    public static let listenToPasteScript = """
+    (() => {
+        console.log("will load listenToPasteScript");
+        document.body.style.backgroundColor = "blue";
+
+        // Listen to paste events
+        document.addEventListener('paste', e=>{
+    
+            // Read the clipboard, and send content to WKhandler
+            navigator.clipboard
+              .readText()
+              .then(
+                (clipText) => (window.webkit.messageHandlers.paste.postMessage({ add: clipText }))
+              );
+
+            // Consume the event so the paste is handled on our side only
+            e.preventDefault();
+            document.body.style.backgroundColor = "red";
+        })
+    })()
+    """
+
     public static func isEmailAddress(_ mail: String) -> Bool {
         return emailPredicate.evaluate(with: mail.lowercased())
     }
@@ -143,7 +165,7 @@ public enum Constants {
     public static let pageSize = 50
     public static let contactSuggestionLimit = 5
 
-    public static let numberOfSecondsInADay: TimeInterval = 86_400
+    public static let numberOfSecondsInADay: TimeInterval = 86400
 
     public static let shortDateFormatter = Date.FormatStyle.dateTime.month(.wide)
     public static let longDateFormatter = shortDateFormatter.year()
