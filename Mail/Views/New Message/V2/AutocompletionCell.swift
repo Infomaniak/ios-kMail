@@ -17,34 +17,38 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import SwiftUI
 import MailCore
+import MailResources
+import SwiftUI
 
 struct AutocompletionCell: View {
     let addRecipient: @MainActor (Recipient) -> Void
     let recipient: Recipient
     var highlight: String?
     let alreadyAppend: Bool
-    
+
     var body: some View {
-        HStack {
+        HStack(spacing: 12) {
             Button {
                 addRecipient(recipient)
             } label: {
                 RecipientCell(recipient: recipient, highlight: highlight)
             }
-            .disabled(alreadyAppend)
+            .allowsHitTesting(!alreadyAppend)
+            .opacity(alreadyAppend ? 0.5 : 1)
 
             if alreadyAppend {
-                Text("v") // TODO: Realm image
+                MailResourcesAsset.checked.swiftUIImage
+                    .resizable()
+                    .frame(width: 24, height: 24)
+                    .foregroundColor(MailResourcesAsset.textTertiaryColor.swiftUIColor)
             }
         }
-        .padding(.horizontal, 8)
     }
 }
 
 struct AutocompletionCell_Previews: PreviewProvider {
     static var previews: some View {
-        AutocompletionCell(addRecipient: { _ in /* Preview */}, recipient: PreviewHelper.sampleRecipient1, alreadyAppend: false)
+        AutocompletionCell(addRecipient: { _ in /* Preview */ }, recipient: PreviewHelper.sampleRecipient1, alreadyAppend: false)
     }
 }

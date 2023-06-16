@@ -21,7 +21,7 @@ import RealmSwift
 import SwiftUI
 
 struct AutocompletionViewV2: View {
-    @State private var hasNoResult = false
+    @State private var shouldAddUserProposal = false
 
     @Binding var autocompletion: [Recipient]
     @Binding var currentSearch: String
@@ -37,13 +37,13 @@ struct AutocompletionViewV2: View {
                         addRecipient: addRecipient,
                         recipient: recipient,
                         highlight: currentSearch,
-                        alreadyAppend: addedRecipients.contains(recipient)
+                        alreadyAppend: addedRecipients.contains { $0.email == recipient.email && $0.name == recipient.name }
                     )
                     IKDivider()
                 }
             }
 
-            if hasNoResult {
+            if shouldAddUserProposal {
                 AutocompletionCell(
                     addRecipient: addRecipient,
                     recipient: Recipient(email: currentSearch, name: ""),
@@ -71,7 +71,7 @@ struct AutocompletionViewV2: View {
 
         withAnimation {
             autocompletion = autocompleteRecipients
-            hasNoResult = !currentSearch.isEmpty && realResults.isEmpty
+            shouldAddUserProposal = !(realResults.count == 1 && realResults.first?.email == currentSearch)
         }
     }
 }
