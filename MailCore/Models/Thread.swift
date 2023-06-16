@@ -19,6 +19,7 @@
 import Foundation
 import MailResources
 import RealmSwift
+import Sentry
 
 public struct ThreadResult: Decodable {
     public let threads: [Thread]?
@@ -121,7 +122,7 @@ public class Thread: Object, Decodable, Identifiable {
         flagged = messages.contains { $0.flagged }
     }
 
-    public func recompute() {
+    public func recomputeOrFail() throws {
         messageIds = messages.flatMap { $0.linkedUids }.toRealmSet()
         updateUnseenMessages()
         from = messages.flatMap { $0.from.detached() }.toRealmList()
@@ -137,12 +138,13 @@ public class Thread: Object, Decodable, Identifiable {
             $0.date.compare($1.date) == .orderedAscending
         }.toRealmList()
 
-        date = lastMessageFromFolder?.date ?? date
-        subject = messages.first?.subject
-
-        if let lastFolderMessage = messages.last(where: { $0.folderId == folder?.id }) {
-            date = lastFolderMessage.date
+        if let lastMessageFromFolderDate = lastMessageFromFolder?.date {
+            date = lastMessageFromFolderDate
+        } else {
+            throw MailError.incoherentThreadDate
         }
+
+        subject = messages.first?.subject
     }
 
     func addMessageIfNeeded(newMessage: Message) {
