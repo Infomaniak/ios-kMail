@@ -79,7 +79,7 @@ struct AccountListView: View {
             isShowingNewAccountView = true
         }
         .fullScreenCover(isPresented: $isShowingNewAccountView, onDismiss: {
-            AppDelegate.orientationLock = .all
+           // AppDelegate.orientationLock = .all
         }, content: {
             OnboardingView(page: 4, isScrollEnabled: false)
         })

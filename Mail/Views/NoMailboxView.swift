@@ -46,14 +46,14 @@ struct NoMailboxView: View {
                 MailButton(icon: MailResourcesAsset.plus, label: MailResourcesStrings.Localizable.buttonAddEmailAddress) {
                     AddMailboxView { _ in
                         DispatchQueue.main.async {
-                            (window?.windowScene?.delegate as? SceneDelegate)?.showMainView()
+                           // (window?.windowScene?.delegate as? SceneDelegate)?.showMainView()
                         }
                     }
                 }
                 .mailButtonFullWidth(true)
 
                 MailButton(label: MailResourcesStrings.Localizable.buttonLogInDifferentAccount) {
-                    (window?.windowScene?.delegate as? SceneDelegate)?.showLoginView()
+                   // (window?.windowScene?.delegate as? SceneDelegate)?.showLoginView()
                 }
                 .mailButtonStyle(.link)
             }

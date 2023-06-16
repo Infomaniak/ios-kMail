@@ -31,10 +31,10 @@ class AccountViewDelegate: DeleteAccountDelegate {
         let window = UIApplication.shared.mainSceneKeyWindow
         AccountManager.instance.removeTokenAndAccount(token: account.token)
         if let nextAccount = AccountManager.instance.accounts.first {
-            (window?.windowScene?.delegate as? SceneDelegate)?.switchAccount(nextAccount)
+            //(window?.windowScene?.delegate as? SceneDelegate)?.switchAccount(nextAccount)
             IKSnackBar.showSnackBar(message: "Account deleted")
         } else {
-            (window?.windowScene?.delegate as? SceneDelegate)?.showLoginView()
+           // (window?.windowScene?.delegate as? SceneDelegate)?.showLoginView()
         }
         AccountManager.instance.saveAccounts()
     }
@@ -101,8 +101,8 @@ struct AccountView: View {
                             NavigationLink {
                                 AddMailboxView { mailbox in
                                     DispatchQueue.main.async {
-                                        guard let mailbox = mailbox else { return }
-                                        (window?.windowScene?.delegate as? SceneDelegate)?.switchMailbox(mailbox)
+                                        guard let mailbox else { return }
+                                        AccountManager.instance.switchMailbox(newMailbox: mailbox)
                                     }
                                 }
                             } label: {
@@ -159,7 +159,6 @@ struct AccountView: View {
         .customAlert(isPresented: $isShowingLogoutAlert) {
             LogoutConfirmationView(account: account)
         }
-        .defaultAppStorage(.shared)
         .matomoView(view: [MatomoUtils.View.accountView.displayName, "Main"])
     }
 }

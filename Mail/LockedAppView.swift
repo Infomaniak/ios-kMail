@@ -61,7 +61,7 @@ struct LockedAppView: View {
     private func unlockApp() {
         Task {
             if (try? await appLockHelper.evaluatePolicy(reason: MailResourcesStrings.Localizable.lockAppTitle)) == true {
-                await (window?.windowScene?.delegate as? SceneDelegate)?.showMainView()
+             //   await (window?.windowScene?.delegate as? SceneDelegate)?.showMainView()
             }
         }
     }

@@ -49,7 +49,7 @@ struct AccountCellView: View {
                     matomo.track(eventWithCategory: .account, name: "switch")
                     withAnimation {
                         selectedUserId = selectedUserId == account.userId ? nil : account.userId
-                        (window?.windowScene?.delegate as? SceneDelegate)?.switchAccount(account)
+                        //(window?.windowScene?.delegate as? SceneDelegate)?.switchAccount(account)
                     }
                 } label: {
                     AccountHeaderCell(account: account, isSelected: Binding(get: {

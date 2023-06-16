@@ -58,7 +58,7 @@ struct WebView: UIViewRepresentable {
         ) {
             if let url = navigationAction.request.url, Constants.isMailTo(url) {
                 decisionHandler(.cancel)
-                (parent.window?.windowScene?.delegate as? SceneDelegate)?.handleUrlOpen(url)
+                //(parent.window?.windowScene?.delegate as? SceneDelegate)?.handleUrlOpen(url)
                 return
             }
 

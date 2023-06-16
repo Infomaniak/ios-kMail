@@ -48,9 +48,9 @@ struct LogoutConfirmationView: View {
         }
         AccountManager.instance.removeTokenAndAccount(token: account.token)
         if let nextAccount = AccountManager.instance.accounts.first {
-            (window?.windowScene?.delegate as? SceneDelegate)?.switchAccount(nextAccount)
+            //(window?.windowScene?.delegate as? SceneDelegate)?.switchAccount(nextAccount)
         } else {
-            (window?.windowScene?.delegate as? SceneDelegate)?.showLoginView()
+           // (window?.windowScene?.delegate as? SceneDelegate)?.showLoginView()
         }
         AccountManager.instance.saveAccounts()
     }

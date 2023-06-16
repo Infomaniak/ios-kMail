@@ -23,7 +23,7 @@ import MailCore
 import MailResources
 import SwiftUI
 import UIKit
-
+/*
 class SceneDelegate: UIResponder, UIWindowSceneDelegate, AccountManagerDelegate {
     var window: UIWindow?
 
@@ -191,4 +191,4 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, AccountManagerDelegate 
 
         return true
     }
-}
+}*/

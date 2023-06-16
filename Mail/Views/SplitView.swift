@@ -30,10 +30,6 @@ public class SplitViewManager: ObservableObject {
     @Published var showSearch = false
     @Published var selectedFolder: Folder?
     var splitViewController: UISplitViewController?
-
-    init(folder: Folder?) {
-        selectedFolder = folder
-    }
 }
 
 struct SplitView: View {
@@ -41,22 +37,16 @@ struct SplitView: View {
     @Environment(\.verticalSizeClass) var verticalSizeClass
     @Environment(\.window) var window
 
+    @EnvironmentObject var mailboxManager: MailboxManager
+
     @State var splitViewController: UISplitViewController?
 
     @StateObject private var navigationDrawerController = NavigationDrawerState()
     @StateObject private var navigationStore = NavigationStore()
-    @StateObject private var splitViewManager: SplitViewManager
-
-    let mailboxManager: MailboxManager
+    @StateObject private var splitViewManager = SplitViewManager()
 
     private var isCompact: Bool {
         UIConstants.isCompact(horizontalSizeClass: horizontalSizeClass, verticalSizeClass: verticalSizeClass)
-    }
-
-    init(mailboxManager: MailboxManager) {
-        self.mailboxManager = mailboxManager
-        _splitViewManager =
-            StateObject(wrappedValue: SplitViewManager(folder: mailboxManager.getFolder(with: .inbox)))
     }
 
     var body: some View {
@@ -112,17 +102,14 @@ struct SplitView: View {
             }
         }
         .onAppear {
-            AppDelegate.orientationLock = .all
+            // AppDelegate.orientationLock = .all
         }
-        .task {
+        .task(id: mailboxManager.mailbox.objectId) {
             await fetchSignatures()
         }
-        .task {
+        .task(id: mailboxManager.mailbox.objectId) {
             await fetchFolders()
-            // On first launch, select inbox
-            if splitViewManager.selectedFolder == nil {
-                splitViewManager.selectedFolder = getInbox()
-            }
+            splitViewManager.selectedFolder = getInbox()
         }
         .onRotate { orientation in
             guard let interfaceOrientation = orientation else { return }
@@ -135,13 +122,10 @@ struct SplitView: View {
             splitViewManager.splitViewController = splitViewController
             setupBehaviour(orientation: interfaceOrientation)
         }
-        .environment(\.realmConfiguration, mailboxManager.realmConfiguration)
         .environment(\.isCompactWindow, horizontalSizeClass == .compact || verticalSizeClass == .compact)
-        .environmentObject(mailboxManager)
         .environmentObject(splitViewManager)
         .environmentObject(navigationDrawerController)
         .environmentObject(navigationStore)
-        .defaultAppStorage(.shared)
     }
 
     private func setupBehaviour(orientation: UIInterfaceOrientation) {

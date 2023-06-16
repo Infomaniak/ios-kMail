@@ -98,7 +98,7 @@ struct SlideView: View {
                 .padding(.horizontal, 32)
             }
             .onChange(of: accentColor) { _ in
-                (window?.windowScene?.delegate as? SceneDelegate)?.updateWindowUI()
+                //(window?.windowScene?.delegate as? SceneDelegate)?.updateWindowUI()
             }
             .onAppear {
                 isVisible = true

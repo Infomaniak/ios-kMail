@@ -78,7 +78,7 @@ struct MailboxCell: View {
             case .account:
                 matomo.track(eventWithCategory: .account, name: "switchMailbox")
             }
-            (window?.windowScene?.delegate as? SceneDelegate)?.switchMailbox(mailbox)
+            AccountManager.instance.switchMailbox(newMailbox: mailbox)
         }
     }
 }

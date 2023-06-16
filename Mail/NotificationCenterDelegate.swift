@@ -39,10 +39,10 @@ class NotificationCenterDelegate: NSObject, UNUserNotificationCenterDelegate {
             if AccountManager.instance.currentAccount.userId != mailboxManager.mailbox.userId {
                 if let switchedAccount = AccountManager.instance.accounts
                     .first(where: { $0.userId == mailboxManager.mailbox.userId }) {
-                    (scene?.delegate as? SceneDelegate)?.switchAccount(switchedAccount, mailbox: mailbox)
+                  //  (scene?.delegate as? SceneDelegate)?.switchAccount(switchedAccount, mailbox: mailbox)
                 }
             } else {
-                (scene?.delegate as? SceneDelegate)?.switchMailbox(mailbox)
+                AccountManager.instance.switchMailbox(newMailbox: mailbox)
             }
         }
 

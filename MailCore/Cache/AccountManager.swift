@@ -67,7 +67,7 @@ public extension InfomaniakNetworkLoginable {
     }
 }
 
-public class AccountManager: RefreshTokenDelegate {
+public class AccountManager: RefreshTokenDelegate, ObservableObject {
     @LazyInjectService var networkLoginService: InfomaniakNetworkLoginable
     @LazyInjectService var keychainHelper: KeychainHelper
     @LazyInjectService var bugTracker: BugTracker
@@ -89,12 +89,18 @@ public class AccountManager: RefreshTokenDelegate {
         didSet {
             UserDefaults.shared.currentMailUserId = currentUserId
             setSentryUserId(userId: currentUserId)
+            Task { @MainActor in
+                objectWillChange.send()
+            }
         }
     }
 
     public var currentMailboxId: Int {
         didSet {
             UserDefaults.shared.currentMailboxId = currentMailboxId
+            Task { @MainActor in
+                objectWillChange.send()
+            }
         }
     }
 
