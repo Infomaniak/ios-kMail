@@ -17,6 +17,7 @@
  */
 
 import CocoaLumberjackSwift
+import Combine
 import MailCore
 import Sentry
 import SwiftSoup
@@ -28,6 +29,10 @@ final class WebViewModel: NSObject, ObservableObject {
 
     @Published var showBlockQuote = false
     @Published var contentLoading = true
+
+    /// Only true the first time the content loads, then keeps false. Eg. when loading subsequent images.
+    @Published var initialContentLoading = true
+    private var contentLoadingSubscriber: AnyCancellable?
 
     let webView: WKWebView
     let contentBlocker: ContentBlocker
@@ -48,6 +53,14 @@ final class WebViewModel: NSObject, ObservableObject {
         contentBlocker = ContentBlocker(webView: webView)
 
         super.init()
+
+        /// only register the first flip of contentLoading to false
+        contentLoadingSubscriber = $contentLoading
+            .filter { $0 == false }
+            .prefix(1)
+            .sink { _ in
+                self.initialContentLoading = false
+            }
 
         setUpWebViewConfiguration()
         loadScripts(configuration: webView.configuration)

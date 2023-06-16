@@ -75,9 +75,9 @@ struct MessageBodyView: View {
                     }
                 }
             }
-            .opacity(model.contentLoading ? 0 : 1)
+            .opacity(model.initialContentLoading ? 0 : 1)
 
-            if isMessagePreprocessed && !model.contentLoading {
+            if model.initialContentLoading {
                 ShimmerView()
             }
         }
