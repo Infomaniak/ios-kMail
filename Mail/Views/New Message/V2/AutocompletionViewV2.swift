@@ -21,6 +21,8 @@ import RealmSwift
 import SwiftUI
 
 struct AutocompletionViewV2: View {
+    @State private var hasNoResult = false
+
     @Binding var autocompletion: [Recipient]
     @Binding var currentSearch: String
     @Binding var addedRecipients: RealmSwift.List<Recipient>
@@ -31,15 +33,22 @@ struct AutocompletionViewV2: View {
         LazyVStack {
             ForEach(autocompletion) { recipient in
                 VStack(alignment: .leading, spacing: 8) {
-                    Button {
-                        addRecipient(recipient)
-                    } label: {
-                        RecipientCell(recipient: recipient)
-                    }
-                    .padding(.horizontal, 8)
-
+                    AutocompletionCell(
+                        addRecipient: addRecipient,
+                        recipient: recipient,
+                        highlight: currentSearch,
+                        alreadyAppend: addedRecipients.contains(recipient)
+                    )
                     IKDivider()
                 }
+            }
+
+            if hasNoResult {
+                AutocompletionCell(
+                    addRecipient: addRecipient,
+                    recipient: Recipient(email: currentSearch, name: ""),
+                    alreadyAppend: false
+                )
             }
         }
         .onChange(of: currentSearch, perform: updateAutocompletion)
@@ -59,12 +68,10 @@ struct AutocompletionViewV2: View {
         var autocompleteRecipients = autocompleteContacts.map { Recipient(email: $0.email, name: $0.name) }
 
         let realResults = autocompleteRecipients.filter { !addedRecipients.map(\.email).contains($0.email) }
-        if !currentSearch.isEmpty && realResults.isEmpty {
-            autocompleteRecipients.append(Recipient(email: currentSearch, name: ""))
-        }
 
         withAnimation {
             autocompletion = autocompleteRecipients
+            hasNoResult = !currentSearch.isEmpty && realResults.isEmpty
         }
     }
 }
