@@ -91,7 +91,7 @@ struct SplitView: View {
             }
         }
         .sheet(item: $navigationStore.messageReply) { messageReply in
-            ComposeMessageView.replyOrForwardMessage(messageReply: messageReply, mailboxManager: mailboxManager)
+            ComposeMessageViewV2.replyOrForwardMessage(messageReply: messageReply, mailboxManager: mailboxManager)
         }
         .onReceive(NotificationCenter.default.publisher(for: UIApplication.willEnterForegroundNotification)) { _ in
             Task {

@@ -207,6 +207,19 @@ public class Draft: Object, Codable, Identifiable {
                      bcc: bcc)
     }
 
+    public static func mailTo(urlComponents: URLComponents) -> Draft {
+        let subject = urlComponents.getQueryItem(named: "subject")
+        let body = urlComponents.getQueryItem(named: "body")?
+            .replacingOccurrences(of: "\r", with: "")
+            .replacingOccurrences(of: "\n", with: "<br>")
+        let to = Recipient.createListUsing(listOfAddresses: urlComponents.path)
+            + Recipient.createListUsing(from: urlComponents, name: "to")
+        let cc = Recipient.createListUsing(from: urlComponents, name: "cc")
+        let bcc = Recipient.createListUsing(from: urlComponents, name: "bcc")
+
+        return Draft(subject: subject ?? "", body: body ?? "", to: to, cc: cc, bcc: bcc)
+    }
+
     public static func writing(to recipient: Recipient) -> Draft {
         return Draft(to: [recipient.detached()])
     }

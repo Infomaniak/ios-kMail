@@ -17,12 +17,35 @@
  */
 
 import Foundation
+import InfomaniakCoreUI
+import InfomaniakDI
 import MailCore
 import RealmSwift
 
 extension ComposeMessageViewV2 {
     static func newMessage(mailboxManager: MailboxManager) -> ComposeMessageViewV2 {
         let draft = Draft(localUUID: UUID().uuidString)
+        return ComposeMessageViewV2(draft: draft, mailboxManager: mailboxManager)
+    }
+
+    static func replyOrForwardMessage(messageReply: MessageReply, mailboxManager: MailboxManager) -> ComposeMessageViewV2 {
+        let draft = Draft.replying(reply: messageReply)
+        return ComposeMessageViewV2(draft: draft, mailboxManager: mailboxManager, messageReply: messageReply)
+    }
+
+    static func edit(draft: Draft, mailboxManager: MailboxManager) -> ComposeMessageViewV2 {
+        @InjectService var matomo: MatomoUtils
+        matomo.track(eventWithCategory: .newMessage, name: "openFromDraft")
+        return ComposeMessageViewV2(draft: draft, mailboxManager: mailboxManager)
+    }
+
+    static func writingTo(recipient: Recipient, mailboxManager: MailboxManager) -> ComposeMessageViewV2 {
+        let draft = Draft.writing(to: recipient)
+        return ComposeMessageViewV2(draft: draft, mailboxManager: mailboxManager)
+    }
+
+    static func mailTo(urlComponents: URLComponents, mailboxManager: MailboxManager) -> ComposeMessageViewV2 {
+        let draft = Draft.mailTo(urlComponents: urlComponents)
         return ComposeMessageViewV2(draft: draft, mailboxManager: mailboxManager)
     }
 }
