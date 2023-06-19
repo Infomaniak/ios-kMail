@@ -102,10 +102,10 @@ struct ComposeMessageView: View {
         NavigationView {
             ScrollView {
                 VStack(spacing: 0) {
-                    ComposeMessageHeaderViewV2(draft: draft, focusedField: _focusedField, autocompletionType: $autocompletionType)
+                    ComposeMessageHeaderView(draft: draft, focusedField: _focusedField, autocompletionType: $autocompletionType)
 
                     if autocompletionType == nil {
-                        ComposeMessageBodyViewV2(
+                        ComposeMessageBodyView(
                             draft: draft,
                             isLoadingContent: $isLoadingContent,
                             editorFocus: $editorFocus,

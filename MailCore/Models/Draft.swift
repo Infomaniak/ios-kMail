@@ -195,18 +195,6 @@ public class Draft: Object, Codable, Identifiable {
         self.action = action
     }
 
-    public static func mailTo(subject: String?,
-                              body: String?,
-                              to: [Recipient],
-                              cc: [Recipient],
-                              bcc: [Recipient]) -> Draft {
-        return Draft(subject: subject ?? "",
-                     body: body ?? "",
-                     to: to,
-                     cc: cc,
-                     bcc: bcc)
-    }
-
     public static func mailTo(urlComponents: URLComponents) -> Draft {
         let subject = urlComponents.getQueryItem(named: "subject")
         let body = urlComponents.getQueryItem(named: "body")?
