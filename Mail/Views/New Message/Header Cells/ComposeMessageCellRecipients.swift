@@ -86,15 +86,20 @@ struct ComposeMessageCellRecipients: View {
         @InjectService var matomo: MatomoUtils
         matomo.track(eventWithCategory: .newMessage, name: "addNewRecipient")
 
-        if Constants.isEmailAddress(recipient.email) {
-            withAnimation {
-                $recipients.append(recipient)
-            }
-            currentText = ""
-        } else {
-            IKSnackBar
-                .showSnackBar(message: MailResourcesStrings.Localizable.addUnknownRecipientInvalidEmail)
+        guard Constants.isEmailAddress(recipient.email) else {
+            IKSnackBar.showSnackBar(message: MailResourcesStrings.Localizable.addUnknownRecipientInvalidEmail)
+            return
         }
+
+        guard !recipients.contains(where: { $0.isSameRecipient(as: recipient) }) else {
+            IKSnackBar.showSnackBar(message: MailResourcesStrings.Localizable.addUnknownRecipientAlreadyUsed)
+            return
+        }
+
+        withAnimation {
+            $recipients.append(recipient)
+        }
+        currentText = ""
     }
 }
 
