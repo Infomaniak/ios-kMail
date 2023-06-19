@@ -374,25 +374,28 @@ struct ComposeMessageView: View {
     }
 
     private func setSignature() async {
-        if draft.identityId == nil || draft.identityId?.isEmpty == true,
-           let signatureResponse = mailboxManager.getSignatureResponse() {
-            guard let signature = signatureResponse.default else {
-                return
-            }
-            $draft.identityId.wrappedValue = "\(signature.id)"
-
-            let html = "<br><br><div class=\"editorUserSignature\">\(signature.content)</div>"
-            var signaturePosition = draft.body.endIndex
-            if messageReply != nil {
-                switch signature.position {
-                case .beforeReplyMessage:
-                    signaturePosition = draft.body.startIndex
-                case .afterReplyMessage:
-                    signaturePosition = draft.body.endIndex
-                }
-            }
-            $draft.body.wrappedValue.insert(contentsOf: html, at: signaturePosition)
+        guard draft.identityId == nil || draft.identityId?.isEmpty == true else {
+            return
         }
+
+        let signatures = mailboxManager.getSignatures()
+        guard let signature = signatures.default else {
+            // TODO sentry
+            return
+        }
+        $draft.identityId.wrappedValue = "\(signature.id)"
+
+        let html = "<br><br><div class=\"editorUserSignature\">\(signature.content)</div>"
+        var signaturePosition = draft.body.endIndex
+        if messageReply != nil {
+            switch signature.position {
+            case .beforeReplyMessage:
+                signaturePosition = draft.body.startIndex
+            case .afterReplyMessage:
+                signaturePosition = draft.body.endIndex
+            }
+        }
+        $draft.body.wrappedValue.insert(contentsOf: html, at: signaturePosition)
     }
 
     private func prepareBody(message: Message, replyMode: ReplyMode) async throws {

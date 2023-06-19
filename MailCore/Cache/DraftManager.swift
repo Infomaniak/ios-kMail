@@ -115,6 +115,11 @@ public class DraftManager {
                     group.addTask {
                         var sendDate: Date?
 
+                        if draft.identityId == nil {
+                            // TODO clean
+                            print("identityId nil")
+                        }
+                        
                         switch draft.action {
                         case .initialSave:
                             await self.initialSave(draft: draft, mailboxManager: mailboxManager, emptyDraftBody: emptyDraftBody)
@@ -196,14 +201,11 @@ public class DraftManager {
 
     private func emptyDraftBodyWithSignature(for mailboxManager: MailboxManager) -> String {
         let draft = Draft()
-        if let signature = mailboxManager.getSignatureResponse() {
-            do {
-                try draft.setSignature(signature)
-            } catch {
-                print("error :\(error)")
-                // TODO add sentry
-            }
+
+        if let signature = mailboxManager.getSignatures().default {
+            draft.setSignature(signature)
         }
+
         return draft.body
     }
 }

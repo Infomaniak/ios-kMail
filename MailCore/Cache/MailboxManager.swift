@@ -82,7 +82,6 @@ public class MailboxManager: ObservableObject {
                 Attachment.self,
                 Recipient.self,
                 Draft.self,
-                SignatureResponse.self,
                 Signature.self,
                 ValidEmail.self,
                 SearchHistory.self
@@ -123,26 +122,43 @@ public class MailboxManager: ObservableObject {
 
     // MARK: - Signatures
 
-    public func signatures() async throws {
+    public func refreshAllSignatures() async throws {
         // Get from API
         let signaturesResult = try await apiFetcher.signatures(mailbox: mailbox)
+        let updatedSignatures = Set(signaturesResult.signatures)
 
         await backgroundRealm.execute { realm in
+            let signaturesToDelete: Set<Signature> // no longer present server side
+            let signaturesToUpdate: Set<Signature> // updated signatures
+            let signaturesToAdd: Set<Signature> // new signatures
+
+            // fetch all local signatures
+            let existingSignatures = Set(realm.objects(Signature.self))
+
+            signaturesToAdd = updatedSignatures.subtracting(existingSignatures)
+            signaturesToUpdate = updatedSignatures.intersection(existingSignatures)
+            signaturesToDelete = existingSignatures.subtracting(updatedSignatures)
+
+            // TODO clean
+            print("add: \(signaturesToAdd.count) update: \(signaturesToUpdate.count) delete: \(signaturesToDelete.count)")
+
             // Update signatures in Realm
             try? realm.safeWrite {
-                realm.add(signaturesResult, update: .modified)
+                realm.delete(signaturesToDelete)
+                realm.add(signaturesToAdd, update: .modified)
+                realm.add(signaturesToUpdate, update: .modified)
             }
         }
     }
 
     public func updateSignature(signature: Signature) async throws {
         _ = try await apiFetcher.updateSignature(mailbox: mailbox, signature: signature)
-        try await signatures()
+        try await refreshAllSignatures()
     }
 
-    public func getSignatureResponse(using realm: Realm? = nil) -> SignatureResponse? {
+    public func getSignatures(using realm: Realm? = nil) -> [Signature] {
         let realm = realm ?? getRealm()
-        return realm.object(ofType: SignatureResponse.self, forPrimaryKey: 1)
+        return Array(realm.objects(Signature.self))
     }
 
     // MARK: - Folders
@@ -892,7 +908,7 @@ public class MailboxManager: ObservableObject {
         let folders = Set(threads.compactMap(\.folder))
         for thread in threads {
             do {
-               try thread.recomputeOrFail()
+                try thread.recomputeOrFail()
             } catch {
                 SentrySDK.capture(message: "Thread has nil lastMessageFromFolderDate") { scope in
                     scope.setContext(value: ["dates": "\(thread.messages.map { $0.date })",
@@ -1074,6 +1090,12 @@ public class MailboxManager: ObservableObject {
             draft.action = .save
             draft.identityId = partialDraft.identityId
             draft.delay = partialDraft.delay
+
+            if draft.identityId == nil,
+               let defaultId = Array(realm.objects(Signature.self)).default?.id {
+                assertionFailure("unexpected nil identityId from the server")
+                draft.identityId = "\(defaultId)"
+            }
 
             try? realm.safeWrite {
                 realm.add(draft.detached(), update: .modified)

@@ -24,21 +24,25 @@ public enum SignaturePosition: String, PersistableEnum, Codable {
     case afterReplyMessage = "bottom"
 }
 
-public class SignatureResponse: Object, Decodable, Identifiable {
-    @Persisted(primaryKey: true) public var id = 1
-    @Persisted public var signatures: List<Signature>
-    @Persisted public var validEmails: List<ValidEmail>
+public struct SignatureResponse: Decodable {
+    public var signatures: [Signature]
 
     public var `default`: Signature? {
-        return signatures.first(where: \.isDefault)
+        signatures.first(where: \.isDefault)
     }
 
     private enum CodingKeys: String, CodingKey {
-        case signatures, validEmails
+        case signatures
     }
 }
 
-public class Signature: Object, Codable, Identifiable {
+public extension Array where Element == Signature {
+    var `default`: Signature? {
+        first(where: \.isDefault)
+    }
+}
+
+public final class Signature: Object, Codable, Identifiable {
     @Persisted(primaryKey: true) public var id: Int
     @Persisted public var name: String
     @Persisted public var content: String
@@ -57,6 +61,10 @@ public class Signature: Object, Codable, Identifiable {
         case id, name, content, replyTo, replyToIdn, replyToId, fullName, sender, senderIdn, senderId, isDefault, position
         // Property 'hash' already exists
         case hashString = "hash"
+    }
+
+    override public var hash: Int {
+        id
     }
 }
 

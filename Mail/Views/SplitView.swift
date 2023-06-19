@@ -163,7 +163,7 @@ struct SplitView: View {
 
     private func fetchSignatures() async {
         await tryOrDisplayError {
-            try await mailboxManager.signatures()
+            try await mailboxManager.refreshAllSignatures()
         }
     }
 
