@@ -17,6 +17,7 @@
  */
 
 import MailCore
+import MailResources
 import RealmSwift
 import SwiftUI
 
@@ -74,7 +75,8 @@ struct AutocompletionView: View {
         withAnimation {
             shouldAddUserProposal = !(realResults.count == 1 && realResults.first?.email == currentSearch)
             if shouldAddUserProposal {
-                autocompleteRecipients.append(Recipient(email: currentSearch, name: ""))
+                autocompleteRecipients
+                    .append(Recipient(email: currentSearch, name: MailResourcesStrings.Localizable.addUnknownRecipientTitle))
             }
 
             autocompletion = autocompleteRecipients
