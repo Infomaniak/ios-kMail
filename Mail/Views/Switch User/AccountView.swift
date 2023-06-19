@@ -28,13 +28,10 @@ import SwiftUI
 class AccountViewDelegate: DeleteAccountDelegate {
     @MainActor func didCompleteDeleteAccount() {
         guard let account = AccountManager.instance.currentAccount else { return }
-        let window = UIApplication.shared.mainSceneKeyWindow
         AccountManager.instance.removeTokenAndAccount(token: account.token)
         if let nextAccount = AccountManager.instance.accounts.first {
-            //(window?.windowScene?.delegate as? SceneDelegate)?.switchAccount(nextAccount)
+            AccountManager.instance.switchAccount(newAccount: nextAccount)
             IKSnackBar.showSnackBar(message: "Account deleted")
-        } else {
-           // (window?.windowScene?.delegate as? SceneDelegate)?.showLoginView()
         }
         AccountManager.instance.saveAccounts()
     }

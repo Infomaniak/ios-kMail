@@ -24,7 +24,8 @@ import SwiftUI
 
 struct LockedAppView: View {
     @LazyInjectService var appLockHelper: AppLockHelper
-    @Environment(\.window) var window
+
+    @Binding var isAppLocked: Bool
 
     var body: some View {
         ZStack {
@@ -61,7 +62,12 @@ struct LockedAppView: View {
     private func unlockApp() {
         Task {
             if (try? await appLockHelper.evaluatePolicy(reason: MailResourcesStrings.Localizable.lockAppTitle)) == true {
-             //   await (window?.windowScene?.delegate as? SceneDelegate)?.showMainView()
+                appLockHelper.setTime()
+                Task { @MainActor in
+                    withAnimation {
+                        isAppLocked = false
+                    }
+                }
             }
         }
     }
@@ -69,6 +75,6 @@ struct LockedAppView: View {
 
 struct LockedAppView_Previews: PreviewProvider {
     static var previews: some View {
-        LockedAppView()
+        LockedAppView(isAppLocked: .constant(true))
     }
 }
