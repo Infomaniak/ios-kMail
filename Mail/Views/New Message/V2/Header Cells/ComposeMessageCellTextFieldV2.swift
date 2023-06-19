@@ -16,25 +16,32 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import MailCore
 import SwiftUI
 
 struct ComposeMessageCellTextFieldV2: View {
     @Binding var text: String
     @Binding var autocompletionType: ComposeViewFieldType?
 
+    @FocusState var focusedField: ComposeViewFieldType?
+
     let type: ComposeViewFieldType
 
     var body: some View {
         if autocompletionType == nil {
-            VStack {
+            VStack(spacing: UIConstants.composeViewVerticalSpacing) {
                 HStack {
                     Text(type.title)
                         .textStyle(.bodySecondary)
 
                     TextField("", text: $text)
+                        .focused($focusedField, equals: .subject)
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
                 IKDivider()
+            }
+            .onTapGesture {
+                focusedField = type
             }
         }
     }

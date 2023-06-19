@@ -16,6 +16,7 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import MailCore
 import SwiftUI
 
 struct ComposeMessageCellStaticTextV2: View {
@@ -26,7 +27,7 @@ struct ComposeMessageCellStaticTextV2: View {
 
     var body: some View {
         if autocompletionType == nil {
-            VStack {
+            VStack(spacing: UIConstants.composeViewVerticalSpacing) {
                 HStack {
                     Text(type.title)
                         .textStyle(.bodySecondary)

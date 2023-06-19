@@ -32,7 +32,7 @@ struct ComposeMessageHeaderViewV2: View {
     @Binding var autocompletionType: ComposeViewFieldType?
 
     var body: some View {
-        VStack {
+        VStack(spacing: UIConstants.composeViewVerticalSpacing) {
             ComposeMessageCellStaticTextV2(
                 autocompletionType: $autocompletionType,
                 type: .from,
@@ -43,6 +43,7 @@ struct ComposeMessageHeaderViewV2: View {
                 recipients: $draft.to,
                 showRecipientsFields: $showRecipientsFields,
                 autocompletionType: $autocompletionType,
+                focusedField: _focusedField,
                 type: .to
             )
 
@@ -51,6 +52,7 @@ struct ComposeMessageHeaderViewV2: View {
                     recipients: $draft.cc,
                     showRecipientsFields: $showRecipientsFields,
                     autocompletionType: $autocompletionType,
+                    focusedField: _focusedField,
                     type: .cc
                 )
 
@@ -58,11 +60,17 @@ struct ComposeMessageHeaderViewV2: View {
                     recipients: $draft.bcc,
                     showRecipientsFields: $showRecipientsFields,
                     autocompletionType: $autocompletionType,
+                    focusedField: _focusedField,
                     type: .bcc
                 )
             }
 
-            ComposeMessageCellTextFieldV2(text: $draft.subject, autocompletionType: $autocompletionType, type: .subject)
+            ComposeMessageCellTextFieldV2(
+                text: $draft.subject,
+                autocompletionType: $autocompletionType,
+                focusedField: _focusedField,
+                type: .subject
+            )
         }
         .padding(.horizontal, 16)
         .onAppear {

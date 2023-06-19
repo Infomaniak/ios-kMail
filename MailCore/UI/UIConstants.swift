@@ -101,6 +101,8 @@ public enum UIConstants {
     public static let buttonsRadius: CGFloat = 16
     public static let buttonsIconSize: CGFloat = 16
 
+    public static let composeViewVerticalSpacing: CGFloat = 12
+
     public static let bottomBarVerticalPadding: CGFloat = 8
     public static let bottomBarSmallVerticalPadding: CGFloat = 4
     public static let bottomBarHorizontalMinimumSpace: CGFloat = 8

@@ -31,16 +31,18 @@ struct ComposeMessageCellRecipientsV2: View {
     @Binding var showRecipientsFields: Bool
     @Binding var autocompletionType: ComposeViewFieldType?
 
+    @FocusState var focusedField: ComposeViewFieldType?
+
     let type: ComposeViewFieldType
 
     var body: some View {
-        VStack {
+        VStack(spacing: UIConstants.composeViewVerticalSpacing) {
             if autocompletionType == nil || autocompletionType == type {
                 HStack {
                     Text(type.title)
                         .textStyle(.bodySecondary)
 
-                    RecipientFieldV2(currentText: $currentText, recipients: $recipients, type: type) {
+                    RecipientFieldV2(currentText: $currentText, recipients: $recipients, focusedField: _focusedField, type: type) {
                         if let bestMatch = autocompletion.first {
                             addNewRecipient(bestMatch)
                         }
@@ -63,6 +65,9 @@ struct ComposeMessageCellRecipientsV2: View {
                     addRecipient: addNewRecipient
                 )
             }
+        }
+        .onTapGesture {
+            focusedField = type
         }
         .onChange(of: currentText) { newValue in
             withAnimation {
