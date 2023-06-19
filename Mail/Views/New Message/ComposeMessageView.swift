@@ -376,10 +376,10 @@ struct ComposeMessageView: View {
     private func setSignature() async {
         if draft.identityId == nil || draft.identityId?.isEmpty == true,
            let signatureResponse = mailboxManager.getSignatureResponse() {
-            $draft.identityId.wrappedValue = "\(signatureResponse.defaultSignatureId)"
             guard let signature = signatureResponse.default else {
                 return
             }
+            $draft.identityId.wrappedValue = "\(signature.id)"
 
             let html = "<br><br><div class=\"editorUserSignature\">\(signature.content)</div>"
             var signaturePosition = draft.body.endIndex

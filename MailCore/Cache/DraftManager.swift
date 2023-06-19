@@ -197,7 +197,12 @@ public class DraftManager {
     private func emptyDraftBodyWithSignature(for mailboxManager: MailboxManager) -> String {
         let draft = Draft()
         if let signature = mailboxManager.getSignatureResponse() {
-            draft.setSignature(signature)
+            do {
+                try draft.setSignature(signature)
+            } catch {
+                print("error :\(error)")
+                // TODO add sentry
+            }
         }
         return draft.body
     }

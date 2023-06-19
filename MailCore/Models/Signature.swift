@@ -27,16 +27,14 @@ public enum SignaturePosition: String, PersistableEnum, Codable {
 public class SignatureResponse: Object, Decodable, Identifiable {
     @Persisted(primaryKey: true) public var id = 1
     @Persisted public var signatures: List<Signature>
-    @Persisted public var defaultSignatureId: Int
     @Persisted public var validEmails: List<ValidEmail>
-    @Persisted public var position: SignaturePosition
 
     public var `default`: Signature? {
         return signatures.first(where: \.isDefault)
     }
 
     private enum CodingKeys: String, CodingKey {
-        case signatures, defaultSignatureId, validEmails, position
+        case signatures, validEmails
     }
 }
 

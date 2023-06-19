@@ -53,6 +53,11 @@ public struct DraftResponse: Codable {
 }
 
 public class Draft: Object, Codable, Identifiable {
+    
+    private enum ErrorDomain: Error {
+        case unableToFetchDefaultSignature
+    }
+    
     @Persisted(primaryKey: true) public var localUUID = UUID().uuidString
     @Persisted public var remoteUUID = ""
     @Persisted public var date = Date()
@@ -253,14 +258,14 @@ public class Draft: Object, Codable, Identifiable {
                      cc: recipientHolder.cc)
     }
 
-    public func setSignature(_ signatureResponse: SignatureResponse) {
-        identityId = "\(signatureResponse.defaultSignatureId)"
-        guard let signature = signatureResponse.default else {
-            return
+    public func setSignature(_ signatureResponse: SignatureResponse) throws {
+        guard let defaultSignature = signatureResponse.default else {
+            throw ErrorDomain.unableToFetchDefaultSignature
         }
-
-        let html = "<br><br><div class=\"editorUserSignature\">\(signature.content)</div>"
-        switch signature.position {
+        
+        identityId = "\(defaultSignature.id)"
+        let html = "<br><br><div class=\"editorUserSignature\">\(defaultSignature.content)</div>"
+        switch defaultSignature.position {
         case .beforeReplyMessage:
             body.insert(contentsOf: html, at: body.startIndex)
         case .afterReplyMessage:
