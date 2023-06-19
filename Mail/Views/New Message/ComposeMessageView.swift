@@ -111,6 +111,7 @@ struct ComposeMessageView: View {
                             editorFocus: $editorFocus,
                             attachmentsManager: attachmentsManager,
                             alert: alert,
+                            dismiss: dismiss,
                             messageReply: messageReply
                         )
                     }

@@ -22,7 +22,6 @@ import RealmSwift
 import SwiftUI
 
 struct ComposeMessageBodyView: View {
-    @Environment(\.dismiss) private var dismiss
     @EnvironmentObject private var mailboxManager: MailboxManager
 
     @State private var isShowingCamera = false
@@ -39,6 +38,7 @@ struct ComposeMessageBodyView: View {
     @ObservedObject var attachmentsManager: AttachmentsManager
     @ObservedObject var alert: NewMessageAlert
 
+    let dismiss: DismissAction
     let messageReply: MessageReply?
 
     private var isRemoteContentBlocked: Bool {
@@ -167,12 +167,15 @@ struct ComposeMessageBodyView: View {
 
 struct ComposeMessageBodyView_Previews: PreviewProvider {
     static var previews: some View {
+        @Environment(\.dismiss) var dismiss
+
         ComposeMessageBodyView(
             draft: Draft(),
             isLoadingContent: .constant(false),
             editorFocus: .constant(false),
             attachmentsManager: AttachmentsManager(draft: Draft(), mailboxManager: PreviewHelper.sampleMailboxManager),
             alert: NewMessageAlert(),
+            dismiss: dismiss,
             messageReply: nil
         )
     }

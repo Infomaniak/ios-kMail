@@ -51,6 +51,9 @@ struct AutocompletionView: View {
                 )
             }
         }
+        .onAppear {
+            updateAutocompletion(currentSearch)
+        }
         .onChange(of: currentSearch, perform: updateAutocompletion)
     }
 
