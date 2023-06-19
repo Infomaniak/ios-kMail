@@ -19,14 +19,14 @@
 import SwiftUI
 import UIKit
 
-struct RecipientsTextFieldV2View: UIViewRepresentable {
+struct RecipientsTextField: UIViewRepresentable {
     @Binding var text: String
 
     var onSubmit: (() -> Void)?
     let onBackspace: (Bool) -> Void
 
     func makeUIView(context: Context) -> UITextField {
-        let textField = RecipientsTextField()
+        let textField = UIRecipientsTextField()
         textField.delegate = context.coordinator
         textField.addTarget(context.coordinator, action: #selector(context.coordinator.textDidChanged(_:)), for: .editingChanged)
         textField.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
@@ -45,9 +45,9 @@ struct RecipientsTextFieldV2View: UIViewRepresentable {
     }
 
     class Coordinator: NSObject, UITextFieldDelegate {
-        let parent: RecipientsTextFieldV2View
+        let parent: RecipientsTextField
 
-        init(_ parent: RecipientsTextFieldV2View) {
+        init(_ parent: RecipientsTextField) {
             self.parent = parent
         }
 
@@ -70,7 +70,7 @@ struct RecipientsTextFieldV2View: UIViewRepresentable {
 /*
  * We need to create our own UITextField to benefit from the `deleteBackward()` function
  */
-class RecipientsTextField: UITextField {
+class UIRecipientsTextField: UITextField {
     var onBackspace: ((Bool) -> Void)?
 
     override init(frame: CGRect) {

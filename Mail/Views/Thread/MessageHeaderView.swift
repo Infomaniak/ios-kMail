@@ -61,7 +61,7 @@ struct MessageHeaderView: View {
             }
         }
         .sheet(item: $editedDraft) { editedDraft in
-            ComposeMessageViewV2.edit(draft: editedDraft, mailboxManager: mailboxManager)
+            ComposeMessageView.edit(draft: editedDraft, mailboxManager: mailboxManager)
         }
     }
 

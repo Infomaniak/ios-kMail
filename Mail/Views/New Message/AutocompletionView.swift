@@ -20,7 +20,7 @@ import MailCore
 import RealmSwift
 import SwiftUI
 
-struct AutocompletionViewV2: View {
+struct AutocompletionView: View {
     @State private var shouldAddUserProposal = false
 
     @Binding var autocompletion: [Recipient]
@@ -76,9 +76,9 @@ struct AutocompletionViewV2: View {
     }
 }
 
-struct AutocompletionViewV2_Previews: PreviewProvider {
+struct AutocompletionView_Previews: PreviewProvider {
     static var previews: some View {
-        AutocompletionViewV2(
+        AutocompletionView(
             autocompletion: .constant([]),
             currentSearch: .constant(""),
             addedRecipients: .constant([PreviewHelper.sampleRecipient1].toRealmList())

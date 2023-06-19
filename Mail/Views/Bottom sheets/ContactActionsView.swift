@@ -99,7 +99,7 @@ struct ContactActionsView: View {
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(.horizontal, 24)
         .sheet(item: $writtenToRecipient) { writtenToRecipient in
-            ComposeMessageViewV2.writingTo(recipient: writtenToRecipient, mailboxManager: mailboxManager)
+            ComposeMessageView.writingTo(recipient: writtenToRecipient, mailboxManager: mailboxManager)
         }
         .matomoView(view: [MatomoUtils.View.bottomSheet.displayName, "ContactActionsView"])
     }

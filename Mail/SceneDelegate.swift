@@ -184,7 +184,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, AccountManagerDelegate 
         }
 
         if Constants.isMailTo(url) {
-            let newMessageView = ComposeMessageViewV2.mailTo(urlComponents: urlComponents, mailboxManager: mailboxManager)
+            let newMessageView = ComposeMessageView.mailTo(urlComponents: urlComponents, mailboxManager: mailboxManager)
             let viewController = UIHostingController(rootView: newMessageView)
             window?.rootViewController?.present(viewController, animated: true)
         }

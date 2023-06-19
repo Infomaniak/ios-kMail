@@ -20,7 +20,7 @@ import MailCore
 import RealmSwift
 import SwiftUI
 
-struct ComposeMessageHeaderViewV2: View {
+struct ComposeMessageHeaderView: View {
     @EnvironmentObject private var mailboxManager: MailboxManager
 
     @State private var showRecipientsFields = false
@@ -79,8 +79,8 @@ struct ComposeMessageHeaderViewV2: View {
     }
 }
 
-struct ComposeMessageHeaderViewV2_Previews: PreviewProvider {
+struct ComposeMessageHeaderView_Previews: PreviewProvider {
     static var previews: some View {
-        ComposeMessageHeaderViewV2(draft: Draft(), autocompletionType: .constant(nil))
+        ComposeMessageHeaderView(draft: Draft(), autocompletionType: .constant(nil))
     }
 }

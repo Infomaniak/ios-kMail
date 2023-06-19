@@ -42,7 +42,7 @@ struct ComposeMessageCellRecipientsV2: View {
                     Text(type.title)
                         .textStyle(.bodySecondary)
 
-                    RecipientFieldV2(currentText: $currentText, recipients: $recipients, focusedField: _focusedField, type: type) {
+                    RecipientField(currentText: $currentText, recipients: $recipients, focusedField: _focusedField, type: type) {
                         if let bestMatch = autocompletion.first {
                             addNewRecipient(bestMatch)
                         }
@@ -58,7 +58,7 @@ struct ComposeMessageCellRecipientsV2: View {
             }
 
             if autocompletionType == type {
-                AutocompletionViewV2(
+                AutocompletionView(
                     autocompletion: $autocompletion,
                     currentSearch: $currentText,
                     addedRecipients: $recipients,

@@ -35,7 +35,7 @@ extension VerticalAlignment {
     static let newMessageCellAlignment = VerticalAlignment(NewMessageCellAlignment.self)
 }
 
-struct RecipientFieldV2: View {
+struct RecipientField: View {
     @State private var keyboardHeight: CGFloat = 0
 
     @Binding var currentText: String
@@ -65,7 +65,7 @@ struct RecipientFieldV2: View {
                 .alignmentGuide(.newMessageCellAlignment) { d in d[.top] + 21 }
             }
 
-            RecipientsTextFieldV2View(text: $currentText, onSubmit: onSubmit, onBackspace: handleBackspaceTextField)
+            RecipientsTextField(text: $currentText, onSubmit: onSubmit, onBackspace: handleBackspaceTextField)
                 .focused($focusedField, equals: type)
         }
         .onReceive(NotificationCenter.default.publisher(for: UIResponder.keyboardDidShowNotification)) { output in
@@ -102,9 +102,9 @@ struct RecipientFieldV2: View {
     }
 }
 
-struct RecipientFieldV2_Previews: PreviewProvider {
+struct RecipientField_Previews: PreviewProvider {
     static var previews: some View {
-        RecipientFieldV2(currentText: .constant(""), recipients: .constant([
+        RecipientField(currentText: .constant(""), recipients: .constant([
             PreviewHelper.sampleRecipient1, PreviewHelper.sampleRecipient2, PreviewHelper.sampleRecipient3
         ].toRealmList()), type: .to)
     }

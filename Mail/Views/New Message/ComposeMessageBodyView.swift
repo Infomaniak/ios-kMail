@@ -21,7 +21,7 @@ import MailCore
 import RealmSwift
 import SwiftUI
 
-struct ComposeMessageBodyViewV2: View {
+struct ComposeMessageBodyView: View {
     @Environment(\.dismiss) private var dismiss
     @EnvironmentObject private var mailboxManager: MailboxManager
 
@@ -165,9 +165,9 @@ struct ComposeMessageBodyViewV2: View {
     }
 }
 
-struct ComposeMessageBodyViewV2_Previews: PreviewProvider {
+struct ComposeMessageBodyView_Previews: PreviewProvider {
     static var previews: some View {
-        ComposeMessageBodyViewV2(
+        ComposeMessageBodyView(
             draft: Draft(),
             isLoadingContent: .constant(false),
             editorFocus: .constant(false),
