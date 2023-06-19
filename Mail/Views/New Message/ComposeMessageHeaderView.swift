@@ -33,13 +33,13 @@ struct ComposeMessageHeaderView: View {
 
     var body: some View {
         VStack(spacing: UIConstants.composeViewVerticalSpacing) {
-            ComposeMessageCellStaticTextV2(
+            ComposeMessageCellStaticText(
                 autocompletionType: $autocompletionType,
                 type: .from,
                 text: mailboxManager.mailbox.email
             )
 
-            ComposeMessageCellRecipientsV2(
+            ComposeMessageCellRecipients(
                 recipients: $draft.to,
                 showRecipientsFields: $showRecipientsFields,
                 autocompletionType: $autocompletionType,
@@ -48,7 +48,7 @@ struct ComposeMessageHeaderView: View {
             )
 
             if showRecipientsFields {
-                ComposeMessageCellRecipientsV2(
+                ComposeMessageCellRecipients(
                     recipients: $draft.cc,
                     showRecipientsFields: $showRecipientsFields,
                     autocompletionType: $autocompletionType,
@@ -56,7 +56,7 @@ struct ComposeMessageHeaderView: View {
                     type: .cc
                 )
 
-                ComposeMessageCellRecipientsV2(
+                ComposeMessageCellRecipients(
                     recipients: $draft.bcc,
                     showRecipientsFields: $showRecipientsFields,
                     autocompletionType: $autocompletionType,
@@ -65,7 +65,7 @@ struct ComposeMessageHeaderView: View {
                 )
             }
 
-            ComposeMessageCellTextFieldV2(
+            ComposeMessageCellTextField(
                 text: $draft.subject,
                 autocompletionType: $autocompletionType,
                 focusedField: _focusedField,

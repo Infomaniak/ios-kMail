@@ -19,7 +19,7 @@
 import MailCore
 import SwiftUI
 
-struct ComposeMessageCellTextFieldV2: View {
+struct ComposeMessageCellTextField: View {
     @Binding var text: String
     @Binding var autocompletionType: ComposeViewFieldType?
 
@@ -47,8 +47,8 @@ struct ComposeMessageCellTextFieldV2: View {
     }
 }
 
-struct ComposeMessageCellTextFieldV2_Previews: PreviewProvider {
+struct ComposeMessageCellTextField_Previews: PreviewProvider {
     static var previews: some View {
-        ComposeMessageCellTextFieldV2(text: .constant(""), autocompletionType: .constant(nil), type: .subject)
+        ComposeMessageCellTextField(text: .constant(""), autocompletionType: .constant(nil), type: .subject)
     }
 }

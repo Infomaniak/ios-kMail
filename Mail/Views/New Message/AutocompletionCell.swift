@@ -25,18 +25,19 @@ struct AutocompletionCell: View {
     let recipient: Recipient
     var highlight: String?
     let alreadyAppend: Bool
+    let unknownRecipient: Bool
 
     var body: some View {
         HStack(spacing: 12) {
             Button {
                 addRecipient(recipient)
             } label: {
-                RecipientCell(recipient: recipient, highlight: highlight)
+                RecipientCell(recipient: recipient, highlight: highlight, unknownRecipient: unknownRecipient)
             }
             .allowsHitTesting(!alreadyAppend)
-            .opacity(alreadyAppend ? 0.5 : 1)
+            .opacity(alreadyAppend && !unknownRecipient ? 0.5 : 1)
 
-            if alreadyAppend {
+            if alreadyAppend && !unknownRecipient {
                 MailResourcesAsset.checked.swiftUIImage
                     .resizable()
                     .frame(width: 24, height: 24)
@@ -48,6 +49,11 @@ struct AutocompletionCell: View {
 
 struct AutocompletionCell_Previews: PreviewProvider {
     static var previews: some View {
-        AutocompletionCell(addRecipient: { _ in /* Preview */ }, recipient: PreviewHelper.sampleRecipient1, alreadyAppend: false)
+        AutocompletionCell(
+            addRecipient: { _ in /* Preview */ },
+            recipient: PreviewHelper.sampleRecipient1,
+            alreadyAppend: false,
+            unknownRecipient: false
+        )
     }
 }

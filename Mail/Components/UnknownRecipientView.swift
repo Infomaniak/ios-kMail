@@ -17,33 +17,33 @@
  */
 
 import MailCore
+import MailResources
 import SwiftUI
 
-struct ComposeMessageCellStaticTextV2: View {
-    @Binding var autocompletionType: ComposeViewFieldType?
+struct UnknownRecipientView: View {
+    let size: CGFloat
 
-    let type: ComposeViewFieldType
-    let text: String
+    static let imagePadding: CGFloat = 8
+
+    private var iconSize: CGFloat {
+        return size - 2 * UIConstants.unknownRecipientHorizontalPadding
+    }
 
     var body: some View {
-        if autocompletionType == nil {
-            VStack(spacing: UIConstants.composeViewVerticalSpacing) {
-                HStack {
-                    Text(type.title)
-                        .textStyle(.bodySecondary)
-
-                    Text(text)
-                        .textStyle(.body)
-                }
-                .frame(maxWidth: .infinity, alignment: .leading)
-                IKDivider()
+        Circle()
+            .fill(Color.accentColor)
+            .frame(width: size, height: size)
+            .overlay {
+                MailResourcesAsset.userBold.swiftUIImage
+                    .resizable()
+                    .foregroundColor(MailResourcesAsset.backgroundColor.swiftUIColor)
+                    .frame(width: iconSize, height: iconSize)
             }
-        }
     }
 }
 
-struct ComposeMessageStaticTextV2_Previews: PreviewProvider {
+struct UnknownRecipientView_Previews: PreviewProvider {
     static var previews: some View {
-        ComposeMessageCellStaticTextV2(autocompletionType: .constant(nil), type: .from, text: "myaddress@email.com")
+        UnknownRecipientView(size: 40)
     }
 }

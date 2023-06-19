@@ -30,25 +30,24 @@ struct AutocompletionView: View {
     let addRecipient: @MainActor (Recipient) -> Void
 
     var body: some View {
-        LazyVStack {
+        LazyVStack(spacing: UIConstants.autocompletionVerticalPadding) {
             ForEach(autocompletion) { recipient in
-                VStack(alignment: .leading, spacing: 8) {
+                let isLastRecipient = autocompletion.last?.isSameRecipient(as: recipient) == true
+                let isUserProposal = shouldAddUserProposal && isLastRecipient
+
+                VStack(alignment: .leading, spacing: UIConstants.autocompletionVerticalPadding) {
                     AutocompletionCell(
                         addRecipient: addRecipient,
                         recipient: recipient,
                         highlight: currentSearch,
-                        alreadyAppend: addedRecipients.contains { $0.email == recipient.email && $0.name == recipient.name }
+                        alreadyAppend: addedRecipients.contains { $0.isSameRecipient(as: recipient) },
+                        unknownRecipient: isUserProposal
                     )
-                    IKDivider()
-                }
-            }
 
-            if shouldAddUserProposal {
-                AutocompletionCell(
-                    addRecipient: addRecipient,
-                    recipient: Recipient(email: currentSearch, name: ""),
-                    alreadyAppend: false
-                )
+                    if !isLastRecipient {
+                        IKDivider()
+                    }
+                }
             }
         }
         .onAppear {
@@ -73,8 +72,12 @@ struct AutocompletionView: View {
         let realResults = autocompleteRecipients.filter { !addedRecipients.map(\.email).contains($0.email) }
 
         withAnimation {
-            autocompletion = autocompleteRecipients
             shouldAddUserProposal = !(realResults.count == 1 && realResults.first?.email == currentSearch)
+            if shouldAddUserProposal {
+                autocompleteRecipients.append(Recipient(email: currentSearch, name: ""))
+            }
+
+            autocompletion = autocompleteRecipients
         }
     }
 }

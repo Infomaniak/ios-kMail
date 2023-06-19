@@ -23,7 +23,7 @@ import MailResources
 import RealmSwift
 import SwiftUI
 
-struct ComposeMessageCellRecipientsV2: View {
+struct ComposeMessageCellRecipients: View {
     @State private var currentText = ""
     @State private var autocompletion = [Recipient]()
 
@@ -36,7 +36,7 @@ struct ComposeMessageCellRecipientsV2: View {
     let type: ComposeViewFieldType
 
     var body: some View {
-        VStack(spacing: UIConstants.composeViewVerticalSpacing) {
+        VStack(spacing: 0) {
             if autocompletionType == nil || autocompletionType == type {
                 HStack {
                     Text(type.title)
@@ -55,6 +55,7 @@ struct ComposeMessageCellRecipientsV2: View {
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
                 IKDivider()
+                    .padding(.top, UIConstants.composeViewVerticalSpacing)
             }
 
             if autocompletionType == type {
@@ -64,6 +65,7 @@ struct ComposeMessageCellRecipientsV2: View {
                     addedRecipients: $recipients,
                     addRecipient: addNewRecipient
                 )
+                .padding(.top, 8)
             }
         }
         .onTapGesture {
@@ -96,9 +98,9 @@ struct ComposeMessageCellRecipientsV2: View {
     }
 }
 
-struct ComposeMessageCellRecipientsV2_Previews: PreviewProvider {
+struct ComposeMessageCellRecipients_Previews: PreviewProvider {
     static var previews: some View {
-        ComposeMessageCellRecipientsV2(recipients: .constant([
+        ComposeMessageCellRecipients(recipients: .constant([
             PreviewHelper.sampleRecipient1, PreviewHelper.sampleRecipient2, PreviewHelper.sampleRecipient3
         ].toRealmList()), showRecipientsFields: .constant(false), autocompletionType: .constant(nil), type: .bcc)
     }

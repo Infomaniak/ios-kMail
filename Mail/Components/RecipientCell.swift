@@ -22,10 +22,11 @@ import SwiftUI
 struct RecipientCell: View {
     let recipient: Recipient
     var highlight: String?
+    var unknownRecipient = false
 
     var body: some View {
         HStack(spacing: 8) {
-            AvatarView(avatarDisplayable: recipient, size: 40)
+            AvatarView(avatarDisplayable: recipient, size: 40, unknownAvatar: unknownRecipient)
                 .accessibilityHidden(true)
 
             if recipient.name.isEmpty {
@@ -48,7 +49,7 @@ struct RecipientCell: View {
 
     private func highlightedAttributedString(from data: String) -> AttributedString {
         var attributedString = AttributedString(data)
-        guard let highlight else { return attributedString }
+        guard let highlight, !unknownRecipient else { return attributedString }
 
         if let range = attributedString.range(of: highlight, options: .caseInsensitive) {
             attributedString[range].foregroundColor = .accentColor
