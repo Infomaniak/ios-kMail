@@ -57,7 +57,7 @@ final class NewMessageAlert: SheetState<NewMessageAlert.State> {
     }
 }
 
-struct ComposeMessageViewV2: View {
+struct ComposeMessageView: View {
     @Environment(\.dismiss) private var dismiss
 
     @LazyInjectService private var matomo: MatomoUtils
@@ -213,8 +213,8 @@ struct ComposeMessageViewV2: View {
     }
 }
 
-struct ComposeMessageViewV2_Previews: PreviewProvider {
+struct ComposeMessageView_Previews: PreviewProvider {
     static var previews: some View {
-        ComposeMessageViewV2.newMessage(mailboxManager: PreviewHelper.sampleMailboxManager)
+        ComposeMessageView.newMessage(mailboxManager: PreviewHelper.sampleMailboxManager)
     }
 }

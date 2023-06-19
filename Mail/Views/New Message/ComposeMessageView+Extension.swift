@@ -22,30 +22,30 @@ import InfomaniakDI
 import MailCore
 import RealmSwift
 
-extension ComposeMessageViewV2 {
-    static func newMessage(mailboxManager: MailboxManager) -> ComposeMessageViewV2 {
+extension ComposeMessageView {
+    static func newMessage(mailboxManager: MailboxManager) -> ComposeMessageView {
         let draft = Draft(localUUID: UUID().uuidString)
-        return ComposeMessageViewV2(draft: draft, mailboxManager: mailboxManager)
+        return ComposeMessageView(draft: draft, mailboxManager: mailboxManager)
     }
 
-    static func replyOrForwardMessage(messageReply: MessageReply, mailboxManager: MailboxManager) -> ComposeMessageViewV2 {
+    static func replyOrForwardMessage(messageReply: MessageReply, mailboxManager: MailboxManager) -> ComposeMessageView {
         let draft = Draft.replying(reply: messageReply)
-        return ComposeMessageViewV2(draft: draft, mailboxManager: mailboxManager, messageReply: messageReply)
+        return ComposeMessageView(draft: draft, mailboxManager: mailboxManager, messageReply: messageReply)
     }
 
-    static func edit(draft: Draft, mailboxManager: MailboxManager) -> ComposeMessageViewV2 {
+    static func edit(draft: Draft, mailboxManager: MailboxManager) -> ComposeMessageView {
         @InjectService var matomo: MatomoUtils
         matomo.track(eventWithCategory: .newMessage, name: "openFromDraft")
-        return ComposeMessageViewV2(draft: draft, mailboxManager: mailboxManager)
+        return ComposeMessageView(draft: draft, mailboxManager: mailboxManager)
     }
 
-    static func writingTo(recipient: Recipient, mailboxManager: MailboxManager) -> ComposeMessageViewV2 {
+    static func writingTo(recipient: Recipient, mailboxManager: MailboxManager) -> ComposeMessageView {
         let draft = Draft.writing(to: recipient)
-        return ComposeMessageViewV2(draft: draft, mailboxManager: mailboxManager)
+        return ComposeMessageView(draft: draft, mailboxManager: mailboxManager)
     }
 
-    static func mailTo(urlComponents: URLComponents, mailboxManager: MailboxManager) -> ComposeMessageViewV2 {
+    static func mailTo(urlComponents: URLComponents, mailboxManager: MailboxManager) -> ComposeMessageView {
         let draft = Draft.mailTo(urlComponents: urlComponents)
-        return ComposeMessageViewV2(draft: draft, mailboxManager: mailboxManager)
+        return ComposeMessageView(draft: draft, mailboxManager: mailboxManager)
     }
 }
