@@ -66,3 +66,33 @@ struct RecipientsTextFieldV2View: UIViewRepresentable {
         }
     }
 }
+
+/*
+ * We need to create our own UITextField to benefit from the `deleteBackward()` function
+ */
+class RecipientsTextField: UITextField {
+    var onBackspace: ((Bool) -> Void)?
+
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        setUpView()
+    }
+
+    required init?(coder: NSCoder) {
+        super.init(coder: coder)
+        setUpView()
+    }
+
+    private func setUpView() {
+        textContentType = .emailAddress
+        keyboardType = .emailAddress
+        autocapitalizationType = .none
+        autocorrectionType = .no
+    }
+
+    override func deleteBackward() {
+        onBackspace?(text?.isEmpty == true)
+        super.deleteBackward()
+    }
+}
+

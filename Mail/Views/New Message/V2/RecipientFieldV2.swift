@@ -25,6 +25,16 @@ import RealmSwift
 import SwiftUI
 import WrappingHStack
 
+extension VerticalAlignment {
+    private struct NewMessageCellAlignment: AlignmentID {
+        static func defaultValue(in context: ViewDimensions) -> CGFloat {
+            context[.firstTextBaseline]
+        }
+    }
+
+    static let newMessageCellAlignment = VerticalAlignment(NewMessageCellAlignment.self)
+}
+
 struct RecipientFieldV2: View {
     @State private var keyboardHeight: CGFloat = 0
 
@@ -94,13 +104,8 @@ struct RecipientFieldV2: View {
 
 struct RecipientFieldV2_Previews: PreviewProvider {
     static var previews: some View {
-        RecipientField(recipients: .constant([
+        RecipientFieldV2(currentText: .constant(""), recipients: .constant([
             PreviewHelper.sampleRecipient1, PreviewHelper.sampleRecipient2, PreviewHelper.sampleRecipient3
-        ].toRealmList()),
-        autocompletion: .constant([]),
-        unknownRecipientAutocompletion: .constant(""),
-        addRecipientHandler: .constant { _ in /* Preview */ },
-        focusedField: .init(),
-        type: .to)
+        ].toRealmList()), type: .to)
     }
 }
