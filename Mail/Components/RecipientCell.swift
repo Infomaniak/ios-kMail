@@ -19,14 +19,29 @@
 import MailCore
 import SwiftUI
 
+struct RecipientCellModifier: ViewModifier {
+    func body(content: Content) -> some View {
+        content
+            .lineLimit(1)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .accessibilityElement(children: .combine)
+            .accessibilityAddTraits(.isButton)
+    }
+}
+
+extension View {
+    func recipientCellModifier() -> some View {
+        modifier(RecipientCellModifier())
+    }
+}
+
 struct RecipientCell: View {
     let recipient: Recipient
     var highlight: String?
-    var unknownRecipient = false
 
     var body: some View {
         HStack(spacing: 8) {
-            AvatarView(avatarDisplayable: recipient, size: 40, unknownAvatar: unknownRecipient)
+            AvatarView(avatarDisplayable: recipient, size: 40)
                 .accessibilityHidden(true)
 
             if recipient.name.isEmpty {
@@ -41,15 +56,12 @@ struct RecipientCell: View {
                 }
             }
         }
-        .lineLimit(1)
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .accessibilityElement(children: .combine)
-        .accessibilityAddTraits(.isButton)
+        .recipientCellModifier()
     }
 
     private func highlightedAttributedString(from data: String) -> AttributedString {
         var attributedString = AttributedString(data)
-        guard let highlight, !unknownRecipient else { return attributedString }
+        guard let highlight else { return attributedString }
 
         if let range = attributedString.range(of: highlight, options: .caseInsensitive) {
             attributedString[range].foregroundColor = .accentColor

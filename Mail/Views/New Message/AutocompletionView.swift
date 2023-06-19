@@ -76,7 +76,7 @@ struct AutocompletionView: View {
             shouldAddUserProposal = !(realResults.count == 1 && realResults.first?.email == currentSearch)
             if shouldAddUserProposal {
                 autocompleteRecipients
-                    .append(Recipient(email: currentSearch, name: MailResourcesStrings.Localizable.addUnknownRecipientTitle))
+                    .append(Recipient(email: currentSearch, name: ""))
             }
 
             autocompletion = autocompleteRecipients

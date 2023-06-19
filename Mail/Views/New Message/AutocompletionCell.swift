@@ -32,9 +32,13 @@ struct AutocompletionCell: View {
             Button {
                 addRecipient(recipient)
             } label: {
-                RecipientCell(recipient: recipient, highlight: highlight, unknownRecipient: unknownRecipient)
+                if unknownRecipient {
+                    UnknownRecipientCell(recipient: recipient)
+                } else {
+                    RecipientCell(recipient: recipient, highlight: highlight)
+                }
             }
-            .allowsHitTesting(!alreadyAppend)
+            .allowsHitTesting(!alreadyAppend || unknownRecipient) 
             .opacity(alreadyAppend && !unknownRecipient ? 0.5 : 1)
 
             if alreadyAppend && !unknownRecipient {

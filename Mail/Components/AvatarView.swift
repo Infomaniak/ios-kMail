@@ -25,13 +25,10 @@ import SwiftUI
 struct AvatarView: View {
     let avatarDisplayable: AvatarDisplayable
     var size: CGFloat = 28
-    var unknownAvatar = false
 
     var body: some View {
         Group {
-            if unknownAvatar {
-                UnknownRecipientView(size: size)
-            } else if let avatarImageRequest = avatarDisplayable.avatarImageRequest {
+            if let avatarImageRequest = avatarDisplayable.avatarImageRequest {
                 LazyImage(request: avatarImageRequest) { state in
                     if let image = state.image {
                         ContactImage(image: image, size: size)
