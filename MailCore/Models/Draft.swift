@@ -96,6 +96,10 @@ public class Draft: Object, Codable, Identifiable {
     /// Store compressed data to reduce realm size.
     @Persisted var bodyData: Data?
 
+    public var recipientsAreEmpty: Bool {
+        to.isEmpty && cc.isEmpty && bcc.isEmpty
+    }
+
     private enum CodingKeys: String, CodingKey {
         case remoteUUID = "uuid"
         case date
@@ -192,16 +196,17 @@ public class Draft: Object, Codable, Identifiable {
         self.action = action
     }
 
-    public static func mailTo(subject: String?,
-                              body: String?,
-                              to: [Recipient],
-                              cc: [Recipient],
-                              bcc: [Recipient]) -> Draft {
-        return Draft(subject: subject ?? "",
-                     body: body ?? "",
-                     to: to,
-                     cc: cc,
-                     bcc: bcc)
+    public static func mailTo(urlComponents: URLComponents) -> Draft {
+        let subject = urlComponents.getQueryItem(named: "subject")
+        let body = urlComponents.getQueryItem(named: "body")?
+            .replacingOccurrences(of: "\r", with: "")
+            .replacingOccurrences(of: "\n", with: "<br>")
+        let to = Recipient.createListUsing(listOfAddresses: urlComponents.path)
+            + Recipient.createListUsing(from: urlComponents, name: "to")
+        let cc = Recipient.createListUsing(from: urlComponents, name: "cc")
+        let bcc = Recipient.createListUsing(from: urlComponents, name: "bcc")
+
+        return Draft(subject: subject ?? "", body: body ?? "", to: to, cc: cc, bcc: bcc)
     }
 
     public static func writing(to recipient: Recipient) -> Draft {
