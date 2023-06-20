@@ -177,11 +177,7 @@ struct ComposeMessageView: View {
 
     var body: some View {
         NavigationView {
-            if signatureManager.doneLoadingDefaultSignature {
-                composeMessageView
-            } else {
-                closableLoadingView
-            }
+            composeMessageView
         }
         .onAppear {
             switch messageReply?.replyMode {
@@ -292,10 +288,8 @@ struct ComposeMessageView: View {
             }
         }
         .overlay {
-            if isLoadingContent {
-                ProgressView()
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
-                    .background(MailResourcesAsset.backgroundColor.swiftUIColor)
+            if isLoadingContent || !signatureManager.doneLoadingDefaultSignature {
+                progressView
             }
         }
         .introspectScrollView { scrollView in
@@ -327,15 +321,10 @@ struct ComposeMessageView: View {
     }
 
     /// A loading view
-    private var closableLoadingView: some View {
-        ShimmerView()
-            .navigationBarTitleDisplayMode(.inline)
-            .navigationBarBackButtonHidden(true)
-            .navigationBarItems(
-                leading: Button(action: closeDraft) {
-                    Label(MailResourcesStrings.Localizable.buttonClose, systemImage: "xmark")
-                }
-            )
+    private var progressView: some View {
+        ProgressView()
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .background(MailResourcesAsset.backgroundColor.swiftUIColor)
     }
 
     @ViewBuilder
