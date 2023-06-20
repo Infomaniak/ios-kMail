@@ -125,28 +125,50 @@ public class MailboxManager: ObservableObject {
     public func refreshAllSignatures() async throws {
         // Get from API
         let signaturesResult = try await apiFetcher.signatures(mailbox: mailbox)
-        let updatedSignatures = Set(signaturesResult.signatures)
+        let updatedSignatures = Array(signaturesResult.signatures)
 
         await backgroundRealm.execute { realm in
-            let signaturesToDelete: Set<Signature> // no longer present server side
-            let signaturesToUpdate: Set<Signature> // updated signatures
-            let signaturesToAdd: Set<Signature> // new signatures
+            let signaturesToDelete: [Signature] // no longer present server side
+            let signaturesToUpdate: [Signature] // updated signatures
+            let signaturesToAdd: [Signature] // new signatures
 
             // fetch all local signatures
             let existingSignatures = Set(realm.objects(Signature.self))
 
-            signaturesToAdd = updatedSignatures.subtracting(existingSignatures)
-            signaturesToUpdate = updatedSignatures.intersection(existingSignatures)
-            signaturesToDelete = existingSignatures.subtracting(updatedSignatures)
+            signaturesToAdd = updatedSignatures.filter { updatedElement in
+                let matchingElement = existingSignatures.first { existingElement in
+                    updatedElement.id == existingElement.id
+                }
 
-            // TODO clean
+                return (matchingElement == nil)
+            }
+
+            signaturesToUpdate = updatedSignatures.filter { updatedElement in
+                let matchingElement = existingSignatures.first { existingElement in
+                    updatedElement.id == existingElement.id
+                }
+
+                return (matchingElement != nil)
+            }
+
+            signaturesToDelete = existingSignatures.filter { existingElement in
+                let matchingElement = updatedSignatures.first { updatedElement in
+                    updatedElement.id == existingElement.id
+                }
+
+                return (matchingElement == nil)
+            }
+
+            existingSignatures.subtracting(updatedSignatures)
+
+            // TODO: clean
             print("add: \(signaturesToAdd.count) update: \(signaturesToUpdate.count) delete: \(signaturesToDelete.count)")
 
             // Update signatures in Realm
             try? realm.safeWrite {
+                realm.add(signaturesToUpdate, update: .modified)
                 realm.delete(signaturesToDelete)
                 realm.add(signaturesToAdd, update: .modified)
-                realm.add(signaturesToUpdate, update: .modified)
             }
         }
     }
