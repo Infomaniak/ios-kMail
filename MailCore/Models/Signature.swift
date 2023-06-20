@@ -38,7 +38,13 @@ public struct SignatureResponse: Decodable {
 
 public extension Array where Element == Signature {
     var `default`: Signature? {
-        first(where: \.isDefault)
+        guard let defaultSignature = first(where: \.isDefault) else {
+            // We try to return at least a signature, so the backend is happy.
+            return self.first
+        }
+        
+        // We matched one
+        return defaultSignature
     }
 }
 
