@@ -20,9 +20,6 @@
 import MailCore
 import SwiftUI
 
-/// Something to track the initial loading of a default signature
-//@StateObject private var signatureManager: SignaturesManager
-
 final class SignaturesManager: ObservableObject {
     @Published var doneLoadingDefaultSignature = false
 
