@@ -115,6 +115,8 @@ final class DateSection: Identifiable, Equatable {
     @Published var isLoadingPage = false
     @Published var lastUpdate: Date?
 
+    private var refreshActor: RefreshActor
+
     // Used to know thread location
     private var selectedThreadIndex: Int?
     var filteredThreads = [Thread]() {
@@ -188,6 +190,7 @@ final class DateSection: Identifiable, Equatable {
         self.folder = folder
         lastUpdate = folder.lastUpdate
         self.isCompact = isCompact
+        refreshActor = RefreshActor(mailboxManager: mailboxManager)
         observeChanges()
         observeUnreadCount()
     }
@@ -201,15 +204,8 @@ final class DateSection: Identifiable, Equatable {
             isLoadingPage = true
         }
 
-        await tryOrDisplayError {
-            try await mailboxManager.threads(folder: folder.freezeIfNeeded()) {
-                Task {
-                    withAnimation {
-                        self.isLoadingPage = false
-                    }
-                }
-            }
-        }
+        await mailboxManager.refresh(folder: folder.freezeIfNeeded())
+
         withAnimation {
             isLoadingPage = false
         }
