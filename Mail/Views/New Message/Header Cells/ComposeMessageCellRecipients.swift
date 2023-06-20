@@ -23,6 +23,16 @@ import MailResources
 import RealmSwift
 import SwiftUI
 
+extension VerticalAlignment {
+    struct NewMessageCellAlignment: AlignmentID {
+        static func defaultValue(in context: ViewDimensions) -> CGFloat {
+            context[.firstTextBaseline]
+        }
+    }
+
+    static let newMessageCellAlignment = VerticalAlignment(NewMessageCellAlignment.self)
+}
+
 struct ComposeMessageCellRecipients: View {
     @State private var currentText = ""
     @State private var autocompletion = [Recipient]()
@@ -38,7 +48,7 @@ struct ComposeMessageCellRecipients: View {
     var body: some View {
         VStack(spacing: 0) {
             if autocompletionType == nil || autocompletionType == type {
-                HStack {
+                HStack(alignment: .newMessageCellAlignment) {
                     Text(type.title)
                         .textStyle(.bodySecondary)
 

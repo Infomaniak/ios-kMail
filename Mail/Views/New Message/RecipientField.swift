@@ -25,16 +25,6 @@ import RealmSwift
 import SwiftUI
 import WrappingHStack
 
-extension VerticalAlignment {
-    private struct NewMessageCellAlignment: AlignmentID {
-        static func defaultValue(in context: ViewDimensions) -> CGFloat {
-            context[.firstTextBaseline]
-        }
-    }
-
-    static let newMessageCellAlignment = VerticalAlignment(NewMessageCellAlignment.self)
-}
-
 struct RecipientField: View {
     @State private var keyboardHeight: CGFloat = 0
 
