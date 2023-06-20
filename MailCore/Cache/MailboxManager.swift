@@ -164,7 +164,7 @@ public class MailboxManager: ObservableObject {
         try await refreshAllSignatures()
     }
 
-    public func getSignatures(using realm: Realm? = nil) -> [Signature] {
+    public func getStoredSignatures(using realm: Realm? = nil) -> [Signature] {
         let realm = realm ?? getRealm()
         return Array(realm.objects(Signature.self))
     }
