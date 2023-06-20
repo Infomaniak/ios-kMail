@@ -58,48 +58,6 @@ final class NewMessageAlert: SheetState<NewMessageAlert.State> {
     }
 }
 
-final class SignaturesManager: ObservableObject {
-    @Published var doneLoadingDefaultSignature = false
-
-    private let mailboxManager: MailboxManager
-    init(mailboxManager: MailboxManager) {
-        self.mailboxManager = mailboxManager
-
-        loadSignaturesIfNeeded()
-    }
-
-    private func loadSignaturesIfNeeded() {
-        Task {
-            do {
-                // check has default
-                guard mailboxManager.getStoredSignatures().default == nil else {
-                    await MainActor.run {
-                        doneLoadingDefaultSignature = true
-                    }
-                    return
-                }
-
-                // load list
-                try await mailboxManager.refreshAllSignatures()
-                assert(mailboxManager.getStoredSignatures().default != nil, "Expecting a default signature")
-
-                await MainActor.run {
-                    doneLoadingDefaultSignature = true
-                }
-
-            } catch {
-                await MainActor.run {
-                    // We want to make sure that in the end the user will not be blocked.
-                    doneLoadingDefaultSignature = true
-                }
-
-                print("error : \(error)")
-                // TODO: sentry
-            }
-        }
-    }
-}
-
 struct ComposeMessageView: View {
     @Environment(\.dismiss) private var dismiss
 
