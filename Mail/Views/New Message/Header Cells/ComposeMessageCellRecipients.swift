@@ -33,12 +33,12 @@ extension VerticalAlignment {
     static let newMessageCellAlignment = VerticalAlignment(NewMessageCellAlignment.self)
 }
 
-class CellRecipientsModel: ObservableObject {
-    @Published var currentText = ""
+class TextDebounce: ObservableObject {
+    @Published var text = ""
 }
 
 struct ComposeMessageCellRecipients: View {
-    @StateObject private var cellRecipientsModel = CellRecipientsModel()
+    @StateObject private var textDebounce = TextDebounce()
 
     @State private var autocompletion = [Recipient]()
 
@@ -58,7 +58,7 @@ struct ComposeMessageCellRecipients: View {
                         .textStyle(.bodySecondary)
 
                     RecipientField(
-                        currentText: $cellRecipientsModel.currentText,
+                        currentText: $textDebounce.text,
                         recipients: $recipients,
                         focusedField: _focusedField,
                         type: type
@@ -80,7 +80,7 @@ struct ComposeMessageCellRecipients: View {
 
             if autocompletionType == type {
                 AutocompletionView(
-                    cellRecipientsModel: cellRecipientsModel,
+                    textDebounce: textDebounce,
                     autocompletion: $autocompletion,
                     addedRecipients: $recipients,
                     addRecipient: addNewRecipient
@@ -91,7 +91,7 @@ struct ComposeMessageCellRecipients: View {
         .onTapGesture {
             focusedField = type
         }
-        .onChange(of: cellRecipientsModel.currentText) { newValue in
+        .onChange(of: textDebounce.text) { newValue in
             withAnimation {
                 if newValue.isEmpty {
                     autocompletionType = nil
@@ -119,7 +119,7 @@ struct ComposeMessageCellRecipients: View {
         withAnimation {
             $recipients.append(recipient)
         }
-        cellRecipientsModel.currentText = ""
+        textDebounce.text = ""
     }
 }
 

@@ -25,7 +25,7 @@ import SwiftUI
 struct AutocompletionView: View {
     @State private var shouldAddUserProposal = false
 
-    @ObservedObject var cellRecipientsModel: CellRecipientsModel
+    @ObservedObject var textDebounce: TextDebounce
 
     @Binding var autocompletion: [Recipient]
     @Binding var addedRecipients: RealmSwift.List<Recipient>
@@ -42,7 +42,7 @@ struct AutocompletionView: View {
                     AutocompletionCell(
                         addRecipient: addRecipient,
                         recipient: recipient,
-                        highlight: cellRecipientsModel.currentText,
+                        highlight: textDebounce.text,
                         alreadyAppend: addedRecipients.contains { $0.isSameRecipient(as: recipient) },
                         unknownRecipient: isUserProposal
                     )
@@ -54,9 +54,9 @@ struct AutocompletionView: View {
             }
         }
         .onAppear {
-            updateAutocompletion(cellRecipientsModel.currentText)
+            updateAutocompletion(textDebounce.text)
         }
-        .onReceive(cellRecipientsModel.$currentText.debounce(for: .milliseconds(150), scheduler: DispatchQueue.main)) { currentValue in
+        .onReceive(textDebounce.$text.debounce(for: .milliseconds(150), scheduler: DispatchQueue.main)) { currentValue in
             updateAutocompletion("\(currentValue)")
         }
     }
@@ -77,10 +77,10 @@ struct AutocompletionView: View {
         let realResults = autocompleteRecipients.filter { !addedRecipients.map(\.email).contains($0.email) }
 
         withAnimation {
-            shouldAddUserProposal = !(realResults.count == 1 && realResults.first?.email == cellRecipientsModel.currentText)
+            shouldAddUserProposal = !(realResults.count == 1 && realResults.first?.email == textDebounce.text)
             if shouldAddUserProposal {
                 autocompleteRecipients
-                    .append(Recipient(email: cellRecipientsModel.currentText, name: ""))
+                    .append(Recipient(email: textDebounce.text, name: ""))
             }
 
             autocompletion = autocompleteRecipients
@@ -91,7 +91,7 @@ struct AutocompletionView: View {
 struct AutocompletionView_Previews: PreviewProvider {
     static var previews: some View {
         AutocompletionView(
-            cellRecipientsModel: CellRecipientsModel(),
+            textDebounce: TextDebounce(),
             autocompletion: .constant([]),
             addedRecipients: .constant([PreviewHelper.sampleRecipient1].toRealmList())
         ) { _ in /* Preview */ }
