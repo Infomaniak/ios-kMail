@@ -33,8 +33,13 @@ extension VerticalAlignment {
     static let newMessageCellAlignment = VerticalAlignment(NewMessageCellAlignment.self)
 }
 
+class CellRecipientsModel: ObservableObject {
+    @Published var currentText = ""
+}
+
 struct ComposeMessageCellRecipients: View {
-    @State private var currentText = ""
+    @StateObject private var cellRecipientsModel = CellRecipientsModel()
+
     @State private var autocompletion = [Recipient]()
 
     @Binding var recipients: RealmSwift.List<Recipient>
@@ -52,7 +57,12 @@ struct ComposeMessageCellRecipients: View {
                     Text(type.title)
                         .textStyle(.bodySecondary)
 
-                    RecipientField(currentText: $currentText, recipients: $recipients, focusedField: _focusedField, type: type) {
+                    RecipientField(
+                        currentText: $cellRecipientsModel.currentText,
+                        recipients: $recipients,
+                        focusedField: _focusedField,
+                        type: type
+                    ) {
                         if let bestMatch = autocompletion.first {
                             addNewRecipient(bestMatch)
                         }
@@ -70,8 +80,8 @@ struct ComposeMessageCellRecipients: View {
 
             if autocompletionType == type {
                 AutocompletionView(
+                    cellRecipientsModel: cellRecipientsModel,
                     autocompletion: $autocompletion,
-                    currentSearch: $currentText,
                     addedRecipients: $recipients,
                     addRecipient: addNewRecipient
                 )
@@ -81,7 +91,7 @@ struct ComposeMessageCellRecipients: View {
         .onTapGesture {
             focusedField = type
         }
-        .onChange(of: currentText) { newValue in
+        .onChange(of: cellRecipientsModel.currentText) { newValue in
             withAnimation {
                 if newValue.isEmpty {
                     autocompletionType = nil
@@ -109,7 +119,7 @@ struct ComposeMessageCellRecipients: View {
         withAnimation {
             $recipients.append(recipient)
         }
-        currentText = ""
+        cellRecipientsModel.currentText = ""
     }
 }
 

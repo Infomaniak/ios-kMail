@@ -16,6 +16,7 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import Combine
 import MailCore
 import MailResources
 import RealmSwift
@@ -24,8 +25,9 @@ import SwiftUI
 struct AutocompletionView: View {
     @State private var shouldAddUserProposal = false
 
+    @ObservedObject var cellRecipientsModel: CellRecipientsModel
+
     @Binding var autocompletion: [Recipient]
-    @Binding var currentSearch: String
     @Binding var addedRecipients: RealmSwift.List<Recipient>
 
     let addRecipient: @MainActor (Recipient) -> Void
@@ -40,7 +42,7 @@ struct AutocompletionView: View {
                     AutocompletionCell(
                         addRecipient: addRecipient,
                         recipient: recipient,
-                        highlight: currentSearch,
+                        highlight: cellRecipientsModel.currentText,
                         alreadyAppend: addedRecipients.contains { $0.isSameRecipient(as: recipient) },
                         unknownRecipient: isUserProposal
                     )
@@ -52,9 +54,11 @@ struct AutocompletionView: View {
             }
         }
         .onAppear {
-            updateAutocompletion(currentSearch)
+            updateAutocompletion(cellRecipientsModel.currentText)
         }
-        .onChange(of: currentSearch, perform: updateAutocompletion)
+        .onReceive(cellRecipientsModel.$currentText.debounce(for: .milliseconds(150), scheduler: DispatchQueue.main)) { currentValue in
+            updateAutocompletion("\(currentValue)")
+        }
     }
 
     private func updateAutocompletion(_ search: String) {
@@ -73,10 +77,10 @@ struct AutocompletionView: View {
         let realResults = autocompleteRecipients.filter { !addedRecipients.map(\.email).contains($0.email) }
 
         withAnimation {
-            shouldAddUserProposal = !(realResults.count == 1 && realResults.first?.email == currentSearch)
+            shouldAddUserProposal = !(realResults.count == 1 && realResults.first?.email == cellRecipientsModel.currentText)
             if shouldAddUserProposal {
                 autocompleteRecipients
-                    .append(Recipient(email: currentSearch, name: ""))
+                    .append(Recipient(email: cellRecipientsModel.currentText, name: ""))
             }
 
             autocompletion = autocompleteRecipients
@@ -87,8 +91,8 @@ struct AutocompletionView: View {
 struct AutocompletionView_Previews: PreviewProvider {
     static var previews: some View {
         AutocompletionView(
+            cellRecipientsModel: CellRecipientsModel(),
             autocompletion: .constant([]),
-            currentSearch: .constant(""),
             addedRecipients: .constant([PreviewHelper.sampleRecipient1].toRealmList())
         ) { _ in /* Preview */ }
     }

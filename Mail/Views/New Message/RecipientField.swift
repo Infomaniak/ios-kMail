@@ -82,7 +82,7 @@ struct RecipientField: View {
     }
 
     private func switchFocus() {
-        guard case .chip(let hash, let recipient) = focusedField else { return }
+        guard case let .chip(hash, recipient) = focusedField else { return }
 
         if recipient == recipients.last {
             focusedField = type

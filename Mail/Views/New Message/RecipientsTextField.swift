@@ -95,4 +95,3 @@ class UIRecipientsTextField: UITextField {
         super.deleteBackward()
     }
 }
-
