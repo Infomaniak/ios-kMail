@@ -125,6 +125,10 @@ public class Recipient: EmbeddedObject, Codable {
             return "\(name) \(emailString)"
         }
     }
+
+    public func isSameRecipient(as recipient: Recipient) -> Bool {
+        return email == recipient.email && name == recipient.name
+    }
 }
 
 extension Recipient: AvatarDisplayable {

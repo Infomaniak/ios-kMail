@@ -17,41 +17,30 @@
  */
 
 import MailCore
-import SwiftUI
 import MailResources
+import SwiftUI
 
-struct AddRecipientCell: View {
-    @AppStorage(UserDefaults.shared.key(.accentColor)) private var accentColor = DefaultPreferences.accentColor
-
-    let recipientEmail: String
+struct UnknownRecipientCell: View {
+    let recipient: Recipient
 
     var body: some View {
         HStack(spacing: 8) {
-            Circle()
-                .fill(accentColor.primary.swiftUIColor)
-                .frame(width: 40, height: 40)
-                .overlay {
-                    MailResourcesAsset.userBold.swiftUIImage
-                        .resizable()
-                        .foregroundColor(accentColor.onAccent.swiftUIColor)
-                        .frame(width: 24, height: 24)
-                }
+            UnknownRecipientView(size: 40)
+                .accessibilityHidden(true)
 
-            VStack(alignment: .leading, spacing: 0) {
+            VStack(alignment: .leading) {
                 Text(MailResourcesStrings.Localizable.addUnknownRecipientTitle)
                     .textStyle(.bodyMedium)
-                Text(recipientEmail)
+                Text(recipient.email)
                     .textStyle(.bodySecondary)
             }
-
-            Spacer()
         }
-        .lineLimit(1)
+        .recipientCellModifier()
     }
 }
 
-struct AddRecipientCell_Previews: PreviewProvider {
+struct UnknownRecipientCell_Previews: PreviewProvider {
     static var previews: some View {
-        AddRecipientCell(recipientEmail: "")
+        UnknownRecipientCell(recipient: PreviewHelper.sampleRecipient1)
     }
 }

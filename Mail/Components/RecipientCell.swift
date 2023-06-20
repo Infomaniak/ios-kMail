@@ -19,8 +19,25 @@
 import MailCore
 import SwiftUI
 
+struct RecipientCellModifier: ViewModifier {
+    func body(content: Content) -> some View {
+        content
+            .lineLimit(1)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .accessibilityElement(children: .combine)
+            .accessibilityAddTraits(.isButton)
+    }
+}
+
+extension View {
+    func recipientCellModifier() -> some View {
+        modifier(RecipientCellModifier())
+    }
+}
+
 struct RecipientCell: View {
     let recipient: Recipient
+    var highlight: String?
 
     var body: some View {
         HStack(spacing: 8) {
@@ -28,21 +45,28 @@ struct RecipientCell: View {
                 .accessibilityHidden(true)
 
             if recipient.name.isEmpty {
-                Text(recipient.email)
+                Text(highlightedAttributedString(from: recipient.email))
                     .textStyle(.bodyMedium)
             } else {
                 VStack(alignment: .leading) {
-                    Text(recipient.name)
+                    Text(highlightedAttributedString(from: recipient.name))
                         .textStyle(.bodyMedium)
-                    Text(recipient.email)
+                    Text(highlightedAttributedString(from: recipient.email))
                         .textStyle(.bodySecondary)
                 }
             }
         }
-        .lineLimit(1)
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .accessibilityElement(children: .combine)
-        .accessibilityAddTraits(.isButton)
+        .recipientCellModifier()
+    }
+
+    private func highlightedAttributedString(from data: String) -> AttributedString {
+        var attributedString = AttributedString(data)
+        guard let highlight else { return attributedString }
+
+        if let range = attributedString.range(of: highlight, options: .caseInsensitive) {
+            attributedString[range].foregroundColor = .accentColor
+        }
+        return attributedString
     }
 }
 

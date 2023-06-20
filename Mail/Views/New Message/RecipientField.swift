@@ -26,17 +26,15 @@ import SwiftUI
 import WrappingHStack
 
 struct RecipientField: View {
+    @State private var keyboardHeight: CGFloat = 0
+
+    @Binding var currentText: String
     @Binding var recipients: RealmSwift.List<Recipient>
-    @Binding var autocompletion: [Recipient]
-    @Binding var unknownRecipientAutocompletion: String
-    @MainActor @Binding var addRecipientHandler: ((Recipient) -> Void)?
 
     @FocusState var focusedField: ComposeViewFieldType?
 
     let type: ComposeViewFieldType
-
-    @State private var currentText = ""
-    @State private var keyboardHeight: CGFloat = 0
+    var onSubmit: (() -> Void)?
 
     /// A trimmed view on `currentText`
     private var trimmedInputText: String {
@@ -57,12 +55,8 @@ struct RecipientField: View {
                 .alignmentGuide(.newMessageCellAlignment) { d in d[.top] + 21 }
             }
 
-            RecipientsTextFieldView(text: $currentText, onSubmit: submitTextField, onBackspace: handleBackspaceTextField)
+            RecipientsTextField(text: $currentText, onSubmit: onSubmit, onBackspace: handleBackspaceTextField)
                 .focused($focusedField, equals: type)
-        }
-        .onChange(of: currentText) { _ in
-            updateAutocompletion()
-            addRecipientHandler = add(recipient:)
         }
         .onReceive(NotificationCenter.default.publisher(for: UIResponder.keyboardDidShowNotification)) { output in
             if let userInfo = output.userInfo,
@@ -72,34 +66,6 @@ struct RecipientField: View {
         }
         .onReceive(NotificationCenter.default.publisher(for: UIResponder.keyboardDidHideNotification)) { _ in
             keyboardHeight = 0
-        }
-    }
-
-    @MainActor private func submitTextField() {
-        // use first autocompletion result or try to validate current input
-        guard let recipient = autocompletion.first else {
-            let guessRecipient = Recipient(email: trimmedInputText, name: "")
-            add(recipient: guessRecipient)
-            return
-        }
-
-        add(recipient: recipient)
-    }
-
-    @MainActor private func add(recipient: Recipient) {
-        @InjectService var matomo: MatomoUtils
-        matomo.track(eventWithCategory: .newMessage, action: .input, name: "addNewRecipient")
-
-        if Constants.isEmailAddress(recipient.email) {
-            withAnimation {
-                $recipients.append(recipient)
-            }
-            currentText = ""
-        } else {
-            IKSnackBar.showSnackBar(
-                message: MailResourcesStrings.Localizable.addUnknownRecipientInvalidEmail,
-                anchor: keyboardHeight
-            )
         }
     }
 
@@ -115,27 +81,8 @@ struct RecipientField: View {
         }
     }
 
-    private func updateAutocompletion() {
-        let trimmedCurrentText = trimmedInputText
-
-        let contactManager = AccountManager.instance.currentContactManager
-        let autocompleteContacts = contactManager?.contacts(matching: trimmedCurrentText) ?? []
-        let autocompleteRecipients = autocompleteContacts.map { Recipient(email: $0.email, name: $0.name) }
-
-        withAnimation {
-            autocompletion = autocompleteRecipients.filter { !recipients.map(\.email).contains($0.email) }
-
-            if !trimmedCurrentText.isEmpty && !autocompletion
-                .contains(where: { $0.email.caseInsensitiveCompare(trimmedCurrentText) == .orderedSame }) {
-                unknownRecipientAutocompletion = trimmedCurrentText
-            } else {
-                unknownRecipientAutocompletion = ""
-            }
-        }
-    }
-
     private func switchFocus() {
-        guard case .chip(let hash, let recipient) = focusedField else { return }
+        guard case let .chip(hash, recipient) = focusedField else { return }
 
         if recipient == recipients.last {
             focusedField = type
@@ -147,13 +94,8 @@ struct RecipientField: View {
 
 struct RecipientField_Previews: PreviewProvider {
     static var previews: some View {
-        RecipientField(recipients: .constant([
+        RecipientField(currentText: .constant(""), recipients: .constant([
             PreviewHelper.sampleRecipient1, PreviewHelper.sampleRecipient2, PreviewHelper.sampleRecipient3
-        ].toRealmList()),
-        autocompletion: .constant([]),
-        unknownRecipientAutocompletion: .constant(""),
-        addRecipientHandler: .constant { _ in /* Preview */ },
-        focusedField: .init(),
-        type: .to)
+        ].toRealmList()), type: .to)
     }
 }
