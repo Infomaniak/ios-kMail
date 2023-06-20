@@ -58,6 +58,48 @@ final class NewMessageAlert: SheetState<NewMessageAlert.State> {
     }
 }
 
+final class SignaturesManager: ObservableObject {
+    @Published var doneLoadingDefaultSignature = false
+
+    private let mailboxManager: MailboxManager
+    init(mailboxManager: MailboxManager) {
+        self.mailboxManager = mailboxManager
+
+        loadSignaturesIfNeeded()
+    }
+
+    private func loadSignaturesIfNeeded() {
+        Task {
+            do {
+                // check has default
+                guard mailboxManager.getStoredSignatures().default == nil else {
+                    await MainActor.run {
+                        doneLoadingDefaultSignature = true
+                    }
+                    return
+                }
+
+                // load list
+                try await mailboxManager.refreshAllSignatures()
+                assert(mailboxManager.getStoredSignatures().default != nil, "Expecting a default signature")
+
+                await MainActor.run {
+                    doneLoadingDefaultSignature = true
+                }
+
+            } catch {
+                await MainActor.run {
+                    // We want to make sure that in the end the user will not be blocked.
+                    doneLoadingDefaultSignature = true
+                }
+
+                print("error : \(error)")
+                // TODO: sentry
+            }
+        }
+    }
+}
+
 struct ComposeMessageView: View {
     @Environment(\.dismiss) private var dismiss
 
@@ -85,6 +127,9 @@ struct ComposeMessageView: View {
     @State private var isShowingCamera = false
     @State private var isShowingFileSelection = false
     @State private var isShowingPhotoLibrary = false
+
+    /// Something to track the initial loading of a default signature
+    @StateObject private var signatureManager: SignaturesManager
     @StateObject private var attachmentsManager: AttachmentsManager
     @State private var isShowingCancelAttachmentsError = false
 
@@ -108,6 +153,8 @@ struct ComposeMessageView: View {
         return UserDefaults.shared.displayExternalContent == .askMe && messageReply?.message.localSafeDisplay == false
     }
 
+    // MARK: - Init
+
     private init(mailboxManager: MailboxManager, draft: Draft, messageReply: MessageReply? = nil) {
         self.messageReply = messageReply
         _mailboxManager = State(initialValue: mailboxManager)
@@ -121,92 +168,20 @@ struct ComposeMessageView: View {
 
         _draft = StateRealmObject(wrappedValue: draft)
         _showCc = State(initialValue: !draft.bcc.isEmpty || !draft.cc.isEmpty)
+        _signatureManager = StateObject(wrappedValue: SignaturesManager(mailboxManager: mailboxManager))
         _attachmentsManager = StateObject(wrappedValue: AttachmentsManager(draft: draft, mailboxManager: mailboxManager))
         _isLoadingContent = State(initialValue: (draft.messageUid != nil && draft.remoteUUID.isEmpty) || messageReply != nil)
     }
 
+    // MARK: - View
+
     var body: some View {
         NavigationView {
-            ScrollView(.vertical, showsIndicators: true) {
-                VStack(spacing: 0) {
-                    if !shouldDisplayAutocompletion {
-                        NewMessageCell(type: .from,
-                                       isFirstCell: true) {
-                            Text(mailboxManager.mailbox.email)
-                                .textStyle(.body)
-                        }
-                    }
-
-                    recipientCell(type: .to)
-
-                    if showCc {
-                        recipientCell(type: .cc)
-                        recipientCell(type: .bcc)
-                    }
-
-                    // Show the rest of the view, or the autocompletion list
-                    if shouldDisplayAutocompletion {
-                        AutocompletionView(autocompletion: $autocompletion,
-                                           unknownRecipientAutocompletion: $unknownRecipientAutocompletion) { recipient in
-                            matomo.track(eventWithCategory: .newMessage, name: "addNewRecipient")
-                            addRecipientHandler?(recipient)
-                        }
-                    } else {
-                        NewMessageCell(type: .subject,
-                                       focusedField: _focusedField) {
-                            TextField("", text: $draft.subject)
-                                .focused($focusedField, equals: .subject)
-                        }
-
-                        AttachmentsHeaderView(attachmentsManager: attachmentsManager)
-
-                        RichTextEditor(model: $editor,
-                                       body: $draft.body,
-                                       alert: $alert,
-                                       isShowingCamera: $isShowingCamera,
-                                       isShowingFileSelection: $isShowingFileSelection,
-                                       isShowingPhotoLibrary: $isShowingPhotoLibrary,
-                                       becomeFirstResponder: $editorFocus,
-                                       blockRemoteContent: isRemoteContentBlocked)
-                            .ignoresSafeArea(.all, edges: .bottom)
-                            .frame(height: editor.height + 20)
-                            .padding([.vertical], 10)
-                    }
-                }
+            if signatureManager.doneLoadingDefaultSignature {
+                composeMessageView
+            } else {
+                closableLoadingView
             }
-            .overlay {
-                if isLoadingContent {
-                    ProgressView()
-                        .frame(maxWidth: .infinity, maxHeight: .infinity)
-                        .background(MailResourcesAsset.backgroundColor.swiftUIColor)
-                }
-            }
-            .introspectScrollView { scrollView in
-                guard self.scrollView != scrollView else { return }
-                self.scrollView = scrollView
-                scrollView.keyboardDismissMode = .interactive
-            }
-            .onChange(of: editor.height) { _ in
-                guard let scrollView = scrollView else { return }
-
-                let fullSize = scrollView.contentSize.height
-                let realPosition = (fullSize - editor.height) + editor.cursorPosition
-
-                let rect = CGRect(x: 0, y: realPosition, width: 1, height: 1)
-                scrollView.scrollRectToVisible(rect, animated: true)
-            }
-            .navigationBarTitleDisplayMode(.inline)
-            .navigationBarBackButtonHidden(true)
-            .navigationBarItems(
-                leading: Button(action: closeDraft) {
-                    Label(MailResourcesStrings.Localizable.buttonClose, systemImage: "xmark")
-                },
-                trailing: Button(action: sendDraft) {
-                    MailResourcesAsset.send.swiftUIImage
-                }
-                .disabled(isSendButtonDisabled)
-            )
-            .background(MailResourcesAsset.backgroundColor.swiftUIColor)
         }
         .onAppear {
             switch messageReply?.replyMode {
@@ -267,6 +242,102 @@ struct ComposeMessageView: View {
         .matomoView(view: ["ComposeMessage"])
     }
 
+    /// The compose message view
+    private var composeMessageView: some View {
+        ScrollView(.vertical, showsIndicators: true) {
+            VStack(spacing: 0) {
+                if !shouldDisplayAutocompletion {
+                    NewMessageCell(type: .from,
+                                   isFirstCell: true) {
+                        Text(mailboxManager.mailbox.email)
+                            .textStyle(.body)
+                    }
+                }
+
+                recipientCell(type: .to)
+
+                if showCc {
+                    recipientCell(type: .cc)
+                    recipientCell(type: .bcc)
+                }
+
+                // Show the rest of the view, or the autocompletion list
+                if shouldDisplayAutocompletion {
+                    AutocompletionView(autocompletion: $autocompletion,
+                                       unknownRecipientAutocompletion: $unknownRecipientAutocompletion) { recipient in
+                        matomo.track(eventWithCategory: .newMessage, name: "addNewRecipient")
+                        addRecipientHandler?(recipient)
+                    }
+                } else {
+                    NewMessageCell(type: .subject,
+                                   focusedField: _focusedField) {
+                        TextField("", text: $draft.subject)
+                            .focused($focusedField, equals: .subject)
+                    }
+
+                    AttachmentsHeaderView(attachmentsManager: attachmentsManager)
+
+                    RichTextEditor(model: $editor,
+                                   body: $draft.body,
+                                   alert: $alert,
+                                   isShowingCamera: $isShowingCamera,
+                                   isShowingFileSelection: $isShowingFileSelection,
+                                   isShowingPhotoLibrary: $isShowingPhotoLibrary,
+                                   becomeFirstResponder: $editorFocus,
+                                   blockRemoteContent: isRemoteContentBlocked)
+                        .ignoresSafeArea(.all, edges: .bottom)
+                        .frame(height: editor.height + 20)
+                        .padding([.vertical], 10)
+                }
+            }
+        }
+        .overlay {
+            if isLoadingContent {
+                ProgressView()
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    .background(MailResourcesAsset.backgroundColor.swiftUIColor)
+            }
+        }
+        .introspectScrollView { scrollView in
+            guard self.scrollView != scrollView else { return }
+            self.scrollView = scrollView
+            scrollView.keyboardDismissMode = .interactive
+        }
+        .onChange(of: editor.height) { _ in
+            guard let scrollView = scrollView else { return }
+
+            let fullSize = scrollView.contentSize.height
+            let realPosition = (fullSize - editor.height) + editor.cursorPosition
+
+            let rect = CGRect(x: 0, y: realPosition, width: 1, height: 1)
+            scrollView.scrollRectToVisible(rect, animated: true)
+        }
+        .navigationBarTitleDisplayMode(.inline)
+        .navigationBarBackButtonHidden(true)
+        .navigationBarItems(
+            leading: Button(action: closeDraft) {
+                Label(MailResourcesStrings.Localizable.buttonClose, systemImage: "xmark")
+            },
+            trailing: Button(action: sendDraft) {
+                MailResourcesAsset.send.swiftUIImage
+            }
+            .disabled(isSendButtonDisabled)
+        )
+        .background(MailResourcesAsset.backgroundColor.swiftUIColor)
+    }
+
+    /// A loading view
+    private var closableLoadingView: some View {
+        ShimmerView()
+            .navigationBarTitleDisplayMode(.inline)
+            .navigationBarBackButtonHidden(true)
+            .navigationBarItems(
+                leading: Button(action: closeDraft) {
+                    Label(MailResourcesStrings.Localizable.buttonClose, systemImage: "xmark")
+                }
+            )
+    }
+
     @ViewBuilder
     private func recipientCell(type: ComposeViewFieldType) -> some View {
         let shouldDisplayField = !shouldDisplayAutocompletion || focusedField == type
@@ -283,6 +354,8 @@ struct ComposeMessageView: View {
             }
         }
     }
+
+    // MARK: - Func
 
     private func binding(for type: ComposeViewFieldType) -> Binding<RealmSwift.List<Recipient>> {
         let binding: Binding<RealmSwift.List<Recipient>>
@@ -378,9 +451,9 @@ struct ComposeMessageView: View {
             return
         }
 
-        let signatures = mailboxManager.getSignatures()
+        let signatures = mailboxManager.getStoredSignatures()
         guard let signature = signatures.default else {
-            // TODO sentry
+            // TODO: sentry
             return
         }
         $draft.identityId.wrappedValue = "\(signature.id)"
