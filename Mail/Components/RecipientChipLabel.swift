@@ -30,6 +30,8 @@ struct RecipientChipLabelView: UIViewRepresentable {
         let label = RecipientChipLabel(recipient: recipient)
         label.removeHandler = removeHandler
         label.switchFocusHandler = switchFocusHandler
+        label.setContentHuggingPriority(.defaultHigh, for: .horizontal)
+        label.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
         return label
     }
 
