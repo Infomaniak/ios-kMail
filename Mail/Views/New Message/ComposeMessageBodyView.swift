@@ -61,7 +61,7 @@ struct ComposeMessageBodyView: View {
             )
             .ignoresSafeArea(.all, edges: .bottom)
             .frame(height: editorModel.height + 20)
-            .padding([.vertical], 8)
+            .padding(.vertical, 8)
         }
         .task {
             await prepareCompleteDraft()

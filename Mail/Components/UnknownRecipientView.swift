@@ -23,8 +23,6 @@ import SwiftUI
 struct UnknownRecipientView: View {
     let size: CGFloat
 
-    static let imagePadding: CGFloat = 8
-
     private var iconSize: CGFloat {
         return size - 2 * UIConstants.unknownRecipientHorizontalPadding
     }
