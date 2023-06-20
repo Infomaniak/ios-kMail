@@ -43,7 +43,7 @@ public class Thread: Object, Decodable, Identifiable {
     @Persisted public var cc: List<Recipient>
     @Persisted public var bcc: List<Recipient>
     @Persisted public var subject: String?
-    @Persisted(indexed: true) public var date: Date
+    @Persisted public var date: Date
     @Persisted public var hasAttachments: Bool
     @Persisted public var hasSwissTransferAttachments: Bool
     @Persisted public var hasDrafts: Bool
