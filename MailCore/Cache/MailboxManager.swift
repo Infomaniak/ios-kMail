@@ -1101,6 +1101,7 @@ public class MailboxManager: ObservableObject {
 
             if draft.identityId == nil,
                let defaultId = Array(realm.objects(Signature.self)).default?.id {
+                // TODO remove
                 assertionFailure("unexpected nil identityId from the server")
                 draft.identityId = "\(defaultId)"
             }

@@ -21,42 +21,45 @@ import MailCore
 import SwiftUI
 
 final class SignaturesManager: ObservableObject {
+    
+    // TODO use this:
+    enum SignaturesLoadingState {
+        case success
+        case progress
+        case error
+    }
+    
     @Published var doneLoadingDefaultSignature = false
 
     private let mailboxManager: MailboxManager
     init(mailboxManager: MailboxManager) {
         self.mailboxManager = mailboxManager
 
-        loadSignaturesIfNeeded()
+        loadRemoteSignatures()
     }
 
-    private func loadSignaturesIfNeeded() {
+    /// Load the signatures every time at init, set `doneLoadingDefaultSignature` to true when done
+    private func loadRemoteSignatures() {
         Task {
             do {
-                // check has default
-                guard mailboxManager.getStoredSignatures().default == nil else {
-                    await MainActor.run {
-                        doneLoadingDefaultSignature = true
-                    }
-                    return
-                }
-
-                // load list
+                // load all signatures every time
                 try await mailboxManager.refreshAllSignatures()
                 assert(mailboxManager.getStoredSignatures().default != nil, "Expecting a default signature")
 
                 await MainActor.run {
                     doneLoadingDefaultSignature = true
                 }
-
             } catch {
                 await MainActor.run {
+                    
+                    // TODO: Error message "An error occurred" to let the user reload and close
+                    
                     // We want to make sure that in the end the user will not be blocked.
                     doneLoadingDefaultSignature = true
                 }
 
                 print("error : \(error)")
-                // TODO: sentry
+                // TODO: sentry ?
             }
         }
     }
