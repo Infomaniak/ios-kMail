@@ -133,33 +133,19 @@ public class MailboxManager: ObservableObject {
             let signaturesToAdd: [Signature] // new signatures
 
             // fetch all local signatures
-            let existingSignatures = Set(realm.objects(Signature.self))
+            let existingSignatures = Array(realm.objects(Signature.self))
 
             signaturesToAdd = updatedSignatures.filter { updatedElement in
-                let matchingElement = existingSignatures.first { existingElement in
-                    updatedElement.id == existingElement.id
-                }
-
-                return (matchingElement == nil)
+                !existingSignatures.contains(updatedElement)
             }
 
             signaturesToUpdate = updatedSignatures.filter { updatedElement in
-                let matchingElement = existingSignatures.first { existingElement in
-                    updatedElement.id == existingElement.id
-                }
-
-                return (matchingElement != nil)
+                existingSignatures.contains(updatedElement)
             }
 
             signaturesToDelete = existingSignatures.filter { existingElement in
-                let matchingElement = updatedSignatures.first { updatedElement in
-                    updatedElement.id == existingElement.id
-                }
-
-                return (matchingElement == nil)
+                !updatedSignatures.contains(existingElement)
             }
-
-            existingSignatures.subtracting(updatedSignatures)
 
             // TODO: clean
             print("add: \(signaturesToAdd.count) update: \(signaturesToUpdate.count) delete: \(signaturesToDelete.count)")

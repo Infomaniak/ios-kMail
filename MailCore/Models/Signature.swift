@@ -66,6 +66,14 @@ public final class Signature: Object, Codable, Identifiable {
     override public var hash: Int {
         id
     }
+
+    override public func isEqual(_ object: Any?) -> Bool {
+        guard let object = object as? Self else {
+            return false
+        }
+
+        return id == object.id
+    }
 }
 
 public class ValidEmail: Object, Decodable {
