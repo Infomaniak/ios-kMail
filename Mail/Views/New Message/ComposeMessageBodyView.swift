@@ -78,10 +78,10 @@ struct ComposeMessageBodyView: View {
                 Task {
                     await setSignature()
                 }
-            case .error(let wrapping):
+            case .error(let _):
                 // Unable to get signatures, "An error occurred" and close modal.
                 IKSnackBar.showSnackBar(message: MailError.unknownError.localizedDescription)
-                self.dismiss
+                self.dismiss()
             default:
                 break
             }
