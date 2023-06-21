@@ -56,7 +56,7 @@ final class SignaturesManager: ObservableObject {
             do {
                 // load all signatures every time
                 try await mailboxManager.refreshAllSignatures()
-                assert(mailboxManager.getStoredSignatures().default != nil, "Expecting a default signature")
+                assert(mailboxManager.getStoredSignatures().defaultSignature != nil, "Expecting a default signature")
 
                 await MainActor.run {
                     loadingSignatureState = .success

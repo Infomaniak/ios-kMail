@@ -197,7 +197,7 @@ public class DraftManager {
     private func emptyDraftBodyWithSignature(for mailboxManager: MailboxManager) -> String {
         let draft = Draft()
 
-        if let signature = mailboxManager.getStoredSignatures().default {
+        if let signature = mailboxManager.getStoredSignatures().defaultSignature {
             draft.setSignature(signature)
         }
 

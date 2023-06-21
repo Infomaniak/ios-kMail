@@ -141,7 +141,7 @@ struct ComposeMessageBodyView: View {
 
     private func setSignature() async {
         guard draft.identityId == nil || draft.identityId?.isEmpty == true,
-              let defaultSignature = mailboxManager.getStoredSignatures().default else {
+              let defaultSignature = mailboxManager.getStoredSignatures().defaultSignature else {
             return
         }
 

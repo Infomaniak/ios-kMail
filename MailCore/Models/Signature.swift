@@ -72,7 +72,7 @@ public final class Signature: Object, Codable, Identifiable {
 
 public extension Array where Element == Signature {
     /// Find the default signature, if any, in  an `Array` of `Signature`
-    var `default`: Signature? {
+    var defaultSignature: Signature? {
         guard let defaultSignature = first(where: \.isDefault) else {
             // We try to return at least a signature, so the backend is happy. Same on Android.
             return first
