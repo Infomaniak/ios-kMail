@@ -72,7 +72,7 @@ public class MailboxManager: ObservableObject {
         let realmName = "\(mailbox.userId)-\(mailbox.mailboxId).realm"
         realmConfiguration = Realm.Configuration(
             fileURL: MailboxManager.constants.rootDocumentsURL.appendingPathComponent(realmName),
-            schemaVersion: 11,
+            schemaVersion: 12,
             deleteRealmIfMigrationNeeded: true,
             objectTypes: [
                 Folder.self,
