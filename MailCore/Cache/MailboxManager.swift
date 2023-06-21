@@ -302,14 +302,7 @@ public class MailboxManager: ObservableObject {
                                     try thread.recomputeOrFail()
                                 } catch {
                                     threadsToDelete.insert(thread)
-                                    SentrySDK.capture(message: "Thread has nil lastMessageFromFolderDate") { scope in
-                                        scope.setContext(value: ["dates": "\(thread.messages.map { $0.date })",
-                                                                 "ids": "\(thread.messages.map { $0.id })"],
-                                                         key: "all messages")
-                                        scope.setContext(value: ["id": "\(thread.lastMessageFromFolder?.uid ?? "nil")"],
-                                                         key: "lastMessageFromFolder")
-                                        scope.setContext(value: ["date before error": thread.date], key: "thread")
-                                    }
+                                    SentryDebug.threadHasNilLastMessageFromFolderDate(thread: thread)
                                 }
                             }
                         }
@@ -892,16 +885,9 @@ public class MailboxManager: ObservableObject {
         let folders = Set(threads.compactMap(\.folder))
         for thread in threads {
             do {
-               try thread.recomputeOrFail()
+                try thread.recomputeOrFail()
             } catch {
-                SentrySDK.capture(message: "Thread has nil lastMessageFromFolderDate") { scope in
-                    scope.setContext(value: ["dates": "\(thread.messages.map { $0.date })",
-                                             "ids": "\(thread.messages.map { $0.id })"],
-                                     key: "all messages")
-                    scope.setContext(value: ["id": "\(thread.lastMessageFromFolder?.uid ?? "nil")"],
-                                     key: "lastMessageFromFolder")
-                    scope.setContext(value: ["date before error": thread.date], key: "thread")
-                }
+                SentryDebug.threadHasNilLastMessageFromFolderDate(thread: thread)
                 realm.delete(thread)
             }
         }

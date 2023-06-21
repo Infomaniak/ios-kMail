@@ -20,7 +20,7 @@ import Foundation
 import RealmSwift
 import Sentry
 
-struct SentryDebug {
+enum SentryDebug {
     static func sendMissingMessagesSentry(sentUids: [String], receivedMessages: [Message], folder: Folder, newCursor: String?) {
         if receivedMessages.count != sentUids.count {
             let receivedUids = Set(receivedMessages.map { Constants.shortUid(from: $0.uid) })
@@ -70,6 +70,17 @@ struct SentryDebug {
                                          "newCursor": newCursor ?? "No cursor"],
                                  key: "orphanThreads")
             }
+        }
+    }
+    
+    static func threadHasNilLastMessageFromFolderDate(thread: Thread) {
+        SentrySDK.capture(message: "Thread has nil lastMessageFromFolderDate") { scope in
+            scope.setContext(value: ["dates": "\(thread.messages.map { $0.date })",
+                                     "ids": "\(thread.messages.map { $0.id })"],
+                             key: "all messages")
+            scope.setContext(value: ["id": "\(thread.lastMessageFromFolder?.uid ?? "nil")"],
+                             key: "lastMessageFromFolder")
+            scope.setContext(value: ["date before error": thread.date], key: "thread")
         }
     }
 }
