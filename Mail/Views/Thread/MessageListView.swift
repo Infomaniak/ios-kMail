@@ -21,18 +21,50 @@ import MailResources
 import RealmSwift
 import SwiftUI
 
+final class MessageSelectionViewModel: ObservableObject {
+    @Published var messages: [Message]
+
+    var messageExpended: [String: Bool] = [:]
+
+    init(messages: [Message], messageExpended: [String: Bool] = [:]) {
+        self.messages = messages
+        self.messageExpended = messageExpended
+    }
+
+    func changeExpanded(forMessageUid uid: String, isExpanded: Bool) {
+        messageExpended[uid] = isExpanded
+    }
+    
+    func expanded(forMessage message: Message) -> Bool {
+        if let value = messageExpended[message.uid] {
+            print("••expanded(forMessage:) cached : \(value)")
+            return value
+        } else {
+            let isExpanded = messages.isExpanded(message)
+            print("••expanded(forMessage:) computed : \(isExpanded)")
+            changeExpanded(forMessageUid: message.uid, isExpanded: isExpanded)
+            return isExpanded
+        }
+    }
+}
+
 struct MessageListView: View {
-    var messages: RealmSwift.List<Message>
+    @ObservedObject var viewModel: MessageSelectionViewModel
+
+    init(messages: [Message]) {
+        viewModel = MessageSelectionViewModel(messages: messages)
+    }
 
     var body: some View {
-        LazyVStack(spacing: 0) {
-            ForEach(messages, id: \.uid) { message in
-                let isMessageExpanded = ((messages.last?.uid == message.uid) && !message.isDraft) || !message.seen
-                MessageView(message: message, isMessageExpanded: isMessageExpanded)
-                if message != messages.last {
-                    IKDivider()
-                }
+        List {
+            ForEach(viewModel.messages, id: \.uid) { message in
+                VStack {
+                    MessageView(message: message, viewModel: viewModel)
+                    if viewModel.messages.isLast(message) {
+                        IKDivider()
+                    }
+                }.listRowSeparator(.hidden)
             }
-        }
+        }.listStyle(.inset)
     }
 }

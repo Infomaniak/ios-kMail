@@ -141,6 +141,16 @@ public enum MessageDKIM: String, Codable, PersistableEnum {
     case notSigned = "not_signed"
 }
 
+public extension Array where Element: Message {
+    func isLast(_ message: Message) -> Bool {
+        last?.uid == message.uid
+    }
+
+    func isExpanded(_ message: Message) -> Bool {
+        (isLast(message) && !message.isDraft) || !message.seen
+    }
+}
+
 public final class Message: Object, Decodable, Identifiable {
     @Persisted(primaryKey: true) public var uid = ""
     @Persisted public var messageId: String?

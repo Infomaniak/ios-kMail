@@ -51,15 +51,15 @@ struct ThreadView: View {
     private let toolbarActions: [Action] = [.reply, .forward, .archive, .delete]
 
     var body: some View {
-        ScrollView {
+//        ScrollView {
             VStack(spacing: 0) {
-                GeometryReader { proxy in
-                    Color.clear.preference(
-                        key: ScrollOffsetPreferenceKey.self,
-                        value: proxy.frame(in: .named("scrollView")).origin
-                    )
-                }
-                .frame(width: 0, height: 0)
+//                GeometryReader { proxy in
+//                    Color.clear.preference(
+//                        key: ScrollOffsetPreferenceKey.self,
+//                        value: proxy.frame(in: .named("scrollView")).origin
+//                    )
+//                }
+//                .frame(width: 0, height: 0)
 
                 Text(thread.formattedSubject)
                     .textStyle(.header2)
@@ -70,9 +70,9 @@ struct ThreadView: View {
                     .padding(.bottom, 16)
                     .padding(.horizontal, 16)
 
-                MessageListView(messages: thread.messages)
+                MessageListView(messages: Array(thread.messages))
             }
-        }
+//        }
         .background(MailResourcesAsset.backgroundColor.swiftUIColor)
         .coordinateSpace(name: "scrollView")
         .onPreferenceChange(ScrollOffsetPreferenceKey.self) { offset in

@@ -31,6 +31,8 @@ struct MessageView: View {
 
     @EnvironmentObject var mailboxManager: MailboxManager
 
+    @ObservedObject var viewModel: MessageSelectionViewModel
+
     @State var presentableBody: PresentableBody
     @State var isHeaderExpanded = false
     @State var isMessageExpanded: Bool
@@ -53,10 +55,11 @@ struct MessageView: View {
             && !message.localSafeDisplay
     }
 
-    init(message: Message, isMessageExpanded: Bool = false) {
+    init(message: Message, viewModel: MessageSelectionViewModel) {
         self.message = message
+        self.viewModel = viewModel
         presentableBody = PresentableBody(message: message)
-        self.isMessageExpanded = isMessageExpanded
+        isMessageExpanded = viewModel.expanded(forMessage: message)
     }
 
     var body: some View {
@@ -69,6 +72,8 @@ struct MessageView: View {
                 )
                 .padding(.horizontal, 16)
 
+                let _ = print("••isMessageExpanded :\(isMessageExpanded)")
+                
                 if isMessageExpanded {
                     if isRemoteContentBlocked && displayContentBlockedActionView {
                         MessageHeaderActionView(
@@ -111,6 +116,9 @@ struct MessageView: View {
                 }
             }
             .onChange(of: isMessageExpanded) { _ in
+                // bump viewModel
+                self.viewModel.changeExpanded(forMessageUid: self.message.uid, isExpanded: isMessageExpanded)
+                
                 if message.fullyDownloaded, isMessageExpanded {
                     prepareBodyIfNeeded()
                 } else {
@@ -159,13 +167,19 @@ struct MessageView: View {
     }
 }
 
-struct MessageView_Previews: PreviewProvider {
-    static var previews: some View {
-        Group {
-            MessageView(message: PreviewHelper.sampleMessage)
-
-            MessageView(message: PreviewHelper.sampleMessage, isMessageExpanded: true)
-        }
-        .previewLayout(.sizeThatFits)
-    }
-}
+// struct MessageView_Previews: PreviewProvider {
+//    static let stateTrue = State(initialValue: true)
+//    static let bindingTrue = Binding(projectedValue: stateTrue)
+//    static let stateFalse = State(initialValue: false)
+//    static let bindingFalse = Binding(projectedValue: stateFalse)
+//
+//    static var previews: some View {
+//
+//        Group {
+//            MessageView(message: PreviewHelper.sampleMessage, isMessageExpanded: self.$stateTrue)
+//
+//            MessageView(message: PreviewHelper.sampleMessage, isMessageExpanded: self.$stateFalse)
+//        }
+//        .previewLayout(.sizeThatFits)
+//    }
+// }
