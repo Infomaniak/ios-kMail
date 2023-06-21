@@ -266,7 +266,7 @@ public class MailboxManager: ObservableObject {
         }
     }
 
-    private func deleteMessages(uids: [String], folder: Folder) async {
+    private func deleteMessages(uids: [String]) async {
         guard !uids.isEmpty && !Task.isCancelled else { return }
 
         await backgroundRealm.execute { realm in
@@ -756,9 +756,34 @@ public class MailboxManager: ObservableObject {
     }
 
     private func handleMessagesUids(messageUids: MessagesUids, folder: Folder) async throws {
-        await deleteMessages(uids: messageUids.deletedUids, folder: folder)
+        let alreadyWrongIds = folder.fresh(using: getRealm())?.threads
+            .where { $0.date == SentryDebug.knownDebugDate }
+            .map { $0.uid } ?? []
+        await deleteMessages(uids: messageUids.deletedUids)
+        var shouldIgnoreNextEvents = SentryDebug.captureWrongDate(
+            step: "After delete",
+            folder: folder,
+            alreadyWrongIds: alreadyWrongIds,
+            realm: getRealm()
+        )
         await updateMessages(updates: messageUids.updated, folder: folder)
+        if !shouldIgnoreNextEvents {
+            shouldIgnoreNextEvents = SentryDebug.captureWrongDate(
+                step: "After updateMessages",
+                folder: folder,
+                alreadyWrongIds: alreadyWrongIds,
+                realm: getRealm()
+            )
+        }
         try await addMessages(shortUids: messageUids.addedShortUids, folder: folder, newCursor: messageUids.cursor)
+        if !shouldIgnoreNextEvents {
+            _ = SentryDebug.captureWrongDate(
+                step: "After addMessages",
+                folder: folder,
+                alreadyWrongIds: alreadyWrongIds,
+                realm: getRealm()
+            )
+        }
     }
 
     private func addMessages(shortUids: [String], folder: Folder, newCursor: String?) async throws {

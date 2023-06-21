@@ -21,6 +21,7 @@ import RealmSwift
 import Sentry
 
 enum SentryDebug {
+    static let knownDebugDate = Date(timeIntervalSince1970: 1_893_456_000)
     static func sendMissingMessagesSentry(sentUids: [String], receivedMessages: [Message], folder: Folder, newCursor: String?) {
         if receivedMessages.count != sentUids.count {
             let receivedUids = Set(receivedMessages.map { Constants.shortUid(from: $0.uid) })
@@ -72,7 +73,7 @@ enum SentryDebug {
             }
         }
     }
-    
+
     static func threadHasNilLastMessageFromFolderDate(thread: Thread) {
         SentrySDK.capture(message: "Thread has nil lastMessageFromFolderDate") { scope in
             scope.setContext(value: ["dates": "\(thread.messages.map { $0.date })",
@@ -82,5 +83,39 @@ enum SentryDebug {
                              key: "lastMessageFromFolder")
             scope.setContext(value: ["date before error": thread.date], key: "thread")
         }
+    }
+
+    static func createBreadcrumb(level: SentryLevel,
+                                 category: String,
+                                 message: String,
+                                 data: [String: Any]? = nil) -> Breadcrumb {
+        let crumb = Breadcrumb(level: level, category: category)
+        crumb.type = level == .info ? "info" : "error"
+        crumb.message = message
+        crumb.data = data
+        return crumb
+    }
+
+    static func captureWrongDate(step: String, folder: Folder, alreadyWrongIds: [String], realm: Realm) -> Bool {
+        guard let freshFolder = folder.fresh(using: realm) else { return false }
+
+        let threads = freshFolder.threads.where { $0.date == knownDebugDate }.filter { !alreadyWrongIds.contains($0.uid) }
+        guard !threads.isEmpty else { return false }
+
+        SentrySDK.capture(message: "Threads with wrong date on step \(step)") { scope in
+            scope.setLevel(.error)
+            scope.setContext(value: ["threads": Array(threads).map {
+                [
+                    "uid": "\($0.uid)",
+                    "subject": $0.subject ?? "No subject",
+                    "messageIds": "\($0.messageIds.joined(separator: ","))",
+                    "lastMessageFromFolder": $0.lastMessageFromFolder?.uid ?? "nil",
+                    "messages": Array($0.messages)
+                        .map { ["message uid": $0.uid, "message subject": $0.subject ?? "No subject", "message date": $0.date] }
+                ]
+            }],
+            key: "threads")
+        }
+        return true
     }
 }
