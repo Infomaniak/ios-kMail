@@ -44,7 +44,8 @@ struct ComposeMessageHeaderView: View {
                 showRecipientsFields: $showRecipientsFields,
                 autocompletionType: $autocompletionType,
                 focusedField: _focusedField,
-                type: .to
+                type: .to,
+                areCCAndBCCEmpty: draft.cc.isEmpty && draft.bcc.isEmpty
             )
 
             if showRecipientsFields {

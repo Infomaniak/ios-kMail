@@ -49,6 +49,12 @@ struct ComposeMessageCellRecipients: View {
     @FocusState var focusedField: ComposeViewFieldType?
 
     let type: ComposeViewFieldType
+    var areCCAndBCCEmpty = false
+
+    /// It should be displayed only for the field to if cc and bcc are empty and when autocompletion is not displayed
+    private var shouldDisplayChevron: Bool {
+        return type == .to && autocompletionType == nil && areCCAndBCCEmpty
+    }
 
     var body: some View {
         VStack(spacing: 0) {
@@ -68,7 +74,7 @@ struct ComposeMessageCellRecipients: View {
                         }
                     }
 
-                    if type == .to && autocompletionType == nil {
+                    if shouldDisplayChevron {
                         Spacer()
                         ChevronButton(isExpanded: $showRecipientsFields)
                     }
