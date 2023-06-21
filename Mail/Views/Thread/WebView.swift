@@ -43,7 +43,7 @@ struct WebView: UIViewRepresentable {
 
         func webView(_ webView: WKWebView, didStartProvisionalNavigation navigation: WKNavigation!) {
             // run the JS function `listenToSizeChanges` early. Prevent issues with distant resources not available.
-            if evaluateSizeChangeJSOnce == false {
+            if !evaluateSizeChangeJSOnce {
                 evaluateSizeChangeJSOnce = true
                 Task { @MainActor in
                     try await webView.evaluateJavaScript("listenToSizeChanges()")
