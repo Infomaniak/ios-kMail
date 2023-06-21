@@ -36,18 +36,6 @@ public struct SignatureResponse: Decodable {
     }
 }
 
-public extension Array where Element == Signature {
-    var `default`: Signature? {
-        guard let defaultSignature = first(where: \.isDefault) else {
-            // We try to return at least a signature, so the backend is happy.
-            return self.first
-        }
-        
-        // We matched one
-        return defaultSignature
-    }
-}
-
 public final class Signature: Object, Codable, Identifiable {
     @Persisted(primaryKey: true) public var id: Int
     @Persisted public var name: String
@@ -82,7 +70,20 @@ public final class Signature: Object, Codable, Identifiable {
     }
 }
 
-public class ValidEmail: Object, Decodable {
+public extension Array where Element == Signature {
+    /// Find the default signature, if any, in  an `Array` of `Signature`
+    var `default`: Signature? {
+        guard let defaultSignature = first(where: \.isDefault) else {
+            // We try to return at least a signature, so the backend is happy. Same on Android.
+            return first
+        }
+
+        // We matched one
+        return defaultSignature
+    }
+}
+
+public final class ValidEmail: Object, Decodable {
     @Persisted(primaryKey: true) var id: Int
     @Persisted var email: String
     @Persisted var emailIdn: String

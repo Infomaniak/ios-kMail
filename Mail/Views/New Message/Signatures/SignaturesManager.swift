@@ -21,15 +21,27 @@ import MailCore
 import SwiftUI
 
 final class SignaturesManager: ObservableObject {
-    
-    // TODO use this:
-    enum SignaturesLoadingState {
+    /// Represents the loading state
+    enum SignaturesLoadingState: Equatable {
+        static func == (lhs: SignaturesManager.SignaturesLoadingState, rhs: SignaturesManager.SignaturesLoadingState) -> Bool {
+            switch (lhs, rhs) {
+            case (.success, .success):
+                return true
+            case (.progress, .progress):
+                return true
+            case (.error(let left), .error(let right)):
+                return left == right
+            default:
+                return false
+            }
+        }
+
         case success
         case progress
-        case error
+        case error(_ wrapping: NSError)
     }
-    
-    @Published var doneLoadingDefaultSignature = false
+
+    @Published var loadingSignatureState: SignaturesLoadingState = .progress
 
     private let mailboxManager: MailboxManager
     init(mailboxManager: MailboxManager) {
@@ -47,18 +59,13 @@ final class SignaturesManager: ObservableObject {
                 assert(mailboxManager.getStoredSignatures().default != nil, "Expecting a default signature")
 
                 await MainActor.run {
-                    doneLoadingDefaultSignature = true
+                    loadingSignatureState = .success
                 }
             } catch {
                 await MainActor.run {
-                    
-                    // TODO: Error message "An error occurred" to let the user reload and close
-                    
-                    // We want to make sure that in the end the user will not be blocked.
-                    doneLoadingDefaultSignature = true
+                    loadingSignatureState = .error(error as NSError)
                 }
 
-                print("error : \(error)")
                 // TODO: sentry ?
             }
         }

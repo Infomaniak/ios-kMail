@@ -72,9 +72,18 @@ struct ComposeMessageBodyView: View {
         .task {
             await prepareReplyForwardBodyAndAttachments()
         }
-        .onChange(of: signatureManager.doneLoadingDefaultSignature, perform: { newValue in
-            Task {
-                await setSignature()
+        .onChange(of: signatureManager.loadingSignatureState, perform: { state in
+            switch state {
+            case .success:
+                Task {
+                    await setSignature()
+                }
+            case .error(let wrapping):
+                // Unable to get signatures, "An error occurred" and close modal.
+                IKSnackBar.showSnackBar(message: MailError.unknownError.localizedDescription)
+                self.dismiss
+            default:
+                break
             }
         })
         .fullScreenCover(isPresented: $isShowingCamera) {

@@ -147,8 +147,7 @@ public class MailboxManager: ObservableObject {
                 !updatedSignatures.contains(existingElement)
             }
 
-            // TODO: clean
-            print("add: \(signaturesToAdd.count) update: \(signaturesToUpdate.count) delete: \(signaturesToDelete.count)")
+            // NOTE: local drafts using a signature in `signaturesToDelete` should be updated to the new default.
 
             // Update signatures in Realm
             try? realm.safeWrite {
@@ -1098,13 +1097,6 @@ public class MailboxManager: ObservableObject {
             draft.action = .save
             draft.identityId = partialDraft.identityId
             draft.delay = partialDraft.delay
-
-            if draft.identityId == nil,
-               let defaultId = Array(realm.objects(Signature.self)).default?.id {
-                // TODO remove
-                assertionFailure("unexpected nil identityId from the server")
-                draft.identityId = "\(defaultId)"
-            }
 
             try? realm.safeWrite {
                 realm.add(draft.detached(), update: .modified)

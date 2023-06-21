@@ -91,13 +91,7 @@ public class DraftManager {
 
     public func send(draft: Draft, mailboxManager: MailboxManager) async -> Date? {
         await IKSnackBar.showSnackBar(message: MailResourcesStrings.Localizable.snackbarEmailSending)
-        
-        // try to apply a default signature if none
-        if draft.identityId == nil,
-           let defaultSignature = mailboxManager.getStoredSignatures().default {
-            draft.identityId = "\(defaultSignature)"
-        }
-        
+
         var sendDate: Date?
         await draftQueue.cleanQueueElement(uuid: draft.localUUID)
         await draftQueue.beginBackgroundTask(withName: "Draft Sender", for: draft.localUUID)
@@ -121,12 +115,6 @@ public class DraftManager {
                 for draft in drafts {
                     group.addTask {
                         var sendDate: Date?
-
-                        if draft.identityId == nil {
-                            // TODO clean
-                            print("identityId nil")
-                        }
-                        
                         switch draft.action {
                         case .initialSave:
                             await self.initialSave(draft: draft, mailboxManager: mailboxManager, emptyDraftBody: emptyDraftBody)

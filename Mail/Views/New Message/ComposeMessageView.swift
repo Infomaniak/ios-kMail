@@ -163,7 +163,7 @@ struct ComposeMessageView: View {
             }
         }
         .overlay {
-            if isLoadingContent || !signatureManager.doneLoadingDefaultSignature {
+            if isLoadingContent || signatureManager.loadingSignatureState == .progress {
                 progressView
             }
         }
