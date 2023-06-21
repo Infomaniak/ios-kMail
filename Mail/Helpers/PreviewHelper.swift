@@ -24,7 +24,8 @@ import MailCore
 import RealmSwift
 import SwiftUI
 
-struct PreviewHelper {
+#if DEBUG
+enum PreviewHelper {
     static let sampleMailboxManager = MailboxManager(mailbox: sampleMailbox, apiFetcher: MailApiFetcher())
 
     static let sampleMailbox = Mailbox(uuid: "",
@@ -132,3 +133,4 @@ struct PreviewHelper {
         expirationDate: Date()
     ))
 }
+#endif

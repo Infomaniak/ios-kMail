@@ -74,7 +74,7 @@ public class MailboxManager: ObservableObject {
         let realmName = "\(mailbox.userId)-\(mailbox.mailboxId).realm"
         realmConfiguration = Realm.Configuration(
             fileURL: MailboxManager.constants.rootDocumentsURL.appendingPathComponent(realmName),
-            schemaVersion: 11,
+            schemaVersion: 12,
             deleteRealmIfMigrationNeeded: true,
             objectTypes: [
                 Folder.self,
@@ -268,7 +268,7 @@ public class MailboxManager: ObservableObject {
         }
     }
 
-    private func deleteMessages(uids: [String], folder: Folder) async {
+    private func deleteMessages(uids: [String]) async {
         guard !uids.isEmpty && !Task.isCancelled else { return }
 
         await backgroundRealm.execute { realm in
@@ -304,14 +304,7 @@ public class MailboxManager: ObservableObject {
                                     try thread.recomputeOrFail()
                                 } catch {
                                     threadsToDelete.insert(thread)
-                                    SentrySDK.capture(message: "Thread has nil lastMessageFromFolderDate") { scope in
-                                        scope.setContext(value: ["dates": "\(thread.messages.map { $0.date })",
-                                                                 "ids": "\(thread.messages.map { $0.id })"],
-                                                         key: "all messages")
-                                        scope.setContext(value: ["id": "\(thread.lastMessageFromFolder?.uid ?? "nil")"],
-                                                         key: "lastMessageFromFolder")
-                                        scope.setContext(value: ["date before error": thread.date], key: "thread")
-                                    }
+                                    SentryDebug.threadHasNilLastMessageFromFolderDate(thread: thread)
                                 }
                             }
                         }
@@ -768,9 +761,34 @@ public class MailboxManager: ObservableObject {
     }
 
     private func handleMessagesUids(messageUids: MessagesUids, folder: Folder) async throws {
-        await deleteMessages(uids: messageUids.deletedUids, folder: folder)
+        let alreadyWrongIds = folder.fresh(using: getRealm())?.threads
+            .where { $0.date == SentryDebug.knownDebugDate }
+            .map { $0.uid } ?? []
+        await deleteMessages(uids: messageUids.deletedUids)
+        var shouldIgnoreNextEvents = SentryDebug.captureWrongDate(
+            step: "After delete",
+            folder: folder,
+            alreadyWrongIds: alreadyWrongIds,
+            realm: getRealm()
+        )
         await updateMessages(updates: messageUids.updated, folder: folder)
+        if !shouldIgnoreNextEvents {
+            shouldIgnoreNextEvents = SentryDebug.captureWrongDate(
+                step: "After updateMessages",
+                folder: folder,
+                alreadyWrongIds: alreadyWrongIds,
+                realm: getRealm()
+            )
+        }
         try await addMessages(shortUids: messageUids.addedShortUids, folder: folder, newCursor: messageUids.cursor)
+        if !shouldIgnoreNextEvents {
+            _ = SentryDebug.captureWrongDate(
+                step: "After addMessages",
+                folder: folder,
+                alreadyWrongIds: alreadyWrongIds,
+                realm: getRealm()
+            )
+        }
     }
 
     private func addMessages(shortUids: [String], folder: Folder, newCursor: String?) async throws {
@@ -899,14 +917,7 @@ public class MailboxManager: ObservableObject {
             do {
                 try thread.recomputeOrFail()
             } catch {
-                SentrySDK.capture(message: "Thread has nil lastMessageFromFolderDate") { scope in
-                    scope.setContext(value: ["dates": "\(thread.messages.map { $0.date })",
-                                             "ids": "\(thread.messages.map { $0.id })"],
-                                     key: "all messages")
-                    scope.setContext(value: ["id": "\(thread.lastMessageFromFolder?.uid ?? "nil")"],
-                                     key: "lastMessageFromFolder")
-                    scope.setContext(value: ["date before error": thread.date], key: "thread")
-                }
+                SentryDebug.threadHasNilLastMessageFromFolderDate(thread: thread)
                 realm.delete(thread)
             }
         }
