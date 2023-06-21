@@ -34,14 +34,25 @@ struct WebView: UIViewRepresentable {
     class Coordinator: NSObject, WKNavigationDelegate {
         var parent: WebView
 
+        /// Toggle to evaluate a JS function only once
+        private var evaluateSizeChangeJSOnce = false
+
         init(_ parent: WebView) {
             self.parent = parent
         }
 
+        func webView(_ webView: WKWebView, didStartProvisionalNavigation navigation: WKNavigation!) {
+            // run the JS function `listenToSizeChanges` early. Prevent issues with distant resources not available.
+            if evaluateSizeChangeJSOnce == false {
+                evaluateSizeChangeJSOnce = true
+                Task { @MainActor in
+                    try await webView.evaluateJavaScript("listenToSizeChanges()")
+                }
+            }
+        }
+
         func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
             Task { @MainActor in
-                try await webView.evaluateJavaScript("listenToSizeChanges()")
-
                 // Fix CSS properties and adapt the mail to the screen size
                 let readyState = try await webView.evaluateJavaScript("document.readyState") as? String
                 guard readyState == "complete" else { return }
