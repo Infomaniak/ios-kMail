@@ -24,17 +24,12 @@ import MailResources
 import RealmSwift
 import SwiftUI
 
-struct AllAttachmentsURL: Identifiable {
-    var id: String { url.absoluteString }
-    let url: URL
-}
-
 struct AttachmentsView: View {
     @State private var showDocumentPicker = false
 
     @State private var previewedAttachment: Attachment?
     @State private var downloadInProgress = false
-    @State private var allAttachmentsURL: AllAttachmentsURL?
+    @State private var allAttachmentsURL: IdentifiableURL?
 
     @EnvironmentObject var mailboxManager: MailboxManager
     @ObservedRealmObject var message: Message
@@ -86,7 +81,7 @@ struct AttachmentsView: View {
                             matomo.track(eventWithCategory: .message, name: "downloadAll")
                             downloadInProgress = true
                             let attachmentURL = try await mailboxManager.apiFetcher.downloadAttachments(message: message)
-                            allAttachmentsURL = AllAttachmentsURL(url: attachmentURL)
+                            allAttachmentsURL = IdentifiableURL(url: attachmentURL)
                             downloadInProgress = false
                         }
                     }

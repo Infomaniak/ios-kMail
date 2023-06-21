@@ -41,7 +41,8 @@ struct SplitView: View {
     @Environment(\.verticalSizeClass) var verticalSizeClass
     @Environment(\.window) var window
 
-    @State var splitViewController: UISplitViewController?
+    @State private var splitViewController: UISplitViewController?
+    @State private var mailToURLComponents: IdentifiableURLComponents?
 
     @StateObject private var navigationDrawerController = NavigationDrawerState()
     @StateObject private var navigationStore = NavigationStore()
@@ -93,6 +94,9 @@ struct SplitView: View {
         .sheet(item: $navigationStore.messageReply) { messageReply in
             ComposeMessageView.replyOrForwardMessage(messageReply: messageReply, mailboxManager: mailboxManager)
         }
+        .sheet(item: $mailToURLComponents) { identifiableURLComponents in
+            ComposeMessageView.mailTo(urlComponents: identifiableURLComponents.urlComponents, mailboxManager: mailboxManager)
+        }
         .onReceive(NotificationCenter.default.publisher(for: UIApplication.willEnterForegroundNotification)) { _ in
             Task {
                 try await mailboxManager.folders()
@@ -110,6 +114,9 @@ struct SplitView: View {
             } else {
                 IKSnackBar.showSnackBar(message: MailError.localMessageNotFound.errorDescription)
             }
+        }
+        .onReceive(NotificationCenter.default.publisher(for: .onOpenedMailTo)) { identifiableURLComponents in
+            self.mailToURLComponents = identifiableURLComponents.object as? IdentifiableURLComponents
         }
         .onAppear {
             AppDelegate.orientationLock = .all

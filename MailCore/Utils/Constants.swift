@@ -50,8 +50,6 @@ public enum Constants {
 
     public static let threadCellMaxRecipients = 5
 
-    public static let dismissMoveSheetNotificationName = Notification.Name(rawValue: "SheetViewDismiss")
-
     public static let maxFolderNameLength = 255
 
     public static let matomoId = "9"
