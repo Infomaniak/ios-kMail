@@ -115,8 +115,6 @@ final class DateSection: Identifiable, Equatable {
     @Published var isLoadingPage = false
     @Published var lastUpdate: Date?
 
-    private var refreshActor: RefreshActor
-
     // Used to know thread location
     private var selectedThreadIndex: Int?
     var filteredThreads = [Thread]() {
@@ -190,7 +188,6 @@ final class DateSection: Identifiable, Equatable {
         self.folder = folder
         lastUpdate = folder.lastUpdate
         self.isCompact = isCompact
-        refreshActor = RefreshActor(mailboxManager: mailboxManager)
         observeChanges()
         observeUnreadCount()
     }

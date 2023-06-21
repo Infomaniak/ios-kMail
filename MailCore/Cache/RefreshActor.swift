@@ -19,7 +19,7 @@
 import Foundation
 
 public actor RefreshActor {
-    let mailboxManager: MailboxManager
+    weak var mailboxManager: MailboxManager?
 
     private var refreshTask: Task<Void, Never>?
 
@@ -32,7 +32,7 @@ public actor RefreshActor {
 
         refreshTask = Task {
             await tryOrDisplayError {
-                try await mailboxManager.threads(folder: folder)
+                try await mailboxManager?.threads(folder: folder)
                 refreshTask = nil
             }
         }

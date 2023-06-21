@@ -66,7 +66,7 @@ public class MailboxManager: ObservableObject {
     public private(set) var apiFetcher: MailApiFetcher
     private let backgroundRealm: BackgroundRealm
 
-    private var refreshActor: RefreshActor?
+    private lazy var refreshActor = RefreshActor(mailboxManager: self)
 
     public init(mailbox: Mailbox, apiFetcher: MailApiFetcher) {
         self.mailbox = mailbox
@@ -1181,14 +1181,11 @@ public class MailboxManager: ObservableObject {
     // MARK: - RefreshActor
 
     public func refresh(folder: Folder) async {
-        if refreshActor == nil {
-            refreshActor = RefreshActor(mailboxManager: self)
-        }
-        await refreshActor?.refresh(folder: folder)
+        await refreshActor.refresh(folder: folder)
     }
 
     public func cancelRefresh() async {
-        await refreshActor?.cancelRefresh()
+        await refreshActor.cancelRefresh()
     }
 
     // MARK: - Utilities
