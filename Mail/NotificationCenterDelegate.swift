@@ -60,7 +60,3 @@ class NotificationCenterDelegate: NSObject, UNUserNotificationCenterDelegate {
         }
     }
 }
-
-public extension Notification.Name {
-    static let onUserTappedNotification = Notification.Name("userTappedNotification")
-}

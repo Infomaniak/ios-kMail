@@ -178,15 +178,10 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, AccountManagerDelegate 
 
     @discardableResult
     func handleUrlOpen(_ url: URL) -> Bool {
-        guard let urlComponents = URLComponents(url: url, resolvingAgainstBaseURL: true),
-              let mailboxManager = accountManager.currentMailboxManager else {
-            return false
-        }
+        guard let urlComponents = URLComponents(url: url, resolvingAgainstBaseURL: true) else { return false }
 
         if Constants.isMailTo(url) {
-            let newMessageView = ComposeMessageView.mailTo(urlComponents: urlComponents, mailboxManager: mailboxManager)
-            let viewController = UIHostingController(rootView: newMessageView)
-            window?.rootViewController?.present(viewController, animated: true)
+            NotificationCenter.default.post(name: .onOpenedMailTo, object: IdentifiableURLComponents(urlComponents: urlComponents))
         }
 
         return true
