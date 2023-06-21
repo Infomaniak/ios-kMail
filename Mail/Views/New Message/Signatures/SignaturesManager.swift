@@ -1,4 +1,3 @@
-//
 /*
  Infomaniak Mail - iOS App
  Copyright (C) 2022 Infomaniak Network SA
@@ -19,6 +18,7 @@
 
 import MailCore
 import SwiftUI
+import Sentry
 
 final class SignaturesManager: ObservableObject {
     /// Represents the loading state
@@ -66,7 +66,12 @@ final class SignaturesManager: ObservableObject {
                     loadingSignatureState = .error(error as NSError)
                 }
 
-                // TODO: sentry ?
+                SentrySDK.capture(message: "We failed to fetch Signatures. This will close the Editor.") { scope in
+                    scope.setExtras([
+                        "errorMessage": error.localizedDescription,
+                        "error": "\(error)"
+                    ])
+                }
             }
         }
     }
