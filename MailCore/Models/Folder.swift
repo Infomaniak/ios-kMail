@@ -191,6 +191,11 @@ public class Folder: Object, Codable, Comparable, Identifiable {
         unreadCount = threads.where { $0.unseenMessages > 0 }.count
     }
 
+    public func completeHistoryInfo() {
+        remainingOldMessagesToFetch = 0
+        isHistoryComplete = true
+    }
+
     public func resetHistoryInfo() {
         remainingOldMessagesToFetch = Constants.messageQuantityLimit
         isHistoryComplete = false
