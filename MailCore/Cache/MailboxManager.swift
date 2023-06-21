@@ -669,6 +669,9 @@ public class MailboxManager: ObservableObject {
         await backgroundRealm.execute { realm in
             guard let folder = folder.fresh(using: realm) else { return }
             try? realm.safeWrite {
+                if previousCursor == nil && messagesUids.addedShortUids.count < Constants.pageSize {
+                    folder.completeHistoryInfo()
+                }
                 folder.computeUnreadCount()
                 folder.cursor = messagesUids.cursor
                 folder.lastUpdate = Date()
@@ -687,8 +690,10 @@ public class MailboxManager: ObservableObject {
             )
         }
 
-        while try await fetchOnePage(folder: folder, direction: .following) {
-            guard !Task.isCancelled else { return }
+        if previousCursor != nil {
+            while try await fetchOnePage(folder: folder, direction: .following) {
+                guard !Task.isCancelled else { return }
+            }
         }
 
         if folder.role == .inbox,
@@ -696,8 +701,18 @@ public class MailboxManager: ObservableObject {
             MailboxInfosManager.instance.updateUnseen(unseenMessages: freshFolder.unreadCount, for: mailbox)
         }
 
-        while try await fetchOnePage(folder: folder, direction: .previous) {
-            guard !Task.isCancelled else { return }
+        let realmPrevious = getRealm()
+        if let folderPrevious = folder.fresh(using: realmPrevious) {
+            var remainingOldMessagesToFetch = folderPrevious.remainingOldMessagesToFetch
+            while remainingOldMessagesToFetch > 0 {
+                guard !Task.isCancelled else { return }
+
+                if try !(await fetchOnePage(folder: folder, direction: .previous)) {
+                    break
+                }
+
+                remainingOldMessagesToFetch -= Constants.pageSize
+            }
         }
     }
 
@@ -728,14 +743,13 @@ public class MailboxManager: ObservableObject {
 
         try await handleMessagesUids(messageUids: messagesUids, folder: folder)
 
-        switch direction {
+        switch paginationInfo?.direction {
         case .previous:
             return await backgroundRealm.execute { realm in
                 let freshFolder = folder.fresh(using: realm)
                 if messagesUids.addedShortUids.count < Constants.pageSize || messagesUids.addedShortUids.contains("1") {
                     try? realm.safeWrite {
-                        freshFolder?.isHistoryComplete = true
-                        freshFolder?.remainingOldMessagesToFetch = 0
+                        freshFolder?.completeHistoryInfo()
                     }
                     return false
                 } else {
@@ -746,16 +760,18 @@ public class MailboxManager: ObservableObject {
                 }
             }
         case .following:
-            if paginationInfo == nil {
-                await backgroundRealm.execute { realm in
-                    let freshFolder = folder.fresh(using: realm)
-                    try? realm.safeWrite {
-                        freshFolder?.resetHistoryInfo()
+            break
+        case .none:
+            await backgroundRealm.execute { realm in
+                let freshFolder = folder.fresh(using: realm)
+                try? realm.safeWrite {
+                    freshFolder?.resetHistoryInfo()
+
+                    if messagesUids.addedShortUids.count < Constants.pageSize {
+                        freshFolder?.completeHistoryInfo()
                     }
                 }
             }
-        default:
-            break
         }
         return messagesUids.addedShortUids.count == Constants.pageSize
     }
