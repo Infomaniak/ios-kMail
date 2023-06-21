@@ -66,6 +66,8 @@ public class MailboxManager: ObservableObject {
     public private(set) var apiFetcher: MailApiFetcher
     private let backgroundRealm: BackgroundRealm
 
+    private lazy var refreshActor = RefreshActor(mailboxManager: self)
+
     public init(mailbox: Mailbox, apiFetcher: MailApiFetcher) {
         self.mailbox = mailbox
         self.apiFetcher = apiFetcher
@@ -222,7 +224,7 @@ public class MailboxManager: ObservableObject {
 
     public func flushFolder(folder: Folder) async throws -> Bool {
         let response = try await apiFetcher.flushFolder(mailbox: mailbox, folderId: folder.id)
-        try await threads(folder: folder)
+        await refresh(folder: folder)
         return response
     }
 
@@ -236,7 +238,7 @@ public class MailboxManager: ObservableObject {
 
         for folder in orderedSet {
             guard let impactedFolder = folder as? Folder else { continue }
-            try await threads(folder: impactedFolder)
+            await refresh(folder: impactedFolder)
         }
     }
 
@@ -637,7 +639,10 @@ public class MailboxManager: ObservableObject {
     public func messages(folder: Folder) async throws {
         guard !Task.isCancelled else { return }
 
-        let previousCursor = folder.cursor
+        let realm = getRealm()
+        let freshFolder = folder.fresh(using: realm)
+
+        let previousCursor = freshFolder?.cursor
         var messagesUids: MessagesUids
 
         if previousCursor == nil {
@@ -892,7 +897,7 @@ public class MailboxManager: ObservableObject {
         let folders = Set(threads.compactMap(\.folder))
         for thread in threads {
             do {
-               try thread.recomputeOrFail()
+                try thread.recomputeOrFail()
             } catch {
                 SentrySDK.capture(message: "Thread has nil lastMessageFromFolderDate") { scope in
                     scope.setContext(value: ["dates": "\(thread.messages.map { $0.date })",
@@ -1171,6 +1176,16 @@ public class MailboxManager: ObservableObject {
                 }
             }
         }
+    }
+
+    // MARK: - RefreshActor
+
+    public func refresh(folder: Folder) async {
+        await refreshActor.refresh(folder: folder)
+    }
+
+    public func cancelRefresh() async {
+        await refreshActor.cancelRefresh()
     }
 
     // MARK: - Utilities

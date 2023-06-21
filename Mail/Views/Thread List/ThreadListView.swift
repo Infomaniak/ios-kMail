@@ -257,7 +257,10 @@ struct ThreadListView: View {
         guard let folder = newFolder else { return }
 
         viewModel.isLoadingPage = false
+
         Task {
+            await viewModel.mailboxManager.cancelRefresh()
+
             fetchingTask?.cancel()
             _ = await fetchingTask?.result
             fetchingTask = nil
