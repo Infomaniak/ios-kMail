@@ -145,18 +145,19 @@ struct ComposeMessageBodyView: View {
             return
         }
 
-        // At this point we have up to date signatures in base, we use the default one.
-        $draft.identityId.wrappedValue = "\(defaultSignature.id)"
-
-        var signaturePosition = draft.body.endIndex
         let html = "<br><br><div class=\"editorUserSignature\">\(defaultSignature.content)</div>"
-        switch defaultSignature.position {
-        case .beforeReplyMessage:
-            signaturePosition = draft.body.startIndex
-        case .afterReplyMessage:
-            signaturePosition = draft.body.endIndex
+        var signaturePosition = draft.body.endIndex
+        if messageReply != nil {
+            switch defaultSignature.position {
+            case .beforeReplyMessage:
+                signaturePosition = draft.body.startIndex
+            case .afterReplyMessage:
+                signaturePosition = draft.body.endIndex
+            }
         }
 
+        // At this point we have up to date signatures in base, we use the default one.
+        $draft.identityId.wrappedValue = "\(defaultSignature.id)"
         $draft.body.wrappedValue.insert(contentsOf: html, at: signaturePosition)
     }
 

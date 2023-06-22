@@ -85,7 +85,11 @@ struct ComposeMessageView: View {
     let messageReply: MessageReply?
 
     private var isSendButtonDisabled: Bool {
-        return draft.identityId?.isEmpty == true || draft.recipientsAreEmpty || !attachmentsManager.allAttachmentsUploaded
+        let disabledState = draft.identityId == nil
+        || draft.identityId?.isEmpty == true
+        || draft.recipientsAreEmpty
+        || !attachmentsManager.allAttachmentsUploaded
+        return disabledState
     }
 
     // MAK: - Int

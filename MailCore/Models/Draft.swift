@@ -258,6 +258,7 @@ public final class Draft: Object, Codable, Identifiable {
                      cc: recipientHolder.cc)
     }
 
+    // TODO: Factorise
     public func setSignature(_ signature: Signature) {
         identityId = "\(signature.id)"
         let html = "<br><br><div class=\"editorUserSignature\">\(signature.content)</div>"
