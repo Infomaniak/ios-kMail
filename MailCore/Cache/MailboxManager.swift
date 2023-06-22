@@ -85,7 +85,6 @@ public class MailboxManager: ObservableObject {
                 Recipient.self,
                 Draft.self,
                 Signature.self,
-                ValidEmail.self,
                 SearchHistory.self
             ]
         )

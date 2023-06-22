@@ -40,21 +40,13 @@ public final class Signature: Object, Codable, Identifiable {
     @Persisted(primaryKey: true) public var id: Int
     @Persisted public var name: String
     @Persisted public var content: String
-    @Persisted public var replyTo: String
-    @Persisted public var replyToIdn: String
     @Persisted public var replyToId: Int
-    @Persisted public var fullName: String
-    @Persisted public var sender: String
-    @Persisted public var senderIdn: String
     @Persisted public var senderId: Int
-    @Persisted public var hashString: String?
     @Persisted public var isDefault: Bool
     @Persisted public var position: SignaturePosition
 
     private enum CodingKeys: String, CodingKey {
-        case id, name, content, replyTo, replyToIdn, replyToId, fullName, sender, senderIdn, senderId, isDefault, position
-        // Property 'hash' already exists
-        case hashString = "hash"
+        case id, name, content, replyToId, senderId, isDefault, position
     }
 
     override public var hash: Int {
@@ -81,13 +73,4 @@ public extension Array where Element == Signature {
         // We matched one
         return defaultSignature
     }
-}
-
-public final class ValidEmail: Object, Decodable {
-    @Persisted(primaryKey: true) var id: Int
-    @Persisted var email: String
-    @Persisted var emailIdn: String
-    @Persisted var isAccount: Bool
-    @Persisted var isVerified: Bool
-    @Persisted var isRemovable: Bool
 }
