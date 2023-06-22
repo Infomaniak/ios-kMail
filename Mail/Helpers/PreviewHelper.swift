@@ -24,7 +24,6 @@ import MailCore
 import RealmSwift
 import SwiftUI
 
-#if DEBUG
 enum PreviewHelper {
     static let sampleMailboxManager = MailboxManager(mailbox: sampleMailbox, apiFetcher: MailApiFetcher())
 
@@ -65,7 +64,7 @@ enum PreviewHelper {
                                      cc: [],
                                      bcc: [],
                                      subject: "Test thread",
-                                     date: Date(),
+                                     date: SentryDebug.knownDebugDate,
                                      hasAttachments: true,
                                      hasSwissTransferAttachments: false,
                                      hasDrafts: false,
@@ -78,7 +77,7 @@ enum PreviewHelper {
                                        msgId: "",
                                        subject: "Test message",
                                        priority: .normal,
-                                       date: Date(),
+                                       date: SentryDebug.knownDebugDate,
                                        size: 0,
                                        from: [sampleRecipient1],
                                        to: [sampleRecipient2],
@@ -133,4 +132,3 @@ enum PreviewHelper {
         expirationDate: Date()
     ))
 }
-#endif
