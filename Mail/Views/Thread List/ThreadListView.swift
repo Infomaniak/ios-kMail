@@ -159,11 +159,10 @@ struct ThreadListView: View {
                                 }
                             }
                             .mailButtonStyle(.smallLink)
-                            .mailButtonFullWidth(true)
+                            .frame(alignment: .leading)
                         }
                     }
                     .padding(.vertical, UIConstants.progressItemsVerticalPadding)
-                    .threadListCellAppearance()
 
                     ListVerticalInsetView(height: multipleSelectionViewModel.isEnabled ? 100 : 110)
                 }
