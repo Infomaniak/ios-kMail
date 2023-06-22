@@ -201,15 +201,8 @@ final class DateSection: Identifiable, Equatable {
             isLoadingPage = true
         }
 
-        await tryOrDisplayError {
-            try await mailboxManager.threads(folder: folder.freezeIfNeeded()) {
-                Task {
-                    withAnimation {
-                        self.isLoadingPage = false
-                    }
-                }
-            }
-        }
+        await mailboxManager.refresh(folder: folder.freezeIfNeeded())
+
         withAnimation {
             isLoadingPage = false
         }

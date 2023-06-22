@@ -78,7 +78,7 @@ struct ComposeMessageBodyView: View {
                 Task {
                     await setSignature()
                 }
-            case .error(let _):
+            case .error:
                 // Unable to get signatures, "An error occurred" and close modal.
                 IKSnackBar.showSnackBar(message: MailError.unknownError.localizedDescription)
                 self.dismiss()
@@ -145,16 +145,19 @@ struct ComposeMessageBodyView: View {
             return
         }
 
-        // At this point we have up to date signatures in base
+        // At this point we have up to date signatures in base, we use the default one.
         $draft.identityId.wrappedValue = "\(defaultSignature.id)"
 
+        var signaturePosition = draft.body.endIndex
         let html = "<br><br><div class=\"editorUserSignature\">\(defaultSignature.content)</div>"
         switch defaultSignature.position {
         case .beforeReplyMessage:
-            $draft.body.wrappedValue.insert(contentsOf: html, at: draft.body.startIndex)
+            signaturePosition = draft.body.startIndex
         case .afterReplyMessage:
-            $draft.body.wrappedValue.append(contentsOf: html)
+            signaturePosition = draft.body.endIndex
         }
+
+        $draft.body.wrappedValue.insert(contentsOf: html, at: signaturePosition)
     }
 
     private func prepareBody(message: Message, replyMode: ReplyMode) async throws {

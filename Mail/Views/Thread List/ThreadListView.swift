@@ -159,11 +159,10 @@ struct ThreadListView: View {
                                 }
                             }
                             .mailButtonStyle(.smallLink)
-                            .mailButtonFullWidth(true)
+                            .frame(alignment: .leading)
                         }
                     }
                     .padding(.vertical, UIConstants.progressItemsVerticalPadding)
-                    .threadListCellAppearance()
 
                     ListVerticalInsetView(height: multipleSelectionViewModel.isEnabled ? 100 : 110)
                 }
@@ -257,7 +256,10 @@ struct ThreadListView: View {
         guard let folder = newFolder else { return }
 
         viewModel.isLoadingPage = false
+
         Task {
+            await viewModel.mailboxManager.cancelRefresh()
+
             fetchingTask?.cancel()
             _ = await fetchingTask?.result
             fetchingTask = nil

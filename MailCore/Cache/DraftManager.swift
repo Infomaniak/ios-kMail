@@ -156,7 +156,7 @@ public class DraftManager {
 
     private func refreshDraftFolder(latestSendDate: Date?, mailboxManager: MailboxManager) async throws {
         if let draftFolder = mailboxManager.getFolder(with: .draft)?.freeze() {
-            try await mailboxManager.threads(folder: draftFolder)
+            await mailboxManager.refresh(folder: draftFolder)
 
             if let latestSendDate = latestSendDate {
                 /*
@@ -165,7 +165,7 @@ public class DraftManager {
                  */
                 let delay = latestSendDate.timeIntervalSinceNow
                 try await Task.sleep(nanoseconds: UInt64(1_000_000_000 * max(Double(delay), 1.5)))
-                try await mailboxManager.threads(folder: draftFolder)
+                await mailboxManager.refresh(folder: draftFolder)
             }
 
             await mailboxManager.deleteOrphanDrafts()
@@ -179,7 +179,7 @@ public class DraftManager {
                     try await mailboxManager.delete(draft: liveDraft.freeze())
                     await IKSnackBar.showSnackBar(message: MailResourcesStrings.Localizable.snackbarDraftDeleted)
                     if let draftFolder = mailboxManager.getFolder(with: .draft)?.freeze() {
-                        try await mailboxManager.threads(folder: draftFolder)
+                        await mailboxManager.refresh(folder: draftFolder)
                     }
                 }
             }

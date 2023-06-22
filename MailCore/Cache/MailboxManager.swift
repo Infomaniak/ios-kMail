@@ -66,13 +66,15 @@ public class MailboxManager: ObservableObject {
     public private(set) var apiFetcher: MailApiFetcher
     private let backgroundRealm: BackgroundRealm
 
+    private lazy var refreshActor = RefreshActor(mailboxManager: self)
+
     public init(mailbox: Mailbox, apiFetcher: MailApiFetcher) {
         self.mailbox = mailbox
         self.apiFetcher = apiFetcher
         let realmName = "\(mailbox.userId)-\(mailbox.mailboxId).realm"
         realmConfiguration = Realm.Configuration(
             fileURL: MailboxManager.constants.rootDocumentsURL.appendingPathComponent(realmName),
-            schemaVersion: 11,
+            schemaVersion: 13,
             deleteRealmIfMigrationNeeded: true,
             objectTypes: [
                 Folder.self,
@@ -245,7 +247,7 @@ public class MailboxManager: ObservableObject {
 
     public func flushFolder(folder: Folder) async throws -> Bool {
         let response = try await apiFetcher.flushFolder(mailbox: mailbox, folderId: folder.id)
-        try await threads(folder: folder)
+        await refresh(folder: folder)
         return response
     }
 
@@ -259,7 +261,7 @@ public class MailboxManager: ObservableObject {
 
         for folder in orderedSet {
             guard let impactedFolder = folder as? Folder else { continue }
-            try await threads(folder: impactedFolder)
+            await refresh(folder: impactedFolder)
         }
     }
 
@@ -289,7 +291,7 @@ public class MailboxManager: ObservableObject {
         }
     }
 
-    private func deleteMessages(uids: [String], folder: Folder) async {
+    private func deleteMessages(uids: [String]) async {
         guard !uids.isEmpty && !Task.isCancelled else { return }
 
         await backgroundRealm.execute { realm in
@@ -325,14 +327,7 @@ public class MailboxManager: ObservableObject {
                                     try thread.recomputeOrFail()
                                 } catch {
                                     threadsToDelete.insert(thread)
-                                    SentrySDK.capture(message: "Thread has nil lastMessageFromFolderDate") { scope in
-                                        scope.setContext(value: ["dates": "\(thread.messages.map { $0.date })",
-                                                                 "ids": "\(thread.messages.map { $0.id })"],
-                                                         key: "all messages")
-                                        scope.setContext(value: ["id": "\(thread.lastMessageFromFolder?.uid ?? "nil")"],
-                                                         key: "lastMessageFromFolder")
-                                        scope.setContext(value: ["date before error": thread.date], key: "thread")
-                                    }
+                                    SentryDebug.threadHasNilLastMessageFromFolderDate(thread: thread)
                                 }
                             }
                         }
@@ -660,7 +655,10 @@ public class MailboxManager: ObservableObject {
     public func messages(folder: Folder) async throws {
         guard !Task.isCancelled else { return }
 
-        let previousCursor = folder.cursor
+        let realm = getRealm()
+        let freshFolder = folder.fresh(using: realm)
+
+        let previousCursor = freshFolder?.cursor
         var messagesUids: MessagesUids
 
         if previousCursor == nil {
@@ -694,6 +692,9 @@ public class MailboxManager: ObservableObject {
         await backgroundRealm.execute { realm in
             guard let folder = folder.fresh(using: realm) else { return }
             try? realm.safeWrite {
+                if previousCursor == nil && messagesUids.addedShortUids.count < Constants.pageSize {
+                    folder.completeHistoryInfo()
+                }
                 folder.computeUnreadCount()
                 folder.cursor = messagesUids.cursor
                 folder.lastUpdate = Date()
@@ -712,8 +713,10 @@ public class MailboxManager: ObservableObject {
             )
         }
 
-        while try await fetchOnePage(folder: folder, direction: .following) {
-            guard !Task.isCancelled else { return }
+        if previousCursor != nil {
+            while try await fetchOnePage(folder: folder, direction: .following) {
+                guard !Task.isCancelled else { return }
+            }
         }
 
         if folder.role == .inbox,
@@ -721,8 +724,18 @@ public class MailboxManager: ObservableObject {
             MailboxInfosManager.instance.updateUnseen(unseenMessages: freshFolder.unreadCount, for: mailbox)
         }
 
-        while try await fetchOnePage(folder: folder, direction: .previous) {
-            guard !Task.isCancelled else { return }
+        let realmPrevious = getRealm()
+        if let folderPrevious = folder.fresh(using: realmPrevious) {
+            var remainingOldMessagesToFetch = folderPrevious.remainingOldMessagesToFetch
+            while remainingOldMessagesToFetch > 0 {
+                guard !Task.isCancelled else { return }
+
+                if try !(await fetchOnePage(folder: folder, direction: .previous)) {
+                    break
+                }
+
+                remainingOldMessagesToFetch -= Constants.pageSize
+            }
         }
     }
 
@@ -753,14 +766,13 @@ public class MailboxManager: ObservableObject {
 
         try await handleMessagesUids(messageUids: messagesUids, folder: folder)
 
-        switch direction {
+        switch paginationInfo?.direction {
         case .previous:
             return await backgroundRealm.execute { realm in
                 let freshFolder = folder.fresh(using: realm)
                 if messagesUids.addedShortUids.count < Constants.pageSize || messagesUids.addedShortUids.contains("1") {
                     try? realm.safeWrite {
-                        freshFolder?.isHistoryComplete = true
-                        freshFolder?.remainingOldMessagesToFetch = 0
+                        freshFolder?.completeHistoryInfo()
                     }
                     return false
                 } else {
@@ -771,24 +783,55 @@ public class MailboxManager: ObservableObject {
                 }
             }
         case .following:
-            if paginationInfo == nil {
-                await backgroundRealm.execute { realm in
-                    let freshFolder = folder.fresh(using: realm)
-                    try? realm.safeWrite {
-                        freshFolder?.resetHistoryInfo()
+            break
+        case .none:
+            await backgroundRealm.execute { realm in
+                let freshFolder = folder.fresh(using: realm)
+                try? realm.safeWrite {
+                    freshFolder?.resetHistoryInfo()
+
+                    if messagesUids.addedShortUids.count < Constants.pageSize {
+                        freshFolder?.completeHistoryInfo()
                     }
                 }
             }
-        default:
-            break
         }
         return messagesUids.addedShortUids.count == Constants.pageSize
     }
 
     private func handleMessagesUids(messageUids: MessagesUids, folder: Folder) async throws {
-        await deleteMessages(uids: messageUids.deletedUids, folder: folder)
+        let startDate = Date(timeIntervalSinceNow: -5 * 60)
+        let ignoredIds = folder.fresh(using: getRealm())?.threads
+            .where { $0.date > startDate }
+            .map { $0.uid } ?? []
+        await deleteMessages(uids: messageUids.deletedUids)
+        var shouldIgnoreNextEvents = SentryDebug.captureWrongDate(
+            step: "After delete",
+            startDate: startDate,
+            folder: folder,
+            alreadyWrongIds: ignoredIds,
+            realm: getRealm()
+        )
         await updateMessages(updates: messageUids.updated, folder: folder)
+        if !shouldIgnoreNextEvents {
+            shouldIgnoreNextEvents = SentryDebug.captureWrongDate(
+                step: "After updateMessages",
+                startDate: startDate,
+                folder: folder,
+                alreadyWrongIds: ignoredIds,
+                realm: getRealm()
+            )
+        }
         try await addMessages(shortUids: messageUids.addedShortUids, folder: folder, newCursor: messageUids.cursor)
+        if !shouldIgnoreNextEvents {
+            _ = SentryDebug.captureWrongDate(
+                step: "After addMessages",
+                startDate: startDate,
+                folder: folder,
+                alreadyWrongIds: ignoredIds,
+                realm: getRealm()
+            )
+        }
     }
 
     private func addMessages(shortUids: [String], folder: Folder, newCursor: String?) async throws {
@@ -917,14 +960,7 @@ public class MailboxManager: ObservableObject {
             do {
                 try thread.recomputeOrFail()
             } catch {
-                SentrySDK.capture(message: "Thread has nil lastMessageFromFolderDate") { scope in
-                    scope.setContext(value: ["dates": "\(thread.messages.map { $0.date })",
-                                             "ids": "\(thread.messages.map { $0.id })"],
-                                     key: "all messages")
-                    scope.setContext(value: ["id": "\(thread.lastMessageFromFolder?.uid ?? "nil")"],
-                                     key: "lastMessageFromFolder")
-                    scope.setContext(value: ["date before error": thread.date], key: "thread")
-                }
+                SentryDebug.threadHasNilLastMessageFromFolderDate(thread: thread)
                 realm.delete(thread)
             }
         }
@@ -1194,6 +1230,16 @@ public class MailboxManager: ObservableObject {
                 }
             }
         }
+    }
+
+    // MARK: - RefreshActor
+
+    public func refresh(folder: Folder) async {
+        await refreshActor.refresh(folder: folder)
+    }
+
+    public func cancelRefresh() async {
+        await refreshActor.cancelRefresh()
     }
 
     // MARK: - Utilities

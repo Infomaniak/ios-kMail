@@ -55,7 +55,6 @@ struct RecipientChip: View {
             }
         } label: { isSelected in
             RecipientChipLabelView(recipient: recipient, removeHandler: removeAndFocus, switchFocusHandler: switchFocusHandler)
-                .fixedSize()
                 .opacity(isSelected ? 0.8 : 1)
         }
     }
