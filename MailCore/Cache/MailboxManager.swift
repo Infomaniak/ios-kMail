@@ -74,7 +74,7 @@ public class MailboxManager: ObservableObject {
         let realmName = "\(mailbox.userId)-\(mailbox.mailboxId).realm"
         realmConfiguration = Realm.Configuration(
             fileURL: MailboxManager.constants.rootDocumentsURL.appendingPathComponent(realmName),
-            schemaVersion: 12,
+            schemaVersion: 13,
             deleteRealmIfMigrationNeeded: true,
             objectTypes: [
                 Folder.self,
@@ -761,22 +761,25 @@ public class MailboxManager: ObservableObject {
     }
 
     private func handleMessagesUids(messageUids: MessagesUids, folder: Folder) async throws {
-        let alreadyWrongIds = folder.fresh(using: getRealm())?.threads
-            .where { $0.date == SentryDebug.knownDebugDate }
+        let startDate = Date(timeIntervalSinceNow: -5 * 60)
+        let ignoredIds = folder.fresh(using: getRealm())?.threads
+            .where { $0.date > startDate }
             .map { $0.uid } ?? []
         await deleteMessages(uids: messageUids.deletedUids)
         var shouldIgnoreNextEvents = SentryDebug.captureWrongDate(
             step: "After delete",
+            startDate: startDate,
             folder: folder,
-            alreadyWrongIds: alreadyWrongIds,
+            alreadyWrongIds: ignoredIds,
             realm: getRealm()
         )
         await updateMessages(updates: messageUids.updated, folder: folder)
         if !shouldIgnoreNextEvents {
             shouldIgnoreNextEvents = SentryDebug.captureWrongDate(
                 step: "After updateMessages",
+                startDate: startDate,
                 folder: folder,
-                alreadyWrongIds: alreadyWrongIds,
+                alreadyWrongIds: ignoredIds,
                 realm: getRealm()
             )
         }
@@ -784,8 +787,9 @@ public class MailboxManager: ObservableObject {
         if !shouldIgnoreNextEvents {
             _ = SentryDebug.captureWrongDate(
                 step: "After addMessages",
+                startDate: startDate,
                 folder: folder,
-                alreadyWrongIds: alreadyWrongIds,
+                alreadyWrongIds: ignoredIds,
                 realm: getRealm()
             )
         }

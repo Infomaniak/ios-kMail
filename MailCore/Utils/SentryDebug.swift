@@ -20,8 +20,8 @@ import Foundation
 import RealmSwift
 import Sentry
 
-enum SentryDebug {
-    static let knownDebugDate = Date(timeIntervalSince1970: 1_893_456_000)
+public enum SentryDebug {
+    public static let knownDebugDate = Date(timeIntervalSince1970: 1_893_456_000)
     static func sendMissingMessagesSentry(sentUids: [String], receivedMessages: [Message], folder: Folder, newCursor: String?) {
         if receivedMessages.count != sentUids.count {
             let receivedUids = Set(receivedMessages.map { Constants.shortUid(from: $0.uid) })
@@ -96,13 +96,18 @@ enum SentryDebug {
         return crumb
     }
 
-    static func captureWrongDate(step: String, folder: Folder, alreadyWrongIds: [String], realm: Realm) -> Bool {
+    static func captureWrongDate(step: String, startDate: Date, folder: Folder, alreadyWrongIds: [String], realm: Realm) -> Bool {
         guard let freshFolder = folder.fresh(using: realm) else { return false }
 
-        let threads = freshFolder.threads.where { $0.date == knownDebugDate }.filter { !alreadyWrongIds.contains($0.uid) }
+        let threads = freshFolder.threads
+            .where { $0.date > startDate }
+            .filter { !alreadyWrongIds.contains($0.uid) }
+            .filter {
+                !$0.messages.map { $0.date }.contains($0.date)
+            }
         guard !threads.isEmpty else { return false }
 
-        SentrySDK.capture(message: "Threads with wrong date on step \(step)") { scope in
+        SentrySDK.capture(message: "No corresponding message date for thread on step \(step)") { scope in
             scope.setLevel(.error)
             scope.setContext(value: ["threads": Array(threads).map {
                 [
