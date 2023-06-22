@@ -34,20 +34,14 @@ struct WebView: UIViewRepresentable {
     class Coordinator: NSObject, WKNavigationDelegate {
         var parent: WebView
 
-        /// Toggle to evaluate a JS function only once
-        private var evaluateSizeChangeJSOnce = false
-
         init(_ parent: WebView) {
             self.parent = parent
         }
 
         func webView(_ webView: WKWebView, didStartProvisionalNavigation navigation: WKNavigation!) {
             // run the JS function `listenToSizeChanges` early. Prevent issues with distant resources not available.
-            if !evaluateSizeChangeJSOnce {
-                evaluateSizeChangeJSOnce = true
-                Task { @MainActor in
-                    try await webView.evaluateJavaScript("listenToSizeChanges()")
-                }
+            Task { @MainActor in
+                try await webView.evaluateJavaScript("listenToSizeChanges()")
             }
         }
 
