@@ -29,21 +29,21 @@ struct MailboxesManagementButtonView: View {
     let detailNumber: Int?
     let handleAction: () -> Void
     let isSelected: Bool
-    let isPasswordValid: Bool
+    let isInMaintenance: Bool
 
     init(
         icon: MailResourcesImages,
         text: String,
         detailNumber: Int? = nil,
         isSelected: Bool,
-        isPasswordValid: Bool,
+        isInMaintenance: Bool,
         handleAction: @escaping () -> Void
     ) {
         self.icon = icon.swiftUIImage
         self.text = text
         self.detailNumber = detailNumber
         self.isSelected = isSelected
-        self.isPasswordValid = isPasswordValid
+        self.isInMaintenance = isInMaintenance
         self.handleAction = handleAction
     }
 
@@ -62,7 +62,7 @@ struct MailboxesManagementButtonView: View {
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
 
-                if !isPasswordValid {
+                if isInMaintenance {
                     MailResourcesAsset.warning.swiftUIImage
                 } else {
                     switch style {
@@ -87,7 +87,7 @@ struct MailboxesManagementButtonView: View {
 
 struct MailboxesManagementButtonView_Previews: PreviewProvider {
     static var previews: some View {
-        MailboxesManagementButtonView(icon: MailResourcesAsset.folder, text: "Hello", isSelected: false, isPasswordValid: true) {
+        MailboxesManagementButtonView(icon: MailResourcesAsset.folder, text: "Hello", isSelected: false, isInMaintenance: true) {
             /* Empty for test */
         }
         MailboxesManagementButtonView(
@@ -95,7 +95,7 @@ struct MailboxesManagementButtonView_Previews: PreviewProvider {
             text: "Hello",
             detailNumber: 10,
             isSelected: false,
-            isPasswordValid: true
+            isInMaintenance: true
         ) {
             /* Empty for test */
         }

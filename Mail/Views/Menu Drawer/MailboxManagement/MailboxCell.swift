@@ -54,6 +54,10 @@ struct MailboxCell: View {
         return mailbox.unseenMessages > 0 ? mailbox.unseenMessages : nil
     }
 
+    private var inMaintenance: Bool {
+        return !mailbox.isPasswordValid || mailbox.isLocked
+    }
+
     enum Style {
         case menuDrawer, account
     }
@@ -64,11 +68,15 @@ struct MailboxCell: View {
             text: mailbox.email,
             detailNumber: detailNumber,
             isSelected: isSelected,
-            isPasswordValid: mailbox.isPasswordValid
+            isInMaintenance: inMaintenance
         ) {
             guard !isSelected else { return }
             guard mailbox.isPasswordValid else {
                 IKSnackBar.showSnackBar(message: MailResourcesStrings.Localizable.frelatedMailbox)
+                return
+            }
+            guard !mailbox.isLocked else {
+                IKSnackBar.showSnackBar(message: MailResourcesStrings.Localizable.lockedMailboxTitle)
                 return
             }
             @InjectService var matomo: MatomoUtils
