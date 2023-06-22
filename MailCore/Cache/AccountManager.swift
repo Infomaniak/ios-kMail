@@ -113,6 +113,19 @@ public class AccountManager: RefreshTokenDelegate {
         }
     }
 
+    public var firstValidMailboxManager: MailboxManager? {
+        if let validMailbox = currentMailboxManager, !validMailbox.mailbox.isLocked && validMailbox.mailbox.isPasswordValid {
+            return validMailbox
+        }
+        for mailbox in mailboxes {
+            if !mailbox.isLocked && mailbox.isPasswordValid {
+                switchMailbox(newMailbox: mailbox)
+                return getMailboxManager(for: mailbox)
+            }
+        }
+        return nil
+    }
+
     public var currentContactManager: ContactManager? {
         if let currentContactManager = getContactManager(for: currentUserId) {
             return currentContactManager

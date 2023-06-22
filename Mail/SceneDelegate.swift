@@ -159,7 +159,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, AccountManagerDelegate 
     }
 
     func showMainView(animated: Bool = true) {
-        if let mailboxManager = accountManager.currentMailboxManager {
+        if let mailboxManager = accountManager.firstValidMailboxManager {
             showMainView(mailboxManager: mailboxManager, animated: animated)
         } else {
             showNoMailboxView(animated: animated)
@@ -181,7 +181,10 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, AccountManagerDelegate 
         guard let urlComponents = URLComponents(url: url, resolvingAgainstBaseURL: true) else { return false }
 
         if Constants.isMailTo(url) {
-            NotificationCenter.default.post(name: .onOpenedMailTo, object: IdentifiableURLComponents(urlComponents: urlComponents))
+            NotificationCenter.default.post(
+                name: .onOpenedMailTo,
+                object: IdentifiableURLComponents(urlComponents: urlComponents)
+            )
         }
 
         return true
