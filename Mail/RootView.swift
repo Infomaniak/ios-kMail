@@ -22,10 +22,11 @@ struct RootView: View {
     @Environment(\.horizontalSizeClass) var horizontalSizeClass
     @Environment(\.verticalSizeClass) var verticalSizeClass
 
-    let rootViewState: RootViewState
+    @EnvironmentObject var navigationStore: NavigationStore
+
     var body: some View {
         ZStack {
-            switch rootViewState {
+            switch navigationStore.rootViewState {
             case .appLocked:
                 LockedAppView()
             case .mainView(let currentMailboxManager):
@@ -34,8 +35,6 @@ struct RootView: View {
                 OnboardingView()
             }
         }
-        .id(rootViewState)
-        .animation(.easeInOut(duration: 0.3), value: rootViewState)
         .environment(\.isCompactWindow, horizontalSizeClass == .compact || verticalSizeClass == .compact)
     }
 }

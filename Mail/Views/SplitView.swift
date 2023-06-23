@@ -33,11 +33,12 @@ public class SplitViewManager: ObservableObject {
 }
 
 struct SplitView: View {
-    @Environment(\.isCompactWindow) var isCompactWindow
+    @Environment(\.isCompactWindow) private var isCompactWindow
+    @Environment(\.scenePhase) private var scenePhase
 
-    @EnvironmentObject var navigationStore: NavigationStore
+    @EnvironmentObject private var navigationStore: NavigationStore
 
-    @State var splitViewController: UISplitViewController?
+    @State private var splitViewController: UISplitViewController?
 
     @StateObject private var navigationDrawerController = NavigationDrawerState()
     @StateObject private var splitViewManager = SplitViewManager()
@@ -78,7 +79,8 @@ struct SplitView: View {
         .sheet(item: $navigationStore.messageReply) { messageReply in
             ComposeMessageView.replyOrForwardMessage(messageReply: messageReply, mailboxManager: mailboxManager)
         }
-        .onReceive(NotificationCenter.default.publisher(for: UIApplication.willEnterForegroundNotification)) { _ in
+        .onChange(of: scenePhase) { newScenePhase in
+            guard newScenePhase == .active else { return }
             Task {
                 try await mailboxManager.folders()
             }

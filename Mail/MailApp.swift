@@ -86,7 +86,7 @@ struct MailApp: App {
 
     @StateObject private var navigationStore = NavigationStore()
 
-    @ObservedObject private var accountManager = AccountManager.instance
+    private let accountManager = AccountManager.instance
 
     init() {
         Logging.initLogging()
@@ -96,7 +96,7 @@ struct MailApp: App {
 
     var body: some Scene {
         WindowGroup {
-            RootView(rootViewState: navigationStore.rootViewState)
+            RootView()
                 .environmentObject(navigationStore)
                 .onAppear {
                     updateUI(accent: accentColor, theme: theme)
@@ -111,11 +111,7 @@ struct MailApp: App {
                     switch newScenePhase {
                     case .active:
                         refreshCacheData()
-                        if UserDefaults.shared.isAppLockEnabled
-                            && appLockHelper.isAppLocked
-                            && accountManager.currentAccount != nil {
-                            navigationStore.transitionToRootViewDestination(.appLocked)
-                        }
+                        navigationStore.transitionToLockViewIfNeeded()
                     case .background:
                         if UserDefaults.shared.isAppLockEnabled && navigationStore.rootViewState != .appLocked {
                             appLockHelper.setTime()
@@ -131,13 +127,6 @@ struct MailApp: App {
                 .onChange(of: accountManager.currentAccount) { _ in
                     refreshCacheData()
                 }
-                .onChange(of: accountManager.currentMailboxId) { _ in
-                    if accountManager.currentAccount == nil {
-                        navigationStore.transitionToRootViewDestination(.onboarding)
-                    } else if navigationStore.rootViewState != .appLocked {
-                        navigationStore.transitionToRootViewDestination(.mainView)
-                    }
-                }
         }
         .defaultAppStorage(.shared)
     }
@@ -151,7 +140,7 @@ struct MailApp: App {
     }
 
     func refreshCacheData() {
-        guard let currentAccount = AccountManager.instance.currentAccount else {
+        guard let currentAccount = accountManager.currentAccount else {
             return
         }
 

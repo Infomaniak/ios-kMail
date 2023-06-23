@@ -58,6 +58,7 @@ struct ThreadListToolbar: ViewModifier {
 
     @EnvironmentObject private var splitViewManager: SplitViewManager
     @EnvironmentObject private var navigationDrawerState: NavigationDrawerState
+    @EnvironmentObject private var navigationStore: NavigationStore
 
     @State private var isShowingSwitchAccount = false
     @State private var multipleSelectionActionsTarget: ActionsTarget?
@@ -126,6 +127,9 @@ struct ThreadListToolbar: ViewModifier {
                             AvatarView(avatarDisplayable: AccountManager.instance.currentAccount.user)
                         }
                         .accessibilityLabel(MailResourcesStrings.Localizable.contentDescriptionUserAvatar)
+                        .sheet(isPresented: $isShowingSwitchAccount) {
+                            AccountView(mailboxes: AccountManager.instance.mailboxes)
+                        }
                     }
                 }
             }
@@ -166,8 +170,5 @@ struct ThreadListToolbar: ViewModifier {
                     : ""
             )
             .navigationBarTitleDisplayMode(.inline)
-            .sheet(isPresented: $isShowingSwitchAccount) {
-                AccountView(mailboxes: AccountManager.instance.mailboxes)
-            }
     }
 }

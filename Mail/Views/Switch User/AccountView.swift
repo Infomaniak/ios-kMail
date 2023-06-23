@@ -43,9 +43,6 @@ class AccountViewDelegate: DeleteAccountDelegate {
 }
 
 struct AccountView: View {
-    @Environment(\.dismiss) private var dismiss
-    @Environment(\.window) private var window
-
     @AppStorage(UserDefaults.shared.key(.accentColor)) private var accentColor = DefaultPreferences.accentColor
 
     @LazyInjectService private var matomo: MatomoUtils
@@ -63,99 +60,93 @@ struct AccountView: View {
     }
 
     var body: some View {
-        NavigationView {
-            VStack(spacing: 0) {
-                ScrollView {
-                    AvatarView(avatarDisplayable: account.user, size: 104)
-                        .padding(.top, 24)
+        VStack(spacing: 0) {
+            ScrollView {
+                AvatarView(avatarDisplayable: account.user, size: 104)
+                    .padding(.top, 24)
+                    .padding(.bottom, 16)
+
+                VStack(spacing: 0) {
+                    Text(account.user.displayName)
+                        .textStyle(.header2)
+                        .padding(.bottom, 4)
+
+                    Text(account.user.email)
+                        .textStyle(.bodySmallSecondary)
                         .padding(.bottom, 16)
 
-                    VStack(spacing: 0) {
-                        Text(account.user.displayName)
-                            .textStyle(.header2)
-                            .padding(.bottom, 4)
+                    NavigationLink {
+                        AccountListView()
+                    } label: {
+                        Text(MailResourcesStrings.Localizable.buttonAccountSwitch)
+                            .textStyle(.bodyMediumAccent)
+                    }
+                }
 
-                        Text(account.user.email)
+                // Email list
+                VStack(alignment: .leading, spacing: 12) {
+                    HStack(alignment: .center) {
+                        Text(MailResourcesStrings.Localizable.buttonAccountAssociatedEmailAddresses)
                             .textStyle(.bodySmallSecondary)
-                            .padding(.bottom, 16)
+
+                        Spacer()
 
                         NavigationLink {
-                            AccountListView()
-                        } label: {
-                            Text(MailResourcesStrings.Localizable.buttonAccountSwitch)
-                                .textStyle(.bodyMediumAccent)
-                        }
-                    }
-
-                    // Email list
-                    VStack(alignment: .leading, spacing: 12) {
-                        HStack(alignment: .center) {
-                            Text(MailResourcesStrings.Localizable.buttonAccountAssociatedEmailAddresses)
-                                .textStyle(.bodySmallSecondary)
-
-                            Spacer()
-
-                            NavigationLink {
-                                AddMailboxView { mailbox in
-                                    DispatchQueue.main.async {
-                                        guard let mailbox else { return }
-                                        AccountManager.instance.switchMailbox(newMailbox: mailbox)
-                                    }
+                            AddMailboxView { mailbox in
+                                DispatchQueue.main.async {
+                                    guard let mailbox else { return }
+                                    AccountManager.instance.switchMailbox(newMailbox: mailbox)
                                 }
-                            } label: {
-                                MailResourcesAsset.addCircle.swiftUIImage
-                                    .resizable()
-                                    .foregroundColor(accentColor.primary)
-                                    .frame(width: 16, height: 16)
                             }
-                        }
-                        .padding(.bottom, 16)
-
-                        if let currentMailbox = selectedMailbox {
-                            MailboxCell(mailbox: currentMailbox)
-                                .mailboxCellStyle(.account)
-                        }
-
-                        ForEach(otherMailbox) { mailbox in
-                            MailboxCell(mailbox: mailbox)
-                                .mailboxCellStyle(.account)
+                        } label: {
+                            MailResourcesAsset.addCircle.swiftUIImage
+                                .resizable()
+                                .foregroundColor(accentColor.primary)
+                                .frame(width: 16, height: 16)
                         }
                     }
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .padding(.top, 24)
+                    .padding(.bottom, 16)
 
-                    Spacer()
-                }
+                    if let currentMailbox = selectedMailbox {
+                        MailboxCell(mailbox: currentMailbox)
+                            .mailboxCellStyle(.account)
+                    }
 
-                // Buttons
-                MailButton(label: MailResourcesStrings.Localizable.buttonAccountDisconnect) {
-                    matomo.track(eventWithCategory: .account, name: "logOut")
-                    isShowingLogoutAlert.toggle()
+                    ForEach(otherMailbox) { mailbox in
+                        MailboxCell(mailbox: mailbox)
+                            .mailboxCellStyle(.account)
+                    }
                 }
-                .mailButtonFullWidth(true)
-                .padding(.bottom, 24)
-                MailButton(label: MailResourcesStrings.Localizable.buttonAccountDelete) {
-                    matomo.track(eventWithCategory: .account, name: "deleteAccount")
-                    isShowingDeleteAccount.toggle()
-                }
-                .mailButtonStyle(.destructive)
-                .padding(.bottom, 24)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .padding(.top, 24)
+
+                Spacer()
             }
-            .padding(.horizontal, 16)
-            .navigationBarTitle(MailResourcesStrings.Localizable.titleMyAccount, displayMode: .inline)
-            .backButtonDisplayMode(.minimal)
-            .navigationBarItems(leading: Button {
-                dismiss()
-            } label: {
-                Label(MailResourcesStrings.Localizable.buttonClose, systemImage: "xmark")
-            })
+
+            // Buttons
+            MailButton(label: MailResourcesStrings.Localizable.buttonAccountDisconnect) {
+                matomo.track(eventWithCategory: .account, name: "logOut")
+                isShowingLogoutAlert.toggle()
+            }
+            .mailButtonFullWidth(true)
+            .padding(.bottom, 24)
+            MailButton(label: MailResourcesStrings.Localizable.buttonAccountDelete) {
+                matomo.track(eventWithCategory: .account, name: "deleteAccount")
+                isShowingDeleteAccount.toggle()
+            }
+            .mailButtonStyle(.destructive)
+            .padding(.bottom, 24)
         }
+        .padding(.horizontal, 16)
+        .navigationBarTitle(MailResourcesStrings.Localizable.titleMyAccount, displayMode: .inline)
+        .backButtonDisplayMode(.minimal)
         .sheet(isPresented: $isShowingDeleteAccount) {
             DeleteAccountView(account: account, delegate: delegate)
         }
         .customAlert(isPresented: $isShowingLogoutAlert) {
             LogoutConfirmationView(account: account)
         }
+        .sheetViewStyle()
         .matomoView(view: [MatomoUtils.View.accountView.displayName, "Main"])
     }
 }
