@@ -41,22 +41,31 @@ struct RecipientField: View {
         currentText.trimmingCharacters(in: .whitespacesAndNewlines)
     }
 
+    private var isCurrentFieldFocused: Bool {
+        if case let .chip(hash, _) = focusedField {
+            return type.hashValue == hash
+        }
+        return type == focusedField
+    }
+
+    private var isExpanded: Bool {
+        return isCurrentFieldFocused || recipients.isEmpty
+    }
+
     var body: some View {
-        VStack {
+        VStack(spacing: 0) {
             if !recipients.isEmpty {
-                WrappingHStack(recipients.indices, spacing: .constant(8), lineSpacing: 8) { i in
-                    RecipientChip(recipient: recipients[i], fieldType: type, focusedField: _focusedField) {
-                        remove(recipientAt: i)
-                    } switchFocusHandler: {
-                        switchFocus()
-                    }
-                    .focused($focusedField, equals: .chip(type.hashValue, recipients[i]))
+                if !isCurrentFieldFocused && recipients.count > 1 {
+                    ShortRecipientsList(recipients: recipients, type: type)
+                } else {
+                    FullRecipientsList(recipients: $recipients, focusedField: _focusedField, type: type)
                 }
-                .alignmentGuide(.newMessageCellAlignment) { d in d[.top] + 21 }
             }
 
             RecipientsTextField(text: $currentText, onSubmit: onSubmit, onBackspace: handleBackspaceTextField)
                 .focused($focusedField, equals: type)
+                .frame(width: isExpanded ? nil : 0, height: isExpanded ? nil : 0)
+                .padding(.top, type == focusedField && !recipients.isEmpty ? 4 : 0)
         }
         .onReceive(NotificationCenter.default.publisher(for: UIResponder.keyboardDidShowNotification)) { output in
             if let userInfo = output.userInfo,
@@ -69,25 +78,9 @@ struct RecipientField: View {
         }
     }
 
-    @MainActor private func remove(recipientAt: Int) {
-        withAnimation {
-            $recipients.remove(at: recipientAt)
-        }
-    }
-
     private func handleBackspaceTextField(isTextEmpty: Bool) {
         if let recipient = recipients.last, isTextEmpty {
             focusedField = .chip(type.hashValue, recipient)
-        }
-    }
-
-    private func switchFocus() {
-        guard case let .chip(hash, recipient) = focusedField else { return }
-
-        if recipient == recipients.last {
-            focusedField = type
-        } else if let recipientIndex = recipients.firstIndex(of: recipient) {
-            focusedField = .chip(hash, recipients[recipientIndex + 1])
         }
     }
 }

@@ -94,9 +94,13 @@ struct ComposeMessageCellRecipients: View {
                 .padding(.top, 8)
             }
         }
-        .onTapGesture {
-            focusedField = type
-        }
+        .simultaneousGesture(
+            TapGesture()
+                .onEnded { _ in
+                    print("COUCOU")
+                    focusedField = type
+                }
+        )
         .onChange(of: textDebounce.text) { newValue in
             withAnimation {
                 if newValue.isEmpty {

@@ -23,14 +23,15 @@ import UIKit
 
 struct RecipientChipLabelView: UIViewRepresentable {
     let recipient: Recipient
-    let removeHandler: () -> Void
-    let switchFocusHandler: () -> Void
+    var removeHandler: (() -> Void)?
+    var switchFocusHandler: (() -> Void)?
 
     func makeUIView(context: Context) -> RecipientChipLabel {
         let label = RecipientChipLabel(recipient: recipient)
         label.removeHandler = removeHandler
         label.switchFocusHandler = switchFocusHandler
         label.setContentHuggingPriority(.defaultHigh, for: .horizontal)
+        label.setContentHuggingPriority(.defaultHigh, for: .vertical)
         label.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
         return label
     }

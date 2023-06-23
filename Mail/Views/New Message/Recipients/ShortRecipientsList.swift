@@ -1,0 +1,44 @@
+//
+/*
+ Infomaniak Mail - iOS App
+ Copyright (C) 2022 Infomaniak Network SA
+
+ This program is free software: you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation, either version 3 of the License, or
+ (at your option) any later version.
+
+ This program is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
+
+ You should have received a copy of the GNU General Public License
+ along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+import MailCore
+import RealmSwift
+import SwiftUI
+import WrappingHStack
+
+struct ShortRecipientsList: View {
+    let recipients: RealmSwift.List<Recipient>
+    let type: ComposeViewFieldType
+
+    var body: some View {
+        WrappingHStack(spacing: .constant(8), lineSpacing: 8) {
+            RecipientChip(recipient: recipients[0], fieldType: type)
+                .allowsHitTesting(false)
+
+            MoreRecipientsChip(count: recipients.count - 1)
+        }
+        .alignmentGuide(.newMessageCellAlignment) { d in d[.top] + 21 }
+    }
+}
+
+struct ShortRecipientsList_Previews: PreviewProvider {
+    static var previews: some View {
+        ShortRecipientsList(recipients: [PreviewHelper.sampleRecipient1].toRealmList(), type: .to)
+    }
+}
