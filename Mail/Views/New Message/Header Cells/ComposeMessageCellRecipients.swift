@@ -64,9 +64,9 @@ struct ComposeMessageCellRecipients: View {
                         .textStyle(.bodySecondary)
 
                     RecipientField(
+                        focusedField: _focusedField,
                         currentText: $textDebounce.text,
                         recipients: $recipients,
-                        focusedField: _focusedField,
                         type: type
                     ) {
                         if let bestMatch = autocompletion.first {

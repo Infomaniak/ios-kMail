@@ -21,9 +21,9 @@ import RealmSwift
 import SwiftUI
 
 struct RecipientsList: View {
-    @Binding var recipients: RealmSwift.List<Recipient>
-
     @FocusState var focusedField: ComposeViewFieldType?
+
+    @Binding var recipients: RealmSwift.List<Recipient>
 
     let isCurrentFieldFocused: Bool
     let type: ComposeViewFieldType

@@ -28,10 +28,10 @@ import WrappingHStack
 struct RecipientField: View {
     @State private var keyboardHeight: CGFloat = 0
 
+    @FocusState var focusedField: ComposeViewFieldType?
+
     @Binding var currentText: String
     @Binding var recipients: RealmSwift.List<Recipient>
-
-    @FocusState var focusedField: ComposeViewFieldType?
 
     let type: ComposeViewFieldType
     var onSubmit: (() -> Void)?
@@ -56,8 +56,8 @@ struct RecipientField: View {
         VStack(spacing: 0) {
             if !recipients.isEmpty {
                 RecipientsList(
-                    recipients: $recipients,
                     focusedField: _focusedField,
+                    recipients: $recipients,
                     isCurrentFieldFocused: isCurrentFieldFocused,
                     type: type
                 )
