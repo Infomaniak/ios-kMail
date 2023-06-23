@@ -55,10 +55,10 @@ struct RecipientField: View {
     var body: some View {
         VStack(spacing: 0) {
             if !recipients.isEmpty {
-                if !isCurrentFieldFocused && recipients.count > 1 {
-                    ShortRecipientsList(recipients: recipients, type: type)
-                } else {
+                if isCurrentFieldFocused {
                     FullRecipientsList(recipients: $recipients, focusedField: _focusedField, type: type)
+                } else {
+                    ShortRecipientsList(recipients: recipients, type: type)
                 }
             }
 

@@ -1,4 +1,3 @@
-//
 /*
  Infomaniak Mail - iOS App
  Copyright (C) 2022 Infomaniak Network SA
@@ -27,12 +26,15 @@ struct ShortRecipientsList: View {
     let type: ComposeViewFieldType
 
     var body: some View {
-        WrappingHStack(spacing: .constant(8), lineSpacing: 8) {
+        HStack(spacing: 8) {
             RecipientChip(recipient: recipients[0], fieldType: type)
-                .allowsHitTesting(false)
+                .disabled(true)
 
-            MoreRecipientsChip(count: recipients.count - 1)
+            if recipients.count > 1 {
+                MoreRecipientsChip(count: recipients.count - 1)
+            }
         }
+        .frame(maxWidth: .infinity, alignment: .leading)
         .alignmentGuide(.newMessageCellAlignment) { d in d[.top] + 21 }
     }
 }
