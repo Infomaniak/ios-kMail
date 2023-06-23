@@ -44,7 +44,8 @@ struct ThreadListView: View {
     @AppStorage(UserDefaults.shared.key(.threadDensity)) private var threadDensity = DefaultPreferences.threadDensity
     @AppStorage(UserDefaults.shared.key(.accentColor)) private var accentColor = DefaultPreferences.accentColor
 
-    @State private var isShowingComposeNewMessageView = false
+    /// Assign a draft will open an edit modal for it.
+    @State private var newDraft: Draft?
     @State private var fetchingTask: Task<Void, Never>?
     @State private var isRefreshing = false
     @State private var firstLaunch = true
@@ -216,7 +217,9 @@ struct ThreadListView: View {
                               icon: MailResourcesAsset.pencilPlain,
                               title: MailResourcesStrings.Localizable.buttonNewMessage) {
             matomo.track(eventWithCategory: .newMessage, name: "openFromFab")
-            isShowingComposeNewMessageView.toggle()
+
+            // Instantiate a new Draft will open the editor.
+            newDraft = Draft(localUUID: UUID().uuidString)
         }
         .onAppear {
             networkMonitor.start()
@@ -243,8 +246,8 @@ struct ThreadListView: View {
                 firstLaunch = false
             }
         }
-        .sheet(isPresented: $isShowingComposeNewMessageView) {
-            ComposeMessageView.newMessage(mailboxManager: viewModel.mailboxManager)
+        .sheet(item: $newDraft) { newDraft in
+            ComposeMessageView.newMessage(newDraft, mailboxManager: viewModel.mailboxManager)
         }
         .customAlert(item: $flushAlert) { item in
             FlushFolderAlertView(flushAlert: item, folder: viewModel.folder)

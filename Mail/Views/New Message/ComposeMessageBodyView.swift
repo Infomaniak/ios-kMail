@@ -75,14 +75,12 @@ struct ComposeMessageBodyView: View {
         .onChange(of: signatureManager.loadingSignatureState) { state in
             switch state {
             case .success:
-                Task {
-                    await setSignature()
-                }
+                setSignature()
             case .error:
                 // Unable to get signatures, "An error occurred" and close modal.
                 IKSnackBar.showSnackBar(message: MailError.unknownError.localizedDescription)
                 dismiss()
-            default:
+            case .progress:
                 break
             }
         }
@@ -139,26 +137,21 @@ struct ComposeMessageBodyView: View {
         }
     }
 
-    private func setSignature() async {
-        guard draft.identityId == nil || draft.identityId?.isEmpty == true,
-              let defaultSignature = mailboxManager.getStoredSignatures().defaultSignature else {
+    private func setSignature() {
+        guard draft.identityId == nil || draft.identityId?.isEmpty == true else {
             return
         }
-
-        let html = "<br><br><div class=\"editorUserSignature\">\(defaultSignature.content)</div>"
-        var signaturePosition = draft.body.endIndex
-        if messageReply != nil {
-            switch defaultSignature.position {
-            case .beforeReplyMessage:
-                signaturePosition = draft.body.startIndex
-            case .afterReplyMessage:
-                signaturePosition = draft.body.endIndex
-            }
+        
+        guard let defaultSignature = mailboxManager.getStoredSignatures().defaultSignature else {
+            return
         }
+        
+        let body = $draft.body.wrappedValue
+        let signedBody = Draft.appendsSignature(defaultSignature, to: body)
 
-        // At this point we have up to date signatures in base, we use the default one.
+        // At this point we have signatures in base up to date, we use the default one.
         $draft.identityId.wrappedValue = "\(defaultSignature.id)"
-        $draft.body.wrappedValue.insert(contentsOf: html, at: signaturePosition)
+        $draft.body.wrappedValue = signedBody
     }
 
     private func prepareBody(message: Message, replyMode: ReplyMode) async throws {

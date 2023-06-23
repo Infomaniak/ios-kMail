@@ -22,6 +22,7 @@ import InfomaniakCoreUI
 import InfomaniakDI
 import MailResources
 import RealmSwift
+import Sentry
 import UIKit
 
 struct DraftQueueElement {
@@ -63,17 +64,22 @@ actor DraftQueue {
     }
 }
 
-public class DraftManager {
-    public static let shared = DraftManager()
-
+public final class DraftManager {
     private let draftQueue = DraftQueue()
     private static let saveExpirationSec = 3
 
     @LazyInjectService private var matomo: MatomoUtils
 
-    private init() {}
+    /// Used by DI only
+    public init() {}
 
-    private func saveDraft(draft: Draft, mailboxManager: MailboxManager) async {
+    /// Save a draft server side
+    private func saveDraftRemotely(draft: Draft, mailboxManager: MailboxManager) async {
+        guard draft.identityId != nil else {
+            SentrySDK.capture(message: "We are trying to send a draft without an identityId, this will fail.")
+            return
+        }
+
         matomo.track(eventWithCategory: .newMessage, name: "saveDraft")
 
         await draftQueue.cleanQueueElement(uuid: draft.localUUID)
@@ -119,7 +125,7 @@ public class DraftManager {
                         case .initialSave:
                             await self.initialSave(draft: draft, mailboxManager: mailboxManager, emptyDraftBody: emptyDraftBody)
                         case .save:
-                            await self.saveDraft(draft: draft, mailboxManager: mailboxManager)
+                            await self.saveDraftRemotely(draft: draft, mailboxManager: mailboxManager)
                         case .send:
                             sendDate = await self.send(draft: draft, mailboxManager: mailboxManager)
                         default:
@@ -142,11 +148,11 @@ public class DraftManager {
 
     private func initialSave(draft: Draft, mailboxManager: MailboxManager, emptyDraftBody: String) async {
         guard draft.body != emptyDraftBody && !draft.body.isEmpty else {
-            deleteEmptyDraft(draft: draft)
+            deleteEmptyDraft(draft: draft, for: mailboxManager)
             return
         }
 
-        await saveDraft(draft: draft, mailboxManager: mailboxManager)
+        await saveDraftRemotely(draft: draft, mailboxManager: mailboxManager)
         await IKSnackBar.showSnackBar(message: MailResourcesStrings.Localizable.snackbarDraftSaved,
                                       action: .init(title: MailResourcesStrings.Localizable.actionDelete) { [weak self] in
                                           self?.matomo.track(eventWithCategory: .snackbar, name: "deleteDraft")
@@ -186,21 +192,24 @@ public class DraftManager {
         }
     }
 
-    private func deleteEmptyDraft(draft: Draft) {
-        guard let liveDraft = draft.thaw(),
-              let realm = liveDraft.realm else { return }
+    private func deleteEmptyDraft(draft: Draft, for mailboxManager: MailboxManager) {
+        let primaryKey = draft.localUUID
+        let realm = mailboxManager.getRealm()
         try? realm.write {
-            realm.delete(liveDraft)
+            guard let object = realm.object(ofType: Draft.self, forPrimaryKey: primaryKey) else {
+                return
+            }
+            realm.delete(object)
         }
     }
 
     private func emptyDraftBodyWithSignature(for mailboxManager: MailboxManager) -> String {
-        let draft = Draft()
-
-        if let signature = mailboxManager.getStoredSignatures().defaultSignature {
-            draft.setSignature(signature)
+        guard let signature = mailboxManager.getStoredSignatures().defaultSignature else {
+            SentrySDK.capture(message: "No default signature available to generate base body")
+            assertionFailure("No default signature available to generate base body")
+            return ""
         }
 
-        return draft.body
+        return Draft.appendsSignature(signature, to: "")
     }
 }

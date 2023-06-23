@@ -61,6 +61,7 @@ struct ComposeMessageView: View {
     @Environment(\.dismiss) private var dismiss
 
     @LazyInjectService private var matomo: MatomoUtils
+    @LazyInjectService private var draftManager: DraftManager
 
     @State private var isLoadingContent: Bool
     @State private var isShowingCancelAttachmentsError = false
@@ -86,9 +87,9 @@ struct ComposeMessageView: View {
 
     private var isSendButtonDisabled: Bool {
         let disabledState = draft.identityId == nil
-        || draft.identityId?.isEmpty == true
-        || draft.recipientsAreEmpty
-        || !attachmentsManager.allAttachmentsUploaded
+            || draft.identityId?.isEmpty == true
+            || draft.recipientsAreEmpty
+            || !attachmentsManager.allAttachmentsUploaded
         return disabledState
     }
 
@@ -162,9 +163,7 @@ struct ComposeMessageView: View {
             }
         }
         .onDisappear {
-            Task {
-                DraftManager.shared.syncDraft(mailboxManager: mailboxManager)
-            }
+            draftManager.syncDraft(mailboxManager: mailboxManager)
         }
         .overlay {
             if isLoadingContent || signatureManager.loadingSignatureState == .progress {
@@ -240,6 +239,6 @@ struct ComposeMessageView: View {
 
 struct ComposeMessageView_Previews: PreviewProvider {
     static var previews: some View {
-        ComposeMessageView.newMessage(mailboxManager: PreviewHelper.sampleMailboxManager)
+        ComposeMessageView.newMessage(Draft(), mailboxManager: PreviewHelper.sampleMailboxManager)
     }
 }

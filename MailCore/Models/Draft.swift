@@ -258,16 +258,19 @@ public final class Draft: Object, Codable, Identifiable {
                      cc: recipientHolder.cc)
     }
 
-    // TODO: Factorise
-    public func setSignature(_ signature: Signature) {
-        identityId = "\(signature.id)"
+    /// Appends a signature to an HTML body at correct position
+    public static func appendsSignature(_ signature: Signature, to body: String) -> String {
         let html = "<br><br><div class=\"editorUserSignature\">\(signature.content)</div>"
+
+        var body = body
         switch signature.position {
         case .beforeReplyMessage:
             body.insert(contentsOf: html, at: body.startIndex)
         case .afterReplyMessage:
             body.append(contentsOf: html)
         }
+
+        return body
     }
 
     public func encode(to encoder: Encoder) throws {

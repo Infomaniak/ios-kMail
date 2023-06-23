@@ -74,7 +74,7 @@ public class MailboxManager: ObservableObject {
         let realmName = "\(mailbox.userId)-\(mailbox.mailboxId).realm"
         realmConfiguration = Realm.Configuration(
             fileURL: MailboxManager.constants.rootDocumentsURL.appendingPathComponent(realmName),
-            schemaVersion: 13,
+            schemaVersion: 14,
             deleteRealmIfMigrationNeeded: true,
             objectTypes: [
                 Folder.self,
@@ -148,7 +148,7 @@ public class MailboxManager: ObservableObject {
                 !updatedSignatures.contains(existingElement)
             }
 
-            // NOTE: local drafts using a signature in `signaturesToDelete` should be updated to the new default.
+            // NOTE: local drafts in `signaturesToDelete` should be migrated to use the new default signature.
 
             // Update signatures in Realm
             try? realm.safeWrite {
@@ -1130,7 +1130,10 @@ public class MailboxManager: ObservableObject {
         await backgroundRealm.execute { realm in
             draft.localUUID = partialDraft.localUUID
             draft.action = .save
-            draft.identityId = partialDraft.identityId
+            
+            // We made sure beforehand to have an up to date signature.
+            // If the server does not return an identityId, we want to keep the original one
+            draft.identityId = partialDraft.identityId ?? draft.identityId
             draft.delay = partialDraft.delay
 
             try? realm.safeWrite {
