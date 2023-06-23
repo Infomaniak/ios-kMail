@@ -115,7 +115,6 @@ public final class DraftManager {
 
     public func syncDraft(mailboxManager: MailboxManager) {
         let drafts = mailboxManager.draftWithPendingAction().freezeIfNeeded()
-        let emptyDraftBody = emptyDraftBodyWithSignature(for: mailboxManager)
         Task {
             let latestSendDate = await withTaskGroup(of: Date?.self, returning: Date?.self) { group in
                 for draft in drafts {
@@ -123,7 +122,7 @@ public final class DraftManager {
                         var sendDate: Date?
                         switch draft.action {
                         case .initialSave:
-                            await self.initialSave(draft: draft, mailboxManager: mailboxManager, emptyDraftBody: emptyDraftBody)
+                            await self.initialSave(draft: draft, mailboxManager: mailboxManager)
                         case .save:
                             await self.saveDraftRemotely(draft: draft, mailboxManager: mailboxManager)
                         case .send:
@@ -146,8 +145,30 @@ public final class DraftManager {
         }
     }
 
-    private func initialSave(draft: Draft, mailboxManager: MailboxManager, emptyDraftBody: String) async {
-        guard draft.body != emptyDraftBody && !draft.body.isEmpty else {
+    func isDraftBodyEmpty(_ body: String, for signature: Signature) -> Bool {
+        guard !body.isEmpty else {
+            return false
+        }
+
+        let emptyDraftBody = emptyDraftBodyWithDefaultSignature(for: signature)
+        guard body == emptyDraftBody else {
+            print("body != emptyDraftBody : \(body) ! \(emptyDraftBody)")
+            return false
+        }
+
+        return true
+    }
+
+    private func initialSave(draft: Draft, mailboxManager: MailboxManager) async {
+        guard let defaultSignature = defaultSignature(for: mailboxManager) else {
+            SentrySDK.capture(message: "No default signature available")
+            assertionFailure("No default signature available")
+            return
+        }
+
+        let isDraftEmpty = isDraftBodyEmpty(draft.body, for: defaultSignature)
+        print("••• isDraftEmpty:\(isDraftEmpty)")
+        guard !isDraftEmpty else {
             deleteEmptyDraft(draft: draft, for: mailboxManager)
             return
         }
@@ -203,13 +224,15 @@ public final class DraftManager {
         }
     }
 
-    private func emptyDraftBodyWithSignature(for mailboxManager: MailboxManager) -> String {
+    private func emptyDraftBodyWithDefaultSignature(for signature: Signature) -> String {
+        return signature.appendSignature(to: "")
+    }
+
+    private func defaultSignature(for mailboxManager: MailboxManager) -> Signature? {
         guard let signature = mailboxManager.getStoredSignatures().defaultSignature else {
-            SentrySDK.capture(message: "No default signature available to generate base body")
-            assertionFailure("No default signature available to generate base body")
-            return ""
+            return nil
         }
 
-        return Draft.appendsSignature(signature, to: "")
+        return signature
     }
 }

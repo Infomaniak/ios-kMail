@@ -84,6 +84,10 @@ struct ComposeMessageBodyView: View {
                 break
             }
         }
+        .onChange(of: draft) { newValue in
+            // TODO: remove
+            print("a change draft.body :\(newValue.body)")
+        }
         .fullScreenCover(isPresented: $isShowingCamera) {
             CameraPicker { data in
                 attachmentsManager.importAttachments(attachments: [data])
@@ -141,13 +145,13 @@ struct ComposeMessageBodyView: View {
         guard draft.identityId == nil || draft.identityId?.isEmpty == true else {
             return
         }
-        
+
         guard let defaultSignature = mailboxManager.getStoredSignatures().defaultSignature else {
             return
         }
-        
+
         let body = $draft.body.wrappedValue
-        let signedBody = Draft.appendsSignature(defaultSignature, to: body)
+        let signedBody = defaultSignature.appendSignature(to: body)
 
         // At this point we have signatures in base up to date, we use the default one.
         $draft.identityId.wrappedValue = "\(defaultSignature.id)"
