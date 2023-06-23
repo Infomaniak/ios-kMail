@@ -29,7 +29,7 @@ struct ComposeMessageCellTextField: View {
 
     var body: some View {
         if autocompletionType == nil {
-            VStack(spacing: UIConstants.composeViewVerticalSpacing) {
+            VStack(spacing: 0) {
                 HStack {
                     Text(type.title)
                         .textStyle(.bodySecondary)
@@ -38,6 +38,8 @@ struct ComposeMessageCellTextField: View {
                         .focused($focusedField, equals: .subject)
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
+                .padding(.vertical, UIConstants.composeViewVerticalSpacing)
+                
                 IKDivider()
             }
             .onTapGesture {

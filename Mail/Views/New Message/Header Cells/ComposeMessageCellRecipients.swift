@@ -80,8 +80,9 @@ struct ComposeMessageCellRecipients: View {
                     }
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
+                .padding(.vertical, UIConstants.composeViewVerticalSpacing)
+
                 IKDivider()
-                    .padding(.top, UIConstants.composeViewVerticalSpacing)
             }
 
             if autocompletionType == type {
