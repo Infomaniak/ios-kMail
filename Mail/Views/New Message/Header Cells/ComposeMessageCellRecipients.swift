@@ -135,8 +135,11 @@ struct ComposeMessageCellRecipients: View {
 
 struct ComposeMessageCellRecipients_Previews: PreviewProvider {
     static var previews: some View {
-        ComposeMessageCellRecipients(recipients: .constant([
-            PreviewHelper.sampleRecipient1, PreviewHelper.sampleRecipient2, PreviewHelper.sampleRecipient3
-        ].toRealmList()), showRecipientsFields: .constant(false), autocompletionType: .constant(nil), type: .bcc)
+        ComposeMessageCellRecipients(
+            recipients: .constant(PreviewHelper.sampleRecipientsList),
+            showRecipientsFields: .constant(false),
+            autocompletionType: .constant(nil),
+            type: .bcc
+        )
     }
 }

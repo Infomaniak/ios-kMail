@@ -55,11 +55,12 @@ struct RecipientField: View {
     var body: some View {
         VStack(spacing: 0) {
             if !recipients.isEmpty {
-                if isCurrentFieldFocused {
-                    FullRecipientsList(recipients: $recipients, focusedField: _focusedField, type: type)
-                } else {
-                    ShortRecipientsList(recipients: recipients, type: type)
-                }
+                RecipientsList(
+                    recipients: $recipients,
+                    focusedField: _focusedField,
+                    isCurrentFieldFocused: isCurrentFieldFocused,
+                    type: type
+                )
             }
 
             RecipientsTextField(text: $currentText, onSubmit: onSubmit, onBackspace: handleBackspaceTextField)
@@ -87,8 +88,6 @@ struct RecipientField: View {
 
 struct RecipientField_Previews: PreviewProvider {
     static var previews: some View {
-        RecipientField(currentText: .constant(""), recipients: .constant([
-            PreviewHelper.sampleRecipient1, PreviewHelper.sampleRecipient2, PreviewHelper.sampleRecipient3
-        ].toRealmList()), type: .to)
+        RecipientField(currentText: .constant(""), recipients: .constant(PreviewHelper.sampleRecipientsList), type: .to)
     }
 }

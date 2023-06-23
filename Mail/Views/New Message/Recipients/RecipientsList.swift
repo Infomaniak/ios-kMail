@@ -19,28 +19,26 @@
 import MailCore
 import RealmSwift
 import SwiftUI
-import WrappingHStack
 
-struct ShortRecipientsList: View {
-    let recipients: RealmSwift.List<Recipient>
+struct RecipientsList: View {
+    @Binding var recipients: RealmSwift.List<Recipient>
+
+    @FocusState var focusedField: ComposeViewFieldType?
+
+    let isCurrentFieldFocused: Bool
     let type: ComposeViewFieldType
 
     var body: some View {
-        HStack(spacing: 8) {
-            RecipientChip(recipient: recipients[0], fieldType: type)
-                .disabled(true)
-
-            if recipients.count > 1 {
-                MoreRecipientsChip(count: recipients.count - 1)
-            }
+        if isCurrentFieldFocused {
+            FullRecipientsList(recipients: $recipients, focusedField: _focusedField, type: type)
+        } else {
+            ShortRecipientsList(recipients: recipients, type: type)
         }
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .alignmentGuide(.newMessageCellAlignment) { d in d[.top] + 21 }
     }
 }
 
-struct ShortRecipientsList_Previews: PreviewProvider {
+struct RecipientsList_Previews: PreviewProvider {
     static var previews: some View {
-        ShortRecipientsList(recipients: PreviewHelper.sampleRecipientsList, type: .to)
+        RecipientsList(recipients: .constant(PreviewHelper.sampleRecipientsList), isCurrentFieldFocused: true, type: .to)
     }
 }

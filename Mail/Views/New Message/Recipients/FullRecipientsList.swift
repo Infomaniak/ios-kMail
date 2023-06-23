@@ -59,6 +59,6 @@ struct FullRecipientsList: View {
 
 struct FullRecipientsList_Previews: PreviewProvider {
     static var previews: some View {
-        FullRecipientsList(recipients: .constant([PreviewHelper.sampleRecipient1].toRealmList()), type: .to)
+        FullRecipientsList(recipients: .constant(PreviewHelper.sampleRecipientsList), type: .to)
     }
 }
