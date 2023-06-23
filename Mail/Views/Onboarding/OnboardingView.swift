@@ -74,7 +74,6 @@ class LoginHandler: InfomaniakLoginDelegate, ObservableObject {
 
     @Published var isLoading = false
     @Published var isPresentingErrorAlert = false
-    //var sceneDelegate: SceneDelegate?
 
     nonisolated func didCompleteLoginWith(code: String, verifier: String) {
         Task {
@@ -127,7 +126,6 @@ class LoginHandler: InfomaniakLoginDelegate, ObservableObject {
         Task {
             do {
                 _ = try await AccountManager.instance.createAndSetCurrentAccount(code: code, codeVerifier: verifier)
-               // sceneDelegate?.showMainView()
                 UIApplication.shared.registerForRemoteNotifications()
             } catch let error as MailError where error == MailError.noMailbox {
                 //sceneDelegate?.showNoMailboxView()
@@ -194,7 +192,6 @@ struct OnboardingView: View {
             VStack(spacing: 24) {
                 if selection == slides.count {
                     MailButton(label: MailResourcesStrings.Localizable.buttonLogin) {
-                        //loginHandler.sceneDelegate = window?.windowScene?.delegate as? SceneDelegate
                         loginHandler.login()
                     }
                     .mailButtonFullWidth(true)
@@ -238,7 +235,6 @@ struct OnboardingView: View {
         .sheet(isPresented: $isPresentingCreateAccount) {
             RegisterView(registrationProcess: .mail) { viewController in
                 guard let viewController else { return }
-               // loginHandler.sceneDelegate = window?.windowScene?.delegate as? SceneDelegate
                 loginHandler.loginAfterAccountCreation(from: viewController)
             }
         }

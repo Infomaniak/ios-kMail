@@ -78,12 +78,15 @@ struct MailApp: App {
     @LazyInjectService var appLockHelper: AppLockHelper
 
     @UIApplicationDelegateAdaptor(AppDelegate.self) private var appDelegate
+
     @Environment(\.scenePhase) private var scenePhase
+
     @AppStorage(UserDefaults.shared.key(.accentColor)) private var accentColor = DefaultPreferences.accentColor
     @AppStorage(UserDefaults.shared.key(.theme)) private var theme = DefaultPreferences.theme
 
-    @State var isAppLocked = false
-    @ObservedObject var accountManager = AccountManager.instance
+    @StateObject private var navigationStore = NavigationStore()
+
+    @ObservedObject private var accountManager = AccountManager.instance
 
     init() {
         Logging.initLogging()
@@ -93,45 +96,48 @@ struct MailApp: App {
 
     var body: some Scene {
         WindowGroup {
-            ZStack {
-                if isAppLocked {
-                    LockedAppView(isAppLocked: $isAppLocked)
-                } else if accountManager.currentAccount != nil,
-                          let currentMailboxManager = accountManager.currentMailboxManager {
-                    SplitView()
-                        .environment(\.realmConfiguration, currentMailboxManager.realmConfiguration)
-                        .environmentObject(currentMailboxManager)
-                } else {
-                    OnboardingView()
+            RootView(rootViewState: navigationStore.rootViewState)
+                .environmentObject(navigationStore)
+                .onAppear {
+                    updateUI(accent: accentColor, theme: theme)
                 }
-            }
-            .onAppear {
-                updateUI(accent: accentColor, theme: theme)
-            }
-            .onChange(of: theme) { newTheme in
-                updateUI(accent: accentColor, theme: newTheme)
-            }
-            .onChange(of: accentColor) { newAccentColor in
-                updateUI(accent: newAccentColor, theme: theme)
-            }
-            .onChange(of: scenePhase) { newScenePhase in
-                switch newScenePhase {
-                case .active:
-                    refreshCacheData()
-                    isAppLocked = UserDefaults.shared.isAppLockEnabled && appLockHelper.isAppLocked
-                case .background:
-                    if UserDefaults.shared.isAppLockEnabled && !isAppLocked {
-                        appLockHelper.setTime()
+                .onChange(of: theme) { newTheme in
+                    updateUI(accent: accentColor, theme: newTheme)
+                }
+                .onChange(of: accentColor) { newAccentColor in
+                    updateUI(accent: newAccentColor, theme: theme)
+                }
+                .onChange(of: scenePhase) { newScenePhase in
+                    switch newScenePhase {
+                    case .active:
+                        refreshCacheData()
+                        if UserDefaults.shared.isAppLockEnabled
+                            && appLockHelper.isAppLocked
+                            && accountManager.currentAccount != nil {
+                            navigationStore.transitionToRootViewDestination(.appLocked)
+                        }
+                    case .background:
+                        if UserDefaults.shared.isAppLockEnabled && navigationStore.rootViewState != .appLocked {
+                            appLockHelper.setTime()
+                        }
+                    case .inactive:
+                        Task {
+                            await NotificationsHelper.updateUnreadCountBadge()
+                        }
+                    @unknown default:
+                        break
                     }
-                case .inactive:
-                    break
-                @unknown default:
-                    break
                 }
-            }
-            .onChange(of: accountManager.currentAccount) { _ in
-                refreshCacheData()
-            }
+                .onChange(of: accountManager.currentAccount) { _ in
+                    refreshCacheData()
+                }
+                .onChange(of: accountManager.currentMailboxId) { _ in
+                    if accountManager.currentAccount == nil {
+                        navigationStore.transitionToRootViewDestination(.onboarding)
+                    } else if navigationStore.rootViewState != .appLocked {
+                        navigationStore.transitionToRootViewDestination(.mainView)
+                    }
+                }
         }
         .defaultAppStorage(.shared)
     }

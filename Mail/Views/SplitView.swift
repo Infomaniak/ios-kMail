@@ -33,25 +33,20 @@ public class SplitViewManager: ObservableObject {
 }
 
 struct SplitView: View {
-    @Environment(\.horizontalSizeClass) var horizontalSizeClass
-    @Environment(\.verticalSizeClass) var verticalSizeClass
-    @Environment(\.window) var window
+    @Environment(\.isCompactWindow) var isCompactWindow
 
-    @EnvironmentObject var mailboxManager: MailboxManager
+    @EnvironmentObject var navigationStore: NavigationStore
 
     @State var splitViewController: UISplitViewController?
 
     @StateObject private var navigationDrawerController = NavigationDrawerState()
-    @StateObject private var navigationStore = NavigationStore()
     @StateObject private var splitViewManager = SplitViewManager()
 
-    private var isCompact: Bool {
-        UIConstants.isCompact(horizontalSizeClass: horizontalSizeClass, verticalSizeClass: verticalSizeClass)
-    }
+    let mailboxManager: MailboxManager
 
     var body: some View {
         Group {
-            if isCompact {
+            if isCompactWindow {
                 ZStack {
                     NBNavigationStack(path: $navigationStore.threadPath) {
                         ThreadListManagerView()
@@ -102,7 +97,7 @@ struct SplitView: View {
             }
         }
         .onAppear {
-            // AppDelegate.orientationLock = .all
+            AppDelegate.orientationLock = .all
         }
         .task(id: mailboxManager.mailbox.objectId) {
             await fetchSignatures()
@@ -116,16 +111,16 @@ struct SplitView: View {
             setupBehaviour(orientation: interfaceOrientation)
         }
         .introspectSplitViewController { splitViewController in
-            guard let interfaceOrientation = window?.windowScene?.interfaceOrientation,
+            guard let interfaceOrientation = splitViewController.view.window?.windowScene?.interfaceOrientation,
                   self.splitViewController != splitViewController else { return }
             self.splitViewController = splitViewController
             splitViewManager.splitViewController = splitViewController
             setupBehaviour(orientation: interfaceOrientation)
         }
-        .environment(\.isCompactWindow, horizontalSizeClass == .compact || verticalSizeClass == .compact)
         .environmentObject(splitViewManager)
         .environmentObject(navigationDrawerController)
-        .environmentObject(navigationStore)
+        .environmentObject(mailboxManager)
+        .environment(\.realmConfiguration, mailboxManager.realmConfiguration)
     }
 
     private func setupBehaviour(orientation: UIInterfaceOrientation) {
