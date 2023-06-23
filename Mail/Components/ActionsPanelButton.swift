@@ -22,8 +22,6 @@ import MailResources
 import SwiftUI
 
 struct ActionsPanelButton<Content: View>: View {
-    @Environment(\.isCompactWindow) private var isCompactWindow
-
     @State private var actionsTarget: ActionsTarget?
 
     var message: Message?
