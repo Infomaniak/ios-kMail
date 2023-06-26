@@ -23,6 +23,7 @@ import InfomaniakDI
 import MailResources
 import RealmSwift
 import Sentry
+import SwiftSoup
 import UIKit
 
 struct DraftQueueElement {
@@ -65,6 +66,10 @@ actor DraftQueue {
 }
 
 public final class DraftManager {
+    
+    
+    static public let signatureClassName = "editorUserSignature"
+    
     private let draftQueue = DraftQueue()
     private static let saveExpirationSec = 3
 
@@ -145,18 +150,29 @@ public final class DraftManager {
         }
     }
 
-    func isDraftBodyEmpty(_ body: String, for signature: Signature) -> Bool {
+    /// Check if once the Signature node is removed, we still have content
+    func isDraftBodyEmptyOfChanges(_ body: String, for signature: Signature) throws -> Bool {
         guard !body.isEmpty else {
-            return false
+            return true
         }
+        
+        // Load DOM structure
+        let document = try SwiftSoup.parse(body)
 
-        let emptyDraftBody = emptyDraftBodyWithDefaultSignature(for: signature)
-        guard body == emptyDraftBody else {
-            print("body != emptyDraftBody : \(body) ! \(emptyDraftBody)")
-            return false
+        let text = try document.text(trimAndNormaliseWhitespace: true)
+        print("••• text before = `\(text)`")
+        
+        // Remove the signature node
+        guard let signatureNode = try document.getElementsByClass(Self.signatureClassName).first() else {
+            return !document.hasText()
         }
+        try signatureNode.remove()
 
-        return true
+        let text2 = try document.text(trimAndNormaliseWhitespace: true)
+        print("••• text after = `\(text2)`")
+        
+        // Do we still have text ?
+        return !document.hasText()
     }
 
     private func initialSave(draft: Draft, mailboxManager: MailboxManager) async {
@@ -166,7 +182,7 @@ public final class DraftManager {
             return
         }
 
-        let isDraftEmpty = isDraftBodyEmpty(draft.body, for: defaultSignature)
+        let isDraftEmpty = (try? isDraftBodyEmptyOfChanges(draft.body, for: defaultSignature)) ?? false
         print("••• isDraftEmpty:\(isDraftEmpty)")
         guard !isDraftEmpty else {
             deleteEmptyDraft(draft: draft, for: mailboxManager)
@@ -222,10 +238,6 @@ public final class DraftManager {
             }
             realm.delete(object)
         }
-    }
-
-    private func emptyDraftBodyWithDefaultSignature(for signature: Signature) -> String {
-        return signature.appendSignature(to: "")
     }
 
     private func defaultSignature(for mailboxManager: MailboxManager) -> Signature? {
