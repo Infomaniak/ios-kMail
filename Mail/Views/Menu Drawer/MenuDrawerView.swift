@@ -16,7 +16,6 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import InfomaniakBugTracker
 import InfomaniakCore
 import InfomaniakCoreUI
 import InfomaniakDI
@@ -130,6 +129,7 @@ struct MenuDrawerView: View {
     @EnvironmentObject private var splitViewManager: SplitViewManager
 
     @StateObject private var viewModel: MenuDrawerViewModel
+    @State private var isShowingRestoreMails = false
 
     let mailboxManager: MailboxManager
 
@@ -159,16 +159,13 @@ struct MenuDrawerView: View {
                         IKDivider(hasVerticalPadding: true, horizontalPadding: UIConstants.menuDrawerHorizontalPadding)
                     }
                     Group {
-                        MenuDrawerItemsListView(
-                            title: MailResourcesStrings.Localizable.menuDrawerAdvancedActions,
-                            content: viewModel.actionsMenuItems,
-                            matomoName: "advancedActions"
+                        MenuDrawerItemsAdvancedListView(
+                            mailboxCanRestoreEmails: mailboxManager.mailbox.permissions?.canRestoreEmails == true
                         )
 
                         IKDivider(hasVerticalPadding: true, horizontalPadding: UIConstants.menuDrawerHorizontalPadding)
 
-                        MenuDrawerItemsListView(content: viewModel.helpMenuItems)
-
+                        MenuDrawerItemsHelpListView()
                         if viewModel.mailbox.isLimited, let quotas = viewModel.mailbox.quotas {
                             IKDivider(hasVerticalPadding: true, horizontalPadding: UIConstants.menuDrawerHorizontalPadding)
 
@@ -185,16 +182,6 @@ struct MenuDrawerView: View {
         }
         .background(MailResourcesAsset.backgroundSecondaryColor.swiftUIColor.ignoresSafeArea())
         .environment(\.folderCellType, .link)
-        .sheet(isPresented: $viewModel.isShowingHelp) {
-            HelpView()
-                .sheetViewStyle()
-        }
-        .sheet(isPresented: $viewModel.isShowingBugTracker) {
-            BugTrackerView(isPresented: $viewModel.isShowingBugTracker)
-        }
-        .floatingPanel(isPresented: $viewModel.isShowingRestoreMails) {
-            RestoreEmailsView()
-        }
     }
 }
 

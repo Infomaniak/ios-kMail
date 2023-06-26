@@ -56,12 +56,6 @@ class MenuDrawerViewModel: ObservableObject {
     /// User created folders for the current mailbox
     @Published var userFolders = [NestableFolder]()
 
-    @Published var helpMenuItems = [MenuItem]()
-    @Published var actionsMenuItems = [MenuItem]()
-    @Published var isShowingHelp = false
-    @Published var isShowingBugTracker = false
-    @Published var isShowingRestoreMails = false
-
     private var foldersObservationToken: NotificationToken?
     private var mailboxesObservationToken: NotificationToken?
 
@@ -103,62 +97,10 @@ class MenuDrawerViewModel: ObservableObject {
                     break
                 }
             }
-
-        createMenuItems()
     }
 
     private func handleFoldersUpdate(_ folders: Results<Folder>) {
         roleFolders = NestableFolder.createFoldersHierarchy(from: Array(folders.where { $0.role != nil }))
         userFolders = NestableFolder.createFoldersHierarchy(from: Array(folders.where { $0.role == nil }))
-    }
-
-    func createMenuItems() {
-        helpMenuItems = [
-            MenuItem(icon: MailResourcesAsset.feedback,
-                     label: MailResourcesStrings.Localizable.buttonFeedback,
-                     matomoName: "feedback",
-                     action: sendFeedback),
-            MenuItem(icon: MailResourcesAsset.help,
-                     label: MailResourcesStrings.Localizable.buttonHelp,
-                     matomoName: "help",
-                     action: openHelp)
-        ]
-
-        actionsMenuItems = [
-            MenuItem(icon: MailResourcesAsset.drawerDownload,
-                     label: MailResourcesStrings.Localizable.buttonImportEmails,
-                     matomoName: "importEmails",
-                     action: importMails)
-        ]
-        if mailbox.permissions?.canRestoreEmails == true {
-            actionsMenuItems.append(.init(
-                icon: MailResourcesAsset.restoreArrow,
-                label: MailResourcesStrings.Localizable.buttonRestoreEmails,
-                matomoName: "restoreEmails",
-                action: restoreMails
-            ))
-        }
-    }
-
-    // MARK: - Menu actions
-
-    private func sendFeedback() {
-        if AccountManager.instance.currentAccount?.user?.isStaff == true {
-            isShowingBugTracker.toggle()
-        } else if let userReportURL = URL(string: MailResourcesStrings.Localizable.urlUserReportiOS) {
-            UIApplication.shared.open(userReportURL)
-        }
-    }
-
-    private func openHelp() {
-        isShowingHelp.toggle()
-    }
-
-    private func importMails() {
-        UIApplication.shared.open(URLConstants.importMails.url)
-    }
-
-    private func restoreMails() {
-        isShowingRestoreMails = true
     }
 }
