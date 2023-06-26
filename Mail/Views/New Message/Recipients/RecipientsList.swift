@@ -40,6 +40,7 @@ struct RecipientsList: View {
             }
         }
         .animation(.spring().speed(2), value: isCurrentFieldFocused)
+        .alignmentGuide(.newMessageCellAlignment) { d in d[.top] + 21 }
     }
 }
 

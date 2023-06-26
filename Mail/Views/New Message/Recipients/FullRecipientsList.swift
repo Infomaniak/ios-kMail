@@ -37,7 +37,6 @@ struct FullRecipientsList: View {
             }
             .focused($focusedField, equals: .chip(type.hashValue, recipients[i]))
         }
-        .alignmentGuide(.newMessageCellAlignment) { d in d[.top] + 21 }
     }
 
     @MainActor private func remove(recipientAt: Int) {

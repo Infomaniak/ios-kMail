@@ -37,7 +37,6 @@ struct ShortRecipientsList: View {
             }
         }
         .frame(maxWidth: .infinity, alignment: .leading)
-        .alignmentGuide(.newMessageCellAlignment) { d in d[.top] + 21 }
     }
 }
 
