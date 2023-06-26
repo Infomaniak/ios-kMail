@@ -102,35 +102,14 @@ final class SignatureTests: XCTestCase {
 
     // MARK: - Empty body detection
 
-    /// Testing detection of empty body with simple HTML signatures
-    func testEmptyBodyDetection_SimpleSignature() {
+    /// Testing detection of empty body; abstracted of the signature used
+    func testEmptyBodyDetection() {
         // GIVEN
-        let mckSignature = Signature()
-        mckSignature.content = Self.basicSignature
-        mckSignature.position = .afterReplyMessage
         let draftManager = DraftManager()
 
         // WHEN
         do {
-            let isBodyEmpty = try draftManager.isDraftBodyEmptyOfChanges(Self.domBodyWithbasicSignature, for: mckSignature)
-
-            XCTAssertTrue(isBodyEmpty, "we should detect and empty body")
-        } catch {
-            XCTFail("Unexpected :\(error)")
-        }
-    }
-
-    /// Testing detection of empty body with complex HTML signatures
-    func testEmptyBodyDetection_ComplexSignature() {
-        // GIVEN
-        let mckSignature = Signature()
-        mckSignature.content = Self.htmlSignature
-        mckSignature.position = .beforeReplyMessage
-        let draftManager = DraftManager()
-
-        // WHEN
-        do {
-            let isBodyEmpty = try draftManager.isDraftBodyEmptyOfChanges(Self.domBodyWithHtmlSignature, for: mckSignature)
+            let isBodyEmpty = try draftManager.isDraftBodyEmptyOfChanges(Self.domBodyWithbasicSignature)
 
             XCTAssertTrue(isBodyEmpty, "we should detect and empty body")
         } catch {
@@ -140,40 +119,15 @@ final class SignatureTests: XCTestCase {
 
     // MARK: - Not Empty body detection
 
-    /// Testing detection of non empty body with simple HTML signatures
-    func testNonEmptyBodyDetection_SimpleSignature() {
+    /// Testing detection of non empty body; abstracted of the signature used
+    func testNonEmptyBodyDetection() {
         // GIVEN
-        let mckSignature = Signature()
-        mckSignature.content = Self.basicSignature
-        mckSignature.position = .afterReplyMessage
         let draftManager = DraftManager()
 
         // WHEN
         do {
             let isBodyEmpty = try draftManager.isDraftBodyEmptyOfChanges(
-                Self.domBodyWithContentAndSimpleSignature,
-                for: mckSignature
-            )
-
-            XCTAssertFalse(isBodyEmpty, "we should detect a non empty body")
-        } catch {
-            XCTFail("Unexpected :\(error)")
-        }
-    }
-
-    /// Testing detection of empty body with complex HTML signatures
-    func testNonEmptyBodyDetection_ComplexSignature() {
-        // GIVEN
-        let mckSignature = Signature()
-        mckSignature.content = Self.htmlSignature
-        mckSignature.position = .beforeReplyMessage
-        let draftManager = DraftManager()
-
-        // WHEN
-        do {
-            let isBodyEmpty = try draftManager.isDraftBodyEmptyOfChanges(
-                Self.domBodyWithContentAndComplexSignature,
-                for: mckSignature
+                Self.domBodyWithContentAndSimpleSignature
             )
 
             XCTAssertFalse(isBodyEmpty, "we should detect a non empty body")

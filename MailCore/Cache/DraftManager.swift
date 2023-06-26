@@ -75,7 +75,9 @@ public final class DraftManager {
     @LazyInjectService private var matomo: MatomoUtils
 
     /// Used by DI only
-    public init() {}
+    public init() {
+        // META: Silencing Sonarcloud
+    }
 
     /// Save a draft server side
     private func saveDraftRemotely(draft: Draft, mailboxManager: MailboxManager) async {
@@ -150,7 +152,7 @@ public final class DraftManager {
     }
 
     /// Check if once the Signature node is removed, we still have content
-    func isDraftBodyEmptyOfChanges(_ body: String, for signature: Signature) throws -> Bool {
+    func isDraftBodyEmptyOfChanges(_ body: String) throws -> Bool {
         guard !body.isEmpty else {
             return true
         }
@@ -169,14 +171,8 @@ public final class DraftManager {
     }
 
     private func initialSave(draft: Draft, mailboxManager: MailboxManager) async {
-        guard let defaultSignature = defaultSignature(for: mailboxManager) else {
-            SentrySDK.capture(message: "No default signature available")
-            assertionFailure("No default signature available")
-            return
-        }
-
         // We consider the body to be not-empty on HTML parsing failure to keep user content.
-        let isDraftEmpty = (try? isDraftBodyEmptyOfChanges(draft.body, for: defaultSignature)) ?? false
+        let isDraftEmpty = (try? isDraftBodyEmptyOfChanges(draft.body)) ?? false
         guard !isDraftEmpty else {
             deleteEmptyDraft(draft: draft, for: mailboxManager)
             return
