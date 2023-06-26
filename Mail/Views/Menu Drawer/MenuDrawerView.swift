@@ -146,7 +146,7 @@ struct MenuDrawerView: View {
             ScrollView {
                 VStack(spacing: 0) {
                     Group {
-                        MailboxesManagementView(mailboxes: viewModel.mailboxes)
+                        MailboxesManagementView()
 
                         IKDivider(hasVerticalPadding: true, horizontalPadding: UIConstants.menuDrawerHorizontalPadding)
 
@@ -166,7 +166,7 @@ struct MenuDrawerView: View {
                         IKDivider(hasVerticalPadding: true, horizontalPadding: UIConstants.menuDrawerHorizontalPadding)
 
                         MenuDrawerItemsHelpListView()
-                        if viewModel.mailbox.isLimited, let quotas = viewModel.mailbox.quotas {
+                        if mailboxManager.mailbox.isLimited, let quotas = mailboxManager.mailbox.quotas {
                             IKDivider(hasVerticalPadding: true, horizontalPadding: UIConstants.menuDrawerHorizontalPadding)
 
                             MailboxQuotaView(quotas: quotas)
