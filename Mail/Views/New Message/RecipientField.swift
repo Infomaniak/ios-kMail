@@ -65,9 +65,10 @@ struct RecipientField: View {
 
             RecipientsTextField(text: $currentText, onSubmit: onSubmit, onBackspace: handleBackspaceTextField)
                 .focused($focusedField, equals: type)
-                .frame(width: isExpanded ? nil : 0, height: isExpanded ? nil : 0)
                 .padding(.top, isCurrentFieldFocused && !recipients.isEmpty ? 4 : 0)
-                .padding(EdgeInsets(uiEdgeInsets: UIConstants.chipInsets))
+                .padding(.top, UIConstants.chipInsets.top)
+                .padding(.bottom, UIConstants.chipInsets.bottom)
+                .frame(width: isExpanded ? nil : 0, height: isExpanded ? nil : 0)
         }
         .onReceive(NotificationCenter.default.publisher(for: UIResponder.keyboardDidShowNotification)) { output in
             if let userInfo = output.userInfo,
