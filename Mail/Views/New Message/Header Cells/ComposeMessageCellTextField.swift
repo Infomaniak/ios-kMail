@@ -36,9 +36,10 @@ struct ComposeMessageCellTextField: View {
 
                     TextField("", text: $text)
                         .focused($focusedField, equals: .subject)
+                        .textStyle(.body)
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
-                .padding(.vertical, UIConstants.composeViewVerticalSpacing)
+                .padding(.vertical, UIConstants.composeViewHeaderCellLargeVerticalSpacing)
                 
                 IKDivider()
             }

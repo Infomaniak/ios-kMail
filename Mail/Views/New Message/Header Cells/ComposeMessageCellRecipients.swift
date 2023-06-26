@@ -80,7 +80,7 @@ struct ComposeMessageCellRecipients: View {
                     }
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
-                .padding(.vertical, UIConstants.composeViewVerticalSpacing)
+                .padding(.vertical, UIConstants.composeViewHeaderCellVerticalSpacing)
 
                 IKDivider()
             }
