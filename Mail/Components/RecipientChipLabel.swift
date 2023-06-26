@@ -22,6 +22,8 @@ import SwiftUI
 import UIKit
 
 struct RecipientChipLabelView: UIViewRepresentable {
+    @Environment(\.isEnabled) private var isEnabled: Bool
+
     let recipient: Recipient
     var removeHandler: (() -> Void)?
     var switchFocusHandler: (() -> Void)?
@@ -38,6 +40,7 @@ struct RecipientChipLabelView: UIViewRepresentable {
 
     func updateUIView(_ uiLabel: RecipientChipLabel, context: Context) {
         uiLabel.text = recipient.name.isEmpty ? recipient.email : recipient.name
+        uiLabel.isUserInteractionEnabled = isEnabled
     }
 }
 
@@ -52,7 +55,7 @@ class RecipientChipLabel: UILabel, UIKeyInput {
         return contentSize
     }
 
-    override var canBecomeFirstResponder: Bool { return true }
+    override var canBecomeFirstResponder: Bool { return isUserInteractionEnabled }
 
     var hasText = false
 

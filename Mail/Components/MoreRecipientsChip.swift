@@ -43,6 +43,6 @@ struct MoreRecipientsChip: View {
 
 struct MoreRecipientsChip_Previews: PreviewProvider {
     static var previews: some View {
-        MoreRecipientsChip(count: 4)
+        MoreRecipientsChip(count: 42)
     }
 }

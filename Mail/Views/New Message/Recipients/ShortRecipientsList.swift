@@ -19,7 +19,6 @@
 import MailCore
 import RealmSwift
 import SwiftUI
-import WrappingHStack
 
 struct ShortRecipientsList: View {
     let recipients: RealmSwift.List<Recipient>
