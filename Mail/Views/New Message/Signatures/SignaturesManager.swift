@@ -17,10 +17,16 @@
  */
 
 import MailCore
-import SwiftUI
 import Sentry
+import SwiftUI
 
 final class SignaturesManager: ObservableObject {
+    /// Local errors for SignaturesManager type
+    private enum ErrorDomain: Error {
+        /// After an update from the server we are still without a default signature
+        case defaultSignatureMissing
+    }
+
     /// Represents the loading state
     enum SignaturesLoadingState: Equatable {
         static func == (lhs: SignaturesManager.SignaturesLoadingState, rhs: SignaturesManager.SignaturesLoadingState) -> Bool {
@@ -56,7 +62,11 @@ final class SignaturesManager: ObservableObject {
             do {
                 // load all signatures every time
                 try await mailboxManager.refreshAllSignatures()
-                assert(mailboxManager.getStoredSignatures().defaultSignature != nil, "Expecting a default signature")
+
+                // If after a refresh we have no default signature we bail
+                guard mailboxManager.getStoredSignatures().defaultSignature != nil else {
+                    throw ErrorDomain.defaultSignatureMissing
+                }
 
                 await MainActor.run {
                     loadingSignatureState = .success
