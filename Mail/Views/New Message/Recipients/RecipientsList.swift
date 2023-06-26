@@ -29,11 +29,17 @@ struct RecipientsList: View {
     let type: ComposeViewFieldType
 
     var body: some View {
-        if isCurrentFieldFocused {
-            FullRecipientsList(recipients: $recipients, focusedField: _focusedField, type: type)
-        } else {
+        ZStack {
             ShortRecipientsList(recipients: recipients, type: type)
+                .opacity(isCurrentFieldFocused ? 0 : 1)
+                .transition(.opacity)
+
+            if isCurrentFieldFocused {
+                FullRecipientsList(recipients: $recipients, focusedField: _focusedField, type: type)
+                    .transition(.opacity)
+            }
         }
+        .animation(.spring().speed(2), value: isCurrentFieldFocused)
     }
 }
 

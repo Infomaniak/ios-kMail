@@ -27,8 +27,10 @@ struct ShortRecipientsList: View {
 
     var body: some View {
         HStack(spacing: 8) {
-            RecipientChip(recipient: recipients[0], fieldType: type)
-                .disabled(true)
+            if let recipient = recipients.first {
+                RecipientChip(recipient: recipient, fieldType: type)
+                    .disabled(true)
+            }
 
             if recipients.count > 1 {
                 MoreRecipientsChip(count: recipients.count - 1)
