@@ -46,7 +46,7 @@ struct NestableFolder: Identifiable {
     }
 }
 
-class MenuDrawerViewModel: ObservableObject {
+class FolderListViewModel: ObservableObject {
     /// Special folders (eg. Inbox) for the current mailbox
     @Published var roleFolders = [NestableFolder]()
     /// User created folders for the current mailbox
@@ -81,5 +81,21 @@ class MenuDrawerViewModel: ObservableObject {
     private func handleFoldersUpdate(_ folders: Results<Folder>) {
         roleFolders = NestableFolder.createFoldersHierarchy(from: Array(folders.where { $0.role != nil }))
         userFolders = NestableFolder.createFoldersHierarchy(from: Array(folders.where { $0.role == nil }))
+    }
+}
+
+struct FolderListView: View {
+    @StateObject private var viewModel: FolderListViewModel
+
+    init(mailboxManager: MailboxManager) {
+        _viewModel = StateObject(wrappedValue: FolderListViewModel(mailboxManager: mailboxManager))
+    }
+
+    var body: some View {
+        RoleFoldersListView(folders: viewModel.roleFolders)
+
+        IKDivider(hasVerticalPadding: true, horizontalPadding: UIConstants.menuDrawerHorizontalPadding)
+
+        UserFoldersListView(folders: viewModel.userFolders)
     }
 }

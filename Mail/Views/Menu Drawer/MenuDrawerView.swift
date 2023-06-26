@@ -94,7 +94,7 @@ struct NavigationDrawer: View {
 
             GeometryReader { geometryProxy in
                 HStack {
-                    MenuDrawerView(mailboxManager: mailboxManager)
+                    MenuDrawerView()
                         .frame(maxWidth: maxWidth)
                         .padding(.trailing, spacing)
                         .offset(x: navigationDrawerState.isOpen ? offsetWidth : -geometryProxy.size.width)
@@ -127,16 +127,9 @@ struct MenuDrawerView: View {
     @LazyInjectService private var matomo: MatomoUtils
 
     @EnvironmentObject private var splitViewManager: SplitViewManager
+    @EnvironmentObject private var mailboxManager: MailboxManager
 
-    @StateObject private var viewModel: MenuDrawerViewModel
     @State private var isShowingRestoreMails = false
-
-    let mailboxManager: MailboxManager
-
-    init(mailboxManager: MailboxManager) {
-        _viewModel = StateObject(wrappedValue: MenuDrawerViewModel(mailboxManager: mailboxManager))
-        self.mailboxManager = mailboxManager
-    }
 
     var body: some View {
         VStack(spacing: 0) {
@@ -150,11 +143,7 @@ struct MenuDrawerView: View {
 
                         IKDivider(hasVerticalPadding: true, horizontalPadding: UIConstants.menuDrawerHorizontalPadding)
 
-                        RoleFoldersListView(folders: viewModel.roleFolders)
-
-                        IKDivider(hasVerticalPadding: true, horizontalPadding: UIConstants.menuDrawerHorizontalPadding)
-
-                        UserFoldersListView(folders: viewModel.userFolders)
+                        FolderListView(mailboxManager: mailboxManager)
 
                         IKDivider(hasVerticalPadding: true, horizontalPadding: UIConstants.menuDrawerHorizontalPadding)
                     }
@@ -194,7 +183,8 @@ struct AppVersionView: View {
 
 struct MenuDrawerView_Previews: PreviewProvider {
     static var previews: some View {
-        MenuDrawerView(mailboxManager: PreviewHelper.sampleMailboxManager)
+        MenuDrawerView()
+            .environmentObject(PreviewHelper.sampleMailboxManager)
             .environmentObject(NavigationDrawerState())
     }
 }
