@@ -31,6 +31,7 @@ struct RecipientsTextField: UIViewRepresentable {
         textField.addTarget(context.coordinator, action: #selector(context.coordinator.textDidChanged(_:)), for: .editingChanged)
         textField.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
         textField.setContentHuggingPriority(.defaultHigh, for: .vertical)
+        textField.font = .systemFont(ofSize: 16)
         textField.onBackspace = onBackspace
         return textField
     }
