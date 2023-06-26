@@ -84,10 +84,6 @@ struct ComposeMessageBodyView: View {
                 break
             }
         }
-        .onChange(of: draft) { newValue in
-            // TODO: remove
-            print("a change draft.body :\(newValue.body)")
-        }
         .fullScreenCover(isPresented: $isShowingCamera) {
             CameraPicker { data in
                 attachmentsManager.importAttachments(attachments: [data])

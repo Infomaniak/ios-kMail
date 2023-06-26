@@ -66,10 +66,9 @@ actor DraftQueue {
 }
 
 public final class DraftManager {
-    
-    
-    static public let signatureClassName = "editorUserSignature"
-    
+    /// Node used to identify the signature in DOM
+    public static let signatureClassName = "editorUserSignature"
+
     private let draftQueue = DraftQueue()
     private static let saveExpirationSec = 3
 
@@ -155,22 +154,16 @@ public final class DraftManager {
         guard !body.isEmpty else {
             return true
         }
-        
+
         // Load DOM structure
         let document = try SwiftSoup.parse(body)
 
-        let text = try document.text(trimAndNormaliseWhitespace: true)
-        print("••• text before = `\(text)`")
-        
         // Remove the signature node
         guard let signatureNode = try document.getElementsByClass(Self.signatureClassName).first() else {
             return !document.hasText()
         }
         try signatureNode.remove()
 
-        let text2 = try document.text(trimAndNormaliseWhitespace: true)
-        print("••• text after = `\(text2)`")
-        
         // Do we still have text ?
         return !document.hasText()
     }
@@ -182,8 +175,8 @@ public final class DraftManager {
             return
         }
 
+        // We consider the body to be not-empty on HTML parsing failure to keep user content.
         let isDraftEmpty = (try? isDraftBodyEmptyOfChanges(draft.body, for: defaultSignature)) ?? false
-        print("••• isDraftEmpty:\(isDraftEmpty)")
         guard !isDraftEmpty else {
             deleteEmptyDraft(draft: draft, for: mailboxManager)
             return
