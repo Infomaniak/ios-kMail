@@ -16,7 +16,6 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import InfomaniakBugTracker
 import InfomaniakCore
 import InfomaniakCoreUI
 import InfomaniakDI
@@ -95,7 +94,7 @@ struct NavigationDrawer: View {
 
             GeometryReader { geometryProxy in
                 HStack {
-                    MenuDrawerView(mailboxManager: mailboxManager)
+                    MenuDrawerView()
                         .frame(maxWidth: maxWidth)
                         .padding(.trailing, spacing)
                         .offset(x: navigationDrawerState.isOpen ? offsetWidth : -geometryProxy.size.width)
@@ -128,15 +127,9 @@ struct MenuDrawerView: View {
     @LazyInjectService private var matomo: MatomoUtils
 
     @EnvironmentObject private var splitViewManager: SplitViewManager
+    @EnvironmentObject private var mailboxManager: MailboxManager
 
-    @StateObject private var viewModel: MenuDrawerViewModel
-
-    let mailboxManager: MailboxManager
-
-    init(mailboxManager: MailboxManager) {
-        _viewModel = StateObject(wrappedValue: MenuDrawerViewModel(mailboxManager: mailboxManager))
-        self.mailboxManager = mailboxManager
-    }
+    @State private var isShowingRestoreMails = false
 
     var body: some View {
         VStack(spacing: 0) {
@@ -146,30 +139,23 @@ struct MenuDrawerView: View {
             ScrollView {
                 VStack(spacing: 0) {
                     Group {
-                        MailboxesManagementView(mailboxes: viewModel.mailboxes)
+                        MailboxesManagementView()
 
                         IKDivider(hasVerticalPadding: true, horizontalPadding: UIConstants.menuDrawerHorizontalPadding)
 
-                        RoleFoldersListView(folders: viewModel.roleFolders)
-
-                        IKDivider(hasVerticalPadding: true, horizontalPadding: UIConstants.menuDrawerHorizontalPadding)
-
-                        UserFoldersListView(folders: viewModel.userFolders)
+                        FolderListView(mailboxManager: mailboxManager)
 
                         IKDivider(hasVerticalPadding: true, horizontalPadding: UIConstants.menuDrawerHorizontalPadding)
                     }
                     Group {
-                        MenuDrawerItemsListView(
-                            title: MailResourcesStrings.Localizable.menuDrawerAdvancedActions,
-                            content: viewModel.actionsMenuItems,
-                            matomoName: "advancedActions"
+                        MenuDrawerItemsAdvancedListView(
+                            mailboxCanRestoreEmails: mailboxManager.mailbox.permissions?.canRestoreEmails == true
                         )
 
                         IKDivider(hasVerticalPadding: true, horizontalPadding: UIConstants.menuDrawerHorizontalPadding)
 
-                        MenuDrawerItemsListView(content: viewModel.helpMenuItems)
-
-                        if viewModel.mailbox.isLimited, let quotas = viewModel.mailbox.quotas {
+                        MenuDrawerItemsHelpListView()
+                        if mailboxManager.mailbox.isLimited, let quotas = mailboxManager.mailbox.quotas {
                             IKDivider(hasVerticalPadding: true, horizontalPadding: UIConstants.menuDrawerHorizontalPadding)
 
                             MailboxQuotaView(quotas: quotas)
@@ -185,16 +171,6 @@ struct MenuDrawerView: View {
         }
         .background(MailResourcesAsset.backgroundSecondaryColor.swiftUIColor.ignoresSafeArea())
         .environment(\.folderCellType, .link)
-        .sheet(isPresented: $viewModel.isShowingHelp) {
-            HelpView()
-                .sheetViewStyle()
-        }
-        .sheet(isPresented: $viewModel.isShowingBugTracker) {
-            BugTrackerView(isPresented: $viewModel.isShowingBugTracker)
-        }
-        .floatingPanel(isPresented: $viewModel.isShowingRestoreMails) {
-            RestoreEmailsView()
-        }
     }
 }
 
@@ -207,7 +183,8 @@ struct AppVersionView: View {
 
 struct MenuDrawerView_Previews: PreviewProvider {
     static var previews: some View {
-        MenuDrawerView(mailboxManager: PreviewHelper.sampleMailboxManager)
+        MenuDrawerView()
+            .environmentObject(PreviewHelper.sampleMailboxManager)
             .environmentObject(NavigationDrawerState())
     }
 }

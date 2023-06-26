@@ -28,10 +28,12 @@ struct MailboxesManagementView: View {
     @EnvironmentObject var mailboxManager: MailboxManager
     @EnvironmentObject var navigationDrawerState: NavigationDrawerState
 
-    @State private var isShowingManageAccount = false
-    @State private var isShowingSwitchAccount = false
-
-    let mailboxes: [Mailbox]
+    @ObservedResults(
+        Mailbox.self,
+        configuration: MailboxInfosManager.instance.realmConfiguration,
+        where: { $0.userId == AccountManager.instance.currentUserId },
+        sortDescriptor: SortDescriptor(keyPath: \Mailbox.mailboxId)
+    ) private var mailboxes
 
     private var otherMailboxes: [Mailbox] {
         return mailboxes.filter { $0.mailboxId != mailboxManager.mailbox.mailboxId }
@@ -80,13 +82,6 @@ struct MailboxesManagementView: View {
                 }
             }
         }
-        .sheet(isPresented: $isShowingSwitchAccount) {
-            AccountListView()
-                .sheetViewStyle()
-        }
-        .sheet(isPresented: $isShowingManageAccount) {
-            AccountView(mailboxes: mailboxes)
-        }
     }
 
     private func updateAccount() async throws {
@@ -97,7 +92,7 @@ struct MailboxesManagementView: View {
 
 struct MailboxesManagementView_Previews: PreviewProvider {
     static var previews: some View {
-        MailboxesManagementView(mailboxes: [PreviewHelper.sampleMailbox])
+        MailboxesManagementView()
             .environmentObject(PreviewHelper.sampleMailboxManager)
             .previewLayout(.sizeThatFits)
             .accentColor(UserDefaults.shared.accentColor.primary.swiftUIColor)

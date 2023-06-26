@@ -78,7 +78,7 @@ struct SplitView: View {
                 }
             } else {
                 NavigationView {
-                    MenuDrawerView(mailboxManager: mailboxManager)
+                    MenuDrawerView()
                         .navigationBarHidden(true)
 
                     ThreadListManagerView()

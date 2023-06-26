@@ -16,6 +16,7 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import InfomaniakBugTracker
 import InfomaniakCore
 import InfomaniakCoreUI
 import InfomaniakDI
@@ -23,21 +24,75 @@ import MailCore
 import MailResources
 import SwiftUI
 
-struct MenuItem: Identifiable {
-    let id = UUID()
+struct MenuDrawerItemsAdvancedListView: View {
+    @State private var isShowingRestoreMails = false
 
-    let icon: MailResourcesImages
-    let label: String
-    let matomoName: String
+    let mailboxCanRestoreEmails: Bool
 
-    let action: () -> Void
+    var body: some View {
+        MenuDrawerItemsListView(title: MailResourcesStrings.Localizable.menuDrawerAdvancedActions,
+                                matomoName: "advancedActions") {
+            MenuDrawerItemCell(icon: MailResourcesAsset.drawerDownload,
+                               label: MailResourcesStrings.Localizable.buttonImportEmails,
+                               matomoName: "importEmails") {
+                UIApplication.shared.open(URLConstants.importMails.url)
+            }
+            if mailboxCanRestoreEmails {
+                MenuDrawerItemCell(
+                    icon: MailResourcesAsset.restoreArrow,
+                    label: MailResourcesStrings.Localizable.buttonRestoreEmails,
+                    matomoName: "restoreEmails"
+                ) {
+                    isShowingRestoreMails = true
+                }
+                .floatingPanel(isPresented: $isShowingRestoreMails) {
+                    RestoreEmailsView()
+                }
+            }
+        }
+    }
 }
 
-struct MenuDrawerItemsListView: View {
-    var title: String?
-    let content: [MenuItem]
+struct MenuDrawerItemsHelpListView: View {
+    @State private var isShowingHelp = false
+    @State private var isShowingBugTracker = false
 
+    var body: some View {
+        MenuDrawerItemsListView {
+            MenuDrawerItemCell(icon: MailResourcesAsset.feedback,
+                               label: MailResourcesStrings.Localizable.buttonFeedback,
+                               matomoName: "feedback") {
+                sendFeedback()
+            }
+            MenuDrawerItemCell(icon: MailResourcesAsset.help,
+                               label: MailResourcesStrings.Localizable.buttonHelp,
+                               matomoName: "help") {
+                isShowingHelp = true
+            }
+        }
+        .sheet(isPresented: $isShowingHelp) {
+            HelpView()
+                .sheetViewStyle()
+        }
+        .sheet(isPresented: $isShowingBugTracker) {
+            BugTrackerView(isPresented: $isShowingBugTracker)
+        }
+    }
+
+    private func sendFeedback() {
+        if AccountManager.instance.currentAccount?.user?.isStaff == true {
+            isShowingBugTracker.toggle()
+        } else if let userReportURL = URL(string: MailResourcesStrings.Localizable.urlUserReportiOS) {
+            UIApplication.shared.open(userReportURL)
+        }
+    }
+}
+
+struct MenuDrawerItemsListView<Content: View>: View {
+    var title: String?
     var matomoName: String?
+
+    @ViewBuilder let content: () -> Content
 
     @State private var isExpanded = false
 
@@ -64,9 +119,7 @@ struct MenuDrawerItemsListView: View {
             }
 
             if title == nil || isExpanded {
-                ForEach(content) { item in
-                    MenuDrawerItemCell(content: item)
-                }
+                content()
             }
         }
         .padding(.horizontal, UIConstants.menuDrawerHorizontalPadding)
@@ -75,16 +128,15 @@ struct MenuDrawerItemsListView: View {
 
 struct ItemsListView_Previews: PreviewProvider {
     static var previews: some View {
-        MenuDrawerItemsListView(title: "Actions avancées",
-                                content: [
-                                    MenuItem(icon: MailResourcesAsset.drawerDownload,
-                                             label: "Importer des mails",
-                                             matomoName: "") { print("Hello") },
-                                    MenuItem(icon: MailResourcesAsset.restoreArrow,
-                                             label: "Restaurer des mails",
-                                             matomoName: "") { print("Hello") }
-                                ])
-                                .previewLayout(.sizeThatFits)
-                                .previewDevice(PreviewDevice(stringLiteral: "iPhone 11 Pro"))
+        MenuDrawerItemsListView(title: "Actions avancées") {
+            MenuDrawerItemCell(icon: MailResourcesAsset.drawerDownload,
+                               label: "Importer des mails",
+                               matomoName: "") { print("Hello") }
+            MenuDrawerItemCell(icon: MailResourcesAsset.restoreArrow,
+                               label: "Restaurer des mails",
+                               matomoName: "") { print("Hello") }
+        }
+        .previewLayout(.sizeThatFits)
+        .previewDevice(PreviewDevice(stringLiteral: "iPhone 11 Pro"))
     }
 }
