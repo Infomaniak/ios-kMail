@@ -78,7 +78,7 @@ struct SplitView: View {
                 }
             } else {
                 NavigationView {
-                    MenuDrawerView(mailboxManager: mailboxManager)
+                    MenuDrawerView()
                         .navigationBarHidden(true)
 
                     ThreadListManagerView()
@@ -170,7 +170,7 @@ struct SplitView: View {
 
     private func fetchSignatures() async {
         await tryOrDisplayError {
-            try await mailboxManager.signatures()
+            try await mailboxManager.refreshAllSignatures()
         }
     }
 

@@ -17,35 +17,33 @@
  */
 
 import MailCore
+import RealmSwift
 import SwiftUI
 
-struct ComposeMessageCellStaticText: View {
-    @Binding var autocompletionType: ComposeViewFieldType?
+struct RecipientsList: View {
+    @FocusState var focusedField: ComposeViewFieldType?
 
+    @Binding var recipients: RealmSwift.List<Recipient>
+
+    let isCurrentFieldFocused: Bool
     let type: ComposeViewFieldType
-    let text: String
 
     var body: some View {
-        if autocompletionType == nil {
-            VStack(spacing: 0) {
-                HStack {
-                    Text(type.title)
-                        .textStyle(.bodySecondary)
-
-                    Text(text)
-                        .textStyle(.body)
-                }
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .padding(.vertical, UIConstants.composeViewHeaderCellLargeVerticalSpacing)
-                
-                IKDivider()
+        Group {
+            if !isCurrentFieldFocused {
+                ShortRecipientsList(recipients: recipients, type: type)
+                    .transition(.opacity.animation(.spring().speed(2)))
+            } else {
+                FullRecipientsList(recipients: $recipients, focusedField: _focusedField, type: type)
+                    .transition(.opacity.animation(.spring().speed(2)))
             }
         }
+        .alignmentGuide(.newMessageCellAlignment) { d in d[.top] + 21 }
     }
 }
 
-struct ComposeMessageStaticText_Previews: PreviewProvider {
+struct RecipientsList_Previews: PreviewProvider {
     static var previews: some View {
-        ComposeMessageCellStaticText(autocompletionType: .constant(nil), type: .from, text: "myaddress@email.com")
+        RecipientsList(recipients: .constant(PreviewHelper.sampleRecipientsList), isCurrentFieldFocused: true, type: .to)
     }
 }

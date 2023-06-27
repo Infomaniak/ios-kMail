@@ -28,10 +28,10 @@ import WrappingHStack
 struct RecipientField: View {
     @State private var keyboardHeight: CGFloat = 0
 
+    @FocusState var focusedField: ComposeViewFieldType?
+
     @Binding var currentText: String
     @Binding var recipients: RealmSwift.List<Recipient>
-
-    @FocusState var focusedField: ComposeViewFieldType?
 
     let type: ComposeViewFieldType
     var onSubmit: (() -> Void)?
@@ -41,22 +41,34 @@ struct RecipientField: View {
         currentText.trimmingCharacters(in: .whitespacesAndNewlines)
     }
 
+    private var isCurrentFieldFocused: Bool {
+        if case let .chip(hash, _) = focusedField {
+            return type.hashValue == hash
+        }
+        return type == focusedField
+    }
+
+    private var isExpanded: Bool {
+        return isCurrentFieldFocused || recipients.isEmpty
+    }
+
     var body: some View {
-        VStack {
+        VStack(spacing: 0) {
             if !recipients.isEmpty {
-                WrappingHStack(recipients.indices, spacing: .constant(8), lineSpacing: 8) { i in
-                    RecipientChip(recipient: recipients[i], fieldType: type, focusedField: _focusedField) {
-                        remove(recipientAt: i)
-                    } switchFocusHandler: {
-                        switchFocus()
-                    }
-                    .focused($focusedField, equals: .chip(type.hashValue, recipients[i]))
-                }
-                .alignmentGuide(.newMessageCellAlignment) { d in d[.top] + 21 }
+                RecipientsList(
+                    focusedField: _focusedField,
+                    recipients: $recipients,
+                    isCurrentFieldFocused: isCurrentFieldFocused,
+                    type: type
+                )
             }
 
             RecipientsTextField(text: $currentText, onSubmit: onSubmit, onBackspace: handleBackspaceTextField)
                 .focused($focusedField, equals: type)
+                .padding(.top, isCurrentFieldFocused && !recipients.isEmpty ? 4 : 0)
+                .padding(.top, UIConstants.chipInsets.top)
+                .padding(.bottom, UIConstants.chipInsets.bottom)
+                .frame(width: isExpanded ? nil : 0, height: isExpanded ? nil : 0)
         }
         .onReceive(NotificationCenter.default.publisher(for: UIResponder.keyboardDidShowNotification)) { output in
             if let userInfo = output.userInfo,
@@ -69,33 +81,15 @@ struct RecipientField: View {
         }
     }
 
-    @MainActor private func remove(recipientAt: Int) {
-        withAnimation {
-            $recipients.remove(at: recipientAt)
-        }
-    }
-
     private func handleBackspaceTextField(isTextEmpty: Bool) {
         if let recipient = recipients.last, isTextEmpty {
             focusedField = .chip(type.hashValue, recipient)
-        }
-    }
-
-    private func switchFocus() {
-        guard case let .chip(hash, recipient) = focusedField else { return }
-
-        if recipient == recipients.last {
-            focusedField = type
-        } else if let recipientIndex = recipients.firstIndex(of: recipient) {
-            focusedField = .chip(hash, recipients[recipientIndex + 1])
         }
     }
 }
 
 struct RecipientField_Previews: PreviewProvider {
     static var previews: some View {
-        RecipientField(currentText: .constant(""), recipients: .constant([
-            PreviewHelper.sampleRecipient1, PreviewHelper.sampleRecipient2, PreviewHelper.sampleRecipient3
-        ].toRealmList()), type: .to)
+        RecipientField(currentText: .constant(""), recipients: .constant(PreviewHelper.sampleRecipientsList), type: .to)
     }
 }

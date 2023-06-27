@@ -24,49 +24,70 @@ public enum SignaturePosition: String, PersistableEnum, Codable {
     case afterReplyMessage = "bottom"
 }
 
-public class SignatureResponse: Object, Decodable, Identifiable {
-    @Persisted(primaryKey: true) public var id = 1
-    @Persisted public var signatures: List<Signature>
-    @Persisted public var defaultSignatureId: Int
-    @Persisted public var validEmails: List<ValidEmail>
-    @Persisted public var position: SignaturePosition
+public struct SignatureResponse: Decodable {
+    public var signatures: [Signature]
 
     public var `default`: Signature? {
-        return signatures.first(where: \.isDefault)
+        signatures.first(where: \.isDefault)
     }
 
     private enum CodingKeys: String, CodingKey {
-        case signatures, defaultSignatureId, validEmails, position
+        case signatures
     }
 }
 
-public class Signature: Object, Codable, Identifiable {
+public final class Signature: Object, Codable, Identifiable {
     @Persisted(primaryKey: true) public var id: Int
     @Persisted public var name: String
     @Persisted public var content: String
-    @Persisted public var replyTo: String
-    @Persisted public var replyToIdn: String
     @Persisted public var replyToId: Int
-    @Persisted public var fullName: String
-    @Persisted public var sender: String
-    @Persisted public var senderIdn: String
     @Persisted public var senderId: Int
-    @Persisted public var hashString: String?
     @Persisted public var isDefault: Bool
     @Persisted public var position: SignaturePosition
 
     private enum CodingKeys: String, CodingKey {
-        case id, name, content, replyTo, replyToIdn, replyToId, fullName, sender, senderIdn, senderId, isDefault, position
-        // Property 'hash' already exists
-        case hashString = "hash"
+        case id, name, content, replyToId, senderId, isDefault, position
+    }
+
+    override public var hash: Int {
+        id
+    }
+
+    override public func isEqual(_ object: Any?) -> Bool {
+        guard let object = object as? Self else {
+            return false
+        }
+
+        return id == object.id
     }
 }
 
-public class ValidEmail: Object, Decodable {
-    @Persisted(primaryKey: true) var id: Int
-    @Persisted var email: String
-    @Persisted var emailIdn: String
-    @Persisted var isAccount: Bool
-    @Persisted var isVerified: Bool
-    @Persisted var isRemovable: Bool
+public extension Signature {
+    /// Appends current signature to an HTML body at correct position
+    func appendSignature(to body: String) -> String {
+        let html = "<br><br><div class=\"editorUserSignature\">\(self.content)</div>"
+
+        var body = body
+        switch self.position {
+        case .beforeReplyMessage:
+            body.insert(contentsOf: html, at: body.startIndex)
+        case .afterReplyMessage:
+            body.append(contentsOf: html)
+        }
+
+        return body
+    }
+}
+
+public extension Array where Element == Signature {
+    /// Find the default signature, if any, in  an `Array` of `Signature`
+    var defaultSignature: Signature? {
+        guard let defaultSignature = first(where: \.isDefault) else {
+            // We try to return at least a signature, so the backend is happy. Same on Android.
+            return first
+        }
+
+        // We matched one
+        return defaultSignature
+    }
 }

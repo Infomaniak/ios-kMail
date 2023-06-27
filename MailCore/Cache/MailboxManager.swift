@@ -74,7 +74,7 @@ public class MailboxManager: ObservableObject {
         let realmName = "\(mailbox.userId)-\(mailbox.mailboxId).realm"
         realmConfiguration = Realm.Configuration(
             fileURL: MailboxManager.constants.rootDocumentsURL.appendingPathComponent(realmName),
-            schemaVersion: 12,
+            schemaVersion: 14,
             deleteRealmIfMigrationNeeded: true,
             objectTypes: [
                 Folder.self,
@@ -84,9 +84,7 @@ public class MailboxManager: ObservableObject {
                 Attachment.self,
                 Recipient.self,
                 Draft.self,
-                SignatureResponse.self,
                 Signature.self,
-                ValidEmail.self,
                 SearchHistory.self
             ]
         )
@@ -125,26 +123,50 @@ public class MailboxManager: ObservableObject {
 
     // MARK: - Signatures
 
-    public func signatures() async throws {
+    public func refreshAllSignatures() async throws {
         // Get from API
         let signaturesResult = try await apiFetcher.signatures(mailbox: mailbox)
+        let updatedSignatures = Array(signaturesResult.signatures)
 
         await backgroundRealm.execute { realm in
+            let signaturesToDelete: [Signature] // no longer present server side
+            let signaturesToUpdate: [Signature] // updated signatures
+            let signaturesToAdd: [Signature] // new signatures
+
+            // fetch all local signatures
+            let existingSignatures = Array(realm.objects(Signature.self))
+
+            signaturesToAdd = updatedSignatures.filter { updatedElement in
+                !existingSignatures.contains(updatedElement)
+            }
+
+            signaturesToUpdate = updatedSignatures.filter { updatedElement in
+                existingSignatures.contains(updatedElement)
+            }
+
+            signaturesToDelete = existingSignatures.filter { existingElement in
+                !updatedSignatures.contains(existingElement)
+            }
+
+            // NOTE: local drafts in `signaturesToDelete` should be migrated to use the new default signature.
+
             // Update signatures in Realm
             try? realm.safeWrite {
-                realm.add(signaturesResult, update: .modified)
+                realm.add(signaturesToUpdate, update: .modified)
+                realm.delete(signaturesToDelete)
+                realm.add(signaturesToAdd, update: .modified)
             }
         }
     }
 
     public func updateSignature(signature: Signature) async throws {
         _ = try await apiFetcher.updateSignature(mailbox: mailbox, signature: signature)
-        try await signatures()
+        try await refreshAllSignatures()
     }
 
-    public func getSignatureResponse(using realm: Realm? = nil) -> SignatureResponse? {
+    public func getStoredSignatures(using realm: Realm? = nil) -> [Signature] {
         let realm = realm ?? getRealm()
-        return realm.object(ofType: SignatureResponse.self, forPrimaryKey: 1)
+        return Array(realm.objects(Signature.self))
     }
 
     // MARK: - Folders
@@ -777,22 +799,25 @@ public class MailboxManager: ObservableObject {
     }
 
     private func handleMessagesUids(messageUids: MessagesUids, folder: Folder) async throws {
-        let alreadyWrongIds = folder.fresh(using: getRealm())?.threads
-            .where { $0.date == SentryDebug.knownDebugDate }
+        let startDate = Date(timeIntervalSinceNow: -5 * 60)
+        let ignoredIds = folder.fresh(using: getRealm())?.threads
+            .where { $0.date > startDate }
             .map { $0.uid } ?? []
         await deleteMessages(uids: messageUids.deletedUids)
         var shouldIgnoreNextEvents = SentryDebug.captureWrongDate(
             step: "After delete",
+            startDate: startDate,
             folder: folder,
-            alreadyWrongIds: alreadyWrongIds,
+            alreadyWrongIds: ignoredIds,
             realm: getRealm()
         )
         await updateMessages(updates: messageUids.updated, folder: folder)
         if !shouldIgnoreNextEvents {
             shouldIgnoreNextEvents = SentryDebug.captureWrongDate(
                 step: "After updateMessages",
+                startDate: startDate,
                 folder: folder,
-                alreadyWrongIds: alreadyWrongIds,
+                alreadyWrongIds: ignoredIds,
                 realm: getRealm()
             )
         }
@@ -800,8 +825,9 @@ public class MailboxManager: ObservableObject {
         if !shouldIgnoreNextEvents {
             _ = SentryDebug.captureWrongDate(
                 step: "After addMessages",
+                startDate: startDate,
                 folder: folder,
-                alreadyWrongIds: alreadyWrongIds,
+                alreadyWrongIds: ignoredIds,
                 realm: getRealm()
             )
         }
@@ -1104,7 +1130,10 @@ public class MailboxManager: ObservableObject {
         await backgroundRealm.execute { realm in
             draft.localUUID = partialDraft.localUUID
             draft.action = .save
-            draft.identityId = partialDraft.identityId
+            
+            // We made sure beforehand to have an up to date signature.
+            // If the server does not return an identityId, we want to keep the original one
+            draft.identityId = partialDraft.identityId ?? draft.identityId
             draft.delay = partialDraft.delay
 
             try? realm.safeWrite {

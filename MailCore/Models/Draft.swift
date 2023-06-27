@@ -52,7 +52,7 @@ public struct DraftResponse: Codable {
     public var uid: String
 }
 
-public class Draft: Object, Codable, Identifiable {
+public final class Draft: Object, Codable, Identifiable {
     @Persisted(primaryKey: true) public var localUUID = UUID().uuidString
     @Persisted public var remoteUUID = ""
     @Persisted public var date = Date()
@@ -256,21 +256,6 @@ public class Draft: Object, Codable, Identifiable {
                      body: "",
                      to: recipientHolder.to,
                      cc: recipientHolder.cc)
-    }
-
-    public func setSignature(_ signatureResponse: SignatureResponse) {
-        identityId = "\(signatureResponse.defaultSignatureId)"
-        guard let signature = signatureResponse.default else {
-            return
-        }
-
-        let html = "<br><br><div class=\"editorUserSignature\">\(signature.content)</div>"
-        switch signature.position {
-        case .beforeReplyMessage:
-            body.insert(contentsOf: html, at: body.startIndex)
-        case .afterReplyMessage:
-            body.append(contentsOf: html)
-        }
     }
 
     public func encode(to encoder: Encoder) throws {

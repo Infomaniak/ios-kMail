@@ -16,31 +16,31 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import CocoaLumberjackSwift
 import MailCore
-import MailResources
+import RealmSwift
 import SwiftUI
 
-struct ActionsPanelButton<Content: View>: View {
-    @State private var actionsTarget: ActionsTarget?
-
-    var message: Message?
-    var threads: [Thread]?
-    var isMultiSelectionEnabled = false
-    @ViewBuilder var label: () -> Content
+struct ShortRecipientsList: View {
+    let recipients: RealmSwift.List<Recipient>
+    let type: ComposeViewFieldType
 
     var body: some View {
-        Button {
-            if let message {
-                actionsTarget = .message(message)
-            } else if let threads {
-                actionsTarget = .threads(threads, isMultiSelectionEnabled)
-            } else {
-                DDLogWarn("MoreButton has no action target, did you forget to set message or threads ?")
+        HStack(spacing: 8) {
+            if let recipient = recipients.first {
+                RecipientChip(recipient: recipient, fieldType: type)
+                    .disabled(true)
             }
-        } label: {
-            label()
+
+            if recipients.count > 1 {
+                MoreRecipientsChip(count: recipients.count - 1)
+            }
         }
-        .actionsPanel(actionsTarget: $actionsTarget)
+        .frame(maxWidth: .infinity, alignment: .leading)
+    }
+}
+
+struct ShortRecipientsList_Previews: PreviewProvider {
+    static var previews: some View {
+        ShortRecipientsList(recipients: PreviewHelper.sampleRecipientsList, type: .to)
     }
 }

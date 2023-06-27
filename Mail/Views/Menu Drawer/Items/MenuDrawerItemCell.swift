@@ -24,22 +24,26 @@ import MailResources
 import SwiftUI
 
 struct MenuDrawerItemCell: View {
-    let content: MenuItem
+    let icon: MailResourcesImages
+    let label: String
+    let matomoName: String
+
+    let action: () -> Void
 
     var body: some View {
         Button {
             @InjectService var matomo: MatomoUtils
-            matomo.track(eventWithCategory: .menuDrawer, name: content.matomoName)
-            content.action()
+            matomo.track(eventWithCategory: .menuDrawer, name: matomoName)
+            action()
         } label: {
             HStack(spacing: UIConstants.menuDrawerHorizontalItemSpacing) {
-                content.icon.swiftUIImage
+                icon.swiftUIImage
                     .resizable()
                     .scaledToFit()
                     .frame(width: 24, height: 24)
                     .foregroundColor(.accentColor)
 
-                Text(content.label)
+                Text(label)
                     .textStyle(.bodyMedium)
             }
             .frame(maxWidth: .infinity, alignment: .leading)
@@ -50,9 +54,9 @@ struct MenuDrawerItemCell: View {
 
 struct ItemCellView_Previews: PreviewProvider {
     static var previews: some View {
-        MenuDrawerItemCell(content: MenuItem(icon: MailResourcesAsset.drawerDownload,
-                                             label: "Importer des mails",
-                                             matomoName: "") { print("Hello") })
+        MenuDrawerItemCell(icon: MailResourcesAsset.drawerDownload,
+                           label: "Importer des mails",
+                           matomoName: "") { print("Hello") }
             .previewLayout(.sizeThatFits)
             .previewDevice(PreviewDevice(stringLiteral: "iPhone 11 Pro"))
     }

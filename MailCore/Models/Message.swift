@@ -314,8 +314,7 @@ public final class Message: Object, Decodable, Identifiable {
         if let date = (try? values.decode(Date.self, forKey: .date)) {
             self.date = date
         } else {
-            // FIXME: Remove after thread date bug fix
-            date = SentryDebug.knownDebugDate
+            date = Date()
             SentrySDK
                 .addBreadcrumb(SentryDebug.createBreadcrumb(
                     level: .warning,

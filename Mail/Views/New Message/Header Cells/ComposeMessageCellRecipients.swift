@@ -49,6 +49,12 @@ struct ComposeMessageCellRecipients: View {
     @FocusState var focusedField: ComposeViewFieldType?
 
     let type: ComposeViewFieldType
+    var areCCAndBCCEmpty = false
+
+    /// It should be displayed only for the field to if cc and bcc are empty and when autocompletion is not displayed
+    private var shouldDisplayChevron: Bool {
+        return type == .to && autocompletionType == nil && areCCAndBCCEmpty
+    }
 
     var body: some View {
         VStack(spacing: 0) {
@@ -58,9 +64,9 @@ struct ComposeMessageCellRecipients: View {
                         .textStyle(.bodySecondary)
 
                     RecipientField(
+                        focusedField: _focusedField,
                         currentText: $textDebounce.text,
                         recipients: $recipients,
-                        focusedField: _focusedField,
                         type: type
                     ) {
                         if let bestMatch = autocompletion.first {
@@ -68,14 +74,15 @@ struct ComposeMessageCellRecipients: View {
                         }
                     }
 
-                    if type == .to && autocompletionType == nil {
+                    if shouldDisplayChevron {
                         Spacer()
                         ChevronButton(isExpanded: $showRecipientsFields)
                     }
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
+                .padding(.vertical, UIConstants.composeViewHeaderCellVerticalSpacing)
+
                 IKDivider()
-                    .padding(.top, UIConstants.composeViewVerticalSpacing)
             }
 
             if autocompletionType == type {
@@ -88,6 +95,7 @@ struct ComposeMessageCellRecipients: View {
                 .padding(.top, 8)
             }
         }
+        .contentShape(Rectangle())
         .onTapGesture {
             focusedField = type
         }
@@ -125,8 +133,11 @@ struct ComposeMessageCellRecipients: View {
 
 struct ComposeMessageCellRecipients_Previews: PreviewProvider {
     static var previews: some View {
-        ComposeMessageCellRecipients(recipients: .constant([
-            PreviewHelper.sampleRecipient1, PreviewHelper.sampleRecipient2, PreviewHelper.sampleRecipient3
-        ].toRealmList()), showRecipientsFields: .constant(false), autocompletionType: .constant(nil), type: .bcc)
+        ComposeMessageCellRecipients(
+            recipients: .constant(PreviewHelper.sampleRecipientsList),
+            showRecipientsFields: .constant(false),
+            autocompletionType: .constant(nil),
+            type: .bcc
+        )
     }
 }

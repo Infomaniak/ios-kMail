@@ -94,8 +94,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/onevcat/Kingfisher",
       "state" : {
-        "revision" : "e8625b80c413457b13ea9be75d07f6e9f5830c19",
-        "version" : "7.7.0"
+        "revision" : "c1f60c63f356d364f4284ba82961acbe7de79bcc",
+        "version" : "7.8.1"
       }
     },
     {
@@ -130,8 +130,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/johnpatrickmorgan/NavigationBackport",
       "state" : {
-        "revision" : "f8930907304f03e589487c0158924d49c2a7ae83",
-        "version" : "0.8.1"
+        "revision" : "fb860a404f8c0aabeca1016400e41ece5363a369",
+        "version" : "0.9.0"
       }
     },
     {
@@ -139,8 +139,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/kean/Nuke",
       "state" : {
-        "revision" : "f4d9b95788679d0654c032961f73e7e9c16ca6b4",
-        "version" : "12.1.0"
+        "revision" : "282b9562c84d76cebbbecd1cc3aaf430448a0cce",
+        "version" : "12.1.1"
       }
     },
     {
@@ -157,8 +157,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/realm/realm-core.git",
       "state" : {
-        "revision" : "36b2df44453ba5e830369c76ab0683799a287605",
-        "version" : "13.13.0"
+        "revision" : "93cc224680a520a84e1c01aa8866042c52eb7958",
+        "version" : "13.15.0"
       }
     },
     {
@@ -166,8 +166,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/realm/realm-swift",
       "state" : {
-        "revision" : "45ea4a0ec4bb3161c807be0a9a4921161dbe60a2",
-        "version" : "10.40.1"
+        "revision" : "2d7d1463a765c8835262dc09da83906e7cea166c",
+        "version" : "10.40.2"
       }
     },
     {
@@ -175,8 +175,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/getsentry/sentry-cocoa",
       "state" : {
-        "revision" : "9cf7d2e514af1600cc2b3c5592e2848c6c5a76d6",
-        "version" : "8.7.3"
+        "revision" : "d277532e1c8af813981ba01f591b15bbdd735615",
+        "version" : "8.8.0"
       }
     },
     {
@@ -219,8 +219,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/shaps80/SwiftBackports",
       "state" : {
-        "revision" : "fafbeabf78b7e364abbbb7565cdfeee42af16211",
-        "version" : "1.0.2"
+        "revision" : "ddca6a237c1ba2291d5a3cc47ec8480ce6e9f805",
+        "version" : "1.0.3"
       }
     },
     {
@@ -246,8 +246,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/siteline/SwiftUI-Introspect",
       "state" : {
-        "revision" : "c29b50a475120fdfa22573622464a7346aaf99a4",
-        "version" : "0.6.0"
+        "revision" : "56065b729481abce73fe606e218024bc77d055cd",
+        "version" : "0.6.2"
       }
     },
     {
