@@ -22,6 +22,8 @@ import InfomaniakCoreUI
 import InfomaniakDI
 import MailResources
 import RealmSwift
+import Sentry
+import SwiftSoup
 import UIKit
 
 struct DraftQueueElement {
@@ -63,17 +65,27 @@ actor DraftQueue {
     }
 }
 
-public class DraftManager {
-    public static let shared = DraftManager()
+public final class DraftManager {
+    /// Node used to identify the signature in DOM
+    public static let signatureClassName = "editorUserSignature"
 
     private let draftQueue = DraftQueue()
     private static let saveExpirationSec = 3
 
     @LazyInjectService private var matomo: MatomoUtils
 
-    private init() {}
+    /// Used by DI only
+    public init() {
+        // META: Silencing Sonarcloud
+    }
 
-    private func saveDraft(draft: Draft, mailboxManager: MailboxManager) async {
+    /// Save a draft server side
+    private func saveDraftRemotely(draft: Draft, mailboxManager: MailboxManager) async {
+        guard draft.identityId != nil else {
+            SentrySDK.capture(message: "We are trying to send a draft without an identityId, this will fail.")
+            return
+        }
+
         matomo.track(eventWithCategory: .newMessage, name: "saveDraft")
 
         await draftQueue.cleanQueueElement(uuid: draft.localUUID)
@@ -91,6 +103,7 @@ public class DraftManager {
 
     public func send(draft: Draft, mailboxManager: MailboxManager) async -> Date? {
         await IKSnackBar.showSnackBar(message: MailResourcesStrings.Localizable.snackbarEmailSending)
+
         var sendDate: Date?
         await draftQueue.cleanQueueElement(uuid: draft.localUUID)
         await draftQueue.beginBackgroundTask(withName: "Draft Sender", for: draft.localUUID)
@@ -108,18 +121,16 @@ public class DraftManager {
 
     public func syncDraft(mailboxManager: MailboxManager) {
         let drafts = mailboxManager.draftWithPendingAction().freezeIfNeeded()
-        let emptyDraftBody = emptyDraftBodyWithSignature(for: mailboxManager)
         Task {
             let latestSendDate = await withTaskGroup(of: Date?.self, returning: Date?.self) { group in
                 for draft in drafts {
                     group.addTask {
                         var sendDate: Date?
-
                         switch draft.action {
                         case .initialSave:
-                            await self.initialSave(draft: draft, mailboxManager: mailboxManager, emptyDraftBody: emptyDraftBody)
+                            await self.initialSave(draft: draft, mailboxManager: mailboxManager)
                         case .save:
-                            await self.saveDraft(draft: draft, mailboxManager: mailboxManager)
+                            await self.saveDraftRemotely(draft: draft, mailboxManager: mailboxManager)
                         case .send:
                             sendDate = await self.send(draft: draft, mailboxManager: mailboxManager)
                         default:
@@ -140,13 +151,34 @@ public class DraftManager {
         }
     }
 
-    private func initialSave(draft: Draft, mailboxManager: MailboxManager, emptyDraftBody: String) async {
-        guard draft.body != emptyDraftBody && !draft.body.isEmpty else {
-            deleteEmptyDraft(draft: draft)
+    /// Check if once the Signature node is removed, we still have content
+    func isDraftBodyEmptyOfChanges(_ body: String) throws -> Bool {
+        guard !body.isEmpty else {
+            return true
+        }
+
+        // Load DOM structure
+        let document = try SwiftSoup.parse(body)
+
+        // Remove the signature node
+        guard let signatureNode = try document.getElementsByClass(Self.signatureClassName).first() else {
+            return !document.hasText()
+        }
+        try signatureNode.remove()
+
+        // Do we still have text ?
+        return !document.hasText()
+    }
+
+    private func initialSave(draft: Draft, mailboxManager: MailboxManager) async {
+        // We consider the body to be not-empty on HTML parsing failure to keep user content.
+        let isDraftEmpty = (try? isDraftBodyEmptyOfChanges(draft.body)) ?? false
+        guard !isDraftEmpty else {
+            deleteEmptyDraft(draft: draft, for: mailboxManager)
             return
         }
 
-        await saveDraft(draft: draft, mailboxManager: mailboxManager)
+        await saveDraftRemotely(draft: draft, mailboxManager: mailboxManager)
         await IKSnackBar.showSnackBar(message: MailResourcesStrings.Localizable.snackbarDraftSaved,
                                       action: .init(title: MailResourcesStrings.Localizable.actionDelete) { [weak self] in
                                           self?.matomo.track(eventWithCategory: .snackbar, name: "deleteDraft")
@@ -186,19 +218,22 @@ public class DraftManager {
         }
     }
 
-    private func deleteEmptyDraft(draft: Draft) {
-        guard let liveDraft = draft.thaw(),
-              let realm = liveDraft.realm else { return }
+    private func deleteEmptyDraft(draft: Draft, for mailboxManager: MailboxManager) {
+        let primaryKey = draft.localUUID
+        let realm = mailboxManager.getRealm()
         try? realm.write {
-            realm.delete(liveDraft)
+            guard let object = realm.object(ofType: Draft.self, forPrimaryKey: primaryKey) else {
+                return
+            }
+            realm.delete(object)
         }
     }
 
-    private func emptyDraftBodyWithSignature(for mailboxManager: MailboxManager) -> String {
-        let draft = Draft()
-        if let signature = mailboxManager.getSignatureResponse() {
-            draft.setSignature(signature)
+    private func defaultSignature(for mailboxManager: MailboxManager) -> Signature? {
+        guard let signature = mailboxManager.getStoredSignatures().defaultSignature else {
+            return nil
         }
-        return draft.body
+
+        return signature
     }
 }

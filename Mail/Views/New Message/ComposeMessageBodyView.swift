@@ -24,6 +24,9 @@ import SwiftUI
 struct ComposeMessageBodyView: View {
     @EnvironmentObject private var mailboxManager: MailboxManager
 
+    /// Something to track the initial loading of a default signature
+    @EnvironmentObject private var signatureManager: SignaturesManager
+
     @State private var isShowingCamera = false
     @State private var isShowingFileSelection = false
     @State private var isShowingPhotoLibrary = false
@@ -68,7 +71,18 @@ struct ComposeMessageBodyView: View {
         }
         .task {
             await prepareReplyForwardBodyAndAttachments()
-            await setSignature()
+        }
+        .onChange(of: signatureManager.loadingSignatureState) { state in
+            switch state {
+            case .success:
+                setSignature()
+            case .error:
+                // Unable to get signatures, "An error occurred" and close modal.
+                IKSnackBar.showSnackBar(message: MailError.unknownError.localizedDescription)
+                dismiss()
+            case .progress:
+                break
+            }
         }
         .fullScreenCover(isPresented: $isShowingCamera) {
             CameraPicker { data in
@@ -123,26 +137,21 @@ struct ComposeMessageBodyView: View {
         }
     }
 
-    private func setSignature() async {
-        if draft.identityId == nil || draft.identityId?.isEmpty == true,
-           let signatureResponse = mailboxManager.getSignatureResponse() {
-            $draft.identityId.wrappedValue = "\(signatureResponse.defaultSignatureId)"
-            guard let signature = signatureResponse.default else {
-                return
-            }
-
-            let html = "<br><br><div class=\"editorUserSignature\">\(signature.content)</div>"
-            var signaturePosition = draft.body.endIndex
-            if messageReply != nil {
-                switch signature.position {
-                case .beforeReplyMessage:
-                    signaturePosition = draft.body.startIndex
-                case .afterReplyMessage:
-                    signaturePosition = draft.body.endIndex
-                }
-            }
-            $draft.body.wrappedValue.insert(contentsOf: html, at: signaturePosition)
+    private func setSignature() {
+        guard draft.identityId == nil || draft.identityId?.isEmpty == true else {
+            return
         }
+
+        guard let defaultSignature = mailboxManager.getStoredSignatures().defaultSignature else {
+            return
+        }
+
+        let body = $draft.body.wrappedValue
+        let signedBody = defaultSignature.appendSignature(to: body)
+
+        // At this point we have signatures in base up to date, we use the default one.
+        $draft.identityId.wrappedValue = "\(defaultSignature.id)"
+        $draft.body.wrappedValue = signedBody
     }
 
     private func prepareBody(message: Message, replyMode: ReplyMode) async throws {
@@ -170,17 +179,21 @@ struct ComposeMessageBodyView: View {
 }
 
 struct ComposeMessageBodyView_Previews: PreviewProvider {
+    static let signaturesManager = SignaturesManager(mailboxManager: PreviewHelper.sampleMailboxManager)
+
     static var previews: some View {
         @Environment(\.dismiss) var dismiss
 
-        ComposeMessageBodyView(
-            draft: Draft(),
-            isLoadingContent: .constant(false),
-            editorFocus: .constant(false),
-            attachmentsManager: AttachmentsManager(draft: Draft(), mailboxManager: PreviewHelper.sampleMailboxManager),
-            alert: NewMessageAlert(),
-            dismiss: dismiss,
-            messageReply: nil
-        )
+        ComposeMessageBodyView(draft: Draft(),
+                               isLoadingContent: .constant(false),
+                               editorFocus: .constant(false),
+                               attachmentsManager: AttachmentsManager(
+                                   draft: Draft(),
+                                   mailboxManager: PreviewHelper.sampleMailboxManager
+                               ),
+                               alert: NewMessageAlert(),
+                               dismiss: dismiss,
+                               messageReply: nil)
+            .environmentObject(signaturesManager)
     }
 }

@@ -61,12 +61,15 @@ struct ComposeMessageView: View {
     @Environment(\.dismiss) private var dismiss
 
     @LazyInjectService private var matomo: MatomoUtils
+    @LazyInjectService private var draftManager: DraftManager
 
     @State private var isLoadingContent: Bool
     @State private var isShowingCancelAttachmentsError = false
     @State private var autocompletionType: ComposeViewFieldType?
     @State private var editorFocus = false
 
+    /// Something to track the initial loading of a default signature
+    @StateObject private var signatureManager: SignaturesManager
     @StateObject private var mailboxManager: MailboxManager
     @StateObject private var attachmentsManager: AttachmentsManager
     @StateObject private var alert = NewMessageAlert()
@@ -83,8 +86,14 @@ struct ComposeMessageView: View {
     let messageReply: MessageReply?
 
     private var isSendButtonDisabled: Bool {
-        return draft.identityId?.isEmpty == true || draft.recipientsAreEmpty || !attachmentsManager.allAttachmentsUploaded
+        let disabledState = draft.identityId == nil
+            || draft.identityId?.isEmpty == true
+            || draft.recipientsAreEmpty
+            || !attachmentsManager.allAttachmentsUploaded
+        return disabledState
     }
+
+    // MAK: - Int
 
     init(draft: Draft, mailboxManager: MailboxManager, messageReply: MessageReply? = nil) {
         self.messageReply = messageReply
@@ -94,76 +103,23 @@ struct ComposeMessageView: View {
 
         _isLoadingContent = State(wrappedValue: (draft.messageUid != nil && draft.remoteUUID.isEmpty) || messageReply != nil)
 
+        _signatureManager = StateObject(wrappedValue: SignaturesManager(mailboxManager: mailboxManager))
         _mailboxManager = StateObject(wrappedValue: mailboxManager)
         _attachmentsManager = StateObject(wrappedValue: AttachmentsManager(draft: draft, mailboxManager: mailboxManager))
     }
 
+    // MAK: - View
+
     var body: some View {
         NavigationView {
-            ScrollView {
-                VStack(spacing: 0) {
-                    ComposeMessageHeaderView(draft: draft, focusedField: _focusedField, autocompletionType: $autocompletionType)
-
-                    if autocompletionType == nil {
-                        ComposeMessageBodyView(
-                            draft: draft,
-                            isLoadingContent: $isLoadingContent,
-                            editorFocus: $editorFocus,
-                            attachmentsManager: attachmentsManager,
-                            alert: alert,
-                            dismiss: dismiss,
-                            messageReply: messageReply
-                        )
-                    }
-                }
-            }
-            .background(MailResourcesAsset.backgroundColor.swiftUIColor)
-            .onAppear {
-                switch messageReply?.replyMode {
-                case .reply, .replyAll:
-                    focusedField = .editor
-                default:
-                    focusedField = .to
-                }
-            }
-            .onDisappear {
-                Task {
-                    DraftManager.shared.syncDraft(mailboxManager: mailboxManager)
-                }
-            }
-            .overlay {
-                if isLoadingContent {
-                    ProgressView()
-                        .frame(maxWidth: .infinity, maxHeight: .infinity)
-                        .background(MailResourcesAsset.backgroundColor.swiftUIColor)
-                }
-            }
-            .introspectScrollView { scrollView in
-                scrollView.keyboardDismissMode = .interactive
-            }
-            .navigationTitle(MailResourcesStrings.Localizable.buttonNewMessage)
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .navigationBarLeading) {
-                    Button(action: didTouchDismiss) {
-                        Label(MailResourcesStrings.Localizable.buttonClose, systemImage: "xmark")
-                    }
-                }
-
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    Button(action: didTouchSend) {
-                        Label(MailResourcesStrings.Localizable.send, image: MailResourcesAsset.send.name)
-                    }
-                    .disabled(isSendButtonDisabled)
-                }
-            }
+            composeMessage
         }
         .interactiveDismissDisabled()
         .customAlert(isPresented: $alert.isShowing) {
             switch alert.state {
-            case let .link(handler):
+            case .link(let handler):
                 AddLinkView(actionHandler: handler)
-            case let .emptySubject(handler):
+            case .emptySubject(let handler):
                 EmptySubjectView(actionHandler: handler)
             case .none:
                 EmptyView()
@@ -176,6 +132,73 @@ struct ComposeMessageView: View {
         }
         .matomoView(view: ["ComposeMessage"])
     }
+
+    /// Compose message view
+    private var composeMessage: some View {
+        ScrollView {
+            VStack(spacing: 0) {
+                ComposeMessageHeaderView(draft: draft, focusedField: _focusedField, autocompletionType: $autocompletionType)
+
+                if autocompletionType == nil {
+                    ComposeMessageBodyView(
+                        draft: draft,
+                        isLoadingContent: $isLoadingContent,
+                        editorFocus: $editorFocus,
+                        attachmentsManager: attachmentsManager,
+                        alert: alert,
+                        dismiss: dismiss,
+                        messageReply: messageReply
+                    )
+                    .environmentObject(signatureManager)
+                }
+            }
+        }
+        .background(MailResourcesAsset.backgroundColor.swiftUIColor)
+        .onAppear {
+            switch messageReply?.replyMode {
+            case .reply, .replyAll:
+                focusedField = .editor
+            default:
+                focusedField = .to
+            }
+        }
+        .onDisappear {
+            draftManager.syncDraft(mailboxManager: mailboxManager)
+        }
+        .overlay {
+            if isLoadingContent || signatureManager.loadingSignatureState == .progress {
+                progressView
+            }
+        }
+        .introspectScrollView { scrollView in
+            scrollView.keyboardDismissMode = .interactive
+        }
+        .navigationTitle(MailResourcesStrings.Localizable.buttonNewMessage)
+        .navigationBarTitleDisplayMode(.inline)
+        .toolbar {
+            ToolbarItem(placement: .navigationBarLeading) {
+                Button(action: didTouchDismiss) {
+                    Label(MailResourcesStrings.Localizable.buttonClose, systemImage: "xmark")
+                }
+            }
+
+            ToolbarItem(placement: .navigationBarTrailing) {
+                Button(action: didTouchSend) {
+                    Label(MailResourcesStrings.Localizable.send, image: MailResourcesAsset.send.name)
+                }
+                .disabled(isSendButtonDisabled)
+            }
+        }
+    }
+
+    /// Progress view
+    private var progressView: some View {
+        ProgressView()
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .background(MailResourcesAsset.backgroundColor.swiftUIColor)
+    }
+
+    // MAK: - Func
 
     private func didTouchDismiss() {
         guard attachmentsManager.allAttachmentsUploaded else {
@@ -216,6 +239,6 @@ struct ComposeMessageView: View {
 
 struct ComposeMessageView_Previews: PreviewProvider {
     static var previews: some View {
-        ComposeMessageView.newMessage(mailboxManager: PreviewHelper.sampleMailboxManager)
+        ComposeMessageView.newMessage(Draft(), mailboxManager: PreviewHelper.sampleMailboxManager)
     }
 }

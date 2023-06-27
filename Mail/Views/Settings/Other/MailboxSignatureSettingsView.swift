@@ -24,18 +24,19 @@ import RealmSwift
 import SwiftUI
 
 struct MailboxSignatureSettingsView: View {
-    @ObservedResults<SignatureResponse> var signatureResponse: Results<SignatureResponse>
+    @ObservedResults(Signature.self) var signatures
+
     let mailboxManager: MailboxManager
 
     init(mailboxManager: MailboxManager) {
         self.mailboxManager = mailboxManager
-        _signatureResponse = ObservedResults(SignatureResponse.self, configuration: mailboxManager.realmConfiguration)
+        _signatures = ObservedResults(Signature.self, configuration: mailboxManager.realmConfiguration)
     }
 
     var body: some View {
         List {
             Section {
-                ForEach(signatureResponse.first?.signatures.toArray() ?? []) { signature in
+                ForEach(signatures) { signature in
                     Button {
                         setAsDefault(signature)
                     } label: {
@@ -52,7 +53,8 @@ struct MailboxSignatureSettingsView: View {
                             .padding(.vertical, 16)
                             .padding(.horizontal, 24)
 
-                            if signature != signatureResponse.first?.signatures.last {
+                            if signature.position != .beforeReplyMessage,
+                               signature.position != .afterReplyMessage {
                                 IKDivider()
                                     .padding(.horizontal, 8)
                             }
@@ -74,7 +76,7 @@ struct MailboxSignatureSettingsView: View {
         .matomoView(view: [MatomoUtils.View.settingsView.displayName, "Signatures"])
         .task {
             do {
-                try await mailboxManager.signatures()
+                try await mailboxManager.refreshAllSignatures()
             } catch {
                 DDLogError("Error fetching signatures: \(error.localizedDescription)")
             }
