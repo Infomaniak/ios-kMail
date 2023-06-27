@@ -105,7 +105,7 @@ public class AccountManager: RefreshTokenDelegate {
     public var currentMailboxManager: MailboxManager? {
         if let currentMailboxManager = getMailboxManager(for: currentMailboxId, userId: currentUserId) {
             return currentMailboxManager
-        } else if let newCurrentMailbox = mailboxes.first {
+        } else if let newCurrentMailbox = mailboxes.first(where: { $0.isAvailable }) {
             setCurrentMailboxForCurrentAccount(mailbox: newCurrentMailbox)
             return getMailboxManager(for: newCurrentMailbox)
         } else {
@@ -326,6 +326,10 @@ public class AccountManager: RefreshTokenDelegate {
                 setCurrentMailboxForCurrentAccount(mailbox: switchedMailbox!)
             }
             MailboxManager.deleteUserMailbox(userId: user.id, mailboxId: mailboxRemoved.mailboxId)
+        }
+
+        if currentMailboxManager?.mailbox.isAvailable == false {
+            switchToFirstValidMailboxManager()
         }
 
         saveAccounts()
