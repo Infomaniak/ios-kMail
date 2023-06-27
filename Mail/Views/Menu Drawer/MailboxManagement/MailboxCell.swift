@@ -73,7 +73,7 @@ struct MailboxCell: View {
                 return
             }
             guard !mailbox.isLocked else {
-                IKSnackBar.showSnackBar(message: MailResourcesStrings.Localizable.lockedMailboxTitle)
+                IKSnackBar.showSnackBar(message: MailResourcesStrings.Localizable.lockedMailboxesTitle)
                 return
             }
             @InjectService var matomo: MatomoUtils
