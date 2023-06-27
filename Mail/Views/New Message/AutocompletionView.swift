@@ -93,7 +93,7 @@ struct AutocompletionView_Previews: PreviewProvider {
         AutocompletionView(
             textDebounce: TextDebounce(),
             autocompletion: .constant([]),
-            addedRecipients: .constant([PreviewHelper.sampleRecipient1].toRealmList())
+            addedRecipients: .constant(PreviewHelper.sampleRecipientsList)
         ) { _ in /* Preview */ }
     }
 }

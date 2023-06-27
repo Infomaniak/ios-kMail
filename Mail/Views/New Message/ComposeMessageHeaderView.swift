@@ -32,7 +32,7 @@ struct ComposeMessageHeaderView: View {
     @Binding var autocompletionType: ComposeViewFieldType?
 
     var body: some View {
-        VStack(spacing: UIConstants.composeViewVerticalSpacing) {
+        VStack(spacing: 0) {
             ComposeMessageCellStaticText(
                 autocompletionType: $autocompletionType,
                 type: .from,
@@ -44,7 +44,8 @@ struct ComposeMessageHeaderView: View {
                 showRecipientsFields: $showRecipientsFields,
                 autocompletionType: $autocompletionType,
                 focusedField: _focusedField,
-                type: .to
+                type: .to,
+                areCCAndBCCEmpty: draft.cc.isEmpty && draft.bcc.isEmpty
             )
 
             if showRecipientsFields {

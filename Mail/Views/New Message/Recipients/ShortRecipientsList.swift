@@ -17,35 +17,30 @@
  */
 
 import MailCore
+import RealmSwift
 import SwiftUI
 
-struct ComposeMessageCellStaticText: View {
-    @Binding var autocompletionType: ComposeViewFieldType?
-
+struct ShortRecipientsList: View {
+    let recipients: RealmSwift.List<Recipient>
     let type: ComposeViewFieldType
-    let text: String
 
     var body: some View {
-        if autocompletionType == nil {
-            VStack(spacing: 0) {
-                HStack {
-                    Text(type.title)
-                        .textStyle(.bodySecondary)
+        HStack(spacing: 8) {
+            if let recipient = recipients.first {
+                RecipientChip(recipient: recipient, fieldType: type)
+                    .disabled(true)
+            }
 
-                    Text(text)
-                        .textStyle(.body)
-                }
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .padding(.vertical, UIConstants.composeViewHeaderCellLargeVerticalSpacing)
-                
-                IKDivider()
+            if recipients.count > 1 {
+                MoreRecipientsChip(count: recipients.count - 1)
             }
         }
+        .frame(maxWidth: .infinity, alignment: .leading)
     }
 }
 
-struct ComposeMessageStaticText_Previews: PreviewProvider {
+struct ShortRecipientsList_Previews: PreviewProvider {
     static var previews: some View {
-        ComposeMessageCellStaticText(autocompletionType: .constant(nil), type: .from, text: "myaddress@email.com")
+        ShortRecipientsList(recipients: PreviewHelper.sampleRecipientsList, type: .to)
     }
 }
