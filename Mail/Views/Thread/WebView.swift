@@ -20,70 +20,30 @@ import MailCore
 import SwiftUI
 import WebKit
 
-struct WebView: UIViewRepresentable {
-    @Environment(\.window) private var window
+final class WebViewController: UIViewController {
+    var model: WebViewModel!
+    var messageUid: String!
 
-    @ObservedObject var model: WebViewModel
+    override func loadView() {
+        let view = UIView()
+        view.backgroundColor = .systemBackground
 
-    let messageUid: String
+        let webView = model.webView
 
-    private var webView: WKWebView {
-        return model.webView
+        webView.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(webView)
+        setUpWebView(webView)
+
+        NSLayoutConstraint.activate([
+            webView.widthAnchor.constraint(equalTo: view.widthAnchor),
+            webView.heightAnchor.constraint(equalTo: view.heightAnchor)
+        ])
+
+        self.view = view
     }
 
-    class Coordinator: NSObject, WKNavigationDelegate {
-        var parent: WebView
-
-        init(_ parent: WebView) {
-            self.parent = parent
-        }
-
-        func webView(_ webView: WKWebView, didStartProvisionalNavigation navigation: WKNavigation!) {
-            // run the JS function `listenToSizeChanges` early. Prevent issues with distant resources not available.
-            Task { @MainActor in
-                try await webView.evaluateJavaScript("listenToSizeChanges()")
-            }
-        }
-
-        func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
-            Task { @MainActor in
-                // Fix CSS properties and adapt the mail to the screen size
-                let readyState = try await webView.evaluateJavaScript("document.readyState") as? String
-                guard readyState == "complete" else { return }
-
-                _ = try await webView.evaluateJavaScript("removeAllProperties()")
-                _ = try await webView.evaluateJavaScript("normalizeMessageWidth(\(webView.frame.width), '\(parent.messageUid)')")
-            }
-        }
-
-        func webView(
-            _ webView: WKWebView,
-            decidePolicyFor navigationAction: WKNavigationAction,
-            decisionHandler: @escaping (WKNavigationActionPolicy) -> Void
-        ) {
-            if let url = navigationAction.request.url, Constants.isMailTo(url) {
-                decisionHandler(.cancel)
-                (parent.window?.windowScene?.delegate as? SceneDelegate)?.handleUrlOpen(url)
-                return
-            }
-
-            if navigationAction.navigationType == .linkActivated {
-                if let url = navigationAction.request.url {
-                    decisionHandler(.cancel)
-                    UIApplication.shared.open(url)
-                }
-            } else {
-                decisionHandler(.allow)
-            }
-        }
-    }
-
-    func makeCoordinator() -> Coordinator {
-        Coordinator(self)
-    }
-
-    func makeUIView(context: Context) -> WKWebView {
-        webView.navigationDelegate = context.coordinator
+    private func setUpWebView(_ webView: WKWebView) {
+        webView.navigationDelegate = self
         webView.scrollView.bounces = false
         webView.scrollView.bouncesZoom = false
         webView.scrollView.showsVerticalScrollIndicator = false
@@ -95,10 +55,62 @@ struct WebView: UIViewRepresentable {
             webView.isInspectable = true
         }
         #endif
-        return webView
+    }
+}
+
+extension WebViewController: WKNavigationDelegate {
+    func webView(_ webView: WKWebView, didStartProvisionalNavigation navigation: WKNavigation!) {
+        // run the JS function `listenToSizeChanges` early. Prevent issues with distant resources not available.
+        Task { @MainActor in
+            try await webView.evaluateJavaScript("listenToSizeChanges()")
+        }
     }
 
-    func updateUIView(_ uiView: WKWebView, context: Context) {
-        // needed for UIViewRepresentable
+    func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
+        Task { @MainActor in
+            // Fix CSS properties and adapt the mail to the screen size
+            let readyState = try await webView.evaluateJavaScript("document.readyState") as? String
+            guard readyState == "complete" else { return }
+
+            _ = try await webView.evaluateJavaScript("removeAllProperties()")
+            _ = try await webView.evaluateJavaScript("normalizeMessageWidth(\(webView.frame.width), '\(messageUid)')")
+        }
+    }
+
+    func webView(
+        _ webView: WKWebView,
+        decidePolicyFor navigationAction: WKNavigationAction,
+        decisionHandler: @escaping (WKNavigationActionPolicy) -> Void
+    ) {
+        if let url = navigationAction.request.url, Constants.isMailTo(url) {
+            decisionHandler(.cancel)
+            (view.window?.windowScene?.delegate as? SceneDelegate)?.handleUrlOpen(url)
+            return
+        }
+
+        if navigationAction.navigationType == .linkActivated {
+            if let url = navigationAction.request.url {
+                decisionHandler(.cancel)
+                UIApplication.shared.open(url)
+            }
+        } else {
+            decisionHandler(.allow)
+        }
+    }
+}
+
+struct WebView: UIViewControllerRepresentable {
+    let model: WebViewModel
+    let messageUid: String
+
+    func makeUIViewController(context: Context) -> WebViewController {
+        let controller = WebViewController()
+        controller.model = model
+        controller.messageUid = messageUid
+        return controller
+    }
+
+    func updateUIViewController(_ uiViewController: WebViewController, context: Context) {
+        // Not needed
     }
 }
