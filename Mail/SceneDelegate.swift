@@ -16,6 +16,7 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import CocoaLumberjackSwift
 import InfomaniakCore
 import InfomaniakCoreUI
 import InfomaniakDI
@@ -69,7 +70,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, AccountManagerDelegate 
     func sceneWillEnterForeground(_ scene: UIScene) {
         // Called as the scene transitions from the background to the foreground.
         // Use this method to undo the changes made on entering the background.
-        (UIApplication.shared.delegate as? AppDelegate)?.refreshCacheData()
+        refreshCacheData()
 
         if UserDefaults.shared.isAppLockEnabled && appLockHelper.isAppLocked {
             showLockView()
@@ -130,7 +131,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, AccountManagerDelegate 
 
     func switchAccount(_ account: Account, mailbox: Mailbox? = nil) {
         accountManager.switchAccount(newAccount: account)
-        (UIApplication.shared.delegate as? AppDelegate)?.refreshCacheData()
+        refreshCacheData()
 
         if let mailbox = mailbox {
             switchMailbox(mailbox)
@@ -168,6 +169,28 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, AccountManagerDelegate 
 
     func showLockView() {
         setRootView(LockedAppView(), animated: false)
+    }
+
+    func refreshCacheData() {
+        guard let currentAccount = AccountManager.instance.currentAccount else {
+            return
+        }
+
+        Task {
+            do {
+                let mailboxIdBeforeSwitching = accountManager.currentMailboxId
+                try await accountManager.updateUser(for: currentAccount)
+                accountManager.enableBugTrackerIfAvailable()
+
+                try await accountManager.currentContactManager?.fetchContactsAndAddressBooks()
+
+                if mailboxIdBeforeSwitching != accountManager.currentMailboxId {
+                    showMainView()
+                }
+            } catch {
+                DDLogError("Error while updating user account: \(error)")
+            }
+        }
     }
 
     // MARK: - Open URLs
