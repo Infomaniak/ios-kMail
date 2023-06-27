@@ -159,7 +159,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, AccountManagerDelegate 
     }
 
     func showMainView(animated: Bool = true) {
-        if let mailboxManager = accountManager.firstValidMailboxManager {
+        if let mailboxManager = accountManager.currentMailboxManager {
             showMainView(mailboxManager: mailboxManager, animated: animated)
         } else {
             showNoMailboxView(animated: animated)

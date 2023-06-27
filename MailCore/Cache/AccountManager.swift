@@ -113,19 +113,6 @@ public class AccountManager: RefreshTokenDelegate {
         }
     }
 
-    public var firstValidMailboxManager: MailboxManager? {
-        if let validMailbox = currentMailboxManager, !validMailbox.mailbox.isLocked && validMailbox.mailbox.isPasswordValid {
-            return validMailbox
-        }
-        for mailbox in mailboxes {
-            if !mailbox.isLocked && mailbox.isPasswordValid {
-                switchMailbox(newMailbox: mailbox)
-                return getMailboxManager(for: mailbox)
-            }
-        }
-        return nil
-    }
-
     public var currentContactManager: ContactManager? {
         if let currentContactManager = getContactManager(for: currentUserId) {
             return currentContactManager
@@ -161,10 +148,7 @@ public class AccountManager: RefreshTokenDelegate {
         if let account = account(for: currentUserId) ?? accounts.first {
             setCurrentAccount(account: account)
 
-            if let currentMailbox = MailboxInfosManager.instance
-                .getMailbox(id: currentMailboxId, userId: currentUserId) ?? mailboxes.first {
-                setCurrentMailboxForCurrentAccount(mailbox: currentMailbox)
-            }
+            switchToFirstValidMailboxManager()
         }
     }
 
@@ -378,6 +362,23 @@ public class AccountManager: RefreshTokenDelegate {
                 }
             }
         }
+    }
+
+    public func switchToFirstValidMailboxManager() {
+        // Current mailbox is valid
+        if let firstValidMailboxManager = currentMailboxManager,
+           !firstValidMailboxManager.mailbox.isLocked && firstValidMailboxManager.mailbox.isPasswordValid {
+            return
+        }
+
+        // At least one mailbox is valid
+        if let firstValidMailbox = mailboxes.first(where: { !$0.isLocked && $0.isPasswordValid && $0.userId == currentUserId }) {
+            switchMailbox(newMailbox: firstValidMailbox)
+            return
+        }
+
+        // No valid mailbox for current user
+        currentMailboxId = 0
     }
 
     public func switchAccount(newAccount: Account) {
