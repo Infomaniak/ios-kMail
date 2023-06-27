@@ -17,10 +17,15 @@
  */
 
 import Foundation
-import SwiftUI
 import MailCore
+import SwiftUI
 
-class NavigationStore: ObservableObject {
+/// Something that represents the state of navigation
+final class NavigationStore: ObservableObject {
     @Published var messageReply: MessageReply?
+
+    /// Represents the state of navigation
+    ///
+    /// The selected thread is the last in collection, by convention.
     @Published var threadPath = [Thread]()
 }

@@ -101,7 +101,7 @@ final class DateSection: Identifiable, Equatable {
     }
 }
 
-@MainActor class ThreadListViewModel: ObservableObject {
+@MainActor final class ThreadListViewModel: ObservableObject {
     let mailboxManager: MailboxManager
 
     @Published var folder: Folder
@@ -224,10 +224,23 @@ final class DateSection: Identifiable, Equatable {
     }
 
     func nextThreadIfNeeded(from threads: [Thread]) {
-        guard !isCompact,
-              !threads.isEmpty,
-              !threads.contains(where: { $0.uid == selectedThread?.uid }),
-              let lastIndex = selectedThreadIndex else { return }
+        // iPad only
+        guard !isCompact else {
+            return
+        }
+
+        // No more threads ?
+        guard !threads.isEmpty else {
+            selectedThread = nil
+            return
+        }
+
+        // Matching thread to selection state
+        guard !threads.contains(where: { $0.uid == selectedThread?.uid }),
+              let lastIndex = selectedThreadIndex else {
+            return
+        }
+
         let validIndex = min(lastIndex, threads.count - 1)
         selectedThread = threads[validIndex]
     }

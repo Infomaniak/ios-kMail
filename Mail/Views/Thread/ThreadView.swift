@@ -129,13 +129,12 @@ struct ThreadView: View {
             .frame(maxWidth: .infinity)
         }
         .onChange(of: thread.messages) { newMessagesList in
-            if newMessagesList.isEmpty || thread.messageInFolderCount == 0 {
-                if isCompactWindow {
-                    dismiss() // For iPhone
-                } else {
-                    navigationStore.threadPath = [] // For iPad
-                }
+            guard isCompactWindow, newMessagesList.isEmpty || thread.messageInFolderCount == 0 else {
+                return
             }
+
+            // Dismiss on iPhone only
+            dismiss()
         }
         .matomoView(view: [MatomoUtils.View.threadView.displayName, "Main"])
     }

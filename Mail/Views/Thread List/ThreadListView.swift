@@ -24,7 +24,7 @@ import MailResources
 import RealmSwift
 import SwiftUI
 
-class FlushAlertState: Identifiable {
+final class FlushAlertState: Identifiable {
     let id = UUID()
     let deletedMessages: Int?
     let completion: () async -> Void
