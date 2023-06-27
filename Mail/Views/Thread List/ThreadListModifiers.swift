@@ -167,7 +167,7 @@ struct ThreadListToolbar: ViewModifier {
             )
             .navigationBarTitleDisplayMode(.inline)
             .sheet(isPresented: $isShowingSwitchAccount) {
-                AccountView(mailboxes: AccountManager.instance.mailboxes)
+                AccountView()
             }
     }
 }

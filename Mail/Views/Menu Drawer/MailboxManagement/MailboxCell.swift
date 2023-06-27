@@ -44,13 +44,8 @@ struct MailboxCell: View {
     @Environment(\.mailboxCellStyle) private var style: Style
     @Environment(\.window) private var window
 
-    @EnvironmentObject var mailboxManager: MailboxManager
-
     let mailbox: Mailbox
-
-    private var isSelected: Bool {
-        return mailboxManager.mailbox.objectId == mailbox.objectId
-    }
+    var isSelected = false
 
     private var detailNumber: Int? {
         return mailbox.unseenMessages > 0 ? mailbox.unseenMessages : nil
@@ -95,6 +90,6 @@ struct MailboxCell: View {
 
 struct MailboxCell_Previews: PreviewProvider {
     static var previews: some View {
-        MailboxCell(mailbox: PreviewHelper.sampleMailbox)
+        MailboxCell(mailbox: PreviewHelper.sampleMailbox, isSelected: true)
     }
 }
