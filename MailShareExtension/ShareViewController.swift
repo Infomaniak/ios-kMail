@@ -16,26 +16,39 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import UIKit
+import InfomaniakCoreUI
 import Social
+import SwiftUI
+import UIKit
 
-class ShareViewController: SLComposeServiceViewController {
+class ShareNavigationViewController: TitleSizeAdjustingNavigationController {
+    override public func viewDidLoad() {
+        super.viewDidLoad()
 
-    override func isContentValid() -> Bool {
-        // Do validation of contentText and/or NSExtensionContext attachments here
-        return true
+        // Modify sheet size on iPadOS, property is ignored on iOS
+        preferredContentSize = CGSize(width: 540, height: 620)
+
+        guard let attachments = (extensionContext?.inputItems.first as? NSExtensionItem)?.attachments else {
+            dismiss(animated: true)
+            return
+        }
+        
+        // To my knowledge, we need to go threw wrapping to use SwiftUI here.
+        let childView = UIHostingController(rootView: SwiftUIView())
+        addChild(childView)
+        childView.view.frame = self.view.bounds
+        self.view.addSubview(childView.view)
+        childView.didMove(toParent: self)
     }
 
-    override func didSelectPost() {
-        // This is called after the user selects Post. Do the upload of contentText and/or NSExtensionContext attachments.
-    
-        // Inform the host that we're done, so it un-blocks its UI. Note: Alternatively you could call super's -didSelectPost, which will similarly complete the extension context.
-        self.extensionContext!.completeRequest(returningItems: [], completionHandler: nil)
+    override func dismiss(animated flag: Bool, completion: (() -> Void)? = nil) {
+        extensionContext!.completeRequest(returningItems: nil, completionHandler: nil)
     }
+}
 
-    override func configurationItems() -> [Any]! {
-        // To add configuration options via table cells at the bottom of the sheet, return an array of SLComposeSheetConfigurationItem here.
-        return []
+struct SwiftUIView: View {
+    var body: some View {
+        Text("test")
+            .background(.red)
     }
-
 }
