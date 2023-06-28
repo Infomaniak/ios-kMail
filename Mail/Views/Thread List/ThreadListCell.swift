@@ -25,6 +25,7 @@ import SwiftUI
 
 struct ThreadListCell: View {
     @EnvironmentObject var splitViewManager: SplitViewManager
+    @EnvironmentObject var navigationStore: NavigationStore
 
     let viewModel: ThreadListViewModel
     @ObservedObject var multipleSelectionViewModel: ThreadListMultipleSelectionViewModel
@@ -77,7 +78,10 @@ struct ThreadListCell: View {
                 if splitViewManager.splitViewController?.splitBehavior == .overlay {
                     splitViewManager.splitViewController?.hide(.supplementary)
                 }
+
+                // Update both viewModel and navigationStore on the truth.
                 viewModel.selectedThread = thread
+                navigationStore.threadPath = [thread]
             }
         }
     }
