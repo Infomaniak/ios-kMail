@@ -20,12 +20,12 @@ import MailResources
 import SwiftUI
 
 struct SearchTextField: View {
+    @State private var initialFocusDone = false
+
     @Binding public var value: String
 
     public var onSubmit: () -> Void
     public var onDelete: () -> Void
-
-    @FocusState private var isFocused: Bool
 
     var body: some View {
         HStack(spacing: 10) {
@@ -36,7 +36,6 @@ struct SearchTextField: View {
             }
             .foregroundColor(MailResourcesAsset.textTertiaryColor)
             TextField(MailResourcesStrings.Localizable.searchFieldPlaceholder, text: $value)
-                .focused($isFocused)
                 .autocorrectionDisabled()
                 .submitLabel(.search)
                 .foregroundColor(value.isEmpty
@@ -44,6 +43,13 @@ struct SearchTextField: View {
                     : MailResourcesAsset.textPrimaryColor)
                 .onSubmit {
                     onSubmit()
+                }
+                .introspectTextField { textField in
+                    guard !initialFocusDone else { return }
+                    DispatchQueue.main.async {
+                        textField.becomeFirstResponder()
+                        initialFocusDone = true
+                    }
                 }
                 .padding(.vertical, 11)
 
@@ -54,9 +60,6 @@ struct SearchTextField: View {
             }
             .foregroundColor(MailResourcesAsset.textTertiaryColor)
             .opacity(value.isEmpty ? 0 : 1)
-        }
-        .onAppear {
-            isFocused = true
         }
         .padding(.horizontal, 12)
         .background {
