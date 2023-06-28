@@ -57,7 +57,7 @@ public class Mailbox: Object, Codable, Identifiable {
     public var id: Int {
         return mailboxId
     }
-    
+
     public var isAvailable: Bool {
         return isPasswordValid && !isLocked
     }

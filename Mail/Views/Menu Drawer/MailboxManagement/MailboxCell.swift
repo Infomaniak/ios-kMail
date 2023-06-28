@@ -43,16 +43,14 @@ extension View {
 struct MailboxCell: View {
     @Environment(\.mailboxCellStyle) private var style: Style
     @Environment(\.window) private var window
+  
+    @State private var isShowingLockedView = false
 
     let mailbox: Mailbox
     var isSelected = false
 
     private var detailNumber: Int? {
         return mailbox.unseenMessages > 0 ? mailbox.unseenMessages : nil
-    }
-
-    private var inMaintenance: Bool {
-        return !mailbox.isPasswordValid || mailbox.isLocked
     }
 
     enum Style {
@@ -65,7 +63,7 @@ struct MailboxCell: View {
             text: mailbox.email,
             detailNumber: detailNumber,
             isSelected: isSelected,
-            isInMaintenance: inMaintenance
+            isInMaintenance: !mailbox.isAvailable
         ) {
             guard !isSelected else { return }
             guard mailbox.isPasswordValid else {
@@ -73,7 +71,7 @@ struct MailboxCell: View {
                 return
             }
             guard !mailbox.isLocked else {
-                IKSnackBar.showSnackBar(message: MailResourcesStrings.Localizable.lockedMailboxesTitle)
+                isShowingLockedView = true
                 return
             }
             @InjectService var matomo: MatomoUtils
@@ -84,6 +82,9 @@ struct MailboxCell: View {
                 matomo.track(eventWithCategory: .account, name: "switchMailbox")
             }
             (window?.windowScene?.delegate as? SceneDelegate)?.switchMailbox(mailbox)
+        }
+        .floatingPanel(isPresented: $isShowingLockedView) {
+            LockedMailboxView(lockedMailboxView: mailbox)
         }
     }
 }
