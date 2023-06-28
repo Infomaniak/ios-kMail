@@ -37,8 +37,8 @@ struct AttachmentsHeaderView: View {
                         }
                     }
                     .padding(.vertical, 1)
+                    .padding(.horizontal, 16)
                 }
-                .padding(.horizontal, 16)
             }
         }
         .customAlert(item: $attachmentsManager.globalError) { error in

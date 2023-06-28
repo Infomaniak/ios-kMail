@@ -46,24 +46,13 @@ struct NestableFolder: Identifiable {
     }
 }
 
-class MenuDrawerViewModel: ObservableObject {
-    /// User currently selected mailbox
-    @Published var mailbox: Mailbox
-    /// Other mailboxes the user owns
-    @Published var mailboxes = [Mailbox]()
+class FolderListViewModel: ObservableObject {
     /// Special folders (eg. Inbox) for the current mailbox
     @Published var roleFolders = [NestableFolder]()
     /// User created folders for the current mailbox
     @Published var userFolders = [NestableFolder]()
 
-    @Published var helpMenuItems = [MenuItem]()
-    @Published var actionsMenuItems = [MenuItem]()
-    @Published var isShowingHelp = false
-    @Published var isShowingBugTracker = false
-    @Published var isShowingRestoreMails = false
-
     private var foldersObservationToken: NotificationToken?
-    private var mailboxesObservationToken: NotificationToken?
 
     private let userFoldersSortDescriptors = [
         SortDescriptor(keyPath: \Folder.isFavorite, ascending: false),
@@ -72,22 +61,6 @@ class MenuDrawerViewModel: ObservableObject {
     ]
 
     init(mailboxManager: MailboxManager) {
-        mailbox = mailboxManager.mailbox
-        mailboxesObservationToken = MailboxInfosManager.instance.getRealm()
-            .objects(Mailbox.self)
-            .where { $0.userId == AccountManager.instance.currentUserId }
-            .sorted(by: \.mailboxId)
-            .observe(on: DispatchQueue.main) { results in
-                switch results {
-                case .initial(let mailboxes):
-                    self.mailboxes = Array(mailboxes)
-                case .update(let mailboxes, _, _, _):
-                    self.mailboxes = Array(mailboxes)
-                case .error:
-                    break
-                }
-            }
-
         // swiftlint:disable empty_count
         foldersObservationToken = mailboxManager.getRealm()
             .objects(Folder.self).where { $0.parents.count == 0 && $0.toolType == nil }
@@ -103,62 +76,26 @@ class MenuDrawerViewModel: ObservableObject {
                     break
                 }
             }
-
-        createMenuItems()
     }
 
     private func handleFoldersUpdate(_ folders: Results<Folder>) {
         roleFolders = NestableFolder.createFoldersHierarchy(from: Array(folders.where { $0.role != nil }))
         userFolders = NestableFolder.createFoldersHierarchy(from: Array(folders.where { $0.role == nil }))
     }
+}
 
-    func createMenuItems() {
-        helpMenuItems = [
-            MenuItem(icon: MailResourcesAsset.feedback,
-                     label: MailResourcesStrings.Localizable.buttonFeedback,
-                     matomoName: "feedback",
-                     action: sendFeedback),
-            MenuItem(icon: MailResourcesAsset.help,
-                     label: MailResourcesStrings.Localizable.buttonHelp,
-                     matomoName: "help",
-                     action: openHelp)
-        ]
+struct FolderListView: View {
+    @StateObject private var viewModel: FolderListViewModel
 
-        actionsMenuItems = [
-            MenuItem(icon: MailResourcesAsset.drawerDownload,
-                     label: MailResourcesStrings.Localizable.buttonImportEmails,
-                     matomoName: "importEmails",
-                     action: importMails)
-        ]
-        if mailbox.permissions?.canRestoreEmails == true {
-            actionsMenuItems.append(.init(
-                icon: MailResourcesAsset.restoreArrow,
-                label: MailResourcesStrings.Localizable.buttonRestoreEmails,
-                matomoName: "restoreEmails",
-                action: restoreMails
-            ))
-        }
+    init(mailboxManager: MailboxManager) {
+        _viewModel = StateObject(wrappedValue: FolderListViewModel(mailboxManager: mailboxManager))
     }
 
-    // MARK: - Menu actions
+    var body: some View {
+        RoleFoldersListView(folders: viewModel.roleFolders)
 
-    private func sendFeedback() {
-        if AccountManager.instance.currentAccount?.user?.isStaff == true {
-            isShowingBugTracker.toggle()
-        } else if let userReportURL = URL(string: MailResourcesStrings.Localizable.urlUserReportiOS) {
-            UIApplication.shared.open(userReportURL)
-        }
-    }
+        IKDivider(hasVerticalPadding: true, horizontalPadding: UIConstants.menuDrawerHorizontalPadding)
 
-    private func openHelp() {
-        isShowingHelp.toggle()
-    }
-
-    private func importMails() {
-        UIApplication.shared.open(URLConstants.importMails.url)
-    }
-
-    private func restoreMails() {
-        isShowingRestoreMails = true
+        UserFoldersListView(folders: viewModel.userFolders)
     }
 }

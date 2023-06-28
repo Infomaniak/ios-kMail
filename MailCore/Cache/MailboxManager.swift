@@ -66,13 +66,15 @@ public class MailboxManager: ObservableObject {
     public private(set) var apiFetcher: MailApiFetcher
     private let backgroundRealm: BackgroundRealm
 
+    private lazy var refreshActor = RefreshActor(mailboxManager: self)
+
     public init(mailbox: Mailbox, apiFetcher: MailApiFetcher) {
         self.mailbox = mailbox
         self.apiFetcher = apiFetcher
         let realmName = "\(mailbox.userId)-\(mailbox.mailboxId).realm"
         realmConfiguration = Realm.Configuration(
             fileURL: MailboxManager.constants.rootDocumentsURL.appendingPathComponent(realmName),
-            schemaVersion: 10,
+            schemaVersion: 14,
             deleteRealmIfMigrationNeeded: true,
             objectTypes: [
                 Folder.self,
@@ -82,9 +84,7 @@ public class MailboxManager: ObservableObject {
                 Attachment.self,
                 Recipient.self,
                 Draft.self,
-                SignatureResponse.self,
                 Signature.self,
-                ValidEmail.self,
                 SearchHistory.self
             ]
         )
@@ -123,26 +123,50 @@ public class MailboxManager: ObservableObject {
 
     // MARK: - Signatures
 
-    public func signatures() async throws {
+    public func refreshAllSignatures() async throws {
         // Get from API
         let signaturesResult = try await apiFetcher.signatures(mailbox: mailbox)
+        let updatedSignatures = Array(signaturesResult.signatures)
 
         await backgroundRealm.execute { realm in
+            let signaturesToDelete: [Signature] // no longer present server side
+            let signaturesToUpdate: [Signature] // updated signatures
+            let signaturesToAdd: [Signature] // new signatures
+
+            // fetch all local signatures
+            let existingSignatures = Array(realm.objects(Signature.self))
+
+            signaturesToAdd = updatedSignatures.filter { updatedElement in
+                !existingSignatures.contains(updatedElement)
+            }
+
+            signaturesToUpdate = updatedSignatures.filter { updatedElement in
+                existingSignatures.contains(updatedElement)
+            }
+
+            signaturesToDelete = existingSignatures.filter { existingElement in
+                !updatedSignatures.contains(existingElement)
+            }
+
+            // NOTE: local drafts in `signaturesToDelete` should be migrated to use the new default signature.
+
             // Update signatures in Realm
             try? realm.safeWrite {
-                realm.add(signaturesResult, update: .modified)
+                realm.add(signaturesToUpdate, update: .modified)
+                realm.delete(signaturesToDelete)
+                realm.add(signaturesToAdd, update: .modified)
             }
         }
     }
 
     public func updateSignature(signature: Signature) async throws {
         _ = try await apiFetcher.updateSignature(mailbox: mailbox, signature: signature)
-        try await signatures()
+        try await refreshAllSignatures()
     }
 
-    public func getSignatureResponse(using realm: Realm? = nil) -> SignatureResponse? {
+    public func getStoredSignatures(using realm: Realm? = nil) -> [Signature] {
         let realm = realm ?? getRealm()
-        return realm.object(ofType: SignatureResponse.self, forPrimaryKey: 1)
+        return Array(realm.objects(Signature.self))
     }
 
     // MARK: - Folders
@@ -222,7 +246,7 @@ public class MailboxManager: ObservableObject {
 
     public func flushFolder(folder: Folder) async throws -> Bool {
         let response = try await apiFetcher.flushFolder(mailbox: mailbox, folderId: folder.id)
-        try await threads(folder: folder)
+        await refresh(folder: folder)
         return response
     }
 
@@ -236,7 +260,7 @@ public class MailboxManager: ObservableObject {
 
         for folder in orderedSet {
             guard let impactedFolder = folder as? Folder else { continue }
-            try await threads(folder: impactedFolder)
+            await refresh(folder: impactedFolder)
         }
     }
 
@@ -266,7 +290,7 @@ public class MailboxManager: ObservableObject {
         }
     }
 
-    private func deleteMessages(uids: [String], folder: Folder) async {
+    private func deleteMessages(uids: [String]) async {
         guard !uids.isEmpty && !Task.isCancelled else { return }
 
         await backgroundRealm.execute { realm in
@@ -302,14 +326,7 @@ public class MailboxManager: ObservableObject {
                                     try thread.recomputeOrFail()
                                 } catch {
                                     threadsToDelete.insert(thread)
-                                    SentrySDK.capture(message: "Thread has nil lastMessageFromFolderDate") { scope in
-                                        scope.setContext(value: ["dates": "\(thread.messages.map { $0.date })",
-                                                                 "ids": "\(thread.messages.map { $0.id })"],
-                                                         key: "all messages")
-                                        scope.setContext(value: ["id": "\(thread.lastMessageFromFolder?.uid ?? "nil")"],
-                                                         key: "lastMessageFromFolder")
-                                        scope.setContext(value: ["date before error": thread.date], key: "thread")
-                                    }
+                                    SentryDebug.threadHasNilLastMessageFromFolderDate(thread: thread)
                                 }
                             }
                         }
@@ -637,7 +654,10 @@ public class MailboxManager: ObservableObject {
     public func messages(folder: Folder) async throws {
         guard !Task.isCancelled else { return }
 
-        let previousCursor = folder.cursor
+        let realm = getRealm()
+        let freshFolder = folder.fresh(using: realm)
+
+        let previousCursor = freshFolder?.cursor
         var messagesUids: MessagesUids
 
         if previousCursor == nil {
@@ -671,6 +691,9 @@ public class MailboxManager: ObservableObject {
         await backgroundRealm.execute { realm in
             guard let folder = folder.fresh(using: realm) else { return }
             try? realm.safeWrite {
+                if previousCursor == nil && messagesUids.addedShortUids.count < Constants.pageSize {
+                    folder.completeHistoryInfo()
+                }
                 folder.computeUnreadCount()
                 folder.cursor = messagesUids.cursor
                 folder.lastUpdate = Date()
@@ -689,8 +712,10 @@ public class MailboxManager: ObservableObject {
             )
         }
 
-        while try await fetchOnePage(folder: folder, direction: .following) {
-            guard !Task.isCancelled else { return }
+        if previousCursor != nil {
+            while try await fetchOnePage(folder: folder, direction: .following) {
+                guard !Task.isCancelled else { return }
+            }
         }
 
         if folder.role == .inbox,
@@ -698,8 +723,18 @@ public class MailboxManager: ObservableObject {
             MailboxInfosManager.instance.updateUnseen(unseenMessages: freshFolder.unreadCount, for: mailbox)
         }
 
-        while try await fetchOnePage(folder: folder, direction: .previous) {
-            guard !Task.isCancelled else { return }
+        let realmPrevious = getRealm()
+        if let folderPrevious = folder.fresh(using: realmPrevious) {
+            var remainingOldMessagesToFetch = folderPrevious.remainingOldMessagesToFetch
+            while remainingOldMessagesToFetch > 0 {
+                guard !Task.isCancelled else { return }
+
+                if try !(await fetchOnePage(folder: folder, direction: .previous)) {
+                    break
+                }
+
+                remainingOldMessagesToFetch -= Constants.pageSize
+            }
         }
     }
 
@@ -730,14 +765,13 @@ public class MailboxManager: ObservableObject {
 
         try await handleMessagesUids(messageUids: messagesUids, folder: folder)
 
-        switch direction {
+        switch paginationInfo?.direction {
         case .previous:
             return await backgroundRealm.execute { realm in
                 let freshFolder = folder.fresh(using: realm)
                 if messagesUids.addedShortUids.count < Constants.pageSize || messagesUids.addedShortUids.contains("1") {
                     try? realm.safeWrite {
-                        freshFolder?.isHistoryComplete = true
-                        freshFolder?.remainingOldMessagesToFetch = 0
+                        freshFolder?.completeHistoryInfo()
                     }
                     return false
                 } else {
@@ -748,24 +782,55 @@ public class MailboxManager: ObservableObject {
                 }
             }
         case .following:
-            if paginationInfo == nil {
-                await backgroundRealm.execute { realm in
-                    let freshFolder = folder.fresh(using: realm)
-                    try? realm.safeWrite {
-                        freshFolder?.resetHistoryInfo()
+            break
+        case .none:
+            await backgroundRealm.execute { realm in
+                let freshFolder = folder.fresh(using: realm)
+                try? realm.safeWrite {
+                    freshFolder?.resetHistoryInfo()
+
+                    if messagesUids.addedShortUids.count < Constants.pageSize {
+                        freshFolder?.completeHistoryInfo()
                     }
                 }
             }
-        default:
-            break
         }
         return messagesUids.addedShortUids.count == Constants.pageSize
     }
 
     private func handleMessagesUids(messageUids: MessagesUids, folder: Folder) async throws {
-        await deleteMessages(uids: messageUids.deletedUids, folder: folder)
+        let startDate = Date(timeIntervalSinceNow: -5 * 60)
+        let ignoredIds = folder.fresh(using: getRealm())?.threads
+            .where { $0.date > startDate }
+            .map { $0.uid } ?? []
+        await deleteMessages(uids: messageUids.deletedUids)
+        var shouldIgnoreNextEvents = SentryDebug.captureWrongDate(
+            step: "After delete",
+            startDate: startDate,
+            folder: folder,
+            alreadyWrongIds: ignoredIds,
+            realm: getRealm()
+        )
         await updateMessages(updates: messageUids.updated, folder: folder)
+        if !shouldIgnoreNextEvents {
+            shouldIgnoreNextEvents = SentryDebug.captureWrongDate(
+                step: "After updateMessages",
+                startDate: startDate,
+                folder: folder,
+                alreadyWrongIds: ignoredIds,
+                realm: getRealm()
+            )
+        }
         try await addMessages(shortUids: messageUids.addedShortUids, folder: folder, newCursor: messageUids.cursor)
+        if !shouldIgnoreNextEvents {
+            _ = SentryDebug.captureWrongDate(
+                step: "After addMessages",
+                startDate: startDate,
+                folder: folder,
+                alreadyWrongIds: ignoredIds,
+                realm: getRealm()
+            )
+        }
     }
 
     private func addMessages(shortUids: [String], folder: Folder, newCursor: String?) async throws {
@@ -892,16 +957,9 @@ public class MailboxManager: ObservableObject {
         let folders = Set(threads.compactMap(\.folder))
         for thread in threads {
             do {
-               try thread.recomputeOrFail()
+                try thread.recomputeOrFail()
             } catch {
-                SentrySDK.capture(message: "Thread has nil lastMessageFromFolderDate") { scope in
-                    scope.setContext(value: ["dates": "\(thread.messages.map { $0.date })",
-                                             "ids": "\(thread.messages.map { $0.id })"],
-                                     key: "all messages")
-                    scope.setContext(value: ["id": "\(thread.lastMessageFromFolder?.uid ?? "nil")"],
-                                     key: "lastMessageFromFolder")
-                    scope.setContext(value: ["date before error": thread.date], key: "thread")
-                }
+                SentryDebug.threadHasNilLastMessageFromFolderDate(thread: thread)
                 realm.delete(thread)
             }
         }
@@ -1072,7 +1130,10 @@ public class MailboxManager: ObservableObject {
         await backgroundRealm.execute { realm in
             draft.localUUID = partialDraft.localUUID
             draft.action = .save
-            draft.identityId = partialDraft.identityId
+
+            // We made sure beforehand to have an up to date signature.
+            // If the server does not return an identityId, we want to keep the original one
+            draft.identityId = partialDraft.identityId ?? draft.identityId
             draft.delay = partialDraft.delay
 
             try? realm.safeWrite {
@@ -1116,15 +1177,21 @@ public class MailboxManager: ObservableObject {
     }
 
     public func save(draft: Draft) async throws {
-        let saveResponse = try await apiFetcher.save(mailbox: mailbox, draft: draft)
-        await backgroundRealm.execute { realm in
-            // Update draft in Realm
-            guard let liveDraft = realm.object(ofType: Draft.self, forPrimaryKey: draft.localUUID) else { return }
-            try? realm.safeWrite {
-                liveDraft.remoteUUID = saveResponse.uuid
-                liveDraft.messageUid = saveResponse.uid
-                liveDraft.action = nil
+        do {
+            let saveResponse = try await apiFetcher.save(mailbox: mailbox, draft: draft)
+            await backgroundRealm.execute { realm in
+                // Update draft in Realm
+                guard let liveDraft = realm.object(ofType: Draft.self, forPrimaryKey: draft.localUUID) else { return }
+                try? realm.safeWrite {
+                    liveDraft.remoteUUID = saveResponse.uuid
+                    liveDraft.messageUid = saveResponse.uid
+                    liveDraft.action = nil
+                }
             }
+        } catch let error as MailApiError {
+            // The api returned an error for now we can do nothing about it so we delete the draft
+            try await deleteLocally(draft: draft)
+            throw error
         }
     }
 
@@ -1171,6 +1238,16 @@ public class MailboxManager: ObservableObject {
                 }
             }
         }
+    }
+
+    // MARK: - RefreshActor
+
+    public func refresh(folder: Folder) async {
+        await refreshActor.refresh(folder: folder)
+    }
+
+    public func cancelRefresh() async {
+        await refreshActor.cancelRefresh()
     }
 
     // MARK: - Utilities

@@ -55,7 +55,7 @@ struct ThreadListManagerView: View {
         .id(mailboxManager.mailbox.id)
         .animation(.easeInOut(duration: 0.25), value: splitViewManager.showSearch)
         .sheet(item: $editedMessageDraft) { draft in
-            ComposeMessageView.editDraft(draft: draft, mailboxManager: mailboxManager)
+            ComposeMessageView.edit(draft: draft, mailboxManager: mailboxManager)
         }
     }
 }

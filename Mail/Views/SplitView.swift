@@ -39,6 +39,7 @@ struct SplitView: View {
     @EnvironmentObject private var navigationStore: NavigationStore
 
     @State private var splitViewController: UISplitViewController?
+    @State private var mailToURLComponents: IdentifiableURLComponents?
 
     @StateObject private var navigationDrawerController = NavigationDrawerState()
     @StateObject private var splitViewManager = SplitViewManager()
@@ -63,7 +64,7 @@ struct SplitView: View {
                 }
             } else {
                 NavigationView {
-                    MenuDrawerView(mailboxManager: mailboxManager)
+                    MenuDrawerView()
                         .navigationBarHidden(true)
 
                     ThreadListManagerView()
@@ -78,6 +79,9 @@ struct SplitView: View {
         }
         .sheet(item: $navigationStore.messageReply) { messageReply in
             ComposeMessageView.replyOrForwardMessage(messageReply: messageReply, mailboxManager: mailboxManager)
+        }
+        .sheet(item: $mailToURLComponents) { identifiableURLComponents in
+            ComposeMessageView.mailTo(urlComponents: identifiableURLComponents.urlComponents, mailboxManager: mailboxManager)
         }
         .onChange(of: scenePhase) { newScenePhase in
             guard newScenePhase == .active else { return }
@@ -97,6 +101,9 @@ struct SplitView: View {
             } else {
                 IKSnackBar.showSnackBar(message: MailError.localMessageNotFound.errorDescription)
             }
+        }
+        .onReceive(NotificationCenter.default.publisher(for: .onOpenedMailTo)) { identifiableURLComponents in
+            self.mailToURLComponents = identifiableURLComponents.object as? IdentifiableURLComponents
         }
         .onAppear {
             AppDelegate.orientationLock = .all
@@ -144,7 +151,7 @@ struct SplitView: View {
 
     private func fetchSignatures() async {
         await tryOrDisplayError {
-            try await mailboxManager.signatures()
+            try await mailboxManager.refreshAllSignatures()
         }
     }
 

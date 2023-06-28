@@ -24,7 +24,7 @@ import MailCore
 import RealmSwift
 import SwiftUI
 
-struct PreviewHelper {
+enum PreviewHelper {
     static let sampleMailboxManager = MailboxManager(mailbox: sampleMailbox, apiFetcher: MailApiFetcher())
 
     static let sampleMailbox = Mailbox(uuid: "",
@@ -64,7 +64,7 @@ struct PreviewHelper {
                                      cc: [],
                                      bcc: [],
                                      subject: "Test thread",
-                                     date: Date(),
+                                     date: SentryDebug.knownDebugDate,
                                      hasAttachments: true,
                                      hasSwissTransferAttachments: false,
                                      hasDrafts: false,
@@ -77,7 +77,7 @@ struct PreviewHelper {
                                        msgId: "",
                                        subject: "Test message",
                                        priority: .normal,
-                                       date: Date(),
+                                       date: SentryDebug.knownDebugDate,
                                        size: 0,
                                        from: [sampleRecipient1],
                                        to: [sampleRecipient2],
@@ -110,6 +110,8 @@ struct PreviewHelper {
     static let sampleRecipient2 = Recipient(email: "to@example.com", name: "Alice Bobber")
 
     static let sampleRecipient3 = Recipient(email: "test@example.com", name: "")
+
+    static let sampleRecipientsList = [sampleRecipient1, sampleRecipient2, sampleRecipient3].toRealmList()
 
     static let sampleAttachment = Attachment(
         uuid: "",

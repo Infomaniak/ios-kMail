@@ -64,6 +64,7 @@ enum RootViewDestination {
 }
 
 @MainActor
+/// Something that represents the state of navigation
 class NavigationStore: ObservableObject {
     @LazyInjectService private var appLockHelper: AppLockHelper
 
@@ -72,6 +73,10 @@ class NavigationStore: ObservableObject {
 
     @Published private(set) var rootViewState: RootViewState
     @Published var messageReply: MessageReply?
+
+    /// Represents the state of navigation
+    ///
+    /// The selected thread is the last in collection, by convention.
     @Published var threadPath = [Thread]()
 
     init() {

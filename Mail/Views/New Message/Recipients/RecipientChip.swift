@@ -29,8 +29,8 @@ struct RecipientChip: View {
     let recipient: Recipient
     let fieldType: ComposeViewFieldType
     @FocusState var focusedField: ComposeViewFieldType?
-    let removeHandler: () -> Void
-    let switchFocusHandler: () -> Void
+    var removeHandler: (() -> Void)?
+    var switchFocusHandler: (() -> Void)?
 
     var body: some View {
         Templates.Menu {
@@ -51,18 +51,17 @@ struct RecipientChip: View {
 
             Templates.MenuButton(text: Text(MailResourcesStrings.Localizable.actionDelete),
                                  image: MailResourcesAsset.bin.swiftUIImage) {
-                removeHandler()
+                removeHandler?()
             }
         } label: { isSelected in
             RecipientChipLabelView(recipient: recipient, removeHandler: removeAndFocus, switchFocusHandler: switchFocusHandler)
-                .fixedSize()
                 .opacity(isSelected ? 0.8 : 1)
         }
     }
 
     private func removeAndFocus() {
         focusedField = fieldType
-        removeHandler()
+        removeHandler?()
     }
 }
 

@@ -22,7 +22,7 @@ import MailResources
 import RealmSwift
 import Sentry
 
-// TODO move to core
+// TODO: move to core
 public extension String {
     /// Max length of a string before we need to truncate it.
     static let closeToMaxRealmSize = 14_000_000
@@ -33,7 +33,7 @@ public extension String {
     var truncatedForRealmIfNeeded: Self {
         Self.truncatedForRealmIfNeeded(self)
     }
-    
+
     /// Truncate a string for compatibility with Realm if needed
     ///
     /// The string will be terminated by " [truncated]" if it was
@@ -303,14 +303,26 @@ public final class Message: Object, Decodable, Identifiable {
 
     public required init(from decoder: Decoder) throws {
         let values = try decoder.container(keyedBy: CodingKeys.self)
-        uid = try values.decode(String.self, forKey: .uid)
+        let uid = try values.decode(String.self, forKey: .uid)
+        self.uid = uid
         if let msgId = try? values.decode(String.self, forKey: .messageId) {
             messageId = msgId
             linkedUids = [msgId].toRealmSet()
         }
         subject = try values.decodeIfPresent(String.self, forKey: .subject)
         priority = try values.decode(MessagePriority.self, forKey: .priority)
-        date = (try? values.decode(Date.self, forKey: .date)) ?? Date()
+        if let date = (try? values.decode(Date.self, forKey: .date)) {
+            self.date = date
+        } else {
+            date = Date()
+            SentrySDK
+                .addBreadcrumb(SentryDebug.createBreadcrumb(
+                    level: .warning,
+                    category: "Thread algo",
+                    message: "Nil message date decoded",
+                    data: ["uid": uid]
+                ))
+        }
         size = try values.decode(Int.self, forKey: .size)
         from = try values.decode(List<Recipient>.self, forKey: .from)
         to = try values.decode(List<Recipient>.self, forKey: .to)
@@ -454,10 +466,9 @@ final class ProxyBody: Codable {
 
     /// Generate a new persisted realm object on the fly
     public func realmObject() -> Body {
-        
         // truncate message if needed
         let truncatedValue = value?.truncatedForRealmIfNeeded
-        
+
         let body = Body()
         body.value = truncatedValue
         body.type = type

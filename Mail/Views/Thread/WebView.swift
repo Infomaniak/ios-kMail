@@ -38,10 +38,15 @@ struct WebView: UIViewRepresentable {
             self.parent = parent
         }
 
-        func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
+        func webView(_ webView: WKWebView, didStartProvisionalNavigation navigation: WKNavigation!) {
+            // run the JS function `listenToSizeChanges` early. Prevent issues with distant resources not available.
             Task { @MainActor in
                 try await webView.evaluateJavaScript("listenToSizeChanges()")
+            }
+        }
 
+        func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
+            Task { @MainActor in
                 // Fix CSS properties and adapt the mail to the screen size
                 let readyState = try await webView.evaluateJavaScript("document.readyState") as? String
                 guard readyState == "complete" else { return }

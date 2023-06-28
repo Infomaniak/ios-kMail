@@ -59,6 +59,9 @@ public struct EarlyDIHook {
         let avoider = Factory(type: SnackBarAvoider.self) { _, _ in
             SnackBarAvoider()
         }
+        let draftManager = Factory(type: DraftManager.self) { _, _ in
+            DraftManager()
+        }
 
         SimpleResolver.sharedResolver.store(factory: networkLoginService)
         SimpleResolver.sharedResolver.store(factory: loginService)
@@ -68,6 +71,7 @@ public struct EarlyDIHook {
         SimpleResolver.sharedResolver.store(factory: bugTracker)
         SimpleResolver.sharedResolver.store(factory: matomoUtils)
         SimpleResolver.sharedResolver.store(factory: avoider)
+        SimpleResolver.sharedResolver.store(factory: draftManager)
     }
 }
 

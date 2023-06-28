@@ -58,13 +58,17 @@ public class MailError: LocalizedError {
     public static let addressBookNotFound = MailError(code: "addressBookNotFound", shouldDisplay: true)
     public static let contactNotFound = MailError(code: "contactNotFound", shouldDisplay: true)
     public static let localMessageNotFound = MailError(code: "messageNotFound",
-                                                  localizedDescription: MailResourcesStrings.Localizable.errorMessageNotFound,
-                                                  shouldDisplay: true)
+                                                       localizedDescription: MailResourcesStrings.Localizable
+                                                           .errorMessageNotFound,
+                                                       shouldDisplay: true)
     public static let attachmentsSizeLimitReached = MailError(code: "attachmentsSizeLimitReached",
                                                               localizedDescription: MailResourcesStrings.Localizable
                                                                   .attachmentFileLimitReached,
                                                               shouldDisplay: true)
     public static let incoherentThreadDate = MailError(code: "incoherentThreadDate")
+
+    /// After an update from the server we are still without a default signature
+    public static let defaultSignatureMissing = MailError(code: "defaultSignatureMissing")
 }
 
 extension MailError: Identifiable {

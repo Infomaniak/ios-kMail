@@ -16,50 +16,84 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import Combine
 import MailCore
 import MailResources
+import RealmSwift
 import SwiftUI
 
 struct AutocompletionView: View {
-    @Binding var autocompletion: [Recipient]
-    @Binding var unknownRecipientAutocompletion: String
+    @State private var shouldAddUserProposal = false
 
-    let onSelect: (Recipient) -> Void
+    @ObservedObject var textDebounce: TextDebounce
+
+    @Binding var autocompletion: [Recipient]
+    @Binding var addedRecipients: RealmSwift.List<Recipient>
+
+    let addRecipient: @MainActor (Recipient) -> Void
 
     var body: some View {
-        LazyVStack {
+        LazyVStack(spacing: UIConstants.autocompletionVerticalPadding) {
             ForEach(autocompletion) { recipient in
-                VStack(alignment: .leading, spacing: 8) {
-                    Button {
-                        onSelect(recipient)
-                    } label: {
-                        RecipientCell(recipient: recipient)
+                let isLastRecipient = autocompletion.last?.isSameRecipient(as: recipient) == true
+                let isUserProposal = shouldAddUserProposal && isLastRecipient
+
+                VStack(alignment: .leading, spacing: UIConstants.autocompletionVerticalPadding) {
+                    AutocompletionCell(
+                        addRecipient: addRecipient,
+                        recipient: recipient,
+                        highlight: textDebounce.text,
+                        alreadyAppend: addedRecipients.contains { $0.isSameRecipient(as: recipient) },
+                        unknownRecipient: isUserProposal
+                    )
+
+                    if !isLastRecipient {
+                        IKDivider()
                     }
-                    .padding(.horizontal, 8)
-
-                    IKDivider()
                 }
-            }
-
-            if !unknownRecipientAutocompletion.isEmpty {
-                Button {
-                    onSelect(Recipient(email: unknownRecipientAutocompletion, name: ""))
-                } label: {
-                    AddRecipientCell(recipientEmail: unknownRecipientAutocompletion)
-                }
-                .padding(.horizontal, 8)
             }
         }
-        .padding(.top, 8)
-        .padding(.horizontal, 8)
+        .onAppear {
+            updateAutocompletion(textDebounce.text)
+        }
+        .onReceive(textDebounce.$text.debounce(for: .milliseconds(150), scheduler: DispatchQueue.main)) { currentValue in
+            updateAutocompletion("\(currentValue)")
+        }
+    }
+
+    private func updateAutocompletion(_ search: String) {
+        guard let contactManager = AccountManager.instance.currentContactManager else {
+            withAnimation {
+                autocompletion = []
+            }
+            return
+        }
+
+        let trimmedSearch = search.trimmingCharacters(in: .whitespacesAndNewlines)
+
+        let autocompleteContacts = contactManager.contacts(matching: trimmedSearch)
+        var autocompleteRecipients = autocompleteContacts.map { Recipient(email: $0.email, name: $0.name) }
+
+        let realResults = autocompleteRecipients.filter { !addedRecipients.map(\.email).contains($0.email) }
+
+        withAnimation {
+            shouldAddUserProposal = !(realResults.count == 1 && realResults.first?.email == textDebounce.text)
+            if shouldAddUserProposal {
+                autocompleteRecipients
+                    .append(Recipient(email: textDebounce.text, name: ""))
+            }
+
+            autocompletion = autocompleteRecipients
+        }
     }
 }
 
 struct AutocompletionView_Previews: PreviewProvider {
     static var previews: some View {
-        AutocompletionView(autocompletion: .constant([
-            PreviewHelper.sampleRecipient1, PreviewHelper.sampleRecipient2, PreviewHelper.sampleRecipient3
-        ]),
-        unknownRecipientAutocompletion: .constant("")) { _ in /* Preview */ }
+        AutocompletionView(
+            textDebounce: TextDebounce(),
+            autocompletion: .constant([]),
+            addedRecipients: .constant(PreviewHelper.sampleRecipientsList)
+        ) { _ in /* Preview */ }
     }
 }
