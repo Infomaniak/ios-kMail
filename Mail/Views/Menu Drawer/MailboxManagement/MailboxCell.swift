@@ -42,7 +42,7 @@ extension View {
 
 struct MailboxCell: View {
     @Environment(\.mailboxCellStyle) private var style: Style
-    @Environment(\.window) private var window
+    @EnvironmentObject private var navigationDrawerState: NavigationDrawerState
 
     let mailbox: Mailbox
 
@@ -79,6 +79,7 @@ struct MailboxCell: View {
                 matomo.track(eventWithCategory: .account, name: "switchMailbox")
             }
             AccountManager.instance.switchMailbox(newMailbox: mailbox)
+            navigationDrawerState.close()
         }
     }
 }

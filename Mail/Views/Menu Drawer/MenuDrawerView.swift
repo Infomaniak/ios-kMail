@@ -138,33 +138,30 @@ struct MenuDrawerView: View {
 
             ScrollView {
                 VStack(spacing: 0) {
-                    Group {
-                        MailboxesManagementView()
+                    MailboxesManagementView()
 
+                    IKDivider(hasVerticalPadding: true, horizontalPadding: UIConstants.menuDrawerHorizontalPadding)
+
+                    FolderListView(mailboxManager: mailboxManager)
+
+                    IKDivider(hasVerticalPadding: true, horizontalPadding: UIConstants.menuDrawerHorizontalPadding)
+
+                    MenuDrawerItemsAdvancedListView(
+                        mailboxCanRestoreEmails: mailboxManager.mailbox.permissions?.canRestoreEmails == true
+                    )
+
+                    IKDivider(hasVerticalPadding: true, horizontalPadding: UIConstants.menuDrawerHorizontalPadding)
+
+                    MenuDrawerItemsHelpListView()
+                    if mailboxManager.mailbox.isLimited, let quotas = mailboxManager.mailbox.quotas {
                         IKDivider(hasVerticalPadding: true, horizontalPadding: UIConstants.menuDrawerHorizontalPadding)
 
-                        FolderListView(mailboxManager: mailboxManager)
-
-                        IKDivider(hasVerticalPadding: true, horizontalPadding: UIConstants.menuDrawerHorizontalPadding)
+                        MailboxQuotaView(quotas: quotas)
                     }
-                    Group {
-                        MenuDrawerItemsAdvancedListView(
-                            mailboxCanRestoreEmails: mailboxManager.mailbox.permissions?.canRestoreEmails == true
-                        )
 
-                        IKDivider(hasVerticalPadding: true, horizontalPadding: UIConstants.menuDrawerHorizontalPadding)
+                    IKDivider(hasVerticalPadding: true, horizontalPadding: UIConstants.menuDrawerHorizontalPadding)
 
-                        MenuDrawerItemsHelpListView()
-                        if mailboxManager.mailbox.isLimited, let quotas = mailboxManager.mailbox.quotas {
-                            IKDivider(hasVerticalPadding: true, horizontalPadding: UIConstants.menuDrawerHorizontalPadding)
-
-                            MailboxQuotaView(quotas: quotas)
-                        }
-
-                        IKDivider(hasVerticalPadding: true, horizontalPadding: UIConstants.menuDrawerHorizontalPadding)
-
-                        AppVersionView()
-                    }
+                    AppVersionView()
                 }
                 .padding(.vertical, 16)
             }

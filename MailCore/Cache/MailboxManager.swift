@@ -1316,6 +1316,14 @@ public class MailboxManager: ObservableObject {
     }
 }
 
+// MARK: - Equatable conformance
+
+extension MailboxManager: Equatable {
+    public static func == (lhs: MailboxManager, rhs: MailboxManager) -> Bool {
+        return lhs.mailbox.id == rhs.mailbox.id
+    }
+}
+
 public extension Realm {
     func uncheckedSafeWrite(_ block: () throws -> Void) throws {
         if isInWriteTransaction {
