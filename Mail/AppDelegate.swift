@@ -28,11 +28,12 @@ import Sentry
 import SwiftUI
 import UIKit
 
-@main
+@main @available(iOSApplicationExtension, unavailable)
 class AppDelegate: UIResponder, UIApplicationDelegate {
     private let notificationCenterDelegate = NotificationCenterDelegate()
     private var accountManager: AccountManager!
-    static var orientationLock = UIInterfaceOrientationMask.all
+    
+    @LazyInjectService var orientationManager: OrientationManageable
 
     func application(_ application: UIApplication,
                      willFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil) -> Bool {
@@ -93,7 +94,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(_ application: UIApplication,
                      supportedInterfaceOrientationsFor window: UIWindow?) -> UIInterfaceOrientationMask {
-        return AppDelegate.orientationLock
+        return orientationManager.orientationLock
     }
 
     func refreshCacheData() {

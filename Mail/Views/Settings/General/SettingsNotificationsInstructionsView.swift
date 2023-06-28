@@ -18,10 +18,13 @@
 
 import MailResources
 import SwiftUI
+import InfomaniakDI
 
 struct SettingsNotificationsInstructionsView: View {
     @Environment(\.dismiss) private var dismiss
 
+    @LazyInjectService private var urlNavigator: URLNavigable
+    
     var body: some View {
         VStack(alignment: .leading, spacing: 24) {
             Text(MailResourcesStrings.Localizable.alertNotificationsDisabledTitle)
@@ -40,9 +43,7 @@ struct SettingsNotificationsInstructionsView: View {
             return
         }
 
-        if UIApplication.shared.canOpenURL(settingsUrl) {
-            UIApplication.shared.open(settingsUrl)
-        }
+        urlNavigator.openUrlIfPossible(settingsUrl)
     }
 }
 

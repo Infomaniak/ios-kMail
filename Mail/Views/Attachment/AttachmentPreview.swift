@@ -30,6 +30,8 @@ struct AttachmentPreview: View {
 
     @Environment(\.verticalSizeClass) var sizeClass
 
+    @LazyInjectService var rootViewControllerFetcher: RootViewControllerFetcheable
+
     var body: some View {
         NavigationView {
             Group {
@@ -72,7 +74,7 @@ struct AttachmentPreview: View {
         @InjectService var matomo: MatomoUtils
         matomo.track(eventWithCategory: .message, name: "download")
         guard let url = attachment.localUrl,
-              var source = UIApplication.shared.mainSceneKeyWindow?.rootViewController else {
+              var source = rootViewControllerFetcher.rootViewController else {
             return
         }
         if let presentedViewController = source.presentedViewController {

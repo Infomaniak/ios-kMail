@@ -27,6 +27,8 @@ import UIKit
 class SceneDelegate: UIResponder, UIWindowSceneDelegate, AccountManagerDelegate {
     var window: UIWindow?
 
+    @LazyInjectService var cacheManager: CacheManageable
+
     private var accountManager: AccountManager!
     @LazyInjectService var appLockHelper: AppLockHelper
 
@@ -69,7 +71,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, AccountManagerDelegate 
     func sceneWillEnterForeground(_ scene: UIScene) {
         // Called as the scene transitions from the background to the foreground.
         // Use this method to undo the changes made on entering the background.
-        (UIApplication.shared.delegate as? AppDelegate)?.refreshCacheData()
+        cacheManager.refreshCacheData()
 
         if UserDefaults.shared.isAppLockEnabled && appLockHelper.isAppLocked {
             showLockView()
@@ -130,7 +132,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, AccountManagerDelegate 
 
     func switchAccount(_ account: Account, mailbox: Mailbox? = nil) {
         accountManager.switchAccount(newAccount: account)
-        (UIApplication.shared.delegate as? AppDelegate)?.refreshCacheData()
+        cacheManager.refreshCacheData()
 
         if let mailbox = mailbox {
             switchMailbox(mailbox)
@@ -181,7 +183,10 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, AccountManagerDelegate 
         guard let urlComponents = URLComponents(url: url, resolvingAgainstBaseURL: true) else { return false }
 
         if Constants.isMailTo(url) {
-            NotificationCenter.default.post(name: .onOpenedMailTo, object: IdentifiableURLComponents(urlComponents: urlComponents))
+            NotificationCenter.default.post(
+                name: .onOpenedMailTo,
+                object: IdentifiableURLComponents(urlComponents: urlComponents)
+            )
         }
 
         return true

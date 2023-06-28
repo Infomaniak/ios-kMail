@@ -71,6 +71,7 @@ struct Slide: Identifiable {
 class LoginHandler: InfomaniakLoginDelegate, ObservableObject {
     @LazyInjectService var loginService: InfomaniakLoginable
     @LazyInjectService var matomo: MatomoUtils
+    @LazyInjectService var remoteNotificationRegistrer: RemoteNotificationRegistrable
 
     @Published var isLoading = false
     @Published var isPresentingErrorAlert = false
@@ -128,7 +129,7 @@ class LoginHandler: InfomaniakLoginDelegate, ObservableObject {
             do {
                 _ = try await AccountManager.instance.createAndSetCurrentAccount(code: code, codeVerifier: verifier)
                 sceneDelegate?.showMainView()
-                UIApplication.shared.registerForRemoteNotifications()
+                remoteNotificationRegistrer.register()
             } catch let error as MailError where error == MailError.noMailbox {
                 sceneDelegate?.showNoMailboxView()
             } catch {
@@ -151,6 +152,8 @@ class LoginHandler: InfomaniakLoginDelegate, ObservableObject {
 struct OnboardingView: View {
     @Environment(\.window) private var window
     @Environment(\.dismiss) private var dismiss
+
+    @LazyInjectService var orientationManager: OrientationManageable
 
     @AppStorage(UserDefaults.shared.key(.accentColor)) private var accentColor = DefaultPreferences.accentColor
 
@@ -246,7 +249,7 @@ struct OnboardingView: View {
             if UIDevice.current.userInterfaceIdiom == .phone {
                 UIDevice.current
                     .setValue(UIInterfaceOrientation.portrait.rawValue, forKey: "orientation")
-                AppDelegate.orientationLock = .portrait
+                orientationManager.orientationLock = .portrait
                 UIViewController.attemptRotationToDeviceOrientation()
             }
         }

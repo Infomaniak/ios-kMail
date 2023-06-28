@@ -27,6 +27,7 @@ import SwiftUI
 struct SettingsNotificationsView: View {
     @LazyInjectService private var notificationService: InfomaniakNotifications
     @LazyInjectService private var matomo: MatomoUtils
+    @LazyInjectService private var urlNavigator: URLNavigable
 
     @AppStorage(UserDefaults.shared.key(.notificationsEnabled)) private var notificationsEnabled = DefaultPreferences
         .notificationsEnabled
@@ -48,9 +49,7 @@ struct SettingsNotificationsView: View {
                                 return
                             }
 
-                            if UIApplication.shared.canOpenURL(settingsUrl) {
-                                UIApplication.shared.open(settingsUrl)
-                            }
+                            urlNavigator.openUrlIfPossible(settingsUrl)
                         }
                         .mailButtonStyle(.link)
                     }

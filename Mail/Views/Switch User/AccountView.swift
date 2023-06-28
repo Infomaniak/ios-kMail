@@ -25,17 +25,21 @@ import MailResources
 import Sentry
 import SwiftUI
 
+@available(iOSApplicationExtension, unavailable)
 class AccountViewDelegate: DeleteAccountDelegate {
     @MainActor func didCompleteDeleteAccount() {
         guard let account = AccountManager.instance.currentAccount else { return }
-        let window = UIApplication.shared.mainSceneKeyWindow
+
         AccountManager.instance.removeTokenAndAccount(token: account.token)
+
+        let window = UIApplication.shared.mainSceneKeyWindow
         if let nextAccount = AccountManager.instance.accounts.first {
             (window?.windowScene?.delegate as? SceneDelegate)?.switchAccount(nextAccount)
             IKSnackBar.showSnackBar(message: "Account deleted")
         } else {
             (window?.windowScene?.delegate as? SceneDelegate)?.showLoginView()
         }
+
         AccountManager.instance.saveAccounts()
     }
 
@@ -45,6 +49,7 @@ class AccountViewDelegate: DeleteAccountDelegate {
     }
 }
 
+@available(iOSApplicationExtension, unavailable)
 struct AccountView: View {
     @Environment(\.dismiss) private var dismiss
     @Environment(\.window) private var window
@@ -164,6 +169,7 @@ struct AccountView: View {
     }
 }
 
+@available(iOSApplicationExtension, unavailable)
 struct AccountView_Previews: PreviewProvider {
     static var previews: some View {
         AccountView(mailboxes: [PreviewHelper.sampleMailbox])

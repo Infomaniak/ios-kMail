@@ -61,6 +61,7 @@ struct AccountListView: View {
     @State var isShowingNewAccountView = false
 
     @LazyInjectService private var matomo: MatomoUtils
+    @LazyInjectService private var orientationManager: OrientationManageable
 
     var body: some View {
         ScrollView {
@@ -79,7 +80,7 @@ struct AccountListView: View {
             isShowingNewAccountView = true
         }
         .fullScreenCover(isPresented: $isShowingNewAccountView, onDismiss: {
-            AppDelegate.orientationLock = .all
+            orientationManager.orientationLock = .all
         }, content: {
             OnboardingView(page: 4, isScrollEnabled: false)
         })

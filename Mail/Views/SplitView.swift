@@ -19,6 +19,7 @@
 import InfomaniakBugTracker
 import InfomaniakCore
 import InfomaniakCoreUI
+import InfomaniakDI
 import Introspect
 import MailCore
 import MailResources
@@ -47,6 +48,8 @@ struct SplitView: View {
     @StateObject private var navigationDrawerController = NavigationDrawerState()
     @StateObject private var navigationStore = NavigationStore()
     @StateObject private var splitViewManager: SplitViewManager
+
+    @LazyInjectService private var orientationManager: OrientationManageable
 
     let mailboxManager: MailboxManager
 
@@ -119,7 +122,7 @@ struct SplitView: View {
             self.mailToURLComponents = identifiableURLComponents.object as? IdentifiableURLComponents
         }
         .onAppear {
-            AppDelegate.orientationLock = .all
+            orientationManager.orientationLock = .all
         }
         .task {
             await fetchSignatures()

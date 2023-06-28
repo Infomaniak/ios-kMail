@@ -16,6 +16,7 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import InfomaniakDI
 import MailCore
 import SwiftUI
 import WebKit
@@ -34,6 +35,8 @@ struct WebView: UIViewRepresentable {
     class Coordinator: NSObject, WKNavigationDelegate {
         var parent: WebView
 
+        @LazyInjectService var urlNavigator: URLNavigable
+        
         init(_ parent: WebView) {
             self.parent = parent
         }
@@ -70,7 +73,7 @@ struct WebView: UIViewRepresentable {
             if navigationAction.navigationType == .linkActivated {
                 if let url = navigationAction.request.url {
                     decisionHandler(.cancel)
-                    UIApplication.shared.open(url)
+                    urlNavigator.openUrl(url)
                 }
             } else {
                 decisionHandler(.allow)

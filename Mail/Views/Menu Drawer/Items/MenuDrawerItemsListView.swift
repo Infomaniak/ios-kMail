@@ -27,6 +27,8 @@ import SwiftUI
 struct MenuDrawerItemsAdvancedListView: View {
     @State private var isShowingRestoreMails = false
 
+    @LazyInjectService var urlNavigator: URLNavigable
+
     let mailboxCanRestoreEmails: Bool
 
     var body: some View {
@@ -35,7 +37,7 @@ struct MenuDrawerItemsAdvancedListView: View {
             MenuDrawerItemCell(icon: MailResourcesAsset.drawerDownload,
                                label: MailResourcesStrings.Localizable.buttonImportEmails,
                                matomoName: "importEmails") {
-                UIApplication.shared.open(URLConstants.importMails.url)
+                urlNavigator.openUrl(URLConstants.importMails.url)
             }
             if mailboxCanRestoreEmails {
                 MenuDrawerItemCell(
@@ -56,6 +58,8 @@ struct MenuDrawerItemsAdvancedListView: View {
 struct MenuDrawerItemsHelpListView: View {
     @State private var isShowingHelp = false
     @State private var isShowingBugTracker = false
+
+    @LazyInjectService var urlNavigator: URLNavigable
 
     var body: some View {
         MenuDrawerItemsListView {
@@ -83,7 +87,7 @@ struct MenuDrawerItemsHelpListView: View {
         if AccountManager.instance.currentAccount?.user?.isStaff == true {
             isShowingBugTracker.toggle()
         } else if let userReportURL = URL(string: MailResourcesStrings.Localizable.urlUserReportiOS) {
-            UIApplication.shared.open(userReportURL)
+            urlNavigator.openUrl(userReportURL)
         }
     }
 }

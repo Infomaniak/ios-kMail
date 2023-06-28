@@ -40,7 +40,9 @@ struct SettingsOptionView<OptionEnum>: View where OptionEnum: CaseIterable, Opti
             UserDefaults.shared[keyPath: keyPath] = selectedValue
             switch keyPath {
             case \.theme, \.accentColor:
-                UIApplication.shared.connectedScenes.forEach { ($0.delegate as? SceneDelegate)?.updateWindowUI() }
+                break
+                // FIXME
+//                UIApplication.shared.connectedScenes.forEach { ($0.delegate as? SceneDelegate)?.updateWindowUI() }
             default:
                 break
             }
