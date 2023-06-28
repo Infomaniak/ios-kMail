@@ -84,7 +84,8 @@ struct MailboxCell: View {
             (window?.windowScene?.delegate as? SceneDelegate)?.switchMailbox(mailbox)
         }
         .floatingPanel(isPresented: $isShowingLockedView) {
-            LockedMailboxView(lockedMailboxView: mailbox)
+            LockedMailboxView(lockedMailbox: mailbox)
+        }
         }
     }
 }

@@ -23,14 +23,14 @@ import SwiftUI
 struct LockedMailboxView: View {
     @Environment(\.dismiss) private var dismiss
 
-    let lockedMailboxView: Mailbox
+    let lockedMailbox: Mailbox
     var body: some View {
         VStack(spacing: 16) {
             MailResourcesAsset.mailboxError.swiftUIImage
                 .resizable()
                 .scaledToFit()
                 .frame(height: 64)
-            Text(MailResourcesStrings.Localizable.lockedMailboxTitle(lockedMailboxView.email))
+            Text(MailResourcesStrings.Localizable.lockedMailboxTitle(lockedMailbox.email))
                 .textStyle(.header2)
                 .multilineTextAlignment(.center)
             Text(MailResourcesStrings.Localizable.lockedMailboxDescription)
@@ -53,7 +53,7 @@ struct LockedMailboxView_Previews: PreviewProvider {
     static var previews: some View {
         Text("Preview")
             .floatingPanel(isPresented: .constant(true)) {
-                LockedMailboxView(lockedMailboxView: PreviewHelper.sampleMailbox)
+                LockedMailboxView(lockedMailbox: PreviewHelper.sampleMailbox)
             }
     }
 }
