@@ -1130,7 +1130,7 @@ public class MailboxManager: ObservableObject {
         await backgroundRealm.execute { realm in
             draft.localUUID = partialDraft.localUUID
             draft.action = .save
-            
+
             // We made sure beforehand to have an up to date signature.
             // If the server does not return an identityId, we want to keep the original one
             draft.identityId = partialDraft.identityId ?? draft.identityId
@@ -1177,15 +1177,21 @@ public class MailboxManager: ObservableObject {
     }
 
     public func save(draft: Draft) async throws {
-        let saveResponse = try await apiFetcher.save(mailbox: mailbox, draft: draft)
-        await backgroundRealm.execute { realm in
-            // Update draft in Realm
-            guard let liveDraft = realm.object(ofType: Draft.self, forPrimaryKey: draft.localUUID) else { return }
-            try? realm.safeWrite {
-                liveDraft.remoteUUID = saveResponse.uuid
-                liveDraft.messageUid = saveResponse.uid
-                liveDraft.action = nil
+        do {
+            let saveResponse = try await apiFetcher.save(mailbox: mailbox, draft: draft)
+            await backgroundRealm.execute { realm in
+                // Update draft in Realm
+                guard let liveDraft = realm.object(ofType: Draft.self, forPrimaryKey: draft.localUUID) else { return }
+                try? realm.safeWrite {
+                    liveDraft.remoteUUID = saveResponse.uuid
+                    liveDraft.messageUid = saveResponse.uid
+                    liveDraft.action = nil
+                }
             }
+        } catch let error as MailApiError {
+            // The api returned an error for now we can do nothing about it so we delete the draft
+            try await deleteLocally(draft: draft)
+            throw error
         }
     }
 
