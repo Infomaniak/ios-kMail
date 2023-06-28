@@ -26,27 +26,29 @@ struct UnavailableMailboxesView: View {
     var body: some View {
         NavigationView {
             VStack(spacing: 16) {
-                MailResourcesAsset.logoText.swiftUIImage
-                    .resizable()
-                    .scaledToFit()
-                    .frame(height: UIConstants.onboardingLogoHeight)
-                    .padding(.top, UIConstants.onboardingLogoPaddingTop)
-                Spacer(minLength: 32)
-
-                MailResourcesAsset.mailboxError.swiftUIImage
-                    .aspectRatio(contentMode: .fit)
-                    .frame(width: 512)
-                Text(MailResourcesStrings.Localizable.lockedMailboxesTitle)
-                    .textStyle(.header2)
-                Text(MailResourcesStrings.Localizable.lockedMailboxesDescription)
-                    .textStyle(.bodySecondary)
-                    .multilineTextAlignment(.center)
-                    .padding(.top, 24)
-
                 ScrollView {
-                    MailboxListView(currentMailbox: nil)
-                }
+                    VStack(spacing: 16) {
+                        MailResourcesAsset.logoText.swiftUIImage
+                            .resizable()
+                            .scaledToFit()
+                            .frame(height: UIConstants.onboardingLogoHeight)
+                            .padding(.top, UIConstants.onboardingLogoPaddingTop)
 
+                        MailResourcesAsset.mailboxError.swiftUIImage
+                            .resizable()
+                            .scaledToFit()
+                            .frame(height: 64)
+                        Text(MailResourcesStrings.Localizable.lockedMailboxesTitle)
+                            .textStyle(.header2)
+                            .multilineTextAlignment(.center)
+                        Text(MailResourcesStrings.Localizable.lockedMailboxesDescription)
+                            .textStyle(.bodySecondary)
+                            .multilineTextAlignment(.center)
+                            .padding(.top, 24)
+
+                        MailboxListView(currentMailbox: nil)
+                    }
+                }
                 Spacer()
 
                 NavigationLink {
@@ -57,6 +59,7 @@ struct UnavailableMailboxesView: View {
                 }
             }
             .padding(.horizontal, 16)
+            .frame(maxWidth: 900)
         }
         .navigationViewStyle(.stack)
         .fullScreenCover(isPresented: $isShowingNewAccountView) {
