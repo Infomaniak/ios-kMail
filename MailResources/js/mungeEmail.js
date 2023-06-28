@@ -24,6 +24,8 @@ const PREFERENCES = {
     minimumEffectiveRatio: 0.7
 };
 
+let actionsLog = {};
+
 // Functions
 
 /**
@@ -53,6 +55,12 @@ function normalizeElementWidths(elements, webViewWidth, messageUid) {
     const documentWidth = document.body.offsetWidth;
     logInfo(`Starts to normalize elements. Document width: ${documentWidth}. WebView width: ${webViewWidth}.`);
 
+    let currentActionsLog = actionsLog[messageUid];
+    if (currentActionsLog != undefined && currentActionsLog.length > 0) {
+        logInfo('We need to undo previous changes.');
+        undoActions(currentActionsLog);
+    }
+
     for (const element of elements) {
         logInfo(`Current element: ${elementDebugName(element)}.`);
 
@@ -65,7 +73,7 @@ function normalizeElementWidths(elements, webViewWidth, messageUid) {
 
         const originalWidth = element.style.width;
         element.style.width = `${webViewWidth}px`;
-        transformContent(element, webViewWidth, element.scrollWidth);
+        transformContent(element, webViewWidth, element.scrollWidth, messageUid);
 
         if (PREFERENCES.normalizeMessageWidths) {
             const newZoom = documentWidth / element.scrollWidth;
@@ -88,7 +96,7 @@ function normalizeElementWidths(elements, webViewWidth, messageUid) {
  * @param documentWidth Width of the overall document
  * @param elementWidth Element width before any action is done
  */
-function transformContent(element, documentWidth, elementWidth) {
+function transformContent(element, documentWidth, elementWidth, messageUid) {
     if (elementWidth <= documentWidth) {
         logInfo(`Element doesn't need to be transformed. Current size: ${elementWidth}, DocumentWidth: ${documentWidth}.`);
         return;
@@ -98,13 +106,14 @@ function transformContent(element, documentWidth, elementWidth) {
     let newWidth = elementWidth;
     let isTransformationDone = false;
     /** Format of entries : { function: fn, object: object, arguments: [list of arguments] } */
-    let actionsLog = [];
+    actionsLog[messageUid] = [];
+    let currentActionsLog = actionsLog[messageUid];
 
     // Try munging all divs or textareas with inline styles where the width
     // is wider than `documentWidth`, and change it to be a max-width.
     if (PREFERENCES.normalizeMessageWidths) {
         const nodes = element.querySelectorAll('div[style], textarea[style]');
-        const areNodesTransformed = transformBlockElements(nodes, documentWidth, actionsLog);
+        const areNodesTransformed = transformBlockElements(nodes, documentWidth, currentActionsLog);
         if (areNodesTransformed) {
             newWidth = element.scrollWidth;
             logTransformation('munge div[style] and textarea[style]', element, elementWidth, newWidth, documentWidth);
@@ -118,7 +127,7 @@ function transformContent(element, documentWidth, elementWidth) {
     if (!isTransformationDone && PREFERENCES.mungeImages) {
         // OK, that wasn't enough. Find images with widths and override their widths.
         const images = element.querySelectorAll('img');
-        const areImagesTransformed = transformImages(images, documentWidth, actionsLog);
+        const areImagesTransformed = transformImages(images, documentWidth, currentActionsLog);
         if (areImagesTransformed) {
             newWidth = element.scrollWidth;
             logTransformation('munge img', element, elementWidth, newWidth, documentWidth);
@@ -134,7 +143,7 @@ function transformContent(element, documentWidth, elementWidth) {
         // Also ensure that any use of 'table-layout: fixed' is negated, since using
         // that with 'width: auto' causes erratic table width.
         const tables = element.querySelectorAll('table');
-        const areTablesTransformed = addClassToElements(tables, shouldMungeTable, 'munged', actionsLog);
+        const areTablesTransformed = addClassToElements(tables, shouldMungeTable, 'munged', currentActionsLog);
         if (areTablesTransformed) {
             newWidth = element.scrollWidth;
             logTransformation('munge table', element, elementWidth, newWidth, documentWidth);
@@ -166,7 +175,7 @@ function transformContent(element, documentWidth, elementWidth) {
             } else {
                 // The transform WAS effective (although not 100%).
                 // Copy the temporary action log entries over as normal.
-                actionsLog.push(...tmpActionsLog);
+                currentActionsLog.push(...tmpActionsLog);
                 logInfo('Munging td is not enough but is effective.');
             }
         }
@@ -183,16 +192,16 @@ function transformContent(element, documentWidth, elementWidth) {
     if (!isTransformationDone) {
         // Reverse all changes if the width is STILL not narrow enough.
         // (except the width->maxWidth change, which is not particularly destructive)
-        undoActions(actionsLog);
-        if (actionsLog.length > 0) {
-            logInfo(`All mungers failed, we will reverse ${actionsLog.length} changes.`);
+        undoActions(currentActionsLog);
+        if (currentActionsLog.length > 0) {
+            logInfo(`All mungers failed, we will reverse ${currentActionsLog.length} changes.`);
         } else {
             logInfo(`No mungers applied, width is still too wide.`);
         }
         return;
     }
 
-    logInfo(`Mungers succeeded. We did ${actionsLog.length} changes.`);
+    logInfo(`Mungers succeeded. We did ${currentActionsLog.length} changes.`);
 }
 
 /**

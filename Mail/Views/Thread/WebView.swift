@@ -31,6 +31,13 @@ final class WebViewController: UIViewController {
         setUpWebView(model.webView)
     }
 
+    override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
+        super.viewWillTransition(to: size, with: coordinator)
+        Task {
+            _ = try await model.webView.evaluateJavaScript("normalizeMessageWidth(\(size.width), '\(messageUid)')")
+        }
+    }
+
     private func setUpWebView(_ webView: WKWebView) {
         webView.navigationDelegate = self
         webView.scrollView.bounces = false
