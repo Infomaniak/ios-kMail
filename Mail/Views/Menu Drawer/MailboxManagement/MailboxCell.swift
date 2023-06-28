@@ -43,8 +43,9 @@ extension View {
 struct MailboxCell: View {
     @Environment(\.mailboxCellStyle) private var style: Style
     @Environment(\.window) private var window
-  
+
     @State private var isShowingLockedView = false
+    @State private var isShowingUpdatePasswordView = false
 
     let mailbox: Mailbox
     var isSelected = false
@@ -67,7 +68,7 @@ struct MailboxCell: View {
         ) {
             guard !isSelected else { return }
             guard mailbox.isPasswordValid else {
-                IKSnackBar.showSnackBar(message: MailResourcesStrings.Localizable.frelatedMailbox)
+                isShowingUpdatePasswordView = true
                 return
             }
             guard !mailbox.isLocked else {
@@ -86,6 +87,8 @@ struct MailboxCell: View {
         .floatingPanel(isPresented: $isShowingLockedView) {
             LockedMailboxView(lockedMailbox: mailbox)
         }
+        .sheet(isPresented: $isShowingUpdatePasswordView) {
+            UpdateMailboxPasswordView(mailbox: mailbox)
         }
     }
 }
