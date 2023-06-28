@@ -25,21 +25,10 @@ final class WebViewController: UIViewController {
     var messageUid: String!
 
     override func loadView() {
-        let view = UIView()
-        view.backgroundColor = .systemBackground
+        view = model.webView
+        view.translatesAutoresizingMaskIntoConstraints = false
 
-        let webView = model.webView
-
-        webView.translatesAutoresizingMaskIntoConstraints = false
-        view.addSubview(webView)
-        setUpWebView(webView)
-
-        NSLayoutConstraint.activate([
-            webView.widthAnchor.constraint(equalTo: view.widthAnchor),
-            webView.heightAnchor.constraint(equalTo: view.heightAnchor)
-        ])
-
-        self.view = view
+        setUpWebView(model.webView)
     }
 
     private func setUpWebView(_ webView: WKWebView) {
@@ -50,6 +39,8 @@ final class WebViewController: UIViewController {
         webView.scrollView.showsHorizontalScrollIndicator = true
         webView.scrollView.alwaysBounceVertical = false
         webView.scrollView.alwaysBounceHorizontal = false
+        webView.scrollView.contentInsetAdjustmentBehavior = .never
+
         #if DEBUG
         if #available(iOS 16.4, *) {
             webView.isInspectable = true
