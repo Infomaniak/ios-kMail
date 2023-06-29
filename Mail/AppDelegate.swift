@@ -35,10 +35,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     @LazyInjectService private var orientationManager: OrientationManageable
     @LazyInjectService private var accountManager: AccountManager
 
+    /// Making sure the DI is registered at a very early stage of the app launch.
+    private let dependencyInjectionHook = EarlyDIHook()
+
     func application(_ application: UIApplication,
                      willFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil) -> Bool {
         Logging.initLogging()
-        setupDI()
+
         DDLogInfo("Application starting in foreground ? \(UIApplication.shared.applicationState != .background)")
         ApiFetcher.decoder.dateDecodingStrategy = .iso8601
 
@@ -111,73 +114,5 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 DDLogError("Error while updating user account: \(error)")
             }
         }
-    }
-
-    func setupDI() {
-        let networkLoginService = Factory(type: InfomaniakNetworkLoginable.self) { _, _ in
-            InfomaniakNetworkLogin(clientId: MailApiFetcher.clientId)
-        }
-        let loginService = Factory(type: InfomaniakLoginable.self) { _, _ in
-            InfomaniakLogin(clientId: MailApiFetcher.clientId)
-        }
-        let keychainHelper = Factory(type: KeychainHelper.self) { _, _ in
-            KeychainHelper(accessGroup: AccountManager.accessGroup)
-        }
-        let notificationService = Factory(type: InfomaniakNotifications.self) { _, _ in
-            InfomaniakNotifications(appGroup: AccountManager.appGroup)
-        }
-        let appLockHelper = Factory(type: AppLockHelper.self) { _, _ in
-            AppLockHelper()
-        }
-        let bugTracker = Factory(type: BugTracker.self) { _, _ in
-            BugTracker(info: BugTrackerInfo(project: "app-mobile-mail", gitHubRepoName: "ios-mail", appReleaseType: .beta))
-        }
-        let matomoUtils = Factory(type: MatomoUtils.self) { _, _ in
-            MatomoUtils(siteId: Constants.matomoId, baseURL: URLConstants.matomo.url)
-        }
-        let avoider = Factory(type: SnackBarAvoider.self) { _, _ in
-            SnackBarAvoider()
-        }
-        let draftManager = Factory(type: DraftManager.self) { _, _ in
-            DraftManager()
-        }
-        let accountManager = Factory(type: AccountManager.self) { _, _ in
-            AccountManager()
-        }
-
-        SimpleResolver.sharedResolver.store(factory: networkLoginService)
-        SimpleResolver.sharedResolver.store(factory: loginService)
-        SimpleResolver.sharedResolver.store(factory: notificationService)
-        SimpleResolver.sharedResolver.store(factory: keychainHelper)
-        SimpleResolver.sharedResolver.store(factory: appLockHelper)
-        SimpleResolver.sharedResolver.store(factory: bugTracker)
-        SimpleResolver.sharedResolver.store(factory: matomoUtils)
-        SimpleResolver.sharedResolver.store(factory: avoider)
-        SimpleResolver.sharedResolver.store(factory: draftManager)
-        SimpleResolver.sharedResolver.store(factory: accountManager)
-
-        setupProxyInDI()
-    }
-
-    private func setupProxyInDI() {
-        let factories = [
-            Factory(type: CacheManageable.self) { _, _ in
-                CacheManager()
-            },
-            Factory(type: OrientationManageable.self) { _, _ in
-                OrientationManager()
-            },
-            Factory(type: RemoteNotificationRegistrable.self) { _, _ in
-                RemoteNotificationRegistrer()
-            },
-            Factory(type: RootViewManageable.self) { _, _ in
-                RootViewManager()
-            },
-            Factory(type: URLNavigable.self) { _, _ in
-                URLNavigator()
-            }
-        ]
-
-        factories.forEach { SimpleResolver.sharedResolver.store(factory: $0) }
     }
 }

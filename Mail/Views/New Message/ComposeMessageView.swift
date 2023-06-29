@@ -100,7 +100,6 @@ struct ComposeMessageView: View {
 
         Self.saveNewDraftInRealm(mailboxManager.getRealm(), draft: draft)
         _draft = StateRealmObject(wrappedValue: draft)
-
         _isLoadingContent = State(wrappedValue: (draft.messageUid != nil && draft.remoteUUID.isEmpty) || messageReply != nil)
 
         _signatureManager = StateObject(wrappedValue: SignaturesManager(mailboxManager: mailboxManager))
@@ -138,7 +137,6 @@ struct ComposeMessageView: View {
         ScrollView {
             VStack(spacing: 0) {
                 ComposeMessageHeaderView(draft: draft, focusedField: _focusedField, autocompletionType: $autocompletionType)
-
                 if autocompletionType == nil {
                     ComposeMessageBodyView(
                         draft: draft,

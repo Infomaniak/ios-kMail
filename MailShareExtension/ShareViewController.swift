@@ -17,11 +17,16 @@
  */
 
 import InfomaniakCoreUI
+import InfomaniakDI
+import MailCore
 import Social
 import SwiftUI
 import UIKit
 
-class ShareNavigationViewController: TitleSizeAdjustingNavigationController {
+final class ShareNavigationViewController: UIViewController {
+    /// Making sure the DI is registered at a very early stage of the app launch.
+    private let dependencyInjectionHook = EarlyDIHook()
+
     override public func viewDidLoad() {
         super.viewDidLoad()
 
@@ -32,13 +37,21 @@ class ShareNavigationViewController: TitleSizeAdjustingNavigationController {
             dismiss(animated: true)
             return
         }
-        
-        // To my knowledge, we need to go threw wrapping to use SwiftUI here.
-        let childView = UIHostingController(rootView: SwiftUIView())
-        addChild(childView)
-        childView.view.frame = self.view.bounds
-        self.view.addSubview(childView.view)
-        childView.didMove(toParent: self)
+
+        // We need to go threw wrapping to use SwiftUI in an NSExtension.
+        let hostingController = UIHostingController(rootView: ComposeMessageWrapperView())
+        hostingController.view.backgroundColor = .clear
+        hostingController.view.translatesAutoresizingMaskIntoConstraints = false
+        addChild(hostingController)
+        view.addSubview(hostingController.view)
+        hostingController.didMove(toParent: self)
+
+        NSLayoutConstraint.activate([
+            hostingController.view.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            hostingController.view.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            hostingController.view.topAnchor.constraint(equalTo: view.topAnchor, constant: 0),
+            hostingController.view.bottomAnchor.constraint(equalTo: view.bottomAnchor)
+        ])
     }
 
     override func dismiss(animated flag: Bool, completion: (() -> Void)? = nil) {
@@ -46,9 +59,18 @@ class ShareNavigationViewController: TitleSizeAdjustingNavigationController {
     }
 }
 
-struct SwiftUIView: View {
+struct ComposeMessageWrapperView: View {
+    @State private var draft = Draft()
+    @LazyInjectService private var accountManager: AccountManager
+
     var body: some View {
-        Text("test")
-            .background(.red)
+        if let mailboxManager = accountManager.currentMailboxManager {
+            ComposeMessageView.newMessage(draft, mailboxManager: mailboxManager)
+                .environmentObject(mailboxManager)
+                .navigationTitle(Text("Test"))
+        } else {
+            Text("Please login in ikMail")
+                .background(.red)
+        }
     }
 }
