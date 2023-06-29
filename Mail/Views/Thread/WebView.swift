@@ -16,6 +16,7 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import Combine
 import MailCore
 import SwiftUI
 import WebKit
@@ -24,18 +25,28 @@ final class WebViewController: UIViewController {
     var model: WebViewModel!
     var messageUid: String!
 
+    private var widthSubject = PassthroughSubject<Double, Never>()
+    private var subscriber: AnyCancellable?
+
     override func loadView() {
         view = model.webView
         view.translatesAutoresizingMaskIntoConstraints = false
 
         setUpWebView(model.webView)
+
+        subscriber = widthSubject
+            .debounce(for: .seconds(0.3), scheduler: DispatchQueue.main)
+            .sink { newWidth in
+                Task {
+                    _ = try await self.model.webView.evaluateJavaScript("normalizeMessageWidth(\(newWidth), '\(self.messageUid ?? "")')")
+                }
+            }
     }
 
     override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
         super.viewWillTransition(to: size, with: coordinator)
-        Task {
-            _ = try await model.webView.evaluateJavaScript("normalizeMessageWidth(\(size.width), '\(messageUid)')")
-        }
+
+        widthSubject.send(size.width)
     }
 
     private func setUpWebView(_ webView: WKWebView) {
@@ -71,7 +82,7 @@ extension WebViewController: WKNavigationDelegate {
             guard readyState == "complete" else { return }
 
             _ = try await webView.evaluateJavaScript("removeAllProperties()")
-            _ = try await webView.evaluateJavaScript("normalizeMessageWidth(\(webView.frame.width), '\(messageUid)')")
+            _ = try await webView.evaluateJavaScript("normalizeMessageWidth(\(webView.frame.width), '\(messageUid ?? "")')")
         }
     }
 
