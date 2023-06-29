@@ -21,6 +21,8 @@ import MailResources
 import SwiftUI
 
 struct NoMailboxView: View {
+    @State private var isShowingAddMailboxView = false
+    @State private var isShowingLoginView = false
     let slide = Slide(
         id: 1,
         backgroundImage: MailResourcesAsset.onboardingBackground3.swiftUIImage,
@@ -42,16 +44,12 @@ struct NoMailboxView: View {
 
             VStack(spacing: 24) {
                 MailButton(icon: MailResourcesAsset.plus, label: MailResourcesStrings.Localizable.buttonAddEmailAddress) {
-                    AddMailboxView { _ in
-                        DispatchQueue.main.async {
-                           // (window?.windowScene?.delegate as? SceneDelegate)?.showMainView()
-                        }
-                    }
+                    isShowingAddMailboxView = true
                 }
                 .mailButtonFullWidth(true)
 
                 MailButton(label: MailResourcesStrings.Localizable.buttonLogInDifferentAccount) {
-                   // (window?.windowScene?.delegate as? SceneDelegate)?.showLoginView()
+                    isShowingLoginView = true
                 }
                 .mailButtonStyle(.link)
             }
@@ -59,6 +57,13 @@ struct NoMailboxView: View {
             .padding(.horizontal, 24)
         }
         .matomoView(view: ["NoMailboxView"])
+        .sheet(isPresented: $isShowingAddMailboxView) {
+            AddMailboxView()
+                .sheetViewStyle()
+        }
+        .fullScreenCover(isPresented: $isShowingLoginView) {
+            OnboardingView(page: 4, isScrollEnabled: false)
+        }
     }
 }
 

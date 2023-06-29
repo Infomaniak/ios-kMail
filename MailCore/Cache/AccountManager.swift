@@ -396,11 +396,15 @@ public class AccountManager: RefreshTokenDelegate, ObservableObject {
         }
     }
 
-    public func addMailbox(mail: String, password: String, completion: (Mailbox?) -> Void) async throws {
+    public func addMailbox(mail: String, password: String) async throws {
         guard let apiFetcher = currentApiFetcher else { return }
+
         _ = try await apiFetcher.addMailbox(mail: mail, password: password)
         try await updateUser(for: currentAccount)
-        completion(mailboxes.first(where: { $0.email == mail }))
+        guard let addedMailbox = mailboxes.first(where: { $0.email == mail }) else { return }
+
+        matomo.track(eventWithCategory: .account, name: "addMailboxConfirm")
+        switchMailbox(newMailbox: addedMailbox)
     }
 
     public func setCurrentAccount(account: Account) {

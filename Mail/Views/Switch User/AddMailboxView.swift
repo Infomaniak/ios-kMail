@@ -25,8 +25,6 @@ import SwiftUI
 struct AddMailboxView: View {
     @Environment(\.dismiss) var dismiss
 
-    var completion: (Mailbox?) -> Void
-
     @State private var newAddress = ""
     @State private var password = ""
     @State private var showError = false
@@ -92,11 +90,7 @@ struct AddMailboxView: View {
     private func addMailbox() {
         Task {
             do {
-                try await AccountManager.instance.addMailbox(mail: newAddress, password: password) { mailbox in
-                    @InjectService var matomo: MatomoUtils
-                    matomo.track(eventWithCategory: .account, name: "addMailboxConfirm")
-                    completion(mailbox)
-                }
+                try await AccountManager.instance.addMailbox(mail: newAddress, password: password)
             } catch {
                 withAnimation {
                     showError = true
@@ -110,6 +104,6 @@ struct AddMailboxView: View {
 
 struct AddMailboxView_Previews: PreviewProvider {
     static var previews: some View {
-        AddMailboxView { _ in /* Preview */ }
+        AddMailboxView()
     }
 }

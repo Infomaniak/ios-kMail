@@ -92,12 +92,7 @@ struct AccountView: View {
                         Spacer()
 
                         NavigationLink {
-                            AddMailboxView { mailbox in
-                                DispatchQueue.main.async {
-                                    guard let mailbox else { return }
-                                    AccountManager.instance.switchMailbox(newMailbox: mailbox)
-                                }
-                            }
+                            AddMailboxView()
                         } label: {
                             MailResourcesAsset.addCircle.swiftUIImage
                                 .resizable()
