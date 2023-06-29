@@ -89,6 +89,9 @@ struct SplitView: View {
                 try await mailboxManager.folders()
             }
         }
+        .onOpenURL { url in
+            handleOpenUrl(url)
+        }
         .onReceive(NotificationCenter.default.publisher(for: .onUserTappedNotification)) { notification in
             guard let notificationPayload = notification.object as? NotificationTappedPayload else { return }
             let realm = mailboxManager.getRealm()
@@ -163,5 +166,13 @@ struct SplitView: View {
 
     private func getInbox() -> Folder? {
         return mailboxManager.getFolder(with: .inbox)
+    }
+
+    private func handleOpenUrl(_ url: URL) {
+        guard let urlComponents = URLComponents(url: url, resolvingAgainstBaseURL: true) else { return }
+
+        if Constants.isMailTo(url) {
+            mailToURLComponents = IdentifiableURLComponents(urlComponents: urlComponents)
+        }
     }
 }
