@@ -25,8 +25,6 @@ import MailResources
 import SwiftUI
 
 struct LogoutConfirmationView: View {
-    @Environment(\.window) private var window
-
     let account: Account
 
     var body: some View {

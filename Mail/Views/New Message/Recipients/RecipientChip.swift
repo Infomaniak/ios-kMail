@@ -23,7 +23,6 @@ import Popovers
 import SwiftUI
 
 struct RecipientChip: View {
-    @Environment(\.window) private var window
     @AppStorage(UserDefaults.shared.key(.accentColor)) private var accentColor = DefaultPreferences.accentColor
 
     let recipient: Recipient
@@ -41,7 +40,7 @@ struct RecipientChip: View {
             RecipientCell(recipient: recipient)
                 .padding(.vertical, 8)
                 .padding(.horizontal, 16)
-                .frame(maxWidth: min(304, 0.8 * (window?.screen.bounds.width ?? 304)))
+                .frame(maxWidth: 600)
 
             Templates.MenuButton(text: Text(MailResourcesStrings.Localizable.contactActionCopyEmailAddress),
                                  image: MailResourcesAsset.duplicate.swiftUIImage) {

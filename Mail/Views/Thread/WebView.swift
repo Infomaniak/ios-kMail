@@ -21,8 +21,6 @@ import SwiftUI
 import WebKit
 
 struct WebView: UIViewRepresentable {
-    @Environment(\.window) private var window
-
     @ObservedObject var model: WebViewModel
 
     let messageUid: String

@@ -147,7 +147,6 @@ class LoginHandler: InfomaniakLoginDelegate, ObservableObject {
 }
 
 struct OnboardingView: View {
-    @Environment(\.window) private var window
     @Environment(\.dismiss) private var dismiss
 
     @AppStorage(UserDefaults.shared.key(.accentColor)) private var accentColor = DefaultPreferences.accentColor

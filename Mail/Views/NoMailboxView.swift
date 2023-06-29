@@ -21,8 +21,6 @@ import MailResources
 import SwiftUI
 
 struct NoMailboxView: View {
-    @Environment(\.window) var window
-
     let slide = Slide(
         id: 1,
         backgroundImage: MailResourcesAsset.onboardingBackground3.swiftUIImage,

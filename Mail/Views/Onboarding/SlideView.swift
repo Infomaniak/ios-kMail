@@ -33,7 +33,6 @@ struct SlideView: View {
 
     @AppStorage(UserDefaults.shared.key(.accentColor)) private var accentColor = DefaultPreferences.accentColor
 
-    @Environment(\.window) private var window
     @Environment(\.colorScheme) private var colorScheme
 
     @State private var isVisible = false
