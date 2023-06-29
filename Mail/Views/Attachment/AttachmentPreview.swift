@@ -30,7 +30,7 @@ struct AttachmentPreview: View {
 
     @Environment(\.verticalSizeClass) var sizeClass
 
-    @LazyInjectService var rootViewControllerFetcher: RootViewControllerFetcheable
+    @LazyInjectService var rootViewControllerFetcher: RootViewManageable
 
     var body: some View {
         NavigationView {

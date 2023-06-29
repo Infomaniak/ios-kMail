@@ -17,20 +17,15 @@
  */
 
 import Foundation
+import InfomaniakCoreUI
 import UIKit
 
-/// Something that can handle rotation lock
-public protocol CacheManageable {
-    func refreshCacheData()
-}
+/// An OrientationManager that works in Extension mode
+public final class OrientationManager: OrientationManageable {
+    
+    public var orientationLock = UIInterfaceOrientationMask.all
+    
+    public func setOrientationLock(_ orientation: UIInterfaceOrientationMask) { }
 
-public final class CacheManagerStub: CacheManageable {
-    public func refreshCacheData() {}
-}
-
-@available(iOSApplicationExtension, unavailable)
-public final class CacheManager: CacheManageable {
-    public func refreshCacheData() {
-        (UIApplication.shared.delegate as? AppDelegate)?.refreshCacheData()
-    }
+    public var interfaceOrientation: UIInterfaceOrientation?
 }

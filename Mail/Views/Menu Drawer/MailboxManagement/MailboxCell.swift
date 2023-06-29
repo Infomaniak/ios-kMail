@@ -44,10 +44,12 @@ struct MailboxCell: View {
     @Environment(\.mailboxCellStyle) private var style: Style
     @Environment(\.window) private var window
 
+    @LazyInjectService private var accountManager: AccountManager
+
     let mailbox: Mailbox
 
     private var isSelected: Bool {
-        return AccountManager.instance.currentMailboxManager?.mailbox.objectId == mailbox.objectId
+        return accountManager.currentMailboxManager?.mailbox.objectId == mailbox.objectId
     }
 
     private var detailNumber: Int? {

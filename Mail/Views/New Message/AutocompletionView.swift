@@ -17,6 +17,7 @@
  */
 
 import Combine
+import InfomaniakDI
 import MailCore
 import MailResources
 import RealmSwift
@@ -29,6 +30,8 @@ struct AutocompletionView: View {
 
     @Binding var autocompletion: [Recipient]
     @Binding var addedRecipients: RealmSwift.List<Recipient>
+
+    @LazyInjectService private var accountManager: AccountManager
 
     let addRecipient: @MainActor (Recipient) -> Void
 
@@ -62,7 +65,7 @@ struct AutocompletionView: View {
     }
 
     private func updateAutocompletion(_ search: String) {
-        guard let contactManager = AccountManager.instance.currentContactManager else {
+        guard let contactManager = accountManager.currentContactManager else {
             withAnimation {
                 autocompletion = []
             }

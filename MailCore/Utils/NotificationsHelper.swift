@@ -60,13 +60,14 @@ public enum NotificationsHelper {
     public static func getUnreadCount() async -> Int {
         var totalUnreadCount = 0
         @InjectService var notificationService: InfomaniakNotifications
+        @InjectService var accountManager: AccountManager
 
-        for account in AccountManager.instance.accounts {
+        for account in accountManager.accounts {
             let currentSubscription = await notificationService.subscriptionForUser(id: account.userId)
 
             for mailbox in MailboxInfosManager.instance.getMailboxes(for: account.userId)
                 where currentSubscription?.topics.contains(mailbox.notificationTopicName) == true {
-                if let mailboxManager = AccountManager.instance.getMailboxManager(for: mailbox) {
+                if let mailboxManager = accountManager.getMailboxManager(for: mailbox) {
                     totalUnreadCount += mailboxManager.getFolder(with: .inbox)?.unreadCount ?? 0
                 }
             }

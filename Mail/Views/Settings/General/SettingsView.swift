@@ -18,11 +18,14 @@
 
 import InfomaniakCore
 import InfomaniakCoreUI
+import InfomaniakDI
 import MailCore
 import MailResources
 import SwiftUI
 
 struct SettingsView: View {
+    @LazyInjectService private var accountManager: AccountManager
+
     @AppStorage(UserDefaults.shared.key(.threadDensity)) private var density = DefaultPreferences.threadDensity
     @AppStorage(UserDefaults.shared.key(.theme)) private var theme = DefaultPreferences.theme
     @AppStorage(UserDefaults.shared.key(.accentColor)) private var accentColor = DefaultPreferences.accentColor
@@ -34,8 +37,8 @@ struct SettingsView: View {
                 Text(MailResourcesStrings.Localizable.settingsSectionEmailAddresses)
                     .textStyle(.bodySmallSecondary)
 
-                ForEach(AccountManager.instance.mailboxes) { mailbox in
-                    if let mailboxManager = AccountManager.instance.getMailboxManager(for: mailbox) {
+                ForEach(accountManager.mailboxes) { mailbox in
+                    if let mailboxManager = accountManager.getMailboxManager(for: mailbox) {
                         SettingsSubMenuCell(title: mailbox.email) {
                             MailboxSettingsView(mailboxManager: mailboxManager)
                         }

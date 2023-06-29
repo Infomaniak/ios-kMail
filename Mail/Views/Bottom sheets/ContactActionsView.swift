@@ -26,7 +26,9 @@ import SwiftUI
 struct ContactActionsView: View {
     @EnvironmentObject var mailboxManager: MailboxManager
     @Environment(\.dismiss) var dismiss
+
     @LazyInjectService private var matomo: MatomoUtils
+    @LazyInjectService private var accountManager: AccountManager
 
     @State private var writtenToRecipient: Recipient?
 
@@ -35,7 +37,8 @@ struct ContactActionsView: View {
 
     init(recipient: Recipient) {
         self.recipient = recipient
-        let isRemoteContact = AccountManager.instance.currentContactManager?.getContact(for: recipient)?.remote != nil
+        @InjectService var accountManager: AccountManager
+        let isRemoteContact = accountManager.currentContactManager?.getContact(for: recipient)?.remote != nil
         if isRemoteContact {
             actions = [.writeEmailAction, .copyEmailAction]
         } else {
@@ -128,7 +131,7 @@ struct ContactActionsView: View {
     private func addToContacts() {
         Task {
             await tryOrDisplayError {
-                try await AccountManager.instance.currentContactManager?.addContact(recipient: recipient)
+                try await accountManager.currentContactManager?.addContact(recipient: recipient)
                 IKSnackBar.showSnackBar(message: MailResourcesStrings.Localizable.snackbarContactSaved)
             }
         }

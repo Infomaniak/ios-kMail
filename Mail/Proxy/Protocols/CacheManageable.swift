@@ -17,20 +17,8 @@
  */
 
 import Foundation
-import UIKit
 
-/// Something that can handle rotation lock
-public protocol RemoteNotificationRegistrable {
-    func register()
-}
-
-public final class RemoteNotificationRegistrerStub: RemoteNotificationRegistrable {
-    public func register() {}
-}
-
-@available(iOSApplicationExtension, unavailable)
-public final class RemoteNotificationRegistrer: RemoteNotificationRegistrable {
-    public func register() {
-        UIApplication.shared.registerForRemoteNotifications()
-    }
+/// Something that can manipulate cached data
+public protocol CacheManageable {
+    func refreshCacheData()
 }

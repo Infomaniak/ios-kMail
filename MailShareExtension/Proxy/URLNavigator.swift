@@ -19,26 +19,8 @@
 import Foundation
 import UIKit
 
-/// Something that can open URL in an abstract way
-public protocol URLNavigable {
-    func openUrl(_ url: URL)
-    func openUrlIfPossible(_ url: URL)
-}
-
-public struct URLNavigatorStub: URLNavigable {
+/// An URLNavigator that works in Extension mode
+public struct URLNavigator: URLNavigable {
     public func openUrl(_ url: URL) {}
     public func openUrlIfPossible(_ url: URL) {}
-}
-
-@available(iOSApplicationExtension, unavailable)
-public struct URLNavigator: URLNavigable {
-    public func openUrl(_ url: URL) {
-        UIApplication.shared.open(url)
-    }
-
-    public func openUrlIfPossible(_ url: URL) {
-        if UIApplication.shared.canOpenURL(url) {
-            UIApplication.shared.open(url)
-        }
-    }
 }

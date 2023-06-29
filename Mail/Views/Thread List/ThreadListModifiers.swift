@@ -53,6 +53,7 @@ struct ThreadListCellAppearance: ViewModifier {
 
 struct ThreadListToolbar: ViewModifier {
     @LazyInjectService private var matomo: MatomoUtils
+    @LazyInjectService private var accountManager: AccountManager
 
     @Environment(\.isCompactWindow) var isCompactWindow
 
@@ -123,7 +124,7 @@ struct ThreadListToolbar: ViewModifier {
                         Button {
                             isShowingSwitchAccount.toggle()
                         } label: {
-                            AvatarView(avatarDisplayable: AccountManager.instance.currentAccount.user)
+                            AvatarView(avatarDisplayable: accountManager.currentAccount.user)
                         }
                         .accessibilityLabel(MailResourcesStrings.Localizable.contentDescriptionUserAvatar)
                     }
@@ -167,8 +168,7 @@ struct ThreadListToolbar: ViewModifier {
             )
             .navigationBarTitleDisplayMode(.inline)
             .sheet(isPresented: $isShowingSwitchAccount) {
-                // FIXME
-//                AccountView(mailboxes: AccountManager.instance.mailboxes)
+                AccountView(mailboxes: accountManager.mailboxes)
             }
     }
 }

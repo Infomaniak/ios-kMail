@@ -34,22 +34,22 @@ struct SettingsOptionView<OptionEnum>: View where OptionEnum: CaseIterable, Opti
     private let matomoValue: Float?
     private let matomoName: KeyPath<OptionEnum, String>?
 
+    @LazyInjectService private var rootViewManager: RootViewManageable
+    @LazyInjectService private var matomo: MatomoUtils
+    
     @State private var values: [OptionEnum]
     @State private var selectedValue: OptionEnum {
         didSet {
             UserDefaults.shared[keyPath: keyPath] = selectedValue
             switch keyPath {
             case \.theme, \.accentColor:
-                break
-                // FIXME
-//                UIApplication.shared.connectedScenes.forEach { ($0.delegate as? SceneDelegate)?.updateWindowUI() }
+                rootViewManager.updateAllWindowUI()
+
             default:
                 break
             }
         }
     }
-
-    @LazyInjectService private var matomo: MatomoUtils
 
     init(title: String,
          subtitle: String? = nil,

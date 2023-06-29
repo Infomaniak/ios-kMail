@@ -17,3 +17,20 @@
  */
 
 import Foundation
+import InfomaniakCoreUI
+import UIKit
+
+@available(iOSApplicationExtension, unavailable)
+public struct RootViewManager: RootViewManageable {
+    public var rootViewController: UIViewController? {
+        self.mainSceneKeyWindow?.rootViewController
+    }
+    
+    public var mainSceneKeyWindow: UIWindow? {
+        UIApplication.shared.mainSceneKeyWindow
+    }
+
+    public func updateAllWindowUI() {
+        UIApplication.shared.connectedScenes.forEach { ($0.delegate as? SceneDelegate)?.updateWindowUI() }
+    }
+}

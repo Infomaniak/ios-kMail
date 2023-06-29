@@ -17,23 +17,17 @@
  */
 
 import Foundation
-import InfomaniakCoreUI
 import UIKit
 
-/// Something that can fetch the Root View Controller
-public protocol RootViewControllerFetcheable {
-    var rootViewController: UIViewController? { get }
-}
-
-public struct RootViewControllerFetcherStub: RootViewControllerFetcheable {
-    public var rootViewController: UIViewController? {
-        nil
-    }
-}
-
 @available(iOSApplicationExtension, unavailable)
-public struct RootViewControllerFetcher: RootViewControllerFetcheable {
-    public var rootViewController: UIViewController? {
-        UIApplication.shared.mainSceneKeyWindow?.rootViewController
+public struct URLNavigator: URLNavigable {
+    public func openUrl(_ url: URL) {
+        UIApplication.shared.open(url)
+    }
+
+    public func openUrlIfPossible(_ url: URL) {
+        if UIApplication.shared.canOpenURL(url) {
+            UIApplication.shared.open(url)
+        }
     }
 }

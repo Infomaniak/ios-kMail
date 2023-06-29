@@ -122,7 +122,7 @@ struct SplitView: View {
             self.mailToURLComponents = identifiableURLComponents.object as? IdentifiableURLComponents
         }
         .onAppear {
-            orientationManager.orientationLock = .all
+            orientationManager.setOrientationLock(.all)
         }
         .task {
             await fetchSignatures()

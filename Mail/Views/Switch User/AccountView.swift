@@ -25,22 +25,26 @@ import MailResources
 import Sentry
 import SwiftUI
 
-@available(iOSApplicationExtension, unavailable)
-class AccountViewDelegate: DeleteAccountDelegate {
+final class AccountViewDelegate: DeleteAccountDelegate {
+    @LazyInjectService private var rootViewManager: RootViewManageable
+    @LazyInjectService private var accountManager: AccountManager
+
     @MainActor func didCompleteDeleteAccount() {
-        guard let account = AccountManager.instance.currentAccount else { return }
+        guard let account = accountManager.currentAccount else {
+            return
+        }
 
-        AccountManager.instance.removeTokenAndAccount(token: account.token)
+        accountManager.removeTokenAndAccount(token: account.token)
 
-        let window = UIApplication.shared.mainSceneKeyWindow
-        if let nextAccount = AccountManager.instance.accounts.first {
+        let window = rootViewManager.mainSceneKeyWindow
+        if let nextAccount = accountManager.accounts.first {
             (window?.windowScene?.delegate as? SceneDelegate)?.switchAccount(nextAccount)
             IKSnackBar.showSnackBar(message: "Account deleted")
         } else {
             (window?.windowScene?.delegate as? SceneDelegate)?.showLoginView()
         }
 
-        AccountManager.instance.saveAccounts()
+        accountManager.saveAccounts()
     }
 
     @MainActor func didFailDeleteAccount(error: InfomaniakLoginError) {
@@ -49,7 +53,6 @@ class AccountViewDelegate: DeleteAccountDelegate {
     }
 }
 
-@available(iOSApplicationExtension, unavailable)
 struct AccountView: View {
     @Environment(\.dismiss) private var dismiss
     @Environment(\.window) private var window
@@ -57,15 +60,24 @@ struct AccountView: View {
     @AppStorage(UserDefaults.shared.key(.accentColor)) private var accentColor = DefaultPreferences.accentColor
 
     @LazyInjectService private var matomo: MatomoUtils
+    @LazyInjectService private var accountManager: AccountManager
 
-    private let account = AccountManager.instance.currentAccount!
+    private let account: Account = {
+        let accountManager = LazyInjectService<AccountManager>().wrappedValue
+        return accountManager.currentAccount
+    }()
+
     @State private var isShowingLogoutAlert = false
     @State private var isShowingDeleteAccount = false
     @State private var delegate = AccountViewDelegate()
 
     @State var mailboxes: [Mailbox]
 
-    let selectedMailbox = AccountManager.instance.currentMailboxManager?.mailbox
+    let selectedMailbox: Mailbox? = {
+        let accountManager = LazyInjectService<AccountManager>().wrappedValue
+        return accountManager.currentMailboxManager?.mailbox
+    }()
+
     var otherMailbox: [Mailbox] {
         return mailboxes.filter { $0.mailboxId != selectedMailbox?.mailboxId }
     }

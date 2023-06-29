@@ -19,6 +19,7 @@
 import Contacts
 import Foundation
 import InfomaniakCore
+import InfomaniakDI
 import Nuke
 import RealmSwift
 import SwiftUI
@@ -35,13 +36,15 @@ extension CNContact {
     }
 }
 
-public class MergedContact {
+public final class MergedContact {
     public var email: String
     public var remote: Contact?
     public var local: CNContact?
 
     private let contactFormatter = CNContactFormatter()
 
+    @LazyInjectService private var accountManager: AccountManager
+    
     public lazy var color: UIColor = {
         if let remoteColorHex = remote?.color,
            let colorFromHex = UIColor(hex: remoteColorHex) {
@@ -74,6 +77,7 @@ public class MergedContact {
 }
 
 extension MergedContact: AvatarDisplayable {
+
     public var avatarImageRequest: ImageRequest? {
         if let localContact = local, localContact.imageDataAvailable {
             var imageRequest = ImageRequest(id: localContact.identifier) {
@@ -89,7 +93,7 @@ extension MergedContact: AvatarDisplayable {
 
         if let remoteAvatar = remote?.avatar {
             let avatarURL = Endpoint.resource(remoteAvatar).url
-            return AccountManager.instance.currentMailboxManager?.apiFetcher.authenticatedImageRequest(avatarURL)
+            return accountManager.currentMailboxManager?.apiFetcher.authenticatedImageRequest(avatarURL)
         }
 
         return nil

@@ -97,7 +97,8 @@ enum SearchState {
     @Published var isLoading = false
 
     @LazyInjectService var matomo: MatomoUtils
-
+    @LazyInjectService private var accountManager: AccountManager
+    
     let searchFolder: Folder
     var resourceNext: String?
     var lastSearch = ""
@@ -128,7 +129,7 @@ enum SearchState {
     }
 
     func updateContactSuggestion() {
-        let contactManager = AccountManager.instance.currentContactManager
+        let contactManager = accountManager.currentContactManager
         let autocompleteContacts = contactManager?.contacts(matching: searchValue) ?? []
         var autocompleteRecipients = autocompleteContacts.map { Recipient(email: $0.email, name: $0.name) }
         // Append typed email

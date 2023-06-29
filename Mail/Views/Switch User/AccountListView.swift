@@ -24,8 +24,13 @@ import MailResources
 import RealmSwift
 import SwiftUI
 
-class AccountListViewModel: ObservableObject {
-    @Published var selectedUserId: Int? = AccountManager.instance.currentUserId
+final class AccountListViewModel: ObservableObject {
+    @LazyInjectService private var accountManager: AccountManager
+
+    @Published var selectedUserId: Int? = {
+        @InjectService var accountManager: AccountManager
+        return accountManager.currentUserId
+    }()
 
     @Published var accounts = [Account: [Mailbox]]()
 
@@ -50,7 +55,7 @@ class AccountListViewModel: ObservableObject {
     }
 
     private func handleMailboxChanged(_ mailboxes: [Mailbox]) {
-        for account in AccountManager.instance.accounts {
+        for account in accountManager.accounts {
             accounts[account] = mailboxes.filter { $0.userId == account.userId }
         }
     }
@@ -62,6 +67,7 @@ struct AccountListView: View {
 
     @LazyInjectService private var matomo: MatomoUtils
     @LazyInjectService private var orientationManager: OrientationManageable
+    @LazyInjectService private var accountManager: AccountManager
 
     var body: some View {
         ScrollView {
@@ -80,7 +86,7 @@ struct AccountListView: View {
             isShowingNewAccountView = true
         }
         .fullScreenCover(isPresented: $isShowingNewAccountView, onDismiss: {
-            orientationManager.orientationLock = .all
+            orientationManager.setOrientationLock(.all)
         }, content: {
             OnboardingView(page: 4, isScrollEnabled: false)
         })
@@ -92,9 +98,9 @@ struct AccountListView: View {
 
     private func updateUsers() async throws {
         await withThrowingTaskGroup(of: Void.self) { group in
-            for account in AccountManager.instance.accounts {
+            for account in accountManager.accounts {
                 group.addTask {
-                    _ = try await AccountManager.instance.updateUser(for: account)
+                    _ = try await accountManager.updateUser(for: account)
                 }
             }
         }

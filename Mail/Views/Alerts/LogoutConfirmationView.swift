@@ -27,6 +27,8 @@ import SwiftUI
 struct LogoutConfirmationView: View {
     @Environment(\.window) private var window
 
+    @LazyInjectService private var accountManager: AccountManager
+
     let account: Account
 
     var body: some View {
@@ -46,13 +48,13 @@ struct LogoutConfirmationView: View {
             @InjectService var notificationService: InfomaniakNotifications
             await notificationService.removeStoredTokenFor(userId: account.userId)
         }
-        AccountManager.instance.removeTokenAndAccount(token: account.token)
-        if let nextAccount = AccountManager.instance.accounts.first {
+        accountManager.removeTokenAndAccount(token: account.token)
+        if let nextAccount = accountManager.accounts.first {
             (window?.windowScene?.delegate as? SceneDelegate)?.switchAccount(nextAccount)
         } else {
             (window?.windowScene?.delegate as? SceneDelegate)?.showLoginView()
         }
-        AccountManager.instance.saveAccounts()
+        accountManager.saveAccounts()
     }
 }
 

@@ -17,6 +17,7 @@
  */
 
 import Foundation
+import InfomaniakDI
 import MailCore
 import UIKit
 import UserNotifications
@@ -26,18 +27,20 @@ public struct NotificationTappedPayload {
 }
 
 @MainActor
-class NotificationCenterDelegate: NSObject, UNUserNotificationCenterDelegate {
+final class NotificationCenterDelegate: NSObject, UNUserNotificationCenterDelegate {
+    @LazyInjectService private var accountManager: AccountManager
+
     private func handleClickOnNotification(scene: UIScene?, content: UNNotificationContent) {
         guard let mailboxId = content.userInfo[NotificationsHelper.UserInfoKeys.mailboxId] as? Int,
               let userId = content.userInfo[NotificationsHelper.UserInfoKeys.userId] as? Int,
               let mailbox = MailboxInfosManager.instance.getMailbox(id: mailboxId, userId: userId),
-              let mailboxManager = AccountManager.instance.getMailboxManager(for: mailbox) else {
+              let mailboxManager = accountManager.getMailboxManager(for: mailbox) else {
             return
         }
 
-        if AccountManager.instance.currentMailboxManager?.mailbox != mailboxManager.mailbox {
-            if AccountManager.instance.currentAccount.userId != mailboxManager.mailbox.userId {
-                if let switchedAccount = AccountManager.instance.accounts
+        if accountManager.currentMailboxManager?.mailbox != mailboxManager.mailbox {
+            if accountManager.currentAccount.userId != mailboxManager.mailbox.userId {
+                if let switchedAccount = accountManager.accounts
                     .first(where: { $0.userId == mailboxManager.mailbox.userId }) {
                     (scene?.delegate as? SceneDelegate)?.switchAccount(switchedAccount, mailbox: mailbox)
                 }

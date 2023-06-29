@@ -25,6 +25,8 @@ import SwiftUI
 struct AddMailboxView: View {
     @Environment(\.dismiss) var dismiss
 
+    @LazyInjectService private var accountManager: AccountManager
+
     var completion: (Mailbox?) -> Void
 
     @State private var newAddress = ""
@@ -92,7 +94,7 @@ struct AddMailboxView: View {
     private func addMailbox() {
         Task {
             do {
-                try await AccountManager.instance.addMailbox(mail: newAddress, password: password) { mailbox in
+                try await accountManager.addMailbox(mail: newAddress, password: password) { mailbox in
                     @InjectService var matomo: MatomoUtils
                     matomo.track(eventWithCategory: .account, name: "addMailboxConfirm")
                     completion(mailbox)

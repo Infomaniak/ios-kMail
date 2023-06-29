@@ -68,11 +68,12 @@ struct Slide: Identifiable {
 }
 
 @MainActor
-class LoginHandler: InfomaniakLoginDelegate, ObservableObject {
-    @LazyInjectService var loginService: InfomaniakLoginable
-    @LazyInjectService var matomo: MatomoUtils
-    @LazyInjectService var remoteNotificationRegistrer: RemoteNotificationRegistrable
-
+final class LoginHandler: InfomaniakLoginDelegate, ObservableObject {
+    @LazyInjectService private var loginService: InfomaniakLoginable
+    @LazyInjectService private var matomo: MatomoUtils
+    @LazyInjectService private var remoteNotificationRegistrer: RemoteNotificationRegistrable
+    @LazyInjectService private var accountManager: AccountManager
+    
     @Published var isLoading = false
     @Published var isPresentingErrorAlert = false
     var sceneDelegate: SceneDelegate?
@@ -124,17 +125,17 @@ class LoginHandler: InfomaniakLoginDelegate, ObservableObject {
 
     private func loginSuccessful(code: String, codeVerifier verifier: String) {
         matomo.track(eventWithCategory: .account, name: "loggedIn")
-        let previousAccount = AccountManager.instance.currentAccount
+        let previousAccount = accountManager.currentAccount
         Task {
             do {
-                _ = try await AccountManager.instance.createAndSetCurrentAccount(code: code, codeVerifier: verifier)
+                _ = try await accountManager.createAndSetCurrentAccount(code: code, codeVerifier: verifier)
                 sceneDelegate?.showMainView()
                 remoteNotificationRegistrer.register()
             } catch let error as MailError where error == MailError.noMailbox {
                 sceneDelegate?.showNoMailboxView()
             } catch {
                 if let previousAccount = previousAccount {
-                    AccountManager.instance.switchAccount(newAccount: previousAccount)
+                    accountManager.switchAccount(newAccount: previousAccount)
                 }
                 IKSnackBar.showSnackBar(message: error.localizedDescription)
             }
@@ -249,7 +250,7 @@ struct OnboardingView: View {
             if UIDevice.current.userInterfaceIdiom == .phone {
                 UIDevice.current
                     .setValue(UIInterfaceOrientation.portrait.rawValue, forKey: "orientation")
-                orientationManager.orientationLock = .portrait
+                orientationManager.setOrientationLock(.portrait)
                 UIViewController.attemptRotationToDeviceOrientation()
             }
         }

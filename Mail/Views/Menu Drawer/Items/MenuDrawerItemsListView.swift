@@ -59,7 +59,8 @@ struct MenuDrawerItemsHelpListView: View {
     @State private var isShowingHelp = false
     @State private var isShowingBugTracker = false
 
-    @LazyInjectService var urlNavigator: URLNavigable
+    @LazyInjectService private var urlNavigator: URLNavigable
+    @LazyInjectService private var accountManager: AccountManager
 
     var body: some View {
         MenuDrawerItemsListView {
@@ -84,7 +85,7 @@ struct MenuDrawerItemsHelpListView: View {
     }
 
     private func sendFeedback() {
-        if AccountManager.instance.currentAccount?.user?.isStaff == true {
+        if accountManager.currentAccount?.user?.isStaff == true {
             isShowingBugTracker.toggle()
         } else if let userReportURL = URL(string: MailResourcesStrings.Localizable.urlUserReportiOS) {
             urlNavigator.openUrl(userReportURL)

@@ -362,13 +362,16 @@ public class MailApiFetcher: ApiFetcher {
     }
 }
 
-class SyncedAuthenticator: OAuthAuthenticator {
+final class SyncedAuthenticator: OAuthAuthenticator {
+
+    @LazyInjectService private var accountManager: AccountManager
+
     override func refresh(
         _ credential: OAuthAuthenticator.Credential,
         for session: Session,
         completion: @escaping (Result<OAuthAuthenticator.Credential, Error>) -> Void
     ) {
-        AccountManager.instance.refreshTokenLockedQueue.async {
+        accountManager.refreshTokenLockedQueue.async {
             @InjectService var keychainHelper: KeychainHelper
             @InjectService var networkLoginService: InfomaniakNetworkLoginable
 
@@ -383,8 +386,8 @@ class SyncedAuthenticator: OAuthAuthenticator {
             }
 
             // Maybe someone else refreshed our token
-            AccountManager.instance.reloadTokensAndAccounts()
-            if let token = AccountManager.instance.getTokenForUserId(credential.userId),
+            self.accountManager.reloadTokensAndAccounts()
+            if let token = self.accountManager.getTokenForUserId(credential.userId),
                token.expirationDate > credential.expirationDate {
                 SentrySDK
                     .addBreadcrumb(token.generateBreadcrumb(level: .info, message: "Refreshing token - Success with local"))

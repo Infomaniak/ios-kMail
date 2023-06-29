@@ -17,29 +17,11 @@
  */
 
 import Foundation
-import InfomaniakCoreUI
 import UIKit
 
-/// Something that can handle rotation lock
-public protocol OrientationManageable {
-    var orientationLock: UIInterfaceOrientationMask { get set }
-
-    var interfaceOrientation: UIInterfaceOrientation? { get }
-}
-
-public final class OrientationManagerStub: OrientationManageable {
-    
-    public var orientationLock = UIInterfaceOrientationMask.all
-
-    public var interfaceOrientation: UIInterfaceOrientation?
-}
-
 @available(iOSApplicationExtension, unavailable)
-public final class OrientationManager: OrientationManageable {
-    /// Default to .all
-    public var orientationLock = UIInterfaceOrientationMask.all
-
-    public var interfaceOrientation: UIInterfaceOrientation? {
-        UIApplication.shared.mainSceneKeyWindow?.windowScene?.interfaceOrientation
+public final class RemoteNotificationRegistrer: RemoteNotificationRegistrable {
+    public func register() {
+        UIApplication.shared.registerForRemoteNotifications()
     }
 }

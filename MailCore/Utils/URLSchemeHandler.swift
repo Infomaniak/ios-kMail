@@ -17,14 +17,17 @@
  */
 
 import Foundation
+import InfomaniakDI
 import WebKit
 
-public class URLSchemeHandler: NSObject, WKURLSchemeHandler {
+public final class URLSchemeHandler: NSObject, WKURLSchemeHandler {
     public static let scheme = "mail-infomaniak"
     public static let domain = "://mail.infomaniak.com"
 
     private var dataTasksInProgress = [Int: URLSessionDataTask]()
     private let syncQueue = DispatchQueue(label: "com.infomaniak.mail.URLSchemeHandler")
+
+    @LazyInjectService private var accountManager: AccountManager
 
     public func webView(_ webView: WKWebView, start urlSchemeTask: WKURLSchemeTask) {
         guard let url = urlSchemeTask.request.url else {
@@ -36,7 +39,7 @@ public class URLSchemeHandler: NSObject, WKURLSchemeHandler {
         components?.scheme = "https"
         var request = URLRequest(url: components!.url!)
         request.addValue(
-            "Bearer \(AccountManager.instance.currentAccount.token.accessToken)",
+            "Bearer \(accountManager.currentAccount.token.accessToken)",
             forHTTPHeaderField: "Authorization"
         )
         let dataTask = URLSession.shared.dataTask(with: request) { [weak self] data, response, error in

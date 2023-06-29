@@ -28,6 +28,7 @@ struct SettingsNotificationsView: View {
     @LazyInjectService private var notificationService: InfomaniakNotifications
     @LazyInjectService private var matomo: MatomoUtils
     @LazyInjectService private var urlNavigator: URLNavigable
+    @LazyInjectService private var accountManager: AccountManager
 
     @AppStorage(UserDefaults.shared.key(.notificationsEnabled)) private var notificationsEnabled = DefaultPreferences
         .notificationsEnabled
@@ -75,7 +76,7 @@ struct SettingsNotificationsView: View {
 
                 if subscribedTopics != nil && notificationsEnabled {
                     IKDivider()
-                    ForEach(AccountManager.instance.mailboxes) { mailbox in
+                    ForEach(accountManager.mailboxes) { mailbox in
                         Toggle(isOn: Binding(get: {
                             notificationsEnabled && subscribedTopics?.contains(mailbox.notificationTopicName) == true
                         }, set: { on in
@@ -131,7 +132,7 @@ struct SettingsNotificationsView: View {
     }
 
     func currentTopics() async {
-        let currentSubscription = await notificationService.subscriptionForUser(id: AccountManager.instance.currentUserId)
+        let currentSubscription = await notificationService.subscriptionForUser(id: accountManager.currentUserId)
         withAnimation {
             self.subscribedTopics = currentSubscription?.topics
         }
@@ -139,7 +140,7 @@ struct SettingsNotificationsView: View {
 
     func updateTopicsForCurrentUserIfNeeded() {
         Task {
-            guard let currentApiFetcher = AccountManager.instance.currentMailboxManager?.apiFetcher,
+            guard let currentApiFetcher = accountManager.currentMailboxManager?.apiFetcher,
                   let subscribedTopics else { return }
             await notificationService.updateTopicsIfNeeded(subscribedTopics, userApiFetcher: currentApiFetcher)
         }

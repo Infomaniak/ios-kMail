@@ -67,7 +67,7 @@ public extension InfomaniakNetworkLoginable {
     }
 }
 
-public class AccountManager: RefreshTokenDelegate {
+public final class AccountManager: RefreshTokenDelegate {
     @LazyInjectService var networkLoginService: InfomaniakNetworkLoginable
     @LazyInjectService var keychainHelper: KeychainHelper
     @LazyInjectService var bugTracker: BugTracker
@@ -78,7 +78,6 @@ public class AccountManager: RefreshTokenDelegate {
     private static let group = "com.infomaniak.mail"
     public static let appGroup = "group." + group
     public static let accessGroup: String = AccountManager.appIdentifierPrefix + AccountManager.group
-    public static var instance = AccountManager()
     private let tag = "ch.infomaniak.token".data(using: .utf8)!
     public var currentAccount: Account!
     public var accounts = [Account]()
@@ -132,7 +131,7 @@ public class AccountManager: RefreshTokenDelegate {
     private var contactManagers = [String: ContactManager]()
     private var apiFetchers = [Int: MailApiFetcher]()
 
-    private init() {
+    public init() {
         currentMailboxId = UserDefaults.shared.currentMailboxId
         currentUserId = UserDefaults.shared.currentMailUserId
 

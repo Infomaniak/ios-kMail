@@ -28,10 +28,15 @@ struct MailboxesManagementView: View {
     @EnvironmentObject var mailboxManager: MailboxManager
     @EnvironmentObject var navigationDrawerState: NavigationDrawerState
 
+    @LazyInjectService private var accountManager: AccountManager
+
     @ObservedResults(
         Mailbox.self,
         configuration: MailboxInfosManager.instance.realmConfiguration,
-        where: { $0.userId == AccountManager.instance.currentUserId },
+        where: {
+            @InjectService var accountManager: AccountManager
+            return $0.userId == accountManager.currentUserId
+        },
         sortDescriptor: SortDescriptor(keyPath: \Mailbox.mailboxId)
     ) private var mailboxes
 
@@ -85,8 +90,8 @@ struct MailboxesManagementView: View {
     }
 
     private func updateAccount() async throws {
-        guard let account = AccountManager.instance.account(for: mailboxManager.mailbox.userId) else { return }
-        try await AccountManager.instance.updateUser(for: account)
+        guard let account = accountManager.account(for: mailboxManager.mailbox.userId) else { return }
+        try await accountManager.updateUser(for: account)
     }
 }
 

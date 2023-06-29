@@ -221,6 +221,7 @@ enum ActionsTarget: Equatable, Identifiable {
     @Published var listActions: [Action] = []
 
     @LazyInjectService private var matomo: MatomoUtils
+    @LazyInjectService private var accountManager: AccountManager
 
     init(mailboxManager: MailboxManager,
          target: ActionsTarget,
@@ -289,7 +290,7 @@ enum ActionsTarget: Equatable, Identifiable {
             let archive = message.folder?.role != .archive
             let unread = !message.seen
             let star = message.flagged
-            let isStaff = AccountManager.instance.currentAccount?.user?.isStaff ?? false
+            let isStaff = accountManager.currentAccount?.user?.isStaff ?? false
             let tempListActions: [Action?] = [
                 archive ? .archive : .moveToInbox,
                 unread ? .markAsRead : .markAsUnread,

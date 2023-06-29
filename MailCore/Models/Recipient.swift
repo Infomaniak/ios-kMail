@@ -17,6 +17,7 @@
  */
 
 import Foundation
+import InfomaniakDI
 import MailResources
 import Nuke
 import RealmSwift
@@ -36,7 +37,7 @@ public struct RecipientHolder {
     var bcc = [Recipient]()
 }
 
-public class Recipient: EmbeddedObject, Codable {
+public final class Recipient: EmbeddedObject, Codable {
     @Persisted public var email: String
     @Persisted public var name: String
 
@@ -73,11 +74,13 @@ public class Recipient: EmbeddedObject, Codable {
     }
 
     public var isCurrentUser: Bool {
-        return AccountManager.instance.currentAccount?.user.email == email
+        @InjectService var accountManager: AccountManager
+        return accountManager.currentAccount?.user.email == email
     }
 
     public var isMe: Bool {
-        return AccountManager.instance.currentMailboxManager?.mailbox.email == email
+        @InjectService var accountManager: AccountManager
+        return accountManager.currentMailboxManager?.mailbox.email == email
     }
 
     public lazy var nameComponents: (givenName: String, familyName: String?) = {
@@ -115,7 +118,10 @@ public class Recipient: EmbeddedObject, Codable {
         return initials.joined().uppercased()
     }()
 
-    public lazy var contact: MergedContact? = AccountManager.instance.currentContactManager?.getContact(for: self)
+    public lazy var contact: MergedContact? = {
+        @InjectService var accountManager: AccountManager
+        return accountManager.currentContactManager?.getContact(for: self)
+    }()
 
     public var htmlDescription: String {
         let emailString = "&lt;\(email)&gt;"
@@ -134,7 +140,8 @@ public class Recipient: EmbeddedObject, Codable {
 extension Recipient: AvatarDisplayable {
     public var avatarImageRequest: ImageRequest? {
         guard !(isCurrentUser && isMe) else {
-            return AccountManager.instance.currentAccount.user.avatarImageRequest
+            @InjectService var accountManager: AccountManager
+            return accountManager.currentAccount.user.avatarImageRequest
         }
         return contact?.avatarImageRequest
     }
