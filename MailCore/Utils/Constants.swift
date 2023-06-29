@@ -65,7 +65,7 @@ public enum Constants {
 
     public static let sizeChangeThreshold = 3
     public static let viewportContent = "width=device-width, initial-scale=1.0"
-    public static let divWrapperId = "kmail-message-content"
+    public static let divWrapperId = "ikmail-message-content"
     public static let mungeEmailScript: String? = {
         guard let mungeScript = Bundle.main.load(filename: "mungeEmail", withExtension: "js") else { return nil }
         return "const MESSAGE_SELECTOR = \"#\(divWrapperId)\"; \(mungeScript)"
@@ -155,9 +155,10 @@ public enum Constants {
     }
 
     public static func appVersion() -> String {
+        let appName = Bundle.main.object(forInfoDictionaryKey: "CFBundleName") as! String? ?? "Mail"
         let release = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as! String? ?? "x.x"
         let build = Bundle.main.object(forInfoDictionaryKey: "CFBundleVersion") as! String? ?? "x"
-        return "kMail iOS version \(release)-beta\(build)"
+        return "\(appName) iOS version \(release)-beta\(build)"
     }
 
     public static let searchFolderId = "search_folder_id"
