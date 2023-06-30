@@ -25,8 +25,8 @@ final class WebViewController: UIViewController {
     var model: WebViewModel!
     var messageUid: String!
 
-    private var widthSubject = PassthroughSubject<Double, Never>()
-    private var subscriber: AnyCancellable?
+    private let widthSubject = PassthroughSubject<Double, Never>()
+    private var widthSubscriber: AnyCancellable?
 
     override func loadView() {
         view = model.webView
@@ -34,7 +34,7 @@ final class WebViewController: UIViewController {
 
         setUpWebView(model.webView)
 
-        subscriber = widthSubject
+        widthSubscriber = widthSubject
             .debounce(for: .seconds(0.3), scheduler: DispatchQueue.main)
             .sink { newWidth in
                 Task {
@@ -45,7 +45,6 @@ final class WebViewController: UIViewController {
 
     override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
         super.viewWillTransition(to: size, with: coordinator)
-
         widthSubject.send(size.width)
     }
 
