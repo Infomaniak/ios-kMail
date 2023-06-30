@@ -63,7 +63,7 @@ struct WebView: UIViewRepresentable {
         ) {
             if let url = navigationAction.request.url, Constants.isMailTo(url) {
                 decisionHandler(.cancel)
-                parent.openUrl.callAsFunction(url)
+                parent.openUrl(url)
                 return
             }
 

@@ -19,10 +19,10 @@
 import SwiftUI
 
 struct RootView: View {
-    @Environment(\.horizontalSizeClass) var horizontalSizeClass
-    @Environment(\.verticalSizeClass) var verticalSizeClass
+    @Environment(\.horizontalSizeClass) private var horizontalSizeClass
+    @Environment(\.verticalSizeClass) private var verticalSizeClass
 
-    @EnvironmentObject var navigationStore: NavigationStore
+    @EnvironmentObject private var navigationStore: NavigationStore
 
     var body: some View {
         ZStack {
