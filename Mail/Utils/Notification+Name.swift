@@ -21,5 +21,6 @@ import Foundation
 public extension Notification.Name {
     static let onUserTappedNotification = Notification.Name("userTappedNotification")
     static let dismissMoveSheetNotificationName = Notification.Name(rawValue: "sheetViewDismiss")
+    static let dismissDraftView = Notification.Name(rawValue: "draftDismiss")
     static let onOpenedMailTo = Notification.Name("onOpenedMailTo")
 }

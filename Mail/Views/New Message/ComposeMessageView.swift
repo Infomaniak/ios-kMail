@@ -67,6 +67,7 @@ struct ComposeMessageView: View {
     @State private var isShowingCancelAttachmentsError = false
     @State private var autocompletionType: ComposeViewFieldType?
     @State private var editorFocus = false
+    @State private var initialAttachments: [Attachable] = []
 
     /// Something to track the initial loading of a default signature
     @StateObject private var signatureManager: SignaturesManager
@@ -95,7 +96,7 @@ struct ComposeMessageView: View {
 
     // MAK: - Int
 
-    init(draft: Draft, mailboxManager: MailboxManager, messageReply: MessageReply? = nil) {
+    init(draft: Draft, mailboxManager: MailboxManager, messageReply: MessageReply? = nil, attachments: [Attachable] = []) {
         self.messageReply = messageReply
 
         Self.saveNewDraftInRealm(mailboxManager.getRealm(), draft: draft)
@@ -105,6 +106,7 @@ struct ComposeMessageView: View {
         _signatureManager = StateObject(wrappedValue: SignaturesManager(mailboxManager: mailboxManager))
         _mailboxManager = StateObject(wrappedValue: mailboxManager)
         _attachmentsManager = StateObject(wrappedValue: AttachmentsManager(draft: draft, mailboxManager: mailboxManager))
+        _initialAttachments = State(wrappedValue: attachments)
     }
 
     // MAK: - View
@@ -112,6 +114,10 @@ struct ComposeMessageView: View {
     var body: some View {
         NavigationView {
             composeMessage
+        }
+        .onAppear() {
+            attachmentsManager.importAttachments(attachments: initialAttachments)
+            initialAttachments = []
         }
         .interactiveDismissDisabled()
         .customAlert(isPresented: $alert.isShowing) {
@@ -126,7 +132,7 @@ struct ComposeMessageView: View {
         }
         .customAlert(isPresented: $isShowingCancelAttachmentsError) {
             AttachmentsUploadInProgressErrorView {
-                dismiss()
+                dismissSheet()
             }
         }
         .matomoView(view: ["ComposeMessage"])
@@ -203,7 +209,7 @@ struct ComposeMessageView: View {
             isShowingCancelAttachmentsError = true
             return
         }
-        dismiss()
+        dismissSheet()
     }
 
     private func didTouchSend() {
@@ -222,7 +228,7 @@ struct ComposeMessageView: View {
                 liveDraft.action = .send
             }
         }
-        dismiss()
+        dismissSheet()
     }
 
     private static func saveNewDraftInRealm(_ realm: Realm, draft: Draft) {
@@ -232,6 +238,11 @@ struct ComposeMessageView: View {
 
             realm.add(draft, update: .modified)
         }
+    }
+
+    private func dismissSheet() {
+        NotificationCenter.default.post(Notification(name: .dismissDraftView))
+        dismiss()
     }
 }
 

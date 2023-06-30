@@ -33,13 +33,26 @@ final class ShareNavigationViewController: UIViewController {
         // Modify sheet size on iPadOS, property is ignored on iOS
         preferredContentSize = CGSize(width: 540, height: 620)
 
-        guard let attachments = (extensionContext?.inputItems.first as? NSExtensionItem)?.attachments else {
+        // Make sure we are handling [NSExtensionItem]
+        guard let extensionItems: [NSExtensionItem] = extensionContext?.inputItems.compactMap { $0 as? NSExtensionItem },
+              !extensionItems.isEmpty else {
             dismiss(animated: true)
             return
         }
 
+        let itemProviders: [NSItemProvider] = extensionItems.compactMap(\.attachments).flatMap { $0 }
+        guard !itemProviders.isEmpty else {
+            dismiss(animated: true)
+            return
+        }
+
+        // Listen to dismiss notification
+        NotificationCenter.default.addObserver(self, selector: #selector(willDismissDraft(notification:)),
+                                               name: .dismissDraftView,
+                                               object: nil)
+
         // We need to go threw wrapping to use SwiftUI in an NSExtension.
-        let hostingController = UIHostingController(rootView: ComposeMessageWrapperView())
+        let hostingController = UIHostingController(rootView: ComposeMessageWrapperView(itemProviders: itemProviders))
         hostingController.view.backgroundColor = .clear
         hostingController.view.translatesAutoresizingMaskIntoConstraints = false
         addChild(hostingController)
@@ -54,23 +67,12 @@ final class ShareNavigationViewController: UIViewController {
         ])
     }
 
+    @objc private func willDismissDraft(notification: NSNotification) {
+        print("willDismissDraft :\(notification)")
+        dismiss(animated: true)
+    }
+
     override func dismiss(animated flag: Bool, completion: (() -> Void)? = nil) {
         extensionContext!.completeRequest(returningItems: nil, completionHandler: nil)
-    }
-}
-
-struct ComposeMessageWrapperView: View {
-    @State private var draft = Draft()
-    @LazyInjectService private var accountManager: AccountManager
-
-    var body: some View {
-        if let mailboxManager = accountManager.currentMailboxManager {
-            ComposeMessageView.newMessage(draft, mailboxManager: mailboxManager)
-                .environmentObject(mailboxManager)
-                .navigationTitle(Text("Test"))
-        } else {
-            Text("Please login in ikMail")
-                .background(.red)
-        }
     }
 }
