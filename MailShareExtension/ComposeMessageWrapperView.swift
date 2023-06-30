@@ -1,4 +1,3 @@
-//
 /*
  Infomaniak Mail - iOS App
  Copyright (C) 2022 Infomaniak Network SA
@@ -25,6 +24,7 @@ import SwiftUI
 import UIKit
 
 struct ComposeMessageWrapperView: View {
+    @State var completionHandler: () -> Void
     @State var itemProviders: [NSItemProvider]
     @State private var draft = Draft()
     @LazyInjectService private var accountManager: AccountManager
@@ -33,7 +33,9 @@ struct ComposeMessageWrapperView: View {
         if let mailboxManager = accountManager.currentMailboxManager {
             ComposeMessageView.newMessage(draft, mailboxManager: mailboxManager, itemProviders: itemProviders)
                 .environmentObject(mailboxManager)
-                .navigationTitle(Text("Test"))
+                .environment(\.dismissModal) {
+                    self.completionHandler()
+                }
         } else {
             Text("Please login in ikMail")
                 .background(.red)

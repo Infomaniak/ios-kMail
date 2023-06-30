@@ -22,6 +22,8 @@ import RealmSwift
 import SwiftUI
 
 struct ComposeMessageBodyView: View {
+    @Environment(\.dismissModal) var dismissModal
+
     @EnvironmentObject private var mailboxManager: MailboxManager
 
     /// Something to track the initial loading of a default signature
@@ -79,7 +81,7 @@ struct ComposeMessageBodyView: View {
             case .error:
                 // Unable to get signatures, "An error occurred" and close modal.
                 IKSnackBar.showSnackBar(message: MailError.unknownError.localizedDescription)
-                dismissSheet()
+                dismissModal()
             case .progress:
                 break
             }
@@ -114,7 +116,7 @@ struct ComposeMessageBodyView: View {
             }
             isLoadingContent = false
         } catch {
-            dismissSheet()
+            dismissModal()
             IKSnackBar.showSnackBar(message: MailError.unknownError.localizedDescription)
         }
     }
@@ -132,7 +134,7 @@ struct ComposeMessageBodyView: View {
 
             isLoadingContent = false
         } catch {
-            dismissSheet()
+            dismissModal()
             IKSnackBar.showSnackBar(message: MailError.unknownError.localizedDescription)
         }
     }
@@ -175,11 +177,6 @@ struct ComposeMessageBodyView: View {
             $draft.attachments.append(attachment)
         }
         attachmentsManager.completeUploadedAttachments()
-    }
-    
-    private func dismissSheet() {
-        NotificationCenter.default.post(Notification(name: .dismissDraftView))
-        dismiss()
     }
 }
 

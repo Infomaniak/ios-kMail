@@ -46,13 +46,10 @@ final class ShareNavigationViewController: UIViewController {
             return
         }
 
-        // Listen to dismiss notification
-        NotificationCenter.default.addObserver(self, selector: #selector(willDismissDraft(notification:)),
-                                               name: .dismissDraftView,
-                                               object: nil)
-
         // We need to go threw wrapping to use SwiftUI in an NSExtension.
-        let hostingController = UIHostingController(rootView: ComposeMessageWrapperView(itemProviders: itemProviders))
+        let hostingController = UIHostingController(rootView: ComposeMessageWrapperView(completionHandler: {
+            self.dismiss(animated: true)
+        }, itemProviders: itemProviders))
         hostingController.view.backgroundColor = .clear
         hostingController.view.translatesAutoresizingMaskIntoConstraints = false
         addChild(hostingController)
@@ -65,11 +62,6 @@ final class ShareNavigationViewController: UIViewController {
             hostingController.view.topAnchor.constraint(equalTo: view.topAnchor, constant: 0),
             hostingController.view.bottomAnchor.constraint(equalTo: view.bottomAnchor)
         ])
-    }
-
-    @objc private func willDismissDraft(notification: NSNotification) {
-        print("willDismissDraft :\(notification)")
-        dismiss(animated: true)
     }
 
     override func dismiss(animated flag: Bool, completion: (() -> Void)? = nil) {

@@ -59,6 +59,7 @@ final class NewMessageAlert: SheetState<NewMessageAlert.State> {
 
 struct ComposeMessageView: View {
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.dismissModal) var dismissModal
 
     @LazyInjectService private var matomo: MatomoUtils
     @LazyInjectService private var draftManager: DraftManager
@@ -115,7 +116,7 @@ struct ComposeMessageView: View {
         NavigationView {
             composeMessage
         }
-        .onAppear() {
+        .onAppear {
             attachmentsManager.importAttachments(attachments: initialAttachments)
             initialAttachments = []
         }
@@ -132,7 +133,7 @@ struct ComposeMessageView: View {
         }
         .customAlert(isPresented: $isShowingCancelAttachmentsError) {
             AttachmentsUploadInProgressErrorView {
-                dismissSheet()
+                dismissModal()
             }
         }
         .matomoView(view: ["ComposeMessage"])
@@ -209,7 +210,7 @@ struct ComposeMessageView: View {
             isShowingCancelAttachmentsError = true
             return
         }
-        dismissSheet()
+        dismissModal()
     }
 
     private func didTouchSend() {
@@ -228,7 +229,7 @@ struct ComposeMessageView: View {
                 liveDraft.action = .send
             }
         }
-        dismissSheet()
+        dismissModal()
     }
 
     private static func saveNewDraftInRealm(_ realm: Realm, draft: Draft) {
@@ -238,11 +239,6 @@ struct ComposeMessageView: View {
 
             realm.add(draft, update: .modified)
         }
-    }
-
-    private func dismissSheet() {
-        NotificationCenter.default.post(Notification(name: .dismissDraftView))
-        dismiss()
     }
 }
 
