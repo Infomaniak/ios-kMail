@@ -38,7 +38,7 @@ final class WebViewController: UIViewController {
             .debounce(for: .seconds(0.3), scheduler: DispatchQueue.main)
             .sink { newWidth in
                 Task {
-                    _ = try await self.model.webView.evaluateJavaScript("normalizeMessageWidth(\(newWidth), '\(self.messageUid ?? "")')")
+                    try await self.normalizeMessageWidth(webViewWidth: CGFloat(newWidth))
                 }
             }
     }
@@ -65,6 +65,10 @@ final class WebViewController: UIViewController {
         }
         #endif
     }
+
+    private func normalizeMessageWidth(webViewWidth width: CGFloat) async throws {
+        _ = try await model.webView.evaluateJavaScript("normalizeMessageWidth(\(width), '\(messageUid ?? "")')")
+    }
 }
 
 extension WebViewController: WKNavigationDelegate {
@@ -82,7 +86,7 @@ extension WebViewController: WKNavigationDelegate {
             guard readyState == "complete" else { return }
 
             _ = try await webView.evaluateJavaScript("removeAllProperties()")
-            _ = try await webView.evaluateJavaScript("normalizeMessageWidth(\(webView.frame.width), '\(messageUid ?? "")')")
+            try await normalizeMessageWidth(webViewWidth: webView.frame.width)
         }
     }
 

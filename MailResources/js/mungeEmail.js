@@ -21,7 +21,8 @@ const PREFERENCES = {
     normalizeMessageWidths: true,
     mungeImages: true,
     mungeTables: true,
-    minimumEffectiveRatio: 0.7
+    minimumEffectiveRatio: 0.7,
+    undoPreviousChanges: true
 };
 
 let actionsLog = {};
@@ -55,14 +56,15 @@ function normalizeElementWidths(elements, webViewWidth, messageUid) {
     const documentWidth = document.body.offsetWidth;
     logInfo(`Starts to normalize elements. Document width: ${documentWidth}. WebView width: ${webViewWidth}.`);
 
-    let currentActionsLog = actionsLog[messageUid];
-    if (currentActionsLog != undefined && currentActionsLog.length > 0) {
-        logInfo('We need to undo previous changes.');
-        undoActions(currentActionsLog);
-    }
-
     for (const element of elements) {
         logInfo(`Current element: ${elementDebugName(element)}.`);
+
+        // If the script has already been run, we can undo the changes we've made and start again from scratch
+        let currentActionsLog = getActionsLog(element, messageUid);
+        if (PREFERENCES.undoPreviousChanges && currentActionsLog.length > 0) {
+            logInfo('We need to undo changes from a previous run.');
+            undoActions(currentActionsLog);
+        }
 
         // Reset any existing normalization
         const originalZoom = element.style.zoom;
@@ -106,8 +108,7 @@ function transformContent(element, documentWidth, elementWidth, messageUid) {
     let newWidth = elementWidth;
     let isTransformationDone = false;
     /** Format of entries : { function: fn, object: object, arguments: [list of arguments] } */
-    actionsLog[messageUid] = [];
-    let currentActionsLog = actionsLog[messageUid];
+    let currentActionsLog = getActionsLog(element, messageUid);
 
     // Try munging all divs or textareas with inline styles where the width
     // is wider than `documentWidth`, and change it to be a max-width.
@@ -317,6 +318,20 @@ function undoActions(actionsLog) {
  */
 function shouldMungeTable(table) {
     return table.hasAttribute('width') || table.style.width;
+}
+
+/**
+ * Get the actionsLog associated with the element to be modified
+ * @param element Element to be modified
+ * @param messageUid MessageUid associated to the element
+ * @returns {string} Id of the actionsLog
+ */
+function getActionsLog(element, messageUid) {
+    const id= `${element.id}${messageUid}`;
+    if (actionsLog[id] === undefined) {
+        actionsLog[id] = [];
+    }
+    return actionsLog[id];
 }
 
 // Logger
