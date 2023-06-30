@@ -30,8 +30,6 @@ struct ThreadListCell: View {
     let viewModel: ThreadListViewModel
     @ObservedObject var multipleSelectionViewModel: ThreadListMultipleSelectionViewModel
 
-    @Binding var editedMessageDraft: Draft?
-
     let thread: Thread
 
     let threadDensity: ThreadDensity
@@ -71,7 +69,7 @@ struct ThreadListCell: View {
                 DraftUtils.editDraft(
                     from: thread,
                     mailboxManager: viewModel.mailboxManager,
-                    editedMessageDraft: $editedMessageDraft
+                    editedMessageDraft: $navigationStore.editedMessageDraft
                 )
             } else {
                 splitViewManager.splitViewController?.hide(.primary)
@@ -105,7 +103,6 @@ struct ThreadListCell_Previews: PreviewProvider {
                                            folder: PreviewHelper.sampleFolder,
                                            isCompact: false),
             multipleSelectionViewModel: ThreadListMultipleSelectionViewModel(mailboxManager: PreviewHelper.sampleMailboxManager),
-            editedMessageDraft: .constant(nil),
             thread: PreviewHelper.sampleThread,
             threadDensity: .large,
             isSelected: false,

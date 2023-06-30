@@ -73,6 +73,7 @@ class NavigationStore: ObservableObject {
 
     @Published private(set) var rootViewState: RootViewState
     @Published var messageReply: MessageReply?
+    @Published var editedMessageDraft: Draft?
 
     /// Represents the state of navigation
     ///

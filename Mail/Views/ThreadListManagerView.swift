@@ -27,42 +27,24 @@ struct ThreadListManagerView: View {
     @EnvironmentObject private var splitViewManager: SplitViewManager
     @EnvironmentObject private var mailboxManager: MailboxManager
 
-    @State private var shouldNavigateToNotificationThread = false
-    @State private var tappedNotificationThread: Thread?
-    @State private var editedMessageDraft: Draft?
-    @State private var messageReply: MessageReply?
-
     var body: some View {
         Group {
             if let selectedFolder = splitViewManager.selectedFolder {
                 if splitViewManager.showSearch {
-                    SearchView(
-                        mailboxManager: mailboxManager,
-                        folder: selectedFolder,
-                        editedMessageDraft: $editedMessageDraft
-                    )
+                    SearchView(mailboxManager: mailboxManager, folder: selectedFolder)
                 } else {
-                    ThreadListView(
-                        mailboxManager: mailboxManager,
-                        folder: selectedFolder,
-                        editedMessageDraft: $editedMessageDraft,
-                        messageReply: $messageReply,
-                        isCompact: isCompactWindow
-                    )
+                    ThreadListView(mailboxManager: mailboxManager, folder: selectedFolder, isCompact: isCompactWindow)
                 }
             }
         }
         .id(mailboxManager.mailbox.id)
         .animation(.easeInOut(duration: 0.25), value: splitViewManager.showSearch)
-        .sheet(item: $editedMessageDraft) { draft in
-            ComposeMessageView.edit(draft: draft, mailboxManager: mailboxManager)
-        }
     }
 }
 
 struct ThreadListManagerView_Previews: PreviewProvider {
     static var previews: some View {
         ThreadListManagerView()
-        .environmentObject(PreviewHelper.sampleMailboxManager)
+            .environmentObject(PreviewHelper.sampleMailboxManager)
     }
 }

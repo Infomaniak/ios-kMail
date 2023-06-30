@@ -21,10 +21,11 @@ import MailResources
 import SwiftUI
 
 struct SearchThreadsSectionView: View {
+    @EnvironmentObject private var navigationStore: NavigationStore
+
     @AppStorage(UserDefaults.shared.key(.threadDensity)) private var threadDensity = DefaultPreferences.threadDensity
 
     let viewModel: SearchViewModel
-    @Binding var editedMessageDraft: Draft?
 
     var body: some View {
         Section {
@@ -35,7 +36,7 @@ struct SearchThreadsSectionView: View {
                             DraftUtils.editDraft(
                                 from: thread,
                                 mailboxManager: viewModel.mailboxManager,
-                                editedMessageDraft: $editedMessageDraft
+                                editedMessageDraft: $navigationStore.editedMessageDraft
                             )
                         }, label: {
                             ThreadCell(thread: thread, density: threadDensity)
