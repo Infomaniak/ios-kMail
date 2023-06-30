@@ -72,10 +72,7 @@ struct ThreadListCell: View {
                     editedMessageDraft: $navigationStore.editedMessageDraft
                 )
             } else {
-                splitViewManager.splitViewController?.hide(.primary)
-                if splitViewManager.splitViewController?.splitBehavior == .overlay {
-                    splitViewManager.splitViewController?.hide(.supplementary)
-                }
+                splitViewManager.adaptToProminentThreadView()
 
                 // Update both viewModel and navigationStore on the truth.
                 viewModel.selectedThread = thread

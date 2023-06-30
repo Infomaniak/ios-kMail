@@ -22,6 +22,7 @@ import SwiftUI
 
 struct SearchThreadsSectionView: View {
     @EnvironmentObject private var navigationStore: NavigationStore
+    @EnvironmentObject private var splitViewManager: SplitViewManager
 
     @AppStorage(UserDefaults.shared.key(.threadDensity)) private var threadDensity = DefaultPreferences.threadDensity
 
@@ -30,38 +31,19 @@ struct SearchThreadsSectionView: View {
     var body: some View {
         Section {
             ForEach(viewModel.threads) { thread in
-                Group {
-                    if thread.shouldPresentAsDraft {
-                        Button(action: {
-                            DraftUtils.editDraft(
-                                from: thread,
-                                mailboxManager: viewModel.mailboxManager,
-                                editedMessageDraft: $navigationStore.editedMessageDraft
-                            )
-                        }, label: {
-                            ThreadCell(thread: thread, density: threadDensity)
-                        })
-                    } else {
-                        ZStack {
-                            NavigationLink(destination: {
-                                ThreadView(thread: thread)
-                                    .onAppear {
-                                        viewModel.selectedThread = thread
-                                    }
-                            }, label: {
-                                EmptyView()
-                            })
-                            .opacity(0)
-
-                            ThreadCell(thread: thread, density: threadDensity)
-                        }
+                ThreadCell(thread: thread, density: threadDensity)
+                    .onTapGesture {
+                        didTapCell(thread: thread)
                     }
-                }
-                .listRowInsets(EdgeInsets())
-                .padding(.leading, -4)
-                .onAppear {
-                    viewModel.loadNextPageIfNeeded(currentItem: thread)
-                }
+                    .background(SelectionBackground(
+                        selectionType: viewModel.selectedThread == thread ? .single : .none,
+                        paddingLeading: 4,
+                        withAnimation: false
+                    ))
+                    .threadListCellAppearance()
+                    .onAppear {
+                        viewModel.loadNextPageIfNeeded(currentItem: thread)
+                    }
             }
         } header: {
             if threadDensity != .compact && !viewModel.threads.isEmpty {
@@ -73,10 +55,24 @@ struct SearchThreadsSectionView: View {
                 ProgressView()
                     .frame(maxWidth: .infinity)
                     .id(UUID())
+                    .threadListCellAppearance()
             }
         }
-        .listRowInsets(.init(top: 0, leading: 12, bottom: 0, trailing: 12))
-        .listRowSeparator(.hidden)
-        .listRowBackground(MailResourcesAsset.backgroundColor.swiftUIColor)
+    }
+
+    private func didTapCell(thread: Thread) {
+        if thread.shouldPresentAsDraft {
+            DraftUtils.editDraft(
+                from: thread,
+                mailboxManager: viewModel.mailboxManager,
+                editedMessageDraft: $navigationStore.editedMessageDraft
+            )
+        } else {
+            splitViewManager.adaptToProminentThreadView()
+
+            // Update both viewModel and navigationStore on the truth.
+            viewModel.selectedThread = thread
+            navigationStore.threadPath = [thread]
+        }
     }
 }
