@@ -25,6 +25,13 @@ const PREFERENCES = {
     undoPreviousChanges: true
 };
 
+/**
+ * Changes made to munge for each element normalized
+ * Format of entries :
+ * {
+ *     <HTMLElementId><MessageUid>: { function: fn, object: object, arguments: [list of arguments] }
+ * }
+ */
 let actionsLog = {};
 
 // Functions
@@ -107,7 +114,7 @@ function transformContent(element, documentWidth, elementWidth, messageUid) {
 
     let newWidth = elementWidth;
     let isTransformationDone = false;
-    /** Format of entries : { function: fn, object: object, arguments: [list of arguments] } */
+
     let currentActionsLog = getActionsLog(element, messageUid);
 
     // Try munging all divs or textareas with inline styles where the width
