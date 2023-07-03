@@ -71,16 +71,9 @@ final class WebViewController: UIViewController {
 }
 
 extension WebViewController: WKNavigationDelegate {
-    func webView(_ webView: WKWebView, didStartProvisionalNavigation navigation: WKNavigation!) {
-        // run the JS function `listenToSizeChanges` early. Prevent issues with distant resources not available.
-        Task { @MainActor in
-            try await webView.evaluateJavaScript("listenToSizeChanges()")
-        }
-    }
-
     func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
         Task { @MainActor in
-            // Fix CSS properties and adapt the mail to the screen size
+            // Fix CSS properties and adapt the mail to the screen size once the resources are loaded
             let readyState = try await webView.evaluateJavaScript("document.readyState") as? String
             guard readyState == "complete" else { return }
 
