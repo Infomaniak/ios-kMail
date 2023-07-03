@@ -56,8 +56,11 @@ final class ShareNavigationViewController: UIViewController {
                 }
 
                 Task {
+                    // TODO: remove as does not work in share-ext
                     let result: Bool = await extensionContext.open(ikDeeplink)
-                    assert(result == true, "should success")
+                    // assert(result == true, "should success")
+
+                    self.dismiss(animated: true)
                 }
             },
             itemProviders: itemProviders))
