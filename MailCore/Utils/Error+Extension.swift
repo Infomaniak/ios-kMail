@@ -39,7 +39,7 @@ public func tryOrDisplayError(_ body: () async throws -> Void) async {
 
 private func displayErrorIfNeeded(error: Error) {
     if let error = error as? MailError {
-        if error.shouldDisplay {
+        if error.shouldDisplay && !Bundle.main.isExtension {
             Task.detached {
                 await IKSnackBar.showSnackBar(message: error.errorDescription)
             }
@@ -52,7 +52,7 @@ private func displayErrorIfNeeded(error: Error) {
             }
         }
         DDLogError("MailError: \(error)")
-    } else if error.shouldDisplay {
+    } else if error.shouldDisplay && !Bundle.main.isExtension {
         Task.detached {
             await IKSnackBar.showSnackBar(message: error.localizedDescription)
         }

@@ -246,8 +246,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/siteline/SwiftUI-Introspect",
       "state" : {
-        "revision" : "56065b729481abce73fe606e218024bc77d055cd",
-        "version" : "0.6.2"
+        "revision" : "dafd88cf0cc09d906dcef9d042743ae13fcff0d4",
+        "version" : "0.6.3"
       }
     },
     {

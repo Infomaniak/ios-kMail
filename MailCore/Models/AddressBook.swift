@@ -21,12 +21,6 @@ import RealmSwift
 
 public struct AddressBookResult: Codable {
     var addressbooks: [AddressBook]
-    var addressbook: AddressBook?
-
-    enum CodingKeys: String, CodingKey {
-        case addressbooks
-        case addressbook = "default"
-    }
 }
 
 public class AddressBook: Object, Codable, Identifiable {
