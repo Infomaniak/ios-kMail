@@ -27,6 +27,8 @@ final class ShareNavigationViewController: UIViewController {
     /// Making sure the DI is registered at a very early stage of the app launch.
     private let dependencyInjectionHook = EarlyDIHook()
 
+    @LazyInjectService private var accountManager: AccountManager
+
     override public func viewDidLoad() {
         super.viewDidLoad()
 
@@ -44,6 +46,13 @@ final class ShareNavigationViewController: UIViewController {
         guard !itemProviders.isEmpty else {
             dismiss(animated: true)
             return
+        }
+
+        /// make sure we load the contact list asap.
+        if let currentContactManager = accountManager.currentContactManager {
+            Task {
+                try await currentContactManager.fetchContactsAndAddressBooks()
+            }
         }
 
         // We need to go threw wrapping to use SwiftUI in an NSExtension.
