@@ -28,9 +28,19 @@ final class ShareNavigationViewController: UIViewController {
     private let dependencyInjectionHook = EarlyDIHook()
 
     @LazyInjectService private var accountManager: AccountManager
+    @LazyInjectService private var snackbarPresenter: SnackBarPresentable
+
+    private func overrideSnackBarPresenter(contextView: UIView) {
+        let snackBarPresenter = Factory(type: SnackBarPresentable.self) { _, _ in
+            SnackBarPresenter(contextView: contextView)
+        }
+        SimpleResolver.sharedResolver.store(factory: snackBarPresenter)
+    }
 
     override public func viewDidLoad() {
         super.viewDidLoad()
+
+        overrideSnackBarPresenter(contextView: view)
 
         // Modify sheet size on iPadOS, property is ignored on iOS
         preferredContentSize = CGSize(width: 540, height: 620)
@@ -55,6 +65,8 @@ final class ShareNavigationViewController: UIViewController {
             }
         }
 
+        self.snackbarPresenter.show(message: "test snackbar in ext")
+        
         // We need to go threw wrapping to use SwiftUI in an NSExtension.
         let hostingController = UIHostingController(rootView: ComposeMessageWrapperView(dismissHandler: {
                 self.dismiss(animated: true)

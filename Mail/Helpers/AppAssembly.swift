@@ -73,6 +73,9 @@ enum ApplicationAssembly {
             },
             Factory(type: AccountManager.self) { _, _ in
                 AccountManager()
+            },
+            Factory(type: SnackBarPresentable.self) { _, _ in
+                SnackBarPresenter()
             }
         ]
 
