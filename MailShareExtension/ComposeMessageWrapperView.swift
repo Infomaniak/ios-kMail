@@ -24,7 +24,8 @@ import SwiftUI
 import UIKit
 
 struct ComposeMessageWrapperView: View {
-    @State var completionHandler: () -> Void
+    @State var dismissHandler: () -> Void
+    @State var openAppHandler: () -> Void
     @State var itemProviders: [NSItemProvider]
     @State private var draft = Draft()
     @LazyInjectService private var accountManager: AccountManager
@@ -34,11 +35,34 @@ struct ComposeMessageWrapperView: View {
             ComposeMessageView.newMessage(draft, mailboxManager: mailboxManager, itemProviders: itemProviders)
                 .environmentObject(mailboxManager)
                 .environment(\.dismissModal) {
-                    self.completionHandler()
+                    self.dismissHandler()
                 }
         } else {
-            Text("Please login in ikMail")
-                .background(.red)
+            PleaseLoginView(openAppHandler: openAppHandler)
+        }
+    }
+}
+
+struct PleaseLoginView: View {
+    @State var slide = Slide.onBoardingSlides.first!
+
+    var openAppHandler: () -> Void
+
+    var body: some View {
+        VStack {
+            MailShareExtensionAsset.logoText.swiftUIImage
+                .resizable()
+                .scaledToFit()
+                .frame(height: UIConstants.onboardingLogoHeight)
+                .padding(.top, UIConstants.onboardingLogoPaddingTop)
+            // TODO: i18n
+            Text("Please login in ikMail first")
+                .textStyle(.header2)
+                .padding(.top, UIConstants.onboardingLogoPaddingTop)
+            LottieView(configuration: slide.lottieConfiguration!)
+            Spacer()
+        }.onTapGesture {
+            openAppHandler()
         }
     }
 }
