@@ -306,7 +306,8 @@ function undoSetProperty(property, savedProperty) {
  * @param actionsLog Previous actions done
  */
 function undoActions(actionsLog) {
-    for (const action of actionsLog) {
+    while (actionsLog.length > 0) {
+        const action = actionsLog.pop();
         action['function'].apply(action['object'], action['arguments']);
     }
 }
