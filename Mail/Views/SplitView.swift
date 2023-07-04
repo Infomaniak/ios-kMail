@@ -30,7 +30,7 @@ public class SplitViewManager: ObservableObject {
     @Published var showSearch = false
     @Published var selectedFolder: Folder?
     var splitViewController: UISplitViewController?
-    
+
     func adaptToProminentThreadView() {
         splitViewController?.hide(.primary)
         if splitViewController?.splitBehavior == .overlay {
