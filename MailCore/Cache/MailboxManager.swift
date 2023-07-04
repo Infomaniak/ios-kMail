@@ -1120,9 +1120,9 @@ public class MailboxManager: ObservableObject {
         return realm.objects(Draft.self).where { $0.action != nil }
     }
 
-    public func draft(partialDraft: Draft) async throws -> Draft? {
+    public func draft(partialDraft: Draft) async throws {
         guard let associatedMessage = getRealm().object(ofType: Message.self, forPrimaryKey: partialDraft.messageUid)?.freeze()
-        else { return nil }
+        else { throw MailError.localMessageNotFound }
 
         // Get from API
         let draft = try await apiFetcher.draft(from: associatedMessage)
@@ -1140,8 +1140,6 @@ public class MailboxManager: ObservableObject {
                 realm.add(draft.detached(), update: .modified)
             }
         }
-
-        return getRealm().object(ofType: Draft.self, forPrimaryKey: draft.localUUID)?.freeze()
     }
 
     public func draft(messageUid: String, using realm: Realm? = nil) -> Draft? {
