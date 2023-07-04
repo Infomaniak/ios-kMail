@@ -149,8 +149,25 @@ struct ComposeMessageView: View {
                         dismiss: dismiss,
                         messageReply: messageReply
                     )
-                    .environmentObject(signatureManager)
                 }
+            }
+        }
+        .task {
+            await prepareCompleteDraft()
+        }
+        .task {
+            await prepareReplyForwardBodyAndAttachments()
+        }
+        .onChange(of: signatureManager.loadingSignatureState) { state in
+            switch state {
+            case .success:
+                setSignature()
+            case .error:
+                // Unable to get signatures, "An error occurred" and close modal.
+                IKSnackBar.showSnackBar(message: MailError.unknownError.localizedDescription)
+                dismiss()
+            case .progress:
+                break
             }
         }
         .background(MailResourcesAsset.backgroundColor.swiftUIColor)
@@ -198,7 +215,7 @@ struct ComposeMessageView: View {
             .background(MailResourcesAsset.backgroundColor.swiftUIColor)
     }
 
-    // MAK: - Func
+    // MARK: - Func
 
     private func didTouchDismiss() {
         guard attachmentsManager.allAttachmentsUploaded else {
@@ -234,6 +251,76 @@ struct ComposeMessageView: View {
 
             realm.add(draft, update: .modified)
         }
+    }
+
+    private func prepareCompleteDraft() async {
+        guard draft.messageUid != nil && draft.remoteUUID.isEmpty else { return }
+
+        do {
+            try await mailboxManager.draft(partialDraft: draft)
+            isLoadingContent = false
+        } catch {
+            dismiss()
+            IKSnackBar.showSnackBar(message: MailError.unknownError.localizedDescription)
+        }
+    }
+
+    private func prepareReplyForwardBodyAndAttachments() async {
+        guard let messageReply else { return }
+
+        let prepareTask = Task.detached {
+            try await prepareBody(message: messageReply.message, replyMode: messageReply.replyMode)
+            try await prepareAttachments(message: messageReply.message, replyMode: messageReply.replyMode)
+        }
+
+        do {
+            _ = try await prepareTask.value
+
+            isLoadingContent = false
+        } catch {
+            dismiss()
+            IKSnackBar.showSnackBar(message: MailError.unknownError.localizedDescription)
+        }
+    }
+
+    private func prepareBody(message: Message, replyMode: ReplyMode) async throws {
+        if !message.fullyDownloaded {
+            try await mailboxManager.message(message: message)
+        }
+
+        guard let freshMessage = message.thaw() else { return }
+        freshMessage.realm?.refresh()
+        $draft.body.wrappedValue = Draft.replyingBody(message: freshMessage, replyMode: replyMode)
+    }
+
+    private func prepareAttachments(message: Message, replyMode: ReplyMode) async throws {
+        guard replyMode == .forward else { return }
+        let attachments = try await mailboxManager.apiFetcher.attachmentsToForward(
+            mailbox: mailboxManager.mailbox,
+            message: message
+        ).attachments
+
+        for attachment in attachments {
+            $draft.attachments.append(attachment)
+        }
+        attachmentsManager.completeUploadedAttachments()
+    }
+
+    private func setSignature() {
+        guard draft.identityId == nil || draft.identityId?.isEmpty == true else {
+            return
+        }
+
+        guard let defaultSignature = mailboxManager.getStoredSignatures().defaultSignature else {
+            return
+        }
+
+        let body = $draft.body.wrappedValue
+        let signedBody = defaultSignature.appendSignature(to: body)
+
+        // At this point we have signatures in base up to date, we use the default one.
+        $draft.identityId.wrappedValue = "\(defaultSignature.id)"
+        $draft.body.wrappedValue = signedBody
     }
 }
 

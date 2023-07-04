@@ -286,7 +286,7 @@ public class AccountManager: RefreshTokenDelegate, ObservableObject {
         }
 
         MailboxInfosManager.instance.storeMailboxes(user: user, mailboxes: mailboxesResponse)
-        if let mainMailbox = mailboxesResponse.first(where: { $0.isPrimary }) ?? mailboxesResponse.first {
+        if let mainMailbox = (mailboxesResponse.first(where: { $0.isPrimary }) ?? mailboxesResponse.first)?.freezeIfNeeded() {
             await notificationService.updateTopicsIfNeeded([mainMailbox.notificationTopicName], userApiFetcher: apiFetcher)
             setCurrentMailboxForCurrentAccount(mailbox: mainMailbox)
         }
