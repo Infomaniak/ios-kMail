@@ -27,6 +27,14 @@ struct UpdateMailboxPasswordView: View {
     @State private var isShowingError = false
     @State private var isLoading = false
 
+    private var disableButton: Bool {
+        return isLoading || showPasswordLengthWarning
+    }
+
+    private var showPasswordLengthWarning: Bool {
+        return !updatedMailboxPassword.isEmpty && (updatedMailboxPassword.count < 5 || updatedMailboxPassword.count > 80)
+    }
+
     let mailbox: Mailbox
     var body: some View {
         VStack(alignment: .leading, spacing: 32) {
@@ -53,9 +61,14 @@ struct UpdateMailboxPasswordView: View {
                             )
                     }
                     .disabled(isLoading)
-                Text(MailResourcesStrings.Localizable.errorInvalidCredentials)
-                    .textStyle(.labelError)
-                    .opacity(isShowingError ? 1 : 0)
+
+                if isShowingError {
+                    Text(MailResourcesStrings.Localizable.errorInvalidCredentials)
+                        .textStyle(.labelError)
+                } else if showPasswordLengthWarning {
+                    Text(MailResourcesStrings.Localizable.errorMailboxPasswordLength)
+                        .textStyle(.labelSecondary)
+                }
             }
 
             MailButton(label: MailResourcesStrings.Localizable.buttonConfirm) {
