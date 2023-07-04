@@ -67,6 +67,7 @@ struct UpdateMailboxPasswordView: View {
             MailButton(label: MailResourcesStrings.Localizable.buttonPasswordForgotten) {}
                 .mailButtonStyle(.link)
                 .mailButtonFullWidth(true)
+                .hidden()
 
             Spacer()
         }
