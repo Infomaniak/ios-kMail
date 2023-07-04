@@ -30,7 +30,14 @@ struct UpdateMailboxPasswordView: View {
     let mailbox: Mailbox
     var body: some View {
         VStack(alignment: .leading, spacing: 32) {
-            Text(MailResourcesStrings.Localizable.enterPasswordDescription(mailbox.email))
+            VStack(alignment: .leading, spacing: 8) {
+                Text(MailResourcesStrings.Localizable.enterPasswordDescription(mailbox.email))
+                MailButton(label: MailResourcesStrings.Localizable.buttonDetachMailbox) {
+                    detachAddress()
+                }
+                .mailButtonStyle(.link)
+                .disabled(isLoading)
+            }
 
             VStack(alignment: .leading) {
                 SecureField(MailResourcesStrings.Localizable.enterPasswordTitle, text: $updatedMailboxPassword)
@@ -46,7 +53,7 @@ struct UpdateMailboxPasswordView: View {
                             )
                     }
                     .disabled(isLoading)
-                Text(MailResourcesStrings.Localizable.errorAttachAddressInput)
+                Text(MailResourcesStrings.Localizable.errorInvalidCredentials)
                     .textStyle(.labelError)
                     .opacity(isShowingError ? 1 : 0)
             }
@@ -62,12 +69,6 @@ struct UpdateMailboxPasswordView: View {
                 .mailButtonFullWidth(true)
 
             Spacer()
-            MailButton(label: MailResourcesStrings.Localizable.buttonDetachMailbox) {
-                detachAddress()
-            }
-            .mailButtonStyle(.link)
-            .mailButtonFullWidth(true)
-            .disabled(isLoading)
         }
         .padding()
         .navigationBarTitleDisplayMode(.inline)
