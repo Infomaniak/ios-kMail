@@ -164,6 +164,7 @@ struct FolderCellContent: View {
                         .textStyle(.bodySmallMediumAccent)
                 } else if folder.remoteUnreadCount > 0 {
                     UnreadIndicatorView()
+                        .accessibilityLabel(MailResourcesStrings.Localizable.contentDescriptionUnreadPastille)
                 }
             }
         } else if isCurrentFolder {
