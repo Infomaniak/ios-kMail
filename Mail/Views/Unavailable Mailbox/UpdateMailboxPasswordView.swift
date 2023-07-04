@@ -64,7 +64,9 @@ struct UpdateMailboxPasswordView: View {
             .mailButtonFullWidth(true)
             .disabled(isLoading)
 
-            MailButton(label: MailResourcesStrings.Localizable.buttonPasswordForgotten) {}
+            MailButton(label: MailResourcesStrings.Localizable.buttonPasswordForgotten) {
+                // Empty for now, WIP
+            }
                 .mailButtonStyle(.link)
                 .mailButtonFullWidth(true)
                 .hidden()

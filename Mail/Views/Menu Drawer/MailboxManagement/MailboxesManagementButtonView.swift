@@ -27,7 +27,7 @@ struct MailboxesManagementButtonView: View {
     let icon: Image
     let text: String
     let detailNumber: Int?
-    let handleAction: () -> Void
+    let handleAction: (() -> Void)?
     let isSelected: Bool
     let isInMaintenance: Bool
 
@@ -37,7 +37,7 @@ struct MailboxesManagementButtonView: View {
         detailNumber: Int? = nil,
         isSelected: Bool,
         isInMaintenance: Bool,
-        handleAction: @escaping () -> Void
+        handleAction: (() -> Void)? = nil
     ) {
         self.icon = icon.swiftUIImage
         self.text = text
@@ -48,7 +48,9 @@ struct MailboxesManagementButtonView: View {
     }
 
     var body: some View {
-        Button(action: handleAction) {
+        Button {
+            handleAction?()
+        } label: {
             HStack {
                 HStack(spacing: 16) {
                     icon
@@ -92,17 +94,13 @@ struct MailboxesManagementButtonView: View {
 
 struct MailboxesManagementButtonView_Previews: PreviewProvider {
     static var previews: some View {
-        MailboxesManagementButtonView(icon: MailResourcesAsset.folder, text: "Hello", isSelected: false, isInMaintenance: true) {
-            /* Empty for test */
-        }
+        MailboxesManagementButtonView(icon: MailResourcesAsset.folder, text: "Hello", isSelected: false, isInMaintenance: true)
         MailboxesManagementButtonView(
             icon: MailResourcesAsset.folder,
             text: "Hello",
             detailNumber: 10,
             isSelected: false,
             isInMaintenance: true
-        ) {
-            /* Empty for test */
-        }
+        )
     }
 }

@@ -61,7 +61,7 @@ struct UnavailableMailboxListView: View {
                             text: mailbox.email,
                             isSelected: false,
                             isInMaintenance: false
-                        ) {}
+                        )
                     }
                 }
             }
