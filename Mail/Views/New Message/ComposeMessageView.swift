@@ -133,7 +133,7 @@ struct ComposeMessageView: View {
         }
         .customAlert(isPresented: $isShowingCancelAttachmentsError) {
             AttachmentsUploadInProgressErrorView {
-                dismissModal()
+                dismissMessageView()
             }
         }
         .matomoView(view: ["ComposeMessage"])
@@ -205,12 +205,18 @@ struct ComposeMessageView: View {
 
     // MAK: - Func
 
+    /// Something to dismiss the view regardless of presentation context
+    private func dismissMessageView() {
+        dismissModal()
+        dismiss()
+    }
+
     private func didTouchDismiss() {
         guard attachmentsManager.allAttachmentsUploaded else {
             isShowingCancelAttachmentsError = true
             return
         }
-        dismissModal()
+        dismissMessageView()
     }
 
     private func didTouchSend() {
@@ -229,7 +235,7 @@ struct ComposeMessageView: View {
                 liveDraft.action = .send
             }
         }
-        dismissModal()
+        dismissMessageView()
     }
 
     private static func saveNewDraftInRealm(_ realm: Realm, draft: Draft) {

@@ -81,7 +81,7 @@ struct ComposeMessageBodyView: View {
             case .error:
                 // Unable to get signatures, "An error occurred" and close modal.
                 IKSnackBar.showSnackBar(message: MailError.unknownError.localizedDescription)
-                dismissModal()
+                dismissMessageView()
             case .progress:
                 break
             }
@@ -116,7 +116,7 @@ struct ComposeMessageBodyView: View {
             }
             isLoadingContent = false
         } catch {
-            dismissModal()
+            dismissMessageView()
             IKSnackBar.showSnackBar(message: MailError.unknownError.localizedDescription)
         }
     }
@@ -134,7 +134,7 @@ struct ComposeMessageBodyView: View {
 
             isLoadingContent = false
         } catch {
-            dismissModal()
+            dismissMessageView()
             IKSnackBar.showSnackBar(message: MailError.unknownError.localizedDescription)
         }
     }
@@ -177,6 +177,12 @@ struct ComposeMessageBodyView: View {
             $draft.attachments.append(attachment)
         }
         attachmentsManager.completeUploadedAttachments()
+    }
+
+    /// Something to dismiss the view regardless of presentation context
+    private func dismissMessageView() {
+        dismissModal()
+        dismiss()
     }
 }
 
