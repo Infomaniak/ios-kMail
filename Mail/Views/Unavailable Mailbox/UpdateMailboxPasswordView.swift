@@ -30,10 +30,10 @@ struct UpdateMailboxPasswordView: View {
     let mailbox: Mailbox
     var body: some View {
         VStack(alignment: .leading, spacing: 32) {
-            Text("Pour des raisons de sécurité, vous devez saisir le mot de passe de l’adresse mail \(mailbox.email)")
+            Text(MailResourcesStrings.Localizable.enterPasswordDescription(mailbox.email))
 
             VStack(alignment: .leading) {
-                SecureField("Saisir le mot de passe", text: $updatedMailboxPassword)
+                SecureField(MailResourcesStrings.Localizable.enterPasswordTitle, text: $updatedMailboxPassword)
                     .textContentType(.password)
                     .padding(.vertical, 12)
                     .padding(.horizontal, 16)
@@ -51,18 +51,18 @@ struct UpdateMailboxPasswordView: View {
                     .opacity(isShowingError ? 1 : 0)
             }
 
-            MailButton(label: "Enregistrer") {
+            MailButton(label: MailResourcesStrings.Localizable.buttonConfirm) {
                 updateMailboxPassword()
             }
             .mailButtonFullWidth(true)
             .disabled(isLoading)
 
-            MailButton(label: "Mot de passe oublié ?") {}
+            MailButton(label: MailResourcesStrings.Localizable.buttonPasswordForgotten) {}
                 .mailButtonStyle(.link)
                 .mailButtonFullWidth(true)
 
             Spacer()
-            MailButton(label: "Détacher l'adresse de votre compte") {
+            MailButton(label: MailResourcesStrings.Localizable.buttonDetachMailbox) {
                 detachAddress()
             }
             .mailButtonStyle(.link)
@@ -71,7 +71,7 @@ struct UpdateMailboxPasswordView: View {
         }
         .padding()
         .navigationBarTitleDisplayMode(.inline)
-        .navigationTitle("Saisir le mot de passe")
+        .navigationTitle(MailResourcesStrings.Localizable.enterPasswordTitle)
         .sheetViewStyle()
     }
 
