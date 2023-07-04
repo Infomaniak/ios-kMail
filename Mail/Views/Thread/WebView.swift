@@ -21,6 +21,30 @@ import MailCore
 import SwiftUI
 import WebKit
 
+enum JavaScriptDeclaration {
+    case normalizeMessageWidth(CGFloat, String)
+    case removeAllProperties
+    case documentReadyState
+
+    var description: String {
+        switch self {
+        case .normalizeMessageWidth(let width, let messageUid):
+            return "normalizeMessageWidth(\(width), \(messageUid))"
+        case .removeAllProperties:
+            return "removeAllProperties()"
+        case .documentReadyState:
+            return "document.readyState"
+        }
+    }
+}
+
+extension WKWebView {
+    @discardableResult
+    func evaluateJavaScript(_ declaration: JavaScriptDeclaration) async throws -> Any {
+        return try await evaluateJavaScript(declaration.description)
+    }
+}
+
 final class WebViewController: UIViewController {
     var model: WebViewModel!
     var messageUid: String!
@@ -66,7 +90,7 @@ final class WebViewController: UIViewController {
     }
 
     private func normalizeMessageWidth(webViewWidth width: CGFloat) async throws {
-        _ = try await model.webView.evaluateJavaScript("normalizeMessageWidth(\(width), '\(messageUid ?? "")')")
+        try await model.webView.evaluateJavaScript(.normalizeMessageWidth(width, messageUid ?? ""))
     }
 }
 
@@ -74,10 +98,10 @@ extension WebViewController: WKNavigationDelegate {
     func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
         Task { @MainActor in
             // Fix CSS properties and adapt the mail to the screen size once the resources are loaded
-            let readyState = try await webView.evaluateJavaScript("document.readyState") as? String
+            let readyState = try await webView.evaluateJavaScript(.documentReadyState) as? String
             guard readyState == "complete" else { return }
 
-            _ = try await webView.evaluateJavaScript("removeAllProperties()")
+            try await webView.evaluateJavaScript(.removeAllProperties)
             try await normalizeMessageWidth(webViewWidth: webView.frame.width)
         }
     }
