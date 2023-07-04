@@ -105,6 +105,9 @@ struct UpdateMailboxPasswordView: View {
             isLoading = true
             do {
                 try await AccountManager.instance.updateMailboxPassword(mailbox: mailbox, password: updatedMailboxPassword)
+                @InjectService var matomo: MatomoUtils
+                matomo.track(eventWithCategory: .noValidMailbox, name: "confirmPassword")
+                await (window?.windowScene?.delegate as? SceneDelegate)?.showMainView()
             } catch {
                 isShowingError = true
             }
@@ -117,6 +120,9 @@ struct UpdateMailboxPasswordView: View {
             isLoading = true
             do {
                 try await AccountManager.instance.detachMailbox(mailbox: mailbox)
+                @InjectService var matomo: MatomoUtils
+                matomo.track(eventWithCategory: .noValidMailbox, name: "detachMailbox")
+                await (window?.windowScene?.delegate as? SceneDelegate)?.showMainView()
             } catch {
                 isShowingError = true
             }

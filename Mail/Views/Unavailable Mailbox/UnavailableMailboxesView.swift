@@ -69,6 +69,10 @@ struct UnavailableMailboxesView: View {
 
                 NavigationLink {
                     AccountListView()
+                        .onAppear {
+                            @InjectService var matomo: MatomoUtils
+                            matomo.track(eventWithCategory: .noValidMailbox, name: "switchAccount")
+                        }
                 } label: {
                     Text(MailResourcesStrings.Localizable.buttonAccountSwitch)
                         .textStyle(.bodyMediumAccent)

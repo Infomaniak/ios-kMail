@@ -46,6 +46,7 @@ public extension MatomoUtils.EventCategory {
     static let snackbar = MatomoUtils.EventCategory(displayName: "snackbar")
     static let threadList = MatomoUtils.EventCategory(displayName: "threadList")
     static let userInfo = MatomoUtils.EventCategory(displayName: "userInfo")
+    static let noValidMailbox = MatomoUtils.EventCategory(displayName: "noValidMailbox")
 
     static let attachmentActions = MatomoUtils.EventCategory(displayName: "attachmentActions")
     static let bottomSheetMessageActions = MatomoUtils.EventCategory(displayName: "bottomSheetMessageActions")
