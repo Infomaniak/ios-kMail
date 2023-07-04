@@ -96,23 +96,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         return AppDelegate.orientationLock
     }
 
-    func refreshCacheData() {
-        guard let currentAccount = AccountManager.instance.currentAccount else {
-            return
-        }
-
-        Task {
-            do {
-                try await accountManager.updateUser(for: currentAccount)
-                accountManager.enableBugTrackerIfAvailable()
-
-                try await accountManager.currentContactManager?.fetchContactsAndAddressBooks()
-            } catch {
-                DDLogError("Error while updating user account: \(error)")
-            }
-        }
-    }
-
     func setupDI() {
         let networkLoginService = Factory(type: InfomaniakNetworkLoginable.self) { _, _ in
             InfomaniakNetworkLogin(clientId: MailApiFetcher.clientId)

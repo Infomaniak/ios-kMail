@@ -28,6 +28,8 @@ struct SettingsNotificationsView: View {
     @LazyInjectService private var notificationService: InfomaniakNotifications
     @LazyInjectService private var matomo: MatomoUtils
 
+    @EnvironmentObject var mailboxManager: MailboxManager
+
     @AppStorage(UserDefaults.shared.key(.notificationsEnabled)) private var notificationsEnabled = DefaultPreferences
         .notificationsEnabled
     @State var subscribedTopics: [String]?
@@ -132,7 +134,7 @@ struct SettingsNotificationsView: View {
     }
 
     func currentTopics() async {
-        let currentSubscription = await notificationService.subscriptionForUser(id: AccountManager.instance.currentUserId)
+        let currentSubscription = await notificationService.subscriptionForUser(id: mailboxManager.mailbox.userId)
         withAnimation {
             self.subscribedTopics = currentSubscription?.topics
         }
@@ -140,9 +142,8 @@ struct SettingsNotificationsView: View {
 
     func updateTopicsForCurrentUserIfNeeded() {
         Task {
-            guard let currentApiFetcher = AccountManager.instance.currentMailboxManager?.apiFetcher,
-                  let subscribedTopics else { return }
-            await notificationService.updateTopicsIfNeeded(subscribedTopics, userApiFetcher: currentApiFetcher)
+            guard let subscribedTopics else { return }
+            await notificationService.updateTopicsIfNeeded(subscribedTopics, userApiFetcher: mailboxManager.apiFetcher)
         }
     }
 

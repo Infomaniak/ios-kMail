@@ -93,6 +93,18 @@ public class MailApiFetcher: ApiFetcher {
         )).data
     }
 
+    public func updateMailboxPassword(mailbox: Mailbox, password: String) async throws -> Bool {
+        try await perform(request: authenticatedRequest(
+            .updateMailboxPassword(mailboxId: mailbox.mailboxId),
+            method: .put,
+            parameters: ["password": password]
+        )).data
+    }
+
+    public func detachMailbox(mailbox: Mailbox) async throws -> Bool {
+        try await perform(request: authenticatedRequest(.detachMailbox(mailboxId: mailbox.mailboxId), method: .delete)).data
+    }
+
     func permissions(mailbox: Mailbox) async throws -> MailboxPermissions {
         try await perform(request: authenticatedRequest(.permissions(mailbox: mailbox))).data
     }

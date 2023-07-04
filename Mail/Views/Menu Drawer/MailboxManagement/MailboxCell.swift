@@ -44,18 +44,18 @@ struct MailboxCell: View {
     @Environment(\.mailboxCellStyle) private var style: Style
     @Environment(\.window) private var window
 
-    let mailbox: Mailbox
+    @State private var isShowingLockedView = false
+    @State private var isShowingUpdatePasswordView = false
 
-    private var isSelected: Bool {
-        return AccountManager.instance.currentMailboxManager?.mailbox.objectId == mailbox.objectId
-    }
+    let mailbox: Mailbox
+    var isSelected = false
 
     private var detailNumber: Int? {
         return mailbox.unseenMessages > 0 ? mailbox.unseenMessages : nil
     }
 
     enum Style {
-        case menuDrawer, account
+        case menuDrawer, account, setPassword
     }
 
     var body: some View {
@@ -64,15 +64,20 @@ struct MailboxCell: View {
             text: mailbox.email,
             detailNumber: detailNumber,
             isSelected: isSelected,
-            isPasswordValid: mailbox.isPasswordValid
+            isInMaintenance: !mailbox.isAvailable
         ) {
             guard !isSelected else { return }
             guard mailbox.isPasswordValid else {
-                IKSnackBar.showSnackBar(message: MailResourcesStrings.Localizable.frelatedMailbox)
+                isShowingUpdatePasswordView = true
+                return
+            }
+            guard !mailbox.isLocked else {
+                isShowingLockedView = true
                 return
             }
             @InjectService var matomo: MatomoUtils
             switch style {
+            case .setPassword: break
             case .menuDrawer:
                 matomo.track(eventWithCategory: .menuDrawer, name: "switchMailbox")
             case .account:
@@ -80,11 +85,17 @@ struct MailboxCell: View {
             }
             (window?.windowScene?.delegate as? SceneDelegate)?.switchMailbox(mailbox)
         }
+        .floatingPanel(isPresented: $isShowingLockedView) {
+            LockedMailboxView(lockedMailbox: mailbox)
+        }
+        .sheet(isPresented: $isShowingUpdatePasswordView) {
+            UpdateMailboxPasswordView(mailbox: mailbox)
+        }
     }
 }
 
 struct MailboxCell_Previews: PreviewProvider {
     static var previews: some View {
-        MailboxCell(mailbox: PreviewHelper.sampleMailbox)
+        MailboxCell(mailbox: PreviewHelper.sampleMailbox, isSelected: true)
     }
 }

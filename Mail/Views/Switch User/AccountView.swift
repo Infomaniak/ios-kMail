@@ -47,9 +47,8 @@ class AccountViewDelegate: DeleteAccountDelegate {
 
 struct AccountView: View {
     @Environment(\.dismiss) private var dismiss
-    @Environment(\.window) private var window
 
-    @AppStorage(UserDefaults.shared.key(.accentColor)) private var accentColor = DefaultPreferences.accentColor
+    @EnvironmentObject private var mailboxManager: MailboxManager
 
     @LazyInjectService private var matomo: MatomoUtils
 
@@ -57,13 +56,6 @@ struct AccountView: View {
     @State private var isShowingLogoutAlert = false
     @State private var isShowingDeleteAccount = false
     @State private var delegate = AccountViewDelegate()
-
-    @State var mailboxes: [Mailbox]
-
-    let selectedMailbox = AccountManager.instance.currentMailboxManager?.mailbox
-    var otherMailbox: [Mailbox] {
-        return mailboxes.filter { $0.mailboxId != selectedMailbox?.mailboxId }
-    }
 
     var body: some View {
         NavigationView {
@@ -90,42 +82,7 @@ struct AccountView: View {
                         }
                     }
 
-                    // Email list
-                    VStack(alignment: .leading, spacing: 12) {
-                        HStack(alignment: .center) {
-                            Text(MailResourcesStrings.Localizable.buttonAccountAssociatedEmailAddresses)
-                                .textStyle(.bodySmallSecondary)
-
-                            Spacer()
-
-                            NavigationLink {
-                                AddMailboxView { mailbox in
-                                    DispatchQueue.main.async {
-                                        guard let mailbox = mailbox else { return }
-                                        (window?.windowScene?.delegate as? SceneDelegate)?.switchMailbox(mailbox)
-                                    }
-                                }
-                            } label: {
-                                MailResourcesAsset.addCircle.swiftUIImage
-                                    .resizable()
-                                    .foregroundColor(accentColor.primary)
-                                    .frame(width: 16, height: 16)
-                            }
-                        }
-                        .padding(.bottom, 16)
-
-                        if let currentMailbox = selectedMailbox {
-                            MailboxCell(mailbox: currentMailbox)
-                                .mailboxCellStyle(.account)
-                        }
-
-                        ForEach(otherMailbox) { mailbox in
-                            MailboxCell(mailbox: mailbox)
-                                .mailboxCellStyle(.account)
-                        }
-                    }
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .padding(.top, 24)
+                    MailboxListView(currentMailbox: mailboxManager.mailbox)
 
                     Spacer()
                 }
@@ -166,6 +123,6 @@ struct AccountView: View {
 
 struct AccountView_Previews: PreviewProvider {
     static var previews: some View {
-        AccountView(mailboxes: [PreviewHelper.sampleMailbox])
+        AccountView()
     }
 }
