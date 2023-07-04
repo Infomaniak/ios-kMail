@@ -22,5 +22,5 @@ import UIKit
 
 /// Something that reads the application state if available
 public protocol ApplicationStatable {
-    var applicationState: UIApplication.State? { get }
+    @MainActor var applicationState: UIApplication.State? { get }
 }

@@ -34,6 +34,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     @LazyInjectService private var orientationManager: OrientationManageable
     @LazyInjectService private var accountManager: AccountManager
+    @LazyInjectService private var applicationState: ApplicationStatable
 
     /// Making sure the DI is registered at a very early stage of the app launch.
     private let dependencyInjectionHook = EarlyDIHook()
@@ -42,7 +43,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                      willFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil) -> Bool {
         Logging.initLogging()
 
-        DDLogInfo("Application starting in foreground ? \(UIApplication.shared.applicationState != .background)")
+        DDLogInfo("Application starting in foreground ? \(applicationState.applicationState != .background)")
         ApiFetcher.decoder.dateDecodingStrategy = .iso8601
 
         UNUserNotificationCenter.current().delegate = notificationCenterDelegate

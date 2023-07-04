@@ -107,7 +107,8 @@ public enum NotificationsHelper {
     private static func sendImmediately(notification: UNMutableNotificationContent, id: String,
                                         action: IKSnackBar.Action? = nil) {
         DispatchQueue.main.async {
-            let isInBackground = Bundle.main.isExtension || UIApplication.shared.applicationState != .active
+            @LazyInjectService var applicationState: ApplicationStatable
+            let isInBackground = Bundle.main.isExtension || applicationState.applicationState != .active
 
             if isInBackground {
                 let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 0.1, repeats: false)

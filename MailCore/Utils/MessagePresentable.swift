@@ -64,20 +64,22 @@ public final class MessagePresenter: MessagePresentable {
     // MARK: - private
 
     private func showInContext(message: String, action: MessageAction?) {
-        // check not in extension mode
-        guard !Bundle.main.isExtension else {
-            presentInLocalNotification(message: message, action: action)
-            return
-        }
+        Task { @MainActor in
+            // check not in extension mode
+            guard !Bundle.main.isExtension else {
+                presentInLocalNotification(message: message, action: action)
+                return
+            }
 
-        // if app not in foreground, we use the local notifications
-        guard applicationState.applicationState == .active else {
-            presentInLocalNotification(message: message, action: action)
-            return
-        }
+            // if app not in foreground, we use the local notifications
+            guard applicationState.applicationState == .active else {
+                presentInLocalNotification(message: message, action: action)
+                return
+            }
 
-        // Present the message as we are in foreground app context
-        presentInSnackbar(message: message, action: action)
+            // Present the message as we are in foreground app context
+            presentInSnackbar(message: message, action: action)
+        }
     }
 
     // MARK: Private
