@@ -680,7 +680,8 @@ public class MailboxManager: ObservableObject {
                 deletedUids: messageDeltaResult.deletedShortUids
                     .map { Constants.longUid(from: $0, folderId: folder.id) },
                 updated: messageDeltaResult.updated,
-                cursor: messageDeltaResult.cursor
+                cursor: messageDeltaResult.cursor,
+                folderUnreadCount: messageDeltaResult.unreadCount
             )
         }
 
@@ -693,6 +694,9 @@ public class MailboxManager: ObservableObject {
             try? realm.safeWrite {
                 if previousCursor == nil && messagesUids.addedShortUids.count < Constants.pageSize {
                     folder.completeHistoryInfo()
+                }
+                if let newUnreadCount = messagesUids.folderUnreadCount {
+                    folder.remoteUnreadCount = newUnreadCount
                 }
                 folder.computeUnreadCount()
                 folder.cursor = messagesUids.cursor

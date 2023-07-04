@@ -159,8 +159,14 @@ struct FolderCellContent: View {
     private var accessory: some View {
         if cellType == .link {
             if folder.role != .sent {
-                Text(folder.formattedUnreadCount)
-                    .textStyle(.bodySmallMediumAccent)
+                if !folder.formattedUnreadCount.isEmpty {
+                    Text(folder.formattedUnreadCount)
+                        .textStyle(.bodySmallMediumAccent)
+                } else if folder.remoteUnreadCount > 0 {
+                    Circle()
+                        .frame(width: 8, height: 8)
+                        .foregroundColor(.accentColor)
+                }
             }
         } else if isCurrentFolder {
             MailResourcesAsset.check.swiftUIImage
