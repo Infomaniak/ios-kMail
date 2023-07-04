@@ -419,6 +419,18 @@ public class AccountManager: RefreshTokenDelegate {
         completion(mailboxes.first(where: { $0.email == mail }))
     }
 
+    public func updateMailboxPassword(mailbox: Mailbox, password: String) async throws {
+        guard let apiFetcher = currentApiFetcher else { return }
+        _ = try await apiFetcher.updateMailboxPassword(mailbox: mailbox, password: password)
+        try await updateUser(for: currentAccount)
+    }
+
+    public func detachMailbox(mailbox: Mailbox) async throws {
+        guard let apiFetcher = currentApiFetcher else { return }
+        _ = try await apiFetcher.detachMailbox(mailbox: mailbox)
+        try await updateUser(for: currentAccount)
+    }
+
     public func setCurrentAccount(account: Account) {
         currentAccount = account
         currentUserId = account.userId

@@ -83,6 +83,15 @@ public extension Endpoint {
         return .base.appending(path: "/securedProxy/profile/workspace/mailbox")
     }
 
+    static func updateMailboxPassword(mailboxId: Int) -> Endpoint {
+        return .base
+            .appending(path: "/securedProxy/cache/invalidation/profile/workspace/mailbox/\(String(mailboxId))/update_password")
+    }
+
+    static func detachMailbox(mailboxId: Int) -> Endpoint {
+        return addMailbox.appending(path: "/\(String(mailboxId))")
+    }
+
     static func backups(hostingId: Int, mailboxName: String) -> Endpoint {
         return .baseManager.appending(path: "/\(hostingId)/mailboxes/\(mailboxName)/backups")
     }

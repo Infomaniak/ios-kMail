@@ -21,6 +21,8 @@ import MailResources
 import SwiftUI
 
 struct UpdateMailboxPasswordView: View {
+    @Environment(\.dismiss) private var dismiss
+
     @State private var updatedMailboxPassword = ""
     @State private var isShowingError = false
     @State private var isLoading = false
@@ -77,7 +79,8 @@ struct UpdateMailboxPasswordView: View {
         Task {
             isLoading = true
             do {
-                try await Task.sleep(nanoseconds: 1_000_000_000)
+                try await AccountManager.instance.updateMailboxPassword(mailbox: mailbox, password: updatedMailboxPassword)
+                dismiss()
             } catch {
                 isShowingError = true
             }
@@ -89,7 +92,8 @@ struct UpdateMailboxPasswordView: View {
         Task {
             isLoading = true
             do {
-                try await Task.sleep(nanoseconds: 1_000_000_000)
+                try await AccountManager.instance.detachMailbox(mailbox: mailbox)
+                dismiss()
             } catch {
                 isShowingError = true
             }
