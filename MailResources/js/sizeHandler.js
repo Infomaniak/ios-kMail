@@ -16,6 +16,11 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+// We need to call the function as quickly as possible to obtain the webview size
+document.addEventListener('DOMContentLoaded', () => {
+    listenToSizeChanges();
+});
+
 function listenToSizeChanges() {
     const observer = new ResizeObserver((entries) => {
         const height = computeMessageContentHeight();
