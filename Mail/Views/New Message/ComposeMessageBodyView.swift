@@ -23,7 +23,7 @@ import RealmSwift
 import SwiftUI
 
 struct ComposeMessageBodyView: View {
-    @LazyInjectService private var snackbarPresenter: SnackBarPresentable
+    @LazyInjectService private var messagePresentable: MessagePresentable
 
     @Environment(\.dismissModal) var dismissModal
 
@@ -83,7 +83,7 @@ struct ComposeMessageBodyView: View {
                 setSignature()
             case .error:
                 // Unable to get signatures, "An error occurred" and close modal.
-                snackbarPresenter.show(message: MailError.unknownError.localizedDescription)
+                messagePresentable.show(message: MailError.unknownError.localizedDescription)
                 dismissMessageView()
             case .progress:
                 break
@@ -120,7 +120,7 @@ struct ComposeMessageBodyView: View {
             isLoadingContent = false
         } catch {
             dismissMessageView()
-            snackbarPresenter.show(message: MailError.unknownError.localizedDescription)
+            messagePresentable.show(message: MailError.unknownError.localizedDescription)
         }
     }
 
@@ -138,7 +138,7 @@ struct ComposeMessageBodyView: View {
             isLoadingContent = false
         } catch {
             dismissMessageView()
-            snackbarPresenter.show(message: MailError.unknownError.localizedDescription)
+            messagePresentable.show(message: MailError.unknownError.localizedDescription)
         }
     }
 
