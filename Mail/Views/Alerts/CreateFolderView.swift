@@ -26,7 +26,8 @@ import SwiftUI
 
 struct CreateFolderView: View {
     @EnvironmentObject private var mailboxManager: MailboxManager
-    @ObservedResults(Folder.self) private var folders
+    // swiftlint:disable empty_count
+    @ObservedResults(Folder.self, where: { $0.parents.count == 0 }) private var folders
 
     @State private var folderName = ""
     @State private var error: FolderError?
