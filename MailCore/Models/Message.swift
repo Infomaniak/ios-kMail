@@ -114,7 +114,7 @@ public struct MessagesUids {
     public var deletedUids = [String]()
     public var updated = [MessageFlags]()
     public let cursor: String
-    public var folderUnreadCount: Int? = nil
+    public var folderUnreadCount: Int?
 }
 
 public class MessageFlags: Decodable {
