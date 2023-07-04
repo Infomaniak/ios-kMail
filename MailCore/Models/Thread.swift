@@ -34,23 +34,17 @@ public struct ThreadResult: Decodable {
 
 public class Thread: Object, Decodable, Identifiable {
     @Persisted(primaryKey: true) public var uid: String
-    @Persisted public var messagesCount: Int
-    @Persisted public var deletedMessagesCount: Int
     @Persisted public var messages: List<Message>
     @Persisted public var unseenMessages: Int
     @Persisted public var from: List<Recipient>
     @Persisted public var to: List<Recipient>
-    @Persisted public var cc: List<Recipient>
-    @Persisted public var bcc: List<Recipient>
     @Persisted public var subject: String?
     @Persisted(indexed: true) public var date: Date
     @Persisted public var hasAttachments: Bool
-    @Persisted public var hasSwissTransferAttachments: Bool
     @Persisted public var hasDrafts: Bool
     @Persisted public var flagged: Bool
     @Persisted public var answered: Bool
     @Persisted public var forwarded: Bool
-    @Persisted public var size: Int
     @Persisted(originProperty: "threads") private var folders: LinkingObjects<Folder>
     @Persisted public var fromSearch = false
 
@@ -126,13 +120,11 @@ public class Thread: Object, Decodable, Identifiable {
         messageIds = messages.flatMap { $0.linkedUids }.toRealmSet()
         updateUnseenMessages()
         from = messages.flatMap { $0.from.detached() }.toRealmList()
-        size = messages.sum(of: \.size)
         hasAttachments = messages.contains { $0.hasAttachments }
         hasDrafts = messages.map { $0.isDraft }.contains(true)
         updateFlagged()
         answered = messages.map { $0.answered }.contains(true)
         forwarded = messages.map { $0.forwarded }.contains(true)
-        messagesCount = messages.count
 
         messages = messages.sorted {
             $0.date.compare($1.date) == .orderedAscending
@@ -205,65 +197,47 @@ public class Thread: Object, Decodable, Identifiable {
 
     private enum CodingKeys: String, CodingKey {
         case uid
-        case messagesCount
-        case deletedMessagesCount
         case messages
         case unseenMessages
         case from
         case to
-        case cc
-        case bcc
         case subject
         case date
         case hasAttachments
-        case hasSwissTransferAttachments = "hasStAttachments"
         case hasDrafts
         case flagged
         case answered
         case forwarded
-        case size
     }
 
     public convenience init(
         uid: String,
-        messagesCount: Int,
-        deletedMessagesCount: Int,
         messages: [Message],
         unseenMessages: Int,
         from: [Recipient],
         to: [Recipient],
-        cc: [Recipient],
-        bcc: [Recipient],
         subject: String? = nil,
         date: Date,
         hasAttachments: Bool,
-        hasSwissTransferAttachments: Bool,
         hasDrafts: Bool,
         flagged: Bool,
         answered: Bool,
-        forwarded: Bool,
-        size: Int
+        forwarded: Bool
     ) {
         self.init()
 
         self.uid = uid
-        self.messagesCount = messagesCount
-        self.deletedMessagesCount = deletedMessagesCount
         self.messages = messages.toRealmList()
         self.unseenMessages = unseenMessages
         self.from = from.toRealmList()
         self.to = to.toRealmList()
-        self.cc = cc.toRealmList()
-        self.bcc = bcc.toRealmList()
         self.subject = subject
         self.date = date
         self.hasAttachments = hasAttachments
-        self.hasSwissTransferAttachments = hasSwissTransferAttachments
         self.hasDrafts = hasDrafts
         self.flagged = flagged
         self.answered = answered
         self.forwarded = forwarded
-        self.size = size
     }
 }
 

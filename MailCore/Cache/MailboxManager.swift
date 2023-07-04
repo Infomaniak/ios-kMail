@@ -575,22 +575,16 @@ public class MailboxManager: ObservableObject {
 
                     let newThread = Thread(
                         uid: "offlineThread\(message.uid)",
-                        messagesCount: 1,
-                        deletedMessagesCount: 0,
                         messages: [newMessage],
                         unseenMessages: 0,
                         from: Array(message.from.detached()),
                         to: Array(message.to.detached()),
-                        cc: Array(message.cc.detached()),
-                        bcc: Array(message.bcc.detached()),
                         date: newMessage.date,
                         hasAttachments: newMessage.hasAttachments,
-                        hasSwissTransferAttachments: newMessage.hasAttachments,
                         hasDrafts: newMessage.isDraft,
                         flagged: newMessage.flagged,
                         answered: newMessage.answered,
-                        forwarded: newMessage.forwarded,
-                        size: newMessage.size
+                        forwarded: newMessage.forwarded
                     )
                     newThread.fromSearch = true
                     newThread.subject = message.subject
