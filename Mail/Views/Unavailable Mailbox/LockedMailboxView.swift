@@ -30,7 +30,7 @@ struct LockedMailboxView: View {
                 .resizable()
                 .scaledToFit()
                 .frame(height: 64)
-            Text(MailResourcesStrings.Localizable.lockedMailboxTitle(lockedMailbox.email))
+            Text(MailResourcesStrings.Localizable.lockedMailboxTitle)
                 .textStyle(.header2)
                 .multilineTextAlignment(.center)
             Text(MailResourcesStrings.Localizable.lockedMailboxDescription)

@@ -55,7 +55,7 @@ struct MailboxCell: View {
     }
 
     enum Style {
-        case menuDrawer, account
+        case menuDrawer, account, setPassword
     }
 
     var body: some View {
@@ -77,6 +77,7 @@ struct MailboxCell: View {
             }
             @InjectService var matomo: MatomoUtils
             switch style {
+            case .setPassword: break
             case .menuDrawer:
                 matomo.track(eventWithCategory: .menuDrawer, name: "switchMailbox")
             case .account:

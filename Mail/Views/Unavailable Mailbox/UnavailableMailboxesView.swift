@@ -21,7 +21,10 @@ import MailResources
 import SwiftUI
 
 struct UnavailableMailboxesView: View {
+    @Environment(\.window) private var window
+
     @State var isShowingNewAccountView = false
+    @State private var showAddMailbox = false
 
     var body: some View {
         NavigationView {
@@ -38,18 +41,33 @@ struct UnavailableMailboxesView: View {
                             .resizable()
                             .scaledToFit()
                             .frame(height: 64)
-                        Text(MailResourcesStrings.Localizable.lockedMailboxesTitle)
+                        Text(MailResourcesStrings.Localizable.lockedMailboxTitlePlural)
                             .textStyle(.header2)
                             .multilineTextAlignment(.center)
-                        Text(MailResourcesStrings.Localizable.lockedMailboxesDescription)
+                        Text(MailResourcesStrings.Localizable.lockedMailboxDescriptionPlural)
                             .textStyle(.bodySecondary)
                             .multilineTextAlignment(.center)
                             .padding(.top, 24)
 
-                        MailboxListView(currentMailbox: nil)
+                        UnavailableMailboxListView()
                     }
                 }
                 Spacer()
+
+                NavigationLink(isActive: $showAddMailbox) {
+                    AddMailboxView { mailbox in
+                        DispatchQueue.main.async {
+                            guard let mailbox = mailbox else { return }
+                            (window?.windowScene?.delegate as? SceneDelegate)?.switchMailbox(mailbox)
+                        }
+                    }
+                } label: {
+                    MailButton(label: MailResourcesStrings.Localizable.buttonAddEmailAddress) {
+                        showAddMailbox.toggle()
+                    }
+                    .mailButtonFullWidth(true)
+                    .mailButtonStyle(.large)
+                }
 
                 NavigationLink {
                     AccountListView()

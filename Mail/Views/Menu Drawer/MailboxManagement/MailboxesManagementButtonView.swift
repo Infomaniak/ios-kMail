@@ -62,10 +62,15 @@ struct MailboxesManagementButtonView: View {
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
 
-                if isInMaintenance {
+                if isInMaintenance && style != .setPassword {
                     MailResourcesAsset.warning.swiftUIImage
                 } else {
                     switch style {
+                    case .setPassword:
+                        MailResourcesAsset.arrowRight.swiftUIImage
+                            .resizable()
+                            .frame(width: 12, height: 12)
+                            .foregroundColor(MailResourcesAsset.textPrimaryColor.swiftUIColor)
                     case .menuDrawer:
                         if let detailNumber {
                             Text(detailNumber < 100 ? "\(detailNumber)" : "99+")
