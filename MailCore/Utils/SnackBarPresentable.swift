@@ -47,6 +47,7 @@ public extension IKSnackBar {
 
 public protocol SnackBarPresentable {
     func show(message: String)
+    func show(message: String, action: IKSnackBar.Action?)
     func show(
         message: String,
         duration: SnackBar.Duration,
@@ -66,6 +67,10 @@ public final class SnackBarPresenter: SnackBarPresentable {
 
     public func show(message: String) {
         show(message: message, contextView: contextView)
+    }
+
+    public func show(message: String, action: IKSnackBar.Action?) {
+        show(message: message, action: action, contextView: nil)
     }
 
     public func show(

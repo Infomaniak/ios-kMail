@@ -18,11 +18,13 @@
 
 import Foundation
 import InfomaniakCoreUI
+import InfomaniakDI
 import MailCore
 import MailResources
 
 // To delete: alert to facilitate tests for beta version
 @MainActor
 func showWorkInProgressSnackBar() {
-    IKSnackBar.showSnackBar(message: MailResourcesStrings.Localizable.workInProgressTitle)
+    @LazyInjectService var snackbarPresenter: SnackBarPresentable
+    snackbarPresenter.show(message: MailResourcesStrings.Localizable.workInProgressTitle)
 }

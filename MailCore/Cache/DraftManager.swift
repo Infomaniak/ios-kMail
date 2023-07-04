@@ -73,6 +73,7 @@ public final class DraftManager {
     private static let saveExpirationSec = 3
 
     @LazyInjectService private var matomo: MatomoUtils
+    @LazyInjectService private var snackbarPresenter: SnackBarPresentable
 
     /// Used by DI only
     public init() {
@@ -94,15 +95,14 @@ public final class DraftManager {
         do {
             try await mailboxManager.save(draft: draft)
         } catch {
-            if error.shouldDisplay {
-                await IKSnackBar.showSnackBar(message: error.localizedDescription)
-            }
+            guard error.shouldDisplay else { return }
+            snackbarPresenter.show(message: error.localizedDescription)
         }
         await draftQueue.endBackgroundTask(uuid: draft.localUUID)
     }
 
     public func send(draft: Draft, mailboxManager: MailboxManager) async -> Date? {
-        await IKSnackBar.showSnackBar(message: MailResourcesStrings.Localizable.snackbarEmailSending)
+        snackbarPresenter.show(message: MailResourcesStrings.Localizable.snackbarEmailSending)
 
         var sendDate: Date?
         await draftQueue.cleanQueueElement(uuid: draft.localUUID)
@@ -110,10 +110,10 @@ public final class DraftManager {
 
         do {
             let cancelableResponse = try await mailboxManager.send(draft: draft)
-            await IKSnackBar.showSnackBar(message: MailResourcesStrings.Localizable.snackbarEmailSent)
+            snackbarPresenter.show(message: MailResourcesStrings.Localizable.snackbarEmailSent)
             sendDate = cancelableResponse.scheduledDate
         } catch {
-            await IKSnackBar.showSnackBar(message: error.localizedDescription)
+            snackbarPresenter.show(message: error.localizedDescription)
         }
         await draftQueue.endBackgroundTask(uuid: draft.localUUID)
         return sendDate
@@ -179,11 +179,11 @@ public final class DraftManager {
         }
 
         await saveDraftRemotely(draft: draft, mailboxManager: mailboxManager)
-        await IKSnackBar.showSnackBar(message: MailResourcesStrings.Localizable.snackbarDraftSaved,
-                                      action: .init(title: MailResourcesStrings.Localizable.actionDelete) { [weak self] in
-                                          self?.matomo.track(eventWithCategory: .snackbar, name: "deleteDraft")
-                                          self?.deleteDraftSnackBarAction(draft: draft, mailboxManager: mailboxManager)
-                                      })
+        snackbarPresenter.show(message: MailResourcesStrings.Localizable.snackbarDraftSaved,
+                               action: .init(title: MailResourcesStrings.Localizable.actionDelete) { [weak self] in
+                                   self?.matomo.track(eventWithCategory: .snackbar, name: "deleteDraft")
+                                   self?.deleteDraftSnackBarAction(draft: draft, mailboxManager: mailboxManager)
+                               })
     }
 
     private func refreshDraftFolder(latestSendDate: Date?, mailboxManager: MailboxManager) async throws {
@@ -209,7 +209,7 @@ public final class DraftManager {
             await tryOrDisplayError {
                 if let liveDraft = draft.thaw() {
                     try await mailboxManager.delete(draft: liveDraft.freeze())
-                    await IKSnackBar.showSnackBar(message: MailResourcesStrings.Localizable.snackbarDraftDeleted)
+                    snackbarPresenter.show(message: MailResourcesStrings.Localizable.snackbarDraftDeleted)
                     if let draftFolder = mailboxManager.getFolder(with: .draft)?.freeze() {
                         await mailboxManager.refresh(folder: draftFolder)
                     }

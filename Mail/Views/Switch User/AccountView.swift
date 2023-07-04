@@ -28,6 +28,7 @@ import SwiftUI
 final class AccountViewDelegate: DeleteAccountDelegate {
     @LazyInjectService private var rootViewManager: RootViewManageable
     @LazyInjectService private var accountManager: AccountManager
+    @LazyInjectService private var snackbarPresenter: SnackBarPresentable
 
     @MainActor func didCompleteDeleteAccount() {
         guard let account = accountManager.currentAccount else {
@@ -39,7 +40,7 @@ final class AccountViewDelegate: DeleteAccountDelegate {
         let window = rootViewManager.mainSceneKeyWindow
         if let nextAccount = accountManager.accounts.first {
             (window?.windowScene?.delegate as? SceneDelegate)?.switchAccount(nextAccount)
-            IKSnackBar.showSnackBar(message: "Account deleted")
+            snackbarPresenter.show(message: "Account deleted")
         } else {
             (window?.windowScene?.delegate as? SceneDelegate)?.showLoginView()
         }
@@ -49,7 +50,7 @@ final class AccountViewDelegate: DeleteAccountDelegate {
 
     @MainActor func didFailDeleteAccount(error: InfomaniakLoginError) {
         SentrySDK.capture(error: error)
-        IKSnackBar.showSnackBar(message: "Failed to delete account")
+        snackbarPresenter.show(message: "Failed to delete account")
     }
 }
 

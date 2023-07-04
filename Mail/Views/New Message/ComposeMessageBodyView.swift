@@ -17,11 +17,14 @@
  */
 
 import InfomaniakCoreUI
+import InfomaniakDI
 import MailCore
 import RealmSwift
 import SwiftUI
 
 struct ComposeMessageBodyView: View {
+    @LazyInjectService private var snackbarPresenter: SnackBarPresentable
+
     @Environment(\.dismissModal) var dismissModal
 
     @EnvironmentObject private var mailboxManager: MailboxManager
@@ -80,7 +83,7 @@ struct ComposeMessageBodyView: View {
                 setSignature()
             case .error:
                 // Unable to get signatures, "An error occurred" and close modal.
-                IKSnackBar.showSnackBar(message: MailError.unknownError.localizedDescription)
+                snackbarPresenter.show(message: MailError.unknownError.localizedDescription)
                 dismissMessageView()
             case .progress:
                 break
@@ -117,7 +120,7 @@ struct ComposeMessageBodyView: View {
             isLoadingContent = false
         } catch {
             dismissMessageView()
-            IKSnackBar.showSnackBar(message: MailError.unknownError.localizedDescription)
+            snackbarPresenter.show(message: MailError.unknownError.localizedDescription)
         }
     }
 
@@ -135,7 +138,7 @@ struct ComposeMessageBodyView: View {
             isLoadingContent = false
         } catch {
             dismissMessageView()
-            IKSnackBar.showSnackBar(message: MailError.unknownError.localizedDescription)
+            snackbarPresenter.show(message: MailError.unknownError.localizedDescription)
         }
     }
 

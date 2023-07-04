@@ -29,6 +29,7 @@ struct ContactActionsView: View {
 
     @LazyInjectService private var matomo: MatomoUtils
     @LazyInjectService private var accountManager: AccountManager
+    @LazyInjectService private var snackbarPresenter: SnackBarPresentable
 
     @State private var writtenToRecipient: Recipient?
 
@@ -132,14 +133,14 @@ struct ContactActionsView: View {
         Task {
             await tryOrDisplayError {
                 try await accountManager.currentContactManager?.addContact(recipient: recipient)
-                IKSnackBar.showSnackBar(message: MailResourcesStrings.Localizable.snackbarContactSaved)
+                snackbarPresenter.show(message: MailResourcesStrings.Localizable.snackbarContactSaved)
             }
         }
     }
 
     private func copyEmail() {
         UIPasteboard.general.string = recipient.email
-        IKSnackBar.showSnackBar(message: MailResourcesStrings.Localizable.snackbarEmailCopiedToClipboard)
+        snackbarPresenter.show(message: MailResourcesStrings.Localizable.snackbarEmailCopiedToClipboard)
     }
 }
 

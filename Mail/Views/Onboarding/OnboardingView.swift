@@ -73,7 +73,8 @@ final class LoginHandler: InfomaniakLoginDelegate, ObservableObject {
     @LazyInjectService private var matomo: MatomoUtils
     @LazyInjectService private var remoteNotificationRegistrer: RemoteNotificationRegistrable
     @LazyInjectService private var accountManager: AccountManager
-    
+    @LazyInjectService private var snackbarPresenter: SnackBarPresentable
+
     @Published var isLoading = false
     @Published var isPresentingErrorAlert = false
     var sceneDelegate: SceneDelegate?
@@ -137,7 +138,7 @@ final class LoginHandler: InfomaniakLoginDelegate, ObservableObject {
                 if let previousAccount = previousAccount {
                     accountManager.switchAccount(newAccount: previousAccount)
                 }
-                IKSnackBar.showSnackBar(message: error.localizedDescription)
+                snackbarPresenter.show(message: error.localizedDescription)
             }
             isLoading = false
         }

@@ -45,6 +45,7 @@ struct MailboxCell: View {
     @Environment(\.window) private var window
 
     @LazyInjectService private var accountManager: AccountManager
+    @LazyInjectService private var snackbarPresenter: SnackBarPresentable
 
     let mailbox: Mailbox
 
@@ -70,7 +71,7 @@ struct MailboxCell: View {
         ) {
             guard !isSelected else { return }
             guard mailbox.isPasswordValid else {
-                IKSnackBar.showSnackBar(message: MailResourcesStrings.Localizable.frelatedMailbox)
+                snackbarPresenter.show(message: MailResourcesStrings.Localizable.frelatedMailbox)
                 return
             }
             @InjectService var matomo: MatomoUtils

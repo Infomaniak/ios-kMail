@@ -17,6 +17,7 @@
  */
 
 import InfomaniakCoreUI
+import InfomaniakDI
 import MailCore
 import MailResources
 import Popovers
@@ -25,6 +26,7 @@ import SwiftUI
 struct RecipientChip: View {
     @Environment(\.window) private var window
     @AppStorage(UserDefaults.shared.key(.accentColor)) private var accentColor = DefaultPreferences.accentColor
+    @LazyInjectService private var snackbarPresenter: SnackBarPresentable
 
     let recipient: Recipient
     let fieldType: ComposeViewFieldType
@@ -46,7 +48,7 @@ struct RecipientChip: View {
             Templates.MenuButton(text: Text(MailResourcesStrings.Localizable.contactActionCopyEmailAddress),
                                  image: MailResourcesAsset.duplicate.swiftUIImage) {
                 UIPasteboard.general.string = recipient.email
-                IKSnackBar.showSnackBar(message: MailResourcesStrings.Localizable.snackbarEmailCopiedToClipboard)
+                snackbarPresenter.show(message: MailResourcesStrings.Localizable.snackbarEmailCopiedToClipboard)
             }
 
             Templates.MenuButton(text: Text(MailResourcesStrings.Localizable.actionDelete),

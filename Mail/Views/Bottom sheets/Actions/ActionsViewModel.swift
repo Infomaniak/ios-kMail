@@ -222,6 +222,7 @@ enum ActionsTarget: Equatable, Identifiable {
 
     @LazyInjectService private var matomo: MatomoUtils
     @LazyInjectService private var accountManager: AccountManager
+    @LazyInjectService private var snackbarPresenter: SnackBarPresentable
 
     init(mailboxManager: MailboxManager,
          target: ActionsTarget,
@@ -443,7 +444,7 @@ enum ActionsTarget: Equatable, Identifiable {
         guard case .message(let message) = target else { return }
         let response = try await mailboxManager.apiFetcher.blockSender(message: message)
         if response {
-            IKSnackBar.showSnackBar(message: MailResourcesStrings.Localizable.snackbarSenderBlacklisted(1))
+            snackbarPresenter.show(message: MailResourcesStrings.Localizable.snackbarSenderBlacklisted(1))
         }
     }
 

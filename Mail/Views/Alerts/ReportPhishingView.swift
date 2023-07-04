@@ -17,11 +17,13 @@
  */
 
 import InfomaniakCoreUI
+import InfomaniakDI
 import MailCore
 import MailResources
 import SwiftUI
 
 struct ReportPhishingView: View {
+    @LazyInjectService private var snackbarPresenter: SnackBarPresentable
     @EnvironmentObject private var mailboxManager: MailboxManager
     let message: Message
 
@@ -45,7 +47,7 @@ struct ReportPhishingView: View {
                     var messages = [message.freezeIfNeeded()]
                     messages.append(contentsOf: message.duplicates)
                     _ = try await mailboxManager.move(messages: messages, to: .spam)
-                    await IKSnackBar.showSnackBar(message: MailResourcesStrings.Localizable.snackbarReportPhishingConfirmation)
+                    await snackbarPresenter.show(message: MailResourcesStrings.Localizable.snackbarReportPhishingConfirmation)
                 }
             }
         }

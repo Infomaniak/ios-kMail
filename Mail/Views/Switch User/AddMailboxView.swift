@@ -26,6 +26,7 @@ struct AddMailboxView: View {
     @Environment(\.dismiss) var dismiss
 
     @LazyInjectService private var accountManager: AccountManager
+    @LazyInjectService private var snackbarPresenter: SnackBarPresentable
 
     var completion: (Mailbox?) -> Void
 
@@ -104,7 +105,7 @@ struct AddMailboxView: View {
                     showError = true
                     password = ""
                 }
-                await IKSnackBar.showSnackBar(message: error.localizedDescription)
+                snackbarPresenter.show(message: error.localizedDescription)
             }
         }
     }

@@ -50,6 +50,7 @@ struct SplitView: View {
     @StateObject private var splitViewManager: SplitViewManager
 
     @LazyInjectService private var orientationManager: OrientationManageable
+    @LazyInjectService private var snackbarPresenter: SnackBarPresentable
 
     let mailboxManager: MailboxManager
 
@@ -115,7 +116,7 @@ struct SplitView: View {
             if let tappedNotificationThread = tappedNotificationMessage?.originalThread {
                 navigationStore.threadPath = [tappedNotificationThread]
             } else {
-                IKSnackBar.showSnackBar(message: MailError.localMessageNotFound.errorDescription)
+                snackbarPresenter.show(message: MailError.localMessageNotFound.errorDescription)
             }
         }
         .onReceive(NotificationCenter.default.publisher(for: .onOpenedMailTo)) { identifiableURLComponents in

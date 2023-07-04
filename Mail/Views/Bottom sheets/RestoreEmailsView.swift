@@ -28,10 +28,10 @@ struct RestoreEmailsView: View {
 
     @State private var selectedDate = ""
     @State private var availableDates = [String]()
-
     @State private var pickerNoSelectionText = MailResourcesStrings.Localizable.loadingText
 
     @LazyInjectService private var matomo: MatomoUtils
+    @LazyInjectService private var snackbarPresenter: SnackBarPresentable
 
     var body: some View {
         VStack(alignment: .leading) {
@@ -76,7 +76,7 @@ struct RestoreEmailsView: View {
         Task {
             await tryOrDisplayError {
                 try await mailboxManager.apiFetcher.restoreBackup(mailbox: mailboxManager.mailbox, date: selectedDate)
-                IKSnackBar.showSnackBar(message: MailResourcesStrings.Localizable.snackbarRestorationLaunched)
+                snackbarPresenter.show(message: MailResourcesStrings.Localizable.snackbarRestorationLaunched)
             }
         }
     }
