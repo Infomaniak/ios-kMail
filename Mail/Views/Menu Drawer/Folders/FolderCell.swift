@@ -158,14 +158,12 @@ struct FolderCellContent: View {
     @ViewBuilder
     private var accessory: some View {
         if cellType == .link {
-            if folder.role != .sent {
+            if folder.role != .sent && folder.role != .trash {
                 if !folder.formattedUnreadCount.isEmpty {
                     Text(folder.formattedUnreadCount)
                         .textStyle(.bodySmallMediumAccent)
                 } else if folder.remoteUnreadCount > 0 {
-                    Circle()
-                        .frame(width: 8, height: 8)
-                        .foregroundColor(.accentColor)
+                    UnreadIndicatorView()
                 }
             }
         } else if isCurrentFolder {
