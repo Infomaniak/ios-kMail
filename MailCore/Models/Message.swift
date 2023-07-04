@@ -432,23 +432,17 @@ public final class Message: Object, Decodable, Identifiable {
     public func toThread() -> Thread {
         let thread = Thread(
             uid: "\(folderId)_\(uid)",
-            messagesCount: 1,
-            deletedMessagesCount: 1,
             messages: [self],
             unseenMessages: seen ? 0 : 1,
             from: Array(from),
             to: Array(to),
-            cc: Array(cc),
-            bcc: Array(bcc),
             subject: subject,
             date: date,
             hasAttachments: !attachments.isEmpty,
-            hasSwissTransferAttachments: false,
             hasDrafts: !(draftResource?.isEmpty ?? true),
             flagged: flagged,
             answered: answered,
-            forwarded: forwarded,
-            size: size
+            forwarded: forwarded
         )
         thread.messageIds = linkedUids
         return thread
