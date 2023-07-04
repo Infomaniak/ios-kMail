@@ -26,7 +26,8 @@ import SwiftUI
 
 struct CreateFolderView: View {
     @EnvironmentObject private var mailboxManager: MailboxManager
-    @ObservedResults(Folder.self) private var folders
+    // swiftlint:disable empty_count
+    @ObservedResults(Folder.self, where: { $0.parents.count == 0 }) private var folders
 
     @State private var folderName = ""
     @State private var error: FolderError?
@@ -111,7 +112,7 @@ struct CreateFolderView: View {
         let trimmedName = newName.trimmingCharacters(in: .whitespacesAndNewlines)
         if trimmedName.count >= Constants.maxFolderNameLength {
             error = .nameTooLong
-        } else if trimmedName.lowercased() == "inbox" || folders.contains(where: { $0.name == trimmedName }) {
+        } else if trimmedName.lowercased() == "inbox" || folders.where({ $0.name == trimmedName }).count > 0 {
             error = .nameAlreadyExists
         } else {
             error = nil
