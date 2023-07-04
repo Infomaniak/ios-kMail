@@ -112,7 +112,7 @@ struct CreateFolderView: View {
         let trimmedName = newName.trimmingCharacters(in: .whitespacesAndNewlines)
         if trimmedName.count >= Constants.maxFolderNameLength {
             error = .nameTooLong
-        } else if trimmedName.lowercased() == "inbox" || folders.contains(where: { $0.name == trimmedName }) {
+        } else if trimmedName.lowercased() == "inbox" || folders.where({ $0.name == trimmedName }).count > 0 {
             error = .nameAlreadyExists
         } else {
             error = nil
