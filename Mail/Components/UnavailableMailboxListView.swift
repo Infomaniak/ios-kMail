@@ -47,7 +47,7 @@ struct UnavailableMailboxListView: View {
                     Text(MailResourcesStrings.Localizable.blockedPasswordTitlePlural)
                     ForEach(passwordBlockedMailboxes) { mailbox in
                         MailboxCell(mailbox: mailbox)
-                            .mailboxCellStyle(.setPassword)
+                            .mailboxCellStyle(.blockedPassword)
                     }
                 }
             }
@@ -56,12 +56,8 @@ struct UnavailableMailboxListView: View {
                 VStack(alignment: .leading, spacing: 12) {
                     Text(MailResourcesStrings.Localizable.lockedMailboxTitlePlural)
                     ForEach(lockedMailboxes) { mailbox in
-                        MailboxesManagementButtonView(
-                            icon: MailResourcesAsset.envelope,
-                            text: mailbox.email,
-                            isSelected: false,
-                            isInMaintenance: false
-                        )
+                        MailboxCell(mailbox: mailbox)
+                            .mailboxCellStyle(.locked)
                     }
                 }
             }

@@ -25,25 +25,23 @@ struct MailboxesManagementButtonView: View {
     @Environment(\.mailboxCellStyle) private var style: MailboxCell.Style
 
     let icon: Image
-    let text: String
-    let detailNumber: Int?
+    let mailbox: Mailbox
     let handleAction: (() -> Void)?
     let isSelected: Bool
-    let isInMaintenance: Bool
+
+    private var detailNumber: Int? {
+        return mailbox.unseenMessages > 0 ? mailbox.unseenMessages : nil
+    }
 
     init(
         icon: MailResourcesImages,
-        text: String,
-        detailNumber: Int? = nil,
+        mailbox: Mailbox,
         isSelected: Bool,
-        isInMaintenance: Bool,
         handleAction: (() -> Void)? = nil
     ) {
         self.icon = icon.swiftUIImage
-        self.text = text
-        self.detailNumber = detailNumber
+        self.mailbox = mailbox
         self.isSelected = isSelected
-        self.isInMaintenance = isInMaintenance
         self.handleAction = handleAction
     }
 
@@ -58,17 +56,17 @@ struct MailboxesManagementButtonView: View {
                         .scaledToFit()
                         .frame(width: 24, height: 24)
                         .foregroundColor(.accentColor)
-                    Text(text)
+                    Text(mailbox.email)
                         .textStyle(.body)
                         .lineLimit(1)
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
 
-                if isInMaintenance && style != .setPassword {
+                if !mailbox.isAvailable && style != .blockedPassword && style != .locked {
                     MailResourcesAsset.warning.swiftUIImage
                 } else {
                     switch style {
-                    case .setPassword:
+                    case .blockedPassword:
                         MailResourcesAsset.arrowRight.swiftUIImage
                             .resizable()
                             .frame(width: 12, height: 12)
@@ -77,6 +75,8 @@ struct MailboxesManagementButtonView: View {
                         if let detailNumber {
                             Text(detailNumber < 100 ? "\(detailNumber)" : "99+")
                                 .textStyle(.bodySmallMediumAccent)
+                        } else if mailbox.remoteUnseenMessages != 0 {
+                            UnreadIndicatorView()
                         }
                     case .account:
                         if isSelected {
@@ -84,6 +84,8 @@ struct MailboxesManagementButtonView: View {
                                 .frame(width: 16, height: 16)
                                 .foregroundColor(.accentColor)
                         }
+                    case .locked:
+                        EmptyView()
                     }
                 }
             }
@@ -94,13 +96,15 @@ struct MailboxesManagementButtonView: View {
 
 struct MailboxesManagementButtonView_Previews: PreviewProvider {
     static var previews: some View {
-        MailboxesManagementButtonView(icon: MailResourcesAsset.folder, text: "Hello", isSelected: false, isInMaintenance: true)
         MailboxesManagementButtonView(
             icon: MailResourcesAsset.folder,
-            text: "Hello",
-            detailNumber: 10,
-            isSelected: false,
-            isInMaintenance: true
+            mailbox: PreviewHelper.sampleMailbox,
+            isSelected: false
+        )
+        MailboxesManagementButtonView(
+            icon: MailResourcesAsset.folder,
+            mailbox: PreviewHelper.sampleMailbox,
+            isSelected: false
         )
     }
 }
