@@ -59,7 +59,7 @@ class AttachmentsManager: ObservableObject {
 
     func completeUploadedAttachments() {
         for attachment in attachments {
-            let uploadTask = attachmentUploadTaskFor(uuid: attachment.uuid)
+            let uploadTask = attachmentUploadTaskOrCreate(for: attachment.uuid)
             uploadTask.progress = 1
         }
         objectWillChange.send()
@@ -84,11 +84,36 @@ class AttachmentsManager: ObservableObject {
         objectWillChange.send()
     }
 
-    func attachmentUploadTaskFor(uuid: String) -> AttachmentUploadTask {
-        if attachmentUploadTasks[uuid] == nil {
-            attachmentUploadTasks[uuid] = AttachmentUploadTask()
+    /// Lookup and return. New object created and returned instead
+    func attachmentUploadTaskOrCreate(for uuid: String) -> AttachmentUploadTask {
+        guard let attachment = attachmentUploadTask(for: uuid) else {
+            let newTask = AttachmentUploadTask()
+            attachmentUploadTasks[uuid] = newTask
+            return newTask
         }
-        return attachmentUploadTasks[uuid]!
+
+        return attachment
+    }
+
+    /// Lookup and return. New object representing a finished task instead.
+    func attachmentUploadTaskOrFinishedTask(for uuid: String) -> AttachmentUploadTask {
+        guard let attachment = attachmentUploadTask(for: uuid) else {
+            let finishedTask = AttachmentUploadTask()
+            finishedTask.progress = 1
+            attachmentUploadTasks[uuid] = finishedTask
+            return finishedTask
+        }
+
+        return attachment
+    }
+
+    /// Lookup and return, nil if not found
+    private func attachmentUploadTask(for uuid: String) -> AttachmentUploadTask? {
+        guard let attachment = attachmentUploadTasks[uuid] else {
+            return nil
+        }
+
+        return attachment
     }
 
     func removeAttachment(_ attachment: Attachment) {
