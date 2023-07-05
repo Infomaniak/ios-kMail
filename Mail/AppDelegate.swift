@@ -74,6 +74,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         }
     }
 
+    /// Validate deeplinks
     func application(_ application: UIApplication,
                      open url: URL,
                      options: [UIApplication.OpenURLOptionsKey: Any] = [:]) -> Bool {
@@ -82,7 +83,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         DDLogInfo("source application = \(sendingAppID ?? "Unknown")")
 
         let absoluteString = url.absoluteString
-        let success = (absoluteString.starts(with: "mailto") || absoluteString.starts(with: "mailto"))
+        let success = absoluteString.starts(with: "mailto")
         DDLogInfo("URL handling = \(success ? "success" : "failure")")
         return success
     }

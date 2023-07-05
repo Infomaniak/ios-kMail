@@ -26,12 +26,37 @@ import UIKit
 // <core> most definitely
 
 /// Represents `any` (ie. all of them not the type) curried closure, of arbitrary type.
+///
+/// Supports concurrency and error
+typealias AsyncCurriedClosure<Input, Output> = (Input) async throws -> Output
+
+/// Execute the closure without waiting, discarding result
+postfix operator ~
+postfix func ~ (x: @escaping AsyncClosure) {
+    Task {
+        try? await x(())
+    }
+}
+
+/// A closure that take no argument and return nothing, but technically curried.
+typealias AsyncClosure = AsyncCurriedClosure<Void, Void>
+
+/// Append an AsyncClosure to another one
+func + (_ lhs: @escaping AsyncClosure, _ rhs: @escaping AsyncClosure) -> AsyncClosure {
+    let closure: AsyncClosure = { _ in
+        try await lhs(())
+        try await rhs(())
+    }
+    return closure
+}
+
+/// Represents `any` (ie. all of them not the type) curried closure, of arbitrary type.
 typealias CurriedClosure<Input, Output> = (Input) -> Output
 
 /// A closure that take no argument and return nothing, but technically curried.
 typealias SimpleClosure = CurriedClosure<Void, Void>
 
-/// Append a SimpleClosure closure to another one
+/// Append a SimpleClosure to another one
 func + (_ lhs: @escaping SimpleClosure, _ rhs: @escaping SimpleClosure) -> SimpleClosure {
     let closure: SimpleClosure = { _ in
         lhs(())
@@ -44,24 +69,22 @@ func + (_ lhs: @escaping SimpleClosure, _ rhs: @escaping SimpleClosure) -> Simpl
 
 struct ComposeMessageWrapperView: View {
     private var itemProviders: [NSItemProvider]
-    private var dismissHandler: SimpleClosure
+    private var dismissHandler: AsyncClosure
 
     @State private var draft: Draft
 
     @LazyInjectService private var accountManager: AccountManager
 
-    init(dismissHandler: @escaping SimpleClosure, itemProviders: [NSItemProvider], draft: Draft = Draft()) {
+    init(dismissHandler: @escaping AsyncClosure, itemProviders: [NSItemProvider], draft: Draft = Draft()) {
         _draft = State(initialValue: draft)
 
         // Append save draft action if possible
         @InjectService var accountManager: AccountManager
         if let mailboxManager = accountManager.currentMailboxManager {
-            let saveDraft: SimpleClosure = { _ in
+            let saveDraft: AsyncClosure = { _ in
                 let detached = draft.detached()
-                Task {
-                    @InjectService var draftManager: DraftManager
-                    _ = await draftManager.initialSaveRemotely(draft: detached, mailboxManager: mailboxManager)
-                }
+                @InjectService var draftManager: DraftManager
+                _ = await draftManager.initialSaveRemotely(draft: detached, mailboxManager: mailboxManager)
             }
             self.dismissHandler = saveDraft + dismissHandler
         } else {
@@ -76,7 +99,7 @@ struct ComposeMessageWrapperView: View {
             ComposeMessageView.newMessage(draft, mailboxManager: mailboxManager, itemProviders: itemProviders)
                 .environmentObject(mailboxManager)
                 .environment(\.dismissModal) {
-                    self.dismissHandler(())
+                    dismissHandler~
                 }
         } else {
             PleaseLoginView(tapHandler: dismissHandler)
@@ -87,7 +110,7 @@ struct ComposeMessageWrapperView: View {
 struct PleaseLoginView: View {
     @State var slide = Slide.onBoardingSlides.first!
 
-    var tapHandler: SimpleClosure
+    var tapHandler: AsyncClosure
 
     var body: some View {
         VStack {
@@ -103,7 +126,7 @@ struct PleaseLoginView: View {
             LottieView(configuration: slide.lottieConfiguration!)
             Spacer()
         }.onTapGesture {
-            tapHandler(())
+            tapHandler~
         }
     }
 }
