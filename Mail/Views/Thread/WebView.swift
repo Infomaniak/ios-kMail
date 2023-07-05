@@ -29,7 +29,7 @@ enum JavaScriptDeclaration {
     var description: String {
         switch self {
         case .normalizeMessageWidth(let width, let messageUid):
-            return "normalizeMessageWidth(\(width), \(messageUid))"
+            return "normalizeMessageWidth(\(width), '\(messageUid)')"
         case .removeAllProperties:
             return "removeAllProperties()"
         case .documentReadyState:
