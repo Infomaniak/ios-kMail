@@ -154,7 +154,6 @@ public final class DraftManager {
     /// First save of a draft with the remote if needed
     @discardableResult
     public func initialSaveRemotely(draft: Draft, mailboxManager: MailboxManager) async -> Bool {
-        print("initialSaveRemotely:\(draft.localUUID)")
         // We consider the body to be not-empty on HTML parsing failure to keep user content.
         let isDraftEmpty = (try? isDraftBodyEmptyOfChanges(draft.body)) ?? false
         guard !isDraftEmpty else {

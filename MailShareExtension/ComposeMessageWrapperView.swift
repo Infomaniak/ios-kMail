@@ -32,7 +32,7 @@ typealias AsyncCurriedClosure<Input, Output> = (Input) async throws -> Output
 
 /// Execute the closure without waiting, discarding result
 postfix operator ~
-postfix func ~ (x: @escaping AsyncClosure) {
+postfix func ~ (x: @escaping AsyncCurriedClosure<Void, Any>) {
     Task {
         try? await x(())
     }
@@ -51,6 +51,8 @@ func + (_ lhs: @escaping AsyncClosure, _ rhs: @escaping AsyncClosure) -> AsyncCl
 }
 
 /// Represents `any` (ie. all of them not the type) curried closure, of arbitrary type.
+///
+/// see `AsyncCurriedClosure` if you need support for structured concurrency or error feedback
 typealias CurriedClosure<Input, Output> = (Input) -> Output
 
 /// A closure that take no argument and return nothing, but technically curried.
@@ -81,9 +83,9 @@ struct ComposeMessageWrapperView: View {
         // Append save draft action if possible
         @InjectService var accountManager: AccountManager
         if let mailboxManager = accountManager.currentMailboxManager {
-            let saveDraft: AsyncClosure = { _ in
-                let detached = draft.detached()
+            let saveDraft: AsyncClosure = { @MainActor _ in
                 @InjectService var draftManager: DraftManager
+                let detached = draft.detached()
                 _ = await draftManager.initialSaveRemotely(draft: detached, mailboxManager: mailboxManager)
             }
             self.dismissHandler = saveDraft + dismissHandler
