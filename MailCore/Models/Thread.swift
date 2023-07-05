@@ -57,7 +57,7 @@ public class Thread: Object, Decodable, Identifiable {
         return uid
     }
 
-    public var folder: Folder? {
+    public var folde: Folder? {
         return folders.first
     }
 
