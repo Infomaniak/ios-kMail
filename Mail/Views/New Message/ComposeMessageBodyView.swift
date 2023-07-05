@@ -109,6 +109,7 @@ struct ComposeMessageBodyView: View {
         }
     }
 
+    /// Save draft remotely if never done before and update it with a remote ID.
     private func prepareCompleteDraft() async {
         guard draft.messageUid != nil && draft.remoteUUID.isEmpty else { return }
 

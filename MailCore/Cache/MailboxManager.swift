@@ -1120,6 +1120,7 @@ public class MailboxManager: ObservableObject {
         return realm.objects(Draft.self).where { $0.action != nil }
     }
 
+    /// Where a new draft is saved in realm the first time if needed
     public func draft(partialDraft: Draft) async throws -> Draft? {
         guard let associatedMessage = getRealm().object(ofType: Message.self, forPrimaryKey: partialDraft.messageUid)?.freeze()
         else { return nil }

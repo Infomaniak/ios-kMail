@@ -67,19 +67,6 @@ final class ShareNavigationViewController: UIViewController {
         // We need to go threw wrapping to use SwiftUI in an NSExtension.
         let hostingController = UIHostingController(rootView: ComposeMessageWrapperView(dismissHandler: {
                 self.dismiss(animated: true)
-            }, openAppHandler: {
-                guard let extensionContext = self.extensionContext,
-                      let ikDeeplink = URL(string: "ikmail:shareExtension") else {
-                    return
-                }
-
-                Task {
-                    // TODO: remove as does not work in share-ext
-                    let result: Bool = await extensionContext.open(ikDeeplink)
-                    // assert(result == true, "should success")
-
-                    self.dismiss(animated: true)
-                }
             },
             itemProviders: itemProviders))
         hostingController.view.translatesAutoresizingMaskIntoConstraints = false

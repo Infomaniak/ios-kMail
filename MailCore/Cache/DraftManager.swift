@@ -128,7 +128,7 @@ public final class DraftManager {
                         var sendDate: Date?
                         switch draft.action {
                         case .initialSave:
-                            await self.initialSave(draft: draft, mailboxManager: mailboxManager)
+                            await self.initialSaveRemotely(draft: draft, mailboxManager: mailboxManager)
                         case .save:
                             await self.saveDraftRemotely(draft: draft, mailboxManager: mailboxManager)
                         case .send:
@@ -151,6 +151,26 @@ public final class DraftManager {
         }
     }
 
+    /// First save of a draft with the remote if needed
+    @discardableResult
+    public func initialSaveRemotely(draft: Draft, mailboxManager: MailboxManager) async -> Bool {
+        print("initialSaveRemotely:\(draft.localUUID)")
+        // We consider the body to be not-empty on HTML parsing failure to keep user content.
+        let isDraftEmpty = (try? isDraftBodyEmptyOfChanges(draft.body)) ?? false
+        guard !isDraftEmpty else {
+            deleteEmptyDraft(draft: draft, for: mailboxManager)
+            return false
+        }
+
+        await saveDraftRemotely(draft: draft, mailboxManager: mailboxManager)
+        let messageAction: MessageAction = (MailResourcesStrings.Localizable.actionDelete, { [weak self] in
+            self?.matomo.track(eventWithCategory: .snackbar, name: "deleteDraft")
+            self?.deleteDraftSnackBarAction(draft: draft, mailboxManager: mailboxManager)
+        })
+        messagePresentable.show(message: MailResourcesStrings.Localizable.snackbarDraftSaved, action: messageAction)
+        return true
+    }
+
     /// Check if once the Signature node is removed, we still have content
     func isDraftBodyEmptyOfChanges(_ body: String) throws -> Bool {
         guard !body.isEmpty else {
@@ -168,22 +188,6 @@ public final class DraftManager {
 
         // Do we still have text ?
         return !document.hasText()
-    }
-
-    private func initialSave(draft: Draft, mailboxManager: MailboxManager) async {
-        // We consider the body to be not-empty on HTML parsing failure to keep user content.
-        let isDraftEmpty = (try? isDraftBodyEmptyOfChanges(draft.body)) ?? false
-        guard !isDraftEmpty else {
-            deleteEmptyDraft(draft: draft, for: mailboxManager)
-            return
-        }
-
-        await saveDraftRemotely(draft: draft, mailboxManager: mailboxManager)
-        let messageAction: MessageAction = (MailResourcesStrings.Localizable.actionDelete, { [weak self] in
-            self?.matomo.track(eventWithCategory: .snackbar, name: "deleteDraft")
-            self?.deleteDraftSnackBarAction(draft: draft, mailboxManager: mailboxManager)
-        })
-        messagePresentable.show(message: MailResourcesStrings.Localizable.snackbarDraftSaved, action: messageAction)
     }
 
     private func refreshDraftFolder(latestSendDate: Date?, mailboxManager: MailboxManager) async throws {

@@ -168,7 +168,10 @@ struct ComposeMessageView: View {
             }
         }
         .onDisappear {
-            draftManager.syncDraft(mailboxManager: mailboxManager)
+            // Only process _all_ drafts if in main app only
+            if !Bundle.main.isExtension {
+                draftManager.syncDraft(mailboxManager: mailboxManager)
+            }
         }
         .overlay {
             if isLoadingContent || signatureManager.loadingSignatureState == .progress {
