@@ -91,19 +91,19 @@ struct ComposeMessageBodyView: View {
         }
         .fullScreenCover(isPresented: $isShowingCamera) {
             CameraPicker { data in
-                attachmentsManager.importAttachments(attachments: [data])
+                attachmentsManager.importAttachments(attachments: [data], draft: draft)
             }
             .ignoresSafeArea()
         }
         .sheet(isPresented: $isShowingFileSelection) {
             DocumentPicker(pickerType: .selectContent([.item]) { urls in
-                attachmentsManager.importAttachments(attachments: urls)
+                attachmentsManager.importAttachments(attachments: urls, draft: draft)
             })
             .ignoresSafeArea()
         }
         .sheet(isPresented: $isShowingPhotoLibrary) {
             ImagePicker { results in
-                attachmentsManager.importAttachments(attachments: results)
+                attachmentsManager.importAttachments(attachments: results, draft: draft)
             }
             .ignoresSafeArea()
         }

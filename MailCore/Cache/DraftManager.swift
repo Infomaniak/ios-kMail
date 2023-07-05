@@ -154,9 +154,7 @@ public final class DraftManager {
     /// First save of a draft with the remote if needed
     @discardableResult
     public func initialSaveRemotely(draft: Draft, mailboxManager: MailboxManager) async -> Bool {
-        // We consider the body to be not-empty on HTML parsing failure to keep user content.
-        let isDraftEmpty = (try? isDraftBodyEmptyOfChanges(draft.body)) ?? false
-        guard !isDraftEmpty else {
+        guard !isDraftEmpty(draft: draft) else {
             deleteEmptyDraft(draft: draft, for: mailboxManager)
             return false
         }
@@ -170,8 +168,27 @@ public final class DraftManager {
         return true
     }
 
+    /// Check multiple conditions to infer if a draft is empty or not
+    private func isDraftEmpty(draft: Draft) -> Bool {
+        guard isDraftBodyEmptyOfAttachments(draft: draft) else {
+            return false
+        }
+
+        guard (try? isDraftBodyEmptyOfChanges(draft.body)) ?? true else {
+            return false
+        }
+
+        return true
+    }
+
+    /// Check that the draft has some Attachments of not
+    private func isDraftBodyEmptyOfAttachments(draft: Draft) -> Bool {
+        // This excludes the signature attachments that are present in Draft.attachments
+        return draft.attachments.filter { $0.contentId == nil }.isEmpty
+    }
+
     /// Check if once the Signature node is removed, we still have content
-    func isDraftBodyEmptyOfChanges(_ body: String) throws -> Bool {
+    private func isDraftBodyEmptyOfChanges(_ body: String) throws -> Bool {
         guard !body.isEmpty else {
             return true
         }

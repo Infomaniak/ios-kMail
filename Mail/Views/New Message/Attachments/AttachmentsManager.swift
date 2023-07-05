@@ -22,7 +22,7 @@ import MailCore
 import PhotosUI
 import SwiftUI
 
-class AttachmentUploadTask: ObservableObject {
+final class AttachmentUploadTask: ObservableObject {
     @Published var progress: Double = 0
     var task: Task<String?, Never>?
     @Published var error: MailError?
@@ -157,7 +157,15 @@ class AttachmentsManager: ObservableObject {
         return newAttachment
     }
 
-    func importAttachments(attachments: [Attachable], disposition: AttachmentDisposition = .attachment) {
+    func importAttachments(attachments: [Attachable], draft: Draft, disposition: AttachmentDisposition = .attachment) {
+        guard !attachments.isEmpty else {
+            return
+        }
+
+        // Cap max number of attachments, API errors out at 100
+        let attachments = attachments[0 ... draft.availableAttachmentsSlots]
+        
+        // TODO: use ParallelTaskMapper for performance here.
         for attachment in attachments {
             Task {
                 let cid = await importAttachment(attachment: attachment, disposition: disposition)

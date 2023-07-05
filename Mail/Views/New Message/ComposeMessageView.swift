@@ -117,7 +117,7 @@ struct ComposeMessageView: View {
             composeMessage
         }
         .onAppear {
-            attachmentsManager.importAttachments(attachments: initialAttachments)
+            attachmentsManager.importAttachments(attachments: initialAttachments, draft: draft)
             initialAttachments = []
         }
         .interactiveDismissDisabled()
