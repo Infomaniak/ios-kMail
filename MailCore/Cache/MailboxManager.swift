@@ -1118,28 +1118,6 @@ public class MailboxManager: ObservableObject {
         return realm.objects(Draft.self).where { $0.action != nil }
     }
 
-    public func draft(partialDraft: Draft) async throws {
-        guard let associatedMessage = getRealm().object(ofType: Message.self, forPrimaryKey: partialDraft.messageUid)?.freeze()
-        else { throw MailError.localMessageNotFound }
-
-        // Get from API
-        let draft = try await apiFetcher.draft(from: associatedMessage)
-
-        await backgroundRealm.execute { realm in
-            draft.localUUID = partialDraft.localUUID
-            draft.action = .save
-
-            // We made sure beforehand to have an up to date signature.
-            // If the server does not return an identityId, we want to keep the original one
-            draft.identityId = partialDraft.identityId ?? draft.identityId
-            draft.delay = partialDraft.delay
-
-            try? realm.safeWrite {
-                realm.add(draft.detached(), update: .modified)
-            }
-        }
-    }
-
     public func draft(messageUid: String, using realm: Realm? = nil) -> Draft? {
         let realm = realm ?? getRealm()
         return realm.objects(Draft.self).where { $0.messageUid == messageUid }.first
