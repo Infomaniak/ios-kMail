@@ -162,7 +162,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, AccountManagerDelegate 
     func showMainView(animated: Bool = true) {
         if let mailboxManager = accountManager.currentMailboxManager {
             showMainView(mailboxManager: mailboxManager, animated: animated)
-        } else if accountManager.mailboxes.allSatisfy({ !$0.isAvailable }) {
+        } else if !accountManager.mailboxes.isEmpty && accountManager.mailboxes.allSatisfy({ !$0.isAvailable }) {
             setRootView(UnavailableMailboxesView(), animated: animated)
         } else {
             showNoMailboxView(animated: animated)
