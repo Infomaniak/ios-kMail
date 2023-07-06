@@ -22,7 +22,7 @@ import ProjectDescription
 let deploymentTarget = DeploymentTarget.iOS(targetVersion: "15.0", devices: [.iphone, .ipad])
 let baseSettings = SettingsDictionary()
     .currentProjectVersion("1")
-    .marketingVersion("1.0.0")
+    .marketingVersion("1.0.1")
     .automaticCodeSigning(devTeam: "864VDCS2QY")
 
 let project = Project(name: "Mail",
