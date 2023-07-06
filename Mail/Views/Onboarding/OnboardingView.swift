@@ -128,7 +128,7 @@ class LoginHandler: InfomaniakLoginDelegate, ObservableObject {
                 _ = try await AccountManager.instance.createAndSetCurrentAccount(code: code, codeVerifier: verifier)
                 UIApplication.shared.registerForRemoteNotifications()
             } catch let error as MailError where error == MailError.noMailbox {
-                //sceneDelegate?.showNoMailboxView()
+                // sceneDelegate?.showNoMailboxView()
             } catch {
                 if let previousAccount = previousAccount {
                     AccountManager.instance.switchAccount(newAccount: previousAccount)
@@ -241,7 +241,7 @@ struct OnboardingView: View {
             if UIDevice.current.userInterfaceIdiom == .phone {
                 UIDevice.current
                     .setValue(UIInterfaceOrientation.portrait.rawValue, forKey: "orientation")
-              //  AppDelegate.orientationLock = .portrait
+                AppDelegate.orientationLock = .portrait
                 UIViewController.attemptRotationToDeviceOrientation()
             }
         }
