@@ -78,6 +78,14 @@ struct ThreadView: View {
         .onPreferenceChange(ScrollOffsetPreferenceKey.self) { offset in
             displayNavigationTitle = offset.y < -85
         }
+        .onAppear {
+            matomo.track(
+                eventWithCategory: .userInfo,
+                action: .data,
+                name: "nbMessagesInThread",
+                value: Float(thread.messages.count)
+            )
+        }
         .task {
             if thread.hasUnseenMessages {
                 try? await mailboxManager.toggleRead(threads: [thread])

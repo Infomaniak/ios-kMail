@@ -18,8 +18,6 @@
 
 import CocoaLumberjackSwift
 import InfomaniakCore
-import InfomaniakCoreUI
-import InfomaniakDI
 import MailCore
 import MailResources
 import RealmSwift
@@ -27,8 +25,6 @@ import SwiftUI
 
 /// Something that can display an email
 struct MessageView: View {
-    @LazyInjectService var matomo: MatomoUtils
-
     @EnvironmentObject var mailboxManager: MailboxManager
 
     @State var presentableBody: PresentableBody
