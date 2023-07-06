@@ -81,8 +81,8 @@ struct ComposeMessageWrapperView: View {
         _draft = State(initialValue: draft)
 
         // Append save draft action if possible
-        @InjectService var accountManager: AccountManager
-        if let mailboxManager = accountManager.currentMailboxManager {
+        @InjectService var manager: AccountManager
+        if let mailboxManager = manager.currentMailboxManager {
             let saveDraft: AsyncClosure = { @MainActor _ in
                 @InjectService var draftManager: DraftManager
                 let detached = draft.detached()

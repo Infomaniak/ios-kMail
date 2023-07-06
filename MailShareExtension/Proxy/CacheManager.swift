@@ -21,5 +21,7 @@ import UIKit
 
 /// A cache manager that works in Extension mode
 public final class CacheManager: CacheManageable {
-    public func refreshCacheData() {}
+    public func refreshCacheData() {
+        // NOOP in shareExtension
+    }
 }

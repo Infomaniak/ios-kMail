@@ -21,6 +21,11 @@ import UIKit
 
 /// An URLNavigator that works in Extension mode
 public struct URLNavigator: URLNavigable {
-    public func openUrl(_ url: URL) {}
-    public func openUrlIfPossible(_ url: URL) {}
+    public func openUrl(_ url: URL) {
+        // NOOP in share extension
+    }
+
+    public func openUrlIfPossible(_ url: URL) {
+        // NOOP in share extension
+    }
 }

@@ -24,7 +24,9 @@ import UIKit
 public final class OrientationManager: OrientationManageable {
     public var orientationLock = UIInterfaceOrientationMask.all
 
-    public func setOrientationLock(_ orientation: UIInterfaceOrientationMask) {}
+    public func setOrientationLock(_ orientation: UIInterfaceOrientationMask) {
+        // NOOP in share extension
+    }
 
     public var interfaceOrientation: UIInterfaceOrientation?
 }

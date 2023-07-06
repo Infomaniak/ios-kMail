@@ -30,5 +30,7 @@ public struct RootViewManager: RootViewManageable {
         nil
     }
 
-    public func updateAllWindowUI() {}
+    public func updateAllWindowUI() {
+        // NOOP in share extension
+    }
 }

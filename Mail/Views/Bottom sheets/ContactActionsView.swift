@@ -28,7 +28,6 @@ struct ContactActionsView: View {
     @Environment(\.dismiss) var dismiss
 
     @LazyInjectService private var matomo: MatomoUtils
-    @LazyInjectService private var accountManager: AccountManager
     @LazyInjectService private var snackbarPresenter: SnackBarPresentable
 
     @State private var writtenToRecipient: Recipient?
@@ -132,6 +131,7 @@ struct ContactActionsView: View {
     private func addToContacts() {
         Task {
             await tryOrDisplayError {
+                @InjectService var accountManager: AccountManager
                 try await accountManager.currentContactManager?.addContact(recipient: recipient)
                 snackbarPresenter.show(message: MailResourcesStrings.Localizable.snackbarContactSaved)
             }

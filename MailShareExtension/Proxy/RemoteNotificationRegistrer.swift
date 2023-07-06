@@ -21,5 +21,7 @@ import UIKit
 
 /// A RemoteNotificationRegistrer that works in Extension mode
 public final class RemoteNotificationRegistrer: RemoteNotificationRegistrable {
-    public func register() {}
+    public func register() {
+        // NOOP in share extension
+    }
 }
