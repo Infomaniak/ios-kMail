@@ -104,7 +104,7 @@ public final class AccountManager: RefreshTokenDelegate {
     public var currentMailboxManager: MailboxManager? {
         if let currentMailboxManager = getMailboxManager(for: currentMailboxId, userId: currentUserId) {
             return currentMailboxManager
-        } else if let newCurrentMailbox = mailboxes.first {
+        } else if let newCurrentMailbox = mailboxes.first(where: { $0.isAvailable }) {
             setCurrentMailboxForCurrentAccount(mailbox: newCurrentMailbox)
             return getMailboxManager(for: newCurrentMailbox)
         } else {
@@ -147,10 +147,7 @@ public final class AccountManager: RefreshTokenDelegate {
         if let account = account(for: currentUserId) ?? accounts.first {
             setCurrentAccount(account: account)
 
-            if let currentMailbox = MailboxInfosManager.instance
-                .getMailbox(id: currentMailboxId, userId: currentUserId) ?? mailboxes.first {
-                setCurrentMailboxForCurrentAccount(mailbox: currentMailbox)
-            }
+            switchToFirstValidMailboxManager()
         }
     }
 
@@ -330,6 +327,10 @@ public final class AccountManager: RefreshTokenDelegate {
             MailboxManager.deleteUserMailbox(userId: user.id, mailboxId: mailboxRemoved.mailboxId)
         }
 
+        if currentMailboxManager?.mailbox.isAvailable == false {
+            switchToFirstValidMailboxManager()
+        }
+
         saveAccounts()
     }
 
@@ -366,6 +367,23 @@ public final class AccountManager: RefreshTokenDelegate {
         }
     }
 
+    public func switchToFirstValidMailboxManager() {
+        // Current mailbox is valid
+        if let firstValidMailboxManager = currentMailboxManager,
+           !firstValidMailboxManager.mailbox.isLocked && firstValidMailboxManager.mailbox.isPasswordValid {
+            return
+        }
+
+        // At least one mailbox is valid
+        if let firstValidMailbox = mailboxes.first(where: { !$0.isLocked && $0.isPasswordValid && $0.userId == currentUserId }) {
+            switchMailbox(newMailbox: firstValidMailbox)
+            return
+        }
+
+        // No valid mailbox for current user
+        currentMailboxId = 0
+    }
+
     public func switchAccount(newAccount: Account) {
         setCurrentAccount(account: newAccount)
         if let defaultMailbox = (mailboxes.first(where: { $0.isPrimary }) ?? mailboxes.first) {
@@ -398,6 +416,18 @@ public final class AccountManager: RefreshTokenDelegate {
         _ = try await apiFetcher.addMailbox(mail: mail, password: password)
         try await updateUser(for: currentAccount)
         completion(mailboxes.first(where: { $0.email == mail }))
+    }
+
+    public func updateMailboxPassword(mailbox: Mailbox, password: String) async throws {
+        guard let apiFetcher = currentApiFetcher else { return }
+        _ = try await apiFetcher.updateMailboxPassword(mailbox: mailbox, password: password)
+        try await updateUser(for: currentAccount)
+    }
+
+    public func detachMailbox(mailbox: Mailbox) async throws {
+        guard let apiFetcher = currentApiFetcher else { return }
+        _ = try await apiFetcher.detachMailbox(mailbox: mailbox)
+        try await updateUser(for: currentAccount)
     }
 
     public func setCurrentAccount(account: Account) {

@@ -58,6 +58,10 @@ public class Mailbox: Object, Codable, Identifiable {
         return mailboxId
     }
 
+    public var isAvailable: Bool {
+        return isPasswordValid && !isLocked
+    }
+
     public var notificationTopicName: String {
         return "mailbox-\(mailboxId)"
     }

@@ -79,12 +79,14 @@ public final class MessageDeltaResult: Decodable {
     public let addedShortUids: [String]
     public let updated: [MessageFlags]
     public let cursor: String
+    public let unreadCount: Int
 
     private enum CodingKeys: String, CodingKey {
         case deletedShortUids = "deleted"
         case addedShortUids = "added"
         case updated
         case cursor = "signature"
+        case unreadCount
     }
 
     // FIXME: Remove this constructor when mixed Int/String arrayis fixed by backend
@@ -103,6 +105,7 @@ public final class MessageDeltaResult: Decodable {
         }
         updated = try container.decode([MessageFlags].self, forKey: .updated)
         cursor = try container.decode(String.self, forKey: .cursor)
+        unreadCount = try container.decode(Int.self, forKey: .unreadCount)
     }
 }
 
@@ -111,6 +114,7 @@ public struct MessagesUids {
     public var deletedUids = [String]()
     public var updated = [MessageFlags]()
     public let cursor: String
+    public var folderUnreadCount: Int?
 }
 
 public class MessageFlags: Decodable {
@@ -428,23 +432,17 @@ public final class Message: Object, Decodable, Identifiable {
     public func toThread() -> Thread {
         let thread = Thread(
             uid: "\(folderId)_\(uid)",
-            messagesCount: 1,
-            deletedMessagesCount: 1,
             messages: [self],
             unseenMessages: seen ? 0 : 1,
             from: Array(from),
             to: Array(to),
-            cc: Array(cc),
-            bcc: Array(bcc),
             subject: subject,
             date: date,
             hasAttachments: !attachments.isEmpty,
-            hasSwissTransferAttachments: false,
             hasDrafts: !(draftResource?.isEmpty ?? true),
             flagged: flagged,
             answered: answered,
-            forwarded: forwarded,
-            size: size
+            forwarded: forwarded
         )
         thread.messageIds = linkedUids
         return thread

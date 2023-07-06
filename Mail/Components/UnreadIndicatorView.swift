@@ -20,7 +20,8 @@ import MailCore
 import SwiftUI
 
 struct UnreadIndicatorView: View {
-    let hidden: Bool
+    var hidden = false
+
     var body: some View {
         Circle()
             .frame(width: UIConstants.unreadIconSize, height: UIConstants.unreadIconSize)

@@ -113,21 +113,4 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                      supportedInterfaceOrientationsFor window: UIWindow?) -> UIInterfaceOrientationMask {
         return orientationManager.orientationLock
     }
-
-    func refreshCacheData() {
-        guard let currentAccount = accountManager.currentAccount else {
-            return
-        }
-
-        Task {
-            do {
-                try await accountManager.updateUser(for: currentAccount)
-                accountManager.enableBugTrackerIfAvailable()
-
-                try await accountManager.currentContactManager?.fetchContactsAndAddressBooks()
-            } catch {
-                DDLogError("Error while updating user account: \(error)")
-            }
-        }
-    }
 }

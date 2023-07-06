@@ -106,6 +106,7 @@ public class Folder: Object, Codable, Comparable, Identifiable {
     @Persisted public var name: String
     @Persisted public var role: FolderRole?
     @Persisted public var unreadCount = 0
+    @Persisted public var remoteUnreadCount = 0
     @Persisted public var isFavorite: Bool
     @Persisted public var separator: String
     @Persisted public var children: MutableSet<Folder>
@@ -223,6 +224,7 @@ public class Folder: Object, Codable, Comparable, Identifiable {
         case isFavorite
         case separator
         case children
+        case remoteUnreadCount = "unreadCount"
     }
 
     public convenience init(

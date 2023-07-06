@@ -575,22 +575,16 @@ public class MailboxManager: ObservableObject {
 
                     let newThread = Thread(
                         uid: "offlineThread\(message.uid)",
-                        messagesCount: 1,
-                        deletedMessagesCount: 0,
                         messages: [newMessage],
                         unseenMessages: 0,
                         from: Array(message.from.detached()),
                         to: Array(message.to.detached()),
-                        cc: Array(message.cc.detached()),
-                        bcc: Array(message.bcc.detached()),
                         date: newMessage.date,
                         hasAttachments: newMessage.hasAttachments,
-                        hasSwissTransferAttachments: newMessage.hasAttachments,
                         hasDrafts: newMessage.isDraft,
                         flagged: newMessage.flagged,
                         answered: newMessage.answered,
-                        forwarded: newMessage.forwarded,
-                        size: newMessage.size
+                        forwarded: newMessage.forwarded
                     )
                     newThread.fromSearch = true
                     newThread.subject = message.subject
@@ -680,7 +674,8 @@ public class MailboxManager: ObservableObject {
                 deletedUids: messageDeltaResult.deletedShortUids
                     .map { Constants.longUid(from: $0, folderId: folder.id) },
                 updated: messageDeltaResult.updated,
-                cursor: messageDeltaResult.cursor
+                cursor: messageDeltaResult.cursor,
+                folderUnreadCount: messageDeltaResult.unreadCount
             )
         }
 
@@ -693,6 +688,9 @@ public class MailboxManager: ObservableObject {
             try? realm.safeWrite {
                 if previousCursor == nil && messagesUids.addedShortUids.count < Constants.pageSize {
                     folder.completeHistoryInfo()
+                }
+                if let newUnreadCount = messagesUids.folderUnreadCount {
+                    folder.remoteUnreadCount = newUnreadCount
                 }
                 folder.computeUnreadCount()
                 folder.cursor = messagesUids.cursor
@@ -1121,9 +1119,10 @@ public class MailboxManager: ObservableObject {
     }
 
     /// Where a new draft is saved in realm the first time if needed
-    public func draft(partialDraft: Draft) async throws -> Draft? {
+    public func draft(partialDraft: Draft) async throws {
+
         guard let associatedMessage = getRealm().object(ofType: Message.self, forPrimaryKey: partialDraft.messageUid)?.freeze()
-        else { return nil }
+        else { throw MailError.localMessageNotFound }
 
         // Get from API
         let draft = try await apiFetcher.draft(from: associatedMessage)
@@ -1141,8 +1140,6 @@ public class MailboxManager: ObservableObject {
                 realm.add(draft.detached(), update: .modified)
             }
         }
-
-        return getRealm().object(ofType: Draft.self, forPrimaryKey: draft.localUUID)?.freeze()
     }
 
     public func draft(messageUid: String, using realm: Realm? = nil) -> Draft? {

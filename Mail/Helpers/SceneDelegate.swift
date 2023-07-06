@@ -16,6 +16,7 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import CocoaLumberjackSwift
 import InfomaniakCore
 import InfomaniakCoreUI
 import InfomaniakDI
@@ -30,7 +31,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, AccountManagerDelegate 
     @LazyInjectService var cacheManager: CacheManageable
     @LazyInjectService var appLockHelper: AppLockHelper
     @LazyInjectService private var accountManager: AccountManager
-
+    
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
         // Use this method to optionally configure and attach the UIWindow `window` to the provided UIWindowScene `scene`.
         // If using a storyboard, the `window` property will automatically be initialized and attached to the scene.
@@ -70,7 +71,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, AccountManagerDelegate 
         // Called as the scene transitions from the background to the foreground.
         // Use this method to undo the changes made on entering the background.
         cacheManager.refreshCacheData()
-
+        
         if UserDefaults.shared.isAppLockEnabled && appLockHelper.isAppLocked {
             showLockView()
         }
@@ -161,6 +162,8 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, AccountManagerDelegate 
     func showMainView(animated: Bool = true) {
         if let mailboxManager = accountManager.currentMailboxManager {
             showMainView(mailboxManager: mailboxManager, animated: animated)
+        } else if accountManager.mailboxes.allSatisfy({ !$0.isAvailable }) {
+            setRootView(UnavailableMailboxesView(), animated: animated)
         } else {
             showNoMailboxView(animated: animated)
         }
@@ -168,6 +171,28 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, AccountManagerDelegate 
 
     func showLockView() {
         setRootView(LockedAppView(), animated: false)
+    }
+
+    func refreshCacheData() {
+        guard let currentAccount = accountManager.currentAccount else {
+            return
+        }
+
+        Task {
+            do {
+                let mailboxIdBeforeSwitching = accountManager.currentMailboxId
+                try await accountManager.updateUser(for: currentAccount)
+                accountManager.enableBugTrackerIfAvailable()
+
+                try await accountManager.currentContactManager?.fetchContactsAndAddressBooks()
+
+                if mailboxIdBeforeSwitching != accountManager.currentMailboxId {
+                    showMainView()
+                }
+            } catch {
+                DDLogError("Error while updating user account: \(error)")
+            }
+        }
     }
 
     // MARK: - Open URLs

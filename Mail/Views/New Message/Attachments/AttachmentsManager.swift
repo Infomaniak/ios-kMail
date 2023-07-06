@@ -22,6 +22,19 @@ import MailCore
 import PhotosUI
 import SwiftUI
 
+// <core> + Tests
+public extension Array {
+    subscript(safe range: Range<Index>) -> ArraySlice<Element> {
+        return self[Swift.min(range.startIndex, endIndex) ..< Swift.min(range.endIndex, endIndex)]
+    }
+
+    subscript(safe range: ClosedRange<Index>) -> ArraySlice<Element> {
+        return self[Swift.min(range.lowerBound, endIndex) ..< Swift.min(range.upperBound, endIndex)]
+    }
+}
+
+// </core>
+
 final class AttachmentUploadTask: ObservableObject {
     @Published var progress: Double = 0
     var task: Task<String?, Never>?
@@ -32,7 +45,7 @@ final class AttachmentUploadTask: ObservableObject {
 }
 
 @MainActor
-class AttachmentsManager: ObservableObject {
+final class AttachmentsManager: ObservableObject {
     private let draft: Draft
     private let mailboxManager: MailboxManager
     var attachments: [Attachment] {
@@ -59,7 +72,7 @@ class AttachmentsManager: ObservableObject {
 
     func completeUploadedAttachments() {
         for attachment in attachments {
-            let uploadTask = attachmentUploadTaskFor(uuid: attachment.uuid)
+            let uploadTask = attachmentUploadTaskOrCreate(for: attachment.uuid)
             uploadTask.progress = 1
         }
         objectWillChange.send()
@@ -84,11 +97,36 @@ class AttachmentsManager: ObservableObject {
         objectWillChange.send()
     }
 
-    func attachmentUploadTaskFor(uuid: String) -> AttachmentUploadTask {
-        if attachmentUploadTasks[uuid] == nil {
-            attachmentUploadTasks[uuid] = AttachmentUploadTask()
+    /// Lookup and return. New object created and returned instead
+    func attachmentUploadTaskOrCreate(for uuid: String) -> AttachmentUploadTask {
+        guard let attachment = attachmentUploadTask(for: uuid) else {
+            let newTask = AttachmentUploadTask()
+            attachmentUploadTasks[uuid] = newTask
+            return newTask
         }
-        return attachmentUploadTasks[uuid]!
+
+        return attachment
+    }
+
+    /// Lookup and return. New object representing a finished task instead.
+    func attachmentUploadTaskOrFinishedTask(for uuid: String) -> AttachmentUploadTask {
+        guard let attachment = attachmentUploadTask(for: uuid) else {
+            let finishedTask = AttachmentUploadTask()
+            finishedTask.progress = 1
+            attachmentUploadTasks[uuid] = finishedTask
+            return finishedTask
+        }
+
+        return attachment
+    }
+
+    /// Lookup and return, nil if not found
+    private func attachmentUploadTask(for uuid: String) -> AttachmentUploadTask? {
+        guard let attachment = attachmentUploadTasks[uuid] else {
+            return nil
+        }
+
+        return attachment
     }
 
     func removeAttachment(_ attachment: Attachment) {
@@ -163,8 +201,8 @@ class AttachmentsManager: ObservableObject {
         }
 
         // Cap max number of attachments, API errors out at 100
-        let attachments = attachments[0 ... draft.availableAttachmentsSlots]
-        
+        let attachments = attachments[safe: 0 ... draft.availableAttachmentsSlots]
+
         // TODO: use ParallelTaskMapper for performance here.
         for attachment in attachments {
             Task {

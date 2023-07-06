@@ -55,23 +55,17 @@ enum PreviewHelper {
                                      children: [])
 
     static let sampleThread = Thread(uid: "",
-                                     messagesCount: 2,
-                                     deletedMessagesCount: 0,
                                      messages: [sampleMessage],
                                      unseenMessages: 1,
                                      from: [sampleRecipient1],
                                      to: [sampleRecipient2],
-                                     cc: [],
-                                     bcc: [],
                                      subject: "Test thread",
                                      date: SentryDebug.knownDebugDate,
                                      hasAttachments: true,
-                                     hasSwissTransferAttachments: false,
                                      hasDrafts: false,
                                      flagged: true,
                                      answered: true,
-                                     forwarded: true,
-                                     size: 0)
+                                     forwarded: true)
 
     static let sampleMessage = Message(uid: "",
                                        msgId: "",

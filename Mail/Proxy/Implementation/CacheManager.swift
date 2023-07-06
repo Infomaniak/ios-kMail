@@ -16,12 +16,30 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import CocoaLumberjackSwift
 import Foundation
+import InfomaniakDI
+import MailCore
 import UIKit
 
 @available(iOSApplicationExtension, unavailable)
 public final class CacheManager: CacheManageable {
+    @LazyInjectService var accountManager: AccountManager
+
     public func refreshCacheData() {
-        (UIApplication.shared.delegate as? AppDelegate)?.refreshCacheData()
+        guard let currentAccount = accountManager.currentAccount else {
+            return
+        }
+
+        Task {
+            do {
+                try await accountManager.updateUser(for: currentAccount)
+                accountManager.enableBugTrackerIfAvailable()
+
+                try await accountManager.currentContactManager?.fetchContactsAndAddressBooks()
+            } catch {
+                DDLogError("Error while updating user account: \(error)")
+            }
+        }
     }
 }
