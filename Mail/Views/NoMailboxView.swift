@@ -23,6 +23,8 @@ import SwiftUI
 struct NoMailboxView: View {
     @Environment(\.window) var window
 
+    @State private var isShowingAddMailboxView = false
+
     let slide = Slide(
         id: 1,
         backgroundImage: MailResourcesAsset.onboardingBackground3.swiftUIImage,
@@ -44,11 +46,7 @@ struct NoMailboxView: View {
 
             VStack(spacing: 24) {
                 MailButton(icon: MailResourcesAsset.plus, label: MailResourcesStrings.Localizable.buttonAddEmailAddress) {
-                    AddMailboxView { _ in
-                        DispatchQueue.main.async {
-                            (window?.windowScene?.delegate as? SceneDelegate)?.showMainView()
-                        }
-                    }
+                    isShowingAddMailboxView = true
                 }
                 .mailButtonFullWidth(true)
 
@@ -59,6 +57,14 @@ struct NoMailboxView: View {
             }
             .frame(height: UIConstants.onboardingButtonHeight + UIConstants.onboardingBottomButtonPadding, alignment: .top)
             .padding(.horizontal, 24)
+        }
+        .sheet(isPresented: $isShowingAddMailboxView) {
+            AddMailboxView { _ in
+                DispatchQueue.main.async {
+                    (window?.windowScene?.delegate as? SceneDelegate)?.showMainView()
+                }
+            }
+            .sheetViewStyle()
         }
         .matomoView(view: ["NoMailboxView"])
     }
