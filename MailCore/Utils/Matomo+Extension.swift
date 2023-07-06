@@ -38,6 +38,7 @@ public extension MatomoUtils.EventCategory {
     static let message = MatomoUtils.EventCategory(displayName: "message")
     static let multiSelection = MatomoUtils.EventCategory(displayName: "multiSelection")
     static let newMessage = MatomoUtils.EventCategory(displayName: "newMessage")
+    static let noValidMailboxes = MatomoUtils.EventCategory(displayName: "noValidMailboxes")
     static let onboarding = MatomoUtils.EventCategory(displayName: "onboarding")
     static let replyBottomSheet = MatomoUtils.EventCategory(displayName: "replyBottomSheet")
     static let restoreEmailsBottomSheet = MatomoUtils.EventCategory(displayName: "restoreEmailsBottomSheet")
