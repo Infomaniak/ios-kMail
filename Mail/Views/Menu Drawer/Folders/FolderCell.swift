@@ -47,14 +47,13 @@ struct FolderCell: View {
 
     let folder: NestableFolder
     var level = 0
-
     var currentFolderId: String?
-
+    var canCollapseSubFolders = false
     var matomoCategory: MatomoUtils.EventCategory?
-
     var customCompletion: ((Folder) -> Void)?
 
     @State private var shouldTransit = false
+    @State private var showSubFolders = true
 
     private var isCurrentFolder: Bool {
         folder.id == currentFolderId
@@ -64,7 +63,13 @@ struct FolderCell: View {
         Group {
             if cellType == .indicator || isCompactWindow {
                 Button(action: didTapButton) {
-                    FolderCellContent(folder: folder.content, level: level, isCurrentFolder: isCurrentFolder)
+                    FolderCellContent(
+                        showSubFolders: $showSubFolders,
+                        folder: folder.content,
+                        level: level,
+                        isCurrentFolder: isCurrentFolder,
+                        canCollapseSubFolders: canCollapseSubFolders
+                    )
                 }
             } else {
                 NavigationLink(isActive: $shouldTransit) {
@@ -79,18 +84,27 @@ struct FolderCell: View {
                         splitViewManager.showSearch = false
                         self.shouldTransit = true
                     } label: {
-                        FolderCellContent(folder: folder.content, level: level, isCurrentFolder: isCurrentFolder)
+                        FolderCellContent(
+                            showSubFolders: $showSubFolders,
+                            folder: folder.content,
+                            level: level,
+                            isCurrentFolder: isCurrentFolder,
+                            canCollapseSubFolders: canCollapseSubFolders
+                        )
                     }
                 }
             }
 
-            ForEach(folder.children) { child in
-                FolderCell(
-                    folder: child,
-                    level: level + 1,
-                    currentFolderId: currentFolderId,
-                    customCompletion: customCompletion
-                )
+            if showSubFolders {
+                ForEach(folder.children) { child in
+                    FolderCell(
+                        folder: child,
+                        level: level + 1,
+                        currentFolderId: currentFolderId,
+                        canCollapseSubFolders: canCollapseSubFolders,
+                        customCompletion: customCompletion
+                    )
+                }
             }
         }
     }
@@ -116,14 +130,19 @@ struct FolderCell: View {
 struct FolderCellContent: View {
     @Environment(\.folderCellType) var cellType
 
+    @Binding var showSubFolders: Bool
+
     private let folder: Folder
     private let level: Int
     private let isCurrentFolder: Bool
+    private let canCollapseSubFolders: Bool
 
-    init(folder: Folder, level: Int, isCurrentFolder: Bool) {
+    init(showSubFolders: Binding<Bool>, folder: Folder, level: Int, isCurrentFolder: Bool, canCollapseSubFolders: Bool = false) {
+        _showSubFolders = showSubFolders
         self.folder = folder
         self.level = min(level, UIConstants.menuDrawerMaximumSubfolderLevel)
         self.isCurrentFolder = isCurrentFolder
+        self.canCollapseSubFolders = canCollapseSubFolders
     }
 
     private var textStyle: MailTextStyle {
@@ -135,6 +154,17 @@ struct FolderCellContent: View {
 
     var body: some View {
         HStack(spacing: UIConstants.menuDrawerHorizontalItemSpacing) {
+            if canCollapseSubFolders && cellType == .link {
+                Button {
+                    withAnimation {
+                        showSubFolders.toggle()
+                    }
+                } label: {
+                    ChevronIcon(style: showSubFolders ? .up : .down, color: .secondary)
+                }
+                .opacity(level == 0 && !folder.children.isEmpty ? 1 : 0)
+            }
+
             folder.icon
                 .resizable()
                 .scaledToFit()
