@@ -60,9 +60,9 @@ final class WebViewController: UIViewController {
 
         widthSubscriber = widthSubject
             .debounce(for: .seconds(0.3), scheduler: DispatchQueue.main)
-            .sink { newWidth in
+            .sink { [weak self] newWidth in
                 Task {
-                    try await self.normalizeMessageWidth(webViewWidth: CGFloat(newWidth))
+                    try await self?.normalizeMessageWidth(webViewWidth: CGFloat(newWidth))
                 }
             }
     }
