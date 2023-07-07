@@ -30,6 +30,7 @@ struct UpdateMailboxPasswordView: View {
     @State private var updatedMailboxPassword = ""
     @State private var isShowingError = false
     @State private var isLoading = false
+    @State private var showDetachMailboxAlert = false
 
     private var disableButton: Bool {
         return isLoading || showPasswordLengthWarning
@@ -49,7 +50,7 @@ struct UpdateMailboxPasswordView: View {
                     .textStyle(.bodySecondary)
                 MailButton(label: MailResourcesStrings.Localizable.buttonDetachMailbox) {
                     matomo.track(eventWithCategory: .invalidPasswordMailbox, name: "detachMailbox")
-                    detachAddress()
+                    showDetachMailboxAlert.toggle()
                 }
                 .mailButtonStyle(.link)
                 .disabled(isLoading)
@@ -100,6 +101,9 @@ struct UpdateMailboxPasswordView: View {
         .navigationTitle(MailResourcesStrings.Localizable.enterPasswordTitle)
         .sheetViewStyle()
         .matomoView(view: ["UpdateMailboxPasswordView"])
+        .customAlert(isPresented: $showDetachMailboxAlert) {
+            DetachMailboxConfirmationView(mailbox: mailbox)
+        }
     }
 
     func updateMailboxPassword() {
@@ -107,19 +111,6 @@ struct UpdateMailboxPasswordView: View {
             isLoading = true
             do {
                 try await AccountManager.instance.updateMailboxPassword(mailbox: mailbox, password: updatedMailboxPassword)
-                navigationState.transitionToRootViewDestination(.mainView)
-            } catch {
-                isShowingError = true
-            }
-            isLoading = false
-        }
-    }
-
-    func detachAddress() {
-        Task {
-            isLoading = true
-            do {
-                try await AccountManager.instance.detachMailbox(mailbox: mailbox)
                 navigationState.transitionToRootViewDestination(.mainView)
             } catch {
                 isShowingError = true
