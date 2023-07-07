@@ -74,6 +74,7 @@ class LoginHandler: InfomaniakLoginDelegate, ObservableObject {
 
     @Published var isLoading = false
     @Published var isPresentingErrorAlert = false
+    @Published var shouldShowEmptyMailboxesView = false
 
     nonisolated func didCompleteLoginWith(code: String, verifier: String) {
         Task {
@@ -128,7 +129,7 @@ class LoginHandler: InfomaniakLoginDelegate, ObservableObject {
                 _ = try await AccountManager.instance.createAndSetCurrentAccount(code: code, codeVerifier: verifier)
                 UIApplication.shared.registerForRemoteNotifications()
             } catch let error as MailError where error == MailError.noMailbox {
-                // sceneDelegate?.showNoMailboxView()
+                shouldShowEmptyMailboxesView = true
             } catch {
                 if let previousAccount = previousAccount {
                     AccountManager.instance.switchAccount(newAccount: previousAccount)
@@ -149,6 +150,8 @@ class LoginHandler: InfomaniakLoginDelegate, ObservableObject {
 struct OnboardingView: View {
     @Environment(\.dismiss) private var dismiss
 
+    @EnvironmentObject private var navigationState: NavigationState
+    
     @AppStorage(UserDefaults.shared.key(.accentColor)) private var accentColor = DefaultPreferences.accentColor
 
     @State private var selection: Int
@@ -167,7 +170,8 @@ struct OnboardingView: View {
     var body: some View {
         VStack(spacing: 0) {
             Group {
-                if !isScrollEnabled, let slide = slides.first { $0.id == selection } {
+                if !isScrollEnabled,
+                   let slide = slides.first(where: { $0.id == selection }) {
                     SlideView(slide: slide, updateAnimationColors: updateAnimationColors)
                 } else {
                     TabView(selection: $selection) {
@@ -245,7 +249,11 @@ struct OnboardingView: View {
                 UIViewController.attemptRotationToDeviceOrientation()
             }
         }
-        .defaultAppStorage(.shared)
+        .onChange(of: loginHandler.shouldShowEmptyMailboxesView) { shouldShowEmptyMailboxesView in
+            if shouldShowEmptyMailboxesView {
+                navigationState.transitionToRootViewDestination(.noMailboxes)
+            }
+        }
     }
 
     // MARK: - Private methods

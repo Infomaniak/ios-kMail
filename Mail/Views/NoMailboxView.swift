@@ -56,9 +56,6 @@ struct NoMailboxView: View {
             .frame(height: UIConstants.onboardingButtonHeight + UIConstants.onboardingBottomButtonPadding, alignment: .top)
             .padding(.horizontal, 24)
         }
-        .sheet(isPresented: $isShowingAddMailboxView) {
-            AddMailboxView()
-        }
         .matomoView(view: ["NoMailboxView"])
         .sheet(isPresented: $isShowingAddMailboxView) {
             AddMailboxView()

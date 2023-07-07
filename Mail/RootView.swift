@@ -33,6 +33,10 @@ struct RootView: View {
                 SplitView(mailboxManager: currentMailboxManager)
             case .onboarding:
                 OnboardingView()
+            case .noMailboxes:
+                NoMailboxView()
+            case .unavailableMailboxes:
+                UnavailableMailboxesView()
             }
         }
         .environment(\.isCompactWindow, horizontalSizeClass == .compact || verticalSizeClass == .compact)

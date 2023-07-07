@@ -34,6 +34,10 @@ enum RootViewState: Equatable, Hashable, Identifiable {
             return true
         case (.onboarding, .onboarding):
             return true
+        case (.noMailboxes, .noMailboxes):
+            return true
+        case (.unavailableMailboxes, .unavailableMailboxes):
+            return true
         case (.mainView(let lhsMailboxManager), .mainView(let rhsMailboxManager)):
             return lhsMailboxManager.mailbox.objectId == rhsMailboxManager.mailbox.objectId
         default:
@@ -49,18 +53,26 @@ enum RootViewState: Equatable, Hashable, Identifiable {
             hasher.combine("mainView\(mailboxManager.mailbox.objectId)")
         case .onboarding:
             hasher.combine("onboarding")
+        case .noMailboxes:
+            hasher.combine("noMailboxes")
+        case .unavailableMailboxes:
+            hasher.combine("unavailableMailboxes")
         }
     }
 
     case appLocked
     case mainView(MailboxManager)
     case onboarding
+    case noMailboxes
+    case unavailableMailboxes
 }
 
 enum RootViewDestination {
     case appLocked
     case mainView
     case onboarding
+    case noMailboxes
+    case unavailableMailboxes
 }
 
 @MainActor
@@ -84,6 +96,8 @@ class NavigationState: ObservableObject {
         if accountManager.currentAccount != nil,
            let currentMailboxManager = accountManager.currentMailboxManager {
             rootViewState = .mainView(currentMailboxManager)
+        } else if !accountManager.mailboxes.isEmpty && accountManager.mailboxes.allSatisfy({ !$0.isAvailable }) {
+            rootViewState = .unavailableMailboxes
         } else {
             rootViewState = .onboarding
         }
@@ -102,6 +116,10 @@ class NavigationState: ObservableObject {
                 switchToCurrentMailboxManagerIfPossible()
             case .onboarding:
                 rootViewState = .onboarding
+            case .noMailboxes:
+                rootViewState = .noMailboxes
+            case .unavailableMailboxes:
+                rootViewState = .unavailableMailboxes
             }
         }
     }
@@ -120,6 +138,8 @@ class NavigationState: ObservableObject {
             if rootViewState != .mainView(currentMailboxManager) {
                 rootViewState = .mainView(currentMailboxManager)
             }
+        } else if !accountManager.mailboxes.isEmpty && accountManager.mailboxes.allSatisfy({ !$0.isAvailable }) {
+            rootViewState = .unavailableMailboxes
         } else {
             rootViewState = .onboarding
         }
