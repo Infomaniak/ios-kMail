@@ -202,6 +202,12 @@ struct ComposeMessageView: View {
             let rect = CGRect(x: 0, y: realPosition, width: 1, height: 1)
             scrollView.scrollRectToVisible(rect, animated: true)
         }
+        .onChange(of: autocompletionType) { newValue in
+            guard newValue != nil else { return }
+
+            let rectTop = CGRect(x: 0, y: 0, width: 1, height: 1)
+            scrollView?.scrollRectToVisible(rectTop, animated: true)
+        }
         .navigationTitle(MailResourcesStrings.Localizable.buttonNewMessage)
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
