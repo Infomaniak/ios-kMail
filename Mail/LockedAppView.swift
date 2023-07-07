@@ -25,7 +25,7 @@ import SwiftUI
 struct LockedAppView: View {
     @LazyInjectService var appLockHelper: AppLockHelper
 
-    @EnvironmentObject var navigationState: NavigationStore
+    @EnvironmentObject var navigationState: NavigationState
 
     var body: some View {
         ZStack {

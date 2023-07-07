@@ -39,7 +39,7 @@ struct ThreadListView: View {
     @LazyInjectService private var matomo: MatomoUtils
 
     @EnvironmentObject var splitViewManager: SplitViewManager
-    @EnvironmentObject var navigationStore: NavigationStore
+    @EnvironmentObject var navigationState: NavigationState
 
     @AppStorage(UserDefaults.shared.key(.threadDensity)) private var threadDensity = DefaultPreferences.threadDensity
     @AppStorage(UserDefaults.shared.key(.accentColor)) private var accentColor = DefaultPreferences.accentColor
@@ -223,9 +223,9 @@ struct ThreadListView: View {
         }
         .onChange(of: viewModel.selectedThread) { newThread in
             if let newThread {
-                navigationStore.threadPath = [newThread]
+                navigationState.threadPath = [newThread]
             } else {
-                navigationStore.threadPath = []
+                navigationState.threadPath = []
             }
         }
         .onReceive(NotificationCenter.default.publisher(for: UIApplication.willEnterForegroundNotification)) { _ in

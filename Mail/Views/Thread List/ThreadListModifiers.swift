@@ -58,7 +58,7 @@ struct ThreadListToolbar: ViewModifier {
 
     @EnvironmentObject private var splitViewManager: SplitViewManager
     @EnvironmentObject private var navigationDrawerState: NavigationDrawerState
-    @EnvironmentObject private var navigationStore: NavigationStore
+    @EnvironmentObject private var navigationState: NavigationState
 
     @State private var isShowingSwitchAccount = false
     @State private var multipleSelectionActionsTarget: ActionsTarget?

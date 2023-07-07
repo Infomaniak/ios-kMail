@@ -25,7 +25,7 @@ import SwiftUI
 
 struct ThreadListCell: View {
     @EnvironmentObject var splitViewManager: SplitViewManager
-    @EnvironmentObject var navigationStore: NavigationStore
+    @EnvironmentObject var navigationState: NavigationState
 
     let viewModel: ThreadListViewModel
     @ObservedObject var multipleSelectionViewModel: ThreadListMultipleSelectionViewModel
@@ -69,14 +69,14 @@ struct ThreadListCell: View {
                 DraftUtils.editDraft(
                     from: thread,
                     mailboxManager: viewModel.mailboxManager,
-                    editedMessageDraft: $navigationStore.editedMessageDraft
+                    editedMessageDraft: $navigationState.editedMessageDraft
                 )
             } else {
                 splitViewManager.adaptToProminentThreadView()
 
-                // Update both viewModel and navigationStore on the truth.
+                // Update both viewModel and navigationState on the truth.
                 viewModel.selectedThread = thread
-                navigationStore.threadPath = [thread]
+                navigationState.threadPath = [thread]
             }
         }
     }

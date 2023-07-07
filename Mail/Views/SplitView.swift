@@ -43,7 +43,7 @@ struct SplitView: View {
     @Environment(\.isCompactWindow) private var isCompactWindow
     @Environment(\.scenePhase) private var scenePhase
 
-    @EnvironmentObject private var navigationStore: NavigationStore
+    @EnvironmentObject private var navigationState: NavigationState
 
     @State private var splitViewController: UISplitViewController?
     @State private var mailToURLComponents: IdentifiableURLComponents?
@@ -57,7 +57,7 @@ struct SplitView: View {
         Group {
             if isCompactWindow {
                 ZStack {
-                    NBNavigationStack(path: $navigationStore.threadPath) {
+                    NBNavigationStack(path: $navigationState.threadPath) {
                         ThreadListManagerView()
                             .accessibilityHidden(navigationDrawerController.isOpen)
                             .nbNavigationDestination(for: Thread.self) { thread in
@@ -76,7 +76,7 @@ struct SplitView: View {
 
                     ThreadListManagerView()
 
-                    if let thread = navigationStore.threadPath.last {
+                    if let thread = navigationState.threadPath.last {
                         ThreadView(thread: thread)
                     } else {
                         EmptyStateView.emptyThread(from: splitViewManager.selectedFolder)
@@ -84,13 +84,13 @@ struct SplitView: View {
                 }
             }
         }
-        .sheet(item: $navigationStore.messageReply) { messageReply in
+        .sheet(item: $navigationState.messageReply) { messageReply in
             ComposeMessageView.replyOrForwardMessage(messageReply: messageReply, mailboxManager: mailboxManager)
         }
         .sheet(item: $mailToURLComponents) { identifiableURLComponents in
             ComposeMessageView.mailTo(urlComponents: identifiableURLComponents.urlComponents, mailboxManager: mailboxManager)
         }
-        .sheet(item: $navigationStore.editedMessageDraft) { editedMessageDraft in
+        .sheet(item: $navigationState.editedMessageDraft) { editedMessageDraft in
             ComposeMessageView.edit(draft: editedMessageDraft, mailboxManager: mailboxManager)
         }
         .onChange(of: scenePhase) { newScenePhase in
@@ -110,7 +110,7 @@ struct SplitView: View {
             let tappedNotificationMessage = realm.object(ofType: Message.self, forPrimaryKey: notificationPayload.messageId)
             // Original parent should always be in the inbox but maybe change in a later stage to always find the parent in inbox
             if let tappedNotificationThread = tappedNotificationMessage?.originalThread {
-                navigationStore.threadPath = [tappedNotificationThread]
+                navigationState.threadPath = [tappedNotificationThread]
             } else {
                 IKSnackBar.showSnackBar(message: MailError.localMessageNotFound.errorDescription)
             }

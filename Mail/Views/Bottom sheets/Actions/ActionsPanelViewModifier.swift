@@ -28,7 +28,7 @@ extension View {
 
 struct ActionsPanelViewModifier: ViewModifier {
     @EnvironmentObject private var mailboxManager: MailboxManager
-    @EnvironmentObject private var navigationStore: NavigationStore
+    @EnvironmentObject private var navigationState: NavigationState
 
     @State private var moveAction: MoveAction?
     @State private var reportJunkActionsTarget: ActionsTarget?
@@ -44,7 +44,7 @@ struct ActionsPanelViewModifier: ViewModifier {
             ActionsView(mailboxManager: mailboxManager,
                         target: target,
                         moveAction: $moveAction,
-                        messageReply: $navigationStore.messageReply,
+                        messageReply: $navigationState.messageReply,
                         reportJunkActionsTarget: $reportJunkActionsTarget,
                         reportedForDisplayProblemMessage: $reportedForDisplayProblemMessage) {
                 completionHandler?()

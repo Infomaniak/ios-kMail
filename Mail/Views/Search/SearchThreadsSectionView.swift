@@ -21,7 +21,7 @@ import MailResources
 import SwiftUI
 
 struct SearchThreadsSectionView: View {
-    @EnvironmentObject private var navigationStore: NavigationStore
+    @EnvironmentObject private var navigationState: NavigationState
     @EnvironmentObject private var splitViewManager: SplitViewManager
 
     @AppStorage(UserDefaults.shared.key(.threadDensity)) private var threadDensity = DefaultPreferences.threadDensity
@@ -65,14 +65,14 @@ struct SearchThreadsSectionView: View {
             DraftUtils.editDraft(
                 from: thread,
                 mailboxManager: viewModel.mailboxManager,
-                editedMessageDraft: $navigationStore.editedMessageDraft
+                editedMessageDraft: $navigationState.editedMessageDraft
             )
         } else {
             splitViewManager.adaptToProminentThreadView()
 
-            // Update both viewModel and navigationStore on the truth.
+            // Update both viewModel and navigationState on the truth.
             viewModel.selectedThread = thread
-            navigationStore.threadPath = [thread]
+            navigationState.threadPath = [thread]
         }
     }
 }

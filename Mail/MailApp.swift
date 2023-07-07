@@ -88,7 +88,7 @@ struct MailApp: App {
     @AppStorage(UserDefaults.shared.key(.accentColor)) private var accentColor = DefaultPreferences.accentColor
     @AppStorage(UserDefaults.shared.key(.theme)) private var theme = DefaultPreferences.theme
 
-    @StateObject private var navigationStore = NavigationStore()
+    @StateObject private var navigationState = NavigationState()
 
     private let accountManager = AccountManager.instance
 
@@ -101,7 +101,7 @@ struct MailApp: App {
     var body: some Scene {
         WindowGroup {
             RootView()
-                .environmentObject(navigationStore)
+                .environmentObject(navigationState)
                 .onAppear {
                     updateUI(accent: accentColor, theme: theme)
                 }
@@ -115,9 +115,9 @@ struct MailApp: App {
                     switch newScenePhase {
                     case .active:
                         refreshCacheData()
-                        navigationStore.transitionToLockViewIfNeeded()
+                        navigationState.transitionToLockViewIfNeeded()
                     case .background:
-                        if UserDefaults.shared.isAppLockEnabled && navigationStore.rootViewState != .appLocked {
+                        if UserDefaults.shared.isAppLockEnabled && navigationState.rootViewState != .appLocked {
                             appLockHelper.setTime()
                         }
                     case .inactive:

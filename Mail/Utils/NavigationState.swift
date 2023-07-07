@@ -65,7 +65,7 @@ enum RootViewDestination {
 
 @MainActor
 /// Something that represents the state of navigation
-class NavigationStore: ObservableObject {
+class NavigationState: ObservableObject {
     @LazyInjectService private var appLockHelper: AppLockHelper
 
     private let accountManager = AccountManager.instance
