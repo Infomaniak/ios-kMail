@@ -63,8 +63,8 @@ final class WebViewController: UIViewController {
 
         webView.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
-            webView.heightAnchor.constraint(equalTo: view.heightAnchor, multiplier: 1),
-            webView.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 1)
+            webView.heightAnchor.constraint(equalTo: view.heightAnchor),
+            webView.widthAnchor.constraint(equalTo: view.widthAnchor)
         ])
 
         setUpWebView(webView)
