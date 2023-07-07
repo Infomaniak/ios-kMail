@@ -26,10 +26,9 @@ struct ComposeMessageBodyView: View {
     @State private var isShowingFileSelection = false
     @State private var isShowingPhotoLibrary = false
 
-    @StateObject private var editorModel = RichTextEditorModel()
-
     @ObservedRealmObject var draft: Draft
 
+    @Binding var editorModel: RichTextEditorModel
     @Binding var isLoadingContent: Bool
     @Binding var editorFocus: Bool
 
@@ -48,7 +47,7 @@ struct ComposeMessageBodyView: View {
             AttachmentsHeaderView(attachmentsManager: attachmentsManager)
 
             RichTextEditor(
-                model: editorModel,
+                model: $editorModel,
                 body: $draft.body,
                 alert: $alert,
                 isShowingCamera: $isShowingCamera,
@@ -87,6 +86,7 @@ struct ComposeMessageBodyView_Previews: PreviewProvider {
         @Environment(\.dismiss) var dismiss
 
         ComposeMessageBodyView(draft: Draft(),
+                               editorModel: .constant(RichTextEditorModel()),
                                isLoadingContent: .constant(false),
                                editorFocus: .constant(false),
                                attachmentsManager: AttachmentsManager(
