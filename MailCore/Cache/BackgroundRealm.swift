@@ -20,11 +20,11 @@ import Foundation
 import RealmSwift
 import Sentry
 
-public class BackgroundRealm {
+public final class BackgroundRealm {
     private let configuration: Realm.Configuration
     private let queue: DispatchQueue
 
-    init(configuration: Realm.Configuration) {
+    public init(configuration: Realm.Configuration) {
         guard let fileURL = configuration.fileURL else {
             fatalError("Realm configurations without file URL not supported")
         }

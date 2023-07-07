@@ -17,7 +17,9 @@
  */
 
 import CocoaLumberjackSwift
+import Combine
 import Foundation
+import InfomaniakCore
 import MailCore
 import PhotosUI
 import SwiftUI
@@ -27,9 +29,64 @@ public extension Array {
     subscript(safe range: Range<Index>) -> ArraySlice<Element> {
         return self[Swift.min(range.startIndex, endIndex) ..< Swift.min(range.endIndex, endIndex)]
     }
+}
 
-    subscript(safe range: ClosedRange<Index>) -> ArraySlice<Element> {
-        return self[Swift.min(range.lowerBound, endIndex) ..< Swift.min(range.upperBound, endIndex)]
+/// A thread safe Dictionary wrapper that does not require `await`. Conforms to Sendable.
+///
+/// Useful when dealing with UI.
+public final class SendableDictionary<T: Hashable, U>: @unchecked Sendable {
+    let lock = DispatchQueue(label: "com.infomaniak.core.SendableDictionary.lock")
+    private(set) var content = [T: U]()
+
+    public init() {
+        // META: keep SonarCloud happy
+    }
+
+    public var values: Dictionary<T, U>.Values {
+        var buffer: Dictionary<T, U>.Values!
+        lock.sync {
+            buffer = content.values
+        }
+        return buffer
+    }
+
+    public func value(for key: T) -> U? {
+        var buffer: U?
+        lock.sync {
+            buffer = content[key]
+        }
+        return buffer
+    }
+
+    public func setValue(_ value: U?, for key: T) {
+        lock.sync {
+            content[key] = value
+        }
+    }
+
+    public func removeValue(forKey key: T) {
+        lock.sync {
+            content.removeValue(forKey: key)
+        }
+    }
+
+    public subscript(_ key: T) -> U? {
+        get {
+            value(for: key)
+        }
+        set {
+            setValue(newValue, for: key)
+        }
+    }
+}
+
+public extension ParallelTaskMapper {
+    // TODO: move to core and change implem to work with ArraySlice by default
+    func map<Input, Output>(
+        slice: ArraySlice<Input>,
+        toOperation operation: @escaping @Sendable (_ item: Input) async throws -> Output?
+    ) async throws -> [Output?] {
+        try await map(collection: Array(slice), toOperation: operation)
     }
 }
 
@@ -48,11 +105,19 @@ final class AttachmentUploadTask: ObservableObject {
 final class AttachmentsManager: ObservableObject {
     private let draft: Draft
     private let mailboxManager: MailboxManager
+    private let parallelTaskMapper = ParallelTaskMapper()
+    private let backgroundRealm: BackgroundRealm
+
+    /// Something to debounce content will change updates
+    private let contentWillChangeSubject = PassthroughSubject<Void, Never>()
+    private var contentWillChangeObserver: AnyCancellable?
+
     var attachments: [Attachment] {
         return draft.attachments.filter { $0.contentId == nil }.toArray()
     }
 
-    private(set) var attachmentUploadTasks = [String: AttachmentUploadTask]()
+    private var attachmentUploadTasks = SendableDictionary<String, AttachmentUploadTask>()
+
     var allAttachmentsUploaded: Bool {
         return attachmentUploadTasks.values.allSatisfy(\.uploadDone)
     }
@@ -68,6 +133,14 @@ final class AttachmentsManager: ObservableObject {
     init(draft: Draft, mailboxManager: MailboxManager) {
         self.draft = draft
         self.mailboxManager = mailboxManager
+
+        // Debouncing objectWillChange helps a lot scaling with numerous attachments
+        backgroundRealm = BackgroundRealm(configuration: mailboxManager.realmConfiguration)
+        contentWillChangeObserver = contentWillChangeSubject
+            .debounce(for: .milliseconds(150), scheduler: DispatchQueue.main)
+            .sink { _ in
+                self.objectWillChange.send()
+            }
     }
 
     func completeUploadedAttachments() {
@@ -75,26 +148,39 @@ final class AttachmentsManager: ObservableObject {
             let uploadTask = attachmentUploadTaskOrCreate(for: attachment.uuid)
             uploadTask.progress = 1
         }
-        objectWillChange.send()
+        contentWillChangeSubject.send()
     }
 
-    private func updateAttachment(oldAttachment: Attachment, newAttachment: Attachment) {
-        guard let realm = draft.realm,
-              let oldAttachment = draft.attachments.first(where: { $0.uuid == oldAttachment.uuid }) else {
+    private func updateAttachment(oldAttachment: Attachment, newAttachment: Attachment) async {
+        guard let oldAttachment = draft.attachments.first(where: { $0.uuid == oldAttachment.uuid }) else {
             return
         }
 
-        if oldAttachment.uuid != newAttachment.uuid {
-            attachmentUploadTasks[newAttachment.uuid] = attachmentUploadTasks[oldAttachment.uuid]
-            attachmentUploadTasks.removeValue(forKey: oldAttachment.uuid)
+        let oldAttachmentUUID = oldAttachment.uuid
+        let newAttachmentUUID = newAttachment.uuid
+        let primaryKey = draft.localUUID
+
+        if oldAttachmentUUID != newAttachmentUUID {
+            attachmentUploadTasks[newAttachmentUUID] = attachmentUploadTasks[oldAttachmentUUID]
+            attachmentUploadTasks.removeValue(forKey: oldAttachmentUUID)
         }
 
-        try? realm.write {
-            // We need to update every field of the local attachment because embedded objects don't have a primary key
-            oldAttachment.update(with: newAttachment)
+        await backgroundRealm.execute { realm in
+            try? realm.write {
+                guard let draftInContext = realm.object(ofType: Draft.self, forPrimaryKey: primaryKey) else {
+                    return
+                }
+
+                guard let liveOldAttachment = draftInContext.attachments.first(where: { $0.uuid == oldAttachmentUUID }) else {
+                    return
+                }
+
+                // We need to update every field of the local attachment because embedded objects don't have a primary key
+                liveOldAttachment.update(with: newAttachment)
+            }
         }
 
-        objectWillChange.send()
+        contentWillChangeSubject.send()
     }
 
     /// Lookup and return. New object created and returned instead
@@ -130,26 +216,50 @@ final class AttachmentsManager: ObservableObject {
     }
 
     func removeAttachment(_ attachment: Attachment) {
-        guard let realm = draft.realm,
-              let liveAttachment = draft.attachments.first(where: { $0.uuid == attachment.uuid }) else { return }
+        let attachmentUUID = attachment.uuid
+        let primaryKey = draft.localUUID
 
-        let attachmentUUID = liveAttachment.uuid
-        try? realm.write {
-            realm.delete(liveAttachment)
+        Task {
+            await backgroundRealm.execute { realm in
+                try? realm.write {
+                    guard let draftInContext = realm.object(ofType: Draft.self, forPrimaryKey: primaryKey) else {
+                        return
+                    }
+
+                    guard let liveAttachment = draftInContext.attachments.first(where: { $0.uuid == attachmentUUID }) else {
+                        return
+                    }
+
+                    realm.delete(liveAttachment)
+                }
+            }
+
+            attachmentUploadTasks[attachmentUUID]?.task?.cancel()
+            attachmentUploadTasks.removeValue(forKey: attachmentUUID)
+
+            contentWillChangeSubject.send()
         }
-        attachmentUploadTasks[attachmentUUID]?.task?.cancel()
-        attachmentUploadTasks.removeValue(forKey: attachmentUUID)
-
-        objectWillChange.send()
     }
 
-    private func addLocalAttachment(attachment: Attachment) -> Attachment {
+    private func addLocalAttachment(attachment: Attachment) async -> Attachment? {
         attachmentUploadTasks[attachment.uuid] = AttachmentUploadTask()
-        try? draft.realm?.write {
-            draft.attachments.append(attachment)
+        let primaryKey = draft.localUUID
+
+        var detached: Attachment?
+        await backgroundRealm.execute { realm in
+            try? realm.write {
+                guard let draftInContext = realm.object(ofType: Draft.self, forPrimaryKey: primaryKey) else {
+                    return
+                }
+
+                draftInContext.attachments.append(attachment)
+            }
+
+            detached = attachment.detached()
         }
-        objectWillChange.send()
-        return attachment.freeze()
+
+        contentWillChangeSubject.send()
+        return detached
     }
 
     private func updateAttachmentUploadError(attachment: Attachment, error: Error?) {
@@ -160,10 +270,9 @@ final class AttachmentsManager: ObservableObject {
         }
     }
 
-    @MainActor
     private func createLocalAttachment(name: String,
                                        type: UTType?,
-                                       disposition: AttachmentDisposition) -> Attachment {
+                                       disposition: AttachmentDisposition) async -> Attachment? {
         let name = nameWithExtension(name: name,
                                      correspondingTo: type)
         let attachment = Attachment(uuid: UUID().uuidString,
@@ -172,7 +281,7 @@ final class AttachmentsManager: ObservableObject {
                                     size: 0,
                                     name: name,
                                     disposition: disposition)
-        let savedAttachment = addLocalAttachment(attachment: attachment)
+        let savedAttachment = await addLocalAttachment(attachment: attachment)
         return savedAttachment
     }
 
@@ -191,7 +300,7 @@ final class AttachmentsManager: ObservableObject {
                                        name: updatedName,
                                        disposition: attachment.disposition)
 
-        updateAttachment(oldAttachment: attachment, newAttachment: newAttachment)
+        await updateAttachment(oldAttachment: attachment, newAttachment: newAttachment)
         return newAttachment
     }
 
@@ -201,21 +310,23 @@ final class AttachmentsManager: ObservableObject {
         }
 
         // Cap max number of attachments, API errors out at 100
-        let attachments = attachments[safe: 0 ... draft.availableAttachmentsSlots]
+        let attachmentsSlice = attachments[safe: 0 ..< draft.availableAttachmentsSlots]
 
-        // TODO: use ParallelTaskMapper for performance here.
-        for attachment in attachments {
-            Task {
-                let cid = await importAttachment(attachment: attachment, disposition: disposition)
+        Task.detached {
+            try? await self.parallelTaskMapper.map(slice: attachmentsSlice) { attachment in
+                _ = await self.importAttachment(attachment: attachment, disposition: disposition)
                 // TODO: - Manage inline attachment
             }
         }
     }
 
     private func importAttachment(attachment: Attachable, disposition: AttachmentDisposition) async -> String? {
-        let localAttachment = createLocalAttachment(name: attachment.suggestedName ?? getDefaultFileName(),
-                                                    type: attachment.type,
-                                                    disposition: disposition)
+        guard let localAttachment = await createLocalAttachment(name: attachment.suggestedName ?? getDefaultFileName(),
+                                                                type: attachment.type,
+                                                                disposition: disposition) else {
+            return nil
+        }
+
         let importTask = Task { () -> String? in
             do {
                 let url = try await attachment.writeToTemporaryURL()
@@ -273,7 +384,7 @@ final class AttachmentsManager: ObservableObject {
                 self?.attachmentUploadTasks[localAttachment.uuid]?.progress = progress
             }
         }
-        updateAttachment(oldAttachment: localAttachment, newAttachment: remoteAttachment)
+        await updateAttachment(oldAttachment: localAttachment, newAttachment: remoteAttachment)
         return remoteAttachment
     }
 }
