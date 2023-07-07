@@ -158,7 +158,9 @@ public enum Constants {
         let appName = Bundle.main.object(forInfoDictionaryKey: "CFBundleName") as! String? ?? "Mail"
         let release = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as! String? ?? "x.x"
         let build = Bundle.main.object(forInfoDictionaryKey: "CFBundleVersion") as! String? ?? "x"
-        return "\(appName) iOS version \(release)-beta\(build)"
+        let betaRelease = Bundle.main.isRunningInTestFlight ? "beta" : ""
+
+        return "\(appName) iOS version \(release)-\(betaRelease)\(build)"
     }
 
     public static let searchFolderId = "search_folder_id"

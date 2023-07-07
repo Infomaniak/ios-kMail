@@ -49,23 +49,34 @@ extension WKWebView {
 final class WebViewController: UIViewController {
     @LazyInjectService var urlNavigator: URLNavigable
 
-    var model: WebViewModel!
-    var messageUid: String!
+    var model: WebViewModel?
+    var messageUid: String?
 
     private let widthSubject = PassthroughSubject<Double, Never>()
     private var widthSubscriber: AnyCancellable?
 
     override func loadView() {
-        view = model.webView
-        view.translatesAutoresizingMaskIntoConstraints = false
+        view = UIView()
+        guard let webView = model?.webView else {
+            return
+        }
+        // In some cases the UIWebView was still owned by an other UIViewController
+        webView.removeFromSuperview()
+        view.addSubview(webView)
 
-        setUpWebView(model.webView)
+        webView.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            webView.heightAnchor.constraint(equalTo: view.heightAnchor),
+            webView.widthAnchor.constraint(equalTo: view.widthAnchor)
+        ])
+
+        setUpWebView(webView)
 
         widthSubscriber = widthSubject
             .debounce(for: .seconds(0.3), scheduler: DispatchQueue.main)
-            .sink { newWidth in
+            .sink { [weak self] newWidth in
                 Task {
-                    try await self.normalizeMessageWidth(webViewWidth: CGFloat(newWidth))
+                    try await self?.normalizeMessageWidth(webViewWidth: CGFloat(newWidth))
                 }
             }
     }
@@ -93,7 +104,7 @@ final class WebViewController: UIViewController {
     }
 
     private func normalizeMessageWidth(webViewWidth width: CGFloat) async throws {
-        try await model.webView.evaluateJavaScript(.normalizeMessageWidth(width, messageUid ?? ""))
+        try await model?.webView.evaluateJavaScript(.normalizeMessageWidth(width, messageUid ?? ""))
     }
 }
 

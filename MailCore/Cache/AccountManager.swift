@@ -265,7 +265,7 @@ public final class AccountManager: RefreshTokenDelegate {
             throw MailError.noMailbox
         }
 
-        matomo.track(eventWithCategory: .userInfo, name: "nbMailboxes", value: Float(mailboxesResponse.count))
+        matomo.track(eventWithCategory: .userInfo, action: .data, name: "nbMailboxes", value: Float(mailboxesResponse.count))
 
         let newAccount = Account(apiToken: token)
         newAccount.user = user

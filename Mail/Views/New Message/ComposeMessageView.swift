@@ -64,15 +64,15 @@ struct ComposeMessageView: View {
     @LazyInjectService private var matomo: MatomoUtils
     @LazyInjectService private var draftManager: DraftManager
 
-    @State private var isLoadingContent: Bool
+    @State private var isLoadingContent = true
     @State private var isShowingCancelAttachmentsError = false
     @State private var autocompletionType: ComposeViewFieldType?
     @State private var editorFocus = false
     @State private var initialAttachments: [Attachable] = []
 
-    /// Something to track the initial loading of a default signature
-    @StateObject private var signatureManager: SignaturesManager
-    @StateObject private var mailboxManager: MailboxManager
+    @State private var editorModel = RichTextEditorModel()
+    @State private var scrollView: UIScrollView?
+
     @StateObject private var attachmentsManager: AttachmentsManager
     @StateObject private var alert = NewMessageAlert()
 
@@ -85,7 +85,9 @@ struct ComposeMessageView: View {
         }
     }
 
-    let messageReply: MessageReply?
+    private let messageReply: MessageReply?
+    private let draftContentManager: DraftContentManager
+    private let mailboxManager: MailboxManager
 
     private var isSendButtonDisabled: Bool {
         let disabledState = draft.identityId == nil
@@ -95,30 +97,56 @@ struct ComposeMessageView: View {
         return disabledState
     }
 
-    // MAK: - Int
+    // MARK: - Init
 
     init(draft: Draft, mailboxManager: MailboxManager, messageReply: MessageReply? = nil, attachments: [Attachable] = []) {
         self.messageReply = messageReply
 
         Self.saveNewDraftInRealm(mailboxManager.getRealm(), draft: draft)
         _draft = StateRealmObject(wrappedValue: draft)
-        _isLoadingContent = State(wrappedValue: (draft.messageUid != nil && draft.remoteUUID.isEmpty) || messageReply != nil)
 
-        _signatureManager = StateObject(wrappedValue: SignaturesManager(mailboxManager: mailboxManager))
-        _mailboxManager = StateObject(wrappedValue: mailboxManager)
+        draftContentManager = DraftContentManager(
+            incompleteDraft: draft,
+            messageReply: messageReply,
+            mailboxManager: mailboxManager
+        )
+
+        self.mailboxManager = mailboxManager
         _attachmentsManager = StateObject(wrappedValue: AttachmentsManager(draft: draft, mailboxManager: mailboxManager))
         _initialAttachments = State(wrappedValue: attachments)
     }
 
-    // MAK: - View
+    // MARK: - View
 
     var body: some View {
         NavigationView {
             composeMessage
         }
+        .task {
+            do {
+                isLoadingContent = true
+                try await draftContentManager.prepareCompleteDraft()
+                attachmentsManager.completeUploadedAttachments()
+                isLoadingContent = false
+            } catch {
+                // Unable to get signatures, "An error occurred" and close modal.
+                IKSnackBar.showSnackBar(message: MailError.unknownError.localizedDescription)
+                dismiss()
+            }
+        }
         .onAppear {
             attachmentsManager.importAttachments(attachments: initialAttachments, draft: draft)
             initialAttachments = []
+
+            switch messageReply?.replyMode {
+            case .reply, .replyAll:
+                focusedField = .editor
+            default:
+                focusedField = .to
+            }
+        }
+        .onDisappear {
+            draftManager.syncDraft(mailboxManager: mailboxManager)
         }
         .interactiveDismissDisabled()
         .customAlert(isPresented: $alert.isShowing) {
@@ -144,9 +172,11 @@ struct ComposeMessageView: View {
         ScrollView {
             VStack(spacing: 0) {
                 ComposeMessageHeaderView(draft: draft, focusedField: _focusedField, autocompletionType: $autocompletionType)
-                if autocompletionType == nil {
+
+                if autocompletionType == nil && !isLoadingContent {
                     ComposeMessageBodyView(
                         draft: draft,
+                        editorModel: $editorModel,
                         isLoadingContent: $isLoadingContent,
                         editorFocus: $editorFocus,
                         attachmentsManager: attachmentsManager,
@@ -157,46 +187,32 @@ struct ComposeMessageView: View {
                 }
             }
         }
-        .task {
-            await prepareCompleteDraft()
-        }
-        .task {
-            await prepareReplyForwardBodyAndAttachments()
-        }
-        .onChange(of: signatureManager.loadingSignatureState) { state in
-            switch state {
-            case .success:
-                setSignature()
-            case .error:
-                // Unable to get signatures, "An error occurred" and close modal.
-                IKSnackBar.showSnackBar(message: MailError.unknownError.localizedDescription)
-                dismiss()
-            case .progress:
-                break
-            }
-        }
         .background(MailResourcesAsset.backgroundColor.swiftUIColor)
-        .onAppear {
-            switch messageReply?.replyMode {
-            case .reply, .replyAll:
-                focusedField = .editor
-            default:
-                focusedField = .to
-            }
-        }
-        .onDisappear {
-            // Only process _all_ drafts if in main app only
-            if !Bundle.main.isExtension {
-                draftManager.syncDraft(mailboxManager: mailboxManager)
-            }
-        }
         .overlay {
-            if isLoadingContent || signatureManager.loadingSignatureState == .progress {
+            if isLoadingContent {
                 progressView
             }
         }
         .introspectScrollView { scrollView in
+            guard self.scrollView != scrollView else { return }
+            self.scrollView = scrollView
             scrollView.keyboardDismissMode = .interactive
+        }
+        .onChange(of: editorModel.height) { _ in
+            guard let scrollView else { return }
+
+            let fullSize = scrollView.contentSize.height
+            let realPosition = (fullSize - editorModel.height) + editorModel.cursorPosition
+
+            guard realPosition >= 0 else { return }
+            let rect = CGRect(x: 0, y: realPosition, width: 1, height: 1)
+            scrollView.scrollRectToVisible(rect, animated: true)
+        }
+        .onChange(of: autocompletionType) { newValue in
+            guard newValue != nil else { return }
+
+            let rectTop = CGRect(x: 0, y: 0, width: 1, height: 1)
+            scrollView?.scrollRectToVisible(rectTop, animated: true)
         }
         .navigationTitle(MailResourcesStrings.Localizable.buttonNewMessage)
         .navigationBarTitleDisplayMode(.inline)
@@ -265,76 +281,6 @@ struct ComposeMessageView: View {
 
             realm.add(draft, update: .modified)
         }
-    }
-
-    private func prepareCompleteDraft() async {
-        guard draft.messageUid != nil && draft.remoteUUID.isEmpty else { return }
-
-        do {
-            try await mailboxManager.draft(partialDraft: draft)
-            isLoadingContent = false
-        } catch {
-            dismiss()
-            IKSnackBar.showSnackBar(message: MailError.unknownError.localizedDescription)
-        }
-    }
-
-    private func prepareReplyForwardBodyAndAttachments() async {
-        guard let messageReply else { return }
-
-        let prepareTask = Task.detached {
-            try await prepareBody(message: messageReply.message, replyMode: messageReply.replyMode)
-            try await prepareAttachments(message: messageReply.message, replyMode: messageReply.replyMode)
-        }
-
-        do {
-            _ = try await prepareTask.value
-
-            isLoadingContent = false
-        } catch {
-            dismiss()
-            IKSnackBar.showSnackBar(message: MailError.unknownError.localizedDescription)
-        }
-    }
-
-    private func prepareBody(message: Message, replyMode: ReplyMode) async throws {
-        if !message.fullyDownloaded {
-            try await mailboxManager.message(message: message)
-        }
-
-        guard let freshMessage = message.thaw() else { return }
-        freshMessage.realm?.refresh()
-        $draft.body.wrappedValue = Draft.replyingBody(message: freshMessage, replyMode: replyMode)
-    }
-
-    private func prepareAttachments(message: Message, replyMode: ReplyMode) async throws {
-        guard replyMode == .forward else { return }
-        let attachments = try await mailboxManager.apiFetcher.attachmentsToForward(
-            mailbox: mailboxManager.mailbox,
-            message: message
-        ).attachments
-
-        for attachment in attachments {
-            $draft.attachments.append(attachment)
-        }
-        attachmentsManager.completeUploadedAttachments()
-    }
-
-    private func setSignature() {
-        guard draft.identityId == nil || draft.identityId?.isEmpty == true else {
-            return
-        }
-
-        guard let defaultSignature = mailboxManager.getStoredSignatures().defaultSignature else {
-            return
-        }
-
-        let body = $draft.body.wrappedValue
-        let signedBody = defaultSignature.appendSignature(to: body)
-
-        // At this point we have signatures in base up to date, we use the default one.
-        $draft.identityId.wrappedValue = "\(defaultSignature.id)"
-        $draft.body.wrappedValue = signedBody
     }
 }
 

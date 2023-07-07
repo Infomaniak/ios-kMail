@@ -46,6 +46,7 @@ struct LockedMailboxView: View {
         }
         .padding(.horizontal, UIConstants.bottomSheetHorizontalPadding)
         .padding(.top, 16)
+        .matomoView(view: ["LockedMailboxView"])
     }
 }
 

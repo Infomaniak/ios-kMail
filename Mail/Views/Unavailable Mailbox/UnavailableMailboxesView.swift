@@ -16,14 +16,16 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import InfomaniakCoreUI
+import InfomaniakDI
 import MailCore
 import MailResources
 import SwiftUI
-import InfomaniakDI
 
 struct UnavailableMailboxesView: View {
     @LazyInjectService private var orientationManager: OrientationManageable
-    
+    @LazyInjectService private var matomo: MatomoUtils
+
     @Environment(\.window) private var window
 
     @State var isShowingNewAccountView = false
@@ -66,6 +68,7 @@ struct UnavailableMailboxesView: View {
                     }
                 } label: {
                     MailButton(label: MailResourcesStrings.Localizable.buttonAddEmailAddress) {
+                        matomo.track(eventWithCategory: .noValidMailboxes, name: "addMailbox")
                         showAddMailbox.toggle()
                     }
                     .mailButtonFullWidth(true)
@@ -78,9 +81,16 @@ struct UnavailableMailboxesView: View {
                     Text(MailResourcesStrings.Localizable.buttonAccountSwitch)
                         .textStyle(.bodyMediumAccent)
                 }
+                .simultaneousGesture(
+                    TapGesture()
+                        .onEnded {
+                            matomo.track(eventWithCategory: .noValidMailboxes, name: "switchAccount")
+                        }
+                )
             }
             .padding(.horizontal, 16)
             .frame(maxWidth: 900)
+            .matomoView(view: ["UnavailableMailboxesView"])
         }
         .navigationViewStyle(.stack)
         .fullScreenCover(isPresented: $isShowingNewAccountView) {

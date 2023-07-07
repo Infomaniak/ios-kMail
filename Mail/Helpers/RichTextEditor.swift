@@ -28,7 +28,7 @@ import WebKit
 struct RichTextEditor: UIViewRepresentable {
     typealias UIViewType = MailEditorView
 
-    @ObservedObject var model: RichTextEditorModel
+    @Binding var model: RichTextEditorModel
     @Binding var body: String
     @Binding var isShowingCamera: Bool
     @Binding var isShowingFileSelection: Bool
@@ -37,12 +37,12 @@ struct RichTextEditor: UIViewRepresentable {
     let blockRemoteContent: Bool
     var alert: ObservedObject<NewMessageAlert>.Wrapper
 
-    init(model: RichTextEditorModel, body: Binding<String>,
+    init(model: Binding<RichTextEditorModel>, body: Binding<String>,
          alert: ObservedObject<NewMessageAlert>.Wrapper,
          isShowingCamera: Binding<Bool>, isShowingFileSelection: Binding<Bool>, isShowingPhotoLibrary: Binding<Bool>,
          becomeFirstResponder: Binding<Bool>,
          blockRemoteContent: Bool) {
-        _model = ObservedObject(wrappedValue: model)
+        _model = model
         _body = body
         self.alert = alert
         _isShowingCamera = isShowingCamera
@@ -146,9 +146,9 @@ extension SQTextEditorView {
     }
 }
 
-class RichTextEditorModel: ObservableObject {
-    @Published var cursorPosition: CGFloat = 0
-    @Published var height: CGFloat = 0
+struct RichTextEditorModel {
+    var cursorPosition: CGFloat = 0
+    var height: CGFloat = 0
 }
 
 class MailEditorView: SQTextEditorView {

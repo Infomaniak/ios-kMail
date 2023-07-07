@@ -16,14 +16,16 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import InfomaniakCoreUI
+import InfomaniakDI
 import MailCore
 import MailResources
 import SwiftUI
-import InfomaniakDI
 
 struct UpdateMailboxPasswordView: View {
     @LazyInjectService private var accountManager: AccountManager
-    
+    @LazyInjectService private var matomo: MatomoUtils
+
     @Environment(\.window) private var window
 
     @State private var updatedMailboxPassword = ""
@@ -44,6 +46,7 @@ struct UpdateMailboxPasswordView: View {
             VStack(alignment: .leading, spacing: 8) {
                 Text(MailResourcesStrings.Localizable.enterPasswordDescription(mailbox.email))
                 MailButton(label: MailResourcesStrings.Localizable.buttonDetachMailbox) {
+                    matomo.track(eventWithCategory: .invalidPasswordMailbox, name: "detachMailbox")
                     detachAddress()
                 }
                 .mailButtonStyle(.link)
@@ -75,6 +78,7 @@ struct UpdateMailboxPasswordView: View {
             }
 
             MailButton(label: MailResourcesStrings.Localizable.buttonConfirm) {
+                matomo.track(eventWithCategory: .invalidPasswordMailbox, name: "updatePassword")
                 updateMailboxPassword()
             }
             .mailButtonFullWidth(true)
@@ -83,9 +87,9 @@ struct UpdateMailboxPasswordView: View {
             MailButton(label: MailResourcesStrings.Localizable.buttonPasswordForgotten) {
                 // Empty for now, WIP
             }
-                .mailButtonStyle(.link)
-                .mailButtonFullWidth(true)
-                .hidden()
+            .mailButtonStyle(.link)
+            .mailButtonFullWidth(true)
+            .hidden()
 
             Spacer()
         }
@@ -93,6 +97,7 @@ struct UpdateMailboxPasswordView: View {
         .navigationBarTitleDisplayMode(.inline)
         .navigationTitle(MailResourcesStrings.Localizable.enterPasswordTitle)
         .sheetViewStyle()
+        .matomoView(view: ["UpdateMailboxPasswordView"])
     }
 
     func updateMailboxPassword() {
