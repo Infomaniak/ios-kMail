@@ -30,14 +30,14 @@ struct UpdateMailboxPasswordView: View {
     @State private var updatedMailboxPassword = ""
     @State private var isShowingError = false
     @State private var isLoading = false
-    @State private var showDetachMailboxAlert = false
+    @State private var isShowDetachMailboxAlertView = false
 
     private var disableButton: Bool {
         return isLoading || showPasswordLengthWarning
     }
 
     private var showPasswordLengthWarning: Bool {
-        return !updatedMailboxPassword.isEmpty && (updatedMailboxPassword.count < 5 || updatedMailboxPassword.count > 80)
+        return updatedMailboxPassword.count < 5 || updatedMailboxPassword.count > 80
     }
 
     let mailbox: Mailbox
@@ -50,7 +50,7 @@ struct UpdateMailboxPasswordView: View {
                     .textStyle(.bodySecondary)
                 MailButton(label: MailResourcesStrings.Localizable.buttonDetachMailbox) {
                     matomo.track(eventWithCategory: .invalidPasswordMailbox, name: "detachMailbox")
-                    showDetachMailboxAlert.toggle()
+                    isShowDetachMailboxAlertView.toggle()
                 }
                 .mailButtonStyle(.link)
                 .disabled(isLoading)
@@ -85,7 +85,7 @@ struct UpdateMailboxPasswordView: View {
                 updateMailboxPassword()
             }
             .mailButtonFullWidth(true)
-            .disabled(isLoading)
+            .disabled(disableButton)
 
             MailButton(label: MailResourcesStrings.Localizable.buttonPasswordForgotten) {
                 // Empty for now, WIP
@@ -106,7 +106,7 @@ struct UpdateMailboxPasswordView: View {
         .navigationTitle(MailResourcesStrings.Localizable.enterPasswordTitle)
         .sheetViewStyle()
         .matomoView(view: ["UpdateMailboxPasswordView"])
-        .customAlert(isPresented: $showDetachMailboxAlert) {
+        .customAlert(isPresented: $isShowDetachMailboxAlertView) {
             DetachMailboxConfirmationView(mailbox: mailbox)
         }
     }
