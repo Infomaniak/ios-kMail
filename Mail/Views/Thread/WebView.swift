@@ -53,12 +53,19 @@ final class WebViewController: UIViewController {
     private var widthSubscriber: AnyCancellable?
 
     override func loadView() {
+        view = UIView()
         guard let webView = model?.webView else {
-            view = UIView()
             return
         }
-        view = webView
-        view.translatesAutoresizingMaskIntoConstraints = false
+        // In some cases the UIWebView was still owned by an other UIViewController
+        webView.removeFromSuperview()
+        view.addSubview(webView)
+
+        webView.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            webView.heightAnchor.constraint(equalTo: view.heightAnchor, multiplier: 1),
+            webView.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 1)
+        ])
 
         setUpWebView(webView)
 
