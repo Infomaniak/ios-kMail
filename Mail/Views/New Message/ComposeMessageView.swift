@@ -68,6 +68,9 @@ struct ComposeMessageView: View {
     @State private var autocompletionType: ComposeViewFieldType?
     @State private var editorFocus = false
 
+    @State private var editorModel = RichTextEditorModel()
+    @State private var scrollView: UIScrollView?
+
     @StateObject private var attachmentsManager: AttachmentsManager
     @StateObject private var alert = NewMessageAlert()
 
@@ -116,6 +119,29 @@ struct ComposeMessageView: View {
         NavigationView {
             composeMessage
         }
+        .task {
+            do {
+                isLoadingContent = true
+                try await draftContentManager.prepareCompleteDraft()
+                attachmentsManager.completeUploadedAttachments()
+                isLoadingContent = false
+            } catch {
+                // Unable to get signatures, "An error occurred" and close modal.
+                IKSnackBar.showSnackBar(message: MailError.unknownError.localizedDescription)
+                dismiss()
+            }
+        }
+        .onAppear {
+            switch messageReply?.replyMode {
+            case .reply, .replyAll:
+                focusedField = .editor
+            default:
+                focusedField = .to
+            }
+        }
+        .onDisappear {
+            draftManager.syncDraft(mailboxManager: mailboxManager)
+        }
         .interactiveDismissDisabled()
         .customAlert(isPresented: $alert.isShowing) {
             switch alert.state {
@@ -144,6 +170,7 @@ struct ComposeMessageView: View {
                 if autocompletionType == nil && !isLoadingContent {
                     ComposeMessageBodyView(
                         draft: draft,
+                        editorModel: $editorModel,
                         isLoadingContent: $isLoadingContent,
                         editorFocus: $editorFocus,
                         attachmentsManager: attachmentsManager,
@@ -154,37 +181,32 @@ struct ComposeMessageView: View {
                 }
             }
         }
-        .task {
-            do {
-                isLoadingContent = true
-                try await draftContentManager.prepareCompleteDraft()
-                attachmentsManager.completeUploadedAttachments()
-                isLoadingContent = false
-            } catch {
-                // Unable to get signatures, "An error occurred" and close modal.
-                IKSnackBar.showSnackBar(message: MailError.unknownError.localizedDescription)
-                dismiss()
-            }
-        }
         .background(MailResourcesAsset.backgroundColor.swiftUIColor)
-        .onAppear {
-            switch messageReply?.replyMode {
-            case .reply, .replyAll:
-                focusedField = .editor
-            default:
-                focusedField = .to
-            }
-        }
-        .onDisappear {
-            draftManager.syncDraft(mailboxManager: mailboxManager)
-        }
         .overlay {
             if isLoadingContent {
                 progressView
             }
         }
         .introspectScrollView { scrollView in
+            guard self.scrollView != scrollView else { return }
+            self.scrollView = scrollView
             scrollView.keyboardDismissMode = .interactive
+        }
+        .onChange(of: editorModel.height) { _ in
+            guard let scrollView else { return }
+
+            let fullSize = scrollView.contentSize.height
+            let realPosition = (fullSize - editorModel.height) + editorModel.cursorPosition
+
+            guard realPosition >= 0 else { return }
+            let rect = CGRect(x: 0, y: realPosition, width: 1, height: 1)
+            scrollView.scrollRectToVisible(rect, animated: true)
+        }
+        .onChange(of: autocompletionType) { newValue in
+            guard newValue != nil else { return }
+
+            let rectTop = CGRect(x: 0, y: 0, width: 1, height: 1)
+            scrollView?.scrollRectToVisible(rectTop, animated: true)
         }
         .navigationTitle(MailResourcesStrings.Localizable.buttonNewMessage)
         .navigationBarTitleDisplayMode(.inline)
