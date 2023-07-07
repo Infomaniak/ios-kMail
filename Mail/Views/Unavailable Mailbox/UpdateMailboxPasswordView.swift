@@ -96,6 +96,11 @@ struct UpdateMailboxPasswordView: View {
 
             Spacer()
         }
+        .onChange(of: updatedMailboxPassword) { newValue in
+            if !newValue.isEmpty {
+                isShowingError = false
+            }
+        }
         .padding()
         .navigationBarTitleDisplayMode(.inline)
         .navigationTitle(MailResourcesStrings.Localizable.enterPasswordTitle)
@@ -114,6 +119,7 @@ struct UpdateMailboxPasswordView: View {
                 navigationState.transitionToRootViewDestination(.mainView)
             } catch {
                 isShowingError = true
+                updatedMailboxPassword = ""
             }
             isLoading = false
         }
