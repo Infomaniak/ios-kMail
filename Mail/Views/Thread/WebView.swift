@@ -46,17 +46,21 @@ extension WKWebView {
 }
 
 final class WebViewController: UIViewController {
-    var model: WebViewModel!
-    var messageUid: String!
+    var model: WebViewModel?
+    var messageUid: String?
 
     private let widthSubject = PassthroughSubject<Double, Never>()
     private var widthSubscriber: AnyCancellable?
 
     override func loadView() {
-        view = model.webView
+        guard let webView = model?.webView else {
+            view = UIView()
+            return
+        }
+        view = webView
         view.translatesAutoresizingMaskIntoConstraints = false
 
-        setUpWebView(model.webView)
+        setUpWebView(webView)
 
         widthSubscriber = widthSubject
             .debounce(for: .seconds(0.3), scheduler: DispatchQueue.main)
@@ -90,7 +94,7 @@ final class WebViewController: UIViewController {
     }
 
     private func normalizeMessageWidth(webViewWidth width: CGFloat) async throws {
-        try await model.webView.evaluateJavaScript(.normalizeMessageWidth(width, messageUid ?? ""))
+        try await model?.webView.evaluateJavaScript(.normalizeMessageWidth(width, messageUid ?? ""))
     }
 }
 
