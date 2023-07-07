@@ -79,29 +79,7 @@ struct AccountView: View {
                     }
                 }
 
-                // Email list
-                VStack(alignment: .leading, spacing: 12) {
-                    HStack(alignment: .center) {
-                        Text(MailResourcesStrings.Localizable.buttonAccountAssociatedEmailAddresses)
-                            .textStyle(.bodySmallSecondary)
-
-                        Spacer()
-
-                        NavigationLink {
-                            AddMailboxView()
-                        } label: {
-                            MailResourcesAsset.addCircle.swiftUIImage
-                                .resizable()
-                                .foregroundColor(accentColor.primary)
-                                .frame(width: 16, height: 16)
-                        }
-                    }
-                    .padding(.bottom, 16)
-
-                    MailboxListView(currentMailbox: mailboxManager.mailbox)
-                }
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .padding(.top, 24)
+                MailboxListView(currentMailbox: mailboxManager.mailbox)
 
                 Spacer()
             }
