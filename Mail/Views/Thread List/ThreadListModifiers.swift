@@ -16,6 +16,7 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import InfomaniakCore
 import InfomaniakCoreUI
 import InfomaniakDI
 import MailCore
@@ -60,7 +61,7 @@ struct ThreadListToolbar: ViewModifier {
     @EnvironmentObject private var navigationDrawerState: NavigationDrawerState
     @EnvironmentObject private var navigationState: NavigationState
 
-    @State private var isShowingSwitchAccount = false
+    @State private var presentedCurrentAccount: Account?
     @State private var multipleSelectionActionsTarget: ActionsTarget?
 
     @Binding var flushAlert: FlushAlertState?
@@ -122,13 +123,15 @@ struct ThreadListToolbar: ViewModifier {
                         }
 
                         Button {
-                            isShowingSwitchAccount.toggle()
+                            presentedCurrentAccount = AccountManager.instance.currentAccount
                         } label: {
-                            AvatarView(avatarDisplayable: AccountManager.instance.currentAccount.user)
+                            if let currentAccountUser = AccountManager.instance.currentAccount?.user {
+                                AvatarView(avatarDisplayable: currentAccountUser)
+                            }
                         }
                         .accessibilityLabel(MailResourcesStrings.Localizable.contentDescriptionUserAvatar)
-                        .sheet(isPresented: $isShowingSwitchAccount) {
-                            AccountView()
+                        .sheet(item: $presentedCurrentAccount) { account in
+                            AccountView(account: account)
                         }
                     }
                 }

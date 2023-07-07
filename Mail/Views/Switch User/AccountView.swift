@@ -50,10 +50,11 @@ struct AccountView: View {
 
     @LazyInjectService private var matomo: MatomoUtils
 
-    private let account = AccountManager.instance.currentAccount!
     @State private var isShowingLogoutAlert = false
     @State private var isShowingDeleteAccount = false
     @State private var delegate = AccountViewDelegate()
+
+    let account: Account
 
     var body: some View {
         VStack(spacing: 0) {
@@ -114,6 +115,6 @@ struct AccountView: View {
 
 struct AccountView_Previews: PreviewProvider {
     static var previews: some View {
-        AccountView()
+        AccountView(account: PreviewHelper.sampleAccount)
     }
 }
