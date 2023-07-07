@@ -116,6 +116,29 @@ struct ComposeMessageView: View {
         NavigationView {
             composeMessage
         }
+        .task {
+            do {
+                isLoadingContent = true
+                try await draftContentManager.prepareCompleteDraft()
+                attachmentsManager.completeUploadedAttachments()
+                isLoadingContent = false
+            } catch {
+                // Unable to get signatures, "An error occurred" and close modal.
+                IKSnackBar.showSnackBar(message: MailError.unknownError.localizedDescription)
+                dismiss()
+            }
+        }
+        .onAppear {
+            switch messageReply?.replyMode {
+            case .reply, .replyAll:
+                focusedField = .editor
+            default:
+                focusedField = .to
+            }
+        }
+        .onDisappear {
+            draftManager.syncDraft(mailboxManager: mailboxManager)
+        }
         .interactiveDismissDisabled()
         .customAlert(isPresented: $alert.isShowing) {
             switch alert.state {
@@ -154,30 +177,7 @@ struct ComposeMessageView: View {
                 }
             }
         }
-        .task {
-            do {
-                isLoadingContent = true
-                try await draftContentManager.prepareCompleteDraft()
-                attachmentsManager.completeUploadedAttachments()
-                isLoadingContent = false
-            } catch {
-                // Unable to get signatures, "An error occurred" and close modal.
-                IKSnackBar.showSnackBar(message: MailError.unknownError.localizedDescription)
-                dismiss()
-            }
-        }
         .background(MailResourcesAsset.backgroundColor.swiftUIColor)
-        .onAppear {
-            switch messageReply?.replyMode {
-            case .reply, .replyAll:
-                focusedField = .editor
-            default:
-                focusedField = .to
-            }
-        }
-        .onDisappear {
-            draftManager.syncDraft(mailboxManager: mailboxManager)
-        }
         .overlay {
             if isLoadingContent {
                 progressView
