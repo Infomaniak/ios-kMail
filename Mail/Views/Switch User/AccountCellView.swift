@@ -45,6 +45,8 @@ struct AccountCellView: View {
 
             VStack {
                 Button {
+                    guard !isSelected else { return }
+
                     @InjectService var matomo: MatomoUtils
                     matomo.track(eventWithCategory: .account, name: "switch")
                     dismissModal()

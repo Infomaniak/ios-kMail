@@ -107,7 +107,7 @@ public class AccountManager: RefreshTokenDelegate, ObservableObject {
     public var currentMailboxManager: MailboxManager? {
         if let currentMailboxManager = getMailboxManager(for: currentMailboxId, userId: currentUserId) {
             return currentMailboxManager
-        } else if let newCurrentMailbox = mailboxes.first {
+        } else if let newCurrentMailbox = mailboxes.first(where: { $0.isAvailable }) {
             setCurrentMailboxForCurrentAccount(mailbox: newCurrentMailbox)
             return getMailboxManager(for: newCurrentMailbox)
         } else {
@@ -150,10 +150,7 @@ public class AccountManager: RefreshTokenDelegate, ObservableObject {
         if let account = account(for: currentUserId) ?? accounts.first {
             setCurrentAccount(account: account)
 
-            if let currentMailbox = MailboxInfosManager.instance
-                .getMailbox(id: currentMailboxId, userId: currentUserId) ?? mailboxes.first {
-                setCurrentMailboxForCurrentAccount(mailbox: currentMailbox)
-            }
+            switchToFirstValidMailboxManager()
         }
     }
 
@@ -271,7 +268,7 @@ public class AccountManager: RefreshTokenDelegate, ObservableObject {
             throw MailError.noMailbox
         }
 
-        matomo.track(eventWithCategory: .userInfo, name: "nbMailboxes", value: Float(mailboxesResponse.count))
+        matomo.track(eventWithCategory: .userInfo, action: .data, name: "nbMailboxes", value: Float(mailboxesResponse.count))
 
         let newAccount = Account(apiToken: token)
         newAccount.user = user
@@ -333,6 +330,10 @@ public class AccountManager: RefreshTokenDelegate, ObservableObject {
             MailboxManager.deleteUserMailbox(userId: user.id, mailboxId: mailboxRemoved.mailboxId)
         }
 
+        if currentMailboxManager?.mailbox.isAvailable == false {
+            switchToFirstValidMailboxManager()
+        }
+
         saveAccounts()
     }
 
@@ -367,6 +368,23 @@ public class AccountManager: RefreshTokenDelegate, ObservableObject {
                 }
             }
         }
+    }
+
+    public func switchToFirstValidMailboxManager() {
+        // Current mailbox is valid
+        if let firstValidMailboxManager = currentMailboxManager,
+           !firstValidMailboxManager.mailbox.isLocked && firstValidMailboxManager.mailbox.isPasswordValid {
+            return
+        }
+
+        // At least one mailbox is valid
+        if let firstValidMailbox = mailboxes.first(where: { !$0.isLocked && $0.isPasswordValid && $0.userId == currentUserId }) {
+            switchMailbox(newMailbox: firstValidMailbox)
+            return
+        }
+
+        // No valid mailbox for current user
+        currentMailboxId = 0
     }
 
     public func switchAccount(newAccount: Account) {
@@ -405,6 +423,18 @@ public class AccountManager: RefreshTokenDelegate, ObservableObject {
 
         matomo.track(eventWithCategory: .account, name: "addMailboxConfirm")
         switchMailbox(newMailbox: addedMailbox)
+    }
+
+    public func updateMailboxPassword(mailbox: Mailbox, password: String) async throws {
+        guard let apiFetcher = currentApiFetcher else { return }
+        _ = try await apiFetcher.updateMailboxPassword(mailbox: mailbox, password: password)
+        try await updateUser(for: currentAccount)
+    }
+
+    public func detachMailbox(mailbox: Mailbox) async throws {
+        guard let apiFetcher = currentApiFetcher else { return }
+        _ = try await apiFetcher.detachMailbox(mailbox: mailbox)
+        try await updateUser(for: currentAccount)
     }
 
     public func setCurrentAccount(account: Account) {

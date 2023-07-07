@@ -43,6 +43,9 @@ class AccountViewDelegate: DeleteAccountDelegate {
 }
 
 struct AccountView: View {
+    @Environment(\.dismiss) private var dismiss
+
+    @EnvironmentObject private var mailboxManager: MailboxManager
     @AppStorage(UserDefaults.shared.key(.accentColor)) private var accentColor = DefaultPreferences.accentColor
 
     @LazyInjectService private var matomo: MatomoUtils
@@ -51,13 +54,6 @@ struct AccountView: View {
     @State private var isShowingLogoutAlert = false
     @State private var isShowingDeleteAccount = false
     @State private var delegate = AccountViewDelegate()
-
-    @State var mailboxes: [Mailbox]
-
-    let selectedMailbox = AccountManager.instance.currentMailboxManager?.mailbox
-    var otherMailbox: [Mailbox] {
-        return mailboxes.filter { $0.mailboxId != selectedMailbox?.mailboxId }
-    }
 
     var body: some View {
         VStack(spacing: 0) {
@@ -102,15 +98,7 @@ struct AccountView: View {
                     }
                     .padding(.bottom, 16)
 
-                    if let currentMailbox = selectedMailbox {
-                        MailboxCell(mailbox: currentMailbox)
-                            .mailboxCellStyle(.account)
-                    }
-
-                    ForEach(otherMailbox) { mailbox in
-                        MailboxCell(mailbox: mailbox)
-                            .mailboxCellStyle(.account)
-                    }
+                    MailboxListView(currentMailbox: mailboxManager.mailbox)
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .padding(.top, 24)
@@ -148,6 +136,6 @@ struct AccountView: View {
 
 struct AccountView_Previews: PreviewProvider {
     static var previews: some View {
-        AccountView(mailboxes: [PreviewHelper.sampleMailbox])
+        AccountView()
     }
 }

@@ -128,7 +128,7 @@ struct ThreadListToolbar: ViewModifier {
                         }
                         .accessibilityLabel(MailResourcesStrings.Localizable.contentDescriptionUserAvatar)
                         .sheet(isPresented: $isShowingSwitchAccount) {
-                            AccountView(mailboxes: AccountManager.instance.mailboxes)
+                            AccountView()
                         }
                     }
                 }
