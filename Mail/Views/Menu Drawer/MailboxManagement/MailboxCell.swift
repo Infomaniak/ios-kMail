@@ -50,21 +50,15 @@ struct MailboxCell: View {
     let mailbox: Mailbox
     var isSelected = false
 
-    private var detailNumber: Int? {
-        return mailbox.unseenMessages > 0 ? mailbox.unseenMessages : nil
-    }
-
     enum Style {
-        case menuDrawer, account, setPassword
+        case menuDrawer, account, blockedPassword, locked
     }
 
     var body: some View {
         MailboxesManagementButtonView(
             icon: MailResourcesAsset.envelope,
-            text: mailbox.email,
-            detailNumber: detailNumber,
-            isSelected: isSelected,
-            isInMaintenance: !mailbox.isAvailable
+            mailbox: mailbox,
+            isSelected: isSelected
         ) {
             guard !isSelected else { return }
             guard mailbox.isPasswordValid else {
@@ -77,7 +71,7 @@ struct MailboxCell: View {
             }
             @InjectService var matomo: MatomoUtils
             switch style {
-            case .setPassword: break
+            case .blockedPassword, .locked: break
             case .menuDrawer:
                 matomo.track(eventWithCategory: .menuDrawer, name: "switchMailbox")
             case .account:
