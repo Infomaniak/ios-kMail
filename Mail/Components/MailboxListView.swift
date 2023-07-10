@@ -22,8 +22,6 @@ import RealmSwift
 import SwiftUI
 
 struct MailboxListView: View {
-    @Environment(\.window) private var window
-
     @AppStorage(UserDefaults.shared.key(.accentColor)) private var accentColor = DefaultPreferences.accentColor
 
     @ObservedResults(
@@ -48,12 +46,7 @@ struct MailboxListView: View {
                 Spacer()
 
                 NavigationLink {
-                    AddMailboxView { mailbox in
-                        DispatchQueue.main.async {
-                            guard let mailbox = mailbox else { return }
-                            (window?.windowScene?.delegate as? SceneDelegate)?.switchMailbox(mailbox)
-                        }
-                    }
+                    AddMailboxView()
                 } label: {
                     MailResourcesAsset.addCircle.swiftUIImage
                         .resizable()

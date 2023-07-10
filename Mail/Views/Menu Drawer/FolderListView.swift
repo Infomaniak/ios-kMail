@@ -54,20 +54,20 @@ class FolderListViewModel: ObservableObject {
 
     private var foldersObservationToken: NotificationToken?
 
-    private let userFoldersSortDescriptors = [
-        SortDescriptor(keyPath: \Folder.isFavorite, ascending: false),
-        SortDescriptor(keyPath: \Folder.unreadCount, ascending: false),
-        SortDescriptor(keyPath: \Folder.name)
-    ]
-
     init(mailboxManager: MailboxManager) {
+        updateFolderListForMailboxManager(mailboxManager, animateInitialChanges: false)
+    }
+
+    func updateFolderListForMailboxManager(_ mailboxManager: MailboxManager, animateInitialChanges: Bool) {
         // swiftlint:disable empty_count
         foldersObservationToken = mailboxManager.getRealm()
             .objects(Folder.self).where { $0.parents.count == 0 && $0.toolType == nil }
             .observe(on: DispatchQueue.main) { [weak self] results in
                 switch results {
                 case .initial(let folders):
-                    self?.handleFoldersUpdate(folders)
+                    withAnimation(animateInitialChanges ? .default : nil) {
+                        self?.handleFoldersUpdate(folders)
+                    }
                 case .update(let folders, _, _, _):
                     withAnimation {
                         self?.handleFoldersUpdate(folders)
@@ -87,15 +87,23 @@ class FolderListViewModel: ObservableObject {
 struct FolderListView: View {
     @StateObject private var viewModel: FolderListViewModel
 
+    private let mailboxManager: MailboxManager
+
     init(mailboxManager: MailboxManager) {
+        self.mailboxManager = mailboxManager
         _viewModel = StateObject(wrappedValue: FolderListViewModel(mailboxManager: mailboxManager))
     }
 
     var body: some View {
-        RoleFoldersListView(folders: viewModel.roleFolders)
+        Group {
+            RoleFoldersListView(folders: viewModel.roleFolders)
 
-        IKDivider(hasVerticalPadding: true, horizontalPadding: UIConstants.menuDrawerHorizontalPadding)
+            IKDivider(hasVerticalPadding: true, horizontalPadding: UIConstants.menuDrawerHorizontalPadding)
 
-        UserFoldersListView(folders: viewModel.userFolders)
+            UserFoldersListView(folders: viewModel.userFolders)
+        }
+        .onChange(of: mailboxManager) { newMailboxManager in
+            viewModel.updateFolderListForMailboxManager(newMailboxManager, animateInitialChanges: true)
+        }
     }
 }

@@ -74,7 +74,7 @@ class LoginHandler: InfomaniakLoginDelegate, ObservableObject {
 
     @Published var isLoading = false
     @Published var isPresentingErrorAlert = false
-    var sceneDelegate: SceneDelegate?
+    @Published var shouldShowEmptyMailboxesView = false
 
     nonisolated func didCompleteLoginWith(code: String, verifier: String) {
         Task {
@@ -127,10 +127,9 @@ class LoginHandler: InfomaniakLoginDelegate, ObservableObject {
         Task {
             do {
                 _ = try await AccountManager.instance.createAndSetCurrentAccount(code: code, codeVerifier: verifier)
-                sceneDelegate?.showMainView()
                 UIApplication.shared.registerForRemoteNotifications()
             } catch let error as MailError where error == MailError.noMailbox {
-                sceneDelegate?.showNoMailboxView()
+                shouldShowEmptyMailboxesView = true
             } catch {
                 if let previousAccount = previousAccount {
                     AccountManager.instance.switchAccount(newAccount: previousAccount)
@@ -149,9 +148,10 @@ class LoginHandler: InfomaniakLoginDelegate, ObservableObject {
 }
 
 struct OnboardingView: View {
-    @Environment(\.window) private var window
     @Environment(\.dismiss) private var dismiss
 
+    @EnvironmentObject private var navigationState: NavigationState
+    
     @AppStorage(UserDefaults.shared.key(.accentColor)) private var accentColor = DefaultPreferences.accentColor
 
     @State private var selection: Int
@@ -170,7 +170,8 @@ struct OnboardingView: View {
     var body: some View {
         VStack(spacing: 0) {
             Group {
-                if !isScrollEnabled, let slide = slides.first { $0.id == selection } {
+                if !isScrollEnabled,
+                   let slide = slides.first(where: { $0.id == selection }) {
                     SlideView(slide: slide, updateAnimationColors: updateAnimationColors)
                 } else {
                     TabView(selection: $selection) {
@@ -194,7 +195,6 @@ struct OnboardingView: View {
             VStack(spacing: 24) {
                 if selection == slides.count {
                     MailButton(label: MailResourcesStrings.Localizable.buttonLogin) {
-                        loginHandler.sceneDelegate = window?.windowScene?.delegate as? SceneDelegate
                         loginHandler.login()
                     }
                     .mailButtonFullWidth(true)
@@ -238,7 +238,6 @@ struct OnboardingView: View {
         .sheet(isPresented: $isPresentingCreateAccount) {
             RegisterView(registrationProcess: .mail) { viewController in
                 guard let viewController else { return }
-                loginHandler.sceneDelegate = window?.windowScene?.delegate as? SceneDelegate
                 loginHandler.loginAfterAccountCreation(from: viewController)
             }
         }
@@ -250,7 +249,11 @@ struct OnboardingView: View {
                 UIViewController.attemptRotationToDeviceOrientation()
             }
         }
-        .defaultAppStorage(.shared)
+        .onChange(of: loginHandler.shouldShowEmptyMailboxesView) { shouldShowEmptyMailboxesView in
+            if shouldShowEmptyMailboxesView {
+                navigationState.transitionToRootViewDestination(.noMailboxes)
+            }
+        }
     }
 
     // MARK: - Private methods

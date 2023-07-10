@@ -26,7 +26,7 @@ import RealmSwift
 import SwiftUI
 
 struct AccountCellView: View {
-    @Environment(\.window) private var window
+    @Environment(\.dismissModal) var dismissModal
 
     let account: Account
     @Binding var selectedUserId: Int?
@@ -49,10 +49,8 @@ struct AccountCellView: View {
 
                     @InjectService var matomo: MatomoUtils
                     matomo.track(eventWithCategory: .account, name: "switch")
-                    withAnimation {
-                        selectedUserId = selectedUserId == account.userId ? nil : account.userId
-                        (window?.windowScene?.delegate as? SceneDelegate)?.switchAccount(account)
-                    }
+                    dismissModal()
+                    AccountManager.instance.switchAccount(newAccount: account)
                 } label: {
                     AccountHeaderCell(account: account, isSelected: Binding(get: {
                         isSelected

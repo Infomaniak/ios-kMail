@@ -38,9 +38,13 @@ struct SettingsOptionView<OptionEnum>: View where OptionEnum: CaseIterable, Opti
     @State private var selectedValue: OptionEnum {
         didSet {
             UserDefaults.shared[keyPath: keyPath] = selectedValue
+
+            // AppStorage updates the views only if directly called
             switch keyPath {
-            case \.theme, \.accentColor:
-                UIApplication.shared.connectedScenes.forEach { ($0.delegate as? SceneDelegate)?.updateWindowUI() }
+            case \.accentColor:
+                AppStorage(UserDefaults.shared.key(.accentColor)).wrappedValue = UserDefaults.shared.accentColor
+            case \.theme:
+                AppStorage(UserDefaults.shared.key(.theme)).wrappedValue = UserDefaults.shared.theme
             default:
                 break
             }

@@ -25,8 +25,6 @@ import SwiftUI
 struct UpdateMailboxPasswordView: View {
     @LazyInjectService private var matomo: MatomoUtils
 
-    @Environment(\.window) private var window
-
     @State private var updatedMailboxPassword = ""
     @State private var isShowingError = false
     @State private var isLoading = false
@@ -104,7 +102,6 @@ struct UpdateMailboxPasswordView: View {
             isLoading = true
             do {
                 try await AccountManager.instance.updateMailboxPassword(mailbox: mailbox, password: updatedMailboxPassword)
-                await (window?.windowScene?.delegate as? SceneDelegate)?.showMainView()
             } catch {
                 isShowingError = true
             }
@@ -117,7 +114,6 @@ struct UpdateMailboxPasswordView: View {
             isLoading = true
             do {
                 try await AccountManager.instance.detachMailbox(mailbox: mailbox)
-                await (window?.windowScene?.delegate as? SceneDelegate)?.showMainView()
             } catch {
                 isShowingError = true
             }

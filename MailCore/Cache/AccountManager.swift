@@ -67,7 +67,7 @@ public extension InfomaniakNetworkLoginable {
     }
 }
 
-public class AccountManager: RefreshTokenDelegate {
+public class AccountManager: RefreshTokenDelegate, ObservableObject {
     @LazyInjectService var networkLoginService: InfomaniakNetworkLoginable
     @LazyInjectService var keychainHelper: KeychainHelper
     @LazyInjectService var bugTracker: BugTracker
@@ -89,12 +89,14 @@ public class AccountManager: RefreshTokenDelegate {
         didSet {
             UserDefaults.shared.currentMailUserId = currentUserId
             setSentryUserId(userId: currentUserId)
+            objectWillChange.send()
         }
     }
 
     public var currentMailboxId: Int {
         didSet {
             UserDefaults.shared.currentMailboxId = currentMailboxId
+            objectWillChange.send()
         }
     }
 
@@ -412,11 +414,15 @@ public class AccountManager: RefreshTokenDelegate {
         }
     }
 
-    public func addMailbox(mail: String, password: String, completion: (Mailbox?) -> Void) async throws {
+    public func addMailbox(mail: String, password: String) async throws {
         guard let apiFetcher = currentApiFetcher else { return }
+
         _ = try await apiFetcher.addMailbox(mail: mail, password: password)
         try await updateUser(for: currentAccount)
-        completion(mailboxes.first(where: { $0.email == mail }))
+        guard let addedMailbox = mailboxes.first(where: { $0.email == mail }) else { return }
+
+        matomo.track(eventWithCategory: .account, name: "addMailboxConfirm")
+        switchMailbox(newMailbox: addedMailbox)
     }
 
     public func updateMailboxPassword(mailbox: Mailbox, password: String) async throws {

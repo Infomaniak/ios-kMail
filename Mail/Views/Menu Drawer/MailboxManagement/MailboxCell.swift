@@ -42,7 +42,7 @@ extension View {
 
 struct MailboxCell: View {
     @Environment(\.mailboxCellStyle) private var style: Style
-    @Environment(\.window) private var window
+    @EnvironmentObject private var navigationDrawerState: NavigationDrawerState
 
     @State private var isShowingLockedView = false
     @State private var isShowingUpdatePasswordView = false
@@ -77,7 +77,8 @@ struct MailboxCell: View {
             case .account:
                 matomo.track(eventWithCategory: .account, name: "switchMailbox")
             }
-            (window?.windowScene?.delegate as? SceneDelegate)?.switchMailbox(mailbox)
+            AccountManager.instance.switchMailbox(newMailbox: mailbox)
+            navigationDrawerState.close()
         }
         .floatingPanel(isPresented: $isShowingLockedView) {
             LockedMailboxView(lockedMailbox: mailbox)

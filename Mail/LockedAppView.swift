@@ -24,7 +24,8 @@ import SwiftUI
 
 struct LockedAppView: View {
     @LazyInjectService var appLockHelper: AppLockHelper
-    @Environment(\.window) var window
+
+    @EnvironmentObject var navigationState: NavigationState
 
     var body: some View {
         ZStack {
@@ -61,7 +62,10 @@ struct LockedAppView: View {
     private func unlockApp() {
         Task {
             if (try? await appLockHelper.evaluatePolicy(reason: MailResourcesStrings.Localizable.lockAppTitle)) == true {
-                await (window?.windowScene?.delegate as? SceneDelegate)?.showMainView()
+                appLockHelper.setTime()
+                Task {
+                    navigationState.transitionToRootViewDestination(.mainView)
+                }
             }
         }
     }

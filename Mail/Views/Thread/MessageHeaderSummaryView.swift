@@ -26,7 +26,7 @@ import SwiftUI
 
 struct MessageHeaderSummaryView: View {
     @EnvironmentObject private var mailboxManager: MailboxManager
-    @EnvironmentObject private var navigationStore: NavigationStore
+    @EnvironmentObject private var navigationState: NavigationState
 
     @ObservedRealmObject var message: Message
 
@@ -114,7 +114,7 @@ struct MessageHeaderSummaryView: View {
                         if message.canReplyAll {
                             replyOrReplyAllMessage = message
                         } else {
-                            navigationStore.messageReply = MessageReply(message: message, replyMode: .reply)
+                            navigationState.messageReply = MessageReply(message: message, replyMode: .reply)
                         }
 
                     } label: {
@@ -126,7 +126,7 @@ struct MessageHeaderSummaryView: View {
                     .adaptivePanel(item: $replyOrReplyAllMessage) { message in
                         ReplyActionsView(mailboxManager: mailboxManager,
                                          message: message,
-                                         messageReply: $navigationStore.messageReply)
+                                         messageReply: $navigationState.messageReply)
                     }
                     ActionsPanelButton(message: message) {
                         MailResourcesAsset.plusActions.swiftUIImage

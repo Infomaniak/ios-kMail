@@ -46,7 +46,8 @@ extension WKWebView {
 }
 
 final class WebViewController: UIViewController {
-    var model: WebViewModel?
+    var openURL: OpenURLAction?
+	var model: WebViewModel?
     var messageUid: String?
 
     private let widthSubject = PassthroughSubject<Double, Never>()
@@ -124,7 +125,7 @@ extension WebViewController: WKNavigationDelegate {
     ) {
         if let url = navigationAction.request.url, Constants.isMailTo(url) {
             decisionHandler(.cancel)
-            (view.window?.windowScene?.delegate as? SceneDelegate)?.handleUrlOpen(url)
+            openURL?(url)
             return
         }
 
@@ -140,11 +141,14 @@ extension WebViewController: WKNavigationDelegate {
 }
 
 struct WebView: UIViewControllerRepresentable {
+    @Environment(\.openURL) private var openUrl
+
     let model: WebViewModel
     let messageUid: String
 
     func makeUIViewController(context: Context) -> WebViewController {
         let controller = WebViewController()
+        controller.openURL = openUrl
         controller.model = model
         controller.messageUid = messageUid
         return controller
