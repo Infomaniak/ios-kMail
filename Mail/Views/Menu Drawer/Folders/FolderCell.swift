@@ -21,7 +21,6 @@ import InfomaniakCoreUI
 import InfomaniakDI
 import MailCore
 import MailResources
-import RealmSwift
 import SwiftUI
 
 struct FolderCellTypeEnvironment: EnvironmentKey {
@@ -128,8 +127,7 @@ struct FolderCell: View {
 struct FolderCellContent: View {
     @Environment(\.folderCellType) var cellType
 
-    @ObservedRealmObject var folder: Folder
-
+    private let folder: Folder
     private let level: Int
     private let isCurrentFolder: Bool
     private let canCollapseSubFolders: Bool
@@ -151,14 +149,8 @@ struct FolderCellContent: View {
     var body: some View {
         HStack(spacing: UIConstants.menuDrawerHorizontalItemSpacing) {
             if canCollapseSubFolders && cellType == .link {
-                Button {
-                    if let liveFolder = folder.thaw() {
-                        try? liveFolder.realm?.write {
-                            liveFolder.isExpanded = !folder.isExpanded
-                        }
-                    }
-                } label: {
-                    ChevronIcon(style: folder.isExpanded ? .down : .up, color: .secondary)
+                Button(action: collapseFolder) {
+                    ChevronIcon(style: folder.isExpanded ? .up : .down, color: .secondary)
                 }
                 .opacity(level == 0 && !folder.children.isEmpty ? 1 : 0)
             }
@@ -206,6 +198,13 @@ struct FolderCellContent: View {
     private var background: some View {
         if cellType == .link {
             SelectionBackground(selectionType: isCurrentFolder ? .folder : .none)
+        }
+    }
+
+    private func collapseFolder() {
+        guard let liveFolder = folder.thaw() else { return }
+        try? liveFolder.realm?.write {
+            liveFolder.isExpanded = !folder.isExpanded
         }
     }
 }
