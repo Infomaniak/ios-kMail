@@ -117,6 +117,7 @@ public class Folder: Object, Codable, Comparable, Identifiable {
     @Persisted public var cursor: String?
     @Persisted public var remainingOldMessagesToFetch = Constants.messageQuantityLimit
     @Persisted public var isHistoryComplete = false
+    @Persisted public var isExpanded = true
 
     /// Date of last threads update
     @Persisted public var lastUpdate: Date?

@@ -74,7 +74,7 @@ public class MailboxManager: ObservableObject {
         let realmName = "\(mailbox.userId)-\(mailbox.mailboxId).realm"
         realmConfiguration = Realm.Configuration(
             fileURL: MailboxManager.constants.rootDocumentsURL.appendingPathComponent(realmName),
-            schemaVersion: 14,
+            schemaVersion: 15,
             deleteRealmIfMigrationNeeded: true,
             objectTypes: [
                 Folder.self,
@@ -1271,6 +1271,7 @@ public class MailboxManager: ObservableObject {
         folder.cursor = savedFolder.cursor
         folder.remainingOldMessagesToFetch = savedFolder.remainingOldMessagesToFetch
         folder.isHistoryComplete = savedFolder.isHistoryComplete
+        folder.isExpanded = savedFolder.isExpanded
     }
 
     func getSubFolders(from folders: [Folder], oldResult: [Folder] = []) -> [Folder] {
