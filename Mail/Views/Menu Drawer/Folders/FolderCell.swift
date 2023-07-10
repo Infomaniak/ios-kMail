@@ -21,6 +21,7 @@ import InfomaniakCoreUI
 import InfomaniakDI
 import MailCore
 import MailResources
+import RealmSwift
 import SwiftUI
 
 struct FolderCellTypeEnvironment: EnvironmentKey {
@@ -53,7 +54,6 @@ struct FolderCell: View {
     var customCompletion: ((Folder) -> Void)?
 
     @State private var shouldTransit = false
-    @State private var showSubFolders = true
 
     private var isCurrentFolder: Bool {
         folder.id == currentFolderId
@@ -64,7 +64,6 @@ struct FolderCell: View {
             if cellType == .indicator || isCompactWindow {
                 Button(action: didTapButton) {
                     FolderCellContent(
-                        showSubFolders: $showSubFolders,
                         folder: folder.content,
                         level: level,
                         isCurrentFolder: isCurrentFolder,
@@ -85,7 +84,6 @@ struct FolderCell: View {
                         self.shouldTransit = true
                     } label: {
                         FolderCellContent(
-                            showSubFolders: $showSubFolders,
                             folder: folder.content,
                             level: level,
                             isCurrentFolder: isCurrentFolder,
@@ -95,7 +93,7 @@ struct FolderCell: View {
                 }
             }
 
-            if showSubFolders {
+            if folder.content.isExpanded {
                 ForEach(folder.children) { child in
                     FolderCell(
                         folder: child,
@@ -130,15 +128,13 @@ struct FolderCell: View {
 struct FolderCellContent: View {
     @Environment(\.folderCellType) var cellType
 
-    @Binding var showSubFolders: Bool
+    @ObservedRealmObject var folder: Folder
 
-    private let folder: Folder
     private let level: Int
     private let isCurrentFolder: Bool
     private let canCollapseSubFolders: Bool
 
-    init(showSubFolders: Binding<Bool>, folder: Folder, level: Int, isCurrentFolder: Bool, canCollapseSubFolders: Bool = false) {
-        _showSubFolders = showSubFolders
+    init(folder: Folder, level: Int, isCurrentFolder: Bool, canCollapseSubFolders: Bool = false) {
         self.folder = folder
         self.level = min(level, UIConstants.menuDrawerMaximumSubfolderLevel)
         self.isCurrentFolder = isCurrentFolder
@@ -156,11 +152,13 @@ struct FolderCellContent: View {
         HStack(spacing: UIConstants.menuDrawerHorizontalItemSpacing) {
             if canCollapseSubFolders && cellType == .link {
                 Button {
-                    withAnimation {
-                        showSubFolders.toggle()
+                    if let liveFolder = folder.thaw() {
+                        try? liveFolder.realm?.write {
+                            liveFolder.isExpanded = !folder.isExpanded
+                        }
                     }
                 } label: {
-                    ChevronIcon(style: showSubFolders ? .up : .down, color: .secondary)
+                    ChevronIcon(style: folder.isExpanded ? .down : .up, color: .secondary)
                 }
                 .opacity(level == 0 && !folder.children.isEmpty ? 1 : 0)
             }
