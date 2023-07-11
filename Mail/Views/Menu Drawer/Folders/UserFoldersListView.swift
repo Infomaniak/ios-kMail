@@ -34,11 +34,11 @@ struct UserFoldersListView: View {
     @State private var isShowingCreateFolderAlert = false
 
     private let folders: [NestableFolder]
-    private let canCollapseSubFolders: Bool
+    private let hasSubFolders: Bool
 
     init(folders: [NestableFolder]) {
         self.folders = folders
-        canCollapseSubFolders = folders.contains { !$0.children.isEmpty }
+        hasSubFolders = folders.contains { !$0.children.isEmpty }
     }
 
     var body: some View {
@@ -86,7 +86,7 @@ struct UserFoldersListView: View {
                     ForEach(folders) { folder in
                         FolderCell(folder: folder,
                                    currentFolderId: splitViewManager.selectedFolder?.id,
-                                   canCollapseSubFolders: canCollapseSubFolders,
+                                   canCollapseSubFolders: hasSubFolders,
                                    matomoCategory: .menuDrawer)
                     }
                 }
