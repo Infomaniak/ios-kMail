@@ -23,7 +23,7 @@ import MailResources
 import SwiftUI
 
 struct DetachMailboxConfirmationView: View {
-    @Environment(\.window) private var window
+    @EnvironmentObject private var navigationState: NavigationState
 
     let mailbox: Mailbox
 
@@ -59,7 +59,7 @@ struct DetachMailboxConfirmationView: View {
         Task {
             await tryOrDisplayError {
                 try await AccountManager.instance.detachMailbox(mailbox: mailbox)
-                await (window?.windowScene?.delegate as? SceneDelegate)?.showMainView()
+                navigationState.transitionToRootViewDestination(.mainView)
             }
         }
     }
