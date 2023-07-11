@@ -30,13 +30,13 @@ public class UserActivityController {
         folder: Folder?
     ) {
         guard let folder,
-              let mailboxIndex = getMailboxIndexForCustomOrder(mailbox),
-              let remoteURL = URL(string: "https://\(ApiEnvironment.current.mailHost)/\(mailboxIndex);fid=\(folder.id)") else {
+              let mailboxIndex = getMailboxIndexForCustomOrder(mailbox) else {
             return
         }
+
         currentActivity?.invalidate()
         currentActivity = activity
-        currentActivity?.webpageURL = remoteURL
+        currentActivity?.webpageURL = Endpoint.currentUserActivity(mailboxIndex: mailboxIndex, folder: folder).url
         currentActivity?.becomeCurrent()
     }
 

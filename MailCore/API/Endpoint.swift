@@ -49,6 +49,10 @@ public extension Endpoint {
         return Endpoint(hostKeypath: \.mailHost, path: "/api")
     }
 
+    static func currentUserActivity(mailboxIndex: Int, folder: Folder) -> Endpoint {
+        return Endpoint(hostKeypath: \.mailHost, path: "/\(mailboxIndex);fid=\(folder.id)")
+    }
+
     static var mailboxes: Endpoint {
         return .base.appending(
             path: "/mailbox",
