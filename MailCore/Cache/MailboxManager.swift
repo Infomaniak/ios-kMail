@@ -75,7 +75,6 @@ public class MailboxManager: ObservableObject {
         realmConfiguration = Realm.Configuration(
             fileURL: MailboxManager.constants.rootDocumentsURL.appendingPathComponent(realmName),
             schemaVersion: 15,
-            deleteRealmIfMigrationNeeded: true,
             objectTypes: [
                 Folder.self,
                 Thread.self,
