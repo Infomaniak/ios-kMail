@@ -31,9 +31,24 @@ struct DetachMailboxConfirmationView: View {
         VStack(alignment: .leading, spacing: 24) {
             Text(MailResourcesStrings.Localizable.buttonDetachMailbox)
                 .textStyle(.bodyMedium)
-            Text(MailResourcesStrings.Localizable.popupDetachMailboxDescription(mailbox.email))
+            Text(attributedString())
                 .textStyle(.bodySecondary)
             ModalButtonsView(primaryButtonTitle: MailResourcesStrings.Localizable.buttonConfirm, primaryButtonAction: detach)
+        }
+    }
+
+    func attributedString() -> AttributedString {
+        do {
+            var text = try AttributedString(markdown: MailResourcesStrings.Localizable
+                .popupDetachMailboxDescription("**\(mailbox.email)**"))
+
+            if let range = text.range(of: mailbox.email) {
+                text[range].foregroundColor = MailResourcesAsset.textPrimaryColor.swiftUIColor
+            }
+
+            return text
+        } catch {
+            return ""
         }
     }
 
