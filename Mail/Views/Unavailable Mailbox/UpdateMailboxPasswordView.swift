@@ -41,7 +41,10 @@ struct UpdateMailboxPasswordView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 32) {
             VStack(alignment: .leading, spacing: 8) {
-                Text(MailResourcesStrings.Localizable.enterPasswordDescription(mailbox.email))
+                Text(MailResourcesStrings.Localizable.enterPasswordDescription1)
+                    .textStyle(.bodySecondary)
+                Text(MailResourcesStrings.Localizable.enterPasswordDescription2(mailbox.email))
+                    .textStyle(.bodySecondary)
                 MailButton(label: MailResourcesStrings.Localizable.buttonDetachMailbox) {
                     matomo.track(eventWithCategory: .invalidPasswordMailbox, name: "detachMailbox")
                     detachAddress()
