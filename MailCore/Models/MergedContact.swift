@@ -36,11 +36,11 @@ extension CNContact {
 }
 
 public class MergedContact {
+    private static let contactFormatter = CNContactFormatter()
+
     public var email: String
     public var remote: Contact?
     public var local: CNContact?
-
-    private let contactFormatter = CNContactFormatter()
 
     public lazy var color: UIColor = {
         if let remoteColorHex = remote?.color,
@@ -52,10 +52,11 @@ public class MergedContact {
     }()
 
     public lazy var name: String = {
-        if let local = local, let localName = contactFormatter.string(from: local) {
-            return localName
+        guard let local,
+              let localName = MergedContact.contactFormatter.string(from: local) else {
+            return remote?.name ?? ""
         }
-        return remote?.name ?? ""
+        return localName
     }()
 
     public var isLocal: Bool {
