@@ -39,9 +39,6 @@ struct ThreadCellDataHolder {
     /// Date of the last message of the folder, otherwise the last message of the thread
     let date: String
 
-    /// Field `to` in the draft folder, otherwise field `from`
-    let from: String
-
     /// Subject of the first message
     let subject: String
 
@@ -53,9 +50,6 @@ struct ThreadCellDataHolder {
         recipientToDisplay = lastMessageNotFromSent?.from.last
 
         date = thread.date.customRelativeFormatted
-
-        let isDraftFolder = thread.messages.allSatisfy(\.isDraft)
-        from = isDraftFolder ? thread.formattedTo : thread.formattedFrom
 
         subject = thread.formattedSubject
 
@@ -137,7 +131,7 @@ struct ThreadCell: View {
             .padding(.trailing, 4)
 
             VStack(alignment: .leading, spacing: 4) {
-                ThreadCellHeaderView(thread: thread, dataHolder: dataHolder)
+                ThreadCellHeaderView(thread: thread)
 
                 HStack(alignment: .top, spacing: 3) {
                     ThreadCellInfoView(dataHolder: dataHolder, density: density)

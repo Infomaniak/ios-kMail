@@ -221,20 +221,20 @@ public final class Message: Object, Decodable, Identifiable {
         return Array(dup)
     }
 
-    public var fromMe: Bool {
-        return from.contains { $0.isMe }
+    public func fromMe(currentMailboxEmail: String) -> Bool {
+        return from.contains { $0.isMe(currentMailboxEmail: currentMailboxEmail) }
     }
 
-    public var canReplyAll: Bool {
-        let holder = recipientsForReplyTo(replyAll: true)
+    public func canReplyAll(currentMailboxEmail: String) -> Bool {
+        let holder = recipientsForReplyTo(replyAll: true, currentMailboxEmail: currentMailboxEmail)
         return !holder.cc.isEmpty
     }
 
-    public func recipientsForReplyTo(replyAll: Bool = false) -> RecipientHolder {
-        let cleanedFrom = Array(from.detached()).filter { !$0.isMe }
-        let cleanedTo = Array(to.detached()).filter { !$0.isMe }
-        let cleanedReplyTo = Array(replyTo.detached()).filter { !$0.isMe }
-        let cleanedCc = Array(cc.detached()).filter { !$0.isMe }
+    public func recipientsForReplyTo(replyAll: Bool = false, currentMailboxEmail: String) -> RecipientHolder {
+        let cleanedFrom = Array(from.detached()).filter { !$0.isMe(currentMailboxEmail: currentMailboxEmail) }
+        let cleanedTo = Array(to.detached()).filter { !$0.isMe(currentMailboxEmail: currentMailboxEmail) }
+        let cleanedReplyTo = Array(replyTo.detached()).filter { !$0.isMe(currentMailboxEmail: currentMailboxEmail) }
+        let cleanedCc = Array(cc.detached()).filter { !$0.isMe(currentMailboxEmail: currentMailboxEmail) }
 
         var holder = RecipientHolder()
 

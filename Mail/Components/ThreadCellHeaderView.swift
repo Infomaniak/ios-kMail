@@ -16,12 +16,14 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import MailCore
 import MailResources
 import SwiftUI
 
 struct ThreadCellHeaderView: View {
+    @EnvironmentObject var mailboxManager: MailboxManager
     let thread: Thread
-    let dataHolder: ThreadCellDataHolder
+
     var body: some View {
         HStack(spacing: 8) {
             if thread.hasDrafts {
@@ -30,7 +32,7 @@ struct ThreadCellHeaderView: View {
                     .lineLimit(1)
                     .layoutPriority(1)
             }
-            Text(dataHolder.from)
+            Text(thread, format: .recipientNameList(context: mailboxManager, style: thread.folder?.role == .draft ? .to : .from))
                 .textStyle(.bodyMedium)
                 .lineLimit(1)
 
@@ -41,7 +43,7 @@ struct ThreadCellHeaderView: View {
 
             Spacer()
 
-            Text(dataHolder.date)
+            Text(thread.date.customRelativeFormatted)
                 .textStyle(.bodySmallSecondary)
                 .lineLimit(1)
                 .accessibilityHidden(true)

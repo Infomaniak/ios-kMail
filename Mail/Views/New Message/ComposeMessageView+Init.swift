@@ -28,7 +28,7 @@ extension ComposeMessageView {
     }
 
     static func replyOrForwardMessage(messageReply: MessageReply, mailboxManager: MailboxManager) -> ComposeMessageView {
-        let draft = Draft.replying(reply: messageReply)
+        let draft = Draft.replying(reply: messageReply, currentMailboxEmail: mailboxManager.mailbox.email)
         return ComposeMessageView(draft: draft, mailboxManager: mailboxManager, messageReply: messageReply)
     }
 

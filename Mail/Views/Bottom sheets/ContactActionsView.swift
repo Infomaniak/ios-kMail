@@ -71,7 +71,7 @@ struct ContactActionsView: View {
                 AvatarView(avatarDisplayable: recipient, size: 32)
                     .accessibilityHidden(true)
                 VStack(alignment: .leading) {
-                    Text(recipient.contact?.name ?? recipient.formattedName)
+                    Text(recipient, format: .recipient(context: mailboxManager))
                         .textStyle(.bodyMedium)
                     Text(recipient.contact?.email ?? recipient.email)
                         .textStyle(.bodySecondary)

@@ -375,7 +375,7 @@ public class MailboxManager: ObservableObject {
             try await markAsSeen(messages: messages, seen: true)
         } else {
             let messages = threads.flatMap { thread in
-                thread.lastMessageAndItsDuplicateToExecuteAction()
+                thread.lastMessageAndItsDuplicateToExecuteAction(currentMailboxEmail: mailbox.email)
             }
             try await markAsSeen(messages: messages, seen: false)
         }
@@ -438,7 +438,7 @@ public class MailboxManager: ObservableObject {
     public func toggleStar(threads: [Thread]) async throws {
         if threads.contains(where: { !$0.flagged }) {
             let messages = threads.flatMap { thread in
-                thread.lastMessageAndItsDuplicateToExecuteAction()
+                thread.lastMessageAndItsDuplicateToExecuteAction(currentMailboxEmail: mailbox.email)
             }
             _ = try await star(messages: messages)
         } else {

@@ -22,13 +22,31 @@ import MailResources
 import NukeUI
 import SwiftUI
 
+extension ImageRequest {
+    func authenticatedRequest(token: ApiToken) -> ImageRequest {
+        guard var urlRequest else {
+            return self
+        }
+
+        urlRequest.addValue(
+            "Bearer \(token.accessToken)",
+            forHTTPHeaderField: "Authorization"
+        )
+
+        return ImageRequest(urlRequest: urlRequest)
+    }
+}
+
 struct AvatarView: View {
+    @EnvironmentObject private var mailboxManager: MailboxManager
+
     let avatarDisplayable: AvatarDisplayable
     var size: CGFloat = 28
 
     var body: some View {
         Group {
-            if let avatarImageRequest = avatarDisplayable.avatarImageRequest {
+            if let currentToken = mailboxManager.apiFetcher.currentToken,
+               let avatarImageRequest = avatarDisplayable.avatarImageRequest?.authenticatedRequest(token: currentToken) {
                 LazyImage(request: avatarImageRequest) { state in
                     if let image = state.image {
                         ContactImage(image: image, size: size)

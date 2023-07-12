@@ -62,8 +62,8 @@ struct MessageHeaderSummaryView: View {
                     } else {
                         HStack(alignment: .firstTextBaseline, spacing: 8) {
                             VStack {
-                                ForEach(message.from, id: \.self) { recipient in
-                                    Text(recipient.formattedName)
+                                ForEach(message.from) { recipient in
+                                    Text(recipient, format: .recipient(context: mailboxManager))
                                         .lineLimit(1)
                                         .textStyle(.bodyMedium)
                                 }
@@ -77,7 +77,7 @@ struct MessageHeaderSummaryView: View {
 
                     if isMessageExpanded {
                         HStack {
-                            Text(message.recipients.map(\.formattedName), format: .list(type: .and))
+                            Text(message.recipients.map { $0.formatted(context: mailboxManager) }, format: .list(type: .and))
                                 .lineLimit(1)
                                 .textStyle(.bodySmallSecondary)
                             ChevronButton(isExpanded: $isHeaderExpanded)
@@ -111,7 +111,7 @@ struct MessageHeaderSummaryView: View {
                 HStack(spacing: 20) {
                     Button {
                         matomo.track(eventWithCategory: .messageActions, name: "reply")
-                        if message.canReplyAll {
+                        if message.canReplyAll(currentMailboxEmail: mailboxManager.mailbox.email) {
                             replyOrReplyAllMessage = message
                         } else {
                             navigationState.messageReply = MessageReply(message: message, replyMode: .reply)
