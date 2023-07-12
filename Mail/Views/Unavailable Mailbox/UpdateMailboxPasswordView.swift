@@ -23,6 +23,8 @@ import MailResources
 import SwiftUI
 
 struct UpdateMailboxPasswordView: View {
+    @EnvironmentObject private var navigationState: NavigationState
+
     @LazyInjectService private var matomo: MatomoUtils
 
     @State private var updatedMailboxPassword = ""
@@ -107,7 +109,7 @@ struct UpdateMailboxPasswordView: View {
                 try await AccountManager.instance.updateMailboxPassword(mailbox: mailbox, password: updatedMailboxPassword)
                 @InjectService var matomo: MatomoUtils
                 matomo.track(eventWithCategory: .noValidMailbox, name: "confirmPassword")
-                await (window?.windowScene?.delegate as? SceneDelegate)?.showMainView()
+                navigationState.transitionToRootViewDestination(.mainView)
             } catch {
                 isShowingError = true
             }
@@ -122,7 +124,7 @@ struct UpdateMailboxPasswordView: View {
                 try await AccountManager.instance.detachMailbox(mailbox: mailbox)
                 @InjectService var matomo: MatomoUtils
                 matomo.track(eventWithCategory: .noValidMailbox, name: "detachMailbox")
-                await (window?.windowScene?.delegate as? SceneDelegate)?.showMainView()
+                navigationState.transitionToRootViewDestination(.mainView)
             } catch {
                 isShowingError = true
             }
