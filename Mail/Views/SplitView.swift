@@ -107,6 +107,8 @@ struct SplitView: View {
             let realm = mailboxManager.getRealm()
             realm.refresh()
 
+            navigationDrawerController.close()
+
             let tappedNotificationMessage = realm.object(ofType: Message.self, forPrimaryKey: notificationPayload.messageId)
             // Original parent should always be in the inbox but maybe change in a later stage to always find the parent in inbox
             if let tappedNotificationThread = tappedNotificationMessage?.originalThread {
