@@ -123,11 +123,12 @@ struct ThreadCell: View {
                 if density == .large, let recipient = dataHolder.recipientToDisplay {
                     ZStack {
                         AvatarView(avatarDisplayable: recipient, size: 40)
+                            .opacity(isSelected ? 0 : 1)
                         CheckboxView(isSelected: isSelected, density: density)
                             .opacity(isSelected ? 1 : 0)
-                            .animation(nil, value: isSelected)
                     }
                     .accessibility(hidden: true)
+                    .animation(nil, value: isSelected)
                 } else if isMultipleSelectionEnabled {
                     CheckboxView(isSelected: isSelected, density: density)
                         .opacity(shouldDisplayCheckbox ? 1 : 0)
