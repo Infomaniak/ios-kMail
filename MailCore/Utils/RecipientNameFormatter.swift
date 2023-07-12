@@ -41,6 +41,7 @@ public extension Recipient {
             case shortName
             case fullName
             case initials
+            case html
         }
 
         public static func == (lhs: Recipient.FormatStyle, rhs: Recipient.FormatStyle) -> Bool {
@@ -114,6 +115,15 @@ public extension Recipient {
             return initials.joined().uppercased()
         }
 
+        private func formattedHtml(recipient: Recipient) -> String {
+            let emailString = "&lt;\(recipient.email)&gt;"
+            if recipient.name.isEmpty {
+                return emailString
+            } else {
+                return "\(recipient.name) \(emailString)"
+            }
+        }
+
         public func format(_ value: Recipient) -> String {
             switch style {
             case .shortName:
@@ -122,6 +132,8 @@ public extension Recipient {
                 return formattedFullName(recipient: value)
             case .initials:
                 return formattedInitials(recipient: value)
+            case .html:
+                return formattedHtml(recipient: value)
             }
         }
 

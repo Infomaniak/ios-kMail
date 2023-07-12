@@ -87,15 +87,6 @@ public class Recipient: EmbeddedObject, Codable {
 
     public lazy var contact: MergedContact? = AccountManager.instance.currentContactManager?.getContact(for: self)
 
-    public var htmlDescription: String {
-        let emailString = "&lt;\(email)&gt;"
-        if name.isEmpty {
-            return emailString
-        } else {
-            return "\(name) \(emailString)"
-        }
-    }
-
     public func isSameRecipient(as recipient: Recipient) -> Bool {
         return email == recipient.email && name == recipient.name
     }

@@ -81,11 +81,11 @@ public enum Constants {
 
     public static func forwardQuote(message: Message) -> String {
         let date = DateFormatter.localizedString(from: message.date, dateStyle: .medium, timeStyle: .short)
-        let to = ListFormatter.localizedString(byJoining: message.to.map(\.htmlDescription))
+        let to = ListFormatter.localizedString(byJoining: message.to.map { $0.formatted(context: nil, style: .html) })
         let subject = message.formattedSubject.replacingOccurrences(of: "'", with: "’")
         var cc: String {
             if !message.cc.isEmpty {
-                return "<div>\(MailResourcesStrings.Localizable.ccTitle) \(ListFormatter.localizedString(byJoining: message.cc.map(\.htmlDescription)))<br></div>"
+                return "<div>\(MailResourcesStrings.Localizable.ccTitle) \(ListFormatter.localizedString(byJoining: message.cc.map { $0.formatted(context: nil, style: .html) }))<br></div>"
             } else {
                 return ""
             }
@@ -93,7 +93,8 @@ public enum Constants {
         return """
         <div class=\"forwardContentMessage\">
         <div>---------- \(MailResourcesStrings.Localizable.messageForwardHeader) ---------<br></div>
-        <div>\(MailResourcesStrings.Localizable.fromTitle) \(message.from.first?.htmlDescription ?? "")<br></div>
+        <div>\(MailResourcesStrings.Localizable.fromTitle) \(message.from.first?
+            .formatted(context: nil, style: .html) ?? "")<br></div>
         <div>\(MailResourcesStrings.Localizable.dateTitle) \(date)<br></div>
         <div>\(MailResourcesStrings.Localizable.subjectTitle) \(subject)<br></div>
         <div>\(MailResourcesStrings.Localizable.toTitle) \(to)<br></div>
@@ -108,7 +109,7 @@ public enum Constants {
     public static func replyQuote(message: Message) -> String {
         let headerText = MailResourcesStrings.Localizable.messageReplyHeader(
             DateFormatter.localizedString(from: message.date, dateStyle: .medium, timeStyle: .short),
-            message.from.first?.htmlDescription ?? ""
+            message.from.first?.formatted(context: nil, style: .html) ?? ""
         )
         return """
         <div id=\"answerContentMessage\" class=\"ik_mail_quote\" >
