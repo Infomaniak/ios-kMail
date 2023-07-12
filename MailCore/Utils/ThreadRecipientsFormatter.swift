@@ -35,7 +35,7 @@ public extension Thread {
 
     struct FormatStyle: Foundation.FormatStyle, Codable, Equatable, Hashable {
         // swiftlint:disable nesting
-        // Standard API does also nests types
+        // Standard API does also nested types
         public enum Style: Codable, Equatable, Hashable {
             case to
             case from

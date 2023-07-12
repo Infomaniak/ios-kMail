@@ -36,7 +36,7 @@ public extension Recipient {
 
     struct FormatStyle: Foundation.FormatStyle, Codable, Equatable, Hashable {
         // swiftlint:disable nesting
-        // Standard API does also nests types
+        // Standard API does also nested types
         public enum Style: Codable, Equatable, Hashable {
             case shortName
             case fullName
