@@ -82,6 +82,9 @@ enum ApplicationAssembly {
             },
             Factory(type: ApplicationStatable.self) { _, _ in
                 ApplicationState()
+            },
+            Factory(type: UserActivityController.self) { _, _ in
+                UserActivityController()
             }
         ]
 

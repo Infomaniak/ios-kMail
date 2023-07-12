@@ -19,17 +19,6 @@
 import Foundation
 import SwiftUI
 
-public struct WindowKey: EnvironmentKey {
-    public static let defaultValue: UIWindow? = nil
-}
-
-public extension EnvironmentValues {
-    var window: WindowKey.Value {
-        get { return self[WindowKey.self] }
-        set { self[WindowKey.self] = newValue }
-    }
-}
-
 public struct CompactWindowKey: EnvironmentKey {
     public static let defaultValue = true
 }

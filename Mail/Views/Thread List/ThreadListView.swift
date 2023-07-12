@@ -37,9 +37,10 @@ final class FlushAlertState: Identifiable {
 
 struct ThreadListView: View {
     @LazyInjectService private var matomo: MatomoUtils
+    @LazyInjectService private var userActivityController: UserActivityController
 
     @EnvironmentObject var splitViewManager: SplitViewManager
-    @EnvironmentObject var navigationStore: NavigationStore
+    @EnvironmentObject var navigationState: NavigationState
 
     @AppStorage(UserDefaults.shared.key(.threadDensity)) private var threadDensity = DefaultPreferences.threadDensity
     @AppStorage(UserDefaults.shared.key(.accentColor)) private var accentColor = DefaultPreferences.accentColor
@@ -55,9 +56,6 @@ struct ThreadListView: View {
     @StateObject var multipleSelectionViewModel: ThreadListMultipleSelectionViewModel
     @StateObject private var networkMonitor = NetworkMonitor()
 
-    @Binding private var editedMessageDraft: Draft?
-    @Binding private var messageReply: MessageReply?
-
     private var shouldDisplayEmptyView: Bool {
         viewModel.folder.lastUpdate != nil && viewModel.sections.isEmpty && !viewModel.isLoadingPage
     }
@@ -72,11 +70,7 @@ struct ThreadListView: View {
 
     init(mailboxManager: MailboxManager,
          folder: Folder,
-         editedMessageDraft: Binding<Draft?>,
-         messageReply: Binding<MessageReply?>,
          isCompact: Bool) {
-        _editedMessageDraft = editedMessageDraft
-        _messageReply = messageReply
         _viewModel = StateObject(wrappedValue: ThreadListViewModel(mailboxManager: mailboxManager,
                                                                    folder: folder,
                                                                    isCompact: isCompact))
@@ -123,7 +117,6 @@ struct ThreadListView: View {
                             ForEach(section.threads) { thread in
                                 ThreadListCell(viewModel: viewModel,
                                                multipleSelectionViewModel: multipleSelectionViewModel,
-                                               editedMessageDraft: $editedMessageDraft,
                                                thread: thread,
                                                threadDensity: threadDensity,
                                                isSelected: viewModel.selectedThread?.uid == thread.uid,
@@ -225,15 +218,18 @@ struct ThreadListView: View {
             if viewModel.isCompact {
                 viewModel.selectedThread = nil
             }
+            userActivityController.setCurrentActivity(mailbox: viewModel.mailboxManager.mailbox,
+                                                      folder: splitViewManager.selectedFolder)
         }
         .onChange(of: splitViewManager.selectedFolder) { newFolder in
             changeFolder(newFolder: newFolder)
+            userActivityController.setCurrentActivity(mailbox: viewModel.mailboxManager.mailbox, folder: newFolder)
         }
         .onChange(of: viewModel.selectedThread) { newThread in
             if let newThread {
-                navigationStore.threadPath = [newThread]
+                navigationState.threadPath = [newThread]
             } else {
-                navigationStore.threadPath = []
+                navigationState.threadPath = []
             }
         }
         .onReceive(NotificationCenter.default.publisher(for: UIApplication.willEnterForegroundNotification)) { _ in
@@ -287,8 +283,6 @@ struct ThreadListView_Previews: PreviewProvider {
         ThreadListView(
             mailboxManager: PreviewHelper.sampleMailboxManager,
             folder: PreviewHelper.sampleFolder,
-            editedMessageDraft: .constant(nil),
-            messageReply: .constant(nil),
             isCompact: false
         )
     }

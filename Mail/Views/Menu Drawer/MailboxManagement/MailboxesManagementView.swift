@@ -87,6 +87,11 @@ struct MailboxesManagementView: View {
                 }
             }
         }
+        .onChange(of: mailboxManager.mailbox.id) { _ in
+            withAnimation {
+                navigationDrawerState.showMailboxes = false
+            }
+        }
     }
 
     private func updateAccount() async throws {

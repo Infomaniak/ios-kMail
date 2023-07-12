@@ -24,7 +24,7 @@ import Sentry
 
 public class MailboxInfosManager {
     public static let instance = MailboxInfosManager()
-    private static let currentDbVersion: UInt64 = 4
+    private static let currentDbVersion: UInt64 = 5
     public let realmConfiguration: Realm.Configuration
     private let dbName = "MailboxInfos.realm"
 

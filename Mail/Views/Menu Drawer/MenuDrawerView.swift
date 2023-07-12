@@ -46,8 +46,6 @@ struct NavigationDrawer: View {
     private let maxWidth = 350.0
     private let spacing = 60.0
 
-    @Environment(\.window) private var window
-
     @EnvironmentObject private var mailboxManager: MailboxManager
     @EnvironmentObject private var splitViewManager: SplitViewManager
     @EnvironmentObject private var navigationDrawerState: NavigationDrawerState
@@ -58,7 +56,49 @@ struct NavigationDrawer: View {
 
     @LazyInjectService private var matomo: MatomoUtils
 
-    private var dragGesture: some Gesture {
+    var body: some View {
+        GeometryReader { rootViewSizeProxy in
+            ZStack {
+                Color.black
+                    .opacity(navigationDrawerState.isOpen ? 0.5 : 0)
+                    .ignoresSafeArea()
+                    .onTapGesture {
+                        matomo.track(eventWithCategory: .menuDrawer, name: "closeByTap")
+                        navigationDrawerState.close()
+                    }
+
+                GeometryReader { geometryProxy in
+                    HStack {
+                        MenuDrawerView()
+                            .frame(maxWidth: maxWidth)
+                            .padding(.trailing, spacing)
+                            .offset(x: navigationDrawerState.isOpen ? offsetWidth : -geometryProxy.size.width)
+                        Spacer()
+                    }
+                }
+            }
+            .accessibilityAction(.escape) {
+                matomo.track(eventWithCategory: .menuDrawer, name: "closeByAccessibility")
+                navigationDrawerState.close()
+            }
+            .gesture(dragGestureForRootViewSize(rootViewSizeProxy.size))
+            .statusBarHidden(navigationDrawerState.isOpen)
+            .onChange(of: navigationDrawerState.isOpen) { isOpen in
+                if !isOpen {
+                    offsetWidth = 0
+                }
+            }
+            .onChange(of: isDragGestureActive) { newIsDragGestureActive in
+                if !newIsDragGestureActive && navigationDrawerState.isOpen {
+                    withAnimation {
+                        offsetWidth = 0
+                    }
+                }
+            }
+        }
+    }
+
+    func dragGestureForRootViewSize(_ size: CGSize) -> some Gesture {
         DragGesture()
             .updating($isDragGestureActive) { _, active, _ in
                 active = true
@@ -69,8 +109,7 @@ struct NavigationDrawer: View {
                 }
             }
             .onEnded { value in
-                let windowWidth = window?.frame.size.width ?? 0
-                if navigationDrawerState.isOpen && value.translation.width < -(windowWidth / 2) {
+                if navigationDrawerState.isOpen && value.translation.width < -(size.width / 2) {
                     matomo.track(eventWithCategory: .menuDrawer, name: "closeByGesture")
                     navigationDrawerState.close()
                 } else {
@@ -80,46 +119,6 @@ struct NavigationDrawer: View {
                     }
                 }
             }
-    }
-
-    var body: some View {
-        ZStack {
-            Color.black
-                .opacity(navigationDrawerState.isOpen ? 0.5 : 0)
-                .ignoresSafeArea()
-                .onTapGesture {
-                    matomo.track(eventWithCategory: .menuDrawer, name: "closeByTap")
-                    navigationDrawerState.close()
-                }
-
-            GeometryReader { geometryProxy in
-                HStack {
-                    MenuDrawerView()
-                        .frame(maxWidth: maxWidth)
-                        .padding(.trailing, spacing)
-                        .offset(x: navigationDrawerState.isOpen ? offsetWidth : -geometryProxy.size.width)
-                    Spacer()
-                }
-            }
-        }
-        .accessibilityAction(.escape) {
-            matomo.track(eventWithCategory: .menuDrawer, name: "closeByAccessibility")
-            navigationDrawerState.close()
-        }
-        .gesture(dragGesture)
-        .statusBarHidden(navigationDrawerState.isOpen)
-        .onChange(of: navigationDrawerState.isOpen) { isOpen in
-            if !isOpen {
-                offsetWidth = 0
-            }
-        }
-        .onChange(of: isDragGestureActive) { newIsDragGestureActive in
-            if !newIsDragGestureActive && navigationDrawerState.isOpen {
-                withAnimation {
-                    offsetWidth = 0
-                }
-            }
-        }
     }
 }
 
@@ -138,33 +137,30 @@ struct MenuDrawerView: View {
 
             ScrollView {
                 VStack(spacing: 0) {
-                    Group {
-                        MailboxesManagementView()
+                    MailboxesManagementView()
 
+                    IKDivider(hasVerticalPadding: true, horizontalPadding: UIConstants.menuDrawerHorizontalPadding)
+
+                    FolderListView(mailboxManager: mailboxManager)
+
+                    IKDivider(hasVerticalPadding: true, horizontalPadding: UIConstants.menuDrawerHorizontalPadding)
+
+                    MenuDrawerItemsAdvancedListView(
+                        mailboxCanRestoreEmails: mailboxManager.mailbox.permissions?.canRestoreEmails == true
+                    )
+
+                    IKDivider(hasVerticalPadding: true, horizontalPadding: UIConstants.menuDrawerHorizontalPadding)
+
+                    MenuDrawerItemsHelpListView()
+                    if mailboxManager.mailbox.isLimited, let quotas = mailboxManager.mailbox.quotas {
                         IKDivider(hasVerticalPadding: true, horizontalPadding: UIConstants.menuDrawerHorizontalPadding)
 
-                        FolderListView(mailboxManager: mailboxManager)
-
-                        IKDivider(hasVerticalPadding: true, horizontalPadding: UIConstants.menuDrawerHorizontalPadding)
+                        MailboxQuotaView(quotas: quotas)
                     }
-                    Group {
-                        MenuDrawerItemsAdvancedListView(
-                            mailboxCanRestoreEmails: mailboxManager.mailbox.permissions?.canRestoreEmails == true
-                        )
 
-                        IKDivider(hasVerticalPadding: true, horizontalPadding: UIConstants.menuDrawerHorizontalPadding)
+                    IKDivider(hasVerticalPadding: true, horizontalPadding: UIConstants.menuDrawerHorizontalPadding)
 
-                        MenuDrawerItemsHelpListView()
-                        if mailboxManager.mailbox.isLimited, let quotas = mailboxManager.mailbox.quotas {
-                            IKDivider(hasVerticalPadding: true, horizontalPadding: UIConstants.menuDrawerHorizontalPadding)
-
-                            MailboxQuotaView(quotas: quotas)
-                        }
-
-                        IKDivider(hasVerticalPadding: true, horizontalPadding: UIConstants.menuDrawerHorizontalPadding)
-
-                        AppVersionView()
-                    }
+                    AppVersionView()
                 }
                 .padding(.vertical, 16)
             }

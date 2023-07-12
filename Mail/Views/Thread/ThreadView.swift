@@ -40,7 +40,7 @@ struct ThreadView: View {
 
     @EnvironmentObject private var splitViewManager: SplitViewManager
     @EnvironmentObject private var mailboxManager: MailboxManager
-    @EnvironmentObject private var navigationStore: NavigationStore
+    @EnvironmentObject private var navigationState: NavigationState
 
     @State private var headerHeight: CGFloat = 0
     @State private var displayNavigationTitle = false
@@ -119,7 +119,7 @@ struct ThreadView: View {
                         ReplyActionsView(
                             mailboxManager: mailboxManager,
                             message: message,
-                            messageReply: $navigationStore.messageReply
+                            messageReply: $navigationState.messageReply
                         )
                     }
                 } else {
@@ -157,11 +157,11 @@ struct ThreadView: View {
             if message.canReplyAll {
                 replyOrReplyAllMessage = message
             } else {
-                navigationStore.messageReply = MessageReply(message: message, replyMode: .reply)
+                navigationState.messageReply = MessageReply(message: message, replyMode: .reply)
             }
         case .forward:
             guard let message = thread.lastMessageToExecuteAction() else { return }
-            navigationStore.messageReply = MessageReply(message: message, replyMode: .forward)
+            navigationState.messageReply = MessageReply(message: message, replyMode: .forward)
         case .archive:
             Task {
                 await tryOrDisplayError {

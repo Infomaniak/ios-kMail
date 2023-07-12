@@ -36,6 +36,14 @@ struct SettingsToggleCell: View {
     @State private var toggleIsOn: Bool {
         didSet {
             UserDefaults.shared[keyPath: userDefaults] = toggleIsOn
+
+            // AppStorage updates the views only if directly called
+            if userDefaults == \.isAppLockEnabled {
+                AppStorage(UserDefaults.shared.key(.appLock)).wrappedValue = UserDefaults.shared.isAppLockEnabled
+                if UserDefaults.shared.isAppLockEnabled {
+                    appLockHelper.setTime()
+                }
+            }
         }
     }
 

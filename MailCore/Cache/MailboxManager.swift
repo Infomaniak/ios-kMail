@@ -74,8 +74,7 @@ public class MailboxManager: ObservableObject {
         let realmName = "\(mailbox.userId)-\(mailbox.mailboxId).realm"
         realmConfiguration = Realm.Configuration(
             fileURL: MailboxManager.constants.rootDocumentsURL.appendingPathComponent(realmName),
-            schemaVersion: 14,
-            deleteRealmIfMigrationNeeded: true,
+            schemaVersion: 15,
             objectTypes: [
                 Folder.self,
                 Thread.self,
@@ -1271,6 +1270,7 @@ public class MailboxManager: ObservableObject {
         folder.cursor = savedFolder.cursor
         folder.remainingOldMessagesToFetch = savedFolder.remainingOldMessagesToFetch
         folder.isHistoryComplete = savedFolder.isHistoryComplete
+        folder.isExpanded = savedFolder.isExpanded
     }
 
     func getSubFolders(from folders: [Folder], oldResult: [Folder] = []) -> [Folder] {
@@ -1287,6 +1287,14 @@ public class MailboxManager: ObservableObject {
     public func hasUnreadMessages() -> Bool {
         let realm = getRealm()
         return realm.objects(Folder.self).contains { $0.unreadCount > 0 }
+    }
+}
+
+// MARK: - Equatable conformance
+
+extension MailboxManager: Equatable {
+    public static func == (lhs: MailboxManager, rhs: MailboxManager) -> Bool {
+        return lhs.mailbox.id == rhs.mailbox.id
     }
 }
 

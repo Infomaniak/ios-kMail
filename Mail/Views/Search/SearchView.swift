@@ -29,10 +29,7 @@ struct SearchView: View {
 
     @StateObject private var viewModel: SearchViewModel
 
-    @Binding private var editedMessageDraft: Draft?
-
-    init(mailboxManager: MailboxManager, folder: Folder, editedMessageDraft: Binding<Draft?>) {
-        _editedMessageDraft = editedMessageDraft
+    init(mailboxManager: MailboxManager, folder: Folder) {
         _viewModel = StateObject(wrappedValue: SearchViewModel(mailboxManager: mailboxManager, folder: folder))
     }
 
@@ -71,7 +68,7 @@ struct SearchView: View {
                     SearchHistorySectionView(viewModel: viewModel)
                 } else if viewModel.searchState == .results {
                     SearchContactsSectionView(viewModel: viewModel)
-                    SearchThreadsSectionView(viewModel: viewModel, editedMessageDraft: $editedMessageDraft)
+                    SearchThreadsSectionView(viewModel: viewModel)
                 }
             }
             .listStyle(.plain)
@@ -121,8 +118,6 @@ struct SearchView: View {
 
 struct SearchView_Previews: PreviewProvider {
     static var previews: some View {
-        SearchView(mailboxManager: PreviewHelper.sampleMailboxManager,
-                   folder: PreviewHelper.sampleFolder,
-                   editedMessageDraft: .constant(nil))
+        SearchView(mailboxManager: PreviewHelper.sampleMailboxManager, folder: PreviewHelper.sampleFolder)
     }
 }

@@ -31,6 +31,7 @@ public struct RootViewManager: RootViewManageable {
     }
 
     public func updateAllWindowUI() {
-        UIApplication.shared.connectedScenes.forEach { ($0.delegate as? SceneDelegate)?.updateWindowUI() }
+        // TODO: fix UIApplication reference
+//        UIApplication.shared.connectedScenes.forEach { ($0.delegate as? SceneDelegate)?.updateWindowUI() }
     }
 }

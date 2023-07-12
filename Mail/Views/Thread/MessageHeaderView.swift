@@ -27,7 +27,7 @@ import SwiftUI
 struct MessageHeaderView: View {
     @LazyInjectService private var matomo: MatomoUtils
 
-    @EnvironmentObject private var navigationStore: NavigationStore
+    @EnvironmentObject private var navigationState: NavigationState
     @EnvironmentObject private var mailboxManager: MailboxManager
 
     @State private var editedDraft: Draft?

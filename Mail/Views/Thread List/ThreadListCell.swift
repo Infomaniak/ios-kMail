@@ -25,12 +25,10 @@ import SwiftUI
 
 struct ThreadListCell: View {
     @EnvironmentObject var splitViewManager: SplitViewManager
-    @EnvironmentObject var navigationStore: NavigationStore
+    @EnvironmentObject var navigationState: NavigationState
 
     let viewModel: ThreadListViewModel
     @ObservedObject var multipleSelectionViewModel: ThreadListMultipleSelectionViewModel
-
-    @Binding var editedMessageDraft: Draft?
 
     let thread: Thread
 
@@ -71,17 +69,14 @@ struct ThreadListCell: View {
                 DraftUtils.editDraft(
                     from: thread,
                     mailboxManager: viewModel.mailboxManager,
-                    editedMessageDraft: $editedMessageDraft
+                    editedMessageDraft: $navigationState.editedMessageDraft
                 )
             } else {
-                splitViewManager.splitViewController?.hide(.primary)
-                if splitViewManager.splitViewController?.splitBehavior == .overlay {
-                    splitViewManager.splitViewController?.hide(.supplementary)
-                }
+                splitViewManager.adaptToProminentThreadView()
 
-                // Update both viewModel and navigationStore on the truth.
+                // Update both viewModel and navigationState on the truth.
                 viewModel.selectedThread = thread
-                navigationStore.threadPath = [thread]
+                navigationState.threadPath = [thread]
             }
         }
     }
@@ -105,7 +100,6 @@ struct ThreadListCell_Previews: PreviewProvider {
                                            folder: PreviewHelper.sampleFolder,
                                            isCompact: false),
             multipleSelectionViewModel: ThreadListMultipleSelectionViewModel(mailboxManager: PreviewHelper.sampleMailboxManager),
-            editedMessageDraft: .constant(nil),
             thread: PreviewHelper.sampleThread,
             threadDensity: .large,
             isSelected: false,

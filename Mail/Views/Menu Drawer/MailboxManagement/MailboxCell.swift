@@ -41,30 +41,27 @@ extension View {
 }
 
 struct MailboxCell: View {
+    @LazyInjectService private var accountManager: AccountManager
+    
     @Environment(\.mailboxCellStyle) private var style: Style
-    @Environment(\.window) private var window
+    @EnvironmentObject private var navigationDrawerState: NavigationDrawerState
 
+    
     @State private var isShowingLockedView = false
     @State private var isShowingUpdatePasswordView = false
 
     let mailbox: Mailbox
     var isSelected = false
 
-    private var detailNumber: Int? {
-        return mailbox.unseenMessages > 0 ? mailbox.unseenMessages : nil
-    }
-
     enum Style {
-        case menuDrawer, account, setPassword
+        case menuDrawer, account, blockedPassword, locked
     }
 
     var body: some View {
         MailboxesManagementButtonView(
             icon: MailResourcesAsset.envelope,
-            text: mailbox.email,
-            detailNumber: detailNumber,
-            isSelected: isSelected,
-            isInMaintenance: !mailbox.isAvailable
+            mailbox: mailbox,
+            isSelected: isSelected
         ) {
             guard !isSelected else { return }
             guard mailbox.isPasswordValid else {
@@ -77,13 +74,14 @@ struct MailboxCell: View {
             }
             @InjectService var matomo: MatomoUtils
             switch style {
-            case .setPassword: break
+            case .blockedPassword, .locked: break
             case .menuDrawer:
                 matomo.track(eventWithCategory: .menuDrawer, name: "switchMailbox")
             case .account:
                 matomo.track(eventWithCategory: .account, name: "switchMailbox")
             }
-            (window?.windowScene?.delegate as? SceneDelegate)?.switchMailbox(mailbox)
+            accountManager.switchMailbox(newMailbox: mailbox)
+            navigationDrawerState.close()
         }
         .floatingPanel(isPresented: $isShowingLockedView) {
             LockedMailboxView(lockedMailbox: mailbox)

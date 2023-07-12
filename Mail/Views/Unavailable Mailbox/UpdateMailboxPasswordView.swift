@@ -26,7 +26,7 @@ struct UpdateMailboxPasswordView: View {
     @LazyInjectService private var accountManager: AccountManager
     @LazyInjectService private var matomo: MatomoUtils
 
-    @Environment(\.window) private var window
+    @EnvironmentObject private var navigationState: NavigationState
 
     @State private var updatedMailboxPassword = ""
     @State private var isShowingError = false
@@ -44,7 +44,10 @@ struct UpdateMailboxPasswordView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 32) {
             VStack(alignment: .leading, spacing: 8) {
-                Text(MailResourcesStrings.Localizable.enterPasswordDescription(mailbox.email))
+                Text(MailResourcesStrings.Localizable.enterPasswordDescription1)
+                    .textStyle(.bodySecondary)
+                Text(MailResourcesStrings.Localizable.enterPasswordDescription2(mailbox.email))
+                    .textStyle(.bodySecondary)
                 MailButton(label: MailResourcesStrings.Localizable.buttonDetachMailbox) {
                     matomo.track(eventWithCategory: .invalidPasswordMailbox, name: "detachMailbox")
                     detachAddress()
@@ -105,7 +108,7 @@ struct UpdateMailboxPasswordView: View {
             isLoading = true
             do {
                 try await accountManager.updateMailboxPassword(mailbox: mailbox, password: updatedMailboxPassword)
-                await (window?.windowScene?.delegate as? SceneDelegate)?.showMainView()
+                navigationState.transitionToRootViewDestination(.mainView)
             } catch {
                 isShowingError = true
             }
@@ -118,7 +121,7 @@ struct UpdateMailboxPasswordView: View {
             isLoading = true
             do {
                 try await accountManager.detachMailbox(mailbox: mailbox)
-                await (window?.windowScene?.delegate as? SceneDelegate)?.showMainView()
+                navigationState.transitionToRootViewDestination(.mainView)
             } catch {
                 isShowingError = true
             }

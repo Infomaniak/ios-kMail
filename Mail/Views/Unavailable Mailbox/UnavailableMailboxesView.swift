@@ -26,10 +26,8 @@ struct UnavailableMailboxesView: View {
     @LazyInjectService private var orientationManager: OrientationManageable
     @LazyInjectService private var matomo: MatomoUtils
 
-    @Environment(\.window) private var window
-
-    @State var isShowingNewAccountView = false
-    @State private var showAddMailbox = false
+    @State private var isShowingNewAccountView = false
+    @State private var isShowingAddMailboxView = false
 
     var body: some View {
         NavigationView {
@@ -59,17 +57,12 @@ struct UnavailableMailboxesView: View {
                 }
                 Spacer()
 
-                NavigationLink(isActive: $showAddMailbox) {
-                    AddMailboxView { mailbox in
-                        DispatchQueue.main.async {
-                            guard let mailbox = mailbox else { return }
-                            (window?.windowScene?.delegate as? SceneDelegate)?.switchMailbox(mailbox)
-                        }
-                    }
+                NavigationLink(isActive: $isShowingAddMailboxView) {
+                    AddMailboxView()
                 } label: {
                     MailButton(label: MailResourcesStrings.Localizable.buttonAddEmailAddress) {
                         matomo.track(eventWithCategory: .noValidMailboxes, name: "addMailbox")
-                        showAddMailbox.toggle()
+                        isShowingAddMailboxView = true
                     }
                     .mailButtonFullWidth(true)
                     .mailButtonStyle(.large)

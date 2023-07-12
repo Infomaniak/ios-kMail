@@ -25,8 +25,6 @@ import MailResources
 import SwiftUI
 
 struct LogoutConfirmationView: View {
-    @Environment(\.window) private var window
-
     @LazyInjectService private var accountManager: AccountManager
 
     let account: Account
@@ -50,9 +48,7 @@ struct LogoutConfirmationView: View {
         }
         accountManager.removeTokenAndAccount(token: account.token)
         if let nextAccount = accountManager.accounts.first {
-            (window?.windowScene?.delegate as? SceneDelegate)?.switchAccount(nextAccount)
-        } else {
-            (window?.windowScene?.delegate as? SceneDelegate)?.showLoginView()
+            accountManager.switchAccount(newAccount: nextAccount)
         }
         accountManager.saveAccounts()
     }

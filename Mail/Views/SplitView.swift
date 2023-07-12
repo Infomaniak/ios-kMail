@@ -32,43 +32,36 @@ public class SplitViewManager: ObservableObject {
     @Published var selectedFolder: Folder?
     var splitViewController: UISplitViewController?
 
-    init(folder: Folder?) {
-        selectedFolder = folder
+    func adaptToProminentThreadView() {
+        splitViewController?.hide(.primary)
+        if splitViewController?.splitBehavior == .overlay {
+            splitViewController?.hide(.supplementary)
+        }
     }
 }
 
 struct SplitView: View {
-    @Environment(\.horizontalSizeClass) var horizontalSizeClass
-    @Environment(\.verticalSizeClass) var verticalSizeClass
-    @Environment(\.window) var window
+    @Environment(\.isCompactWindow) private var isCompactWindow
+    @Environment(\.scenePhase) private var scenePhase
+
+    @EnvironmentObject private var navigationState: NavigationState
 
     @State private var splitViewController: UISplitViewController?
     @State private var mailToURLComponents: IdentifiableURLComponents?
 
     @StateObject private var navigationDrawerController = NavigationDrawerState()
-    @StateObject private var navigationStore = NavigationStore()
-    @StateObject private var splitViewManager: SplitViewManager
+    @StateObject private var splitViewManager = SplitViewManager()
 
     @LazyInjectService private var orientationManager: OrientationManageable
     @LazyInjectService private var snackbarPresenter: SnackBarPresentable
 
     let mailboxManager: MailboxManager
 
-    private var isCompact: Bool {
-        UIConstants.isCompact(horizontalSizeClass: horizontalSizeClass, verticalSizeClass: verticalSizeClass)
-    }
-
-    init(mailboxManager: MailboxManager) {
-        self.mailboxManager = mailboxManager
-        _splitViewManager =
-            StateObject(wrappedValue: SplitViewManager(folder: mailboxManager.getFolder(with: .inbox)))
-    }
-
     var body: some View {
         Group {
-            if isCompact {
+            if isCompactWindow {
                 ZStack {
-                    NBNavigationStack(path: $navigationStore.threadPath) {
+                    NBNavigationStack(path: $navigationState.threadPath) {
                         ThreadListManagerView()
                             .accessibilityHidden(navigationDrawerController.isOpen)
                             .nbNavigationDestination(for: Thread.self) { thread in
@@ -87,7 +80,7 @@ struct SplitView: View {
 
                     ThreadListManagerView()
 
-                    if let thread = navigationStore.threadPath.last {
+                    if let thread = navigationState.threadPath.last {
                         ThreadView(thread: thread)
                     } else {
                         EmptyStateView.emptyThread(from: splitViewManager.selectedFolder)
@@ -95,16 +88,23 @@ struct SplitView: View {
                 }
             }
         }
-        .sheet(item: $navigationStore.messageReply) { messageReply in
+        .sheet(item: $navigationState.messageReply) { messageReply in
             ComposeMessageView.replyOrForwardMessage(messageReply: messageReply, mailboxManager: mailboxManager)
         }
         .sheet(item: $mailToURLComponents) { identifiableURLComponents in
             ComposeMessageView.mailTo(urlComponents: identifiableURLComponents.urlComponents, mailboxManager: mailboxManager)
         }
-        .onReceive(NotificationCenter.default.publisher(for: UIApplication.willEnterForegroundNotification)) { _ in
+        .sheet(item: $navigationState.editedMessageDraft) { editedMessageDraft in
+            ComposeMessageView.edit(draft: editedMessageDraft, mailboxManager: mailboxManager)
+        }
+        .onChange(of: scenePhase) { newScenePhase in
+            guard newScenePhase == .active else { return }
             Task {
                 try await mailboxManager.folders()
             }
+        }
+        .onOpenURL { url in
+            handleOpenUrl(url)
         }
         .onReceive(NotificationCenter.default.publisher(for: .onUserTappedNotification)) { notification in
             guard let notificationPayload = notification.object as? NotificationTappedPayload else { return }
@@ -114,7 +114,7 @@ struct SplitView: View {
             let tappedNotificationMessage = realm.object(ofType: Message.self, forPrimaryKey: notificationPayload.messageId)
             // Original parent should always be in the inbox but maybe change in a later stage to always find the parent in inbox
             if let tappedNotificationThread = tappedNotificationMessage?.originalThread {
-                navigationStore.threadPath = [tappedNotificationThread]
+                navigationState.threadPath = [tappedNotificationThread]
             } else {
                 snackbarPresenter.show(message: MailError.localMessageNotFound.errorDescription)
             }
@@ -125,34 +125,28 @@ struct SplitView: View {
         .onAppear {
             orientationManager.setOrientationLock(.all)
         }
-        .task {
+        .task(id: mailboxManager.mailbox.objectId) {
             await fetchSignatures()
         }
-        .task {
+        .task(id: mailboxManager.mailbox.objectId) {
             await fetchFolders()
-            // On first launch, select inbox
-            if splitViewManager.selectedFolder == nil {
-                splitViewManager.selectedFolder = getInbox()
-            }
+            splitViewManager.selectedFolder = getInbox()
         }
         .onRotate { orientation in
             guard let interfaceOrientation = orientation else { return }
             setupBehaviour(orientation: interfaceOrientation)
         }
         .introspectSplitViewController { splitViewController in
-            guard let interfaceOrientation = window?.windowScene?.interfaceOrientation,
+            guard let interfaceOrientation = splitViewController.view.window?.windowScene?.interfaceOrientation,
                   self.splitViewController != splitViewController else { return }
             self.splitViewController = splitViewController
             splitViewManager.splitViewController = splitViewController
             setupBehaviour(orientation: interfaceOrientation)
         }
-        .environment(\.realmConfiguration, mailboxManager.realmConfiguration)
-        .environment(\.isCompactWindow, horizontalSizeClass == .compact || verticalSizeClass == .compact)
-        .environmentObject(mailboxManager)
         .environmentObject(splitViewManager)
         .environmentObject(navigationDrawerController)
-        .environmentObject(navigationStore)
-        .defaultAppStorage(.shared)
+        .environmentObject(mailboxManager)
+        .environment(\.realmConfiguration, mailboxManager.realmConfiguration)
     }
 
     private func setupBehaviour(orientation: UIInterfaceOrientation) {
@@ -186,5 +180,13 @@ struct SplitView: View {
 
     private func getInbox() -> Folder? {
         return mailboxManager.getFolder(with: .inbox)
+    }
+
+    private func handleOpenUrl(_ url: URL) {
+        guard let urlComponents = URLComponents(url: url, resolvingAgainstBaseURL: true) else { return }
+
+        if Constants.isMailTo(url) {
+            mailToURLComponents = IdentifiableURLComponents(urlComponents: urlComponents)
+        }
     }
 }

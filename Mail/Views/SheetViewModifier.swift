@@ -49,9 +49,6 @@ struct SheetViewModifier: ViewModifier {
     func body(content: Content) -> some View {
         NavigationView {
             content
-                .environment(\.dismissModal) {
-                    dismiss()
-                }
                 .toolbar {
                     ToolbarItem(placement: .cancellationAction) {
                         Button {
@@ -63,5 +60,8 @@ struct SheetViewModifier: ViewModifier {
                 }
         }
         .navigationViewStyle(.stack)
+        .environment(\.dismissModal) {
+            dismiss()
+        }
     }
 }
