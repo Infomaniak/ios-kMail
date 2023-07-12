@@ -20,18 +20,15 @@ import Foundation
 import MailResources
 
 public extension FormatStyle where Self == Recipient.FormatStyle {
-    static func recipient(context: MailboxManager?, style: Recipient.FormatStyle.Style = .fullName) -> Self {
-        .init(mailboxManagerFormattingContext: context, style: style)
+    static func recipient(currentEmailContext: String?, style: Recipient.FormatStyle.Style = .fullName) -> Self {
+        .init(currentEmail: currentEmailContext, style: style)
     }
 }
 
 public extension Recipient {
-    func formatted(context: MailboxManager?, style: Recipient.FormatStyle.Style = .fullName) -> String {
-        Self.FormatStyle(mailboxManagerFormattingContext: context, style: style).format(self)
-    }
 
-    func formatted(currentEmail: String?, style: Recipient.FormatStyle.Style = .fullName) -> String {
-        Self.FormatStyle(currentEmail: currentEmail, style: style).format(self)
+    func formatted(currentEmailContext: String? = nil, style: Recipient.FormatStyle.Style = .fullName) -> String {
+        Self.FormatStyle(currentEmail: currentEmailContext, style: style).format(self)
     }
 
     struct FormatStyle: Foundation.FormatStyle, Codable, Equatable, Hashable {
@@ -50,15 +47,9 @@ public extension Recipient {
                 && lhs.contactManager?.realmConfiguration.fileURL == rhs.contactManager?.realmConfiguration.fileURL
         }
 
-        var style: Style
-
-        private var currentEmail: String?
+        private let style: Style
+        private let currentEmail: String?
         private var contactManager: ContactManager?
-
-        public init(mailboxManagerFormattingContext: MailboxManager?, style: Style = Style.fullName) {
-            currentEmail = mailboxManagerFormattingContext?.mailbox.email
-            self.style = style
-        }
 
         public init(currentEmail: String?, style: Style = Style.fullName) {
             self.currentEmail = currentEmail

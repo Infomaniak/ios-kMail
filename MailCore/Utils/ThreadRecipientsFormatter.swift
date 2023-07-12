@@ -21,16 +21,16 @@ import MailResources
 
 public extension FormatStyle where Self == Thread.FormatStyle {
     static func recipientNameList(
-        context: MailboxManager?,
+        currentEmailContext: String?,
         style: Thread.FormatStyle.Style
     ) -> Self {
-        .init(mailboxManagerFormattingContext: context, style: style)
+        .init(currentEmailContext: currentEmailContext, style: style)
     }
 }
 
 public extension Thread {
-    func formatted(context: MailboxManager?, style: Thread.FormatStyle.Style) -> String {
-        Self.FormatStyle(mailboxManagerFormattingContext: context, style: style).format(self)
+    func formatted(currentEmailContext: String?, style: Thread.FormatStyle.Style) -> String {
+        Self.FormatStyle(currentEmailContext: currentEmailContext, style: style).format(self)
     }
 
     struct FormatStyle: Foundation.FormatStyle, Codable, Equatable, Hashable {
@@ -41,12 +41,11 @@ public extension Thread {
             case from
         }
 
-        var style: Style
+        private let style: Style
+        private let currentEmail: String?
 
-        private var currentEmail: String?
-
-        public init(mailboxManagerFormattingContext: MailboxManager?, style: Style) {
-            self.currentEmail = mailboxManagerFormattingContext?.mailbox.email
+        public init(currentEmailContext: String?, style: Style) {
+            self.currentEmail = currentEmailContext
             self.style = style
         }
 
@@ -61,18 +60,18 @@ public extension Thread {
             case 0:
                 return MailResourcesStrings.Localizable.unknownRecipientTitle
             case 1:
-                return fromArray[0].formatted(currentEmail: currentEmail)
+                return fromArray[0].formatted(currentEmailContext: currentEmail)
             default:
                 let fromCount = min(fromArray.count, Constants.threadCellMaxRecipients)
                 return fromArray[0 ..< fromCount]
-                    .map { $0.formatted(currentEmail: currentEmail, style: .shortName) }
+                    .map { $0.formatted(currentEmailContext: currentEmail, style: .shortName) }
                     .joined(separator: ", ")
             }
         }
 
         private func formattedTo(thread: Thread) -> String {
             guard let to = thread.to.last else { return MailResourcesStrings.Localizable.unknownRecipientTitle }
-            return to.formatted(currentEmail: currentEmail)
+            return to.formatted(currentEmailContext: currentEmail)
         }
 
         public func format(_ value: Thread) -> String {

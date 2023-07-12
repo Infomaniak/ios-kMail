@@ -63,7 +63,7 @@ struct MessageHeaderSummaryView: View {
                         HStack(alignment: .firstTextBaseline, spacing: 8) {
                             VStack {
                                 ForEach(message.from) { recipient in
-                                    Text(recipient, format: .recipient(context: mailboxManager))
+                                    Text(recipient, format: .recipient(currentEmailContext: mailboxManager.mailbox.email))
                                         .lineLimit(1)
                                         .textStyle(.bodyMedium)
                                 }
@@ -77,9 +77,12 @@ struct MessageHeaderSummaryView: View {
 
                     if isMessageExpanded {
                         HStack {
-                            Text(message.recipients.map { $0.formatted(context: mailboxManager) }, format: .list(type: .and))
-                                .lineLimit(1)
-                                .textStyle(.bodySmallSecondary)
+                            Text(
+                                message.recipients.map { $0.formatted(currentEmailContext: mailboxManager.mailbox.email) },
+                                format: .list(type: .and)
+                            )
+                            .lineLimit(1)
+                            .textStyle(.bodySmallSecondary)
                             ChevronButton(isExpanded: $isHeaderExpanded)
                                 .accessibilityLabel(MailResourcesStrings.Localizable.contentDescriptionButtonExpandRecipients)
                                 .onChange(of: isHeaderExpanded) { isExpanded in

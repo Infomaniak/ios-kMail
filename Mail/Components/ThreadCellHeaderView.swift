@@ -32,9 +32,13 @@ struct ThreadCellHeaderView: View {
                     .lineLimit(1)
                     .layoutPriority(1)
             }
-            Text(thread, format: .recipientNameList(context: mailboxManager, style: thread.folder?.role == .draft ? .to : .from))
-                .textStyle(.bodyMedium)
-                .lineLimit(1)
+            Text(
+                thread,
+                format: .recipientNameList(currentEmailContext: mailboxManager.mailbox.email,
+                                           style: thread.folder?.role == .draft ? .to : .from)
+            )
+            .textStyle(.bodyMedium)
+            .lineLimit(1)
 
             if thread.messages.count > 1 {
                 ThreadCountIndicatorView(messagesCount: thread.messages.count, hasUnseenMessages: thread.hasUnseenMessages)
