@@ -16,6 +16,7 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import InfomaniakCore
 import InfomaniakCoreUI
 import InfomaniakDI
 import MailCore
@@ -23,70 +24,26 @@ import Social
 import SwiftUI
 import UIKit
 
-// <core> most definitely
-
-/// Represents `any` (ie. all of them not the type) curried closure, of arbitrary type.
-///
-/// Supports concurrency and error
-typealias AsyncCurriedClosure<Input, Output> = (Input) async throws -> Output
-
-/// Execute the closure without waiting, discarding result
-postfix operator ~
-postfix func ~ (x: @escaping AsyncCurriedClosure<Void, Any>) {
-    Task {
-        try? await x(())
-    }
-}
-
-/// A closure that take no argument and return nothing, but technically curried.
-typealias AsyncClosure = AsyncCurriedClosure<Void, Void>
-
-/// Append an AsyncClosure to another one
-func + (_ lhs: @escaping AsyncClosure, _ rhs: @escaping AsyncClosure) -> AsyncClosure {
-    let closure: AsyncClosure = { _ in
-        try await lhs(())
-        try await rhs(())
-    }
-    return closure
-}
-
-/// Represents `any` (ie. all of them not the type) curried closure, of arbitrary type.
-///
-/// see `AsyncCurriedClosure` if you need support for structured concurrency or error feedback
-typealias CurriedClosure<Input, Output> = (Input) -> Output
-
-/// A closure that take no argument and return nothing, but technically curried.
-typealias SimpleClosure = CurriedClosure<Void, Void>
-
-/// Append a SimpleClosure to another one
-func + (_ lhs: @escaping SimpleClosure, _ rhs: @escaping SimpleClosure) -> SimpleClosure {
-    let closure: SimpleClosure = { _ in
-        lhs(())
-        rhs(())
-    }
-    return closure
-}
-
-// </core>
-
 struct ComposeMessageWrapperView: View {
     private var itemProviders: [NSItemProvider]
-    private var dismissHandler: AsyncClosure
+    private var dismissHandler: SimpleClosure
 
     @State private var draft: Draft
 
     @LazyInjectService private var accountManager: AccountManager
 
-    init(dismissHandler: @escaping AsyncClosure, itemProviders: [NSItemProvider], draft: Draft = Draft()) {
+    init(dismissHandler: @escaping SimpleClosure, itemProviders: [NSItemProvider], draft: Draft = Draft()) {
         _draft = State(initialValue: draft)
 
         // Append save draft action if possible
         @InjectService var manager: AccountManager
         if let mailboxManager = manager.currentMailboxManager {
-            let saveDraft: AsyncClosure = { @MainActor _ in
-                @InjectService var draftManager: DraftManager
+            let saveDraft: SimpleClosure = { _ in
                 let detached = draft.detached()
-                _ = await draftManager.initialSaveRemotely(draft: detached, mailboxManager: mailboxManager)
+                Task {
+                    @InjectService var draftManager: DraftManager
+                    _ = await draftManager.initialSaveRemotely(draft: detached, mailboxManager: mailboxManager)
+                }
             }
             self.dismissHandler = saveDraft + dismissHandler
         } else {
@@ -101,7 +58,7 @@ struct ComposeMessageWrapperView: View {
             ComposeMessageView.newMessage(draft, mailboxManager: mailboxManager, itemProviders: itemProviders)
                 .environmentObject(mailboxManager)
                 .environment(\.dismissModal) {
-                    dismissHandler~
+                    dismissHandler(())
                 }
         } else {
             PleaseLoginView(tapHandler: dismissHandler)
@@ -112,7 +69,7 @@ struct ComposeMessageWrapperView: View {
 struct PleaseLoginView: View {
     @State var slide = Slide.onBoardingSlides.first!
 
-    var tapHandler: AsyncClosure
+    var tapHandler: SimpleClosure
 
     var body: some View {
         VStack {
@@ -128,7 +85,7 @@ struct PleaseLoginView: View {
             LottieView(configuration: slide.lottieConfiguration!)
             Spacer()
         }.onTapGesture {
-            tapHandler~
+            tapHandler(())
         }
     }
 }

@@ -24,74 +24,6 @@ import MailCore
 import PhotosUI
 import SwiftUI
 
-// <core> + Tests
-public extension Array {
-    subscript(safe range: Range<Index>) -> ArraySlice<Element> {
-        return self[Swift.min(range.startIndex, endIndex) ..< Swift.min(range.endIndex, endIndex)]
-    }
-}
-
-/// A thread safe Dictionary wrapper that does not require `await`. Conforms to Sendable.
-///
-/// Useful when dealing with UI.
-public final class SendableDictionary<T: Hashable, U>: @unchecked Sendable {
-    let lock = DispatchQueue(label: "com.infomaniak.core.SendableDictionary.lock")
-    private(set) var content = [T: U]()
-
-    public init() {
-        // META: keep SonarCloud happy
-    }
-
-    public var values: Dictionary<T, U>.Values {
-        var buffer: Dictionary<T, U>.Values!
-        lock.sync {
-            buffer = content.values
-        }
-        return buffer
-    }
-
-    public func value(for key: T) -> U? {
-        var buffer: U?
-        lock.sync {
-            buffer = content[key]
-        }
-        return buffer
-    }
-
-    public func setValue(_ value: U?, for key: T) {
-        lock.sync {
-            content[key] = value
-        }
-    }
-
-    public func removeValue(forKey key: T) {
-        lock.sync {
-            content.removeValue(forKey: key)
-        }
-    }
-
-    public subscript(_ key: T) -> U? {
-        get {
-            value(for: key)
-        }
-        set {
-            setValue(newValue, for: key)
-        }
-    }
-}
-
-public extension ParallelTaskMapper {
-    // TODO: move to core and change implem to work with ArraySlice by default
-    func map<Input, Output>(
-        slice: ArraySlice<Input>,
-        toOperation operation: @escaping @Sendable (_ item: Input) async throws -> Output?
-    ) async throws -> [Output?] {
-        try await map(collection: Array(slice), toOperation: operation)
-    }
-}
-
-// </core>
-
 final class AttachmentUploadTask: ObservableObject {
     @Published var progress: Double = 0
     var task: Task<String?, Never>?
@@ -313,7 +245,7 @@ final class AttachmentsManager: ObservableObject {
         let attachmentsSlice = attachments[safe: 0 ..< draft.availableAttachmentsSlots]
 
         Task.detached {
-            try? await self.parallelTaskMapper.map(slice: attachmentsSlice) { attachment in
+            try? await self.parallelTaskMapper.map(collection: attachmentsSlice) { attachment in
                 _ = await self.importAttachment(attachment: attachment, disposition: disposition)
                 // TODO: - Manage inline attachment
             }
