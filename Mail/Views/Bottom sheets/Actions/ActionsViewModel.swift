@@ -256,12 +256,14 @@ enum ActionsTarget: Equatable, Identifiable {
         switch target {
         case .threads(let threads, _):
             if threads.count > 1 {
-                let spam = threads.allSatisfy { $0.folder?.role == .spam }
                 let unread = threads.allSatisfy(\.hasUnseenMessages)
-                quickActions = [.move, .archive, spam ? .nonSpam : .spam, .delete]
+                quickActions = [.move, unread ? .markAsRead : .markAsUnread, .archive, .delete]
 
+                let spam = threads.allSatisfy { $0.folder?.role == .spam }
+                let star = threads.allSatisfy(\.flagged)
                 listActions = [
-                    unread ? .markAsRead : .markAsUnread
+                    spam ? .nonSpam : .spam,
+                    star ? .unstar : .star
                 ]
             } else if let thread = threads.first {
                 quickActions = Action.quickActions
