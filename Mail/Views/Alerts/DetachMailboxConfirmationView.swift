@@ -29,7 +29,7 @@ struct DetachMailboxConfirmationView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 24) {
-            Text(MailResourcesStrings.Localizable.buttonDetachMailbox)
+            Text(MailResourcesStrings.Localizable.popupDetachMailboxTitle)
                 .textStyle(.bodyMedium)
             Text(attributedString())
                 .textStyle(.bodySecondary)

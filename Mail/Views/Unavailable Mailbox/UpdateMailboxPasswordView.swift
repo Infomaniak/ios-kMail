@@ -50,7 +50,7 @@ struct UpdateMailboxPasswordView: View {
                     .textStyle(.bodySecondary)
                 MailButton(label: MailResourcesStrings.Localizable.buttonDetachMailbox) {
                     matomo.track(eventWithCategory: .invalidPasswordMailbox, name: "detachMailbox")
-                    isShowingDetachMailboxAlertView.toggle()
+                    isShowingDetachMailboxAlertView = true
                 }
                 .mailButtonStyle(.link)
                 .disabled(isLoading)
