@@ -234,7 +234,7 @@ public class MailboxManager: ObservableObject {
         await backgroundRealm.execute { realm in
             try? realm.safeWrite {
                 realm.add(folder)
-                if let parent = parent {
+                if let parent {
                     parent.fresh(using: realm)?.children.insert(folder)
                 }
             }
@@ -251,7 +251,7 @@ public class MailboxManager: ObservableObject {
 
     public func refreshFolder(from messages: [Message], additionalFolder: Folder? = nil) async throws {
         var folders = messages.map(\.folder)
-        if let additionalFolder = additionalFolder {
+        if let additionalFolder {
             folders.append(additionalFolder)
         }
 
@@ -488,7 +488,7 @@ public class MailboxManager: ObservableObject {
             }
         }
 
-        if let searchFolder = searchFolder {
+        if let searchFolder {
             await saveThreads(result: threadResult, parent: searchFolder)
         }
 
@@ -508,7 +508,7 @@ public class MailboxManager: ObservableObject {
             }
         }
 
-        if let searchFolder = searchFolder {
+        if let searchFolder {
             await saveThreads(result: threadResult, parent: searchFolder)
         }
 
@@ -726,7 +726,7 @@ public class MailboxManager: ObservableObject {
             while remainingOldMessagesToFetch > 0 {
                 guard !Task.isCancelled else { return }
 
-                if try !(await fetchOnePage(folder: folder, direction: .previous)) {
+                if await try !fetchOnePage(folder: folder, direction: .previous) {
                     break
                 }
 
@@ -799,7 +799,7 @@ public class MailboxManager: ObservableObject {
         let startDate = Date(timeIntervalSinceNow: -5 * 60)
         let ignoredIds = folder.fresh(using: getRealm())?.threads
             .where { $0.date > startDate }
-            .map { $0.uid } ?? []
+            .map(\.uid) ?? []
         await deleteMessages(uids: messageUids.deletedUids)
         var shouldIgnoreNextEvents = SentryDebug.captureWrongDate(
             step: "After delete",
@@ -1061,7 +1061,7 @@ public class MailboxManager: ObservableObject {
                                                              "messageId": message.messageId,
                                                              "date": message.date,
                                                              "seen": message.seen,
-                                                             "duplicates": message.duplicates.compactMap { $0.messageId },
+                                                             "duplicates": message.duplicates.compactMap(\.messageId),
                                                              "references": message.references],
                                                  "Seen": ["Expected": seen, "Actual": liveMessage.seen],
                                                  "Folder": ["id": message.folder?._id,

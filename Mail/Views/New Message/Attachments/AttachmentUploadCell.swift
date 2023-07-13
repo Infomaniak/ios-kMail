@@ -46,7 +46,7 @@ struct AttachmentUploadCell: View {
                 }
 
                 Button {
-                    if let attachmentRemoved = attachmentRemoved {
+                    if let attachmentRemoved {
                         attachmentRemoved(attachment)
                     }
                 } label: {
@@ -74,6 +74,8 @@ struct AttachmentUploadCell: View {
 
 struct AttachmentUploadCell_Previews: PreviewProvider {
     static var previews: some View {
-        AttachmentUploadCell(attachment: PreviewHelper.sampleAttachment, uploadTask: AttachmentUploadTask()) { _ in /* Preview */ }
+        AttachmentUploadCell(attachment: PreviewHelper.sampleAttachment, uploadTask: AttachmentUploadTask()) { _ in
+            /* Preview */
+        }
     }
 }

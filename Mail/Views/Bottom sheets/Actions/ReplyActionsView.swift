@@ -30,9 +30,9 @@ struct ReplyActionsView: View {
          message: Message,
          messageReply: Binding<MessageReply?>?) {
         _viewModel = StateObject(wrappedValue: ActionsViewModel(mailboxManager: mailboxManager,
-                                                               target: .message(message),
-                                                               messageReply: messageReply,
-                                                               matomoCategory: .replyBottomSheet))
+                                                                target: .message(message),
+                                                                messageReply: messageReply,
+                                                                matomoCategory: .replyBottomSheet))
     }
 
     var body: some View {

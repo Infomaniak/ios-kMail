@@ -40,7 +40,7 @@ struct SettingsSubMenuCell<Content: View>: View {
                     VStack(alignment: .leading) {
                         Text(title)
                             .textStyle(.body)
-                        if let subtitle = subtitle {
+                        if let subtitle {
                             Text(subtitle)
                                 .textStyle(.bodySmallTertiary)
                         }

@@ -498,7 +498,7 @@ class NetworkRequestRetrier: RequestInterceptor {
     }
 
     private func removeCachedUrlRequest(url: String?) {
-        guard let url = url else {
+        guard let url else {
             return
         }
         retriedRequests.removeValue(forKey: url)

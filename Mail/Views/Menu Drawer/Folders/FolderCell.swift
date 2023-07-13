@@ -80,7 +80,7 @@ struct FolderCell: View {
                         }
                         splitViewManager.selectedFolder = folder.content
                         splitViewManager.showSearch = false
-                        self.shouldTransit = true
+                        shouldTransit = true
                     } label: {
                         FolderCellContent(
                             folder: folder.content,

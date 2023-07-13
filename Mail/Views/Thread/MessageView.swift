@@ -97,7 +97,7 @@ struct MessageView: View {
             }
             .padding(.vertical, 16)
             .task {
-                if self.message.shouldComplete {
+                if message.shouldComplete {
                     await fetchMessage()
                 }
             }

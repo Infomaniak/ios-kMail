@@ -19,8 +19,8 @@
 import Foundation
 import RealmSwift
 
-extension Object {
-    public func fresh(using realm: Realm) -> Self? {
+public extension Object {
+    func fresh(using realm: Realm) -> Self? {
         if let primaryKey = objectSchema.primaryKeyProperty?.name,
            let primaryKeyValue = value(forKey: primaryKey) {
             return realm.object(ofType: Self.self, forPrimaryKey: primaryKeyValue)

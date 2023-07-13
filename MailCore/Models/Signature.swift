@@ -65,10 +65,10 @@ public final class Signature: Object, Codable, Identifiable {
 public extension Signature {
     /// Appends current signature to an HTML body at correct position
     func appendSignature(to body: String) -> String {
-        let html = "<br><br><div class=\"editorUserSignature\">\(self.content)</div>"
+        let html = "<br><br><div class=\"editorUserSignature\">\(content)</div>"
 
         var body = body
-        switch self.position {
+        switch position {
         case .beforeReplyMessage:
             body.insert(contentsOf: html, at: body.startIndex)
         case .afterReplyMessage:
@@ -79,7 +79,7 @@ public extension Signature {
     }
 }
 
-public extension Array where Element == Signature {
+public extension [Signature] {
     /// Find the default signature, if any, in  an `Array` of `Signature`
     var defaultSignature: Signature? {
         guard let defaultSignature = first(where: \.isDefault) else {

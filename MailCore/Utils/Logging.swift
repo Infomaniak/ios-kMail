@@ -44,10 +44,10 @@ public enum Logging {
             ], key: "Realm")
         }
         #if DEBUG
-            DDLogError(
-                "Realm files \(realmConfiguration.fileURL?.lastPathComponent ?? "") will be deleted to prevent migration error for next launch"
-            )
-            _ = try? Realm.deleteFiles(for: realmConfiguration)
+        DDLogError(
+            "Realm files \(realmConfiguration.fileURL?.lastPathComponent ?? "") will be deleted to prevent migration error for next launch"
+        )
+        _ = try? Realm.deleteFiles(for: realmConfiguration)
         #endif
         fatalError("Failed creating realm \(error.localizedDescription)")
     }
@@ -69,9 +69,9 @@ public enum Logging {
             options.beforeSend = { event in
                 // if the application is in debug mode discard the events
                 #if DEBUG
-                    return nil
+                return nil
                 #else
-                    return event
+                return event
                 #endif
             }
         }
@@ -79,7 +79,7 @@ public enum Logging {
 
     private static func initAtlantis() {
         #if DEBUG
-            Atlantis.start(hostName: ProcessInfo.processInfo.environment["hostname"])
+        Atlantis.start(hostName: ProcessInfo.processInfo.environment["hostname"])
         #endif
     }
 }

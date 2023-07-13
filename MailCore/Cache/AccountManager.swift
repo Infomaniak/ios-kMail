@@ -37,7 +37,7 @@ public extension InfomaniakNetworkLoginable {
     func apiToken(username: String, applicationPassword: String) async throws -> ApiToken {
         try await withCheckedThrowingContinuation { continuation in
             getApiToken(username: username, applicationPassword: applicationPassword) { token, error in
-                if let token = token {
+                if let token {
                     continuation.resume(returning: token)
                 } else {
                     continuation.resume(throwing: error ?? MailError.unknownError)
@@ -49,7 +49,7 @@ public extension InfomaniakNetworkLoginable {
     func apiToken(using code: String, codeVerifier: String) async throws -> ApiToken {
         try await withCheckedThrowingContinuation { continuation in
             getApiTokenUsing(code: code, codeVerifier: codeVerifier) { token, error in
-                if let token = token {
+                if let token {
                     continuation.resume(returning: token)
                 } else {
                     continuation.resume(throwing: error ?? MailError.unknownError)

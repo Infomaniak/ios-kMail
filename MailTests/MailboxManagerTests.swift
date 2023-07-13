@@ -19,9 +19,8 @@
 import Foundation
 import InfomaniakCore
 import InfomaniakLogin
-import XCTest
-
 @testable import MailCore
+import XCTest
 
 final class MailboxManagerTests: XCTestCase {
     static var mailboxManager: MailboxManager!
@@ -47,13 +46,21 @@ final class MailboxManagerTests: XCTestCase {
     }
 
     func testThreads() async throws {
-        let folders = try await MailboxManagerTests.mailboxManager.apiFetcher.folders(mailbox: MailboxManagerTests.mailboxManager.mailbox)
-        try await MailboxManagerTests.mailboxManager.apiFetcher.threads(mailbox: MailboxManagerTests.mailboxManager.mailbox, folderId: folders[0]._id)
+        let folders = try await MailboxManagerTests.mailboxManager.apiFetcher
+            .folders(mailbox: MailboxManagerTests.mailboxManager.mailbox)
+        try await MailboxManagerTests.mailboxManager.apiFetcher.threads(
+            mailbox: MailboxManagerTests.mailboxManager.mailbox,
+            folderId: folders[0]._id
+        )
     }
 
     func testMessage() async throws {
-        let folders = try await MailboxManagerTests.mailboxManager.apiFetcher.folders(mailbox: MailboxManagerTests.mailboxManager.mailbox)
-        let threadResult = try await MailboxManagerTests.mailboxManager.apiFetcher.threads(mailbox: MailboxManagerTests.mailboxManager.mailbox, folderId: folders[0]._id)
+        let folders = try await MailboxManagerTests.mailboxManager.apiFetcher
+            .folders(mailbox: MailboxManagerTests.mailboxManager.mailbox)
+        let threadResult = try await MailboxManagerTests.mailboxManager.apiFetcher.threads(
+            mailbox: MailboxManagerTests.mailboxManager.mailbox,
+            folderId: folders[0]._id
+        )
         try await MailboxManagerTests.mailboxManager.message(message: threadResult.threads![0].messages[0])
     }
 }

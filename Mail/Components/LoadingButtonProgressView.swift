@@ -21,7 +21,7 @@ import SwiftUI
 
 struct LoadingButtonProgressView: View {
     private let tintColor: Color?
-    
+
     init(style: MailButton.Style) {
         tintColor = style == .large ? .white : nil
     }

@@ -268,7 +268,7 @@ struct ThreadListView: View {
     private func updateFetchingTask(with folder: Folder? = nil) {
         guard fetchingTask == nil else { return }
         fetchingTask = Task {
-            if let folder = folder {
+            if let folder {
                 await viewModel.updateThreads(with: folder)
             } else {
                 await viewModel.fetchThreads()

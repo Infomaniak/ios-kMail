@@ -55,7 +55,7 @@ final class MailBase64Encoder: XCTestCase {
         )
 
         // THEN
-        guard let processedBody = processedBody else {
+        guard let processedBody else {
             XCTFail("Unexpected")
             return
         }
@@ -114,7 +114,7 @@ final class MailBase64Encoder: XCTestCase {
         )
 
         // THEN
-        guard let processedBody = processedBody else {
+        guard let processedBody else {
             XCTFail("Unexpected")
             return
         }

@@ -199,7 +199,7 @@ class AttachmentsManager: ObservableObject {
             do {
                 let url = try await attachment.writeToTemporaryURL()
                 let updatedAttachment = await updateLocalAttachment(url: url, attachment: localAttachment)
-                let totalSize = attachments.map { $0.size }.reduce(0) { $0 + $1 }
+                let totalSize = attachments.map(\.size).reduce(0) { $0 + $1 }
                 guard totalSize < Constants.maxAttachmentsSize else {
                     globalError = MailError.attachmentsSizeLimitReached
                     removeAttachment(updatedAttachment)

@@ -17,6 +17,7 @@
  */
 
 import Foundation
+import InfomaniakCore
 import SwiftUI
 
 public protocol SettingsOptionEnum {
