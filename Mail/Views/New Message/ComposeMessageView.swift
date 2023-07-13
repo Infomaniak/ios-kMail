@@ -63,7 +63,8 @@ struct ComposeMessageView: View {
 
     @LazyInjectService private var matomo: MatomoUtils
     @LazyInjectService private var draftManager: DraftManager
-
+    @LazyInjectService private var snackbarPresenter: SnackBarPresentable
+    
     @State private var isLoadingContent = true
     @State private var isShowingCancelAttachmentsError = false
     @State private var autocompletionType: ComposeViewFieldType?
@@ -130,7 +131,7 @@ struct ComposeMessageView: View {
                 isLoadingContent = false
             } catch {
                 // Unable to get signatures, "An error occurred" and close modal.
-                IKSnackBar.showSnackBar(message: MailError.unknownError.localizedDescription)
+                snackbarPresenter.show(message: MailError.unknownError.localizedDescription)
                 dismiss()
             }
         }

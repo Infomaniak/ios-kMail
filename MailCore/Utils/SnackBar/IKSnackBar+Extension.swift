@@ -41,7 +41,8 @@ public extension SnackBarStyle {
     }
 }
 
-public class SnackBarAvoider {
+// TODO: delete
+public final class SnackBarAvoider {
     public var snackBarInset: CGFloat = 0
 
     public init() { /* Needed to init */ }
@@ -60,7 +61,7 @@ public class SnackBarAvoider {
 public extension IKSnackBar {
     @discardableResult
     @MainActor
-    /// Call this method to display a snackbar
+    /// Call this method to display a `SnackBar`
     /// - Parameters:
     ///   - message: The message to display
     ///   - duration: The time the message should be displayed
@@ -68,7 +69,7 @@ public extension IKSnackBar {
     ///   - anchor: The anchor to use for presenting
     ///   - contextView: Set a context view, when displaying in extension mode for eg.
     /// - Returns: An IKSnackBar if any
-    static func showSnackBar(
+    static func showMailSnackBar(
         message: String,
         duration: SnackBar.Duration = .lengthLong,
         action: IKSnackBar.Action? = nil,
@@ -115,10 +116,11 @@ public extension IKSnackBar {
         undoRedoAction: UndoRedoAction,
         mailboxManager: MailboxManager
     ) -> IKSnackBar? {
-        return IKSnackBar.showSnackBar(
+        return IKSnackBar.showMailSnackBar(
             message: message,
             duration: duration,
             action: .init(title: MailResourcesStrings.Localizable.buttonCancel) {
+                @InjectService var snackbarPresenter: SnackBarPresentable
                 Task {
                     do {
                         @InjectService var matomo: MatomoUtils
@@ -127,11 +129,11 @@ public extension IKSnackBar {
                         let cancelled = try await mailboxManager.apiFetcher.undoAction(resource: undoRedoAction.undo.resource)
 
                         if cancelled {
-                            IKSnackBar.showSnackBar(message: cancelSuccessMessage)
+                            snackbarPresenter.show(message: cancelSuccessMessage)
                             try await undoRedoAction.redo?()
                         }
                     } catch {
-                        IKSnackBar.showSnackBar(message: error.localizedDescription)
+                        snackbarPresenter.show(message: error.localizedDescription)
                     }
                 }
             }

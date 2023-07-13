@@ -130,10 +130,7 @@ final class LoginHandler: InfomaniakLoginDelegate, ObservableObject {
         Task {
             do {
                 _ = try await accountManager.createAndSetCurrentAccount(code: code, codeVerifier: verifier)
-                
-                // TODO fix UIApplication
-//                UIApplication.shared.registerForRemoteNotifications()
-
+                remoteNotificationRegistrer.register()
             } catch let error as MailError where error == MailError.noMailbox {
                 shouldShowEmptyMailboxesView = true
             } catch {

@@ -35,7 +35,7 @@ final class AccountViewDelegate: DeleteAccountDelegate {
         accountManager.removeTokenAndAccount(token: account.token)
         if let nextAccount = accountManager.accounts.first {
             accountManager.switchAccount(newAccount: nextAccount)
-            IKSnackBar.showSnackBar(message: "Account deleted")
+            snackbarPresenter.show(message: "Account deleted")
         }
 
         accountManager.saveAccounts()
@@ -55,12 +55,6 @@ struct AccountView: View {
 
     @LazyInjectService private var matomo: MatomoUtils
     @LazyInjectService private var accountManager: AccountManager
-
-    // TODO remove
-//    private let account: Account = {
-//        let accountManager = LazyInjectService<AccountManager>().wrappedValue
-//        return accountManager.currentAccount
-//    }()
 
     @State private var isShowingLogoutAlert = false
     @State private var isShowingDeleteAccount = false

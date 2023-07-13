@@ -21,30 +21,6 @@ import InfomaniakCoreUI
 import SnackBar
 import UIKit
 
-// TODO: move to core UI
-// TODO: Use our type not the lib
-public extension IKSnackBar {
-    enum Duration: Equatable {
-        case lengthLong
-        case lengthShort
-        case infinite
-        case custom(CGFloat)
-
-        var value: CGFloat {
-            switch self {
-            case .lengthLong:
-                return 3.5
-            case .lengthShort:
-                return 2
-            case .infinite:
-                return -1
-            case .custom(let duration):
-                return duration
-            }
-        }
-    }
-}
-
 public protocol SnackBarPresentable {
     func show(message: String)
     func show(message: String, action: IKSnackBar.Action?)
@@ -81,7 +57,7 @@ public final class SnackBarPresenter: SnackBarPresentable {
         contextView: UIView? = nil
     ) {
         Task { @MainActor in
-            IKSnackBar.showSnackBar(
+            IKSnackBar.showMailSnackBar(
                 message: message,
                 duration: duration,
                 action: action,
