@@ -28,34 +28,53 @@ struct AddMailboxView: View {
     @State private var newAddress = ""
     @State private var password = ""
     @State private var showError = false
+    @State private var invalidEmailAddress = false
 
     private var buttonDisabled: Bool {
-        return !Constants.isEmailAddress(newAddress) || password.isEmpty
+        return invalidEmailAddress || password.isEmpty
     }
 
     var body: some View {
         VStack(alignment: .leading) {
             Text(MailResourcesStrings.Localizable.attachMailboxDescription1)
                 .textStyle(.bodySecondary)
-                .padding(.bottom, 32)
+                .padding(.bottom, 16)
 
-            TextField(MailResourcesStrings.Localizable.attachMailboxInputHint, text: $newAddress)
-                .textContentType(.emailAddress)
-                .keyboardType(.emailAddress)
-                .autocorrectionDisabled()
-                .padding(12)
-                .overlay {
-                    RoundedRectangle(cornerRadius: 4, style: .continuous)
-                        .stroke(
-                            showError ? MailResourcesAsset.redColor.swiftUIColor : MailResourcesAsset.elementsColor.swiftUIColor,
-                            lineWidth: 1
-                        )
+            TextField(
+                MailResourcesStrings.Localizable.attachMailboxInputHint,
+                text: $newAddress
+            ) { editingChanged in
+                if !editingChanged {
+                    invalidEmailAddress = !Constants.isEmailAddress(newAddress)
+                } else {
+                    invalidEmailAddress = false
+                    showError = false
                 }
-                .padding(.bottom, 4)
+            }
+            .textContentType(.emailAddress)
+            .keyboardType(.emailAddress)
+            .autocorrectionDisabled()
+            .padding(12)
+            .overlay {
+                RoundedRectangle(cornerRadius: 4, style: .continuous)
+                    .stroke(
+                        (showError || invalidEmailAddress) ? MailResourcesAsset.redColor.swiftUIColor : MailResourcesAsset
+                            .elementsColor.swiftUIColor,
+                        lineWidth: 1
+                    )
+            }
+            .padding(.bottom, 4)
 
-            Text(MailResourcesStrings.Localizable.attachMailboxDescription2)
-                .textStyle(showError ? .labelError : .labelSecondary)
-                .padding(.bottom, 8)
+            if invalidEmailAddress {
+                Text(MailResourcesStrings.Localizable.errorInvalidEmailAddress)
+                    .textStyle(.labelError)
+                    .padding(.bottom, 16)
+            } else {
+                Text(MailResourcesStrings.Localizable.errorInvalidCredentials)
+                    .textStyle(.labelError)
+                    .opacity(showError ? 1 : 0)
+                    .padding(.bottom, 8)
+            }
 
             SecureField(MailResourcesStrings.Localizable.attachMailboxPasswordInputHint, text: $password)
                 .textContentType(.password)
@@ -73,6 +92,10 @@ struct AddMailboxView: View {
             Text(MailResourcesStrings.Localizable.errorInvalidCredentials)
                 .textStyle(.labelError)
                 .opacity(showError ? 1 : 0)
+                .padding(.bottom, 16)
+
+            Text(MailResourcesStrings.Localizable.attachMailboxDescription2)
+                .textStyle(.labelSecondary)
 
             Spacer()
 
