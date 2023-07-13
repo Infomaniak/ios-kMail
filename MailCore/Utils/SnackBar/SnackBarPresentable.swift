@@ -21,6 +21,7 @@ import InfomaniakCoreUI
 import SnackBar
 import UIKit
 
+// todo use the version in CoreUI
 public protocol SnackBarPresentable {
     func show(message: String)
     func show(message: String, action: IKSnackBar.Action?)

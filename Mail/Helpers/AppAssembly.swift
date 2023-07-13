@@ -85,6 +85,9 @@ enum ApplicationAssembly {
             },
             Factory(type: UserActivityController.self) { _, _ in
                 UserActivityController()
+            },
+            Factory(type: PlatformDetectable.self) { _, _ in
+                PlatformDetector()
             }
         ]
 

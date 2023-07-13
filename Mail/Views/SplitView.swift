@@ -54,6 +54,7 @@ struct SplitView: View {
 
     @LazyInjectService private var orientationManager: OrientationManageable
     @LazyInjectService private var snackbarPresenter: SnackBarPresentable
+    @LazyInjectService private var platformDetector: PlatformDetectable
 
     let mailboxManager: MailboxManager
 
@@ -150,7 +151,7 @@ struct SplitView: View {
     }
 
     private func setupBehaviour(orientation: UIInterfaceOrientation) {
-        if orientation.isLandscape {
+        if orientation.isLandscape || platformDetector.isMacCatalyst {
             splitViewController?.preferredSplitBehavior = .displace
             splitViewController?.preferredDisplayMode = splitViewManager.selectedFolder == nil
                 ? .twoDisplaceSecondary
