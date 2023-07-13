@@ -44,7 +44,6 @@ struct FloatingActionButtonModifier: ViewModifier {
                     .onPreferenceChange(ViewHeightKey.self) { value in
                         snackBarAwareModifier.inset = value
                     }
-
             }
         }
         .ignoresSafeArea(.keyboard)

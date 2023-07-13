@@ -190,7 +190,7 @@ public final class DraftManager {
         if let draftFolder = mailboxManager.getFolder(with: .draft)?.freeze() {
             await mailboxManager.refresh(folder: draftFolder)
 
-            if let latestSendDate = latestSendDate {
+            if let latestSendDate {
                 /*
                     We need to refresh the draft folder after the mail is sent to make it disappear, we wait at least 1.5 seconds
                     because the sending process is not synchronous

@@ -52,7 +52,7 @@ public class MergedContact {
     }()
 
     public lazy var name: String = {
-        if let local = local, let localName = contactFormatter.string(from: local) {
+        if let local, let localName = contactFormatter.string(from: local) {
             return localName
         }
         return remote?.name ?? ""

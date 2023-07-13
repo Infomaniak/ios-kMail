@@ -26,9 +26,9 @@ public struct MailTextStyle {
 
     public var color: SwiftUI.Color {
         switch colorType {
-        case let .staticColor(color):
+        case .staticColor(let color):
             return color
-        case let .accentColor(colorKeyPath):
+        case .accentColor(let colorKeyPath):
             return UserDefaults.shared.accentColor[keyPath: colorKeyPath].swiftUIColor
         }
     }

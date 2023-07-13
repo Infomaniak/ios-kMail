@@ -70,7 +70,7 @@ final class SignatureTests: XCTestCase {
                 XCTFail("Unexpected signature not found")
                 return
             }
-            XCTAssertTrue((try signatureNode.text().count) > 0, "We expect a non empty signature content")
+            XCTAssertTrue(try (signatureNode.text().count) > 0, "We expect a non empty signature content")
         } catch {
             XCTFail("Unexpected :\(error)")
         }
@@ -94,7 +94,7 @@ final class SignatureTests: XCTestCase {
                 XCTFail("Unexpected signature not found")
                 return
             }
-            XCTAssertTrue((try signatureNode.text().count) > 0, "We expect a non empty signature content")
+            XCTAssertTrue(try (signatureNode.text().count) > 0, "We expect a non empty signature content")
         } catch {
             XCTFail("Unexpected :\(error)")
         }

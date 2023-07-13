@@ -18,8 +18,8 @@
 
 import Foundation
 import InfomaniakCoreUI
-import MailResources
 import MailCore
+import MailResources
 
 struct ActionUtils {
     let actionsTarget: ActionsTarget
@@ -42,9 +42,9 @@ struct ActionUtils {
         }
 
         await IKSnackBar.showCancelableSnackBar(message: snackBarMessage,
-                                          cancelSuccessMessage: MailResourcesStrings.Localizable.snackbarMoveCancelled,
-                                          undoRedoAction: undoRedoAction,
-                                          mailboxManager: mailboxManager)
+                                                cancelSuccessMessage: MailResourcesStrings.Localizable.snackbarMoveCancelled,
+                                                undoRedoAction: undoRedoAction,
+                                                mailboxManager: mailboxManager)
     }
 
     func move(to folderRole: FolderRole) async throws {

@@ -66,7 +66,7 @@ struct ThreadListHeader: View {
                 }
             }
             Spacer()
-            if let unreadCount = unreadCount, unreadCount > 0 && !isMultipleSelectionEnabled {
+            if let unreadCount, unreadCount > 0 && !isMultipleSelectionEnabled {
                 Toggle(isOn: $unreadFilterOn) {
                     Text(unreadCount < 100 ? MailResourcesStrings.Localizable
                         .threadListHeaderUnreadCount(unreadCount) : MailResourcesStrings.Localizable

@@ -142,7 +142,7 @@ public enum SwipeAction: String, CaseIterable, SettingsOptionEnum {
         if self == .postPone {
             return true
         }
-        return false 
+        return false
     }
 
     public var image: Image? {

@@ -37,7 +37,7 @@ struct ComposeMessageCellStaticText: View {
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .padding(.vertical, UIConstants.composeViewHeaderCellLargeVerticalSpacing)
-                
+
                 IKDivider()
             }
         }

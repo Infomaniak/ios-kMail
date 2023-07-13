@@ -180,7 +180,8 @@ public class ContactManager: ObservableObject {
     }
 
     public func contacts(matching string: String) -> [MergedContact] {
-        return mergedContacts.values.filter { $0.name.localizedCaseInsensitiveContains(string) || $0.email.localizedCaseInsensitiveContains(string) }
+        return mergedContacts.values
+            .filter { $0.name.localizedCaseInsensitiveContains(string) || $0.email.localizedCaseInsensitiveContains(string) }
     }
 
     public func addContact(recipient: Recipient) async throws {

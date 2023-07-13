@@ -46,7 +46,7 @@ struct FullRecipientsList: View {
     }
 
     private func switchFocus() {
-        guard case let .chip(hash, recipient) = focusedField else { return }
+        guard case .chip(let hash, let recipient) = focusedField else { return }
 
         if recipient == recipients.last {
             focusedField = type

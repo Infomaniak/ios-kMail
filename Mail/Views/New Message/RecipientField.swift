@@ -42,7 +42,7 @@ struct RecipientField: View {
     }
 
     private var isCurrentFieldFocused: Bool {
-        if case let .chip(hash, _) = focusedField {
+        if case .chip(let hash, _) = focusedField {
             return type.hashValue == hash
         }
         return type == focusedField

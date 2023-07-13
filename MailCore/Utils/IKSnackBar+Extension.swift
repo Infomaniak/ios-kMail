@@ -66,8 +66,13 @@ public extension IKSnackBar {
         anchor: CGFloat = 0
     ) -> IKSnackBar? {
         @LazyInjectService var avoider: SnackBarAvoider
-        let snackbar = IKSnackBar.make(message: message, duration: duration, style: .mailStyle(withAnchor: avoider.snackBarInset), elevation: 0)
-        if let action = action {
+        let snackbar = IKSnackBar.make(
+            message: message,
+            duration: duration,
+            style: .mailStyle(withAnchor: avoider.snackBarInset),
+            elevation: 0
+        )
+        if let action {
             snackbar?.setAction(action).show()
         } else {
             snackbar?.show()

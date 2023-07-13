@@ -52,7 +52,7 @@ public enum SentryDebug {
         if !orphanMessages.isEmpty {
             SentrySDK.capture(message: "We found some orphan Messages.") { scope in
                 scope.setLevel(.error)
-                scope.setContext(value: ["uids": "\(orphanMessages.map { $0.uid }.toArray())",
+                scope.setContext(value: ["uids": "\(orphanMessages.map(\.uid).toArray())",
                                          "previousCursor": previousCursor ?? "No cursor",
                                          "newCursor": newCursor ?? "No cursor"],
                                  key: "orphanMessages")
@@ -66,7 +66,7 @@ public enum SentryDebug {
         if !orphanThreads.isEmpty {
             SentrySDK.capture(message: "We found some orphan Threads.") { scope in
                 scope.setLevel(.error)
-                scope.setContext(value: ["uids": "\(orphanThreads.map { $0.uid }.toArray())",
+                scope.setContext(value: ["uids": "\(orphanThreads.map(\.uid).toArray())",
                                          "previousCursor": previousCursor ?? "No cursor",
                                          "newCursor": newCursor ?? "No cursor"],
                                  key: "orphanThreads")
@@ -76,8 +76,8 @@ public enum SentryDebug {
 
     static func threadHasNilLastMessageFromFolderDate(thread: Thread) {
         SentrySDK.capture(message: "Thread has nil lastMessageFromFolderDate") { scope in
-            scope.setContext(value: ["dates": "\(thread.messages.map { $0.date })",
-                                     "ids": "\(thread.messages.map { $0.id })"],
+            scope.setContext(value: ["dates": "\(thread.messages.map(\.date))",
+                                     "ids": "\(thread.messages.map(\.id))"],
                              key: "all messages")
             scope.setContext(value: ["id": "\(thread.lastMessageFromFolder?.uid ?? "nil")"],
                              key: "lastMessageFromFolder")
@@ -103,7 +103,7 @@ public enum SentryDebug {
             .where { $0.date > startDate }
             .filter { !alreadyWrongIds.contains($0.uid) }
             .filter {
-                !$0.messages.map { $0.date }.contains($0.date)
+                !$0.messages.map(\.date).contains($0.date)
             }
         guard !threads.isEmpty else { return false }
 

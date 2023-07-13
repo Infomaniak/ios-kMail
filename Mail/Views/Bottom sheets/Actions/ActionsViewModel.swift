@@ -176,8 +176,8 @@ struct Action: Identifiable, Equatable {
 enum ActionsTarget: Equatable, Identifiable {
     var id: String {
         switch self {
-        case .threads(let threads, let isMultiSelectionEnabled):
-            return threads.map { $0.id }.joined()
+        case .threads(let threads, _):
+            return threads.map(\.id).joined()
         case .message(let message):
             return message.uid
         }

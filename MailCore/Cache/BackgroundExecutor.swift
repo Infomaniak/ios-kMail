@@ -21,7 +21,8 @@ import Foundation
 
 enum BackgroundExecutor {
     typealias TaskCompletion = () -> Void
-    static func executeWithBackgroundTask(_ block: @escaping (@escaping TaskCompletion) -> Void, onExpired: @escaping () -> Void) {
+    static func executeWithBackgroundTask(_ block: @escaping (@escaping TaskCompletion) -> Void,
+                                          onExpired: @escaping () -> Void) {
         let taskName = "executeWithBackgroundTask \(UUID().uuidString)"
         DDLogDebug("Starting task \(taskName)")
         let processInfos = ProcessInfo()

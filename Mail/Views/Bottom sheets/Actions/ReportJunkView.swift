@@ -30,8 +30,8 @@ struct ReportJunkView: View {
          target: ActionsTarget,
          reportedForPhishingMessage: Binding<Message?>) {
         _viewModel = StateObject(wrappedValue: ActionsViewModel(mailboxManager: mailboxManager,
-                                                               target: target,
-                                                               reportedForPhishingMessage: reportedForPhishingMessage))
+                                                                target: target,
+                                                                reportedForPhishingMessage: reportedForPhishingMessage))
         if case .message(let message) = target {
             let spam = message.folder?.role == .spam
             actions.append(contentsOf: [

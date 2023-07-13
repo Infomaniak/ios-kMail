@@ -140,7 +140,7 @@ struct MailApp: App {
     }
 
     func updateUI(accent: AccentColor, theme: Theme) {
-        let allWindows = UIApplication.shared.connectedScenes.compactMap { $0 as? UIWindowScene }.flatMap { $0.windows }
+        let allWindows = UIApplication.shared.connectedScenes.compactMap { $0 as? UIWindowScene }.flatMap(\.windows)
         for window in allWindows {
             window.tintColor = accent.primary.color
             window.overrideUserInterfaceStyle = theme.interfaceStyle

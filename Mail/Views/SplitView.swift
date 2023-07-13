@@ -118,7 +118,7 @@ struct SplitView: View {
             }
         }
         .onReceive(NotificationCenter.default.publisher(for: .onOpenedMailTo)) { identifiableURLComponents in
-            self.mailToURLComponents = identifiableURLComponents.object as? IdentifiableURLComponents
+            mailToURLComponents = identifiableURLComponents.object as? IdentifiableURLComponents
         }
         .onAppear {
             AppDelegate.orientationLock = .all
