@@ -274,11 +274,11 @@ enum ActionsTarget: Equatable, Identifiable {
                 let spamAction: Action? = spam ? .nonSpam : .spam
 
                 let tempListActions: [Action?] = [
-                    archive ? .archive : .moveToInbox,
-                    unread ? .markAsRead : .markAsUnread,
                     .move,
+                    spamAction,
+                    unread ? .markAsRead : .markAsUnread,
+                    archive ? .archive : .moveToInbox,
                     star ? .unstar : .star,
-                    spamAction
                 ]
 
                 listActions = tempListActions.compactMap { $0 }
@@ -291,11 +291,11 @@ enum ActionsTarget: Equatable, Identifiable {
             let star = message.flagged
             let isStaff = AccountManager.instance.currentAccount?.user?.isStaff ?? false
             let tempListActions: [Action?] = [
-                archive ? .archive : .moveToInbox,
-                unread ? .markAsRead : .markAsUnread,
                 .move,
-                star ? .unstar : .star,
                 .reportJunk,
+                unread ? .markAsRead : .markAsUnread,
+                archive ? .archive : .moveToInbox,
+                star ? .unstar : .star,
                 isStaff ? .report : nil
             ]
 
