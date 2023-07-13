@@ -29,13 +29,12 @@ struct ThreadCountIndicatorView: View {
             .padding(.horizontal, 4)
             .padding(.vertical, 1)
             .lineLimit(1)
-            .background(hasUnseenMessages ? .clear : MailResourcesAsset.unreadIndicatorBackgroundColor.swiftUIColor)
             .clipShape(RoundedRectangle(cornerRadius: 3))
             .overlay {
                 RoundedRectangle(cornerRadius: 3)
                     .stroke(hasUnseenMessages
                         ? MailResourcesAsset.textPrimaryColor.swiftUIColor
-                        : MailResourcesAsset.elementsColor.swiftUIColor)
+                        : MailResourcesAsset.textFieldBorder.swiftUIColor)
             }
     }
 }
