@@ -85,7 +85,7 @@ public class Recipient: EmbeddedObject, Codable {
         return contact?.color ?? UIColor.backgroundColor(from: email.hash, with: UIConstants.avatarColors)
     }
 
-    public lazy var contact: MergedContact? = AccountManager.instance.currentContactManager?.getContact(for: self)
+    public lazy var contact: MergedContact? = nil //AccountManager.instance.currentContactManager?.getContact(for: self)
 
     public func isSameRecipient(as recipient: Recipient) -> Bool {
         return email == recipient.email && name == recipient.name

@@ -25,7 +25,13 @@ import RealmSwift
 import SwiftUI
 
 enum PreviewHelper {
-    static let sampleMailboxManager = MailboxManager(mailbox: sampleMailbox, apiFetcher: MailApiFetcher())
+    static var sampleMailboxManager: MailboxManager = {
+        let apiFetcher = MailApiFetcher()
+        let contactManager = ContactManager(userId: 0, apiFetcher: apiFetcher)
+        return MailboxManager(mailbox: sampleMailbox,
+                              apiFetcher: apiFetcher,
+                              contactManager: contactManager)
+    }()
 
     static let sampleMailbox = Mailbox(uuid: "",
                                        email: "test@example.com",

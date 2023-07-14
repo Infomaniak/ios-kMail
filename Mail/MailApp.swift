@@ -153,7 +153,7 @@ struct MailApp: App {
                 try await accountManager.updateUser(for: currentAccount)
                 accountManager.enableBugTrackerIfAvailable()
 
-                try await accountManager.currentContactManager?.fetchContactsAndAddressBooks()
+                try await accountManager.currentMailboxManager?.contactManager.fetchContactsAndAddressBooks()
             } catch {
                 DDLogError("Error while updating user account: \(error)")
             }

@@ -30,16 +30,14 @@ struct ContactActionsView: View {
 
     @State private var writtenToRecipient: Recipient?
 
-    private let recipient: Recipient
-    private let actions: [ContactAction]
+    let recipient: Recipient
+    private var actions: [ContactAction] {
+        let isRemoteContact = mailboxManager.contactManager.getContact(for: recipient)?.remote != nil
 
-    init(recipient: Recipient) {
-        self.recipient = recipient
-        let isRemoteContact = AccountManager.instance.currentContactManager?.getContact(for: recipient)?.remote != nil
         if isRemoteContact {
-            actions = [.writeEmailAction, .copyEmailAction]
+            return [.writeEmailAction, .copyEmailAction]
         } else {
-            actions = [.writeEmailAction, .addContactsAction, .copyEmailAction]
+            return [.writeEmailAction, .addContactsAction, .copyEmailAction]
         }
     }
 
@@ -71,7 +69,8 @@ struct ContactActionsView: View {
                 AvatarView(avatarDisplayable: recipient, size: 32)
                     .accessibilityHidden(true)
                 VStack(alignment: .leading) {
-                    Text(recipient, format: .recipient(currentEmailContext: mailboxManager.mailbox.email))
+                    Text(recipient.displayablePersonFor(contextMailboxManager: mailboxManager),
+                         format: .displayablePerson())
                         .textStyle(.bodyMedium)
                     Text(recipient.contact?.email ?? recipient.email)
                         .textStyle(.bodySecondary)
@@ -128,7 +127,7 @@ struct ContactActionsView: View {
     private func addToContacts() {
         Task {
             await tryOrDisplayError {
-                try await AccountManager.instance.currentContactManager?.addContact(recipient: recipient)
+                try await mailboxManager.contactManager.addContact(recipient: recipient)
                 IKSnackBar.showSnackBar(message: MailResourcesStrings.Localizable.snackbarContactSaved)
             }
         }

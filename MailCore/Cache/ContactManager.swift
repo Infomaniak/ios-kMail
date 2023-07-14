@@ -80,13 +80,11 @@ public class ContactManager: ObservableObject {
 
     let realmConfiguration: Realm.Configuration
     let backgroundRealm: BackgroundRealm
-    let user: InfomaniakCore.UserProfile
     let apiFetcher: MailApiFetcher
 
-    public init(user: InfomaniakCore.UserProfile, apiFetcher: MailApiFetcher) {
-        self.user = user
+    public init(userId: Int, apiFetcher: MailApiFetcher) {
         self.apiFetcher = apiFetcher
-        let realmName = "\(user.id).realm"
+        let realmName = "\(userId).realm"
         realmConfiguration = Realm.Configuration(
             fileURL: ContactManager.constants.rootDocumentsURL.appendingPathComponent(realmName),
             schemaVersion: 2,

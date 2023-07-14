@@ -63,14 +63,16 @@ public class MailboxManager: ObservableObject {
 
     public let realmConfiguration: Realm.Configuration
     public let mailbox: Mailbox
-    public private(set) var apiFetcher: MailApiFetcher
+    public let apiFetcher: MailApiFetcher
+    public let contactManager: ContactManager
     private let backgroundRealm: BackgroundRealm
 
     private lazy var refreshActor = RefreshActor(mailboxManager: self)
 
-    public init(mailbox: Mailbox, apiFetcher: MailApiFetcher) {
+    public init(mailbox: Mailbox, apiFetcher: MailApiFetcher, contactManager: ContactManager) {
         self.mailbox = mailbox
         self.apiFetcher = apiFetcher
+        self.contactManager = contactManager
         let realmName = "\(mailbox.userId)-\(mailbox.mailboxId).realm"
         realmConfiguration = Realm.Configuration(
             fileURL: MailboxManager.constants.rootDocumentsURL.appendingPathComponent(realmName),
