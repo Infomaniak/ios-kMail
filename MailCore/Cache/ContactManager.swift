@@ -95,6 +95,9 @@ public class ContactManager: ObservableObject {
             ]
         )
         backgroundRealm = BackgroundRealm(configuration: realmConfiguration)
+        Task {
+            await uniqueMergeContacts()
+        }
     }
 
     public func getRealm() -> Realm {
@@ -110,6 +113,8 @@ public class ContactManager: ObservableObject {
 
     public var mergedContacts = [String: MergedContact]()
 
+    private var currentMergeRequest: Task<Void, Never>?
+
     public func fetchContactsAndAddressBooks() async throws {
         do {
             async let addressBooksRequest = apiFetcher.addressBooks().addressbooks
@@ -124,22 +129,38 @@ public class ContactManager: ObservableObject {
                 }
             }
 
-            await mergeContacts()
+            await uniqueMergeContacts()
         } catch {
-            await mergeContacts()
+            await uniqueMergeContacts()
 
             throw error
         }
     }
 
-    public func mergeContacts() async {
+    private func uniqueMergeContacts() async {
+        DDLogInfo("Will start merging contacts cancelling previous task : \(currentMergeRequest != nil)")
+        currentMergeRequest?.cancel()
+        currentMergeRequest = Task {
+            await mergeContacts()
+        }
+
+        await currentMergeRequest?.value
+        currentMergeRequest = nil
+    }
+
+    private func mergeContacts() async {
         var mergeableContacts = [String: (email: String, local: CNContact?, remote: Contact?)]()
 
         // Add local contacts
-        await localContactsHelper.enumerateContacts { localContact, _ in
+        await localContactsHelper.enumerateContacts { localContact, stop in
             for email in localContact.emailAddresses {
                 let key = localContact.uniqueKeyForEmail(String(email.value))
                 mergeableContacts[key] = (email: String(email.value), local: localContact, remote: nil)
+            }
+
+            if Task.isCancelled {
+                stop.pointee = true
+                return
             }
         }
 
@@ -151,12 +172,19 @@ public class ContactManager: ObservableObject {
                 let key = remoteContact.uniqueKeyForEmail(email)
                 mergeableContacts[key] = (email: email, local: mergeableContacts[key]?.local, remote: remoteContact)
             }
+
+            if Task.isCancelled {
+                return
+            }
         }
 
         // Merge
         var tmpMergedContacts = [String: MergedContact]()
         mergeableContacts.forEach { key, value in
             tmpMergedContacts[key] = MergedContact(email: value.email, remote: value.remote?.freeze(), local: value.local)
+            if Task.isCancelled {
+                return
+            }
         }
         mergedContacts = tmpMergedContacts
     }
