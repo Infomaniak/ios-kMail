@@ -112,9 +112,11 @@ public class ContactManager: ObservableObject {
 
     public func fetchContactsAndAddressBooks() async throws {
         do {
-            let addressBooks = try await apiFetcher.addressBooks().addressbooks
-            let contacts = try await apiFetcher.contacts()
+            async let addressBooksRequest = apiFetcher.addressBooks().addressbooks
+            async let contactsRequest = apiFetcher.contacts()
 
+            let addressBooks = try await addressBooksRequest
+            let contacts = try await contactsRequest
             await backgroundRealm.execute { realm in
                 try? realm.safeWrite {
                     realm.add(addressBooks, update: .modified)
