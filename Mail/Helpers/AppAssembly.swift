@@ -26,6 +26,9 @@ import InfomaniakNotifications
 import MailCore
 import os.log
 
+private let realmRootPath = "mailboxes"
+private let appGroupIdentifier = "group.com.infomaniak.mail"
+
 extension Array where Element == Factory {
     func registerFactoriesInDI() {
         forEach { SimpleResolver.sharedResolver.store(factory: $0) }
@@ -88,6 +91,16 @@ enum ApplicationAssembly {
             },
             Factory(type: PlatformDetectable.self) { _, _ in
                 PlatformDetector()
+            },
+            Factory(type: AppGroupPathProvidable.self) { _, _ in
+                guard let provider = AppGroupPathProvider(
+                    realmRootPath: realmRootPath,
+                    appGroupIdentifier: appGroupIdentifier
+                ) else {
+                    fatalError("could not safely init AppGroupPathProvider")
+                }
+
+                return provider
             }
         ]
 
@@ -125,4 +138,3 @@ public struct EarlyDIHook {
         ApplicationAssembly.setupDI()
     }
 }
-

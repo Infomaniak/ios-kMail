@@ -20,38 +20,26 @@ import CocoaLumberjackSwift
 import Foundation
 import InfomaniakCore
 import InfomaniakCoreUI
+import InfomaniakDI
 import MailResources
 import RealmSwift
 import Sentry
 import SwiftRegex
 
-public class MailboxManager: ObservableObject {
-    public class MailboxManagerConstants {
+public final class MailboxManager: ObservableObject {
+    public final class MailboxManagerConstants {
         private let fileManager = FileManager.default
         public let rootDocumentsURL: URL
         public let groupDirectoryURL: URL
         public let cacheDirectoryURL: URL
 
         init() {
-            groupDirectoryURL = fileManager.containerURL(forSecurityApplicationGroupIdentifier: AccountManager.appGroup)!
-            rootDocumentsURL = groupDirectoryURL.appendingPathComponent("mailboxes", isDirectory: true)
-            cacheDirectoryURL = groupDirectoryURL.appendingPathComponent("Library/Caches", isDirectory: true)
-            print(groupDirectoryURL)
-            try? fileManager.setAttributes(
-                [FileAttributeKey.protectionKey: FileProtectionType.completeUntilFirstUserAuthentication],
-                ofItemAtPath: groupDirectoryURL.path
-            )
-            try? FileManager.default.createDirectory(
-                atPath: rootDocumentsURL.path,
-                withIntermediateDirectories: true,
-                attributes: nil
-            )
-            try? FileManager.default.createDirectory(
-                atPath: cacheDirectoryURL.path,
-                withIntermediateDirectories: true,
-                attributes: nil
-            )
+            @InjectService var appGroupPathProvider: AppGroupPathProvidable
+            groupDirectoryURL = appGroupPathProvider.groupDirectoryURL
+            rootDocumentsURL = appGroupPathProvider.realmRootURL
+            cacheDirectoryURL = appGroupPathProvider.cacheDirectoryURL
 
+            DDLogInfo("groupDirectoryURL: \(groupDirectoryURL)")
             DDLogInfo(
                 "App working path is: \(fileManager.urls(for: .documentDirectory, in: .userDomainMask).first?.absoluteString ?? "")"
             )

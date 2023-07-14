@@ -220,7 +220,8 @@ final class AttachmentsManager: ObservableObject {
     private func updateLocalAttachment(url: URL, attachment: Attachment) async -> Attachment {
         let urlResources = try? url.resourceValues(forKeys: [.typeIdentifierKey, .fileSizeKey])
         let uti = UTType(urlResources?.typeIdentifier ?? "")
-        let updatedName = nameWithExtension(name: attachment.name,
+        let name = url.lastPathComponent
+        let updatedName = nameWithExtension(name: name,
                                             correspondingTo: uti)
         let mimeType = uti?.preferredMIMEType ?? attachment.mimeType
         let size = Int64(urlResources?.fileSize ?? 0)
