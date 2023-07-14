@@ -120,11 +120,12 @@ struct ThreadCell: View {
                             displayablePerson: DisplayablePerson(recipient: recipient, contextMailboxManager: mailboxManager),
                             size: 40
                         )
+                        .opacity(isSelected ? 0 : 1)
                         CheckboxView(isSelected: isSelected, density: density)
                             .opacity(isSelected ? 1 : 0)
-                            .animation(nil, value: isSelected)
                     }
                     .accessibility(hidden: true)
+                    .animation(nil, value: isSelected)
                 } else if isMultipleSelectionEnabled {
                     CheckboxView(isSelected: isSelected, density: density)
                         .opacity(shouldDisplayCheckbox ? 1 : 0)
@@ -159,10 +160,10 @@ struct ThreadCell: View {
                 if isEnabled {
                     // We should wait a bit before showing the checkbox
                     DispatchQueue.main.asyncAfter(deadline: .now() + UIConstants.checkboxAppearDelay) {
-                        self.shouldDisplayCheckbox = true
+                        shouldDisplayCheckbox = true
                     }
                 } else {
-                    self.shouldDisplayCheckbox = false
+                    shouldDisplayCheckbox = false
                 }
             }
         }

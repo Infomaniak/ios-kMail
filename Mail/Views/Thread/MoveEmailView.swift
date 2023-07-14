@@ -42,12 +42,12 @@ struct MoveEmailView: View {
 
     typealias MoveHandler = (Folder) -> Void
 
-    // swiftlint:disable empty_count
     @ObservedResults(Folder.self, where: { $0.role != .draft && $0.toolType == nil }) var folders
     @State private var isShowingCreateFolderAlert = false
 
     private var filteredFolders: [NestableFolder] {
         guard !searchFilter.isEmpty else {
+            // swiftlint:disable:next empty_count
             return NestableFolder.createFoldersHierarchy(from: Array(folders.where { $0.parents.count == 0 }))
         }
         return folders.filter {

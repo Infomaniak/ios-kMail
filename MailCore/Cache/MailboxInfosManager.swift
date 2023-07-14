@@ -80,7 +80,7 @@ public class MailboxInfosManager {
         let realm = realm ?? getRealm()
         var realmMailboxList = realm.objects(Mailbox.self)
             .sorted(by: \Mailbox.mailboxId)
-        if let userId = userId {
+        if let userId {
             realmMailboxList = realmMailboxList.where { $0.userId == userId }
         }
         return Array(realmMailboxList.map { $0.freeze() })

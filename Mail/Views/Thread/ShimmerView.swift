@@ -17,8 +17,8 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import SwiftUI
 import Shimmer
+import SwiftUI
 
 struct ShimmerView: View {
     var body: some View {

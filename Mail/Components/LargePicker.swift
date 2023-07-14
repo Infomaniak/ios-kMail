@@ -50,7 +50,7 @@ struct LargePicker<SelectionValue, ButtonType>: View where SelectionValue: Hasha
 
     var body: some View {
         VStack(alignment: .leading, spacing: 4) {
-            if let title = title {
+            if let title {
                 Text(title)
                     .textStyle(.bodySmall)
             }
@@ -87,10 +87,9 @@ extension LargePicker where ButtonType == EmptyView {
         self.title = title
         self.noSelectionText = noSelectionText
         self.items = items
-        self.button = nil
+        button = nil
         _selection = selection
     }
-
 }
 
 struct LargePicker_Previews: PreviewProvider {

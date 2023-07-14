@@ -116,14 +116,14 @@ enum SearchState {
         searchFieldObservation = $searchValue
             .debounce(for: .seconds(0.3), scheduler: DispatchQueue.main)
             .sink { [weak self] newValue in
-                guard let self = self,
-                      self.lastSearch.trimmingCharacters(in: .whitespacesAndNewlines) != newValue
+                guard let self,
+                      lastSearch.trimmingCharacters(in: .whitespacesAndNewlines) != newValue
                       .trimmingCharacters(in: .whitespacesAndNewlines) else {
                     return
                 }
-                self.lastSearch = newValue
-                self.searchValueType = .threadsAndContacts
-                self.performSearch()
+                lastSearch = newValue
+                searchValueType = .threadsAndContacts
+                performSearch()
             }
     }
 

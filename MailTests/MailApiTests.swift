@@ -19,9 +19,8 @@
 import Foundation
 import InfomaniakCore
 import InfomaniakLogin
-import XCTest
-
 @testable import MailCore
+import XCTest
 
 class FakeTokenDelegate: RefreshTokenDelegate {
     func didUpdateToken(newToken: ApiToken, oldToken: ApiToken) {

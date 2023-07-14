@@ -35,7 +35,7 @@ public extension Endpoint {
         var mergedQueryItems = components?.queryItems
         if mergedQueryItems == nil {
             mergedQueryItems = queryItems
-        } else if let queryItems = queryItems {
+        } else if let queryItems {
             mergedQueryItems?.append(contentsOf: queryItems)
         }
         return Endpoint(hostKeypath: \.mailHost, path: components?.path ?? resource, queryItems: mergedQueryItems)
@@ -47,6 +47,10 @@ public extension Endpoint {
 
     private static var base: Endpoint {
         return Endpoint(hostKeypath: \.mailHost, path: "/api")
+    }
+
+    static func currentUserActivity(mailboxIndex: Int, folder: Folder) -> Endpoint {
+        return Endpoint(hostKeypath: \.mailHost, path: "/\(mailboxIndex);fid=\(folder.id)")
     }
 
     static var mailboxes: Endpoint {

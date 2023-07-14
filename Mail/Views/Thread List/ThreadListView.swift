@@ -37,6 +37,7 @@ final class FlushAlertState: Identifiable {
 
 struct ThreadListView: View {
     @LazyInjectService private var matomo: MatomoUtils
+    @LazyInjectService private var userActivityController: UserActivityController
 
     @EnvironmentObject var splitViewManager: SplitViewManager
     @EnvironmentObject var navigationState: NavigationState
@@ -217,9 +218,12 @@ struct ThreadListView: View {
             if viewModel.isCompact {
                 viewModel.selectedThread = nil
             }
+            userActivityController.setCurrentActivity(mailbox: viewModel.mailboxManager.mailbox,
+                                                      folder: splitViewManager.selectedFolder)
         }
         .onChange(of: splitViewManager.selectedFolder) { newFolder in
             changeFolder(newFolder: newFolder)
+            userActivityController.setCurrentActivity(mailbox: viewModel.mailboxManager.mailbox, folder: newFolder)
         }
         .onChange(of: viewModel.selectedThread) { newThread in
             if let newThread {
@@ -264,7 +268,7 @@ struct ThreadListView: View {
     private func updateFetchingTask(with folder: Folder? = nil) {
         guard fetchingTask == nil else { return }
         fetchingTask = Task {
-            if let folder = folder {
+            if let folder {
                 await viewModel.updateThreads(with: folder)
             } else {
                 await viewModel.fetchThreads()

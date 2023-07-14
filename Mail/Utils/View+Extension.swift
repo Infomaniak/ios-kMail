@@ -103,11 +103,10 @@ extension View {
     }
 
     func emptyState<T>(isEmpty: Bool, @ViewBuilder emptyView: () -> T) -> some View where T: View {
-        self
-            .overlay {
-                if isEmpty {
-                    emptyView()
-                }
+        overlay {
+            if isEmpty {
+                emptyView()
             }
+        }
     }
 }

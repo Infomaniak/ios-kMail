@@ -71,7 +71,7 @@ public class Thread: Object, Decodable, Identifiable {
     }
 
     public var formattedSubject: String {
-        guard let subject = subject, !subject.isEmpty else {
+        guard let subject, !subject.isEmpty else {
             return MailResourcesStrings.Localizable.noSubjectTitle
         }
         return subject
@@ -94,14 +94,14 @@ public class Thread: Object, Decodable, Identifiable {
     }
 
     public func recomputeOrFail() throws {
-        messageIds = messages.flatMap { $0.linkedUids }.toRealmSet()
+        messageIds = messages.flatMap(\.linkedUids).toRealmSet()
         updateUnseenMessages()
         from = messages.flatMap { $0.from.detached() }.toRealmList()
         hasAttachments = messages.contains { $0.hasAttachments }
-        hasDrafts = messages.map { $0.isDraft }.contains(true)
+        hasDrafts = messages.map(\.isDraft).contains(true)
         updateFlagged()
-        answered = messages.map { $0.answered }.contains(true)
-        forwarded = messages.map { $0.forwarded }.contains(true)
+        answered = messages.map(\.answered).contains(true)
+        forwarded = messages.map(\.forwarded).contains(true)
 
         messages = messages.sorted {
             $0.date.compare($1.date) == .orderedAscending

@@ -47,11 +47,9 @@ struct FolderCell: View {
 
     let folder: NestableFolder
     var level = 0
-
     var currentFolderId: String?
-
+    var canCollapseSubFolders = false
     var matomoCategory: MatomoUtils.EventCategory?
-
     var customCompletion: ((Folder) -> Void)?
 
     @State private var shouldTransit = false
@@ -64,7 +62,12 @@ struct FolderCell: View {
         Group {
             if cellType == .indicator || isCompactWindow {
                 Button(action: didTapButton) {
-                    FolderCellContent(folder: folder.content, level: level, isCurrentFolder: isCurrentFolder)
+                    FolderCellContent(
+                        folder: folder.content,
+                        level: level,
+                        isCurrentFolder: isCurrentFolder,
+                        canCollapseSubFolders: canCollapseSubFolders
+                    )
                 }
             } else {
                 NavigationLink(isActive: $shouldTransit) {
@@ -77,20 +80,28 @@ struct FolderCell: View {
                         }
                         splitViewManager.selectedFolder = folder.content
                         splitViewManager.showSearch = false
-                        self.shouldTransit = true
+                        shouldTransit = true
                     } label: {
-                        FolderCellContent(folder: folder.content, level: level, isCurrentFolder: isCurrentFolder)
+                        FolderCellContent(
+                            folder: folder.content,
+                            level: level,
+                            isCurrentFolder: isCurrentFolder,
+                            canCollapseSubFolders: canCollapseSubFolders
+                        )
                     }
                 }
             }
 
-            ForEach(folder.children) { child in
-                FolderCell(
-                    folder: child,
-                    level: level + 1,
-                    currentFolderId: currentFolderId,
-                    customCompletion: customCompletion
-                )
+            if folder.content.isExpanded {
+                ForEach(folder.children) { child in
+                    FolderCell(
+                        folder: child,
+                        level: level + 1,
+                        currentFolderId: currentFolderId,
+                        canCollapseSubFolders: canCollapseSubFolders,
+                        customCompletion: customCompletion
+                    )
+                }
             }
         }
     }
@@ -119,11 +130,13 @@ struct FolderCellContent: View {
     private let folder: Folder
     private let level: Int
     private let isCurrentFolder: Bool
+    private let canCollapseSubFolders: Bool
 
-    init(folder: Folder, level: Int, isCurrentFolder: Bool) {
+    init(folder: Folder, level: Int, isCurrentFolder: Bool, canCollapseSubFolders: Bool = false) {
         self.folder = folder
         self.level = min(level, UIConstants.menuDrawerMaximumSubfolderLevel)
         self.isCurrentFolder = isCurrentFolder
+        self.canCollapseSubFolders = canCollapseSubFolders
     }
 
     private var textStyle: MailTextStyle {
@@ -135,6 +148,13 @@ struct FolderCellContent: View {
 
     var body: some View {
         HStack(spacing: UIConstants.menuDrawerHorizontalItemSpacing) {
+            if canCollapseSubFolders && cellType == .link {
+                Button(action: collapseFolder) {
+                    ChevronIcon(style: folder.isExpanded ? .up : .down, color: .secondary)
+                }
+                .opacity(level == 0 && !folder.children.isEmpty ? 1 : 0)
+            }
+
             folder.icon
                 .resizable()
                 .scaledToFit()
@@ -178,6 +198,13 @@ struct FolderCellContent: View {
     private var background: some View {
         if cellType == .link {
             SelectionBackground(selectionType: isCurrentFolder ? .folder : .none)
+        }
+    }
+
+    private func collapseFolder() {
+        guard let liveFolder = folder.thaw() else { return }
+        try? liveFolder.realm?.write {
+            liveFolder.isExpanded = !folder.isExpanded
         }
     }
 }

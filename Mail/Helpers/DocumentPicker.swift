@@ -37,10 +37,10 @@ struct DocumentPicker: UIViewControllerRepresentable {
     func makeUIViewController(context: Context) -> UIDocumentPickerViewController {
         let picker: UIDocumentPickerViewController
         switch pickerType {
-        case let .selectContent(types, _):
+        case .selectContent(let types, _):
             picker = UIDocumentPickerViewController(forOpeningContentTypes: types, asCopy: true)
             picker.allowsMultipleSelection = true
-        case let .exportContent(urls):
+        case .exportContent(let urls):
             picker = UIDocumentPickerViewController(forExporting: urls, asCopy: true)
         }
 
@@ -63,7 +63,7 @@ struct DocumentPicker: UIViewControllerRepresentable {
         }
 
         func documentPicker(_ controller: UIDocumentPickerViewController, didPickDocumentsAt urls: [URL]) {
-            if case let .selectContent(_, completion) = parent.pickerType {
+            if case .selectContent(_, let completion) = parent.pickerType {
                 completion(urls)
             }
             parent.dismiss()

@@ -47,12 +47,12 @@ extension SearchViewModel {
         performSearch()
     }
 
-    internal func searchThreadsForContact(_ contact: Recipient) {
+    func searchThreadsForContact(_ contact: Recipient) {
         searchValueType = .contact
         searchValue = "\"" + contact.email + "\""
     }
 
-    internal func performSearch() {
+    func performSearch() {
         if searchValueType == .threadsAndContacts {
             updateContactSuggestion()
         } else {

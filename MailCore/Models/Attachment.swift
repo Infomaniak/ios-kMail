@@ -52,7 +52,7 @@ public class Attachment: /* Hashable, */ EmbeddedObject, Codable, Identifiable {
     }
 
     public var icon: MailResourcesImages {
-        guard let uti = uti else { return MailResourcesAsset.unknownFile }
+        guard let uti else { return MailResourcesAsset.unknownFile }
         if uti.conforms(to: .audio) {
             return MailResourcesAsset.audioFile
         } else if uti.conforms(to: .archive) {

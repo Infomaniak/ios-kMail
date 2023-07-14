@@ -45,14 +45,14 @@ extension ThreadListViewModel {
         stopObserveChanges()
 
         observationThreadToken = threadResults()?.observe(on: observeQueue) { [weak self] changes in
-            guard let self = self else {
+            guard let self else {
                 return
             }
 
             switch changes {
             case .initial(let results):
                 let filteredThreads = Array(results.freezeIfNeeded())
-                guard let newSections = self.sortThreadsIntoSections(threads: filteredThreads) else { return }
+                guard let newSections = sortThreadsIntoSections(threads: filteredThreads) else { return }
 
                 DispatchQueue.main.sync {
                     self.filteredThreads = filteredThreads
@@ -62,7 +62,7 @@ extension ThreadListViewModel {
                 }
             case .update(let results, _, _, _):
                 let filteredThreads = Array(results.freezeIfNeeded())
-                guard let newSections = self.sortThreadsIntoSections(threads: filteredThreads) else { return }
+                guard let newSections = sortThreadsIntoSections(threads: filteredThreads) else { return }
 
                 DispatchQueue.main.sync {
                     self.nextThreadIfNeeded(from: filteredThreads)
@@ -81,8 +81,8 @@ extension ThreadListViewModel {
             }
 
             // We only apply the first update when in "unread" mode
-            if self.filter == .unseen {
-                self.stopObserveChanges()
+            if filter == .unseen {
+                stopObserveChanges()
             }
         }
         observationLastUpdateToken = folder.observe(keyPaths: [\Folder.lastUpdate], on: observeQueue) { [weak self] changes in
@@ -119,7 +119,7 @@ extension ThreadListViewModel {
             partialResult + [thread.uid]
         }
 
-        guard let allThreadsUIDs = allThreadsUIDs else {
+        guard let allThreadsUIDs else {
             return
         }
 
@@ -128,7 +128,7 @@ extension ThreadListViewModel {
         let allThreads = realm.objects(Thread.self).filter(containAnyOf)
 
         observeFilteredThreadsToken = allThreads.observe(on: observeQueue) { [weak self] changes in
-            guard let self = self else {
+            guard let self else {
                 return
             }
 
@@ -161,13 +161,13 @@ extension ThreadListViewModel {
                 section.threads.contains { $0.uid == uid }
             }
 
-            guard let threadToUpdate = threadToUpdate,
-                  let sectionToUpdate = sectionToUpdate else {
+            guard let threadToUpdate,
+                  let sectionToUpdate else {
                 continue
             }
 
             let threadToUpdateIndex = sectionToUpdate.threads.firstIndex(of: threadToUpdate)
-            guard let threadToUpdateIndex = threadToUpdateIndex else {
+            guard let threadToUpdateIndex else {
                 continue
             }
 
@@ -188,7 +188,7 @@ extension ThreadListViewModel {
         stopObserveUnread()
 
         observationUnreadToken = threadResults()?.observe(on: observeQueue) { [weak self] changes in
-            guard let self = self else {
+            guard let self else {
                 return
             }
 

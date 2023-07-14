@@ -47,7 +47,7 @@ extension WKWebView {
 
 final class WebViewController: UIViewController {
     var openURL: OpenURLAction?
-	var model: WebViewModel?
+    var model: WebViewModel?
     var messageUid: String?
 
     private let widthSubject = PassthroughSubject<Double, Never>()

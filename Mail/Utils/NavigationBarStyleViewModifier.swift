@@ -31,11 +31,11 @@ struct NavigationBarStyleViewModifier: ViewModifier {
 
     func body(content: Content) -> some View {
         content
-            .introspectNavigationController { navigationController in
-                guard self.navigationViewController != navigationController else {
+            .introspectNavigationController { navigationViewController in
+                guard self.navigationViewController != navigationViewController else {
                     return
                 }
-                self.navigationViewController = navigationController
+                self.navigationViewController = navigationViewController
                 updateAppearanceNavigationController()
             }
             .onAppear {

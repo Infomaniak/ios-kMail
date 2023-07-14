@@ -21,7 +21,7 @@ import MailCore
 import SwiftUI
 
 @MainActor
-class DraftUtils {
+enum DraftUtils {
     public static func editDraft(from thread: Thread, mailboxManager: MailboxManager, editedMessageDraft: Binding<Draft?>) {
         guard let message = thread.messages.first else { return }
         // If we already have the draft locally, present it directly
