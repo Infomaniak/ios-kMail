@@ -46,7 +46,7 @@ public struct AvatarImageRequest {
     }
 }
 
-public struct DisplayablePerson {
+public struct CommonContact {
     public let fullName: String
     public let email: String
     public let avatarImageRequest: AvatarImageRequest
@@ -84,8 +84,8 @@ public struct DisplayablePerson {
     }
 }
 
-extension DisplayablePerson: Equatable {
-    public static func == (lhs: DisplayablePerson, rhs: DisplayablePerson) -> Bool {
+extension CommonContact: Equatable {
+    public static func == (lhs: CommonContact, rhs: CommonContact) -> Bool {
         return lhs.fullName == rhs.fullName && lhs.email == rhs.email
     }
 }

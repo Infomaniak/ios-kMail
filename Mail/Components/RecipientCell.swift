@@ -44,7 +44,7 @@ struct RecipientCell: View {
     var body: some View {
         HStack(spacing: 8) {
             AvatarView(
-                displayablePerson: DisplayablePerson(recipient: recipient, contextMailboxManager: mailboxManager),
+                displayablePerson: CommonContact(recipient: recipient, contextMailboxManager: mailboxManager),
                 size: 40
             )
             .accessibilityHidden(true)

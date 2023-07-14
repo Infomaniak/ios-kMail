@@ -25,7 +25,7 @@ import SwiftUI
 struct AvatarView: View {
     @EnvironmentObject private var mailboxManager: MailboxManager
 
-    let displayablePerson: DisplayablePerson
+    let displayablePerson: CommonContact
     var size: CGFloat = 28
 
     var body: some View {

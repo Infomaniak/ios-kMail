@@ -20,7 +20,7 @@ import MailCore
 import SwiftUI
 
 struct ContactActionsHeaderView: View {
-    let displayablePerson: DisplayablePerson
+    let displayablePerson: CommonContact
     var body: some View {
         HStack {
             AvatarView(displayablePerson: displayablePerson, size: 32)

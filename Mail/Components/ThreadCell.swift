@@ -117,7 +117,7 @@ struct ThreadCell: View {
                 if density == .large, let recipient = dataHolder.recipientToDisplay {
                     ZStack {
                         AvatarView(
-                            displayablePerson: DisplayablePerson(recipient: recipient, contextMailboxManager: mailboxManager),
+                            displayablePerson: CommonContact(recipient: recipient, contextMailboxManager: mailboxManager),
                             size: 40
                         )
                         .opacity(isSelected ? 0 : 1)

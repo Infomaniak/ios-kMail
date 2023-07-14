@@ -59,7 +59,7 @@ struct AccountView: View {
     var body: some View {
         VStack(spacing: 0) {
             ScrollView {
-                AvatarView(displayablePerson: DisplayablePerson(user: account.user), size: 104)
+                AvatarView(displayablePerson: CommonContact(user: account.user), size: 104)
                     .padding(.top, 24)
                     .padding(.bottom, 16)
 

@@ -49,7 +49,7 @@ struct MessageHeaderSummaryView: View {
                         contactViewRecipient = recipient
                     } label: {
                         AvatarView(
-                            displayablePerson: DisplayablePerson(recipient: recipient, contextMailboxManager: mailboxManager),
+                            displayablePerson: CommonContact(recipient: recipient, contextMailboxManager: mailboxManager),
                             size: 40
                         )
                     }
@@ -66,7 +66,7 @@ struct MessageHeaderSummaryView: View {
                         HStack(alignment: .firstTextBaseline, spacing: 8) {
                             VStack {
                                 ForEach(message.from) { recipient in
-                                    Text(DisplayablePerson(recipient: recipient, contextMailboxManager: mailboxManager),
+                                    Text(CommonContact(recipient: recipient, contextMailboxManager: mailboxManager),
                                          format: .displayablePerson())
                                         .lineLimit(1)
                                         .textStyle(.bodyMedium)
@@ -83,7 +83,7 @@ struct MessageHeaderSummaryView: View {
                         HStack {
                             Text(
                                 message.recipients.map {
-                                    DisplayablePerson(recipient: $0, contextMailboxManager: mailboxManager).formatted()
+                                    CommonContact(recipient: $0, contextMailboxManager: mailboxManager).formatted()
                                 },
                                 format: .list(type: .and)
                             )

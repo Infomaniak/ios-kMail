@@ -60,12 +60,12 @@ public extension Thread {
             case 0:
                 return MailResourcesStrings.Localizable.unknownRecipientTitle
             case 1:
-                return DisplayablePerson(recipient: fromArray[0], contextMailboxManager: contextMailboxManager).formatted()
+                return CommonContact(recipient: fromArray[0], contextMailboxManager: contextMailboxManager).formatted()
             default:
                 let fromCount = min(fromArray.count, Constants.threadCellMaxRecipients)
                 return fromArray[0 ..< fromCount]
                     .map {
-                        DisplayablePerson(recipient: $0, contextMailboxManager: contextMailboxManager)
+                        CommonContact(recipient: $0, contextMailboxManager: contextMailboxManager)
                             .formatted(style: .shortName)
                     }
                     .joined(separator: ", ")
@@ -74,7 +74,7 @@ public extension Thread {
 
         private func formattedTo(thread: Thread) -> String {
             guard let to = thread.to.last else { return MailResourcesStrings.Localizable.unknownRecipientTitle }
-            return DisplayablePerson(recipient: to, contextMailboxManager: contextMailboxManager).formatted()
+            return CommonContact(recipient: to, contextMailboxManager: contextMailboxManager).formatted()
         }
 
         public func format(_ value: Thread) -> String {

@@ -19,14 +19,14 @@
 import Foundation
 import MailResources
 
-public extension FormatStyle where Self == DisplayablePerson.FormatStyle {
-    static func displayablePerson(style: DisplayablePerson.FormatStyle.Style = .fullName) -> Self {
+public extension FormatStyle where Self == CommonContact.FormatStyle {
+    static func displayablePerson(style: CommonContact.FormatStyle.Style = .fullName) -> Self {
         .init(style: style)
     }
 }
 
-public extension DisplayablePerson {
-    func formatted(style: DisplayablePerson.FormatStyle.Style = .fullName) -> String {
+public extension CommonContact {
+    func formatted(style: CommonContact.FormatStyle.Style = .fullName) -> String {
         Self.FormatStyle(style: style).format(self)
     }
 
@@ -45,11 +45,11 @@ public extension DisplayablePerson {
             self.style = style
         }
 
-        private func formattedFullName(_ displayablePerson: DisplayablePerson) -> String {
+        private func formattedFullName(_ displayablePerson: CommonContact) -> String {
             return displayablePerson.fullName
         }
 
-        private func formattedShortName(_ displayablePerson: DisplayablePerson) -> String {
+        private func formattedShortName(_ displayablePerson: CommonContact) -> String {
             let formattedFullName = formattedFullName(displayablePerson)
             if Constants.isEmailAddress(formattedFullName) {
                 return displayablePerson.email.components(separatedBy: "@").first ?? displayablePerson.email
@@ -58,7 +58,7 @@ public extension DisplayablePerson {
             return nameComponents(displayablePerson).givenName.removePunctuation
         }
 
-        public func nameComponents(_ displayablePerson: DisplayablePerson) -> (givenName: String, familyName: String?) {
+        public func nameComponents(_ displayablePerson: CommonContact) -> (givenName: String, familyName: String?) {
             let name = formattedFullName(displayablePerson)
 
             let components = name.components(separatedBy: .whitespaces)
@@ -67,7 +67,7 @@ public extension DisplayablePerson {
             return (givenName, familyName)
         }
 
-        private func formattedInitials(_ displayablePerson: DisplayablePerson) -> String {
+        private func formattedInitials(_ displayablePerson: CommonContact) -> String {
             let nameComponents = nameComponents(displayablePerson)
             let initials = [nameComponents.givenName, nameComponents.familyName]
                 .compactMap {
@@ -80,7 +80,7 @@ public extension DisplayablePerson {
             return initials.joined().uppercased()
         }
 
-        public func format(_ value: DisplayablePerson) -> String {
+        public func format(_ value: CommonContact) -> String {
             switch style {
             case .shortName:
                 return formattedShortName(value)

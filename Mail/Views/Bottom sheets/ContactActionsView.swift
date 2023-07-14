@@ -65,7 +65,7 @@ struct ContactActionsView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
-            ContactActionsHeaderView(displayablePerson: DisplayablePerson(
+            ContactActionsHeaderView(displayablePerson: CommonContact(
                 recipient: recipient,
                 contextMailboxManager: mailboxManager
             ))
