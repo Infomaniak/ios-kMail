@@ -30,7 +30,8 @@ import UIKit
 
 public struct EarlyDIHook {
     public init() {
-        // setup DI ASAP
+        // setup DI and logging ASAP
+        Logging.initLogging()
         setupDI()
     }
 
@@ -93,7 +94,6 @@ struct MailApp: App {
     private let accountManager = AccountManager.instance
 
     init() {
-        Logging.initLogging()
         DDLogInfo("Application starting in foreground ? \(UIApplication.shared.applicationState != .background)")
         ApiFetcher.decoder.dateDecodingStrategy = .iso8601
     }
