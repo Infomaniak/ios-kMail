@@ -84,4 +84,13 @@ public class Recipient: EmbeddedObject, Codable {
     public func isSameRecipient(as recipient: Recipient) -> Bool {
         return email == recipient.email && name == recipient.name
     }
+
+    public var htmlDescription: String {
+        let emailString = "&lt;\(email)&gt;"
+        if name.isEmpty {
+            return emailString
+        } else {
+            return "\(name) \(emailString)"
+        }
+    }
 }

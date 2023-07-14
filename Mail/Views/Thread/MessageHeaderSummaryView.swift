@@ -82,7 +82,9 @@ struct MessageHeaderSummaryView: View {
                     if isMessageExpanded {
                         HStack {
                             Text(
-                                message.recipients.map { $0.formatted(currentEmailContext: mailboxManager.mailbox.email) },
+                                message.recipients.map {
+                                    DisplayablePerson(recipient: $0, contextMailboxManager: mailboxManager).formatted()
+                                },
                                 format: .list(type: .and)
                             )
                             .lineLimit(1)

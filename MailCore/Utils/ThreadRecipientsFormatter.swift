@@ -21,16 +21,16 @@ import MailResources
 
 public extension FormatStyle where Self == Thread.FormatStyle {
     static func recipientNameList(
-        currentEmailContext: String?,
+        contextMailboxManager: MailboxManager,
         style: Thread.FormatStyle.Style
     ) -> Self {
-        .init(currentEmailContext: currentEmailContext, style: style)
+        .init(contextMailboxManager: contextMailboxManager, style: style)
     }
 }
 
 public extension Thread {
-    func formatted(currentEmailContext: String?, style: Thread.FormatStyle.Style) -> String {
-        Self.FormatStyle(currentEmailContext: currentEmailContext, style: style).format(self)
+    func formatted(contextMailboxManager: MailboxManager, style: Thread.FormatStyle.Style) -> String {
+        Self.FormatStyle(contextMailboxManager: contextMailboxManager, style: style).format(self)
     }
 
     struct FormatStyle: Foundation.FormatStyle, Codable, Equatable, Hashable {
@@ -42,11 +42,11 @@ public extension Thread {
         }
 
         private let style: Style
-        private let currentEmail: String?
+        private let contextMailboxManager: MailboxManager
 
-        public init(currentEmailContext: String?, style: Style) {
-            self.currentEmail = currentEmailContext
+        public init(contextMailboxManager: MailboxManager, style: Style) {
             self.style = style
+            self.contextMailboxManager = contextMailboxManager
         }
 
         private func formattedFrom(thread: Thread) -> String {
@@ -60,18 +60,21 @@ public extension Thread {
             case 0:
                 return MailResourcesStrings.Localizable.unknownRecipientTitle
             case 1:
-                return fromArray[0].formatted(currentEmailContext: currentEmail)
+                return DisplayablePerson(recipient: fromArray[0], contextMailboxManager: contextMailboxManager).formatted()
             default:
                 let fromCount = min(fromArray.count, Constants.threadCellMaxRecipients)
                 return fromArray[0 ..< fromCount]
-                    .map { $0.formatted(currentEmailContext: currentEmail, style: .shortName) }
+                    .map {
+                        DisplayablePerson(recipient: $0, contextMailboxManager: contextMailboxManager)
+                            .formatted(style: .shortName)
+                    }
                     .joined(separator: ", ")
             }
         }
 
         private func formattedTo(thread: Thread) -> String {
             guard let to = thread.to.last else { return MailResourcesStrings.Localizable.unknownRecipientTitle }
-            return to.formatted(currentEmailContext: currentEmail)
+            return DisplayablePerson(recipient: to, contextMailboxManager: contextMailboxManager).formatted()
         }
 
         public func format(_ value: Thread) -> String {
@@ -81,6 +84,23 @@ public extension Thread {
             case .from:
                 return formattedFrom(thread: value)
             }
+        }
+
+        // MARK: Codable
+
+        public init(from decoder: Decoder) throws {
+            fatalError("Thread.FormatStyle init from Decoder is not supported")
+        }
+
+        public func encode(to encoder: Encoder) throws {
+            fatalError("Thread.FormatStyle encode is not supported")
+        }
+
+        // MARK: Hashable
+
+        public func hash(into hasher: inout Hasher) {
+            hasher.combine(style)
+            hasher.combine(contextMailboxManager.mailbox.objectId)
         }
     }
 }

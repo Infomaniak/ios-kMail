@@ -34,7 +34,7 @@ struct ThreadCellHeaderView: View {
             }
             Text(
                 thread,
-                format: .recipientNameList(currentEmailContext: mailboxManager.mailbox.email,
+                format: .recipientNameList(contextMailboxManager: mailboxManager,
                                            style: thread.folder?.role == .draft ? .to : .from)
             )
             .textStyle(.bodyMedium)
