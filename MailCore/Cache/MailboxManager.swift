@@ -63,13 +63,16 @@ public class MailboxManager: ObservableObject {
 
     public let realmConfiguration: Realm.Configuration
     public let mailbox: Mailbox
+    public let account: Account
+
     public let apiFetcher: MailApiFetcher
     public let contactManager: ContactManager
     private let backgroundRealm: BackgroundRealm
 
     private lazy var refreshActor = RefreshActor(mailboxManager: self)
 
-    public init(mailbox: Mailbox, apiFetcher: MailApiFetcher, contactManager: ContactManager) {
+    public init(account: Account, mailbox: Mailbox, apiFetcher: MailApiFetcher, contactManager: ContactManager) {
+        self.account = account
         self.mailbox = mailbox
         self.apiFetcher = apiFetcher
         self.contactManager = contactManager

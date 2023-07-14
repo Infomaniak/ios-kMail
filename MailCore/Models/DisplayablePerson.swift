@@ -58,8 +58,12 @@ public struct DisplayablePerson {
         if recipient.isMe(currentMailboxEmail: contextMailboxManager.mailbox.email) {
             fullName = MailResourcesStrings.Localizable.contactMe
             color = UIColor.backgroundColor(from: email.hash, with: UIConstants.avatarColors)
-            avatarImageRequest = AvatarImageRequest(imageRequest: nil, shouldAuthenticate: false)
-            // contextMailboxManager.contactManager.user.avatarImageRequest
+            if recipient.isCurrentUser(currentAccountEmail: contextMailboxManager.account.user.email),
+               let avatarURL = URL(string: contextMailboxManager.account.user.avatar) {
+                avatarImageRequest = AvatarImageRequest(imageRequest: ImageRequest(url: avatarURL), shouldAuthenticate: false)
+            } else {
+                avatarImageRequest = AvatarImageRequest(imageRequest: nil, shouldAuthenticate: false)
+            }
         } else {
             let contact = contextMailboxManager.contactManager.getContact(for: recipient)
             fullName = contact?.name ?? (recipient.name.isEmpty ? recipient.email : recipient.name)

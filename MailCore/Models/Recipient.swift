@@ -73,11 +73,11 @@ public class Recipient: EmbeddedObject, Codable {
         return recipients
     }
 
-    public func isCurrentUser(currentAccountEmail: String) -> Bool {
+    func isCurrentUser(currentAccountEmail: String) -> Bool {
         return currentAccountEmail == email
     }
 
-    public func isMe(currentMailboxEmail: String) -> Bool {
+    func isMe(currentMailboxEmail: String) -> Bool {
         return currentMailboxEmail == email
     }
 

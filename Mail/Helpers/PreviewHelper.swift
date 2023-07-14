@@ -28,7 +28,8 @@ enum PreviewHelper {
     static var sampleMailboxManager: MailboxManager = {
         let apiFetcher = MailApiFetcher()
         let contactManager = ContactManager(userId: 0, apiFetcher: apiFetcher)
-        return MailboxManager(mailbox: sampleMailbox,
+        return MailboxManager(account: PreviewHelper.sampleAccount,
+                              mailbox: sampleMailbox,
                               apiFetcher: apiFetcher,
                               contactManager: contactManager)
     }()

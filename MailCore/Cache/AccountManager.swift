@@ -178,11 +178,14 @@ public class AccountManager: RefreshTokenDelegate, ObservableObject {
 
         if let mailboxManager = mailboxManagers[objectId] {
             return mailboxManager
-        } else if let token = getTokenForUserId(userId),
+        } else if let account = account(for: userId),
                   let mailbox = MailboxInfosManager.instance.getMailbox(id: mailboxId, userId: userId) {
-            let apiFetcher = getApiFetcher(for: userId, token: token)
+            let apiFetcher = getApiFetcher(for: userId, token: account.token)
             let contactManager = getContactManager(for: userId, apiFetcher: apiFetcher)
-            mailboxManagers[objectId] = MailboxManager(mailbox: mailbox, apiFetcher: apiFetcher, contactManager: contactManager)
+            mailboxManagers[objectId] = MailboxManager(account: account,
+                                                       mailbox: mailbox,
+                                                       apiFetcher: apiFetcher,
+                                                       contactManager: contactManager)
             return mailboxManagers[objectId]
         } else {
             return nil
