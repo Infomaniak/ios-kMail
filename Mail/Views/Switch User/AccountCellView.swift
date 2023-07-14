@@ -72,7 +72,7 @@ struct AccountHeaderCell: View {
 
     var body: some View {
         HStack(spacing: 8) {
-            AvatarView(avatarDisplayable: account.user, size: 38)
+            AvatarView(displayablePerson: DisplayablePerson(user: account.user), size: 38)
             VStack(alignment: .leading, spacing: 2) {
                 Text(account.user.displayName)
                     .textStyle(.bodyMedium)

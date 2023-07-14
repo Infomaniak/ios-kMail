@@ -126,7 +126,7 @@ struct ThreadListToolbar: ViewModifier {
                             presentedCurrentAccount = AccountManager.instance.currentAccount
                         } label: {
                             if let currentAccountUser = AccountManager.instance.currentAccount?.user {
-                                AvatarView(avatarDisplayable: currentAccountUser)
+                                AvatarView(displayablePerson: DisplayablePerson(user: currentAccountUser))
                             }
                         }
                         .accessibilityLabel(MailResourcesStrings.Localizable.contentDescriptionUserAvatar)

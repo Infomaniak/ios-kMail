@@ -116,7 +116,10 @@ struct ThreadCell: View {
             Group {
                 if density == .large, let recipient = dataHolder.recipientToDisplay {
                     ZStack {
-                        AvatarView(avatarDisplayable: recipient, size: 40)
+                        AvatarView(
+                            displayablePerson: DisplayablePerson(recipient: recipient, contextMailboxManager: mailboxManager),
+                            size: 40
+                        )
                         CheckboxView(isSelected: isSelected, density: density)
                             .opacity(isSelected ? 1 : 0)
                             .animation(nil, value: isSelected)

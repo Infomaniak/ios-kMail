@@ -48,7 +48,10 @@ struct MessageHeaderSummaryView: View {
                         matomo.track(eventWithCategory: .message, name: "selectAvatar")
                         contactViewRecipient = recipient
                     } label: {
-                        AvatarView(avatarDisplayable: recipient, size: 40)
+                        AvatarView(
+                            displayablePerson: DisplayablePerson(recipient: recipient, contextMailboxManager: mailboxManager),
+                            size: 40
+                        )
                     }
                     .adaptivePanel(item: $contactViewRecipient) { recipient in
                         ContactActionsView(recipient: recipient)
@@ -63,7 +66,8 @@ struct MessageHeaderSummaryView: View {
                         HStack(alignment: .firstTextBaseline, spacing: 8) {
                             VStack {
                                 ForEach(message.from) { recipient in
-                                    Text(recipient, format: .recipient(currentEmailContext: mailboxManager.mailbox.email))
+                                    Text(DisplayablePerson(recipient: recipient, contextMailboxManager: mailboxManager),
+                                         format: .displayablePerson())
                                         .lineLimit(1)
                                         .textStyle(.bodyMedium)
                                 }

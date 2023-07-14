@@ -67,14 +67,6 @@ public class MergedContact {
         return remote != nil
     }
 
-    public init(email: String, remote: Contact?, local: CNContact?) {
-        self.email = email
-        self.remote = remote
-        self.local = local
-    }
-}
-
-extension MergedContact: AvatarDisplayable {
     public var avatarImageRequest: ImageRequest? {
         if let localContact = local, localContact.imageDataAvailable {
             var imageRequest = ImageRequest(id: localContact.identifier) {
@@ -90,17 +82,15 @@ extension MergedContact: AvatarDisplayable {
 
         if let remoteAvatar = remote?.avatar {
             let avatarURL = Endpoint.resource(remoteAvatar).url
-            return AccountManager.instance.currentMailboxManager?.apiFetcher.authenticatedImageRequest(avatarURL)
+            return ImageRequest(url: avatarURL)
         }
 
         return nil
     }
 
-    public var initials: String {
-        ""
-    }
-
-    public var initialsBackgroundColor: UIColor {
-        color
+    public init(email: String, remote: Contact?, local: CNContact?) {
+        self.email = email
+        self.remote = remote
+        self.local = local
     }
 }

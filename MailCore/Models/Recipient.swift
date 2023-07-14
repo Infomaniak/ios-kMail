@@ -81,30 +81,7 @@ public class Recipient: EmbeddedObject, Codable {
         return currentMailboxEmail == email
     }
 
-    public var color: UIColor {
-        return contact?.color ?? UIColor.backgroundColor(from: email.hash, with: UIConstants.avatarColors)
-    }
-
-    public lazy var contact: MergedContact? = nil //AccountManager.instance.currentContactManager?.getContact(for: self)
-
     public func isSameRecipient(as recipient: Recipient) -> Bool {
         return email == recipient.email && name == recipient.name
-    }
-}
-
-extension Recipient: AvatarDisplayable {
-    public var initials: String {
-        ""
-    }
-
-    public var avatarImageRequest: ImageRequest? {
-        /* guard !(isCurrentUser && isMe) else {
-             return AccountManager.instance.currentAccount.user.avatarImageRequest
-         } */
-        return contact?.avatarImageRequest
-    }
-
-    public var initialsBackgroundColor: UIColor {
-        color
     }
 }

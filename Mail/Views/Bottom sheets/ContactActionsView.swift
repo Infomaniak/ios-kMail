@@ -65,19 +65,10 @@ struct ContactActionsView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
-            HStack {
-                AvatarView(avatarDisplayable: recipient, size: 32)
-                    .accessibilityHidden(true)
-                VStack(alignment: .leading) {
-                    Text(recipient.displayablePersonFor(contextMailboxManager: mailboxManager),
-                         format: .displayablePerson())
-                        .textStyle(.bodyMedium)
-                    Text(recipient.contact?.email ?? recipient.email)
-                        .textStyle(.bodySecondary)
-                }
-            }
-            .padding(.bottom, 8)
-            .accessibilityElement(children: .combine)
+            ContactActionsHeaderView(displayablePerson: DisplayablePerson(
+                recipient: recipient,
+                contextMailboxManager: mailboxManager
+            ))
 
             ForEach(actions, id: \.self) { action in
                 Button {
