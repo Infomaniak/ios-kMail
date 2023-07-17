@@ -22,6 +22,8 @@ import MailCore
 import SwiftUI
 
 struct ReportJunkView: View {
+    @Environment(\.dismiss) private var dismiss
+
     @StateObject var viewModel: ActionsViewModel
 
     var actions: [Action] = []
@@ -43,23 +45,24 @@ struct ReportJunkView: View {
     }
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 12) {
+        VStack(alignment: .leading, spacing: UIConstants.actionsViewSpacing) {
             ForEach(actions) { action in
                 if action != actions.first {
                     IKDivider()
                 }
 
                 ActionView(action: action) {
+                    dismiss()
                     Task {
                         await tryOrDisplayError {
                             try await viewModel.didTap(action: action)
                         }
                     }
                 }
-                .padding(.horizontal, 24)
+                .padding(.horizontal, UIConstants.actionsViewCellHorizontalPadding)
             }
         }
-        .padding(.horizontal, 8)
+        .padding(.horizontal, UIConstants.actionsViewHorizontalPadding)
         .matomoView(view: [MatomoUtils.View.bottomSheet.displayName, "ReportJunkView"])
     }
 }

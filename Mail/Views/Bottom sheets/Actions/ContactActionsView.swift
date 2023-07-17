@@ -44,7 +44,7 @@ struct ContactActionsView: View {
     }
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 12) {
+        VStack(alignment: .leading, spacing: UIConstants.actionsViewSpacing) {
             ContactActionsHeaderView(displayablePerson: CommonContact(
                 recipient: recipient,
                 contextMailboxManager: mailboxManager
@@ -62,11 +62,11 @@ struct ContactActionsView: View {
                     }
                     handleAction(action)
                 }
-                .padding(.horizontal, 24)
+                .padding(.horizontal, UIConstants.actionsViewCellHorizontalPadding)
             }
         }
         .frame(maxWidth: .infinity, alignment: .leading)
-        .padding(.horizontal, 8)
+        .padding(.horizontal, UIConstants.actionsViewHorizontalPadding)
         .sheet(item: $writtenToRecipient) { writtenToRecipient in
             ComposeMessageView.writingTo(recipient: writtenToRecipient, mailboxManager: mailboxManager)
         }
