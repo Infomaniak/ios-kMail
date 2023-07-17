@@ -41,12 +41,14 @@ public final class Signature: Object, Codable, Identifiable {
     @Persisted public var name: String
     @Persisted public var content: String
     @Persisted public var replyToId: Int
+    @Persisted public var fullName: String
+    @Persisted public var senderIdn: String
     @Persisted public var senderId: Int
     @Persisted public var isDefault: Bool
     @Persisted public var position: SignaturePosition
 
     private enum CodingKeys: String, CodingKey {
-        case id, name, content, replyToId, senderId, isDefault, position
+        case id, name, content, replyToId, fullName, senderIdn, senderId, isDefault, position
     }
 
     override public var hash: Int {
