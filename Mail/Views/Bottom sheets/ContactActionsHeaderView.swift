@@ -16,29 +16,23 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import Foundation
-import InfomaniakCore
-import Nuke
+import MailCore
 import SwiftUI
-import UIKit
 
-public protocol AvatarDisplayable {
-    var avatarImageRequest: ImageRequest? { get }
-    var initials: String { get }
-    var initialsBackgroundColor: UIColor { get }
-}
-
-extension UserProfile: AvatarDisplayable {
-    public var avatarImageRequest: ImageRequest? {
-        guard let avatarURL = URL(string: avatar) else { return nil }
-        return ImageRequest(url: avatarURL)
-    }
-
-    public var initials: String {
-        displayName.initials
-    }
-
-    public var initialsBackgroundColor: UIColor {
-        UIColor.backgroundColor(from: id, with: UIConstants.avatarColors)
+struct ContactActionsHeaderView: View {
+    let displayablePerson: CommonContact
+    var body: some View {
+        HStack {
+            AvatarView(displayablePerson: displayablePerson, size: 32)
+                .accessibilityHidden(true)
+            VStack(alignment: .leading) {
+                Text(displayablePerson, format: .displayablePerson())
+                    .textStyle(.bodyMedium)
+                Text(displayablePerson.email)
+                    .textStyle(.bodySecondary)
+            }
+        }
+        .padding(.bottom, 8)
+        .accessibilityElement(children: .combine)
     }
 }

@@ -80,13 +80,11 @@ public class ContactManager: ObservableObject {
 
     let realmConfiguration: Realm.Configuration
     let backgroundRealm: BackgroundRealm
-    let user: InfomaniakCore.UserProfile
     let apiFetcher: MailApiFetcher
 
-    public init(user: InfomaniakCore.UserProfile, apiFetcher: MailApiFetcher) {
-        self.user = user
+    public init(userId: Int, apiFetcher: MailApiFetcher) {
         self.apiFetcher = apiFetcher
-        let realmName = "\(user.id).realm"
+        let realmName = "\(userId).realm"
         realmConfiguration = Realm.Configuration(
             fileURL: ContactManager.constants.rootDocumentsURL.appendingPathComponent(realmName),
             schemaVersion: 2,
@@ -97,6 +95,9 @@ public class ContactManager: ObservableObject {
             ]
         )
         backgroundRealm = BackgroundRealm(configuration: realmConfiguration)
+        Task {
+            await uniqueMergeContacts()
+        }
     }
 
     public func getRealm() -> Realm {
@@ -112,11 +113,15 @@ public class ContactManager: ObservableObject {
 
     public var mergedContacts = [String: MergedContact]()
 
+    private var currentMergeRequest: Task<Void, Never>?
+
     public func fetchContactsAndAddressBooks() async throws {
         do {
-            let addressBooks = try await apiFetcher.addressBooks().addressbooks
-            let contacts = try await apiFetcher.contacts()
+            async let addressBooksRequest = apiFetcher.addressBooks().addressbooks
+            async let contactsRequest = apiFetcher.contacts()
 
+            let addressBooks = try await addressBooksRequest
+            let contacts = try await contactsRequest
             await backgroundRealm.execute { realm in
                 try? realm.safeWrite {
                     realm.add(addressBooks, update: .modified)
@@ -124,22 +129,38 @@ public class ContactManager: ObservableObject {
                 }
             }
 
-            await mergeContacts()
+            await uniqueMergeContacts()
         } catch {
-            await mergeContacts()
+            await uniqueMergeContacts()
 
             throw error
         }
     }
 
-    public func mergeContacts() async {
+    private func uniqueMergeContacts() async {
+        DDLogInfo("Will start merging contacts cancelling previous task : \(currentMergeRequest != nil)")
+        currentMergeRequest?.cancel()
+        currentMergeRequest = Task {
+            await mergeContacts()
+        }
+
+        await currentMergeRequest?.value
+        currentMergeRequest = nil
+    }
+
+    private func mergeContacts() async {
         var mergeableContacts = [String: (email: String, local: CNContact?, remote: Contact?)]()
 
         // Add local contacts
-        await localContactsHelper.enumerateContacts { localContact, _ in
+        await localContactsHelper.enumerateContacts { localContact, stop in
             for email in localContact.emailAddresses {
                 let key = localContact.uniqueKeyForEmail(String(email.value))
                 mergeableContacts[key] = (email: String(email.value), local: localContact, remote: nil)
+            }
+
+            if Task.isCancelled {
+                stop.pointee = true
+                return
             }
         }
 
@@ -151,12 +172,19 @@ public class ContactManager: ObservableObject {
                 let key = remoteContact.uniqueKeyForEmail(email)
                 mergeableContacts[key] = (email: email, local: mergeableContacts[key]?.local, remote: remoteContact)
             }
+
+            if Task.isCancelled {
+                return
+            }
         }
 
         // Merge
         var tmpMergedContacts = [String: MergedContact]()
         mergeableContacts.forEach { key, value in
             tmpMergedContacts[key] = MergedContact(email: value.email, remote: value.remote?.freeze(), local: value.local)
+            if Task.isCancelled {
+                return
+            }
         }
         mergedContacts = tmpMergedContacts
     }

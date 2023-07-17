@@ -63,14 +63,19 @@ public class MailboxManager: ObservableObject {
 
     public let realmConfiguration: Realm.Configuration
     public let mailbox: Mailbox
-    public private(set) var apiFetcher: MailApiFetcher
+    public let account: Account
+
+    public let apiFetcher: MailApiFetcher
+    public let contactManager: ContactManager
     private let backgroundRealm: BackgroundRealm
 
     private lazy var refreshActor = RefreshActor(mailboxManager: self)
 
-    public init(mailbox: Mailbox, apiFetcher: MailApiFetcher) {
+    public init(account: Account, mailbox: Mailbox, apiFetcher: MailApiFetcher, contactManager: ContactManager) {
+        self.account = account
         self.mailbox = mailbox
         self.apiFetcher = apiFetcher
+        self.contactManager = contactManager
         let realmName = "\(mailbox.userId)-\(mailbox.mailboxId).realm"
         realmConfiguration = Realm.Configuration(
             fileURL: MailboxManager.constants.rootDocumentsURL.appendingPathComponent(realmName),
@@ -374,7 +379,7 @@ public class MailboxManager: ObservableObject {
             try await markAsSeen(messages: messages, seen: true)
         } else {
             let messages = threads.flatMap { thread in
-                thread.lastMessageAndItsDuplicateToExecuteAction()
+                thread.lastMessageAndItsDuplicateToExecuteAction(currentMailboxEmail: mailbox.email)
             }
             try await markAsSeen(messages: messages, seen: false)
         }
@@ -437,7 +442,7 @@ public class MailboxManager: ObservableObject {
     public func toggleStar(threads: [Thread]) async throws {
         if threads.contains(where: { !$0.flagged }) {
             let messages = threads.flatMap { thread in
-                thread.lastMessageAndItsDuplicateToExecuteAction()
+                thread.lastMessageAndItsDuplicateToExecuteAction(currentMailboxEmail: mailbox.email)
             }
             _ = try await star(messages: messages)
         } else {

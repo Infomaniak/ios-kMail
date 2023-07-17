@@ -375,7 +375,8 @@ enum ActionsTarget: Equatable, Identifiable {
         case .threads(let threads, _):
             // We don't handle this action in multiple selection
             guard threads.count == 1, let thread = threads.first,
-                  let message = thread.lastMessageToExecuteAction() else { break }
+                  let message = thread.lastMessageToExecuteAction(currentMailboxEmail: mailboxManager.mailbox.email)
+            else { break }
             displayedMessageReply = MessageReply(message: message, replyMode: mode)
         case .message(let message):
             displayedMessageReply = MessageReply(message: message, replyMode: mode)

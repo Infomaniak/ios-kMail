@@ -36,13 +36,18 @@ extension View {
 }
 
 struct RecipientCell: View {
+    @EnvironmentObject private var mailboxManager: MailboxManager
+
     let recipient: Recipient
     var highlight: String?
 
     var body: some View {
         HStack(spacing: 8) {
-            AvatarView(avatarDisplayable: recipient, size: 40)
-                .accessibilityHidden(true)
+            AvatarView(
+                displayablePerson: CommonContact(recipient: recipient, contextMailboxManager: mailboxManager),
+                size: 40
+            )
+            .accessibilityHidden(true)
 
             if recipient.name.isEmpty {
                 Text(highlightedAttributedString(from: recipient.email))
