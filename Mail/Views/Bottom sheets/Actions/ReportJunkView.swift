@@ -43,15 +43,23 @@ struct ReportJunkView: View {
     }
 
     var body: some View {
-        Group {
+        VStack(alignment: .leading, spacing: 12) {
             ForEach(actions) { action in
                 if action != actions.first {
                     IKDivider()
                 }
-                ActionView(viewModel: viewModel, action: action)
-                    .padding(.horizontal, 24)
+
+                ActionView(action: action) {
+                    Task {
+                        await tryOrDisplayError {
+                            try await viewModel.didTap(action: action)
+                        }
+                    }
+                }
+                .padding(.horizontal, 24)
             }
         }
+        .padding(.horizontal, 8)
         .matomoView(view: [MatomoUtils.View.bottomSheet.displayName, "ReportJunkView"])
     }
 }

@@ -63,8 +63,15 @@ struct ActionsView: View {
                 if action != viewModel.listActions.first {
                     IKDivider()
                 }
-                ActionView(viewModel: viewModel, action: action)
-                    .padding(.horizontal, 24)
+
+                ActionView(action: action) {
+                    Task {
+                        await tryOrDisplayError {
+                            try await viewModel.didTap(action: action)
+                        }
+                    }
+                }
+                .padding(.horizontal, 24)
             }
         }
         .padding(.horizontal, 8)
@@ -118,27 +125,22 @@ struct QuickActionView: View {
 }
 
 struct ActionView: View {
-    @Environment(\.dismiss) var dismiss
-    @ObservedObject var viewModel: ActionsViewModel
-    let action: Action
+    @Environment(\.dismiss) private var dismiss
 
-    @AppStorage(UserDefaults.shared.key(.accentColor)) private var accentColor = DefaultPreferences.accentColor
+    let action: Action
+    let handler: () -> Void
 
     var body: some View {
         Button {
             dismiss()
-            Task {
-                await tryOrDisplayError {
-                    try await viewModel.didTap(action: action)
-                }
-            }
+            handler()
         } label: {
-            HStack(spacing: 20) {
+            HStack(spacing: 24) {
                 action.icon
                     .resizable()
                     .scaledToFit()
-                    .frame(width: 21, height: 21)
-                    .foregroundColor(action == .report ? MailResourcesAsset.princeColor : accentColor.primary)
+                    .frame(width: 24, height: 24)
+                    .foregroundColor(action == .report ? MailResourcesAsset.princeColor.swiftUIColor : .accentColor)
                 Text(action.title)
                     .foregroundColor(action == .report ? MailResourcesAsset.princeColor : MailResourcesAsset.textPrimaryColor)
                     .textStyle(.body)

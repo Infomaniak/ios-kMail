@@ -23,7 +23,7 @@ struct ContactActionsHeaderView: View {
     let displayablePerson: CommonContact
     var body: some View {
         HStack {
-            AvatarView(displayablePerson: displayablePerson, size: 32)
+            AvatarView(displayablePerson: displayablePerson, size: 40)
                 .accessibilityHidden(true)
             VStack(alignment: .leading) {
                 Text(displayablePerson, format: .displayablePerson())

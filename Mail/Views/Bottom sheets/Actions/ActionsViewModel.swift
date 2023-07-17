@@ -157,6 +157,24 @@ struct Action: Identifiable, Equatable {
         icon: MailResourcesAsset.drawer,
         matomoName: "moveToInbox"
     )
+    static let writeEmailAction = Action(
+        id: 18,
+        title: MailResourcesStrings.Localizable.contactActionWriteEmail,
+        icon: MailResourcesAsset.pencil,
+        matomoName: "writeEmail"
+    )
+    static let addContactsAction = Action(
+        id: 19,
+        title: MailResourcesStrings.Localizable.contactActionAddToContacts,
+        icon: MailResourcesAsset.userAdd,
+        matomoName: "addToContacts"
+    )
+    static let copyEmailAction = Action(
+        id: 20,
+        title: MailResourcesStrings.Localizable.contactActionCopyEmailAddress,
+        icon: MailResourcesAsset.duplicate,
+        matomoName: "copyEmailAddress"
+    )
 
     static let quickActions: [Action] = [.reply, .replyAll, .forward, .delete]
 
