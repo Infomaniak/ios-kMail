@@ -16,12 +16,16 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import RealmSwift
 import MailCore
 import SwiftUI
 
 struct ComposeMessageCellStaticText: View {
-    @Binding var autocompletionType: ComposeViewFieldType?
+    @State private var selectedSignature: Signature?
 
+    @ObservedResults(Signature.self) private var signatures
+
+    let autocompletionType: ComposeViewFieldType?
     let type: ComposeViewFieldType
     let text: String
 
@@ -32,13 +36,34 @@ struct ComposeMessageCellStaticText: View {
                     Text(type.title)
                         .textStyle(.bodySecondary)
 
-                    Text(text)
-                        .textStyle(.body)
+                    if let selectedSignature {
+                        Menu {
+                            ForEach(signatures) { signature in
+                                Button {
+                                    withAnimation {
+                                        self.selectedSignature = signature
+                                    }
+                                } label: {
+                                    Text("\(signature.fullName) (\(signature.name))")
+                                    Text(signature.senderIdn)
+                                }
+
+                            }
+                        } label: {
+                            Text("\(selectedSignature.fullName) <\(selectedSignature.senderIdn)> (\(selectedSignature.name))")
+                                .textStyle(.bodyAccent)
+                                .lineLimit(1)
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                        }
+
+                    }
                 }
-                .frame(maxWidth: .infinity, alignment: .leading)
                 .padding(.vertical, UIConstants.composeViewHeaderCellLargeVerticalSpacing)
 
                 IKDivider()
+            }
+            .onAppear {
+                selectedSignature = Array(signatures).defaultSignature
             }
         }
     }
@@ -46,6 +71,6 @@ struct ComposeMessageCellStaticText: View {
 
 struct ComposeMessageStaticText_Previews: PreviewProvider {
     static var previews: some View {
-        ComposeMessageCellStaticText(autocompletionType: .constant(nil), type: .from, text: "myaddress@email.com")
+        ComposeMessageCellStaticText(autocompletionType: nil, type: .from, text: "myaddress@email.com")
     }
 }

@@ -34,7 +34,7 @@ struct ComposeMessageHeaderView: View {
     var body: some View {
         VStack(spacing: 0) {
             ComposeMessageCellStaticText(
-                autocompletionType: $autocompletionType,
+                autocompletionType: autocompletionType,
                 type: .from,
                 text: mailboxManager.mailbox.email
             )
@@ -68,8 +68,8 @@ struct ComposeMessageHeaderView: View {
 
             ComposeMessageCellTextField(
                 text: $draft.subject,
-                autocompletionType: $autocompletionType,
                 focusedField: _focusedField,
+                autocompletionType: autocompletionType,
                 type: .subject
             )
         }
