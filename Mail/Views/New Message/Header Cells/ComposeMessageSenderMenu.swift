@@ -18,9 +18,12 @@
 
 import RealmSwift
 import MailCore
+import MailResources
 import SwiftUI
 
-struct ComposeMessageCellStaticText: View {
+struct ComposeMessageSenderMenu: View {
+    @EnvironmentObject private var draftContentManager: DraftContentManager
+
     @State private var selectedSignature: Signature?
 
     @ObservedResults(Signature.self) private var signatures
@@ -28,6 +31,10 @@ struct ComposeMessageCellStaticText: View {
     let autocompletionType: ComposeViewFieldType?
     let type: ComposeViewFieldType
     let text: String
+
+    private var canSelectSignature: Bool {
+        signatures.count > 1
+    }
 
     var body: some View {
         if autocompletionType == nil {
@@ -43,19 +50,31 @@ struct ComposeMessageCellStaticText: View {
                                     withAnimation {
                                         self.selectedSignature = signature
                                     }
+                                    draftContentManager.updateSignature(with: signature)
                                 } label: {
-                                    Text("\(signature.fullName) (\(signature.name))")
+                                    Label {
+                                        Text("\(signature.fullName) (\(signature.name))")
+                                    } icon: {
+                                        if signature == selectedSignature {
+                                            MailResourcesAsset.check.swiftUIImage
+                                        }
+                                    }
+
                                     Text(signature.senderIdn)
                                 }
 
                             }
                         } label: {
                             Text("\(selectedSignature.fullName) <\(selectedSignature.senderIdn)> (\(selectedSignature.name))")
-                                .textStyle(.bodyAccent)
+                                .textStyle(.body)
                                 .lineLimit(1)
                                 .frame(maxWidth: .infinity, alignment: .leading)
-                        }
 
+                            if canSelectSignature {
+                                ChevronIcon(style: .down)
+                            }
+                        }
+                        .disabled(!canSelectSignature)
                     }
                 }
                 .padding(.vertical, UIConstants.composeViewHeaderCellLargeVerticalSpacing)
@@ -71,6 +90,6 @@ struct ComposeMessageCellStaticText: View {
 
 struct ComposeMessageStaticText_Previews: PreviewProvider {
     static var previews: some View {
-        ComposeMessageCellStaticText(autocompletionType: nil, type: .from, text: "myaddress@email.com")
+        ComposeMessageSenderMenu(autocompletionType: nil, type: .from, text: "myaddress@email.com")
     }
 }

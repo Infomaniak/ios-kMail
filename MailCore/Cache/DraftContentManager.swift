@@ -18,6 +18,7 @@
 
 import Foundation
 import Sentry
+import SwiftSoup
 
 public class DraftContentManager: ObservableObject {
     struct CompleteDraftResult {
@@ -46,6 +47,30 @@ public class DraftContentManager: ObservableObject {
             shouldAddSignatureText: draftBodyResult.shouldAddSignatureText,
             attachments: draftBodyResult.attachments
         )
+    }
+
+    public func updateSignature(with newSignature: Signature) {
+        let realm = mailboxManager.getRealm()
+        guard let liveIncompleteDraft = realm.object(ofType: Draft.self, forPrimaryKey: incompleteDraft.localUUID) else {
+            return
+        }
+
+        do {
+            let parsedBody = try SwiftSoup.parse(liveIncompleteDraft.body)
+            // If we find the old signature, we replace it with the new one
+            // else, we append the signature at the end of the document
+            if let foundSignatureDiv = try parsedBody.select(".editorUserSignature").first {
+                try foundSignatureDiv.html(newSignature.content)
+            } else {
+                try parsedBody.body()?.append(newSignature.content)
+            }
+
+            try? realm.write {
+                liveIncompleteDraft.identityId = "\(newSignature.id)"
+                liveIncompleteDraft.body = try parsedBody.outerHtml()
+            }
+        } catch {
+        }
     }
 
     private func loadCompleteDraftBody() async throws -> CompleteDraftResult {

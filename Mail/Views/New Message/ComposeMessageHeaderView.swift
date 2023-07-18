@@ -33,7 +33,7 @@ struct ComposeMessageHeaderView: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            ComposeMessageCellStaticText(
+            ComposeMessageSenderMenu(
                 autocompletionType: autocompletionType,
                 type: .from,
                 text: mailboxManager.mailbox.email

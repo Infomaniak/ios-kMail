@@ -171,7 +171,6 @@ struct ComposeMessageView: View {
                     ComposeMessageBodyView(
                         draft: draft,
                         editorModel: $editorModel,
-                        isLoadingContent: $isLoadingContent,
                         editorFocus: $editorFocus,
                         attachmentsManager: attachmentsManager,
                         alert: alert,

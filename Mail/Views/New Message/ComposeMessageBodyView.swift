@@ -29,7 +29,6 @@ struct ComposeMessageBodyView: View {
     @ObservedRealmObject var draft: Draft
 
     @Binding var editorModel: RichTextEditorModel
-    @Binding var isLoadingContent: Bool
     @Binding var editorFocus: Bool
 
     @ObservedObject var attachmentsManager: AttachmentsManager
@@ -87,7 +86,6 @@ struct ComposeMessageBodyView_Previews: PreviewProvider {
 
         ComposeMessageBodyView(draft: Draft(),
                                editorModel: .constant(RichTextEditorModel()),
-                               isLoadingContent: .constant(false),
                                editorFocus: .constant(false),
                                attachmentsManager: AttachmentsManager(
                                    draft: Draft(),
