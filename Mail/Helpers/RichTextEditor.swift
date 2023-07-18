@@ -57,12 +57,18 @@ struct RichTextEditor: UIViewRepresentable {
 
         init(_ parent: RichTextEditor) {
             self.parent = parent // tell the coordinator what its parent is, so it can modify values there directly
+            NotificationCenter.default.addObserver(self, selector: #selector(updateBody), name: Notification.Name.signatureDidChanged, object: nil)
+        }
+
+        @objc private func updateBody() {
+            print("Hey ! Update le contenu du champ.")
         }
 
         @MainActor
         private func insertBody(editor: SQTextEditorView) async throws {
             guard let editor = (editor as? MailEditorView) else { throw MailError.unknownError }
             try await editor.contentBlocker.setRemoteContentBlocked(parent.blockRemoteContent)
+            editor.clear()
             try await editor.insertHtml(parent.body)
             editor.moveCursorToStart()
             editor.webView.scrollView.isScrollEnabled = false

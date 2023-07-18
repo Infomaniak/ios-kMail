@@ -166,6 +166,7 @@ struct ComposeMessageView: View {
         ScrollView {
             VStack(spacing: 0) {
                 ComposeMessageHeaderView(draft: draft, focusedField: _focusedField, autocompletionType: $autocompletionType)
+                    .environmentObject(draftContentManager)
 
                 if autocompletionType == nil && !isLoadingContent {
                     ComposeMessageBodyView(
