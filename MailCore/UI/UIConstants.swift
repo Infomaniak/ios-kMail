@@ -110,6 +110,10 @@ public enum UIConstants {
 
     public static let bottomSheetHorizontalPadding: CGFloat = 24
 
+    public static let actionsViewSpacing: CGFloat = 12
+    public static let actionsViewHorizontalPadding: CGFloat = 8
+    public static let actionsViewCellHorizontalPadding: CGFloat = 24
+
     public static let unknownRecipientHorizontalPadding: CGFloat = 8
 
     public static let autocompletionVerticalPadding: CGFloat = 8

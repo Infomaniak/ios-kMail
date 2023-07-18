@@ -24,14 +24,16 @@ import MailResources
 import SwiftUI
 
 struct ContactActionsView: View {
-    @EnvironmentObject var mailboxManager: MailboxManager
-    @Environment(\.dismiss) var dismiss
+    @Environment(\.dismiss) private var dismiss
+
+    @EnvironmentObject private var mailboxManager: MailboxManager
+
     @LazyInjectService private var matomo: MatomoUtils
 
     @State private var writtenToRecipient: Recipient?
 
     let recipient: Recipient
-    private var actions: [ContactAction] {
+    private var actions: [Action] {
         let isRemoteContact = mailboxManager.contactManager.getContact(for: recipient)?.remote != nil
 
         if isRemoteContact {
@@ -41,53 +43,30 @@ struct ContactActionsView: View {
         }
     }
 
-    private struct ContactAction: Hashable {
-        let name: String
-        let image: UIImage
-        let matomoName: String
-
-        static let writeEmailAction = ContactAction(
-            name: MailResourcesStrings.Localizable.contactActionWriteEmail,
-            image: MailResourcesAsset.pencil.image,
-            matomoName: "writeEmail"
-        )
-        static let addContactsAction = ContactAction(
-            name: MailResourcesStrings.Localizable.contactActionAddToContacts,
-            image: MailResourcesAsset.userAdd.image,
-            matomoName: "addToContacts"
-        )
-        static let copyEmailAction = ContactAction(
-            name: MailResourcesStrings.Localizable.contactActionCopyEmailAddress,
-            image: MailResourcesAsset.duplicate.image,
-            matomoName: "copyEmailAddress"
-        )
-    }
-
     var body: some View {
-        VStack(alignment: .leading, spacing: 16) {
+        VStack(alignment: .leading, spacing: UIConstants.actionsViewSpacing) {
             ContactActionsHeaderView(displayablePerson: CommonContact(
                 recipient: recipient,
                 contextMailboxManager: mailboxManager
             ))
+            .padding(.horizontal, 16)
 
-            ForEach(actions, id: \.self) { action in
-                Button {
-                    matomo.track(eventWithCategory: .contactActions, name: action.matomoName)
-                    handleAction(action)
-                } label: {
-                    HStack(spacing: 20) {
-                        Image(uiImage: action.image)
-                        Text(action.name)
-                            .textStyle(.body)
-                    }
-                }
-                if action != actions.last {
+            ForEach(actions) { action in
+                if action != actions.first {
                     IKDivider()
                 }
+
+                ActionView(action: action) {
+                    if let matomoName = action.matomoName {
+                        matomo.track(eventWithCategory: .contactActions, name: matomoName)
+                    }
+                    handleAction(action)
+                }
+                .padding(.horizontal, UIConstants.actionsViewCellHorizontalPadding)
             }
         }
         .frame(maxWidth: .infinity, alignment: .leading)
-        .padding(.horizontal, 24)
+        .padding(.horizontal, UIConstants.actionsViewHorizontalPadding)
         .sheet(item: $writtenToRecipient) { writtenToRecipient in
             ComposeMessageView.writingTo(recipient: writtenToRecipient, mailboxManager: mailboxManager)
         }
@@ -96,7 +75,7 @@ struct ContactActionsView: View {
 
     // MARK: - Actions
 
-    private func handleAction(_ action: ContactAction) {
+    private func handleAction(_ action: Action) {
         switch action {
         case .writeEmailAction:
             writeEmail()
