@@ -460,7 +460,6 @@ public struct BodyResult: Codable {
 final class ProxyBody: Codable {
     public var value: String?
     public var type: String?
-    public var subBody: String?
 
     /// Generate a new persisted realm object on the fly
     public func realmObject() -> Body {
@@ -470,7 +469,6 @@ final class ProxyBody: Codable {
         let body = Body()
         body.value = truncatedValue
         body.type = type
-        body.subBody = subBody
         return body
     }
 }
@@ -495,7 +493,6 @@ public final class Body: EmbeddedObject, Codable {
     }
 
     @Persisted public var type: String?
-    @Persisted public var subBody: String?
 
     /// Store compressed data to reduce realm size.
     @Persisted var valueData: Data?
