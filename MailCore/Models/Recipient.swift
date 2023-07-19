@@ -18,6 +18,7 @@
 
 import Foundation
 import InfomaniakDI
+import InfomaniakCore
 import MailResources
 import Nuke
 import RealmSwift
@@ -73,55 +74,18 @@ public final class Recipient: EmbeddedObject, Codable {
         return recipients
     }
 
-    public var isCurrentUser: Bool {
-        @InjectService var accountManager: AccountManager
-        return accountManager.currentAccount?.user.email == email
+
+    func isCurrentUser(currentAccountEmail: String) -> Bool {
+        return currentAccountEmail == email
     }
 
-    public var isMe: Bool {
-        @InjectService var accountManager: AccountManager
-        return accountManager.currentMailboxManager?.mailbox.email == email
+    func isMe(currentMailboxEmail: String) -> Bool {
+        return currentMailboxEmail == email
     }
 
-    public lazy var nameComponents: (givenName: String, familyName: String?) = {
-        let name = contact?.name ?? (name.isEmpty ? email : name)
-
-        let components = name.components(separatedBy: .whitespaces)
-        let givenName = components[0]
-        let familyName = components.count > 1 ? components[1] : nil
-        return (givenName, familyName)
-    }()
-
-    public lazy var formattedName: String = {
-        if isMe {
-            return MailResourcesStrings.Localizable.contactMe
-        }
-        return contact?.name ?? (name.isEmpty ? email : name)
-    }()
-
-    public lazy var formattedShortName: String = {
-        if Constants.isEmailAddress(formattedName) {
-            return email.components(separatedBy: "@").first ?? email
-        }
-        return isMe ? MailResourcesStrings.Localizable.contactMe : nameComponents.givenName.removePunctuation
-    }()
-
-    public var color: UIColor {
-        return contact?.color ?? UIColor.backgroundColor(from: email.hash, with: UIConstants.avatarColors)
+    public func isSameRecipient(as recipient: Recipient) -> Bool {
+        return email == recipient.email && name == recipient.name
     }
-
-    public lazy var initials: String = {
-        let initials = [nameComponents.givenName, nameComponents.familyName]
-            .map { $0?.removePunctuation.first }
-            .compactMap { $0 }
-            .map { "\($0)" }
-        return initials.joined().uppercased()
-    }()
-
-    public lazy var contact: MergedContact? = {
-        @InjectService var accountManager: AccountManager
-        return accountManager.currentContactManager?.getContact(for: self)
-    }()
 
     public var htmlDescription: String {
         let emailString = "&lt;\(email)&gt;"
@@ -130,23 +94,5 @@ public final class Recipient: EmbeddedObject, Codable {
         } else {
             return "\(name) \(emailString)"
         }
-    }
-
-    public func isSameRecipient(as recipient: Recipient) -> Bool {
-        return email == recipient.email && name == recipient.name
-    }
-}
-
-extension Recipient: AvatarDisplayable {
-    public var avatarImageRequest: ImageRequest? {
-        guard !(isCurrentUser && isMe) else {
-            @InjectService var accountManager: AccountManager
-            return accountManager.currentAccount.user.avatarImageRequest
-        }
-        return contact?.avatarImageRequest
-    }
-
-    public var initialsBackgroundColor: UIColor {
-        color
     }
 }

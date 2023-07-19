@@ -56,7 +56,7 @@ struct AddMailboxView: View {
                 }
                 .padding(.bottom, 4)
 
-            Text(MailResourcesStrings.Localizable.errorAttachAddressInput)
+            Text(MailResourcesStrings.Localizable.attachAddressInputHelper)
                 .textStyle(showError ? .labelError : .labelSecondary)
                 .padding(.bottom, 8)
 

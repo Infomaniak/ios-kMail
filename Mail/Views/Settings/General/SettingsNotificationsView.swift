@@ -136,7 +136,7 @@ struct SettingsNotificationsView: View {
     func currentTopics() async {
         let currentSubscription = await notificationService.subscriptionForUser(id: mailboxManager.mailbox.userId)
         withAnimation {
-            self.subscribedTopics = currentSubscription?.topics
+            subscribedTopics = currentSubscription?.topics
         }
     }
 

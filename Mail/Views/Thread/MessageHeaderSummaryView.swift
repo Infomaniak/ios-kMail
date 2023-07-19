@@ -48,7 +48,10 @@ struct MessageHeaderSummaryView: View {
                         matomo.track(eventWithCategory: .message, name: "selectAvatar")
                         contactViewRecipient = recipient
                     } label: {
-                        AvatarView(avatarDisplayable: recipient, size: 40)
+                        AvatarView(
+                            displayablePerson: CommonContact(recipient: recipient, contextMailboxManager: mailboxManager),
+                            size: 40
+                        )
                     }
                     .adaptivePanel(item: $contactViewRecipient) { recipient in
                         ContactActionsView(recipient: recipient)
@@ -62,8 +65,9 @@ struct MessageHeaderSummaryView: View {
                     } else {
                         HStack(alignment: .firstTextBaseline, spacing: 8) {
                             VStack {
-                                ForEach(message.from, id: \.self) { recipient in
-                                    Text(recipient.formattedName)
+                                ForEach(message.from) { recipient in
+                                    Text(CommonContact(recipient: recipient, contextMailboxManager: mailboxManager),
+                                         format: .displayablePerson())
                                         .lineLimit(1)
                                         .textStyle(.bodyMedium)
                                 }
@@ -77,9 +81,14 @@ struct MessageHeaderSummaryView: View {
 
                     if isMessageExpanded {
                         HStack {
-                            Text(message.recipients.map(\.formattedName), format: .list(type: .and))
-                                .lineLimit(1)
-                                .textStyle(.bodySmallSecondary)
+                            Text(
+                                message.recipients.map {
+                                    CommonContact(recipient: $0, contextMailboxManager: mailboxManager).formatted()
+                                },
+                                format: .list(type: .and)
+                            )
+                            .lineLimit(1)
+                            .textStyle(.bodySmallSecondary)
                             ChevronButton(isExpanded: $isHeaderExpanded)
                                 .accessibilityLabel(MailResourcesStrings.Localizable.contentDescriptionButtonExpandRecipients)
                                 .onChange(of: isHeaderExpanded) { isExpanded in
@@ -111,7 +120,7 @@ struct MessageHeaderSummaryView: View {
                 HStack(spacing: 20) {
                     Button {
                         matomo.track(eventWithCategory: .messageActions, name: "reply")
-                        if message.canReplyAll {
+                        if message.canReplyAll(currentMailboxEmail: mailboxManager.mailbox.email) {
                             replyOrReplyAllMessage = message
                         } else {
                             navigationState.messageReply = MessageReply(message: message, replyMode: .reply)

@@ -46,7 +46,6 @@ struct MailApp: App {
     @StateObject private var navigationState = NavigationState()
 
     init() {
-        Logging.initLogging()
         DDLogInfo("Application starting in foreground ? \(UIApplication.shared.applicationState != .background)")
         ApiFetcher.decoder.dateDecodingStrategy = .iso8601
     }
@@ -89,7 +88,7 @@ struct MailApp: App {
     }
 
     func updateUI(accent: AccentColor, theme: Theme) {
-        let allWindows = UIApplication.shared.connectedScenes.compactMap { $0 as? UIWindowScene }.flatMap { $0.windows }
+        let allWindows = UIApplication.shared.connectedScenes.compactMap { $0 as? UIWindowScene }.flatMap(\.windows)
         for window in allWindows {
             window.tintColor = accent.primary.color
             window.overrideUserInterfaceStyle = theme.interfaceStyle
@@ -106,7 +105,7 @@ struct MailApp: App {
                 try await accountManager.updateUser(for: currentAccount)
                 accountManager.enableBugTrackerIfAvailable()
 
-                try await accountManager.currentContactManager?.fetchContactsAndAddressBooks()
+                try await accountManager.contactManager?.fetchContactsAndAddressBooks()
             } catch {
                 DDLogError("Error while updating user account: \(error)")
             }

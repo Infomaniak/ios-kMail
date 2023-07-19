@@ -24,6 +24,8 @@ import RealmSwift
 import SwiftUI
 
 struct AutocompletionView: View {
+    @EnvironmentObject private var mailboxManager: MailboxManager
+
     @State private var shouldAddUserProposal = false
 
     @ObservedObject var textDebounce: TextDebounce
@@ -65,16 +67,9 @@ struct AutocompletionView: View {
     }
 
     private func updateAutocompletion(_ search: String) {
-        guard let contactManager = accountManager.currentContactManager else {
-            withAnimation {
-                autocompletion = []
-            }
-            return
-        }
-
         let trimmedSearch = search.trimmingCharacters(in: .whitespacesAndNewlines)
 
-        let autocompleteContacts = contactManager.contacts(matching: trimmedSearch)
+        let autocompleteContacts = mailboxManager.contactManager.contacts(matching: trimmedSearch)
         var autocompleteRecipients = autocompleteContacts.map { Recipient(email: $0.email, name: $0.name) }
 
         let realResults = autocompleteRecipients.filter { !addedRecipients.map(\.email).contains($0.email) }

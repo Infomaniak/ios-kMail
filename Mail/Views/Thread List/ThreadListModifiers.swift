@@ -56,7 +56,7 @@ struct ThreadListToolbar: ViewModifier {
     @LazyInjectService private var matomo: MatomoUtils
     @LazyInjectService private var accountManager: AccountManager
 
-    @Environment(\.isCompactWindow) var isCompactWindow
+    @Environment(\.isCompactWindow) private var isCompactWindow
 
     @EnvironmentObject private var splitViewManager: SplitViewManager
     @EnvironmentObject private var navigationDrawerState: NavigationDrawerState
@@ -70,7 +70,7 @@ struct ThreadListToolbar: ViewModifier {
     @ObservedObject var viewModel: ThreadListViewModel
     @ObservedObject var multipleSelectionViewModel: ThreadListMultipleSelectionViewModel
 
-    var selectAll: () -> Void
+    let selectAll: () -> Void
 
     func body(content: Content) -> some View {
         content
@@ -94,14 +94,9 @@ struct ThreadListToolbar: ViewModifier {
                             }
                             .accessibilityLabel(MailResourcesStrings.Localizable.contentDescriptionButtonMenu)
                         }
-                    }
-                }
 
-                ToolbarItem(placement: .principal) {
-                    if !multipleSelectionViewModel.isEnabled {
                         Text(splitViewManager.selectedFolder?.localizedName ?? "")
                             .textStyle(.header1)
-                            .frame(maxWidth: .infinity, alignment: .leading)
                     }
                 }
 
@@ -127,7 +122,7 @@ struct ThreadListToolbar: ViewModifier {
                             presentedCurrentAccount = accountManager.currentAccount
                         } label: {
                             if let currentAccountUser = accountManager.currentAccount?.user {
-                                AvatarView(avatarDisplayable: currentAccountUser)
+                                AvatarView(displayablePerson: CommonContact(user: currentAccountUser))
                             }
                         }
                         .accessibilityLabel(MailResourcesStrings.Localizable.contentDescriptionUserAvatar)

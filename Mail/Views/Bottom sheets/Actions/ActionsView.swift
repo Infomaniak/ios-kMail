@@ -23,6 +23,8 @@ import MailResources
 import SwiftUI
 
 struct ActionsView: View {
+    @Environment(\.dismiss) private var dismiss
+
     @StateObject var viewModel: ActionsViewModel
 
     init(mailboxManager: MailboxManager,
@@ -48,7 +50,7 @@ struct ActionsView: View {
     }
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 12) {
+        VStack(alignment: .leading, spacing: UIConstants.actionsViewSpacing) {
             // Quick actions
             HStack(alignment: .top, spacing: 16) {
                 ForEach(viewModel.quickActions) { action in
@@ -63,11 +65,19 @@ struct ActionsView: View {
                 if action != viewModel.listActions.first {
                     IKDivider()
                 }
-                ActionView(viewModel: viewModel, action: action)
-                    .padding(.horizontal, 24)
+
+                ActionView(action: action) {
+                    dismiss()
+                    Task {
+                        await tryOrDisplayError {
+                            try await viewModel.didTap(action: action)
+                        }
+                    }
+                }
+                .padding(.horizontal, UIConstants.actionsViewCellHorizontalPadding)
             }
         }
-        .padding(.horizontal, 8)
+        .padding(.horizontal, UIConstants.actionsViewHorizontalPadding)
         .matomoView(view: [MatomoUtils.View.bottomSheet.displayName, "ActionsView"])
     }
 }
@@ -118,27 +128,19 @@ struct QuickActionView: View {
 }
 
 struct ActionView: View {
-    @Environment(\.dismiss) var dismiss
-    @ObservedObject var viewModel: ActionsViewModel
     let action: Action
-
-    @AppStorage(UserDefaults.shared.key(.accentColor)) private var accentColor = DefaultPreferences.accentColor
+    let handler: () -> Void
 
     var body: some View {
         Button {
-            dismiss()
-            Task {
-                await tryOrDisplayError {
-                    try await viewModel.didTap(action: action)
-                }
-            }
+            handler()
         } label: {
-            HStack(spacing: 20) {
+            HStack(spacing: 24) {
                 action.icon
                     .resizable()
                     .scaledToFit()
-                    .frame(width: 21, height: 21)
-                    .foregroundColor(action == .report ? MailResourcesAsset.princeColor : accentColor.primary)
+                    .frame(width: 24, height: 24)
+                    .foregroundColor(action == .report ? MailResourcesAsset.princeColor.swiftUIColor : .accentColor)
                 Text(action.title)
                     .foregroundColor(action == .report ? MailResourcesAsset.princeColor : MailResourcesAsset.textPrimaryColor)
                     .textStyle(.body)

@@ -24,7 +24,7 @@ import UIKit
 
 @available(iOSApplicationExtension, unavailable)
 public final class CacheManager: CacheManageable {
-    @LazyInjectService var accountManager: AccountManager
+    @LazyInjectService private var accountManager: AccountManager
 
     public func refreshCacheData() {
         guard let currentAccount = accountManager.currentAccount else {
@@ -36,7 +36,7 @@ public final class CacheManager: CacheManageable {
                 try await accountManager.updateUser(for: currentAccount)
                 accountManager.enableBugTrackerIfAvailable()
 
-                try await accountManager.currentContactManager?.fetchContactsAndAddressBooks()
+                try await accountManager.contactManager?.fetchContactsAndAddressBooks()
             } catch {
                 DDLogError("Error while updating user account: \(error)")
             }

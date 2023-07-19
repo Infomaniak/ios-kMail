@@ -51,18 +51,23 @@ public final class MailboxManager: ObservableObject {
 
     public let realmConfiguration: Realm.Configuration
     public let mailbox: Mailbox
-    public private(set) var apiFetcher: MailApiFetcher
+    public let account: Account
+
+    public let apiFetcher: MailApiFetcher
+    public let contactManager: ContactManager
     private let backgroundRealm: BackgroundRealm
 
     private lazy var refreshActor = RefreshActor(mailboxManager: self)
 
-    public init(mailbox: Mailbox, apiFetcher: MailApiFetcher) {
+    public init(account: Account, mailbox: Mailbox, apiFetcher: MailApiFetcher, contactManager: ContactManager) {
+        self.account = account
         self.mailbox = mailbox
         self.apiFetcher = apiFetcher
+        self.contactManager = contactManager
         let realmName = "\(mailbox.userId)-\(mailbox.mailboxId).realm"
         realmConfiguration = Realm.Configuration(
             fileURL: MailboxManager.constants.rootDocumentsURL.appendingPathComponent(realmName),
-            schemaVersion: 15,
+            schemaVersion: 16,
             objectTypes: [
                 Folder.self,
                 Thread.self,
@@ -222,7 +227,7 @@ public final class MailboxManager: ObservableObject {
         await backgroundRealm.execute { realm in
             try? realm.safeWrite {
                 realm.add(folder)
-                if let parent = parent {
+                if let parent {
                     parent.fresh(using: realm)?.children.insert(folder)
                 }
             }
@@ -239,7 +244,7 @@ public final class MailboxManager: ObservableObject {
 
     public func refreshFolder(from messages: [Message], additionalFolder: Folder? = nil) async throws {
         var folders = messages.map(\.folder)
-        if let additionalFolder = additionalFolder {
+        if let additionalFolder {
             folders.append(additionalFolder)
         }
 
@@ -362,7 +367,7 @@ public final class MailboxManager: ObservableObject {
             try await markAsSeen(messages: messages, seen: true)
         } else {
             let messages = threads.flatMap { thread in
-                thread.lastMessageAndItsDuplicateToExecuteAction()
+                thread.lastMessageAndItsDuplicateToExecuteAction(currentMailboxEmail: mailbox.email)
             }
             try await markAsSeen(messages: messages, seen: false)
         }
@@ -425,7 +430,7 @@ public final class MailboxManager: ObservableObject {
     public func toggleStar(threads: [Thread]) async throws {
         if threads.contains(where: { !$0.flagged }) {
             let messages = threads.flatMap { thread in
-                thread.lastMessageAndItsDuplicateToExecuteAction()
+                thread.lastMessageAndItsDuplicateToExecuteAction(currentMailboxEmail: mailbox.email)
             }
             _ = try await star(messages: messages)
         } else {
@@ -476,7 +481,7 @@ public final class MailboxManager: ObservableObject {
             }
         }
 
-        if let searchFolder = searchFolder {
+        if let searchFolder {
             await saveThreads(result: threadResult, parent: searchFolder)
         }
 
@@ -496,7 +501,7 @@ public final class MailboxManager: ObservableObject {
             }
         }
 
-        if let searchFolder = searchFolder {
+        if let searchFolder {
             await saveThreads(result: threadResult, parent: searchFolder)
         }
 
@@ -714,7 +719,7 @@ public final class MailboxManager: ObservableObject {
             while remainingOldMessagesToFetch > 0 {
                 guard !Task.isCancelled else { return }
 
-                if try !(await fetchOnePage(folder: folder, direction: .previous)) {
+                if await try !fetchOnePage(folder: folder, direction: .previous) {
                     break
                 }
 
@@ -787,7 +792,7 @@ public final class MailboxManager: ObservableObject {
         let startDate = Date(timeIntervalSinceNow: -5 * 60)
         let ignoredIds = folder.fresh(using: getRealm())?.threads
             .where { $0.date > startDate }
-            .map { $0.uid } ?? []
+            .map(\.uid) ?? []
         await deleteMessages(uids: messageUids.deletedUids)
         var shouldIgnoreNextEvents = SentryDebug.captureWrongDate(
             step: "After delete",
@@ -1049,7 +1054,7 @@ public final class MailboxManager: ObservableObject {
                                                              "messageId": message.messageId,
                                                              "date": message.date,
                                                              "seen": message.seen,
-                                                             "duplicates": message.duplicates.compactMap { $0.messageId },
+                                                             "duplicates": message.duplicates.compactMap(\.messageId),
                                                              "references": message.references],
                                                  "Seen": ["Expected": seen, "Actual": liveMessage.seen],
                                                  "Folder": ["id": message.folder?._id,

@@ -23,7 +23,7 @@ import SwiftSoup
 import XCTest
 
 final class SignatureTests: XCTestCase {
-    /// Some randon HTML content
+    /// Some random HTML content
     static let someMailContent = "<br><br><h1>Hello<h1></br></br>"
 
     /// A basic signature wrapped in the "editorUserSignature" class
@@ -70,7 +70,7 @@ final class SignatureTests: XCTestCase {
                 XCTFail("Unexpected signature not found")
                 return
             }
-            XCTAssertTrue((try signatureNode.text().count) > 0, "We expect a non empty signature content")
+            XCTAssertTrue(try (signatureNode.text().count) > 0, "We expect a non empty signature content")
         } catch {
             XCTFail("Unexpected :\(error)")
         }
@@ -94,7 +94,7 @@ final class SignatureTests: XCTestCase {
                 XCTFail("Unexpected signature not found")
                 return
             }
-            XCTAssertTrue((try signatureNode.text().count) > 0, "We expect a non empty signature content")
+            XCTAssertTrue(try (signatureNode.text().count) > 0, "We expect a non empty signature content")
         } catch {
             XCTFail("Unexpected :\(error)")
         }

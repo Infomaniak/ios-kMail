@@ -37,14 +37,14 @@ extension CNContact {
 }
 
 public final class MergedContact {
+    @LazyInjectService private var accountManager: AccountManager
+
+    private static let contactFormatter = CNContactFormatter()
+
     public var email: String
     public var remote: Contact?
     public var local: CNContact?
 
-    private let contactFormatter = CNContactFormatter()
-
-    @LazyInjectService private var accountManager: AccountManager
-    
     public lazy var color: UIColor = {
         if let remoteColorHex = remote?.color,
            let colorFromHex = UIColor(hex: remoteColorHex) {
@@ -55,10 +55,11 @@ public final class MergedContact {
     }()
 
     public lazy var name: String = {
-        if let local = local, let localName = contactFormatter.string(from: local) {
-            return localName
+        guard let local,
+              let localName = MergedContact.contactFormatter.string(from: local) else {
+            return remote?.name ?? ""
         }
-        return remote?.name ?? ""
+        return localName
     }()
 
     public var isLocal: Bool {
@@ -68,15 +69,6 @@ public final class MergedContact {
     public var isInfomaniak: Bool {
         return remote != nil
     }
-
-    public init(email: String, remote: Contact?, local: CNContact?) {
-        self.email = email
-        self.remote = remote
-        self.local = local
-    }
-}
-
-extension MergedContact: AvatarDisplayable {
 
     public var avatarImageRequest: ImageRequest? {
         if let localContact = local, localContact.imageDataAvailable {
@@ -93,17 +85,15 @@ extension MergedContact: AvatarDisplayable {
 
         if let remoteAvatar = remote?.avatar {
             let avatarURL = Endpoint.resource(remoteAvatar).url
-            return accountManager.currentMailboxManager?.apiFetcher.authenticatedImageRequest(avatarURL)
+            return ImageRequest(url: avatarURL)
         }
 
         return nil
     }
 
-    public var initials: String {
-        ""
-    }
-
-    public var initialsBackgroundColor: UIColor {
-        color
+    public init(email: String, remote: Contact?, local: CNContact?) {
+        self.email = email
+        self.remote = remote
+        self.local = local
     }
 }

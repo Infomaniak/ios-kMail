@@ -226,7 +226,7 @@ public final class Draft: Object, Codable, Identifiable {
         return "<br><br>" + quote
     }
 
-    public static func replying(reply: MessageReply) -> Draft {
+    public static func replying(reply: MessageReply, currentMailboxEmail: String) -> Draft {
         let message = reply.message
         let mode = reply.replyMode
         var subject = "\(message.formattedSubject)"
@@ -244,7 +244,7 @@ public final class Draft: Object, Codable, Identifiable {
         var recipientHolder = RecipientHolder()
 
         if mode.isReply {
-            recipientHolder = message.recipientsForReplyTo(replyAll: mode == .replyAll)
+            recipientHolder = message.recipientsForReplyTo(replyAll: mode == .replyAll, currentMailboxEmail: currentMailboxEmail)
         }
 
         return Draft(localUUID: reply.localDraftUUID,

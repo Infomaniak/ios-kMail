@@ -59,8 +59,8 @@ class FolderListViewModel: ObservableObject {
     }
 
     func updateFolderListForMailboxManager(_ mailboxManager: MailboxManager, animateInitialChanges: Bool) {
-        // swiftlint:disable empty_count
         foldersObservationToken = mailboxManager.getRealm()
+            // swiftlint:disable:next empty_count
             .objects(Folder.self).where { $0.parents.count == 0 && $0.toolType == nil }
             .observe(on: DispatchQueue.main) { [weak self] results in
                 switch results {

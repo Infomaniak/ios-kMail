@@ -35,7 +35,7 @@ public extension Endpoint {
         var mergedQueryItems = components?.queryItems
         if mergedQueryItems == nil {
             mergedQueryItems = queryItems
-        } else if let queryItems = queryItems {
+        } else if let queryItems {
             mergedQueryItems?.append(contentsOf: queryItems)
         }
         return Endpoint(hostKeypath: \.mailHost, path: components?.path ?? resource, queryItems: mergedQueryItems)

@@ -99,7 +99,7 @@ public extension IKSnackBar {
             return nil
         }
 
-        if let action = action {
+        if let action {
             snackbar.setAction(action).show()
         } else {
             snackbar.show()

@@ -110,6 +110,10 @@ public enum UIConstants {
 
     public static let bottomSheetHorizontalPadding: CGFloat = 24
 
+    public static let actionsViewSpacing: CGFloat = 12
+    public static let actionsViewHorizontalPadding: CGFloat = 8
+    public static let actionsViewCellHorizontalPadding: CGFloat = 24
+
     public static let unknownRecipientHorizontalPadding: CGFloat = 8
 
     public static let autocompletionVerticalPadding: CGFloat = 8
@@ -118,7 +122,8 @@ public enum UIConstants {
 
     public static let chipInsets = UIEdgeInsets(top: 4, left: 8, bottom: 4, right: 8)
 
-    public static func isCompact(horizontalSizeClass: UserInterfaceSizeClass?, verticalSizeClass: UserInterfaceSizeClass?) -> Bool {
+    public static func isCompact(horizontalSizeClass: UserInterfaceSizeClass?,
+                                 verticalSizeClass: UserInterfaceSizeClass?) -> Bool {
         return horizontalSizeClass == .compact || verticalSizeClass == .compact
     }
 }

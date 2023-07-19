@@ -221,20 +221,20 @@ public final class Message: Object, Decodable, Identifiable {
         return Array(dup)
     }
 
-    public var fromMe: Bool {
-        return from.contains { $0.isMe }
+    public func fromMe(currentMailboxEmail: String) -> Bool {
+        return from.contains { $0.isMe(currentMailboxEmail: currentMailboxEmail) }
     }
 
-    public var canReplyAll: Bool {
-        let holder = recipientsForReplyTo(replyAll: true)
+    public func canReplyAll(currentMailboxEmail: String) -> Bool {
+        let holder = recipientsForReplyTo(replyAll: true, currentMailboxEmail: currentMailboxEmail)
         return !holder.cc.isEmpty
     }
 
-    public func recipientsForReplyTo(replyAll: Bool = false) -> RecipientHolder {
-        let cleanedFrom = Array(from.detached()).filter { !$0.isMe }
-        let cleanedTo = Array(to.detached()).filter { !$0.isMe }
-        let cleanedReplyTo = Array(replyTo.detached()).filter { !$0.isMe }
-        let cleanedCc = Array(cc.detached()).filter { !$0.isMe }
+    public func recipientsForReplyTo(replyAll: Bool = false, currentMailboxEmail: String) -> RecipientHolder {
+        let cleanedFrom = Array(from.detached()).filter { !$0.isMe(currentMailboxEmail: currentMailboxEmail) }
+        let cleanedTo = Array(to.detached()).filter { !$0.isMe(currentMailboxEmail: currentMailboxEmail) }
+        let cleanedReplyTo = Array(replyTo.detached()).filter { !$0.isMe(currentMailboxEmail: currentMailboxEmail) }
+        let cleanedCc = Array(cc.detached()).filter { !$0.isMe(currentMailboxEmail: currentMailboxEmail) }
 
         var holder = RecipientHolder()
 
@@ -460,7 +460,6 @@ public struct BodyResult: Codable {
 final class ProxyBody: Codable {
     public var value: String?
     public var type: String?
-    public var subBody: String?
 
     /// Generate a new persisted realm object on the fly
     public func realmObject() -> Body {
@@ -470,7 +469,6 @@ final class ProxyBody: Codable {
         let body = Body()
         body.value = truncatedValue
         body.type = type
-        body.subBody = subBody
         return body
     }
 }
@@ -495,7 +493,6 @@ public final class Body: EmbeddedObject, Codable {
     }
 
     @Persisted public var type: String?
-    @Persisted public var subBody: String?
 
     /// Store compressed data to reduce realm size.
     @Persisted var valueData: Data?

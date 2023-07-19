@@ -134,7 +134,7 @@ final class LoginHandler: InfomaniakLoginDelegate, ObservableObject {
             } catch let error as MailError where error == MailError.noMailbox {
                 shouldShowEmptyMailboxesView = true
             } catch {
-                if let previousAccount = previousAccount {
+                if let previousAccount {
                     accountManager.switchAccount(newAccount: previousAccount)
                 }
                 snackbarPresenter.show(message: error.localizedDescription)
@@ -156,7 +156,7 @@ struct OnboardingView: View {
     @LazyInjectService var orientationManager: OrientationManageable
 
     @EnvironmentObject private var navigationState: NavigationState
-    
+
     @AppStorage(UserDefaults.shared.key(.accentColor)) private var accentColor = DefaultPreferences.accentColor
 
     @State private var selection: Int

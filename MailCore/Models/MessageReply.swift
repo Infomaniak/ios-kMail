@@ -30,6 +30,6 @@ public struct MessageReply: Identifiable {
     public init(message: Message, replyMode: ReplyMode) {
         self.message = message
         self.replyMode = replyMode
-        self.localDraftUUID = UUID().uuidString
+        localDraftUUID = UUID().uuidString
     }
 }

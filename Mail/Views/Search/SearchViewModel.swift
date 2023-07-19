@@ -117,20 +117,19 @@ enum SearchState {
         searchFieldObservation = $searchValue
             .debounce(for: .seconds(0.3), scheduler: DispatchQueue.main)
             .sink { [weak self] newValue in
-                guard let self = self,
-                      self.lastSearch.trimmingCharacters(in: .whitespacesAndNewlines) != newValue
+                guard let self,
+                      lastSearch.trimmingCharacters(in: .whitespacesAndNewlines) != newValue
                       .trimmingCharacters(in: .whitespacesAndNewlines) else {
                     return
                 }
-                self.lastSearch = newValue
-                self.searchValueType = .threadsAndContacts
-                self.performSearch()
+                lastSearch = newValue
+                searchValueType = .threadsAndContacts
+                performSearch()
             }
     }
 
     func updateContactSuggestion() {
-        let contactManager = accountManager.currentContactManager
-        let autocompleteContacts = contactManager?.contacts(matching: searchValue) ?? []
+        let autocompleteContacts = mailboxManager.contactManager.contacts(matching: searchValue) ?? []
         var autocompleteRecipients = autocompleteContacts.map { Recipient(email: $0.email, name: $0.name) }
         // Append typed email
         if Constants.isEmailAddress(searchValue) && !contacts

@@ -33,7 +33,7 @@ extension SearchViewModel {
 
         let threadResults = folder.threads.sorted(by: \.date, ascending: false)
         observationSearchThreadToken = threadResults.observe(on: .main) { [weak self] changes in
-            guard let self = self else {
+            guard let self else {
                 return
             }
 
@@ -69,13 +69,13 @@ extension SearchViewModel {
     func observeSearchResultsChanges() {
         stopObserveSearchResultsChanges()
 
-        let allThreadsUIDs = threads.map { $0.uid }
+        let allThreadsUIDs = threads.map(\.uid)
         let containAnyOf = NSPredicate(format: Self.containAnyOfUIDs, allThreadsUIDs)
         let realm = mailboxManager.getRealm()
         let allThreads = realm.objects(Thread.self).filter(containAnyOf)
 
         observationSearchResultsChangesToken = allThreads.observe(on: observeQueue) { [weak self] changes in
-            guard let self = self else {
+            guard let self else {
                 return
             }
 

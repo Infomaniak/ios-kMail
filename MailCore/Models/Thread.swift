@@ -70,31 +70,8 @@ public class Thread: Object, Decodable, Identifiable {
         messages.last { $0.folderId == folder?.id }
     }
 
-    public var formattedFrom: String {
-        var fromArray = [Recipient]()
-        for recipient in from {
-            guard !fromArray.contains(where: { $0.email == recipient.email && $0.name == recipient.name }) else { continue }
-            fromArray.append(recipient)
-        }
-
-        switch fromArray.count {
-        case 0:
-            return MailResourcesStrings.Localizable.unknownRecipientTitle
-        case 1:
-            return fromArray[0].formattedName
-        default:
-            let fromCount = min(fromArray.count, Constants.threadCellMaxRecipients)
-            return fromArray[0 ..< fromCount].map(\.formattedShortName).joined(separator: ", ")
-        }
-    }
-
-    public var formattedTo: String {
-        guard let to = to.last else { return MailResourcesStrings.Localizable.unknownRecipientTitle }
-        return to.formattedName
-    }
-
     public var formattedSubject: String {
-        guard let subject = subject, !subject.isEmpty else {
+        guard let subject, !subject.isEmpty else {
             return MailResourcesStrings.Localizable.noSubjectTitle
         }
         return subject
@@ -117,14 +94,14 @@ public class Thread: Object, Decodable, Identifiable {
     }
 
     public func recomputeOrFail() throws {
-        messageIds = messages.flatMap { $0.linkedUids }.toRealmSet()
+        messageIds = messages.flatMap(\.linkedUids).toRealmSet()
         updateUnseenMessages()
         from = messages.flatMap { $0.from.detached() }.toRealmList()
         hasAttachments = messages.contains { $0.hasAttachments }
-        hasDrafts = messages.map { $0.isDraft }.contains(true)
+        hasDrafts = messages.map(\.isDraft).contains(true)
         updateFlagged()
-        answered = messages.map { $0.answered }.contains(true)
-        forwarded = messages.map { $0.forwarded }.contains(true)
+        answered = messages.map(\.answered).contains(true)
+        forwarded = messages.map(\.forwarded).contains(true)
 
         messages = messages.sorted {
             $0.date.compare($1.date) == .orderedAscending
@@ -179,8 +156,8 @@ public class Thread: Object, Decodable, Identifiable {
         }
     }
 
-    public func lastMessageToExecuteAction() -> Message? {
-        if let message = messages.last(where: { $0.isDraft == false && $0.fromMe == false }) {
+    public func lastMessageToExecuteAction(currentMailboxEmail: String) -> Message? {
+        if let message = messages.last(where: { $0.isDraft == false && $0.fromMe(currentMailboxEmail: currentMailboxEmail) == false }) {
             return message
         } else if let message = messages.last(where: { $0.isDraft == false }) {
             return message
@@ -188,8 +165,8 @@ public class Thread: Object, Decodable, Identifiable {
         return messages.last
     }
 
-    public func lastMessageAndItsDuplicateToExecuteAction() -> [Message] {
-        guard let lastMessage = lastMessageToExecuteAction() else { return [] }
+    public func lastMessageAndItsDuplicateToExecuteAction(currentMailboxEmail: String) -> [Message] {
+        guard let lastMessage = lastMessageToExecuteAction(currentMailboxEmail: currentMailboxEmail) else { return [] }
         var messageAndDuplicates = [lastMessage]
         messageAndDuplicates.append(contentsOf: lastMessage.duplicates)
         return messageAndDuplicates

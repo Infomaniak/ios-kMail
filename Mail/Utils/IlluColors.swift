@@ -43,7 +43,8 @@ extension AnimationKeypath {
         case border = "Contour"
     }
 
-    static func keyPath(category: Category, categoryNumber: Int? = nil, group: Int = 1, finalLayer: FinalLayer = .background) -> Self {
+    static func keyPath(category: Category, categoryNumber: Int? = nil, group: Int = 1,
+                        finalLayer: FinalLayer = .background) -> Self {
         var categoryName = category.rawValue
         if let categoryNumber {
             categoryName = "\(categoryName) \(categoryNumber)"

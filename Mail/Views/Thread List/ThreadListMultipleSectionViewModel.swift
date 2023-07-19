@@ -72,7 +72,11 @@ import SwiftUI
 
     func didTap(action: Action, flushAlert: Binding<FlushAlertState?>) async throws {
         if let matomoName = action.matomoName {
-            matomo.trackBulkEvent(eventWithCategory: .threadActions, name: matomoName.capitalized, numberOfItems: selectedItems.count)
+            matomo.trackBulkEvent(
+                eventWithCategory: .threadActions,
+                name: matomoName.capitalized,
+                numberOfItems: selectedItems.count
+            )
         }
         switch action {
         case .markAsRead, .markAsUnread:

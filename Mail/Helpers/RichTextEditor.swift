@@ -122,7 +122,7 @@ struct RichTextEditor: UIViewRepresentable {
         if becomeFirstResponder {
             DispatchQueue.main.async {
                 uiView.setBecomeFirstResponder()
-                self.becomeFirstResponder = false
+                becomeFirstResponder = false
             }
         }
     }

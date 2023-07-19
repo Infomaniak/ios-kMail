@@ -18,17 +18,18 @@
 
 import Foundation
 import InfomaniakCore
+import InfomaniakDI
 import InfomaniakLogin
-import XCTest
-
 @testable import MailCore
+import XCTest
 
 final class MailboxManagerTests: XCTestCase {
     static var mailboxManager: MailboxManager!
 
     override class func setUp() {
         super.setUp()
-        mailboxManager = AccountManager.instance.getMailboxManager(for: Env.mailboxId, userId: Env.userId)
+        @InjectService var accountManager: AccountManager
+        mailboxManager = accountManager.getMailboxManager(for: Env.mailboxId, userId: Env.userId)
 
         let token = ApiToken(accessToken: Env.token,
                              expiresIn: Int.max,
@@ -47,13 +48,21 @@ final class MailboxManagerTests: XCTestCase {
     }
 
     func testThreads() async throws {
-        let folders = try await MailboxManagerTests.mailboxManager.apiFetcher.folders(mailbox: MailboxManagerTests.mailboxManager.mailbox)
-        try await MailboxManagerTests.mailboxManager.apiFetcher.threads(mailbox: MailboxManagerTests.mailboxManager.mailbox, folderId: folders[0]._id)
+        let folders = try await MailboxManagerTests.mailboxManager.apiFetcher
+            .folders(mailbox: MailboxManagerTests.mailboxManager.mailbox)
+        try await MailboxManagerTests.mailboxManager.apiFetcher.threads(
+            mailbox: MailboxManagerTests.mailboxManager.mailbox,
+            folderId: folders[0]._id
+        )
     }
 
     func testMessage() async throws {
-        let folders = try await MailboxManagerTests.mailboxManager.apiFetcher.folders(mailbox: MailboxManagerTests.mailboxManager.mailbox)
-        let threadResult = try await MailboxManagerTests.mailboxManager.apiFetcher.threads(mailbox: MailboxManagerTests.mailboxManager.mailbox, folderId: folders[0]._id)
+        let folders = try await MailboxManagerTests.mailboxManager.apiFetcher
+            .folders(mailbox: MailboxManagerTests.mailboxManager.mailbox)
+        let threadResult = try await MailboxManagerTests.mailboxManager.apiFetcher.threads(
+            mailbox: MailboxManagerTests.mailboxManager.mailbox,
+            folderId: folders[0]._id
+        )
         try await MailboxManagerTests.mailboxManager.message(message: threadResult.threads![0].messages[0])
     }
 }

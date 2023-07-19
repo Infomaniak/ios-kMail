@@ -39,9 +39,6 @@ struct ThreadCellDataHolder {
     /// Date of the last message of the folder, otherwise the last message of the thread
     let date: String
 
-    /// Field `to` in the draft folder, otherwise field `from`
-    let from: String
-
     /// Subject of the first message
     let subject: String
 
@@ -53,9 +50,6 @@ struct ThreadCellDataHolder {
         recipientToDisplay = lastMessageNotFromSent?.from.last
 
         date = thread.date.customRelativeFormatted
-
-        let isDraftFolder = thread.messages.allSatisfy(\.isDraft)
-        from = isDraftFolder ? thread.formattedTo : thread.formattedFrom
 
         subject = thread.formattedSubject
 
@@ -122,8 +116,11 @@ struct ThreadCell: View {
             Group {
                 if density == .large, let recipient = dataHolder.recipientToDisplay {
                     ZStack {
-                        AvatarView(avatarDisplayable: recipient, size: 40)
-                            .opacity(isSelected ? 0 : 1)
+                        AvatarView(
+                            displayablePerson: CommonContact(recipient: recipient, contextMailboxManager: mailboxManager),
+                            size: 40
+                        )
+                        .opacity(isSelected ? 0 : 1)
                         CheckboxView(isSelected: isSelected, density: density)
                             .opacity(isSelected ? 1 : 0)
                     }
@@ -138,7 +135,7 @@ struct ThreadCell: View {
             .padding(.trailing, 4)
 
             VStack(alignment: .leading, spacing: 4) {
-                ThreadCellHeaderView(thread: thread, dataHolder: dataHolder)
+                ThreadCellHeaderView(thread: thread)
 
                 HStack(alignment: .top, spacing: 3) {
                     ThreadCellInfoView(dataHolder: dataHolder, density: density)
@@ -163,10 +160,10 @@ struct ThreadCell: View {
                 if isEnabled {
                     // We should wait a bit before showing the checkbox
                     DispatchQueue.main.asyncAfter(deadline: .now() + UIConstants.checkboxAppearDelay) {
-                        self.shouldDisplayCheckbox = true
+                        shouldDisplayCheckbox = true
                     }
                 } else {
-                    self.shouldDisplayCheckbox = false
+                    shouldDisplayCheckbox = false
                 }
             }
         }

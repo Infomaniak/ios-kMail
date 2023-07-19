@@ -112,6 +112,8 @@ struct SplitView: View {
             let realm = mailboxManager.getRealm()
             realm.refresh()
 
+            navigationDrawerController.close()
+
             let tappedNotificationMessage = realm.object(ofType: Message.self, forPrimaryKey: notificationPayload.messageId)
             // Original parent should always be in the inbox but maybe change in a later stage to always find the parent in inbox
             if let tappedNotificationThread = tappedNotificationMessage?.originalThread {
@@ -121,7 +123,7 @@ struct SplitView: View {
             }
         }
         .onReceive(NotificationCenter.default.publisher(for: .onOpenedMailTo)) { identifiableURLComponents in
-            self.mailToURLComponents = identifiableURLComponents.object as? IdentifiableURLComponents
+            mailToURLComponents = identifiableURLComponents.object as? IdentifiableURLComponents
         }
         .onAppear {
             orientationManager.setOrientationLock(.all)

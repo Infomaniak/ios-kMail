@@ -23,32 +23,18 @@ import InfomaniakCore
 import RealmSwift
 import SwiftRegex
 
-protocol IdentifiableFromEmail {
-    func uniqueKeyForEmail(_ email: String) -> String
-}
-
-extension CNContact: IdentifiableFromEmail {
-    func uniqueKeyForEmail(_ email: String) -> String {
+extension CNContact {
+    var fullName: String {
         /*
          Workspace API creates a "name" field from the first name and the last name with a space in the middle
          We trim the name in case givenName or familyName is empty
          */
-        return (givenName + " " + familyName).trimmingCharacters(in: .whitespaces) + email
-    }
-}
-
-extension Contact: IdentifiableFromEmail {
-    func uniqueKeyForEmail(_ email: String) -> String {
-        return (name ?? "") + email
+        return (givenName + " " + familyName).trimmingCharacters(in: .whitespaces)
     }
 }
 
 extension Recipient: Identifiable {
     public var id: String {
-        return uniqueKey()
-    }
-
-    func uniqueKey() -> String {
         return name + email
     }
 }
@@ -80,13 +66,11 @@ public class ContactManager: ObservableObject {
 
     let realmConfiguration: Realm.Configuration
     let backgroundRealm: BackgroundRealm
-    let user: InfomaniakCore.UserProfile
     let apiFetcher: MailApiFetcher
 
-    public init(user: InfomaniakCore.UserProfile, apiFetcher: MailApiFetcher) {
-        self.user = user
+    public init(userId: Int, apiFetcher: MailApiFetcher) {
         self.apiFetcher = apiFetcher
-        let realmName = "\(user.id).realm"
+        let realmName = "\(userId).realm"
         realmConfiguration = Realm.Configuration(
             fileURL: ContactManager.constants.rootDocumentsURL.appendingPathComponent(realmName),
             schemaVersion: 2,
@@ -97,6 +81,9 @@ public class ContactManager: ObservableObject {
             ]
         )
         backgroundRealm = BackgroundRealm(configuration: realmConfiguration)
+        Task {
+            await uniqueMergeContacts()
+        }
     }
 
     public func getRealm() -> Realm {
@@ -110,13 +97,18 @@ public class ContactManager: ObservableObject {
 
     private let localContactsHelper = LocalContactsHelper()
 
-    public var mergedContacts = [String: MergedContact]()
+    public var mergedContacts = [String: [String: MergedContact]]()
+    public var flatMergedContacts = [MergedContact]()
+
+    private var currentMergeRequest: Task<Void, Never>?
 
     public func fetchContactsAndAddressBooks() async throws {
         do {
-            let addressBooks = try await apiFetcher.addressBooks().addressbooks
-            let contacts = try await apiFetcher.contacts()
+            async let addressBooksRequest = apiFetcher.addressBooks().addressbooks
+            async let contactsRequest = apiFetcher.contacts()
 
+            let addressBooks = try await addressBooksRequest
+            let contacts = try await contactsRequest
             await backgroundRealm.execute { realm in
                 try? realm.safeWrite {
                     realm.add(addressBooks, update: .modified)
@@ -124,22 +116,43 @@ public class ContactManager: ObservableObject {
                 }
             }
 
-            await mergeContacts()
+            await uniqueMergeContacts()
         } catch {
-            await mergeContacts()
+            await uniqueMergeContacts()
 
             throw error
         }
     }
 
-    public func mergeContacts() async {
-        var mergeableContacts = [String: (email: String, local: CNContact?, remote: Contact?)]()
+    private func uniqueMergeContacts() async {
+        DDLogInfo("Will start merging contacts cancelling previous task : \(currentMergeRequest != nil)")
+        currentMergeRequest?.cancel()
+        currentMergeRequest = Task {
+            await mergeContacts()
+        }
+
+        await currentMergeRequest?.value
+        currentMergeRequest = nil
+    }
+
+    private func mergeContacts() async {
+        var mergeableContacts = [String: [String: (email: String, local: CNContact?, remote: Contact?)]]()
 
         // Add local contacts
-        await localContactsHelper.enumerateContacts { localContact, _ in
-            for email in localContact.emailAddresses {
-                let key = localContact.uniqueKeyForEmail(String(email.value))
-                mergeableContacts[key] = (email: String(email.value), local: localContact, remote: nil)
+        await localContactsHelper.enumerateContacts { localContact, stop in
+            for cnEmail in localContact.emailAddresses {
+                let email = String(cnEmail.value)
+                let fullName = localContact.fullName
+                if var mergeableContact = mergeableContacts[email] {
+                    mergeableContact[fullName] = (email: email, local: localContact, remote: nil)
+                } else {
+                    mergeableContacts[email] = [fullName: (email: email, local: localContact, remote: nil)]
+                }
+            }
+
+            if Task.isCancelled {
+                stop.pointee = true
+                return
             }
         }
 
@@ -148,16 +161,44 @@ public class ContactManager: ObservableObject {
         let contacts = realm.objects(Contact.self)
         for remoteContact in contacts {
             for email in remoteContact.emails {
-                let key = remoteContact.uniqueKeyForEmail(email)
-                mergeableContacts[key] = (email: email, local: mergeableContacts[key]?.local, remote: remoteContact)
+                let fullName = remoteContact.name ?? ""
+                if var mergeableContact = mergeableContacts[email] {
+                    mergeableContact[fullName] = (email: email, local: mergeableContact[fullName]?.local, remote: remoteContact)
+                } else {
+                    mergeableContacts[email] = [fullName: (email: email, local: nil, remote: remoteContact)]
+                }
+            }
+
+            if Task.isCancelled {
+                return
             }
         }
 
         // Merge
-        var tmpMergedContacts = [String: MergedContact]()
-        mergeableContacts.forEach { key, value in
-            tmpMergedContacts[key] = MergedContact(email: value.email, remote: value.remote?.freeze(), local: value.local)
+        var tmpMergedContacts = [String: [String: MergedContact]]()
+        for (email, mergeableContactMatch) in mergeableContacts {
+            for (fullName, mergeableContact) in mergeableContactMatch {
+                if var tmpMergedContact = tmpMergedContacts[email] {
+                    tmpMergedContact[fullName] = MergedContact(
+                        email: mergeableContact.email,
+                        remote: mergeableContact.remote?.freeze(),
+                        local: mergeableContact.local
+                    )
+                } else {
+                    tmpMergedContacts[email] = [fullName: MergedContact(
+                        email: mergeableContact.email,
+                        remote: mergeableContact.remote?.freeze(),
+                        local: mergeableContact.local
+                    )]
+                }
+
+                if Task.isCancelled {
+                    return
+                }
+            }
         }
+
+        flatMergedContacts = tmpMergedContacts.flatMap { $0.value.values }
         mergedContacts = tmpMergedContacts
     }
 
@@ -171,7 +212,9 @@ public class ContactManager: ObservableObject {
     }
 
     public func getContact(for recipient: Recipient) -> MergedContact? {
-        return mergedContacts[recipient.uniqueKey()]
+        guard let mergedContact = mergedContacts[recipient.email] else { return nil }
+
+        return mergedContact[recipient.name] ?? mergedContact.values.first
     }
 
     public func addressBook(with id: Int) -> AddressBook? {
@@ -180,7 +223,8 @@ public class ContactManager: ObservableObject {
     }
 
     public func contacts(matching string: String) -> [MergedContact] {
-        return mergedContacts.values.filter { $0.name.localizedCaseInsensitiveContains(string) || $0.email.localizedCaseInsensitiveContains(string) }
+        return flatMergedContacts
+            .filter { $0.name.localizedCaseInsensitiveContains(string) || $0.email.localizedCaseInsensitiveContains(string) }
     }
 
     public func addContact(recipient: Recipient) async throws {
@@ -197,10 +241,19 @@ public class ContactManager: ObservableObject {
             }
         }
 
-        if let mergedContact = mergedContacts[recipient.uniqueKey()] {
-            mergedContact.remote = newContact
+        let fullName = newContact.name ?? ""
+        if var matchingByNameContact = mergedContacts[recipient.email] {
+            if let mergedContact = matchingByNameContact[fullName] {
+                mergedContact.remote = newContact
+            } else {
+                let newMergedContact = MergedContact(email: recipient.email, remote: newContact, local: nil)
+                matchingByNameContact[fullName] = newMergedContact
+                flatMergedContacts.append(newMergedContact)
+            }
         } else {
-            mergedContacts[recipient.uniqueKey()] = MergedContact(email: recipient.email, remote: newContact, local: nil)
+            let newMergedContact = MergedContact(email: recipient.email, remote: newContact, local: nil)
+            mergedContacts[recipient.email] = [fullName: newMergedContact]
+            flatMergedContacts.append(newMergedContact)
         }
     }
 

@@ -38,7 +38,7 @@ struct AutocompletionCell: View {
                     RecipientCell(recipient: recipient, highlight: highlight)
                 }
             }
-            .allowsHitTesting(!alreadyAppend || unknownRecipient) 
+            .allowsHitTesting(!alreadyAppend || unknownRecipient)
             .opacity(alreadyAppend && !unknownRecipient ? 0.5 : 1)
 
             if alreadyAppend && !unknownRecipient {

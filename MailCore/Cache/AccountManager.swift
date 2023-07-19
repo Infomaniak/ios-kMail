@@ -37,7 +37,7 @@ public extension InfomaniakNetworkLoginable {
     func apiToken(username: String, applicationPassword: String) async throws -> ApiToken {
         try await withCheckedThrowingContinuation { continuation in
             getApiToken(username: username, applicationPassword: applicationPassword) { token, error in
-                if let token = token {
+                if let token {
                     continuation.resume(returning: token)
                 } else {
                     continuation.resume(throwing: error ?? MailError.unknownError)
@@ -49,7 +49,7 @@ public extension InfomaniakNetworkLoginable {
     func apiToken(using code: String, codeVerifier: String) async throws -> ApiToken {
         try await withCheckedThrowingContinuation { continuation in
             getApiTokenUsing(code: code, codeVerifier: codeVerifier) { token, error in
-                if let token = token {
+                if let token {
                     continuation.resume(returning: token)
                 } else {
                     continuation.resume(throwing: error ?? MailError.unknownError)
@@ -67,7 +67,7 @@ public extension InfomaniakNetworkLoginable {
     }
 }
 
-public  final class AccountManager: RefreshTokenDelegate, ObservableObject {
+public final class AccountManager: RefreshTokenDelegate, ObservableObject {
     @LazyInjectService var networkLoginService: InfomaniakNetworkLoginable
     @LazyInjectService var keychainHelper: KeychainHelper
     @LazyInjectService var bugTracker: BugTracker
@@ -114,15 +114,9 @@ public  final class AccountManager: RefreshTokenDelegate, ObservableObject {
         }
     }
 
-    public var currentContactManager: ContactManager? {
-        if let currentContactManager = getContactManager(for: currentUserId) {
-            return currentContactManager
-        } else if let newCurrentAccount = accounts.first {
-            setCurrentAccount(account: newCurrentAccount)
-            return getContactManager(for: currentUserId)
-        } else {
-            return nil
-        }
+    /// Shorthand for `currentMailboxManager?.contactManager`
+    public var contactManager: ContactManager? {
+        currentMailboxManager?.contactManager
     }
 
     public var currentApiFetcher: MailApiFetcher? {
@@ -188,25 +182,27 @@ public  final class AccountManager: RefreshTokenDelegate, ObservableObject {
 
         if let mailboxManager = mailboxManagers[objectId] {
             return mailboxManager
-        } else if let token = getTokenForUserId(userId),
+        } else if let account = account(for: userId),
                   let mailbox = MailboxInfosManager.instance.getMailbox(id: mailboxId, userId: userId) {
-            let apiFetcher = getApiFetcher(for: userId, token: token)
-            mailboxManagers[objectId] = MailboxManager(mailbox: mailbox, apiFetcher: apiFetcher)
+            let apiFetcher = getApiFetcher(for: userId, token: account.token)
+            let contactManager = getContactManager(for: userId, apiFetcher: apiFetcher)
+            mailboxManagers[objectId] = MailboxManager(account: account,
+                                                       mailbox: mailbox,
+                                                       apiFetcher: apiFetcher,
+                                                       contactManager: contactManager)
             return mailboxManagers[objectId]
         } else {
             return nil
         }
     }
 
-    public func getContactManager(for userId: Int) -> ContactManager? {
+    public func getContactManager(for userId: Int, apiFetcher: MailApiFetcher) -> ContactManager {
         if let contactManager = contactManagers[String(userId)] {
             return contactManager
-        } else if let token = getTokenForUserId(userId) {
-            let apiFetcher = getApiFetcher(for: userId, token: token)
-            contactManagers[String(userId)] = ContactManager(user: currentAccount.user, apiFetcher: apiFetcher)
-            return contactManagers[String(userId)]
         } else {
-            return nil
+            let contactManager = ContactManager(userId: userId, apiFetcher: apiFetcher)
+            contactManagers[String(userId)] = contactManager
+            return contactManager
         }
     }
 
@@ -289,7 +285,7 @@ public  final class AccountManager: RefreshTokenDelegate, ObservableObject {
         saveAccounts()
 
         Task {
-            try await currentContactManager?.fetchContactsAndAddressBooks()
+            try await currentMailboxManager?.contactManager.fetchContactsAndAddressBooks()
         }
 
         return newAccount
@@ -508,19 +504,6 @@ public  final class AccountManager: RefreshTokenDelegate, ObservableObject {
         }
         tokens.removeAll { $0.userId == oldToken.userId }
         tokens.append(newToken)
-
-        // Update token for the other mailbox manager
-        for mailboxManager in mailboxManagers.values
-            where mailboxManager.mailbox != currentMailboxManager?.mailbox && mailboxManager.apiFetcher.currentToken?
-            .userId == newToken.userId {
-            mailboxManager.apiFetcher.currentToken = newToken
-        }
-
-        // Update token for the other contact manager
-        for contactManager in contactManagers.values
-            where contactManager.user.id != currentUserId && contactManager.apiFetcher.currentToken?.userId == newToken.userId {
-            contactManager.apiFetcher.currentToken = newToken
-        }
     }
 
     public func enableBugTrackerIfAvailable() {

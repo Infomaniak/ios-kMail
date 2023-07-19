@@ -61,7 +61,7 @@ struct LockedAppView: View {
 
     private func unlockApp() {
         Task {
-            if (try? await appLockHelper.evaluatePolicy(reason: MailResourcesStrings.Localizable.lockAppTitle)) == true {
+            if await (try? appLockHelper.evaluatePolicy(reason: MailResourcesStrings.Localizable.lockAppTitle)) == true {
                 appLockHelper.setTime()
                 Task {
                     navigationState.transitionToRootViewDestination(.mainView)

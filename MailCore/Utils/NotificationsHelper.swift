@@ -116,7 +116,7 @@ public enum NotificationsHelper {
                 UNUserNotificationCenter.current().add(request)
             } else {
                 let snackbar = IKSnackBar.make(message: notification.body, duration: .lengthLong)
-                if let action = action {
+                if let action {
                     snackbar?.setAction(action).show()
                 } else {
                     snackbar?.show()
@@ -130,7 +130,7 @@ public enum NotificationsHelper {
                                                userId: Int) async -> UNMutableNotificationContent {
         let content = UNMutableNotificationContent()
         if !message.from.isEmpty {
-            content.title = message.from.map { $0.name }.joined(separator: ",")
+            content.title = message.from.map(\.name).joined(separator: ",")
         } else {
             content.title = MailResourcesStrings.Localizable.unknownRecipientTitle
         }

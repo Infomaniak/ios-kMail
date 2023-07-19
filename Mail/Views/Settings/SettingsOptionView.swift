@@ -115,7 +115,7 @@ struct SettingsOptionView<OptionEnum>: View where OptionEnum: CaseIterable, Opti
                 .listRowInsets(.init())
                 .background(MailResourcesAsset.backgroundColor.swiftUIColor)
             } header: {
-                if let subtitle = subtitle {
+                if let subtitle {
                     Text(subtitle)
                         .textStyle(.bodySmallSecondary)
                 } else {
@@ -129,7 +129,7 @@ struct SettingsOptionView<OptionEnum>: View where OptionEnum: CaseIterable, Opti
         .onAppear {
             guard let excludedKeyPaths else { return }
             let excludedValues = excludedKeyPaths.map { UserDefaults.shared[keyPath: $0] }
-            self.values = allValues.filter { !excludedValues.contains($0) || ($0.rawValue as? String) == "none" }
+            values = allValues.filter { !excludedValues.contains($0) || ($0.rawValue as? String) == "none" }
         }
         .matomoView(view: [MatomoUtils.View.settingsView.displayName, String(describing: OptionEnum.self)])
     }

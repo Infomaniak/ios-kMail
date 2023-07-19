@@ -188,7 +188,7 @@ public final class DraftManager {
     }
 
     /// Check if once the Signature node is removed, we still have content
-    private func isDraftBodyEmptyOfChanges(_ body: String) throws -> Bool {
+    internal func isDraftBodyEmptyOfChanges(_ body: String) throws -> Bool {
         guard !body.isEmpty else {
             return true
         }
@@ -210,7 +210,7 @@ public final class DraftManager {
         if let draftFolder = mailboxManager.getFolder(with: .draft)?.freeze() {
             await mailboxManager.refresh(folder: draftFolder)
 
-            if let latestSendDate = latestSendDate {
+            if let latestSendDate {
                 /*
                     We need to refresh the draft folder after the mail is sent to make it disappear, we wait at least 1.5 seconds
                     because the sending process is not synchronous

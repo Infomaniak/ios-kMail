@@ -157,6 +157,24 @@ struct Action: Identifiable, Equatable {
         icon: MailResourcesAsset.drawer,
         matomoName: "moveToInbox"
     )
+    static let writeEmailAction = Action(
+        id: 18,
+        title: MailResourcesStrings.Localizable.contactActionWriteEmail,
+        icon: MailResourcesAsset.pencil,
+        matomoName: "writeEmail"
+    )
+    static let addContactsAction = Action(
+        id: 19,
+        title: MailResourcesStrings.Localizable.contactActionAddToContacts,
+        icon: MailResourcesAsset.userAdd,
+        matomoName: "addToContacts"
+    )
+    static let copyEmailAction = Action(
+        id: 20,
+        title: MailResourcesStrings.Localizable.contactActionCopyEmailAddress,
+        icon: MailResourcesAsset.duplicate,
+        matomoName: "copyEmailAddress"
+    )
 
     static let quickActions: [Action] = [.reply, .replyAll, .forward, .delete]
 
@@ -176,8 +194,8 @@ struct Action: Identifiable, Equatable {
 enum ActionsTarget: Equatable, Identifiable {
     var id: String {
         switch self {
-        case .threads(let threads, let isMultiSelectionEnabled):
-            return threads.map { $0.id }.joined()
+        case .threads(let threads, _):
+            return threads.map(\.id).joined()
         case .message(let message):
             return message.uid
         }
@@ -258,12 +276,14 @@ enum ActionsTarget: Equatable, Identifiable {
         switch target {
         case .threads(let threads, _):
             if threads.count > 1 {
-                let spam = threads.allSatisfy { $0.folder?.role == .spam }
                 let unread = threads.allSatisfy(\.hasUnseenMessages)
-                quickActions = [.move, .archive, spam ? .nonSpam : .spam, .delete]
+                quickActions = [.move, unread ? .markAsRead : .markAsUnread, .archive, .delete]
 
+                let spam = threads.allSatisfy { $0.folder?.role == .spam }
+                let star = threads.allSatisfy(\.flagged)
                 listActions = [
-                    unread ? .markAsRead : .markAsUnread
+                    spam ? .nonSpam : .spam,
+                    star ? .unstar : .star
                 ]
             } else if let thread = threads.first {
                 quickActions = Action.quickActions
@@ -276,11 +296,11 @@ enum ActionsTarget: Equatable, Identifiable {
                 let spamAction: Action? = spam ? .nonSpam : .spam
 
                 let tempListActions: [Action?] = [
-                    archive ? .archive : .moveToInbox,
-                    unread ? .markAsRead : .markAsUnread,
                     .move,
+                    spamAction,
+                    unread ? .markAsRead : .markAsUnread,
+                    archive ? .archive : .moveToInbox,
                     star ? .unstar : .star,
-                    spamAction
                 ]
 
                 listActions = tempListActions.compactMap { $0 }
@@ -293,11 +313,11 @@ enum ActionsTarget: Equatable, Identifiable {
             let star = message.flagged
             let isStaff = accountManager.currentAccount?.user?.isStaff ?? false
             let tempListActions: [Action?] = [
-                archive ? .archive : .moveToInbox,
-                unread ? .markAsRead : .markAsUnread,
                 .move,
-                star ? .unstar : .star,
                 .reportJunk,
+                unread ? .markAsRead : .markAsUnread,
+                archive ? .archive : .moveToInbox,
+                star ? .unstar : .star,
                 isStaff ? .report : nil
             ]
 
@@ -377,7 +397,8 @@ enum ActionsTarget: Equatable, Identifiable {
         case .threads(let threads, _):
             // We don't handle this action in multiple selection
             guard threads.count == 1, let thread = threads.first,
-                  let message = thread.lastMessageToExecuteAction() else { break }
+                  let message = thread.lastMessageToExecuteAction(currentMailboxEmail: mailboxManager.mailbox.email)
+            else { break }
             displayedMessageReply = MessageReply(message: message, replyMode: mode)
         case .message(let message):
             displayedMessageReply = MessageReply(message: message, replyMode: mode)
