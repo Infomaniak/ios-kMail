@@ -30,10 +30,12 @@ struct ComposeMessageHeaderView: View {
     @FocusState var focusedField: ComposeViewFieldType?
 
     @Binding var autocompletionType: ComposeViewFieldType?
+    @Binding var currentSignature: Signature?
 
     var body: some View {
         VStack(spacing: 0) {
             ComposeMessageSenderMenu(
+                currentSignature: $currentSignature,
                 autocompletionType: autocompletionType,
                 type: .from,
                 text: mailboxManager.mailbox.email
@@ -82,6 +84,6 @@ struct ComposeMessageHeaderView: View {
 
 struct ComposeMessageHeaderView_Previews: PreviewProvider {
     static var previews: some View {
-        ComposeMessageHeaderView(draft: Draft(), autocompletionType: .constant(nil))
+        ComposeMessageHeaderView(draft: Draft(), autocompletionType: .constant(nil), currentSignature: .constant(nil))
     }
 }

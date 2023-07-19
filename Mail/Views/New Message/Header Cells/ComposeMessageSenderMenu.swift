@@ -16,17 +16,17 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import RealmSwift
 import MailCore
 import MailResources
+import RealmSwift
 import SwiftUI
 
 struct ComposeMessageSenderMenu: View {
     @EnvironmentObject private var draftContentManager: DraftContentManager
 
-    @State private var selectedSignature: Signature?
-
     @ObservedResults(Signature.self) private var signatures
+
+    @Binding var currentSignature: Signature?
 
     let autocompletionType: ComposeViewFieldType?
     let type: ComposeViewFieldType
@@ -43,12 +43,12 @@ struct ComposeMessageSenderMenu: View {
                     Text(type.title)
                         .textStyle(.bodySecondary)
 
-                    if let selectedSignature {
+                    if let currentSignature {
                         Menu {
                             ForEach(signatures) { signature in
                                 Button {
                                     withAnimation {
-                                        self.selectedSignature = signature
+                                        self.currentSignature = signature
                                     }
                                     draftContentManager.updateSignature(with: signature)
                                     NotificationCenter.default.post(name: Notification.Name.signatureDidChanged, object: nil)
@@ -56,17 +56,18 @@ struct ComposeMessageSenderMenu: View {
                                     Label {
                                         Text("\(signature.fullName) (\(signature.name))")
                                     } icon: {
-                                        if signature == selectedSignature {
+                                        if signature == currentSignature {
                                             MailResourcesAsset.check.swiftUIImage
                                         }
                                     }
 
                                     Text(signature.senderIdn)
                                 }
-
                             }
                         } label: {
-                            Text("\(selectedSignature.fullName) <\(selectedSignature.senderIdn)> (\(selectedSignature.name))")
+                            Text(canSelectSignature
+                                ? "\(currentSignature.fullName) <\(currentSignature.senderIdn)> (\(currentSignature.name))"
+                                : currentSignature.senderIdn)
                                 .textStyle(.body)
                                 .lineLimit(1)
                                 .frame(maxWidth: .infinity, alignment: .leading)
@@ -82,15 +83,12 @@ struct ComposeMessageSenderMenu: View {
 
                 IKDivider()
             }
-            .onAppear {
-                selectedSignature = Array(signatures).defaultSignature
-            }
         }
     }
 }
 
 struct ComposeMessageStaticText_Previews: PreviewProvider {
     static var previews: some View {
-        ComposeMessageSenderMenu(autocompletionType: nil, type: .from, text: "myaddress@email.com")
+        ComposeMessageSenderMenu(currentSignature: .constant(nil), autocompletionType: nil, type: .from, text: "email@email.com")
     }
 }

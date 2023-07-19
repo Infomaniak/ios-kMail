@@ -67,6 +67,7 @@ struct ComposeMessageView: View {
     @State private var isShowingCancelAttachmentsError = false
     @State private var autocompletionType: ComposeViewFieldType?
     @State private var editorFocus = false
+    @State private var currentSignature: Signature?
 
     @State private var editorModel = RichTextEditorModel()
     @State private var scrollView: UIScrollView?
@@ -122,7 +123,7 @@ struct ComposeMessageView: View {
         .task {
             do {
                 isLoadingContent = true
-                try await draftContentManager.prepareCompleteDraft()
+                currentSignature = try await draftContentManager.prepareCompleteDraft()
                 attachmentsManager.completeUploadedAttachments()
                 isLoadingContent = false
             } catch {
@@ -165,8 +166,13 @@ struct ComposeMessageView: View {
     private var composeMessage: some View {
         ScrollView {
             VStack(spacing: 0) {
-                ComposeMessageHeaderView(draft: draft, focusedField: _focusedField, autocompletionType: $autocompletionType)
-                    .environmentObject(draftContentManager)
+                ComposeMessageHeaderView(
+                    draft: draft,
+                    focusedField: _focusedField,
+                    autocompletionType: $autocompletionType,
+                    currentSignature: $currentSignature
+                )
+                .environmentObject(draftContentManager)
 
                 if autocompletionType == nil && !isLoadingContent {
                     ComposeMessageBodyView(

@@ -37,7 +37,7 @@ public class DraftContentManager: ObservableObject {
         self.mailboxManager = mailboxManager
     }
 
-    public func prepareCompleteDraft() async throws {
+    public func prepareCompleteDraft() async throws -> Signature {
         async let draftBodyResult = try await loadCompleteDraftBody()
         async let signature = try await loadDefaultRemoteSignature()
 
@@ -47,6 +47,8 @@ public class DraftContentManager: ObservableObject {
             shouldAddSignatureText: draftBodyResult.shouldAddSignatureText,
             attachments: draftBodyResult.attachments
         )
+
+        return try await signature
     }
 
     public func updateSignature(with newSignature: Signature) {
