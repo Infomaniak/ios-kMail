@@ -19,6 +19,7 @@
 import Combine
 import Foundation
 import InfomaniakCore
+import InfomaniakCoreUI
 import MailCore
 import PhotosUI
 import UniformTypeIdentifiers
@@ -64,10 +65,6 @@ extension NSItemProvider: Attachable {
         case .isDirectory:
             let getFile = try ItemProviderZipRepresentation(from: self)
             return try await getFile.result.get()
-
-            // TODO: remove from core
-//            let url = try await zippedRepresentation.get()
-//            return url
 
         case .none:
             throw ErrorDomain.UTINotFound
