@@ -51,7 +51,6 @@ struct ComposeMessageSenderMenu: View {
                                         self.currentSignature = signature
                                     }
                                     draftContentManager.updateSignature(with: signature)
-                                    NotificationCenter.default.post(name: Notification.Name.signatureDidChanged, object: nil)
                                 } label: {
                                     Label {
                                         Text("\(signature.senderName) (\(signature.name))")

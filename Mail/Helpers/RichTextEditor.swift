@@ -28,12 +28,16 @@ import WebKit
 struct RichTextEditor: UIViewRepresentable {
     typealias UIViewType = MailEditorView
 
+    @State private var editorCurrentSignature: Signature?
+
     @Binding var model: RichTextEditorModel
     @Binding var body: String
     @Binding var isShowingCamera: Bool
     @Binding var isShowingFileSelection: Bool
     @Binding var isShowingPhotoLibrary: Bool
     @Binding var becomeFirstResponder: Bool
+    @Binding var currentSignature: Signature?
+
     let blockRemoteContent: Bool
     var alert: ObservedObject<NewMessageAlert>.Wrapper
 
@@ -41,6 +45,7 @@ struct RichTextEditor: UIViewRepresentable {
          alert: ObservedObject<NewMessageAlert>.Wrapper,
          isShowingCamera: Binding<Bool>, isShowingFileSelection: Binding<Bool>, isShowingPhotoLibrary: Binding<Bool>,
          becomeFirstResponder: Binding<Bool>,
+         currentSignature: Binding<Signature?>,
          blockRemoteContent: Bool) {
         _model = model
         _body = body
@@ -49,7 +54,9 @@ struct RichTextEditor: UIViewRepresentable {
         _isShowingFileSelection = isShowingFileSelection
         _isShowingPhotoLibrary = isShowingPhotoLibrary
         _becomeFirstResponder = becomeFirstResponder
+        _currentSignature = currentSignature
         self.blockRemoteContent = blockRemoteContent
+        _editorCurrentSignature = State(wrappedValue: currentSignature.wrappedValue)
     }
 
     class Coordinator: SQTextEditorDelegate {
@@ -57,7 +64,6 @@ struct RichTextEditor: UIViewRepresentable {
 
         init(_ parent: RichTextEditor) {
             self.parent = parent // tell the coordinator what its parent is, so it can modify values there directly
-            NotificationCenter.default.addObserver(self, selector: #selector(updateBody), name: Notification.Name.signatureDidChanged, object: nil)
         }
 
         @objc private func updateBody() {
@@ -65,8 +71,13 @@ struct RichTextEditor: UIViewRepresentable {
         }
 
         @MainActor
-        private func insertBody(editor: SQTextEditorView) async throws {
+        func insertBody(editor: SQTextEditorView) async throws {
             guard let editor = (editor as? MailEditorView) else { throw MailError.unknownError }
+            try await insertBody(editor: editor)
+        }
+
+        @MainActor
+        func insertBody(editor: MailEditorView) async throws {
             try await editor.contentBlocker.setRemoteContentBlocked(parent.blockRemoteContent)
             editor.clear()
             try await editor.insertHtml(parent.body)
@@ -129,6 +140,14 @@ struct RichTextEditor: UIViewRepresentable {
             DispatchQueue.main.async {
                 uiView.setBecomeFirstResponder()
                 becomeFirstResponder = false
+            }
+        }
+        if currentSignature != editorCurrentSignature {
+            DispatchQueue.main.async {
+                editorCurrentSignature = currentSignature
+            }
+            Task {
+                try await context.coordinator.insertBody(editor: uiView)
             }
         }
     }

@@ -22,5 +22,4 @@ public extension Notification.Name {
     static let onUserTappedNotification = Notification.Name("userTappedNotification")
     static let dismissMoveSheetNotificationName = Notification.Name(rawValue: "sheetViewDismiss")
     static let onOpenedMailTo = Notification.Name("onOpenedMailTo")
-    static let signatureDidChanged = Notification.Name("signatureDidChanged")
 }

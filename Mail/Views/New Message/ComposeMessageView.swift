@@ -179,6 +179,7 @@ struct ComposeMessageView: View {
                         draft: draft,
                         editorModel: $editorModel,
                         editorFocus: $editorFocus,
+                        currentSignature: $currentSignature,
                         attachmentsManager: attachmentsManager,
                         alert: alert,
                         dismiss: dismiss,
