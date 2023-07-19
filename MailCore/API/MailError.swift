@@ -69,6 +69,10 @@ public class MailError: LocalizedError {
 
     /// After an update from the server we are still without a default signature
     public static let defaultSignatureMissing = MailError(code: "defaultSignatureMissing")
+
+    public var localizedDescription: String {
+        return errorDescription
+    }
 }
 
 extension MailError: Identifiable {
