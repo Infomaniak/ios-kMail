@@ -54,20 +54,18 @@ struct ComposeMessageSenderMenu: View {
                                     NotificationCenter.default.post(name: Notification.Name.signatureDidChanged, object: nil)
                                 } label: {
                                     Label {
-                                        Text("\(signature.fullName) (\(signature.name))")
+                                        Text("\(signature.senderName) (\(signature.name))")
                                     } icon: {
                                         if signature == currentSignature {
                                             MailResourcesAsset.check.swiftUIImage
                                         }
                                     }
 
-                                    Text(signature.senderIdn)
+                                    Text(signature.senderEmailIdn)
                                 }
                             }
                         } label: {
-                            Text(canSelectSignature
-                                ? "\(currentSignature.fullName) <\(currentSignature.senderIdn)> (\(currentSignature.name))"
-                                : currentSignature.senderIdn)
+                            Text(currentSignature, format: .signature(style: canSelectSignature ? .long : .short))
                                 .textStyle(.body)
                                 .lineLimit(1)
                                 .frame(maxWidth: .infinity, alignment: .leading)
