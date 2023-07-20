@@ -22,18 +22,9 @@ import RealmSwift
 import SwiftUI
 
 struct MailboxListView: View {
+    @EnvironmentObject private var mailboxManager: MailboxManager
+
     @AppStorage(UserDefaults.shared.key(.accentColor)) private var accentColor = DefaultPreferences.accentColor
-
-    @ObservedResults(
-        Mailbox.self,
-        configuration: MailboxInfosManager.instance.realmConfiguration,
-        where: { $0.userId == AccountManager.instance.currentUserId },
-        sortDescriptor: SortDescriptor(keyPath: \Mailbox.mailboxId)
-    ) private var mailboxes
-
-    private var otherMailboxes: [Mailbox] {
-        return mailboxes.filter { $0.mailboxId != currentMailbox?.mailboxId }
-    }
 
     let currentMailbox: Mailbox?
 
@@ -61,7 +52,10 @@ struct MailboxListView: View {
                     .mailboxCellStyle(.account)
             }
 
-            ForEach(otherMailboxes) { mailbox in
+            ForEachMailboxView(
+                userId: mailboxManager.account.userId,
+                excludedMailboxIds: [currentMailbox?.mailboxId].compactMap { $0 }
+            ) { mailbox in
                 MailboxCell(mailbox: mailbox)
                     .mailboxCellStyle(.account)
             }

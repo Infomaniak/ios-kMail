@@ -23,6 +23,8 @@ import MailResources
 import SwiftUI
 
 struct SettingsView: View {
+    @EnvironmentObject private var mailboxManager: MailboxManager
+
     @AppStorage(UserDefaults.shared.key(.threadDensity)) private var density = DefaultPreferences.threadDensity
     @AppStorage(UserDefaults.shared.key(.theme)) private var theme = DefaultPreferences.theme
     @AppStorage(UserDefaults.shared.key(.accentColor)) private var accentColor = DefaultPreferences.accentColor
@@ -34,7 +36,7 @@ struct SettingsView: View {
                 Text(MailResourcesStrings.Localizable.settingsSectionEmailAddresses)
                     .textStyle(.bodySmallSecondary)
 
-                ForEach(AccountManager.instance.mailboxes) { mailbox in
+                ForEachMailboxView(userId: mailboxManager.account.userId) { mailbox in
                     if let mailboxManager = AccountManager.instance.getMailboxManager(for: mailbox) {
                         SettingsSubMenuCell(title: mailbox.email) {
                             MailboxSettingsView(mailboxManager: mailboxManager)
