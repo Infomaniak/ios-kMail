@@ -100,7 +100,7 @@ public class AccountManager: RefreshTokenDelegate, ObservableObject {
         }
     }
 
-    public var mailboxes: [Mailbox] {
+    private var mailboxes: [Mailbox] {
         return MailboxInfosManager.instance.getMailboxes(for: currentUserId)
     }
 

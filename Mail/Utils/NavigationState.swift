@@ -93,18 +93,27 @@ class NavigationState: ObservableObject {
     @Published var threadPath = [Thread]()
 
     init() {
-        if accountManager.currentAccount != nil,
-           let currentMailboxManager = accountManager.currentMailboxManager {
-            rootViewState = .mainView(currentMailboxManager)
-        } else if !accountManager.mailboxes.isEmpty && accountManager.mailboxes.allSatisfy({ !$0.isAvailable }) {
-            rootViewState = .unavailableMailboxes
-        } else {
-            rootViewState = .onboarding
-        }
+        rootViewState = NavigationState.getMainViewStateIfPossible()
 
         accountManagerObservation = accountManager.objectWillChange.receive(on: RunLoop.main).sink { [weak self] in
-            self?.switchToCurrentMailboxManagerIfPossible()
+            self?.rootViewState = NavigationState.getMainViewStateIfPossible()
         }
+        }
+
+    static func getMainViewStateIfPossible() -> RootViewState {
+        let accountManager = AccountManager.instance
+        if let currentAccount = accountManager.getCurrentAccount() {
+            if let currentMailboxManager = accountManager.currentMailboxManager {
+                return .mainView(currentMailboxManager)
+            } else {
+                let mailboxes = MailboxInfosManager.instance.getMailboxes(for: currentAccount.userId)
+                if !mailboxes.isEmpty && mailboxes.allSatisfy({ !$0.isAvailable }) {
+                    return .unavailableMailboxes
+                }
+            }
+        }
+
+        return .onboarding
     }
 
     func transitionToRootViewDestination(_ destination: RootViewDestination) {
@@ -113,7 +122,7 @@ class NavigationState: ObservableObject {
             case .appLocked:
                 rootViewState = .appLocked
             case .mainView:
-                switchToCurrentMailboxManagerIfPossible()
+                rootViewState = NavigationState.getMainViewStateIfPossible()
             case .onboarding:
                 rootViewState = .onboarding
             case .noMailboxes:
@@ -129,19 +138,6 @@ class NavigationState: ObservableObject {
             && appLockHelper.isAppLocked
             && accountManager.currentAccount != nil {
             transitionToRootViewDestination(.appLocked)
-        }
-    }
-
-    private func switchToCurrentMailboxManagerIfPossible() {
-        if accountManager.currentAccount != nil,
-           let currentMailboxManager = accountManager.currentMailboxManager {
-            if rootViewState != .mainView(currentMailboxManager) {
-                rootViewState = .mainView(currentMailboxManager)
-            }
-        } else if !accountManager.mailboxes.isEmpty && accountManager.mailboxes.allSatisfy({ !$0.isAvailable }) {
-            rootViewState = .unavailableMailboxes
-        } else {
-            rootViewState = .onboarding
         }
     }
 }
