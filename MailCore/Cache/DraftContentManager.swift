@@ -16,6 +16,7 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import CocoaLumberjackSwift
 import Foundation
 import Sentry
 import SwiftSoup
@@ -58,12 +59,12 @@ public class DraftContentManager: ObservableObject {
         }
 
         do {
-            let parsedBody = try SwiftSoup.parse(liveIncompleteDraft.body)
+            let parsedMessage = try SwiftSoup.parse(liveIncompleteDraft.body)
             // If we find the previous signature, we replace it with the new one
             // otherwise we append the signature at the end of the document
-            if let foundSignatureDiv = try parsedBody.select(".\(Constants.signatureWrapperIdentifier)").first {
+            if let foundSignatureDiv = try parsedMessage.select(".\(Constants.signatureWrapperIdentifier)").first {
                 try foundSignatureDiv.html(newSignature.content)
-            } else if let body = parsedBody.body() {
+            } else if let body = parsedMessage.body() {
                 let signatureDiv = try body.appendElement("div")
                 try signatureDiv.addClass(Constants.signatureWrapperIdentifier)
                 try signatureDiv.html(newSignature.content)
@@ -71,9 +72,10 @@ public class DraftContentManager: ObservableObject {
 
             try? realm.write {
                 liveIncompleteDraft.identityId = "\(newSignature.id)"
-                liveIncompleteDraft.body = try parsedBody.outerHtml()
+                liveIncompleteDraft.body = try parsedMessage.outerHtml()
             }
         } catch {
+            DDLogError("An error occurred while transforming the DOM of the draft: \(error)")
         }
     }
 
