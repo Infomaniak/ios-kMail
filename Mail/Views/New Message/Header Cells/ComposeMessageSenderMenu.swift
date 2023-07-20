@@ -46,22 +46,7 @@ struct ComposeMessageSenderMenu: View {
                     if let currentSignature {
                         Menu {
                             ForEach(signatures) { signature in
-                                Button {
-                                    withAnimation {
-                                        self.currentSignature = signature
-                                    }
-                                    draftContentManager.updateSignature(with: signature)
-                                } label: {
-                                    Label {
-                                        Text("\(signature.senderName) (\(signature.name))")
-                                    } icon: {
-                                        if signature == currentSignature {
-                                            MailResourcesAsset.check.swiftUIImage
-                                        }
-                                    }
-
-                                    Text(signature.senderEmailIdn)
-                                }
+                                SenderMenuCell(currentSignature: $currentSignature, signature: signature)
                             }
                         } label: {
                             Text(currentSignature, format: .signature(style: canSelectSignature ? .long : .short))
