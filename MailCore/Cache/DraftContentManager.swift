@@ -40,7 +40,7 @@ public class DraftContentManager: ObservableObject {
 
     public func prepareCompleteDraft() async throws -> Signature {
         async let draftBodyResult = try await loadCompleteDraftBody()
-        async let signature = try await loadDefaultRemoteSignature()
+        async let signature = try await loadMostFittingSignature()
 
         try await writeCompleteDraft(
             completeBody: draftBodyResult.body,
@@ -146,17 +146,23 @@ public class DraftContentManager: ObservableObject {
         }
     }
 
-    private func loadDefaultRemoteSignature() async throws -> Signature {
+    private func loadMostFittingSignature() async throws -> Signature {
         do {
-            // load all signatures every time
             try await mailboxManager.refreshAllSignatures()
+            let storedSignatures = mailboxManager.getStoredSignatures()
 
-            // If after a refresh we have no default signature we bail
-            guard let defaultSignature = mailboxManager.getStoredSignatures().defaultSignature else {
-                throw MailError.defaultSignatureMissing
+            // If draft has an identity, return corresponding signature
+            if let identityId = incompleteDraft.identityId {
+                return try getSignature(for: identityId, userSignatures: storedSignatures)
+                    ?? getDefaultSignature(userSignatures: storedSignatures)
             }
 
-            return defaultSignature.freezeIfNeeded()
+            // If draft is reply from a reply or replyAll action, return default signature
+            guard let messageReply, messageReply.replyMode == .reply || messageReply.replyMode == .replyAll else {
+                return try getDefaultSignature(userSignatures: storedSignatures)
+            }
+
+            return guessMostFittingSignature(userSignatures: storedSignatures)
         } catch {
             SentrySDK.capture(message: "We failed to fetch Signatures. This will close the Editor.") { scope in
                 scope.setExtras([
@@ -166,6 +172,22 @@ public class DraftContentManager: ObservableObject {
             }
             throw error
         }
+    }
+
+    private func getSignature(for identity: String, userSignatures: [Signature]) -> Signature? {
+        return userSignatures.first { identity == "\($0.id)" }?.freezeIfNeeded()
+    }
+
+    private func getDefaultSignature(userSignatures: [Signature]) throws -> Signature {
+        guard let defaultSignature = userSignatures.defaultSignature else {
+            throw MailError.defaultSignatureMissing
+        }
+        return defaultSignature.freezeIfNeeded()
+    }
+
+    private func guessMostFittingSignature(userSignatures: [Signature]) -> Signature {
+        // TODO: Add logic
+        return Signature()
     }
 
     private func loadReplyingBody(message: Message, replyMode: ReplyMode) async throws -> String {
