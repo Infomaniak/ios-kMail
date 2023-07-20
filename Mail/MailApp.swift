@@ -90,8 +90,8 @@ struct MailApp: App {
 
     @Environment(\.scenePhase) private var scenePhase
 
-    @AppStorage(UserDefaults.shared.key(.accentColor)) private var accentColor = DefaultPreferences.accentColor
-    @AppStorage(UserDefaults.shared.key(.theme)) private var theme = DefaultPreferences.theme
+    @AppStorage(UserDefaults.shared.key(.accentColor), store: .shared) private var accentColor = DefaultPreferences.accentColor
+    @AppStorage(UserDefaults.shared.key(.theme), store: .shared) private var theme = DefaultPreferences.theme
 
     @StateObject private var navigationState = NavigationState()
 

@@ -52,7 +52,6 @@ struct LockedAppView: View {
             .padding(.bottom, 40)
         }
         .padding(.horizontal, 24)
-        .defaultAppStorage(.shared)
         .onAppear {
             unlockApp()
         }
