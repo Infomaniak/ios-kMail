@@ -66,9 +66,6 @@ actor DraftQueue {
 }
 
 public final class DraftManager {
-    /// Node used to identify the signature in DOM
-    public static let signatureClassName = "editorUserSignature"
-
     private let draftQueue = DraftQueue()
     private static let saveExpirationSec = 3
 
@@ -161,7 +158,7 @@ public final class DraftManager {
         let document = try SwiftSoup.parse(body)
 
         // Remove the signature node
-        guard let signatureNode = try document.getElementsByClass(Self.signatureClassName).first() else {
+        guard let signatureNode = try document.getElementsByClass(Constants.signatureWrapperIdentifier).first() else {
             return !document.hasText()
         }
         try signatureNode.remove()

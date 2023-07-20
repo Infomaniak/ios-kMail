@@ -18,6 +18,7 @@
 
 import Foundation
 import Sentry
+import SwiftSoup
 
 public class DraftContentManager: ObservableObject {
     struct CompleteDraftResult {
@@ -36,7 +37,7 @@ public class DraftContentManager: ObservableObject {
         self.mailboxManager = mailboxManager
     }
 
-    public func prepareCompleteDraft() async throws {
+    public func prepareCompleteDraft() async throws -> Signature {
         async let draftBodyResult = try await loadCompleteDraftBody()
         async let signature = try await loadDefaultRemoteSignature()
 
@@ -46,6 +47,34 @@ public class DraftContentManager: ObservableObject {
             shouldAddSignatureText: draftBodyResult.shouldAddSignatureText,
             attachments: draftBodyResult.attachments
         )
+
+        return try await signature
+    }
+
+    public func updateSignature(with newSignature: Signature) {
+        let realm = mailboxManager.getRealm()
+        guard let liveIncompleteDraft = realm.object(ofType: Draft.self, forPrimaryKey: incompleteDraft.localUUID) else {
+            return
+        }
+
+        do {
+            let parsedBody = try SwiftSoup.parse(liveIncompleteDraft.body)
+            // If we find the previous signature, we replace it with the new one
+            // otherwise we append the signature at the end of the document
+            if let foundSignatureDiv = try parsedBody.select(".\(Constants.signatureWrapperIdentifier)").first {
+                try foundSignatureDiv.html(newSignature.content)
+            } else if let body = parsedBody.body() {
+                let signatureDiv = try body.appendElement("div")
+                try signatureDiv.addClass(Constants.signatureWrapperIdentifier)
+                try signatureDiv.html(newSignature.content)
+            }
+
+            try? realm.write {
+                liveIncompleteDraft.identityId = "\(newSignature.id)"
+                liveIncompleteDraft.body = try parsedBody.outerHtml()
+            }
+        } catch {
+        }
     }
 
     private func loadCompleteDraftBody() async throws -> CompleteDraftResult {

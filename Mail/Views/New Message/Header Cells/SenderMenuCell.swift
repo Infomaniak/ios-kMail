@@ -17,35 +17,38 @@
  */
 
 import MailCore
+import MailResources
 import SwiftUI
 
-struct ComposeMessageCellStaticText: View {
-    @Binding var autocompletionType: ComposeViewFieldType?
+struct SenderMenuCell: View {
+    @EnvironmentObject private var draftContentManager: DraftContentManager
 
-    let type: ComposeViewFieldType
-    let text: String
+    @Binding var currentSignature: Signature?
+
+    let signature: Signature
 
     var body: some View {
-        if autocompletionType == nil {
-            VStack(spacing: 0) {
-                HStack {
-                    Text(type.title)
-                        .textStyle(.bodySecondary)
-
-                    Text(text)
-                        .textStyle(.body)
-                }
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .padding(.vertical, UIConstants.composeViewHeaderCellLargeVerticalSpacing)
-
-                IKDivider()
+        Button {
+            withAnimation {
+                self.currentSignature = signature
             }
+            draftContentManager.updateSignature(with: signature)
+        } label: {
+            Label {
+                Text("\(signature.senderName) (\(signature.name))")
+            } icon: {
+                if signature == currentSignature {
+                    MailResourcesAsset.check.swiftUIImage
+                }
+            }
+
+            Text(signature.senderEmailIdn)
         }
     }
 }
 
-struct ComposeMessageStaticText_Previews: PreviewProvider {
+struct SenderMenuCell_Previews: PreviewProvider {
     static var previews: some View {
-        ComposeMessageCellStaticText(autocompletionType: .constant(nil), type: .from, text: "myaddress@email.com")
+        SenderMenuCell(currentSignature: .constant(nil), signature: Signature())
     }
 }

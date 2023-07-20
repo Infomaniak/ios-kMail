@@ -137,6 +137,8 @@ public enum Constants {
         return dateFormatter.string(from: date)
     }
 
+    public static let signatureWrapperIdentifier = "editorUserSignature"
+
     public static let messageQuantityLimit = 500
     public static let pageSize = 50
     public static let contactSuggestionLimit = 5
