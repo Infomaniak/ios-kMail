@@ -59,12 +59,14 @@ public class DraftContentManager: ObservableObject {
 
         do {
             let parsedBody = try SwiftSoup.parse(liveIncompleteDraft.body)
-            // If we find the old signature, we replace it with the new one
-            // else, we append the signature at the end of the document
-            if let foundSignatureDiv = try parsedBody.select(".editorUserSignature").first {
+            // If we find the previous signature, we replace it with the new one
+            // otherwise we append the signature at the end of the document
+            if let foundSignatureDiv = try parsedBody.select(".\(Constants.signatureWrapperIdentifier)").first {
                 try foundSignatureDiv.html(newSignature.content)
-            } else {
-                try parsedBody.body()?.append(newSignature.content)
+            } else if let body = parsedBody.body() {
+                let signatureDiv = try body.appendElement("div")
+                try signatureDiv.addClass(Constants.signatureWrapperIdentifier)
+                try signatureDiv.html(newSignature.content)
             }
 
             try? realm.write {

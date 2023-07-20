@@ -69,7 +69,7 @@ public final class Signature: Object, Codable, Identifiable {
 public extension Signature {
     /// Appends current signature to an HTML body at correct position
     func appendSignature(to body: String) -> String {
-        let html = "<br><br><div class=\"editorUserSignature\">\(content)</div>"
+        let html = "<br><br><div class=\"\(Constants.signatureWrapperIdentifier)\">\(content)</div>"
 
         var body = body
         switch position {

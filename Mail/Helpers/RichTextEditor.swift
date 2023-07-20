@@ -66,10 +66,6 @@ struct RichTextEditor: UIViewRepresentable {
             self.parent = parent // tell the coordinator what its parent is, so it can modify values there directly
         }
 
-        @objc private func updateBody() {
-            print("Hey ! Update le contenu du champ.")
-        }
-
         @MainActor
         func insertBody(editor: SQTextEditorView) async throws {
             guard let editor = (editor as? MailEditorView) else { throw MailError.unknownError }
@@ -143,10 +139,8 @@ struct RichTextEditor: UIViewRepresentable {
             }
         }
         if currentSignature != editorCurrentSignature {
-            DispatchQueue.main.async {
-                editorCurrentSignature = currentSignature
-            }
             Task {
+                editorCurrentSignature = currentSignature
                 try await context.coordinator.insertBody(editor: uiView)
             }
         }
