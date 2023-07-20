@@ -80,7 +80,7 @@ public class AccountManager: RefreshTokenDelegate, ObservableObject {
     public static let accessGroup: String = AccountManager.appIdentifierPrefix + AccountManager.group
     public static var instance = AccountManager()
     private let tag = "ch.infomaniak.token".data(using: .utf8)!
-    public var currentAccount: Account!
+    var currentAccount: Account!
     public var accounts = [Account]()
     public var tokens = [ApiToken]()
     public let refreshTokenLockedQueue = DispatchQueue(label: "com.infomaniak.mail.refreshtoken")
@@ -128,6 +128,10 @@ public class AccountManager: RefreshTokenDelegate, ObservableObject {
         currentUserId = UserDefaults.shared.currentMailUserId
 
         forceReload()
+    }
+
+    public func getCurrentAccount() -> Account? {
+        return currentAccount
     }
 
     public func forceReload() {

@@ -18,6 +18,7 @@
 
 import Combine
 import Foundation
+import InfomaniakCore
 import InfomaniakCoreUI
 import InfomaniakDI
 import MailCore
@@ -92,13 +93,17 @@ class NavigationState: ObservableObject {
     /// The selected thread is the last in collection, by convention.
     @Published var threadPath = [Thread]()
 
+    private(set) var account: Account?
+
     init() {
+        account = AccountManager.instance.getCurrentAccount()
         rootViewState = NavigationState.getMainViewStateIfPossible()
 
         accountManagerObservation = accountManager.objectWillChange.receive(on: RunLoop.main).sink { [weak self] in
+            self?.account = AccountManager.instance.getCurrentAccount()
             self?.rootViewState = NavigationState.getMainViewStateIfPossible()
         }
-        }
+    }
 
     static func getMainViewStateIfPossible() -> RootViewState {
         let accountManager = AccountManager.instance
@@ -136,7 +141,7 @@ class NavigationState: ObservableObject {
     func transitionToLockViewIfNeeded() {
         if UserDefaults.shared.isAppLockEnabled
             && appLockHelper.isAppLocked
-            && accountManager.currentAccount != nil {
+            && account != nil {
             transitionToRootViewDestination(.appLocked)
         }
     }
