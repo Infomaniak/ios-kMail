@@ -36,7 +36,7 @@ class NotificationCenterDelegate: NSObject, UNUserNotificationCenterDelegate {
         }
 
         if AccountManager.instance.currentMailboxManager?.mailbox != mailboxManager.mailbox {
-            if AccountManager.instance.currentAccount.userId != mailboxManager.mailbox.userId {
+            if AccountManager.instance.getCurrentAccount()?.userId != mailboxManager.mailbox.userId {
                 if let switchedAccount = AccountManager.instance.accounts
                     .first(where: { $0.userId == mailboxManager.mailbox.userId }) {
                     AccountManager.instance.switchAccount(newAccount: switchedAccount)

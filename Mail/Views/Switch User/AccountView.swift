@@ -27,7 +27,7 @@ import SwiftUI
 
 class AccountViewDelegate: DeleteAccountDelegate {
     @MainActor func didCompleteDeleteAccount() {
-        guard let account = AccountManager.instance.currentAccount else { return }
+        guard let account = AccountManager.instance.getCurrentAccount() else { return }
         AccountManager.instance.removeTokenAndAccount(token: account.token)
         if let nextAccount = AccountManager.instance.accounts.first {
             AccountManager.instance.switchAccount(newAccount: nextAccount)

@@ -298,7 +298,7 @@ enum ActionsTarget: Equatable, Identifiable {
                     spamAction,
                     unread ? .markAsRead : .markAsUnread,
                     archive ? .archive : .moveToInbox,
-                    star ? .unstar : .star,
+                    star ? .unstar : .star
                 ]
 
                 listActions = tempListActions.compactMap { $0 }
@@ -309,7 +309,7 @@ enum ActionsTarget: Equatable, Identifiable {
             let archive = message.folder?.role != .archive
             let unread = !message.seen
             let star = message.flagged
-            let isStaff = AccountManager.instance.currentAccount?.user?.isStaff ?? false
+            let isStaff = mailboxManager.account.user?.isStaff ?? false
             let tempListActions: [Action?] = [
                 .move,
                 .reportJunk,

@@ -80,7 +80,7 @@ public class AccountManager: RefreshTokenDelegate, ObservableObject {
     public static let accessGroup: String = AccountManager.appIdentifierPrefix + AccountManager.group
     public static var instance = AccountManager()
     private let tag = "ch.infomaniak.token".data(using: .utf8)!
-    public var currentAccount: Account!
+    private var currentAccount: Account?
     public var accounts = [Account]()
     public var tokens = [ApiToken]()
     public let refreshTokenLockedQueue = DispatchQueue(label: "com.infomaniak.mail.refreshtoken")
@@ -100,7 +100,7 @@ public class AccountManager: RefreshTokenDelegate, ObservableObject {
         }
     }
 
-    public var mailboxes: [Mailbox] {
+    private var mailboxes: [Mailbox] {
         return MailboxInfosManager.instance.getMailboxes(for: currentUserId)
     }
 
@@ -128,6 +128,10 @@ public class AccountManager: RefreshTokenDelegate, ObservableObject {
         currentUserId = UserDefaults.shared.currentMailUserId
 
         forceReload()
+    }
+
+    public func getCurrentAccount() -> Account? {
+        return currentAccount
     }
 
     public func forceReload() {
@@ -287,9 +291,9 @@ public class AccountManager: RefreshTokenDelegate, ObservableObject {
         return newAccount
     }
 
-    public func updateUser(for account: Account) async throws {
-        guard account.isConnected else {
-            throw MailError.unknownError
+    public func updateUser(for account: Account?) async throws {
+        guard let account, account.isConnected else {
+            throw MailError.noToken
         }
 
         let apiFetcher = await AccountActor.run {
@@ -503,7 +507,7 @@ public class AccountManager: RefreshTokenDelegate, ObservableObject {
     }
 
     public func enableBugTrackerIfAvailable() {
-        if currentAccount.user?.isStaff == true {
+        if let currentAccount, currentAccount.user?.isStaff == true {
             bugTracker.activateOnScreenshot()
             let apiFetcher = getApiFetcher(for: currentAccount.userId, token: currentAccount.token)
             bugTracker.configure(with: apiFetcher)

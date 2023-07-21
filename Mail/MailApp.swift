@@ -132,7 +132,7 @@ struct MailApp: App {
                         break
                     }
                 }
-                .onChange(of: accountManager.currentAccount) { _ in
+                .onChange(of: navigationState.account) { _ in
                     refreshCacheData()
                 }
         }
@@ -148,13 +148,13 @@ struct MailApp: App {
     }
 
     func refreshCacheData() {
-        guard let currentAccount = accountManager.currentAccount else {
+        guard let account = navigationState.account else {
             return
         }
 
         Task {
             do {
-                try await accountManager.updateUser(for: currentAccount)
+                try await accountManager.updateUser(for: account)
                 accountManager.enableBugTrackerIfAvailable()
 
                 try await accountManager.currentMailboxManager?.contactManager.fetchContactsAndAddressBooks()

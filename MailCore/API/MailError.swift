@@ -48,7 +48,11 @@ public class MailError: LocalizedError {
     }
 
     public static let unknownError = MailError(code: "unknownError", shouldDisplay: true)
-    public static let noToken = MailError(code: "noToken", shouldDisplay: true)
+    public static let noToken = MailError(
+        code: "noToken",
+        localizedDescription: MailResourcesStrings.Localizable.refreshTokenError,
+        shouldDisplay: true
+    )
     public static let resourceError = MailError(code: "resourceError", shouldDisplay: true)
     public static let unknownToken = MailError(code: "unknownToken", shouldDisplay: true)
     public static let noMailbox = MailError(code: "noMailbox")

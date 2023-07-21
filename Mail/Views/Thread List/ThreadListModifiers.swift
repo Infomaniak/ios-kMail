@@ -118,9 +118,9 @@ struct ThreadListToolbar: ViewModifier {
                         }
 
                         Button {
-                            presentedCurrentAccount = AccountManager.instance.currentAccount
+                            presentedCurrentAccount = viewModel.mailboxManager.account
                         } label: {
-                            if let currentAccountUser = AccountManager.instance.currentAccount?.user {
+                            if let currentAccountUser = viewModel.mailboxManager.account.user {
                                 AvatarView(displayablePerson: CommonContact(user: currentAccountUser))
                             }
                         }
