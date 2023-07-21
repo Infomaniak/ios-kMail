@@ -116,9 +116,9 @@ public class AccountManager: RefreshTokenDelegate, ObservableObject {
         return apiFetchers[currentUserId]
     }
 
-    private var mailboxManagers = [String: MailboxManager]()
-    private var contactManagers = [String: ContactManager]()
-    private var apiFetchers = [Int: MailApiFetcher]()
+    private let mailboxManagers = SendableDictionary<String, MailboxManager>()
+    private let contactManagers = SendableDictionary<String, ContactManager>()
+    private let apiFetchers = SendableDictionary<Int, MailApiFetcher>()
 
     private init() {
         currentMailboxId = UserDefaults.shared.currentMailboxId
@@ -201,10 +201,6 @@ public class AccountManager: RefreshTokenDelegate, ObservableObject {
             contactManagers[String(userId)] = contactManager
             return contactManager
         }
-    }
-
-    private func clearMailboxManagers() {
-        mailboxManagers.removeAll()
     }
 
     public func getApiFetcher(for userId: Int, token: ApiToken) -> MailApiFetcher {
@@ -312,7 +308,7 @@ public class AccountManager: RefreshTokenDelegate, ObservableObject {
         }
 
         let mailboxRemovedList = MailboxInfosManager.instance.storeMailboxes(user: user, mailboxes: fetchedMailboxes)
-        clearMailboxManagers()
+        mailboxManagers.removeAll()
 
         var switchedMailbox: Mailbox?
         for mailboxRemoved in mailboxRemovedList {
