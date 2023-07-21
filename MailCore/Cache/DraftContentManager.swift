@@ -22,6 +22,17 @@ import RealmSwift
 import Sentry
 import SwiftSoup
 
+enum SignatureMatch: Int, Comparable {
+    case exactMatchDefault = 3
+    case exactMatch = 2
+    case emailMatchDefault = 1
+    case emailMatch = 0
+
+    static func < (lhs: SignatureMatch, rhs: SignatureMatch) -> Bool {
+        return lhs.rawValue < rhs.rawValue
+    }
+}
+
 public class DraftContentManager: ObservableObject {
     struct CompleteDraftResult {
         let body: String
@@ -189,14 +200,14 @@ public class DraftContentManager: ObservableObject {
     private func guessMostFittingSignature(userSignatures: [Signature], defaultSignature: Signature) -> Signature {
         guard let previousMessage = messageReply?.message else { return defaultSignature }
 
-        var signaturesForRecipient = [String: [Signature]]()
+        var signaturesForEmail = [String: [Signature]]()
         for signature in userSignatures {
-            signaturesForRecipient[signature.senderEmail, default: []].append(signature)
+            signaturesForEmail[signature.senderEmail, default: []].append(signature)
         }
 
-        let messageFieldsToCheck: [KeyPath<Message, List<Recipient>>] = [\.to, \.from, \.cc]
-        for field in messageFieldsToCheck {
-            if let signature = findSignatureInRecipients(recipients: previousMessage[keyPath: field]) {
+        let recipientsFieldsToCheck = [\Message.to, \Message.from, \Message.cc]
+        for field in recipientsFieldsToCheck {
+            if let signature = findSignatureInRecipients(recipients: previousMessage[keyPath: field], signaturesForEmail: signaturesForEmail) {
                 return signature
             }
         }
@@ -204,8 +215,52 @@ public class DraftContentManager: ObservableObject {
         return defaultSignature
     }
 
-    private func findSignatureInRecipients(recipients: List<Recipient>) -> Signature? {
+    private func findSignatureInRecipients(recipients: List<Recipient>, signaturesForEmail: [String: [Signature]]) -> Signature? {
+        let matchingEmailRecipients = recipients.filter { signaturesForEmail[$0.email] != nil }.toArray()
+        guard !matchingEmailRecipients.isEmpty else { return nil }
+
+        var bestSignature: Signature?
+        var bestMatchingScore: SignatureMatch?
+
+        for recipient in matchingEmailRecipients {
+            guard let signatures = signaturesForEmail[recipient.email] else { continue }
+
+            let (signature, computedScore) = computeScore(for: signatures, recipient: recipient)
+            if computedScore == .exactMatchDefault {
+                return signature
+            }
+
+            if let bestMatchingScore {
+
+            }
+        }
+
         return nil
+    }
+
+    private func computeScore(for signatures: [Signature], recipient: Recipient) -> (Signature, SignatureMatch) {
+        var bestResult: (Signature, SignatureMatch)?
+
+        for signature in signatures {
+            let computedScore = computeScore(for: signature, recipient: recipient)
+            if computedScore == .exactMatchDefault {
+                return (signature, computedScore)
+            }
+
+            bestResult = (signature, computedScore)
+        }
+
+        return bestResult!
+    }
+
+    private func computeScore(for signature: Signature, recipient: Recipient) -> SignatureMatch {
+        let isExactMatch = signature.senderName == recipient.name
+        let isDefault = signature.isDefault
+
+        if isExactMatch {
+            return isDefault ? .exactMatchDefault : .exactMatch
+        }
+        return isDefault ? .emailMatchDefault : .emailMatch
     }
 
     private func loadReplyingBody(message: Message, replyMode: ReplyMode) async throws -> String {
