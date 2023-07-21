@@ -79,7 +79,7 @@ public class AccountManager: RefreshTokenDelegate, ObservableObject {
     public static let appGroup = "group." + group
     public static let accessGroup: String = AccountManager.appIdentifierPrefix + AccountManager.group
     public static var instance = AccountManager()
-    private let tag = "ch.infomaniak.token".data(using: .utf8)!
+    
     private var currentAccount: Account?
     public var accounts = [Account]()
     public var tokens = [ApiToken]()
