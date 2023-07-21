@@ -18,6 +18,7 @@
 
 import CocoaLumberjackSwift
 import Foundation
+import RealmSwift
 import Sentry
 import SwiftSoup
 
@@ -150,19 +151,19 @@ public class DraftContentManager: ObservableObject {
         do {
             try await mailboxManager.refreshAllSignatures()
             let storedSignatures = mailboxManager.getStoredSignatures()
+            let defaultSignature = try getDefaultSignature(userSignatures: storedSignatures)
 
             // If draft has an identity, return corresponding signature
             if let identityId = incompleteDraft.identityId {
-                return try getSignature(for: identityId, userSignatures: storedSignatures)
-                    ?? getDefaultSignature(userSignatures: storedSignatures)
+                return getSignature(for: identityId, userSignatures: storedSignatures) ?? defaultSignature
             }
 
-            // If draft is reply from a reply or replyAll action, return default signature
+            // If draft is a new message or a forward, use default signature
             guard let messageReply, messageReply.replyMode == .reply || messageReply.replyMode == .replyAll else {
-                return try getDefaultSignature(userSignatures: storedSignatures)
+                return defaultSignature
             }
 
-            return guessMostFittingSignature(userSignatures: storedSignatures)
+            return guessMostFittingSignature(userSignatures: storedSignatures, defaultSignature: defaultSignature)
         } catch {
             SentrySDK.capture(message: "We failed to fetch Signatures. This will close the Editor.") { scope in
                 scope.setExtras([
@@ -185,9 +186,26 @@ public class DraftContentManager: ObservableObject {
         return defaultSignature.freezeIfNeeded()
     }
 
-    private func guessMostFittingSignature(userSignatures: [Signature]) -> Signature {
-        // TODO: Add logic
-        return Signature()
+    private func guessMostFittingSignature(userSignatures: [Signature], defaultSignature: Signature) -> Signature {
+        guard let previousMessage = messageReply?.message else { return defaultSignature }
+
+        var signaturesForRecipient = [String: [Signature]]()
+        for signature in userSignatures {
+            signaturesForRecipient[signature.senderEmail, default: []].append(signature)
+        }
+
+        let messageFieldsToCheck: [KeyPath<Message, List<Recipient>>] = [\.to, \.from, \.cc]
+        for field in messageFieldsToCheck {
+            if let signature = findSignatureInRecipients(recipients: previousMessage[keyPath: field]) {
+                return signature
+            }
+        }
+
+        return defaultSignature
+    }
+
+    private func findSignatureInRecipients(recipients: List<Recipient>) -> Signature? {
+        return nil
     }
 
     private func loadReplyingBody(message: Message, replyMode: ReplyMode) async throws -> String {
