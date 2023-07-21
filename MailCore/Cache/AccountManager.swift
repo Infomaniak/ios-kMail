@@ -81,8 +81,8 @@ public class AccountManager: RefreshTokenDelegate, ObservableObject {
     public static var instance = AccountManager()
 
     private var currentAccount: Account?
-    public var accounts = [Account]()
-    public var tokens = [ApiToken]()
+    public var accounts = SendableArray<Account>()
+    public var tokens = SendableArray<ApiToken>()
     public let refreshTokenLockedQueue = DispatchQueue(label: "com.infomaniak.mail.refreshtoken")
     public weak var delegate: AccountManagerDelegate?
     public var currentUserId: Int {
@@ -145,13 +145,17 @@ public class AccountManager: RefreshTokenDelegate, ObservableObject {
     }
 
     public func reloadTokensAndAccounts() {
-        accounts = loadAccounts()
+        accounts.removeAll()
+        let newAccounts = loadAccounts()
+        accounts.append(contentsOf: newAccounts)
+
         if !accounts.isEmpty {
-            tokens = keychainHelper.loadTokens()
+            tokens.removeAll()
+            tokens.append(contentsOf: keychainHelper.loadTokens())
         }
 
         // Also update current account reference to prevent mismatch
-        if let account = accounts.first(where: { $0.userId == currentAccount?.userId }) {
+        if let account = accounts.values.first(where: { $0.userId == currentAccount?.userId }) {
             currentAccount = account
         }
 
@@ -348,7 +352,7 @@ public class AccountManager: RefreshTokenDelegate, ObservableObject {
             .containerURL(forSecurityApplicationGroupIdentifier: AccountManager.appGroup)?
             .appendingPathComponent("preferences/", isDirectory: true) {
             let encoder = JSONEncoder()
-            if let data = try? encoder.encode(accounts) {
+            if let data = try? encoder.encode(accounts.values) {
                 do {
                     try FileManager.default.createDirectory(atPath: groupDirectoryURL.path, withIntermediateDirectories: true)
                     try data.write(to: groupDirectoryURL.appendingPathComponent("accounts.json"))
@@ -453,7 +457,7 @@ public class AccountManager: RefreshTokenDelegate, ObservableObject {
     }
 
     public func addAccount(account: Account) {
-        if accounts.contains(account) {
+        if accounts.values.contains(account) {
             removeAccount(toDeleteAccount: account)
         }
         accounts.append(account)
@@ -488,11 +492,11 @@ public class AccountManager: RefreshTokenDelegate, ObservableObject {
     }
 
     public func account(for token: ApiToken) -> Account? {
-        return accounts.first { $0.token.userId == token.userId }
+        return accounts.values.first { $0.token.userId == token.userId }
     }
 
     public func account(for userId: Int) -> Account? {
-        return accounts.first { $0.userId == userId }
+        return accounts.values.first { $0.userId == userId }
     }
 
     public func updateToken(newToken: ApiToken, oldToken: ApiToken) {
