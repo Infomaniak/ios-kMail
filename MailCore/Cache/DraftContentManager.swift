@@ -165,7 +165,8 @@ public class DraftContentManager: ObservableObject {
             let defaultSignature = try getDefaultSignature(userSignatures: storedSignatures)
 
             // If draft already has an identity, return corresponding signature
-            if let identityId = incompleteDraft.identityId {
+            if let storedDraft = mailboxManager.getRealm().object(ofType: Draft.self, forPrimaryKey: incompleteDraft.localUUID),
+               let identityId = storedDraft.identityId {
                 return getSignature(for: identityId, userSignatures: storedSignatures) ?? defaultSignature
             }
 
