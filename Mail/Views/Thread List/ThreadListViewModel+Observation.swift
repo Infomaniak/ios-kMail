@@ -126,6 +126,7 @@ extension ThreadListViewModel {
         let containAnyOf = NSPredicate(format: Self.containAnyOfUIDs, allThreadsUIDs)
         let realm = mailboxManager.getRealm()
         let allThreads = realm.objects(Thread.self).filter(containAnyOf)
+        let oldThreads = allThreads.freezeIfNeeded()
 
         observeFilteredThreadsToken = allThreads.observe(on: observeQueue) { [weak self] changes in
             guard let self else {
@@ -135,8 +136,13 @@ extension ThreadListViewModel {
             switch changes {
             case .initial:
                 break
-            case .update(let all, _, _, let modificationIndexes):
-                refreshInFilterMode(all: all, changes: modificationIndexes)
+            case .update(let all, let deletionIndexes, _, let modificationIndexes):
+                refreshInFilterMode(
+                    all: all,
+                    old: oldThreads,
+                    deletions: deletionIndexes,
+                    changes: modificationIndexes
+                )
             case .error:
                 break
             }
@@ -148,7 +154,7 @@ extension ThreadListViewModel {
     }
 
     /// Update filtered threads on observation change.
-    private func refreshInFilterMode(all: Results<Thread>, changes: [Int]) {
+    private func refreshInFilterMode(all: Results<Thread>, old: Results<Thread>, deletions: [Int], changes: [Int]) {
         for index in changes {
             let updatedThread = all[index]
             let uid = updatedThread.uid
@@ -172,6 +178,28 @@ extension ThreadListViewModel {
             }
 
             sectionToUpdate.threads[threadToUpdateIndex] = updatedThread.freeze()
+
+            Task {
+                await MainActor.run {
+                    objectWillChange.send()
+                }
+            }
+        }
+        for index in deletions {
+            let deletedThread = old[index]
+            let uid = deletedThread.uid
+
+            let sectionToUpdate = sections.first { section in
+                section.threads.contains { $0.uid == uid }
+            }
+
+            guard let sectionToUpdate else {
+                continue
+            }
+
+            sectionToUpdate.threads.removeAll {
+                $0.uid == uid
+            }
 
             Task {
                 await MainActor.run {
