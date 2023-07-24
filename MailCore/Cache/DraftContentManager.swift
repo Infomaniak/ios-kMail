@@ -207,8 +207,11 @@ public class DraftContentManager: ObservableObject {
 
         let recipientsFieldsToCheck = [\Message.to, \Message.from, \Message.cc]
         for field in recipientsFieldsToCheck {
-            if let signature = findSignatureInRecipients(recipients: previousMessage[keyPath: field], signaturesForEmail: signaturesForEmail) {
-                return signature
+            if let signature = findSignatureInRecipients(
+                recipients: previousMessage[keyPath: field],
+                signaturesForEmail: signaturesForEmail
+            ) {
+                return signature.freezeIfNeeded()
             }
         }
 
@@ -223,22 +226,23 @@ public class DraftContentManager: ObservableObject {
         var bestMatchingScore: SignatureMatch?
 
         for recipient in matchingEmailRecipients {
-            guard let signatures = signaturesForEmail[recipient.email] else { continue }
+            guard let signatures = signaturesForEmail[recipient.email],
+                  let (signature, computedScore) = computeScore(for: signatures, recipient: recipient) else { continue }
 
-            let (signature, computedScore) = computeScore(for: signatures, recipient: recipient)
             if computedScore == .exactMatchDefault {
                 return signature
             }
 
-            if let bestMatchingScore {
-
+            if bestMatchingScore == nil || computedScore > bestMatchingScore! {
+                bestMatchingScore = computedScore
+                bestSignature = signature
             }
         }
 
-        return nil
+        return bestSignature
     }
 
-    private func computeScore(for signatures: [Signature], recipient: Recipient) -> (Signature, SignatureMatch) {
+    private func computeScore(for signatures: [Signature], recipient: Recipient) -> (Signature, SignatureMatch)? {
         var bestResult: (Signature, SignatureMatch)?
 
         for signature in signatures {
@@ -247,10 +251,12 @@ public class DraftContentManager: ObservableObject {
                 return (signature, computedScore)
             }
 
-            bestResult = (signature, computedScore)
+            if bestResult == nil || computedScore > bestResult!.1 {
+                bestResult = (signature, computedScore)
+            }
         }
 
-        return bestResult!
+        return bestResult
     }
 
     private func computeScore(for signature: Signature, recipient: Recipient) -> SignatureMatch {
