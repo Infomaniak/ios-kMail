@@ -119,7 +119,6 @@ struct AddMailboxView: View {
                     showError = true
                     password = ""
                 }
-                await IKSnackBar.showSnackBar(message: error.localizedDescription)
             }
         }
     }
