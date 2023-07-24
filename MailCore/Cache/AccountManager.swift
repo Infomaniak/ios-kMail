@@ -184,8 +184,9 @@ public class AccountManager: RefreshTokenDelegate, ObservableObject {
         if let mailboxManager = mailboxManagers[objectId] {
             return mailboxManager
         } else if let account = account(for: userId),
+                  let token = account.token,
                   let mailbox = MailboxInfosManager.instance.getMailbox(id: mailboxId, userId: userId) {
-            let apiFetcher = getApiFetcher(for: userId, token: account.token)
+            let apiFetcher = getApiFetcher(for: userId, token: token)
             let contactManager = getContactManager(for: userId, apiFetcher: apiFetcher)
             mailboxManagers[objectId] = MailboxManager(account: account,
                                                        mailbox: mailbox,
