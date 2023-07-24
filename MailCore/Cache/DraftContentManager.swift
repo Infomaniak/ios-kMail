@@ -164,7 +164,7 @@ public class DraftContentManager: ObservableObject {
             let storedSignatures = mailboxManager.getStoredSignatures()
             let defaultSignature = try getDefaultSignature(userSignatures: storedSignatures)
 
-            // If draft has an identity, return corresponding signature
+            // If draft already has an identity, return corresponding signature
             if let identityId = incompleteDraft.identityId {
                 return getSignature(for: identityId, userSignatures: storedSignatures) ?? defaultSignature
             }
@@ -200,16 +200,16 @@ public class DraftContentManager: ObservableObject {
     private func guessMostFittingSignature(userSignatures: [Signature], defaultSignature: Signature) -> Signature {
         guard let previousMessage = messageReply?.message else { return defaultSignature }
 
-        var signaturesForEmail = [String: [Signature]]()
+        var signaturesAssociatedToEmail = [String: [Signature]]()
         for signature in userSignatures {
-            signaturesForEmail[signature.senderEmail, default: []].append(signature)
+            signaturesAssociatedToEmail[signature.senderEmail, default: []].append(signature)
         }
 
         let recipientsFieldsToCheck = [\Message.to, \Message.from, \Message.cc]
         for field in recipientsFieldsToCheck {
             if let signature = findSignatureInRecipients(
                 recipients: previousMessage[keyPath: field],
-                signaturesForEmail: signaturesForEmail
+                signaturesAssociatedToEmail: signaturesAssociatedToEmail
             ) {
                 return signature.freezeIfNeeded()
             }
@@ -218,15 +218,16 @@ public class DraftContentManager: ObservableObject {
         return defaultSignature
     }
 
-    private func findSignatureInRecipients(recipients: List<Recipient>, signaturesForEmail: [String: [Signature]]) -> Signature? {
-        let matchingEmailRecipients = recipients.filter { signaturesForEmail[$0.email] != nil }.toArray()
+    private func findSignatureInRecipients(recipients: List<Recipient>,
+                                           signaturesAssociatedToEmail: [String: [Signature]]) -> Signature? {
+        let matchingEmailRecipients = recipients.filter { signaturesAssociatedToEmail[$0.email] != nil }.toArray()
         guard !matchingEmailRecipients.isEmpty else { return nil }
 
         var bestSignature: Signature?
         var bestMatchingScore: SignatureMatch?
 
         for recipient in matchingEmailRecipients {
-            guard let signatures = signaturesForEmail[recipient.email],
+            guard let signatures = signaturesAssociatedToEmail[recipient.email],
                   let (signature, computedScore) = computeScore(for: signatures, recipient: recipient) else { continue }
 
             if computedScore == .exactMatchDefault {
