@@ -384,9 +384,9 @@ class SyncedAuthenticator: OAuthAuthenticator {
         @InjectService var tokenStore: TokenStore
         @InjectService var networkLoginService: InfomaniakNetworkLoginable
 
-        SentrySDK
-            .addBreadcrumb((credential as ApiToken).generateBreadcrumb(level: .info, message: "Refreshing token - Starting"))
-        if !keychainHelper.isKeychainAccessible {
+        SentrySDK.addBreadcrumb((credential as ApiToken).generateBreadcrumb(level: .info, message: "Refreshing token - Starting"))
+
+        guard keychainHelper.isKeychainAccessible else {
             SentrySDK
                 .addBreadcrumb((credential as ApiToken)
                     .generateBreadcrumb(level: .error, message: "Refreshing token failed - Keychain unaccessible"))
