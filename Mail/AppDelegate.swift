@@ -42,13 +42,16 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
         @InjectService var notificationService: InfomaniakNotifications
+        @InjectService var tokenStore: TokenStore
+
         for account in AccountManager.instance.accounts {
-            guard let token = account.token else { continue }
-            let userApiFetcher = AccountManager.instance.getApiFetcher(for: token.userId, token: token)
             Task {
                 /* Because of a backend issue we can't register the notification token directly after the creation or refresh of
                  an API token. We wait at least 15 seconds before trying to register. */
                 try? await Task.sleep(nanoseconds: 15_000_000_000)
+
+                guard let token = tokenStore.tokenFor(userId: account.userId) else { return }
+                let userApiFetcher = AccountManager.instance.getApiFetcher(for: token.userId, token: token)
                 await notificationService.updateRemoteNotificationsToken(tokenData: deviceToken,
                                                                          userApiFetcher: userApiFetcher,
                                                                          updatePolicy: .always)

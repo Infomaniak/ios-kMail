@@ -27,13 +27,15 @@ import SwiftUI
 
 class AccountViewDelegate: DeleteAccountDelegate {
     @MainActor func didCompleteDeleteAccount() {
-        guard let account = AccountManager.instance.getCurrentAccount() else { return }
-        AccountManager.instance.removeTokenAndAccount(token: account.token)
-        if let nextAccount = AccountManager.instance.accounts.first {
-            AccountManager.instance.switchAccount(newAccount: nextAccount)
-            IKSnackBar.showSnackBar(message: "Account deleted")
+        Task {
+            guard let account = AccountManager.instance.getCurrentAccount() else { return }
+            AccountManager.instance.removeTokenAndAccount(account: account)
+            if let nextAccount = AccountManager.instance.accounts.first {
+                AccountManager.instance.switchAccount(newAccount: nextAccount)
+                IKSnackBar.showSnackBar(message: "Account deleted")
+            }
+            AccountManager.instance.saveAccounts()
         }
-        AccountManager.instance.saveAccounts()
     }
 
     @MainActor func didFailDeleteAccount(error: InfomaniakLoginError) {
@@ -43,15 +45,16 @@ class AccountViewDelegate: DeleteAccountDelegate {
 }
 
 struct AccountView: View {
+    @LazyInjectService private var matomo: MatomoUtils
+    @LazyInjectService private var tokenStore: TokenStore
+    
     @Environment(\.dismiss) private var dismiss
 
     @EnvironmentObject private var mailboxManager: MailboxManager
     @AppStorage(UserDefaults.shared.key(.accentColor)) private var accentColor = DefaultPreferences.accentColor
 
-    @LazyInjectService private var matomo: MatomoUtils
-
     @State private var isShowingLogoutAlert = false
-    @State private var isShowingDeleteAccount = false
+    @State private var presentedDeletedToken: ApiToken?
     @State private var delegate = AccountViewDelegate()
 
     let account: Account
@@ -94,7 +97,7 @@ struct AccountView: View {
             .padding(.bottom, 24)
             MailButton(label: MailResourcesStrings.Localizable.buttonAccountDelete) {
                 matomo.track(eventWithCategory: .account, name: "deleteAccount")
-                isShowingDeleteAccount.toggle()
+                presentedDeletedToken = tokenStore.removeTokenFor(account: account)
             }
             .mailButtonStyle(.destructive)
             .padding(.bottom, 24)
@@ -102,14 +105,20 @@ struct AccountView: View {
         .padding(.horizontal, 16)
         .navigationBarTitle(MailResourcesStrings.Localizable.titleMyAccount, displayMode: .inline)
         .backButtonDisplayMode(.minimal)
-        .sheet(isPresented: $isShowingDeleteAccount) {
-            DeleteAccountView(account: account, delegate: delegate)
+        .sheet(item: $presentedDeletedToken) { deletedToken in
+            DeleteAccountView(token: deletedToken, delegate: delegate)
         }
         .customAlert(isPresented: $isShowingLogoutAlert) {
             LogoutConfirmationView(account: account)
         }
         .sheetViewStyle()
         .matomoView(view: [MatomoUtils.View.accountView.displayName, "Main"])
+    }
+}
+
+extension ApiToken: Identifiable {
+    public var id: String {
+        return "\(userId)\(accessToken)"
     }
 }
 
