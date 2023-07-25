@@ -375,6 +375,22 @@ public class MailApiFetcher: ApiFetcher {
 }
 
 class SyncedAuthenticator: OAuthAuthenticator {
+    func handleFailedRefreshingToken(oldToken: ApiToken, error: Error?) -> Result<OAuthAuthenticator.Credential, Error> {
+        guard let error = error as NSError?,
+              error.domain == "invalid_grant" else {
+            // Couldn't refresh the token, keep the old token and fetch it later. Maybe because of bad network ?
+            SentrySDK
+                .addBreadcrumb(oldToken.generateBreadcrumb(level: .error,
+                                                           message: "Refreshing token failed - Other \(error.debugDescription)"))
+            return .success(oldToken)
+        }
+
+        // Couldn't refresh the token, API says it's invalid
+        SentrySDK.addBreadcrumb(oldToken.generateBreadcrumb(level: .error, message: "Refreshing token failed - Invalid grant"))
+        refreshTokenDelegate?.didFailRefreshToken(oldToken)
+        return .failure(error)
+    }
+
     override func refresh(
         _ credential: OAuthAuthenticator.Credential,
         for session: Session,
@@ -397,9 +413,7 @@ class SyncedAuthenticator: OAuthAuthenticator {
         // Maybe someone else refreshed our token
         if let token = tokenStore.tokenFor(userId: credential.userId, fetchLocation: .keychain),
            token.expirationDate > credential.expirationDate {
-            SentrySDK
-                .addBreadcrumb(token.generateBreadcrumb(level: .info, message: "Refreshing token - Success with local"))
-
+            SentrySDK.addBreadcrumb(token.generateBreadcrumb(level: .info, message: "Refreshing token - Success with local"))
             completion(.success(token))
             return
         }
@@ -415,21 +429,7 @@ class SyncedAuthenticator: OAuthAuthenticator {
                     self.refreshTokenDelegate?.didUpdateToken(newToken: token, oldToken: credential)
                     completion(.success(token))
                 } else {
-                    // Couldn't refresh the token, API says it's invalid
-                    if let error = error as NSError?, error.domain == "invalid_grant" {
-                        SentrySDK
-                            .addBreadcrumb((credential as ApiToken)
-                                .generateBreadcrumb(level: .error, message: "Refreshing token failed - Invalid grant"))
-                        self.refreshTokenDelegate?.didFailRefreshToken(credential)
-                        completion(.failure(error))
-                    } else {
-                        // Couldn't refresh the token, keep the old token and fetch it later. Maybe because of bad network ?
-                        SentrySDK
-                            .addBreadcrumb((credential as ApiToken)
-                                .generateBreadcrumb(level: .error,
-                                                    message: "Refreshing token failed - Other \(error.debugDescription)"))
-                        completion(.success(credential))
-                    }
+                    completion(self.handleFailedRefreshingToken(oldToken: credential, error: error))
                 }
                 endBackgroundTask()
             }
