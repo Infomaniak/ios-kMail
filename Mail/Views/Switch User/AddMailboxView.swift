@@ -45,7 +45,7 @@ struct AddMailboxView: View {
                 text: $newAddress
             ) { editingChanged in
                 if !editingChanged {
-                    invalidEmailAddress = !Constants.isEmailAddress(newAddress)
+                    invalidEmailAddress = newAddress.isEmpty ? false : !Constants.isEmailAddress(newAddress)
                 } else {
                     invalidEmailAddress = false
                     showError = false
