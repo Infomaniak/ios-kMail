@@ -35,8 +35,12 @@ struct AddMailboxView: View {
     }
 
     var body: some View {
-        VStack(alignment: .leading) {
+        VStack(alignment: .leading, spacing: 0) {
             Text(MailResourcesStrings.Localizable.attachMailboxDescription1)
+                .textStyle(.bodySecondary)
+                .padding(.bottom, 8)
+
+            Text(MailResourcesStrings.Localizable.attachMailboxDescription2)
                 .textStyle(.bodySecondary)
                 .padding(.bottom, 16)
 
@@ -73,7 +77,7 @@ struct AddMailboxView: View {
                 Text(MailResourcesStrings.Localizable.errorInvalidCredentials)
                     .textStyle(.labelError)
                     .opacity(showError ? 1 : 0)
-                    .padding(.bottom, 8)
+                    .padding(.bottom, 16)
             }
 
             SecureField(MailResourcesStrings.Localizable.attachMailboxPasswordInputHint, text: $password)
@@ -87,15 +91,10 @@ struct AddMailboxView: View {
                             lineWidth: 1
                         )
                 }
-                .padding(.bottom, 4)
 
             Text(MailResourcesStrings.Localizable.errorInvalidCredentials)
                 .textStyle(.labelError)
                 .opacity(showError ? 1 : 0)
-                .padding(.bottom, 16)
-
-            Text(MailResourcesStrings.Localizable.attachMailboxDescription2)
-                .textStyle(.labelSecondary)
 
             Spacer()
 
