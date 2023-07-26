@@ -56,42 +56,32 @@ public class Attachment: /* Hashable, */ EmbeddedObject, Codable, Identifiable {
 
         if uti.conforms(to: .pdf) {
             return MailResourcesAsset.pdfFile
-        }
-        if uti.conforms(to: .calendarEvent) || uti.conforms(to: .ics) {
+        } else if uti.conforms(to: .calendarEvent) || uti.conforms(to: .ics) {
             return MailResourcesAsset.icsFile
-        }
-        if uti.conforms(to: .vCard) {
+        } else if uti.conforms(to: .vCard) {
             return MailResourcesAsset.vcardFile
-        }
-        if uti.conforms(to: .image) {
+        } else if uti.conforms(to: .image) {
             return MailResourcesAsset.imageFile
-        }
-        if uti.conforms(to: .audio) {
+        } else if uti.conforms(to: .audio) {
             return MailResourcesAsset.audioFile
-        }
-        if uti.conforms(to: .movie) {
+        } else if uti.conforms(to: .movie) {
             return MailResourcesAsset.videoFile
-        }
-        if uti.conforms(to: .spreadsheet) {
+        } else if uti.conforms(to: .spreadsheet) {
             return MailResourcesAsset.gridFile
-        }
-        if uti.conforms(to: .presentation) {
+        } else if uti.conforms(to: .presentation) {
             return MailResourcesAsset.pointFile
-        }
-        if uti.conforms(to: .sourceCode) || uti.conforms(to: .html) || uti.conforms(to: .json) || uti.conforms(to: .xml) {
+        } else if uti.conforms(to: .sourceCode) || uti.conforms(to: .html) || uti.conforms(to: .json) || uti.conforms(to: .xml) {
             return MailResourcesAsset.codeFile
-        }
-        if uti.conforms(to: .text) || uti.conforms(to: .pages) || uti.conforms(to: .onlyOffice)
+        } else if uti.conforms(to: .text) || uti.conforms(to: .pages) || uti.conforms(to: .onlyOffice)
             || uti.conforms(to: .wordDoc) || uti.conforms(to: .wordDocm) || uti.conforms(to: .wordDocx) {
             return MailResourcesAsset.docFile
-        }
-        if uti.conforms(to: .archive) {
+        } else if uti.conforms(to: .archive) {
             return MailResourcesAsset.archiveFile
-        }
-        if uti.conforms(to: .font) {
+        } else if uti.conforms(to: .font) {
             return MailResourcesAsset.fontFile
+        } else {
+            return MailResourcesAsset.unknownFile
         }
-        return MailResourcesAsset.unknownFile
     }
 
     private enum CodingKeys: String, CodingKey {

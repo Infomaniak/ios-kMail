@@ -24,28 +24,7 @@ struct AttachmentCell: View {
     let attachment: Attachment
 
     var body: some View {
-        VStack(spacing: 0) {
-            HStack {
-                attachment.icon.swiftUIImage
-
-                VStack(alignment: .leading, spacing: 0) {
-                    Text(attachment.name)
-                        .textStyle(.bodySmall)
-                        .lineLimit(1)
-                        .truncationMode(.middle)
-                    Text(attachment.size, format: .defaultByteCount)
-                        .textStyle(.labelSecondary)
-                        .opacity(attachment.size == 0 ? 0 : 1)
-                }
-            }
-            .padding(4)
-        }
-        .background(
-            RoundedRectangle(cornerRadius: 6)
-                .stroke(MailResourcesAsset.elementsColor.swiftUIColor, lineWidth: 1)
-        )
-        .cornerRadius(6)
-        .frame(maxWidth: 200)
+        AttachmentView(attachment: attachment, subtitle: attachment.size.formatted(.defaultByteCount))
     }
 }
 

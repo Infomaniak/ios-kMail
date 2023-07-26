@@ -21,60 +21,39 @@ import MailResources
 import SwiftUI
 
 struct AttachmentUploadCell: View {
-    let attachment: Attachment
     @ObservedObject var uploadTask: AttachmentUploadTask
+
+    let attachment: Attachment
     let attachmentRemoved: ((Attachment) -> Void)?
 
     var body: some View {
-        VStack(spacing: 0) {
-            HStack {
-                attachment.icon.swiftUIImage
-
-                VStack(alignment: .leading, spacing: 0) {
-                    Text(attachment.name)
-                        .textStyle(.bodySmall)
-                        .lineLimit(1)
-                        .truncationMode(.middle)
-                    if let error = uploadTask.error {
-                        Text(error.localizedDescription)
-                            .textStyle(.labelSecondary)
-                    } else {
-                        Text(attachment.size, format: .defaultByteCount)
-                            .textStyle(.labelSecondary)
-                            .opacity(attachment.size == 0 ? 0 : 1)
-                    }
+        AttachmentView(
+            attachment: attachment,
+            subtitle: uploadTask.error != nil ? uploadTask.error!.localizedDescription : attachment.size
+                .formatted(.defaultByteCount)
+        ) {
+            Button {
+                if let attachmentRemoved {
+                    attachmentRemoved(attachment)
                 }
-
-                Button {
-                    if let attachmentRemoved {
-                        attachmentRemoved(attachment)
-                    }
-                } label: {
-                    MailResourcesAsset.closeSmall.swiftUIImage
-                        .resizable()
-                        .foregroundColor(MailResourcesAsset.textSecondaryColor)
-                        .frame(width: 16, height: 16)
-                }
-                .buttonStyle(.borderless)
-                .padding(.leading, 8)
+            } label: {
+                MailResourcesAsset.closeSmall.swiftUIImage
+                    .resizable()
+                    .foregroundColor(MailResourcesAsset.textSecondaryColor)
+                    .frame(width: 12, height: 12)
             }
-            .padding(6)
+            .buttonStyle(.borderless)
+        }
+        .overlay(alignment: .bottom) {
             IndeterminateProgressView(indeterminate: uploadTask.progress == 0, progress: uploadTask.progress)
                 .opacity(uploadTask.progress == 1 ? 0 : 1)
         }
-        .background(
-            RoundedRectangle(cornerRadius: 6)
-                .stroke(MailResourcesAsset.elementsColor.swiftUIColor, lineWidth: 1)
-        )
-        .cornerRadius(6)
-        .frame(maxWidth: 200)
-        .padding(.top, 16)
     }
 }
 
 struct AttachmentUploadCell_Previews: PreviewProvider {
     static var previews: some View {
-        AttachmentUploadCell(attachment: PreviewHelper.sampleAttachment, uploadTask: AttachmentUploadTask()) { _ in
+        AttachmentUploadCell(uploadTask: AttachmentUploadTask(), attachment: PreviewHelper.sampleAttachment) { _ in
             /* Preview */
         }
     }

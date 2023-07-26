@@ -30,10 +30,10 @@ struct AttachmentsHeaderView: View {
                 ScrollView(.horizontal, showsIndicators: false) {
                     HStack(spacing: 8) {
                         ForEach(attachmentsManager.attachments) { attachment in
-                            AttachmentUploadCell(attachment: attachment,
-                                                 uploadTask: attachmentsManager
-                                                     .attachmentUploadTaskOrFinishedTask(for: attachment
-                                                         .uuid)) { attachmentRemoved in
+                            AttachmentUploadCell(
+                                uploadTask: attachmentsManager.attachmentUploadTaskOrFinishedTask(for: attachment.uuid),
+                                attachment: attachment
+                            ) { attachmentRemoved in
                                 attachmentsManager.removeAttachment(attachmentRemoved)
                             }
                         }
@@ -41,6 +41,7 @@ struct AttachmentsHeaderView: View {
                     .padding(.vertical, 1)
                     .padding(.horizontal, 16)
                 }
+                .padding(.top, 16)
             }
         }
         .customAlert(item: $attachmentsManager.globalError) { error in
