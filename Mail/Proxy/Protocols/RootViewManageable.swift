@@ -26,7 +26,4 @@ public protocol RootViewManageable {
 
     /// The current mainSceneKeyWindow
     var mainSceneKeyWindow: UIWindow? { get }
-    
-    /// Call updateWindowUI on all connected scenes
-    func updateAllWindowUI()
 }

@@ -29,8 +29,4 @@ public struct RootViewManager: RootViewManageable {
     public var mainSceneKeyWindow: UIWindow? {
         nil
     }
-
-    public func updateAllWindowUI() {
-        // NOOP in share extension
-    }
 }

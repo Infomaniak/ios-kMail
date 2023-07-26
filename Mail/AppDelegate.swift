@@ -17,6 +17,7 @@
  */
 
 import CocoaLumberjackSwift
+import InfomaniakCore
 import InfomaniakDI
 import InfomaniakNotifications
 import MailCore
@@ -38,8 +39,7 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
         Logging.initLogging()
 
         DDLogInfo("Application starting in foreground ? \(applicationState.applicationState != .background)")
-        // TODO: fix ApiFetcher call
-//        ApiFetcher.decoder.dateDecodingStrategy = .iso8601
+        ApiFetcher.decoder.dateDecodingStrategy = .iso8601
 
         UNUserNotificationCenter.current().delegate = notificationCenterDelegate
         Task {

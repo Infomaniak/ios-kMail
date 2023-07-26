@@ -23,15 +23,10 @@ import UIKit
 @available(iOSApplicationExtension, unavailable)
 public struct RootViewManager: RootViewManageable {
     public var rootViewController: UIViewController? {
-        self.mainSceneKeyWindow?.rootViewController
-    }
-    
-    public var mainSceneKeyWindow: UIWindow? {
-        UIApplication.shared.mainSceneKeyWindow
+        mainSceneKeyWindow?.rootViewController
     }
 
-    public func updateAllWindowUI() {
-        // TODO: fix UIApplication reference
-//        UIApplication.shared.connectedScenes.forEach { ($0.delegate as? SceneDelegate)?.updateWindowUI() }
+    public var mainSceneKeyWindow: UIWindow? {
+        UIApplication.shared.mainSceneKeyWindow
     }
 }
