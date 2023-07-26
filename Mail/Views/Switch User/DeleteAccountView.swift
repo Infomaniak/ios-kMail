@@ -22,13 +22,13 @@ import MailCore
 import SwiftUI
 
 struct DeleteAccountView: UIViewControllerRepresentable {
-    var account: Account
-    var delegate: DeleteAccountDelegate
+    let token: ApiToken
+    let delegate: DeleteAccountDelegate
 
     func makeUIViewController(context: Context) -> UINavigationController {
         return DeleteAccountViewController.instantiateInViewController(
             delegate: delegate,
-            accessToken: account.token.accessToken,
+            accessToken: token.accessToken,
             navBarColor: nil,
             navBarButtonColor: nil
         )

@@ -382,6 +382,7 @@ class SyncedAuthenticator: OAuthAuthenticator {
     ) {
         AccountManager.instance.refreshTokenLockedQueue.async {
             @InjectService var keychainHelper: KeychainHelper
+            @InjectService var tokenStore: TokenStore
             @InjectService var networkLoginService: InfomaniakNetworkLoginable
 
             SentrySDK
@@ -395,8 +396,7 @@ class SyncedAuthenticator: OAuthAuthenticator {
             }
 
             // Maybe someone else refreshed our token
-            AccountManager.instance.reloadTokensAndAccounts()
-            if let token = AccountManager.instance.getTokenForUserId(credential.userId),
+            if let token = tokenStore.tokenFor(userId: credential.userId, fetchLocation: .keychain),
                token.expirationDate > credential.expirationDate {
                 SentrySDK
                     .addBreadcrumb(token.generateBreadcrumb(level: .info, message: "Refreshing token - Success with local"))

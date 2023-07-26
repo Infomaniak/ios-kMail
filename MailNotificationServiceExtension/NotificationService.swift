@@ -41,6 +41,9 @@ class NotificationService: UNNotificationServiceExtension {
         let keychainHelper = Factory(type: KeychainHelper.self) { _, _ in
             KeychainHelper(accessGroup: AccountManager.accessGroup)
         }
+        let tokenStore = Factory(type: TokenStore.self) { _, _ in
+            TokenStore()
+        }
         let notificationService = Factory(type: InfomaniakNotifications.self) { _, _ in
             InfomaniakNotifications(appGroup: AccountManager.appGroup)
         }
@@ -48,6 +51,7 @@ class NotificationService: UNNotificationServiceExtension {
         SimpleResolver.sharedResolver.store(factory: networkLoginService)
         SimpleResolver.sharedResolver.store(factory: loginService)
         SimpleResolver.sharedResolver.store(factory: keychainHelper)
+        SimpleResolver.sharedResolver.store(factory: tokenStore)
         SimpleResolver.sharedResolver.store(factory: notificationService)
     }
 

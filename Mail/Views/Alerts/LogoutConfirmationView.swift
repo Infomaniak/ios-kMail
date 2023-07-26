@@ -43,12 +43,13 @@ struct LogoutConfirmationView: View {
         Task {
             @InjectService var notificationService: InfomaniakNotifications
             await notificationService.removeStoredTokenFor(userId: account.userId)
+
+            AccountManager.instance.removeTokenAndAccount(account: account)
+            if let nextAccount = AccountManager.instance.accounts.first {
+                AccountManager.instance.switchAccount(newAccount: nextAccount)
+            }
+            AccountManager.instance.saveAccounts()
         }
-        AccountManager.instance.removeTokenAndAccount(token: account.token)
-        if let nextAccount = AccountManager.instance.accounts.first {
-            AccountManager.instance.switchAccount(newAccount: nextAccount)
-        }
-        AccountManager.instance.saveAccounts()
     }
 }
 
