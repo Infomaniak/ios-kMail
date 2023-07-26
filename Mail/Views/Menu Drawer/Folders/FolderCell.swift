@@ -24,7 +24,7 @@ import MailResources
 import SwiftUI
 
 struct FolderCellTypeEnvironment: EnvironmentKey {
-    static var defaultValue = FolderCell.CellType.link
+    static var defaultValue = FolderCell.CellType.menuDrawer
 }
 
 extension EnvironmentValues {
@@ -36,7 +36,7 @@ extension EnvironmentValues {
 
 struct FolderCell: View {
     enum CellType {
-        case link, indicator
+        case menuDrawer, move
     }
 
     @Environment(\.folderCellType) private var cellType
@@ -60,7 +60,7 @@ struct FolderCell: View {
 
     var body: some View {
         Group {
-            if cellType == .indicator || isCompactWindow {
+            if cellType == .move || isCompactWindow {
                 Button(action: didTapButton) {
                     FolderCellContent(
                         folder: folder.content,
@@ -92,7 +92,7 @@ struct FolderCell: View {
                 }
             }
 
-            if folder.content.isExpanded {
+            if folder.content.isExpanded || cellType == .move {
                 ForEach(folder.children) { child in
                     FolderCell(
                         folder: child,
@@ -107,7 +107,7 @@ struct FolderCell: View {
     }
 
     private func didTapButton() {
-        if cellType == .indicator {
+        if cellType == .move {
             customCompletion?(folder.content)
         } else {
             updateFolder()
@@ -140,7 +140,7 @@ struct FolderCellContent: View {
     }
 
     private var textStyle: MailTextStyle {
-        if cellType == .link {
+        if cellType == .menuDrawer {
             return isCurrentFolder ? .bodyMediumAccent : .bodyMedium
         }
         return .body
@@ -148,7 +148,7 @@ struct FolderCellContent: View {
 
     var body: some View {
         HStack(spacing: UIConstants.menuDrawerHorizontalItemSpacing) {
-            if canCollapseSubFolders && cellType == .link {
+            if canCollapseSubFolders && cellType == .menuDrawer {
                 Button(action: collapseFolder) {
                     ChevronIcon(style: folder.isExpanded ? .up : .down, color: .secondary)
                 }
@@ -177,7 +177,7 @@ struct FolderCellContent: View {
 
     @ViewBuilder
     private var accessory: some View {
-        if cellType == .link {
+        if cellType == .menuDrawer {
             if folder.role != .sent && folder.role != .trash {
                 if !folder.formattedUnreadCount.isEmpty {
                     Text(folder.formattedUnreadCount)
@@ -196,7 +196,7 @@ struct FolderCellContent: View {
 
     @ViewBuilder
     private var background: some View {
-        if cellType == .link {
+        if cellType == .menuDrawer {
             SelectionBackground(selectionType: isCurrentFolder ? .folder : .none)
         }
     }
