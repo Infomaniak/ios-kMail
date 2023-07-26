@@ -16,6 +16,8 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import InfomaniakCoreUI
+import InfomaniakDI
 import MailCore
 import MailResources
 import SwiftUI
@@ -29,6 +31,9 @@ struct SenderMenuCell: View {
 
     var body: some View {
         Button {
+            @InjectService var matomo: MatomoUtils
+            matomo.track(eventWithCategory: .newMessage, name: "switchIdentity")
+
             withAnimation {
                 self.currentSignature = signature
             }
