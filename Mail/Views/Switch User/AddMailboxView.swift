@@ -35,7 +35,7 @@ struct AddMailboxView: View {
 
     var body: some View {
         VStack(alignment: .leading) {
-            Text(MailResourcesStrings.Localizable.attachAddressDescription)
+            Text(MailResourcesStrings.Localizable.attachMailboxDescription1)
                 .textStyle(.bodySecondary)
                 .padding(.bottom, 32)
 
@@ -82,7 +82,7 @@ struct AddMailboxView: View {
             .disabled(buttonDisabled)
             .mailButtonFullWidth(true)
         }
-        .navigationBarTitle(MailResourcesStrings.Localizable.attachAddressTitle, displayMode: .inline)
+        .navigationBarTitle(MailResourcesStrings.Localizable.attachMailboxTitle, displayMode: .inline)
         .padding(.horizontal, 16)
         .padding(.vertical, 32)
     }

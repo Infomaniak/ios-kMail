@@ -153,6 +153,7 @@ struct FolderCellContent: View {
                     ChevronIcon(style: folder.isExpanded ? .up : .down, color: .secondary)
                 }
                 .opacity(level == 0 && !folder.children.isEmpty ? 1 : 0)
+                .accessibilityLabel(MailResourcesStrings.Localizable.contentDescriptionButtonExpandFolder(folder.name))
             }
 
             folder.icon
