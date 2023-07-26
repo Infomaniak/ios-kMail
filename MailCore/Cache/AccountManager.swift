@@ -74,7 +74,6 @@ public class AccountManager: RefreshTokenDelegate, ObservableObject {
 
     private var currentAccount: Account?
     public var accounts = SendableArray<Account>()
-    public let refreshTokenLockedQueue = DispatchQueue(label: "com.infomaniak.mail.refreshtoken")
     public weak var delegate: AccountManagerDelegate?
     public var currentUserId: Int {
         didSet {
