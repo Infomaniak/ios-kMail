@@ -126,7 +126,7 @@ final class LoginHandler: InfomaniakLoginDelegate, ObservableObject {
 
     private func loginSuccessful(code: String, codeVerifier verifier: String) {
         matomo.track(eventWithCategory: .account, name: "loggedIn")
-        let previousAccount = accountManager.currentAccount
+        let previousAccount = accountManager.getCurrentAccount()
         Task {
             do {
                 _ = try await accountManager.createAndSetCurrentAccount(code: code, codeVerifier: verifier)

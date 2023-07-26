@@ -67,7 +67,14 @@ public final class MailboxManager: ObservableObject {
         let realmName = "\(mailbox.userId)-\(mailbox.mailboxId).realm"
         realmConfiguration = Realm.Configuration(
             fileURL: MailboxManager.constants.rootDocumentsURL.appendingPathComponent(realmName),
-            schemaVersion: 16,
+            schemaVersion: 17,
+            migrationBlock: { migration, oldSchemaVersion in
+                // No migration needed from 0 to 16
+                if oldSchemaVersion < 17 {
+                    // Remove signatures without `senderName` and `senderEmailIdn`
+                    migration.deleteData(forType: Signature.className())
+                }
+            },
             objectTypes: [
                 Folder.self,
                 Thread.self,

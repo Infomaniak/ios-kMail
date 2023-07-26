@@ -351,7 +351,15 @@ public final class Message: Object, Decodable, Identifiable {
         swissTransferUuid = try values.decodeIfPresent(String.self, forKey: .swissTransferUuid)
         folderId = try values.decode(String.self, forKey: .folderId)
         references = try values.decodeIfPresent(String.self, forKey: .references)
-        inReplyTo = try values.decodeIfPresent(String.self, forKey: .inReplyTo)
+        if let inReplyTo = try? values.decodeIfPresent(String.self, forKey: .inReplyTo) {
+            self.inReplyTo = inReplyTo
+        } else if let inReplyToList = try values.decodeIfPresent([String].self, forKey: .inReplyTo) {
+            SentrySDK.capture(message: "Found an array of inReplyTo") { scope in
+                scope.setContext(value: ["ids": inReplyToList.joined(separator: ", ")], key: "inReplyToList")
+            }
+            inReplyTo = inReplyToList.first
+        }
+
         preview = try values.decode(String.self, forKey: .preview)
         answered = try values.decode(Bool.self, forKey: .answered)
         isDraft = try values.decode(Bool.self, forKey: .isDraft)

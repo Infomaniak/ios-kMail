@@ -18,6 +18,7 @@
 
 import Combine
 import Foundation
+import InfomaniakCore
 import InfomaniakCoreUI
 import InfomaniakDI
 import MailCore
@@ -79,8 +80,7 @@ enum RootViewDestination {
 /// Something that represents the state of navigation
 class NavigationState: ObservableObject {
     @LazyInjectService private var appLockHelper: AppLockHelper
-    @LazyInjectService private var accountManager: AccountManager
-    
+
     private var accountManagerObservation: AnyCancellable?
 
     @Published private(set) var rootViewState: RootViewState
@@ -92,20 +92,35 @@ class NavigationState: ObservableObject {
     /// The selected thread is the last in collection, by convention.
     @Published var threadPath = [Thread]()
 
+    private(set) var account: Account?
+
     init() {
-        @InjectService var localAccountManager: AccountManager
-        if localAccountManager.currentAccount != nil,
-           let currentMailboxManager = localAccountManager.currentMailboxManager {
-            rootViewState = .mainView(currentMailboxManager)
-        } else if !localAccountManager.mailboxes.isEmpty && localAccountManager.mailboxes.allSatisfy({ !$0.isAvailable }) {
-            rootViewState = .unavailableMailboxes
-        } else {
-            rootViewState = .onboarding
-        }
+        @InjectService var accountManager: AccountManager
+
+        account = accountManager.getCurrentAccount()
+        rootViewState = NavigationState.getMainViewStateIfPossible()
 
         accountManagerObservation = accountManager.objectWillChange.receive(on: RunLoop.main).sink { [weak self] in
-            self?.switchToCurrentMailboxManagerIfPossible()
+            self?.account = accountManager.getCurrentAccount()
+            self?.rootViewState = NavigationState.getMainViewStateIfPossible()
         }
+    }
+
+    static func getMainViewStateIfPossible() -> RootViewState {
+        @InjectService var accountManager: AccountManager
+
+        if let currentAccount = accountManager.getCurrentAccount() {
+            if let currentMailboxManager = accountManager.currentMailboxManager {
+                return .mainView(currentMailboxManager)
+            } else {
+                let mailboxes = MailboxInfosManager.instance.getMailboxes(for: currentAccount.userId)
+                if !mailboxes.isEmpty && mailboxes.allSatisfy({ !$0.isAvailable }) {
+                    return .unavailableMailboxes
+                }
+            }
+        }
+
+        return .onboarding
     }
 
     func transitionToRootViewDestination(_ destination: RootViewDestination) {
@@ -114,7 +129,7 @@ class NavigationState: ObservableObject {
             case .appLocked:
                 rootViewState = .appLocked
             case .mainView:
-                switchToCurrentMailboxManagerIfPossible()
+                rootViewState = NavigationState.getMainViewStateIfPossible()
             case .onboarding:
                 rootViewState = .onboarding
             case .noMailboxes:
@@ -128,21 +143,8 @@ class NavigationState: ObservableObject {
     func transitionToLockViewIfNeeded() {
         if UserDefaults.shared.isAppLockEnabled
             && appLockHelper.isAppLocked
-            && accountManager.currentAccount != nil {
+            && account != nil {
             transitionToRootViewDestination(.appLocked)
-        }
-    }
-
-    private func switchToCurrentMailboxManagerIfPossible() {
-        if accountManager.currentAccount != nil,
-           let currentMailboxManager = accountManager.currentMailboxManager {
-            if rootViewState != .mainView(currentMailboxManager) {
-                rootViewState = .mainView(currentMailboxManager)
-            }
-        } else if !accountManager.mailboxes.isEmpty && accountManager.mailboxes.allSatisfy({ !$0.isAvailable }) {
-            rootViewState = .unavailableMailboxes
-        } else {
-            rootViewState = .onboarding
         }
     }
 }

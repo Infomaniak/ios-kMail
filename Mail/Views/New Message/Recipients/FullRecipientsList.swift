@@ -22,6 +22,7 @@ import SwiftUI
 import WrappingHStack
 
 struct FullRecipientsList: View {
+    @EnvironmentObject private var mailboxManager: MailboxManager
     @Binding var recipients: RealmSwift.List<Recipient>
 
     @FocusState var focusedField: ComposeViewFieldType?
@@ -36,6 +37,7 @@ struct FullRecipientsList: View {
                 switchFocus()
             }
             .focused($focusedField, equals: .chip(type.hashValue, recipients[i]))
+            .environmentObject(mailboxManager)
         }
     }
 

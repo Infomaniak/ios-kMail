@@ -101,6 +101,9 @@ enum ApplicationAssembly {
                 }
 
                 return provider
+            },
+            Factory(type: TokenStore.self) { _, _ in
+                TokenStore()
             }
         ]
 

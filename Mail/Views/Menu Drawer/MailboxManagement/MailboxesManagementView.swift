@@ -33,15 +33,13 @@ struct MailboxesManagementView: View {
     @ObservedResults(
         Mailbox.self,
         configuration: MailboxInfosManager.instance.realmConfiguration,
-        where: {
-            @InjectService var accountManager: AccountManager
-            return $0.userId == accountManager.currentUserId
-        },
         sortDescriptor: SortDescriptor(keyPath: \Mailbox.mailboxId)
     ) private var mailboxes
 
-    private var otherMailboxes: [Mailbox] {
-        return mailboxes.filter { $0.mailboxId != mailboxManager.mailbox.mailboxId }
+    private var hasOtherMailboxes: Bool {
+        return !mailboxes.where {
+            $0.userId == mailboxManager.account.userId && $0.mailboxId != mailboxManager.mailbox.mailboxId
+        }.isEmpty
     }
 
     var body: some View {
@@ -64,7 +62,7 @@ struct MailboxesManagementView: View {
                         .textStyle(navigationDrawerState.showMailboxes ? .bodyMediumAccent : .bodyMedium)
                         .lineLimit(1)
                     Spacer()
-                    if !otherMailboxes.isEmpty {
+                    if hasOtherMailboxes {
                         ChevronIcon(style: navigationDrawerState.showMailboxes ? .up : .down, color: .primary)
                     }
                 }
@@ -72,11 +70,14 @@ struct MailboxesManagementView: View {
                 .padding(.vertical, UIConstants.menuDrawerVerticalPadding)
                 .padding(.horizontal, UIConstants.menuDrawerHorizontalPadding)
             }
-            .disabled(otherMailboxes.isEmpty)
+            .disabled(!hasOtherMailboxes)
 
             if navigationDrawerState.showMailboxes {
                 VStack(alignment: .leading) {
-                    ForEach(otherMailboxes) { mailbox in
+                    ForEachMailboxView(
+                        userId: mailboxManager.account.userId,
+                        excludedMailboxIds: [mailboxManager.mailbox.mailboxId]
+                    ) { mailbox in
                         MailboxCell(mailbox: mailbox)
                             .padding(.horizontal, UIConstants.menuDrawerHorizontalPadding)
                             .mailboxCellStyle(.menuDrawer)

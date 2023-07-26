@@ -36,7 +36,7 @@ public class UserActivityController {
 
         currentActivity?.invalidate()
         currentActivity = activity
-        currentActivity?.webpageURL = Endpoint.currentUserActivity(mailboxIndex: mailboxIndex, folder: folder).url
+        currentActivity?.webpageURL = URL(string: "https://\(ApiEnvironment.current.mailHost)/\(mailboxIndex);fid=\(folder.id)")
         currentActivity?.becomeCurrent()
     }
 

@@ -24,7 +24,9 @@ import MailResources
 import SwiftUI
 
 struct SettingsView: View {
-    @LazyInjectService private var accountManager: AccountManager
+    @InjectService private var accountManager: AccountManager
+
+    @EnvironmentObject private var mailboxManager: MailboxManager
 
     @AppStorage(UserDefaults.shared.key(.threadDensity)) private var density = DefaultPreferences.threadDensity
     @AppStorage(UserDefaults.shared.key(.theme)) private var theme = DefaultPreferences.theme
@@ -37,7 +39,7 @@ struct SettingsView: View {
                 Text(MailResourcesStrings.Localizable.settingsSectionEmailAddresses)
                     .textStyle(.bodySmallSecondary)
 
-                ForEach(accountManager.mailboxes) { mailbox in
+                ForEachMailboxView(userId: mailboxManager.account.userId) { mailbox in
                     if let mailboxManager = accountManager.getMailboxManager(for: mailbox) {
                         SettingsSubMenuCell(title: mailbox.email) {
                             MailboxSettingsView(mailboxManager: mailboxManager)

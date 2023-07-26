@@ -41,7 +41,7 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Infomaniak/ios-core",
       "state" : {
-        "revision" : "60e101e3981ac5ce10cdd72ed8e60ebfdc0010cf"
+        "revision" : "f8c11f9a383c84b3c7c3db75afe87a1d077d7dd2"
       }
     },
     {
@@ -85,8 +85,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Infomaniak/ios-notifications",
       "state" : {
-        "revision" : "4609e33800a11f9f7acd38df66d1fbaaba0e60a8",
-        "version" : "2.1.0"
+        "revision" : "d02b2c439e69565bb320b37ef90342152a6b16f8",
+        "version" : "3.0.0"
       }
     },
     {

@@ -40,8 +40,8 @@ struct MailApp: App {
 
     @Environment(\.scenePhase) private var scenePhase
 
-    @AppStorage(UserDefaults.shared.key(.accentColor)) private var accentColor = DefaultPreferences.accentColor
-    @AppStorage(UserDefaults.shared.key(.theme)) private var theme = DefaultPreferences.theme
+    @AppStorage(UserDefaults.shared.key(.accentColor), store: .shared) private var accentColor = DefaultPreferences.accentColor
+    @AppStorage(UserDefaults.shared.key(.theme), store: .shared) private var theme = DefaultPreferences.theme
 
     @StateObject private var navigationState = NavigationState()
 
@@ -80,7 +80,7 @@ struct MailApp: App {
                         break
                     }
                 }
-                .onChange(of: accountManager.currentAccount) { _ in
+                .onChange(of: navigationState.account) { _ in
                     refreshCacheData()
                 }
         }
@@ -96,13 +96,13 @@ struct MailApp: App {
     }
 
     func refreshCacheData() {
-        guard let currentAccount = accountManager.currentAccount else {
+        guard let account = navigationState.account else {
             return
         }
 
         Task {
             do {
-                try await accountManager.updateUser(for: currentAccount)
+                try await accountManager.updateUser(for: account)
                 accountManager.enableBugTrackerIfAvailable()
 
                 try await accountManager.contactManager?.fetchContactsAndAddressBooks()

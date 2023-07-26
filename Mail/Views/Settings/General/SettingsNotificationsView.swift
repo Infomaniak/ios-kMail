@@ -30,7 +30,7 @@ struct SettingsNotificationsView: View {
     @LazyInjectService private var urlNavigator: URLNavigable
     @LazyInjectService private var accountManager: AccountManager
 
-    @EnvironmentObject var mailboxManager: MailboxManager
+    @EnvironmentObject private var mailboxManager: MailboxManager
 
     @AppStorage(UserDefaults.shared.key(.notificationsEnabled)) private var notificationsEnabled = DefaultPreferences
         .notificationsEnabled
@@ -78,7 +78,7 @@ struct SettingsNotificationsView: View {
 
                 if subscribedTopics != nil && notificationsEnabled {
                     IKDivider()
-                    ForEach(accountManager.mailboxes) { mailbox in
+                    ForEachMailboxView(userId: mailboxManager.account.userId) { mailbox in
                         Toggle(isOn: Binding(get: {
                             notificationsEnabled && subscribedTopics?.contains(mailbox.notificationTopicName) == true
                         }, set: { on in

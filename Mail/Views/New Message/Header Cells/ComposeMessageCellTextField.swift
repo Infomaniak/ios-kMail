@@ -21,10 +21,10 @@ import SwiftUI
 
 struct ComposeMessageCellTextField: View {
     @Binding var text: String
-    @Binding var autocompletionType: ComposeViewFieldType?
 
     @FocusState var focusedField: ComposeViewFieldType?
 
+    let autocompletionType: ComposeViewFieldType?
     let type: ComposeViewFieldType
 
     var body: some View {
@@ -52,6 +52,6 @@ struct ComposeMessageCellTextField: View {
 
 struct ComposeMessageCellTextField_Previews: PreviewProvider {
     static var previews: some View {
-        ComposeMessageCellTextField(text: .constant(""), autocompletionType: .constant(nil), type: .subject)
+        ComposeMessageCellTextField(text: .constant(""), autocompletionType: nil, type: .subject)
     }
 }

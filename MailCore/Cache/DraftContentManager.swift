@@ -16,8 +16,22 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import CocoaLumberjackSwift
 import Foundation
+import RealmSwift
 import Sentry
+import SwiftSoup
+
+enum SignatureMatch: Int, Comparable {
+    case exactMatchDefault = 3
+    case exactMatch = 2
+    case emailMatchDefault = 1
+    case emailMatch = 0
+
+    static func < (lhs: SignatureMatch, rhs: SignatureMatch) -> Bool {
+        return lhs.rawValue < rhs.rawValue
+    }
+}
 
 public class DraftContentManager: ObservableObject {
     struct CompleteDraftResult {
@@ -36,9 +50,9 @@ public class DraftContentManager: ObservableObject {
         self.mailboxManager = mailboxManager
     }
 
-    public func prepareCompleteDraft() async throws {
+    public func prepareCompleteDraft() async throws -> Signature {
         async let draftBodyResult = try await loadCompleteDraftBody()
-        async let signature = try await loadDefaultRemoteSignature()
+        async let signature = try await loadMostFittingSignature()
 
         try await writeCompleteDraft(
             completeBody: draftBodyResult.body,
@@ -46,6 +60,35 @@ public class DraftContentManager: ObservableObject {
             shouldAddSignatureText: draftBodyResult.shouldAddSignatureText,
             attachments: draftBodyResult.attachments
         )
+
+        return try await signature
+    }
+
+    public func updateSignature(with newSignature: Signature) {
+        let realm = mailboxManager.getRealm()
+        guard let liveIncompleteDraft = realm.object(ofType: Draft.self, forPrimaryKey: incompleteDraft.localUUID) else {
+            return
+        }
+
+        do {
+            let parsedMessage = try SwiftSoup.parse(liveIncompleteDraft.body)
+            // If we find the previous signature, we replace it with the new one
+            // otherwise we append the signature at the end of the document
+            if let foundSignatureDiv = try parsedMessage.select(".\(Constants.signatureWrapperIdentifier)").first {
+                try foundSignatureDiv.html(newSignature.content)
+            } else if let body = parsedMessage.body() {
+                let signatureDiv = try body.appendElement("div")
+                try signatureDiv.addClass(Constants.signatureWrapperIdentifier)
+                try signatureDiv.html(newSignature.content)
+            }
+
+            try? realm.write {
+                liveIncompleteDraft.identityId = "\(newSignature.id)"
+                liveIncompleteDraft.body = try parsedMessage.outerHtml()
+            }
+        } catch {
+            DDLogError("An error occurred while transforming the DOM of the draft: \(error)")
+        }
     }
 
     private func loadCompleteDraftBody() async throws -> CompleteDraftResult {
@@ -115,17 +158,24 @@ public class DraftContentManager: ObservableObject {
         }
     }
 
-    private func loadDefaultRemoteSignature() async throws -> Signature {
+    private func loadMostFittingSignature() async throws -> Signature {
         do {
-            // load all signatures every time
             try await mailboxManager.refreshAllSignatures()
+            let storedSignatures = mailboxManager.getStoredSignatures()
+            let defaultSignature = try getDefaultSignature(userSignatures: storedSignatures)
 
-            // If after a refresh we have no default signature we bail
-            guard let defaultSignature = mailboxManager.getStoredSignatures().defaultSignature else {
-                throw MailError.defaultSignatureMissing
+            // If draft already has an identity, return corresponding signature
+            if let storedDraft = mailboxManager.getRealm().object(ofType: Draft.self, forPrimaryKey: incompleteDraft.localUUID),
+               let identityId = storedDraft.identityId {
+                return getSignature(for: identityId, userSignatures: storedSignatures) ?? defaultSignature
             }
 
-            return defaultSignature.freezeIfNeeded()
+            // If draft is a new message or a forward, use default signature
+            guard let messageReply, messageReply.replyMode == .reply || messageReply.replyMode == .replyAll else {
+                return defaultSignature
+            }
+
+            return guessMostFittingSignature(userSignatures: storedSignatures, defaultSignature: defaultSignature)
         } catch {
             SentrySDK.capture(message: "We failed to fetch Signatures. This will close the Editor.") { scope in
                 scope.setExtras([
@@ -135,6 +185,90 @@ public class DraftContentManager: ObservableObject {
             }
             throw error
         }
+    }
+
+    private func getSignature(for identity: String, userSignatures: [Signature]) -> Signature? {
+        return userSignatures.first { identity == "\($0.id)" }?.freezeIfNeeded()
+    }
+
+    private func getDefaultSignature(userSignatures: [Signature]) throws -> Signature {
+        guard let defaultSignature = userSignatures.defaultSignature else {
+            throw MailError.defaultSignatureMissing
+        }
+        return defaultSignature.freezeIfNeeded()
+    }
+
+    private func guessMostFittingSignature(userSignatures: [Signature], defaultSignature: Signature) -> Signature {
+        guard let previousMessage = messageReply?.message else { return defaultSignature }
+
+        var signaturesAssociatedToEmail = [String: [Signature]]()
+        for signature in userSignatures {
+            signaturesAssociatedToEmail[signature.senderEmail, default: []].append(signature)
+        }
+
+        let recipientsFieldsToCheck = [\Message.to, \Message.from, \Message.cc]
+        for field in recipientsFieldsToCheck {
+            if let signature = findSignatureInRecipients(
+                recipients: previousMessage[keyPath: field],
+                signaturesAssociatedToEmail: signaturesAssociatedToEmail
+            ) {
+                return signature.freezeIfNeeded()
+            }
+        }
+
+        return defaultSignature
+    }
+
+    private func findSignatureInRecipients(recipients: List<Recipient>,
+                                           signaturesAssociatedToEmail: [String: [Signature]]) -> Signature? {
+        let matchingEmailRecipients = recipients.filter { signaturesAssociatedToEmail[$0.email] != nil }.toArray()
+        guard !matchingEmailRecipients.isEmpty else { return nil }
+
+        var bestSignature: Signature?
+        var bestMatchingScore: SignatureMatch?
+
+        for recipient in matchingEmailRecipients {
+            guard let signatures = signaturesAssociatedToEmail[recipient.email],
+                  let (signature, computedScore) = computeScore(for: signatures, recipient: recipient) else { continue }
+
+            if computedScore == .exactMatchDefault {
+                return signature
+            }
+
+            if bestMatchingScore == nil || computedScore > bestMatchingScore! {
+                bestMatchingScore = computedScore
+                bestSignature = signature
+            }
+        }
+
+        return bestSignature
+    }
+
+    private func computeScore(for signatures: [Signature], recipient: Recipient) -> (Signature, SignatureMatch)? {
+        var bestResult: (Signature, SignatureMatch)?
+
+        for signature in signatures {
+            let computedScore = computeScore(for: signature, recipient: recipient)
+            if computedScore == .exactMatchDefault {
+                return (signature, computedScore)
+            }
+
+            if bestResult == nil || computedScore > bestResult!.1 {
+                bestResult = (signature, computedScore)
+            }
+        }
+
+        return bestResult
+    }
+
+    private func computeScore(for signature: Signature, recipient: Recipient) -> SignatureMatch {
+        let isExactMatch = signature.senderName == recipient.name
+        let isDefault = signature.isDefault
+
+        if isExactMatch {
+            return isDefault ? .exactMatchDefault : .exactMatch
+        }
+        return isDefault ? .emailMatchDefault : .emailMatch
     }
 
     private func loadReplyingBody(message: Message, replyMode: ReplyMode) async throws -> String {

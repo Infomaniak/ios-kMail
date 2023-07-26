@@ -16,25 +16,28 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import InfomaniakCore
-import InfomaniakLogin
 import MailCore
+import RealmSwift
 import SwiftUI
 
-struct DeleteAccountView: UIViewControllerRepresentable {
-    let token: ApiToken
-    let delegate: DeleteAccountDelegate
+struct ForEachMailboxView<Content: View>: View {
+    @ObservedResults private var mailboxes: Results<Mailbox>
 
-    func makeUIViewController(context: Context) -> UINavigationController {
-        return DeleteAccountViewController.instantiateInViewController(
-            delegate: delegate,
-            accessToken: token.accessToken,
-            navBarColor: nil,
-            navBarButtonColor: nil
+    let content: (Mailbox) -> Content
+
+    init(userId: Int, excludedMailboxIds: [Int] = [], @ViewBuilder content: @escaping (Mailbox) -> Content) {
+        self.content = content
+        _mailboxes = ObservedResults(
+            Mailbox.self,
+            configuration: MailboxInfosManager.instance.realmConfiguration,
+            where: { $0.userId == userId && !$0.mailboxId.in(excludedMailboxIds) },
+            sortDescriptor: SortDescriptor(keyPath: \Mailbox.mailboxId)
         )
     }
 
-    func updateUIViewController(_ uiViewController: UINavigationController, context: Context) {
-        // Not needed
+    var body: some View {
+        ForEach(mailboxes) { mailbox in
+            content(mailbox)
+        }
     }
 }

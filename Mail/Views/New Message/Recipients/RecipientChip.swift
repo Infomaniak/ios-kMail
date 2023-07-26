@@ -24,6 +24,8 @@ import Popovers
 import SwiftUI
 
 struct RecipientChip: View {
+    @EnvironmentObject private var mailboxManager: MailboxManager
+
     @AppStorage(UserDefaults.shared.key(.accentColor)) private var accentColor = DefaultPreferences.accentColor
     @LazyInjectService private var snackbarPresenter: SnackBarPresentable
 
@@ -43,6 +45,7 @@ struct RecipientChip: View {
                 .padding(.vertical, 8)
                 .padding(.horizontal, 16)
                 .frame(maxWidth: 600)
+                .environmentObject(mailboxManager)
 
             Templates.MenuButton(text: Text(MailResourcesStrings.Localizable.contactActionCopyEmailAddress),
                                  image: MailResourcesAsset.duplicate.swiftUIImage) {

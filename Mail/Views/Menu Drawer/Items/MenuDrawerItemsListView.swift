@@ -56,6 +56,8 @@ struct MenuDrawerItemsAdvancedListView: View {
 }
 
 struct MenuDrawerItemsHelpListView: View {
+    @EnvironmentObject private var mailboxManager: MailboxManager
+
     @State private var isShowingHelp = false
     @State private var isShowingBugTracker = false
 
@@ -85,7 +87,7 @@ struct MenuDrawerItemsHelpListView: View {
     }
 
     private func sendFeedback() {
-        if accountManager.currentAccount?.user?.isStaff == true {
+        if mailboxManager.account.user?.isStaff == true {
             isShowingBugTracker.toggle()
         } else if let userReportURL = URL(string: MailResourcesStrings.Localizable.urlUserReportiOS) {
             urlNavigator.openUrl(userReportURL)

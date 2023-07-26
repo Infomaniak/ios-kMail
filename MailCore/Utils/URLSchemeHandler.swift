@@ -34,12 +34,17 @@ public final class URLSchemeHandler: NSObject, WKURLSchemeHandler {
             urlSchemeTask.didFailWithError(MailError.resourceError)
             return
         }
+        
+        guard let currentAccessToken = accountManager.getCurrentAccount()?.token?.accessToken else {
+            urlSchemeTask.didFailWithError(MailError.unknownError)
+            return
+        }
 
         var components = URLComponents(url: url, resolvingAgainstBaseURL: true)
         components?.scheme = "https"
         var request = URLRequest(url: components!.url!)
         request.addValue(
-            "Bearer \(accountManager.currentAccount.token.accessToken)",
+            "Bearer \(currentAccessToken)",
             forHTTPHeaderField: "Authorization"
         )
         let dataTask = URLSession.shared.dataTask(with: request) { [weak self] data, response, error in

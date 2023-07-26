@@ -83,7 +83,7 @@ struct MoveEmailView: View {
                 }
             }
         }
-        .environment(\.folderCellType, .indicator)
+        .environment(\.folderCellType, .move)
         .matomoView(view: ["MoveEmailView"])
         .customAlert(isPresented: $isShowingCreateFolderAlert) {
             CreateFolderView(mode: .move { newFolder in

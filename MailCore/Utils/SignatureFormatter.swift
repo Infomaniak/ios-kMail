@@ -16,30 +16,32 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import CocoaLumberjackSwift
 import Foundation
-import InfomaniakDI
-import MailCore
-import UIKit
 
-@available(iOSApplicationExtension, unavailable)
-public final class CacheManager: CacheManageable {
-    @LazyInjectService private var accountManager: AccountManager
+public extension FormatStyle where Self == Signature.FormatStyle {
+    static func signature(style: Signature.FormatStyle.Style) -> Self {
+        return .init(style: style)
+    }
+}
 
-    public func refreshCacheData() {
-        guard let currentAccount = accountManager.getCurrentAccount() else {
-            return
+public extension Signature {
+    struct FormatStyle: Foundation.FormatStyle {
+        public enum Style: Codable {
+            case long
+            case short
         }
 
-        Task {
-            do {
-                try await accountManager.updateUser(for: currentAccount)
-                accountManager.enableBugTrackerIfAvailable()
+        private let style: Style
 
-                try await accountManager.contactManager?.fetchContactsAndAddressBooks()
-            } catch {
-                DDLogError("Error while updating user account: \(error)")
+        public init(style: Style) {
+            self.style = style
+        }
+
+        public func format(_ value: Signature) -> String {
+            if style == .short {
+                return value.senderEmailIdn
             }
+            return "\(value.senderName) <\(value.senderEmailIdn)> (\(value.name))"
         }
     }
 }
