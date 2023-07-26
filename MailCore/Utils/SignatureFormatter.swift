@@ -39,7 +39,7 @@ public extension Signature {
 
         public func format(_ value: Signature) -> String {
             if style == .short {
-                return value.senderName
+                return value.senderEmailIdn
             }
             return "\(value.senderName) <\(value.senderEmailIdn)> (\(value.name))"
         }
