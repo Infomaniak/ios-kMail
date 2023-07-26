@@ -70,20 +70,6 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
         }
     }
 
-    /// Validate deeplinks
-    func application(_ application: UIApplication,
-                     open url: URL,
-                     options: [UIApplication.OpenURLOptionsKey: Any] = [:]) -> Bool {
-        // Determine who sent the URL.
-        let sendingAppID = options[.sourceApplication]
-        DDLogInfo("source application = \(sendingAppID ?? "Unknown")")
-
-        let absoluteString = url.absoluteString
-        let success = absoluteString.starts(with: "mailto")
-        DDLogInfo("URL handling = \(success ? "success" : "failure")")
-        return success
-    }
-
     func application(_ application: UIApplication, didFailToRegisterForRemoteNotificationsWithError error: Error) {
         DDLogError("Failed registering for notifications: \(error)")
     }
