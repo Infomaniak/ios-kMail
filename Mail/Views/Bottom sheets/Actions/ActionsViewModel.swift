@@ -385,7 +385,7 @@ enum ActionsTarget: Equatable, Identifiable {
         case .threads(let threads, _):
             try await mailboxManager.moveOrDelete(threads: threads)
         case .message(let message):
-            try await mailboxManager.moveOrDelete(message: message)
+            try await mailboxManager.moveOrDelete(messages: [message])
         }
     }
 
