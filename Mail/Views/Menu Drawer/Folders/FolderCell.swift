@@ -204,7 +204,7 @@ struct FolderCellContent: View {
 
     private func collapseFolder() {
         @InjectService var matomo: MatomoUtils
-        matomo.track(eventWithCategory: .menuDrawer, name: "collapseFolder")
+        matomo.track(eventWithCategory: .menuDrawer, name: "collapseFolder", value: !folder.isExpanded)
 
         guard let liveFolder = folder.thaw() else { return }
         try? liveFolder.realm?.write {

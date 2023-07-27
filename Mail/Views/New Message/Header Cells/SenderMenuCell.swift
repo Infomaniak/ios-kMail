@@ -46,6 +46,7 @@ struct SenderMenuCell: View {
                     MailResourcesAsset.check.swiftUIImage
                 }
             }
+            .accessibilityHint(MailResourcesStrings.Localizable.contentDescriptionButtonSelectSignature)
 
             Text(signature.senderEmailIdn)
         }
