@@ -122,11 +122,16 @@ struct AddMailboxView: View {
         Task {
             do {
                 try await AccountManager.instance.addMailbox(mail: newAddress, password: password)
-            } catch {
+            } catch let error as MailApiError where error == .apiInvalidCredential {
                 withAnimation {
                     showError = true
                     password = ""
                 }
+            } catch {
+                withAnimation {
+                    password = ""
+                }
+                await IKSnackBar.showSnackBar(message: error.localizedDescription)
             }
         }
     }
