@@ -39,96 +39,81 @@ struct AddMailboxView: View {
     }
 
     var body: some View {
-        ZStack(alignment: .leading) {
-            ScrollView {
-                VStack(alignment: .leading, spacing: 0) {
-                    Text(MailResourcesStrings.Localizable.attachMailboxDescription1)
-                        .textStyle(.bodySecondary)
-                        .padding(.bottom, 8)
+        ScrollView {
+            VStack(alignment: .leading, spacing: 0) {
+                Text(MailResourcesStrings.Localizable.attachMailboxDescription1)
+                    .textStyle(.bodySecondary)
+                    .padding(.bottom, 8)
 
-                    Text(MailResourcesStrings.Localizable.attachMailboxDescription2)
-                        .textStyle(.bodySecondary)
-                        .padding(.bottom, 16)
+                Text(MailResourcesStrings.Localizable.attachMailboxDescription2)
+                    .textStyle(.bodySecondary)
+                    .padding(.bottom, 16)
 
-                    TextField(
-                        MailResourcesStrings.Localizable.attachMailboxInputHint,
-                        text: $newAddress
-                    ) { editingChanged in
-                        if !editingChanged {
-                            showInvalidEmailError = !newAddress.isEmpty && invalidEmailAddress
-                        } else {
-                            showInvalidEmailError = false
-                            showError = false
-                        }
-                    }
-                    .textContentType(.emailAddress)
-                    .keyboardType(.emailAddress)
-                    .autocorrectionDisabled()
-                    .padding(12)
-                    .overlay {
-                        RoundedRectangle(cornerRadius: 4, style: .continuous)
-                            .stroke(
-                                (showError || showInvalidEmailError) ? MailResourcesAsset.redColor
-                                    .swiftUIColor : MailResourcesAsset
-                                    .elementsColor.swiftUIColor,
-                                lineWidth: 1
-                            )
-                    }
-                    .padding(.bottom, 4)
-
-                    if showInvalidEmailError {
-                        Text(MailResourcesStrings.Localizable.errorInvalidEmailAddress)
-                            .textStyle(.labelError)
-                            .padding(.bottom, 16)
+                TextField(
+                    MailResourcesStrings.Localizable.attachMailboxInputHint,
+                    text: $newAddress
+                ) { editingChanged in
+                    if !editingChanged {
+                        showInvalidEmailError = !newAddress.isEmpty && invalidEmailAddress
                     } else {
-                        Text(MailResourcesStrings.Localizable.errorInvalidCredentials)
-                            .textStyle(.labelError)
-                            .opacity(showError ? 1 : 0)
-                            .padding(.bottom, 16)
+                        showInvalidEmailError = false
+                        showError = false
                     }
+                }
+                .textContentType(.emailAddress)
+                .keyboardType(.emailAddress)
+                .autocorrectionDisabled()
+                .padding(12)
+                .overlay {
+                    RoundedRectangle(cornerRadius: 4, style: .continuous)
+                        .stroke(
+                            (showError || showInvalidEmailError) ? MailResourcesAsset.redColor
+                                .swiftUIColor : MailResourcesAsset
+                                .elementsColor.swiftUIColor,
+                            lineWidth: 1
+                        )
+                }
+                .padding(.bottom, 4)
 
-                    SecureField(MailResourcesStrings.Localizable.attachMailboxPasswordInputHint, text: $password)
-                        .textContentType(.password)
-                        .padding([.vertical, .leading], 12)
-                        .padding(.trailing, 16)
-                        .overlay {
-                            RoundedRectangle(cornerRadius: 4, style: .continuous)
-                                .stroke(
-                                    showError ? MailResourcesAsset.redColor.swiftUIColor : MailResourcesAsset.elementsColor
-                                        .swiftUIColor,
-                                    lineWidth: 1
-                                )
-                        }
-
+                if showInvalidEmailError {
+                    Text(MailResourcesStrings.Localizable.errorInvalidEmailAddress)
+                        .textStyle(.labelError)
+                        .padding(.bottom, 16)
+                } else {
                     Text(MailResourcesStrings.Localizable.errorInvalidCredentials)
                         .textStyle(.labelError)
                         .opacity(showError ? 1 : 0)
+                        .padding(.bottom, 16)
+                }
 
-                    Spacer()
-
-                    MailButton(label: MailResourcesStrings.Localizable.buttonAttachMailbox) {
-                        // Fake button for sizing
+                SecureField(MailResourcesStrings.Localizable.attachMailboxPasswordInputHint, text: $password)
+                    .textContentType(.password)
+                    .padding([.vertical, .leading], 12)
+                    .padding(.trailing, 16)
+                    .overlay {
+                        RoundedRectangle(cornerRadius: 4, style: .continuous)
+                            .stroke(
+                                showError ? MailResourcesAsset.redColor.swiftUIColor : MailResourcesAsset.elementsColor
+                                    .swiftUIColor,
+                                lineWidth: 1
+                            )
                     }
-                    .disabled(true)
-                    .mailButtonFullWidth(true)
-                    .hidden()
-                }
-                .padding(.horizontal, 16)
-                .padding(.vertical, 32)
-            }
 
-            VStack(alignment: .center) {
-                Spacer()
-
-                MailButton(label: MailResourcesStrings.Localizable.buttonAttachMailbox) {
-                    addMailbox()
-                }
-                .disabled(buttonDisabled)
-                .mailButtonFullWidth(true)
+                Text(MailResourcesStrings.Localizable.errorInvalidCredentials)
+                    .textStyle(.labelError)
+                    .opacity(showError ? 1 : 0)
             }
             .padding(.horizontal, 16)
             .padding(.vertical, 32)
-            .frame(maxWidth: .infinity)
+        }
+        .safeAreaInset(edge: .bottom) {
+            MailButton(label: MailResourcesStrings.Localizable.buttonAttachMailbox) {
+                addMailbox()
+            }
+            .disabled(buttonDisabled)
+            .mailButtonFullWidth(true)
+            .padding(.horizontal, 16)
+            .padding(.vertical, 32)
         }
         .navigationBarTitle(MailResourcesStrings.Localizable.attachMailboxTitle, displayMode: .inline)
     }
