@@ -104,8 +104,7 @@ struct AddMailboxView: View {
                     .textStyle(.labelError)
                     .opacity(showError ? 1 : 0)
             }
-            .padding(.horizontal, 16)
-            .padding(.vertical, 32)
+            .padding(16)
         }
         .safeAreaInset(edge: .bottom) {
             MailButton(label: MailResourcesStrings.Localizable.buttonAttachMailbox) {
@@ -115,8 +114,7 @@ struct AddMailboxView: View {
             .mailButtonLoading(isButtonLoading)
             .mailButtonFullWidth(true)
             .disabled(buttonDisabled)
-            .padding(.horizontal, 16)
-            .padding(.vertical, 32)
+            .padding(24)
         }
         .navigationBarTitle(MailResourcesStrings.Localizable.attachMailboxTitle, displayMode: .inline)
     }
