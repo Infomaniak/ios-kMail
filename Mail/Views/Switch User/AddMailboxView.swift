@@ -117,14 +117,18 @@ struct AddMailboxView: View {
                 .padding(.vertical, 32)
             }
 
-            MailButton(label: MailResourcesStrings.Localizable.buttonAttachMailbox) {
-                addMailbox()
+            VStack(alignment: .center) {
+                Spacer()
+
+                MailButton(label: MailResourcesStrings.Localizable.buttonAttachMailbox) {
+                    addMailbox()
+                }
+                .disabled(buttonDisabled)
+                .mailButtonFullWidth(true)
             }
-            .disabled(buttonDisabled)
-            .mailButtonFullWidth(true)
-            .frame(maxHeight: .infinity, alignment: .bottom)
             .padding(.horizontal, 16)
             .padding(.vertical, 32)
+            .frame(maxWidth: .infinity)
         }
         .navigationBarTitle(MailResourcesStrings.Localizable.attachMailboxTitle, displayMode: .inline)
     }
