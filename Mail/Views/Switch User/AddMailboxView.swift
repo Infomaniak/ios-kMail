@@ -28,7 +28,11 @@ struct AddMailboxView: View {
     @State private var newAddress = ""
     @State private var password = ""
     @State private var showError = false
-    @State private var invalidEmailAddress = false
+    @State private var showInvalidEmailError = false
+
+    private var invalidEmailAddress: Bool {
+        return !Constants.isEmailAddress(newAddress)
+    }
 
     private var buttonDisabled: Bool {
         return invalidEmailAddress || password.isEmpty
@@ -51,9 +55,9 @@ struct AddMailboxView: View {
                         text: $newAddress
                     ) { editingChanged in
                         if !editingChanged {
-                            invalidEmailAddress = newAddress.isEmpty ? true : !Constants.isEmailAddress(newAddress)
+                            showInvalidEmailError = !newAddress.isEmpty && invalidEmailAddress
                         } else {
-                            invalidEmailAddress = false
+                            showInvalidEmailError = false
                             showError = false
                         }
                     }
@@ -64,14 +68,15 @@ struct AddMailboxView: View {
                     .overlay {
                         RoundedRectangle(cornerRadius: 4, style: .continuous)
                             .stroke(
-                                (showError || invalidEmailAddress) ? MailResourcesAsset.redColor.swiftUIColor : MailResourcesAsset
+                                (showError || showInvalidEmailError) ? MailResourcesAsset.redColor
+                                    .swiftUIColor : MailResourcesAsset
                                     .elementsColor.swiftUIColor,
                                 lineWidth: 1
                             )
                     }
                     .padding(.bottom, 4)
 
-                    if invalidEmailAddress {
+                    if showInvalidEmailError {
                         Text(MailResourcesStrings.Localizable.errorInvalidEmailAddress)
                             .textStyle(.labelError)
                             .padding(.bottom, 16)
