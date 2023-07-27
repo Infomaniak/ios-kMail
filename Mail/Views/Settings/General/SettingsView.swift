@@ -18,12 +18,15 @@
 
 import InfomaniakCore
 import InfomaniakCoreUI
+import InfomaniakDI
 import MailCore
 import MailResources
 import SwiftUI
 
 struct SettingsView: View {
     @EnvironmentObject private var mailboxManager: MailboxManager
+
+    @LazyInjectService private var appLockHelper: AppLockHelper
 
     @AppStorage(UserDefaults.shared.key(.threadDensity)) private var density = DefaultPreferences.threadDensity
     @AppStorage(UserDefaults.shared.key(.theme)) private var theme = DefaultPreferences.theme
@@ -52,13 +55,15 @@ struct SettingsView: View {
                 Text(MailResourcesStrings.Localizable.settingsSectionGeneral)
                     .textStyle(.bodySmallSecondary)
 
-                SettingsToggleCell(
-                    title: MailResourcesStrings.Localizable.settingsAppLock,
-                    userDefaults: \.isAppLockEnabled,
-                    matomoCategory: .settingsGeneral,
-                    matomoName: "lock"
-                )
-                .settingCellModifier()
+                if appLockHelper.isAvailable {
+                    SettingsToggleCell(
+                        title: MailResourcesStrings.Localizable.settingsAppLock,
+                        userDefaults: \.isAppLockEnabled,
+                        matomoCategory: .settingsGeneral,
+                        matomoName: "lock"
+                    )
+                    .settingCellModifier()
+                }
 
                 SettingsSubMenuCell(title: MailResourcesStrings.Localizable.settingsMailboxGeneralNotifications) {
                     SettingsNotificationsView()
