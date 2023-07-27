@@ -29,6 +29,7 @@ struct AddMailboxView: View {
     @State private var password = ""
     @State private var showError = false
     @State private var showInvalidEmailError = false
+    @State private var isButtonLoading = false
 
     private var invalidEmailAddress: Bool {
         return !Constants.isEmailAddress(newAddress)
@@ -110,8 +111,10 @@ struct AddMailboxView: View {
             MailButton(label: MailResourcesStrings.Localizable.buttonAttachMailbox) {
                 addMailbox()
             }
-            .disabled(buttonDisabled)
+            .mailButtonStyle(.large)
+            .mailButtonLoading(isButtonLoading)
             .mailButtonFullWidth(true)
+            .disabled(buttonDisabled)
             .padding(.horizontal, 16)
             .padding(.vertical, 32)
         }
@@ -121,15 +124,19 @@ struct AddMailboxView: View {
     private func addMailbox() {
         Task {
             do {
+                isButtonLoading = true
                 try await AccountManager.instance.addMailbox(mail: newAddress, password: password)
+                isButtonLoading = false
             } catch let error as MailApiError where error == .apiInvalidCredential {
                 withAnimation {
                     showError = true
                     password = ""
+                    isButtonLoading = false
                 }
             } catch {
                 withAnimation {
                     password = ""
+                    isButtonLoading = false
                 }
                 await IKSnackBar.showSnackBar(message: error.localizedDescription)
             }
