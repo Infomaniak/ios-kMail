@@ -153,6 +153,7 @@ struct FolderCellContent: View {
                     ChevronIcon(style: folder.isExpanded ? .up : .down, color: .secondary)
                 }
                 .opacity(level == 0 && !folder.children.isEmpty ? 1 : 0)
+                .accessibilityLabel(MailResourcesStrings.Localizable.contentDescriptionButtonExpandFolder(folder.name))
             }
 
             folder.icon
@@ -202,6 +203,9 @@ struct FolderCellContent: View {
     }
 
     private func collapseFolder() {
+        @InjectService var matomo: MatomoUtils
+        matomo.track(eventWithCategory: .menuDrawer, name: "collapseFolder", value: !folder.isExpanded)
+
         guard let liveFolder = folder.thaw() else { return }
         try? liveFolder.realm?.write {
             liveFolder.isExpanded = !folder.isExpanded
