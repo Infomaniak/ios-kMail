@@ -201,16 +201,12 @@ public class DraftContentManager: ObservableObject {
     private func guessMostFittingSignature(userSignatures: [Signature], defaultSignature: Signature) -> Signature {
         guard let previousMessage = messageReply?.message else { return defaultSignature }
 
-        var signaturesAssociatedToEmail = [String: [Signature]]()
-        for signature in userSignatures {
-            signaturesAssociatedToEmail[signature.senderEmail, default: []].append(signature)
-        }
-
+        let signaturesGroupedByEmail = Dictionary(grouping: userSignatures, by: \.senderEmail)
         let recipientsFieldsToCheck = [\Message.to, \Message.from, \Message.cc]
         for field in recipientsFieldsToCheck {
             if let signature = findSignatureInRecipients(
                 recipients: previousMessage[keyPath: field],
-                signaturesAssociatedToEmail: signaturesAssociatedToEmail
+                signaturesGroupedByEmail: signaturesGroupedByEmail
             ) {
                 return signature.freezeIfNeeded()
             }
@@ -220,15 +216,15 @@ public class DraftContentManager: ObservableObject {
     }
 
     private func findSignatureInRecipients(recipients: List<Recipient>,
-                                           signaturesAssociatedToEmail: [String: [Signature]]) -> Signature? {
-        let matchingEmailRecipients = recipients.filter { signaturesAssociatedToEmail[$0.email] != nil }.toArray()
+                                           signaturesGroupedByEmail: [String: [Signature]]) -> Signature? {
+        let matchingEmailRecipients = recipients.filter { signaturesGroupedByEmail[$0.email] != nil }.toArray()
         guard !matchingEmailRecipients.isEmpty else { return nil }
 
         var bestSignature: Signature?
         var bestMatchingScore: SignatureMatch?
 
         for recipient in matchingEmailRecipients {
-            guard let signatures = signaturesAssociatedToEmail[recipient.email],
+            guard let signatures = signaturesGroupedByEmail[recipient.email],
                   let (signature, computedScore) = computeScore(for: signatures, recipient: recipient) else { continue }
 
             if computedScore == .exactMatchDefault {
