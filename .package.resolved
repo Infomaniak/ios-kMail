@@ -14,8 +14,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/ProxymanApp/atlantis",
       "state" : {
-        "revision" : "f6f7be1330bd4f847b6d52278acd88516eaac471",
-        "version" : "1.21.1"
+        "revision" : "cfa72085bce2600b28e47fdbbbfa2d5b96f0392b",
+        "version" : "1.22.0"
       }
     },
     {
@@ -139,8 +139,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/kean/Nuke",
       "state" : {
-        "revision" : "c3864b8882bc69f5edfe5c70e18786c91d228b28",
-        "version" : "12.1.3"
+        "revision" : "989586f86b683680f7bd5765d6a5683edbea0c1b",
+        "version" : "12.1.4"
       }
     },
     {
@@ -175,8 +175,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/getsentry/sentry-cocoa",
       "state" : {
-        "revision" : "e46936ed191c0112cd3276e1c10c0bb7f865268e",
-        "version" : "8.9.1"
+        "revision" : "259d8bc75aa4028416535d35840ff19fc7661292",
+        "version" : "8.9.3"
       }
     },
     {
@@ -246,8 +246,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/siteline/SwiftUI-Introspect",
       "state" : {
-        "revision" : "730ab9e6cdbb3122ad88277b295c4cecd284a311",
-        "version" : "0.9.1"
+        "revision" : "ccb973cfff703cba53fb88197413485c060eb26b",
+        "version" : "0.10.0"
       }
     },
     {

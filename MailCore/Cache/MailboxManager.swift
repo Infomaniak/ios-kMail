@@ -27,6 +27,8 @@ import Sentry
 import SwiftRegex
 
 public final class MailboxManager: ObservableObject {
+    @LazyInjectService private var snackbarPresenter: SnackBarPresentable
+
     public final class MailboxManagerConstants {
         private let fileManager = FileManager.default
         public let rootDocumentsURL: URL
@@ -980,7 +982,7 @@ public final class MailboxManager: ObservableObject {
             || firstMessageFolderRole == .spam
             || firstMessageFolderRole == .draft {
             try await delete(messages: messagesToMoveOrDelete)
-            async let _ = IKSnackBar.showSnackBar(message: deletionSnackbarMessage(for: messages, permanentlyDelete: true))
+            async let _ = snackbarPresenter.show(message: deletionSnackbarMessage(for: messages, permanentlyDelete: true))
         } else {
             let undoRedoAction = try await move(messages: messagesToMoveOrDelete, to: .trash)
             async let _ = IKSnackBar.showCancelableSnackBar(
