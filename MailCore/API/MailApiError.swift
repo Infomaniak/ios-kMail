@@ -25,9 +25,12 @@ public class MailApiError: MailError {
                                                             .errorMessageNotFound,
                                                         shouldDisplay: true)
 
+    public static let apiInvalidCredential = MailApiError(code: "invalid_credentials")
+
     static let allErrors: [MailApiError] = [
         // General
         MailApiError(code: "not_authorized"),
+        apiInvalidCredential,
 
         // Folder
         MailApiError(code: "folder__unable_to_create"),
