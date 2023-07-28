@@ -149,6 +149,10 @@ struct ComposeMessageView: View {
             }
         }
         .onDisappear {
+            // Only save draft on Disappear on the main app. Share extension manages its own Draft()
+            guard !Bundle.main.isExtension else {
+                return
+            }
             draftManager.syncDraft(mailboxManager: mailboxManager)
         }
         .interactiveDismissDisabled()
