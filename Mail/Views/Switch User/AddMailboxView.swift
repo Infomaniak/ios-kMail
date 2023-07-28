@@ -31,18 +31,39 @@ struct AddMailboxView: View {
     @State private var newAddress = ""
     @State private var password = ""
     @State private var showError = false
+    @State private var showInvalidEmailError = false
+    @State private var isButtonLoading = false
+
+    private var invalidEmailAddress: Bool {
+        return !Constants.isEmailAddress(newAddress)
+    }
 
     private var buttonDisabled: Bool {
-        return !Constants.isEmailAddress(newAddress) || password.isEmpty
+        return invalidEmailAddress || password.isEmpty
     }
 
     var body: some View {
-        VStack(alignment: .leading) {
-            Text(MailResourcesStrings.Localizable.attachMailboxDescription1)
-                .textStyle(.bodySecondary)
-                .padding(.bottom, 32)
+        ScrollView {
+            VStack(alignment: .leading, spacing: 0) {
+                Text(MailResourcesStrings.Localizable.attachMailboxDescription1)
+                    .textStyle(.bodySecondary)
+                    .padding(.bottom, 8)
 
-            TextField(MailResourcesStrings.Localizable.attachMailboxInputHint, text: $newAddress)
+                Text(MailResourcesStrings.Localizable.attachMailboxDescription2)
+                    .textStyle(.bodySecondary)
+                    .padding(.bottom, 16)
+
+                TextField(
+                    MailResourcesStrings.Localizable.attachMailboxInputHint,
+                    text: $newAddress
+                ) { editingChanged in
+                    if !editingChanged {
+                        showInvalidEmailError = !newAddress.isEmpty && invalidEmailAddress
+                    } else {
+                        showInvalidEmailError = false
+                        showError = false
+                    }
+                }
                 .textContentType(.emailAddress)
                 .keyboardType(.emailAddress)
                 .autocorrectionDisabled()
@@ -50,54 +71,73 @@ struct AddMailboxView: View {
                 .overlay {
                     RoundedRectangle(cornerRadius: 4, style: .continuous)
                         .stroke(
-                            showError ? MailResourcesAsset.redColor.swiftUIColor : MailResourcesAsset.elementsColor.swiftUIColor,
+                            (showError || showInvalidEmailError) ? MailResourcesAsset.redColor
+                                .swiftUIColor : MailResourcesAsset
+                                .elementsColor.swiftUIColor,
                             lineWidth: 1
                         )
                 }
                 .padding(.bottom, 4)
 
-            Text(MailResourcesStrings.Localizable.attachMailboxDescription2)
-                .textStyle(showError ? .labelError : .labelSecondary)
-                .padding(.bottom, 8)
-
-            SecureField(MailResourcesStrings.Localizable.attachMailboxPasswordInputHint, text: $password)
-                .textContentType(.password)
-                .padding([.vertical, .leading], 12)
-                .padding(.trailing, 16)
-                .overlay {
-                    RoundedRectangle(cornerRadius: 4, style: .continuous)
-                        .stroke(
-                            showError ? MailResourcesAsset.redColor.swiftUIColor : MailResourcesAsset.elementsColor.swiftUIColor,
-                            lineWidth: 1
-                        )
+                if showInvalidEmailError {
+                    Text(MailResourcesStrings.Localizable.errorInvalidEmailAddress)
+                        .textStyle(.labelError)
+                        .padding(.bottom, 16)
+                } else {
+                    Text(MailResourcesStrings.Localizable.errorInvalidCredentials)
+                        .textStyle(.labelError)
+                        .opacity(showError ? 1 : 0)
+                        .padding(.bottom, 16)
                 }
-                .padding(.bottom, 4)
 
-            Text(MailResourcesStrings.Localizable.errorInvalidCredentials)
-                .textStyle(.labelError)
-                .opacity(showError ? 1 : 0)
+                SecureField(MailResourcesStrings.Localizable.attachMailboxPasswordInputHint, text: $password)
+                    .textContentType(.password)
+                    .padding([.vertical, .leading], 12)
+                    .padding(.trailing, 16)
+                    .overlay {
+                        RoundedRectangle(cornerRadius: 4, style: .continuous)
+                            .stroke(
+                                showError ? MailResourcesAsset.redColor.swiftUIColor : MailResourcesAsset.elementsColor
+                                    .swiftUIColor,
+                                lineWidth: 1
+                            )
+                    }
 
-            Spacer()
-
+                Text(MailResourcesStrings.Localizable.errorInvalidCredentials)
+                    .textStyle(.labelError)
+                    .opacity(showError ? 1 : 0)
+            }
+            .padding(16)
+        }
+        .safeAreaInset(edge: .bottom) {
             MailButton(label: MailResourcesStrings.Localizable.buttonAttachMailbox) {
                 addMailbox()
             }
-            .disabled(buttonDisabled)
+            .mailButtonStyle(.large)
+            .mailButtonLoading(isButtonLoading)
             .mailButtonFullWidth(true)
+            .disabled(buttonDisabled)
+            .padding(24)
         }
         .navigationBarTitle(MailResourcesStrings.Localizable.attachMailboxTitle, displayMode: .inline)
-        .padding(.horizontal, 16)
-        .padding(.vertical, 32)
     }
 
     private func addMailbox() {
         Task {
             do {
+                isButtonLoading = true
                 try await accountManager.addMailbox(mail: newAddress, password: password)
-            } catch {
+                isButtonLoading = false
+            } catch let error as MailApiError where error == .apiInvalidCredential {
                 withAnimation {
                     showError = true
                     password = ""
+                    isButtonLoading = false
+                }
+            } catch {
+                withAnimation {
+                    password = ""
+                    isButtonLoading = false
                 }
                 snackbarPresenter.show(message: error.localizedDescription)
             }

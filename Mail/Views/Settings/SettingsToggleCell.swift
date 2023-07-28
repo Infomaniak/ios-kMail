@@ -24,8 +24,8 @@ import MailResources
 import SwiftUI
 
 struct SettingsToggleCell: View {
-    @LazyInjectService var appLockHelper: AppLockHelper
-    @LazyInjectService var matomo: MatomoUtils
+    @LazyInjectService private var appLockHelper: AppLockHelper
+    @LazyInjectService private var matomo: MatomoUtils
 
     let title: String
     let userDefaults: ReferenceWritableKeyPath<UserDefaults, Bool>
