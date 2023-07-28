@@ -245,7 +245,7 @@ final class AttachmentsManager: ObservableObject {
         // Cap max number of attachments, API errors out at 100
         let attachmentsSlice = attachments[safe: 0 ..< draft.availableAttachmentsSlots]
 
-        Task.detached {
+        Task {
             try? await self.parallelTaskMapper.map(collection: attachmentsSlice) { attachment in
                 _ = await self.importAttachment(attachment: attachment, disposition: disposition)
                 // TODO: - Manage inline attachment

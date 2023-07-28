@@ -47,7 +47,7 @@ extension NSItemProvider: Attachable {
     func writeToTemporaryURL() async throws -> URL {
         switch underlyingType {
         case .isURL:
-            let getPlist = try ItemProviderWeblocRepresentation(from: self)
+            let getPlist = try ItemProviderURLRepresentation(from: self)
             return try await getPlist.result.get()
 
         case .isText:
