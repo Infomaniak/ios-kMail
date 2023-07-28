@@ -38,11 +38,11 @@ struct AddMailboxView: View {
 
     var body: some View {
         VStack(alignment: .leading) {
-            Text(MailResourcesStrings.Localizable.attachAddressDescription)
+            Text(MailResourcesStrings.Localizable.attachMailboxDescription1)
                 .textStyle(.bodySecondary)
                 .padding(.bottom, 32)
 
-            TextField(MailResourcesStrings.Localizable.attachAddressInputHint, text: $newAddress)
+            TextField(MailResourcesStrings.Localizable.attachMailboxInputHint, text: $newAddress)
                 .textContentType(.emailAddress)
                 .keyboardType(.emailAddress)
                 .autocorrectionDisabled()
@@ -56,11 +56,11 @@ struct AddMailboxView: View {
                 }
                 .padding(.bottom, 4)
 
-            Text(MailResourcesStrings.Localizable.attachAddressInputHelper)
+            Text(MailResourcesStrings.Localizable.attachMailboxDescription2)
                 .textStyle(showError ? .labelError : .labelSecondary)
                 .padding(.bottom, 8)
 
-            SecureField(MailResourcesStrings.Localizable.attachAddressPasswordInputHint, text: $password)
+            SecureField(MailResourcesStrings.Localizable.attachMailboxPasswordInputHint, text: $password)
                 .textContentType(.password)
                 .padding([.vertical, .leading], 12)
                 .padding(.trailing, 16)
@@ -79,13 +79,13 @@ struct AddMailboxView: View {
 
             Spacer()
 
-            MailButton(label: MailResourcesStrings.Localizable.buttonAttachEmailAddress) {
+            MailButton(label: MailResourcesStrings.Localizable.buttonAttachMailbox) {
                 addMailbox()
             }
             .disabled(buttonDisabled)
             .mailButtonFullWidth(true)
         }
-        .navigationBarTitle(MailResourcesStrings.Localizable.attachAddressTitle, displayMode: .inline)
+        .navigationBarTitle(MailResourcesStrings.Localizable.attachMailboxTitle, displayMode: .inline)
         .padding(.horizontal, 16)
         .padding(.vertical, 32)
     }

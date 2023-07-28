@@ -1,7 +1,17 @@
 {
   "images" : [
     {
-      "filename" : "audio-file.svg",
+      "filename" : "audio-file-light.svg",
+      "idiom" : "universal"
+    },
+    {
+      "appearances" : [
+        {
+          "appearance" : "luminosity",
+          "value" : "dark"
+        }
+      ],
+      "filename" : "audio-file-dark.svg",
       "idiom" : "universal"
     }
   ],

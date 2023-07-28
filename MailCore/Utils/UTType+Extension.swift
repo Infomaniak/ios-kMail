@@ -16,20 +16,15 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import MailCore
-import MailResources
-import SwiftUI
+import Foundation
+import UniformTypeIdentifiers
 
-struct AttachmentCell: View {
-    let attachment: Attachment
+public extension UTType {
+    static let pages = UTType("com.apple.iwork.pages.sffpages")!
+    static let wordDoc = UTType("com.microsoft.word.doc")!
+    static let wordDocm = UTType(mimeType: "application/vnd.ms-word")!
+    static let wordDocx = UTType("org.openxmlformats.wordprocessingml.document")!
+    static let onlyOffice = UTType("org.oasis-open.opendocument.text")!
 
-    var body: some View {
-        AttachmentView(attachment: attachment, subtitle: attachment.size.formatted(.defaultByteCount))
-    }
-}
-
-struct AttachmentCell_Previews: PreviewProvider {
-    static var previews: some View {
-        AttachmentCell(attachment: PreviewHelper.sampleAttachment)
-    }
+    static let ics = UTType(mimeType: "application/ics")!
 }

@@ -392,46 +392,9 @@ public final class MailboxManager: ObservableObject {
         return try await move(messages: messages, to: folder)
     }
 
-    /// Move to trash or delete threads, depending on its current state
-    /// - Parameter threads: Threads to remove
     public func moveOrDelete(threads: [Thread]) async throws {
-        // All threads comes from the same folder
-        guard let parentFolder = threads.first?.folder else { return }
-
-        if parentFolder.toolType == .search {
-            for thread in threads {
-                await deleteInSearch(thread: thread) // Review this ?
-            }
-        }
-
-        if parentFolder.role == .trash || parentFolder.role == .draft || parentFolder.role == .spam {
-            var messages = threads.flatMap(\.messages)
-            messages.append(contentsOf: messages.flatMap(\.duplicates))
-            try await delete(messages: messages)
-        } else {
-            var messages = threads.flatMap(\.messages).filter { $0.scheduled == false }
-            messages.append(contentsOf: messages.flatMap(\.duplicates))
-            let undoRedoAction = try await move(messages: messages, to: .trash)
-            let folderName = FolderRole.trash.localizedName
-            Task.detached {
-                await IKSnackBar.showCancelableSnackBar(message: MailResourcesStrings.Localizable.snackbarThreadMoved(folderName),
-                                                        cancelSuccessMessage: MailResourcesStrings.Localizable
-                                                            .snackbarMoveCancelled,
-                                                        undoRedoAction: undoRedoAction,
-                                                        mailboxManager: self)
-            }
-        }
-    }
-
-    private func deleteInSearch(thread: Thread) async {
-        await backgroundRealm.execute { realm in
-            guard let searchFolder = realm.object(ofType: Folder.self, forPrimaryKey: Constants.searchFolderId),
-                  let thread = thread.fresh(using: realm) else { return }
-
-            try? realm.safeWrite {
-                searchFolder.threads.remove(thread)
-            }
-        }
+        let messagesToMoveOrDelete = threads.flatMap(\.messages)
+        try await moveOrDelete(messages: messagesToMoveOrDelete)
     }
 
     public func toggleStar(threads: [Thread]) async throws {
@@ -1009,26 +972,52 @@ public final class MailboxManager: ObservableObject {
         }
     }
 
-    /// Move to trash or delete message, depending on its current state
-    /// - Parameter message: Message to remove
-    public func moveOrDelete(message: Message) async throws {
-        if message.folder?.role == .trash
-            || message.folder?.role == .spam
-            || message.folder?.role == .draft {
-            var messages = [message]
-            messages.append(contentsOf: message.duplicates)
-            try await delete(messages: messages)
+    private func moveOrDeleteMessagesInSameFolder(messages: [Message]) async throws {
+        let messagesToMoveOrDelete = messages + messages.flatMap(\.duplicates)
+
+        let firstMessageFolderRole = messages.first?.folder?.role
+        if firstMessageFolderRole == .trash
+            || firstMessageFolderRole == .spam
+            || firstMessageFolderRole == .draft {
+            try await delete(messages: messagesToMoveOrDelete)
+            async let _ = IKSnackBar.showSnackBar(message: deletionSnackbarMessage(for: messages, permanentlyDelete: true))
         } else {
-            var messages = [message]
-            messages.append(contentsOf: message.duplicates)
-            let undoRedoAction = try await move(messages: messages, to: .trash)
-            Task.detached {
-                await IKSnackBar.showCancelableSnackBar(
-                    message: MailResourcesStrings.Localizable.snackbarMessageMoved(FolderRole.trash.localizedName),
-                    cancelSuccessMessage: MailResourcesStrings.Localizable.snackbarMoveCancelled,
-                    undoRedoAction: undoRedoAction,
-                    mailboxManager: self
-                )
+            let undoRedoAction = try await move(messages: messagesToMoveOrDelete, to: .trash)
+            async let _ = IKSnackBar.showCancelableSnackBar(
+                message: deletionSnackbarMessage(for: messages, permanentlyDelete: false),
+                cancelSuccessMessage: MailResourcesStrings.Localizable.snackbarMoveCancelled,
+                undoRedoAction: undoRedoAction,
+                mailboxManager: self
+            )
+        }
+    }
+
+    private func deletionSnackbarMessage(for messages: [Message], permanentlyDelete: Bool) -> String {
+        if let firstMessageThreadMessagesCount = messages.first?.originalThread?.messages.count,
+           messages.count == 1 && firstMessageThreadMessagesCount > 1 {
+            return permanentlyDelete ?
+                MailResourcesStrings.Localizable.snackbarMessageDeletedPermanently :
+                MailResourcesStrings.Localizable.snackbarMessageMoved(FolderRole.trash.localizedName)
+        } else {
+            let uniqueThreadCount = Set(messages.compactMap(\.originalThread?.uid)).count
+            if permanentlyDelete {
+                return MailResourcesStrings.Localizable.snackbarThreadDeletedPermanently(uniqueThreadCount)
+            } else if uniqueThreadCount == 1 {
+                return MailResourcesStrings.Localizable.snackbarThreadMoved(FolderRole.trash.localizedName)
+            } else {
+                return MailResourcesStrings.Localizable.snackbarThreadsMoved(FolderRole.trash.localizedName)
+            }
+        }
+    }
+
+    public func moveOrDelete(messages: [Message]) async throws {
+        let messagesGroupedByFolderId = Dictionary(grouping: messages, by: \.folderId)
+
+        await withThrowingTaskGroup(of: Void.self) { group in
+            for messagesInSameFolder in messagesGroupedByFolderId.values {
+                group.addTask {
+                    try await self.moveOrDeleteMessagesInSameFolder(messages: messagesInSameFolder)
+                }
             }
         }
     }

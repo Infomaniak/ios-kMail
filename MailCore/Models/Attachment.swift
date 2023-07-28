@@ -53,24 +53,35 @@ public class Attachment: /* Hashable, */ EmbeddedObject, Codable, Identifiable {
 
     public var icon: MailResourcesImages {
         guard let uti else { return MailResourcesAsset.unknownFile }
-        if uti.conforms(to: .audio) {
-            return MailResourcesAsset.audioFile
-        } else if uti.conforms(to: .archive) {
-            return MailResourcesAsset.zipFile
+
+        if uti.conforms(to: .pdf) {
+            return MailResourcesAsset.pdfFile
+        } else if uti.conforms(to: .calendarEvent) || uti.conforms(to: .ics) {
+            return MailResourcesAsset.icsFile
+        } else if uti.conforms(to: .vCard) {
+            return MailResourcesAsset.vcardFile
         } else if uti.conforms(to: .image) {
-            return MailResourcesAsset.imageFileLandscape
-        } else if uti.conforms(to: .pdf) {
-            return MailResourcesAsset.officeFileAdobe
-        } else if uti.conforms(to: .plainText) {
-            return MailResourcesAsset.commonFileText
-        } else if uti.conforms(to: .presentation) {
-            return MailResourcesAsset.officeFileGraph
-        } else if uti.conforms(to: .spreadsheet) {
-            return MailResourcesAsset.officeFileSheet
+            return MailResourcesAsset.imageFile
+        } else if uti.conforms(to: .audio) {
+            return MailResourcesAsset.audioFile
         } else if uti.conforms(to: .movie) {
-            return MailResourcesAsset.videoFilePlay
+            return MailResourcesAsset.videoFile
+        } else if uti.conforms(to: .spreadsheet) {
+            return MailResourcesAsset.gridFile
+        } else if uti.conforms(to: .presentation) {
+            return MailResourcesAsset.pointFile
+        } else if uti.conforms(to: .sourceCode) || uti.conforms(to: .html) || uti.conforms(to: .json) || uti.conforms(to: .xml) {
+            return MailResourcesAsset.codeFile
+        } else if uti.conforms(to: .text) || uti.conforms(to: .pages) || uti.conforms(to: .onlyOffice)
+            || uti.conforms(to: .wordDoc) || uti.conforms(to: .wordDocm) || uti.conforms(to: .wordDocx) {
+            return MailResourcesAsset.docFile
+        } else if uti.conforms(to: .archive) {
+            return MailResourcesAsset.archiveFile
+        } else if uti.conforms(to: .font) {
+            return MailResourcesAsset.fontFile
+        } else {
+            return MailResourcesAsset.unknownFile
         }
-        return MailResourcesAsset.unknownFile
     }
 
     private enum CodingKeys: String, CodingKey {

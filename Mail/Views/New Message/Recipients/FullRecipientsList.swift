@@ -20,6 +20,8 @@ import MailCore
 import RealmSwift
 import SwiftUI
 import WrappingHStack
+import InfomaniakDI
+import InfomaniakCoreUI
 
 struct FullRecipientsList: View {
     @EnvironmentObject private var mailboxManager: MailboxManager
@@ -42,6 +44,9 @@ struct FullRecipientsList: View {
     }
 
     @MainActor private func remove(recipientAt: Int) {
+        @InjectService var matomo: MatomoUtils
+        matomo.track(eventWithCategory: .newMessage, name: "deleteRecipient")
+
         withAnimation {
             $recipients.remove(at: recipientAt)
         }
