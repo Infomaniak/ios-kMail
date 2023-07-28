@@ -33,7 +33,7 @@ struct ComposeMessageWrapperView: View {
     @LazyInjectService private var accountManager: AccountManager
 
     init(dismissHandler: @escaping SimpleClosure, itemProviders: [NSItemProvider], draft: Draft = Draft()) {
-        _draft = State(initialValue: draft)
+        _draft = State(wrappedValue: draft)
 
         // Append save draft action if possible
         @InjectService var manager: AccountManager

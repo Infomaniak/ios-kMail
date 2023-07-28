@@ -20,7 +20,6 @@ import Foundation
 import InfomaniakCore
 import InfomaniakDI
 import MailCore
-import OSLog
 
 private let realmRootPath = "mailboxes"
 private let appGroupIdentifier = "group.com.infomaniak.mail"
@@ -63,7 +62,6 @@ enum NotificationServiceAssembly {
 public struct EarlyDIHook {
     public init() {
         // setup DI ASAP
-        os_log("EarlyDIHook")
         NotificationServiceAssembly.setupDI()
     }
 }

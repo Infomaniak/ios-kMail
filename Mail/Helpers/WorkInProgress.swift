@@ -25,6 +25,6 @@ import MailResources
 // To delete: alert to facilitate tests for beta version
 @MainActor
 func showWorkInProgressSnackBar() {
-    @LazyInjectService var snackbarPresenter: SnackBarPresentable
+    @InjectService var snackbarPresenter: SnackBarPresentable
     snackbarPresenter.show(message: MailResourcesStrings.Localizable.workInProgressTitle)
 }

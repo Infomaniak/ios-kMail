@@ -39,7 +39,7 @@ public func tryOrDisplayError(_ body: () async throws -> Void) async {
 }
 
 private func displayErrorIfNeeded(error: Error) {
-    @LazyInjectService var snackbarPresenter: SnackBarPresentable
+    @InjectService var snackbarPresenter: SnackBarPresentable
     if let error = error as? MailError {
         if error.shouldDisplay && !Bundle.main.isExtension {
             snackbarPresenter.show(message: error.errorDescription)
