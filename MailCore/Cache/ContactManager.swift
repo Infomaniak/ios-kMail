@@ -198,7 +198,7 @@ public class ContactManager: ObservableObject {
             }
         }
 
-        flatMergedContacts = tmpMergedContacts.flatMap { $0.value.values }
+        flatMergedContacts = tmpMergedContacts.flatMap(\.value.values)
         mergedContacts = tmpMergedContacts
     }
 

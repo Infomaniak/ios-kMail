@@ -282,6 +282,7 @@ public final class Draft: Object, Codable, Identifiable {
         try container.encode(ackRequest, forKey: .ackRequest)
         try container.encode(priority, forKey: .priority)
         try container.encode(swissTransferUuid, forKey: .swissTransferUuid)
+        // swiftformat:disable:next all
         let attachmentsArray = Array(attachments.compactMap { $0.uuid })
         try container.encode(attachmentsArray, forKey: .attachments)
         try container.encode(action, forKey: .action)

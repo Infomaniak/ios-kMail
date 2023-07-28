@@ -31,7 +31,7 @@ public class URLSchemeHandler: NSObject, WKURLSchemeHandler {
             urlSchemeTask.didFailWithError(MailError.resourceError)
             return
         }
-        
+
         guard let currentAccessToken = AccountManager.instance.getCurrentAccount()?.token?.accessToken else {
             urlSchemeTask.didFailWithError(MailError.unknownError)
             return
