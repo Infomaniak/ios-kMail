@@ -410,18 +410,10 @@ public class MailboxManager: ObservableObject {
     }
 
     public func toggleStar(threads: [Thread]) async throws {
-        if threads.contains(where: { !$0.flagged }) {
-            let messages = threads.flatMap { thread in
-                thread.lastMessageAndItsDuplicateToExecuteAction(currentMailboxEmail: mailbox.email)
-            }
-            _ = try await star(messages: messages)
-        } else {
-            var messages = threads.flatMap { thread in
-                thread.messages.where { $0.isDraft == false }
-            }
-            messages.append(contentsOf: messages.flatMap(\.duplicates))
-            _ = try await unstar(messages: messages)
+        let messagesToToggleStar = threads.flatMap { thread in
+            thread.lastMessageAndItsDuplicateToExecuteAction(currentMailboxEmail: mailbox.email)
         }
+        try await toggleStar(messages: messagesToToggleStar)
     }
 
     // MARK: - Search
@@ -1092,13 +1084,25 @@ public class MailboxManager: ObservableObject {
         try await refreshFolder(from: messages)
     }
 
-    public func star(messages: [Message]) async throws -> MessageActionResult {
+    public func toggleStar(messages: [Message]) async throws {
+        if messages.contains(where: { !$0.flagged }) {
+            let messagesToStar = messages + messages.flatMap(\.duplicates)
+            _ = try await star(messages: messagesToStar)
+        } else {
+            let messagesToUnstar = messages
+                .compactMap { $0.originalThread?.messages.where { $0.isDraft == false } }
+                .flatMap { $0 + $0.flatMap(\.duplicates) }
+            _ = try await unstar(messages: messagesToUnstar)
+        }
+    }
+
+    private func star(messages: [Message]) async throws -> MessageActionResult {
         let response = try await apiFetcher.star(mailbox: mailbox, messages: messages)
         try await refreshFolder(from: messages)
         return response
     }
 
-    public func unstar(messages: [Message]) async throws -> MessageActionResult {
+    private func unstar(messages: [Message]) async throws -> MessageActionResult {
         let response = try await apiFetcher.unstar(mailbox: mailbox, messages: messages)
         try await refreshFolder(from: messages)
         return response

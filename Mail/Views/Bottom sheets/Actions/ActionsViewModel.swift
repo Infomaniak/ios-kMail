@@ -438,18 +438,12 @@ enum ActionsTarget: Equatable, Identifiable {
     }
 
     private func star() async throws {
-        switch target {
-        case .threads(let threads, _):
-            await tryOrDisplayError {
+        await tryOrDisplayError {
+            switch target {
+            case .threads(let threads, _):
                 try await mailboxManager.toggleStar(threads: threads)
-            }
-        case .message(let message):
-            await tryOrDisplayError {
-                if message.flagged {
-                    _ = try await mailboxManager.unstar(messages: [message])
-                } else {
-                    _ = try await mailboxManager.star(messages: [message])
-                }
+            case .message(let message):
+                try await mailboxManager.toggleStar(messages: [message])
             }
         }
     }
