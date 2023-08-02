@@ -20,7 +20,6 @@ import MailCore
 import MailResources
 import RealmSwift
 import SwiftUI
-import InfomaniakDI
 
 struct MailboxListView: View {
     @EnvironmentObject private var mailboxManager: MailboxManager
