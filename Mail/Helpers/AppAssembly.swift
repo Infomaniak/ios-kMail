@@ -120,9 +120,6 @@ enum ApplicationAssembly {
             Factory(type: RemoteNotificationRegistrable.self) { _, _ in
                 RemoteNotificationRegistrer()
             },
-            Factory(type: RootViewManageable.self) { _, _ in
-                RootViewManager()
-            },
             Factory(type: URLNavigable.self) { _, _ in
                 URLNavigator()
             }

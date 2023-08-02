@@ -26,7 +26,6 @@ import Sentry
 import SwiftUI
 
 final class AccountViewDelegate: DeleteAccountDelegate {
-    @LazyInjectService private var rootViewManager: RootViewManageable
     @LazyInjectService private var accountManager: AccountManager
     @LazyInjectService private var snackbarPresenter: SnackBarPresentable
 
