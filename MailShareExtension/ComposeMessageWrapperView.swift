@@ -19,6 +19,7 @@
 import InfomaniakCore
 import InfomaniakCoreUI
 import InfomaniakDI
+import MailResources
 import MailCore
 import Social
 import SwiftUI
@@ -78,8 +79,7 @@ struct PleaseLoginView: View {
                 .scaledToFit()
                 .frame(height: UIConstants.onboardingLogoHeight)
                 .padding(.top, UIConstants.onboardingLogoPaddingTop)
-            // TODO: i18n
-            Text("Please login in ikMail first")
+            Text(MailResourcesStrings.Localizable.pleaseLogInFirst)
                 .textStyle(.header2)
                 .padding(.top, UIConstants.onboardingLogoPaddingTop)
             LottieView(configuration: slide.lottieConfiguration!)
