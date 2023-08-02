@@ -36,7 +36,7 @@ public final class CacheManager: CacheManageable {
                 try await accountManager.updateUser(for: currentAccount)
                 accountManager.enableBugTrackerIfAvailable()
 
-                try await accountManager.contactManager?.fetchContactsAndAddressBooks()
+                try await accountManager.currentContactManager?.fetchContactsAndAddressBooks()
             } catch {
                 DDLogError("Error while updating user account: \(error)")
             }
