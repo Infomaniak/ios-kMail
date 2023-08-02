@@ -119,9 +119,6 @@ enum ApplicationAssembly {
             },
             Factory(type: RemoteNotificationRegistrable.self) { _, _ in
                 RemoteNotificationRegistrer()
-            },
-            Factory(type: URLNavigable.self) { _, _ in
-                URLNavigator()
             }
         ]
 

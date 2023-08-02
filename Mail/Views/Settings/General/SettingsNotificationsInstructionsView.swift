@@ -16,15 +16,14 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import InfomaniakDI
 import MailResources
 import SwiftUI
-import InfomaniakDI
 
 struct SettingsNotificationsInstructionsView: View {
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.openURL) var openURL
 
-    @LazyInjectService private var urlNavigator: URLNavigable
-    
     var body: some View {
         VStack(alignment: .leading, spacing: 24) {
             Text(MailResourcesStrings.Localizable.alertNotificationsDisabledTitle)
@@ -43,7 +42,7 @@ struct SettingsNotificationsInstructionsView: View {
             return
         }
 
-        urlNavigator.openUrlIfPossible(settingsUrl)
+        openURL.callAsFunction(settingsUrl)
     }
 }
 

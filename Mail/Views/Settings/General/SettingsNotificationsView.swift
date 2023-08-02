@@ -27,10 +27,11 @@ import SwiftUI
 struct SettingsNotificationsView: View {
     @LazyInjectService private var notificationService: InfomaniakNotifications
     @LazyInjectService private var matomo: MatomoUtils
-    @LazyInjectService private var urlNavigator: URLNavigable
     @LazyInjectService private var accountManager: AccountManager
 
     @EnvironmentObject private var mailboxManager: MailboxManager
+
+    @Environment(\.openURL) private var openURL
 
     @AppStorage(UserDefaults.shared.key(.notificationsEnabled)) private var notificationsEnabled = DefaultPreferences
         .notificationsEnabled
@@ -52,7 +53,7 @@ struct SettingsNotificationsView: View {
                                 return
                             }
 
-                            urlNavigator.openUrlIfPossible(settingsUrl)
+                            openURL.callAsFunction(settingsUrl)
                         }
                         .mailButtonStyle(.link)
                     }
