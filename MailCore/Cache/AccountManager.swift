@@ -218,7 +218,7 @@ public final class AccountManager: RefreshTokenDelegate, ObservableObject {
         }
         tokenStore.removeTokenFor(userId: token.userId)
         if let account = account(for: token.userId),
-            account.userId == currentUserId {
+           account.userId == currentUserId {
             delegate?.currentAccountNeedsAuthentication()
             NotificationsHelper.sendDisconnectedNotification()
         }

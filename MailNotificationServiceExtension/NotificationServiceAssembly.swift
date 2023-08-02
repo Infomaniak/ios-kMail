@@ -19,6 +19,8 @@
 import Foundation
 import InfomaniakCore
 import InfomaniakDI
+import InfomaniakLogin
+import InfomaniakNotifications
 import MailCore
 
 private let realmRootPath = "mailboxes"
@@ -39,8 +41,35 @@ enum NotificationServiceAssembly {
 
     private static func setupMainServices() {
         let factories = [
+            Factory(type: InfomaniakNetworkLoginable.self) { _, _ in
+                InfomaniakNetworkLogin(clientId: MailApiFetcher.clientId)
+            },
+            Factory(type: InfomaniakLoginable.self) { _, _ in
+                InfomaniakLogin(clientId: MailApiFetcher.clientId)
+            },
+            Factory(type: KeychainHelper.self) { _, _ in
+                KeychainHelper(accessGroup: AccountManager.accessGroup)
+            },
+            Factory(type: InfomaniakNotifications.self) { _, _ in
+                InfomaniakNotifications(appGroup: AccountManager.appGroup)
+            },
+            Factory(type: DraftManager.self) { _, _ in
+                DraftManager()
+            },
             Factory(type: AccountManager.self) { _, _ in
                 AccountManager()
+            },
+            Factory(type: SnackBarPresentable.self) { _, _ in
+                SnackBarPresenter()
+            },
+            Factory(type: MessagePresentable.self) { _, _ in
+                MessagePresenter()
+            },
+            Factory(type: UserActivityController.self) { _, _ in
+                UserActivityController()
+            },
+            Factory(type: PlatformDetectable.self) { _, _ in
+                PlatformDetector()
             },
             Factory(type: AppGroupPathProvidable.self) { _, _ in
                 guard let provider = AppGroupPathProvider(
@@ -51,7 +80,10 @@ enum NotificationServiceAssembly {
                 }
 
                 return provider
-            }
+            },
+            Factory(type: TokenStore.self) { _, _ in
+                TokenStore()
+            },
         ]
 
         factories.registerFactoriesInDI()
