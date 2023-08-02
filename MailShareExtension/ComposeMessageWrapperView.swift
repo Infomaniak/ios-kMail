@@ -40,11 +40,9 @@ struct ComposeMessageWrapperView: View {
         @InjectService var manager: AccountManager
         if let mailboxManager = manager.currentMailboxManager {
             let saveDraft: SimpleClosure = { _ in
-                let detached = draft.detached()
-                Task {
-                    @InjectService var draftManager: DraftManager
-                    _ = await draftManager.initialSaveRemotely(draft: detached, mailboxManager: mailboxManager)
-                }
+                let detachedDraft = draft.detached()
+                @InjectService var draftManager: DraftManager
+                draftManager.saveAndProcessDraftFromShareExtension(draft: detachedDraft, mailboxManager: mailboxManager)
             }
             self.dismissHandler = saveDraft + dismissHandler
         } else {

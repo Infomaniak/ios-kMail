@@ -125,7 +125,7 @@ public final class DraftManager {
                         var sendDate: Date?
                         switch draft.action {
                         case .initialSave:
-                            await self.initialSaveRemotely(draft: draft, mailboxManager: mailboxManager)
+                            await self.initialSaveRemotelyAndNotify(draft: draft, mailboxManager: mailboxManager)
                         case .save:
                             await self.saveDraftRemotely(draft: draft, mailboxManager: mailboxManager)
                         case .send:
@@ -148,21 +148,55 @@ public final class DraftManager {
         }
     }
 
-    /// First save of a draft with the remote if needed
+    /// Process a `draft` when the ShareExtension dismisses.
+    /// - Parameters:
+    ///   - draft: Expecting a .detached draft
+    ///   - mailboxManager: the mailbox manager
+    public func saveAndProcessDraftFromShareExtension(draft: Draft, mailboxManager: MailboxManager) {
+        Task {
+            let saved = await self.initialSaveRemotelyIfNonEmpty(draft: draft, mailboxManager: mailboxManager)
+
+            // No message for empty draft
+            guard saved else {
+                return
+            }
+
+            // Present a matching message
+            @InjectService var messagePresentable: MessagePresentable
+            if draft.action == .send {
+                messagePresentable.show(message: MailResourcesStrings.Localizable.snackbarEmailSending)
+            } else {
+                messagePresentable.show(message: MailResourcesStrings.Localizable.snackbarDraftSaved)
+            }
+        }
+    }
+
+    /// First save of a draft with the remote if non empty
     @discardableResult
-    public func initialSaveRemotely(draft: Draft, mailboxManager: MailboxManager) async -> Bool {
+    private func initialSaveRemotelyIfNonEmpty(draft: Draft, mailboxManager: MailboxManager) async -> Bool {
         guard !isDraftEmpty(draft: draft) else {
             deleteEmptyDraft(draft: draft, for: mailboxManager)
             return false
         }
 
         await saveDraftRemotely(draft: draft, mailboxManager: mailboxManager)
-        let messageAction: MessageAction = (MailResourcesStrings.Localizable.actionDelete, { [weak self] in
-            self?.matomo.track(eventWithCategory: .snackbar, name: "deleteDraft")
-            self?.deleteDraftSnackBarAction(draft: draft, mailboxManager: mailboxManager)
-        })
-        messagePresentable.show(message: MailResourcesStrings.Localizable.snackbarDraftSaved, action: messageAction)
         return true
+    }
+
+    /// First save of a draft with the remote if non empty.
+    ///
+    /// Present a message with a `delete draft`  action
+    @discardableResult
+    public func initialSaveRemotelyAndNotify(draft: Draft, mailboxManager: MailboxManager) async -> Bool {
+        let saved = await initialSaveRemotelyIfNonEmpty(draft: draft, mailboxManager: mailboxManager)
+        if saved {
+            let messageAction: MessageAction = (MailResourcesStrings.Localizable.actionDelete, { [weak self] in
+                self?.matomo.track(eventWithCategory: .snackbar, name: "deleteDraft")
+                self?.deleteDraftSnackBarAction(draft: draft, mailboxManager: mailboxManager)
+            })
+            messagePresentable.show(message: MailResourcesStrings.Localizable.snackbarDraftSaved, action: messageAction)
+        }
+        return saved
     }
 
     /// Check multiple conditions to infer if a draft is empty or not

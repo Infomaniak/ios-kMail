@@ -41,7 +41,7 @@ public func tryOrDisplayError(_ body: () async throws -> Void) async {
 private func displayErrorIfNeeded(error: Error) {
     @InjectService var snackbarPresenter: SnackBarPresentable
     if let error = error as? MailError {
-        if error.shouldDisplay && !Bundle.main.isExtension {
+        if error.shouldDisplay {
             snackbarPresenter.show(message: error.errorDescription)
         } else {
             SentrySDK.capture(message: "Encountered error that we didn't display to the user") { scope in
@@ -52,7 +52,7 @@ private func displayErrorIfNeeded(error: Error) {
             }
         }
         DDLogError("MailError: \(error)")
-    } else if error.shouldDisplay && !Bundle.main.isExtension {
+    } else if error.shouldDisplay {
         snackbarPresenter.show(message: error.localizedDescription)
         DDLogError("Error: \(error)")
     }
@@ -60,13 +60,17 @@ private func displayErrorIfNeeded(error: Error) {
 
 public extension Error {
     var shouldDisplay: Bool {
+        guard !Bundle.main.isExtension else {
+            return false
+        }
+
         switch asAFError {
         case .explicitlyCancelled:
             return false
         case .sessionTaskFailed(let error):
             return (error as NSError).code != NSURLErrorNotConnectedToInternet
         default:
-            return true
+            return false
         }
     }
 }
