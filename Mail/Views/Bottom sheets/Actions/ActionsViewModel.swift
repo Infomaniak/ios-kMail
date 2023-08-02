@@ -239,7 +239,6 @@ enum ActionsTarget: Equatable, Identifiable {
     @Published var listActions: [Action] = []
 
     @LazyInjectService private var matomo: MatomoUtils
-    @LazyInjectService private var accountManager: AccountManager
     @LazyInjectService private var snackbarPresenter: SnackBarPresentable
 
     init(mailboxManager: MailboxManager,
