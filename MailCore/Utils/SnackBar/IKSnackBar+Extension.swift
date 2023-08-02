@@ -41,23 +41,6 @@ public extension SnackBarStyle {
     }
 }
 
-// TODO: delete
-public final class SnackBarAvoider {
-    public var snackBarInset: CGFloat = 0
-
-    public init() { /* Needed to init */ }
-
-    public func addAvoider(inset: CGFloat) {
-        if inset != snackBarInset {
-            snackBarInset = inset
-        }
-    }
-
-    public func removeAvoider() {
-        snackBarInset = 0
-    }
-}
-
 public extension IKSnackBar {
     @discardableResult
     @MainActor
@@ -76,7 +59,7 @@ public extension IKSnackBar {
         anchor: CGFloat = 0,
         contextView: UIView? = nil
     ) -> IKSnackBar? {
-        @LazyInjectService var avoider: SnackBarAvoider
+        @LazyInjectService var avoider: IKSnackBarAvoider
 
         let snackbar: IKSnackBar?
         if let contextView = contextView {

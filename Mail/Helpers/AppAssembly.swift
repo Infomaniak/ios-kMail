@@ -67,8 +67,8 @@ enum ApplicationAssembly {
             Factory(type: MatomoUtils.self) { _, _ in
                 MatomoUtils(siteId: Constants.matomoId, baseURL: URLConstants.matomo.url)
             },
-            Factory(type: SnackBarAvoider.self) { _, _ in
-                SnackBarAvoider()
+            Factory(type: IKSnackBarAvoider.self) { _, _ in
+                IKSnackBarAvoider()
             },
             Factory(type: DraftManager.self) { _, _ in
                 DraftManager()

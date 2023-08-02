@@ -16,12 +16,13 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import InfomaniakCoreUI
 import InfomaniakDI
 import MailCore
 import SwiftUI
 
 struct SnackBarAwareModifier: ViewModifier {
-    @InjectService var avoider: SnackBarAvoider
+    @InjectService var avoider: IKSnackBarAvoider
     var inset: CGFloat {
         didSet {
             avoider.addAvoider(inset: inset)

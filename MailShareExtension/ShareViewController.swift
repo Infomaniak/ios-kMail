@@ -65,10 +65,12 @@ final class ShareNavigationViewController: UIViewController {
         }
 
         // We need to go threw wrapping to use SwiftUI in an NSExtension.
-        let hostingController = UIHostingController(rootView: ComposeMessageWrapperView(dismissHandler: {
-                self.dismiss(animated: true)
-            },
-            itemProviders: itemProviders))
+        let rootView = ComposeMessageWrapperView(dismissHandler: {
+                                                     self.dismiss(animated: true)
+                                                 },
+                                                 itemProviders: itemProviders)
+            .defaultAppStorage(.shared)
+        let hostingController = UIHostingController(rootView: rootView)
         hostingController.view.translatesAutoresizingMaskIntoConstraints = false
         addChild(hostingController)
         view.addSubview(hostingController.view)
