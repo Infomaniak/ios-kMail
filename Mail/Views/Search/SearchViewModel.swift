@@ -97,8 +97,7 @@ enum SearchState {
     @Published var isLoading = false
 
     @LazyInjectService var matomo: MatomoUtils
-    @LazyInjectService private var accountManager: AccountManager
-    
+
     let searchFolder: Folder
     var resourceNext: String?
     var lastSearch = ""

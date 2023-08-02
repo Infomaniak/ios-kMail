@@ -19,7 +19,6 @@
 import Contacts
 import Foundation
 import InfomaniakCore
-import InfomaniakDI
 import Nuke
 import RealmSwift
 import SwiftUI
@@ -37,8 +36,6 @@ extension CNContact {
 }
 
 public final class MergedContact {
-    @LazyInjectService private var accountManager: AccountManager
-
     private static let contactFormatter = CNContactFormatter()
 
     public var email: String

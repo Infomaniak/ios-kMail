@@ -17,7 +17,6 @@
  */
 
 import Foundation
-import InfomaniakDI
 import InfomaniakCore
 import MailResources
 import Nuke
@@ -73,7 +72,6 @@ public final class Recipient: EmbeddedObject, Codable {
 
         return recipients
     }
-
 
     func isCurrentUser(currentAccountEmail: String) -> Bool {
         return currentAccountEmail == email

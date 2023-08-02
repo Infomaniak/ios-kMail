@@ -50,7 +50,6 @@ final class AccountViewDelegate: DeleteAccountDelegate {
 struct AccountView: View {
     @LazyInjectService private var matomo: MatomoUtils
     @LazyInjectService private var tokenStore: TokenStore
-    @LazyInjectService private var accountManager: AccountManager
 
     @Environment(\.dismiss) private var dismiss
 

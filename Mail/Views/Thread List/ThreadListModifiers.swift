@@ -54,7 +54,6 @@ struct ThreadListCellAppearance: ViewModifier {
 
 struct ThreadListToolbar: ViewModifier {
     @LazyInjectService private var matomo: MatomoUtils
-    @LazyInjectService private var accountManager: AccountManager
 
     @Environment(\.isCompactWindow) private var isCompactWindow
 
