@@ -129,10 +129,10 @@ enum ApplicationAssembly {
 /// Something that loads the DI on init
 public struct EarlyDIHook {
     public init() {
-        // Setup debug stack early
-        Logging.initLogging()
-        
         // setup DI ASAP
         ApplicationAssembly.setupDI()
+
+        // Setup debug stack early, requires DI to be setup to work
+        Logging.initLogging()
     }
 }
