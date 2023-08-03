@@ -36,10 +36,7 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(_ application: UIApplication,
                      willFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil) -> Bool {
-        Logging.initLogging()
-
         DDLogInfo("Application starting in foreground ? \(applicationState.applicationState != .background)")
-        ApiFetcher.decoder.dateDecodingStrategy = .iso8601
 
         UNUserNotificationCenter.current().delegate = notificationCenterDelegate
         Task {
