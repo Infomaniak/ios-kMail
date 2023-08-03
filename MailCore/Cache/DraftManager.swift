@@ -70,7 +70,7 @@ public final class DraftManager {
     private static let saveExpirationSec = 3
 
     @LazyInjectService private var matomo: MatomoUtils
-    @LazyInjectService private var messagePresentable: MessagePresentable
+    @LazyInjectService private var alertDisplayable: UserAlertDisplayable
 
     /// Used by DI only
     public init() {
@@ -93,13 +93,13 @@ public final class DraftManager {
             try await mailboxManager.save(draft: draft)
         } catch {
             guard error.shouldDisplay else { return }
-            messagePresentable.show(message: error.localizedDescription)
+            alertDisplayable.show(message: error.localizedDescription)
         }
         await draftQueue.endBackgroundTask(uuid: draft.localUUID)
     }
 
     public func send(draft: Draft, mailboxManager: MailboxManager) async -> Date? {
-        messagePresentable.show(message: MailResourcesStrings.Localizable.snackbarEmailSending)
+        alertDisplayable.show(message: MailResourcesStrings.Localizable.snackbarEmailSending)
 
         var sendDate: Date?
         await draftQueue.cleanQueueElement(uuid: draft.localUUID)
@@ -107,10 +107,10 @@ public final class DraftManager {
 
         do {
             let cancelableResponse = try await mailboxManager.send(draft: draft)
-            messagePresentable.show(message: MailResourcesStrings.Localizable.snackbarEmailSent)
+            alertDisplayable.show(message: MailResourcesStrings.Localizable.snackbarEmailSent)
             sendDate = cancelableResponse.scheduledDate
         } catch {
-            messagePresentable.show(message: error.localizedDescription)
+            alertDisplayable.show(message: error.localizedDescription)
         }
         await draftQueue.endBackgroundTask(uuid: draft.localUUID)
         return sendDate
@@ -162,11 +162,11 @@ public final class DraftManager {
             }
 
             // Present a matching message
-            @InjectService var messagePresentable: MessagePresentable
+            @InjectService var alertDisplayable: UserAlertDisplayable
             if draft.action == .send {
-                messagePresentable.show(message: MailResourcesStrings.Localizable.snackbarEmailSending)
+                alertDisplayable.show(message: MailResourcesStrings.Localizable.snackbarEmailSending)
             } else {
-                messagePresentable.show(message: MailResourcesStrings.Localizable.snackbarDraftSaved)
+                alertDisplayable.show(message: MailResourcesStrings.Localizable.snackbarDraftSaved)
             }
         }
     }
@@ -190,11 +190,11 @@ public final class DraftManager {
     public func initialSaveRemotelyAndNotify(draft: Draft, mailboxManager: MailboxManager) async -> Bool {
         let saved = await initialSaveRemotelyIfNonEmpty(draft: draft, mailboxManager: mailboxManager)
         if saved {
-            let messageAction: MessageAction = (MailResourcesStrings.Localizable.actionDelete, { [weak self] in
+            let messageAction: UserAlertAction = (MailResourcesStrings.Localizable.actionDelete, { [weak self] in
                 self?.matomo.track(eventWithCategory: .snackbar, name: "deleteDraft")
                 self?.deleteDraftSnackBarAction(draft: draft, mailboxManager: mailboxManager)
             })
-            messagePresentable.show(message: MailResourcesStrings.Localizable.snackbarDraftSaved, action: messageAction)
+            alertDisplayable.show(message: MailResourcesStrings.Localizable.snackbarDraftSaved, action: messageAction)
         }
         return saved
     }
@@ -260,7 +260,7 @@ public final class DraftManager {
             await tryOrDisplayError {
                 if let liveDraft = draft.thaw() {
                     try await mailboxManager.delete(draft: liveDraft.freeze())
-                    messagePresentable.show(message: MailResourcesStrings.Localizable.snackbarDraftDeleted)
+                    alertDisplayable.show(message: MailResourcesStrings.Localizable.snackbarDraftDeleted)
                     if let draftFolder = mailboxManager.getFolder(with: .draft)?.freeze() {
                         await mailboxManager.refresh(folder: draftFolder)
                     }

@@ -28,7 +28,7 @@ import UserNotifications
 /// Something that can present a message to the user, abstracted of execution context (App / NSExtension)
 ///
 /// Will present a snackbar while main app is opened, a local notification in Extension or Background.
-public protocol MessagePresentable {
+public protocol UserAlertDisplayable {
     /// Will present a snackbar while main app is opened, a local notification in Extension or Background.
     /// - Parameter message: The message to display
     func show(message: String)
@@ -37,12 +37,12 @@ public protocol MessagePresentable {
     /// - Parameters:
     ///   - message: The message to display
     ///   - action:  Title and closure associated with the action
-    func show(message: String, action: MessageAction)
+    func show(message: String, action: UserAlertAction)
 }
 
-public typealias MessageAction = (name: String, closure: () -> Void)
+public typealias UserAlertAction = (name: String, closure: () -> Void)
 
-public final class MessagePresenter: MessagePresentable {
+public final class UserAlertDisplayer: UserAlertDisplayable {
     @LazyInjectService private var snackbarPresenter: SnackBarPresentable
     @LazyInjectService private var applicationState: ApplicationStatable
 
@@ -51,19 +51,19 @@ public final class MessagePresenter: MessagePresentable {
         // META: keep sonarcloud happy
     }
 
-    // MARK: - MessagePresentable
+    // MARK: - UserAlertDisplayable
 
     public func show(message: String) {
         showInContext(message: message, action: nil)
     }
 
-    public func show(message: String, action: MessageAction) {
+    public func show(message: String, action: UserAlertAction) {
         showInContext(message: message, action: action)
     }
 
     // MARK: - private
 
-    private func showInContext(message: String, action: MessageAction?) {
+    private func showInContext(message: String, action: UserAlertAction?) {
         Task { @MainActor in
             // check not in extension mode
             guard !Bundle.main.isExtension else {
@@ -84,7 +84,7 @@ public final class MessagePresenter: MessagePresentable {
 
     // MARK: Private
 
-    private func presentInSnackbar(message: String, action: MessageAction?) {
+    private func presentInSnackbar(message: String, action: UserAlertAction?) {
         guard let action = action else {
             snackbarPresenter.show(message: message)
             return
@@ -94,7 +94,7 @@ public final class MessagePresenter: MessagePresentable {
         snackbarPresenter.show(message: message, action: snackBarAction)
     }
 
-    private func presentInLocalNotification(message: String, action: MessageAction?) {
+    private func presentInLocalNotification(message: String, action: UserAlertAction?) {
         if action != nil {
             DDLogError("Action not implemented in notifications for now")
         }
@@ -107,7 +107,7 @@ public final class MessagePresenter: MessagePresentable {
         let request = UNNotificationRequest(identifier: uuidString, content: content, trigger: trigger)
         let notificationCenter = UNUserNotificationCenter.current()
         notificationCenter.add(request) { error in
-            DDLogError("MessagePresenter local notification error:\(String(describing: error)) ")
+            DDLogError("UserAlertDisplayer local notification error:\(String(describing: error)) ")
         }
 
         // Self destruct this notification, as used only for user feedback

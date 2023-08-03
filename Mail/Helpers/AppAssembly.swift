@@ -79,8 +79,8 @@ enum ApplicationAssembly {
             Factory(type: SnackBarPresentable.self) { _, _ in
                 SnackBarPresenter()
             },
-            Factory(type: MessagePresentable.self) { _, _ in
-                MessagePresenter()
+            Factory(type: UserAlertDisplayable.self) { _, _ in
+                UserAlertDisplayer()
             },
             Factory(type: ApplicationStatable.self) { _, _ in
                 ApplicationState()
