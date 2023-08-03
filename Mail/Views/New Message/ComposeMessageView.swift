@@ -125,6 +125,7 @@ struct ComposeMessageView: View {
         NavigationView {
             composeMessage
         }
+        .navigationViewStyle(.stack)
         .task {
             do {
                 isLoadingContent = true
