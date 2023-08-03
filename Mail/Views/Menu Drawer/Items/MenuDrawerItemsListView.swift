@@ -63,8 +63,6 @@ struct MenuDrawerItemsHelpListView: View {
     @State private var isShowingHelp = false
     @State private var isShowingBugTracker = false
 
-    @LazyInjectService private var accountManager: AccountManager
-
     var body: some View {
         MenuDrawerItemsListView {
             MenuDrawerItemCell(icon: MailResourcesAsset.feedback,
