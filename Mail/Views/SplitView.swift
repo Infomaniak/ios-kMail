@@ -28,11 +28,17 @@ import RealmSwift
 import SwiftUI
 
 public class SplitViewManager: ObservableObject {
+    @LazyInjectService private var platformDetector: PlatformDetectable
+
     @Published var showSearch = false
     @Published var selectedFolder: Folder?
     var splitViewController: UISplitViewController?
 
     func adaptToProminentThreadView() {
+        guard !platformDetector.isMacCatalyst, !platformDetector.isiOSAppOnMac else {
+            return
+        }
+
         splitViewController?.hide(.primary)
         if splitViewController?.splitBehavior == .overlay {
             splitViewController?.hide(.supplementary)
@@ -153,7 +159,10 @@ struct SplitView: View {
     }
 
     private func setupBehaviour(orientation: UIInterfaceOrientation) {
-        if orientation.isLandscape || platformDetector.isMacCatalyst {
+        if platformDetector.isMacCatalyst || platformDetector.isiOSAppOnMac {
+            splitViewController?.preferredSplitBehavior = .tile
+            splitViewController?.preferredDisplayMode = .twoBesideSecondary
+        } else if orientation.isLandscape {
             splitViewController?.preferredSplitBehavior = .displace
             splitViewController?.preferredDisplayMode = splitViewManager.selectedFolder == nil
                 ? .twoDisplaceSecondary

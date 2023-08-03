@@ -25,6 +25,9 @@ public protocol PlatformDetectable {
     /// We are running in Mac Catalyst mode
     var isMacCatalyst: Bool { get }
 
+    /// We are running an iOS App on Mac
+    var isiOSAppOnMac: Bool { get }
+
     /// We are running in extension mode
     var isInExtension: Bool { get }
 }
@@ -40,6 +43,10 @@ public struct PlatformDetector: PlatformDetectable {
         #else
         false
         #endif
+    }()
+
+    public var isiOSAppOnMac: Bool = {
+        ProcessInfo().isiOSAppOnMac
     }()
 
     public var isInExtension: Bool = {
