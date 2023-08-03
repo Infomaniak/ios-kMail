@@ -43,7 +43,7 @@ final class ShareNavigationViewController: UIViewController {
 
         // Set theme
         overrideUserInterfaceStyle = UserDefaults.shared.theme.interfaceStyle
-        view.tintColor = UserDefaults.shared.accentColor.secondary.color
+        view.tintColor = UserDefaults.shared.accentColor.primary.color
 
         // Modify sheet size on iPadOS, property is ignored on iOS
         preferredContentSize = CGSize(width: 540, height: 620)
