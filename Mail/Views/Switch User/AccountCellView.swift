@@ -27,7 +27,7 @@ import SwiftUI
 
 struct AccountCellView: View {
     @LazyInjectService private var accountManager: AccountManager
-    
+
     @Environment(\.dismissModal) var dismissModal
 
     let account: Account

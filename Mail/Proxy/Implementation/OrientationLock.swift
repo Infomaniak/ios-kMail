@@ -28,7 +28,7 @@ public final class OrientationManager: OrientationManageable {
     public func setOrientationLock(_ orientation: UIInterfaceOrientationMask) {
         orientationLock = orientation
     }
-    
+
     public var interfaceOrientation: UIInterfaceOrientation? {
         UIApplication.shared.mainSceneKeyWindow?.windowScene?.interfaceOrientation
     }

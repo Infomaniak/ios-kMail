@@ -35,7 +35,7 @@ struct SettingsOptionView<OptionEnum>: View where OptionEnum: CaseIterable, Opti
     private let matomoName: KeyPath<OptionEnum, String>?
 
     @LazyInjectService private var matomo: MatomoUtils
-    
+
     @State private var values: [OptionEnum]
     @State private var selectedValue: OptionEnum {
         didSet {

@@ -157,7 +157,8 @@ public class Thread: Object, Decodable, Identifiable {
     }
 
     public func lastMessageToExecuteAction(currentMailboxEmail: String) -> Message? {
-        if let message = messages.last(where: { $0.isDraft == false && $0.fromMe(currentMailboxEmail: currentMailboxEmail) == false }) {
+        if let message = messages
+            .last(where: { $0.isDraft == false && $0.fromMe(currentMailboxEmail: currentMailboxEmail) == false }) {
             return message
         } else if let message = messages.last(where: { $0.isDraft == false }) {
             return message

@@ -16,11 +16,11 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import InfomaniakDI
 import MailCore
 import MailResources
 import RealmSwift
 import SwiftUI
-import InfomaniakDI
 
 struct UnavailableMailboxListView: View {
     @AppStorage(UserDefaults.shared.key(.accentColor)) private var accentColor = DefaultPreferences.accentColor
@@ -30,7 +30,7 @@ struct UnavailableMailboxListView: View {
         configuration: MailboxInfosManager.instance.realmConfiguration,
         where: { mailbox in
             @InjectService var accountManager: AccountManager
-            return (mailbox.userId == accountManager.currentUserId && mailbox.isPasswordValid == false)
+            return mailbox.userId == accountManager.currentUserId && mailbox.isPasswordValid == false
         },
         sortDescriptor: SortDescriptor(keyPath: \Mailbox.mailboxId)
     ) private var passwordBlockedMailboxes
@@ -40,7 +40,7 @@ struct UnavailableMailboxListView: View {
         configuration: MailboxInfosManager.instance.realmConfiguration,
         where: { mailbox in
             @InjectService var accountManager: AccountManager
-            return (mailbox.userId == accountManager.currentUserId && mailbox.isLocked == true)
+            return mailbox.userId == accountManager.currentUserId && mailbox.isLocked == true
         },
         sortDescriptor: SortDescriptor(keyPath: \Mailbox.mailboxId)
     ) private var lockedMailboxes

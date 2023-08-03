@@ -26,7 +26,7 @@ public protocol OrientationManageable {
 
     /// Set the orientation lock mask
     func setOrientationLock(_ orientation: UIInterfaceOrientationMask)
-    
+
     /// Read the interface orientation
     var interfaceOrientation: UIInterfaceOrientation? { get }
 }

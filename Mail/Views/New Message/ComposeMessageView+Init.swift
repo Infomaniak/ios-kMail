@@ -23,7 +23,8 @@ import MailCore
 import RealmSwift
 
 extension ComposeMessageView {
-    static func newMessage(_ draft: Draft, mailboxManager: MailboxManager, itemProviders: [NSItemProvider] = []) -> ComposeMessageView {
+    static func newMessage(_ draft: Draft, mailboxManager: MailboxManager,
+                           itemProviders: [NSItemProvider] = []) -> ComposeMessageView {
         return ComposeMessageView(draft: draft, mailboxManager: mailboxManager, attachments: itemProviders)
     }
 

@@ -24,7 +24,7 @@ import SwiftUI
 
 struct DetachMailboxConfirmationView: View {
     @LazyInjectService private var accountManager: AccountManager
-    
+
     @EnvironmentObject private var navigationState: NavigationState
 
     let mailbox: Mailbox

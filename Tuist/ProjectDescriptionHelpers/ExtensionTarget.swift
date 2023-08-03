@@ -19,5 +19,5 @@
 import ProjectDescription
 
 public extension Target {
-  // TODO move contructors here if needed
+    // TODO: move contructors here if needed
 }

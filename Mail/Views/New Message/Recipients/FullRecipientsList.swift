@@ -16,12 +16,12 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import InfomaniakCoreUI
+import InfomaniakDI
 import MailCore
 import RealmSwift
 import SwiftUI
 import WrappingHStack
-import InfomaniakDI
-import InfomaniakCoreUI
 
 struct FullRecipientsList: View {
     @EnvironmentObject private var mailboxManager: MailboxManager

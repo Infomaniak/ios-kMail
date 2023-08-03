@@ -27,7 +27,7 @@ struct AddMailboxView: View {
 
     @LazyInjectService private var accountManager: AccountManager
     @LazyInjectService private var snackbarPresenter: SnackBarPresentable
-    
+
     @State private var newAddress = ""
     @State private var password = ""
     @State private var showError = false

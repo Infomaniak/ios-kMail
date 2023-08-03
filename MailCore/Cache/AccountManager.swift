@@ -79,7 +79,7 @@ public final class AccountManager: RefreshTokenDelegate, ObservableObject {
     public var tokens = [ApiToken]()
     public let refreshTokenLockedQueue = DispatchQueue(label: "com.infomaniak.mail.refreshtoken")
     public static var instance = AccountManager()
-    
+
     public weak var delegate: AccountManagerDelegate?
     public var currentUserId: Int {
         didSet {

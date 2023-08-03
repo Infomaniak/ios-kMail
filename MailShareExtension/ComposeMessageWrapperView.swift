@@ -19,8 +19,8 @@
 import InfomaniakCore
 import InfomaniakCoreUI
 import InfomaniakDI
-import MailResources
 import MailCore
+import MailResources
 import Social
 import SwiftUI
 import UIKit

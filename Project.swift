@@ -24,7 +24,10 @@ let project = Project(name: "Mail",
                       packages: [
                           .package(url: "https://github.com/Infomaniak/ios-login", .upToNextMajor(from: "4.0.0")),
                           .package(url: "https://github.com/Infomaniak/ios-dependency-injection", .upToNextMajor(from: "1.1.6")),
-                          .package(url: "https://github.com/Infomaniak/ios-core", .revision("4eaefd644f75d833d6b1009dd94a9d6d674ccb53")),
+                          .package(
+                              url: "https://github.com/Infomaniak/ios-core",
+                              .revision("4eaefd644f75d833d6b1009dd94a9d6d674ccb53")
+                          ),
                           .package(url: "https://github.com/Infomaniak/ios-core-ui", .upToNextMajor(from: "2.5.2")),
                           .package(url: "https://github.com/Infomaniak/ios-notifications", .upToNextMajor(from: "3.0.0")),
                           .package(url: "https://github.com/Infomaniak/ios-create-account", .upToNextMajor(from: "1.1.0")),
@@ -36,7 +39,10 @@ let project = Project(name: "Mail",
                           .package(url: "https://github.com/flowbe/SwiftRegex", .upToNextMajor(from: "1.0.0")),
                           .package(url: "https://github.com/matomo-org/matomo-sdk-ios", .upToNextMajor(from: "7.5.1")),
                           .package(url: "https://github.com/siteline/SwiftUI-Introspect", .upToNextMajor(from: "0.9.0")),
-                          .package(url: "https://github.com/Ambrdctr/SQRichTextEditor", .revision("04737b7694ecc6cfd78631bce5fc370f310e7e14")),
+                          .package(
+                              url: "https://github.com/Ambrdctr/SQRichTextEditor",
+                              .revision("04737b7694ecc6cfd78631bce5fc370f310e7e14")
+                          ),
                           .package(url: "https://github.com/markiv/SwiftUI-Shimmer", .upToNextMajor(from: "1.0.1")),
                           .package(url: "https://github.com/dkk/WrappingHStack", .upToNextMajor(from: "2.0.0")),
                           .package(url: "https://github.com/kean/Nuke", .upToNextMajor(from: "12.1.3")),
@@ -114,7 +120,7 @@ let project = Project(name: "Mail",
                                         "Mail/Utils/**",
                                         "Mail/Views/**",
                                         "Mail/Proxy/Protocols/**"],
-                              resources:[
+                              resources: [
                                   "MailShareExtension/Base.lproj/MainInterface.storyboard",
                                   "MailShareExtension/ShareExtension.entitlements",
                                   "Mail/**/*.storyboard",

@@ -42,11 +42,10 @@ extension View {
 
 struct MailboxCell: View {
     @LazyInjectService private var accountManager: AccountManager
-    
+
     @Environment(\.mailboxCellStyle) private var style: Style
     @EnvironmentObject private var navigationDrawerState: NavigationDrawerState
 
-    
     @State private var isShowingLockedView = false
     @State private var isShowingUpdatePasswordView = false
 

@@ -20,11 +20,11 @@ import ProjectDescription
 
 public enum Constants {
     public static let baseSettings = SettingsDictionary()
-            .currentProjectVersion("1")
-            .marketingVersion("1.0.3")
-            .automaticCodeSigning(devTeam: "864VDCS2QY")
-            
+        .currentProjectVersion("1")
+        .marketingVersion("1.0.3")
+        .automaticCodeSigning(devTeam: "864VDCS2QY")
+
     public static let deploymentTarget = DeploymentTarget.iOS(targetVersion: "15.0", devices: [.iphone, .ipad])
-    
+
     public static let swiftlintScript = TargetScript.post(path: "scripts/lint.sh", name: "Swiftlint")
 }
