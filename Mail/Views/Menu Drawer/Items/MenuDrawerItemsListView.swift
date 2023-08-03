@@ -37,7 +37,7 @@ struct MenuDrawerItemsAdvancedListView: View {
             MenuDrawerItemCell(icon: MailResourcesAsset.drawerDownload,
                                label: MailResourcesStrings.Localizable.buttonImportEmails,
                                matomoName: "importEmails") {
-                openURL.callAsFunction(URLConstants.importMails.url)
+                openURL(URLConstants.importMails.url)
             }
             if mailboxCanRestoreEmails {
                 MenuDrawerItemCell(
@@ -91,7 +91,7 @@ struct MenuDrawerItemsHelpListView: View {
         if mailboxManager.account.user?.isStaff == true {
             isShowingBugTracker.toggle()
         } else if let userReportURL = URL(string: MailResourcesStrings.Localizable.urlUserReportiOS) {
-            openURL.callAsFunction(userReportURL)
+            openURL(userReportURL)
         }
     }
 }

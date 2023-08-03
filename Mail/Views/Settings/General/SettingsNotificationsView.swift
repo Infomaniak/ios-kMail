@@ -53,7 +53,7 @@ struct SettingsNotificationsView: View {
                                 return
                             }
 
-                            openURL.callAsFunction(settingsUrl)
+                            openURL(settingsUrl)
                         }
                         .mailButtonStyle(.link)
                     }

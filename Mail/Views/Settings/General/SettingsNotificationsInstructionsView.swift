@@ -42,7 +42,7 @@ struct SettingsNotificationsInstructionsView: View {
             return
         }
 
-        openURL.callAsFunction(settingsUrl)
+        openURL(settingsUrl)
     }
 }
 
