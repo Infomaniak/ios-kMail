@@ -131,7 +131,7 @@ let project = Project(name: "Mail",
                                   "MailResources/**/*.css",
                                   "MailResources/**/*.js"
                               ],
-                              entitlements: "MailResources/Mail.entitlements",
+                              entitlements: "MailShareExtension/ShareExtension.entitlements",
                               scripts: [Constants.swiftlintScript],
                               dependencies: [
                                   .target(name: "MailCore"),
