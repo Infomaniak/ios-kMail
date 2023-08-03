@@ -61,21 +61,7 @@ extension ThreadListViewModel {
                     }
                 }
             case .update(let results, _, _, _):
-                let filteredThreads = Array(results.freezeIfNeeded())
-                guard let newSections = sortThreadsIntoSections(threads: filteredThreads) else { return }
-
-                DispatchQueue.main.sync {
-                    self.nextThreadIfNeeded(from: filteredThreads)
-                    self.filteredThreads = filteredThreads
-                    if self.filter != .all,
-                       filteredThreads.count == 1,
-                       !self.filter.accepts(thread: filteredThreads[0]) {
-                        self.filter = .all
-                    }
-                    withAnimation {
-                        self.sections = newSections
-                    }
-                }
+                updateThreadResults(results: results)
             case .error:
                 break
             }
@@ -107,6 +93,25 @@ extension ThreadListViewModel {
         observationLastUpdateToken?.invalidate()
     }
 
+    private func updateThreadResults(results: Results<Thread>) {
+        let filteredThreads = Array(results.freezeIfNeeded())
+        guard let newSections = sortThreadsIntoSections(threads: filteredThreads)
+        else { return }
+
+        DispatchQueue.main.sync {
+            self.nextThreadIfNeeded(from: filteredThreads)
+            self.filteredThreads = filteredThreads
+            if self.filter != .all,
+               filteredThreads.count == 1,
+               !self.filter.accepts(thread: filteredThreads[0]) {
+                self.filter = .all
+            }
+            withAnimation {
+                self.sections = newSections
+            }
+        }
+    }
+
     // MARK: - Observe filtered results
 
     static let containAnyOfUIDs = "uid IN %@"
@@ -125,7 +130,7 @@ extension ThreadListViewModel {
 
         let containAnyOf = NSPredicate(format: Self.containAnyOfUIDs, allThreadsUIDs)
         let realm = mailboxManager.getRealm()
-        let allThreads = realm.objects(Thread.self).filter(containAnyOf)
+        let allThreads = realm.objects(Thread.self).filter(containAnyOf).sorted(by: \.date, ascending: false)
 
         observeFilteredThreadsToken = allThreads.observe(on: observeQueue) { [weak self] changes in
             guard let self else {
@@ -135,8 +140,8 @@ extension ThreadListViewModel {
             switch changes {
             case .initial:
                 break
-            case .update(let all, _, _, let modificationIndexes):
-                refreshInFilterMode(all: all, changes: modificationIndexes)
+            case .update(let results, _, _, _):
+                updateThreadResults(results: results)
             case .error:
                 break
             }
@@ -145,40 +150,6 @@ extension ThreadListViewModel {
 
     func stopObserveFilteredThreads() {
         observeFilteredThreadsToken?.invalidate()
-    }
-
-    /// Update filtered threads on observation change.
-    private func refreshInFilterMode(all: Results<Thread>, changes: [Int]) {
-        for index in changes {
-            let updatedThread = all[index]
-            let uid = updatedThread.uid
-
-            let threadToUpdate: Thread? = sections.reduce(nil as Thread?) { partialResult, section in
-                partialResult ?? section.threads.first { $0.uid == uid }
-            }
-
-            let sectionToUpdate = sections.first { section in
-                section.threads.contains { $0.uid == uid }
-            }
-
-            guard let threadToUpdate,
-                  let sectionToUpdate else {
-                continue
-            }
-
-            let threadToUpdateIndex = sectionToUpdate.threads.firstIndex(of: threadToUpdate)
-            guard let threadToUpdateIndex else {
-                continue
-            }
-
-            sectionToUpdate.threads[threadToUpdateIndex] = updatedThread.freeze()
-
-            Task {
-                await MainActor.run {
-                    objectWillChange.send()
-                }
-            }
-        }
     }
 
     // MARK: - Observe unread count
