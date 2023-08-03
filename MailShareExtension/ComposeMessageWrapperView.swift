@@ -35,20 +35,7 @@ struct ComposeMessageWrapperView: View {
 
     init(dismissHandler: @escaping SimpleClosure, itemProviders: [NSItemProvider], draft: Draft = Draft()) {
         _draft = State(wrappedValue: draft)
-
-        // Append save draft action if possible
-        @InjectService var manager: AccountManager
-        if let mailboxManager = manager.currentMailboxManager {
-            let saveDraft: SimpleClosure = { _ in
-                let detachedDraft = draft.detached()
-                @InjectService var draftManager: DraftManager
-                draftManager.saveAndProcessDraftFromShareExtension(draft: detachedDraft, mailboxManager: mailboxManager)
-            }
-            self.dismissHandler = saveDraft + dismissHandler
-        } else {
-            self.dismissHandler = dismissHandler
-        }
-
+        self.dismissHandler = dismissHandler
         self.itemProviders = itemProviders
     }
 
