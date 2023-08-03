@@ -93,6 +93,8 @@ enum NotificationServiceAssembly {
 /// Something that loads the DI on init
 public struct EarlyDIHook {
     public init() {
+        ApiFetcher.decoder.dateDecodingStrategy = .iso8601
+
         // setup DI ASAP
         NotificationServiceAssembly.setupDI()
     }

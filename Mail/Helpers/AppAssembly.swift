@@ -129,6 +129,9 @@ enum ApplicationAssembly {
 /// Something that loads the DI on init
 public struct EarlyDIHook {
     public init() {
+        // Setup date encoding
+        ApiFetcher.decoder.dateDecodingStrategy = .iso8601
+
         // setup DI ASAP
         ApplicationAssembly.setupDI()
 

@@ -47,7 +47,6 @@ struct MailApp: App {
 
     init() {
         DDLogInfo("Application starting in foreground ? \(UIApplication.shared.applicationState != .background)")
-        ApiFetcher.decoder.dateDecodingStrategy = .iso8601
     }
 
     var body: some Scene {
