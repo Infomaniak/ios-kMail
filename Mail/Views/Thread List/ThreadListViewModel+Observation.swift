@@ -61,21 +61,7 @@ extension ThreadListViewModel {
                     }
                 }
             case .update(let results, _, _, _):
-                let filteredThreads = Array(results.freezeIfNeeded())
-                guard let newSections = sortThreadsIntoSections(threads: filteredThreads) else { return }
-
-                DispatchQueue.main.sync {
-                    self.nextThreadIfNeeded(from: filteredThreads)
-                    self.filteredThreads = filteredThreads
-                    if self.filter != .all,
-                       filteredThreads.count == 1,
-                       !self.filter.accepts(thread: filteredThreads[0]) {
-                        self.filter = .all
-                    }
-                    withAnimation {
-                        self.sections = newSections
-                    }
-                }
+                updateThreadResults(results: results)
             case .error:
                 break
             }
@@ -107,6 +93,25 @@ extension ThreadListViewModel {
         observationLastUpdateToken?.invalidate()
     }
 
+    private func updateThreadResults(results: Results<Thread>) {
+        let filteredThreads = Array(results.freezeIfNeeded())
+        guard let newSections = sortThreadsIntoSections(threads: filteredThreads)
+        else { return }
+
+        DispatchQueue.main.sync {
+            self.nextThreadIfNeeded(from: filteredThreads)
+            self.filteredThreads = filteredThreads
+            if self.filter != .all,
+               filteredThreads.count == 1,
+               !self.filter.accepts(thread: filteredThreads[0]) {
+                self.filter = .all
+            }
+            withAnimation {
+                self.sections = newSections
+            }
+        }
+    }
+
     // MARK: - Observe filtered results
 
     static let containAnyOfUIDs = "uid IN %@"
@@ -135,23 +140,8 @@ extension ThreadListViewModel {
             switch changes {
             case .initial:
                 break
-            case .update(let all, _, _, _):
-                let filteredThreads = Array(all.freezeIfNeeded())
-                guard let newSections = sortThreadsIntoSections(threads: filteredThreads)
-                else { return }
-
-                DispatchQueue.main.sync {
-                    self.nextThreadIfNeeded(from: filteredThreads)
-                    self.filteredThreads = filteredThreads
-                    if self.filter != .all,
-                       filteredThreads.count == 1,
-                       !self.filter.accepts(thread: filteredThreads[0]) {
-                        self.filter = .all
-                    }
-                    withAnimation {
-                        self.sections = newSections
-                    }
-                }
+            case .update(let results, _, _, _):
+                updateThreadResults(results: results)
             case .error:
                 break
             }
