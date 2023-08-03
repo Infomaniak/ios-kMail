@@ -24,6 +24,8 @@ import SwiftUI
 struct ThreadListManagerView: View {
     @Environment(\.isCompactWindow) private var isCompactWindow
 
+    @AppStorage(UserDefaults.shared.key(.threadMode)) private var threadMode = DefaultPreferences.threadMode
+
     @EnvironmentObject private var splitViewManager: SplitViewManager
     @EnvironmentObject private var mailboxManager: MailboxManager
 
@@ -34,6 +36,7 @@ struct ThreadListManagerView: View {
                     SearchView(mailboxManager: mailboxManager, folder: selectedFolder)
                 } else {
                     ThreadListView(mailboxManager: mailboxManager, folder: selectedFolder, isCompact: isCompactWindow)
+                        .id(threadMode)
                 }
             }
         }

@@ -34,6 +34,7 @@ struct SettingsView: View {
     @AppStorage(UserDefaults.shared.key(.theme)) private var theme = DefaultPreferences.theme
     @AppStorage(UserDefaults.shared.key(.accentColor)) private var accentColor = DefaultPreferences.accentColor
     @AppStorage(UserDefaults.shared.key(.externalContent)) private var externalContent = DefaultPreferences.externalContent
+    @AppStorage(UserDefaults.shared.key(.threadMode)) private var threadMode = DefaultPreferences.threadMode
 
     var body: some View {
         ScrollView {
@@ -79,6 +80,20 @@ struct SettingsView: View {
                 Text(MailResourcesStrings.Localizable.settingsSectionAppearance)
                     .textStyle(.bodySmallSecondary)
                     .padding(.top, 16)
+
+                // Thread mode
+                SettingsSubMenuCell(
+                    title: "Thread mode",
+                    subtitle: threadMode.title
+                ) {
+                    SettingsOptionView(
+                        title: "Thread mode",
+                        subtitle: MailResourcesStrings.Localizable.settingsSelectDisplayModeDescription,
+                        keyPath: \.threadMode,
+                        matomoCategory: .settingsDisplayExternalContent, // Change this
+                        matomoName: \.rawValue // Change this
+                    )
+                }
 
                 // Thread density
                 SettingsSubMenuCell(

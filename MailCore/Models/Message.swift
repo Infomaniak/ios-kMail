@@ -199,6 +199,10 @@ public final class Message: Object, Decodable, Identifiable {
         return threads.first { $0.folder?.id == folderId }
     }
 
+    public var uniqueThread: Thread? {
+        return threads.first { $0.folder?.id == folderId && $0.isUniqueThread == true }
+    }
+
     public var folder: Folder? {
         return folders.first
     }
@@ -437,7 +441,7 @@ public final class Message: Object, Decodable, Identifiable {
     public func toThread() -> Thread {
         let thread = Thread(
             uid: "\(folderId)_\(uid)",
-            messages: [self],
+            messages: [],
             unseenMessages: seen ? 0 : 1,
             from: Array(from),
             to: Array(to),
@@ -450,6 +454,13 @@ public final class Message: Object, Decodable, Identifiable {
             forwarded: forwarded
         )
         thread.messageIds = linkedUids
+        return thread
+    }
+
+    public func toUniqueThread() -> Thread {
+        let thread = toThread()
+        thread.uid.append("_unique")
+        thread.isUniqueThread = true
         return thread
     }
 }

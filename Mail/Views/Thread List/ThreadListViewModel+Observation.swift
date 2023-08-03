@@ -36,7 +36,8 @@ extension ThreadListViewModel {
             threadResults = folder.threads.sorted(by: \.date, ascending: false)
         }
 
-        return threadResults
+        let uniqueThreadMode = UserDefaults.shared.threadMode == .message
+        return threadResults.where { $0.isUniqueThread == uniqueThreadMode }
     }
 
     // MARK: - Observe global changes
@@ -127,6 +128,8 @@ extension ThreadListViewModel {
         guard let allThreadsUIDs else {
             return
         }
+
+        let uniqueThreadMode = UserDefaults.shared.threadMode == .message
 
         let containAnyOf = NSPredicate(format: Self.containAnyOfUIDs, allThreadsUIDs)
         let realm = mailboxManager.getRealm()
