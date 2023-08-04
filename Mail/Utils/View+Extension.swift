@@ -17,26 +17,41 @@
  */
 
 import InfomaniakCoreUI
+import InfomaniakDI
 import MailCore
 import MailResources
 import SwiftUI
 
 struct DeviceRotationViewModifier: ViewModifier {
     let action: (UIInterfaceOrientation?) -> Void
-    @State private var lastOrientation = UIApplication.shared.mainSceneKeyWindow?.windowScene?.interfaceOrientation
+
+    private var orientationManager: OrientationManageable
+
+    @State private var lastOrientation: UIInterfaceOrientation?
+
+    init(action: @escaping (UIInterfaceOrientation?) -> Void) {
+        let orientationSource = InjectService<OrientationManageable>().wrappedValue
+        let orientation = orientationSource.interfaceOrientation
+        self.action = action
+        orientationManager = orientationSource
+        lastOrientation = orientation
+    }
 
     func body(content: Content) -> some View {
         content
             .onReceive(NotificationCenter.default.publisher(for: UIDevice.orientationDidChangeNotification)) { _ in
-                if lastOrientation != UIApplication.shared.mainSceneKeyWindow?.windowScene?.interfaceOrientation {
-                    lastOrientation = UIApplication.shared.mainSceneKeyWindow?.windowScene?.interfaceOrientation
-                    action(lastOrientation)
+                guard let currentOrientation = orientationManager.interfaceOrientation else {
+                    return
+                }
+                if lastOrientation != currentOrientation {
+                    lastOrientation = currentOrientation
+                    action(currentOrientation)
                 }
             }
     }
 }
 
-// A View wrapper to make the modifier easier to use
+/// A View wrapper to make the modifier easier to use
 extension View {
     func onRotate(perform action: @escaping (UIInterfaceOrientation?) -> Void) -> some View {
         modifier(DeviceRotationViewModifier(action: action))

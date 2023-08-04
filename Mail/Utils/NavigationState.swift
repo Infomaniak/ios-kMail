@@ -81,7 +81,6 @@ enum RootViewDestination {
 class NavigationState: ObservableObject {
     @LazyInjectService private var appLockHelper: AppLockHelper
 
-    private let accountManager = AccountManager.instance
     private var accountManagerObservation: AnyCancellable?
 
     @Published private(set) var rootViewState: RootViewState
@@ -96,17 +95,20 @@ class NavigationState: ObservableObject {
     private(set) var account: Account?
 
     init() {
-        account = AccountManager.instance.getCurrentAccount()
+        @InjectService var accountManager: AccountManager
+
+        account = accountManager.getCurrentAccount()
         rootViewState = NavigationState.getMainViewStateIfPossible()
 
         accountManagerObservation = accountManager.objectWillChange.receive(on: RunLoop.main).sink { [weak self] in
-            self?.account = AccountManager.instance.getCurrentAccount()
+            self?.account = accountManager.getCurrentAccount()
             self?.rootViewState = NavigationState.getMainViewStateIfPossible()
         }
     }
 
     static func getMainViewStateIfPossible() -> RootViewState {
-        let accountManager = AccountManager.instance
+        @InjectService var accountManager: AccountManager
+
         if let currentAccount = accountManager.getCurrentAccount() {
             if let currentMailboxManager = accountManager.currentMailboxManager {
                 return .mainView(currentMailboxManager)

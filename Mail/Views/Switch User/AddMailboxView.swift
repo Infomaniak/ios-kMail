@@ -25,6 +25,9 @@ import SwiftUI
 struct AddMailboxView: View {
     @Environment(\.dismiss) var dismiss
 
+    @LazyInjectService private var accountManager: AccountManager
+    @LazyInjectService private var snackbarPresenter: SnackBarPresentable
+
     @State private var newAddress = ""
     @State private var password = ""
     @State private var showError = false
@@ -123,7 +126,7 @@ struct AddMailboxView: View {
         Task {
             do {
                 isButtonLoading = true
-                try await AccountManager.instance.addMailbox(mail: newAddress, password: password)
+                try await accountManager.addMailbox(mail: newAddress, password: password)
                 isButtonLoading = false
             } catch let error as MailApiError where error == .apiInvalidCredential {
                 withAnimation {
@@ -136,7 +139,7 @@ struct AddMailboxView: View {
                     password = ""
                     isButtonLoading = false
                 }
-                await IKSnackBar.showSnackBar(message: error.localizedDescription)
+                snackbarPresenter.show(message: error.localizedDescription)
             }
         }
     }

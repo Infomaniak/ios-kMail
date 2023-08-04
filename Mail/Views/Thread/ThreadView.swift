@@ -153,14 +153,16 @@ struct ThreadView: View {
         }
         switch action {
         case .reply:
-            guard let message = thread.lastMessageToExecuteAction(currentMailboxEmail: mailboxManager.mailbox.email) else { return }
+            guard let message = thread.lastMessageToExecuteAction(currentMailboxEmail: mailboxManager.mailbox.email)
+            else { return }
             if message.canReplyAll(currentMailboxEmail: mailboxManager.mailbox.email) {
                 replyOrReplyAllMessage = message
             } else {
                 navigationState.messageReply = MessageReply(message: message, replyMode: .reply)
             }
         case .forward:
-            guard let message = thread.lastMessageToExecuteAction(currentMailboxEmail: mailboxManager.mailbox.email) else { return }
+            guard let message = thread.lastMessageToExecuteAction(currentMailboxEmail: mailboxManager.mailbox.email)
+            else { return }
             navigationState.messageReply = MessageReply(message: message, replyMode: .forward)
         case .archive:
             Task {

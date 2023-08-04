@@ -26,6 +26,8 @@ import RealmSwift
 import SwiftUI
 
 struct AccountCellView: View {
+    @LazyInjectService private var accountManager: AccountManager
+
     @Environment(\.dismissModal) var dismissModal
 
     let account: Account
@@ -50,7 +52,7 @@ struct AccountCellView: View {
                     @InjectService var matomo: MatomoUtils
                     matomo.track(eventWithCategory: .account, name: "switch")
                     dismissModal()
-                    AccountManager.instance.switchAccount(newAccount: account)
+                    accountManager.switchAccount(newAccount: account)
                 } label: {
                     AccountHeaderCell(account: account, isSelected: Binding(get: {
                         isSelected

@@ -59,7 +59,7 @@ public extension InfomaniakNetworkLoginable {
     }
 }
 
-public class AccountManager: RefreshTokenDelegate, ObservableObject {
+public final class AccountManager: RefreshTokenDelegate, ObservableObject {
     @LazyInjectService var networkLoginService: InfomaniakNetworkLoginable
     @LazyInjectService var tokenStore: TokenStore
     @LazyInjectService var bugTracker: BugTracker
@@ -68,12 +68,18 @@ public class AccountManager: RefreshTokenDelegate, ObservableObject {
 
     private static let appIdentifierPrefix = Bundle.main.infoDictionary!["AppIdentifierPrefix"] as! String
     private static let group = "com.infomaniak.mail"
+
+    private let tag = "ch.infomaniak.token".data(using: .utf8)!
+    private var currentAccount: Account?
+
     public static let appGroup = "group." + group
     public static let accessGroup: String = AccountManager.appIdentifierPrefix + AccountManager.group
+
+    public var accounts = SendableArray<Account>()
+    public var tokens = [ApiToken]()
+    public let refreshTokenLockedQueue = DispatchQueue(label: "com.infomaniak.mail.refreshtoken")
     public static var instance = AccountManager()
 
-    private var currentAccount: Account?
-    public var accounts = SendableArray<Account>()
     public weak var delegate: AccountManagerDelegate?
     public var currentUserId: Int {
         didSet {
@@ -102,6 +108,11 @@ public class AccountManager: RefreshTokenDelegate, ObservableObject {
         }
     }
 
+    /// Shorthand for `currentMailboxManager?.contactManager`
+    public var currentContactManager: ContactManager? {
+        currentMailboxManager?.contactManager
+    }
+
     public var currentApiFetcher: MailApiFetcher? {
         return apiFetchers[currentUserId]
     }
@@ -110,7 +121,7 @@ public class AccountManager: RefreshTokenDelegate, ObservableObject {
     private let contactManagers = SendableDictionary<String, ContactManager>()
     private let apiFetchers = SendableDictionary<Int, MailApiFetcher>()
 
-    private init() {
+    public init() {
         currentMailboxId = UserDefaults.shared.currentMailboxId
         currentUserId = UserDefaults.shared.currentMailUserId
 
@@ -207,7 +218,7 @@ public class AccountManager: RefreshTokenDelegate, ObservableObject {
         }
         tokenStore.removeTokenFor(userId: token.userId)
         if let account = account(for: token.userId),
-            account.userId == currentUserId {
+           account.userId == currentUserId {
             delegate?.currentAccountNeedsAuthentication()
             NotificationsHelper.sendDisconnectedNotification()
         }

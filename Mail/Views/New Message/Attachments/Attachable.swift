@@ -16,7 +16,10 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import Combine
 import Foundation
+import InfomaniakCore
+import InfomaniakCoreUI
 import MailCore
 import PhotosUI
 import UniformTypeIdentifiers
@@ -28,6 +31,10 @@ protocol Attachable {
 }
 
 extension NSItemProvider: Attachable {
+    enum ErrorDomain: Error {
+        case UTINotFound
+    }
+
     private var preferredIdentifier: String {
         return registeredTypeIdentifiers
             .first { UTType($0)?.conforms(to: .image) == true || UTType($0)?.conforms(to: .movie) == true } ?? ""
@@ -38,27 +45,29 @@ extension NSItemProvider: Attachable {
     }
 
     func writeToTemporaryURL() async throws -> URL {
-        return try await loadFileRepresentation(typeIdentifier: preferredIdentifier)
-    }
+        switch underlyingType {
+        case .isURL:
+            let getPlist = try ItemProviderURLRepresentation(from: self)
+            return try await getPlist.result.get()
 
-    private func loadFileRepresentation(typeIdentifier: String) async throws -> URL {
-        try await withCheckedThrowingContinuation { continuation in
-            loadFileRepresentation(forTypeIdentifier: typeIdentifier) { fileProviderURL, error in
-                guard let fileProviderURL else {
-                    continuation.resume(throwing: error ?? MailError.unknownError)
-                    return
-                }
+        case .isText:
+            let getText = try ItemProviderTextRepresentation(from: self)
+            return try await getText.result.get()
 
-                do {
-                    let temporaryURL = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
-                    let temporaryFileURL = temporaryURL.appendingPathComponent(fileProviderURL.lastPathComponent)
-                    try FileManager.default.createDirectory(at: temporaryURL, withIntermediateDirectories: true)
-                    try FileManager.default.copyItem(atPath: fileProviderURL.path, toPath: temporaryFileURL.path)
-                    continuation.resume(returning: temporaryFileURL)
-                } catch {
-                    continuation.resume(throwing: error)
-                }
-            }
+        case .isUIImage:
+            let getUIImage = try ItemProviderUIImageRepresentation(from: self)
+            return try await getUIImage.result.get()
+
+        case .isImageData, .isCompressedData, .isMiscellaneous:
+            let getFile = try ItemProviderFileRepresentation(from: self)
+            return try await getFile.result.get()
+
+        case .isDirectory:
+            let getFile = try ItemProviderZipRepresentation(from: self)
+            return try await getFile.result.get()
+
+        case .none:
+            throw ErrorDomain.UTINotFound
         }
     }
 }

@@ -68,9 +68,12 @@ struct Slide: Identifiable {
 }
 
 @MainActor
-class LoginHandler: InfomaniakLoginDelegate, ObservableObject {
-    @LazyInjectService var loginService: InfomaniakLoginable
-    @LazyInjectService var matomo: MatomoUtils
+final class LoginHandler: InfomaniakLoginDelegate, ObservableObject {
+    @LazyInjectService private var loginService: InfomaniakLoginable
+    @LazyInjectService private var matomo: MatomoUtils
+    @LazyInjectService private var remoteNotificationRegistrer: RemoteNotificationRegistrable
+    @LazyInjectService private var accountManager: AccountManager
+    @LazyInjectService private var snackbarPresenter: SnackBarPresentable
 
     @Published var isLoading = false
     @Published var isPresentingErrorAlert = false
@@ -123,18 +126,18 @@ class LoginHandler: InfomaniakLoginDelegate, ObservableObject {
 
     private func loginSuccessful(code: String, codeVerifier verifier: String) {
         matomo.track(eventWithCategory: .account, name: "loggedIn")
-        let previousAccount = AccountManager.instance.getCurrentAccount()
+        let previousAccount = accountManager.getCurrentAccount()
         Task {
             do {
-                _ = try await AccountManager.instance.createAndSetCurrentAccount(code: code, codeVerifier: verifier)
-                UIApplication.shared.registerForRemoteNotifications()
+                _ = try await accountManager.createAndSetCurrentAccount(code: code, codeVerifier: verifier)
+                remoteNotificationRegistrer.register()
             } catch let error as MailError where error == MailError.noMailbox {
                 shouldShowEmptyMailboxesView = true
             } catch {
                 if let previousAccount {
-                    AccountManager.instance.switchAccount(newAccount: previousAccount)
+                    accountManager.switchAccount(newAccount: previousAccount)
                 }
-                IKSnackBar.showSnackBar(message: error.localizedDescription)
+                snackbarPresenter.show(message: error.localizedDescription)
             }
             isLoading = false
         }
@@ -149,6 +152,8 @@ class LoginHandler: InfomaniakLoginDelegate, ObservableObject {
 
 struct OnboardingView: View {
     @Environment(\.dismiss) private var dismiss
+
+    @LazyInjectService var orientationManager: OrientationManageable
 
     @EnvironmentObject private var navigationState: NavigationState
 
@@ -245,7 +250,7 @@ struct OnboardingView: View {
             if UIDevice.current.userInterfaceIdiom == .phone {
                 UIDevice.current
                     .setValue(UIInterfaceOrientation.portrait.rawValue, forKey: "orientation")
-                AppDelegate.orientationLock = .portrait
+                orientationManager.setOrientationLock(.portrait)
                 UIViewController.attemptRotationToDeviceOrientation()
             }
         }

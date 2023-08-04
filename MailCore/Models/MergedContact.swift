@@ -35,7 +35,7 @@ extension CNContact {
     }
 }
 
-public class MergedContact {
+public final class MergedContact {
     private static let contactFormatter = CNContactFormatter()
 
     public var email: String

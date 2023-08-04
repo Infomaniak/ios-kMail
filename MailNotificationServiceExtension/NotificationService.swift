@@ -25,34 +25,18 @@ import MailResources
 import RealmSwift
 import UserNotifications
 
-class NotificationService: UNNotificationServiceExtension {
+final class NotificationService: UNNotificationServiceExtension {
+    /// Making sure the DI is registered at a very early stage of the app launch.
+    private let dependencyInjectionHook = EarlyDIHook()
+
+    @LazyInjectService private var accountManager: AccountManager
+
     var contentHandler: ((UNNotificationContent) -> Void)?
     var bestAttemptContent: UNMutableNotificationContent?
 
     override init() {
         super.init()
         Logging.initLogging()
-        let networkLoginService = Factory(type: InfomaniakNetworkLoginable.self) { _, _ in
-            InfomaniakNetworkLogin(clientId: MailApiFetcher.clientId)
-        }
-        let loginService = Factory(type: InfomaniakLoginable.self) { _, _ in
-            InfomaniakLogin(clientId: MailApiFetcher.clientId)
-        }
-        let keychainHelper = Factory(type: KeychainHelper.self) { _, _ in
-            KeychainHelper(accessGroup: AccountManager.accessGroup)
-        }
-        let tokenStore = Factory(type: TokenStore.self) { _, _ in
-            TokenStore()
-        }
-        let notificationService = Factory(type: InfomaniakNotifications.self) { _, _ in
-            InfomaniakNotifications(appGroup: AccountManager.appGroup)
-        }
-
-        SimpleResolver.sharedResolver.store(factory: networkLoginService)
-        SimpleResolver.sharedResolver.store(factory: loginService)
-        SimpleResolver.sharedResolver.store(factory: keychainHelper)
-        SimpleResolver.sharedResolver.store(factory: tokenStore)
-        SimpleResolver.sharedResolver.store(factory: notificationService)
     }
 
     func fetchMessage(uid: String, in mailboxManager: MailboxManager) async throws -> Message? {
@@ -95,7 +79,7 @@ class NotificationService: UNNotificationServiceExtension {
             guard let mailboxId = userInfos[NotificationsHelper.UserInfoKeys.mailboxId] as? Int,
                   let userId = userInfos[NotificationsHelper.UserInfoKeys.userId] as? Int,
                   let mailbox = MailboxInfosManager.instance.getMailbox(id: mailboxId, userId: userId),
-                  let mailboxManager = AccountManager.instance.getMailboxManager(for: mailbox) else {
+                  let mailboxManager = accountManager.getMailboxManager(for: mailbox) else {
                 // This should never happen, we received a notification for an unknown mailbox
                 logNotificationFailed(userInfo: userInfos, type: .mailboxNotFound)
                 return contentHandler(bestAttemptContent)

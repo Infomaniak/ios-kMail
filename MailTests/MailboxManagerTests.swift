@@ -18,6 +18,7 @@
 
 import Foundation
 import InfomaniakCore
+import InfomaniakDI
 import InfomaniakLogin
 @testable import MailCore
 import XCTest
@@ -27,7 +28,8 @@ final class MailboxManagerTests: XCTestCase {
 
     override class func setUp() {
         super.setUp()
-        mailboxManager = AccountManager.instance.getMailboxManager(for: Env.mailboxId, userId: Env.userId)
+        @InjectService var accountManager: AccountManager
+        mailboxManager = accountManager.getMailboxManager(for: Env.mailboxId, userId: Env.userId)
 
         let token = ApiToken(accessToken: Env.token,
                              expiresIn: Int.max,

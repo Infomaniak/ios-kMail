@@ -3,9 +3,8 @@
  * Project: kMail
  * Release: Working copy
  * Locale: es, Spanish
- * Tagged: ios
- * Exported by: Ambroise Decouttere
- * Exported at: Thu, 27 Jul 2023 16:53:47 +0200
+ * Exported by: Adrien Coye
+ * Exported at: Wed, 02 Aug 2023 10:42:34 +0200
  */
 
 /* loco:6256793050618f7416758a32 */
@@ -584,6 +583,12 @@
 /* loco:62bc67601f560d734f2fbe58 */
 "snackbarContactSaved" = "Nuevo contacto registrado correctamente";
 
+/* loco:62bd4fa9c71d395cd431e6a2 */
+"NSFaceIDUsageDescription" = "Face ID se utilizará para desbloquear la aplicación.";
+
+/* loco:62bd538485526660827f95d2 */
+"NSContactsUsageDescription" = "Los contactos locales se utilizarán para mostrar la información del destinatario. NO los enviaremos al servidor.";
+
 /* loco:62bd85a64880c362bd5ece72 */
 "snackbarEmailCopiedToClipboard" = "Dirección de correo electrónico copiada en el portapapeles";
 
@@ -710,6 +715,9 @@
 /* loco:62cd644f5141ee164b494272 */
 "snackbarDisplayProblemReported" = "Problema de visualización notificado";
 
+/* loco:62ce828ff799954b2054aac2 */
+"NSCameraUsageDescription" = "La cámara se utilizará para adjuntar la foto a su correo electrónico";
+
 /* loco:62cecdf0413c882ede7451c2 */
 "reportPhishingTitle" = "Informar de un intento de phishing";
 
@@ -718,6 +726,9 @@
 
 /* loco:62cfb94ffe73905627441c62 */
 "settingsOptionSystemTheme" = "Sistema";
+
+/* loco:62cfdf508559983b710b7bd2 */
+"threadListHeaderLastUpdateNow" = "ahora";
 
 /* loco:62d5561a4fa44b4a25143fc2 */
 "searchFilterRead" = "Leer";
@@ -788,6 +799,12 @@
 /* loco:634ea0a369dac5469e1ce6d2 */
 "noConversationSelected" = "Ninguna conversación seleccionada en %@";
 
+/* loco:6357867da9aca53d914670a2 */
+"settingsSwipeLeft" = "Deslizar a la izquierda";
+
+/* loco:63578695fa87a96c446068f2 */
+"settingsSwipeRight" = "Deslizar a la derecha";
+
 /* loco:635fab674606bd5f944f7784 */
 "workInProgressTitle" = "Disponible en breve";
 
@@ -802,6 +819,15 @@
 
 /* loco:637ce6f461e6ca5762134f53 */
 "noFolderTitle" = "Aún no tienes ninguna carpeta…";
+
+/* loco:6384d9c01d10203fe203b7e2 */
+"notificationSyncDraftChannelName" = "Guardar borradores";
+
+/* loco:6384dc46d8b6482c3f1962a4 */
+"notificationSyncMessagesChannelName" = "Recuperación de nuevos correos electrónicos";
+
+/* loco:6384e1c927eaf70c585c8732 */
+"notificationNewMessagesChannelName" = "Nuevos correos electrónicos";
 
 /* loco:638f5a17e9a49034ae006a92 */
 "snackbarThreadDeletedPermanently" = "Conversación eliminada";
@@ -839,6 +865,15 @@
 /* loco:63a474bd648cd86d56444012 */
 "confirmLogoutDescription" = "¿Seguro que quieres desconectarte de %@?";
 
+/* loco:63bc30711f2f796a1c262c92 */
+"newMessageNotificationSummary" = "%d nuevo mensaje";
+
+/* loco:63bc31091f2f796a1c262c95 */
+"newMessageNotificationSummary-plural" = "%d nuevos mensajes";
+
+/* loco:63bc31577985706f5870b192 */
+"newMessageNotificationSummary-plural-many" = "";
+
 /* loco:63c64f5d53fe7b61a46310c3 */
 "newFolderDialogHint" = "Nombre de la carpeta";
 
@@ -851,8 +886,14 @@
 /* loco:63d14902e3c4eb4832777c42 */
 "errorCancelAttachmentsUploadInProgress" = "Algunos archivos adjuntos se siguen importando. Si cierra la vista se perderán los archivos adjuntos.";
 
+/* loco:63d27324e186fd10f243ce82 */
+"webViewCantHandleAction" = "No se ha encontrado ninguna aplicación que gestione esta acción";
+
 /* loco:63d7e73a70ff84756f78f0b3 */
 "threadListHeaderUnreadCountMore" = "99 no leídos";
+
+/* loco:63e0c11f3fd6c70fb7723192 */
+"contentDescriptionIconFolderSelected" = "Carpeta seleccionada";
 
 /* loco:63e11e5771d13a480771a162 */
 "SettingsEnableNotifications" = "Activar las notificaciones";
@@ -896,6 +937,9 @@
 /* loco:63edf28c20221c0f3a6d30a2 */
 "threadListDeletionConfirmationAlertTitle-plural" = "Borrar %d mensajes";
 
+/* loco:63edf7b80fc3f74f890dd0c4 */
+"threadListDeletionConfirmationAlertTitle-plural-many" = "";
+
 /* loco:63ee0cbbad127b43f8650242 */
 "newFolderDialogMovePositiveButton" = "Crear y mover";
 
@@ -925,6 +969,9 @@
 
 /* loco:6400bb16c117ec0d866887b5 */
 "messageHideQuotedText" = "Ocultar la conversación";
+
+/* loco:6401f75b518ceb46ca297432 */
+"googlePlayServicesAreRequired" = "Se requieren los servicios de Google Play";
 
 /* loco:640836aa0f09a82bfa0da572 */
 "searchAllMessages" = "Todos los mensajes";
@@ -962,14 +1009,32 @@
 /* loco:641d60b6f5c19a18734d9192 */
 "urlUserReportiOS" = "https://feedback.userreport.com/bc05436b-f496-4b6e-934a-338b4b0f1cda/";
 
+/* loco:641d6129a45dca299a5fdf02 */
+"urlUserReportAndroid" = "https://feedback.userreport.com/f0daec0a-6950-4891-a064-7d040bdce127/";
+
 /* loco:641db88f88b1f63cb05aad52 */
 "tooManyRecipients" = "No puede añadir esta dirección porque ha alcanzado el límite de destinatarios";
 
 /* loco:642179d9733cd4523d03dcf2 */
 "accentColorSystemTitle" = "Color del sistema";
 
+/* loco:6422a877e133d2121822bf72 */
+"contentDescriptionButtonDelete" = "Borrar %@";
+
+/* loco:6422d0ea459bcf36c5099782 */
+"contentDescriptionDownloadIndicator" = "Descargar";
+
+/* loco:6422da8be273963aac69e902 */
+"contentDescriptionAccountSelection" = "Cuenta seleccionada";
+
 /* loco:6422e08598a76c7f98590952 */
 "contentDescriptionButtonExpandRecipients" = "Ver detalles";
+
+/* loco:6422e0f363700359984130d3 */
+"contentDescriptionOpenMailActions" = "Acciones de mensajes abiertos";
+
+/* loco:64241f061119dc0dd86b0272 */
+"contentDescriptionButtonOpenSystemSettings" = "Abrir la configuración de notificaciones del sistema";
 
 /* loco:642430a9ce12f43b026e7ef2 */
 "contentDescriptionSelectedItem" = "Selección";
@@ -979,6 +1044,9 @@
 
 /* loco:64243b4a9a9a1f26302e33f3 */
 "emailWithoutSubjectDescription" = "Está a punto de enviar un mensaje sin asunto. ¿Desea continuar?";
+
+/* loco:6424488fdb64c92719278303 */
+"contentDescriptionButtonDeleteSignature" = "Borrar firma";
 
 /* loco:64245322f2b3ab37ed1b26b2 */
 "buttonContinue" = "Continuar";
@@ -1054,6 +1122,12 @@
 
 /* loco:6450d3f93e5fcf13c9037b02 */
 "errorMailboxLocked" = "Esta dirección de correo electrónico está bloqueada";
+
+/* loco:64522a87e05780ced808fd62 */
+"errorCorruptAttachment" = "No se ha podido gestionar el borrador, un archivo adjunto está dañado";
+
+/* loco:64539f465ac8a1dc1b0a87c2 */
+"contentDescriptionButtonDeleteQuote" = "Borrar mensajes citados";
 
 /* loco:645b485e158c37a429012092 */
 "buttonLoadMore" = "Cargar más conversaciones";
@@ -1222,3 +1296,9 @@
 
 /* loco:64c21f7b8b1932323c047792 */
 "newAccountStorageDrive" = "15 GB de almacenamiento kDrive";
+
+/* loco:64c389458fb94726cf010c52 */
+"snackbarDownloadInProgress" = "Descarga en proceso…";
+
+/* loco:64ca16484dbf65eb9b0ea862 */
+"PleaseLogInFirst" = "Inicia sesión primero en la aplicación ikMail.";

@@ -18,12 +18,14 @@
 
 import InfomaniakCore
 import InfomaniakCoreUI
+import InfomaniakDI
 import MailCore
 import MailResources
 import Sentry
 import SwiftUI
 
 struct ReportDisplayProblemView: View {
+    @LazyInjectService private var snackbarPresenter: SnackBarPresentable
     @EnvironmentObject private var mailboxManager: MailboxManager
     let message: Message
 
@@ -55,7 +57,7 @@ struct ReportDisplayProblemView: View {
                 _ = SentrySDK.capture(message: "Message display problem reported") { scope in
                     scope.add(fileAttachment)
                 }
-                await IKSnackBar.showSnackBar(message: MailResourcesStrings.Localizable.snackbarDisplayProblemReported)
+                snackbarPresenter.show(message: MailResourcesStrings.Localizable.snackbarDisplayProblemReported)
             }
         }
     }

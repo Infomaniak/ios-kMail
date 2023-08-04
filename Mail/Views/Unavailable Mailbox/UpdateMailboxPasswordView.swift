@@ -23,9 +23,10 @@ import MailResources
 import SwiftUI
 
 struct UpdateMailboxPasswordView: View {
-    @EnvironmentObject private var navigationState: NavigationState
-
+    @LazyInjectService private var accountManager: AccountManager
     @LazyInjectService private var matomo: MatomoUtils
+
+    @EnvironmentObject private var navigationState: NavigationState
 
     @State private var updatedMailboxPassword = ""
     @State private var isShowingError = false
@@ -115,7 +116,7 @@ struct UpdateMailboxPasswordView: View {
         Task {
             isLoading = true
             do {
-                try await AccountManager.instance.updateMailboxPassword(mailbox: mailbox, password: updatedMailboxPassword)
+                try await accountManager.updateMailboxPassword(mailbox: mailbox, password: updatedMailboxPassword)
                 navigationState.transitionToRootViewDestination(.mainView)
             } catch {
                 isShowingError = true

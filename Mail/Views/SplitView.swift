@@ -19,6 +19,7 @@
 import InfomaniakBugTracker
 import InfomaniakCore
 import InfomaniakCoreUI
+import InfomaniakDI
 import Introspect
 import MailCore
 import MailResources
@@ -27,11 +28,17 @@ import RealmSwift
 import SwiftUI
 
 public class SplitViewManager: ObservableObject {
+    @LazyInjectService private var platformDetector: PlatformDetectable
+
     @Published var showSearch = false
     @Published var selectedFolder: Folder?
     var splitViewController: UISplitViewController?
 
     func adaptToProminentThreadView() {
+        guard !platformDetector.isMacCatalyst, !platformDetector.isiOSAppOnMac else {
+            return
+        }
+
         splitViewController?.hide(.primary)
         if splitViewController?.splitBehavior == .overlay {
             splitViewController?.hide(.supplementary)
@@ -50,6 +57,10 @@ struct SplitView: View {
 
     @StateObject private var navigationDrawerController = NavigationDrawerState()
     @StateObject private var splitViewManager = SplitViewManager()
+
+    @LazyInjectService private var orientationManager: OrientationManageable
+    @LazyInjectService private var snackbarPresenter: SnackBarPresentable
+    @LazyInjectService private var platformDetector: PlatformDetectable
 
     let mailboxManager: MailboxManager
 
@@ -122,14 +133,14 @@ struct SplitView: View {
             if let tappedNotificationThread = tappedNotificationMessage?.originalThread {
                 navigationState.threadPath = [tappedNotificationThread]
             } else {
-                IKSnackBar.showSnackBar(message: MailError.localMessageNotFound.errorDescription)
+                snackbarPresenter.show(message: MailError.localMessageNotFound.errorDescription)
             }
         }
         .onReceive(NotificationCenter.default.publisher(for: .onOpenedMailTo)) { identifiableURLComponents in
             mailToURLComponents = identifiableURLComponents.object as? IdentifiableURLComponents
         }
         .onAppear {
-            AppDelegate.orientationLock = .all
+            orientationManager.setOrientationLock(.all)
         }
         .task(id: mailboxManager.mailbox.objectId) {
             await fetchSignatures()
@@ -156,7 +167,10 @@ struct SplitView: View {
     }
 
     private func setupBehaviour(orientation: UIInterfaceOrientation) {
-        if orientation.isLandscape {
+        if platformDetector.isMacCatalyst || platformDetector.isiOSAppOnMac {
+            splitViewController?.preferredSplitBehavior = .tile
+            splitViewController?.preferredDisplayMode = .twoBesideSecondary
+        } else if orientation.isLandscape {
             splitViewController?.preferredSplitBehavior = .displace
             splitViewController?.preferredDisplayMode = splitViewManager.selectedFolder == nil
                 ? .twoDisplaceSecondary

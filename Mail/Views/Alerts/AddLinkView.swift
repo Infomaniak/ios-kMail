@@ -27,6 +27,7 @@ struct AddLinkView: View {
     @State private var url = ""
     @FocusState private var isFocused: Bool
 
+    @LazyInjectService private var snackbarPresenter: SnackBarPresentable
     @LazyInjectService private var matomo: MatomoUtils
 
     var actionHandler: ((String) -> Void)?
@@ -50,14 +51,14 @@ struct AddLinkView: View {
                 matomo.track(eventWithCategory: .editorActions, name: "addLinkConfirm")
 
                 guard var urlComponents = URLComponents(string: url) else {
-                    IKSnackBar.showSnackBar(message: MailResourcesStrings.Localizable.snackbarInvalidUrl)
+                    snackbarPresenter.show(message: MailResourcesStrings.Localizable.snackbarInvalidUrl)
                     return
                 }
                 if urlComponents.scheme == nil {
                     urlComponents.scheme = URLConstants.schemeUrl
                 }
                 guard let url = urlComponents.url?.absoluteString else {
-                    IKSnackBar.showSnackBar(message: MailResourcesStrings.Localizable.snackbarInvalidUrl)
+                    snackbarPresenter.show(message: MailResourcesStrings.Localizable.snackbarInvalidUrl)
                     return
                 }
                 actionHandler?(url)

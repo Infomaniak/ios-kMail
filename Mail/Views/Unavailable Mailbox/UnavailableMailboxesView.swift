@@ -23,6 +23,7 @@ import MailResources
 import SwiftUI
 
 struct UnavailableMailboxesView: View {
+    @LazyInjectService private var orientationManager: OrientationManageable
     @LazyInjectService private var matomo: MatomoUtils
 
     @State private var isShowingNewAccountView = false
@@ -86,7 +87,7 @@ struct UnavailableMailboxesView: View {
         }
         .navigationViewStyle(.stack)
         .fullScreenCover(isPresented: $isShowingNewAccountView) {
-            AppDelegate.orientationLock = .all
+            orientationManager.setOrientationLock(.all)
         } content: {
             OnboardingView(page: 4, isScrollEnabled: false)
         }

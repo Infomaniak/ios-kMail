@@ -288,3 +288,13 @@ public final class Draft: Object, Codable, Identifiable {
         try container.encode(delay, forKey: .delay)
     }
 }
+
+public extension Draft {
+    /// Returns the available attachments slots
+    var availableAttachmentsSlots: Int {
+        let maxBound = 96
+        let offset = min(attachments.count, maxBound)
+        let available = max(maxBound - offset, 0)
+        return available
+    }
+}

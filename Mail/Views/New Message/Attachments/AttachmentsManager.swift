@@ -17,12 +17,14 @@
  */
 
 import CocoaLumberjackSwift
+import Combine
 import Foundation
+import InfomaniakCore
 import MailCore
 import PhotosUI
 import SwiftUI
 
-class AttachmentUploadTask: ObservableObject {
+final class AttachmentUploadTask: ObservableObject {
     @Published var progress: Double = 0
     var task: Task<String?, Never>?
     @Published var error: MailError?
@@ -32,14 +34,22 @@ class AttachmentUploadTask: ObservableObject {
 }
 
 @MainActor
-class AttachmentsManager: ObservableObject {
+final class AttachmentsManager: ObservableObject {
     private let draft: Draft
     private let mailboxManager: MailboxManager
+    private let parallelTaskMapper = ParallelTaskMapper()
+    private let backgroundRealm: BackgroundRealm
+
+    /// Something to debounce content will change updates
+    private let contentWillChangeSubject = PassthroughSubject<Void, Never>()
+    private var contentWillChangeObserver: AnyCancellable?
+
     var attachments: [Attachment] {
         return draft.attachments.filter { $0.contentId == nil }.toArray()
     }
 
-    private(set) var attachmentUploadTasks = [String: AttachmentUploadTask]()
+    private var attachmentUploadTasks = SendableDictionary<String, AttachmentUploadTask>()
+
     var allAttachmentsUploaded: Bool {
         return attachmentUploadTasks.values.allSatisfy(\.uploadDone)
     }
@@ -55,6 +65,14 @@ class AttachmentsManager: ObservableObject {
     init(draft: Draft, mailboxManager: MailboxManager) {
         self.draft = draft
         self.mailboxManager = mailboxManager
+
+        // Debouncing objectWillChange helps a lot scaling with numerous attachments
+        backgroundRealm = BackgroundRealm(configuration: mailboxManager.realmConfiguration)
+        contentWillChangeObserver = contentWillChangeSubject
+            .debounce(for: .milliseconds(150), scheduler: DispatchQueue.main)
+            .sink { _ in
+                self.objectWillChange.send()
+            }
     }
 
     func completeUploadedAttachments() {
@@ -62,26 +80,39 @@ class AttachmentsManager: ObservableObject {
             let uploadTask = attachmentUploadTaskOrCreate(for: attachment.uuid)
             uploadTask.progress = 1
         }
-        objectWillChange.send()
+        contentWillChangeSubject.send()
     }
 
-    private func updateAttachment(oldAttachment: Attachment, newAttachment: Attachment) {
-        guard let realm = draft.realm,
-              let oldAttachment = draft.attachments.first(where: { $0.uuid == oldAttachment.uuid }) else {
+    private func updateAttachment(oldAttachment: Attachment, newAttachment: Attachment) async {
+        guard let oldAttachment = draft.attachments.first(where: { $0.uuid == oldAttachment.uuid }) else {
             return
         }
 
-        if oldAttachment.uuid != newAttachment.uuid {
-            attachmentUploadTasks[newAttachment.uuid] = attachmentUploadTasks[oldAttachment.uuid]
-            attachmentUploadTasks.removeValue(forKey: oldAttachment.uuid)
+        let oldAttachmentUUID = oldAttachment.uuid
+        let newAttachmentUUID = newAttachment.uuid
+        let primaryKey = draft.localUUID
+
+        if oldAttachmentUUID != newAttachmentUUID {
+            attachmentUploadTasks[newAttachmentUUID] = attachmentUploadTasks[oldAttachmentUUID]
+            attachmentUploadTasks.removeValue(forKey: oldAttachmentUUID)
         }
 
-        try? realm.write {
-            // We need to update every field of the local attachment because embedded objects don't have a primary key
-            oldAttachment.update(with: newAttachment)
+        await backgroundRealm.execute { realm in
+            try? realm.write {
+                guard let draftInContext = realm.object(ofType: Draft.self, forPrimaryKey: primaryKey) else {
+                    return
+                }
+
+                guard let liveOldAttachment = draftInContext.attachments.first(where: { $0.uuid == oldAttachmentUUID }) else {
+                    return
+                }
+
+                // We need to update every field of the local attachment because embedded objects don't have a primary key
+                liveOldAttachment.update(with: newAttachment)
+            }
         }
 
-        objectWillChange.send()
+        contentWillChangeSubject.send()
     }
 
     /// Lookup and return. New object created and returned instead
@@ -117,26 +148,50 @@ class AttachmentsManager: ObservableObject {
     }
 
     func removeAttachment(_ attachment: Attachment) {
-        guard let realm = draft.realm,
-              let liveAttachment = draft.attachments.first(where: { $0.uuid == attachment.uuid }) else { return }
+        let attachmentUUID = attachment.uuid
+        let primaryKey = draft.localUUID
 
-        let attachmentUUID = liveAttachment.uuid
-        try? realm.write {
-            realm.delete(liveAttachment)
+        Task {
+            await backgroundRealm.execute { realm in
+                try? realm.write {
+                    guard let draftInContext = realm.object(ofType: Draft.self, forPrimaryKey: primaryKey) else {
+                        return
+                    }
+
+                    guard let liveAttachment = draftInContext.attachments.first(where: { $0.uuid == attachmentUUID }) else {
+                        return
+                    }
+
+                    realm.delete(liveAttachment)
+                }
+            }
+
+            attachmentUploadTasks[attachmentUUID]?.task?.cancel()
+            attachmentUploadTasks.removeValue(forKey: attachmentUUID)
+
+            contentWillChangeSubject.send()
         }
-        attachmentUploadTasks[attachmentUUID]?.task?.cancel()
-        attachmentUploadTasks.removeValue(forKey: attachmentUUID)
-
-        objectWillChange.send()
     }
 
-    private func addLocalAttachment(attachment: Attachment) -> Attachment {
+    private func addLocalAttachment(attachment: Attachment) async -> Attachment? {
         attachmentUploadTasks[attachment.uuid] = AttachmentUploadTask()
-        try? draft.realm?.write {
-            draft.attachments.append(attachment)
+        let primaryKey = draft.localUUID
+
+        var detached: Attachment?
+        await backgroundRealm.execute { realm in
+            try? realm.write {
+                guard let draftInContext = realm.object(ofType: Draft.self, forPrimaryKey: primaryKey) else {
+                    return
+                }
+
+                draftInContext.attachments.append(attachment)
+            }
+
+            detached = attachment.detached()
         }
-        objectWillChange.send()
-        return attachment.freeze()
+
+        contentWillChangeSubject.send()
+        return detached
     }
 
     private func updateAttachmentUploadError(attachment: Attachment, error: Error?) {
@@ -147,10 +202,9 @@ class AttachmentsManager: ObservableObject {
         }
     }
 
-    @MainActor
     private func createLocalAttachment(name: String,
                                        type: UTType?,
-                                       disposition: AttachmentDisposition) -> Attachment {
+                                       disposition: AttachmentDisposition) async -> Attachment? {
         let name = nameWithExtension(name: name,
                                      correspondingTo: type)
         let attachment = Attachment(uuid: UUID().uuidString,
@@ -159,14 +213,15 @@ class AttachmentsManager: ObservableObject {
                                     size: 0,
                                     name: name,
                                     disposition: disposition)
-        let savedAttachment = addLocalAttachment(attachment: attachment)
+        let savedAttachment = await addLocalAttachment(attachment: attachment)
         return savedAttachment
     }
 
     private func updateLocalAttachment(url: URL, attachment: Attachment) async -> Attachment {
         let urlResources = try? url.resourceValues(forKeys: [.typeIdentifierKey, .fileSizeKey])
         let uti = UTType(urlResources?.typeIdentifier ?? "")
-        let updatedName = nameWithExtension(name: attachment.name,
+        let name = url.lastPathComponent
+        let updatedName = nameWithExtension(name: name,
                                             correspondingTo: uti)
         let mimeType = uti?.preferredMIMEType ?? attachment.mimeType
         let size = Int64(urlResources?.fileSize ?? 0)
@@ -178,23 +233,33 @@ class AttachmentsManager: ObservableObject {
                                        name: updatedName,
                                        disposition: attachment.disposition)
 
-        updateAttachment(oldAttachment: attachment, newAttachment: newAttachment)
+        await updateAttachment(oldAttachment: attachment, newAttachment: newAttachment)
         return newAttachment
     }
 
-    func importAttachments(attachments: [Attachable], disposition: AttachmentDisposition = .attachment) {
-        for attachment in attachments {
-            Task {
-                let cid = await importAttachment(attachment: attachment, disposition: disposition)
+    func importAttachments(attachments: [Attachable], draft: Draft, disposition: AttachmentDisposition = .attachment) {
+        guard !attachments.isEmpty else {
+            return
+        }
+
+        // Cap max number of attachments, API errors out at 100
+        let attachmentsSlice = attachments[safe: 0 ..< draft.availableAttachmentsSlots]
+
+        Task {
+            try? await self.parallelTaskMapper.map(collection: attachmentsSlice) { attachment in
+                _ = await self.importAttachment(attachment: attachment, disposition: disposition)
                 // TODO: - Manage inline attachment
             }
         }
     }
 
     private func importAttachment(attachment: Attachable, disposition: AttachmentDisposition) async -> String? {
-        let localAttachment = createLocalAttachment(name: attachment.suggestedName ?? getDefaultFileName(),
-                                                    type: attachment.type,
-                                                    disposition: disposition)
+        guard let localAttachment = await createLocalAttachment(name: attachment.suggestedName ?? getDefaultFileName(),
+                                                                type: attachment.type,
+                                                                disposition: disposition) else {
+            return nil
+        }
+
         let importTask = Task { () -> String? in
             do {
                 let url = try await attachment.writeToTemporaryURL()
@@ -252,7 +317,7 @@ class AttachmentsManager: ObservableObject {
                 self?.attachmentUploadTasks[localAttachment.uuid]?.progress = progress
             }
         }
-        updateAttachment(oldAttachment: localAttachment, newAttachment: remoteAttachment)
+        await updateAttachment(oldAttachment: localAttachment, newAttachment: remoteAttachment)
         return remoteAttachment
     }
 }

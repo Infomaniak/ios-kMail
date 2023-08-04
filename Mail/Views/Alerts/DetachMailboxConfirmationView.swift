@@ -23,6 +23,8 @@ import MailResources
 import SwiftUI
 
 struct DetachMailboxConfirmationView: View {
+    @LazyInjectService private var accountManager: AccountManager
+
     @EnvironmentObject private var navigationState: NavigationState
 
     let mailbox: Mailbox
@@ -58,7 +60,7 @@ struct DetachMailboxConfirmationView: View {
 
         Task {
             await tryOrDisplayError {
-                try await AccountManager.instance.detachMailbox(mailbox: mailbox)
+                try await accountManager.detachMailbox(mailbox: mailbox)
                 navigationState.transitionToRootViewDestination(.mainView)
             }
         }

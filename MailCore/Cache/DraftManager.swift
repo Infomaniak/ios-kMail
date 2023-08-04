@@ -70,6 +70,7 @@ public final class DraftManager {
     private static let saveExpirationSec = 3
 
     @LazyInjectService private var matomo: MatomoUtils
+    @LazyInjectService private var alertDisplayable: UserAlertDisplayable
 
     /// Used by DI only
     public init() {
@@ -91,15 +92,14 @@ public final class DraftManager {
         do {
             try await mailboxManager.save(draft: draft)
         } catch {
-            if error.shouldDisplay {
-                await IKSnackBar.showSnackBar(message: error.localizedDescription)
-            }
+            guard error.shouldDisplay else { return }
+            alertDisplayable.show(message: error.localizedDescription)
         }
         await draftQueue.endBackgroundTask(uuid: draft.localUUID)
     }
 
     public func send(draft: Draft, mailboxManager: MailboxManager) async -> Date? {
-        await IKSnackBar.showSnackBar(message: MailResourcesStrings.Localizable.snackbarEmailSending)
+        alertDisplayable.show(message: MailResourcesStrings.Localizable.snackbarEmailSending)
 
         var sendDate: Date?
         await draftQueue.cleanQueueElement(uuid: draft.localUUID)
@@ -107,10 +107,10 @@ public final class DraftManager {
 
         do {
             let cancelableResponse = try await mailboxManager.send(draft: draft)
-            await IKSnackBar.showSnackBar(message: MailResourcesStrings.Localizable.snackbarEmailSent)
+            alertDisplayable.show(message: MailResourcesStrings.Localizable.snackbarEmailSent)
             sendDate = cancelableResponse.scheduledDate
         } catch {
-            await IKSnackBar.showSnackBar(message: error.localizedDescription)
+            alertDisplayable.show(message: error.localizedDescription)
         }
         await draftQueue.endBackgroundTask(uuid: draft.localUUID)
         return sendDate
@@ -125,7 +125,7 @@ public final class DraftManager {
                         var sendDate: Date?
                         switch draft.action {
                         case .initialSave:
-                            await self.initialSave(draft: draft, mailboxManager: mailboxManager)
+                            await self.initialSaveRemotely(draft: draft, mailboxManager: mailboxManager)
                         case .save:
                             await self.saveDraftRemotely(draft: draft, mailboxManager: mailboxManager)
                         case .send:
@@ -148,8 +148,48 @@ public final class DraftManager {
         }
     }
 
+    /// First save of a draft with the remote, if non empty.
+    ///
+    /// Present a message with a `delete draft`  action
+    @discardableResult
+    public func initialSaveRemotely(draft: Draft, mailboxManager: MailboxManager) async -> Bool {
+        guard !isDraftEmpty(draft: draft) else {
+            deleteEmptyDraft(draft: draft, for: mailboxManager)
+            return false
+        }
+
+        await saveDraftRemotely(draft: draft, mailboxManager: mailboxManager)
+
+        let messageAction: UserAlertAction = (MailResourcesStrings.Localizable.actionDelete, { [weak self] in
+            self?.matomo.track(eventWithCategory: .snackbar, name: "deleteDraft")
+            self?.deleteDraftSnackBarAction(draft: draft, mailboxManager: mailboxManager)
+        })
+        alertDisplayable.show(message: MailResourcesStrings.Localizable.snackbarDraftSaved, action: messageAction)
+
+        return true
+    }
+
+    /// Check multiple conditions to infer if a draft is empty or not
+    private func isDraftEmpty(draft: Draft) -> Bool {
+        guard isDraftBodyEmptyOfAttachments(draft: draft) else {
+            return false
+        }
+
+        guard (try? isDraftBodyEmptyOfChanges(draft.body)) ?? true else {
+            return false
+        }
+
+        return true
+    }
+
+    /// Check that the draft has some Attachments of not
+    private func isDraftBodyEmptyOfAttachments(draft: Draft) -> Bool {
+        // This excludes the signature attachments that are present in Draft.attachments
+        return draft.attachments.filter { $0.contentId == nil }.isEmpty
+    }
+
     /// Check if once the Signature node is removed, we still have content
-    func isDraftBodyEmptyOfChanges(_ body: String) throws -> Bool {
+    internal func isDraftBodyEmptyOfChanges(_ body: String) throws -> Bool {
         guard !body.isEmpty else {
             return true
         }
@@ -165,22 +205,6 @@ public final class DraftManager {
 
         // Do we still have text ?
         return !document.hasText()
-    }
-
-    private func initialSave(draft: Draft, mailboxManager: MailboxManager) async {
-        // We consider the body to be not-empty on HTML parsing failure to keep user content.
-        let isDraftEmpty = (try? isDraftBodyEmptyOfChanges(draft.body)) ?? false
-        guard !isDraftEmpty else {
-            deleteEmptyDraft(draft: draft, for: mailboxManager)
-            return
-        }
-
-        await saveDraftRemotely(draft: draft, mailboxManager: mailboxManager)
-        await IKSnackBar.showSnackBar(message: MailResourcesStrings.Localizable.snackbarDraftSaved,
-                                      action: .init(title: MailResourcesStrings.Localizable.actionDelete) { [weak self] in
-                                          self?.matomo.track(eventWithCategory: .snackbar, name: "deleteDraft")
-                                          self?.deleteDraftSnackBarAction(draft: draft, mailboxManager: mailboxManager)
-                                      })
     }
 
     private func refreshDraftFolder(latestSendDate: Date?, mailboxManager: MailboxManager) async throws {
@@ -206,7 +230,7 @@ public final class DraftManager {
             await tryOrDisplayError {
                 if let liveDraft = draft.thaw() {
                     try await mailboxManager.delete(draft: liveDraft.freeze())
-                    await IKSnackBar.showSnackBar(message: MailResourcesStrings.Localizable.snackbarDraftDeleted)
+                    alertDisplayable.show(message: MailResourcesStrings.Localizable.snackbarDraftDeleted)
                     if let draftFolder = mailboxManager.getFolder(with: .draft)?.freeze() {
                         await mailboxManager.refresh(folder: draftFolder)
                     }

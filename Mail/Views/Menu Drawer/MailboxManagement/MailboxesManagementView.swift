@@ -28,6 +28,8 @@ struct MailboxesManagementView: View {
     @EnvironmentObject var mailboxManager: MailboxManager
     @EnvironmentObject var navigationDrawerState: NavigationDrawerState
 
+    @LazyInjectService private var accountManager: AccountManager
+
     @ObservedResults(
         Mailbox.self,
         configuration: MailboxInfosManager.instance.realmConfiguration,
@@ -94,8 +96,8 @@ struct MailboxesManagementView: View {
     }
 
     private func updateAccount() async throws {
-        guard let account = AccountManager.instance.account(for: mailboxManager.mailbox.userId) else { return }
-        try await AccountManager.instance.updateUser(for: account)
+        guard let account = accountManager.account(for: mailboxManager.mailbox.userId) else { return }
+        try await accountManager.updateUser(for: account)
     }
 }
 

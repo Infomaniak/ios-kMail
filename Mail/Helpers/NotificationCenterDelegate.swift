@@ -17,6 +17,7 @@
  */
 
 import Foundation
+import InfomaniakDI
 import MailCore
 import UIKit
 import UserNotifications
@@ -26,24 +27,26 @@ public struct NotificationTappedPayload {
 }
 
 @MainActor
-class NotificationCenterDelegate: NSObject, UNUserNotificationCenterDelegate {
+final class NotificationCenterDelegate: NSObject, UNUserNotificationCenterDelegate {
+    @LazyInjectService private var accountManager: AccountManager
+
     private func handleClickOnNotification(scene: UIScene?, content: UNNotificationContent) {
         guard let mailboxId = content.userInfo[NotificationsHelper.UserInfoKeys.mailboxId] as? Int,
               let userId = content.userInfo[NotificationsHelper.UserInfoKeys.userId] as? Int,
               let mailbox = MailboxInfosManager.instance.getMailbox(id: mailboxId, userId: userId),
-              let mailboxManager = AccountManager.instance.getMailboxManager(for: mailbox) else {
+              let mailboxManager = accountManager.getMailboxManager(for: mailbox) else {
             return
         }
 
-        if AccountManager.instance.currentMailboxManager?.mailbox != mailboxManager.mailbox {
-            if AccountManager.instance.getCurrentAccount()?.userId != mailboxManager.mailbox.userId {
-                if let switchedAccount = AccountManager.instance.accounts.values
+        if accountManager.currentMailboxManager?.mailbox != mailboxManager.mailbox {
+            if accountManager.getCurrentAccount()?.userId != mailboxManager.mailbox.userId {
+                if let switchedAccount = accountManager.accounts.values
                     .first(where: { $0.userId == mailboxManager.mailbox.userId }) {
-                    AccountManager.instance.switchAccount(newAccount: switchedAccount)
-                    AccountManager.instance.switchMailbox(newMailbox: mailbox)
+                    accountManager.switchAccount(newAccount: switchedAccount)
+                    accountManager.switchMailbox(newMailbox: mailbox)
                 }
             } else {
-                AccountManager.instance.switchMailbox(newMailbox: mailbox)
+                accountManager.switchMailbox(newMailbox: mailbox)
             }
         }
 

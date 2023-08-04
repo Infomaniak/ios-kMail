@@ -17,19 +17,27 @@
  */
 
 import CocoaLumberjackSwift
+import InfomaniakCore
 import InfomaniakDI
 import InfomaniakNotifications
 import MailCore
 import UIKit
 
-class AppDelegate: UIResponder, UIApplicationDelegate {
+@available(iOSApplicationExtension, unavailable)
+final class AppDelegate: UIResponder, UIApplicationDelegate {
     private let notificationCenterDelegate = NotificationCenterDelegate()
-    static var orientationLock = UIInterfaceOrientationMask.all
 
-    func application(
-        _ application: UIApplication,
-        willFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil
-    ) -> Bool {
+    @LazyInjectService private var orientationManager: OrientationManageable
+    @LazyInjectService private var accountManager: AccountManager
+    @LazyInjectService private var applicationState: ApplicationStatable
+
+    /// Making sure the DI is registered at a very early stage of the app launch.
+    private let dependencyInjectionHook = EarlyDIHook()
+
+    func application(_ application: UIApplication,
+                     willFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil) -> Bool {
+        DDLogInfo("Application starting in foreground ? \(applicationState.applicationState != .background)")
+
         UNUserNotificationCenter.current().delegate = notificationCenterDelegate
         Task {
             // Ask permission app launch
@@ -44,14 +52,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         @InjectService var notificationService: InfomaniakNotifications
         @InjectService var tokenStore: TokenStore
 
-        for account in AccountManager.instance.accounts {
+        for account in accountManager.accounts {
             Task {
                 /* Because of a backend issue we can't register the notification token directly after the creation or refresh of
                  an API token. We wait at least 15 seconds before trying to register. */
                 try? await Task.sleep(nanoseconds: 15_000_000_000)
 
                 guard let token = tokenStore.tokenFor(userId: account.userId) else { return }
-                let userApiFetcher = AccountManager.instance.getApiFetcher(for: token.userId, token: token)
+                let userApiFetcher = accountManager.getApiFetcher(for: token.userId, token: token)
                 await notificationService.updateRemoteNotificationsToken(tokenData: deviceToken,
                                                                          userApiFetcher: userApiFetcher,
                                                                          updatePolicy: .always)
@@ -65,6 +73,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(_ application: UIApplication,
                      supportedInterfaceOrientationsFor window: UIWindow?) -> UIInterfaceOrientationMask {
-        return AppDelegate.orientationLock
+        return orientationManager.orientationLock
     }
 }

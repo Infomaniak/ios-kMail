@@ -25,6 +25,8 @@ import MailResources
 import SwiftUI
 
 struct LogoutConfirmationView: View {
+    @LazyInjectService private var accountManager: AccountManager
+
     let account: Account
 
     var body: some View {
@@ -44,11 +46,11 @@ struct LogoutConfirmationView: View {
             @InjectService var notificationService: InfomaniakNotifications
             await notificationService.removeStoredTokenFor(userId: account.userId)
 
-            AccountManager.instance.removeTokenAndAccount(account: account)
-            if let nextAccount = AccountManager.instance.accounts.first {
-                AccountManager.instance.switchAccount(newAccount: nextAccount)
+            accountManager.removeTokenAndAccount(account: account)
+            if let nextAccount = accountManager.accounts.first {
+                accountManager.switchAccount(newAccount: nextAccount)
             }
-            AccountManager.instance.saveAccounts()
+            accountManager.saveAccounts()
         }
     }
 }

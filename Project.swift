@@ -18,18 +18,16 @@
 
 import Foundation
 import ProjectDescription
-
-let deploymentTarget = DeploymentTarget.iOS(targetVersion: "15.0", devices: [.iphone, .ipad])
-let baseSettings = SettingsDictionary()
-    .currentProjectVersion("1")
-    .marketingVersion("1.0.3")
-    .automaticCodeSigning(devTeam: "864VDCS2QY")
+import ProjectDescriptionHelpers
 
 let project = Project(name: "Mail",
                       packages: [
                           .package(url: "https://github.com/Infomaniak/ios-login", .upToNextMajor(from: "4.0.0")),
                           .package(url: "https://github.com/Infomaniak/ios-dependency-injection", .upToNextMajor(from: "1.1.6")),
-                          .package(url: "https://github.com/Infomaniak/ios-core", .revision("4eaefd644f75d833d6b1009dd94a9d6d674ccb53")),
+                          .package(
+                              url: "https://github.com/Infomaniak/ios-core",
+                              .revision("d779a9f6619615a4b4a91fa9d3fbb48415a27470")
+                          ),
                           .package(url: "https://github.com/Infomaniak/ios-core-ui", .upToNextMajor(from: "2.5.2")),
                           .package(url: "https://github.com/Infomaniak/ios-notifications", .upToNextMajor(from: "3.0.0")),
                           .package(url: "https://github.com/Infomaniak/ios-create-account", .upToNextMajor(from: "1.1.0")),
@@ -41,7 +39,10 @@ let project = Project(name: "Mail",
                           .package(url: "https://github.com/flowbe/SwiftRegex", .upToNextMajor(from: "1.0.0")),
                           .package(url: "https://github.com/matomo-org/matomo-sdk-ios", .upToNextMajor(from: "7.5.1")),
                           .package(url: "https://github.com/siteline/SwiftUI-Introspect", .upToNextMajor(from: "0.9.0")),
-                          .package(url: "https://github.com/Ambrdctr/SQRichTextEditor", .revision("04737b7694ecc6cfd78631bce5fc370f310e7e14")),
+                          .package(
+                              url: "https://github.com/Ambrdctr/SQRichTextEditor",
+                              .revision("04737b7694ecc6cfd78631bce5fc370f310e7e14")
+                          ),
                           .package(url: "https://github.com/markiv/SwiftUI-Shimmer", .upToNextMajor(from: "1.0.1")),
                           .package(url: "https://github.com/dkk/WrappingHStack", .upToNextMajor(from: "2.0.0")),
                           .package(url: "https://github.com/kean/Nuke", .upToNextMajor(from: "12.1.3")),
@@ -56,7 +57,7 @@ let project = Project(name: "Mail",
                                  platform: .iOS,
                                  product: .app,
                                  bundleId: "com.infomaniak.mail",
-                                 deploymentTarget: deploymentTarget,
+                                 deploymentTarget: Constants.deploymentTarget,
                                  infoPlist: "Mail/Info.plist",
                                  sources: "Mail/**",
                                  resources: [
@@ -69,12 +70,11 @@ let project = Project(name: "Mail",
                                      "MailResources/**/*.js"
                                  ],
                                  entitlements: "MailResources/Mail.entitlements",
-                                 scripts: [
-                                     .post(path: "scripts/lint.sh", name: "Swiftlint")
-                                 ],
+                                 scripts: [Constants.swiftlintScript],
                                  dependencies: [
                                      .target(name: "MailCore"),
                                      .target(name: "MailNotificationServiceExtension"),
+                                     .target(name: "MailShareExtension"),
                                      .package(product: "Introspect"),
                                      .package(product: "SQRichTextEditor"),
                                      .package(product: "Shimmer"),
@@ -84,7 +84,7 @@ let project = Project(name: "Mail",
                                      .package(product: "Popovers"),
                                      .package(product: "SwiftUIBackports")
                                  ],
-                                 settings: .settings(base: baseSettings),
+                                 settings: .settings(base: Constants.baseSettings),
                                  environment: ["hostname": "\(ProcessInfo.processInfo.hostName)."]),
                           Target(name: "MailTests",
                                  platform: .iOS,
@@ -107,11 +107,50 @@ let project = Project(name: "Mail",
                               ]
                           ),
                           Target(
+                              name: "MailShareExtension",
+                              platform: .iOS,
+                              product: .appExtension,
+                              bundleId: "com.infomaniak.mail.ShareExtension",
+                              deploymentTarget: Constants.deploymentTarget,
+                              infoPlist: .file(path: "MailShareExtension/Info.plist"),
+                              sources: ["MailShareExtension/**",
+                                        "Mail/Views/**",
+                                        "Mail/Components/**",
+                                        "Mail/Helpers/**",
+                                        "Mail/Utils/**",
+                                        "Mail/Views/**",
+                                        "Mail/Proxy/Protocols/**"],
+                              resources: [
+                                  "MailShareExtension/Base.lproj/MainInterface.storyboard",
+                                  "Mail/**/*.storyboard",
+                                  "MailResources/**/*.xcassets",
+                                  "MailResources/**/*.strings",
+                                  "MailResources/**/*.stringsdict",
+                                  "MailResources/**/*.json",
+                                  "MailResources/**/*.css",
+                                  "MailResources/**/*.js"
+                              ],
+                              entitlements: "MailShareExtension/ShareExtension.entitlements",
+                              scripts: [Constants.swiftlintScript],
+                              dependencies: [
+                                  .target(name: "MailCore"),
+                                  .package(product: "Introspect"),
+                                  .package(product: "SQRichTextEditor"),
+                                  .package(product: "Shimmer"),
+                                  .package(product: "WrappingHStack"),
+                                  .package(product: "Lottie"),
+                                  .package(product: "NavigationBackport"),
+                                  .package(product: "Popovers"),
+                                  .package(product: "SwiftUIBackports")
+                              ],
+                              settings: .settings(base: Constants.baseSettings)
+                          ),
+                          Target(
                               name: "MailNotificationServiceExtension",
                               platform: .iOS,
                               product: .appExtension,
                               bundleId: "com.infomaniak.mail.NotificationServiceExtension",
-                              deploymentTarget: deploymentTarget,
+                              deploymentTarget: Constants.deploymentTarget,
                               infoPlist: .extendingDefault(with: [
                                   "AppIdentifierPrefix": "$(AppIdentifierPrefix)",
                                   "CFBundleDisplayName": "$(PRODUCT_NAME)",
@@ -127,14 +166,14 @@ let project = Project(name: "Mail",
                               dependencies: [
                                   .target(name: "MailCore")
                               ],
-                              settings: .settings(base: baseSettings)
+                              settings: .settings(base: Constants.baseSettings)
                           ),
                           Target(
                               name: "MailResources",
                               platform: .iOS,
                               product: .staticLibrary,
                               bundleId: "com.infomaniak.mail.resources",
-                              deploymentTarget: deploymentTarget,
+                              deploymentTarget: Constants.deploymentTarget,
                               infoPlist: .default,
                               resources: [
                                   "MailResources/**/*.xcassets",
@@ -144,14 +183,14 @@ let project = Project(name: "Mail",
                                   "MailResources/**/*.css",
                                   "MailResources/**/*.js"
                               ],
-                              settings: .settings(base: baseSettings)
+                              settings: .settings(base: Constants.baseSettings)
                           ),
                           Target(
                               name: "MailCore",
                               platform: .iOS,
                               product: .framework,
                               bundleId: "com.infomaniak.mail.core",
-                              deploymentTarget: deploymentTarget,
+                              deploymentTarget: Constants.deploymentTarget,
                               infoPlist: "MailCore/Info.plist",
                               sources: "MailCore/**",
                               dependencies: [
@@ -172,7 +211,7 @@ let project = Project(name: "Mail",
                                   .package(product: "NukeUI"),
                                   .package(product: "SwiftSoup")
                               ],
-                              settings: .settings(base: baseSettings)
+                              settings: .settings(base: Constants.baseSettings)
                           )
                       ],
                       fileHeaderTemplate: .file("file-header-template.txt"))

@@ -16,11 +16,13 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import InfomaniakDI
 import MailResources
 import SwiftUI
 
 struct SettingsNotificationsInstructionsView: View {
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.openURL) var openURL
 
     var body: some View {
         VStack(alignment: .leading, spacing: 24) {
@@ -40,9 +42,7 @@ struct SettingsNotificationsInstructionsView: View {
             return
         }
 
-        if UIApplication.shared.canOpenURL(settingsUrl) {
-            UIApplication.shared.open(settingsUrl)
-        }
+        openURL(settingsUrl)
     }
 }
 

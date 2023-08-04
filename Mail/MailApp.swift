@@ -28,67 +28,13 @@ import Sentry
 import SwiftUI
 import UIKit
 
-public struct EarlyDIHook {
-    public init() {
-        // setup DI and logging ASAP
-        Logging.initLogging()
-        setupDI()
-    }
-
-    func setupDI() {
-        let networkLoginService = Factory(type: InfomaniakNetworkLoginable.self) { _, _ in
-            InfomaniakNetworkLogin(clientId: MailApiFetcher.clientId)
-        }
-        let loginService = Factory(type: InfomaniakLoginable.self) { _, _ in
-            InfomaniakLogin(clientId: MailApiFetcher.clientId)
-        }
-        let keychainHelper = Factory(type: KeychainHelper.self) { _, _ in
-            KeychainHelper(accessGroup: AccountManager.accessGroup)
-        }
-        let tokenStore = Factory(type: TokenStore.self) { _, _ in
-            TokenStore()
-        }
-        let notificationService = Factory(type: InfomaniakNotifications.self) { _, _ in
-            InfomaniakNotifications(appGroup: AccountManager.appGroup)
-        }
-        let appLockHelper = Factory(type: AppLockHelper.self) { _, _ in
-            AppLockHelper()
-        }
-        let bugTracker = Factory(type: BugTracker.self) { _, _ in
-            BugTracker(info: BugTrackerInfo(project: "app-mobile-mail", gitHubRepoName: "ios-mail", appReleaseType: .beta))
-        }
-        let matomoUtils = Factory(type: MatomoUtils.self) { _, _ in
-            MatomoUtils(siteId: Constants.matomoId, baseURL: URLConstants.matomo.url)
-        }
-        let avoider = Factory(type: SnackBarAvoider.self) { _, _ in
-            SnackBarAvoider()
-        }
-        let draftManager = Factory(type: DraftManager.self) { _, _ in
-            DraftManager()
-        }
-        let userActivityController = Factory(type: UserActivityController.self) { _, _ in
-            UserActivityController()
-        }
-
-        SimpleResolver.sharedResolver.store(factory: networkLoginService)
-        SimpleResolver.sharedResolver.store(factory: loginService)
-        SimpleResolver.sharedResolver.store(factory: notificationService)
-        SimpleResolver.sharedResolver.store(factory: keychainHelper)
-        SimpleResolver.sharedResolver.store(factory: tokenStore)
-        SimpleResolver.sharedResolver.store(factory: appLockHelper)
-        SimpleResolver.sharedResolver.store(factory: bugTracker)
-        SimpleResolver.sharedResolver.store(factory: matomoUtils)
-        SimpleResolver.sharedResolver.store(factory: avoider)
-        SimpleResolver.sharedResolver.store(factory: draftManager)
-        SimpleResolver.sharedResolver.store(factory: userActivityController)
-    }
-}
-
 @main
 struct MailApp: App {
     /// Making sure the DI is registered at a very early stage of the app launch.
     private let dependencyInjectionHook = EarlyDIHook()
-    @LazyInjectService var appLockHelper: AppLockHelper
+
+    @LazyInjectService private var appLockHelper: AppLockHelper
+    @LazyInjectService private var accountManager: AccountManager
 
     @UIApplicationDelegateAdaptor(AppDelegate.self) private var appDelegate
 
@@ -99,11 +45,8 @@ struct MailApp: App {
 
     @StateObject private var navigationState = NavigationState()
 
-    private let accountManager = AccountManager.instance
-
     init() {
         DDLogInfo("Application starting in foreground ? \(UIApplication.shared.applicationState != .background)")
-        ApiFetcher.decoder.dateDecodingStrategy = .iso8601
     }
 
     var body: some Scene {
@@ -161,7 +104,7 @@ struct MailApp: App {
                 try await accountManager.updateUser(for: account)
                 accountManager.enableBugTrackerIfAvailable()
 
-                try await accountManager.currentMailboxManager?.contactManager.fetchContactsAndAddressBooks()
+                try await accountManager.currentContactManager?.fetchContactsAndAddressBooks()
             } catch {
                 DDLogError("Error while updating user account: \(error)")
             }

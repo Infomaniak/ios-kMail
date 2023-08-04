@@ -16,6 +16,7 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import InfomaniakDI
 import MailCore
 import MailResources
 import RealmSwift
@@ -27,14 +28,20 @@ struct UnavailableMailboxListView: View {
     @ObservedResults(
         Mailbox.self,
         configuration: MailboxInfosManager.instance.realmConfiguration,
-        where: { $0.userId == AccountManager.instance.currentUserId && $0.isPasswordValid == false },
+        where: { mailbox in
+            @InjectService var accountManager: AccountManager
+            return mailbox.userId == accountManager.currentUserId && mailbox.isPasswordValid == false
+        },
         sortDescriptor: SortDescriptor(keyPath: \Mailbox.mailboxId)
     ) private var passwordBlockedMailboxes
 
     @ObservedResults(
         Mailbox.self,
         configuration: MailboxInfosManager.instance.realmConfiguration,
-        where: { $0.userId == AccountManager.instance.currentUserId && $0.isLocked == true },
+        where: { mailbox in
+            @InjectService var accountManager: AccountManager
+            return mailbox.userId == accountManager.currentUserId && mailbox.isLocked == true
+        },
         sortDescriptor: SortDescriptor(keyPath: \Mailbox.mailboxId)
     ) private var lockedMailboxes
 

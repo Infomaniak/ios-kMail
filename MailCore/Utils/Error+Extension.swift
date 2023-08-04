@@ -19,6 +19,7 @@
 import CocoaLumberjackSwift
 import Foundation
 import InfomaniakCoreUI
+import InfomaniakDI
 import Sentry
 
 public func tryOrDisplayError(_ body: () throws -> Void) {
@@ -38,11 +39,10 @@ public func tryOrDisplayError(_ body: () async throws -> Void) async {
 }
 
 private func displayErrorIfNeeded(error: Error) {
+    @InjectService var snackbarPresenter: SnackBarPresentable
     if let error = error as? MailError {
-        if error.shouldDisplay && !Bundle.main.isExtension {
-            Task.detached {
-                await IKSnackBar.showSnackBar(message: error.errorDescription)
-            }
+        if error.shouldDisplay {
+            snackbarPresenter.show(message: error.errorDescription)
         } else {
             SentrySDK.capture(message: "Encountered error that we didn't display to the user") { scope in
                 scope.setContext(
@@ -52,23 +52,25 @@ private func displayErrorIfNeeded(error: Error) {
             }
         }
         DDLogError("MailError: \(error)")
-    } else if error.shouldDisplay && !Bundle.main.isExtension {
-        Task.detached {
-            await IKSnackBar.showSnackBar(message: error.localizedDescription)
-        }
+    } else if error.shouldDisplay {
+        snackbarPresenter.show(message: error.localizedDescription)
         DDLogError("Error: \(error)")
     }
 }
 
 public extension Error {
     var shouldDisplay: Bool {
+        guard !Bundle.main.isExtension else {
+            return false
+        }
+
         switch asAFError {
         case .explicitlyCancelled:
             return false
         case .sessionTaskFailed(let error):
             return (error as NSError).code != NSURLErrorNotConnectedToInternet
         default:
-            return true
+            return false
         }
     }
 }

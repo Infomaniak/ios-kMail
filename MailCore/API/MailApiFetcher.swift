@@ -374,7 +374,7 @@ public class MailApiFetcher: ApiFetcher {
     }
 }
 
-class SyncedAuthenticator: OAuthAuthenticator {
+final class SyncedAuthenticator: OAuthAuthenticator {
     func handleFailedRefreshingToken(oldToken: ApiToken, error: Error?) -> Result<OAuthAuthenticator.Credential, Error> {
         guard let error = error as NSError?,
               error.domain == "invalid_grant" else {

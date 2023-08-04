@@ -37,7 +37,7 @@ public struct RecipientHolder {
     var bcc = [Recipient]()
 }
 
-public class Recipient: EmbeddedObject, Codable {
+public final class Recipient: EmbeddedObject, Codable {
     @Persisted public var email: String
     @Persisted public var name: String
 

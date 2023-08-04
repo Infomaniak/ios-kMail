@@ -24,6 +24,8 @@ import MailResources
 import SwiftUI
 
 struct SettingsView: View {
+    @InjectService private var accountManager: AccountManager
+
     @EnvironmentObject private var mailboxManager: MailboxManager
 
     @LazyInjectService private var appLockHelper: AppLockHelper
@@ -40,7 +42,7 @@ struct SettingsView: View {
                     .textStyle(.bodySmallSecondary)
 
                 ForEachMailboxView(userId: mailboxManager.account.userId) { mailbox in
-                    if let mailboxManager = AccountManager.instance.getMailboxManager(for: mailbox) {
+                    if let mailboxManager = accountManager.getMailboxManager(for: mailbox) {
                         SettingsSubMenuCell(title: mailbox.email) {
                             MailboxSettingsView(mailboxManager: mailboxManager)
                         }

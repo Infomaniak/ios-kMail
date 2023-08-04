@@ -22,6 +22,7 @@ import InfomaniakCoreUI
 import InfomaniakDI
 import MailResources
 import SnackBar
+import UIKit
 
 public extension SnackBarStyle {
     static func mailStyle(withAnchor anchor: CGFloat) -> SnackBarStyle {
@@ -40,42 +41,51 @@ public extension SnackBarStyle {
     }
 }
 
-public class SnackBarAvoider {
-    public var snackBarInset: CGFloat = 0
-
-    public init() { /* Needed to init */ }
-
-    public func addAvoider(inset: CGFloat) {
-        if inset != snackBarInset {
-            snackBarInset = inset
-        }
-    }
-
-    public func removeAvoider() {
-        snackBarInset = 0
-    }
-}
-
 public extension IKSnackBar {
     @discardableResult
     @MainActor
-    static func showSnackBar(
+    /// Call this method to display a `SnackBar`
+    /// - Parameters:
+    ///   - message: The message to display
+    ///   - duration: The time the message should be displayed
+    ///   - action: The action to perform if any
+    ///   - anchor: The anchor to use for presenting
+    ///   - contextView: Set a context view, when displaying in extension mode for eg.
+    /// - Returns: An IKSnackBar if any
+    static func showMailSnackBar(
         message: String,
         duration: SnackBar.Duration = .lengthLong,
         action: IKSnackBar.Action? = nil,
-        anchor: CGFloat = 0
+        anchor: CGFloat = 0,
+        contextView: UIView? = nil
     ) -> IKSnackBar? {
-        @LazyInjectService var avoider: SnackBarAvoider
-        let snackbar = IKSnackBar.make(
-            message: message,
-            duration: duration,
-            style: .mailStyle(withAnchor: avoider.snackBarInset),
-            elevation: 0
-        )
-        if let action {
-            snackbar?.setAction(action).show()
+        @LazyInjectService var avoider: IKSnackBarAvoider
+
+        let snackbar: IKSnackBar?
+        if let contextView = contextView {
+            snackbar = IKSnackBar.make(
+                in: contextView,
+                message: message,
+                duration: duration,
+                style: .mailStyle(withAnchor: avoider.snackBarInset)
+            )
         } else {
-            snackbar?.show()
+            snackbar = IKSnackBar.make(
+                message: message,
+                duration: duration,
+                style: .mailStyle(withAnchor: avoider.snackBarInset),
+                elevation: 0
+            )
+        }
+
+        guard let snackbar = snackbar else {
+            return nil
+        }
+
+        if let action {
+            snackbar.setAction(action).show()
+        } else {
+            snackbar.show()
         }
         return snackbar
     }
@@ -89,10 +99,11 @@ public extension IKSnackBar {
         undoRedoAction: UndoRedoAction,
         mailboxManager: MailboxManager
     ) -> IKSnackBar? {
-        return IKSnackBar.showSnackBar(
+        return IKSnackBar.showMailSnackBar(
             message: message,
             duration: duration,
             action: .init(title: MailResourcesStrings.Localizable.buttonCancel) {
+                @InjectService var snackbarPresenter: SnackBarPresentable
                 Task {
                     do {
                         @InjectService var matomo: MatomoUtils
@@ -101,11 +112,11 @@ public extension IKSnackBar {
                         let cancelled = try await mailboxManager.apiFetcher.undoAction(resource: undoRedoAction.undo.resource)
 
                         if cancelled {
-                            IKSnackBar.showSnackBar(message: cancelSuccessMessage)
+                            snackbarPresenter.show(message: cancelSuccessMessage)
                             try await undoRedoAction.redo?()
                         }
                     } catch {
-                        IKSnackBar.showSnackBar(message: error.localizedDescription)
+                        snackbarPresenter.show(message: error.localizedDescription)
                     }
                 }
             }

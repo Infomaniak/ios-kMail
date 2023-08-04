@@ -48,6 +48,9 @@ struct ComposeMessageCellRecipients: View {
 
     @FocusState var focusedField: ComposeViewFieldType?
 
+    @LazyInjectService private var snackbarPresenter: SnackBarPresentable
+    @LazyInjectService private var matomo: MatomoUtils
+
     let type: ComposeViewFieldType
     var areCCAndBCCEmpty = false
 
@@ -111,16 +114,15 @@ struct ComposeMessageCellRecipients: View {
     }
 
     @MainActor private func addNewRecipient(_ recipient: Recipient) {
-        @InjectService var matomo: MatomoUtils
         matomo.track(eventWithCategory: .newMessage, name: "addNewRecipient")
 
         guard Constants.isEmailAddress(recipient.email) else {
-            IKSnackBar.showSnackBar(message: MailResourcesStrings.Localizable.addUnknownRecipientInvalidEmail)
+            snackbarPresenter.show(message: MailResourcesStrings.Localizable.addUnknownRecipientInvalidEmail)
             return
         }
 
         guard !recipients.contains(where: { $0.isSameRecipient(as: recipient) }) else {
-            IKSnackBar.showSnackBar(message: MailResourcesStrings.Localizable.addUnknownRecipientAlreadyUsed)
+            snackbarPresenter.show(message: MailResourcesStrings.Localizable.addUnknownRecipientAlreadyUsed)
             return
         }
 

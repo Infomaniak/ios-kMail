@@ -16,6 +16,7 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import InfomaniakCore
 import InfomaniakCoreUI
 import InfomaniakDI
 import Introspect
@@ -59,15 +60,18 @@ final class NewMessageAlert: SheetState<NewMessageAlert.State> {
 
 struct ComposeMessageView: View {
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.dismissModal) var dismissModal
 
     @LazyInjectService private var matomo: MatomoUtils
     @LazyInjectService private var draftManager: DraftManager
+    @LazyInjectService private var snackbarPresenter: SnackBarPresentable
 
     @State private var isLoadingContent = true
     @State private var isShowingCancelAttachmentsError = false
     @State private var autocompletionType: ComposeViewFieldType?
     @State private var editorFocus = false
     @State private var currentSignature: Signature?
+    @State private var initialAttachments = [Attachable]()
 
     @State private var editorModel = RichTextEditorModel()
     @State private var scrollView: UIScrollView?
@@ -98,7 +102,7 @@ struct ComposeMessageView: View {
 
     // MARK: - Init
 
-    init(draft: Draft, mailboxManager: MailboxManager, messageReply: MessageReply? = nil) {
+    init(draft: Draft, mailboxManager: MailboxManager, messageReply: MessageReply? = nil, attachments: [Attachable] = []) {
         self.messageReply = messageReply
 
         Self.saveNewDraftInRealm(mailboxManager.getRealm(), draft: draft)
@@ -112,6 +116,7 @@ struct ComposeMessageView: View {
 
         self.mailboxManager = mailboxManager
         _attachmentsManager = StateObject(wrappedValue: AttachmentsManager(draft: draft, mailboxManager: mailboxManager))
+        _initialAttachments = State(wrappedValue: attachments)
     }
 
     // MARK: - View
@@ -120,6 +125,7 @@ struct ComposeMessageView: View {
         NavigationView {
             composeMessage
         }
+        .navigationViewStyle(.stack)
         .task {
             do {
                 isLoadingContent = true
@@ -128,11 +134,14 @@ struct ComposeMessageView: View {
                 isLoadingContent = false
             } catch {
                 // Unable to get signatures, "An error occurred" and close modal.
-                IKSnackBar.showSnackBar(message: MailError.unknownError.localizedDescription)
+                snackbarPresenter.show(message: MailError.unknownError.localizedDescription)
                 dismiss()
             }
         }
         .onAppear {
+            attachmentsManager.importAttachments(attachments: initialAttachments, draft: draft)
+            initialAttachments = []
+
             switch messageReply?.replyMode {
             case .reply, .replyAll:
                 focusedField = .editor
@@ -156,7 +165,7 @@ struct ComposeMessageView: View {
         }
         .customAlert(isPresented: $isShowingCancelAttachmentsError) {
             AttachmentsUploadInProgressErrorView {
-                dismiss()
+                dismissMessageView()
             }
         }
         .matomoView(view: ["ComposeMessage"])
@@ -242,12 +251,18 @@ struct ComposeMessageView: View {
 
     // MARK: - Func
 
+    /// Something to dismiss the view regardless of presentation context
+    private func dismissMessageView() {
+        dismissModal()
+        dismiss()
+    }
+
     private func didTouchDismiss() {
         guard attachmentsManager.allAttachmentsUploaded else {
             isShowingCancelAttachmentsError = true
             return
         }
-        dismiss()
+        dismissMessageView()
     }
 
     private func didTouchSend() {
@@ -266,7 +281,7 @@ struct ComposeMessageView: View {
                 liveDraft.action = .send
             }
         }
-        dismiss()
+        dismissMessageView()
     }
 
     private static func saveNewDraftInRealm(_ realm: Realm, draft: Draft) {

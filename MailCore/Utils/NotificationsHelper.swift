@@ -60,13 +60,14 @@ public enum NotificationsHelper {
     public static func getUnreadCount() async -> Int {
         var totalUnreadCount = 0
         @InjectService var notificationService: InfomaniakNotifications
+        @InjectService var accountManager: AccountManager
 
-        for account in AccountManager.instance.accounts {
+        for account in accountManager.accounts {
             let currentSubscription = await notificationService.subscriptionForUser(id: account.userId)
 
             for mailbox in MailboxInfosManager.instance.getMailboxes(for: account.userId)
                 where currentSubscription?.topics.contains(mailbox.notificationTopicName) == true {
-                if let mailboxManager = AccountManager.instance.getMailboxManager(for: mailbox) {
+                if let mailboxManager = accountManager.getMailboxManager(for: mailbox) {
                     totalUnreadCount += mailboxManager.getFolder(with: .inbox)?.unreadCount ?? 0
                 }
             }
@@ -106,7 +107,8 @@ public enum NotificationsHelper {
     private static func sendImmediately(notification: UNMutableNotificationContent, id: String,
                                         action: IKSnackBar.Action? = nil) {
         DispatchQueue.main.async {
-            let isInBackground = Bundle.main.isExtension || UIApplication.shared.applicationState != .active
+            @LazyInjectService var applicationState: ApplicationStatable
+            let isInBackground = Bundle.main.isExtension || applicationState.applicationState != .active
 
             if isInBackground {
                 let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 0.1, repeats: false)

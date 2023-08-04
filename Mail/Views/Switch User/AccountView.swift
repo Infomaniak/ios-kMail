@@ -25,29 +25,32 @@ import MailResources
 import Sentry
 import SwiftUI
 
-class AccountViewDelegate: DeleteAccountDelegate {
+final class AccountViewDelegate: DeleteAccountDelegate {
+    @LazyInjectService private var accountManager: AccountManager
+    @LazyInjectService private var snackbarPresenter: SnackBarPresentable
+
     @MainActor func didCompleteDeleteAccount() {
         Task {
-            guard let account = AccountManager.instance.getCurrentAccount() else { return }
-            AccountManager.instance.removeTokenAndAccount(account: account)
-            if let nextAccount = AccountManager.instance.accounts.first {
-                AccountManager.instance.switchAccount(newAccount: nextAccount)
-                IKSnackBar.showSnackBar(message: "Account deleted")
+            guard let account = accountManager.getCurrentAccount() else { return }
+            accountManager.removeTokenAndAccount(account: account)
+            if let nextAccount = accountManager.accounts.first {
+                accountManager.switchAccount(newAccount: nextAccount)
+                snackbarPresenter.show(message: "Account deleted")
             }
-            AccountManager.instance.saveAccounts()
+            accountManager.saveAccounts()
         }
     }
 
     @MainActor func didFailDeleteAccount(error: InfomaniakLoginError) {
         SentrySDK.capture(error: error)
-        IKSnackBar.showSnackBar(message: "Failed to delete account")
+        snackbarPresenter.show(message: "Failed to delete account")
     }
 }
 
 struct AccountView: View {
     @LazyInjectService private var matomo: MatomoUtils
     @LazyInjectService private var tokenStore: TokenStore
-    
+
     @Environment(\.dismiss) private var dismiss
 
     @EnvironmentObject private var mailboxManager: MailboxManager

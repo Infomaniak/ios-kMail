@@ -41,6 +41,8 @@ extension View {
 }
 
 struct MailboxCell: View {
+    @LazyInjectService private var accountManager: AccountManager
+
     @Environment(\.mailboxCellStyle) private var style: Style
     @EnvironmentObject private var navigationDrawerState: NavigationDrawerState
 
@@ -77,7 +79,7 @@ struct MailboxCell: View {
             case .account:
                 matomo.track(eventWithCategory: .account, name: "switchMailbox")
             }
-            AccountManager.instance.switchMailbox(newMailbox: mailbox)
+            accountManager.switchMailbox(newMailbox: mailbox)
             navigationDrawerState.close()
         }
         .floatingPanel(isPresented: $isShowingLockedView) {

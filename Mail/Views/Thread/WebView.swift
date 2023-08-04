@@ -17,6 +17,7 @@
  */
 
 import Combine
+import InfomaniakDI
 import MailCore
 import SwiftUI
 import WebKit
@@ -132,7 +133,7 @@ extension WebViewController: WKNavigationDelegate {
         if navigationAction.navigationType == .linkActivated {
             if let url = navigationAction.request.url {
                 decisionHandler(.cancel)
-                UIApplication.shared.open(url)
+                openURL?(url)
             }
         } else {
             decisionHandler(.allow)

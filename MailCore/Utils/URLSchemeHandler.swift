@@ -17,22 +17,25 @@
  */
 
 import Foundation
+import InfomaniakDI
 import WebKit
 
-public class URLSchemeHandler: NSObject, WKURLSchemeHandler {
+public final class URLSchemeHandler: NSObject, WKURLSchemeHandler {
     public static let scheme = "mail-infomaniak"
     public static let domain = "://mail.infomaniak.com"
 
     private var dataTasksInProgress = [Int: URLSessionDataTask]()
     private let syncQueue = DispatchQueue(label: "com.infomaniak.mail.URLSchemeHandler")
 
+    @LazyInjectService private var accountManager: AccountManager
+
     public func webView(_ webView: WKWebView, start urlSchemeTask: WKURLSchemeTask) {
         guard let url = urlSchemeTask.request.url else {
             urlSchemeTask.didFailWithError(MailError.resourceError)
             return
         }
-        
-        guard let currentAccessToken = AccountManager.instance.getCurrentAccount()?.token?.accessToken else {
+
+        guard let currentAccessToken = accountManager.getCurrentAccount()?.token?.accessToken else {
             urlSchemeTask.didFailWithError(MailError.unknownError)
             return
         }
