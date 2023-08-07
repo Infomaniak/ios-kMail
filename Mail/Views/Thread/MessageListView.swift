@@ -36,9 +36,12 @@ struct MessageListView: View {
                 }
             }
             .onAppear {
-                guard let firstExpanded = firstExpanded() else { return }
-                DispatchQueue.main.async {
-                    proxy.scrollTo(firstExpanded.uid, anchor: .top)
+                guard messages.count > 1,
+                      let firstExpanded = firstExpanded() else { return }
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                    withAnimation {
+                        proxy.scrollTo(firstExpanded.uid, anchor: .top)
+                    }
                 }
             }
         }
