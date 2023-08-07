@@ -177,7 +177,6 @@ public final class Message: Object, Decodable, Identifiable {
     @Persisted public var scheduled: Bool
     @Persisted public var forwarded: Bool
     @Persisted public var flagged: Bool
-    @Persisted private var safeDisplay: Bool?
     @Persisted public var hasUnsubscribeLink: Bool?
     @Persisted(originProperty: "messages") var threads: LinkingObjects<Thread>
     @Persisted(originProperty: "messages") private var folders: LinkingObjects<Folder>
@@ -368,7 +367,6 @@ public final class Message: Object, Decodable, Identifiable {
         scheduled = try values.decode(Bool.self, forKey: .scheduled)
         forwarded = try values.decode(Bool.self, forKey: .forwarded)
         flagged = try values.decode(Bool.self, forKey: .flagged)
-        safeDisplay = try values.decodeIfPresent(Bool.self, forKey: .safeDisplay)
         hasUnsubscribeLink = try values.decodeIfPresent(Bool.self, forKey: .hasUnsubscribeLink)
     }
 
@@ -432,7 +430,6 @@ public final class Message: Object, Decodable, Identifiable {
         self.scheduled = scheduled
         self.forwarded = forwarded
         self.flagged = flagged
-        self.safeDisplay = safeDisplay
         self.hasUnsubscribeLink = hasUnsubscribeLink
         fullyDownloaded = true
     }
