@@ -25,14 +25,33 @@ struct MessageListView: View {
     var messages: RealmSwift.List<Message>
 
     var body: some View {
-        LazyVStack(spacing: 0) {
-            ForEach(messages, id: \.uid) { message in
-                let isMessageExpanded = ((messages.last?.uid == message.uid) && !message.isDraft) || !message.seen
-                MessageView(message: message, isMessageExpanded: isMessageExpanded)
-                if message != messages.last {
-                    IKDivider()
+        ScrollViewReader { proxy in
+            LazyVStack(spacing: 0) {
+                ForEach(messages, id: \.uid) { message in
+                    MessageView(message: message, isMessageExpanded: isExpanded(message: message))
+                        .id(message.uid)
+                    if message != messages.last {
+                        IKDivider()
+                    }
+                }
+            }
+            .onAppear {
+                guard messages.count > 1,
+                      let firstExpanded = firstExpanded() else { return }
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                    withAnimation {
+                        proxy.scrollTo(firstExpanded.uid, anchor: .top)
+                    }
                 }
             }
         }
+    }
+
+    private func isExpanded(message: Message) -> Bool {
+        return ((messages.last?.uid == message.uid) && !message.isDraft) || !message.seen
+    }
+
+    private func firstExpanded() -> Message? {
+        return messages.first { isExpanded(message: $0) }
     }
 }
