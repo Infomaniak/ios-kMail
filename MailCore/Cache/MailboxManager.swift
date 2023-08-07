@@ -504,7 +504,7 @@ public final class MailboxManager: ObservableObject {
                 case .contains(let content):
                     predicates
                         .append(
-                            NSPredicate(format: "body.value CONTAINS[c] %@ OR subject CONTAINS[c] %@ OR preview CONTAINS[c] %@",
+                            NSPredicate(format: "subject CONTAINS[c] %@ OR preview CONTAINS[c] %@",
                                         content, content, content)
                         )
                 case .everywhere(let searchEverywhere):
