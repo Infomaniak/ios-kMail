@@ -200,7 +200,7 @@ public final class Message: Object, Decodable, Identifiable {
     }
 
     public var uniqueThread: Thread? {
-        return threads.first { $0.folder?.id == folderId && $0.isUniqueThread == true }
+        return threads.first { $0.folder?.id == folderId && $0.isConversationThread == false }
     }
 
     public var folder: Folder? {
@@ -460,7 +460,7 @@ public final class Message: Object, Decodable, Identifiable {
     public func toUniqueThread() -> Thread {
         let thread = toThread()
         thread.uid.append("_unique")
-        thread.isUniqueThread = true
+        thread.isConversationThread = false
         return thread
     }
 }

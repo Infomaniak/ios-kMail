@@ -21,13 +21,13 @@ import MailResources
 import SwiftUI
 
 public enum ThreadMode: String, CaseIterable, SettingsOptionEnum {
-    case thread
+    case conversation
     case message
 
     public var title: String {
         switch self {
-        case .thread:
-            return "thread"
+        case .conversation:
+            return "conversation"
         case .message:
             return "message"
         }
