@@ -81,20 +81,6 @@ struct SettingsView: View {
                     .textStyle(.bodySmallSecondary)
                     .padding(.top, 16)
 
-                // Thread mode
-                SettingsSubMenuCell(
-                    title: "Thread mode",
-                    subtitle: threadMode.title
-                ) {
-                    SettingsOptionView(
-                        title: "Thread mode",
-                        subtitle: MailResourcesStrings.Localizable.settingsSelectDisplayModeDescription,
-                        keyPath: \.threadMode,
-                        matomoCategory: .settingsDisplayExternalContent, // Change this
-                        matomoName: \.rawValue // Change this
-                    )
-                }
-
                 // Thread density
                 SettingsSubMenuCell(
                     title: MailResourcesStrings.Localizable.settingsThreadListDensityTitle,
@@ -135,6 +121,20 @@ struct SettingsView: View {
                     SettingsSwipeActionsView()
                 }
 
+                // Thread mode
+                SettingsSubMenuCell(
+                    title: MailResourcesStrings.Localizable.settingsThreadModeTitle,
+                    subtitle: threadMode.title
+                ) {
+                    SettingsOptionView(
+                        title: MailResourcesStrings.Localizable.settingsThreadModeTitle,
+                        subtitle: MailResourcesStrings.Localizable.settingsSelectDisplayModeDescription,
+                        keyPath: \.threadMode,
+                        matomoCategory: .settingsDisplayExternalContent, // Change this
+                        matomoName: \.rawValue // Change this
+                    )
+                }
+
                 // External content
                 SettingsSubMenuCell(
                     title: MailResourcesStrings.Localizable.settingsExternalContentTitle,
@@ -151,6 +151,11 @@ struct SettingsView: View {
             }
             .frame(maxWidth: .infinity, alignment: .leading)
             .padding(.horizontal, 16)
+        }
+        .onChange(of: threadMode) { _ in
+            Task {
+                await mailboxManager.cleanRealm()
+            }
         }
         .background(MailResourcesAsset.backgroundColor.swiftUIColor)
         .navigationBarTitle(MailResourcesStrings.Localizable.settingsTitle, displayMode: .inline)

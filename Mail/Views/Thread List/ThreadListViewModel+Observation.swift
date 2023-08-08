@@ -36,8 +36,7 @@ extension ThreadListViewModel {
             threadResults = folder.threads.sorted(by: \.date, ascending: false)
         }
 
-        let isConversationMode = folder.role != .draft && UserDefaults.shared.threadMode == .conversation
-        return threadResults.where { $0.isConversationThread == isConversationMode }
+        return threadResults
     }
 
     // MARK: - Observe global changes
@@ -128,8 +127,6 @@ extension ThreadListViewModel {
         guard let allThreadsUIDs else {
             return
         }
-
-        let isConversationMode = folder.role != .draft && UserDefaults.shared.threadMode == .conversation
 
         let containAnyOf = NSPredicate(format: Self.containAnyOfUIDs, allThreadsUIDs)
         let realm = mailboxManager.getRealm()

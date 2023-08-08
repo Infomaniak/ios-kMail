@@ -144,7 +144,7 @@ public class Folder: Object, Codable, Comparable, Identifiable {
     }
 
     public var formattedUnreadCount: String {
-        let realCount = (role == .draft ? threads.where { $0.isConversationThread == false }.count : unreadCount)
+        let realCount = (role == .draft ? threads.count : unreadCount)
         if realCount >= 100 {
             return "99+"
         }
@@ -190,8 +190,7 @@ public class Folder: Object, Codable, Comparable, Identifiable {
     }
 
     public func computeUnreadCount() {
-        let isConversationMode = UserDefaults.shared.threadMode == .conversation
-        unreadCount = threads.where { $0.isConversationThread == isConversationMode && $0.unseenMessages > 0 }.count
+        unreadCount = threads.where { $0.unseenMessages > 0 }.count
     }
 
     public func completeHistoryInfo() {

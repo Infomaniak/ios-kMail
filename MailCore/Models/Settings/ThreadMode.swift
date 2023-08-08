@@ -27,13 +27,18 @@ public enum ThreadMode: String, CaseIterable, SettingsOptionEnum {
     public var title: String {
         switch self {
         case .conversation:
-            return "conversation"
+            return MailResourcesStrings.Localizable.settingsOptionThreadModeConversation
         case .message:
-            return "message"
+            return MailResourcesStrings.Localizable.settingsOptionThreadModeMessage
         }
     }
 
     public var image: Image? {
-        return nil
+        switch self {
+        case .conversation:
+            return MailResourcesAsset.conversationEmail.swiftUIImage
+        case .message:
+            return MailResourcesAsset.singleEmail.swiftUIImage
+        }
     }
 }

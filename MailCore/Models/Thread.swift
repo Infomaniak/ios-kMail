@@ -48,8 +48,6 @@ public class Thread: Object, Decodable, Identifiable {
     @Persisted(originProperty: "threads") private var folders: LinkingObjects<Folder>
     @Persisted public var fromSearch = false
 
-    @Persisted public var isConversationThread = true
-
     @Persisted public var isDraft = false
 
     @Persisted public var duplicates = List<Message>()
