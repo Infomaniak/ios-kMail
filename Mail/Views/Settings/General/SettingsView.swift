@@ -153,9 +153,7 @@ struct SettingsView: View {
             .padding(.horizontal, 16)
         }
         .onChange(of: threadMode) { _ in
-            Task {
-                await mailboxManager.cleanRealm()
-            }
+            AccountManager.instance.updateConversationSettings()
         }
         .background(MailResourcesAsset.backgroundColor.swiftUIColor)
         .navigationBarTitle(MailResourcesStrings.Localizable.settingsTitle, displayMode: .inline)
