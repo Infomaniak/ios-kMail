@@ -27,6 +27,8 @@ import Sentry
 import SwiftRegex
 
 public final class MailboxManager: ObservableObject {
+    private let apiFetcherSerializer: MailApiFetchable
+
     @LazyInjectService private var snackbarPresenter: SnackBarPresentable
 
     public final class MailboxManagerConstants {
@@ -64,7 +66,10 @@ public final class MailboxManager: ObservableObject {
     public init(account: Account, mailbox: Mailbox, apiFetcher: MailApiFetcher, contactManager: ContactManager) {
         self.account = account
         self.mailbox = mailbox
+
+        apiFetcherSerializer = MailApiFetcherSerializer(mailApiFetcher: apiFetcher)
         self.apiFetcher = apiFetcher
+
         self.contactManager = contactManager
         let realmName = "\(mailbox.userId)-\(mailbox.mailboxId).realm"
         realmConfiguration = Realm.Configuration(
@@ -126,7 +131,7 @@ public final class MailboxManager: ObservableObject {
 
     public func refreshAllSignatures() async throws {
         // Get from API
-        let signaturesResult = try await apiFetcher.signatures(mailbox: mailbox)
+        let signaturesResult = try await apiFetcherSerializer.signatures(mailbox: mailbox)
         let updatedSignatures = Array(signaturesResult.signatures)
 
         await backgroundRealm.execute { realm in
@@ -161,7 +166,7 @@ public final class MailboxManager: ObservableObject {
     }
 
     public func updateSignature(signature: Signature) async throws {
-        _ = try await apiFetcher.updateSignature(mailbox: mailbox, signature: signature)
+        _ = try await apiFetcherSerializer.updateSignature(mailbox: mailbox, signature: signature)
         try await refreshAllSignatures()
     }
 
@@ -178,7 +183,7 @@ public final class MailboxManager: ObservableObject {
             return
         }
         // Get from API
-        let folderResult = try await apiFetcher.folders(mailbox: mailbox)
+        let folderResult = try await apiFetcherSerializer.folders(mailbox: mailbox)
         let newFolders = getSubFolders(from: folderResult)
 
         await backgroundRealm.execute { realm in
@@ -232,7 +237,7 @@ public final class MailboxManager: ObservableObject {
     }
 
     public func createFolder(name: String, parent: Folder? = nil) async throws -> Folder {
-        var folder = try await apiFetcher.create(mailbox: mailbox, folder: NewFolder(name: name, path: parent?.path))
+        var folder = try await apiFetcherSerializer.create(mailbox: mailbox, folder: NewFolder(name: name, path: parent?.path))
         await backgroundRealm.execute { realm in
             try? realm.safeWrite {
                 realm.add(folder)
@@ -246,7 +251,7 @@ public final class MailboxManager: ObservableObject {
     }
 
     public func flushFolder(folder: Folder) async throws -> Bool {
-        let response = try await apiFetcher.flushFolder(mailbox: mailbox, folderId: folder.id)
+        let response = try await apiFetcherSerializer.flushFolder(mailbox: mailbox, folderId: folder.id)
         await refresh(folder: folder)
         return response
     }
@@ -428,11 +433,12 @@ public final class MailboxManager: ObservableObject {
 
     public func searchThreads(searchFolder: Folder?, filterFolderId: String, filter: Filter = .all,
                               searchFilter: [URLQueryItem] = []) async throws -> ThreadResult {
-        let threadResult = try await apiFetcher.threads(
+        let threadResult = try await apiFetcherSerializer.threads(
             mailbox: mailbox,
             folderId: filterFolderId,
             filter: filter,
-            searchFilter: searchFilter
+            searchFilter: searchFilter,
+            isDraftFolder: false
         )
 
         await backgroundRealm.execute { realm in
@@ -454,7 +460,7 @@ public final class MailboxManager: ObservableObject {
 
     public func searchThreads(searchFolder: Folder?, from resource: String,
                               searchFilter: [URLQueryItem] = []) async throws -> ThreadResult {
-        let threadResult = try await apiFetcher.threads(from: resource, searchFilter: searchFilter)
+        let threadResult = try await apiFetcherSerializer.threads(from: resource, searchFilter: searchFilter)
 
         let realm = getRealm()
         for thread in threadResult.threads ?? [] {
@@ -611,16 +617,17 @@ public final class MailboxManager: ObservableObject {
         var messagesUids: MessagesUids
 
         if previousCursor == nil {
-            let messageUidsResult = try await apiFetcher.messagesUids(
+            let messageUidsResult = try await apiFetcherSerializer.messagesUids(
                 mailboxUuid: mailbox.uuid,
-                folderId: folder.id
+                folderId: folder.id,
+                paginationInfo: nil
             )
             messagesUids = MessagesUids(
                 addedShortUids: messageUidsResult.messageShortUids,
                 cursor: messageUidsResult.cursor
             )
         } else {
-            let messageDeltaResult = try await apiFetcher.messagesDelta(
+            let messageDeltaResult = try await apiFetcherSerializer.messagesDelta(
                 mailboxUUid: mailbox.uuid,
                 folderId: folder.id,
                 signature: previousCursor!
@@ -707,7 +714,7 @@ public final class MailboxManager: ObservableObject {
             paginationInfo = PaginationInfo(offsetUid: offset, direction: direction)
         }
 
-        let messageUidsResult = try await apiFetcher.messagesUids(
+        let messageUidsResult = try await apiFetcherSerializer.messagesUids(
             mailboxUuid: mailbox.uuid,
             folderId: folder.id,
             paginationInfo: paginationInfo
@@ -791,7 +798,7 @@ public final class MailboxManager: ObservableObject {
         guard !shortUids.isEmpty && !Task.isCancelled else { return }
 
         let uniqueUids: [String] = getUniqueUids(folder: folder, remoteUids: shortUids)
-        let messageByUidsResult = try await apiFetcher.messagesByUids(
+        let messageByUidsResult = try await apiFetcherSerializer.messagesByUids(
             mailboxUuid: mailbox.uuid,
             folderId: folder.id,
             messageUids: uniqueUids
@@ -924,7 +931,7 @@ public final class MailboxManager: ObservableObject {
 
     public func message(message: Message) async throws {
         // Get from API
-        let completedMessage = try await apiFetcher.message(message: message)
+        let completedMessage = try await apiFetcherSerializer.message(message: message)
         completedMessage.fullyDownloaded = true
 
         await backgroundRealm.execute { realm in
@@ -936,7 +943,7 @@ public final class MailboxManager: ObservableObject {
     }
 
     public func attachmentData(attachment: Attachment) async throws -> Data {
-        let data = try await apiFetcher.attachment(attachment: attachment)
+        let data = try await apiFetcherSerializer.attachment(attachment: attachment)
 
         let safeAttachment = ThreadSafeReference(to: attachment)
         await backgroundRealm.execute { realm in
@@ -1028,9 +1035,9 @@ public final class MailboxManager: ObservableObject {
 
     private func markAsSeen(messages: [Message], seen: Bool) async throws {
         if seen {
-            _ = try await apiFetcher.markAsSeen(mailbox: mailbox, messages: messages)
+            _ = try await apiFetcherSerializer.markAsSeen(mailbox: mailbox, messages: messages)
         } else {
-            _ = try await apiFetcher.markAsUnseen(mailbox: mailbox, messages: messages)
+            _ = try await apiFetcherSerializer.markAsUnseen(mailbox: mailbox, messages: messages)
         }
         try await refreshFolder(from: messages)
 
@@ -1064,13 +1071,13 @@ public final class MailboxManager: ObservableObject {
     }
 
     public func move(messages: [Message], to folder: Folder) async throws -> UndoRedoAction {
-        let response = try await apiFetcher.move(mailbox: mailbox, messages: messages, destinationId: folder._id)
+        let response = try await apiFetcherSerializer.move(mailbox: mailbox, messages: messages, destinationId: folder._id)
         try await refreshFolder(from: messages, additionalFolder: folder)
         return undoRedoAction(for: response, and: messages)
     }
 
     public func delete(messages: [Message]) async throws {
-        _ = try await apiFetcher.delete(mailbox: mailbox, messages: messages)
+        _ = try await apiFetcherSerializer.delete(mailbox: mailbox, messages: messages)
         try await refreshFolder(from: messages)
     }
 
@@ -1087,13 +1094,13 @@ public final class MailboxManager: ObservableObject {
     }
 
     private func star(messages: [Message]) async throws -> MessageActionResult {
-        let response = try await apiFetcher.star(mailbox: mailbox, messages: messages)
+        let response = try await apiFetcherSerializer.star(mailbox: mailbox, messages: messages)
         try await refreshFolder(from: messages)
         return response
     }
 
     private func unstar(messages: [Message]) async throws -> MessageActionResult {
-        let response = try await apiFetcher.unstar(mailbox: mailbox, messages: messages)
+        let response = try await apiFetcherSerializer.unstar(mailbox: mailbox, messages: messages)
         try await refreshFolder(from: messages)
         return response
     }
@@ -1129,7 +1136,7 @@ public final class MailboxManager: ObservableObject {
 
     public func send(draft: Draft) async throws -> SendResponse {
         do {
-            let cancelableResponse = try await apiFetcher.send(mailbox: mailbox, draft: draft)
+            let cancelableResponse = try await apiFetcherSerializer.send(mailbox: mailbox, draft: draft)
             // Once the draft has been sent, we can delete it from Realm
             try await deleteLocally(draft: draft)
             return cancelableResponse
@@ -1146,7 +1153,7 @@ public final class MailboxManager: ObservableObject {
 
     public func save(draft: Draft) async throws {
         do {
-            let saveResponse = try await apiFetcher.save(mailbox: mailbox, draft: draft)
+            let saveResponse = try await apiFetcherSerializer.save(mailbox: mailbox, draft: draft)
             await backgroundRealm.execute { realm in
                 // Update draft in Realm
                 guard let liveDraft = realm.object(ofType: Draft.self, forPrimaryKey: draft.localUUID) else { return }
@@ -1165,7 +1172,7 @@ public final class MailboxManager: ObservableObject {
 
     public func delete(draft: Draft) async throws {
         try await deleteLocally(draft: draft)
-        try await apiFetcher.deleteDraft(mailbox: mailbox, draftId: draft.remoteUUID)
+        try await apiFetcherSerializer.deleteDraft(mailbox: mailbox, draftId: draft.remoteUUID)
     }
 
     public func delete(draftMessage: Message) async throws {
@@ -1177,7 +1184,7 @@ public final class MailboxManager: ObservableObject {
             try await deleteLocally(draft: draft)
         }
 
-        try await apiFetcher.deleteDraft(draftResource: draftResource)
+        try await apiFetcherSerializer.deleteDraft(draftResource: draftResource)
         try await refreshFolder(from: [draftMessage])
     }
 
