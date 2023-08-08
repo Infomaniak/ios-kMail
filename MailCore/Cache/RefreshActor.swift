@@ -27,10 +27,34 @@ public actor RefreshActor {
         self.mailboxManager = mailboxManager
     }
 
+    func flushFolder(folder: Folder, mailbox: Mailbox, apiFetcher: MailApiFetcher) async throws -> Bool {
+        let response = try await apiFetcher.flushFolder(mailbox: mailbox, folderId: folder.id)
+        await refresh(folder: folder)
+        return response
+    }
+    
+    public func refreshFolder(from messages: [Message], additionalFolder: Folder?) async throws {
+        var folders = messages.map(\.folder)
+        if let additionalFolder {
+            folders.append(additionalFolder)
+        }
+
+        let orderedSet = NSOrderedSet(array: folders as [Any])
+
+        for folder in orderedSet {
+            guard let impactedFolder = folder as? Folder else { continue }
+            await refresh(folder: impactedFolder)
+        }
+    }
+
     public func refresh(folder: Folder) async {
         await cancelRefresh()
 
         refreshTask = Task {
+            guard !Task.isCancelled else {
+                return
+            }
+
             await tryOrDisplayError {
                 try await mailboxManager?.threads(folder: folder)
                 refreshTask = nil
