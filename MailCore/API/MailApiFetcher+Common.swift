@@ -1,0 +1,165 @@
+//
+/*
+ Infomaniak Mail - iOS App
+ Copyright (C) 2022 Infomaniak Network SA
+
+ This program is free software: you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation, either version 3 of the License, or
+ (at your option) any later version.
+
+ This program is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
+
+ You should have received a copy of the GNU General Public License
+ along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+import Alamofire
+import Foundation
+import InfomaniakCore
+import InfomaniakLogin
+
+/// implementing `MailApiCommonFetchable`
+public extension MailApiFetcher {
+    // MARK: - API methods
+
+    func mailboxes() async throws -> [Mailbox] {
+        try await perform(request: authenticatedRequest(.mailboxes)).data
+    }
+
+    func addMailbox(mail: String, password: String) async throws -> MailboxLinkedResult {
+        try await perform(request: authenticatedRequest(
+            .addMailbox,
+            method: .post,
+            parameters: ["mail": mail, "password": password, "is_primary": false]
+        )).data
+    }
+
+    func updateMailboxPassword(mailbox: Mailbox, password: String) async throws -> Bool {
+        try await perform(request: authenticatedRequest(
+            .updateMailboxPassword(mailboxId: mailbox.mailboxId),
+            method: .put,
+            parameters: ["password": password]
+        )).data
+    }
+
+    func detachMailbox(mailbox: Mailbox) async throws -> Bool {
+        try await perform(request: authenticatedRequest(.detachMailbox(mailboxId: mailbox.mailboxId), method: .delete)).data
+    }
+
+    func listBackups(mailbox: Mailbox) async throws -> BackupsList {
+        try await perform(request: authenticatedRequest(.backups(hostingId: mailbox.hostingId, mailboxName: mailbox.mailbox)))
+            .data
+    }
+
+    @discardableResult
+    func restoreBackup(mailbox: Mailbox, date: String) async throws -> Bool {
+        try await perform(request: authenticatedRequest(.backups(hostingId: mailbox.hostingId, mailboxName: mailbox.mailbox),
+                                                        method: .put,
+                                                        parameters: ["date": date])).data
+    }
+
+    func threads(mailbox: Mailbox, folderId: String, filter: Filter = .all,
+                 searchFilter: [URLQueryItem] = [], isDraftFolder: Bool = false) async throws -> ThreadResult {
+        try await perform(request: authenticatedRequest(.threads(
+            uuid: mailbox.uuid,
+            folderId: folderId,
+            filter: filter == .all ? nil : filter.rawValue,
+            searchFilters: searchFilter,
+            isDraftFolder: isDraftFolder
+        ))).data
+    }
+
+    func threads(from resource: String, searchFilter: [URLQueryItem] = []) async throws -> ThreadResult {
+        try await perform(request: authenticatedRequest(.resource(resource, queryItems: searchFilter))).data
+    }
+
+    func download(message: Message) async throws -> URL {
+        let destination = DownloadRequest.suggestedDownloadDestination(options: [
+            .createIntermediateDirectories,
+            .removePreviousFile
+        ])
+        let download = authenticatedSession.download(Endpoint.resource(message.downloadResource).url, to: destination)
+        return try await download.serializingDownloadedFileURL().value
+    }
+
+    func quotas(mailbox: Mailbox) async throws -> Quotas {
+        try await perform(request: authenticatedRequest(.quotas(mailbox: mailbox.mailbox, productId: mailbox.hostingId))).data
+    }
+
+    @discardableResult
+    func undoAction(resource: String) async throws -> Bool {
+        try await perform(request: authenticatedRequest(.resource(resource), method: .post)).data
+    }
+
+    func star(mailbox: Mailbox, messages: [Message]) async throws -> MessageActionResult {
+        try await perform(request: authenticatedRequest(.star(uuid: mailbox.uuid),
+                                                        method: .post,
+                                                        parameters: ["uids": messages.map(\.uid)])).data
+    }
+
+    func unstar(mailbox: Mailbox, messages: [Message]) async throws -> MessageActionResult {
+        try await perform(request: authenticatedRequest(.unstar(uuid: mailbox.uuid),
+                                                        method: .post,
+                                                        parameters: ["uids": messages.map(\.uid)])).data
+    }
+
+    func downloadAttachments(message: Message) async throws -> URL {
+        let destination = DownloadRequest.suggestedDownloadDestination(options: [
+            .createIntermediateDirectories,
+            .removePreviousFile
+        ])
+        let download = authenticatedSession.download(
+            Endpoint.downloadAttachments(messageResource: message.resource).url,
+            to: destination
+        )
+        return try await download.serializingDownloadedFileURL().value
+    }
+
+    func blockSender(message: Message) async throws -> Bool {
+        try await perform(request: authenticatedRequest(.blockSender(messageResource: message.resource), method: .post)).data
+    }
+
+    func reportPhishing(message: Message) async throws -> Bool {
+        try await perform(request: authenticatedRequest(.report(messageResource: message.resource),
+                                                        method: .post,
+                                                        parameters: ["type": "phishing"])).data
+    }
+
+    func create(mailbox: Mailbox, folder: NewFolder) async throws -> Folder {
+        try await perform(request: authenticatedRequest(.folders(uuid: mailbox.uuid), method: .post, parameters: folder)).data
+    }
+
+    func createAttachment(
+        mailbox: Mailbox,
+        attachmentData: Data,
+        attachment: Attachment,
+        progressObserver: @escaping (Double) -> Void
+    ) async throws -> Attachment {
+        let headers = HTTPHeaders([
+            "x-ws-attachment-filename": attachment.name,
+            "x-ws-attachment-mime-type": attachment.mimeType,
+            "x-ws-attachment-disposition": attachment.disposition.rawValue
+        ])
+        var request = try URLRequest(url: Endpoint.createAttachment(uuid: mailbox.uuid).url, method: .post, headers: headers)
+        request.httpBody = attachmentData
+
+        let uploadRequest = authenticatedSession.request(request)
+        Task {
+            for await progress in uploadRequest.uploadProgress() {
+                progressObserver(progress.fractionCompleted)
+            }
+        }
+
+        return try await perform(request: uploadRequest).data
+    }
+
+    func attachmentsToForward(mailbox: Mailbox, message: Message) async throws -> AttachmentsToForwardResult {
+        let attachmentsToForward = AttachmentsToForward(toForwardUids: [message.uid], mode: AttachmentDisposition.inline.rawValue)
+        return try await perform(request: authenticatedRequest(.attachmentToForward(uuid: mailbox.uuid), method: .post,
+                                                               parameters: attachmentsToForward)).data
+    }
+}
