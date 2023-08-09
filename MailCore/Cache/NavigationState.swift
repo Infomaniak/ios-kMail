@@ -21,15 +21,10 @@ import Foundation
 import InfomaniakCore
 import InfomaniakCoreUI
 import InfomaniakDI
-import MailCore
 import SwiftUI
 
-enum RootViewState: Equatable, Hashable, Identifiable {
-    var id: Int {
-        return hashValue
-    }
-
-    static func == (lhs: RootViewState, rhs: RootViewState) -> Bool {
+public enum RootViewState: Equatable {
+    public static func == (lhs: RootViewState, rhs: RootViewState) -> Bool {
         switch (lhs, rhs) {
         case (.appLocked, .appLocked):
             return true
@@ -46,21 +41,6 @@ enum RootViewState: Equatable, Hashable, Identifiable {
         }
     }
 
-    func hash(into hasher: inout Hasher) {
-        switch self {
-        case .appLocked:
-            hasher.combine("applocked")
-        case .mainView(let mailboxManager):
-            hasher.combine("mainView\(mailboxManager.mailbox.objectId)")
-        case .onboarding:
-            hasher.combine("onboarding")
-        case .noMailboxes:
-            hasher.combine("noMailboxes")
-        case .unavailableMailboxes:
-            hasher.combine("unavailableMailboxes")
-        }
-    }
-
     case appLocked
     case mainView(MailboxManager)
     case onboarding
@@ -68,7 +48,7 @@ enum RootViewState: Equatable, Hashable, Identifiable {
     case unavailableMailboxes
 }
 
-enum RootViewDestination {
+public enum RootViewDestination {
     case appLocked
     case mainView
     case onboarding
@@ -78,23 +58,23 @@ enum RootViewDestination {
 
 @MainActor
 /// Something that represents the state of navigation
-class NavigationState: ObservableObject {
+public class NavigationState: ObservableObject {
     @LazyInjectService private var appLockHelper: AppLockHelper
 
     private var accountManagerObservation: AnyCancellable?
 
-    @Published private(set) var rootViewState: RootViewState
-    @Published var messageReply: MessageReply?
-    @Published var editedMessageDraft: Draft?
+    @Published public private(set) var rootViewState: RootViewState
+    @Published public var messageReply: MessageReply?
+    @Published public var editedMessageDraft: Draft?
 
     /// Represents the state of navigation
     ///
     /// The selected thread is the last in collection, by convention.
-    @Published var threadPath = [Thread]()
+    @Published public var threadPath = [Thread]()
 
-    private(set) var account: Account?
+    public private(set) var account: Account?
 
-    init() {
+    public init() {
         @InjectService var accountManager: AccountManager
 
         account = accountManager.getCurrentAccount()
@@ -123,7 +103,7 @@ class NavigationState: ObservableObject {
         return .onboarding
     }
 
-    func transitionToRootViewDestination(_ destination: RootViewDestination) {
+    public func transitionToRootViewDestination(_ destination: RootViewDestination) {
         withAnimation {
             switch destination {
             case .appLocked:
@@ -140,7 +120,7 @@ class NavigationState: ObservableObject {
         }
     }
 
-    func transitionToLockViewIfNeeded() {
+    public func transitionToLockViewIfNeeded() {
         if UserDefaults.shared.isAppLockEnabled
             && appLockHelper.isAppLocked
             && account != nil {
