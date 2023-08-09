@@ -245,24 +245,22 @@ public final class MailboxManager: ObservableObject {
         return folder
     }
 
+    // MARK: - RefreshActor
+
     public func flushFolder(folder: Folder) async throws -> Bool {
-        let response = try await apiFetcher.flushFolder(mailbox: mailbox, folderId: folder.id)
-        await refresh(folder: folder)
-        return response
+        try await refreshActor.flushFolder(folder: folder, mailbox: mailbox, apiFetcher: apiFetcher)
     }
 
     public func refreshFolder(from messages: [Message], additionalFolder: Folder? = nil) async throws {
-        var folders = messages.map(\.folder)
-        if let additionalFolder {
-            folders.append(additionalFolder)
-        }
+        try await refreshActor.refreshFolder(from: messages, additionalFolder: additionalFolder)
+    }
 
-        let orderedSet = NSOrderedSet(array: folders as [Any])
+    public func refresh(folder: Folder) async {
+        await refreshActor.refresh(folder: folder)
+    }
 
-        for folder in orderedSet {
-            guard let impactedFolder = folder as? Folder else { continue }
-            await refresh(folder: impactedFolder)
-        }
+    public func cancelRefresh() async {
+        await refreshActor.cancelRefresh()
     }
 
     // MARK: - Thread
@@ -1206,16 +1204,6 @@ public final class MailboxManager: ObservableObject {
                 }
             }
         }
-    }
-
-    // MARK: - RefreshActor
-
-    public func refresh(folder: Folder) async {
-        await refreshActor.refresh(folder: folder)
-    }
-
-    public func cancelRefresh() async {
-        await refreshActor.cancelRefresh()
     }
 
     // MARK: - Utilities
