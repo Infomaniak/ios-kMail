@@ -27,12 +27,12 @@ public actor RefreshActor {
         self.mailboxManager = mailboxManager
     }
 
-    func flushFolder(folder: Folder, mailbox: Mailbox, apiFetcher: MailApiFetcher) async throws -> Bool {
+    public func flushFolder(folder: Folder, mailbox: Mailbox, apiFetcher: MailApiFetcher) async throws -> Bool {
         let response = try await apiFetcher.flushFolder(mailbox: mailbox, folderId: folder.id)
         await refresh(folder: folder)
         return response
     }
-    
+
     public func refreshFolder(from messages: [Message], additionalFolder: Folder?) async throws {
         var folders = messages.map(\.folder)
         if let additionalFolder {
