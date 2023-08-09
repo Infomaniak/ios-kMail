@@ -129,9 +129,7 @@ struct SettingsView: View {
                     SettingsOptionView(
                         title: MailResourcesStrings.Localizable.settingsThreadModeTitle,
                         subtitle: MailResourcesStrings.Localizable.settingsSelectDisplayModeDescription,
-                        keyPath: \.threadMode,
-                        matomoCategory: .settingsDisplayExternalContent, // Change this
-                        matomoName: \.rawValue // Change this
+                        keyPath: \.threadMode
                     )
                 }
 
