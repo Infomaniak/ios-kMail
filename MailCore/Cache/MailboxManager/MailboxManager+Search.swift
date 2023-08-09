@@ -1,0 +1,206 @@
+//
+/*
+ Infomaniak Mail - iOS App
+ Copyright (C) 2022 Infomaniak Network SA
+
+ This program is free software: you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation, either version 3 of the License, or
+ (at your option) any later version.
+
+ This program is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
+
+ You should have received a copy of the GNU General Public License
+ along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+import Foundation
+import InfomaniakCore
+import RealmSwift
+
+// MARK: - Search
+
+public extension MailboxManager {
+    func initSearchFolder() -> Folder {
+        let searchFolder = Folder(
+            id: Constants.searchFolderId,
+            path: "",
+            name: "",
+            isFavorite: false,
+            separator: "/",
+            children: [],
+            toolType: .search
+        )
+
+        let realm = getRealm()
+        try? realm.uncheckedSafeWrite {
+            realm.add(searchFolder, update: .modified)
+        }
+        return searchFolder
+    }
+
+    func searchThreads(searchFolder: Folder?, filterFolderId: String, filter: Filter = .all,
+                       searchFilter: [URLQueryItem] = []) async throws -> ThreadResult {
+        let threadResult = try await apiFetcher.threads(
+            mailbox: mailbox,
+            folderId: filterFolderId,
+            filter: filter,
+            searchFilter: searchFilter,
+            isDraftFolder: false
+        )
+
+        await backgroundRealm.execute { realm in
+            for thread in threadResult.threads ?? [] {
+                thread.fromSearch = true
+
+                for message in thread.messages where realm.object(ofType: Message.self, forPrimaryKey: message.uid) == nil {
+                    message.fromSearch = true
+                }
+            }
+        }
+
+        if let searchFolder {
+            await saveThreads(result: threadResult, parent: searchFolder)
+        }
+
+        return threadResult
+    }
+
+    func searchThreads(searchFolder: Folder?, from resource: String,
+                       searchFilter: [URLQueryItem] = []) async throws -> ThreadResult {
+        let threadResult = try await apiFetcher.threads(from: resource, searchFilter: searchFilter)
+
+        let realm = getRealm()
+        for thread in threadResult.threads ?? [] {
+            thread.fromSearch = true
+
+            for message in thread.messages where realm.object(ofType: Message.self, forPrimaryKey: message.uid) == nil {
+                message.fromSearch = true
+            }
+        }
+
+        if let searchFolder {
+            await saveThreads(result: threadResult, parent: searchFolder)
+        }
+
+        return threadResult
+    }
+
+    func searchThreadsOffline(searchFolder: Folder?, filterFolderId: String,
+                              searchFilters: [SearchCondition]) async {
+        await backgroundRealm.execute { realm in
+            guard let searchFolder = searchFolder?.fresh(using: realm) else { return }
+
+            try? realm.safeWrite {
+                realm.delete(realm.objects(Message.self).where { $0.fromSearch == true })
+                realm.delete(searchFolder.threads.where { $0.fromSearch == true })
+                searchFolder.threads.removeAll()
+            }
+
+            var predicates: [NSPredicate] = []
+            for searchFilter in searchFilters {
+                switch searchFilter {
+                case .filter(let filter):
+                    switch filter {
+                    case .seen:
+                        predicates.append(NSPredicate(format: "seen = true"))
+                    case .unseen:
+                        predicates.append(NSPredicate(format: "seen = false"))
+                    case .starred:
+                        predicates.append(NSPredicate(format: "flagged = true"))
+                    case .unstarred:
+                        predicates.append(NSPredicate(format: "flagged = false"))
+                    default:
+                        break
+                    }
+                case .from(let from):
+                    predicates.append(NSPredicate(format: "ANY from.email = %@", from))
+                case .contains(let content):
+                    predicates
+                        .append(
+                            NSPredicate(format: "subject CONTAINS[c] %@ OR preview CONTAINS[c] %@",
+                                        content, content, content)
+                        )
+                case .everywhere(let searchEverywhere):
+                    if !searchEverywhere {
+                        predicates.append(NSPredicate(format: "folderId = %@", filterFolderId))
+                    }
+                case .attachments(let searchAttachments):
+                    if searchAttachments {
+                        predicates.append(NSPredicate(format: "hasAttachments = true"))
+                    }
+                }
+            }
+
+            let compoundPredicate = NSCompoundPredicate(andPredicateWithSubpredicates: predicates)
+
+            let filteredMessages = realm.objects(Message.self).filter(compoundPredicate)
+
+            // Update thread in Realm
+            try? realm.safeWrite {
+                for message in filteredMessages {
+                    let newMessage = message.detached()
+                    newMessage.uid = "offline\(newMessage.uid)"
+                    newMessage.fromSearch = true
+
+                    let newThread = Thread(
+                        uid: "offlineThread\(message.uid)",
+                        messages: [newMessage],
+                        unseenMessages: 0,
+                        from: Array(message.from.detached()),
+                        to: Array(message.to.detached()),
+                        date: newMessage.date,
+                        hasAttachments: newMessage.hasAttachments,
+                        hasDrafts: newMessage.isDraft,
+                        flagged: newMessage.flagged,
+                        answered: newMessage.answered,
+                        forwarded: newMessage.forwarded
+                    )
+                    newThread.fromSearch = true
+                    newThread.subject = message.subject
+                    searchFolder.threads.insert(newThread)
+                }
+            }
+        }
+    }
+
+    func searchHistory(using realm: Realm? = nil) -> SearchHistory {
+        let realm = realm ?? getRealm()
+        if let searchHistory = realm.objects(SearchHistory.self).first {
+            return searchHistory.freeze()
+        }
+        let newSearchHistory = SearchHistory()
+        try? realm.uncheckedSafeWrite {
+            realm.add(newSearchHistory)
+        }
+        return newSearchHistory
+    }
+
+    func update(searchHistory: SearchHistory, with value: String) async -> SearchHistory {
+        return await backgroundRealm.execute { realm in
+            guard let liveSearchHistory = realm.objects(SearchHistory.self).first else { return searchHistory }
+            try? realm.safeWrite {
+                if let indexToRemove = liveSearchHistory.history.firstIndex(of: value) {
+                    liveSearchHistory.history.remove(at: indexToRemove)
+                }
+                liveSearchHistory.history.insert(value, at: 0)
+            }
+            return liveSearchHistory.freeze()
+        }
+    }
+
+    func delete(searchHistory: SearchHistory, with value: String) async -> SearchHistory {
+        return await backgroundRealm.execute { realm in
+            guard let liveSearchHistory = realm.objects(SearchHistory.self).first else { return searchHistory }
+            try? realm.safeWrite {
+                if let indexToRemove = liveSearchHistory.history.firstIndex(of: value) {
+                    liveSearchHistory.history.remove(at: indexToRemove)
+                }
+            }
+            return liveSearchHistory.freeze()
+        }
+    }
+}

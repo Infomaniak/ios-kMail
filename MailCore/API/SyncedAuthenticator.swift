@@ -22,63 +22,6 @@ import InfomaniakCore
 import InfomaniakDI
 import InfomaniakLogin
 import Sentry
-import UIKit
-
-public extension ApiFetcher {
-    convenience init(token: ApiToken, delegate: RefreshTokenDelegate) {
-        self.init()
-        createAuthenticatedSession(token,
-                                   authenticator: SyncedAuthenticator(refreshTokenDelegate: delegate),
-                                   additionalAdapters: [RequestContextIdAdaptor()])
-    }
-}
-
-public final class MailApiFetcher: ApiFetcher, MailApiFetchable {
-    public static let clientId = "E90BC22D-67A8-452C-BE93-28DA33588CA4"
-
-    /// All status except 401 are handled by our code, 401 status is handled by Alamofire's Authenticator code
-    private lazy var handledHttpStatus: Set<Int> = {
-        var allStatus = Set(200 ... 500)
-        allStatus.remove(401)
-        return allStatus
-    }()
-
-    override public func perform<T: Decodable>(
-        request: DataRequest,
-        decoder: JSONDecoder = ApiFetcher.decoder
-    ) async throws -> (data: T, responseAt: Int?) {
-        do {
-            return try await super.perform(request: request.validate(statusCode: handledHttpStatus))
-        } catch InfomaniakError.apiError(let apiError) {
-            throw MailApiError.mailApiErrorWithFallback(apiErrorCode: apiError.code)
-        } catch InfomaniakError.serverError(statusCode: let statusCode) {
-            throw MailServerError(httpStatus: statusCode)
-        } catch {
-            if let afError = error.asAFError {
-                if case .responseSerializationFailed(let reason) = afError,
-                   case .decodingFailed(let error) = reason {
-                    var rawJson = "No data"
-                    if let data = request.data,
-                       let stringData = String(data: data, encoding: .utf8) {
-                        rawJson = stringData
-                    }
-
-                    SentrySDK.capture(error: error) { scope in
-                        scope.setExtras(["Request URL": request.request?.url?.absoluteString ?? "No URL",
-                                         "Request Id": request.request?
-                                             .value(forHTTPHeaderField: RequestContextIdAdaptor.requestContextIdHeader) ??
-                                             "No request Id",
-                                         "Decoded type": String(describing: T.self),
-                                         "Raw JSON": rawJson])
-                    }
-                }
-                throw AFErrorWithContext(request: request, afError: afError)
-            } else {
-                throw error
-            }
-        }
-    }
-}
 
 final class SyncedAuthenticator: OAuthAuthenticator {
     func handleFailedRefreshingToken(oldToken: ApiToken, error: Error?) -> Result<OAuthAuthenticator.Credential, Error> {
@@ -147,59 +90,5 @@ final class SyncedAuthenticator: OAuthAuthenticator {
             // revoked
             completion(.failure(MailError.noToken))
         }
-    }
-}
-
-final class NetworkRequestRetrier: RequestInterceptor {
-    let maxRetry: Int
-    private var retriedRequests: [String: Int] = [:]
-    let timeout = -1001
-    let connectionLost = -1005
-
-    init(maxRetry: Int = 3) {
-        self.maxRetry = maxRetry
-    }
-
-    func retry(
-        _ request: Alamofire.Request,
-        for session: Session,
-        dueTo error: Error,
-        completion: @escaping (RetryResult) -> Void
-    ) {
-        guard request.task?.response == nil,
-              let url = request.request?.url?.absoluteString else {
-            removeCachedUrlRequest(url: request.request?.url?.absoluteString)
-            completion(.doNotRetry)
-            return
-        }
-
-        let errorGenerated = error as NSError
-        switch errorGenerated.code {
-        case timeout, connectionLost:
-            guard let retryCount = retriedRequests[url] else {
-                retriedRequests[url] = 1
-                completion(.retryWithDelay(0.5))
-                return
-            }
-
-            if retryCount < maxRetry {
-                retriedRequests[url] = retryCount + 1
-                completion(.retryWithDelay(0.5))
-            } else {
-                removeCachedUrlRequest(url: url)
-                completion(.doNotRetry)
-            }
-
-        default:
-            removeCachedUrlRequest(url: url)
-            completion(.doNotRetry)
-        }
-    }
-
-    private func removeCachedUrlRequest(url: String?) {
-        guard let url else {
-            return
-        }
-        retriedRequests.removeValue(forKey: url)
     }
 }

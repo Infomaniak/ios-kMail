@@ -145,8 +145,7 @@ struct SettingsNotificationsView: View {
         Task {
             guard let subscribedTopics else { return }
             
-            // TODO fix
-            await notificationService.updateTopicsIfNeeded(subscribedTopics, userApiFetcher: mailboxManager.apiFetcher as! ApiFetcher)
+            await notificationService.updateTopicsIfNeeded(subscribedTopics, userApiFetcher: mailboxManager.apiFetcher)
         }
     }
 

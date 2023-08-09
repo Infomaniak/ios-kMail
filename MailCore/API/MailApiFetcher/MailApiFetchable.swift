@@ -71,31 +71,54 @@ public protocol MailApiCommonFetchable {
     func attachmentsToForward(mailbox: Mailbox, message: Message) async throws -> AttachmentsToForwardResult
 }
 
-/// Extended capabilities
+/// Extended capabilities of the `MailApiFetcher`
 public protocol MailApiExtendedFetchable {
+    
     func permissions(mailbox: Mailbox) async throws -> MailboxPermissions
+    
     func contacts() async throws -> [Contact]
+    
     func addressBooks() async throws -> AddressBookResult
+    
     func addContact(_ recipient: Recipient, to addressBook: AddressBook) async throws -> Int
+    
     func signatures(mailbox: Mailbox) async throws -> SignatureResponse
+    
     func updateSignature(mailbox: Mailbox, signature: Signature) async throws -> Bool
+    
     func folders(mailbox: Mailbox) async throws -> [Folder]
+    
     func flushFolder(mailbox: Mailbox, folderId: String) async throws -> Bool
+    
     func messagesUids(mailboxUuid: String,
                       folderId: String,
                       paginationInfo: PaginationInfo?) async throws -> MessageUidsResult
+    
     func messagesByUids(mailboxUuid: String, folderId: String, messageUids: [String]) async throws -> MessageByUidsResult
+    
     func messagesDelta(mailboxUUid: String, folderId: String, signature: String) async throws -> MessageDeltaResult
+    
     func message(message: Message) async throws -> Message
+    
     func markAsSeen(mailbox: Mailbox, messages: [Message]) async throws -> MessageActionResult
+    
     func markAsUnseen(mailbox: Mailbox, messages: [Message]) async throws -> MessageActionResult
+    
     func move(mailbox: Mailbox, messages: [Message], destinationId: String) async throws -> UndoResponse
+    
     func delete(mailbox: Mailbox, messages: [Message]) async throws -> Empty
+    
     func attachment(attachment: Attachment) async throws -> Data
+    
     func draft(mailbox: Mailbox, draftUuid: String) async throws -> Draft
+    
     func draft(from message: Message) async throws -> Draft
+    
     func send(mailbox: Mailbox, draft: Draft) async throws -> SendResponse
+    
     func save(mailbox: Mailbox, draft: Draft) async throws -> DraftResponse
+    
     func deleteDraft(mailbox: Mailbox, draftId: String) async throws -> Empty?
+    
     func deleteDraft(draftResource: String) async throws -> Empty?
 }
