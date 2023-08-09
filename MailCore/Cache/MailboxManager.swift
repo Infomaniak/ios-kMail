@@ -245,7 +245,7 @@ public final class MailboxManager: ObservableObject {
         return folder
     }
 
-    // MARK: RefreshActor
+    // MARK: - RefreshActor
 
     public func flushFolder(folder: Folder) async throws -> Bool {
         try await refreshActor.flushFolder(folder: folder, mailbox: mailbox, apiFetcher: apiFetcher)
