@@ -5,7 +5,7 @@
  * Locale: es, Spanish
  * Tagged: ios
  * Exported by: Ambroise Decouttere
- * Exported at: Wed, 09 Aug 2023 18:11:40 +0200
+ * Exported at: Thu, 10 Aug 2023 14:44:55 +0200
  */
 
 /* loco:6256793050618f7416758a32 */
@@ -1223,11 +1223,11 @@
 /* loco:64c21f7b8b1932323c047792 */
 "newAccountStorageDrive" = "15 GB de almacenamiento kDrive";
 
+/* loco:64ca16484dbf65eb9b0ea862 */
+"pleaseLogInFirst" = "Inicia sesión primero en la aplicación ikMail.";
+
 /* loco:64cca81829e8aeaec602e1c2 */
 "settingsThreadModeTitle" = "Modo de visualización de mensajes";
-
-/* loco:64ccb58ceef1939fc6061fa2 */
-"contentDescriptionButtonDeleteSearch" = "Borrar búsqueda";
 
 /* loco:64d209e0b3606abecd06b622 */
 "errorNewFolderInvalidCharacter" = "El nombre de la carpeta contiene caracteres no válidos";

@@ -332,7 +332,7 @@ public extension MailboxManager {
 
         await backgroundRealm.execute { [self] realm in
             if let folder = folder.fresh(using: realm) {
-                createMultiMessagesThreads(messageByUids: messageByUidsResult, folder: folder, using: realm)
+                createThreads(messageByUids: messageByUidsResult, folder: folder, using: realm)
             }
             SentryDebug.sendMissingMessagesSentry(
                 sentUids: uniqueUids,
@@ -343,7 +343,7 @@ public extension MailboxManager {
         }
     }
 
-    private func createMultiMessagesThreads(messageByUids: MessageByUidsResult, folder: Folder, using realm: Realm) {
+    private func createThreads(messageByUids: MessageByUidsResult, folder: Folder, using realm: Realm) {
         var threadsToUpdate = Set<Thread>()
         try? realm.safeWrite {
             for message in messageByUids.messages {
@@ -360,28 +360,12 @@ public extension MailboxManager {
                 }
                 message.inTrash = folder.role == .trash
                 message.computeReference()
-                let existingThreads = Array(realm.objects(Thread.self)
-                    .where { $0.messageIds.containsAny(in: message.linkedUids) })
 
-                if let newThread = createNewThreadIfRequired(
-                    for: message,
-                    folder: folder,
-                    existingThreads: existingThreads
-                ) {
-                    threadsToUpdate.insert(newThread)
-                }
-
-                var allExistingMessages = Set(existingThreads.flatMap(\.messages))
-                allExistingMessages.insert(message)
-
-                for thread in existingThreads {
-                    for existingMessage in allExistingMessages {
-                        if !thread.messages.map(\.uid).contains(existingMessage.uid) {
-                            thread.addMessageIfNeeded(newMessage: message.fresh(using: realm) ?? message)
-                        }
-                    }
-
-                    threadsToUpdate.insert(thread)
+                let isThreadMode = UserDefaults.shared.threadMode == .conversation
+                if isThreadMode {
+                    createConversationThread(message: message, folder: folder, threadsToUpdate: &threadsToUpdate, using: realm)
+                } else {
+                    createSingleMessageThread(message: message, folder: folder) // threadsToUpdate ?
                 }
 
                 if let message = realm.objects(Message.self).first(where: { $0.uid == message.uid }) {
@@ -390,6 +374,42 @@ public extension MailboxManager {
             }
             self.updateThreads(threads: threadsToUpdate, realm: realm)
         }
+    }
+
+    private func createConversationThread(
+        message: Message,
+        folder: Folder,
+        threadsToUpdate: inout Set<Thread>,
+        using realm: Realm
+    ) {
+        let existingThreads = Array(realm.objects(Thread.self)
+            .where { $0.messageIds.containsAny(in: message.linkedUids) /* && $0.isConversationThread == true */ })
+
+        if let newThread = createNewThreadIfRequired(
+            for: message,
+            folder: folder,
+            existingThreads: existingThreads
+        ) {
+            threadsToUpdate.insert(newThread)
+        }
+
+        var allExistingMessages = Set(existingThreads.flatMap(\.messages))
+        allExistingMessages.insert(message)
+
+        for thread in existingThreads {
+            for existingMessage in allExistingMessages {
+                if !thread.messages.map(\.uid).contains(existingMessage.uid) {
+                    thread.addMessageIfNeeded(newMessage: message.fresh(using: realm) ?? message)
+                }
+            }
+
+            threadsToUpdate.insert(thread)
+        }
+    }
+
+    private func createSingleMessageThread(message: Message, folder: Folder) {
+        let thread = message.toThread().detached()
+        folder.threads.insert(thread)
     }
 
     private func createNewThreadIfRequired(for message: Message, folder: Folder, existingThreads: [Thread]) -> Thread? {
