@@ -5,7 +5,7 @@
  * Locale: fr, French
  * Tagged: ios
  * Exported by: Ambroise Decouttere
- * Exported at: Tue, 08 Aug 2023 08:56:57 +0200
+ * Exported at: Wed, 09 Aug 2023 18:11:40 +0200
  */
 
 /* loco:6256793050618f7416758a32 */
@@ -1228,3 +1228,12 @@
 
 /* loco:64ccb58ceef1939fc6061fa2 */
 "contentDescriptionButtonDeleteSearch" = "Effacer la recherche";
+
+/* loco:64d209e0b3606abecd06b622 */
+"errorNewFolderInvalidCharacter" = "Le nom du dossier comporte des caractères invalides";
+
+/* loco:64d2441dc9b7f2b678050fc4 */
+"settingsThreadModeWarningDescription" = "Attention, modifier cette option va télécharger à nouveau tous vos messages";
+
+/* loco:64d2491e76ea5dc92c070c52 */
+"settingsThreadModeWarningTitle" = "Passer en mode %@ ?";

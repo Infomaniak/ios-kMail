@@ -5,7 +5,7 @@
  * Locale: de, German
  * Tagged: ios
  * Exported by: Ambroise Decouttere
- * Exported at: Tue, 08 Aug 2023 08:56:57 +0200
+ * Exported at: Wed, 09 Aug 2023 18:11:40 +0200
  */
 
 /* loco:6256793050618f7416758a32 */
@@ -714,7 +714,7 @@
 "reportPhishingTitle" = "Einen Phishing-Versuch melden";
 
 /* loco:62cece41730aa70c5f3da0e2 */
-"reportPhishingDescription" = "Wenn diese Nachricht versucht, vertrauliche Informationen (Passwort, Bankdaten usw.) zu stehlen und/oder sich als eine anerkannte Identität ausgibt, handelt es sich um Phishing.\n\nIndem Sie uns diese Nachricht melden, können Sie die Erkennung gefährlicher Nachrichten für alle unsere Nutzer beschleunigen.\n\nDie Meldung wird an unser Sicherheitsteam weitergeleitet, das sie analysiert und Massnahmen ergreift. Die E-Mail wird außerdem automatisch in Ihren Spam-Ordner verschoben.";
+"reportPhishingDescription" = "Wenn diese Nachricht versucht, vertrauliche Informationen (Passwort, Bankdaten usw.) zu stehlen und/oder sich als eine anerkannte Identität ausgibt, handelt es sich um Phishing.\n\nIndem Sie uns diese Nachricht melden, können Sie die Erkennung gefährlicher Nachrichten für alle unsere Nutzer beschleunigen.\n\nDie Meldung wird an unser Sicherheitsteam weitergeleitet, das sie analysiert und Massnahmen ergreift. Die E-Mail wird ausserdem automatisch in Ihren Spam-Ordner verschoben.";
 
 /* loco:62cfb94ffe73905627441c62 */
 "settingsOptionSystemTheme" = "System";
@@ -1228,3 +1228,12 @@
 
 /* loco:64ccb58ceef1939fc6061fa2 */
 "contentDescriptionButtonDeleteSearch" = "Suche löschen";
+
+/* loco:64d209e0b3606abecd06b622 */
+"errorNewFolderInvalidCharacter" = "Der Ordnername enthält ungültige Zeichen";
+
+/* loco:64d2441dc9b7f2b678050fc4 */
+"settingsThreadModeWarningDescription" = "Achtung: Wenn Sie diese Option ändern, werden alle Ihre Nachrichten erneut heruntergeladen";
+
+/* loco:64d2491e76ea5dc92c070c52 */
+"settingsThreadModeWarningTitle" = "In den Modus %@ wechseln?";

@@ -126,11 +126,7 @@ struct SettingsView: View {
                     title: MailResourcesStrings.Localizable.settingsThreadModeTitle,
                     subtitle: threadMode.title
                 ) {
-                    SettingsOptionView(
-                        title: MailResourcesStrings.Localizable.settingsThreadModeTitle,
-                        subtitle: MailResourcesStrings.Localizable.settingsSelectDisplayModeDescription,
-                        keyPath: \.threadMode
-                    )
+                    SettingsThreadModeView()
                 }
 
                 // External content
