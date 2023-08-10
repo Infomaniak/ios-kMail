@@ -51,10 +51,6 @@ public actor RefreshActor {
         await cancelRefresh()
 
         refreshTask = Task {
-            guard !Task.isCancelled else {
-                return
-            }
-
             await tryOrDisplayError {
                 try await mailboxManager?.threads(folder: folder)
                 refreshTask = nil
