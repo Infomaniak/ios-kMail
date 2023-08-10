@@ -22,59 +22,108 @@ import MailCore
 import MailResources
 import SwiftUI
 
+enum ActionsViewContentHelper {
+    private static func actionsForMessage(_ message: Message,
+                                          userIsStaff: Bool) -> (quickActions: [Action], listActions: [Action]) {
+        let archive = message.folder?.role != .archive
+        let unread = !message.seen
+        let star = message.flagged
+        let tempListActions: [Action?] = [
+            .openMovePanel,
+            .reportJunk,
+            unread ? .markAsRead : .markAsUnread,
+            archive ? .archive : .moveToInbox,
+            star ? .unstar : .star,
+            userIsStaff ? .report : nil
+        ]
+        return (Action.quickActions, tempListActions.compactMap { $0 })
+    }
+
+    private static func actionsForMessagesInDifferentThreads(_ messages: [Message])
+        -> (quickActions: [Action], listActions: [Action]) {
+        let unread = messages.allSatisfy(\.seen)
+        let quickActions: [Action] = [.openMovePanel, unread ? .markAsRead : .markAsUnread, .archive, .delete]
+
+        let spam = messages.allSatisfy { $0.folder?.role == .spam }
+        let star = messages.allSatisfy(\.flagged)
+
+        let listActions: [Action] = [
+            spam ? .nonSpam : .spam,
+            star ? .unstar : .star
+        ]
+
+        return (quickActions, listActions)
+    }
+
+    private static func actionsForMessagesInSameThreads(_ messages: [Message])
+        -> (quickActions: [Action], listActions: [Action]) {
+        let archive = messages.first?.folder?.role != .archive
+        let unread = messages.allSatisfy(\.seen)
+        let star = messages.allSatisfy(\.flagged)
+
+        let spam = messages.first?.folder?.role == .spam
+        let spamAction: Action? = spam ? .nonSpam : .spam
+
+        let tempListActions: [Action?] = [
+            .openMovePanel,
+            spamAction,
+            unread ? .markAsRead : .markAsUnread,
+            archive ? .archive : .moveToInbox,
+            star ? .unstar : .star
+        ]
+
+        return (Action.quickActions, tempListActions.compactMap { $0 })
+    }
+
+    static func actionsForMessages(_ messages: [Message],
+                                   userIsStaff: Bool) -> (quickActions: [Action], listActions: [Action]) {
+        if messages.count == 1, let message = messages.first {
+            return actionsForMessage(message, userIsStaff: userIsStaff)
+        } else if Set(messages.compactMap(\.originalThread?.id)).count > 1 {
+            return actionsForMessagesInDifferentThreads(messages)
+        } else {
+            return actionsForMessagesInSameThreads(messages)
+        }
+    }
+}
+
 struct ActionsView: View {
     @Environment(\.dismiss) private var dismiss
+    @EnvironmentObject private var actionsManager: ActionsManager
 
-    @StateObject var viewModel: ActionsViewModel
+    private let targetMessages: [Message]
+    private let quickActions: [Action]
+    private let listActions: [Action]
 
     init(mailboxManager: MailboxManager,
-         target: ActionsTarget,
-         moveAction: Binding<MoveAction?>? = nil,
-         messageReply: Binding<MessageReply?>? = nil,
-         reportJunkActionsTarget: Binding<ActionsTarget?>? = nil,
-         reportedForDisplayProblemMessage: Binding<Message?>? = nil,
+         target messages: [Message],
          completionHandler: (() -> Void)? = nil) {
-        var matomoCategory = MatomoUtils.EventCategory.bottomSheetMessageActions
-        if case .threads = target {
-            matomoCategory = .bottomSheetThreadActions
-        }
+        let userIsStaff = mailboxManager.account.user.isStaff ?? false
+        let actions = ActionsViewContentHelper.actionsForMessages(messages, userIsStaff: userIsStaff)
+        quickActions = actions.quickActions
+        listActions = actions.listActions
 
-        _viewModel = StateObject(wrappedValue: ActionsViewModel(mailboxManager: mailboxManager,
-                                                                target: target,
-                                                                moveAction: moveAction,
-                                                                messageReply: messageReply,
-                                                                reportJunkActionsTarget: reportJunkActionsTarget,
-                                                                reportedForDisplayProblemMessage: reportedForDisplayProblemMessage,
-                                                                matomoCategory: matomoCategory,
-                                                                completionHandler: completionHandler))
+        targetMessages = messages
     }
 
     var body: some View {
         VStack(alignment: .leading, spacing: UIConstants.actionsViewSpacing) {
-            // Quick actions
             HStack(alignment: .top, spacing: 16) {
-                ForEach(viewModel.quickActions) { action in
-                    QuickActionView(viewModel: viewModel, action: action)
+                ForEach(quickActions) { action in
+                    QuickActionView(targetMessages: targetMessages, action: action)
                         .frame(maxWidth: .infinity)
                 }
             }
             .padding(.bottom, 16)
             .padding(.horizontal, 16)
-            // Actions
-            ForEach(viewModel.listActions) { action in
-                if action != viewModel.listActions.first {
+
+            ForEach(listActions) { action in
+                if action != listActions.first {
                     IKDivider()
                 }
 
-                ActionView(action: action) {
-                    dismiss()
-                    Task {
-                        await tryOrDisplayError {
-                            try await viewModel.didTap(action: action)
-                        }
-                    }
-                }
-                .padding(.horizontal, UIConstants.actionsViewCellHorizontalPadding)
+                ActionView(targetMessages: targetMessages, action: action)
+                    .padding(.horizontal, UIConstants.actionsViewCellHorizontalPadding)
             }
         }
         .padding(.horizontal, UIConstants.actionsViewHorizontalPadding)
@@ -84,24 +133,30 @@ struct ActionsView: View {
 
 struct ActionsView_Previews: PreviewProvider {
     static var previews: some View {
-        ActionsView(mailboxManager: PreviewHelper.sampleMailboxManager, target: .threads([PreviewHelper.sampleThread], false))
+        ActionsView(mailboxManager: PreviewHelper.sampleMailboxManager, target: PreviewHelper.sampleThread.messages.toArray())
             .accentColor(AccentColor.pink.primary.swiftUIColor)
     }
 }
 
 struct QuickActionView: View {
-    @Environment(\.dismiss) var dismiss
-    @ObservedObject var viewModel: ActionsViewModel
-    let action: Action
-
     @AppStorage(UserDefaults.shared.key(.accentColor)) private var accentColor = DefaultPreferences.accentColor
+
+    @Environment(\.dismiss) private var dismiss
+    @EnvironmentObject private var actionsManager: ActionsManager
+
+    let targetMessages: [Message]
+    let action: Action
 
     var body: some View {
         Button {
             dismiss()
             Task {
                 await tryOrDisplayError {
-                    try await viewModel.didTap(action: action)
+                    try await actionsManager.performAction(
+                        target: targetMessages,
+                        action: action,
+                        origin: .floatingPanel
+                    )
                 }
             }
         } label: {
@@ -111,7 +166,7 @@ struct QuickActionView: View {
                     .frame(maxWidth: 56, maxHeight: 56)
                     .aspectRatio(1, contentMode: .fit)
                     .overlay {
-                        action.icon
+                        action.floatingPanelIcon
                             .resizable()
                             .scaledToFit()
                             .padding(16)
@@ -128,15 +183,27 @@ struct QuickActionView: View {
 }
 
 struct ActionView: View {
+    @Environment(\.dismiss) private var dismiss
+    @EnvironmentObject private var actionsManager: ActionsManager
+
+    let targetMessages: [Message]
     let action: Action
-    let handler: () -> Void
 
     var body: some View {
         Button {
-            handler()
+            dismiss()
+            Task {
+                await tryOrDisplayError {
+                    try await actionsManager.performAction(
+                        target: targetMessages,
+                        action: action,
+                        origin: .floatingPanel
+                    )
+                }
+            }
         } label: {
             HStack(spacing: 24) {
-                action.icon
+                action.floatingPanelIcon
                     .resizable()
                     .scaledToFit()
                     .frame(width: 24, height: 24)

@@ -24,24 +24,17 @@ import SwiftUI
 struct ReportJunkView: View {
     @Environment(\.dismiss) private var dismiss
 
-    @StateObject var viewModel: ActionsViewModel
+    private let reportedMessage: Message
+    private let actions: [Action]
 
-    var actions: [Action] = []
-
-    init(mailboxManager: MailboxManager,
-         target: ActionsTarget,
-         reportedForPhishingMessage: Binding<Message?>) {
-        _viewModel = StateObject(wrappedValue: ActionsViewModel(mailboxManager: mailboxManager,
-                                                                target: target,
-                                                                reportedForPhishingMessage: reportedForPhishingMessage))
-        if case .message(let message) = target {
-            let spam = message.folder?.role == .spam
-            actions.append(contentsOf: [
-                spam ? .nonSpam : .spam,
-                .phishing,
-                .block
-            ])
-        }
+    init(reportedMessage: Message) {
+        self.reportedMessage = reportedMessage
+        let spam = reportedMessage.folder?.role == .spam
+        actions = [
+            spam ? .nonSpam : .spam,
+            .phishing,
+            .block
+        ]
     }
 
     var body: some View {
@@ -51,15 +44,8 @@ struct ReportJunkView: View {
                     IKDivider()
                 }
 
-                ActionView(action: action) {
-                    dismiss()
-                    Task {
-                        await tryOrDisplayError {
-                            try await viewModel.didTap(action: action)
-                        }
-                    }
-                }
-                .padding(.horizontal, UIConstants.actionsViewCellHorizontalPadding)
+                ActionView(targetMessages: [reportedMessage], action: action)
+                    .padding(.horizontal, UIConstants.actionsViewCellHorizontalPadding)
             }
         }
         .padding(.horizontal, UIConstants.actionsViewHorizontalPadding)
@@ -69,9 +55,7 @@ struct ReportJunkView: View {
 
 struct ReportJunkView_Previews: PreviewProvider {
     static var previews: some View {
-        ReportJunkView(mailboxManager: PreviewHelper.sampleMailboxManager,
-                       target: .message(PreviewHelper.sampleMessage),
-                       reportedForPhishingMessage: .constant(nil))
+        ReportJunkView(reportedMessage: PreviewHelper.sampleMessage)
             .accentColor(AccentColor.pink.primary.swiftUIColor)
     }
 }

@@ -133,9 +133,7 @@ struct MessageHeaderSummaryView: View {
                             .frame(width: 20, height: 20)
                     }
                     .adaptivePanel(item: $replyOrReplyAllMessage) { message in
-                        ReplyActionsView(mailboxManager: mailboxManager,
-                                         message: message,
-                                         messageReply: $navigationState.messageReply)
+                        ReplyActionsView(message: message)
                     }
                     ActionsPanelButton(message: message) {
                         MailResourcesAsset.plusActions.swiftUIImage

@@ -112,18 +112,14 @@ struct ThreadView: View {
         .bottomBar {
             ForEach(toolbarActions) { action in
                 if action == .reply {
-                    ToolbarButton(text: action.title, icon: action.icon) {
+                    ToolbarButton(text: action.title, icon: action.floatingPanelIcon) {
                         didTap(action: action)
                     }
                     .adaptivePanel(item: $replyOrReplyAllMessage) { message in
-                        ReplyActionsView(
-                            mailboxManager: mailboxManager,
-                            message: message,
-                            messageReply: $navigationState.messageReply
-                        )
+                        ReplyActionsView(message: message)
                     }
                 } else {
-                    ToolbarButton(text: action.title, icon: action.icon) {
+                    ToolbarButton(text: action.title, icon: action.floatingPanelIcon) {
                         didTap(action: action)
                     }
                     .disabled(action == .archive && thread.folder?.role == .archive)

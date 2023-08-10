@@ -58,7 +58,7 @@ struct MoveEmailView: View {
 
     @State private var searchFilter = ""
 
-    let moveAction: MoveAction
+    let movedMessages: [Message]
 
     var body: some View {
         ScrollView {
@@ -87,21 +87,23 @@ struct MoveEmailView: View {
         .matomoView(view: ["MoveEmailView"])
         .customAlert(isPresented: $isShowingCreateFolderAlert) {
             CreateFolderView(mode: .move { newFolder in
-                Task {
-                    try await ActionUtils(actionsTarget: moveAction.target, mailboxManager: mailboxManager).move(to: newFolder)
-                }
-                dismissModal()
+                move(to: newFolder)
             })
         }
     }
 
+    private func move(to folder: Folder) {
+        Task {
+            // TODO: Also use Actions manager
+            try await mailboxManager.move(messages: movedMessages, to: folder)
+        }
+        dismissModal()
+    }
+
     private func listOfFolders(nestableFolders: [NestableFolder]) -> some View {
         ForEach(nestableFolders) { nestableFolder in
-            FolderCell(folder: nestableFolder, currentFolderId: moveAction.fromFolderId) { folder in
-                Task {
-                    try await ActionUtils(actionsTarget: moveAction.target, mailboxManager: mailboxManager).move(to: folder)
-                }
-                dismissModal()
+            FolderCell(folder: nestableFolder, currentFolderId: movedMessages.first?.folderId) { folder in
+                move(to: folder)
             }
         }
     }
@@ -109,8 +111,7 @@ struct MoveEmailView: View {
 
 struct MoveMessageView_Previews: PreviewProvider {
     static var previews: some View {
-        MoveEmailView(moveAction: MoveAction(fromFolderId: PreviewHelper.sampleFolder.id,
-                                             target: .message(PreviewHelper.sampleMessage)))
+        MoveEmailView(movedMessages: [PreviewHelper.sampleMessage])
             .environmentObject(PreviewHelper.sampleMailboxManager)
     }
 }

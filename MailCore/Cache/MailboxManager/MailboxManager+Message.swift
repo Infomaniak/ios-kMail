@@ -108,7 +108,7 @@ public extension MailboxManager {
             while remainingOldMessagesToFetch > 0 {
                 guard !Task.isCancelled else { return }
 
-                if await try !fetchOnePage(folder: folder, direction: .previous) {
+                if try await !fetchOnePage(folder: folder, direction: .previous) {
                     break
                 }
 
@@ -523,7 +523,7 @@ public extension MailboxManager {
         }
     }
 
-    internal func markAsSeen(messages: [Message], seen: Bool) async throws {
+    func markAsSeen(messages: [Message], seen: Bool) async throws {
         if seen {
             _ = try await apiFetcher.markAsSeen(mailbox: mailbox, messages: messages)
         } else {
@@ -552,6 +552,18 @@ public extension MailboxManager {
                     }
                 }
             }
+        }
+    }
+
+    func star(messages: [Message], starred: Bool) async throws {
+        if starred {
+            let messagesToStar = messages + messages.flatMap(\.duplicates)
+            _ = try await star(messages: messagesToStar)
+        } else {
+            let messagesToUnstar = messages
+                .compactMap { $0.originalThread?.messages.where { $0.isDraft == false } }
+                .flatMap { $0 + $0.flatMap(\.duplicates) }
+            _ = try await unstar(messages: messagesToUnstar)
         }
     }
 

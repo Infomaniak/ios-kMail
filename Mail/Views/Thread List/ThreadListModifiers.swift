@@ -136,7 +136,7 @@ struct ThreadListToolbar: ViewModifier {
                     ForEach(multipleSelectionViewModel.toolbarActions) { action in
                         ToolbarButton(
                             text: action.shortTitle ?? action.title,
-                            icon: action.icon
+                            icon: action.floatingPanelIcon
                         ) {
                             Task {
                                 await tryOrDisplayError {

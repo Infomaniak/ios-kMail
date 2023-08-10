@@ -30,7 +30,6 @@ struct ActionsPanelViewModifier: ViewModifier {
     @EnvironmentObject private var mailboxManager: MailboxManager
     @EnvironmentObject private var navigationState: NavigationState
 
-    @State private var moveAction: MoveAction?
     @State private var reportJunkActionsTarget: ActionsTarget?
     @State private var reportedForPhishingMessage: Message?
     @State private var reportedForDisplayProblemMessage: Message?
@@ -42,22 +41,14 @@ struct ActionsPanelViewModifier: ViewModifier {
     func body(content: Content) -> some View {
         content.adaptivePanel(item: $actionsTarget) { target in
             ActionsView(mailboxManager: mailboxManager,
-                        target: target,
-                        moveAction: $moveAction,
-                        messageReply: $navigationState.messageReply,
-                        reportJunkActionsTarget: $reportJunkActionsTarget,
-                        reportedForDisplayProblemMessage: $reportedForDisplayProblemMessage) {
+                        target: target.messages) {
                 completionHandler?()
             }
         }
-        .sheet(item: $moveAction) { moveAction in
-            MoveEmailView(moveAction: moveAction)
-                .sheetViewStyle()
-        }
         .floatingPanel(item: $reportJunkActionsTarget) { target in
-            ReportJunkView(mailboxManager: mailboxManager,
-                           target: target,
-                           reportedForPhishingMessage: $reportedForPhishingMessage)
+            if let reportedMessage = target.messages.first {
+                ReportJunkView(reportedMessage: reportedMessage)
+            }
         }
         .customAlert(item: $reportedForPhishingMessage) { message in
             ReportPhishingView(message: message)

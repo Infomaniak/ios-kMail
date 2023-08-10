@@ -57,13 +57,14 @@ struct ContactActionsView: View {
                     IKDivider()
                 }
 
-                ActionView(action: action) {
+                // FIXME: target for now is only message, not contact
+                /*ActionView(action: action) {
                     if let matomoName = action.matomoName {
                         matomo.track(eventWithCategory: .contactActions, name: matomoName)
                     }
                     handleAction(action)
                 }
-                .padding(.horizontal, UIConstants.actionsViewCellHorizontalPadding)
+                .padding(.horizontal, UIConstants.actionsViewCellHorizontalPadding)*/
             }
         }
         .frame(maxWidth: .infinity, alignment: .leading)

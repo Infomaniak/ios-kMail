@@ -66,6 +66,7 @@ public class NavigationState: ObservableObject {
     @Published public private(set) var rootViewState: RootViewState
     @Published public var messageReply: MessageReply?
     @Published public var editedMessageDraft: Draft?
+    @Published public var messagesToMove: [Message]?
 
     /// Represents the state of navigation
     ///

@@ -112,6 +112,10 @@ struct SplitView: View {
         .sheet(item: $navigationState.editedMessageDraft) { editedMessageDraft in
             ComposeMessageView.edit(draft: editedMessageDraft, mailboxManager: mailboxManager)
         }
+        .sheet(item: $navigationState.messagesToMove) { messages in
+            MoveEmailView(movedMessages: messages)
+                .sheetViewStyle()
+        }
         .onChange(of: scenePhase) { newScenePhase in
             guard newScenePhase == .active else { return }
             Task {
@@ -163,6 +167,7 @@ struct SplitView: View {
         .environmentObject(splitViewManager)
         .environmentObject(navigationDrawerController)
         .environmentObject(mailboxManager)
+        .environmentObject(ActionsManager(mailboxManager: mailboxManager, navigationState: navigationState))
         .environment(\.realmConfiguration, mailboxManager.realmConfiguration)
     }
 
