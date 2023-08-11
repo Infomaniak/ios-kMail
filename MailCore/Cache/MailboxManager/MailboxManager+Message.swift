@@ -365,7 +365,7 @@ public extension MailboxManager {
                 if isThreadMode {
                     createConversationThread(message: message, folder: folder, threadsToUpdate: &threadsToUpdate, using: realm)
                 } else {
-                    createSingleMessageThread(message: message, folder: folder) // threadsToUpdate ?
+                    createSingleMessageThread(message: message, folder: folder, threadsToUpdate: &threadsToUpdate)
                 }
 
                 if let message = realm.objects(Message.self).first(where: { $0.uid == message.uid }) {
@@ -407,9 +407,14 @@ public extension MailboxManager {
         }
     }
 
-    private func createSingleMessageThread(message: Message, folder: Folder) {
+    private func createSingleMessageThread(
+        message: Message,
+        folder: Folder,
+        threadsToUpdate: inout Set<Thread>
+    ) {
         let thread = message.toThread().detached()
         folder.threads.insert(thread)
+        threadsToUpdate.insert(thread)
     }
 
     private func createNewThreadIfRequired(for message: Message, folder: Folder, existingThreads: [Thread]) -> Thread? {
