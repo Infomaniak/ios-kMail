@@ -363,9 +363,11 @@ public extension MailboxManager {
 
                 let isThreadMode = UserDefaults.shared.threadMode == .conversation
                 if isThreadMode {
-                    createConversationThread(message: message, folder: folder, threadsToUpdate: &threadsToUpdate, using: realm)
+                    let updatedThreads = createConversationThread(message: message, folder: folder, using: realm)
+                    threadsToUpdate.formUnion(updatedThreads)
                 } else {
-                    createSingleMessageThread(message: message, folder: folder, threadsToUpdate: &threadsToUpdate)
+                    let createdThread = createSingleMessageThread(message: message, folder: folder)
+                    threadsToUpdate.insert(createdThread)
                 }
 
                 if let message = realm.objects(Message.self).first(where: { $0.uid == message.uid }) {
@@ -379,9 +381,10 @@ public extension MailboxManager {
     private func createConversationThread(
         message: Message,
         folder: Folder,
-        threadsToUpdate: inout Set<Thread>,
         using realm: Realm
-    ) {
+    ) -> Set<Thread> {
+        var threadsToUpdate = Set<Thread>()
+
         let existingThreads = Array(realm.objects(Thread.self)
             .where { $0.messageIds.containsAny(in: message.linkedUids) /* && $0.isConversationThread == true */ })
 
@@ -405,16 +408,13 @@ public extension MailboxManager {
 
             threadsToUpdate.insert(thread)
         }
+        return threadsToUpdate
     }
 
-    private func createSingleMessageThread(
-        message: Message,
-        folder: Folder,
-        threadsToUpdate: inout Set<Thread>
-    ) {
+    private func createSingleMessageThread(message: Message, folder: Folder) -> Thread {
         let thread = message.toThread().detached()
         folder.threads.insert(thread)
-        threadsToUpdate.insert(thread)
+        return thread
     }
 
     private func createNewThreadIfRequired(for message: Message, folder: Folder, existingThreads: [Thread]) -> Thread? {
