@@ -130,6 +130,12 @@ struct ThreadCell: View {
                     CheckboxView(isSelected: isSelected, density: density)
                         .opacity(shouldDisplayCheckbox ? 1 : 0)
                         .animation(.default.speed(1.5), value: shouldDisplayCheckbox)
+                } else {
+                    // Fallback to maintain UI coherency
+                    AvatarView(
+                        displayablePerson: CommonContact.emptyContact(contextMailboxManager: mailboxManager),
+                        size: 40
+                    )
                 }
             }
             .padding(.trailing, 4)
