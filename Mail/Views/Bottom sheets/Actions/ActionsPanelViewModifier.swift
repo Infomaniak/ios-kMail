@@ -21,8 +21,8 @@ import MailCore
 import SwiftUI
 
 extension View {
-    func actionsPanel(actionsTarget: Binding<ActionsTarget?>, completionHandler: (() -> Void)? = nil) -> some View {
-        return modifier(ActionsPanelViewModifier(actionsTarget: actionsTarget, completionHandler: completionHandler))
+    func actionsPanel(messages: Binding<[Message]?>, completionHandler: (() -> Void)? = nil) -> some View {
+        return modifier(ActionsPanelViewModifier(messages: messages, completionHandler: completionHandler))
     }
 }
 
@@ -34,14 +34,14 @@ struct ActionsPanelViewModifier: ViewModifier {
     @State private var reportedForPhishingMessage: Message?
     @State private var reportedForDisplayProblemMessage: Message?
 
-    @Binding var actionsTarget: ActionsTarget?
+    @Binding var messages: [Message]?
 
     var completionHandler: (() -> Void)?
 
     func body(content: Content) -> some View {
-        content.adaptivePanel(item: $actionsTarget) { target in
+        content.adaptivePanel(item: $messages) { messages in
             ActionsView(mailboxManager: mailboxManager,
-                        target: target.messages) {
+                        target: messages) {
                 completionHandler?()
             }
         }

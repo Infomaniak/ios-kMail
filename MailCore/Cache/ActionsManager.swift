@@ -22,7 +22,7 @@ import SwiftUI
 
 extension [Message]: Identifiable {
     public var id: Int {
-        return map(\.uid).joined().hashValue
+        return reduce(1) { $0.hashValue ^ $1.hashValue }
     }
 
     public func lastMessageToExecuteAction(currentMailboxEmail: String) -> Message? {

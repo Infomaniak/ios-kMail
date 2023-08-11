@@ -63,7 +63,7 @@ struct ThreadListToolbar: ViewModifier {
     @EnvironmentObject private var actionsManager: ActionsManager
 
     @State private var presentedCurrentAccount: Account?
-    @State private var multipleSelectionActionsTarget: ActionsTarget?
+    @State private var multipleSelectedMessages: [Message]?
 
     @Binding var flushAlert: FlushAlertState?
 
@@ -160,12 +160,12 @@ struct ThreadListToolbar: ViewModifier {
                         text: MailResourcesStrings.Localizable.buttonMore,
                         icon: MailResourcesAsset.plusActions.swiftUIImage
                     ) {
-                        multipleSelectionActionsTarget = .threads(Array(multipleSelectionViewModel.selectedItems), true)
+                        multipleSelectedMessages = multipleSelectionViewModel.selectedItems.flatMap(\.messages)
                     }
                 }
                 .disabled(multipleSelectionViewModel.selectedItems.isEmpty)
             }
-            .actionsPanel(actionsTarget: $multipleSelectionActionsTarget) {
+            .actionsPanel(messages: $multipleSelectedMessages) {
                 multipleSelectionViewModel.isEnabled = false
             }
             .navigationTitle(
