@@ -67,7 +67,12 @@ public class Thread: Object, Decodable, Identifiable {
     }
 
     public var lastMessageFromFolder: Message? {
-        messages.last { $0.folderId == folder?.id }
+        // Search should be excluded from folderId check.
+        guard !fromSearch else {
+            return messages.last
+        }
+
+        return messages.last { $0.folderId == folder?.id }
     }
 
     public var formattedSubject: String {
@@ -93,6 +98,7 @@ public class Thread: Object, Decodable, Identifiable {
         flagged = messages.contains { $0.flagged }
     }
 
+    /// Re-generate `Thread` properties given the messages it contains.
     public func recomputeOrFail() throws {
         messageIds = messages.flatMap(\.linkedUids).toRealmSet()
         updateUnseenMessages()
