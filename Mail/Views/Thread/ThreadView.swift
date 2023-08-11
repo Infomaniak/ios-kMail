@@ -41,6 +41,7 @@ struct ThreadView: View {
     @EnvironmentObject private var splitViewManager: SplitViewManager
     @EnvironmentObject private var mailboxManager: MailboxManager
     @EnvironmentObject private var navigationState: NavigationState
+    @EnvironmentObject private var actionsManager: ActionsManager
 
     @State private var headerHeight: CGFloat = 0
     @State private var displayNavigationTitle = false
@@ -98,10 +99,9 @@ struct ThreadView: View {
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
                 Button {
+                    let messages = thread.messages.freeze().toArray()
                     Task {
-                        await tryOrDisplayError {
-                            try await mailboxManager.toggleStar(threads: [thread])
-                        }
+                        try await actionsManager.performAction(target: messages, action: .star, origin: .toolbar)
                     }
                 } label: {
                     (thread.flagged ? MailResourcesAsset.starFull : MailResourcesAsset.star).swiftUIImage
@@ -147,41 +147,20 @@ struct ThreadView: View {
         if let matomoName = action.matomoName {
             matomo.track(eventWithCategory: .threadActions, name: matomoName)
         }
-        switch action {
-        case .reply:
-            guard let message = thread.lastMessageToExecuteAction(currentMailboxEmail: mailboxManager.mailbox.email)
-            else { return }
-            if message.canReplyAll(currentMailboxEmail: mailboxManager.mailbox.email) {
-                replyOrReplyAllMessage = message
-            } else {
-                navigationState.messageReply = MessageReply(message: message, replyMode: .reply)
+        let messages = thread.messages.freezeIfNeeded().toArray()
+
+        if action == .reply,
+           let message = messages.lastMessageToExecuteAction(currentMailboxEmail: mailboxManager.mailbox.email),
+           message.canReplyAll(currentMailboxEmail: mailboxManager.mailbox.email) {
+            replyOrReplyAllMessage = message
+            return
+        }
+
+        Task {
+            try await actionsManager.performAction(target: messages, action: action, origin: .toolbar)
+            if action == .archive || action == .delete {
+                dismiss()
             }
-        case .forward:
-            guard let message = thread.lastMessageToExecuteAction(currentMailboxEmail: mailboxManager.mailbox.email)
-            else { return }
-            navigationState.messageReply = MessageReply(message: message, replyMode: .forward)
-        case .archive:
-            Task {
-                await tryOrDisplayError {
-                    let undoAction = try await mailboxManager.move(threads: [thread], to: .archive)
-                    IKSnackBar.showCancelableSnackBar(
-                        message: MailResourcesStrings.Localizable.snackbarThreadMoved(FolderRole.archive.localizedName),
-                        cancelSuccessMessage: MailResourcesStrings.Localizable.snackbarMoveCancelled,
-                        undoAction: undoAction,
-                        mailboxManager: mailboxManager
-                    )
-                    dismiss()
-                }
-            }
-        case .delete:
-            Task {
-                await tryOrDisplayError {
-                    try await mailboxManager.moveOrDelete(threads: [thread])
-                    dismiss()
-                }
-            }
-        default:
-            break
         }
     }
 }

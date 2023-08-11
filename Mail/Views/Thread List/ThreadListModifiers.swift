@@ -60,6 +60,7 @@ struct ThreadListToolbar: ViewModifier {
     @EnvironmentObject private var splitViewManager: SplitViewManager
     @EnvironmentObject private var navigationDrawerState: NavigationDrawerState
     @EnvironmentObject private var navigationState: NavigationState
+    @EnvironmentObject private var actionsManager: ActionsManager
 
     @State private var presentedCurrentAccount: Account?
     @State private var multipleSelectionActionsTarget: ActionsTarget?
@@ -138,13 +139,18 @@ struct ThreadListToolbar: ViewModifier {
                             text: action.shortTitle ?? action.title,
                             icon: action.floatingPanelIcon
                         ) {
+                            let selectedMessages = multipleSelectionViewModel.selectedItems.flatMap(\.messages)
                             Task {
                                 await tryOrDisplayError {
-                                    try await multipleSelectionViewModel.didTap(
+                                   try await actionsManager.performAction(
+                                        target: selectedMessages,
                                         action: action,
-                                        flushAlert: $flushAlert
+                                        origin: .toolbar
                                     )
                                 }
+                            }
+                            withAnimation {
+                                multipleSelectionViewModel.isEnabled = false
                             }
                         }
                         .disabled(action == .archive && splitViewManager.selectedFolder?.role == .archive)

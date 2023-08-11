@@ -24,6 +24,15 @@ extension [Message]: Identifiable {
     public var id: Int {
         return map(\.uid).joined().hashValue
     }
+
+    public func lastMessageToExecuteAction(currentMailboxEmail: String) -> Message? {
+        if let message = last(where: { $0.isDraft == false && $0.fromMe(currentMailboxEmail: currentMailboxEmail) == false }) {
+            return message
+        } else if let message = last(where: { $0.isDraft == false }) {
+            return message
+        }
+        return last
+    }
 }
 
 public class ActionsManager: ObservableObject {
@@ -76,7 +85,7 @@ public class ActionsManager: ObservableObject {
 
     private func replyOrForward(messages: [Message], mode: ReplyMode) throws {
         assert(messages.count == 1, "Cannot reply to more than one message")
-        guard let replyingMessage = messages.first else {
+        guard let replyingMessage = messages.lastMessageToExecuteAction(currentMailboxEmail: mailboxManager.mailbox.email) else {
             throw MailError.localMessageNotFound
         }
 
