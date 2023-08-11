@@ -489,10 +489,14 @@ public final class AccountManager: RefreshTokenDelegate, ObservableObject {
             bugTracker.stopActivatingOnScreenshot()
         }
     }
-    
+
     public func updateConversationSettings() {
-        for mailboxManager in mailboxManagers.values {
-            mailboxManager.cleanRealm()
+        for account in accounts {
+            for mailbox in MailboxInfosManager.instance.getMailboxes(for: account.userId) {
+                if let mailboxManager = getMailboxManager(for: mailbox) {
+                    mailboxManager.cleanRealm()
+                }
+            }
         }
     }
 }
