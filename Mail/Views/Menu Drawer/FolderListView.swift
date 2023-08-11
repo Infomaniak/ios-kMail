@@ -25,11 +25,22 @@ import SwiftUI
 
 struct NestableFolder: Identifiable {
     var id: String {
-        content.id
+        guard !content.isInvalidated else {
+            return UUID().uuidString
+        }
+
+        return content.id
     }
 
     let content: Folder
     let children: [NestableFolder]
+
+    /// A view on `children` data, only valid Realm objects
+    var displayableChildren: [NestableFolder] {
+        children.filter { element in
+            !element.content.isInvalidated
+        }
+    }
 
     static func createFoldersHierarchy(from folders: [Folder]) -> [Self] {
         var parentFolders = [NestableFolder]()
