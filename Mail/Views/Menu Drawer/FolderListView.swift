@@ -45,9 +45,7 @@ struct NestableFolder: Identifiable {
     static func createFoldersHierarchy(from folders: [Folder]) -> [Self] {
         var parentFolders = [NestableFolder]()
 
-        // sort Folder with case insensitive compare
-        let sortedFolders = folders.sorted { $0.name.localizedCompare($1.name) == .orderedAscending }
-        for folder in sortedFolders {
+        for folder in folders {
             parentFolders.append(NestableFolder(
                 content: folder,
                 children: Self.createFoldersHierarchy(from: Array(folder.children))
@@ -91,8 +89,12 @@ class FolderListViewModel: ObservableObject {
     }
 
     private func handleFoldersUpdate(_ folders: Results<Folder>) {
-        roleFolders = NestableFolder.createFoldersHierarchy(from: Array(folders.where { $0.role != nil }))
-        userFolders = NestableFolder.createFoldersHierarchy(from: Array(folders.where { $0.role == nil }))
+        let sortedRoleFolders = folders.where { $0.role != nil }.sorted()
+        roleFolders = NestableFolder.createFoldersHierarchy(from: Array(sortedRoleFolders))
+
+        // sort Folders with case insensitive compare
+        let sortedUserFolders = folders.where { $0.role == nil }.sorted { $0.name.localizedCompare($1.name) == .orderedAscending }
+        userFolders = NestableFolder.createFoldersHierarchy(from: Array(sortedUserFolders))
     }
 }
 
