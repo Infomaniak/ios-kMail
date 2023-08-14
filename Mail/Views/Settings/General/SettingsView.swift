@@ -34,6 +34,7 @@ struct SettingsView: View {
     @AppStorage(UserDefaults.shared.key(.theme)) private var theme = DefaultPreferences.theme
     @AppStorage(UserDefaults.shared.key(.accentColor)) private var accentColor = DefaultPreferences.accentColor
     @AppStorage(UserDefaults.shared.key(.externalContent)) private var externalContent = DefaultPreferences.externalContent
+    @AppStorage(UserDefaults.shared.key(.threadMode)) private var threadMode = DefaultPreferences.threadMode
 
     var body: some View {
         ScrollView {
@@ -120,6 +121,14 @@ struct SettingsView: View {
                     SettingsSwipeActionsView()
                 }
 
+                // Thread mode
+                SettingsSubMenuCell(
+                    title: MailResourcesStrings.Localizable.settingsThreadModeTitle,
+                    subtitle: threadMode.title
+                ) {
+                    SettingsThreadModeView()
+                }
+
                 // External content
                 SettingsSubMenuCell(
                     title: MailResourcesStrings.Localizable.settingsExternalContentTitle,
@@ -136,6 +145,9 @@ struct SettingsView: View {
             }
             .frame(maxWidth: .infinity, alignment: .leading)
             .padding(.horizontal, 16)
+        }
+        .onChange(of: threadMode) { _ in
+            AccountManager.instance.updateConversationSettings()
         }
         .background(MailResourcesAsset.backgroundColor.swiftUIColor)
         .navigationBarTitle(MailResourcesStrings.Localizable.settingsTitle, displayMode: .inline)

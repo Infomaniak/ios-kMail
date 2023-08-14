@@ -33,4 +33,5 @@ public enum DefaultPreferences {
     public static let forwardMode = ForwardMode.inline
     public static let acknowledgement = false
     public static let includeOriginalInReply = false
+    public static let threadMode = ThreadMode.conversation
 }

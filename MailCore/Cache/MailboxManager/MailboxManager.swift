@@ -184,6 +184,27 @@ public final class MailboxManager: ObservableObject, MailboxManageable {
         let realm = getRealm()
         return realm.objects(Folder.self).contains { $0.unreadCount > 0 }
     }
+
+    public func cleanRealm() {
+        Task {
+            await backgroundRealm.execute { realm in
+
+                let folders = realm.objects(Folder.self)
+                let threads = realm.objects(Thread.self)
+                let messages = realm.objects(Message.self)
+
+                try? realm.safeWrite {
+                    realm.delete(threads)
+                    realm.delete(messages)
+                    for folder in folders {
+                        folder.cursor = nil
+                        folder.resetHistoryInfo()
+                        folder.computeUnreadCount()
+                    }
+                }
+            }
+        }
+    }
 }
 
 // MARK: - Equatable conformance
