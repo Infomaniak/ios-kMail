@@ -45,7 +45,8 @@ struct NestableFolder: Identifiable {
     static func createFoldersHierarchy(from folders: [Folder]) -> [Self] {
         var parentFolders = [NestableFolder]()
 
-        let sortedFolders = folders.sorted()
+        // sort Folder with case insensitive compare
+        let sortedFolders = folders.sorted { $0.name.localizedCompare($1.name) == .orderedAscending }
         for folder in sortedFolders {
             parentFolders.append(NestableFolder(
                 content: folder,
