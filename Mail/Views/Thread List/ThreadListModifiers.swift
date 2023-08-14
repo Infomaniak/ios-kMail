@@ -137,7 +137,7 @@ struct ThreadListToolbar: ViewModifier {
                     ForEach(multipleSelectionViewModel.toolbarActions) { action in
                         ToolbarButton(
                             text: action.shortTitle ?? action.title,
-                            icon: action.floatingPanelIcon
+                            icon: action.icon
                         ) {
                             let selectedMessages = multipleSelectionViewModel.selectedItems.flatMap(\.messages)
                             Task {

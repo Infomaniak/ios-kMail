@@ -166,7 +166,7 @@ struct QuickActionView: View {
                     .frame(maxWidth: 56, maxHeight: 56)
                     .aspectRatio(1, contentMode: .fit)
                     .overlay {
-                        action.floatingPanelIcon
+                        action.icon
                             .resizable()
                             .scaledToFit()
                             .padding(16)
@@ -203,7 +203,7 @@ struct ActionView: View {
             }
         } label: {
             HStack(spacing: 24) {
-                action.floatingPanelIcon
+                action.icon
                     .resizable()
                     .scaledToFit()
                     .frame(width: 24, height: 24)

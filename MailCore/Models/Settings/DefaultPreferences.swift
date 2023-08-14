@@ -25,10 +25,10 @@ public enum DefaultPreferences {
     public static let externalContent = ExternalContent.always
     public static let theme = Theme.system
     public static let accentColor = AccentColor.pink
-    public static let swipeLeading = SwipeAction.none
-    public static let swipeFullLeading = SwipeAction.readUnread
-    public static let swipeTrailing = SwipeAction.quickAction
-    public static let swipeFullTrailing = SwipeAction.delete
+    public static let swipeLeading = Action.noAction
+    public static let swipeFullLeading = Action.markAsRead
+    public static let swipeTrailing = Action.swipeQuickAction
+    public static let swipeFullTrailing = Action.delete
     public static let cancelDelay = CancelDelay.seconds10
     public static let forwardMode = ForwardMode.inline
     public static let acknowledgement = false

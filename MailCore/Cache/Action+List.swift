@@ -19,129 +19,220 @@
 import Foundation
 import MailResources
 
-public extension Action {
-    static let quickActions: [Action] = [.reply, .replyAll, .forward, .delete]
+extension Action: CaseIterable {
+    public static let quickActions: [Action] = [.reply, .replyAll, .forward, .delete]
+    public static let swipeActions: [Action] = [
+        .delete,
+        .markAsRead,
+        .openMovePanel,
+        .star,
+        .spam,
+        .swipeQuickAction,
+        .archive,
+        .noAction
+    ]
+    public static let allCases: [Action] = [
+        .delete,
+        .reply,
+        .replyAll,
+        .archive,
+        .forward,
+        .markAsRead,
+        .markAsUnread,
+        .openMovePanel,
+        .star,
+        .star,
+        .unstar,
+        .reportJunk,
+        .spam,
+        .nonSpam,
+        .block,
+        .phishing,
+        .report,
+        .editMenu,
+        .moveToInbox,
+        .writeEmailAction,
+        .addContactsAction,
+        .copyEmailAction,
+        .noAction,
+        .swipeQuickAction
+    ]
+}
+
+extension Action: RawRepresentable {
+    public var rawValue: String {
+        return id
+    }
+
+    public init?(rawValue: String) {
+        guard let action = Action.allCases.first(where: { $0.rawValue == rawValue }) else { return nil }
+        id = action.id
+        title = action.title
+        shortTitle = action.shortTitle
+        iconName = action.iconName
+        tintColorName = action.tintColorName
+        isDestructive = action.isDestructive
+        matomoName = action.matomoName
+    }
 }
 
 public extension Action {
     static let delete = Action(
+        id: "delete",
         title: MailResourcesStrings.Localizable.actionDelete,
-        icon: MailResourcesAsset.bin,
+        iconResource: MailResourcesAsset.bin,
+        tintColorResource: MailResourcesAsset.swipeDeleteColor,
+        isDestructive: true,
         matomoName: "delete"
     )
     static let reply = Action(
+        id: "reply",
         title: MailResourcesStrings.Localizable.actionReply,
-        icon: MailResourcesAsset.emailActionReply,
+        iconResource: MailResourcesAsset.emailActionReply,
         matomoName: "reply"
     )
     static let replyAll = Action(
+        id: "replyAll",
         title: MailResourcesStrings.Localizable.actionReplyAll,
-        icon: MailResourcesAsset.emailActionReplyToAll,
+        iconResource: MailResourcesAsset.emailActionReplyToAll,
         matomoName: "replyAll"
     )
     static let archive = Action(
+        id: "archive",
         title: MailResourcesStrings.Localizable.actionArchive,
-        icon: MailResourcesAsset.archives,
+        iconResource: MailResourcesAsset.archives,
+        tintColorResource: MailResourcesAsset.swipeArchiveColor,
+        isDestructive: true,
         matomoName: "archive"
     )
     static let forward = Action(
+        id: "forward",
         title: MailResourcesStrings.Localizable.actionForward,
-        icon: MailResourcesAsset.emailActionTransfer,
+        iconResource: MailResourcesAsset.emailActionTransfer,
         matomoName: "forward"
     )
     static let markAsRead = Action(
+        id: "markAsRead",
         title: MailResourcesStrings.Localizable.actionMarkAsRead,
         shortTitle: MailResourcesStrings.Localizable.actionShortMarkAsRead,
-        icon: MailResourcesAsset.envelopeOpen,
+        iconResource: MailResourcesAsset.envelopeOpen,
+        tintColorResource: MailResourcesAsset.swipeReadColor,
         matomoName: "markAsSeen"
     )
     static let markAsUnread = Action(
+        id: "markAsUnread",
         title: MailResourcesStrings.Localizable.actionMarkAsUnread,
         shortTitle: MailResourcesStrings.Localizable.actionShortMarkAsUnread,
-        icon: MailResourcesAsset.envelope,
+        iconResource: MailResourcesAsset.envelope,
+        tintColorResource: MailResourcesAsset.swipeReadColor,
         matomoName: "markAsSeen"
     )
     static let openMovePanel = Action(
+        id: "openMovePanel",
         title: MailResourcesStrings.Localizable.actionMove,
-        icon: MailResourcesAsset.emailActionSend,
+        iconResource: MailResourcesAsset.emailActionSend,
+        tintColorResource: MailResourcesAsset.swipeMoveColor,
         matomoName: "move"
     )
-    static let postpone = Action(
-        title: MailResourcesStrings.Localizable.actionPostpone,
-        icon: MailResourcesAsset.waitingMessage,
-        matomoName: "postpone"
-    )
     static let star = Action(
+        id: "star",
         title: MailResourcesStrings.Localizable.actionStar,
         shortTitle: MailResourcesStrings.Localizable.actionShortStar,
-        icon: MailResourcesAsset.star,
+        iconResource: MailResourcesAsset.star,
+        tintColorResource: MailResourcesAsset.swipeFavoriteColor,
         matomoName: "favorite"
     )
     static let unstar = Action(
+        id: "unstar",
         title: MailResourcesStrings.Localizable.actionUnstar,
         shortTitle: MailResourcesStrings.Localizable.actionShortStar,
-        icon: MailResourcesAsset.unstar,
+        iconResource: MailResourcesAsset.unstar,
+        tintColorResource: MailResourcesAsset.swipeFavoriteColor,
         matomoName: "favorite"
     )
     static let reportJunk = Action(
+        id: "reportJunk",
         title: MailResourcesStrings.Localizable.actionReportJunk,
-        icon: MailResourcesAsset.report,
-        matomoName: nil
+        iconResource: MailResourcesAsset.report,
+        matomoName: "reportJunk"
     )
     static let spam = Action(
+        id: "spam",
         title: MailResourcesStrings.Localizable.actionSpam,
         shortTitle: MailResourcesStrings.Localizable.actionShortSpam,
-        icon: MailResourcesAsset.spam,
+        iconResource: MailResourcesAsset.spam,
+        tintColorResource: MailResourcesAsset.swipeSpamColor,
+        isDestructive: true,
         matomoName: "spam"
     )
     static let nonSpam = Action(
+        id: "nonSpam",
         title: MailResourcesStrings.Localizable.actionNonSpam,
-        icon: MailResourcesAsset.spam,
+        iconResource: MailResourcesAsset.spam,
+        tintColorResource: MailResourcesAsset.swipeSpamColor,
         matomoName: "spam"
     )
     static let block = Action(
+        id: "block",
         title: MailResourcesStrings.Localizable.actionBlockSender,
-        icon: MailResourcesAsset.blockUser,
+        iconResource: MailResourcesAsset.blockUser,
         matomoName: "blockUser"
     )
     static let phishing = Action(
+        id: "phishing",
         title: MailResourcesStrings.Localizable.actionPhishing,
-        icon: MailResourcesAsset.phishing,
+        iconResource: MailResourcesAsset.phishing,
         matomoName: "signalPhishing"
     )
-    static let print = Action(
-        title: MailResourcesStrings.Localizable.actionPrint,
-        icon: MailResourcesAsset.printText,
-        matomoName: "print"
-    )
     static let report = Action(
+        id: "report",
         title: MailResourcesStrings.Localizable.actionReportDisplayProblem,
-        icon: MailResourcesAsset.feedbacks,
-        matomoName: nil
+        iconResource: MailResourcesAsset.feedbacks,
+        matomoName: "report"
     )
     static let editMenu = Action(
+        id: "editMenu",
         title: MailResourcesStrings.Localizable.actionEditMenu,
-        icon: MailResourcesAsset.editTools,
+        iconResource: MailResourcesAsset.editTools,
         matomoName: "editMenu"
     )
     static let moveToInbox = Action(
+        id: "moveToInbox",
         title: MailResourcesStrings.Localizable.actionMoveToInbox,
-        icon: MailResourcesAsset.drawer,
+        iconResource: MailResourcesAsset.drawer,
+        tintColorResource: MailResourcesAsset.grayActionColor,
+        isDestructive: true,
         matomoName: "moveToInbox"
     )
     static let writeEmailAction = Action(
+        id: "writeEmailAction",
         title: MailResourcesStrings.Localizable.contactActionWriteEmail,
-        icon: MailResourcesAsset.pencil,
+        iconResource: MailResourcesAsset.pencil,
         matomoName: "writeEmail"
     )
     static let addContactsAction = Action(
+        id: "addContactsAction",
         title: MailResourcesStrings.Localizable.contactActionAddToContacts,
-        icon: MailResourcesAsset.userAdd,
+        iconResource: MailResourcesAsset.userAdd,
         matomoName: "addToContacts"
     )
     static let copyEmailAction = Action(
+        id: "copyEmailAction",
         title: MailResourcesStrings.Localizable.contactActionCopyEmailAddress,
-        icon: MailResourcesAsset.duplicate,
+        iconResource: MailResourcesAsset.duplicate,
         matomoName: "copyEmailAddress"
+    )
+    static let noAction = Action(
+        id: "none",
+        title: MailResourcesStrings.Localizable.settingsSwipeActionNone,
+        iconResource: MailResourcesAsset.duplicate,
+        matomoName: "swipeNone"
+    )
+    static let swipeQuickAction = Action(
+        id: "swipeQuickAction",
+        title: MailResourcesStrings.Localizable.settingsSwipeActionQuickActionsMenu,
+        iconResource: MailResourcesAsset.navigationMenu,
+        tintColorResource: MailResourcesAsset.swipeQuickActionColor,
+        matomoName: "quickActions"
     )
 }

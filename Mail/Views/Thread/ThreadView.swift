@@ -112,14 +112,14 @@ struct ThreadView: View {
         .bottomBar {
             ForEach(toolbarActions) { action in
                 if action == .reply {
-                    ToolbarButton(text: action.title, icon: action.floatingPanelIcon) {
+                    ToolbarButton(text: action.title, icon: action.icon) {
                         didTap(action: action)
                     }
                     .adaptivePanel(item: $replyOrReplyAllMessage) { message in
                         ReplyActionsView(message: message)
                     }
                 } else {
-                    ToolbarButton(text: action.title, icon: action.floatingPanelIcon) {
+                    ToolbarButton(text: action.title, icon: action.icon) {
                         didTap(action: action)
                     }
                     .disabled(action == .archive && thread.folder?.role == .archive)
@@ -144,9 +144,8 @@ struct ThreadView: View {
     }
 
     private func didTap(action: Action) {
-        if let matomoName = action.matomoName {
-            matomo.track(eventWithCategory: .threadActions, name: matomoName)
-        }
+        matomo.track(eventWithCategory: .threadActions, name: action.matomoName)
+
         let messages = thread.messages.freezeIfNeeded().toArray()
 
         if action == .reply,

@@ -21,23 +21,70 @@ import MailResources
 import SwiftUI
 
 public struct Action: Identifiable, Hashable, Equatable {
-    public var id: Int {
-        return hashValue
-    }
-
+    public let id: String
     public let title: String
     public let shortTitle: String?
-    public let floatingPanelIconName: String
-    public var floatingPanelIcon: Image {
-        return Image(floatingPanelIconName)
+    public let iconName: String
+    public var icon: Image {
+        return Image(iconName)
     }
 
-    public let matomoName: String?
+    public let tintColorName: String?
+    public var tintColor: Color? {
+        guard let tintColorName else { return nil }
+        return Color(tintColorName)
+    }
 
-    init(title: String, shortTitle: String? = nil, icon: MailResourcesImages, matomoName: String?) {
+    public let isDestructive: Bool
+
+    public let matomoName: String
+
+    init(
+        id: String,
+        title: String,
+        shortTitle: String? = nil,
+        iconResource: MailResourcesImages,
+        tintColorResource: MailResourcesColors? = nil,
+        isDestructive: Bool = false,
+        matomoName: String
+    ) {
+        self.id = id
         self.title = title
         self.shortTitle = shortTitle
-        floatingPanelIconName = icon.name
+        iconName = iconResource.name
+        tintColorName = tintColorResource?.name
+        self.isDestructive = isDestructive
         self.matomoName = matomoName
+    }
+
+    public func inverseActionIfNeeded(for thread: Thread) -> Self {
+        switch self {
+        case .archive:
+            if thread.folder?.role == .archive {
+                return .moveToInbox
+            }
+        case .spam:
+            if thread.folder?.role == .spam {
+                return .moveToInbox
+            }
+        case .markAsRead:
+            if !thread.hasUnseenMessages {
+                return .markAsUnread
+            }
+        case .star:
+            if thread.flagged {
+                return .unstar
+            }
+        default:
+            return self
+        }
+
+        return self
+    }
+}
+
+extension Action: SettingsOptionEnum {
+    public var image: Image? {
+        return nil
     }
 }

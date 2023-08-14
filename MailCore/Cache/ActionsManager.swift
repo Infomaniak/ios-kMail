@@ -52,7 +52,7 @@ public class ActionsManager: ObservableObject {
     }
 
     public func performAction(target messages: [Message], action: Action, origin: ActionOrigin) async throws {
-        // TODO: Handle snackbar  + Undo here depending on origin
+        // TODO: Handle snackbar + Undo here depending on origin
         switch action {
         case .delete:
             try await mailboxManager.moveOrDelete(messages: messages)
@@ -72,12 +72,12 @@ public class ActionsManager: ObservableObject {
             Task { @MainActor in
                 navigationState?.messagesToMove = messages
             }
-        case .postpone:
-            break
         case .star:
             try await mailboxManager.star(messages: messages, starred: true)
         case .unstar:
             try await mailboxManager.star(messages: messages, starred: false)
+        case .moveToInbox:
+            try await mailboxManager.move(messages: messages, to: .inbox)
         default:
             break
         }
