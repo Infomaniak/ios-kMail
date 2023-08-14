@@ -27,7 +27,7 @@ public enum DefaultPreferences {
     public static let accentColor = AccentColor.pink
     public static let swipeLeading = Action.noAction
     public static let swipeFullLeading = Action.markAsRead
-    public static let swipeTrailing = Action.swipeQuickAction
+    public static let swipeTrailing = Action.quickActionPanel
     public static let swipeFullTrailing = Action.delete
     public static let cancelDelay = CancelDelay.seconds10
     public static let forwardMode = ForwardMode.inline

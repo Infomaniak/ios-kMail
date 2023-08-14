@@ -27,7 +27,7 @@ extension Action: CaseIterable {
         .openMovePanel,
         .star,
         .spam,
-        .swipeQuickAction,
+        .quickActionPanel,
         .archive,
         .noAction
     ]
@@ -55,7 +55,7 @@ extension Action: CaseIterable {
         .addContactsAction,
         .copyEmailAction,
         .noAction,
-        .swipeQuickAction
+        .quickActionPanel
     ]
 }
 
@@ -228,7 +228,7 @@ public extension Action {
         iconResource: MailResourcesAsset.duplicate,
         matomoName: "swipeNone"
     )
-    static let swipeQuickAction = Action(
+    static let quickActionPanel = Action(
         id: "swipeQuickAction",
         title: MailResourcesStrings.Localizable.settingsSwipeActionQuickActionsMenu,
         iconResource: MailResourcesAsset.navigationMenu,

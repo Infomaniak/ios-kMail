@@ -29,6 +29,8 @@ private struct SwipeActionView: View {
     @EnvironmentObject private var mailboxManager: MailboxManager
     @EnvironmentObject private var actionsManager: ActionsManager
 
+    @Binding var actionPanelMessages: [Message]?
+
     let thread: Thread
     let action: Action
 
@@ -37,7 +39,11 @@ private struct SwipeActionView: View {
             matomo.track(eventWithCategory: .swipeActions, name: action.matomoName)
             Task {
                 await tryOrDisplayError {
-                    try await actionsManager.performAction(target: thread.messages.toArray(), action: action, origin: .swipe)
+                    try await actionsManager.performAction(
+                        target: thread.messages.toArray(),
+                        action: action,
+                        origin: .swipe(nearestActionPanelMessages: $actionPanelMessages)
+                    )
                 }
             }
         } label: {
@@ -55,8 +61,7 @@ struct ThreadListSwipeActions: ViewModifier {
     @AppStorage(UserDefaults.shared.key(.swipeFullTrailing)) private var swipeFullTrailing = DefaultPreferences.swipeFullTrailing
     @AppStorage(UserDefaults.shared.key(.swipeTrailing)) private var swipeTrailing = DefaultPreferences.swipeTrailing
 
-    @State private var moveAction: MoveAction?
-    @State private var actionsTarget: ActionsTarget?
+    @State private var actionPanelMessages: [Message]?
 
     let thread: Thread
     let viewModel: ThreadListViewModel
@@ -76,13 +81,14 @@ struct ThreadListSwipeActions: ViewModifier {
                     edgeActions([swipeFullTrailing, swipeTrailing])
                 }
             }
+            .actionsPanel(messages: $actionPanelMessages)
     }
 
     @MainActor @ViewBuilder
     private func edgeActions(_ actions: [Action]) -> some View {
         if !multipleSelectionViewModel.isEnabled {
             ForEach(actions.filter { $0 != .noAction }.map { $0.inverseActionIfNeeded(for: thread) }) { action in
-                SwipeActionView(thread: thread, action: action)
+                SwipeActionView(actionPanelMessages: $actionPanelMessages, thread: thread, action: action)
             }
         }
     }
@@ -100,6 +106,6 @@ extension View {
 
 struct ThreadListSwipeAction_Previews: PreviewProvider {
     static var previews: some View {
-        SwipeActionView(thread: PreviewHelper.sampleThread, action: .delete)
+        SwipeActionView(actionPanelMessages: .constant(nil), thread: PreviewHelper.sampleThread, action: .delete)
     }
 }

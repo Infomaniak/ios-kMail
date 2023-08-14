@@ -22,6 +22,7 @@ import SwiftUI
 
 extension [Message]: Identifiable {
     public var id: Int {
+        // Calculate a unique identifier by XORing hash values of messages
         return reduce(1) { $0.hashValue ^ $1.hashValue }
     }
 
@@ -35,14 +36,27 @@ extension [Message]: Identifiable {
     }
 }
 
-public class ActionsManager: ObservableObject {
-    public enum ActionOrigin {
+public struct ActionOrigin {
+    public enum ActionOriginType {
         case swipe
         case floatingPanel
         case toolbar
         case multipleSelection
     }
 
+    let type: ActionOriginType
+    let nearestActionPanelMessages: Binding<[Message]?>?
+
+    public static let floatingPanel = ActionOrigin(type: .floatingPanel, nearestActionPanelMessages: nil)
+    public static let toolbar = ActionOrigin(type: .toolbar, nearestActionPanelMessages: nil)
+    public static let multipleSelection = ActionOrigin(type: .multipleSelection, nearestActionPanelMessages: nil)
+
+    public static func swipe(nearestActionPanelMessages: Binding<[Message]?>? = nil) -> ActionOrigin {
+        return ActionOrigin(type: .swipe, nearestActionPanelMessages: nearestActionPanelMessages)
+    }
+}
+
+public class ActionsManager: ObservableObject {
     private let mailboxManager: MailboxManager
     private let navigationState: NavigationState?
 
@@ -78,6 +92,10 @@ public class ActionsManager: ObservableObject {
             try await mailboxManager.star(messages: messages, starred: false)
         case .moveToInbox:
             try await mailboxManager.move(messages: messages, to: .inbox)
+        case .quickActionPanel:
+            Task { @MainActor in
+                origin.nearestActionPanelMessages?.wrappedValue = messages
+            }
         default:
             break
         }
