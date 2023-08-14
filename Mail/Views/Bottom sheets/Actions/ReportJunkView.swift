@@ -34,10 +34,20 @@ struct ReportJunkView: View {
         _viewModel = StateObject(wrappedValue: ActionsViewModel(mailboxManager: mailboxManager,
                                                                 target: target,
                                                                 reportedForPhishingMessage: reportedForPhishingMessage))
-        if case .message(let message) = target {
+        switch target {
+        case .message(let message):
             let spam = message.folder?.role == .spam
             actions.append(contentsOf: [
                 spam ? .nonSpam : .spam,
+                .phishing,
+                .block
+            ])
+        case .threads(let threads, _):
+            guard threads.count == 1, let thread = threads.first else {
+                fatalError("TBD")
+            }
+            actions.append(contentsOf: [
+                .spam,
                 .phishing,
                 .block
             ])

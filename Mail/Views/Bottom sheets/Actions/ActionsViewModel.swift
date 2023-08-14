@@ -281,7 +281,7 @@ enum ActionsTarget: Equatable, Identifiable {
                 let spam = threads.allSatisfy { $0.folder?.role == .spam }
                 let star = threads.allSatisfy(\.flagged)
                 listActions = [
-                    spam ? .nonSpam : .spam,
+                    spam ? .nonSpam : .reportJunk,
                     star ? .unstar : .star
                 ]
             } else if let thread = threads.first {
@@ -292,7 +292,7 @@ enum ActionsTarget: Equatable, Identifiable {
                 let star = thread.flagged
 
                 let spam = thread.folder?.role == .spam
-                let spamAction: Action? = spam ? .nonSpam : .spam
+                let spamAction: Action? = spam ? .nonSpam : .reportJunk
 
                 let tempListActions: [Action?] = [
                     .move,
