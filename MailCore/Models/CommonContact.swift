@@ -82,6 +82,11 @@ public struct CommonContact {
             avatarImageRequest = AvatarImageRequest(imageRequest: nil, shouldAuthenticate: false)
         }
     }
+    
+    /// A `CommonContact` that represents no-one.
+    public static func emptyContact(contextMailboxManager: MailboxManager) -> CommonContact {
+        CommonContact(recipient: Recipient(email: "", name: ""), contextMailboxManager: contextMailboxManager)
+    }
 }
 
 extension CommonContact: Equatable {

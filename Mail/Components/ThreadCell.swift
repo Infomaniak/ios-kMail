@@ -64,6 +64,14 @@ struct ThreadCellDataHolder {
             preview = MailResourcesStrings.Localizable.noBodyTitle
         }
     }
+
+    func commonContact(contextMailboxManager: MailboxManager) -> CommonContact {
+        if let recipientToDisplay {
+            return CommonContact(recipient: recipientToDisplay, contextMailboxManager: contextMailboxManager)
+        } else {
+            return CommonContact.emptyContact(contextMailboxManager: contextMailboxManager)
+        }
+    }
 }
 
 struct ThreadCell: View {
@@ -114,10 +122,10 @@ struct ThreadCell: View {
                 .accessibilityHidden(additionalAccessibilityLabel.isEmpty)
 
             Group {
-                if density == .large, let recipient = dataHolder.recipientToDisplay {
+                if density == .large {
                     ZStack {
                         AvatarView(
-                            displayablePerson: CommonContact(recipient: recipient, contextMailboxManager: mailboxManager),
+                            displayablePerson: dataHolder.commonContact(contextMailboxManager: mailboxManager),
                             size: 40
                         )
                         .opacity(isSelected ? 0 : 1)
