@@ -29,15 +29,17 @@ struct CreateAccountView: View {
     @StateObject private var loginHandler = LoginHandler()
 
     var body: some View {
-        VStack(alignment: .center, spacing: 24) {
+        VStack(alignment: .center, spacing: 0) {
             accentColor.createAccountImage.swiftUIImage
                 .resizable()
                 .scaledToFit()
-                .padding(.bottom, 24)
+                .padding(.top, 24)
+                .padding(.bottom, 48)
 
             Text(MailResourcesStrings.Localizable.newAccountTitle)
                 .textStyle(.header1)
                 .multilineTextAlignment(.center)
+                .padding(.bottom, 24)
 
             HStack {
                 Text(MailResourcesStrings.Localizable.newAccountStorageMail)
@@ -56,15 +58,20 @@ struct CreateAccountView: View {
                     .multilineTextAlignment(.center)
             }
             .fixedSize(horizontal: false, vertical: true)
-            .padding(.bottom, 12)
+            .padding(.bottom, 24)
 
             Text(MailResourcesStrings.Localizable.newAccountDescription)
                 .textStyle(.bodySmallSecondary)
-                .padding(.bottom, 12)
+                .padding(.bottom, 24)
+                .multilineTextAlignment(.center)
+
+            Spacer()
 
             MailButton(label: MailResourcesStrings.Localizable.buttonCreate) {
                 isPresentingCreateAccount.toggle()
-            }.mailButtonFullWidth(true)
+            }
+            .mailButtonFullWidth(true)
+            .padding(.bottom, 24)
         }
         .padding(.horizontal, 24)
         .sheet(isPresented: $isPresentingCreateAccount) {
