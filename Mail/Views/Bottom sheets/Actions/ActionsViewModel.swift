@@ -457,7 +457,7 @@ enum ActionsTarget: Equatable, Identifiable {
         // This action is only available on a single message
         guard case .message(let message) = target else { return }
         _ = try await mailboxManager.apiFetcher.blockSender(message: message)
-        IKSnackBar.showSnackBar(message: MailResourcesStrings.Localizable.snackbarSenderBlacklisted(1))
+        snackbarPresenter.show(message: MailResourcesStrings.Localizable.snackbarSenderBlacklisted(1))
     }
 
     private func phishing() async throws {
