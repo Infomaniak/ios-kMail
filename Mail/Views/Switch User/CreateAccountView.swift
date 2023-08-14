@@ -1,4 +1,3 @@
-//
 /*
  Infomaniak Mail - iOS App
  Copyright (C) 2022 Infomaniak Network SA
@@ -17,14 +16,17 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import InfomaniakCoreUI
-import InfomaniakDI
+import InfomaniakCreateAccount
+import InfomaniakLogin
 import MailCore
 import MailResources
 import SwiftUI
 
 struct CreateAccountView: View {
     @AppStorage(UserDefaults.shared.key(.accentColor)) private var accentColor = DefaultPreferences.accentColor
+
+    @State private var isPresentingCreateAccount = false
+    @StateObject private var loginHandler = LoginHandler()
 
     var body: some View {
         VStack(alignment: .center, spacing: 24) {
@@ -38,20 +40,22 @@ struct CreateAccountView: View {
                 .multilineTextAlignment(.center)
 
             HStack {
-                    Text(MailResourcesStrings.Localizable.newAccountStorageMail)
-                        .textStyle(.labelMediumAccent)
-                        .padding()
-                            .background(accentColor.secondary.swiftUIColor)
-                            .clipShape(Capsule())
-                            .multilineTextAlignment(.center)
+                Text(MailResourcesStrings.Localizable.newAccountStorageMail)
+                    .textStyle(.labelMediumAccent)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    .padding()
+                    .background(accentColor.secondary.swiftUIColor)
+                    .clipShape(Capsule())
+                    .multilineTextAlignment(.center)
                 Text(MailResourcesStrings.Localizable.newAccountStorageDrive)
                     .textStyle(.labelMediumAccent)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
                     .padding()
-                        .background(accentColor.secondary.swiftUIColor)
-                        .clipShape(Capsule())
-                        .multilineTextAlignment(.center)
+                    .background(accentColor.secondary.swiftUIColor)
+                    .clipShape(Capsule())
+                    .multilineTextAlignment(.center)
             }
-            .fixedSize(horizontal: true, vertical: true)
+            .fixedSize(horizontal: false, vertical: true)
             .padding(.bottom, 12)
 
             Text(MailResourcesStrings.Localizable.newAccountDescription)
@@ -59,10 +63,16 @@ struct CreateAccountView: View {
                 .padding(.bottom, 12)
 
             MailButton(label: MailResourcesStrings.Localizable.buttonCreate) {
-                //TODO: add action on press
+                isPresentingCreateAccount.toggle()
             }.mailButtonFullWidth(true)
         }
         .padding(.horizontal, 24)
+        .sheet(isPresented: $isPresentingCreateAccount) {
+            RegisterView(registrationProcess: .mail) { viewController in
+                guard let viewController else { return }
+                loginHandler.loginAfterAccountCreation(from: viewController)
+            }
+        }
     }
 }
 

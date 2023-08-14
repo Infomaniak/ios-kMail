@@ -241,10 +241,7 @@ struct OnboardingView: View {
             Text(MailResourcesStrings.Localizable.errorLoginDescription)
         }
         .sheet(isPresented: $isPresentingCreateAccount) {
-            RegisterView(registrationProcess: .mail) { viewController in
-                guard let viewController else { return }
-                loginHandler.loginAfterAccountCreation(from: viewController)
-            }
+            CreateAccountView()
         }
         .onAppear {
             if UIDevice.current.userInterfaceIdiom == .phone {
