@@ -82,10 +82,10 @@ import SwiftUI
         case .markAsRead, .markAsUnread:
             try await mailboxManager.toggleRead(threads: Array(selectedItems))
         case .archive:
-            let undoRedoAction = try await mailboxManager.move(threads: Array(selectedItems), to: .archive)
+            let undoAction = try await mailboxManager.move(threads: Array(selectedItems), to: .archive)
             IKSnackBar.showCancelableSnackBar(message: MailResourcesStrings.Localizable.actionArchive,
                                               cancelSuccessMessage: MailResourcesStrings.Localizable.snackbarMoveCancelled,
-                                              undoRedoAction: undoRedoAction,
+                                              undoAction: undoAction,
                                               mailboxManager: mailboxManager)
         case .star:
             try await mailboxManager.toggleStar(threads: Array(selectedItems))

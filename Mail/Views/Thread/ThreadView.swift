@@ -167,11 +167,11 @@ struct ThreadView: View {
         case .archive:
             Task {
                 await tryOrDisplayError {
-                    let undoRedoAction = try await mailboxManager.move(threads: [thread], to: .archive)
+                    let undoAction = try await mailboxManager.move(threads: [thread], to: .archive)
                     IKSnackBar.showCancelableSnackBar(
                         message: MailResourcesStrings.Localizable.snackbarThreadMoved(FolderRole.archive.localizedName),
                         cancelSuccessMessage: MailResourcesStrings.Localizable.snackbarMoveCancelled,
-                        undoRedoAction: undoRedoAction,
+                        undoAction: undoAction,
                         mailboxManager: mailboxManager
                     )
                     dismiss()

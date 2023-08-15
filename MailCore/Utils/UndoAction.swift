@@ -18,14 +18,14 @@
 
 import Foundation
 
-public struct UndoRedoAction {
-    public typealias RedoBlock = () async throws -> Void
+public struct UndoAction {
+    public typealias UndoBlock = () async throws -> Void
 
     public let undo: CancelableResponse
-    public let redo: RedoBlock?
+    public let undoBlock: UndoBlock?
 
-    public init(undo: CancelableResponse, redo: RedoBlock?) {
+    public init(undo: CancelableResponse, undoBlock: UndoBlock?) {
         self.undo = undo
-        self.redo = redo
+        self.undoBlock = undoBlock
     }
 }

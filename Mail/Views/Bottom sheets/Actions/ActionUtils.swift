@@ -26,24 +26,24 @@ struct ActionUtils {
     let mailboxManager: MailboxManager
 
     func move(to folder: Folder) async throws {
-        let undoRedoAction: UndoRedoAction
+        let undoAction: UndoAction
         let snackBarMessage: String
         switch actionsTarget {
         case .threads(let threads, _):
             guard threads.first?.folder != folder else { return }
-            undoRedoAction = try await mailboxManager.move(threads: threads, to: folder)
+            undoAction = try await mailboxManager.move(threads: threads, to: folder)
             snackBarMessage = MailResourcesStrings.Localizable.snackbarThreadsMoved(folder.localizedName)
         case .message(let message):
             guard message.folderId != folder.id else { return }
             var messages = [message]
             messages.append(contentsOf: message.duplicates)
-            undoRedoAction = try await mailboxManager.move(messages: messages, to: folder)
+            undoAction = try await mailboxManager.move(messages: messages, to: folder)
             snackBarMessage = MailResourcesStrings.Localizable.snackbarMessageMoved(folder.localizedName)
         }
 
         await IKSnackBar.showCancelableSnackBar(message: snackBarMessage,
                                                 cancelSuccessMessage: MailResourcesStrings.Localizable.snackbarMoveCancelled,
-                                                undoRedoAction: undoRedoAction,
+                                                undoAction: undoAction,
                                                 mailboxManager: mailboxManager)
     }
 

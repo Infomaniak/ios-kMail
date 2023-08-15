@@ -139,12 +139,12 @@ public extension MailboxManager {
         }
     }
 
-    func move(threads: [Thread], to folderRole: FolderRole) async throws -> UndoRedoAction {
+    func move(threads: [Thread], to folderRole: FolderRole) async throws -> UndoAction {
         guard let folder = getFolder(with: folderRole)?.freeze() else { throw MailError.folderNotFound }
         return try await move(threads: threads, to: folder)
     }
 
-    func move(threads: [Thread], to folder: Folder) async throws -> UndoRedoAction {
+    func move(threads: [Thread], to folder: Folder) async throws -> UndoAction {
         var messages = threads.flatMap(\.messages).filter { $0.folder == threads.first?.folder }
         messages.append(contentsOf: messages.flatMap(\.duplicates))
 
