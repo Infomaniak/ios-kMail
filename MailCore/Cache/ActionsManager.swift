@@ -36,6 +36,18 @@ extension [Message]: Identifiable {
         }
         return last
     }
+
+    var uniqueThreadCount: Int {
+        return Set(compactMap(\.originalThread?.uid)).count
+    }
+
+    var isSingleMessage: Bool {
+        guard let firstMessageThreadMessagesCount = first?.originalThread?.messages.count else {
+            return false
+        }
+
+        return count == 1 && firstMessageThreadMessagesCount > 1
+    }
 }
 
 public struct ActionOrigin {
@@ -72,23 +84,21 @@ public class ActionsManager: ObservableObject {
     public func performAction(target messages: [Message], action: Action, origin: ActionOrigin) async throws {
         switch action {
         case .delete:
-            let snackbarMessage: String?
-            let undoAction: UndoAction?
             let deletionResults = try await mailboxManager.moveOrDelete(messages: messages)
 
             // Can eventually be improved if needed
             assert(deletionResults.count <= 1, "For now deletion result should always have only one value")
             guard let firstDeletionResult = deletionResults.first else { return }
 
-            snackbarMessage = deletionSnackbarMessage(
-                for: messages,
-                permanentlyDelete: firstDeletionResult == .permanentlyDeleted
-            )
-
-            if case .moved(let resultUndoAction) = firstDeletionResult {
-                undoAction = resultUndoAction
-            } else {
+            let snackbarMessage: String
+            let undoAction: UndoAction?
+            switch firstDeletionResult {
+            case .permanentlyDeleted:
+                snackbarMessage = snackbarPermanentlyDeleteMessage(for: messages)
                 undoAction = nil
+            case .moved(let resultUndoAction):
+                snackbarMessage = snackbarMoveMessage(for: messages, destinationFolderName: FolderRole.trash.localizedName)
+                undoAction = resultUndoAction
             }
 
             async let _ = await displayResultSnackbar(message: snackbarMessage, undoAction: undoAction)
@@ -100,10 +110,9 @@ public class ActionsManager: ObservableObject {
             try replyOrForward(messages: messages, mode: .forward)
         case .archive:
             let undoAction = try await mailboxManager.move(messages: messages, to: .archive)
-            async let _ = await displayResultSnackbar(
-                message: MailResourcesStrings.Localizable.snackbarMessageMoved(FolderRole.archive.localizedName),
-                undoAction: undoAction
-            )
+            let snackbarMessage = snackbarMoveMessage(for: messages, destinationFolderName: FolderRole.archive.localizedName)
+
+            async let _ = await displayResultSnackbar(message: snackbarMessage, undoAction: undoAction)
         case .markAsRead:
             try await mailboxManager.markAsSeen(messages: messages, seen: true)
         case .markAsUnread:
@@ -118,10 +127,9 @@ public class ActionsManager: ObservableObject {
             try await mailboxManager.star(messages: messages, starred: false)
         case .moveToInbox:
             let undoAction = try await mailboxManager.move(messages: messages, to: .inbox)
-            async let _ = await displayResultSnackbar(
-                message: MailResourcesStrings.Localizable.snackbarMessageMoved(FolderRole.inbox.localizedName),
-                undoAction: undoAction
-            )
+            let snackbarMessage = snackbarMoveMessage(for: messages, destinationFolderName: FolderRole.inbox.localizedName)
+
+            async let _ = await displayResultSnackbar(message: snackbarMessage, undoAction: undoAction)
         case .quickActionPanel:
             Task { @MainActor in
                 origin.nearestActionPanelMessages?.wrappedValue = messages
@@ -158,21 +166,24 @@ public class ActionsManager: ObservableObject {
         }
     }
 
-    private func deletionSnackbarMessage(for messages: [Message], permanentlyDelete: Bool) -> String {
-        if let firstMessageThreadMessagesCount = messages.first?.originalThread?.messages.count,
-           messages.count == 1 && firstMessageThreadMessagesCount > 1 {
-            return permanentlyDelete ?
-                MailResourcesStrings.Localizable.snackbarMessageDeletedPermanently :
-                MailResourcesStrings.Localizable.snackbarMessageMoved(FolderRole.trash.localizedName)
+    private func snackbarMoveMessage(for messages: [Message], destinationFolderName: String) -> String {
+        if messages.isSingleMessage {
+            return MailResourcesStrings.Localizable.snackbarMessageMoved(destinationFolderName)
         } else {
-            let uniqueThreadCount = Set(messages.compactMap(\.originalThread?.uid)).count
-            if permanentlyDelete {
-                return MailResourcesStrings.Localizable.snackbarThreadDeletedPermanently(uniqueThreadCount)
-            } else if uniqueThreadCount == 1 {
-                return MailResourcesStrings.Localizable.snackbarThreadMoved(FolderRole.trash.localizedName)
+            let uniqueThreadCount = messages.uniqueThreadCount
+            if uniqueThreadCount == 1 {
+                return MailResourcesStrings.Localizable.snackbarThreadMoved(destinationFolderName)
             } else {
-                return MailResourcesStrings.Localizable.snackbarThreadsMoved(FolderRole.trash.localizedName)
+                return MailResourcesStrings.Localizable.snackbarThreadsMoved(destinationFolderName)
             }
+        }
+    }
+
+    private func snackbarPermanentlyDeleteMessage(for messages: [Message]) -> String {
+        if messages.isSingleMessage {
+            return MailResourcesStrings.Localizable.snackbarMessageDeletedPermanently
+        } else {
+            return MailResourcesStrings.Localizable.snackbarThreadDeletedPermanently(messages.uniqueThreadCount)
         }
     }
 }
