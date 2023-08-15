@@ -78,7 +78,7 @@ public final class DraftManager {
     }
 
     /// Save a draft server side
-    private func saveDraftRemotely(draft: Draft, mailboxManager: MailboxManager) async {
+    private func saveDraftRemotely(draft: Draft, mailboxManager: MailboxManager, retry: Bool = true) async {
         guard draft.identityId != nil else {
             SentrySDK.capture(message: "We are trying to send a draft without an identityId, this will fail.")
             return
@@ -92,12 +92,30 @@ public final class DraftManager {
         do {
             try await mailboxManager.save(draft: draft)
         } catch {
-            guard error.shouldDisplay else { return }
-            alertDisplayable.show(message: error.localizedDescription)
+            // retry
+            if /*error.code == 422 &&*/ retry == true {
+                await setDefaultSignatureAndRetryToSaveRemotely(draft: draft, mailboxManager: mailboxManager)
+            }
+            // show error if needed
+            else {
+                guard error.shouldDisplay else { return }
+                alertDisplayable.show(message: error.localizedDescription)
+            }
         }
         await draftQueue.endBackgroundTask(uuid: draft.localUUID)
     }
 
+    private func setDefaultSignatureAndRetryToSaveRemotely(draft: Draft, mailboxManager: MailboxManager) async {
+        try? await mailboxManager.refreshAllSignatures()
+        let storedSignatures = mailboxManager.getStoredSignatures()
+        guard let defaultSignature = storedSignatures.defaultSignature else {
+            print("missing default signature")
+            return
+        }
+        draft.identityId = "\(defaultSignature.name)"
+        await saveDraftRemotely(draft: draft, mailboxManager: mailboxManager, retry: false)
+    }
+    
     public func send(draft: Draft, mailboxManager: MailboxManager) async -> Date? {
         alertDisplayable.show(message: MailResourcesStrings.Localizable.snackbarEmailSending)
 
