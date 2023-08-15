@@ -221,15 +221,21 @@ public extension MailboxManager {
         }
     }
 
-    func moveOrDelete(messages: [Message]) async throws {
+    func moveOrDelete(messages: [Message]) async throws -> [DeletionResult] {
         let messagesGroupedByFolderId = Dictionary(grouping: messages, by: \.folderId)
 
-        await withThrowingTaskGroup(of: Void.self) { group in
+        return try await withThrowingTaskGroup(of: DeletionResult.self, returning: [DeletionResult].self) { group in
             for messagesInSameFolder in messagesGroupedByFolderId.values {
                 group.addTask {
-                    try await self.moveOrDeleteMessagesInSameFolder(messages: messagesInSameFolder)
+                    return try await self.moveOrDeleteMessagesInSameFolder(messages: messagesInSameFolder)
                 }
             }
+
+            var undoActions = [DeletionResult]()
+            for try await undoAction in group {
+                undoActions.append(undoAction)
+            }
+            return undoActions
         }
     }
 
@@ -485,7 +491,7 @@ public extension MailboxManager {
         }
     }
 
-    private func moveOrDeleteMessagesInSameFolder(messages: [Message]) async throws {
+    private func moveOrDeleteMessagesInSameFolder(messages: [Message]) async throws -> DeletionResult {
         let messagesToMoveOrDelete = messages + messages.flatMap(\.duplicates)
 
         let firstMessageFolderRole = messages.first?.folder?.role
@@ -493,33 +499,10 @@ public extension MailboxManager {
             || firstMessageFolderRole == .spam
             || firstMessageFolderRole == .draft {
             try await delete(messages: messagesToMoveOrDelete)
-            async let _ = snackbarPresenter.show(message: deletionSnackbarMessage(for: messages, permanentlyDelete: true))
+            return .permanentlyDeleted
         } else {
             let undoAction = try await move(messages: messagesToMoveOrDelete, to: .trash)
-            async let _ = IKSnackBar.showCancelableSnackBar(
-                message: deletionSnackbarMessage(for: messages, permanentlyDelete: false),
-                cancelSuccessMessage: MailResourcesStrings.Localizable.snackbarMoveCancelled,
-                undoAction: undoAction,
-                mailboxManager: self
-            )
-        }
-    }
-
-    private func deletionSnackbarMessage(for messages: [Message], permanentlyDelete: Bool) -> String {
-        if let firstMessageThreadMessagesCount = messages.first?.originalThread?.messages.count,
-           messages.count == 1 && firstMessageThreadMessagesCount > 1 {
-            return permanentlyDelete ?
-                MailResourcesStrings.Localizable.snackbarMessageDeletedPermanently :
-                MailResourcesStrings.Localizable.snackbarMessageMoved(FolderRole.trash.localizedName)
-        } else {
-            let uniqueThreadCount = Set(messages.compactMap(\.originalThread?.uid)).count
-            if permanentlyDelete {
-                return MailResourcesStrings.Localizable.snackbarThreadDeletedPermanently(uniqueThreadCount)
-            } else if uniqueThreadCount == 1 {
-                return MailResourcesStrings.Localizable.snackbarThreadMoved(FolderRole.trash.localizedName)
-            } else {
-                return MailResourcesStrings.Localizable.snackbarThreadsMoved(FolderRole.trash.localizedName)
-            }
+            return .moved(undoAction)
         }
     }
 

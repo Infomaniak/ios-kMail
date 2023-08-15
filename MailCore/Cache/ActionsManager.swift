@@ -17,6 +17,8 @@
  */
 
 import Foundation
+import InfomaniakCoreUI
+import InfomaniakDI
 import MailResources
 import SwiftUI
 
@@ -57,6 +59,8 @@ public struct ActionOrigin {
 }
 
 public class ActionsManager: ObservableObject {
+    @LazyInjectService private var snackbarPresenter: SnackBarPresentable
+
     private let mailboxManager: MailboxManager
     private let navigationState: NavigationState?
 
@@ -66,10 +70,28 @@ public class ActionsManager: ObservableObject {
     }
 
     public func performAction(target messages: [Message], action: Action, origin: ActionOrigin) async throws {
-        // TODO: Handle snackbar + Undo here depending on origin
         switch action {
         case .delete:
-            try await mailboxManager.moveOrDelete(messages: messages)
+            let snackbarMessage: String?
+            let undoAction: UndoAction?
+            let deletionResults = try await mailboxManager.moveOrDelete(messages: messages)
+
+            // Can eventually be improved if needed
+            assert(deletionResults.count <= 1, "For now deletion result should always have only one value")
+            guard let firstDeletionResult = deletionResults.first else { return }
+
+            snackbarMessage = deletionSnackbarMessage(
+                for: messages,
+                permanentlyDelete: firstDeletionResult == .permanentlyDeleted
+            )
+
+            if case .moved(let resultUndoAction) = firstDeletionResult {
+                undoAction = resultUndoAction
+            } else {
+                undoAction = nil
+            }
+
+            async let _ = await displayResultSnackbar(message: snackbarMessage, undoAction: undoAction)
         case .reply:
             try replyOrForward(messages: messages, mode: .reply)
         case .replyAll:
@@ -77,7 +99,11 @@ public class ActionsManager: ObservableObject {
         case .forward:
             try replyOrForward(messages: messages, mode: .forward)
         case .archive:
-            try await mailboxManager.move(messages: messages, to: .archive)
+            let undoAction = try await mailboxManager.move(messages: messages, to: .archive)
+            async let _ = await displayResultSnackbar(
+                message: MailResourcesStrings.Localizable.snackbarMessageMoved(FolderRole.archive.localizedName),
+                undoAction: undoAction
+            )
         case .markAsRead:
             try await mailboxManager.markAsSeen(messages: messages, seen: true)
         case .markAsUnread:
@@ -91,13 +117,33 @@ public class ActionsManager: ObservableObject {
         case .unstar:
             try await mailboxManager.star(messages: messages, starred: false)
         case .moveToInbox:
-            try await mailboxManager.move(messages: messages, to: .inbox)
+            let undoAction = try await mailboxManager.move(messages: messages, to: .inbox)
+            async let _ = await displayResultSnackbar(
+                message: MailResourcesStrings.Localizable.snackbarMessageMoved(FolderRole.inbox.localizedName),
+                undoAction: undoAction
+            )
         case .quickActionPanel:
             Task { @MainActor in
                 origin.nearestActionPanelMessages?.wrappedValue = messages
             }
         default:
             break
+        }
+    }
+
+    @MainActor
+    private func displayResultSnackbar(message: String?, undoAction: UndoAction?) {
+        guard let message else { return }
+
+        if let undoAction {
+            IKSnackBar.showCancelableSnackBar(
+                message: message,
+                cancelSuccessMessage: MailResourcesStrings.Localizable.snackbarMoveCancelled,
+                undoAction: undoAction,
+                mailboxManager: mailboxManager
+            )
+        } else {
+            snackbarPresenter.show(message: message)
         }
     }
 
@@ -109,6 +155,24 @@ public class ActionsManager: ObservableObject {
 
         Task { @MainActor in
             navigationState?.messageReply = MessageReply(message: replyingMessage, replyMode: .replyAll)
+        }
+    }
+
+    private func deletionSnackbarMessage(for messages: [Message], permanentlyDelete: Bool) -> String {
+        if let firstMessageThreadMessagesCount = messages.first?.originalThread?.messages.count,
+           messages.count == 1 && firstMessageThreadMessagesCount > 1 {
+            return permanentlyDelete ?
+                MailResourcesStrings.Localizable.snackbarMessageDeletedPermanently :
+                MailResourcesStrings.Localizable.snackbarMessageMoved(FolderRole.trash.localizedName)
+        } else {
+            let uniqueThreadCount = Set(messages.compactMap(\.originalThread?.uid)).count
+            if permanentlyDelete {
+                return MailResourcesStrings.Localizable.snackbarThreadDeletedPermanently(uniqueThreadCount)
+            } else if uniqueThreadCount == 1 {
+                return MailResourcesStrings.Localizable.snackbarThreadMoved(FolderRole.trash.localizedName)
+            } else {
+                return MailResourcesStrings.Localizable.snackbarThreadsMoved(FolderRole.trash.localizedName)
+            }
         }
     }
 }
