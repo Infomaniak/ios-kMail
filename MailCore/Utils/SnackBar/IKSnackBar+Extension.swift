@@ -96,7 +96,7 @@ public extension IKSnackBar {
         message: String,
         cancelSuccessMessage: String,
         duration: SnackBar.Duration = .lengthLong,
-        undoRedoAction: UndoRedoAction,
+        undoAction: UndoAction,
         mailboxManager: MailboxManager
     ) -> IKSnackBar? {
         return IKSnackBar.showMailSnackBar(
@@ -109,11 +109,11 @@ public extension IKSnackBar {
                         @InjectService var matomo: MatomoUtils
                         matomo.track(eventWithCategory: .snackbar, name: "undo")
 
-                        let cancelled = try await mailboxManager.apiFetcher.undoAction(resource: undoRedoAction.undo.resource)
+                        let cancelled = try await mailboxManager.apiFetcher.undoAction(resource: undoAction.undo.resource)
 
                         if cancelled {
                             snackbarPresenter.show(message: cancelSuccessMessage)
-                            try await undoRedoAction.redo?()
+                            try await undoAction.undoBlock?()
                         }
                     } catch {
                         snackbarPresenter.show(message: error.localizedDescription)

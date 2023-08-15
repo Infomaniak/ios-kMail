@@ -90,7 +90,7 @@ private struct SwipeActionView: View {
         let response = try await mailboxManager.move(threads: [thread], to: folder)
         IKSnackBar.showCancelableSnackBar(message: MailResourcesStrings.Localizable.snackbarThreadMoved(folder.localizedName),
                                           cancelSuccessMessage: MailResourcesStrings.Localizable.snackbarMoveCancelled,
-                                          undoRedoAction: response,
+                                          undoAction: response,
                                           mailboxManager: mailboxManager)
     }
 }

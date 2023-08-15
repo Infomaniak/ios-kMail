@@ -243,15 +243,15 @@ public extension MailboxManager {
         }
     }
 
-    func move(messages: [Message], to folderRole: FolderRole) async throws -> UndoRedoAction {
+    func move(messages: [Message], to folderRole: FolderRole) async throws -> UndoAction {
         guard let folder = getFolder(with: folderRole)?.freeze() else { throw MailError.folderNotFound }
         return try await move(messages: messages, to: folder)
     }
 
-    func move(messages: [Message], to folder: Folder) async throws -> UndoRedoAction {
+    func move(messages: [Message], to folder: Folder) async throws -> UndoAction {
         let response = try await apiFetcher.move(mailbox: mailbox, messages: messages, destinationId: folder._id)
         try await refreshFolder(from: messages, additionalFolder: folder)
-        return undoRedoAction(for: response, and: messages)
+        return undoAction(for: response, and: messages)
     }
 
     func delete(messages: [Message]) async throws {
@@ -495,11 +495,11 @@ public extension MailboxManager {
             try await delete(messages: messagesToMoveOrDelete)
             async let _ = snackbarPresenter.show(message: deletionSnackbarMessage(for: messages, permanentlyDelete: true))
         } else {
-            let undoRedoAction = try await move(messages: messagesToMoveOrDelete, to: .trash)
+            let undoAction = try await move(messages: messagesToMoveOrDelete, to: .trash)
             async let _ = IKSnackBar.showCancelableSnackBar(
                 message: deletionSnackbarMessage(for: messages, permanentlyDelete: false),
                 cancelSuccessMessage: MailResourcesStrings.Localizable.snackbarMoveCancelled,
-                undoRedoAction: undoRedoAction,
+                undoAction: undoAction,
                 mailboxManager: self
             )
         }
@@ -567,10 +567,10 @@ public extension MailboxManager {
         return response
     }
 
-    private func undoRedoAction(for cancellableResponse: UndoResponse, and messages: [Message]) -> UndoRedoAction {
-        let redoAction = {
+    private func undoAction(for cancellableResponse: UndoResponse, and messages: [Message]) -> UndoAction {
+        let undoBlock = {
             try await self.refreshFolder(from: messages)
         }
-        return UndoRedoAction(undo: cancellableResponse, redo: redoAction)
+        return UndoAction(undo: cancellableResponse, undoBlock: undoBlock)
     }
 }
