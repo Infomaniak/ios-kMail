@@ -5,7 +5,7 @@
  * Locale: es, Spanish
  * Tagged: ios
  * Exported by: Ambroise Decouttere
- * Exported at: Thu, 10 Aug 2023 14:44:55 +0200
+ * Exported at: Tue, 15 Aug 2023 13:46:15 +0200
  */
 
 /* loco:6256793050618f7416758a32 */
@@ -117,7 +117,7 @@
 "settingsThreadListDensityTitle" = "Densidad de la lista de hilos";
 
 /* loco:627a318d0c2fa16955156a22 */
-"settingsTheme" = "Tema";
+"settingsThemeTitle" = "Tema";
 
 /* loco:627a323b7f79c0171c37aa42 */
 "settingsSwipeActionsTitle" = "Acciones de deslizamiento";
@@ -186,7 +186,7 @@
 "settingsSelectDisplayModeDescription" = "Seleccionar un modo de visualización";
 
 /* loco:627a40cb203b0403f20a0db2 */
-"settingsThemeChoiceTitle" = "Elección del tema";
+"settingsThemeDescription" = "Elección del tema";
 
 /* loco:627a40e8203b0403f20a0db5 */
 "settingsOptionLightTheme" = "Luz";
@@ -1237,3 +1237,21 @@
 
 /* loco:64d2491e76ea5dc92c070c52 */
 "settingsThreadModeWarningTitle" = "¿Cambiar al modo %@?";
+
+/* loco:64db5beeaa9eb013f7039f64 */
+"externalTag" = "Exterior";
+
+/* loco:64db5c4e6ded79bce2077102 */
+"externalDialogTitleExpeditor" = "Expedidor externo";
+
+/* loco:64db5c9b91415c032d05f9f2 */
+"externalDialogTitleRecipient" = "Receptor externo";
+
+/* loco:64db5d146ded79bce2077106 */
+"externalDialogDescription" = "El remitente %@ no forma parte de tu organización ni de tus contactos. Ten cuidado si compartes información sensible.";
+
+/* loco:64db5dc6df82e571c9064552 */
+"externalDialogConfirmButton" = "Comprendo";
+
+/* loco:64db6125fde80c52f005cd42 */
+"externalDialogDescription-plural" = "Algunos remitentes no forman parte de tu organización ni de tus contactos. Ten cuidado si compartes información sensible.";

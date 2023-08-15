@@ -93,12 +93,12 @@ struct SettingsView: View {
                 // MARK: - Theme
 
                 SettingsSubMenuCell(
-                    title: MailResourcesStrings.Localizable.settingsTheme,
+                    title: MailResourcesStrings.Localizable.settingsThemeTitle,
                     subtitle: theme.title
                 ) {
                     SettingsOptionView<Theme>(
-                        title: MailResourcesStrings.Localizable.settingsThemeChoiceTitle,
-                        subtitle: MailResourcesStrings.Localizable.settingsTheme,
+                        title: MailResourcesStrings.Localizable.settingsThemeTitle,
+                        subtitle: MailResourcesStrings.Localizable.settingsThemeDescription,
                         keyPath: \.theme,
                         matomoCategory: .settingsTheme,
                         matomoName: \.rawValue
