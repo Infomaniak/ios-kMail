@@ -81,7 +81,8 @@ struct SettingsView: View {
                     .textStyle(.bodySmallSecondary)
                     .padding(.top, 16)
 
-                // Thread density
+                // MARK: - Thread Density
+
                 SettingsSubMenuCell(
                     title: MailResourcesStrings.Localizable.settingsThreadListDensityTitle,
                     subtitle: density.title
@@ -89,7 +90,8 @@ struct SettingsView: View {
                     SettingsThreadDensityOptionView()
                 }
 
-                // Theme
+                // MARK: - Theme
+
                 SettingsSubMenuCell(
                     title: MailResourcesStrings.Localizable.settingsTheme,
                     subtitle: theme.title
@@ -103,7 +105,8 @@ struct SettingsView: View {
                     )
                 }
 
-                // Accent color
+                // MARK: - Accent Color
+
                 SettingsSubMenuCell(
                     title: MailResourcesStrings.Localizable.settingsAccentColor,
                     subtitle: accentColor.title
@@ -116,12 +119,14 @@ struct SettingsView: View {
                     )
                 }
 
-                // Swipe actions
+                // MARK: - Swipe Actions
+
                 SettingsSubMenuCell(title: MailResourcesStrings.Localizable.settingsSwipeActionsTitle) {
                     SettingsSwipeActionsView()
                 }
 
-                // Thread mode
+                // MARK: - Thread Mode
+
                 SettingsSubMenuCell(
                     title: MailResourcesStrings.Localizable.settingsThreadModeTitle,
                     subtitle: threadMode.title
@@ -129,7 +134,8 @@ struct SettingsView: View {
                     SettingsThreadModeView()
                 }
 
-                // External content
+                // MARK: - External Content
+
                 SettingsSubMenuCell(
                     title: MailResourcesStrings.Localizable.settingsExternalContentTitle,
                     subtitle: externalContent.title
