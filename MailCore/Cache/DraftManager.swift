@@ -96,7 +96,10 @@ public final class DraftManager {
             if retry == true,
                let mailError = error as? MailApiError,
                mailError == MailApiError.apiIdentityNotFound {
-                await setDefaultSignatureAndRetryToSaveRemotely(draft: draft, mailboxManager: mailboxManager)
+                guard let updatedDraft = await setDefaultSignature(draft: draft, mailboxManager: mailboxManager) else {
+                    return
+                }
+                await saveDraftRemotely(draft: updatedDraft, mailboxManager: mailboxManager, retry: false)
             }
             // show error if needed
             else {
@@ -107,12 +110,11 @@ public final class DraftManager {
         await draftQueue.endBackgroundTask(uuid: draft.localUUID)
     }
 
-    private func setDefaultSignatureAndRetryToSaveRemotely(draft: Draft, mailboxManager: MailboxManager) async {
+    private func setDefaultSignature(draft: Draft, mailboxManager: MailboxManager) async -> Draft? {
         try? await mailboxManager.refreshAllSignatures()
         let storedSignatures = mailboxManager.getStoredSignatures()
         guard let defaultSignature = storedSignatures.defaultSignature else {
-            print("missing default signature")
-            return
+            return nil
         }
 
         var updatedDraft: Draft?
@@ -122,19 +124,15 @@ public final class DraftManager {
                 return
             }
             liveDraft.identityId = "\(defaultSignature.id)"
+            
             realm.add(liveDraft, update: .modified)
-
-            updatedDraft = liveDraft.freezeIfNeeded()
+            
+            updatedDraft = liveDraft.detached()
         }
-
-        guard let updatedDraft else {
-            return
-        }
-
-        await saveDraftRemotely(draft: updatedDraft, mailboxManager: mailboxManager, retry: false)
+        return updatedDraft
     }
 
-    public func send(draft: Draft, mailboxManager: MailboxManager) async -> Date? {
+    public func send(draft: Draft, mailboxManager: MailboxManager, retry: Bool = true) async -> Date? {
         alertDisplayable.show(message: MailResourcesStrings.Localizable.snackbarEmailSending)
 
         var sendDate: Date?
@@ -146,6 +144,16 @@ public final class DraftManager {
             alertDisplayable.show(message: MailResourcesStrings.Localizable.snackbarEmailSent)
             sendDate = cancelableResponse.scheduledDate
         } catch {
+            // Retry with default signature on missing identity
+            if retry == true,
+               let mailError = error as? MailApiError,
+               mailError == MailApiError.apiIdentityNotFound {
+                guard let updatedDraft = await setDefaultSignature(draft: draft, mailboxManager: mailboxManager) else {
+                    return nil
+                }
+                return await send(draft: updatedDraft, mailboxManager: mailboxManager, retry: false)
+            }
+
             alertDisplayable.show(message: error.localizedDescription)
         }
         await draftQueue.endBackgroundTask(uuid: draft.localUUID)

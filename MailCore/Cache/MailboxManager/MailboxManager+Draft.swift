@@ -53,6 +53,11 @@ public extension MailboxManager {
             try await deleteLocally(draft: draft)
             throw error
         } catch let error as MailApiError {
+            // Do not delete draft on invalid identity
+            guard error != MailApiError.apiIdentityNotFound else {
+                throw error
+            }
+
             // The api returned an error
             try await deleteLocally(draft: draft)
             throw error
