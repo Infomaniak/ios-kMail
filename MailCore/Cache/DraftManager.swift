@@ -93,7 +93,7 @@ public final class DraftManager {
             try await mailboxManager.save(draft: draft)
         } catch {
             // Retry with default signature on missing identity
-            if retry == true,
+            if retry,
                let mailError = error as? MailApiError,
                mailError == MailApiError.apiIdentityNotFound {
                 guard let updatedDraft = await setDefaultSignature(draft: draft, mailboxManager: mailboxManager) else {
@@ -145,7 +145,7 @@ public final class DraftManager {
             sendDate = cancelableResponse.scheduledDate
         } catch {
             // Retry with default signature on missing identity
-            if retry == true,
+            if retry,
                let mailError = error as? MailApiError,
                mailError == MailApiError.apiIdentityNotFound {
                 guard let updatedDraft = await setDefaultSignature(draft: draft, mailboxManager: mailboxManager) else {
