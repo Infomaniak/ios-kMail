@@ -24,17 +24,6 @@ import MailResources
 import RealmSwift
 import SwiftUI
 
-final class FlushAlertState: Identifiable {
-    let id = UUID()
-    let deletedMessages: Int?
-    let completion: () async -> Void
-
-    init(deletedMessages: Int? = nil, completion: @escaping () async -> Void) {
-        self.deletedMessages = deletedMessages
-        self.completion = completion
-    }
-}
-
 struct ThreadListView: View {
     @LazyInjectService private var matomo: MatomoUtils
     @LazyInjectService private var userActivityController: UserActivityController
