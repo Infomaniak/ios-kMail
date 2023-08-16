@@ -60,14 +60,26 @@ struct ThreadView: View {
                 }
                 .frame(width: 0, height: 0)
 
-                Text(thread.formattedSubject)
-                    .textStyle(.header2)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .multilineTextAlignment(.leading)
-                    .lineSpacing(8)
-                    .padding(.top, 8)
-                    .padding(.bottom, 16)
-                    .padding(.horizontal, 16)
+                HStack(alignment: .bottom, spacing: 0) {
+                    Text(thread.formattedSubject)
+                        .textStyle(.header2)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .multilineTextAlignment(.leading)
+                        .lineSpacing(8)
+
+                    Button {
+                        //TODO: add action
+                    } label: {
+                        Text(MailResourcesStrings.Localizable.externalTag)
+                            .textStyle(.labelMedium)
+                            .padding(4)
+                            .background(MailResourcesAsset.yellowColor.swiftUIColor)
+                            .cornerRadius(2)
+                    }
+                }
+                .padding(.top, 8)
+                .padding(.bottom, 16)
+                .padding(.horizontal, 16)
 
                 MessageListView(messages: thread.messages)
             }
