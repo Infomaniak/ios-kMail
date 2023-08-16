@@ -16,14 +16,22 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import Foundation
-import UIKit
+import SwiftUI
 
-/// Something that can fetch the Root View Controller
-public protocol RootViewManageable {
-    /// The current rootViewController
-    var rootViewController: UIViewController? { get }
+struct ActivityView: UIViewControllerRepresentable {
+    @Environment(\.dismiss) var dismiss
 
-    /// The current mainSceneKeyWindow
-    var mainSceneKeyWindow: UIWindow? { get }
+    let activityItems: [Any]
+
+    func makeUIViewController(context: Context) -> UIActivityViewController {
+        let activityViewController = UIActivityViewController(activityItems: activityItems, applicationActivities: nil)
+        activityViewController.completionWithItemsHandler = { _, _, _, _ in
+            dismiss()
+        }
+        return activityViewController
+    }
+
+    func updateUIViewController(_ uiViewController: UIActivityViewController, context: Context) {
+        // UIActivityViewController cannot be updated
+    }
 }

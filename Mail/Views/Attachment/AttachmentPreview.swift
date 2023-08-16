@@ -26,11 +26,11 @@ import SwiftUI
 
 struct AttachmentPreview: View {
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.verticalSizeClass) private var sizeClass
+
+    @State private var downloadedAttachmentURL: IdentifiableURL?
+
     @ObservedRealmObject var attachment: Attachment
-
-    @Environment(\.verticalSizeClass) var sizeClass
-
-    @LazyInjectService var rootViewControllerFetcher: RootViewManageable
 
     var body: some View {
         NavigationView {
@@ -52,7 +52,12 @@ struct AttachmentPreview: View {
                 }
 
                 ToolbarItemGroup(placement: .bottomBar) {
-                    Button(action: download) {
+                    Button {
+                        guard let attachmentURL = attachment.localUrl else { return }
+                        @InjectService var matomo: MatomoUtils
+                        matomo.track(eventWithCategory: .message, name: "download")
+                        downloadedAttachmentURL = IdentifiableURL(url: attachmentURL)
+                    } label: {
                         Label {
                             Text(MailResourcesStrings.Localizable.buttonDownload)
                                 .font(MailTextStyle.labelSecondary.font)
@@ -64,25 +69,22 @@ struct AttachmentPreview: View {
                         }
                         .dynamicLabelStyle(sizeClass: sizeClass ?? .regular)
                     }
+                    .sheet(item: $downloadedAttachmentURL) { downloadedAttachmentURL in
+                        if #available(iOS 16.0, *) {
+                            ActivityView(activityItems: [downloadedAttachmentURL.url])
+                                .ignoresSafeArea(edges: [.bottom])
+                                .presentationDetents([.medium, .large])
+                        } else {
+                            ActivityView(activityItems: [downloadedAttachmentURL.url])
+                                .ignoresSafeArea(edges: [.bottom])
+                                .backport.presentationDetents([.medium, .large])
+                        }
+                    }
+
                     Spacer()
                 }
             }
         }
-    }
-
-    private func download() {
-        @InjectService var matomo: MatomoUtils
-        matomo.track(eventWithCategory: .message, name: "download")
-        guard let url = attachment.localUrl,
-              var source = rootViewControllerFetcher.rootViewController else {
-            return
-        }
-        if let presentedViewController = source.presentedViewController {
-            source = presentedViewController
-        }
-        let vc = UIActivityViewController(activityItems: [url], applicationActivities: nil)
-        vc.popoverPresentationController?.sourceView = source.view
-        source.present(vc, animated: true)
     }
 }
 
