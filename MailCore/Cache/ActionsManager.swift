@@ -60,10 +60,24 @@ public struct ActionOrigin {
 
     let type: ActionOriginType
     let nearestActionPanelMessages: Binding<[Message]?>?
+    let nearestFlushAlert: Binding<FlushAlertState?>?
 
-    public static let floatingPanel = ActionOrigin(type: .floatingPanel, nearestActionPanelMessages: nil)
-    public static let toolbar = ActionOrigin(type: .toolbar, nearestActionPanelMessages: nil)
-    public static let multipleSelection = ActionOrigin(type: .multipleSelection, nearestActionPanelMessages: nil)
+    init(
+        type: ActionOriginType,
+        nearestActionPanelMessages: Binding<[Message]?>? = nil,
+        nearestFlushAlert: Binding<FlushAlertState?>? = nil
+    ) {
+        self.type = type
+        self.nearestActionPanelMessages = nearestActionPanelMessages
+        self.nearestFlushAlert = nearestFlushAlert
+    }
+
+    public static let floatingPanel = ActionOrigin(type: .floatingPanel)
+    public static let toolbar = ActionOrigin(type: .toolbar)
+
+    public static func multipleSelection(nearestFlushAlert: Binding<FlushAlertState?>? = nil) -> ActionOrigin {
+        return ActionOrigin(type: .multipleSelection, nearestFlushAlert: nearestFlushAlert)
+    }
 
     public static func swipe(nearestActionPanelMessages: Binding<[Message]?>? = nil) -> ActionOrigin {
         return ActionOrigin(type: .swipe, nearestActionPanelMessages: nearestActionPanelMessages)
@@ -84,24 +98,18 @@ public class ActionsManager: ObservableObject {
     public func performAction(target messages: [Message], action: Action, origin: ActionOrigin) async throws {
         switch action {
         case .delete:
-            let deletionResults = try await mailboxManager.moveOrDelete(messages: messages)
-
-            // Can eventually be improved if needed
-            assert(deletionResults.count <= 1, "For now deletion result should always have only one value")
-            guard let firstDeletionResult = deletionResults.first else { return }
-
-            let snackbarMessage: String
-            let undoAction: UndoAction?
-            switch firstDeletionResult {
-            case .permanentlyDeleted:
-                snackbarMessage = snackbarPermanentlyDeleteMessage(for: messages)
-                undoAction = nil
-            case .moved(let resultUndoAction):
-                snackbarMessage = snackbarMoveMessage(for: messages, destinationFolderName: FolderRole.trash.localizedName)
-                undoAction = resultUndoAction
+            guard !shouldDisplayDeleteAlert(messages: messages, origin: origin) else {
+                Task { @MainActor in
+                    origin.nearestFlushAlert?.wrappedValue = FlushAlertState(deletedMessages: messages.uniqueThreadCount) {
+                        await tryOrDisplayError { [weak self] in
+                            try await self?.performDelete(messages: messages)
+                        }
+                    }
+                }
+                return
             }
 
-            async let _ = await displayResultSnackbar(message: snackbarMessage, undoAction: undoAction)
+            try await performDelete(messages: messages)
         case .reply:
             try replyOrForward(messages: messages, mode: .reply)
         case .replyAll:
@@ -137,6 +145,37 @@ public class ActionsManager: ObservableObject {
         default:
             break
         }
+    }
+
+    private func performDelete(messages: [Message]) async throws {
+        let deletionResults = try await mailboxManager.moveOrDelete(messages: messages)
+
+        // Can eventually be improved if needed
+        assert(deletionResults.count <= 1, "For now deletion result should always have only one value")
+        guard let firstDeletionResult = deletionResults.first else { return }
+
+        let snackbarMessage: String
+        let undoAction: UndoAction?
+        switch firstDeletionResult {
+        case .permanentlyDeleted:
+            snackbarMessage = snackbarPermanentlyDeleteMessage(for: messages)
+            undoAction = nil
+        case .moved(let resultUndoAction):
+            snackbarMessage = snackbarMoveMessage(for: messages, destinationFolderName: FolderRole.trash.localizedName)
+            undoAction = resultUndoAction
+        }
+
+        async let _ = await displayResultSnackbar(message: snackbarMessage, undoAction: undoAction)
+    }
+
+    private func shouldDisplayDeleteAlert(messages: [Message], origin: ActionOrigin) -> Bool {
+        if origin.type == .multipleSelection,
+           let firstFolderRole = messages.first?.folder?.role,
+           [FolderRole.draft, FolderRole.spam, FolderRole.trash].contains(firstFolderRole) {
+            return true
+        }
+
+        return false
     }
 
     @MainActor

@@ -143,8 +143,20 @@ struct ThreadListToolbar: ViewModifier {
                             text: action.shortTitle ?? action.title,
                             icon: action.icon
                         ) {
+                            let allMessages = multipleSelectionViewModel.selectedItems.flatMap(\.messages)
+                            multipleSelectionViewModel.isEnabled = false
                             Task {
-                                try await didTap(action: action)
+                                matomo.trackBulkEvent(
+                                    eventWithCategory: .threadActions,
+                                    name: action.matomoName.capitalized,
+                                    numberOfItems: multipleSelectionViewModel.selectedItems.count
+                                )
+
+                                try await actionsManager.performAction(
+                                    target: allMessages,
+                                    action: action,
+                                    origin: .multipleSelection(nearestFlushAlert: $flushAlert)
+                                )
                             }
                         }
                         .disabled(action == .archive && splitViewManager.selectedFolder?.role == .archive)
@@ -168,43 +180,5 @@ struct ThreadListToolbar: ViewModifier {
                     : ""
             )
             .navigationBarTitleDisplayMode(.inline)
-    }
-
-    func didTap(action: Action) async throws {
-        let selectedItems = multipleSelectionViewModel.selectedItems
-        multipleSelectionViewModel.isEnabled = false
-
-        matomo.trackBulkEvent(
-            eventWithCategory: .threadActions,
-            name: action.matomoName.capitalized,
-            numberOfItems: selectedItems.count
-        )
-
-        let allMessages = selectedItems.flatMap(\.messages)
-
-        guard !shouldDisplayAlert(for: action, selectedItems: selectedItems) else {
-            flushAlert = FlushAlertState(deletedMessages: selectedItems.count) {
-                await tryOrDisplayError {
-                    try await actionsManager.performAction(
-                        target: allMessages,
-                        action: action,
-                        origin: .multipleSelection
-                    )
-                }
-            }
-            return
-        }
-
-        try await actionsManager.performAction(target: allMessages, action: action, origin: .multipleSelection)
-    }
-
-    func shouldDisplayAlert(for action: Action, selectedItems: Set<Thread>) -> Bool {
-        if action == .delete,
-           let firstFolderRole = selectedItems.first?.folder?.role,
-           [FolderRole.draft, FolderRole.spam, FolderRole.trash].contains(firstFolderRole) {
-            return true
-        }
-
-        return false
     }
 }
