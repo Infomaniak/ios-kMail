@@ -144,7 +144,7 @@ struct SettingsNotificationsView: View {
     func updateTopicsForCurrentUserIfNeeded() {
         Task {
             guard let subscribedTopics else { return }
-            
+
             await notificationService.updateTopicsIfNeeded(subscribedTopics, userApiFetcher: mailboxManager.apiFetcher)
         }
     }

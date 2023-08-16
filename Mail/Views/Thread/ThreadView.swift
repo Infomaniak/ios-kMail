@@ -45,6 +45,8 @@ struct ThreadView: View {
     @State private var displayNavigationTitle = false
     @State private var replyOrReplyAllMessage: Message?
 
+    @StateObject private var alert = NewMessageAlert()
+
     @ObservedRealmObject var thread: Thread
 
     private let toolbarActions: [Action] = [.reply, .forward, .archive, .delete]
@@ -68,7 +70,7 @@ struct ThreadView: View {
                         .lineSpacing(8)
 
                     Button {
-                        //TODO: add action
+                        alert.state = .externalExpeditor
                     } label: {
                         Text(MailResourcesStrings.Localizable.externalTag)
                             .textStyle(.labelMedium)
@@ -158,6 +160,14 @@ struct ThreadView: View {
 
             // Dismiss on iPhone only
             dismiss()
+        }
+        .customAlert(isPresented: $alert.isShowing) {
+            switch alert.state {
+            case .externalExpeditor:
+                ExternalExpeditorView()
+            default:
+                EmptyView()
+            }
         }
         .matomoView(view: [MatomoUtils.View.threadView.displayName, "Main"])
     }

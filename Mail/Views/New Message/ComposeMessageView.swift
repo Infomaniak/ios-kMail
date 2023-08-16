@@ -55,6 +55,7 @@ final class NewMessageAlert: SheetState<NewMessageAlert.State> {
     enum State {
         case link(handler: (String) -> Void)
         case emptySubject(handler: () -> Void)
+        case externalExpeditor
     }
 }
 
@@ -159,6 +160,8 @@ struct ComposeMessageView: View {
                 AddLinkView(actionHandler: handler)
             case .emptySubject(let handler):
                 EmptySubjectView(actionHandler: handler)
+            case .externalExpeditor :
+                ExternalExpeditorView()
             case .none:
                 EmptyView()
             }
