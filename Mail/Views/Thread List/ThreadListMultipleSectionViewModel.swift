@@ -24,9 +24,8 @@ import MailCore
 import MailResources
 import SwiftUI
 
-@MainActor class ThreadListMultipleSelectionViewModel: ObservableObject {
-    let mailboxManager: MailboxManager
-
+@MainActor
+class ThreadListMultipleSelectionViewModel: ObservableObject {
     @LazyInjectService private var matomo: MatomoUtils
 
     @Published var isEnabled = false {
@@ -42,14 +41,13 @@ import SwiftUI
 
     let feedbackGenerator = UIImpactFeedbackGenerator(style: .medium)
 
-    init(mailboxManager: MailboxManager) {
-        self.mailboxManager = mailboxManager
+    init() {
         setActions()
     }
 
     func toggleSelection(of thread: Thread) {
-        if let thread = selectedItems.first(where: { $0.id == thread.id }) {
-            selectedItems.remove(thread)
+        if let threadIndex = selectedItems.firstIndex(of: thread) {
+            selectedItems.remove(at: threadIndex)
         } else {
             selectedItems.insert(thread)
         }
@@ -68,38 +66,6 @@ import SwiftUI
             matomo.track(eventWithCategory: .multiSelection, name: "all")
         }
         setActions()
-    }
-
-    func didTap(action: Action, flushAlert: Binding<FlushAlertState?>) async throws {
-        matomo.trackBulkEvent(eventWithCategory: .threadActions, name: action.matomoName.capitalized, numberOfItems: selectedItems.count)
-
-        switch action {
-        case .markAsRead, .markAsUnread:
-            try await mailboxManager.toggleRead(threads: Array(selectedItems))
-        case .archive:
-            let undoAction = try await mailboxManager.move(threads: Array(selectedItems), to: .archive)
-            IKSnackBar.showCancelableSnackBar(message: MailResourcesStrings.Localizable.actionArchive,
-                                              cancelSuccessMessage: MailResourcesStrings.Localizable.snackbarMoveCancelled,
-                                              undoAction: undoAction,
-                                              mailboxManager: mailboxManager)
-        case .star:
-            try await mailboxManager.toggleStar(threads: Array(selectedItems))
-        case .delete:
-            let threads = Array(selectedItems)
-            switch selectedItems.first?.folder?.role {
-            case .draft, .spam, .trash:
-                flushAlert.wrappedValue = FlushAlertState(deletedMessages: selectedItems.count) {
-                    await tryOrDisplayError {
-                        try await self.mailboxManager.moveOrDelete(threads: threads)
-                    }
-                }
-            default:
-                try await mailboxManager.moveOrDelete(threads: threads)
-            }
-        default:
-            break
-        }
-        isEnabled = false
     }
 
     private func setActions() {

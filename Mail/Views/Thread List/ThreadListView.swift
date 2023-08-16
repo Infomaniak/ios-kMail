@@ -74,8 +74,7 @@ struct ThreadListView: View {
         _viewModel = StateObject(wrappedValue: ThreadListViewModel(mailboxManager: mailboxManager,
                                                                    folder: folder,
                                                                    isCompact: isCompact))
-        _multipleSelectionViewModel =
-            StateObject(wrappedValue: ThreadListMultipleSelectionViewModel(mailboxManager: mailboxManager))
+        _multipleSelectionViewModel = StateObject(wrappedValue: ThreadListMultipleSelectionViewModel())
 
         UITableViewCell.appearance().focusEffect = .none
     }
@@ -200,11 +199,7 @@ struct ThreadListView: View {
         }
         .threadListToolbar(flushAlert: $flushAlert,
                            viewModel: viewModel,
-                           multipleSelectionViewModel: multipleSelectionViewModel) {
-            withAnimation(.default.speed(2)) {
-                multipleSelectionViewModel.selectAll(threads: viewModel.filteredThreads)
-            }
-        }
+                           multipleSelectionViewModel: multipleSelectionViewModel)
         .floatingActionButton(isEnabled: !multipleSelectionViewModel.isEnabled,
                               icon: MailResourcesAsset.pencilPlain,
                               title: MailResourcesStrings.Localizable.buttonNewMessage) {
