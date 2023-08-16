@@ -44,7 +44,7 @@ struct ReportJunkView: View {
                     IKDivider()
                 }
 
-                ActionView(targetMessages: [reportedMessage], action: action)
+                MessageActionView(targetMessages: [reportedMessage], action: action)
                     .padding(.horizontal, UIConstants.actionsViewCellHorizontalPadding)
             }
         }

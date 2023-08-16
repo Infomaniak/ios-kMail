@@ -122,7 +122,7 @@ struct ActionsView: View {
                     IKDivider()
                 }
 
-                ActionView(targetMessages: targetMessages, action: action)
+                MessageActionView(targetMessages: targetMessages, action: action)
                     .padding(.horizontal, UIConstants.actionsViewCellHorizontalPadding)
             }
         }
@@ -182,7 +182,7 @@ struct QuickActionView: View {
     }
 }
 
-struct ActionView: View {
+struct MessageActionView: View {
     @Environment(\.dismiss) private var dismiss
     @EnvironmentObject private var actionsManager: ActionsManager
 
@@ -202,17 +202,24 @@ struct ActionView: View {
                 }
             }
         } label: {
-            HStack(spacing: 24) {
-                action.icon
-                    .resizable()
-                    .scaledToFit()
-                    .frame(width: 24, height: 24)
-                    .foregroundColor(action == .report ? MailResourcesAsset.princeColor.swiftUIColor : .accentColor)
-                Text(action.title)
-                    .foregroundColor(action == .report ? MailResourcesAsset.princeColor : MailResourcesAsset.textPrimaryColor)
-                    .textStyle(.body)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-            }
+            ActionButtonLabel(action: action)
+        }
+    }
+}
+
+struct ActionButtonLabel: View {
+    let action: Action
+    var body: some View {
+        HStack(spacing: 24) {
+            action.icon
+                .resizable()
+                .scaledToFit()
+                .frame(width: 24, height: 24)
+                .foregroundColor(action == .report ? MailResourcesAsset.princeColor.swiftUIColor : .accentColor)
+            Text(action.title)
+                .foregroundColor(action == .report ? MailResourcesAsset.princeColor : MailResourcesAsset.textPrimaryColor)
+                .textStyle(.body)
+                .frame(maxWidth: .infinity, alignment: .leading)
         }
     }
 }
