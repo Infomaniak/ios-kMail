@@ -23,20 +23,30 @@ import SwiftUI
 struct ForEachMailboxView<Content: View>: View {
     @ObservedResults private var mailboxes: Results<Mailbox>
 
+    var sortedMailboxes: [Mailbox] {
+        let sorted = mailboxes.sorted {
+            if $0.isPrimary {
+                return true
+            } else if $1.isPrimary {
+                return false
+            }
+
+            return $0.email < $1.email
+        }
+        return sorted
+    }
+
     let content: (Mailbox) -> Content
 
     init(userId: Int, excludedMailboxIds: [Int] = [], @ViewBuilder content: @escaping (Mailbox) -> Content) {
         self.content = content
-        _mailboxes = ObservedResults(
-            Mailbox.self,
-            configuration: MailboxInfosManager.instance.realmConfiguration,
-            where: { $0.userId == userId && !$0.mailboxId.in(excludedMailboxIds) },
-            sortDescriptor: SortDescriptor(keyPath: \Mailbox.mailboxId)
-        )
+        _mailboxes = ObservedResults(Mailbox.self, configuration: MailboxInfosManager.instance.realmConfiguration) {
+            $0.userId == userId && !$0.mailboxId.in(excludedMailboxIds)
+        }
     }
 
     var body: some View {
-        ForEach(mailboxes) { mailbox in
+        ForEach(sortedMailboxes) { mailbox in
             content(mailbox)
         }
     }
