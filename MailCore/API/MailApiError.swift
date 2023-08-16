@@ -27,7 +27,7 @@ enum MailApiErrorCode {
     /// Invalid credentials
     static let invalidCredentials = "invalid_credentials"
 
-    /// The server does not know bout the identity used in the request
+    /// The server does not know about the identity used in the request
     static let identityNotFound = "identity__not_found"
 }
 
