@@ -92,8 +92,10 @@ public final class DraftManager {
         do {
             try await mailboxManager.save(draft: draft)
         } catch {
-            // retry
-            if /*error.code == 422 &&*/ retry == true {
+            // Retry with default signature on missing identity
+            if retry == true,
+               let mailError = error as? MailApiError,
+               mailError == MailApiError.apiIdentityNotFound {
                 await setDefaultSignatureAndRetryToSaveRemotely(draft: draft, mailboxManager: mailboxManager)
             }
             // show error if needed
@@ -112,10 +114,26 @@ public final class DraftManager {
             print("missing default signature")
             return
         }
-        draft.identityId = "\(defaultSignature.name)"
-        await saveDraftRemotely(draft: draft, mailboxManager: mailboxManager, retry: false)
+
+        var updatedDraft: Draft?
+        let realm = mailboxManager.getRealm()
+        try? realm.write {
+            guard let liveDraft = realm.object(ofType: Draft.self, forPrimaryKey: draft.localUUID) else {
+                return
+            }
+            liveDraft.identityId = "\(defaultSignature.id)"
+            realm.add(liveDraft, update: .modified)
+
+            updatedDraft = liveDraft.freezeIfNeeded()
+        }
+
+        guard let updatedDraft else {
+            return
+        }
+
+        await saveDraftRemotely(draft: updatedDraft, mailboxManager: mailboxManager, retry: false)
     }
-    
+
     public func send(draft: Draft, mailboxManager: MailboxManager) async -> Date? {
         alertDisplayable.show(message: MailResourcesStrings.Localizable.snackbarEmailSending)
 
