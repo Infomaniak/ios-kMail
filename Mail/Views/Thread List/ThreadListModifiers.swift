@@ -67,6 +67,15 @@ struct ThreadListToolbar: ViewModifier {
     @ObservedObject var viewModel: ThreadListViewModel
     @ObservedObject var multipleSelectionViewModel: ThreadListMultipleSelectionViewModel
 
+    var selectAllButtonTitle: String {
+        if multipleSelectionViewModel.selectedItems.count == viewModel.filteredThreads.count {
+            return MailResourcesStrings.Localizable.buttonUnselectAll
+
+        } else {
+            return MailResourcesStrings.Localizable.buttonSelectAll
+        }
+    }
+
     func body(content: Content) -> some View {
         content
             .toolbar {
@@ -97,14 +106,12 @@ struct ThreadListToolbar: ViewModifier {
 
                 ToolbarItemGroup(placement: .navigationBarTrailing) {
                     if multipleSelectionViewModel.isEnabled {
-                        Button(multipleSelectionViewModel.selectedItems.count == viewModel.filteredThreads.count
-                            ? MailResourcesStrings.Localizable.buttonUnselectAll
-                            : MailResourcesStrings.Localizable.buttonSelectAll) {
-                                withAnimation(.default.speed(2)) {
-                                    multipleSelectionViewModel.selectAll(threads: viewModel.filteredThreads)
-                                }
+                        Button(selectAllButtonTitle) {
+                            withAnimation(.default.speed(2)) {
+                                multipleSelectionViewModel.selectAll(threads: viewModel.filteredThreads)
                             }
-                            .animation(nil, value: multipleSelectionViewModel.selectedItems)
+                        }
+                        .animation(nil, value: multipleSelectionViewModel.selectedItems)
                     } else {
                         Button {
                             splitViewManager.showSearch = true
