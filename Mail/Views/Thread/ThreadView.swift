@@ -38,9 +38,7 @@ struct ThreadView: View {
     @Environment(\.isCompactWindow) private var isCompactWindow
     @Environment(\.dismiss) private var dismiss
 
-    @EnvironmentObject private var splitViewManager: SplitViewManager
     @EnvironmentObject private var mailboxManager: MailboxManager
-    @EnvironmentObject private var navigationState: NavigationState
     @EnvironmentObject private var actionsManager: ActionsManager
 
     @State private var headerHeight: CGFloat = 0

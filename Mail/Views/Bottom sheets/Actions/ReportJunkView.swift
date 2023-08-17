@@ -22,8 +22,6 @@ import MailCore
 import SwiftUI
 
 struct ReportJunkView: View {
-    @Environment(\.dismiss) private var dismiss
-
     let reportedMessage: Message
     let actions: [Action] = [.spam, .phishing, .block]
     let origin: ActionOrigin

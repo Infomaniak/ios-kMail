@@ -23,9 +23,6 @@ import MailResources
 import SwiftUI
 
 struct ActionsView: View {
-    @Environment(\.dismiss) private var dismiss
-    @EnvironmentObject private var actionsManager: ActionsManager
-
     private let targetMessages: [Message]
     private let quickActions: [Action]
     private let listActions: [Action]

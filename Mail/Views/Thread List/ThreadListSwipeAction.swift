@@ -26,7 +26,6 @@ import SwiftUI
 private struct SwipeActionView: View {
     @LazyInjectService private var matomo: MatomoUtils
 
-    @EnvironmentObject private var mailboxManager: MailboxManager
     @EnvironmentObject private var actionsManager: ActionsManager
 
     @Binding var actionPanelMessages: [Message]?

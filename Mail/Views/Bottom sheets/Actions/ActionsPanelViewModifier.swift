@@ -28,7 +28,6 @@ extension View {
 
 struct ActionsPanelViewModifier: ViewModifier {
     @EnvironmentObject private var mailboxManager: MailboxManager
-    @EnvironmentObject private var navigationState: NavigationState
 
     @State private var reportForJunkMessage: Message?
     @State private var reportedForDisplayProblemMessage: Message?

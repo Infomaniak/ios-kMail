@@ -26,7 +26,6 @@ struct ActionsPanelButton<Content: View>: View {
 
     var message: Message?
     var threads: [Thread]?
-    var isMultiSelectionEnabled = false
     @ViewBuilder var label: () -> Content
 
     var body: some View {

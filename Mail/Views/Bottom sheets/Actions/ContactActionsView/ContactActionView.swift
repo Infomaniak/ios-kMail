@@ -24,7 +24,6 @@ import MailResources
 import SwiftUI
 
 struct ContactActionView: View {
-    @LazyInjectService private var matomo: MatomoUtils
     @LazyInjectService private var snackbarPresenter: SnackBarPresentable
 
     @Environment(\.dismiss) private var dismiss

@@ -24,15 +24,6 @@ import MailResources
 import RealmSwift
 import SwiftUI
 
-struct MoveAction: Identifiable {
-    var id: String {
-        return "\(target.id)\(fromFolderId ?? "")"
-    }
-
-    let fromFolderId: String?
-    let target: ActionsTarget
-}
-
 struct MoveEmailView: View {
     @LazyInjectService private var matomo: MatomoUtils
 

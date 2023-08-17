@@ -22,8 +22,6 @@ import MailCore
 import SwiftUI
 
 struct ReplyActionsView: View {
-    @EnvironmentObject private var actionsManager: ActionsManager
-
     let quickActions: [Action] = [.reply, .replyAll]
     let message: Message
 
