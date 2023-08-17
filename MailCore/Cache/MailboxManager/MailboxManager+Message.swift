@@ -265,18 +265,6 @@ public extension MailboxManager {
         try await refreshFolder(from: messages)
     }
 
-    func toggleStar(messages: [Message]) async throws {
-        if messages.contains(where: { !$0.flagged }) {
-            let messagesToStar = messages + messages.flatMap(\.duplicates)
-            _ = try await star(messages: messagesToStar)
-        } else {
-            let messagesToUnstar = messages
-                .compactMap { $0.originalThread?.messages.where { $0.isDraft == false } }
-                .flatMap { $0 + $0.flatMap(\.duplicates) }
-            _ = try await unstar(messages: messagesToUnstar)
-        }
-    }
-
     // MARK: Private
 
     private func getUniqueUids(folder: Folder, remoteUids: [String]) -> [String] {
@@ -538,15 +526,13 @@ public extension MailboxManager {
         }
     }
 
+    /// Set starred the given messages.
+    /// - Important: This methods stars only the messages you passes, no processing is done to add duplicates or remove drafts
     func star(messages: [Message], starred: Bool) async throws {
         if starred {
-            let messagesToStar = messages + messages.flatMap(\.duplicates)
-            _ = try await star(messages: messagesToStar)
+            _ = try await star(messages: messages)
         } else {
-            let messagesToUnstar = messages
-                .compactMap { $0.originalThread?.messages.where { $0.isDraft == false } }
-                .flatMap { $0 + $0.flatMap(\.duplicates) }
-            _ = try await unstar(messages: messagesToUnstar)
+            _ = try await unstar(messages: messages)
         }
     }
 

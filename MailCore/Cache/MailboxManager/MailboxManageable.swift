@@ -34,7 +34,6 @@ public protocol MailBoxManagerMessageable {
     func move(messages: [Message], to folderRole: FolderRole) async throws -> UndoAction
     func move(messages: [Message], to folder: Folder) async throws -> UndoAction
     func delete(messages: [Message]) async throws
-    func toggleStar(messages: [Message]) async throws
 }
 
 /// An abstract interface on the `MailboxManager` related to drafts

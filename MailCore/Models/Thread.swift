@@ -166,13 +166,6 @@ public class Thread: Object, Decodable, Identifiable {
         return messages.lastMessageToExecuteAction(currentMailboxEmail: currentMailboxEmail)
     }
 
-    public func lastMessageAndItsDuplicateToExecuteAction(currentMailboxEmail: String) -> [Message] {
-        guard let lastMessage = lastMessageToExecuteAction(currentMailboxEmail: currentMailboxEmail) else { return [] }
-        var messageAndDuplicates = [lastMessage]
-        messageAndDuplicates.append(contentsOf: lastMessage.duplicates)
-        return messageAndDuplicates
-    }
-
     private enum CodingKeys: String, CodingKey {
         case uid
         case messages
