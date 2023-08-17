@@ -22,71 +22,6 @@ import MailCore
 import MailResources
 import SwiftUI
 
-enum ActionsViewContentHelper {
-    private static func actionsForMessage(_ message: Message,
-                                          userIsStaff: Bool) -> (quickActions: [Action], listActions: [Action]) {
-        let archive = message.folder?.role != .archive
-        let unread = !message.seen
-        let star = message.flagged
-        let tempListActions: [Action?] = [
-            .openMovePanel,
-            .reportJunk,
-            unread ? .markAsRead : .markAsUnread,
-            archive ? .archive : .moveToInbox,
-            star ? .unstar : .star,
-            userIsStaff ? .reportDisplayProblem : nil
-        ]
-        return (Action.quickActions, tempListActions.compactMap { $0 })
-    }
-
-    private static func actionsForMessagesInDifferentThreads(_ messages: [Message])
-        -> (quickActions: [Action], listActions: [Action]) {
-        let unread = messages.allSatisfy(\.seen)
-        let quickActions: [Action] = [.openMovePanel, unread ? .markAsRead : .markAsUnread, .archive, .delete]
-
-        let spam = messages.allSatisfy { $0.folder?.role == .spam }
-        let star = messages.allSatisfy(\.flagged)
-
-        let listActions: [Action] = [
-            spam ? .nonSpam : .spam,
-            star ? .unstar : .star
-        ]
-
-        return (quickActions, listActions)
-    }
-
-    private static func actionsForMessagesInSameThreads(_ messages: [Message])
-        -> (quickActions: [Action], listActions: [Action]) {
-        let archive = messages.first?.folder?.role != .archive
-        let unread = messages.allSatisfy(\.seen)
-        let star = messages.allSatisfy(\.flagged)
-
-        let spam = messages.first?.folder?.role == .spam
-        let spamAction: Action? = spam ? .nonSpam : .spam
-
-        let tempListActions: [Action?] = [
-            .openMovePanel,
-            spamAction,
-            unread ? .markAsRead : .markAsUnread,
-            archive ? .archive : .moveToInbox,
-            star ? .unstar : .star
-        ]
-
-        return (Action.quickActions, tempListActions.compactMap { $0 })
-    }
-
-    static func actionsForMessages(_ messages: [Message],
-                                   userIsStaff: Bool) -> (quickActions: [Action], listActions: [Action]) {
-        if messages.count == 1, let message = messages.first {
-            return actionsForMessage(message, userIsStaff: userIsStaff)
-        } else if Set(messages.compactMap(\.originalThread?.id)).count > 1 {
-            return actionsForMessagesInDifferentThreads(messages)
-        } else {
-            return actionsForMessagesInSameThreads(messages)
-        }
-    }
-}
-
 struct ActionsView: View {
     @Environment(\.dismiss) private var dismiss
     @EnvironmentObject private var actionsManager: ActionsManager
@@ -100,7 +35,7 @@ struct ActionsView: View {
          target messages: [Message],
          origin: ActionOrigin) {
         let userIsStaff = mailboxManager.account.user.isStaff ?? false
-        let actions = ActionsViewContentHelper.actionsForMessages(messages, userIsStaff: userIsStaff)
+        let actions = Action.actionsForMessages(messages, userIsStaff: userIsStaff)
         quickActions = actions.quickActions
         listActions = actions.listActions
 

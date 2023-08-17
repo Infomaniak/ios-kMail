@@ -50,64 +50,6 @@ extension [Message]: Identifiable {
     }
 }
 
-public struct ActionOrigin {
-    public enum ActionOriginType {
-        case swipe
-        case floatingPanel
-        case toolbar
-        case multipleSelection
-    }
-
-    let type: ActionOriginType
-    let nearestMessagesActionsPanel: Binding<[Message]?>?
-    let nearestFlushAlert: Binding<FlushAlertState?>?
-    let nearestMessagesToMoveSheet: Binding<[Message]?>?
-    let nearestReportJunkMessageActionsPanel: Binding<Message?>?
-    let nearestReportedForPhishingMessageAlert: Binding<Message?>?
-    let nearestReportedForDisplayProblemMessageAlert: Binding<Message?>?
-
-    init(
-        type: ActionOriginType,
-        nearestMessagesActionsPanel: Binding<[Message]?>? = nil,
-        nearestFlushAlert: Binding<FlushAlertState?>? = nil,
-        nearestMessagesToMoveSheet: Binding<[Message]?>? = nil,
-        nearestReportJunkMessageActionsPanel: Binding<Message?>? = nil,
-        nearestReportedForPhishingMessageAlert: Binding<Message?>? = nil,
-        nearestReportedForDisplayProblemMessageAlert: Binding<Message?>? = nil
-    ) {
-        self.type = type
-        self.nearestMessagesActionsPanel = nearestMessagesActionsPanel
-        self.nearestFlushAlert = nearestFlushAlert
-        self.nearestMessagesToMoveSheet = nearestMessagesToMoveSheet
-        self.nearestReportJunkMessageActionsPanel = nearestReportJunkMessageActionsPanel
-        self.nearestReportedForPhishingMessageAlert = nearestReportedForPhishingMessageAlert
-        self.nearestReportedForDisplayProblemMessageAlert = nearestReportedForDisplayProblemMessageAlert
-    }
-
-    public static let toolbar = ActionOrigin(type: .toolbar)
-
-    public static func floatingPanel(nearestMessagesToMoveSheet: Binding<[Message]?>? = nil,
-                                     nearestReportJunkMessageActionsPanel: Binding<Message?>? = nil,
-                                     nearestReportedForPhishingMessageAlert: Binding<Message?>? = nil,
-                                     nearestReportedForDisplayProblemMessageAlert: Binding<Message?>? = nil) -> ActionOrigin {
-        return ActionOrigin(
-            type: .floatingPanel,
-            nearestMessagesToMoveSheet: nearestMessagesToMoveSheet,
-            nearestReportJunkMessageActionsPanel: nearestReportJunkMessageActionsPanel,
-            nearestReportedForPhishingMessageAlert: nearestReportedForPhishingMessageAlert,
-            nearestReportedForDisplayProblemMessageAlert: nearestReportedForDisplayProblemMessageAlert
-        )
-    }
-
-    public static func multipleSelection(nearestFlushAlert: Binding<FlushAlertState?>? = nil) -> ActionOrigin {
-        return ActionOrigin(type: .multipleSelection, nearestFlushAlert: nearestFlushAlert)
-    }
-
-    public static func swipe(nearestMessagesActionsPanel: Binding<[Message]?>? = nil) -> ActionOrigin {
-        return ActionOrigin(type: .swipe, nearestMessagesActionsPanel: nearestMessagesActionsPanel)
-    }
-}
-
 public class ActionsManager: ObservableObject {
     @LazyInjectService private var snackbarPresenter: SnackBarPresentable
 
