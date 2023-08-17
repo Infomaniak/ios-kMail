@@ -34,7 +34,7 @@ enum ActionsViewContentHelper {
             unread ? .markAsRead : .markAsUnread,
             archive ? .archive : .moveToInbox,
             star ? .unstar : .star,
-            userIsStaff ? .report : nil
+            userIsStaff ? .reportDisplayProblem : nil
         ]
         return (Action.quickActions, tempListActions.compactMap { $0 })
     }
@@ -94,23 +94,25 @@ struct ActionsView: View {
     private let targetMessages: [Message]
     private let quickActions: [Action]
     private let listActions: [Action]
+    private let origin: ActionOrigin
 
     init(mailboxManager: MailboxManager,
          target messages: [Message],
-         completionHandler: (() -> Void)? = nil) {
+         origin: ActionOrigin) {
         let userIsStaff = mailboxManager.account.user.isStaff ?? false
         let actions = ActionsViewContentHelper.actionsForMessages(messages, userIsStaff: userIsStaff)
         quickActions = actions.quickActions
         listActions = actions.listActions
 
         targetMessages = messages
+        self.origin = origin
     }
 
     var body: some View {
         VStack(alignment: .leading, spacing: UIConstants.actionsViewSpacing) {
             HStack(alignment: .top, spacing: 16) {
                 ForEach(quickActions) { action in
-                    QuickActionView(targetMessages: targetMessages, action: action)
+                    QuickActionView(targetMessages: targetMessages, action: action, origin: origin)
                         .frame(maxWidth: .infinity)
                 }
             }
@@ -122,7 +124,7 @@ struct ActionsView: View {
                     IKDivider()
                 }
 
-                MessageActionView(targetMessages: targetMessages, action: action)
+                MessageActionView(targetMessages: targetMessages, action: action, origin: origin)
                     .padding(.horizontal, UIConstants.actionsViewCellHorizontalPadding)
             }
         }
@@ -133,8 +135,12 @@ struct ActionsView: View {
 
 struct ActionsView_Previews: PreviewProvider {
     static var previews: some View {
-        ActionsView(mailboxManager: PreviewHelper.sampleMailboxManager, target: PreviewHelper.sampleThread.messages.toArray())
-            .accentColor(AccentColor.pink.primary.swiftUIColor)
+        ActionsView(
+            mailboxManager: PreviewHelper.sampleMailboxManager,
+            target: PreviewHelper.sampleThread.messages.toArray(),
+            origin: .toolbar
+        )
+        .accentColor(AccentColor.pink.primary.swiftUIColor)
     }
 }
 
@@ -146,6 +152,7 @@ struct QuickActionView: View {
 
     let targetMessages: [Message]
     let action: Action
+    let origin: ActionOrigin
 
     var body: some View {
         Button {
@@ -155,7 +162,7 @@ struct QuickActionView: View {
                     try await actionsManager.performAction(
                         target: targetMessages,
                         action: action,
-                        origin: .floatingPanel
+                        origin: origin
                     )
                 }
             }
@@ -188,6 +195,7 @@ struct MessageActionView: View {
 
     let targetMessages: [Message]
     let action: Action
+    let origin: ActionOrigin
 
     var body: some View {
         Button {
@@ -197,7 +205,7 @@ struct MessageActionView: View {
                     try await actionsManager.performAction(
                         target: targetMessages,
                         action: action,
-                        origin: .floatingPanel
+                        origin: origin
                     )
                 }
             }
@@ -215,9 +223,10 @@ struct ActionButtonLabel: View {
                 .resizable()
                 .scaledToFit()
                 .frame(width: 24, height: 24)
-                .foregroundColor(action == .report ? MailResourcesAsset.princeColor.swiftUIColor : .accentColor)
+                .foregroundColor(action == .reportDisplayProblem ? MailResourcesAsset.princeColor.swiftUIColor : .accentColor)
             Text(action.title)
-                .foregroundColor(action == .report ? MailResourcesAsset.princeColor : MailResourcesAsset.textPrimaryColor)
+                .foregroundColor(action == .reportDisplayProblem ? MailResourcesAsset.princeColor : MailResourcesAsset
+                    .textPrimaryColor)
                 .textStyle(.body)
                 .frame(maxWidth: .infinity, alignment: .leading)
         }

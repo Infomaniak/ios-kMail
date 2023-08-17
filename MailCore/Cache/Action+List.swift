@@ -48,7 +48,7 @@ extension Action: CaseIterable {
         .nonSpam,
         .block,
         .phishing,
-        .report,
+        .reportDisplayProblem,
         .editMenu,
         .moveToInbox,
         .writeEmailAction,
@@ -184,8 +184,8 @@ public extension Action {
         iconResource: MailResourcesAsset.phishing,
         matomoName: "signalPhishing"
     )
-    static let report = Action(
-        id: "report",
+    static let reportDisplayProblem = Action(
+        id: "reportDisplayProblem",
         title: MailResourcesStrings.Localizable.actionReportDisplayProblem,
         iconResource: MailResourcesAsset.feedbacks,
         matomoName: "report"

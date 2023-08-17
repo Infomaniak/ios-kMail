@@ -26,9 +26,11 @@ struct ReportJunkView: View {
 
     private let reportedMessage: Message
     private let actions: [Action]
+    private let origin: ActionOrigin
 
-    init(reportedMessage: Message) {
+    init(reportedMessage: Message, origin: ActionOrigin) {
         self.reportedMessage = reportedMessage
+        self.origin = origin
         let spam = reportedMessage.folder?.role == .spam
         actions = [
             spam ? .nonSpam : .spam,
@@ -44,7 +46,7 @@ struct ReportJunkView: View {
                     IKDivider()
                 }
 
-                MessageActionView(targetMessages: [reportedMessage], action: action)
+                MessageActionView(targetMessages: [reportedMessage], action: action, origin: origin)
                     .padding(.horizontal, UIConstants.actionsViewCellHorizontalPadding)
             }
         }
@@ -55,7 +57,7 @@ struct ReportJunkView: View {
 
 struct ReportJunkView_Previews: PreviewProvider {
     static var previews: some View {
-        ReportJunkView(reportedMessage: PreviewHelper.sampleMessage)
+        ReportJunkView(reportedMessage: PreviewHelper.sampleMessage, origin: .floatingPanel())
             .accentColor(AccentColor.pink.primary.swiftUIColor)
     }
 }

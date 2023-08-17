@@ -18,6 +18,7 @@
 
 import Foundation
 import Alamofire
+import InfomaniakCore
 
 /// Public interface of `MailApiFetcher`
 public typealias MailApiFetchable = MailApiCommonFetchable & MailApiExtendedFetchable
@@ -56,7 +57,7 @@ public protocol MailApiCommonFetchable {
 
     func downloadAttachments(message: Message) async throws -> URL
 
-    func blockSender(message: Message) async throws -> Bool
+    func blockSender(message: Message) async throws -> NullableResponse
 
     func reportPhishing(message: Message) async throws -> Bool
 

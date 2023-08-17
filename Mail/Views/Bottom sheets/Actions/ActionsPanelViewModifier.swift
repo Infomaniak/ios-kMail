@@ -30,31 +30,40 @@ struct ActionsPanelViewModifier: ViewModifier {
     @EnvironmentObject private var mailboxManager: MailboxManager
     @EnvironmentObject private var navigationState: NavigationState
 
-    @State private var reportJunkActionsTarget: ActionsTarget?
-    @State private var reportedForPhishingMessage: Message?
+    @State private var reportForJunkMessage: Message?
     @State private var reportedForDisplayProblemMessage: Message?
+    @State private var reportedForPhishingMessage: Message?
+    @State private var messagesToMove: [Message]?
 
     @Binding var messages: [Message]?
 
     var completionHandler: (() -> Void)?
 
+    private var origin: ActionOrigin {
+        .floatingPanel(
+            messagesToMove: $messagesToMove,
+            reportedForJunkMessage: $reportForJunkMessage,
+            reportedForPhishingMessage: $reportedForPhishingMessage,
+            reportedForDisplayProblemMessage: $reportedForDisplayProblemMessage
+        )
+    }
+
     func body(content: Content) -> some View {
         content.adaptivePanel(item: $messages) { messages in
-            ActionsView(mailboxManager: mailboxManager,
-                        target: messages) {
-                completionHandler?()
-            }
+            ActionsView(mailboxManager: mailboxManager, target: messages, origin: origin)
         }
-        .floatingPanel(item: $reportJunkActionsTarget) { target in
-            if let reportedMessage = target.messages.first {
-                ReportJunkView(reportedMessage: reportedMessage)
-            }
+        .sheet(item: $messagesToMove) { messages in
+            MoveEmailView(movedMessages: messages)
+                .sheetViewStyle()
         }
-        .customAlert(item: $reportedForPhishingMessage) { message in
-            ReportPhishingView(message: message)
+        .floatingPanel(item: $reportForJunkMessage) { reportForJunkMessage in
+            ReportJunkView(reportedMessage: reportForJunkMessage, origin: origin)
         }
         .customAlert(item: $reportedForDisplayProblemMessage) { message in
             ReportDisplayProblemView(message: message)
+        }
+        .customAlert(item: $reportedForPhishingMessage) { message in
+            ReportPhishingView(message: message)
         }
     }
 }
