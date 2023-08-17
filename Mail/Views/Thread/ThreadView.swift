@@ -101,7 +101,11 @@ struct ThreadView: View {
                 Button {
                     let messages = thread.messages.freeze().toArray()
                     Task {
-                        try await actionsManager.performAction(target: messages, action: .star, origin: .toolbar)
+                        try await actionsManager.performAction(
+                            target: messages,
+                            action: thread.flagged ? .unstar: .star,
+                            origin: .toolbar
+                        )
                     }
                 } label: {
                     (thread.flagged ? MailResourcesAsset.starFull : MailResourcesAsset.star).swiftUIImage
