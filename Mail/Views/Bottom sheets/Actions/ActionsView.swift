@@ -30,10 +30,12 @@ struct ActionsView: View {
     private let quickActions: [Action]
     private let listActions: [Action]
     private let origin: ActionOrigin
+    private let completionHandler: (() -> Void)?
 
     init(mailboxManager: MailboxManager,
          target messages: [Message],
-         origin: ActionOrigin) {
+         origin: ActionOrigin,
+         completionHandler: (() -> Void)? = nil) {
         let userIsStaff = mailboxManager.account.user.isStaff ?? false
         let actions = Action.actionsForMessages(messages, userIsStaff: userIsStaff)
         quickActions = actions.quickActions
@@ -41,14 +43,20 @@ struct ActionsView: View {
 
         targetMessages = messages
         self.origin = origin
+        self.completionHandler = completionHandler
     }
 
     var body: some View {
         VStack(alignment: .leading, spacing: UIConstants.actionsViewSpacing) {
             HStack(alignment: .top, spacing: 16) {
                 ForEach(quickActions) { action in
-                    QuickActionView(targetMessages: targetMessages, action: action, origin: origin)
-                        .frame(maxWidth: .infinity)
+                    QuickActionView(
+                        targetMessages: targetMessages,
+                        action: action,
+                        origin: origin,
+                        completionHandler: completionHandler
+                    )
+                    .frame(maxWidth: .infinity)
                 }
             }
             .padding(.bottom, 16)
@@ -59,8 +67,13 @@ struct ActionsView: View {
                     IKDivider()
                 }
 
-                MessageActionView(targetMessages: targetMessages, action: action, origin: origin)
-                    .padding(.horizontal, UIConstants.actionsViewCellHorizontalPadding)
+                MessageActionView(
+                    targetMessages: targetMessages,
+                    action: action,
+                    origin: origin,
+                    completionHandler: completionHandler
+                )
+                .padding(.horizontal, UIConstants.actionsViewCellHorizontalPadding)
             }
         }
         .padding(.horizontal, UIConstants.actionsViewHorizontalPadding)
@@ -88,6 +101,7 @@ struct QuickActionView: View {
     let targetMessages: [Message]
     let action: Action
     let origin: ActionOrigin
+    var completionHandler: (() -> Void)?
 
     var body: some View {
         Button {
@@ -99,6 +113,7 @@ struct QuickActionView: View {
                         action: action,
                         origin: origin
                     )
+                    completionHandler?()
                 }
             }
         } label: {
@@ -131,6 +146,7 @@ struct MessageActionView: View {
     let targetMessages: [Message]
     let action: Action
     let origin: ActionOrigin
+    var completionHandler: (() -> Void)?
 
     var body: some View {
         Button {
@@ -142,6 +158,7 @@ struct MessageActionView: View {
                         action: action,
                         origin: origin
                     )
+                    completionHandler?()
                 }
             }
         } label: {

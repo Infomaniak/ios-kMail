@@ -50,7 +50,7 @@ struct ActionsPanelViewModifier: ViewModifier {
 
     func body(content: Content) -> some View {
         content.adaptivePanel(item: $messages) { messages in
-            ActionsView(mailboxManager: mailboxManager, target: messages, origin: origin)
+            ActionsView(mailboxManager: mailboxManager, target: messages, origin: origin, completionHandler: completionHandler)
         }
         .sheet(item: $messagesToMove) { messages in
             MoveEmailView(movedMessages: messages)
