@@ -89,14 +89,6 @@ struct SplitView: View {
 
                     if let thread = navigationState.threadPath.last {
                         ThreadView(thread: thread)
-                            .onChange(of: thread) { newValue in
-                                if newValue.hasUnseenMessages {
-                                    Task {
-                                        try? await mailboxManager
-                                            .toggleRead(threads: [newValue])
-                                    }
-                                }
-                            }
                     } else {
                         EmptyStateView.emptyThread(from: splitViewManager.selectedFolder)
                     }

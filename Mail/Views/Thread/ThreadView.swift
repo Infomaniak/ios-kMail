@@ -88,8 +88,11 @@ struct ThreadView: View {
             )
         }
         .task {
-            if thread.hasUnseenMessages {
-                try? await mailboxManager.toggleRead(threads: [thread])
+            await markThreadAsReadIfNeeded(thread: thread)
+        }
+        .onChange(of: thread) { newValue in
+            Task {
+                await markThreadAsReadIfNeeded(thread: newValue)
             }
         }
         .navigationTitle(displayNavigationTitle ? thread.formattedSubject : "")
@@ -103,7 +106,7 @@ struct ThreadView: View {
                     Task {
                         try await actionsManager.performAction(
                             target: messages,
-                            action: thread.flagged ? .unstar: .star,
+                            action: thread.flagged ? .unstar : .star,
                             origin: .toolbar
                         )
                     }
@@ -145,6 +148,11 @@ struct ThreadView: View {
             dismiss()
         }
         .matomoView(view: [MatomoUtils.View.threadView.displayName, "Main"])
+    }
+
+    private func markThreadAsReadIfNeeded(thread: Thread) async {
+        guard thread.hasUnseenMessages else { return }
+        try? await actionsManager.performAction(target: thread.messages.toArray(), action: .markAsRead, origin: .toolbar)
     }
 
     private func didTap(action: Action) {
