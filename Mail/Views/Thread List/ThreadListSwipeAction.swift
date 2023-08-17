@@ -42,7 +42,7 @@ private struct SwipeActionView: View {
                     try await actionsManager.performAction(
                         target: thread.messages.toArray(),
                         action: action,
-                        origin: .swipe(nearestActionPanelMessages: $actionPanelMessages)
+                        origin: .swipe(nearestMessagesActionsPanel: $actionPanelMessages)
                     )
                 }
             }

@@ -41,10 +41,10 @@ struct ActionsPanelViewModifier: ViewModifier {
 
     private var origin: ActionOrigin {
         .floatingPanel(
-            messagesToMove: $messagesToMove,
-            reportedForJunkMessage: $reportForJunkMessage,
-            reportedForPhishingMessage: $reportedForPhishingMessage,
-            reportedForDisplayProblemMessage: $reportedForDisplayProblemMessage
+            nearestMessagesToMoveSheet: $messagesToMove,
+            nearestReportJunkMessageActionsPanel: $reportForJunkMessage,
+            nearestReportedForPhishingMessageAlert: $reportedForPhishingMessage,
+            nearestReportedForDisplayProblemMessageAlert: $reportedForDisplayProblemMessage
         )
     }
 

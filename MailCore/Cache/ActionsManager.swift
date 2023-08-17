@@ -59,43 +59,43 @@ public struct ActionOrigin {
     }
 
     let type: ActionOriginType
-    let nearestActionPanelMessages: Binding<[Message]?>?
+    let nearestMessagesActionsPanel: Binding<[Message]?>?
     let nearestFlushAlert: Binding<FlushAlertState?>?
-    let reportedForJunkMessage: Binding<Message?>?
-    let reportedForPhishingMessage: Binding<Message?>?
-    let reportedForDisplayProblemMessage: Binding<Message?>?
-    let messagesToMove: Binding<[Message]?>?
+    let nearestMessagesToMoveSheet: Binding<[Message]?>?
+    let nearestReportJunkMessageActionsPanel: Binding<Message?>?
+    let nearestReportedForPhishingMessageAlert: Binding<Message?>?
+    let nearestReportedForDisplayProblemMessageAlert: Binding<Message?>?
 
     init(
         type: ActionOriginType,
-        nearestActionPanelMessages: Binding<[Message]?>? = nil,
+        nearestMessagesActionsPanel: Binding<[Message]?>? = nil,
         nearestFlushAlert: Binding<FlushAlertState?>? = nil,
-        messagesToMove: Binding<[Message]?>? = nil,
-        reportedForJunkMessage: Binding<Message?>? = nil,
-        reportedForPhishingMessage: Binding<Message?>? = nil,
-        reportedForDisplayProblemMessage: Binding<Message?>? = nil
+        nearestMessagesToMoveSheet: Binding<[Message]?>? = nil,
+        nearestReportJunkMessageActionsPanel: Binding<Message?>? = nil,
+        nearestReportedForPhishingMessageAlert: Binding<Message?>? = nil,
+        nearestReportedForDisplayProblemMessageAlert: Binding<Message?>? = nil
     ) {
         self.type = type
-        self.nearestActionPanelMessages = nearestActionPanelMessages
+        self.nearestMessagesActionsPanel = nearestMessagesActionsPanel
         self.nearestFlushAlert = nearestFlushAlert
-        self.messagesToMove = messagesToMove
-        self.reportedForJunkMessage = reportedForJunkMessage
-        self.reportedForPhishingMessage = reportedForPhishingMessage
-        self.reportedForDisplayProblemMessage = reportedForDisplayProblemMessage
+        self.nearestMessagesToMoveSheet = nearestMessagesToMoveSheet
+        self.nearestReportJunkMessageActionsPanel = nearestReportJunkMessageActionsPanel
+        self.nearestReportedForPhishingMessageAlert = nearestReportedForPhishingMessageAlert
+        self.nearestReportedForDisplayProblemMessageAlert = nearestReportedForDisplayProblemMessageAlert
     }
 
     public static let toolbar = ActionOrigin(type: .toolbar)
 
-    public static func floatingPanel(messagesToMove: Binding<[Message]?>? = nil,
-                                     reportedForJunkMessage: Binding<Message?>? = nil,
-                                     reportedForPhishingMessage: Binding<Message?>? = nil,
-                                     reportedForDisplayProblemMessage: Binding<Message?>? = nil) -> ActionOrigin {
+    public static func floatingPanel(nearestMessagesToMoveSheet: Binding<[Message]?>? = nil,
+                                     nearestReportJunkMessageActionsPanel: Binding<Message?>? = nil,
+                                     nearestReportedForPhishingMessageAlert: Binding<Message?>? = nil,
+                                     nearestReportedForDisplayProblemMessageAlert: Binding<Message?>? = nil) -> ActionOrigin {
         return ActionOrigin(
             type: .floatingPanel,
-            messagesToMove: messagesToMove,
-            reportedForJunkMessage: reportedForJunkMessage,
-            reportedForPhishingMessage: reportedForPhishingMessage,
-            reportedForDisplayProblemMessage: reportedForDisplayProblemMessage
+            nearestMessagesToMoveSheet: nearestMessagesToMoveSheet,
+            nearestReportJunkMessageActionsPanel: nearestReportJunkMessageActionsPanel,
+            nearestReportedForPhishingMessageAlert: nearestReportedForPhishingMessageAlert,
+            nearestReportedForDisplayProblemMessageAlert: nearestReportedForDisplayProblemMessageAlert
         )
     }
 
@@ -103,8 +103,8 @@ public struct ActionOrigin {
         return ActionOrigin(type: .multipleSelection, nearestFlushAlert: nearestFlushAlert)
     }
 
-    public static func swipe(nearestActionPanelMessages: Binding<[Message]?>? = nil) -> ActionOrigin {
-        return ActionOrigin(type: .swipe, nearestActionPanelMessages: nearestActionPanelMessages)
+    public static func swipe(nearestMessagesActionsPanel: Binding<[Message]?>? = nil) -> ActionOrigin {
+        return ActionOrigin(type: .swipe, nearestMessagesActionsPanel: nearestMessagesActionsPanel)
     }
 }
 
@@ -151,7 +151,7 @@ public class ActionsManager: ObservableObject {
             try await mailboxManager.markAsSeen(messages: messages, seen: false)
         case .openMovePanel:
             Task { @MainActor in
-                origin.messagesToMove?.wrappedValue = messages
+                origin.nearestMessagesToMoveSheet?.wrappedValue = messages
             }
         case .star:
             try await mailboxManager.star(messages: messages, starred: true)
@@ -164,12 +164,12 @@ public class ActionsManager: ObservableObject {
             async let _ = await displayResultSnackbar(message: snackbarMessage, undoAction: undoAction)
         case .quickActionPanel:
             Task { @MainActor in
-                origin.nearestActionPanelMessages?.wrappedValue = messages
+                origin.nearestMessagesActionsPanel?.wrappedValue = messages
             }
         case .reportJunk:
             Task { @MainActor in
                 assert(messages.count <= 1, "More than one message was passed for junk report")
-                origin.reportedForJunkMessage?.wrappedValue = messages.first
+                origin.nearestReportJunkMessageActionsPanel?.wrappedValue = messages.first
             }
         case .spam:
             let undoAction = try await mailboxManager.move(messages: messages, to: .spam)
@@ -178,11 +178,11 @@ public class ActionsManager: ObservableObject {
             async let _ = await displayResultSnackbar(message: snackbarMessage, undoAction: undoAction)
         case .phishing:
             Task { @MainActor in
-                origin.reportedForPhishingMessage?.wrappedValue = messages.first
+                origin.nearestReportedForPhishingMessageAlert?.wrappedValue = messages.first
             }
         case .reportDisplayProblem:
             Task { @MainActor in
-                origin.reportedForDisplayProblemMessage?.wrappedValue = messages.first
+                origin.nearestReportedForDisplayProblemMessageAlert?.wrappedValue = messages.first
             }
         case .block:
             guard let message = messages.first else { return }

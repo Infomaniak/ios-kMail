@@ -30,7 +30,7 @@ struct ReplyActionsView: View {
     var body: some View {
         HStack(alignment: .top, spacing: 28) {
             ForEach(quickActions) { action in
-                QuickActionView(targetMessages: [message], action: action, origin: .floatingPanel(messagesToMove: nil))
+                QuickActionView(targetMessages: [message], action: action, origin: .floatingPanel())
                     .frame(width: 70)
             }
 
