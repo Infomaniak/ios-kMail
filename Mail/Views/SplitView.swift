@@ -140,6 +140,20 @@ struct SplitView: View {
                 snackbarPresenter.show(message: MailError.localMessageNotFound.errorDescription)
             }
         }
+        .onReceive(NotificationCenter.default.publisher(for: .onUserTappedReplyToNotification)) { notification in
+            guard let notificationPayload = notification.object as? NotificationTappedPayload else { return }
+            let realm = mailboxManager.getRealm()
+            realm.refresh()
+
+            navigationDrawerController.close()
+
+            let tappedNotificationMessage = realm.object(ofType: Message.self, forPrimaryKey: notificationPayload.messageId)
+            if let tappedNotificationMessage {
+                navigationState.messageReply = MessageReply(message: tappedNotificationMessage, replyMode: .reply)
+            } else {
+                snackbarPresenter.show(message: MailError.localMessageNotFound.errorDescription)
+            }
+        }
         .onReceive(NotificationCenter.default.publisher(for: .onOpenedMailTo)) { identifiableURLComponents in
             mailToURLComponents = identifiableURLComponents.object as? IdentifiableURLComponents
         }

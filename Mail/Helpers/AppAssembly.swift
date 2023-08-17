@@ -103,6 +103,9 @@ enum ApplicationAssembly {
             },
             Factory(type: TokenStore.self) { _, _ in
                 TokenStore()
+            },
+            Factory(type: NotificationActionsRegistrable.self) { _, _ in
+                NotificationActionsRegistrer()
             }
         ]
 

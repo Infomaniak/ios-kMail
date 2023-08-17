@@ -20,6 +20,7 @@ import Foundation
 
 public extension Notification.Name {
     static let onUserTappedNotification = Notification.Name("userTappedNotification")
+    static let onUserTappedReplyToNotification = Notification.Name("userTappedReplyToNotification")
     static let dismissMoveSheetNotificationName = Notification.Name(rawValue: "sheetViewDismiss")
     static let onOpenedMailTo = Notification.Name("onOpenedMailTo")
 }
