@@ -54,7 +54,7 @@ public struct ActionOrigin {
         return ActionOrigin(type: .multipleSelection, nearestFlushAlert: nearestFlushAlert)
     }
 
-    public static func swipe(nearestMessagesActionsPanel: Binding<[Message]?>? = nil) -> ActionOrigin {
-        return ActionOrigin(type: .swipe, nearestMessagesActionsPanel: nearestMessagesActionsPanel)
+    public static func swipe(nearestMessagesActionsPanel: Binding<[Message]?>? = nil, nearestMessagesToMoveSheet: Binding<[Message]?>? = nil) -> ActionOrigin {
+        return ActionOrigin(type: .swipe, nearestMessagesActionsPanel: nearestMessagesActionsPanel, nearestMessagesToMoveSheet: nearestMessagesToMoveSheet)
     }
 }

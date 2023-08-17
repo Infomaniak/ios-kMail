@@ -30,6 +30,7 @@ private struct SwipeActionView: View {
     @EnvironmentObject private var actionsManager: ActionsManager
 
     @Binding var actionPanelMessages: [Message]?
+    @Binding var moveSheetMessages: [Message]?
 
     let thread: Thread
     let action: Action
@@ -42,7 +43,10 @@ private struct SwipeActionView: View {
                     try await actionsManager.performAction(
                         target: thread.messages.toArray(),
                         action: action,
-                        origin: .swipe(nearestMessagesActionsPanel: $actionPanelMessages)
+                        origin: .swipe(
+                            nearestMessagesActionsPanel: $actionPanelMessages,
+                            nearestMessagesToMoveSheet: $moveSheetMessages
+                        )
                     )
                 }
             }
@@ -62,6 +66,7 @@ struct ThreadListSwipeActions: ViewModifier {
     @AppStorage(UserDefaults.shared.key(.swipeTrailing)) private var swipeTrailing = DefaultPreferences.swipeTrailing
 
     @State private var actionPanelMessages: [Message]?
+    @State private var moveSheetMessages: [Message]?
 
     let thread: Thread
     let viewModel: ThreadListViewModel
@@ -88,7 +93,12 @@ struct ThreadListSwipeActions: ViewModifier {
     private func edgeActions(_ actions: [Action]) -> some View {
         if !multipleSelectionViewModel.isEnabled {
             ForEach(actions.filter { $0 != .noAction }.map { $0.inverseActionIfNeeded(for: thread) }) { action in
-                SwipeActionView(actionPanelMessages: $actionPanelMessages, thread: thread, action: action)
+                SwipeActionView(
+                    actionPanelMessages: $actionPanelMessages,
+                    moveSheetMessages: $moveSheetMessages,
+                    thread: thread,
+                    action: action
+                )
             }
         }
     }
@@ -106,6 +116,11 @@ extension View {
 
 struct ThreadListSwipeAction_Previews: PreviewProvider {
     static var previews: some View {
-        SwipeActionView(actionPanelMessages: .constant(nil), thread: PreviewHelper.sampleThread, action: .delete)
+        SwipeActionView(
+            actionPanelMessages: .constant(nil),
+            moveSheetMessages: .constant(nil),
+            thread: PreviewHelper.sampleThread,
+            action: .delete
+        )
     }
 }
