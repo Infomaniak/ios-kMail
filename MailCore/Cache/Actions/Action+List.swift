@@ -63,9 +63,11 @@ extension Action: CaseIterable {
         let archive = message.folder?.role != .archive
         let unread = !message.seen
         let star = message.flagged
+        let spam = message.folder?.role == .spam
+
         let tempListActions: [Action?] = [
             .openMovePanel,
-            .reportJunk,
+            spam ? .nonSpam : .reportJunk,
             unread ? .markAsRead : .markAsUnread,
             archive ? .archive : .moveToInbox,
             star ? .unstar : .star,

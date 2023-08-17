@@ -24,20 +24,9 @@ import SwiftUI
 struct ReportJunkView: View {
     @Environment(\.dismiss) private var dismiss
 
-    private let reportedMessage: Message
-    private let actions: [Action]
-    private let origin: ActionOrigin
-
-    init(reportedMessage: Message, origin: ActionOrigin) {
-        self.reportedMessage = reportedMessage
-        self.origin = origin
-        let spam = reportedMessage.folder?.role == .spam
-        actions = [
-            spam ? .nonSpam : .spam,
-            .phishing,
-            .block
-        ]
-    }
+    let reportedMessage: Message
+    let actions: [Action] = [.spam, .phishing, .block]
+    let origin: ActionOrigin
 
     var body: some View {
         VStack(alignment: .leading, spacing: UIConstants.actionsViewSpacing) {
