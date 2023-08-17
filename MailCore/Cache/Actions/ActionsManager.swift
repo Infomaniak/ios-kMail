@@ -27,7 +27,9 @@ extension [Message]: Identifiable {
         // Calculate a unique identifier by XORing hash values of messages
         return reduce(1) { $0.hashValue ^ $1.hashValue }
     }
+}
 
+extension RandomAccessCollection where Element == Message {
     public func lastMessageToExecuteAction(currentMailboxEmail: String) -> Message? {
         if let message = last(where: { $0.isDraft == false && $0.fromMe(currentMailboxEmail: currentMailboxEmail) == false }) {
             return message
@@ -128,7 +130,7 @@ public class ActionsManager: ObservableObject {
             }
         case .block:
             guard let message = messages.first else { return }
-            let response = try await mailboxManager.apiFetcher.blockSender(message: message)
+            try await mailboxManager.apiFetcher.blockSender(message: message)
             snackbarPresenter.show(message: MailResourcesStrings.Localizable.snackbarSenderBlacklisted(1))
         default:
             break

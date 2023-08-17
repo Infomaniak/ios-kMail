@@ -163,13 +163,7 @@ public class Thread: Object, Decodable, Identifiable {
     }
 
     public func lastMessageToExecuteAction(currentMailboxEmail: String) -> Message? {
-        if let message = messages
-            .last(where: { $0.isDraft == false && $0.fromMe(currentMailboxEmail: currentMailboxEmail) == false }) {
-            return message
-        } else if let message = messages.last(where: { $0.isDraft == false }) {
-            return message
-        }
-        return messages.last
+        return messages.lastMessageToExecuteAction(currentMailboxEmail: currentMailboxEmail)
     }
 
     public func lastMessageAndItsDuplicateToExecuteAction(currentMailboxEmail: String) -> [Message] {
