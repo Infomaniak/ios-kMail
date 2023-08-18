@@ -24,18 +24,9 @@ struct ForEachMailboxView<Content: View>: View {
     @ObservedResults private var mailboxes: Results<Mailbox>
 
     var sortedMailboxes: [Mailbox] {
-        let sorted = mailboxes.sorted {
-            if $0.isPrimary {
-                return true
-            } else if $1.isPrimary {
-                return false
-            }
-
-            return $0.email < $1.email
-        }
+        let sorted = Array(mailboxes).webmailSorted()
         return sorted
     }
-
     let content: (Mailbox) -> Content
 
     init(userId: Int, excludedMailboxIds: [Int] = [], @ViewBuilder content: @escaping (Mailbox) -> Content) {

@@ -134,3 +134,17 @@ public class Mailbox: Object, Codable, Identifiable {
         self.dailyLimit = dailyLimit
     }
 }
+
+public extension [Mailbox] {
+    func webmailSorted() -> [Mailbox] {
+        return sorted {
+            if $0.isPrimary {
+                return true
+            } else if $1.isPrimary {
+                return false
+            }
+
+            return $0.email < $1.email
+        }
+    }
+}
