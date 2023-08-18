@@ -41,15 +41,7 @@ public class UserActivityController {
     }
 
     private func getMailboxIndexForCustomOrder(_ mailbox: Mailbox) -> Int? {
-        let sortedUserMailboxes = MailboxInfosManager.instance.getMailboxes(for: mailbox.userId).sorted {
-            if $0.isPrimary {
-                return true
-            } else if $1.isPrimary {
-                return false
-            } else {
-                return $0.email < $1.email
-            }
-        }
+        let sortedUserMailboxes = MailboxInfosManager.instance.getMailboxes(for: mailbox.userId).webmailSorted()
         return sortedUserMailboxes.firstIndex { $0.objectId == mailbox.objectId }
     }
 }
