@@ -142,7 +142,7 @@ struct SettingsView: View {
                 ) {
                     SettingsOptionView(
                         title: MailResourcesStrings.Localizable.settingsExternalContentTitle,
-                        subtitle: MailResourcesStrings.Localizable.settingsExternalContentTitle,
+                        subtitle: MailResourcesStrings.Localizable.settingsExternalContentDescription,
                         keyPath: \.displayExternalContent,
                         matomoCategory: .settingsDisplayExternalContent,
                         matomoName: \.rawValue

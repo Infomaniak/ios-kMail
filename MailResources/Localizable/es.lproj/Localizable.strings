@@ -5,7 +5,7 @@
  * Locale: es, Spanish
  * Tagged: ios
  * Exported by: Ambroise Decouttere
- * Exported at: Tue, 15 Aug 2023 13:46:15 +0200
+ * Exported at: Fri, 18 Aug 2023 09:58:00 +0200
  */
 
 /* loco:6256793050618f7416758a32 */
@@ -123,7 +123,7 @@
 "settingsSwipeActionsTitle" = "Acciones de deslizamiento";
 
 /* loco:627a329eeeb721567557b3a2 */
-"settingsExternalContentTitle" = "Mostrar contenido externo";
+"settingsExternalContentTitle" = "Contenido externo";
 
 /* loco:627a3ba7d5f44d600a6f1803 */
 "settingsMailboxGeneralSignature" = "Configuración de la firma";
@@ -1248,10 +1248,19 @@
 "externalDialogTitleRecipient" = "Receptor externo";
 
 /* loco:64db5d146ded79bce2077106 */
-"externalDialogDescription" = "El remitente %@ no forma parte de tu organización ni de tus contactos. Ten cuidado si compartes información sensible.";
+"externalDialogDescriptionExpeditor" = "El remitente %@ no forma parte de tu organización ni de tus contactos. Ten cuidado si compartes información sensible.";
 
 /* loco:64db5dc6df82e571c9064552 */
 "externalDialogConfirmButton" = "Comprendo";
 
 /* loco:64db6125fde80c52f005cd42 */
-"externalDialogDescription-plural" = "Algunos remitentes no forman parte de tu organización ni de tus contactos. Ten cuidado si compartes información sensible.";
+"externalDialogDescriptionExpeditor-plural" = "Algunos remitentes no forman parte de tu organización ni de tus contactos. Ten cuidado si compartes información sensible.";
+
+/* loco:64db6d8c2395a8caf3096ae3 */
+"externalDialogDescriptionRecipient" = "El destinatario %@ no forma parte de tu organización ni de tus contactos. Ten cuidado si compartes información sensible.";
+
+/* loco:64db6e28e1a0ee7e7405efc5 */
+"externalDialogDescriptionRecipient-plural" = "Algunos destinatarios no forman parte de tu organización ni de tus contactos. Ten cuidado si compartes información sensible.";
+
+/* loco:64df15c6e992ed0689022852 */
+"settingsExternalContentDescription" = "Mostrar contenido externo";

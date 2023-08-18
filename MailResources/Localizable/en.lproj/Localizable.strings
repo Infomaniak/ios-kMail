@@ -5,7 +5,7 @@
  * Locale: en, English
  * Tagged: ios
  * Exported by: Ambroise Decouttere
- * Exported at: Tue, 15 Aug 2023 13:46:15 +0200
+ * Exported at: Fri, 18 Aug 2023 09:58:00 +0200
  */
 
 /* loco:6256793050618f7416758a32 */
@@ -123,7 +123,7 @@
 "settingsSwipeActionsTitle" = "Swipe actions";
 
 /* loco:627a329eeeb721567557b3a2 */
-"settingsExternalContentTitle" = "Display external content";
+"settingsExternalContentTitle" = "External content";
 
 /* loco:627a3ba7d5f44d600a6f1803 */
 "settingsMailboxGeneralSignature" = "Signature settings";
@@ -1248,10 +1248,19 @@
 "externalDialogTitleRecipient" = "External recipient";
 
 /* loco:64db5d146ded79bce2077106 */
-"externalDialogDescription" = "The sender %@ is not part of your organization or your contacts. Be careful if you are sharing sensitive information.";
+"externalDialogDescriptionExpeditor" = "The sender %@ is not part of your organization or your contacts. Be careful if you are sharing sensitive information.";
 
 /* loco:64db5dc6df82e571c9064552 */
 "externalDialogConfirmButton" = "I understand";
 
 /* loco:64db6125fde80c52f005cd42 */
-"externalDialogDescription-plural" = "Some senders are not part of your organization or your contacts. Be careful if you are sharing sensitive information.";
+"externalDialogDescriptionExpeditor-plural" = "Some senders are not part of your organization or your contacts. Be careful if you are sharing sensitive information.";
+
+/* loco:64db6d8c2395a8caf3096ae3 */
+"externalDialogDescriptionRecipient" = "The recipient %@ is not part of your organization or your contacts. Be careful if you are sharing sensitive information.";
+
+/* loco:64db6e28e1a0ee7e7405efc5 */
+"externalDialogDescriptionRecipient-plural" = "Some recipients are not part of your organization or your contacts. Be careful if you are sharing sensitive information.";
+
+/* loco:64df15c6e992ed0689022852 */
+"settingsExternalContentDescription" = "Display external content";
