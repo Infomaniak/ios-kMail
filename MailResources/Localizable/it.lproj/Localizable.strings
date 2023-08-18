@@ -5,7 +5,7 @@
  * Locale: it, Italian
  * Tagged: ios
  * Exported by: Ambroise Decouttere
- * Exported at: Tue, 15 Aug 2023 13:46:15 +0200
+ * Exported at: Fri, 18 Aug 2023 09:58:00 +0200
  */
 
 /* loco:6256793050618f7416758a32 */
@@ -123,7 +123,7 @@
 "settingsSwipeActionsTitle" = "Azioni di scorrimento";
 
 /* loco:627a329eeeb721567557b3a2 */
-"settingsExternalContentTitle" = "Visualizzazione di contenuti esterni";
+"settingsExternalContentTitle" = "contenuto esterno";
 
 /* loco:627a3ba7d5f44d600a6f1803 */
 "settingsMailboxGeneralSignature" = "Impostazioni della firma";
@@ -1233,7 +1233,7 @@
 "errorNewFolderInvalidCharacter" = "Il nome della cartella contiene caratteri non validi";
 
 /* loco:64d2441dc9b7f2b678050fc4 */
-"settingsThreadModeWarningDescription" = "";
+"settingsThreadModeWarningDescription" = "Si noti che la modifica di questa opzione comporta un nuovo download di tutti i messaggi";
 
 /* loco:64d2491e76ea5dc92c070c52 */
 "settingsThreadModeWarningTitle" = "Passare alla modalità %@?";
@@ -1248,10 +1248,19 @@
 "externalDialogTitleRecipient" = "Destinatario esterno";
 
 /* loco:64db5d146ded79bce2077106 */
-"externalDialogDescription" = "Il mittente %@ non fa parte della vostra organizzazione o dei vostri contatti. Fate attenzione se state condividendo informazioni sensibili.";
+"externalDialogDescriptionExpeditor" = "Il mittente %@ non fa parte della vostra organizzazione o dei vostri contatti. Fate attenzione se state condividendo informazioni sensibili.";
 
 /* loco:64db5dc6df82e571c9064552 */
 "externalDialogConfirmButton" = "Capisco";
 
 /* loco:64db6125fde80c52f005cd42 */
-"externalDialogDescription-plural" = "Alcuni mittenti non fanno parte della vostra organizzazione o dei vostri contatti. Fate attenzione se state condividendo informazioni sensibili.";
+"externalDialogDescriptionExpeditor-plural" = "Alcuni mittenti non fanno parte della vostra organizzazione o dei vostri contatti. Fate attenzione se state condividendo informazioni sensibili.";
+
+/* loco:64db6d8c2395a8caf3096ae3 */
+"externalDialogDescriptionRecipient" = "Il destinatario %@ non fa parte della vostra organizzazione o dei vostri contatti. Fate attenzione se state condividendo informazioni sensibili.";
+
+/* loco:64db6e28e1a0ee7e7405efc5 */
+"externalDialogDescriptionRecipient-plural" = "Alcuni destinatari non fanno parte della vostra organizzazione o dei vostri contatti. Fate attenzione se condividete informazioni sensibili.";
+
+/* loco:64df15c6e992ed0689022852 */
+"settingsExternalContentDescription" = "Visualizzare il contenuto esterno";
