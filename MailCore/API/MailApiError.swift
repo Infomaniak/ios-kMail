@@ -19,13 +19,30 @@
 import Foundation
 import MailResources
 
+/// Static definitions of Mail API error codes
+enum MailApiErrorCode {
+    /// The email is not found
+    static let mailMessageNotFound = "mail__message_not_found"
+
+    /// Invalid credentials
+    static let invalidCredentials = "invalid_credentials"
+
+    /// The server does not know about the identity used in the request
+    static let identityNotFound = "identity__not_found"
+}
+
 public class MailApiError: MailError {
-    public static let apiMessageNotFound = MailApiError(code: "mail__message_not_found",
+    /// The email is not found
+    public static let apiMessageNotFound = MailApiError(code: MailApiErrorCode.mailMessageNotFound,
                                                         localizedDescription: MailResourcesStrings.Localizable
                                                             .errorMessageNotFound,
                                                         shouldDisplay: true)
 
-    public static let apiInvalidCredential = MailApiError(code: "invalid_credentials")
+    /// Invalid credentials
+    public static let apiInvalidCredential = MailApiError(code: MailApiErrorCode.invalidCredentials)
+
+    /// The server does not know bout the identity used in the request
+    public static let apiIdentityNotFound = MailApiError(code: MailApiErrorCode.identityNotFound, shouldDisplay: false)
 
     static let allErrors: [MailApiError] = [
         // General
@@ -112,7 +129,10 @@ public class MailApiError: MailError {
         MailApiError(code: "attachment__store_to_drive_fail"),
 
         // Message
-        MailApiError(code: "message__uid_is_not_valid")
+        MailApiError(code: "message__uid_is_not_valid"),
+
+        // Signatures / Identity
+        apiIdentityNotFound
     ]
 
     static func mailApiErrorFromCode(_ code: String) -> MailApiError? {

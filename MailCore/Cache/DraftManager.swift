@@ -78,7 +78,7 @@ public final class DraftManager {
     }
 
     /// Save a draft server side
-    private func saveDraftRemotely(draft: Draft, mailboxManager: MailboxManager) async {
+    private func saveDraftRemotely(draft: Draft, mailboxManager: MailboxManager, retry: Bool = true) async {
         guard draft.identityId != nil else {
             SentrySDK.capture(message: "We are trying to send a draft without an identityId, this will fail.")
             return
@@ -92,13 +92,47 @@ public final class DraftManager {
         do {
             try await mailboxManager.save(draft: draft)
         } catch {
-            guard error.shouldDisplay else { return }
-            alertDisplayable.show(message: error.localizedDescription)
+            // Retry with default signature on missing identity
+            if retry,
+               let mailError = error as? MailApiError,
+               mailError == MailApiError.apiIdentityNotFound {
+                guard let updatedDraft = await setDefaultSignature(draft: draft, mailboxManager: mailboxManager) else {
+                    return
+                }
+                await saveDraftRemotely(draft: updatedDraft, mailboxManager: mailboxManager, retry: false)
+            }
+            // show error if needed
+            else {
+                guard error.shouldDisplay else { return }
+                alertDisplayable.show(message: error.localizedDescription)
+            }
         }
         await draftQueue.endBackgroundTask(uuid: draft.localUUID)
     }
 
-    public func send(draft: Draft, mailboxManager: MailboxManager) async -> Date? {
+    private func setDefaultSignature(draft: Draft, mailboxManager: MailboxManager) async -> Draft? {
+        try? await mailboxManager.refreshAllSignatures()
+        let storedSignatures = mailboxManager.getStoredSignatures()
+        guard let defaultSignature = storedSignatures.defaultSignature else {
+            return nil
+        }
+
+        var updatedDraft: Draft?
+        let realm = mailboxManager.getRealm()
+        try? realm.write {
+            guard let liveDraft = realm.object(ofType: Draft.self, forPrimaryKey: draft.localUUID) else {
+                return
+            }
+            liveDraft.identityId = "\(defaultSignature.id)"
+
+            realm.add(liveDraft, update: .modified)
+
+            updatedDraft = liveDraft.detached()
+        }
+        return updatedDraft
+    }
+
+    public func send(draft: Draft, mailboxManager: MailboxManager, retry: Bool = true) async -> Date? {
         alertDisplayable.show(message: MailResourcesStrings.Localizable.snackbarEmailSending)
 
         var sendDate: Date?
@@ -110,6 +144,16 @@ public final class DraftManager {
             alertDisplayable.show(message: MailResourcesStrings.Localizable.snackbarEmailSent)
             sendDate = cancelableResponse.scheduledDate
         } catch {
+            // Retry with default signature on missing identity
+            if retry,
+               let mailError = error as? MailApiError,
+               mailError == MailApiError.apiIdentityNotFound {
+                guard let updatedDraft = await setDefaultSignature(draft: draft, mailboxManager: mailboxManager) else {
+                    return nil
+                }
+                return await send(draft: updatedDraft, mailboxManager: mailboxManager, retry: false)
+            }
+
             alertDisplayable.show(message: error.localizedDescription)
         }
         await draftQueue.endBackgroundTask(uuid: draft.localUUID)
