@@ -124,9 +124,9 @@ public final class DraftManager {
                 return
             }
             liveDraft.identityId = "\(defaultSignature.id)"
-            
+
             realm.add(liveDraft, update: .modified)
-            
+
             updatedDraft = liveDraft.detached()
         }
         return updatedDraft
