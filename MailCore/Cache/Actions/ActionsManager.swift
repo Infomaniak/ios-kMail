@@ -97,13 +97,7 @@ public class ActionsManager: ObservableObject {
         case .forward:
             try replyOrForward(messages: messagesWithDuplicates, mode: .forward)
         case .archive:
-            let undoAction = try await mailboxManager.move(messages: messagesWithDuplicates, to: .archive)
-            let snackbarMessage = snackbarMoveMessage(
-                for: messagesWithDuplicates,
-                destinationFolderName: FolderRole.archive.localizedName
-            )
-
-            async let _ = await displayResultSnackbar(message: snackbarMessage, undoAction: undoAction)
+            try await performMove(messages: messagesWithDuplicates, to: .archive)
         case .markAsRead:
             let messagesToExecuteAction = messagesWithDuplicates.lastMessagesAndDuplicatesToExecuteAction(
                 currentMailboxEmail: mailboxManager.mailbox.email
@@ -123,13 +117,7 @@ public class ActionsManager: ObservableObject {
         case .unstar:
             try await mailboxManager.star(messages: messagesWithDuplicates, starred: false)
         case .moveToInbox, .nonSpam:
-            let undoAction = try await mailboxManager.move(messages: messagesWithDuplicates, to: .inbox)
-            let snackbarMessage = snackbarMoveMessage(
-                for: messagesWithDuplicates,
-                destinationFolderName: FolderRole.inbox.localizedName
-            )
-
-            async let _ = await displayResultSnackbar(message: snackbarMessage, undoAction: undoAction)
+            try await performMove(messages: messagesWithDuplicates, to: .inbox)
         case .quickActionPanel:
             Task { @MainActor in
                 origin.nearestMessagesActionsPanel?.wrappedValue = messagesWithDuplicates
@@ -140,13 +128,7 @@ public class ActionsManager: ObservableObject {
                 origin.nearestReportJunkMessageActionsPanel?.wrappedValue = messagesWithDuplicates.first
             }
         case .spam:
-            let undoAction = try await mailboxManager.move(messages: messagesWithDuplicates, to: .spam)
-            let snackbarMessage = snackbarMoveMessage(
-                for: messagesWithDuplicates,
-                destinationFolderName: FolderRole.spam.localizedName
-            )
-
-            async let _ = await displayResultSnackbar(message: snackbarMessage, undoAction: undoAction)
+         try await performMove(messages: messagesWithDuplicates, to: .spam)
         case .phishing:
             Task { @MainActor in
                 origin.nearestReportedForPhishingMessageAlert?.wrappedValue = messagesWithDuplicates.first
@@ -162,6 +144,16 @@ public class ActionsManager: ObservableObject {
         default:
             break
         }
+    }
+
+    private func performMove(messages: [Message], to folderRole: FolderRole) async throws {
+        let undoAction = try await mailboxManager.move(messages: messages, to: folderRole)
+        let snackbarMessage = snackbarMoveMessage(
+            for: messages,
+            destinationFolderName: folderRole.localizedName
+        )
+
+        async let _ = await displayResultSnackbar(message: snackbarMessage, undoAction: undoAction)
     }
 
     public func performMove(messages: [Message], to folder: Folder) async throws {
