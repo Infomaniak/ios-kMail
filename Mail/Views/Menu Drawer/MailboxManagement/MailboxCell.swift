@@ -67,13 +67,16 @@ struct MailboxCell: View {
                 isShowingUpdatePasswordView = true
                 return
             }
-            guard !mailbox.isLocked else {
+            guard !mailbox.isLocked || style == .locked else {
                 isShowingLockedView = true
                 return
             }
             @InjectService var matomo: MatomoUtils
             switch style {
-            case .blockedPassword, .locked: break
+            case .blockedPassword:
+                break
+            case .locked:
+                return
             case .menuDrawer:
                 matomo.track(eventWithCategory: .menuDrawer, name: "switchMailbox")
             case .account:
