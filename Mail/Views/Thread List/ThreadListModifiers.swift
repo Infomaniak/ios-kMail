@@ -67,7 +67,7 @@ struct ThreadListToolbar: ViewModifier {
     @ObservedObject var viewModel: ThreadListViewModel
     @ObservedObject var multipleSelectionViewModel: ThreadListMultipleSelectionViewModel
 
-    var selectAllButtonTitle: String {
+    private var selectAllButtonTitle: String {
         if multipleSelectionViewModel.selectedItems.count == viewModel.filteredThreads.count {
             return MailResourcesStrings.Localizable.buttonUnselectAll
 
