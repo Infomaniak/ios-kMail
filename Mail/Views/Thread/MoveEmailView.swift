@@ -29,7 +29,7 @@ struct MoveEmailView: View {
 
     @Environment(\.dismissModal) var dismissModal
 
-    @EnvironmentObject private var mailboxManager: MailboxManager
+    @EnvironmentObject private var actionsManager: ActionsManager
 
     typealias MoveHandler = (Folder) -> Void
 
@@ -85,8 +85,7 @@ struct MoveEmailView: View {
 
     private func move(to folder: Folder) {
         Task {
-            // TODO: Also use Actions manager
-            try await mailboxManager.move(messages: movedMessages, to: folder)
+            try await actionsManager.performMove(messages: movedMessages, to: folder)
         }
         dismissModal()
     }

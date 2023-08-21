@@ -164,6 +164,17 @@ public class ActionsManager: ObservableObject {
         }
     }
 
+    public func performMove(messages: [Message], to folder: Folder) async throws {
+        let undoAction = try await mailboxManager.move(messages: messages, to: folder)
+
+        let snackbarMessage = snackbarMoveMessage(
+            for: messages,
+            destinationFolderName: folder.localizedName
+        )
+
+        async let _ = await displayResultSnackbar(message: snackbarMessage, undoAction: undoAction)
+    }
+
     private func performDelete(messages: [Message]) async throws {
         let deletionResults = try await mailboxManager.moveOrDelete(messages: messages)
 
