@@ -73,6 +73,7 @@ struct ComposeMessageView: View {
     @State private var editorFocus = false
     @State private var currentSignature: Signature?
     @State private var initialAttachments = [Attachable]()
+    @State private var showExternalTag = true
 
     @State private var editorModel = RichTextEditorModel()
     @State private var scrollView: UIScrollView?
@@ -241,6 +242,38 @@ struct ComposeMessageView: View {
                     Label(MailResourcesStrings.Localizable.send, image: MailResourcesAsset.send.name)
                 }
                 .disabled(isSendButtonDisabled)
+            }
+        }
+        .safeAreaInset(edge: .bottom) {
+            if showExternalTag {
+                HStack(spacing: 24) {
+                    Text(MailResourcesStrings.Localizable.externalDialogTitleRecipient)
+                        .foregroundColor(MailResourcesAsset.onTagColor.swiftUIColor)
+                        .textStyle(.bodySmall)
+
+                    Spacer()
+
+                    Button {
+                        alert.state = .externalExpeditor
+                    } label: {
+                        MailResourcesAsset.info.swiftUIImage
+                            .resizable()
+                            .foregroundColor(MailResourcesAsset.onTagColor)
+                            .frame(width: 16, height: 16)
+                    }
+
+                    Button {
+                        showExternalTag = false
+                    } label: {
+                        MailResourcesAsset.closeSmall.swiftUIImage
+                            .resizable()
+                            .foregroundColor(MailResourcesAsset.onTagColor)
+                            .frame(width: 16, height: 16)
+                    }
+                }
+                .frame(maxWidth: .infinity)
+                .padding()
+                .background(MailResourcesAsset.yellowColor.swiftUIColor)
             }
         }
     }
