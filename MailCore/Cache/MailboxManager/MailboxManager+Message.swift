@@ -108,7 +108,7 @@ public extension MailboxManager {
             while remainingOldMessagesToFetch > 0 {
                 guard !Task.isCancelled else { return }
 
-                if await try !fetchOnePage(folder: folder, direction: .previous) {
+                if try await !fetchOnePage(folder: folder, direction: .previous) {
                     break
                 }
 

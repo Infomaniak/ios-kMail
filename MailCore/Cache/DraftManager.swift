@@ -92,10 +92,11 @@ public final class DraftManager {
         do {
             try await mailboxManager.save(draft: draft)
         } catch {
-            // Retry with default signature on missing identity
+            // Refresh signatures and retry with default signature on missing identity
             if retry,
                let mailError = error as? MailApiError,
                mailError == MailApiError.apiIdentityNotFound {
+                try? await mailboxManager.refreshAllSignatures()
                 guard let updatedDraft = await setDefaultSignature(draft: draft, mailboxManager: mailboxManager) else {
                     return
                 }
@@ -110,8 +111,8 @@ public final class DraftManager {
         await draftQueue.endBackgroundTask(uuid: draft.localUUID)
     }
 
+    // Set a default signature to a draft, from existing ones in DB
     private func setDefaultSignature(draft: Draft, mailboxManager: MailboxManager) async -> Draft? {
-        try? await mailboxManager.refreshAllSignatures()
         let storedSignatures = mailboxManager.getStoredSignatures()
         guard let defaultSignature = storedSignatures.defaultSignature else {
             return nil
@@ -144,10 +145,11 @@ public final class DraftManager {
             alertDisplayable.show(message: MailResourcesStrings.Localizable.snackbarEmailSent)
             sendDate = cancelableResponse.scheduledDate
         } catch {
-            // Retry with default signature on missing identity
+            // Refresh signatures and retry with default signature on missing identity
             if retry,
                let mailError = error as? MailApiError,
                mailError == MailApiError.apiIdentityNotFound {
+                try? await mailboxManager.refreshAllSignatures()
                 guard let updatedDraft = await setDefaultSignature(draft: draft, mailboxManager: mailboxManager) else {
                     return nil
                 }
