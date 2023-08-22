@@ -52,6 +52,10 @@ struct RecipientField: View {
         return isCurrentFieldFocused || recipients.isEmpty
     }
 
+    private var shouldDisplayEmptyButton: Bool {
+        return isCurrentFieldFocused && !currentText.isEmpty
+    }
+
     var body: some View {
         VStack(spacing: 0) {
             if !recipients.isEmpty {
@@ -63,12 +67,24 @@ struct RecipientField: View {
                 )
             }
 
-            RecipientsTextField(text: $currentText, onSubmit: onSubmit, onBackspace: handleBackspaceTextField)
-                .focused($focusedField, equals: type)
-                .padding(.top, isCurrentFieldFocused && !recipients.isEmpty ? 4 : 0)
-                .padding(.top, UIConstants.chipInsets.top)
-                .padding(.bottom, UIConstants.chipInsets.bottom)
-                .frame(width: isExpanded ? nil : 0, height: isExpanded ? nil : 0)
+            HStack {
+                RecipientsTextField(text: $currentText, onSubmit: onSubmit, onBackspace: handleBackspaceTextField)
+                    .focused($focusedField, equals: type)
+                    .padding(.top, isCurrentFieldFocused && !recipients.isEmpty ? 4 : 0)
+                    .padding(.top, UIConstants.chipInsets.top)
+                    .padding(.bottom, UIConstants.chipInsets.bottom)
+                    .frame(width: isExpanded ? nil : 0, height: isExpanded ? nil : 0)
+
+                Button {
+                    currentText = ""
+                } label: {
+                    MailResourcesAsset.remove.swiftUIImage
+                        .resizable()
+                        .frame(width: 18, height: 18)
+                }
+                .foregroundColor(MailResourcesAsset.textTertiaryColor)
+                .opacity(shouldDisplayEmptyButton ? 1 : 0)
+            }
         }
         .onReceive(NotificationCenter.default.publisher(for: UIResponder.keyboardDidShowNotification)) { output in
             if let userInfo = output.userInfo,
