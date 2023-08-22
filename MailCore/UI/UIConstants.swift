@@ -94,6 +94,10 @@ public extension UIConstants {
     static let onboardingButtonHeight: CGFloat = 104
     static let onboardingArrowIconSize: CGFloat = 24
 
+    static let menuDrawerMaxWidth: CGFloat = 352
+    static let menuDrawerTrailingSpacing: CGFloat = 64
+    static let menuDrawerLogoHeight: CGFloat = 48
+
     static let unreadIconSize: CGFloat = 8
     static let checkboxSize: CGFloat = 32
     static let checkmarkSize: CGFloat = 14
