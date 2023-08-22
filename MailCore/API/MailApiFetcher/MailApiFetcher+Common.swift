@@ -118,7 +118,8 @@ public extension MailApiFetcher {
         return try await download.serializingDownloadedFileURL().value
     }
 
-    func blockSender(message: Message) async throws -> Bool {
+    @discardableResult
+    func blockSender(message: Message) async throws -> NullableResponse {
         try await perform(request: authenticatedRequest(.blockSender(messageResource: message.resource), method: .post)).data
     }
 

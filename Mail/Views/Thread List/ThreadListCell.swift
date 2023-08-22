@@ -99,7 +99,7 @@ struct ThreadListCell_Previews: PreviewProvider {
             viewModel: ThreadListViewModel(mailboxManager: PreviewHelper.sampleMailboxManager,
                                            folder: PreviewHelper.sampleFolder,
                                            isCompact: false),
-            multipleSelectionViewModel: ThreadListMultipleSelectionViewModel(mailboxManager: PreviewHelper.sampleMailboxManager),
+            multipleSelectionViewModel: ThreadListMultipleSelectionViewModel(),
             thread: PreviewHelper.sampleThread,
             threadDensity: .large,
             isSelected: false,

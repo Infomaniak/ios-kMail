@@ -24,17 +24,6 @@ import MailResources
 import RealmSwift
 import SwiftUI
 
-final class FlushAlertState: Identifiable {
-    let id = UUID()
-    let deletedMessages: Int?
-    let completion: () async -> Void
-
-    init(deletedMessages: Int? = nil, completion: @escaping () async -> Void) {
-        self.deletedMessages = deletedMessages
-        self.completion = completion
-    }
-}
-
 struct ThreadListView: View {
     @LazyInjectService private var matomo: MatomoUtils
     @LazyInjectService private var userActivityController: UserActivityController
@@ -74,8 +63,7 @@ struct ThreadListView: View {
         _viewModel = StateObject(wrappedValue: ThreadListViewModel(mailboxManager: mailboxManager,
                                                                    folder: folder,
                                                                    isCompact: isCompact))
-        _multipleSelectionViewModel =
-            StateObject(wrappedValue: ThreadListMultipleSelectionViewModel(mailboxManager: mailboxManager))
+        _multipleSelectionViewModel = StateObject(wrappedValue: ThreadListMultipleSelectionViewModel())
 
         UITableViewCell.appearance().focusEffect = .none
     }
@@ -200,11 +188,7 @@ struct ThreadListView: View {
         }
         .threadListToolbar(flushAlert: $flushAlert,
                            viewModel: viewModel,
-                           multipleSelectionViewModel: multipleSelectionViewModel) {
-            withAnimation(.default.speed(2)) {
-                multipleSelectionViewModel.selectAll(threads: viewModel.filteredThreads)
-            }
-        }
+                           multipleSelectionViewModel: multipleSelectionViewModel)
         .floatingActionButton(isEnabled: !multipleSelectionViewModel.isEnabled,
                               icon: MailResourcesAsset.pencilPlain,
                               title: MailResourcesStrings.Localizable.buttonNewMessage) {

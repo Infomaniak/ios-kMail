@@ -23,57 +23,53 @@ import MailResources
 import SwiftUI
 
 struct ActionsView: View {
-    @Environment(\.dismiss) private var dismiss
-
-    @StateObject var viewModel: ActionsViewModel
+    private let targetMessages: [Message]
+    private let quickActions: [Action]
+    private let listActions: [Action]
+    private let origin: ActionOrigin
+    private let completionHandler: (() -> Void)?
 
     init(mailboxManager: MailboxManager,
-         target: ActionsTarget,
-         moveAction: Binding<MoveAction?>? = nil,
-         messageReply: Binding<MessageReply?>? = nil,
-         reportJunkActionsTarget: Binding<ActionsTarget?>? = nil,
-         reportedForDisplayProblemMessage: Binding<Message?>? = nil,
+         target messages: [Message],
+         origin: ActionOrigin,
          completionHandler: (() -> Void)? = nil) {
-        var matomoCategory = MatomoUtils.EventCategory.bottomSheetMessageActions
-        if case .threads = target {
-            matomoCategory = .bottomSheetThreadActions
-        }
+        let userIsStaff = mailboxManager.account.user.isStaff ?? false
+        let actions = Action.actionsForMessages(messages, userIsStaff: userIsStaff)
+        quickActions = actions.quickActions
+        listActions = actions.listActions
 
-        _viewModel = StateObject(wrappedValue: ActionsViewModel(mailboxManager: mailboxManager,
-                                                                target: target,
-                                                                moveAction: moveAction,
-                                                                messageReply: messageReply,
-                                                                reportJunkActionsTarget: reportJunkActionsTarget,
-                                                                reportedForDisplayProblemMessage: reportedForDisplayProblemMessage,
-                                                                matomoCategory: matomoCategory,
-                                                                completionHandler: completionHandler))
+        targetMessages = messages
+        self.origin = origin
+        self.completionHandler = completionHandler
     }
 
     var body: some View {
         VStack(alignment: .leading, spacing: UIConstants.actionsViewSpacing) {
-            // Quick actions
             HStack(alignment: .top, spacing: 16) {
-                ForEach(viewModel.quickActions) { action in
-                    QuickActionView(viewModel: viewModel, action: action)
-                        .frame(maxWidth: .infinity)
+                ForEach(quickActions) { action in
+                    QuickActionView(
+                        targetMessages: targetMessages,
+                        action: action,
+                        origin: origin,
+                        completionHandler: completionHandler
+                    )
+                    .frame(maxWidth: .infinity)
                 }
             }
             .padding(.bottom, 16)
             .padding(.horizontal, 16)
-            // Actions
-            ForEach(viewModel.listActions) { action in
-                if action != viewModel.listActions.first {
+
+            ForEach(listActions) { action in
+                if action != listActions.first {
                     IKDivider()
                 }
 
-                ActionView(action: action) {
-                    dismiss()
-                    Task {
-                        await tryOrDisplayError {
-                            try await viewModel.didTap(action: action)
-                        }
-                    }
-                }
+                MessageActionView(
+                    targetMessages: targetMessages,
+                    action: action,
+                    origin: origin,
+                    completionHandler: completionHandler
+                )
                 .padding(.horizontal, UIConstants.actionsViewCellHorizontalPadding)
             }
         }
@@ -84,24 +80,37 @@ struct ActionsView: View {
 
 struct ActionsView_Previews: PreviewProvider {
     static var previews: some View {
-        ActionsView(mailboxManager: PreviewHelper.sampleMailboxManager, target: .threads([PreviewHelper.sampleThread], false))
-            .accentColor(AccentColor.pink.primary.swiftUIColor)
+        ActionsView(
+            mailboxManager: PreviewHelper.sampleMailboxManager,
+            target: PreviewHelper.sampleThread.messages.toArray(),
+            origin: .toolbar
+        )
+        .accentColor(AccentColor.pink.primary.swiftUIColor)
     }
 }
 
 struct QuickActionView: View {
-    @Environment(\.dismiss) var dismiss
-    @ObservedObject var viewModel: ActionsViewModel
-    let action: Action
-
     @AppStorage(UserDefaults.shared.key(.accentColor)) private var accentColor = DefaultPreferences.accentColor
+
+    @Environment(\.dismiss) private var dismiss
+    @EnvironmentObject private var actionsManager: ActionsManager
+
+    let targetMessages: [Message]
+    let action: Action
+    let origin: ActionOrigin
+    var completionHandler: (() -> Void)?
 
     var body: some View {
         Button {
             dismiss()
             Task {
                 await tryOrDisplayError {
-                    try await viewModel.didTap(action: action)
+                    try await actionsManager.performAction(
+                        target: targetMessages,
+                        action: action,
+                        origin: origin
+                    )
+                    completionHandler?()
                 }
             }
         } label: {
@@ -127,25 +136,48 @@ struct QuickActionView: View {
     }
 }
 
-struct ActionView: View {
+struct MessageActionView: View {
+    @Environment(\.dismiss) private var dismiss
+    @EnvironmentObject private var actionsManager: ActionsManager
+
+    let targetMessages: [Message]
     let action: Action
-    let handler: () -> Void
+    let origin: ActionOrigin
+    var completionHandler: (() -> Void)?
 
     var body: some View {
         Button {
-            handler()
-        } label: {
-            HStack(spacing: 24) {
-                action.icon
-                    .resizable()
-                    .scaledToFit()
-                    .frame(width: 24, height: 24)
-                    .foregroundColor(action == .report ? MailResourcesAsset.princeColor.swiftUIColor : .accentColor)
-                Text(action.title)
-                    .foregroundColor(action == .report ? MailResourcesAsset.princeColor : MailResourcesAsset.textPrimaryColor)
-                    .textStyle(.body)
-                    .frame(maxWidth: .infinity, alignment: .leading)
+            dismiss()
+            Task {
+                await tryOrDisplayError {
+                    try await actionsManager.performAction(
+                        target: targetMessages,
+                        action: action,
+                        origin: origin
+                    )
+                    completionHandler?()
+                }
             }
+        } label: {
+            ActionButtonLabel(action: action)
+        }
+    }
+}
+
+struct ActionButtonLabel: View {
+    let action: Action
+    var body: some View {
+        HStack(spacing: 24) {
+            action.icon
+                .resizable()
+                .scaledToFit()
+                .frame(width: 24, height: 24)
+                .foregroundColor(action == .reportDisplayProblem ? MailResourcesAsset.princeColor.swiftUIColor : .accentColor)
+            Text(action.title)
+                .foregroundColor(action == .reportDisplayProblem ? MailResourcesAsset.princeColor : MailResourcesAsset
+                    .textPrimaryColor)
+                .textStyle(.body)
+                .frame(maxWidth: .infinity, alignment: .leading)
         }
     }
 }

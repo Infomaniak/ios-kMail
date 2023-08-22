@@ -21,49 +21,48 @@ import MailCore
 import SwiftUI
 
 extension View {
-    func actionsPanel(actionsTarget: Binding<ActionsTarget?>, completionHandler: (() -> Void)? = nil) -> some View {
-        return modifier(ActionsPanelViewModifier(actionsTarget: actionsTarget, completionHandler: completionHandler))
+    func actionsPanel(messages: Binding<[Message]?>, completionHandler: (() -> Void)? = nil) -> some View {
+        return modifier(ActionsPanelViewModifier(messages: messages, completionHandler: completionHandler))
     }
 }
 
 struct ActionsPanelViewModifier: ViewModifier {
     @EnvironmentObject private var mailboxManager: MailboxManager
-    @EnvironmentObject private var navigationState: NavigationState
 
-    @State private var moveAction: MoveAction?
-    @State private var reportJunkActionsTarget: ActionsTarget?
-    @State private var reportedForPhishingMessage: Message?
+    @State private var reportForJunkMessage: Message?
     @State private var reportedForDisplayProblemMessage: Message?
+    @State private var reportedForPhishingMessage: Message?
+    @State private var messagesToMove: [Message]?
 
-    @Binding var actionsTarget: ActionsTarget?
+    @Binding var messages: [Message]?
 
     var completionHandler: (() -> Void)?
 
+    private var origin: ActionOrigin {
+        .floatingPanel(
+            nearestMessagesToMoveSheet: $messagesToMove,
+            nearestReportJunkMessageActionsPanel: $reportForJunkMessage,
+            nearestReportedForPhishingMessageAlert: $reportedForPhishingMessage,
+            nearestReportedForDisplayProblemMessageAlert: $reportedForDisplayProblemMessage
+        )
+    }
+
     func body(content: Content) -> some View {
-        content.adaptivePanel(item: $actionsTarget) { target in
-            ActionsView(mailboxManager: mailboxManager,
-                        target: target,
-                        moveAction: $moveAction,
-                        messageReply: $navigationState.messageReply,
-                        reportJunkActionsTarget: $reportJunkActionsTarget,
-                        reportedForDisplayProblemMessage: $reportedForDisplayProblemMessage) {
-                completionHandler?()
-            }
+        content.adaptivePanel(item: $messages) { messages in
+            ActionsView(mailboxManager: mailboxManager, target: messages, origin: origin, completionHandler: completionHandler)
         }
-        .sheet(item: $moveAction) { moveAction in
-            MoveEmailView(moveAction: moveAction)
+        .sheet(item: $messagesToMove) { messages in
+            MoveEmailView(movedMessages: messages)
                 .sheetViewStyle()
         }
-        .floatingPanel(item: $reportJunkActionsTarget) { target in
-            ReportJunkView(mailboxManager: mailboxManager,
-                           target: target,
-                           reportedForPhishingMessage: $reportedForPhishingMessage)
-        }
-        .customAlert(item: $reportedForPhishingMessage) { message in
-            ReportPhishingView(message: message)
+        .floatingPanel(item: $reportForJunkMessage) { reportForJunkMessage in
+            ReportJunkView(reportedMessage: reportForJunkMessage, origin: origin)
         }
         .customAlert(item: $reportedForDisplayProblemMessage) { message in
             ReportDisplayProblemView(message: message)
+        }
+        .customAlert(item: $reportedForPhishingMessage) { message in
+            ReportPhishingView(message: message)
         }
     }
 }

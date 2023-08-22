@@ -29,12 +29,11 @@ public protocol MailBoxManagerMessageable {
     func message(message: Message) async throws
     func attachmentData(attachment: Attachment) async throws -> Data
     func saveAttachmentLocally(attachment: Attachment) async
-    func moveOrDelete(messages: [Message]) async throws
+    func moveOrDelete(messages: [Message]) async throws -> [DeletionResult]
     func markAsSeen(message: Message, seen: Bool) async throws
     func move(messages: [Message], to folderRole: FolderRole) async throws -> UndoAction
     func move(messages: [Message], to folder: Folder) async throws -> UndoAction
     func delete(messages: [Message]) async throws
-    func toggleStar(messages: [Message]) async throws
 }
 
 /// An abstract interface on the `MailboxManager` related to drafts

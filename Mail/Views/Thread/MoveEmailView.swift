@@ -24,21 +24,12 @@ import MailResources
 import RealmSwift
 import SwiftUI
 
-struct MoveAction: Identifiable {
-    var id: String {
-        return "\(target.id)\(fromFolderId ?? "")"
-    }
-
-    let fromFolderId: String?
-    let target: ActionsTarget
-}
-
 struct MoveEmailView: View {
     @LazyInjectService private var matomo: MatomoUtils
 
     @Environment(\.dismissModal) var dismissModal
 
-    @EnvironmentObject private var mailboxManager: MailboxManager
+    @EnvironmentObject private var actionsManager: ActionsManager
 
     typealias MoveHandler = (Folder) -> Void
 
@@ -58,7 +49,7 @@ struct MoveEmailView: View {
 
     @State private var searchFilter = ""
 
-    let moveAction: MoveAction
+    let movedMessages: [Message]
 
     var body: some View {
         ScrollView {
@@ -87,21 +78,22 @@ struct MoveEmailView: View {
         .matomoView(view: ["MoveEmailView"])
         .customAlert(isPresented: $isShowingCreateFolderAlert) {
             CreateFolderView(mode: .move { newFolder in
-                Task {
-                    try await ActionUtils(actionsTarget: moveAction.target, mailboxManager: mailboxManager).move(to: newFolder)
-                }
-                dismissModal()
+                move(to: newFolder)
             })
         }
     }
 
+    private func move(to folder: Folder) {
+        Task {
+            try await actionsManager.performMove(messages: movedMessages, to: folder)
+        }
+        dismissModal()
+    }
+
     private func listOfFolders(nestableFolders: [NestableFolder]) -> some View {
         ForEach(nestableFolders) { nestableFolder in
-            FolderCell(folder: nestableFolder, currentFolderId: moveAction.fromFolderId) { folder in
-                Task {
-                    try await ActionUtils(actionsTarget: moveAction.target, mailboxManager: mailboxManager).move(to: folder)
-                }
-                dismissModal()
+            FolderCell(folder: nestableFolder, currentFolderId: movedMessages.first?.folderId) { folder in
+                move(to: folder)
             }
         }
     }
@@ -109,8 +101,7 @@ struct MoveEmailView: View {
 
 struct MoveMessageView_Previews: PreviewProvider {
     static var previews: some View {
-        MoveEmailView(moveAction: MoveAction(fromFolderId: PreviewHelper.sampleFolder.id,
-                                             target: .message(PreviewHelper.sampleMessage)))
+        MoveEmailView(movedMessages: [PreviewHelper.sampleMessage])
             .environmentObject(PreviewHelper.sampleMailboxManager)
     }
 }

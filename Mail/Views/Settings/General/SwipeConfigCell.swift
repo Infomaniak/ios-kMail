@@ -28,7 +28,7 @@ struct SwipeConfigCell: View {
 
     var section: SwipeSettingsSection
 
-    var actions: [SwipeAction] {
+    var actions: [Action] {
         return section == .leadingSwipe ? [fullLeading, leading] : [trailing, fullTrailing]
     }
 
@@ -41,7 +41,7 @@ struct SwipeConfigCell: View {
             ForEach(actions.indices, id: \.self) { i in
                 let action = actions[i]
                 ZStack {
-                    if action == .none {
+                    if action == .noAction {
                         if i == 0 {
                             MailResourcesAsset.elementsColor.swiftUIColor
                         } else {
@@ -51,8 +51,8 @@ struct SwipeConfigCell: View {
                         Text(MailResourcesStrings.Localizable.settingsSwipeActionToDefine)
                             .textStyle(.bodySmall)
                     } else {
-                        action.swipeTint
-                        action.icon()?
+                        action.tintColor
+                        action.icon
                             .resizable()
                             .frame(width: 24, height: 24)
                             .foregroundColor(.white)

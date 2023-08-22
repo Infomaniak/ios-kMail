@@ -125,41 +125,4 @@ public extension MailboxManager {
             }
         }
     }
-
-    func toggleRead(threads: [Thread]) async throws {
-        if threads.contains(where: \.hasUnseenMessages) {
-            var messages = threads.flatMap(\.messages)
-            messages.append(contentsOf: messages.flatMap(\.duplicates))
-            try await markAsSeen(messages: messages, seen: true)
-        } else {
-            let messages = threads.flatMap { thread in
-                thread.lastMessageAndItsDuplicateToExecuteAction(currentMailboxEmail: mailbox.email)
-            }
-            try await markAsSeen(messages: messages, seen: false)
-        }
-    }
-
-    func move(threads: [Thread], to folderRole: FolderRole) async throws -> UndoAction {
-        guard let folder = getFolder(with: folderRole)?.freeze() else { throw MailError.folderNotFound }
-        return try await move(threads: threads, to: folder)
-    }
-
-    func move(threads: [Thread], to folder: Folder) async throws -> UndoAction {
-        var messages = threads.flatMap(\.messages).filter { $0.folder == threads.first?.folder }
-        messages.append(contentsOf: messages.flatMap(\.duplicates))
-
-        return try await move(messages: messages, to: folder)
-    }
-
-    func moveOrDelete(threads: [Thread]) async throws {
-        let messagesToMoveOrDelete = threads.flatMap(\.messages)
-        try await moveOrDelete(messages: messagesToMoveOrDelete)
-    }
-
-    func toggleStar(threads: [Thread]) async throws {
-        let messagesToToggleStar = threads.flatMap { thread in
-            thread.lastMessageAndItsDuplicateToExecuteAction(currentMailboxEmail: mailbox.email)
-        }
-        try await toggleStar(messages: messagesToToggleStar)
-    }
 }

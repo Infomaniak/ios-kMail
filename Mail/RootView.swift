@@ -17,6 +17,7 @@
  */
 
 import SwiftUI
+import MailCore
 
 struct RootView: View {
     @Environment(\.horizontalSizeClass) private var horizontalSizeClass

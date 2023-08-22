@@ -26,72 +26,34 @@ import SwiftUI
 private struct SwipeActionView: View {
     @LazyInjectService private var matomo: MatomoUtils
 
-    @EnvironmentObject private var mailboxManager: MailboxManager
+    @EnvironmentObject private var actionsManager: ActionsManager
 
-    @Binding var moveAction: MoveAction?
-    @Binding var actionsTarget: ActionsTarget?
+    @Binding var actionPanelMessages: [Message]?
+    @Binding var moveSheetMessages: [Message]?
 
     let thread: Thread
-    let viewModel: ThreadListViewModel
-    let action: SwipeAction
+    let action: Action
 
     var body: some View {
         Button(role: action.isDestructive ? .destructive : nil) {
             matomo.track(eventWithCategory: .swipeActions, name: action.matomoName)
             Task {
                 await tryOrDisplayError {
-                    try await handleSwipeAction(action, thread: thread)
+                    try await actionsManager.performAction(
+                        target: thread.messages.toArray(),
+                        action: action,
+                        origin: .swipe(
+                            nearestMessagesActionsPanel: $actionPanelMessages,
+                            nearestMessagesToMoveSheet: $moveSheetMessages
+                        )
+                    )
                 }
             }
         } label: {
-            Label { Text(action.title) } icon: { action.icon(from: thread) }
+            Label { Text(action.title) } icon: { action.icon }
                 .labelStyle(.iconOnly)
         }
-        .tint(action.swipeTint)
-    }
-
-    func handleSwipeAction(_ action: SwipeAction, thread: Thread) async throws {
-        switch action {
-        case .delete:
-            try await mailboxManager.moveOrDelete(threads: [thread])
-        case .archive:
-            try await move(thread: thread, to: .archive)
-        case .readUnread:
-            try await mailboxManager.toggleRead(threads: [thread])
-        case .move:
-            moveAction = MoveAction(fromFolderId: viewModel.folder.id, target: .threads([thread], false))
-        case .favorite:
-            try await mailboxManager.toggleStar(threads: [thread])
-        case .postPone:
-            // TODO: Report action
-            showWorkInProgressSnackBar()
-        case .spam:
-            try await toggleSpam(thread: thread)
-        case .quickAction:
-            actionsTarget = .threads([thread.thaw() ?? thread], false)
-        case .none:
-            break
-        case .moveToInbox:
-            try await move(thread: thread, to: .inbox)
-        }
-    }
-
-    private func toggleSpam(thread: Thread) async throws {
-        let destination: FolderRole = viewModel.folder.role == .spam ? .inbox : .spam
-        try await move(thread: thread, to: destination)
-    }
-
-    private func move(thread: Thread, to folderRole: FolderRole) async throws {
-        guard let folder = mailboxManager.getFolder(with: folderRole)?.freeze() else { return }
-        try await move(thread: thread, to: folder)
-    }
-
-    private func move(thread: Thread, to folder: Folder) async throws {
-        let response = try await mailboxManager.move(threads: [thread], to: folder)
-        IKSnackBar.showCancelableSnackBar(message: MailResourcesStrings.Localizable.snackbarThreadMoved(folder.localizedName),
-                                          cancelSuccessMessage: MailResourcesStrings.Localizable.snackbarMoveCancelled,
-                                          undoAction: response,
-                                          mailboxManager: mailboxManager)
+        .tint(action.tintColor)
     }
 }
 
@@ -102,8 +64,8 @@ struct ThreadListSwipeActions: ViewModifier {
     @AppStorage(UserDefaults.shared.key(.swipeFullTrailing)) private var swipeFullTrailing = DefaultPreferences.swipeFullTrailing
     @AppStorage(UserDefaults.shared.key(.swipeTrailing)) private var swipeTrailing = DefaultPreferences.swipeTrailing
 
-    @State private var moveAction: MoveAction?
-    @State private var actionsTarget: ActionsTarget?
+    @State private var actionPanelMessages: [Message]?
+    @State private var moveSheetMessages: [Message]?
 
     let thread: Thread
     let viewModel: ThreadListViewModel
@@ -123,22 +85,19 @@ struct ThreadListSwipeActions: ViewModifier {
                     edgeActions([swipeFullTrailing, swipeTrailing])
                 }
             }
-            .actionsPanel(actionsTarget: $actionsTarget)
-            .sheet(item: $moveAction) { moveAction in
-                MoveEmailView(moveAction: moveAction)
-                    .sheetViewStyle()
-            }
+            .actionsPanel(messages: $actionPanelMessages)
     }
 
     @MainActor @ViewBuilder
-    private func edgeActions(_ actions: [SwipeAction]) -> some View {
+    private func edgeActions(_ actions: [Action]) -> some View {
         if !multipleSelectionViewModel.isEnabled {
-            ForEach(actions.filter { $0 != .none }, id: \.rawValue) { action in
-                SwipeActionView(moveAction: $moveAction,
-                                actionsTarget: $actionsTarget,
-                                thread: thread,
-                                viewModel: viewModel,
-                                action: action)
+            ForEach(actions.filter { $0 != .noAction }.map { $0.inverseActionIfNeeded(for: thread) }) { action in
+                SwipeActionView(
+                    actionPanelMessages: $actionPanelMessages,
+                    moveSheetMessages: $moveSheetMessages,
+                    thread: thread,
+                    action: action
+                )
             }
         }
     }
@@ -156,12 +115,11 @@ extension View {
 
 struct ThreadListSwipeAction_Previews: PreviewProvider {
     static var previews: some View {
-        SwipeActionView(moveAction: .constant(nil),
-                        actionsTarget: .constant(nil),
-                        thread: PreviewHelper.sampleThread,
-                        viewModel: ThreadListViewModel(mailboxManager: PreviewHelper.sampleMailboxManager,
-                                                       folder: PreviewHelper.sampleFolder,
-                                                       isCompact: false),
-                        action: .delete)
+        SwipeActionView(
+            actionPanelMessages: .constant(nil),
+            moveSheetMessages: .constant(nil),
+            thread: PreviewHelper.sampleThread,
+            action: .delete
+        )
     }
 }

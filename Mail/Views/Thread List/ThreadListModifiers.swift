@@ -31,14 +31,12 @@ extension View {
     func threadListToolbar(
         flushAlert: Binding<FlushAlertState?>,
         viewModel: ThreadListViewModel,
-        multipleSelectionViewModel: ThreadListMultipleSelectionViewModel,
-        selectAll: @escaping () -> Void
+        multipleSelectionViewModel: ThreadListMultipleSelectionViewModel
     ) -> some View {
         modifier(ThreadListToolbar(
             flushAlert: flushAlert,
             viewModel: viewModel,
-            multipleSelectionViewModel: multipleSelectionViewModel,
-            selectAll: selectAll
+            multipleSelectionViewModel: multipleSelectionViewModel
         ))
     }
 }
@@ -59,17 +57,24 @@ struct ThreadListToolbar: ViewModifier {
 
     @EnvironmentObject private var splitViewManager: SplitViewManager
     @EnvironmentObject private var navigationDrawerState: NavigationDrawerState
-    @EnvironmentObject private var navigationState: NavigationState
+    @EnvironmentObject private var actionsManager: ActionsManager
 
     @State private var presentedCurrentAccount: Account?
-    @State private var multipleSelectionActionsTarget: ActionsTarget?
+    @State private var multipleSelectedMessages: [Message]?
 
     @Binding var flushAlert: FlushAlertState?
 
     @ObservedObject var viewModel: ThreadListViewModel
     @ObservedObject var multipleSelectionViewModel: ThreadListMultipleSelectionViewModel
 
-    let selectAll: () -> Void
+    private var selectAllButtonTitle: String {
+        if multipleSelectionViewModel.selectedItems.count == viewModel.filteredThreads.count {
+            return MailResourcesStrings.Localizable.buttonUnselectAll
+
+        } else {
+            return MailResourcesStrings.Localizable.buttonSelectAll
+        }
+    }
 
     func body(content: Content) -> some View {
         content
@@ -101,12 +106,12 @@ struct ThreadListToolbar: ViewModifier {
 
                 ToolbarItemGroup(placement: .navigationBarTrailing) {
                     if multipleSelectionViewModel.isEnabled {
-                        Button(multipleSelectionViewModel.selectedItems.count == viewModel.filteredThreads.count
-                            ? MailResourcesStrings.Localizable.buttonUnselectAll
-                            : MailResourcesStrings.Localizable.buttonSelectAll) {
-                                selectAll()
+                        Button(selectAllButtonTitle) {
+                            withAnimation(.default.speed(2)) {
+                                multipleSelectionViewModel.selectAll(threads: viewModel.filteredThreads)
                             }
-                            .animation(nil, value: multipleSelectionViewModel.selectedItems)
+                        }
+                        .animation(nil, value: multipleSelectionViewModel.selectedItems)
                     } else {
                         Button {
                             splitViewManager.showSearch = true
@@ -138,13 +143,20 @@ struct ThreadListToolbar: ViewModifier {
                             text: action.shortTitle ?? action.title,
                             icon: action.icon
                         ) {
+                            let allMessages = multipleSelectionViewModel.selectedItems.flatMap(\.messages)
+                            multipleSelectionViewModel.isEnabled = false
                             Task {
-                                await tryOrDisplayError {
-                                    try await multipleSelectionViewModel.didTap(
-                                        action: action,
-                                        flushAlert: $flushAlert
-                                    )
-                                }
+                                matomo.trackBulkEvent(
+                                    eventWithCategory: .threadActions,
+                                    name: action.matomoName.capitalized,
+                                    numberOfItems: multipleSelectionViewModel.selectedItems.count
+                                )
+
+                                try await actionsManager.performAction(
+                                    target: allMessages,
+                                    action: action,
+                                    origin: .multipleSelection(nearestFlushAlert: $flushAlert)
+                                )
                             }
                         }
                         .disabled(action == .archive && splitViewManager.selectedFolder?.role == .archive)
@@ -154,12 +166,12 @@ struct ThreadListToolbar: ViewModifier {
                         text: MailResourcesStrings.Localizable.buttonMore,
                         icon: MailResourcesAsset.plusActions.swiftUIImage
                     ) {
-                        multipleSelectionActionsTarget = .threads(Array(multipleSelectionViewModel.selectedItems), true)
+                        multipleSelectedMessages = multipleSelectionViewModel.selectedItems.flatMap(\.messages)
                     }
                 }
                 .disabled(multipleSelectionViewModel.selectedItems.isEmpty)
             }
-            .actionsPanel(actionsTarget: $multipleSelectionActionsTarget) {
+            .actionsPanel(messages: $multipleSelectedMessages) {
                 multipleSelectionViewModel.isEnabled = false
             }
             .navigationTitle(

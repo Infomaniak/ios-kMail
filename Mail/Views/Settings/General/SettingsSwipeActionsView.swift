@@ -53,13 +53,13 @@ struct SettingsSwipeActionsView: View {
                 ForEach(SwipeSettingsSection.allCases, id: \.self) { section in
                     ForEach(section.items, id: \.self) { item in
                         SettingsSubMenuCell(title: item.title, subtitle: settingValue(for: item), icon: icon(for: item)) {
-                            SettingsOptionView<SwipeAction>(
+                            SettingsOptionView<Action>(
                                 title: item.title,
-                                values: SwipeAction.allCases.filter { $0.isCustomizable && !$0.isComingLater },
+                                values: Action.swipeActions,
                                 keyPath: item.keyPath,
                                 excludedKeyPath: item.excludedKeyPaths,
                                 matomoCategory: .settingsSwipeActions,
-                                matomoName: \.matomoSettingsName,
+                                matomoName: \.matomoName,
                                 matomoValue: item == .leading || item == .fullLeading ? 1 : 0
                             )
                             .frame(minHeight: 40)

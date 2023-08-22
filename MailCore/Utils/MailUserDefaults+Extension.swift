@@ -126,36 +126,36 @@ public extension UserDefaults {
         }
     }
 
-    var swipeLeading: SwipeAction {
+    var swipeLeading: Action {
         get {
-            return SwipeAction(rawValue: string(forKey: key(.swipeLeading)) ?? "") ?? DefaultPreferences.swipeLeading
+            return Action(rawValue: string(forKey: key(.swipeLeading)) ?? "") ?? DefaultPreferences.swipeLeading
         }
         set {
             set(newValue.rawValue, forKey: key(.swipeLeading))
         }
     }
 
-    var swipeFullLeading: SwipeAction {
+    var swipeFullLeading: Action {
         get {
-            return SwipeAction(rawValue: string(forKey: key(.swipeFullLeading)) ?? "") ?? DefaultPreferences.swipeFullLeading
+            return Action(rawValue: string(forKey: key(.swipeFullLeading)) ?? "") ?? DefaultPreferences.swipeFullLeading
         }
         set {
             set(newValue.rawValue, forKey: key(.swipeFullLeading))
         }
     }
 
-    var swipeTrailing: SwipeAction {
+    var swipeTrailing: Action {
         get {
-            return SwipeAction(rawValue: string(forKey: key(.swipeTrailing)) ?? "") ?? DefaultPreferences.swipeTrailing
+            return Action(rawValue: string(forKey: key(.swipeTrailing)) ?? "") ?? DefaultPreferences.swipeTrailing
         }
         set {
             set(newValue.rawValue, forKey: key(.swipeTrailing))
         }
     }
 
-    var swipeFullTrailing: SwipeAction {
+    var swipeFullTrailing: Action {
         get {
-            return SwipeAction(rawValue: string(forKey: key(.swipeFullTrailing)) ?? "") ?? DefaultPreferences.swipeFullTrailing
+            return Action(rawValue: string(forKey: key(.swipeFullTrailing)) ?? "") ?? DefaultPreferences.swipeFullTrailing
         }
         set {
             set(newValue.rawValue, forKey: key(.swipeFullTrailing))

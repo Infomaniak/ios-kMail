@@ -38,9 +38,8 @@ struct ThreadView: View {
     @Environment(\.isCompactWindow) private var isCompactWindow
     @Environment(\.dismiss) private var dismiss
 
-    @EnvironmentObject private var splitViewManager: SplitViewManager
     @EnvironmentObject private var mailboxManager: MailboxManager
-    @EnvironmentObject private var navigationState: NavigationState
+    @EnvironmentObject private var actionsManager: ActionsManager
 
     @State private var headerHeight: CGFloat = 0
     @State private var displayNavigationTitle = false
@@ -87,8 +86,11 @@ struct ThreadView: View {
             )
         }
         .task {
-            if thread.hasUnseenMessages {
-                try? await mailboxManager.toggleRead(threads: [thread])
+            await markThreadAsReadIfNeeded(thread: thread)
+        }
+        .onChange(of: thread) { newValue in
+            Task {
+                await markThreadAsReadIfNeeded(thread: newValue)
             }
         }
         .navigationTitle(displayNavigationTitle ? thread.formattedSubject : "")
@@ -98,10 +100,13 @@ struct ThreadView: View {
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
                 Button {
+                    let messages = thread.messages.freeze().toArray()
                     Task {
-                        await tryOrDisplayError {
-                            try await mailboxManager.toggleStar(threads: [thread])
-                        }
+                        try await actionsManager.performAction(
+                            target: messages,
+                            action: thread.flagged ? .unstar : .star,
+                            origin: .toolbar
+                        )
                     }
                 } label: {
                     (thread.flagged ? MailResourcesAsset.starFull : MailResourcesAsset.star).swiftUIImage
@@ -116,11 +121,7 @@ struct ThreadView: View {
                         didTap(action: action)
                     }
                     .adaptivePanel(item: $replyOrReplyAllMessage) { message in
-                        ReplyActionsView(
-                            mailboxManager: mailboxManager,
-                            message: message,
-                            messageReply: $navigationState.messageReply
-                        )
+                        ReplyActionsView(message: message)
                     }
                 } else {
                     ToolbarButton(text: action.title, icon: action.icon) {
@@ -147,45 +148,28 @@ struct ThreadView: View {
         .matomoView(view: [MatomoUtils.View.threadView.displayName, "Main"])
     }
 
+    private func markThreadAsReadIfNeeded(thread: Thread) async {
+        guard thread.hasUnseenMessages else { return }
+        try? await actionsManager.performAction(target: thread.messages.toArray(), action: .markAsRead, origin: .toolbar)
+    }
+
     private func didTap(action: Action) {
-        if let matomoName = action.matomoName {
-            matomo.track(eventWithCategory: .threadActions, name: matomoName)
+        matomo.track(eventWithCategory: .threadActions, name: action.matomoName)
+
+        let messages = thread.messages.freezeIfNeeded().toArray()
+
+        if action == .reply,
+           let message = messages.lastMessageToExecuteAction(currentMailboxEmail: mailboxManager.mailbox.email),
+           message.canReplyAll(currentMailboxEmail: mailboxManager.mailbox.email) {
+            replyOrReplyAllMessage = message
+            return
         }
-        switch action {
-        case .reply:
-            guard let message = thread.lastMessageToExecuteAction(currentMailboxEmail: mailboxManager.mailbox.email)
-            else { return }
-            if message.canReplyAll(currentMailboxEmail: mailboxManager.mailbox.email) {
-                replyOrReplyAllMessage = message
-            } else {
-                navigationState.messageReply = MessageReply(message: message, replyMode: .reply)
+
+        Task {
+            try await actionsManager.performAction(target: messages, action: action, origin: .toolbar)
+            if action == .archive || action == .delete {
+                dismiss()
             }
-        case .forward:
-            guard let message = thread.lastMessageToExecuteAction(currentMailboxEmail: mailboxManager.mailbox.email)
-            else { return }
-            navigationState.messageReply = MessageReply(message: message, replyMode: .forward)
-        case .archive:
-            Task {
-                await tryOrDisplayError {
-                    let undoAction = try await mailboxManager.move(threads: [thread], to: .archive)
-                    IKSnackBar.showCancelableSnackBar(
-                        message: MailResourcesStrings.Localizable.snackbarThreadMoved(FolderRole.archive.localizedName),
-                        cancelSuccessMessage: MailResourcesStrings.Localizable.snackbarMoveCancelled,
-                        undoAction: undoAction,
-                        mailboxManager: mailboxManager
-                    )
-                    dismiss()
-                }
-            }
-        case .delete:
-            Task {
-                await tryOrDisplayError {
-                    try await mailboxManager.moveOrDelete(threads: [thread])
-                    dismiss()
-                }
-            }
-        default:
-            break
         }
     }
 }

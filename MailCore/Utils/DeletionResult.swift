@@ -16,30 +16,18 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import CocoaLumberjackSwift
-import MailCore
-import MailResources
-import SwiftUI
+import Foundation
 
-struct ActionsPanelButton<Content: View>: View {
-    @State private var messages: [Message]?
-
-    var message: Message?
-    var threads: [Thread]?
-    @ViewBuilder var label: () -> Content
-
-    var body: some View {
-        Button {
-            if let message {
-                messages = [message]
-            } else if let threads {
-                messages = threads.flatMap(\.messages)
-            } else {
-                DDLogWarn("MoreButton has no action target, did you forget to set message or threads ?")
-            }
-        } label: {
-            label()
+public enum DeletionResult: Equatable {
+    public static func == (lhs: DeletionResult, rhs: DeletionResult) -> Bool {
+        switch (lhs, rhs) {
+        case (.permanentlyDeleted, .permanentlyDeleted):
+            return true
+        default:
+            return false
         }
-        .actionsPanel(messages: $messages)
     }
+
+    case permanentlyDeleted
+    case moved(UndoAction)
 }
