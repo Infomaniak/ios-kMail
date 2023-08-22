@@ -30,16 +30,13 @@ public struct NotificationTappedPayload {
 @MainActor
 final class NotificationCenterDelegate: NSObject, UNUserNotificationCenterDelegate {
     @LazyInjectService private var accountManager: AccountManager
-
-    let messageActions = MessageActionHandler()
+    @LazyInjectService private var messageActions: MessageActionHandlable
 
     /// Handles the actions related to mail notifications
     /// - Parameters:
     ///   - identifier: the notification type string identifier
     ///   - content: the notification content
-    /// - Returns: True if handled, false otherwise
-    @discardableResult
-    internal func handleMailAction(for identifier: String, content: UNNotificationContent) async -> Bool {
+    internal func handleMailAction(for identifier: String, content: UNNotificationContent) async {
         // precond for mail actions
         guard let mailboxId = content.userInfo[NotificationsHelper.UserInfoKeys.mailboxId] as? Int,
               let userId = content.userInfo[NotificationsHelper.UserInfoKeys.userId] as? Int,
@@ -47,32 +44,32 @@ final class NotificationCenterDelegate: NSObject, UNUserNotificationCenterDelega
               let mailboxManager = accountManager.getMailboxManager(for: mailbox),
               let messageUid = content.userInfo[NotificationsHelper.UserInfoKeys.messageUid] as? String,
               !messageUid.isEmpty else {
-            return false
+            return
         }
 
         switch identifier {
         case UNNotificationDefaultActionIdentifier:
-            await messageActions.handleTapOnNotification(messageUid: messageUid, mailbox: mailbox, mailboxManager: mailboxManager)
-            return true
+            try? await messageActions.handleTapOnNotification(
+                messageUid: messageUid,
+                mailbox: mailbox,
+                mailboxManager: mailboxManager
+            )
         case NewMailActionIdentifier.archive:
-            await messageActions.handleArchiveOnNotification(
+            try? await messageActions.handleArchiveOnNotification(
                 messageUid: messageUid,
                 mailbox: mailbox,
                 mailboxManager: mailboxManager
             )
-            return true
         case NewMailActionIdentifier.delete:
-            await messageActions.handleDeleteOnNotification(
+            try? await messageActions.handleDeleteOnNotification(
                 messageUid: messageUid,
                 mailbox: mailbox,
                 mailboxManager: mailboxManager
             )
-            return true
         case NewMailActionIdentifier.reply:
             messageActions.handleReplyOnNotification(messageUid: messageUid, mailbox: mailbox, mailboxManager: mailboxManager)
-            return true
         default:
-            return false
+            break
         }
     }
 

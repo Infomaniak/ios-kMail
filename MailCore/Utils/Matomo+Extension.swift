@@ -55,6 +55,7 @@ public extension MatomoUtils.EventCategory {
     static let messageActions = MatomoUtils.EventCategory(displayName: "messageActions")
     static let threadActions = MatomoUtils.EventCategory(displayName: "threadActions")
     static let swipeActions = MatomoUtils.EventCategory(displayName: "swipeActions")
+    static let notificationAction = MatomoUtils.EventCategory(displayName: "notificationAction")
 
     static let settingsGeneral = MatomoUtils.EventCategory(displayName: "settingsGeneral")
     static let settingsAccentColor = MatomoUtils.EventCategory(displayName: "settingsAccentColor")

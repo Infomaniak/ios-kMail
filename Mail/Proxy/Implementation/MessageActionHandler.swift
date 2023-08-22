@@ -17,69 +17,83 @@
  */
 
 import Foundation
+import InfomaniakCoreUI
 import InfomaniakDI
 import MailCore
 import RealmSwift
 import UIKit
 import UserNotifications
 
-/// Something that take care of actions related to a message
-protocol MessageActionHandlable {
-    /// Present the new mail to the user with the correct account
-    func handleTapOnNotification(messageUid: String, mailbox: Mailbox, mailboxManager: MailboxManager) async
-
-    /// Silently move mail to `archive` folder
-    func handleArchiveOnNotification(messageUid: String, mailbox: Mailbox, mailboxManager: MailboxManager) async
-
-    /// Silently move mail to `trash` folder
-    func handleDeleteOnNotification(messageUid: String, mailbox: Mailbox, mailboxManager: MailboxManager) async
-
-    /// Present a new `reply to` draft to the user with the correct account
-    func handleReplyOnNotification(messageUid: String, mailbox: Mailbox, mailboxManager: MailboxManager)
-}
-
 public struct MessageActionHandler: MessageActionHandlable {
+    private enum ErrorDomain: Error {
+        case messageNotFoundInDatabase
+    }
+
+    private enum ActionNames {
+        static let archive = "archiveClicked"
+        static let delete = "deleteClicked"
+        static let reply = "reply"
+        static let open = "open"
+
+        static let archiveExecuted = "archiveExecuted"
+        static let deleteExecuted = "deleteExecuted"
+    }
+
     @LazyInjectService private var accountManager: AccountManager
+    @LazyInjectService private var matomo: MatomoUtils
 
     func handleTapOnNotification(messageUid: String, mailbox: Mailbox, mailboxManager: MailboxManager) async {
+        matomo.track(eventWithCategory: .notificationAction, name: ActionNames.open)
+
         // Switch account if needed
         switchAccountIfNeeded(mailbox: mailbox, mailboxManager: mailboxManager)
 
-        // Open message
         NotificationCenter.default.post(name: .onUserTappedNotification,
                                         object: NotificationTappedPayload(messageId: messageUid))
     }
 
     func handleReplyOnNotification(messageUid: String, mailbox: Mailbox, mailboxManager: MailboxManager) {
+        matomo.track(eventWithCategory: .notificationAction, name: ActionNames.reply)
+
         // Switch account if needed
         switchAccountIfNeeded(mailbox: mailbox, mailboxManager: mailboxManager)
 
-        // Open reply to
         NotificationCenter.default.post(name: .onUserTappedReplyToNotification,
                                         object: NotificationTappedPayload(messageId: messageUid))
     }
 
-    func handleArchiveOnNotification(messageUid: String, mailbox: Mailbox, mailboxManager: MailboxManager) async {
-        await moveMessage(uid: messageUid, to: .archive, mailboxManager: mailboxManager)
+    func handleArchiveOnNotification(messageUid: String, mailbox: Mailbox, mailboxManager: MailboxManager) async throws {
+        matomo.track(eventWithCategory: .notificationAction, name: ActionNames.archive)
+
+        try await moveMessage(uid: messageUid, to: .archive, mailboxManager: mailboxManager)
+
+        await updateUnreadBadgeCount()
+
+        matomo.track(eventWithCategory: .notificationAction, name: ActionNames.archiveExecuted)
     }
 
-    func handleDeleteOnNotification(messageUid: String, mailbox: Mailbox, mailboxManager: MailboxManager) async {
-        await moveMessage(uid: messageUid, to: .trash, mailboxManager: mailboxManager)
+    func handleDeleteOnNotification(messageUid: String, mailbox: Mailbox, mailboxManager: MailboxManager) async throws {
+        matomo.track(eventWithCategory: .notificationAction, name: ActionNames.delete)
+
+        try await moveMessage(uid: messageUid, to: .trash, mailboxManager: mailboxManager)
+
+        await updateUnreadBadgeCount()
+
+        matomo.track(eventWithCategory: .notificationAction, name: ActionNames.deleteExecuted)
     }
 
     /// - Private
 
     /// Silently move mail to a specified folder
-    private func moveMessage(uid: String, to folderRole: FolderRole, mailboxManager: MailboxManager) async {
+    private func moveMessage(uid: String, to folderRole: FolderRole, mailboxManager: MailboxManager) async throws {
         let realm = mailboxManager.getRealm()
         realm.refresh()
 
         guard let notificationMessage = realm.object(ofType: Message.self, forPrimaryKey: uid) else {
-            // Sentry not able to load fetched mail
-            return
+            throw ErrorDomain.messageNotFoundInDatabase
         }
 
-        _ = try? await mailboxManager.move(messages: [notificationMessage.freezeIfNeeded()], to: folderRole)
+        _ = try await mailboxManager.move(messages: [notificationMessage.freezeIfNeeded()], to: folderRole)
     }
 
     /// Switch logged in account if needed, given a mailbox and a mailboxManager
@@ -96,6 +110,18 @@ public struct MessageActionHandler: MessageActionHandlable {
                 }
             } else {
                 accountManager.switchMailbox(newMailbox: mailbox)
+            }
+        }
+    }
+
+    /// Update the unread count
+    private func updateUnreadBadgeCount() async {
+        let unreadCount = await NotificationsHelper.getUnreadCount()
+        if #available(iOS 16.0, *) {
+            try? await UNUserNotificationCenter.current().setBadgeCount(unreadCount)
+        } else {
+            Task { @MainActor in
+                UIApplication.shared.applicationIconBadgeNumber = unreadCount
             }
         }
     }

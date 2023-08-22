@@ -122,6 +122,9 @@ enum ApplicationAssembly {
             },
             Factory(type: RemoteNotificationRegistrable.self) { _, _ in
                 RemoteNotificationRegistrer()
+            },
+            Factory(type: MessageActionHandlable.self) { _, _ in
+                MessageActionHandler()
             }
         ]
 
