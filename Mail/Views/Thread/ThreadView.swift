@@ -89,6 +89,7 @@ struct ThreadView: View {
             await markThreadAsReadIfNeeded(thread: thread)
         }
         .onChange(of: thread) { newValue in
+            guard newValue.uid != thread.uid else { return }
             Task {
                 await markThreadAsReadIfNeeded(thread: newValue)
             }
