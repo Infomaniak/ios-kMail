@@ -112,7 +112,7 @@ struct FolderListView: View {
         Group {
             RoleFoldersListView(folders: viewModel.roleFolders)
 
-            IKDivider(hasVerticalPadding: true, horizontalPadding: UIConstants.menuDrawerHorizontalPadding)
+            IKDivider(type: .menu)
 
             UserFoldersListView(folders: viewModel.userFolders)
         }

@@ -136,26 +136,26 @@ struct MenuDrawerView: View {
                 VStack(spacing: 0) {
                     MailboxesManagementView()
 
-                    IKDivider(hasVerticalPadding: true, horizontalPadding: UIConstants.menuDrawerHorizontalPadding)
+                    IKDivider(type: .menu)
 
                     FolderListView(mailboxManager: mailboxManager)
 
-                    IKDivider(hasVerticalPadding: true, horizontalPadding: UIConstants.menuDrawerHorizontalPadding)
+                    IKDivider(type: .menu)
 
                     MenuDrawerItemsAdvancedListView(
                         mailboxCanRestoreEmails: mailboxManager.mailbox.permissions?.canRestoreEmails == true
                     )
 
-                    IKDivider(hasVerticalPadding: true, horizontalPadding: UIConstants.menuDrawerHorizontalPadding)
+                    IKDivider(type: .menu)
 
                     MenuDrawerItemsHelpListView()
                     if mailboxManager.mailbox.isLimited, let quotas = mailboxManager.mailbox.quotas {
-                        IKDivider(hasVerticalPadding: true, horizontalPadding: UIConstants.menuDrawerHorizontalPadding)
+                        IKDivider(type: .menu)
 
                         MailboxQuotaView(quotas: quotas)
                     }
 
-                    IKDivider(hasVerticalPadding: true, horizontalPadding: UIConstants.menuDrawerHorizontalPadding)
+                    IKDivider(type: .menu)
 
                     AppVersionView()
                 }
