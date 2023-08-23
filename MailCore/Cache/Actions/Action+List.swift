@@ -79,7 +79,7 @@ extension Action: CaseIterable {
     private static func actionsForMessagesInDifferentThreads(_ messages: [Message])
         -> (quickActions: [Action], listActions: [Action]) {
         let unread = messages.allSatisfy(\.seen)
-        let quickActions: [Action] = [.openMovePanel, unread ? .markAsRead : .markAsUnread, .archive, .delete]
+            let quickActions: [Action] = [.openMovePanel, unread ? .markAsUnread : .markAsRead, .archive, .delete]
 
         let spam = messages.allSatisfy { $0.folder?.role == .spam }
         let star = messages.allSatisfy(\.flagged)
@@ -104,7 +104,7 @@ extension Action: CaseIterable {
         let tempListActions: [Action?] = [
             .openMovePanel,
             spamAction,
-            unread ? .markAsRead : .markAsUnread,
+            unread ? .markAsUnread : .markAsRead,
             archive ? .archive : .moveToInbox,
             star ? .unstar : .star
         ]

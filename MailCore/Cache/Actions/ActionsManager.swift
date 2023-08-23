@@ -99,12 +99,12 @@ public class ActionsManager: ObservableObject {
         case .archive:
             try await performMove(messages: messagesWithDuplicates, to: .archive)
         case .markAsRead:
+            try await mailboxManager.markAsSeen(messages: messagesWithDuplicates, seen: true)
+        case .markAsUnread:
             let messagesToExecuteAction = messagesWithDuplicates.lastMessagesAndDuplicatesToExecuteAction(
                 currentMailboxEmail: mailboxManager.mailbox.email
             )
-            try await mailboxManager.markAsSeen(messages: messagesToExecuteAction, seen: true)
-        case .markAsUnread:
-            try await mailboxManager.markAsSeen(messages: messagesWithDuplicates, seen: false)
+            try await mailboxManager.markAsSeen(messages: messagesToExecuteAction, seen: false)
         case .openMovePanel:
             Task { @MainActor in
                 origin.nearestMessagesToMoveSheet?.wrappedValue = messagesWithDuplicates
