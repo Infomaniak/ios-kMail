@@ -158,9 +158,9 @@ public class DraftContentManager: ObservableObject {
         }
     }
 
+    /// Load best signature from local DB
     private func loadMostFittingSignature() async throws -> Signature {
         do {
-            try await mailboxManager.refreshAllSignatures()
             let storedSignatures = mailboxManager.getStoredSignatures()
             let defaultSignature = try getDefaultSignature(userSignatures: storedSignatures)
 
