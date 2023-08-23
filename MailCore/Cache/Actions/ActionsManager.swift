@@ -30,6 +30,7 @@ extension [Message]: Identifiable {
 }
 
 extension RandomAccessCollection where Element == Message {
+    /// - Returns: The last message of the list which is not a draft and if possible not from the user's address eg. a reply
     public func lastMessageToExecuteAction(currentMailboxEmail: String) -> Message? {
         if let message = last(where: { $0.isDraft == false && $0.fromMe(currentMailboxEmail: currentMailboxEmail) == false }) {
             return message
@@ -39,20 +40,29 @@ extension RandomAccessCollection where Element == Message {
         return last
     }
 
+    /// - Returns: The `lastMessageToExecuteAction` to execute an action for each unique thread.
+    ///
+    /// - For a list of messages coming from different threads: `lastMessageToExecuteAction` for each unique thread in the given folder
+    ///
+    /// - For a list of messages all coming from the same thread: `lastMessageToExecuteAction`
     func lastMessagesAndDuplicatesToExecuteAction(currentMailboxEmail: String, currentFolder: Folder?) -> [Message] {
         let lastMessages = uniqueThreadsInFolder(currentFolder)
             .compactMap { $0.lastMessageToExecuteAction(currentMailboxEmail: currentMailboxEmail) }
-        return lastMessages + lastMessages.flatMap(\.duplicates)
+        return lastMessages.addingDuplicates()
     }
 
+    /// - Returns: The original message list and their duplicates
     func addingDuplicates() -> [Message] {
         return self + flatMap(\.duplicates)
     }
 
+    /// - Returns: An array of unique threads to which the given messages belong in a given folder
     func uniqueThreadsInFolder(_ folder: Folder?) -> [Thread] {
         return Set(flatMap(\.threads)).filter { $0.folder == folder }.toArray()
     }
 
+    /// Check if the given list is only composed of one message.
+    /// - Returns: `true` if the list contains one message and it's not a one message thread.
     func isSingleMessage(currentFolder: Folder?) -> Bool {
         guard count == 1 else {
             return false
