@@ -111,7 +111,7 @@ public final class DraftManager {
         await draftQueue.endBackgroundTask(uuid: draft.localUUID)
     }
 
-    // Set a default signature to a draft, from existing ones in DB
+    /// Set a default signature to a draft, from existing ones in DB
     private func setDefaultSignature(draft: Draft, mailboxManager: MailboxManager) async -> Draft? {
         let storedSignatures = mailboxManager.getStoredSignatures()
         guard let defaultSignature = storedSignatures.defaultSignature else {
