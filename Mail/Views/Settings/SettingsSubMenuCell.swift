@@ -47,7 +47,7 @@ struct SettingsSubMenuCell<Content: View>: View {
                     }
                 }
                 Spacer()
-                ChevronIcon(style: .right, color: .secondary)
+                ChevronIcon(style: .right)
             }
         }
     }

@@ -51,7 +51,7 @@ struct UserFoldersListView: View {
                     }
                 } label: {
                     HStack(spacing: 12) {
-                        ChevronIcon(style: isExpanded ? .up : .down, color: .secondary)
+                        ChevronIcon(style: isExpanded ? .up : .down)
                         Text(MailResourcesStrings.Localizable.buttonFolders)
                             .textStyle(.bodySmallSecondary)
                         Spacer()
