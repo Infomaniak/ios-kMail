@@ -28,6 +28,7 @@ public struct ActionOrigin {
     }
 
     private(set) var type: ActionOriginType
+    private(set) var folder: Folder?
     private(set) var nearestMessagesActionsPanel: Binding<[Message]?>?
     private(set) var nearestFlushAlert: Binding<FlushAlertState?>?
     private(set) var nearestMessagesToMoveSheet: Binding<[Message]?>?
@@ -35,14 +36,18 @@ public struct ActionOrigin {
     private(set) var nearestReportedForPhishingMessageAlert: Binding<Message?>?
     private(set) var nearestReportedForDisplayProblemMessageAlert: Binding<Message?>?
 
-    public static let toolbar = ActionOrigin(type: .toolbar)
+    public static func toolbar(originFolder: Folder? = nil) -> ActionOrigin {
+        return ActionOrigin(type: .toolbar, folder: originFolder)
+    }
 
-    public static func floatingPanel(nearestMessagesToMoveSheet: Binding<[Message]?>? = nil,
+    public static func floatingPanel(originFolder: Folder? = nil,
+                                     nearestMessagesToMoveSheet: Binding<[Message]?>? = nil,
                                      nearestReportJunkMessageActionsPanel: Binding<Message?>? = nil,
                                      nearestReportedForPhishingMessageAlert: Binding<Message?>? = nil,
                                      nearestReportedForDisplayProblemMessageAlert: Binding<Message?>? = nil) -> ActionOrigin {
         return ActionOrigin(
             type: .floatingPanel,
+            folder: originFolder,
             nearestMessagesToMoveSheet: nearestMessagesToMoveSheet,
             nearestReportJunkMessageActionsPanel: nearestReportJunkMessageActionsPanel,
             nearestReportedForPhishingMessageAlert: nearestReportedForPhishingMessageAlert,
@@ -50,11 +55,19 @@ public struct ActionOrigin {
         )
     }
 
-    public static func multipleSelection(nearestFlushAlert: Binding<FlushAlertState?>? = nil) -> ActionOrigin {
-        return ActionOrigin(type: .multipleSelection, nearestFlushAlert: nearestFlushAlert)
+    public static func multipleSelection(originFolder: Folder? = nil,
+                                         nearestFlushAlert: Binding<FlushAlertState?>? = nil) -> ActionOrigin {
+        return ActionOrigin(type: .multipleSelection, folder: originFolder, nearestFlushAlert: nearestFlushAlert)
     }
 
-    public static func swipe(nearestMessagesActionsPanel: Binding<[Message]?>? = nil, nearestMessagesToMoveSheet: Binding<[Message]?>? = nil) -> ActionOrigin {
-        return ActionOrigin(type: .swipe, nearestMessagesActionsPanel: nearestMessagesActionsPanel, nearestMessagesToMoveSheet: nearestMessagesToMoveSheet)
+    public static func swipe(
+        originFolder: Folder? = nil,
+        nearestMessagesActionsPanel: Binding<[Message]?>? = nil,
+        nearestMessagesToMoveSheet: Binding<[Message]?>? = nil
+    ) -> ActionOrigin {
+        return ActionOrigin(type: .swipe,
+                            folder: originFolder,
+                            nearestMessagesActionsPanel: nearestMessagesActionsPanel,
+                            nearestMessagesToMoveSheet: nearestMessagesToMoveSheet)
     }
 }

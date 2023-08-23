@@ -83,7 +83,7 @@ struct ActionsView_Previews: PreviewProvider {
         ActionsView(
             mailboxManager: PreviewHelper.sampleMailboxManager,
             target: PreviewHelper.sampleThread.messages.toArray(),
-            origin: .toolbar
+            origin: .toolbar(originFolder: nil)
         )
         .accentColor(AccentColor.pink.primary.swiftUIColor)
     }

@@ -106,7 +106,7 @@ struct ThreadView: View {
                         try await actionsManager.performAction(
                             target: messages,
                             action: thread.flagged ? .unstar : .star,
-                            origin: .toolbar
+                            origin: .toolbar(originFolder: thread.folder)
                         )
                     }
                 } label: {
@@ -132,7 +132,7 @@ struct ThreadView: View {
                 }
                 Spacer()
             }
-            ActionsPanelButton(threads: [thread]) {
+            ActionsPanelButton(messages: thread.messages.toArray(), originFolder: thread.folder) {
                 ToolbarButtonLabel(text: MailResourcesStrings.Localizable.buttonMore,
                                    icon: MailResourcesAsset.plusActions.swiftUIImage)
             }
@@ -151,7 +151,11 @@ struct ThreadView: View {
 
     private func markThreadAsReadIfNeeded(thread: Thread) async {
         guard thread.hasUnseenMessages else { return }
-        try? await actionsManager.performAction(target: thread.messages.toArray(), action: .markAsRead, origin: .toolbar)
+        try? await actionsManager.performAction(
+            target: thread.messages.toArray(),
+            action: .markAsRead,
+            origin: .toolbar(originFolder: thread.folder)
+        )
     }
 
     private func didTap(action: Action) {
@@ -167,7 +171,11 @@ struct ThreadView: View {
         }
 
         Task {
-            try await actionsManager.performAction(target: messages, action: action, origin: .toolbar)
+            try await actionsManager.performAction(
+                target: messages,
+                action: action,
+                origin: .toolbar(originFolder: thread.folder)
+            )
             if action == .archive || action == .delete {
                 dismiss()
             }

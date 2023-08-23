@@ -50,6 +50,7 @@ struct MoveEmailView: View {
     @State private var searchFilter = ""
 
     let movedMessages: [Message]
+    let originFolder: Folder?
 
     var body: some View {
         ScrollView {
@@ -85,7 +86,7 @@ struct MoveEmailView: View {
 
     private func move(to folder: Folder) {
         Task {
-            try await actionsManager.performMove(messages: movedMessages, to: folder)
+            try await actionsManager.performMove(messages: movedMessages, from: originFolder, to: folder)
         }
         dismissModal()
     }
@@ -101,7 +102,7 @@ struct MoveEmailView: View {
 
 struct MoveMessageView_Previews: PreviewProvider {
     static var previews: some View {
-        MoveEmailView(movedMessages: [PreviewHelper.sampleMessage])
+        MoveEmailView(movedMessages: [PreviewHelper.sampleMessage], originFolder: nil)
             .environmentObject(PreviewHelper.sampleMailboxManager)
     }
 }

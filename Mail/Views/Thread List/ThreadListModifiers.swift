@@ -155,7 +155,7 @@ struct ThreadListToolbar: ViewModifier {
                                 try await actionsManager.performAction(
                                     target: allMessages,
                                     action: action,
-                                    origin: .multipleSelection(nearestFlushAlert: $flushAlert)
+                                    origin: .multipleSelection(originFolder: viewModel.folder, nearestFlushAlert: $flushAlert)
                                 )
                             }
                         }
@@ -171,7 +171,7 @@ struct ThreadListToolbar: ViewModifier {
                 }
                 .disabled(multipleSelectionViewModel.selectedItems.isEmpty)
             }
-            .actionsPanel(messages: $multipleSelectedMessages) {
+            .actionsPanel(messages: $multipleSelectedMessages, originFolder: viewModel.folder) {
                 multipleSelectionViewModel.isEnabled = false
             }
             .navigationTitle(

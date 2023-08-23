@@ -22,24 +22,18 @@ import MailResources
 import SwiftUI
 
 struct ActionsPanelButton<Content: View>: View {
-    @State private var messages: [Message]?
+    @State private var actionMessages: [Message]?
 
-    var message: Message?
-    var threads: [Thread]?
+    let messages: [Message]
+    let originFolder: Folder?
     @ViewBuilder var label: () -> Content
 
     var body: some View {
         Button {
-            if let message {
-                messages = [message]
-            } else if let threads {
-                messages = threads.flatMap(\.messages)
-            } else {
-                DDLogWarn("MoreButton has no action target, did you forget to set message or threads ?")
-            }
+            actionMessages = messages
         } label: {
             label()
         }
-        .actionsPanel(messages: $messages)
+        .actionsPanel(messages: $actionMessages, originFolder: originFolder)
     }
 }
