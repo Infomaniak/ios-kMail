@@ -221,7 +221,7 @@ public class ActionsManager: ObservableObject {
         }
 
         Task { @MainActor in
-            navigationState?.messageReply = MessageReply(message: replyingMessage, replyMode: .replyAll)
+            navigationState?.messageReply = MessageReply(message: replyingMessage, replyMode: mode)
         }
     }
 
