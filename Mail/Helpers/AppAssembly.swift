@@ -103,6 +103,9 @@ enum ApplicationAssembly {
             },
             Factory(type: TokenStore.self) { _, _ in
                 TokenStore()
+            },
+            Factory(type: NotificationActionsRegistrable.self) { _, _ in
+                NotificationActionsRegistrer()
             }
         ]
 
@@ -119,6 +122,9 @@ enum ApplicationAssembly {
             },
             Factory(type: RemoteNotificationRegistrable.self) { _, _ in
                 RemoteNotificationRegistrer()
+            },
+            Factory(type: MessageActionHandlable.self) { _, _ in
+                MessageActionHandler()
             }
         ]
 

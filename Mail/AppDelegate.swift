@@ -38,13 +38,16 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
                      willFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil) -> Bool {
         DDLogInfo("Application starting in foreground ? \(applicationState.applicationState != .background)")
 
+        // Register actions for notifications of incoming emails.
+        @InjectService var notificationActions: NotificationActionsRegistrable
+        notificationActions.registerEmailActionNotificationGroup()
+
         UNUserNotificationCenter.current().delegate = notificationCenterDelegate
         Task {
             // Ask permission app launch
             await NotificationsHelper.askForPermissions()
         }
         application.registerForRemoteNotifications()
-
         return true
     }
 

@@ -114,17 +114,31 @@ struct SplitView: View {
         .onOpenURL { url in
             handleOpenUrl(url)
         }
-        .onReceive(NotificationCenter.default.publisher(for: .onUserTappedNotification)) { notification in
+        .onReceive(NotificationCenter.default.publisher(for: .onUserTappedNotification).receive(on: RunLoop.main)) { notification in
             guard let notificationPayload = notification.object as? NotificationTappedPayload else { return }
             let realm = mailboxManager.getRealm()
             realm.refresh()
 
             navigationDrawerController.close()
 
-            let tappedNotificationMessage = realm.object(ofType: Message.self, forPrimaryKey: notificationPayload.messageId)
+            let tappedNotificationMessage = realm.object(ofType: Message.self, forPrimaryKey: notificationPayload.messageId)?.freezeIfNeeded()
             // Original parent should always be in the inbox but maybe change in a later stage to always find the parent in inbox
             if let tappedNotificationThread = tappedNotificationMessage?.originalThread {
                 navigationState.threadPath = [tappedNotificationThread]
+            } else {
+                snackbarPresenter.show(message: MailError.localMessageNotFound.errorDescription)
+            }
+        }
+        .onReceive(NotificationCenter.default.publisher(for: .onUserTappedReplyToNotification).receive(on: RunLoop.main)) { notification in
+            guard let notificationPayload = notification.object as? NotificationTappedPayload else { return }
+            let realm = mailboxManager.getRealm()
+            realm.refresh()
+
+            navigationDrawerController.close()
+
+            let tappedNotificationMessage = realm.object(ofType: Message.self, forPrimaryKey: notificationPayload.messageId)?.freezeIfNeeded()
+            if let tappedNotificationMessage {
+                navigationState.messageReply = MessageReply(message: tappedNotificationMessage, replyMode: .reply)
             } else {
                 snackbarPresenter.show(message: MailError.localMessageNotFound.errorDescription)
             }
