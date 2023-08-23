@@ -113,10 +113,11 @@ extension Action: CaseIterable {
     }
 
     public static func actionsForMessages(_ messages: [Message],
+                                          originFolder: Folder?,
                                           userIsStaff: Bool) -> (quickActions: [Action], listActions: [Action]) {
         if messages.count == 1, let message = messages.first {
             return actionsForMessage(message, userIsStaff: userIsStaff)
-        } else if Set(messages.compactMap(\.originalThread?.id)).count > 1 {
+        } else if messages.uniqueThreadsInFolder(originFolder).count > 1 {
             return actionsForMessagesInDifferentThreads(messages)
         } else {
             return actionsForMessagesInSameThreads(messages)

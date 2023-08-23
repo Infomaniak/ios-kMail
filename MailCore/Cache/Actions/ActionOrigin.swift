@@ -27,8 +27,8 @@ public struct ActionOrigin {
         case multipleSelection
     }
 
-    private(set) var type: ActionOriginType
-    private(set) var folder: Folder?
+    public private(set) var type: ActionOriginType
+    public private(set) var folder: Folder?
     private(set) var nearestMessagesActionsPanel: Binding<[Message]?>?
     private(set) var nearestFlushAlert: Binding<FlushAlertState?>?
     private(set) var nearestMessagesToMoveSheet: Binding<[Message]?>?
