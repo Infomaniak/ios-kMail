@@ -63,7 +63,7 @@ struct MailboxesManagementView: View {
                         .lineLimit(1)
                     Spacer()
                     if hasOtherMailboxes {
-                        ChevronIcon(style: navigationDrawerState.showMailboxes ? .up : .down, color: .primary)
+                        ChevronIcon(style: navigationDrawerState.showMailboxes ? .up : .down)
                     }
                 }
                 .environment(\.isEnabled, true)
