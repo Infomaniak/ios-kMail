@@ -46,7 +46,7 @@ struct MailboxesManagementView: View {
     }
 
     var body: some View {
-        VStack(alignment: .leading) {
+        VStack(alignment: .leading, spacing: 0) {
             Button {
                 withAnimation {
                     navigationDrawerState.showMailboxes.toggle()
@@ -60,18 +60,20 @@ struct MailboxesManagementView: View {
                         .scaledToFit()
                         .frame(width: 24, height: 24)
                         .foregroundColor(.accentColor)
-                        .padding(.trailing, 16)
+                        .padding(.trailing, UIConstants.paddingRegular)
+
                     Text(mailboxManager.mailbox.email)
                         .textStyle(navigationDrawerState.showMailboxes ? .bodyMediumAccent : .bodyMedium)
                         .lineLimit(1)
-                    Spacer()
+
+                    Spacer(minLength: UIConstants.paddingRegular)
+
                     if hasOtherMailboxes {
                         ChevronIcon(style: navigationDrawerState.showMailboxes ? .up : .down)
                     }
                 }
                 .environment(\.isEnabled, true)
-                .padding(.vertical, UIConstants.menuDrawerVerticalPadding)
-                .padding(.horizontal, UIConstants.menuDrawerHorizontalPadding)
+                .padding(UIConstants.paddingRegular)
             }
             .disabled(!hasOtherMailboxes)
 
@@ -82,7 +84,6 @@ struct MailboxesManagementView: View {
                         excludedMailboxIds: [mailboxManager.mailbox.mailboxId]
                     ) { mailbox in
                         MailboxCell(mailbox: mailbox)
-                            .padding(.horizontal, UIConstants.menuDrawerHorizontalPadding)
                             .mailboxCellStyle(.menuDrawer)
                     }
                 }

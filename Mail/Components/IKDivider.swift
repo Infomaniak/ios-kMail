@@ -27,7 +27,7 @@ struct IKDivider: View {
         var insets: EdgeInsets {
             switch self {
             case .menu:
-                return EdgeInsets(top: 8, leading: 8, bottom: 8, trailing: 0)
+                return EdgeInsets(top: 8, leading: 0, bottom: 8, trailing: 0)
             case .item:
                 return EdgeInsets(top: 0, leading: 16, bottom: 0, trailing: 16)
             }

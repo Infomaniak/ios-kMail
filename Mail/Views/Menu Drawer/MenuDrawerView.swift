@@ -149,6 +149,7 @@ struct MenuDrawerView: View {
                     IKDivider(type: .menu)
 
                     MenuDrawerItemsHelpListView()
+
                     if mailboxManager.mailbox.isLimited, let quotas = mailboxManager.mailbox.quotas {
                         IKDivider(type: .menu)
 
@@ -159,7 +160,8 @@ struct MenuDrawerView: View {
 
                     AppVersionView()
                 }
-                .padding(.vertical, 16)
+                .padding(.vertical, UIConstants.paddingSmall)
+                .padding(.leading, UIConstants.paddingSmall)
             }
         }
         .background(MailResourcesAsset.backgroundSecondaryColor.swiftUIColor.ignoresSafeArea())

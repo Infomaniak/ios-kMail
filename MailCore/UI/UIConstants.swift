@@ -63,7 +63,7 @@ public enum UIConstants {}
 public extension UIConstants {
     static let paddingLarge: CGFloat = 48
     static let paddingMedium: CGFloat = 24
-    static let paddingStandard: CGFloat = 16
+    static let paddingRegular: CGFloat = 16
     static let paddingIntermediate: CGFloat = 12
     static let paddingSmall: CGFloat = 8
     static let paddingVerySmall: CGFloat = 4
@@ -97,6 +97,7 @@ public extension UIConstants {
     static let menuDrawerMaxWidth: CGFloat = 352
     static let menuDrawerTrailingSpacing: CGFloat = 64
     static let menuDrawerLogoHeight: CGFloat = 48
+    static let menuDrawerSubFolderPadding: CGFloat = 24
 
     static let unreadIconSize: CGFloat = 8
     static let checkboxSize: CGFloat = 32
@@ -141,7 +142,6 @@ public extension UIConstants {
 
     static let menuDrawerHorizontalPadding: CGFloat = 24
     static let menuDrawerVerticalPadding: CGFloat = 14
-    static let menuDrawerSubFolderPadding: CGFloat = 16
     static let menuDrawerHorizontalItemSpacing: CGFloat = 16
 
     static let floatingButtonBottomPadding: CGFloat = 24

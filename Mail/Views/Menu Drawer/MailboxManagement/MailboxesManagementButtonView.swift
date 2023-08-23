@@ -49,18 +49,16 @@ struct MailboxesManagementButtonView: View {
         Button {
             handleAction?()
         } label: {
-            HStack {
-                HStack(spacing: 16) {
-                    icon
-                        .resizable()
-                        .scaledToFit()
-                        .frame(width: 24, height: 24)
-                        .foregroundColor(.accentColor)
-                    Text(mailbox.email)
-                        .textStyle(.body)
-                        .lineLimit(1)
-                }
-                .frame(maxWidth: .infinity, alignment: .leading)
+            HStack(spacing: UIConstants.paddingRegular) {
+                icon
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 24, height: 24)
+                    .foregroundColor(.accentColor)
+                Text(mailbox.email)
+                    .textStyle(.body)
+                    .lineLimit(1)
+                    .frame(maxWidth: .infinity, alignment: .leading)
 
                 if !mailbox.isAvailable && style != .blockedPassword && style != .locked {
                     MailResourcesAsset.warning.swiftUIImage
@@ -87,7 +85,7 @@ struct MailboxesManagementButtonView: View {
                 }
             }
         }
-        .padding(.vertical, 10)
+        .padding(UIConstants.paddingRegular)
     }
 }
 

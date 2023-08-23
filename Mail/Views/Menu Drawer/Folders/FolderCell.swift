@@ -147,7 +147,7 @@ struct FolderCellContent: View {
     }
 
     var body: some View {
-        HStack(spacing: UIConstants.menuDrawerHorizontalItemSpacing) {
+        HStack(spacing: UIConstants.paddingIntermediate) {
             if canCollapseSubFolders && cellType == .menuDrawer {
                 Button(action: collapseFolder) {
                     ChevronIcon(style: folder.isExpanded ? .up : .down)
@@ -156,23 +156,24 @@ struct FolderCellContent: View {
                 .accessibilityLabel(MailResourcesStrings.Localizable.contentDescriptionButtonExpandFolder(folder.name))
             }
 
-            folder.icon
-                .resizable()
-                .scaledToFit()
-                .frame(width: 24, height: 24)
-                .foregroundColor(.accentColor)
+            HStack(spacing: UIConstants.paddingRegular) {
+                folder.icon
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 24, height: 24)
+                    .foregroundColor(.accentColor)
 
-            Text(folder.localizedName)
-                .textStyle(textStyle)
-                .lineLimit(1)
+                Text(folder.localizedName)
+                    .textStyle(textStyle)
+                    .lineLimit(1)
 
-            Spacer()
+                Spacer(minLength: UIConstants.paddingRegular)
 
-            accessory
+                accessory
+            }
         }
-        .padding(.vertical, 14)
-        .padding(.horizontal, UIConstants.menuDrawerHorizontalPadding)
         .padding(.leading, UIConstants.menuDrawerSubFolderPadding * CGFloat(level))
+        .padding(UIConstants.paddingRegular)
         .background(background)
     }
 
@@ -198,7 +199,7 @@ struct FolderCellContent: View {
     @ViewBuilder
     private var background: some View {
         if cellType == .menuDrawer {
-            SelectionBackground(selectionType: isCurrentFolder ? .folder : .none)
+            SelectionBackground(selectionType: isCurrentFolder ? .folder : .none, paddingLeading: 0)
         }
     }
 
