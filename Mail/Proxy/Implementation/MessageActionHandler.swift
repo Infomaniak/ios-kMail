@@ -63,6 +63,8 @@ public struct MessageActionHandler: MessageActionHandlable {
     }
 
     func handleArchiveOnNotification(messageUid: String, mailbox: Mailbox, mailboxManager: MailboxManager) async throws {
+        let uiBackgroundTask = await UIApplicationBackgroundTaskHelper(identifier: #function + UUID().uuidString)
+
         matomo.track(eventWithCategory: .notificationAction, name: ActionNames.archive)
 
         try await moveMessage(uid: messageUid, to: .archive, mailboxManager: mailboxManager)
@@ -70,9 +72,13 @@ public struct MessageActionHandler: MessageActionHandlable {
         await updateUnreadBadgeCount()
 
         matomo.track(eventWithCategory: .notificationAction, name: ActionNames.archiveExecuted)
+
+        await uiBackgroundTask.end()
     }
 
     func handleDeleteOnNotification(messageUid: String, mailbox: Mailbox, mailboxManager: MailboxManager) async throws {
+        let uiBackgroundTask = await UIApplicationBackgroundTaskHelper(identifier: #function + UUID().uuidString)
+
         matomo.track(eventWithCategory: .notificationAction, name: ActionNames.delete)
 
         try await moveMessage(uid: messageUid, to: .trash, mailboxManager: mailboxManager)
@@ -80,6 +86,8 @@ public struct MessageActionHandler: MessageActionHandlable {
         await updateUnreadBadgeCount()
 
         matomo.track(eventWithCategory: .notificationAction, name: ActionNames.deleteExecuted)
+
+        await uiBackgroundTask.end()
     }
 
     /// - Private
@@ -124,5 +132,58 @@ public struct MessageActionHandler: MessageActionHandlable {
                 UIApplication.shared.applicationIconBadgeNumber = unreadCount
             }
         }
+    }
+}
+
+/// Something to generate and track an UIApplication.BackgroundTask in a modern Async/Await context.
+///
+/// TODO: move to CoreUI
+@available(iOSApplicationExtension, unavailable)
+final class UIApplicationBackgroundTaskHelper {
+    /// A background task identifier
+    private let identifier: String
+
+    /// Callback to execute on a task expiration. Performed on MainActor.
+    private var expirationHandler: (() async -> Void)?
+
+    private var _state: UIBackgroundTaskIdentifier = .invalid
+    public var state: UIBackgroundTaskIdentifier? {
+        guard _state != .invalid else {
+            return nil
+        }
+
+        return _state
+    }
+
+    public init(identifier: String, expirationHandler: (() -> Void)? = nil) async {
+        self.identifier = identifier
+        self.expirationHandler = expirationHandler
+        await begin()
+    }
+
+    /// perform the beginBackgroundTask
+    private func begin() async {
+        _state = await UIApplication.shared.beginBackgroundTask(withName: identifier) {
+            guard let currentState = self.state else {
+                return
+            }
+
+            self._state = .invalid
+            Task { @MainActor in
+                await self.expirationHandler?()
+
+                UIApplication.shared.endBackgroundTask(currentState)
+            }
+        }
+    }
+
+    /// Terminate a background task
+    public func end() async {
+        guard let currentState = state else {
+            return
+        }
+
+        _state = .invalid
+        await UIApplication.shared.endBackgroundTask(currentState)
     }
 }
