@@ -114,7 +114,7 @@ struct SplitView: View {
         }
         .onChange(of: scenePhase) { newScenePhase in
             guard newScenePhase == .active else { return }
-            Task.detached {
+            Task {
                 try? await mailboxManager.folders()
                 try? await mailboxManager.refreshAllSignatures()
             }
