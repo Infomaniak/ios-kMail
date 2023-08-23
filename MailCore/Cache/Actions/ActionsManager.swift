@@ -215,13 +215,12 @@ public class ActionsManager: ObservableObject {
     }
 
     private func replyOrForward(messages: [Message], mode: ReplyMode) throws {
-        assert(messages.count == 1, "Cannot reply to more than one message")
         guard let replyingMessage = messages.lastMessageToExecuteAction(currentMailboxEmail: mailboxManager.mailbox.email) else {
             throw MailError.localMessageNotFound
         }
 
         Task { @MainActor in
-            navigationState?.messageReply = MessageReply(message: replyingMessage, replyMode: .replyAll)
+            navigationState?.messageReply = MessageReply(message: replyingMessage, replyMode: mode)
         }
     }
 
