@@ -99,7 +99,7 @@ public extension UIConstants {
 
     static let componentsMaxWidth: CGFloat = 496
 
-    static let chipInsets = UIEdgeInsets(top: 4, left: 8, bottom: 4, right: 8)
+    static let recipientChipInsets = UIEdgeInsets(top: 4, left: 8, bottom: 4, right: 8)
 }
 
 // MARK: - Animations
@@ -134,7 +134,7 @@ public extension UIConstants {
     static let selectionBackgroundVerticalPadding: CGFloat = 2
 
     static let composeViewHeaderCellVerticalSpacing: CGFloat = 12
-    static let composeViewHeaderCellLargeVerticalSpacing = composeViewHeaderCellVerticalSpacing + chipInsets.top
+    static let composeViewHeaderCellLargeVerticalSpacing = composeViewHeaderCellVerticalSpacing + recipientChipInsets.top
 
     static let bottomBarVerticalPadding: CGFloat = 8
     static let bottomBarSmallVerticalPadding: CGFloat = 4

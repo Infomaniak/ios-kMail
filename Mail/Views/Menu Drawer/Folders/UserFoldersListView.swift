@@ -43,14 +43,14 @@ struct UserFoldersListView: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            HStack(spacing: UIPadding.intermediate) {
+            HStack(spacing: UIPadding.menuDrawerCellChevronSpacing) {
                 Button {
                     withAnimation {
                         isExpanded.toggle()
                         matomo.track(eventWithCategory: .menuDrawer, name: "customFolders", value: isExpanded)
                     }
                 } label: {
-                    HStack(spacing: UIPadding.intermediate) {
+                    HStack(spacing: UIPadding.menuDrawerCellChevronSpacing) {
                         ChevronIcon(style: isExpanded ? .up : .down)
                         Text(MailResourcesStrings.Localizable.buttonFolders)
                             .textStyle(.bodySmallSecondary)
