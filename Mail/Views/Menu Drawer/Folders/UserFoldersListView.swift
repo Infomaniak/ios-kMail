@@ -43,14 +43,14 @@ struct UserFoldersListView: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            HStack(spacing: UIConstants.paddingIntermediate) {
+            HStack(spacing: UIPadding.intermediate) {
                 Button {
                     withAnimation {
                         isExpanded.toggle()
                         matomo.track(eventWithCategory: .menuDrawer, name: "customFolders", value: isExpanded)
                     }
                 } label: {
-                    HStack(spacing: UIConstants.paddingIntermediate) {
+                    HStack(spacing: UIPadding.intermediate) {
                         ChevronIcon(style: isExpanded ? .up : .down)
                         Text(MailResourcesStrings.Localizable.buttonFolders)
                             .textStyle(.bodySmallSecondary)
@@ -73,13 +73,13 @@ struct UserFoldersListView: View {
                     CreateFolderView(mode: .create)
                 }
             }
-            .padding(UIConstants.paddingRegular)
+            .padding(UIPadding.regular)
 
             if isExpanded {
                 if folders.isEmpty {
                     Text(MailResourcesStrings.Localizable.noFolderTitle)
                         .textStyle(.bodySmallSecondary)
-                        .padding(UIConstants.paddingRegular)
+                        .padding(UIPadding.regular)
                 } else {
                     ForEach(folders) { folder in
                         FolderCell(folder: folder,

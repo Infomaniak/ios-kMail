@@ -49,7 +49,7 @@ struct MailboxesManagementButtonView: View {
         Button {
             handleAction?()
         } label: {
-            HStack(spacing: UIConstants.paddingRegular) {
+            HStack(spacing: UIPadding.regular) {
                 icon
                     .resizable()
                     .scaledToFit()
@@ -85,7 +85,6 @@ struct MailboxesManagementButtonView: View {
                 }
             }
         }
-        .padding(UIConstants.paddingRegular)
     }
 }
 

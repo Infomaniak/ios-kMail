@@ -44,7 +44,7 @@ struct EmptyStateView: View {
                 .multilineTextAlignment(.center)
         }
         .padding(.horizontal, 48)
-        .padding(.bottom, withFABPadding ? UIConstants.floatingButtonBottomPadding + 56 : 0)
+        .padding(.bottom, withFABPadding ? UIPadding.floatingButtonBottom + 56 : 0)
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .matomoView(view: [MatomoUtils.View.threadListView.displayName, "Empty\(matomoName)View"])
     }

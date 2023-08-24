@@ -60,20 +60,20 @@ struct MailboxesManagementView: View {
                         .scaledToFit()
                         .frame(width: 24, height: 24)
                         .foregroundColor(.accentColor)
-                        .padding(.trailing, UIConstants.paddingRegular)
+                        .padding(.trailing, UIPadding.regular)
 
                     Text(mailboxManager.mailbox.email)
                         .textStyle(navigationDrawerState.showMailboxes ? .bodyMediumAccent : .bodyMedium)
                         .lineLimit(1)
 
-                    Spacer(minLength: UIConstants.paddingRegular)
+                    Spacer(minLength: UIPadding.regular)
 
                     if hasOtherMailboxes {
                         ChevronIcon(style: navigationDrawerState.showMailboxes ? .up : .down)
                     }
                 }
                 .environment(\.isEnabled, true)
-                .padding(UIConstants.paddingRegular)
+                .padding(UIPadding.regular)
             }
             .disabled(!hasOtherMailboxes)
 
@@ -87,6 +87,7 @@ struct MailboxesManagementView: View {
                             .mailboxCellStyle(.menuDrawer)
                     }
                 }
+                .padding(UIPadding.regular)
                 .task {
                     try? await updateAccount()
                 }

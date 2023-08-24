@@ -113,14 +113,14 @@ struct MenuDrawerItemsListView<Content: View>: View {
                         }
                     }
                 } label: {
-                    HStack(spacing: UIConstants.paddingIntermediate) {
+                    HStack(spacing: UIPadding.intermediate) {
                         ChevronIcon(style: isExpanded ? .up : .down)
                         Text(title)
                             .textStyle(.bodySmallSecondary)
                         Spacer()
                     }
                 }
-                .padding(UIConstants.paddingRegular)
+                .padding(UIPadding.regular)
             }
 
             if title == nil || isExpanded {
