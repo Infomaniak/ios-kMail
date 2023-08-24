@@ -85,8 +85,9 @@ struct MoveEmailView: View {
     }
 
     private func move(to folder: Folder) {
+        let frozenOriginFolder = originFolder?.freezeIfNeeded()
         Task {
-            try await actionsManager.performMove(messages: movedMessages, from: originFolder, to: folder)
+            try await actionsManager.performMove(messages: movedMessages, from: frozenOriginFolder, to: folder)
         }
         dismissModal()
     }

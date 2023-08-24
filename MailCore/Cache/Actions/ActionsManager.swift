@@ -42,7 +42,8 @@ extension RandomAccessCollection where Element == Message {
 
     /// - Returns: The `lastMessageToExecuteAction` to execute an action for each unique thread.
     ///
-    /// - For a list of messages coming from different threads: `lastMessageToExecuteAction` for each unique thread in the given folder
+    /// - For a list of messages coming from different threads: `lastMessageToExecuteAction` for each unique thread in the given
+    /// folder
     ///
     /// - For a list of messages all coming from the same thread: `lastMessageToExecuteAction`
     func lastMessagesAndDuplicatesToExecuteAction(currentMailboxEmail: String, currentFolder: Folder?) -> [Message] {
@@ -58,7 +59,7 @@ extension RandomAccessCollection where Element == Message {
 
     /// - Returns: An array of unique threads to which the given messages belong in a given folder
     func uniqueThreadsInFolder(_ folder: Folder?) -> [Thread] {
-        return Set(flatMap(\.threads)).filter { $0.folder == folder }.toArray()
+        return Set(flatMap(\.threads)).filter { $0.folder?.id == folder?.id }.toArray()
     }
 
     /// Check if the given list is only composed of one message.

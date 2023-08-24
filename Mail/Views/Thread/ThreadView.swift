@@ -102,11 +102,12 @@ struct ThreadView: View {
             ToolbarItem(placement: .navigationBarTrailing) {
                 Button {
                     let messages = thread.messages.freeze().toArray()
+                    let originFolder = thread.folder?.freezeIfNeeded()
                     Task {
                         try await actionsManager.performAction(
                             target: messages,
                             action: thread.flagged ? .unstar : .star,
-                            origin: .toolbar(originFolder: thread.folder)
+                            origin: .toolbar(originFolder: originFolder)
                         )
                     }
                 } label: {
@@ -151,10 +152,12 @@ struct ThreadView: View {
 
     private func markThreadAsReadIfNeeded(thread: Thread) async {
         guard thread.hasUnseenMessages else { return }
+        
+        let originFolder = thread.folder?.freezeIfNeeded()
         try? await actionsManager.performAction(
             target: thread.messages.toArray(),
             action: .markAsRead,
-            origin: .toolbar(originFolder: thread.folder)
+            origin: .toolbar(originFolder: originFolder)
         )
     }
 
@@ -170,11 +173,12 @@ struct ThreadView: View {
             return
         }
 
+        let originFolder = thread.folder?.freezeIfNeeded()
         Task {
             try await actionsManager.performAction(
                 target: messages,
                 action: action,
-                origin: .toolbar(originFolder: thread.folder)
+                origin: .toolbar(originFolder: originFolder)
             )
             if action == .archive || action == .delete {
                 dismiss()

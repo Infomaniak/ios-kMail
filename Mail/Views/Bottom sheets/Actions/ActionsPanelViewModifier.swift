@@ -46,7 +46,7 @@ struct ActionsPanelViewModifier: ViewModifier {
 
     private var origin: ActionOrigin {
         .floatingPanel(
-            originFolder: originFolder,
+            originFolder: originFolder?.freezeIfNeeded(),
             nearestMessagesToMoveSheet: $messagesToMove,
             nearestReportJunkMessageActionsPanel: $reportForJunkMessage,
             nearestReportedForPhishingMessageAlert: $reportedForPhishingMessage,
