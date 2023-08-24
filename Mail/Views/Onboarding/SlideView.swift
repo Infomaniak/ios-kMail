@@ -47,7 +47,7 @@ struct SlideView: View {
                     .ignoresSafeArea(edges: .top)
 
                 VStack(spacing: 0) {
-                    Spacer(minLength: UIConstants.onboardingLogoHeight + UIConstants.onboardingVerticalTopPadding)
+                    Spacer(minLength: UIConstants.onboardingLogoHeight + UIPadding.large)
 
                     Group {
                         if let asset = slide.asset {

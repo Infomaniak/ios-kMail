@@ -28,6 +28,10 @@ public enum UIPadding {
 }
 
 public extension UIPadding {
+    // MARK: Onboarding
+
+    static let onboardingLogoTop: CGFloat = UIPadding.medium
+
     // MARK: Menu
 
     static let menuDrawerCell = UIPadding.regular

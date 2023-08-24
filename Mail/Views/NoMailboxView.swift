@@ -39,7 +39,7 @@ struct NoMailboxView: View {
                         .resizable()
                         .scaledToFit()
                         .frame(height: UIConstants.onboardingLogoHeight)
-                        .padding(.top, UIConstants.onboardingLogoPaddingTop)
+                        .padding(.top, UIPadding.onboardingLogoTop)
                 }
 
             VStack(spacing: 24) {

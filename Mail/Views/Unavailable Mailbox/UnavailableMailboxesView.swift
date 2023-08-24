@@ -38,7 +38,7 @@ struct UnavailableMailboxesView: View {
                             .resizable()
                             .scaledToFit()
                             .frame(height: UIConstants.onboardingLogoHeight)
-                            .padding(.top, UIConstants.onboardingLogoPaddingTop)
+                            .padding(.top, UIPadding.onboardingLogoTop)
 
                         MailResourcesAsset.mailboxError.swiftUIImage
                             .resizable()

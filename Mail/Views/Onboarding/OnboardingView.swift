@@ -150,10 +150,10 @@ final class LoginHandler: InfomaniakLoginDelegate, ObservableObject {
 }
 
 struct OnboardingView: View {
-    @LazyInjectService var orientationManager: OrientationManageable
-
     @Environment(\.dismiss) private var dismiss
     @EnvironmentObject private var navigationState: NavigationState
+
+    @LazyInjectService var orientationManager: OrientationManageable
 
     @AppStorage(UserDefaults.shared.key(.accentColor)) private var accentColor = DefaultPreferences.accentColor
 
@@ -192,10 +192,10 @@ struct OnboardingView: View {
                     .resizable()
                     .scaledToFit()
                     .frame(height: UIConstants.onboardingLogoHeight)
-                    .padding(.top, UIConstants.onboardingLogoPaddingTop)
+                    .padding(.top, UIPadding.onboardingLogoTop)
             }
 
-            VStack(spacing: 24) {
+            VStack(spacing: UIPadding.medium) {
                 if selection == slides.count {
                     MailButton(label: MailResourcesStrings.Localizable.buttonLogin) {
                         loginHandler.login()
@@ -214,11 +214,11 @@ struct OnboardingView: View {
                             selection += 1
                         }
                     }
-                    .mailButtonIconSize(UIConstants.onboardingArrowIconSize)
+                    .mailButtonIconSize(24)
                 }
             }
             .frame(height: UIConstants.onboardingButtonHeight + UIConstants.onboardingBottomButtonPadding, alignment: .top)
-            .padding(.horizontal, 24)
+            .padding(.horizontal, UIPadding.medium)
         }
         .overlay(alignment: .topLeading) {
             if !isScrollEnabled {
@@ -229,8 +229,8 @@ struct OnboardingView: View {
                         .resizable()
                 }
                 .frame(width: 24, height: 24)
-                .padding(.top, 16)
-                .padding(.leading, 24)
+                .padding(.top, UIPadding.regular)
+                .padding(.leading, UIPadding.medium)
             }
         }
         .alert(MailResourcesStrings.Localizable.errorLoginTitle, isPresented: $loginHandler.isPresentingErrorAlert) {

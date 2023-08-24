@@ -81,7 +81,6 @@ public extension UIConstants {
 
     static let onboardingLogoHeight: CGFloat = 56
     static let onboardingButtonHeight: CGFloat = 104
-    static let onboardingArrowIconSize: CGFloat = 24
 
     static let menuDrawerMaxWidth: CGFloat = 352
     static let menuDrawerTrailingSpacing: CGFloat = 64
@@ -124,8 +123,6 @@ public extension UIConstants {
 
     // TODO: Sort elements below (wip)
 
-    static let onboardingLogoPaddingTop: CGFloat = 24
-    static let onboardingVerticalTopPadding: CGFloat = 48
     static let onboardingBottomButtonPadding: CGFloat = 32
 
     static let progressItemsVerticalPadding: CGFloat = 8
