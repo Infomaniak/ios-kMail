@@ -55,7 +55,7 @@ final class NewMessageAlert: SheetState<NewMessageAlert.State> {
     enum State {
         case link(handler: (String) -> Void)
         case emptySubject(handler: () -> Void)
-        case externalExpeditor
+        case externalRecipient(state: DisplayExternalRecipientStatus.State)
     }
 }
 
@@ -161,8 +161,8 @@ struct ComposeMessageView: View {
                 AddLinkView(actionHandler: handler)
             case .emptySubject(let handler):
                 EmptySubjectView(actionHandler: handler)
-            case .externalExpeditor :
-                ExternalExpeditorView()
+            case .externalRecipient(let state):
+                ExternalRecipientView(externalTagSate: state, isDraft: true)
             case .none:
                 EmptyView()
             }
@@ -246,34 +246,40 @@ struct ComposeMessageView: View {
         }
         .safeAreaInset(edge: .bottom) {
             if showExternalTag {
-                HStack(spacing: 24) {
-                    Text(MailResourcesStrings.Localizable.externalDialogTitleRecipient)
-                        .foregroundColor(MailResourcesAsset.onTagColor.swiftUIColor)
-                        .textStyle(.bodySmall)
-
-                    Spacer()
-
-                    Button {
-                        alert.state = .externalExpeditor
-                    } label: {
-                        MailResourcesAsset.info.swiftUIImage
-                            .resizable()
-                            .foregroundColor(MailResourcesAsset.onTagColor)
-                            .frame(width: 16, height: 16)
+                let externalTag = draft.displayExternalTag(mailboxManager: mailboxManager)
+                switch externalTag {
+                case .many, .one:
+                    HStack(spacing: 24) {
+                        Text(MailResourcesStrings.Localizable.externalDialogTitleRecipient)
+                            .foregroundColor(MailResourcesAsset.onTagColor.swiftUIColor)
+                            .textStyle(.bodySmall)
+                        
+                        Spacer()
+                        
+                        Button {
+                            alert.state = .externalRecipient(state: externalTag)
+                        } label: {
+                            MailResourcesAsset.info.swiftUIImage
+                                .resizable()
+                                .foregroundColor(MailResourcesAsset.onTagColor)
+                                .frame(width: 16, height: 16)
+                        }
+                        
+                        Button {
+                            showExternalTag = false
+                        } label: {
+                            MailResourcesAsset.closeSmall.swiftUIImage
+                                .resizable()
+                                .foregroundColor(MailResourcesAsset.onTagColor)
+                                .frame(width: 16, height: 16)
+                        }
                     }
-
-                    Button {
-                        showExternalTag = false
-                    } label: {
-                        MailResourcesAsset.closeSmall.swiftUIImage
-                            .resizable()
-                            .foregroundColor(MailResourcesAsset.onTagColor)
-                            .frame(width: 16, height: 16)
-                    }
+                    .frame(maxWidth: .infinity)
+                    .padding()
+                    .background(MailResourcesAsset.yellowColor.swiftUIColor)
+                case .none:
+                    EmptyView()
                 }
-                .frame(maxWidth: .infinity)
-                .padding()
-                .background(MailResourcesAsset.yellowColor.swiftUIColor)
             }
         }
     }

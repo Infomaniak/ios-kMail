@@ -69,15 +69,21 @@ struct ThreadView: View {
                         .multilineTextAlignment(.leading)
                         .lineSpacing(8)
 
-                    Button {
-                        alert.state = .externalExpeditor
-                    } label: {
-                        Text(MailResourcesStrings.Localizable.externalTag)
-                            .foregroundColor(MailResourcesAsset.onTagColor.swiftUIColor)
-                            .textStyle(.labelMedium)
-                            .padding(4)
-                            .background(MailResourcesAsset.yellowColor.swiftUIColor)
-                            .cornerRadius(2)
+                    let externalTag = thread.displayExternalRecipientState(mailboxManager: mailboxManager, recipientsList: thread.from)
+                    switch externalTag {
+                    case .many, .one:
+                        Button {
+                            alert.state = .externalRecipient(state: externalTag)
+                        } label: {
+                            Text(MailResourcesStrings.Localizable.externalTag)
+                                .foregroundColor(MailResourcesAsset.onTagColor.swiftUIColor)
+                                .textStyle(.labelMedium)
+                                .padding(4)
+                                .background(MailResourcesAsset.yellowColor.swiftUIColor)
+                                .cornerRadius(2)
+                        }
+                    case .none:
+                        EmptyView()
                     }
                 }
                 .padding(.top, 8)
@@ -164,8 +170,8 @@ struct ThreadView: View {
         }
         .customAlert(isPresented: $alert.isShowing) {
             switch alert.state {
-            case .externalExpeditor:
-                ExternalExpeditorView()
+            case .externalRecipient(let state):
+                ExternalRecipientView(externalTagSate: state, isDraft: false)
             default:
                 EmptyView()
             }
