@@ -189,28 +189,15 @@ public class ActionsManager: ObservableObject {
     }
 
     private func performDelete(messages: [Message], originFolder: Folder?) async throws {
-        let deletionResults = try await mailboxManager.moveOrDelete(messages: messages)
-
-        // Can eventually be improved if needed
-        assert(deletionResults.count <= 1, "For now deletion result should always have only one value")
-        guard let firstDeletionResult = deletionResults.first else { return }
-
-        let snackbarMessage: String
-        let undoAction: UndoAction?
-        switch firstDeletionResult {
-        case .permanentlyDeleted:
-            snackbarMessage = snackbarPermanentlyDeleteMessage(for: messages, originFolder: originFolder)
-            undoAction = nil
-        case .moved(let resultUndoAction):
-            snackbarMessage = snackbarMoveMessage(
-                for: messages,
-                originFolder: originFolder,
-                destinationFolderName: FolderRole.trash.localizedName
-            )
-            undoAction = resultUndoAction
+        if originFolder?.role == .trash
+            || originFolder?.role == .spam
+            || originFolder?.role == .draft {
+            try await mailboxManager.delete(messages: messages)
+            let snackbarMessage = snackbarPermanentlyDeleteMessage(for: messages, originFolder: originFolder)
+            async let _ = await displayResultSnackbar(message: snackbarMessage, undoAction: nil)
+        } else {
+            try await performMove(messages: messages, from: originFolder, to: .trash)
         }
-
-        async let _ = await displayResultSnackbar(message: snackbarMessage, undoAction: undoAction)
     }
 
     private func shouldDisplayDeleteAlert(messages: [Message], origin: ActionOrigin) -> Bool {

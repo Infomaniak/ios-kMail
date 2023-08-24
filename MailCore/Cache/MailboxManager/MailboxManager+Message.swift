@@ -221,24 +221,6 @@ public extension MailboxManager {
         }
     }
 
-    func moveOrDelete(messages: [Message]) async throws -> [DeletionResult] {
-        let messagesGroupedByFolderId = Dictionary(grouping: messages, by: \.folderId)
-
-        return try await withThrowingTaskGroup(of: DeletionResult.self, returning: [DeletionResult].self) { group in
-            for messagesInSameFolder in messagesGroupedByFolderId.values {
-                group.addTask {
-                    return try await self.moveOrDeleteMessagesInSameFolder(messages: messagesInSameFolder)
-                }
-            }
-
-            var undoActions = [DeletionResult]()
-            for try await undoAction in group {
-                undoActions.append(undoAction)
-            }
-            return undoActions
-        }
-    }
-
     func markAsSeen(message: Message, seen: Bool = true) async throws {
         if seen {
             var messages = [message]
@@ -476,21 +458,6 @@ public extension MailboxManager {
         }
         for folder in folders {
             folder.computeUnreadCount()
-        }
-    }
-
-    private func moveOrDeleteMessagesInSameFolder(messages: [Message]) async throws -> DeletionResult {
-        let messagesToMoveOrDelete = messages + messages.flatMap(\.duplicates)
-
-        let firstMessageFolderRole = messages.first?.folder?.role
-        if firstMessageFolderRole == .trash
-            || firstMessageFolderRole == .spam
-            || firstMessageFolderRole == .draft {
-            try await delete(messages: messagesToMoveOrDelete)
-            return .permanentlyDeleted
-        } else {
-            let undoAction = try await move(messages: messagesToMoveOrDelete, to: .trash)
-            return .moved(undoAction)
         }
     }
 
