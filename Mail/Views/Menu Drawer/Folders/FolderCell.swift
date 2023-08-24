@@ -147,7 +147,7 @@ struct FolderCellContent: View {
     }
 
     var body: some View {
-        HStack(spacing: UIPadding.intermediate) {
+        HStack(spacing: UIPadding.menuDrawerCellChevronSpacing) {
             if canCollapseSubFolders && cellType == .menuDrawer {
                 Button(action: collapseFolder) {
                     ChevronIcon(style: folder.isExpanded ? .up : .down)
@@ -156,7 +156,7 @@ struct FolderCellContent: View {
                 .accessibilityLabel(MailResourcesStrings.Localizable.contentDescriptionButtonExpandFolder(folder.name))
             }
 
-            HStack(spacing: UIPadding.regular) {
+            HStack(spacing: UIPadding.menuDrawerCellSpacing) {
                 folder.icon
                     .resizable()
                     .scaledToFit()
@@ -173,7 +173,7 @@ struct FolderCellContent: View {
             }
         }
         .padding(.leading, UIPadding.menuDrawerSubFolder * CGFloat(level))
-        .padding(UIPadding.regular)
+        .padding(UIPadding.menuDrawerCell)
         .background(background)
     }
 

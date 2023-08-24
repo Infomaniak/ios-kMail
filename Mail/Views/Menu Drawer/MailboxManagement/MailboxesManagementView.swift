@@ -54,26 +54,24 @@ struct MailboxesManagementView: View {
                     matomo.track(eventWithCategory: .menuDrawer, name: "mailboxes", value: navigationDrawerState.showMailboxes)
                 }
             } label: {
-                HStack(spacing: 0) {
+                HStack(spacing: UIPadding.menuDrawerCellSpacing) {
                     MailResourcesAsset.envelope.swiftUIImage
                         .resizable()
                         .scaledToFit()
                         .frame(width: 24, height: 24)
                         .foregroundColor(.accentColor)
-                        .padding(.trailing, UIPadding.regular)
 
                     Text(mailboxManager.mailbox.email)
                         .textStyle(navigationDrawerState.showMailboxes ? .bodyMediumAccent : .bodyMedium)
                         .lineLimit(1)
-
-                    Spacer(minLength: UIPadding.regular)
+                        .frame(maxWidth: .infinity, alignment: .leading)
 
                     if hasOtherMailboxes {
                         ChevronIcon(style: navigationDrawerState.showMailboxes ? .up : .down)
                     }
                 }
                 .environment(\.isEnabled, true)
-                .padding(UIPadding.regular)
+                .padding(UIPadding.menuDrawerCell)
             }
             .disabled(!hasOtherMailboxes)
 

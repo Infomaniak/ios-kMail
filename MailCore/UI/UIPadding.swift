@@ -28,6 +28,14 @@ public enum UIPadding {
 }
 
 public extension UIPadding {
-    static let menuDrawerSubFolder = UIPadding.large
+    // MARK: Menu
+
+    static let menuDrawerCell = UIPadding.regular
+    static let menuDrawerCellSpacing = UIPadding.regular
+    static let menuDrawerCellChevronSpacing = UIPadding.intermediate
+    static let menuDrawerSubFolder = UIPadding.medium
+
+    // MARK: Misc
+
     static let floatingButtonBottom = UIPadding.large
 }
