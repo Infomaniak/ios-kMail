@@ -97,7 +97,7 @@ public final class Recipient: EmbeddedObject, Codable {
 
         let isContact = (mailboxManager.contactManager.contacts(matching: email)).isEmpty ? false : true
 
-        return !isKnownDomain && !isMailerDeamon && !isAnAlias //&& !isContact
+        return !isKnownDomain && !isMailerDeamon && !isAnAlias && !isContact
     }
 
     public var htmlDescription: String {
