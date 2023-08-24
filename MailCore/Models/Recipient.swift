@@ -85,6 +85,21 @@ public final class Recipient: EmbeddedObject, Codable {
         return email == recipient.email && name == recipient.name
     }
 
+    public func isExternal(mailboxManager: MailboxManager) -> Bool {
+        let trustedDomains = ["@infomaniak.com", "@infomaniak.event", "@swisstransfer.com"]
+        let isKnownDomain = trustedDomains.contains { domain in
+            return email.hasSuffix(domain)
+        }
+
+        let isMailerDeamon = Regex(pattern: "mailer-daemon@(?:.+.)?infomaniak.ch")?.firstMatch(in: email).isEmpty ?? false ? false : true
+
+        let isAnAlias = mailboxManager.mailbox.aliases.contains(email)
+
+        let isContact = (mailboxManager.contactManager.contacts(matching: email)).isEmpty ? false : true
+
+        return !isKnownDomain && !isMailerDeamon && !isAnAlias //&& !isContact
+    }
+
     public var htmlDescription: String {
         let emailString = "&lt;\(email)&gt;"
         if name.isEmpty {
