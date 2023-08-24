@@ -52,7 +52,7 @@ public extension Endpoint {
     static var mailboxes: Endpoint {
         return .base.appending(
             path: "/mailbox",
-            queryItems: [URLQueryItem(name: "with", value: "unseen")]
+            queryItems: [URLQueryItem(name: "with", value: "unseen,aliases,external_mail_flag_enabled")]
         )
     }
 
