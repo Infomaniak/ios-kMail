@@ -192,7 +192,7 @@ struct OnboardingView: View {
                     .resizable()
                     .scaledToFit()
                     .frame(height: UIConstants.onboardingLogoHeight)
-                    .padding(.top, UIPadding.onboardingLogoTop)
+                    .padding(.top, UIPadding.onBoardingLogoTop)
             }
 
             VStack(spacing: UIPadding.medium) {
@@ -217,8 +217,8 @@ struct OnboardingView: View {
                     .mailButtonIconSize(24)
                 }
             }
-            .frame(height: UIConstants.onboardingButtonHeight + UIConstants.onboardingBottomButtonPadding, alignment: .top)
             .padding(.horizontal, UIPadding.medium)
+            .padding(.bottom, UIPadding.onBoardingBottomButtons)
         }
         .overlay(alignment: .topLeading) {
             if !isScrollEnabled {

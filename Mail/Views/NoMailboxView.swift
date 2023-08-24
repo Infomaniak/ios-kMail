@@ -39,7 +39,7 @@ struct NoMailboxView: View {
                         .resizable()
                         .scaledToFit()
                         .frame(height: UIConstants.onboardingLogoHeight)
-                        .padding(.top, UIPadding.onboardingLogoTop)
+                        .padding(.top, UIPadding.onBoardingLogoTop)
                 }
 
             VStack(spacing: 24) {
@@ -53,8 +53,8 @@ struct NoMailboxView: View {
                 }
                 .mailButtonStyle(.link)
             }
-            .frame(height: UIConstants.onboardingButtonHeight + UIConstants.onboardingBottomButtonPadding, alignment: .top)
-            .padding(.horizontal, 24)
+            .padding(.horizontal, UIPadding.medium)
+            .padding(.bottom, UIPadding.onBoardingBottomButtons)
         }
         .matomoView(view: ["NoMailboxView"])
         .sheet(isPresented: $isShowingAddMailboxView) {

@@ -35,12 +35,12 @@ struct AutocompletionView: View {
     let addRecipient: @MainActor (Recipient) -> Void
 
     var body: some View {
-        LazyVStack(spacing: UIConstants.autocompletionVerticalPadding) {
+        LazyVStack(spacing: UIPadding.small) {
             ForEach(autocompletion) { recipient in
                 let isLastRecipient = autocompletion.last?.isSameRecipient(as: recipient) == true
                 let isUserProposal = shouldAddUserProposal && isLastRecipient
 
-                VStack(alignment: .leading, spacing: UIConstants.autocompletionVerticalPadding) {
+                VStack(alignment: .leading, spacing: UIPadding.small) {
                     AutocompletionCell(
                         addRecipient: addRecipient,
                         recipient: recipient,

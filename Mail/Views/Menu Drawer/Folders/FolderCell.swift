@@ -134,7 +134,7 @@ struct FolderCellContent: View {
 
     init(folder: Folder, level: Int, isCurrentFolder: Bool, canCollapseSubFolders: Bool = false) {
         self.folder = folder
-        self.level = min(level, UIConstants.menuDrawerMaximumSubfolderLevel)
+        self.level = min(level, UIConstants.menuDrawerMaximumSubFolderLevel)
         self.isCurrentFolder = isCurrentFolder
         self.canCollapseSubFolders = canCollapseSubFolders
     }

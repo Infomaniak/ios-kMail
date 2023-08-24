@@ -92,7 +92,7 @@ struct ThreadListView: View {
                         ProgressView()
                             .id(UUID())
                             .frame(maxWidth: .infinity)
-                            .padding(.vertical, UIConstants.progressItemsVerticalPadding)
+                            .padding(.vertical, UIPadding.small)
                             .threadListCellAppearance()
                     }
 
@@ -143,7 +143,7 @@ struct ThreadListView: View {
                             .frame(alignment: .leading)
                         }
                     }
-                    .padding(.vertical, UIConstants.progressItemsVerticalPadding)
+                    .padding(.vertical, UIPadding.small)
 
                     ListVerticalInsetView(height: multipleSelectionViewModel.isEnabled ? 100 : 110)
                 }

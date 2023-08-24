@@ -51,13 +51,13 @@ private struct QuotaCircularProgressViewStyle: ProgressViewStyle {
                 .trim(from: 0, to: 1)
                 .stroke(MailResourcesAsset.elementsColor.swiftUIColor, lineWidth: 4)
                 .rotationEffect(.degrees(-90))
-                .frame(width: 40)
+                .frame(width: UIConstants.menuDrawerQuotaSize)
 
             Circle()
                 .trim(from: 0, to: configuration.fractionCompleted ?? 0)
                 .stroke(Color.accentColor, lineWidth: 4)
                 .rotationEffect(.degrees(-90))
-                .frame(width: 40)
+                .frame(width: UIConstants.menuDrawerQuotaSize)
 
             MailResourcesAsset.drawer.swiftUIImage
                 .resizable()
@@ -65,6 +65,6 @@ private struct QuotaCircularProgressViewStyle: ProgressViewStyle {
                 .frame(width: 16, height: 16)
                 .foregroundColor(.accentColor)
         }
-        .frame(height: 40)
+        .frame(height: UIConstants.menuDrawerQuotaSize)
     }
 }

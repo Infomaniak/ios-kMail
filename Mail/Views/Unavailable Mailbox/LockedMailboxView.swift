@@ -44,7 +44,7 @@ struct LockedMailboxView: View {
             .mailButtonStyle(.link)
             .mailButtonFullWidth(true)
         }
-        .padding(.horizontal, UIConstants.bottomSheetHorizontalPadding)
+        .padding(.horizontal, UIPadding.bottomSheetHorizontal)
         .padding(.top, 16)
         .matomoView(view: ["LockedMailboxView"])
     }

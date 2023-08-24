@@ -28,18 +28,27 @@ public enum UIPadding {
 }
 
 public extension UIPadding {
-    // MARK: Onboarding
+    // MARK: OnBoarding
 
-    static let onboardingLogoTop: CGFloat = UIPadding.medium
+    static let onBoardingLogoTop = medium
+    static let onBoardingBottomButtons = medium
 
     // MARK: Menu
 
-    static let menuDrawerCell = UIPadding.regular
-    static let menuDrawerCellSpacing = UIPadding.regular
-    static let menuDrawerCellChevronSpacing = UIPadding.intermediate
-    static let menuDrawerSubFolder = UIPadding.medium
+    static let menuDrawerCell = regular
+    static let menuDrawerCellSpacing = regular
+    static let menuDrawerCellChevronSpacing = intermediate
+    static let menuDrawerSubFolder = medium
+
+    // MARK: Actions
+
+    static let actionsSpacing = intermediate
+    static let actionsHorizontal = small
+    static let actionsCellHorizontal = medium
 
     // MARK: Misc
 
-    static let floatingButtonBottom = UIPadding.large
+    static let floatingButtonBottom = medium
+    static let bottomSheetHorizontal = medium
+    static let composeViewHeaderCellLargeVertical = intermediate + UIConstants.recipientChipInsets.top
 }

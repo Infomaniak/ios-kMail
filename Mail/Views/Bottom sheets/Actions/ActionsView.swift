@@ -44,7 +44,7 @@ struct ActionsView: View {
     }
 
     var body: some View {
-        VStack(alignment: .leading, spacing: UIConstants.actionsViewSpacing) {
+        VStack(alignment: .leading, spacing: UIPadding.actionsSpacing) {
             HStack(alignment: .top, spacing: 16) {
                 ForEach(quickActions) { action in
                     QuickActionView(
@@ -70,10 +70,10 @@ struct ActionsView: View {
                     origin: origin,
                     completionHandler: completionHandler
                 )
-                .padding(.horizontal, UIConstants.actionsViewCellHorizontalPadding)
+                .padding(.horizontal, UIPadding.actionsCellHorizontal)
             }
         }
-        .padding(.horizontal, UIConstants.actionsViewHorizontalPadding)
+        .padding(.horizontal, UIPadding.actionsHorizontal)
         .matomoView(view: [MatomoUtils.View.bottomSheet.displayName, "ActionsView"])
     }
 }

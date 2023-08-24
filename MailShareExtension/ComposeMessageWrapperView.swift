@@ -63,10 +63,10 @@ struct PleaseLoginView: View {
                 .resizable()
                 .scaledToFit()
                 .frame(height: UIConstants.onboardingLogoHeight)
-                .padding(.top, UIPadding.onboardingLogoTop)
+                .padding(.top, UIPadding.onBoardingLogoTop)
             Text(MailResourcesStrings.Localizable.pleaseLogInFirst)
                 .textStyle(.header2)
-                .padding(.top, UIPadding.onboardingLogoTop)
+                .padding(.top, UIPadding.onBoardingLogoTop)
             LottieView(configuration: slide.lottieConfiguration!)
             Spacer()
         }.onTapGesture {

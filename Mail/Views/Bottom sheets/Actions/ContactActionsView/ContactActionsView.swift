@@ -42,7 +42,7 @@ struct ContactActionsView: View {
     }
 
     var body: some View {
-        VStack(alignment: .leading, spacing: UIConstants.actionsViewSpacing) {
+        VStack(alignment: .leading, spacing: UIPadding.actionsSpacing) {
             ContactActionsHeaderView(displayablePerson: CommonContact(
                 recipient: recipient,
                 contextMailboxManager: mailboxManager
@@ -55,11 +55,11 @@ struct ContactActionsView: View {
                 }
 
                 ContactActionView(recipient: recipient, action: action)
-                    .padding(.horizontal, UIConstants.actionsViewCellHorizontalPadding)
+                    .padding(.horizontal, UIPadding.actionsCellHorizontal)
             }
         }
         .frame(maxWidth: .infinity, alignment: .leading)
-        .padding(.horizontal, UIConstants.actionsViewHorizontalPadding)
+        .padding(.horizontal, UIPadding.actionsHorizontal)
         .matomoView(view: [MatomoUtils.View.bottomSheet.displayName, "ContactActionsView"])
     }
 }

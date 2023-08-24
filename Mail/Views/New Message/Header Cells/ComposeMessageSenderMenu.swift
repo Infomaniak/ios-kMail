@@ -72,7 +72,7 @@ struct ComposeMessageSenderMenu: View {
                         .disabled(!canSelectSignature)
                     }
                 }
-                .padding(.vertical, UIConstants.composeViewHeaderCellLargeVerticalSpacing)
+                .padding(.vertical, UIPadding.composeViewHeaderCellLargeVertical)
 
                 IKDivider()
             }

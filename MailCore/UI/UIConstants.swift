@@ -85,6 +85,7 @@ public extension UIConstants {
     static let menuDrawerMaxWidth: CGFloat = 352
     static let menuDrawerTrailingSpacing: CGFloat = 64
     static let menuDrawerLogoHeight: CGFloat = 48
+    static let menuDrawerQuotaSize: CGFloat = 40
 
     static let unreadIconSize: CGFloat = 8
     static let checkboxSize: CGFloat = 32
@@ -119,30 +120,5 @@ public extension UIConstants {
 // MARK: - Misc
 
 public extension UIConstants {
-    static let menuDrawerMaximumSubfolderLevel = 2
-
-    // TODO: Sort elements below (wip)
-
-    static let onboardingBottomButtonPadding: CGFloat = 32
-
-    static let progressItemsVerticalPadding: CGFloat = 8
-
-    static let selectionBackgroundDefaultLeadingPadding: CGFloat = 8
-    static let selectionBackgroundVerticalPadding: CGFloat = 2
-
-    static let composeViewHeaderCellVerticalSpacing: CGFloat = 12
-    static let composeViewHeaderCellLargeVerticalSpacing = composeViewHeaderCellVerticalSpacing + recipientChipInsets.top
-
-    static let bottomBarVerticalPadding: CGFloat = 8
-    static let bottomBarSmallVerticalPadding: CGFloat = 4
-
-    static let bottomSheetHorizontalPadding: CGFloat = 24
-
-    static let actionsViewSpacing: CGFloat = 12
-    static let actionsViewHorizontalPadding: CGFloat = 8
-    static let actionsViewCellHorizontalPadding: CGFloat = 24
-
-    static let unknownRecipientHorizontalPadding: CGFloat = 8
-
-    static let autocompletionVerticalPadding: CGFloat = 8
+    static let menuDrawerMaximumSubFolderLevel = 2
 }

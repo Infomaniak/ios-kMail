@@ -57,7 +57,7 @@ struct RestoreEmailsView: View {
                              primaryButtonEnabled: !availableDates.isEmpty,
                              primaryButtonAction: restoreEmails)
         }
-        .padding(.horizontal, UIConstants.bottomSheetHorizontalPadding)
+        .padding(.horizontal, UIPadding.bottomSheetHorizontal)
         .task {
             await tryOrDisplayError {
                 let backupsList = try await mailboxManager.apiFetcher.listBackups(mailbox: mailboxManager.mailbox).backups

@@ -48,7 +48,7 @@ struct LockedAppView: View {
                 MailButton(label: MailResourcesStrings.Localizable.buttonUnlock, action: unlockApp)
                     .mailButtonFullWidth(true)
             }
-            .padding(.top, UIPadding.onboardingLogoTop)
+            .padding(.top, UIPadding.onBoardingLogoTop)
             .padding(.bottom, 40)
         }
         .padding(.horizontal, 24)
