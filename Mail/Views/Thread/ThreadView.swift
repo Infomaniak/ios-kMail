@@ -62,7 +62,7 @@ struct ThreadView: View {
                 }
                 .frame(width: 0, height: 0)
 
-                HStack(alignment: .bottom, spacing: 0) {
+                VStack(alignment: .leading, spacing: 8) {
                     Text(thread.formattedSubject)
                         .textStyle(.header2)
                         .frame(maxWidth: .infinity, alignment: .leading)
