@@ -40,6 +40,12 @@ public struct RecipientHolder {
 public final class Recipient: EmbeddedObject, Codable {
     @Persisted public var email: String
     @Persisted public var name: String
+    @Persisted public var isAddedByMe = false
+
+    enum CodingKeys: String, CodingKey {
+        case email
+        case name
+    }
 
     public convenience init(email: String, name: String) {
         self.init()
@@ -86,6 +92,9 @@ public final class Recipient: EmbeddedObject, Codable {
     }
 
     public func isExternal(mailboxManager: MailboxManager) -> Bool {
+        ///if the email adress is added manually by me, it's not considered as an external
+        guard !isAddedByMe else { return false }
+
         let trustedDomains = ["@infomaniak.com", "@infomaniak.event", "@swisstransfer.com"]
         let isKnownDomain = trustedDomains.contains { domain in
             return email.hasSuffix(domain)
