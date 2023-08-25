@@ -33,6 +33,7 @@ public extension MatomoUtils.View {
 
 public extension MatomoUtils.EventCategory {
     static let createFolder = MatomoUtils.EventCategory(displayName: "createFolder")
+    static let externals = MatomoUtils.EventCategory(displayName: "externals")
     static let invalidPasswordMailbox = MatomoUtils.EventCategory(displayName: "invalidPasswordMailbox")
     static let menuDrawer = MatomoUtils.EventCategory(displayName: "menuDrawer")
     static let message = MatomoUtils.EventCategory(displayName: "message")
@@ -72,12 +73,14 @@ public extension MatomoUtils.EventCategory {
 // MARK: - Helpers
 
 public extension MatomoUtils {
-    func trackSendMessage(numberOfTo: Int, numberOfCc: Int, numberOfBcc: Int) {
+    func trackSendMessage(draft: Draft, sentWithExternals: Bool) {
         track(eventWithCategory: .newMessage, name: "sendMail")
 
-        track(eventWithCategory: .newMessage, action: .data, name: "numberOfTo", value: Float(numberOfTo))
-        track(eventWithCategory: .newMessage, action: .data, name: "numberOfCC", value: Float(numberOfCc))
-        track(eventWithCategory: .newMessage, action: .data, name: "numberOfBCC", value: Float(numberOfBcc))
+        track(eventWithCategory: .newMessage, action: .data, name: "numberOfTo", value: Float(draft.to.count))
+        track(eventWithCategory: .newMessage, action: .data, name: "numberOfCC", value: Float(draft.cc.count))
+        track(eventWithCategory: .newMessage, action: .data, name: "numberOfBCC", value: Float(draft.bcc.count))
+
+        track(eventWithCategory: .externals, action: .data, name: "emailSentWithExternals", value: sentWithExternals)
     }
 }
 

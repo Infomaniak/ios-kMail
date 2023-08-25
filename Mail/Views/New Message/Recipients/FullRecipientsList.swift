@@ -46,6 +46,9 @@ struct FullRecipientsList: View {
     @MainActor private func remove(recipientAt: Int) {
         @InjectService var matomo: MatomoUtils
         matomo.track(eventWithCategory: .newMessage, name: "deleteRecipient")
+        if recipients[recipientAt].isExternal(mailboxManager: mailboxManager) {
+            matomo.track(eventWithCategory: .externals, name: "deleteRecipient")
+        }
 
         withAnimation {
             $recipients.remove(at: recipientAt)

@@ -253,10 +253,11 @@ struct ComposeMessageView: View {
                         Text(MailResourcesStrings.Localizable.externalDialogTitleRecipient)
                             .foregroundColor(MailResourcesAsset.onTagColor.swiftUIColor)
                             .textStyle(.bodySmall)
-                        
+
                         Spacer()
-                        
+
                         Button {
+                            matomo.track(eventWithCategory: .externals, name: "bannerInfo")
                             alert.state = .externalRecipient(state: externalTag)
                         } label: {
                             MailResourcesAsset.info.swiftUIImage
@@ -264,8 +265,9 @@ struct ComposeMessageView: View {
                                 .foregroundColor(MailResourcesAsset.onTagColor)
                                 .frame(width: 16, height: 16)
                         }
-                        
+
                         Button {
+                            matomo.track(eventWithCategory: .externals, name: "bannerManuallyClosed")
                             showExternalTag = false
                         } label: {
                             MailResourcesAsset.closeSmall.swiftUIImage
@@ -317,7 +319,15 @@ struct ComposeMessageView: View {
     }
 
     private func sendDraft() {
-        matomo.trackSendMessage(numberOfTo: draft.to.count, numberOfCc: draft.cc.count, numberOfBcc: draft.bcc.count)
+        var sentWithExternals = false
+        switch draft.displayExternalTag(mailboxManager: mailboxManager) {
+        case .one, .many:
+            sentWithExternals = true
+        case .none:
+            sentWithExternals = false
+        }
+
+        matomo.trackSendMessage(draft: draft, sentWithExternals: sentWithExternals)
         if let liveDraft = draft.thaw() {
             try? liveDraft.realm?.write {
                 liveDraft.action = .send

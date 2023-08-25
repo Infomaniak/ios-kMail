@@ -73,6 +73,7 @@ struct ThreadView: View {
                     switch externalTag {
                     case .many, .one:
                         Button {
+                            matomo.track(eventWithCategory: .externals, name: "threadTag")
                             alert.state = .externalRecipient(state: externalTag)
                         } label: {
                             Text(MailResourcesStrings.Localizable.externalTag)
