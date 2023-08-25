@@ -115,7 +115,7 @@ class RecipientChipLabel: UILabel, UIKeyInput {
             backgroundColor = isFirstResponder ? MailResourcesAsset.yellowColor.color : MailResourcesAsset.textFieldColor.color
         } else {
             textColor = isFirstResponder ? UserDefaults.shared.accentColor.secondary.color : .tintColor
-            borderColor = isFirstResponder ? .tintColor : UserDefaults.shared.accentColor.secondary.color
+            borderColor = isFirstResponder ? UserDefaults.shared.accentColor.primary.color : UserDefaults.shared.accentColor.secondary.color
             backgroundColor = isFirstResponder ? .tintColor : UserDefaults.shared.accentColor.secondary.color
         }
     }
