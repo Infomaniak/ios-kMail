@@ -27,8 +27,8 @@ import UIKit
 
 extension CNContact {
     static func fromUUID(_ identifier: String) -> CNContact? {
-        // TODO: use DI
-        return try? LocalContactsHelper.shared.getContact(with: identifier)
+        @InjectService var localContactsHelper: LocalContactsHelpable
+        return try? localContactsHelper.getContact(with: identifier)
     }
 
     func pngImageData() -> Data? {

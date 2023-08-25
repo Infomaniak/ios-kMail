@@ -106,6 +106,9 @@ enum ApplicationAssembly {
             },
             Factory(type: NotificationActionsRegistrable.self) { _, _ in
                 NotificationActionsRegistrer()
+            },
+            Factory(type: LocalContactsHelpable.self) { _, _ in
+                LocalContactsHelper()
             }
         ]
 
