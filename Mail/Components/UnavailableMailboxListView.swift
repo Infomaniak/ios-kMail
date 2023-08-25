@@ -63,6 +63,7 @@ struct UnavailableMailboxListView: View {
                     ForEach(lockedMailboxes) { mailbox in
                         MailboxCell(mailbox: mailbox)
                             .mailboxCellStyle(.locked)
+                            .allowsHitTesting(false)
                     }
                 }
             }

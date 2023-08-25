@@ -25,6 +25,7 @@ import SwiftUI
 struct UpdateMailboxPasswordView: View {
     @LazyInjectService private var accountManager: AccountManager
     @LazyInjectService private var matomo: MatomoUtils
+    @LazyInjectService private var snackbarPresenter: SnackBarPresentable
 
     @EnvironmentObject private var navigationState: NavigationState
 
@@ -43,50 +44,55 @@ struct UpdateMailboxPasswordView: View {
 
     let mailbox: Mailbox
     var body: some View {
-        VStack(alignment: .leading, spacing: 32) {
-            VStack(alignment: .leading, spacing: 8) {
-                Text(MailResourcesStrings.Localizable.enterPasswordDescription1)
-                    .textStyle(.bodySecondary)
-                Text(MailResourcesStrings.Localizable.enterPasswordDescription2(mailbox.email))
-                    .textStyle(.bodySecondary)
-                MailButton(label: MailResourcesStrings.Localizable.buttonDetachMailbox) {
-                    matomo.track(eventWithCategory: .invalidPasswordMailbox, name: "detachMailbox")
-                    isShowingDetachMailboxAlertView = true
-                }
-                .mailButtonStyle(.link)
-                .disabled(isLoading)
-            }
-
-            VStack(alignment: .leading) {
-                SecureField(MailResourcesStrings.Localizable.enterPasswordTitle, text: $updatedMailboxPassword)
-                    .textContentType(.password)
-                    .padding(.vertical, 12)
-                    .padding(.horizontal, 16)
-                    .overlay {
-                        RoundedRectangle(cornerRadius: 4, style: .continuous)
-                            .stroke(
-                                isShowingError ? MailResourcesAsset.redColor.swiftUIColor : MailResourcesAsset.elementsColor
-                                    .swiftUIColor,
-                                lineWidth: 1
-                            )
+        ScrollView {
+            VStack(alignment: .leading, spacing: 32) {
+                VStack(alignment: .leading, spacing: 8) {
+                    Text(MailResourcesStrings.Localizable.enterPasswordDescription1)
+                        .textStyle(.bodySecondary)
+                    Text(MailResourcesStrings.Localizable.enterPasswordDescription2(mailbox.email))
+                        .textStyle(.bodySecondary)
+                    MailButton(label: MailResourcesStrings.Localizable.buttonDetachMailbox) {
+                        matomo.track(eventWithCategory: .invalidPasswordMailbox, name: "detachMailbox")
+                        isShowingDetachMailboxAlertView = true
                     }
+                    .mailButtonStyle(.link)
                     .disabled(isLoading)
+                }
 
-                if isShowingError {
-                    Text(MailResourcesStrings.Localizable.errorInvalidCredentials)
-                        .textStyle(.labelError)
-                } else if showPasswordLengthWarning {
-                    Text(MailResourcesStrings.Localizable.errorMailboxPasswordLength)
-                        .textStyle(.labelSecondary)
+                VStack(alignment: .leading) {
+                    SecureField(MailResourcesStrings.Localizable.enterPasswordTitle, text: $updatedMailboxPassword)
+                        .textContentType(.password)
+                        .padding(.vertical, 12)
+                        .padding(.horizontal, 16)
+                        .overlay {
+                            RoundedRectangle(cornerRadius: 4, style: .continuous)
+                                .stroke(
+                                    isShowingError ? MailResourcesAsset.redColor.swiftUIColor : MailResourcesAsset.elementsColor
+                                        .swiftUIColor,
+                                    lineWidth: 1
+                                )
+                        }
+                        .disabled(isLoading)
+
+                    if isShowingError {
+                        Text(MailResourcesStrings.Localizable.errorInvalidMailboxPassword)
+                            .textStyle(.labelError)
+                    } else if showPasswordLengthWarning {
+                        Text(MailResourcesStrings.Localizable.errorMailboxPasswordLength)
+                            .textStyle(.labelSecondary)
+                    }
                 }
             }
-
+        }
+        .padding()
+        .safeAreaInset(edge: .bottom) {
             MailButton(label: MailResourcesStrings.Localizable.buttonConfirm) {
                 matomo.track(eventWithCategory: .invalidPasswordMailbox, name: "updatePassword")
                 updateMailboxPassword()
             }
             .mailButtonFullWidth(true)
             .disabled(disableButton)
+            .padding(24)
 
             MailButton(label: MailResourcesStrings.Localizable.buttonPasswordForgotten) {
                 // Empty for now, WIP
@@ -94,15 +100,12 @@ struct UpdateMailboxPasswordView: View {
             .mailButtonStyle(.link)
             .mailButtonFullWidth(true)
             .hidden()
-
-            Spacer()
         }
         .onChange(of: updatedMailboxPassword) { newValue in
             if !newValue.isEmpty {
                 isShowingError = false
             }
         }
-        .padding()
         .navigationBarTitleDisplayMode(.inline)
         .navigationTitle(MailResourcesStrings.Localizable.enterPasswordTitle)
         .sheetViewStyle()
@@ -118,9 +121,16 @@ struct UpdateMailboxPasswordView: View {
             do {
                 try await accountManager.updateMailboxPassword(mailbox: mailbox, password: updatedMailboxPassword)
                 navigationState.transitionToRootViewDestination(.mainView)
+            } catch let error as MailApiError where error == .apiInvalidPassword {
+                withAnimation {
+                    isShowingError = true
+                    updatedMailboxPassword = ""
+                }
             } catch {
-                isShowingError = true
-                updatedMailboxPassword = ""
+                withAnimation {
+                    updatedMailboxPassword = ""
+                }
+                snackbarPresenter.show(message: error.localizedDescription)
             }
             isLoading = false
         }

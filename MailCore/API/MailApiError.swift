@@ -27,6 +27,9 @@ enum MailApiErrorCode {
     /// Invalid credentials
     static let invalidCredentials = "invalid_credentials"
 
+    /// Invalid password
+    static let invalidPassword = "invalid_mailbox_password"
+
     /// The server does not know about the identity used in the request
     static let identityNotFound = "identity__not_found"
 }
@@ -41,6 +44,9 @@ public class MailApiError: MailError {
     /// Invalid credentials
     public static let apiInvalidCredential = MailApiError(code: MailApiErrorCode.invalidCredentials)
 
+    /// Invalid password
+    public static let apiInvalidPassword = MailApiError(code: MailApiErrorCode.invalidPassword)
+
     /// The server does not know bout the identity used in the request
     public static let apiIdentityNotFound = MailApiError(code: MailApiErrorCode.identityNotFound, shouldDisplay: false)
 
@@ -48,6 +54,7 @@ public class MailApiError: MailError {
         // General
         MailApiError(code: "not_authorized"),
         apiInvalidCredential,
+        apiInvalidPassword,
 
         // Folder
         MailApiError(code: "folder__unable_to_create"),
