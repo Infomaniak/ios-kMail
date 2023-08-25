@@ -19,7 +19,7 @@
 import Contacts
 import Foundation
 
-class LocalContactsHelper {
+final class LocalContactsHelper {
     enum ContactError: Error, LocalizedError {
         case accessDenied
         case unhandledCase
@@ -55,8 +55,12 @@ class LocalContactsHelper {
         }
     }
 
-    func getContact(with identifier: String) async throws -> CNContact {
+    func checkAuthorizationAndGetContact(with identifier: String) async throws -> CNContact {
         try await checkAuthorization()
+        return try store.unifiedContact(withIdentifier: identifier, keysToFetch: keysToFetch)
+    }
+
+    func getContact(with identifier: String) throws -> CNContact {
         return try store.unifiedContact(withIdentifier: identifier, keysToFetch: keysToFetch)
     }
 

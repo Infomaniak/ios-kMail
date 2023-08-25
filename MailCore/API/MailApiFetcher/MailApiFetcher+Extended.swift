@@ -27,7 +27,7 @@ public extension MailApiFetcher {
         try await perform(request: authenticatedRequest(.permissions(mailbox: mailbox))).data
     }
 
-    func contacts() async throws -> [Contact] {
+    func contacts() async throws -> [InfomaniakContact] {
         try await perform(request: authenticatedRequest(.contacts)).data
     }
 

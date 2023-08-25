@@ -21,13 +21,6 @@ import InfomaniakCore
 import Nuke
 
 public extension MailApiFetcher {
-    func avatarImageRequestForContact(_ contact: MergedContact) -> ImageRequest? {
-        guard let avatarPath = contact.remote?.avatar else { return nil }
-        let endpoint = Endpoint.resource(avatarPath)
-
-        return authenticatedImageRequest(endpoint.url)
-    }
-
     func authenticatedImageRequest(_ url: URL) -> ImageRequest? {
         var urlRequest = URLRequest(url: url)
         urlRequest.addValue(
