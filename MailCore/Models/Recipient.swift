@@ -100,11 +100,12 @@ public final class Recipient: EmbeddedObject, Codable {
             return email.hasSuffix(domain)
         }
 
-        let isMailerDeamon = Regex(pattern: "mailer-daemon@(?:.+.)?infomaniak.ch")?.firstMatch(in: email).isEmpty ?? false ? false : true
+        guard let regex = Regex(pattern: "mailer-daemon@(?:.+.)?infomaniak.ch") else { return false }
+        let isMailerDeamon = !regex.firstMatch(in: email).isEmpty
 
         let isAnAlias = mailboxManager.mailbox.aliases.contains(email)
 
-        let isContact = (mailboxManager.contactManager.contacts(matching: email)).isEmpty ? false : true
+        let isContact = !(mailboxManager.contactManager.contacts(matching: email)).isEmpty
 
         return !isKnownDomain && !isMailerDeamon && !isAnAlias && !isContact
     }

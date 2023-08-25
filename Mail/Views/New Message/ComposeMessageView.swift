@@ -319,7 +319,7 @@ struct ComposeMessageView: View {
     }
 
     private func sendDraft() {
-        var sentWithExternals = false
+        let sentWithExternals: Bool
         switch draft.displayExternalTag(mailboxManager: mailboxManager) {
         case .one, .many:
             sentWithExternals = true
