@@ -119,7 +119,8 @@ public class ActionsManager: ObservableObject {
         case .forward:
             try replyOrForward(messages: messagesWithDuplicates, mode: .forward)
         case .archive:
-            try await performMove(messages: messagesWithDuplicates, from: origin.folder, to: .archive)
+            let messagesFromFolder = messagesWithDuplicates.filter { $0.folderId == origin.folder?.id }
+            try await performMove(messages: messagesFromFolder, from: origin.folder, to: .archive)
         case .markAsRead:
             try await mailboxManager.markAsSeen(messages: messagesWithDuplicates, seen: true)
         case .markAsUnread:
@@ -152,7 +153,8 @@ public class ActionsManager: ObservableObject {
                 origin.nearestReportJunkMessageActionsPanel?.wrappedValue = messagesWithDuplicates.first
             }
         case .spam:
-            try await performMove(messages: messagesWithDuplicates, from: origin.folder, to: .spam)
+            let messagesFromFolder = messagesWithDuplicates.filter { $0.folderId == origin.folder?.id }
+            try await performMove(messages: messagesFromFolder, from: origin.folder, to: .spam)
         case .phishing:
             Task { @MainActor in
                 origin.nearestReportedForPhishingMessageAlert?.wrappedValue = messagesWithDuplicates.first
@@ -182,10 +184,11 @@ public class ActionsManager: ObservableObject {
     }
 
     public func performMove(messages: [Message], from originFolder: Folder?, to destinationFolder: Folder) async throws {
-        let undoAction = try await mailboxManager.move(messages: messages, to: destinationFolder)
+        let messagesFromFolder = messages.filter { $0.folderId == originFolder?.id }
+        let undoAction = try await mailboxManager.move(messages: messagesFromFolder, to: destinationFolder)
 
         let snackbarMessage = snackbarMoveMessage(
-            for: messages,
+            for: messagesFromFolder,
             originFolder: originFolder,
             destinationFolderName: destinationFolder.localizedName
         )
