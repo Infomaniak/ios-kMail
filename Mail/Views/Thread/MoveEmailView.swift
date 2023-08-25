@@ -94,7 +94,7 @@ struct MoveEmailView: View {
 
     private func listOfFolders(nestableFolders: [NestableFolder]) -> some View {
         ForEach(nestableFolders) { nestableFolder in
-            FolderCell(folder: nestableFolder, currentFolderId: movedMessages.first?.folderId) { folder in
+            FolderCell(folder: nestableFolder, currentFolderId: originFolder?.id) { folder in
                 move(to: folder)
             }
         }
