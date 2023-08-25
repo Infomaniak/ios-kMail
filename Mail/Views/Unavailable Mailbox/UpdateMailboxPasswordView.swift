@@ -25,6 +25,7 @@ import SwiftUI
 struct UpdateMailboxPasswordView: View {
     @LazyInjectService private var accountManager: AccountManager
     @LazyInjectService private var matomo: MatomoUtils
+    @LazyInjectService private var snackbarPresenter: SnackBarPresentable
 
     @EnvironmentObject private var navigationState: NavigationState
 
@@ -74,7 +75,7 @@ struct UpdateMailboxPasswordView: View {
                         .disabled(isLoading)
 
                     if isShowingError {
-                        Text(MailResourcesStrings.Localizable.errorInvalidCredentials)
+                        Text(MailResourcesStrings.Localizable.errorInvalidMailboxPassword)
                             .textStyle(.labelError)
                     } else if showPasswordLengthWarning {
                         Text(MailResourcesStrings.Localizable.errorMailboxPasswordLength)
@@ -120,9 +121,16 @@ struct UpdateMailboxPasswordView: View {
             do {
                 try await accountManager.updateMailboxPassword(mailbox: mailbox, password: updatedMailboxPassword)
                 navigationState.transitionToRootViewDestination(.mainView)
+            } catch let error as MailApiError where error == .apiInvalidPassword {
+                withAnimation {
+                    isShowingError = true
+                    updatedMailboxPassword = ""
+                }
             } catch {
-                isShowingError = true
-                updatedMailboxPassword = ""
+                withAnimation {
+                    updatedMailboxPassword = ""
+                }
+                snackbarPresenter.show(message: error.localizedDescription)
             }
             isLoading = false
         }
