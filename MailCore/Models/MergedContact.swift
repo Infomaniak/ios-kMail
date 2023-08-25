@@ -76,14 +76,14 @@ public final class MergedContact: Object, Identifiable {
 
     public var avatarImageRequest: ImageRequest? {
         // IK avatar
-        if let remoteAvatarURL, remoteAvatarURL.isEmpty == false {
+        if let remoteAvatarURL, !remoteAvatarURL.isEmpty {
             let avatarURL = Endpoint.resource(remoteAvatarURL).url
             return ImageRequest(url: avatarURL)
         }
 
         // iOS Avatar
         if let localIdentifier,
-           localIdentifier.isEmpty == false,
+           !localIdentifier.isEmpty,
            let localContact = CNContact.fromUUID(localIdentifier),
            localContact.imageDataAvailable {
             var imageRequest = ImageRequest(id: localIdentifier) {
@@ -111,7 +111,7 @@ public final class MergedContact: Object, Identifiable {
         self.email = email
 
         // We must have an email at this point
-        guard email.isEmpty == false else {
+        guard !email.isEmpty else {
             return nil
         }
 

@@ -92,8 +92,6 @@ extension ContactManager {
                 realm.add(mergedContact, update: .modified)
             }
         }
-
-        let allInBase = Array(realm.objects(MergedContact.self))
     }
 
     func uniqueMergeLocalInto(remote: [InfomaniakContact]) async {
