@@ -47,9 +47,14 @@ extension RandomAccessCollection where Element == Message {
     ///
     /// - For a list of messages all coming from the same thread: `lastMessageToExecuteAction`
     func lastMessagesAndDuplicatesToExecuteAction(currentMailboxEmail: String, currentFolder: Folder?) -> [Message] {
-        let lastMessages = uniqueThreadsInFolder(currentFolder)
-            .compactMap { $0.lastMessageToExecuteAction(currentMailboxEmail: currentMailboxEmail) }
-        return lastMessages.addingDuplicates()
+        if isSingleMessage(currentFolder: currentFolder) {
+            return self.addingDuplicates()
+        } else {
+            return uniqueThreadsInFolder(currentFolder)
+                .compactMap { $0.lastMessageToExecuteAction(currentMailboxEmail: currentMailboxEmail)
+                }
+                .addingDuplicates()
+        }
     }
 
     /// - Returns: The original message list and their duplicates
