@@ -75,12 +75,6 @@ public final class MergedContact: Object, Identifiable {
     }()
 
     public var avatarImageRequest: ImageRequest? {
-        // IK avatar
-        if let remoteAvatarURL, !remoteAvatarURL.isEmpty {
-            let avatarURL = Endpoint.resource(remoteAvatarURL).url
-            return ImageRequest(url: avatarURL)
-        }
-
         // iOS Avatar
         if let localIdentifier,
            !localIdentifier.isEmpty,
@@ -95,6 +89,12 @@ public final class MergedContact: Object, Identifiable {
             }
             imageRequest.options = [.disableDiskCache]
             return imageRequest
+        }
+
+        // IK avatar
+        if let remoteAvatarURL, !remoteAvatarURL.isEmpty {
+            let avatarURL = Endpoint.resource(remoteAvatarURL).url
+            return ImageRequest(url: avatarURL)
         }
 
         // nothing
@@ -115,13 +115,13 @@ public final class MergedContact: Object, Identifiable {
             return nil
         }
 
-        // Load the object, prefer data from Infomaniak
-        populateWithLocal(local)
-        overrideWithRemote(remote)
+        // Load the object, prefer data from Device.
+        populateWithRemote(remote)
+        overrideWithLocal(local)
     }
 
     /// Load object with bare information
-    private func populateWithLocal(_ contact: CNContact?) {
+    private func overrideWithLocal(_ contact: CNContact?) {
         guard let contact else {
             return
         }
@@ -133,8 +133,8 @@ public final class MergedContact: Object, Identifiable {
         localIdentifier = contact.identifier
     }
 
-    /// IK has priority over local contacts
-    func overrideWithRemote(_ contact: InfomaniakContact?) {
+    /// IK has _not_ priority over local contacts
+    func populateWithRemote(_ contact: InfomaniakContact?) {
         guard let contact else {
             return
         }
