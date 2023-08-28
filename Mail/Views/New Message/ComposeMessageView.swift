@@ -251,7 +251,7 @@ struct ComposeMessageView: View {
                 case .many, .one:
                     HStack(spacing: 24) {
                         Text(MailResourcesStrings.Localizable.externalDialogTitleRecipient)
-                            .foregroundColor(MailResourcesAsset.onTagColor.swiftUIColor)
+                            .foregroundColor(MailResourcesAsset.onTagColor)
                             .textStyle(.bodySmall)
 
                         Spacer()
