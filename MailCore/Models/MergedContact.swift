@@ -92,7 +92,7 @@ public final class MergedContact: Object, Identifiable {
         }
 
         // IK avatar
-        if let remoteAvatarURL, !remoteAvatarURL.isEmpty {
+        else if let remoteAvatarURL, !remoteAvatarURL.isEmpty {
             let avatarURL = Endpoint.resource(remoteAvatarURL).url
             return ImageRequest(url: avatarURL)
         }
@@ -120,7 +120,7 @@ public final class MergedContact: Object, Identifiable {
         overrideWithLocal(local)
     }
 
-    /// Load object with bare information
+    /// Overload object with local information
     private func overrideWithLocal(_ contact: CNContact?) {
         guard let contact else {
             return

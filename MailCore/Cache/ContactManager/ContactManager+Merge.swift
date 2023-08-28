@@ -32,53 +32,30 @@ extension CNContact {
 
 extension ContactManager {
     func merge(localInto remote: [InfomaniakContact]) async {
-        let realm = getRealm()
-
         // Make sure the base propagates back the changes
         defer {
-            realm.refresh()
+            getRealm().refresh()
         }
 
         // index remote account per email
-        var remoteEmailLookupTable = [String: InfomaniakContact]()
+        var remoteContactsByEmail = [String: InfomaniakContact]()
         for contact in remote {
             let emails = contact.emails
             for mail in emails {
-                remoteEmailLookupTable[mail] = contact
+                remoteContactsByEmail[mail] = contact
             }
         }
 
-        // Merge local and remote
-        await localContactsHelper.enumerateContacts { localContact, stop in
-            // For each email of a specific contact
-            for cnEmail in localContact.emailAddresses {
-                let email = String(cnEmail.value)
+        // Insert all the local contacts, while merging them with the remote version
+        let remainingContacts = await insertLocalContactsInDBMerging(remote: remoteContactsByEmail)
 
-                // lookup matching remote contact for current email
-                let remoteContact = remoteEmailLookupTable[email]
+        // Insert remaining remote contacts in db
+        insertContactsInDB(remainingContacts)
+    }
 
-                // Create DB object
-                guard let mergedContact = MergedContact(email: email, local: localContact, remote: remoteContact) else {
-                    return
-                }
-
-                // Remove email from lookup table
-                remoteEmailLookupTable.removeValue(forKey: email)
-
-                // Store result
-                try? realm.safeWrite {
-                    realm.add(mergedContact, update: .modified)
-                }
-
-                if Task.isCancelled {
-                    stop.pointee = true
-                    return
-                }
-            }
-        }
-
-        // Insert remaining remote contacts
-        for (email, contact) in remoteEmailLookupTable {
+    // Insert Contacts indexed by email in base without check
+    private func insertContactsInDB(_ input: [String: InfomaniakContact]) {
+        for (email, contact) in input {
             guard !Task.isCancelled else {
                 break
             }
@@ -88,10 +65,49 @@ extension ContactManager {
                 return
             }
 
+            let realm = getRealm()
             try? realm.safeWrite {
                 realm.add(mergedContact, update: .modified)
             }
         }
+    }
+
+    /// Merge local and remote contacts, insert them in contact database.
+    /// - Parameter remote: all the remote Infomaniak contacts, indexed by email
+    /// - Returns: The remaining remote contacts without a local version, indexed by email
+    private func insertLocalContactsInDBMerging(remote input: [String: InfomaniakContact]) async -> [String: InfomaniakContact] {
+        var output = input
+
+        await localContactsHelper.enumerateContacts { localContact, stop in
+            // For each email of a specific contact
+            for cnEmail in localContact.emailAddresses {
+                if Task.isCancelled {
+                    stop.pointee = true
+                    return
+                }
+
+                let email = String(cnEmail.value)
+
+                // lookup matching remote contact for current email
+                let remoteContact = input[email]
+
+                // Create DB object
+                guard let mergedContact = MergedContact(email: email, local: localContact, remote: remoteContact) else {
+                    return
+                }
+
+                // Remove email from lookup table
+                output.removeValue(forKey: email)
+
+                // Store result
+                let realm = self.getRealm()
+                try? realm.safeWrite {
+                    realm.add(mergedContact, update: .modified)
+                }
+            }
+        }
+
+        return output
     }
 
     func uniqueMergeLocalInto(remote: [InfomaniakContact]) async {
