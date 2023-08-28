@@ -18,6 +18,7 @@
 
 import Foundation
 import InfomaniakCore
+import InfomaniakCoreUI
 import InfomaniakDI
 import InfomaniakLogin
 import InfomaniakNotifications
@@ -84,6 +85,9 @@ enum NotificationServiceAssembly {
             Factory(type: TokenStore.self) { _, _ in
                 TokenStore()
             },
+            Factory(type: IKSnackBarAvoider.self) { _, _ in
+                IKSnackBarAvoider()
+            }
         ]
 
         factories.registerFactoriesInDI()
