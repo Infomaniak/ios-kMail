@@ -61,12 +61,6 @@ public extension UIPadding {
     static let menuDrawerCellChevronSpacing = intermediate
     static let menuDrawerSubFolder = medium
 
-    // MARK: Actions
-
-    static let actionsSpacing = intermediate
-    static let actionsHorizontal = small
-    static let actionsCellHorizontal = medium
-
     // MARK: Misc
 
     static let floatingButtonBottom = medium
