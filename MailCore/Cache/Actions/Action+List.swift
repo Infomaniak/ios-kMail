@@ -92,13 +92,13 @@ extension Action: CaseIterable {
         return (quickActions, listActions)
     }
 
-    private static func actionsForMessagesInSameThreads(_ messages: [Message])
+    private static func actionsForMessagesInSameThreads(_ messages: [Message], originFolder: Folder?)
         -> (quickActions: [Action], listActions: [Action]) {
-        let archive = messages.first?.folder?.role != .archive
+        let archive = originFolder?.role != .archive
         let unread = messages.allSatisfy(\.seen)
-        let star = messages.allSatisfy(\.flagged)
+        let showUnstar = messages.contains { $0.flagged }
 
-        let spam = messages.first?.folder?.role == .spam
+        let spam = originFolder?.role == .spam
         let spamAction: Action? = spam ? .nonSpam : .spam
 
         let tempListActions: [Action?] = [
@@ -106,7 +106,7 @@ extension Action: CaseIterable {
             spamAction,
             unread ? .markAsUnread : .markAsRead,
             archive ? .archive : .moveToInbox,
-            star ? .unstar : .star
+            showUnstar ? .unstar : .star
         ]
 
         return (Action.quickActions, tempListActions.compactMap { $0 })
@@ -120,7 +120,7 @@ extension Action: CaseIterable {
         } else if messages.uniqueThreadsInFolder(originFolder).count > 1 {
             return actionsForMessagesInDifferentThreads(messages)
         } else {
-            return actionsForMessagesInSameThreads(messages)
+            return actionsForMessagesInSameThreads(messages, originFolder: originFolder)
         }
     }
 }
