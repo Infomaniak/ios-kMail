@@ -32,10 +32,34 @@ public extension ContactManager {
     /// Both *case* insensitive __and__ *diacritic* (accents) insensitive
     static let searchContactInsensitivePredicate = "name contains[cd] %@ OR email contains[cd] %@"
 
-    func contacts(matching string: String) -> [MergedContact] {
+    /// Making sure, that by default, we do not overflow memory with too much contacts
+    private static let contactFetchLimit = 120
+
+    /// Case and diacritic insensitive search for a `MergedContact`
+    /// - Parameters:
+    ///   - string: input string to match against email and name
+    ///   - fetchLimit: limit the query by default to limit memory footprint
+    /// - Returns: The collection of matching contacts.
+    func contacts(matching string: String, fetchLimit: Int? = nil) -> [MergedContact] {
         let realm = getRealm()
-        let result = Array(realm.objects(MergedContact.self).filter(Self.searchContactInsensitivePredicate, string, string))
-        return result
+        let lazyResults = realm
+            .objects(MergedContact.self)
+            .filter(Self.searchContactInsensitivePredicate, string, string)
+
+        // Use a default value if none provided
+        let fetchLimit = fetchLimit ?? Self.contactFetchLimit
+
+        // Iterate a given number of times to emulate a `LIMIT` statement.
+        var iterator = lazyResults.makeIterator()
+        var results = [MergedContact]()
+        for _ in [..<fetchLimit] {
+            guard let next = iterator.next() else {
+                break
+            }
+            results.append(next)
+        }
+
+        return results
     }
 
     func getContact(for recipient: Recipient) -> MergedContact? {
