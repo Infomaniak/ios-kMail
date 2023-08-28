@@ -31,7 +31,7 @@ public enum MessageWebViewUtils {
         if let style = Bundle.main.loadCSS(filename: "style") {
             let variables = """
             :root {
-                --ikmail-primary-color: \(UserDefaults.shared.accentColor.primary.swiftUIColor.hexRepresentation);
+                --mail-primary-color: \(UserDefaults.shared.accentColor.primary.swiftUIColor.hexRepresentation);
             }
             """
             resources += "<style>\(variables + style)</style>".replacingOccurrences(of: "\n", with: "")
