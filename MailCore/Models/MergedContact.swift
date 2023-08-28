@@ -58,7 +58,7 @@ public final class MergedContact: Object, Identifiable {
 
     /// `true` if a remote Infomaniak contact was used to create this object
     public lazy var isRemote = {
-        guard let remoteIdentifier else {
+        guard remoteIdentifier != nil else {
             return false
         }
         return true
@@ -66,7 +66,7 @@ public final class MergedContact: Object, Identifiable {
 
     /// `true` if a local iPhone contact was used to create this object
     public lazy var isLocal = {
-        guard let localIdentifier else {
+        guard localIdentifier != nil else {
             return false
         }
         return true
