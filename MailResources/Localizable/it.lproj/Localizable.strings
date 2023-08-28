@@ -4,8 +4,8 @@
  * Release: Working copy
  * Locale: it, Italian
  * Tagged: ios
- * Exported by: Ambroise Decouttere
- * Exported at: Fri, 18 Aug 2023 09:58:00 +0200
+ * Exported by: Valentin Perignon
+ * Exported at: Mon, 28 Aug 2023 09:59:22 +0200
  */
 
 /* loco:6256793050618f7416758a32 */
@@ -486,10 +486,10 @@
 "buttonItalic" = "Corsivo";
 
 /* loco:62b2d9af68273c4a783d30d2 */
-"buttonUnderlined" = "Sottolineatura";
+"buttonUnderline" = "Sottolineatura";
 
 /* loco:62b2dd31865d4941c92777d3 */
-"buttonStrikedThrough" = "Sciopero attraverso";
+"buttonStrikeThrough" = "Sciopero attraverso";
 
 /* loco:62b2dda49d1c850fb016c612 */
 "buttonBulletPoint" = "Punto di riferimento";
@@ -993,7 +993,7 @@
 "buttonUpdate" = "Aggiorna";
 
 /* loco:64257388057ce0235d2c5222 */
-"updateAvailableDescription" = "Per vivere la migliore esperienza con ikMail, ti consigliamo di aggiornare la tua applicazione.";
+"updateAvailableDescription" = "Per vivere la migliore esperienza con Infomaniak Mail, ti consigliamo di aggiornare la tua applicazione.";
 
 /* loco:6425777e2343387912223aa2 */
 "buttonLater" = "Più tardi";
@@ -1086,7 +1086,7 @@
 "alertNotificationsDisabledTitle" = "Notifiche disabilitate";
 
 /* loco:6481a3d9c7a313bee80faa42 */
-"alertNotificationsDisabledDescription" = "Attiva le notifiche per ikMail **nelle impostazioni di iOS** per essere avvisati quando si ricevono nuovi messaggi";
+"alertNotificationsDisabledDescription" = "Attiva le notifiche per Infomaniak Mail **nelle impostazioni di iOS** per essere avvisati quando si ricevono nuovi messaggi";
 
 /* loco:6481a576efb1d3072f0ede02 */
 "alertNotificationsDisabledButton" = "Vedi i parametri";
@@ -1158,7 +1158,7 @@
 "enterPasswordDescription1" = "La password è stata modificata. Se non sei responsabile, contatta l’amministratore.";
 
 /* loco:64a2b7a35386a9ec49013e42 */
-"buttonPasswordForgotten" = "Hai dimenticato la password?";
+"buttonRequestPassword" = "Richiesta password";
 
 /* loco:64a3bb083ee4236af806d393 */
 "errorInvalidMailboxPassword" = "Password errata per l’indirizzo e-mail";
@@ -1224,7 +1224,7 @@
 "newAccountStorageDrive" = "15 GB di memoria kDrive";
 
 /* loco:64ca16484dbf65eb9b0ea862 */
-"pleaseLogInFirst" = "Effettuare prima il login nell'app ikMail.";
+"pleaseLogInFirst" = "Effettua prima il login nell'app Infomaniak Mail.";
 
 /* loco:64cca81829e8aeaec602e1c2 */
 "settingsThreadModeTitle" = "Modalità di visualizzazione dei messaggi";
@@ -1264,3 +1264,12 @@
 
 /* loco:64df15c6e992ed0689022852 */
 "settingsExternalContentDescription" = "Visualizzare il contenuto esterno";
+
+/* loco:64df3c1f3e0659f4670b7093 */
+"snackbarMailboxPasswordRequested" = "Richiesta inviata all’amministratore";
+
+/* loco:64e7612b488e98f39d0960e2 */
+"externalDialogDescriptionExpeditor-plural-many" = "";
+
+/* loco:64e7615fcdd6976491020982 */
+"externalDialogDescriptionRecipient-plural-many" = "";
