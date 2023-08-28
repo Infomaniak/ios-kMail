@@ -136,7 +136,7 @@ public final class MergedContact: Object, Identifiable {
     }
 
     /// IK has _not_ priority over local contacts
-    func populateWithRemote(_ contact: InfomaniakContact?) {
+    private func populateWithRemote(_ contact: InfomaniakContact?) {
         guard let contact else {
             return
         }
