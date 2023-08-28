@@ -87,8 +87,7 @@ public final class ContactManager: ObservableObject {
         do {
             // Fetch remote content
             async let addressBooksRequest = apiFetcher.addressBooks().addressbooks
-            async let contactsRequest = apiFetcher.contacts()
-
+            
             // Process addressBooks
             let addressBooks = try await addressBooksRequest
             await backgroundRealm.execute { realm in
@@ -97,10 +96,9 @@ public final class ContactManager: ObservableObject {
                 }
             }
 
-            let contacts = try await contactsRequest
-            await uniqueMergeLocalInto(remote: contacts)
+            await uniqueMergeLocalTask(apiFetcher)
         } catch {
-            await uniqueMergeLocalInto(remote: [])
+            await uniqueMergeLocalTask(apiFetcher)
 
             throw error
         }

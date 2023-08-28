@@ -52,7 +52,7 @@ public extension ContactManager {
         // Iterate a given number of times to emulate a `LIMIT` statement.
         var iterator = lazyResults.makeIterator()
         var results = [MergedContact]()
-        for _ in [..<fetchLimit] {
+        for _ in 0..<fetchLimit {
             guard let next = iterator.next() else {
                 break
             }

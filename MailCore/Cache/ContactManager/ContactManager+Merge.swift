@@ -34,6 +34,7 @@ extension ContactManager {
     func merge(localInto remote: [InfomaniakContact]) async {
         // Make sure the base propagates back the changes
         defer {
+            DDLogInfo("Done merging remote and local contacts, refreshing DB…")
             getRealm().refresh()
         }
 
@@ -110,15 +111,37 @@ extension ContactManager {
         return output
     }
 
-    func uniqueMergeLocalInto(remote: [InfomaniakContact]) async {
-        // TODO; optimise, do not override task if running
-        DDLogInfo("Will start merging contacts cancelling previous task : \(currentMergeRequest != nil)")
-        currentMergeRequest?.cancel()
-        currentMergeRequest = Task {
-            await merge(localInto: remote)
+    /// Making sure only one update task is running or return
+    func uniqueMergeLocalTask(_ apiFetcher: MailApiFetcher) async {
+        // We do not run an update of contacts in extension mode as we are too resource constrained
+        guard !Bundle.main.isExtension else {
+            DDLogInfo("Skip updating contacts, we are in extension mode")
+            return
         }
 
-        await currentMergeRequest?.finish()
+        // Unique task running
+        guard currentMergeRequest == nil else {
+            DDLogInfo("Merging contacts running exiting …")
+            return
+        }
+
+        DDLogInfo("Will start merging contacts cancelling previous task : \(currentMergeRequest != nil)")
+        let updateTask = Task {
+            // Fetch remote contacts
+            let remoteContacts: [InfomaniakContact]
+            if let remote = try? await apiFetcher.contacts() {
+                remoteContacts = remote
+            } else {
+                remoteContacts = []
+            }
+
+            // Merge them
+            await merge(localInto: remoteContacts)
+        }
+        currentMergeRequest = updateTask
+
+        // Await for completion
+        await updateTask.finish()
         currentMergeRequest = nil
     }
 }
