@@ -56,10 +56,17 @@ public final class MergedContact: Object, Identifiable {
     /// Local
     @Persisted public var localIdentifier: String?
 
-    /// false if can point to a contact available on the iPhone contacts
+    /// `true` if a remote Infomaniak contact was used to create this object
     public lazy var isRemote = {
-        guard let localIdentifier,
-              !localIdentifier.isEmpty else {
+        guard let remoteIdentifier else {
+            return false
+        }
+        return true
+    }()
+    
+    /// `true` if a local iPhone contact was used to create this object
+    public lazy var isLocal = {
+        guard let localIdentifier else {
             return false
         }
         return true
