@@ -63,7 +63,7 @@ public final class MergedContact: Object, Identifiable {
         }
         return true
     }()
-    
+
     /// `true` if a local iPhone contact was used to create this object
     public lazy var isLocal = {
         guard let localIdentifier else {
@@ -116,11 +116,6 @@ public final class MergedContact: Object, Identifiable {
         super.init()
 
         self.email = email
-
-        // We must have an email at this point
-        guard !email.isEmpty else {
-            return nil
-        }
 
         // Load the object, prefer data from Device.
         populateWithRemote(remote)
