@@ -91,6 +91,8 @@ public final class Recipient: EmbeddedObject, Codable {
         return email == recipient.email && name == recipient.name
     }
 
+    private static let mailerDeamonRegex = Regex(pattern: "mailer-daemon@(?:.+.)?infomaniak.ch")
+
     public func isExternal(mailboxManager: MailboxManager) -> Bool {
         ///if the email adress is added manually by me, it's not considered as an external
         guard !isAddedByMe else { return false }
@@ -100,8 +102,12 @@ public final class Recipient: EmbeddedObject, Codable {
             return email.hasSuffix(domain)
         }
 
-        guard let regex = Regex(pattern: "mailer-daemon@(?:.+.)?infomaniak.ch") else { return false }
-        let isMailerDeamon = !regex.firstMatch(in: email).isEmpty
+        let isMailerDeamon: Bool
+        if let regex = Self.mailerDeamonRegex {
+            isMailerDeamon = !regex.firstMatch(in: email).isEmpty
+        } else {
+            isMailerDeamon = false
+        }
 
         let isAnAlias = mailboxManager.mailbox.aliases.contains(email)
 

@@ -73,7 +73,7 @@ struct ComposeMessageView: View {
     @State private var editorFocus = false
     @State private var currentSignature: Signature?
     @State private var initialAttachments = [Attachable]()
-    @State private var showExternalTag = true
+    @State private var isShowingExternalTag = true
 
     @State private var editorModel = RichTextEditorModel()
     @State private var scrollView: UIScrollView?
@@ -245,7 +245,7 @@ struct ComposeMessageView: View {
             }
         }
         .safeAreaInset(edge: .bottom) {
-            if showExternalTag {
+            if isShowingExternalTag {
                 let externalTag = draft.displayExternalTag(mailboxManager: mailboxManager)
                 switch externalTag {
                 case .many, .one:
@@ -268,7 +268,7 @@ struct ComposeMessageView: View {
 
                         Button {
                             matomo.track(eventWithCategory: .externals, name: "bannerManuallyClosed")
-                            showExternalTag = false
+                            isShowingExternalTag = false
                         } label: {
                             MailResourcesAsset.closeSmall.swiftUIImage
                                 .resizable()
@@ -277,7 +277,7 @@ struct ComposeMessageView: View {
                         }
                     }
                     .frame(maxWidth: .infinity)
-                    .padding()
+                    .padding(16)
                     .background(MailResourcesAsset.yellowColor.swiftUIColor)
                 case .none:
                     EmptyView()

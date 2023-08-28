@@ -29,11 +29,6 @@ public struct DisplayExternalRecipientStatus {
     let mailboxManager: MailboxManager
     let recipientsList: List<Recipient>
 
-    public init(mailboxManager: MailboxManager, recipientsList: List<Recipient>) {
-        self.mailboxManager = mailboxManager
-        self.recipientsList = recipientsList
-    }
-
     public var state: State {
         var externalList = [Recipient]()
         let recipients = recipientsList

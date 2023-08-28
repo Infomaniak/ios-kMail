@@ -24,13 +24,11 @@ import SwiftUI
 struct ExternalRecipientView: View {
     @Environment(\.dismiss) private var dismiss
 
-    @State public var externalTagSate: DisplayExternalRecipientStatus.State
-
+    public var externalTagSate: DisplayExternalRecipientStatus.State
     public var isDraft: Bool
 
     var body: some View {
         VStack(alignment: .leading, spacing: 24) {
-            
             isDraft ? Text(MailResourcesStrings.Localizable.externalDialogTitleRecipient)
                 .textStyle(.bodyMedium) : Text(MailResourcesStrings.Localizable.externalDialogTitleExpeditor)
                 .textStyle(.bodyMedium)
