@@ -4,8 +4,8 @@
  * Release: Working copy
  * Locale: es, Spanish
  * Tagged: ios
- * Exported by: Ambroise Decouttere
- * Exported at: Fri, 18 Aug 2023 09:58:00 +0200
+ * Exported by: Valentin Perignon
+ * Exported at: Mon, 28 Aug 2023 09:59:22 +0200
  */
 
 /* loco:6256793050618f7416758a32 */
@@ -486,10 +486,10 @@
 "buttonItalic" = "Cursiva";
 
 /* loco:62b2d9af68273c4a783d30d2 */
-"buttonUnderlined" = "Subraye";
+"buttonUnderline" = "Subraye";
 
 /* loco:62b2dd31865d4941c92777d3 */
-"buttonStrikedThrough" = "Huelga a través de";
+"buttonStrikeThrough" = "Huelga a través de";
 
 /* loco:62b2dda49d1c850fb016c612 */
 "buttonBulletPoint" = "Viñetas";
@@ -993,7 +993,7 @@
 "buttonUpdate" = "Actualizar";
 
 /* loco:64257388057ce0235d2c5222 */
-"updateAvailableDescription" = "Para disfrutar de una experiencia óptima de ikMail, te aconsejamos que actualices tu aplicación.";
+"updateAvailableDescription" = "Para disfrutar de una experiencia óptima de Infomaniak Mail, te aconsejamos que actualices tu aplicación.";
 
 /* loco:6425777e2343387912223aa2 */
 "buttonLater" = "Más tarde";
@@ -1086,7 +1086,7 @@
 "alertNotificationsDisabledTitle" = "Notificaciones desactivadas";
 
 /* loco:6481a3d9c7a313bee80faa42 */
-"alertNotificationsDisabledDescription" = "Por favor, activa las notificaciones para ikMail **en los ajustes de iOS** para ser notificado cuando recibas nuevos mensajes";
+"alertNotificationsDisabledDescription" = "Por favor, activa las notificaciones para Infomaniak Mail **en los ajustes de iOS** para ser notificado cuando recibas nuevos mensajes";
 
 /* loco:6481a576efb1d3072f0ede02 */
 "alertNotificationsDisabledButton" = "Ver los parámetros";
@@ -1158,7 +1158,7 @@
 "enterPasswordDescription1" = "Su contraseña ha sido modificada. Si no es culpa suya, póngase en contacto con su administrador.";
 
 /* loco:64a2b7a35386a9ec49013e42 */
-"buttonPasswordForgotten" = "¿Ha olvidado su contraseña?";
+"buttonRequestPassword" = "Solicitar contraseña";
 
 /* loco:64a3bb083ee4236af806d393 */
 "errorInvalidMailboxPassword" = "Contraseña incorrecta para la dirección de correo electrónico";
@@ -1224,7 +1224,7 @@
 "newAccountStorageDrive" = "15 GB de almacenamiento kDrive";
 
 /* loco:64ca16484dbf65eb9b0ea862 */
-"pleaseLogInFirst" = "Inicia sesión primero en la aplicación ikMail.";
+"pleaseLogInFirst" = "Inicia sesión primero en la aplicación Infomaniak Mail.";
 
 /* loco:64cca81829e8aeaec602e1c2 */
 "settingsThreadModeTitle" = "Modo de visualización de mensajes";
@@ -1264,3 +1264,12 @@
 
 /* loco:64df15c6e992ed0689022852 */
 "settingsExternalContentDescription" = "Mostrar contenido externo";
+
+/* loco:64df3c1f3e0659f4670b7093 */
+"snackbarMailboxPasswordRequested" = "Solicitud enviada al administrador";
+
+/* loco:64e7612b488e98f39d0960e2 */
+"externalDialogDescriptionExpeditor-plural-many" = "";
+
+/* loco:64e7615fcdd6976491020982 */
+"externalDialogDescriptionRecipient-plural-many" = "";

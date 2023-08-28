@@ -4,8 +4,8 @@
  * Release: Working copy
  * Locale: fr, French
  * Tagged: ios
- * Exported by: Ambroise Decouttere
- * Exported at: Fri, 18 Aug 2023 09:58:00 +0200
+ * Exported by: Valentin Perignon
+ * Exported at: Mon, 28 Aug 2023 09:59:22 +0200
  */
 
 /* loco:6256793050618f7416758a32 */
@@ -486,10 +486,10 @@
 "buttonItalic" = "Italique";
 
 /* loco:62b2d9af68273c4a783d30d2 */
-"buttonUnderlined" = "Souligner";
+"buttonUnderline" = "Souligner";
 
 /* loco:62b2dd31865d4941c92777d3 */
-"buttonStrikedThrough" = "Barrer";
+"buttonStrikeThrough" = "Barrer";
 
 /* loco:62b2dda49d1c850fb016c612 */
 "buttonBulletPoint" = "Puce";
@@ -993,7 +993,7 @@
 "buttonUpdate" = "Mettre à jour";
 
 /* loco:64257388057ce0235d2c5222 */
-"updateAvailableDescription" = "Afin de profiter d’une expérience optimale de ikMail, nous vous conseillons de mettre à jour votre application.";
+"updateAvailableDescription" = "Afin de profiter d’une expérience optimale d’Infomaniak Mail, nous vous conseillons de mettre à jour votre application.";
 
 /* loco:6425777e2343387912223aa2 */
 "buttonLater" = "Plus tard";
@@ -1086,7 +1086,7 @@
 "alertNotificationsDisabledTitle" = "Notifications désactivées";
 
 /* loco:6481a3d9c7a313bee80faa42 */
-"alertNotificationsDisabledDescription" = "Veuillez autoriser les notifications pour ikMail **dans les paramètres iOS** afin d’être alerté à la réception de nouveaux messages";
+"alertNotificationsDisabledDescription" = "Veuillez autoriser les notifications pour Infomaniak Mail **dans les paramètres iOS** afin d’être alerté à la réception de nouveaux messages";
 
 /* loco:6481a576efb1d3072f0ede02 */
 "alertNotificationsDisabledButton" = "Voir les paramètres";
@@ -1158,7 +1158,7 @@
 "enterPasswordDescription1" = "Votre mot de passe a été modifié. Si vous n’en êtes pas à l’origine, veuillez contacter votre administrateur.";
 
 /* loco:64a2b7a35386a9ec49013e42 */
-"buttonPasswordForgotten" = "Mot de passe oublié ?";
+"buttonRequestPassword" = "Demander le mot de passe";
 
 /* loco:64a3bb083ee4236af806d393 */
 "errorInvalidMailboxPassword" = "Mot de passe de l’adresse mail incorrect";
@@ -1224,7 +1224,7 @@
 "newAccountStorageDrive" = "15 Go de stockage kDrive";
 
 /* loco:64ca16484dbf65eb9b0ea862 */
-"pleaseLogInFirst" = "Veuillez d'abord vous connecter à l'application ikMail.";
+"pleaseLogInFirst" = "Veuillez d'abord vous connecter à l'application Infomaniak Mail.";
 
 /* loco:64cca81829e8aeaec602e1c2 */
 "settingsThreadModeTitle" = "Mode d’affichage des messages";
@@ -1264,3 +1264,12 @@
 
 /* loco:64df15c6e992ed0689022852 */
 "settingsExternalContentDescription" = "Afficher le contenu externe";
+
+/* loco:64df3c1f3e0659f4670b7093 */
+"snackbarMailboxPasswordRequested" = "Demande transmise à l’administrateur";
+
+/* loco:64e7612b488e98f39d0960e2 */
+"externalDialogDescriptionExpeditor-plural-many" = "Certains expéditeurs ne font pas partie de votre organisation ni de vos contacts. Soyez vigilant si vous partagez des informations sensibles.";
+
+/* loco:64e7615fcdd6976491020982 */
+"externalDialogDescriptionRecipient-plural-many" = "Certains destinataires ne font pas partie de votre organisation ni de vos contacts. Soyez vigilant si vous partagez des informations sensibles.";

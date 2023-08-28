@@ -94,7 +94,7 @@ struct UpdateMailboxPasswordView: View {
             .disabled(disableButton)
             .padding(24)
 
-            MailButton(label: MailResourcesStrings.Localizable.buttonPasswordForgotten) {
+            MailButton(label: MailResourcesStrings.Localizable.buttonRequestPassword) {
                 // Empty for now, WIP
             }
             .mailButtonStyle(.link)
