@@ -19,6 +19,27 @@
 import SwiftUI
 
 public enum UIPadding {
+    public enum Options {
+        case large, medium, regular, intermediate, small, verySmall
+
+        var value: CGFloat {
+            switch self {
+            case .large:
+                return UIPadding.large
+            case .medium:
+                return UIPadding.medium
+            case .regular:
+                return UIPadding.regular
+            case .intermediate:
+                return UIPadding.intermediate
+            case .small:
+                return UIPadding.small
+            case .verySmall:
+                return UIPadding.verySmall
+            }
+        }
+    }
+
     public static let large: CGFloat = 48
     public static let medium: CGFloat = 24
     public static let regular: CGFloat = 16
@@ -51,4 +72,10 @@ public extension UIPadding {
     static let floatingButtonBottom = medium
     static let bottomSheetHorizontal = medium
     static let composeViewHeaderCellLargeVertical = intermediate + UIConstants.recipientChipInsets.top
+}
+
+public extension View {
+    func padding(_ edges: Edge.Set = .all, value: UIPadding.Options) -> some View {
+        padding(edges, value.value)
+    }
 }

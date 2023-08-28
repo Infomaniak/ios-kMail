@@ -48,9 +48,9 @@ struct MenuHeaderView: View {
             .frame(width: UIConstants.menuDrawerLogoHeight, height: UIConstants.menuDrawerLogoHeight)
             .contentShape(Rectangle())
         }
-        .padding(.vertical, UIPadding.regular)
-        .padding(.leading, UIPadding.medium)
-        .padding(.trailing, UIPadding.verySmall)
+        .padding(.vertical, value: .regular)
+        .padding(.leading, value: .medium)
+        .padding(.trailing, value: .verySmall)
         .background(MailResourcesAsset.backgroundSecondaryColor.swiftUIColor)
         .clipped()
         .shadow(color: MailResourcesAsset.menuDrawerShadowColor.swiftUIColor, radius: 1, x: 0, y: 2)

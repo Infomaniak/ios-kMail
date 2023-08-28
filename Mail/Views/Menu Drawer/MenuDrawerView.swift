@@ -160,8 +160,8 @@ struct MenuDrawerView: View {
 
                     AppVersionView()
                 }
-                .padding(.vertical, UIPadding.small)
-                .padding(.leading, UIPadding.small)
+                .padding(.vertical, value: .small)
+                .padding(.leading, value: .small)
             }
         }
         .background(MailResourcesAsset.backgroundSecondaryColor.swiftUIColor.ignoresSafeArea())

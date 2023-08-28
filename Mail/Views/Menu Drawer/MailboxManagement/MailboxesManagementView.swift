@@ -85,7 +85,7 @@ struct MailboxesManagementView: View {
                             .mailboxCellStyle(.menuDrawer)
                     }
                 }
-                .padding(UIPadding.regular)
+                .padding(value: .regular)
                 .task {
                     try? await updateAccount()
                 }

@@ -55,8 +55,8 @@ struct BottomBarView<Items: View>: View {
             Spacer(minLength: UIConstants.bottomBarHorizontalMinimumSpace)
         }
         .modifier(snackBarAwareModifier)
-        .padding(.top, UIPadding.small)
-        .padding(.bottom, hasBottomSafeArea ? UIPadding.verySmall : UIPadding.small)
+        .padding(.top, value: .small)
+        .padding(.bottom, value: hasBottomSafeArea ? .verySmall : .small)
         .background(MailResourcesAsset.backgroundTabBarColor.swiftUIColor)
         .overlay(alignment: .top) {
             Divider()

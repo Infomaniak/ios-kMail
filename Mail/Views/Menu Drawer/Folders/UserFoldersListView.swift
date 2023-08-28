@@ -73,13 +73,13 @@ struct UserFoldersListView: View {
                     CreateFolderView(mode: .create)
                 }
             }
-            .padding(UIPadding.regular)
+            .padding(value: .regular)
 
             if isExpanded {
                 if folders.isEmpty {
                     Text(MailResourcesStrings.Localizable.noFolderTitle)
                         .textStyle(.bodySmallSecondary)
-                        .padding(UIPadding.regular)
+                        .padding(value: .regular)
                 } else {
                     ForEach(folders) { folder in
                         FolderCell(folder: folder,

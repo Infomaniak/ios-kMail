@@ -120,7 +120,7 @@ struct MenuDrawerItemsListView<Content: View>: View {
                         Spacer()
                     }
                 }
-                .padding(UIPadding.regular)
+                .padding(value: .regular)
             }
 
             if title == nil || isExpanded {

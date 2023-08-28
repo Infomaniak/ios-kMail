@@ -53,7 +53,7 @@ struct NoMailboxView: View {
                 }
                 .mailButtonStyle(.link)
             }
-            .padding(.horizontal, UIPadding.medium)
+            .padding(.horizontal, value: .medium)
             .padding(.bottom, UIPadding.onBoardingBottomButtons)
         }
         .matomoView(view: ["NoMailboxView"])

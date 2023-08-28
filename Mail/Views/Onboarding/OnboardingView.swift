@@ -217,7 +217,7 @@ struct OnboardingView: View {
                     .mailButtonIconSize(24)
                 }
             }
-            .padding(.horizontal, UIPadding.medium)
+            .padding(.horizontal, value: .medium)
             .padding(.bottom, UIPadding.onBoardingBottomButtons)
         }
         .overlay(alignment: .topLeading) {
@@ -229,8 +229,8 @@ struct OnboardingView: View {
                         .resizable()
                 }
                 .frame(width: 24, height: 24)
-                .padding(.top, UIPadding.regular)
-                .padding(.leading, UIPadding.medium)
+                .padding(.top, value: .regular)
+                .padding(.leading, value: .medium)
             }
         }
         .alert(MailResourcesStrings.Localizable.errorLoginTitle, isPresented: $loginHandler.isPresentingErrorAlert) {
