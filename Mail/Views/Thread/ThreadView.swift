@@ -102,11 +102,12 @@ struct ThreadView: View {
             ToolbarItem(placement: .navigationBarTrailing) {
                 Button {
                     let messages = thread.messages.freeze().toArray()
+                    let originFolder = thread.folder?.freezeIfNeeded()
                     Task {
                         try await actionsManager.performAction(
                             target: messages,
                             action: thread.flagged ? .unstar : .star,
-                            origin: .toolbar
+                            origin: .toolbar(originFolder: originFolder)
                         )
                     }
                 } label: {
@@ -132,7 +133,7 @@ struct ThreadView: View {
                 }
                 Spacer()
             }
-            ActionsPanelButton(threads: [thread]) {
+            ActionsPanelButton(messages: thread.messages.toArray(), originFolder: thread.folder) {
                 ToolbarButtonLabel(text: MailResourcesStrings.Localizable.buttonMore,
                                    icon: MailResourcesAsset.plusActions.swiftUIImage)
             }
@@ -151,7 +152,13 @@ struct ThreadView: View {
 
     private func markThreadAsReadIfNeeded(thread: Thread) async {
         guard thread.hasUnseenMessages else { return }
-        try? await actionsManager.performAction(target: thread.messages.toArray(), action: .markAsRead, origin: .toolbar)
+        
+        let originFolder = thread.folder?.freezeIfNeeded()
+        try? await actionsManager.performAction(
+            target: thread.messages.toArray(),
+            action: .markAsRead,
+            origin: .toolbar(originFolder: originFolder)
+        )
     }
 
     private func didTap(action: Action) {
@@ -166,8 +173,13 @@ struct ThreadView: View {
             return
         }
 
+        let originFolder = thread.folder?.freezeIfNeeded()
         Task {
-            try await actionsManager.performAction(target: messages, action: action, origin: .toolbar)
+            try await actionsManager.performAction(
+                target: messages,
+                action: action,
+                origin: .toolbar(originFolder: originFolder)
+            )
             if action == .archive || action == .delete {
                 dismiss()
             }

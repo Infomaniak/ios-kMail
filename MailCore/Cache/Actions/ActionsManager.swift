@@ -30,6 +30,7 @@ extension [Message]: Identifiable {
 }
 
 extension RandomAccessCollection where Element == Message {
+    /// - Returns: The last message of the list which is not a draft and if possible not from the user's address eg. a reply
     public func lastMessageToExecuteAction(currentMailboxEmail: String) -> Message? {
         if let message = last(where: { $0.isDraft == false && $0.fromMe(currentMailboxEmail: currentMailboxEmail) == false }) {
             return message
@@ -39,25 +40,45 @@ extension RandomAccessCollection where Element == Message {
         return last
     }
 
-    func lastMessagesAndDuplicatesToExecuteAction(currentMailboxEmail: String) -> [Message] {
-        let lastMessages = uniqueThreads.compactMap { $0.lastMessageToExecuteAction(currentMailboxEmail: currentMailboxEmail) }
-        return lastMessages + lastMessages.flatMap(\.duplicates)
+    /// - Returns: The `lastMessageToExecuteAction` to execute an action for each unique thread.
+    ///
+    /// - For a list of messages coming from different threads: `lastMessageToExecuteAction` for each unique thread in the given
+    /// folder
+    ///
+    /// - For a list of messages all coming from the same thread: `lastMessageToExecuteAction`
+    func lastMessagesAndDuplicatesToExecuteAction(currentMailboxEmail: String, currentFolder: Folder?) -> [Message] {
+        if isSingleMessage(currentFolder: currentFolder) {
+            return self.addingDuplicates()
+        } else {
+            return uniqueThreadsInFolder(currentFolder)
+                .compactMap { $0.lastMessageToExecuteAction(currentMailboxEmail: currentMailboxEmail)
+                }
+                .addingDuplicates()
+        }
     }
 
+    /// - Returns: The original message list and their duplicates
     func addingDuplicates() -> [Message] {
         return self + flatMap(\.duplicates)
     }
 
-    var uniqueThreads: [Thread] {
-        return Set(compactMap(\.originalThread)).toArray()
+    /// - Returns: An array of unique threads to which the given messages belong in a given folder
+    func uniqueThreadsInFolder(_ folder: Folder?) -> [Thread] {
+        return Set(flatMap(\.threads)).filter { $0.folder?.id == folder?.id }.toArray()
     }
 
-    var isSingleMessage: Bool {
-        guard let firstMessageThreadMessagesCount = first?.originalThread?.messages.count else {
+    /// Check if the given list is only composed of one message.
+    /// - Returns: `true` if the list contains one message and it's not a one message thread.
+    func isSingleMessage(currentFolder: Folder?) -> Bool {
+        guard count == 1 else {
             return false
         }
 
-        return count == 1 && firstMessageThreadMessagesCount > 1
+        guard let firstMessageThread = first?.threads.first(where: { $0.folder == currentFolder }) else {
+            return false
+        }
+
+        return firstMessageThread.messages.count > 1
     }
 }
 
@@ -80,16 +101,17 @@ public class ActionsManager: ObservableObject {
             guard !shouldDisplayDeleteAlert(messages: messagesWithDuplicates, origin: origin) else {
                 Task { @MainActor in
                     origin.nearestFlushAlert?
-                        .wrappedValue = FlushAlertState(deletedMessages: messagesWithDuplicates.uniqueThreads.count) {
-                            await tryOrDisplayError { [weak self] in
-                                try await self?.performDelete(messages: messagesWithDuplicates)
-                            }
+                        .wrappedValue = FlushAlertState(deletedMessages: messagesWithDuplicates
+                            .uniqueThreadsInFolder(origin.folder).count) {
+                                await tryOrDisplayError { [weak self] in
+                                    try await self?.performDelete(messages: messagesWithDuplicates, originFolder: origin.folder)
+                                }
                         }
                 }
                 return
             }
 
-            try await performDelete(messages: messagesWithDuplicates)
+            try await performDelete(messages: messagesWithDuplicates, originFolder: origin.folder)
         case .reply:
             try replyOrForward(messages: messagesWithDuplicates, mode: .reply)
         case .replyAll:
@@ -97,12 +119,14 @@ public class ActionsManager: ObservableObject {
         case .forward:
             try replyOrForward(messages: messagesWithDuplicates, mode: .forward)
         case .archive:
-            try await performMove(messages: messagesWithDuplicates, to: .archive)
+            let messagesFromFolder = messagesWithDuplicates.filter { $0.folderId == origin.folder?.id }
+            try await performMove(messages: messagesFromFolder, from: origin.folder, to: .archive)
         case .markAsRead:
             try await mailboxManager.markAsSeen(messages: messagesWithDuplicates, seen: true)
         case .markAsUnread:
             let messagesToExecuteAction = messagesWithDuplicates.lastMessagesAndDuplicatesToExecuteAction(
-                currentMailboxEmail: mailboxManager.mailbox.email
+                currentMailboxEmail: mailboxManager.mailbox.email,
+                currentFolder: origin.folder
             )
             try await mailboxManager.markAsSeen(messages: messagesToExecuteAction, seen: false)
         case .openMovePanel:
@@ -111,13 +135,14 @@ public class ActionsManager: ObservableObject {
             }
         case .star:
             let messagesToExecuteAction = messagesWithDuplicates.lastMessagesAndDuplicatesToExecuteAction(
-                currentMailboxEmail: mailboxManager.mailbox.email
+                currentMailboxEmail: mailboxManager.mailbox.email,
+                currentFolder: origin.folder
             )
             try await mailboxManager.star(messages: messagesToExecuteAction, starred: true)
         case .unstar:
             try await mailboxManager.star(messages: messagesWithDuplicates, starred: false)
         case .moveToInbox, .nonSpam:
-            try await performMove(messages: messagesWithDuplicates, to: .inbox)
+            try await performMove(messages: messagesWithDuplicates, from: origin.folder, to: .inbox)
         case .quickActionPanel:
             Task { @MainActor in
                 origin.nearestMessagesActionsPanel?.wrappedValue = messagesWithDuplicates
@@ -128,7 +153,8 @@ public class ActionsManager: ObservableObject {
                 origin.nearestReportJunkMessageActionsPanel?.wrappedValue = messagesWithDuplicates.first
             }
         case .spam:
-         try await performMove(messages: messagesWithDuplicates, to: .spam)
+            let messagesFromFolder = messagesWithDuplicates.filter { $0.folderId == origin.folder?.id }
+            try await performMove(messages: messagesFromFolder, from: origin.folder, to: .spam)
         case .phishing:
             Task { @MainActor in
                 origin.nearestReportedForPhishingMessageAlert?.wrappedValue = messagesWithDuplicates.first
@@ -146,46 +172,40 @@ public class ActionsManager: ObservableObject {
         }
     }
 
-    private func performMove(messages: [Message], to folderRole: FolderRole) async throws {
+    private func performMove(messages: [Message], from originFolder: Folder?, to folderRole: FolderRole) async throws {
         let undoAction = try await mailboxManager.move(messages: messages, to: folderRole)
         let snackbarMessage = snackbarMoveMessage(
             for: messages,
+            originFolder: originFolder,
             destinationFolderName: folderRole.localizedName
         )
 
         async let _ = await displayResultSnackbar(message: snackbarMessage, undoAction: undoAction)
     }
 
-    public func performMove(messages: [Message], to folder: Folder) async throws {
-        let undoAction = try await mailboxManager.move(messages: messages, to: folder)
+    public func performMove(messages: [Message], from originFolder: Folder?, to destinationFolder: Folder) async throws {
+        let messagesFromFolder = messages.filter { $0.folderId == originFolder?.id }
+        let undoAction = try await mailboxManager.move(messages: messagesFromFolder, to: destinationFolder)
 
         let snackbarMessage = snackbarMoveMessage(
-            for: messages,
-            destinationFolderName: folder.localizedName
+            for: messagesFromFolder,
+            originFolder: originFolder,
+            destinationFolderName: destinationFolder.localizedName
         )
 
         async let _ = await displayResultSnackbar(message: snackbarMessage, undoAction: undoAction)
     }
 
-    private func performDelete(messages: [Message]) async throws {
-        let deletionResults = try await mailboxManager.moveOrDelete(messages: messages)
-
-        // Can eventually be improved if needed
-        assert(deletionResults.count <= 1, "For now deletion result should always have only one value")
-        guard let firstDeletionResult = deletionResults.first else { return }
-
-        let snackbarMessage: String
-        let undoAction: UndoAction?
-        switch firstDeletionResult {
-        case .permanentlyDeleted:
-            snackbarMessage = snackbarPermanentlyDeleteMessage(for: messages)
-            undoAction = nil
-        case .moved(let resultUndoAction):
-            snackbarMessage = snackbarMoveMessage(for: messages, destinationFolderName: FolderRole.trash.localizedName)
-            undoAction = resultUndoAction
+    private func performDelete(messages: [Message], originFolder: Folder?) async throws {
+        if originFolder?.role == .trash
+            || originFolder?.role == .spam
+            || originFolder?.role == .draft {
+            try await mailboxManager.delete(messages: messages)
+            let snackbarMessage = snackbarPermanentlyDeleteMessage(for: messages, originFolder: originFolder)
+            async let _ = await displayResultSnackbar(message: snackbarMessage, undoAction: nil)
+        } else {
+            try await performMove(messages: messages, from: originFolder, to: .trash)
         }
-
-        async let _ = await displayResultSnackbar(message: snackbarMessage, undoAction: undoAction)
     }
 
     private func shouldDisplayDeleteAlert(messages: [Message], origin: ActionOrigin) -> Bool {
@@ -224,11 +244,11 @@ public class ActionsManager: ObservableObject {
         }
     }
 
-    private func snackbarMoveMessage(for messages: [Message], destinationFolderName: String) -> String {
-        if messages.isSingleMessage {
+    private func snackbarMoveMessage(for messages: [Message], originFolder: Folder?, destinationFolderName: String) -> String {
+        if messages.isSingleMessage(currentFolder: originFolder) {
             return MailResourcesStrings.Localizable.snackbarMessageMoved(destinationFolderName)
         } else {
-            let uniqueThreadCount = messages.uniqueThreads.count
+            let uniqueThreadCount = messages.uniqueThreadsInFolder(originFolder).count
             if uniqueThreadCount == 1 {
                 return MailResourcesStrings.Localizable.snackbarThreadMoved(destinationFolderName)
             } else {
@@ -237,11 +257,12 @@ public class ActionsManager: ObservableObject {
         }
     }
 
-    private func snackbarPermanentlyDeleteMessage(for messages: [Message]) -> String {
-        if messages.isSingleMessage {
+    private func snackbarPermanentlyDeleteMessage(for messages: [Message], originFolder: Folder?) -> String {
+        if messages.isSingleMessage(currentFolder: originFolder) {
             return MailResourcesStrings.Localizable.snackbarMessageDeletedPermanently
         } else {
-            return MailResourcesStrings.Localizable.snackbarThreadDeletedPermanently(messages.uniqueThreads.count)
+            return MailResourcesStrings.Localizable
+                .snackbarThreadDeletedPermanently(messages.uniqueThreadsInFolder(originFolder).count)
         }
     }
 }

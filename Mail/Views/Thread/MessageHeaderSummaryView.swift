@@ -135,7 +135,7 @@ struct MessageHeaderSummaryView: View {
                     .adaptivePanel(item: $replyOrReplyAllMessage) { message in
                         ReplyActionsView(message: message)
                     }
-                    ActionsPanelButton(message: message) {
+                    ActionsPanelButton(messages: [message], originFolder: message.folder) {
                         MailResourcesAsset.plusActions.swiftUIImage
                             .resizable()
                             .scaledToFit()

@@ -34,7 +34,7 @@ struct ActionsView: View {
          origin: ActionOrigin,
          completionHandler: (() -> Void)? = nil) {
         let userIsStaff = mailboxManager.account.user.isStaff ?? false
-        let actions = Action.actionsForMessages(messages, userIsStaff: userIsStaff)
+        let actions = Action.actionsForMessages(messages, originFolder: origin.folder, userIsStaff: userIsStaff)
         quickActions = actions.quickActions
         listActions = actions.listActions
 
@@ -83,7 +83,7 @@ struct ActionsView_Previews: PreviewProvider {
         ActionsView(
             mailboxManager: PreviewHelper.sampleMailboxManager,
             target: PreviewHelper.sampleThread.messages.toArray(),
-            origin: .toolbar
+            origin: .toolbar(originFolder: nil)
         )
         .accentColor(AccentColor.pink.primary.swiftUIColor)
     }
