@@ -164,6 +164,10 @@ struct OnboardingView: View {
     private var isScrollEnabled: Bool
     private var slides = Slide.onBoardingSlides
 
+    private var isLastSlide: Bool {
+        selection == slides.count
+    }
+
     init(page: Int = 1, isScrollEnabled: Bool = true) {
         _selection = State(initialValue: page)
         self.isScrollEnabled = isScrollEnabled
@@ -196,19 +200,20 @@ struct OnboardingView: View {
             }
 
             VStack(spacing: UIPadding.medium) {
-                if selection == slides.count {
-                    MailButton(label: MailResourcesStrings.Localizable.buttonLogin) {
-                        loginHandler.login()
-                    }
-                    .mailButtonFullWidth(true)
-                    .mailButtonLoading(loginHandler.isLoading)
+                MailButton(label: MailResourcesStrings.Localizable.buttonLogin) {
+                    loginHandler.login()
+                }
+                .mailButtonFullWidth(true)
+                .mailButtonLoading(loginHandler.isLoading)
 
-                    MailButton(label: MailResourcesStrings.Localizable.buttonCreateAccount) {
-                        isPresentingCreateAccount = true
-                    }
-                    .mailButtonStyle(.link)
-                    .disabled(loginHandler.isLoading)
-                } else {
+                MailButton(label: MailResourcesStrings.Localizable.buttonCreateAccount) {
+                    isPresentingCreateAccount.toggle()
+                }
+                .mailButtonStyle(.link)
+                .disabled(loginHandler.isLoading)
+                .opacity(isLastSlide ? 1 : 0)
+                .overlay {
+                if !isLastSlide {
                     MailButton(icon: MailResourcesAsset.fullArrowRight) {
                         withAnimation {
                             selection += 1
