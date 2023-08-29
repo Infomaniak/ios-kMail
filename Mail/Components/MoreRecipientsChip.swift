@@ -33,7 +33,7 @@ struct MoreRecipientsChip: View {
     var body: some View {
         Text("+\(count)")
             .textStyle(.bodyAccent)
-            .padding(EdgeInsets(uiEdgeInsets: UIConstants.recipientChipInsets))
+            .padding(EdgeInsets(uiEdgeInsets: UIPadding.recipientChip))
             .background(
                 RoundedRectangle(cornerRadius: 50)
                     .fill(accentColor.secondary.swiftUIColor)

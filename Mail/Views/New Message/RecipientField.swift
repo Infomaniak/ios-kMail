@@ -71,8 +71,8 @@ struct RecipientField: View {
                 RecipientsTextField(text: $currentText, onSubmit: onSubmit, onBackspace: handleBackspaceTextField)
                     .focused($focusedField, equals: type)
                     .padding(.top, isCurrentFieldFocused && !recipients.isEmpty ? 4 : 0)
-                    .padding(.top, UIConstants.recipientChipInsets.top)
-                    .padding(.bottom, UIConstants.recipientChipInsets.bottom)
+                    .padding(.top, UIPadding.recipientChip.top)
+                    .padding(.bottom, UIPadding.recipientChip.bottom)
                     .frame(width: isExpanded ? nil : 0, height: isExpanded ? nil : 0)
 
                 Button {

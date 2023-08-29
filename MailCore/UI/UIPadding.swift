@@ -56,7 +56,7 @@ public extension UIPadding {
 
     // MARK: Menu
 
-    static let menuDrawerCell = regular
+    static let menuDrawerCell = EdgeInsets(top: intermediate, leading: regular, bottom: intermediate, trailing: regular)
     static let menuDrawerCellSpacing = regular
     static let menuDrawerCellChevronSpacing = intermediate
     static let menuDrawerSubFolder = medium
@@ -65,7 +65,8 @@ public extension UIPadding {
 
     static let floatingButtonBottom = medium
     static let bottomSheetHorizontal = medium
-    static let composeViewHeaderCellLargeVertical = intermediate + UIConstants.recipientChipInsets.top
+    static let recipientChip = UIEdgeInsets(top: verySmall, left: small, bottom: verySmall, right: small)
+    static let composeViewHeaderCellLargeVertical = intermediate + recipientChip.top
 }
 
 public extension View {

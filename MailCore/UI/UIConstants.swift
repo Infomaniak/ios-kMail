@@ -98,8 +98,6 @@ public extension UIConstants {
     static let buttonsIconSize: CGFloat = 16
 
     static let componentsMaxWidth: CGFloat = 496
-
-    static let recipientChipInsets = UIEdgeInsets(top: 4, left: 8, bottom: 4, right: 8)
 }
 
 // MARK: - Animations
