@@ -65,7 +65,7 @@ struct AccountView: View {
     var body: some View {
         VStack(spacing: 0) {
             ScrollView {
-                AvatarView(displayablePerson: CommonContact(user: account.user), size: 104)
+                AvatarView(mailboxManager: mailboxManager, displayablePerson: CommonContact(user: account.user), size: 104)
                     .padding(.top, 24)
                     .padding(.bottom, 16)
 
@@ -79,7 +79,7 @@ struct AccountView: View {
                         .padding(.bottom, 16)
 
                     NavigationLink {
-                        AccountListView()
+                        AccountListView(mailboxManager: mailboxManager)
                     } label: {
                         Text(MailResourcesStrings.Localizable.buttonAccountSwitch)
                             .textStyle(.bodyMediumAccent)

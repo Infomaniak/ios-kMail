@@ -125,6 +125,7 @@ struct ThreadCell: View {
                 if density == .large {
                     ZStack {
                         AvatarView(
+                            mailboxManager: mailboxManager,
                             displayablePerson: dataHolder.commonContact(contextMailboxManager: mailboxManager),
                             size: 40
                         )

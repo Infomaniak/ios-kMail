@@ -49,7 +49,11 @@ struct MessageHeaderSummaryView: View {
                         contactViewRecipient = recipient
                     } label: {
                         AvatarView(
-                            displayablePerson: CommonContact(recipient: recipient, contextMailboxManager: mailboxManager),
+                            mailboxManager: mailboxManager,
+                            displayablePerson: CommonContact(
+                                recipient: recipient,
+                                contextMailboxManager: mailboxManager
+                            ),
                             size: 40
                         )
                     }

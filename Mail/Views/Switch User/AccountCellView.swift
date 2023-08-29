@@ -30,6 +30,8 @@ struct AccountCellView: View {
 
     @Environment(\.dismissModal) var dismissModal
 
+    let mailboxManager: MailboxManager?
+
     let account: Account
     @Binding var selectedUserId: Int?
 
@@ -54,7 +56,7 @@ struct AccountCellView: View {
                     dismissModal()
                     accountManager.switchAccount(newAccount: account)
                 } label: {
-                    AccountHeaderCell(account: account, isSelected: Binding(get: {
+                    AccountHeaderCell(account: account, mailboxManager: mailboxManager, isSelected: Binding(get: {
                         isSelected
                     }, set: {
                         selectedUserId = $0 ? account.userId : nil
@@ -70,11 +72,15 @@ struct AccountCellView: View {
 
 struct AccountHeaderCell: View {
     let account: Account
+
+    /// Optional as this view can be displayed from a context without a mailboxManager available
+    let mailboxManager: MailboxManager?
+
     @Binding var isSelected: Bool
 
     var body: some View {
         HStack(spacing: 8) {
-            AvatarView(displayablePerson: CommonContact(user: account.user), size: 38)
+            AvatarView(mailboxManager: mailboxManager, displayablePerson: CommonContact(user: account.user), size: 38)
             VStack(alignment: .leading, spacing: 2) {
                 Text(account.user.displayName)
                     .textStyle(.bodyMedium)
@@ -98,6 +104,7 @@ struct AccountHeaderCell: View {
 struct AccountCellView_Previews: PreviewProvider {
     static var previews: some View {
         AccountCellView(
+            mailboxManager: nil,
             account: Account(apiToken: ApiToken(
                 accessToken: "",
                 expiresIn: .max,

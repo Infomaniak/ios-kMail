@@ -69,7 +69,8 @@ struct UnavailableMailboxesView: View {
                 }
 
                 NavigationLink {
-                    AccountListView()
+                    // We cannot provide a mailbox manager here
+                    AccountListView(mailboxManager: nil)
                 } label: {
                     Text(MailResourcesStrings.Localizable.buttonAccountSwitch)
                         .textStyle(.bodyMediumAccent)
