@@ -30,9 +30,11 @@ struct ContactActionsView: View {
 
     let recipient: Recipient
     private var actions: [Action] {
-        let isRemoteContact = mailboxManager.contactManager.getContact(for: recipient)?.remote != nil
+        guard let contact = mailboxManager.contactManager.getContact(for: recipient) else {
+            return []
+        }
 
-        if isRemoteContact {
+        if contact.isRemote {
             return [.writeEmailAction, .copyEmailAction]
         } else {
             return [.writeEmailAction, .addContactsAction, .copyEmailAction]

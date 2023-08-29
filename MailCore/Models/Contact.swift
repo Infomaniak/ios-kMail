@@ -19,27 +19,25 @@
 import Foundation
 import RealmSwift
 
-public class Contact: Object, Codable, Identifiable {
-    @Persisted(primaryKey: true) public var id: String
-    @Persisted public var color: String
-//    @Persisted public var contactedTimes: [String: Int]
-    @Persisted public var emails: List<String>
-    @Persisted public var firstname: String?
-    @Persisted public var lastname: String?
-    @Persisted public var name: String?
-    @Persisted public var other: Bool
-    @Persisted public var uuid: String?
-    @Persisted public var addressbookId: Int?
-    @Persisted public var avatar: String?
-//    @Persisted public var categories: [Int]?
-    @Persisted public var favorite: Bool?
-    @Persisted public var nickname: String?
-    @Persisted public var organization: String?
+/// Infomaniak API Contact Object
+public struct InfomaniakContact: Codable, Identifiable {
+    public var id: String
+    public var color: String
+    public var emails: [String]
+    public var firstname: String?
+    public var lastname: String?
+    public var name: String?
+    public var other: Bool
+    public var uuid: String?
+    public var addressbookId: Int?
+    public var avatar: String?
+    public var favorite: Bool?
+    public var nickname: String?
+    public var organization: String?
 
     enum CodingKeys: String, CodingKey {
         case id
         case color
-//        case contactedTimes
         case emails
         case firstname
         case lastname
@@ -48,18 +46,12 @@ public class Contact: Object, Codable, Identifiable {
         case uuid
         case addressbookId
         case avatar
-//        case categories
         case favorite
         case nickname
         case organization
     }
 
-    override init() {
-        super.init()
-    }
-
-    public required init(from decoder: Decoder) throws {
-        super.init()
+    public init(from decoder: Decoder) throws {
         // Custom decoder because of `id` type inconsistency (#I8)
         let values = try decoder.container(keyedBy: CodingKeys.self)
         if let id = try? values.decode(Int.self, forKey: .id) {
@@ -68,9 +60,7 @@ public class Contact: Object, Codable, Identifiable {
             id = try values.decode(String.self, forKey: .id)
         }
         color = try values.decode(String.self, forKey: .color)
-        // Will need to investigate this later
-//        contactedTimes = (try? values.decode([String: Int].self, forKey: .contactedTimes)) ?? [:]
-        emails = try values.decode(List<String>.self, forKey: .emails)
+        emails = try values.decode([String].self, forKey: .emails)
         firstname = try values.decodeIfPresent(String.self, forKey: .firstname)
         lastname = try values.decodeIfPresent(String.self, forKey: .lastname)
         name = try values.decode(String.self, forKey: .name)
@@ -78,7 +68,6 @@ public class Contact: Object, Codable, Identifiable {
         uuid = try values.decodeIfPresent(String.self, forKey: .uuid)
         addressbookId = try values.decodeIfPresent(Int.self, forKey: .addressbookId)
         avatar = try values.decodeIfPresent(String.self, forKey: .avatar)
-//        categories = try values.decodeIfPresent([Int].self, forKey: .categories)
         favorite = try values.decodeIfPresent(Bool.self, forKey: .favorite)
         nickname = try values.decodeIfPresent(String.self, forKey: .nickname)
         organization = try values.decodeIfPresent(String.self, forKey: .organization)

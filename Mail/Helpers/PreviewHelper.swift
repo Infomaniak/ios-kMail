@@ -123,7 +123,7 @@ enum PreviewHelper {
         disposition: .attachment
     )
 
-    static let sampleMergedContact = MergedContact(email: "mergedContact@example.com", remote: nil, local: nil)
+    static let sampleMergedContact = MergedContact(email: "mergedContact@example.com", local: nil, remote: nil)
 
     static let sampleAccount = Account(apiToken: ApiToken(
         accessToken: "",

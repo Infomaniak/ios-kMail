@@ -128,6 +128,8 @@ public final class AccountManager: RefreshTokenDelegate, ObservableObject {
         forceReload()
     }
 
+    // MARK: - Mailbox
+
     public func getCurrentAccount() -> Account? {
         return currentAccount
     }
@@ -263,7 +265,7 @@ public final class AccountManager: RefreshTokenDelegate, ObservableObject {
         saveAccounts()
 
         Task {
-            try await currentMailboxManager?.contactManager.fetchContactsAndAddressBooks()
+            try await currentMailboxManager?.contactManager.refreshContactsAndAddressBooks()
         }
 
         return newAccount

@@ -19,7 +19,15 @@
 import Contacts
 import Foundation
 
-class LocalContactsHelper {
+public protocol LocalContactsHelpable {
+    func enumerateContacts(usingBlock: @escaping (CNContact, UnsafeMutablePointer<ObjCBool>) -> Void) async
+
+    func checkAuthorizationAndGetContact(with identifier: String) async throws -> CNContact
+
+    func getContact(with identifier: String) throws -> CNContact
+}
+
+public final class LocalContactsHelper: LocalContactsHelpable {
     enum ContactError: Error, LocalizedError {
         case accessDenied
         case unhandledCase
@@ -34,8 +42,6 @@ class LocalContactsHelper {
         }
     }
 
-    static let shared = LocalContactsHelper()
-
     let store = CNContactStore()
     let keysToFetch = ([
         CNContactIdentifierKey,
@@ -45,7 +51,11 @@ class LocalContactsHelper {
         CNContactNicknameKey
     ] as [CNKeyDescriptor]) + [CNContactFormatter.descriptorForRequiredKeys(for: .fullName)]
 
-    func enumerateContacts(usingBlock: @escaping (CNContact, UnsafeMutablePointer<ObjCBool>) -> Void) async {
+    public init() {
+        // META: Keep SonarCloud happy
+    }
+
+    public func enumerateContacts(usingBlock: @escaping (CNContact, UnsafeMutablePointer<ObjCBool>) -> Void) async {
         do {
             try await checkAuthorization()
             let request = CNContactFetchRequest(keysToFetch: keysToFetch)
@@ -55,8 +65,12 @@ class LocalContactsHelper {
         }
     }
 
-    func getContact(with identifier: String) async throws -> CNContact {
+    public func checkAuthorizationAndGetContact(with identifier: String) async throws -> CNContact {
         try await checkAuthorization()
+        return try store.unifiedContact(withIdentifier: identifier, keysToFetch: keysToFetch)
+    }
+
+    public func getContact(with identifier: String) throws -> CNContact {
         return try store.unifiedContact(withIdentifier: identifier, keysToFetch: keysToFetch)
     }
 

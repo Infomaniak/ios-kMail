@@ -85,6 +85,9 @@ enum NotificationServiceAssembly {
             Factory(type: TokenStore.self) { _, _ in
                 TokenStore()
             },
+            Factory(type: LocalContactsHelpable.self) { _, _ in
+                LocalContactsHelper()
+            },
             Factory(type: IKSnackBarAvoider.self) { _, _ in
                 IKSnackBarAvoider()
             }

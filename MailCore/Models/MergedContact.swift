@@ -19,13 +19,19 @@
 import Contacts
 import Foundation
 import InfomaniakCore
+import InfomaniakDI
 import Nuke
 import RealmSwift
 import SwiftUI
 import UIKit
 
 extension CNContact {
-    func pngImageData() async -> Data? {
+    static func fromUUID(_ identifier: String) -> CNContact? {
+        @InjectService var localContactsHelper: LocalContactsHelpable
+        return try? localContactsHelper.getContact(with: identifier)
+    }
+
+    func pngImageData() -> Data? {
         // We have to load something that Nuke can cache
         guard let imageData,
               let convertedImage = UIImage(data: imageData)?.pngData() else {
@@ -35,42 +41,54 @@ extension CNContact {
     }
 }
 
-public final class MergedContact {
+public final class MergedContact: Object, Identifiable {
     private static let contactFormatter = CNContactFormatter()
 
-    public var email: String
-    public var remote: Contact?
-    public var local: CNContact?
+    /// Shared
+    @Persisted(primaryKey: true) public var email: String
+    @Persisted public var name: String
+
+    /// Remote
+    @Persisted public var remoteColorHex: String?
+    @Persisted public var remoteAvatarURL: String?
+    @Persisted public var remoteIdentifier: String?
+
+    /// Local
+    @Persisted public var localIdentifier: String?
+
+    /// `true` if a remote Infomaniak contact was used to create this object
+    public lazy var isRemote = {
+        guard remoteIdentifier != nil else {
+            return false
+        }
+        return true
+    }()
+
+    /// `true` if a local iPhone contact was used to create this object
+    public lazy var isLocal = {
+        guard localIdentifier != nil else {
+            return false
+        }
+        return true
+    }()
 
     public lazy var color: UIColor = {
-        if let remoteColorHex = remote?.color,
-           let colorFromHex = UIColor(hex: remoteColorHex) {
-            return colorFromHex
-        } else {
+        guard let remoteColorHex,
+              let colorFromHex = UIColor(hex: remoteColorHex) else {
             return UIColor.backgroundColor(from: email.hash, with: UIConstants.avatarColors)
         }
+
+        return colorFromHex
     }()
-
-    public lazy var name: String = {
-        guard let local,
-              let localName = MergedContact.contactFormatter.string(from: local) else {
-            return remote?.name ?? ""
-        }
-        return localName
-    }()
-
-    public var isLocal: Bool {
-        return local != nil
-    }
-
-    public var isInfomaniak: Bool {
-        return remote != nil
-    }
 
     public var avatarImageRequest: ImageRequest? {
-        if let localContact = local, localContact.imageDataAvailable {
-            var imageRequest = ImageRequest(id: localContact.identifier) {
-                guard let imageData = await localContact.pngImageData() else {
+        // iOS Avatar
+        if let localIdentifier,
+           !localIdentifier.isEmpty,
+           let localContact = CNContact.fromUUID(localIdentifier),
+           localContact.imageDataAvailable {
+            var imageRequest = ImageRequest(id: localIdentifier) {
+                guard let imageData = localContact.pngImageData() else {
                     throw MailError.unknownError
                 }
 
@@ -80,17 +98,61 @@ public final class MergedContact {
             return imageRequest
         }
 
-        if let remoteAvatar = remote?.avatar {
-            let avatarURL = Endpoint.resource(remoteAvatar).url
+        // IK avatar
+        else if let remoteAvatarURL, !remoteAvatarURL.isEmpty {
+            let avatarURL = Endpoint.resource(remoteAvatarURL).url
             return ImageRequest(url: avatarURL)
         }
 
+        // nothing
         return nil
     }
 
-    public init(email: String, remote: Contact?, local: CNContact?) {
+    /// Do not use directly
+    override public init() { /* Realm needs an empty constructor */ }
+
+    /// Init with what you have, it will generate the most usable contact possible
+    public init?(email: String, local: CNContact?, remote: InfomaniakContact?) {
+        super.init()
+
         self.email = email
-        self.remote = remote
-        self.local = local
+
+        // Load the object, prefer data from Device.
+        populateWithRemote(remote)
+        overrideWithLocal(local)
+    }
+
+    /// Overload object with local information
+    private func overrideWithLocal(_ contact: CNContact?) {
+        guard let contact else {
+            return
+        }
+
+        // name
+        name = Self.contactFormatter.string(from: contact) ?? ""
+
+        // local contact identifier
+        localIdentifier = contact.identifier
+    }
+
+    /// IK has _not_ priority over local contacts
+    private func populateWithRemote(_ contact: InfomaniakContact?) {
+        guard let contact else {
+            return
+        }
+
+        // name
+        if let remoteName = contact.name {
+            name = remoteName
+        }
+
+        // color
+        remoteColorHex = contact.color
+
+        // avatar
+        remoteAvatarURL = contact.avatar
+
+        // identifier
+        remoteIdentifier = contact.id
     }
 }

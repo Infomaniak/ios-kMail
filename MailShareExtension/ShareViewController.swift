@@ -64,7 +64,7 @@ final class ShareNavigationViewController: UIViewController {
         /// make sure we load the contact list asap.
         if let currentContactManager = accountManager.currentContactManager {
             Task {
-                try await currentContactManager.fetchContactsAndAddressBooks()
+                try await currentContactManager.refreshContactsAndAddressBooks()
             }
         }
 
