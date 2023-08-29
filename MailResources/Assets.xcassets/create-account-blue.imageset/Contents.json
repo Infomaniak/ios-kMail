@@ -1,7 +1,7 @@
 {
   "images" : [
     {
-      "filename" : "create-account-blue.svg",
+      "filename" : "create-account-blue-light.svg",
       "idiom" : "universal"
     },
     {
@@ -11,7 +11,7 @@
           "value" : "dark"
         }
       ],
-      "filename" : "Group 51495-3.svg",
+      "filename" : "create-account-blue-dark.svg",
       "idiom" : "universal"
     }
   ],
