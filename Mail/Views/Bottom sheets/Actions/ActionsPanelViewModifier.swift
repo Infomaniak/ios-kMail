@@ -21,8 +21,13 @@ import MailCore
 import SwiftUI
 
 extension View {
-    func actionsPanel(messages: Binding<[Message]?>, completionHandler: (() -> Void)? = nil) -> some View {
-        return modifier(ActionsPanelViewModifier(messages: messages, completionHandler: completionHandler))
+    func actionsPanel(messages: Binding<[Message]?>, originFolder: Folder?,
+                      completionHandler: (() -> Void)? = nil) -> some View {
+        return modifier(ActionsPanelViewModifier(
+            messages: messages,
+            originFolder: originFolder,
+            completionHandler: completionHandler
+        ))
     }
 }
 
@@ -35,11 +40,13 @@ struct ActionsPanelViewModifier: ViewModifier {
     @State private var messagesToMove: [Message]?
 
     @Binding var messages: [Message]?
+    let originFolder: Folder?
 
     var completionHandler: (() -> Void)?
 
     private var origin: ActionOrigin {
         .floatingPanel(
+            originFolder: originFolder?.freezeIfNeeded(),
             nearestMessagesToMoveSheet: $messagesToMove,
             nearestReportJunkMessageActionsPanel: $reportForJunkMessage,
             nearestReportedForPhishingMessageAlert: $reportedForPhishingMessage,
@@ -52,7 +59,7 @@ struct ActionsPanelViewModifier: ViewModifier {
             ActionsView(mailboxManager: mailboxManager, target: messages, origin: origin, completionHandler: completionHandler)
         }
         .sheet(item: $messagesToMove) { messages in
-            MoveEmailView(movedMessages: messages)
+            MoveEmailView(movedMessages: messages, originFolder: originFolder)
                 .sheetViewStyle()
         }
         .floatingPanel(item: $reportForJunkMessage) { reportForJunkMessage in

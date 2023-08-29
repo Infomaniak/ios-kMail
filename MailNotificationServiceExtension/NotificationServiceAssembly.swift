@@ -18,6 +18,7 @@
 
 import Foundation
 import InfomaniakCore
+import InfomaniakCoreUI
 import InfomaniakDI
 import InfomaniakLogin
 import InfomaniakNotifications
@@ -86,6 +87,9 @@ enum NotificationServiceAssembly {
             },
             Factory(type: LocalContactsHelpable.self) { _, _ in
                 LocalContactsHelper()
+            },
+            Factory(type: IKSnackBarAvoider.self) { _, _ in
+                IKSnackBarAvoider()
             }
         ]
 

@@ -145,6 +145,7 @@ struct ThreadListToolbar: ViewModifier {
                         ) {
                             let allMessages = multipleSelectionViewModel.selectedItems.flatMap(\.messages)
                             multipleSelectionViewModel.isEnabled = false
+                            let originFolder = viewModel.folder.freezeIfNeeded()
                             Task {
                                 matomo.trackBulkEvent(
                                     eventWithCategory: .threadActions,
@@ -155,7 +156,7 @@ struct ThreadListToolbar: ViewModifier {
                                 try await actionsManager.performAction(
                                     target: allMessages,
                                     action: action,
-                                    origin: .multipleSelection(nearestFlushAlert: $flushAlert)
+                                    origin: .multipleSelection(originFolder: originFolder, nearestFlushAlert: $flushAlert)
                                 )
                             }
                         }
@@ -171,7 +172,7 @@ struct ThreadListToolbar: ViewModifier {
                 }
                 .disabled(multipleSelectionViewModel.selectedItems.isEmpty)
             }
-            .actionsPanel(messages: $multipleSelectedMessages) {
+            .actionsPanel(messages: $multipleSelectedMessages, originFolder: viewModel.folder) {
                 multipleSelectionViewModel.isEnabled = false
             }
             .navigationTitle(

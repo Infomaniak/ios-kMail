@@ -76,12 +76,12 @@ extension Action: CaseIterable {
         return (Action.quickActions, tempListActions.compactMap { $0 })
     }
 
-    private static func actionsForMessagesInDifferentThreads(_ messages: [Message])
+    private static func actionsForMessagesInDifferentThreads(_ messages: [Message], originFolder: Folder?)
         -> (quickActions: [Action], listActions: [Action]) {
         let unread = messages.allSatisfy(\.seen)
-            let quickActions: [Action] = [.openMovePanel, unread ? .markAsUnread : .markAsRead, .archive, .delete]
+        let quickActions: [Action] = [.openMovePanel, unread ? .markAsUnread : .markAsRead, .archive, .delete]
 
-        let spam = messages.allSatisfy { $0.folder?.role == .spam }
+        let spam = originFolder?.role == .spam
         let star = messages.allSatisfy(\.flagged)
 
         let listActions: [Action] = [
@@ -92,13 +92,13 @@ extension Action: CaseIterable {
         return (quickActions, listActions)
     }
 
-    private static func actionsForMessagesInSameThreads(_ messages: [Message])
+    private static func actionsForMessagesInSameThreads(_ messages: [Message], originFolder: Folder?)
         -> (quickActions: [Action], listActions: [Action]) {
-        let archive = messages.first?.folder?.role != .archive
+        let archive = originFolder?.role != .archive
         let unread = messages.allSatisfy(\.seen)
-        let star = messages.allSatisfy(\.flagged)
+        let showUnstar = messages.contains { $0.flagged }
 
-        let spam = messages.first?.folder?.role == .spam
+        let spam = originFolder?.role == .spam
         let spamAction: Action? = spam ? .nonSpam : .spam
 
         let tempListActions: [Action?] = [
@@ -106,20 +106,21 @@ extension Action: CaseIterable {
             spamAction,
             unread ? .markAsUnread : .markAsRead,
             archive ? .archive : .moveToInbox,
-            star ? .unstar : .star
+            showUnstar ? .unstar : .star
         ]
 
         return (Action.quickActions, tempListActions.compactMap { $0 })
     }
 
     public static func actionsForMessages(_ messages: [Message],
+                                          originFolder: Folder?,
                                           userIsStaff: Bool) -> (quickActions: [Action], listActions: [Action]) {
         if messages.count == 1, let message = messages.first {
             return actionsForMessage(message, userIsStaff: userIsStaff)
-        } else if Set(messages.compactMap(\.originalThread?.id)).count > 1 {
-            return actionsForMessagesInDifferentThreads(messages)
+        } else if messages.uniqueThreadsInFolder(originFolder).count > 1 {
+            return actionsForMessagesInDifferentThreads(messages, originFolder: originFolder)
         } else {
-            return actionsForMessagesInSameThreads(messages)
+            return actionsForMessagesInSameThreads(messages, originFolder: originFolder)
         }
     }
 }

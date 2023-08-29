@@ -43,6 +43,7 @@ private struct SwipeActionView: View {
                         target: thread.messages.toArray(),
                         action: action,
                         origin: .swipe(
+                            originFolder: thread.folder,
                             nearestMessagesActionsPanel: $actionPanelMessages,
                             nearestMessagesToMoveSheet: $moveSheetMessages
                         )
@@ -85,7 +86,7 @@ struct ThreadListSwipeActions: ViewModifier {
                     edgeActions([swipeFullTrailing, swipeTrailing])
                 }
             }
-            .actionsPanel(messages: $actionPanelMessages)
+            .actionsPanel(messages: $actionPanelMessages, originFolder: thread.folder)
     }
 
     @MainActor @ViewBuilder

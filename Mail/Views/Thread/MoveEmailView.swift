@@ -50,6 +50,7 @@ struct MoveEmailView: View {
     @State private var searchFilter = ""
 
     let movedMessages: [Message]
+    let originFolder: Folder?
 
     var body: some View {
         ScrollView {
@@ -84,15 +85,16 @@ struct MoveEmailView: View {
     }
 
     private func move(to folder: Folder) {
+        let frozenOriginFolder = originFolder?.freezeIfNeeded()
         Task {
-            try await actionsManager.performMove(messages: movedMessages, to: folder)
+            try await actionsManager.performMove(messages: movedMessages, from: frozenOriginFolder, to: folder)
         }
         dismissModal()
     }
 
     private func listOfFolders(nestableFolders: [NestableFolder]) -> some View {
         ForEach(nestableFolders) { nestableFolder in
-            FolderCell(folder: nestableFolder, currentFolderId: movedMessages.first?.folderId) { folder in
+            FolderCell(folder: nestableFolder, currentFolderId: originFolder?.id) { folder in
                 move(to: folder)
             }
         }
@@ -101,7 +103,7 @@ struct MoveEmailView: View {
 
 struct MoveMessageView_Previews: PreviewProvider {
     static var previews: some View {
-        MoveEmailView(movedMessages: [PreviewHelper.sampleMessage])
+        MoveEmailView(movedMessages: [PreviewHelper.sampleMessage], originFolder: nil)
             .environmentObject(PreviewHelper.sampleMailboxManager)
     }
 }

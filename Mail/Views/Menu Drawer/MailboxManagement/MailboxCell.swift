@@ -73,7 +73,10 @@ struct MailboxCell: View {
             }
             @InjectService var matomo: MatomoUtils
             switch style {
-            case .blockedPassword, .locked: break
+            case .blockedPassword:
+                break
+            case .locked:
+                return
             case .menuDrawer:
                 matomo.track(eventWithCategory: .menuDrawer, name: "switchMailbox")
             case .account:
