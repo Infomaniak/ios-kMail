@@ -40,6 +40,12 @@ public struct RecipientHolder {
 public final class Recipient: EmbeddedObject, Codable {
     @Persisted public var email: String
     @Persisted public var name: String
+    @Persisted public var isAddedByMe = false
+
+    enum CodingKeys: String, CodingKey {
+        case email
+        case name
+    }
 
     public convenience init(email: String, name: String) {
         self.init()
@@ -83,6 +89,31 @@ public final class Recipient: EmbeddedObject, Codable {
 
     public func isSameRecipient(as recipient: Recipient) -> Bool {
         return email == recipient.email && name == recipient.name
+    }
+
+    private static let mailerDeamonRegex = Regex(pattern: "mailer-daemon@(?:.+.)?infomaniak.ch")
+
+    public func isExternal(mailboxManager: MailboxManager) -> Bool {
+        ///if the email adress is added manually by me, it's not considered as an external
+        guard !isAddedByMe else { return false }
+
+        let trustedDomains = ["@infomaniak.com", "@infomaniak.event", "@swisstransfer.com"]
+        let isKnownDomain = trustedDomains.contains { domain in
+            return email.hasSuffix(domain)
+        }
+
+        let isMailerDeamon: Bool
+        if let regex = Self.mailerDeamonRegex {
+            isMailerDeamon = !regex.firstMatch(in: email).isEmpty
+        } else {
+            isMailerDeamon = false
+        }
+
+        let isAnAlias = mailboxManager.mailbox.aliases.contains(email)
+
+        let isContact = !(mailboxManager.contactManager.contacts(matching: email)).isEmpty
+
+        return !isKnownDomain && !isMailerDeamon && !isAnAlias && !isContact
     }
 
     public var htmlDescription: String {

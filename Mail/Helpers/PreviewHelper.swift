@@ -52,7 +52,9 @@ enum PreviewHelper {
                                        mdaVersion: "",
                                        isLimited: false,
                                        isFree: false,
-                                       dailyLimit: 999)
+                                       dailyLimit: 999,
+                                       aliases: ["test@example.com", "test@example.ch"].toRealmList(),
+                                       externalMailFlagEnabled: true)
 
     static let sampleFolder = Folder(id: "",
                                      path: "Folder",

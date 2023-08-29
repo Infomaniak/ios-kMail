@@ -127,6 +127,7 @@ struct ComposeMessageCellRecipients: View {
         }
 
         withAnimation {
+            recipient.isAddedByMe = true
             $recipients.append(recipient)
         }
         textDebounce.text = ""

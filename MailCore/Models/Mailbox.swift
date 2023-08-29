@@ -46,6 +46,8 @@ public class Mailbox: Object, Codable, Identifiable {
     @Persisted public var dailyLimit: Int
     @Persisted public var unseenMessages = 0
     @Persisted public var remoteUnseenMessages: Int
+    @Persisted public var aliases: List<String>
+    @Persisted public var externalMailFlagEnabled: Bool
     @Persisted public var userId = 0 {
         didSet {
             objectId = MailboxInfosManager.getObjectId(mailboxId: mailboxId, userId: userId)
@@ -88,6 +90,8 @@ public class Mailbox: Object, Codable, Identifiable {
         case isFree
         case dailyLimit
         case remoteUnseenMessages = "unseenMessages"
+        case aliases
+        case externalMailFlagEnabled
     }
 
     public convenience init(
@@ -109,7 +113,9 @@ public class Mailbox: Object, Codable, Identifiable {
         mdaVersion: String,
         isLimited: Bool,
         isFree: Bool,
-        dailyLimit: Int
+        dailyLimit: Int,
+        aliases: List<String>,
+        externalMailFlagEnabled: Bool
     ) {
         self.init()
 
@@ -132,6 +138,8 @@ public class Mailbox: Object, Codable, Identifiable {
         self.isLimited = isLimited
         self.isFree = isFree
         self.dailyLimit = dailyLimit
+        self.aliases = aliases
+        self.externalMailFlagEnabled = externalMailFlagEnabled
     }
 }
 

@@ -45,6 +45,8 @@ struct ThreadView: View {
     @State private var displayNavigationTitle = false
     @State private var replyOrReplyAllMessage: Message?
 
+    @StateObject private var alert = NewMessageAlert()
+
     @ObservedRealmObject var thread: Thread
 
     private let toolbarActions: [Action] = [.reply, .forward, .archive, .delete]
@@ -60,14 +62,34 @@ struct ThreadView: View {
                 }
                 .frame(width: 0, height: 0)
 
-                Text(thread.formattedSubject)
-                    .textStyle(.header2)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .multilineTextAlignment(.leading)
-                    .lineSpacing(8)
-                    .padding(.top, 8)
-                    .padding(.bottom, 16)
-                    .padding(.horizontal, 16)
+                VStack(alignment: .leading, spacing: 8) {
+                    Text(thread.formattedSubject)
+                        .textStyle(.header2)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .multilineTextAlignment(.leading)
+                        .lineSpacing(8)
+
+                    let externalTag = thread.displayExternalRecipientState(mailboxManager: mailboxManager, recipientsList: thread.from)
+                    switch externalTag {
+                    case .many, .one:
+                        Button {
+                            matomo.track(eventWithCategory: .externals, name: "threadTag")
+                            alert.state = .externalRecipient(state: externalTag)
+                        } label: {
+                            Text(MailResourcesStrings.Localizable.externalTag)
+                                .foregroundColor(MailResourcesAsset.onTagColor)
+                                .textStyle(.labelMedium)
+                                .padding(4)
+                                .background(MailResourcesAsset.yellowColor.swiftUIColor)
+                                .cornerRadius(2)
+                        }
+                    case .none:
+                        EmptyView()
+                    }
+                }
+                .padding(.top, 8)
+                .padding(.bottom, 16)
+                .padding(.horizontal, 16)
 
                 MessageListView(messages: thread.messages)
             }
@@ -146,6 +168,14 @@ struct ThreadView: View {
 
             // Dismiss on iPhone only
             dismiss()
+        }
+        .customAlert(isPresented: $alert.isShowing) {
+            switch alert.state {
+            case .externalRecipient(let state):
+                ExternalRecipientView(externalTagSate: state, isDraft: false)
+            default:
+                EmptyView()
+            }
         }
         .matomoView(view: [MatomoUtils.View.threadView.displayName, "Main"])
     }

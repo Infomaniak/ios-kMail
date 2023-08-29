@@ -212,6 +212,14 @@ public class Thread: Object, Decodable, Identifiable {
     }
 }
 
+public extension Thread {
+    /// Compute if the thread has external recipients
+    func displayExternalRecipientState(mailboxManager: MailboxManager, recipientsList: List<Recipient>) -> DisplayExternalRecipientStatus.State {
+        let externalDisplayStatus = DisplayExternalRecipientStatus(mailboxManager: mailboxManager, recipientsList: recipientsList)
+        return externalDisplayStatus.state
+    }
+}
+
 public enum Filter: String {
     case all, seen, unseen, starred, unstarred
 

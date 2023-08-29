@@ -55,6 +55,7 @@ final class NewMessageAlert: SheetState<NewMessageAlert.State> {
     enum State {
         case link(handler: (String) -> Void)
         case emptySubject(handler: () -> Void)
+        case externalRecipient(state: DisplayExternalRecipientStatus.State)
     }
 }
 
@@ -72,6 +73,7 @@ struct ComposeMessageView: View {
     @State private var editorFocus = false
     @State private var currentSignature: Signature?
     @State private var initialAttachments = [Attachable]()
+    @State private var isShowingExternalTag = true
 
     @State private var editorModel = RichTextEditorModel()
     @State private var scrollView: UIScrollView?
@@ -159,6 +161,8 @@ struct ComposeMessageView: View {
                 AddLinkView(actionHandler: handler)
             case .emptySubject(let handler):
                 EmptySubjectView(actionHandler: handler)
+            case .externalRecipient(let state):
+                ExternalRecipientView(externalTagSate: state, isDraft: true)
             case .none:
                 EmptyView()
             }
@@ -240,6 +244,46 @@ struct ComposeMessageView: View {
                 .disabled(isSendButtonDisabled)
             }
         }
+        .safeAreaInset(edge: .bottom) {
+            if isShowingExternalTag {
+                let externalTag = draft.displayExternalTag(mailboxManager: mailboxManager)
+                switch externalTag {
+                case .many, .one:
+                    HStack(spacing: 24) {
+                        Text(MailResourcesStrings.Localizable.externalDialogTitleRecipient)
+                            .foregroundColor(MailResourcesAsset.onTagColor)
+                            .textStyle(.bodySmall)
+
+                        Spacer()
+
+                        Button {
+                            matomo.track(eventWithCategory: .externals, name: "bannerInfo")
+                            alert.state = .externalRecipient(state: externalTag)
+                        } label: {
+                            MailResourcesAsset.info.swiftUIImage
+                                .resizable()
+                                .foregroundColor(MailResourcesAsset.onTagColor)
+                                .frame(width: 16, height: 16)
+                        }
+
+                        Button {
+                            matomo.track(eventWithCategory: .externals, name: "bannerManuallyClosed")
+                            isShowingExternalTag = false
+                        } label: {
+                            MailResourcesAsset.closeSmall.swiftUIImage
+                                .resizable()
+                                .foregroundColor(MailResourcesAsset.onTagColor)
+                                .frame(width: 16, height: 16)
+                        }
+                    }
+                    .frame(maxWidth: .infinity)
+                    .padding(16)
+                    .background(MailResourcesAsset.yellowColor.swiftUIColor)
+                case .none:
+                    EmptyView()
+                }
+            }
+        }
     }
 
     /// Progress view
@@ -275,7 +319,15 @@ struct ComposeMessageView: View {
     }
 
     private func sendDraft() {
-        matomo.trackSendMessage(numberOfTo: draft.to.count, numberOfCc: draft.cc.count, numberOfBcc: draft.bcc.count)
+        let sentWithExternals: Bool
+        switch draft.displayExternalTag(mailboxManager: mailboxManager) {
+        case .one, .many:
+            sentWithExternals = true
+        case .none:
+            sentWithExternals = false
+        }
+
+        matomo.trackSendMessage(draft: draft, sentWithExternals: sentWithExternals)
         if let liveDraft = draft.thaw() {
             try? liveDraft.realm?.write {
                 liveDraft.action = .send

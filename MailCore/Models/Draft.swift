@@ -298,3 +298,19 @@ public extension Draft {
         return available
     }
 }
+
+public extension Draft {
+    /// Compute if the draft has external recipients
+    func displayExternalTag(mailboxManager: MailboxManager) -> DisplayExternalRecipientStatus.State {
+        var recipientsList = List<Recipient>()
+        recipientsList.append(objectsIn: cc)
+        recipientsList.append(objectsIn: bcc)
+        recipientsList.append(objectsIn: to)
+        return displayExternalRecipientState(mailboxManager: mailboxManager, recipientsList: recipientsList)
+    }
+
+    func displayExternalRecipientState(mailboxManager: MailboxManager, recipientsList: List<Recipient>) -> DisplayExternalRecipientStatus.State {
+        let externalDisplayStatus = DisplayExternalRecipientStatus(mailboxManager: mailboxManager, recipientsList: recipientsList)
+        return externalDisplayStatus.state
+    }
+}

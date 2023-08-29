@@ -18,18 +18,20 @@
 
 import Foundation
 import MailCore
+import MailResources
 import SwiftUI
 import UIKit
 
 struct RecipientChipLabelView: UIViewRepresentable {
     @Environment(\.isEnabled) private var isEnabled: Bool
+    @EnvironmentObject private var mailboxManager: MailboxManager
 
     let recipient: Recipient
     var removeHandler: (() -> Void)?
     var switchFocusHandler: (() -> Void)?
 
     func makeUIView(context: Context) -> RecipientChipLabel {
-        let label = RecipientChipLabel(recipient: recipient)
+        let label = RecipientChipLabel(recipient: recipient, external: recipient.isExternal(mailboxManager: mailboxManager))
         label.removeHandler = removeHandler
         label.switchFocusHandler = switchFocusHandler
         label.setContentHuggingPriority(.defaultHigh, for: .horizontal)
@@ -40,7 +42,9 @@ struct RecipientChipLabelView: UIViewRepresentable {
 
     func updateUIView(_ uiLabel: RecipientChipLabel, context: Context) {
         uiLabel.text = recipient.name.isEmpty ? recipient.email : recipient.name
+        uiLabel.isExternal = recipient.isExternal(mailboxManager: mailboxManager)
         uiLabel.isUserInteractionEnabled = isEnabled
+        uiLabel.updateColors(isFirstResponder: uiLabel.isFirstResponder)
     }
 }
 
@@ -58,8 +62,9 @@ class RecipientChipLabel: UILabel, UIKeyInput {
     override var canBecomeFirstResponder: Bool { return isUserInteractionEnabled }
 
     var hasText = false
+    var isExternal = false
 
-    init(recipient: Recipient) {
+    init(recipient: Recipient, external: Bool) {
         super.init(frame: .zero)
 
         text = recipient.name.isEmpty ? recipient.email : recipient.name
@@ -67,10 +72,13 @@ class RecipientChipLabel: UILabel, UIKeyInput {
         numberOfLines = 1
 
         font = .systemFont(ofSize: 16)
-        updateColors(isFirstResponder: false)
 
         layer.cornerRadius = intrinsicContentSize.height / 2
+        layer.borderWidth = 1
         layer.masksToBounds = true
+
+        isExternal = external
+        updateColors(isFirstResponder: false)
     }
 
     @available(*, unavailable)
@@ -102,8 +110,15 @@ class RecipientChipLabel: UILabel, UIKeyInput {
         removeHandler?()
     }
 
-    private func updateColors(isFirstResponder: Bool) {
-        textColor = isFirstResponder ? UserDefaults.shared.accentColor.secondary.color : .tintColor
-        backgroundColor = isFirstResponder ? .tintColor : UserDefaults.shared.accentColor.secondary.color
+    public func updateColors(isFirstResponder: Bool) {
+        if isExternal {
+            textColor = isFirstResponder ? MailResourcesAsset.onTagColor.color : MailResourcesAsset.textPrimaryColor.color
+            borderColor = MailResourcesAsset.yellowColor.color
+            backgroundColor = isFirstResponder ? MailResourcesAsset.yellowColor.color : MailResourcesAsset.textFieldColor.color
+        } else {
+            textColor = isFirstResponder ? UserDefaults.shared.accentColor.secondary.color : .tintColor
+            borderColor = isFirstResponder ? UserDefaults.shared.accentColor.primary.color : UserDefaults.shared.accentColor.secondary.color
+            backgroundColor = isFirstResponder ? .tintColor : UserDefaults.shared.accentColor.secondary.color
+        }
     }
 }
