@@ -24,7 +24,7 @@ import Sentry
 
 public class MailboxInfosManager {
     public static let instance = MailboxInfosManager()
-    private static let currentDbVersion: UInt64 = 5
+    private static let currentDbVersion: UInt64 = 6
     public let realmConfiguration: Realm.Configuration
     private let dbName = "MailboxInfos.realm"
 
@@ -32,6 +32,14 @@ public class MailboxInfosManager {
         realmConfiguration = Realm.Configuration(
             fileURL: MailboxManager.constants.rootDocumentsURL.appendingPathComponent(dbName),
             schemaVersion: MailboxInfosManager.currentDbVersion,
+            migrationBlock: { migration, oldSchemaVersion in
+                // No migration needed from 0 to 5
+
+                // Added `aliases` and `externalMailFlagEnabled` to Mailbox
+                if oldSchemaVersion < 6 {
+                    migration.deleteData(forType: Mailbox.className())
+                }
+            },
             objectTypes: [Mailbox.self, MailboxPermissions.self, Quotas.self]
         )
     }
