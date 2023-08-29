@@ -65,7 +65,7 @@ public enum Constants {
 
     public static let sizeChangeThreshold = 3
     public static let viewportContent = "width=device-width, initial-scale=1.0"
-    public static let divWrapperId = "mail-message-content"
+    public static let divWrapperId = "kmail-message-content"
     public static let mungeEmailScript: String? = {
         guard let mungeScript = Bundle.main.load(filename: "mungeEmail", withExtension: "js") else { return nil }
         return "const MESSAGE_SELECTOR = \"#\(divWrapperId)\"; \(mungeScript)"

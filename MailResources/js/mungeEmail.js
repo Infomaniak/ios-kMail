@@ -16,7 +16,7 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-// MESSAGE_SELECTOR = "#mail-message-content";
+// MESSAGE_SELECTOR = "#kmail-message-content";
 const PREFERENCES = {
     normalizeMessageWidths: true,
     mungeImages: true,
