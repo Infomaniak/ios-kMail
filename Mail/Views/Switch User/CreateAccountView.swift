@@ -29,7 +29,7 @@ struct CreateAccountView: View {
     @StateObject private var loginHandler = LoginHandler()
 
     var body: some View {
-        VStack(alignment: .center, spacing: 0) {
+        VStack(spacing: 0) {
             accentColor.createAccountImage.swiftUIImage
                 .resizable()
                 .scaledToFit()
