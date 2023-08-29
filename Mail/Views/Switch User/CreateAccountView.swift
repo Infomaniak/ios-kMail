@@ -67,7 +67,7 @@ struct CreateAccountView: View {
 
             Spacer()
 
-            MailButton(label: MailResourcesStrings.Localizable.buttonCreate) {
+            MailButton(label: MailResourcesStrings.Localizable.buttonStart) {
                 isPresentingCreateAccount.toggle()
             }
             .mailButtonFullWidth(true)
