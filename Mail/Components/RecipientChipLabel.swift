@@ -42,7 +42,9 @@ struct RecipientChipLabelView: UIViewRepresentable {
 
     func updateUIView(_ uiLabel: RecipientChipLabel, context: Context) {
         uiLabel.text = recipient.name.isEmpty ? recipient.email : recipient.name
+        uiLabel.isExternal = recipient.isExternal(mailboxManager: mailboxManager)
         uiLabel.isUserInteractionEnabled = isEnabled
+        uiLabel.updateColors(isFirstResponder: uiLabel.isFirstResponder)
     }
 }
 
@@ -108,7 +110,7 @@ class RecipientChipLabel: UILabel, UIKeyInput {
         removeHandler?()
     }
 
-    private func updateColors(isFirstResponder: Bool) {
+    public func updateColors(isFirstResponder: Bool) {
         if isExternal {
             textColor = isFirstResponder ? MailResourcesAsset.onTagColor.color : MailResourcesAsset.textPrimaryColor.color
             borderColor = MailResourcesAsset.yellowColor.color
