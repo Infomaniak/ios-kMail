@@ -104,7 +104,7 @@ public enum AccentColor: String, CaseIterable, SettingsOptionEnum {
         case .pink:
             return MailResourcesAsset.createAccountPink
         case .blue:
-            return MailResourcesAsset.createAccountPink // TODO: change when blue version is available
+            return MailResourcesAsset.createAccountBlue
         }
     }
 
