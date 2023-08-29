@@ -20,10 +20,13 @@ import MailCore
 import SwiftUI
 
 struct ContactActionsHeaderView: View {
+    @EnvironmentObject private var mailboxManager: MailboxManager
+
     let displayablePerson: CommonContact
+
     var body: some View {
         HStack {
-            AvatarView(displayablePerson: displayablePerson, size: 40)
+            AvatarView(mailboxManager: mailboxManager, displayablePerson: displayablePerson, size: 40)
                 .accessibilityHidden(true)
             VStack(alignment: .leading) {
                 Text(displayablePerson, format: .displayablePerson())

@@ -58,6 +58,7 @@ struct ThreadListToolbar: ViewModifier {
     @EnvironmentObject private var splitViewManager: SplitViewManager
     @EnvironmentObject private var navigationDrawerState: NavigationDrawerState
     @EnvironmentObject private var actionsManager: ActionsManager
+    @EnvironmentObject private var mailboxManager: MailboxManager
 
     @State private var presentedCurrentAccount: Account?
     @State private var multipleSelectedMessages: [Message]?
@@ -126,7 +127,10 @@ struct ThreadListToolbar: ViewModifier {
                             presentedCurrentAccount = viewModel.mailboxManager.account
                         } label: {
                             if let currentAccountUser = viewModel.mailboxManager.account.user {
-                                AvatarView(displayablePerson: CommonContact(user: currentAccountUser))
+                                AvatarView(
+                                    mailboxManager: mailboxManager,
+                                    displayablePerson: CommonContact(user: currentAccountUser)
+                                )
                             }
                         }
                         .accessibilityLabel(MailResourcesStrings.Localizable.contentDescriptionUserAvatar)

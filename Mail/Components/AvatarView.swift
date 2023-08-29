@@ -23,15 +23,19 @@ import NukeUI
 import SwiftUI
 
 struct AvatarView: View {
-    @EnvironmentObject private var mailboxManager: MailboxManager
+    /// Optional as this view can be displayed from a context without a mailboxManager available
+    let mailboxManager: MailboxManager?
 
     let displayablePerson: CommonContact
+
     var size: CGFloat = 28
 
     var body: some View {
         Group {
-            if let currentToken = mailboxManager.apiFetcher.currentToken,
-               let avatarImageRequest = displayablePerson.avatarImageRequest.authenticatedRequestIfNeeded(token: currentToken) {
+            if let mailboxManager,
+               let currentToken = mailboxManager.apiFetcher.currentToken,
+               let avatarImageRequest = displayablePerson.avatarImageRequest.authenticatedRequestIfNeeded(token:
+                   currentToken) {
                 LazyImage(request: avatarImageRequest) { state in
                     if let image = state.image {
                         ContactImage(image: image, size: size)

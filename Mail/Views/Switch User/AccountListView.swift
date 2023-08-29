@@ -69,11 +69,14 @@ struct AccountListView: View {
     @LazyInjectService private var orientationManager: OrientationManageable
     @LazyInjectService private var accountManager: AccountManager
 
+    /// Optional as this view can be displayed from a context without a mailboxManager available
+    let mailboxManager: MailboxManager?
+
     var body: some View {
         ScrollView {
             VStack {
                 ForEach(Array(viewModel.accounts.keys)) { account in
-                    AccountCellView(account: account, selectedUserId: $viewModel.selectedUserId)
+                    AccountCellView(mailboxManager: mailboxManager, account: account, selectedUserId: $viewModel.selectedUserId)
                 }
             }
             .padding(8)
@@ -109,6 +112,6 @@ struct AccountListView: View {
 
 struct AccountListView_Previews: PreviewProvider {
     static var previews: some View {
-        AccountListView()
+        AccountListView(mailboxManager: nil)
     }
 }
