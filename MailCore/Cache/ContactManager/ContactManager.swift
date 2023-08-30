@@ -20,6 +20,7 @@ import CocoaLumberjackSwift
 import Contacts
 import Foundation
 import InfomaniakCore
+import InfomaniakCoreUI
 import RealmSwift
 import SwiftRegex
 
@@ -85,9 +86,12 @@ public final class ContactManager: ObservableObject {
         }
 
         do {
+            // Track background refresh of addressBooks
+            let backgroundTaskTracker = await ApplicationBackgroundTaskTracker(identifier: #function + UUID().uuidString)
+
             // Fetch remote content
             async let addressBooksRequest = apiFetcher.addressBooks().addressbooks
-            
+
             // Process addressBooks
             let addressBooks = try await addressBooksRequest
             await backgroundRealm.execute { realm in
@@ -95,9 +99,12 @@ public final class ContactManager: ObservableObject {
                     realm.add(addressBooks, update: .modified)
                 }
             }
+            await backgroundTaskTracker.end()
 
+            // Process Contacts
             await uniqueMergeLocalTask(apiFetcher)
         } catch {
+            // Process Contacts anyway
             await uniqueMergeLocalTask(apiFetcher)
 
             throw error
