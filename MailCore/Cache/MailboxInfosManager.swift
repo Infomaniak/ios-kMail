@@ -22,13 +22,12 @@ import Realm
 import RealmSwift
 import Sentry
 
-public class MailboxInfosManager {
-    public static let instance = MailboxInfosManager()
+public final class MailboxInfosManager {
     private static let currentDbVersion: UInt64 = 6
     public let realmConfiguration: Realm.Configuration
     private let dbName = "MailboxInfos.realm"
 
-    private init() {
+    public init() {
         realmConfiguration = Realm.Configuration(
             fileURL: MailboxManager.constants.rootDocumentsURL.appendingPathComponent(dbName),
             schemaVersion: MailboxInfosManager.currentDbVersion,
@@ -37,7 +36,9 @@ public class MailboxInfosManager {
 
                 // Added `aliases` and `externalMailFlagEnabled` to Mailbox
                 if oldSchemaVersion < 6 {
-                    migration.deleteData(forType: Mailbox.className())
+                    migration.enumerateObjects(ofType: Mailbox.className()) { _, newObject in
+                        newObject!["aliases"] = List<String>()
+                    }
                 }
             },
             objectTypes: [Mailbox.self, MailboxPermissions.self, Quotas.self]

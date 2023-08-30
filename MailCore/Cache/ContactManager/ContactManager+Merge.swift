@@ -19,6 +19,7 @@
 import CocoaLumberjackSwift
 import Contacts
 import Foundation
+import InfomaniakCoreUI
 
 extension CNContact {
     var fullName: String {
@@ -32,10 +33,15 @@ extension CNContact {
 
 extension ContactManager {
     func merge(localInto remote: [InfomaniakContact]) async {
-        // Make sure the base propagates back the changes
+        // Refresh Realm, and trigger redraws, only if app is in foreground.
         defer {
-            DDLogInfo("Done merging remote and local contacts, refreshing DB…")
-            getRealm().refresh()
+            Task { @MainActor in
+                let state = UIApplication.shared.applicationState
+                if state == .active {
+                    DDLogInfo("Done merging remote and local contacts, refreshing DB…")
+                    getRealm().refresh()
+                }
+            }
         }
 
         // index remote account per email
@@ -80,13 +86,13 @@ extension ContactManager {
         var output = input
 
         await localContactsHelper.enumerateContacts { localContact, stop in
+            if Task.isCancelled {
+                stop.pointee = true
+                return
+            }
+            
             // For each email of a specific contact
             for cnEmail in localContact.emailAddresses {
-                if Task.isCancelled {
-                    stop.pointee = true
-                    return
-                }
-
                 let email = String(cnEmail.value)
 
                 // lookup matching remote contact for current email
@@ -126,6 +132,12 @@ extension ContactManager {
         }
 
         DDLogInfo("Will start merging contacts cancelling previous task : \(currentMergeRequest != nil)")
+
+        // Track background refresh of contacts, and cancel task is system asks to.
+        let backgroundTaskTracker = await ApplicationBackgroundTaskTracker(identifier: #function + UUID().uuidString) {
+            self.currentMergeRequest?.cancel()
+        }
+
         let updateTask = Task {
             // Fetch remote contacts
             let remoteContacts: [InfomaniakContact]
@@ -142,6 +154,11 @@ extension ContactManager {
 
         // Await for completion
         await updateTask.finish()
+
+        // Making sure to terminate BG work tracker
+        await backgroundTaskTracker.end()
+
+        // cleanup
         currentMergeRequest = nil
     }
 }

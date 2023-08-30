@@ -25,6 +25,7 @@ import SwiftRegex
 
 public final class MailboxManager: ObservableObject, MailboxManageable {
     @LazyInjectService internal var snackbarPresenter: SnackBarPresentable
+    @LazyInjectService internal var mailboxInfosManager: MailboxInfosManager
 
     internal lazy var refreshActor = RefreshActor(mailboxManager: self)
     internal let backgroundRealm: BackgroundRealm

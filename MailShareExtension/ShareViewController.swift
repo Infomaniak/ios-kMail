@@ -61,12 +61,8 @@ final class ShareNavigationViewController: UIViewController {
             return
         }
 
-        /// make sure we load the contact list asap.
-        if let currentContactManager = accountManager.currentContactManager {
-            Task {
-                try await currentContactManager.refreshContactsAndAddressBooks()
-            }
-        }
+        /// Realm migration if needed
+        ModelMigrator().migrateRealmIfNeeded()
 
         // We need to go threw wrapping to use SwiftUI in an NSExtension.
         let rootView = ComposeMessageWrapperView(dismissHandler: {

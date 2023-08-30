@@ -30,6 +30,7 @@ final class NotificationService: UNNotificationServiceExtension {
     private let dependencyInjectionHook = EarlyDIHook()
 
     @LazyInjectService private var accountManager: AccountManager
+    @LazyInjectService private var mailboxInfosManager: MailboxInfosManager
 
     var contentHandler: ((UNNotificationContent) -> Void)?
     var bestAttemptContent: UNMutableNotificationContent?
@@ -37,6 +38,7 @@ final class NotificationService: UNNotificationServiceExtension {
     override init() {
         super.init()
         Logging.initLogging()
+        ModelMigrator().migrateRealmIfNeeded()
     }
 
     func fetchMessage(uid: String, in mailboxManager: MailboxManager) async throws -> Message? {
@@ -78,7 +80,7 @@ final class NotificationService: UNNotificationServiceExtension {
             let userInfos = bestAttemptContent.userInfo
             guard let mailboxId = userInfos[NotificationsHelper.UserInfoKeys.mailboxId] as? Int,
                   let userId = userInfos[NotificationsHelper.UserInfoKeys.userId] as? Int,
-                  let mailbox = MailboxInfosManager.instance.getMailbox(id: mailboxId, userId: userId),
+                  let mailbox = mailboxInfosManager.getMailbox(id: mailboxId, userId: userId),
                   let mailboxManager = accountManager.getMailboxManager(for: mailbox) else {
                 // This should never happen, we received a notification for an unknown mailbox
                 logNotificationFailed(userInfo: userInfos, type: .mailboxNotFound)

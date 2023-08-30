@@ -18,6 +18,7 @@
 
 import Foundation
 import InfomaniakCore
+import InfomaniakDI
 
 public class UserActivityController {
     var currentActivity: NSUserActivity?
@@ -41,7 +42,9 @@ public class UserActivityController {
     }
 
     private func getMailboxIndexForCustomOrder(_ mailbox: Mailbox) -> Int? {
-        let sortedUserMailboxes = MailboxInfosManager.instance.getMailboxes(for: mailbox.userId).webmailSorted()
+        @InjectService var mailboxInfosManager: MailboxInfosManager
+
+        let sortedUserMailboxes = mailboxInfosManager.getMailboxes(for: mailbox.userId).webmailSorted()
         return sortedUserMailboxes.firstIndex { $0.objectId == mailbox.objectId }
     }
 }

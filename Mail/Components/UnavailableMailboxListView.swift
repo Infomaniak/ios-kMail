@@ -27,7 +27,10 @@ struct UnavailableMailboxListView: View {
 
     @ObservedResults(
         Mailbox.self,
-        configuration: MailboxInfosManager.instance.realmConfiguration,
+        configuration: {
+            @InjectService var mailboxInfosManager: MailboxInfosManager
+            return mailboxInfosManager.realmConfiguration
+        }(),
         where: { mailbox in
             @InjectService var accountManager: AccountManager
             return mailbox.userId == accountManager.currentUserId && mailbox.isPasswordValid == false
@@ -37,7 +40,10 @@ struct UnavailableMailboxListView: View {
 
     @ObservedResults(
         Mailbox.self,
-        configuration: MailboxInfosManager.instance.realmConfiguration,
+        configuration: {
+            @InjectService var mailboxInfosManager: MailboxInfosManager
+            return mailboxInfosManager.realmConfiguration
+        }(),
         where: { mailbox in
             @InjectService var accountManager: AccountManager
             return mailbox.userId == accountManager.currentUserId && mailbox.isLocked == true
