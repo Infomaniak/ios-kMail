@@ -33,17 +33,6 @@ extension CNContact {
 
 extension ContactManager {
     func merge(localInto remote: [InfomaniakContact]) async {
-        // Refresh Realm, and trigger redraws, only if app is in foreground.
-        defer {
-            Task { @MainActor in
-                let state = UIApplication.shared.applicationState
-                if state == .active {
-                    DDLogInfo("Done merging remote and local contacts, refreshing DB…")
-                    getRealm().refresh()
-                }
-            }
-        }
-
         // index remote account per email
         var remoteContactsByEmail = [String: InfomaniakContact]()
         for contact in remote {
