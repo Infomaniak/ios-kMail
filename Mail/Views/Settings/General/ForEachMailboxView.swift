@@ -16,6 +16,7 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import InfomaniakDI
 import MailCore
 import RealmSwift
 import SwiftUI
@@ -27,11 +28,16 @@ struct ForEachMailboxView<Content: View>: View {
         let sorted = Array(mailboxes).webmailSorted()
         return sorted
     }
+
     let content: (Mailbox) -> Content
 
     init(userId: Int, excludedMailboxIds: [Int] = [], @ViewBuilder content: @escaping (Mailbox) -> Content) {
         self.content = content
-        _mailboxes = ObservedResults(Mailbox.self, configuration: MailboxInfosManager.instance.realmConfiguration) {
+        let configuration = {
+            @InjectService var mailboxInfosManager: MailboxInfosManager
+            return mailboxInfosManager.realmConfiguration
+        }()
+        _mailboxes = ObservedResults(Mailbox.self, configuration: configuration) {
             $0.userId == userId && !$0.mailboxId.in(excludedMailboxIds)
         }
     }

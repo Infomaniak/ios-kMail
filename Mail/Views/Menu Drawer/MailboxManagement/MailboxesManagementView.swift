@@ -32,7 +32,10 @@ struct MailboxesManagementView: View {
 
     @ObservedResults(
         Mailbox.self,
-        configuration: MailboxInfosManager.instance.realmConfiguration,
+        configuration: {
+            @InjectService var mailboxInfosManager: MailboxInfosManager
+            return mailboxInfosManager.realmConfiguration
+        }(),
         sortDescriptor: SortDescriptor(keyPath: \Mailbox.mailboxId)
     ) private var mailboxes
 

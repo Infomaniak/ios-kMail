@@ -89,12 +89,13 @@ public class NavigationState: ObservableObject {
 
     static func getMainViewStateIfPossible() -> RootViewState {
         @InjectService var accountManager: AccountManager
+        @InjectService var mailboxInfosManager: MailboxInfosManager
 
         if let currentAccount = accountManager.getCurrentAccount() {
             if let currentMailboxManager = accountManager.currentMailboxManager {
                 return .mainView(currentMailboxManager)
             } else {
-                let mailboxes = MailboxInfosManager.instance.getMailboxes(for: currentAccount.userId)
+                let mailboxes = mailboxInfosManager.getMailboxes(for: currentAccount.userId)
                 if !mailboxes.isEmpty && mailboxes.allSatisfy({ !$0.isAvailable }) {
                     return .unavailableMailboxes
                 }

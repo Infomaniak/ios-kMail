@@ -31,6 +31,7 @@ public struct NotificationTappedPayload {
 final class NotificationCenterDelegate: NSObject, UNUserNotificationCenterDelegate {
     @LazyInjectService private var accountManager: AccountManager
     @LazyInjectService private var messageActions: MessageActionHandlable
+    @LazyInjectService private var mailboxInfosManager: MailboxInfosManager
 
     /// Handles the actions related to mail notifications
     /// - Parameters:
@@ -40,7 +41,7 @@ final class NotificationCenterDelegate: NSObject, UNUserNotificationCenterDelega
         // precond for mail actions
         guard let mailboxId = content.userInfo[NotificationsHelper.UserInfoKeys.mailboxId] as? Int,
               let userId = content.userInfo[NotificationsHelper.UserInfoKeys.userId] as? Int,
-              let mailbox = MailboxInfosManager.instance.getMailbox(id: mailboxId, userId: userId),
+              let mailbox = mailboxInfosManager.getMailbox(id: mailboxId, userId: userId),
               let mailboxManager = accountManager.getMailboxManager(for: mailbox),
               let messageUid = content.userInfo[NotificationsHelper.UserInfoKeys.messageUid] as? String,
               !messageUid.isEmpty else {

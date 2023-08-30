@@ -26,6 +26,7 @@ import SwiftUI
 
 final class AccountListViewModel: ObservableObject {
     @LazyInjectService private var accountManager: AccountManager
+    @LazyInjectService private var mailboxInfosManager: MailboxInfosManager
 
     @Published var selectedUserId: Int? = {
         @InjectService var accountManager: AccountManager
@@ -37,7 +38,7 @@ final class AccountListViewModel: ObservableObject {
     private var mailboxObservationToken: NotificationToken?
 
     init() {
-        mailboxObservationToken = MailboxInfosManager.instance.getRealm()
+        mailboxObservationToken = mailboxInfosManager.getRealm()
             .objects(Mailbox.self)
             .sorted(by: \.mailboxId)
             .observe(on: DispatchQueue.main) { [weak self] results in

@@ -18,6 +18,7 @@
 
 import Foundation
 import InfomaniakCoreUI
+import InfomaniakDI
 import MailResources
 import RealmSwift
 import Sentry
@@ -25,6 +26,7 @@ import Sentry
 // MARK: - Message
 
 public extension MailboxManager {
+
     func messages(folder: Folder) async throws {
         guard !Task.isCancelled else { return }
 
@@ -99,7 +101,7 @@ public extension MailboxManager {
 
         if folder.role == .inbox,
            let freshFolder = folder.fresh(using: getRealm()) {
-            MailboxInfosManager.instance.updateUnseen(unseenMessages: freshFolder.unreadCount, for: mailbox)
+            mailboxInfosManager.updateUnseen(unseenMessages: freshFolder.unreadCount, for: mailbox)
         }
 
         let realmPrevious = getRealm()

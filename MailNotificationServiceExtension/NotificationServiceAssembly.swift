@@ -42,6 +42,9 @@ enum NotificationServiceAssembly {
 
     private static func setupMainServices() {
         let factories = [
+            Factory(type: MailboxInfosManager.self) { _, _ in
+                MailboxInfosManager()
+            },
             Factory(type: InfomaniakNetworkLoginable.self) { _, _ in
                 InfomaniakNetworkLogin(clientId: MailApiFetcher.clientId)
             },

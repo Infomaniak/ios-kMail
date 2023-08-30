@@ -65,6 +65,7 @@ public final class AccountManager: RefreshTokenDelegate, ObservableObject {
     @LazyInjectService var bugTracker: BugTracker
     @LazyInjectService var notificationService: InfomaniakNotifications
     @LazyInjectService var matomo: MatomoUtils
+    @LazyInjectService var mailboxInfosManager: MailboxInfosManager
 
     private static let appIdentifierPrefix = Bundle.main.infoDictionary!["AppIdentifierPrefix"] as! String
     private static let group = "com.infomaniak.mail"
@@ -99,7 +100,7 @@ public final class AccountManager: RefreshTokenDelegate, ObservableObject {
     public var currentMailboxManager: MailboxManager? {
         if let currentMailboxManager = getMailboxManager(for: currentMailboxId, userId: currentUserId) {
             return currentMailboxManager
-        } else if let newCurrentMailbox = MailboxInfosManager.instance.getMailboxes(for: currentUserId)
+        } else if let newCurrentMailbox = mailboxInfosManager.getMailboxes(for: currentUserId)
             .first(where: \.isAvailable) {
             setCurrentMailboxForCurrentAccount(mailbox: newCurrentMailbox)
             return getMailboxManager(for: newCurrentMailbox)
@@ -174,7 +175,7 @@ public final class AccountManager: RefreshTokenDelegate, ObservableObject {
             return mailboxManager
         } else if let account = account(for: userId),
                   let token = tokenStore.tokenFor(userId: userId),
-                  let mailbox = MailboxInfosManager.instance.getMailbox(id: mailboxId, userId: userId) {
+                  let mailbox = mailboxInfosManager.getMailbox(id: mailboxId, userId: userId) {
             let apiFetcher = getApiFetcher(for: userId, token: token)
             let contactManager = getContactManager(for: userId, apiFetcher: apiFetcher)
             mailboxManagers[objectId] = MailboxManager(account: account,
@@ -257,7 +258,7 @@ public final class AccountManager: RefreshTokenDelegate, ObservableObject {
             }
         }
 
-        MailboxInfosManager.instance.storeMailboxes(user: user, mailboxes: mailboxesResponse)
+        mailboxInfosManager.storeMailboxes(user: user, mailboxes: mailboxesResponse)
         if let mainMailbox = (mailboxesResponse.first(where: { $0.isPrimary }) ?? mailboxesResponse.first)?.freezeIfNeeded() {
             await notificationService.updateTopicsIfNeeded([mainMailbox.notificationTopicName], userApiFetcher: apiFetcher)
             setCurrentMailboxForCurrentAccount(mailbox: mainMailbox)
@@ -293,13 +294,13 @@ public final class AccountManager: RefreshTokenDelegate, ObservableObject {
             }
         }
 
-        let mailboxRemovedList = MailboxInfosManager.instance.storeMailboxes(user: user, mailboxes: fetchedMailboxes)
+        let mailboxRemovedList = mailboxInfosManager.storeMailboxes(user: user, mailboxes: fetchedMailboxes)
         mailboxManagers.removeAll()
 
         var switchedMailbox: Mailbox?
         for mailboxRemoved in mailboxRemovedList {
             if currentMailboxManager?.mailbox.mailboxId == mailboxRemoved.mailboxId {
-                switchedMailbox = MailboxInfosManager.instance.getMailboxes(for: account.userId).first
+                switchedMailbox = mailboxInfosManager.getMailboxes(for: account.userId).first
                 setCurrentMailboxForCurrentAccount(mailbox: switchedMailbox!)
             }
             MailboxManager.deleteUserMailbox(userId: user.id, mailboxId: mailboxRemoved.mailboxId)
@@ -353,7 +354,7 @@ public final class AccountManager: RefreshTokenDelegate, ObservableObject {
         }
 
         // At least one mailbox is valid
-        let mailboxes = MailboxInfosManager.instance.getMailboxes(for: currentUserId)
+        let mailboxes = mailboxInfosManager.getMailboxes(for: currentUserId)
         if let firstValidMailbox = mailboxes.first(where: { !$0.isLocked && $0.isPasswordValid && $0.userId == currentUserId }) {
             switchMailbox(newMailbox: firstValidMailbox)
             return
@@ -365,7 +366,7 @@ public final class AccountManager: RefreshTokenDelegate, ObservableObject {
 
     public func switchAccount(newAccount: Account) {
         setCurrentAccount(account: newAccount)
-        let mailboxes = MailboxInfosManager.instance.getMailboxes(for: newAccount.userId)
+        let mailboxes = mailboxInfosManager.getMailboxes(for: newAccount.userId)
         if let defaultMailbox = (mailboxes.first(where: \.isPrimary) ?? mailboxes.first) {
             setCurrentMailboxForCurrentAccount(mailbox: defaultMailbox)
         }
@@ -397,7 +398,7 @@ public final class AccountManager: RefreshTokenDelegate, ObservableObject {
         _ = try await apiFetcher.addMailbox(mail: mail, password: password)
         try await updateUser(for: currentAccount)
 
-        let mailboxes = MailboxInfosManager.instance.getMailboxes(for: currentUserId)
+        let mailboxes = mailboxInfosManager.getMailboxes(for: currentUserId)
         guard let addedMailbox = mailboxes.first(where: { $0.email == mail }) else { return }
 
         matomo.track(eventWithCategory: .account, name: "addMailboxConfirm")
@@ -455,7 +456,7 @@ public final class AccountManager: RefreshTokenDelegate, ObservableObject {
         }
         MailboxManager.deleteUserMailbox(userId: toDeleteAccount.userId)
         ContactManager.deleteUserContacts(userId: toDeleteAccount.userId)
-        MailboxInfosManager.instance.removeMailboxesFor(userId: toDeleteAccount.userId)
+        mailboxInfosManager.removeMailboxesFor(userId: toDeleteAccount.userId)
         mailboxManagers.removeAll()
         contactManagers.removeAll()
         apiFetchers.removeAll()
@@ -494,7 +495,7 @@ public final class AccountManager: RefreshTokenDelegate, ObservableObject {
 
     public func updateConversationSettings() {
         for account in accounts {
-            for mailbox in MailboxInfosManager.instance.getMailboxes(for: account.userId) {
+            for mailbox in mailboxInfosManager.getMailboxes(for: account.userId) {
                 if let mailboxManager = getMailboxManager(for: mailbox) {
                     mailboxManager.cleanRealm()
                 }

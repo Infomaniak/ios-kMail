@@ -61,6 +61,9 @@ final class ShareNavigationViewController: UIViewController {
             return
         }
 
+        /// Realm migration if needed
+        ModelMigrator().migrateRealmIfNeeded()
+
         // We need to go threw wrapping to use SwiftUI in an NSExtension.
         let rootView = ComposeMessageWrapperView(dismissHandler: {
                                                      self.dismiss(animated: true)

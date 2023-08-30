@@ -22,13 +22,12 @@ import Realm
 import RealmSwift
 import Sentry
 
-public class MailboxInfosManager {
-    public static let instance = MailboxInfosManager()
+public final class MailboxInfosManager {
     private static let currentDbVersion: UInt64 = 6
     public let realmConfiguration: Realm.Configuration
     private let dbName = "MailboxInfos.realm"
 
-    private init() {
+    public init() {
         realmConfiguration = Realm.Configuration(
             fileURL: MailboxManager.constants.rootDocumentsURL.appendingPathComponent(dbName),
             schemaVersion: MailboxInfosManager.currentDbVersion,
