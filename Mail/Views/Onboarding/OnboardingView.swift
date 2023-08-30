@@ -93,7 +93,6 @@ final class LoginHandler: InfomaniakLoginDelegate, ObservableObject {
 
     func loginAfterAccountCreation(from viewController: UIViewController) {
         isLoading = true
-        matomo.track(eventWithCategory: .account, name: "openCreationWebview")
         loginService.setupWebviewNavbar(
             title: MailResourcesStrings.Localizable.buttonLogin,
             titleColor: nil,
@@ -260,6 +259,7 @@ struct OnboardingView: View {
                 navigationState.transitionToRootViewDestination(.noMailboxes)
             }
         }
+        .matomoView(view: [MatomoUtils.View.onboarding.displayName, "Main"])
     }
 
     // MARK: - Private methods

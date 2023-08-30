@@ -16,7 +16,9 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import InfomaniakCoreUI
 import InfomaniakCreateAccount
+import InfomaniakDI
 import InfomaniakLogin
 import MailCore
 import MailResources
@@ -68,6 +70,8 @@ struct CreateAccountView: View {
             Spacer()
 
             MailButton(label: MailResourcesStrings.Localizable.buttonStart) {
+                @InjectService var matomo: MatomoUtils
+                matomo.track(eventWithCategory: .account, name: "openCreationWebview")
                 isPresentingCreateAccount.toggle()
             }
             .mailButtonFullWidth(true)
@@ -80,6 +84,7 @@ struct CreateAccountView: View {
                 loginHandler.loginAfterAccountCreation(from: viewController)
             }
         }
+        .matomoView(view: [MatomoUtils.View.onboarding.displayName, "CreateAccount"])
     }
 }
 
