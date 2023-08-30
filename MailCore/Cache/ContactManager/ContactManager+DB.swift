@@ -22,7 +22,9 @@ import RealmSwift
 public extension ContactManager {
     func getRealm() -> Realm {
         do {
-            return try Realm(configuration: realmConfiguration)
+            let realm = Realm(configuration: realmConfiguration)
+            realm.refresh()
+            return try
         } catch {
             // We can't recover from this error but at least we report it correctly on Sentry
             Logging.reportRealmOpeningError(error, realmConfiguration: realmConfiguration)

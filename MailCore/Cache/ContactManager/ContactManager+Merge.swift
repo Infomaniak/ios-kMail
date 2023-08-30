@@ -62,6 +62,7 @@ extension ContactManager {
 
     // Insert Contacts indexed by email in base without check
     private func insertContactsInDB(_ input: [String: InfomaniakContact]) {
+        let realm = getRealm()
         for (email, contact) in input {
             guard !Task.isCancelled else {
                 break
@@ -72,7 +73,6 @@ extension ContactManager {
                 return
             }
 
-            let realm = getRealm()
             try? realm.safeWrite {
                 realm.add(mergedContact, update: .modified)
             }
@@ -90,7 +90,10 @@ extension ContactManager {
                 stop.pointee = true
                 return
             }
-            
+
+            // Realm to use for this contact
+            let realm = self.getRealm()
+
             // For each email of a specific contact
             for cnEmail in localContact.emailAddresses {
                 let email = String(cnEmail.value)
@@ -107,7 +110,6 @@ extension ContactManager {
                 output.removeValue(forKey: email)
 
                 // Store result
-                let realm = self.getRealm()
                 try? realm.safeWrite {
                     realm.add(mergedContact, update: .modified)
                 }
