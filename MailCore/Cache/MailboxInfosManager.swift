@@ -37,7 +37,7 @@ public class MailboxInfosManager {
 
                 // Added `aliases` and `externalMailFlagEnabled` to Mailbox
                 if oldSchemaVersion < 6 {
-                    migration.enumerateObjects(ofType: Mailbox.className()) { oldObject, newObject in
+                    migration.enumerateObjects(ofType: Mailbox.className()) { _, newObject in
                         newObject!["aliases"] = List<String>()
                     }
                 }
