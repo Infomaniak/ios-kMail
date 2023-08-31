@@ -102,10 +102,10 @@ public final class ContactManager: ObservableObject {
             await backgroundTaskTracker.end()
 
             // Process Contacts
-            await uniqueMergeLocalTask(apiFetcher)
+            await uniqueUpdateContactDBTask(apiFetcher)
         } catch {
             // Process Contacts anyway
-            await uniqueMergeLocalTask(apiFetcher)
+            await uniqueUpdateContactDBTask(apiFetcher)
 
             throw error
         }

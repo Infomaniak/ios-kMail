@@ -112,7 +112,7 @@ public final class MergedContact: Object, Identifiable {
     override public init() { /* Realm needs an empty constructor */ }
 
     /// Init with what you have, it will generate the most usable contact possible
-    public init?(email: String, local: CNContact?, remote: InfomaniakContact?) {
+    public init(email: String, local: CNContact?, remote: InfomaniakContact?) {
         super.init()
 
         self.email = email
