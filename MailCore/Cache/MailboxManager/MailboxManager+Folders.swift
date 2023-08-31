@@ -114,7 +114,7 @@ public extension MailboxManager {
         try await refreshActor.refreshFolder(from: messages, additionalFolder: additionalFolder)
     }
 
-    func refresh(folder: Folder) async {
+    func refreshFolderContent(_ folder: Folder) async {
         await refreshActor.refreshFolderContent(folder)
     }
 

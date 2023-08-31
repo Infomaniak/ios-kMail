@@ -47,7 +47,7 @@ final class NotificationService: UNNotificationServiceExtension {
             // We do nothing if we don't have an initial cursor
             return nil
         }
-        await mailboxManager.refresh(folder: inboxFolder.freezeIfNeeded())
+        await mailboxManager.refreshFolderContent(inboxFolder.freezeIfNeeded())
 
         @ThreadSafe var message = mailboxManager.getRealm().object(ofType: Message.self, forPrimaryKey: uid)
 
