@@ -18,16 +18,21 @@
 
 import Foundation
 import InfomaniakCore
+import InfomaniakCoreUI
 import RealmSwift
 
 // MARK: - Folders
 
 public extension MailboxManager {
-    func folders() async throws {
-        // Get from Realm
+    /// Get all remote folders in DB
+    func refreshAllFolders() async throws {
+        let backgroundTracker = await ApplicationBackgroundTaskTracker(identifier: #function + UUID().uuidString)
+
+        // Network check
         guard ReachabilityListener.instance.currentStatus != .offline else {
             return
         }
+
         // Get from API
         let folderResult = try await apiFetcher.folders(mailbox: mailbox)
         let newFolders = getSubFolders(from: folderResult)
@@ -37,12 +42,12 @@ public extension MailboxManager {
                 self.keepCacheAttributes(for: folder, using: realm)
             }
 
+            // Get from Realm
             let cachedFolders = realm.objects(Folder.self)
 
             // Update folders in Realm
             try? realm.safeWrite {
                 // Remove old folders
-                realm.add(folderResult, update: .modified)
                 let toDeleteFolders = Set(cachedFolders).subtracting(Set(newFolders)).filter { $0.id != Constants.searchFolderId }
                 var toDeleteThreads = [Thread]()
 
@@ -59,8 +64,13 @@ public extension MailboxManager {
                 realm.delete(toDeleteMessages)
                 realm.delete(toDeleteThreads)
                 realm.delete(toDeleteFolders)
+                
+                // Insert fresh remote folders
+                realm.add(folderResult, update: .modified)
             }
         }
+
+        await backgroundTracker.end()
     }
 
     /// Get the folder with the corresponding role in Realm.
@@ -106,8 +116,8 @@ public extension MailboxManager {
         try await refreshActor.refreshFolder(from: messages, additionalFolder: additionalFolder)
     }
 
-    func refresh(folder: Folder) async {
-        await refreshActor.refresh(folder: folder)
+    func refreshFolderContent(_ folder: Folder) async {
+        await refreshActor.refreshFolderContent(folder)
     }
 
     func cancelRefresh() async {

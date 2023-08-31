@@ -201,7 +201,7 @@ final class DateSection: Identifiable, Equatable {
             isLoadingPage = true
         }
 
-        await mailboxManager.refresh(folder: folder.freezeIfNeeded())
+        await mailboxManager.refreshFolderContent(folder.freezeIfNeeded())
 
         withAnimation {
             isLoadingPage = false
