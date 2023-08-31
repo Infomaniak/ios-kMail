@@ -48,6 +48,7 @@ public extension MailboxManager {
             // Update folders in Realm
             try? realm.safeWrite {
                 // Remove old folders
+                realm.add(folderResult, update: .modified)
                 let toDeleteFolders = Set(cachedFolders).subtracting(Set(newFolders)).filter { $0.id != Constants.searchFolderId }
                 var toDeleteThreads = [Thread]()
 
@@ -64,9 +65,6 @@ public extension MailboxManager {
                 realm.delete(toDeleteMessages)
                 realm.delete(toDeleteThreads)
                 realm.delete(toDeleteFolders)
-                
-                // Insert fresh remote folders
-                realm.add(folderResult, update: .modified)
             }
         }
 
