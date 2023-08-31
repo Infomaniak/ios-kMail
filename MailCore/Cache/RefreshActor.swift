@@ -17,6 +17,7 @@
  */
 
 import Foundation
+import InfomaniakCoreUI
 
 public actor RefreshActor {
     weak var mailboxManager: MailboxManager?
@@ -29,25 +30,41 @@ public actor RefreshActor {
 
     public func flushFolder(folder: Folder, mailbox: Mailbox, apiFetcher: MailApiFetcher) async throws -> Bool {
         let response = try await apiFetcher.flushFolder(mailbox: mailbox, folderId: folder.id)
-        await refresh(folder: folder)
+        await refreshFolderContent(folder)
         return response
     }
 
     public func refreshFolder(from messages: [Message], additionalFolder: Folder?) async throws {
-        var folders = messages.map(\.folder)
-        if let additionalFolder {
-            folders.append(additionalFolder)
+        let updateFolders = Task {
+            var folders = messages.map(\.folder)
+            if let additionalFolder {
+                folders.append(additionalFolder)
+            }
+
+            let orderedSet = NSOrderedSet(array: folders as [Any])
+
+            for folder in orderedSet {
+                guard !Task.isCancelled else { break }
+                guard let impactedFolder = folder as? Folder else { continue }
+                await refreshFolderContent(impactedFolder)
+            }
         }
 
-        let orderedSet = NSOrderedSet(array: folders as [Any])
+        // Track progress in background with a cancelation handler
+        let backgroundTracker = await ApplicationBackgroundTaskTracker(identifier: #function + UUID().uuidString) {
+            updateFolders.cancel()
 
-        for folder in orderedSet {
-            guard let impactedFolder = folder as? Folder else { continue }
-            await refresh(folder: impactedFolder)
+            Task {
+                await self.cancelRefresh()
+            }
         }
+
+        await updateFolders.finish()
+
+        await backgroundTracker.end()
     }
 
-    public func refresh(folder: Folder) async {
+    public func refreshFolderContent(_ folder: Folder) async {
         await cancelRefresh()
 
         refreshTask = Task {

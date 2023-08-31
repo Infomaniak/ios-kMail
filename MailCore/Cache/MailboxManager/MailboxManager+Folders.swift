@@ -18,16 +18,21 @@
 
 import Foundation
 import InfomaniakCore
+import InfomaniakCoreUI
 import RealmSwift
 
 // MARK: - Folders
 
 public extension MailboxManager {
-    func folders() async throws {
-        // Get from Realm
+    /// Get all remote folders in DB
+    func refreshAllFolders() async throws {
+        let backgroundTracker = await ApplicationBackgroundTaskTracker(identifier: #function + UUID().uuidString)
+
+        // Network check
         guard ReachabilityListener.instance.currentStatus != .offline else {
             return
         }
+
         // Get from API
         let folderResult = try await apiFetcher.folders(mailbox: mailbox)
         let newFolders = getSubFolders(from: folderResult)
@@ -37,6 +42,7 @@ public extension MailboxManager {
                 self.keepCacheAttributes(for: folder, using: realm)
             }
 
+            // Get from Realm
             let cachedFolders = realm.objects(Folder.self)
 
             // Update folders in Realm
@@ -61,6 +67,8 @@ public extension MailboxManager {
                 realm.delete(toDeleteFolders)
             }
         }
+
+        await backgroundTracker.end()
     }
 
     /// Get the folder with the corresponding role in Realm.
@@ -107,7 +115,7 @@ public extension MailboxManager {
     }
 
     func refresh(folder: Folder) async {
-        await refreshActor.refresh(folder: folder)
+        await refreshActor.refreshFolderContent(folder)
     }
 
     func cancelRefresh() async {

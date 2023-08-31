@@ -107,7 +107,7 @@ struct SplitView: View {
         .onChange(of: scenePhase) { newScenePhase in
             guard newScenePhase == .active else { return }
             Task {
-                async let _ = try? mailboxManager.folders()
+                async let _ = try? mailboxManager.refreshAllFolders()
                 async let _ = try? mailboxManager.refreshAllSignatures()
             }
         }
@@ -202,7 +202,7 @@ struct SplitView: View {
 
     private func fetchFolders() async {
         await tryOrDisplayError {
-            try await mailboxManager.folders()
+            try await mailboxManager.refreshAllFolders()
         }
     }
 

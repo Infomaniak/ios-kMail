@@ -44,7 +44,7 @@ final class MailboxManagerTests: XCTestCase {
     // MARK: Tests methods
 
     func testFolders() async throws {
-        try await MailboxManagerTests.mailboxManager.folders()
+        try await MailboxManagerTests.mailboxManager.refreshAllFolders()
     }
 
     func testThreads() async throws {

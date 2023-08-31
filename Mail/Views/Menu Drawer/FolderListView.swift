@@ -56,7 +56,7 @@ struct NestableFolder: Identifiable {
     }
 }
 
-class FolderListViewModel: ObservableObject {
+final class FolderListViewModel: ObservableObject {
     /// Special folders (eg. Inbox) for the current mailbox
     @Published var roleFolders = [NestableFolder]()
     /// User created folders for the current mailbox
