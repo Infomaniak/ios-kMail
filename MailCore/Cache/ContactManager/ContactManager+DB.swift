@@ -22,7 +22,9 @@ import RealmSwift
 public extension ContactManager {
     func getRealm() -> Realm {
         do {
-            return try Realm(configuration: realmConfiguration)
+            let realm = try Realm(configuration: realmConfiguration)
+            realm.refresh()
+            return realm
         } catch {
             // We can't recover from this error but at least we report it correctly on Sentry
             Logging.reportRealmOpeningError(error, realmConfiguration: realmConfiguration)
@@ -52,7 +54,7 @@ public extension ContactManager {
         // Iterate a given number of times to emulate a `LIMIT` statement.
         var iterator = lazyResults.makeIterator()
         var results = [MergedContact]()
-        for _ in 0..<fetchLimit {
+        for _ in 0 ..< fetchLimit {
             guard let next = iterator.next() else {
                 break
             }
@@ -85,8 +87,7 @@ public extension ContactManager {
 
         guard let newContact = contacts.first(where: { $0.id == String(contactId) }) else { throw MailError.contactNotFound }
 
-        let email = recipient.email
-        guard let mergedContact = MergedContact(email: email, local: nil, remote: newContact) else { return }
+        let mergedContact = MergedContact(email: recipient.email, local: nil, remote: newContact)
 
         let realm = getRealm()
         try? realm.safeWrite {
