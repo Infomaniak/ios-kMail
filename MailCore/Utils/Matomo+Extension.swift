@@ -26,7 +26,6 @@ import SwiftUI
 public extension MatomoUtils.View {
     static let accountView = MatomoUtils.View(displayName: "AccountView")
     static let bottomSheet = MatomoUtils.View(displayName: "BottomSheet")
-    static let onboarding = MatomoUtils.View(displayName: "Onboarding")
     static let threadListView = MatomoUtils.View(displayName: "ThreadListView")
     static let threadView = MatomoUtils.View(displayName: "ThreadView")
     static let settingsView = MatomoUtils.View(displayName: "SettingsView")
