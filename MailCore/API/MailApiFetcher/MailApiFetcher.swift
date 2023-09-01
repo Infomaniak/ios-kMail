@@ -21,6 +21,7 @@ import Foundation
 import InfomaniakCore
 import InfomaniakDI
 import InfomaniakLogin
+import MachO
 import Sentry
 import UIKit
 
@@ -36,6 +37,13 @@ struct UserAgentBuilder {
             .trimmingCharacters(in: .controlCharacters)
     }
 
+    func microarchitecture() -> String? {
+        guard let archRaw = NXGetLocalArchInfo().pointee.name else {
+            return nil
+        }
+        return String(cString: archRaw)
+    }
+
     var userAgent: String {
         let release = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "x.x.x"
         let build = Bundle.main.object(forInfoDictionaryKey: "CFBundleVersion") as? String ?? "x"
@@ -46,12 +54,14 @@ struct UserAgentBuilder {
 
         let processInfo = ProcessInfo.processInfo
         let OSNameAndVersion =
-            "\(UIDevice.current.systemName)\(processInfo.operatingSystemVersion.majorVersion).\(processInfo.operatingSystemVersion.minorVersion).\(processInfo.operatingSystemVersion.patchVersion)"
+            "\(UIDevice.current.systemName) \(processInfo.operatingSystemVersion.majorVersion).\(processInfo.operatingSystemVersion.minorVersion).\(processInfo.operatingSystemVersion.patchVersion)"
+
+        let cpuArchitecture = microarchitecture() ?? "unknownArch"
 
         /// Something like:
         /// `com.infomaniak.mail/1.0.5-1 (iPhone15,2; iOS16.4.0)`
         /// `com.infomaniak.mail.ShareExtension/1.0.5-1 (iPhone15,2; iOS16.4.0)`
-        let userAgent = "\(executableName)/\(appVersion) (\(hardwareDevice); \(OSNameAndVersion))"
+        let userAgent = "\(executableName)/\(appVersion) (\(hardwareDevice); \(OSNameAndVersion); \(cpuArchitecture))"
         return userAgent
     }
 }
