@@ -308,6 +308,7 @@ public extension MailboxManager {
             messageUids: uniqueUids
         )
 
+        let backgroundTracker = await ApplicationBackgroundTaskTracker(identifier: #function + UUID().uuidString)
         await backgroundRealm.execute { [self] realm in
             if let folder = folder.fresh(using: realm) {
                 createThreads(messageByUids: messageByUidsResult, folder: folder, using: realm)
@@ -319,6 +320,7 @@ public extension MailboxManager {
                 newCursor: newCursor
             )
         }
+        await backgroundTracker.end()
     }
 
     private func createThreads(messageByUids: MessageByUidsResult, folder: Folder, using realm: Realm) {
@@ -426,6 +428,7 @@ public extension MailboxManager {
     private func updateMessages(updates: [MessageFlags], folder: Folder) async {
         guard !Task.isCancelled else { return }
 
+        let backgroundTracker = await ApplicationBackgroundTaskTracker(identifier: #function + UUID().uuidString)
         await backgroundRealm.execute { realm in
             var threadsToUpdate = Set<Thread>()
             try? realm.safeWrite {
@@ -446,6 +449,7 @@ public extension MailboxManager {
                 self.updateThreads(threads: threadsToUpdate, realm: realm)
             }
         }
+        await backgroundTracker.end()
     }
 
     private func updateThreads(threads: Set<Thread>, realm: Realm) {
