@@ -24,12 +24,62 @@ import InfomaniakLogin
 import Sentry
 import UIKit
 
+// TODO: move to Core and share with kDrive
+struct UserAgentBuilder {
+    func modelIdentifier() -> String {
+        if let simulatorModelIdentifier = ProcessInfo()
+            .environment["SIMULATOR_MODEL_IDENTIFIER"] { return simulatorModelIdentifier }
+        var sysinfo = utsname()
+        uname(&sysinfo) // ignore return value
+        return String(bytes: Data(bytes: &sysinfo.machine,
+                                  count: Int(_SYS_NAMELEN)), encoding: .ascii)!
+            .trimmingCharacters(in: .controlCharacters)
+    }
+
+    var userAgent: String {
+        let release = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "x.x.x"
+        let build = Bundle.main.object(forInfoDictionaryKey: "CFBundleVersion") as? String ?? "x"
+
+        let executableName = Bundle.main.bundleIdentifier ?? "com.infomaniak.x"
+        let appVersion = "\(release)-\(build)"
+        let hardwareDevice = modelIdentifier()
+
+        let processInfo = ProcessInfo.processInfo
+        let OSNameAndVersion =
+            "\(UIDevice.current.systemName)\(processInfo.operatingSystemVersion.majorVersion).\(processInfo.operatingSystemVersion.minorVersion).\(processInfo.operatingSystemVersion.patchVersion)"
+
+        /// Something like:
+        /// `com.infomaniak.mail/1.0.5-1 (iPhone15,2; iOS16.4.0)`
+        /// `com.infomaniak.mail.ShareExtension/1.0.5-1 (iPhone15,2; iOS16.4.0)`
+        let userAgent = "\(executableName)/\(appVersion) (\(hardwareDevice); \(OSNameAndVersion))"
+        return userAgent
+    }
+}
+
+public class UserAgentAdapter: RequestAdapter {
+    public static let userAgentKey = "User-Agent"
+
+    public init() {}
+
+    public func adapt(
+        _ urlRequest: URLRequest,
+        for session: Alamofire.Session,
+        completion: @escaping (Result<URLRequest, Error>) -> Void
+    ) {
+        var adaptedRequest = urlRequest
+        adaptedRequest.headers.remove(name: Self.userAgentKey)
+        adaptedRequest.headers.add(name: Self.userAgentKey, value: UserAgentBuilder().userAgent)
+
+        completion(.success(adaptedRequest))
+    }
+}
+
 public extension ApiFetcher {
     convenience init(token: ApiToken, delegate: RefreshTokenDelegate) {
         self.init()
         createAuthenticatedSession(token,
                                    authenticator: SyncedAuthenticator(refreshTokenDelegate: delegate),
-                                   additionalAdapters: [RequestContextIdAdaptor()])
+                                   additionalAdapters: [RequestContextIdAdaptor(), UserAgentAdapter()])
     }
 }
 
