@@ -27,8 +27,8 @@ struct FilterCellModifier: ViewModifier {
 
     func body(content: Content) -> some View {
         content
-            .padding(.vertical, 6)
-            .padding(.horizontal, 11)
+            .padding(.vertical, value: .verySmall)
+            .padding(.horizontal, value: .small)
             .foregroundColor(isSelected ? accentColor.onAccent.swiftUIColor : .accentColor)
             .background(isSelected ? .accentColor : MailResourcesAsset.backgroundColor.swiftUIColor)
             .cornerRadius(40)

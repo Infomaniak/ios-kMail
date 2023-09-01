@@ -34,14 +34,13 @@ struct SearchView: View {
     }
 
     var body: some View {
-        VStack {
+        VStack(spacing: 0) {
             ScrollView(.horizontal, showsIndicators: false) {
-                HStack(spacing: 0) {
+                HStack(spacing: UIPadding.small) {
                     ForEach(viewModel.filters) { filter in
                         if filter == .folder {
                             SearchFilterFolderCell(selection: $viewModel.selectedSearchFolderId, folders: viewModel.folderList)
                                 .accessibilityHint(MailResourcesStrings.Localizable.contentDescriptionButtonFilterSearch)
-                                .padding(.horizontal, 12)
                         } else {
                             SearchFilterCell(
                                 title: filter.title,
@@ -49,17 +48,14 @@ struct SearchView: View {
                             )
                             .accessibilityHint(MailResourcesStrings.Localizable.contentDescriptionButtonFilterSearch)
                             .accessibilityAddTraits(viewModel.selectedFilters.contains(filter) ? [.isSelected] : [])
-                            .padding(.vertical, 2)
-                            .padding(.trailing, 0)
-                            .padding(.leading, 12)
                             .onTapGesture {
                                 viewModel.searchFilter(filter)
                             }
                         }
                     }
                 }
+                .padding(value: .regular)
             }
-            .padding(.top, 16)
 
             List {
                 if viewModel.searchState == .noHistory {

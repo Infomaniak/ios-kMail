@@ -210,9 +210,11 @@ struct OnboardingView: View {
                     isPresentingCreateAccount.toggle()
                 }
                 .mailButtonStyle(.link)
+                .mailButtonStyle(.link)
                 .disabled(loginHandler.isLoading)
                 .opacity(isLastSlide ? 1 : 0)
-                .overlay {
+            }
+            .overlay {
                 if !isLastSlide {
                     MailButton(icon: MailResourcesAsset.fullArrowRight) {
                         withAnimation {
@@ -232,6 +234,9 @@ struct OnboardingView: View {
                 } label: {
                     Image(systemName: "xmark")
                         .resizable()
+                        .scaledToFit()
+                        .frame(height: UIConstants.onboardingLogoHeight)
+                        .padding(.top, UIPadding.onBoardingLogoTop)
                 }
                 .frame(width: 24, height: 24)
                 .padding(.top, value: .regular)

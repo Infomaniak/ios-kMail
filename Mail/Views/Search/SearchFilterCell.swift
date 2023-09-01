@@ -26,7 +26,7 @@ struct SearchFilterCell: View {
     public var isSelected: Bool
 
     var body: some View {
-        HStack(spacing: 11) {
+        HStack(spacing: UIPadding.searchFolderCellSpacing) {
             if isSelected {
                 MailResourcesAsset.check.swiftUIImage
                     .resizable()

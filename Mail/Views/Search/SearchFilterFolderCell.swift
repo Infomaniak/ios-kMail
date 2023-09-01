@@ -69,7 +69,7 @@ struct SearchFilterFolderCell: View {
                 }
             }
         } label: {
-            HStack(spacing: 11) {
+            HStack(spacing: UIPadding.searchFolderCellSpacing) {
                 if isSelected {
                     MailResourcesAsset.check.swiftUIImage
                         .resizable()
