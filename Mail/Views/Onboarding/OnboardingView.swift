@@ -212,8 +212,8 @@ struct OnboardingView: View {
                 .mailButtonStyle(.link)
                 .mailButtonStyle(.link)
                 .disabled(loginHandler.isLoading)
-                .opacity(isLastSlide ? 1 : 0)
             }
+            .opacity(isLastSlide ? 1 : 0)
             .overlay {
                 if !isLastSlide {
                     MailButton(icon: MailResourcesAsset.fullArrowRight) {
