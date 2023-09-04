@@ -100,12 +100,7 @@ struct ThreadView: View {
             displayNavigationTitle = offset.y < -85
         }
         .onAppear {
-            matomo.track(
-                eventWithCategory: .userInfo,
-                action: .data,
-                name: "nbMessagesInThread",
-                value: Float(thread.messages.count)
-            )
+            matomo.trackThreadInfo(of: thread)
         }
         .task {
             await markThreadAsReadIfNeeded(thread: thread)

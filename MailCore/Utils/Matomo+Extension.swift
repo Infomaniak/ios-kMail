@@ -82,6 +82,18 @@ public extension MatomoUtils {
 
         track(eventWithCategory: .externals, action: .data, name: "emailSentWithExternals", value: sentWithExternals)
     }
+
+    func trackThreadInfo(of thread: Thread) {
+        let messagesCount = Float(thread.messages.count)
+
+        track(eventWithCategory: .userInfo, action: .data, name: "nbMessagesInThread", value: messagesCount)
+
+        if messagesCount == 1 {
+            track(eventWithCategory: .userInfo, action: .data, name: "oneMessagesInThread")
+        } else if messagesCount > 1 {
+            track(eventWithCategory: .userInfo, action: .data, name: "multipleMessagesInThread", value: messagesCount)
+        }
+    }
 }
 
 // MARK: - Track views
